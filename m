@@ -1,321 +1,118 @@
-Return-Path: <linux-kernel+bounces-823523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBDDB86BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:44:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2526B86BE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1671B287E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FE83A6A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44862E284B;
-	Thu, 18 Sep 2025 19:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6DA2E2F09;
+	Thu, 18 Sep 2025 19:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DaoFuKrI";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="iahzhy3C"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5FQPO83"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3102D9EFA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758224665; cv=fail; b=FWIn2Ku8FIysjPce62J7Fvs75pE/b39n4m3EiBVuJKOCvwe9feEt3DLVgBOBE/zdGIXr+mC6hQPZj6oajCtAxk3aozXB28xIrvJElFINYAPsNB0yvby3BCJXxA+WgSp+zXrbQAfQ0yMyXI4z80pLw58t+p0Y17WRJdkwMWwpzsE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758224665; c=relaxed/simple;
-	bh=hBYp4nKD3i8hpLCySMHZCDjNXXqPM/EYzc10/xmdIM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=t/7jbzRWsDwDD/6U6AFeqgauOcKuE2nRhfr1nlmViMggqQcayqN2EU245Adnw3n9VvIDbRMIfTtnW9+jYPnjga+6RaA8BPGFgx21Vexxxy1ilo5iYq1m7acez3eieBMKFRNdffVdb9WACyK9XmhMroYRZutVC1pQ/47UxPSgrIM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=DaoFuKrI; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=iahzhy3C; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IGE109027262;
-	Thu, 18 Sep 2025 19:43:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=GbdijMagfd8Z+5ql8p
-	bPvWeQthdyTMM0b0skO+KviTc=; b=DaoFuKrI3ISFi4V6b67h1mdMAfZFhdQY8z
-	iGAe4IpZaHsMHg/sPmUaB0mBrhkjsADT0vSoz7yVuB5t/lt3rysZBqzQL/rSpB8g
-	B8w86EqDRPfcBpKAvH0/Fef/gE89SS942HYLSFAzK8fPAA8PrBAMR77hreS/W3TJ
-	Bu7LPJs5Ox9eYYaFUcJxvDX6MIyxoMXEnkPIq4pzyKQQ9O08Mq6J6QONz1Bx+tDQ
-	4gEk1mlunYJPQ0N7sKNTTqc/KpspbBajFVyFYeuba9VGczTylrV7qD01PY/XWb2M
-	e2R1tN2BdS4QnO+14bXFKOQHlyyWP2vEO1WMh2T9H8jwwpf5Ksdg==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fxd47qr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 19:43:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58IImZ4U033703;
-	Thu, 18 Sep 2025 19:43:50 GMT
-Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11010011.outbound.protection.outlook.com [52.101.46.11])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 494y2fjush-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 19:43:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t3ct/EMYGwaOnSyoOEwthDt9hAtjYt73YcYzTv4tRWBv3to5jO/4Be4UUNoSlgH/K9Z0aqlWu6oKi3n3a5p+SuZH8CZTssynGrP20FabSVxYODScPwftiigupKMvam0Lc/+yzami02cOGtThUmM6uS0w6ZtOS59nGNsnCXVAI0H6Ox7CvHgI6h+tRrLpC96nfd2Py8Zp+Aoi1mwyzjNdEW6dm9C2CWrs+5CLIXVI+UcSuqy7SSx3nlX+Fmk4TUgkC61yZEmXPiiwSWHLMJWxwL27DDdGYwGZw96lteYXobb1WlBX28inffW4jc7RrpfFzdpLuWyx2BaoBruzho7H9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GbdijMagfd8Z+5ql8pbPvWeQthdyTMM0b0skO+KviTc=;
- b=Vdmmi7Ygo2c7T+P2apntuLlYIGchh1Xbbj7tBZizaR4/fR08iV7Gr5AshAV0EjL1GmTTJ1ixvnZyJ/OkiKIZ3wJxByFVxI8e+KO6ZvNMczRwNhKRiSvHZg4wFns9fvZgovHvA/FsWXb/pldM0RdvVSM29CKEKqoia0TAU+MU4EqnCYEGDbGqVemzrlzdLdgp8rujThHYnumAWsn63qsUE/ZS21ydtKHnEF7cEIVfnrjLwijjhCkzRp8ouMf5TUpbQvZwky0c3n3wREppHVFrXAWERGE84FBPLsVHnPh+ibrGrEzspxv7I4Mk7wlH67UPhZTJR6zfLY00tfOAtUv9rA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GbdijMagfd8Z+5ql8pbPvWeQthdyTMM0b0skO+KviTc=;
- b=iahzhy3Ce8511O3Dbu+SvU1sUGfyP6uOUxcLXcOZ0VuasUTr3441+MwUqwEhHJCMTWMKnNDoYB8EkmUTm01guOMfTkKhwTWEpMwpnL2n/qgjbUwu6DVGIq48S/8a0ffr3xIJ3tca56Ri7PZlbqGrUEw2y7k/WNZ1IfUL9iIrFS4=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by SA2PR10MB4571.namprd10.prod.outlook.com (2603:10b6:806:11d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
- 2025 19:43:47 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9115.022; Thu, 18 Sep 2025
- 19:43:46 +0000
-Date: Thu, 18 Sep 2025 15:43:34 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Nikita Kalyazin <kalyazin@amazon.com>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Houghton <jthoughton@google.com>, Michal Hocko <mhocko@suse.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Axel Rasmussen <axelrasmussen@google.com>,
-        Ujwal Kundur <ujwal.kundur@gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <cigo2r2x22bk7wzr6qvazcdkmt5kfqhbgb7nslpuff7djufucg@f6xucfuntz3q>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Nikita Kalyazin <kalyazin@amazon.com>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
-	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, James Houghton <jthoughton@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>, 
-	Oscar Salvador <osalvador@suse.de>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Ujwal Kundur <ujwal.kundur@gmail.com>
-References: <930d8830-3d5d-496d-80d8-b716ea6446bb@amazon.com>
- <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
- <aMp-kW3OLqtZs8sh@kernel.org>
- <du5pzxmfk6lile3ykpaloylwz4eni6disj2oe25eq6ipzqemiw@ybcouflfnlev>
- <aMvEu9m7fJLnj862@kernel.org>
- <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
- <a1a48a0e-62d3-48d0-b9c2-492eb190b99f@amazon.com>
- <7cccbceb-b833-4a21-bdc4-1ff9d1d6c14f@lucifer.local>
- <74b92ce3-9e0e-4361-8117-7abda27f2dd4@redhat.com>
- <aMxNgyVRuiFq2Sms@x1.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMxNgyVRuiFq2Sms@x1.local>
-User-Agent: NeoMutt/20250510
-X-ClientProxiedBy: MW3PR05CA0023.namprd05.prod.outlook.com
- (2603:10b6:303:2b::28) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343BE2E8B6B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758224677; cv=none; b=UmCfu1X2Qj8jQOF0Mp+a8HgHBuAfEB9vIp3MQJmEYMjZy0VHGA2fGdiEZ05rftruSPxwZL1BwS3kbtQxOn5zPq3BP0VqzH3Xf9qBYIPfhLURMJUq99WLYI3Rxd2D0iwrg0DvPyJbS2kTgEKKO/qpO+7eUHKTClBlO0SIIYuUxOA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758224677; c=relaxed/simple;
+	bh=xDt0aZagELXwSkTdz82ubamN8Iov86wVWkejVlcjJIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CoAAXkpZn5+ZFDWFoJEbtOlIeIUBHen+2j8eHQAhCYIJv7WkmoyxpwR08iw6DRoD14lRivAFeNUy3NcaK19BQ/x+IcuIBVIgC8dtwgobNnZCh2+iv0lDxizt3hQJr0ZnRCcwRAFLsLQwIwFxczyNeP/xVhRsWF6nsw6IzYyd1U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5FQPO83; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27E7C4CEE7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758224676;
+	bh=xDt0aZagELXwSkTdz82ubamN8Iov86wVWkejVlcjJIo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=A5FQPO83h0wKAhG07kgXFOaEJL6tYOKh2fngOkQril0hLbZZmjcXeUljfduKCCRtw
+	 iu5a7LRoSizH9mS7jRyB2aoEuKfAW9PjFckimlYt5jtT3qSKl61anUHL26sYTjXFZT
+	 iEptKin3FfZqNyqbg5AdBSIfuGaisOmRuyCeWERgZDK8djiEvFIqqhGzx5ZmgnhJg8
+	 FxJghXNarV6GlowxrFhVzePBJ0mkLauCqyFcpiK/Xo8mj+CwtboUr8mNg28+yE1Jbc
+	 PXocGgLKhGWeV/CYGp1LzcLaOEepB6683LUzRmsxcv/Fn8eX6s+tjsOKcymfBsCtOZ
+	 uFD1ZuZ6eY8lA==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b2350899a40so133371366b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:44:36 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yxku3F5WUUtOt8EV29UwuOx1Ydi7JcEXII/ppwVZOmhp+ysjS15
+	rQ0oc9vAj1fssOePTjo6HWMRXsaQh28x0yZfEFphgnAu/CpC8As/CWtHWMV4IxHkJ/QqFBPxbfZ
+	BoQ0y8Fi+lrvfiwV7bobDtpp+hxC3Zw==
+X-Google-Smtp-Source: AGHT+IGAhcnuc0wpWw/s1p4UA6lxTrINGFr54H6UilY1ZtrPf2GcAEbRMuog4KleHa2rD/k9wiHS+9FlPpcBXhXUlUs=
+X-Received: by 2002:a17:906:6a1f:b0:b04:85f2:d26f with SMTP id
+ a640c23a62f3a-b24ef6880fdmr46219566b.25.1758224675450; Thu, 18 Sep 2025
+ 12:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|SA2PR10MB4571:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1da0849f-43f6-4742-c727-08ddf6ebaec1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eu3keoo6Z/HRaUVpFRacLP1IzJso37gSE22mskktWK6vH20op83ZC/gr7NRO?=
- =?us-ascii?Q?PQqIf81XUWFFrvERQmXKfUp4pTXW8RxqhH5I/7Qx7weOESNVpHdBnuzDrQix?=
- =?us-ascii?Q?1RMQurCbCHp0lRwnGgXz6sD0pk3rTSP/V/LtXRf6d779T1+HTqzWnrfX2TaR?=
- =?us-ascii?Q?xP3n2Tl7h3UpBlUd6kbt81Wl+38z6Ey3TToGARUCsNFmwUsSdZfDvPleTz6B?=
- =?us-ascii?Q?7DW3yniBJADtCuNgxR2OKv6NO4gKrckl6eUWM3m8iC5o/cgtSad0sWFM2GCM?=
- =?us-ascii?Q?wGYaK68FuwCT6A5c9gblcBs8bj9Bbu0iX9KmP33L9J54RlAnrE5TN991kVrn?=
- =?us-ascii?Q?AiQIkq7rYPpUdsKUc+k9PDcyTZUYZMjnN9fF6RTgJa3FdncoHlkrlJj4tNcX?=
- =?us-ascii?Q?pxPNRI4HKiUiYrKV+a94yrOIrXnPwmXOC59nVizD7BGcVdysIv2k8Zkk+wXb?=
- =?us-ascii?Q?I87s1kjjKMDE/A1wb2FuasaqHco3l/AsPGc7tuQwDCsfeUaScxY63/yNREJv?=
- =?us-ascii?Q?43XzrPNaEYaWHzuXKhALqcmmulYCWquoNA1BpjeO3Jg7EonDovpGDu6AM+Bq?=
- =?us-ascii?Q?auzN/gzSRWa4zYqQ4TeT2WlYb/2pI2kFxLwRzN17KG0PDOHpnjBBs90S8t6q?=
- =?us-ascii?Q?gWwil6QOARy0wT0CCRMa6hkDbGJSBcq+NxQCISPeZ0BkvR+8/dEfDgxnZF5R?=
- =?us-ascii?Q?Ii80XoxcAU743keXm4hqHhQ5ZrNfE16HubecUPksFYzQjdmcnXiu+aqtK15f?=
- =?us-ascii?Q?LLi3OnQY1ZQ7C4ZeVIpV8i4AxPrZtSq/898QJHTWaToVnkgz4UyhmN6Qjmss?=
- =?us-ascii?Q?o2IRrWhIN+rF8SEA3qNE0S49PP9TNX689+BXMY4Dea8ob7so3D8wX3fBLseF?=
- =?us-ascii?Q?AB8D6MdFueAP7ZuwVcsqEr4IZ+919oIqqqEdAn/TQDxdGCVcjqcBaBIvra6k?=
- =?us-ascii?Q?zpnHaUkJPuirrhf7gFLmD+QHwsxajTg40iUCUXc5aILI8Ry19ZA5B2KqjNpY?=
- =?us-ascii?Q?ik7Gq5xi6m9usDRA5Fs7VG0kq7PmGN/7kKT/0/Ne5GDR3R43x/Nj9+DtMR0q?=
- =?us-ascii?Q?FRlDEEMfkuvQAeFFzf3lXXLgRfxT2C+35D3uaLZHDdFtu2EKyJQUxLI0sYyH?=
- =?us-ascii?Q?rjuePquFp4uGjR4HvBf8ZSzWatfkMapiLroc8rdE/MpDR9zeyE48rXRg0FiK?=
- =?us-ascii?Q?P3hbtLK8pd4OX5w29i0zU9y6p/LcxHyHxFu0h1HAzhVFA2NtgcBA9TeUFMf2?=
- =?us-ascii?Q?qPsoa4BMTpZ/8IC5djCfUyX9XfyVMKbkryBnQ4BR9xyh0SpXtBC2nsgan9at?=
- =?us-ascii?Q?GNyLWZSPxTfIGiuJ6Rkghd4h8EbS/ZMTFtnSEYefKmmt8gqSOIupfvsctcd7?=
- =?us-ascii?Q?Rfs1ofUtks+aXXZ3cnQTZDjSQ+zL?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GxD9DgPxjRiPfZQrY58Ou8SnoBYgUdLsm8L6yu3q5nzh+urE1XYYSCtqjhug?=
- =?us-ascii?Q?GFIfWKH1APtdA1zYKB3mGvzCPtgsXowOaT+XS9Z0HHIxfh+qoAHwjd4685Ol?=
- =?us-ascii?Q?cgQ2OU/SeGIfAImTv/x0pfiWaeyUCwPSm0Jutxh4dN2co3Hg+Rf8+wXiTebx?=
- =?us-ascii?Q?McC5EBiziBfFiwq+Zg2pFNKG6MYZD7j4m1q3O8lsGrypJdHVTqni5RHhSVkE?=
- =?us-ascii?Q?oMGLq4IzFOxzcr7epqZajhf4Fpvtj3xDEq6QIxGLetVQ3agcASV6Q/iogk/7?=
- =?us-ascii?Q?Xr0ezsD4gg3R/kcW7fpu5wJgC4Z3kqifqZG6NdKgx/E4iYu6yUlZnAPc6W4U?=
- =?us-ascii?Q?WhX3aJ1BZ+IK3qQOXU6972fDYdSayQzCkQDRM9Lr5Wqb60HAL/zOZpaAXQu2?=
- =?us-ascii?Q?2nFLkEePciu3a/cxu5l4qMRRNkiqi4ua9KS9hL9bzANtVg/mUfYlaVe3RpOs?=
- =?us-ascii?Q?e0mzHG+c+U57k4OlhkGzNdfnI4VEhQr2qMBjqQs0j0W2nLFFZvhFO9CRtcMm?=
- =?us-ascii?Q?q9tLmhJBGANsu6aJRz1b/NBsEFtUQvspqABIi0r+5ONNbJrh23c3P5OW4tnB?=
- =?us-ascii?Q?20p3poGM7wBrVcXZFiuaTLmwr5HWt7JaJD4Te/NQzeFcYBXMkSpNdBcMVmA8?=
- =?us-ascii?Q?p692qqN5VXfXND1bsWIG0UgPMSB1WPsEbHzp4GU6FxA9MwT70Hqkg1EZUZct?=
- =?us-ascii?Q?ID2v2fuksVudMTqZOYz3n/m0UY9nkZB5ll4PXkGqL3wDoy/4a5UfjLEq4tFt?=
- =?us-ascii?Q?TPhm2bqxl5Z0MgV/clKB6tJ2jaMBVBNXL+GzvsTaXGhaQApXShaTJePxl2e3?=
- =?us-ascii?Q?kC77794kHXNVgl38F+r+3NRiN7rrsdArAX+JqpeAOOK6NPGYhEbJ7RcjKytB?=
- =?us-ascii?Q?kzdMqDWp7vEtHjR3I7rNXpdK4bBSiaS4sFwWCpQMCxpn9QxSF3Bsxy+u5+jH?=
- =?us-ascii?Q?rD9X+aE3Ve8J+35bqOAOziG9m2fRfJAeCB7WY9rwGuzkt2jQKrx4rc3mL5LP?=
- =?us-ascii?Q?OvA06bF2B+BaMlp90yl6gVUv/wCAuyjm8EjB8MM464dqg5ywLsYPP6R3zNsJ?=
- =?us-ascii?Q?QNROizwREO6kDw8qgIWYdfZzQ/M9tYPs8WLIxUD7uuKj8HWmr3Ykx6TGwdyz?=
- =?us-ascii?Q?fPcF+W7+vUIQ4tzdwtTkzfbJ6oyJNlhXDo8JT26bbgKX/V5f8SMT8qKnBC+j?=
- =?us-ascii?Q?njeuSR1eaWVwQ3j+vzBRtoNUr4cDwJouBHix2MOLtlhdyHrWFHxwY0EEr/XS?=
- =?us-ascii?Q?CC7J5hMoKE5Hb7Q3rNWUwNU64VpPBsWJu3QmBofpfQCi7x2VXYgqEKrck5sH?=
- =?us-ascii?Q?bn7IAaxs5N+NAFdJZAov58+TeRfNZovUvLQYbVi5c0ACaei+CcY3YCIr8+/y?=
- =?us-ascii?Q?FYJ2RgQ9BEYfwP9WzJIQQ7YWqBqafbtyY2gRJ0JgeDR59og87uLRlU2ifCsp?=
- =?us-ascii?Q?5a6lSKo2lrnYI851mwm0iCasZar8dXCq/8AfSlFtA88//rjTgfbL0HTCehcH?=
- =?us-ascii?Q?e3SQlVeOCz1hLmelIef4wGC10ymby50YhtN+RghZbxyWh6fpBGV47QE/P2XZ?=
- =?us-ascii?Q?DUps+eRDoPdo2O/Mc0vz8Q9MA36ARZ8Ioy7VoW/r?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	6ig57Eax97L8/XeIYN5/cHpnK0EFmz+R28joB4gGZtnFTjzsy+/2rfnztHk2jzJpUBkfC9g/J9Pul8ogyvaJgCg7CfvLb6Dme6BhjgbIPfAHEFDnal5S58O4OQkfRuRNPlvD44PAapNkWcg1LuaD8h6zTrjTcNzvF0vowG46sJ5Kuav64pIphk8czDK5iVUlIsGq8U0XXtEZhcRPVm55hkDvGv558KMJGusPMctiWDlx77asHy+e8uy83+dYvcOWQbIivP2qYkHTxSk/G2AB1ZD2AKqqJSe+Ev0/gZWfRmA3gCjdIC7VKL98PXn01VkCLwUZzCDGvgiLh+eI93C79qYGCT/nbDkpW3gRa70Yci3CCaBaWIuSRdKYjNzGtuFWlqIhAQHpk/92Jsj3kFhZPakaP0tdKD9sM5TtqLSx2sZnziI82zR3KR1U+9F/AqglkLPrR8Q233MVmZxACSeX3VfsgN/eTLesl7PExNKNe6BRmb/d2SccJjW1fV+WGu0YgmJu+7Q2P4h2cCXQoV7e94Cp6UZSJVCGUAihlpIdp4n2TUL4ygXyfhkXe4qKG2ETHOhbo7T4+cqoqCF5ks/W34lAD+F0mzZPBJHECdBwq+8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1da0849f-43f6-4742-c727-08ddf6ebaec1
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 19:43:46.8310
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: X86qNFfZFy1gbUI5k5f60oYeOtO3/yehvcOOjSeZr6XTn5lYpoMWCDmHWYacjYmGAn22P43pbA/C94GflFcypg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4571
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_02,2025-09-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 adultscore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509180176
-X-Proofpoint-GUID: EKuhsKeWx8BbexBmYhXHKBTKnSoVFYyX
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXz+KjaGJ+5M2/
- nFVeYGE8gp1WiUig3yKTS8qeUrln+1iFLZrV2GhjxPi4AQYDPxUI0gY3c7SIqO1bRdJK5CBxbsP
- Ojw05OAngGsY6OLYVVoswWkXuT9TAJTqTSIZv1xCagZwM4U/LPBfVvc9ZTP9Ra2CR6NvcZj/Pjk
- r40VlsvmsDgvTORlKtTKEscD76BJrKdPm8050Pj6lcimQ446kjIa0rmN7gB/E0+n1JU+iVKxODj
- 14QNNciLNPb7ZeY51dY1rucpzT/eNyGdIrsv4xNGeu2G4QZJJjwQyc9967pskhQnwfeIsE94aoH
- OsLV004+Cu3sx+NCx/2GwwIOkRMQz+iu9yLVqX29d6uCA5Jrl2n4nRUBhMafnwJAJJet0ukS9U2
- tOPA/LsX
-X-Authority-Analysis: v=2.4 cv=cerSrmDM c=1 sm=1 tr=0 ts=68cc60fd b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8
- a=20KFwNOVAAAA:8 a=yb4417N6jwVSY2xLmeUA:9 a=CjuIK1q_8ugA:10
- a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-ORIG-GUID: EKuhsKeWx8BbexBmYhXHKBTKnSoVFYyX
+References: <20250916091858.257868-1-lpieralisi@kernel.org>
+ <20250918135555.GA1540012-robh@kernel.org> <aMwjcIS/rvxkSZdr@lpieralisi>
+In-Reply-To: <aMwjcIS/rvxkSZdr@lpieralisi>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 18 Sep 2025 14:44:23 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+XKT+HkE0W0BLKbQ76RtgBrKToLAVaWOy80mLkD=x0+A@mail.gmail.com>
+X-Gm-Features: AS18NWA_awGPL2y1OiG42_bMmJJc8tA99I270bH2QK0xh_S_5QTtemDGIGlw3EA
+Message-ID: <CAL_Jsq+XKT+HkE0W0BLKbQ76RtgBrKToLAVaWOy80mLkD=x0+A@mail.gmail.com>
+Subject: Re: [PATCH] of/irq: Add msi-parent check to of_msi_xlate()
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, Sascha Bischoff <sascha.bischoff@arm.com>, 
+	Marc Zyngier <maz@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Peter Xu <peterx@redhat.com> [250918 14:21]:
-> On Thu, Sep 18, 2025 at 07:53:46PM +0200, David Hildenbrand wrote:
-> > Re Nikita: If we could just reuse fault() for userfaultfd purposes, that
-> > might actually be pretty nice.
-> 
-> I commented on that.
-> 
-> https://lore.kernel.org/all/aEiwHjl4tsUt98sh@x1.local/
-> 
-> That'll need to leak FAULT_FLAG_USERFAULT_CONTINUE which isn't necessary,
-> make it extremely hard to know when to set the flag, and comlicates the
-> fault path which isn't necessary.
-> 
-> I think Mike's comment was spot on, that the new API is literally
-> do_fault() for shmem, but only used in userfaultfd context so it's even an
-> oneliner.
-> 
-> I do not maintain mm, so above is only my two cents, so I don't make
-> decisions.  Personally I still prefer the current approach of keep the mm
-> main fault path clean.
+On Thu, Sep 18, 2025 at 10:21=E2=80=AFAM Lorenzo Pieralisi
+<lpieralisi@kernel.org> wrote:
+>
+> On Thu, Sep 18, 2025 at 08:55:55AM -0500, Rob Herring wrote:
+> > On Tue, Sep 16, 2025 at 11:18:58AM +0200, Lorenzo Pieralisi wrote:
+> > > In some legacy platforms the MSI controller for a PCI host
+> > > bridge is identified by an msi-parent property whose phandle
+> > > points at an MSI controller node with no #msi-cells property,
+> > > that implicitly means #msi-cells =3D=3D 0.
+> > >
+> > > For such platforms, mapping a device ID and retrieving the
+> > > MSI controller node becomes simply a matter of checking
+> > > whether in the device hierarchy there is an msi-parent property
+> > > pointing at an MSI controller node with such characteristics.
+> > >
+> > > Add a helper function to of_msi_xlate() to check the msi-parent
+> > > property in addition to msi-map and retrieve the MSI controller
+> > > node (with a 1:1 ID deviceID-IN<->deviceID-OUT mapping) to
+> > > provide support for deviceID mapping and MSI controller node
+> > > retrieval for such platforms.
+> >
+> > Your line wrapping is a bit short.
+> >
+> > I had a look at who is parsing "msi-parent" themselves as that's
+> > typically a recipe for doing it incorrectly ('interrupt-map' anyone).
+> > Can we make iproc_pcie_msi_enable() use this? It's quite ugly reaching
+> > into the GICv3 node...
+>
+> I am not sure I get what you mean here. Possibly iproc_pcie_msi_enable()
+> can reuse this patch's code if I extend it and make it a global function,
+> yes and somehow use that function to carry out the check for an
+> msi-parent property with no #msi-cells property or an #msi-cells =3D=3D 0=
+.
 
-What we are trying to say is you can have a fault path that takes a type
-enum that calls into a function that does whatever you want.  It can
-even live in mm/userfaultfd.c.  It can then jump off to mm/guest-memfd.c
-which can contain super unique copying of memory if that's needed.
+I meant using of_msi_xlate() (or even of_msi_get_domain()).
 
-That way driver/i_know_better_that_everyone.c or fs/stature.c don't
-decide they can register their uffd and do cool stuff that totally won't
-tank the system in random strange ways.
+> Don't get what GICv3 node has to do with that though, sorry.
 
-Seriously, how many fault handlers are you expecting to have here?
+Just trace what the code there does after it gets the MSI parent. I
+didn't study it too closely, but why is a iProc PCIe parsing GICv3 MSI
+stuff itself? There's either some missing feature in the
+irqchip/domain APIs or it's being dumb.
 
-I'd be surprised if a lot of the code in these memory types isn't
-shared, but I guess if they are all over the kernel they'll just clone
-the code and bugs (like the arch code does, but with less of a reason).
-
-> Besides, this series also cleans up other places all over the places, the
-> vm_uffd_ops is a most simplified version of description for a memory type.
-
-6 files changed, 207 insertions(+), 76 deletions(-)
-
-Can you please point me to which patch has clean up?
-
-The mm has uffd code _everywhere_, including mm/userfaultfd.c that jumps
-to fs/userfaultfd.c and back.  Every entry has a LIST_HEAD(uf) [1] [2]
-[3] in it that is passed through the entire call stack in case it is
-needed [4] [5] [6] [7] [8].   It has if statements in core mm functions
-in the middle of loops [9].  It complicates error handling and has
-tricky locking [10] (full disclosure, I helped with the locking..
-totally worth the complication).
-
-This is a seriously complicated feature.
-
-How is a generic callback that splits out into, probably 4?, functions
-the deal breaker here?
-
-How is leaking a flag the line that we won't cross?
-
-> So IMHO it's beneficial in other aspects as well.  If uffd_copy() is a
-> concern, fine, we drop it.  We don't plan to have more use of UFFDIO_COPY
-> outside of the known three memory types after all.
-
-EXACTLY!  There are three memory types and we're going to the most
-flexible interface possible, with the most danger.  With guest_memfd
-we're up to four functions we'd need.  Why not keep the mm code in the
-mm and have four functions to choose from?  If you want 5 we can always
-add another.
-
-Regards,
-Liam
-
-
-[1]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/mmap.c#L122
-[2]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/vma.c#L3149
-[3]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/util.c#L572
-
-
-[4]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/mmap.c#L338
-[5]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/mmap.c#L1063
-[6]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/vma.c#L1478
-[7]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/vma.c#L1517
-[8]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/vma.c#L1563
-
-[9]. https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/vma.c#L1407
-
-[10].  https://elixir.bootlin.com/linux/v6.17-rc6/source/mm/userfaultfd.c#L69
-
-
+Rob
 
