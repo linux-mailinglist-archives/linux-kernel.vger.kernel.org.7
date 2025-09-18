@@ -1,60 +1,81 @@
-Return-Path: <linux-kernel+bounces-823547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21862B86CFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:59:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E6DB86D12
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04CD627D85
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046221C84467
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AB1308F1C;
-	Thu, 18 Sep 2025 19:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D88231A7EF;
+	Thu, 18 Sep 2025 20:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ri2W5Vqr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f8/8Pko/"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF6E2BD04;
-	Thu, 18 Sep 2025 19:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4A3195FE;
+	Thu, 18 Sep 2025 20:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758225582; cv=none; b=roeVc3jXmNXqI5G5dkjIFiXC8hlrQHMpjM6Rxg//enQ3DIoioUbJfXT2TrN1oDa3cDxQcU8upN27y+DYNVPkrYWDn46bF42WMbJRcreEwSakiliGy2hyHtDlYx7iNjUAmc7riGtZ/JVr30b62V5b42E1i/TxDP7bf8T0NroUZwU=
+	t=1758225633; cv=none; b=RY0zhn3QOMAU9DgLFpJK6A0nnpX4WcoAiIBFqd9JEa5JzEfl9WT6bpyVKxe7S+MXgAcGTpRFjHHwU5RKGasC+0SeEjKRG27fx/aZUSFE/ySCoVLhLK0yPNU6jmh//MznFQTR9T1YtWQ5Rs5ZpeZhJiUGioAXxwrPIgDqzk/FtLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758225582; c=relaxed/simple;
-	bh=R1QX696odm1TCUI2x6CZHjFJPTvpael/7rOj+EdLefo=;
+	s=arc-20240116; t=1758225633; c=relaxed/simple;
+	bh=cKo8QnxTqwRlZbbrTi6NfByG+sCorX6sVt0V6y4S1EQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rG5Csy5KwjEECWYEylxT00Q88H4msNzFusSw8qYDPhnAa2/1CLINJVf9wtj75gDFd5gYE6lp5L3ie39D3Vvh2BFgsxUZFdK6VkjXi1yt6IvAlBGS802nWqQQZctNQ+AQXCuQAcxTATadVGCS549DXamah7GNer4hCTe9UHehc5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ri2W5Vqr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27727C4CEE7;
-	Thu, 18 Sep 2025 19:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758225581;
-	bh=R1QX696odm1TCUI2x6CZHjFJPTvpael/7rOj+EdLefo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=G5lE5A60+cKKMffogpC1FvqBT/5ogUilC56NCrJoLWo8bde+aLFFSUfJ2jIf6qF4u0k2TZPfnfEf+7n3Jae9juqxkur8ypszZEgO396KDewwX74RdWOJY9Jjnpxt4PlAaa/WqDRLf/D9++GUb0awTPxXr6tXd6r1srAlVCqFWo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f8/8Pko/; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D5CCF40E01B3;
+	Thu, 18 Sep 2025 20:00:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 1khS_LFk5DMP; Thu, 18 Sep 2025 20:00:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758225617; bh=XI8MbpBy+ycWzG5aO02jWHqOsvEkXPBPzx6jQtrzNY0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ri2W5VqrWa86d8MWJ9v29lTCulg17j8U1LEbudNKv5NVCHYA93UJEIVubjj/7GaOV
-	 pFrhtSTZ0l0E3nkbsPaRaeKxFA6u9CjwifyM9oDYtPkImGYMJWjS+gOYqqyIl3+kAD
-	 Up9PyuFMCop66PmjjEHCzMKrI+ZbmvoOYdmEKXfNV/3oWCZ3D9tazkx0dXzQEut0dm
-	 UJrS27dCmzJpSp/6SaYwwN26UDls9xMxWTbVH/9IjGa5RMbxXGL15W4SR5BWNlzZvB
-	 DmyQhXCrIKuKXYfPxKJ4nFDBzm9h/rsz9LA7FwADhtQaXRAGmd54Tz0jE0XtsihFWF
-	 qHgjwJ0yX4hKw==
-Date: Thu, 18 Sep 2025 16:59:38 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Kevin Tian <kevin.tian@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
-Message-ID: <aMxkqnXdrvv9BN8s@x1>
-References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
- <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
- <189e060b-207b-469f-9b6e-314380d12a42@linux.intel.com>
+	b=f8/8Pko/2jb7mdI3q8FvyM+z/0suyHgNXRse10uugugMJdlXgPLIkaqMRCtvbcdWb
+	 C7voUCVa0isP7XjAONjs0of4kM6o934NMivN1P+/rx/WybQkUKDaHtSalg9QODm3H4
+	 7o9d5jdyezqh/4V1AGSW06kTODhdRYMHABgf0z39QQVmIbDINovD3O1wStzgYNSYZm
+	 V2eBLWTBsuUldNphGqRO7aaIG2UDhWTFQdyBWW51KXfz/CB4cYNAWJZiURSSU3lJeK
+	 Xr4BFA7L+btTDiF1tCnMIuM1wKNtqiwBfHpcFrRIK8kDHE1mDODjoUdmm2F0FfVinQ
+	 v50OZBWMN6YGRZ+iXCS4EuEg8iMZaxMu22Skhj+flIMyaZBOzXHL28+9i9DNm54gCp
+	 TOq5JD9vQq1PoIvV9pKwqyGXMdKO88cwcdiKpmgg46EHXFO415ND02wXllDjoJSURp
+	 Xhb4dfwEJisZzzj//t1pvZSv4e/fOCR53YShixh7C2LmnW2Ytuh3TMFx8eoV7eqxZe
+	 AImKJZTeWuXtSUffloQRl1ShQYQaiSkR/X5OjSWgMWtXy0lSXkWXoLqggfaXutrxVd
+	 BeSg5Op1YtAXo1ipExLr9Z2tGFIHpBDeOJkV9CziBkPuNV3YM//gtJPpoFEJf9b7S+
+	 YzHZ+Ca4pOeOLFoBzb1/FrSw=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id CB88C40E01C9;
+	Thu, 18 Sep 2025 19:59:58 +0000 (UTC)
+Date: Thu, 18 Sep 2025 21:59:52 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tianyu Lan <ltykernel@gmail.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de, Neeraj.Upadhyay@amd.com, tiala@microsoft.com,
+	romank@linux.microsoft.com, linux-arch@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH 5/5] x86/Hyper-V: Add Hyper-V specific hvcall to set
+ backing page
+Message-ID: <20250918195952.GFaMxkuFc1OqfWavWv@fat_crate.local>
+References: <20250918150023.474021-1-tiala@microsoft.com>
+ <20250918150023.474021-6-tiala@microsoft.com>
+ <20250918150959.GEaMwgx78CGCxjGce8@fat_crate.local>
+ <CAMvTesBwkFr7VYoEYq5hc7NJi5xdiz037bmzoaEV2eG__h-kTg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,60 +84,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <189e060b-207b-469f-9b6e-314380d12a42@linux.intel.com>
+In-Reply-To: <CAMvTesBwkFr7VYoEYq5hc7NJi5xdiz037bmzoaEV2eG__h-kTg@mail.gmail.com>
 
-On Thu, Sep 18, 2025 at 07:52:43AM +0800, Mi, Dapeng wrote:
-> On 9/18/2025 5:12 AM, Ian Rogers wrote:
-> > On Sun, Aug 10, 2025 at 10:56 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
-> >> his patch-set fixes perf kvm commands issues, like missed memory
-> >> allocation check/free, out of range memory access and especially the
-> >> issue that fails to sample guest with "perf kvm record/top" commands on
-> >> Intel platforms.
-> >>
-> >> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
-> >>  default event") changes to use PEBS event to do sampling by default
-> >> including guest sampling. This breaks host to sample guest with commands
-> >> "perf kvm record/top" on Intel platforms.
-> > Huh? That change is:
-> > ```
-> > $ git show 634d36f82517
-> > commit 634d36f82517eb5c6a9b9ec7fe3ba19dbbcb7809
-> > Author: Namhyung Kim <namhyung@kernel.org>
-> > Date:   Tue Oct 15 23:23:58 2024 -0700
-> >
-> >     perf record: Just use "cycles:P" as the default event
-> >
-> >     The fallback logic can add ":u" modifier if needed.
-> > ...
-> > -               bool can_profile_kernel = perf_event_paranoid_check(1);
-> > -
-> > -               err = parse_event(rec->evlist, can_profile_kernel ?
-> > "cycles:P" : "cycles:Pu");
-> > +               err = parse_event(rec->evlist, "cycles:P");
-> > ...
-> > ```
-> > isn't the precision the same before and after? I think you've blamed
-> > the wrong patch.
-> >
-> > The change to use cycles:P looks to come from commit 7b100989b4f6
-> > ("perf evlist: Remove __evlist__add_default") but the old code was
-> > doing things like "evsel->precise_max = true;" so I think I was just
-> > carrying forward behavior. The use of precise_max comes from commit
-> > 4e8a5c155137 ("perf evsel: Fix max perf_event_attr.precise_ip
-> > detection") from over 6 years ago, and the behavior before that also
-> > appears to have been to use the maximum supported precision.
-> >
-> > Apart from the blame and commit message being off I think the change
-> > is okay, delta my usual complaint that weak symbols are the devil's
-> > work.
-> 
-> Hmm, yeah, you're right. Thanks for correcting this. 
+On Fri, Sep 19, 2025 at 01:11:02AM +0800, Tianyu Lan wrote:
+> Could I move the check into savic_register_gpa() or add a stub function
+> to check guest runs on Hyper-V  or not and then call associated function
+> to register APIC backing page?
 
-Hi Dapeng,
+You probably should do
 
-	Can you please fix the patch descriptions and Fixes references
-and resubmit?
+static struct apic apic_x2apic_savic_hyperv
 
-- Arnaldo
+and copy the apic_x2apic_savic contents into it and overwrite the .setup
+function with your variant.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
