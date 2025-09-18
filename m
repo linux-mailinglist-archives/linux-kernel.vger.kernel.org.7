@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-823552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE86B86D45
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:05:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F658B86D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 953BF16FA1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD28A563362
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4856930DEDC;
-	Thu, 18 Sep 2025 20:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EFC3112BF;
+	Thu, 18 Sep 2025 20:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHXnZyZM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWsj0GhW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B8E280A5F;
-	Thu, 18 Sep 2025 20:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B26E2E4247;
+	Thu, 18 Sep 2025 20:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758225929; cv=none; b=HbZXbSLEKrHNqLINKwNO2319IhPWt+0bxCY9AdGoxMp6BvuGYshZKuV5/+4xeEjcGFGP94EuCi4RBwNBvOd+DiyltAI5rpDkMGCWVxXmiJ1zE7QeH1hbxdHRo4N8gqiPYm012ly7AVbc5GGyYK2g8l+5Ymw1C3lOejPwIMRlIVE=
+	t=1758226050; cv=none; b=NLUl7wbCMfuxYPMJOEp++MnrLHoinaDY03RCK0xEXKW0O37OsvzoWz0wLv5U/KF58NI/+m8kGZilcNWpHUZXqWVvSQHcbVu3nFioZpl4VjLhVPfpK1J+jUQ25KtVjery5Jvz5Vsml/HNcUGdbTf458vPMXFymYZcOuD8enUkJ9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758225929; c=relaxed/simple;
-	bh=PQIMs0F7qBnCSupIdEq0faegbRGXgcQzWl1UXppJGbM=;
+	s=arc-20240116; t=1758226050; c=relaxed/simple;
+	bh=9H/BmCbdny9Zk674F9G3jClnzY1O/2SdIwHGSQpnP+M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnImUSR/RIAwJLuBRqZv4ofEQnMwuxQBuW5aqE8yYCv/FL4Hjmtb7VBn6wLdcbqYqRjVQ07FLEXORtKYSXc82/H1mWc3sPS1KCyW6hhT14MUkx+E+ypfEtcSjmWxY/Ycx2nFHTIF1Ki/oYcWvpoZGNsKKhRDjHwluaasPMmp6GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHXnZyZM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02954C4CEE7;
-	Thu, 18 Sep 2025 20:05:25 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UupdAC501lcqhm+c2n1UtRhFQpsDHp4qqPtlfE5g9T+xO4zS+37wkbjErxuC5Cg7q6DeYTkOr1UL2Kvbz+zjP1frRgF/Gs5nHrKNJ+BRqHskXqjobokG4KnZadQGfGFxj5lV0hy21s6+cd9YRmx2h3ay78btP/KOZkMhM3YCMYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWsj0GhW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24DFCC4CEE7;
+	Thu, 18 Sep 2025 20:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758225929;
-	bh=PQIMs0F7qBnCSupIdEq0faegbRGXgcQzWl1UXppJGbM=;
+	s=k20201202; t=1758226049;
+	bh=9H/BmCbdny9Zk674F9G3jClnzY1O/2SdIwHGSQpnP+M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MHXnZyZM8mmUiXmySeoga6YEwlAuUym90fpQsvxBtazDC9J2vBBK/2cKyENL8ZZu7
-	 NyuC/fsSYikHLmuHuihMMB9G6jgy1k6E6R/xJ8DcdfGUS26EiL+MjosTAKllF7m1TY
-	 Or/Wfzxgl59lHT/058iyjD8l/XIRejR8pT57ChS07D6CAA9XWqvQ8UelMJVcipOUpg
-	 8owRDGRgOYOKt2HGSDMbRQCc4tV5mAe7T4V/lkdZ5jMimDyaPTmtZBtQsaI20kCCA4
-	 Q5y4Ei6XDYcM90nA/5ag4RXb5hSaDJJSx15phpSANwIbrq4gv1DOnqX+aJCy0pCC95
-	 kLAJU8qUUKb/A==
-Date: Thu, 18 Sep 2025 21:05:22 +0100
-From: Will Deacon <will@kernel.org>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-	arnd@arndb.de, catalin.marinas@arm.com, peterz@infradead.org,
-	akpm@linux-foundation.org, mark.rutland@arm.com,
-	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
-	memxor@gmail.com, zhenglifeng1@huawei.com,
-	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
-	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Subject: Re: [PATCH v5 2/5] arm64: barrier: Add
- smp_cond_load_relaxed_timeout()
-Message-ID: <aMxmAuK-adVaVezk@willie-the-truck>
-References: <20250911034655.3916002-1-ankur.a.arora@oracle.com>
- <20250911034655.3916002-3-ankur.a.arora@oracle.com>
+	b=RWsj0GhWOrIgm/E0IZpDMlaJ/Jjgu8VfZLNKxsi7AmX8Ul4GUmQ2/nzO0qt9S5wev
+	 FarlE0mmqK7BaTR2glas5DmTdj8K0+1HHl3w2XniAVw8uZZ22gcZCB4p9pr1Mmksqf
+	 4Gx0wzNZbtbVPswYuCLY/Lfumw67RdYR7p8TDpRyHJDV+z2werqYKXWNhsQa2RqmIM
+	 CrVaHzNh3rIfHxjq+gyBYxHNH1hOPaTcyRPTTVUWxaLWEriqMM5ksQ0x/Fvu9tSbWF
+	 hz7L4JnT1pb97a3JdawezEkJhf/EfiEwfVJxajbWPrbhDXt0e2nhf6zBW+m1ZXxDHl
+	 pO2EHoKMRANrQ==
+Date: Thu, 18 Sep 2025 15:07:27 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-amarula@amarulasolutions.com,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] dt-bindings: touchscreen: convert bu21013
+ bindings to json schema
+Message-ID: <175822604690.2540982.15927446834671643783.robh@kernel.org>
+References: <20250918153630.2535208-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,83 +61,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250911034655.3916002-3-ankur.a.arora@oracle.com>
+In-Reply-To: <20250918153630.2535208-1-dario.binacchi@amarulasolutions.com>
 
-On Wed, Sep 10, 2025 at 08:46:52PM -0700, Ankur Arora wrote:
-> Add smp_cond_load_relaxed_timeout(), a timed variant of
-> smp_cond_load_relaxed().
+
+On Thu, 18 Sep 2025 17:36:06 +0200, Dario Binacchi wrote:
+> Convert Rohm BU21013 I2C touchscreen controller device tree binding to
+> json-schema.
 > 
-> This uses __cmpwait_relaxed() to do the actual waiting, with the
-> event-stream guaranteeing that we wake up from WFE periodically
-> and not block forever in case there are no stores to the cacheline.
+> Additional changes:
+> - Replace <supply_name>-supply with avdd-supply to match example and
+>   existing DTS.
+> - Add reset-gpios in the example because it is required.
 > 
-> For cases when the event-stream is unavailable, fallback to
-> spin-waiting.
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Reviewed-by: Haris Okanovic <harisokn@amazon.com>
-> Tested-by: Haris Okanovic <harisokn@amazon.com>
-> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
 > ---
->  arch/arm64/include/asm/barrier.h | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
 > 
-> diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
-> index f5801b0ba9e9..4f0d9ed7a072 100644
-> --- a/arch/arm64/include/asm/barrier.h
-> +++ b/arch/arm64/include/asm/barrier.h
-> @@ -219,6 +219,29 @@ do {									\
->  	(typeof(*ptr))VAL;						\
->  })
->  
-> +/* Re-declared here to avoid include dependency. */
-> +extern bool arch_timer_evtstrm_available(void);
-> +
-> +#define smp_cond_load_relaxed_timeout(ptr, cond_expr, time_check_expr)	\
-> +({									\
-> +	typeof(ptr) __PTR = (ptr);					\
-> +	__unqual_scalar_typeof(*ptr) VAL;				\
-> +	bool __wfe = arch_timer_evtstrm_available();			\
-> +									\
-> +	for (;;) {							\
-> +		VAL = READ_ONCE(*__PTR);				\
-> +		if (cond_expr)						\
-> +			break;						\
-> +		if (time_check_expr)					\
-> +			break;						\
-> +		if (likely(__wfe))					\
-> +			__cmpwait_relaxed(__PTR, VAL);			\
-> +		else							\
-> +			cpu_relax();					\
+> Changes in v4:
+> - Drop description from reset-gpios
+> - Re-work description of avdd-supply
+> - Rename the file to rohm,bu21013.yaml
+> - Add Reviewed-by tag of Krzysztof Kozlowski
+> 
+> Changes in v2:
+> - Added in v2
+> 
+>  .../bindings/input/touchscreen/bu21013.txt    | 43 ---------
+>  .../input/touchscreen/rohm,bu21013.yaml       | 95 +++++++++++++++++++
+>  2 files changed, 95 insertions(+), 43 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/bu21013.txt
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/rohm,bu21013.yaml
+> 
 
-It'd be an awful lot nicer if we could just use the generic code if
-wfe isn't available. One option would be to make that available as
-e.g. __smp_cond_load_relaxed_timeout_cpu_relax() and call it from the
-arch code when !arch_timer_evtstrm_available() but a potentially cleaner
-version would be to introduce something like cpu_poll_relax() and use
-that in the core code.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-So arm64 would do:
-
-#define SMP_TIMEOUT_SPIN_COUNT	1
-#define cpu_poll_relax(ptr, val)	do {				\
-	if (arch_timer_evtstrm_available())				\
-		__cmpwait_relaxed(ptr, val);				\
-	else								\
-		cpu_relax();						\
-} while (0)
-
-and then the core code would have:
-
-#ifndef cpu_poll_relax
-#define cpu_poll_relax(p, v)	cpu_relax()
-#endif
-
-and could just use cpu_poll_relax() in the generic implementation of
-smp_cond_load_relaxed_timeout().
-
-Will
 
