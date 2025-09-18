@@ -1,160 +1,244 @@
-Return-Path: <linux-kernel+bounces-823591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB34B86EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:37:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C474B86EF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6B01C87CCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54647E4A4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B972F28E2;
-	Thu, 18 Sep 2025 20:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FD42F28E2;
+	Thu, 18 Sep 2025 20:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dGITqn4J"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDjaykv5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0AE2E284A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F87291C07
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758227870; cv=none; b=cdR7b7VswPvzYULe/umPmfIxb3LBw5ujdoW0igWJNidU8iiost7bCJpTt+obhNpFKeILt+s4JPkvia57tAwq0jG31MXh6znAWYBwHRWinGU8u1rAC2WWicSeoIf4kN+YRW+bRw3zHqKS2Ti0BRmiygjsVVjT5+CYnak/hBf2Fxk=
+	t=1758228105; cv=none; b=G2ndQiV0dxyRvWljafSyL+lSB6qoz1G20SA/OoL7abtlwV0xnVSMeDaw8NI2PesSuEcCHnGOFr2lY8AMI8eSmQmwj2W+b2PYtCTXvdgV/voHx62b/v3oupF2tvpkdTZdu377OUb9Jw0znJOkVYLFs+quCO1wDCi4HGGfN+g4Zt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758227870; c=relaxed/simple;
-	bh=+0R/2T7Tg9D4YiaoqRiplwCZvbPjlzXYv47AHkbl7dM=;
+	s=arc-20240116; t=1758228105; c=relaxed/simple;
+	bh=aDocuMnkv4mVo6KXRe3fiBe9cisLwlR+sER5CgmTjug=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fkJ5r/lC76tULuCCaHpR5Te84Gr8YAvb5cb62TBAiZ5i8DmYN8lbsbdAzhREswbQxet3UCebdetfWTHBp/KgbLS4N4YIe7tmqbfLdNZqgd6Wjb4I5Kgk9s6cLjZVGs390fvboWFNC5Xi2WcX4iEwVkU8nzXGI+Dpjguedklh6/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=dGITqn4J; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea5aa2fdac8so1353122276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:37:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1758227868; x=1758832668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPqblTFKrLAe0mzsDyY6YySHuY6Q2kBBLw78NU0KIeg=;
-        b=dGITqn4JwTmj5KwN35OD6/w5on0Ky8BtXx72gnPAkmp+/tXztRoUxlrBVs4ZSLAQFl
-         0WJTdsR4LIGjuEl1QwUmqXU1ZbKWotDZBJG6uz0fcDJu+Pde2OpvjBLV6Wcgt7ebZaGE
-         3IiA0rQaf+FOGwRk4LF2MySoeTtdmVC5ogGWw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758227868; x=1758832668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPqblTFKrLAe0mzsDyY6YySHuY6Q2kBBLw78NU0KIeg=;
-        b=Qt3CAAADIBYOoKfz9Pe0BML7+BkA/C2ZP7RwBzPhXtexaPhFNLD6IQsSXp2nwitfjD
-         8ewmNkQdpFl08QACgy/oTgYXotVF0jF32gkwY6GcuwlYLOn1DOWm+5Yc2goHDP0mLwwc
-         kYr5osxG1KMZmtFWCSEhJADPNpMaa6mSC5ohlXJsc+fV5fC/lMv2w/CKleMGDm8hW+E5
-         1dykzB9ojprXs56XEivcKHNRgX/tdnANdn03p9i3ZXcZ1PUvCiWfEXeYfTcXryUsM+ku
-         xP4zg9Z0XyTu5kejs0Z54ZMijk+hKlFHstxtmIbYoLv61XItXgIrf/X/uwlM38CSp2Lc
-         49fQ==
-X-Gm-Message-State: AOJu0YwT+qTc0sj6AHSNm7b8QQf2zWF7bP/TTn2xd/5KYjPhnWOwGRjH
-	HBc9E3T8gnLtL8GVILGlIL1TQOAISLaX/M1ZEeuce7bRpUHQwQKrpcR8OpyC+jUXW2V7ZtjKq85
-	ExFv/Ojk9upOxk3RetntijhPq5ZeDe5Qsql0TcAv7R7++ejc7gqwia90=
-X-Gm-Gg: ASbGncvOuaRiHpO18JQe9Z4IAE0YVYNS5OmbV/MDIXhpMgsodTGkkO7wiZ8mN9j3Cc6
-	1HegSL7+TmqO4qIgWSJIcnhCB/novmZcFb5VsLu4DducndyW9lJC9g2wDThQLHw5o7llUEzcIgw
-	JZXhgJSG3jB7jM9PNBJ3k+5W+oyY4xZNN9yG1kq2hR4We7Ry4mJjOvFp2CemK6Iskx0Vu2EBVJ4
-	HPwmCTBC+Rc2nu99rzTfLWH
-X-Google-Smtp-Source: AGHT+IH14ML5OeTgfNCjZ+eLR5D0BkEN/X8W7UZQcrAQKu6xXP5etxnsRLfqJ5tS5GUlUf2xOTL9iOYN03VgHVRvQJU=
-X-Received: by 2002:a05:6902:c04:b0:ea4:f3f:5498 with SMTP id
- 3f1490d57ef6-ea8aa09f336mr791364276.36.1758227867928; Thu, 18 Sep 2025
- 13:37:47 -0700 (PDT)
+	 To:Cc:Content-Type; b=mJNCdqC5rXiOUQUyek3D+ig4YxpyzD5yd2vgybxse7jR1ETvq82R8nHB3kjyfwBQ4LT7vj3r/x3UUBuWjpkbOC3Vm5MxqzzM5pytHTws+3htgHwyIC/TCgMGLJoWiOa6qeJW8snXxrSshwmunh/uTefbTrjtWlj8L4IxtIF6mpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iDjaykv5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF79CC4CEE7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:41:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758228104;
+	bh=aDocuMnkv4mVo6KXRe3fiBe9cisLwlR+sER5CgmTjug=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iDjaykv5WkLRmbqgn7D1eJ4lMgVq2g6VdG2QFNtcV9q9PkcSYZRHGoHH/qxoZgosq
+	 nnip1d0MLmjtDjl8a9u57Qubmk0ajm3MbHiPBwmnh1QGiY+V4FqYhDwWz/qyiikUUD
+	 ZcJoWelwTHd++iFNi6pHKOT0FFNTBXAbBnTehrgJ7grz1dOrEvoQ7b8Xikaap6r7bH
+	 TNWVesKbHchdr+kf27oGETe8V/+hu5Vsf7k87Y5epcZIRHzPnaEWNSQiTRoDX+zdPy
+	 JR1XCKVitNznSlsATuq0QEKizl983Ac0i7ZE5SA1ZRwKya/J471adPYCOJUzMhIeOM
+	 x+X30iWwk9nQw==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7459fa1ef2aso1283506a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:41:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/pFxXbDGZkiCnZ7gr89d9aa9WCObHPepO9aH4v+VUyB7w/vtSCbWeWzqUlvef+q443oOo/r/rki0FjtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf9Puscp/4m4QjZScuEZBKeD9tu4NffAINt1gBhvy2exP8+Z/T
+	efvZDfhrNcbpBV7Et6QxuJcBO66Q0L0Vsx8XIajzlTa6Tm71N8YDHL0ufgHSTP2sF/2hVIo1ECq
+	/4ok5E2QEGUxryC3R/gePLhjt+o663HE=
+X-Google-Smtp-Source: AGHT+IHbgn+Em6qgOGkmyyKFH4O6KrMY22fLCzxb2sK+AcbcoPYSM2t5aezkKL+Wj4iS8cE+9rtGtf7IGswC1rBRJ4s=
+X-Received: by 2002:a05:6808:50a8:b0:439:af0a:dca4 with SMTP id
+ 5614622812f47-43d6c288304mr401495b6e.35.1758228104044; Thu, 18 Sep 2025
+ 13:41:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918155240.2536852-1-dario.binacchi@amarulasolutions.com>
- <20250918155240.2536852-4-dario.binacchi@amarulasolutions.com> <20250918200445.GA2529753-robh@kernel.org>
-In-Reply-To: <20250918200445.GA2529753-robh@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Thu, 18 Sep 2025 22:37:37 +0200
-X-Gm-Features: AS18NWBqzx_QCJLvM1ZupXjBE082LYlK02aLhStfsrL_kkHbqntwv2U3qqpvFFU
-Message-ID: <CABGWkvqX9aCxam6UMYsUBkwnMJrMNKjVKrqi5Ca7O5Jk8xRTAA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] dt-bindings: touchscreen: add touchscreen-glitch-threshold-ns
- property
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, 
-	linux-amarula@amarulasolutions.com, Conor Dooley <conor.dooley@microchip.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Javier Carrasco <javier.carrasco@wolfvision.net>, Jeff LaBundy <jeff@labundy.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org
+References: <878qimv24u.wl-tiwai@suse.de> <87ikhptpgm.wl-tiwai@suse.de>
+ <CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
+ <87tt10b5hq.wl-tiwai@suse.de> <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
+ <CAJZ5v0jafoG--WrZNjt+euY0gtQSTqSDH2_cWotf92ziq5wdUw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jafoG--WrZNjt+euY0gtQSTqSDH2_cWotf92ziq5wdUw@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 18 Sep 2025 22:41:32 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
+X-Gm-Features: AS18NWDkTaA7k8ZeUuuh_IsjSGk4mkR6cG4n3fK_qylbpPgCTEu85hQKQVPaUbE
+Message-ID: <CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
+Subject: Re: PM runtime auto-cleanup macros
+To: Takashi Iwai <tiwai@suse.de>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 10:04=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
-e:
+On Thu, Sep 18, 2025 at 10:19=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
+rg> wrote:
 >
-> On Thu, Sep 18, 2025 at 05:52:31PM +0200, Dario Binacchi wrote:
-> > Add support for glitch threshold configuration. A detected signal is va=
-lid
-> > only if it lasts longer than the set threshold; otherwise, it is regard=
-ed
-> > as a glitch.
+> On Thu, Sep 18, 2025 at 1:28=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
 > >
-> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > On Thu, Sep 18, 2025 at 9:10=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wr=
+ote:
+> > >
+> > > On Wed, 17 Sep 2025 20:58:36 +0200,
+> > > Rafael J. Wysocki wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > Sorry for the delay.
+> > > >
+> > > > On Thu, Sep 11, 2025 at 9:31=E2=80=AFAM Takashi Iwai <tiwai@suse.de=
+> wrote:
+> > > > >
+> > > > > On Wed, 10 Sep 2025 16:00:17 +0200,
+> > > > > Takashi Iwai wrote:
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > while I worked on the code cleanups in the drivers with the rec=
+ent
+> > > > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*=
+() can
+> > > > > > be also managed with the auto-cleanup gracefully, too.  Actuall=
+y we
+> > > > > > already defined the __free(pm_runtime_put) in commit bfa4477751=
+e9, and
+> > > > > > there is a (single) user of it in pci-sysfs.c.
+> > > > > >
+> > > > > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
+> > > > > >
+> > > > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
+> > > > > >            if (_T) pm_runtime_put_autosuspend(_T))
+> > > > > >
+> > > > > > Then one can use it like
+> > > > > >
+> > > > > >       ret =3D pm_runtime_resume_and_get(dev);
+> > > > > >       if (ret < 0)
+> > > > > >               return ret;
+> > > > > >       struct device *pmdev __free(pm_runtime_put_autosuspend) =
+=3D dev;
+> > > > > >
+> > > > > > that is similar as done in pci-sysfs.c.  So far, so good.
+> > > > > >
+> > > > > > But, I find putting the line like above at each place a bit ugl=
+y.
+> > > > > > So I'm wondering whether it'd be better to introduce some helpe=
+r
+> > > > > > macros, e.g.
+> > > > > >
+> > > > > > #define pm_runtime_auto_clean(dev, var) \
+> > > > > >       struct device *var __free(pm_runtime_put) =3D (dev)
+> > > > >
+> > > > > It can be even simpler by assigning a temporary variable such as:
+> > > > >
+> > > > > #define pm_runtime_auto_clean(dev) \
+> > > > >         struct device *__pm_runtime_var ## __LINE__ __free(pm_run=
+time_put) =3D (dev)
+> > > >
+> > > > Well, if there's something like
+> > > >
+> > > > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
+> > > > {
+> > > >         int ret =3D pm_runtime_resume_and_get(dev);
+> > > >         if (ret < 0)
+> > > >                 return ERR_PTR(ret);
+> > > >
+> > > >         return dev;
+> > > > }
+> > > >
+> > > > It would be a matter of redefining the FREE to also take error
+> > > > pointers into account and you could do
+> > > >
+> > > > struct device *__dev __free(pm_runtim_put) =3D pm_runtime_resume_an=
+d_get_dev(dev);
+> > > > if (IS_ERR(__dev))
+> > > >         return PTR_ERR(__dev);
+> > >
+> > > That'll work, too.  Though, I find the notion of __free() and a
+> > > temporary variable __dev a bit too cumbersome; it's used only for
+> > > auto-clean stuff, so it could be somewhat anonymous.
 > >
-> > ---
+> > No, it is not used only for auto-clean, it is also used for return
+> > value checking and it represents a reference on the original dev.  It
+> > cannot be entirely anonymous because of the error checking part.
 > >
-> > Changes in v5:
-> > - Add Acked-by tag of Conor Dooley
+> > The point is that this is one statement instead of two and so it is
+> > arguably harder to mess up with.
 > >
-> > Changes in v2:
-> > - Added in v2.
+> > > But it's all about a matter of taste, and I'd follow what you and
+> > > other guys suggest.
+> > >
+> > > FWIW, there are lots of code doing like
+> > >
+> > >         pm_runtime_get_sync(dev);
+> > >         mutex_lock(&foo);
+> > >         ....
+> > >         mutex_unlock(&foo);
+> > >         pm_runtime_put(dev);
+> > >         return;
+> > >
+> > > or
+> > >
+> > >         ret =3D pm_runtime_resume_and_get(dev);
+> > >         if (ret)
+> > >                 return ret;
+> > >         mutex_lock(&foo);
+> > >         ....
+> > >         mutex_unlock(&foo);
+> > >         pm_runtime_put_autosuspend(dev);
+> > >         return 0;
+> > >
+> > > and they can be converted nicely with guard() once when PM runtime ca=
+n
+> > > be automatically unreferenced.  With my proposed change, it would
+> > > become like:
+> > >
+> > >         pm_runtime_get_sync(dev);
+> > >         pm_runtime_auto_clean(dev);
 > >
-> >  .../devicetree/bindings/input/touchscreen/touchscreen.yaml    | 4 ++++
-> >  1 file changed, 4 insertions(+)
+> > For the case in which the pm_runtime_get_sync() return value is
+> > discarded, you could define a guard and do
 > >
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchs=
-creen.yaml b/Documentation/devicetree/bindings/input/touchscreen/touchscree=
-n.yaml
-> > index 3e3572aa483a..a60b4d08620d 100644
-> > --- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.y=
-aml
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.y=
-aml
-> > @@ -206,6 +206,10 @@ properties:
+> > guard(pm_runtime_get_sync)(dev);
 > >
-> >          unevaluatedProperties: false
+> > here.
 > >
-> > +  touchscreen-glitch-threshold-ns:
-> > +    description: Minimum duration in nanoseconds a signal must remain =
-stable
-> > +      to be considered valid.
+> > The case checking the return value is less straightforward.
+> >
+> > >         guard(mutex)(&foo);
+> > >         ....
+> > >         return;
+> > >
+> > > or
+> > >
+> > >         ret =3D pm_runtime_resume_and_get(dev);
+> > >         if (ret)
+> > >                 return ret;
+> > >         pm_runtime_auto_clean_autosuspend(dev);
+> > >         guard(mutex)(&foo);
+> > >         ....
+> > >         return 0;
+> > >
 >
-> What's wrong with debounce-delay-ms?
+> I guess what I'm saying means basically something like this:
+>
+> DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
+>          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put(_T),
+> pm_runtime_resume_and_get_dev(dev), struct device *dev)
+>
+> DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
+>          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put_autosuspend(_T),
+> pm_runtime_resume_and_get_dev(dev), struct device *dev)
+>
+> and analogously for pm_runtime_get_sync().
 
-Do you mean that I should rename touchscreen-glitch-threshold-ns to
-debounce-delay-ms?
+And it kind of makes sense either.  Do
 
-Thanks and regards,
-Dario
+CLASS(pm_runtime_resume_and_get, active_dev)(dev);
+if (IS_ERR(active_dev))
+        return PTR_ERR(active_dev);
 
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+and now use active_dev for representing the device until it gets out
+of the scope.
 
