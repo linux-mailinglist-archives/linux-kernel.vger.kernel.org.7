@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-823153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AE1B85B0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB2DB85D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9381894AE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58D7E1CC4A7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A059312801;
-	Thu, 18 Sep 2025 15:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="QQemO7m4"
-Received: from smtp16.bhosted.nl (smtp16.bhosted.nl [94.124.121.27])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D7C3126BD
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A28314B95;
+	Thu, 18 Sep 2025 15:51:01 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D67314B7D;
+	Thu, 18 Sep 2025 15:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209702; cv=none; b=owJN3Nlxp9mHjmvzSEfV63GdYdOc+be30hHlISt3uxpWdIWjzq1B+TJDstPRCKdvnWFSQGtY6MijEha3Uuze20QXpXVhgg350yWE8liLS2pn7exHJ6T12WBLLdzrK0JEd/17PpWk0VreMwpQ7o8Vb0TIk2byhnWcVcxcVnA51iE=
+	t=1758210660; cv=none; b=HUUsLUkohSqLg7Ekd68CXkg/+5gMFgg5qYbJDEDxsYO9DvLxnqgD2lfyIXHDhUyCBjHuzEcFfqT1iuBEdLPB8mvgVjfxL1mMRE8OB1bNyFnFSih5FqBuBeVa+1Xz0Kr85I16cfx/GR1f6A3gqvLt0sT/f6nxs4AWAbzdHxekrmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209702; c=relaxed/simple;
-	bh=1L4ztzZI21TGZatF3aNWfrnQCTgXQdveVEOhyL3fA0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VP/cSWUM3PQCKXLyYBrFDFfHaYkC9ZuAlUYTSN/v+kKeAiFbmrIZUB3PgszslLEMADyf3PQ7diI6uJeFAa2cP3/eSHrZEAUmkcsn1lGlDo5BdymYSGoh1RRMBhiEKjTzSdI8x1BVvWqa25uCvZ4ENlmE86IwC1Sw9CaH/JTUFHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=QQemO7m4; arc=none smtp.client-ip=94.124.121.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=SqjdATjfjZTk7QANAggTs1mW/P13EV6a+Izt0r+agQ0=;
-	b=QQemO7m4x6zCxk4M9laZ90eCIBZvlHRq/VuixCptBB7zzwo7W14mF7GpiYLDE2KravDs5mWr5Fe32
-	 YI5vbPnjY8XchNI9DA2VxwqrhGOoXIMDArJfiLqW1D+YRL2YnyHQ4WHp2jj+Z3dwdLVow44GMCxb0b
-	 S6ozX0oObc8Pf1HBbvovaxNrs8/iL/hnZAJYohUXXEqDuxD0E+wq2MS2PgcGQeAqkHwHgbtE3szPdO
-	 LY51aW6TvUu1QOAIlIzGxXruryI8IjrqSj/QbUYXHmCSZMbUySBHPD6UI6terkJcLsOTJupcY0AuoB
-	 JpIpBWXwmgF0fXl9CqpcwJtEM9ZcoKQ==
-X-MSG-ID: df093cf2-94a4-11f0-858c-005056817704
-Date: Thu, 18 Sep 2025 17:33:47 +0200
-From: David Jander <david@protonic.nl>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jonas Rebmann <jre@pengutronix.de>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Lucas Stach <l.stach@pengutronix.de>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH v2 3/3] arm64: dts: add Protonic PRT8ML board
-Message-ID: <20250918173347.28db5569@erd003.prtnl>
-In-Reply-To: <7f1d9289-4102-4db9-a2bb-ff270e8871b7@lunn.ch>
-References: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
-	<20250918-imx8mp-prt8ml-v2-3-3d84b4fe53de@pengutronix.de>
-	<af554442-aeec-40d2-a35a-c7ee5bfcb99a@lunn.ch>
-	<20250918165156.10e55b85@erd003.prtnl>
-	<7f1d9289-4102-4db9-a2bb-ff270e8871b7@lunn.ch>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758210660; c=relaxed/simple;
+	bh=Rw14QDBJonb5u5+cR6dROagBvXa3A1OgDpRn/q0SkpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ltD7fqMa5i3c6g84WNeTlzdRtTqK63dXuk/3rSJ5X80Xihx4epvzzT+pcDPX75ZH9RSVIRWGiflxDaIZhh4OOaipVZ/WSYeae1PNbadgopWlF9jzgW9fqLXka22BaePEWIQYyhDEtcNZqdMOZ5CbyjgNUKSRuQGbtXctx+buxi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cSKSP59dCz9sfw;
+	Thu, 18 Sep 2025 17:34:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id kCoeXJoTf93q; Thu, 18 Sep 2025 17:34:29 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cSKSP3td4z9sfv;
+	Thu, 18 Sep 2025 17:34:29 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D0C28B775;
+	Thu, 18 Sep 2025 17:34:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id qRoFWfinmY1o; Thu, 18 Sep 2025 17:34:29 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B16A98B767;
+	Thu, 18 Sep 2025 17:34:28 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Herve Codina <herve.codina@bootlin.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH RESEND v3 0/4] ASoC: fsl: fsl_qmc_audio: Reduce amount of interrupts
+Date: Thu, 18 Sep 2025 17:34:07 +0200
+Message-ID: <cover.1758209158.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758209656; l=2459; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=Rw14QDBJonb5u5+cR6dROagBvXa3A1OgDpRn/q0SkpI=; b=2JOfAbtKY5oOgf9Q0u+gokAxci8wOnFAoh+mIaShgDQVavxJparyog9AWj22aslzf1HGZl38O HWCFs/nJPimDCioJkfe41o2WfF9P+cnlWCmlzbTpSKe9iPPewKLyxEu
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Sep 2025 17:04:55 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
+This is a RESEND of v3 sent one month ago, see:
+https://lore.kernel.org/all/cover.1754993232.git.christophe.leroy@csgroup.eu/
 
-> > Yes, unfortunately the SJA1105Q does not support PAUSE frames, and the i.MX8MP
-> > FEC isn't able to sustain 1000Mbps (only about 400ish) due to insufficient
-> > internal bus bandwidth. It will generate PAUSE frames, but the SJA1105Q
-> > ignores these, leading to packet loss, which is obviously worse than
-> > restricting this link to 100Mbps. Ironically both chips are from the same
-> > manufacturer, yet are incompatible in this regard.  
-> 
-> Thanks for the explanation. Maybe add a comment that the bandwidth is
-> limited due to the lack of flow control resulting in packet loss in
-> the FEC.
->
-> Anything which looks odd deserves a comment, otherwise somebody will
-> question it....
+This series reduces significantly the amount of interrupts on
+fsl_qmc_audio device.
 
-Yes! This is a golden tip. Ironically what I said above is incorrect. Sorry
-for the noise.
+Patches 1 and 2 are preparatory patches.
+Patch 3 is the main change
+Patch 4 is a cleanup which is enabled by previous patch
 
-Ftr: I wrote this DT about 4 years ago, so my memory failed me, and a comment
-in the code would have saved me this embarrassment ;-)
+Changes in v3:
+- Properly check the buffer descriptor is unused (Patch 1, comment from Herve Codina)
+- Fixed copy/paste error (patch 2, comment from Herve Codina)
+- Fixed build failure (patch 2, comment from Herve Codina and Test robot)
 
-The comment above applies to the i.MX6 SoC's which had this limitation. On the
-i.MX8MP we had a different problem that also caused the SJA1105Q not to work
-reliably at 1000Mbps either. We haven't been able to find the issue, but so far
-this switch hasn't been able to work at 1000Mbps reliable on any platform,
-possibly for different reasons in each case.
+Changes in v2:
+- Don't remove UB bit (Patch 1, comment from Herve Codina)
+- Make sure audio channels are ordered on TDM bus (Patch 2, new patch, comment from Herve Codina)
+- Drop struct qmc_dai_chan  (patch 4, new patch)
 
-Best regards,
+Backgroup (copied from patch 3):
+
+In non-interleaved mode, several QMC channels are used in sync.
+More details can be found in commit 188d9cae5438 ("ASoC: fsl:
+fsl_qmc_audio: Add support for non-interleaved mode.")
+At the time being, an interrupt is requested on each channel to
+perform capture/playback completion, allthough the completion is
+really performed only once all channels have completed their work.
+
+This leads to a lot more interrupts than really needed. Looking at
+/proc/interrupts shows ~3800 interrupts per second when using
+4 capture and 4 playback devices with 5ms periods while
+only 1600 (200 x 4 + 200 x 4) periods are processed during one second.
+
+The QMC channels work in sync, the one started first is the one
+finishing first and the one started last is the one finishing last,
+so when the last one finishes it is guaranteed that the other ones are
+finished as well. Therefore only request completion processing on the
+last QMC channel.
+
+On my board with the above exemple, on a kernel started with
+'threadirqs' option, the QMC irq thread uses 16% CPU time with this
+patch while it uses 26% CPU time without this patch.
+
+Christophe Leroy (4):
+  soc: fsl: qmc: Only set completion interrupt when needed
+  ASoc: fsl: fsl_qmc_audio: Ensure audio channels are ordered in TDM bus
+  ASoC: fsl: fsl_qmc_audio: Only request completion on last channel
+  ASoc: fsl: fsl_qmc_audio: Drop struct qmc_dai_chan
+
+ drivers/soc/fsl/qe/qmc.c      |  44 +++++++++---
+ sound/soc/fsl/fsl_qmc_audio.c | 125 +++++++++++++++-------------------
+ 2 files changed, 87 insertions(+), 82 deletions(-)
 
 -- 
-David Jander
+2.49.0
+
 
