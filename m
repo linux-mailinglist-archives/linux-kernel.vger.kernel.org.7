@@ -1,120 +1,474 @@
-Return-Path: <linux-kernel+bounces-823481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0ACAB869E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:06:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FBEB869ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC57564D2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:06:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05AA626501
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AEC2D2499;
-	Thu, 18 Sep 2025 19:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C022D3ED2;
+	Thu, 18 Sep 2025 19:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9WnJ5fk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLyH5h/M"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95534A2D;
-	Thu, 18 Sep 2025 19:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39824280CC8
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758222412; cv=none; b=in4RK4Kmt67soCWr9af6wnKu9D1wkxDNGmHmbF6Y+y8cc1/It5VRl1U8QlhyWLKoQshIUtsPhIAwmwy24hniIGVEc/TJO/g3ZRaTQf/5oe+nqcF/YLMRv/m+Vs8rqjytsYSkMrErEPztF6jHj8mVcfZ24XhZhBPL3WuXG6hii6o=
+	t=1758222472; cv=none; b=Vtd8r/looqm4vUOh5M56helI8SIpsC6Aohf+B02/7dBQ3vBXD/TZqqYtyMDyJRCLVQw5HQHEOvehQ2Ch3N5o7Z0BiyiLOBBZ+7CbnPNDt8FjEX4npWaMQY4Fp0S85ECdXMtXCEPkR1lpApeKSbvPly0xXylbbFemwubB84hXvn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758222412; c=relaxed/simple;
-	bh=kNq2BBV7RX/0piN88LUKeCXvz59XV/A1jAaDcvjFWys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3s62uLxvihvcDBkmk9B6IGbW8h9sOIdmjis9at+Ni3m8e0loCw44eipkWgkZceIWEWA360ideUGBvM9/KcmmbAgZQHeICAgMEPqq4MoEGFbOKhOBJAmA597zVitxAiJQP3QY0DV05iJ51xKgHvhj5woBZmYFmgSKcVUOi7DE58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9WnJ5fk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D31C4CEE7;
-	Thu, 18 Sep 2025 19:06:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758222412;
-	bh=kNq2BBV7RX/0piN88LUKeCXvz59XV/A1jAaDcvjFWys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O9WnJ5fkhNYH3JTptjLK9oyXJgL9XM4u3NQMviefKGT0ACqwsosPKXEr6XR2CNFYv
-	 alm73Mmqcpnv5YJ1LormxgrLP745lglkCDYTggX+MFKOTCNfDdMJaNCuTIQpqHHZXI
-	 TmUyQ5vs9yK+tFXJ19BJtGFr0z5ws1a29MQYNOm6swKdGkTnzXIPCJ5gex95Ke3W4V
-	 loB+RN2zpZKVlhvd+rlFJfUQusiCQPeQAvo40hojXOyjMUAfncC8p1SpW5MhXdq/bK
-	 9TC8sHa/15nJ5ZZ00ksmEg/5FFMe4X0bdsDieCZ7RW+ZYaGjY2b/BrnahBe9kjYAJ1
-	 Jlth69CRQ/M6A==
-Date: Thu, 18 Sep 2025 20:06:47 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bhargava Chenna Marreddy <bhargava.marreddy@broadcom.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
-	vikas.gupta@broadcom.com,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: Re: [v7, net-next 08/10] bng_en: Register rings with the firmware
-Message-ID: <20250918190647.GB589538@horms.kernel.org>
-References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
- <20250911193505.24068-9-bhargava.marreddy@broadcom.com>
- <20250916155130.GK224143@horms.kernel.org>
- <CANXQDtYdxMq_EAPqu_WvnYqZ5SKW2k139Hwm+jW=kZpSQQgRtQ@mail.gmail.com>
+	s=arc-20240116; t=1758222472; c=relaxed/simple;
+	bh=jrIvI+w6CK9otr03Fn28JkgZC0RCwPVB7AkcnRP1j40=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1Hqkh1CxlvPbpr1xWpnkQYM6YQzHRzIqCIChmiCMUmaH9vHdme2Tw1bR0PWZVhAcpJf0lHbbWcB5mGd7OHpeRs5ThPc32Q//Y9KFLsgFCww5R+SVd+5tHbtJcp8+oU4mvmYjoZmrJSRNcFq9k/MS+gQ8vjhuiQLG09vixezgfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLyH5h/M; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2570bf605b1so18017025ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758222469; x=1758827269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MB2jfHSKSzLMOVGGO7AnFq090fGDv2evBNxwEJ6iueg=;
+        b=DLyH5h/Mi/B1i63bJJKvk5L2MfmMlq/e+x5JAkJgZpgc0hsCohFEGMBS+j1/x2H/Fd
+         2Wyk2vcScV9vBzfP8MrIc4OclwJoL96lCOgbJ9nRKmC+oyNzV76oYl8KyOa+9psPtRAI
+         gKxQEEgU47+ZR4DKoUY6DkT51+RVqKE0O3apCAn07PA5F8OPE1FtzOLZm6w9ce9Z21ra
+         A6uJ7bgjyWyIU4m6+RK7AC/ECdDFfSME4izQW2b/zj3IljisY0pS678aKcc1T/Ls1md8
+         BiDRcGKL6j4/IkaTYgQaDXltRFLsWYEgFZiswAwFVWP5HQYqjKgdSqYn0l800BLNG9V9
+         vuFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758222469; x=1758827269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MB2jfHSKSzLMOVGGO7AnFq090fGDv2evBNxwEJ6iueg=;
+        b=YTVm3Y2528jJB+Oe6JH9eKvhf9SfrkzeiO1YQOFoB8rBH/CqJwNoim6Ob9CIIAtI0X
+         JY7uch/cIaJ4wDYr0LGgKwohMm7a7b/PyO9+/pZGOWAYaw1N+tltOUvBwk/7ZvTWVaMU
+         M2Zi6upuRQ/mayp4wHSYHWqLIdMmJ1USMZnSww+fQfkNjr+hO8Y4JSwsTJ2fXK0TGOFI
+         HbXdFh4yWVOfjPr1kSwebP1rVD7eM71zfHp/CcUfnd6fjx7BiT2/nbv+BP/yAbstl6Gp
+         S7k4gwo1hnvOEOlj8V+prVoRe8wQz58SjCI/eD0q2eqPf3xhNjFeHowYfUL+pCPAJ9PS
+         M10Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0IWi4xbrJo3kHoSPMoezsg312Tt7wRRjcEGAjiLL5ciwfaBbF6YMfUIRpJ5xWu5/640ItDLp8TswErsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzzNO20fNhtoP8fn6rE28C9enjUa+mglD1wA+8JBbKtHo+FGsv
+	xM4wSHmaHf+vdv5jlAaXzOy2vZz67kyCjKQ3Dy7RN7qbEivaFSVZr0Om
+X-Gm-Gg: ASbGncud5/2/ByBM+zTiC6XAjzp0bGaC2jH74Zi6YymK6ZCe9ROFQEHY5+iBTvxS1W6
+	6fNVAnH3ofYworFLV6Wa1JQyFcfLqsu1Fwzqc9AmSg5WIGbo+EAVxYO4HMsbvXxRgo2lPT1Ka9M
+	XyWJ1+YvdR8ABKXYLzXojcPHZcuo+F4ZDqVCiPfcAwei7EyMMYNEKyg119f0FJxrR5dUUkXb9Vc
+	7VVSAFuB+j4A7y9rHzvIHqEycTV9pPckPIq7x5EwDzO/raayHe2ku5RfHvcforoGEM4oIpBLLKN
+	9PEbzH4WSEIxUPTzniFXhtsi9tZbSI5tJm52K9kMOSNPhlEkpuCfn7wpMnXwnBP/h2KEU8GWRA+
+	aHjcsneMmLkTIk9wld4V9tUGcCEbM6YG63vgxJ9NlL9EvP3n1wWg=
+X-Google-Smtp-Source: AGHT+IEtuI2s8Fy98EzG7d6EdEZGY4CPQNtcHrHxMNfvblBRQK9roCHaxPBCYJ3HUAC/EffzpLZtPQ==
+X-Received: by 2002:a17:903:380d:b0:246:de71:1839 with SMTP id d9443c01a7336-269ba5512ddmr8012325ad.50.1758222469506;
+        Thu, 18 Sep 2025 12:07:49 -0700 (PDT)
+Received: from akshayaj-lenovo.. ([223.233.78.39])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802de635sm32989235ad.82.2025.09.18.12.07.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 12:07:48 -0700 (PDT)
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+To: dan@dlrobertson.com,
+	jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>,
+	shuah@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: accel: bma400: Refactor generic interrupt configuration
+Date: Fri, 19 Sep 2025 00:37:21 +0530
+Message-ID: <20250918190729.387117-1-akshayaj.lkd@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANXQDtYdxMq_EAPqu_WvnYqZ5SKW2k139Hwm+jW=kZpSQQgRtQ@mail.gmail.com>
 
-On Thu, Sep 18, 2025 at 04:11:12PM +0530, Bhargava Chenna Marreddy wrote:
-> On Tue, Sep 16, 2025 at 9:21 PM Simon Horman <horms@kernel.org> wrote:
-> >
-> > On Fri, Sep 12, 2025 at 01:05:03AM +0530, Bhargava Marreddy wrote:
-> > > Enable ring functionality by registering RX, AGG, TX, CMPL, and
-> > > NQ rings with the firmware. Initialise the doorbells associated
-> > > with the rings.
-> > >
-> > > Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-> > > Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
-> > > Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-> >
-> > ...
-> >
-> > > diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_db.h b/drivers/net/ethernet/broadcom/bnge/bnge_db.h
-> > > new file mode 100644
-> > > index 00000000000..950ed582f1d
-> > > --- /dev/null
-> > > +++ b/drivers/net/ethernet/broadcom/bnge/bnge_db.h
-> > > @@ -0,0 +1,34 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > +/* Copyright (c) 2025 Broadcom */
-> > > +
-> > > +#ifndef _BNGE_DB_H_
-> > > +#define _BNGE_DB_H_
-> > > +
-> > > +/* 64-bit doorbell */
-> > > +#define DBR_EPOCH_SFT                                        24
-> > > +#define DBR_TOGGLE_SFT                                       25
-> > > +#define DBR_XID_SFT                                  32
-> > > +#define DBR_PATH_L2                                  (0x1ULL << 56)
-> > > +#define DBR_VALID                                    (0x1ULL << 58)
-> > > +#define DBR_TYPE_SQ                                  (0x0ULL << 60)
-> > > +#define DBR_TYPE_SRQ                                 (0x2ULL << 60)
-> > > +#define DBR_TYPE_CQ                                  (0x4ULL << 60)
-> > > +#define DBR_TYPE_CQ_ARMALL                           (0x6ULL << 60)
-> > > +#define DBR_TYPE_NQ                                  (0xaULL << 60)
-> > > +#define DBR_TYPE_NQ_ARM                                      (0xbULL << 60)
-> > > +#define DBR_TYPE_NQ_MASK                             (0xeULL << 60)
-> >
-> > Perhaps BIT_ULL() and GENMASK_ULL() can be used here?
-> 
-> Thanks for the suggestion, Simon. Some macros have non-contiguous
-> bits, requiring combinations with "|",
-> which would make the definitions longer and harder to follow. Since
-> these Doorbell Register (DBR) values
-> are hardware-specified, I believe it's better to keep them as they
-> are. Please let me know if you see any issues.
+Refactor the generic interrupt configuration logic to improve readability
+and reduce repetitive code. Replace hard-coded register values with macros
+and enums, making it clearer what configuration is written to hardware.
 
-Thanks, understood.
-If you prefer the current approach, that is fine by me.
+Introduce a const struct to map event direction to the corresponding
+generic interrupt. This removes the need for switch statements in multiple
+callbacks, including activity event setup, read_event_value, and
+write_event_value, while still performing the selection at runtime.
+
+This change has no functional impact but simplifies the code and makes it
+easier to maintain and extend in future updates.
+
+Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
+---
+ drivers/iio/accel/bma400.h      |  71 +++++++++++++++---
+ drivers/iio/accel/bma400_core.c | 128 ++++++++++++++++----------------
+ 2 files changed, 125 insertions(+), 74 deletions(-)
+
+diff --git a/drivers/iio/accel/bma400.h b/drivers/iio/accel/bma400.h
+index 932358b45f17..ab7d1d139b66 100644
+--- a/drivers/iio/accel/bma400.h
++++ b/drivers/iio/accel/bma400.h
+@@ -68,7 +68,19 @@
+ #define BMA400_CMD_REG              0x7e
+ 
+ /* Interrupt registers */
+-#define BMA400_INT_CONFIG0_REG	    0x1f
++#define BMA400_INT_CONFIG0_REG			0x1f
++#define BMA400_INT_CONFIG0_ORTN_CHG_MASK	BIT(1)
++#define BMA400_INT_CONFIG0_GEN1_MASK		BIT(2)
++#define BMA400_INT_CONFIG0_GEN2_MASK		BIT(3)
++#define BMA400_INT_CONFIG0_FIFO_FULL_MASK	BIT(5)
++#define BMA400_INT_CONFIG0_FIFO_WTRMRK_MASK	BIT(6)
++#define BMA400_INT_CONFIG0_DRDY_MASK		BIT(7)
++
++enum generic_intr {
++	GEN1_INTR,
++	GEN2_INTR
++};
++
+ #define BMA400_INT_CONFIG1_REG	    0x20
+ #define BMA400_INT1_MAP_REG	    0x21
+ #define BMA400_INT_IO_CTRL_REG	    0x24
+@@ -96,15 +108,53 @@
+ #define BMA400_ACC_ODR_MIN_HZ       12
+ 
+ /* Generic interrupts register */
+-#define BMA400_GEN1INT_CONFIG0      0x3f
+-#define BMA400_GEN2INT_CONFIG0      0x4A
+-#define BMA400_GEN_CONFIG1_OFF      0x01
+-#define BMA400_GEN_CONFIG2_OFF      0x02
+-#define BMA400_GEN_CONFIG3_OFF      0x03
+-#define BMA400_GEN_CONFIG31_OFF     0x04
+-#define BMA400_INT_GEN1_MSK         BIT(2)
+-#define BMA400_INT_GEN2_MSK         BIT(3)
+-#define BMA400_GEN_HYST_MSK         GENMASK(1, 0)
++#define BMA400_GENINT_CONFIG_REG_BASE	0x3f
++#define BMA400_NUM_GENINT_CONFIG_REGS	11
++#define BMA400_GENINT_CONFIG_REG(gen_intr, config_idx)	\
++	(BMA400_GENINT_CONFIG_REG_BASE +		\
++	(gen_intr) * BMA400_NUM_GENINT_CONFIG_REGS +	\
++	(config_idx))
++
++/* Generic Interrupt Config0 register */
++#define BMA400_GENINT_CONFIG0_HYST_MASK			GENMASK(1, 0)
++#define BMA400_GENINT_CONFIG0_REF_UPD_MODE_MASK		GENMASK(3, 2)
++#define BMA400_GENINT_CONFIG0_DATA_SRC_MASK		BIT(4)
++#define BMA400_GENINT_CONFIG0_X_EN_MASK			BIT(5)
++#define BMA400_GENINT_CONFIG0_Y_EN_MASK			BIT(6)
++#define BMA400_GENINT_CONFIG0_Z_EN_MASK			BIT(7)
++
++enum bma400_hysteresis_config {
++	NO_HYSTERESIS,
++	HYSTERESIS_24MG,
++	HYSTERESIS_48MG,
++	HYSTERESIS_96MG
++};
++
++enum bma400_accel_data_src {
++	ACCEL_FILT1,
++	ACCEL_FILT2
++};
++
++enum bma400_ref_updt_mode {
++	BMA400_REF_MANUAL_UPDT_MODE,
++	BMA400_REF_ONETIME_UPDT_MODE,
++	BMA400_REF_EVERYTIME_UPDT_MODE,
++	BMA400_REF_EVERYTIME_LP_UPDT_MODE
++};
++
++/* Generic Interrupt Config1 register */
++#define BMA400_GENINT_CONFIG1_AXES_COMB_MASK		BIT(0)
++#define BMA400_GENINT_CONFIG1_DETCT_CRIT_MASK		BIT(1)
++
++enum bma400_genintr_acceleval_axescomb {
++	BMA400_EVAL_X_OR_Y_OR_Z,
++	BMA400_EVAL_X_AND_Y_AND_Z,
++};
++
++enum bma400_detect_criterion {
++	BMA400_DETECT_INACTIVITY,
++	BMA400_DETECT_ACTIVITY,
++};
+ 
+ /* TAP config registers */
+ #define BMA400_TAP_CONFIG           0x57
+@@ -119,6 +169,7 @@
+ #define BMA400_TAP_QUIETDT_MSK      GENMASK(5, 4)
+ #define BMA400_TAP_TIM_LIST_LEN     4
+ 
++
+ /*
+  * BMA400_SCALE_MIN macro value represents m/s^2 for 1 LSB before
+  * converting to micro values for +-2g range.
+diff --git a/drivers/iio/accel/bma400_core.c b/drivers/iio/accel/bma400_core.c
+index 85e23badf733..d59c26b8a57f 100644
+--- a/drivers/iio/accel/bma400_core.c
++++ b/drivers/iio/accel/bma400_core.c
+@@ -121,6 +121,29 @@ struct bma400_data {
+ 	__be16 duration;
+ };
+ 
++struct bma400_genintr_info {
++	u8 genintr;
++	unsigned int intrmask;
++	enum iio_event_direction dir;
++	enum bma400_detect_criterion detect_mode;
++};
++
++/* Lookup struct for determining GEN1/GEN2 based on dir */
++static const struct bma400_genintr_info bma400_genintrs[] = {
++	[IIO_EV_DIR_RISING] = {
++		.genintr = GEN1_INTR,	/* 0 for GEN1 */
++		.intrmask = BMA400_INT_CONFIG0_GEN1_MASK,
++		.dir = IIO_EV_DIR_RISING,
++		.detect_mode = BMA400_DETECT_ACTIVITY,
++	},
++	[IIO_EV_DIR_FALLING] = {
++		.genintr = GEN2_INTR,	/* 1 for GEN2 */
++		.intrmask = BMA400_INT_CONFIG0_GEN2_MASK,
++		.dir = IIO_EV_DIR_FALLING,
++		.detect_mode = BMA400_DETECT_INACTIVITY,
++	}
++};
++
+ static bool bma400_is_writable_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+@@ -1114,10 +1137,10 @@ static int bma400_read_event_config(struct iio_dev *indio_dev,
+ 	case IIO_ACCEL:
+ 		switch (dir) {
+ 		case IIO_EV_DIR_RISING:
+-			return FIELD_GET(BMA400_INT_GEN1_MSK,
++			return FIELD_GET(BMA400_INT_CONFIG0_GEN1_MASK,
+ 					 data->generic_event_en);
+ 		case IIO_EV_DIR_FALLING:
+-			return FIELD_GET(BMA400_INT_GEN2_MSK,
++			return FIELD_GET(BMA400_INT_CONFIG0_GEN2_MASK,
+ 					 data->generic_event_en);
+ 		case IIO_EV_DIR_SINGLETAP:
+ 			return FIELD_GET(BMA400_S_TAP_MSK,
+@@ -1159,59 +1182,50 @@ static int bma400_activity_event_en(struct bma400_data *data,
+ 				    enum iio_event_direction dir,
+ 				    int state)
+ {
+-	int ret, reg, msk, value;
+-	int field_value = 0;
+-
+-	switch (dir) {
+-	case IIO_EV_DIR_RISING:
+-		reg = BMA400_GEN1INT_CONFIG0;
+-		msk = BMA400_INT_GEN1_MSK;
+-		value = 2;
+-		set_mask_bits(&field_value, BMA400_INT_GEN1_MSK,
+-			      FIELD_PREP(BMA400_INT_GEN1_MSK, state));
+-		break;
+-	case IIO_EV_DIR_FALLING:
+-		reg = BMA400_GEN2INT_CONFIG0;
+-		msk = BMA400_INT_GEN2_MSK;
+-		value = 0;
+-		set_mask_bits(&field_value, BMA400_INT_GEN2_MSK,
+-			      FIELD_PREP(BMA400_INT_GEN2_MSK, state));
+-		break;
+-	default:
+-		return -EINVAL;
+-	}
++	int ret, regval;
++	u8 genintr = bma400_genintrs[dir].genintr;
++	u8 detect_criterion = bma400_genintrs[dir].detect_mode;
++	unsigned int intrmask = bma400_genintrs[dir].intrmask;
+ 
+ 	/* Enabling all axis for interrupt evaluation */
+-	ret = regmap_write(data->regmap, reg, 0xF8);
++	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 0),
++			   BMA400_GENINT_CONFIG0_X_EN_MASK |
++			   BMA400_GENINT_CONFIG0_Y_EN_MASK |
++			   BMA400_GENINT_CONFIG0_Z_EN_MASK|
++			   BMA400_REF_EVERYTIME_UPDT_MODE);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* OR combination of all axis for interrupt evaluation */
+-	ret = regmap_write(data->regmap, reg + BMA400_GEN_CONFIG1_OFF, value);
++	regval = FIELD_PREP(BMA400_GENINT_CONFIG1_AXES_COMB_MASK, BMA400_EVAL_X_OR_Y_OR_Z) |
++		 FIELD_PREP(BMA400_GENINT_CONFIG1_DETCT_CRIT_MASK, detect_criterion);
++	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 1), regval);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* Initial value to avoid interrupts while enabling*/
+-	ret = regmap_write(data->regmap, reg + BMA400_GEN_CONFIG2_OFF, 0x0A);
++	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 2), 0x0A);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/* Initial duration value to avoid interrupts while enabling*/
+-	ret = regmap_write(data->regmap, reg + BMA400_GEN_CONFIG31_OFF, 0x0F);
++	ret = regmap_write(data->regmap, BMA400_GENINT_CONFIG_REG(genintr, 4), 0x0F);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_update_bits(data->regmap, BMA400_INT1_MAP_REG, msk,
+-				 field_value);
++	regval = FIELD_PREP(BMA400_INT_CONFIG0_GEN1_MASK, state);
++	if (genintr)
++		regval = FIELD_PREP(BMA400_INT_CONFIG0_GEN2_MASK, state);
++
++	ret = regmap_update_bits(data->regmap, BMA400_INT1_MAP_REG, intrmask, regval);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_update_bits(data->regmap, BMA400_INT_CONFIG0_REG, msk,
+-				 field_value);
++	ret = regmap_update_bits(data->regmap, BMA400_INT_CONFIG0_REG, intrmask, regval);
+ 	if (ret)
+ 		return ret;
+ 
+-	set_mask_bits(&data->generic_event_en, msk, field_value);
++	set_mask_bits(&data->generic_event_en, intrmask, regval);
+ 	return 0;
+ }
+ 
+@@ -1336,18 +1350,6 @@ static int bma400_write_event_config(struct iio_dev *indio_dev,
+ 	}
+ }
+ 
+-static int get_gen_config_reg(enum iio_event_direction dir)
+-{
+-	switch (dir) {
+-	case IIO_EV_DIR_FALLING:
+-		return BMA400_GEN2INT_CONFIG0;
+-	case IIO_EV_DIR_RISING:
+-		return BMA400_GEN1INT_CONFIG0;
+-	default:
+-		return -EINVAL;
+-	}
+-}
+-
+ static int bma400_read_event_value(struct iio_dev *indio_dev,
+ 				   const struct iio_chan_spec *chan,
+ 				   enum iio_event_type type,
+@@ -1356,22 +1358,20 @@ static int bma400_read_event_value(struct iio_dev *indio_dev,
+ 				   int *val, int *val2)
+ {
+ 	struct bma400_data *data = iio_priv(indio_dev);
+-	int ret, reg, reg_val, raw;
++	int ret, genintr, reg_val, raw;
+ 
+ 	if (chan->type != IIO_ACCEL)
+ 		return -EINVAL;
+ 
+ 	switch (type) {
+ 	case IIO_EV_TYPE_MAG:
+-		reg = get_gen_config_reg(dir);
+-		if (reg < 0)
+-			return -EINVAL;
++		genintr = bma400_genintrs[dir].genintr;
+ 
+ 		*val2 = 0;
+ 		switch (info) {
+ 		case IIO_EV_INFO_VALUE:
+ 			ret = regmap_read(data->regmap,
+-					  reg + BMA400_GEN_CONFIG2_OFF,
++					  BMA400_GENINT_CONFIG_REG(genintr, 2),
+ 					  val);
+ 			if (ret)
+ 				return ret;
+@@ -1379,7 +1379,7 @@ static int bma400_read_event_value(struct iio_dev *indio_dev,
+ 		case IIO_EV_INFO_PERIOD:
+ 			mutex_lock(&data->mutex);
+ 			ret = regmap_bulk_read(data->regmap,
+-					       reg + BMA400_GEN_CONFIG3_OFF,
++					       BMA400_GENINT_CONFIG_REG(genintr, 3),
+ 					       &data->duration,
+ 					       sizeof(data->duration));
+ 			if (ret) {
+@@ -1390,10 +1390,12 @@ static int bma400_read_event_value(struct iio_dev *indio_dev,
+ 			mutex_unlock(&data->mutex);
+ 			return IIO_VAL_INT;
+ 		case IIO_EV_INFO_HYSTERESIS:
+-			ret = regmap_read(data->regmap, reg, val);
++			ret = regmap_read(data->regmap,
++					  BMA400_GENINT_CONFIG_REG(genintr, 0),
++					  val);
+ 			if (ret)
+ 				return ret;
+-			*val = FIELD_GET(BMA400_GEN_HYST_MSK, *val);
++			*val = FIELD_GET(BMA400_GENINT_CONFIG0_HYST_MASK, *val);
+ 			return IIO_VAL_INT;
+ 		default:
+ 			return -EINVAL;
+@@ -1444,16 +1446,14 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
+ 				    int val, int val2)
+ {
+ 	struct bma400_data *data = iio_priv(indio_dev);
+-	int reg, ret, raw;
++	int genintr, ret, raw;
+ 
+ 	if (chan->type != IIO_ACCEL)
+ 		return -EINVAL;
+ 
+ 	switch (type) {
+ 	case IIO_EV_TYPE_MAG:
+-		reg = get_gen_config_reg(dir);
+-		if (reg < 0)
+-			return -EINVAL;
++		genintr = bma400_genintrs[dir].genintr;
+ 
+ 		switch (info) {
+ 		case IIO_EV_INFO_VALUE:
+@@ -1461,7 +1461,7 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
+ 				return -EINVAL;
+ 
+ 			return regmap_write(data->regmap,
+-					    reg + BMA400_GEN_CONFIG2_OFF,
++					    BMA400_GENINT_CONFIG_REG(genintr, 2),
+ 					    val);
+ 		case IIO_EV_INFO_PERIOD:
+ 			if (val < 1 || val > 65535)
+@@ -1470,7 +1470,7 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
+ 			mutex_lock(&data->mutex);
+ 			put_unaligned_be16(val, &data->duration);
+ 			ret = regmap_bulk_write(data->regmap,
+-						reg + BMA400_GEN_CONFIG3_OFF,
++						BMA400_GENINT_CONFIG_REG(genintr, 3),
+ 						&data->duration,
+ 						sizeof(data->duration));
+ 			mutex_unlock(&data->mutex);
+@@ -1479,10 +1479,10 @@ static int bma400_write_event_value(struct iio_dev *indio_dev,
+ 			if (val < 0 || val > 3)
+ 				return -EINVAL;
+ 
+-			return regmap_update_bits(data->regmap, reg,
+-						  BMA400_GEN_HYST_MSK,
+-						  FIELD_PREP(BMA400_GEN_HYST_MSK,
+-							     val));
++			return regmap_update_bits(data->regmap,
++						  BMA400_GENINT_CONFIG_REG(genintr, 0),
++						  BMA400_GENINT_CONFIG0_HYST_MASK,
++						  FIELD_PREP(BMA400_GENINT_CONFIG0_HYST_MASK, val));
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -1650,10 +1650,10 @@ static irqreturn_t bma400_interrupt(int irq, void *private)
+ 						  IIO_EV_DIR_DOUBLETAP),
+ 			       timestamp);
+ 
+-	if (FIELD_GET(BMA400_INT_GEN1_MSK, le16_to_cpu(data->status)))
++	if (FIELD_GET(BMA400_INT_CONFIG0_GEN1_MASK, le16_to_cpu(data->status)))
+ 		ev_dir = IIO_EV_DIR_RISING;
+ 
+-	if (FIELD_GET(BMA400_INT_GEN2_MSK, le16_to_cpu(data->status)))
++	if (FIELD_GET(BMA400_INT_CONFIG0_GEN2_MASK, le16_to_cpu(data->status)))
+ 		ev_dir = IIO_EV_DIR_FALLING;
+ 
+ 	if (ev_dir != IIO_EV_DIR_NONE) {
+-- 
+2.43.0
+
 
