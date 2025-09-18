@@ -1,61 +1,92 @@
-Return-Path: <linux-kernel+bounces-822644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB0BB84623
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:40:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82A52B8462F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8723B9C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:40:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F693BA715
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC85303A01;
-	Thu, 18 Sep 2025 11:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED73B303A32;
+	Thu, 18 Sep 2025 11:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5uwumjL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tjr8pLXw"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFEA2582
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD4F302740
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758195617; cv=none; b=CdimfmxtFaQy9/xr9oCr2KP4fZ6Ew2VQAStMY3+b4+tsa8kKm+tzO4HFKc553kmxFPHcVF6jkFzoI69X67/zjgZunFxtePIdL/O0J17NyJcJn72ZSfgivix5vrfSWJO/y89RY3jHg2HDkXzpzeFIE0+T1R4Dyd/mwwNbwP+9WG0=
+	t=1758195718; cv=none; b=HmOToB8bA6Lp1myqS8N3XDxpg36oUjHqiAnB6yKgMJQytlaYVXiO6MgJs3jb8ZdLbGxK2RMLC+0uYqkOEDHXFpJ92XuSiBd+qYcuU2ocX2AJcEp+OTVLFyT9vWy1VbXQjW2b1p6vKWCbMb8FrTWIJAqR6egxXAfjZyTe/ndC1HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758195617; c=relaxed/simple;
-	bh=dQtfU+0WY2OOQFd+daG8wlVyguap+S9ukLR8d2rPA9c=;
+	s=arc-20240116; t=1758195718; c=relaxed/simple;
+	bh=7N0UmSdKOHAaSXIPk6et3/EoSHnVMaI/hTlcSmus18k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwnsKsVEs8bWvKaXTvPpTcWorjzAuW+zea9BQ8aHlbOyrmgLPWA944KAXqHvJLpjLDK1V/MIje13bZld5UVzFIlppT5ZdnI/Y2fvt6etvWQ2kjeuxR1UQBRqaqZszbZQKHXqLEI8P4AMyI5+WLUO5yQykdhBRS0Oh25Ek5ZfbGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5uwumjL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24D5C4CEE7;
-	Thu, 18 Sep 2025 11:40:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758195616;
-	bh=dQtfU+0WY2OOQFd+daG8wlVyguap+S9ukLR8d2rPA9c=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=X5uwumjLoZi/9cRZf5qxtNG/cDxmIveicAdVj/wy/8arkY61vLt1wiVeiVHtB0i1t
-	 AOo911TD8JxsyP4Ge5Oj5Kpt+N9diRTLkSd0HMv01TWpS5DI58Ki6wUFdvlwonebGN
-	 +kQZhlbfOMcIGYnODGi4G+Kfr3DeSwJHV1WgM+NHHFUQW/jOmtPTcwVd0Be3lt5pVU
-	 JUaMstblLJUmfUDobzhXBdpHEdI8f18DkmHDXg73M2wldkfohZHSxVCQbQnUxWAvFu
-	 mDpPpS7GFfr3wVSUbKaSStP3EOsfYtqtiq/SyEgI2txZjajwsXGkEL/IX6eU1FjKy0
-	 K+Md7a2o3FaTw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 38BDFCE0B32; Thu, 18 Sep 2025 04:40:16 -0700 (PDT)
-Date: Thu, 18 Sep 2025 04:40:16 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: Zhang Changzhong <zhangchangzhong@huawei.com>, dave@stgolabs.net,
-	josh@joshtriplett.org, frederic@kernel.org, yuehaibing@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
-Message-ID: <33613004-3bad-4847-ae7b-2b85cb01b502@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250912015737.1209143-1-wangliang74@huawei.com>
- <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
- <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
- <679d81f3-2610-44b9-bc9a-30ef0f70fa36@paulmck-laptop>
- <2cc0b052-c464-44e2-9341-5eaf9858b24f@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3YKzdvmo7VhdyTS61cc2Et+DN+wrNgX/O4peRB8U6+06AJLYFEaxTSqWlyRDx5eT2q0c7kk/o6XYgRcjA31YL1ZP89AUspoVz90w7H+YJbJ8uVn7wqwwTUFWScunYR80tqpkky1SL/yqGJF1Im68AdYJVWK5Cqrg9wKDEdHDsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Tjr8pLXw; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45f2d21cbabso54295e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758195715; x=1758800515; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=B8l84kyRuuCoNVc5N+ElWv18ENe/Xi0Yvo10Z8affNw=;
+        b=Tjr8pLXwFxxt+R7IU8PjnzsdXEynfwP7+das/n4+Ucnm+sVkBhVJm8jzHi0Qkk7XtB
+         3vaDUuiRaUpmBDyrMShphP/tnKX2nXv0hJ5Q+AKs4rL4d+KBoVN3DD6OnarJqYieI6Ti
+         U5woaE8rAfPz15XH3iLyO5qWg5la5+zJgKySXHtlTLjlA/ZKmGz59cxqhougYRtqOmJY
+         XvyBxXPC5oxEA3cliinBoYMNicvIzQD7NAb1hTyOnUpXFSZFA19p6PIRyGIfY2e5NvfN
+         Mky+xRlwKeQJxbhC6+mgRAxrSYfAa7VHqhzoFGiTB+R0uSeB7KcuEBqXbR+StBR/sgjr
+         Lp6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758195715; x=1758800515;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8l84kyRuuCoNVc5N+ElWv18ENe/Xi0Yvo10Z8affNw=;
+        b=YSXaWdxhnpFYYXxSDu53UOTgzkm7iaJ8XRDYFz/AZKPt2tY43SO7cpvTfA6Y6PqaN5
+         i5bsAMXej59klqAQABbEsem1v0+1MTjsf7HfirFs38OVWLy+nNMItTraDpB5WtXw1INg
+         M7U/xKrozD9/b3FAsP3k2DA3aFSrN1i7D3QOKP5pEeknLQH8QQQSqoZIHYWCxVHuFWAC
+         dYI75ynkGkvPqma+e9LeXqwB1KY14bHirWv3oH982ZA6ZzNlN5CTtsjI+6Fz7L9R+J/X
+         fkeu+HjmkTs3Ed7GNScY+/Ym9FCa2Tqquf3WZm/6/CGLkRKWQVg3jtkU6UkjF+tL2aA+
+         GWnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV37t+elK2lrPLAO0soEHxfkfr9tAfs0s1mEBdG4h/gflZ6GjvVXB1LmHwuJTcGfHvrHzFBOAxj7W5EzD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ3Rxqz32RpllLxvOPLPhGjg4C79vWwPe1x75oupucSkjmWGWT
+	tGuSBbJpUbQx1UrITOf637LcQjjc9VtdQIboFfwBl1rcwbvUVXP0y7UJFwZTCtqn8A==
+X-Gm-Gg: ASbGncvimSsv50k61WQDU32CNqghICRPLYZYmiIzraiVlZeDfLMu8Gai+OJV45wJUVU
+	hLjlwH3uvehtnxhxN6aCrPQJNmHGINpUj/UbopwHI5BPvQBfmp9r9LPpETn92U5aSv4S9uu8sAm
+	ZEQsEjk1GaSeeTqrNsABbChQ8PSbZ8fc2cmkKxouEPcHXD0/V/gNr4z2KKZXdmRHEKRBok4ltoz
+	100uazt7qA3kPbAwQHOZyRSvv6lIZChWZN7Dkjq5TThgMj0BhODWq3+pvyciULZtpWMRKhLLULd
+	0+XIGtHqxk5Fz0nF3XrCxMclJpFNaww+EOqr/yUe+B96nxDDCGa+k9yOqswbvOOYRXz29qnBBgi
+	vIfiVnzEH3f3QNDyx2/8AImq3qhET2Ia4jX8Z6f59eFSNbZwXER+GJO9wmdt6LvRyDSvrLVJLlx
+	tDBDD2Z9OrTstna09eM/XhhUg=
+X-Google-Smtp-Source: AGHT+IFo++kIW70zN9Z7jaqR2wmSrLihbXgI8ryzk1jKjLYdejG3WXIUw1J2WnvE7qB1mOgjXOYq2A==
+X-Received: by 2002:a05:600c:c4a5:b0:45f:2949:7aa9 with SMTP id 5b1f17b1804b1-461548788a0mr3774745e9.6.1758195714750;
+        Thu, 18 Sep 2025 04:41:54 -0700 (PDT)
+Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac439sm42958055e9.5.2025.09.18.04.41.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 04:41:54 -0700 (PDT)
+Date: Thu, 18 Sep 2025 11:41:50 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, praan@google.com
+Subject: Re: [PATCH v2 1/3] iommu/io-pgtable-arm: Move selftests to a
+ separate file
+Message-ID: <aMvv_u8HXAV7tbYz@google.com>
+References: <20250917191143.3847487-1-smostafa@google.com>
+ <20250917191143.3847487-2-smostafa@google.com>
+ <20250917193818.GK1326709@ziepe.ca>
+ <aMsX_HafW3rLs5dQ@google.com>
+ <20250917214824.GN1326709@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,110 +96,56 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2cc0b052-c464-44e2-9341-5eaf9858b24f@huawei.com>
+In-Reply-To: <20250917214824.GN1326709@ziepe.ca>
 
-On Thu, Sep 18, 2025 at 07:17:41PM +0800, Wang Liang wrote:
-> 
-> 在 2025/9/18 17:03, Paul E. McKenney 写道:
-> > On Mon, Sep 15, 2025 at 10:13:33AM +0800, Wang Liang wrote:
-> > > 在 2025/9/12 10:16, Zhang Changzhong 写道:
-> > > > 在 2025/9/12 9:57, Wang Liang 写道:
-> > > > > When setting the locktorture module parameter 'bind_writers', the variable
-> > > > > 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
-> > > > > is not freed, when removing module or setting the parameter again.
-> > > > > 
-> > > > > Below kmemleak trace is seen for this issue:
-> > > > > 
-> > > > > unreferenced object 0xffff888100aabff8 (size 8):
-> > > > >     comm "bash", pid 323, jiffies 4295059233
-> > > > >     hex dump (first 8 bytes):
-> > > > >       07 00 00 00 00 00 00 00                          ........
-> > > > >     backtrace (crc ac50919):
-> > > > >       __kmalloc_node_noprof+0x2e5/0x420
-> > > > >       alloc_cpumask_var_node+0x1f/0x30
-> > > > >       param_set_cpumask+0x26/0xb0 [locktorture]
-> > > > >       param_attr_store+0x93/0x100
-> > > > >       module_attr_store+0x1b/0x30
-> > > > >       kernfs_fop_write_iter+0x114/0x1b0
-> > > > >       vfs_write+0x300/0x410
-> > > > >       ksys_write+0x60/0xd0
-> > > > >       do_syscall_64+0xa4/0x260
-> > > > >       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > > > > 
-> > > > > This issue can be reproduced by:
-> > > > >     insmod locktorture.ko
-> > > > >     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
-> > > > >     rmmod locktorture
-> > > > > 
-> > > > > or:
-> > > > >     insmod locktorture.ko
-> > > > >     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
-> > > > >     echo 0-2 > /sys/module/locktorture/parameters/bind_writers
-> > > > > 
-> > > > > The parameter 'bind_readers' also has the same problem. Free the memory
-> > > > > when removing module or setting the parameter.
-> > > > > 
-> > > > > Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
-> > > > > Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> > > > > ---
-> > > > >    kernel/locking/locktorture.c | 9 +++++++++
-> > > > >    1 file changed, 9 insertions(+)
-> > > > > 
-> > > > > diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-> > > > > index ce0362f0a871..cad80c050502 100644
-> > > > > --- a/kernel/locking/locktorture.c
-> > > > > +++ b/kernel/locking/locktorture.c
-> > > > > @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
-> > > > >    	int ret;
-> > > > >    	char *s;
-> > > > > +	free_cpumask_var(*cm_bind);
-> > > > > +	*cm_bind = NULL;
-> > > > 这个NULL没必要吧
-> > Assuming this translates to "This NULL is unnecessary", I have to
-> > agree with Zhang Changzhong.  I would go further and argue that the
-> > free_cpumask_var() is also unnecessary here.
-> 
-> Thanks for your replies!
-> 
-> The free_cpumask_var() in param_set_cpumask() may be necessary(). If user
-> set the parameter for two times, the pointer will point to a new memory,
-> and no one hold the old memory, which trigger a memory leak.
-
-Why wouldn't the free_cpumask_var() you are adding to
-lock_torture_cleanup() cover that case?
-
-> > > Setting global pointer to NULL after free may be more safe. ^-^
-> > In lock_torture_cleanup(), you mean?  I would agree with that.
+On Wed, Sep 17, 2025 at 06:48:24PM -0300, Jason Gunthorpe wrote:
+> On Wed, Sep 17, 2025 at 08:20:12PM +0000, Mostafa Saleh wrote:
+> > On Wed, Sep 17, 2025 at 04:38:18PM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Sep 17, 2025 at 07:11:38PM +0000, Mostafa Saleh wrote:
+> > > > +static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
+> > > > +{
+> > > > +	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
+> > > > +	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+> > > 
+> > > Can be:
+> > > 
+> > >        struct io_pgtable_cfg *cfg =
+> > >                &io_pgtable_ops_to_pgtable(pgtbl_ops)->cfg;
 > > 
-> > > > > +
-> > > > >    	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
-> > > > >    		s = "Out of memory";
-> > > > >    		ret = -ENOMEM;
-> > > > > @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
-> > > > >    			cxt.cur_ops->exit();
-> > > > >    		cxt.init_called = false;
-> > > > >    	}
-> > > > > +
-> > > > > +	free_cpumask_var(bind_readers);
-> > > > > +	free_cpumask_var(bind_writers);
-> > > > > +	bind_readers = NULL;
-> > > > > +	bind_writers = NULL;
-> > > > 同上
-> > But here I agree with Wang Liang, as it helps people running debuggers
-> > on the kernel.  Instead of a dangling pointer, they see a NULL pointer.
+> > There are a bunch of other formatting issues here also, but I wanted to
+> > move the code as is, so with “--color-moved” you can see the exact
+> > difference, otherwise, it’s harder to review.
 > > 
-> > Except...  Is this NULLing really the right thing to do for
-> > CONFIG_CPUMASK_OFFSTACK=n kernels?
+> > I can add a patch before to fix those + the printing as you suggested
+> > next.
 > 
-> For CONFIG_CPUMASK_OFFSTACK=n, the NULLing may be not appropriate. I will
-> remove it.
+> Yeah, I brought it up because with the above you don't need
+> arm_lpae_io_pgtable
+> 
+> > I don’t have a strong opinion about this, but I am more inclined to
+> > keep the prints considering it’s a low-level test for the page table,
+> > and such parameters would be useful to understand the failures.
+> 
+> My general view has been that there is alot of debug prints I've added
+> to kunits to debug them but once they are debugged I tend to drop them
+> off as they may not be useful to debug the next issue.
+> 
+> > I know this is not relevant to this series, but the KVM driver will
+> > need to expose arm_lpae_io_pgtable anyway.
+> 
+> Really? That sounds like wrong layering, why does it need to break the
+> iopgtable abstraction? :(
 
-But if you remove the NULLing entirely, mightn't that inconvenience
-people debugging?
+Oh, not any more actually, in my lastest version it's just exported
+for the selftest, sorry for the confusion.
 
-							Thanx, Paul
+I will respin v3 with with this patch leaving the arm_lpae_dump_ops
+behind, it's a bit ugly with the guards + the exports, if Robin and
+Will are OK with removing it we can just drop it.
 
-> > > > > +
-> > > > >    	torture_cleanup_end();
-> > > > >    }
+Thanks,
+Mostafa
+
+> 
+> Jason
 
