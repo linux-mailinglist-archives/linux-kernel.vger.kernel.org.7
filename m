@@ -1,102 +1,76 @@
-Return-Path: <linux-kernel+bounces-821853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4CAB82753
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCB2B82759
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16851721DEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C332480C65
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847CF1D514E;
-	Thu, 18 Sep 2025 01:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTTVLt22"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E76E1D514E;
+	Thu, 18 Sep 2025 01:03:42 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46BC6F53E;
-	Thu, 18 Sep 2025 01:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C8038B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758157311; cv=none; b=YQbwz0/hj02wVyI3BM/ltmKMNmdTYluuoNCKezTSZois0SvpiH1A2x0Q5byd4i/hnw2zJ/lCwcGt+hsjy3zpsaTIlcgYbAzjW12oD0e6uCxz9rh4Kha4bX1JOjhEL4eolWSSqIXaRIhWld1+Z4vpV50mEoSQUwmryaEbMqOr9BQ=
+	t=1758157422; cv=none; b=B+nN1R5HovbWQ2uht5uTYCsTT7t+I1WqdqFdyuLA1huQBAm/nLNvCD4JvzA5oubBQuPULy803Xdp9CETAxP7SYD49SMedCDjRAR51PmA6v9UKuSXc1h4K7rb1PH37K6t5ElCwFDlNds6MHaAUmL1epFK5qFKdOFRoS+HhIhNB28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758157311; c=relaxed/simple;
-	bh=JSIUrDUCEBotm/znuNOiQJb4uyQ+2I+hyAil8bK3s54=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0dq76CdUSqC8DV7aQzY41bcjF0/Qe7XWfRW7BYyRTlHUH8EezqSF0gDJacaKm8zBSJAtyivEl6upCaK193gfMx/IkpecQ7kkWQzq6YujyQpA59beVb4jODac9uljL68xMFsHh4neXSe5ittKLpulgXx/nn0if9bZTYxQMOsWNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTTVLt22; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 564ACC4CEE7;
-	Thu, 18 Sep 2025 01:01:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758157310;
-	bh=JSIUrDUCEBotm/znuNOiQJb4uyQ+2I+hyAil8bK3s54=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mTTVLt22doeEewvF32nXAVDo8PI/JOlnw8Gzj+WrKwqCTVkfXojtJFHHiHzhKrjS9
-	 Bp3rlAmPob5hZr7ElxFoGqMJeNnDoevfCHtJEr/um/TpmPW4R6JdIq7zViT7rwpT2W
-	 E46ZfuMfO8U4zn838DsUlVsUHHKkMMiSftBlcQfFFDCeFM50RnWLYPzQVxeYNJMmQH
-	 xytaz2hH4gusc9NdpYPG+C6+SY2FzOEbtDJfxQ7Yi7xLXPkhue/jQRG0dz7NNMIbKi
-	 jqov6aPEdPNauuMdOk5HjqXuLQiNG0TDJNAqrSQjjYalucjlfFV4UMxk7JF9lS45RB
-	 FUTS5ZoBBFSAA==
-Date: Thu, 18 Sep 2025 10:01:48 +0900
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
- QCS8300
-Message-ID: <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
-References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
- <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
+	s=arc-20240116; t=1758157422; c=relaxed/simple;
+	bh=xQBneLHGSaWhoWXgwO+HeLkkcwXMKlIllVytZGaj3HU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=X393VdfZCtghAnuuYeQoauw5zFXqWHtey2an4UG3vMc7z4x+IK3VH7zbAhEcpwue56jVYcQnZ8D2Pzm+pvRvUMB3SjtVFeFzR0xgxMMoQZG5hEjcT8J34+05W101YomKn5kI+Q9OnbKA2VW1CimX40h9iGcR+zjCjUU73ucCQrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42412899f90so9622175ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:03:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758157420; x=1758762220;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQBneLHGSaWhoWXgwO+HeLkkcwXMKlIllVytZGaj3HU=;
+        b=obUjFNlEGi0XrLRU235UmE/D7nuqp5vkYUXKa6slLt12y9buaf8U8NEgSPIn5O164/
+         edvvAJ+1BbvG2ScDCX1UWDPfpT7616JITnVMApV3D1bEPxk7K9Ar8TD0Vc91m9l9AI/o
+         8bwr7dMysGDL+Q76Kbrm7PBfMhk/qBo7FcUhSo5b3mLpvEu0aNcQau7IsqPzB73sRu1h
+         sdltqeM8j7+nidSaA6P26pTbhcdf/2DIXL1fB3hdu+V/Xnba6FI+RM7jrhK1VE/999pU
+         wCmCjFE74wm9SQPd7q4coh2wsDXtBgsP8wxr7rjRl221yYxFniMQlGV4fUtaRrr0wT9f
+         Qz1A==
+X-Gm-Message-State: AOJu0YzdVN2p19fCa00dvBCunjEslsYOps7viNJToPRGF6tJ+oeAG0gF
+	+Tbo1bOtvcPnATmEqI15X+Mc4QysD26N2waYNawrIlnqN17pQyNCXqZpi6yGqwhuzP8anNNtaxx
+	AJFvncbhBSrWjtAV+uejFtEYHb9+/wUrrK2+a0khPbr3L3kfrykIMejD6LFI=
+X-Google-Smtp-Source: AGHT+IH5ktm1mraTeKKCNDoT/P0ES/QOVTtc46GYdgZbJ3BXdswyaKooccHHlSG2VvHxGhzcVvIFKOXsKhmkubh8U4+jdrNDYUBu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
+X-Received: by 2002:a05:6e02:148a:b0:40d:e50a:35b0 with SMTP id
+ e9e14a558f8ab-4241a56499bmr53622995ab.32.1758157419915; Wed, 17 Sep 2025
+ 18:03:39 -0700 (PDT)
+Date: Wed, 17 Sep 2025 18:03:39 -0700
+In-Reply-To: <68c21301.050a0220.3c6139.0031.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cb5a6b.050a0220.3c6139.0faa.GAE@google.com>
+Subject: Forwarded: WARNING in ext4_xattr_inode_update_ref
+From: syzbot <syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 11, 2025 at 07:24:03PM +0800, Yongxing Mou wrote:
-> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
-> 
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Patch v11 and still basic issues. I am very dissapointed.
+***
 
-<form letter>
-This is a friendly reminder during the review process.
+Subject: WARNING in ext4_xattr_inode_update_ref
+Author: eraykrdg1@gmail.com
 
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions of patchset, under or above your Signed-off-by tag, unless
-patch changed significantly (e.g. new properties added to the DT
-bindings). Tag is "received", when provided in a message replied to you
-on the mailing list. Tools like b4 can help here. However, there's no
-need to repost patches *only* to add the tags. The upstream maintainer
-will do that for tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
-
+#syz test
 
