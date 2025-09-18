@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-822019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0233AB82DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BECEB82DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41454A2669
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA70E1C2144B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 04:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F378248880;
-	Thu, 18 Sep 2025 04:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BFD24418F;
+	Thu, 18 Sep 2025 04:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ShVjJBDQ";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="yG/LBgVK"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ErSRjBVv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8D334BA4C;
-	Thu, 18 Sep 2025 04:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCE81F4181;
+	Thu, 18 Sep 2025 04:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758168987; cv=none; b=mg9ORFruJRQzuiEq0NbNbEA0yJXjZfFX8EzmLHjWa3nYuZYyU1FTbk7l9ba6WSvuT6GMJmTNMpYKIAHAdL/DoTKBuXpZohg/NfHv2DLA/IeKXY/SF0Vbj9GiO6rSxtc8XHl8OGngnc9UnWJJNWKNpN/4mVFZiU9FVxc/YBNSR5s=
+	t=1758168792; cv=none; b=qArNwlnu99iReaUjFux+ygtFuRDBH9wseODZWSrLS0A8/h9Luu0XTu9X8AQPhFMlnNFOZuEZ/KCPj7zKuaOzzY95R3qaL8teQNps8lxxOLsdnmADBNODTw2RPXoGx/tt97NYsrwpN226maf2q9YGEMWknhFBa631MmbfEK2PBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758168987; c=relaxed/simple;
-	bh=BVY8Xj4e6MAs5x7hg6qQchNUfdSkglsNbtbLEad+y00=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=sYB70M0zifBu51S+ZR0NwSgPahL1BhDbP/XrT8MpzAZME4Lsz8eQeNmNc9kcJDdAP+Aivo5TqZLQFhQKzAZZ7Lsu9z/75P5q3Vyjk9QBygIvbywVPdCjsekU3CQrW8H6eJym4iNPbGPxbuxoIuJZ+5qR1pKt0mvYjvqPAFD3jv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ShVjJBDQ; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=yG/LBgVK; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1758168671; bh=NJjbSSj5jhMk0HRinPCbRwY
-	9CFU4h6QcLpjE9fG/CGw=; b=ShVjJBDQtkoHl4zZviJw22Cn95HrMuMYoejLcf0xJzeQA7qKuJ
-	D5qGCh0b0urde73kHsIhQh0EsyeFnt6xLrCS4Wai/5YtjmNkkyeT1cTVXMvpBVRGs6RPCbRYT5d
-	KTQGQJbCq0HAA7aFbdsJbn+LX9CWR3mBsbAH5qHi+tbZeV4TPnjuZF1/f7ExusA6J2edVGY2bxx
-	XVh5ikQM3M4YuTAjivkFueiiTHxKhDNx0/PTewZ1HIP9kvQNpLjdZXXG4rVFwOslOgHB/JYldjK
-	OrVBQcOpVrOBMP7JPbckmUd1ygtraryn8HSnmM5jtXDJK4g7dnltryNpoL/GlzGe03Q==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1758168671; bh=NJjbSSj5jhMk0HRinPCbRwY
-	9CFU4h6QcLpjE9fG/CGw=; b=yG/LBgVK91WyVeVJYLDzq2LIwSsiLwpyegB0yLgC8ixqUZuUMP
-	oEKedmOlTd3bIbX2/d7CiHNj6juQ1b/PrEAQ==;
+	s=arc-20240116; t=1758168792; c=relaxed/simple;
+	bh=W7Yj5+1o6KKMQC/tA+UpcbbG71xRxkrXyq2jA6xZEe8=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=f9kW3k0d/mdwGMMxV6ex/+n8Lz0Y6GLEHp+n/LEQydaVrJemep9dVpkRIbDb3hWu4/MPxtljur4SzzPotCYkbgHBSAgNfOadfNivTgjtzRKgLADku951xmwHstx+VKOkT7uacvdMK63l/+glLjsFiZgKM4YsCjFSFEKE4hksY1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ErSRjBVv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDEB8C4CEE7;
+	Thu, 18 Sep 2025 04:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758168791;
+	bh=W7Yj5+1o6KKMQC/tA+UpcbbG71xRxkrXyq2jA6xZEe8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ErSRjBVvxfZAW9IXBd47FcARzxb0fJHZzBM57kJEbVjPS9Zgw690tuQI3p5tAiFkk
+	 9dgXH8ElJQcIhJBoSCToVRqOjEbLIiv+d49mbKuWF52CyxDDhtRBV0+6lP+SLO6aWn
+	 /4v67jTsYSQ33omWwyqA4pDCVQsv6SbNG9tKTXQk=
+Date: Wed, 17 Sep 2025 21:13:10 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: [GIT PULL] hotfixes for 6.17-rc7
+Message-Id: <20250917211310.da8771af4cb50be2e657fe6a@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Date: Thu, 18 Sep 2025 11:11:10 +0700
-From: Dang Huynh <dang.huynh@mainlining.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Sebastian Reichel <sre@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-mmc@vger.kernel.org
-Subject: Re: [PATCH 05/25] dt-bindings: rtc: Add RDA Micro RDA8810PL RTC
-In-Reply-To: <20250917-contort-sassy-df07fd7515a0@spud>
-References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org>
- <20250917-rda8810pl-drivers-v1-5-74866def1fe3@mainlining.org>
- <20250917-contort-sassy-df07fd7515a0@spud>
-Message-ID: <c905fb3ace281280f1ac11c7fbe8e0aa@mainlining.org>
-X-Sender: dang.huynh@mainlining.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-09-18 03:46, Conor Dooley wrote:
-> On Wed, Sep 17, 2025 at 03:07:22AM +0700, Dang Huynh wrote:
->> Add documentation describing the RTC found in RDA8810PL SoC.
->> 
->> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
->> ---
->>  .../devicetree/bindings/rtc/rda,8810pl-rtc.yaml    | 30 
->> ++++++++++++++++++++++
->>  1 file changed, 30 insertions(+)
->> 
->> diff --git a/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml 
->> b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
->> new file mode 100644
->> index 
->> 0000000000000000000000000000000000000000..3ceae294921cc3211cd775d9b3890393196faf82
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/rtc/rda,8810pl-rtc.yaml
->> @@ -0,0 +1,30 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/rtc/rda,8810pl-rtc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: RDA Micro RDA8810PL Real Time Clock
->> +
->> +maintainers:
->> +  - Dang Huynh <dang.huynh@mainlining.org>
->> +
->> +properties:
->> +  compatible:
->> +    const: rda,8810pl-rtc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
-> 
-> Your driver implements functions that turn on an alarm irq, but there 
-> is
-> none mentioned here. What's going on there?
-The RTC doesn't seem to have an AP IRQ associated. I can't find any
-reference to it on downstream kernel and the docs.
 
-> 
-> Additionally, there's no clocks property? For an onboard RTC I'd have
-> expected there to be a clock sourced outside of the block.
-> 
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    rtc@1a06000 {
->> +      compatible = "rda,8810pl-rtc";
->> +      reg = <0x1a06000 0x1000>;
->> +    };
->> 
->> --
->> 2.51.0
+Linus, please merge this batch of hotfixes, thanks.
+
+
+The following changes since commit a68172d95c2845d2b5455b072b4ff51ba32650e9:
+
+  MAINTAINERS: add tree entry to numa memblocks and emulation block (2025-09-08 23:45:12 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-17-21-10
+
+for you to fetch changes up to ce4be9e4307c5a60701ff6e0cafa74caffdc54ce:
+
+  zram: fix slot write race condition (2025-09-15 20:01:45 -0700)
+
+----------------------------------------------------------------
+15 hotfixes.  11 are cc:stable and the remainder address post-6.16 issues
+or aren't considered necessary for -stable kernels.  13 of these fixes are
+for MM.
+
+The usual shower of singletons, plus
+
+- A 5 patch series from Hugh which addresses various misbehaviors in
+  get_user_pages()
+
+- A 2 patch series from SeongJae which addresses a quite severe issue in
+  DAMON
+
+- A 3 patch series also from SeongJae which completes some fixes for a
+  DAMON startup issue
+
+----------------------------------------------------------------
+Hugh Dickins (5):
+      mm/gup: check ref_count instead of lru before migration
+      mm/gup: local lru_add_drain() to avoid lru_add_drain_all()
+      mm: revert "mm/gup: clear the LRU flag of a page before adding to LRU batch"
+      mm: revert "mm: vmscan.c: fix OOM on swap stress test"
+      mm: folio_may_be_lru_cached() unless folio_test_large()
+
+Lance Yang (1):
+      MAINTAINERS: add Lance Yang as a THP reviewer
+
+Lorenzo Stoakes (1):
+      MAINTAINERS: add Jann Horn as rmap reviewer
+
+Nathan Chancellor (1):
+      nilfs2: fix CFI failure when accessing /sys/fs/nilfs2/features/*
+
+SeongJae Park (5):
+      mm/damon/core: introduce damon_call_control->dealloc_on_cancel
+      mm/damon/sysfs: use dynamically allocated repeat mode damon_call_control
+      samples/damon/wsse: avoid starting DAMON before initialization
+      samples/damon/prcl: avoid starting DAMON before initialization
+      samples/damon/mtier: avoid starting DAMON before initialization
+
+Sergey Senozhatsky (1):
+      zram: fix slot write race condition
+
+ MAINTAINERS                   |  2 ++
+ drivers/block/zram/zram_drv.c |  8 +++----
+ fs/nilfs2/sysfs.c             |  4 ++--
+ fs/nilfs2/sysfs.h             |  8 +++----
+ include/linux/damon.h         |  2 ++
+ include/linux/swap.h          | 10 +++++++++
+ mm/damon/core.c               |  8 +++++--
+ mm/damon/sysfs.c              | 23 +++++++++++++-------
+ mm/gup.c                      | 14 +++++++++---
+ mm/mlock.c                    |  6 +++---
+ mm/swap.c                     | 50 ++++++++++++++++++++++---------------------
+ mm/vmscan.c                   |  2 +-
+ samples/damon/mtier.c         |  3 +++
+ samples/damon/prcl.c          |  3 +++
+ samples/damon/wsse.c          |  3 +++
+ 15 files changed, 94 insertions(+), 52 deletions(-)
+
 
