@@ -1,143 +1,142 @@
-Return-Path: <linux-kernel+bounces-822987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C99AB853C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6953FB853A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4091B227CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35393A40C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599383115A0;
-	Thu, 18 Sep 2025 14:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C96313280;
+	Thu, 18 Sep 2025 14:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mDSdxegK"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGZFAI/w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C7C30CDB1;
-	Thu, 18 Sep 2025 14:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E7F313269
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205172; cv=none; b=Xbcll48xBZO3ObiRMN7aqGKujtLLJ5aKj7f6W8kRriPC9/RTQkyswbjVxd+fpxDMdjsRZJQbjt2NXzC7C1nqFGN7SETnMaMxiQhfc5Z3r/N9CVysgzX2PamEkjEd9R3GGYcXayQia6nTjf5ruIWKD2XMO+TOGBBVixBZgL+XUeo=
+	t=1758205205; cv=none; b=Yx/EajhHtGK0NZZn3uUYoxr6QlWNaZew3RpaCyL+lfnAgA4dC1hYT2EJUQcllqnQY+54jg9DLpENyv6VvHSEVvSBj5rKjB4Vn9oItPhbp4rBiC+3GipZQ1g8SMVzVeQBkhb0yFX6GzoCGbYkBzswSaJyM1IwygzfKTlbAxBgdAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205172; c=relaxed/simple;
-	bh=ZaQal7p/D3lVjO56/+eFW4knjRvXXBe2Az2adf7o3pU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1HyJjJJssgKoKovf2K8npUHQxX5lpz24LbCJ/7UCkEnsD+ash1TLQHwzAvVwWxjfxtzNhDwSAicV3XxWML6Eqbuu+Fmx9u5+686U9c9C+GZAly0CPgfMn13oD9+a8u0+J7mafeQRjBKH29i55y7mr73rpR5JKoUDzc5+f2peYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mDSdxegK; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ICVv4D000437;
-	Thu, 18 Sep 2025 14:19:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=DprqDoKslhG2Vxphcet3gBW4by2OCt
-	LD3p/0yuyogXk=; b=mDSdxegKalYo9emM9i9PNcujkOp4bHhQQxnqmYzRU/Yow2
-	DaL4TDZKRLmyCmFQ9g0/bFGVN8WX2b3ADBNLDJkEgaqm+kj6wyRSPyGo4dXS956N
-	jpjaLGrByxzCqoPPl+5uhOOVkWKFrMkhdWmAg6ZA0fIjh/kmMqWRkoto7U7OpDgW
-	O/JKMntjYOJQK36M5m/O3gmj1j0Y2sh/uhTnRoy4HNagVyrK5hkkFdrYVatY4Zv6
-	yGvvt/oCaypxWzqb61hdfxLdd/scx56cn/Iitw1cHpCLjb64OVhf55jL68HGLnGV
-	2Tq419jPZLwKFemA6msNW196e7rYTUwqwdO5k0wQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4htree-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 14:19:28 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58IEEROu005978;
-	Thu, 18 Sep 2025 14:19:28 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4htreb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 14:19:28 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58IB2OjR019200;
-	Thu, 18 Sep 2025 14:19:27 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 495n5mpt6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 14:19:27 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58IEJNT741419068
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 14:19:23 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B1FCB20043;
-	Thu, 18 Sep 2025 14:19:23 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6BCF320040;
-	Thu, 18 Sep 2025 14:19:23 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 18 Sep 2025 14:19:23 +0000 (GMT)
-Date: Thu, 18 Sep 2025 16:19:22 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-        Kees Cook <kees@kernel.org>,
-        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Juergen Christ <jchrist@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH v2 0/4] s390: Fix and optimize __flogr() inline assembly
-Message-ID: <c38409b1-fa4e-4fa6-94a8-51616bf1fd6a-agordeev@linux.ibm.com>
-References: <20250916134803.874580-1-hca@linux.ibm.com>
+	s=arc-20240116; t=1758205205; c=relaxed/simple;
+	bh=OWZhryAvRQtDyjeStvoQhj1ITDFDPTCq/irqjRsFVR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uC1u4VC2wDQcIvd78FCYdhjH1oarLJmtVu2nbCs77ONnimQtnirYVMKDtYjMnlpBPKaLtdvrRj5Gy5mloQS4QbBtnZRMlYjMquV/3QBdoN5eA/LD4OXB8ukvf5CJXSuo84Wi/fgdTMWQprRq1yn62I+KdwWOG+9A79GfMDZiHFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGZFAI/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6BADC4CEFA
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758205204;
+	bh=OWZhryAvRQtDyjeStvoQhj1ITDFDPTCq/irqjRsFVR8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AGZFAI/w3PnQAru63me4ay9jcaUlh2xe9SKRc+AnrbhbOSWIHnJULSpTHXF8mBdH2
+	 g1CCR4xfum6T5US/0VPAFJg9rWMbHWRhVxHwdWRD8/lTly0KGojQ7dCoAlHOa/FzxO
+	 gGAGahj1CzvbfPpzYutFt3Ll+KLdEaJ1U4/8WyjBgtsrtRQuzew+MswdAHxkqW91H0
+	 f+YEdfxz3vDTr8sBecc5GQN1oBiJPLbed4JAiRiI5tLUxpMzCguyaDqgi+1WU4RPR/
+	 wSamAdiZcSXghDtYJgSpz4sAY9J2XDizVueMNCzf8uasuTaiVDFzECHmYBGJQXg7Mc
+	 w9AU5drGotPPw==
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d6051aeafso8042967b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:20:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIm+79SKU7Y5Mxh2hh23n1m1jObKiEGbVl2md8zkL3OaGm3G5e/mw/OugS/CcaNhSS+nB+1BHnLdUAPGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMLtEz9JHnbP1BLnM7wJIjlrawBN2iHZzENeaPttSb7eVMWBY
+	YWjaJ9i3Iy5uLMngDwypU9qgkIABf5Pj1N4TEouvteknEvRrn906UbPoXLzOpMS4OGFNA8tPdwk
+	kvQYRLbDKJiW0H4/epBKNmhJKpry52+RoxNpeCmwCTQ==
+X-Google-Smtp-Source: AGHT+IHJ5VJ815IdenFpro8uYXEfzkWvkvnL+QTGV/q4zXxuxIvJR5FbvI/qS7bEiRnQ3lj33uFOCWbw2B2cpQMqPjE=
+X-Received: by 2002:a05:690c:18:b0:71f:e430:666b with SMTP id
+ 00721157ae682-73892a49056mr46759697b3.32.1758205203651; Thu, 18 Sep 2025
+ 07:20:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916134803.874580-1-hca@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6N_hs30sEL_CvWtwubb2zil0yj7Y07Oh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX6qmWAPCuYGjR
- LulzjsIPBdnSu3dK9rer8sWqsXlBsQSR3EUbqtv6eni4ana3CZDTcbqxqlAlkyJ+vs3exFoOpkO
- FuFTb57yI265e/rDDyI6ukJM2Kp4aJwWOII4rzXDamos5QqabBRcMI5xnB4hnLf0BRVojXdKiJB
- m+LEYYnlQR87xf7S3xXOE7TP9M4fDF4rD2uMk85hglFxet1ZUlz/QmCXR6QsPPN72h9nQq25pOI
- hzgxcXwAt6SoyYGE0q91VkL8yRhfZ9NCH31SvZXbBfgfSrc0wF/95UqKYHJRRxWYgQDu7R/2ksf
- y+E5IHOGVI7Cf+fZPduz/VuX6zyn24JVghUe7QynV1SnESpk5kRTlNMMxazEh1nTFNKm9f3L0MW
- hK4ZHtxC
-X-Proofpoint-GUID: eT4eKIyRBDCi3yCkmH9GexjPMpYsHkAP
-X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68cc14f0 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=9osAhOkfvIjfBw3QZZoA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_01,2025-09-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160204
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+ <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+ <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
+ <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
+ <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
+ <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+ <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
+ <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
+ <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com> <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 18 Sep 2025 07:19:52 -0700
+X-Gmail-Original-Message-ID: <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com>
+X-Gm-Features: AS18NWAMcE25uboInmnLpD0pUJ78wF8y-VpV56txG6Fyry-vKnC2XHT05OGiLaE
+Message-ID: <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Barry Song <21cnbao@gmail.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025 at 03:47:59PM +0200, Heiko Carstens wrote:
-> A recent optimization of the s390 specific ffs() and ffs64()
-> implementations leads to a new compiler warning. Instead of reverting the
-> optimization address this with the rather new assume attribute, which
-> generates even better code, if supported by compilers.
-> 
-> Since the assume attribute may be useful for others as well, add the
-> __assume macro to compiler attributes, so it is kernel wide available,
-> instead of adding an s390 specific optimization.
-> 
-> Heiko Carstens (4):
->   s390/bitops: Limit return value range of __flogr()
->   compiler_types: Add __assume macro
->   s390/bitops: Use __assume() for __flogr() inline assembly return value
->   s390/bitops: Cleanup __flogr()
-> 
->  arch/s390/include/asm/bitops.h | 21 ++++++++++++++-------
->  include/linux/compiler_types.h | 23 +++++++++++++++++++++++
->  init/Kconfig                   | 10 ++++++++++
->  3 files changed, 47 insertions(+), 7 deletions(-)
+On Thu, Sep 18, 2025 at 1:59=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Thu, Sep 18, 2025 at 3:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrot=
+e:
+> >
+> > Hi Barry,
+> >
+> > How about this:
+> >
+> > A swap table stores one cluster worth of swap cache values, which is
+> > exactly one page table page on most morden 64 bit systems. This is not
+> > coincidental because the cluster size is determined by the huge page si=
+ze.
+>
+> I=E2=80=99d phrase it as =E2=80=9CPMD huge page,=E2=80=9D since we also h=
+ave =E2=80=9CPUD huge page.=E2=80=9D
 
-Applied, thanks!
+Good point. Will do.
+
+>
+> > The swap table is holding an array of pointers, which have the same
+> > size as the PTE. The size of the swap table should match the page table
+> > page.
+> >
+>
+> I=E2=80=99m not entirely sure what you mean by =E2=80=9Cpage table page.=
+=E2=80=9D
+
+The page that gets pointed by the page table, or the page that holds the PT=
+E.
+
+> My understanding is that you=E2=80=99re saying:
+> The swap table contains an array of pointers, each the same size as a PTE=
+,
+> so its total size typically matches a PTE page table=E2=80=94one page on =
+modern
+> 64-bit systems.
+
+That sounds good. Thanks for the suggestion.
+I take your suggestion with some small modifications, mostly to
+clarify the total size is the total size of one cluster of swap
+tables. The total size of all swap tables in a swap file is much
+bigger.
+
+How about this:
+
+A swap table is an array of pointers. Each pointer is the same size as a PT=
+E.
+The size of a swap table for one swap cluster typically matches a PTE
+page table,
+which is one page on modern 64-bit systems.
+
+Chris
 
