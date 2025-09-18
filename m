@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-821813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B039B82596
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:11:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29FB0B825A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A80283B2322
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDFDA3B0F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4861D2D023;
-	Thu, 18 Sep 2025 00:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487BF42A8C;
+	Thu, 18 Sep 2025 00:14:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyJdYQkk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSfvdykW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C98410E9;
-	Thu, 18 Sep 2025 00:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA3610E9;
+	Thu, 18 Sep 2025 00:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758154252; cv=none; b=VtnET6PJTNdtq0klXL7GbL7dOs6XAb3IayoOAklrk9WMix+0kwIQaPLegsTjX3WJQKz9y7X7lupwkzEA1gO3NkrJUpPvIOOpBRKAi5acSxN/eQGk4VWqebYYzE4pMCbg+wbSsjosL+ySqiPqN6J/Kw5vMcO3CNbvz2lHgs9iefU=
+	t=1758154440; cv=none; b=jDXCGYq/EWyXwmwHUfcSEWwPb7qTU+gx/uZHV23AS8ynb0vVDssMx7ACNw+UIS5H2JTnotrKJqVZN/NN39a0+UZV54W8k+z/mDPXiLkzPI3g9NhAvFPPeG+uqK0T0HbH0v6Wipk46Mi3CyPkDM2y7cux7vjhAscJNkqNSqp7jNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758154252; c=relaxed/simple;
-	bh=8mtrXdMjzuzHAbOpsanLGbWf7gnLc5D1Foi3/VnOcgM=;
+	s=arc-20240116; t=1758154440; c=relaxed/simple;
+	bh=hTr6J9VDHbXPhtYR1LDytW4f3i4cGpxo4JbO2JkTn5A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RXCUwiY/VpSSKrGsVOf9wmInnyYDFWlBRxSGAvKl6Y15DcUgB/1xxPjaDmb6ou/UbUsdjbLh4FlnL26FkFxnHmRQY3WMijWWBTeodBk80sxetOdlivZhV/nj9f/oUuaPquMufS2wa2p1GS3Y23Fr3kPB6vTT8Tp8Y62OSF+5RFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyJdYQkk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C556CC4CEE7;
-	Thu, 18 Sep 2025 00:10:47 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OsoCBtdc1iRxv8pX1FYrZzPIjqTcBSC58WH/hM54BPvvJP0C58+rq6KvUCrIK8g624vHRArQiU4GZhWnFRvyWg0Ru0gYQBdBzBwH8XPhJT7c8wXZqwwc3a0E03L8W8+utX7C8Y6AvhTCT5rq14YQtITSDH6fbfQsfpFmNj9Fl1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nSfvdykW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFBFFC4CEE7;
+	Thu, 18 Sep 2025 00:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758154252;
-	bh=8mtrXdMjzuzHAbOpsanLGbWf7gnLc5D1Foi3/VnOcgM=;
+	s=k20201202; t=1758154440;
+	bh=hTr6J9VDHbXPhtYR1LDytW4f3i4cGpxo4JbO2JkTn5A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OyJdYQkkFpHHEcM9nT6ur2S750w/3F2tqMonFEN576RIpuDdF180SobzO6c01xrAG
-	 5mTH7Bhinw/iqB4GxWe6fzkRy+b3A0pY9rRC6BFmmTeJgmR2IVLSGt/S/LoPv6A5hQ
-	 yFvYrMINAcPLCaBYCtaEIUk/y9s5skLO2xJqPa7SBDUDFvDbcYxWOOcg+kLK0CoFbv
-	 sGjJW6y72/Xrylr8p+PCJMBXtHFVGD1RN7/xvXcOz1i2H3o6JA1K810vPe3UhqPTkD
-	 zLSmoqhLwH5kNdxo8+UQ7Pzh4SbJpJ/RqwBv8ciIFpNJQ9xIuuOBHQ7riYj8pp/J72
-	 aQdzs3S5D+kHw==
-Message-ID: <7585233a-a41d-45b0-b009-58b9dfb9a828@kernel.org>
-Date: Thu, 18 Sep 2025 09:10:46 +0900
+	b=nSfvdykW/QAagDbiqu+Jm+EIagRmz+5tOLyORVZH/4cVIex98I1WhXOaP/q4VuJZB
+	 /gZkXEjrouGFqrikMU81RrLmZq17xAameEOH50leGJ2SFEtnjzHA+puOG6oH65tg61
+	 EnhuBYIuNbuU4C8yXQNI+lsiKW6zgVwed8PWszlAq/HsYRI+k+byUAWSRRAwsb0Zw/
+	 Jm1jGaPesKjTF5dZweeMHoq73JFwmtxcBpYkbcYv8Ah/VRYPVIYIUW1HHIoOnmj3py
+	 jcZyZosunQ4HWZJpO8VD7aBELWXoh4UJc8GK8FWVR89UEAy9B6XjEQomY54yfHB0Ma
+	 Vs27wqAwxSxEg==
+Message-ID: <69ac620e-9f2c-4e46-ac93-59fc1b9829ba@kernel.org>
+Date: Thu, 18 Sep 2025 09:13:56 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V13 6/6] dt-bindings: riscv: Add Svrsw60t59b extension
- description
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>,
- Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250917033703.1695933-1-zhangchunyan@iscas.ac.cn>
- <20250917033703.1695933-7-zhangchunyan@iscas.ac.cn>
+Subject: Re: [PATCH v3 5/7] dt-bindings: serial: samsung: Add Exynos990 UART
+ compatible
+To: Denzeel Oliva <wachiturroxd150@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Andi Shyti <andi.shyti@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-i2c@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250917-perics-add-usinodes-v3-0-a3629e4666ef@gmail.com>
+ <20250917-perics-add-usinodes-v3-5-a3629e4666ef@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,39 +108,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250917033703.1695933-7-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <20250917-perics-add-usinodes-v3-5-a3629e4666ef@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 17/09/2025 12:37, Chunyan Zhang wrote:
-> Add description for the Svrsw60t59b extension (PTE Reserved for SW
-> bits 60:59) extension which was ratified recently in
-> riscv-non-isa/riscv-iommu.
+On 18/09/2025 06:04, Denzeel Oliva wrote:
+> Add samsung,exynos990-uart compatible string to the Samsung UART bindings.
 > 
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> Signed-off-by: Denzeel Oliva <wachiturroxd150@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+This should not be part of this patchset.
 
 Best regards,
 Krzysztof
