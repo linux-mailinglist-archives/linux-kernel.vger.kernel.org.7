@@ -1,120 +1,122 @@
-Return-Path: <linux-kernel+bounces-822523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFA3B8411D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:26:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84AA2B84114
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D60AA3A342E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BA2178795
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D522C302175;
-	Thu, 18 Sep 2025 10:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192311B394F;
+	Thu, 18 Sep 2025 10:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EP4ueUHN"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cvmtbncS"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3A12F90CE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD928750B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190932; cv=none; b=inQArjPleM0LocYJ4Q+IZp8h8+DlsdJkWOO8e6I7dQuC18z3W4xUkhMnEJ3+2uKoReCV1iK04hhVy1v00ov5u2UBkHnQFve4zseBZAdBTaiOYTQrvtCYbaTSBVNPEh0g5ieTpdUrvMi5tlfbuZg22KKUEosgYdkriBTpzM+rc5g=
+	t=1758191105; cv=none; b=e+7AVj0u9ICclT9nfXapIczqmAyBHKHEGpb7JonSyiim76+Q0FHJVUDQRASfzblnh1UPynOGEYPxK0BCVlNv+PoEq2vhj5f0bHYbehpPWeR3wW0PFjokO+kcsefRRZywrY4EoylfQk/ucQv3O4VtP4AVQnGlPgcz8KjRbh5Gb0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758190932; c=relaxed/simple;
-	bh=kDKD1DqAkYu+mVcTWSvMzfvsQwzK9VBXEe95QXgpNXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9EZtUugeVPoVW97RGsrQmIpb4f3iH5TIcLw9nFvnfSRDCmJ6Y1PwOE717Noq6Ob093W2lmqokfZHX0oG0nUpOv6PcbLb9/v6MOuzRI+0uRQrO7idEm4XKtI7QKPriuL+T2Vt49vIPF3sESCTzLojgQ6gFwEPRPsIU4vLb+GhYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EP4ueUHN; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JGSKMad2e49ENOnKr0+ijqZM75TslQ66m4Ye2rlmscI=; b=EP4ueUHNveUWsZ12n3lWGHx1a8
-	8qMB7VtnQ9/Li1B3HNtB92q8tfgyWRmeYnipDn6WxQp+1ph2MguJAlq9ssFbO0k3elv7vHtGlj9Lx
-	yFRhIhHnRJ+5C2qqLdNhQg1j/IqU0PQJk6j7iUbTZkGGSKWzUaUbuVYjX971qSbsdoTCTgMUriEhi
-	/mrxFDicJDZX5zz/eG5d8t83r7jdFYJhOvQ/xMWsrDQc0EqxmnCLD5wq1yY7XgWtQK75Enz74TgeZ
-	gvdkZNqWSiuf2+mqdr9dvA2pl7cRSnlaQZXUgVJq1l6KOoAMC7aPaKz+CpsaNK58He6RiFKbybc4g
-	nZiR2mmw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uzBm4-00000007ad2-3GA1;
-	Thu, 18 Sep 2025 10:22:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8431E300566; Thu, 18 Sep 2025 12:21:59 +0200 (CEST)
-Date: Thu, 18 Sep 2025 12:21:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Fernand Sieber <sieberf@amazon.com>
-Cc: bsegall@google.com, dietmar.eggemann@arm.com, dwmw@amazon.co.uk,
-	graf@amazon.com, jschoenh@amazon.de, juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org, mingo@redhat.com,
-	tanghui20@huawei.com, vincent.guittot@linaro.org,
-	vineethr@linux.ibm.com, wangtao554@huawei.com,
-	zhangqiao22@huawei.com
-Subject: Re: [PATCH v2] sched/fair: Forfeit vruntime on yield
-Message-ID: <20250918102159.GH1386988@noisy.programming.kicks-ass.net>
-References: <20250916140228.452231-1-sieberf@amazon.com>
- <20250916160036.584174-1-sieberf@amazon.com>
- <20250918064300.GV3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1758191105; c=relaxed/simple;
+	bh=kOvm+FSRDMqrfRGWXwZTtgcmHLHOo9umbhIA218JDrg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HzkwwiVM3Mgck+8guF5gN8gc9BEp5Igsh7orYXbpD+tAiEdymZwCQ9ucj8wTokpo/WE/7NWxr1/R+MnU9LFwD6fetVlatNV50/baUuB9fphm/O9juOPW+nJlWxF2u0ZNygeAoF3NWI7Z/ALgDnI2KSMYGWy5ERivBOJeD/+ncrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cvmtbncS; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e98c5adbbeso481821f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758191102; x=1758795902; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kOvm+FSRDMqrfRGWXwZTtgcmHLHOo9umbhIA218JDrg=;
+        b=cvmtbncS4faW81Kst2F7UfgR/toi8Ef6z9b5bnLyxhpnScrKMWonjnsDVG6xDQq2t4
+         birFdasZXFjQgGnv0YDBiz2HrGCt8+yWq+ewegyJSRsMp/Cp5ztrfi/GJYPhWX5njIcO
+         gPU4l/+k4fKO3pnDdv2CwgmeOW76QiVXSlIyr7/RoB46+qjtZBnOsTsK/bOUVJc+DZaA
+         G8WWNtiJFZfkmoX1zPR6k8z1g7wlRfQkVNkJHXf/Zvux+ZcqOPPbyPiRsQx4FPRs52ba
+         9oYHS4K2doEIjH8ujdJy9tvL+2JpuavbZH4Yn75Ia1FOAvm0m0bojra+5q3FPUaRSfTy
+         tHlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758191102; x=1758795902;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kOvm+FSRDMqrfRGWXwZTtgcmHLHOo9umbhIA218JDrg=;
+        b=o3XzdnrLDfUJrD0nCDlerBISLGh7dn/X9FvpQylnTTJ1mc2Nm9rADZXci5d9LLRBjT
+         EqPNCWrpIHVx9LQIrdtEsEsgOFAiz3wqOTMa4+5NOTyYnje0c3sbDu9tgXg2CpmyovdZ
+         Naa2q2DZIKJmU3SMaNv1QNWhmpR9k8Ers1JrtJEtVkEX6KTwyeIFZDadq/45JlH3hjml
+         pea4+KC0Re25ZyyO7R1/Y5vmjhblwbAg2OLEUcpYAsMVpvBcPcV5pAI+1X+NSHzRDu5J
+         hoYeVOcwPuckEFowjkrqEsuZSIB3pioFuE3szMPtvJRTG7u0KE+qAcIzPNjEy8/DLJH6
+         Qzqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkAslURUhiGmEm07Y0YqB+1q/JqnzC6vq+MWVkF6TCMkXQzCHqYAm9EXRC8770Y226KWkyxZaUUIw6QqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh9XRke4M8J+roo35l+H9kjjJPGwkW7E92i5zuKTj/IYXkDbym
+	EMgfnSW5HY+vLQWbuDL794ZM9pVQPYDuLFquQCFwaHA52UMFP5WTlf0X
+X-Gm-Gg: ASbGncuAkSEyoW/LH84SMuvQw4pBVLAqt03ujylfQysm043gwVgQD+ifKkvz9quvCSE
+	uHM5YKD3GozaddGiX62NjuSw3Z5nXa54IeJx5lVPllRyOB0yQWZfBVKSQ1DIrrnoW/25Ca4iUJ4
+	rZWSko9giY4rhF8wtixmBw7y6uXWxKruCCiEVrOOI3kW7ul5YMiM/h06wkh3Jp982kBnCmXvb67
+	121WZpVt7nDk3a4np1ZeHRCCBVcZ930vUiSBtlqgo1JfdHmK6c1be5vpUy3KevCaj4WUcc7R/Fg
+	pENUyRqzkHbMZTId3+G78f/FBFzQPZvENSjXdUXyjVsPujDYssJx3gX5JbudSlam+6zNErwBqdK
+	bKQF5yGvH/hv8rfNNwYASeWY55VIoCYz3qIWSfGH81NOkiUb0tD/2WQ/K3vr4
+X-Google-Smtp-Source: AGHT+IE89bqEquEMvnJ2bVfT2RyzTCxqXtWFe3MTLksbWjUhUBkk1SNeRoutV4BeFiYIHxO9vGiHdg==
+X-Received: by 2002:a05:6000:40cb:b0:3ee:1461:1659 with SMTP id ffacd0b85a97d-3ee146119c6mr658186f8f.31.1758191101614;
+        Thu, 18 Sep 2025 03:25:01 -0700 (PDT)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbf0a4fsm2962807f8f.52.2025.09.18.03.25.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 03:25:01 -0700 (PDT)
+Message-ID: <f2eb2424e4b3fc787d1f20b17852e97b1a708cc8.camel@gmail.com>
+Subject: Re: [PATCH 0/2] iio: adc: ad7124: drop nr field
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Michael Hennerich
+	 <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 18 Sep 2025 11:25:27 +0100
+In-Reply-To: <20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
+References: 
+	<20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918064300.GV3419281@noisy.programming.kicks-ass.net>
 
-On Thu, Sep 18, 2025 at 08:43:00AM +0200, Peter Zijlstra wrote:
-> On Tue, Sep 16, 2025 at 06:00:35PM +0200, Fernand Sieber wrote:
-> > After further testing I think we should stick with the original approach or
-> > iterate on the vruntime forfeiting.
-> > 
-> > The vruntime forfeiting doesn't work well with core scheduling. The core
-> > scheduler picks the best task across the SMT mask, and then the siblings run a
-> > matching task no matter what. This means the core scheduler can keep picking
-> > the yielding task on the sibling even after it becomes ineligible (because it's
-> > preferrable than force idle). In this scenario the vruntime of the yielding
-> > task runs away rapidly, which causes problematic imbalances later on.
-> > 
-> > Perhaps an alternative is to forfeit the vruntime (set it to the deadline), but
-> > only once. I.e don't do it if the task is already ineligible? If the task is
-> > ineligible then we simply increment the deadline as in my original patch?
-> > 
-> > Peter, let me know your thoughts on this.
-> 
-> Sorry, I missed this email earlier. I'll go ponder it a bit -- my brain
-> is esp. slow today due to a cold :/
+On Wed, 2025-09-17 at 15:39 -0500, David Lechner wrote:
+> The motivation behind this series was to remove the `nr` field in struct
+> ad7124_channel since it is duplicating the same value as struct
+> iio_chan_spec.address (and duplicated again by .scan_index).
+>=20
+> When it came to actually doing that though, I found that it was easier
+> to first clean things up by removing the ad7124_enable_channel()
+> function - which is a nice cleanup by itself. So ended up with 2 patches
+> that end with the same result without ever mentioning the duplication.
+>=20
+> ---
+> David Lechner (2):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7124: inline ad7124_enable_cha=
+nnel()
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7124: remove unused `nr` field
+>=20
+> =C2=A0drivers/iio/adc/ad7124.c | 19 ++++++-------------
+> =C2=A01 file changed, 6 insertions(+), 13 deletions(-)
+> ---
+> base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
+> change-id: 20250917-iio-adc-ad7124-drop-nr-field-518102218a61
+>=20
+> Best regards,
 
-Right; so you're saying something like the below, right?
-
-Yeah, I suppose we can do that; please write a coherent comment on it
-though, so we can remember why, later on.
-
----
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5c94caa93085..e75abf3c256d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -9012,8 +9012,13 @@ static void yield_task_fair(struct rq *rq)
- 	 */
- 	rq_clock_skip_update(rq);
- 
--	se->vruntime = se->deadline;
--	se->deadline += calc_delta_fair(se->slice, se);
-+	/*
-+	 * comment...
-+	 */
-+	if (entity_eligible(cfs_rq, se)) {
-+		se->vruntime = se->deadline;
-+		se->deadline += calc_delta_fair(se->slice, se);
-+	}
- }
- 
- static bool yield_to_task_fair(struct rq *rq, struct task_struct *p)
+Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
 
