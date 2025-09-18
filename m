@@ -1,222 +1,120 @@
-Return-Path: <linux-kernel+bounces-822563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67B3B84235
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:37:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD61B8423B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CED3161DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:36:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4258B1627B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C0C288CA6;
-	Thu, 18 Sep 2025 10:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ergZYfav"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB896248873;
-	Thu, 18 Sep 2025 10:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7784927FD48;
+	Thu, 18 Sep 2025 10:36:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0D22628C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758191790; cv=none; b=eQYSPXnLIL3m1soRciMnknQiOj3mrFklS8BJXWedId3k2lsrjwAuMbKHJCjw4UhQMDww/+8D5mObnVn+EBdOqhWKikPies4wk/kePnbB1jbdkYHOpsQaXiay+7MUdpyLyBmaU/Bp0gEN5DImARuFLZXhfDrGWiOQP4V+mML4Me0=
+	t=1758191812; cv=none; b=MkPfnf2Vmfb4WpOg9YNsy43eN6CHjjQqPzZGeGq1QmesSNE9orAUvuns+mZCZe5BLG6Bx1DMc0L2OQ4p46t8+VVp7ZK4IZJ8hqYrIUBwhEq4RhMLpZ6qzN02H4zM3qFR8YPrF/MMK3BnvZ7O9w5D7/4MCbqYqOJQzTR0fXS0xTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758191790; c=relaxed/simple;
-	bh=cKSTVhSvmb5YUS3u1Y6cdzoo5orOzVA1+59PDgLYgYg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D38URSb5tAvBs+1d1L3UBQllac2W4Y5wBBZPDqJtEaCOCkO1Ncr5/YAMuc8W2VHUt47hekGCKITQ/pRGk60+H5+LbGfhecvp3nIlFsXAPsa6Eup+A0IXWwGWUKHLoHY2+AnAPB/oyI24FmqhTcRLdfMAHtY8cy508NQReLwBfQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ergZYfav; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D0E1C4CEE7;
-	Thu, 18 Sep 2025 10:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758191789;
-	bh=cKSTVhSvmb5YUS3u1Y6cdzoo5orOzVA1+59PDgLYgYg=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=ergZYfavH31ZqhCSiUoSaQZh1UpMWKj9Kn6YB3Cpman7AtMAbgv7jT1B7DA/V0R9+
-	 wKEq6gk52QRCpX+bXAuemhqcrJHqjWAMrvNmQGMs5D70DH6IWoYDCf5JLi8Ap9JpRe
-	 /6qS+wI6DujtJO0sN4OM6RJVRHStYPME21+BFj85m1jjOCepRO4KDFavNMQzlTpaCH
-	 +M+nFXImmY8Dvd23k3e1QoOQZ+ZpDOtG/l65ib4vI4Bu1CjLTJfp/YXdEt/D4AsTB5
-	 S7uR5YlTuOeQTzxhVEzIeGReDyMTmc1qvhVzAkpZAQuxGySw2TLnc48MXykgzLyeyZ
-	 9eVHiQdDQSC2A==
-Message-ID: <56a6a3b8-bee4-46db-af15-8312067e28db@kernel.org>
-Date: Thu, 18 Sep 2025 11:36:25 +0100
+	s=arc-20240116; t=1758191812; c=relaxed/simple;
+	bh=Xyj/YlO6tdAphJTcqYcM0jEInHXKTptvdq5xmiXsHnQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gNfzL4yHYurYn/MG4r1Oc7fpXUazGODcaUB33uzOt87Z7NH5BHYOrHEIDAxs5YCTyhPuOYKi4XA8mr+8IQrAWou1HrGWdlm3aqUNxaKUtTswmN33bxzXFZMTzhym9Esz/8akg1Qe+Aj7uTvceP0L6oSz6oCEDMQm8tXehCiraeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 073451A25;
+	Thu, 18 Sep 2025 03:36:40 -0700 (PDT)
+Received: from MacBook-Pro.blr.arm.com (MacBook-Pro.blr.arm.com [10.164.18.52])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F1A4A3F673;
+	Thu, 18 Sep 2025 03:36:44 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: anshuman.khandual@arm.com,
+	wangkefeng.wang@huawei.com,
+	ryan.roberts@arm.com,
+	baohua@kernel.org,
+	pjaroszynski@nvidia.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH] arm64/mm: Elide TLB flush in certain pte protection transitions
+Date: Thu, 18 Sep 2025 16:06:38 +0530
+Message-Id: <20250918103638.77282-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: venus: pm_helpers: add fallback for the
- opp-table
-From: Bryan O'Donoghue <bod@kernel.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>, quic_qiweil@quicinc.com,
- quic_wangaow@quicinc.com, Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250724-fallback_of_opp_table-v2-1-2fc61f2407dc@quicinc.com>
- <6dc33f02-6691-4ad8-b04f-423e4e5caea8@linaro.org>
- <b19ff26f-7dc7-4022-aec7-49922ab521cf@quicinc.com>
- <b4e25dd2-caf3-48f0-8e1b-622f3db1b7ca@quicinc.com>
- <a59ccd01-1482-4091-957f-740840ff5112@linaro.org>
-Content-Language: en-US
-In-Reply-To: <a59ccd01-1482-4091-957f-740840ff5112@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 18/09/2025 11:33, Bryan O'Donoghue wrote:
-> On 18/09/2025 11:21, Renjiang Han wrote:
->>
->> On 9/4/2025 11:33 AM, Renjiang Han wrote:
->>>
->>> On 7/28/2025 11:20 PM, Bryan O'Donoghue wrote:
->>>> On 24/07/2025 08:53, Renjiang Han wrote:
->>>>> Since the device trees for both HFI_VERSION_1XX and HFI_VERSION_3XX
->>>>> do not include an opp-table and have not configured opp-pmdomain, they
->>>>> still need to use the frequencies defined in the driver's freq_tbl.
->>>>>
->>>>> Both core_power_v1 and core_power_v4 functions require 
->>>>> core_clks_enable
->>>>> function during POWER_ON. Therefore, in the core_clks_enable function,
->>>>> if calling dev_pm_opp_find_freq_ceil to obtain the frequency fails,
->>>>> it needs to fall back to the freq_tbl to retrieve the frequency.
->>>>>
->>>>> Fixes: b179234b5e59 ("media: venus: pm_helpers: use opp-table for 
->>>>> the frequency")
->>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
->>>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>>> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
->>>>> ---
->>>>> Since device trees for both HFI_VERSION_1XX and HFI_VERSION_3XX do not
->>>>> contain an opp-table and have not configured opp-pmdomain, they still
->>>>> need to use the frequencies defined in the driver's freq_tbl.
->>>>>
->>>>> Therefore, if calling dev_pm_opp_find_freq_ceil to obtain the 
->>>>> frequency
->>>>> fails in the core_clks_enable, it needs to fall back to the 
->>>>> freq_tbl to
->>>>> retrieve the frequency.
->>>>>
->>>>> Validated this series on QCS615 and msm8916.
->>>>> ---
->>>>> Changes in v2:
->>>>> - 1. Update the returned error value as per the feedback.
->>>>> - Link to v1: https://lore.kernel.org/r/20250723- 
->>>>> fallback_of_opp_table-v1-1-20a6277fdded@quicinc.com
->>>>> ---
->>>>>   drivers/media/platform/qcom/venus/pm_helpers.c | 11 ++++++++++-
->>>>>   1 file changed, 10 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/ 
->>>>> drivers/media/platform/qcom/venus/pm_helpers.c
->>>>> index 
->>>>> 8dd5a9b0d060cddfeafd4da477ade0c7aeb6c390..77c12273dbb9505244e260fc8fa635e4fe045236 100644
->>>>> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
->>>>> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
->>>>> @@ -40,6 +40,8 @@ static int core_clks_get(struct venus_core *core)
->>>>>     static int core_clks_enable(struct venus_core *core)
->>>>>   {
->>>>> +    const struct freq_tbl *freq_tbl = core->res->freq_tbl;
->>>>> +    unsigned int freq_tbl_size = core->res->freq_tbl_size;
->>>>>       const struct venus_resources *res = core->res;
->>>>>       struct device *dev = core->dev;
->>>>>       unsigned long freq = 0;
->>>>> @@ -48,7 +50,14 @@ static int core_clks_enable(struct venus_core 
->>>>> *core)
->>>>>       int ret;
->>>>>         opp = dev_pm_opp_find_freq_ceil(dev, &freq);
->>>>> -    dev_pm_opp_put(opp);
->>>>> +    if (IS_ERR(opp)) {
->>>>> +        if (!freq_tbl)
->>>>> +            return -ENODEV;
->>>>> +        freq = freq_tbl[freq_tbl_size - 1].freq;
->>>>> +    } else {
->>>>> +        dev_pm_opp_put(opp);
->>>>> +    }
->>>>> +
->>>>>         for (i = 0; i < res->clks_num; i++) {
->>>>>           if (IS_V6(core)) {
->>>>>
->>>>> ---
->>>>> base-commit: d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
->>>>> change-id: 20250721-fallback_of_opp_table-4ea39376f617
->>>>>
->>>>> Best regards,
->>>>
->>>> Note to self add a
->>>>
->>>> Closes: 
->>>> CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com
->>> Thanks for helping review this patch. But I'm sorry, may I ask how to
->>> understand this comment?
->>>
->>> This patch has not been picked yet.Is there anything else I need to do?
->> I’d appreciate any thoughts you might have on this.
->>>>
->>>>
->>>> ---
->>>> bod
->>>
-> 
-> Marked as "Not applicable" on media-ci patchwork - you should have 
-> received an email about that.
-> 
-> * 7881cd6886a89 - media: venus: Fix OPP table error handling (6 weeks ago)
-> * b179234b5e590 - media: venus: pm_helpers: use opp-table for the 
-> frequency (3 months ago)
-> * 14423fc3a4a21 - media: venus: pm_helpers: add compatibility for 
-> dev_pm_genpd_set_hwmode on V4 (5 months ago)
-> 
-> git checkout -b linux-next/master-25-09-18 linux-next/master
-> Updating files: 100% (10211/10211), done.
-> branch 'linux-next/master-25-09-18' set up to track 'linux-next/master'.
-> 
-> b4 shazam b4e25dd2-caf3-48f0-8e1b-622f3db1b7ca@quicinc.com
-> Grabbing thread from lore.kernel.org/all/b4e25dd2- 
-> caf3-48f0-8e1b-622f3db1b7ca@quicinc.com/t.mbox.gz
-> Checking for newer revisions
-> Grabbing search results from lore.kernel.org
-> Analyzing 5 messages in the thread
-> Looking for additional code-review trailers on lore.kernel.org
-> Analyzing 0 code-review messages
-> Checking attestation on all messages, may take a moment...
-> ---
->    ✓ [PATCH v2] media: venus: pm_helpers: add fallback for the opp-table
->      + Closes: 
-> CA+G9fYu5=3n84VY+vTbCAcfFKOq7Us5vgBZgpypY4MveM=eVwg@mail.gmail.com (✗ 
-> DKIM/linaro.org)
->      + Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com> (✓ DKIM/ 
-> quicinc.com)
->    ---
->    ✗ No key: ed25519/quic_renjiang@quicinc.com
->    ✓ Signed: DKIM/quicinc.com
-> ---
-> Total patches: 1
-> ---
->   Base: using specified base-commit 
-> d086c886ceb9f59dea6c3a9dae7eb89e780a20c9
-> Applying: media: venus: pm_helpers: add fallback for the opp-table
-> Patch failed at 0001 media: venus: pm_helpers: add fallback for the opp- 
-> table
-> error: patch failed: drivers/media/platform/qcom/venus/pm_helpers.c:48
-> error: drivers/media/platform/qcom/venus/pm_helpers.c: patch does not apply
-> hint: Use 'git am --show-current-patch=diff' to see the failed patch
-> hint: When you have resolved this problem, run "git am --continue".
-> hint: If you prefer to skip this patch, run "git am --skip" instead.
-> hint: To restore the original branch and stop patching, run "git am -- 
-> abort".
-> hint: Disable this message with "git config set advice.mergeConflict false"
-> 
-> ---
-> bod
+Currently arm64 does an unconditional TLB flush in mprotect(). This is not
+required for some cases, for example, when changing from PROT_NONE to
+PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
+growing into the non-main heaps), and unsetting uffd-wp in a range.
 
-"Not Applicable" -> "Changes Requested"
+Therefore, implement pte_needs_flush() for arm64, which is already
+implemented by some other arches as well.
 
+Running a userspace program changing permissions back and forth between
+PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
+for the none->rw transition, I get a reduction from 3.2 microseconds to
+2.95 microseconds, giving an 8.5% improvement.
+
+Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
-bod
+mm-selftests pass. Based on 6.17-rc6.
+
+ arch/arm64/include/asm/tlbflush.h | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index 18a5dc0c9a54..4a566d589100 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -524,6 +524,35 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
+ {
+ 	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
+ }
++
++static inline bool __pte_flags_need_flush(pteval_t oldval, pteval_t newval)
++{
++	pteval_t diff = oldval ^ newval;
++
++	/* invalid to valid transition requires no flush */
++	if (!(oldval & PTE_VALID) || (oldval & PTE_PRESENT_INVALID))
++		return false;
++
++	/* Transition in the SW bits and access flag requires no flush */
++	diff &= ~(PTE_SWBITS_MASK | PTE_AF);
++
++	if (!diff)
++		return false;
++	return true;
++}
++
++static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
++{
++	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
++}
++#define pte_needs_flush pte_needs_flush
++
++static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
++{
++	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
++}
++#define huge_pmd_needs_flush huge_pmd_needs_flush
++
+ #endif
+ 
+ #endif
+-- 
+2.30.2
+
 
