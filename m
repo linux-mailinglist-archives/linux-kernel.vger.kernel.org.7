@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-823753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802FCB87601
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:27:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE14B8760D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6811C865FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:27:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B0C7B4DEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BE02D063D;
-	Thu, 18 Sep 2025 23:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C40E32252B;
+	Thu, 18 Sep 2025 23:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JQM1e73s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="luLgGnIx"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B7331E8AD;
-	Thu, 18 Sep 2025 23:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAA43203A3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758237794; cv=none; b=lyT9hf3op0MrAMdKI/smJ04PdtbSP22Lg4VTBBnaEhtWhOinWMZXgRmSrqe7CuTTMzq94m2hDgZOumsHDtMz6Yv7vsT9il4dhavhDPXDTFrLAiJptN5RTct+rr4xDeOEOXKrOs+/MfHBNIHAjvz8m7C94xgU7GW1ImLecBSo9t0=
+	t=1758237794; cv=none; b=T7RUmeIuz9wJbtqZWYSc2Fqlp7xT4ia6WNtGjKwdmgIHg9D0hJPCEovetYUIFhupC9U2Ais0u0z/6TogNHT2N3r5VDqjPV2b8mtkew93+VpPCHzWIGhWKINdgmsq0s7xvMGOUq48W0gvVyFGLauJ++/7Ndsi3CiXUWhcGB6zmLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758237794; c=relaxed/simple;
-	bh=x1kfSJSD+ZsZVDmROQy13II+aAyWoHke/JipsQ6+0Tw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p0VkOKCEemUbLBeov3GgRZkQg4+RUlqu7vov04Lw/Xe/bpqYOJ4yCkx1LcQkgimJ7nHYkqBR9GAHBc2eGhK6yUBTxIuNrZpqEyvd5R6nNn9BaaHGE1mvTZvt2LvVthmkqYZNUj1Sh6C4QFzyoVHpLXT3YeYy2fTU+r14wHQPpec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JQM1e73s; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758237792; x=1789773792;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=x1kfSJSD+ZsZVDmROQy13II+aAyWoHke/JipsQ6+0Tw=;
-  b=JQM1e73snDC/8rJjPvFgem8CRzI1+g8kE3ieYbKuNsRTRbIUt4wzT/99
-   vqnhlQlNV0gWXMKTUgaqmpFwipaoEEJXcer1HZC9dnebm6COv7xEzwBYY
-   emhh7a22uXUQGirYzFXJ/aHOQoE568VjvphAvLJlM4xykgPl8yu8jh3ic
-   tJbj6Z/v8kEfnQbk0Z8/4AY+pi0cIxbbz90VKc050Y+DmGiYYDYRE+W0A
-   LUXArHI6msXZP7PkdGMZ1+awGgmiCKD6xaJaaFLiB00Pdqv5oYzhAdofj
-   s8KZDWcZ/c/M6EY2dBc9NNJYKWH+tMYQ5D9T4tBppP91+6SoJ6Cbp0IiV
-   Q==;
-X-CSE-ConnectionGUID: xiX8CaiPSQK6oKTqbg2mPA==
-X-CSE-MsgGUID: D1Fc9f7rTo6I69O5nH0pEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60735480"
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="60735480"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 16:23:08 -0700
-X-CSE-ConnectionGUID: PcYxYFTjQVqHLOTcVtY++g==
-X-CSE-MsgGUID: 7oI4sD50TVK8yQ1mWtZEjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="176491483"
-Received: from rpedgeco-desk.jf.intel.com ([10.88.27.139])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 16:23:07 -0700
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
-To: kas@kernel.org,
-	bp@alien8.de,
-	chao.gao@intel.com,
-	dave.hansen@linux.intel.com,
-	isaku.yamahata@intel.com,
-	kai.huang@intel.com,
-	kvm@vger.kernel.org,
-	linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	mingo@redhat.com,
-	pbonzini@redhat.com,
-	seanjc@google.com,
-	tglx@linutronix.de,
-	x86@kernel.org,
-	yan.y.zhao@intel.com,
-	vannapurve@google.com
-Cc: rick.p.edgecombe@intel.com,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v3 16/16] Documentation/x86: Add documentation for TDX's Dynamic PAMT
-Date: Thu, 18 Sep 2025 16:22:24 -0700
-Message-ID: <20250918232224.2202592-17-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+	bh=Ef6Rx/N5TdXrlfO8lXio1fR8SoaPImH0mD+Ap5KLFW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egCTVkb5vi9HwFtbFrvifBXf8DDyDhPlUsDjgPeLK1X+wKx6GO+5NM2ZanlrMf0vPpYGH/4EHm5pvVcPCanFkP+VPoY8IJIdRQKSPsvko10rYQd7CabOpfqGD6g+IhJGkBD0Qnsuv4+7Ashd5B4J+5ggTQDIWuMk+ftqSR2W/5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=luLgGnIx; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2570bf6058aso20052555ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758237792; x=1758842592; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cywbwc8EdUxJw4qdKc7+s9IRWS7iBCfFJYQJGElQO3Y=;
+        b=luLgGnIxBnTH88GFo1W5xRfvjAKInbTT3pyBUnJIazeftoQ+vDUmf1/L1SWp6n+SMC
+         bLgC/RsR6L93kaeQEtdHnc+ih5oOGJtVut7TkVlm0yzw2WcIAPJQYJamSfGGXqbAfLB1
+         KmcM9XFuj9dL2C/WxiD0mkUFMdMVWk3zH8v2sO0wcVK9Bpbrqx/vBJCFUitI0XjVqYrN
+         ZrFbM6PxJ+G5rF/IxbidbCEZDFLvEE+OgH/LThX2tmb6FLZ8LTIni49U/P8C2fxauMQP
+         QIWHkK/PVtGEJeI331xdvwUhiBkqhb82KnchApAR/Q9SKefYbmUX0L/d+ZDXZLXs/Lvt
+         bH8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758237792; x=1758842592;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cywbwc8EdUxJw4qdKc7+s9IRWS7iBCfFJYQJGElQO3Y=;
+        b=MvIHXPdA3aBliFWli4mzmWQh4tuNjI4owocItkjW+4Dr4k6siM8+g3VtTUy9MLiWHB
+         8MmmNSkp+qldKiiKDIiO19pd1wjD1CCEYvb/9UdsHPVgCJbFu5mBurGvy1X4dHw+mUO6
+         MF3RrZ9x3RwnLvIQDfIUUTrklDDo6A6Whr83DE4bA/wJL9jX2zwh6WqlMHb8G7Z+ZnCr
+         tTWU0USeIwOvibKobUucKnbhgjQmwhDHm066VqYX4eDbyd59ZsTmcSDkfbBVSlzf4Ei5
+         iyOycMuQsCeQbMI9El0OFel+n86CjdxkgZ956tNtKoUpl7DPJnSz2yMLjMsgi0G+IQ88
+         iUEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUxytFq5F2Ax9jnJ6UQqpBlWcPLrJhOtH5x0keAKqsxu0v8EDT0SY1TnJcuF9MH4yZ3PWMeRZHOXux0xE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKEOfwaH61jJ/8Qqg0UkdMnMOntGSoETkw00Agem6vvV2M6q7P
+	oJIUD1WLRnHj3AXqb2p3agKdXSWsROnvRj69ZdT76tqDaehsd/9d19iK
+X-Gm-Gg: ASbGnct7mLuDzj90mzkJMWwKwL2tDMFuGPEE+F1UH9cJgiAWJMDsQsZJT6IT+kcfTju
+	wbxl8pgT5I+Hhu88x+E31sTCbADgHd8bPVh6/n2tZ0HdO5G/ISzH+U0ELcOabPEhey3z9hUwVeX
+	rVGNqVABzkr9wJzhIvIi8ViD7S8zi+LYFZx2AdJyIWR/YODNmJoh2MzZ37bDgMcMUzm/traq6k4
+	oGAfZ3w9Tm41jY4pffjJ1OUNZvS49MSifOLZWF3f664vZ2wAYN2OFtcwVD3xjxGZPhozZQ9X4sU
+	w5H40QGZXWRH59P9dZdY6FvduMfSAtS0eZ/iQkrFoh+4DwM9VAT7uMYOxsE1VLOuxsGehekKjkI
+	z5F9/KXJL4bow6kiQ6obeJ3c3ick1fScUmyuO8DE9
+X-Google-Smtp-Source: AGHT+IGpNOwUTJg5vEerN1zVzVrhhiTJaIsAfQYpkwPbjiwSkLY7kk7Blhp0t2/ryk7iJPRhMy3cEQ==
+X-Received: by 2002:a17:902:d511:b0:24c:ce43:e60b with SMTP id d9443c01a7336-269ba45c0a8mr19654615ad.18.1758237792166;
+        Thu, 18 Sep 2025 16:23:12 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77e20bf07c4sm992769b3a.70.2025.09.18.16.23.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 16:23:11 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 0313E420B4E0; Fri, 19 Sep 2025 06:23:08 +0700 (WIB)
+Date: Fri, 19 Sep 2025 06:23:08 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Philipp Stanner <phasta@kernel.org>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v2] drm/sched: Extend and update documentation
+Message-ID: <aMyUXCF-Jlu3wAjt@archie.me>
+References: <20250902111209.64082-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Qhp/VLK82Ka+Yy/u"
+Content-Disposition: inline
+In-Reply-To: <20250902111209.64082-2-phasta@kernel.org>
 
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-Expand TDX documentation to include information on the Dynamic PAMT
-feature.
+--Qhp/VLK82Ka+Yy/u
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The new section explains PAMT support in the TDX module and how Dynamic
-PAMT affects the kernel memory use.
+On Tue, Sep 02, 2025 at 01:12:10PM +0200, Philipp Stanner wrote:
+> + * The GPU scheduler is shared infrastructure intended to help drivers m=
+anaging
+                          a shared infrastructure
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-[Add feedback, update log]
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
-v3:
- - Trim down docs to be about things that user cares about, instead
-   of development history and other details like this.
----
- Documentation/arch/x86/tdx.rst | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> + * command submission to their hardware.
+> <snipped>...
+> + * Job initialization is split into two stages:
+> + *   1. drm_sched_job_init() which serves for basic preparation of a job.
+> + *      Drivers don't have to be mindful of this function's consequences=
+ and
+> + *      its effects can be reverted through drm_sched_job_cleanup().
 
-diff --git a/Documentation/arch/x86/tdx.rst b/Documentation/arch/x86/tdx.rst
-index 719043cd8b46..d07132c99cc6 100644
---- a/Documentation/arch/x86/tdx.rst
-+++ b/Documentation/arch/x86/tdx.rst
-@@ -99,6 +99,27 @@ initialize::
- 
-   [..] virt/tdx: module initialization failed ...
- 
-+Dynamic PAMT
-+------------
-+
-+PAMT is memory that the TDX module needs to keep data about each page
-+(think like struct page). It needs to handed to the TDX module for its
-+exclusive use. For normal PAMT, this is installed when the TDX module
-+is first loaded and comes to about 0.4% of system memory.
-+
-+Dynamic PAMT is a TDX feature that allows VMM to allocate part of the
-+PAMT as needed (the parts for tracking 4KB size pages). The other page
-+sizes (1GB and 2MB) are still allocated statically at the time of
-+TDX module initialization. This reduces the amount of memory that TDX
-+uses while TDs are not in use.
-+
-+When Dynamic PAMT is in use, dmesg shows it like:
-+  [..] virt/tdx: Enable Dynamic PAMT
-+  [..] virt/tdx: 10092 KB allocated for PAMT
-+  [..] virt/tdx: module initialized
-+
-+Dynamic PAMT is enabled automatically if supported.
-+
- TDX Interaction to Other Kernel Components
- ------------------------------------------
- 
--- 
-2.51.0
+           ".. this function's side effects and these can be .."
 
+> + *   2. drm_sched_job_arm() which irrevokably arms a job for execution. =
+This
+
+                                     irrevocably
+
+> + *      initializes the job's fences and the job has to be submitted with
+> + *      drm_sched_entity_push_job(). Once drm_sched_job_arm() has been c=
+alled,
+> + *      the job structure has to be valid until the scheduler invoked
+> + *      drm_sched_backend_ops.free_job().
+> + *
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--Qhp/VLK82Ka+Yy/u
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMyUWAAKCRD2uYlJVVFO
+ozP1AQC87UKQORC06R0t9sItFjRkRGzZuHrMM2C41aAjbI9oCwD9GhjvSUEkZs++
+clAP/8722HiSPJona2f7L3BBaH4cGQ0=
+=kNNY
+-----END PGP SIGNATURE-----
+
+--Qhp/VLK82Ka+Yy/u--
 
