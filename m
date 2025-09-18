@@ -1,234 +1,96 @@
-Return-Path: <linux-kernel+bounces-823709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36604B87405
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:37:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21682B874A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0ED5823EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019E03A7E30
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE792F5499;
-	Thu, 18 Sep 2025 22:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5932FCC04;
+	Thu, 18 Sep 2025 22:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kX1MgsHu"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF8QR4hc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27768BEE;
-	Thu, 18 Sep 2025 22:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DBF2D7D42;
+	Thu, 18 Sep 2025 22:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758235050; cv=none; b=Nwf4DjuF+BtRFTkIVfbAIeyfzLmIA8/46+z9jCbpYKLDVLraf3occoqxEMGqvoavl+8qdheNAQwl7ldg1W6LI6Vs36ijCCCFIvkg9vOqVtiEfuEXC8wnLVRhHFVnij02UxL7NK+OkPZyA7GgRSQxPSATqPdtrx2/y8FhPcdwITs=
+	t=1758235807; cv=none; b=HKacN+7dx8XkKIzm1XO0lD+fNSFSKMSPnP9yw5DCImS3bLLRuwOED6MlRXg1YK3rWkotxJGytcS4HW8DpCCMhPu1KO6NHp5e3Te1/FjtD9S4GvkkggqERsx1TgxlDKraQF0Ysc7csS5gtRnEPpneJJmY6NCr64H+Sg9Jsl7prgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758235050; c=relaxed/simple;
-	bh=CFNp1DwRSlhPzDlZBacPlISS3GavBgP3D8OWPHMrqTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIvWujndWlW9NJLgwX3s3efEWiFm7ifTAct3ZC/LYcPe920vSpgzinWFy3fp2/S/iLYB6bFp2SkN+NnHrOqsqqMfO+jnJmmEO2g3wwzMTUNb081YaFHxyXeRJlp4fY6AlVm6NZhnchJg/H5V4V6eyRsL53ieW2goTZPtIS49vh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kX1MgsHu; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 29C489FC;
-	Fri, 19 Sep 2025 00:36:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758234965;
-	bh=CFNp1DwRSlhPzDlZBacPlISS3GavBgP3D8OWPHMrqTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kX1MgsHuiTMdxlMpsJTLrcl6+bZIagVC1+hcH0yPq7yg8lrFDS6Iegjqt7RvxoKYl
-	 7354xr0R6tcDIqcMpuyzHU6C7JxWl6p9VZB1yUtji1Ob7TaGx+e/3qqDikhOTAtIwc
-	 TUTaExBonINK7j2HJizJC+7v4cELXPqJejvsG0dI=
-Date: Fri, 19 Sep 2025 01:36:55 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Stefan Klug <stefan.klug@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: rkisp1: Improve frame sequence correctness on
- stats and params buffers
-Message-ID: <20250918223655.GA10985@pendragon.ideasonboard.com>
-References: <20250918145504.111428-2-stefan.klug@ideasonboard.com>
- <175820896821.1246375.16035780810428204673@ping.linuxembedded.co.uk>
+	s=arc-20240116; t=1758235807; c=relaxed/simple;
+	bh=zCNghe8wZK3YL9w7ahoDbq8yjun1A2bLTWOD7EnLmAQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=m1MZv2Vv8Z0VPqQqNzyDi02mBVm7usxwmEjLZVPO7awBG1tMREnpCv3o1cVYdt1a8XPW+RFeIy1hb3AZiQG+PIZnmh0paacgY8ESwUMLoYYLvve0oPNnpw/8iwRQWeieG3xxBp38grU8w5BEonBl+J/rKd6BhPVIAewY2XU9bxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF8QR4hc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59978C4CEE7;
+	Thu, 18 Sep 2025 22:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758235807;
+	bh=zCNghe8wZK3YL9w7ahoDbq8yjun1A2bLTWOD7EnLmAQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=IF8QR4hcOEt6M254wM1tRuwTm4xCQNN+IbfnaHIb/t4M2N2g7BOzBWNCkS1ppp3ZL
+	 RunUXLFkd89R6sAkIxg+hB99l2ZOKFmBY/+Ub39COHFXwi218Op1phTc1lsYlCsvWD
+	 xkqWw34eAlJLHnhWb5nv4stiRH0gZacJDvZReSgW365Mk6cdZrjcgzlIlt/BYL9GL9
+	 d1cffqXoKJ+ceOXBaWl1HdkUqM/ELXFaZpKugjo5niR56cVYhwF4hG7ycz5oud3xaI
+	 V47iM49qPzFs7PN1n6BvSt4zvg9cWtlY5NlgyGlK9jnH6a9WLJF0hToT94ypmimjKL
+	 5dURuxJuovnYw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D6239D0C20;
+	Thu, 18 Sep 2025 22:50:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <175820896821.1246375.16035780810428204673@ping.linuxembedded.co.uk>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ti: am65-cpsw: Update hw timestamping filter for
+ PTPv1
+ RX packets
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175823580725.2978091.7418472305512609467.git-patchwork-notify@kernel.org>
+Date: Thu, 18 Sep 2025 22:50:07 +0000
+References: <20250917041455.1815579-1-v-singh1@ti.com>
+In-Reply-To: <20250917041455.1815579-1-v-singh1@ti.com>
+To: vishnu singh <v-singh1@ti.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, richardcochran@gmail.com,
+ rogerq@kernel.org, horms@kernel.org, mwalle@kernel.org,
+ alexander.sverdlin@gmail.com, npitre@baylibre.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, c-vankar@ti.com
 
-On Thu, Sep 18, 2025 at 04:22:48PM +0100, Kieran Bingham wrote:
-> Quoting Stefan Klug (2025-09-18 15:54:33)
-> > On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
-> > handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
-> > and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
-> > commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
-> > debugfs var for irq delay") a warning was added for that. There are two
-> > cases where this condition can occur:
-> > 
-> > 1. The v-sync and the frame-end belong to the same frame. This means,
-> >    the irq was heavily delayed and the warning is likely appropriate.
-> > 
-> > 2. The v-sync belongs to the next frame. This can happen if the vertical
-> >    blanking between two frames is very short.
-> > 
-> > The current code always handles case 1 although case 2 is in my
-> > experience the more common case and happens in regular usage. This leads
-> > to incorrect sequence numbers on stats and params buffers which in turn
-> > breaks the regulation in user space. Fix that by adding a frame_active
-> > flag to distinguish between these cases and handle the start of frame
-> > either at the beginning or at the end of the rkisp1_isp_isr().
-> > 
-> > Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
-> > 
-> > ---
-> > 
-> > Hi all,
-> > 
-> > Here is an updated version of the patch with some fixes from the review.
-> > 
-> > Changes in v2:
-> > - Removed test for !frame_active in second v_start handler
-> > - Improved comments
-> > 
-> > Best regards,
-> > Stefan
-> > 
-> > ---
-> >  .../platform/rockchip/rkisp1/rkisp1-common.h  |  1 +
-> >  .../platform/rockchip/rkisp1/rkisp1-isp.c     | 27 +++++++++++++++----
-> >  2 files changed, 23 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> > index ca952fd0829b..adf23416de9a 100644
-> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
-> > @@ -222,6 +222,7 @@ struct rkisp1_isp {
-> >         struct media_pad pads[RKISP1_ISP_PAD_MAX];
-> >         const struct rkisp1_mbus_info *sink_fmt;
-> >         __u32 frame_sequence;
-> > +       bool frame_active;
-> >  };
-> >  
-> >  /*
-> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> > index 8c29a1c9309a..2e49764d6262 100644
-> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
-> > @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd, int enable)
-> >         }
-> >  
-> >         isp->frame_sequence = -1;
-> > +       isp->frame_active = false;
-> >  
-> >         sd_state = v4l2_subdev_lock_and_get_active_state(sd);
-> >  
-> > @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *rkisp1)
-> >   * Interrupt handlers
-> >   */
-> >  
-> > -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
-> > +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
-> >  {
-> >         struct v4l2_event event = {
-> >                 .type = V4L2_EVENT_FRAME_SYNC,
-> >         };
-> >  
-> > +       isp->frame_sequence++;
-> > +       isp->frame_active = true;
-> > +
-> >         event.u.frame_sync.frame_sequence = isp->frame_sequence;
-> >         v4l2_event_queue(isp->sd.devnode, &event);
-> >  }
-> > @@ -1111,15 +1115,20 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
-> >  
-> >         rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
-> >  
-> > -       /* Vertical sync signal, starting generating new frame */
-> > -       if (status & RKISP1_CIF_ISP_V_START) {
-> > -               rkisp1->isp.frame_sequence++;
-> > -               rkisp1_isp_queue_event_sof(&rkisp1->isp);
-> > +       /*
-> > +        * Vertical sync signal, starting new frame. Defer handling of vsync
-> > +        * after RKISP1_CIF_ISP_FRAME if the previous frame was not completed
-> > +        * yet.
-> > +        */
-> > +       if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active) {
-> > +               status &= ~RKISP1_CIF_ISP_V_START;
-> > +               rkisp1_isp_sof(&rkisp1->isp);
-> >                 if (status & RKISP1_CIF_ISP_FRAME) {
-> >                         WARN_ONCE(1, "irq delay is too long, buffers might not be in sync\n");
-> 
-> Now I've read below - I see how in here we've had both a frame start and
-> a frame end without processing an IRQ at all.
-> 
-> I'm trying to figure out if the ISR should always just process frame end
-> events before frame starts ... but then i think we wouldn't catch this
-> case so I suspect this is fine keeping it how things are now.
-> 
-> 
-> >                         rkisp1->debug.irq_delay++;
-> >                 }
-> >         }
-> > +
-> >         if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
-> >                 /* Clear pic_size_error */
-> >                 isp_err = rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
-> > @@ -1138,6 +1147,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
-> >         if (status & RKISP1_CIF_ISP_FRAME) {
-> >                 u32 isp_ris;
-> >  
-> > +               rkisp1->isp.frame_active = false;
-> >                 rkisp1->debug.complete_frames++;
-> >  
-> >                 /* New frame from the sensor received */
-> > @@ -1152,5 +1162,12 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
-> >                 rkisp1_params_isr(rkisp1);
-> >         }
-> >  
-> > +       /*
-> > +        * Deferred handling of vsync if RKISP1_CIF_ISP_V_START and
-> > +        * RKISP1_CIF_ISP_FRAME occurrend in the same irq.
-> 
-> s/occurend/occured/
-> 
-> > +        */
-> > +       if (status & RKISP1_CIF_ISP_V_START)
-> > +               rkisp1_isp_sof(&rkisp1->isp);
-> 
-> Aha I see - so this makes sure we /complete/ the frame before we start
-> another one.
-> 
-> That definitely sounds like a very good thing.
+Hello:
 
-Yes, this seems to be a good improvement.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Wed, 17 Sep 2025 09:44:55 +0530 you wrote:
+> From: Vishnu Singh <v-singh1@ti.com>
+> 
+> CPTS module of CPSW supports hardware timestamping of PTPv1 packets.Update
+> the "hwtstamp_rx_filters" of CPSW driver to enable timestamping of received
+> PTPv1 packets. Also update the advertised capability to include PTPv1.
+> 
+> Signed-off-by: Vishnu Singh <v-singh1@ti.com>
+> 
+> [...]
 
-There may still be room for improvement, we could measure the time
-between IRQs to estimate the number of lost interrupts. That won't be
-easy to develop, and may be best handled in userspace. If we investigate
-that, it should probably be implemented with generic helpers.
+Here is the summary with links:
+  - net: ti: am65-cpsw: Update hw timestamping filter for PTPv1 RX packets
+    https://git.kernel.org/netdev/net-next/c/97248adb5a3b
 
-> I'd be curuious to add a counter for how often we process a frame start
-> and frame end in the same ISR too. That likely still means we've got
-> some undesirable delays?
-
-There's a counter already, and it's already exported through debugfs :-)
-
-> > +
-> >         return IRQ_HANDLED;
-> >  }
-
+You are awesome, thank you!
 -- 
-Regards,
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Laurent Pinchart
+
 
