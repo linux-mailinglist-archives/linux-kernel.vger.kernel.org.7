@@ -1,188 +1,168 @@
-Return-Path: <linux-kernel+bounces-822187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B28CEB833FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBC1B83406
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB743A6C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:03:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD55B3B3455
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E6829A9FA;
-	Thu, 18 Sep 2025 07:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A663B2DE6EE;
+	Thu, 18 Sep 2025 07:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tXuN/uJU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/jPoKA6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B71239E61
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E222454764
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178980; cv=none; b=iELRqkAqnKGc+eHQFo7BdgNZahjjZaVVXwzGAwl6qLsRS/cg7She6cggxLLXtl4MaX4JSOCjmA9ud+lG5mSTOen4bU9uGLtJ9hwIGQGXQZCWLITUTFi/ygoC5D31+bvAcmiSyUF1j/G/yZhUim+8PbRDCk7Nva5+wZitND2u4MQ=
+	t=1758179015; cv=none; b=pJfcVcHW3OE+giofsOPjaMNsSRDVf3+x1Pkk2xNigbdKl3debe+2IlJLNA+sffKtabfn4v6cINXXeKetV2g0srH4iFtKSDE8bNYk4E1jt5bgnyvfnc5viBmzEH3SP3xUTASZ7elciTzlg3ZFjbJ8Su/7zLr1GBSDI1UKf5/ijZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178980; c=relaxed/simple;
-	bh=t/tgrnSpQzBuhqeycgn8yPZpTHU7BCNR8cVDZenjmQY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o39Syev8XPDwaCQvMgj77XkbZTgA+LWkpnTQDaJt1qnuhq+FTvhuCJcItMASaXwSRMTf3gc1hc7M5CxxOSIbW8UvM897Omg3iK+IB4RKO45m0MMHlBMf8JBpRjQV5a/GmyQ+EmxmiWdaVwaLnpfxjrmDhjB1aMKMjUtRbv6lia4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tXuN/uJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB24C4CEF0;
-	Thu, 18 Sep 2025 07:02:58 +0000 (UTC)
+	s=arc-20240116; t=1758179015; c=relaxed/simple;
+	bh=w+ErpBRL1l1AWMxlK8Kv80OYxkNODRdorjcQzFTx4Vw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YMBUfA46sbyu5f4m1cyn3b3kDRaPArMC5Uad4t3n85z78+FYZS2DH4fuQmHh5uMWEW73mA7x1FeiZ7hKEY7qFJiJs7wwR6jL2ds2c1pQxhwb5ojKlKCngm4XXjE9GpBEdyYKxn65AfmWbz+CQJzQqTqHFrbvmZ6ScKTtKpWLGHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/jPoKA6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654C8C113CF
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:03:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758178980;
-	bh=t/tgrnSpQzBuhqeycgn8yPZpTHU7BCNR8cVDZenjmQY=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=tXuN/uJUuuNvcc7ZVLNWIzoXEkFQtWdLWmMeCTfnCccnTKsBs0iwiEyKn56Gp94H/
-	 JSEEbTJb13l2hyQL+4UZryRiorR1vT2iRLCykabcImtdXx4BjsN+s02+odOr9R1I5M
-	 VW17wpRdaDA4wty2dGjTi9ELMEcc1GR/na5bfbuGwM7yMw3e0y8rZxMkkQvtxGG5ei
-	 kXW9SMbPe8GrWADMjsQmkaqvk3MWXad+1v8zg9Rz51eyazoZoYxhIe8+gIt5Wvh5PD
-	 vCtQn9A3FBeVWXnkNgtDuv505jfq5tHzKXB870ah5F55sSnwo5rToa2KRGB0SSNoZF
-	 4v3znBGjH9SkA==
-Message-ID: <519340cb-a84d-4e0e-ab58-a5bf3562152d@kernel.org>
-Date: Thu, 18 Sep 2025 15:02:55 +0800
+	s=k20201202; t=1758179014;
+	bh=w+ErpBRL1l1AWMxlK8Kv80OYxkNODRdorjcQzFTx4Vw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p/jPoKA6AhiIzCBP61Nuqy1q6G1Fl792+ptGL7xQCo7KrkYrD5FfEW/MQOWUz6cMD
+	 H4Yil1LNC3vThRtVziWcCCxN3OzaQuoL9Z32NE3S907ZmcOqRz0EotVjsr/T84qkN3
+	 WqH0sgW4yjmYKbageMFD3Am5BITisMQrCQw5xlTsAE9XQ/eEv1CR8N2CH/oU6w5TAu
+	 g7VKmnwg0Lhjv+Rjfxl/wKybdHc+0dgKRZczTtYRZIlvRgZK6bKUZLSqoQ0XKyvmSM
+	 KMIrkxEdiP6XV7M5e8WiZWVrg38ADigKta8ypu4iVxAiY9CQj5DJgEwEfoFDZ6scS+
+	 NJ1RK7r8TA/3g==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5608b619cd8so694148e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:03:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXnHAJ/OSOjlVXwOrm2UU307xpPUgDF2Ab+EVlZ6IA92wf07aka/XEgJ73BFMQZWnEsKsjdSnBGhYWnLT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXpG7O1pY8JUOmAvWAtYbTK8mQ8L579YnLYHy4um6t4kKyIpVR
+	+NYSPzVWyqST7Hhx0QWryGcq5aPqDyI2i7UcwV10OfKRadQ2NNTMVSJQNcl5UA61oVXCRQwan3/
+	VtDQsmkwFOfayZcwl18lmQh6WcotghQ==
+X-Google-Smtp-Source: AGHT+IGJs/PcXCDxOEGAiTcDcrXuGdiFMqjgrLIi1+1jjccVhq9MjHPWG23k6+kfQ5dKqi7auT6HU1FGc+Nq4YAKaiY=
+X-Received: by 2002:a05:6512:3b2b:b0:55f:3faa:7c2b with SMTP id
+ 2adb3069b0e04-5779bdc6d10mr1368887e87.39.1758179012976; Thu, 18 Sep 2025
+ 00:03:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, 'Sungjong Seo' <sj1557.seo@samsung.com>,
- 'Sunmin Jeong' <s_min.jeong@samsung.com>
-Subject: Re: [PATCH] f2fs: readahead node block in F2FS_GET_BLOCK_PRECACHE
- mode
-To: Yunji Kang <yunji0.kang@samsung.com>, jaegeuk@kernel.org
-References: <CGME20250917055237epcas1p2faa1b3d6555ffc5179c700e7a2afd448@epcas1p2.samsung.com>
- <20250917055217.39960-1-yunji0.kang@samsung.com>
- <de32bc26-6424-4750-83f7-17956e6727cd@kernel.org>
- <000a01dc2858$7e50f460$7af2dd20$@samsung.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <000a01dc2858$7e50f460$7af2dd20$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+ <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+ <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
+ <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
+ <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
+ <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+ <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com> <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
+In-Reply-To: <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 18 Sep 2025 00:03:20 -0700
+X-Gmail-Original-Message-ID: <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
+X-Gm-Features: AS18NWC9pu8B5pH4dlv8MuU8SxVN9kdKP9S1B5I9Sg97ymUY5ImXVEPfBbPThSs
+Message-ID: <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Barry Song <21cnbao@gmail.com>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/18/25 12:55, Yunji Kang wrote:
->>> In f2fs_precache_extents(), For large files, It requires reading many
->>> node blocks. Instead of reading each node block with synchronous I/O,
->>> this patch applies readahead so that node blocks can be fetched in
->>> advance.
->>>
->>> It reduces the overhead of repeated sync reads and improves efficiency
->>> when precaching extents of large files.
->>>
->>> I created a file with the same largest extent and executed the test.
->>> For this experiment, I set the file's largest extent with an offset of
->>> 0 and a size of 1GB. I configured the remaining area with 100MB extents.
->>>
->>> 5GB test file:
->>> dd if=/dev/urandom of=test1 bs=1m count=5120 cp test1 test2 fsync
->>> test1 dd if=test1 of=test2 bs=1m skip=1024 seek=1024 count=100
->>> conv=notrunc dd if=test1 of=test2 bs=1m skip=1224 seek=1224 count=100
->>> conv=notrunc ...
->>> dd if=test1 of=test2 bs=1m skip=5024 seek=5024 count=100 conv=notrunc
->>> reboot
->>>
->>> I also created 10GB and 20GB files with large extents using the same
->>> method.
->>>
->>> ioctl(F2FS_IOC_PRECACHE_EXTENTS) test results are as follows:
->>>   +-----------+---------+---------+-----------+
->>>   | File size | Before  | After   | Reduction |
->>>   +-----------+---------+---------+-----------+
->>>   | 5GB       | 101.8ms | 72.1ms  | 29.2%     |
->>>   | 10GB      | 222.9ms | 149.5ms | 32.9%     |
->>>   | 20GB      | 446.2ms | 276.3ms | 38.1%     |
->>>   +-----------+---------+---------+-----------+
->>> Tested on a 256GB mobile device with an SM8750 chipset.
->>>
->>> Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
->>> Reviewed-by: Sunmin Jeong <s_min.jeong@samsung.com>
->>> Signed-off-by: Yunji Kang <yunji0.kang@samsung.com>
->>> ---
->>>  fs/f2fs/data.c | 3 +++
->>>  fs/f2fs/f2fs.h | 1 +
->>>  fs/f2fs/node.c | 4 +++-
->>>  3 files changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c index
->>> 7961e0ddfca3..ab3117e3b24a 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -1572,6 +1572,9 @@ int f2fs_map_blocks(struct inode *inode, struct
->> f2fs_map_blocks *map, int flag)
->>>  	pgofs =	(pgoff_t)map->m_lblk;
->>>  	end = pgofs + maxblocks;
->>>
->>> +	if (flag == F2FS_GET_BLOCK_PRECACHE)
->>> +		mode = LOOKUP_NODE_PRECACHE;
->>> +
->>>  next_dnode:
->>>  	if (map->m_may_create) {
->>>  		if (f2fs_lfs_mode(sbi))
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h index
->>> 9d3bc9633c1d..3ce41528d48e 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -651,6 +651,7 @@ enum {
->>>  					 * look up a node with readahead called
->>>  					 * by get_data_block.
->>>  					 */
->>> +	LOOKUP_NODE_PRECACHE,		/* look up a node for
->> F2FS_GET_BLOCK_PRECACHE */
->>>  };
->>>
->>>  #define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO or flush
->> count */
->>> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c index
->>> 4254db453b2d..50be167e5c59 100644
->>> --- a/fs/f2fs/node.c
->>> +++ b/fs/f2fs/node.c
->>> @@ -860,7 +860,9 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn,
->> pgoff_t index, int mode)
->>>  			set_nid(parent, offset[i - 1], nids[i], i == 1);
->>>  			f2fs_alloc_nid_done(sbi, nids[i]);
->>>  			done = true;
->>> -		} else if (mode == LOOKUP_NODE_RA && i == level && level > 1)
->> {
->>> +		} else if ((mode == LOOKUP_NODE_RA ||
->>
->> Does this change the logic for mode = LOOKUP_NODE_RA?
->>
->> Not sure, do you mean this?
->>
->> 	if ((i == level && level > 1) &&
->> 		(mode == LOOKUP_NODE_RA ||
->> 		(mode == LOOKUP_NODE_PRECACHE &&
->> 		offset[i - 1] % MAX_RA_NODE == 0)))
->>
->> Thanks,
->>
->>> +				(mode == LOOKUP_NODE_PRECACHE && offset[i - 1] %
->> MAX_RA_NODE == 0))
->>> +				&& i == level && level > 1) {
->>>  			nfolio[i] = f2fs_get_node_folio_ra(parent, offset[i -
->> 1]);
->>>  			if (IS_ERR(nfolio[i])) {
->>>  				err = PTR_ERR(nfolio[i]);
-> 
-> I think the code has the same meaning.
-> The version you wrote looks more readable, so would it be okay if I change the patch with your code?
+Hi Barry,
 
-Sure, please go ahead.
+How about this:
 
-> 
-> Also, I did not change the logic for mode = LOOKUP_NODE_RA; I only added a condition for when readahead is performed.
+A swap table stores one cluster worth of swap cache values, which is
+exactly one page table page on most morden 64 bit systems. This is not
+coincidental because the cluster size is determined by the huge page size.
+The swap table is holding an array of pointers, which have the same
+size as the PTE. The size of the swap table should match the page table
+page.
 
-Oh, I see, I missed the parenthesis, sorry.
+If that sounds OK, I will send an incremental patch to Andrew.
 
-Thanks,
+Chris
 
-> 
-> Thanks.
-> 
-
+On Wed, Sep 17, 2025 at 10:03=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote=
+:
+>
+> On Wed, Sep 17, 2025 at 4:38=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
+ote:
+> >
+> > > > This approach still seems to work, so the 32-bit system appears to =
+be
+> > > > the only exception. However, I=E2=80=99m not entirely sure that you=
+r description
+> > > > of =E2=80=9Cthe second last level=E2=80=9D is correct. I believe it=
+ refers to the PTE,
+> > > > which corresponds to the last level, not the second-to-last.
+> > > > In other words, how do you define the second-to-last level page tab=
+le?
+> > >
+> > > The second-to-last level page table page holds the PMD. The last leve=
+l
+> > > page table holds PTE.
+> > > Cluster size is HPAGE_PMD_NR =3D 1<<HPAGE_PMD_ORDER
+> > > I was thinking of a PMD entry but the actual page table page it point=
+s
+> > > to is the last level.
+> > > That is a good catch. Let me see how to fix it.
+> > >
+> > > What I am trying to say is that, swap table size should match to the
+> > > PTE page table page size which determines the cluster size. An
+> > > alternative to understanding the swap table is that swap table is a
+> > > shadow PTE page table containing the shadow PTE matching to the page
+> > > that gets swapped out to the swapfile. It is arranged in the swapfile
+> > > swap offset order. The intuition is simple once you find the right
+> > > angle to view it. However it might be a mouthful to explain.
+> > >
+> > > I am fine with removing it, on the other hand it removes the only bit
+> > > of secret sauce which I try to give the reader a glimpse of my
+> > > intuition of the swap table.
+> >
+> > Perhaps you could describe the swap table as similar to a PTE page tabl=
+e
+> > representing the swap cache mapping.
+>
+> Hard to qualify what is "similar", in what way it is similar.
+> Different readers will have different interpretations of what similar
+> means to them.
+>
+> > That is correct for most 32-bit and 64-bit systems,
+> > but not for every machine.
+>
+> I think I will leave it as for most 64 bit systems, the swap table
+> size is exactly one page table page size and that is not coincidental.
+>
+> > The only exception is a 32-bit system with a 64-bit physical address
+> > (Large Physical Address Extension, LPAE), which uses a 4 KB PTE table
+> > but a 2 KB swap table because the pointer is 32 bit while each page
+> > table entry is 64 bit.
+>
+> I feel that is a very corner case. I will leave it out of the
+> document. I want to present a simplified abstracted view. There is
+> always more detail to distract the simple abstracted view. That is why
+> we have physics.
+>
+> > Maybe we can simply say that the number of entries in the swap table
+> > is the same as in a PTE page table?
+>
+> Yes, that is what I want to say, for most modern 64 bit systems.
+>
+> Chris
 
