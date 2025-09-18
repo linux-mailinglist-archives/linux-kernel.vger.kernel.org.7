@@ -1,194 +1,212 @@
-Return-Path: <linux-kernel+bounces-822349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2227AB83992
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C4CB839A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C574721742
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790311C03F2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D682FFF9E;
-	Thu, 18 Sep 2025 08:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2622D2FC02A;
+	Thu, 18 Sep 2025 08:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAThHaqV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L6gVLpCg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2082F9DAF;
-	Thu, 18 Sep 2025 08:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652942D94AC;
+	Thu, 18 Sep 2025 08:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185493; cv=none; b=NbfrIoFBR7RJmHLMnif9i5jk87PRuthA9Xe09wfdL9kEeCkvFaa94346z7VpmNFCMSnKgbf7NVH3ERfHWhbZyKfYQWWQGwmSIi52dy/gM6mtlIOuSE3xWOVxhnxs2aYvrnyJxea5l07g/T8J/Z7tQivIdtxpgfMsmvV52+u2UOY=
+	t=1758185574; cv=none; b=TVqCJjwK9uXHYUpfyqELX3Ace+B2N9Y390YZ0f4nwsXNmn0YYT44K0a08XEF7hYhN1wRCk6TJDJA3ULP6brsc9bW4sJr6CBvxHzp3xoCbjMXzLadelXhYS5E0+ScGzNn+2x7hnq54weZhLpH2weErTqp0+tZOBLy1Cv1bbvcoTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185493; c=relaxed/simple;
-	bh=/03h3jsMxljIVekEltK1ygHyCyhWTpzD816qiyEvgvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J2RvN3n/Lwi6DcbLsjQOv8dZxqAhfXmBgceQ04+hKddtQs8BQakHmn8LwTxleABCyFh6jTMkk0bnAxJX5cuwizz0hqHyb0TiLanpbRzhXDDGgay7NftYqo8P+MjMIdi0NDM7bUrh46PC3nXoAd1H02OAzLX4SNKv04narBdBkcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAThHaqV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02D4C4CEF1;
-	Thu, 18 Sep 2025 08:51:31 +0000 (UTC)
+	s=arc-20240116; t=1758185574; c=relaxed/simple;
+	bh=0M5LM0c8y+CtEFZ3d/JKxqrH2sSLDWz7njz6l7NWh3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C3zSwlo7ELnpHIByVWlK3QHTqz6GVd0wZvDzmcxPaAG6SpT4iqej19RVEBbAEd3uM2KNcMO+LOcxBhxguSVxHVcrCHEMOzzfFqlhDsmpvqc/SaWK7ftV7/3piz6yYWMCrNZXy6P9l6EMAkP80S60Sh1NzD91Ft7K6VajtqPoz1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L6gVLpCg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4713C4CEE7;
+	Thu, 18 Sep 2025 08:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758185493;
-	bh=/03h3jsMxljIVekEltK1ygHyCyhWTpzD816qiyEvgvA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tAThHaqVjK7RI8qOisp5Pyo0TGAfrdls7mAPINus76LrtU7OHcA/jChZSjx38rnwz
-	 Z4d6ry615h6/6ZeoPFk/S8QJurPxRs12RQUPYM2MIrc1mzq0utETqnj4dWHbwShvrk
-	 ZwgN722g4YWxcOF3nIneX+FkatxYWt+4HF9VCG9TGlVnDWdsMCUSpJhVHXpJk1btls
-	 GhBdzYtypbKfGrrTzYoJyshHHRWX43EB52UJ9fm+4sLxeeKwCF4a5Wwfn116aHO+T0
-	 KvqTk8Zgm1pt4T0CXfBID2K4ml/EAKB/14giWVR7AcXebtvDv0i1lZbmKlfTdfeGXi
-	 Zrh1MK5hm3tmg==
-Date: Thu, 18 Sep 2025 10:51:28 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 04/21] scripts: check-variable-fonts.sh: convert to
- Python
-Message-ID: <20250918105124.3728661a@foz.lan>
-In-Reply-To: <eaab7ba4-f23c-4c33-b9d1-faae73c136a4@gmail.com>
-References: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
-	<52932ede-eb04-4275-a051-952bc2859cf6@gmail.com>
-	<20250917104818.62862b48@foz.lan>
-	<eaab7ba4-f23c-4c33-b9d1-faae73c136a4@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1758185573;
+	bh=0M5LM0c8y+CtEFZ3d/JKxqrH2sSLDWz7njz6l7NWh3w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L6gVLpCg20pntw8sER7to9BKLjByFOwJnBTdxoN1T2Nvcbz8fq7Ju1lIAkqTPUOSO
+	 YZXp4QQ3kEwz7QrGlrnQyZNRb86q4vx52YoPJVuLZQtzuiSLMRz+XDIxGGhRKG6irT
+	 3YV+snln4FfLqXfNwJxhET5ShiuMIWgfPwtiwP46GSExOtVQOyHBBtW562UVPtnnVo
+	 ctWKTbHRQsbSE91E3bPJLo8aCOaRP4oqcwMDv9s9I3rws2dUNGEJnjap8uPCiGOEVu
+	 VGWs0m1ik01YGI1UOH4hKSb/jLQe5k7qXGm4m34I1iJ7kfTL2AH3Nfilxk+2V+WTmV
+	 vkEx37E9NEnVA==
+From: SeongJae Park <sj@kernel.org>
+To: Xinyu Zheng <zhengxinyu6@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	zouyipeng@huawei.com,
+	Hugh Dickins <hughd@google.com>
+Subject: Re: [BUG REPORT] mm/damon: softlockup when kdamond walk page with cpu hotplug
+Date: Thu, 18 Sep 2025 01:52:49 -0700
+Message-Id: <20250918085249.58966-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250918030029.2652607-1-zhengxinyu6@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Em Thu, 18 Sep 2025 08:22:44 +0900
-Akira Yokosawa <akiyks@gmail.com> escreveu:
+Hello,
 
-> Hi,
+On Thu, 18 Sep 2025 03:00:29 +0000 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
+
+> A softlockup issue was found with stress test:
+
+Thank you for sharing this great report!
+
 > 
-> On Wed, 17 Sep 2025 10:48:18 +0200, Mauro Carvalho Chehab wrote:
-> > Em Wed, 17 Sep 2025 10:09:05 +0900
-> > Akira Yokosawa <akiyks@gmail.com> escreveu:
-> >   
-> >> On Tue, 16 Sep 2025 12:22:40 +0200, Mauro Carvalho Chehab wrote:  
-> >>> This script handle errors when trying to build translations
-> >>> with make pdfdocs.
-> >>>
-> >>> As part of our cleanup work to remove hacks from docs Makefile,
-> >>> convert this to python, preparing it to be part of a library
-> >>> to be called by sphinx-build-wrapper.
-> >>>
-> >>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
-> >>
-> >> I could apply up to 05/21 of v6 and did some quick tests under
-> >> Fedora (where Noto CJK VF fonts are installed).
-> >>
-> >> At 3/21, "./scripts/check-variable-fonts.sh" doesn't say a word.
-> >>
-> >> At 4/21, "./scripts/check-variable-fonts.py" complains:  
-> > 
-> > I got a little bit confused with the above. I guess you picked the
-> > wrong patch numbers, but yeah, there is a bisect issue, caused by
-> > the part reorder I did moving this change to happen before adding
-> > the script. Basically, I updated docs Makefile the wrong way.
-> > 
-> > Thanks for pointing it!
-> > 
-> > For v7 I'll ensure that all patches will properly print the suggestions
-> > from the script.
-> >   
-> >> =============================================================================
-> >> XeTeX is confused by "variable font" files listed below:
-> >>     /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
-> >>     /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
-> >>     /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
-> >>
-> >> For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
-> >> Or, CJK pages can be skipped by uninstalling texlive-xecjk.
-> >>
-> >> For more info on denylisting, other options, and variable font, see header
-> >> comments of scripts/check-variable-fonts.py.
-> >> =============================================================================
-> >>
-> >> Of course, I have followed the suggestions in the header comments.  
-> > 
-> > I didn't try to follow the suggestions to solve the issue on Fedora yet.
-> > It is on my todo list to test it.
-> > 
-> > The new script has an exact copy of the instructions of the previous one.
-> > 
-> > So, up to patch 09/21 from this series, there won't be any change at
-> > doc build, except for the script conversion and some code cleanups
-> > and reordering.
-> > 
-> > Patch 09/21 moves the env logic of FONTS_CONF_DENY_VF to the wrapper.
-> > So, in thesis, fixing it before-after the series shouldn't have any
-> > impact (I didn't test yet. Will do on my next respin). Btw, we should
-> > probably document it at make help.
-> > 
-> > If the instructions from the header is wrong, we need to update it
-> > on a separate patch series.
-> >   
+> watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [migration/0:957]
+> CPU: 0 PID: 957 Comm: migration/0 Kdump: loaded Tainted:
+> Stopper: multi_cpu_stop+0x0/0x1e8 <- __stop_cpus.constprop.0+0x5c/0xb0
+> pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> pc : rcu_momentary_dyntick_idle+0x4c/0xa0
+> lr : multi_cpu_stop+0x10c/0x1e8
+> sp : ffff800086013d60
+> x29: ffff800086013d60 x28: 0000000000000001 x27: 0000000000000000
+> x26: 0000000000000000 x25: 00000000ffffffff x24: 0000000000000000
+> x23: 0000000000000001 x22: ffffab8f02977e00 x21: ffff8000b44ebb84
+> x20: ffff8000b44ebb60 x19: 0000000000000001 x18: 0000000000000000
+> x17: 000000040044ffff x16: 004000b5b5503510 x15: 0000000000000800
+> x14: ffff081003921440 x13: ffff5c907c75d000 x12: a34000013454d99d
+> x11: 0000000000000000 x10: 0000000000000f90 x9 : ffffab8f01b657bc
+> x8 : ffff081005e060f0 x7 : ffff081f7fd7b610 x6 : 0000009e0bb34c91
+> x5 : 00000000480fd060 x4 : ffff081f7fd7b508 x3 : ffff5c907c75d000
+> x2 : ffff800086013d60 x1 : 00000000b8ccb304 x0 : 00000000b8ccb30c
+> Call trace:
+>  rcu_momentary_dyntick_idle+0x4c/0xa0
+>  multi_cpu_stop+0x10c/0x1e8
+>  cpu_stopper_thread+0xdc/0x1c0
+>  smpboot_thread_fn+0x140/0x190
+>  kthread+0xec/0x100
+>  ret_from_fork+0x10/0x20
 > 
-> I have tested v7.
+> watchdog: BUG: soft lockup - CPU#18 stuck for 26s! [kdamond.0:408949]
+> CPU: 18 PID: 408949 Comm: kdamond.0 Kdump: loaded Tainted:
+> pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> pc : damon_mkold_pmd_entry+0x138/0x1d8
+> lr : damon_mkold_pmd_entry+0x68/0x1d8
+> sp : ffff8000c384bb00
+> x29: ffff8000c384bb10 x28: 0000ffff6e2a4a9b x27: 0000ffff6e2a4a9b
+> x26: ffff080090fdeb88 x25: 0000ffff6e2a4a9b x24: ffffab8f029a9020
+> x23: ffff08013eb8dfe8 x22: 0000ffff6e2a4a9c x21: 0000ffff6e2a4a9b
+> x20: ffff8000c384bd08 x19: 0000000000000000 x18: 0000000000000014
+> x17: 00000000f90a2272 x16: 0000000004c87773 x15: 000000004524349f
+> x14: 00000000ee10aa21 x13: 0000000000000000 x12: ffffab8f02af4818
+> x11: 0000ffff7e7fffff x10: 0000ffff62700000 x9 : ffffab8f01d2f628
+> x8 : ffff0800879fbc0c x7 : ffff0800879fbc00 x6 : ffff0800c41c7d88
+> x5 : 0000000000000171 x4 : ffff08100aab0000 x3 : 00003081088800c0
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+> Call trace:
+>  damon_mkold_pmd_entry+0x138/0x1d8
+>  walk_pmd_range.isra.0+0x1ac/0x3a8
+>  walk_pud_range+0x120/0x190
+>  walk_pgd_range+0x170/0x1b8
+>  __walk_page_range+0x184/0x198
+>  walk_page_range+0x124/0x1f0
+>  damon_va_prepare_access_checks+0xb4/0x1b8
+>  kdamond_fn+0x11c/0x690
+>  kthread+0xec/0x100
+>  ret_from_fork+0x10/0x20
 > 
-> With v7 fully applied, it is now possible to build translations.pdf on
-> Fedora.  Nice!
+> The stress test enable numa balance and kdamond, operation 
+> involves CPU hotplug and page fault with migration.
 > 
-> HOWEVER, running
+> CPU0				 CPU18                      events
+> ===============================	 ======================     ===============
+> page_fault(user task invoke)
+> migrate_pages(pmd page migrate)
+> __schedule
+> 				 kdamond_fn
+> 				 walk_pmd_range
+> 				 damon_mkold_pmd_entry      <= cpu hotplug
+> stop_machine_cpuslocked	         // infinite loop
+> queue_stop_cpus_work		 // waiting CPU 0 user task
+> multi_cpu_stop(migration/0)	 // to be scheduled
+> // infinite loop waiting for
+> // cpu 18 ACK
 > 
->     ./tools/docs/check-variable-fonts.py
+> Detail explanation:
+> 1. When shutdown one cpu, a state machine in multi_cpu_stop() 
+> will wait for other cpu's migration thread reach to same state. 
+> In this case, all cpus are doing migration except cpu 18.
+> 2. A user task which is bind on cpu 0 is allocating page and 
+> invoke page fault to migrate page. Kdamond is looping between 
+> damon_mkold_pmd_entry () and walk_pmd_range(),
+
+damon_mkold_pmd_entry() calls pte_offset_map_lock().  If the call returns an
+error, damon_mkold_pmd_entry() sets walk->action as ACTION_AGAIN, to retry.  If
+the pte_offset_map_lock() continues fails, infinite loop can happen.  I
+understand the loop you mentioned above is this case.
+
+The error handling (retrying) was introduced by commit 7780d04046a2
+("mm/pagewalkers: ACTION_AGAIN if pte_offset_map_lock() fails").  According to
+the commit message, it is assumed to be safe to retry pte_offset_map_lock()
+inside walk_page_range(), but it is not for this corner case.  And the commit
+introduced the error handling pattern in not only DAMON but also a few other
+pte_offset_map_lock() callers, so I think same issue can happen on those, too?
+
+So for the long term, I'm wondering if we should update pte_offset_map_lock()
+or whole pte_offset_map_lock() error handling inside walk_page_range()
+callbacks to deal with this corner case.  Or, other involved parts like CPU
+hotplugging handling?
+
+> since target page 
+> is a migration entry. Kdamond can end the loop until user task is 
+> scheduled on CPU 0. But CPU 0 is running migration/0.
+> 3. CONFIG_PREEMPT_NONE is enable. So all cpu are in a infinite loop.
 > 
-> still complains.  I'm not sure but there might be some minor issue (typo?)
-> in the translation from .sh into .py ???
+> I found a similar softlockup issue which is also invoked by a memory 
+> operation with cpu hotplug. To fix that issue, add a cond_resched() 
+> to avoid block migration task.
+> https://lore.kernel.org/all/20250211081819.33307-1-chenridong@huaweicloud.com/#t
 > 
-> So I have to keep the NAK on v7's 7/24 ("scripts: check-variable-fonts.sh:
-> convert to Python") for the moment.
+> May I ask if there is any solution we can fix this issue? Such as add a 
+> cond_sched() in kdamond process.
+
+I think adding cond_resched() on the error handling part of
+damon_mkold_pmd_entry() is doable.  Since DAMON is a best-effort approach, just
+returning without setting ACTION_AGAIN would also be ok for DAMON.  It will
+simply make the behavior same to that before the commit 7780d04046a2
+("mm/pagewalkers: ACTION_AGAIN if pte_offset_map_lock() fails").
+
+If this is a real issue making your products bleeding, please feel free to send
+such a fix for DAMON (I'd prefer the second approach - just return without
+setting ACTION_AGAIN) as a hotfix.
+
+Nonetheless, for long term, as I mentioned above, I'm wondering if we should
+update pte_offset_map_lock() internal, or add similar error handling
+modification on every similar pte_offset_map_lock() error handling.
+
+> Or is there any chance to do some yield 
+> in stop machine process? Probably next time there is another different case 
+> running with cpu hotplug can cause the same softlockup. 
+
+I'm not familiar with stop machine process, so I have no good idea here but
+this might also be an option?
+
 > 
-> Please run the script under a terminal session and see what happens ...
+> Xinyu Zheng
 
-Yeah, there was a typo there. I fixed it for the next respin.
-
-To better allow running it manually, I'm adding to the tool a new command
-line argument:
-
-	$ tools/docs/check-variable-fonts.py -h
-	...
-	options:
-	  -h, --help         show this help message and exit
-	  --deny-vf DENY_VF  XDG_CONFIG_HOME dir containing fontconfig/fonts.conf file
-
-And changed the class __init__ logic to optionally use it:
-
-    def __init__(self, deny_vf=None):
-        if not deny_vf:
-            deny_vf = os.environ.get('FONTS_CONF_DENY_VF', "~/deny-vf")
-
-This way, it will keep using FONTS_CONF_DENY_VF (defaulting to ~/deny-vf),
-yet allowing it to be overriden via command line:
-
-	$ tools/docs/check-variable-fonts.py
-	<no output>
-
-	$ tools/docs/check-variable-fonts.py --deny-vf ~/deny-vf/
-	<no output>
-
-	$ tools/docs/check-variable-fonts.py --deny-vf ~/dont-deny-vf/
-	=============================================================================
-	XeTeX is confused by "variable font" files listed below:
-	    /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
-	    /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
-	    /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
-	
-	For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
-	Or, CJK pages can be skipped by uninstalling texlive-xecjk.
-	
-	For more info on denylisting, other options, and variable font, run:
-	
-	    tools/docs/check-variable-fonts.py -h
-	=============================================================================
 
 Thanks,
-Mauro
+SJ
 
