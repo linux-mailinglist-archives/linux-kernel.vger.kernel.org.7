@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-822071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55973B82F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85074B82F8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D73501C24338
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDCAC321A4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FA628B4E1;
-	Thu, 18 Sep 2025 05:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F31280A29;
+	Thu, 18 Sep 2025 05:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BILWPuBS"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xwh+HCy9"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9041A27E1DC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC30288C39
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758172594; cv=none; b=q/pdeIVxEtGnxO64t+deFTLz8AHXsiypqb2KihB/v8VRcagJO6a8yRog40Uz0FR+dp494A3r/oWzNh9nw7WbOBHWt5hGZFBVVZgAmhC5MbqMrftNaVDJzAmxRQpXCrjK6voXbqQu72UpRTbecXBiG0N2gkI/PsMkOd6ky6DOuzg=
+	t=1758172595; cv=none; b=LtkbimyVxS+G18KLY+fpjY6npsshpfQdWLdK9cOuMb49IlZpp4zdQel1tAkHBtiXfcsxLEvu5TTCNQdu5sd2VSIQeqZd3ancK0TB/W9Sie8nMX1h6yiJ3sHKHpqunDMxH08b7wyawCcATPlAWfjUiEIPM/XUNgazme2KitXmzB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758172594; c=relaxed/simple;
-	bh=Z6qZSB5ccwxVgYVj98AksF/DlcdpqcgoKyj9hpY/Brg=;
+	s=arc-20240116; t=1758172595; c=relaxed/simple;
+	bh=7/bypW60GL8eL/uqYkt5R7qvzBuLOGenTkwRBAP7t9k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MXIHL7lBmgCBhwG7sg1cz3NCOmqvQNcE8JcKoiLDCAn+PrGhNTe27uckg3d4KZzMc+bFOOgok6Lm3JMikh2fB3+7q8tkGT0KdJkXxMtFkWpfhRirF9XgPQdASSCUaDvEzGy5DqRrjB6d7lGMjjE52QEhjkGOYBoPUAvLwlvQlaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BILWPuBS; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=VUJdDNuQfECPB4Y25zZGTY9JIrg2em7AAqZdYojJZxr+fZrNOFf5B1wXtuKVe8EEaz/Y4PxKatDnnanyKOIhgfirI9yEKihSrRyzna+UVPIeg+Hywe0i0Teg0BL5IL+zwep0nKQGArfMJBGy07Ib7JxvZntiuneJJSBgGBkga/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xwh+HCy9; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2698e4795ebso2356755ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:16:31 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32ee4817c43so430056a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:16:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758172591; x=1758777391; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758172593; x=1758777393; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MNruZWOB1A9W2xPWfDeeJw/PtthshopimV+lzxEm4to=;
-        b=BILWPuBS861KpUGocDcp19/hWLMUgF6tITpf8G7zG0E/DhewSqa706J9yyH0s+dIsT
-         ADoFEvLtmD2SEXxPGwww7awup+5U1H8IoP8t35nf2duMpOrIv8/n+Y8JY7US9kW974AA
-         3PnLtCBZzqXFGPnM63q2DDtVn+GEvaldQgsZ+18w7RKb9CcaQR4oue8FJG7iuBiGv9or
-         14U/p6FTxbmBHP8lQNRjUqX4pYHcsBQj0RkOb8r6HvesUW93GFSdJ+2VwViPJJggzDUa
-         3208UGQtQ/VkUYxdHWxu2VbWbHGxWX2RQBlQHc8QeN89sHUP6eXvV+c2hmIbZqICUlrz
-         S71A==
+        bh=q19q5PL21Wai78SSc2mwVr4TVT2qO2bW74gFJJ8pT9o=;
+        b=Xwh+HCy9RhW5Uyvt/EAa3N6IJH7OP3t8KW2n7wHGH0Tr7rh9oAkc3UaYEx1HYB1XVA
+         fj6sNBi1dfhghlzAwxYs2gHWWJxYVHmYj56TvD6bbfjLz6scAKL0zFTcn7Npdx5jREi7
+         Yr2zH6EnLggdg4aP/rwFCCtFiXw2tP99YKAGOYAXKXzH/o0AI5wK1FwU36efLOKCEp+A
+         2zBFBBtCG4UIzteH/bfBeGpi5AivcHvW9CRyskYregXdR09ZDwVZNBOuLrcNkMqy/Yhk
+         lWnv9NfvlGoYkLmtfWTQc3YkoXzHUjAdVl8ctIUohMJoQSLY+4BypGfnfBlsDIc3l1ng
+         aRAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758172591; x=1758777391;
+        d=1e100.net; s=20230601; t=1758172593; x=1758777393;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MNruZWOB1A9W2xPWfDeeJw/PtthshopimV+lzxEm4to=;
-        b=GrodupRLvw2YzXHN3cE1XwVIMhkNf8CCFM5lryizzIMEewWVuWK+9gVRYbwf0F2jJ+
-         nFi9oxzpAlC+8VjCLfF/0EnW7Cm4xMbOuwEYIH1hUvIyEWCdV/JpYdvdC2LEdkpLOHP3
-         9ZAOtxo525keVMQHBz1QjDnVupseVN/qVFgJDJZMd04BGH7nkHIkReBGIXPP5fiZ2j5r
-         xd+iwRQ42Pj8VugLnX5t5HCldUHVuWEezTkaxOHQlikanEe/gPUd5JPMkeyOtsIF9dr4
-         lH+bvX8i0Xk2E5O3X6No1KBheJEU2mfpx0xtcsB4xsS9uw2Wnvj1mipG02aDPD8mzlHT
-         kdtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmE8JaVr2o7wIK5kCBYnIt4MRYqibPjp2BP7f0XQcELQ3zI8yMSxqPt7HiEIXYuWglUUnL/vL9pxXyAfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkKkPsNtxXKwVRLlRUn49UZ1miJAJgGd2U25Z5qYwtB252/CVF
-	h/tROTWubEQ0GbujnoWZXhSfdScSpQaHXtYF+DkvTEr/aCcLT9y1siDz
-X-Gm-Gg: ASbGncsCueIzn+DUmCzDhV/rudFluPLcunm5VYqtlCznLKeiVv1lpa4yMduHUdraIRC
-	HXmkVvcANGJtv1HjrjnrJcWZ8e36g3kFVqYJPwWLGUS8iYc6hIkerMPpsw1tcqTVKUw5V2NJUgA
-	gD+UnvXBJB/9uqIFeRRMVH4FFs4mGlEBcllIaqb33+PU0Y4UkP0ERaBl9jFrCvVhlEmkoe89ilP
-	/B/iM+HlYvNFWyDybnJTXn9DCRTuKUnYUz4A0XkTQan0p9QKz5U3GoS3DsFrgw3mmtOubwmRtH8
-	ws8bOmy7gzsu0RtufaDs3vjsIk/kR88bTWIfrbE3fJE3hFmdKvrqg8rhulTi7U/Co862jHwFENa
-	gjgb85q2TmnQIaC4eTA9Vlw7i5jGr9mvRF5ZgiTJG1AH2Xc+tXzD4e+F34mQayY9a3NMv2Z88Gt
-	sbpzKOOzdvM3plqBSVEYrrYg==
-X-Google-Smtp-Source: AGHT+IGDcPCTQRDQJloTH9BdqlAOj6e2/TUJJrtVUeXUVjBEic4MtyF8+jxmHyt7EO3Nq8kgKfGCdw==
-X-Received: by 2002:a17:902:d504:b0:258:9d26:1860 with SMTP id d9443c01a7336-26813902e19mr67208525ad.40.1758172590685;
-        Wed, 17 Sep 2025 22:16:30 -0700 (PDT)
+        bh=q19q5PL21Wai78SSc2mwVr4TVT2qO2bW74gFJJ8pT9o=;
+        b=Q7GQavSAn+ywv3QcRY/3Ww0EYRcv375yn8xTYj/+VUcuMhLAnqQTOhiLf9zSBFIBOF
+         T9qFkv4lw/IUjS/0o1T4ADyXVlDGUMy5OyHLKImDnx91USRNJm4Vd6h3fv/9eOsaHhdb
+         +oWUuG2ll9+UXd5n0Hr70TqwWUhSf+s3Fu4aV+j4LZ81XlA/4wC0qDZ+rHSmJyFnuNos
+         hgMwBGSrsE3TJh5kQEGvOFs1rS8gmu7ixuMpi5lXQfarO7GtUmV2vVpxbX7MHQzv9YCF
+         JjMxgk5Wsz1XfrFrWgJri5L7bYf8ECa0xFOBQYUHGJ/uxFT4A3Zr6TEwON5zDQB1KQ0k
+         M0dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0KKbogh3L9ZLQi4AHPpKgTf8O2PBAi81EXi0iTi9rG+o4nJ8MJv1gl6tUtgdEgEX17yvKNGjPZPqCz9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/nA20o0Wss5YNMFgSTQa+4jNO8/ZGdSJNEndUG966MMKBePVJ
+	9Lj1NLNxL64FInOQqQ8Xa48sztSmIRqA+D8g7rvALVRA9N/k8uTq0FUP
+X-Gm-Gg: ASbGnctVE45FfE3YhP7ZSvaNcV1gtHdssVXaJNo43Uw7e3i++egogLnoa87/nDzZaC1
+	Qhq79ah1CRnzdjLG1ILdHjHcu34NETA8JjNNZqGpD4hE/5WMpLYdlRITd2OyuVKS6fbmPu9JRjo
+	YE2D7NVj30GsCR5DwCi9ek6liDf4OGt57SbHIqF5n7CZ54+fH1vdDxDHA7PmFJr7c9adR+bduU3
+	tIb5waPl0Xs/dEJoo4bx2Dy691nE0N/YIwLYK1CpJXw74XnnUF5L8N+lpXkrveFUJjplC8jespl
+	c9dUTcnuGWezZ/VPsCWbRCNd0Za86V8BhtIjzdURG0g1KumwESNs5hgMjGY4G2uA4Matl1FOBQP
+	TV8rizH4sHxZuqbRBWYeFP+pntn/0C9/KRfY/rU8EM3wh+ywADZCFfPtPUFlDe4Q1uIZsEm67uI
+	mWJ6mcMQbdVYs=
+X-Google-Smtp-Source: AGHT+IGPq6NoJecMSRuhP/l9ouJtlFCnSkKR9+iBv1QGL1Q1oGRUhlnsX+GsoH3jhGeW+/vjvX25Wg==
+X-Received: by 2002:a17:90b:3f0f:b0:32d:e309:8d76 with SMTP id 98e67ed59e1d1-3305c64978fmr2409491a91.10.1758172592958;
+        Wed, 17 Sep 2025 22:16:32 -0700 (PDT)
 Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802deeb1sm12286825ad.78.2025.09.17.22.16.29
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33046a4d0basm2726998a91.27.2025.09.17.22.16.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 22:16:30 -0700 (PDT)
+        Wed, 17 Sep 2025 22:16:32 -0700 (PDT)
 Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 4EAD71061EE8; Thu, 18 Sep 2025 14:16:28 +0900 (JST)
+	id 003E61061EEA; Thu, 18 Sep 2025 14:16:31 +0900 (JST)
 From: Hajime Tazaki <thehajime@gmail.com>
 To: linux-um@lists.infradead.org
 Cc: thehajime@gmail.com,
 	ricarkol@google.com,
 	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v11 04/14] x86/um: nommu: syscall handling
-Date: Thu, 18 Sep 2025 14:15:57 +0900
-Message-ID: <99a54b96cee85275692ca01fe4a0ef0d83996f0f.1758171893.git.thehajime@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Kenichi Yasukata <kenichi.yasukata@gmail.com>
+Subject: [PATCH v11 05/14] um: nommu: seccomp syscalls hook
+Date: Thu, 18 Sep 2025 14:15:58 +0900
+Message-ID: <952f2620bf435d90358bf5868a17ec27f213bf3f.1758171893.git.thehajime@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1758171893.git.thehajime@gmail.com>
 References: <cover.1758171893.git.thehajime@gmail.com>
@@ -95,256 +96,360 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit introduces an entry point of syscall interface for !MMU
-mode. It uses an entry function, __kernel_vsyscall, a kernel-wide global
-symbol accessible from any locations.
+This commit adds syscall hook with seccomp.
 
-Although it isn't in the scope of this commit, it can be also exposed
-via vdso image which is directly accessible from userspace. A standard
-library (i.e., libc) can utilize this entry point to implement syscall
-wrapper; we can also use this by hooking syscall for unmodified userspace
-applications/libraries, which will be implemented in the subsequent
-commit.
+Using seccomp raises SIGSYS to UML process, which is captured in the
+(UML) kernel, then jumps to the syscall entry point, __kernel_vsyscall,
+to hook the original syscall instructions.
 
-This only supports 64-bit mode of x86 architecture.
+The SIGSYS signal is raised upon the execution from uml_reserved and
+high_physmem, which locates userspace memory.
+
+It also renames existing static function, sigsys_handler(), in
+start_up.c to avoid name conflicts between them.
 
 Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-Signed-off-by: Ricardo Koller <ricarkol@google.com>
+Signed-off-by: Kenichi Yasukata <kenichi.yasukata@gmail.com>
 ---
- arch/x86/um/Makefile              |   4 ++
- arch/x86/um/asm/syscall.h         |   6 ++
- arch/x86/um/nommu/Makefile        |   8 +++
- arch/x86/um/nommu/do_syscall_64.c |  32 +++++++++
- arch/x86/um/nommu/entry_64.S      | 112 ++++++++++++++++++++++++++++++
- arch/x86/um/nommu/syscalls.h      |  16 +++++
- 6 files changed, 178 insertions(+)
- create mode 100644 arch/x86/um/nommu/Makefile
- create mode 100644 arch/x86/um/nommu/do_syscall_64.c
- create mode 100644 arch/x86/um/nommu/entry_64.S
- create mode 100644 arch/x86/um/nommu/syscalls.h
+ arch/um/include/shared/kern_util.h    |  2 +
+ arch/um/include/shared/os.h           | 10 +++
+ arch/um/kernel/um_arch.c              |  3 +
+ arch/um/nommu/Makefile                |  3 +
+ arch/um/nommu/os-Linux/Makefile       |  7 +++
+ arch/um/nommu/os-Linux/signal.c       | 16 +++++
+ arch/um/os-Linux/Makefile             |  5 ++
+ arch/um/os-Linux/seccomp.c            | 87 +++++++++++++++++++++++++++
+ arch/um/os-Linux/signal.c             |  8 +++
+ arch/um/os-Linux/start_up.c           |  4 +-
+ arch/x86/um/nommu/Makefile            |  2 +-
+ arch/x86/um/nommu/os-Linux/Makefile   |  6 ++
+ arch/x86/um/nommu/os-Linux/mcontext.c | 15 +++++
+ arch/x86/um/shared/sysdep/mcontext.h  |  4 ++
+ 14 files changed, 169 insertions(+), 3 deletions(-)
+ create mode 100644 arch/um/nommu/Makefile
+ create mode 100644 arch/um/nommu/os-Linux/Makefile
+ create mode 100644 arch/um/nommu/os-Linux/signal.c
+ create mode 100644 arch/um/os-Linux/seccomp.c
+ create mode 100644 arch/x86/um/nommu/os-Linux/Makefile
+ create mode 100644 arch/x86/um/nommu/os-Linux/mcontext.c
 
-diff --git a/arch/x86/um/Makefile b/arch/x86/um/Makefile
-index b42c31cd2390..227af2a987e2 100644
---- a/arch/x86/um/Makefile
-+++ b/arch/x86/um/Makefile
-@@ -32,6 +32,10 @@ obj-y += syscalls_64.o vdso/
- subarch-y = ../lib/csum-partial_64.o ../lib/memcpy_64.o \
- 	../lib/memmove_64.o ../lib/memset_64.o
+diff --git a/arch/um/include/shared/kern_util.h b/arch/um/include/shared/kern_util.h
+index 00ca3e12fd9a..ec8ba1f13c58 100644
+--- a/arch/um/include/shared/kern_util.h
++++ b/arch/um/include/shared/kern_util.h
+@@ -66,6 +66,8 @@ extern void segv_handler(int sig, struct siginfo *unused_si, struct uml_pt_regs
+ extern void winch(int sig, struct siginfo *unused_si, struct uml_pt_regs *regs,
+ 		  void *mc);
+ extern void fatal_sigsegv(void) __attribute__ ((noreturn));
++extern void sigsys_handler(int sig, struct siginfo *si, struct uml_pt_regs *regs,
++			   void *mc);
  
-+ifneq ($(CONFIG_MMU),y)
-+obj-y += nommu/
-+endif
+ void um_idle_sleep(void);
+ 
+diff --git a/arch/um/include/shared/os.h b/arch/um/include/shared/os.h
+index b35cc8ce333b..1251f08e26d0 100644
+--- a/arch/um/include/shared/os.h
++++ b/arch/um/include/shared/os.h
+@@ -338,4 +338,14 @@ extern void um_trace_signals_off(void);
+ /* time-travel */
+ extern void deliver_time_travel_irqs(void);
+ 
++/* seccomp.c */
++#ifdef CONFIG_MMU
++static inline int os_setup_seccomp(void)
++{
++	return 0;
++}
++#else
++extern int os_setup_seccomp(void);
++#endif
 +
- endif
- 
- subarch-$(CONFIG_MODULES) += ../kernel/module.o
-diff --git a/arch/x86/um/asm/syscall.h b/arch/x86/um/asm/syscall.h
-index d6208d0fad51..bb4f6f011667 100644
---- a/arch/x86/um/asm/syscall.h
-+++ b/arch/x86/um/asm/syscall.h
-@@ -20,4 +20,10 @@ static inline int syscall_get_arch(struct task_struct *task)
  #endif
+diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
+index cfbbbf8500c3..e90b8744144a 100644
+--- a/arch/um/kernel/um_arch.c
++++ b/arch/um/kernel/um_arch.c
+@@ -426,6 +426,9 @@ void __init setup_arch(char **cmdline_p)
+ 		add_bootloader_randomness(rng_seed, sizeof(rng_seed));
+ 		memzero_explicit(rng_seed, sizeof(rng_seed));
+ 	}
++
++	/* install seccomp filter */
++	os_setup_seccomp();
  }
  
-+#ifndef CONFIG_MMU
-+extern void do_syscall_64(struct pt_regs *regs);
-+extern long __kernel_vsyscall(int64_t a0, int64_t a1, int64_t a2, int64_t a3,
-+			      int64_t a4, int64_t a5, int64_t a6);
-+#endif
-+
- #endif /* __UM_ASM_SYSCALL_H */
-diff --git a/arch/x86/um/nommu/Makefile b/arch/x86/um/nommu/Makefile
+ void __init arch_cpu_finalize_init(void)
+diff --git a/arch/um/nommu/Makefile b/arch/um/nommu/Makefile
 new file mode 100644
-index 000000000000..d72c63afffa5
+index 000000000000..baab7c2f57c2
 --- /dev/null
-+++ b/arch/x86/um/nommu/Makefile
-@@ -0,0 +1,8 @@
++++ b/arch/um/nommu/Makefile
+@@ -0,0 +1,3 @@
 +# SPDX-License-Identifier: GPL-2.0
-+ifeq ($(CONFIG_X86_32),y)
-+	BITS := 32
-+else
-+	BITS := 64
-+endif
 +
-+obj-y = do_syscall_$(BITS).o entry_$(BITS).o
-diff --git a/arch/x86/um/nommu/do_syscall_64.c b/arch/x86/um/nommu/do_syscall_64.c
++obj-y := os-Linux/
+diff --git a/arch/um/nommu/os-Linux/Makefile b/arch/um/nommu/os-Linux/Makefile
 new file mode 100644
-index 000000000000..292d7c578622
+index 000000000000..68833c576437
 --- /dev/null
-+++ b/arch/x86/um/nommu/do_syscall_64.c
-@@ -0,0 +1,32 @@
++++ b/arch/um/nommu/os-Linux/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-y := signal.o
++USER_OBJS := $(obj-y)
++
++include $(srctree)/arch/um/scripts/Makefile.rules
++USER_CFLAGS+=-I$(srctree)/arch/um/os-Linux
+diff --git a/arch/um/nommu/os-Linux/signal.c b/arch/um/nommu/os-Linux/signal.c
+new file mode 100644
+index 000000000000..19043b9652e2
+--- /dev/null
++++ b/arch/um/nommu/os-Linux/signal.c
+@@ -0,0 +1,16 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#include <linux/kernel.h>
-+#include <linux/ptrace.h>
++#include <signal.h>
 +#include <kern_util.h>
-+#include <asm/syscall.h>
 +#include <os.h>
++#include <sysdep/mcontext.h>
++#include <sys/ucontext.h>
 +
-+__visible void do_syscall_64(struct pt_regs *regs)
++void sigsys_handler(int sig, struct siginfo *si,
++		    struct uml_pt_regs *regs, void *ptr)
 +{
-+	int syscall;
++	mcontext_t *mc = (mcontext_t *) ptr;
 +
-+	syscall = PT_SYSCALL_NR(regs->regs.gp);
-+	UPT_SYSCALL_NR(&regs->regs) = syscall;
++	/* hook syscall via SIGSYS */
++	set_mc_sigsys_hook(mc);
++}
+diff --git a/arch/um/os-Linux/Makefile b/arch/um/os-Linux/Makefile
+index c048fc838068..432476a4239a 100644
+--- a/arch/um/os-Linux/Makefile
++++ b/arch/um/os-Linux/Makefile
+@@ -21,4 +21,9 @@ USER_OBJS := $(user-objs-y) elf_aux.o execvp.o file.o helper.o irq.o \
+ 	main.o mem.o process.o registers.o sigio.o signal.o start_up.o time.o \
+ 	tty.o umid.o util.o
+ 
++ifneq ($(CONFIG_MMU),y)
++obj-y += seccomp.o
++USER_OBJS += seccomp.o
++endif
 +
-+	if (likely(syscall < NR_syscalls)) {
-+		unsigned long ret;
+ include $(srctree)/arch/um/scripts/Makefile.rules
+diff --git a/arch/um/os-Linux/seccomp.c b/arch/um/os-Linux/seccomp.c
+new file mode 100644
+index 000000000000..d1cfa6e3d632
+--- /dev/null
++++ b/arch/um/os-Linux/seccomp.c
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+		ret = (*sys_call_table[syscall])(UPT_SYSCALL_ARG1(&regs->regs),
-+						 UPT_SYSCALL_ARG2(&regs->regs),
-+						 UPT_SYSCALL_ARG3(&regs->regs),
-+						 UPT_SYSCALL_ARG4(&regs->regs),
-+						 UPT_SYSCALL_ARG5(&regs->regs),
-+						 UPT_SYSCALL_ARG6(&regs->regs));
-+		PT_REGS_SET_SYSCALL_RETURN(regs, ret);
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <errno.h>
++#include <signal.h>
++#include <sys/prctl.h>
++#include <sys/syscall.h>   /* For SYS_xxx definitions */
++#include <init.h>
++#include <as-layout.h>
++#include <os.h>
++#include <linux/filter.h>
++#include <linux/seccomp.h>
++
++int __init os_setup_seccomp(void)
++{
++	int err;
++	unsigned long __userspace_start = uml_reserved,
++		__userspace_end = high_physmem;
++
++	struct sock_filter filter[] = {
++		/* if (IP_high > __userspace_end) allow; */
++		BPF_STMT(BPF_LD + BPF_W + BPF_ABS,
++			 offsetof(struct seccomp_data, instruction_pointer) + 4),
++		BPF_JUMP(BPF_JMP + BPF_JGT + BPF_K, __userspace_end >> 32,
++			 /*true-skip=*/0, /*false-skip=*/1),
++		BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW),
++
++		/* if (IP_high == __userspace_end && IP_low >= __userspace_end) allow; */
++		BPF_STMT(BPF_LD + BPF_W + BPF_ABS,
++			 offsetof(struct seccomp_data, instruction_pointer) + 4),
++		BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, __userspace_end >> 32,
++			 /*true-skip=*/0, /*false-skip=*/3),
++		BPF_STMT(BPF_LD + BPF_W + BPF_ABS,
++			 offsetof(struct seccomp_data, instruction_pointer)),
++		BPF_JUMP(BPF_JMP + BPF_JGE + BPF_K, __userspace_end,
++			 /*true-skip=*/0, /*false-skip=*/1),
++		BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW),
++
++		/* if (IP_high < __userspace_start) allow; */
++		BPF_STMT(BPF_LD + BPF_W + BPF_ABS,
++			 offsetof(struct seccomp_data, instruction_pointer) + 4),
++		BPF_JUMP(BPF_JMP + BPF_JGE + BPF_K, __userspace_start >> 32,
++			 /*true-skip=*/1, /*false-skip=*/0),
++		BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW),
++
++		/* if (IP_high == __userspace_start && IP_low < __userspace_start) allow; */
++		BPF_STMT(BPF_LD + BPF_W + BPF_ABS,
++			 offsetof(struct seccomp_data, instruction_pointer) + 4),
++		BPF_JUMP(BPF_JMP + BPF_JEQ + BPF_K, __userspace_start >> 32,
++			 /*true-skip=*/0, /*false-skip=*/3),
++		BPF_STMT(BPF_LD + BPF_W + BPF_ABS,
++			 offsetof(struct seccomp_data, instruction_pointer)),
++		BPF_JUMP(BPF_JMP + BPF_JGE + BPF_K, __userspace_start,
++			 /*true-skip=*/1, /*false-skip=*/0),
++		BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_ALLOW),
++
++		/* other address; trap  */
++		BPF_STMT(BPF_RET + BPF_K, SECCOMP_RET_TRAP),
++	};
++	struct sock_fprog prog = {
++		.len = ARRAY_SIZE(filter),
++		.filter = filter,
++	};
++
++	err = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
++	if (err)
++		os_warn("PR_SET_NO_NEW_PRIVS (err=%d, ernro=%d)\n",
++		       err, errno);
++
++	err = syscall(SYS_seccomp, SECCOMP_SET_MODE_FILTER,
++		      SECCOMP_FILTER_FLAG_TSYNC, &prog);
++	if (err) {
++		os_warn("SECCOMP_SET_MODE_FILTER (err=%d, ernro=%d)\n",
++		       err, errno);
++		exit(1);
 +	}
 +
-+	PT_REGS_SYSCALL_RET(regs) = regs->regs.gp[HOST_AX];
++	set_handler(SIGSYS);
 +
-+	/* handle tasks and signals at the end */
-+	interrupt_end();
++	os_info("seccomp: setup filter syscalls in the range: 0x%lx-0x%lx\n",
++		__userspace_start, __userspace_end);
++
++	return 0;
 +}
-diff --git a/arch/x86/um/nommu/entry_64.S b/arch/x86/um/nommu/entry_64.S
++
+diff --git a/arch/um/os-Linux/signal.c b/arch/um/os-Linux/signal.c
+index 11f07f498270..53e276e81b37 100644
+--- a/arch/um/os-Linux/signal.c
++++ b/arch/um/os-Linux/signal.c
+@@ -20,6 +20,7 @@
+ #include <um_malloc.h>
+ #include <sys/ucontext.h>
+ #include <timetravel.h>
++#include <linux/compiler_attributes.h>
+ 
+ void (*sig_info[NSIG])(int, struct siginfo *, struct uml_pt_regs *, void *mc) = {
+ 	[SIGTRAP]	= relay_signal,
+@@ -30,6 +31,7 @@ void (*sig_info[NSIG])(int, struct siginfo *, struct uml_pt_regs *, void *mc) =
+ 	[SIGSEGV]	= segv_handler,
+ 	[SIGIO]		= sigio_handler,
+ 	[SIGCHLD]	= sigchld_handler,
++	[SIGSYS]	= sigsys_handler,
+ };
+ 
+ static void sig_handler_common(int sig, struct siginfo *si, mcontext_t *mc)
+@@ -176,6 +178,11 @@ static void sigusr1_handler(int sig, struct siginfo *unused_si, mcontext_t *mc)
+ 	uml_pm_wake();
+ }
+ 
++__weak void sigsys_handler(int sig, struct siginfo *unused_si,
++			   struct uml_pt_regs *regs, void *mc)
++{
++}
++
+ void register_pm_wake_signal(void)
+ {
+ 	set_handler(SIGUSR1);
+@@ -187,6 +194,7 @@ static void (*handlers[_NSIG])(int sig, struct siginfo *si, mcontext_t *mc) = {
+ 	[SIGILL] = sig_handler,
+ 	[SIGFPE] = sig_handler,
+ 	[SIGTRAP] = sig_handler,
++	[SIGSYS] = sig_handler,
+ 
+ 	[SIGIO] = sig_handler,
+ 	[SIGWINCH] = sig_handler,
+diff --git a/arch/um/os-Linux/start_up.c b/arch/um/os-Linux/start_up.c
+index a827c2e01aa5..4e1f05360c49 100644
+--- a/arch/um/os-Linux/start_up.c
++++ b/arch/um/os-Linux/start_up.c
+@@ -238,7 +238,7 @@ extern unsigned long *exec_fp_regs;
+ 
+ __initdata static struct stub_data *seccomp_test_stub_data;
+ 
+-static void __init sigsys_handler(int sig, siginfo_t *info, void *p)
++static void __init _sigsys_handler(int sig, siginfo_t *info, void *p)
+ {
+ 	ucontext_t *uc = p;
+ 
+@@ -273,7 +273,7 @@ static int __init seccomp_helper(void *data)
+ 			sizeof(seccomp_test_stub_data->sigstack));
+ 
+ 	sa.sa_flags = SA_ONSTACK | SA_NODEFER | SA_SIGINFO;
+-	sa.sa_sigaction = (void *) sigsys_handler;
++	sa.sa_sigaction = (void *) _sigsys_handler;
+ 	sa.sa_restorer = NULL;
+ 	if (sigaction(SIGSYS, &sa, NULL) < 0)
+ 		exit(2);
+diff --git a/arch/x86/um/nommu/Makefile b/arch/x86/um/nommu/Makefile
+index d72c63afffa5..ebe47d4836f4 100644
+--- a/arch/x86/um/nommu/Makefile
++++ b/arch/x86/um/nommu/Makefile
+@@ -5,4 +5,4 @@ else
+ 	BITS := 64
+ endif
+ 
+-obj-y = do_syscall_$(BITS).o entry_$(BITS).o
++obj-y = do_syscall_$(BITS).o entry_$(BITS).o os-Linux/
+diff --git a/arch/x86/um/nommu/os-Linux/Makefile b/arch/x86/um/nommu/os-Linux/Makefile
 new file mode 100644
-index 000000000000..485c578aae64
+index 000000000000..4571e403a6ff
 --- /dev/null
-+++ b/arch/x86/um/nommu/entry_64.S
-@@ -0,0 +1,112 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <asm/errno.h>
++++ b/arch/x86/um/nommu/os-Linux/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+#include <linux/linkage.h>
-+#include <asm/percpu.h>
-+#include <asm/desc.h>
++obj-y = mcontext.o
++USER_OBJS := mcontext.o
 +
-+#include "../entry/calling.h"
++include $(srctree)/arch/um/scripts/Makefile.rules
+diff --git a/arch/x86/um/nommu/os-Linux/mcontext.c b/arch/x86/um/nommu/os-Linux/mcontext.c
+new file mode 100644
+index 000000000000..b62a6195096f
+--- /dev/null
++++ b/arch/x86/um/nommu/os-Linux/mcontext.c
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <sys/ucontext.h>
++#define __FRAME_OFFSETS
++#include <asm/ptrace.h>
++#include <sysdep/ptrace.h>
++#include <sysdep/mcontext.h>
 +
-+#ifdef CONFIG_SMP
-+#error need to stash these variables somewhere else
++extern long __kernel_vsyscall(int64_t a0, int64_t a1, int64_t a2, int64_t a3,
++			      int64_t a4, int64_t a5, int64_t a6);
++
++void set_mc_sigsys_hook(mcontext_t *mc)
++{
++	mc->gregs[REG_RCX] = mc->gregs[REG_RIP];
++	mc->gregs[REG_RIP] = (unsigned long) __kernel_vsyscall;
++}
+diff --git a/arch/x86/um/shared/sysdep/mcontext.h b/arch/x86/um/shared/sysdep/mcontext.h
+index 6fe490cc5b98..9a0d6087f357 100644
+--- a/arch/x86/um/shared/sysdep/mcontext.h
++++ b/arch/x86/um/shared/sysdep/mcontext.h
+@@ -17,6 +17,10 @@ extern int get_stub_state(struct uml_pt_regs *regs, struct stub_data *data,
+ extern int set_stub_state(struct uml_pt_regs *regs, struct stub_data *data,
+ 			  int single_stepping);
+ 
++#ifndef CONFIG_MMU
++extern void set_mc_sigsys_hook(mcontext_t *mc);
 +#endif
 +
-+#define UM_GLOBAL_VAR(x) .data; .align 8; .globl x; x:; .long 0
-+
-+UM_GLOBAL_VAR(current_top_of_stack)
-+UM_GLOBAL_VAR(current_ptregs)
-+
-+.code64
-+.section .entry.text, "ax"
-+
-+.align 8
-+#undef ENTRY
-+#define ENTRY(x) .text; .globl x; .type x,%function; x:
-+#undef END
-+#define END(x)   .size x, . - x
-+
-+/*
-+ * %rcx has the return address (we set it before entering __kernel_vsyscall).
-+ *
-+ * Registers on entry:
-+ * rax  system call number
-+ * rcx  return address
-+ * rdi  arg0
-+ * rsi  arg1
-+ * rdx  arg2
-+ * r10  arg3
-+ * r8   arg4
-+ * r9   arg5
-+ *
-+ * (note: we are allowed to mess with r11: r11 is callee-clobbered
-+ * register in C ABI)
-+ */
-+ENTRY(__kernel_vsyscall)
-+
-+	movq	%rsp, %r11
-+
-+	/* Point rsp to the top of the ptregs array, so we can
-+           just fill it with a bunch of push'es. */
-+	movq	current_ptregs, %rsp
-+
-+	/* 8 bytes * 20 registers (plus 8 for the push) */
-+	addq	$168, %rsp
-+
-+	/* Construct struct pt_regs on stack */
-+	pushq	$0		/* pt_regs->ss (index 20) */
-+	pushq   %r11		/* pt_regs->sp */
-+	pushfq			/* pt_regs->flags */
-+	pushq	$0		/* pt_regs->cs */
-+	pushq	%rcx		/* pt_regs->ip */
-+	pushq	%rax		/* pt_regs->orig_ax */
-+
-+	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
-+
-+	mov %rsp, %rdi
-+
-+	/*
-+	 * Switch to current top of stack, so "current->" points
-+	 * to the right task.
-+	 */
-+	movq	current_top_of_stack, %rsp
-+
-+	call	do_syscall_64
-+
-+	jmp	userspace
-+
-+END(__kernel_vsyscall)
-+
-+/*
-+ * common userspace returning routine
-+ *
-+ * all procedures like syscalls, signal handlers, umh processes, will gate
-+ * this routine to properly configure registers/stacks.
-+ *
-+ * void userspace(struct uml_pt_regs *regs)
-+ */
-+ENTRY(userspace)
-+
-+	/* clear direction flag to meet ABI */
-+	cld
-+	/* align the stack for x86_64 ABI */
-+	and     $-0x10, %rsp
-+	/* Handle any immediate reschedules or signals */
-+	call	interrupt_end
-+
-+	movq	current_ptregs, %rsp
-+
-+	POP_REGS
-+
-+	addq	$8, %rsp	/* skip orig_ax */
-+	popq	%rcx		/* pt_regs->ip */
-+	addq	$8, %rsp	/* skip cs */
-+	addq	$8, %rsp	/* skip flags */
-+	popq	%rsp
-+
-+	/*
-+	* not return w/ ret but w/ jmp as the stack is already popped before
-+	* entering __kernel_vsyscall
-+	*/
-+	jmp	*%rcx
-+
-+END(userspace)
-diff --git a/arch/x86/um/nommu/syscalls.h b/arch/x86/um/nommu/syscalls.h
-new file mode 100644
-index 000000000000..a2433756b1fc
---- /dev/null
-+++ b/arch/x86/um/nommu/syscalls.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __UM_NOMMU_SYSCALLS_H
-+#define __UM_NOMMU_SYSCALLS_H
-+
-+
-+#define task_top_of_stack(task) \
-+({									\
-+	unsigned long __ptr = (unsigned long)task->stack;	\
-+	__ptr += THREAD_SIZE;			\
-+	__ptr;					\
-+})
-+
-+extern long current_top_of_stack;
-+extern long current_ptregs;
-+
-+#endif
+ #ifdef __i386__
+ 
+ #define GET_FAULTINFO_FROM_MC(fi, mc) \
 -- 
 2.43.0
 
