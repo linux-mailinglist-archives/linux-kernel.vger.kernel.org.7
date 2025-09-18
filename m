@@ -1,261 +1,235 @@
-Return-Path: <linux-kernel+bounces-823212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC532B85CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:56:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC85B85AED
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B534F3A5385
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC481886259
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E56D314B60;
-	Thu, 18 Sep 2025 15:50:57 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3CE312801;
-	Thu, 18 Sep 2025 15:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B70A311C01;
+	Thu, 18 Sep 2025 15:34:35 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A789730E0C7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758210656; cv=none; b=WL/lc9LVnRLrKsOXaaEsDjSyLQeajiiNec5bgClSoaGc30GxvqZK31si+Z7MbbYvQor45ymPLw4LyeGkXatCMd5KTUEI7WVX9MaX8lkelGXEokUC6dlgwvXF1YWG5aZEjzmwQ3RYdphbWmQrqYXE+LpNHsbCqn2u3aTLHXyUTdk=
+	t=1758209674; cv=none; b=lqGO5fd3BYXhEJ+0foriunIylG+Hy5XrLyBbwI7sfmeuDbscSEqMjpghqeB3I38usQOhWmVvPgO7Ej0iHN9gbZhkzOEWuoxXfDKDzp4qJmebzsWnSyY84h/W9leG1FAQcOYZ6p8CKylcLPzo9V2LdnIxphPENByjvC9AXmLdFPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758210656; c=relaxed/simple;
-	bh=hiFVvDsKhsZYm/v2+/bRrQVP0aSM357pzO7qX7bdClA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UtAoC1ki27+HYo86wY8Z/4rIiajd1mq5RwrWKdUJA36mBMSgmlgsLQSvUyicZHxdvjPhSHbr5t8TtKFHLHOmVrOwvMs8yXyP5nh7NUdlH7oJ5L+KubJ888uNKdnynNPfiTDMBshrokZzr7Djfgm289yTwNyBgD7zndN5pBiusnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cSKST1lJVz9sg5;
-	Thu, 18 Sep 2025 17:34:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id oX_2heg6YaBY; Thu, 18 Sep 2025 17:34:33 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cSKST04Rcz9sg4;
-	Thu, 18 Sep 2025 17:34:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C02FB8B767;
-	Thu, 18 Sep 2025 17:34:32 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id XD6WzEdXVtAS; Thu, 18 Sep 2025 17:34:32 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E966A8B776;
-	Thu, 18 Sep 2025 17:34:31 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Qiang Zhao <qiang.zhao@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: [PATCH RESEND v3 4/4] ASoc: fsl: fsl_qmc_audio: Drop struct qmc_dai_chan
-Date: Thu, 18 Sep 2025 17:34:11 +0200
-Message-ID: <9c729bbd9f1b61120a09a87fb76176ef344c5153.1758209158.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1758209158.git.christophe.leroy@csgroup.eu>
-References: <cover.1758209158.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1758209674; c=relaxed/simple;
+	bh=sf8inLcyyURrqrt8I1aE6XtRdQnfMf3aVhy6JYqE0AQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=e2MK+A4B4NkWp+Gjbi5TJfs8F5cd+JM4XbSqP0kqdm2uq3frO8wmBvo+H0VfvEvUnwtqjQQUJ2V8JVhvzMIJmsIdPMf+4ftbW0R6F+OHiEYT7rpK1ufeZXxIDW0dhvvkSd1ywGtbP0/5g+SqfDJJHQZvrrInoZuTdbyvxWmHuFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-42404bb4284so13509955ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:34:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758209672; x=1758814472;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rfgUaO3w0Y6SX1N7OWUD+f8H1k2Nfi1/FrpQdNYlp7o=;
+        b=l2y51S6h1VXccg3KBk5t4n6bRDijZD3VWbKNCRyW4l6T7Db8oOYVjhtYtYnClTEg4v
+         Kxm9cMUXVhMiX3jvO6AP4OFmPsqjw2qF1n3RD3b0rm+fL5PbwLbnauQprhAvs52RD3u9
+         n9FP5Ad5i+AhK8oVwLUJbgUTK+718ZQHPxMI8xtfuU0rrZwgiDFDHxrwcbk+h0wOjJ1Y
+         Bhe+5E7huv3Dhv0vUsFsr6AOC41ZKkgA8+U0ADypCoKGZCkmKr60Lkj6z/bnJshnGJhE
+         RYvdq08bZwakse7yM82Y9xL13eP6jqKetOHtjZx4J3UM2Qr7PxC5Q1h/ZT0QRZhne3Ul
+         mz5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWSSuyvp1yeYtUAVC/y2BL2+YoVj2bj4gPdLlqZhUPkgBKN3NZfInoj7K3pKW81jdjp9Oq9Zg2rT0cYpuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8d49CjF4FOQJouwml51AH0tUngYQ8ePTl8IFInh+nAG3/A/kv
+	/OIqOF6i8RiTlIx+0RDAvEWphl6WzXQpKkBXRv1r+tQREX72ABmP6afuBGjjH9tO5f4UzKLhyk3
+	tOrGT3OZVLey1cJVm9TBxHZbMr61hHA2ntsrDWR//Gt+g2OPw89DR2DwWNcw=
+X-Google-Smtp-Source: AGHT+IFw/d224B4mdYFn2HHT8wVIgibnc1Ve50CWbh2u+uRMAr6GY5xyjsDN4Bt/hH/FB8t0SDtH3v9ZmrnDhi5xzfLM+Mnkzx26
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758209657; l=7036; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=hiFVvDsKhsZYm/v2+/bRrQVP0aSM357pzO7qX7bdClA=; b=oA3dKiOCZ31kqBYOQcNUMFTkOTmgYgQtxij9M8WvelR5/+bYlgZQBVItZWNy4YPLRccDMKo6Q dV61RhOSRLWAzLjZP/dUyAWPZSYf0HGD7vPtuOYVP9fwia3krRLHUdr
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:19ca:b0:3f2:a771:9fb3 with SMTP id
+ e9e14a558f8ab-4241a56dbedmr90996165ab.27.1758209671826; Thu, 18 Sep 2025
+ 08:34:31 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:34:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cc2687.050a0220.139b6.0005.GAE@google.com>
+Subject: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
+ __io_req_task_work_add (2)
+From: syzbot <syzbot+baa2e0f4e02df602583e@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-prtd_tx and prtd_rx members are not used anymore and only qmc_chan
-member remains so struct qmc_dai_chan has become pointless.
+Hello,
 
-Use qmc_chan directly and drop struct qmc_dai_chan.
+syzbot found the following issue on:
 
-Acked-by: Herve Codina <herve.codina@bootlin.com>
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+HEAD commit:    8b789f2b7602 Merge tag 'mm-hotfixes-stable-2025-09-17-21-1..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10154f62580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=baa2e0f4e02df602583e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2c5815e2639f/disk-8b789f2b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1e6e9e88f96c/vmlinux-8b789f2b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e1f2a1d87f1f/bzImage-8b789f2b.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+baa2e0f4e02df602583e@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in io_req_local_work_add io_uring/io_uring.c:1219 [inline]
+BUG: KASAN: slab-use-after-free in __io_req_task_work_add+0x589/0x950 io_uring/io_uring.c:1287
+Read of size 4 at addr ffff888032ab9904 by task iou-wrk-12380/12382
+
+CPU: 0 UID: 0 PID: 12382 Comm: iou-wrk-12380 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ io_req_local_work_add io_uring/io_uring.c:1219 [inline]
+ __io_req_task_work_add+0x589/0x950 io_uring/io_uring.c:1287
+ io_req_task_work_add io_uring/io_uring.h:157 [inline]
+ io_req_complete_post io_uring/io_uring.c:961 [inline]
+ io_issue_sqe+0x643/0xfd0 io_uring/io_uring.c:1802
+ io_wq_submit_work+0x6e9/0xb90 io_uring/io_uring.c:1908
+ io_worker_handle_work+0x7cd/0x1180 io_uring/io-wq.c:650
+ io_wq_worker+0x42f/0xeb0 io_uring/io-wq.c:704
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 12382:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:330 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4191 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x3c0 mm/slub.c:4247
+ io_msg_get_kiocb io_uring/msg_ring.c:117 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:126 [inline]
+ __io_msg_ring_data+0x47b/0xa80 io_uring/msg_ring.c:151
+ io_msg_ring_data io_uring/msg_ring.c:173 [inline]
+ io_msg_ring+0x134/0xa00 io_uring/msg_ring.c:314
+ __io_issue_sqe+0x17e/0x4b0 io_uring/io_uring.c:1773
+ io_issue_sqe+0x165/0xfd0 io_uring/io_uring.c:1796
+ io_wq_submit_work+0x6e9/0xb90 io_uring/io_uring.c:1908
+ io_worker_handle_work+0x7cd/0x1180 io_uring/io-wq.c:650
+ io_wq_worker+0x42f/0xeb0 io_uring/io-wq.c:704
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Freed by task 12380:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_mempool_poison_object+0xad/0x130 mm/kasan/common.c:533
+ kasan_mempool_poison_object include/linux/kasan.h:360 [inline]
+ io_alloc_cache_put io_uring/alloc_cache.h:23 [inline]
+ io_msg_tw_complete+0x12c/0x4f0 io_uring/msg_ring.c:80
+ __io_run_local_work_loop io_uring/io_uring.c:1330 [inline]
+ __io_run_local_work+0x350/0x810 io_uring/io_uring.c:1363
+ io_run_local_work_locked io_uring/io_uring.c:1385 [inline]
+ __do_sys_io_uring_enter io_uring/io_uring.c:3478 [inline]
+ __se_sys_io_uring_enter+0x1725/0x2b20 io_uring/io_uring.c:3399
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0xb6/0x2b0 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x34/0x80 arch/x86/entry/syscall_32.c:331
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+The buggy address belongs to the object at ffff888032ab98c0
+ which belongs to the cache io_kiocb of size 248
+The buggy address is located 68 bytes inside of
+ freed 248-byte region [ffff888032ab98c0, ffff888032ab99b8)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32ab9
+memcg:ffff8880334ee901
+ksm flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff8881413b9c80 ffffea0001f63740 dead000000000003
+raw: 0000000000000000 00000000800c000c 00000000f5000000 ffff8880334ee901
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 12143, tgid 12142 (syz.1.1033), ts 466289495240, free_ts 459260987318
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2492 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2660
+ new_slab mm/slub.c:2714 [inline]
+ ___slab_alloc+0xbeb/0x1420 mm/slub.c:3901
+ __kmem_cache_alloc_bulk mm/slub.c:5346 [inline]
+ kmem_cache_alloc_bulk_noprof+0x20e/0x790 mm/slub.c:5418
+ __io_alloc_req_refill+0x9d/0x280 io_uring/io_uring.c:1007
+ io_alloc_req io_uring/io_uring.h:453 [inline]
+ io_submit_sqes+0xbfd/0x1d30 io_uring/io_uring.c:2387
+ __do_sys_io_uring_enter io_uring/io_uring.c:3465 [inline]
+ __se_sys_io_uring_enter+0x2df/0x2b20 io_uring/io_uring.c:3399
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0xb6/0x2b0 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x34/0x80 arch/x86/entry/syscall_32.c:331
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+page last free pid 15 tgid 15 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1395 [inline]
+ __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
+ rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+ rcu_core+0xcab/0x1770 kernel/rcu/tree.c:2861
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff888032ab9800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
+ ffff888032ab9880: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+>ffff888032ab9900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888032ab9980: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fc
+ ffff888032ab9a00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- sound/soc/fsl/fsl_qmc_audio.c | 52 ++++++++++++++---------------------
- 1 file changed, 20 insertions(+), 32 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
-index 2790953543c5..3de448ef724c 100644
---- a/sound/soc/fsl/fsl_qmc_audio.c
-+++ b/sound/soc/fsl/fsl_qmc_audio.c
-@@ -17,12 +17,6 @@
- #include <sound/pcm_params.h>
- #include <sound/soc.h>
- 
--struct qmc_dai_chan {
--	struct qmc_dai_prtd *prtd_tx;
--	struct qmc_dai_prtd *prtd_rx;
--	struct qmc_chan *qmc_chan;
--};
--
- struct qmc_dai {
- 	char *name;
- 	int id;
-@@ -33,7 +27,7 @@ struct qmc_dai {
- 	unsigned int nb_chans_avail;
- 	unsigned int nb_chans_used_tx;
- 	unsigned int nb_chans_used_rx;
--	struct qmc_dai_chan *chans;
-+	struct qmc_chan **qmc_chans;
- };
- 
- struct qmc_audio {
-@@ -125,7 +119,7 @@ static int qmc_audio_pcm_write_submit(struct qmc_dai_prtd *prtd)
- 	int ret;
- 
- 	for (i = 0; i < prtd->channels; i++) {
--		ret = qmc_chan_write_submit(prtd->qmc_dai->chans[i].qmc_chan,
-+		ret = qmc_chan_write_submit(prtd->qmc_dai->qmc_chans[i],
- 					    prtd->ch_dma_addr_current + i * prtd->ch_dma_offset,
- 					    prtd->ch_dma_size,
- 					    i == prtd->channels - 1 ? qmc_audio_pcm_write_complete :
-@@ -165,7 +159,7 @@ static int qmc_audio_pcm_read_submit(struct qmc_dai_prtd *prtd)
- 	int ret;
- 
- 	for (i = 0; i < prtd->channels; i++) {
--		ret = qmc_chan_read_submit(prtd->qmc_dai->chans[i].qmc_chan,
-+		ret = qmc_chan_read_submit(prtd->qmc_dai->qmc_chans[i],
- 					   prtd->ch_dma_addr_current + i * prtd->ch_dma_offset,
- 					   prtd->ch_dma_size,
- 					   i == prtd->channels - 1 ? qmc_audio_pcm_read_complete :
-@@ -206,7 +200,6 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 				 struct snd_pcm_substream *substream, int cmd)
- {
- 	struct qmc_dai_prtd *prtd = substream->runtime->private_data;
--	unsigned int i;
- 	int ret;
- 
- 	if (!prtd->qmc_dai) {
-@@ -220,9 +213,6 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 		prtd->ch_dma_addr_current = prtd->ch_dma_addr_start;
- 
- 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--			for (i = 0; i < prtd->channels; i++)
--				prtd->qmc_dai->chans[i].prtd_tx = prtd;
--
- 			/* Submit first chunk ... */
- 			ret = qmc_audio_pcm_write_submit(prtd);
- 			if (ret)
-@@ -238,9 +228,6 @@ static int qmc_audio_pcm_trigger(struct snd_soc_component *component,
- 			if (ret)
- 				return ret;
- 		} else {
--			for (i = 0; i < prtd->channels; i++)
--				prtd->qmc_dai->chans[i].prtd_rx = prtd;
--
- 			/* Submit first chunk ... */
- 			ret = qmc_audio_pcm_read_submit(prtd);
- 			if (ret)
-@@ -610,9 +597,9 @@ static int qmc_dai_hw_params(struct snd_pcm_substream *substream,
- 		chan_param.mode = QMC_TRANSPARENT;
- 		chan_param.transp.max_rx_buf_size = params_period_bytes(params) / nb_chans_used;
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret = qmc_chan_set_param(qmc_dai->chans[i].qmc_chan, &chan_param);
-+			ret = qmc_chan_set_param(qmc_dai->qmc_chans[i], &chan_param);
- 			if (ret) {
--				dev_err(dai->dev, "chans[%u], set param failed %d\n",
-+				dev_err(dai->dev, "qmc_chans[%u], set param failed %d\n",
- 					i, ret);
- 				return ret;
- 			}
-@@ -654,7 +641,7 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret = qmc_chan_start(qmc_dai->chans[i].qmc_chan, direction);
-+			ret = qmc_chan_start(qmc_dai->qmc_chans[i], direction);
- 			if (ret)
- 				goto err_stop;
- 		}
-@@ -663,13 +650,13 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_STOP:
- 		/* Stop and reset all QMC channels and return the first error encountered */
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret_tmp = qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+			ret_tmp = qmc_chan_stop(qmc_dai->qmc_chans[i], direction);
- 			if (!ret)
- 				ret = ret_tmp;
- 			if (ret_tmp)
- 				continue;
- 
--			ret_tmp = qmc_chan_reset(qmc_dai->chans[i].qmc_chan, direction);
-+			ret_tmp = qmc_chan_reset(qmc_dai->qmc_chans[i], direction);
- 			if (!ret)
- 				ret = ret_tmp;
- 		}
-@@ -681,7 +668,7 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
- 		/* Stop all QMC channels and return the first error encountered */
- 		for (i = 0; i < nb_chans_used; i++) {
--			ret_tmp = qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
-+			ret_tmp = qmc_chan_stop(qmc_dai->qmc_chans[i], direction);
- 			if (!ret)
- 				ret = ret_tmp;
- 		}
-@@ -697,8 +684,8 @@ static int qmc_dai_trigger(struct snd_pcm_substream *substream, int cmd,
- 
- err_stop:
- 	while (i--) {
--		qmc_chan_stop(qmc_dai->chans[i].qmc_chan, direction);
--		qmc_chan_reset(qmc_dai->chans[i].qmc_chan, direction);
-+		qmc_chan_stop(qmc_dai->qmc_chans[i], direction);
-+		qmc_chan_reset(qmc_dai->qmc_chans[i], direction);
- 	}
- 	return ret;
- }
-@@ -794,19 +781,20 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
- 		return dev_err_probe(qmc_audio->dev, -EINVAL,
- 				     "dai %d no QMC channel defined\n", qmc_dai->id);
- 
--	qmc_dai->chans = devm_kcalloc(qmc_audio->dev, count, sizeof(*qmc_dai->chans), GFP_KERNEL);
--	if (!qmc_dai->chans)
-+	qmc_dai->qmc_chans = devm_kcalloc(qmc_audio->dev, count, sizeof(*qmc_dai->qmc_chans),
-+					  GFP_KERNEL);
-+	if (!qmc_dai->qmc_chans)
- 		return -ENOMEM;
- 
- 	for (i = 0; i < count; i++) {
--		qmc_dai->chans[i].qmc_chan = devm_qmc_chan_get_byphandles_index(qmc_audio->dev, np,
--										"fsl,qmc-chan", i);
--		if (IS_ERR(qmc_dai->chans[i].qmc_chan)) {
--			return dev_err_probe(qmc_audio->dev, PTR_ERR(qmc_dai->chans[i].qmc_chan),
-+		qmc_dai->qmc_chans[i] = devm_qmc_chan_get_byphandles_index(qmc_audio->dev, np,
-+									   "fsl,qmc-chan", i);
-+		if (IS_ERR(qmc_dai->qmc_chans[i])) {
-+			return dev_err_probe(qmc_audio->dev, PTR_ERR(qmc_dai->qmc_chans[i]),
- 					     "dai %d get QMC channel %d failed\n", qmc_dai->id, i);
- 		}
- 
--		ret = qmc_chan_get_info(qmc_dai->chans[i].qmc_chan, &info);
-+		ret = qmc_chan_get_info(qmc_dai->qmc_chans[i], &info);
- 		if (ret) {
- 			dev_err(qmc_audio->dev, "dai %d get QMC %d channel info failed %d\n",
- 				qmc_dai->id, i, ret);
-@@ -851,7 +839,7 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
- 			}
- 		}
- 
--		ret = qmc_chan_get_ts_info(qmc_dai->chans[i].qmc_chan, &ts_info);
-+		ret = qmc_chan_get_ts_info(qmc_dai->qmc_chans[i], &ts_info);
- 		if (ret) {
- 			dev_err(qmc_audio->dev, "dai %d get QMC %d channel TS info failed %d\n",
- 				qmc_dai->id, i, ret);
--- 
-2.49.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
