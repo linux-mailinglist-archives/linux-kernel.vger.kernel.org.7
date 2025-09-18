@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-822214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F0CB834E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E030B8349A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7816A16A53C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E4C465C8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07342E974E;
-	Thu, 18 Sep 2025 07:24:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D802236A73
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13B62E7650;
+	Thu, 18 Sep 2025 07:19:59 +0000 (UTC)
+Received: from vs81.iboxed.net (vs10.datenmanufaktur-hosting.net [213.160.73.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43D023315A;
+	Thu, 18 Sep 2025 07:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758180254; cv=none; b=Y1IYEYAkV38Qu+cWy4rOhFNmL5vLnJdvaVBjDodjw4zBghoaiBbD8k9Xr5X+o3Xv7JOLKbbWRT8UYtvWT55/XhsLGVbVA0A1lsTbVhMyWs+CM1kLEuxv/U6/zQ7nYSp6hDvxLDt75r77DEePO7/JqMPaXliFsjn68ODHFB3IuxY=
+	t=1758179999; cv=none; b=ZR2lP8KPFZ4cPfnpmSx9oGo2+0MwMxgJ0fmd07lAuAOICJ/ZdMr0XibXtms9waAkOpqKQqN1bPrs6fQPu/Q8zJIq9fOcRTrlAEeZIB4G20j2/R06sVso9WVmSRWPYOLw3QcjJDgCrKFD3faR10edReCHaDhfEhB50oxQITEOuz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758180254; c=relaxed/simple;
-	bh=n74wAqwgiO0syKbdD+ecePKpzNA6k2nx2V93GwGFwoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eHmeLXuxcHUIDJy34pUc+IZH5b72DGPb8cKjjTm4aYlqVJGuSrKomWlvn7WoVdPoVjr+PDxHmxXNM5VJZAGswBy1jFN1e65PQcOICDBHpxKUGbj7J8M01MZyfvwW98MD7yL7cLKGxExVUUDcEKxtizIlrectHf61R4ncMx17D/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4DA1176C;
-	Thu, 18 Sep 2025 00:24:02 -0700 (PDT)
-Received: from [10.57.71.56] (unknown [10.57.71.56])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 111D83F66E;
-	Thu, 18 Sep 2025 00:24:08 -0700 (PDT)
-Message-ID: <ddc84d24-8bb6-48ca-9cab-cee8d4e0eca6@arm.com>
-Date: Thu, 18 Sep 2025 09:24:06 +0200
+	s=arc-20240116; t=1758179999; c=relaxed/simple;
+	bh=VvMIAtEi37Ksv2pemOmzDYTf0zTpsAVgWcNFBkpSQto=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Gq0ICWdFsymx2BZsSgBXBmQatRlvvTuKbb8CqRUlqtUGJJE2/g+Xe88fPGw/1uOrf7yvTyQyr8iKYFULejZvFDKrxR+Sqf+ElOdH2/DKcqWQOEo0UYogo/dL8qYD+Sv1klZOL/VRLdopM8hUoZAA3ixRCrdIvdFDdQoe4M8QP5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de; spf=pass smtp.mailfrom=blala.de; arc=none smtp.client-ip=213.160.73.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blala.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blala.de
+Received: from blala.de (localhost [127.0.0.1])
+	by vs81.iboxed.net (8.15.2/8.15.2/Debian-14~deb10u1) with ESMTP id 58I7P6Mh009840;
+	Thu, 18 Sep 2025 07:25:06 GMT
+Received: from localhost (akurz@localhost)
+	by blala.de (8.15.2/8.15.2/Submit) with ESMTP id 58I7P5Wt009836;
+	Thu, 18 Sep 2025 07:25:05 GMT
+Date: Thu, 18 Sep 2025 07:25:05 +0000 (UTC)
+From: Alexander Kurz <akurz@blala.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Dzmitry Sankouski <dsankouski@gmail.com>,
+        "Dr. David Alan Gilbert" <linux@treblig.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/8] mfd: mc13xxx: Use devm_mfd_add_devices and
+ devm_regmap_add_irq_chip
+In-Reply-To: <fqhldiqylcsp6kp4tvhopxekgszabbemnvbseygkqaipgp5mhl@wtz6c7kjloko>
+Message-ID: <alpine.DEB.2.21.2509180710190.9711@blala.de>
+References: <20250914193723.10544-1-akurz@blala.de> <20250914193723.10544-5-akurz@blala.de> <fqhldiqylcsp6kp4tvhopxekgszabbemnvbseygkqaipgp5mhl@wtz6c7kjloko>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: mm: Move KPTI helpers to mmu.c
-To: Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Ryan Roberts <ryan.roberts@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Kees Cook <kees@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20250912073908.404924-1-kevin.brodsky@arm.com>
- <aMrVOmOro930Bgob@willie-the-truck>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <aMrVOmOro930Bgob@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 17/09/2025 17:35, Will Deacon wrote:
-> Hey Kevin,
->
-> On Fri, Sep 12, 2025 at 08:39:08AM +0100, Kevin Brodsky wrote:
->> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
->> mmu.c without matching declaration in a header; instead cpufeature.c
->> makes its own declaration. This is clearly not pretty, and as commit
->> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
->> function signature") showed, it also makes it very easy for the
->> prototypes to go out of sync.
->>
->> All this would be much simpler if kpti_install_ng_mappings() and
->> associated functions lived in mmu.c, where they logically belong.
->> This is what this patch does:
->> - Move kpti_install_ng_mappings() and associated functions from
->>   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
->> - Remove create_kpti_ng_temp_pgd() and just call
->>   __create_pgd_mapping_locked() directly instead
->> - Mark all these functions __init
->> - Move __initdata after kpti_ng_temp_alloc (as suggested by
->>   checkpatch)
->>
->> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
->> Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->> ---
->> v1..v2:
->> * Removed create_kpti_ng_temp_pgd() instead of making it a wrapper
->>   [Ryan's suggestion]
->> * Added Reviewed-by's.
->> ---
->> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
->> Cc: Ard Biesheuvel <ardb@kernel.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Kees Cook <kees@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
->> ---
->>  arch/arm64/include/asm/mmu.h   |  6 +++
->>  arch/arm64/kernel/cpufeature.c | 97 ----------------------------------
->>  arch/arm64/mm/mmu.c            | 96 +++++++++++++++++++++++++++++----
->>  3 files changed, 93 insertions(+), 106 deletions(-)
-> Thanks, this looks fine to me. However, it conflicts with ceca927c86e6
-> ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc function
-> signature") which landed after -rc1 so I'll either queue this late
-> (after merging in for-next/fixes to for-next/core) or we can defer it to
-> -rc1.
 
-Ah yes, this patch is based on -rc5 so it depends on that commit (also
-mentioned in the commit message above). Didn't realise it caused trouble
-for merging!
+Hi Dimitry
+On Tue, 16 Sep 2025, Dmitry Torokhov wrote:
 
-> If we get to -rc2 and it's not in Linus' tree, then please repost
-> because it means I forgot about it :)
+> Hi Alexander,
+> 
+> On Sun, Sep 14, 2025 at 07:37:19PM +0000, Alexander Kurz wrote:
+> > Use devm_mfd_add_devices() for adding MFD child devices and
+> > devm_regmap_add_irq_chip() for IRQ chip registration.
+> > 
+> > This reduces the amount of required cleanup.
+> > 
+> > Signed-off-by: Alexander Kurz <akurz@blala.de>
+> > ---
+> >  drivers/mfd/mc13xxx-core.c | 9 ++++-----
+> >  1 file changed, 4 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/mfd/mc13xxx-core.c b/drivers/mfd/mc13xxx-core.c
+> > index 920797b806ce..091c9171b2b7 100644
+> > --- a/drivers/mfd/mc13xxx-core.c
+> > +++ b/drivers/mfd/mc13xxx-core.c
+> > @@ -381,7 +381,7 @@ static int mc13xxx_add_subdevice_pdata(struct mc13xxx *mc13xxx,
+> >  	if (!cell.name)
+> >  		return -ENOMEM;
+> >  
+> > -	return mfd_add_devices(mc13xxx->dev, -1, &cell, 1, NULL, 0,
+> > +	return devm_mfd_add_devices(mc13xxx->dev, -1, &cell, 1, NULL, 0,
+> >  			       regmap_irq_get_domain(mc13xxx->irq_data));
+> >  }
+> >  
+> > @@ -455,8 +455,9 @@ int mc13xxx_common_init(struct device *dev)
+> >  	mc13xxx->irq_chip.irqs = mc13xxx->irqs;
+> >  	mc13xxx->irq_chip.num_irqs = ARRAY_SIZE(mc13xxx->irqs);
+> >  
+> > -	ret = regmap_add_irq_chip(mc13xxx->regmap, mc13xxx->irq, IRQF_ONESHOT,
+> > -				  0, &mc13xxx->irq_chip, &mc13xxx->irq_data);
+> > +	ret = devm_regmap_add_irq_chip(dev, mc13xxx->regmap, mc13xxx->irq,
+> > +				       IRQF_ONESHOT, 0, &mc13xxx->irq_chip,
+> > +				       &mc13xxx->irq_data);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > @@ -502,8 +503,6 @@ void mc13xxx_common_exit(struct device *dev)
+> >  {
+> >  	struct mc13xxx *mc13xxx = dev_get_drvdata(dev);
+> >  
+> > -	mfd_remove_devices(dev);
+> > -	regmap_del_irq_chip(mc13xxx->irq, mc13xxx->irq_data);
+> >  	mutex_destroy(&mc13xxx->lock);
+> 
+> This causes the mutex be destroyed while the sub-devices are still
+> present. The power button will try to call mc13xxx_lock() and
+> mc13xxx_unlock() and of mutex debugging is enabled you'll get errors.
+Thanks for noting this, actually I have introduced this change
+in v4 of this series.
 
-Sure I'll prod you if I don't see it by then - I don't think I'll need
-to repost a new version though, unless that code changes again in the
-meantime.
+> I'd remove mutex_destroy() as well (and transitively get rid of 
+> mc13xxx_common_exit()) and then look into getting rid of  mc13xxx_lock()
+> and mc13xxx_unlock() because, as I mentioned in another email, they are
+> IMO not needed.
+I would prefer not to extend the scope of this series even further
+and just drop this patch for v5.
 
-- Kevin
+There are still more issues todo with mc13xxx, e.g. mc13xxx-led does
+not work since commit 78efa53e715e ("leds: Init leds class earlier").
+Cleaning up potentially legacy mutex is just one more topic on this list. 
+> 
+> But this version of the patch is broken as far as I can tell.
+> 
+> Thanks.
+> 
+> -- 
+> Dmitry
+> 
+Thanks, Alexander
 
