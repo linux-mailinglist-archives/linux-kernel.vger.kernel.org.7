@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-822091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9AFCB8300D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCA5B83016
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3354A402C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1225C3B0084
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254A029E109;
-	Thu, 18 Sep 2025 05:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1956628850B;
+	Thu, 18 Sep 2025 05:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XXngzjTn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTMtazp4"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC72281375;
-	Thu, 18 Sep 2025 05:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C64D29BDBC
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758172970; cv=none; b=MxiQkKt9OAH0H3MgpuxZrt7adz1ZoPKYXQm/Xc/MPuFq/WuGmNm2PPhloMqarXrYa95vuGva7VYNhWKyEPw6WQI2qZKJYyf6TKUeNc+Uuku9Fc4q334Q4ybzgDImdrAJVRj5Q+JJdY5q0hlWGkGjYKSr9gW4wzVD5tjUn3q1Zbk=
+	t=1758172989; cv=none; b=Xf/skOqUxPmsviLusZPAe8iyTpqznsmOhQv4iUHWlbHLncgBywWtrTxZG75n3hcUNACpwhWVPYSY35MIqi/qX4EiB0ePXJHwbha9obl0l9kAtMBAYG7leFJYZhbqF4//qDPg7YsPWTjNFAFqv7ghBDPkb/TXv7l1GIsZ4Ad/jP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758172970; c=relaxed/simple;
-	bh=cVAohRqBcycE1z4pnfbYj51eCcPb2X2a+BWjmIWaDTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P7HXklJhY/n06p8SUW43XyxkF9oyOGnTDw58Zrf5uVDiQnlbL0ZWoQC483XOQveSxSjHehOSxVwjKyJ18+sioKieay4TF/bQb8TxFr8I1henhjVu9UTX0ESIp68bctNZkZV4X6+ERLrBoT3NbMZELpGkuvwlTDwvfnAKdT0XXLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XXngzjTn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I3JV91021451;
-	Thu, 18 Sep 2025 05:22:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QJ35t+1pjW/4wbYnYDIZpDR70LxcJQIn85tHpDFOe4s=; b=XXngzjTnUm3rxVeX
-	1RRMofUdZwX5cs9wuvdBMWYDBG/2sTAHczuvtwj3+fz4J3mnHz/FXOQSyfKPrii+
-	FPRp2ZIQi4VMsaehzdgNXS3qfRq8Nl0O/gFr9Xr/cL0tVX/5vaAvxtynX+mwFBpA
-	3VbM8H6IMmOacE8eYT4n8vmlzR4nJTeeF0uDPoQDCBuN37wjOE0xZeiWYhfTUsCf
-	lpudK4WiYXtz+aU7KfQHo2YxKG1JHRoLMDOF3Q0VIlFR5rc+rlo+zhMGXL8497HL
-	4XfVpQUPH4dkSeE/jxiTiKqG6bqxH9lolqMqk6ddBIY4iheIiIbsklhIdbkr9nXt
-	56sEww==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy5d1e1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 05:22:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58I5MX0e000628
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 18 Sep 2025 05:22:33 GMT
-Received: from [10.152.204.0] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 17 Sep
- 2025 22:22:30 -0700
-Message-ID: <27c1274c-e021-ba69-175d-a1271c33498b@quicinc.com>
-Date: Thu, 18 Sep 2025 10:52:26 +0530
+	s=arc-20240116; t=1758172989; c=relaxed/simple;
+	bh=TLOVWO8z3YKEVC/nG7+rCJR0ydpCskrgzD5ovtmPwE0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NrttBMQGz3rrZAnteK/n/51P+Q5QWztb6I3aLIH0jC2ZyGstF/s3AcJ30wvvbvwJDd/saYo3tbeiuGXl+Gqic9Yg++6uNSJ16g9djKe7F3dcdv2mK5zy3VYVYYKcdznniuKCvjnGbRwzXwKRBUph9ravDFQZP7+U+kz6zHNhVaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTMtazp4; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b5503438189so153695a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758172987; x=1758777787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TLOVWO8z3YKEVC/nG7+rCJR0ydpCskrgzD5ovtmPwE0=;
+        b=UTMtazp4XYHPTLcZ0zHHCcpO0xHIRSB2lMJPxIoGzrvIt9EoD96ld88ffOtZgirzuD
+         ZD5KbZbNZ9a/L2mqKGWCHxw22nWAy/BwQYf69/jnVi7F764hg+b3pOCU4aP6e9oOkNMw
+         cmhR/HBpzMnsq1Nweon1AxOgBvXoWtxUy3msrsuKeGYbVLA5cD++CM9tg+Zt3bg2ajHc
+         XspbdBSW97T/9Ef1jzffWN4ZwzX1vQJBHe7WNzDScnJISR0AkO4TlyLozbZ+pkxZE2Re
+         VmQBX7wt/fjsmIyFlNYk25ZSPXyvoIDlXGzx1xthR9h8NT9IBPWhZmjQ2HFZRs5oDnkx
+         RtDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758172987; x=1758777787;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TLOVWO8z3YKEVC/nG7+rCJR0ydpCskrgzD5ovtmPwE0=;
+        b=MtGECNyHC7NdYlb7bGZsAWHLwAO/SvGJQfzNxQyvUFe05ocVhmljIJCfY4NKBgiCIy
+         lRAUguHKu4Z5jlKM4y7zQ1/oerHrW3lRkao59zm53GvvEgYdi1OtttZWxbxgS/AbxFaG
+         /4uhmF4SAOcMrl7rwTORpZXClYQ4tmeeGVySATdyOIqVBe5mLzjvporUymwJxv9wHg6M
+         w3XrXhTyJE7hCc3iJGnMfs6MiHIG3XbJddN9WXXTPno4xr6oUWVyjW18nKAoBiwpfwqT
+         fMKu1nz+jkwSMyuGRRVvuyy46m8jBuklzmVHecbx31GeJnmkLWYdnSZz004BI3k90sRi
+         2suA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxIYDOqbKaTUJrz5W2qHrAt5ZTY2vti6i+iqQpwb2xnB6xT87zh7SVFcvdXomKpo+IWqdKzaRg/k+b0Bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCM8WGoo2ZtLeX/yVYok+DHYPFfAgbOlxKIceU7/7qa4jBDwC7
+	RjPPg2maEZrGaSrqK8MWwc6UHTnOr7a/Eg6HMp894rxnaQUUtR0sahji
+X-Gm-Gg: ASbGncsKk5zpeYGbtIpw8mzcajrNlndz6QgRUuQ/Zgo+jhS6K2uTAYPGVdQfWnw0ODy
+	nG+r2kOZ7hF+8RaWrW1m53VjI48LNE6SFFCBe2QI2mHXrSFNAzW+rWSSwl420UBbmgjZF1HUFcT
+	SIAzoeD21LyA2ZMQquZtzQxqYB1mHC7QoJ2GXPhgRYrC/dNM7YupIstDEEUmNAtr4GLCyP5HEla
+	NiBy/xna6xHBZsEHpNTWNUyz/E1dXxbH81z3hTHAisWbcjGHhUy7xfBKg0n9LW/rt6YG0a/tWLf
+	/lmj317EwK2aKlHGX7zK/npyiV0OPsw17L0zD1yjOzxyUO4qGOtQDbQX1XXMy1dVtTCCKLMt3DE
+	J5BfUPHhsXTpsyxjXiJ29qCNUXnvLE59OEbl6Y2MJUuITaRqk+WfsjkhZm/Htw2S7
+X-Google-Smtp-Source: AGHT+IHrJelkeadXxxJ309pMmd78F2SZWNn8q0FOA+TBRg4iz1HVjQgFNx8SwnfeBgb2w12a3cnNUQ==
+X-Received: by 2002:a17:90b:4ccb:b0:32b:6820:6509 with SMTP id 98e67ed59e1d1-32ee3ef0a33mr5635940a91.9.1758172987275;
+        Wed, 17 Sep 2025 22:23:07 -0700 (PDT)
+Received: from test-HP-Desktop-Pro-G3.. ([49.249.92.90])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ec9e66b02sm2118449a91.10.2025.09.17.22.23.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 22:23:07 -0700 (PDT)
+From: Sudarshan Shetty <tessolveupstream@gmail.com>
+To: dmitry.baryshkov@oss.qualcomm.com
+Cc: andersson@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	robh@kernel.org,
+	tessolveupstream@gmail.com,
+	tingweiz@qti.qualcomm.com
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Add support for QCS615 talos evk board
+Date: Thu, 18 Sep 2025 10:53:01 +0530
+Message-Id: <20250918052301.2583623-1-tessolveupstream@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <f3y4ibzkyfdub6gszoliaenuiudfrtqfr5u4zqpibfdr44hr7l@z5ap4odsoiti>
+References: <f3y4ibzkyfdub6gszoliaenuiudfrtqfr5u4zqpibfdr44hr7l@z5ap4odsoiti>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 16/21] ath10k: remove gpio number assignment
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>, <linux-gpio@vger.kernel.org>,
-        Jeff
- Johnson <jjohnson@kernel.org>
-CC: Arnd Bergmann <arnd@arndb.de>, <linux-wireless@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-17-arnd@kernel.org>
-From: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>
-In-Reply-To: <20250808151822.536879-17-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ihiK4gcQ95ce_hOvehKA0L1xCcQFPCa6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX1MjYEFI6UPVg
- TGRKwW3RwOlq+D4cvpqH75a+82bBSlRQmcfwyYnOJgAJQj/hTYm59xch759Bo54H/M1KuysTfz9
- +4W1SYRRR72OVFB6sGnyquYkRFV8J1+K0aSLcF2IY7u4Ik0U0FtdpxrGIzf2sFe99l6KJH8GPLq
- 2HeK0Y3Q9tKjznDMaLZ9HiYy/rm50GCdU7keV/lD3ey10Tm0S2dAuVd3J2Osmfjgpe+Imy6d6TC
- IynLFStqqJ76szafFk8fVTi4Fv/7yvNRAVyUAd5NlLGWIUkyqfNFtVcG5YtblXcODDS9zNAG8pN
- yqi2s3XUda8kxfWDh8RHTWCxG9yjj/SoPsSKwCddkWYEpIBgnVZAr7nbnvE7eVjGHy3ucbWYzSD
- Lij9qxGt
-X-Authority-Analysis: v=2.4 cv=Y+f4sgeN c=1 sm=1 tr=0 ts=68cb971a cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=0JjSHZ6I5lEitlysoQ8A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: ihiK4gcQ95ce_hOvehKA0L1xCcQFPCa6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
- malwarescore=0 bulkscore=0 spamscore=0 clxscore=1011 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Transfer-Encoding: 8bit
 
+Thank you for the suggestion.
 
-
-On 8/8/2025 8:48 PM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The leds-gpio traditionally takes a global gpio number in its platform
-> data, but the number assigned here is not actually such a number but
-> only meant to be used internally to this driver.
-> 
-> As part of the kernel-wide cleanup of the old gpiolib interfaces, the
-> 'gpio' number field is going away, so to keep ath10k building, move
-> the assignment into a private structure instead.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/net/wireless/ath/ath10k/leds.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-
-wifi tag is missing in the patch title.
+Sure, I will update the commit message in v2 to mention
+that the QCS615 talos-evk uses a Quectel AF68E module
+(PCIe for WiFi and UART for Bluetooth), which is
+different from the RIDE platform.
 
