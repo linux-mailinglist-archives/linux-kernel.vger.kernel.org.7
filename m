@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-822838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8174DB84C4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:17:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF98B84C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AB11C27E2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 720A3581ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236DB30BB86;
-	Thu, 18 Sep 2025 13:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDC12FE56B;
+	Thu, 18 Sep 2025 13:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hdyXsoJs"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QbPOKRES"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E9E1A9FB8
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B88530B51D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758201435; cv=none; b=Z0I1ngEKiSrhh1YI5qKxPgVA0eYTZ/TmPUJvdWG0ThX/dN18xoQ1LmIjaTnGleho+f1iSN8p3AfMFGQ7gdEDH95XnxQEVrNMutAv20t93niMiBkdJziC1d/LofygPOMDZeTHpkXMWHhtGAcqOuYgI+lgsj7X5Oymans3g5ERT3E=
+	t=1758201437; cv=none; b=Xbox13Yjy4aQTs9PiHHTb5mZeqFMC0cvkOswf+s29eshb+MRh7+LeqJVLIVDwbd67jBWPKPYZKPoWjmTnRdlhPQzfWX3vJMNB9ylfmqU0Xsg/yBFIdzxyCIm3QnfkOTSFmfExJ1dd+OYRrM75FFn69hSwD1kc+FYsxtsMQLwG+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758201435; c=relaxed/simple;
-	bh=wmpH1IZheL6VhPF2kJkl7JWLrU5CCHpllonvyugZuLM=;
+	s=arc-20240116; t=1758201437; c=relaxed/simple;
+	bh=e7pSmlvKKaCM1hV2B4SRXTfZFTkeEmDL37d00ocErAI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TNgz4KfkzCvfxhpT1MNNTL4GwKYRGd9BfGsRwwhemlbHqT61rwg8rMelKactpSIMUVxzuWKuI0AZXaBVT3rYXCpJSPgLVZxl6hA54S5AKmxZS+5WvT/lcKRExHrWuHh6OidE7l6KOtmZ8a02tjLVJJX3Cz/PTX39gDU8xQP64/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hdyXsoJs; arc=none smtp.client-ip=198.175.65.10
+	 MIME-Version; b=lKKrwpeEvOd3+kjHEzTsrbEzoJneKPRSy6gni43W2XbaBYsCPcVyKKR8U3JKvb55r4yzD14W+6ue3H5eJ7+t0joDh0kljmL8X/l9M+t4p/6lUM6vJUprXx3nO6dwA+61HhxAdP/UJ5Tph96BhIedClc5Bv6/BWZ4l0NYdaVRoNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QbPOKRES; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758201434; x=1789737434;
+  t=1758201436; x=1789737436;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=wmpH1IZheL6VhPF2kJkl7JWLrU5CCHpllonvyugZuLM=;
-  b=hdyXsoJs7GrNyGeiz5N3zX2uS3U+7mdt7fx4Od+8/jbS/dqTUAa/LUI5
-   MW5/35oO+qsKfnCxTewjra3PWmJSgm8ImKRyDpGuK9zbtUIO8j7a8uuM3
-   odmN3kjKKFyHN4l0nov5WOaFuHBp9S7GdCpGQeCkvNXEMalDfW19DzBFK
-   bzhOACgkx6fSss/1LirQ7d2bFTs0QSIOFAq57fAP4m8F1XDgeMxPhV6Qf
-   7Ud+EacJ1jAOzW/u9ThyBPTw9wmIBDEXPapfKQrg6ZlpFa0ICodpqK6ov
-   ULrIG7EOEEAaIL/KzzaARZ8qp7eXNVMeMvR4IzFIJh9g3Zen2vSidmtwq
-   g==;
-X-CSE-ConnectionGUID: V/UNihOvTn6TKgvu6H2DtA==
-X-CSE-MsgGUID: 2AWhan4hS0yE8aISLIUnNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="77970705"
+  bh=e7pSmlvKKaCM1hV2B4SRXTfZFTkeEmDL37d00ocErAI=;
+  b=QbPOKRESSzYgTKlZ0GWCHpZoD5RvaOXVsiY7AY1F31q4QDnRqFrwLO2Q
+   czyQCddOwP/dNnZzyvuY5/csLyGzSoWknXYleaGTST31zQ3G7g6bspNVJ
+   JUR/8xhfUnhF7x2NsjlXjxvqjX3sIQy3GU586lAEWyIXGxXGR0YX1x8Bu
+   ximgOxaIO6H8iAJOJ9ewheJnMds2DDbvtrxotxcjaGHVZqj04qwJ8Np1H
+   LIIvXJ04WnE10uoSnnuIfpRl360dcXq70KeDXLXKTBjrQ3hZjAhvKJP33
+   iiylq1WZxx25wM8pEpJlgguxv+oTGjg+/lXbJ2VPv40zyKUVKJgQL/j1z
+   w==;
+X-CSE-ConnectionGUID: wNEvOjcuSpWo00ea1Gn9cA==
+X-CSE-MsgGUID: zb3/uA0zQ2KOhtDZQKExNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="77970712"
 X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="77970705"
+   d="scan'208";a="77970712"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 06:17:13 -0700
-X-CSE-ConnectionGUID: Oa8Q/8KNT329sbeah5lbYw==
-X-CSE-MsgGUID: UcoAoAgjSFquIsX/aApd9Q==
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 06:17:15 -0700
+X-CSE-ConnectionGUID: rxRX1tnIQIm0K6/2RUPkRQ==
+X-CSE-MsgGUID: xxfcX6g6Sjih4uD04iz0nA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="174648798"
+   d="scan'208";a="174648810"
 Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 06:17:12 -0700
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 06:17:14 -0700
 From: Alexander Usyskin <alexander.usyskin@intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
 	Alexander Usyskin <alexander.usyskin@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [char-misc-next 2/5] mei: make a local copy of client uuid in connect
-Date: Thu, 18 Sep 2025 16:04:32 +0300
-Message-ID: <20250918130435.3327400-3-alexander.usyskin@intel.com>
+Subject: [char-misc-next 3/5] mei: retry connect if interrupted by link reset
+Date: Thu, 18 Sep 2025 16:04:33 +0300
+Message-ID: <20250918130435.3327400-4-alexander.usyskin@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250918130435.3327400-1-alexander.usyskin@intel.com>
 References: <20250918130435.3327400-1-alexander.usyskin@intel.com>
@@ -76,78 +76,129 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Connect ioctl has the same memory for in and out parameters.
-Copy in parameter (client uuid) to the local stack to avoid it be
-overwritten by out parameters fill.
+When device is in D3cold the connect message will wake device
+and cause link reset.
+Link reset flow cleans all queues and wakes all waiters.
+Retry the connect flow if connect is failed and link reset is detected.
 
 Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
 ---
- drivers/misc/mei/main.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/misc/mei/hw.h      |  2 ++
+ drivers/misc/mei/init.c    |  2 ++
+ drivers/misc/mei/main.c    | 25 +++++++++++++++++++++++++
+ drivers/misc/mei/mei_dev.h |  3 +++
+ 4 files changed, 32 insertions(+)
 
+diff --git a/drivers/misc/mei/hw.h b/drivers/misc/mei/hw.h
+index 2e9cf6f4efb6..3771aa09c592 100644
+--- a/drivers/misc/mei/hw.h
++++ b/drivers/misc/mei/hw.h
+@@ -27,6 +27,8 @@
+ #define MKHI_RCV_TIMEOUT 500 /* receive timeout in msec */
+ #define MKHI_RCV_TIMEOUT_SLOW 10000 /* receive timeout in msec, slow FW */
+ 
++#define MEI_LINK_RESET_WAIT_TIMEOUT_MSEC 500  /* Max wait timeout for link reset, in msec */
++
+ /*
+  * FW page size for DMA allocations
+  */
+diff --git a/drivers/misc/mei/init.c b/drivers/misc/mei/init.c
+index b9fb54328a7b..32ce6a879207 100644
+--- a/drivers/misc/mei/init.c
++++ b/drivers/misc/mei/init.c
+@@ -400,6 +400,7 @@ void mei_device_init(struct mei_device *dev,
+ 	init_waitqueue_head(&dev->wait_pg);
+ 	init_waitqueue_head(&dev->wait_hbm_start);
+ 	dev->dev_state = MEI_DEV_UNINITIALIZED;
++	init_waitqueue_head(&dev->wait_dev_state);
+ 	dev->reset_count = 0;
+ 
+ 	INIT_LIST_HEAD(&dev->write_list);
+@@ -442,5 +443,6 @@ void mei_device_init(struct mei_device *dev,
+ 		dev->timeouts.hbm = mei_secs_to_jiffies(MEI_HBM_TIMEOUT);
+ 		dev->timeouts.mkhi_recv = msecs_to_jiffies(MKHI_RCV_TIMEOUT);
+ 	}
++	dev->timeouts.link_reset_wait = msecs_to_jiffies(MEI_LINK_RESET_WAIT_TIMEOUT_MSEC);
+ }
+ EXPORT_SYMBOL_GPL(mei_device_init);
 diff --git a/drivers/misc/mei/main.c b/drivers/misc/mei/main.c
-index f37f9b8b1f51..2d41a05b8694 100644
+index 2d41a05b8694..e69140fc5aa4 100644
 --- a/drivers/misc/mei/main.c
 +++ b/drivers/misc/mei/main.c
-@@ -646,7 +646,7 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 	struct mei_cl *cl = file->private_data;
- 	struct mei_connect_client_data conn;
- 	struct mei_connect_client_data_vtag conn_vtag;
--	const uuid_le *cl_uuid;
-+	uuid_le cl_uuid;
- 	struct mei_client *props;
- 	u8 vtag;
- 	u32 notify_get, notify_req;
-@@ -674,18 +674,18 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 			rets = -EFAULT;
- 			goto out;
- 		}
--		cl_uuid = &conn.in_client_uuid;
-+		cl_uuid = conn.in_client_uuid;
- 		props = &conn.out_client_properties;
- 		vtag = 0;
+@@ -423,6 +423,7 @@ static int mei_ioctl_connect_client(struct file *file,
+ 	    cl->state != MEI_FILE_DISCONNECTED)
+ 		return  -EBUSY;
  
--		rets = mei_vt_support_check(dev, cl_uuid);
-+		rets = mei_vt_support_check(dev, &cl_uuid);
- 		if (rets == -ENOTTY)
- 			goto out;
- 		if (!rets)
--			rets = mei_ioctl_connect_vtag(file, cl_uuid, props,
-+			rets = mei_ioctl_connect_vtag(file, &cl_uuid, props,
- 						      vtag);
- 		else
--			rets = mei_ioctl_connect_client(file, cl_uuid, props);
-+			rets = mei_ioctl_connect_client(file, &cl_uuid, props);
- 		if (rets)
- 			goto out;
++retry:
+ 	/* find ME client we're trying to connect to */
+ 	me_cl = mei_me_cl_by_uuid(dev, in_client_uuid);
+ 	if (!me_cl) {
+@@ -454,6 +455,28 @@ static int mei_ioctl_connect_client(struct file *file,
  
-@@ -707,14 +707,14 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 			goto out;
- 		}
+ 	rets = mei_cl_connect(cl, me_cl, file);
  
--		cl_uuid = &conn_vtag.connect.in_client_uuid;
-+		cl_uuid = conn_vtag.connect.in_client_uuid;
- 		props = &conn_vtag.out_client_properties;
- 		vtag = conn_vtag.connect.vtag;
++	if (rets && cl->status == -EFAULT &&
++	    (dev->dev_state == MEI_DEV_RESETTING ||
++	     dev->dev_state == MEI_DEV_INIT_CLIENTS)) {
++		/* in link reset, wait for it completion */
++		mutex_unlock(&dev->device_lock);
++		rets = wait_event_interruptible_timeout(dev->wait_dev_state,
++							dev->dev_state == MEI_DEV_ENABLED,
++							dev->timeouts.link_reset_wait);
++		mutex_lock(&dev->device_lock);
++		if (rets < 0) {
++			if (signal_pending(current))
++				rets = -EINTR;
++			goto end;
++		}
++		if (dev->dev_state != MEI_DEV_ENABLED) {
++			rets = -ETIME;
++			goto end;
++		}
++		mei_me_cl_put(me_cl);
++		goto retry;
++	}
++
+ end:
+ 	mei_me_cl_put(me_cl);
+ 	return rets;
+@@ -1120,6 +1143,8 @@ void mei_set_devstate(struct mei_device *dev, enum mei_dev_state state)
  
--		rets = mei_vt_support_check(dev, cl_uuid);
-+		rets = mei_vt_support_check(dev, &cl_uuid);
- 		if (rets == -EOPNOTSUPP)
- 			cl_dbg(dev, cl, "FW Client %pUl does not support vtags\n",
--				cl_uuid);
-+				&cl_uuid);
- 		if (rets)
- 			goto out;
+ 	dev->dev_state = state;
  
-@@ -724,7 +724,7 @@ static long mei_ioctl(struct file *file, unsigned int cmd, unsigned long data)
- 			goto out;
- 		}
++	wake_up_interruptible_all(&dev->wait_dev_state);
++
+ 	if (!dev->cdev)
+ 		return;
  
--		rets = mei_ioctl_connect_vtag(file, cl_uuid, props, vtag);
-+		rets = mei_ioctl_connect_vtag(file, &cl_uuid, props, vtag);
- 		if (rets)
- 			goto out;
+diff --git a/drivers/misc/mei/mei_dev.h b/drivers/misc/mei/mei_dev.h
+index 9f2044ae6cc4..23afa381a0a0 100644
+--- a/drivers/misc/mei/mei_dev.h
++++ b/drivers/misc/mei/mei_dev.h
+@@ -466,6 +466,7 @@ struct mei_dev_timeouts {
+ 	unsigned int d0i3; /* D0i3 set/unset max response time, in jiffies */
+ 	unsigned long hbm; /* HBM operation timeout, in jiffies */
+ 	unsigned long mkhi_recv; /* receive timeout, in jiffies */
++	unsigned long link_reset_wait; /* link reset wait timeout, in jiffies */
+ };
  
+ /**
+@@ -496,6 +497,7 @@ struct mei_dev_timeouts {
+  *
+  * @reset_count : number of consecutive resets
+  * @dev_state   : device state
++ * @wait_dev_state: wait queue for device state change
+  * @hbm_state   : state of host bus message protocol
+  * @pxp_mode    : PXP device mode
+  * @init_clients_timer : HBM init handshake timeout
+@@ -588,6 +590,7 @@ struct mei_device {
+ 	 */
+ 	unsigned long reset_count;
+ 	enum mei_dev_state dev_state;
++	wait_queue_head_t wait_dev_state;
+ 	enum mei_hbm_state hbm_state;
+ 	enum mei_dev_pxp_mode pxp_mode;
+ 	u16 init_clients_timer;
 -- 
 2.43.0
 
