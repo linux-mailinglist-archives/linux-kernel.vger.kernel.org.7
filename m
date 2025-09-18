@@ -1,132 +1,104 @@
-Return-Path: <linux-kernel+bounces-823484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E83B869F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:08:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66364B869FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D31C8564F7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:08:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29451564DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E81E2D3ED2;
-	Thu, 18 Sep 2025 19:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L8CHWb2q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49EA2D3745;
+	Thu, 18 Sep 2025 19:10:36 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9064280CC8;
-	Thu, 18 Sep 2025 19:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479671B424F;
+	Thu, 18 Sep 2025 19:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758222485; cv=none; b=MWPb3ZH2v4ogUADZtKdVSGBdktk7Z7/dWr+tqZaRTp9Ti+P6KQRCdWjLQ5PR053QCCBWQGVX1cv9S2W8hxp1WXwos3CZXrwb34r+npkFfvjha8EehSonimYvfft+bJYur193p4VKMebzMySGdjHY0By2YpuaqJjZEX87uaeehfs=
+	t=1758222636; cv=none; b=RvaGYxd8kw1/DglhuMiOJensFjQSqc2rUp+BUK/tIQpCikzL097ll2G6VXZcJ6+go3M3blRz/cgNKH6EoZ0FAo0AbjKv8oM8iL1lBcFb9NCokvzAalX+YRz00nhVJpL1YjHe35fYvSE+m8Sl52uNH4qjHLwQlSti30k9knL8Uo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758222485; c=relaxed/simple;
-	bh=nWsU0VxMhLIb3J80cOn7bM83bbnPgkTyClgu0z22NPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LbGtPLpqaY+tOx6dAJGAjsl7PYDaa0/p35hy0Wp887BdWFpQsDlA8YDZ1CIqS7hIHjsLWsFqQpgJ8P/O1Qbt2h3IjOBkXlAbIGftvSyXSapn4n1kHOjCpW2uucIHze6Vkq/w9I1TJSFozS7ADdw+9Jyd7Eg/kfNituzlQaz/c+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L8CHWb2q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6E79C4CEF0;
-	Thu, 18 Sep 2025 19:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758222485;
-	bh=nWsU0VxMhLIb3J80cOn7bM83bbnPgkTyClgu0z22NPs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=L8CHWb2qwQcCmJLXLJ3HgOS6K2zWY8fSZldj72TW5CW73nI+3PfEkrVUeMRbMrSM+
-	 MvgTNnXpQ6ukMU8IUdYZvlnaSLZawRdQv6tuxNfK5kX34j+lwYx/X/aOhxtuVkpeC7
-	 Z42iDq6FfnmjMhRYefgttc+BrVTfZmciXuOo75q1xe8ZuVoOPydTDg9m1pukckn8uz
-	 EKWdy+Zb/qPn8MIvIy79hOAr8HxFCB+jFb4QbHCLQlHSoKz29ya08gHMP/lClFxcUG
-	 2d0+i4+F3vXJ08JkJHoDM+JWbD2+JQss3xFkXuNbfenG7Nbv0cJCez5c8hLe63QM9H
-	 OSauP1M4dSS2w==
-Date: Thu, 18 Sep 2025 20:08:01 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Sep 18
-Message-ID: <aMxYkXdK_V8DL273@sirena.org.uk>
+	s=arc-20240116; t=1758222636; c=relaxed/simple;
+	bh=9SZR+SuTYIC8MLH7n/Yq2yFZOALoWMg54qW6QG2HcGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R7sTvp6F3TEtb3b475ZYc5H2qcf+J7nHcv0/plm/6jCOfT9urCUUlFfo7tKyt4tDT8QrI2dAJuMJ7o7Ab+tObIHrH9Iyb8PCRKMxMi8fDaG7Mav5OEI/YA4KHphfLp/mNbS/ed+zgFJAI73FDRiUljwDPHQ62ae4cA3EXvMlNr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 411791DE95D;
+	Thu, 18 Sep 2025 19:10:25 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id D67712000E;
+	Thu, 18 Sep 2025 19:10:19 +0000 (UTC)
+Date: Thu, 18 Sep 2025 15:10:18 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
+ <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Kees Cook
+ <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 0/4] perf: Support the deferred unwinding
+ infrastructure
+Message-ID: <20250918151018.7281647b@batman.local.home>
+In-Reply-To: <20250918173220.GA3475922@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+	<20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
+	<20250918111853.5dc424df@gandalf.local.home>
+	<20250918172414.GC3409427@noisy.programming.kicks-ass.net>
+	<20250918173220.GA3475922@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3DUEGP+FdTl4A3cy"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: D67712000E
+X-Stat-Signature: h1hgkh88tuibdg3mt1ehcpsxxxdt3gir
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/zbrh9fWamytU6OGKlVUT/UuZ68vGirDg=
+X-HE-Tag: 1758222619-146320
+X-HE-Meta: U2FsdGVkX19b91weo4g1HI+eRc29F0KZYjyDDZ5n7luQgDFeo3pumYSHPARppijOoR7nLeGpkqbqOqSBVUgcD0uyw4ARnoZ8OkS2tP91QTa+5ShhqVanQXvkdQNz+1PaygLEQZ0Zyd6x0XkEkGFcKjjmLFA4PWrf3JHwYDKLSOg5pEzSGxl6ZPZ4TLHbMJYju8VwewgBwdUVZYOARYRhCt3+eHcdMQF+XfotU7PHOYTcSBu/EF7V7gi7Gbym8yvW7oNPzntLcHrSOO+C/RP4YpEaPW6c5E59tQQcRVNIMg1nU4qtl/i/db66SYD3jtYt7CBF6iq8RRMNVMnvEcG2iZkG6BS5eRo4vBLvv6itELqD2840DkVgXddlcGp6urGc
 
+On Thu, 18 Sep 2025 19:32:20 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
---3DUEGP+FdTl4A3cy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > Now, task_work_run() is in the exit_to_user_mode_loop() which is notably
+> > *before* exit_to_user_mode() which does the unwind_reset_info().
+> > 
+> > What happens if we get an NMI requesting an unwind after
+> > unwind_reset_info() while still very much being in the kernel on the way
+> > out?  
+> 
+> AFAICT it will try and do a task_work_add(TWA_RESUME) from NMI context,
+> and this will fail horribly.
+> 
+> If you do something like:
+> 
+> 	twa_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
+> 	task_work_add(foo, twa_mode);
+> 
+> it might actually work.
 
-Hi all,
+Ah, the comment for TWA_RESUME didn't express this restriction.
 
-Changes since 20250917:
+That does look like that would work as the way I expected task_work to
+handle this case.
 
-The btrfs tree gained a conflict with the btrfs-fixes tree.
-
-The nfs-anna tree gained a build failure, I used the version from
-yesterday.
-
-The vfs tree gained a conflict with the vfs-brauner tree.
-
-The kvm tree gained a conflict with the kvm-fixes tree.
-
-The i2c tree gained a conflict with the usb tree.
-
-The kunit-next tree gained a conflict with the drm-xe tree.
-
-Non-merge commits (relative to Linus' tree): 9545
- 9893 files changed, 447404 insertions(+), 184328 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with an arm64
-defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
-a native build of tools/perf. After the final fixups (if any), I do an
-x86_64 modules_install followed by builds for x86_64 allnoconfig,
-powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig and
-pseries_le_defconfig and i386, arm64, s390, sparc and sparc64 defconfig
-and htmldocs. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 407 trees (counting Linus' and 406 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---3DUEGP+FdTl4A3cy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjMWJEACgkQJNaLcl1U
-h9BoDAf/bbFNBAXN/G/L+DWwZ+QiwG+vX1JQQgec2+Xj/gmePHc4RD+9V+ie/Br2
-UeYnGz+/xfvd9Bx/I8HbYJNCPJAuxA20IyycJe9MeoI1iHhN8S9D9DP+2KcIaG1g
-NFVzLJ0ifKKWe1AA4AC20P1VJH+SXQNCjlZREZa8scV3pB+2FJGGE/wZiNfqeYGE
-/PAEWVJxu9wb4KMF+L0Ux4VnV69rPFO7OeA354m68Nvp4lN/dYjGfzMGSvojhvt/
-H7F4s+M5OT7HeFYYffULElFgY0Vjg3GUxtOiVyW7uuSeuGkEq32mS4QHUqFrytNz
-2owC7xI/AGNq0bGgrS8+23MAMcNnDQ==
-=l8ZB
------END PGP SIGNATURE-----
-
---3DUEGP+FdTl4A3cy--
+-- Steve
 
