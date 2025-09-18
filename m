@@ -1,115 +1,176 @@
-Return-Path: <linux-kernel+bounces-823111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F823B858C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C12F5B858BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887757C1715
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E9B3AF19D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A98030CD8D;
-	Thu, 18 Sep 2025 15:18:53 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4605130CDB1;
+	Thu, 18 Sep 2025 15:18:03 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DB0241664
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E437628466C;
+	Thu, 18 Sep 2025 15:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208733; cv=none; b=ZR1yIRgcu0/jZpYDMS9/gba2FgbngXBYw1alcLkqRmtZM+SCEu0BzLItHK5gdokFy/w7fptjij1u7QIxnupbMr4oSQ9b/j/z7fYhUkUbx7K1epRS7QYhbNzhUc+C02gYDNTCEuF7yPIyn6NHDGuo3yHoGgtY1JMtlkCFzsrguqo=
+	t=1758208682; cv=none; b=FRF2tqZ6+IKFgmVy3+0fIuVwj9D6pbgpSkdxUBZ8P+nTdIxGUNtFLg8ggSU0hrSKF8zCXjuCfZUSMMvBD+uopj4M9rgsFRSQ6/EUg0zAC9qMV9Ja5guHcV1boHgTHa/lDIo2DGaSkYADt6IDGm2JPlLP/EOIXwlR0Zygh0tEvD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208733; c=relaxed/simple;
-	bh=kXjuFca2JVNLJSZmRetnImSHpmW7eJSiNdlnLfXoDNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=maqA4p/iV8K6QoH1pVhlaTcJVX4kPMBT5Ec5P+YD9Uk7VceTPmikRsZ6mgtc7UkOT6+6kRJmJLXjCeiEdfghuOT7iek2cbwWvSGuEmTHI09gw/27u1YBbjDxYyYdlvWOjjzH2TEzqZwi0eczZWkMNznOqfNlCYqzGoRk98nywJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C602CC4CEE7;
-	Thu, 18 Sep 2025 15:18:51 +0000 (UTC)
-Date: Thu, 18 Sep 2025 16:18:49 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	James Morse <james.morse@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 2/2] arm64: tlbflush: Don't broadcast if mm was
- only active on local cpu
-Message-ID: <aMwi2TwPIut5Lr4Z@arm.com>
-References: <20250829153510.2401161-1-ryan.roberts@arm.com>
- <20250829153510.2401161-3-ryan.roberts@arm.com>
+	s=arc-20240116; t=1758208682; c=relaxed/simple;
+	bh=/qqM+OnbdxuaSsWAHehkRJ5d3NIG8IKHyVeXH3ttzOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hGSVaDHnFlhrTFx9TrSGP49rx9aMQT4LhbJsGdUKYWf6qQlLGhMIoV8PyknE3ZdPDtQyO4FyjamaNJcBv1NNUtb5uza2YkxcvEq+5JKSwtExFh7a5aJ5D/3yGcLRYhba/ismb7DL3xVRyGuJ81L+RALA3iTEdvnt+lBbsThcHXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id 04853139686;
+	Thu, 18 Sep 2025 15:17:50 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id A56D22001C;
+	Thu, 18 Sep 2025 15:17:45 +0000 (UTC)
+Date: Thu, 18 Sep 2025 11:18:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
+ <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Kees Cook
+ <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [RESEND][PATCH v15 0/4] perf: Support the deferred unwinding
+ infrastructure
+Message-ID: <20250918111853.5dc424df@gandalf.local.home>
+In-Reply-To: <20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
+References: <20250908171412.268168931@kernel.org>
+	<20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250829153510.2401161-3-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: m719uiotxajw89bojnoubs1mmbksosce
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: A56D22001C
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18DtFopQGFaWtIxBTa3O6GGeiywGvx+DoQ=
+X-HE-Tag: 1758208665-421618
+X-HE-Meta: U2FsdGVkX1/VQb2NHcbL5LrPbBZ059FL5TbDk3IaTeCsyrBrjO8jdMYMlCjSbGX+5dkPlzWVRri9nJ7pgHA1QdUUnG5kr491vZMHqh48Tm92cgY2+4JrsEkA3qfCKdNFPQAJfCzYdJ3y+HjDal4h91QHNy9Bl/CkJQrk2Gao3P2ft/6vGAoDYL0D1AzOGHjuV0WFmjA0ciUU8vf2tdNnNqiNDi/3dE3xjSju756kDulC3/KRYZh0JwNZ7ZrZHMV5iwfJbsorQFMen1eOGdsHNVMFm2r00YYCXR5uRe3kGf9ElPOdv25Z5z6LTE7FsnFz30dtBrIvT10xBlMcMCKnrsQ5tBnt+BCt7KpxYsbetIbb6Vm2Cu1fD5kwODI5DoNj
 
-On Fri, Aug 29, 2025 at 04:35:08PM +0100, Ryan Roberts wrote:
-> diff --git a/arch/arm64/mm/context.c b/arch/arm64/mm/context.c
-> index b2ac06246327..adf4fc26ddb6 100644
-> --- a/arch/arm64/mm/context.c
-> +++ b/arch/arm64/mm/context.c
-> @@ -214,9 +214,10 @@ static u64 new_context(struct mm_struct *mm)
+On Thu, 18 Sep 2025 13:46:10 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> So I started looking at this, but given I never seen the deferred unwind
+> bits that got merged I have to look at that first.
+> 
+> Headers want something like so.. Let me read the rest.
+> 
+> ---
+>  include/linux/unwind_deferred.h       | 38 +++++++++++++++++++----------------
+>  include/linux/unwind_deferred_types.h |  2 ++
+>  2 files changed, 23 insertions(+), 17 deletions(-)
+
+Would you like to send a formal patch with this? I'd actually break it into
+two patches. One to clean up the long lines, and the other to change the
+logic.
+
+-- Steve
+
+
+> 
+> diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+> index 26122d00708a..5d51a3f2f8ec 100644
+> --- a/include/linux/unwind_deferred.h
+> +++ b/include/linux/unwind_deferred.h
+> @@ -8,7 +8,8 @@
 >  
->  void check_and_switch_context(struct mm_struct *mm)
+>  struct unwind_work;
+>  
+> -typedef void (*unwind_callback_t)(struct unwind_work *work, struct unwind_stacktrace *trace, u64 cookie);
+> +typedef void (*unwind_callback_t)(struct unwind_work *work,
+> +				  struct unwind_stacktrace *trace, u64 cookie);
+>  
+>  struct unwind_work {
+>  	struct list_head		list;
+> @@ -44,22 +45,22 @@ void unwind_deferred_task_exit(struct task_struct *task);
+>  static __always_inline void unwind_reset_info(void)
 >  {
-> -	unsigned long flags;
-> -	unsigned int cpu;
-> +	unsigned int cpu = smp_processor_id();
->  	u64 asid, old_active_asid;
-> +	unsigned int active;
-> +	unsigned long flags;
+>  	struct unwind_task_info *info = &current->unwind_info;
+> -	unsigned long bits;
+> +	unsigned long bits = info->unwind_mask;
 >  
->  	if (system_supports_cnp())
->  		cpu_set_reserved_ttbr0();
-> @@ -251,7 +252,6 @@ void check_and_switch_context(struct mm_struct *mm)
->  		atomic64_set(&mm->context.id, asid);
+>  	/* Was there any unwinding? */
+> -	if (unlikely(info->unwind_mask)) {
+> -		bits = info->unwind_mask;
+> -		do {
+> -			/* Is a task_work going to run again before going back */
+> -			if (bits & UNWIND_PENDING)
+> -				return;
+> -		} while (!try_cmpxchg(&info->unwind_mask, &bits, 0UL));
+> -		current->unwind_info.id.id = 0;
+> +	if (likely(!bits))
+> +		return;
+>  
+> -		if (unlikely(info->cache)) {
+> -			info->cache->nr_entries = 0;
+> -			info->cache->unwind_completed = 0;
+> -		}
+> +	do {
+> +		/* Is a task_work going to run again before going back */
+> +		if (bits & UNWIND_PENDING)
+> +			return;
+> +	} while (!try_cmpxchg(&info->unwind_mask, &bits, 0UL));
+> +	current->unwind_info.id.id = 0;
+> +
+> +	if (unlikely(info->cache)) {
+> +		info->cache->nr_entries = 0;
+> +		info->cache->unwind_completed = 0;
 >  	}
+>  }
 >  
-> -	cpu = smp_processor_id();
->  	if (cpumask_test_and_clear_cpu(cpu, &tlb_flush_pending))
->  		local_flush_tlb_all();
+> @@ -68,9 +69,12 @@ static __always_inline void unwind_reset_info(void)
+>  static inline void unwind_task_init(struct task_struct *task) {}
+>  static inline void unwind_task_free(struct task_struct *task) {}
 >  
-> @@ -262,6 +262,30 @@ void check_and_switch_context(struct mm_struct *mm)
+> -static inline int unwind_user_faultable(struct unwind_stacktrace *trace) { return -ENOSYS; }
+> -static inline int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func) { return -ENOSYS; }
+> -static inline int unwind_deferred_request(struct unwind_work *work, u64 *timestamp) { return -ENOSYS; }
+> +static inline int unwind_user_faultable(struct unwind_stacktrace *trace)
+> +{ return -ENOSYS; }
+> +static inline int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
+> +{ return -ENOSYS; }
+> +static inline int unwind_deferred_request(struct unwind_work *work, u64 *timestamp)
+> +{ return -ENOSYS; }
+>  static inline void unwind_deferred_cancel(struct unwind_work *work) {}
 >  
->  	arm64_apply_bp_hardening();
+>  static inline void unwind_deferred_task_exit(struct task_struct *task) {}
+> diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
+> index 33b62ac25c86..29452ff49859 100644
+> --- a/include/linux/unwind_deferred_types.h
+> +++ b/include/linux/unwind_deferred_types.h
+> @@ -2,6 +2,8 @@
+>  #ifndef _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+>  #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
 >  
-> +	/*
-> +	 * Update mm->context.active_cpu in such a manner that we avoid cmpxchg
-> +	 * and dsb unless we definitely need it. If initially ACTIVE_CPU_NONE
-> +	 * then we are the first cpu to run so set it to our id. If initially
-> +	 * any id other than ours, we are the second cpu to run so set it to
-> +	 * ACTIVE_CPU_MULTIPLE. If we update the value then we must issue
-> +	 * dsb(ishst) to ensure stores to mm->context.active_cpu are ordered
-> +	 * against the TTBR0 write in cpu_switch_mm()/uaccess_enable(); the
-> +	 * store must be visible to another cpu before this cpu could have
-> +	 * populated any TLB entries based on the pgtables that will be
-> +	 * installed.
-> +	 */
-> +	active = READ_ONCE(mm->context.active_cpu);
-> +	if (active != cpu && active != ACTIVE_CPU_MULTIPLE) {
-> +		if (active == ACTIVE_CPU_NONE)
-> +			active = cmpxchg_relaxed(&mm->context.active_cpu,
-> +						 ACTIVE_CPU_NONE, cpu);
+> +#include <linux/types.h>
 > +
-> +		if (active != ACTIVE_CPU_NONE)
-> +			WRITE_ONCE(mm->context.active_cpu, ACTIVE_CPU_MULTIPLE);
-> +
-> +		dsb(ishst);
-> +	}
+>  struct unwind_cache {
+>  	unsigned long		unwind_completed;
+>  	unsigned int		nr_entries;
 
-I realised when we talked earlier that we can reset active_cpu on the
-slow path if we got a new ASID. I think it's best to do it in
-new_context().
-
-The fork() case where the child may unnecessarily inherit the parent's
-active_cpu is already handled by init_new_context() in this patch.
-
--- 
-Catalin
 
