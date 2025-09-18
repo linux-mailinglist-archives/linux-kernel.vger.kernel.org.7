@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-823130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2637B85948
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:27:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03332B85A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DDF91644E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79DFF18933E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC3230DD14;
-	Thu, 18 Sep 2025 15:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d47hQZzP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30CD30FC13;
+	Thu, 18 Sep 2025 15:29:48 +0000 (UTC)
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B6B30F80C;
-	Thu, 18 Sep 2025 15:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4017C30DECA;
+	Thu, 18 Sep 2025 15:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209225; cv=none; b=lyUkgx9eKo9YoOxzTAOLTaCE7TevRXfA5PSmeBrZO87ocBFsyq1zCIPtvVdZpuhyfvAiF4PvzOgkXXwBXAkyB719LiQy3UbpteLasAvTvaUTnwgnIZaP9TMzNPBHyYG1KqdB7SEowINqJLEAZtoY1H/zJomEzNq+eNx54HwD/ng=
+	t=1758209388; cv=none; b=WYq6KGHeiw8+Fr6IUeDir0CP34mWhD+5qQVhSn06o8SHUGC5cG+xivNKwFjfhs6TJ+h3N0mVb8MeApCdITR+8AH3yUNZuIrLvWEQLyfCJhduGGXHg88ORagUopM8jN74TDYNkWqxFIn+JQ/u5LdVaF+UQbkKUh9wjxNOc4L/FJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209225; c=relaxed/simple;
-	bh=BwqLfcPI4fqGMrRKoHaz7EZY8YKsYs2WAMxp5J73LSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aEYIAPrs0Hmy88n9p1wclR7m+/RFVY+Ok78IP7mOKnvflblr++WOx/EjF56Hb1IETpOgm7CAXQsf1iKPiIQvjYAaGgz4mud03uvst4kgZ6xNwIywffxKux3ksYCOAFH0PhYM0kiKD9yNwdPYw82ggMvHB2ooc0ojCJrB/4pfKCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d47hQZzP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4557DC4CEEB;
-	Thu, 18 Sep 2025 15:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758209225;
-	bh=BwqLfcPI4fqGMrRKoHaz7EZY8YKsYs2WAMxp5J73LSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d47hQZzPAIdH5mldPmUZH1IaZjVHNjMIpaGYdWoCs1oLr+6Tcxp9t8bMvuLu9gFEX
-	 lo+6brZG4IkWpzP/S3cUAVOjQrScbGC7Y5uCGuO5+s88oqc+30Jdi+8//okEH01f89
-	 85402JQ0/0K0U8B+w8PhY4YwZO9tf/OcyQhDrxJrllRDoGdR21TGOS6CVkez6ioeSK
-	 cdJjfZ4RiNrrQdljWW2p4sFo8z54nwCL1ALgo06kZasrnpCCTyEIMDiIsw46sVHSZ5
-	 G8Hh7Olv1zI/rjZvF2lSnSidLuI7YJAR81E9GmRs/H3sb7eV2LSCBjRinpLhVS52pO
-	 GwmwKUMIcFF+Q==
-Date: Thu, 18 Sep 2025 16:26:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
- GPIO Interrupt Multiplexer
-Message-ID: <20250918-education-resource-aac71b87e979@spud>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-7-herve.codina@bootlin.com>
- <20250918-majestic-mockup-0a0e090db0a7@spud>
- <20250918171502.411c3527@bootlin.com>
+	s=arc-20240116; t=1758209388; c=relaxed/simple;
+	bh=1E1TtPIzWv3UVjPPN5oafjjL60AY6+jP9kR4QCfSNnU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PvGhCB0dzmwbkI77atdqyqReCeWamBfqjA3tAz4g9JGvz47TSOUXF7kFb9qaxjyBgfsCtN0RT5EFFcvG0igUUb2IpMn1llfTor0uONxBC09z8nci0HSl6jMjCSKZXjRNF8gbpefQC6MHYMrcxRAy3RyqLHO75Z3hJqUOfuKP3OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=fail smtp.mailfrom=freebox.fr; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=freebox.fr
+Received: from daria.iliad.local (unknown [213.36.7.13])
+	by smtp2-g21.free.fr (Postfix) with ESMTP id 179252003FC;
+	Thu, 18 Sep 2025 17:28:31 +0200 (CEST)
+From: Nicolas Schichan <nschichan@freebox.fr>
+To: safinaskar@gmail.com
+Cc: akpm@linux-foundation.org,
+	andy.shevchenko@gmail.com,
+	axboe@kernel.dk,
+	brauner@kernel.org,
+	cyphar@cyphar.com,
+	devicetree@vger.kernel.org,
+	ecurtin@redhat.com,
+	email2tema@gmail.com,
+	graf@amazon.com,
+	gregkh@linuxfoundation.org,
+	hca@linux.ibm.com,
+	hch@lst.de,
+	hsiangkao@linux.alibaba.com,
+	initramfs@vger.kernel.org,
+	jack@suse.cz,
+	julian.stecklina@cyberus-technology.de,
+	kees@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-block@vger.kernel.org,
+	linux-csky@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev,
+	mcgrof@kernel.org,
+	mingo@redhat.com,
+	monstr@monstr.eu,
+	mzxreary@0pointer.de,
+	patches@lists.linux.dev,
+	rob@landley.net,
+	sparclinux@vger.kernel.org,
+	thomas.weissschuh@linutronix.de,
+	thorsten.blum@linux.dev,
+	torvalds@linux-foundation.org,
+	tytso@mit.edu,
+	viro@zeniv.linux.org.uk,
+	x86@kernel.org,
+	nschichan@freebox.fr
+Subject: Re: [PATCH RESEND 00/62] initrd: remove classic initrd support
+Date: Thu, 18 Sep 2025 17:28:30 +0200
+Message-Id: <20250918152830.438554-1-nschichan@freebox.fr>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250913003842.41944-1-safinaskar@gmail.com>
+References: <20250913003842.41944-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="04PZPDVvYnUHAPS9"
-Content-Disposition: inline
-In-Reply-To: <20250918171502.411c3527@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
---04PZPDVvYnUHAPS9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Intro
+> ====
+> This patchset removes classic initrd (initial RAM disk) support,
+> which was deprecated in 2020.
 
-On Thu, Sep 18, 2025 at 05:15:02PM +0200, Herve Codina wrote:
-> Hi Conor,
->=20
-> On Thu, 18 Sep 2025 16:06:04 +0100
-> Conor Dooley <conor@kernel.org> wrote:
->=20
-> > On Thu, Sep 18, 2025 at 12:40:04PM +0200, Herve Codina (Schneider Elect=
-ric) wrote:
-> > > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> > > interruption lines are multiplexed by the GPIO Interrupt Multiplexer =
-in
-> > > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
-> > >=20
-> > > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> > > IRQ lines out of the 96 available to wire them to the GIC input lines.
-> > >=20
-> > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootli=
-n.com>
-> > > ---
-> > >  .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  | 87 +++++++++++++++++=
-++
-> > >  1 file changed, 87 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/soc/renesas/ren=
-esas,rzn1-gpioirqmux.yaml =20
-> >=20
-> > This is an interrupt controller, please move it to that subdirectory.
->=20
-> Not so sure. It is a nexus node. It routes interrupt signals to the
-> interrupt controller (interrupt-map) but it is not an interrupt controller
-> itself.
->=20
-> I am not sure that it should be moved to the interrupt-controller
-> directory.
+This serie came a bit as a surprise, because even though the message
+notifying of the initrd deprecation was added in July 2020, the message
+was never displayed on our kernels.
 
-Your node name choice disagrees with you!
+When booting with root=/dev/ram0 in the kernel commandline,
+handle_initrd() where the deprecation message resides is never called,
+which is rather unfortunate (init/do_mounts_initrd.c):
 
---04PZPDVvYnUHAPS9
-Content-Type: application/pgp-signature; name="signature.asc"
+	if (rd_load_image("/initrd.image") && ROOT_DEV != Root_RAM0) {
+		init_unlink("/initrd.image");
+		handle_initrd(root_device_name); // shows the deprecation msg
+		return true;
+	}
 
------BEGIN PGP SIGNATURE-----
+It is likely we are not the alone booting with that particular
+configuration, so other people are probably going to be surprised when
+initrd support is removed, because they never saw the deprecation
+message.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMwkwwAKCRB4tDGHoIJi
-0mK2AQCYPHl4rF871L3zpt0NZtb7tH1ZVhuOQg0+r0MqiY6UyQEA2Dn0unSyWBQs
-L4iJKiNqXKFSDPbUt3IAV/KTVPzZeQY=
-=aBup
------END PGP SIGNATURE-----
+We do depend on initrd support a lot on our embedded platforms (more
+than a million devices with a yearlyish upgrade to the latest
+kernel). If it eventually becomes removed this is going to impact us.
 
---04PZPDVvYnUHAPS9--
+We use an initrd squashfs4 image, because coming from a time where
+embedded flash devices were fragile, we avoid having the root
+filesystem directly mounted (even when read only) on the flash
+block/mtd device, and have the bootloader load the root filesystem as
+an initrd.
+
+We use a squashfs4 because we can mount it and keep it compressed. The
+kernel would decompress data on demand in the page cache, and evict it
+as needed.
+
+Regards,
+
+-- 
+Nicolas Schichan
 
