@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-823457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A54B86842
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:49:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9A9B868F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85DB4A66EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:48:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3A287BA34B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2342D8DA6;
-	Thu, 18 Sep 2025 18:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4723530C0E8;
+	Thu, 18 Sep 2025 18:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GJdUviO4"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATGpncwy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEBB2D7802
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B85E28CF56;
+	Thu, 18 Sep 2025 18:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221295; cv=none; b=Xzx6/H1Gyo55aqrVr7BRbPlqvPej3JuYSe8FSMLI0PD8j+ksvQrat5p0N2YPw5FfAFDEIAcxtlGSDMbnsVl9ueijnZ9vuIMsA30z+4nbkPoJp4TDs3vCw/jPDUEyOSrMx8mPOLXKOF98gmEnE27O92rLi+udgaHHC+LzPflcQso=
+	t=1758221398; cv=none; b=geCw6kZMzewxtfdC5OtVk4hjpANT0DnwUOLvkzWm6XheuFLIwC4ULPBMqZHh9WcCYYi1GwGllL8Q/hz4NS6wsbeqglyk8MFm+soGel6b2C4x3aLGRAR2p1YGdqRIkG758Xdfc37mbW6dpWbAYcUx0Uq67TVIKH2EXJUaxVgIAPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221295; c=relaxed/simple;
-	bh=3LUG8CDlFaeOAc7TmZpmAR80a/tbN4YHi+y0ePtW84I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QGOU8+pf+YrDO4Dzbi6PVnZLsZrGr2hwLGo9DlWqBlw75WjuDP3O8vG7LIaZiw5oXnrnah6I3TZOphCB+JfqLwQ+CJnDzmXIYH8zaFiv6zQoo4xncKVNr1jQS1S+VveKsFJvFJwl63uxU4zLyu2n7pLcwZmqpTgqZj6YdQEyQUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GJdUviO4; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b54a588ad96so975431a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758221292; x=1758826092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3LUG8CDlFaeOAc7TmZpmAR80a/tbN4YHi+y0ePtW84I=;
-        b=GJdUviO4cMljecghqlZIW7CMeuCDdgmnHnycTIqsUgeS7I4Kurc0uAJznZUMpmaf8x
-         I7aOIlZPmm9HPwepR5dookk6dax0vqIjt6Lj19Sw2vJLst00yzF131lUtEh7t/tH5cJA
-         R6J2QTA1prI7MVpFSKo/Xn7Io2asQVQBOVFHo5sOX5tFJYyt93j8iopUfKVBf7kbm2L8
-         QKjiMJNWae47REPpg7dBpzWqecqEKMAlr4ZHenvdeXWndKxKdosRrgO0hSmvyLUDMrFl
-         wCcZuGxwdVWCcRcHgXuI3gKWdTcQuhZ4B/Bn3nCKuaHQgoqlmykgOmMUlsLDzSOdzXDM
-         7i0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758221292; x=1758826092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3LUG8CDlFaeOAc7TmZpmAR80a/tbN4YHi+y0ePtW84I=;
-        b=h46nbUJuqCQHpYYxAYz4z1Aa8pes9oQAmYEtOudvKcY1oMqhCMedrjBM5/bis5Umbp
-         HjdAZ8tBmGkV8ieU8xb4nSzrxYTgYONMdpe7EKz6gLbLWzCEMhK8iJjIlBnt8gGhA83Q
-         qhxOpEasaB/g6VdCBJnztF2G0PpMVzEExm5lW/EA/nwpySk8bOwlvtXFZ7agiXOpbli7
-         PqAm1j/drjpnmkN08hEyLJQ8fEXhiOpsXyotTPInvDmWZ5BH8GgLqX+Hc+fvtSNxYG7e
-         2qZv8fRR4EhoN9eSW/c0piranJ9e19MiY32u3xisiG4jMDN0k7ErdasnFywTqsp9UDBg
-         7FGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVt4jHHXdkSGSrxyLp69Vv6BZ8+ZJgewUmcuB4wtRce+hl2rPxVZSoslZzQC0cJo1Qdya/ItEHsR1Vjxzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp9kuZ/Fwpg4Q1B9hSg+sWTFIB7eHfrI+sTr6s+4AKwnNdwwQI
-	FqLCS9lzstAzn31CEztYU/MFDYB+kuCZBRVNYZx3zz2Bn87qcoIVfouaFymbnCOP+kSPRrc1EWV
-	KnhQP9hay+8NOwMR1PU7Se2LPmo00ZzG7Paij9B06
-X-Gm-Gg: ASbGnctmE6LEJ9M6eFstJR45Lpb/6TFDTYaoIE4F7oRQMOy8GhTDmfiaemO3ti0a25P
-	k5BQPvuvvdyUU5rU6OGhGXX+vtmCuB2xmHe4EkNb8BNm9abf3YoPVXid5wA9aVwELfXXAP+lpu8
-	8xbZol/C4kbpGp+7kUELsOhrVMU6bovqtyzaGPAhD+lq8Qqkx+fTVEh+d8q1bKhyFmVWYxUBvgV
-	oFSvY5A4q+6qN8L/ehDWCkxTTcnspPI0fcvx/2k6BPdsYdCvHR/fiWvTSxW+JBarA==
-X-Google-Smtp-Source: AGHT+IFChwu/WXFE/Bk1qPbNxzjVEQRH8mYRXcstr2vxeJXZTN7B4PXslngta4OJd71ruXQZuBfYRAqRPI1cCQdkWpQ=
-X-Received: by 2002:a17:902:ce09:b0:267:c1ae:8f04 with SMTP id
- d9443c01a7336-269b92f5037mr8368235ad.20.1758221291602; Thu, 18 Sep 2025
- 11:48:11 -0700 (PDT)
+	s=arc-20240116; t=1758221398; c=relaxed/simple;
+	bh=kZ31Cj+9SlIwCue4nf87udZAy0O4rgTArK6cH8v5gE0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YTcRaeCxWhiiCNRmuIGDslsIMAM1lVEsgdsKNHtQXXJM2h+ELthpaAI+RJ3LucvsLydyjqkb0mBoRX4oQK32YAwhX5QuslE/c4lX1FZPSfthehQ8/7J0et5S90zfHOhaG66HPqckp7rV80u0ggbo5875zSmH5VkAWKATHeZ7OqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATGpncwy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9BD4C4CEF0;
+	Thu, 18 Sep 2025 18:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758221397;
+	bh=kZ31Cj+9SlIwCue4nf87udZAy0O4rgTArK6cH8v5gE0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ATGpncwy2bS+wQApNWWCLiBfVItH2WsyhrR5OU2hxOuEYThCgq5qokSue4tke0Sma
+	 9UhVm+nW7/SCeJJQS2Ti2LGwPiungb6RyUjKuG9hHRzrzxfHSlAOJb4NFJfHwZp9QZ
+	 lQWJYNZk7Kfvh5+lIa/IFCuzcVsRlrY7jwzun+mrxv7eAU3JrN3E1go77oeYZp954E
+	 tILkcGL9x9F3KSKp343DZ5TcIPDYxyvRKxa3CmR1JXU/tBLTtSamZtNqc0KlSReeuJ
+	 Blz7hd1ilSLhGOSVGxt2Q+5XH7gl56r746zq7MuwLVqarjjwJy86bblAx71C3ueyE6
+	 tfP97FdQaWD0A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB476CAC597;
+	Thu, 18 Sep 2025 18:49:57 +0000 (UTC)
+From: Dang Huynh via B4 Relay <devnull+dang.huynh.mainlining.org@kernel.org>
+Subject: [PATCH 00/10] RDA8810PL SD/MMC support
+Date: Fri, 19 Sep 2025 01:48:40 +0700
+Message-Id: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918-net-next-mptcp-blackhole-reset-loopback-v1-1-bf5818326639@kernel.org>
-In-Reply-To: <20250918-net-next-mptcp-blackhole-reset-loopback-v1-1-bf5818326639@kernel.org>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Thu, 18 Sep 2025 11:48:00 -0700
-X-Gm-Features: AS18NWBIaYnWg5h64UvvqbyXa3vbYuymfJ8c7oW4xcgcAtF9AXx0O8o97REhA6I
-Message-ID: <CAAVpQUCy-xurW6r9oUcDV17fS3wiJsn2QuQ1mQ4k2wXYa6L1RQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] mptcp: reset blackhole on success with
- non-loopback ifaces
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAhUzGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0ML3aKURAsLQ4OCHN3c3GRd4zRj4yQL42RjQ+MUJaCegqLUtMwKsHn
+ RsbW1ANyU/p1fAAAA
+X-Change-ID: 20250918-rda8810pl-mmc-3f33b83c313d
+To: Manivannan Sadhasivam <mani@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-unisoc@lists.infradead.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Dang Huynh <dang.huynh@mainlining.org>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758221395; l=2690;
+ i=dang.huynh@mainlining.org; s=20250917; h=from:subject:message-id;
+ bh=kZ31Cj+9SlIwCue4nf87udZAy0O4rgTArK6cH8v5gE0=;
+ b=qOqMjxWy0QtL3Ogxpb8gkzjO7d5vmQGyKe+kb/6NkDaSg1BsYLRsnjbZgBDstvASeAx0n2d2c
+ 3shNDl4Z4C4Bf3HZJfK9hqW3+uGf3bq50x8EsDU0gvAu95HssYcfjYM
+X-Developer-Key: i=dang.huynh@mainlining.org; a=ed25519;
+ pk=RyzH4CL4YU/ItXYUurA51EVBidfx4lIy8/E4EKRJCUk=
+X-Endpoint-Received: by B4 Relay for dang.huynh@mainlining.org/20250917
+ with auth_id=526
+X-Original-From: Dang Huynh <dang.huynh@mainlining.org>
+Reply-To: dang.huynh@mainlining.org
 
-On Thu, Sep 18, 2025 at 1:51=E2=80=AFAM Matthieu Baerts (NGI0)
-<matttbe@kernel.org> wrote:
->
-> When a first MPTCP connection gets successfully established after a
-> blackhole period, 'active_disable_times' was supposed to be reset when
-> this connection was done via any non-loopback interfaces.
->
-> Unfortunately, the opposite condition was checked: only reset when the
-> connection was established via a loopback interface. Fixing this by
-> simply looking at the opposite.
->
-> This is similar to what is done with TCP FastOpen, see
-> tcp_fastopen_active_disable_ofo_check().
->
-> This patch is a follow-up of a previous discussion linked to commit
-> 893c49a78d9f ("mptcp: Use __sk_dst_get() and dst_dev_rcu() in
-> mptcp_active_enable()."), see [1].
->
-> Fixes: 27069e7cb3d1 ("mptcp: disable active MPTCP in case of blackhole")
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/4209a283-8822-47bd-95b7-87e96d9b7ea3@kernel=
-.org [1]
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
-> Cc: Kuniyuki Iwashima <kuniyu@google.com>
-> Note: sending this fix to net-next, similar to commits 108a86c71c93
-> ("mptcp: Call dst_release() in mptcp_active_enable().") and 893c49a78d9f
-> ("mptcp: Use __sk_dst_get() and dst_dev_rcu() in mptcp_active_enable().")=
-.
-> Also to avoid conflicts, and because we are close to the merge windows.
+This patch series aims to add SDMMC driver and various drivers required
+for SDMMC controller to function.
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
+This also fixed a bug where all the GPIO switched from INPUT to OUTPUT
+after the GPIO driver probed or by reading the GPIO debugfs.
 
-Thanks for the followup!
+This patch series is a split from [1] to ease the maintainers.
+
+Tested on Orange Pi 2G-IOT using a Buildroot environment.
+
+[1]: https://lore.kernel.org/all/20250917-rda8810pl-drivers-v1-0-9ca9184ca977@mainlining.org/
+
+Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+---
+Dang Huynh (10):
+      dt-bindings: gpio: rda: Make interrupts optional
+      dt-bindings: clock: Add RDA Micro RDA8810PL clock/reset controller
+      dt-bindings: dma: Add RDA IFC DMA
+      dt-bindings: mmc: Add RDA SDMMC controller
+      gpio: rda: Make IRQ optional
+      gpio: rda: Make direction register unreadable
+      clk: Add Clock and Reset Driver for RDA Micro RDA8810PL SoC
+      dmaengine: Add RDA IFC driver
+      mmc: host: Add RDA Micro SD/MMC driver
+      ARM: dts: unisoc: rda8810pl: Add SDMMC controllers
+
+ .../bindings/clock/rda,8810pl-apsyscon.yaml        |  43 ++
+ Documentation/devicetree/bindings/dma/rda,ifc.yaml |  45 ++
+ .../devicetree/bindings/gpio/gpio-rda.yaml         |   3 -
+ Documentation/devicetree/bindings/mmc/rda,mmc.yaml |  92 +++
+ MAINTAINERS                                        |  18 +
+ .../boot/dts/unisoc/rda8810pl-orangepi-2g-iot.dts  |  20 +
+ .../arm/boot/dts/unisoc/rda8810pl-orangepi-i96.dts |  20 +
+ arch/arm/boot/dts/unisoc/rda8810pl.dtsi            |  47 +-
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/rda/Kconfig                            |  14 +
+ drivers/clk/rda/Makefile                           |   2 +
+ drivers/clk/rda/clk-rda8810.c                      | 769 +++++++++++++++++++
+ drivers/dma/Kconfig                                |  10 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/rda-ifc.c                              | 450 +++++++++++
+ drivers/gpio/gpio-rda.c                            |   4 +-
+ drivers/mmc/host/Kconfig                           |  12 +
+ drivers/mmc/host/Makefile                          |   1 +
+ drivers/mmc/host/rda-mmc.c                         | 853 +++++++++++++++++++++
+ include/dt-bindings/clock/rda,8810pl-apclk.h       |  70 ++
+ include/dt-bindings/dma/rda-ifc.h                  |  28 +
+ 22 files changed, 2495 insertions(+), 9 deletions(-)
+---
+base-commit: ae2d20002576d2893ecaff25db3d7ef9190ac0b6
+change-id: 20250918-rda8810pl-mmc-3f33b83c313d
+
+Best regards,
+-- 
+Dang Huynh <dang.huynh@mainlining.org>
+
+
 
