@@ -1,89 +1,93 @@
-Return-Path: <linux-kernel+bounces-823060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA835B856D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:03:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB7DB856E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5217C44F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:01:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6B037BCD63
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F205C22423A;
-	Thu, 18 Sep 2025 15:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JqAWS1rN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1C1311C2A;
+	Thu, 18 Sep 2025 15:01:31 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E82CAD23;
-	Thu, 18 Sep 2025 15:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436B930FC35
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207636; cv=none; b=mMFGkjT+x5haBHg23cMeTFDnvlJwtKMywH/gBHGcY/gY9qvUe9S/KqzMZ/uRY+7EqlFGbEHcT8C/mKyQUYYud4lpeLuuSjF6eiImArNzBQQzmbGhpGFvGxdQQujQiac6++/LIkNYEFL3d7WJyj9xb/7VSG4mDDokAb9jYXwPxLY=
+	t=1758207690; cv=none; b=SSptEZ8pfuWDzUiKFSEqEFyJMqdDTO9CEPS+K84EUs/tUg0+q7v+OSu5KIAd7+NKX7XIwzZQQ32r995bLwVQ/JfzkmPH175oYqxgdaN41woTBzXE7GjzXve5iElhTzIX8bXa9zu/d5RK0QEL8x8TYQKaBc25LJIzioVaBweC1sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207636; c=relaxed/simple;
-	bh=xuOkoUNw7rn5KxPRuOp5pQL5CtBW0260AwBgcanXRXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=caix/6ziTRcz2Grg8grH2S6Do6rM+nrWBYY/U1eXQxSgzdNYy0Z/5wPgW+Q8PjfLv4HaqZG3b4dFIqIHh7Cm01plixAOZP5BPuUjYbF8FjhoJCVeKXYm70Ih4uSrWMGfrlB5pu+K3ZX2VvPrXM2E3mVgqE+atL7Xe56ySkYKVps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JqAWS1rN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8D4C4CEF7;
-	Thu, 18 Sep 2025 15:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758207635;
-	bh=xuOkoUNw7rn5KxPRuOp5pQL5CtBW0260AwBgcanXRXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JqAWS1rNTliJuZW77rrKBWqxFqq+CDpUja0x5eSS/S5Xv5V+6XMagqVkUXpvTcunK
-	 6J/PBjjXkcUciXodteyx9Cfk3RRvvhtpNYm8xG5d+NviK0n63cupwomjQaiejVQbxB
-	 1c0f+0KS1oGoC1OQMzJ6pl9W02HyNJCmfoEScx4I=
-Date: Thu, 18 Sep 2025 17:00:32 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: ManeraKai <manerakai@protonmail.com>
-Cc: "aliceryhl@google.com" <aliceryhl@google.com>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: miscdevice: Moved `MiscDevice` to a more
- general abstraction
-Message-ID: <2025091803-rephrase-deepen-52fd@gregkh>
-References: <20250918144356.28585-1-manerakai@protonmail.com>
- <20250918144356.28585-2-manerakai@protonmail.com>
+	s=arc-20240116; t=1758207690; c=relaxed/simple;
+	bh=dMgnUT9SN0xWEnTD5CB7F2sIRMIdRNv8a528sPnHBx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m/a7YQDb1Ethfe4o0+Q6sBFkToLSxbgrBmJ4JkULW+QxeuRhtfzqBQ4Yici019NipPRCjjKhGLzkoRu237caRN/F0tLUjcv1WZEx3JJ1K9nH7/lRx0GsM6lDCvB9Bu1/mteH3vJ/vOEh/vyY7yCHX3lkGpZk4YSdYcjGR1WZHzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <jre@pengutronix.de>)
+	id 1uzG88-0007Qj-74; Thu, 18 Sep 2025 17:01:04 +0200
+Message-ID: <09ffce72-e826-4126-8761-13efc689dee7@pengutronix.de>
+Date: Thu, 18 Sep 2025 17:01:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918144356.28585-2-manerakai@protonmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: add Protonic PRT8ML board
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, David Jander <david@protonic.nl>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Oleksij Rempel <o.rempel@pengutronix.de>
+References: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
+ <20250918-imx8mp-prt8ml-v2-3-3d84b4fe53de@pengutronix.de>
+ <0f520191-7d9f-4800-a41e-a623b9335c9d@lunn.ch>
+From: Jonas Rebmann <jre@pengutronix.de>
+Content-Language: en-US
+In-Reply-To: <0f520191-7d9f-4800-a41e-a623b9335c9d@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: jre@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Sep 18, 2025 at 02:45:28PM +0000, ManeraKai wrote:
-> This new general abstraction is called `FileOperations`.
+Hi Andrew,
+
+On 2025-09-18 16:18, Andrew Lunn wrote:
+>>   - Onboard T1 ethernet (10BASE-T1L+PoDL, 100BASE-T1+PoDL, 1000BASE-T1)
 > 
-> `struct file_operations` is not only meant for misc. Its methods are
-> accessible from any other driver type. This change, however, doesn't
-> generalize the safe wrapping for all driver types, but rather just the
-> method declarations. The actual safe wrappings are left for every driver
-> type to implement. This may make each implementation simpler. For
-> example, misc can choose not to implement the safe wrapping for `lock`,
-> `sendfile`, or `sendpage`, since they have no use in misc drivers.
+> Are these PHYs connected to the switch? It just seems odd you have a
+> switch with only one port connected to the outside world.
 
-This has come up many times, but we really are not "ready" for a generic
-file operations export.  Let's keep this just for misc for now, until we
-have another use for it, as the interaction with the vfs is tricky and
-subtle and full of corner cases (see the debugfs bindings for lots of
-examples here.)
+yes, the 10BASE-T1L+PoDL and 100BASE-T1+PoDL are. We didn't get to test
+them, so I removed them from the devicetree.
 
-So for a misc device, let's just stick with what we have for now.
+Regards,
+Jonas
 
-> Signed-off-by: ManeraKai <manerakai@protonmail.com>
-
-Nit, we need a full name please.
-
-thanks,
-
-greg k-h
+-- 
+Pengutronix e.K.                           | Jonas Rebmann               |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-9    |
 
