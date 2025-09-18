@@ -1,431 +1,189 @@
-Return-Path: <linux-kernel+bounces-823119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B82DB85912
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:26:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE916B85967
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:28:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF093583DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:22:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 864441B25678
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C695A30DD07;
-	Thu, 18 Sep 2025 15:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="UL1zNQD0";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="cWZlU5sm"
-Received: from e234-57.smtp-out.ap-northeast-1.amazonses.com (e234-57.smtp-out.ap-northeast-1.amazonses.com [23.251.234.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED79225390;
-	Thu, 18 Sep 2025 15:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179E630CDB4;
+	Thu, 18 Sep 2025 15:22:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D2225390
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208956; cv=none; b=DCgQ6ljjahzne+XIsKrPuFQPj5lRJrmxY505dQM/HOyDrgDMeT9v5a5gvlDTKyLAjYNttVRGt5307Q1Dq00QIkgm0csYJvFqvJWL6itK0etig81DADpNDlBGlPS5o/mEPSTC5pBlMfpYJMmBSZuZ6GzWPWekmxJ+ypRVoUxvUE0=
+	t=1758208969; cv=none; b=kb6u0s0o1vouX8J1ip1aJTFGa1kJ5yR2kcO78QLhWVxa2Yecl+HPWPtXNVu14RvA7UuDYITqTLPzz+EJ1+VTZk70rTh8uWVuIrFF3YRqW3d63+BgMdYD1Tb704K0dpHPVcSQ4vmsg1AZGlaTRyTXBoCoHtXh485q5DNNqMqHQ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208956; c=relaxed/simple;
-	bh=+wRW5r809KImjAJ3ytI5cjMx82R3BkcF+tuNTLxsXeU=;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
-	 Content-Type; b=GyToZA5DJx5sh7cy7JXpRvlACfuAgrEWn6wxhPGO6+442dPEUTrAYQAlw6q0hA88dcoBSllf6HExtShv6y8qg5fXN+fV2Bv3DqSa/tGXMnQjQDh0goV4RT8uwRITUTQq3KQnKfdlYGjE07f0GPyjTiECU1Mnvn8LTwEIcLqmPFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=UL1zNQD0; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=cWZlU5sm; arc=none smtp.client-ip=23.251.234.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=mgml.me; t=1758208952;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=+wRW5r809KImjAJ3ytI5cjMx82R3BkcF+tuNTLxsXeU=;
-	b=UL1zNQD0h6aEKc965I1WJaXXD7qhxX1dJqLUUz5vcKugqOC6uJ6vxEKIwwqKI7eP
-	c6SJKa3lHD0xGbcQ8M0UKDuz1CngneOvXRYOdzoKGrXrr9NghoowxC1QDfRrsetzZpQ
-	BjTD7leZBZClgxu3aptA3BBVUHsCaHqqBNd1rMlk=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758208952;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=+wRW5r809KImjAJ3ytI5cjMx82R3BkcF+tuNTLxsXeU=;
-	b=cWZlU5smWzUAFDvVSrI2KBRoC2A0dFtPKtgRJZ5BWvXQkQ+iMSAgTDeUTTEEOaYj
-	e+2LP91XNsg4EKELomvDm6+PBH+4Gb/wXkhaK/QAhhUCRVvDoS1A/CDdKBZ1XxXeO2L
-	VXle3ouuu5Ke3Lm7iasM7DwjL5pU13HkJ5zlZYX0=
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-In-Reply-To: <1c71d0c8-dc3a-9dbf-4e69-e444f94c7ab8@huaweicloud.com>
-From: Kenta Akagi <k@mgml.me>
-To: yukuai1@huaweicloud.com, song@kernel.org, mtkaczyk@kernel.org, 
-	shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yukuai3@huawei.com, k@mgml.me
-Subject: Re: [PATCH v4 4/9] md/raid1,raid10: Don't set MD_BROKEN on
- failfast bio failure
-Message-ID: <010601995d6b88a4-423a9b3c-3790-4d65-86a4-20a9ddea0686-000000@ap-northeast-1.amazonses.com>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 18 Sep 2025 15:22:32 +0000
+	s=arc-20240116; t=1758208969; c=relaxed/simple;
+	bh=3zI9dntSj7tod/rpTd2Z/DAlKMAh3TVV3G+4wh7ddSg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YEHI596Gb703BoHsLAQWcLIrCSHaTkbZZ+avWtF/xEMvGtupnRoYKKUglHtrcHGmcxp3nao24/h9gI+fFcEDGlmqInWgrXfkoA1Gt22okMhhw4dae78SXbsvmxrTmpgJOUszQpTUXrALcbnQbg3TQs9WZnIZReAqLV31viBjZLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE3CE1764;
+	Thu, 18 Sep 2025 08:22:38 -0700 (PDT)
+Received: from [10.1.33.171] (XHFQ2J9959.cambridge.arm.com [10.1.33.171])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67A913F66E;
+	Thu, 18 Sep 2025 08:22:45 -0700 (PDT)
+Message-ID: <4b27bb1a-8279-416b-b84c-0b9ab7430a48@arm.com>
+Date: Thu, 18 Sep 2025 16:22:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
-X-SES-Outgoing: 2025.09.18-23.251.234.57
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Elide TLB flush in certain pte protection
+ transitions
+Content-Language: en-GB
+To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
+Cc: anshuman.khandual@arm.com, wangkefeng.wang@huawei.com, baohua@kernel.org,
+ pjaroszynski@nvidia.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250918103638.77282-1-dev.jain@arm.com>
+ <fb5818ec-dde9-4d53-ab0f-e28e5c2cab33@arm.com>
+ <5f4037e3-7aaa-4919-9220-8989790c333b@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <5f4037e3-7aaa-4919-9220-8989790c333b@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2025/09/18 10:26, Yu Kuai wrote:
-> Hi,
->=20
-> =E5=9C=A8 2025/09/15 =
-11:42, Kenta Akagi =E5=86=99=E9=81=93:
->> Failfast is a feature implemented=
- only for RAID1 and RAID10. It instructs
->> the block device providing the =
-rdev to immediately return a bio error
->> without retrying if any issue =
-occurs. This allows quickly detaching a
->> problematic rdev and minimizes =
-IO latency.
+On 18/09/2025 16:04, Dev Jain wrote:
+> 
+> On 18/09/25 6:19 pm, Ryan Roberts wrote:
+>> On 18/09/2025 11:36, Dev Jain wrote:
+>>> Currently arm64 does an unconditional TLB flush in mprotect(). This is not
+>>> required for some cases, for example, when changing from PROT_NONE to
+>>> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
+>>> growing into the non-main heaps), and unsetting uffd-wp in a range.
+>>>
+>>> Therefore, implement pte_needs_flush() for arm64, which is already
+>>> implemented by some other arches as well.
+>>>
+>>> Running a userspace program changing permissions back and forth between
+>>> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
+>>> for the none->rw transition, I get a reduction from 3.2 microseconds to
+>>> 2.95 microseconds, giving an 8.5% improvement.
+>>>
+>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>> ---
+>>> mm-selftests pass. Based on 6.17-rc6.
+>>>
+>>>   arch/arm64/include/asm/tlbflush.h | 29 +++++++++++++++++++++++++++++
+>>>   1 file changed, 29 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/
+>>> tlbflush.h
+>>> index 18a5dc0c9a54..4a566d589100 100644
+>>> --- a/arch/arm64/include/asm/tlbflush.h
+>>> +++ b/arch/arm64/include/asm/tlbflush.h
+>>> @@ -524,6 +524,35 @@ static inline void arch_tlbbatch_add_pending(struct
+>>> arch_tlbflush_unmap_batch *b
+>>>   {
+>>>       __flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
+>>>   }
+>>> +
+>>> +static inline bool __pte_flags_need_flush(pteval_t oldval, pteval_t newval)
+>> ptdesc_t is the preferred any-level type.
+> 
+> I keep forgetting this :)
+> 
 >>
->> Due to its nature, failfast bios can fail easily, and md =
-must not mark
->> an essential rdev as Faulty or set MD_BROKEN on the array =
-just because
->> a failfast bio failed.
+>>> +{
+>>> +    pteval_t diff = oldval ^ newval;
+>>> +
+>>> +    /* invalid to valid transition requires no flush */
+>>> +    if (!(oldval & PTE_VALID) || (oldval & PTE_PRESENT_INVALID))
+>> Is the PTE_PRESENT_INVALID really required? If the oldval was invalid, there
+>> can't be a TLB entry for it, so no flush is required; that's it, I think?
 >>
->> When failfast was introduced, =
-RAID1 and RAID10 were designed to continue
->> operating normally even if =
-md_error was called for the last rdev. However,
->> with the introduction of=
- MD_BROKEN in RAID1/RAID10
->> in commit 9631abdbf406 ("md: Set MD_BROKEN =
-for RAID1 and RAID10"), calling
->> md_error for the last rdev now prevents =
-further writes to the array.
->> Despite this, the current failfast error =
-handler still assumes that
->> calling md_error will not break the array.
+>> In fact, PTE_PRESENT_INVALID is overlaid with PTE_NG; it only means
+>> PTE_PRESENT_INVALID when PTE_INVALID=0, so I think this is broken as is. Valid
+>> user-space PTEs always have PTE_NG set, so you will never flush.
+> 
+> Not sure I get you. The condition as I wrote means
+> 
+> 1. If PTE_VALID is not set, then do not flush.
+> 2. If PTE_VALID is set, *and* PTE_PRESENT_INVALID is set, then do not flush.
+> 
+> So when you say "it only means PTE_PRESENT_INVALID when PTE_INVALID=0", the
+> second condition meets that.
+
+Sorry I meant PTE_VALID=0. Your second condition is wrong; PTE_PRESENT_INVALID
+is only defined when PTE_VALID=0.
+
+Think about it; the PTE is valid from the HW's perspective if and only if
+PTE_VALID=1. So that's the only condition that needs to be checked.
+
+
+See this comment in the code for more info:
+
+/*
+ * PTE_PRESENT_INVALID=1 & PTE_VALID=0 indicates that the pte's fields should be
+ * interpreted according to the HW layout by SW but any attempted HW access to
+ * the address will result in a fault. pte_present() returns true.
+ */
+#define PTE_PRESENT_INVALID	(PTE_NG)     /* only when !PTE_VALID */
+
+
+> 
 >>
->> Normally, this is not an issue because MD_FAILFAST is not set when a bio
->> is issued to the last rdev. However, if the array is not degraded and a
->> bio with MD_FAILFAST has been issued, simultaneous failures could
->> potentially break the array. This is unusual but can happen; for example=
-,
->> this can occur when using NVMe over TCP if all rdevs depend on
->> a single Ethernet link.
+>>> +        return false;
+>>> +
+>>> +    /* Transition in the SW bits and access flag requires no flush */
+>>> +    diff &= ~(PTE_SWBITS_MASK | PTE_AF);
+>> Could you explain your thinking on why PTE_AF changes don't need a flush? I
+>> would have thought if we want to clear the access flag, that would definitely
+>> require a flush? Otherwise how would the MMU know to set the acccess bit on next
+>> access if it already has a TLB entry?
+> 
+> You are correct, but AFAIK losing access bit information is not fatal, it will only
+> mess with page aging. So potentially reclaim will lose some accuracy.
+
+Sure, but it means that your change has a cost; reduced page aging accuracy.
+That part of the change should at least be separated into its own commit and
+probably backed up with performance numbers. Otherwise, I think we should retain
+the original behaviour.
+
+
+> 
 >>
->> In other words, this becomes a problem =
-under the following conditions:
->> Preconditions:
->> * Failfast is enabled =
-on all rdevs.
->> * All rdevs are In_sync - This is a requirement for bio to=
- be submit
->> =C2=A0=C2=A0 with MD_FAILFAST.
->> * At least one bio has been=
- submitted but has not yet completed.
+>>> +
+>>> +    if (!diff)
+>>> +        return false;
+>>> +    return true;
+>> Perhaps just "return !!diff;" here?
+> 
+> Sure.
+> 
 >>
->> Trigger condition:
->> * All underlying devices of the rdevs return an error for their failfast
->> =C2=A0=C2=A0 bios.
+>> Thanks,
+>> Ryan
 >>
->> Whether the bio is a read or a write makes =
-little difference to the
->> outcome.
->> In the write case, md_error is =
-invoked on each rdev through its bi_end_io
->> handler.
->> In the read case, losing the first rdev triggers a metadata
->> update. Next, md_super_write, unlike raid1_write_request, issues the bio
->> with MD_FAILFAST if the rdev supports it, causing the bio to fail
->> immediately - Before this patchset, LastDev was set only by the failure
->> path in super_written. Consequently, super_written calls md_error on the
->> remaining rdev.
 >>
->> Prior to this commit, the following changes were =
-introduced:
->> * The helper function md_bio_failure_error() that skips the =
-error handler
->> =C2=A0=C2=A0 if a failfast bio targets the last rdev.
->> * Serialization md_error() and md_bio_failure_error().
->> * Setting the LastDev flag for rdevs that must not be lost.
->>
->> This commit uses md_bio_failure_error() instead of md_error() for =
-failfast
->> bio failures, ensuring that failfast bios do not stop array =
-operations.
->>
->> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and =
-RAID10")
->> Signed-off-by: Kenta Akagi <k@mgml.me>
->> ---
->> =C2=A0 drivers/md/md.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 +----
->> =C2=A0 drivers/md/raid1.c=C2=A0 | 37 ++++++++++++++++++-----------------=
---
->> =C2=A0 drivers/md/raid10.c |=C2=A0 9 +++++----
->> =C2=A0 3 files changed, 24 insertions(+), 27 deletions(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index 65fdd9bae8f4..=
-65814bbe9bad 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -1004,11 +1004,8 @@ static void super_written(struct bio *bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (bio->bi_status) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("md: %s =
-gets error=3D%d\n", __func__,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-blk_status_to_errno(bio->bi_status));
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 md_error(mddev, rdev);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (!test_bit(Faulty, &rdev->flags)
->> =
--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 && =
-(bio->bi_opf & MD_FAILFAST)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 if (!md_bio_failure_error(mddev, rdev, bio))
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-bio_put(bio);
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index 32ad6b102ff7..8fff9dacc6e0 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -470,7 +470,7 @@ static void =
-raid1_end_write_request(struct bio *bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (bio->bi_opf & =
-MD_FAILFAST) &&
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 /* We never try FailFast to WriteMostly devices */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 !test_bit(WriteMostly, &rdev->flags)) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-md_error(r1_bio->mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_bio_failure_error(r1_bio->mddev, rdev, =
-bio);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> Can following check of faulty replaced with return value?
-
-In the case where raid1_end_write_request is called for a non-failfast IO,
-and the rdev has already been marked Faulty by another bio, it must not =
-retry too.
-I think it would be simpler not to use a return value here.
-
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> @@ -2178,8 +2178,7 @@ static int fix_sync_read_error(struct r1bio =
-*r1_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (test_bit(FailFast, =
-&rdev->flags)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-/* Don't try recovering from here - just fail it
->> =
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * ... unless =
-it is the last working device of course */
->> -=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 md_error(mddev, rdev);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (test_bit(Faulty, &rdev->flags))
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (md_bio_failure_error(mdd=
-ev, rdev, bio))
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 /* Don't try to read from here, but make sure
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 * put_buf does it's thing
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> @@ -2657,9 +2656,8 @@ static void handle_write_finished(struct r1conf =
-*conf, struct r1bio *r1_bio)
->> =C2=A0 static void handle_read_error(struct=
- r1conf *conf, struct r1bio *r1_bio)
->> =C2=A0 {
->> =
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mddev *mddev =3D conf->mddev;
->> -=C2=A0=C2=A0=C2=A0 struct bio *bio;
->> +=C2=A0=C2=A0=C2=A0 struct bio =
-*bio, *updated_bio;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct md_rdev *rdev;
->> -=C2=A0=C2=A0=C2=A0 sector_t sector;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 clear_bit(R1BIO_ReadError, &r1_bio->state);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* we got a read error. Maybe the drive =
-is bad.=C2=A0 Maybe just
->> @@ -2672,29 +2670,30 @@ static void =
-handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0 =
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bio =3D r1_bio->bios[r1_bio->read_disk];
->> -=C2=A0=C2=A0=C2=A0 bio_put(bio);
->> -=C2=A0=C2=A0=C2=A0 =
-r1_bio->bios[r1_bio->read_disk] =3D NULL;
->> +=C2=A0=C2=A0=C2=A0 =
-updated_bio =3D NULL;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdev =3D =
-conf->mirrors[r1_bio->read_disk].rdev;
->> -=C2=A0=C2=A0=C2=A0 if (mddev->ro=
- =3D=3D 0
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 && !=
-test_bit(FailFast, &rdev->flags)) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 freeze_array(conf, 1);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 fix_read_error(conf, r1_bio);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 unfreeze_array(conf);
->> -=C2=A0=C2=A0=C2=A0 } else if =
-(mddev->ro =3D=3D 0 && test_bit(FailFast, &rdev->flags)) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_error(mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0 if (mddev->ro =3D=3D 0) {
->> =
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!test_bit(FailFast, =
-&rdev->flags)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 freeze_array(conf, 1);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fix_read_error(conf, r1_bio);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-unfreeze_array(conf);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else=
- {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-md_bio_failure_error(mddev, rdev, bio);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r1_bio->bios[r1_bio->read_di=
-sk] =3D IO_BLOCKED;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-updated_bio =3D IO_BLOCKED;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->=20
-> I'll suggest a separate patch to cleanup the conditions first, it's
-> better for code review.
-
-Thank you for your guidance. I will split the =
-commit.
-
->=20
-> BTW, I'll prefer if else chain insted of nested if else, =
-perhaps
-> following is better:
->=20
-> if (mddev->ro !=3D 0) {
-> =C2=A0/* read-only */
-> } else if (!test_bit(FailFast, &rdev->flags) {
-> =C2=A0/* read-write and failfast is not set */
-> } else {
-> =C2=A0/* read-write and failfast is set */
-> }
-
-Ah, this looks much =
-readable. I'll fix. Thanks.
-
->> =C2=A0 +=C2=A0=C2=A0=C2=A0 bio_put(bio);
->> +=C2=A0=C2=A0=C2=A0 r1_bio->bios[r1_bio->read_disk] =3D updated_bio;
->> +
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdev_dec_pending(rdev, conf->mddev);
->> -=C2=A0=C2=A0=C2=A0 sector =3D r1_bio->sector;
->> -=C2=A0=C2=A0=C2=A0 =
-bio =3D r1_bio->master_bio;
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* =
-Reuse the old r1_bio so that the IO_BLOCKED settings are preserved */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r1_bio->state =3D 0;
->> -=C2=A0=C2=A0=C2=A0 raid1_read_request(mddev, bio, r1_bio->sectors, =
-r1_bio);
->> -=C2=A0=C2=A0=C2=A0 allow_barrier(conf, sector);
->> +=C2=A0=C2=A0=C2=A0 raid1_read_request(mddev, r1_bio->master_bio, =
-r1_bio->sectors, r1_bio);
->> +=C2=A0=C2=A0=C2=A0 allow_barrier(conf, =
-r1_bio->sector);
->> =C2=A0 }
->> =C2=A0 =C2=A0 static void raid1d(struct =
-md_thread *thread)
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.=
-c
->> index dc4edd4689f8..b73af94a88b0 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -488,7 +488,7 @@ static void =
-raid10_end_write_request(struct bio *bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dec_rdev =3D 0;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (test_bit(FailFast, &rdev->flags) &&
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (bio->bi_opf & MD_FAILFAST)) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 md_error(rdev->mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 md_bio_failure_error(rdev->mddev, rdev, bio);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 }
->> =C2=A0
->=20
-> Same as raid1, can following check of =
-faulty replaced of return value.
-
-Same as RAID1, non-Failfast IO must also =
-be handled. Therefore, the Faulty
-bit should be checked instead of relying =
-on the return value.
-
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> @@ -2443,7 +2443,7 @@ static void =
-sync_request_write(struct mddev *mddev, struct r10bio *r10_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue;
->> =C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (test_bit(FailFast, =
-&rdev->flags)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Just give up on this device */
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-md_error(rdev->mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_bio_failure_error(rdev->mddev, rdev, =
-tbio);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 continue;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 }
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 /* Ok, we need to write this bio, either to correct an
->> @@ -2895,8 +2895,9 @@ static void handle_read_error(struct mddev *mddev,=
- struct r10bio *r10_bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 freeze_array(conf, 1);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 fix_read_error(conf, mddev, r10_bio);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-unfreeze_array(conf);
->> -=C2=A0=C2=A0=C2=A0 } else
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 md_error(mddev, rdev);
->> +=C2=A0=C2=A0=C2=A0 } else {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 md_bio_failure_error(mddev, rdev, bio);
->> +=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rdev_dec_pending(rdev, mddev);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r10_bio->state =3D 0;
->>
->=20
-> And please split this patch for raid1 and raid10.
-
-Understood, I will split it.
-
-Thanks,
-Akagi
-
->=20
-> Thanks
-> Kuai
->=20
->=20
+>>> +}
+>>> +
+>>> +static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
+>>> +{
+>>> +    return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
+>>> +}
+>>> +#define pte_needs_flush pte_needs_flush
+>>> +
+>>> +static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
+>>> +{
+>>> +    return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
+>>> +}
+>>> +#define huge_pmd_needs_flush huge_pmd_needs_flush
+>>> +
+>>>   #endif
+>>>     #endif
 
 
