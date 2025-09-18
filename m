@@ -1,93 +1,176 @@
-Return-Path: <linux-kernel+bounces-823290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7732BB860EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F96B860F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A09018916A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:34:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D24D44665AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7298A313D4E;
-	Thu, 18 Sep 2025 16:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B73330F524;
+	Thu, 18 Sep 2025 16:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="N6yC5m6F"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qjpf0K7t"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF8E30EF86;
-	Thu, 18 Sep 2025 16:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF7F23C507
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758213254; cv=none; b=rkxlsp45zfmtMtvdajgOlxIrat7FfYqHPaCUjsRoYaw736DrIgdh+8WLrGPe93eZZ5QSwuZ4tXHgXuAalRnrudKf39/kpBp2WtBYvqoXql2OnSRSTRHotn19IC5s6aqZPCuYS4Wl0+bphfgA0jBTPPVSIDmadwPceolrKb6m9yw=
+	t=1758213439; cv=none; b=NxNrQ9dKU0ikWygTLnjQdmFPOgJL+m5tYaa9QQbI/vT8sgsmX8sPn6uT0w18iE6EXxjElJUhVOS9qir81cojS3FZKAR0v5MY5LyakUNqfOBngX66QpSl9PhU1/yoR6rdk4coxFzfSnk0Y4DY2FIyLrQkB1OC6t4F8Cxtt0aVMbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758213254; c=relaxed/simple;
-	bh=aqwtNK6di5GBXsobB4WCO7ec6zovjJK0WwMrHWilHOI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h1kXvL7b4Jh6v86w+DWUTx2xYlyuOhU+XXgbMPBWSzT2+rJ/1ulRlUriyL7FoCfNWmWyNiiOewML5jOrn2LWHwUxsR+psr22fMhTpLDi90E8jf11x8Maw8qaV0YMJlStqpBWJd3rAfvM0+dRKc5Xrph012V3OebIZJOBwraTVPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=N6yC5m6F; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0B9B9406FA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1758213252; bh=QiJQcaqGnpfxXUttN20FBH0tpTUHOeBQntDMRqt269o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=N6yC5m6FqGKcjEW11nfg02qV8Yye79eP9IihS2+8h4f6RbVGwNyWTq1okPe9nDzwN
-	 22PXU/VvThVcrDOzuZQJ2jPiHK++Ed+TBmFm0xmQ/HZtSWQl5CJQIvVNpYYQEcdbVn
-	 BLfGPI/ISrUqjA+qSrtlSJ4VCl/ltL238TeQsJCMsMtvte56GVV902R33AuFnlLCn9
-	 UW89JMfV1G3v3OrcbT4uX6MjAOaP5pHDGJeSmxad26OToQeabY0OUHMQ3LRSUvziY6
-	 K73s+fXQc2pX5w1N2rgEMgYs5pEe7XMcvEaV4ObtrHh6//R1wcLSwBaZGveEbSrpLn
-	 w4As8uDxpnLZg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 0B9B9406FA;
-	Thu, 18 Sep 2025 16:34:11 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Alex Tran <alex.t.tran@gmail.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Tran
- <alex.t.tran@gmail.com>
-Subject: Re: [PATCH v1 1/3] docs: filesystems: sysfs: remove top level sysfs
- net directory
-In-Reply-To: <20250902023039.1351270-3-alex.t.tran@gmail.com>
-References: <20250902023039.1351270-1-alex.t.tran@gmail.com>
- <20250902023039.1351270-3-alex.t.tran@gmail.com>
-Date: Thu, 18 Sep 2025 10:34:11 -0600
-Message-ID: <87a52r90u4.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1758213439; c=relaxed/simple;
+	bh=kFJ+IJJ/P+kETETmwViop/GOMOHCNyCzy+STbkWbGaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U5jsZPAXM7PjDb9IXYUvoRe1+VaGhHwIELFJkQ55XewWedXHT1uKJ1zaQvv+phP5fTdAI4U9btrs5Dtm7nvLTdcG3A4a//mofdr4IGCbHRxoqEhMBDIIdyp4d7TXmCc4Rj41VyuW5/7tdTc0De+ds7xLKVthM+vbSnLHcAWtFEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qjpf0K7t; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8f1143f0-e70f-4187-9a2c-4e825ed9c63f@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758213434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XO454g9fUgdATXAdxjgdUn+MLRq0EbRhxsOv4dkvFzY=;
+	b=Qjpf0K7taskmFHjCc8lNG67rAi0v4ikc3zUW9yLfeNiqXFwBqiWeguz9gIdigUTcpJtFln
+	0sWHDX78CdAQdLvmVOlGhxN1Vw4bpDGmvbKJL1a80qTVrkVLIVubnZrTobvnliRGWr0hT6
+	uglWMRKVdfKJlI2an+VCXtcVIhGD/xY=
+Date: Thu, 18 Sep 2025 09:37:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Subject: Re: [PATCH v2] drm/amd/display: Only restore backlight after
+ amdgpu_dm_init or dm_resume
+To: Mario Limonciello <mario.limonciello@amd.com>, chiahsuan.chung@amd.com,
+ alexander.deucher@amd.com, harry.wentland@amd.com, simona@ffwll.ch,
+ airlied@gmail.com, sunpeng.li@amd.com
+Cc: amd-gfx@lists.freedesktop.org, zaeem.mohamed@amd.com, misyl@froggi.es,
+ linux-kernel@vger.kernel.org
+References: <20250911174851.2767335-1-matthew.schwartz@linux.dev>
+ <ccdc6dda-8341-4b77-a571-e0642499e3f7@amd.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Matthew Schwartz <matthew.schwartz@linux.dev>
+In-Reply-To: <ccdc6dda-8341-4b77-a571-e0642499e3f7@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Alex Tran <alex.t.tran@gmail.com> writes:
+On 9/11/25 10:55 AM, Mario Limonciello wrote:
+> On 9/11/25 12:48 PM, Matthew Schwartz wrote:
+>> On clients that utilize AMD_PRIVATE_COLOR properties for HDR support,
+>> brightness sliders can include a hardware controlled portion and a
+>> gamma-based portion. This is the case on the Steam Deck OLED when using
+>> gamescope with Steam as a client.
+>>
+>> When a user sets a brightness level while HDR is active, the gamma-based
+>> portion and/or hardware portion are adjusted to achieve the desired
+>> brightness. However, when a modeset takes place while the gamma-based
+>> portion is in-use, restoring the hardware brightness level overrides the
+>> user's overall brightness level and results in a mismatch between what
+>> the slider reports and the display's current brightness.
+>>
+>> To avoid overriding gamma-based brightness, only restore HW backlight
+>> level after boot or resume. This ensures that the backlight level is
+>> set correctly after the DC layer resets it while avoiding interference
+>> with subsequent modesets.
+>>
+>> Fixes: 7875afafba84 ("drm/amd/display: Fix brightness level not retained over reboot")
+>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4551
+>> Signed-off-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> 
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> Haven't picked it up, will wait a few days for more comments.
 
-> The net/ directory is not present as a top level sysfs directory
-> in standard Linux systems. Network interfaces can be accessible
-> via /sys/class/net instead.
->
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> ---
->  Documentation/filesystems/sysfs.rst | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/Documentation/filesystems/sysfs.rst b/Documentation/filesystems/sysfs.rst
-> index c32993bc83c7..c50da87f27fa 100644
-> --- a/Documentation/filesystems/sysfs.rst
-> +++ b/Documentation/filesystems/sysfs.rst
-> @@ -299,7 +299,6 @@ The top level sysfs directory looks like::
->      hypervisor/
->      kernel/
->      module/
-> -    net/
->      power/
+Was this applied somewhere or still waiting on more comments?
 
-I have applied these three, thanks.
+Thanks
 
-jon
+> 
+>> ---
+>> v2: Drop set_backlight_level and use dm->restore_backlight in
+>> amdgpu_dm_commit_streams
+>> ---
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++++++----
+>>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  7 +++++++
+>>   2 files changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> index 7808a647a306c..2a5fa85505e84 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+>> @@ -2037,6 +2037,8 @@ static int amdgpu_dm_init(struct amdgpu_device *adev)
+>>         dc_hardware_init(adev->dm.dc);
+>>   +    adev->dm.restore_backlight = true;
+>> +
+>>       adev->dm.hpd_rx_offload_wq = hpd_rx_irq_create_workqueue(adev);
+>>       if (!adev->dm.hpd_rx_offload_wq) {
+>>           drm_err(adev_to_drm(adev), "failed to create hpd rx offload workqueue.\n");
+>> @@ -3407,6 +3409,7 @@ static int dm_resume(struct amdgpu_ip_block *ip_block)
+>>           dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D0);
+>>             dc_resume(dm->dc);
+>> +        adev->dm.restore_backlight = true;
+>>             amdgpu_dm_irq_resume_early(adev);
+>>   @@ -9802,7 +9805,6 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+>>       bool mode_set_reset_required = false;
+>>       u32 i;
+>>       struct dc_commit_streams_params params = {dc_state->streams, dc_state->stream_count};
+>> -    bool set_backlight_level = false;
+>>         /* Disable writeback */
+>>       for_each_old_connector_in_state(state, connector, old_con_state, i) {
+>> @@ -9922,7 +9924,6 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+>>               acrtc->hw_mode = new_crtc_state->mode;
+>>               crtc->hwmode = new_crtc_state->mode;
+>>               mode_set_reset_required = true;
+>> -            set_backlight_level = true;
+>>           } else if (modereset_required(new_crtc_state)) {
+>>               drm_dbg_atomic(dev,
+>>                          "Atomic commit: RESET. crtc id %d:[%p]\n",
+>> @@ -9979,13 +9980,16 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+>>        * to fix a flicker issue.
+>>        * It will cause the dm->actual_brightness is not the current panel brightness
+>>        * level. (the dm->brightness is the correct panel level)
+>> -     * So we set the backlight level with dm->brightness value after set mode
+>> +     * So we set the backlight level with dm->brightness value after initial
+>> +     * set mode. Use restore_backlight flag to avoid setting backlight level
+>> +     * for every subsequent mode set.
+>>        */
+>> -    if (set_backlight_level) {
+>> +    if (dm->restore_backlight) {
+>>           for (i = 0; i < dm->num_of_edps; i++) {
+>>               if (dm->backlight_dev[i])
+>>                   amdgpu_dm_backlight_set_level(dm, i, dm->brightness[i]);
+>>           }
+>> +        dm->restore_backlight = false;
+>>       }
+>>   }
+>>   diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>> index b937da0a4e4a0..6aae51c1beb36 100644
+>> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+>> @@ -610,6 +610,13 @@ struct amdgpu_display_manager {
+>>        */
+>>       u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
+>>   +    /**
+>> +     * @restore_backlight:
+>> +     *
+>> +     * Flag to indicate whether to restore backlight after modeset.
+>> +     */
+>> +    bool restore_backlight;
+>> +
+>>       /**
+>>        * @aux_hpd_discon_quirk:
+>>        *
+> 
+
 
