@@ -1,155 +1,136 @@
-Return-Path: <linux-kernel+bounces-823243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCDEB85E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E1BB85E58
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:08:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA35D189543D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:03:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5E41898DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4523313E34;
-	Thu, 18 Sep 2025 16:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1FF314D29;
+	Thu, 18 Sep 2025 16:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0AuIhhM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Mf0M1J8U"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BDC243951;
-	Thu, 18 Sep 2025 16:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D0314A62;
+	Thu, 18 Sep 2025 16:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758211393; cv=none; b=mGIupq0sznqy0xgikEbUiB4qZnIZJe+TExTIJY56zPxcttkhDvJ4UpniMT9EHaiW+iZ6msPr+I0ggxa8g3kPGDMVtZdSYddG4ZKubKSVA+iFN1hgY/2aWA7/p0LJ3iCTkGZGNtFnohP5rIt9qnMl54V32oW3aVEkGWyeomwuiuU=
+	t=1758211452; cv=none; b=Il9QWpas0opsMNgnmb6D5FyB1mHH3CPUuEarokZXOB/7dOOPhxbaNRXDmWvc0l/nSYqIHy+Zn+4FBAIY3LqUc26iafRmowjlTxeFB5AX30rRuOptFdXf/YBfSACu02GNUNjARAFOg8nXz8GZNXLM/ZG7hazxZfiqjTtUOv3I3ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758211393; c=relaxed/simple;
-	bh=vH5vxTGmTQMX72D+ve+fQ+5ugobLSMznc3Ridr8UWLQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=EHWPF+c56CXkXMRKV6ZeqCVn5FI5iAlFvsRcL3tRczftiq8W2RjDCsk6lW0vurtAIUlGuHhgkCnGRdoiM4CZTES1OYHPFx+FdMR2DMLCTtw2Kjn2eBD95xU1wRPNzex5BFg8w6vQYKQwE2BPg6I+e4uDJllTSPca8IIQ4FmM0Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0AuIhhM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52FBCC4CEE7;
-	Thu, 18 Sep 2025 16:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758211392;
-	bh=vH5vxTGmTQMX72D+ve+fQ+5ugobLSMznc3Ridr8UWLQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=B0AuIhhMsEhy9/U2Ac148Np47X//3+PNEjPKs8YGaRIv9xEglCq9DIZa+xT8N6FiO
-	 oqfSgRPBTOf/ioaK605mhscrelsJyjCVt1qwVGCzWm6+a6dmb+Yaa1cegongIeMCCE
-	 ZCX9YDkU9TwFGWqxuvrQQeg3Y8TjjYI0BEg9rJ5ybhR+4bcDY/Fm8NJTFyH5uMrE3d
-	 zXBhNDjcnFUV3wUd32nw8mq6jlKIA5J8ImGK1BCt0SP2h7SbA4g69cXhDxYjJ+6S4H
-	 UjRFOR3uLnDUqYME768v3XTg5HHJpPiB/pB6vAH7fawjiy3blwmkLn8e6odhmkq3kb
-	 F0uFSik5agO2A==
+	s=arc-20240116; t=1758211452; c=relaxed/simple;
+	bh=3LE35nZGZq8MyMAMqGFXGW2TSB7AmNx1a4aDe+qCZPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yx/BqS4a3nqufeBCoPbtCI6602xVlH3cPMcRGyxiHV0suKtumXreyfcb1b52+Yg2E77Z5Y6xXH/a5mxF7rGIucqd3NXeFffoxwKkR3p7J0HdyfWcao0/5thJ73AQ5SaVe/W4AnoqBYujYu9eH+YIFPbyxNWTBboEDhYEV8jCO9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Mf0M1J8U; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cSL6c3snqzlgn8k;
+	Thu, 18 Sep 2025 16:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1758211439; x=1760803440; bh=4wzWm6RSRc1tNocFJFpFoox7
+	GYZLGguM76hcy5QnMFw=; b=Mf0M1J8U6wTLeu2gHoc5SUiGtJ7IvGYk8UZ6fQtQ
+	F2HzXxFsv2wJKVo3E3itBcK5M7HBPy7vs16rMQdZNtkdtlpHUdAB6gp5zElM1tQv
+	X44SkYoj7S3blZaRVlzHiogKzJP7RsYrM9zFM9RqFriOFHgBvgFNCVmVWHjXbnfj
+	BCNxjhZ/nIKCSqWA5KRGlBXCj8ouY534Wu4SFzXm9YsWLm1w6mkQLx3XVjEv5N0J
+	qYICjPTqTk8g9G9tSYHje0mRJLCaVRl0Qo98o58MrF9E6yTEcWnwOiMsYBacC9iZ
+	WV8PxWTT8jpLUWJ3lpx2TSzx7JNYmCOfRmR8oXeNulu1CA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 6L6n7UbPW0mK; Thu, 18 Sep 2025 16:03:59 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cSL5g10BTzltKG9;
+	Thu, 18 Sep 2025 16:03:18 +0000 (UTC)
+Message-ID: <1ca90ba0-7bdc-43d1-af12-bba73dd3234a@acm.org>
+Date: Thu, 18 Sep 2025 09:03:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/35] compiler-capability-analysis: Add infrastructure
+ for Clang's capability analysis
+To: Ian Rogers <irogers@google.com>, Marco Elver <elver@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>,
+ Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Jann Horn <jannh@google.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+ Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>,
+ kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org,
+ llvm@lists.linux.dev, rcu@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>
+References: <20250918140451.1289454-1-elver@google.com>
+ <20250918140451.1289454-3-elver@google.com>
+ <CAP-5=fUfbMAKrLC_z04o9r0kGZ02tpHfv8cOecQAQaYPx44awA@mail.gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <CAP-5=fUfbMAKrLC_z04o9r0kGZ02tpHfv8cOecQAQaYPx44awA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 18 Sep 2025 18:03:05 +0200
-Message-Id: <DCW1X3ZY82PY.TCFDCBLZ7HDQ@kernel.org>
-Cc: <skhan@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [RESEND PATCH v5] rust: kernel: introduce
- `unsafe_precondition_assert!` macro
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Ritvik Gupta" <ritvikfoss@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20250827060013.6874-1-ritvikfoss@gmail.com>
-In-Reply-To: <20250827060013.6874-1-ritvikfoss@gmail.com>
 
-On Wed Aug 27, 2025 at 8:00 AM CEST, Ritvik Gupta wrote:
-> diff --git a/rust/kernel/safety.rs b/rust/kernel/safety.rs
-> new file mode 100644
-> index 000000000000..e78d49e3e7c8
-> --- /dev/null
-> +++ b/rust/kernel/safety.rs
-> @@ -0,0 +1,54 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Safety related APIs.
+On 9/18/25 8:58 AM, Ian Rogers wrote:
+> On Thu, Sep 18, 2025 at 7:05=E2=80=AFAM Marco Elver <elver@google.com> =
+wrote:
+>> +config WARN_CAPABILITY_ANALYSIS
+>> +       bool "Compiler capability-analysis warnings"
+>> +       depends on CC_IS_CLANG && CLANG_VERSION >=3D 220000
+>> +       # Branch profiling re-defines "if", which messes with the comp=
+iler's
+>> +       # ability to analyze __cond_acquires(..), resulting in false p=
+ositives.
+>> +       depends on !TRACE_BRANCH_PROFILING
+>=20
+> Err, wow! What and huh, and why? Crikes. I'm amazed you found such an
+> option exists. I must be very naive to have never heard of it and now
+> I wonder if it is needed and load bearing?
 
-I think this looks fine to start out with.
+(+Steven)
 
-> +
-> +/// Checks that preconditions of an unsafe function are followed.
-> +///
-> +/// The check is enabled at runtime if debug assertions (`CONFIG_RUST_DE=
-BUG_ASSERTIONS`)
-> +/// are enabled. Otherwise, this macro is no-op.
-> +///
-> +/// # Examples
-> +///
-> +/// ```no_run
-> +/// use kernel::unsafe_precondition_assert;
-> +///
-> +/// struct RawBuffer<T: Copy, const N: usize> {
-> +///     data: [T; N],
-> +/// }
-> +///
-> +/// impl<T: Copy, const N: usize> RawBuffer<T, N> {
-> +///     /// # Safety
-> +///     ///
-> +///     /// The caller must ensure that `index` is less than `N`
-> +///     unsafe fn set_unchecked(&mut self, index: usize, value: T) {
-> +///         unsafe_precondition_assert!(
-> +///             index < N,
-> +///             "RawBuffer::set_unchecked requires index ({}) < N ({})",
-> +///             index,
-> +///             N,
+This is an old option. I think this commit introduced it:
 
-You can move the names into the `{}`:
+commit 52f232cb720a7babb752849cbc2cab2d24021209
+Author: Steven Rostedt <rostedt@goodmis.org>
+Date:   Wed Nov 12 00:14:40 2008 -0500
 
-    unsafe_precondition_assert!(
-        index < N,
-        "RawBuffer::set_unchecked requires index ({index}) < N ({N})",
-    );
+     tracing: likely/unlikely branch annotation tracer
 
-> +///         );
-> +///
-> +///         // SAFETY: By the safety requirements of this function, `ind=
-ex` is valid
-> +///         unsafe {
-> +///             *self.data.get_unchecked_mut(index) =3D value;
-> +///         }
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// # Panics
-> +///
-> +/// Panics if the expression is evaluated to `false` at runtime.
-> +#[macro_export]
-> +macro_rules! unsafe_precondition_assert {
-> +    ($cond:expr $(,)?) =3D> {
-> +        $crate::unsafe_precondition_assert!(@inner $cond, ::core::string=
-ify!($cond))
-> +    };
-> +
-> +    ($cond:expr, $($arg:tt)+) =3D> {
-> +        $crate::unsafe_precondition_assert!(@inner $cond, $crate::prelud=
-e::fmt!($($arg)+))
-> +    };
-> +
-> +    (@inner $cond:expr, $msg:expr) =3D> {
-> +        ::core::debug_assert!($cond, "unsafe precondition(s) violated: {=
-}", $msg) };
-
-The closing `}` should be on the next line.
-
----
-Cheers,
-Benno
-
-> +}
->
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-
+Bart.
 
