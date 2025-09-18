@@ -1,116 +1,194 @@
-Return-Path: <linux-kernel+bounces-822347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E086B83983
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2227AB83992
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608EF1C03B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C574721742
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EDF2FE598;
-	Thu, 18 Sep 2025 08:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D682FFF9E;
+	Thu, 18 Sep 2025 08:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vGBuD8Fl"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAThHaqV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85892F9DAF
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2082F9DAF;
+	Thu, 18 Sep 2025 08:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185490; cv=none; b=CTDmrIUcM3xbhvKi9EBVFt/oLKWdJjxLsPJ609esjMRV095G7Xwviowofp8M2b5AMUd0FH2tJYd5Hsu2FbwK+eZTSwygQHhp0lfYDG96IUj/BpEP6Hb11RfmlLmShsRzqtPRoW9RxQ3VXJyvlmgTdO2SyMuRt74V6hxMZhmfu/k=
+	t=1758185493; cv=none; b=NbfrIoFBR7RJmHLMnif9i5jk87PRuthA9Xe09wfdL9kEeCkvFaa94346z7VpmNFCMSnKgbf7NVH3ERfHWhbZyKfYQWWQGwmSIi52dy/gM6mtlIOuSE3xWOVxhnxs2aYvrnyJxea5l07g/T8J/Z7tQivIdtxpgfMsmvV52+u2UOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185490; c=relaxed/simple;
-	bh=HkqrJdNGa2duMrYZbpbFvG8nRI6z4Ws788qlrVk+/To=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=FQJkWTCohORETUdopxW6s6LK9zq773fD3j0ZlaObEUprvvMosWvBatRwMlUWSvDKioxRbk3MwIjhDr/4LYcwCZJasO0odaPBR8g+2VX4InBcpsOyand1F9wNT2QCr86i0fx/mU+9rm47LRxA3yhGe1MkvROUwvdLN68KujItAik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vGBuD8Fl; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250918085119epoutp01422c8d3c1fe95a54440e99a08fb4770f~mVGDdZXQQ2801528015epoutp01k
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:51:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250918085119epoutp01422c8d3c1fe95a54440e99a08fb4770f~mVGDdZXQQ2801528015epoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758185479;
-	bh=/n8aZaGi5wsZR3M7fxB/xKjxSKJA7+RjEz4hMqj7gvI=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=vGBuD8FlsHxFXCb9z9eD9mefUm8gQo7rGZoTtcwWnHvgsabfziku8iXwfYIBvjchm
-	 udzMo7gt//eam8GnJ0Lbbd8BEwWhVWpGgF9Oz0s8gf6/8W2sa4FvOGggk6Y/dycuol
-	 WbUuK+h6sZGuR0qJtw1wsFxaTbPP99YS0vK/IyTY=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250918085118epcas5p49ea042cd797817fabbe3e9cd04938c10~mVGC7mMTj0181101811epcas5p4a;
-	Thu, 18 Sep 2025 08:51:18 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cS8W96djpz2SSKY; Thu, 18 Sep
-	2025 08:51:17 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250918085116epcas5p1b8d60fcb677cbed348996b4c11761d92~mVGAOVtcj1744917449epcas5p1S;
-	Thu, 18 Sep 2025 08:51:16 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250918085112epsmtip2c228739b2db7b0773d4c34c7df918b7f~mVF9VBzE82068720687epsmtip2X;
-	Thu, 18 Sep 2025 08:51:12 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <sunyeal.hong@samsung.com>, <shin.son@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <chandan.vn@samsung.com>,
-	<dev.tailor@samsung.com>, <karthik.sun@samsung.com>
-In-Reply-To: <20250915095401.3699849-2-raghav.s@samsung.com>
-Subject: RE: [PATCH v2 1/3] dt-bindings: clock: exynosautov920: add m2m
- clock definitions
-Date: Thu, 18 Sep 2025 14:21:11 +0530
-Message-ID: <087a01dc2879$64a6f750$2df4e5f0$@samsung.com>
+	s=arc-20240116; t=1758185493; c=relaxed/simple;
+	bh=/03h3jsMxljIVekEltK1ygHyCyhWTpzD816qiyEvgvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J2RvN3n/Lwi6DcbLsjQOv8dZxqAhfXmBgceQ04+hKddtQs8BQakHmn8LwTxleABCyFh6jTMkk0bnAxJX5cuwizz0hqHyb0TiLanpbRzhXDDGgay7NftYqo8P+MjMIdi0NDM7bUrh46PC3nXoAd1H02OAzLX4SNKv04narBdBkcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAThHaqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F02D4C4CEF1;
+	Thu, 18 Sep 2025 08:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758185493;
+	bh=/03h3jsMxljIVekEltK1ygHyCyhWTpzD816qiyEvgvA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tAThHaqVjK7RI8qOisp5Pyo0TGAfrdls7mAPINus76LrtU7OHcA/jChZSjx38rnwz
+	 Z4d6ry615h6/6ZeoPFk/S8QJurPxRs12RQUPYM2MIrc1mzq0utETqnj4dWHbwShvrk
+	 ZwgN722g4YWxcOF3nIneX+FkatxYWt+4HF9VCG9TGlVnDWdsMCUSpJhVHXpJk1btls
+	 GhBdzYtypbKfGrrTzYoJyshHHRWX43EB52UJ9fm+4sLxeeKwCF4a5Wwfn116aHO+T0
+	 KvqTk8Zgm1pt4T0CXfBID2K4ml/EAKB/14giWVR7AcXebtvDv0i1lZbmKlfTdfeGXi
+	 Zrh1MK5hm3tmg==
+Date: Thu, 18 Sep 2025 10:51:28 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/21] scripts: check-variable-fonts.sh: convert to
+ Python
+Message-ID: <20250918105124.3728661a@foz.lan>
+In-Reply-To: <eaab7ba4-f23c-4c33-b9d1-faae73c136a4@gmail.com>
+References: <8a77212d5459eac2a98db442691930425a2cbefd.1758018030.git.mchehab+huawei@kernel.org>
+	<52932ede-eb04-4275-a051-952bc2859cf6@gmail.com>
+	<20250917104818.62862b48@foz.lan>
+	<eaab7ba4-f23c-4c33-b9d1-faae73c136a4@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIDMWX7dzjI2+lsAsCe3lTeFtXiqgHaCRjjAd0WrFy0LNbBwA==
-Content-Language: en-us
-X-CMS-MailID: 20250918085116epcas5p1b8d60fcb677cbed348996b4c11761d92
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250915094512epcas5p223e2eb264967508527f478eb2200be83
-References: <20250915095401.3699849-1-raghav.s@samsung.com>
-	<CGME20250915094512epcas5p223e2eb264967508527f478eb2200be83@epcas5p2.samsung.com>
-	<20250915095401.3699849-2-raghav.s@samsung.com>
 
-Hi Raghav,
+Em Thu, 18 Sep 2025 08:22:44 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-> -----Original Message-----
-> From: Raghav Sharma <raghav.s@samsung.com>
-> Sent: Monday, September 15, 2025 3:24 PM
-> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; conor+dt@kernel.org; sunyeal.hong@samsung.com;
-> shin.son@samsung.com
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; chandan.vn@samsung.com; dev.tailor@samsung.com;
-> karthik.sun@samsung.com; Raghav Sharma <raghav.s@samsung.com>
-> Subject: [PATCH v2 1/3] dt-bindings: clock: exynosautov920: add m2m clock
-> definitions
+> Hi,
 > 
-> Add device tree clock binding definitions for CMU_M2M
+> On Wed, 17 Sep 2025 10:48:18 +0200, Mauro Carvalho Chehab wrote:
+> > Em Wed, 17 Sep 2025 10:09:05 +0900
+> > Akira Yokosawa <akiyks@gmail.com> escreveu:
+> >   
+> >> On Tue, 16 Sep 2025 12:22:40 +0200, Mauro Carvalho Chehab wrote:  
+> >>> This script handle errors when trying to build translations
+> >>> with make pdfdocs.
+> >>>
+> >>> As part of our cleanup work to remove hacks from docs Makefile,
+> >>> convert this to python, preparing it to be part of a library
+> >>> to be called by sphinx-build-wrapper.
+> >>>
+> >>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> >>
+> >> I could apply up to 05/21 of v6 and did some quick tests under
+> >> Fedora (where Noto CJK VF fonts are installed).
+> >>
+> >> At 3/21, "./scripts/check-variable-fonts.sh" doesn't say a word.
+> >>
+> >> At 4/21, "./scripts/check-variable-fonts.py" complains:  
+> > 
+> > I got a little bit confused with the above. I guess you picked the
+> > wrong patch numbers, but yeah, there is a bisect issue, caused by
+> > the part reorder I did moving this change to happen before adding
+> > the script. Basically, I updated docs Makefile the wrong way.
+> > 
+> > Thanks for pointing it!
+> > 
+> > For v7 I'll ensure that all patches will properly print the suggestions
+> > from the script.
+> >   
+> >> =============================================================================
+> >> XeTeX is confused by "variable font" files listed below:
+> >>     /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+> >>     /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+> >>     /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+> >>
+> >> For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
+> >> Or, CJK pages can be skipped by uninstalling texlive-xecjk.
+> >>
+> >> For more info on denylisting, other options, and variable font, see header
+> >> comments of scripts/check-variable-fonts.py.
+> >> =============================================================================
+> >>
+> >> Of course, I have followed the suggestions in the header comments.  
+> > 
+> > I didn't try to follow the suggestions to solve the issue on Fedora yet.
+> > It is on my todo list to test it.
+> > 
+> > The new script has an exact copy of the instructions of the previous one.
+> > 
+> > So, up to patch 09/21 from this series, there won't be any change at
+> > doc build, except for the script conversion and some code cleanups
+> > and reordering.
+> > 
+> > Patch 09/21 moves the env logic of FONTS_CONF_DENY_VF to the wrapper.
+> > So, in thesis, fixing it before-after the series shouldn't have any
+> > impact (I didn't test yet. Will do on my next respin). Btw, we should
+> > probably document it at make help.
+> > 
+> > If the instructions from the header is wrong, we need to update it
+> > on a separate patch series.
+> >   
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
-> ---
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> I have tested v7.
+> 
+> With v7 fully applied, it is now possible to build translations.pdf on
+> Fedora.  Nice!
+> 
+> HOWEVER, running
+> 
+>     ./tools/docs/check-variable-fonts.py
+> 
+> still complains.  I'm not sure but there might be some minor issue (typo?)
+> in the translation from .sh into .py ???
+> 
+> So I have to keep the NAK on v7's 7/24 ("scripts: check-variable-fonts.sh:
+> convert to Python") for the moment.
+> 
+> Please run the script under a terminal session and see what happens ...
 
+Yeah, there was a typo there. I fixed it for the next respin.
+
+To better allow running it manually, I'm adding to the tool a new command
+line argument:
+
+	$ tools/docs/check-variable-fonts.py -h
+	...
+	options:
+	  -h, --help         show this help message and exit
+	  --deny-vf DENY_VF  XDG_CONFIG_HOME dir containing fontconfig/fonts.conf file
+
+And changed the class __init__ logic to optionally use it:
+
+    def __init__(self, deny_vf=None):
+        if not deny_vf:
+            deny_vf = os.environ.get('FONTS_CONF_DENY_VF', "~/deny-vf")
+
+This way, it will keep using FONTS_CONF_DENY_VF (defaulting to ~/deny-vf),
+yet allowing it to be overriden via command line:
+
+	$ tools/docs/check-variable-fonts.py
+	<no output>
+
+	$ tools/docs/check-variable-fonts.py --deny-vf ~/deny-vf/
+	<no output>
+
+	$ tools/docs/check-variable-fonts.py --deny-vf ~/dont-deny-vf/
+	=============================================================================
+	XeTeX is confused by "variable font" files listed below:
+	    /usr/share/fonts/google-noto-sans-cjk-vf-fonts/NotoSansCJK-VF.ttc
+	    /usr/share/fonts/google-noto-sans-mono-cjk-vf-fonts/NotoSansMonoCJK-VF.ttc
+	    /usr/share/fonts/google-noto-serif-cjk-vf-fonts/NotoSerifCJK-VF.ttc
+	
+	For CJK pages in PDF, they need to be hidden from XeTeX by denylisting.
+	Or, CJK pages can be skipped by uninstalling texlive-xecjk.
+	
+	For more info on denylisting, other options, and variable font, run:
+	
+	    tools/docs/check-variable-fonts.py -h
+	=============================================================================
+
+Thanks,
+Mauro
 
