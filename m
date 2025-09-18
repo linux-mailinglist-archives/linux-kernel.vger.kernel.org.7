@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-822812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BD7B84B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:01:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6731B84B71
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74CF23AE83F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:00:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1B5179748
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92393307AD7;
-	Thu, 18 Sep 2025 12:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE05F304BBD;
+	Thu, 18 Sep 2025 12:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALuUE+wF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="EYf+ja/m"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E0B307493;
-	Thu, 18 Sep 2025 12:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E022F90F0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200379; cv=none; b=bPuNyVoewugpRGEo3O0qj2Y6tSH6zCkyfugo/zJenubBC/nABs3xOOL6Lcpq2b23sAyIuPe5PJEYw8ifxt12wqwiKlpOi2sCKOS3GqH7D3Z//7vdKuq96E82JSOlUq2Ux00KaF55YrqsdWGMWKsMi/+cZG2Y8hcx2/sED2jWLS8=
+	t=1758200368; cv=none; b=O/nWNdvtidFAZykXQA9u2CBbtCIakTqYz4kqox5bMLxl91xPbEcBGPRN62vbgj3O23EeVjlsqN20DDJUZujGoWMJiKLF+h4Bwju+1+qMxCQXl7yBNIXhxfIrCOzpzjLcH2+iEmcg4ICnTxlJ/vU4rcM0XuYCC8Ox6DE0nFozu7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200379; c=relaxed/simple;
-	bh=2/MlNtQVs67BhcBQu3mBYH5/+H7qem0YfGtT2lPXmQw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sRJvmUbX/61obVYdMBZ3jXtjnW644N8lfQGswHLlNTjtubADnqexuGiBsuvhOpZzNwh7dV/bShpolluvEjHx2PPBSxXGydi+GywSULeflI1NzLQwItf7xcJzYpVKN1nli0CT5aanFuQZyRnIOyP+16dck6Ig+MZQ8n8nT/ZxAD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALuUE+wF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DC0C4CEFB;
-	Thu, 18 Sep 2025 12:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758200378;
-	bh=2/MlNtQVs67BhcBQu3mBYH5/+H7qem0YfGtT2lPXmQw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ALuUE+wF4QyR07v7KLfnr6Stu0SlzmPIlubjM1KQhcSMD3CV3f9CU6HYXgdUyZ0+M
-	 EjbZCOC7NWjnvbJ1YaXgySORyqauILrE53XBUcvl/E2xTpsFdunzzreDEtqbICtNN9
-	 hxUaJgfihQaxGfhS9C31mJ2eVzkkL/G5Mj5t2KtfXyFMxCijwDz15lWt5jjfMtRkiY
-	 zILPIJiTv7z0/FbFug6FsZVH5bENN4Nv+Bi0wO+QY8y++y+/FAfhXcaQzbOL86VcMi
-	 Sc/bcyrxwPXjX+B7UG8MRGHxC3Ltn8PAfVaA95LzxLMbkIpdyd5zEb59PcYqjWQXqE
-	 H+qBHGxgP6Nqw==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Thu, 18 Sep 2025 21:59:15 +0900
-Subject: [PATCH RFC 5/5] can: enable CAN XL for virtual CAN devices by
- default
+	s=arc-20240116; t=1758200368; c=relaxed/simple;
+	bh=CbZ6gYEJxW7XWC59yzH9WJlgV3s7R6FDbk4UYbi5ssU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dw4w06F0WWTYo72LYjz7W5+6KAvvmxfXkDX8Ku9wfjMhp+cvGSErRf4QxkJHrpS0Ola8ceNosPMaUAuyXsG+HLBzkuZjzTa+a+dPmcGd7v5jJSCkk5G2Pa97nHdEw132gjcwCER/UoiV4YgO9LpXhhveVESDxk+bFe/032igH8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=EYf+ja/m; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
+	by cmsmtp with ESMTPS
+	id zBQruQONQaPqLzEEQu6ndN; Thu, 18 Sep 2025 12:59:26 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id zEEPuRwmZmCqvzEEPuYkCa; Thu, 18 Sep 2025 12:59:25 +0000
+X-Authority-Analysis: v=2.4 cv=W8Y4VQWk c=1 sm=1 tr=0 ts=68cc022d
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=S5I6IyoDQDCI//OVfcJNsw+DY9YlafQQ2nkm67LEAkU=; b=EYf+ja/mzrvxnjKdRVEAvFT3Xt
+	yQ3sJeyRsVZONcSpPUXAPhSlyCRelxwTxMLJn0DMgisqA09ApxO96Q9e/seTmEvUjn+WNpTK2B1HR
+	1fRmHSuTIjR9ZsZKJeYryjCHWyKLeIsJQIMT3+CeuRAp/wotasw5IvScEYbutb4+UNgijgpOel3bv
+	b0RRYGACPgx/kFWVrzzjQNHV3Wu5oDLjfTSfe6Cx7JEkbwEfUE0Jyz/iYhNnSsF/TKxWDzqF4FVeR
+	SZEPqcmSk/x7XV485uJmieEMNEFukPGRx+S71/ucV59f7V7CjZzK6jAiLjZIFw/qnDE+rr+96Rjyz
+	msz0M/LA==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:41152 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uzEEO-00000004GWu-2dF5;
+	Thu, 18 Sep 2025 06:59:24 -0600
+Message-ID: <5f3f06b0-c6e8-4c0c-9187-8a436c67d36b@w6rz.net>
+Date: Thu, 18 Sep 2025 05:59:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/101] 6.6.107-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250917123336.863698492@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250917123336.863698492@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-can-fix-mtu-v1-5-471edb942295@kernel.org>
-References: <20250918-can-fix-mtu-v1-0-471edb942295@kernel.org>
-In-Reply-To: <20250918-can-fix-mtu-v1-0-471edb942295@kernel.org>
-To: Oliver Hartkopp <socketcan@hartkopp.net>, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1737; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=2/MlNtQVs67BhcBQu3mBYH5/+H7qem0YfGtT2lPXmQw=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDBlnmIyurpvtpM+gttg4QlpwkiLPO1PxeEV9hu2OWqEvf
- ayT38p1lLIwiHExyIopsiwr5+RW6Cj0Djv01xJmDisTyBAGLk4BmEjTBUaGRZqvrnvEBP/xMbE1
- 5Fy1+J99plFU1c0mtfBADu9/gfn9DP9U1+T8XFzO+YSnYsW5H9MsDB7V3G+0jrTnFN9iG/Rtuys
- rAA==
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1uzEEO-00000004GWu-2dF5
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:41152
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 57
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPBdRSS1S9LHS4qxTAIUNNEr6tz2ulhHbUlfAVbue/B7GS7W4irOUpwYSQLVUHz7DgNtGmpz9c7yz5ezpcFG8u3+nDaZi/8gdXnL96CE5WMVqxxTbs+E
+ /987aFwzqlVCAWXNjmrbsZo6Ga3w4Hxq7G2ia+96L8iuMtvMEuMb0gjQ5CnKBGdeL1hWAsIeM1OWzdViqDH/bI88MQGtEBqPi7I=
 
-In commit 97edec3a11cf ("can: enable CAN FD for virtual CAN devices by
-default"), vcan and vxcan default MTU was set to CANFD_MTU by default.
-The reason was that users were confused on how to activate CAN FD on
-virtual interfaces.
+On 9/17/25 05:33, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.107 release.
+> There are 101 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.107-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Following the introduction of CAN XL, the same logic should be
-applied. Set the MTU to CANXL_MTU by default.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-The users who really wish to use a Classical CAN only or a CAN FD
-virtual device can do respectively:
-
-  $ ip link set vcan0 mtu 16
-
-or
-
-  $ ip link set vcan0 mtu 72
-
-to force the old behaviour.
-
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
- drivers/net/can/vcan.c  | 2 +-
- drivers/net/can/vxcan.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/can/vcan.c b/drivers/net/can/vcan.c
-index f67e858071007acd5f34fa00a76212f1a77997a6..fdc662aea2798125b3aa373f09958363b427ced2 100644
---- a/drivers/net/can/vcan.c
-+++ b/drivers/net/can/vcan.c
-@@ -156,7 +156,7 @@ static const struct ethtool_ops vcan_ethtool_ops = {
- static void vcan_setup(struct net_device *dev)
- {
- 	dev->type		= ARPHRD_CAN;
--	dev->mtu		= CANFD_MTU;
-+	dev->mtu		= CANXL_MTU;
- 	dev->hard_header_len	= 0;
- 	dev->addr_len		= 0;
- 	dev->tx_queue_len	= 0;
-diff --git a/drivers/net/can/vxcan.c b/drivers/net/can/vxcan.c
-index 99a78a75716749bf858cc78eadb41ca2588fcf94..b2c19f8c5f8e5101b8be343401afe9a4f388c4da 100644
---- a/drivers/net/can/vxcan.c
-+++ b/drivers/net/can/vxcan.c
-@@ -156,7 +156,7 @@ static void vxcan_setup(struct net_device *dev)
- 	struct can_ml_priv *can_ml;
- 
- 	dev->type		= ARPHRD_CAN;
--	dev->mtu		= CANFD_MTU;
-+	dev->mtu		= CANXL_MTU;
- 	dev->hard_header_len	= 0;
- 	dev->addr_len		= 0;
- 	dev->tx_queue_len	= 0;
-
--- 
-2.49.1
+Tested-by: Ron Economos <re@w6rz.net>
 
 
