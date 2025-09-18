@@ -1,128 +1,373 @@
-Return-Path: <linux-kernel+bounces-821863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FF5B827C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:22:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A24CB827C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962BC1895817
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6020584C7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 01:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002C8212564;
-	Thu, 18 Sep 2025 01:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AB91FF1B5;
+	Thu, 18 Sep 2025 01:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dfGmB311"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="IQ/kfl/1"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15391DFD8B;
-	Thu, 18 Sep 2025 01:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F417482F2
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758158512; cv=none; b=QZsVxBjK6fpz1ou8vhn4sn6TpjM5rqWnMTu6PLizSyruCknNN2rFSH2SN6m/s9UNj5oS5hz9egpMv6O0v14tyPig4okIo36zz0fnnQepA37qqhk+gWYceQzI1mwmX1BpW/aVBpjAj7EysQuzb5XmVCl8C6sE1tqaC93BjiUwgzc=
+	t=1758158677; cv=none; b=ccmjGr0mId1nhFrFIEm5EJ33dZa780T1wYkiaoLYkAIB/82mqAz1vb2QQ9kiuX38FzWJuhYH9P664CdusY5jmGmVfMF3yfM2rmiiSjd3JwWiPDRX7LL91nQiUS16EYYxEe/910wzDsF/M5IOPpePmHF4ERNjlAQPTD18s9wEs3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758158512; c=relaxed/simple;
-	bh=Vy8OK5kJzvHuwLBFfSz7rPqR5X9KlVDHhZG5vHMcUIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUtavrQCM+AFmUrk9bvUuhVrPhs1C2+m/lJjyaLHwOR9IJ35tHAoaAbd3XvpUMAverOzFqr4EiXjIiRqDxmCRCSOQRKlUpQyZkJJ0nT336uxR4krx8JsP8ZhMal670s4V5HcvMsNHhPDBJ58XaJqBTG+w1bxJlrz5aH3N8k8P9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dfGmB311; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758158510; x=1789694510;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Vy8OK5kJzvHuwLBFfSz7rPqR5X9KlVDHhZG5vHMcUIs=;
-  b=dfGmB311H4M6r0VMv/1nqYxNBupkAOgtCuorAtkCrFrG/azQuY58143i
-   Da/w9+KPcILu+eMNQopDC2XjmnSlLUw8LW/5aFngrb4Oq5lH5Dxp+WItg
-   vWVe3H0jFbLaikDeNOWEhqivHPj6apxIxwEhUtxrS3XOLvhXYWatIGNv+
-   cZ4e18jxZSXKurdVLPZuv728ncguoWEAJvl7sMvbdNf8JRZBoulTYeXjG
-   8PWbdxPMm7rF2ygRuzcOWG/0fUTiKod903Ce+Esz4EZd8jKTCpV6bU8yu
-   Px7JxhYuAB6AMEYppeQB2BsaLpTqokbIsR7DZIS+6eRrlJ5KtBH56pHVf
-   w==;
-X-CSE-ConnectionGUID: qaOgTSCHRZqwAiSxUalQkw==
-X-CSE-MsgGUID: x08yL8zyRNuVSjauJ+Gmpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="60627997"
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="60627997"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 18:21:49 -0700
-X-CSE-ConnectionGUID: 5pkUIZn2Q/6Mbe2PH99Gtw==
-X-CSE-MsgGUID: wGtr9egyR3ugRJzUk/HTmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,273,1751266800"; 
-   d="scan'208";a="175477862"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 17 Sep 2025 18:21:43 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uz3LA-0002cJ-1Y;
-	Thu, 18 Sep 2025 01:21:40 +0000
-Date: Thu, 18 Sep 2025 09:21:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com,
-	glider@google.com
-Cc: oe-kbuild-all@lists.linux.dev, andreyknvl@gmail.com, andy@kernel.org,
-	brauner@kernel.org, brendan.higgins@linux.dev, davem@davemloft.net,
-	davidgow@google.com, dhowells@redhat.com, dvyukov@google.com,
-	elver@google.com, herbert@gondor.apana.org.au, ignat@cloudflare.com,
-	jack@suse.cz, jannh@google.com, johannes@sipsolutions.net,
-	kasan-dev@googlegroups.com, kees@kernel.org,
-	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
-	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
-Subject: Re: [PATCH v1 03/10] kfuzztest: implement core module and input
- processing
-Message-ID: <202509180855.TT6uHpiC-lkp@intel.com>
-References: <20250916090109.91132-4-ethan.w.s.graham@gmail.com>
+	s=arc-20240116; t=1758158677; c=relaxed/simple;
+	bh=susPy4sTX/CQWTXn/0dwj3NtG6X+6SXoqzqlJFxhIwU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SJA85DcUn75wlCIVrq5kVKmlTYY7FnKC2hJk3tu98mgh8j6nv/+AXxd19SBTi8TXQQnn2LPgQkq/koZ74XneB896QrX4GDfrrLOoyZvaw7oYFFV+m+gaCtr5RGAiKcROW/tfWkf7JwIZvWNG2RB0bLHfgdgSTUOi/VlkQDzxSwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=IQ/kfl/1; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-30ccea94438so296398fac.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 18:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758158674; x=1758763474; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IKNvdhWHFBO2LxeGbbJQCVnxFSJKdVJYeGTN3QpPNOg=;
+        b=IQ/kfl/1ccuKGJJ9tsLycCqtN9xwQ+Je6O8U2ljYwEGJJ6TXFZ6FYkt3Wp0VMMf7LK
+         zQMDCgg//7EP5QOmjf5Odn+JYDKYARkJ9zF2F1sgrlyfEqlViCIZRgZbln5GV0mqywAl
+         fWC0aBwensMWEiUoexnUXMie525f29MaQn70awJQf8nHAbxoUhFU2L9IDZ0z/iXxec19
+         BVYEKSoakFydpYYKYtcZk9fIEWGYYaj36ib32BpETa+OGUBYj7H/VgDZ/JgGwAZ7fSVv
+         tbbbLMPGGmOPXIXa8QH4uiZitCnqvZs9mhKEKKGk+tZWPislcftlvXZ3Ddslg30ZMYdi
+         yJvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758158674; x=1758763474;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IKNvdhWHFBO2LxeGbbJQCVnxFSJKdVJYeGTN3QpPNOg=;
+        b=hq4KH/RiOgF9QAVTVTiqKwZTBr1FqRP4jvoXZUAr3wBJ/2zCWRnnTM8QjzUzHj5X/7
+         l8WFrNugz8zHCxXdHvysVA6xmyuMwFM1scLgXYYDwdLpjROlNKkgugcs9pVmND51W/4i
+         SM3jUoR1OSpAjEjxVW1iBn0LHZl7FqJwpjJUM6jIn7PXxz5xgg11+z4HibLryD3ceL5E
+         Nba1WXpwJiR5/VHx1GMMqqKjpVlk67Go7E2q1urr1J2rkBZTBnLKN3B5Qr29DjLpBBBL
+         NibFYfIGv2TV9eWfqOFe/krHMb3b+uojVsH5v/gZtL9E5T8tcdvarKmZ5eebV1RsyuCp
+         Isnw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6i1sYHVXPrYfN0njjDMWl0gx8l5bAgCreYHEq4VMlNMHStyP6qe3TQKA2sWmibcJoetzrJKD+i/GvEuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG5gLADVj20nmP04TKvsrmifYyFSD5vqGDGj7a2cz2sO11ZCe6
+	9GTLRG7gHLtmfr/27BFJrsaBTUOnJZO0m9bbcLSr4RB+iVllmcNe12MNZTLePMXB/jLIvthJB9J
+	PR5gWKzzSrwnBkCKguWigDhoIHG0yGBVd0L5RRjxXkw==
+X-Gm-Gg: ASbGnct6nDZbBikrt0XqYLPETbtoSwEPNV8zYzRRSCsexcNYBdnxjCVtrRTDLPWEPVK
+	XfYExSoSTDKDmianroeKLV1ScU2TSj4YPjjF8DioNbDE0hgOHnRp90Xnz51rllIrkNcUfGLc4Sg
+	3aDzKshbltu15h+nlWrFvlV2BdjV9RyGpZx+CC3JnE1oUOKZb6ExpkLLz6mA0fI3QjNeYZBC+rP
+	FonETKm00eGIc1ZhBuhlQsp3cE4dSaogmp55lna7frbyMHVSV35XWRGkvS4
+X-Google-Smtp-Source: AGHT+IF7Jz86Ss5xUsOAka6ZfidlIbp3iI6MRj0U1kuwvACRXQMFNLJnzIbP5GFFnb6wKl3sDJlW0BNwASJHgNKIss4=
+X-Received: by 2002:a05:6871:7b85:b0:319:c3d3:21da with SMTP id
+ 586e51a60fabf-335be3b7fb8mr2433435fac.16.1758158674397; Wed, 17 Sep 2025
+ 18:24:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916090109.91132-4-ethan.w.s.graham@gmail.com>
+References: <20250917023007.97637-1-cuiyunhui@bytedance.com> <8863bbfb-326e-1914-4f97-0cc59558a602@huawei.com>
+In-Reply-To: <8863bbfb-326e-1914-4f97-0cc59558a602@huawei.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Thu, 18 Sep 2025 09:24:23 +0800
+X-Gm-Features: AS18NWC8xXQe0_3214vs8m1XMLOxfuglWltR5fxGmhMSH4Oe6OQuLiSS7oHdd1E
+Message-ID: <CAEEQ3wmbHuyVMpiU_zaxjgS-Tm8Ve=rDVLgY7qoA-ZBZjx_hJg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] arch_topology: move parse_acpi_topology()
+ to common code
+To: Yicong Yang <yangyicong@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, sudeep.holla@arm.com, 
+	gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
+	beata.michalska@arm.com, sumitg@nvidia.com, ptsm@linux.microsoft.com, 
+	yangyicong@hisilicon.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ethan,
+Hi Yicong,
 
-kernel test robot noticed the following build warnings:
+On Wed, Sep 17, 2025 at 2:43=E2=80=AFPM Yicong Yang <yangyicong@huawei.com>=
+ wrote:
+>
+> On 2025/9/17 10:30, Yunhui Cui wrote:
+> > Currently, RISC-V lacks arch-specific registers for CPU topology
+> > properties and must get them from ACPI. Thus, parse_acpi_topology()
+> > is moved from arm64/ to drivers/ for RISC-V reuse.
+> >
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > ---
+> >  arch/arm64/kernel/topology.c  | 87 +----------------------------------
+> >  drivers/base/arch_topology.c  | 85 +++++++++++++++++++++++++++++++++-
+> >  include/linux/arch_topology.h |  6 +++
+> >  3 files changed, 91 insertions(+), 87 deletions(-)
+> >
+> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.=
+c
+> > index 5d07ee85bdae4..55650db53b526 100644
+> > --- a/arch/arm64/kernel/topology.c
+> > +++ b/arch/arm64/kernel/topology.c
+> > @@ -26,7 +26,7 @@
+> >  #include <asm/topology.h>
+> >
+> >  #ifdef CONFIG_ACPI
+> > -static bool __init acpi_cpu_is_threaded(int cpu)
+> > +bool __init acpi_cpu_is_threaded(int cpu)
+> >  {
+> >       int is_threaded =3D acpi_pptt_cpu_is_thread(cpu);
+> >
+> > @@ -39,91 +39,6 @@ static bool __init acpi_cpu_is_threaded(int cpu)
+> >
+> >       return !!is_threaded;
+> >  }
+> > -
+> > -struct cpu_smt_info {
+> > -     unsigned int thread_num;
+> > -     int core_id;
+> > -};
+> > -
+> > -/*
+> > - * Propagate the topology information of the processor_topology_node t=
+ree to the
+> > - * cpu_topology array.
+> > - */
+> > -int __init parse_acpi_topology(void)
+> > -{
+> > -     unsigned int max_smt_thread_num =3D 1;
+> > -     struct cpu_smt_info *entry;
+> > -     struct xarray hetero_cpu;
+> > -     unsigned long hetero_id;
+> > -     int cpu, topology_id;
+> > -
+> > -     if (acpi_disabled)
+> > -             return 0;
+> > -
+> > -     xa_init(&hetero_cpu);
+> > -
+> > -     for_each_possible_cpu(cpu) {
+> > -             topology_id =3D find_acpi_cpu_topology(cpu, 0);
+> > -             if (topology_id < 0)
+> > -                     return topology_id;
+> > -
+> > -             if (acpi_cpu_is_threaded(cpu)) {
+> > -                     cpu_topology[cpu].thread_id =3D topology_id;
+> > -                     topology_id =3D find_acpi_cpu_topology(cpu, 1);
+> > -                     cpu_topology[cpu].core_id   =3D topology_id;
+> > -
+> > -                     /*
+> > -                      * In the PPTT, CPUs below a node with the 'ident=
+ical
+> > -                      * implementation' flag have the same number of t=
+hreads.
+> > -                      * Count the number of threads for only one CPU (=
+i.e.
+> > -                      * one core_id) among those with the same hetero_=
+id.
+> > -                      * See the comment of find_acpi_cpu_topology_hete=
+ro_id()
+> > -                      * for more details.
+> > -                      *
+> > -                      * One entry is created for each node having:
+> > -                      * - the 'identical implementation' flag
+> > -                      * - its parent not having the flag
+> > -                      */
+> > -                     hetero_id =3D find_acpi_cpu_topology_hetero_id(cp=
+u);
+> > -                     entry =3D xa_load(&hetero_cpu, hetero_id);
+> > -                     if (!entry) {
+> > -                             entry =3D kzalloc(sizeof(*entry), GFP_KER=
+NEL);
+> > -                             WARN_ON_ONCE(!entry);
+> > -
+> > -                             if (entry) {
+> > -                                     entry->core_id =3D topology_id;
+> > -                                     entry->thread_num =3D 1;
+> > -                                     xa_store(&hetero_cpu, hetero_id,
+> > -                                              entry, GFP_KERNEL);
+> > -                             }
+> > -                     } else if (entry->core_id =3D=3D topology_id) {
+> > -                             entry->thread_num++;
+> > -                     }
+> > -             } else {
+> > -                     cpu_topology[cpu].thread_id  =3D -1;
+> > -                     cpu_topology[cpu].core_id    =3D topology_id;
+> > -             }
+> > -             topology_id =3D find_acpi_cpu_topology_cluster(cpu);
+> > -             cpu_topology[cpu].cluster_id =3D topology_id;
+> > -             topology_id =3D find_acpi_cpu_topology_package(cpu);
+> > -             cpu_topology[cpu].package_id =3D topology_id;
+> > -     }
+> > -
+> > -     /*
+> > -      * This is a short loop since the number of XArray elements is th=
+e
+> > -      * number of heterogeneous CPU clusters. On a homogeneous system
+> > -      * there's only one entry in the XArray.
+> > -      */
+> > -     xa_for_each(&hetero_cpu, hetero_id, entry) {
+> > -             max_smt_thread_num =3D max(max_smt_thread_num, entry->thr=
+ead_num);
+> > -             xa_erase(&hetero_cpu, hetero_id);
+> > -             kfree(entry);
+> > -     }
+> > -
+> > -     cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
+> > -     xa_destroy(&hetero_cpu);
+> > -     return 0;
+> > -}
+> >  #endif
+> >
+> >  #ifdef CONFIG_ARM64_AMU_EXTN
+> > diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.=
+c
+> > index 1037169abb459..65ec1f3d2bd28 100644
+> > --- a/drivers/base/arch_topology.c
+> > +++ b/drivers/base/arch_topology.c
+> > @@ -823,12 +823,95 @@ void remove_cpu_topology(unsigned int cpu)
+> >       clear_cpu_topology(cpu);
+> >  }
+> >
+> > +__weak bool __init acpi_cpu_is_threaded(int cpu)
+> > +{
+> > +     int is_threaded =3D acpi_pptt_cpu_is_thread(cpu);
+> > +
+> > +     return !!is_threaded;
+> > +
+>
+> acpi_pptt_cpu_is_thread() could return an error which shouldn't be
+> regarded as a threaded cpu.
+>
+> > +}
+> > +
+> > +#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+> > +/*
+> > + * Propagate the topology information of the processor_topology_node t=
+ree to the
+> > + * cpu_topology array.
+> > + */
+> >  __weak int __init parse_acpi_topology(void)
+> >  {
+> > +     unsigned int max_smt_thread_num =3D 1;
+> > +     struct cpu_smt_info *entry;
+> > +     struct xarray hetero_cpu;
+> > +     unsigned long hetero_id;
+> > +     int cpu, topology_id;
+> > +
+> > +     if (acpi_disabled)
+> > +             return 0;
+> > +
+> > +     xa_init(&hetero_cpu);
+> > +
+> > +     for_each_possible_cpu(cpu) {
+> > +             topology_id =3D find_acpi_cpu_topology(cpu, 0);
+> > +             if (topology_id < 0)
+> > +                     return topology_id;
+> > +
+> > +             if (acpi_cpu_is_threaded(cpu)) {
+> > +                     cpu_topology[cpu].thread_id =3D topology_id;
+> > +                     topology_id =3D find_acpi_cpu_topology(cpu, 1);
+> > +                     cpu_topology[cpu].core_id   =3D topology_id;
+> > +
+> > +                     /*
+> > +                      * In the PPTT, CPUs below a node with the 'ident=
+ical
+> > +                      * implementation' flag have the same number of t=
+hreads.
+> > +                      * Count the number of threads for only one CPU (=
+i.e.
+> > +                      * one core_id) among those with the same hetero_=
+id.
+> > +                      * See the comment of find_acpi_cpu_topology_hete=
+ro_id()
+> > +                      * for more details.
+> > +                      *
+> > +                      * One entry is created for each node having:
+> > +                      * - the 'identical implementation' flag
+> > +                      * - its parent not having the flag
+> > +                      */
+> > +                     hetero_id =3D find_acpi_cpu_topology_hetero_id(cp=
+u);
+> > +                     entry =3D xa_load(&hetero_cpu, hetero_id);
+> > +                     if (!entry) {
+> > +                             entry =3D kzalloc(sizeof(*entry), GFP_KER=
+NEL);
+> > +                             WARN_ON_ONCE(!entry);
+> > +
+> > +                             if (entry) {
+> > +                                     entry->core_id =3D topology_id;
+> > +                                     entry->thread_num =3D 1;
+> > +                                     xa_store(&hetero_cpu, hetero_id,
+> > +                                              entry, GFP_KERNEL);
+> > +                             }
+> > +                     } else if (entry->core_id =3D=3D topology_id) {
+> > +                             entry->thread_num++;
+> > +                     }
+> > +             } else {
+> > +                     cpu_topology[cpu].thread_id  =3D -1;
+> > +                     cpu_topology[cpu].core_id    =3D topology_id;
+> > +             }
+> > +             topology_id =3D find_acpi_cpu_topology_cluster(cpu);
+> > +             cpu_topology[cpu].cluster_id =3D topology_id;
+> > +             topology_id =3D find_acpi_cpu_topology_package(cpu);
+> > +             cpu_topology[cpu].package_id =3D topology_id;
+> > +     }
+> > +
+> > +     /*
+> > +      * This is a short loop since the number of XArray elements is th=
+e
+> > +      * number of heterogeneous CPU clusters. On a homogeneous system
+> > +      * there's only one entry in the XArray.
+> > +      */
+> > +     xa_for_each(&hetero_cpu, hetero_id, entry) {
+> > +             max_smt_thread_num =3D max(max_smt_thread_num, entry->thr=
+ead_num);
+> > +             xa_erase(&hetero_cpu, hetero_id);
+> > +             kfree(entry);
+> > +     }
+> > +
+> > +     cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
+> > +     xa_destroy(&hetero_cpu);
+> >       return 0;
+> >  }
+> >
+> > -#if defined(CONFIG_ARM64) || defined(CONFIG_RISCV)
+> >  void __init init_cpu_topology(void)
+> >  {
+> >       int cpu, ret;
+> > diff --git a/include/linux/arch_topology.h b/include/linux/arch_topolog=
+y.h
+> > index d72d6e5aa2002..50d33b5a78ccd 100644
+> > --- a/include/linux/arch_topology.h
+> > +++ b/include/linux/arch_topology.h
+> > @@ -70,6 +70,11 @@ struct cpu_topology {
+> >       cpumask_t llc_sibling;
+> >  };
+> >
+> > +struct cpu_smt_info {
+> > +     unsigned int thread_num;
+> > +     int core_id;
+> > +};
+> > +
+>
+> this is only used in parse_acpi_topology() and seems no reason to make it=
+ into
+> the header.
 
-[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
-[also build test WARNING on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250917]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Okay, I'll update it in v2.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Graham/mm-kasan-implement-kasan_poison_range/20250916-210448
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
-patch link:    https://lore.kernel.org/r/20250916090109.91132-4-ethan.w.s.graham%40gmail.com
-patch subject: [PATCH v1 03/10] kfuzztest: implement core module and input processing
-config: x86_64-randconfig-r112-20250918 (https://download.01.org/0day-ci/archive/20250918/202509180855.TT6uHpiC-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509180855.TT6uHpiC-lkp@intel.com/reproduce)
+>
+> otherwise looks good to me. most acpi topology building code is not arm64
+> specific and make sense to make it common.
+>
+> thanks.
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509180855.TT6uHpiC-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> lib/kfuzztest/main.c:65:15: sparse: sparse: symbol 'KFUZZTEST_INPUT_PERMS' was not declared. Should it be static?
->> lib/kfuzztest/main.c:66:15: sparse: sparse: symbol 'KFUZZTEST_MINALIGN_PERMS' was not declared. Should it be static?
-
-vim +/KFUZZTEST_INPUT_PERMS +65 lib/kfuzztest/main.c
-
-    64	
-  > 65	const umode_t KFUZZTEST_INPUT_PERMS = 0222;
-  > 66	const umode_t KFUZZTEST_MINALIGN_PERMS = 0444;
-    67	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Yunhui
 
