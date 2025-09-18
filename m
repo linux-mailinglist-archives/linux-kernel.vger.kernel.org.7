@@ -1,134 +1,179 @@
-Return-Path: <linux-kernel+bounces-823373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530CDB863A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:34:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEE5B8637C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9059D565816
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 991647C65F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A6D31A05B;
-	Thu, 18 Sep 2025 17:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B3C2BDC3F;
+	Thu, 18 Sep 2025 17:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="UUX3oyxl"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWpvUTCn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393A731A54D;
-	Thu, 18 Sep 2025 17:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758216849; cv=pass; b=NZpfh4+mh3pgq4G/BdNsoMbgUvALHpCaCAYBCjxmK6AMtFGDjp0zWbJ6tMiFuzLkigQIuP/RyyxSTa6r8B+KV+iUj2Noejprjfcb6NDcmq9qvcwuj+79GJeqtpKR3FNk4vVpOzDS9o8Sd31e5jIC0jWi1sX7wwLqCf9KMjKPJxo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758216849; c=relaxed/simple;
-	bh=+nfB0fQiINFxD7VnPVNGxeX2KZATIEwRDmxJnHC1ZQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vry6KglCXa8M0rQ9jXAiKOW3Rr5qoZvSgycY/pmH+mo07lVtLKeihDZdG3aSCwf5jSk+R50HkXiBTgOwnt41XmQU5onKt1ayzkxCe0kh3DCXubf/LveihcXDZPnIfGqjcxJRHl+8sI/o3cTAB+Hngg/v0MQUESRyR6ynUNRfUcs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=UUX3oyxl; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1758216834; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=jQ4Z/FhppDPJRcR308Tfk3OtC4kU9/BoPy/iN5RHx2Z9lVLsihsl6Ypd5PhDxferk6ZfWWtZBCwcDMdbvWdB571xMEJBBDRQMQXt++Dpjz7umlpKfSCU6nhBkwBejK3dv691rjNwUdCvegS+8X7A/R1iCd87gyWH6+fp7pjvhC8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758216834; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=lEFxTFHiyI2q/oDLkp6vLKAusartnU5WLpPBBCAmUB4=; 
-	b=XL0LoWTCect3d6Ld7kol6d0cVSQxdghvMQ68o3EpiECEDamc+4hemSM+XT8WEhas7Kgz1q+gaNlwvd7jHF13xqYw9ccp7N0m+LtemC8KGEyVNs4D63d4KG9vaLL4zRoLBbiPwYvC68dEAz0A8gl06RqifFcdXV4adfqtX8LNPEI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758216834;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=lEFxTFHiyI2q/oDLkp6vLKAusartnU5WLpPBBCAmUB4=;
-	b=UUX3oyxl32yNEYujg2yPxxXKznw0246z9eigktItrIPWUPNddSJa6IySPM0PWpng
-	Lks207vEty3vTFFkW7ryb72EyJgKyifzvr+LcwIzy+iQiXOHGBoLtPV4ME+Pf/HSyqH
-	dB2WvL8EUY7DD4XxU7OJSHGBLPuvCv7svs8dj7WH6cusy6PsB/qvGycacDMJ1a7lS9r
-	7gN7YhoTN0VHY+WV4lZCsNGzWmFnp6jSg1hvojsS8Sw1VGP91IZrwIQ1j08XrxTzGxf
-	AACyr2yBjtbNirZlegdshDwW3g77maPfpkSxG0zlreiKZX99eugecBzK53L9DfrHH45
-	u7+u+k0xcg==
-Received: by mx.zohomail.com with SMTPS id 175821683282116.852562929362648;
-	Thu, 18 Sep 2025 10:33:52 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>
-Cc: Han Gao <rabenda.cn@gmail.com>,
-	Yao Zi <ziyao@disroot.org>,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v2 2/2] pmdomain: thead: create auxiliary device for rebooting
-Date: Fri, 19 Sep 2025 01:33:23 +0800
-Message-ID: <20250918173323.340738-3-uwu@icenowy.me>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250918173323.340738-1-uwu@icenowy.me>
-References: <20250918173323.340738-1-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D490258EE9;
+	Thu, 18 Sep 2025 17:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758216807; cv=none; b=AdB401xzp0yTAOf1tHqHni0HiNA+zK55tlVzfyqg+nDyQeBgwu8ud7KlGusA7MpcZU8JH32hXkao8jH2e4QObolIeoVn3n2fEjKxiX3PW4CzSH081TZXLC92zB5S5/xO7mPdEdP9QjGRDifuW40ALppKHAhp7OLIfQWnEsHzyA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758216807; c=relaxed/simple;
+	bh=o5Mi5RTVZPdLCZiio2GuBYItztE9raPW/ws7HtV0wuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4yvyDa+xjvHyPIRSRtfMvQvfdBRVzfJj9XVcEezL2roTf25uQO1L7RyCPdexFZrYLdHWBh8nEJvu7ssjd9YguddxhgbdAOfABn91J76FmRODuW4kh7XcxPBoVawTT/g7ZAd+b4Bn97/SaecvTiVMumwp53yqTtJmLtySKlkTOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWpvUTCn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA31EC4CEE7;
+	Thu, 18 Sep 2025 17:33:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758216805;
+	bh=o5Mi5RTVZPdLCZiio2GuBYItztE9raPW/ws7HtV0wuo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TWpvUTCnUin5ZWvmLL9oVblUw6/pVt/Ezs3LZt3OguqkkYoAKQ4tdfCdGgTcv4a7I
+	 fvPcPFck8GiQQ6k/B3DyRvHrI+7o+XAChY7I4GZOk6kBa2bC36uFDriPP0HsSRqFA2
+	 KjjYhOKzgiiWxyX3BlnzEn9ByXnXuv1KGZdyh+CXniMI+PVi1vzMF4uFeAyCvQyAzs
+	 +swMynGhtsVI8IrVBlate8WzbqQbUCi71q71xdcUShYWF6U9jmr4lXWjfuOH0BaLua
+	 nEOddxlE4L8Nt/kJPcgLv/6nKRLPVgEmSg7mK+67aoc/Ztt60nYWqeupFiWkXe/yn7
+	 urpT5p3gKOUyA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uzIVX-0000000D09x-329n;
+	Thu, 18 Sep 2025 19:33:23 +0200
+Date: Thu, 18 Sep 2025 19:33:23 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>, Akira Yokosawa <akiyks@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 01/24] scripts/jobserver-exec: move the code to a class
+Message-ID: <t565x25o3gftbwzekhx6uanmxbkfdeqyydhkulwru5uszbw5wd@d7edoparssgv>
+References: <cover.1758196090.git.mchehab+huawei@kernel.org>
+ <4749921b75d4e0bd85a25d4d94aa2c940fad084e.1758196090.git.mchehab+huawei@kernel.org>
+ <87segj7l5r.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87segj7l5r.fsf@trenco.lwn.net>
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The reboot / power off operations require communication with the AON
-firmware too.
+On Thu, Sep 18, 2025 at 10:58:08AM -0600, Jonathan Corbet wrote:
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > +class JobserverExec:
+> > +    """
+> > +    Claim all slots from make using POSIX Jobserver.
+> > +
+> > +    The main methods here are:
+> > +    - open(): reserves all slots;
+> > +    - close(): method returns all used slots back to make;
+> > +    - run(): executes a command setting PARALLELISM=<available slots jobs + 1>
+> > +    """
+> > +
+> > +    def __init__(self):
+> > +        """Initialize internal vars"""
+> > +        self.claim = 0
+> > +        self.jobs = b""
+> > +        self.reader = None
+> > +        self.writer = None
+> > +        self.is_open = False
+> > +
+> > +    def open(self):
+> > +        """Reserve all available slots to be claimed later on"""
+> > +
+> > +        if self.is_open:
+> > +            return
+> > +
+> > +        try:
+> > +            # Fetch the make environment options.
+> > +            flags = os.environ["MAKEFLAGS"]
+> > +            # Look for "--jobserver=R,W"
+> > +            # Note that GNU Make has used --jobserver-fds and --jobserver-auth
+> > +            # so this handles all of them.
+> > +            opts = [x for x in flags.split(" ") if x.startswith("--jobserver")]
+> > +
+> > +            # Parse out R,W file descriptor numbers and set them nonblocking.
+> > +            # If the MAKEFLAGS variable contains multiple instances of the
+> > +            # --jobserver-auth= option, the last one is relevant.
+> > +            fds = opts[-1].split("=", 1)[1]
+> > +
+> > +            # Starting with GNU Make 4.4, named pipes are used for reader
+> > +            # and writer.
+> > +            # Example argument: --jobserver-auth=fifo:/tmp/GMfifo8134
+> > +            _, _, path = fds.partition("fifo:")
+> > +
+> > +            if path:
+> > +                self.reader = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+> > +                self.writer = os.open(path, os.O_WRONLY)
+> > +            else:
+> > +                self.reader, self.writer = [int(x) for x in fds.split(",", 1)]
+> > +                # Open a private copy of reader to avoid setting nonblocking
+> > +                # on an unexpecting process with the same reader fd.
+> > +                self.reader = os.open("/proc/self/fd/%d" % (self.reader),
+> > +                                      os.O_RDONLY | os.O_NONBLOCK)
+> > +
+> > +            # Read out as many jobserver slots as possible
+> > +            while True:
+> > +                try:
+> > +                    slot = os.read(self.reader, 8)
+> > +                    self.jobs += slot
+> > +                except (OSError, IOError) as e:
+> > +                    if e.errno == errno.EWOULDBLOCK:
+> > +                        # Stop at the end of the jobserver queue.
+> > +                        break
+> > +                    # If something went wrong, give back the jobs.
+> > +                    if self.jobs:
+> > +                        os.write(self.writer, self.jobs)
+> > +                    raise e
+> > +
+> > +            # Add a bump for our caller's reserveration, since we're just going
+> > +            # to sit here blocked on our child.
+> > +            self.claim = len(self.jobs) + 1
+> > +
+> > +        except (KeyError, IndexError, ValueError, OSError, IOError):
+> > +            # Any missing environment strings or bad fds should result in just
+> > +            # not being parallel.
+> > +            self.claim = None
+> 
+> Sigh ... this kind of massive try/except block is one of the best ways
+> I've found in Python to hide bugs - and Python has a few of those.  I
+> realize this is existing code, this is not the place to fix it, but I
+> would like to clean that up at some point.
 
-As the driver is already present, create an auxiliary device with name
-"reboot" to match that driver, and pass the AON channel by using
-platform_data.
+Agreed: this class deserves some cleanup.
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
-Changes in v2:
-- Rewritten to use devm_auxiliary_device_create.
+While working here, I considered doing more changes, but I refrained
+myself. As you pointed, this is not the right series to do large
+changes. Also, this is used not only for documentation build but also
+inside scripts/Makefile.vmlinux_o. A major change there could affect
+vmlinux generation.
 
- drivers/pmdomain/thead/th1520-pm-domains.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Btw, besides Python cleanups, IMHO jobserver class could benefit
+on having a maximum value for claim (which could even be 1). I was
+also tempted to add a jobserver-aware subprocess.call here.
 
-diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
-index 9040b698e7f7f..5213994101a59 100644
---- a/drivers/pmdomain/thead/th1520-pm-domains.c
-+++ b/drivers/pmdomain/thead/th1520-pm-domains.c
-@@ -173,6 +173,16 @@ static int th1520_pd_pwrseq_gpu_init(struct device *dev)
- 					adev);
- }
- 
-+static int th1520_pd_reboot_init(struct device *dev,
-+				 struct th1520_aon_chan *aon_chan)
-+{
-+	struct auxiliary_device *adev;
-+
-+	adev = devm_auxiliary_device_create(dev, "reboot", aon_chan);
-+
-+	return PTR_ERR_OR_ZERO(adev);
-+}
-+
- static int th1520_pd_probe(struct platform_device *pdev)
- {
- 	struct generic_pm_domain **domains;
-@@ -235,6 +245,10 @@ static int th1520_pd_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_clean_provider;
- 
-+	ret = th1520_pd_reboot_init(dev, aon_chan);
-+	if (ret)
-+		goto err_clean_provider;
-+
- 	return 0;
- 
- err_clean_provider:
+That's said, doing a risk analysis, if it fails to properly read
+jobserver pipes, the except logic will set claim to None, which:
+
+- for documentation: will use "-jauto";
+- for vmlinux generation: will probably use a single job when
+  building vmlinux. If target dependencies are correct, this
+  should not cause build failures.
+
+On my tests, I didn't get any such exception for doc build. I
+wrote a small testbench to check if jobserver was handling claim
+the right way. Before/after the changes, the behavior remained
+the same, and caim was always initialized when running via make.
+
 -- 
-2.51.0
-
+Thanks,
+Mauro
 
