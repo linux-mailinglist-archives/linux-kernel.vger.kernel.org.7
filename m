@@ -1,209 +1,125 @@
-Return-Path: <linux-kernel+bounces-823278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48B5B86071
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:28:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAE24B8606B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA99C543F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858387C21DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F075B319616;
-	Thu, 18 Sep 2025 16:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBECE3195F2;
+	Thu, 18 Sep 2025 16:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="JoPGxKnK"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023108.outbound.protection.outlook.com [40.107.201.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hSP9qlFE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5196C3195FA;
-	Thu, 18 Sep 2025 16:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758212648; cv=fail; b=hmkc+fHolR9Q8hVAecdRqslrg0pOxHRflPWcTKIJ7d6DJSJmlMmTEU3SclNd5LkqbhcF7c9YYIPI045vKFvoYAyLiVGNRlHCkRj4GJc/jXmQhVhfMJcZOeoIPiFuRPpNaLhmt2FPWlV7SmHpwmLH9RwTRYj2q8JA+jEtyWMeMG0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758212648; c=relaxed/simple;
-	bh=zVnSOvCKsPFSx72oW1EGykFEtdxQjApUtiJXGQ/3nCg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=CCDfD0RWCWIET2F1u+jgl9fT5XoD3zdCRXptnLwbQRLqG06ztLiRomC+NDgl+YzhKoZPABNUjA18E7mnTnJgLAXMGeBinynSrKn3fUx5tb/CXNHhgLprzRXy1zFAZWJgerPHXjI9mBX+TDnrMsnTHfGV7M7KDF3lAmyo2LRcih4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=JoPGxKnK; arc=fail smtp.client-ip=40.107.201.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fL4l2YUFw9o6TB1LBfX6mDJCn+CZLZvQzk0RpXR9ssiEwWLzWJmNUjZ1cT4Yka+gcDxPe20oxJ/iHLFvhla4PdgNpiyyS4q5sxyGN3jo/cHJvuKIpMgaSDHRLDHWpM16wkJ3Xb0UTEa4Xb33DvzZ8ViEHCZdy3PyeAgt/expN7fitBMKQldDTngoaE+L1HO6lohgIoWAuw9j9KQ7J+IujZFo10b+ez9RnhzdPcsnfjVH9mk3ol3iP5MWz9OWINX9WRNdqFedS+ehCG6UqyRPMYiCHBzNAF6yKvD7T+xaXGqhLZglwUDaax09omfeFMXlKSmZeLOjd+5U83SW3IfYrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IYWBiuxVYCN40YFikD9rdRlsKiW3Tie02Ykt4D0/KX8=;
- b=Vc5cYHZJ7SWuHOr5XwUrSxu0Ifmv+kBvXOm/9+JsyTzIldaFYfGgwiekyc9DY28Kd9dupc8G7FkP76DvUnfSq2lOWthfJUvvJBPDKYPhzAQ6OricbwOYOv929CqK5G/W2aAgwsti+3GN7MbMA+8yCqlLRnRN85TuEMvGGHkPkAxB8oTrGWbYAdNviYdQHouZt3XUBsvq5bbb8XQCxfNQrnkCbLJIz2YwO6s6II2HDPq6iDzyAS8m7LV4OP0L5ov4ZzFZaUrk0aIQZ0wdsJWB6YGuE4Hu6dYy+EggYhJOwrJoJXGO/NUAAvdjyz+MhdsTvOcNf7mIV+xQwTGh4pAjhQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IYWBiuxVYCN40YFikD9rdRlsKiW3Tie02Ykt4D0/KX8=;
- b=JoPGxKnKdTnvZ9F6MpKDNG7KbDfIfNG1PNo9ptVV4Lx/3J5dphbGHhlU1Fiff8GUSvjt3OejSyh495pPnXj5ZNtVZMcyAJ0XyNNiggbQqV2p/4O99Hd2lUT328YhrDZljAHQfdJdH/VsNczpICthsORSZ3Rary/yP5c6LsGC8qA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- BY3PR01MB6612.prod.exchangelabs.com (2603:10b6:a03:355::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.13; Thu, 18 Sep 2025 16:24:02 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%3]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 16:24:02 +0000
-From: Yang Shi <yang@os.amperecomputing.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	ryan.roberts@arm.com
-Cc: yang@os.amperecomputing.com,
-	linux-arm-kernel@lists.infradead.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A32244692;
+	Thu, 18 Sep 2025 16:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758212642; cv=none; b=e9Q1aEzOvKeogH3YwZFmynb+bjaZ6mOHRye3CJAak8ODndFNBctJpO/7Pl8mbhih3YN73LR4tcZ/ieia9T4LxbJZcCgonc4Mks4kehZLd6eaPFoKbbC7gHdiLUjdxaxlIvmmmCp572PTE3dEron0y03YCXOqYjkokZu+QPRXUlU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758212642; c=relaxed/simple;
+	bh=qxZffvEGZk3Ux/d97kUEpFcAYo5rdjWgeV+BxpkYyq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HRLfMauYoyGEwXJxg2JtINdbC4VPRzYN5fwRsDMun2pqD/WhiZ9JSmdyqo5zyZJ7PYIc3NSi15pXapZ0oLhaIoD4Jvf5o4FaTKLm6rCJm9Ps8x8z6ODNtdW991Rwyq9NhxCGiu68+9gKkqTLFJu0VlfekiDAwKNKKjneNn0c2FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hSP9qlFE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758212640; x=1789748640;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qxZffvEGZk3Ux/d97kUEpFcAYo5rdjWgeV+BxpkYyq0=;
+  b=hSP9qlFEtpBSuNKXCBklel+xwh6tHl7p5xQTSzfsutH1EdpM8eDxdUpf
+   QIkuWQZxZ3J4MbqnpcJuny2vWB02Q1w7syMhEgDaL2jZDWVhvlD52riA6
+   CHagN3WY1Ce1SObxfhB0a+dEVu9UfXdpphUgI3LCguEBmu45RZLS7V2xz
+   /zruHD9lg4aa48tBwyi3OCetElnRPpHmZKxQEAwcRrQBgtChnoNm0a7AV
+   E3ZWt/VZVR9hcojoh7dFr5UGfCJWNy3fyNiaAhxI13MBM1/IHFaQTeQM4
+   FxS6g5pbVPUNv+r6VihWCWdg5FJMzwFLP9pVA4SuYYocTHurPqdO8Rtzd
+   g==;
+X-CSE-ConnectionGUID: X/PnW/DSSKOk3Cgu0IzGyA==
+X-CSE-MsgGUID: NZsu+535SVO5RMal9iqXqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60242233"
+X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
+   d="scan'208";a="60242233"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 09:23:58 -0700
+X-CSE-ConnectionGUID: eKrlZOwzQNCLAbp65zkapA==
+X-CSE-MsgGUID: PgXR132hTEWTscTPsQZC5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
+   d="scan'208";a="175508435"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Sep 2025 09:23:54 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 7142C97; Thu, 18 Sep 2025 18:23:52 +0200 (CEST)
+Date: Thu, 18 Sep 2025 18:23:52 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Jack Pham <quic_jackp@quicinc.com>,
+	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Mayank Rana <mayank.rana@oss.qualcomm.com>,
+	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [v2 PATCH] arm64: kprobes: call set_memory_rox() for kprobe page
-Date: Thu, 18 Sep 2025 09:23:49 -0700
-Message-ID: <20250918162349.4031286-1-yang@os.amperecomputing.com>
-X-Mailer: git-send-email 2.50.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR20CA0035.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::48) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	Andreas Noever <andreas.noever@gmail.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
+ Router
+Message-ID: <20250918162352.GM2912318@black.igk.intel.com>
+References: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
+ <20250917061236.GF2912318@black.igk.intel.com>
+ <e648a71f-a642-4f5d-bcf8-893484cfe601@oss.qualcomm.com>
+ <20250918051244.GJ2912318@black.igk.intel.com>
+ <035c0d66-bddd-495c-bd23-e1d98570ba7f@oss.qualcomm.com>
+ <20250918152322.GK2912318@black.igk.intel.com>
+ <af749f54-1406-40c0-97c3-2a418f29b55f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|BY3PR01MB6612:EE_
-X-MS-Office365-Filtering-Correlation-Id: 362a7510-b823-489c-8682-08ddf6cfc77c
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZazfZ3wL2vapK8WVTdHjG5IKq/PBfdTixdrxu0fgSthHED/PX9UmLcDBvoOY?=
- =?us-ascii?Q?Uc2oCOXEHER+lg2rb+KZqTUMsn65xS8zmAcH+i1Xn79MtW6TVdkBoI+2/sv+?=
- =?us-ascii?Q?AB/y/sM+6ATWXAPBqn7irhioOsCC0BKRxKflzH0NFil+ONiYiccUEz6Oml/B?=
- =?us-ascii?Q?WWyDavZZE3p2UiP6VSEIh9Cq8LcObXG/jjgbLNMw/fJuRJVtd+fkrBJ3ncuO?=
- =?us-ascii?Q?u77CvEXCp6i+KtFKbBBv0fHr8aeFIplJszQoLVNQFJOfoYxXQ4hgD6mrOW1Q?=
- =?us-ascii?Q?bfbGufzq/z3FP+qe87yzkMOThLgKPGuZ10GdrhEy0O+t1SHqsXA+n+N38HqY?=
- =?us-ascii?Q?k12j0LKoQiJYQHF7dl8d3DnOyKOvjwWtI9aEsK/NUpjs3ApCAb/pO8lu8uDE?=
- =?us-ascii?Q?SxnJSTX0WswHSsZcR784h/frjhmmt73GTB9e9Xj76Vh42rVBuyCzNXPNejFv?=
- =?us-ascii?Q?d9HYhOGjDU9B8lO+Zk3WCWbYyCJgpYS3uPjBPffNk13xssWru9ze9rUoNEzs?=
- =?us-ascii?Q?DrFSt4rmWX9QgVSWkcb9g1pUldBtXYj9f2Nki8seAR/qKs0Exvl6Losh0ITo?=
- =?us-ascii?Q?m0mwfgAC8Zn0CPQkNddrPnjMdQ4axB64HJJzFDm1tkoThQpYthCD7maO46NQ?=
- =?us-ascii?Q?rlsDJibHMIXTQUYnxeiH0C9LmBRr9Rb02hqtFg+Pf6Y96j/dlLjbec7qQ1Ay?=
- =?us-ascii?Q?ehW2/VjvmNoM62IfDAK3i39jLZrOMnMYiW/zN9TtAj4UZFWM/WgszOsG2Cnw?=
- =?us-ascii?Q?pC+KWUiSvNeatgIJQtkr1n7F6hvHB+DKtrMv9WLhH1R2O6+0EBSnsoSW3lYF?=
- =?us-ascii?Q?z7m3vqZyUHESKWBhqCF3YQo43m7RV2CljP4X3RpInEoO/aH8SAE87v07F0tA?=
- =?us-ascii?Q?xR9IFe47Jpj3UqA1n3pRpr+fzqdoCe6xbchWml4lzWzj3q8HuyOn4tTlKCrl?=
- =?us-ascii?Q?crGBYDnChcjjL9hRMW41/gXYYuYM0slZenzLqGqG4eZ20xNttd3yQoRPyKkf?=
- =?us-ascii?Q?+W9DEl57b8Kg+169D91Hr+fsxQbTRUXhc1wpaW5ikQvdBgTP9jXyftrNnEnI?=
- =?us-ascii?Q?/6rnA6eVTh6dduUnG5qJyoJauOOa7D9nMQrHkzjFvWoJbJWDuoI4Cu3F/VEL?=
- =?us-ascii?Q?AaH4Ne1qFP3eYf5g6dl06AaqCyOowukAgFt1h1kdSZNHP3hpMEDvv2Vk4UJu?=
- =?us-ascii?Q?jmxL4nrRLcj0w2458ndkE4Sb8IYzuD6PGtxcqOQbkQ8XjpwhVsNHJxI2BhPw?=
- =?us-ascii?Q?UN8el8F9dHYWG75NFvIMvc4oxmD/Qi10sPoLgaVbEjJJAuhXG5Up+DkXlWhu?=
- =?us-ascii?Q?29rQUX8vJI65J/EVRn6g25Yb5LdK/h4KcisKSnrlRY/STpwSD6I5pMNmvzo0?=
- =?us-ascii?Q?7+XpPSo7OTOppkONzMjY+xrYW/I1JsWJMtiqXI3UXljEI04e2nVp7uaGQ03a?=
- =?us-ascii?Q?kgGWerk851d+MyGT92eOoJ3Rg3L4RdD4wfnyiDYE7OhaW50kIXvgJA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ywwa12W4S39Zl99um1C5Mkt+lSebzXsrkvwlIYdt10J5+qjp27TZaXEurKK/?=
- =?us-ascii?Q?LRNnS/inrFXWRr3AjcOQf7JX/oEDokebC9d5dwC/6zZzjPQvSqipH+/fclyK?=
- =?us-ascii?Q?sRCLt1C5t8Pocu+MSPFe1tJxMtPbQNKTY8yWiWtbT0fcaF1j6ZgLoFM8SpkU?=
- =?us-ascii?Q?jJh3PEtdbNa4/DxwOIzWEpSv9QKcuiAUNYa8RcymeAqvBvEOOCsSu1s3JEdt?=
- =?us-ascii?Q?YE6fM/Gxe9Ok4IYqYLDSriSzvIMmjF90EjIoJE+DO4KPPHno9tTNLMfWpIRZ?=
- =?us-ascii?Q?3j9HvhchFgOtP8ZECxlcWflCtR4Cvn+EKLX9kO1WiiwOxRb1SVISU8SsHVi2?=
- =?us-ascii?Q?mMJbdazZjriCS61/uiJ3jTwsR4aiEgsAnW5HDyy8hBOFbyZbDmMAogVNvcej?=
- =?us-ascii?Q?PMEumr8Q8YZaXJSZe6Azct7bO9rWI1U1wVYsv+m8/UQa0ws2sLeMhnOtYC7o?=
- =?us-ascii?Q?Y1kBLz/5L8t0ro3lxhAXB/Q6S7xI57PdbW2L+DNR9h7Zaf7XOB84uDfwQb6Q?=
- =?us-ascii?Q?p/8tb9evFpCZtoAPN4I0b/NK1ytk1X+Iz9kN3z8q4IeMWpPjUDGI6i7C6R4p?=
- =?us-ascii?Q?zoOMDWadIb4HCNZ6CwhSWOAaTTqNXr6yWBfkxRG2NMCzzL20qU/Rvu3JtGt2?=
- =?us-ascii?Q?XrJmOGzobxdF3FTENJm02LlvwKhmraBgQ14ARchltr2tp2eZmYOGNyLkiy1S?=
- =?us-ascii?Q?CpXr8bVaKBfXoRXYosWbTYiTuOAqF4K0k7qg7MyN0jlWxu6v+TE28GHusKoe?=
- =?us-ascii?Q?WkDRQnDl0y6TF5IpnNzPL71NzCbHc/fHhmz0p3YQuO2pHPJEd4PAY9cfxNJR?=
- =?us-ascii?Q?xzrVaUWJnBFvbc7zPEguDK1PsyzCzsJRbZBaGzDv6aD9CmHnkHGAP356UVB/?=
- =?us-ascii?Q?UymqG4Yg2QWc85s8tvhuQBnDVxKTst+LVZCyScqgrNMuTR8VkZLp7Pd5k5Rt?=
- =?us-ascii?Q?n7QozuCYZZ7GUqNV2B8eK+0/dXoopmSM/xAQfdmc2YFVb9s1qQSWAxBKbNUG?=
- =?us-ascii?Q?90KnYsGzG/04DT4Cjijc6Vwd15RUKjLHEPky/GaoogbB26szzDvrkKg4KcRw?=
- =?us-ascii?Q?54H3/sUryO/a2tuauFxh/dDMrifdwxVWo82I3+Si2c0e8MIlr+OoP6qhTdkj?=
- =?us-ascii?Q?Waz4+MA+bHMCPwZL2xBTjY8LSwVmm0op+M73NNjACMdSE4MORMt/skmFtTro?=
- =?us-ascii?Q?AunCNrX5XkEjHb4m/FerMyzi3HHj7ghdGkzm6DXtcfB3BwgiYNwn0XTgGo2v?=
- =?us-ascii?Q?fAPgNWqR1k1jc+m2pfp/NSZMbnBll3DzqWNIfPdeyqN55E5Tf2NLstB65nHt?=
- =?us-ascii?Q?U8o5vHYC7NkcW0F0xUwJLGbAdV8Hsmyr+HuFlx994ZChMjBGPV6nYZLlZLS+?=
- =?us-ascii?Q?U/oFHdzlJdEV+CTD0/u0AuKfZey18oISWcHbEGE6lP6sZNrSG26W7jV6W8zB?=
- =?us-ascii?Q?AWLEbmjP/yGLyyab1IqFsd3t6NMTakid/QU46ps4RqxpkkKbGb5ebld7wgu0?=
- =?us-ascii?Q?o9Rgbd5m+kyxtcVI9+RZBzKq487/99LPBulw2VmFQCXkek25vHfYGjQ5Dz/d?=
- =?us-ascii?Q?Gx9mc3ej8dUTaSO2o0dWbzwm2nSH8YCU7PaM17jNN7H+GwqN1dJ1Gl90aN54?=
- =?us-ascii?Q?MU265sJDceUzj24l5wwaiLk=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 362a7510-b823-489c-8682-08ddf6cfc77c
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 16:24:02.4402
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G8WwRdE0H/rf1lyXjY1OVu/dfF26ofwq9S3TvMRpOmNZ8YAhqPlyOopT0U9DQ6I/i8iDSHrZuPRphY2uEMiuwi9jl70QDBDjDUJwTrayrsU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR01MB6612
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <af749f54-1406-40c0-97c3-2a418f29b55f@oss.qualcomm.com>
 
-The kprobe page is allocated by execmem allocator with ROX permission.
-It needs to call set_memory_rox() to set proper permission for the
-direct map too. It was missed.
+On Thu, Sep 18, 2025 at 05:38:13PM +0200, Konrad Dybcio wrote:
+> On 9/18/25 5:23 PM, Mika Westerberg wrote:
+> > Hi,
+> > 
+> > On Thu, Sep 18, 2025 at 11:05:42AM +0200, Konrad Dybcio wrote:
+> >>> I it hard to change these DT bindings later on? If yes then I would
+> >>> definitely think forward and make this support MSI from the get-go.
+> >>
+> >> dt-bindings (attempt to) promise an ABI-like interface, so bindings
+> >> for *a given IP block* ("dt-bindings describe the hardware") should
+> >> not change, unless there's something critically wrong (e.g. "this
+> >> could have never really worked").
+> > 
+> > Then I think it is good to think few steps forward and make sure when
+> > Qualcomm adds MSI to their IP it can be easily desribed in the DT bindings.
+> 
+> Your reply makes me believe I glossed over an important detail..
+> 
+> If qcom,x1e80100-hr doesn't have MSIs, qcom,nextsoc-hr can add them
+> without any issues too, just that the X1E80100 binding can't be altered,
+> e.g. "binding" refers to the (compatible, allowed_props, required_props)
+> tuple
 
-Fixes: 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in alloc_insn_page")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
----
-v2: Separated the patch from BBML2 series since it is an orthogonal bug
-    fix per Ryan.
-    Fixed the variable name nit per Catalin.
-    Collected R-bs from Catalin.
-
- arch/arm64/kernel/probes/kprobes.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index 0c5d408afd95..8ab6104a4883 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -10,6 +10,7 @@
- 
- #define pr_fmt(fmt) "kprobes: " fmt
- 
-+#include <linux/execmem.h>
- #include <linux/extable.h>
- #include <linux/kasan.h>
- #include <linux/kernel.h>
-@@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- static void __kprobes
- post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs *);
- 
-+void *alloc_insn_page(void)
-+{
-+	void *addr;
-+
-+	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
-+	if (!addr)
-+		return NULL;
-+	set_memory_rox((unsigned long)addr, 1);
-+	return addr;
-+}
-+
- static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
- {
- 	kprobe_opcode_t *addr = p->ainsn.xol_insn;
--- 
-2.47.0
-
+OK then it is all good and allows extension in the future generations.
 
