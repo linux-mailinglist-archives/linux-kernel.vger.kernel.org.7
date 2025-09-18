@@ -1,89 +1,137 @@
-Return-Path: <linux-kernel+bounces-823275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C47B86059
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:27:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC90B861B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A3AD2A61F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:25:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F3B54689C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84B83176E1;
-	Thu, 18 Sep 2025 16:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gC3GzEZp"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8254D307AFE;
-	Thu, 18 Sep 2025 16:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7C9253B59;
+	Thu, 18 Sep 2025 16:50:46 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB066221F29;
+	Thu, 18 Sep 2025 16:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758212600; cv=none; b=TSo46fvSU7A8S6oPb6xo+9DA153wvflj1KOvELI8ay6u6AuEAZWqcil+Bt9t98DS7V2dMEUtL1FyfN7Yd8GwWux6n4yd3iIhWBRb8Nuj6BHD2D+p2sBPA8K31kSN0L446gir9YSoVZTJWih/GzFqZDqTYW0CaRY7JDSawIzBn08=
+	t=1758214246; cv=none; b=sG5izBU5y3HzTLIFjUREuq43aGMx7vMB9iLz+RXOq0N4+FcCBRfKvH3fFyZcXg4APXQELIAH6ZPAbUEmlqWFUhErtPZrf3KVr7nM85vFYz+FCt7YrYDvNiRAEzEou5rm6m4ElK9vflqWTRaS6MawSOdIct87aEF6SJxKrwH49JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758212600; c=relaxed/simple;
-	bh=n/hd5t6CHABWdzF41a1SUfYrY33AjbVj4GD6gVVNiwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnpyDxQNGIXHd72r/jF6ONaM9Fr6oSG2WCn9H3w+C7iZRGrnr7is8wlhI2KdtCm70RvG2vPUuXk/nV5kCX1l2VtWl8k/qarGlrLDisp+8LpT6Z7Wf4DGABz7GqfWfiDSRqUT9kSxTCcQlGauRdtlk3yRu0KkzjTSlnjgnZaYNn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gC3GzEZp; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=auJypmeJ+OauCPuHoVkkb7kVeyHnCM7wOf2csNOyrVY=; b=gC3GzEZpYgzgaODE8Qx09xGxd5
-	aKmaCrfkx6RvRQi5dtsT6j6wCHLtcxDGkrAWRmeyif2AuS15ZLiOHDkw19LuQPA/tUPgqAyj81VBA
-	y/ODtYc1TLaYdO8IvF8nF24U9CTIWGwrv92jSCr/g8N8c4KlN1lH8J0Y4kBFbBHye7jU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uzHPN-008qth-Hn; Thu, 18 Sep 2025 18:22:57 +0200
-Date: Thu, 18 Sep 2025 18:22:57 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: weishangjuan@eswincomputing.com
-Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, vladimir.oltean@nxp.com,
-	rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com,
-	anthony.l.nguyen@intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	jan.petrous@oss.nxp.com, jszhang@kernel.org, inochiama@gmail.com,
-	0x1207@gmail.com, boon.khai.ng@altera.com,
+	s=arc-20240116; t=1758214246; c=relaxed/simple;
+	bh=OgCnUIlKw1JxR7kjRn4Et9d8YymbVWaWOnW11EryMBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fi0KP8/PVBszq6V+vjyQW/dATDifikwrxBKcRCUaUYsMPIymVkDLCpyNU1ienEYmT0fzSl9XNyEy4NOUBklVLEgH8sANSyeGuHPSF2ZUEM6VoHmtWt+VXs0gKnLvl7Ti1Vn1kqpy3XnLyP+QsD5N6I1PoXcTf4RceiCJUtFCLZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cSLY10Mbrz9sfh;
+	Thu, 18 Sep 2025 18:23:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id sO3sKZP93SXY; Thu, 18 Sep 2025 18:23:32 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cSLY06MC6z9sff;
+	Thu, 18 Sep 2025 18:23:32 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C9AE08B776;
+	Thu, 18 Sep 2025 18:23:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 9SmYjYN9p3HL; Thu, 18 Sep 2025 18:23:32 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1D1588B767;
+	Thu, 18 Sep 2025 18:23:32 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH v7 2/2] ethernet: eswin: Add eic7700 ethernet driver
-Message-ID: <28e282d0-ca3d-43ce-8c10-3517ca963a3b@lunn.ch>
-References: <20250918085612.3176-1-weishangjuan@eswincomputing.com>
- <20250918090026.3280-1-weishangjuan@eswincomputing.com>
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v6 0/7] Add support of IRQs to QUICC ENGINE GPIOs
+Date: Thu, 18 Sep 2025 18:23:20 +0200
+Message-ID: <cover.1758212309.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918090026.3280-1-weishangjuan@eswincomputing.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758212605; l=2729; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=OgCnUIlKw1JxR7kjRn4Et9d8YymbVWaWOnW11EryMBs=; b=kJ17167SdnC2brfs/6ZVeip2FJrVuZWNePg7vhRzccMHLW4xR2hWSncCA8JgOKj0R2u6IENLD yr/kbkEH4dEBRTTs5kh8I0ABfpN+NWO5uki35VvaGdsWBxh54sMSOg9
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 18, 2025 at 05:00:26PM +0800, weishangjuan@eswincomputing.com wrote:
-> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
-> 
-> Add Ethernet controller support for Eswin's eic7700 SoC. The driver
-> implements hardware initialization, clock configuration, delay
-> adjustment functions based on DWC Ethernet controller, and supports
-> device tree configuration and platform driver integration.
-> 
-> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
-> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+The QUICC Engine provides interrupts for a few I/O ports. This is
+handled via a separate interrupt ID and managed via a triplet of
+dedicated registers hosted by the SoC.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Implement an interrupt driver for those IRQs then add change
+notification capability to the QUICC ENGINE GPIOs.
 
-    Andrew
+The number of GPIOs for which interrupts are supported depends on
+the microcontroller:
+- mpc8323 has 10 GPIOS supporting interrupts
+- mpc8360 has 28 GPIOS supporting interrupts
+- mpc8568 has 18 GPIOS supporting interrupts
+
+Changes in v6:
+- Changed mask local var to unsigned long instead of u32 to avoid build failure on 64 bits (patch 4)
+- Comments from Rob taken into account except the comment on fsl,<chip>-qe-pario-bank becoming fsl,chip-qe-pario-bank as I don't know what to do.
+
+Changes in v5:
+- Replaced new DT property "fsl,qe-gpio-irq-mask" by a mask encoded
+in the of_device_id table
+- Converted QE QPIO DT bindings to DT schema
+
+Changes in v4:
+- Removed unused headers
+- Using device_property_read_u32() instead of of_property_read_u32()
+
+Changes in v3:
+- Splited dt-bindings update out of patch "soc: fsl: qe: Add support of IRQ in QE GPIO"
+- Reordered DTS node exemples iaw dts-coding-style.rst
+
+Changes in v2:
+- Fixed warning on PPC64 build (Patch 1)
+- Using devm_kzalloc() instead of kzalloc (Patch 2)
+- Stop using of-mm-gpiochip (New patch 3)
+- Added fsl,qe-gpio-irq-mask propertie in DT binding doc (Patch 4)
+- Fixed problems reported by 'make dt_binding_check' (Patch 5)
+
+Christophe Leroy (7):
+  soc: fsl: qe: Add an interrupt controller for QUICC Engine Ports
+  soc: fsl: qe: Change GPIO driver to a proper platform driver
+  soc: fsl: qe: Drop legacy-of-mm-gpiochip.h header from GPIO driver
+  soc: fsl: qe: Add support of IRQ in QE GPIO
+  dt-bindings: soc: fsl: qe: Add an interrupt controller for QUICC
+    Engine Ports
+  dt-bindings: soc: fsl: qe: Convert QE GPIO to DT schema
+  dt-bindings: soc: fsl: qe: Add support of IRQ in QE GPIO
+
+ .../gpio/fsl,mpc8323-qe-pario-bank.yaml       |  72 ++++++
+ .../soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml       |  58 +++++
+ .../bindings/soc/fsl/cpm_qe/qe/par_io.txt     |  26 +--
+ arch/powerpc/platforms/Kconfig                |   1 -
+ drivers/soc/fsl/qe/Makefile                   |   2 +-
+ drivers/soc/fsl/qe/gpio.c                     | 209 ++++++++++++------
+ drivers/soc/fsl/qe/qe_ports_ic.c              | 156 +++++++++++++
+ 7 files changed, 434 insertions(+), 90 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-ports-ic.yaml
+ create mode 100644 drivers/soc/fsl/qe/qe_ports_ic.c
+
+-- 
+2.49.0
+
 
