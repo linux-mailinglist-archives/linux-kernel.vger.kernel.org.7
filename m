@@ -1,351 +1,162 @@
-Return-Path: <linux-kernel+bounces-822234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC490B835DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F93B835C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814463A24DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CCE721287
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228602EF652;
-	Thu, 18 Sep 2025 07:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2702EC08A;
+	Thu, 18 Sep 2025 07:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3Ry3y1h"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSnk2+ai"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CD92E7F0B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B3F2EA493
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758181166; cv=none; b=LDr4b0qhU1+cp4Tubu/O/gPcKQTwj7bJtSkSCx0j6Clo0uT+GwohSS0upK05ug6ug/v0IXBQ/4vF4vBKoAxA3MQdDE1bhglSg4EEmxCD4PzUBbfjL6udAwzMRRQbX7AfeZ0UGwcEaXbKctygZFgoOTcsXGNuidQN9gkAKrJif2g=
+	t=1758181147; cv=none; b=D56rQEUIJYREDvBELg4mqTfkOcB8qPKpRfHrWluMVn78dDc7YTpuseq3JRp2Dlhcbdwfs4LbO/9MuNw6m0plTgwZudTGtlJoZiw616clj2QOodVdQmrzb8TT6RUqVJKDVJBWwLAVwv6CIhtSsebJi3otMJMkcd5uFVoJDpEYjPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758181166; c=relaxed/simple;
-	bh=Z6qZSB5ccwxVgYVj98AksF/DlcdpqcgoKyj9hpY/Brg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lxEBtpKgP5eNbA5xsW2JgAfHtmxl9AT+jZK/TzXGzU2YlKm/g9yoxu1PVNG8ZYV0LTVh/UAle42fdYWDaESD2QWtLkV5Gh652ZN4Dqj+n1qPLu0ldBF82iTXjEOw25rfbOoz4d4xwV87JpDIgnzqG52P4qUF6ZFknbSZRC6E5hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3Ry3y1h; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b54fc45db56so579335a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:39:23 -0700 (PDT)
+	s=arc-20240116; t=1758181147; c=relaxed/simple;
+	bh=zr9sG0j68lmhOpqFGvsTn7V0/phVlb0kkL+RjN1CCm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kr9ir4eGumLMr/Y8lJb7SuvOtmXhqYrzhv2Q6O3gfPcxq+XUuERCbBbOwXODUWieTioElhSi1KIvbAfAcBGQZk1arb054/lfSALNga/m821+s9ulv6417Ojf54f2ws9b61ctvvo/bUbSZhpUDKIG1vjN/KrfVj37b0SRIPp2lpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jSnk2+ai; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4619eb18311so3785705e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758181163; x=1758785963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNruZWOB1A9W2xPWfDeeJw/PtthshopimV+lzxEm4to=;
-        b=k3Ry3y1h4W+aM5hylaiF71sI4Eb+EqKe3+jTwAZWQsZ62fYg49Wzt4sIQccgD9ofjS
-         q0Cr7WDsFiWFoUIjM7vSu+VCG8j23lmu4S8gztAgCptA9tYdWzLGtXAxrBE/wx47ezIj
-         9O+kmEPKBwTpmEkdVJo6cxH2v0kdE5GCMc4EP6VZMigBNuc7u9zOI/rPp+cuUB4erwzt
-         /8FhknvK7yAzRRwO9jThb/CMJ1/muZFwfpKhYBGVj1kYbm7YasTrHC2Uctd6dDMVXR9O
-         zQXT1trnzij1O+PbHnD/vBYMmeU8s+PRUFIdef/8xOUsAMw/jMRFtDTOnx4HW9YFCKnV
-         EuqA==
+        d=linaro.org; s=google; t=1758181143; x=1758785943; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EXt4qIjnPyB2Xiavamfk0cWdPtVvBQPn83+TPQKe3KE=;
+        b=jSnk2+aiclMSdfvaENwl/v13ykOt04X0HlnCTT7V30DdbrP1cXbIz/sX/4jOQugfcd
+         Xi/GdyIfvvHyywWNX0xdppR30bM+4mesm/h3JyYDFsRkOygGVbVUukIwLREglLsFkqsQ
+         D6uhuIgJGsWt/NJ3ZsphlSleHbyOOqctidTbMMZQwNf/7KCqKI5lo1HZ2869bL+QvVPT
+         Yuvvp51L3BZyvPAKA62kuoaIuLHem6gAppY4jWEFb1cF3kdpMNCuf6iortAcrp7z+YCV
+         Apxx4mjkPvxZstkUqgMpAE9ppSJwcDZcqIqGhVsS8c824zPiTQyff0Pam9GHB2YfV9WI
+         XT1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758181163; x=1758785963;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNruZWOB1A9W2xPWfDeeJw/PtthshopimV+lzxEm4to=;
-        b=p9NurfKegAsGqzGIkW3k+gUoBUfT3RyOcy/ImA8C5fHpA3vHlZUwe9PYXGHtp1w28s
-         tdgjkidL58tfr9ZX86aiXuG/5jlxcuNwssMlMF6ExuYG+c6Spk1HIVZVKf4+Rj6FlbnN
-         nb8YMfHAtqSL3vAvIJ4u85GW8T0ns2ZLadDUmfmAEvx+EVBPk9c5iWuD9/f5p84ejor+
-         36LNCGAtmCt/0eELZGUOvTfEDp0yknEXWu+kKXQcTYKojIxrWpCUUWBgzLBCC9rGsi7W
-         LBGpxRChC4NaRCCkEYdzVjW9q3UfKGqnQuhY85Z4G2CHw4HlTI0DYZ+CuUKGm0Ki7rrF
-         FkqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcNhm6oYBbEHQZVkzNqE524/Huf50LqGmeqKYsyS8py9FKMHDx+cRfH+lq1T7kRSqxGkp2SKPirOXCmFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygqtqQx26v8xdYNdse9JktYZWc7u4cH6Y4shEugGoQ5Xl5Hix4
-	lFoaAx5Tf9HR/UMGoCUNt0fruG7ED7su96XBrd419fdY+7X/3UaD8L1X
-X-Gm-Gg: ASbGncspFJj8QwE/MwqcViAJr3vZVaM3rezjIPhyIqfGJaoyml7mEfsmXzz/ZoX6swb
-	5qCqx0Xkz9eYQfB3CPQMrtvo7Cm1aP5B0TVYdu4z5YSjaGOKae9fT1cl6guoACUXEO2UB6yJUU2
-	amUFIw3T5vrtJUCGW9GpUXUYEGfXE2VYqiPu/P/JmF+GAPQ6M12onVYMK20hAisxpx90EF1tNZe
-	7B97g1ONtL2c8CTiLYByBTDGO45Czeq9i3UarKjsv16jHA4ViTE+EtUq42/51KcVO+aIm9hF3wQ
-	JkX4oOv4b1jsFe48pdDVE9cpnjxbys6hPMk3VnG3ff5uj4GQNnd8gwlYKSCEKDABojhkcuSQ1qn
-	eAiQP4+2df1SHJXNivoY93rKq00svyhfzbrB/6ZOcBjZmjy06UcWqtmUoLsQQiAPLPKL2APPR+l
-	ExF6XiAKD1TvGp592IZbjqmg==
-X-Google-Smtp-Source: AGHT+IHb67OmugF2cEMXD12M/xW4W+V68Zi7+KrzUwtAstQdAuQx8i/xU/qunW2Twhas2liFfVE02A==
-X-Received: by 2002:a17:902:ce8e:b0:246:24d:2394 with SMTP id d9443c01a7336-268119b2bdbmr55687205ad.8.1758181163196;
-        Thu, 18 Sep 2025 00:39:23 -0700 (PDT)
-Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802de7a9sm16783015ad.80.2025.09.18.00.39.21
+        d=1e100.net; s=20230601; t=1758181143; x=1758785943;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EXt4qIjnPyB2Xiavamfk0cWdPtVvBQPn83+TPQKe3KE=;
+        b=daOMKrRHnJSv7vtaBhRVnhUZ2xdPcz07JFHsbi8vfsg7SIri00U69QNvGlmTnAPTUc
+         BJdgG5h9X5synnDMgUNT/zKmZ4bv1k0GVuyf9i26zV1e/kGYTt7m4PwYTPZJZd3cvVXS
+         zqI0DqWgJCDE4QNviV1JTWhEtKiL6qzeXIbK+k7/P3f8MlxRn5tRNeKoSr3YR+ybcHor
+         8CZlSEjq4yQT5Y9cW5LnZHqZWyFvwteNDnAis01LRLOnuEXRammPqn4O6OOqNJy+k/4m
+         QxemefJMvQrDiFhLiYV0dfZgwUqGIpIROqighkxjIVG09w4gOOA6SR/YC3wrP84yVN2/
+         mtQA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3rVf5rimX+Xo7rGbkwn5ta3GPn/Cq8C+I2fw5u/caCbVVtpx7jJiDp3K8+KoyZNrGS+IRbBRlME/bAvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0HavJ3AAYZegIfd/UF39RAQHoJSbd9SZz9iia4SCkyxP1+hGh
+	fSYsZ6p2AjqYNJusWnteDpUT3TPRDmsuI9yQA3Hr7Bzsu3xlfbv1lRgHbBN6Gbvc904=
+X-Gm-Gg: ASbGncsj+mXKfiq0ab10nWlbmN1TaACZTZyvq8Oo+SGHfZd6+/JGvwLMhRxo0z4SRh0
+	69Nvw7Y2MusrlVyVhn6ToWT6SxxNhivSnfrAIeuPMHKF9EvdXqrs1/ddZn4BcMeDwHm9zdKA9dK
+	G+Vr1KNB/q9RJfy6XspaFCcZV2SK2Eke9uz4MBCgRCvYlrpJ/untjWfMGK3symCHCpiQxUSkS/y
+	acPN13UUXKJYnHobI0qmtUmv1TIAumbT0hNxaYWQMktgDnxbPPRYLmxrYBHuEWSLIdvsYHAfjHe
+	tsResYx4Tpd25Qu0YsF0RKcj31RDbF8avx8VjBGyEeMQPhRKWF3fnJCS2QhBgc06jJfUyezCoWS
+	U1qxOGvT0QGJ1Oxl6qzVPcq0HXaYStJJ5nY/dZ/Usdw3tJw==
+X-Google-Smtp-Source: AGHT+IH2MLUzEYKA2BPh6/SOk9G3FIKKjuMYakg7LjBGvzqYlCjhPjkDjyAhkJHpc9DvchwNU3Bf+A==
+X-Received: by 2002:a05:600c:5250:b0:45d:d5fb:1858 with SMTP id 5b1f17b1804b1-46205adf916mr40396985e9.21.1758181143198;
+        Thu, 18 Sep 2025 00:39:03 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ee0fbc72e6sm2350863f8f.29.2025.09.18.00.39.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 00:39:22 -0700 (PDT)
-Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 5B7C51062102; Thu, 18 Sep 2025 16:39:20 +0900 (JST)
-From: Hajime Tazaki <thehajime@gmail.com>
-To: linux-um@lists.infradead.org
-Cc: thehajime@gmail.com,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v11 04/13] x86/um: nommu: syscall handling
-Date: Thu, 18 Sep 2025 16:38:59 +0900
-Message-ID: <99a54b96cee85275692ca01fe4a0ef0d83996f0f.1758181109.git.thehajime@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1758181109.git.thehajime@gmail.com>
-References: <cover.1758181109.git.thehajime@gmail.com>
+        Thu, 18 Sep 2025 00:39:02 -0700 (PDT)
+Date: Thu, 18 Sep 2025 10:38:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Fan Gong <gongfan1@huawei.com>
+Cc: Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+	Xin Guo <guoxin09@huawei.com>,
+	Shen Chenyang <shenchenyang1@hisilicon.com>,
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+	Shi Jing <shijing34@huawei.com>,
+	Luo Yang <luoyang82@h-partners.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>,
+	Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Suman Ghosh <sumang@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next v06 08/14] hinic3: Queue pair resource
+ initialization
+Message-ID: <aMu3E-wTfK-B18id@stanley.mountain>
+References: <cover.1757653621.git.zhuyikai1@h-partners.com>
+ <8d72eefd38d1c3b106eeb830d9e149df247b2906.1757653621.git.zhuyikai1@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8d72eefd38d1c3b106eeb830d9e149df247b2906.1757653621.git.zhuyikai1@h-partners.com>
 
-This commit introduces an entry point of syscall interface for !MMU
-mode. It uses an entry function, __kernel_vsyscall, a kernel-wide global
-symbol accessible from any locations.
+On Fri, Sep 12, 2025 at 02:28:25PM +0800, Fan Gong wrote:
+> @@ -102,6 +127,41 @@ static u32 hinic3_rx_fill_buffers(struct hinic3_rxq *rxq)
+>  	return i;
+>  }
+>  
+> +static u32 hinic3_alloc_rx_buffers(struct hinic3_dyna_rxq_res *rqres,
+> +				   u32 rq_depth, u16 buf_len)
+> +{
+> +	u32 free_wqebbs = rq_depth - 1;
 
-Although it isn't in the scope of this commit, it can be also exposed
-via vdso image which is directly accessible from userspace. A standard
-library (i.e., libc) can utilize this entry point to implement syscall
-wrapper; we can also use this by hooking syscall for unmodified userspace
-applications/libraries, which will be implemented in the subsequent
-commit.
+Why is there this "- 1" here.  Why do we not allocate the last page so
+it's 1 page for each rq_depth?
 
-This only supports 64-bit mode of x86 architecture.
+regards,
+dan carpenter
 
-Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
-Signed-off-by: Ricardo Koller <ricarkol@google.com>
----
- arch/x86/um/Makefile              |   4 ++
- arch/x86/um/asm/syscall.h         |   6 ++
- arch/x86/um/nommu/Makefile        |   8 +++
- arch/x86/um/nommu/do_syscall_64.c |  32 +++++++++
- arch/x86/um/nommu/entry_64.S      | 112 ++++++++++++++++++++++++++++++
- arch/x86/um/nommu/syscalls.h      |  16 +++++
- 6 files changed, 178 insertions(+)
- create mode 100644 arch/x86/um/nommu/Makefile
- create mode 100644 arch/x86/um/nommu/do_syscall_64.c
- create mode 100644 arch/x86/um/nommu/entry_64.S
- create mode 100644 arch/x86/um/nommu/syscalls.h
-
-diff --git a/arch/x86/um/Makefile b/arch/x86/um/Makefile
-index b42c31cd2390..227af2a987e2 100644
---- a/arch/x86/um/Makefile
-+++ b/arch/x86/um/Makefile
-@@ -32,6 +32,10 @@ obj-y += syscalls_64.o vdso/
- subarch-y = ../lib/csum-partial_64.o ../lib/memcpy_64.o \
- 	../lib/memmove_64.o ../lib/memset_64.o
- 
-+ifneq ($(CONFIG_MMU),y)
-+obj-y += nommu/
-+endif
-+
- endif
- 
- subarch-$(CONFIG_MODULES) += ../kernel/module.o
-diff --git a/arch/x86/um/asm/syscall.h b/arch/x86/um/asm/syscall.h
-index d6208d0fad51..bb4f6f011667 100644
---- a/arch/x86/um/asm/syscall.h
-+++ b/arch/x86/um/asm/syscall.h
-@@ -20,4 +20,10 @@ static inline int syscall_get_arch(struct task_struct *task)
- #endif
- }
- 
-+#ifndef CONFIG_MMU
-+extern void do_syscall_64(struct pt_regs *regs);
-+extern long __kernel_vsyscall(int64_t a0, int64_t a1, int64_t a2, int64_t a3,
-+			      int64_t a4, int64_t a5, int64_t a6);
-+#endif
-+
- #endif /* __UM_ASM_SYSCALL_H */
-diff --git a/arch/x86/um/nommu/Makefile b/arch/x86/um/nommu/Makefile
-new file mode 100644
-index 000000000000..d72c63afffa5
---- /dev/null
-+++ b/arch/x86/um/nommu/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+ifeq ($(CONFIG_X86_32),y)
-+	BITS := 32
-+else
-+	BITS := 64
-+endif
-+
-+obj-y = do_syscall_$(BITS).o entry_$(BITS).o
-diff --git a/arch/x86/um/nommu/do_syscall_64.c b/arch/x86/um/nommu/do_syscall_64.c
-new file mode 100644
-index 000000000000..292d7c578622
---- /dev/null
-+++ b/arch/x86/um/nommu/do_syscall_64.c
-@@ -0,0 +1,32 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/kernel.h>
-+#include <linux/ptrace.h>
-+#include <kern_util.h>
-+#include <asm/syscall.h>
-+#include <os.h>
-+
-+__visible void do_syscall_64(struct pt_regs *regs)
-+{
-+	int syscall;
-+
-+	syscall = PT_SYSCALL_NR(regs->regs.gp);
-+	UPT_SYSCALL_NR(&regs->regs) = syscall;
-+
-+	if (likely(syscall < NR_syscalls)) {
-+		unsigned long ret;
-+
-+		ret = (*sys_call_table[syscall])(UPT_SYSCALL_ARG1(&regs->regs),
-+						 UPT_SYSCALL_ARG2(&regs->regs),
-+						 UPT_SYSCALL_ARG3(&regs->regs),
-+						 UPT_SYSCALL_ARG4(&regs->regs),
-+						 UPT_SYSCALL_ARG5(&regs->regs),
-+						 UPT_SYSCALL_ARG6(&regs->regs));
-+		PT_REGS_SET_SYSCALL_RETURN(regs, ret);
-+	}
-+
-+	PT_REGS_SYSCALL_RET(regs) = regs->regs.gp[HOST_AX];
-+
-+	/* handle tasks and signals at the end */
-+	interrupt_end();
-+}
-diff --git a/arch/x86/um/nommu/entry_64.S b/arch/x86/um/nommu/entry_64.S
-new file mode 100644
-index 000000000000..485c578aae64
---- /dev/null
-+++ b/arch/x86/um/nommu/entry_64.S
-@@ -0,0 +1,112 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#include <asm/errno.h>
-+
-+#include <linux/linkage.h>
-+#include <asm/percpu.h>
-+#include <asm/desc.h>
-+
-+#include "../entry/calling.h"
-+
-+#ifdef CONFIG_SMP
-+#error need to stash these variables somewhere else
-+#endif
-+
-+#define UM_GLOBAL_VAR(x) .data; .align 8; .globl x; x:; .long 0
-+
-+UM_GLOBAL_VAR(current_top_of_stack)
-+UM_GLOBAL_VAR(current_ptregs)
-+
-+.code64
-+.section .entry.text, "ax"
-+
-+.align 8
-+#undef ENTRY
-+#define ENTRY(x) .text; .globl x; .type x,%function; x:
-+#undef END
-+#define END(x)   .size x, . - x
-+
-+/*
-+ * %rcx has the return address (we set it before entering __kernel_vsyscall).
-+ *
-+ * Registers on entry:
-+ * rax  system call number
-+ * rcx  return address
-+ * rdi  arg0
-+ * rsi  arg1
-+ * rdx  arg2
-+ * r10  arg3
-+ * r8   arg4
-+ * r9   arg5
-+ *
-+ * (note: we are allowed to mess with r11: r11 is callee-clobbered
-+ * register in C ABI)
-+ */
-+ENTRY(__kernel_vsyscall)
-+
-+	movq	%rsp, %r11
-+
-+	/* Point rsp to the top of the ptregs array, so we can
-+           just fill it with a bunch of push'es. */
-+	movq	current_ptregs, %rsp
-+
-+	/* 8 bytes * 20 registers (plus 8 for the push) */
-+	addq	$168, %rsp
-+
-+	/* Construct struct pt_regs on stack */
-+	pushq	$0		/* pt_regs->ss (index 20) */
-+	pushq   %r11		/* pt_regs->sp */
-+	pushfq			/* pt_regs->flags */
-+	pushq	$0		/* pt_regs->cs */
-+	pushq	%rcx		/* pt_regs->ip */
-+	pushq	%rax		/* pt_regs->orig_ax */
-+
-+	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
-+
-+	mov %rsp, %rdi
-+
-+	/*
-+	 * Switch to current top of stack, so "current->" points
-+	 * to the right task.
-+	 */
-+	movq	current_top_of_stack, %rsp
-+
-+	call	do_syscall_64
-+
-+	jmp	userspace
-+
-+END(__kernel_vsyscall)
-+
-+/*
-+ * common userspace returning routine
-+ *
-+ * all procedures like syscalls, signal handlers, umh processes, will gate
-+ * this routine to properly configure registers/stacks.
-+ *
-+ * void userspace(struct uml_pt_regs *regs)
-+ */
-+ENTRY(userspace)
-+
-+	/* clear direction flag to meet ABI */
-+	cld
-+	/* align the stack for x86_64 ABI */
-+	and     $-0x10, %rsp
-+	/* Handle any immediate reschedules or signals */
-+	call	interrupt_end
-+
-+	movq	current_ptregs, %rsp
-+
-+	POP_REGS
-+
-+	addq	$8, %rsp	/* skip orig_ax */
-+	popq	%rcx		/* pt_regs->ip */
-+	addq	$8, %rsp	/* skip cs */
-+	addq	$8, %rsp	/* skip flags */
-+	popq	%rsp
-+
-+	/*
-+	* not return w/ ret but w/ jmp as the stack is already popped before
-+	* entering __kernel_vsyscall
-+	*/
-+	jmp	*%rcx
-+
-+END(userspace)
-diff --git a/arch/x86/um/nommu/syscalls.h b/arch/x86/um/nommu/syscalls.h
-new file mode 100644
-index 000000000000..a2433756b1fc
---- /dev/null
-+++ b/arch/x86/um/nommu/syscalls.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __UM_NOMMU_SYSCALLS_H
-+#define __UM_NOMMU_SYSCALLS_H
-+
-+
-+#define task_top_of_stack(task) \
-+({									\
-+	unsigned long __ptr = (unsigned long)task->stack;	\
-+	__ptr += THREAD_SIZE;			\
-+	__ptr;					\
-+})
-+
-+extern long current_top_of_stack;
-+extern long current_ptregs;
-+
-+#endif
--- 
-2.43.0
+> +	u32 idx;
+> +	int err;
+> +
+> +	for (idx = 0; idx < free_wqebbs; idx++) {
+> +		err = rx_alloc_mapped_page(rqres->page_pool,
+> +					   &rqres->rx_info[idx], buf_len);
+> +		if (err)
+> +			break;
+> +	}
+> +
+> +	return idx;
+> +}
+> +
+> +static void hinic3_free_rx_buffers(struct hinic3_dyna_rxq_res *rqres,
+> +				   u32 q_depth)
+> +{
+> +	struct hinic3_rx_info *rx_info;
+> +	u32 i;
+> +
+> +	/* Free all the Rx ring sk_buffs */
+> +	for (i = 0; i < q_depth; i++) {
+> +		rx_info = &rqres->rx_info[i];
+> +
+> +		if (rx_info->page) {
+> +			page_pool_put_full_page(rqres->page_pool,
+> +						rx_info->page, false);
+> +			rx_info->page = NULL;
+> +		}
+> +	}
+> +}
+> +
 
 
