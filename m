@@ -1,175 +1,100 @@
-Return-Path: <linux-kernel+bounces-822652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C949B8466F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:46:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F61DB84678
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869D1587B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ECB516AD98
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D95027AC57;
-	Thu, 18 Sep 2025 11:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11BD2BDC1B;
+	Thu, 18 Sep 2025 11:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BUN1cpH7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yLverfxC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KVItu1d6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VH7pas99"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aT13i7do"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02542701B6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570BE25334B;
+	Thu, 18 Sep 2025 11:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758196010; cv=none; b=TGZvWvmoHGP1gAFQ2xy3qBX4P0bVqnHvxtubFHAYfFs3d3Ei40eIAWQBQ7ir5oW7PzOjKbRjoAasO9Oc1w1ANir3mvgB/P2NnQH6mg5cxRTuHtxtMobbD7EjD3F6fbaAsm9Zw0NCGtgdnnNB/gfXIY74szEqxnjb5i2Uup3DLnc=
+	t=1758196044; cv=none; b=M1wNwz4WVL4VPbM3jlJjU2T7Z6g/2xGGqfXyXPSUG4g/5k8AEtojCwvN9xfAntDEGHTjEnRR0zIrJCI2SfbXpg9ChOk40MOwwPgBkabUuDmtFib6tA2TaknbvRTwYro2rx6tcSYVhMPW1csY7VDzszL6wlyG23MZZK/WUgJCTBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758196010; c=relaxed/simple;
-	bh=ohlPV7apBK//LNuEFq6ZhPhrKiI8b8UbCzZp8mbfTxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQZA1wwprsNJRBG4Vmyt2xnzhhGDycH+ZuZTkceXpyAOKoXihN4gMl9RXP2ho1gzbBJcFYKbwT12TqZEL5CsdEOz3XZ2XuW+Fg6rR+imsU2HUlw8F7cHI0MCW7xyLCCHljjYj/y7qzP447/Zd/T206+F6IzufCckHTlsH0wnztk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BUN1cpH7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yLverfxC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KVItu1d6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VH7pas99; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1758196044; c=relaxed/simple;
+	bh=6EKZDkdDj+TQTFKi29y3ENgReTXMEGTTC1s38Fo2/GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TKLPctxpDXXpwGstykJm/IO3zIP2CKIbmg/7Uw8CcEQ5PnOjgdFFJzy+n1Vr2GelgW5Jc3em9sqRidtio9grnuCts0stKmZ/eMeSZ+XR+UN8vozwfU7bHdisiIzbytmUdcxeFqTos/ucE+CuBRprznRzvTdagtvx43yp8ev7mdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aT13i7do; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1758196040;
+	bh=6EKZDkdDj+TQTFKi29y3ENgReTXMEGTTC1s38Fo2/GA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aT13i7doY1WMx3ADOq+HzXsPl1jAKpBpEZI81nRRpR+YRkCVwTNVdH5tHrdUx3Ave
+	 c4g1Gvmj9RW3sKCGJM52hwcYc/6zn+zlK/Zd+zsC4hBX1vWPqf/EFswGkgsaDi+xhb
+	 +k4ZyVOf7h0E3WxBhGKhb8x20GmLSarNAv5g9/6+2zAS6XBJj7I3RmfHAdN6Fkghu8
+	 33DaoU50JzO5m0UplX3G/wEQZpt2qUBVdkwgWr9Q4P5pStpXl8UjqIWMQb9GPvE7fV
+	 Ew1wQ82nMzRp497XUEfegOK0EIk48nKPkU9MuQwkYliUnzpmPYQEU7nZhpOsTzxtXG
+	 aYenc45V8LhOQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CB50F33783;
-	Thu, 18 Sep 2025 11:46:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758196007; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8DePXp4fUzj2VkRR30Ty2gOyQ/zyboG3IhS6cWHdUzY=;
-	b=BUN1cpH73R+4pwL4YvAboha/rA3SwWwimEZmuyFYreBkVTFu6BghhR7c5u3oR/292QP2Up
-	0fBYjE/NQtdYbdFqOHptKcfM3gbujaXvfDfImp4Kz/7bHNXVp2ARMu1CK7fVn3kJo30WGB
-	5HPN8nJ7yBAA4oAivjdtf1e4HkKZZWk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758196007;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8DePXp4fUzj2VkRR30Ty2gOyQ/zyboG3IhS6cWHdUzY=;
-	b=yLverfxC6gdH8nqT9c//5OCZya0JswpzHorA2ek4beIQzR2EKbqRhrVyJaWZmroT7nplWe
-	km8zkuLWfZc/XiAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KVItu1d6;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VH7pas99
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758196006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8DePXp4fUzj2VkRR30Ty2gOyQ/zyboG3IhS6cWHdUzY=;
-	b=KVItu1d6W0M5/H3gn7D8KZhdqxTPVoZppIAa2RfGgnv0JDSt+IFAeN8Tlug9XDDUKp1yAG
-	2fyKs5wl1jivweyuoxlKeRSDMelNmdsaQ26wH4AaV34UZvHDwiRkjlgqqtFuAK02ZdPZyS
-	lUhKkjxvup8IFi8Z8Neg3zgUQhQqiuk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758196006;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8DePXp4fUzj2VkRR30Ty2gOyQ/zyboG3IhS6cWHdUzY=;
-	b=VH7pas99xZm52NkBWoqw52EGBDdJu2pK1U5cTZzZg7cTniiRenPV86oAlJAbg+abSHD7dd
-	Nsj/GrMZcw3eIJDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C20DB13A51;
-	Thu, 18 Sep 2025 11:46:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QCCwKyTxy2huCgAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Thu, 18 Sep 2025 11:46:44 +0000
-Date: Thu, 18 Sep 2025 12:46:34 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: akpm@linux-foundation.org, minchan@kernel.org, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, 
-	kernel-team@android.com, android-mm@google.com, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Kees Cook <kees@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] mm: rename mm_struct::map_count to vma_count
-Message-ID: <2t6asetuopq2wtj7cki6qf24i5j5slhi3palturmf62db2qddg@zfdbh6nivya5>
-References: <20250915163838.631445-1-kaleshsingh@google.com>
- <20250915163838.631445-5-kaleshsingh@google.com>
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0583E17E0B8C;
+	Thu, 18 Sep 2025 13:47:19 +0200 (CEST)
+Message-ID: <c31bc281-94d5-40b6-a9bd-76b41769f6e5@collabora.com>
+Date: Thu, 18 Sep 2025 13:47:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915163838.631445-5-kaleshsingh@google.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[34];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[to_ip_from(RLg31yqq1xypujqsbh8raoa6zf)];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,linux-foundation.org:email,suse.de:email,suse.de:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: CB50F33783
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] SPMI: MediaTek: Add support for multi-bus
+To: sboyd@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, hsin-hsiung.wang@mediatek.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20250703115828.118425-1-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250703115828.118425-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 15, 2025 at 09:36:35AM -0700, Kalesh Singh wrote:
-> A mechanical rename of the mm_struct->map_count field to
-> vma_count; no functional change is intended.
+Il 03/07/25 13:58, AngeloGioacchino Del Regno ha scritto:
+> Changes in v2:
+>   - Fixed indentation error in dt-bindings
 > 
-> The name "map_count" is ambiguous within the memory management subsystem,
-> as it can be confused with the folio/page->_mapcount field, which tracks
-> PTE references.
+> This series adds basic support for multi-bus (multi-master) SPMI
+> controllers, as found in the MediaTek MT8196 Chromebook SoC and
+> the MediaTek MT6991 Dimensity 9400 Smartphone SoC, including RCS
+> interrupt handling and per-bus registration.
 > 
-> The new name, vma_count, is more precise as this field has always
-> counted the number of vm_area_structs associated with an mm_struct.
+> AngeloGioacchino Del Regno (5):
+>    dt-bindings: spmi: Add MediaTek MT8196 SPMI 2 Arbiter/Controllers
+>    spmi: mtk-pmif: Add multi-bus support for SPMI 2.0
+>    spmi: mtk-pmif: Keep spinlock until read is fully done
+>    spmi: mtk-pmif: Implement Request Capable Slave (RCS) interrupt
+>    spmi: mtk-pmif: Add support for MT8196 SPMI Controller
 > 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Mike Rapoport <rppt@kernel.org>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Pedro Falcato <pfalcato@suse.de>
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+>   .../bindings/spmi/mediatek,mt8196-spmi.yaml   | 138 +++++
+>   drivers/spmi/spmi-mtk-pmif.c                  | 471 +++++++++++++++---
+>   2 files changed, 530 insertions(+), 79 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/spmi/mediatek,mt8196-spmi.yaml
+> 
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
--- 
-Pedro
+Gentle ping on this series.
+
+Regards,
+Angelo
 
