@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-822602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87FFB84405
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:00:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B328B8487D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B7B189C4C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:00:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1499B60B3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E032FFFA3;
-	Thu, 18 Sep 2025 10:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD99304BBC;
+	Thu, 18 Sep 2025 12:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aos9blcv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1Bu5GRQ"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA15C18A6DB;
-	Thu, 18 Sep 2025 10:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DF4302166
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758193187; cv=none; b=jDhW0rTj7PaCXdg6noTyRpxU+ehbYBxbKbcVCUCCM0VWer8HO9PzDkjeQG907cqSxRxUjSVvo+tiaEwYJMXfgyKylYx0X1izkgIvcC/FyrOY446lbnEqeT2NXkPzQRShE3mX63fr4uW6jiv9eF75xbX8TardZzzofD+zQ53o84Q=
+	t=1758197624; cv=none; b=QYW7rCVJ1Jj2SuyaLtpukND/2pgWxgogAIhnsqdDj1Fk0nUfQGkfpAtmgD5n9ZEJb0EZKM95B+89e3+IglH1zvlcyrs2oYycdFARQKv0gd1Bk55LutTIyNrPOo23ns0ETJLr/kNcU643gCUMA/7gNJRfqfdGitRUP8fPlXVvU1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758193187; c=relaxed/simple;
-	bh=k7WjdxD1akUFMFsnjD+igZOq30uLF23C9JuX5ROO/Wk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aXuWS+8z6uU4RyDOTKgtP3hPEoKgoEn8UH+wh2K9PMxqVIkxRtp2q9chqzde6aHm42+5XsOIFDQazotMO40d/WxFNF/d+jRO06P1p0SC1PrqDT13hUpz0uO0YMfWLUoKKRpiv3JwPz5vW5VjlLbs5d+ciNHkFXRSR7BkjjxUeiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aos9blcv; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758193186; x=1789729186;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=k7WjdxD1akUFMFsnjD+igZOq30uLF23C9JuX5ROO/Wk=;
-  b=Aos9blcvkrt9eop+nKgdyLCxd9Yd0+/NoT2gWYrKdTZ7C2/snZM32qY2
-   1oiJT5nx77MJqkiqnPDncmDlB+g9KQ8qmaEEwNBxcOVICPD+hY7+t3rUv
-   fmd0rYmCPv7/znvKASeknMpXwD7vSyKCN6Pca6GTXWBubbpyRy6Gf9TTZ
-   3/AyBXgOI37an1t9xgH0Tln6tn5IjqQjCpbrv9I761eFKmwMKciX3BdSi
-   9ut7GAon0GeDNpPK6K+4Skby1y3r2Y8pFZegaCEmZuQoUgqL8VL+579TA
-   pkw/9F58KAkfYZfqSrvT36h+R/Of6QC/z79EA+01VPRFvQmERi/d/E1jH
-   A==;
-X-CSE-ConnectionGUID: q+Jmw2+kSUC45AaKVqZlsw==
-X-CSE-MsgGUID: QejdNk/gQqeNz3yxS6Kd1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="64336083"
-X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="64336083"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 03:59:45 -0700
-X-CSE-ConnectionGUID: TW+Q+WYtS32lblmpHmpoQw==
-X-CSE-MsgGUID: ZVBunwrSQee44Q89CHxReQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="180627016"
-Received: from p2dy149cchoong.png.intel.com ([10.107.243.50])
-  by orviesa005.jf.intel.com with ESMTP; 18 Sep 2025 03:59:41 -0700
-From: Chwee-Lin Choong <chwee.lin.choong@intel.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Avi Shalev <avi.shalev@intel.com>,
-	Song Yoong Siang <yoong.siang.song@intel.com>
-Subject: [PATCH iwl-net v1] igc: fix race condition in TX timestamp read for register 0
-Date: Fri, 19 Sep 2025 02:38:11 +0800
-Message-ID: <20250918183811.31270-1-chwee.lin.choong@intel.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1758197624; c=relaxed/simple;
+	bh=JsiWJ0idw6/yiGbo3kbDll8GBfeTR6oH0as6tc+6i9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CWYoRboK2QuOBOivgmtzaFuXDqDtOKuSNzFp2uDQjvmYp7xPVAz8fAyONnxqIMMlu/jSw7F9FFiiDC45ckbocSg2mv2RoaHZGpqGu09RL86jCXO1lEjGWjUNScaw+5mS/OLt81EPJgwlyvXYBq3XPAoJFVvA8qcxiYbqwSVR/mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1Bu5GRQ; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b7ae45a91cso6268261cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:13:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758197622; x=1758802422; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WwWZNUuCtZ9/86xWHoWdfhxYkVDMpzkc+/3I7/MEfIo=;
+        b=l1Bu5GRQlWCahMDDZENu+ItK/XMMLDelCWS1qqIpCy1TsDzJYC4bDFZoE/2TN4YCVz
+         6YsA57tKVtPEDKG/DuwuYzE+tK+6Lt1tYbejMAj6jeJDOL0JeFauB5N9fPdmrov4uvRI
+         n2UwWACkQHh78D1sjXU8k5DA9HG7qW0quWntLlO9MNuq+vkW1lh1oImBiF/Em/rwkzis
+         Wj14DnrNq93a4ooj2YRAu6CyDC6IXx+9CuZVCj1+TIl5avtqWa/Nv1CocrYX+uo37mp+
+         jCtQNXDLFYFjSLcI5+8VD/Hrsy6gmKL/lIA0lQPjNHuSxvJVf4nC57Akzw3RIk4d5rlN
+         IHLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758197622; x=1758802422;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WwWZNUuCtZ9/86xWHoWdfhxYkVDMpzkc+/3I7/MEfIo=;
+        b=uhuXnF62nsklWCWcPD1aWCy3hafEaPZlDDepdR5776+sx4JUKCIFoMH8skEZB/VJnN
+         t7r5yEUIc/nuJkTE6TapSST4sOz2M/0b8gdIKOrXdYmDT20S69wtCi0gsw9TpmObisKh
+         +p3BpfOxpO28QVQ0BwOYmWjvU9dlXFrDyXCXW0fxSkXrPf0HOJp8GQ3gQg38PyXmHxzL
+         RPwNKIksFBlMxc6RRzuyTyZn9LAtXu6yI59S+ButqwSenEb7pdI2s/fHiyd3nopazIQR
+         oBqycb9kaYfYsvbP50yHF8nHKFz56PtjRmNK5Qt9Utk1Az98XEtQr1N5zXyH7DKRYLnh
+         VjNw==
+X-Gm-Message-State: AOJu0Yzd3C1uCdMbgm01N6X/AgRA+trVFkAFlujslJPvOIFmMbxgWHcZ
+	ZDS0eK+rpNRHz7ueip0AVXylqyejFFp5rd/IkJAWXwVKosU2mhbPU0tfmCdJrQ==
+X-Gm-Gg: ASbGncu8yABRGyE5bee9kZkO/wBwdSUDftsuxMb+5BTQ6Qn+FrIyLuopYwLyCu6U8EF
+	6Joa6rs9qn8rWPyJ0JLQWUuV5b9kPAH9JqWbCbj4dzpxPz+39B7bwXZl0/6dbu21Qyq4nw7cNmK
+	PRk+hfnTVDTd0N0etRAfps4Gw2kuB6VN1v2Qz/dyN86W8PZNsT5HD5b9GmT3/HM3tdGqu568Spt
+	k8xo9WLQr6fzwlsOQdBzE+3ez2b9VgxIoMpHIjxr7F/eUb10gJeoeNEwaPBSHtf4S+qeiDcHBgd
+	gjRlwbSK0Fia228cpavnIvWtFfFfz8dr1iOJWD3GQwF2RMXl0zyfAG9PcYi8wj358Yx69VuVhvm
+	/UlIUxRPUUTeaeur+M7lkiyY+9btDViGOs/Hnu3KYHjuaW95CzEfXBMKEN4OauZX7wfCGFrDXU/
+	m6TFihZxDqhsk=
+X-Google-Smtp-Source: AGHT+IGRc+hNfS3wAF3k/kzEr22/JJ8PvBugFt93cCI74XG8yHk7aPlN4AQJ3WQO6WRjQuc4vGziBA==
+X-Received: by 2002:a05:622a:5518:b0:4b7:7c2c:8534 with SMTP id d75a77b69052e-4ba655f9703mr63257701cf.15.1758197621571;
+        Thu, 18 Sep 2025 05:13:41 -0700 (PDT)
+Received: from localhost (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-836278b5cd7sm154528185a.21.2025.09.18.05.13.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 05:13:41 -0700 (PDT)
+From: =?UTF-8?q?Jean-Fran=C3=A7ois=20Lessard?= <jefflessard3@gmail.com>
+To: Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/5] auxdisplay: linedisp: add num_chars sysfs attribute
+Date: Thu, 18 Sep 2025 08:13:14 -0400
+Message-ID: <20250918121321.116248-5-jefflessard3@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250918121321.116248-1-jefflessard3@gmail.com>
+References: <20250918121321.116248-1-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The current HW bug workaround checks the TXTT_0 ready bit first,
-then reads LOW -> HIGH -> LOW from register 0 to detect if a
-timestamp was captured.
+Add a read-only 'num_chars' sysfs attribute to report display digit count.
 
-This sequence has a race: if a new timestamp is latched after
-reading the TXTT mask but before the first LOW read, both old
-and new timestamp match, causing the driver to drop a valid
-timestamp.
+The num_chars attribute provides essential capability information to
+userspace applications that need to know display dimensions before writing
+messages, complementing the existing message and scroll controls.
 
-Fix by reading the LOW register first, then the TXTT mask,
-so a newly latched timestamp will always be detected.
+No functional changes to existing behavior.
 
-This fix also prevents TX unit hangs observed under heavy
-timestamping load.
-
-Fixes: c789ad7cbebc ("igc: Work around HW bug causing missing timestamps")
-Suggested-by: Avi Shalev <avi.shalev@intel.com>
-Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
-Signed-off-by: Chwee-Lin Choong <chwee.lin.choong@intel.com>
+Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
 ---
- drivers/net/ethernet/intel/igc/igc_ptp.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ Documentation/ABI/testing/sysfs-auxdisplay-linedisp | 11 +++++++++++
+ drivers/auxdisplay/line-display.c                   | 11 +++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
-index b7b46d863bee..930486b02fc1 100644
---- a/drivers/net/ethernet/intel/igc/igc_ptp.c
-+++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
-@@ -774,10 +774,17 @@ static void igc_ptp_tx_reg_to_stamp(struct igc_adapter *adapter,
- static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
- {
- 	struct igc_hw *hw = &adapter->hw;
-+	u32 txstmpl_old;
- 	u64 regval;
- 	u32 mask;
- 	int i;
+diff --git a/Documentation/ABI/testing/sysfs-auxdisplay-linedisp b/Documentation/ABI/testing/sysfs-auxdisplay-linedisp
+index 45cf4e5a2feb..55f1b559e84e 100644
+--- a/Documentation/ABI/testing/sysfs-auxdisplay-linedisp
++++ b/Documentation/ABI/testing/sysfs-auxdisplay-linedisp
+@@ -15,6 +15,17 @@ Description:
+ 		  echo "Hello World" > message
+ 		  cat message			# Returns "Hello World\n"
  
-+	/* Read the "low" register 0 first to establish a baseline value.
-+	 * This avoids a race where a new timestamp could be latched
-+	 * after checking the TXTT mask.
-+	 */
-+	txstmpl_old = rd32(IGC_TXSTMPL);
++What:		/sys/.../num_chars
++Date:		November 2025
++KernelVersion:	6.18
++Contact:	Jean-François Lessard <jefflessard3@gmail.com>
++Description:
++		Read-only attribute showing the character width capacity of
++		the line display device. Messages longer than this will scroll.
 +
- 	mask = rd32(IGC_TSYNCTXCTL) & IGC_TSYNCTXCTL_TXTT_ANY;
- 	if (mask & IGC_TSYNCTXCTL_TXTT_0) {
- 		regval = rd32(IGC_TXSTMPL);
-@@ -801,9 +808,8 @@ static void igc_ptp_tx_hwtstamp(struct igc_adapter *adapter)
- 		 * timestamp was captured, we can read the "high"
- 		 * register again.
- 		 */
--		u32 txstmpl_old, txstmpl_new;
-+		u32 txstmpl_new;
++		Example:
++		  cat num_chars		# Returns "16\n" for 16-char display
++
+ What:		/sys/.../scroll_step_ms
+ Date:		October 2021
+ KernelVersion:	5.16
+diff --git a/drivers/auxdisplay/line-display.c b/drivers/auxdisplay/line-display.c
+index 73e4e77ea4f9..7f3e53e2847b 100644
+--- a/drivers/auxdisplay/line-display.c
++++ b/drivers/auxdisplay/line-display.c
+@@ -178,6 +178,16 @@ static ssize_t message_store(struct device *dev, struct device_attribute *attr,
  
--		txstmpl_old = rd32(IGC_TXSTMPL);
- 		rd32(IGC_TXSTMPH);
- 		txstmpl_new = rd32(IGC_TXSTMPL);
+ static DEVICE_ATTR_RW(message);
  
++static ssize_t num_chars_show(struct device *dev, struct device_attribute *attr,
++			      char *buf)
++{
++	struct linedisp *linedisp = to_linedisp(dev);
++
++	return sysfs_emit(buf, "%u\n", linedisp->num_chars);
++}
++
++static DEVICE_ATTR_RO(num_chars);
++
+ static ssize_t scroll_step_ms_show(struct device *dev,
+ 				   struct device_attribute *attr, char *buf)
+ {
+@@ -240,6 +250,7 @@ static DEVICE_ATTR(map_seg14, 0644, map_seg_show, map_seg_store);
+ 
+ static struct attribute *linedisp_attrs[] = {
+ 	&dev_attr_message.attr,
++	&dev_attr_num_chars.attr,
+ 	&dev_attr_scroll_step_ms.attr,
+ 	&dev_attr_map_seg7.attr,
+ 	&dev_attr_map_seg14.attr,
 -- 
-2.42.0
+2.43.0
 
 
