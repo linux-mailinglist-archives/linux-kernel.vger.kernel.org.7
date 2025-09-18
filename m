@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-821824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34355B82642
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:39:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9BCEB82651
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B205A1C2279F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8454A585993
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7471DF748;
-	Thu, 18 Sep 2025 00:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA0F1F4C8C;
+	Thu, 18 Sep 2025 00:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ty5Ef03t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqxK6uqJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F657155C88;
-	Thu, 18 Sep 2025 00:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A321E1DF2;
+	Thu, 18 Sep 2025 00:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758155970; cv=none; b=HzK5TpNy8N/tl6FRNSjBRF2wzA6zslUHIh0E7N63JrQicZP0JclF3gh8xUEw38jVnxjMk52rHD0RpK4549hRYaHAWMJvPCq5GLVOKiZyC+umfkT49pe+Dv+I9A4ZblsNiCGA0c4cPPvbltK1aCeDmNPzIxjBsj0iO8hRoNC4X0A=
+	t=1758155971; cv=none; b=gpr6HIFWJYcRJNoXTDwDkCvjaBx652ACSw2IhkLl8rmjfjbGhkbq5c9Ou15IYkGejX0yLOxafFgb/YkV4XIS2T4E+RGmfXm4x3Cd//J8Z0asOzNILAWii6i9D3X2RO9ciNk2Uv8Ezyrmj5csRW5Y9xolqQOaezsH/rFNFhoTYqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758155970; c=relaxed/simple;
-	bh=a75lhk+xgj4a6qR5ZsY/lmRJGeQMFkEJZWE3IgPCtIo=;
+	s=arc-20240116; t=1758155971; c=relaxed/simple;
+	bh=wCEJTBS5uIVfDBDzT/2Z5MMI5evfx/hh621pvrQxQLE=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=BF1p9Fb+E326i7/DPJuufxnd1PJwtjrQIO9oGZBXlifAkrVnkYJXYuLe4K5/paBidXijOQ35lWTiB1WF7ISDahbIxYQJ2IcpfooC7rOKWAy6Vc/TLT875JuxrFCJ0rrhlHl8JFNN48bGtU4tUxmBLpW3VP3uvlkh7pideR1BI9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ty5Ef03t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBFBC4CEE7;
-	Thu, 18 Sep 2025 00:39:29 +0000 (UTC)
+	 Message-Id:Subject; b=PMiSN7PrbmmiwkRo/pdMtVEFV4o7J7xotsxcs961Vaf/T9dAdwXxTp2ilx3tQeA5+g7cqK1BZJiDyeACIzX9eTviJNnOU81w8zAq9qPXIGrDgzl0TrTmeJHCX+7UbzSnd4cXsDIMF484JGZ88RPnQYcBqfA+ZJv37vq2afZnuEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqxK6uqJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F89DC4CEFB;
+	Thu, 18 Sep 2025 00:39:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758155970;
-	bh=a75lhk+xgj4a6qR5ZsY/lmRJGeQMFkEJZWE3IgPCtIo=;
+	s=k20201202; t=1758155971;
+	bh=wCEJTBS5uIVfDBDzT/2Z5MMI5evfx/hh621pvrQxQLE=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Ty5Ef03tAJzpoz+XIPXuRIzkkpXYoHt2BMsB9KWT+jy2MEKMJ0FHYFZ5RhbBuhxyt
-	 R7ZkHF1aSnzqMm0WsvVahUPre/erQRjU3TNH43HUh2abKvCXqkiE57hcVFmz4mYbh8
-	 nDSY+oJFz5RvSc0ulNDT/H1VhApylmvgmcOjFrKYkCUklasO2O0DZgBe7ZqT4I9qzw
-	 /zKvj91yiPj8CHLFLz4dDTOz9x5VR3wIvka6ps2tQk4cYXs4fJBY/rgoIo1rbAdVo3
-	 f/DpkFP7cGJt1GkIim0reC1i6smLVcU5QPKfxvqWjIXCn0OYJeWgznHjPwXA8S2CG5
-	 GhEKD3IA+LhCA==
-Date: Wed, 17 Sep 2025 19:39:27 -0500
+	b=FqxK6uqJmMN9Zg7D3ZQgs2RhF5MMCneizh7omKZrTu+TEjdVCS+LMexuWv9EWxJR4
+	 xONha/Kvj3IB56BjvKOKSNdgBzM/fgovjQmPSfGV9hBtWNH/ObnoAhSoiXz6k9Mlgf
+	 lIQo9zhf7CrsAnIY78jt8jtgJjsOYCBMEYdbtV9b0+86InRC902wYLMo+Nl9m/kWIr
+	 TsGEVMNkdbFFtW/XJqhNKg1P5S1HSfW+MT0elZmUjy7DPbmGqNZv3hvROz7V2wv3ie
+	 MYo0lkRJDLljjMFAI5a5MkwFBs5Z1PXG04Sg5QMGjKoM/39YmNQXdDq/FfDpYdU9bA
+	 0nj8eHYVfSI3w==
+Date: Wed, 17 Sep 2025 19:39:30 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,36 +50,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Magnus Damm <magnus.damm@gmail.com>, linux-aspeed@lists.ozlabs.org, 
- devicetree@vger.kernel.org, Joel Stanley <joel@jms.id.au>, 
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Kevin Tung <kevin.tung.openbmc@gmail.com>
-In-Reply-To: <20250917075334.4044607-1-kevin.tung.openbmc@gmail.com>
-References: <20250917075334.4044607-1-kevin.tung.openbmc@gmail.com>
-Message-Id: <175815587102.3804257.11804671658691330900.robh@kernel.org>
-Subject: Re: [PATCH v1 2/2] ARM: dts: aspeed: yosemite5: Add Meta Yosemite5
- BMC
+Cc: gwk1013@coasia.com, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, sboyd@kernel.org, 
+ krzk+dt@kernel.org, s.nawrocki@samsung.com, shradha.t@samsung.com, 
+ swathi.ks@samsung.com, kenkim@coasia.com, linux-kernel@vger.kernel.org, 
+ lars.persson@axis.com, devicetree@vger.kernel.org, jspark@coasia.com, 
+ cw00.choi@samsung.com, bread@coasia.com, ksk4725@coasia.com, 
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com, 
+ krzk@kernel.org, mingyoungbo@coasia.com, limjh0823@coasia.com, 
+ pjsin865@coasia.com, smn1196@coasia.com, lightwise@coasia.com, 
+ alim.akhtar@samsung.com, hgkim05@coasia.com, mturquette@baylibre.com, 
+ jesper.nilsson@axis.com
+To: Ravi Patel <ravi.patel@samsung.com>
+In-Reply-To: <20250917085005.89819-1-ravi.patel@samsung.com>
+References: <CGME20250917085019epcas5p273ef86028a90e78ada55cde48a28a949@epcas5p2.samsung.com>
+ <20250917085005.89819-1-ravi.patel@samsung.com>
+Message-Id: <175815587241.3804330.15494043939076166560.robh@kernel.org>
+Subject: Re: [PATCH 0/7] Add support for the Axis ARTPEC-9 SoC
 
 
-On Wed, 17 Sep 2025 15:53:32 +0800, Kevin Tung wrote:
-> Add device tree for the Meta (Facebook) Yosemite5 compute node,
-> based on the AST2600 BMC.
+On Wed, 17 Sep 2025 14:19:57 +0530, Ravi Patel wrote:
+> Add basic support for the Axis ARTPEC-9 SoC which contains
+> 6-core Cortex-A55 CPU and other several IPs. This SoC is an
+> Axis-designed chipset used in surveillance camera products.
 > 
-> The Yosemite5 platform provides monitoring of voltages, power,
-> temperatures, and other critical parameters across the motherboard,
-> CXL board, E1.S expansion board, and NIC components. The BMC also
-> logs relevant events and performs appropriate system actions in
-> response to abnormal conditions.
+> This ARTPEC-9 SoC has a variety of Samsung-specific IP blocks and
+> Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
 > 
-> Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
-> ---
->  .../aspeed/aspeed-bmc-facebook-yosemite5.dts  | 1063 +++++++++++++++++
->  1 file changed, 1063 insertions(+)
->  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dts
+> This patch series includes below changes:
+> - CMU (Clock Management Unit) driver and its bindings (patch #1 to #3)
+> - PMU bindings (patch #4)
+> - Basic Device Tree for ARTPEC-9 SoC and boards (patch #5 to #7)
+> 
+> The patch series has been tested on the ARTPEC-9 EVB with
+> Linux Samsung SoC tree (for-next branch) and intended
+> to be merged via the `arm-soc` tree.
+> 
+> NOTE: This patch series is dependent on following floating patches:
+> 1. https://lore.kernel.org/all/20250917070004.87872-1-ravi.patel@samsung.com/T/#t
+> 2. https://lore.kernel.org/all/20250917071342.5637-1-ravi.patel@samsung.com/T/#u
+> 3. https://lore.kernel.org/all/20250917071311.1404-1-ravi.patel@samsung.com/T/#u
+> 
+> GyoungBo Min (3):
+>   dt-bindings: clock: Add ARTPEC-9 clock controller
+>   clk: samsung: Add clock PLL support for ARTPEC-9 SoC
+>   clk: samsung: artpec-9: Add initial clock support for ARTPEC-9 SoC
+> 
+> Ravi Patel (2):
+>   dt-bindings: arm: axis: Add ARTPEC-9 alfred board
+>   arm64: dts: axis: Add ARTPEC-9 Alfred board support
+> 
+> SungMin Park (2):
+>   dt-bindings: samsung: exynos-pmu: Add compatible for ARTPEC-9 SoC
+>   arm64: dts: exynos: axis: Add initial ARTPEC-9 SoC support
+> 
+>  .../devicetree/bindings/arm/axis.yaml         |    6 +
+>  .../bindings/clock/axis,artpec9-clock.yaml    |  232 ++++
+>  .../bindings/soc/samsung/exynos-pmu.yaml      |    1 +
+>  arch/arm64/boot/dts/exynos/axis/Makefile      |    3 +-
+>  .../boot/dts/exynos/axis/artpec9-alfred.dts   |   36 +
+>  .../boot/dts/exynos/axis/artpec9-pinctrl.dtsi |  115 ++
+>  arch/arm64/boot/dts/exynos/axis/artpec9.dtsi  |  277 ++++
+>  drivers/clk/samsung/Makefile                  |    1 +
+>  drivers/clk/samsung/clk-artpec9.c             | 1224 +++++++++++++++++
+>  drivers/clk/samsung/clk-pll.c                 |  184 ++-
+>  drivers/clk/samsung/clk-pll.h                 |   17 +
+>  include/dt-bindings/clock/axis,artpec9-clk.h  |  195 +++
+>  12 files changed, 2282 insertions(+), 9 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/axis/artpec9.dtsi
+>  create mode 100644 drivers/clk/samsung/clk-artpec9.c
+>  create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+> 
+> --
+> 2.17.1
+> 
+> 
 > 
 
 
@@ -99,40 +147,36 @@ make sure dt-schema is up to date:
 
 This patch series was applied (using b4) to base:
  Base: attempting to guess base-commit...
- Base: failed to guess base
+ Base: tags/next-20250917 (exact match)
 
 If this is not the correct base, please add 'base-commit' tag
 (or use b4 which does this automatically)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/aspeed/' for 20250917075334.4044607-1-kevin.tung.openbmc@gmail.com:
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/exynos/' for 20250917085005.89819-1-ravi.patel@samsung.com:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: / (facebook,yosemite5-bmc): compatible: 'oneOf' conditional failed, one must be fixed:
-	'facebook,yosemite5-bmc' is not one of ['delta,ahe50dc-bmc', 'facebook,galaxy100-bmc', 'facebook,wedge100-bmc', 'facebook,wedge40-bmc', 'microsoft,olympus-bmc', 'quanta,q71l-bmc', 'tyan,palmetto-bmc', 'yadro,vesnin-bmc']
-	'facebook,yosemite5-bmc' is not one of ['amd,daytonax-bmc', 'amd,ethanolx-bmc', 'ampere,mtjade-bmc', 'aspeed,ast2500-evb', 'asrock,e3c246d4i-bmc', 'asrock,e3c256d4i-bmc', 'asrock,romed8hm3-bmc', 'asrock,spc621d8hm3-bmc', 'asrock,x570d4u-bmc', 'bytedance,g220a-bmc', 'facebook,cmm-bmc', 'facebook,minipack-bmc', 'facebook,tiogapass-bmc', 'facebook,yamp-bmc', 'facebook,yosemitev2-bmc', 'facebook,wedge400-bmc', 'facebook,wedge400-data64-bmc', 'hxt,stardragon4800-rep2-bmc', 'ibm,mihawk-bmc', 'ibm,mowgli-bmc', 'ibm,romulus-bmc', 'ibm,swift-bmc', 'ibm,witherspoon-bmc', 'ingrasys,zaius-bmc', 'inspur,fp5280g2-bmc', 'inspur,nf5280m6-bmc', 'inspur,on5263m5-bmc', 'intel,s2600wf-bmc', 'inventec,lanyang-bmc', 'lenovo,hr630-bmc', 'lenovo,hr855xg2-bmc', 'portwell,neptune-bmc', 'qcom,centriq2400-rep-bmc', 'supermicro,x11spi-bmc', 'tyan,s7106-bmc', 'tyan,s8036-bmc', 'yadro,nicole-bmc', 'yadro,vegman-n110-bmc', 'yadro,vegman-rx20-bmc', 'yadro,vegman-sx20-bmc']
-	'facebook,yosemite5-bmc' is not one of ['ampere,mtjefferson-bmc', 'ampere,mtmitchell-bmc', 'aspeed,ast2600-evb', 'aspeed,ast2600-evb-a1', 'asus,x4tf-bmc', 'facebook,bletchley-bmc', 'facebook,catalina-bmc', 'facebook,clemente-bmc', 'facebook,cloudripper-bmc', 'facebook,darwin-bmc', 'facebook,elbert-bmc', 'facebook,fuji-bmc', 'facebook,fuji-data64-bmc', 'facebook,greatlakes-bmc', 'facebook,harma-bmc', 'facebook,minerva-cmc', 'facebook,santabarbara-bmc', 'facebook,yosemite4-bmc', 'ibm,blueridge-bmc', 'ibm,everest-bmc', 'ibm,fuji-bmc', 'ibm,rainier-bmc', 'ibm,sbp1-bmc', 'ibm,system1-bmc', 'ibm,tacoma-bmc', 'inventec,starscream-bmc', 'inventec,transformer-bmc', 'jabil,rbp-bmc', 'nvidia,gb200nvl-bmc', 'qcom,dc-scm-v1-bmc', 'quanta,s6q-bmc', 'ufispace,ncplite-bmc']
-	'aspeed,ast2400' was expected
-	'aspeed,ast2500' was expected
-	from schema $id: http://devicetree.org/schemas/arm/aspeed/aspeed.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: /: failed to match any schema with compatible: ['facebook,yosemite5-bmc', 'aspeed,ast2600']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: timer (arm,armv7-timer): 'clocks' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: bus@1e600000 (aspeed,ast2600-ahbc): compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: ethernet@1e670000 (aspeed,ast2600-mac): Unevaluated properties are not allowed ('ncsi-package' was unexpected)
-	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: syscon@1e6e2000 (aspeed,ast2600-scu): 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^pinctrl-[0-9]+$', '^silicon-id@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: /ahb/apb/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: adc@1e6e9000 (aspeed,ast2600-adc0): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: adc@1e6e9100 (aspeed,ast2600-adc1): 'interrupts' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: crypto@1e6fa000 (aspeed,ast2600-acry): 'aspeed,ahbc' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: /ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: /ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite5.dtb: /ahb/apb/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: timer@10040000 (axis,artpec9-mct): compatible: 'oneOf' conditional failed, one must be fixed:
+	['axis,artpec9-mct', 'samsung,exynos4210-mct'] is too long
+	'axis,artpec9-mct' is not one of ['samsung,exynos4210-mct', 'samsung,exynos4412-mct']
+	'axis,artpec9-mct' is not one of ['axis,artpec8-mct', 'google,gs101-mct', 'samsung,exynos2200-mct-peris', 'samsung,exynos3250-mct', 'samsung,exynos5250-mct', 'samsung,exynos5260-mct', 'samsung,exynos5420-mct', 'samsung,exynos5433-mct', 'samsung,exynos850-mct', 'samsung,exynos8895-mct', 'samsung,exynos990-mct', 'tesla,fsd-mct']
+	from schema $id: http://devicetree.org/schemas/timer/samsung,exynos4210-mct.yaml#
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/timer@10040000: failed to match any schema with compatible: ['axis,artpec9-mct', 'samsung,exynos4210-mct']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/pinctrl@141f0000: failed to match any schema with compatible: ['axis,artpec9-pinctrl']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/pinctrl@14430000: failed to match any schema with compatible: ['axis,artpec9-pinctrl']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/pinctrl@14c30000: failed to match any schema with compatible: ['axis,artpec9-pinctrl']
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: serial@14c70000 (axis,artpec9-uart): compatible: 'oneOf' conditional failed, one must be fixed:
+	['axis,artpec9-uart', 'samsung,exynos8895-uart'] is too long
+	'axis,artpec9-uart' is not one of ['apple,s5l-uart', 'axis,artpec8-uart', 'google,gs101-uart', 'samsung,s3c6400-uart', 'samsung,s5pv210-uart', 'samsung,exynos4210-uart', 'samsung,exynos5433-uart', 'samsung,exynos850-uart', 'samsung,exynos8895-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos2200-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos7-uart', 'tesla,fsd-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos7885-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynosautov9-uart', 'samsung,exynosautov920-uart']
+	'axis,artpec9-uart' is not one of ['samsung,exynos7870-uart']
+	'google,gs101-uart' was expected
+	'samsung,exynos4210-uart' was expected
+	'samsung,exynos5433-uart' was expected
+	'samsung,exynos850-uart' was expected
+	from schema $id: http://devicetree.org/schemas/serial/samsung_uart.yaml#
+arch/arm64/boot/dts/exynos/axis/artpec9-alfred.dtb: /soc/serial@14c70000: failed to match any schema with compatible: ['axis,artpec9-uart', 'samsung,exynos8895-uart']
 
 
 
