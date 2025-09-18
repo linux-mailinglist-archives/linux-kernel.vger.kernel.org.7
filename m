@@ -1,259 +1,214 @@
-Return-Path: <linux-kernel+bounces-822199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C39BB83469
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:11:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AD2B83472
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBDD175765
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:11:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0164B1C21C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41232E7F08;
-	Thu, 18 Sep 2025 07:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3332E974E;
+	Thu, 18 Sep 2025 07:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TwCal60E";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EHCr+7k9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TwCal60E";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EHCr+7k9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E9fzhRBa"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7630A2EA726
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53720482F2
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758179451; cv=none; b=nAnp1I5DoJjN7n44DZPHV2n9ZMJmWJc40lGrhoJ0cBimBE3of9bv7sKtFGIjTeXTT5NVbYToJvIK1wMpKEzOjQaOOiDAszIYwBBTkw/jU4XuDdaFJg64xaDi3eMtOE0Ag6vPAxYJu4d3se9Tc46mxiv4OXr+yifc84IgafezvC8=
+	t=1758179554; cv=none; b=mSCOd8SmmexXfwxgEOHjUlQJiIVA5UXxegYdZyQ7fQiHLyOzE+VDZeXKyGZQxl/4SX/FVmISCL8uK3tW1IXCW84MsQV/K1OuI2m0b6OaFII/3UkIe+m27SyJcOTyuzDm0AusX9o3zmPtNtuj44mTdCrp0Ob9lLKaf/NrDr4re7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758179451; c=relaxed/simple;
-	bh=afbZiTITWiDPxpVDFuaq7hIxA4pu1Ma8IO/vh9BBM6w=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZAZU8aktp1Mmt4S9kPnSyKzuHJ4S63bgL+DKR97Av5IZfv7LDzUbX1k/auf/EmbHB84b/4TdZRaRWZWO6/plAjcTIPK0X6zLBD8/tlXd9KQpWLOiidCjjnM9cm1wvh4bcXi1soUin14pdW29fT8Cy33Q8cPW/wXdGZxAOyY8v2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TwCal60E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EHCr+7k9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TwCal60E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EHCr+7k9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2738B336B0;
-	Thu, 18 Sep 2025 07:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758179442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
-	b=TwCal60EKp1MDOYLxoKy6YjdPtPkSczXK7B7bK3rOpV76PRPfJMOkOowlhCljGbcUzP/cK
-	j+FfczXwY+wOCeTs+OU1fDqaqcgucBb5vw44Meu9+gu/i5sockbhOqxJlksJY5HslRufD5
-	vUGsrw4qdAW3MvT8hnOMyGi7qNeRQ/s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758179442;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
-	b=EHCr+7k9hyySXBNOFAuI8v3Jc7tuniPCQowjRMA+7x2ERLpmAcF2dz/fMsMQuaNZy5iw8w
-	ovAJf6kyNBBOCyCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=TwCal60E;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=EHCr+7k9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758179442; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
-	b=TwCal60EKp1MDOYLxoKy6YjdPtPkSczXK7B7bK3rOpV76PRPfJMOkOowlhCljGbcUzP/cK
-	j+FfczXwY+wOCeTs+OU1fDqaqcgucBb5vw44Meu9+gu/i5sockbhOqxJlksJY5HslRufD5
-	vUGsrw4qdAW3MvT8hnOMyGi7qNeRQ/s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758179442;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pit2StEZvDVJ127lc63LyjBnZcAyarkm35ZsvFwG3Ug=;
-	b=EHCr+7k9hyySXBNOFAuI8v3Jc7tuniPCQowjRMA+7x2ERLpmAcF2dz/fMsMQuaNZy5iw8w
-	ovAJf6kyNBBOCyCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F3BDE13A39;
-	Thu, 18 Sep 2025 07:10:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VzApOnGwy2irKQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 18 Sep 2025 07:10:41 +0000
-Date: Thu, 18 Sep 2025 09:10:41 +0200
-Message-ID: <87tt10b5hq.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: PM runtime auto-cleanup macros
-In-Reply-To: <CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
-References: <878qimv24u.wl-tiwai@suse.de>
-	<87ikhptpgm.wl-tiwai@suse.de>
-	<CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758179554; c=relaxed/simple;
+	bh=ud1Tmg51SfzqY6HtE7aDmCcSXYCOdVA2UHkFLQUePVg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YnIICzTF9PIHJf9ZGboGSGeEmTjl1YH8SzRzWMuoUdOrHjYJxuqnyJd2DKSmQMKX6qKcgFoDuBi8oatoSEBATKT5yOMt499F928oITTovtaPVh7drOnoN4iGLiOQwEQWBAgAlTVLvikYG7rK31nGiBxqCMHJ5pHbRANJTho08k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E9fzhRBa; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77256e75eacso601615b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758179553; x=1758784353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kkm5768qLYG/7lMt2aDpCtrK/g19VAgQZBHIXA7VzC8=;
+        b=E9fzhRBaEoY+/VPgju3mCUe7rnGP9acLTL/1U2lqio5TLdB5SRg3uamixWvy9kJAI8
+         P38weZt3QVNfsvCVZRg5nxj9AzyX+GyxJBwYrdcBWWS/zN6KXgD8+iWAd9fljpqwxcjD
+         22BnV0dqo4h8Ra4tpI4DVQbVHpbY14pXNJ9GoQ3hZh51zhpL7kb8f03uLP7FXYpVKIFx
+         xfDlew7pS4yPoWYdFbOCCsqFZR+lGwr8sr4upHlyNhx1KYew239dgOviXSycu4hFkZrB
+         JpYtLuKtLququggwy/BUVx8MIa8NSE2ZRxue4Z7ucYZxYYw2iy6b0eHiywRF9BZojbDU
+         JC/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758179553; x=1758784353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kkm5768qLYG/7lMt2aDpCtrK/g19VAgQZBHIXA7VzC8=;
+        b=ny5OzRnl70LGGPlcev+SBI1yOTw319RggwkUum/vf6/n9sb01MJ3b+Ws6A+Fbkr98t
+         /jS0vdLD1gsnFEibV5EOTQ6KGj2wj6YH2er/hxREAw25LQgs/H/FHdWNj99EgTzO0OXh
+         RCWWmcAG3rnDbcQJDdrUwM/VtxJXDfZ+L/CYoTVcU2diaTFCjQXe7CYjr7Vw5opHFXOn
+         o6X6YjYaloyf3vc5YP53VI4jfr4/hc6Y8RK75Ce5KayoLWarIMee9+F5WuRr4S3Wy80I
+         Rmv/34Krfz9rylNBeDKWx+9ZQiuAwrA1dabgLicVS/1yHnnhWZ9nT5vnhHeRqPQK7gVr
+         D7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsUdX87SUI+Dldu1qEhNCWq6wTEzRUEq68xdvdZcI4YVDh/IohfMfXNkh94ZrjUkHd/dgOcfg6Q1XckHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnRijtoeI+3X6CBgshU2R9QoGyLNPQ5HqQv5qlQhAwPBtGHac5
+	J8TSyDsUX3bCIQ9WhyR6doLhgx9nQRpK6AbAMN87S61boysVA9+X5uQ4
+X-Gm-Gg: ASbGncvEtsnRHzitKAJEIp904ByXTlAc4v/eANBWbnOcIfpDU6KVWCIxf5/oqQjZm2B
+	vnT8eRj3IF2eKrV2vCZUBTJH5vh0Cw1BhlkMbSss41+fATNTnKTGH4lZ2s17pqCNJ4q0gjFIlba
+	1CBB3KYYETyQanRD23A0oBQAlTdyyCidFoZRSatioCwI4/arrHx2mxk1HtAevuWkdLZ98whuf8L
+	rqBNMCnEY8rh9ub1V/WRSChgbU9Pty28RmhD/0ac/JEomj0weyljPHNXaTw8wim8p830dTU9e/E
+	dGo1oq2xu3fZSVMtqtYWXdMBjDP2OI+lYQZIqk0t/+FVQQvp0uQGzlM+Djefk+D5EUjeh3GAk2X
+	50HlCioWliBYQNZLEr1c3jyAFB4J16ws8tpyuuy1GakB5ESnAkJErcAs=
+X-Google-Smtp-Source: AGHT+IGdU2UHmJHhU9RR2jUy+RtSKtOMtaGZXLns5gxJCl2FXNsuL8oTowVvbbfw7QvNTE+aUNdCBQ==
+X-Received: by 2002:a05:6a20:6a10:b0:23d:ab68:1b7c with SMTP id adf61e73a8af0-27aa99bdb9emr7214606637.46.1758179552545;
+        Thu, 18 Sep 2025 00:12:32 -0700 (PDT)
+Received: from localhost.localdomain ([165.204.156.251])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff3743bcsm1435597a12.20.2025.09.18.00.12.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 00:12:32 -0700 (PDT)
+From: Rahul Kumar <rk0006818@gmail.com>
+To: Felix.Kuehling@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	rk0006818@gmail.com,
+	Felix Kuehling <felix.kuehling@amd.com>
+Subject: [PATCH v2] drm/amdgpu: Use kmalloc_array() instead of kmalloc()
+Date: Thu, 18 Sep 2025 12:42:00 +0530
+Message-ID: <20250918071201.350162-1-rk0006818@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 2738B336B0
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
 
-On Wed, 17 Sep 2025 20:58:36 +0200,
-Rafael J. Wysocki wrote:
-> 
-> Hi,
-> 
-> Sorry for the delay.
-> 
-> On Thu, Sep 11, 2025 at 9:31 AM Takashi Iwai <tiwai@suse.de> wrote:
-> >
-> > On Wed, 10 Sep 2025 16:00:17 +0200,
-> > Takashi Iwai wrote:
-> > >
-> > > Hi,
-> > >
-> > > while I worked on the code cleanups in the drivers with the recent
-> > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() can
-> > > be also managed with the auto-cleanup gracefully, too.  Actually we
-> > > already defined the __free(pm_runtime_put) in commit bfa4477751e9, and
-> > > there is a (single) user of it in pci-sysfs.c.
-> > >
-> > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
-> > >
-> > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
-> > >            if (_T) pm_runtime_put_autosuspend(_T))
-> > >
-> > > Then one can use it like
-> > >
-> > >       ret = pm_runtime_resume_and_get(dev);
-> > >       if (ret < 0)
-> > >               return ret;
-> > >       struct device *pmdev __free(pm_runtime_put_autosuspend) = dev;
-> > >
-> > > that is similar as done in pci-sysfs.c.  So far, so good.
-> > >
-> > > But, I find putting the line like above at each place a bit ugly.
-> > > So I'm wondering whether it'd be better to introduce some helper
-> > > macros, e.g.
-> > >
-> > > #define pm_runtime_auto_clean(dev, var) \
-> > >       struct device *var __free(pm_runtime_put) = (dev)
-> >
-> > It can be even simpler by assigning a temporary variable such as:
-> >
-> > #define pm_runtime_auto_clean(dev) \
-> >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime_put) = (dev)
-> 
-> Well, if there's something like
-> 
-> struct device *pm_runtime_resume_and_get_dev(struct device *dev)
-> {
->         int ret = pm_runtime_resume_and_get(dev);
->         if (ret < 0)
->                 return ERR_PTR(ret);
-> 
->         return dev;
-> }
-> 
-> It would be a matter of redefining the FREE to also take error
-> pointers into account and you could do
-> 
-> struct device *__dev __free(pm_runtim_put) = pm_runtime_resume_and_get_dev(dev);
-> if (IS_ERR(__dev))
->         return PTR_ERR(__dev);
+Documentation/process/deprecated.rst recommends against the use of
+kmalloc with dynamic size calculations due to the risk of overflow and
+smaller allocation being made than the caller was expecting.
 
-That'll work, too.  Though, I find the notion of __free() and a
-temporary variable __dev a bit too cumbersome; it's used only for
-auto-clean stuff, so it could be somewhat anonymous.
+Replace kmalloc() with kmalloc_array() in amdgpu_amdkfd_gfx_v10.c,
+amdgpu_amdkfd_gfx_v10_3.c, amdgpu_amdkfd_gfx_v11.c and
+amdgpu_amdkfd_gfx_v12.c to make the intended allocation size clearer
+and avoid potential overflow issues.
 
-But it's all about a matter of taste, and I'd follow what you and
-other guys suggest.
+Suggested-by: Felix Kuehling <felix.kuehling@amd.com>
+Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
+---
+Changes since v1:
+- Extend fix to amdgpu_amdkfd_gfx_v10_3.c, amdgpu_amdkfd_gfx_v11.c and
+  amdgpu_amdkfd_gfx_v12.c as suggested.
+- Added Suggested-by tag.
+Link to v1:
+https://lore.kernel.org/all/f782159b-ad3f-4d0c-8476-50a701bf29e6@amd.com/
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10.c   | 4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10_3.c | 4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v11.c   | 4 ++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v12.c   | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-FWIW, there are lots of code doing like
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10.c
+index 04ef0ca10541..0239114fb6c4 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10.c
+@@ -352,7 +352,7 @@ static int kgd_hqd_dump(struct amdgpu_device *adev,
+ 		(*dump)[i++][1] = RREG32_SOC15_IP(GC, addr);		\
+ 	} while (0)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+@@ -449,7 +449,7 @@ static int kgd_hqd_sdma_dump(struct amdgpu_device *adev,
+ #undef HQD_N_REGS
+ #define HQD_N_REGS (19+6+7+10)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10_3.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10_3.c
+index 6d08bc2781a3..f2278a0937ff 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10_3.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v10_3.c
+@@ -338,7 +338,7 @@ static int hqd_dump_v10_3(struct amdgpu_device *adev,
+ 		(*dump)[i++][1] = RREG32_SOC15_IP(GC, addr);		\
+ 	} while (0)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+@@ -435,7 +435,7 @@ static int hqd_sdma_dump_v10_3(struct amdgpu_device *adev,
+ #undef HQD_N_REGS
+ #define HQD_N_REGS (19+6+7+12)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v11.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v11.c
+index e0e6a6a49d90..aaccf0b9947d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v11.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v11.c
+@@ -323,7 +323,7 @@ static int hqd_dump_v11(struct amdgpu_device *adev,
+ 		(*dump)[i++][1] = RREG32(addr);		\
+ 	} while (0)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+@@ -420,7 +420,7 @@ static int hqd_sdma_dump_v11(struct amdgpu_device *adev,
+ #undef HQD_N_REGS
+ #define HQD_N_REGS (7+11+1+12+12)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v12.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v12.c
+index 6f0dc23c901b..e0ceab400b2d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v12.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v12.c
+@@ -115,7 +115,7 @@ static int hqd_dump_v12(struct amdgpu_device *adev,
+ 		(*dump)[i++][1] = RREG32(addr);		\
+ 	} while (0)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+@@ -146,7 +146,7 @@ static int hqd_sdma_dump_v12(struct amdgpu_device *adev,
+ #undef HQD_N_REGS
+ #define HQD_N_REGS (last_reg - first_reg + 1)
+ 
+-	*dump = kmalloc(HQD_N_REGS*2*sizeof(uint32_t), GFP_KERNEL);
++	*dump = kmalloc_array(HQD_N_REGS, sizeof(**dump), GFP_KERNEL);
+ 	if (*dump == NULL)
+ 		return -ENOMEM;
+ 
+-- 
+2.43.0
 
-	pm_runtime_get_sync(dev);
-	mutex_lock(&foo);
-	....
-	mutex_unlock(&foo);
-	pm_runtime_put(dev);
-	return;
-
-or
-
-	ret = pm_runtime_resume_and_get(dev);
-	if (ret)
-		return ret;
-	mutex_lock(&foo);
-	....
-	mutex_unlock(&foo);
-	pm_runtime_put_autosuspend(dev);
-	return 0;
-
-and they can be converted nicely with guard() once when PM runtime can
-be automatically unreferenced.  With my proposed change, it would
-become like:
-
-	pm_runtime_get_sync(dev);
-	pm_runtime_auto_clean(dev);
-	guard(mutex)(&foo);
-	....
-	return;
-
-or
-
-	ret = pm_runtime_resume_and_get(dev);
-	if (ret)
-		return ret;
-	pm_runtime_auto_clean_autosuspend(dev);
-	guard(mutex)(&foo);
-	....
-	return 0;
-
-
-thanks,
-
-Takashi
 
