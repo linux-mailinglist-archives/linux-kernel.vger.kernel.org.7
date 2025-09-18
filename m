@@ -1,619 +1,419 @@
-Return-Path: <linux-kernel+bounces-822738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E7CB848DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:21:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A6DB84902
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6E863BDE0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC7B4A846C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B047D27A929;
-	Thu, 18 Sep 2025 12:20:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B87A2F7AC4;
+	Thu, 18 Sep 2025 12:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gRLIcHko"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893482206AC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737202F90D8
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758198001; cv=none; b=eWbEXI6JqOUEUtk2s8TMuI77Yw1aknskwcSh6QqP6C0tuWYloVtffth4XcKr/gvK23zwen+a86DahpE7Wu7rkXpcI3EKtaMyeN5AE4+gQbcJCoOWwO1ljn/uwnty6wLsJIsOFZjt4ido6bT9SR+Jd3GHMeu9SLqLlNzEASDCJMA=
+	t=1758198210; cv=none; b=b33mVTERF4lQOmtCCr7DUjirwbPNXH+syyOz+xvCtWcRZSe80h7zt2wGpZ2BWqmaFD1FMlUgPu5nPmBHUCK8o3HnWmGtfcXA/rWwhwyFvMPm9ld67ZMnobJGUjAyhvQSKrScey3X4Vbdsk7mnirLZ3n2mGdIHsuIHUF6bQTn9Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758198001; c=relaxed/simple;
-	bh=kyNMoQ/EnwvMC9d8Qt93p2u59Ov5jx8DHLAs2kk92as=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RhRQmGsFISigPMw88hUplgtENxF9faWshzeto9ONR1ZI5gBDg5cwQyv+y1xHYSrP2VsWdJMNu1HS2CqafLS1eifUs+B+VmIKdsmpNay21pXqk68qpMZ0SIFbOvoVD8j9hPnyrjtKMJXhu134zaIFGm9XkH5tVPuwwy2bnaxwcgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <jre@pengutronix.de>)
-	id 1uzDc7-0006mw-HD; Thu, 18 Sep 2025 14:19:51 +0200
-From: Jonas Rebmann <jre@pengutronix.de>
-Date: Thu, 18 Sep 2025 14:19:46 +0200
-Subject: [PATCH v2 3/3] arm64: dts: add Protonic PRT8ML board
+	s=arc-20240116; t=1758198210; c=relaxed/simple;
+	bh=aqi6B7ioBm41FAk4Q6fI3UWaKs+FmYaH6o18uB3O2Ks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pezW2HayFtB51PIUsJOEU1DU0Fo4BE/zCuzMGqg8xJMfe7mf+L6k2K5G9G5boG3eRggp0qB4nNAVSdDLURJy9zdTnSazwTcb+66qaXIV+jWFkboOEw3uTvou0K0YLSI6FDxLnohJHKr+sntuQd+qfy+V/qa6h2Otzleay/OliCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gRLIcHko; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Forwarded-Encrypted: i=1; AJvYcCW6EUf3/KXCLS3mcuxuKmD892KTnzzA7DO3XomxKPNABRh0i0RH+Qo5lyVUj636DY0f7MuRcB2YKHXESAk=@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758198205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J8oe9XvHDnm2FWMpAdWBJmc/z4EhsPkQed7m2jR4/gU=;
+	b=gRLIcHkoK0i7PM/hW83L25dukx6NJ3MWezhPKxE9/tQO+E5hw2nH0UD8eIY6UBSDE7bgQR
+	lqpEozTntS225MSWnhmob2++JskvQ4fMHj7OcFomWFX/W791d1etoRl+XVLlIjI1srsOKM
+	K+5dDUgFj5xdXF2QPEyiQQT5YIXRqa0=
+X-Gm-Message-State: AOJu0YxRY6TLU+5LD0BAZNLt2mz6XYPCBXxyHgc5TnsKhYFM2wpK7GrC
+	/Ln09MzpC0ZixwwKaXMvQjJm1ac2vIH0g4TE8cYFkZbb6mpSm5OCDRtXBjUlfKx+HyDcUXKHttf
+	h/zAknuHb2VMFHxBAX9sHHF0H0VwMR1s=
+X-Google-Smtp-Source: AGHT+IGz03gXmFndFmZXYJ3YHSREnajcpjVVXEW6eIe1D1uvauHGkpGBSqDskaN/nzj9+/P0PUMV5wngYh67XvI4jAA=
+X-Received: by 2002:a05:6214:2aaf:b0:70d:6df4:1b21 with SMTP id
+ 6a1803df08f44-78ecf8e940amr56368016d6.62.1758198195042; Thu, 18 Sep 2025
+ 05:23:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-imx8mp-prt8ml-v2-3-3d84b4fe53de@pengutronix.de>
-References: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
-In-Reply-To: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, Jonas Rebmann <jre@pengutronix.de>, 
- David Jander <david@protonic.nl>, Lucas Stach <l.stach@pengutronix.de>, 
- Oleksij Rempel <o.rempel@pengutronix.de>
-X-Mailer: b4 0.15-dev-7abec
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13608; i=jre@pengutronix.de;
- h=from:subject:message-id; bh=kyNMoQ/EnwvMC9d8Qt93p2u59Ov5jx8DHLAs2kk92as=;
- b=owGbwMvMwCV2ZcYT3onnbjcwnlZLYsg4/eOp9zzTXc+soy+o+75RDZ5/PMlhnWz2vLPPc4+89
- 9/MmvL8XUcpC4MYF4OsmCJLrJqcgpCx/3WzSrtYmDmsTCBDGLg4BWAifPsZ/gefbp555gDPuh7W
- zl9936fZ3Ip5szP1yOMlK1Yf4phleXILwz+Ddy1/pQ/dudtg+Pdqa4DrvgOeYpymNRyztsw9Y3U
- xxo0RAA==
-X-Developer-Key: i=jre@pengutronix.de; a=openpgp;
- fpr=0B7B750D5D3CD21B3B130DE8B61515E135CD49B5
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::ac
-X-SA-Exim-Mail-From: jre@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240830100438.3623486-1-usamaarif642@gmail.com>
+ <20240830100438.3623486-3-usamaarif642@gmail.com> <a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com>
+ <434c092b-0f19-47bf-a5fa-ea5b4b36c35e@redhat.com>
+In-Reply-To: <434c092b-0f19-47bf-a5fa-ea5b4b36c35e@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+Date: Thu, 18 Sep 2025 20:22:38 +0800
+X-Gmail-Original-Message-ID: <CABzRoyYWQMFTGYgfC7N=cWMnL_+5Y05=jrMhFjBf1aKOGxzq5g@mail.gmail.com>
+X-Gm-Features: AS18NWDbqrRo3FfsRakNQRuvHE-tDLRQdNj86jb0FFw9fBQ6yZ3X6shjFvDKfSg
+Message-ID: <CABzRoyYWQMFTGYgfC7N=cWMnL_+5Y05=jrMhFjBf1aKOGxzq5g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] mm: remap unused subpages to shared zeropage when
+ splitting isolated thp
+To: David Hildenbrand <david@redhat.com>
+Cc: =?UTF-8?B?UXVuLXdlaSBMaW4gKOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "usamaarif642@gmail.com" <usamaarif642@gmail.com>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "yuzhao@google.com" <yuzhao@google.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "corbet@lwn.net" <corbet@lwn.net>, 
+	=?UTF-8?B?QW5kcmV3IFlhbmcgKOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>, 
+	"npache@redhat.com" <npache@redhat.com>, "rppt@kernel.org" <rppt@kernel.org>, 
+	"willy@infradead.org" <willy@infradead.org>, "kernel-team@meta.com" <kernel-team@meta.com>, 
+	"roman.gushchin@linux.dev" <roman.gushchin@linux.dev>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>, 
+	"cerasuolodomenico@gmail.com" <cerasuolodomenico@gmail.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ryncsn@gmail.com" <ryncsn@gmail.com>, 
+	"surenb@google.com" <surenb@google.com>, "riel@surriel.com" <riel@surriel.com>, 
+	"shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
+	=?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= <chinwen.chang@mediatek.com>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	=?UTF-8?B?Q2FzcGVyIExpICjmnY7kuK3mpq4p?= <casper.li@mediatek.com>, 
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"baohua@kernel.org" <baohua@kernel.org>, "kaleshsingh@google.com" <kaleshsingh@google.com>, 
+	"zhais@google.com" <zhais@google.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-Add devicetree for the Protonic PRT8ML.
+On Thu, Sep 18, 2025 at 5:21=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 18.09.25 10:53, Qun-wei Lin (=E6=9E=97=E7=BE=A4=E5=B4=B4) wrote:
+> > On Fri, 2024-08-30 at 11:03 +0100, Usama Arif wrote:
+> >> From: Yu Zhao <yuzhao@google.com>
+> >>
+> >> Here being unused means containing only zeros and inaccessible to
+> >> userspace. When splitting an isolated thp under reclaim or migration,
+> >> the unused subpages can be mapped to the shared zeropage, hence
+> >> saving
+> >> memory. This is particularly helpful when the internal
+> >> fragmentation of a thp is high, i.e. it has many untouched subpages.
+> >>
+> >> This is also a prerequisite for THP low utilization shrinker which
+> >> will
+> >> be introduced in later patches, where underutilized THPs are split,
+> >> and
+> >> the zero-filled pages are freed saving memory.
+> >>
+> >> Signed-off-by: Yu Zhao <yuzhao@google.com>
+> >> Tested-by: Shuang Zhai <zhais@google.com>
+> >> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> >> ---
+> >>   include/linux/rmap.h |  7 ++++-
+> >>   mm/huge_memory.c     |  8 ++---
+> >>   mm/migrate.c         | 72 ++++++++++++++++++++++++++++++++++++++----
+> >> --
+> >>   mm/migrate_device.c  |  4 +--
+> >>   4 files changed, 75 insertions(+), 16 deletions(-)
+> >>
+> >> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> >> index 91b5935e8485..d5e93e44322e 100644
+> >> --- a/include/linux/rmap.h
+> >> +++ b/include/linux/rmap.h
+> >> @@ -745,7 +745,12 @@ int folio_mkclean(struct folio *);
+> >>   int pfn_mkclean_range(unsigned long pfn, unsigned long nr_pages,
+> >> pgoff_t pgoff,
+> >>                    struct vm_area_struct *vma);
+> >>
+> >> -void remove_migration_ptes(struct folio *src, struct folio *dst,
+> >> bool locked);
+> >> +enum rmp_flags {
+> >> +    RMP_LOCKED              =3D 1 << 0,
+> >> +    RMP_USE_SHARED_ZEROPAGE =3D 1 << 1,
+> >> +};
+> >> +
+> >> +void remove_migration_ptes(struct folio *src, struct folio *dst, int
+> >> flags);
+> >>
+> >>   /*
+> >>    * rmap_walk_control: To control rmap traversing for specific needs
+> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >> index 0c48806ccb9a..af60684e7c70 100644
+> >> --- a/mm/huge_memory.c
+> >> +++ b/mm/huge_memory.c
+> >> @@ -3020,7 +3020,7 @@ bool unmap_huge_pmd_locked(struct
+> >> vm_area_struct *vma, unsigned long addr,
+> >>      return false;
+> >>   }
+> >>
+> >> -static void remap_page(struct folio *folio, unsigned long nr)
+> >> +static void remap_page(struct folio *folio, unsigned long nr, int
+> >> flags)
+> >>   {
+> >>      int i =3D 0;
+> >>
+> >> @@ -3028,7 +3028,7 @@ static void remap_page(struct folio *folio,
+> >> unsigned long nr)
+> >>      if (!folio_test_anon(folio))
+> >>              return;
+> >>      for (;;) {
+> >> -            remove_migration_ptes(folio, folio, true);
+> >> +            remove_migration_ptes(folio, folio, RMP_LOCKED |
+> >> flags);
+> >>              i +=3D folio_nr_pages(folio);
+> >>              if (i >=3D nr)
+> >>                      break;
+> >> @@ -3240,7 +3240,7 @@ static void __split_huge_page(struct page
+> >> *page, struct list_head *list,
+> >>
+> >>      if (nr_dropped)
+> >>              shmem_uncharge(folio->mapping->host, nr_dropped);
+> >> -    remap_page(folio, nr);
+> >> +    remap_page(folio, nr, PageAnon(head) ?
+> >> RMP_USE_SHARED_ZEROPAGE : 0);
+> >>
+> >>      /*
+> >>       * set page to its compound_head when split to non order-0
+> >> pages, so
+> >> @@ -3542,7 +3542,7 @@ int split_huge_page_to_list_to_order(struct
+> >> page *page, struct list_head *list,
+> >>              if (mapping)
+> >>                      xas_unlock(&xas);
+> >>              local_irq_enable();
+> >> -            remap_page(folio, folio_nr_pages(folio));
+> >> +            remap_page(folio, folio_nr_pages(folio), 0);
+> >>              ret =3D -EAGAIN;
+> >>      }
+> >>
+> >> diff --git a/mm/migrate.c b/mm/migrate.c
+> >> index 6f9c62c746be..d039863e014b 100644
+> >> --- a/mm/migrate.c
+> >> +++ b/mm/migrate.c
+> >> @@ -204,13 +204,57 @@ bool isolate_folio_to_list(struct folio *folio,
+> >> struct list_head *list)
+> >>      return true;
+> >>   }
+> >>
+> >> +static bool try_to_map_unused_to_zeropage(struct
+> >> page_vma_mapped_walk *pvmw,
+> >> +                                      struct folio *folio,
+> >> +                                      unsigned long idx)
+> >> +{
+> >> +    struct page *page =3D folio_page(folio, idx);
+> >> +    bool contains_data;
+> >> +    pte_t newpte;
+> >> +    void *addr;
+> >> +
+> >> +    VM_BUG_ON_PAGE(PageCompound(page), page);
+> >> +    VM_BUG_ON_PAGE(!PageAnon(page), page);
+> >> +    VM_BUG_ON_PAGE(!PageLocked(page), page);
+> >> +    VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
+> >> +
+> >> +    if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags &
+> >> VM_LOCKED) ||
+> >> +        mm_forbids_zeropage(pvmw->vma->vm_mm))
+> >> +            return false;
+> >> +
+> >> +    /*
+> >> +     * The pmd entry mapping the old thp was flushed and the pte
+> >> mapping
+> >> +     * this subpage has been non present. If the subpage is only
+> >> zero-filled
+> >> +     * then map it to the shared zeropage.
+> >> +     */
+> >> +    addr =3D kmap_local_page(page);
+> >> +    contains_data =3D memchr_inv(addr, 0, PAGE_SIZE);
+> >> +    kunmap_local(addr);
+> >> +
+> >> +    if (contains_data)
+> >> +            return false;
+> >> +
+> >> +    newpte =3D pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
+> >> +                                    pvmw->vma->vm_page_prot));
+> >> +    set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte,
+> >> newpte);
+> >> +
+> >> +    dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
+> >> +    return true;
+> >> +}
+> >> +
+> >> +struct rmap_walk_arg {
+> >> +    struct folio *folio;
+> >> +    bool map_unused_to_zeropage;
+> >> +};
+> >> +
+> >>   /*
+> >>    * Restore a potential migration pte to a working pte entry
+> >>    */
+> >>   static bool remove_migration_pte(struct folio *folio,
+> >> -            struct vm_area_struct *vma, unsigned long addr, void
+> >> *old)
+> >> +            struct vm_area_struct *vma, unsigned long addr, void
+> >> *arg)
+> >>   {
+> >> -    DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr, PVMW_SYNC |
+> >> PVMW_MIGRATION);
+> >> +    struct rmap_walk_arg *rmap_walk_arg =3D arg;
+> >> +    DEFINE_FOLIO_VMA_WALK(pvmw, rmap_walk_arg->folio, vma, addr,
+> >> PVMW_SYNC | PVMW_MIGRATION);
+> >>
+> >>      while (page_vma_mapped_walk(&pvmw)) {
+> >>              rmap_t rmap_flags =3D RMAP_NONE;
+> >> @@ -234,6 +278,9 @@ static bool remove_migration_pte(struct folio
+> >> *folio,
+> >>                      continue;
+> >>              }
+> >>   #endif
+> >> +            if (rmap_walk_arg->map_unused_to_zeropage &&
+> >> +                try_to_map_unused_to_zeropage(&pvmw, folio,
+> >> idx))
+> >> +                    continue;
+> >>
+> >>              folio_get(folio);
+> >>              pte =3D mk_pte(new, READ_ONCE(vma->vm_page_prot));
+> >> @@ -312,14 +359,21 @@ static bool remove_migration_pte(struct folio
+> >> *folio,
+> >>    * Get rid of all migration entries and replace them by
+> >>    * references to the indicated page.
+> >>    */
+> >> -void remove_migration_ptes(struct folio *src, struct folio *dst,
+> >> bool locked)
+> >> +void remove_migration_ptes(struct folio *src, struct folio *dst, int
+> >> flags)
+> >>   {
+> >> +    struct rmap_walk_arg rmap_walk_arg =3D {
+> >> +            .folio =3D src,
+> >> +            .map_unused_to_zeropage =3D flags &
+> >> RMP_USE_SHARED_ZEROPAGE,
+> >> +    };
+> >> +
+> >>      struct rmap_walk_control rwc =3D {
+> >>              .rmap_one =3D remove_migration_pte,
+> >> -            .arg =3D src,
+> >> +            .arg =3D &rmap_walk_arg,
+> >>      };
+> >>
+> >> -    if (locked)
+> >> +    VM_BUG_ON_FOLIO((flags & RMP_USE_SHARED_ZEROPAGE) && (src !=3D
+> >> dst), src);
+> >> +
+> >> +    if (flags & RMP_LOCKED)
+> >>              rmap_walk_locked(dst, &rwc);
+> >>      else
+> >>              rmap_walk(dst, &rwc);
+> >> @@ -934,7 +988,7 @@ static int writeout(struct address_space
+> >> *mapping, struct folio *folio)
+> >>       * At this point we know that the migration attempt cannot
+> >>       * be successful.
+> >>       */
+> >> -    remove_migration_ptes(folio, folio, false);
+> >> +    remove_migration_ptes(folio, folio, 0);
+> >>
+> >>      rc =3D mapping->a_ops->writepage(&folio->page, &wbc);
+> >>
+> >> @@ -1098,7 +1152,7 @@ static void migrate_folio_undo_src(struct folio
+> >> *src,
+> >>                                 struct list_head *ret)
+> >>   {
+> >>      if (page_was_mapped)
+> >> -            remove_migration_ptes(src, src, false);
+> >> +            remove_migration_ptes(src, src, 0);
+> >>      /* Drop an anon_vma reference if we took one */
+> >>      if (anon_vma)
+> >>              put_anon_vma(anon_vma);
+> >> @@ -1336,7 +1390,7 @@ static int migrate_folio_move(free_folio_t
+> >> put_new_folio, unsigned long private,
+> >>              lru_add_drain();
+> >>
+> >>      if (old_page_state & PAGE_WAS_MAPPED)
+> >> -            remove_migration_ptes(src, dst, false);
+> >> +            remove_migration_ptes(src, dst, 0);
+> >>
+> >>   out_unlock_both:
+> >>      folio_unlock(dst);
+> >> @@ -1474,7 +1528,7 @@ static int unmap_and_move_huge_page(new_folio_t
+> >> get_new_folio,
+> >>
+> >>      if (page_was_mapped)
+> >>              remove_migration_ptes(src,
+> >> -                    rc =3D=3D MIGRATEPAGE_SUCCESS ? dst : src,
+> >> false);
+> >> +                    rc =3D=3D MIGRATEPAGE_SUCCESS ? dst : src, 0);
+> >>
+> >>   unlock_put_anon:
+> >>      folio_unlock(dst);
+> >> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+> >> index 8d687de88a03..9cf26592ac93 100644
+> >> --- a/mm/migrate_device.c
+> >> +++ b/mm/migrate_device.c
+> >> @@ -424,7 +424,7 @@ static unsigned long
+> >> migrate_device_unmap(unsigned long *src_pfns,
+> >>                      continue;
+> >>
+> >>              folio =3D page_folio(page);
+> >> -            remove_migration_ptes(folio, folio, false);
+> >> +            remove_migration_ptes(folio, folio, 0);
+> >>
+> >>              src_pfns[i] =3D 0;
+> >>              folio_unlock(folio);
+> >> @@ -840,7 +840,7 @@ void migrate_device_finalize(unsigned long
+> >> *src_pfns,
+> >>                      dst =3D src;
+> >>              }
+> >>
+> >> -            remove_migration_ptes(src, dst, false);
+> >> +            remove_migration_ptes(src, dst, 0);
+> >>              folio_unlock(src);
+> >>
+> >>              if (folio_is_zone_device(src))
+> >
+> > Hi,
+> >
+> > This patch has been in the mainline for some time, but we recently
+> > discovered an issue when both mTHP and MTE (Memory Tagging Extension)
+> > are enabled.
+> >
+> > It seems that remapping to the same zeropage might causes MTE tag
+> > mismatches, since MTE tags are associated with physical addresses.
+>
+> Does this only trigger when the VMA has mte enabled? Maybe we'll have to
+> bail out if we detect that mte is enabled.
 
-The board is similar to the Protonic PRT8MM but i.MX8MP based.
+It seems RISC-V also has a similar feature (RISCV_ISA_SUPM) that uses
+the same prctl(PR_{GET,SET}_TAGGED_ADDR_CTRL) API.
 
-Some features have been removed as the drivers haven't been mainlined
-yet or other issues where encountered:
- - Stepper motors to be controlled using motion control subsystem
- - MIPI/DSI to eDP USB alt-mode
- - Onboard T1 ethernet (10BASE-T1L+PoDL, 100BASE-T1+PoDL, 1000BASE-T1)
+config RISCV_ISA_SUPM
+        bool "Supm extension for userspace pointer masking"
+        depends on 64BIT
+        default y
+        help
+          Add support for pointer masking in userspace (Supm) when the
+          underlying hardware extension (Smnpm or Ssnpm) is detected at boo=
+t.
 
-Signed-off-by: David Jander <david@protonic.nl>
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
----
- arch/arm64/boot/dts/freescale/Makefile          |   1 +
- arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts | 500 ++++++++++++++++++++++++
- 2 files changed, 501 insertions(+)
+          If this option is disabled, userspace will be unable to use
+          the prctl(PR_{SET,GET}_TAGGED_ADDR_CTRL) API.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 525ef180481d..0c9abfa8d23d 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -228,6 +228,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mp-nitrogen-smarc-universal-board.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk.dtb
- imx8mp-phyboard-pollux-rdk-no-eth-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-eth.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-eth.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-prt8ml.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-basic.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-hdmi.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-revb-lt6.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts b/arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts
-new file mode 100644
-index 000000000000..5d3b5d114804
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-prt8ml.dts
-@@ -0,0 +1,500 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2020 Protonic Holland
-+ * Copyright 2019 NXP
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8mp.dtsi"
-+
-+/ {
-+	model = "Protonic PRT8ML";
-+	compatible = "prt,prt8ml", "fsl,imx8mp";
-+
-+	chosen {
-+		stdout-path = &uart4;
-+	};
-+
-+	pcie_refclk: pcie0-refclk {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <100000000>;
-+	};
-+
-+	pcie_refclk_oe: pcie0-refclk-oe {
-+		compatible = "gpio-gate-clock";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pcie_refclk>;
-+		clocks = <&pcie_refclk>;
-+		#clock-cells = <0>;
-+		enable-gpios = <&gpio5 23 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&A53_0 {
-+	cpu-supply = <&fan53555>;
-+};
-+
-+&A53_1 {
-+	cpu-supply = <&fan53555>;
-+};
-+
-+&A53_2 {
-+	cpu-supply = <&fan53555>;
-+};
-+
-+&A53_3 {
-+	cpu-supply = <&fan53555>;
-+};
-+
-+&a53_opp_table {
-+	opp-1200000000 {
-+		opp-microvolt = <900000>;
-+	};
-+
-+	opp-1600000000 {
-+		opp-microvolt = <980000>;
-+	};
-+
-+	/delete-node/ opp-1800000000;
-+};
-+
-+&ecspi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi2>;
-+	cs-gpios = <&gpio5 13 GPIO_ACTIVE_HIGH>;
-+	/delete-property/ dmas;
-+	/delete-property/ dma-names;
-+	status = "okay";
-+
-+	switch@0 {
-+		compatible = "nxp,sja1105q";
-+		reg = <0>;
-+		reset-gpios = <&gpio_exp_1 4 GPIO_ACTIVE_LOW>;
-+		spi-cpha;
-+		spi-max-frequency = <4000000>;
-+		spi-rx-delay-us = <1>;
-+		spi-tx-delay-us = <1>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@3 {
-+				reg = <3>;
-+				label = "rj45";
-+				phy-handle = <&rj45_phy>;
-+				phy-mode = "rgmii-id";
-+			};
-+
-+			port@4 {
-+				reg = <4>;
-+				ethernet = <&fec>;
-+				label = "cpu";
-+				phy-mode = "rgmii-id";
-+				rx-internal-delay-ps = <2000>;
-+				tx-internal-delay-ps = <2000>;
-+
-+				fixed-link {
-+					full-duplex;
-+					speed = <100>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&fec {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_fec>;
-+	phy-mode = "rgmii"; /* switch inserts delay */
-+	rx-internal-delay-ps = <0>;
-+	tx-internal-delay-ps = <0>;
-+	status = "okay";
-+
-+	fixed-link {
-+		full-duplex;
-+		speed = <100>;
-+	};
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		rj45_phy: ethernet-phy@2 {
-+			reg = <2>;
-+			reset-gpios = <&gpio_exp_1 1 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <10000>;
-+			reset-deassert-us = <80000>;
-+		};
-+	};
-+};
-+
-+&flexcan1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	status = "okay";
-+};
-+
-+&flexcan2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan2>;
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	status = "okay";
-+
-+	ak5558: codec@10 {
-+		compatible = "asahi-kasei,ak5558";
-+		reg = <0x10>;
-+		reset-gpios = <&gpio_exp_1 2 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	gpio_exp_1: gpio@25 {
-+		compatible = "nxp,pca9571";
-+		reg = <0x25>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
-+&i2c2 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+
-+	tps65987ddh_0: usb-pd@20 {
-+		compatible = "ti,tps6598x";
-+		reg = <0x20>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_tps65987ddh_0>;
-+		interrupts-extended = <&gpio1 12 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	gpio_exp_2: gpio@25 {
-+		compatible = "nxp,pca9571";
-+		reg = <0x25>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		c0-hreset-hog {
-+			gpio-hog;
-+			gpios = <7 GPIO_ACTIVE_LOW>;
-+			line-name = "c0-hreset";
-+			output-low;
-+		};
-+
-+		c1-hreset-hog {
-+			gpio-hog;
-+			gpios = <6 GPIO_ACTIVE_LOW>;
-+			line-name = "c1-hreset";
-+			output-low;
-+		};
-+	};
-+
-+	fan53555: regulator@60 {
-+		compatible = "fcs,fan53555";
-+		reg = <0x60>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_fan53555>;
-+		regulator-name = "fan53555";
-+		regulator-min-microvolt = <900000>;
-+		regulator-max-microvolt = <980000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		fcs,suspend-voltage-selector = <1>;
-+	};
-+};
-+
-+&i2c3 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	status = "okay";
-+
-+	ak4458: codec@11 {
-+		compatible = "asahi-kasei,ak4458";
-+		reg = <0x11>;
-+		#sound-dai-cells = <0>;
-+		reset-gpios = <&gpio_exp_2 5 GPIO_ACTIVE_LOW>;
-+	};
-+
-+	tps65987ddh_1: usb-pd@20 {
-+		compatible = "ti,tps6598x";
-+		reg = <0x20>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_tps65987ddh_1>;
-+		interrupts-extended = <&gpio1 15 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+&lcdif1 {
-+	status = "okay";
-+};
-+
-+&snvs_pwrkey {
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart4>;
-+	status = "okay";
-+};
-+
-+&usb3_0 {
-+	status = "okay";
-+};
-+
-+&usb3_1 {
-+	status = "okay";
-+};
-+
-+&usb3_phy0 {
-+	status = "okay";
-+};
-+
-+&usb3_phy1 {
-+	status = "okay";
-+};
-+
-+&usb_dwc3_0 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb_dwc3_1 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
-+	assigned-clocks = <&clk IMX8MP_CLK_USDHC2>;
-+	assigned-clock-rates = <100000000>;
-+	bus-width = <4>;
-+	cd-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
-+	no-1-8-v;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	status = "okay";
-+};
-+
-+&usdhc3 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc3>;
-+	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
-+	assigned-clocks = <&clk IMX8MP_CLK_USDHC3_ROOT>;
-+	assigned-clock-rates = <400000000>;
-+	bus-width = <8>;
-+	non-removable;
-+	no-sdio;
-+	no-sd;
-+	status = "okay";
-+};
-+
-+&wdog1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_ecspi2: ecspi2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_ECSPI2_SCLK__ECSPI2_SCLK		0x154
-+			MX8MP_IOMUXC_ECSPI2_MOSI__ECSPI2_MOSI		0x154
-+			MX8MP_IOMUXC_ECSPI2_MISO__ECSPI2_MISO		0x154
-+			MX8MP_IOMUXC_ECSPI2_SS0__GPIO5_IO13		0x154
-+		>;
-+	};
-+
-+	pinctrl_fan53555: fan53555grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SPDIF_EXT_CLK__GPIO5_IO05		0x114
-+		>;
-+	};
-+
-+	pinctrl_fec: fecgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI1_RXD2__ENET1_MDC		0x3
-+			MX8MP_IOMUXC_SAI1_RXD3__ENET1_MDIO		0x3
-+			MX8MP_IOMUXC_SAI1_RXD4__ENET1_RGMII_RD0		0x91
-+			MX8MP_IOMUXC_SAI1_RXD5__ENET1_RGMII_RD1		0x91
-+			MX8MP_IOMUXC_SAI1_RXD6__ENET1_RGMII_RD2		0x91
-+			MX8MP_IOMUXC_SAI1_RXD7__ENET1_RGMII_RD3		0x91
-+			MX8MP_IOMUXC_SAI1_TXC__ENET1_RGMII_RXC		0x91
-+			MX8MP_IOMUXC_SAI1_TXFS__ENET1_RGMII_RX_CTL	0x91
-+			MX8MP_IOMUXC_SAI1_TXD0__ENET1_RGMII_TD0		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD1__ENET1_RGMII_TD1		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD2__ENET1_RGMII_TD2		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD3__ENET1_RGMII_TD3		0x1f
-+			MX8MP_IOMUXC_SAI1_TXD4__ENET1_RGMII_TX_CTL	0x1f
-+			MX8MP_IOMUXC_SAI1_TXD5__ENET1_RGMII_TXC		0x1f
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SPDIF_RX__CAN1_RX		0x154
-+			MX8MP_IOMUXC_SPDIF_TX__CAN1_TX		0x154
-+		>;
-+	};
-+
-+	pinctrl_flexcan2: flexcan2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART3_TXD__CAN2_RX		0x154
-+			MX8MP_IOMUXC_UART3_RXD__CAN2_TX		0x154
-+		>;
-+	};
-+
-+	pinctrl_i2c1: i2c1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_ECSPI1_SCLK__I2C1_SCL	0x400000c3
-+			MX8MP_IOMUXC_ECSPI1_MOSI__I2C1_SDA	0x400000c3
-+		>;
-+	};
-+
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C2_SCL__I2C2_SCL		0x400000c3
-+			MX8MP_IOMUXC_I2C2_SDA__I2C2_SDA		0x400000c3
-+		>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_I2C3_SCL__I2C3_SCL		0x400000c3
-+			MX8MP_IOMUXC_I2C3_SDA__I2C3_SDA		0x400000c3
-+		>;
-+	};
-+
-+	pinctrl_pcie_refclk: pcierefclkgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART1_TXD__GPIO5_IO23	0xc6
-+		>;
-+	};
-+
-+	pinctrl_tps65987ddh_0: tps65987ddh_0grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO12__GPIO1_IO12	0x1d0
-+		>;
-+	};
-+
-+	pinctrl_tps65987ddh_1: tps65987ddh_1grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO15__GPIO1_IO15	0x1d0
-+		>;
-+	};
-+
-+	pinctrl_uart4: uart4grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_UART4_RXD__UART4_DCE_RX		0x040
-+			MX8MP_IOMUXC_UART4_TXD__UART4_DCE_TX		0x040
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x190
-+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d0
-+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d0
-+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d0
-+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d0
-+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d0
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x194
-+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d4
-+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d4
-+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d4
-+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d4
-+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d4
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CLK__USDHC2_CLK		0x196
-+			MX8MP_IOMUXC_SD2_CMD__USDHC2_CMD		0x1d6
-+			MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0		0x1d6
-+			MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1		0x1d6
-+			MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2		0x1d6
-+			MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3		0x1d6
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_gpio: usdhc2-gpiogrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SD2_CD_B__GPIO2_IO12		0x0d4
-+		>;
-+	};
-+
-+	pinctrl_usdhc3: usdhc3grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x190
-+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d0
-+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d0
-+			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4		0x1d0
-+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d0
-+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d0
-+			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7		0x1d0
-+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE		0x190
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_100mhz: usdhc3-100mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x194
-+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d4
-+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d4
-+			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4		0x1d4
-+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d4
-+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d4
-+			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7		0x1d4
-+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE		0x194
-+		>;
-+	};
-+
-+	pinctrl_usdhc3_200mhz: usdhc3-200mhzgrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x196
-+			MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA04__USDHC3_DATA0		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA05__USDHC3_DATA1		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA06__USDHC3_DATA2		0x1d6
-+			MX8MP_IOMUXC_NAND_DATA07__USDHC3_DATA3		0x1d6
-+			MX8MP_IOMUXC_NAND_RE_B__USDHC3_DATA4		0x1d6
-+			MX8MP_IOMUXC_NAND_CE2_B__USDHC3_DATA5		0x1d6
-+			MX8MP_IOMUXC_NAND_CE3_B__USDHC3_DATA6		0x1d6
-+			MX8MP_IOMUXC_NAND_CLE__USDHC3_DATA7		0x1d6
-+			MX8MP_IOMUXC_NAND_CE1_B__USDHC3_STROBE		0x196
-+		>;
-+	};
-+
-+	pinctrl_wdog: wdoggrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B		0x166
-+		>;
-+	};
-+};
+I wonder if we should disable the THP shrinker for such architectures that
+define PR_SET_TAGGED_ADDR_CTRL (or PR_GET_TAGGED_ADDR_CTRL).
 
--- 
-2.51.0.178.g2462961280
+Cheers,
+Lance
 
+>
+> Also, I wonder how KSM and the shared zeropage works in general with
+> that, because I would expect similar issues when we de-duplicate memory?
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
+>
 
