@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-822141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1FFB83275
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AB45B8327D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489FB1C800BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:35:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5011C80089
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868842D8DC3;
-	Thu, 18 Sep 2025 06:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186D41E51E0;
+	Thu, 18 Sep 2025 06:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AdRlBb9B"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWPm2voH"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A4A2D77ED
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AEF2D8DA3
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758177297; cv=none; b=S2fHQ4OuAum2gu0EQU8HLjr+z4tyzLeF747ROplp0/eBiozoMcAHJtMR3xnzIjKgxelgmZIc3PzO15DBaG2vsFnjZ9Xzn/I5VPk5RjWdP2f1awh+/0zOGELU+vidNgq9iBN4VqeouMw0IshXdnQPZBuaCVVnB2uG13WWtMCuOhY=
+	t=1758177371; cv=none; b=uKOiEwsIpztFxly1bRwoihnWrwsx3UFl6Ctl1bp2xrOkj0rmiiAm1/ZNeHG2u7YqyYS9nzFETn+VtuD1cxXBYzGsSXid4oDfC0yZKNSOt8RmaWd0fPKF/i3xy1UbiSa22yi9FiTdvSKv0hPULZtEv9uX/qx2uUo4CfkX1rHY8ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758177297; c=relaxed/simple;
-	bh=+0vSdZmOwq8F/9R/kI0phGtqmphJwJ5lflmVHUCDqVc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rFP81c0eMaN072in9/dOn8fOHGl21aycLz5u0gekZq1bvdbAjLrU1vu8xauerzZi44MFis/WlX2urZvshKT1qvFdi2x68Loom+IDy/K0BY399mVlMxqpYdZk1c3My+eX0OxPePattL+i5Xv9aB1Fr3J+beH7i1ReIdlrjrddZVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AdRlBb9B; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I2sNoB027149
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:34:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LJ+vHFzBs1wUhjHtKO42xRexrj+VJ9lROsx9KC1ozbQ=; b=AdRlBb9BSGouk+ms
-	L2026v4vGXrH1CFsu+CRBdl0yTJfQLwpXnopG/j1TbCnmNx9FoZawSH+J6cE4WZk
-	jjoZYjkYCRVWdzAmikYXDrpYNUrIRjsNWz78Cet2XOCpoEQ6xkMD6uF6760MhiGe
-	eAtxIUwGNmg7z2BGflHcY0bHfDVntUpHJcK3gjkDbciuta1hqoK1wRIJSSjXJp1+
-	anZewHoIa2YXlOk4oqPyo0vcrwm8dWGDcrTjJuOdVbXxbY/Y9X5aitKXqr+OQQW6
-	gOSrS3VQFmPazpgzHAhP/JIYcBIXAIwsB07Qd1LKLac8xKq5ihOaDXfEkGsJWu4D
-	BuEr9w==
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxt58b5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:34:55 +0000 (GMT)
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-ea423f034cfso802317276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:34:55 -0700 (PDT)
+	s=arc-20240116; t=1758177371; c=relaxed/simple;
+	bh=6V9uNq83XXSYotxaF5gDZpQuTwairQF/oZADfO3/sw4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sCmaLS9IJBbY9r5C8ZMUSE/BKLDROk1ri2gk/4/pZAxGYTrb0jWqTgbSeoKffSukPpySUx8AuvHpmEcDlgyIwl9UY6LPBjR5k27Fei8tBaYH/E0N0BjMoCcgKIMeg5Fia3kS6Y2bF42BQk2HJa9FajvzFejqXnGidwZWyK97sWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWPm2voH; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b467f5173so4692635e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758177367; x=1758782167; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VFjH+4iKezMx9taew/P2Pp2wCahAKn7daFaD40BNcwI=;
+        b=dWPm2voH0f603vPYQX77aQqLkQwj1gccurUP3xm1C/utJaqfk50DrRytdrmmiyQJfg
+         Ycv4tPwrswZeOpCt4GBicXAxbm62qcDyG0SIvYXMBlZAPcn7/yv0kg7d561BhHzlUocL
+         vXuHJevK3ZD6fDDJM2ygdtHImzccAXDBSCj/P/1DTfPXDuCvmnZZ+AHtWzy21aq+MpNW
+         As7FIotfnDc8YfSYp8eCugw0KlJrZIcTzlwCpyvbmZ8Vuuro5MEUH7cayCez0pX2JdKD
+         Zvt1xxtMkc/p+RRUyyX5EdoPZROIlDNWvVk7e3pMead98VErbqqpr0B4KEYaeJL9p0K4
+         2YhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758177294; x=1758782094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LJ+vHFzBs1wUhjHtKO42xRexrj+VJ9lROsx9KC1ozbQ=;
-        b=i5gy0JDqJQ9xg+f25x539Yws50E/GH6L25qXAbEbhFgvZdWhqxOzLw35HUtMpfiLiY
-         yobNok8W2vcpTU7NJLZpic/irCSXxU9BJtkm3jNhls5ZqqsdkSNeuXPm/376yQYuczI3
-         qeGfpBC/dK4wAs7V6dNiOF+/QxNAet1DwDdaXSWG5MwDOxCaON7Gh+PBNBHKfsfUrglJ
-         8tnV5yNueA2sTNwU1rz8rLgFDWPdfJaBpRrl+1e4uzntwFyyzYiZq2CbP4a0/HRsJ52W
-         LcGmDElY4z3XHQp3n8HmN1IS1rMpi+QEykVOOdXGeZ75GJg6k9VRhH6AEzqqY/EXtMpJ
-         oDpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZcgo0NjRC9WgMUJkHt7QmN+3Sj1T5yrJiwJbmI/yE9vpjnHGpfM5O14u+zQzpj23qvvVjZa/I2m8fSQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOCz1N7pPnDDFQ96sgPrE606DAt/cjQDx/VzrAAxaqSvGt9OWs
-	3e5z2rre9cpKnvnQMkVHlMtEJKxfiU8EjZn8ShgU29CkkdLfIsQbCTloQqx4pMGgkbWyfUNq5QK
-	ZUOhjbNLJJDITAU/ah2cLXGmiCtLX4gF9AZghqKBTA3yCaR4dfw6HeI+U2NLl1uZQzZeZC/NKfr
-	R0xeUgIGZ2AwKKQQDckXB0C5LZw3cawo4xbb0c2mxPeA==
-X-Gm-Gg: ASbGncs1e0oJVnxb/ba/rhrhsPAtVCCiap+o3EP+7fNecy3mK+jvpQbMqvTE7991q5a
-	KiInQUGJVJ8H7+5bqVfnWSqdtjt0s6SuTPJYGHUevRZ4oWXof/hcvew3YikgTmP7ZjG6ovPeJB7
-	xUq8MKnRlEdhLHj70KiOyLAqA=
-X-Received: by 2002:a05:690c:87:b0:723:be18:e6de with SMTP id 00721157ae682-73891b87043mr37498797b3.29.1758177294172;
-        Wed, 17 Sep 2025 23:34:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF359T+ynH7B0YBVHYdIUSznowf26uiydfg4Xsq82Eyh2GFZoEJFfVFBb/Vop9pNIb3aRomnhYSHj8mNK6v8TE=
-X-Received: by 2002:a05:690c:87:b0:723:be18:e6de with SMTP id
- 00721157ae682-73891b87043mr37498627b3.29.1758177293634; Wed, 17 Sep 2025
- 23:34:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758177367; x=1758782167;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VFjH+4iKezMx9taew/P2Pp2wCahAKn7daFaD40BNcwI=;
+        b=ttZbcE6DCw1zDtm4xjZNFn52lYQG0aGenyo9lkbs5+WQ1z9JSJoZh1uQBnyDlB4XA5
+         CD0fmDRTMIOvuyZqoQVcDd7QVsyp6Sryf6u+kb72i0hrs4RECNwHXzb3EXUJLK7wyDK0
+         RuN5q7VK4lN5P9U3TVp5GiR2z0oHV8OA1NFvsAB0wGgLlKk22h31JfsWTltsP8ocy2v/
+         bncPitRW2460dSf9XR4NtLKH7qlzZGJqe45x7RzkHmcWwGmo7iJ7ME1vUz1pFIZ4JPNR
+         Z4rFXjWLthXFnqsfDdLiSI6R4EQiffHLRfkCFFvzlWJ60jCfQL1udSImi8HF6eWsa6s/
+         xUTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUs62wUlBV4YDVtnCwXa7+qRyy8hXsgPXwMGmisjI/rR5mIgopbNvDsKcgcCLuNoJDnHSP8LMGicMIryak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFKJrSZ1kKhJUD7bLQ5sNlj7OpRqldWaPZ1+pJscW3L6tYHNk/
+	pKm+5iEYbJFc0wxJoxoXaIPb6LfhdvlgYhnckFDBNekM+vtZp76VTegHOQHHFjhZnUxNiVEqBg=
+	=
+X-Google-Smtp-Source: AGHT+IH2UgG37umNMoeACtGTZ7/9BuSZf5nN5MC+UZpNd1hrMGzyvC/NPJGsd1QclVocKHX2GkTc/eq3
+X-Received: from wmbjg18.prod.google.com ([2002:a05:600c:a012:b0:45f:28d1:7681])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:19d4:b0:45b:8f5e:529a
+ with SMTP id 5b1f17b1804b1-462031b1dfdmr44345345e9.14.1758177367559; Wed, 17
+ Sep 2025 23:36:07 -0700 (PDT)
+Date: Thu, 18 Sep 2025 08:35:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250916093957.4058328-1-anup.kulkarni@oss.qualcomm.com> <2025091701-glamorous-financial-b649@gregkh>
-In-Reply-To: <2025091701-glamorous-financial-b649@gregkh>
-From: Anup Kulkarni <anup.kulkarni@oss.qualcomm.com>
-Date: Thu, 18 Sep 2025 12:04:42 +0530
-X-Gm-Features: AS18NWCwmtfeqFQcg9i-B4xEmvRecUhlo2PrXpNtE39W8_lbS3jp3t7HmtTXQys
-Message-ID: <CAP0YdSqCD8MZPrj0ekDHG4LhoGm4s3qs_z0xubD5hQ=vBOv9_g@mail.gmail.com>
-Subject: Re: [PATCH v1] tty: serial: qcom_geni_serial: Fix error handling for
- RS485 mode
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: jirislaby@kernel.org, johan+linaro@kernel.org, dianders@chromium.org,
-        quic_ptalari@quicinc.com, bryan.odonoghue@linaro.org,
-        quic_zongjian@quicinc.com, quic_jseerapu@quicinc.com,
-        quic_vdadhani@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        mukesh.savaliya@oss.qualcomm.com, viken.dadhaniya@oss.qualcomm.com,
-        stable@vger.kernel.org
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1640; i=ardb@kernel.org;
+ h=from:subject; bh=rNO7lD/OuznN/elc7/2TihvZkB/fdGPOYNhJzbseLp0=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeP0CpsE7vV2ez+u1zTqWvlm66PI7v2vzq858OP34VDlH
+ RdSd7CEdJSyMIhxMciKKbIIzP77bufpiVK1zrNkYeawMoEMYeDiFICJXNZgZJi8acHsj1ffLuVk
+ fL/bXFd9jZnTm39O0idV/Nf9jMhU6bJm+Ge14c5izX+7hNeL3t5mGNO5U2iZoqlY/rFJqrp8UkJ t+dwA
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250918063539.2640512-7-ardb+git@google.com>
+Subject: [PATCH 0/5] arm64: Move kernel mode FPSIMD buffer to the stack
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	herbert@gondor.apana.org.au, ebiggers@kernel.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: ZMwrdVUMWWuyfhonEN3uIbAK5CqP4ImH
-X-Authority-Analysis: v=2.4 cv=bIMWIO+Z c=1 sm=1 tr=0 ts=68cba80f cx=c_pps
- a=bcYUF9iMMBfaiOy0M+g+3g==:117 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=ag1SF4gXAAAA:8 a=EUspDBNiAAAA:8
- a=oPvcWFQ82zTIPni4Ta8A:9 a=QEXdDO2ut3YA:10 a=4AvBJ3eyfGLrynxe6Eyb:22
- a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXzYYtyDlhvzXi
- VJqAnsFHsXREu+P8V2IF90bIexN1EG7pUaeknlzacmvyWIFFetjTlTNTRZ+ORYWprk89sfsksBU
- ct24x2ES0KdBa23tQoTWrEXKYQeJcFGYKj4LmWH2W8tVBzsKKnVFxr8TaUD6pGWCheA/DCPs94t
- SWIPBGIUdsHyRB4PtR5xFmM7chXaBWw15DVIeASZzZm62/dVsmeqhnSTkyxIFuXRA+ogEn6wxZb
- IirjgaHLgU+NssJLQiSRupTeevP7o8z5tNZ3cpLTk4SjNEvNwHAaYRawySVR0WTnTR4q4097Phh
- GvPcHpRpiC4yuuhuTKAox36dEX3mZj6x60zUJHgRbAFN/+T/aXGinUFlEOIB7WgqnmQaBPnQdbZ
- 2BIXRpOa
-X-Proofpoint-ORIG-GUID: ZMwrdVUMWWuyfhonEN3uIbAK5CqP4ImH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-17_01,2025-09-18_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 malwarescore=0 adultscore=0 priorityscore=1501
- suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Wed, Sep 17, 2025 at 4:45=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Tue, Sep 16, 2025 at 03:09:57PM +0530, Anup Kulkarni wrote:
-> > If uart_get_rs485() fails, the driver returns without detaching
-> > the PM domain list.
-> >
-> > Fix the error handling path in uart_get_rs485_mode() to ensure the
-> > PM domain list is detached before exiting.
-> >
-> > Fixes: 86fa39dd6fb7 ("serial: qcom-geni: Enable Serial on SA8255p Qualc=
-omm platforms")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Anup Kulkarni <anup.kulkarni@oss.qualcomm.com>
-> > ---
-> >  drivers/tty/serial/qcom_geni_serial.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> I've taken
-> https://lore.kernel.org/r/20250917010437.129912-2-krzysztof.kozlowski@lin=
-aro.org
-> instead, so this shouldn't be needed anymore.
->
-Agree. It's not required now.
-> thanks,
->
-> greg k-h
+From: Ard Biesheuvel <ardb@kernel.org>
 
-thanks,
+Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
+context switch out of struct thread_struct, and onto the stack, so that
+the memory cost is not imposed needlessly on all tasks in the system.
 
-Anup
+Patches #1 - #3 contains some prepwork so that patch #4 can tighten the
+rules around permitted usage patterns of kernel_neon_begin() and
+kernel_neon_end(). This permits #5 to provide a stack buffer to
+kernel_neon_begin() transparently, in a manner that ensures that it will
+remain available until after the associated call to kernel_neon_end()
+returns.
+
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Brown <broonie@kernel.org>
+
+Ard Biesheuvel (5):
+  crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
+  crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
+  crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
+  arm64/fpsimd: Require kernel NEON begin/end calls from the same scope
+  arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
+
+ arch/arm64/crypto/aes-ce-ccm-glue.c |  5 +--
+ arch/arm64/crypto/sm4-ce-ccm-glue.c | 10 ++----
+ arch/arm64/crypto/sm4-ce-gcm-glue.c | 10 ++----
+ arch/arm64/include/asm/neon.h       |  7 ++--
+ arch/arm64/include/asm/processor.h  |  2 +-
+ arch/arm64/kernel/fpsimd.c          | 34 +++++++++++++-------
+ 6 files changed, 34 insertions(+), 34 deletions(-)
+
+
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+-- 
+2.51.0.384.g4c02a37b29-goog
+
 
