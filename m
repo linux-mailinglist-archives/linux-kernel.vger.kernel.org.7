@@ -1,71 +1,105 @@
-Return-Path: <linux-kernel+bounces-823330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDEA7B8623A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:59:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B64EB86243
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6839B1C8833D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:00:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C26560778
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A02D258CE1;
-	Thu, 18 Sep 2025 16:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806B0255E27;
+	Thu, 18 Sep 2025 17:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V4PVmfmy"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JmVjXXQP"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D21A24DCEC;
-	Thu, 18 Sep 2025 16:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DED2242D97
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758214781; cv=none; b=YqdhcZTEAU0ezzsK/oV5bkU0+Gjih1pBFECwFthRd4/0yztAHcAXXO5dUw/PLk512rIdtGK1Wu1iy1/eawdjUqqoKt/WzYUg2lKi/z/QFqyu5cGJZhYgLWGFvSM34uPjA9VcOiuJgIJgMJgHZRN5+4XYKKmhBI3PmH7ECypyIxw=
+	t=1758214993; cv=none; b=DhRJTVezC4BJcqzS+aYVeLi+dtoDIRiAMKuY3S052UOnCx5NbeM5lVjhWWLWqmc+C+CzAPFStYUrkShFhlbuzsBUsTth6VL3hPU9d2X3+mB2uUm/9bKx1oLWD/nKU2cUPGwJzjUPofIMBzs6PDFDad/dw1Hwa3UEfJF8rZKKxdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758214781; c=relaxed/simple;
-	bh=pfyWM3zCV0p04m781Ji1FMv4FYVLwCB+NFARLMRAcKU=;
+	s=arc-20240116; t=1758214993; c=relaxed/simple;
+	bh=WqdXMGtL8w4zmU4S23uYUzbjQRhs7VBTRXB15Vt3dVQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYSc1QgezJplCqSYJ12A2diuLu3Y9jf+MeCUHEqaK1+NScxxxErmY21cffpTOi3TA8LtGHGP9y+/MD0GpNjkekeADyCUPi6WrgQufGu5CQd7pO206vL80bLH18O+S0Fp4uireAyD0b/phYplbeG4gvdTbdowWNQmomIQJJxC2o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V4PVmfmy; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KYlbrh/+zbSaV0aKvPofumpTBr/wNHfVy6ZSzlqoomw=; b=V4PVmfmyy9GgkSK7a/EpJUev6B
-	MWwWNpfvlv8f3QSEEVWYME8XWf7v3eYBSwY5UqsE8HJOt1nFmLhYqquKhWEj0fMcjSLJ9R0u0daVa
-	2b0RKVkiuVcjOadtADH1Hn7+NCG0l2NLsPIjVGzvfX683nblUEuc8KVWYX/kxOwchB3pLD0wdLIU9
-	Ha1nVBOTHIignII1yz7KLHnBUbViZruiDmUILIYX7rYao8kAR0clFBpvUlL/8jl2WFvuqiYtijL46
-	KmtL9s1bmFc/fYilfd+QiEIOM3MYtB4AfF/2r4O5cYgd51ZiFE/pjmzNBYi+i7YGsK/KP4Ud5/PMD
-	t/2Lptlw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uzHyp-00000007fS2-3Pj6;
-	Thu, 18 Sep 2025 16:59:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5C188300125; Thu, 18 Sep 2025 18:59:35 +0200 (CEST)
-Date: Thu, 18 Sep 2025 18:59:35 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Mike Rapoport <rppt@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
-Message-ID: <20250918165935.GB3409427@noisy.programming.kicks-ass.net>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <20250918130543.GM3245006@noisy.programming.kicks-ass.net>
- <CADxym3ae8NGRt70rVO8ZyHa3BvWhczUkRs=dVn=rTRMVzrU9tA@mail.gmail.com>
- <CAADnVQ+hOdOpCR6s_GyO_7xxehCPBHSttidia38P5xFie6yjnw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YY7vKgYx2IMv0mrHu7MmE2XFj7Ny75kHzbdZt6Jxgg5LOfDNbW1RaY42xOvKLefbiwv6b3u4wp5uQ8dojubs/Ik3zTSIa1evhKIJrji1LHph66aXnOkOj42BKw6RMaI6vbjMyEX+Djxe0QHVqiFJkjAehppznyuMX3oI3OiD1Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JmVjXXQP; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-265f460ae7bso9315ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758214992; x=1758819792; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ym1RX9p3TOSmJKSmG5yfpw916lpqGnu+pp5TNhgvRs=;
+        b=JmVjXXQPgMTCI//kri/rrED/j9uDHLqXDsaQa4cvxPU+IPCD2RnrA3xot/tPDAtGIn
+         kzThFh2hRlvWu3SHHo6xdEwx9iCGDPkwkRNQ91914yJI9UZPVqAF66hAlkdRDo/fidHy
+         8i2LKEboJxF4DNUAiO4QQu7IzNcUyFNyTNA1XnBCmm9tc/X8w1b1sAx6RmsvubxY8KRN
+         3koZ1HAdCS2eYBblCF+pwILfAfB46270I4pR7pTEwSVZEAeWjM/y5KVVCXmD0VXHyE7K
+         shU/pkZAQsOD650A+g8ycwAnEh+Ox1tehoJXqTJlniNEuCIP3/vaJRLbSQM/2AmNmSsS
+         RSHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758214992; x=1758819792;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Ym1RX9p3TOSmJKSmG5yfpw916lpqGnu+pp5TNhgvRs=;
+        b=S+yN4WL6gPo9Ih6Kxs9AyKGSluefwJbGCYmg8u+I97AGvon5ghy+j0JvH9ACzMiPBY
+         AEXpRdTZM0AYUGOBkbA7bHZbSgRuPSNw5qMkKGQYptrdkxjhdmrJx2BiFrr6PUGv2K9N
+         FtizoX0IjFNzvg3SJwR8h8l7oDtpcgL76fqG8zE067N5Tb3YJUKb3MYnCtDPdkXtDZKj
+         4tW7H3xI6I90LRD+QHprHaxilek48+/uOWbN7T4I+AjE78SuFXvakyJdIzpMR7Sdebf1
+         cgfPiUQS4yyT5A4hwpACzPDgFxh9sKEi1SCAiE8oYhfXrqYVkZsiLV1E/Y9pfIK26x8u
+         NmkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbN57fRgRury8Ub2x/7jUB1pBkAdCrCFZCYfE+xYXAIfTaB0Kdb4BASuiMhFzLWpHuizBIcp31xQDDWqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy816zx6x3XLy1YeCAeMjFnrmSRh6x0GklqewTwIvvfHHRuMlu
+	b2Zo1MwMyDRPU9EybbwFLz46sVlDPH2hdYaf5ugG5wDBHwOdKT9juiMbOWedMaDaPjdG9xIsieq
+	zLjklyfNe
+X-Gm-Gg: ASbGncugjgaSSC4hjpDm1sLJjVhchfyNNJTTIJKcxeBMMEaCMxOECbrSi2c3L8OCG7a
+	r21Mctnrzrwe+zGj7acOvm9F2dIgCCh5WNLeOI6AMr7yyr2+6yrl1zuVeTmMVE6/yYEkTol/vA0
+	LOIOkve85iO2sj/TNMx1Q8T8ckyUvr4NPh01ZRPIKxyC1SUhEtbvhftPI/oaw0WwwKUUe1pvKzO
+	PaBLeKLkWRuLA8mGWWyqry/ZBLl2jWPb+nR+6tYVXgImzFn0E5Ya3uquIfAN9gdwwhcR9WmCmP/
+	kq8qJE82By23STYQJHtUo8sR6cCi7cZHoYt4hMDs4XcHdHVyYBLEe+oGJhu5BleCR89eMkDs/iq
+	W3170hPnXF45bGXK2tG6Sj+NW9DgcMWxtp5LnmLG4BFN9Ied2IGY3USdgX5Ih+Hk4A5EUKQgYkE
+	uV0LihUIfd9A==
+X-Google-Smtp-Source: AGHT+IFjuyi4QqLZ8qvMbqryrbOAzU3Sc3TkWOooDemgm6De8AipTLgjMlTSUGYxKpghu12Kv3bL8A==
+X-Received: by 2002:a17:902:e74d:b0:269:7c50:85c8 with SMTP id d9443c01a7336-2697c5088camr7050725ad.2.1758214991379;
+        Thu, 18 Sep 2025 10:03:11 -0700 (PDT)
+Received: from google.com (163.180.16.34.bc.googleusercontent.com. [34.16.180.163])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980336511sm30783875ad.124.2025.09.18.10.03.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 10:03:10 -0700 (PDT)
+Date: Thu, 18 Sep 2025 17:03:06 +0000
+From: Carlos Llamas <cmllamas@google.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <sergeh@kernel.org>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Matt Gilbride <mattgilbride@google.com>
+Subject: Re: [PATCH] rust_binder: add Rust Binder driver
+Message-ID: <aMw7SmMz8CXOelix@google.com>
+References: <20250918-rust-binder-v1-1-7a5559e8c6bb@google.com>
+ <aMwxLQubVOuGZGLf@google.com>
+ <aMw5b7aNxoULilmg@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,42 +108,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAADnVQ+hOdOpCR6s_GyO_7xxehCPBHSttidia38P5xFie6yjnw@mail.gmail.com>
+In-Reply-To: <aMw5b7aNxoULilmg@google.com>
 
-On Thu, Sep 18, 2025 at 09:02:31AM -0700, Alexei Starovoitov wrote:
-> On Thu, Sep 18, 2025 at 6:32???AM Menglong Dong <menglong8.dong@gmail.com> wrote:
-> >
-> > On Thu, Sep 18, 2025 at 9:05???PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > On Thu, Sep 18, 2025 at 08:09:39PM +0800, Menglong Dong wrote:
-> > > > is_endbr() is called in __ftrace_return_to_handler -> fprobe_return ->
-> > > > kprobe_multi_link_exit_handler -> is_endbr.
-> > > >
-> > > > It is not protected by the "bpf_prog_active", so it can't be traced by
-> > > > kprobe-multi, which can cause recurring and panic the kernel. Fix it by
-> > > > make it notrace.
-> > >
-> > > This is very much a riddle wrapped in an enigma. Notably
-> > > kprobe_multi_link_exit_handler() does not call is_endbr(). Nor is that
-> > > cryptic next line sufficient to explain why its a problem.
-> > >
-> > > I suspect the is_endbr() you did mean is the one in
-> > > arch_ftrace_get_symaddr(), but who knows.
-> >
-> > Yeah, I mean
-> > kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
-> > arch_ftrace_get_symaddr -> is_endbr
-> > actually. And CONFIG_X86_KERNEL_IBT is enabled of course.
+On Thu, Sep 18, 2025 at 04:55:11PM +0000, Alice Ryhl wrote:
+> On Thu, Sep 18, 2025 at 04:19:57PM +0000, Carlos Llamas wrote:
+> > Hmm, is there anyway to keep a single binderfs.c implementation? In this
+> > case we now have separate CONFIGs we could use for the file creation
+> > callback? It would be nice to keep a single binderfs source file.
 > 
-> All this makes sense to me.
+> It could be nice, but it's pretty non-trivial to unify them. If we do
+> that, it will have to be a follow-up, and the follow-up will modify C
+> Binder too.
+> 
 
-As written down, I'm still clueless.
+Ok, that is fine then. I can look more into this part once it lands.
 
-> __noendbr bool is_endbr(u32 *val) needs "notrace",
-> since it's in alternative.c and won't get inlined (unless LTO+luck).
+Feel free to add to you next version:
 
-notrace don't help with kprobes in general, only with __fentry__ sites.
-
-I've still not clue why there is a panic, or why notrace would be
-sufficient.
+Acked-by: Carlos Llamas <cmllamas@google.com>
 
