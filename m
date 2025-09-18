@@ -1,182 +1,130 @@
-Return-Path: <linux-kernel+bounces-823255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF8BB85EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A288BB85EEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 594914A1BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017FA188EF85
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62112306D36;
-	Thu, 18 Sep 2025 16:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="DsirBSWZ";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="i/aQKCEO"
-Received: from e234-57.smtp-out.ap-northeast-1.amazonses.com (e234-57.smtp-out.ap-northeast-1.amazonses.com [23.251.234.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914C313D41;
+	Thu, 18 Sep 2025 16:13:28 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7732E2644;
-	Thu, 18 Sep 2025 16:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6C0DF59;
+	Thu, 18 Sep 2025 16:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758211981; cv=none; b=R541T1u9NWRx7pFaEsQoBfO8BzVxAmQBlFnd9Fbw+dZti1vR7plig+K8qRyhnXrbDO1gn7KN++s+1B1w+nT8AwXtHhk8cbqBZRgcjznwANUjs/Vl24zyBEc+mv9wNmQGn48h1nEkOti82ds9q9cmqvm7+nkjbMhyHixl+brjCv4=
+	t=1758212008; cv=none; b=HrjQ1HVtE0edd/lHatUZS4R51DabCeEZbHfeRHgs5Yx1FmRUyPqV9TIJcgESKpIlhuHE0RJUG2lBNSkxXGl/qNVbyvO2Pwe+/xxZTxIoCkvS3inEIbu1qF/AylwroJVRjw2ZvtNR/wleT9D1gA9xqn853pQ3z2BDZo0ZQ4T50Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758211981; c=relaxed/simple;
-	bh=ic2DdsPhqzZai0gh2uHOtWWCtQ1BWS6D1TUtB+Y2S1E=;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
-	 Content-Type; b=KcuLozf1A42cylz/0jr5I1AKF+m9JqGFcnrIy7NY1qy/DFjZvmO3cMwpy1OGpyd8ChANIS9htVL8ri7/S+FIegNV1FaXD6vKaLHO7A8isijVNArsXVuJ4Ri6W9QCzqYWwkkCxb6fZ3pu0cncpXHZhy2qYWgzBxOlLwL0mL0C7Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=DsirBSWZ; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=i/aQKCEO; arc=none smtp.client-ip=23.251.234.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
-	d=mgml.me; t=1758211978;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
-	bh=ic2DdsPhqzZai0gh2uHOtWWCtQ1BWS6D1TUtB+Y2S1E=;
-	b=DsirBSWZb2R19rQTfNEUlCMXqXegoqxYO2pmlU0u2S3ao4FfuCgiKSZlpcNmgdPC
-	9JWlFLdQtZ344Fk5accp30BtaN7OJ6F0ltIRNvatRZBO8pbdR/COek2Et41G0/i0Dti
-	rbOzOdHgY611f/NGI/7+UMQmjkCFhjZNw6w+z7Yo=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758211978;
-	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
-	bh=ic2DdsPhqzZai0gh2uHOtWWCtQ1BWS6D1TUtB+Y2S1E=;
-	b=i/aQKCEO05mGU1/okx/xOscwFhzCIBG7q1HZcBYHcUpPjnbr2W+gjgGMla9Va9VS
-	nirzeqC6kUi5PYoMis9lpBWaRlTKcY+FtkfyhO9i+fcgvcwyaOKmQepoJoSBak3XQVX
-	wn0olbT6z+5ty/eFqp0zEX0PcvJFwtqKA4xX3ha0=
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-In-Reply-To: <e7031446-88be-cd4d-ca00-7ce95da5f55a@huaweicloud.com>
-From: Kenta Akagi <k@mgml.me>
-To: linan666@huaweicloud.com, song@kernel.org, yukuai3@huawei.com, 
-	mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, k@mgml.me
-Subject: Re: [PATCH v4 7/9] md/raid10: fix failfast read error not
- rescheduled
-Message-ID: <010601995d99b3dc-e860902f-c7c4-4d04-8adb-c49a551a616a-000000@ap-northeast-1.amazonses.com>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 18 Sep 2025 16:12:58 +0000
+	s=arc-20240116; t=1758212008; c=relaxed/simple;
+	bh=RkkHYldHqxfCy+eO9kZc2Nu88Vb/p3AF9OgOx7ZCEAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NNqs8aIlnoX7xicHSXDduoCGWQTGQpyMhhph/j9lqeCAuRHf7I4ARqkb20t9rHcAEZodMyCHqer4Gf895xODVTRqARdGbFHjwBmhs0nwM+e6CwyI2FITbhYSmseWdN9K1ifml9lGHAO08vM5T/c4A9VBHJqP/L9ck8ktQYvRGaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 0D508118E89;
+	Thu, 18 Sep 2025 16:13:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 2846618;
+	Thu, 18 Sep 2025 16:13:08 +0000 (UTC)
+Date: Thu, 18 Sep 2025 12:14:16 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Ian Rogers <irogers@google.com>, Marco Elver <elver@google.com>, Peter
+ Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, Ingo
+ Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko
+ <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, Bill Wendling
+ <morbo@google.com>, Christoph Hellwig <hch@lst.de>, Dmitry Vyukov
+ <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, Frederic
+ Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>,
+ Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, Kentaro
+ Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Neeraj Upadhyay
+ <neeraj.upadhyay@kernel.org>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Tetsuo Handa
+ <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>,
+ Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman
+ Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+ linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+ linux-sparse@vger.kernel.org, llvm@lists.linux.dev, rcu@vger.kernel.org
+Subject: Re: [PATCH v3 02/35] compiler-capability-analysis: Add
+ infrastructure for Clang's capability analysis
+Message-ID: <20250918121416.19a8041e@gandalf.local.home>
+In-Reply-To: <1ca90ba0-7bdc-43d1-af12-bba73dd3234a@acm.org>
+References: <20250918140451.1289454-1-elver@google.com>
+	<20250918140451.1289454-3-elver@google.com>
+	<CAP-5=fUfbMAKrLC_z04o9r0kGZ02tpHfv8cOecQAQaYPx44awA@mail.gmail.com>
+	<1ca90ba0-7bdc-43d1-af12-bba73dd3234a@acm.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
-X-SES-Outgoing: 2025.09.18-23.251.234.57
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 2846618
+X-Stat-Signature: jk37s4n4y1abypzz3ibjma6i8hwh3dpi
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX187tFXsL5Le7f+OEdXPb8EfevPMdYJjxao=
+X-HE-Tag: 1758211988-794253
+X-HE-Meta: U2FsdGVkX19m1tAn22PHk3kX2Wk2POBgAZFzgAQIMCx/TzKCFJHSRgy7lqGNU4t4JpUf2LxrofFc8Ml/SzvQUemqI2s/M2eVv2TcCTTofn0gFGf1qiKnggle2+rBi9jozqgLP+w5zmTzD8j5BYGNETdC7HYpSCmlxzgRl1HmUDgT6vBPRbNQKlew/GiSPntamWI4BN+3BQMlrQzHKrw2Hd44nH0TJbDzGUvq4EnHN5l77wWkx8yamYKm0wF/UonjU1auAq1+e+AHgLIMHgDBTy/q+l9/HvzB2gWDjclvwsnGTS+Jv2LDmjZbgWOiLNXP1sp9TafIX1LTwyRs55KIsTFDvD2gur62c5R5bpv6t02yJBvS9Pt6FACmEbxkfSaUp1nLcDU5Q19B7Ha8v33a91ClwZlXoj1UYYAtqvo6OkbX+GZwbhQ0RoFfAYIW3JVWEzxWKbCA0qFysRVjwJOtsFC2FqAYNCgDAkEhxNFg1LQ=
 
+On Thu, 18 Sep 2025 09:03:17 -0700
+Bart Van Assche <bvanassche@acm.org> wrote:
 
-
-On 2025/09/18 16:38, Li Nan wrote:
+> On 9/18/25 8:58 AM, Ian Rogers wrote:
+> > On Thu, Sep 18, 2025 at 7:05=E2=80=AFAM Marco Elver <elver@google.com> =
+wrote: =20
+> >> +config WARN_CAPABILITY_ANALYSIS
+> >> +       bool "Compiler capability-analysis warnings"
+> >> +       depends on CC_IS_CLANG && CLANG_VERSION >=3D 220000
+> >> +       # Branch profiling re-defines "if", which messes with the comp=
+iler's
+> >> +       # ability to analyze __cond_acquires(..), resulting in false p=
+ositives.
+> >> +       depends on !TRACE_BRANCH_PROFILING =20
+> >=20
+> > Err, wow! What and huh, and why? Crikes. I'm amazed you found such an
+> > option exists. I must be very naive to have never heard of it and now
+> > I wonder if it is needed and load bearing? =20
 >=20
+> (+Steven)
 >=20
-> =E5=9C=A8 2025/9/15 11:42,=
- Kenta Akagi =E5=86=99=E9=81=93:
->> raid10_end_read_request lacks a path to=
- retry when a FailFast IO fails.
->> As a result, when Failfast Read IOs =
-fail on all rdevs, the upper layer
->> receives EIO, without read =
-rescheduled.
->>
->> Looking at the two commits below, it seems only =
-raid10_end_read_request
->> lacks the failfast read retry handling, while =
-raid1_end_read_request has
->> it. In RAID1, the retry works as expected.
->> * commit 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
->> * commit 2e52d449bcec ("md/raid1: add failfast handling for reads.")
->>
->> I don't know why raid10_end_read_request lacks this, but it is probably
->> just a simple oversight.
+> This is an old option. I think this commit introduced it:
 >=20
-> Agreed, these two lines can be removed.
-
-I will revise the commit message.
-
+> commit 52f232cb720a7babb752849cbc2cab2d24021209
+> Author: Steven Rostedt <rostedt@goodmis.org>
+> Date:   Wed Nov 12 00:14:40 2008 -0500
 >=20
-> Other than that, LGTM.
->=20
-> Reviewed-by: Li Nan <linan122@huawei.com>
-
-Thank you. However, there is a=
- WARNING due to the comment format that needs to be fixed.
-I also received a failure email from the RAID CI system.
-
-------------------------------------------------------------------------
-patch-v4/v4-0007-md-raid10-fix-failfast-read-error-not-rescheduled.patch
-------------------------------------------------------------------------
-WARNING: Block comments use a trailing */ on a separate line
-#39: FILE: drivers/md/raid10.c:405:
-+                * want to retry */
-
-total: 0 errors, 1 warnings, 11 lines checked
-
-
-I will apply the =
-corrections below and resubmit as v5.
-Is it okay to add a Reviewed-by tag =
-in this case?
-Sorry to bother you.
-
-+       } else if (test_bit(FailFast, =
-&rdev->flags) &&
-+                test_bit(R10BIO_FailFast, =
-&r10_bio->state)) {
-+               /* This was a fail-fast read so we =
-definitely
-+                * want to retry
-+                */
-+               ;
-
-Thanks,
-Akagi
-
->=20
->>
->> This commit will make the =
-failfast read bio for the last rdev in raid10
->> retry if it fails.
->>
->> Fixes: 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
->> Signed-off-by: Kenta Akagi <k@mgml.me>
->> ---
->> =C2=A0 =
-drivers/md/raid10.c | 5 +++++
->> =C2=A0 1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index 92cf3047dce6..86c0eacd37cb 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -399,6 +399,11 @@ static void =
-raid10_end_read_request(struct bio *bio)
->> =C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * wait for the 'master' bio.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-set_bit(R10BIO_Uptodate, &r10_bio->state);
->> +=C2=A0=C2=A0=C2=A0 } else if=
- (test_bit(FailFast, &rdev->flags) &&
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 test_bit(R10BIO_FailFast, &r10_bio->state)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* This was a fail-fast read=
- so we definitely
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * =
-want to retry */
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (!raid1_should_handle_error(bio=
-)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 uptodate =3D=
- 1;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
->=20
-> --=C2=A0
-> Thanks,
-> Nan
->=20
+>      tracing: likely/unlikely branch annotation tracer
 >=20
 
+I still use it every year (enable it during December for a few weeks on my
+workstation and server) and post the results publicly. When I get time, I
+try to fix (add / remove) likely/unlikely statements. Unfortunately, I
+haven't had time to look deeper at them.
+
+ https://rostedt.org/branches/current/
+
+This year I missed December and ended up running it in January instead.
+
+-- Steve
 
