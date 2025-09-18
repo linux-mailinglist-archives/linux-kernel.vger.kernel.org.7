@@ -1,185 +1,139 @@
-Return-Path: <linux-kernel+bounces-822464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C60B83F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:59:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398EAB83F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167E82A792A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:59:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3563B4D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3012EF660;
-	Thu, 18 Sep 2025 09:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2642F3C13;
+	Thu, 18 Sep 2025 10:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GuC4/0E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6C39Yrta";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3GuC4/0E";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6C39Yrta"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tsgj5sal"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA922E2F0E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC4B2EF660;
+	Thu, 18 Sep 2025 10:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758189559; cv=none; b=uNNT5yYOhjJZJBHfBVK0voejWaenh0GjPN/6COBOkPh8Nv6dnaXSodfh1Fp0q2gvtAR1uCtKq0E8FSGxOucBV6N/oLxKYoG3hh6BpLvJK1IVgv25CaM88XMjZYDfxNaG5VbY/aw2aq43VYLyade1YPsMGL7nUojCfti1qGYlJ9k=
+	t=1758189615; cv=none; b=jpzBV1D6b17VAtF2yBAng0nt2SBhViBOBVQg/9edFZrW+5AJAeGxY05rj67e9r8y662qtNP+BOMtHuxzTnMPPBErlAWXwhXO071tQHh6R3LAX9OHmLxsypZuDk1xP8aMRT11ZjFA4uXVHUTrbeQnznESjfK1amTB46UaGUXpjrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758189559; c=relaxed/simple;
-	bh=0RqsuiwyKINatYSR4jMGpA2kcsw74TNDR71ONXIxGVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=agPRdmjZyW8zZR/uQozeBrdfFq77EPEdSggvYHGGIegt09vh5ZhR1EVQnniQ6QrfmrwKsF3OSnxcQvIz1B+nq3qhHPaGzaq/vHbdjWbrQ4ATFCvO5Uk2GDuuo/DlA2Fr46LQPKBM8SsQ1VObo9kwQXMBNnMngTgvgkByN6wrkvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GuC4/0E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6C39Yrta; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3GuC4/0E; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6C39Yrta; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A50FF3370E;
-	Thu, 18 Sep 2025 09:59:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758189555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
-	b=3GuC4/0ESPjQC3pmzIZ8bUCKHTf/JnNQrCqYYL9kmgf85s872lNOzwXwhKUuxkWBLC2WyB
-	s2R6wFu5VsG+nCwu65iLBy8RDidVPcj+vriWINrK6M18sij6Y/TJ2um4t+qOLPBnx4drYq
-	bL0D9MtXtRERWp3NFmAKgwD1rwe74LA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758189555;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
-	b=6C39YrtawpyxD3kT6zBqWw3NoYY63UzNAjAlne7/PNQwND2TcTzmnUMngyuaa7EIaYb43S
-	t41Z2/gB+1zvY9DA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758189555; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
-	b=3GuC4/0ESPjQC3pmzIZ8bUCKHTf/JnNQrCqYYL9kmgf85s872lNOzwXwhKUuxkWBLC2WyB
-	s2R6wFu5VsG+nCwu65iLBy8RDidVPcj+vriWINrK6M18sij6Y/TJ2um4t+qOLPBnx4drYq
-	bL0D9MtXtRERWp3NFmAKgwD1rwe74LA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758189555;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v86nF+pbQuZ2GvN5imRKeIaZ48Qi34wAMqRkUSzBUxg=;
-	b=6C39YrtawpyxD3kT6zBqWw3NoYY63UzNAjAlne7/PNQwND2TcTzmnUMngyuaa7EIaYb43S
-	t41Z2/gB+1zvY9DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 902A913A51;
-	Thu, 18 Sep 2025 09:59:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id C//kIvPXy2giZQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 18 Sep 2025 09:59:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id DA616A09B1; Thu, 18 Sep 2025 11:59:14 +0200 (CEST)
-Date: Thu, 18 Sep 2025 11:59:14 +0200
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
-	Jakub Acs <acsjakub@amazon.de>, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] ovl: check before dereferencing s_root field
-Message-ID: <vtan7uaf5mf35zxy6pma6sdahxr7idv2awaf7yh7vtyhxsoram@2au7ec4hto7i>
-References: <20250915101510.7994-1-acsjakub@amazon.de>
- <CAOQ4uxgXvwumYvJm3cLDFfx-TsU3g5-yVsTiG=6i8KS48dn0mQ@mail.gmail.com>
- <x4q65t5ar5bskvinirqjbrs4btoqvvvdsce2bdygoe33fnwdtm@eqxfv357dyke>
- <CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com>
- <gdovf4egsaqighoig3xg4r2ddwthk2rujenkloqep5kdub75d4@7wkvfnp4xlxx>
- <CAOQ4uxhOMcaVupVVGXV2Srz_pAG+BzDc9Gb4hFdwKUtk45QypQ@mail.gmail.com>
- <scmyycf2trich22v25s6gpe3ib6ejawflwf76znxg7sedqablp@ejfycd34xvpa>
- <CAOQ4uxgSQPQ6Vx4MLECPPxn35m8--1iL7_rUFEobBuROfEzq_A@mail.gmail.com>
- <20250917204200.GB39973@ZenIV>
+	s=arc-20240116; t=1758189615; c=relaxed/simple;
+	bh=Bse43jyzR8nZcEl4pAQd2Sdp31p7Bh/3Ilo+I2o2rJA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XkhUp/KuaVn+3qS1IelpY1V0rYksfrD8xieJof0GF2xju9Jr6sa+bju8SxLPIeGvuAWQHpXZMPURE/AF52J1JlS//q7Ka7wWxH2TqDJXe9rmbxuZJ6fzQZYwr8rioxfiMXGbWcs+oYUJqyVHjxfYmLQiVP1/RjLZIYSkjkbCx34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tsgj5sal; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58I9xqX71721643;
+	Thu, 18 Sep 2025 04:59:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758189592;
+	bh=38CN86+v/N3yFeHrI8mpeV2lMrT0UcLaFt3ugTYePww=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=tsgj5salexCwGPpZCXDQDFIU1+Hr0BUPeO100cAx0k7uv3bkMyqjLbtZfon1aGGY3
+	 vZxWPSG+FkIFsunHQRfvFwJ3gDfKIN/qIduzHHRcPi8limvOKOu3QZa5mzYqTx9MhC
+	 15bPn/eNvj+Gj96Smuc0Ig7TRDH7LE1COliYUPp4=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58I9xqTX1465831
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 18 Sep 2025 04:59:52 -0500
+Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 18
+ Sep 2025 04:59:52 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE209.ent.ti.com
+ (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 18 Sep 2025 04:59:52 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58I9xoAl683748;
+	Thu, 18 Sep 2025 04:59:51 -0500
+Date: Thu, 18 Sep 2025 15:29:50 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Peng Fan <peng.fan@nxp.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+        Pavel Machek
+	<pavel@kernel.org>, Peter Chen <peter.chen@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Xu Yang <xu.yang_2@nxp.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <imx@lists.linux.dev>, <arm-scmi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 1/4] pmdomain: core: Introduce
+ device_set/get_out_band_wakeup()
+Message-ID: <20250918095950.h7wmz2qj5e6khtwr@lcpd911>
+References: <20250902-pm-v3-0-ffadbb454cdc@nxp.com>
+ <20250902-pm-v3-1-ffadbb454cdc@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250917204200.GB39973@ZenIV>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,suse.cz,amazon.de,vger.kernel.org,szeredi.hu,kernel.org];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+In-Reply-To: <20250902-pm-v3-1-ffadbb454cdc@nxp.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed 17-09-25 21:42:00, Al Viro wrote:
-> On Wed, Sep 17, 2025 at 01:07:45PM +0200, Amir Goldstein wrote:
+On Sep 02, 2025 at 11:33:00 +0800, Peng Fan wrote:
+> For some cases, a device could still wakeup the system even if its power
+> domain is in off state, because the device's wakeup hardware logic is
+> in an always-on domain.
 > 
-> > diff --git a/fs/dcache.c b/fs/dcache.c
-> > index 60046ae23d514..8c9d0d6bb0045 100644
-> > --- a/fs/dcache.c
-> > +++ b/fs/dcache.c
-> > @@ -1999,10 +1999,12 @@ struct dentry *d_make_root(struct inode *root_inode)
-> > 
-> >         if (root_inode) {
-> >                 res = d_alloc_anon(root_inode->i_sb);
-> > -               if (res)
-> > +               if (res) {
-> > +                       root_inode->i_opflags |= IOP_ROOT;
-> >                         d_instantiate(res, root_inode);
+> To support this case, introduce device_set/get_out_band_wakeup() to
+> allow device drivers to control the behaviour in genpd for a device
+> that is attached to it.
 > 
-> Umm...  Not a good idea - if nothing else, root may end up
-> being attached someplace (normal with nfs, for example).
-> 
-> But more fundamentally, once we are into ->kill_sb(), let alone
-> generic_shutdown_super(), nobody should be playing silly buggers
-> with the filesystem.  Sure, RCU accesses are possible, but messing
-> around with fhandles?  ->s_root is not the only thing that might
-> be no longer there.
-> 
-> What the fuck is fsnotify playing at?
 
-The problem is fsnotify marks aren't shutdown until generic_shutdown_super()
-calls fsnotify_sb_delete(). So until that moment fsnotify can be generating
-events for the filesystem. Sure, userspace has no longer access to the fs
-but stuff like delayed inode deletion or other in-kernel users can still
-result in events being generated and these events may end up creating file
-handles to report to userspace.
+Thinking more into it, to me it seems like if the intent here is to only
+allow the device drivers to figure out whether they should be or not be
+executing the suspend/resume_noirqs then that can still be checked by
+wisely using the device set_wakeup APIs in the driver itself.
 
-We have already uncovered with Amir quite a few moments how this is broken
-so I agree that the best solution is to shutdown fsnotify before we call
-shrink_dcache_for_umount(). The slight problem is this means iterating all
-inodes in the sb which is costly when you have millions of them (this is
-the reason why fsnotify_sb_delete() is currently called after
-evict_inodes()). So it needs more work on fsnotify side...
+Not sure why this patch should be necessary for a
+driver to execute the suspend_noirq or not. That decision can very well
+be taken inside the driver's suspend resume_noirq hooks based on wakeup
+capability and wake_enabled statuses.
 
-								Honza
+Just a pseudo code:
+```
+driver_suspend_noirq () {
+	if (device_may_wakeup()) {
+		// do the sequence where the power domain might get turned off
+		// but like you say device can do some out band wakeup
+		return XXX;
+	}
+	// regular suspend sequence here... maybe inband wakeup config / clk
+	// disable etc...
+}
+ ```
+
+And something similar in resume_noirq?
+
+Just need to make sure that the probe func does the
+device_set_wakeup_enable or capable stuff correctly as per your H/w and
+wakeup requirements...
+
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
