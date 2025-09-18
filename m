@@ -1,133 +1,211 @@
-Return-Path: <linux-kernel+bounces-822631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C31DB845A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:28:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D5AEB845AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8044A8597
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:28:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F3317AA81F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDEA30496A;
-	Thu, 18 Sep 2025 11:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB180303A06;
+	Thu, 18 Sep 2025 11:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl2XmFWz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68236303A3E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063932DA757
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758194889; cv=none; b=YsXqwtMEAN5fKccOYbTs32APT2jXnYnfzWd1WPhfvaaRrPDnnRsIEH2NXgU4HB4qHF8d73vqWaSk3tFC/vI0fhIu+bej+RS5W5cTCNFsMwkEQCWULnZAvNxl2W9y0gjWnALLOsisSQkw5pdYY+ueREDgqPimYWX2JrCjZ9O3MqM=
+	t=1758194932; cv=none; b=mrwuLAuIMoIbKV0yq4sOeEdGDYMN/TN7kSPH56ZdB5rwbNUyvDqmpLnWECedUFNxG+iEWhMqFc/RHkB+WBa/fBw0RewSJNSmPm7lX0V9kru+sGHHVt99ltrebEnPaWdmUP0vibjk0Mp9Ut+vOpu2aSb3NAow/VPJDZhbzDmeijs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758194889; c=relaxed/simple;
-	bh=hq+bGyb564QEovQdWqRvrGIRd5MAH79oTofRW4U38uc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2BKnM0Nl7TLVloidpWiqVx8LEqiXMwHQRtMjW28ly99m9c4KPgb+gj394lNmNt8s4S92B33fj+gdAO8O7uoS85FGly+YKKlWBIDYsmQRmiL2WnS+GkbDbVkEOHOQvuRG7q9ysBW6h/0ibjBtDNOb/6D+407UJjYB14ZakeWQHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E27C4CEE7;
-	Thu, 18 Sep 2025 11:28:07 +0000 (UTC)
-Date: Thu, 18 Sep 2025 12:28:05 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: shechenglong <shechenglong@xfusion.com>
-Cc: will@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, stone.xulei@xfusion.com,
-	chenjialong@xfusion.com, yuxiating@xfusion.com
-Subject: Re: [PATCH] cpu: fix hard lockup triggered during stress-ng stress
- testing.
-Message-ID: <aMvsxd8nHb5roC0o@arm.com>
-References: <20250918064907.1832-1-shechenglong@xfusion.com>
+	s=arc-20240116; t=1758194932; c=relaxed/simple;
+	bh=aGX4zFbu6ixCH3Tv8vvb+Ir1zlZCuHzA62pjtMb8H9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XL5k0Hqg0QLPQ2TBj8WYwkTi+Uww0jC57LRER2NvgSxbNF1JDVEha/uMZdz3/uPyYYqoT/GSFoVhot9ZlMa8JaUm+mitrIXg1sgoMkJfOteLDBWX+QexnmkAP0uvOUCdd83vn8cPyA2J7qX0wpuQbux6fXCzTJB27G6lXstkr5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl2XmFWz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809D2C4CEEB
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:28:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758194931;
+	bh=aGX4zFbu6ixCH3Tv8vvb+Ir1zlZCuHzA62pjtMb8H9U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Sl2XmFWziQwzMxXE4tAL7uEPE4V11Hf8IaCAsWJDZ0YQBRLZzEgMdeCZIMpHyu20d
+	 gNqX+5NlxMIrrtCDuEpNlma4oC7v2fE25cUx1itTYKYsHfwJQPpoWrN3w9GjdSX4mi
+	 iF1QdbkWNvSvVmTxc44xKpdsgnWETPBH/zUKt1GzYfjm7mKa9byRjWV9RQ3Q7FUxkx
+	 eloZUCZaCbFZo00WWk/g2aXVwi0y8YKYdVggu3kaahtGhK3uBz3LWJ8aPVO6YKarar
+	 qAJTr+Tn4DPqzOYAN9jD2hkFl8+CWfDUoXFDXdTz0QIAkCo8kCnqXbVlJ/FCfxJpnS
+	 f21l8veoIYuSA==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-750b77699b4so630549a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:28:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwwz8dDsV6i66SiJ2a/3iDtb4/Ay2Joj/PNX97q+kZ6aev6Kj3EhcvxfAq+aqGoyE54I/stSti+av3fdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyaB5mNka4hJaaMgqIavKClH9DLNyNWFcD4u8qn7O6uJkMWMrt
+	lZkPudGRUykCKh01c1U9hQaczaFol5w6Zjqc+5LubqL67nMH7ePDsEgnuUVDc9nPVKcgtnTSHQI
+	6kwdsiYI8uHLOPHgJxWvJG56e97TPkbc=
+X-Google-Smtp-Source: AGHT+IHe7GVU0yxBg/xdy5kAVi+cnsgH8FVocDQJtOYW5b+idqPIhO8Ey8RCPsDzzIJoKeHKDMqWERmGkh05IbRrmiw=
+X-Received: by 2002:a05:6808:f94:b0:43d:2dc4:9d16 with SMTP id
+ 5614622812f47-43d50a8e97bmr2588108b6e.9.1758194930823; Thu, 18 Sep 2025
+ 04:28:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250918064907.1832-1-shechenglong@xfusion.com>
+References: <878qimv24u.wl-tiwai@suse.de> <87ikhptpgm.wl-tiwai@suse.de>
+ <CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com> <87tt10b5hq.wl-tiwai@suse.de>
+In-Reply-To: <87tt10b5hq.wl-tiwai@suse.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 18 Sep 2025 13:28:39 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
+X-Gm-Features: AS18NWA4sJvRMM6lzUoIW98fo5qumY39WEP-CzBbiU-mbi_9Mil7xxpLJakcxfk
+Message-ID: <CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
+Subject: Re: PM runtime auto-cleanup macros
+To: Takashi Iwai <tiwai@suse.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 02:49:07PM +0800, shechenglong wrote:
-> Context of the Issue:
-> In an ARM64 environment, the following steps were performed:
-> 
-> 1. Repeatedly ran stress-ng to stress the CPU, memory, and I/O.
-> 2. Cyclically executed test case pty06 from the LTP test suite.
-> 3. Added mitigations=off to the GRUB parameters.
-> 
-> After 1–2 hours of stress testing, a hardlockup occurred,
-> causing a system crash.
-> 
-> Root Cause of the Hardlockup:
-> Each time stress-ng starts, it invokes the /sys/kernel/debug/clear_warn_once
-> interface, which clears the values in the memory section from __start_once
-> to __end_once. This caused functions like pr_info_once() — originally
-> designed to print only once — to print again every time stress-ng was called.
-> If the pty06 test case happened to be using the serial module at that same
-> moment, it would sleep in waiter.list within the __down_common function.
-> 
-> After pr_info_once() completed its output using the serial module,
-> it invoked the semaphore up() function to wake up the process waiting
-> in waiter.list. This sequence triggered an A-A deadlock, ultimately
-> leading to a hardlockup and system crash.
-> 
-> To prevent this, a local variable should be used to control and ensure
-> the print operation occurs only once.
-> 
-> Hard lockup call stack:
-> 
-> _raw_spin_lock_nested+168
-> ttwu_queue+180 （rq_lock(rq, &rf); 2nd acquiring the rq->__lock）
-> try_to_wake_up+548
-> wake_up_process+32
-> __up+88
-> up+100
-> __up_console_sem+96
-> console_unlock+696
-> vprintk_emit+428
-> vprintk_default+64
-> vprintk_func+220
-> printk+104
-> spectre_v4_enable_task_mitigation+344
-> __switch_to+100
-> __schedule+1028 (rq_lock(rq, &rf); 1st acquiring the rq->__lock)
-> schedule_idle+48
-> do_idle+388
-> cpu_startup_entry+44
-> secondary_start_kernel+352
+On Thu, Sep 18, 2025 at 9:10=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wrote:
+>
+> On Wed, 17 Sep 2025 20:58:36 +0200,
+> Rafael J. Wysocki wrote:
+> >
+> > Hi,
+> >
+> > Sorry for the delay.
+> >
+> > On Thu, Sep 11, 2025 at 9:31=E2=80=AFAM Takashi Iwai <tiwai@suse.de> wr=
+ote:
+> > >
+> > > On Wed, 10 Sep 2025 16:00:17 +0200,
+> > > Takashi Iwai wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > while I worked on the code cleanups in the drivers with the recent
+> > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() c=
+an
+> > > > be also managed with the auto-cleanup gracefully, too.  Actually we
+> > > > already defined the __free(pm_runtime_put) in commit bfa4477751e9, =
+and
+> > > > there is a (single) user of it in pci-sysfs.c.
+> > > >
+> > > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
+> > > >
+> > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
+> > > >            if (_T) pm_runtime_put_autosuspend(_T))
+> > > >
+> > > > Then one can use it like
+> > > >
+> > > >       ret =3D pm_runtime_resume_and_get(dev);
+> > > >       if (ret < 0)
+> > > >               return ret;
+> > > >       struct device *pmdev __free(pm_runtime_put_autosuspend) =3D d=
+ev;
+> > > >
+> > > > that is similar as done in pci-sysfs.c.  So far, so good.
+> > > >
+> > > > But, I find putting the line like above at each place a bit ugly.
+> > > > So I'm wondering whether it'd be better to introduce some helper
+> > > > macros, e.g.
+> > > >
+> > > > #define pm_runtime_auto_clean(dev, var) \
+> > > >       struct device *var __free(pm_runtime_put) =3D (dev)
+> > >
+> > > It can be even simpler by assigning a temporary variable such as:
+> > >
+> > > #define pm_runtime_auto_clean(dev) \
+> > >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime=
+_put) =3D (dev)
+> >
+> > Well, if there's something like
+> >
+> > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
+> > {
+> >         int ret =3D pm_runtime_resume_and_get(dev);
+> >         if (ret < 0)
+> >                 return ERR_PTR(ret);
+> >
+> >         return dev;
+> > }
+> >
+> > It would be a matter of redefining the FREE to also take error
+> > pointers into account and you could do
+> >
+> > struct device *__dev __free(pm_runtim_put) =3D pm_runtime_resume_and_ge=
+t_dev(dev);
+> > if (IS_ERR(__dev))
+> >         return PTR_ERR(__dev);
+>
+> That'll work, too.  Though, I find the notion of __free() and a
+> temporary variable __dev a bit too cumbersome; it's used only for
+> auto-clean stuff, so it could be somewhat anonymous.
 
-Is the problem actually that we call the spectre v4 stuff on the
-switch_to() path (we can't change this) under the rq_lock() and it
-subsequently calls printk() which takes the console semaphore? I think
-the "once" aspect makes it less likely but does not address the actual
-problem.
+No, it is not used only for auto-clean, it is also used for return
+value checking and it represents a reference on the original dev.  It
+cannot be entirely anonymous because of the error checking part.
 
-> diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-> index edf1783ffc81..f8663157e041 100644
-> --- a/arch/arm64/kernel/proton-pack.c
-> +++ b/arch/arm64/kernel/proton-pack.c
-> @@ -424,8 +424,10 @@ static bool spectre_v4_mitigations_off(void)
->  	bool ret = cpu_mitigations_off() ||
->  		   __spectre_v4_policy == SPECTRE_V4_POLICY_MITIGATION_DISABLED;
->  
-> -	if (ret)
-> -		pr_info_once("spectre-v4 mitigation disabled by command-line option\n");
-> +	static atomic_t __printk_once = ATOMIC_INIT(0);
-> +
-> +	if (ret && !atomic_cmpxchg(&__printk_once, 0, 1))
-> +		pr_info("spectre-v4 mitigation disabled by command-line option\n");
->  
->  	return ret;
->  }
+The point is that this is one statement instead of two and so it is
+arguably harder to mess up with.
 
-I think we should just avoid the printk() on the
-spectre_v4_enable_task_mitigation() path. Well, I'd remove it altogether
-from the spectre_v4_mitigations_off() as it's called on kernel entry as
-well. Just add a different way to print the status during kernel boot if
-there isn't one already, maybe an initcall.
+> But it's all about a matter of taste, and I'd follow what you and
+> other guys suggest.
+>
+> FWIW, there are lots of code doing like
+>
+>         pm_runtime_get_sync(dev);
+>         mutex_lock(&foo);
+>         ....
+>         mutex_unlock(&foo);
+>         pm_runtime_put(dev);
+>         return;
+>
+> or
+>
+>         ret =3D pm_runtime_resume_and_get(dev);
+>         if (ret)
+>                 return ret;
+>         mutex_lock(&foo);
+>         ....
+>         mutex_unlock(&foo);
+>         pm_runtime_put_autosuspend(dev);
+>         return 0;
+>
+> and they can be converted nicely with guard() once when PM runtime can
+> be automatically unreferenced.  With my proposed change, it would
+> become like:
+>
+>         pm_runtime_get_sync(dev);
+>         pm_runtime_auto_clean(dev);
 
--- 
-Catalin
+For the case in which the pm_runtime_get_sync() return value is
+discarded, you could define a guard and do
+
+guard(pm_runtime_get_sync)(dev);
+
+here.
+
+The case checking the return value is less straightforward.
+
+>         guard(mutex)(&foo);
+>         ....
+>         return;
+>
+> or
+>
+>         ret =3D pm_runtime_resume_and_get(dev);
+>         if (ret)
+>                 return ret;
+>         pm_runtime_auto_clean_autosuspend(dev);
+>         guard(mutex)(&foo);
+>         ....
+>         return 0;
+>
+>
 
