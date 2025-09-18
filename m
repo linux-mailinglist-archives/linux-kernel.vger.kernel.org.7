@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-821996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C01B82CDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:51:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F2BB82CF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05927485A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:51:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7202917E6A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62124242D63;
-	Thu, 18 Sep 2025 03:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECA424503B;
+	Thu, 18 Sep 2025 03:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="X3y7Y/dJ"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VqnvnRXl"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99E923B615
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E581244664
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758167478; cv=none; b=GiuKJEbzE0LY09Q5nJgsbTMs0tgqRCKXsTMtoGIzElKhoqFlnUAMBScwPIoSdC1A4/m4bBDGVCImsHd0HnX7LYXfyWsh25YZQ4drEZ+FV6tamkasdWkQnFuLvr4z4YlFXLKnqODZpN/7KmEKC8NTkAQKcKxZh1Bm2c2uEI0HKRE=
+	t=1758167481; cv=none; b=QHVIHa5srsyI64IwJVOdgF5e03B3ufamUC0PHFNkYuk96WaAzmyNp4EzpfQCxtjcfiJuyHzAbcmobK2K61w6/ec4r5tLlwqpjzVItZhc8kcm1SgCglg+T3m8ZAK/6c9Hph9ME3IpXZVR8iiAZbHA5yXfA8GMjTixJp4lZTOoKcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758167478; c=relaxed/simple;
-	bh=N12mAH4AEAt7MmcqShE1P3CEHF675u7xLlRmXgGx5Xo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nuMkdJ6UE3vdtbQLbnnBrh2lrglkJCb2eraKtkXqnzDsmEoO8XAWdjz6mH4ElHa9d9NpLKa1r+ebRCFmzp7INlbMKgNtVJEzRGvaOEpSQz0W7uRNRIg91cxqUbYmXu3jqbRaqOQ3H5EfN9DoL1dGPSecfaALOVQB9dTFYUrbP/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=X3y7Y/dJ; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1758167481; c=relaxed/simple;
+	bh=n1jsPxkiDoDjeGzSxaWrdwHm2EzDZrO/DhyX5ok9ZkU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NNJ0Md4aKsjrWU0PRgiy8u4oNKdfxLro4YPb/ayc833x0NCwH4Q51/QUajiF7Z8AW50HMrvKThefWzlAeURY5YOzbFR2gaW1FRUxAhAqknKZUuk+3yJIBlJhfOsIZWrfrkzTapO/aI1FWrOUskkmYNKmF5bUJ99u2C21rRxtJDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VqnvnRXl; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I3j5BF032414
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:16 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I1FWB9013713
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=le3hcgVXjn8geHN7AQBsWT
-	xvYkhBX1Lcw++MHyY4VEk=; b=X3y7Y/dJmEZaNlp4uMoE94qP3P2nxCu4BepXJf
-	jfFi5ZXwIn+PxTpvLMGPRR8ChVjwwRK89iHg7gk/nbqo2V7DyZnzzfxDIaMIwrR8
-	Fi75ZKd/Wr3c6y18aHk68+dlqxa1dG8Ms/Jzw/sSHpmIFDC8Smeu+RCsZMAp+Edi
-	9zsbGXrXjpqkU/33HRcuQh0CUpGVihxATJXdYuWGdTMQN8KQK3S3yt38VPXExaSL
-	+GCg3M4QeBnT6/I+a19Yq/6AY8ajkWoKk4EScTshkYivX2pn2u8Dr9LOxQlR+Ug1
-	aOFmf6/cFd9hW802oVa+Rol2o3x9L+1p7U6eTVCUhkpmH9Vg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxymtg7-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RkZe+kneCZcqUTCXv49AXWAvghtTrXyc5dpFgLO8PBU=; b=VqnvnRXlP6KvEO+S
+	vWs5UjO9/qWSjXicrJPqWCIaTDXvc0wkf0cTG3PrHUVU8XjAb+9GYh8BSHI0QXZp
+	8Tc1387V3r+kexpJvziCkqxIC3TfUwSKEgmPBYdhzvWHhdJpbffRpsJfdrm+gdFO
+	6aheDDAJK4WdKZisnjsnhMe3034vxDTeGj7f0khE/cZwV5v6hGene++vu4Ikp7U/
+	fSmjgm5PuJVX5Yt/kmgA7oq8u3sa07abNGfPSUv7b6bY4fj/YuXqnzUdL+V7B2n/
+	hf61GQ1UxdjTyi5WqbEdZvvU2bE4+bzYkG/kKapICujal32/Wte/xT9+7n6yLYlj
+	ZFG2jw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxymtgd-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:15 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b7ad72bc9dso13921581cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:51:15 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:51:19 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-78ea15d3583so8496806d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 20:51:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758167474; x=1758772274;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=le3hcgVXjn8geHN7AQBsWTxvYkhBX1Lcw++MHyY4VEk=;
-        b=Ro17W2tPF5UREsHvQEUMrU6TT/ndRHrFzwgLH48MPo/YmGxHw1QNGYyf4jZAA7QfF8
-         jSUQru/KkIErZJSbx2xHlER8a/VW8kVtbtOZY1uR4QEkQ2fITyK01fRATjzX+y2ZxlTn
-         iKXf+oUaQeoidIS2cyCvp+1lAo3gE7Jr6r3yGe0rQ10O1P+kquBmQ4bl33L2NxRslG/f
-         jZFlNbQx7zKz9VTLX4vZSeztfXzuTgq9wcG+uN0CIeWSbBLLeBp5Xa+mp9QDxQzdLwCU
-         LYTr9NGQuZ0W/gc7/vlsrqFTyhiVT3+CQSoBsgG+0PL4CO7kDU+xVGSQL131ROTvLi2x
-         W8mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGLmzBWDt4Krd3GphIqiURzKvVW2wmd9imAOF8pM9w7qVQeTb+iWC59Ir0L6CXur0wZ3kcMgeNYgxAG3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWbA/i/wweGlTW/v12gDCbZ3jBamuZBtluKGW0CKPjvksVsbub
-	iK4tQJKJ+Fy/EkbLfK+4o6Ch+tIXqWI/gf2ocF0haQhCDvUzzYzWtJw3NuT1aGIby6TkHVjE/89
-	jdLlPPeet+2y111ZNTru8YlJokJVNtI9vCgmlfDRP2gl7gJJNsbLvXluiBj3lv79svjc=
-X-Gm-Gg: ASbGncvXV7+hhSNrgiiDE4nQVbZUqWclDKFlGgCJtEx6ou0FzhRljC1vYO8r6SfuCKA
-	uwwqeOJGv17yPtyRXHIIbpW6sAY4YLdVG6nb5ci00eK9vCzgDIDELBnNpKaNWhUcrHQjt+09mhc
-	uJNei1PDgHPuwDeSNmqzlatqI6l2MJzmtvVixfI+Wrl6iN+FdMIWfOXZv6HwbWw4ZztAFYOzABa
-	4uRNN6ALgCWxKPjNeohAPvqSiVNhPfKCjxQr6x/KePVmNSvK281JnqQXD42rUFoF7rXNNhPbnLH
-	hWxUCnM6b4kkaIKgtcUTq+t3OFd+wH36p+/vtcgZCkkHTSXOpJLJt5obi//11KPtMMbji35+gDU
-	TDdWGfRM8+epp8CjKfafNmmo9h4S5X0pYZjqo7hRgMLTb19HSeS/8
-X-Received: by 2002:a05:622a:410a:b0:4b7:aa31:3c54 with SMTP id d75a77b69052e-4ba6d819d77mr56422841cf.55.1758167474441;
-        Wed, 17 Sep 2025 20:51:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHk+JT0nmGXpYlGzcsiZnvebGGF+RyXL6mJsOObPCr7jEILfS/0AWa9sVdxR5sxI5O0qDmEZQ==
-X-Received: by 2002:a05:622a:410a:b0:4b7:aa31:3c54 with SMTP id d75a77b69052e-4ba6d819d77mr56422661cf.55.1758167474005;
-        Wed, 17 Sep 2025 20:51:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758167478; x=1758772278;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RkZe+kneCZcqUTCXv49AXWAvghtTrXyc5dpFgLO8PBU=;
+        b=QyS41M1Ec2QhCZauGaN41TsWMKKjWUvOSTONxqZA/Bl4ApFUgRKsRv7wollzJVwkbB
+         /c6iv/XJ1zK6tEP5l1AbNtYgTr9a9C0SFNWvlVpl1UJyR3jkma/SUCsB5YirltWKgt3Q
+         wZxDRhHha8J24v3LXOl5s6UV1gnkwN2SOnx32YY3prBdhoUoXijAlhitvk/fz8rW6hz6
+         PK8mw45a+mr7BPDS+3kUISF2H1Y75uhFtHghcDILw0EmFdqARCIwV3k6NarAeO/PwUzf
+         bsbIA8bri/1T5mHBSTsaa+1euoIOJW8RVqJSgnonNLvx4Z0FIGbaqJjbwcyrN8S4uEM9
+         80ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVZDTe8qai7rSFiyBMvTomYStsafIXYxd+/baGeq7hyLlT4Pz60PiONcom9sdnfU5ihrZYJnzDRanpLqK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxepN5ZQxwIisKPFB09uhg77EduV0lCUULuXkuQTRgULcESqbOU
+	A/jFAmCWNqs+8eh6ikz84AlPebH4/NCNSVoLhxEGJB3GV6McqqwkVB7k6Y+Ic60a44o7ZqFRosu
+	E9KP6rzicwkksI7Xr9BIJsibJUjlG4vU5gLvM9ter+u12HiGvqtxhJ3LfN5kcQqmrLJw=
+X-Gm-Gg: ASbGncvfePxXMDuq5vA7qN4u+lWrzT4vS5wsNn4NyIHkfuYGP2+1rG+x5i6RbUnIGa7
+	7Mq0EJwDXyMe2bJ56gFlqw/ZftpNge4NdaE2eex8sNGFkvBFmyRh1UyvMeAJoUtYAHIqd1no+pC
+	/CZlzOvO18hwTPIHQSPMB6xMM5q/eAlqNemmacw3ykVrVoKrC6RUUYGvQsETNn2IX+4pUP7oxCV
+	s9JUDxQof/i+QKWc0iTZ1V2fAxD6w5+HfHKzRgoJ/0JyFqHRDo/TnoywetSkX/E5Hk8xtPevhrX
+	qcQlw8aeVh8Hpe3i7emFVZeA0Ayzs47tJVF/MRDX4DscElwfWxwlETa7mRknLujS5eknsvpdH3g
+	RJ0XcjavQqImaCu7YikYBbbaIpd9pi0fhp3LfI1qYccpfy/gD2KkT
+X-Received: by 2002:a05:6214:4104:b0:721:cbee:3a5c with SMTP id 6a1803df08f44-78ecef1ae02mr47255056d6.48.1758167478167;
+        Wed, 17 Sep 2025 20:51:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSx6ImXWka4qzu25nsGIPKG3jxYLOXD5VmYgqTlB6n69eBvtJTy4miHF7fghHQwXJ6uEWe3g==
+X-Received: by 2002:a05:6214:4104:b0:721:cbee:3a5c with SMTP id 6a1803df08f44-78ecef1ae02mr47254786d6.48.1758167477633;
+        Wed, 17 Sep 2025 20:51:17 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361aa38c4f7sm2799911fa.62.2025.09.17.20.51.10
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361aa38c4f7sm2799911fa.62.2025.09.17.20.51.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 20:51:11 -0700 (PDT)
+        Wed, 17 Sep 2025 20:51:15 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: [PATCH v5 0/5] drm/msm: rework the ties between KMS and GPU parts
- of the driver
-Date: Thu, 18 Sep 2025 06:50:21 +0300
-Message-Id: <20250918-msm-gpu-split-v5-0-44486f44d27d@oss.qualcomm.com>
+Date: Thu, 18 Sep 2025 06:50:22 +0300
+Subject: [PATCH v5 1/5] drm/msm: correct separate_gpu_kms description
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,12 +91,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAH2By2gC/3XPwQrCMAyA4VeRnq0kaWs3T76HeNhqqgXn5jqHI
- nt3O0GUqZfAH8gHuYvIbeAoVrO7aLkPMdSnFGY+E+5QnPYswy61ICADGlFWsZL75iJjcwydJAv
- IOmcNHkS6aVr24fr0NtvUhxC7ur09+R7H7UtSE6lHCRJRkdflEpfOrusYF+dLcXR1VS3SECPY0
- xsx8IXQiFBOrizAm2L3B1EfCGZTRCUEOEfO2Fog9QfRb8SCmSI6Ib7UFpzO0lv4AxmG4QEbzZH
- 1gAEAAA==
-X-Change-ID: 20250411-msm-gpu-split-2701e49e40f0
+Message-Id: <20250918-msm-gpu-split-v5-1-44486f44d27d@oss.qualcomm.com>
+References: <20250918-msm-gpu-split-v5-0-44486f44d27d@oss.qualcomm.com>
+In-Reply-To: <20250918-msm-gpu-split-v5-0-44486f44d27d@oss.qualcomm.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>,
         Dmitry Baryshkov <lumag@kernel.org>,
         Abhinav Kumar <abhinav.kumar@linux.dev>,
@@ -111,31 +108,31 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3268;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1406;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=N12mAH4AEAt7MmcqShE1P3CEHF675u7xLlRmXgGx5Xo=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoy4GtJ5eB/xL4gUiMVxXXYJu5iL4TDfPX2/WvQ
- AE2GvhevTqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaMuBrQAKCRCLPIo+Aiko
- 1bGaCACrcfl54E/NPTAiqJJvaiIh87+3wEmrZe5uAs+zCxfSkb/1/O3vl7fIMGOxtOchxgYTAqi
- cNlwfhGmodkeo+b5qM/8DyUuYNje1wRgr4VF1LosjPB1sV4b4V6Hju7/mTqEWi6sImMBFvw9BlD
- ce7JM8BemdWIzrE5XQj/DSR4vFIyxU3nCTq54eOx5bz/uUgnm2jA9TxaSS8hBYyevK1Afifm3tO
- MdYoYTOUQ+HZdQ5hNk0qGui7mAGxKRDkdvddYmBm8AgYLvWSwDL/0nUg2iJWiXAM6SRI8NCZQV0
- J2WFGYHxG6s4TooNwqEc5jy2TQwwR2x4k/mFvVXYy/TEtp+h
+ bh=n1jsPxkiDoDjeGzSxaWrdwHm2EzDZrO/DhyX5ok9ZkU=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBoy4Gth5pDDKZjVIenXb81Ygke05JopoBwjyJK1
+ zEuck0IZpSJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaMuBrQAKCRCLPIo+Aiko
+ 1WQkB/4lg9tvQI4us/U5LqqNXJTGG36WkG5XJKtFnQcWFkKRzDRqk1ZNk4h9Mb3mPueYFIhsp8V
+ BbzTyeamtCaqZ04D1qJMYL5eJwlgY4uL1spsdfLVR6Gi0qlqlEMDNidNoU4Dag9RWFOKia0N/Js
+ Gr9EHf6lYOvHRjIiG1Hv8bT5u51c+GuTWMq9/QvZeSdizjJTeUSf87xvUG1VXyuLJALiOctg4RO
+ okIthfyiGYNZm2Zl7TuRexJqoWjBn42AfFrtxnWDa4axY7m4DH+OLxrGjfVcNH6YSRarKwHvcKd
+ ulw8+OVYkJs/GR3EXnuymyTQIpbFggCf3XuZO67duHMS3ilD
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cb81b3 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=3aS5ecUQXdRO32CnfYUA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: VTtNG7Cnxtzf-4a47j9qC-qsH3FH--M5
-X-Proofpoint-ORIG-GUID: VTtNG7Cnxtzf-4a47j9qC-qsH3FH--M5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX230q9VrJwmjh
- SdhNYjrDOANrcI2tOmm/r1Nrhx7oHtA8OKdBwe6EZEZuS8GorkpKV/2R3oh/tj6IrBQ5PQjp0m2
- n/W9rIZH/yp58WL97Md10ng3YyksswZ7gEjCY9GTlRu4fxmjK0Cv+CEVer5juxkocyP1fbGSO54
- by2cbTPAlhv8iqm5kMDGn0KYG5ZwoNzkHww42AKkr4+JRZkUcs5H5G2eIe5m2Crmq/JMBa919PG
- dXTrRFkwkUJoOXr15N0QRAwX0Q3xMY4HClst54Yp2FWitbz4F0KeXCMt9b20SBFV1OS8t4fpQvg
- FFAhBG4SaRuxoRo/5Djc7EuFsj11AdQR21OdZEm/58wJLkLJ1H0g5KnbKYi3XhIR1vPo+5ruUYu
- ht7vz68C
+X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cb81b7 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=NR_zzOBYvoclL3rq_QoA:9 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22
+X-Proofpoint-GUID: 9fl-xHfc0SHxqfgLTvmVyazidaEtphiz
+X-Proofpoint-ORIG-GUID: 9fl-xHfc0SHxqfgLTvmVyazidaEtphiz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX12kYVnpnFMKQ
+ b7OLAp4rlFTbrX1lcOd50XCmmBAw1xixxWowBwWCUwhpRbkObLFm9y7l3x2nqHIJSQ5tqCg26ca
+ 6JBwxTAiZXbg4Xpxde/RxQUOHJyl4UMQcyA4o0+qSwG4piq8Eb7IKJiCbSba6aYykWtiORsrJO8
+ pcfnjDFLkKMFkC/CVeDp8/YM07nDdibw55xelqMqviq8XvWfwlG3H88oH+s5/DFLBDlUZURNn4o
+ f5Yqj43UKU6kYbOUfm+UTMbyasT8FKclw/tXBagMLEjpVEyaWLwUU/AL6M1YxQGuwDs/dugVTXR
+ o/ATeXd/0H9jLUHNc8FpDRpfnmfmzXmrBUiJimRL1gjIa5jpPIYSFpTCHhtUj0bVnHByKLSlgO2
+ sjCukr7Z
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
@@ -145,81 +142,34 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-Currently the KMS and GPU parts of the msm driver are pretty much
-intertwined. It is impossible to register a KMS-only device and
-registering a GPU-only DRM device requires modifying the DT.  Not to
-mention that binding the GPU-only device creates an interim platform
-devices, which complicates IOMMU setup.
+While applying commit 217ed15bd399 ("drm/msm: enable separate binding of
+GPU and display devices") the module param was renamed from
+separate_gpu_drm to separate_gpu_kms. However param name inside
+MODULE_PARAM_DESC wasn't updated to reflect the new name.
 
-Rework the driver:
-- Make it possible to disable KMS parts (if MDP4, MDP5 and DPU drivers
-  are disabled).
-- Register GPU-only devices without an interim platform device.
-- Add module param that makes msm driver register GPU and KMS devices
-  separately.
+Update MODULE_PARAM_DESC to use current name for the module param.
 
+Fixes: 217ed15bd399 ("drm/msm: enable separate binding of GPU and display devices")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
-Changes in v5:
-- Rebased on msm-next, dropped applied patches, re-picked up no-GPU
-  patch
-- Rewored debugfs, GEM VM_BIND and ioctls code to reduce number of
-  #ifdef's
-- Link to v4: https://lore.kernel.org/r/20250705-msm-gpu-split-v4-0-fb470c481131@oss.qualcomm.com
+ drivers/gpu/drm/msm/msm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v4:
-- Rebased on msm-next(-robclark)
-- Temporarily dropped the "no-GPU" patch, it will be reposted later
-  (Rob)
-- Link to v3: https://lore.kernel.org/r/20250518-msm-gpu-split-v3-0-0e91e8e77023@oss.qualcomm.com
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 7e977fec4100792394dccf59097a01c2b2556608..06ab78e1a2c583352c08a62e6cf250bacde9b75b 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -55,7 +55,7 @@ MODULE_PARM_DESC(modeset, "Use kernel modesetting [KMS] (1=on (default), 0=disab
+ module_param(modeset, bool, 0600);
+ 
+ static bool separate_gpu_kms;
+-MODULE_PARM_DESC(separate_gpu_drm, "Use separate DRM device for the GPU (0=single DRM device for both GPU and display (default), 1=two DRM devices)");
++MODULE_PARM_DESC(separate_gpu_kms, "Use separate DRM device for the GPU (0=single DRM device for both GPU and display (default), 1=two DRM devices)");
+ module_param(separate_gpu_kms, bool, 0400);
+ 
+ DECLARE_FAULT_ATTR(fail_gem_alloc);
 
-Changes in v3:
-- Disabled SYNCOBJ / SYNCOBJ_TIMELINE for KMS-only driver (Rob Clark)
-- Further refine Kconfig dependencies
-- Link to v2: https://lore.kernel.org/r/20250503-msm-gpu-split-v2-0-1292cba0f5ad@oss.qualcomm.com
-
-Changes in v2:
-- Got rid of mdp4_crtc.id and msm_drm_private.num_crtcs
-- Moved msm_drm_private.wq and msm_drm_private.event_thread to struct
-  msm_kms (Rob Clark)
-- Moved HDMI / DSI / DP pointers to msm_kms (Abhinav)
-- Link to v1: https://lore.kernel.org/r/20250413-msm-gpu-split-v1-0-1132f4b616c7@oss.qualcomm.com
-
----
-Dmitry Baryshkov (5):
-      drm/msm: correct separate_gpu_kms description
-      drm/msm: split VM_BIND from the rest of GEM VMA code
-      drm/msm: split away IOCTLs implementation
-      drm/msm: split debugfs implementation
-      drm/msm: make it possible to disable GPU support
-
- drivers/gpu/drm/msm/Kconfig           |   27 +-
- drivers/gpu/drm/msm/Makefile          |   21 +-
- drivers/gpu/drm/msm/msm_debugfs.c     |  420 ------------
- drivers/gpu/drm/msm/msm_debugfs.h     |   14 -
- drivers/gpu/drm/msm/msm_drv.c         |  645 +++---------------
- drivers/gpu/drm/msm/msm_drv.h         |   16 -
- drivers/gpu/drm/msm/msm_gem.h         |   10 +
- drivers/gpu/drm/msm/msm_gem_debugfs.c |   96 +++
- drivers/gpu/drm/msm/msm_gem_vm_bind.c | 1116 +++++++++++++++++++++++++++++++
- drivers/gpu/drm/msm/msm_gem_vma.c     | 1177 +--------------------------------
- drivers/gpu/drm/msm/msm_gem_vma.h     |  119 ++++
- drivers/gpu/drm/msm/msm_gpu.c         |   45 ++
- drivers/gpu/drm/msm/msm_gpu.h         |  111 +++-
- drivers/gpu/drm/msm/msm_gpu_debugfs.c |  213 ++++++
- drivers/gpu/drm/msm/msm_ioctl.c       |  484 ++++++++++++++
- drivers/gpu/drm/msm/msm_ioctl.h       |   37 ++
- drivers/gpu/drm/msm/msm_kms.h         |    8 +
- drivers/gpu/drm/msm/msm_kms_debugfs.c |  129 ++++
- drivers/gpu/drm/msm/msm_submitqueue.c |   12 +-
- 19 files changed, 2463 insertions(+), 2237 deletions(-)
----
-base-commit: 05af764719214d6568adb55c8749dec295228da8
-change-id: 20250411-msm-gpu-split-2701e49e40f0
-
-Best regards,
 -- 
-With best wishes
-Dmitry
+2.47.3
 
 
