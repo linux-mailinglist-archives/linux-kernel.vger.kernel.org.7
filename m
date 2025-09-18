@@ -1,125 +1,87 @@
-Return-Path: <linux-kernel+bounces-823123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86137B85972
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:28:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77828B858D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532A01C22E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77FB37AE45D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656E230C36A;
-	Thu, 18 Sep 2025 15:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TolEN6m5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256D030F939;
+	Thu, 18 Sep 2025 15:23:34 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C921A2F5A3C;
-	Thu, 18 Sep 2025 15:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF7230E0E9;
+	Thu, 18 Sep 2025 15:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209010; cv=none; b=kUmIlcXUdyfb+I7IBUpva1/wLHp3DcnUE/0XNu6SU9Me7xXjzcaoJVhvv+c6viooe9JW9sJ5UOltfggw8A5pazyIg971EXuWtGLtSwKC9/Cnp0hg6zBFqoT2wDm2GmSKZNV4VNTvl5zbHOYlAoXufFh18OxSbnkKuBZmiKfakGs=
+	t=1758209013; cv=none; b=DK2atUWxDEJqp5hsDzw8D/ADnFB4JGXEUv2Q/bKIWZo+qUezbwLNqvoaP9SxVIMNMPUcnyCHi/41VmYpjqE3yye3/cAFUd+KwmDXuKOSdJwpNvnOm8b1HZCLW+wAYmIoJCQq5vT69u/ibCuwCAqwmwVFzYvjk9EYpK8pQYSDyVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209010; c=relaxed/simple;
-	bh=g3cS/lZwgVcclRY6ZWivvVKvmwA2sJzfeV9D2rWS388=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9t3KGN52q//4K0h2vJWDTiyVSFQosjQD6cTbjK249OtsDOM6TTCmEod6Mw47Nja3YlJxMgtdDCh3WU3OQZBAZybPV2Cf5SWC5s6RdIjOJrn/3/oJzU1h0v9oFra1aY0bydWj/PaYqu1jNqALipottmr7T/R88a2XH9+uuFeaqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TolEN6m5; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758209009; x=1789745009;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g3cS/lZwgVcclRY6ZWivvVKvmwA2sJzfeV9D2rWS388=;
-  b=TolEN6m5aRZWnXtMKj4BnnvWR0fy4INhtVY93RnYMZB8fD1rPoYEPfsy
-   QDKNkvRCZucLWjrpddB8Qavvji2t0smVlgfHF9meu5h3lWvwlofi/qNro
-   tO7s+ZcPQh1AWY16BGKj37HXJM6ircdA2asMa+UBAtQk1RPmkop4x3sa0
-   +Alrqk9pJ7b6MWrPT/FZFPl+Poc5vl0vbbhPFtFa5KeHLHFkoCJ/adS3d
-   HpZhvafmFIWDlmUuzYUi4IEc4HSfFbMtXvL4Sk0HUlZYyreKG4WWfa7OL
-   Hdf3XK0I1QysTyxCUbx5yQMTy1whSnWCq6bAYoaeKBzVX9UHVCnf+QzAw
-   w==;
-X-CSE-ConnectionGUID: rg5qYePjT26T13vObs+LgA==
-X-CSE-MsgGUID: XbgtlJz1Tja6I9Wt1nqCUg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64348587"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64348587"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 08:23:28 -0700
-X-CSE-ConnectionGUID: t8SDyEeiQE2t72SKnVtbVg==
-X-CSE-MsgGUID: FuLKWxRXTZC60UTTdFY3fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="180684283"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 18 Sep 2025 08:23:23 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 21C1497; Thu, 18 Sep 2025 17:23:22 +0200 (CEST)
-Date: Thu, 18 Sep 2025 17:23:22 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Jack Pham <quic_jackp@quicinc.com>,
-	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Mayank Rana <mayank.rana@oss.qualcomm.com>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
- Router
-Message-ID: <20250918152322.GK2912318@black.igk.intel.com>
-References: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
- <20250917061236.GF2912318@black.igk.intel.com>
- <e648a71f-a642-4f5d-bcf8-893484cfe601@oss.qualcomm.com>
- <20250918051244.GJ2912318@black.igk.intel.com>
- <035c0d66-bddd-495c-bd23-e1d98570ba7f@oss.qualcomm.com>
+	s=arc-20240116; t=1758209013; c=relaxed/simple;
+	bh=NHZ2ORArzxNUylF6vygV6kCOeIu2Wbgv9ac/4epvHK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CBLM7xgzqceHDdN92Mn3izVuOd1zXzP7KdGxC6KqCEB72HWF+azAD5A1tzp64M5nqATnub6yDBU5wM2jm0hmZwutl01Qw258SF8Ws3TPZVQZo/m7jl7/RsSc50hWFxuaKhaYy/cR3PlYqQCA/8zAzc6en8hsw74oHwKcrumf6YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id B88C3B756B;
+	Thu, 18 Sep 2025 15:23:22 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 6C22E20025;
+	Thu, 18 Sep 2025 15:23:17 +0000 (UTC)
+Date: Thu, 18 Sep 2025 11:24:25 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Fuyu Zhao <zhaofuyu@vivo.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
+ haoluo@google.com, jolsa@kernel.org, eddyz87@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ shuah@kernel.org, willemb@google.com, kerneljasonxing@gmail.com,
+ paul.chaignon@gmail.com, chen.dylane@linux.dev, memxor@gmail.com,
+ martin.kelly@crowdstrike.com, ameryhung@gmail.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ yikai.lin@vivo.com
+Subject: Re: [RFC PATCH bpf-next v1 0/3] bpf: Add BPF program type for
+ overriding tracepoint probes
+Message-ID: <20250918112425.23d4d379@gandalf.local.home>
+In-Reply-To: <e8e8b5e2-35fe-43cc-ba41-c84ccba189f7@vivo.com>
+References: <20250917072242.674528-1-zhaofuyu@vivo.com>
+	<20250917153055.6fee814f@gandalf.local.home>
+	<e8e8b5e2-35fe-43cc-ba41-c84ccba189f7@vivo.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <035c0d66-bddd-495c-bd23-e1d98570ba7f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Stat-Signature: fqyhtzmk4ch6fggf79z9gc37wtq3dwu1
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 6C22E20025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18P1hRjLcFAJR/HlcDkMOBrSvLYf6Ril7w=
+X-HE-Tag: 1758208997-146052
+X-HE-Meta: U2FsdGVkX19KLlcfuUHlnoX7WA6C2lDCWiD1hUjNLxixnDz/qr5at9WuFIcm+IE0hVWwHrzDnHtL/FhxnH6Lc9flXhRLnxNC+3Jfx5/CuhM0gcDZCq2qZmbp8fBv5MXvrlbsGHKFyjKeGbR/EivgAkrA9auX3H+7PRBDl9PZVJVtH+Nv39QCqMkBNMz0Dw2fpF+rmQ2sMhN/5kNTLsdxV7gA4YvTEde3iwnB7rz1txvHFxJMs/fmjcVj9NMspXvvSPah+cbky9LCU8jjwf2WeARwDTePM7z7Sq4KFBeX5xPlAm8ApHORE3uXXqzKxVBcDjJNQrE5yTxmBwC5bf3AvlJtPfXsEK7c
 
-Hi,
+On Thu, 18 Sep 2025 20:33:22 +0800
+Fuyu Zhao <zhaofuyu@vivo.com> wrote:
 
-On Thu, Sep 18, 2025 at 11:05:42AM +0200, Konrad Dybcio wrote:
-> > I it hard to change these DT bindings later on? If yes then I would
-> > definitely think forward and make this support MSI from the get-go.
-> 
-> dt-bindings (attempt to) promise an ABI-like interface, so bindings
-> for *a given IP block* ("dt-bindings describe the hardware") should
-> not change, unless there's something critically wrong (e.g. "this
-> could have never really worked").
+> At the moment, I don=E2=80=99t have a solid real-world example to provide.
+> This work is still in an exploratory stage.
 
-Then I think it is good to think few steps forward and make sure when
-Qualcomm adds MSI to their IP it can be easily desribed in the DT bindings.
+We shouldn't be in the business of "if you build it, they will come".
+Unless there is a concrete use case now, I would not be adding anything.
 
-> Adding new properties is always OK, marking the new properties  as
-> 'required' is not (unless it falls into the aforementioned case).
-> 
-> It's also totally OK to add MSI properties to e.g. Apple Host Router
-> bindings specifically when they come around, as it's simply a different
-> piece of hardware. It's also OK to create a usb4-host-router.yaml down
-> the line, which will act as a common include and perform any
-> maintenance/code churn, so long as it doesn't end up in the bindings
-> for any specific hw block (e.g. this QC one) becoming more strict
-> than they were on HEAD^.
+My entire workflow for what I created in the tracing system was "I have a
+need, I will implement it". The "need" came first. I then wrote code to
+satisfy that need. It should not be the other way around.
 
-Okay thanks for the explanation.
+-- Steve
 
