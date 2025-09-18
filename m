@@ -1,199 +1,308 @@
-Return-Path: <linux-kernel+bounces-823128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC03B85909
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:26:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29220B859C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8201613DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:26:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887C81888717
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA42430F80F;
-	Thu, 18 Sep 2025 15:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fEHCzXBX"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2B930DECA;
+	Thu, 18 Sep 2025 15:26:42 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684A124467A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B7F243951;
+	Thu, 18 Sep 2025 15:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209170; cv=none; b=U9qP+pUX/FNZmHJiX9I+SAfH+2VI0JLGEzPNx4eXKx21a0HwZHLpo9coj3b0a/6ix/rfH+ukHV5ca06oZVyEbbUyWxdzGjzjpeA3wyqASWWJvZZ6b6bX/IVTg/KgkTNj6rRPPzA3JagWrfMT8OCQNHJKBmrsLWAL8u1W/fwzN60=
+	t=1758209201; cv=none; b=ksJcEEZIC41k5jAWrkZDAz4TL2fQShqk0CNw4nejgmovZiBp/ZiBmlhi+TTUsutqlHe7KrD6WSQ+rszxn65HATjVh1WSeiBVkC3c6h0s3F3uk5KK4AgVS8LM9ZpmebQ0SrSEohvKjmxr3mxKWAOEvUF6RUW7YfGl7j5hqiwHGW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209170; c=relaxed/simple;
-	bh=T/mWFe8NzS54YpnNNIjgGNosJ7quWk5Bo4FQETSjfQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oGd9fxYfRNBL5/icWu0kBglB9rilu5Q8qUBjKktxIGwbwgyn+eMr45bvBnF2UqwEGSSSN7O2tX4G7RrGJv7UVOOTX8d8g90yAbKaVHTNznpGNvbIhTOTXCG+JTcTvWk2fgXYVq5TKF3Lp5kGF9O2lm70Wr94RKpBPLWWvrPHUtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fEHCzXBX; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45f2f7ae386so8155885e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758209166; x=1758813966; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPabrgJ3flhzfh3xzBI0TJyAcLG6lM4hGPw3JCTS0NM=;
-        b=fEHCzXBXDkYgV0HUjs24QqnAKGz2D7Iiys8h5rhQXH68nzY3xNqkxStYdGMbdmk9OM
-         suYRQpr6IWS7V/Buhfp8sUaWdjqyFGJqP+p47ricuZhW9mI8SBWif2fuRmCWCEd4IEjW
-         kDBTEbVqGdA/QyPgQWzipnNOWfwfF025xKUdSNtkykK0kK/ykjOY4Rhk3Kj/YSY6nS+6
-         C6Q4QHi5W1Sa2d5oywrW0hKvEqKYIyPdpR5BbFOdimj9JuTiEoNAff+wABw2R6j/gwBb
-         eTlZ/4den5MF1LDtQMegEJzKLg0i6sGopw/umRZ0aurYD+HyEzYyDtxQ6lTSsYarczJj
-         k1oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758209166; x=1758813966;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPabrgJ3flhzfh3xzBI0TJyAcLG6lM4hGPw3JCTS0NM=;
-        b=v++vT2E+M8s9zl4euoboThroQ0i1cPVHYkhEnN+aaFWV4FGxQDRBWkpOGwR8bNXU6P
-         7D8gV64GWXUEbNOQzGwF4WBSdFiTmOEasgl+Peio0++OAkbhK2d1I0s9R0VbDldclSyr
-         IUPVFsMdD9CeiI//6voDPBCe2DVHFyz3wLyjlmVElF8vNse0HeRlb8gLbRgPbw9kfW5T
-         PsRwziuMeWWqK6o4XWwid0btYyndsQ3u4IgLTf3+ki/RYy/E89rQ7qv1pK9MwKBHTLoD
-         HsoWdCidehJs/1my472JhwSOIbcUGhzINLBAVVn6e7+5teOAftmJilISBYaIiruVyS8N
-         RuNw==
-X-Gm-Message-State: AOJu0YxMThvnOHKjGtR7HWPTmgs0YAvvtN+OXcfUwCiF2HkpPpfBqSYo
-	YXRyJ9fPQ7pcj/MMeEWUI1/jZHZj06Nkv5F8zfo/C9aM48N4byTXtZQoP92BdEwU5M0OD9EyMs9
-	rtTj3Gos=
-X-Gm-Gg: ASbGncuYUcSjCojnTkeOynjEFPLLYp1TOzrQJ2Cj2fmrZ+NS1IyDzvpMprEaI24FWtm
-	CEjifpufbqo66ODRLo7WJss5U/vpb4NWYu1IkE2jdpgR94BuTY9SVhWnaAs6K4WnYd6+KFfabsp
-	EkxOAZ3k9U9jAOFtDDi2UJeb0pm2RQ1/F7D6GRdElNwWxFMP4fR4zXD0z5+b5IeWIG2zkbxnGlM
-	7cwPxEQpxdc77uzboKZ0fRLZZNjPwnyp5ideBe+0k/n/3uh89/WyTdBktWnaculFq6+eKp1cm2d
-	XrHEEcXcr+8zk/ZVZXkse1KA9N2r/RnBno9xlHe5MUa/LUDSWbTCpEmMlkNekhZ7sHV4xG0z3WN
-	THQWpX8rfebbn7PRi5mCroyQJEDwDUpQdiB4CCNqyAxsN5NlZVkVKo40gv4e56ANY
-X-Google-Smtp-Source: AGHT+IEpdSO5Kx2EqRZYU9Is6GMWXSSVjk1EzXFYF/z2X5WoUebXHk2UFL+J3lsvf5aGWoJdYiR8Xg==
-X-Received: by 2002:a05:6000:26c6:b0:3dc:eb5:51f6 with SMTP id ffacd0b85a97d-3ecdfa07bc5mr5332196f8f.39.1758209166322;
-        Thu, 18 Sep 2025 08:26:06 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f3d73sm4069815f8f.8.2025.09.18.08.26.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 08:26:06 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-	Pagadala Yesu Anjaneyulu <pagadala.yesu.anjaneyulu@intel.com>
-Subject: [PATCH 2/2] wifi: replace use of system_wq with system_percpu_wq
-Date: Thu, 18 Sep 2025 17:25:17 +0200
-Message-ID: <20250918152517.361773-3-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250918152517.361773-1-marco.crivellari@suse.com>
-References: <20250918152517.361773-1-marco.crivellari@suse.com>
+	s=arc-20240116; t=1758209201; c=relaxed/simple;
+	bh=VKAYKLQrxUsJo0+Ph4IN0UIq4I25sBDCBgS1MW9feCM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jQ5S5tOApxQUiF8xrgjpzNAEzn1ehN6vRNMnaA6WmHN4h0gIlXhb8+gezzVDdoagXQI2eInubPDSCySa/GqLUDmbyFf4jPCD9qEVt+ui6iVrLRpUkqaFJmlykFeFwXw0xuDj+0qfcn9vmrcxtAtkokJa7UeoTprQukh16xC00Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cSKHJ6lp3zYQvSJ;
+	Thu, 18 Sep 2025 23:26:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 8E3131A07BB;
+	Thu, 18 Sep 2025 23:26:35 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP3 (Coremail) with SMTP id _Ch0CgCXMUCoJMxoqFUQAA--.34287S2;
+	Thu, 18 Sep 2025 23:26:33 +0800 (CST)
+Message-ID: <e27254b5-22cf-4578-9623-d2d8de54aeca@huaweicloud.com>
+Date: Thu, 18 Sep 2025 23:26:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Li Lingfeng <lilingfeng3@huawei.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+ Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+ NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>,
+ Tom Talpey <tom@talpey.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ yangerkun <yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>,
+ Hou Tao <houtao1@huawei.com>,
+ "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>, leo.lilong@huawei.com
+Reply-To: 34bd5595-8f3f-4c52-a1d5-d782fc99efb9@huawei.com
+From: Tengda Wu <wutengda@huaweicloud.com>
+Subject: Re: [Question] nfsd: possible reordering between nf->nf_file
+ assignment and NFSD_FILE_PENDING clearing?
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgCXMUCoJMxoqFUQAA--.34287S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Jw47Aw4xtrWDXFy7Kry8Zrb_yoWxWr13pr
+	WYgFyUGrW8J3ykAwnFka1Dur1Y9r4xuF4aqr9Ygws3JryjgrZYvFW8KFyUZFWrGrWkAFyr
+	Zr4YgrZrXa1vy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrP
+	EfUUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+Hi,
 
-This lack of consistentcy cannot be addressed without refactoring the API.
+On 2025/9/18 21:57, Li Lingfeng wrote:
+> Recently, we encountered a null pointer dereference on a relatively old
+> 5.10 kernel that does not include commit c4c649ab413ba ("NFSD: Convert
+> filecache to rhltable"), which exhibited the same behavior as described
+> in [1]. I was wondering if it might be caused by the reordering between
+> the assignment of nf->nf_file and the clearing of NFSD_FILE_PENDING.
+> 
+> Just to mention, I don't believe the analysis in [1] is entirely accurate,
+> since hlist_add_head_rcu includes a write barrier.
+> 
+> We haven't encountered this issue on newer kernel versions, but the
+> assignment of nf->nf_file and the clearing of NFSD_FILE_PENDING appear
+> consistent across different versions.
+> 
+> Our expected outcome should be like this:
+>                 T1                                    T2
+> nfsd_read
+>  nfsd_file_acquire_gc
+>   nfsd_file_do_acquire
+>    nfsd_file_lookup_locked
+>     // get nfsd_file from nfsd_file_rhltable
+>                                         nfsd_read
+>                                          nfsd_file_acquire_gc
+>                                           nfsd_file_do_acquire
+>                                            nfsd_file_alloc
+>                                             nf->nf_flags // set NFSD_FILE_PENDING
+>                                            rhltable_insert // insert to nfsd_file_rhltable
+>                                            nf->nf_file = file // set nf_file
+>    wait_on_bit
+>    // wait NFSD_FILE_PENDING to be cleared
+>                                            clear_and_wake_up_bit // clear NFSD_FILE_PENDING
+>    // get file after being awakened
+>  file = nf->nf_file
+> 
+> Or like this:
+>                 T1                                    T2
+> nfsd_read
+>  nfsd_file_acquire_gc
+>   nfsd_file_do_acquire
+>    nfsd_file_lookup_locked
+>     // get nfsd_file from nfsd_file_rhltable
+>                                         nfsd_read
+>                                          nfsd_file_acquire_gc
+>                                           nfsd_file_do_acquire
+>                                            nfsd_file_alloc
+>                                             nf->nf_flags // set NFSD_FILE_PENDING
+>                                            rhltable_insert // insert to nfsd_file_rhltable
+>                                            nf->nf_file = file // set nf_file
+>                                            clear_and_wake_up_bit // clear NFSD_FILE_PENDING
+>    // get file directly
+>  file = nf->nf_file
+> 
+> But is it possible that due to reordering, it ends up like this:
+>                 T1                                    T2
+> nfsd_read
+>  nfsd_file_acquire_gc
+>   nfsd_file_do_acquire
+>    nfsd_file_lookup_locked
+>     // get nfsd_file from nfsd_file_rhltable
+>                                         nfsd_read
+>                                          nfsd_file_acquire_gc
+>                                           nfsd_file_do_acquire
+>                                            nfsd_file_alloc
+>                                             nf->nf_flags // set NFSD_FILE_PENDING
+>                                            rhltable_insert // insert to nfsd_file_rhltable
+>                                            clear_and_wake_up_bit // clear NFSD_FILE_PENDING
+>    // get file directly
+>  file = nf->nf_file
+>                                            nf->nf_file = file // set nf_file
+>  // Null dereference due to uninitialized file pointer.
+> 
+> [1]: https://lore.kernel.org/all/20230818065507.1280625-1-haydenw.kernel@gmail.com/
+> 
+> Any suggestion will be appreciated.
+> 
+> Thanks,
+> Lingfeng.
+> 
 
-system_wq is a per-cpu workqueue, but its name is not clear. Because of
-that has been renamed in system_percpu_wq.
+I would like to provide a reproducible test case, though it might not be
+entirely precise.
 
-The old system_wq will be kept for a few release cycles.
+The test case mimics the nfsd_file_acquire workflow and consists of three
+threads: main thread, thread1, and thread2, where:
 
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
----
- drivers/net/wireless/intel/ipw2x00/ipw2100.c  | 6 +++---
- drivers/net/wireless/intel/ipw2x00/ipw2200.c  | 2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/tdls.c | 6 +++---
- 3 files changed, 7 insertions(+), 7 deletions(-)
+* Thread1 acts as the writer, simulating the open_file workflow.
+* Thread2 acts as the reader, simulating the wait_for_construction workflow.
+* The main thread runs multiple iterations to ensure that thread1 and thread2
+  can execute concurrently in each round.
 
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2100.c b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-index 215814861cbd..c7c5bc0f1650 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2100.c
-@@ -2143,7 +2143,7 @@ static void isr_indicate_rf_kill(struct ipw2100_priv *priv, u32 status)
- 
- 	/* Make sure the RF Kill check timer is running */
- 	priv->stop_rf_kill = 0;
--	mod_delayed_work(system_wq, &priv->rf_kill, round_jiffies_relative(HZ));
-+	mod_delayed_work(system_percpu_wq, &priv->rf_kill, round_jiffies_relative(HZ));
- }
- 
- static void ipw2100_scan_event(struct work_struct *work)
-@@ -2170,7 +2170,7 @@ static void isr_scan_complete(struct ipw2100_priv *priv, u32 status)
- 				      round_jiffies_relative(msecs_to_jiffies(4000)));
- 	} else {
- 		priv->user_requested_scan = 0;
--		mod_delayed_work(system_wq, &priv->scan_event, 0);
-+		mod_delayed_work(system_percpu_wq, &priv->scan_event, 0);
- 	}
- }
- 
-@@ -4252,7 +4252,7 @@ static int ipw_radio_kill_sw(struct ipw2100_priv *priv, int disable_radio)
- 					  "disabled by HW switch\n");
- 			/* Make sure the RF_KILL check timer is running */
- 			priv->stop_rf_kill = 0;
--			mod_delayed_work(system_wq, &priv->rf_kill,
-+			mod_delayed_work(system_percpu_wq, &priv->rf_kill,
- 					 round_jiffies_relative(HZ));
- 		} else
- 			schedule_reset(priv);
-diff --git a/drivers/net/wireless/intel/ipw2x00/ipw2200.c b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-index 24a5624ef207..09035a77e775 100644
---- a/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-+++ b/drivers/net/wireless/intel/ipw2x00/ipw2200.c
-@@ -4415,7 +4415,7 @@ static void handle_scan_event(struct ipw_priv *priv)
- 				      round_jiffies_relative(msecs_to_jiffies(4000)));
- 	} else {
- 		priv->user_requested_scan = 0;
--		mod_delayed_work(system_wq, &priv->scan_event, 0);
-+		mod_delayed_work(system_percpu_wq, &priv->scan_event, 0);
- 	}
- }
- 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
-index 36379b738de1..0df31639fa5e 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
-@@ -234,7 +234,7 @@ void iwl_mvm_rx_tdls_notif(struct iwl_mvm *mvm, struct iwl_rx_cmd_buffer *rxb)
- 	 * Also convert TU to msec.
- 	 */
- 	delay = TU_TO_MS(vif->bss_conf.dtim_period * vif->bss_conf.beacon_int);
--	mod_delayed_work(system_wq, &mvm->tdls_cs.dwork,
-+	mod_delayed_work(system_percpu_wq, &mvm->tdls_cs.dwork,
- 			 msecs_to_jiffies(delay));
- 
- 	iwl_mvm_tdls_update_cs_state(mvm, IWL_MVM_TDLS_SW_ACTIVE);
-@@ -548,7 +548,7 @@ iwl_mvm_tdls_channel_switch(struct ieee80211_hw *hw,
- 	 */
- 	delay = 2 * TU_TO_MS(vif->bss_conf.dtim_period *
- 			     vif->bss_conf.beacon_int);
--	mod_delayed_work(system_wq, &mvm->tdls_cs.dwork,
-+	mod_delayed_work(system_percpu_wq, &mvm->tdls_cs.dwork,
- 			 msecs_to_jiffies(delay));
- 	return 0;
- }
-@@ -659,6 +659,6 @@ iwl_mvm_tdls_recv_channel_switch(struct ieee80211_hw *hw,
- 	/* register a timeout in case we don't succeed in switching */
- 	delay = vif->bss_conf.dtim_period * vif->bss_conf.beacon_int *
- 		1024 / 1000;
--	mod_delayed_work(system_wq, &mvm->tdls_cs.dwork,
-+	mod_delayed_work(system_percpu_wq, &mvm->tdls_cs.dwork,
- 			 msecs_to_jiffies(delay));
- }
--- 
-2.51.0
+The test case is as follows:
+
+
+// writer
+static int thread_func1(void *data)
+{
+	struct foo *nf;
+	void *file;
+
+	nf = &global_nf;
+
+	while (!kthread_should_stop()) {
+		wait_for_completion(&comp_start1);
+		if (kthread_should_stop()) break;
+
+		/* Simulate the open_file process in nfsd_file_acquire() */
+		__set_bit(FOO_PENDING, &nf->nf_flags);
+		hlist_add_head_rcu(&nf->nf_node, &foo_hashtbl[ghashval].nfb_head);
+		file = foo_filp_open();
+
+		/* Test whether the following two lines of code will cause memory reordering */
+		nf->nf_file = file;
+		clear_bit_unlock(FOO_PENDING, &nf->nf_flags);
+
+		smp_mb__after_atomic();
+		wake_up_bit(&nf->nf_flags, FOO_PENDING);
+
+		complete(&comp_end1);
+	}
+	if (file)
+		kfree(file);
+	pr_info("thread_func1: exit\n");
+	return 0;
+}
+
+// reader
+static int thread_func2(void *data)
+{
+	void *file;
+	struct foo *nf;
+
+	nf = &global_nf;
+
+	while (!kthread_should_stop()) {
+		wait_for_completion(&comp_start2);
+		if (kthread_should_stop()) break;
+
+		/* Simulate the wait_for_construction process in nfsd_file_acquire() */
+retry:
+		rcu_read_lock();
+		nf = foo_find_locked(ghashval);
+		rcu_read_unlock();
+		if (!nf)
+			goto retry;
+
+		wait_on_bit(&nf->nf_flags, FOO_PENDING, TASK_UNINTERRUPTIBLE);
+		file = nf->nf_file;
+		if (!file)
+			WARN_ON(1);
+		else
+			kfree(file);
+
+		complete(&comp_end2);
+	}
+	pr_info("thread_func2: exit\n");
+	return 0;
+}
+
+static int main_thread_func(void *data)
+{
+	u64 iters = 0;
+
+	while (!kthread_should_stop()) {
+		iters++;
+		if (iters % 1000000 == 0)
+			pr_info("main_thread_func: started %llu iterations\n", iters);
+
+		/* Start both threads */
+		complete(&comp_start1);
+		complete(&comp_start2);
+		/* wait for both to finish */
+		wait_for_completion(&comp_end1);
+		wait_for_completion(&comp_end2);
+
+		/* Reset completions */
+		reinit_completion(&comp_end1);
+		reinit_completion(&comp_end2);
+		reinit_completion(&comp_start1);
+        	reinit_completion(&comp_start2);
+
+		hlist_del_rcu(&global_nf.nf_node);
+                global_nf.nf_file = 0;
+                global_nf.nf_flags = 0;
+	}
+
+	pr_info("main_thread_func: exit\n");
+
+	return 0;
+}
+
+
+I compiled and executed this test case on ARM64. The experimental results show that
+after approximately 6,000,000 rounds, the "file is null" warning in thread2 was
+triggered, indicating that reordering occurred between the file assignment and flag
+clearance operations in thread1.
+
+
+[107632.795543] My module is being loaded
+[107632.800255] Threads started successfully
+[107637.656469] main_thread_func: started 1000000 iterations
+[107642.520876] main_thread_func: started 2000000 iterations
+[107646.919550] main_thread_func: started 3000000 iterations
+[107651.545742] main_thread_func: started 4000000 iterations
+[107655.577054] main_thread_func: started 5000000 iterations
+[107660.507772] main_thread_func: started 6000000 iterations
+[107663.212711] ------------[ cut here ]------------
+[107663.218265] WARNING: CPU: 26 PID: 10603 at /path/to/nfsd/mod3/order_test.c:142 thread_func2+0xa0/0xe0 [order_test]
+
+
+When I placed an smp_mb() between 'wait_on_bit' and 'file = nf->nf_file' in thread2,
+the warning *no longer* occurred.
+
+		wait_on_bit(&nf->nf_flags, FOO_PENDING, TASK_UNINTERRUPTIBLE);
++		smp_mb();
+		file = nf->nf_file;
+
+I hope this test case proves helpful for investigating the aforementioned memory
+reordering issue.
+
+Best regards,
+Tengda
 
 
