@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-822806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6731B84B71
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:59:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DF0B84BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1B5179748
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:59:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A49A27A906B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE05F304BBD;
-	Thu, 18 Sep 2025 12:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08D230277A;
+	Thu, 18 Sep 2025 13:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="EYf+ja/m"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YoAnsHq0"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E022F90F0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB691E1E1B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200368; cv=none; b=O/nWNdvtidFAZykXQA9u2CBbtCIakTqYz4kqox5bMLxl91xPbEcBGPRN62vbgj3O23EeVjlsqN20DDJUZujGoWMJiKLF+h4Bwju+1+qMxCQXl7yBNIXhxfIrCOzpzjLcH2+iEmcg4ICnTxlJ/vU4rcM0XuYCC8Ox6DE0nFozu7E=
+	t=1758200551; cv=none; b=S/U+bXydyJWFKFpJ+9jdO1KRLzu99waVGVHqK1byzJNdwPhGbzh1HJyafTxDDBmWo0CnFTz3EFj8swvzoqNoxxKO0jwaFKkXF9SdKpi9PS/yBnntxU7MszH7fNllbrj2xRvnUZ5ygFJ/8U20NHw7LVBWpeLnIgylyKGQkRoVazw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200368; c=relaxed/simple;
-	bh=CbZ6gYEJxW7XWC59yzH9WJlgV3s7R6FDbk4UYbi5ssU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dw4w06F0WWTYo72LYjz7W5+6KAvvmxfXkDX8Ku9wfjMhp+cvGSErRf4QxkJHrpS0Ola8ceNosPMaUAuyXsG+HLBzkuZjzTa+a+dPmcGd7v5jJSCkk5G2Pa97nHdEw132gjcwCER/UoiV4YgO9LpXhhveVESDxk+bFe/032igH8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=EYf+ja/m; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
-	by cmsmtp with ESMTPS
-	id zBQruQONQaPqLzEEQu6ndN; Thu, 18 Sep 2025 12:59:26 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id zEEPuRwmZmCqvzEEPuYkCa; Thu, 18 Sep 2025 12:59:25 +0000
-X-Authority-Analysis: v=2.4 cv=W8Y4VQWk c=1 sm=1 tr=0 ts=68cc022d
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=S5I6IyoDQDCI//OVfcJNsw+DY9YlafQQ2nkm67LEAkU=; b=EYf+ja/mzrvxnjKdRVEAvFT3Xt
-	yQ3sJeyRsVZONcSpPUXAPhSlyCRelxwTxMLJn0DMgisqA09ApxO96Q9e/seTmEvUjn+WNpTK2B1HR
-	1fRmHSuTIjR9ZsZKJeYryjCHWyKLeIsJQIMT3+CeuRAp/wotasw5IvScEYbutb4+UNgijgpOel3bv
-	b0RRYGACPgx/kFWVrzzjQNHV3Wu5oDLjfTSfe6Cx7JEkbwEfUE0Jyz/iYhNnSsF/TKxWDzqF4FVeR
-	SZEPqcmSk/x7XV485uJmieEMNEFukPGRx+S71/ucV59f7V7CjZzK6jAiLjZIFw/qnDE+rr+96Rjyz
-	msz0M/LA==;
-Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:41152 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1uzEEO-00000004GWu-2dF5;
-	Thu, 18 Sep 2025 06:59:24 -0600
-Message-ID: <5f3f06b0-c6e8-4c0c-9187-8a436c67d36b@w6rz.net>
-Date: Thu, 18 Sep 2025 05:59:22 -0700
+	s=arc-20240116; t=1758200551; c=relaxed/simple;
+	bh=pNG+InEIeVE5jh10Z56aIojWZnOwbe1cuSvsD4fE6FY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9WTgF8sFoVhCLEqjS60L8wvAGCAVuyFtUnhpdmvv/n6EMIJslqSg5U1o6UxgzB2o1kd5jwQ236ovwThgm+qXByJRBWsP3eALBTfu1Fw6mK7eaDylVFQcq2h6lVnwSNTJVZ7zghanV9kIT5R6LoSgWiycMmL+cq6SCfkOlf8/Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YoAnsHq0; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-afcb7322da8so162894066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:02:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758200547; x=1758805347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aIzDbyhYpuaBXUrKMka7lKnhRt47H5xyoFzXDbV9fD0=;
+        b=YoAnsHq0edX7E6Jx0CU87FeFRTtyIDPqQaODc+Ir1iiR97/ckLeQsQWhV+J8RYUraW
+         YAhQ1NVCXipZOtjZHbJRBeuYeS4igmJXaPeqsKdgtlwiLBsfgy8Ax86y8UdOSOD5vabg
+         88enr4NdARSkttk+iunUX01enHmNIrHi0fcjdaLPIsEkejFnVXBFRpNRHjlUHf/Qe8u6
+         KmYf9SNAAmXO0rYQe/rQ/el3KqAoNBouOdBTs9MJkHHnUXpfsMkeJdlKxPtFMsOeyYs4
+         94Vdy5DvL82KGnZinOSY4drVZtFEkcLwpAdl39OmDZLtk4sAbdpYll06R/v6vd/QHeoG
+         HDRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758200547; x=1758805347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aIzDbyhYpuaBXUrKMka7lKnhRt47H5xyoFzXDbV9fD0=;
+        b=neNW93BF46D+OK4pM4BQzHpw7VVu/2T4odLFBaeVru+bat+kUPSqDze7XkQEIUNI2j
+         bpfV8YL1J3ILzpzqFrrRwbhvRGdWMStj/n7q+klFFpZwoFb+nk5x0jb0degz500FHkFp
+         mACvNHhw7DCrlb452j/nCEATzNyWealc62pSUpIAuviuaEg5gNbSRLP/af3Xji5yN7Sw
+         4NwHqrl3+U4nzBKOiLufgHnPvgKdU/PukXFHqcGfPOi5hvE/mj8eU1d3D4E8TBL3FfZO
+         CGgbVviSE6JTOIA5yxTaRM26t1lQBZWOwsj4F8nG1hDpV3lcSVch9Oe3SjPNJZPC9R+L
+         G9Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRmHYMD33C8B2WYSNc7m8plfIWQJEjyzPbThG6YkjZzY7Xctf7h8JV8B0hREC3++igRsyPzSPBq9HFQ9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUuORuhvEQr1OMlUsM2EZQiY6QtWTR+qGQ8Jlwlt4DqYbH0n5j
+	bF3D1bwWltt/WqW4T7Gxep0rlVzk7RA0AS1355VUXrir+GYDu3X+AuIqW0uJSEb+D3I=
+X-Gm-Gg: ASbGnctoJHstJ6T116a4nYqa2hyaLuzUq5nPykIIgwnpbcZl42o5EIRqPQMFbtuSw6a
+	AgWE9MqE5yR/61VnIiA9Sf9T5v2vk62k5AN6pbA9qItml4XlRz35LgAtB+znmP7L+b/gmWSI7Iy
+	Vti2BBdWamPN1/O8Jc9s2wl0PTgJL61VZinZiqiJIUphHGl1DKGw6K39GIhZvzzmKh5eHf4RCos
+	dxVlDolyTSZJOKBXLGDSbUfB1P8dj2ztih95Yh7kLmt3tJFZKUfmGqO/EdQ7omSQCMe0SdAS1h5
+	3VB619E6lfb/FnGSHDJrzD0Z9GhGMRr4jDO11aiKyabTPFkXa3ByTWoZ6hoF1vQKH4xB42Ewysl
+	gdaDWZcEQV6pG5fSbRu7V2XuOTjngmhV0rxBysn5yD+NR
+X-Google-Smtp-Source: AGHT+IE4mI2rDB6qnxX4AnK+7Sl4B8jgUrUQKivo/eG6grifwlwBSBfvXGxUWSy1bqE3hTsahdhF/w==
+X-Received: by 2002:a17:907:9604:b0:b0a:aa7e:a191 with SMTP id a640c23a62f3a-b1bbb733fc4mr655010666b.57.1758200546741;
+        Thu, 18 Sep 2025 06:02:26 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5d437b1sm1427249a12.22.2025.09.18.06.02.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 06:02:26 -0700 (PDT)
+Date: Thu, 18 Sep 2025 15:02:24 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v4 1/5] printk: nbcon: Export console_is_usable
+Message-ID: <aMwC4HAYjpWpZDMj@pathway.suse.cz>
+References: <20250915-nbcon-kgdboc-v4-0-e2b6753bb566@suse.com>
+ <20250915-nbcon-kgdboc-v4-1-e2b6753bb566@suse.com>
+ <aMp4BrEpqXOW9nam@pathway.suse.cz>
+ <dad15813cfdc3b7c77ba71266e38a137d0015bcd.camel@suse.com>
+ <20250917-imaginary-vigorous-condor-fccdc1@lemur>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/101] 6.6.107-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250917123336.863698492@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250917123336.863698492@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.92.56.26
-X-Source-L: No
-X-Exim-ID: 1uzEEO-00000004GWu-2dF5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:41152
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 57
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPBdRSS1S9LHS4qxTAIUNNEr6tz2ulhHbUlfAVbue/B7GS7W4irOUpwYSQLVUHz7DgNtGmpz9c7yz5ezpcFG8u3+nDaZi/8gdXnL96CE5WMVqxxTbs+E
- /987aFwzqlVCAWXNjmrbsZo6Ga3w4Hxq7G2ia+96L8iuMtvMEuMb0gjQ5CnKBGdeL1hWAsIeM1OWzdViqDH/bI88MQGtEBqPi7I=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-imaginary-vigorous-condor-fccdc1@lemur>
 
-On 9/17/25 05:33, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.107 release.
-> There are 101 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.107-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed 2025-09-17 10:07:47, Konstantin Ryabitsev wrote:
+> On Wed, Sep 17, 2025 at 09:21:48AM -0300, Marcos Paulo de Souza wrote:
+> > > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> > > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > > 
+> > > It means that Macros developed a patch and Petr reviewed it.
+> > > The patch was not longer modified.
+> 
+> That's not entirely correct. The signed-off trailer is used as the boundary
+> indicating who was the person responsible for collecting the trailers. When
+> the trailers are collected by the original author as part of their iteration
+> cycles, their signed-off-by trailer goes below any trailers they have
+> received.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This is an interesting interpretation. I am just curious. Has this
+already been discussed anywhere, please?
 
-Tested-by: Ron Economos <re@w6rz.net>
+It seems that the ordering of the trailers is not much described
+in the process documentation, see
+https://docs.kernel.org/process/submitting-patches.html
 
+Best Regards,
+Petr
 
