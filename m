@@ -1,111 +1,160 @@
-Return-Path: <linux-kernel+bounces-823590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 757C1B86ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:37:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB34B86EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40667E4501
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6B01C87CCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331592F3606;
-	Thu, 18 Sep 2025 20:37:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B972F28E2;
+	Thu, 18 Sep 2025 20:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dGITqn4J"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284092D63FF;
-	Thu, 18 Sep 2025 20:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0AE2E284A
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758227833; cv=none; b=tiDxDeFl/yy+KmiA8Wh9a7c7KJjQOt1TSdLZiZ0sxvaLJ3TJtOSDCqrFR5RFK2gDMYzZuHnVNYOpgfxObY4KLN+tS2dY7dvYb8UsqbzMeTpH9j7EKRAcd+VAqH+Aqhgtsni1o/Z05QEsr8unXo4B0DskdfveUXSQ7ElG3iL1FjQ=
+	t=1758227870; cv=none; b=cdR7b7VswPvzYULe/umPmfIxb3LBw5ujdoW0igWJNidU8iiost7bCJpTt+obhNpFKeILt+s4JPkvia57tAwq0jG31MXh6znAWYBwHRWinGU8u1rAC2WWicSeoIf4kN+YRW+bRw3zHqKS2Ti0BRmiygjsVVjT5+CYnak/hBf2Fxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758227833; c=relaxed/simple;
-	bh=K4mBwSrBNcKyhAm8gbEHryo4PTBkpR7Q30/ZWeXHl1I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V+UIXSbqTa16v04yCupiVXIUlIwsc1ePqF6QmiyG1QlhxnYlV7zG1a+Of9PDn8PfFKsuVjbBS2iSaDn56T2YZ3TD3VvKJbywK/2IgFPA9IfvAB5Ef8Ns/heq8pFizo9ZmRtJ7vwL8JmIuwVhJi8N/80y5Fk4fIrxoxxHAuuoyVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 8E6D31604ED;
-	Thu, 18 Sep 2025 20:37:01 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf03.hostedemail.com (Postfix) with ESMTPA id 9D9BE6000D;
-	Thu, 18 Sep 2025 20:36:44 +0000 (UTC)
-Message-ID: <13389786a2a121c21a6f4940b4acf09fad53a3d9.camel@perches.com>
-Subject: Re: [PATCH v3 05/35] checkpatch: Warn about capability_unsafe()
- without comment
-From: Joe Perches <joe@perches.com>
-To: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>, 
- Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will
- Deacon <will@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck	
- <luc.vanoostenryck@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
- Alexander Potapenko	 <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
- Bart Van Assche	 <bvanassche@acm.org>, Bill Wendling <morbo@google.com>,
- Christoph Hellwig	 <hch@lst.de>, Dmitry Vyukov <dvyukov@google.com>, Eric
- Dumazet	 <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Herbert Xu
- <herbert@gondor.apana.org.au>, Ian Rogers	 <irogers@google.com>, Jann Horn
- <jannh@google.com>, Joel Fernandes	 <joelagnelf@nvidia.com>, Jonathan
- Corbet <corbet@lwn.net>, Josh Triplett	 <josh@joshtriplett.org>, Justin
- Stitt <justinstitt@google.com>, Kees Cook	 <kees@kernel.org>, Kentaro
- Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn	 <lukas.bulwahn@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Miguel Ojeda <ojeda@kernel.org>, Nathan
- Chancellor	 <nathan@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>,
- Tetsuo Handa	 <penguin-kernel@I-love.SAKURA.ne.jp>, Thomas Gleixner
- <tglx@linutronix.de>,  Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki
- <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
-	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
-	llvm@lists.linux.dev, rcu@vger.kernel.org
-Date: Thu, 18 Sep 2025 13:36:43 -0700
-In-Reply-To: <20250918140451.1289454-6-elver@google.com>
-References: <20250918140451.1289454-1-elver@google.com>
-	 <20250918140451.1289454-6-elver@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758227870; c=relaxed/simple;
+	bh=+0R/2T7Tg9D4YiaoqRiplwCZvbPjlzXYv47AHkbl7dM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fkJ5r/lC76tULuCCaHpR5Te84Gr8YAvb5cb62TBAiZ5i8DmYN8lbsbdAzhREswbQxet3UCebdetfWTHBp/KgbLS4N4YIe7tmqbfLdNZqgd6Wjb4I5Kgk9s6cLjZVGs390fvboWFNC5Xi2WcX4iEwVkU8nzXGI+Dpjguedklh6/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=dGITqn4J; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea5aa2fdac8so1353122276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1758227868; x=1758832668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vPqblTFKrLAe0mzsDyY6YySHuY6Q2kBBLw78NU0KIeg=;
+        b=dGITqn4JwTmj5KwN35OD6/w5on0Ky8BtXx72gnPAkmp+/tXztRoUxlrBVs4ZSLAQFl
+         0WJTdsR4LIGjuEl1QwUmqXU1ZbKWotDZBJG6uz0fcDJu+Pde2OpvjBLV6Wcgt7ebZaGE
+         3IiA0rQaf+FOGwRk4LF2MySoeTtdmVC5ogGWw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758227868; x=1758832668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vPqblTFKrLAe0mzsDyY6YySHuY6Q2kBBLw78NU0KIeg=;
+        b=Qt3CAAADIBYOoKfz9Pe0BML7+BkA/C2ZP7RwBzPhXtexaPhFNLD6IQsSXp2nwitfjD
+         8ewmNkQdpFl08QACgy/oTgYXotVF0jF32gkwY6GcuwlYLOn1DOWm+5Yc2goHDP0mLwwc
+         kYr5osxG1KMZmtFWCSEhJADPNpMaa6mSC5ohlXJsc+fV5fC/lMv2w/CKleMGDm8hW+E5
+         1dykzB9ojprXs56XEivcKHNRgX/tdnANdn03p9i3ZXcZ1PUvCiWfEXeYfTcXryUsM+ku
+         xP4zg9Z0XyTu5kejs0Z54ZMijk+hKlFHstxtmIbYoLv61XItXgIrf/X/uwlM38CSp2Lc
+         49fQ==
+X-Gm-Message-State: AOJu0YwT+qTc0sj6AHSNm7b8QQf2zWF7bP/TTn2xd/5KYjPhnWOwGRjH
+	HBc9E3T8gnLtL8GVILGlIL1TQOAISLaX/M1ZEeuce7bRpUHQwQKrpcR8OpyC+jUXW2V7ZtjKq85
+	ExFv/Ojk9upOxk3RetntijhPq5ZeDe5Qsql0TcAv7R7++ejc7gqwia90=
+X-Gm-Gg: ASbGncvOuaRiHpO18JQe9Z4IAE0YVYNS5OmbV/MDIXhpMgsodTGkkO7wiZ8mN9j3Cc6
+	1HegSL7+TmqO4qIgWSJIcnhCB/novmZcFb5VsLu4DducndyW9lJC9g2wDThQLHw5o7llUEzcIgw
+	JZXhgJSG3jB7jM9PNBJ3k+5W+oyY4xZNN9yG1kq2hR4We7Ry4mJjOvFp2CemK6Iskx0Vu2EBVJ4
+	HPwmCTBC+Rc2nu99rzTfLWH
+X-Google-Smtp-Source: AGHT+IH14ML5OeTgfNCjZ+eLR5D0BkEN/X8W7UZQcrAQKu6xXP5etxnsRLfqJ5tS5GUlUf2xOTL9iOYN03VgHVRvQJU=
+X-Received: by 2002:a05:6902:c04:b0:ea4:f3f:5498 with SMTP id
+ 3f1490d57ef6-ea8aa09f336mr791364276.36.1758227867928; Thu, 18 Sep 2025
+ 13:37:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 9D9BE6000D
-X-Stat-Signature: py53mcfac346e64tk9rcf8ugswnwrn9n
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+Psz6mclmN7I07c5jPtb/CcemQyIEeoMA=
-X-HE-Tag: 1758227804-881299
-X-HE-Meta: U2FsdGVkX1+3ZResTrAAf9g9L6dJTCgmeXzyM4kYyOanBXCbxLPKLUzexU279fp4Uk1s32nIlGL7ALFntG4iQsakleJTeVRQim4oreS1teDe2c1v+Yr3chddZziKPoDc++AISXJQPhyq2w3G+YXN9VlSwrMnsmWf2JBDP+6EKscCwfkdUqEPS2c1jIOhGC9JFL5oLKZVp7yaxDYTVOVvcxJD81BMXbf5A4qGtQvLNkMWZnMoJtyHKmlojlv7i6K2T4g5I4c9AZ5UYsKsHO+RYQ2ZU++uSS7Q3j7El4OW8jbzA/Y7Pj1Sh8vbE9tWV5T5
+References: <20250918155240.2536852-1-dario.binacchi@amarulasolutions.com>
+ <20250918155240.2536852-4-dario.binacchi@amarulasolutions.com> <20250918200445.GA2529753-robh@kernel.org>
+In-Reply-To: <20250918200445.GA2529753-robh@kernel.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 18 Sep 2025 22:37:37 +0200
+X-Gm-Features: AS18NWBqzx_QCJLvM1ZupXjBE082LYlK02aLhStfsrL_kkHbqntwv2U3qqpvFFU
+Message-ID: <CABGWkvqX9aCxam6UMYsUBkwnMJrMNKjVKrqi5Ca7O5Jk8xRTAA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] dt-bindings: touchscreen: add touchscreen-glitch-threshold-ns
+ property
+To: Rob Herring <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, 
+	linux-amarula@amarulasolutions.com, Conor Dooley <conor.dooley@microchip.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Javier Carrasco <javier.carrasco@wolfvision.net>, Jeff LaBundy <jeff@labundy.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-09-18 at 15:59 +0200, Marco Elver wrote:
-> Warn about applications of capability_unsafe() without a comment, to
-> encourage documenting the reasoning behind why it was deemed safe.
-[]
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -6717,6 +6717,14 @@ sub process {
->  			}
->  		}
-> =20
-> +# check for capability_unsafe without a comment.
-> +		if ($line =3D~ /\bcapability_unsafe\b/) {
-> +			if (!ctx_has_comment($first_line, $linenr)) {
-> +				WARN("CAPABILITY_UNSAFE",
-> +				     "capability_unsafe without comment\n" . $herecurr);
+On Thu, Sep 18, 2025 at 10:04=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
+e:
+>
+> On Thu, Sep 18, 2025 at 05:52:31PM +0200, Dario Binacchi wrote:
+> > Add support for glitch threshold configuration. A detected signal is va=
+lid
+> > only if it lasts longer than the set threshold; otherwise, it is regard=
+ed
+> > as a glitch.
+> >
+> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > ---
+> >
+> > Changes in v5:
+> > - Add Acked-by tag of Conor Dooley
+> >
+> > Changes in v2:
+> > - Added in v2.
+> >
+> >  .../devicetree/bindings/input/touchscreen/touchscreen.yaml    | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchs=
+creen.yaml b/Documentation/devicetree/bindings/input/touchscreen/touchscree=
+n.yaml
+> > index 3e3572aa483a..a60b4d08620d 100644
+> > --- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.y=
+aml
+> > +++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.y=
+aml
+> > @@ -206,6 +206,10 @@ properties:
+> >
+> >          unevaluatedProperties: false
+> >
+> > +  touchscreen-glitch-threshold-ns:
+> > +    description: Minimum duration in nanoseconds a signal must remain =
+stable
+> > +      to be considered valid.
+>
+> What's wrong with debounce-delay-ms?
 
-while most of these are using the same multi-line style
-I'd prefer combining and reducing indentation
+Do you mean that I should rename touchscreen-glitch-threshold-ns to
+debounce-delay-ms?
 
-		if ($line =3D~ /\bcapability_unsafe\b/ &&
-		    !ctx_has_comment($first_line, $linenr)) {
-			WARN(etc...
+Thanks and regards,
+Dario
+
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
