@@ -1,447 +1,137 @@
-Return-Path: <linux-kernel+bounces-822747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE1BB84941
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:26:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A6EB84926
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4987058521A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:26:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D774A84EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3742FD1A3;
-	Thu, 18 Sep 2025 12:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T6x4fXfw"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4082FBDFD;
+	Thu, 18 Sep 2025 12:26:07 +0000 (UTC)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA292FBDFD
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF8A2FB09E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758198380; cv=none; b=S2X35JgQtcF6isjg/wfci85pYVROZ3byIgfYK29KK+YKm7KyjI4Fxx8Ejcepu+r7XtfxW0Xq9deni6Us1uz7ncWh6A8LPkX5gDSoUjaiGzi1lc5EZ7JopI93Bvz8Lphg6SNj4igH7GQf5fqbucm6fP5YPHBIs0QWiQjeN8gcz4A=
+	t=1758198367; cv=none; b=WRUXCrme3D8FbwPU+ouKdBHkQYdVr3lDP/yYqYcivr41879OhY0idRWUXesi5FLMVFl1ORzzPA9tekhfG2oOQ+DNNqIjpY5Vj5ly9IhSaTuHm3rVMEiUN5JfWFy3A+D8VjFpIukch3XaW5GxcICgLjLItSkUknJKMPpNtJ/AMo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758198380; c=relaxed/simple;
-	bh=aqmhAs0S/LHx29s3fxAaLNhauw6lSq212EjvulXG7hU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qdAOMDOUcWnqQ+dDBmLkVM5YDq0aUVccauIEr03qAda8/Stjiadu+MZOW2ephfQJlsqQP/PoOudpLss9hyFiLxowbvacxuqGRkkW+oc2lcTapZL9WO/Cobtb8dIaNxNjFXVhsCu4PxT8c7IQ/zfrQSLz3LvDqGmfrz+Z4m9kRTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T6x4fXfw; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Forwarded-Encrypted: i=1; AJvYcCVCXtMXkb9BYDaYiTnsCJkrqSpx3y3gd1c+KbuR0A36nvvmBcTJUbhd73JsYHHAVepuJLXa24n4gglCjG8=@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758198375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EH9giSpZMfR77wwHdiCIsexZ2AcufjY7Wc4xPwqnI1M=;
-	b=T6x4fXfwrKFQ351hVVVAFrIV5wwlLU2ydLEwR9WNgEh/iQ31q7jGJAPxNZArAYcSieUNXi
-	M6HjdHU2hv/KLS/FAYGECE8tDdika8F9aNlsbKaf0qU0ShU9RCzSQVzE1dX6k73fbk1C9T
-	bJJIh6kwVKi3oMeXKWFOfKOOWnX7pac=
-X-Gm-Message-State: AOJu0Yw4FzagxSc/F0f1s5fGf0kqWVxkYl5Se57VXJOqIOH7N83JrTka
-	G//TQQ5/SV1d1rGM/Iggp0v2nL/NNlScp7kzfLTWxhqTYWgjp9NP0dfwvhXrUk2QU76dMzqzFcD
-	cguHObrJIBddnq4qQS8nWrRQXWcQk2RI=
-X-Google-Smtp-Source: AGHT+IGGP31ziNtgQqklBwMARCMOLiDiCC/zUBb/4ZbQjX3VBvk8Am/kuZmLkz9fixDfq7zDeYHVtGHCAOqyXDThVPM=
-X-Received: by 2002:a05:620a:3903:b0:816:492c:875a with SMTP id
- af79cd13be357-831165425abmr540175985a.78.1758198373516; Thu, 18 Sep 2025
- 05:26:13 -0700 (PDT)
+	s=arc-20240116; t=1758198367; c=relaxed/simple;
+	bh=BnrMrtsr2AwzNeynM+FwYe/VSFvzmFKnora+bM4/LaM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Gn980O0BGPattdNmNwGAp5z09tcIKnyTh//VWSfGrU6IZtTKMnftidB7WOZuLG4SsBX/PWewqwAwcgN/XdTw75j98P4RpqCSrR5rjdY7aLbu7FK7DJif3CB13zT3fQNO+o8njnZymdWXQYMGbjwxEQGlU9tyto2xfGJQ6ZZ2/gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0418f6fc27so148173566b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:26:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758198364; x=1758803164;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tb5jY5fs5C8DqAcfkDVhoy1uAvDHAU63YQhZVIzsa1c=;
+        b=LojSxdrVuenbAQCtrw0a/PGEAlktqxVFbx7U2LEaD14pmRzGmLnESkE429CRH3nUaH
+         V+7893g+thTKp9ML6gWSVOCNDTSUP/sJ0TBqf6IN8Up0d1FTRhu12eUKWw9W2yLE2Cep
+         wWPwPjxu0k4YAGtJN4Y/Pc9ctySysFH2rWGvWCYy/nLM+kwBrfCEagUEDzJBtIY8mqUX
+         Zhg0H8kXWjDd+nKWLAslhCicmlXX3sGao2/5/z/Ty34XfKLoDrHOgb01C35oMxAoyQnL
+         WoYp4hR+7Unm8CekeTSkrD6BXvRYzBuqQlPVhCyUV8H2sLuSC9QGM+YMz+vLYnP88481
+         qcVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrKMUv98LUQvg+LzZgV/DjtWO3ngvICxqBUv/iR+BSN0wf2rIQ8MHgPiMIxBrnaIMhToTpjdNhLcepMFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymrVqgS4lEc0jyaSldeGSKx63T63wOgluWvx1K3GneOnNaPAhc
+	0VTQ5+FxtmJWlLs+gwTdtHxrhxqZN5MaPzOJMmZFWikM0F0B16k8r6lR
+X-Gm-Gg: ASbGncuPs0NL0xpWbCzDiQGGMZfKmwqpJTSVadMQ1oI20DpqgiK1mexe6pYkIHISRY1
+	uraW5UPm9gFhVVlsPkkGowoHZR3cJ7hOU6xXLcULNH2Ve4EA0gtbmnmErT6yNaJszC8pdEHSm07
+	FxWYvHMZAGZpVuScr+7WMJsKMddmNKre4NIj1ITGNdU7tzTFSHN38LvJr4q2zw+dd9516iI5+Bc
+	vmv4bpW+zmgskO84+IfTKJw2Y/DnZMFf9gqUwqWMidbVIR0G6UAsOBs2+r74yrUPlawEZX0sGP5
+	SBcCVywlkOv789gujTwxX4MHa81Z4yCzxT781rbzD7X2aMsuUmFVAsEeJSTYL2PwT4rl8ax9td6
+	lEa13a+0Bc68y31KjHj17YENySB97jik3
+X-Google-Smtp-Source: AGHT+IGEfoHakw2xql8ZehfjfPaOLhWCCVd10JLLYxDRAxbcr0o84RQ34UJ57G2Uqs7u2S8lio3MaA==
+X-Received: by 2002:a17:907:2d0f:b0:afe:764d:6b22 with SMTP id a640c23a62f3a-b1bb50c4172mr608468566b.9.1758198363665;
+        Thu, 18 Sep 2025 05:26:03 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:44::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc73ba6c0sm187053166b.24.2025.09.18.05.26.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 05:26:03 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next 0/2] net: netpoll: remove dead code and speed up
+ rtnl-locked region
+Date: Thu, 18 Sep 2025 05:25:56 -0700
+Message-Id: <20250918-netpoll_jv-v1-0-67d50eeb2c26@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830100438.3623486-1-usamaarif642@gmail.com>
- <20240830100438.3623486-3-usamaarif642@gmail.com> <a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com>
- <434c092b-0f19-47bf-a5fa-ea5b4b36c35e@redhat.com> <CABzRoyYWQMFTGYgfC7N=cWMnL_+5Y05=jrMhFjBf1aKOGxzq5g@mail.gmail.com>
-In-Reply-To: <CABzRoyYWQMFTGYgfC7N=cWMnL_+5Y05=jrMhFjBf1aKOGxzq5g@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Date: Thu, 18 Sep 2025 20:25:36 +0800
-X-Gmail-Original-Message-ID: <CABzRoybFEdtXFktqMgKbjHW7S_Usp-ugSpXFSBJHMO+1Q3Qi-Q@mail.gmail.com>
-X-Gm-Features: AS18NWB_1fTc7ZEWvJsWWzqg_bBpxb7vwlhX7CM5LekBeNlQSfsQCuVdouIUXxY
-Message-ID: <CABzRoybFEdtXFktqMgKbjHW7S_Usp-ugSpXFSBJHMO+1Q3Qi-Q@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] mm: remap unused subpages to shared zeropage when
- splitting isolated thp
-To: Lance Yang <lance.yang@linux.dev>
-Cc: David Hildenbrand <david@redhat.com>, =?UTF-8?B?UXVuLXdlaSBMaW4gKOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "usamaarif642@gmail.com" <usamaarif642@gmail.com>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "yuzhao@google.com" <yuzhao@google.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "corbet@lwn.net" <corbet@lwn.net>, 
-	=?UTF-8?B?QW5kcmV3IFlhbmcgKOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>, 
-	"npache@redhat.com" <npache@redhat.com>, "rppt@kernel.org" <rppt@kernel.org>, 
-	"willy@infradead.org" <willy@infradead.org>, "kernel-team@meta.com" <kernel-team@meta.com>, 
-	"roman.gushchin@linux.dev" <roman.gushchin@linux.dev>, "hannes@cmpxchg.org" <hannes@cmpxchg.org>, 
-	"cerasuolodomenico@gmail.com" <cerasuolodomenico@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ryncsn@gmail.com" <ryncsn@gmail.com>, 
-	"surenb@google.com" <surenb@google.com>, "riel@surriel.com" <riel@surriel.com>, 
-	"shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
-	=?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?= <chinwen.chang@mediatek.com>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	=?UTF-8?B?Q2FzcGVyIExpICjmnY7kuK3mpq4p?= <casper.li@mediatek.com>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"baohua@kernel.org" <baohua@kernel.org>, "kaleshsingh@google.com" <kaleshsingh@google.com>, 
-	"zhais@google.com" <zhais@google.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFT6y2gC/x3MUQqDMBAFwKss79tAtCqaq4iUWjftiqySBBFC7
+ l7oHGAyIgfhCEcZgS+Jcigc1RXh/X3ph42scITGNp0d68Eop/PY9+d2mXHxve9b6x92QEU4A3u
+ 5/9kE5WSU74S5lB8mS6bBZgAAAA==
+X-Change-ID: 20250918-netpoll_jv-9bf6f640f308
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>, efault@gmx.de, jv@jvosburgh.net, 
+ kernel-team@meta.com, calvin@wbinvd.org
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1370; i=leitao@debian.org;
+ h=from:subject:message-id; bh=BnrMrtsr2AwzNeynM+FwYe/VSFvzmFKnora+bM4/LaM=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoy/paOttH6yMEPbyggzhbIa4szrf811dI+6EWz
+ bNb4Neq3AiJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaMv6WgAKCRA1o5Of/Hh3
+ bQaFD/0TW68QYyYiEtNVxKw5NsP5fz7z7VNSRNZT8Jvwg1rpeuAH9WhzkGyAy7V7h4Wlr3umEAU
+ O7/1hnRmDEHTaePy7MuIYWKOVWq7rFTfW8aX5FYVDmB/mpqTs0uh1S6gxXidKW1vfqv/q5zfV9S
+ 1XtB0hyuLq+4PyZI503bfVan3lNpgqlfeRCNP+r519FU82XipJKjdhjO+hMxG/XPZw0Sz1bryqv
+ fIDnuh0toMlrgilg0dRlJ6GALvzTIEPnqcgiacYBrzmiTHlcraoULnynitBERD8rEyVchgdT9fZ
+ yPYmdDgl6oQO7yWDONKqPfijjsbAG+HFtk9agdHjVAMvvldXYQ0xRRCfqL4LmZaa6OaN5s2C7E8
+ 6QnlemA3YHpopUvTA/WExxTowzBn2DFAWYvNrgqqQFgQ6LxAoFZUR25aazVcEYTDSHJJka0Waen
+ J8tu/P+7eziRCFkFwaHqAZRkadX5MsN4hODQYno0kYQrbYW2YFHb4JKUfZWTda1sJjuH5GKgF6Q
+ Y+bjTcU7r+6OVSRcuT6mw983Nigcn7tmuOj94bWvIP4kpKyyuXZRwffVEVbhqKp5vOtRQSAVhGD
+ cm+IX/IN3mFee+B5KiMa1lR6y9XqjQpbqypKgU/nXabmRrRO+Ubt78Bsgk1F/6s7msQRPHRsuXZ
+ /oZTBHnjD5nactg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Thu, Sep 18, 2025 at 8:22=E2=80=AFPM Lance Yang <lance.yang@linux.dev> w=
-rote:
->
-> On Thu, Sep 18, 2025 at 5:21=E2=80=AFPM David Hildenbrand <david@redhat.c=
-om> wrote:
-> >
-> > On 18.09.25 10:53, Qun-wei Lin (=E6=9E=97=E7=BE=A4=E5=B4=B4) wrote:
-> > > On Fri, 2024-08-30 at 11:03 +0100, Usama Arif wrote:
-> > >> From: Yu Zhao <yuzhao@google.com>
-> > >>
-> > >> Here being unused means containing only zeros and inaccessible to
-> > >> userspace. When splitting an isolated thp under reclaim or migration=
-,
-> > >> the unused subpages can be mapped to the shared zeropage, hence
-> > >> saving
-> > >> memory. This is particularly helpful when the internal
-> > >> fragmentation of a thp is high, i.e. it has many untouched subpages.
-> > >>
-> > >> This is also a prerequisite for THP low utilization shrinker which
-> > >> will
-> > >> be introduced in later patches, where underutilized THPs are split,
-> > >> and
-> > >> the zero-filled pages are freed saving memory.
-> > >>
-> > >> Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > >> Tested-by: Shuang Zhai <zhais@google.com>
-> > >> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> > >> ---
-> > >>   include/linux/rmap.h |  7 ++++-
-> > >>   mm/huge_memory.c     |  8 ++---
-> > >>   mm/migrate.c         | 72 ++++++++++++++++++++++++++++++++++++++--=
---
-> > >> --
-> > >>   mm/migrate_device.c  |  4 +--
-> > >>   4 files changed, 75 insertions(+), 16 deletions(-)
-> > >>
-> > >> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-> > >> index 91b5935e8485..d5e93e44322e 100644
-> > >> --- a/include/linux/rmap.h
-> > >> +++ b/include/linux/rmap.h
-> > >> @@ -745,7 +745,12 @@ int folio_mkclean(struct folio *);
-> > >>   int pfn_mkclean_range(unsigned long pfn, unsigned long nr_pages,
-> > >> pgoff_t pgoff,
-> > >>                    struct vm_area_struct *vma);
-> > >>
-> > >> -void remove_migration_ptes(struct folio *src, struct folio *dst,
-> > >> bool locked);
-> > >> +enum rmp_flags {
-> > >> +    RMP_LOCKED              =3D 1 << 0,
-> > >> +    RMP_USE_SHARED_ZEROPAGE =3D 1 << 1,
-> > >> +};
-> > >> +
-> > >> +void remove_migration_ptes(struct folio *src, struct folio *dst, in=
-t
-> > >> flags);
-> > >>
-> > >>   /*
-> > >>    * rmap_walk_control: To control rmap traversing for specific need=
-s
-> > >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > >> index 0c48806ccb9a..af60684e7c70 100644
-> > >> --- a/mm/huge_memory.c
-> > >> +++ b/mm/huge_memory.c
-> > >> @@ -3020,7 +3020,7 @@ bool unmap_huge_pmd_locked(struct
-> > >> vm_area_struct *vma, unsigned long addr,
-> > >>      return false;
-> > >>   }
-> > >>
-> > >> -static void remap_page(struct folio *folio, unsigned long nr)
-> > >> +static void remap_page(struct folio *folio, unsigned long nr, int
-> > >> flags)
-> > >>   {
-> > >>      int i =3D 0;
-> > >>
-> > >> @@ -3028,7 +3028,7 @@ static void remap_page(struct folio *folio,
-> > >> unsigned long nr)
-> > >>      if (!folio_test_anon(folio))
-> > >>              return;
-> > >>      for (;;) {
-> > >> -            remove_migration_ptes(folio, folio, true);
-> > >> +            remove_migration_ptes(folio, folio, RMP_LOCKED |
-> > >> flags);
-> > >>              i +=3D folio_nr_pages(folio);
-> > >>              if (i >=3D nr)
-> > >>                      break;
-> > >> @@ -3240,7 +3240,7 @@ static void __split_huge_page(struct page
-> > >> *page, struct list_head *list,
-> > >>
-> > >>      if (nr_dropped)
-> > >>              shmem_uncharge(folio->mapping->host, nr_dropped);
-> > >> -    remap_page(folio, nr);
-> > >> +    remap_page(folio, nr, PageAnon(head) ?
-> > >> RMP_USE_SHARED_ZEROPAGE : 0);
-> > >>
-> > >>      /*
-> > >>       * set page to its compound_head when split to non order-0
-> > >> pages, so
-> > >> @@ -3542,7 +3542,7 @@ int split_huge_page_to_list_to_order(struct
-> > >> page *page, struct list_head *list,
-> > >>              if (mapping)
-> > >>                      xas_unlock(&xas);
-> > >>              local_irq_enable();
-> > >> -            remap_page(folio, folio_nr_pages(folio));
-> > >> +            remap_page(folio, folio_nr_pages(folio), 0);
-> > >>              ret =3D -EAGAIN;
-> > >>      }
-> > >>
-> > >> diff --git a/mm/migrate.c b/mm/migrate.c
-> > >> index 6f9c62c746be..d039863e014b 100644
-> > >> --- a/mm/migrate.c
-> > >> +++ b/mm/migrate.c
-> > >> @@ -204,13 +204,57 @@ bool isolate_folio_to_list(struct folio *folio=
-,
-> > >> struct list_head *list)
-> > >>      return true;
-> > >>   }
-> > >>
-> > >> +static bool try_to_map_unused_to_zeropage(struct
-> > >> page_vma_mapped_walk *pvmw,
-> > >> +                                      struct folio *folio,
-> > >> +                                      unsigned long idx)
-> > >> +{
-> > >> +    struct page *page =3D folio_page(folio, idx);
-> > >> +    bool contains_data;
-> > >> +    pte_t newpte;
-> > >> +    void *addr;
-> > >> +
-> > >> +    VM_BUG_ON_PAGE(PageCompound(page), page);
-> > >> +    VM_BUG_ON_PAGE(!PageAnon(page), page);
-> > >> +    VM_BUG_ON_PAGE(!PageLocked(page), page);
-> > >> +    VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
-> > >> +
-> > >> +    if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags &
-> > >> VM_LOCKED) ||
-> > >> +        mm_forbids_zeropage(pvmw->vma->vm_mm))
-> > >> +            return false;
-> > >> +
-> > >> +    /*
-> > >> +     * The pmd entry mapping the old thp was flushed and the pte
-> > >> mapping
-> > >> +     * this subpage has been non present. If the subpage is only
-> > >> zero-filled
-> > >> +     * then map it to the shared zeropage.
-> > >> +     */
-> > >> +    addr =3D kmap_local_page(page);
-> > >> +    contains_data =3D memchr_inv(addr, 0, PAGE_SIZE);
-> > >> +    kunmap_local(addr);
-> > >> +
-> > >> +    if (contains_data)
-> > >> +            return false;
-> > >> +
-> > >> +    newpte =3D pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
-> > >> +                                    pvmw->vma->vm_page_prot));
-> > >> +    set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte,
-> > >> newpte);
-> > >> +
-> > >> +    dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
-> > >> +    return true;
-> > >> +}
-> > >> +
-> > >> +struct rmap_walk_arg {
-> > >> +    struct folio *folio;
-> > >> +    bool map_unused_to_zeropage;
-> > >> +};
-> > >> +
-> > >>   /*
-> > >>    * Restore a potential migration pte to a working pte entry
-> > >>    */
-> > >>   static bool remove_migration_pte(struct folio *folio,
-> > >> -            struct vm_area_struct *vma, unsigned long addr, void
-> > >> *old)
-> > >> +            struct vm_area_struct *vma, unsigned long addr, void
-> > >> *arg)
-> > >>   {
-> > >> -    DEFINE_FOLIO_VMA_WALK(pvmw, old, vma, addr, PVMW_SYNC |
-> > >> PVMW_MIGRATION);
-> > >> +    struct rmap_walk_arg *rmap_walk_arg =3D arg;
-> > >> +    DEFINE_FOLIO_VMA_WALK(pvmw, rmap_walk_arg->folio, vma, addr,
-> > >> PVMW_SYNC | PVMW_MIGRATION);
-> > >>
-> > >>      while (page_vma_mapped_walk(&pvmw)) {
-> > >>              rmap_t rmap_flags =3D RMAP_NONE;
-> > >> @@ -234,6 +278,9 @@ static bool remove_migration_pte(struct folio
-> > >> *folio,
-> > >>                      continue;
-> > >>              }
-> > >>   #endif
-> > >> +            if (rmap_walk_arg->map_unused_to_zeropage &&
-> > >> +                try_to_map_unused_to_zeropage(&pvmw, folio,
-> > >> idx))
-> > >> +                    continue;
-> > >>
-> > >>              folio_get(folio);
-> > >>              pte =3D mk_pte(new, READ_ONCE(vma->vm_page_prot));
-> > >> @@ -312,14 +359,21 @@ static bool remove_migration_pte(struct folio
-> > >> *folio,
-> > >>    * Get rid of all migration entries and replace them by
-> > >>    * references to the indicated page.
-> > >>    */
-> > >> -void remove_migration_ptes(struct folio *src, struct folio *dst,
-> > >> bool locked)
-> > >> +void remove_migration_ptes(struct folio *src, struct folio *dst, in=
-t
-> > >> flags)
-> > >>   {
-> > >> +    struct rmap_walk_arg rmap_walk_arg =3D {
-> > >> +            .folio =3D src,
-> > >> +            .map_unused_to_zeropage =3D flags &
-> > >> RMP_USE_SHARED_ZEROPAGE,
-> > >> +    };
-> > >> +
-> > >>      struct rmap_walk_control rwc =3D {
-> > >>              .rmap_one =3D remove_migration_pte,
-> > >> -            .arg =3D src,
-> > >> +            .arg =3D &rmap_walk_arg,
-> > >>      };
-> > >>
-> > >> -    if (locked)
-> > >> +    VM_BUG_ON_FOLIO((flags & RMP_USE_SHARED_ZEROPAGE) && (src !=3D
-> > >> dst), src);
-> > >> +
-> > >> +    if (flags & RMP_LOCKED)
-> > >>              rmap_walk_locked(dst, &rwc);
-> > >>      else
-> > >>              rmap_walk(dst, &rwc);
-> > >> @@ -934,7 +988,7 @@ static int writeout(struct address_space
-> > >> *mapping, struct folio *folio)
-> > >>       * At this point we know that the migration attempt cannot
-> > >>       * be successful.
-> > >>       */
-> > >> -    remove_migration_ptes(folio, folio, false);
-> > >> +    remove_migration_ptes(folio, folio, 0);
-> > >>
-> > >>      rc =3D mapping->a_ops->writepage(&folio->page, &wbc);
-> > >>
-> > >> @@ -1098,7 +1152,7 @@ static void migrate_folio_undo_src(struct foli=
-o
-> > >> *src,
-> > >>                                 struct list_head *ret)
-> > >>   {
-> > >>      if (page_was_mapped)
-> > >> -            remove_migration_ptes(src, src, false);
-> > >> +            remove_migration_ptes(src, src, 0);
-> > >>      /* Drop an anon_vma reference if we took one */
-> > >>      if (anon_vma)
-> > >>              put_anon_vma(anon_vma);
-> > >> @@ -1336,7 +1390,7 @@ static int migrate_folio_move(free_folio_t
-> > >> put_new_folio, unsigned long private,
-> > >>              lru_add_drain();
-> > >>
-> > >>      if (old_page_state & PAGE_WAS_MAPPED)
-> > >> -            remove_migration_ptes(src, dst, false);
-> > >> +            remove_migration_ptes(src, dst, 0);
-> > >>
-> > >>   out_unlock_both:
-> > >>      folio_unlock(dst);
-> > >> @@ -1474,7 +1528,7 @@ static int unmap_and_move_huge_page(new_folio_=
-t
-> > >> get_new_folio,
-> > >>
-> > >>      if (page_was_mapped)
-> > >>              remove_migration_ptes(src,
-> > >> -                    rc =3D=3D MIGRATEPAGE_SUCCESS ? dst : src,
-> > >> false);
-> > >> +                    rc =3D=3D MIGRATEPAGE_SUCCESS ? dst : src, 0);
-> > >>
-> > >>   unlock_put_anon:
-> > >>      folio_unlock(dst);
-> > >> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> > >> index 8d687de88a03..9cf26592ac93 100644
-> > >> --- a/mm/migrate_device.c
-> > >> +++ b/mm/migrate_device.c
-> > >> @@ -424,7 +424,7 @@ static unsigned long
-> > >> migrate_device_unmap(unsigned long *src_pfns,
-> > >>                      continue;
-> > >>
-> > >>              folio =3D page_folio(page);
-> > >> -            remove_migration_ptes(folio, folio, false);
-> > >> +            remove_migration_ptes(folio, folio, 0);
-> > >>
-> > >>              src_pfns[i] =3D 0;
-> > >>              folio_unlock(folio);
-> > >> @@ -840,7 +840,7 @@ void migrate_device_finalize(unsigned long
-> > >> *src_pfns,
-> > >>                      dst =3D src;
-> > >>              }
-> > >>
-> > >> -            remove_migration_ptes(src, dst, false);
-> > >> +            remove_migration_ptes(src, dst, 0);
-> > >>              folio_unlock(src);
-> > >>
-> > >>              if (folio_is_zone_device(src))
-> > >
-> > > Hi,
-> > >
-> > > This patch has been in the mainline for some time, but we recently
-> > > discovered an issue when both mTHP and MTE (Memory Tagging Extension)
-> > > are enabled.
-> > >
-> > > It seems that remapping to the same zeropage might causes MTE tag
-> > > mismatches, since MTE tags are associated with physical addresses.
-> >
-> > Does this only trigger when the VMA has mte enabled? Maybe we'll have t=
-o
-> > bail out if we detect that mte is enabled.
->
-> It seems RISC-V also has a similar feature (RISCV_ISA_SUPM) that uses
-> the same prctl(PR_{GET,SET}_TAGGED_ADDR_CTRL) API.
->
-> config RISCV_ISA_SUPM
->         bool "Supm extension for userspace pointer masking"
->         depends on 64BIT
->         default y
->         help
->           Add support for pointer masking in userspace (Supm) when the
->           underlying hardware extension (Smnpm or Ssnpm) is detected at b=
-oot.
->
->           If this option is disabled, userspace will be unable to use
->           the prctl(PR_{SET,GET}_TAGGED_ADDR_CTRL) API.
->
-> I wonder if we should disable the THP shrinker for such architectures tha=
-t
-> define PR_SET_TAGGED_ADDR_CTRL (or PR_GET_TAGGED_ADDR_CTRL).
+This patchset introduces two minor modernizations to the netpoll
+infrastructure:
 
-SET_TAGGED_ADDR_CTRL or GET_TAGGED_ADDR_CTRL
+The first patch removes the unused netpoll pointer from the netpoll_info
+structure. This member is redundant and its presence does not benefit
+multi-instance setups, as reported by Jay Vosburgh. Eliminating it cleans up
+the structure and removes unnecessary code.
 
-File: kernel/sys.c 114
-#ifndef SET_TAGGED_ADDR_CTRL
-# define SET_TAGGED_ADDR_CTRL(a) (-EINVAL)
-#endif
-#ifndef GET_TAGGED_ADDR_CTRL
-# define GET_TAGGED_ADDR_CTRL() (-EINVAL)
-#endif
+The second patch updates the netpoll resource cleanup routine to use
+synchronize_net() instead of synchronize_rcu(). As __netpoll_free() is always
+called under the RTNL lock, using synchronize_net() leverages the more
+efficient synchronize_rcu_expedited() in these contexts, reducing time spent in
+critical sections and improving performance.
 
-Cheers,
-Lance
+Both changes simplify maintenance and enhance efficiency without altering
+netpoll behavior.
 
->
-> Cheers,
-> Lance
->
-> >
-> > Also, I wonder how KSM and the shared zeropage works in general with
-> > that, because I would expect similar issues when we de-duplicate memory=
-?
-> >
-> > --
-> > Cheers
-> >
-> > David / dhildenb
-> >
-> >
+This is not expected to conflict with the other netpoll fix into `net`.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Breno Leitao (2):
+      net: netpoll: remove unused netpoll pointer from netpoll_info
+      net: netpoll: use synchronize_net() instead of synchronize_rcu()
+
+ include/linux/netpoll.h | 1 -
+ net/core/netpoll.c      | 3 +--
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+---
+base-commit: 64d2616972b77506731fa0122d3c48cb04dbe21b
+change-id: 20250918-netpoll_jv-9bf6f640f308
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
+
 
