@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-823676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78675B8724F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:29:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8221B8725E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8508FB648D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:28:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7B2A7BB58B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7B62FABFE;
-	Thu, 18 Sep 2025 21:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7099D2F1FDF;
+	Thu, 18 Sep 2025 21:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItzNtb+Y"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b="tUKiFPM1"
+Received: from www637.your-server.de (www637.your-server.de [168.119.26.117])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937BC2F7AAE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 21:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D8B86342;
+	Thu, 18 Sep 2025 21:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.26.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758230974; cv=none; b=q1z3NXpP6NX7OtQk+lU5G/q8mEquZPDslAse/F88h2livhyFGqaypgfPtBXBOQwxskmdQQk+S3sj0ZJRzHAOApAkC18WH7HsZiS/RorHCT917iAl9oJfyO5DQ/6vMNxznUm7bgtuAgotuO3CcPeVj53BQgvYy1w+lQr08fxOWQ0=
+	t=1758231094; cv=none; b=ntPhaEmlPV5psGgnjCcf5Sd1VTWI2O4hq7Zk65RBylTYlgGjdbKxr06RCr7fNGc7yRrpLwtqL8CoPA0RSaVcl0AQeREeMyB3iuMUKCT+XUH5oJqo2AD2Zb4vj/JbM/0BtGgF7j43atUCU3rfay9ESjoHhQeb5lP8nVJbmBFpGiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758230974; c=relaxed/simple;
-	bh=Y/g7MH1bz5uUTekQcW8JYQMQ93odnK04liGdY8dwB+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVp8ffQKd7U5zZ5tR0EyWJfYT9pZ+v549RUaKglXg0OFKlom+EBJOMBCT+Wjzisw3MoWSjCAsc5/sEGanHd2EcmgbdtzsaNpHfA5S5NU6D/2LdIeA5b9Pjqi5W4XLXivUluOS+t3NgVk8dywHbLhoVN4SU/PMGi7pP0jdhH37DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ItzNtb+Y; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b54f57eb7c9so830413a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758230973; x=1758835773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OuOfn5BynYjHyfO8hnZOpVSeujXtYV70hxGYV5OTCNY=;
-        b=ItzNtb+YeeFoSQlDfyJ+4n14NdYaJbAqRXompb1OYGEJ6WmMjVltaIU4n0c09vLiQN
-         MxlOSzVmfiu6C3Oave+ZpvVqDXZnZl7xEQ2n1yceIjHyheHAo/ziO2CJYhzdAhDN3Can
-         bjH+pMtZjP9B5V5CvsjulXnHnqWPdsb5tXu7yl5gwMapEqTY9JoBHRYmlTBe9uaAfXdP
-         8hfYUUVuKAh0Sj1u9LkGCGShS3PhEjD+x9bzVNssJVSV1Tu7KXgu/4FuDyeow10xQ/Ou
-         +xvITm6pG0TAV7ksdtTLHe2XDj4bgHDd+qAWCO2pFNLRAoY/KA4U0v0B39Jca1T04PxV
-         l1kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758230973; x=1758835773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OuOfn5BynYjHyfO8hnZOpVSeujXtYV70hxGYV5OTCNY=;
-        b=HDkMuSwiS8QVFPHi/Yd2KLA/wpTQ+Zfx2Eu4Y0YrgAMGjIVd/KKoyhKJLsrUe9mLHV
-         PFPqi8llBXFQhR5VwldYnoluALW/2/l1xlLS/TV7RCzo3wTJ55jc/aH6YxUvuqoJGP8n
-         jx+m2pZHtebEWP0bmJQEO+G/NwN92A0DOltRNgxsQSsYKbB5e4PnxD7F2TEZJavum7pJ
-         +2qjAUD8MxV7tfHpkLd2UD6e0Jyb73yeoqZ7AJYY6JwlHpmhf4a8wC08Csncu1YCwcAF
-         kE5sZmklhbkDI3khAELn3uQufP9gOxCmGWA3GtDgCFdiNmTUBiTjGuxK20Koj9cmwtyt
-         dkkw==
-X-Gm-Message-State: AOJu0Yxp0gScYNg2EzFujVIJkhJrb7jHUlrzK/p0/UJo22ThZjN4rz7d
-	cwJb9Bd2EfywagS0N77fiKaL3jDMcqKydigMZmlxuBDSbGm+I8LwcryC
-X-Gm-Gg: ASbGnct1V8v6wgHvSRlTJNLO0CUQ7lYQVdfoIvvv9iVcADy5pZhUpeiBmBcJ3VECOHn
-	7jTnYCfCdXBE0Cxeg8a41wwxtCnpu/imRF9U5C4izq8he7NAMqCRjnUh8BZ4rSUPFvHRsULXN5s
-	ZNvVmkLGFkXsY+L2y2lpb7q30vDnFy9a2jG9M/ymFgTtqz+IMJ4zb8QJuDGL0CvXLYrtu5YdibG
-	fzJMUy+D0mFfrPv1YqiR6VG4i50jiNTfI8OJHdggyqJgKq7Y1bD3VlRg4IFQCRYGogIvG7iGW+7
-	SHBU+MjQCj+hLxdmLTxTrI+r8SULJ3Zv/bm/frqjYpkcv6O6aBkzhsLTOwED/hCyMVejF1SQ1AY
-	6QAX2TjroQCtsaISWXdruHhqg+bJqPXbXLmqyqcMob2gXaWWD9yit
-X-Google-Smtp-Source: AGHT+IGJVCoAx599ArMTaqWmQd71Ibkb5sXiglq6XEMSs2fJiAQc2hYEh1dHQTNHwRyHuT99FrXNmw==
-X-Received: by 2002:a17:903:3387:b0:260:c48c:3fba with SMTP id d9443c01a7336-269ba53b148mr9460685ad.47.1758230972743;
-        Thu, 18 Sep 2025 14:29:32 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:8e3e:e1c9:1151:50c3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269a7dcafb6sm15559465ad.83.2025.09.18.14.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 14:29:32 -0700 (PDT)
-Date: Thu, 18 Sep 2025 14:29:30 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] dt-bindings: touchscreen: convert zet6223
- bindings to json schema
-Message-ID: <jlncvy4jmxwcuryvrto4jxudnohw4berxa67avjqzrxsdakbvj@tlpf54cr3acf>
-References: <20250918153630.2535208-1-dario.binacchi@amarulasolutions.com>
- <20250918153630.2535208-4-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1758231094; c=relaxed/simple;
+	bh=XRP3BRzw4PTthp+BvbIBnXlgMbZK3cuX60MpXQlz+jo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B/SMyjn1AnkgtjbZZG4MoEGDw/0PlNhIjrarZTotSZqIxQxyXFzXoVUYzr84saee2ALUpstILjbkUVt5HxxqFw+Wy1cPcklLjdUAKPWwEg1yA9zE0NGTnFMzBBnGmTvnV1JSoQAaCOS+FfeSx1Lv6id2gx1qjCDPAhmi/uLDvvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu; spf=pass smtp.mailfrom=apitzsch.eu; dkim=pass (2048-bit key) header.d=apitzsch.eu header.i=@apitzsch.eu header.b=tUKiFPM1; arc=none smtp.client-ip=168.119.26.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apitzsch.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apitzsch.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=apitzsch.eu
+	; s=default2410; h=MIME-Version:Content-Transfer-Encoding:Content-Type:
+	References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=9k36Yx116Uyq432ZKnjyvbWAnWv4qokj8porc2uvnG8=; b=tUKiFPM1F4JeTCYVBYkZfj96MR
+	fTvSJnfCrD6bBIxqjd0x7PpdFVR2X6+pToTsTfLGYgHPO3eHpJzpKA6HUZ/oJnKAcj2BQR0/tEBVE
+	TvDymarobfc5gMHoss9dIT1tZCGPMlBnDsAMOK/UoII2e0Y6I36e/P+LkWd5LRveTzKQXIyrmCYO0
+	QZJzkFOAnd2mM5aVTAGia5O/7WljdJo91SdrgkBaBAI+4UEYf1uGqQWlKri/pkSCVTbdKOmnbWzAC
+	VXZr4AK/HNN1FWcGuz0dnLnFdl20ZWgke4BAscqHl/JgL4srI/69dTMtMY+W9K6WQDw9Pgjx8SPIV
+	9T213Bcw==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www637.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uzMDo-0003xr-1L;
+	Thu, 18 Sep 2025 23:31:20 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <git@apitzsch.eu>)
+	id 1uzMDn-000NGJ-1l;
+	Thu, 18 Sep 2025 23:31:19 +0200
+Message-ID: <048dd9a2d3257ddea4e4223b023bde9747469083.camel@apitzsch.eu>
+Subject: Re: [PATCH 7/7] media: i2c: dw9719: Fix power on/off sequence
+From: =?ISO-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, Val Packett
+ <val@packett.cool>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, 	devicetree@vger.kernel.org, Daniel Scally
+ <djrscally@gmail.com>, 	~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, 	linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 18 Sep 2025 23:31:18 +0200
+In-Reply-To: <aMqI-lElZsWV-Hrl@kekkonen.localdomain>
+References: <20250817-dw9719-v1-0-426f46c69a5a@apitzsch.eu>
+	 <20250817-dw9719-v1-7-426f46c69a5a@apitzsch.eu>
+	 <aKLZ39IzI_azrDIu@kekkonen.localdomain>
+	 <550f28a9aa82a28beb35fd3490dbe08928ba9eed.camel@apitzsch.eu>
+	 <fad5cb33-0e7c-499b-bad7-bbdacca8076a@packett.cool>
+	 <aMqI-lElZsWV-Hrl@kekkonen.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918153630.2535208-4-dario.binacchi@amarulasolutions.com>
+X-Virus-Scanned: Clear (ClamAV 1.0.9/27766/Thu Sep 18 10:27:50 2025)
 
-On Thu, Sep 18, 2025 at 05:36:09PM +0200, Dario Binacchi wrote:
-> Convert Zeitec ZET6223 touchscreen controller device tree binding to
-> json-schema.
-> 
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> 
+Hi Sakari,
 
-Applied, thank you.
+Am Mittwoch, dem 17.09.2025 um 13:10 +0300 schrieb Sakari Ailus:
+> Hi Andr=C3=A9, Val,
+>=20
+> On Tue, Sep 16, 2025 at 05:08:44PM -0300, Val Packett wrote:
+> >=20
+> > On 9/15/25 5:48 PM, Andr=C3=A9 Apitzsch wrote:
+> > > Hi Sakari,
+> > >=20
+> > > @Val, please see below.
+> > >=20
+> > > Am Montag, dem 18.08.2025 um 07:44 +0000 schrieb Sakari Ailus:
+> > > > Hi Andr=C3=A9,
+> > > >=20
+> > > > On Sun, Aug 17, 2025 at 07:09:26PM +0200, Andr=C3=A9 Apitzsch via B=
+4
+> > > > Relay wrote:
+> > > > > =C2=A0=C2=A0	u64 val;
+> > > > > =C2=A0=C2=A0	int ret;
+> > > > > =C2=A0=C2=A0	int err;
+> > > > > @@ -109,13 +116,15 @@ static int dw9719_power_up(struct
+> > > > > dw9719_device *dw9719, bool detect)
+> > > > > =C2=A0=C2=A0	if (ret)
+> > > > > =C2=A0=C2=A0		return ret;
+> > > > > -	/* Jiggle SCL pin to wake up device */
+> > > > > -	reg_pwr =3D (dw9719->model =3D=3D DW9718S) ? DW9718S_PD :
+> > > > > DW9719_CONTROL;
+> > > > > -	cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN,
+> > > > > &ret);
+> > > > > -	fsleep(100);
+> > > > > +	/*
+> > > > > +	 * Need 100us to transition from SHUTDOWN to
+> > > > > STANDBY.
+> > > > > +	 * Jiggle the SCL pin to wake up the device (even
+> > > > > when the
+> > > > > regulator
+> > > > > +	 * is shared) and wait double the time to be sure,
+> > > > > then
+> > > > > retry the write.
+> > > > Why double? Isn't the datasheet correct when it comes to the
+> > > > power-on sequence?
+> > > >=20
+> > > I haven't noticed any problems during power-up of DW9761.
+> > > However, according to the commit message, there seems be an issue
+> > > with DW9718S. But I don't own the device and cannot test it.
+> > >=20
+> > > Maybe Val can provided some additional information.
+> >=20
+> > I haven't had access to the datasheet for the DW9718S, so this was
+> > all deduced experimentally. By "to be sure" I meant that I
+> > literally raised the timeout "just in case", not based on actual
+> > issues.
+> >=20
+> > The actually important change was expecting the failure on the
+> > write and not erroring out.
+>=20
+> Ack.
+>=20
+> Andr=C3=A9: could you add this information to the comment as well?
 
--- 
-Dmitry
+Could you clarify which information.
+
+Best regards,
+Andr=C3=A9
 
