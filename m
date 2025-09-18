@@ -1,308 +1,198 @@
-Return-Path: <linux-kernel+bounces-823129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29220B859C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:31:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F72B859D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887C81888717
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507131B210DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2B930DECA;
-	Thu, 18 Sep 2025 15:26:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DA222D7B5;
+	Thu, 18 Sep 2025 15:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lkU890kN"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B7F243951;
-	Thu, 18 Sep 2025 15:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15E8231A21
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758209201; cv=none; b=ksJcEEZIC41k5jAWrkZDAz4TL2fQShqk0CNw4nejgmovZiBp/ZiBmlhi+TTUsutqlHe7KrD6WSQ+rszxn65HATjVh1WSeiBVkC3c6h0s3F3uk5KK4AgVS8LM9ZpmebQ0SrSEohvKjmxr3mxKWAOEvUF6RUW7YfGl7j5hqiwHGW8=
+	t=1758209242; cv=none; b=jGvUM1kcKO2C8JdRK9qvzTWoA6zyTaK0yl1DuzkCYCS0Dq6FQSNoBGRhb9+FGFIA3jKqx/3Vc0fmVTvw3PeDjwflO29aN888zAb55i5plXzo8JvWi7Q+Z0UnxIlZaTMTPGw5LYztOviJxwaK0SmwDFGukKE0f5/Gjl3QwpRCsfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758209201; c=relaxed/simple;
-	bh=VKAYKLQrxUsJo0+Ph4IN0UIq4I25sBDCBgS1MW9feCM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jQ5S5tOApxQUiF8xrgjpzNAEzn1ehN6vRNMnaA6WmHN4h0gIlXhb8+gezzVDdoagXQI2eInubPDSCySa/GqLUDmbyFf4jPCD9qEVt+ui6iVrLRpUkqaFJmlykFeFwXw0xuDj+0qfcn9vmrcxtAtkokJa7UeoTprQukh16xC00Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cSKHJ6lp3zYQvSJ;
-	Thu, 18 Sep 2025 23:26:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 8E3131A07BB;
-	Thu, 18 Sep 2025 23:26:35 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP3 (Coremail) with SMTP id _Ch0CgCXMUCoJMxoqFUQAA--.34287S2;
-	Thu, 18 Sep 2025 23:26:33 +0800 (CST)
-Message-ID: <e27254b5-22cf-4578-9623-d2d8de54aeca@huaweicloud.com>
-Date: Thu, 18 Sep 2025 23:26:31 +0800
+	s=arc-20240116; t=1758209242; c=relaxed/simple;
+	bh=YBK/SyTZPuGX863Tcjtijt2T0fHp5LvG9rFeW7r66Mc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qbMw7N7UGjo2lCd6e3pJAkrRepeYOydotcdrjy+aSprggyYHG2tHRch1IgQFS1lwYIAjeUMmoySfc7zc004D+XffcuW6gslEuaqRgZhGUjrLdIsACEJRRSMv7EeMkFpMmFRmQ7A2m5xsP33rU/mTVm4OVnM1J/miQzgDFRnmxyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lkU890kN; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d5fe46572so12000207b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:27:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758209240; x=1758814040; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ohjdE7vsdp2mFA+MExTFcCWgNEkrk5a/T8KfjfgAz0o=;
+        b=lkU890kNry7mju+kcE2/yHzQwVoKlC/rh5L9iTThdKbYyq4QP1m2U8h3WeqeXi6jK1
+         aA4IDOaicxPNqrDdj7BnxFLWr5deDP+DS5FVXT9SdEVFdcQIewi69H5o+dOOtm6XqgK/
+         at0qhN1xe6aLSRPF2AgfwfvdGcwhR0pB+wu/5KGNJk7ZCnzABY+pO9h6rLVM3Ptd+RnU
+         0D5ivpUJsoEfegU9T/gc38vwpNqf4wSov2iyxHa5289SJodtvhGr3ovdM7J6Dedp0TQZ
+         oD8pipm3zeMK77+3PhGAz1yVcqhKUKshG96OQkXOzxZja6OGdSNZwDIXx/iTtv91i5M3
+         qcVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758209240; x=1758814040;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ohjdE7vsdp2mFA+MExTFcCWgNEkrk5a/T8KfjfgAz0o=;
+        b=BfngNtRYrRloC/bDS7HuT/bJwYcbWYWmiB0lOOsdzrEK/KgxmolPOmpcZJQ/xLts0Z
+         ju0H8Kog+sjAgBS+m+5AN0jKLrbvNJ2fm9TUbTPOFPLVfHVkoNbT/sm/4Z1uSQarj2VU
+         Yibjn81U7R7bPIfdMyZJrutqDvJ/wXm0Je1Vi6PHA5pQO9f6nBjF2o2rGyS7m1t5vnOi
+         PS27QaDMpqOW8T+3Zsbk1vwDSgDH4n1AOM4pk8GYrPkK9HmpXeWzL83SJRw+XT9SeZ4s
+         3Y0h4Htn/Q2Ho5i+h8SIPb3MFgxopd+X5XF4nWWASlU9rHhHsxo2jYhq7pVG5q8EghcN
+         8jLg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4s6zB7s1Obv+Uh7Ow81v5WpP8m/KQ/F6UjikCZODHRQAFAu63HppjUxH1KLx+lmuQ9dWDMbVcMQQAR9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBtxc27qDfxnaxLd/Y75PUSCWjE/2rXUHyyeV1ZmdEHWdB1E30
+	9LyfNp8lZNzSPAFUj01uLPgHw3JISFuutASBbjswxCFlt2UAcD6GiRIj/S696yPxW1tpHHJ0MOC
+	3JHO6Gi2pb4V7BVDiUVCpVXj7MQmUMX6hYGnPCHBbvg==
+X-Gm-Gg: ASbGnctslneiHUhGRA0hAKRmT4mbc3HtxfD9xVn3IAAEbX8K/agLvjxZEeSUUIltKk5
+	QpcWEvfCiY/glvPR1cLRcX2jMeVbGUt5CeIyfCXepUIakrQca76kZlpSrB2whfkj6iMpQuVwx5a
+	ZNq4GbRHAh8SMRGN+kqyxzOt5uU5HiLDSkSHofMJb38X+26OZiG+RVVwEITm8MkXREIutDsbQJ4
+	LK2b0Ykas+7iMsiDXSZHEfuOgs=
+X-Google-Smtp-Source: AGHT+IEQCrv2rBD0HZ5Ef3kA7d83Z57qpN7uwi/iH7ea1Nc2x95VmWRF+4zmzOqyCpcnKa543iKVkH+EZRR/L9nuveg=
+X-Received: by 2002:a05:690c:6588:b0:734:61f:2b1b with SMTP id
+ 00721157ae682-7396eafa4acmr29231447b3.0.1758209239669; Thu, 18 Sep 2025
+ 08:27:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Li Lingfeng <lilingfeng3@huawei.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>,
- Tom Talpey <tom@talpey.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
- yangerkun <yangerkun@huawei.com>, "zhangyi (F)" <yi.zhang@huawei.com>,
- Hou Tao <houtao1@huawei.com>,
- "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>, leo.lilong@huawei.com
-Reply-To: 34bd5595-8f3f-4c52-a1d5-d782fc99efb9@huawei.com
-From: Tengda Wu <wutengda@huaweicloud.com>
-Subject: Re: [Question] nfsd: possible reordering between nf->nf_file
- assignment and NFSD_FILE_PENDING clearing?
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgCXMUCoJMxoqFUQAA--.34287S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jw47Aw4xtrWDXFy7Kry8Zrb_yoWxWr13pr
-	WYgFyUGrW8J3ykAwnFka1Dur1Y9r4xuF4aqr9Ygws3JryjgrZYvFW8KFyUZFWrGrWkAFyr
-	Zr4YgrZrXa1vy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUrP
-	EfUUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+References: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
+ <CAPDyKFoi9KcsP5k84cSxuXNuMHmcf3a8emfOc6hMjGm_0FMk8w@mail.gmail.com> <2162077.CQOukoFCf9@workhorse>
+In-Reply-To: <2162077.CQOukoFCf9@workhorse>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 18 Sep 2025 17:26:43 +0200
+X-Gm-Features: AS18NWAglY0uDqlAxTVI2SesnRFzqdlGAX0p_bWMYckBiLfd4yldGayxKumI5X4
+Message-ID: <CAPDyKFqXVt5rF++GGTRxv6+S-2FevvdMVmJefvfqXkZ2iam1Rg@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] MT8196 GPU Frequency/Power Control Support
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Wed, 17 Sept 2025 at 17:45, Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> On Wednesday, 17 September 2025 15:28:59 Central European Summer Time Ulf Hansson wrote:
+> > On Wed, 17 Sept 2025 at 14:23, Nicolas Frattaroli
+> > <nicolas.frattaroli@collabora.com> wrote:
+> > >
+> > > This series introduces two new drivers to accomplish controlling the
+> > > frequency and power of the Mali GPU on MediaTek MT8196 SoCs.
+> > >
+> > > The reason why it's not as straightforward as with other SoCs is that
+> > > the MT8196 has quite complex glue logic in order to squeeze the maximum
+> > > amount of performance possible out of the silicon. There's an additional
+> > > MCU running a specialised firmware, which communicates with the
+> > > application processor through a mailbox and some SRAM, and is in charge
+> > > of controlling the regulators, the PLL clocks, and the power gating of
+> > > the GPU, all while also being in charge of any DVFS control.
+> > >
+> > > This set of drivers is enough to communicate desired OPP index limits to
+> > > the aforementioned MCU, referred to as "GPUEB" from here on out. The
+> > > GPUEB is still free to lower the effective frequency if the GPU has no
+> > > jobs going on at all, even when a higher OPP is set. There's also
+> > > several more powerful OPPs it seemingly refuses to apply. The downstream
+> > > chromeos kernel also doesn't reach the frequencies of those OPPs, so we
+> > > assume this is expected.
+> > >
+> > > The frequency control driver lives in panthor's subdirectory, as it
+> > > needs to pass panthor some data. I've kept the tie-in parts generic
+> > > enough however to not make this a complete hack; mediatek_mfg (the
+> > > frequency control driver) registers itself as a "devfreq provider" with
+> > > panthor, and panthor picks it up during its probe function (or defers if
+> > > mediatek_mfg is not ready yet, after adding a device link first).
+> > >
+> > > It's now generic enough to where I'll ponder about moving the devfreq
+> > > provider stuff into a header in include/, and moving mediatek_mfg into
+> > > the drivers/soc/ subdirectory, but there were enough changes so far to
+> > > warrant a v3 without a move or further struct renames added, so that I
+> > > can get feedback on this approach.
+> > >
+> > > The mailbox driver is a fairly bog-standard common mailbox framework
+> > > driver, just specific to the firmware that runs on the GPUEB.
+> >
+> > I had a brief look at the series and it seems to me that the devfreq
+> > thing here, may not be the perfect fit.
+> >
+> > Rather than using a new binding  (#performance-domain-cells) to model
+> > a performance domain provider using devfreq, I think it could be more
+> > straightforward to model this using the common #power-domain-cells
+> > binding instead. As a power-domain provider then, which would be
+> > capable of scaling performance too. Both genpd and the OPP core
+> > already support this, though via performance-states (as indexes).
+> >
+> > In fact, this looks very similar to what we have implemented for the
+> > Arm SCMI performance domain.
+> >
+> > If you have a look at the below, I think it should give you an idea of
+> > the pieces.
+> > drivers/pmdomain/arm/scmi_perf_domain.c
+> > drivers/firmware/arm_scmi/perf.c
+> > Documentation/devicetree/bindings/firmware/arm,scmi.yaml (protocol@13
+> > is the performance protocol).
+> >
+> > That said, I don't have a strong opinion, but just wanted to share my
+> > thoughts on your approach.
+>
+> Yeah, I found out about the pmdomain set_performance_state callback
+> a few days ago. I've not looked into it much so far because not
+> unlike a veterinarian on a cattle ranch, I was elbow-deep in v3's
+> guts already and didn't want to pivot to something different before
+> pushing it out, but I'll look into it more seriously now.
 
-On 2025/9/18 21:57, Li Lingfeng wrote:
-> Recently, we encountered a null pointer dereference on a relatively old
-> 5.10 kernel that does not include commit c4c649ab413ba ("NFSD: Convert
-> filecache to rhltable"), which exhibited the same behavior as described
-> in [1]. I was wondering if it might be caused by the reordering between
-> the assignment of nf->nf_file and the clearing of NFSD_FILE_PENDING.
-> 
-> Just to mention, I don't believe the analysis in [1] is entirely accurate,
-> since hlist_add_head_rcu includes a write barrier.
-> 
-> We haven't encountered this issue on newer kernel versions, but the
-> assignment of nf->nf_file and the clearing of NFSD_FILE_PENDING appear
-> consistent across different versions.
-> 
-> Our expected outcome should be like this:
->                 T1                                    T2
-> nfsd_read
->  nfsd_file_acquire_gc
->   nfsd_file_do_acquire
->    nfsd_file_lookup_locked
->     // get nfsd_file from nfsd_file_rhltable
->                                         nfsd_read
->                                          nfsd_file_acquire_gc
->                                           nfsd_file_do_acquire
->                                            nfsd_file_alloc
->                                             nf->nf_flags // set NFSD_FILE_PENDING
->                                            rhltable_insert // insert to nfsd_file_rhltable
->                                            nf->nf_file = file // set nf_file
->    wait_on_bit
->    // wait NFSD_FILE_PENDING to be cleared
->                                            clear_and_wake_up_bit // clear NFSD_FILE_PENDING
->    // get file after being awakened
->  file = nf->nf_file
-> 
-> Or like this:
->                 T1                                    T2
-> nfsd_read
->  nfsd_file_acquire_gc
->   nfsd_file_do_acquire
->    nfsd_file_lookup_locked
->     // get nfsd_file from nfsd_file_rhltable
->                                         nfsd_read
->                                          nfsd_file_acquire_gc
->                                           nfsd_file_do_acquire
->                                            nfsd_file_alloc
->                                             nf->nf_flags // set NFSD_FILE_PENDING
->                                            rhltable_insert // insert to nfsd_file_rhltable
->                                            nf->nf_file = file // set nf_file
->                                            clear_and_wake_up_bit // clear NFSD_FILE_PENDING
->    // get file directly
->  file = nf->nf_file
-> 
-> But is it possible that due to reordering, it ends up like this:
->                 T1                                    T2
-> nfsd_read
->  nfsd_file_acquire_gc
->   nfsd_file_do_acquire
->    nfsd_file_lookup_locked
->     // get nfsd_file from nfsd_file_rhltable
->                                         nfsd_read
->                                          nfsd_file_acquire_gc
->                                           nfsd_file_do_acquire
->                                            nfsd_file_alloc
->                                             nf->nf_flags // set NFSD_FILE_PENDING
->                                            rhltable_insert // insert to nfsd_file_rhltable
->                                            clear_and_wake_up_bit // clear NFSD_FILE_PENDING
->    // get file directly
->  file = nf->nf_file
->                                            nf->nf_file = file // set nf_file
->  // Null dereference due to uninitialized file pointer.
-> 
-> [1]: https://lore.kernel.org/all/20230818065507.1280625-1-haydenw.kernel@gmail.com/
-> 
-> Any suggestion will be appreciated.
-> 
-> Thanks,
-> Lingfeng.
-> 
+:-)
 
-I would like to provide a reproducible test case, though it might not be
-entirely precise.
+>
+> Even if it means I have to get rid of my fun array binary search
+> and rely on the opp core to do its linear time linked list
+> traversal. :'( (But moving OPP core to use XArrays instead is a
+> concern for the future.)
 
-The test case mimics the nfsd_file_acquire workflow and consists of three
-threads: main thread, thread1, and thread2, where:
+Sure!
 
-* Thread1 acts as the writer, simulating the open_file workflow.
-* Thread2 acts as the reader, simulating the wait_for_construction workflow.
-* The main thread runs multiple iterations to ensure that thread1 and thread2
-  can execute concurrently in each round.
+>
+> I've also been avoiding it because I didn't know how much
+> additional functionality we'll add later, but I've talked with
+> Angelo about it an hour ago and he agrees that I should go down
+> the pmdomain route for the current functionality.
+>
+> Thank you for the hints!
 
-The test case is as follows:
+Np! I am glad to help!
 
+I will try my best to continue to review/comment on these things, if
+you need it.
 
-// writer
-static int thread_func1(void *data)
-{
-	struct foo *nf;
-	void *file;
-
-	nf = &global_nf;
-
-	while (!kthread_should_stop()) {
-		wait_for_completion(&comp_start1);
-		if (kthread_should_stop()) break;
-
-		/* Simulate the open_file process in nfsd_file_acquire() */
-		__set_bit(FOO_PENDING, &nf->nf_flags);
-		hlist_add_head_rcu(&nf->nf_node, &foo_hashtbl[ghashval].nfb_head);
-		file = foo_filp_open();
-
-		/* Test whether the following two lines of code will cause memory reordering */
-		nf->nf_file = file;
-		clear_bit_unlock(FOO_PENDING, &nf->nf_flags);
-
-		smp_mb__after_atomic();
-		wake_up_bit(&nf->nf_flags, FOO_PENDING);
-
-		complete(&comp_end1);
-	}
-	if (file)
-		kfree(file);
-	pr_info("thread_func1: exit\n");
-	return 0;
-}
-
-// reader
-static int thread_func2(void *data)
-{
-	void *file;
-	struct foo *nf;
-
-	nf = &global_nf;
-
-	while (!kthread_should_stop()) {
-		wait_for_completion(&comp_start2);
-		if (kthread_should_stop()) break;
-
-		/* Simulate the wait_for_construction process in nfsd_file_acquire() */
-retry:
-		rcu_read_lock();
-		nf = foo_find_locked(ghashval);
-		rcu_read_unlock();
-		if (!nf)
-			goto retry;
-
-		wait_on_bit(&nf->nf_flags, FOO_PENDING, TASK_UNINTERRUPTIBLE);
-		file = nf->nf_file;
-		if (!file)
-			WARN_ON(1);
-		else
-			kfree(file);
-
-		complete(&comp_end2);
-	}
-	pr_info("thread_func2: exit\n");
-	return 0;
-}
-
-static int main_thread_func(void *data)
-{
-	u64 iters = 0;
-
-	while (!kthread_should_stop()) {
-		iters++;
-		if (iters % 1000000 == 0)
-			pr_info("main_thread_func: started %llu iterations\n", iters);
-
-		/* Start both threads */
-		complete(&comp_start1);
-		complete(&comp_start2);
-		/* wait for both to finish */
-		wait_for_completion(&comp_end1);
-		wait_for_completion(&comp_end2);
-
-		/* Reset completions */
-		reinit_completion(&comp_end1);
-		reinit_completion(&comp_end2);
-		reinit_completion(&comp_start1);
-        	reinit_completion(&comp_start2);
-
-		hlist_del_rcu(&global_nf.nf_node);
-                global_nf.nf_file = 0;
-                global_nf.nf_flags = 0;
-	}
-
-	pr_info("main_thread_func: exit\n");
-
-	return 0;
-}
-
-
-I compiled and executed this test case on ARM64. The experimental results show that
-after approximately 6,000,000 rounds, the "file is null" warning in thread2 was
-triggered, indicating that reordering occurred between the file assignment and flag
-clearance operations in thread1.
-
-
-[107632.795543] My module is being loaded
-[107632.800255] Threads started successfully
-[107637.656469] main_thread_func: started 1000000 iterations
-[107642.520876] main_thread_func: started 2000000 iterations
-[107646.919550] main_thread_func: started 3000000 iterations
-[107651.545742] main_thread_func: started 4000000 iterations
-[107655.577054] main_thread_func: started 5000000 iterations
-[107660.507772] main_thread_func: started 6000000 iterations
-[107663.212711] ------------[ cut here ]------------
-[107663.218265] WARNING: CPU: 26 PID: 10603 at /path/to/nfsd/mod3/order_test.c:142 thread_func2+0xa0/0xe0 [order_test]
-
-
-When I placed an smp_mb() between 'wait_on_bit' and 'file = nf->nf_file' in thread2,
-the warning *no longer* occurred.
-
-		wait_on_bit(&nf->nf_flags, FOO_PENDING, TASK_UNINTERRUPTIBLE);
-+		smp_mb();
-		file = nf->nf_file;
-
-I hope this test case proves helpful for investigating the aforementioned memory
-reordering issue.
-
-Best regards,
-Tengda
-
+Kind regards
+Uffe
 
