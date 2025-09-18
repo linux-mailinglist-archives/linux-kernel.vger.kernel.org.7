@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-823778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0C8B876D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5155B876D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641BB18927C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B4B625D1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735C4274FEF;
-	Thu, 18 Sep 2025 23:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B73C2BEFF9;
+	Thu, 18 Sep 2025 23:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="L2dmJe8U";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mdDt1WGC"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="c38uZGiB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B37X+xSf"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E6E34BA5A
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE0D20C488
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758239694; cv=none; b=KNOgkZE2pb5vAhk7PnBdLnvb2wl8uT7uO2SaqwmoYQhg5uIoo+MCh3pH9C4MCG2YS+lsg8zzONyKQdohDnJRiooQtd1YgnN9Le0abXVpaw6s40xNAh2qgp5ulqEsBZzPyJTMmwtVC7BupN6eLd7kfdfHxZM8/HNZp5IuQ1k24pA=
+	t=1758239696; cv=none; b=uds7NSGyG4dahnkz5AXYVYsYV0mB9SWGc1ghQSRn44q+hlzwwka7km8MgL7Cgw2SGhHQsfTgc1KTT4xZzLSRKzIc6AuOq/9ioNYXNS5/nvVoNAfPCfINCx/E/VI9N4BlDKc2FwdUmHwEY0py7fk5sU5OWRCFuWN5XWs8AfcLM0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758239694; c=relaxed/simple;
-	bh=NSy/o4ZzRkF6XSr+ZivyDW8rhlDJLXSDsRwo7qhw7zI=;
+	s=arc-20240116; t=1758239696; c=relaxed/simple;
+	bh=SaMhrXY4ROVt7GFlmLm/qxTHJtT+uMbdM59hXVeaRIA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DALu6QA6VHdqCcnOqDmcrvAlKikw749IJ62uoqhDlMIFQcasw5WLlISb/o2I8mL3ud6lwQTlOG5PX7dL3mAXu3EqJlosEYw4WpRYhJQMDtdbN+X5BiszaEnW8xRcFL/ePjq8YzUkxMW5IX2Swh2fJGRerB+ut6FccflK96ljU5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=L2dmJe8U; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mdDt1WGC; arc=none smtp.client-ip=202.12.124.153
+	 MIME-Version; b=OXD2s591301vWry6NfDSAXW+z8VY7dvUSN6Ck0cFXS7I2ZoW2stSTJ5QPXwEqHkAt8Zg5kJ/rBvM4cFkkjyPjCd5BXRna5ebWLrsonM8KBDXAJ//rzqS/hp/V9PsHp0OXmwonXKj/KKStBG+6Nhkph6SmJKRps8HUtnbd5R7Www=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=c38uZGiB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B37X+xSf; arc=none smtp.client-ip=202.12.124.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id E3A527A02EB;
-	Thu, 18 Sep 2025 19:54:51 -0400 (EDT)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 8B8EA1D0028E;
+	Thu, 18 Sep 2025 19:54:53 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Thu, 18 Sep 2025 19:54:51 -0400
+  by phl-compute-06.internal (MEProxy); Thu, 18 Sep 2025 19:54:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1758239691; x=
-	1758326091; bh=JXjjbUEqhHDFtZPE4qxfZxl67VIDcJ7T0Luenviwv8U=; b=L
-	2dmJe8Um0BT+/9U2qhQxqSez86kh86SfHLxStcFYGlvxWiqFj1deztTmp+qvW+oG
-	kkbMOgD3ap5wgczOabVTByNl+tE5cKplNN/OeHgJ7d2U4T32lOQfoPLl10ykjamn
-	h9OeaxHQMOxbahwfdJVaECDeo7BdC0ejJH0X/GotK7jhdk6pXnv/T9o6ol9iV3bM
-	SRthV4H/lN20w7moVK00IRHISzq1iwB+Ze6jKS9EwdAfrHFGntPWOMunSKJMskri
-	EI5bCABaYSq81yEk51zOxeELPk/h7SzNnkAYlkbiJ1/CtSzTIHFSU3/3QdGideex
-	dQAv9siljt4bQ+ujGpDmA==
+	:reply-to:subject:subject:to:to; s=fm1; t=1758239693; x=
+	1758326093; bh=ejd4z6Y74LQMHrIhXYwar2zF5r9qzO6yTwePlxELzOg=; b=c
+	38uZGiBuk9pBkBw+iaAnut3EnYTKzdvVVb3R/OcQOckbqcphKU/xGyk9a8pnKkkI
+	S/OgPJpfN2Lrf2AO0jH80hati/Fv9ZnX79uWirpeHM/UO1OA/jdKpxv4jtXEgTDO
+	tdNyO9qXjSh42XTBrE5kLK+lPf3mSf8VoJZC08AgjdS9YjSgQ5KdFLwT5kNknFhg
+	GWlVQhxLbvCBuAt4iLYoaiDTSWSXFfzqXBB9s2szSEcw7IOWLV5U8QgzRKI5KT2t
+	kBxcTc7gFK0Kq3yq1ZO8RouXj4ghpuFViG13MG9ITqDIV2k9BTToRYmQL/fKqP8q
+	RwLCYnV4VEEUtOr0r54jQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758239691; x=1758326091; bh=J
-	XjjbUEqhHDFtZPE4qxfZxl67VIDcJ7T0Luenviwv8U=; b=mdDt1WGCA+Su6241R
-	syfDPSP+fgfwksDtLGY2PH6vrqX8dGnlMplZPvfZ8ZuzMJj1z28fx/gCrxhwgOOM
-	owU1IpopgPo2neJrJsmPfmgI0qZzUamL//i6Qx3rCuT17ZS7372JCdk+jwPAjc2o
-	y6ovDmhiY4TrQ05dPzCWnWMqvZ3qoSIxvjkIqnvcmlzPPwzKi3fTJIqquZQXOSuS
-	FoLVgfI6+duGO211AtsiKgJnAhOaIi2CA7134SS4HDwjjpYcDuCqx1ns7bTGr4tt
-	p2mU2mzaI2B9eOt3z0InIaNycAuqJZGhDV+rVKRaEUXSNjQIIQe3QGt5G9eCfov8
-	0HMGA==
-X-ME-Sender: <xms:y5vMaNnCyvvo4FaxFg_ds3ouViuepLzkbPHL1tD5Fuh7BD6p_A_9qA>
-    <xme:y5vMaBxqNhgMvRYLKoG6jfpJzNeajCdWGSh_hDc9_vqa7QwGP-vkhWFXJ0qe_pxFE
-    REhCbU_6yJUj7BzH14>
-X-ME-Received: <xmr:y5vMaFlB6Ol5Ig56o7q74hM2pPcSEeyJUpW-8s86KdvtRtU2ASUSUADyCT9aW5Bg-MiTWX4nV28AUm8ibqNAzfrhdwSsohyIpLXIOdNK8tFnw0M>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1758239693; x=1758326093; bh=e
+	jd4z6Y74LQMHrIhXYwar2zF5r9qzO6yTwePlxELzOg=; b=B37X+xSf/fCZHX8Yu
+	ZKNFow/EfEiZgXng1bJaRC8zg8enbQkoJtjbdg3GOpZ2IPshgiQ967QhqWvf+zXA
+	TkAPoqqVb7jDBLLn1MsZcdzaTuljNefjsrj3CrKHLPB1Pgd7JJBwNy+OgLql79UL
+	Hd1diPewM4sOTOJN7yi/U8DINeoAsv0ORQUd0CRNYZa5RG3OrXSf3gTgwM6BY7k3
+	MwM3Bfw4Nwm5hEHXucLtoHGv4nrSuQMoNsgUAZKltdvydEYkELmn0ldzyNT0qa3I
+	3YENndllSCHZ9EXYmQ/emHdMuGtfT9GBwhYBrNC91bg6/D8vtksa/z2uJjg6Rzdv
+	OMo6g==
+X-ME-Sender: <xms:zZvMaJchoTj2n98wXG6-oRoYNdoL4Jo8TeWwZ4_JE1jy-FXLBEdIHg>
+    <xme:zZvMaAJ1w7OIsjVFECZeBl5yxVLKJoP2RaGiqxJiKlY3dbVB1dpu1o4oaD6RsVa2T
+    KnR1Uqua1lcEefKQrk>
+X-ME-Received: <xmr:zZvMaEeJyFzw2qe14aeiWwAQkCCNrRjwTEo_Up8Gfd10ex1P-LzABeBDi5VxxUX-fhikEE-NyPzG553s7RcMx1v2L8RfWL6dDPJhaKGzEwOjgyk>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegjeejtdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtre
     dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepjedvteetudfhie
-    dvheegiedvkefgkedtleeftdetleejkedvueekheekvdfggfevnecuffhomhgrihhnpehk
-    vghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgt
-    phhtthhopedvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefle
-    egqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:y5vMaKd7OopXATFBDZp3aMjIf19MM24K_RIyJYi0qLIPNl5cjyl_aQ>
-    <xmx:y5vMaLqnxOcdPH57yZYzxX1PmSNAHN7hRULm1M738Gf9xb2o_079VQ>
-    <xmx:y5vMaI6OYn1pZ3Ce67bGcWpWKOepK01dndwaRIcqWrHAtVHla65q4A>
-    <xmx:y5vMaBrKvGYXYuv7-kajUSXGpEIS1ftQORq9KM_G3VGRzK2JvhihUw>
-    <xmx:y5vMaJLRG-oKs6buMbnA3Ppelr0_32pSdmzJ3_RJV8LHWvtLAGcuip8K>
+    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejuedvgf
+    duudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgvrhfu
+    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
+    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:zZvMaP3vwKc1XDjKJNp1z3u1bECAYlpFrJwxuNCKp1ONEcO-X8eSsw>
+    <xmx:zZvMaFh00RlyU6ZAO42_4h4HMj_XnP1LwCY3BPYh8W7MUEr6U1xbwQ>
+    <xmx:zZvMaNShU_KA4hEFUyaX8b39_Rgw6g6LZF_7OCtaPLHy1a-Du2f__g>
+    <xmx:zZvMaOjiOkHoOWcY7qYSojcYKdBlo4zwB0hMFr34l1b-dIVENpfRag>
+    <xmx:zZvMaMAwJe93aoU7oJQoiL7LnUt4UBkNujVaKKUatf4soVX-i7ig9Byv>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Sep 2025 19:54:50 -0400 (EDT)
+ 18 Sep 2025 19:54:52 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/6] firewire: core: code refactoring for work item of bus manager
-Date: Fri, 19 Sep 2025 08:54:42 +0900
-Message-ID: <20250918235448.129705-1-o-takashi@sakamocchi.jp>
+Subject: [PATCH v2 1/6] firewire: core: remove useless generation check
+Date: Fri, 19 Sep 2025 08:54:43 +0900
+Message-ID: <20250918235448.129705-2-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250918230857.127400-1-o-takashi@sakamocchi.jp>
 References: <20250918230857.127400-1-o-takashi@sakamocchi.jp>
@@ -100,30 +100,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Two functions, fw_core_handle_bus_reset() and bm_work(), are serialized
+by a commit 3d91fd440cc7 ("firewire: core: disable bus management work
+temporarily during updating topology"). Therefore the generation member
+of fw_card is immutable in bm_work().
 
-This patchset is the revised version of my previous one:
-https://lore.kernel.org/lkml/20250918230857.127400-1-o-takashi@sakamocchi.jp/
+This commit removes useless generation check in bm_work().
 
-Changes from v1:
-* Ensure to initialize local variable
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-card.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-Takashi Sakamoto (6):
-  firewire: core: remove useless generation check
-  firewire: core: use switch statement to evaluate transaction result to
-    CSR_BUS_MANAGER_ID
-  firewire: core: code refactoring for the case of generation mismatch
-  firewire: core: code refactoring to split contention procedure for bus
-    manager
-  firewire: core; eliminate pick_me goto label
-  firewire: core: minor code refactoring to delete useless local
-    variable
-
- drivers/firewire/core-card.c | 335 ++++++++++++++++++-----------------
- 1 file changed, 177 insertions(+), 158 deletions(-)
-
-
-base-commit: e6d2338b6f3e522872f3a14fcc5e5de2f58bf23b
+diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
+index 4fcd5ce4b2ce..ef00125fb01a 100644
+--- a/drivers/firewire/core-card.c
++++ b/drivers/firewire/core-card.c
+@@ -362,14 +362,12 @@ static void bm_work(struct work_struct *work)
+ 		if (rcode == RCODE_COMPLETE) {
+ 			int bm_id = be32_to_cpu(data[0]);
+ 
+-			if (generation == card->generation) {
+-				// Used by cdev layer for "struct fw_cdev_event_bus_reset".
+-				scoped_guard(spinlock, &card->lock) {
+-					if (bm_id != BUS_MANAGER_ID_NOT_REGISTERED)
+-						card->bm_node_id = 0xffc0 & bm_id;
+-					else
+-						card->bm_node_id = local_id;
+-				}
++			// Used by cdev layer for "struct fw_cdev_event_bus_reset".
++			scoped_guard(spinlock, &card->lock) {
++				if (bm_id != BUS_MANAGER_ID_NOT_REGISTERED)
++					card->bm_node_id = 0xffc0 & bm_id;
++				else
++					card->bm_node_id = local_id;
+ 			}
+ 
+ 			if (bm_id != BUS_MANAGER_ID_NOT_REGISTERED) {
 -- 
 2.48.1
 
