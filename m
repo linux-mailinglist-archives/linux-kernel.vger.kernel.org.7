@@ -1,118 +1,71 @@
-Return-Path: <linux-kernel+bounces-823103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E023B85888
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:21:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95ED1B85882
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D761893700
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:16:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1F41887916
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22EF30EF63;
-	Thu, 18 Sep 2025 15:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4C330CB27;
+	Thu, 18 Sep 2025 15:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S2QRPGDs"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuUhUofM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5A30DD29;
-	Thu, 18 Sep 2025 15:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9FB30CB5F;
+	Thu, 18 Sep 2025 15:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208525; cv=none; b=plbmu9Jbe44J4Y7j00AbLqa8iFN4jy02moRnyOX9dbX11vDpXP6kdFr3o263hGMGmJ5V23QheVSx4ckHa+EmDkFLTnI7NK0YqrknFRxMkDL9eFfYmCGpXVb8bmOkod9Slpyi3LeHb6lYpM6Yt7xTjASqqCTT1QD0VJnEeqgU52s=
+	t=1758208511; cv=none; b=qKblBrm8QbBG6+44JRZz/C/cvDqr6jlB+oVsU0mZVX/gR/cgvIaUDq6wgS/rfU9RvmUZwgRkZlh1EGrkmpeLh7YBhZFr3mGHUGnIPCmnJWwBFH7ByCnqNls1i5lXBNfWYkgv22MZ01lguPZRRA0LwurFNWaqTu14pY57lTbQiio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208525; c=relaxed/simple;
-	bh=ykNt9ik5AHQfEDNEYgj4XVFufl8SXg51nFMFWRD/dvQ=;
+	s=arc-20240116; t=1758208511; c=relaxed/simple;
+	bh=8JwclengLTvMgBdFHuzKmj+p7e6D4OWHLbYoSRMS1/I=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hPY12ZT7Wtq2yMZDLHqLbB6Vtdv+wWqYWqTun2zsi7sIPG3WTBVxqnZb93S4NpDeKCz+vYOcCDWrFXj6hWsLruV7qOlKeecxrqYO+HxQgDZpcXlI7IZ6KUit3WqvILyvB+QdUZsaJeFahJztIlpKQFF/ut+s1OWyb0YlGGLwVX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S2QRPGDs; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 5D24AC003C9;
-	Thu, 18 Sep 2025 15:15:03 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C20756062C;
-	Thu, 18 Sep 2025 15:15:19 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 91341102F1704;
-	Thu, 18 Sep 2025 17:15:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758208518; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=bBz84TZkfDLLhPGBTU9pbGWLejx7qAV5GjzUkaLGTDs=;
-	b=S2QRPGDsWgskQ9R2aBDQIzYoTJlPbeMnY822QlcaVGz0DjmmLRZ0VT2WDVd3K578tGsiUE
-	FZ0lKu0Ji8Kp384+VNLkqxnH0jBCTPyae4nq6WAa4IWP48kntCA/iCwRFJqjutj6t9XjVS
-	vlL6gGYJ2i56+CzKuwocDEoamTaSVNKFCCpO3aHeoAXSB+op/bH9j0B1PuJ8OGad/k+QsG
-	OHpW2JFvBXFNPNah2LYAcKcOfTsHDg6v+wKtzNASfRZhLPCPvOvriugzKKdfHfFBBAh7J2
-	hi2c/ADc0cWTiG8dQScE89zEQo/wecOEhn6iYVysqikg3zeXQnuodwaj9QRFXA==
-Date: Thu, 18 Sep 2025 17:15:02 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Hoan Tran
- <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
- Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
- Eberhard <pascal.eberhard@se.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
- GPIO Interrupt Multiplexer
-Message-ID: <20250918171502.411c3527@bootlin.com>
-In-Reply-To: <20250918-majestic-mockup-0a0e090db0a7@spud>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
-	<20250918104009.94754-7-herve.codina@bootlin.com>
-	<20250918-majestic-mockup-0a0e090db0a7@spud>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=upd9DFRUWmFga+QueDmwEOWomDhG8GQfRQVNyF1nszqe3BIddSjfdbvHDmGePAtK3rU3zM/jXsJXrhNQc+KXxYKpVOZ1C/3rf+NuUVON1eQk6iJKH9Sn05QsB3TgrWrwz9/eMqEh/VlAjJUoZQKYelckcFIc+XUpd3D39Rr6hMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuUhUofM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72ACAC4CEEB;
+	Thu, 18 Sep 2025 15:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758208510;
+	bh=8JwclengLTvMgBdFHuzKmj+p7e6D4OWHLbYoSRMS1/I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IuUhUofMJ9th+V1Q+UdSl79TW3eCpmpANbZzMKMRxq85b+2FFll5NYAF6pDe7m1H2
+	 kKAmfmR5+sLxAbYe08Xeo9bPnC3HaFPMl+fI9dh8LrD35QfIFjkpqNoPHz6Xqjq6pc
+	 ruOYLMpWBCN097QZZ6+DaHooSxLycWkH+9CK3Ouqf+Y+ztSSRDHUX17/ChHp0E3Lbe
+	 OeRjDWMXJfoCkokiWLGxE905+9rXV4SoX4Q/CLNvLUIYxdtKOONvxJt2kohoUsyDA8
+	 XgD/ajndt3FhJROD3DCZkndZY7gOxB3LzmC0Qm/NBm1IP76PNFsC0LwoeJwWhQZ2Ap
+	 39zibW6cZo8oA==
+Date: Thu, 18 Sep 2025 08:15:09 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Sathesh B Edara <sedara@marvell.com>
+Cc: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>,
+ <vburru@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
+ <andrew@lunn.ch>, <srasheed@marvell.com>
+Subject: Re: [net-next PATCH v1 0/2] Add support to retrieve hardware
+ channel information
+Message-ID: <20250918081509.39c066e3@kernel.org>
+In-Reply-To: <20250918144858.29960-1-sedara@marvell.com>
+References: <20250918144858.29960-1-sedara@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Conor,
+On Thu, 18 Sep 2025 07:48:56 -0700 Sathesh B Edara wrote:
+> This patch series introduces support for retrieving hardware channel
+> configuration through the ethtool interface for both PF and VF.
 
-On Thu, 18 Sep 2025 16:06:04 +0100
-Conor Dooley <conor@kernel.org> wrote:
-
-> On Thu, Sep 18, 2025 at 12:40:04PM +0200, Herve Codina (Schneider Electric) wrote:
-> > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> > interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
-> > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
-> > 
-> > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> > IRQ lines out of the 96 available to wire them to the GIC input lines.
-> > 
-> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> > ---
-> >  .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  | 87 +++++++++++++++++++
-> >  1 file changed, 87 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.yaml  
-> 
-> This is an interrupt controller, please move it to that subdirectory.
-
-Not so sure. It is a nexus node. It routes interrupt signals to the
-interrupt controller (interrupt-map) but it is not an interrupt controller
-itself.
-
-I am not sure that it should be moved to the interrupt-controller
-directory.
-
-> Otherwise,
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Best regards,
-Hervé
+Please read the doc I sent you and repost in a couple of days.
+-- 
+pw-bot: defer
 
