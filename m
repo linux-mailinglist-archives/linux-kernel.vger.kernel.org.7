@@ -1,370 +1,89 @@
-Return-Path: <linux-kernel+bounces-823066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6237EB856BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:03:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA835B856D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45B964E01B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5217C44F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B2730E0C8;
-	Thu, 18 Sep 2025 15:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F205C22423A;
+	Thu, 18 Sep 2025 15:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezg/bOJJ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JqAWS1rN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0A830E0D6
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E82CAD23;
+	Thu, 18 Sep 2025 15:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207682; cv=none; b=mdMvYPbazQcLzV50EihwRx1k2gByjyZdnpHWeJejzSp2xEbudmTIgbkTYDdXL4ySEu+mQ/GMouknV+A3yWzMt0S1/C5gZdrkow1cOg2BE5AWS19Uib7+yXlKhJySCE32OF+DCqd56fgDk39eTeqX7laoTBSwwsanl2eIJvaz/FQ=
+	t=1758207636; cv=none; b=mMFGkjT+x5haBHg23cMeTFDnvlJwtKMywH/gBHGcY/gY9qvUe9S/KqzMZ/uRY+7EqlFGbEHcT8C/mKyQUYYud4lpeLuuSjF6eiImArNzBQQzmbGhpGFvGxdQQujQiac6++/LIkNYEFL3d7WJyj9xb/7VSG4mDDokAb9jYXwPxLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207682; c=relaxed/simple;
-	bh=jigv5lGRfozuxeNjrQe5Jd18flyc/mH3vSjt7WpCG9c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OE46fK5PIaOZToHInIJ2C8B9x8AaCA64lF5t1q0EImf4zv7lkRR2p8CxGMUYr0l/TjyeRmJC2SzbObKd11/uTndKU1m+iXnei4leO26QF5GDUU03bnrdt5exWHgQrQJrAUmRIYlNrVfKKmQyYro7WyzasCU8ZA1s62a3d0j5fsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezg/bOJJ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2445824dc27so11012845ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:01:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758207679; x=1758812479; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z793sSCLFMecAL1qHudhek1VXc1Ubweo7E2LhfZeqJ4=;
-        b=ezg/bOJJ0njkugtVzt5nAP1yujsPZLB9gAHO6A8cJB1jwdKd9a+SIeEfqBlMRYNFng
-         pNvdrEbTfRb01J+SDeCIY5V1exWhSpo4jIxoBHQUmJHrioGRiYQGyllhpy1SQs180usT
-         hdMohOkiVnv6H3Vlcds8X6EMmMbPmj0BUU+hZfwMWD8v9snro0I2CFcNHwJrDKXizgt1
-         iikHODJcYrp2hRi2a5KY9qNjsG7L0AUcmOyeottW+537rsJRucgFrEVNlze0m5O37bf1
-         RLz4LngFDhAZm1ln4WyddvbNuu5fJrYazSKZ2N/yzZGM6u20TqNn3+ryxww9racihR0q
-         kZWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758207679; x=1758812479;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z793sSCLFMecAL1qHudhek1VXc1Ubweo7E2LhfZeqJ4=;
-        b=CwdMa7k6yBPJPswac5EhyExxNMUEvwkHmFivNxuF/KOY5ZEZQB5v5Ynmc8E3Qg9FgI
-         MbwBkogldn1o3lYvh5wVtlxHHz4RKUQ3BxwOrcmdb4r7x484wig7ovLdjIKJ5ysPqUOP
-         n6VgSmTD7FQn2ITy+xwzaqwEdvoIuBekGQ0URT8r6rc8mOu3xd20SWDnxClPtAZ80V4o
-         zwjMMLZDu+LXvGrAoWVd+yvguj/fIfq97w5tD6OYMufLKax2LW/yIgg96K71UN0Lhh/O
-         ofOJmYOpwSiXjjD7aKrqlPbgTsM3Uw9XWPdoVJScPwa9L9FKDipF1QdorKsMJXeHmtiW
-         s4/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWAPlOyPQvXpb6+UlOtSAHqPShEUEJQgldeTA0tGf8wO1BpamfsQI+ExtcNLdvzwvNVt6/qyRVkSnz2QjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3a6OJut/hiHuIrA8uHHNyw6gXqjS3Q1BKu4EnDZzSEVYw0j2c
-	9wyZLCBK7g+dbjHBCDI9HX2fusku2RcxFxsfvIl4ab9ChyOlKbr9zOxx
-X-Gm-Gg: ASbGncvHhnkgn3XvWwWbodrigmUJGGTf3EkXH1oAL3JZrslEUVQ5g/2JSlX5QhF8JoF
-	uh3AWS+9sQBKg0J4QL+7QaLd3wjkC5f3PGm7V6DfMWJL53pxpoouvhCzPpydR35B0xDtieo3mAO
-	iYjLMkZxbSjTLJPbOO6FgswthyVGeOwmbuWYNx987PCs3gn7rvvJ55WjekcpLkoGXAzNkbqBYfb
-	UeW6gGbrEM/0ktGQmSSiYbr21KDLQaDuFaxDYy77yuiijPz5N/1OLNKqfAuYmXeRa1SekrvggGn
-	nKFcpON5pVd1P3th7zLkAQcwbGRMeG5ftlAmrmakAy9CODOGyospWYXpik19dMRdcS3mpeumKgs
-	j0tKHDiwVexFR713cuWvXZmnu10WYZBR6/YUeMJXLKO73L1sNOdJYLp4Df9cGYlU65A==
-X-Google-Smtp-Source: AGHT+IEd6CLVBPEgC0+cky8wVNz975p+LYsCVhE+8kAl231+xpyYKE9iXFkssmQQTcZKLyd0w2CKmQ==
-X-Received: by 2002:a17:902:d511:b0:267:9aa5:f6a6 with SMTP id d9443c01a7336-26812190737mr98812395ad.19.1758207678581;
-        Thu, 18 Sep 2025 08:01:18 -0700 (PDT)
-Received: from ubuntu-Virtual-Machine.mshome.net ([70.37.26.59])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980302b20sm28425005ad.101.2025.09.18.08.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 08:01:17 -0700 (PDT)
-From: Tianyu Lan <ltykernel@gmail.com>
-X-Google-Original-From: Tianyu Lan <tiala@microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	arnd@arndb.de,
-	Neeraj.Upadhyay@amd.com,
-	tiala@microsoft.com,
-	kvijayab@amd.com,
-	romank@linux.microsoft.com
-Cc: linux-arch@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] x86/Hyper-V: Add Hyper-V specific hvcall to set backing page
-Date: Thu, 18 Sep 2025 11:00:23 -0400
-Message-Id: <20250918150023.474021-6-tiala@microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250918150023.474021-1-tiala@microsoft.com>
-References: <20250918150023.474021-1-tiala@microsoft.com>
+	s=arc-20240116; t=1758207636; c=relaxed/simple;
+	bh=xuOkoUNw7rn5KxPRuOp5pQL5CtBW0260AwBgcanXRXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=caix/6ziTRcz2Grg8grH2S6Do6rM+nrWBYY/U1eXQxSgzdNYy0Z/5wPgW+Q8PjfLv4HaqZG3b4dFIqIHh7Cm01plixAOZP5BPuUjYbF8FjhoJCVeKXYm70Ih4uSrWMGfrlB5pu+K3ZX2VvPrXM2E3mVgqE+atL7Xe56ySkYKVps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JqAWS1rN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D8D4C4CEF7;
+	Thu, 18 Sep 2025 15:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758207635;
+	bh=xuOkoUNw7rn5KxPRuOp5pQL5CtBW0260AwBgcanXRXc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JqAWS1rNTliJuZW77rrKBWqxFqq+CDpUja0x5eSS/S5Xv5V+6XMagqVkUXpvTcunK
+	 6J/PBjjXkcUciXodteyx9Cfk3RRvvhtpNYm8xG5d+NviK0n63cupwomjQaiejVQbxB
+	 1c0f+0KS1oGoC1OQMzJ6pl9W02HyNJCmfoEScx4I=
+Date: Thu, 18 Sep 2025 17:00:32 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: ManeraKai <manerakai@protonmail.com>
+Cc: "aliceryhl@google.com" <aliceryhl@google.com>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] rust: miscdevice: Moved `MiscDevice` to a more
+ general abstraction
+Message-ID: <2025091803-rephrase-deepen-52fd@gregkh>
+References: <20250918144356.28585-1-manerakai@protonmail.com>
+ <20250918144356.28585-2-manerakai@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918144356.28585-2-manerakai@protonmail.com>
 
-Secure AVIC hardware provides APIC backing page
-to aid the guest in limiting which interrupt
-vectors can be injected into the guest. Hyper-V
-introduces a new register HV_X64_REGISTER_SEV_GPA_PAGE
-to notify hypervisor with APIC backing page and call
-it in Secure AVIC driver.
+On Thu, Sep 18, 2025 at 02:45:28PM +0000, ManeraKai wrote:
+> This new general abstraction is called `FileOperations`.
+> 
+> `struct file_operations` is not only meant for misc. Its methods are
+> accessible from any other driver type. This change, however, doesn't
+> generalize the safe wrapping for all driver types, but rather just the
+> method declarations. The actual safe wrappings are left for every driver
+> type to implement. This may make each implementation simpler. For
+> example, misc can choose not to implement the safe wrapping for `lock`,
+> `sendfile`, or `sendpage`, since they have no use in misc drivers.
 
-Setting APIC backing page for APs takes place before
-allocating hyperv_pcpu_input_arg and so allocate
-hv_vp_early_input_arg to handle such case.
+This has come up many times, but we really are not "ready" for a generic
+file operations export.  Let's keep this just for misc for now, until we
+have another use for it, as the interaction with the vfs is tricky and
+subtle and full of corner cases (see the debugfs bindings for lots of
+examples here.)
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-Signed-off-by: Tianyu Lan <tiala@microsoft.com>
----
- arch/x86/hyperv/hv_init.c           | 24 +++++++++++++++++-
- arch/x86/hyperv/ivm.c               | 38 ++++++++++++++++++++++++++++
- arch/x86/include/asm/mshyperv.h     |  2 ++
- arch/x86/kernel/apic/x2apic_savic.c |  9 ++++++-
- include/hyperv/hvgdk_mini.h         | 39 +++++++++++++++++++++++++++++
- 5 files changed, 110 insertions(+), 2 deletions(-)
+So for a misc device, let's just stick with what we have for now.
 
-diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
-index a38bb96c9f5e..3fa8e91cd03f 100644
---- a/arch/x86/hyperv/hv_init.c
-+++ b/arch/x86/hyperv/hv_init.c
-@@ -39,6 +39,7 @@
- void *hv_hypercall_pg;
- EXPORT_SYMBOL_GPL(hv_hypercall_pg);
- 
-+void *hv_vp_early_input_arg;
- union hv_ghcb * __percpu *hv_ghcb_pg;
- 
- /* Storage to save the hypercall page temporarily for hibernation */
-@@ -412,6 +413,7 @@ void __init hyperv_init(void)
- 	u64 guest_id;
- 	union hv_x64_msr_hypercall_contents hypercall_msr;
- 	int cpuhp;
-+	int ret;
- 
- 	if (x86_hyper_type != X86_HYPER_MS_HYPERV)
- 		return;
-@@ -419,6 +421,22 @@ void __init hyperv_init(void)
- 	if (hv_common_init())
- 		return;
- 
-+	if (cc_platform_has(CC_ATTR_SNP_SECURE_AVIC)) {
-+		hv_vp_early_input_arg = kcalloc(num_possible_cpus(),
-+					     PAGE_SIZE,
-+					     GFP_KERNEL);
-+		if (hv_vp_early_input_arg) {
-+			ret = set_memory_decrypted((u64)hv_vp_early_input_arg,
-+					     num_possible_cpus());
-+			if (ret) {
-+				kfree(hv_vp_early_input_arg);
-+				goto common_free;
-+			}
-+		} else {
-+			goto common_free;
-+		}
-+	}
-+
- 	/*
- 	 * The VP assist page is useless to a TDX guest: the only use we
- 	 * would have for it is lazy EOI, which can not be used with TDX.
-@@ -433,7 +451,7 @@ void __init hyperv_init(void)
- 		ms_hyperv.hints &= ~HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
- 
- 		if (!hv_isolation_type_tdx())
--			goto common_free;
-+			goto free_vp_early_input_arg;
- 	}
- 
- 	if (ms_hyperv.paravisor_present && hv_isolation_type_snp()) {
-@@ -591,6 +609,10 @@ void __init hyperv_init(void)
- free_vp_assist_page:
- 	kfree(hv_vp_assist_page);
- 	hv_vp_assist_page = NULL;
-+free_vp_early_input_arg:
-+	set_memory_encrypted((u64)hv_vp_early_input_arg, num_possible_cpus());
-+	kfree(hv_vp_early_input_arg);
-+	hv_vp_early_input_arg = NULL;
- common_free:
- 	hv_common_free();
- }
-diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
-index ade6c665c97e..e69dae57730c 100644
---- a/arch/x86/hyperv/ivm.c
-+++ b/arch/x86/hyperv/ivm.c
-@@ -291,6 +291,44 @@ static void snp_cleanup_vmsa(struct sev_es_save_area *vmsa)
- 		free_page((unsigned long)vmsa);
- }
- 
-+enum es_result hv_set_savic_backing_page(u64 gfn)
-+{
-+	u64 control = HV_HYPERCALL_REP_COMP_1 | HVCALL_SET_VP_REGISTERS;
-+	struct hv_set_vp_registers_input *input
-+		= hv_vp_early_input_arg + smp_processor_id() * PAGE_SIZE;
-+	union hv_x64_register_sev_gpa_page value;
-+	unsigned long flags;
-+	int retry = 5;
-+	u64 ret;
-+
-+	local_irq_save(flags);
-+
-+	value.enabled = 1;
-+	value.reserved = 0;
-+	value.pagenumber = gfn;
-+
-+	memset(input, 0, struct_size(input, element, 1));
-+	input->header.partitionid = HV_PARTITION_ID_SELF;
-+	input->header.vpindex = HV_VP_INDEX_SELF;
-+	input->header.inputvtl = ms_hyperv.vtl;
-+	input->element[0].name = HV_X64_REGISTER_SEV_AVIC_GPA;
-+	input->element[0].value.reg64 = value.u64;
-+
-+	do {
-+		ret = hv_do_hypercall(control, input, NULL);
-+	} while (ret == HV_STATUS_TIME_OUT && retry--);
-+
-+	if (!hv_result_success(ret))
-+		pr_err("Failed to set Secure AVIC backing page %llx.\n", ret);
-+
-+	local_irq_restore(flags);
-+
-+	if (hv_result_success(ret))
-+		return ES_OK;
-+	else
-+		return ES_VMM_ERROR;
-+}
-+
- int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip, unsigned int cpu)
- {
- 	struct sev_es_save_area *vmsa = (struct sev_es_save_area *)
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index abc4659f5809..b140558816de 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -43,6 +43,7 @@ static inline unsigned char hv_get_nmi_reason(void)
- extern bool hyperv_paravisor_present;
- 
- extern void *hv_hypercall_pg;
-+extern void *hv_vp_early_input_arg;
- 
- extern union hv_ghcb * __percpu *hv_ghcb_pg;
- 
-@@ -252,6 +253,7 @@ int hv_unmap_ioapic_interrupt(int ioapic_id, struct hv_interrupt_entry *entry);
- bool hv_ghcb_negotiate_protocol(void);
- void __noreturn hv_ghcb_terminate(unsigned int set, unsigned int reason);
- int hv_snp_boot_ap(u32 apic_id, unsigned long start_ip, unsigned int cpu);
-+enum es_result hv_set_savic_backing_page(u64 gfn);
- #else
- static inline bool hv_ghcb_negotiate_protocol(void) { return false; }
- static inline void hv_ghcb_terminate(unsigned int set, unsigned int reason) {}
-diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
-index dbc5678bc3b6..60bdb524de53 100644
---- a/arch/x86/kernel/apic/x2apic_savic.c
-+++ b/arch/x86/kernel/apic/x2apic_savic.c
-@@ -14,6 +14,7 @@
- 
- #include <asm/apic.h>
- #include <asm/sev.h>
-+#include <asm/mshyperv.h>
- 
- #include "local.h"
- 
-@@ -342,6 +343,7 @@ static void savic_setup(void)
- 	void *ap = this_cpu_ptr(savic_page);
- 	enum es_result res;
- 	unsigned long gpa;
-+	unsigned long gfn;
- 
- 	/*
- 	 * Before Secure AVIC is enabled, APIC MSR reads are intercepted.
-@@ -350,6 +352,7 @@ static void savic_setup(void)
- 	apic_set_reg(ap, APIC_ID, native_apic_msr_read(APIC_ID));
- 
- 	gpa = __pa(ap);
-+	gfn = gpa >> PAGE_SHIFT;
- 
- 	/*
- 	 * The NPT entry for a vCPU's APIC backing page must always be
-@@ -361,7 +364,11 @@ static void savic_setup(void)
- 	 * VMRUN, the hypervisor makes use of this information to make sure
- 	 * the APIC backing page is mapped in NPT.
- 	 */
--	res = savic_register_gpa(gpa);
-+	if (hv_isolation_type_snp())
-+		res = hv_set_savic_backing_page(gfn);
-+	else
-+		res = savic_register_gpa(gpa);
-+
- 	if (res != ES_OK)
- 		sev_es_terminate(SEV_TERM_SET_LINUX, GHCB_TERM_SAVIC_FAIL);
- 
-diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-index 1be7f6a02304..e3092469aafe 100644
---- a/include/hyperv/hvgdk_mini.h
-+++ b/include/hyperv/hvgdk_mini.h
-@@ -1170,6 +1170,28 @@ union hv_register_value {
- 	union hv_arm64_pending_synthetic_exception_event pending_synthetic_exception_event;
- };
- 
-+/* HvSetVpRegisters hypercall with variable size reg name/value list*/
-+struct hv_set_vp_registers_input {
-+	struct {
-+		u64 partitionid;
-+		u32 vpindex;
-+		u8  inputvtl;
-+		u8  padding[3];
-+	} header;
-+	struct {
-+		u32 name;
-+		u32 padding1;
-+		u64 padding2;
-+		union {
-+			union hv_register_value value;
-+			struct {
-+				u64 valuelow;
-+				u64 valuehigh;
-+			};
-+		};
-+	} element[];
-+} __packed;
-+
- /* NOTE: Linux helper struct - NOT from Hyper-V code. */
- struct hv_output_get_vp_registers {
- 	DECLARE_FLEX_ARRAY(union hv_register_value, values);
-@@ -1210,6 +1232,15 @@ struct hv_input_get_vp_registers {
- 	u32 names[];
- } __packed;
- 
-+union hv_x64_register_sev_gpa_page {
-+	u64 u64;
-+	struct {
-+		u64 enabled:1;
-+		u64 reserved:11;
-+		u64 pagenumber:52;
-+	};
-+} __packed;
-+
- struct hv_input_set_vp_registers {
- 	u64 partition_id;
- 	u32 vp_index;
-@@ -1230,6 +1261,14 @@ struct hv_send_ipi {	 /* HV_INPUT_SEND_SYNTHETIC_CLUSTER_IPI */
- 
- #define	HV_VTL_MASK			GENMASK(3, 0)
- 
-+/*
-+ * Registers are only accessible via HVCALL_GET_VP_REGISTERS hvcall and
-+ * there is not associated MSR address.
-+ */
-+#define	HV_X64_REGISTER_VSM_VP_STATUS	0x000D0003
-+#define	HV_X64_VTL_MASK			GENMASK(3, 0)
-+#define	HV_X64_REGISTER_SEV_AVIC_GPA    0x00090043
-+
- /* Hyper-V memory host visibility */
- enum hv_mem_host_visibility {
- 	VMBUS_PAGE_NOT_VISIBLE		= 0,
--- 
-2.25.1
+> Signed-off-by: ManeraKai <manerakai@protonmail.com>
 
+Nit, we need a full name please.
+
+thanks,
+
+greg k-h
 
