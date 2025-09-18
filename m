@@ -1,231 +1,383 @@
-Return-Path: <linux-kernel+bounces-822123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0ABB83115
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2C35B83121
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD9461F9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7A93AF75D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85DC2D94B5;
-	Thu, 18 Sep 2025 06:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CF8248F47;
+	Thu, 18 Sep 2025 06:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OEQLV4AZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PREosJ+z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2088B2D94AA
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900362C0270
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758175221; cv=none; b=qbQKGYyKuSyHiNWxCOqhT8aFipIMcthM04uKcs+/Xdx9WM6tfl91qj4n2lbFqFrWiWEI9egw8n6/yF8Qnz/pKfvhWnvSEbjHLf+5Np/yujOxATrnh/IIY0GOdbLo0R5OM6U6JEuf+yyhXD7fcQhex6pYva5SjFutYCBdMJhNiP8=
+	t=1758175242; cv=none; b=YzVDy/OwHEXhtb0F8uK479o8dfSxuLOcUAF7ibbHZd5mu6ZQZwDRggYpATxGJRAB0irAL7ceilndE+4LucV33i15EJmeNaFDanTnuMKe4ldteZicsEpCkTzPod5JUiFslbx4Nt6UEHhQaziz1uwPo4ShjsaIj6r+cMvE0NrRCAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758175221; c=relaxed/simple;
-	bh=rEmfRlOQozGVdj6yZy0yv5UqzEh8KtQEnjDDQOJ5NAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bpp8dOCdAKQdxFxIwI0AMXg8twv+GR2EEPkRdEqF7ko/yeqprlZ5sChrHPLOmopGJsTk9AgHbUFI5C1tFBE4/LZ13X5ZkR2HFVaut93H6QDmA6XE0K7wQ2Mo0Rfsl5DADcvE7/3IJZs5eOFp3ayoZ9AcTdMyTC2ImzcyVaQDuEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OEQLV4AZ; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1758175242; c=relaxed/simple;
+	bh=J/CC/MLx0na/ia90gUzHbCOsjOVmYIShm8WMw51G3uE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o/sX7riGhbujOUrzsWFe25nhEp+jBU3AkGr/SQ59vkG8x2QeSwqnti6zfRQQAvBqO7U4zj6guGHMZzVtN/B09nPwJQTWuyG7SNAO0sbyrEtQR0CwtZFwwgdBm3aiBSVWEX9ynDxXUAcoes1OiWBH+qyLzDIR8CgIKR1OaF2DgIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PREosJ+z; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758175218;
+	s=mimecast20190719; t=1758175239;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Egs9MORsMvaYVbs9QUFPAzXFwITcR+mUkRUBRDXNcgc=;
-	b=OEQLV4AZHpVyx/5KMlOnUy58FNs2i93TP9/6zbOMkWuBZ4NLyW2RpxoeuBxBtzZp6wumE8
-	GXJlZspfSK6CANtiwGxUFEOgMDtrQMw8kCXZGb6bHVrz02VuG0glrdtzd86tc16zNyKyF4
-	E71yQGODi3FKfESXOEPQ/6VPvBL/riA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=D8oLiMDHlxx74GLSjArN8RqwVO2mfX7/biLkwfJqtlg=;
+	b=PREosJ+zWJsg3+3tENhYTK3iSw0BNIdAMJDGVMIEjooRLUfaGTJOC1zr39oS7RyJUWFljI
+	JVMG2ISLRuvkD/k1nn5gFgOGMBU29SxB88cK+TKtj6Xgv+JtQ2bxYw2yhIH2SjbjN2jPk6
+	toaqjFm1zWRpPSQhQm7+NmLRjKltw2M=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-187-n8Xe-Bz2MoWQkbaAqTzL4A-1; Thu, 18 Sep 2025 02:00:16 -0400
-X-MC-Unique: n8Xe-Bz2MoWQkbaAqTzL4A-1
-X-Mimecast-MFC-AGG-ID: n8Xe-Bz2MoWQkbaAqTzL4A_1758175215
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4612d068c47so2913505e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:00:16 -0700 (PDT)
+ us-mta-158-uI3hfEl6PUatoLMDSu7o3Q-1; Thu, 18 Sep 2025 02:00:37 -0400
+X-MC-Unique: uI3hfEl6PUatoLMDSu7o3Q-1
+X-Mimecast-MFC-AGG-ID: uI3hfEl6PUatoLMDSu7o3Q_1758175236
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b54df707c1cso426788a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 23:00:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758175215; x=1758780015;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Egs9MORsMvaYVbs9QUFPAzXFwITcR+mUkRUBRDXNcgc=;
-        b=YbQmn3HS6CP9iQxU3KohWVVy565CpDhDKEub6j/mf60QNF7Z3FTRMuIWC28WlnCsQm
-         H3zUl+f/3ReswJCrRyu9ZGMqR0ydRfgVCYdKWZZ+NBcN6kWyM4M6M53aEoyxZ1yTB1gf
-         l2uygnYtd46Gg8FlaAmPbYJJksI7WVJHTRb8XkSh5v0A9YFQ6UJekYXJSScJu9esNckH
-         K6zq2tEXzBR75U76jRTZi/ep5Df10veULoAPllVaJl81IPrnAayn4T2pYF+SnwARoIQJ
-         Gx6xRmwR/PFG8yuezZbqs2maTNICFFDx6xvXFw9GY8JLzbAFmmzqYm/Fjm4JQdHinJd7
-         EYFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBO0dc1kDzYXRcUhqkB1ZDAR+V/ujaZ0Ica3CuWV5TIu8yjYmibvxxEdO6p/TuU4P4xnjVDZPhvXHnlwU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7bmHWq0sLwc6Cih0K6wAA25DZ0tTe1mtLBReoiPAaSXfjpzUO
-	jy2kJ8Aru91mpNS4K13YI3B20TVi6YJhaOYl4UaNakRlrbzmDetGaCpQjMmEzjtvyVS7o095Y5k
-	Viw4GwQ9wR2kTGT9fmEpbqNifJ2zmmEYC+BFQPMYTKaDtSGvRNGTvEb5Fv8z9whxNdQ==
-X-Gm-Gg: ASbGncuYPGC4dEuZ0Ht9WdRP3KBPggPgvn7+1HhrB56/v0Pb0dZA5j4p6wByeXLMDbN
-	I7DoTrEa7s5GC3c14eLSIBzJ9QQASJVdOZ5toO1tkFuJzJT9WTj7yqSfDkgMdhL6RwMi7OvX8KE
-	woMm1rz3vajGEueGveniA9dRusdsNh5vkFkkJJlP7k0no4rPCFLinTE+3285Q4CC/1jLRbP8Nh2
-	9fhfaUWuZ8+d/4mdZkH0dwFjn84wD51GPKCpHuhEe92R0vr2N+1FzdiR4/R+E5zMvJMK9+Pg1ZH
-	ZVvroprExT4BD1FXwaLHJlMcgXssfAvrJH8JAoDiIhmiy4AlS4c8CnFXF+xMKgVHLgtledVMOw5
-	ZVk8wj/6RG+T4cUudNSc9MBqAy06gG+e+mTQvrW0MPXl2CZ7o7T/Zt/YvvoWILMz6woff
-X-Received: by 2002:a05:600c:1d0c:b0:458:c059:7db1 with SMTP id 5b1f17b1804b1-46207d632c5mr43159085e9.30.1758175213587;
-        Wed, 17 Sep 2025 23:00:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBPDGFO1ZJKbSLPlQU6hrKmvukZl3bWN2+07Z4T7xEVSYJLDlgI5/VEDLbR+swq1LiPRI1Nw==
-X-Received: by 2002:a05:600c:1d0c:b0:458:c059:7db1 with SMTP id 5b1f17b1804b1-46207d632c5mr43158595e9.30.1758175212983;
-        Wed, 17 Sep 2025 23:00:12 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f07:dd00:ca9c:199e:d2b6:9099? (p200300d82f07dd00ca9c199ed2b69099.dip0.t-ipconnect.de. [2003:d8:2f07:dd00:ca9c:199e:d2b6:9099])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464eadd7e11sm26175745e9.0.2025.09.17.23.00.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Sep 2025 23:00:12 -0700 (PDT)
-Message-ID: <17d1b293-e393-4989-a357-7eea74b3c805@redhat.com>
-Date: Thu, 18 Sep 2025 08:00:11 +0200
+        d=1e100.net; s=20230601; t=1758175236; x=1758780036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D8oLiMDHlxx74GLSjArN8RqwVO2mfX7/biLkwfJqtlg=;
+        b=oyUMakl0QhTlDBjQzzCRxdH0s1fqsFCrD+VT/EeN+vscZdbWGY5WpWugF+svfW6uwQ
+         +gxdqxOsGtFFCMPxtkHDk05zySKtWzgvIQP1unXLTQtZ3M0KDlEn05xh2/jtpLRIAfbH
+         dSCdq7ZpIQvE6HOwBuiEJyy/QguMBxz2mdzWlRWPbhIpNW73CYAxJEn+/y6LKorI7ZG4
+         n93fK9Zo1LXsp/z1R7YWAYozAbJhn20lXhlYQ5QTnviUI6sBE3IpNavTg2pfOkT9h1fF
+         zw1svo0QVrV7V98EvXNTPbt+imKeq3YOP1+rSieNccxTFRgJXqC1ICadxIx4s2TRBEDQ
+         Hhag==
+X-Forwarded-Encrypted: i=1; AJvYcCXoqshl5KLmGJi4LBxIh5o39/RE+Go3aQ5LybrN5D39Waj8ws3AcaCgIgLNvMIcrIH4Jx+upn4p5KV9Wbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5KBLiS2yuLSla41Lzu4z3p5W/UmjdIa8TxUKQlfFJkd2bx83R
+	NHt5VjkRyDANxLeitd9HjUaFwWj2aKykzITXSUziNuXZjBWDca4foeY+6IfMiVLgs3CgEp2LPgN
+	WgYDpFRewCGJJ6QKDe9MZI7p6V34hbLLX+ysOOhyl1pMIfSOGvRtRnnGSOFrwly8qQXhb/59wNZ
+	gsqRDKSLSU4F7R4AYOe7WEYFT4aNwlkHv8ZrQoNrlo
+X-Gm-Gg: ASbGncvkOHwmHKQXU+m+GXynLIlV837OXK9HIQK6AmyLYNEA65+VTAcYHxDbkR13qr1
+	wOPH9jLkPZnmm3rldZlFrd8TB4R/uat6KoZ5ycMC5qvAqDehBrutLHJeRHeStG5qzFvyDBRqBso
+	Tdqb3+L9FJZFkhY37XJ8G5ng==
+X-Received: by 2002:a05:6a21:33aa:b0:246:9192:278a with SMTP id adf61e73a8af0-27aa99bd41emr6149993637.44.1758175236106;
+        Wed, 17 Sep 2025 23:00:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7+xmzxFyoklt2yjV8D8HuazMemR4ibiCqULitol5a5ZKHMdW971rjO9+Wz5VCrop82hSV7dqCE0g0evVA6Bs=
+X-Received: by 2002:a05:6a21:33aa:b0:246:9192:278a with SMTP id
+ adf61e73a8af0-27aa99bd41emr6149946637.44.1758175235570; Wed, 17 Sep 2025
+ 23:00:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mm: vmscan: remove folio_test_private() check in
- pageout()
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hannes@cmpxchg.org
-Cc: mhocko@kernel.org, zhengqi.arch@bytedance.com, shakeel.butt@linux.dev,
- lorenzo.stoakes@oracle.com, hughd@google.com, willy@infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1758166683.git.baolin.wang@linux.alibaba.com>
- <9ef0e560dc83650bc538eb5dcd1594e112c1369f.1758166683.git.baolin.wang@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <9ef0e560dc83650bc538eb5dcd1594e112c1369f.1758166683.git.baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250916130833.329087-1-eperezma@redhat.com> <20250916130833.329087-4-eperezma@redhat.com>
+ <CACGkMEv+FxECjhxfEKjZJcqXKc=c7RogAk6wdptBymTvL0fz1Q@mail.gmail.com> <CAJaqyWeFDSXQtUnZG_O226YBu1Zy_L8ws_UMDGVTMA=YfrGcFg@mail.gmail.com>
+In-Reply-To: <CAJaqyWeFDSXQtUnZG_O226YBu1Zy_L8ws_UMDGVTMA=YfrGcFg@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 18 Sep 2025 14:00:23 +0800
+X-Gm-Features: AS18NWCOj7OMXTG-GVNLvoead5gf7nL7fM2Mr9MxQSYyi6jR-qWZ9WN1-q_PY3A
+Message-ID: <CACGkMEtyKWwLfb17U3+7SZ_T-NrYhMpYfcCegVarjq_Xen2s6g@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] vduse: add vq group support
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
+	Cindy Lu <lulu@redhat.com>, Laurent Vivier <lvivier@redhat.com>, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18.09.25 05:46, Baolin Wang wrote:
-> The folio_test_private() check in pageout() was introduced by commit
-> ce91b575332b ("orphaned pagecache memleak fix") in 2005 (checked from
-> a history tree[1]). As the commit message mentioned, it was to address
-> the issue where reiserfs pagecache may be truncated while still pinned.
-> To further explain, the truncation removes the page->mapping, but the
-> page is still listed in the VM queues because it still has buffers.
-> 
-> In 2008, commit a2b345642f530 ("Fix dirty page accounting leak with ext3
-> data=journal") seems to be dealing with a similar issue, where the page
-> becomes dirty after truncation, and it provides a very useful call stack:
-> truncate_complete_page()
->        cancel_dirty_page() // PG_dirty cleared, decr. dirty pages
->        do_invalidatepage()
->          ext3_invalidatepage()
->            journal_invalidatepage()
->              journal_unmap_buffer()
->                __dispose_buffer()
->                  __journal_unfile_buffer()
->                    __journal_temp_unlink_buffer()
->                      mark_buffer_dirty(); // PG_dirty set, incr. dirty pages
-> 
-> In this commit a2b345642f530, we forcefully clear the page's dirty flag
-> during truncation (in truncate_complete_page()).
-> 
-> Now it seems this was just a peculiar usage specific to reiserfs. Maybe
-> reiserfs had some extra refcount on these pages, which caused them to pass
-> the is_page_cache_freeable() check. With the fix provided by commit a2b345642f530
-> and reiserfs being removed in 2024 by commit fb6f20ecb121 ("reiserfs: The
-> last commit"), such a case is unlikely to occur again. So let's remove the
-> redundant folio_test_private() checks and related buffer_head release logic,
-> and just leave a warning here to catch such a bug.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->   mm/vmscan.c | 12 +++---------
->   1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index f1fc36729ddd..930add6d90ab 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -701,16 +701,10 @@ static pageout_t pageout(struct folio *folio, struct address_space *mapping,
->   		return PAGE_KEEP;
->   	if (!mapping) {
->   		/*
-> -		 * Some data journaling orphaned folios can have
-> -		 * folio->mapping == NULL while being dirty with clean buffers.
-> +		 * Is it still possible to have a dirty folio with
-> +		 * a NULL mapping? I think not.
->   		 */
+On Wed, Sep 17, 2025 at 11:42=E2=80=AFPM Eugenio Perez Martin
+<eperezma@redhat.com> wrote:
+>
+> On Wed, Sep 17, 2025 at 10:37=E2=80=AFAM Jason Wang <jasowang@redhat.com>=
+ wrote:
+> >
+> > On Tue, Sep 16, 2025 at 9:08=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@re=
+dhat.com> wrote:
+> > >
+> > > This allows sepparate the different virtqueues in groups that shares =
+the
+> > > same address space.  Asking the VDUSE device for the groups of the vq=
+ at
+> > > the beginning as they're needed for the DMA API.
+> > >
+> > > Allocating 3 vq groups as net is the device that need the most groups=
+:
+> > > * Dataplane (guest passthrough)
+> > > * CVQ
+> > > * Shadowed vrings.
+> > >
+> > > Future versions of the series can include dynamic allocation of the
+> > > groups array so VDUSE can declare more groups.
+> > >
+> > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > > ---
+> > > v2:
+> > > * Now the vq group is in vduse_vq_config struct instead of issuing on=
+e
+> > >   VDUSE message per vq.
+> > >
+> > > v1:
+> > > * Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
+> > >
+> > > RFC v3:
+> > > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a low=
+er
+> > >   value to reduce memory consumption, but vqs are already limited to
+> > >   that value and userspace VDUSE is able to allocate that many vqs.
+> > > * Remove the descs vq group capability as it will not be used and we =
+can
+> > >   add it on top.
+> > > * Do not ask for vq groups in number of vq groups < 2.
+> > > * Move the valid vq groups range check to vduse_validate_config.
+> > >
+> > > RFC v2:
+> > > * Cache group information in kernel, as we need to provide the vq map
+> > >   tokens properly.
+> > > * Add descs vq group to optimize SVQ forwarding and support indirect
+> > >   descriptors out of the box.
+> > > ---
+> > >  drivers/vdpa/vdpa_user/vduse_dev.c | 37 ++++++++++++++++++++++++++--=
+--
+> > >  include/uapi/linux/vduse.h         | 12 +++++++---
+> > >  2 files changed, 41 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_u=
+ser/vduse_dev.c
+> > > index 2b6a8958ffe0..42f8807911d4 100644
+> > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > @@ -59,6 +59,7 @@ struct vduse_virtqueue {
+> > >         struct vdpa_vq_state state;
+> > >         bool ready;
+> > >         bool kicked;
+> > > +       u32 vq_group;
+> > >         spinlock_t kick_lock;
+> > >         spinlock_t irq_lock;
+> > >         struct eventfd_ctx *kickfd;
+> > > @@ -115,6 +116,7 @@ struct vduse_dev {
+> > >         u8 status;
+> > >         u32 vq_num;
+> > >         u32 vq_align;
+> > > +       u32 ngroups;
+> > >         struct vduse_umem *umem;
+> > >         struct mutex mem_lock;
+> > >         unsigned int bounce_size;
+> > > @@ -593,6 +595,13 @@ static int vduse_vdpa_set_vq_state(struct vdpa_d=
+evice *vdpa, u16 idx,
+> > >         return 0;
+> > >  }
+> > >
+> > > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > > +{
+> > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > > +
+> > > +       return dev->vqs[idx]->vq_group;
+> >
+> > I wonder if we should fail if VDUSE_VQ_SETUP is not set by userspace?
+> >
+>
+> I'm kind of ok with implementing it, but I see it as redundant as if
+> the VDUSE device does not call the vq max size will be 0 anyway.
 
-I would rephrase slightly (removing the "I think not"):
+Is this better to fail (I meant return int instead of a u32, probably
+require changes in the vdpa core)?
 
-/*
-  * We should no longer have dirty folios with clean buffers and a NULL
-  * mapping. However, let's be careful for now.
-  */
+>
+> > > +}
+> > > +
+> > >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx=
+,
+> > >                                 struct vdpa_vq_state *state)
+> > >  {
+> > > @@ -790,6 +799,7 @@ static const struct vdpa_config_ops vduse_vdpa_co=
+nfig_ops =3D {
+> > >         .set_vq_cb              =3D vduse_vdpa_set_vq_cb,
+> > >         .set_vq_num             =3D vduse_vdpa_set_vq_num,
+> > >         .get_vq_size            =3D vduse_vdpa_get_vq_size,
+> > > +       .get_vq_group           =3D vduse_get_vq_group,
+> > >         .set_vq_ready           =3D vduse_vdpa_set_vq_ready,
+> > >         .get_vq_ready           =3D vduse_vdpa_get_vq_ready,
+> > >         .set_vq_state           =3D vduse_vdpa_set_vq_state,
+> > > @@ -1253,12 +1263,21 @@ static long vduse_dev_ioctl(struct file *file=
+, unsigned int cmd,
+> > >                 if (config.index >=3D dev->vq_num)
+> > >                         break;
+> > >
+> > > -               if (!is_mem_zero((const char *)config.reserved,
+> > > -                                sizeof(config.reserved)))
+> > > +               if (dev->api_version < VDUSE_API_VERSION_1 && config.=
+group)
+> > > +                       break;
+> > > +
+> > > +               if (dev->api_version >=3D VDUSE_API_VERSION_1 &&
+> > > +                   config.group > dev->ngroups)
+> > > +                       break;
+> > > +
+> > > +               if (config.reserved1 ||
+> > > +                   !is_mem_zero((const char *)config.reserved2,
+> > > +                                sizeof(config.reserved2)))
+> > >                         break;
+> >
+> > What's the reason for having this check? I mean if we don't check this
+> > since the day0, it might be too late to do that.
+> >
+>
+> It's been checked from day0, both reserved1 and reserved2 were
+> included in the config.reserved before the patch, and the replaced
+> lines already checked with is_mem_zero [1].
 
-> -		if (folio_test_private(folio)) {
-> -			if (try_to_free_buffers(folio)) {
-> -				folio_clear_dirty(folio);
-> -				pr_info("%s: orphaned folio\n", __func__);
-> -				return PAGE_CLEAN;
-> -			}
-> -		}
-> +		VM_WARN_ON_FOLIO(true, folio);
->   		return PAGE_KEEP;
->   	}
->   
+Ok. I see.
 
+>
+> > >
+> > >                 index =3D array_index_nospec(config.index, dev->vq_nu=
+m);
+> > >                 dev->vqs[index]->num_max =3D config.max_size;
+> > > +               dev->vqs[index]->vq_group =3D config.group;
+> > >                 ret =3D 0;
+> > >                 break;
+> > >         }
+> > > @@ -1738,12 +1757,19 @@ static bool features_is_valid(struct vduse_de=
+v_config *config)
+> > >         return true;
+> > >  }
+> > >
+> > > -static bool vduse_validate_config(struct vduse_dev_config *config)
+> > > +static bool vduse_validate_config(struct vduse_dev_config *config,
+> > > +                                 u64 api_version)
+> > >  {
+> > >         if (!is_mem_zero((const char *)config->reserved,
+> > >                          sizeof(config->reserved)))
+> > >                 return false;
+> > >
+> > > +       if (api_version < VDUSE_API_VERSION_1 && config->ngroups)
+> > > +               return false;
+> >
+> > Better with ngroups > 1?
+> >
+>
+> Same here. The kernel in the master branch already returns false if
+> that position of "reserved" is 1, and we are changing the behavior if
+> we don't include the 1 too.
+>
+> > > +
+> > > +       if (api_version >=3D VDUSE_API_VERSION_1 && config->ngroups >=
+ 0xffff)
+> > > +               return false;
+> > > +
+> > >         if (config->vq_align > PAGE_SIZE)
+> > >                 return false;
+> > >
+> > > @@ -1859,6 +1885,7 @@ static int vduse_create_dev(struct vduse_dev_co=
+nfig *config,
+> > >         dev->device_features =3D config->features;
+> > >         dev->device_id =3D config->device_id;
+> > >         dev->vendor_id =3D config->vendor_id;
+> > > +       dev->ngroups =3D (dev->api_version < 1) ? 1 : (config->ngroup=
+s ?: 1);
+> > >         dev->name =3D kstrdup(config->name, GFP_KERNEL);
+> > >         if (!dev->name)
+> > >                 goto err_str;
+> > > @@ -1937,7 +1964,7 @@ static long vduse_ioctl(struct file *file, unsi=
+gned int cmd,
+> > >                         break;
+> > >
+> > >                 ret =3D -EINVAL;
+> > > -               if (vduse_validate_config(&config) =3D=3D false)
+> > > +               if (!vduse_validate_config(&config, control->api_vers=
+ion))
+> > >                         break;
+> > >
+> > >                 buf =3D vmemdup_user(argp + size, config.config_size)=
+;
+> > > @@ -2018,7 +2045,7 @@ static int vduse_dev_init_vdpa(struct vduse_dev=
+ *dev, const char *name)
+> > >
+> > >         vdev =3D vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
+> > >                                  &vduse_vdpa_config_ops, &vduse_map_o=
+ps,
+> > > -                                1, 1, name, true);
+> > > +                                dev->ngroups, 1, name, true);
+> > >         if (IS_ERR(vdev))
+> > >                 return PTR_ERR(vdev);
+> > >
+> > > diff --git a/include/uapi/linux/vduse.h b/include/uapi/linux/vduse.h
+> > > index ccb92a1efce0..a3d51cf6df3a 100644
+> > > --- a/include/uapi/linux/vduse.h
+> > > +++ b/include/uapi/linux/vduse.h
+> > > @@ -31,6 +31,7 @@
+> > >   * @features: virtio features
+> > >   * @vq_num: the number of virtqueues
+> > >   * @vq_align: the allocation alignment of virtqueue's metadata
+> > > + * @ngroups: number of vq groups that VDUSE device declares
+> > >   * @reserved: for future use, needs to be initialized to zero
+> > >   * @config_size: the size of the configuration space
+> > >   * @config: the buffer of the configuration space
+> > > @@ -45,7 +46,8 @@ struct vduse_dev_config {
+> > >         __u64 features;
+> > >         __u32 vq_num;
+> > >         __u32 vq_align;
+> > > -       __u32 reserved[13];
+> > > +       __u32 ngroups; /* if VDUSE_API_VERSION >=3D 1 */
+> > > +       __u32 reserved[12];
+> > >         __u32 config_size;
+> > >         __u8 config[];
+> > >  };
+> > > @@ -122,14 +124,18 @@ struct vduse_config_data {
+> > >   * struct vduse_vq_config - basic configuration of a virtqueue
+> > >   * @index: virtqueue index
+> > >   * @max_size: the max size of virtqueue
+> > > - * @reserved: for future use, needs to be initialized to zero
+> > > + * @reserved1: for future use, needs to be initialized to zero
+> > > + * @group: virtqueue group
+> > > + * @reserved2: for future use, needs to be initialized to zero
+> > >   *
+> > >   * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+> > >   */
+> > >  struct vduse_vq_config {
+> > >         __u32 index;
+> > >         __u16 max_size;
+> > > -       __u16 reserved[13];
+> > > +       __u16 reserved1;
+> > > +       __u32 group;
+> >
+> > This makes me think if u16 is sufficient as I see:
+> >
+> >         u32 (*get_vq_group)(struct vdpa_device *vdev, u16 idx);
+> >
+> > The index is u16 but the group is u32 ...
+> >
+>
+> That's a very good point, but I got the reverse logic actually :). All
+> the vhost userland ioctls use an unsigned int (=3D=3Du32) already, so
+> VDUSE should keep going with that. If any, get_vq_group (and similar)
+> kernel internal API should move to u32 to keep up with userland API.
 
--- 
-Cheers
+Ok, I see this:
 
-David / dhildenb
+struct vhost_vring_state {
+        unsigned int index;
+        unsigned int num;
+};
+
+It is just a little bit weird that we leave a hole.
+
+Thanks
+
+>
+> [1] https://patchew.org/linux/20250606115012.1331551-1-eperezma@redhat.co=
+m/20250606115012.1331551-4-eperezma@redhat.com/
+>
 
 
