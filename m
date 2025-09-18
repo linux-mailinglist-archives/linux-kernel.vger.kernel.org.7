@@ -1,79 +1,109 @@
-Return-Path: <linux-kernel+bounces-823051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E96B85647
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:58:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44A1B85656
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B41518936DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0391C04BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA31230C637;
-	Thu, 18 Sep 2025 14:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B321530496A;
+	Thu, 18 Sep 2025 14:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3UZcSMD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="adPc1VEo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DV6F3pbz"
+Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA93D30595E;
-	Thu, 18 Sep 2025 14:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D099A2FE05B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207478; cv=none; b=YZuqoGCROpmMEcgF4UIysdVA3EfEddOtYxHjC7Uv7sjc5ePUmt3CD+a4OsEuPfsGV8U8wu+QhKO9p8e4D74pm3ObgrYu05N+nsf92QEnUdf8Df8P/3iOlNiClcvtSvhh0C/POrBEpT9m2sKezwFr0gBMcfaz9gQ5jEicf5ZjuFE=
+	t=1758207514; cv=none; b=O5B3HwfFvro8nnakaaOmDSjx1IwhKh+FXcpVxipHhnrbpPygzbPQGuEPSA5PlPcEQPULxsCGagLd9nKfrgbDNSV6Yd1aizNYTrXQr6u2BQNL6B+1R9cl0xvqPuh9DMQAM5pbOZhw1n/2I/sA8L7HkcXzGGQa+IsU/j85sJ3NQn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207478; c=relaxed/simple;
-	bh=9ptbDgx9yP30JQpxvmB423ylAWuRrb/kCJRElL8M6vw=;
+	s=arc-20240116; t=1758207514; c=relaxed/simple;
+	bh=rIC3ZyOp4kVr688hxJAN8417b4on1DdVa/vc2bbQHxs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZ3bSIByEoBXQLcL49/MyebERYAVgR+1G5fqBB16scrZwi8sARa13DsNlgsOUIsieQ8Jk3QP45BE+l8BrGg3YWhR0Mfcl0xSHpHbh2qX8ZfJmrWin6zqdV1CTJeAyeh4wLCzCHZCMEjOqLbMuM8EEg8jy7Xw7+Bhf2r60eaTkyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3UZcSMD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D2CEC4CEE7;
-	Thu, 18 Sep 2025 14:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758207478;
-	bh=9ptbDgx9yP30JQpxvmB423ylAWuRrb/kCJRElL8M6vw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d3UZcSMD22E0ZDun9Js4sfb9Q7YO2pN4OwP/ARhsg4W9XplFc4V5HpaFVNce1vQNg
-	 zvyPJzQGxARz6drO1QKZwc0lDuj0oqMgbGFdOY7cUfhFLM8caCYMCpenLKJr/KRxod
-	 vkGrg9x5BZ6izYWXrUGrCkzYK2YYcgINJ8O/+1xGyXt32SlWBAtemljm7E0ZpUt7hB
-	 tJsuEOOLl+ixsfYK23QR41GUCz/XQFhYTYp3qoYPQbGQBn0k6/CmmF0O1zXatmxs6s
-	 Z6+3dPT0BgiwKpPoN+heHxgIJbgLwTBc0V5uqVsmVhKw9wsssQM9skdZRnNZHKdPsZ
-	 wdPv0t9HbPuxA==
-Date: Thu, 18 Sep 2025 15:57:48 +0100
-From: Will Deacon <will@kernel.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>, linux-hardening@vger.kernel.org,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Ira Weiny <ira.weiny@intel.com>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@chromium.org>, Joey Gouly <joey.gouly@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Marc Zyngier <maz@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Maxwell Bland <mbland@motorola.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pierre Langlois <pierre.langlois@arm.com>,
-	Quentin Perret <qperret@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-	x86@kernel.org
-Subject: Re: [RFC PATCH v5 00/18] pkeys-based page table hardening
-Message-ID: <aMwd7IJVECEy8mzf@willie-the-truck>
-References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
- <98c9689f-157b-4fbb-b1b4-15e5a68e2d32@os.amperecomputing.com>
- <8e4e5648-9b70-4257-92c5-14c60928e240@arm.com>
- <8f7b3f4e-bf56-4030-952f-962291e53ccc@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvaE9NDSeKjuelmrJHx+zWKx12g76ljFwBDG3riDG77CF+ZePejdwkAC4NMygZJXA9BJI0RS8ETPot7+ToxLxr1z+h3zPPK2CGEG1ct0l/vdu5Jh4E1DeiTyGQ0QFLs9Vcsb16Nu4gvZSudDrY4IZ5+YoDgMsZLNw6lkBzMT5KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=adPc1VEo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DV6F3pbz; arc=none smtp.client-ip=202.12.124.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailflow.stl.internal (Postfix) with ESMTP id EED511301561;
+	Thu, 18 Sep 2025 10:58:29 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Thu, 18 Sep 2025 10:58:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1758207509; x=
+	1758214709; bh=L8pg48vNYs6t9/+XwPwkU2uiasNJp6vX14PGIKbK9co=; b=a
+	dPc1VEod5zAB8+jl+a8T/k9xXjRLP2d+JuqGORhZIvOB0iSBlLyWbTeQS0RCnnNr
+	l7Oe67B/Vb5SPerFR/MrSBS58pVXnXZ58xU3WLlKpK0sR//JTbbtYb0wY5Ahy2OC
+	cOUV2qqkbG8dqTQCsxt4Dlwnh22sBwNH+W+UUk00mBNsHb3jwOY6tVyN+e2OTLF+
+	bXqfZxY7E7vH8rstUdUVNGz3/bGkdhXRXiq+hXN/oyKC57479C11+fdCEy+pGlAL
+	yKm1FniUs+XjXgbLrQue7usEni7CiOVUplUlUnE9ts6iyy3RgGPbk+vBnBSvCZCO
+	kmxNhoG7XVIyurW23zIMQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758207509; x=1758214709; bh=L8pg48vNYs6t9/+XwPwkU2uiasNJp6vX14P
+	GIKbK9co=; b=DV6F3pbzYhifjM1R7ZFYdtv5Gd7EEK2g+aLSxmCSmTIGeutj1Lm
+	BL1hearz+fakRDrPMULpsM5TNiL3pm3f4zi//yWIPv9GdieNckH07ik7j3ULRhZo
+	+J6/eR0hpYE50igO/sjAFKtKa/lbyure5og8Jhg8lFZIOg01dBgTdcvFX84oUk9I
+	PcQUqBWH2JCDj0o5S/R6eiXTUGeKh2Bh+2U7UQv+cTJtjiD1wjnEvFaA8B6Y2OLq
+	TvnaaqA0UkvSlsmtJgQqTSZ+Wd8IKOnYNvqrUyX6SHJ872Q6FNMYM4TieT+Ai9sk
+	FfCn46S9oqJoVgt9csRvI+6iqBOFpgoHQiA==
+X-ME-Sender: <xms:FB7MaDNan9yyHFIiR65MXoLKi_L2TawaFQnpMyoroeEsEdfqR4z0GA>
+    <xme:FB7MaLFPXIaWk5b_HryoBuZ-rxTZ2-Xg-JYDtfxzx4BZlLPWxnh8WOq4R7NwfZjyR
+    lT1V4ifkPgMhXKNliU>
+X-ME-Received: <xmr:FB7MaCvcg7hHLw1fqP7i125-8IDYR7fTB5iFg99gUCGrMqHarjsawGV771CNWg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegieeifecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepfeeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlohhrvghniihordhsthhorghkvg
+    hssehorhgrtghlvgdrtghomhdprhgtphhtthhopehfvghnghifvghirdihihhnsehinhht
+    vghlrdgtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonh
+    drohhrghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthho
+    pehhuhhghhgusehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrh
+    gruggvrggurdhorhhgpdhrtghpthhtoheplhhirghmrdhhohiflhgvthhtsehorhgrtghl
+    vgdrtghomhdprhgtphhtthhopehvsggrsghkrgesshhushgvrdgtiidprhgtphhtthhope
+    hrphhptheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:FB7MaIvhcOW8RTLi_NxS_a3fBcVdbItDPNhUHF_c4xaBwBQsK0XKBw>
+    <xmx:FB7MaDGldt__88ouzLItUh1EOPj0GT1Q1S_Z02Bm3b2z_uijm32KeA>
+    <xmx:FB7MaLLtUlQzEM4ja34ahIQj1sYFImhwuFvYdJp5fboqgIgHCKlxsw>
+    <xmx:FB7MaDbtHLd8j7zybuLllrSBICNl3R35yn-f5Oiz3oMwbYcc8FB2LQ>
+    <xmx:FR7MaN6MkmK4rzorT_6u6oh09ihRs147rAPqBhpcZUaP_e4VSiDjWbIl>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 18 Sep 2025 10:58:28 -0400 (EDT)
+Date: Thu, 18 Sep 2025 15:58:25 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] mm/rmap: Improve mlock tracking for large folios
+Message-ID: <5c4gefrln7nnkhl4pcnlq7qtaj56wmpp6r3lagpuzcjoi2uyms@cd7c5oehjorz>
+References: <20250918112157.410172-1-kirill@shutemov.name>
+ <20250918112157.410172-3-kirill@shutemov.name>
+ <429481ef-6527-40f5-b7a0-c9370fd1e374@lucifer.local>
+ <ndryzvkmrfidmjgj4tl27hk2kmspmb42mxl2smuwgmp5hyedzh@thggle3dhp5j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,88 +112,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8f7b3f4e-bf56-4030-952f-962291e53ccc@arm.com>
+In-Reply-To: <ndryzvkmrfidmjgj4tl27hk2kmspmb42mxl2smuwgmp5hyedzh@thggle3dhp5j>
 
-On Thu, Sep 18, 2025 at 04:15:52PM +0200, Kevin Brodsky wrote:
-> On 25/08/2025 09:31, Kevin Brodsky wrote:
-> >>> Note: the performance impact of set_memory_pkey() is likely to be
-> >>> relatively low on arm64 because the linear mapping uses PTE-level
-> >>> descriptors only. This means that set_memory_pkey() simply changes the
-> >>> attributes of some PTE descriptors. However, some systems may be able to
-> >>> use higher-level descriptors in the future [5], meaning that
-> >>> set_memory_pkey() may have to split mappings. Allocating page tables
-> >> I'm supposed the page table hardening feature will be opt-in due to
-> >> its overhead? If so I think you can just keep kernel linear mapping
-> >> using PTE, just like debug page alloc.
-> > Indeed, I don't expect it to be turned on by default (in defconfig). If
-> > the overhead proves too large when block mappings are used, it seems
-> > reasonable to force PTE mappings when kpkeys_hardened_pgtables is enabled.
+On Thu, Sep 18, 2025 at 02:48:27PM +0100, Kiryl Shutsemau wrote:
+> > So maybe we could do something similar in try_to_unmap_one()?
 > 
-> I had a closer look at what happens when the linear map uses block
-> mappings, rebasing this series on top of [1]. Unfortunately, this is
-> worse than I thought: it does not work at all as things stand.
+> Hm. This seems to be buggy to me.
 > 
-> The main issue is that calling set_memory_pkey() in pagetable_*_ctor()
-> can cause the linear map to be split, which requires new PTP(s) to be
-> allocated, which means more nested call(s) to set_memory_pkey(). This
-> explodes as a non-recursive lock is taken on that path.
+> mlock_vma_folio() has to be called with ptl taken, no? It gets dropped
+> by this place.
 > 
-> More fundamentally, this cannot work unless we can explicitly allocate
-> PTPs from either:
-> 1. A pool of PTE-mapped pages
-> 2. A pool of memory that is already mapped with the right pkey (at any
-> level)
+> +Fengwei.
 > 
-> This is where I have to apologise to Rick for not having studied his
-> series more thoroughly, as patch 17 [2] covers this issue very well in
-> the commit message.
+> I think this has to be handled inside the loop once ptes reaches
+> folio_nr_pages(folio).
 > 
-> It seems fair to say there is no ideal or simple solution, though.
-> Rick's patch reserves enough (PTE-mapped) memory for fully splitting the
-> linear map, which is relatively simple but not very pleasant. Chatting
-> with Ryan Roberts, we figured another approach, improving on solution 1
-> mentioned in [2]. It would rely on allocating all PTPs from a special
-> pool (without using set_memory_pkey() in pagetable_*_ctor), along those
-> lines:
-> 
-> 1. 2 pages are reserved at all times (with the appropriate pkey)
-> 2. Try to allocate a 2M block. If needed, use a reserved page as PMD to
-> split a PUD. If successful, set its pkey - the entire block can now be
-> used for PTPs. Replenish the reserve from the block if needed.
-> 3. If no block is available, make an order-2 allocation (4 pages). If
-> needed, use 1-2 reserved pages to split PUD/PMD. Set the pkey of the 4
-> pages, take 1-2 pages to replenish the reserve if needed.
-> 
-> This ensures that we never run out of PTPs for splitting. We may get
-> into an OOM situation more easily due to the order-2 requirement, but
-> the risk remains low compared to requiring a 2M block. A bigger concern
-> is concurrency - do we need a per-CPU cache? Reserving a 2M block per
-> CPU could be very much overkill.
-> 
-> No matter which solution is used, this clearly increases the complexity
-> of kpkeys_hardened_pgtables. Mike Rapoport has posted a number of RFCs
-> [3][4] that aim at addressing this problem more generally, but no
-> consensus seems to have emerged and I'm not sure they would completely
-> solve this specific problem either.
-> 
-> For now, my plan is to stick to solution 3 from [2], i.e. force the
-> linear map to be PTE-mapped. This is easily done on arm64 as it is the
-> default, and is required for rodata=full, unless [1] is applied and the
-> system supports BBML2_NOABORT. See [1] for the potential performance
-> improvements we'd be missing out on (~5% ballpark). I'm not quite sure
-> what the picture looks like on x86 - it may well be more significant as
-> Rick suggested.
+> Maybe something like this (untested):
 
-Just as a data point, but forcing the linear map down to 4k would likely
-prevent us from being able to enable this on Android. We've measured a
-considerable (double digit %) increase in CPU power consumption for some
-real-life camera workloads when mapping the linear map at 4k granularity
-thanks to the additional memory traffic from the PTW.
+With a little bit more tinkering I've come up with the change below.
 
-At some point, KFENCE required 4k granularity for the linear map, but we
-fixed it. rodata=full requires 4k granularity, but there are patches to
-fix that too. So I think we should avoid making the same mistake from
-the start for this series.
+Still untested.
 
-Will
+diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+index 6cd020eea37a..86975033cb96 100644
+--- a/include/linux/rmap.h
++++ b/include/linux/rmap.h
+@@ -928,6 +928,11 @@ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
+ /* Look for migration entries rather than present PTEs */
+ #define PVMW_MIGRATION		(1 << 1)
+ 
++/* Result flags */
++
++/* The page mapped across page boundary */
++#define PVMW_PGTABLE_CROSSSED	(1 << 16)
++
+ struct page_vma_mapped_walk {
+ 	unsigned long pfn;
+ 	unsigned long nr_pages;
+diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+index e981a1a292d2..a184b88743c3 100644
+--- a/mm/page_vma_mapped.c
++++ b/mm/page_vma_mapped.c
+@@ -309,6 +309,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+ 				}
+ 				pte_unmap(pvmw->pte);
+ 				pvmw->pte = NULL;
++				pvmw->flags |= PVMW_PGTABLE_CROSSSED;
+ 				goto restart;
+ 			}
+ 			pvmw->pte++;
+diff --git a/mm/rmap.c b/mm/rmap.c
+index ca8d4ef42c2d..afe2711f4e3d 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -851,34 +851,34 @@ static bool folio_referenced_one(struct folio *folio,
+ {
+ 	struct folio_referenced_arg *pra = arg;
+ 	DEFINE_FOLIO_VMA_WALK(pvmw, folio, vma, address, 0);
+-	int referenced = 0;
+-	unsigned long start = address, ptes = 0;
++	int ptes = 0, referenced = 0;
+ 
+ 	while (page_vma_mapped_walk(&pvmw)) {
+ 		address = pvmw.address;
+ 
+ 		if (vma->vm_flags & VM_LOCKED) {
+-			if (!folio_test_large(folio) || !pvmw.pte) {
+-				/* Restore the mlock which got missed */
+-				mlock_vma_folio(folio, vma);
+-				page_vma_mapped_walk_done(&pvmw);
+-				pra->vm_flags |= VM_LOCKED;
+-				return false; /* To break the loop */
+-			}
+-			/*
+-			 * For large folio fully mapped to VMA, will
+-			 * be handled after the pvmw loop.
+-			 *
+-			 * For large folio cross VMA boundaries, it's
+-			 * expected to be picked  by page reclaim. But
+-			 * should skip reference of pages which are in
+-			 * the range of VM_LOCKED vma. As page reclaim
+-			 * should just count the reference of pages out
+-			 * the range of VM_LOCKED vma.
+-			 */
+ 			ptes++;
+ 			pra->mapcount--;
+-			continue;
++
++			/* Only mlock fully mapped pages */
++			if (pvmw.pte && ptes != pvmw.nr_pages)
++				continue;
++
++			/*
++			 * All PTEs must be protected by page table lock in
++			 * order to mlock the page.
++			 *
++			 * If page table boundary has been cross, current ptl
++			 * only protect part of ptes.
++			 */
++			if (pvmw.flags & PVMW_PGTABLE_CROSSSED)
++				continue;
++
++			/* Restore the mlock which got missed */
++			mlock_vma_folio(folio, vma);
++			page_vma_mapped_walk_done(&pvmw);
++			pra->vm_flags |= VM_LOCKED;
++			return false; /* To break the loop */
+ 		}
+ 
+ 		/*
+@@ -914,23 +914,6 @@ static bool folio_referenced_one(struct folio *folio,
+ 		pra->mapcount--;
+ 	}
+ 
+-	if ((vma->vm_flags & VM_LOCKED) &&
+-			folio_test_large(folio) &&
+-			folio_within_vma(folio, vma)) {
+-		unsigned long s_align, e_align;
+-
+-		s_align = ALIGN_DOWN(start, PMD_SIZE);
+-		e_align = ALIGN_DOWN(start + folio_size(folio) - 1, PMD_SIZE);
+-
+-		/* folio doesn't cross page table boundary and fully mapped */
+-		if ((s_align == e_align) && (ptes == folio_nr_pages(folio))) {
+-			/* Restore the mlock which got missed */
+-			mlock_vma_folio(folio, vma);
+-			pra->vm_flags |= VM_LOCKED;
+-			return false; /* To break the loop */
+-		}
+-	}
+-
+ 	if (referenced)
+ 		folio_clear_idle(folio);
+ 	if (folio_test_clear_young(folio))
+@@ -1882,6 +1865,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 	unsigned long nr_pages = 1, end_addr;
+ 	unsigned long pfn;
+ 	unsigned long hsz = 0;
++	int ptes = 0;
+ 
+ 	/*
+ 	 * When racing against e.g. zap_pte_range() on another cpu,
+@@ -1922,9 +1906,24 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 		 */
+ 		if (!(flags & TTU_IGNORE_MLOCK) &&
+ 		    (vma->vm_flags & VM_LOCKED)) {
++			ptes++;
++
++			/* Only mlock fully mapped pages */
++			if (pvmw.pte && ptes != pvmw.nr_pages)
++				goto walk_abort;
++
++			/*
++			 * All PTEs must be protected by page table lock in
++			 * order to mlock the page.
++			 *
++			 * If page table boundary has been cross, current ptl
++			 * only protect part of ptes.
++			 */
++			if (pvmw.flags & PVMW_PGTABLE_CROSSSED)
++				goto walk_abort;
++
+ 			/* Restore the mlock which got missed */
+-			if (!folio_test_large(folio))
+-				mlock_vma_folio(folio, vma);
++			mlock_vma_folio(folio, vma);
+ 			goto walk_abort;
+ 		}
+ 
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
