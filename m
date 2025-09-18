@@ -1,204 +1,159 @@
-Return-Path: <linux-kernel+bounces-822377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021E9B83ABE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F2DB83ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121B4721DCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625B91C06FF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F672FE58C;
-	Thu, 18 Sep 2025 09:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE1A2FB995;
+	Thu, 18 Sep 2025 09:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MCjtsiz4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7/h0Cyy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7FA2DF714
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B3C2F9D82
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758186190; cv=none; b=BS/sjkCpHmENziWQafLBDB8sQD/FEQVQMQGNs0OUbe+xNADS8U6DFjehcKJJ6VqtGgQFmBuPcqtr70ydUhZbB22hfFbP3GpvwXyt2KPE3VMgz+lLuVc3RGjugshvsMiyB0bE3Q7VLSjg8zwJWEKIHXpENYhpmIIUe0RV17eEntw=
+	t=1758186216; cv=none; b=i1vl1zUJ/zpRerjJVAmZvn3WovKSyz+2SP2Atu9SCqfJPm5gksU/83a3x+VsHWIxRrxoayjIvCKEl/E6whEi/ATbGoOWCB+BhkPGQ6THg0s04wZUqI0RIKU5AvVBC1moRRHY79E9uS6jFyf1kb2STCmVxA24TKvziyW6DFirvdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758186190; c=relaxed/simple;
-	bh=3gF74B/Ah4EDnWU58ZXx6dvP16HFD3sYPDMbzivTE0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sQsM3a5PEIgrd6YdHv4HWvSq82KQKPfCUoAnRC1rwY8e9Gb2K/bwXYPv8uRuChqrXLp9IpXdt+T8r78bWCmo0hyaJ0u1EsDJCuoBRUWAP4mQ7QtX4kPknV5Xy/vylXGn/fs3orrxwn8+KnC7mxtdvpYnkaaNcNncfPr/tiVfo/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MCjtsiz4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758186188;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XFCZX9eN7thiq9pavKtpP8J9JCm4he2B7yCgrgp98u4=;
-	b=MCjtsiz4r9xGj+hY01nwJfnHfS/x74Wez0cQH0RlxB6nI6WsptM4xKY+TOJotUsgpZev9X
-	wb/PWgC8Oc9RujZKW7PV3HM1CnV/p2eAQIF3GoyvhHSTUZjm7bcurfjEwwCrKcbtx8eAgh
-	OUUiP4Rc3MsrCmEwdgpxAdJVriCXSbY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-93-3GZntSIDNtOGQiKBrg5Z0w-1; Thu, 18 Sep 2025 05:03:06 -0400
-X-MC-Unique: 3GZntSIDNtOGQiKBrg5Z0w-1
-X-Mimecast-MFC-AGG-ID: 3GZntSIDNtOGQiKBrg5Z0w_1758186186
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4612d068c47so4056775e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:03:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758186186; x=1758790986;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XFCZX9eN7thiq9pavKtpP8J9JCm4he2B7yCgrgp98u4=;
-        b=Cf1z/3BM8QV09Jovj231idgzTdR9CYk34rMf4iV2lS/KByeac+9fSetl1xXz5z3cLa
-         E2c0Dqn7SpCzaHc7BRQFw0tA7jjCVGa2623awsozQOIiPEw09KbmT5OUGwapSzZWzaQd
-         sSOWZFW2tUepEqXpqCZ76xrOzgNuMy4iHmYT31R7ZAIRBEq5FiKwFhR6vrKdySz3b2RP
-         DW64+5UYYyQlZXFDU0e3MxdCXK2rsieYtQxPz5lvXrONgaY3MlsKLNwyrMhmnGjmBezN
-         G04VH1ibsDtOYzEsFsOPDLZLuYOrX40qj89bwA7zNFVUXKUwZmlZePCGdHQXYxTOra7M
-         TKwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIZ/oJEtmhLeIX0v9groLIaQV5xwLbEm95Rqa6JEb7io5tmPED86kQEH8VIrRfD4rV/IDQNEysfkuelQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLkhLJSL5UTBgjpej9t21L3CDKI7PeQC9uhNZTLQihc67TipUO
-	sYNWZj0PAcE5cKgSyHjQjZTktoFWYuNEFjk8shmRlS8rto7R7D3pFoOktZNTfDSkH91DqxDxUvg
-	HOzi4DYHEyYhlb/v0uWSqyflxJvkUbBgHB5r5tmRJVbot10T0LtCF93IQUPzgT/z7ww==
-X-Gm-Gg: ASbGncuPiqb9Ul8ivFhC9BX3notW9f1gnpIlNSl/ru5hvYbORkmF0aNWkGywnaJbQzb
-	XA7APeC2zg1PcR7iyERPKdYajexreD5AFyiOJ8OofmoJdO2SRmUL0Y+un1jEaujsptESB+u0FR6
-	TzDzAcFB5pmtdCYPh2/Lx+tx9sGWUuyeAqA6cRThRVNxHLdnxX37tfIg4c0iKdmMlIgHCxx6Gdj
-	Y37CjBktwBct1HiiXoGzP8WsbXjsLadYPTzcAD4kct2WeCXjHJnNV/gHmM1c0X19A9bQL46tT/3
-	iYaCyQk6AWtIbwX8pPOWoftpFzDV9ECebrAeWnnyeyBkdwxautHWJfAInV5loG6A6rD5ivv8g3W
-	3OI5HFlpzuDAO1u8bTvUz8L5khvILXxqEtxa2qMOqjYkuOLcIhVWAnWUcvKiVRRdPP+Di
-X-Received: by 2002:a05:6000:2313:b0:3e7:42ba:7e66 with SMTP id ffacd0b85a97d-3ecdf9f4477mr4804881f8f.3.1758186185379;
-        Thu, 18 Sep 2025 02:03:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElkxupMxmNif5/lzfzUVobHl0PSoeQ1IdEubg1s704Bcn0Lb4/+vf/JHCv5gGV276WTwwYSg==
-X-Received: by 2002:a05:6000:2313:b0:3e7:42ba:7e66 with SMTP id ffacd0b85a97d-3ecdf9f4477mr4804839f8f.3.1758186184853;
-        Thu, 18 Sep 2025 02:03:04 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f07:dd00:ca9c:199e:d2b6:9099? (p200300d82f07dd00ca9c199ed2b69099.dip0.t-ipconnect.de. [2003:d8:2f07:dd00:ca9c:199e:d2b6:9099])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e754140sm70721995e9.21.2025.09.18.02.03.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 02:03:04 -0700 (PDT)
-Message-ID: <45cd1637-54f6-4941-9670-7130aaf080f0@redhat.com>
-Date: Thu, 18 Sep 2025 11:03:02 +0200
+	s=arc-20240116; t=1758186216; c=relaxed/simple;
+	bh=dH794V60EHBMXjQIvpn2qHpklmIbvedci1K/cTrITJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ggT0IYj5X/zxZxPPBZWmKbWNfBZYvQCyIxI+qR3M/U6qG7oUrKsZoF807uSEaSmzxiMxtIIQanibTypQR47E5f2OJl4Q4LPGYMfbgL7pVNLmK48kBFftO1c8HJOcOxKfLuLxa6LY//egXDGOE6DMCD/Uofel89al9nwVmJEHybI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7/h0Cyy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECACC4CEE7;
+	Thu, 18 Sep 2025 09:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758186215;
+	bh=dH794V60EHBMXjQIvpn2qHpklmIbvedci1K/cTrITJs=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=a7/h0CyyPGpSdFmzbxAjSRFRLIilR3pglyTtsAnTxAiklHS0pOFSNdeNKCO3Jtl79
+	 vxBQjkRE1hzOlzDc9UbntgmEb78CdBCMYDKwjNssXnMmacowByEapQC7jB7TVy1zGj
+	 G8QLX3CObeN2mfs+93vQnl9OvToRB9P2ZPgyyxHJ1qCEQ/z2ufSpDUCe7572z0uAT/
+	 jS9WDH+WWQlyzNY6FVdZfcetppqtzcTh3WflbhfpTFr8oLAJV8nYm7V6lGMa82iCGU
+	 GhoX4n+QcdjtYX/0ZusNPHyxi2i9YYKXcX9F6+u5d/UZKZ8I4gF/ihZB1AC07GeyJb
+	 Ka6lfhTLnpTaQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 454ACCE0B1E; Thu, 18 Sep 2025 02:03:35 -0700 (PDT)
+Date: Thu, 18 Sep 2025 02:03:35 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: Zhang Changzhong <zhangchangzhong@huawei.com>, dave@stgolabs.net,
+	josh@joshtriplett.org, frederic@kernel.org, yuehaibing@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
+Message-ID: <679d81f3-2610-44b9-bc9a-30ef0f70fa36@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250912015737.1209143-1-wangliang74@huawei.com>
+ <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
+ <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V14 1/6] mm: softdirty: Add pgtable_supports_soft_dirty()
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
- Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250918083731.1820327-1-zhangchunyan@iscas.ac.cn>
- <20250918083731.1820327-2-zhangchunyan@iscas.ac.cn>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250918083731.1820327-2-zhangchunyan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
 
-On 18.09.25 10:37, Chunyan Zhang wrote:
-> Some platforms can customize the PTE PMD entry soft-dirty bit making it
-> unavailable even if the architecture provides the resource.
+On Mon, Sep 15, 2025 at 10:13:33AM +0800, Wang Liang wrote:
 > 
-> Add an API which architectures can define their specific implementations
-> to detect if soft-dirty bit is available on which device the kernel is
-> running.
-> 
-> This patch is removing "ifdef CONFIG_MEM_SOFT_DIRTY" in favor of
-> pgtable_supports_soft_dirty() checks that defaults to
-> IS_ENABLED(CONFIG_MEM_SOFT_DIRTY), if not overridden by
-> the architecture, no change in behavior is expected.
-> 
-> We make sure to never set VM_SOFTDIRTY if !pgtable_supports_soft_dirty(),
-> so we will never run into VM_SOFTDIRTY checks.
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
+> 在 2025/9/12 10:16, Zhang Changzhong 写道:
+> > 
+> > 在 2025/9/12 9:57, Wang Liang 写道:
+> > > When setting the locktorture module parameter 'bind_writers', the variable
+> > > 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
+> > > is not freed, when removing module or setting the parameter again.
+> > > 
+> > > Below kmemleak trace is seen for this issue:
+> > > 
+> > > unreferenced object 0xffff888100aabff8 (size 8):
+> > >    comm "bash", pid 323, jiffies 4295059233
+> > >    hex dump (first 8 bytes):
+> > >      07 00 00 00 00 00 00 00                          ........
+> > >    backtrace (crc ac50919):
+> > >      __kmalloc_node_noprof+0x2e5/0x420
+> > >      alloc_cpumask_var_node+0x1f/0x30
+> > >      param_set_cpumask+0x26/0xb0 [locktorture]
+> > >      param_attr_store+0x93/0x100
+> > >      module_attr_store+0x1b/0x30
+> > >      kernfs_fop_write_iter+0x114/0x1b0
+> > >      vfs_write+0x300/0x410
+> > >      ksys_write+0x60/0xd0
+> > >      do_syscall_64+0xa4/0x260
+> > >      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > 
+> > > This issue can be reproduced by:
+> > >    insmod locktorture.ko
+> > >    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+> > >    rmmod locktorture
+> > > 
+> > > or:
+> > >    insmod locktorture.ko
+> > >    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+> > >    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+> > > 
+> > > The parameter 'bind_readers' also has the same problem. Free the memory
+> > > when removing module or setting the parameter.
+> > > 
+> > > Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
+> > > Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> > > ---
+> > >   kernel/locking/locktorture.c | 9 +++++++++
+> > >   1 file changed, 9 insertions(+)
+> > > 
+> > > diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+> > > index ce0362f0a871..cad80c050502 100644
+> > > --- a/kernel/locking/locktorture.c
+> > > +++ b/kernel/locking/locktorture.c
+> > > @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
+> > >   	int ret;
+> > >   	char *s;
+> > > +	free_cpumask_var(*cm_bind);
+> > > +	*cm_bind = NULL;
+> > 这个NULL没必要吧
 
-[...]
+Assuming this translates to "This NULL is unnecessary", I have to
+agree with Zhang Changzhong.  I would go further and argue that the
+free_cpumask_var() is also unnecessary here.
 
->   mas_store_fail:
-> diff --git a/mm/vma_exec.c b/mm/vma_exec.c
-> index 922ee51747a6..a822fb73f4e2 100644
-> --- a/mm/vma_exec.c
-> +++ b/mm/vma_exec.c
-> @@ -107,6 +107,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
->   int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
->   			  unsigned long *top_mem_p)
->   {
-> +	unsigned long flags  = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+> Setting global pointer to NULL after free may be more safe. ^-^
 
-No need to resend because of this (probably can be fixed up when 
-applying): there is a double space before the "="
+In lock_torture_cleanup(), you mean?  I would agree with that.
 
--- 
-Cheers
+> > > +
+> > >   	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
+> > >   		s = "Out of memory";
+> > >   		ret = -ENOMEM;
+> > > @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
+> > >   			cxt.cur_ops->exit();
+> > >   		cxt.init_called = false;
+> > >   	}
+> > > +
+> > > +	free_cpumask_var(bind_readers);
+> > > +	free_cpumask_var(bind_writers);
+> > > +	bind_readers = NULL;
+> > > +	bind_writers = NULL;
+> > 同上
 
-David / dhildenb
+But here I agree with Wang Liang, as it helps people running debuggers
+on the kernel.  Instead of a dangling pointer, they see a NULL pointer.
 
+Except...  Is this NULLing really the right thing to do for
+CONFIG_CPUMASK_OFFSTACK=n kernels?
+
+							Thanx, Paul
+
+> > > +
+> > >   	torture_cleanup_end();
+> > >   }
 
