@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-821819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-821820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20212B825E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:24:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D70B82603
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 02:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE206723880
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72FA93B76B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 00:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CA919E819;
-	Thu, 18 Sep 2025 00:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BED1F4C8C;
+	Thu, 18 Sep 2025 00:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H3l+CyN0"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCS0KNB3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0520B211C
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 00:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BFC1E231E;
+	Thu, 18 Sep 2025 00:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758155086; cv=none; b=osXa87T16JtkBR8fIeNU58yCZeAdfleGXJ8HLTFdmdD3kEqx2KKXRp45wEuVrhPA1lY0w6e2sAxNwEs5DkK6CD+/F/jFl1OWg8YZehTWrzyVTy73NemVVP58tXYIluya6BLEFdQVYjEvydIXC6NSGDI201x7mDLX1WDO+mAWXtg=
+	t=1758155411; cv=none; b=cb3jJTmUinUPdUUYsSiP0MJU9RXtGe8awrpTrhhe9J/LKeHU5Q31fv9wduyNiyEWQzqkvxDzbA0Lv6+TtNUmH4T5bZibKTh3CzGPFOJFnqxJDc4YxGNAU9RZPEx6av/8+pjHdPh7TsyJD+WeJWVG6T2W1t1/252KHNyVemFqMnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758155086; c=relaxed/simple;
-	bh=aqa3HyW4izEedzN2M7rAgsR/LkZTNRFE/QQpCiqhopE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dzSGidP6q60aVI4blS6tJ6RCWQF0VaBbMz8lv6JajcTI7AbGJm/z84z+APdzJEYpnezCqrZYPtNAivnyuQRDheVITfvuUrEH/VZta++wwTGXrv+soTFg0yL1VRQ57Vgs/YutjnmUvOytB/WxZ9WZ+lj/rIjgSx5O+SPuVWXpVQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H3l+CyN0; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b7abed161bso4669201cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 17:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758155084; x=1758759884; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AAXfVbKrj81Yrvk5S99ka61ApJPAF5+mvHdEE3dMmkE=;
-        b=H3l+CyN0+X4DRDmDvIeMO8W26J1phrmYxGauoc3V//ih0oCsyVw3aDQbq9kWcDBVh5
-         so8lJ8kSahN+2Rgi7WzTK5lQfJtlHcbnMwGylb3iMQnj9iQ2YlxaIK8/qEa2Ye155UAM
-         U0TPIS2V5I9fl8njAXsty7esJQsX0+MP6vOg1M4cmbeBFbxWg39LzxRq2Jh5ClRV8VYV
-         QjTMnfArEMVnH4ou1NWEvksvUJ3gAOht1XUhl+gArp26uC2vb7BpwReK787MkNmz7iSq
-         XQTM+hIYl/8n/QbC/aAvdikoWdDEMisAPF6oyTaMCAppeHQfdIdGuneePbw/vjgL3WmN
-         IEeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758155084; x=1758759884;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AAXfVbKrj81Yrvk5S99ka61ApJPAF5+mvHdEE3dMmkE=;
-        b=VDhqiD9fHWHMkX17KGzHu4TpdgTCgiHUVzA0v9aqhH8AQnqlReyqGfkrytdGCjtk+v
-         QPq9L629Pa9MyZyvvVirZKAK1qC4FujQkF5B3vyGPE8Py7quxa3Xi3KxQpaDdp+HB/ff
-         jtWYMzfA09xhV6DH0rb72TtNc3thVnLvSTthXTiWwa99lMHXwKPxa++mS7+B5PvZiFND
-         BqL2beR69tsbHCV1yghjKUtaBEQcatBMpgWHZmjAfFabFrb7iKEKXDFI4suIGDBxkhog
-         XQtRPp59cKvLgIhbKLPD87ZHWGmYzDfeVndl54Q9bYwQl0V7DMeASbyFYBX/OZ393G5u
-         2P9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV2wMvXGaw79kPQYULCGOhttgqrCJnRCZ1Q8PwqDwS1AkMMFGgYXv23daniCRDADkN3Kisnox1A+444tkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydEs1IHAVEnis/x7jhJrhSX9B81UqAhbE4Ej2ZLQw2f34wEfQ0
-	7/KYD4Hd69inSL+lgbcj8ylwQLBoGG/ZttnNJCst4mDDMwMruPNLeSWv1OCMy0r6mbWZxJCoB/c
-	+P7q+mQF9RuK+42tnp6WAo2bcmeSQA08=
-X-Gm-Gg: ASbGnctSGNP6/xMq2x5IJ/gDRYbUaSnIOaqF5RlWiDER5BvpFBx0K7Jtjonq8DCFRfe
-	mebUDXtxRHOod+CE7FEtO7X2q0nT37WfOwc3FGd769NCafgK36a83oKZ6SnbXCjh4rJnu729tuY
-	EsfTzxrHw8gAgpX1AEpvnHjWVBR4fGy8V66ggOSDdjPIUQeKje1OlvU0faMIC9KMIbP5NOjLfDY
-	yI4bCgauZwo5sEF5mG918T52Y/feb/Dxq0uNkfL4rFfKp58RBO9PFDOs2kiAlDd+QvsrUh84/dk
-	fHEbXvXxoFnQMYD4Erq6+Y6s4xlQBrx+VlyCP4K0QfVFdBjfjUHYvVxvzg==
-X-Google-Smtp-Source: AGHT+IGUH+Vo5ah/BOcidk5QhkanPaPPGQuYC3QJ2qzogXag5pL1GyIB63O7MImSt5xi0DjpoDoPL0PfcM83Oi+Oc3w=
-X-Received: by 2002:a05:6214:412:b0:782:9454:ac8a with SMTP id
- 6a1803df08f44-78ecf4fdc10mr43901236d6.57.1758155083710; Wed, 17 Sep 2025
- 17:24:43 -0700 (PDT)
+	s=arc-20240116; t=1758155411; c=relaxed/simple;
+	bh=hqiBjDTMNtIZK2c3OUTgcHqbJVWmnljVpG2n/f/ZTiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDVbBw7EshtHA6E9i3XYEsoXAR1cImyw6M1BSUK1WvtoDxkL5O5Z5pVCXqH6iFG9avHOAYGkOCGeR6e4PnWloXeIkkbhNE1AVK06gGb9jf/6yVXEE/kv1U2wRl9ch58F3KVD9OfeM3QpI682Ma4+bLZwTv3mu2KfORcogKn1KBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCS0KNB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83380C4CEE7;
+	Thu, 18 Sep 2025 00:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758155410;
+	bh=hqiBjDTMNtIZK2c3OUTgcHqbJVWmnljVpG2n/f/ZTiw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VCS0KNB3JWofqsgTN9Fg9b/3eTr0cJ7H3mJrjAJOl6uSnj4je1myzQ7Li018BoJEb
+	 N4xB82npcp7YCNnumNB4vo0ENuelxgjruP6jwc7nGt5iSTrBfaK9DhodP1pt/LrM9P
+	 6lBcn1GtEmqwQ6sHL4T0sRtoJg1pAhKNCY7JO8PcXT6CgOJmm2ZkISOTIwZDRKaRGS
+	 5XmPm4HU7t/r/JWe8QlhypHdRNQsxmllbCFPIR2qOeG/big3wIyeyxCQEMT2Se9CZP
+	 YQgNIGZQNLj665FfU3Xl6g8qGTYkqCyRIErGc7rjC+Xz1zEWyPERcXYnT5dhObBoTL
+	 2sysuT046nHIg==
+Date: Thu, 18 Sep 2025 09:30:09 +0900
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>, 
+	kernel@collabora.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] dt-bindings: gpu: mali-valhall-csf: add
+ mediatek,mt8196-mali variant
+Message-ID: <20250918-festive-chowchow-of-joy-5a51de@kuoka>
+References: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com>
+ <20250917-mt8196-gpufreq-v3-1-c4ede4b4399e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 17 Sep 2025 19:24:31 -0500
-X-Gm-Features: AS18NWBPu6sGfW3hnPreMxF2wFj2Jem45fHu6Sahx8yNzeyFoZ-xTePQClKaY-I
-Message-ID: <CAH2r5mveqnRsJ4Fi8pQjTY2WrtDbys1f3JPR+OR=w-eskUoiyw@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, "Stefan (metze) Metzmacher" <metze@samba.org>, 
-	CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250917-mt8196-gpufreq-v3-1-c4ede4b4399e@collabora.com>
 
-Please pull the following changes since commit
-f83ec76bf285bea5727f478a68b894f5543ca76e:
+On Wed, Sep 17, 2025 at 02:22:32PM +0200, Nicolas Frattaroli wrote:
+> The Mali-based GPU on the MediaTek MT8196 SoC uses a separate MCU to
+> control the power and frequency of the GPU.
+> 
+> It lets us omit the OPP tables from the device tree, as those can now be
+> enumerated at runtime from the MCU. It also means the mali GPU node
+> described in this binding does not have any clocks in this case, as all
+> clock control is delegated to the MCU.
+> 
+> Add the mediatek,mt8196-mali compatible, and a performance-domains
+> property which points to the MCU's device tree node in this case. It's
+> required on mt8196 devices.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>  .../bindings/gpu/arm,mali-valhall-csf.yaml         | 32 ++++++++++++++++++++--
+>  1 file changed, 30 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> index 7ad5a3ffc5f5c753322eda9e74cc65de89d11c73..ccab2dd0ea852187e3ab75923e19739622b2b3b8 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> @@ -38,7 +38,6 @@ properties:
+>        - const: gpu
+>  
+>    clocks:
+> -    minItems: 1
 
-  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+I don't understand why.
 
-are available in the Git repository at:
+Best regards,
+Krzysztof
 
-  git://git.samba.org/ksmbd.git tags/6.17-rc6-ksmbd-fixes
-
-for you to fetch changes up to e1868ba37fd27c6a68e31565402b154beaa65df0:
-
-  ksmbd: smbdirect: verify remaining_data_length respects
-max_fragmented_recv_size (2025-09-14 22:17:10 -0500)
-
-----------------------------------------------------------------
-Three ksmbd fixes, all for stable
-- Two fixes for remaining_data_length and offset checks in receive path
-- Don't go over max SGEs which caused smbdirect send to fail (and
-trigger disconnect)
-----------------------------------------------------------------
-Namjae Jeon (1):
-      ksmbd: smbdirect: validate data_offset and data_length field of
-smb_direct_data_transfer
-
-Stefan Metzmacher (2):
-      smb: server: let smb_direct_writev() respect SMB_DIRECT_MAX_SEND_SGES
-      ksmbd: smbdirect: verify remaining_data_length respects
-max_fragmented_recv_size
-
- fs/smb/server/transport_rdma.c | 183 ++++++++++++++++++++++++++-------------
- 1 file changed, 125 insertions(+), 58 deletions(-)
-
--- 
-Thanks,
-
-Steve
 
