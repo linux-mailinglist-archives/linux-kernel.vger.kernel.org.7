@@ -1,66 +1,67 @@
-Return-Path: <linux-kernel+bounces-822108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E333B830A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB3EB830A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEAD34A3852
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103781C23F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3B12D6E7A;
-	Thu, 18 Sep 2025 05:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D6929E0F7;
+	Thu, 18 Sep 2025 05:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e9le4255"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011069.outbound.protection.outlook.com [40.107.130.69])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="euzLiT0U"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010023.outbound.protection.outlook.com [52.101.84.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B772D6407;
-	Thu, 18 Sep 2025 05:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2592D7DCB;
+	Thu, 18 Sep 2025 05:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.23
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758174300; cv=fail; b=HrLM9EV2qA3oQ3HOwcucNYbNOK4Al+QwfaVcaM7VyGBxoAA3ysidQ1XT0Ql0y+IId0XTaSrbp413rFfr/7M7vecj4fU/y9duKLuRSQjDuKYbLHPYLmsrWosoZCZ3oU9ZhtK0h54fH66kQS+dQ+6iMATYtv8UcQqTxyLujdo+uHE=
+	t=1758174306; cv=fail; b=mWldI6Pgtj0W5qJybUvf8L1HtCcecy8nMo3Wg2LObuUGFJuT+ac9DlOWyBe7bnwCDlFd2Ng2yY+s/D0SNwQvkis3KSrNh+PRrMwPo5vy/UrfCjuHbkWq50jf/hMfJJt/uJOJakQAHK98aOW0PZ0QH3eYmMfuYC/s9W2vRl1xJaM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758174300; c=relaxed/simple;
-	bh=HbxiISTQ3eg1CuILWGIza5WVAELx162zndqEMuzMpcQ=;
+	s=arc-20240116; t=1758174306; c=relaxed/simple;
+	bh=CfbIc1elZn6eTFU7iP5xzC5CD5U9QqeDon40aaxtFh8=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=Bpq1Oi1X6jqmNCNHUceIe3GfzkknsVqLqIUiUjBRYOlWxAvL+Qk173Sn1YQqw1e69t4GPX5ChR6q5Jc+5IKF3UXgT5kp5jFp4ZTyQdeLPhm7CfoUxSnczv30eDkPkif5Fpg7h/KmdWKhlS3X+M3IH0oFlNmHYJKF098/4Q7wEAI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e9le4255; arc=fail smtp.client-ip=40.107.130.69
+	 To:Cc:MIME-Version; b=AF2AAQW1t+j5ShfMgIaaFEMigiY1bsK++5NGVK6u0tHTrf5hOT8+vTwEqPXDtGY5/IvEpOpwlAVbfUczvywcP70hOixKQqjfWLQLw8pBhNPfiiv4HVhMyoHcAkXzitQPcYcHNJxB0lg3KaAMSBYF9IaTNRLbPmIoTyj+WS5Y+cc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=euzLiT0U; arc=fail smtp.client-ip=52.101.84.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MpskM3IkBZHztWvo6UpyVCOUz7zw2iWp/eNhOGKt6kHacdlwhjZS/XS+jITNpyTeKLSIgRUTf1LHwYWq9DSppLWym0fZ1jEYCeIhegLkErM4VdUrlR7yFmTZ408ul632Uvnn8RbaVAMJYEedv7hSo4cMsga49gsV8eeQyo4+bliY5v6P76qWzHL+5SONElkW9IkWaGpen30FCygDvCdpPdTKblp0b8Ss9a2kVSUupAizBzLnaz+uLLIzX3arXnwZJ7qVI4rQbkKFQH2rO4EbDeSNnwar9xzARtRfbV/Zl9/G/oN3MzdbGTkAeTx0W52Rbjpt3BHhodvBj+LAQcTAgg==
+ b=jYTBtqTnvGkxmCSqPsCjmgl3VqTK/BKT8zffZiOImLgKuGyM/1IDjdE52Jb4QwPIBAtRlw+0R7xbyLHryianA/xMC+IFj+yUP+oS89Q6T3vW+8QFfiiqy4cXfWPBadzKiRHidqfuyRaR/Nw5Zg2Q4AJKWJ7DXZcq2LB8yBRMXsJaUjmHo6NQ32M8WPNtli51fYqgZ3BNuTNd4XVU2FPKnEbYs5nEmmT4FTUw3VBxWM0GCtAKaEdD1srVekziYTiXCsSWG5QEjC0REinZN1Wday/WHtzJkY5OMQ8gS5Wg10bG7m3UMJSeRY0hN/1EkgsDMr3rItnhlZv2IFpOHi1log==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8IYncX3GlcUhVvM3FOiEZ32Pl7Dvri6sPw/gE05NHaw=;
- b=XEh1QAlcMnfvw8jh8ADWNbe5D604Cxv807u1s4HZ6Yy/+A3bDOAazT//0HGNuv1h6azS1jo/9HELrTyqsy85k7gbHfIbal03MzswQndhKz2TQNC9Dx+l/pCJFdJc8uXCqqqpKWKA1mvbJ3zhPcAu02xSstmwHBg/WkGNA/U3mDd5jamLhLlvAERg0XeqkuwD6RwrZi2mVStYIlkfbLw7JjBW0P4SnZhvljex73Zjfa+euLvRy2km+bIxn1OtJGI3FlpvP50JbQOu+oDoJa3SH1NEINMOg2ZtBytIZ9Nme7WkRIMM0x69A18WCAKZdFXKEB7l0w8BWHoIHUVR8tSKGQ==
+ bh=CHzOvQGqSC7WE13JG//zlfGOExQHvRSDxYoUa4tKKAU=;
+ b=DLgJB7G9PNL9qGy+AEh4mqtS3u5fhedxwp9rR/KeseY1i5Anr+kwC2kFn7wFrokUnHkEBzAzIMYB3Ufps6WOVcNSB3Ye/b23wcJePzQ6cPDv6izA0FWYLvTrIReeN9kXjMShVS0q/SubCYX6ympcCiuGaHPf1/jdIXV6zsnVP7VZR7Prl7YYOvzZLhMu/wh8wvIOv2OeAttN3l5MpxsKfeCOQsrN02IvGr+z9cW4byCrtxaRoITWD3TLbh8LPT8LigJoJjXMTanIq0GFOvkTManKKlo8O1YKmPK1oP+TMf/gYRQlZ+HDofoaAC6uk/TQkb6dI7ENVT2di7nFDwY83g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8IYncX3GlcUhVvM3FOiEZ32Pl7Dvri6sPw/gE05NHaw=;
- b=e9le4255DMw7E5KuOiKSk9DUMZ5jT+vXBCmeq2hPn6z1SzJ40XHlSnQANx3xxp7XlHYQC8diVMkJP6CPY1l69oUTxY+xq5YhlhP7QaXS/dcRsw7aUnWCB7w3eysbzOGI6y37+8dOrX7CLAog4Uzi4O9c6YtkZ6EFjbH+eMpcHtpVRHRQQ+svGdijN1nYYazZSM8k47krziiVM1a10exvqWJELSAYjNlItQtME1peXga1wHYW+J7mHq7p7QfuKRrXnQ9TXVKpQz5169bgGCRGll/imTQcV9i9gtJjDpp++dx/QNh95Ka/rlIHXRayNDu+n3XEatFMJgiogKgDwNeaxw==
+ bh=CHzOvQGqSC7WE13JG//zlfGOExQHvRSDxYoUa4tKKAU=;
+ b=euzLiT0U+yAx31m1SKGlqdjrcJn4TE+ZxhKk+GpYlFrrHzzav1hoS4vyV/Y9XU4iGrQJoHRlgVMnXkk/ql0t0dUsdZg4M/VGwbNuXKOvHg+dftMgqIIC8EzvB2WteGMTXqbqwfGlJrRBL4Pa+q+ip9xKCBpwhU6QhzQ1ZhJAvwLGTTzICFkwEqJxvreuoE2sfsaD3tNeHu/Ild9k1BvCvX5uJPQeToztf+nuubHsijRrAdxMypwmAVphYrRz4fRRkNnbLHgwkyqNvDgm44HM2rlLIVzTXI+Jtl5Aht/qaLIdpPu3Eqn9M9BWTEvXLAx2QLzpvnUV6Ig2EzNinib1rw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DBAPR04MB7398.eurprd04.prod.outlook.com (2603:10a6:10:1a0::7) with
+ by PA4PR04MB9415.eurprd04.prod.outlook.com (2603:10a6:102:2aa::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.12; Thu, 18 Sep
- 2025 05:44:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
+ 2025 05:45:01 +0000
 Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
  ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
  ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 05:44:56 +0000
+ 05:45:01 +0000
 From: Peng Fan <peng.fan@nxp.com>
-Date: Thu, 18 Sep 2025 13:44:32 +0800
-Subject: [PATCH 1/2] ASoC: codec: Remove pxa2xx-ac97.c
+Date: Thu, 18 Sep 2025 13:44:33 +0800
+Subject: [PATCH 2/2] ARM: defconfig: remove CONFIG_SND_PXA2XX_AC97
+ references
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250918-audio-v1-1-e9d0df5c60d2@nxp.com>
+Message-Id: <20250918-audio-v1-2-e9d0df5c60d2@nxp.com>
 References: <20250918-audio-v1-0-e9d0df5c60d2@nxp.com>
 In-Reply-To: <20250918-audio-v1-0-e9d0df5c60d2@nxp.com>
 To: Daniel Mack <daniel@zonque.org>, 
@@ -71,11 +72,11 @@ To: Daniel Mack <daniel@zonque.org>,
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-sound@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758174285; l=9158;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758174285; l=755;
  i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=HbxiISTQ3eg1CuILWGIza5WVAELx162zndqEMuzMpcQ=;
- b=ZSEXs0mYQGDPK9dGRpzb168HJSlJdg1e8eAoreM1MKt9GcDY7kSfwN4p5RTqpsC0mWu1wxhx2
- us3n7TahaExCw9OS26ZiLkD0lRD8zByN1Melh+BQNJaG327Hd8v26L6
+ bh=CfbIc1elZn6eTFU7iP5xzC5CD5U9QqeDon40aaxtFh8=;
+ b=I9AFyLD2MpXnPrHcSv0DuarjOEu+TGkSMmnuQWozXUNGn72umnoFUXafIHQ4CdfNSYa9JWDUZ
+ eWx9gbxB9w8AwaBRqbFklr9fd7wbAkAedRU2PAbLfaN8E9JyBhaH2an
 X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
  pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
 X-ClientProxiedBy: SI2P153CA0015.APCP153.PROD.OUTLOOK.COM
@@ -88,436 +89,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DBAPR04MB7398:EE_
-X-MS-Office365-Filtering-Correlation-Id: d116d41b-84d3-453d-a71a-08ddf6767f17
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB9415:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e26e431-1692-4768-73c8-08ddf676822e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|1800799024|52116014|7416014|376014|366016|38350700014|41080700001;
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|19092799006|38350700014|41080700001;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R3ZWMTJpM2ExTDNkd1FhZFVMMFQ5azdtUzU2b1AxMCtVOFVMb2gvbFFhcGtK?=
- =?utf-8?B?THRndmczSnRPTkw0dURJOUxqMTNEaFZ6M1ZwVk16ai9kVmR4bWVVTTR2ZWV5?=
- =?utf-8?B?aHJFQldqNjBoVHlDb2hYQnRVNGxFTkdVTTVsSTJJTUlucHdJYUJ5V0krcGk0?=
- =?utf-8?B?WkJNWXVQZlFlQW9iNHNBSG9TZU05NExBdWQ1ZFhmRG1ZNXpFSWRRNkFrZ2JS?=
- =?utf-8?B?NEFzRmd6YXhkVDF3WE1RRmt4UmZ3WkVwYUpZcG1RQmQ5VUpQTkNHWjdLQ3hB?=
- =?utf-8?B?SWJtb1Q4V0dIUjltblhCTVhXNjQ1SG1qWmZGMWpuZW9GbXJHczhuT1cxVUdu?=
- =?utf-8?B?MmtwWVVTdEVweUR2d0NTT1UwbEpwblprOU9aWFJ1a2Z3SVBMeVBLTmNQTGxB?=
- =?utf-8?B?Y2VXMUhkWG93NTlPSlV3VXVvS2RNRVlLdWMwSmZBUHFPWmM0dGEwb3M5ZFdB?=
- =?utf-8?B?QUx0dWpSOXo2VjRXQ2lseWU3NE4zVEZNbWVIeUIzVUREcXFzM2lMVWNXaFcz?=
- =?utf-8?B?MlBzdE4xeFMyaEFTalZNU00rL29KRHRwSDdtRnVKVkpwSzNhMlBzb3VnQ0s1?=
- =?utf-8?B?S3R1b3pNQ0t2VUd3TERJZHRTQzErSGY3VDNFKzB0YXUxb3JWRm5Td1g4c2NG?=
- =?utf-8?B?OE92WHp3ZjNVN2M2N0V1bDNEdzlMSlpXZWg2Q0piajRHNEZlaldobThuZXMv?=
- =?utf-8?B?alp6ZnBTV0pya3dEdEwvU3RkWm0zMG1KOHgrZURVQ0hkTnRBR3kvWjhhNHJs?=
- =?utf-8?B?QWx6QTlFWVVnc2hvSTNNVHU2cG9iT3I4RlBQbit6RmRxTG5sbXM1M2VSVE5S?=
- =?utf-8?B?b1J2ckp0eVYvS3B5Q2E5RDFXbVZ5ZEdFTGN6eG9tS2pYYVFEMHNFcEpOU293?=
- =?utf-8?B?K1psQU5mMEU1QmE5enNmcGZ0TTROK3RocVRuOGVIMUNMTHBJcVJTTDlZYUk1?=
- =?utf-8?B?ckxUMTVVOTNpbWxjY3lNWk1LKzZRTFJCSlRXMG9Kby9sVmtOVE1BeFVqVzNs?=
- =?utf-8?B?TUlaZ1MvYXR6OEY3VnRKWlUwK0tlanBDWHZ3OUF2NWxNNnM3TXhoeXBnZWJU?=
- =?utf-8?B?TFYwcVpSWjFDbm1hR1RZSGdCaDBvR0c5NUsva29jcXBGR3IrVTZQVjdwdkY5?=
- =?utf-8?B?OGtFUEg4Y2I0elFxbWJaY0FlbnF0dDMvR0FiU1E5U3pHekRwZVJGT1lpNjUy?=
- =?utf-8?B?cExzVXo3b1EranNrbGFLdyt3akJydVoyZzZleDJldm43OS9uWEd2OWRpZHRq?=
- =?utf-8?B?bGp2NW5OUVhJbFJoR2VCVW15TVh5NlFXMmc0MDFwT2xVdEhFNEd5ZXV0LzVS?=
- =?utf-8?B?OGhxaWc2YTRYYXhNYWNFR0NGbmJOWHhUZ2lpN3d1UTlkbGdneFk1TmxrNnpC?=
- =?utf-8?B?WFI3OVZXWjcwdE4vemJlU2NVZkw2Q2JMWHU0R0l1ZjFsN3gwTHZ4MGQ2dHJx?=
- =?utf-8?B?aEFiUzE4Nkwra0hjaUJyK2FFZVNralJLcVJJMGE2d1ExREw5UGRXVFIxWjRU?=
- =?utf-8?B?ZWhORHFCV1d1REllSGpoRkltVlpLdGFXeWZCNkI2bnpROHZ1OFl4QXRUcmlN?=
- =?utf-8?B?N1doUm95eGE0UFYrejJkZy9TVU43RjEveEtwajIxajRpUW8yQkVSdjJPZm02?=
- =?utf-8?B?YWRHMDBiZ2hRcU5UdXBqTllIRlpnOVVqYVg3anpla3ZONUVwS09DRGY3bWZ3?=
- =?utf-8?B?bEo2cEU2d2dhU0hCN3l3QkxzUHJ3WThpSUprTEZWZHgxZzZsTmxxS3RHWmIx?=
- =?utf-8?B?dXA1TlhaTHVzc2FmRy9sUGdSUHZmdXZDMFlkNGVNMFE0OXVhSkZTa0RDOXFJ?=
- =?utf-8?B?ZzNDSWRYYnZ1WVVTWGZkelh4cXArTEVRdzJpK2E4Vnk0bFRDcjhZZ2oxU3VZ?=
- =?utf-8?B?L3cybDlzYjFjMkZpZkE2YmdKS05RcDFhdXl2Y3hEczN3bzFuaEpmdlFzWUla?=
- =?utf-8?B?UHZtckluaERhU0Q0V3R3N2FNVmYvLzRmNkNPY2xXbDhZbkplaHFsRmE0RDQ3?=
- =?utf-8?B?VHlxa1BXNHBHK2tscnp5ZjVtOSs2Y0pPMkIwY1FyMXB1a3c3UFFmK2Ryb28r?=
- =?utf-8?Q?/DRyhs?=
+	=?utf-8?B?OXY5OXVBWDVqOGxORWs3TWNoY1l1Z0JOZFNxU0F3RW5UNm8yZFF0SWZRcEIz?=
+ =?utf-8?B?NVVUYlBjR2FSd1psZ0pCM3podHFDRUZIUzZXQnpyeUlUcmo1amhEKzAvZ3lS?=
+ =?utf-8?B?bDhIZi9Sb2lGTWlxWUxEb2QyRmZCVzJTNjE1ampjM1NPZnlNWkJ0cTM5QVBo?=
+ =?utf-8?B?TzRHY1NkbmQwS25mVldUeTFFRHdaK2lralV3Q3VqdzJ0clRXd2h5U2FuUEdV?=
+ =?utf-8?B?MjJlWU95ellVNXlubk5lOGZSY1cyR2FOUmlJR2xRNS95WjRMOE1sV1greTlO?=
+ =?utf-8?B?RkV2NnZsK0V4NjZZSzZOdjhSSm55RnQzc1dWTWpiM3RVZVgycU1nTGxhbzNs?=
+ =?utf-8?B?V1dJbWFlai9neEZ3enN5QUtmRHpBRktCYkJaTk1xd1BIT3ppVFppS2Z5VTh4?=
+ =?utf-8?B?WUpSMVBnQ3Jham5HUTc3MEp4RkxFdktDTS9BSlZDeFp0aDF6UlRkUitXMDk4?=
+ =?utf-8?B?VVRaanI4Z2JDY2h6OVFCa1Y5eTh3QTF2WkdLYjA5cXZhY2lyMEpNZ2J0OWJv?=
+ =?utf-8?B?cFdEbWllNjAwd253OHJyT3FxNGNGcFR3d3NsemNzTDFZc1BONHNKcFlpT0tB?=
+ =?utf-8?B?WUhrS2gxWWw4c0JPMkk4QkQxSlFHa3YxR3h5WXNxQlc3ZUptbDF3cldVaDJD?=
+ =?utf-8?B?U1dnRVZVUC9aRmNMSjg4b1hiUDNuOVM0b2ZCMDBnazdJMlhhNHNNUXdJYm5X?=
+ =?utf-8?B?c1pUYTRBZkpjbElleFVwR1pMUW1HT1drcFN2R1pXVS94NGMzY1hieW9sZFNV?=
+ =?utf-8?B?a1RHODNFeWlpVzRPMlVxbWRXTTJ1SWRjS3ZZdWlFTTVnNU0wYTltK2xnOVdB?=
+ =?utf-8?B?RUtOdWg3QlJHWFJ3TUQ5RWdFSkh5NkxvY0hrbEVUNUJJQlI5cVh2OVFmSUNO?=
+ =?utf-8?B?K3M0dG1yRUU0a3lmLzNpVVloS1JIczJwTU5ucHdISmljVFlWNGFvUE5SQlcx?=
+ =?utf-8?B?QnNCVExBOWxwaUYzdGpDT05lSnJ1NlJ1QXNoWW1ReHU2WENHWjhZYVl0L1ND?=
+ =?utf-8?B?ODJWYTZOa3J0bXV1cGNyWlk0QUphWGo0cFpuWHRyVG9VY0ZXeE5tSEVtNXVK?=
+ =?utf-8?B?K2NRb3ozbmFCZ3RRN05Tam5zU2E4dlErQkgxVTFNcEhJQUNZYnNrTUN1RGJL?=
+ =?utf-8?B?QTR5a0JmMGVtTmhuaTFYUlVzS21sVExCeE03d1o1ZnRwS3lYWW5CbTVEVVZK?=
+ =?utf-8?B?RkY5NVpWaXpaR2doVFhUWlJuQzFjemNySzhQQTlTc0ZONjlyQ01Wckx0UWVX?=
+ =?utf-8?B?T0RXaWhrVGdvWWphc1BKYUlhaTJRUC9WRWNwODloazdUQk85MFpwNmlkTktl?=
+ =?utf-8?B?NTZ3L3BZUkV2T3RsK2QzWC8xTlRkeGRabHhNeXR3TG1WbVhYWk5RYXc0SlFw?=
+ =?utf-8?B?dVJCQ0dlaVZWNjYvSjhrZE9STVpkN054emsydVFORU1JUFNLYkRRK0NjSWpQ?=
+ =?utf-8?B?anVCeXl6NEpWK3BOL0tPZ01hTGVTVTZRRlUyb1p2NHdiQmV1UVJ0VzMwa0pY?=
+ =?utf-8?B?UFhSSVRab0g3R1dBYmF5RDJ5NCtWQkJSRHR1VURaUXRFSUpNbmN6dm13YUgw?=
+ =?utf-8?B?VXVuWVdpbnBpK01zcTB3R2tOUzk0Vm1RL0NFTGxablI4ek5QU1crTVhyaGpa?=
+ =?utf-8?B?b3JCV2I1NDU3c3lzM1hsYXBzeU9lbXJBWCt0c3JVUTlUMThRS1kwaDlJRzhU?=
+ =?utf-8?B?UUQ3RVQ3RHZ5TnRNV3VqSlQvREpoRmFnSjhmaVVqRTVLd0VlY0ppd2RtL216?=
+ =?utf-8?B?WkQ2bXF4eFFXVUhwQ0JVSEhVNGVBNGJNNEYva0pBaTRJNVF2RHRLZ0Vwei9V?=
+ =?utf-8?B?SlBEVFZsVHFXckVzOHg5M01ZVmt4a3JhWTNqZVpSOHd3V0htaUszOGRLS2NW?=
+ =?utf-8?B?Rm1Kb3lHbEo5anZRZ3JBcURBNG9zcHNFUDN0Y255cFlUS1huZkh4ZVRCZkdt?=
+ =?utf-8?B?SktlaWxNT1NjWUZtR2xDWFlJQmMvbGJEdkZaeUd6WHMrTTdJcEhkRVFTc2RG?=
+ =?utf-8?B?QVNaSVlISGI2SXpyaGp4a2U5MHZOK3E2Y3hkTjNxVmMzRlpFWTNMWVloaGtK?=
+ =?utf-8?Q?gIdVb8?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014)(41080700001);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(19092799006)(38350700014)(41080700001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TmFVbFhVN3pUL3pQbk5vc2c0WW9keWpZLzY1ZnVBYW9iRlhWODBsRWloQ0Jh?=
- =?utf-8?B?b291K1pLUWgyYnNNUDZxRXBmcktOOUx3blppN1N5OTNpUHMyMVZnSXZjdUNt?=
- =?utf-8?B?YldFdG9zSHo4dG9SbCtJY0h0YUlVYVg1WVhNbGhnVjNiZ2RSUDRabGxEcU92?=
- =?utf-8?B?Vk5rZjlMbXd1VXFOWm5TV2pzR0Uxb21GaW1VQjJRbERqUVZVbURSekdIV01n?=
- =?utf-8?B?dWJGdTJ4UDJ0bkEyM2w5bjRFZXhRaDRxbGY5c2VtekJZL2VyNnM1VHhnYmR1?=
- =?utf-8?B?TnN0Wmh0YXRDVXFpQklyV0ZqWXFoSHhKVlZIZ3lXOTBWWWRqUHB4eEUrNEl3?=
- =?utf-8?B?T1hYeWFhMDJMOEFwMkpGdTNBWmNHU1ZWT0t2bnN6emhyY3hlYzZlRGRNa3cy?=
- =?utf-8?B?d1pHK2cycUZkazZaclNUb2JDeWtLbmhjcGlsbkM1eEpHYnFxdk9VK3JVMmRu?=
- =?utf-8?B?eDZnRVRjRk5jQS9yMnBVMXZFdWJQMERlbFNtdDZwRGtMR1V3ZWFlRk9WVm81?=
- =?utf-8?B?aGgvSkRiQ2Fzc1JLa0FYZE9ueEs1cHVqbTA1L0x1TnBLQmtTSkdrdU0rSnRj?=
- =?utf-8?B?b2h1aGNycmRZMHBrUEpJZ0hVQndWNGlCVStoODNCMXR2RGVBN2dsYzNPMmZP?=
- =?utf-8?B?UkNuRkl3SFVoZ2xuTGpLNUIyNkZDa2dWQ0NFZTFZS3RQQWJvSHZkUWg3N2Z2?=
- =?utf-8?B?cTZtVmpTQys4QVkwK3dMdnppZUZ4VVo4UnBzZ0xNVUFNbjlvalJDVnBQbnJs?=
- =?utf-8?B?MU9WeGFyQXJYMGVEUjlNVDU3OFZhd1crOXZQU3V3dzlHdEdkZjhsT1NOT1B5?=
- =?utf-8?B?SkhFbXBHZGNzcnFlVlRubEt2YjEvL0VIb0E3TFdTMEdoSkM5S1VKTFYySjQ0?=
- =?utf-8?B?Nmp0aktNOWR4WXhXeHlwQUpZOURuZW5UUzliZFJ1a1pONlZLdng1WXZRYkhk?=
- =?utf-8?B?M1AzakNOanZtWEY5d3lqTjRhZE0rQVJLZGU5YjBXUitTYUxVTFd5VTBSQzlS?=
- =?utf-8?B?QXpadGlEajdKL2g4a1ZDS3l4M3Y1L3lyNzVDbTZqTkc4UDAzaXlXNGJzSVRP?=
- =?utf-8?B?OFFsanZjWWtIN1lmVjFmelkwbXRNTHlTa3hzaDVlVmZzMlZaMTFUMzZ4RFlv?=
- =?utf-8?B?L25SOU1RZVZtSUcxbVhLb0k4bGx6dTg4Ymt6WjlVcDFTbjRiSndUYXpQRUpO?=
- =?utf-8?B?QlpzRExuYzg2QktZVFdnR2p1SE0rRVdGQ2hzM2RCTlVBS1JJU0d6L0dUL2Q4?=
- =?utf-8?B?OTFsTncyV0MwMVFON3lkdEpvK2RUZDZ4OERmWDI5L0pabXkzblVoSXRFNlNv?=
- =?utf-8?B?NWFxdmNzWFlnRzRiNEd4MmUyS3pFRFpQbEUza1ZMRXRQR2c1eGlGMlp5QmNu?=
- =?utf-8?B?bGIrMnY1a3AxRXhXbnE3UDNBcjNVTnNBU1NQbXp6WjF1UjlOZmFKUWIwZDFu?=
- =?utf-8?B?dXVBOEdscHZGSDdmUVZqMVNvT2J1cDlsTVh3WlExazV1OXhIZHQyV3ZJWFVa?=
- =?utf-8?B?VE9lTkVBcS85V2RlM1NKVDdERk5tNlFOaWxscUp6ekFnK0lqSVhHNDRzTjY4?=
- =?utf-8?B?d0x3ZmNheCtLOEMxMm9DVE9OdGVwYmhBci96VVBxMmU3YVQwNm9UVDhrVkVK?=
- =?utf-8?B?ZUNXdjJtWDUxQzliVGpTZXFFNUZQOGp0SG5rVUoxMWxhaXkyTEo5Rk1XT3VI?=
- =?utf-8?B?ODVJSnhGWGNUSnpJVnk0SHRaMVdjeGs2UEZJWWpQcDVwUU9GVkZBTlJ5aEcv?=
- =?utf-8?B?M0gwVDVLUFZpRHdRTkNra2JvQmtiYWJtOHB5RTdZN3c0Rk5RUW01MDFjRDhB?=
- =?utf-8?B?MElFSmIrak91UFZ5TVg5SkpBK0xLWFBYMkJXYWhtNUE3V1J2VE0rQ3FSakIy?=
- =?utf-8?B?dWtUbXphMzRHSkVzVnhibDZlc01ZbUFJOUY5bjAxeXRITCtoUWE5VFZxbXBj?=
- =?utf-8?B?SHZXSVNQbFI2ZHdiNEVUYjdqUXdVaVhWOGVoZDFkZEVTai9WMUE1c09aUTI4?=
- =?utf-8?B?eTZyRDZmYkJNYTh4S1Y0S1NDS2pwbnpROExqNnlrR3lnOTNpMkpHK2FiNGNv?=
- =?utf-8?B?VS9iMEIraWtHMUtvWHgwRDE2ZUNCTkg1SDdxWXE5M251YzQwczFmWTRYYTBi?=
- =?utf-8?Q?Wzw3ruPtEkVU5hxOr3GcvhnIS?=
+	=?utf-8?B?ZndIbXdjYUtHY2pETzlPSE1EN21Nb1orRjFHUTlTNmpGYWdUWXpaYW9JSThw?=
+ =?utf-8?B?T3M3TnRTdm02ZGZSN2VrVU8zQ3lSd2tNRmVBZGRnVzJwV21MakZqOTY2dnB5?=
+ =?utf-8?B?RHFUS200K1lSazdaeW41UE1POFpHZFJYZVY1bjBDd1BTVmdmUitOaVV2OXRu?=
+ =?utf-8?B?OWcvRmxqVWNXRWc1UjNUOXd5c1Z3dEJ0UnU5NzAwa0E3Y3lzK3h2SzNsNjdn?=
+ =?utf-8?B?RTg1UThFMGs2NWQzRlZ4eGt3VGd5TXkzckRQbjVwQzFFTjREb2pwQkxnZ092?=
+ =?utf-8?B?SHd3Z1JjS0FKTDJvNGsvQnU4bEVmdjI1Tm9XN28xbVB1MnovQjF6bEdSb1Zo?=
+ =?utf-8?B?UTJxdncvYXpmV1F5UkxsR0xYT29CcytOeWdESElRdmhxNWtaLzRScmNWSDZG?=
+ =?utf-8?B?RXJlSHQwZzZ6cDJtYWh1dlEvMm1Wd0FsK0FoU2RHdVpFMlY3VS9DRUdIVUZE?=
+ =?utf-8?B?QThoT083a0tKUTRnVzVhL3Zuem1qZFVFYjdFUUxpYkE5SjZFNXlLOVJ5aGlR?=
+ =?utf-8?B?RHV1UzhNbzBEUXR3VUhNUDQwU2J2dmhLR1RackFmZTRnRWdsNWd1VEhqenpQ?=
+ =?utf-8?B?MnlwWVNFRDA4QkJqd3Q4cGhGZnFiN3BIMTFLUUoydVJQeElZTkJsUmZHRzZZ?=
+ =?utf-8?B?N0pTUUhkSG9zRXluYXBkZEwwWStyK1ZweU1SL1o5WU1lUVhYMHZkVS9hSGk3?=
+ =?utf-8?B?WHU1RkJleXdtcUo2aE85TVBQdFA2Vit6UndxQlR6b3cwOS9kaTlzNWVPZWxH?=
+ =?utf-8?B?ZjV5ZFlLaG94Nk4vZ2RucUFBZHdmMHNLYlhyWER1SWxFSDRZb2NoMFg0TWhk?=
+ =?utf-8?B?bzllK0x6OW9lWVFXeWNaQnFNSlZkeTR2d3ZxOFRyTnJzSzhOaE15NEVoMzNx?=
+ =?utf-8?B?aXY1SWp5WTArKzg0WFJrbThKSWFtRzAva2pUZU5oZ25ZTG9UZDRrSUZCNUFw?=
+ =?utf-8?B?SENjYkdSVXlXeEJFa0pwaTJrTEF4RUVlTVYyM255MlZDNHNUaFRWdkNVUkdU?=
+ =?utf-8?B?bEg0blozelQzdlRmeVFDZ3JRc0d5UTBvcThEVFczRFJkWC9wdEo1eVB4UHNM?=
+ =?utf-8?B?VFFFK3dQVkJmVGJWVE5pdDk3QXlMSGI0dDFqQ0oxWDExaUVlL2xzMGZwbTFm?=
+ =?utf-8?B?bElIa0lYWkc5OWVYK1RoUFVOS1BwSmxCYTR3SHVjQkhCT1Fhbnk4cjVOaDJy?=
+ =?utf-8?B?cSt5Z1lVSUFSYnQ2OVFDUVJtdU8vaFJ2eXI2UVVSWVFoWEducmFwZzZiNHND?=
+ =?utf-8?B?R3AvK3JwaHYrc1dBVkw0MG5wemZkQlp1Sm0xR0htamhSeFRQdktZdmJwYTRN?=
+ =?utf-8?B?c3RJTk9COG5IUllCak8zbGhkRXJlQjFYZmJwb0x1OTRGR3lnNnJtM1NKMEls?=
+ =?utf-8?B?dk8xRjJ0MU5aUEZSN2lMRDJ0QmNHWWdXOEc5Rks5ZXowLzQzSjV6R1pRNGhT?=
+ =?utf-8?B?TjN6QzFkWngwWHUvSUZXYysrNjkrTnRMVEtkb055N0lSTTBJcFdPUEpLdmcw?=
+ =?utf-8?B?bUZKWHcwNWtVUmJjTHZnellYblRvd3lFR0pDK0JVUVY4R0F1RDlmTHE1V3VX?=
+ =?utf-8?B?Z1RnNEV5SWc4eHRna3ZwWkNqalZTMzN1V0R2SEc2RFBRLzBlT3paaE1PNDdh?=
+ =?utf-8?B?czFXOXhpWDhvTmtFdW4vTkZpSHZBZlFrUW1xbGl1Q3JMTFA2WXpXYXJUaDBJ?=
+ =?utf-8?B?bHk3eTVtUld2RS9RRzRDWERVNTFqSnZHbVV2WVFUaW93TFJVVzZOZ2lzSEwv?=
+ =?utf-8?B?ZzBUdi9xYVJCUWdMTko2eGR0WDNVVHhwWFBwWVkvZkhVRmF1MkpFOWhYZ3lP?=
+ =?utf-8?B?OUNDRTZWRElSRWpERzdqOFFnVGx6NExrMjhPdUNvOW1ETTlQREd1UlZkTzk3?=
+ =?utf-8?B?MHdpdmt3dWVuMmNRZjgrRlQ3S095eWJ4aEFoTEo4YTcvM2FWL1Y1ZU5XS0JX?=
+ =?utf-8?B?My8zOTB1YUhob094LzJpU3J6VWxTYVNlaWJmc0piUHJzc3lwSWQzYmtCNkZE?=
+ =?utf-8?B?WWE2bEEzalRlaFdRTGpDVUJya2JJd0VzM0QwUTR0TkgwSHRnQVlJbzM3RmpR?=
+ =?utf-8?B?V3FpNVMrYjVMeTVic3dWYWlEc0MzME0rZjQwQllvR2hlVVBYMWVYN0VxRjJr?=
+ =?utf-8?Q?fgR11HQ/VMkahCW+rtoX9/oyU?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d116d41b-84d3-453d-a71a-08ddf6767f17
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e26e431-1692-4768-73c8-08ddf676822e
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 05:44:55.9339
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 05:45:01.3734
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I54FLiQxzxnNXkgCAXc8n4y4APUG57KUcFc7pH3rMKubF3QOyhN4Gu9qYp2sIXGLBTFgX0QEFemFECml17Ow0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7398
+X-MS-Exchange-CrossTenant-UserPrincipalName: u81FEjS+WVl/Rkut+60T5Vk6b51UA8vwlW0JKzVmmjRuIMfyJgISRFikv7W+lWWj4yX4/gSdo17sSKDafpSH/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9415
 
-With commit ce79f3a1ad5f ("ARM: pxa: prune unused device support") and
-commit 2548e6c76ebf ("ARM: pxa: pxa2xx-ac97-lib: use IRQ resource"), there
-is no 'pxa2xx-ac97' platform device created by machine level code, so this
-driver could be removed.
+The pxa2xx-ac97 non-DT supported driver was removed, so remove
+the reference to the config.
 
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- sound/arm/Kconfig       |  10 --
- sound/arm/Makefile      |   3 -
- sound/arm/pxa2xx-ac97.c | 286 ------------------------------------------------
- 3 files changed, 299 deletions(-)
+ arch/arm/configs/am200epdkit_defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/sound/arm/Kconfig b/sound/arm/Kconfig
-index dea2c661b3537309d8ba0ab044640f15205bf29c..e4d7288d1e1e3e7c5d081a7bf474319693d5bff6 100644
---- a/sound/arm/Kconfig
-+++ b/sound/arm/Kconfig
-@@ -18,16 +18,6 @@ config SND_ARMAACI
- 	select SND_PCM
- 	select SND_AC97_CODEC
- 
--config SND_PXA2XX_AC97
--	tristate "AC97 driver for the Intel PXA2xx chip"
--	depends on ARCH_PXA
--	select SND_AC97_CODEC
--	select SND_PXA2XX_LIB
--	select SND_PXA2XX_LIB_AC97
--	help
--	  Say Y or M if you want to support any AC97 codec attached to
--	  the PXA2xx AC97 interface.
--
- endif	# SND_ARM
- 
- config SND_PXA2XX_LIB
-diff --git a/sound/arm/Makefile b/sound/arm/Makefile
-index 899edb4bb278dad0e7dd90fd11703f4dca6c3cb1..99325a66cf771ad7a22df18b340221fa13e69a2d 100644
---- a/sound/arm/Makefile
-+++ b/sound/arm/Makefile
-@@ -9,6 +9,3 @@ snd-aaci-y			:= aaci.o
- obj-$(CONFIG_SND_PXA2XX_LIB)	+= snd-pxa2xx-lib.o
- snd-pxa2xx-lib-y		:= pxa2xx-pcm-lib.o
- snd-pxa2xx-lib-$(CONFIG_SND_PXA2XX_LIB_AC97)	+= pxa2xx-ac97-lib.o
--
--obj-$(CONFIG_SND_PXA2XX_AC97)	+= snd-pxa2xx-ac97.o
--snd-pxa2xx-ac97-y		:= pxa2xx-ac97.o
-diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
-deleted file mode 100644
-index 77b11616a7ee05a45573d1b643f3192f35c0c38a..0000000000000000000000000000000000000000
---- a/sound/arm/pxa2xx-ac97.c
-+++ /dev/null
-@@ -1,286 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * linux/sound/pxa2xx-ac97.c -- AC97 support for the Intel PXA2xx chip.
-- *
-- * Author:	Nicolas Pitre
-- * Created:	Dec 02, 2004
-- * Copyright:	MontaVista Software Inc.
-- */
--
--#include <linux/init.h>
--#include <linux/io.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
--#include <linux/dmaengine.h>
--#include <linux/dma-mapping.h>
--
--#include <sound/core.h>
--#include <sound/pcm.h>
--#include <sound/ac97_codec.h>
--#include <sound/initval.h>
--#include <sound/pxa2xx-lib.h>
--#include <sound/dmaengine_pcm.h>
--
--#include <linux/platform_data/asoc-pxa.h>
--
--static void pxa2xx_ac97_legacy_reset(struct snd_ac97 *ac97)
--{
--	if (!pxa2xx_ac97_try_cold_reset())
--		pxa2xx_ac97_try_warm_reset();
--
--	pxa2xx_ac97_finish_reset();
--}
--
--static unsigned short pxa2xx_ac97_legacy_read(struct snd_ac97 *ac97,
--					      unsigned short reg)
--{
--	int ret;
--
--	ret = pxa2xx_ac97_read(ac97->num, reg);
--	if (ret < 0)
--		return 0;
--	else
--		return (unsigned short)(ret & 0xffff);
--}
--
--static void pxa2xx_ac97_legacy_write(struct snd_ac97 *ac97,
--				     unsigned short reg, unsigned short val)
--{
--	pxa2xx_ac97_write(ac97->num, reg, val);
--}
--
--static const struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
--	.read	= pxa2xx_ac97_legacy_read,
--	.write	= pxa2xx_ac97_legacy_write,
--	.reset	= pxa2xx_ac97_legacy_reset,
--};
--
--static struct snd_pcm *pxa2xx_ac97_pcm;
--static struct snd_ac97 *pxa2xx_ac97_ac97;
--
--static int pxa2xx_ac97_pcm_open(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	pxa2xx_audio_ops_t *platform_ops;
--	int ret, i;
--
--	ret = pxa2xx_pcm_open(substream);
--	if (ret)
--		return ret;
--
--	runtime->hw.channels_min = 2;
--	runtime->hw.channels_max = 2;
--
--	i = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
--		AC97_RATES_FRONT_DAC : AC97_RATES_ADC;
--	runtime->hw.rates = pxa2xx_ac97_ac97->rates[i];
--	snd_pcm_limit_hw_rates(runtime);
--
--	platform_ops = substream->pcm->card->dev->platform_data;
--	if (platform_ops && platform_ops->startup) {
--		ret = platform_ops->startup(substream, platform_ops->priv);
--		if (ret < 0)
--			pxa2xx_pcm_close(substream);
--	}
--
--	return ret;
--}
--
--static int pxa2xx_ac97_pcm_close(struct snd_pcm_substream *substream)
--{
--	pxa2xx_audio_ops_t *platform_ops;
--
--	platform_ops = substream->pcm->card->dev->platform_data;
--	if (platform_ops && platform_ops->shutdown)
--		platform_ops->shutdown(substream, platform_ops->priv);
--
--	return 0;
--}
--
--static int pxa2xx_ac97_pcm_prepare(struct snd_pcm_substream *substream)
--{
--	struct snd_pcm_runtime *runtime = substream->runtime;
--	int reg = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) ?
--		  AC97_PCM_FRONT_DAC_RATE : AC97_PCM_LR_ADC_RATE;
--	int ret;
--
--	ret = pxa2xx_pcm_prepare(substream);
--	if (ret < 0)
--		return ret;
--
--	return snd_ac97_set_rate(pxa2xx_ac97_ac97, reg, runtime->rate);
--}
--
--static int pxa2xx_ac97_do_suspend(struct snd_card *card)
--{
--	pxa2xx_audio_ops_t *platform_ops = card->dev->platform_data;
--
--	snd_power_change_state(card, SNDRV_CTL_POWER_D3cold);
--	snd_ac97_suspend(pxa2xx_ac97_ac97);
--	if (platform_ops && platform_ops->suspend)
--		platform_ops->suspend(platform_ops->priv);
--
--	return pxa2xx_ac97_hw_suspend();
--}
--
--static int pxa2xx_ac97_do_resume(struct snd_card *card)
--{
--	pxa2xx_audio_ops_t *platform_ops = card->dev->platform_data;
--	int rc;
--
--	rc = pxa2xx_ac97_hw_resume();
--	if (rc)
--		return rc;
--
--	if (platform_ops && platform_ops->resume)
--		platform_ops->resume(platform_ops->priv);
--	snd_ac97_resume(pxa2xx_ac97_ac97);
--	snd_power_change_state(card, SNDRV_CTL_POWER_D0);
--
--	return 0;
--}
--
--static int pxa2xx_ac97_suspend(struct device *dev)
--{
--	struct snd_card *card = dev_get_drvdata(dev);
--	int ret = 0;
--
--	if (card)
--		ret = pxa2xx_ac97_do_suspend(card);
--
--	return ret;
--}
--
--static int pxa2xx_ac97_resume(struct device *dev)
--{
--	struct snd_card *card = dev_get_drvdata(dev);
--	int ret = 0;
--
--	if (card)
--		ret = pxa2xx_ac97_do_resume(card);
--
--	return ret;
--}
--
--static DEFINE_SIMPLE_DEV_PM_OPS(pxa2xx_ac97_pm_ops, pxa2xx_ac97_suspend, pxa2xx_ac97_resume);
--
--static const struct snd_pcm_ops pxa2xx_ac97_pcm_ops = {
--	.open		= pxa2xx_ac97_pcm_open,
--	.close		= pxa2xx_ac97_pcm_close,
--	.hw_params	= pxa2xx_pcm_hw_params,
--	.prepare	= pxa2xx_ac97_pcm_prepare,
--	.trigger	= pxa2xx_pcm_trigger,
--	.pointer	= pxa2xx_pcm_pointer,
--};
--
--
--static int pxa2xx_ac97_pcm_new(struct snd_card *card)
--{
--	struct snd_pcm *pcm;
--	int ret;
--
--	ret = snd_pcm_new(card, "PXA2xx-PCM", 0, 1, 1, &pcm);
--	if (ret)
--		goto out;
--
--	ret = dma_coerce_mask_and_coherent(card->dev, DMA_BIT_MASK(32));
--	if (ret)
--		goto out;
--
--	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &pxa2xx_ac97_pcm_ops);
--	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_CAPTURE, &pxa2xx_ac97_pcm_ops);
--	ret = pxa2xx_pcm_preallocate_dma_buffer(pcm);
--	if (ret)
--		goto out;
--
--	pxa2xx_ac97_pcm = pcm;
--	ret = 0;
--
-- out:
--	return ret;
--}
--
--static int pxa2xx_ac97_probe(struct platform_device *dev)
--{
--	struct snd_card *card;
--	struct snd_ac97_bus *ac97_bus;
--	struct snd_ac97_template ac97_template;
--	int ret;
--	pxa2xx_audio_ops_t *pdata = dev->dev.platform_data;
--
--	if (dev->id >= 0) {
--		dev_err(&dev->dev, "PXA2xx has only one AC97 port.\n");
--		ret = -ENXIO;
--		goto err_dev;
--	}
--
--	ret = snd_card_new(&dev->dev, SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1,
--			   THIS_MODULE, 0, &card);
--	if (ret < 0)
--		goto err;
--
--	strscpy(card->driver, dev->dev.driver->name, sizeof(card->driver));
--
--	ret = pxa2xx_ac97_pcm_new(card);
--	if (ret)
--		goto err;
--
--	ret = pxa2xx_ac97_hw_probe(dev);
--	if (ret)
--		goto err;
--
--	ret = snd_ac97_bus(card, 0, &pxa2xx_ac97_ops, NULL, &ac97_bus);
--	if (ret)
--		goto err_remove;
--	memset(&ac97_template, 0, sizeof(ac97_template));
--	ret = snd_ac97_mixer(ac97_bus, &ac97_template, &pxa2xx_ac97_ac97);
--	if (ret)
--		goto err_remove;
--
--	snprintf(card->shortname, sizeof(card->shortname),
--		 "%s", snd_ac97_get_short_name(pxa2xx_ac97_ac97));
--	snprintf(card->longname, sizeof(card->longname),
--		 "%s (%s)", dev->dev.driver->name, card->mixername);
--
--	if (pdata && pdata->codec_pdata[0])
--		snd_ac97_dev_add_pdata(ac97_bus->codec[0], pdata->codec_pdata[0]);
--	ret = snd_card_register(card);
--	if (ret == 0) {
--		platform_set_drvdata(dev, card);
--		return 0;
--	}
--
--err_remove:
--	pxa2xx_ac97_hw_remove(dev);
--err:
--	if (card)
--		snd_card_free(card);
--err_dev:
--	return ret;
--}
--
--static void pxa2xx_ac97_remove(struct platform_device *dev)
--{
--	struct snd_card *card = platform_get_drvdata(dev);
--
--	if (card) {
--		snd_card_free(card);
--		pxa2xx_ac97_hw_remove(dev);
--	}
--}
--
--static struct platform_driver pxa2xx_ac97_driver = {
--	.probe		= pxa2xx_ac97_probe,
--	.remove		= pxa2xx_ac97_remove,
--	.driver		= {
--		.name	= "pxa2xx-ac97",
--		.pm	= &pxa2xx_ac97_pm_ops,
--	},
--};
--
--module_platform_driver(pxa2xx_ac97_driver);
--
--MODULE_AUTHOR("Nicolas Pitre");
--MODULE_DESCRIPTION("AC97 driver for the Intel PXA2xx chip");
--MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:pxa2xx-ac97");
+diff --git a/arch/arm/configs/am200epdkit_defconfig b/arch/arm/configs/am200epdkit_defconfig
+index 134a559aba3dd535782942b1aeef94631ba231f4..9305db0b48f2ace7ececd826d06fa22b8ad3f1ff 100644
+--- a/arch/arm/configs/am200epdkit_defconfig
++++ b/arch/arm/configs/am200epdkit_defconfig
+@@ -70,7 +70,6 @@ CONFIG_SND_MIXER_OSS=m
+ CONFIG_SND_PCM_OSS=m
+ # CONFIG_SND_SUPPORT_OLD_API is not set
+ # CONFIG_SND_VERBOSE_PROCFS is not set
+-CONFIG_SND_PXA2XX_AC97=m
+ CONFIG_USB_GADGET=y
+ CONFIG_USB_ETH=m
+ CONFIG_MMC=y
 
 -- 
 2.37.1
