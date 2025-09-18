@@ -1,161 +1,114 @@
-Return-Path: <linux-kernel+bounces-823073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDDBB85764
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862E4B85704
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4D61B21854
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E41EB1661B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDABC22A4EB;
-	Thu, 18 Sep 2025 15:05:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2145227B8E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E0E1CAA7D;
+	Thu, 18 Sep 2025 15:04:58 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17271EB36;
+	Thu, 18 Sep 2025 15:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758207902; cv=none; b=NlXuAAaQRCMBNbvtL6SQQ90DUoeEVu2Jwt2CVB285kgV30fcPGWLknaNGl5TkAaAW4rBCuVCpD5T9NHsKe/WGlx3NTmRGF9buf0IcIZn6S9a7VTG2hk9CaonqExJIiKzpzKd27zoPYrwwiD6us8p4Ccjn13mcgOcjCMk3TTyoMA=
+	t=1758207898; cv=none; b=FaFgPwAnre18JwqUB48uIMPAQ6vnaS/0SZx6+a/fsgusvMYAQk5YCxkAXmPinJj/ya+4794/mvJoaOd6CNCOzqjVIGANDRusKrmmoVUw8K49f5TVeJLoOUlKzJ77o56+9iZkC9IeOk/yY5uwCWBfMjUfMJZemDNgwPsW0UUb2yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758207902; c=relaxed/simple;
-	bh=ffvDeLf+jsGqH7cy11jdHr3XK8D4u8wyTht0obQawAA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1BMImo3gcNnDDT/WREQf0b6DwxwmVdjEY7scPOoOZaaNaqpeD8eSdcQFA3FcpEiLIBARGDCjW7wX9o8QV9MWSFGd2tc6BCF2H4cNYWSwLovd/4p5C0UrCXkZPrLnYZvXbL7SfuJg8MRFY2SR6dvXBzAnFDBUQV9cHI6e4pxRC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B83001764;
-	Thu, 18 Sep 2025 08:04:51 -0700 (PDT)
-Received: from [10.163.74.75] (unknown [10.163.74.75])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E1B43F66E;
-	Thu, 18 Sep 2025 08:04:54 -0700 (PDT)
-Message-ID: <5f4037e3-7aaa-4919-9220-8989790c333b@arm.com>
-Date: Thu, 18 Sep 2025 20:34:50 +0530
+	s=arc-20240116; t=1758207898; c=relaxed/simple;
+	bh=4PZfLFnOxLVq3nXJlAJ9Bj7bNfCQqBZqH9+lTJiqVhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8P5J1ZJiptcU46YmaKGQAd/Ja53+3u4ZTD8tIZIQ6cfiqHlU9sU97lSho74EKHU3XYmLfe6hqq2Ewd4/rL1xYOEcvThQsCLIB6kx5rX200KSrDDgoY6+4d9lYHROcOzEPbqFvHnBFMX/UMS9SeTEZGB1FX5QVuhA3FGmGB8+ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.158.240.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id C2BEC34210A;
+	Thu, 18 Sep 2025 15:04:55 +0000 (UTC)
+Date: Thu, 18 Sep 2025 23:04:50 +0800
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] riscv: dts: spacemit: define a SPI controller node
+Message-ID: <20250918150450-GYD1274501@gentoo.org>
+References: <20250917220724.288127-1-elder@riscstar.com>
+ <20250917220724.288127-4-elder@riscstar.com>
+ <20250918133209-GYB1273705@gentoo.org>
+ <5956e320-7cbb-4d9a-95a7-720cfa6b9654@riscstar.com>
+ <20250918140633-GYA1274501@gentoo.org>
+ <0053c0ca-340f-46fd-adb1-6af6928717ee@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Elide TLB flush in certain pte protection
- transitions
-To: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: anshuman.khandual@arm.com, wangkefeng.wang@huawei.com, baohua@kernel.org,
- pjaroszynski@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250918103638.77282-1-dev.jain@arm.com>
- <fb5818ec-dde9-4d53-ab0f-e28e5c2cab33@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <fb5818ec-dde9-4d53-ab0f-e28e5c2cab33@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0053c0ca-340f-46fd-adb1-6af6928717ee@riscstar.com>
 
+Hi Alex,
 
-On 18/09/25 6:19 pm, Ryan Roberts wrote:
-> On 18/09/2025 11:36, Dev Jain wrote:
->> Currently arm64 does an unconditional TLB flush in mprotect(). This is not
->> required for some cases, for example, when changing from PROT_NONE to
->> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
->> growing into the non-main heaps), and unsetting uffd-wp in a range.
->>
->> Therefore, implement pte_needs_flush() for arm64, which is already
->> implemented by some other arches as well.
->>
->> Running a userspace program changing permissions back and forth between
->> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
->> for the none->rw transition, I get a reduction from 3.2 microseconds to
->> 2.95 microseconds, giving an 8.5% improvement.
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->> mm-selftests pass. Based on 6.17-rc6.
->>
->>   arch/arm64/include/asm/tlbflush.h | 29 +++++++++++++++++++++++++++++
->>   1 file changed, 29 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->> index 18a5dc0c9a54..4a566d589100 100644
->> --- a/arch/arm64/include/asm/tlbflush.h
->> +++ b/arch/arm64/include/asm/tlbflush.h
->> @@ -524,6 +524,35 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
->>   {
->>   	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
->>   }
->> +
->> +static inline bool __pte_flags_need_flush(pteval_t oldval, pteval_t newval)
-> ptdesc_t is the preferred any-level type.
+On 09:20 Thu 18 Sep     , Alex Elder wrote:
+> On 9/18/25 9:06 AM, Yixun Lan wrote:
+> > Hi Alex,
+> > 
+> > On 08:51 Thu 18 Sep     , Alex Elder wrote:
+> >> On 9/18/25 8:32 AM, Yixun Lan wrote:
+> >>>> +			spi3: spi@d401c000 {
+> >>>> +				compatible = "spacemit,k1-spi";
+> >>>> +				reg = <0x0 0xd401c000 0x0 0x30>;
+> >>>> +				#address-cells = <1>;
+> >>>> +				#size-cells = <0>;
+> >>>> +				clocks = <&syscon_apbc CLK_SSP3>,
+> >>>> +					 <&syscon_apbc CLK_SSP3_BUS>;
+> >>> ..
+> >>>> +				clock-names = "core",
+> >>>> +					      "bus";
+> >>> can you simply put them together in one line? it's kind of tedious to split..
+> >>
+> >> Sure I can do that.  I've seen it both ways.
+> >>
+> > right, it's merely a coding style I want to enforce, to make it slightly consistent
+> > 
+> >>>> +				resets = <&syscon_apbc RESET_SSP3>;
+> >>>> +				interrupts-extended = <&plic 55>;
+> >>> why use interrupts-extended?
+> >>
+> >> Because it specifies both the controller and interrupt number
+> >> explicitly.  Why *not* use interrupts-extended?
+> >>
+> > It's just unnecessary, the SPI node will fall back to find parent node's interrupt
+> > which already specific as &plic, brings no benefits
+> 
+> The benefit it brings is that I don't have to search backward to
+> see what the interrupt controller is.  I realize it's redundant
+> but I do prefer interrupts-extended over just interrupts.
+> 
+although both should work fine, I do prefer simple "interrupts" version
+for dts wide consistence, at least for SpacemiT
 
-I keep forgetting this :)
+while reading Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+interrupts-extended is useful when there are multi interrupt parents, or need
+to specific different one..
 
->
->> +{
->> +	pteval_t diff = oldval ^ newval;
->> +
->> +	/* invalid to valid transition requires no flush */
->> +	if (!(oldval & PTE_VALID) || (oldval & PTE_PRESENT_INVALID))
-> Is the PTE_PRESENT_INVALID really required? If the oldval was invalid, there
-> can't be a TLB entry for it, so no flush is required; that's it, I think?
->
-> In fact, PTE_PRESENT_INVALID is overlaid with PTE_NG; it only means
-> PTE_PRESENT_INVALID when PTE_INVALID=0, so I think this is broken as is. Valid
-> user-space PTEs always have PTE_NG set, so you will never flush.
+Yes, we have different opinion here, let's wait and see what DT maintainer think
 
-Not sure I get you. The condition as I wrote means
-
-1. If PTE_VALID is not set, then do not flush.
-2. If PTE_VALID is set, *and* PTE_PRESENT_INVALID is set, then do not flush.
-
-So when you say "it only means PTE_PRESENT_INVALID when PTE_INVALID=0", the
-second condition meets that.
-
->
->> +		return false;
->> +
->> +	/* Transition in the SW bits and access flag requires no flush */
->> +	diff &= ~(PTE_SWBITS_MASK | PTE_AF);
-> Could you explain your thinking on why PTE_AF changes don't need a flush? I
-> would have thought if we want to clear the access flag, that would definitely
-> require a flush? Otherwise how would the MMU know to set the acccess bit on next
-> access if it already has a TLB entry?
-
-You are correct, but AFAIK losing access bit information is not fatal, it will only
-mess with page aging. So potentially reclaim will lose some accuracy.
-
->
->> +
->> +	if (!diff)
->> +		return false;
->> +	return true;
-> Perhaps just "return !!diff;" here?
-
-Sure.
-
->
-> Thanks,
-> Ryan
->
->
->> +}
->> +
->> +static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
->> +{
->> +	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
->> +}
->> +#define pte_needs_flush pte_needs_flush
->> +
->> +static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
->> +{
->> +	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
->> +}
->> +#define huge_pmd_needs_flush huge_pmd_needs_flush
->> +
->>   #endif
->>   
->>   #endif
+-- 
+Yixun Lan (dlan)
 
