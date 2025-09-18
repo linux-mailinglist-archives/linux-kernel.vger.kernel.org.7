@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-822729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDCCB848A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:17:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83D6B848B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7673362808E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:17:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F67C54214C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B0B1DDC1D;
-	Thu, 18 Sep 2025 12:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E8F2D238B;
+	Thu, 18 Sep 2025 12:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="RJfTU5E6"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="n0PqFeBt"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5902F36D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEB638DEC;
+	Thu, 18 Sep 2025 12:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758197839; cv=none; b=oO6ok2Hz2FNdiy57HVaNZUvsjyfOqR4zQWbrQvWgGE+I3XeNfEmV3RHs9RkbwNv10plzgc3wmUVtxHhwr7eAfiR15fxijCqiLKMp6Fj014K/QM/L5+T2yQs2sXs0aldTUVc06g32PHrf0blhtRcpsxUwq5K2Zjz9Hq4Ss4KD7kY=
+	t=1758197885; cv=none; b=ESuX3PAiXME+LZPEIAnZRrv/mIzGuuzAZKShk9suPYZMVT0rn+PBWJB8pABUQ9+QBRvWJckia7+TLopM/d/SnmmbheSalCbXI2Wq6cMauEaplzPRx98au47j8fhiVRSMCqBgI6BUW6vaF5LGCLU7uMCFi1Gf+ExRdJNaY1big44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758197839; c=relaxed/simple;
-	bh=3HTdFHE1nOnlBuISAA1vPVTn99dilijNsc7PTZ/Rej8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kmKj//D9bV6V45n36fFSNUurfAHdTB2dffmWxuj4wS/PYM53mwoCjJPH388hozv78IaI+UJeCVLVH/eRUYGu2i8uwWqVa4w+WNBzrHohCL/MB4LG47bM9UphdAdr6eSly6iS9wNjDpiSccsKKhM7qKBvrTHi7b6VecFOEzsjqOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=RJfTU5E6; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77b91ed5546so800955b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758197834; x=1758802634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jatDnkKAY0zA3/egfMgLsSXpfyI9PR3+CVwZCbKLIFA=;
-        b=RJfTU5E6HCbEvFZDmlZyUaFg7a+olv/lbMXcGLtj6ZGbtSdGcA+q617+1FRBVJxHvC
-         cWet5jXlMZ/Zd347fXruZNKUWL+yltUU0cOdJow5VdpejvNYqukq2ooZBfirV0omu9xB
-         LRF1m6a5DG1WGLaK5uT8y2roqglZVVQri6HrTlBafnWMT3BptW2C8NL3OHFlgMA0bEmE
-         KATQoYrt2iJt1mYCjpxzWJsRvvnuxd+NbV/IJpF3WZ6NZiDMUbsYZfsZr64J4eQpBeRT
-         66LQJSbJdgM0I8YD1gqAwpO1Qfi2BlaLHlpr+Oz6HuX25WiFz6emzkMoagX/pJ9vz895
-         Mwkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758197834; x=1758802634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jatDnkKAY0zA3/egfMgLsSXpfyI9PR3+CVwZCbKLIFA=;
-        b=Mz23TXo8W0nCPsjD8KhTs9EnjBp/F/leCRQQkErOt7rcL/vfaKTKJvy+gcYS47Y4u1
-         NovMS5t5gXC+rL4BXtqowZJ9YFWqmoiwyelgNgK6C4gAC4ZSgGvgkKeQoUnI033NW/p2
-         XBJl9PBRy/6eT8J6S/7rPeYAR1Ep8xzAv/AEfqKAXveHl5GrOLITGwC5zIz7iN04Wa/6
-         IMJohwe7fVD0f29xg9OcGEszwTvrpoRPXPFLoqfsNRge3TBljTkY6WE2d1/K/TmqpPwi
-         O3ptCx9GTJpXcfTihBrUeszVAS694WgldckEOjOwbFuMuB+npXRV2emlVh4bQwk68ctt
-         e0Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGLfg4dPn1CvTMiHmoXpEAqSkssTPLGOKrh0aSqa56LTHjO6o2UTrOUDaBHc5VBZtkY6ZaY6972MVS/vA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOtz5kKu/tZ1AZRruXsSIGt2tQ6H+RAK/4k6Zd7OkoEad7Srsa
-	2koGk/G2FQQ0me3fqnEANbPZta5AqAiotaIa5NEbAKgNmU4On4bVobsCAEQD+eabpM0=
-X-Gm-Gg: ASbGnctM3h7IRwQdToLjJRTqMoGxBB6FVFxFmRx853MBNBvL3LyEd2MFIjPEtzFOkUg
-	UMrAfGFeb3yTenQ3SNlZrqO/OjMLQxjFtJRuidqTqxxitUhIFhvy1HTtdWUN205wRLyE801UrkG
-	CbyMY4/xxA9Vv4/RPLFnNLK3Z/gXY/vMVHB/2oI3xdH1c0ynTogLyt4r2Jj/n4EIqG+25O1TTl2
-	BSADavpn1dx6k+oC5spmtVqjHY38jHVrvp5EF2QGvh1ZLB7hWYp3lxBNlSxHLF0zAo6m4J+Ofhh
-	rUYWyyPdEgtrfgtXLMKr2GWCW2Aya4YZWtFyrkmtNMlG9reWGIjmLfZA430nx9a7JMnUaV4r0ks
-	3W/DQk5mqYuP2yB0qWTAL+O/ezNoygjx3mGFWm6fm0urXrBXULA==
-X-Google-Smtp-Source: AGHT+IG4rqckA4W7pc4nGdg3+s4HGjiQFkvQqmFvGUjzXj+OKrljgWz6KGWOYSNvOTvazqcm9w16Og==
-X-Received: by 2002:a05:6a00:18a1:b0:772:78e6:f61a with SMTP id d2e1a72fcca58-77bf71cdeeemr7119344b3a.13.1758197834388;
-        Thu, 18 Sep 2025 05:17:14 -0700 (PDT)
-Received: from L4CR4519N7.bytedance.net ([203.208.189.10])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77da44030besm1168023b3a.0.2025.09.18.05.17.11
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 18 Sep 2025 05:17:14 -0700 (PDT)
-From: Rui Qi <qirui.001@bytedance.com>
-X-Google-Original-From: Rui Qi
-To: tony.luck@intel.com,
-	bp@alien8.de,
-	mchehab@kernel.org,
-	james.morse@arm.com,
-	rric@kernel.org
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rui Qi <qirui.001@bytedance.com>
-Subject: [PATCH] EDAC/skx_common: Fix allocation check when adxl_component_count is 0
-Date: Thu, 18 Sep 2025 20:17:04 +0800
-Message-Id: <20250918121704.45116-1-qirui.001@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1758197885; c=relaxed/simple;
+	bh=Pi55Lgv4NSH7IBWAFEbfdejlpFHj7kA8fDuK+OV14IE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MT9jLNfdPgoX44ibxbaBtbfwn0LmvUJuIc13YYqycqfYiQUVVamDKdWhNhBjblgvaVaLBG5G8thR58hjayMR19+GKCerMk+NXTFNzgk7duu6vkwxgJGWaO7zaHIyqLS+dZ3xCioL/YWsxPu0l8ScozhBOtWJ9D8s1EnaDKuZHhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=n0PqFeBt; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 81a79b8a948911f0b33aeb1e7f16c2b6-20250918
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ibnvy9YAQTgvMVoP55WsnSiUBvLu1L/8yxn2eAXqpYc=;
+	b=n0PqFeBtZr0gsx2SjJRridpE3Wz8c9lNTZiayFmlHGXvaxBneW+Nwh3VZzcVpH086uY6pxiIYjerlZA3QTFOEBrcNA0bqTrlJMSeWsdYcmU5gLySEQAgNDa/LkPjJhjdKeGggO62kvyxb1+ih3qztYtSpGO9x9yyJLTqgd44ZUo=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:6c635f8f-7c03-408c-9102-3fe21878e74a,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:1ca6b93,CLOUDID:bd9a1991-68e1-4022-b848-86f5c49a6751,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 81a79b8a948911f0b33aeb1e7f16c2b6-20250918
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 342183766; Thu, 18 Sep 2025 20:17:55 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Thu, 18 Sep 2025 20:17:53 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Thu, 18 Sep 2025 20:17:53 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Sean Wang
+	<sean.wang@mediatek.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 1/4] dt-bindings: arm64: mediatek: add mt8395-evk-ufs board
+Date: Thu, 18 Sep 2025 20:17:47 +0800
+Message-ID: <20250918121751.229554-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,35 +81,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-From: Rui Qi <qirui.001@bytedance.com>
+Add a compatible string for the MediaTek mt8395-evk-ufs board.
+This board is the origin Genio 1200 EVK already mounted two main storages,
+one is eMMC, and the other is UFS. The system automatically prioritizes
+between eMMC and UFS via BROM detection, so user could not use both storage
+types simultaneously. As a result, mt8395-evk-ufs must be treated as a
+separate board.
 
-Use ZERO_OR_NULL_PTR instead of simple NULL check to properly handle
-the case where adxl_component_count is 0, which would result in
-kcalloc returning ZERO_SIZE_PTR rather than NULL.
-
-This ensures correct error handling when no ADXL components are
-present and prevents potential issues with zero-sized allocations.
-
-Signed-off-by: Rui Qi <qirui.001@bytedance.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/edac/skx_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/mediatek.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/edac/skx_common.c b/drivers/edac/skx_common.c
-index 39c733dbc5b9..768d787813ec 100644
---- a/drivers/edac/skx_common.c
-+++ b/drivers/edac/skx_common.c
-@@ -90,7 +90,7 @@ int skx_adxl_get(void)
- 
- 	adxl_values = kcalloc(adxl_component_count, sizeof(*adxl_values),
- 			      GFP_KERNEL);
--	if (!adxl_values) {
-+	if (ZERO_OR_NULL_PTR(adxl_values)) {
- 		adxl_component_count = 0;
- 		return -ENOMEM;
- 	}
+Changes for v2:
+ - No change.
+
+Changes for v3:
+ - No change.
+
+Changes for v4:
+ - No change. Add Reviewed-by tag. Thanks!
+
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index 19ed9448c9c2..34b9e254a563 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -443,6 +443,7 @@ properties:
+           - enum:
+               - kontron,3-5-sbc-i1200
+               - mediatek,mt8395-evk
++              - mediatek,mt8395-evk-ufs
+               - radxa,nio-12l
+           - const: mediatek,mt8395
+           - const: mediatek,mt8195
 -- 
-2.20.1
+2.45.2
 
 
