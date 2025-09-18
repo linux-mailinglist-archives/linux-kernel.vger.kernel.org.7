@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-823471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1D7B86978
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:55:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDEEB8698D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E02F27A9210
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:52:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B0AA7BE0BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526B52D46B3;
-	Thu, 18 Sep 2025 18:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5ACE2D3EC7;
+	Thu, 18 Sep 2025 18:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggOo/wv6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="q4ZxZa03"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF6127B357;
-	Thu, 18 Sep 2025 18:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19603C465;
+	Thu, 18 Sep 2025 18:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221638; cv=none; b=cEqnSh9dunaHECkyakMZcLX8enHnBA3iOP0mZ4Ttw4g32tk93nleVHaP3I6plBq4O3uF4WSdMCDu/eV5y9nNyMEo+0JgvaBKEYf5IL68XUMUtlRqSVwKGTGSNK4pEPgc0Roxz3j5ycEmPPfWKod2d+fPUG//wm9DdxoJ76fc5O4=
+	t=1758221839; cv=none; b=G9SbmFJEvI94Vu0JAU37l7yrBgt4TJwwcmoCZG80dcyPtL9gVlzIwwI+JdShnHgABQ6RKESTfh+LNjmzQYhBgBhL3eLFomA/g4hVypr5OILubaNzscrGamk6vGGydncKa4ByYdplLUdrzKmg6YMMSjbpEzZE5hYxFvPtLtIjpgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221638; c=relaxed/simple;
-	bh=8pFcwNdTRRXNyhxMg3EVbIUjIj9oGklWQFId1hTxeWE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WkDTKSUT7e6vZYBfwufMerreXl7Fv+gxvo1DEOfdH4MCs9emKgc5g8oB7SFkM32ZUqJm7KaATuoevAaMlSd7k3IMYQSrx0eLQRe7pUgQK4I8PuIjSYP5qRLiw0vjLlgtPjCk2w+ps93Ldcf2xkTZrwkF0frDu0n7n4qrEmpuEfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggOo/wv6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F161BC4CEE7;
-	Thu, 18 Sep 2025 18:53:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758221638;
-	bh=8pFcwNdTRRXNyhxMg3EVbIUjIj9oGklWQFId1hTxeWE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ggOo/wv6spysNgu8Zxg51el+9c+Z9BAXohzEw+5T15dJ+3eruutBRss9+oDCUC2vW
-	 PEeWGEyCt9dR8CEqji9p5mJLcd+FMZrCJNWWjjECY5+khLbKSIa9PoMxqUK4W/T1gu
-	 RoSutHlVDJuXpFBeL2IwrWkYFR9Fu0sH50+eZHDzCv6em8UCH6HmvAXQ+iv3EDTHCN
-	 dNBxRSIhbGYde6Njg+JNAphhQBxMFlvg/936HWE6jaV/2YoG6IQJkrCeYpXZLL2pqZ
-	 JdqFD+eXg8aoLS/s0W2Il8jmiuSOCoGjEPHxSbhwKd/sHAHXDGjgU3t6APcksbGCOH
-	 /ISDzYzl48cfg==
-Date: Thu, 18 Sep 2025 13:53:56 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v3 4/4] PCI: qcom: Allow pwrctrl core to control PERST#
- if 'reset-gpios' property is available
-Message-ID: <20250918185356.GA1879416@bhelgaas>
+	s=arc-20240116; t=1758221839; c=relaxed/simple;
+	bh=n3lbOBSHHN6qjgd0ZGik8Gxu1EjlZkYg8FEfJYQxmjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jAQ3VI3Rz67TZNkXY0i1fzzKS7MFyhmGqZAgD675W/J8vdwrDj2/kjjDxSulwUqVTSrq+mkirXWTcQkp6zEUkvpb4iLH14O/KXeBX2EI30hQcDvuajQqobCeXBiwA0Rzp5oZjqShXoFabmK94xwPMgtQrYjJ1L6wi+Yt+fAiE+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=q4ZxZa03; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Dq+1iSG82r9yQIVHmumBoetFqjeDWLapJ2V4N8waYYE=; b=q4ZxZa03qHI68xQGdp1+HoucWC
+	A6UKcRRoF7upoBx+/JQDcOnmpTpM+Gei1qTcmgUadALtWTjpfnhzEAzVt/x7MW/pYZLd14Aq1LvrW
+	N0aDiWpJ0VKi8lOSIwAq4ngUjO1vknuFPaaCNjj6b86XUj1Pv7vaGObohPsiS1Xo+PlqNhCKtAemf
+	RvZcobPmZv6pLKkD8DB0nZmNXQDeMj5+YmQB13tVTxPaU4nmzrjcjOfH8LKguncAqW6GoDEpdjNkP
+	1/CCJsWoIb8Dvk7Nwdj1cpdAijA7x2xeZLqKwZRQW+ThWmXa1aAs46Y60v2xEpJ/E/a1aVVEExdWR
+	GDrxP/0Q==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1uzJoL-00Fya0-13;
+	Thu, 18 Sep 2025 19:56:53 +0100
+Date: Thu, 18 Sep 2025 19:56:53 +0100
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, stable@vger.kernel.or,
+	Chris Fenner <cfenn@google.com>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Disable TPM2_TCG_HMAC by default
+Message-ID: <aMxV9fB0E72QQY2G@earth.li>
+References: <20250825203223.629515-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <gnaubphg6iyh23vtf2flsjxoot7psgla7cr2c5jpecaozh4vf3@mzcmg74g3ogk>
+In-Reply-To: <20250825203223.629515-1-jarkko@kernel.org>
 
-On Wed, Sep 17, 2025 at 03:53:25PM +0530, Manivannan Sadhasivam wrote:
-> On Tue, Sep 16, 2025 at 03:48:10PM GMT, Bjorn Helgaas wrote:
-> > On Fri, Sep 12, 2025 at 02:05:04PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > 
-> > > For historic reasons, the pcie-qcom driver was controlling the
-> > > power supply and PERST# GPIO of the PCIe slot.
-> > 
-> > > This turned out to be an issue as the power supply requirements
-> > > differ between components. For instance, some of the WLAN
-> > > chipsets used in Qualcomm systems were connected to the Root
-> > > Port in a non-standard way using their own connectors.
-> > 
-> > This is kind of hand-wavy.  I don't know what a non-standard
-> > connector has to do with this.  I assume there's still a PCIe link
-> > from Root Port to WLAN, and there's still a PERST# signal to the
-> > WLAN device and a Root Port GPIO that asserts/deasserts it.
-> 
-> If we have a non-standard connector, then the power supply
-> requirements change.  There is no longer the standard 3.3v, 3.3Vaux,
-> 1.8v supplies, but plenty more.  For instance, take a look at the
-> WCN6855 WiFi/BT combo chip in the Lenovo X13s laptop:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts#n414
-> 
-> These supplies directly go from the host PMIC to the WCN6855 chip
-> integrated in the PCB itself. And these supplies need to be turned
-> on/off in a sequence also, together with the EN/SWCTRL GPIOs, while
-> sharing with the Bluetooth driver.
+On Mon, Aug 25, 2025 at 11:32:23PM +0300, Jarkko Sakkinen wrote:
+>After reading all the feedback, right now disabling the TPM2_TCG_HMAC
+>is the right call.
+>
+>Other views discussed:
+>
+>A. Having a kernel command-line parameter or refining the feature
+>   otherwise. This goes to the area of improvements.  E.g., one
+>   example is my own idea where the null key specific code would be
+>   replaced with a persistent handle parameter (which can be
+>   *unambigously* defined as part of attestation process when
+>   done correctly).
+>
+>B. Removing the code. I don't buy this because that is same as saying
+>   that HMAC encryption cannot work at all (if really nitpicking) in
+>   any form. Also I disagree on the view that the feature could not
+>   be refined to something more reasoable.
+>
+>Also, both A and B are worst options in terms of backporting.
+>
+>Thus, this is the best possible choice.
 
-It sounds like the WCN6855 power supplies have nothing to do with the
-qcom PCIe controller, the Root Port, or any switches leading to the
-WCN6855.  And I guess the same for the wlan-enable, bt-enable, and
-swctrl GPIOs?
+I think this is reasonable; it's adding runtime overhead and not adding 
+enough benefit to be the default upstream.
 
-  wcn6855-pmu {
-          compatible = "qcom,wcn6855-pmu";
-          wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
-          bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
-          swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
-          regulators {
-                  vreg_pmu_rfa_cmn_0p8: ldo0 {
-                          regulator-name = "vreg_pmu_rfa_cmn_0p8";
-                  ...
+Reviewed-By: Jonathan McDowell <noodles@earth.li>
 
-  &pcie4_port0 {
-          wifi@0 {
-                  compatible = "pci17cb,1103";
-                  vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
-                  ...
+>Cc: stable@vger.kernel.or # v6.10+
+>Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+>Suggested-by: Chris Fenner <cfenn@google.com>
+>Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>---
+>PS. I did not post this last week because that would have been most
+>likely the most counter-productive action to taken. It's better
+>sometimes to take a bit of time to think (which can be seen that
+>I've given also more reasonable weight to my own eaerlier
+>proposals).
+>
+>I also accept further changes, if there is e.g., inconsistency
+>with TCG_TPM_HMAC setting or similar (obviously).
+>---
+> drivers/char/tpm/Kconfig | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+>index dddd702b2454..3e4684f6b4af 100644
+>--- a/drivers/char/tpm/Kconfig
+>+++ b/drivers/char/tpm/Kconfig
+>@@ -29,7 +29,7 @@ if TCG_TPM
+>
+> config TCG_TPM2_HMAC
+> 	bool "Use HMAC and encrypted transactions on the TPM bus"
+>-	default X86_64
+>+	default n
+> 	select CRYPTO_ECDH
+> 	select CRYPTO_LIB_AESCFB
+> 	select CRYPTO_LIB_SHA256
+>-- 
+>2.39.5
 
-But I guess PERST# isn't described in the same place (not in
-wcn6855-pmu)?  Looks like maybe it's this, which IIUC is part of the
-pcie4 host bridge?
+J.
 
-  &pcie4 {
-          max-link-speed = <2>;
-          perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
-          wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
-
-Does that mean this PERST# signal is driven by a GPIO and routed
-directly to the WCN6855?  Seems like there's some affinity between the
-WCN6855 power supplies and the WCN6855 PERST# signal, and maybe they
-would be better described together?
+-- 
+] https://www.earth.li/~noodles/ []  Is this real - that's the first   [
+]  PGP/GPG Key @ the.earth.li    []    thing I think every morning.    [
+] via keyserver, web or email.   []                                    [
+] RSA: 4096/0x94FA372B2DA8B985   []                                    [
 
