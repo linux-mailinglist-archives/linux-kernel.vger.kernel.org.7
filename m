@@ -1,78 +1,112 @@
-Return-Path: <linux-kernel+bounces-821986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B88B82C53
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D175DB82D4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D331B272D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:38:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0423A1C05F1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB3E23AB87;
-	Thu, 18 Sep 2025 03:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F9E23E33D;
+	Thu, 18 Sep 2025 03:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ez6AdStu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="W9RAvHvV"
+Received: from out198-30.us.a.mail.aliyun.com (out198-30.us.a.mail.aliyun.com [47.90.198.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B662582;
-	Thu, 18 Sep 2025 03:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBB15680;
+	Thu, 18 Sep 2025 03:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758166698; cv=none; b=Y+F1WQsj7YGG3xIBMrrM4QuopbMCf3PXqQHkDUYOTvx6fbChAIBUK1d7GCqBHCbr8yI10ARuFgTkho0mwqUsn2NCDN8uhZBzu55aiI0duEqiTPrt1QwWfQ5CsibGY5kOilV9L3MKE3xLk6V2oYcuH72cKB62K5/o8nebHYawxNo=
+	t=1758167695; cv=none; b=UyW27wFkdQ2yAnKY0zId7w4GH+0gv63j5etapDJ6RiLR23Nm3pRYDEurdmnt4SduZ5YAlS0jYrssc9B+6/+p+Thcg1GZKx0PicTl7Vp4kajUgkCDuQ6Id485WfE8EuIoTO5a7SDslJSBsJdggzEmE5Pr5mIDL3Cka9uM9MFiJtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758166698; c=relaxed/simple;
-	bh=9zlp7HPPoTfiEyUqnJ1aM49b7XicO+GZ1rBQUGKxoGc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=M9RgjVp8YriEhI2tVORSpH7hLi/puMVpKCIA52Tp7EanClaOBy7PErFdWz1okigwBqindETJtUkaB8An1Gs6r20WbffEHt2yv6H7ILgCKTQ0TMRZXkcZNWB8wjl9DJXQ8eqfhBiaeL7JXDseHVEjV+pmEC37O7tw+y/Rgbw9zP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ez6AdStu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9EEEC4CEE7;
-	Thu, 18 Sep 2025 03:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758166697;
-	bh=9zlp7HPPoTfiEyUqnJ1aM49b7XicO+GZ1rBQUGKxoGc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Ez6AdStu5nBpZwd7W4163cNGnuEZsTLewXuLmoocC1znZsRpgk9sz+w20iAJM++ok
-	 1lByfAbQfw3pfjpGSdeL7SgExx9Bas6vZJn0p2LbXwwVEs+mlYgCMwi+vH1AEZTjq/
-	 rM8QGF0lXS9wGGA5pkrBKZgGSZ1ja+mKz3wBjih5Qjw917VWmHz2DEr9a64/0bXI6R
-	 fVj+moWqiPDZdy/T75CS0E3UpEAF6qwlNr93CeKE0QB5kdqb8nwX8SmTvkdSgDX/w7
-	 j2hWcEaf2bLB74SD+HYj8ePikiAW1/KBN7fzMKBiRlYp2fHw67f7gid5ZOCtCTtzuP
-	 eEQyG/ehhjGTQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7166B39D0C28;
-	Thu, 18 Sep 2025 03:38:19 +0000 (UTC)
-Subject: Re: [GIT PULL] ksmbd server fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mveqnRsJ4Fi8pQjTY2WrtDbys1f3JPR+OR=w-eskUoiyw@mail.gmail.com>
-References: <CAH2r5mveqnRsJ4Fi8pQjTY2WrtDbys1f3JPR+OR=w-eskUoiyw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mveqnRsJ4Fi8pQjTY2WrtDbys1f3JPR+OR=w-eskUoiyw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/6.17-rc6-ksmbd-fixes
-X-PR-Tracked-Commit-Id: e1868ba37fd27c6a68e31565402b154beaa65df0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 592a93fea16bd86a605a1b4ce9aed16e22d124d2
-Message-Id: <175816669794.2244756.15215190037383884573.pr-tracker-bot@kernel.org>
-Date: Thu, 18 Sep 2025 03:38:17 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Namjae Jeon <linkinjeon@kernel.org>, "Stefan (metze) Metzmacher" <metze@samba.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1758167695; c=relaxed/simple;
+	bh=alUYGA6GvFU0nR1WoHxLH4K/gUHxySZ4f64UAbwIu6U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KHk3W8oTIRhn+Wt7yWy4aNNDOgbh9kMahRTAjisOgsMl/sj+NDBAknaKRy1T59FrXxUKcBQ+92D6ydL1BVjruwzutwpFa9Mm8jJe0udTyVJOh2rkEodjg4Gt/GaWM3Tx7peboiiatA92REhOm+5c244JP19jz0+3sg/V79JGgt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=W9RAvHvV; arc=none smtp.client-ip=47.90.198.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1758167678; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=tRHDzYMehKJtnyqVrOz7oriZ6NEoN18vvwdHpqaGPwM=;
+	b=W9RAvHvVKHG2Z0BaDKcF5/cPk8bdFkeR3+Y/ji/CJGjYoETSjt7zuqb4AbPjjrMywSpdQWvheS7iceZ+JZu7VAVpIMOy628MMd3WNufaGcuO3DeQfNOznMa35IY55l11bQHX4hWlVampBD7WmfMWsbTJw0ZkwaKEKngd+6vN41A=
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.ehjHahQ_1758166737 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Thu, 18 Sep 2025 11:38:57 +0800
+From: Hou Wenlong <houwenlong.hwl@antgroup.com>
+To: kvm@vger.kernel.org
+Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] KVM: x86: Add helper to retrieve cached value of user return MSR
+Date: Thu, 18 Sep 2025 11:38:50 +0800
+Message-Id: <05a018a6997407080b3b7921ba692aa69a720f07.1758166596.git.houwenlong.hwl@antgroup.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Wed, 17 Sep 2025 19:24:31 -0500:
+In the user return MSR support, the cached value is always the hardware
+value of the specific MSR. Therefore, add a helper to retrieve the
+cached value, which can replace the need for RDMSR, for example, to
+allow SEV-ES guests to restore the correct host hardware value without
+using RDMSR.
 
-> git://git.samba.org/ksmbd.git tags/6.17-rc6-ksmbd-fixes
+Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+---
+ arch/x86/include/asm/kvm_host.h | 1 +
+ arch/x86/kvm/x86.c              | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/592a93fea16bd86a605a1b4ce9aed16e22d124d2
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index cb86f3cca3e9..2cbb0f446a9b 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -2376,6 +2376,7 @@ int kvm_add_user_return_msr(u32 msr);
+ int kvm_find_user_return_msr(u32 msr);
+ int kvm_set_user_return_msr(unsigned index, u64 val, u64 mask);
+ void kvm_user_return_msr_update_cache(unsigned int index, u64 val);
++u64 kvm_get_user_return_msr_cache(unsigned int index);
+ 
+ static inline bool kvm_is_supported_user_return_msr(u32 msr)
+ {
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 6d85fbafc679..88d26c86c3b2 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -675,6 +675,14 @@ void kvm_user_return_msr_update_cache(unsigned int slot, u64 value)
+ }
+ EXPORT_SYMBOL_GPL(kvm_user_return_msr_update_cache);
+ 
++u64 kvm_get_user_return_msr_cache(unsigned int slot)
++{
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
++
++	return msrs->values[slot].curr;
++}
++EXPORT_SYMBOL_GPL(kvm_get_user_return_msr_cache);
++
+ static void drop_user_return_notifiers(void)
+ {
+ 	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
 
-Thank you!
-
+base-commit: 603c090664d350b7fdaffbe8e6a6e43829938458
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.31.1
+
 
