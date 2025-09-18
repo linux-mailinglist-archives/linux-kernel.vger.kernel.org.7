@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-822656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90597B8468C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:48:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E10B84693
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307C2174B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78915525D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92320286427;
-	Thu, 18 Sep 2025 11:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBB82FB603;
+	Thu, 18 Sep 2025 11:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="afUQKMJe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gUTOyhZU"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E18283153;
-	Thu, 18 Sep 2025 11:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64299302CB6
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758196122; cv=none; b=R8JWPB+jj1+QdzsKsvwuirGUb/E+eI2Lr4wT40jHvop05juDvgta/H/PCUwBnLq7wDzBnZ5K5UJduOiAd1Gn7TTl1+xHsi7gEXfqLaJtHMjT0xAoxGosciMx4Rf102IKtWyib7J3vdUlfYZYZewDJKCFMSJ8a+TEfTL6hzj8j3g=
+	t=1758196127; cv=none; b=OeL+CIFNG4M6iegddmCS7cPpHxyDAR2hHY1Twz5kQTyJaKy2rbgrrJWX2xL9o6aEWgX8ZZGU/0g8m3HYjAXYa93jdALgCS/ROTJ6+TO1e73bo7xUWfdDsq+VEncP9GyqsRyXrXWXPgo+RKBuT7gbOErA4a7554BdivLuiaxJGXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758196122; c=relaxed/simple;
-	bh=/GS2pi0BPhylD1m4PDk3EtPIv0KWtd8YNZ8MMg1pVkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ucwx74BIePSj9CjenmF0Lumr+h/uHdxiirmLnnZIKJvkzi1HED7+eRSsM+pyg8LLpFkJaC4JTBNNagf65xP91GNlgeJ4EWj3Wz6Mv31wRwUXjaecJgYcZqr9jP/D8Ppi2Q71Rs4khUnX1fPc2qegEk5+zkmTZrbc8Nw+OMYp1YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=afUQKMJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8F7C4CEE7;
-	Thu, 18 Sep 2025 11:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758196121;
-	bh=/GS2pi0BPhylD1m4PDk3EtPIv0KWtd8YNZ8MMg1pVkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=afUQKMJe3SZLc6Bp48RNJW9wskTebguMeMhbdotT0nsxBGAcS1HoUw2x2+voUrCUL
-	 2hmNJ3tq26QDYQ84qBCcX6kBuH1IWQVDajTU+S1GAcHxBIy6wfV+ZCCqJSWdUta9RR
-	 Ge0px/b+idBZT2BMlCVCTw9myHppianrLaXtnHTbgEhSlFag2bxRGqmaCmWB8f8uLX
-	 Mh0srkBkFOp+1sbDwS80Ugnpk3zV6kQqaj6gcCkTNGk272pV/NsoBrJKsPsGHGqZCR
-	 P/GSwyvyLSip48Wh6Elz+LqNSRlTBZrGtsiwI7o8JMUlXiwZNoddrbJfa4CuSXJz9w
-	 iPf1DTrWIe2qA==
-Date: Thu, 18 Sep 2025 12:48:35 +0100
-From: Will Deacon <will@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Luis Machado <luis.machado.foss@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64/sme: Support disabling streaming mode via
- ptrace on SME only systems
-Message-ID: <aMvxkzg_LT4C4Quh@willie-the-truck>
-References: <20250820-arm64-sme-ptrace-sme-only-v1-0-f7c22b2871f8@kernel.org>
- <20250820-arm64-sme-ptrace-sme-only-v1-3-f7c22b2871f8@kernel.org>
+	s=arc-20240116; t=1758196127; c=relaxed/simple;
+	bh=r0CpiwUKL2QvqtTVBu/vkf6gOH+5nGv/WLO8R4158+o=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=PfSPzdX397KKMonQkBLGePu6eIm1jSmcJtC3f2PO2S0Fyo9rbs8VUV/1bBIx+I6dlPTgh1ExpwrUCAH+3YUpelUTHsyB4sHj+YUAckeK4cysWAWR8M6UpVAEuYPwCZ/P0Y/fKTiSq29eHrkx5gCiUMSkPUR8Ag/4hC74iP5KX30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gUTOyhZU; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45f29c99f99so5180575e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 04:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758196124; x=1758800924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gjTjhC0GXxWOKnWXxPiVFKHc+WCcUAZ7VMt/DJBDKtg=;
+        b=gUTOyhZUbouLnbUoNORMzmdUPVYMmRKE9ljDinQ95+T5mVZb4NkWGsO0xOSEouG8m0
+         +sIG9v02e4K+umerQ1/RLEpcdPGdb1owKyKEDAmz2mHgF8/qgM52EkOm22EV8U5zkmA/
+         Rw1zYJNu6a2Y5QP5lPuxC+1/+q5By4zW+nNz6bduV77n/HJZeBqfHAoQRIDfCON1wpAD
+         xTLEb5rPmnimTCFl7wrRWBLh0HL/styTGUwOAnbyOLUaXojf8FQM0vnlfkZ+LIC/z0N5
+         3FDdqnMis4t+wObImsecDhHVp7nsuNwPVzFMx2gVL+BTTbzTflFIcNsuBTkCf6+T0stk
+         fKaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758196124; x=1758800924;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gjTjhC0GXxWOKnWXxPiVFKHc+WCcUAZ7VMt/DJBDKtg=;
+        b=urGRdpr8N9eUW8ndtS3qdAwBJ+PcnY1/cnbaD1PdljN268fF5MgyA83rV0qI/IQRvX
+         6MwzmPHcpSx4Y77wTtIo7Z3/G3eLjzwlpKL0/Y16CiHUKyWPMQ+g2t9x+35lh200kuYQ
+         nr5bLZFwuccg0Srjhq+nYYsF7Geh7cd1Tg7LrFBVFVd/5JX5/p6QBXAGzU6vphhDWpdU
+         f+w8yH78ynjtux7FEiVAYQdTNWcIMk8d5C2Lyhn2I049Y43R6YX02CrHU0IzGv+sBWqe
+         l2YZwAyJkTY/tO5Om2TeEmXCTjggVsELSuOOttAtkidI3SGEV0G/W7b3GX+wCaigEJQr
+         AnYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXLCFAGFONcU73aT38oFeOCHodn5lmNKavkAB8bOuw3Y6t/5WTG6yeaO/A31APCLuuVvmFVYoZkFjYR1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBPMuwGLr/9WNA7AZzJiF1GwkMM9+dpVVMy4YgfUoXU4mz9HvO
+	2kOH65DUlU/FLMURW3hW2uWFJ0d6CvF2S3+j9vOmNatwQyO7hyKQ39SBlkoVSJf8lu1z713Wxin
+	a05AsIljlpA==
+X-Google-Smtp-Source: AGHT+IEFRqfe/nIo/PJ9WsmrZAu5LFESQ/y9pacPFCfYMGNYUfu2hTf1tc2+XxV1ebQiySb1OZphgejnjUUp
+X-Received: from wmmu8.prod.google.com ([2002:a05:600c:c8:b0:45b:890a:14d1])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:350d:b0:45d:d2cd:de36
+ with SMTP id 5b1f17b1804b1-46202a0e76emr44220295e9.12.1758196123627; Thu, 18
+ Sep 2025 04:48:43 -0700 (PDT)
+Date: Thu, 18 Sep 2025 11:48:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250820-arm64-sme-ptrace-sme-only-v1-3-f7c22b2871f8@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250918114840.53581-1-abarnas@google.com>
+Subject: [PATCH] arch: powerpc: ps3: Make ps3_system_bus_type const
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: Geoff Levand <geoff@infradead.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 20, 2025 at 07:29:05PM +0100, Mark Brown wrote:
-> Currently it is not possible to disable streaming mode via ptrace on SME
-> only systems, the interface for doing this is to write via NT_ARM_SVE but
-> such writes will be rejected on a system without SVE support. Enable this
-> functionality by allowing userspace to write SVE_PT_REGS_FPSIMD format data
-> via NT_ARM_SVE with the vector length set to 0 on SME only systems. Such
-> writes currently error since we require that a vector length is specified
-> which should minimise the risk that existing software is relying on current
-> behaviour.
-> 
-> Reads are not supported since I am not aware of any use case for this and
-> there is some risk that an existing userspace application may be confused if
-> it reads NT_ARM_SVE on a system without SVE. Existing kernels will return
-> FPSIMD formatted register state from NT_ARM_SVE if full SVE state is not
-> stored, for example if the task has not used SVE. Returning a vector length
-> of 0 would create a risk that software would try to do things like allocate
-> space for register state with zero sizes, while returning a vector length of
-> 128 bits would look like SVE is supported. It seems safer to just not make
-> the changes to add read support.
-> 
-> It remains possible for userspace to detect a SME only system via the ptrace
-> interface only since reads of NT_ARM_SSVE and NT_ARM_ZA will succeed while
-> reads of NT_ARM_SVE will fail. Read/write access to the FPSIMD registers in
-> non-streaming mode is available via REGSET_FPR.
-> 
-> sve_set_common() already avoids allocating SVE storage when doing a FPSIMD
-> formatted write and allocating SME storage when doing a NT_ARM_SVE write so
-> we change the function to validate the new case and skip setting a vector
-> length for it.
-> 
-> The aim is to make a minimally invasive change, no operation that would
-> previously have succeeded will be affected, and we use a previously
-> defined interface in new circumstances rather than define completely new
-> ABI.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  Documentation/arch/arm64/sve.rst |  5 +++++
->  arch/arm64/kernel/ptrace.c       | 40 +++++++++++++++++++++++++++++++++-------
->  2 files changed, 38 insertions(+), 7 deletions(-)
+Because driver core can properly handle constant struct bus_type,
+move the ps3_system_bus_type to be a constant structure as well,
+placing it into read-only memory which can not be modified at runtime.
 
-It would be good to have an Ack from the userspace side (GDB?) so that
-we know that the minimal ABI change you're proposing is sufficient.
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
+---
+ arch/powerpc/platforms/ps3/system-bus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In the meantime, I'll pick up the first two selftests as they are
-independent of this part.
+diff --git a/arch/powerpc/platforms/ps3/system-bus.c b/arch/powerpc/platfor=
+ms/ps3/system-bus.c
+index afbaabf182d0..c5b880c411ef 100644
+--- a/arch/powerpc/platforms/ps3/system-bus.c
++++ b/arch/powerpc/platforms/ps3/system-bus.c
+@@ -465,7 +465,7 @@ static struct attribute *ps3_system_bus_dev_attrs[] =3D=
+ {
+ };
+ ATTRIBUTE_GROUPS(ps3_system_bus_dev);
+=20
+-static struct bus_type ps3_system_bus_type =3D {
++static const struct bus_type ps3_system_bus_type =3D {
+ 	.name =3D "ps3_system_bus",
+ 	.match =3D ps3_system_bus_match,
+ 	.uevent =3D ps3_system_bus_uevent,
+--=20
+2.51.0.470.ga7dc726c21-goog
 
-Will
 
