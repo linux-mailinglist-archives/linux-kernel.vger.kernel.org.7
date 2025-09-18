@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-823548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E6DB86D12
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:00:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6801BB86D15
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046221C84467
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A47D1C835E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D88231A7EF;
-	Thu, 18 Sep 2025 20:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716032D3732;
+	Thu, 18 Sep 2025 20:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f8/8Pko/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="PqVqB+Cu"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4A3195FE;
-	Thu, 18 Sep 2025 20:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C933D15442C;
+	Thu, 18 Sep 2025 20:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758225633; cv=none; b=RY0zhn3QOMAU9DgLFpJK6A0nnpX4WcoAiIBFqd9JEa5JzEfl9WT6bpyVKxe7S+MXgAcGTpRFjHHwU5RKGasC+0SeEjKRG27fx/aZUSFE/ySCoVLhLK0yPNU6jmh//MznFQTR9T1YtWQ5Rs5ZpeZhJiUGioAXxwrPIgDqzk/FtLo=
+	t=1758225705; cv=none; b=KzXR87dcWLCZCWfKpGzKWBJQgowx0C0pXgHYYXJpmXnPllbZai/j+MGnfWAMb37iEwNSjf8x0Qhf92GEjGODnHqt3MRruqvQu/fvxq3YjMCbmTBksnRkilm87LQ9RJWOZiVDq7eUQK7eiz6G5hILGF8vN91RUf/VgEV5Bfd0VRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758225633; c=relaxed/simple;
-	bh=cKo8QnxTqwRlZbbrTi6NfByG+sCorX6sVt0V6y4S1EQ=;
+	s=arc-20240116; t=1758225705; c=relaxed/simple;
+	bh=LxDvrxY2bwQJFsQKv7V85HYqrETwbOshcRCYEPOyloM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5lE5A60+cKKMffogpC1FvqBT/5ogUilC56NCrJoLWo8bde+aLFFSUfJ2jIf6qF4u0k2TZPfnfEf+7n3Jae9juqxkur8ypszZEgO396KDewwX74RdWOJY9Jjnpxt4PlAaa/WqDRLf/D9++GUb0awTPxXr6tXd6r1srAlVCqFWo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f8/8Pko/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D5CCF40E01B3;
-	Thu, 18 Sep 2025 20:00:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1khS_LFk5DMP; Thu, 18 Sep 2025 20:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758225617; bh=XI8MbpBy+ycWzG5aO02jWHqOsvEkXPBPzx6jQtrzNY0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=VdljpkxID/5DuWldtGvlwSSpmKfChpJyDZlr8Xaa1f0fxxTnUJWDS255Dd+3/EcDXZfhgEKB/ibnai/Ic/jUSFnXzJ3o0c58TIq5VlWfk3VX2FB9CVCFoA2kpxQn7l6xmMO43sZ6lpvvds2rM5sDP1cEWL4PFROIYJhv8prM2QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=PqVqB+Cu; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1758225696;
+	bh=LxDvrxY2bwQJFsQKv7V85HYqrETwbOshcRCYEPOyloM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f8/8Pko/2jb7mdI3q8FvyM+z/0suyHgNXRse10uugugMJdlXgPLIkaqMRCtvbcdWb
-	 C7voUCVa0isP7XjAONjs0of4kM6o934NMivN1P+/rx/WybQkUKDaHtSalg9QODm3H4
-	 7o9d5jdyezqh/4V1AGSW06kTODhdRYMHABgf0z39QQVmIbDINovD3O1wStzgYNSYZm
-	 V2eBLWTBsuUldNphGqRO7aaIG2UDhWTFQdyBWW51KXfz/CB4cYNAWJZiURSSU3lJeK
-	 Xr4BFA7L+btTDiF1tCnMIuM1wKNtqiwBfHpcFrRIK8kDHE1mDODjoUdmm2F0FfVinQ
-	 v50OZBWMN6YGRZ+iXCS4EuEg8iMZaxMu22Skhj+flIMyaZBOzXHL28+9i9DNm54gCp
-	 TOq5JD9vQq1PoIvV9pKwqyGXMdKO88cwcdiKpmgg46EHXFO415ND02wXllDjoJSURp
-	 Xhb4dfwEJisZzzj//t1pvZSv4e/fOCR53YShixh7C2LmnW2Ytuh3TMFx8eoV7eqxZe
-	 AImKJZTeWuXtSUffloQRl1ShQYQaiSkR/X5OjSWgMWtXy0lSXkWXoLqggfaXutrxVd
-	 BeSg5Op1YtAXo1ipExLr9Z2tGFIHpBDeOJkV9CziBkPuNV3YM//gtJPpoFEJf9b7S+
-	 YzHZ+Ca4pOeOLFoBzb1/FrSw=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id CB88C40E01C9;
-	Thu, 18 Sep 2025 19:59:58 +0000 (UTC)
-Date: Thu, 18 Sep 2025 21:59:52 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tianyu Lan <ltykernel@gmail.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	arnd@arndb.de, Neeraj.Upadhyay@amd.com, tiala@microsoft.com,
-	romank@linux.microsoft.com, linux-arch@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH 5/5] x86/Hyper-V: Add Hyper-V specific hvcall to set
- backing page
-Message-ID: <20250918195952.GFaMxkuFc1OqfWavWv@fat_crate.local>
-References: <20250918150023.474021-1-tiala@microsoft.com>
- <20250918150023.474021-6-tiala@microsoft.com>
- <20250918150959.GEaMwgx78CGCxjGce8@fat_crate.local>
- <CAMvTesBwkFr7VYoEYq5hc7NJi5xdiz037bmzoaEV2eG__h-kTg@mail.gmail.com>
+	b=PqVqB+Cuk9ACRvIgiHJRoXQt9di8KTVK4MWHR4KVM/rJySWN/lPVP0tSgdBO0mQe9
+	 bWRSaCsz6YGXluH+avcSZhsIRLcubblyKO64T2IcUTGBM/ThfEgbtTKt5RtPWerv0N
+	 lDyfmqU4oXywXXYFFtM8bzTsh4FUmNRc7isj7lXo=
+Date: Thu, 18 Sep 2025 22:01:35 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Zhouyi Zhou <zhouzhouyi@gmail.com>
+Cc: w@1wt.eu, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lance@osuosl.org
+Subject: Re: [PATCH] tools/nolibc: make time_t robust if __kernel_old_time_t
+ is missing in host headers
+Message-ID: <6aa8f3da-05b8-482f-ae14-a1a67a393ebf@t-8ch.de>
+References: <20250918010833.2760723-1-zhouzhouyi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMvTesBwkFr7VYoEYq5hc7NJi5xdiz037bmzoaEV2eG__h-kTg@mail.gmail.com>
+In-Reply-To: <20250918010833.2760723-1-zhouzhouyi@gmail.com>
 
-On Fri, Sep 19, 2025 at 01:11:02AM +0800, Tianyu Lan wrote:
-> Could I move the check into savic_register_gpa() or add a stub function
-> to check guest runs on Hyper-V  or not and then call associated function
-> to register APIC backing page?
+Hi Zhouyi,
 
-You probably should do
+thanks for your report and patch!
 
-static struct apic apic_x2apic_savic_hyperv
+On 2025-09-18 01:08:33+0000, Zhouyi Zhou wrote:
+> Commit 
+> d5094bcb5bfd ("tools/nolibc: define time_t in terms of __kernel_old_time_t")
+> made nolibc use the kernel's time type so that `time_t` matches
+> `timespec::tv_sec` on all ABIs (notably x32).    
 
-and copy the apic_x2apic_savic contents into it and overwrite the .setup
-function with your variant.
+FYI you don't need to keep the referenced commit message on a single
+line and should reflow it like regular text:
 
--- 
-Regards/Gruss,
-    Boris.
+Commit d5094bcb5bfd ("tools/nolibc: define time_t in terms of
+__kernel_old_time_t") made nolibc use the kernel's time type so that
+`time_t` matches `timespec::tv_sec` on all ABIs (notably x32).    
 
-https://people.kernel.org/tglx/notes-about-netiquette
+(Source: I did the same thing as you until Linus told me to stop)
+
+> Some distributions (e.g. Ubuntu 20.04 on ppc64le with older
+> exported headers under /usr/include) do not expose
+> `__kernel_old_time_t`, causing nolibc builds that rely on host
+> headers to fail (I discovered this when doing RCU torture test in
+> PPC VM of Open Source Lab of Oregon State University).
+
+Instead of mentioning Ubuntu 20.04, just explain that __kernel_old_time_t
+is fairly new, notably from 2020 in commit 94c467ddb273 ("y2038: add
+__kernel_old_timespec and __kernel_old_time_t")
+
+> Keep the new behavior, but add a small compatibility shim:
+> if `__kernel_old_time_t` is not available, fall back to
+>  `signed long`
+> 
+> This preserves the intent of d5094bcb5bfd while letting nolibc
+> build on systems with older exported headers.
+> 
+> Fixes: d5094bcb5bfd ("tools/nolibc: define time_t in terms of __kernel_old_time_t")
+> Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>    
+> ---
+>  tools/include/nolibc/std.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/include/nolibc/std.h b/tools/include/nolibc/std.h
+> index ba950f0e7338..ea225a0b16e9 100644
+> --- a/tools/include/nolibc/std.h
+> +++ b/tools/include/nolibc/std.h
+> @@ -29,6 +29,10 @@ typedef unsigned long       nlink_t;
+>  typedef   signed long         off_t;
+>  typedef   signed long     blksize_t;
+>  typedef   signed long      blkcnt_t;
+> +#ifndef __kernel_old_time_t
+> +typedef   signed long        time_t;
+> +#else
+>  typedef __kernel_old_time_t  time_t;
+> +#endif
+
+I don't think this works as __kernel_old_time_t is never defined.
+Instead we could switch to __kernel_time_t, which is the same as
+__kernel_old_time_t and has existed for longer.
+
+>
+>  #endif /* _NOLIBC_STD_H */
+
+
+Thomas
 
