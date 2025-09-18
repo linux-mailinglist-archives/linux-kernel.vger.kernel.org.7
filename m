@@ -1,317 +1,232 @@
-Return-Path: <linux-kernel+bounces-822471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF72B83F66
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:06:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6307DB83F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2334A647F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:06:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 482784E2800
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3063E278753;
-	Thu, 18 Sep 2025 10:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C3024167F;
+	Thu, 18 Sep 2025 10:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="anR487+w";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="b354y7tO"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UHFidj9d"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4A51F1921
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190007; cv=fail; b=tNKckG1sp6EZk385fzGJcOabs2lMf2yeh9BpM914eXGeu1+C7xRH82XXBgOZ7MAPQV+RNKOioepDXeIUxZ1q4AiVqHINg9AvsBj+7vjSrDAkGcEAOwzeDLjXZejHCiVs8LHHrSx7q1xpej06gqA51xjFeIn4Ji8ZPUUp4LXKB5M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758190007; c=relaxed/simple;
-	bh=XFOXz/xTjgqLONMReZ5g8OURo/8igeqvm3YPNAQ5Kz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rlEdsfOFlWgQvqEfO/yUagee0MyGB65Qq1zfspX/kZcoVV+XY2HKkbgnMMc0De8LL1tsNXZRtci4LS8XQ4iW6N9nOnh062KFW+3MvObQxI8Dmjafcu5t9tQ8bIybin3KKK4VL3/+KkFYvkW5aZX4rNe1tW3uZVPKSANp5MWnalY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=anR487+w; dkim=fail (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=b354y7tO reason="signature verification failed"; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I7fv9m007030;
-	Thu, 18 Sep 2025 10:06:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=XFOXz/xTjgqLONMReZ5g8OURo/8igeqvm3YPNAQ5Kz0=; b=
-	anR487+wLNoGr9kiCp91QNanDEZWH45BuXG3n28yyLNRk9QXoIuiZZC3mZkXaduX
-	XFBEDA6XElLWdY1QqPCbxh+9q3f815DsWgCW4Z2loooXlFPPkI9ePX7ZoWp4vHSn
-	ULjk91MBN9Sgt5PF+Z17slkunWiQR8ywaUp1pbAYn56+EKuyZYSQNlrsFVXMxvuR
-	/SPAQf/WP5FamT58nrK8JgrSSsbUXRnZwOVQsNzTjzTa+fKNOsNGZRuJ7r8/ad6G
-	vb1oVXFGo4G3RdZEG7xqQm3Ck4yfuCum8YICYRGRRadjwB1z3XXRxzLB3TLODdMN
-	K+VR5rRJx3NlLwHVUdmDxA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497g0kb6pk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 10:06:19 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58I8WGZ6027324;
-	Thu, 18 Sep 2025 10:06:18 GMT
-Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012042.outbound.protection.outlook.com [52.101.48.42])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2n6pg1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 18 Sep 2025 10:06:18 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sG8FyX6B7p2cLUYAG+kv2gAMwkaF4LKXi8mKVtt6jWxwmPqKbKctYon+9fR5SzpQdYI2csGumGamC5xib8VpdQJieBpZED0LzTBk2/Hxm+KMrbfITzBLXR9VNAEKFQr2PR9v8/WN57huBy1E0yp/W4+cV3qXrD9RPEwAUtewLodIOyyAcHlMSW7Iq/mBfgV8rTm+gc77Ee4MIf1EYlI+5c2VXVVWXb9HnbAliaJ1eVWlps8N6l/nUEKAi2qwSZu+061giQfYoA1AAFGzqTAcVHgJzd6m8yqVdUwQhxQg/5KR//T0vT+rq9aiuKqYrJOJ5LqflrNNIbSFpE4HHt0hag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=logTQ1fhkVHfWHdwNBJiHFccd8PR5BTAhHSFg5M9iKg=;
- b=KLS6EOofk11uDeZKyOoRmxtDZxQsL3FUuy+3KWJIULhNCW/gQ0ewFqR/G3Xvl/eh2wDFRaflRphryfYCUcTF4AdElcBQFKh1Q81uKNoNVQbgH+jTX1LlgOI0VA67GlfH3NIJYPeYBrVa+MBGjnJAFPK++2TJXPoFRE1PqgdcpY6v6nCmOQfU+jv0E/chgeE9NFzblrljWZMMpXKdnjlRI/aOuHDG5SvBzAemPhUvYKl+M429leYLBckyKoJSmG2Bfe3rg1LVj89Cr/O2eiVd/lH2bzjMZzeb/2IO5sbP3XXJQ+3coGJndFlGPwN1+4FxVIr2oqyRWkxxqkcyNKq89A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=logTQ1fhkVHfWHdwNBJiHFccd8PR5BTAhHSFg5M9iKg=;
- b=b354y7tOsWSGnkbDAe3QrMZWdPa07Ory2qCYClUJsiGtIruZZh6UE1w3ZS8BcOqXQwlyZrEeNwiXHNq+cKtUZ9h9N11Qa8gPT0GCHIFQ8cbtGfij1Rls7+AXpNJgZ7+QWYODQjtdkritB3z/Q1QpzPKK46VaNhuE2aYA19958+8=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH7PR10MB6379.namprd10.prod.outlook.com (2603:10b6:510:1a9::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Thu, 18 Sep
- 2025 10:06:15 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 10:06:15 +0000
-Date: Thu, 18 Sep 2025 11:06:12 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, david@redhat.com,
-        ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-        npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
-        ioworker0@gmail.com, kirill@shutemov.name, hughd@google.com,
-        mpenttil@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on
- guard PTEs
-Message-ID: <7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local>
-References: <20250918050431.36855-1-lance.yang@linux.dev>
- <20250918050431.36855-3-lance.yang@linux.dev>
- <f6073afe-a604-485a-8cea-7aa08e46a0cf@arm.com>
- <db182c88-04d6-408a-b36e-a708dc7eb3de@linux.dev>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <db182c88-04d6-408a-b36e-a708dc7eb3de@linux.dev>
-X-ClientProxiedBy: LO2P123CA0105.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:139::20) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84F26CE07
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758190046; cv=none; b=G0JwYwmKrTNgiN4L75wnSK6s8a+Nq0KLIwn07P5mVSmeMPe1p94nxjof8kbgVTJ6HlKjsnVKCxa0jb+Nk8ID0GbYtdVo8mAB2JYiQehgTHl+JH5mf8/7U9bI81y+/T+a5Ab2aR8Qb2wBpuPYiUzywiKKy3qeKgQ4LD0f6FTF3bQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758190046; c=relaxed/simple;
+	bh=MaHkjJYwc8DMck7Xh9rwkZqfWOJBacfKsQYBgtQ+Umc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UARaih1x0gbgT4pqla3j9FrLOuODf78UiQW41Y3eiKsDJdKvmyCdBMfbHkx9af/lSwvjTGjDe/j8RGFr5Ss0yEvEy1dsI1QT69JL78nMXwvOhFn/dTN/DLVnTRe9B2X3lHrj4KtDwNc0TwVU9Vu30230wN957MMAmgbnODL1E/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UHFidj9d; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I6Q1m5030267
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:07:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GGOSNQ5nH47a+34ZmsmhGV0lPGcs11aQrS/2w7Sf1xk=; b=UHFidj9dVpLlZODi
+	nDLsX2J00guAzO1R6kpuayxmCkoVrL679n2MCP7Ok8v+JzUkRjtFd2gB9vAfpEsx
+	6jQ3khsk1Ce7wqK8w45V19ae8DBzNHOfClxu9fMXKjErjO1MwHnIoR3ew73HktPy
+	bA0TMvb7Ta6w23VRpG6VzbQb74z0D3CeLVC231nZJo9x8y8pdv0t15BSnYw4/eZN
+	UM7i88Xn0UG6G+cRcisvxz3qsNIHXzoH/67dYMSgwFmIf5Dksim0qWyuXXP7Ukh1
+	uxqz8hWgTVcvCxuTkOHXPSfZmpiV82UCo0wNbYLkTyc4KPUDsDb9wgNyY/74Ef9Q
+	fGElTg==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497v1jbu3c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:07:23 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-79538b281cdso4911216d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:07:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758190043; x=1758794843;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GGOSNQ5nH47a+34ZmsmhGV0lPGcs11aQrS/2w7Sf1xk=;
+        b=Cohv/2pBT0TL78HOcSR0i8wsMth4HxM8mlXU5kWqkCFkigzZIe2AL464xIX1vpl2od
+         7p/MAM7EXIBiZuKsdL67YjI6NvtLYdJg/kZ9S6H4hykauRz6VCxYfs62ygyAlMIwtzWP
+         vru2ApbIOYn6mM6wLVz2W77PPwzbp6qQeel7+aaPQpsS8aGLZzJOo8ftD5NAYNJ3pLP9
+         inn+uK/pQnkVnCBzSnHCCqAh8Md+ZqPDt3SUU2R57uK8RYdNXrNbmkhdaHM6U/tTrotz
+         otEub3ubmIWnhwz8/5s+iTuELRo4pnrCox+bz/ztOQ0+0HhBzalonMlreHKpoNMmPKV/
+         4BLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd9PQ19T3IdeL8V7SObewLHyBFDMU5/2FInDZ41RJKNEar9QmK+j8444nj9+6DkbL0YCPr6BeKAkrdLeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvoYsX32D1FXHe3h/WildrwTsG6GFWfIWsNisXmbh50yMPW3Yw
+	6sRDewizJQ+S6nrfU5SXRZigyE4lQaM2iME1rYEC1FqSn/QtLfojayppXeeM3yGf1Uzknrb6mFu
+	iwQFPXlPd+hjGcWGkKUX0+oIOONEdv6VvZzI0TpKG+e/tI6ptVFPCi2Vkz1YpFbQ2NQg=
+X-Gm-Gg: ASbGncvDAiYy8yzQM+XS+0U/6kx32AR2F8VH0IRd5LESN+ZwIUNog/e41WWeNXTOApe
+	ygHSN3xRNsiA52jcaFFH7dgautDklniKr2St5EDCjk2YZWucl7oxmUiCdZ/u+Kz+ijHloA++DSc
+	C6Hpqs7IMlTEt9KdXKGZ+9QvpdtzAjyy1MgsB9CF+7paWgsW7FtG8LR/zxWJ925vDAmGjNtsVfU
+	0rgTBpmj5r/nD6YB6YS8y9zHf0/eNNWmhuautey1puuNLR5aawXxnRY3+3O4b17/dtJQuAi0WnE
+	p4vhseZKMzgSRM3rgJMWQPoYH4jzOpxXvl8dt7upL5BPAYRbf0wyggaeMCevmGlI6rJ7tgOq8Iw
+	=
+X-Received: by 2002:ad4:5fca:0:b0:72a:2e5b:af2f with SMTP id 6a1803df08f44-7927b757c00mr27754036d6.30.1758190042453;
+        Thu, 18 Sep 2025 03:07:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFBEfjc7Tkt/1Iv7IF+XCof1OPXKA6VZBfDMdHjBqN0oeH0J4tmyEMtrM4m9cQn6cz5NMfNg==
+X-Received: by 2002:ad4:5fca:0:b0:72a:2e5b:af2f with SMTP id 6a1803df08f44-7927b757c00mr27753456d6.30.1758190041748;
+        Thu, 18 Sep 2025 03:07:21 -0700 (PDT)
+Received: from trex (152.red-79-144-196.dynamicip.rima-tde.net. [79.144.196.152])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e754140sm73363605e9.21.2025.09.18.03.07.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 03:07:21 -0700 (PDT)
+From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
+Date: Thu, 18 Sep 2025 12:07:19 +0200
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+Cc: Praveen Talari <praveen.talari@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Praveen Talari <quic_ptalari@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, alexey.klimov@linaro.org,
+        dmitry.baryshkov@oss.qualcomm.com, andersson@kernel.org,
+        psodagud@quicinc.com, djaggi@quicinc.com, quic_msavaliy@quicinc.com,
+        quic_vtanuku@quicinc.com, quic_arandive@quicinc.com,
+        quic_shazhuss@quicinc.com, quic_cchiluve@quicinc.com
+Subject: Re: [PATCH v2] serial: qcom_geni: Fix pinctrl deadlock on runtime
+ resume
+Message-ID: <aMvZ10EsMif/DOP4@trex>
+References: <20250917185102.3763398-1-praveen.talari@oss.qualcomm.com>
+ <dab18f70-4017-4c06-92c1-91cfd2229540@kernel.org>
+ <8e2781ae-34d2-4009-bf8c-56aa1bb6fe85@oss.qualcomm.com>
+ <aMuz/C1iT8JtjXbQ@trex>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB6379:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e65b719-3841-4a0f-b082-08ddf69b00af
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?kk7sqHEpFy+pNMwoZ3EqDozUWS31tNBIhv/3rYaKjmd0u6scybV3/ARmK0?=
- =?iso-8859-1?Q?4IAR3V77ojq45cjdpqk2zVB9RAQBE3JN8/V2F/2mqOyGe9QlFRS3oRkltH?=
- =?iso-8859-1?Q?K7XtqMj6QHqPStdkRyqM29Y77aRcbexsRCKnRwPMYeKwQ0MPPEG0LL9w1Y?=
- =?iso-8859-1?Q?lzQaALVvghTmpO6bgS5uiGKMZs85PH7ww9dHoztV2sbkyfSLTXjqopAlIQ?=
- =?iso-8859-1?Q?YK9q3yQuxP+tLYbrcNxmVQm4tdggyjKyNF3SXlHkm8lUHQy5mJlO7eUZC6?=
- =?iso-8859-1?Q?LGkImriWvf+Y/p+Htk9iOs/rRlSAJqerFyIuN25qCV5H/q7oc1nhIPfYBj?=
- =?iso-8859-1?Q?AGmYC5yxeVmg7YuUfR+8ZVGlqauAjIJxtF31i3aKKYWTswIovBWVC3yKrg?=
- =?iso-8859-1?Q?3kY3gdSj8uTaGNK1U/lDK4m0Dp97OnoIEaphkzpCiLOlgkrqFrlYz7ghFz?=
- =?iso-8859-1?Q?OfsbVqFL7zIUWkjJkzq5e7DzuSLuTkYoQFtE34ow+zrmlFl0dz3BmP7fRy?=
- =?iso-8859-1?Q?1Hc+EShx2MV6+mcgmyeSsP+qjBNmlbuUwlubT9O6LNOwYrqelqSS5k/TlH?=
- =?iso-8859-1?Q?mR3bhDzcbUpfz5IrlE97l8tlfyNHZx3mzUX8RW0IacGnS09Rm4/tmhHW71?=
- =?iso-8859-1?Q?Al59V53uxNn1SarM3iiELcRWK8YfL62ja9et7mgQMeyyXIpa7WbCL9BpLW?=
- =?iso-8859-1?Q?DGmDYJlOI7et6ALyxY5vbab3YxAz2nQcZwOLocF8Q0xzrzkS8POTp//5sr?=
- =?iso-8859-1?Q?Qmw0+7zbfcDz/LmICweyuDTM0l1usdhfvIEgUtySkqMPSNAJ2jVgJ7Y0TI?=
- =?iso-8859-1?Q?AbURKVrOTAnUtT6JeQzaLBGCyYuUSga33kJ3TVVtCZyCoekPaXGA3jzyZ6?=
- =?iso-8859-1?Q?ja7r/xLR7L620+jHiggZSncwTL+EHcABxwHmwiYKI/j+l1IjaEBzkgHFv7?=
- =?iso-8859-1?Q?BOZgfjPDd4Lu5zhFAgn/J+lGcG2WynABF3vJ+ByAOyUwvIDzODq/mhs2RJ?=
- =?iso-8859-1?Q?i5QSBDZX7uYleuhu1xWad/QzTNTw9MS2Mn32k+LPiByt9TO5oKMddW2AwI?=
- =?iso-8859-1?Q?ObGEX+24+1510k2TXcak57towVmhrbdj3TtAgvZyX7NK3/0VhJtncQcKej?=
- =?iso-8859-1?Q?4dg9Bruh4fAJlS+X0iZTEARS1ZCZ86x1r0/EqNpFnCZ/iwehYqSRWQMTnQ?=
- =?iso-8859-1?Q?oel/ny4AnHvOLSYjJxxXh6fNx9rTNJGKOdscK+M+jBYCP/cSMIdqhZxX9s?=
- =?iso-8859-1?Q?nYTx2Rb3aKYZQEy95WjhjnVN6WmVMATj9szYL6XszM+cORwJN2MKAbRQ5L?=
- =?iso-8859-1?Q?CN9012X9uYDNQjMp4IZkKZ6jcA1cND/ISUf3m/LuhDOOZweAMvQBULOE0E?=
- =?iso-8859-1?Q?6GdE99J8bGhQ3kB+hsn6GEMxdk8jJq89yj9+7jku4SxHYdAHBYcm16I3Pk?=
- =?iso-8859-1?Q?gbUwYTftma72QNPjRXIVxG8Opq9KplGW24pLhBbH5o0TtE25Ue+wf58jJe?=
- =?iso-8859-1?Q?c=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?c/ZSHGcH5rGCH6mKaONxjU7IEE9/q1w56MOu4g9Ikd2q3nT4NIJ40fWJzQ?=
- =?iso-8859-1?Q?EkK8dboUO46l1HZvsYMkG1u08R6KXv5I3jRbjjFbojf2T17xaVZDMW5O4U?=
- =?iso-8859-1?Q?b7ymi3FtkXV15szyq3sAOeaRUaadeL4E7t7I7+YWi64bipzfaNmG/r7y+O?=
- =?iso-8859-1?Q?oENSbDeYoeubcLT4Uz2oeGnDu3EGBxd7QhezEKmls9nwv1WB5EnXt/EutJ?=
- =?iso-8859-1?Q?gxzcUFLiiKU7WZ4C5uhoYvqtP5WX61C1t4VDNTxal9e8BpRzgvRrtbk1RD?=
- =?iso-8859-1?Q?Xp7UFyXOdIH74mn/AZO0i4BfjQKLVDQoAh+4x/HJrzVJKlSxAGnW6awhA5?=
- =?iso-8859-1?Q?zApDPkFZ0Q7URKTlen2WgqkCYelkm1T1wM0YakvkVh890f7BrzpFVUrSiS?=
- =?iso-8859-1?Q?zcraal/eyKZtlLDxaFgklsBpAgvqvs0SJa8NSxIxdOqY91iafWjwooLIea?=
- =?iso-8859-1?Q?OjNcoQohs7CzEalctrVr0WBs66j6s7K53P7ZuYgUpGk6bP02isNxj8sUBX?=
- =?iso-8859-1?Q?83qM3cwRR0WmSywl6QUCF5cOSA/IvlEPCFzIGyJunuLK/cl+gr7pY74CKw?=
- =?iso-8859-1?Q?kCru/ispg5QkNRu1kkbcGgzTccInx1uSJN/4MtKQWlfx6P36VNKYHyLsBu?=
- =?iso-8859-1?Q?NlT0s1neMjg9n+8JAPLZSX18QeRiivZDQKXgM1iikI8AW7fRIIUq1oU5B7?=
- =?iso-8859-1?Q?mTc6KJsqpNKKKwVd46thRHX3mLM7xMFR/W83SrmQS/SSdJ1rwlre1PFfYX?=
- =?iso-8859-1?Q?adAebadF0NwmMU8TRSSRNa+CLYkr1rjyG9lSqZCeAh58vEFV8qThtxHeFN?=
- =?iso-8859-1?Q?nmSYycm135E6MbVDmRcmZIYrJ6vMvEieK8o580unm7Wp2W+4eDJW3szyVZ?=
- =?iso-8859-1?Q?UKmEfa7eRnJCRXbGvsRLsWiZoeUFOYqoQY14Wkcha+ywiBmieuaHV9Erv4?=
- =?iso-8859-1?Q?x2xt+3eQzv1DPSNeMxP4EuWHTsvToCup23WAN6KTc8GaL9bOE9MU2jeBKV?=
- =?iso-8859-1?Q?hwn8k1SHtXpnLYyDAakMFGdoPobYvxG4ySoOlXU3SJsEx1NAbYw/Z+G5/U?=
- =?iso-8859-1?Q?qBBVgvSpIyZ66CWmLPEuWhd3tZndz5STebMNmHE4PwEwQL4zucy1AMolh2?=
- =?iso-8859-1?Q?LXZaTt5HLQvY1Z1D9qe8NCwUYKAm6Wf/okPG8Y6GzY656QAlpPBcLsXJTu?=
- =?iso-8859-1?Q?QsYxdXTmGx1ZBj0a3ACR05wQ7tlJbhs4he0DWSSdP7B+jiWw9t1n7pRWsv?=
- =?iso-8859-1?Q?3hHKvcKVUz2cBBZ8gwGGf1cPlbYtCMEYHPZDijkwiSJHcwrb5xqtZZop0f?=
- =?iso-8859-1?Q?joH5aT612lJXYjiS47yjPzHzPmPdavwtT+Cl8gYywzvHhwEZA1z3asY6zY?=
- =?iso-8859-1?Q?CLW+6vvaXbSh7mMKYvQ5bw+eYVQKbOZ5nEtRl6j1cksEFuWY9wfNDCALdv?=
- =?iso-8859-1?Q?thoW/3CRBcVpVieDMmtbOlSV/c2besmgiHEMfKpZcAu3vy4ChCC20p9dtU?=
- =?iso-8859-1?Q?Rdr3URkB+rtyR8I+gqDOfVf/TSt9JYfx+0pzGTXsO6s1A8Eo/Pi2vMSki5?=
- =?iso-8859-1?Q?KyxiAUN1zsbvRo61X8yBdMwF9g/EXpI0tyUe9nEZ5mVlwBVzlL+h4yw+N3?=
- =?iso-8859-1?Q?RTlEDBw9tSEqBY6kTef+8ZpEEdxhYmdVkwUAWu8Vidkgq0WEJ3lSZXEA?=
- =?iso-8859-1?Q?=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	o4MBeORR2unsH9QKCaQkzY2nrOx+bfucg7Y6GqVS56TVyE82SiYz8GCpxfF17XRv4Do878BysaLneU8BUxNmczvSrGJDww5IgBh+AGtjAbnzCFkgrBAhMWUzeihXYNNBgppAuoWLydwf5jgmw2PaUcMze9X7y/p6GNlAbJ9d7guuP9UuFh4MzKLqj4sk63rA9P1jnZgC14twzSIlTzpgVz06MYpcNi70UNjaI4LSmfPdh3TrD6x6WNyo+UXi6qIG2qsO71rsdQFP+9jrUs8xvdt+WRY9JD3bYP+bvfZ62/6NPz1H1sJBDgGGSL9maEsfwVlVTjlz1ukFEbr0xSijOc9SN92jc+PESEXNWfx4/TsssbwoRqj9VbkfCezqAD3UayXWRQZFMgzVI7pjwmoBv2UijsOt643tw5N7yfPTGafv9KxSRswCVBqvpYecmk2OK9lia3qV3IlAdVoQEzH3YA18zcNkReQgp3GeWYXmJ6j8tgVvXquB+Urjm5vpx8QLVGcPswY0ciGQWRloTxW7uWwqB21yuh8hyCqBcwhW9Vzklg8mqMPAPkgk4K0ZdxjRp51EhSddQz7dk3BQH8YMUJexV8923nV8st6E4gWpi48=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e65b719-3841-4a0f-b082-08ddf69b00af
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 10:06:15.0188
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g/4o0fEvTO9DhNMX4qGIB6FsAABqj/FSCBATrP5VIbdsOYr8PTBIzMujet3p809kPGiJ7PwyuTwOQGMR/9ilrqe4KSqdO1KCCU4gq1w3hk4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6379
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMuz/C1iT8JtjXbQ@trex>
+X-Proofpoint-ORIG-GUID: tgIBbeAh3Xv9GJsPdelR1iWnbT3qyxcT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDExMCBTYWx0ZWRfX6FCND0fvNqRu
+ hFPEWVKMAxcC9JU+JkUTkXJ500qjmo5qEJp6+gajFZBrKZzAtwV9gm+h36/gh3O6ODyydFKgJpk
+ m3HmHTfCcZg9koXMXO07DfpMtpLcVc9AqKvj+80pl6+t3km4KaJ2qPaLhs7XhdX0OuvFN+7KWBT
+ lOvHISdJk24VvH8ydtctqUFohOFhrANweV6TstbnBt/bPutcZG/GwV3QPrF4j9HHnKVuGthhxXl
+ IDflHZil1j8xQlsMUTK2I2bMkFwVeOmWXtkOYHcvbv6oiQhjtejmkJ9DtRfeVcxB86YLiu7I5iB
+ 5X7mrCIfC7tqQ6YCzL7rSNARHbmqND3i/nrK1NDjdi75UyB+FWwj62E4JmsnZNIfWrxx2px5IR1
+ CaZHAzgq
+X-Authority-Analysis: v=2.4 cv=AeqxH2XG c=1 sm=1 tr=0 ts=68cbd9db cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=UlsMzGb/nx+Jy78HFkoo8g==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=EUspDBNiAAAA:8 a=UD1JcZfzldWnGte6AesA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=OIgjcC2v60KrkQgK7BGD:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: tgIBbeAh3Xv9GJsPdelR1iWnbT3qyxcT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-17_01,2025-09-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509180093
-X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68cbd99c b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=7CQSdrXTAAAA:8 a=PfG_9dqRh3ySf4n7azgA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=a-qgeE7W1pNrGK8U0ZQC:22 cc=ntf awl=host:12083
-X-Proofpoint-GUID: AohkwM5pesYS5yPJdD-7M5iIXD5g7Mso
-X-Proofpoint-ORIG-GUID: AohkwM5pesYS5yPJdD-7M5iIXD5g7Mso
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMyBTYWx0ZWRfX4UR4WBAG+C37
- uojDrWfMxiuppXJu3M0rn8rTVkhe5dxY0Exu/i/YAi7DCxHhNQOrhS3F44sQXs4acpoSKS12Gah
- UM28WjUmKFQNTKUWb66KJgZ0UhpaxUi/A699v8OOVEWtvTkkzbehVYk8sQAwFh57fjJp7Bi+Gh2
- GaEw73n6u2aQ/jVYrNUByEe3QM6DB1XxxAPOpCEcs7kxNqB74STsN+c0MKNWspAJFCKAL+wC6gb
- ZBIb9DFRE2VbGPZUY8YZ5oy9uajM8bn2+AyJHIbJeB4R+3AHOUPLvsBbB0WGDcpWqQvYwn+f24r
- SDR7EHfjbh9n5Qwq/MlWbKJCyNrTVuhy4wgPM5tflqksSgTX2zHymK6ioed2Lx9s4VBT5lTNUnZ
- uhh8hqIoljmfz67y5PxBOZxK6/PoQA==
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170110
 
-On Thu, Sep 18, 2025 at 04:11:21PM +0800, Lance Yang wrote:
->
->
-> On 2025/9/18 15:37, Dev Jain wrote:
-> >
-> > On 18/09/25 10:34 am, Lance Yang wrote:
-> > > From: Lance Yang <lance.yang@linux.dev>
-> > >
-> > > Guard PTE markers are installed via MADV_GUARD_INSTALL to create
-> > > lightweight guard regions.
-> > >
-> > > Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
-> > > encountering such a range.
-> > >
-> > > MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
-> > > the special marker in __collapse_huge_page_swapin().
-> > >
-> > > hpage_collapse_scan_pmd()
-> > >   `- collapse_huge_page()
-> > >       `- __collapse_huge_page_swapin() -> fails!
-> > >
-> > > khugepaged's behavior is slightly different due to its max_ptes_swap
-> > > limit
-> > > (default 64). It won't fail as deep, but it will still needlessly scan up
-> > > to 64 swap entries before bailing out.
-> > >
-> > > IMHO, we can and should detect this much earlier.
-> > >
-> > > This patch adds a check directly inside the PTE scan loop. If a guard
-> > > marker is found, the scan is aborted immediately with
-> > > SCAN_PTE_NON_PRESENT,
-> > > avoiding wasted work.
-> > >
-> > > Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> > > ---
-> > >   mm/khugepaged.c | 10 ++++++++++
-> > >   1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > > index 9ed1af2b5c38..70ebfc7c1f3e 100644
-> > > --- a/mm/khugepaged.c
-> > > +++ b/mm/khugepaged.c
-> > > @@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct
-> > > mm_struct *mm,
-> > >                       result = SCAN_PTE_UFFD_WP;
-> > >                       goto out_unmap;
-> > >                   }
-> > > +                /*
-> > > +                 * Guard PTE markers are installed by
-> > > +                 * MADV_GUARD_INSTALL. Any collapse path must
-> > > +                 * not touch them, so abort the scan immediately
-> > > +                 * if one is found.
-> > > +                 */
-> > > +                if (is_guard_pte_marker(pteval)) {
-> > > +                    result = SCAN_PTE_NON_PRESENT;
-> > > +                    goto out_unmap;
-> > > +                }
-> > >                   continue;
-> > >               } else {
-> > >                   result = SCAN_EXCEED_SWAP_PTE;
-> > >
-> > >
-> >
-> > I would like to hear everyone else's thoughts on
-> > https://lore.kernel.org/linux-mm/750a06dc-db3d-43c6-
-> > b234-95efb393a9df@arm.com/
-> > wherein I suggest that we should not continue to try collapsing other
-> > regions
-> > but immediately exit. The SCAN_PTE_NON_PRESENT case does not exit.
->
-> Yes! Let's hear what other folks think on that[1].
->
-> [1] https://lore.kernel.org/linux-mm/c9d4d761-202f-48ce-8e3d-fb9075671ff3@linux.dev
+On 18/09/25 09:25:48, Jorge Ramirez wrote:
+> On 18/09/25 09:25:53, Praveen Talari wrote:
+> > Hi Krzysztof,
+> > 
+> > On 9/18/2025 5:28 AM, Krzysztof Kozlowski wrote:
+> > > On 18/09/2025 03:51, Praveen Talari wrote:
+> > > > A stall was observed in disable_irq() during
+> > > > pinctrl_pm_select_default_state(), triggered by wakeup IRQ being active
+> > > > while the UART port was not yet active. This led to a hang in
+> > > > __synchronize_irq(), as shown in the following trace:
+> > > > 
+> > > > Call trace:
+> > > >      __switch_to+0xe0/0x120
+> > > >      __schedule+0x39c/0x978
+> > > >      schedule+0x5c/0xf8
+> > > >      __synchronize_irq+0x88/0xb4
+> > > >      disable_irq+0x3c/0x4c
+> > > >      msm_pinmux_set_mux+0x508/0x644
+> > > >      pinmux_enable_setting+0x190/0x2dc
+> > > >      pinctrl_commit_state+0x13c/0x208
+> > > >      pinctrl_pm_select_default_state+0x4c/0xa4
+> > > >      geni_se_resources_on+0xe8/0x154
+> > > >      qcom_geni_serial_runtime_resume+0x4c/0x88
+> > > >      pm_generic_runtime_resume+0x2c/0x44
+> > > >      __genpd_runtime_resume+0x30/0x80
+> > > >      genpd_runtime_resume+0x114/0x29c
+> > > >      __rpm_callback+0x48/0x1d8
+> > > >      rpm_callback+0x6c/0x78
+> > > >      rpm_resume+0x530/0x750
+> > > >      __pm_runtime_resume+0x50/0x94
+> > > >      handle_threaded_wake_irq+0x30/0x94
+> > > >      irq_thread_fn+0x2c/0xa8
+> > > >      irq_thread+0x160/0x248
+> > > >      kthread+0x110/0x114
+> > > >      ret_from_fork+0x10/0x20
+> > > > 
+> > > > To fix this, wakeup IRQ setup is moved from probe to UART startup,
+> > > > ensuring it is only configured when the port is active. Correspondingly,
+> > > > the wakeup IRQ is cleared during shutdown. This avoids premature IRQ
+> > > > disable during pinctrl setup and prevents the observed stall. The probe
+> > > > and remove pathsare simplified by removing redundant wakeup IRQ handling.
+> > > > 
+> > > > Fixes: 1afa70632c39 ("serial: qcom-geni: Enable PM runtime for serial driver")
+> > > > Reported-by: Alexey Klimov <alexey.klimov@linaro.org>
+> > > > Closes: https://lore.kernel.org/all/DC0D53ZTNOBU.E8LSD5E5Z8TX@linaro.org/
+> > > > Tested-by: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+> > > 
+> > > Where did you receive this tag for this patch exactly?
+> > 
+> > Since Jorge was involved in validating the change, Iâ€™ve added him under the
+> > Tested-by tag.
+> > 
+> > Please correct me if Iâ€™m not supposed to add this tag myself.
+> 
+> let's test a bit further Praveen - we need to validate/trace the wake
+> path on a real scenairo to make sure it is not cpu intensive (although I
+> suspect the 2% was due to the storm you described more than to the code
+> path itself)
+> 
+> I can then provide the tested-by on the list.
+> 
 
-Since the code has changed let's discuss on this thread.
+um bluetooh comms are broken - reverting the runtime_pm patch fixes it.
+and the proposed fix (V2) does not address this scenario.
 
-Dev - You can have guard regions in a range that prevent one PMD from being
-collapsed, I'm struggling to understand why you'd want to abort the whole
-thing?
+I agree with the common sentiment, I think the patch should be reverted
+in linux-next and better test definition shared.
 
-Your reasoning there isn't clear at all, so if I had a guard region in one
-page in a giant range I was trying to collapse, you're saying we should
-just abort the whole thing?
-
-I really don't understand why we would do that? You just skip over what you
-can't collapse right?
-
-There's no reason at all to assume that overlapping regions here matter, we
-can't predict how users will use this.
-
-As Lance says, it's best effort. And also note we already do this with UFFD
-WP. And note this is also a non-present, PTE marker.
-
-And also this would change existing behaviour which treats this as a swap
-entry then just fails later down the line right?
-
-So yeah I don't agree, I think it's fine as is, unless I'm missing
-something here.
-
-Cheers, Lorenzo
+[    1.451715] Bluetooth: Core ver 2.22
+[    1.460668] Bluetooth: HCI device and connection manager initialized
+[    1.467034] Bluetooth: HCI socket layer initialized
+[    1.471922] Bluetooth: L2CAP socket layer initialized
+[    1.476988] Bluetooth: SCO socket layer initialized
+[    2.504958] Bluetooth: HCI UART driver ver 2.3
+[    2.509427] Bluetooth: HCI UART protocol H4 registered
+[    2.514600] Bluetooth: HCI UART protocol LL registered
+[    2.519978] Bluetooth: HCI UART protocol Broadcom registered
+[    2.525662] Bluetooth: HCI UART protocol QCA registered
+[    2.530915] Bluetooth: HCI UART protocol Marvell registered
+[    2.764571] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    2.770503] Bluetooth: HIDP socket layer initialized
+[    3.901958] Bluetooth: hci0: setting up wcn399x
+[    6.202761] Bluetooth: hci0: command 0xfc00 tx timeout
+[    6.212294] Bluetooth: hci0: Reading QCA version information failed (-110)
+[    6.219261] Bluetooth: hci0: Retry BT power ON:0
+[    8.538729] Bluetooth: hci0: command 0xfc00 tx timeout
+[    8.543988] Bluetooth: hci0: Reading QCA version information failed (-110)
+[    8.550989] Bluetooth: hci0: Retry BT power ON:1
+[   10.810736] Bluetooth: hci0: command 0xfc00 tx timeout
+[   10.816095] Bluetooth: hci0: Reading QCA version information failed (-110)
+[   10.816110] Bluetooth: hci0: Retry BT power ON:2
+[   13.082946] Bluetooth: hci0: command 0xfc00 tx timeout
+[   13.088490] Bluetooth: hci0: Reading QCA version information failed (-110):
 
