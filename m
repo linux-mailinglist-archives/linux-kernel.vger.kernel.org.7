@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-823442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03ACB8671C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A878B8673A
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E33F5887A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:44:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92BF31C26563
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15BA296BB3;
-	Thu, 18 Sep 2025 18:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922AA2D738A;
+	Thu, 18 Sep 2025 18:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/eFFjXC"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z28vS7zX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED481643B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C940F27B357;
+	Thu, 18 Sep 2025 18:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758221070; cv=none; b=Y4rg/I+qneIKH8lKqk8fyNMHh6bTIwJBUoJvaqr1FKI7Fb67Jpy5jnda2nk4vnYZPkFPatq22xJ5xdPYD2yOkFE/DobQKhcGntZ/j4AIX3aRm88HM49r7cPTnPeW2BD1eSOAuA7NZ3TCFW2CJtjlP5SV6ROvUqhKSeEmMncltxI=
+	t=1758221130; cv=none; b=rt2z92a7FR73gB9UCJmFdSmmKU710duc/Po5rhpDJf000f4bJ/uyNWVz4LiSf0myhO7AQ3mgIqZ7VIm3EAfVMFcbvD7GzmyVKmmaxwkebgSdfu0t8+zWhsde2+CYARniQszET78+ZcQTX7om2Ae0kjCgrj5trxt5YaWA9NvAfsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758221070; c=relaxed/simple;
-	bh=fe3A6MnHA+kBcuSKcXPhgzXX8sc6RtnqsVbVSSBzilk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=paKLwulleDno41tNRLT3/IN4J5fDg5B7U4AkutQRycudv0sD3G2JQkwx+ijjTqptt1zjUgKosnIpYE9vtbOnSDBEvRlWuQudmW4AM0khb293Gx0tEXA5NDpyPGCxM2F3Y7lmYpRHXO1TfmmkDo7Fpt4zozP5GoUISYISzAxS/+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/eFFjXC; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so1330803b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:44:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758221068; x=1758825868; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=A8zgmbahM1VfgP+dW3KRwovtdnR9tCk8bO4aKfh2zws=;
-        b=Z/eFFjXCWXG4mqtbYjWIwr50SFPpLpuwGi4wn7h4nT3cFteeuykG6vCIj0JFcaVZ+j
-         c0dfoQ3Y429LpT30XwJSyXHmLwSUzpc+6FN/v+991tPxthgOQ+85K+ZhWAl1c1IuI6Y+
-         y1NHLOn5RSQd1YI6euWyosNxLSDwKGkTyzYRGaD83qiPWjVU7xmdUkuhMuTTdmmYGche
-         DrCw3ORT1LTk5x3Ztx1uRj8n4z/6FOlIQfClQDrYj0V7VtkGVltWOMA4SZo8HsftbUQ/
-         jCyPxh2eypc00n+8cHNaMwC0zsKTMyKllGsP2qIiLw6fzEmMJLx3N8NTGlMA3QzVSIDJ
-         zHqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758221068; x=1758825868;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A8zgmbahM1VfgP+dW3KRwovtdnR9tCk8bO4aKfh2zws=;
-        b=oU45rgZryDdPV0NLjdjwJ7j3ZTuiv2E7g5Fk/mMWV7wTe/WjZ791AVKWHCmkPuVQ5b
-         Vs8ciKar1SUaWAIYDlpV7+evtXeeJYIASMywgDNmt8Rw8hZr/FV6o/OirLjavIwlgtA3
-         cXVyhGZdjMrtq2WpasHgIasA56KCUSKnX0ER2Qq5BhVF/d8u/qmx36HePCjSsZ4VK4ZN
-         s/WnJk/hKUGyEUkEoKLAdZCfwiLAqpcXMaSgTbJMvCWa6oGN/lOa/Flg9pWngP4wGWLv
-         HBVoZxlZi0fmyLZQR0enwf/Qoc/K5BnXhCASlNX1qGxHHZKP07mkG2z+0B+k2WkgMSXn
-         hxLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOyW7zxsFd/TUR3jF+Z9X5m1gD1gjzS9d6Vr6UVuS97KHhGldMZerGYr7RoDlgWWlVMIsCgNk0ShdkYuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2riv2raxSUUJcpYyANt5FBWH640NFw1Y14qlyy4bemQ/v3kQR
-	cJNKJseJZRATt3Fm+d0SbwWkMeNJKp4074V1dVrShpw+RUgYYCy7p1rv
-X-Gm-Gg: ASbGncu9PN1ZCppZzdDWwqNhERgb/sq8gjoThSX8y0sv5fb2Tpc8+Ycck4jvzYUniZs
-	1YjApVHHa7MwgmKY7DETNfSdBEbGpxEj9OgPUS/We1/cHpwoXnPM/ivb0GW1eCMJw8eNExl6tKV
-	Mzeh5MCEdWjThWHov5DQ3jwGiHhfjm07YOry3OHzPDlVtMf4vCX8i0hCe1fRR3H4SdGKl9p7hQH
-	y+CvEqShNYVDDbhPm/gKbJ5YvexbPs8mSvgQiK2Ad6UtQSeJerEOQ6SUz2mGZIe/cH5UzCtgy8E
-	2yOTUrtpUaVYeK5ri4L9IXcbQhbQhHZcY3zDzTJFJEtuPXI8tfyF+DUHZI00kAySJXCbHJy5ov7
-	qUTciWM6cQg8Q3vwHDHuKHTJYYEESWssQjEmujbaE+AgqAwHoDHQ1tWHcYaee
-X-Google-Smtp-Source: AGHT+IES0nh3YJZduE+bzFAmjo4n9/IGmSy36TfhXM3u3Sd6MomrUkG0ZxjN3Mi9LkDFwohHkOZtBQ==
-X-Received: by 2002:a05:6a20:3d1c:b0:245:ffe1:5609 with SMTP id adf61e73a8af0-29270503242mr768026637.44.1758221068102;
-        Thu, 18 Sep 2025 11:44:28 -0700 (PDT)
-Received: from kforge.gk.pfsense.com ([103.70.166.143])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cff22bdb5sm3051926b3a.94.2025.09.18.11.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 11:44:27 -0700 (PDT)
-From: Gopi Krishna Menon <krishnagopi487@gmail.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
-	linux-mtd@lists.infradead.org,
+	s=arc-20240116; t=1758221130; c=relaxed/simple;
+	bh=u6NaIt2RygsBlCtYn4hZiQqQdifJG8iCHYQXwiLX65E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XPsnxUwc9vl3m5vYay5W8a/2POm+r3LgogskIB18XakLi7/6O/ZLH1sSgOzEXZQ178CCKvGnCcv/fAp3DhZak01e8usR29X1+aznNDLKhF0nFC28nsGoeJNRDrBPvnp2cXxMCCU8sperSXXdgZ3uPgta4q8oJQe3aTRvO9UBj7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z28vS7zX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340C7C4CEE7;
+	Thu, 18 Sep 2025 18:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758221129;
+	bh=u6NaIt2RygsBlCtYn4hZiQqQdifJG8iCHYQXwiLX65E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Z28vS7zXihUdX9isz4tKX5bJfG+N6wgA49ZsUL9MzWkxVOZIaB9CEoaGCeOdF5Wlc
+	 irtxfrEkcx12CNmXSpOaxnrWSE3uyQ9BLUGMgdMwz3ZkzTrB7vIU5S+RDvQ6dKM5ki
+	 RxUJdVCwUhpNByj1sxF0SK4ASPa55TnwfCGcGHPBq14Ogh8/QuEEAY6ulYXQRiCrc/
+	 gKhn/kbZmmAWPpdmUgqtKeJS0PBEgSw0hZoyR9kwDh1THqWJDw1i1JuxwJQDO1Fvaa
+	 tjs8Xsk56/6qq7xSDRAZoHUF6JGB7I+NLrajHOGD2OUILv6g7xC1NJVMJM9wXp6cE/
+	 8ldLVQITFO98w==
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Geoff Levand <geoff@infradead.org>,
+	Helge Deller <deller@gmx.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	iommu@lists.linux.dev,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	linux-alpha@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] mtd: cfi: use struct_size() helper for cfiq allocation
-Date: Fri, 19 Sep 2025 00:14:14 +0530
-Message-ID: <20250918184420.76047-1-krishnagopi487@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Matt Turner <mattst88@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	sparclinux@vger.kernel.org,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	virtualization@lists.linux.dev,
+	x86@kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH 0/9] Remove DMA .map_page and .unmap_page callbacks
+Date: Thu, 18 Sep 2025 21:45:00 +0300
+Message-ID: <cover.1758219786.git.leon@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +82,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Documentation/process/deprecated.rst recommends against performing
-dynamic size calculations in the arguments of memory allocator
-function due to the risk of overflow. Such calculations can
-wrap around and result in a smaller allocation than what the caller
-was expecting.
+Hi,
 
-Replace the size calculation in cfiq allocation with struct_size()
-helper to make the code clearer and handle the overflows correctly.
+This series continues following two series:
+1. "dma-mapping: migrate to physical address-based API" 
+https://lore.kernel.org/all/cover.1757423202.git.leonro@nvidia.com
+2. "Preparation to .map_page and .unmap_page removal"
+Preparation to .map_page and .unmap_page removal
 
-Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
----
- drivers/mtd/chips/cfi_probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+In this series, the DMA .map_page/.unmap_page callbacks are converted to newly
+introduced .map_phys/.unmap_phys interfaces. This conversion allows us to reduce
+or eliminate (for certain ARCHs) use of struct pages in DMA path.
 
-diff --git a/drivers/mtd/chips/cfi_probe.c b/drivers/mtd/chips/cfi_probe.c
-index a04b6174181c..e254f9cd2796 100644
---- a/drivers/mtd/chips/cfi_probe.c
-+++ b/drivers/mtd/chips/cfi_probe.c
-@@ -208,7 +208,7 @@ static int __xipram cfi_chip_setup(struct map_info *map,
- 	if (!num_erase_regions)
- 		return 0;
- 
--	cfi->cfiq = kmalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
-+	cfi->cfiq = kmalloc(struct_size(cfi->cfiq, EraseRegionInfo, num_erase_regions), GFP_KERNEL);
- 	if (!cfi->cfiq)
- 		return 0;
- 
+Thanks
+
+Leon Romanovsky (9):
+  alpha: Convert mapping routine to rely on physical address
+  MIPS/jazzdma: Provide physical address directly
+  parisc: Convert DMA map_page to map_phys interface
+  powerpc: Convert to physical address DMA mapping
+  sparc64: Use physical address DMA mapping
+  x86: Use physical address for DMA mapping
+  vdpa: Convert to physical address DMA mapping
+  xen: swiotlb: Convert mapping routine to rely on physical address
+  dma-mapping: remove unused map_page callback
+
+ arch/alpha/kernel/pci_iommu.c            | 47 ++++++++++--------------
+ arch/mips/jazz/jazzdma.c                 | 20 ++++++----
+ arch/powerpc/include/asm/iommu.h         |  8 ++--
+ arch/powerpc/kernel/dma-iommu.c          | 22 +++++------
+ arch/powerpc/kernel/iommu.c              | 14 +++----
+ arch/powerpc/platforms/ps3/system-bus.c  | 33 ++++++++++-------
+ arch/powerpc/platforms/pseries/ibmebus.c | 15 ++++----
+ arch/powerpc/platforms/pseries/vio.c     | 21 ++++++-----
+ arch/sparc/kernel/iommu.c                | 16 ++++----
+ arch/sparc/kernel/pci_sun4v.c            | 16 ++++----
+ arch/sparc/mm/io-unit.c                  | 13 +++----
+ arch/sparc/mm/iommu.c                    | 46 ++++++++++++-----------
+ arch/x86/kernel/amd_gart_64.c            | 19 +++++-----
+ drivers/parisc/ccio-dma.c                | 25 +++++++------
+ drivers/parisc/sba_iommu.c               | 23 ++++++------
+ drivers/vdpa/vdpa_user/iova_domain.c     | 11 +++---
+ drivers/vdpa/vdpa_user/iova_domain.h     |  8 ++--
+ drivers/vdpa/vdpa_user/vduse_dev.c       | 18 +++++----
+ drivers/xen/grant-dma-ops.c              | 20 ++++++----
+ include/linux/dma-map-ops.h              |  7 ----
+ kernel/dma/mapping.c                     | 12 ------
+ kernel/dma/ops_helpers.c                 |  8 +---
+ 22 files changed, 208 insertions(+), 214 deletions(-)
+
 -- 
-2.43.0
+2.51.0
 
 
