@@ -1,161 +1,145 @@
-Return-Path: <linux-kernel+bounces-823360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41345B86336
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CBC2B86325
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 041C856555B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB9E563388
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB9E3195FA;
-	Thu, 18 Sep 2025 17:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32807315D5D;
+	Thu, 18 Sep 2025 17:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sQ0wo1M3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hoNs9W3X"
+Received: from mail-oi1-f201.google.com (mail-oi1-f201.google.com [209.85.167.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73DF31A7E1;
-	Thu, 18 Sep 2025 17:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D118264A72
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758216273; cv=none; b=uZ9U5Tb1ddVTH0begWa/c99ObZwf0Kw7imsA2mHeZJgeiPjQ4yCHbnAggqUyo92NMqchs7ZrwvuKEjxlDAXEzea4+oef30sKa8qsU9qqaun6ruU4I9X0DD7FzRw7jarjue20eqOrhWp8yNKdbY+ORptcG0a97M6dyxp5NH7dl+Q=
+	t=1758216261; cv=none; b=NGEE9q0VzLS74j/NhX/zqB4lBg+46M7FnQKmeDd2SoKoSdItmSSgLtHYqD7Xud6n6N5RslH8pZLkc0IvZ6eP2TwwPJ9YDySzqP+tcat6UJY1GcdeSt34PdXm2MeGZVfD9HtCPl0Pxx+BBKYkRtp1PAcU7b03mWkO+0FauViYl+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758216273; c=relaxed/simple;
-	bh=7zUIF4doMbyCpR2nzVRmsi7rEQhw/x7p/IcFKhdqYCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNmDCcm9NSKDiDGPiau+QrzeutY7Xwovf0h05ZQiWyUimxXJeUvYD+JK8/nMNartzFZQ3MhuzrjKCdBRQTomstKSLt5o38Ic+VH9hcXLr/umVyolkV95sJhT0/WJrOzQ43dofBJMivG4ofLoGSYr3bieWEwYMlsdqkH1PGeEcOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sQ0wo1M3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pX8hgFoPiMyFYee1qff/GbRGpxMGCd83byCgw7rNe+s=; b=sQ0wo1M3ipZBhGr1+5Pl2TV/5v
-	Ir3PiYGREY5KOhNnxm/AACaskE7a3vwAHnC7QB//zQ39mQOCTaVzv6FnHVm0kAIJH6xsnS+0joJVR
-	ixjl0jjs1QHh4SLHtwUl764UGgpBCZKu6SFDyL7AM3VIEMNdlyj4cOX7JyLdj+akMSKOhEgQNDI+Z
-	bbEIbfcX5xwTICRq5Ey+oS3Kp7tXPNEwGTvqBpxNeXDdhnElhi0uHes2DrbJJOPG5/qlvNI8u5QvP
-	K8YvUgDR2gGHOTbIMa1hXCRJarxRsuCSPHR3oyBQRg3pR1gjgcqyBKo9OAxH/Ah4aCkfhMIWObU5f
-	poxrbR6g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uzIMh-00000007KAU-3mnE;
-	Thu, 18 Sep 2025 17:24:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 813E8300125; Thu, 18 Sep 2025 19:24:14 +0200 (CEST)
-Date: Thu, 18 Sep 2025 19:24:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
-	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [RESEND][PATCH v15 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <20250918172414.GC3409427@noisy.programming.kicks-ass.net>
-References: <20250908171412.268168931@kernel.org>
- <20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
- <20250918111853.5dc424df@gandalf.local.home>
+	s=arc-20240116; t=1758216261; c=relaxed/simple;
+	bh=vaDWT20s/LC9UNltIDvKjeDjNkntHPYzNahjuA8L3NM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=eEErgOyhqiu81gkr15lpiooXQYMW8cLluH0k1rmBBzX+uv43fRzF6h6UlsBHLLxoU8TWBeOxcF369DbqhXGE+mtciXOSHmJYgt508nqbzxqeZgwyGoYuQ9+AEJ7hLobXariJiq6VuAIt4GmD0ccltzZU5G13lleANNdbudnPHL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hoNs9W3X; arc=none smtp.client-ip=209.85.167.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-oi1-f201.google.com with SMTP id 5614622812f47-435de7f86aeso971447b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 10:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758216259; x=1758821059; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rGc1GlAUI6MGVyw1McNVC1ua5PKAdc6aMJbTizQeuf4=;
+        b=hoNs9W3X/PXR33hzWAy2zWYyF9Z5SxhuEysNp37TeLCILlzlI1rg1lmgjhrS6HFv1d
+         6rmHVnvrzFkDj7bNqLYTzOMdZXJlV3uzpBWaq5U/1UNIJlDSzrtusCUGROZmrDC9RAmv
+         lcdfUDbwO0S4u6H6k2KWLVR7kAisiUFF/D3h180KgOwEGhygdn42T/ygY/MK0HFopKJP
+         FQ+6RQovzNKzsBau/LL38bIo66ECN5L6eNa3TTk0MT1Skgj29V96XDEWoen6P06Msp8a
+         5MT6HbpYEUfOJc9249Glcu4EZanQAJpCOfkX52lTOjWxQRVWHdu4sx8u+qLmBTX5i7Mt
+         j+Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758216259; x=1758821059;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rGc1GlAUI6MGVyw1McNVC1ua5PKAdc6aMJbTizQeuf4=;
+        b=JNzhUNY7FKwp48TO0oRmjefmg9bhgfcmXDmJ0+bB4a5w7rNIQvfHN7VU2maxzDn+Ps
+         prThg8APK/tUIrDQtNqywZNJR61fy80ieqsaTon97jMQbT864tZrnyB83ixEKLmaFns2
+         +nbSJgJjZATsffzSgrKCUDNbkEaZDudGDw18mOSnMyst5bt6QCnmWbuskpH+/yMUnoPN
+         A12KLBBExqkLA64hB+lnNEH2KahXJBB3vL1jUA+yJ8/7Kx+lAXqoAbmood9C4Knz/s/m
+         F7NUweTev77RH9G/yRiXrMnY+1iGJ547v1xJgzB6EW+3t/vCJY+TeidDTvEYwC36zWPu
+         3uXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBVkqFdoZLO877Rfv1Ro+X35V0S+FhTjgwxm652OKzh9fV9rmv9TRhjlul48KlKu9PYrKQDOCgSMEDqDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBPhC60vk15XhjORaprmorA7iGV3094Zuw3DTg2NX3IiT25z8g
+	8q/4CuJdfvUMfOZibmM9d1KrEjC2mL+RvBMIjJ7jY75I64/KFWEPNFIGsE9MDjB2I4nsj4FjnY1
+	2n6GwnmMU5w==
+X-Google-Smtp-Source: AGHT+IGacugtWxHcctIggiAC3tjIbV92hwu7pngoJJJFA6GiBta/P4RS3r1fXotqF9c2rBzq6XOtMZchSPZC
+X-Received: from oabpp22.prod.google.com ([2002:a05:6870:9d16:b0:331:9a49:4dbe])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6808:4484:b0:438:9303:acee
+ with SMTP id 5614622812f47-43d6c245512mr95512b6e.30.1758216259014; Thu, 18
+ Sep 2025 10:24:19 -0700 (PDT)
+Date: Thu, 18 Sep 2025 10:24:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918111853.5dc424df@gandalf.local.home>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250918172416.1247940-1-irogers@google.com>
+Subject: [PATCH v1 1/2] perf evsel: Ensure the fallback message is always
+ written to
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 18, 2025 at 11:18:53AM -0400, Steven Rostedt wrote:
-> On Thu, 18 Sep 2025 13:46:10 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > So I started looking at this, but given I never seen the deferred unwind
-> > bits that got merged I have to look at that first.
-> > 
-> > Headers want something like so.. Let me read the rest.
-> > 
-> > ---
-> >  include/linux/unwind_deferred.h       | 38 +++++++++++++++++++----------------
-> >  include/linux/unwind_deferred_types.h |  2 ++
-> >  2 files changed, 23 insertions(+), 17 deletions(-)
-> 
-> Would you like to send a formal patch with this? I'd actually break it into
-> two patches. One to clean up the long lines, and the other to change the
-> logic.
+The fallback message is unconditionally printed in places like
+record__open. If no fallback is attempted this can lead to printing
+uninitialized data, crashes, etc.
 
-Sure, I'll collect the lot while I go through it and whip something up
-when I'm done. For now, I'll just shoot a few questions your way.
+Fixes: c0a54341c0e8 ("perf evsel: Introduce event fallback method")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/evsel.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 477cddf08c5c..814ef6f6b32a 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -3565,7 +3565,7 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+ 
+ 		/* If event has exclude user then don't exclude kernel. */
+ 		if (evsel->core.attr.exclude_user)
+-			return false;
++			goto no_fallback;
+ 
+ 		/* Is there already the separator in the name. */
+ 		if (strchr(name, '/') ||
+@@ -3573,7 +3573,7 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+ 			sep = "";
+ 
+ 		if (asprintf(&new_name, "%s%su", name, sep) < 0)
+-			return false;
++			goto no_fallback;
+ 
+ 		free(evsel->name);
+ 		evsel->name = new_name;
+@@ -3596,17 +3596,19 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+ 			sep = "";
+ 
+ 		if (asprintf(&new_name, "%s%sH", name, sep) < 0)
+-			return false;
++			goto no_fallback;
+ 
+ 		free(evsel->name);
+ 		evsel->name = new_name;
+ 		/* Apple M1 requires exclude_guest */
+-		scnprintf(msg, msgsize, "trying to fall back to excluding guest samples");
++		scnprintf(msg, msgsize, "Trying to fall back to excluding guest samples");
+ 		evsel->core.attr.exclude_guest = 1;
+ 
+ 		return true;
+ 	}
+-
++no_fallback:
++	scnprintf(msg, msgsize, "No fallback found for '%s' for error %d",
++		  evsel__name(evsel), err);
+ 	return false;
+ }
+ 
+-- 
+2.51.0.470.ga7dc726c21-goog
 
-So we have:
-
-do_syscall_64()
-  ... do stuff ...
-  syscall_exit_to_user_mode(regs)
-    syscall_exit_to_user_mode_work(regs)
-      syscall_exit_work()
-      exit_to_user_mode_prepare()
-        exit_to_user_mode_loop()
-	  retume_user_mode_work()
-	    task_work_run()
-    exit_to_user_mode()
-      unwind_reset_info();
-      user_enter_irqoff();
-      arch_exit_to_user_mode();
-      lockdep_hardirqs_on();
-  SYSRET/IRET
-
-
-and
-
-DEFINE_IDTENTRY*()
-  irqentry_enter();
-  ... stuff ...
-  irqentry_exit()
-    irqentry_exit_to_user_mode()
-      exit_to_user_mode_prepare()
-        exit_to_user_mode_loop();
-	  retume_user_mode_work()
-	    task_work_run()
-      exit_to_user_mode()
-        unwind_reset_info();
-	...
-  IRET
-
-Now, task_work_run() is in the exit_to_user_mode_loop() which is notably
-*before* exit_to_user_mode() which does the unwind_reset_info().
-
-What happens if we get an NMI requesting an unwind after
-unwind_reset_info() while still very much being in the kernel on the way
-out?
-
-
-What is the purpose of unwind_deferred_task_exit()? This is called from
-do_exit(), only slightly before it does exit_task_work(), which runs all
-pending task_work. Is there something that justifies the manual run and
-cancel instead of just leaving it sit in task_work an having it run
-naturally? If so, that most certainly deserves a comment.
-
-
-A similar question for unwind_task_free(), where exactly is it relevant?
-Where does it acquire a task_work that is not otherwise already ran on
-exit?
 
