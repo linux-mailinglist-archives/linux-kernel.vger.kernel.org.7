@@ -1,202 +1,242 @@
-Return-Path: <linux-kernel+bounces-822894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF0DB84EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:54:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA40BB84EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C5F7C49B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C29C7B3E52
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF46225A38;
-	Thu, 18 Sep 2025 13:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AB01DF74F;
+	Thu, 18 Sep 2025 13:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfQMeVPw"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="OlZpnHjh"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F111F12F8
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383E734BA33;
+	Thu, 18 Sep 2025 13:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758203631; cv=none; b=JFhSNGy84PPrk1saU3HGsKp2iNCgMP0tt2OrPbaPAA5i/euGRFUndz9Qfp3IjO6jX7r+erhF3KBj6B0gg4xmXSmQRfQXVAeQVcpcVzpVoA+Qma7lCoI2gUfqXlIEReIq+AsM1oGKosjoWumnoieyvN5glFn1ey8l3jmE2R1hMQY=
+	t=1758203795; cv=none; b=Et/24KreGS1apXYr6VDN18I2vqsVgNKm5PcDps/sTJjsvOMMVjzYx+ig6R/1/jGMSecR31e8kkkIeevRu62ElIiDqEg5EPL0/ApF5JOT/dob0T7wCx1tMf00655CFayJuSzLt/5IYjC4NWkg/nmX7oqf3tEhfMp3oG0oAV7fkL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758203631; c=relaxed/simple;
-	bh=W8d+rtW76hd2LNkPX2+QJLDJy6PBL5cszIE1g/3/9FI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WFSb2zv7N5Wh3zACHtpTfqUtdHysOVb09ieGQWkzCxJ2abKUxg+8oHkylrGufJjvGm2POJhlBlO/NTdkaEs49+nEHUftLu5bUbCxj7YLNRcurIOr5O5TbpD6IxZpCtMhCQ66UdJdt9IeYGHx8DP6uNVXMbA8A/bsVfH0cjvUzVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfQMeVPw; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0b6bf0097aso182592066b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758203628; x=1758808428; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=j7efdXg49cd0dO4HNsPgED93u6J0FRsteNdyMBWuRc0=;
-        b=cfQMeVPwhlYmpXtRfT5BYz/T64TCrvFJH32cIptJYbfQCQtwjQsSKaALeXPvk33VpH
-         arNXDWeQtAB702/agV1Yb32LnvTiUtMqTik2TaYQiQXOKm/pXZfcgDMDgXTbX3k+8A0y
-         OaRPcDv3acaWTtrxzqWfSR7KIQ/pWUhzTwypH+zeKkK5pzI7Zjt4xFlqjNNLgyFIMmRT
-         40MWju1htAXyxrvY9WduasEk6HQQXXrUbFxklSW+ghU45OQefJky7Yl77X2GMM7RIDRD
-         b6hxehcLvwJwR1QDj0FxPKio+SUWdBrDk8SxtjjdvS9IxiLeQCsa5koecQdC1qlQah4D
-         ywig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758203628; x=1758808428;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7efdXg49cd0dO4HNsPgED93u6J0FRsteNdyMBWuRc0=;
-        b=wmXBp5recicBmg2b5wym7S10pvRKCnOcP/Q5b9NicPgXdYg0gx7V2w4iJz71eyxQfd
-         cOkIqMTNpwfrALTKeF7x2UShEN+nhu+5vAJDGZT+iZhvfHZpVlh2LCGtLnZM9VoqTME+
-         R2tr/6qpJu6GM/pGb0K/H9j1xKh1Nytmbf0sMK7Pd9xUR1Z0moNKw8UB7R/CuD0LVFu9
-         3CYC8q4ZOaCd0Fhem+0iQEFwmqeD9O3UiPxUfr630jMLaV+QHJCWyRiFYrrLkZUzdlwQ
-         UA2k7pVDdrcEFF2s96NeD5rR6z79ydGXAk/TUdNKSJDa0Oa1Txy9l6VhjnvprWg27ges
-         fr2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUSUgi1tF/IbbBPKFJ8RVQYiFv763JhF6adcEc0h9OVGM2dml6U1qWnI+7OvH6nvrunnu9q9wklSHzXl9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxudA/O+rzMr5Un+REOOWhMz2lMpP0gipRTPP0bxmfO9Vx+1g/l
-	PEMTlJvVb80XtbgdPxdjiI7L16cQSIvQ1zT7iqbHpZiPKKOWHk+GCFvtJM6mQLx8y40=
-X-Gm-Gg: ASbGnctp5MvSc0ZtfVdb49xXZx4dcMPvcXxLXRMjO0cikj40EamaGvZrE8f+jd0u/rU
-	iPXHsaJjwvGb3kieHl4BzZt/H8Pb6rQe2U2mvLo0FH3jVqHcwZR6oeM2aDx6UEP6n/Ik8HhpNls
-	VleugETR6Tc8CmBZokYtOuh2HDV16/VMsHcn1BbpM/FFMUARhcpy5KghYg7FHJegumE60xVA2x7
-	rSZ+vUPSp6EsrASxrZF06qLfUuvDbm0HIcORZaTwAx9ZWzVAPuHXapDrRLuEwmvXoAcr+p6xG00
-	HlVmxjWIqsdPdp4xT7cOun/7yGbAS+OElnhQNCw3zPu4TU4+gd2J31wgIhmv6k7yA5qW1bKtONz
-	CWWEfKOynfGQsyrGJ7S7EBg/4y2refhWRK8sTaB1G0zNGs/2sJw4=
-X-Google-Smtp-Source: AGHT+IHnDWpjM1umgSyHsR6OREF3QxVVNfm6x8W+jII5XcXDsJKZeNe+EM7x++buErDbKkF9QmRQfw==
-X-Received: by 2002:a17:907:7e93:b0:b02:a093:eac9 with SMTP id a640c23a62f3a-b1bc1169518mr637192866b.53.1758203628349;
-        Thu, 18 Sep 2025 06:53:48 -0700 (PDT)
-Received: from [172.20.10.3] ([109.166.131.237])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc5f44bbcsm203026466b.5.2025.09.18.06.53.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 06:53:47 -0700 (PDT)
-Message-ID: <c3ab4a21-183f-495a-b3b5-cc74b392eebc@linaro.org>
-Date: Thu, 18 Sep 2025 16:53:45 +0300
+	s=arc-20240116; t=1758203795; c=relaxed/simple;
+	bh=IcwikUMKVI674/Awn/O+0nUBM4X3XXiTzFOHJR7bTow=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A3pSaVCcjQdii3cc1bF1etowfN7NV8oDQhXjR+v0h3Mg97l1le9+rYp0ckdESeU/wLfVsTK9XdTUwYNeTTH+FUl2Szo/C53O6r+BH0pKyV+qchBxbTRBzeE12vK0y0rTtTGxqZ+FnXei4hiXAaiPqUmVN1qBnnDDNTEfyVfoN0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=OlZpnHjh; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=V3
+	JP7qmGZxeuZjnZhKjY3T4O/Qv+zV8IFdlGJhwsyEQ=; b=OlZpnHjh1qYWRr5MjW
+	1MbxMncIIKedh5p4imrNGYGRruNWzQZnxLbahV++DQPM15RQeTWDp18tZsUXsCit
+	MuKcmRVtQG2lA69IWCNxUKIqD9rNxFsf+tsdwOk85kUQKCf3sIPMtwwK8XJc01/E
+	MxKh5aNJi8gIKoPFICBECbkk4=
+Received: from MS-CMFLBWVCLQRG.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3z91mD8xo2WenCA--.26380S2;
+	Thu, 18 Sep 2025 21:55:52 +0800 (CST)
+From: GuangFei Luo <luogf2025@163.com>
+To: rafael@kernel.org
+Cc: michal.wilczynski@intel.com,
+	dan.carpenter@linaro.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lkp@intel.com,
+	luogf2025@163.com,
+	sre@kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v6] ACPI: battery: prevent sysfs_add_battery re-entry on rapid events
+Date: Thu, 18 Sep 2025 21:55:49 +0800
+Message-ID: <20250918135549.1075-1-luogf2025@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
-To: Thomas Gleixner <tglx@linutronix.de>, David Hildenbrand
- <david@redhat.com>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, andersson@kernel.org,
- pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
- <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
- <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
- <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
- <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
- <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
- <7f4aa4c6-7b77-422b-9f7a-d01530c54bff@redhat.com> <87segk9az5.ffs@tglx>
- <f8d3c2d4-8399-4169-8527-3c87922f2ef1@redhat.com> <87jz1w88zq.ffs@tglx>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <87jz1w88zq.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3z91mD8xo2WenCA--.26380S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtFWkKr18JrW3ZFyxJFyfCrg_yoWxtw1Dpa
+	yrCayUKrW8JF48JwsF9F1UKryfursYqF9rWr95Cr92k3srur1DAr4xXFyUAF47Gry8Z3y8
+	ZFn5t3WYyr1xWw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UnBMtUUUUU=
+X-CM-SenderInfo: poxrwwisqskqqrwthudrp/1tbiPRTImWjGkaTplgACse
 
+When removing and reinserting the laptop battery, ACPI can trigger
+two notifications in quick succession:
+  - ACPI_BATTERY_NOTIFY_STATUS (0x80)
+  - ACPI_BATTERY_NOTIFY_INFO   (0x81)
 
+Both notifications call acpi_battery_update(). Because the events
+happen very close in time, sysfs_add_battery() can be re-entered
+before battery->bat is set, causing a duplicate sysfs entry error.
 
-On 9/18/25 11:23, Thomas Gleixner wrote:
-> On Wed, Sep 17 2025 at 21:03, David Hildenbrand wrote:
->>> As this is specific for the compiled kernel version you can define an
->>> extensible struct format for the table.
->>>
->>> struct inspect_entry {
->>> 	unsigned long	properties;
->>>          unsigned int	type;
->>>          unsigned int	id;
->>>          const char	name[$MAX_NAME_LEN];
->>> 	unsigned long	address;
->>>          unsigned long	length;
->>>          ....
->>> };
->>>
->>> @type
->>>         refers either to a table with type information, which describes
->>>         the struct in some way or just generate a detached compile time
->>>         description.
->>>
->>> @id
->>>         a unique id created at compile time or via registration at
->>>         runtime. Might not be required
->>
->> We discussed that maybe one would want some kind of a "class" 
->> description. For example we might have to register one pgdat area per 
->> node. Giving each one a unique name might be impractical / unreasonable.
->>
->> Still, someone would want to select / filter out all entries of the same 
->> "class".
->>
->> Just a thought.
-> 
-> Right. As I said this was mostly a insta brain dump to start a
-> discussion. Seems it worked :)
-> 
->>> @properties:
->>>
->>>          A "bitfield", which allows to mark this entry as (in)valid for a
->>>          particular consumer.
->>>
->>>          That obviously requires to modify these properties when the
->>>          requirements of a consumer change, new consumers arrive or new
->>>          producers are added, but I think it's easier to do that at the
->>>          producer side than maintaining filters on all consumer ends
->>>          forever.
->>
->> Question would be if that is not up to a consumer to decide ("allowlist" 
->> / filter) by class or id, stored elsewhere.
-> 
-> Yes, I looked at it the wrong way round. We should leave the filtering
-> to the consumers. If you use allow lists, then a newly introduced class
-> won't be automatically exposed everywhere.
-> 
-> Thanks,
-> 
->         tglx
+When the ACPI battery driver uses
+acpi_dev_install_notify_handler() to register acpi_battery_notify,
+the callback may be triggered twice in a very short period of time.
 
+This patch ensures that sysfs_add_battery() is not re-entered
+when battery->bat is already non-NULL, preventing the duplicate
+sysfs creation and stabilizing battery hotplug handling.
 
-So, one direction to follow from this discussion is to have the
-inspection entry and inspection table for all these entries.
-Now, one burning question open for debate, is, should this reside into mm ?
-mm/inspect.h would have to define the inspection entry struct, and some
-macros to help everyone add an inspection entry.
-E.g. INSPECTION_ENTRY(my ptr, my size);
-and this would be used all over the kernel wherever folks want to
-register something.
-Now the second part is, where to keep all the inspection drivers ?
-Would it make sense to have mm/inspection/inspection_helpers.h which
-would keep the table start/end, some macros to traverse the tables, and
-this would be included by the inspection drivers.
-inspection drivers would then probe via any mechanism, and tap into the
-inspection table.
-I am thinking that my model with a single backend can be enhanced by
-allowing any inspection driver to access it. And further on, each
-inspection driver would register a notifier to be called when an entry
-is being created or not. This would mean N possible drivers connected to
-the table at the same time. ( if that would make sense...)
-Would it make sense for pstore to have an inspection driver that would
-be connected here to get different kinds of stuff ?
-Would it make sense to have some debugfs driver that would just expose
-to user space different regions ? Perhaps something similar with
-/proc/kcore but not the whole kernel memory rather only the exposed
-inspection entries.
-Now, for the dynamic memory, e.g. memblock_alloc and friends ,
-would it be interesting to have a flag e.g. MEMBLOCK_INSPECT, that would
-be used when calling it, and in the background, this would request an
-inspection_entry being created ? Or it makes more sense to call some
-function like inspect_register as a different call directly at the
-allocation point ?
+[  476.117945] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
+[  476.118896] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
+[  476.118903] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
+[  476.118906] Workqueue: kacpi_notify acpi_os_execute_deferred
+[  476.118917] Call Trace:
+[  476.118922]  <TASK>
+[  476.118929]  dump_stack_lvl+0x5d/0x80
+[  476.118938]  sysfs_warn_dup.cold+0x17/0x23
+[  476.118943]  sysfs_create_dir_ns+0xce/0xe0
+[  476.118952]  kobject_add_internal+0xba/0x250
+[  476.118959]  kobject_add+0x96/0xc0
+[  476.118964]  ? get_device_parent+0xde/0x1e0
+[  476.118970]  device_add+0xe2/0x870
+[  476.118975]  __power_supply_register.part.0+0x20f/0x3f0
+[  476.118981]  ? wake_up_q+0x4e/0x90
+[  476.118990]  sysfs_add_battery+0xa4/0x1d0 [battery]
+[  476.118998]  acpi_battery_update+0x19e/0x290 [battery]
+[  476.119002]  acpi_battery_notify+0x50/0x120 [battery]
+[  476.119006]  acpi_ev_notify_dispatch+0x49/0x70
+[  476.119012]  acpi_os_execute_deferred+0x1a/0x30
+[  476.119015]  process_one_work+0x177/0x330
+[  476.119022]  worker_thread+0x251/0x390
+[  476.119026]  ? __pfx_worker_thread+0x10/0x10
+[  476.119030]  kthread+0xd2/0x100
+[  476.119033]  ? __pfx_kthread+0x10/0x10
+[  476.119035]  ret_from_fork+0x34/0x50
+[  476.119040]  ? __pfx_kthread+0x10/0x10
+[  476.119042]  ret_from_fork_asm+0x1a/0x30
+[  476.119049]  </TASK>
+[  476.142552] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
+[  476.415022] ata1.00: unexpected _GTF length (8)
+[  476.428076] sd 0:0:0:0: [sda] Starting disk
+[  476.835035] ata1.00: unexpected _GTF length (8)
+[  476.839720] ata1.00: configured for UDMA/133
+[  491.328831] sysfs: cannot create duplicate filename '/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0C0A:00/power_supply/BAT1'
+[  491.329720] CPU: 1 UID: 0 PID: 185 Comm: kworker/1:4 Kdump: loaded Not tainted 6.12.38+deb13-amd64 #1  Debian 6.12.38-1
+[  491.329727] Hardware name: Gateway          NV44             /SJV40-MV        , BIOS V1.3121 04/08/2009
+[  491.329731] Workqueue: kacpi_notify acpi_os_execute_deferred
+[  491.329741] Call Trace:
+[  491.329745]  <TASK>
+[  491.329751]  dump_stack_lvl+0x5d/0x80
+[  491.329758]  sysfs_warn_dup.cold+0x17/0x23
+[  491.329762]  sysfs_create_dir_ns+0xce/0xe0
+[  491.329770]  kobject_add_internal+0xba/0x250
+[  491.329775]  kobject_add+0x96/0xc0
+[  491.329779]  ? get_device_parent+0xde/0x1e0
+[  491.329784]  device_add+0xe2/0x870
+[  491.329790]  __power_supply_register.part.0+0x20f/0x3f0
+[  491.329797]  sysfs_add_battery+0xa4/0x1d0 [battery]
+[  491.329805]  acpi_battery_update+0x19e/0x290 [battery]
+[  491.329809]  acpi_battery_notify+0x50/0x120 [battery]
+[  491.329812]  acpi_ev_notify_dispatch+0x49/0x70
+[  491.329817]  acpi_os_execute_deferred+0x1a/0x30
+[  491.329820]  process_one_work+0x177/0x330
+[  491.329826]  worker_thread+0x251/0x390
+[  491.329830]  ? __pfx_worker_thread+0x10/0x10
+[  491.329833]  kthread+0xd2/0x100
+[  491.329836]  ? __pfx_kthread+0x10/0x10
+[  491.329838]  ret_from_fork+0x34/0x50
+[  491.329842]  ? __pfx_kthread+0x10/0x10
+[  491.329844]  ret_from_fork_asm+0x1a/0x30
+[  491.329850]  </TASK>
+[  491.329855] kobject: kobject_add_internal failed for BAT1 with -EEXIST, don't try to register things with the same name in the same directory.
 
-Feel free to throw your opinion at each of the above.
-Thanks for helping out !
+Fixes: 10666251554c ("ACPI: battery: Install Notify() handler directly")
+Signed-off-by: GuangFei Luo <luogf2025@163.com>
+Cc: stable@vger.kernel.org
+---
+v6:
+  - Update Fixes tag: point to commit 10666251554c ("ACPI: battery: Install
+    Notify() handler directly"), which introduced the sysfs_add_battery()
+    re-entry issue when acpi_battery_notify is registered via
+    acpi_dev_install_notify_handler(). The problem does not occur with
+    acpi_bus_register_driver().
+
+v5:
+  - Move changelog above the '---' line as per submission guidelines.
+
+v4:
+  - Uses guard(mutex) for battery->sysfs_lock in sysfs_add_battery().
+  - Since sysfs_add_battery() now handles the battery->bat check with
+    proper locking,the extra if (!battery->bat) check at the call site
+    has become redundant.
+
+v3:
+  - Modified the earlier approach: since sysfs_add_battery() is invoked
+    from multiple places, the most reliable way is to add the lock inside
+    the function itself.
+  - sysfs_remove_battery() had a similar race issue in the past, which was
+    fixed by adding a lock as well. Reference:
+    https://lore.kernel.org/all/9c921c22a7f33397a6774d7fa076db9b6a0fd669
+        .1312318300.git.len.brown@intel.com/
+
+v2:
+ - Fix missing mutex_unlock in acpi_battery_update()
+   (Reported-by: kernel test robot)
+
+v1:
+ - Initial patch to handle race when hotplugging battery, preventing
+   duplicate sysfs entries.
+---
+ drivers/acpi/battery.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index 6905b56bf3e4..20d68f3e881f 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -850,6 +850,10 @@ static void __exit battery_hook_exit(void)
+ 
+ static int sysfs_add_battery(struct acpi_battery *battery)
+ {
++	guard(mutex)(&battery->sysfs_lock);
++	if (battery->bat)
++		return 0;
++
+ 	struct power_supply_config psy_cfg = {
+ 		.drv_data = battery,
+ 		.attr_grp = acpi_battery_groups,
+@@ -1026,11 +1030,9 @@ static int acpi_battery_update(struct acpi_battery *battery, bool resume)
+ 		return result;
+ 	acpi_battery_quirks(battery);
+ 
+-	if (!battery->bat) {
+-		result = sysfs_add_battery(battery);
+-		if (result)
+-			return result;
+-	}
++	result = sysfs_add_battery(battery);
++	if (result)
++		return result;
+ 
+ 	/*
+ 	 * Wakeup the system if battery is critical low
+@@ -1112,12 +1114,12 @@ static int battery_notify(struct notifier_block *nb,
+ 			result = acpi_battery_get_info(battery);
+ 			if (result)
+ 				return result;
+-
+-			result = sysfs_add_battery(battery);
+-			if (result)
+-				return result;
+ 		}
+ 
++		result = sysfs_add_battery(battery);
++		if (result)
++			return result;
++
+ 		acpi_battery_init_alarm(battery);
+ 		acpi_battery_get_state(battery);
+ 		break;
+-- 
+2.43.0
+
 
