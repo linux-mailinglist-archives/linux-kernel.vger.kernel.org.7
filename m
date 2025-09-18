@@ -1,71 +1,135 @@
-Return-Path: <linux-kernel+bounces-823102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95ED1B85882
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:21:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E57B858AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1F41887916
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C417E2BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4C330CB27;
-	Thu, 18 Sep 2025 15:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE69D27AC4C;
+	Thu, 18 Sep 2025 15:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuUhUofM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WyvCZiG+"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9FB30CB5F;
-	Thu, 18 Sep 2025 15:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C38930C0EB
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 15:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758208511; cv=none; b=qKblBrm8QbBG6+44JRZz/C/cvDqr6jlB+oVsU0mZVX/gR/cgvIaUDq6wgS/rfU9RvmUZwgRkZlh1EGrkmpeLh7YBhZFr3mGHUGnIPCmnJWwBFH7ByCnqNls1i5lXBNfWYkgv22MZ01lguPZRRA0LwurFNWaqTu14pY57lTbQiio=
+	t=1758208573; cv=none; b=pcCL0bYuszoRM0pP3rOcZ+iLDLjcDOOG1Fg4ZV8JClnEobn6j+VIPP1y9iMmk8cIBA19pWQlM5eXaXVBeV8zM9oJvFmK7s3cZEc6GeNZgD3T2VLhJpW6WDwsY/DZsv5MNFqxHvFTjsPeJEMik0uuYJ14begvjLarnSTVKYXhtTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758208511; c=relaxed/simple;
-	bh=8JwclengLTvMgBdFHuzKmj+p7e6D4OWHLbYoSRMS1/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=upd9DFRUWmFga+QueDmwEOWomDhG8GQfRQVNyF1nszqe3BIddSjfdbvHDmGePAtK3rU3zM/jXsJXrhNQc+KXxYKpVOZ1C/3rf+NuUVON1eQk6iJKH9Sn05QsB3TgrWrwz9/eMqEh/VlAjJUoZQKYelckcFIc+XUpd3D39Rr6hMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuUhUofM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72ACAC4CEEB;
-	Thu, 18 Sep 2025 15:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758208510;
-	bh=8JwclengLTvMgBdFHuzKmj+p7e6D4OWHLbYoSRMS1/I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IuUhUofMJ9th+V1Q+UdSl79TW3eCpmpANbZzMKMRxq85b+2FFll5NYAF6pDe7m1H2
-	 kKAmfmR5+sLxAbYe08Xeo9bPnC3HaFPMl+fI9dh8LrD35QfIFjkpqNoPHz6Xqjq6pc
-	 ruOYLMpWBCN097QZZ6+DaHooSxLycWkH+9CK3Ouqf+Y+ztSSRDHUX17/ChHp0E3Lbe
-	 OeRjDWMXJfoCkokiWLGxE905+9rXV4SoX4Q/CLNvLUIYxdtKOONvxJt2kohoUsyDA8
-	 XgD/ajndt3FhJROD3DCZkndZY7gOxB3LzmC0Qm/NBm1IP76PNFsC0LwoeJwWhQZ2Ap
-	 39zibW6cZo8oA==
-Date: Thu, 18 Sep 2025 08:15:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sathesh B Edara <sedara@marvell.com>
-Cc: <linux-kernel@vger.kernel.org>, <sburla@marvell.com>,
- <vburru@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
- <pabeni@redhat.com>, <netdev@vger.kernel.org>, <hgani@marvell.com>,
- <andrew@lunn.ch>, <srasheed@marvell.com>
-Subject: Re: [net-next PATCH v1 0/2] Add support to retrieve hardware
- channel information
-Message-ID: <20250918081509.39c066e3@kernel.org>
-In-Reply-To: <20250918144858.29960-1-sedara@marvell.com>
-References: <20250918144858.29960-1-sedara@marvell.com>
+	s=arc-20240116; t=1758208573; c=relaxed/simple;
+	bh=XpqlDA/hyMutqOXOtcHoeGa/ryYYMOPnkl081l9Xc5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ps7OWBRf/wO0L2NhObdB6oWGqJRAXp4PJQgD1x1Ih322AC+CJo+Yl99H16dXFcF4BM3N97UKgnYkTFvQVi57g3fPOSx3GJwdCZYEnm7DRpTt+/DofwqkfvoScuz+alTtcniljJr3CgS1/xvzQ6Wx/U/hgd2Qdry7m4Dl9SUL5Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WyvCZiG+; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d71bcab69so8332337b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:16:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758208570; x=1758813370; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxqmW3n9Sw4jw325VsVgJ6XHMVW6nHnWRwX1gianPwM=;
+        b=WyvCZiG+tMHNFlwu37e/r3icUHyWHScp19n4RT99Js6INaBe/jcEf7b9D0Ju1teEAg
+         VDJQi/ME7eUnexMaqoYy6XQdxjr7+k3/5y+vK7MhXEr6wGFQBjeseS8Fxn/oeQJzUU9W
+         RHASCbgtelhqIpJpYLYQOFRuSeFjrcC9bbkrtfiUL6G1uYXsHV64DCkTAf/UL38GDF3j
+         N/z2HWfEbgPKTmsPYOlWkForNlsLdX63w5Odxw6L28IUK5NFmO4I5cSj2H95Q0z5ipKa
+         GB8xIBimCf9NdQn+TwXBEzu7w0pB/QalOZTSShFIuHWCT/LCUOUYQohkLT7oKM2Hs8p4
+         SQuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758208570; x=1758813370;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxqmW3n9Sw4jw325VsVgJ6XHMVW6nHnWRwX1gianPwM=;
+        b=mpbhNe72tRbDDVHW4bnNEavibiUnYrQOWyAEOwwU7fzrqCmI6R4JdJZbq0isKpHfLO
+         FeUpsxmp7/ZBEx5XF+A1Ipvp53MbcplGu6hWypqWhBFYiYasD85gTjMJKo/BAHdVzkbW
+         0uctQpMxnmbJMdq7V8hp0+KZ3bZC2Y2v9zTI7Nd9TEIh5kM5JZHvrcpdjeZHEfpu/NIf
+         cLIQAu6PrgMuNQketApw79dvKIpzHWZ3wUZ4gsUzQXGBsmxL5WJGw4qsy04fU0ADNAdV
+         XQvkf+Oyd+2phjF3p+ej/1hOwAA8Jno1wvjTA/GGUH70KuzJCIyJ7R9EeKVRigGw5Jyh
+         Bk3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhHbgiPSJrlMC/0xOmmBdBZ3i+G+RJRb5Hr88fzoB9/6Lks0HYMHlhVO1s5dgO2dPHI8bOA0bcU9BiX88=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7WBazcENedKyRri0lWY4cA+mmceauJW3/+NpQdgp4irwnTS4W
+	MavcITJDBtEPZCjWgjC0ZHxv7dCdYOGcRUoS0+GTZWgmyZ18gzdzS/c9Ydf+6V5sUo5fcSUTzpw
+	vhL0O/MoPfw/TV/UmO2j9jy0uZwjez612kd9YckZ7Kg==
+X-Gm-Gg: ASbGnctehZW1UEhiJuhBbg3/WcvDdr/8Utx+kDgD0lEvWgb7XuZ8josBzFZKuY4Ci0M
+	IIBO4APEhyc9ElCHVMzzd8OC2nBQW8MallxLb7PlZg+uNB0wvnJzSmMzaeK6Ek30W1+HfNRvcz6
+	k8ky5+5z939oSFf+fPO1cQbYENvOEmMS/PfGxfpOuk16qwLadk5RgyQAVt+eZrGL07Zr3ICztOu
+	G7805GoBjfH1ZUnsHqsSQY=
+X-Google-Smtp-Source: AGHT+IGhhJ7Bv3R+nZnqBzlYOnhgsyWlmTzS9C8s6bR8WkgRrUao/WcQHEslpUiS5E5xsVP21eeJhMPtVBvj4DhTSeo=
+X-Received: by 2002:a05:690c:7108:b0:720:d27:5d0 with SMTP id
+ 00721157ae682-7388e0ff14fmr49402547b3.0.1758208569760; Thu, 18 Sep 2025
+ 08:16:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250902-pm-v3-0-ffadbb454cdc@nxp.com> <20250902-pm-v3-4-ffadbb454cdc@nxp.com>
+In-Reply-To: <20250902-pm-v3-4-ffadbb454cdc@nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 18 Sep 2025 17:15:32 +0200
+X-Gm-Features: AS18NWCz7mrWAc40Ox1MHdxef1Mp2CL_HkIidm9lOboNSf8e8s0UW_BDcKfNYeU
+Message-ID: <CAPDyKFrMPz8X23WAoj_8A3-SsdpbZZ5Ss9MbLK0yy6FLRytTVA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] usb: dwc3: imx8mp: Set out of band wakeup for i.MX95
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Peter Chen <peter.chen@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Xu Yang <xu.yang_2@nxp.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, imx@lists.linux.dev, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 18 Sep 2025 07:48:56 -0700 Sathesh B Edara wrote:
-> This patch series introduces support for retrieving hardware channel
-> configuration through the ethtool interface for both PF and VF.
+On Tue, 2 Sept 2025 at 05:33, Peng Fan <peng.fan@nxp.com> wrote:
+>
+> i.MX95 DWC3 inside HSIOMIX could still wakeup Linux, even if HSIOMIX
+> power domain(Digital logic) is off. There is still always on logic
+> have the wakeup capability which is out band wakeup capbility.
+>
+> So use device_set_out_band_wakeup for i.MX95 to make sure DWC3 could
+> wakeup system even if HSIOMIX power domain is in off state.
+>
+> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/usb/dwc3/dwc3-imx8mp.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/usb/dwc3/dwc3-imx8mp.c b/drivers/usb/dwc3/dwc3-imx8mp.c
+> index bce6af82f54c24423c1e1fcc46913c8456b6f035..fde158d1f6e3d89d261ed3689a17d703878c7e37 100644
+> --- a/drivers/usb/dwc3/dwc3-imx8mp.c
+> +++ b/drivers/usb/dwc3/dwc3-imx8mp.c
+> @@ -248,6 +248,10 @@ static int dwc3_imx8mp_probe(struct platform_device *pdev)
+>         }
+>
+>         device_set_wakeup_capable(dev, true);
+> +
+> +       if (device_is_compatible(dev, "fsl,imx95-dwc3"))
+> +               device_set_out_band_wakeup(dev, true);
+> +
 
-Please read the doc I sent you and repost in a couple of days.
--- 
-pw-bot: defer
+Similar comment as for patch3, please set this from system suspend
+callback instead.
+
+>         pm_runtime_put(dev);
+>
+>         return 0;
+>
+> --
+> 2.37.1
+>
+
+Kind regards
+Uffe
 
