@@ -1,204 +1,155 @@
-Return-Path: <linux-kernel+bounces-823765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E7EB8765E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:46:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FBCB87665
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957B07E2104
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333B81CC096D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D876619F115;
-	Thu, 18 Sep 2025 23:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362DA275113;
+	Thu, 18 Sep 2025 23:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="KntxePmE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O8m50MwF"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ADzNdYSN"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B020134BA40
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE134BA40
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758239186; cv=none; b=JL+Zp6bbrAVR2sd/SDwIfgPJuq5jewi6UNu0OxIZw2qDGbC5DRkh8loQkktAi5ER6eIMcG3amw5JjVP6aeyu3ErQn14Fx6hdpJSqSmXxcq6l8rWBE9XRY+HXokmSUKCSIS503DTplJndLZlVf3d5K50fJhW2hiWef2b1mbv/9pk=
+	t=1758239243; cv=none; b=dkjZ96kkpIOJ36Yncfi0JN55odpGiIaOyt+Xq/9bzkOuFPtSk0pXFBfroGtTxJIYqh0Gni87u4+B0Kyq7g+XcVqu/FhymHlopqisqTFUhMHghUL45TQXSskrJHz0/Ja7/8Gzy0A/Az7qP/PuQCbn9XqJE4cTjSvZkVqM3JB25vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758239186; c=relaxed/simple;
-	bh=iFGQupn5XPpP2KjstqGmLw4s+9R+PrX8KlceWBGW5zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhiVtvnoValCGzcESLEZZ3i1khKCcl5HpcK+oiRTw4laig7H8btGni4cvACN5DyhigeG4Rb4KNWJHht2JkFYcM1KIBlWFsSEKHU/m4Cs6KoJBRb1dXpurDhPigw+4/qGvz7TUnA0cC6tr+s00MlMwRV1iXeyYTfvEbVgOv1a4XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=KntxePmE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O8m50MwF; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 97A0D1D002BA;
-	Thu, 18 Sep 2025 19:46:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Thu, 18 Sep 2025 19:46:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1758239183; x=
-	1758325583; bh=sWsEZtX/uvsijDe9n8yAt9hLHijgKIaNN7Dlpi/+8Z4=; b=K
-	ntxePmEWuYrbO+uzZx+Ox0o9w36HsHuJlFo6DzPuODhX6zv61rUbK+ILGZcHguHV
-	Snsp1coFmghQbXqWhJJik/qei4A+cqx0knxfRrnELrzSIJHaRTg0ZoIxJ2V2xdft
-	EFRVpTJh+ukUbvXX/044BDfwQjF5cVglprUmAd6kWY9l3shTYrpAH8y/Pfqk1jyR
-	sIsZhfwQOozehxyXkMLDJfXHthscg+EuVhy2j69AXYhI+QJiBnV+OLn5SiNHUXC0
-	jJYfpDFjXM4oAK+1TR3clslGmUnnDXXNP4OB0uA/HnTCgeK9hkPeLzIUx6kHiIee
-	yFEaZ+748Gict5cPIV31Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758239183; x=1758325583; bh=sWsEZtX/uvsijDe9n8yAt9hLHijgKIaNN7D
-	lpi/+8Z4=; b=O8m50MwFhGBzbf9tHv76nzB2l/yI/pHnZvt8NLlDjtZB+VDwyHK
-	5j3bI6nalh434GOksdKx5OGYC+MaKAu9XmUl/YMUwOl7xn2resMzFWpqegBXDZ1g
-	Cr1cJc4ZrbR7XpoyHeHcQuvyBgg+AeW80JbOIsgrX6NixcY+1aVodbeUjU+KFXV+
-	Z7kf0OU1PJBzE3mGbz1K8oPIXGq2AS7zPBdSMzbhN3UbujG+2+WHZhbgBB6ETS6W
-	3e714+Z1zbDDvS4EqQPV1vnO9CEIHHkqfFFRn/xkENCHyfs6/s9BpNGCvrGUip+M
-	kJgs0bHUY1NqgBmdcMgx4MJEroC9m5eT1Xg==
-X-ME-Sender: <xms:z5nMaH64xwhQX4Vz3PAJXvKYLbayJJpDKHHhaeNIEyKOZnvh0mjdtA>
-    <xme:z5nMaF0_uW4kCBYXij4EUzHDCtFEJMTIhbsP2jBrRD1L78m8L3diQxQZWcmLINi31
-    JstlHOg2bNiDWfm2uE>
-X-ME-Received: <xmr:z5nMaAZ0IUHx1RRipb9QOjtDisZi50OJ1vji8IsAeNJ5ao_KPf0hJfKhsAhOIoq9LlZKiJ3lBVbfW-59wsEomEbstNn-_XF0Pe1d>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegjeeilecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttd
-    dtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgke
-    dvieeuffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfu
-    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
-    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
-    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:z5nMaFB9mM4EOUpklYaEej7xNi9n4vzZeUMNuMg_0Grn1gBIFOdAQA>
-    <xmx:z5nMaK8yFY8nMu7jYtC6aH5eq44AbMr3UhNpEjvTvjNvrN229f95Lg>
-    <xmx:z5nMaN_WYacWs4h6gQ0IsIMvq6HH56FGlM9r7DTNqiWl-cCvrI4pcA>
-    <xmx:z5nMaJdaE4xcPeYqzckiFkkqDdhJel6BxdGkk84eX6AKarYTyed3AQ>
-    <xmx:z5nMaB86T56qkGAy98DNl7MjEIiL0ZyQWxdE3JiSe3W4q20Z-FoTYC8L>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 18 Sep 2025 19:46:22 -0400 (EDT)
-Date: Fri, 19 Sep 2025 08:46:20 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] firewire: core; eliminate pick_me goto label
-Message-ID: <20250918234620.GA127993@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-References: <20250918230857.127400-1-o-takashi@sakamocchi.jp>
- <20250918230857.127400-6-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1758239243; c=relaxed/simple;
+	bh=Pq2rpqDxwoTk6V+36ropQRFEMsic1JeXwdhKIYEltEs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NENprUmjgS9mlu2TtFtIvsfRmO3Gs8SFqsPkm61RcZcsK89wpCi41NMlRspLMlqJLe3SdvqW0IVgYVAdVhBwN9PfziFjH8Q6NjBDKPJLaiiyvHPRp1M8CUFjzn77WKCWaEe0kgy1eeN9C3ojed6tDWmu6h+Tmdi8BKcjpGH6fd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ADzNdYSN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58II5S6V018318
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nLDrKlFQ+TyQOjCDaTNIvkV0oUkgBFPymnp+deo0dNw=; b=ADzNdYSN8RLPCcdD
+	B5kCrmrqnuQqUWi++ZZN1eby5awGlOWD3XqW0abC1ffuangQnvN7d7jYEJpIZ23b
+	WQK+W2a6NyNpN/RjxSRDSBjduW0jjoa2TWFUY1gJgWOJpoI9Mk0aNAxF5hWNz4km
+	VmhugCJPDSqnJgOJ5G4jW18wo8U/aomK6Fdn4fIaJO75fjsPiyc8uTyKj5Y/K3Ss
+	E/BPocum5EPWK5rqaMOP/IXhJv1yaedqtGaut2tgZplFZaofUHrLTotjKYBvYg2B
+	g7P/h7bbRQg7EUvD5kZ5/3ieDIUcYdIrhc/NX1LYPJ5YgFWwkhhXyIg98LliEYE9
+	VIzVqw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxwgcc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:21 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-25177b75e38so20198825ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:47:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758239240; x=1758844040;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nLDrKlFQ+TyQOjCDaTNIvkV0oUkgBFPymnp+deo0dNw=;
+        b=PypivJcxsHPcOd71+lUAP50N6birVPsH8tReYvuV8NymFm7/TgqJ8ldeigA3AbJKo2
+         htO1JNqfenRrDCHgWseJulFb4O2wEcL6Z+QRdOZt/ln9VWBLAnVEz1xOAtK6gDVrOoV9
+         HeUY0E9AJyd3UTFsiCJ4os/Q7JQ6PSVyNjb0/9KZfAlUVK2DiAimN1JA+qaPRfC4PXej
+         4Bw7fVV2oowxeJYFKh4t+BnjxQFf016sYot67FKRiriZR/mN55Y6fdA06sJxQ0OQwbG0
+         WiqHw0QChImftsYdWPZlUEYcgslvap8c0FOd3rbhb/jZQPQecAZcytZmzqd9IZSGtJNL
+         jPoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo4RlRa9nfRNyk2JWKcrpGGAqrP63u0KA/YkOcsJFeUrp1RNnPESkkqjXtAle7smnWEAq0Kk+kyOKSsNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywspk8Fi0b3oYn4ghU6ZPzsPNeAA4fUpFkHCsqabIzMMy/moACh
+	p2zEHW9/XALXAKTZDWoRVIaLH/bYNU476Xa81i4ltiAj5hjipt2vaMFKqGmTm6n2Pix2uj5+nrj
+	rBaFQ8aXe/YNe+bPDS+Z+dB1sOhKBJIpnRnC92Jiu+2IjW//GsNYM6ODclQY0p7RYJew=
+X-Gm-Gg: ASbGncsr8uw8+0WYtoOe49TccPmKps+imHJRd8mVGXSq4yRY0TtHf4k3oUAADE8Q9hx
+	lQK7YSOdEUdAJbThVxfzE7+4fb3PHUO3uBtokF4kaMjt7w2TLrn8iJvj1wq5N8UN/R1mTugsa77
+	UfIUQYZRmgvzhcCRdfwcOGBro4Io7K9qmzhEkYKUF9Rq/uxhRcu5OXZ+IRWP+NUNml67hTU5DRu
+	/evn4bY6K2WAzCsZWv82N5zvy2xDl/rd9Q0pade3qrQoz5pvQt1NsPp8+RDLTr5qP9SfgtyKjNo
+	X91f8E53STtV+2Ib4avzVQiCYog94HhlxYdFbODAI8w3OeZ7H8AnhblEmCLcpgvBrtLrc2QsYW+
+	/
+X-Received: by 2002:a17:902:db05:b0:25c:19b4:7ae3 with SMTP id d9443c01a7336-269ba476d87mr19514385ad.24.1758239240291;
+        Thu, 18 Sep 2025 16:47:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGD9ekDQzPxbJSmIN93i1sbgAAD3PPG0qDLK6MmIW/8S8pKCsKu6izoBYxkpA5iLsl7JaGyZg==
+X-Received: by 2002:a17:902:db05:b0:25c:19b4:7ae3 with SMTP id d9443c01a7336-269ba476d87mr19514155ad.24.1758239239836;
+        Thu, 18 Sep 2025 16:47:19 -0700 (PDT)
+Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269aa71c928sm16474705ad.107.2025.09.18.16.47.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 16:47:19 -0700 (PDT)
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+To: Jeff Johnson <jjohnson@kernel.org>,
+        Baochen Qiang <quic_bqiang@quicinc.com>,
+        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
+        Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>
+In-Reply-To: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
+References: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
+Subject: Re: [PATCH ath-next 0/2] wifi: ath12k: fix 2 instances of Smatch
+ warnings
+Message-Id: <175823923890.3217488.17674946008340249630.b4-ty@oss.qualcomm.com>
+Date: Thu, 18 Sep 2025 16:47:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918230857.127400-6-o-takashi@sakamocchi.jp>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68cc9a09 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=3oxmQQPd3Vm5LX_vkI8A:9
+ a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX2Qlyn2rthLce
+ F4Ti8FHMm4vm+5cRM9v3l54KIRs/CKCpe6uDniv3J1W8xAQGSBkMboiPxVUmW9IBRKbqBUvBvUo
+ ovNzdZvMRwTWoMQJvKuJTKU68wkosBBdBslYfa9SEF9ZKZjY38SWi1aon8c4rqw7/0Fuu1cxsc5
+ J+5ZAw9CwhKN2TzIsrPhSM4j8Ik434zu399nX/uuGgSTPv6MrVCNPUsJ8fhDrcYHWjLNE9YVDbe
+ Yt1T7eyUlt5Jqaqk9dUHjgxgfTb0M94A1QKlPrgB2uuPCzbAmFuG5llKxamTRxojBnDLTFdd+q6
+ 0eRG/ZjJOIDvr6hUua8R084wXGJnyUya5bsVScbiRfERL5NQJOQlyWBCJ2slMNkzj63ihCJaI8d
+ jt/FF4fw
+X-Proofpoint-GUID: WGOVFt4txLk1xqZPo3kG3SzZxiPxYUsx
+X-Proofpoint-ORIG-GUID: WGOVFt4txLk1xqZPo3kG3SzZxiPxYUsx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_03,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-Hi,
 
-On Fri, Sep 19, 2025 at 08:08:56AM +0900, Takashi Sakamoto wrote:
-> This commit uses condition statements instead of pick_me goto label.
+On Mon, 04 Aug 2025 11:03:09 +0800, Baochen Qiang wrote:
+> Fix below two Smatch warnings:
 > 
-> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> ---
->  drivers/firewire/core-card.c | 102 ++++++++++++++++++-----------------
->  1 file changed, 52 insertions(+), 50 deletions(-)
+> 1#
+> drivers/net/wireless/ath/ath12k/mac.c:10069
+> ath12k_mac_fill_reg_tpc_info() error: uninitialized symbol 'eirp_power'.
 > 
-> diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
-> index 6268b595d4fa..b766ce5fdea4 100644
-> --- a/drivers/firewire/core-card.c
-> +++ b/drivers/firewire/core-card.c
-> @@ -388,6 +388,7 @@ static void bm_work(struct work_struct *work)
->  	int root_id, new_root_id, irm_id, local_id;
->  	int expected_gap_count, generation;
->  	bool do_reset = false;
-> +	bool stand_for_root;
->  
->  	if (card->local_node == NULL)
->  		return;
-> @@ -408,11 +409,11 @@ static void bm_work(struct work_struct *work)
->  			fw_schedule_bm_work(card, msecs_to_jiffies(125));
->  			return;
->  		case BM_CONTENTION_OUTCOME_IRM_HAS_LINK_OFF:
-> -			new_root_id = local_id;
-> -			goto pick_me;
-> +			stand_for_root = true;
-> +			break;
->  		case BM_CONTENTION_OUTCOME_IRM_COMPLIES_1394_1995_ONLY:
-> -			new_root_id = local_id;
-> -			goto pick_me;
-> +			stand_for_root = true;
-> +			break;
->  		case BM_CONTENTION_OUTCOME_AT_NEW_GENERATION:
->  			// BM work has been rescheduled.
->  			return;
-> @@ -423,8 +424,8 @@ static void bm_work(struct work_struct *work)
->  			return;
->  		case BM_CONTENTION_OUTCOME_IRM_IS_NOT_CAPABLE_FOR_IRM:
->  			// Let's do a bus reset and pick the local node as root, and thus, IRM.
-> -			new_root_id = local_id;
-> -			goto pick_me;
-> +			stand_for_root = true;
-> +			break;
->  		case BM_CONTENTION_OUTCOME_IRM_HOLDS_ANOTHER_NODE_AS_BM:
->  			if (local_id == irm_id) {
->  				// Only acts as IRM.
-> @@ -434,60 +435,61 @@ static void bm_work(struct work_struct *work)
->  		case BM_CONTENTION_OUTCOME_IRM_HOLDS_LOCAL_NODE_AS_BM:
->  		default:
->  			card->bm_generation = generation;
-> +			stand_for_root = false;
->  			break;
->  		}
->  	}
->  
-> -	/*
-> -	 * We're bus manager for this generation, so next step is to
-> -	 * make sure we have an active cycle master and do gap count
-> -	 * optimization.
-> -	 */
-> -	if (card->gap_count == GAP_COUNT_MISMATCHED) {
-> -		/*
-> -		 * If self IDs have inconsistent gap counts, do a
-> -		 * bus reset ASAP. The config rom read might never
-> -		 * complete, so don't wait for it. However, still
-> -		 * send a PHY configuration packet prior to the
-> -		 * bus reset. The PHY configuration packet might
-> -		 * fail, but 1394-2008 8.4.5.2 explicitly permits
-> -		 * it in this case, so it should be safe to try.
-> -		 */
-> -		new_root_id = local_id;
-> -		/*
-> -		 * We must always send a bus reset if the gap count
-> -		 * is inconsistent, so bypass the 5-reset limit.
-> -		 */
-> -		card->bm_retries = 0;
-> -	} else {
-> -		// Now investigate root node.
-> -		struct fw_device *root_device = fw_node_get_device(root_node);
-> -
-> -		if (root_device == NULL) {
-> -			// Either link_on is false, or we failed to read the
-> -			// config rom.  In either case, pick another root.
-> -			new_root_id = local_id;
-> +	// We're bus manager for this generation, so next step is to make sure we have an active
-> +	// cycle master and do gap count optimization.
-> +	if (!stand_for_root) {
+> 2#
+> drivers/net/wireless/ath/ath12k/mac.c:9812
+> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'local_non_psd->power' 5 <= 15
+> drivers/net/wireless/ath/ath12k/mac.c:9812
+> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'reg_non_psd->power' 5 <= 15
+> 
+> [...]
 
-I realized that the "stand_for_root" local variable would be
-ununitialized here at the case of "card->bm_generation == generation".
-Let me post take 2.
+Applied, thanks!
 
+[1/2] wifi: ath12k: initialize eirp_power before use
+      commit: bba2f9faf41ee9607c78fcd669527b7654543cfe
+[2/2] wifi: ath12k: fix overflow warning on num_pwr_levels
+      commit: ea2b0af4c9e3f7187b5be4b7fc1511ea239046c0
 
-Regards
+Best regards,
+-- 
+Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 
-Takashi Sakamoto
 
