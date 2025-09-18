@@ -1,174 +1,233 @@
-Return-Path: <linux-kernel+bounces-823313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70CFB861A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A250B8605F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A532545B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:50:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0210C544A82
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5F8248F51;
-	Thu, 18 Sep 2025 16:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAA5221F29;
-	Thu, 18 Sep 2025 16:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B2C3191A6;
+	Thu, 18 Sep 2025 16:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b="RNfVg4an";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="lefDCXN3"
+Received: from e234-58.smtp-out.ap-northeast-1.amazonses.com (e234-58.smtp-out.ap-northeast-1.amazonses.com [23.251.234.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5130302769;
+	Thu, 18 Sep 2025 16:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.251.234.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758214237; cv=none; b=HhSkN27VcfT7J0dod+F1XK4d76bpz/GZN4HpRYf02oadZTDgx9hCFEV4k0n2o1OHPbvg8gk91EKECKVx04P5qFcZLGXFFHLWzbmIrQUaOmlSDXWNjb583oGit7ggEwH1SJJLlQoMP21DNLB9yUkBp3Sb1GWm72mb2RENROPW4VQ=
+	t=1758212624; cv=none; b=hMBTg1JVShI1G5C1UxtD3TaJi0BqzI2lpBX0TKad5E4BSe+SI7h6l+ulyN32/dimYXt/Yx5hkfBSEO1mwDoMvi15wVOyfWLMde9j6mDUEdEWpdxXbEZCfRFf9YdUB2969mVOMO9oddPuqy+voN0uHKIb3UDhnnaIQL3gSkrFKWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758214237; c=relaxed/simple;
-	bh=k3Y6MBNnl6dECpR6PnRX0K8qXjVVH4SDYF4pnM6U+5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lLQ/afSkHbTZ9GQNIU5i5wiRUO25KQ+4RJJBVGxLww4gIE0fkVBaDM70Anoyec/J8wywXDl5e6ThlbwUPk2ysWPJQtfQoESEUCe1ulqXD3p/9f0F7k0NzZor+PeX1S2FgJyGb/WbD4RZRF3pnzdIawno2Ggu43PlkG/86RD16YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cSLY82NTDz9sg9;
-	Thu, 18 Sep 2025 18:23:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id sEG83xOg8Ef7; Thu, 18 Sep 2025 18:23:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cSLY624WMz9sfq;
-	Thu, 18 Sep 2025 18:23:38 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 361D48B767;
-	Thu, 18 Sep 2025 18:23:38 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id mscD6JiKuvkZ; Thu, 18 Sep 2025 18:23:38 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 79A2C8B778;
-	Thu, 18 Sep 2025 18:23:37 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v6 7/7] dt-bindings: soc: fsl: qe: Add support of IRQ in QE GPIO
-Date: Thu, 18 Sep 2025 18:23:27 +0200
-Message-ID: <7269082e90d20cf2cb4c11ceb61e24f0520d0154.1758212309.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1758212309.git.christophe.leroy@csgroup.eu>
-References: <cover.1758212309.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1758212624; c=relaxed/simple;
+	bh=u/TIKGWb90UND1Ifu9ImpXpO7j7JXL1d5NVo7EjQykE=;
+	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Date:MIME-Version:
+	 Content-Type; b=FFTlCIN+XC+ogixo7pIaZrbeusxaJdaU6o2NoA9QwciAo1T1S8PCzXZyOZM00ETplfWjGfjxRJOyMHEHDBCnOZmyilDjJ/2cbR+mmyWRFT2S7iqw4jkWN90OIP2hQilR+kARpQLlp792SMDsEhl7REOOJEcHfAZaur1iJJ+DHrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=send.mgml.me; dkim=pass (1024-bit key) header.d=mgml.me header.i=@mgml.me header.b=RNfVg4an; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=lefDCXN3; arc=none smtp.client-ip=23.251.234.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=send.mgml.me
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; s=resend;
+	d=mgml.me; t=1758212620;
+	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type;
+	bh=u/TIKGWb90UND1Ifu9ImpXpO7j7JXL1d5NVo7EjQykE=;
+	b=RNfVg4anWMzSDxPLwJJVFK7US9FBqHFQHOYSc497AXYQp9F2y3lX4SJqlvYFeSWx
+	Z8m8M4R8F+ICf/2UVLdfxnICF9av7Q5Ai9LaPG5BQPDUky3c7A7dPe2V3agcWOKRH0R
+	RAK8j6wExssfZvcOsrEHy1VJRkqj+RBY7aOK9SXA=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=suwteswkahkjx5z3rgaujjw4zqymtlt2; d=amazonses.com; t=1758212620;
+	h=In-Reply-To:From:To:Cc:Subject:Message-ID:Content-Transfer-Encoding:Date:MIME-Version:Content-Type:Feedback-ID;
+	bh=u/TIKGWb90UND1Ifu9ImpXpO7j7JXL1d5NVo7EjQykE=;
+	b=lefDCXN3p6jbeP1CQZinNzC26iPawQVjsj26yBar8Pm1advK1EV/NWwYLKFn04ze
+	uAeZ5ZErKmx56kc9YMSRvPRMDcXKTEYqjeP99vevECrQp6t3UU6Q27le0ANYmZsKYka
+	SW345WigslNrBv//F3kEfdW6nDL8i9tS1MsuohSw=
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+In-Reply-To: <5da5e4c7-47d7-be71-0724-7b03af33324a@huaweicloud.com>
+From: Kenta Akagi <k@mgml.me>
+To: linan666@huaweicloud.com, song@kernel.org, yukuai3@huawei.com, 
+	mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, k@mgml.me
+Subject: Re: [PATCH v4 6/9] md/raid1,raid10: Fix missing retries Failfast
+ write bios on no-bbl rdevs
+Message-ID: <010601995da37ff4-b47cc6d9-a75b-4ef0-bced-e5a9a55c3f77-000000@ap-northeast-1.amazonses.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 18 Sep 2025 16:23:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758212606; l=3549; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=k3Y6MBNnl6dECpR6PnRX0K8qXjVVH4SDYF4pnM6U+5g=; b=3OSUaeiNXCSwzLz+tUKTqJNBGf6B7Ioh5bO/V4rphHE6/+9Er+qUOqScWnM/rlK+XLEXiwf1o glInwdidngzCUT7dAGGwouPmY/73WQuRgFgH5vsf+hc8S21egdBPaJM
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Feedback-ID: ::1.ap-northeast-1.TOS0vxEE3Ar6ai29fkp2i/jb+l2iigajCGeLfF7S3sk=:AmazonSES
+X-SES-Outgoing: 2025.09.18-23.251.234.58
 
-In the QE, a few GPIOs have an associated IRQ to notify changes.
-Add IRQ support to QE GPIO.
 
-As not all GPIOs have an associated IRQ, the driver needs to know
-to which GPIO corresponds each provided IRQ. This is provided via
-multiple compatible properties:
 
-	compatible = "fsl,mpc8323-qe-pario-bank-a"
-	compatible = "fsl,mpc8323-qe-pario-bank-b"
-	compatible = "fsl,mpc8323-qe-pario-bank-c"
+On 2025/09/18 15:58, Li Nan wrote:
+>=20
+>=20
+> =E5=9C=A8 2025/9/17 21:33,=
+ Kenta Akagi =E5=86=99=E9=81=93:
+>>
+>>
+>> On 2025/09/17 19:06, Li Nan =
+wrote:
+>>>
+>>>
+>>> =E5=9C=A8 2025/9/15 11:42, Kenta Akagi =
+=E5=86=99=E9=81=93:
+>>>> In the current implementation, write failures are =
+not retried on rdevs
+>>>> with badblocks disabled. This is because =
+narrow_write_error, which issues
+>>>> retry bios, immediately returns when =
+badblocks are disabled. As a result,
+>>>> a single write failure on such an=
+ rdev will immediately mark it as Faulty.
+>>>>
+>>>
+>>> IMO, there's no need=
+ to add extra logic for scenarios where badblocks
+>>> is not enabled. Do =
+you have real-world scenarios where badblocks is
+>>> disabled?
+>>
+>> No, badblocks are enabled in my environment.
+>> I'm fine if it's not =
+added, but I still think it's worth adding WARN_ON like:
+>>
+>> @@ -2553,13 +2554,17 @@ static bool narrow_write_error(struct r1bio =
+*r1_bio, int i)
+>> =C2=A0=C2=A0 fail =3D true;
+>> + WARN_ON( (bio->bi_opf &=
+ MD_FAILFAST) && (rdev->badblocks.shift < 0) );
+>> =C2=A0=C2=A0 if (!=
+narrow_write_error(r1_bio, m))
+>>
+>> What do you think?
+>>
+>=20
+> How about this?
+>=20
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.=
+c
+> @@ -2522,10 +2522,11 @@ static bool narrow_write_error(struct r1bio =
+*r1_bio, int i)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool ok =3D =
+true;
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rdev->badblocks=
+.shift < 0)
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return false;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 block_sectors =
+=3D bdev_logical_block_size(rdev->bdev) >> 9;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 else
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 block_sectors =3D roundup(1 << =
+rdev->badblocks.shift,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bdev_logical_block_size(rdev->bd=
+ev) >> 9);
+>=20
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 block_sectors =3D =
+roundup(1 << rdev->badblocks.shift,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 bdev_logical_block_size(rdev->bdev) >> 9);
+> =
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sector =3D r1_bio->sector;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sectors =3D ((sector + =
+block_sectors)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 & =
+~(sector_t)(block_sectors - 1))
+>=20
+> rdev_set_badblocks() checks shift, =
+too. rdev is marked to Faulty if setting
+> badblocks fails.
 
-	compatible = "fsl,mpc8360-qe-pario-bank-a"
-	compatible = "fsl,mpc8360-qe-pario-bank-b"
-	compatible = "fsl,mpc8360-qe-pario-bank-c"
-	compatible = "fsl,mpc8360-qe-pario-bank-d"
-	compatible = "fsl,mpc8360-qe-pario-bank-e"
-	compatible = "fsl,mpc8360-qe-pario-bank-f"
-	compatible = "fsl,mpc8360-qe-pario-bank-g"
+Sounds good. If badblocks are disabled, rdev_set_badblocks() returns false,=
+ so there
+should be no problem.
 
-	compatible = "fsl,mpc8568-qe-pario-bank-a"
-	compatible = "fsl,mpc8568-qe-pario-bank-b"
-	compatible = "fsl,mpc8568-qe-pario-bank-c"
-	compatible = "fsl,mpc8568-qe-pario-bank-d"
-	compatible = "fsl,mpc8568-qe-pario-bank-e"
-	compatible = "fsl,mpc8568-qe-pario-bank-f"
+Can this be included in the cleanup?
+https://lore.kernel.org/linux-raid/20250917093508.456790-3-linan666@huaweic=
+loud.com/T/#u
 
-When not using IRQ and for banks having no IRQ (like bank D on mpc8323)
-the origin compatible = "fsl,mpc8323-qe-pario-bank" is still valid.
+or should I resend this patch as proposed?
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- .../gpio/fsl,mpc8323-qe-pario-bank.yaml       | 27 +++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
+Thanks,
+Akagi
 
-diff --git a/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml b/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
-index 0dd9c0e6ca39..c34aeea119e0 100644
---- a/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
-+++ b/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
-@@ -14,6 +14,22 @@ properties:
-     items:
-       - enum:
-           - fsl,chip-qe-pario-bank
-+          - fsl,mpc8323-qe-pario-bank-a
-+          - fsl,mpc8323-qe-pario-bank-b
-+          - fsl,mpc8323-qe-pario-bank-c
-+          - fsl,mpc8360-qe-pario-bank-a
-+          - fsl,mpc8360-qe-pario-bank-b
-+          - fsl,mpc8360-qe-pario-bank-c
-+          - fsl,mpc8360-qe-pario-bank-d
-+          - fsl,mpc8360-qe-pario-bank-e
-+          - fsl,mpc8360-qe-pario-bank-f
-+          - fsl,mpc8360-qe-pario-bank-g
-+          - fsl,mpc8568-qe-pario-bank-a
-+          - fsl,mpc8568-qe-pario-bank-b
-+          - fsl,mpc8568-qe-pario-bank-c
-+          - fsl,mpc8568-qe-pario-bank-d
-+          - fsl,mpc8568-qe-pario-bank-e
-+          - fsl,mpc8568-qe-pario-bank-f
-       - const: fsl,mpc8323-qe-pario-bank
- 
-   reg:
-@@ -24,6 +40,9 @@ properties:
-   '#gpio-cells':
-     const: 2
- 
-+  interrupts:
-+    description: List of interrupts for lines of the port that trigger interrupts on change.
-+
- required:
-   - compatible
-   - reg
-@@ -35,15 +54,19 @@ additionalProperties: false
- examples:
-   - |
-     gpio-controller@1400 {
--        compatible = "fsl,mpc8360-qe-pario-bank", "fsl,mpc8323-qe-pario-bank";
-+        compatible = "fsl,mpc8360-qe-pario-bank-a", "fsl,mpc8323-qe-pario-bank";
-         reg = <0x1400 0x18>;
-         gpio-controller;
-         #gpio-cells = <2>;
-+        interrupts = <0 1 2 3>;
-+        interrupt-parent = <&qepic>;
-     };
- 
-     gpio-controller@1460 {
--        compatible = "fsl,mpc8360-qe-pario-bank", "fsl,mpc8323-qe-pario-bank";
-+        compatible = "fsl,mpc8360-qe-pario-bank-e", "fsl,mpc8323-qe-pario-bank";
-         reg = <0x1460 0x18>;
-         gpio-controller;
-         #gpio-cells = <2>;
-+        interrupts = <19 20 21 22 23 24 25>;
-+        interrupt-parent = <&qepic>;
-     };
--- 
-2.49.0
+>=20
+>=20
+>>
+>> Thanks,
+>> Akagi
+>>
+>>>> The retry mechanism appears to =
+have been implemented under the assumption
+>>>> that a bad block is =
+involved in the failure. However, the retry after
+>>>> MD_FAILFAST write =
+failure depend on this code, and a Failfast write request
+>>>> may fail for reasons unrelated to bad blocks.
+>>>>
+>>>> Consequently, if failfast is enabled and badblocks are disabled on all
+>>>> rdevs, and all rdevs encounter a failfast write bio failure at the =
+same
+>>>> time, no retries will occur and the entire array can be lost.
+>>>>
+>>>> This commit adds a path in narrow_write_error to retry writes =
+even on rdevs
+>>>> where bad blocks are disabled, and failed bios marked =
+with MD_FAILFAST will
+>>>> use this path. For non-failfast cases, the =
+behavior remains unchanged: no
+>>>> retry writes are attempted to rdevs =
+with bad blocks disabled.
+>>>>
+>>>> Fixes: 1919cbb23bf1 ("md/raid10: add =
+failfast handling for writes.")
+>>>> Fixes: 212e7eb7a340 ("md/raid1: add =
+failfast handling for writes.")
+>>>> Signed-off-by: Kenta Akagi <k@mgml.me>
+>>>> ---
+>>>> =C2=A0=C2=A0 drivers/md/raid1.c=C2=A0 | 44 =
++++++++++++++++++++++++++++++---------------
+>>>> =C2=A0=C2=A0 =
+drivers/md/raid10.c | 37 ++++++++++++++++++++++++-------------
+>>>> =C2=A0=C2=A0 2 files changed, 53 insertions(+), 28 deletions(-)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !test_bit(Faulty, &rdev->flags) &&
+>>>
+>>> --=C2=A0
+>>> Thanks,
+>>> Nan
+>>>
+>>>
+>>
+>>
+>>
+>> .
+>=20
+> --=C2=A0
+> Thanks,
+> Nan
+>=20
+>=20
 
 
