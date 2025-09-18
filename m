@@ -1,117 +1,204 @@
-Return-Path: <linux-kernel+bounces-822376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1D8B83AA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:03:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021E9B83ABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26ACB4A3687
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121B4721DCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF09A2FE58C;
-	Thu, 18 Sep 2025 09:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F672FE58C;
+	Thu, 18 Sep 2025 09:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Tke3dUod"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MCjtsiz4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46102C11EE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7FA2DF714
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758186139; cv=none; b=YehObpvzZmKAqhy6q03mfTo2PuyOpvxNmTJ9pkS2qiWwHFhazOGhyfoINmz2PXZNYSn8B7YEsJ5ynZtr22F65LvaWKFWmKADnY3cPUaxO0zM12I3H/BtH9Eac84uEVnIZX04ZNfe3NlNpyzv8WUXn8/BRt+rpcAhVqMas7ao9VE=
+	t=1758186190; cv=none; b=BS/sjkCpHmENziWQafLBDB8sQD/FEQVQMQGNs0OUbe+xNADS8U6DFjehcKJJ6VqtGgQFmBuPcqtr70ydUhZbB22hfFbP3GpvwXyt2KPE3VMgz+lLuVc3RGjugshvsMiyB0bE3Q7VLSjg8zwJWEKIHXpENYhpmIIUe0RV17eEntw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758186139; c=relaxed/simple;
-	bh=yUo0gwp5DmrYyI9pysjTCC8QKBXzpTTeyo4OlcnCFGg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=p/Awa/jzsKEoTOFMrBA9p3ZithZmJALE6FnchvY8FZpYFau9ShAmR2vEdckUKvIe/bHjS1lA2YifCmaEJNg12LFjpeYO8nOaQCC3awgz6GNgqNkm+hSD8ZGu0QqsZm77rIcWNCeeZBOlXsr3sgtW0lc+MBPcEewIz90eOgy2FDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Tke3dUod; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250918090214epoutp0153b3e6b176b990311a1709fe0c3476be~mVPlgya6m0596905969epoutp01B
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:02:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250918090214epoutp0153b3e6b176b990311a1709fe0c3476be~mVPlgya6m0596905969epoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1758186134;
-	bh=xohElGlOL2qwuc7CaXtsWhYSzs957c36W9/xGMuImuk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=Tke3dUodbTkau937Ut/TVOrn/aNDPd2vymNswh+GMDtCRYjpedMriimw/19fSwSYl
-	 wwNtG0nmJ2Kh1n213M6brzVDxjNZnNIktmmkeTmyaZ8mEEWlwDUiMD3RV8qkNvaovC
-	 mYTstNC50VWVjjKuDglzFK/mupZRxUzrefG0A4Hs=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250918090214epcas5p4d1ca88ffc44bb86f416cc7356a33e7ec~mVPlAaEad0371503715epcas5p4Z;
-	Thu, 18 Sep 2025 09:02:14 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4cS8ln0298z3hhTD; Thu, 18 Sep
-	2025 09:02:13 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250918090212epcas5p1fae66bbfa75ebed68841f83a10714c54~mVPjcjgHK3151831518epcas5p1m;
-	Thu, 18 Sep 2025 09:02:12 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250918090209epsmtip29e21b8aa35276b5789667d683987389a~mVPg-y8no2788427884epsmtip2w;
-	Thu, 18 Sep 2025 09:02:09 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
-	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <sunyeal.hong@samsung.com>, <shin.son@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <chandan.vn@samsung.com>,
-	<dev.tailor@samsung.com>, <karthik.sun@samsung.com>
-In-Reply-To: <20250915095401.3699849-4-raghav.s@samsung.com>
-Subject: RE: [PATCH v2 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
- nodes
-Date: Thu, 18 Sep 2025 14:32:08 +0530
-Message-ID: <087c01dc287a$ebd50680$c37f1380$@samsung.com>
+	s=arc-20240116; t=1758186190; c=relaxed/simple;
+	bh=3gF74B/Ah4EDnWU58ZXx6dvP16HFD3sYPDMbzivTE0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sQsM3a5PEIgrd6YdHv4HWvSq82KQKPfCUoAnRC1rwY8e9Gb2K/bwXYPv8uRuChqrXLp9IpXdt+T8r78bWCmo0hyaJ0u1EsDJCuoBRUWAP4mQ7QtX4kPknV5Xy/vylXGn/fs3orrxwn8+KnC7mxtdvpYnkaaNcNncfPr/tiVfo/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MCjtsiz4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758186188;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XFCZX9eN7thiq9pavKtpP8J9JCm4he2B7yCgrgp98u4=;
+	b=MCjtsiz4r9xGj+hY01nwJfnHfS/x74Wez0cQH0RlxB6nI6WsptM4xKY+TOJotUsgpZev9X
+	wb/PWgC8Oc9RujZKW7PV3HM1CnV/p2eAQIF3GoyvhHSTUZjm7bcurfjEwwCrKcbtx8eAgh
+	OUUiP4Rc3MsrCmEwdgpxAdJVriCXSbY=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-3GZntSIDNtOGQiKBrg5Z0w-1; Thu, 18 Sep 2025 05:03:06 -0400
+X-MC-Unique: 3GZntSIDNtOGQiKBrg5Z0w-1
+X-Mimecast-MFC-AGG-ID: 3GZntSIDNtOGQiKBrg5Z0w_1758186186
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4612d068c47so4056775e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:03:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758186186; x=1758790986;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XFCZX9eN7thiq9pavKtpP8J9JCm4he2B7yCgrgp98u4=;
+        b=Cf1z/3BM8QV09Jovj231idgzTdR9CYk34rMf4iV2lS/KByeac+9fSetl1xXz5z3cLa
+         E2c0Dqn7SpCzaHc7BRQFw0tA7jjCVGa2623awsozQOIiPEw09KbmT5OUGwapSzZWzaQd
+         sSOWZFW2tUepEqXpqCZ76xrOzgNuMy4iHmYT31R7ZAIRBEq5FiKwFhR6vrKdySz3b2RP
+         DW64+5UYYyQlZXFDU0e3MxdCXK2rsieYtQxPz5lvXrONgaY3MlsKLNwyrMhmnGjmBezN
+         G04VH1ibsDtOYzEsFsOPDLZLuYOrX40qj89bwA7zNFVUXKUwZmlZePCGdHQXYxTOra7M
+         TKwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIZ/oJEtmhLeIX0v9groLIaQV5xwLbEm95Rqa6JEb7io5tmPED86kQEH8VIrRfD4rV/IDQNEysfkuelQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLkhLJSL5UTBgjpej9t21L3CDKI7PeQC9uhNZTLQihc67TipUO
+	sYNWZj0PAcE5cKgSyHjQjZTktoFWYuNEFjk8shmRlS8rto7R7D3pFoOktZNTfDSkH91DqxDxUvg
+	HOzi4DYHEyYhlb/v0uWSqyflxJvkUbBgHB5r5tmRJVbot10T0LtCF93IQUPzgT/z7ww==
+X-Gm-Gg: ASbGncuPiqb9Ul8ivFhC9BX3notW9f1gnpIlNSl/ru5hvYbORkmF0aNWkGywnaJbQzb
+	XA7APeC2zg1PcR7iyERPKdYajexreD5AFyiOJ8OofmoJdO2SRmUL0Y+un1jEaujsptESB+u0FR6
+	TzDzAcFB5pmtdCYPh2/Lx+tx9sGWUuyeAqA6cRThRVNxHLdnxX37tfIg4c0iKdmMlIgHCxx6Gdj
+	Y37CjBktwBct1HiiXoGzP8WsbXjsLadYPTzcAD4kct2WeCXjHJnNV/gHmM1c0X19A9bQL46tT/3
+	iYaCyQk6AWtIbwX8pPOWoftpFzDV9ECebrAeWnnyeyBkdwxautHWJfAInV5loG6A6rD5ivv8g3W
+	3OI5HFlpzuDAO1u8bTvUz8L5khvILXxqEtxa2qMOqjYkuOLcIhVWAnWUcvKiVRRdPP+Di
+X-Received: by 2002:a05:6000:2313:b0:3e7:42ba:7e66 with SMTP id ffacd0b85a97d-3ecdf9f4477mr4804881f8f.3.1758186185379;
+        Thu, 18 Sep 2025 02:03:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElkxupMxmNif5/lzfzUVobHl0PSoeQ1IdEubg1s704Bcn0Lb4/+vf/JHCv5gGV276WTwwYSg==
+X-Received: by 2002:a05:6000:2313:b0:3e7:42ba:7e66 with SMTP id ffacd0b85a97d-3ecdf9f4477mr4804839f8f.3.1758186184853;
+        Thu, 18 Sep 2025 02:03:04 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f07:dd00:ca9c:199e:d2b6:9099? (p200300d82f07dd00ca9c199ed2b69099.dip0.t-ipconnect.de. [2003:d8:2f07:dd00:ca9c:199e:d2b6:9099])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e754140sm70721995e9.21.2025.09.18.02.03.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 Sep 2025 02:03:04 -0700 (PDT)
+Message-ID: <45cd1637-54f6-4941-9670-7130aaf080f0@redhat.com>
+Date: Thu, 18 Sep 2025 11:03:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V14 1/6] mm: softdirty: Add pgtable_supports_soft_dirty()
+To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>
+References: <20250918083731.1820327-1-zhangchunyan@iscas.ac.cn>
+ <20250918083731.1820327-2-zhangchunyan@iscas.ac.cn>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250918083731.1820327-2-zhangchunyan@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIDMWX7dzjI2+lsAsCe3lTeFtXiqgFAK0RPAkIX1i20Ln7xwA==
-Content-Language: en-us
-X-CMS-MailID: 20250918090212epcas5p1fae66bbfa75ebed68841f83a10714c54
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250915094517epcas5p2186fc92cca758b6fe610c0ec91ee51bc
-References: <20250915095401.3699849-1-raghav.s@samsung.com>
-	<CGME20250915094517epcas5p2186fc92cca758b6fe610c0ec91ee51bc@epcas5p2.samsung.com>
-	<20250915095401.3699849-4-raghav.s@samsung.com>
 
-Hi Raghav
-
-> -----Original Message-----
-> From: Raghav Sharma <raghav.s@samsung.com>
-> Sent: Monday, September 15, 2025 3:24 PM
-> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
-> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
-> robh@kernel.org; conor+dt@kernel.org; sunyeal.hong@samsung.com;
-> shin.son@samsung.com
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; chandan.vn@samsung.com; dev.tailor@samsung.com;
-> karthik.sun@samsung.com; Raghav Sharma <raghav.s@samsung.com>
-> Subject: [PATCH v2 3/3] arm64: dts: exynosautov920: add CMU_M2M clock DT
-> nodes
+On 18.09.25 10:37, Chunyan Zhang wrote:
+> Some platforms can customize the PTE PMD entry soft-dirty bit making it
+> unavailable even if the architecture provides the resource.
 > 
-> Add required dt node for CMU_M2M block, which provides clocks for M2M IP
+> Add an API which architectures can define their specific implementations
+> to detect if soft-dirty bit is available on which device the kernel is
+> running.
 > 
-> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> This patch is removing "ifdef CONFIG_MEM_SOFT_DIRTY" in favor of
+> pgtable_supports_soft_dirty() checks that defaults to
+> IS_ENABLED(CONFIG_MEM_SOFT_DIRTY), if not overridden by
+> the architecture, no change in behavior is expected.
+> 
+> We make sure to never set VM_SOFTDIRTY if !pgtable_supports_soft_dirty(),
+> so we will never run into VM_SOFTDIRTY checks.
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
 > ---
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+[...]
+
+>   mas_store_fail:
+> diff --git a/mm/vma_exec.c b/mm/vma_exec.c
+> index 922ee51747a6..a822fb73f4e2 100644
+> --- a/mm/vma_exec.c
+> +++ b/mm/vma_exec.c
+> @@ -107,6 +107,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+>   int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+>   			  unsigned long *top_mem_p)
+>   {
+> +	unsigned long flags  = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+
+No need to resend because of this (probably can be fixed up when 
+applying): there is a double space before the "="
+
+-- 
+Cheers
+
+David / dhildenb
 
 
