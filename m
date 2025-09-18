@@ -1,186 +1,202 @@
-Return-Path: <linux-kernel+bounces-822985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E63EB853D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:30:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6283B853BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45705560D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC39A1890028
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7E53101B8;
-	Thu, 18 Sep 2025 14:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6425311C33;
+	Thu, 18 Sep 2025 14:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FY1PXBLQ"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBehxCs3"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521D5220686
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0136D3115A0
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205152; cv=none; b=GkyiAez40QAxvkNbnxxhMDFBxvYleE6xzNWzNxlk1lmEsyRJnqkRZvCP+78aSuuyageeEhzeX2EWoNAjwHDDQGtiRndoUtFSy8BxuZhomMRS/41Gc/eXFgn3kZAEcm7mF4yELeUnc82u2AOLTQZpbnlIF3hG2NaxJNe6PgAjZ84=
+	t=1758205158; cv=none; b=krLJK3xtM9ylL5JnplWTtfczAL5lARx3eb50TfSk8xH/K8NBaiQO54ldX0gsAl3mzXs1piH8M7V5htL+AwFmFq7soFr90ygshfVYS9XYCZCToxhWDAaHuIqfdyIgPTURimVB0GF/A6FZHeIuxtF/tklrMfxnaOkUxXqUEbL9Czo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205152; c=relaxed/simple;
-	bh=efV7ND5peOzZ6wFre05dZsI2sW9Mwg+FnrXTj0ULe04=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSw6Sefbdfm8E2tbOPPyiaVpq+ld3rAQsE18tYwtagep//y1bkhtyt78vF554h19qjpqT7YE6e3DDu8a6kHTuC5CdtaXqsZEd+dd5FvlZGlUI7q+AFjMlssj+kMmhIQ5VDFpvIFgxrMMatjT1mtsfnqa/OD84ckrpEZAiltfXr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FY1PXBLQ; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d60150590so7250967b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:19:10 -0700 (PDT)
+	s=arc-20240116; t=1758205158; c=relaxed/simple;
+	bh=RQ9Z1kx85zQlnSoOrFhTvfy5+txdhW6JwPYMb+IwFM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAUEw+WRsBRgrQ70M8HLz2XvUDjVhKEGjBx4LplFwXiJ6TkLUWWETX/MmpE+H2eYqPoRg5XWf260yPPCjH/CaQuYN3Q2vzP/3Ah6EwxkhQ7/cHrzwZyE/TvD1nRwu5JA4k6qh+dGtcyj1RuAGIJFvYifrAYNu3GdSqBvI5XGu0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBehxCs3; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-ea402199de1so1306202276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758205149; x=1758809949; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwnJ7MfncjQZZqEO7RPiB5wvlA6TdyUbKRJ/WpUXEpc=;
-        b=FY1PXBLQW7nyZrUWVKrDHMIsBsJSdJjNWVsRJRCKwHuSlAwV9XIxG7Pr40MjxY4/wm
-         7rwDY/TNygK4sLnCKqN4moCCuhjbEwdc5/fkDJk5h1KD8CDb1auRcHmeqy00tXn9gj5w
-         R/3zF40CbHsvkzpJZQ+g71AgvBg8IuFwX/hjKzde9N4ptRmc4RM6igGaVd8CCp6MeycS
-         KzjnMgQ7QZaqIjlcUtmKpkJjIuWYRJyqptse0It3YUADaAeO6tbtMiH0xDRdgIzj1kGU
-         tNO1D4tx19AZ7v39laPYSMERNAgR4UHqXbMAvog/OqJWE/grfwxqddymT99aOBS/YK7Z
-         Qk3Q==
+        d=gmail.com; s=20230601; t=1758205156; x=1758809956; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qZ/G6ZSVs4k9erlC2f6Rzvjnd7FrleQnq9KmYnVqgJg=;
+        b=WBehxCs3vtFrsM35NwmQ7LPf7MgcdmoILtiK6r9gsWGdqqVCHrjIH5Mq6V5iGE7IeY
+         v5yRPj19s35dbSVp799ZzhlEWRovJTF9unig734wm4hkcbGXj3RyToULMz/0s2Rd0Zr8
+         rp/FgKVyJmqSpdU76YwCCFKbsgy24VqglXdysbpEsygeIKe+PGRJUk+b2JM+L4cafuE8
+         Gd8sL31OBjzvBrWMj/aVzjgg7AI6XTqZ76m569ffO4C2tI5lyS4L0nvyWXLgVyuXhTwa
+         SeKZHv4T90pTwedcW5YvUBsDh0RqJxXqroL0aMyd9a0eTOCILacDtOGfs4SppDoIP0i2
+         BGIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758205149; x=1758809949;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rwnJ7MfncjQZZqEO7RPiB5wvlA6TdyUbKRJ/WpUXEpc=;
-        b=SDOWSk0Quy6KyABNmaARVci2Hl33hxLgJNKu0ASp2iV0qypuybpk4T+t/L6bfo/Arr
-         Sg7Af69Nxxkbu/Mawmrt509sPSET/d8rcwGLfsjt9BbEHHm7HvrqKYaTUuxWi29MOUqW
-         Kt3AZ36ArXgTfwK0BhZghCZdhqxXfaXEGaMxxLAHwy/pLdiSFFYCp2C3FXgyJEHrKaci
-         YiuILlU9g6fodCrrG5UJubG+irUKc4jp11g8KMsDdP+Q1AEVD/GQC/KErKf/uiRcgqOf
-         PPqm0plSArzHpyJWs/4IM+cG1r9HUsxQ2jQLW8Kfk4MobVYvWWbLmEZ9m0kLD5NMInlr
-         d1FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHREMWBAAf/PLtEOyXwXTkMn6MYR9ejOBmaSjt76Yvige8QtfyNcIhYg1Dlxp1KMVq4JGMOZ7/jtV5FFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySc69ql+ogXE9BudESxwSWjQ1csAPdLG71lvkxemYZtzyf2FJw
-	osbhiBijef64uRWf8gp7LPD0FvXrdOCdAv/+TrOdTZWRMTpDLs3UVLJJcS4Dc8JCKxd+ZNccABB
-	/D60Gg4QZhI+GW4BoENr0b99CXMPb2BlTgUUuUAqMUQ==
-X-Gm-Gg: ASbGncsiCNXDd4CE9APg3fyMCSbJtErZvo7gpjZRpJ2tSoDv5StAM7W28fd931+gU4T
-	HPAkyqz45MG5Pd6DgolKXBKmMYsxpiTKKFjXrxJQEgAZvdI1iw/xO3jZJ6+uK5sD6rw2xPHRBeg
-	/gsTwIBlCEuKFwN8/B7wuZqgbY2sxdgDo69O/EfKbJuALOIqDaE+G/8ivopS8uxu67olGwcNUHi
-	KeQ633/SWIqGYCssj/79NCA9rM=
-X-Google-Smtp-Source: AGHT+IFja2SGfrTtCyPdRJCCefTmrgo0mQhH1O6x561N6cabqmvG2QM8w3ohhfxToBTf2XJdX84zA191m+AeXdLVuso=
-X-Received: by 2002:a05:690c:3582:b0:735:8634:be68 with SMTP id
- 00721157ae682-73890cb0553mr52912587b3.23.1758205148353; Thu, 18 Sep 2025
- 07:19:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758205156; x=1758809956;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZ/G6ZSVs4k9erlC2f6Rzvjnd7FrleQnq9KmYnVqgJg=;
+        b=w5MSOQZu+LF+sUV+e7Oc8tjCktL9McYtsDkR+iz+1kT2GQEAVYBkXUeL1OT4hh8IGX
+         k1bp1SGV/ualCfhP3fxXeIGUbzlZitSzHOdYZBjCo+DCSn4he4MEVohfoKQGiN2R+Iuo
+         3QFn6RAmiE/3iCJVcxRugCTBq/oIjgtNs0U0BMGLeSjU9mxYsdoNbiRU3bvHrh3z3HQi
+         AsQQco+e+cY8HyJxXEl5Ujr8Veo8eGaDdHOOiA8qEAcYMtegkWqWS2rzMQsVN4AdWCRc
+         G4wHwXBxpK9xtYq7q0H3G+cmuc9Ssp6DguXzPq/b8TX7Zu3ZJYdc0rWLyhUfGIirUyT9
+         XMnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Y55vgXeOW6vkrQDzdxSfUgnpeOh857u62T+RcVSg/zkX6ZigcP8s8+UTsSX9mmAkLMxEfH9NQSSYPwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz59Ub2Dn0xEdBHw/7zQRCQzdksNxw+3dIkyBB37VIuSNqH7GP4
+	0TJZWN29GTtnwJQQPKmMKcZJO/MKr8ggQqlkYnEWzeXRGssSY8nxZWiK
+X-Gm-Gg: ASbGncugAWwbGbWa82WSSmLKnUdOrxg4mwp17uEHVASmRNp62f22z8OM+1oo9U7w04p
+	aVYEflSrp5F1KCcL3LjhGYu/BT8wzj540OImp0yjDiW/RqhRFDx7zWsv8Ch5tJOgf+pBAqzOS06
+	KE74Yy3ylWyeN/FOrsv5sud7qO6hxkccY61y5pKvSspeVAbjGdl/AdLGb4D1tSYXaqFkJus0kMD
+	9wVLjhnUfi3/TtcqD6wyzLa6EnGO8I5mde1C0Qb61+nkf3WnSWKefg9s8xNv/NXwSmXI0LzvS65
+	A5B5jW9vM+UNoa/NXPG2mB74KtzkEU+Q6j4ZWOMQLyZk+gxTvzgjKjNXhLdljfYTvlIcbBuzIZT
+	JTf1R2hPr3JcI7RnFraDv2xiwCFGCwnb2lWaRVM7In/TN6uQ6xQZPWY3cccGWc2pIGg==
+X-Google-Smtp-Source: AGHT+IG7gBtevs0hkEsojHqgLcCqhRh/vTUZDf3Hoe3SB7t+1GIpQn7iBnokxxVyhlltzD5uxMls3A==
+X-Received: by 2002:a05:6902:722:b0:ea5:d7bc:1152 with SMTP id 3f1490d57ef6-ea5d7bc1b08mr1568771276.2.1758205155453;
+        Thu, 18 Sep 2025 07:19:15 -0700 (PDT)
+Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:5c::])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea5ce974212sm853450276.26.2025.09.18.07.19.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 07:19:14 -0700 (PDT)
+Date: Thu, 18 Sep 2025 07:19:13 -0700
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Subject: Re: [PATCH net-next v2 2/3] net: devmem: use niov array for token
+ management
+Message-ID: <aMwU4YPF+ERN9qxc@devvm11784.nha0.facebook.com>
+References: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
+ <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-2-c80d735bd453@meta.com>
+ <CAHS8izPNC65OUr4j1AjWFwRi-kNFobQ=cS4UtwNSVJsZrw19nQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902-pm-v3-0-ffadbb454cdc@nxp.com> <20250902-pm-v3-1-ffadbb454cdc@nxp.com>
- <20250918095950.h7wmz2qj5e6khtwr@lcpd911> <20250918131230.GD9196@nxa18884-linux.ap.freescale.net>
- <20250918134039.zkpeqsbf6m2ymxvt@lcpd911>
-In-Reply-To: <20250918134039.zkpeqsbf6m2ymxvt@lcpd911>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Sep 2025 16:18:32 +0200
-X-Gm-Features: AS18NWB-C7Q2eLiy5k262B4Ual4xN_o15_I0cJZ8lRcTd3E2RvJskp1XeHp2s5E
-Message-ID: <CAPDyKFrweJTBHfOOU5r8Lcfs-dsTj94A=JK8+jKDqwJ0jNfiQw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] pmdomain: core: Introduce device_set/get_out_band_wakeup()
-To: Peng Fan <peng.fan@oss.nxp.com>, Dhruva Gole <d-gole@ti.com>
-Cc: Peng Fan <peng.fan@nxp.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Peter Chen <peter.chen@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, imx@lists.linux.dev, 
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izPNC65OUr4j1AjWFwRi-kNFobQ=cS4UtwNSVJsZrw19nQ@mail.gmail.com>
 
-On Thu, 18 Sept 2025 at 15:40, Dhruva Gole <d-gole@ti.com> wrote:
->
-> Hi Peng,
->
-> On Sep 18, 2025 at 21:12:30 +0800, Peng Fan wrote:
-> > Hi Dhruva,
+On Wed, Sep 17, 2025 at 04:55:34PM -0700, Mina Almasry wrote:
+> On Thu, Sep 11, 2025 at 10:28 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
 > >
-> > On Thu, Sep 18, 2025 at 03:29:50PM +0530, Dhruva Gole wrote:
-> > >On Sep 02, 2025 at 11:33:00 +0800, Peng Fan wrote:
-> > >> For some cases, a device could still wakeup the system even if its power
-> > >> domain is in off state, because the device's wakeup hardware logic is
-> > >> in an always-on domain.
-> > >>
-> > >> To support this case, introduce device_set/get_out_band_wakeup() to
-> > >> allow device drivers to control the behaviour in genpd for a device
-> > >> that is attached to it.
-> > >>
-> > >
-> > >Thinking more into it, to me it seems like if the intent here is to only
-> > >allow the device drivers to figure out whether they should be or not be
-> > >executing the suspend/resume_noirqs then that can still be checked by
-> > >wisely using the device set_wakeup APIs in the driver itself.
-> > >
-> > >Not sure why this patch should be necessary for a
-> > >driver to execute the suspend_noirq or not. That decision can very well
-> > >be taken inside the driver's suspend resume_noirq hooks based on wakeup
-> > >capability and wake_enabled statuses.
+> > From: Bobby Eshleman <bobbyeshleman@meta.com>
 > >
-> > I should join today's SCMI meeting, but something else caught me (:
->
-> It's alright, maybe see you in the next one ;)
->
+> > Improve CPU performance of devmem token management by using page offsets
+> > as dmabuf tokens and using them for direct array access lookups instead
+> > of xarray lookups. Consequently, the xarray can be removed. The result
+> > is an average 5% reduction in CPU cycles spent by devmem RX user
+> > threads.
 > >
-> > Thanks for looking into this.
+> > This patch changes the meaning of tokens. Tokens previously referred to
+> > unique fragments of pages. In this patch tokens instead represent
+> > references to pages, not fragments.  Because of this, multiple tokens
+> > may refer to the same page and so have identical value (e.g., two small
+> > fragments may coexist on the same page). The token and offset pair that
+> > the user receives uniquely identifies fragments if needed.  This assumes
+> > that the user is not attempting to sort / uniq the token list using
+> > tokens alone.
 > >
-> > In genpd_suspend_finish, genpd_sync_power_off will be called if
-> > "(device_awake_path(dev) && genpd_is_active_wakeup(genpd))" is false.
-> > So if the device is enabled wakeup, the genpd will not be turned off because
-> > the check return true.
->
-> Umm I think this device_awake_path stuff is only going to be true when
-> someone calls device_set_wakeup_path, I don't think it is going to
-> return true for a wakeup_capable device. I know all these "wakeup"
-> terminology and APIs have become all too confusing :( , so maybe Ulf can
-> correct me.
+> > A new restriction is added to the implementation: devmem RX sockets
+> > cannot switch dmabuf bindings. In practice, this is a symptom of invalid
+> > configuration as a flow would have to be steered to a different queue or
+> > device where there is a different binding, which is generally bad for
+> > TCP flows. This restriction is necessary because the 32-bit dmabuf token
+> > does not have enough bits to represent both the pages in a large dmabuf
+> > and also a binding or dmabuf ID. For example, a system with 8 NICs and
+> > 32 queues requires 8 bits for a binding / queue ID (8 NICs * 32 queues
+> > == 256 queues total == 2^8), which leaves only 24 bits for dmabuf pages
+> > (2^24 * 4096 / (1<<30) == 64GB). This is insufficient for the device and
+> > queue numbers on many current systems or systems that may need larger
+> > GPU dmabufs (as for hard limits, my current H100 has 80GB GPU memory per
+> > device).
+> >
+> > Using kperf[1] with 4 flows and workers, this patch improves receive
+> > worker CPU util by ~4.9% with slightly better throughput.
+> >
+> > Before, mean cpu util for rx workers ~83.6%:
+> >
+> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> > Average:       4    2.30    0.00   79.43    0.00    0.65    0.21    0.00    0.00    0.00   17.41
+> > Average:       5    2.27    0.00   80.40    0.00    0.45    0.21    0.00    0.00    0.00   16.67
+> > Average:       6    2.28    0.00   80.47    0.00    0.46    0.25    0.00    0.00    0.00   16.54
+> > Average:       7    2.42    0.00   82.05    0.00    0.46    0.21    0.00    0.00    0.00   14.86
+> >
+> > After, mean cpu util % for rx workers ~78.7%:
+> >
+> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+> > Average:       4    2.61    0.00   73.31    0.00    0.76    0.11    0.00    0.00    0.00   23.20
+> > Average:       5    2.95    0.00   74.24    0.00    0.66    0.22    0.00    0.00    0.00   21.94
+> > Average:       6    2.81    0.00   73.38    0.00    0.97    0.11    0.00    0.00    0.00   22.73
+> > Average:       7    3.05    0.00   78.76    0.00    0.76    0.11    0.00    0.00    0.00   17.32
+> >
+> > Mean throughput improves, but falls within a standard deviation (~45GB/s
+> > for 4 flows on a 50GB/s NIC, one hop).
+> >
+> > This patch adds an array of atomics for counting the tokens returned to
+> > the user for a given page. There is a 4-byte atomic per page in the
+> > dmabuf per socket. Given a 2GB dmabuf, this array is 2MB.
+> >
+> 
+> I think this may be an issue. A typical devmem application doing real
+> work will probably use a dmabuf around this size and will have
+> thousands of connections. For algorithms like all-to-all I believe
+> every node needs a number of connections to each other node, and it's
+> common to see 10K devmem connections while a training is happening or
+> what not.
+> 
+> Having (2MB * 10K) = 20GB extra memory now being required just for
+> this book-keeping is a bit hard to swallow. Do you know what's the
+> existing memory footprint of the xarrays? Were they large anyway
+> (we're not actually adding more memory), or is the 2MB entirely new?
+> 
+> If it's entirely new, I think we may need to resolve that somehow. One
+> option is implement a resizeable array... IDK if that would be more
+> efficient, especially since we need to lock it in the
+> tcp_recvmsg_dmabuf and in the setsockopt.
+> 
 
-The PM core checks device_may_wakeup() in device_suspend() and then
-sets dev->power.wakeup_path = true;
+I can give the xarray a measurement on some workloads and see. My guess
+is it'll be quite a bit smaller than the aggregate of per-socket arrays.
 
-The device_set_awake_path() and device_awake_path(), is to allow
-drivers/subsystems to enforce its device to stay powered-on during
-system-wide suspend. This may be needed even if the device isn't
-configured to deliver system-wakeups.
+> Another option is to track the userrefs per-binding, not per socket.
+> If we do that, we can't free user refs the user leaves behind when
+> they close the socket (or crash). We can only clear refs on dmabuf
+> unbind. We have to trust the user to do the right thing. I'm finding
+> it hard to verify that our current userspace is careful about not
+> leaving refs behind. We'd have to run thorough tests and stuff against
+> your series.
+> 
 
-> I maybe misremembering, but I have seen in some cases where a driver may
-> have marked itself wakeup_capable but the suspend hooks still do get
-> called... So your concern about genpd_sync_power_off not being called
-> due to wakeup capable device driver may not be valid... Again please
-> feel to correct me if I am wrong.
+I can give this a try and test on our end too, this would work for us.
 
-The system PM callbacks should get called no matter what.
+Thanks!
 
-The problem Peng pointing out, is when genpd_suspend_noirq() (which
-calls genpd_finish_suspend()) is called for a device that is attached
-to a genpd, we may end up bailing out, preventing the power-off for
-its PM domain, while it may be perfectly fine to allow the PM domain
-to be powered-off.
-
-The particular code we are looking at, is in genpd_finish_suspend():
-
-        if (device_awake_path(dev) && genpd_is_active_wakeup(genpd))
-                return 0;
-
->
-> Did you also look at the wake IRQ stuff I mentioned?
-> In the path you're talking about it just checks
-> device_awake_path(dev) && genpd_is_active_wakeup(genpd)
-> However if the device irq is just marked as a wake IRQ, I don't think
-> that is checked anywhere in this path. So definitely if the IRQ of your
-> device is set as a wake IRQ, it will still get suspended and resumed as
-> usual and that's what you want right?
-
-The missing piece for the wake_irq, is to know whether the interrupt
-can be delivered via an out-band-powered-on-logic, thus without
-requiring the device to stay powered-on during system suspend.
-
-[...]
-
-Kind regards
-Uffe
+Best,
+Bobby
 
