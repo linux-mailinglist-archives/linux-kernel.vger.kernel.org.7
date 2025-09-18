@@ -1,122 +1,135 @@
-Return-Path: <linux-kernel+bounces-823570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0647B86DCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:13:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7255EB86DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 22:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98A91CC497D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5416259F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F7731D754;
-	Thu, 18 Sep 2025 20:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC4D31D741;
+	Thu, 18 Sep 2025 20:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLsGYu0D"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVfz5EMU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD931D72D
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE4331D387;
+	Thu, 18 Sep 2025 20:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758226328; cv=none; b=NtdB6QjM5qd5QSRVWw4iYHkr2gRG6UOEFbO5b3lI5LYMB/gcuCSgtFZkzFBhxmjMmhEItxaF9r9LnJJrG2ait/pf89VFhrno+tfYbgrIqpHWVJ6DBhOYY0jq6PfJKCSiNdlK1005rDIBNGUsYh7R1weUSzug8J1LY4jdBKPUbw4=
+	t=1758226326; cv=none; b=B3d1khqweFd95HTNuFcl8pcYM/H20oLC+AJcBSWJsafmmsa7Jz6HKipseWZ3F+vp8lOuopt3eWvjYHBH4G+iqy8se5u+YSGTRygG6nOVEafx9iJPewOmJrIuVEqlg0HIh1scPGhxx4dMHVPvmmtMLBX25JrbES2fAwrXk2VqCeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758226328; c=relaxed/simple;
-	bh=ny1wrXLDh3RsyooyRx8m8um2skd/fs2vW4vIYfk/ANU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sYA8RUYCwvHjxYnRlcvHmY3b35s/bSBtgpx4zUfzKyUkr11gHijyQYpDU8djfGB9/SMeIaJEAQnsbWa99xo+gwuidxXG76jEGrzL97nCZehAKBOOJ+8ZSSDZoCymWss5PniDh/Ac2K4M3gIr1IVK9KLvvqDwvLapnNFVE7TE7Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLsGYu0D; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-8173e8effa1so97237385a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758226326; x=1758831126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cpKJ4FYn851/u3+mSRW1KYRDrW2vMaNsMXQSquJ7H/s=;
-        b=XLsGYu0DdShuSsoaSUFUO0WHrhEeMSiFGSrJfsdtDlY6e/NZcWcQWzeykzfG0LR7nU
-         USt/7f+gFcm0PvuwOPwWgmhr1w33+ge11hVGWYM9a/qSLucA6yslo+FrUXyvi06A3aOl
-         k3gDZ9IIx57rPtdrL9Y8zyvBMmWdSmm2BzmNlpAt32T7FkOFpo79viDJqj6ls7FMDLtb
-         IAU1w4yQQIeKmzW3bOeSimp2jrmpiXeLC+fLstz6mhhYj2se42ZW5mnC7kjC1d9hqyNE
-         QBRwyQZeGAFf4x2vwsl38pueWvh0FSb1E8uVYhRJpfKN2GYNS4fYTnozWFRikHJWNXEZ
-         Kc+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758226326; x=1758831126;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cpKJ4FYn851/u3+mSRW1KYRDrW2vMaNsMXQSquJ7H/s=;
-        b=SbhKbmBUK/6WEHoP4fqKfNuANmN2sqcIopuEWi267NMMVEcHWQmsnR3F84vh10ZXEB
-         NPz+H3TVkZtqZ2gkW2gWAmEnmpqRcv2hvmMxsKPmqCp/W7gLviBtujqkbS3qc6i6C4Md
-         gHt+4fK6Xf11UU2znCb7I/vL/zVfnxtHE4uPHCzeogxaDVfUGlFSTdlDNLndh7ku+knt
-         Wj9HLZPONPs6gdZvwNW764+rjBF4sdq/DB+NKCue7v3lBKwa4biDQE9Eh07CFG4Hck7i
-         lO52U2vKi2KyxaqgY+81qO04SLg4GiQNe1vOtFYYBRtu5FjXEfGLZlRyxi2Gn9W6xNmV
-         mGgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWxGvauk9RECUOAj2oCC0lONoUFm+jBGLMdeKlkwhb2q65bi0nndSgDGNdGuOzc57mBDEyC4jVkZgdaWFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgpcK9Nuv+iOwK6CoE0cFldHgylIQshqPkkDUKscE84iqjCHCM
-	bk9QOkpGqHs62tOqMJp6qNfFWZlieM+pvXx7i14SUfsuvdRCa0sRu9Uk
-X-Gm-Gg: ASbGncseM8mGlRdOr5gwzHRwF4ttUlm4AobKh9ygysA7SaFZKXXgPA+PgObjIxJ9/u4
-	b0MlsWbt9ekzAog431xNay7+/mxGhzGtSGR1lRiHPIcT6kVAJ4VaHOogE21M/dxUjGSnOqXwbea
-	zZ+Z9R7jOK//ojrE3GQza1sFVN9muPovtNf1vS7dvOSySAeQ83aLR6F+QQQTCtYKbIRPgFPo9cN
-	EXnVvqv/sBphN/zUEwZ3oRMr1GOawMhGRaUSd4cfiyvzZmnlXOhViUGMX4zc6Dybdj6YmI6xEqh
-	ZIWVP3kbvJxDNgP6aSx7Sf7CllvLdvAHjxX7s7SjkVYwl0QjIOj4Y5rS6g9xlbpLm8skGwFrQXi
-	dUw3tcUdpSAedGFo9oetxZDeFHi2atEe6XZzz4WAszOPchJUDoK42UX0=
-X-Google-Smtp-Source: AGHT+IHO+x7rpttILqBrr+bkLB4ACuWoLHRLLqhfpvVqyGjEJFvteQaJ5DbjiRTmgT2eKE95zYRvdQ==
-X-Received: by 2002:a05:620a:12da:b0:82b:15c1:5a3d with SMTP id af79cd13be357-83ba2e7eb61mr109879285a.1.1758226326112;
-        Thu, 18 Sep 2025 13:12:06 -0700 (PDT)
-Received: from jl.umd.edu ([129.2.89.30])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-83630299579sm222392985a.41.2025.09.18.13.12.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 13:12:05 -0700 (PDT)
-From: julian-lagattuta <julian.lagattuta@gmail.com>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	julian-lagattuta <julian.lagattuta@gmail.com>
-Subject: [PATCH 6/6] module: comment describing new codepath
-Date: Thu, 18 Sep 2025 16:11:16 -0400
-Message-ID: <20250918201109.24620-14-julian.lagattuta@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250918201109.24620-2-julian.lagattuta@gmail.com>
-References: <20250918201109.24620-2-julian.lagattuta@gmail.com>
+	s=arc-20240116; t=1758226326; c=relaxed/simple;
+	bh=RxCpqhSvLg4lk7i9vbQdgM1MVNM/M/8zr48h4MsKziQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fwen+yftgAojIYlQ58sOVFrFaplgBnZCJ3K+wsTjxz1aexygUlQo1H+YsC1iEwb6v8hwZ0UKHRO5/6PoqLuMqii+dS1lDjCcepdFmO+BoxdjP0CaNG5L8/ZEMm+jN8iqnk/Qjdm0RsdKaNiY8kv5nJJhwDuAig86c1M4yT2AZvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVfz5EMU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E562C4CEE7;
+	Thu, 18 Sep 2025 20:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758226326;
+	bh=RxCpqhSvLg4lk7i9vbQdgM1MVNM/M/8zr48h4MsKziQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GVfz5EMUsDpb+0LZ8xGvg6w9zy/epN8/yRL5Y46vIjdJN2tk29Mm1E5XIzz690h9b
+	 LlP0k6rsqjfIgQlZcDnpsGlekukCsLvorolwuarWFu2pv/jOztLtLw5d3t3JTclW/T
+	 /Jtnm+3/h5rNyr8ieI+1c+b0TDDOJbVT7QTqdXvquKjr7B60QPJ482aWMW0vCiuKDi
+	 +uzNHZoafbVH6NokoWViz4kU4zHTHaSqhHzB59v2VgnfUHu5zqD6m07SC/eSYdMl/2
+	 qoNdP/AACvN58ksSUvVqypAJBkojL7QT6ssHwjrK8vHWfl6k0lEKgF4MJGzY33toqZ
+	 sVXniDenv9Hjg==
+Date: Thu, 18 Sep 2025 17:12:03 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [RFC/PATCH 1/2] perf check: Add 'system' subcommand
+Message-ID: <aMxnk8dQrXC-q5dD@x1>
+References: <20250918063944.16331-1-namhyung@kernel.org>
+ <CAP-5=fVAsDN50X07zpnxikS_tA2cw92YJwHR2f9RVs0fc8j-Ng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVAsDN50X07zpnxikS_tA2cw92YJwHR2f9RVs0fc8j-Ng@mail.gmail.com>
 
-added comment so future authors know about this codepath
+On Thu, Sep 18, 2025 at 08:48:10AM -0700, Ian Rogers wrote:
+> On Wed, Sep 17, 2025 at 11:39 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > +/**
+> > + * Usage: 'perf check system <settings>'
+> > + *
+> > + * Show system settings that affect perf behavior.
+> > + */
+> > +static int subcommand_system(int argc, const char **argv)
+> > +{
+> > +#define PERF_SYSCTL(name) { #name, system_help_##name }
+> > +       struct {
+> > +               const char *name;
+> > +               const char *(*help)(int value);
+> > +       } sysctls[] = {
+> > +               PERF_SYSCTL(perf_event_paranoid),
+> > +               PERF_SYSCTL(perf_event_max_stack),
+> > +               PERF_SYSCTL(perf_event_mlock_kb),
+> > +               PERF_SYSCTL(nmi_watchdog),
+> > +               PERF_SYSCTL(kptr_restrict),
+> > +       };
+> > +#undef PERF_SYSCTL
+> > +
+> > +       argc = parse_options(argc, argv, check_system_options,
+> > +                            check_system_usage, 0);
+> > +
+> > +       for (size_t i = 0; i < ARRAY_SIZE(sysctls); i++) {
+> > +               int value;
+> > +
+> > +               if (argc) {
+> > +                       bool found = false;
+> > +
+> > +                       /* only show entries match to command line arguments */
+> > +                       for (int k = 0; k < argc; k++) {
+> > +                               if (strstr(sysctls[i].name, argv[k])) {
+> > +                                       found = true;
+> > +                                       break;
+> > +                               }
+> > +                       }
+> > +                       if (!found)
+> > +                               continue;
+> > +               }
+> > +
+> > +               value = read_sysctl_kernel_int(sysctls[i].name);
+> > +               printf("%-20s = %d", sysctls[i].name, value);
+> > +               if (!quiet)
+> > +                       printf("\t# %s", sysctls[i].help(value));
+> > +               printf("\n");
+> > +       }
+> > +
+> > +       return 0;
+> 
+> This looks useful! Rather than returning 0 should this return
+> something indicating whether perf does or doesn't have the permission?
+> In that case, what about root? We have this pattern in our shell
+> tests:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/tests/shell/lib/stat_output.sh?h=perf-tools-next
+> ```
+> function ParanoidAndNotRoot()
+> {
+> [ "$(id -u)" != 0 ] && [ "$(cat /proc/sys/kernel/perf_event_paranoid)" -gt $1 ]
+> }
+> ```
+> I wonder things like this can use these values instead.
 
-Signed-off-by: julian-lagattuta <julian.lagattuta@gmail.com>
----
- kernel/module/main.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Yeah, I thought about that as well, to use these checks in the perf test
+shell entries.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 256e30259bcf..f4ce431163fa 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3220,6 +3220,11 @@ static int module_patient_check_exists(const char *name,
-         */
-        if (old && old->state == MODULE_STATE_LIVE)
-                return -EEXIST;
-+
-+       /* 
-+        * Can occur if the module was forcefully unloaded after
-+        * its initcall crashed.
-+       */
-        return -EBUSY;
- }
- 
--- 
-2.45.2
+- Arnaldo
 
