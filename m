@@ -1,140 +1,194 @@
-Return-Path: <linux-kernel+bounces-822311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309FCB83833
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD99B8382D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9EB146184A
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 377B44615F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0102F3C39;
-	Thu, 18 Sep 2025 08:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219F22F3632;
+	Thu, 18 Sep 2025 08:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="eH0li/nG"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H35qUX0n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920682F362C;
-	Thu, 18 Sep 2025 08:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD2E2F1FDC;
+	Thu, 18 Sep 2025 08:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758183906; cv=none; b=pOtSPczZU8VPACAnQPJr27vUHKZAZiA780uUgeLfYazlc+m6+kLzTJiNN0yugOhBCpXkZzq0ApQClEBjY7DbBPQAP4h8kmh2EMoLhu2K0sydyuBP5qTE57RFA9KC7VL87LYj7kgduuFxwOCT1d5/iQL6ZGtFXtQmcvgTTS8S95Y=
+	t=1758183882; cv=none; b=pGyI7PMNYfGybdozTnfC8+yU9YUCQv6e4XGA4XyMmxuBdbDV00W/8RztWDBJIR+xz5Hb7DemLFCz2lWXOg92TaNbRG9e5j3uavjCmT5m+0uR/FLHgsCAOGYlQhb8cUtmONGds83RTKQS2w9WqCyo4LfIdtNpcwgs5hSmb8F3Vrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758183906; c=relaxed/simple;
-	bh=wBQH4x39aG6mB8iHL9yRMDxDggYzTR5vRD+YFwTuBbk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvF1c2kN97yQ0257SlFmlesVrNyw3JluHY1pL/zBIc2JiGESSsz2bb7maiyE5TuUOd6dhKNbkdIp3OeafMZ0DsoBteO+VAukDNSeMCrPVOSYFxi1ssfayfNK8U4Ya+aBIbKoRMHtDyrQKizK9zy4QqOqZd0Vey12GT1GKCDQqSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=eH0li/nG; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758183904; x=1789719904;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wBQH4x39aG6mB8iHL9yRMDxDggYzTR5vRD+YFwTuBbk=;
-  b=eH0li/nGYDlmOzRcbfJpAno30/VHwrz0rh8WDFx7n9GpBG5PEg7SPDqv
-   P1Z2T4hWQrO8pIlTg0qZXJcgmXqPmkebb5VnqVnvwsjfVuWeOKdvgQb6H
-   YDxgx2tQs2h5gLPX36G7I0T97PaNhgMTP0dDFByapTTaeFxnl+o7Hzc/L
-   lcryL0GvA0WROVd0QbUb248mlEgdGlTkaq9GbS9HCSCLymr4udX5IW5Ac
-   Iegm11XWbpXOygboDTrwWfSVhpGM539L6dcVDjl9aMloq6L3zKv6Tqa2Q
-   cTeT1M87aEKOPkvtcWRkNnRqwe7v84/QuSe6FiDNorqrUk5wLAdB2lv0B
-   w==;
-X-CSE-ConnectionGUID: lOySgYw7Rg+a7f7PqeqBrQ==
-X-CSE-MsgGUID: fTczQzg1QX2hq+qTsBjoMw==
-X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
-   d="scan'208";a="52529240"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Sep 2025 01:25:03 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 18 Sep 2025 01:24:38 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 18 Sep 2025 01:24:36 -0700
-Date: Thu, 18 Sep 2025 08:24:36 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Robert Marko <robert.marko@sartura.hr>
-CC: <p.zabel@pengutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <Steen.Hegelund@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <lars.povlsen@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <luka.perkov@sartura.hr>,
-	<benjamin.ryzman@canonical.com>
-Subject: Re: [PATCH 2/2] reset: sparx5: add LAN969x support
-Message-ID: <20250918082436.3nfs7lo7hv5jdqhd@DEN-DL-M70577>
-References: <20250917111323.60781-1-robert.marko@sartura.hr>
- <20250917111323.60781-2-robert.marko@sartura.hr>
+	s=arc-20240116; t=1758183882; c=relaxed/simple;
+	bh=nr4NWLVlw/K5BK59dcgOAF7rOQHWbDbROkErLKcolIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jn/gHxdj7nIUW5SgqYmFoPfPU/3Q4xyZFNtH9T2HNiJxbiSe7I+2LcItiCz/L2QCCNih4cPgYULM3+2HzNzPwNhK8grAiQhZfmfJyWfht1wD+zRRZ+VR5y1328gbqv6njPFOqCSDuHzb8FbTXr0KhDQ4dbJ38i3If+V9EaDpYeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H35qUX0n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DE0C4CEE7;
+	Thu, 18 Sep 2025 08:24:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758183882;
+	bh=nr4NWLVlw/K5BK59dcgOAF7rOQHWbDbROkErLKcolIg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H35qUX0nnVNeRdkJ3J3gjRuCRR/erGHvGGAFFQ4BSEDvI090nCV3XF9l6bwkzdEk3
+	 C00t4swSUs4+md3tmoSIymPaUhTHE+u6bEv6hEazVKDnqEUt0mUY2vGDOPgSyneFfg
+	 kV8hne+wkFUvAo/pXNu6qAJh2jTi2gHsoTyyNM5avthukYYeUKmb/RUT3QAlBz6GNj
+	 8Vry7KDNMh7XlfmNm7lRAybzgi5ydcflZL12cS1ooBAQ6pTR2Uxs9fuhtWfjwlKrT+
+	 RbwVeptRvlUZyfi1Y6A137CbeT5vtKmwO/kmzuDsAf1cd/hXgM4B4J9lmTK0AKNud1
+	 BL29rc+AYWOOg==
+Date: Thu, 18 Sep 2025 10:24:37 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [PATCH v6 10/21] tools/docs: sphinx-build-wrapper: add a
+ wrapper for sphinx-build
+Message-ID: <20250918102437.3a9c770b@foz.lan>
+In-Reply-To: <ed4eeee3-4e95-4bf4-b19f-cf7d38d8a1ea@gmail.com>
+References: <4d4dc78a4e29f2478fd1c1a746378dc61a090ca3.1758018030.git.mchehab+huawei@kernel.org>
+	<1d454604-288d-4185-8567-836e06b3cbea@gmail.com>
+	<875xdhazcq.fsf@trenco.lwn.net>
+	<ed4eeee3-4e95-4bf4-b19f-cf7d38d8a1ea@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250917111323.60781-2-robert.marko@sartura.hr>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Robert,
+Em Thu, 18 Sep 2025 08:43:19 +0900
+Akira Yokosawa <akiyks@gmail.com> escreveu:
 
-> LAN969x uses the same reset configuration as LAN966x so lets add support
-> for it as well.
+> Hi Jon,
 > 
-> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> ---
->  drivers/reset/Kconfig                  | 2 +-
->  drivers/reset/reset-microchip-sparx5.c | 3 +++
->  2 files changed, 4 insertions(+), 1 deletion(-)
+> Jonathan Corbet wrote:
+> > Akira Yokosawa <akiyks@gmail.com> writes:
+> >   
+> >> Wait!  In the cover-letter, you said:
+> >>
+> >>     It should be noticed that it is out of the scope of this series
+> >>     to change the implementation. Surely the process can be improved,
+> >>     but first let's consolidate and document everything on a single
+> >>     place.
+> >>
+> >> Removing current restriction on SPHINXDIRS does look inconsistent with
+> >> your own words to me.
+> >>
+> >> So, I guess I have to NAK 06/21 as well.  
+> > 
+> > Is there an actual problem with this change that we need to know about?
+> > I am not quite understanding the objection here.  
 > 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 78b7078478d4..35cb84d1de4e 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -170,7 +170,7 @@ config RESET_LPC18XX
+> As Mauro has pointed out, and as I could not apply v6 series, I failed
+> to look at the whole patch.
 > 
->  config RESET_MCHP_SPARX5
->         tristate "Microchip Sparx5 reset driver"
-> -       depends on ARCH_SPARX5 || SOC_LAN966 || MCHP_LAN966X_PCI || COMPILE_TEST
-> +       depends on ARCH_SPARX5 || ARCH_LAN969X ||SOC_LAN966 || MCHP_LAN966X_PCI || COMPILE_TEST
-
-Missing space at ||SOC_LAN966.
-
->         default y if SPARX5_SWITCH
->         select MFD_SYSCON
->         help
-> diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-> index 6d3e75b33260..28ad8f1298a0 100644
-> --- a/drivers/reset/reset-microchip-sparx5.c
-> +++ b/drivers/reset/reset-microchip-sparx5.c
-> @@ -198,6 +198,9 @@ static const struct of_device_id mchp_sparx5_reset_of_match[] = {
->         }, {
->                 .compatible = "microchip,lan966x-switch-reset",
->                 .data = &reset_props_lan966x,
-> +       }, {
-> +               .compatible = "microchip,lan969x-switch-reset",
-> +               .data = &reset_props_lan966x,
->         },
->         { }
->  };
-> --
-> 2.51.0
+> My knee jerk reaction came from the fact that, for example,
 > 
+>     make SPHINXDIRS=translations/zh_CN pdfdocs
+> 
+> won't build.  This is because I didn't know such a sub-directory is
+> allowed (despite what "make dochelp" says) in SPHINXDIRS.
 
-When upstreaming support for the other SoC peripherals [1] [2], I got some
-push-back on the use of wildcards in the compatible string. Instead, we used a
-fallback, which is the accepted ways of expressing the individual SKU's.
+The build system does support it, provided that the directory has
+an index.rst file (not all subdirs have)...
 
-This boils down to: using the lan9691-switch-reset compatible string, and
-documenting each individual SKU in the bindings, with a fallback to lan9691.
-The linked patches should give you and idea.
+> 
+> At the time I made "improvements in CJK font configs", I embedded
+> hacky ".. raw:: latex     \kerneldocCJKoff" and others in:
+> 
+>      Documentations/index.rst
+>                    /*/index.rst
 
-[1] https://lore.kernel.org/linux-gpio/20240917-lan969x-pinctrl-v2-1-ea02cbc56831@microchip.com/
-[2] https://lore.kernel.org/linux-clk/20240916-lan969x-clock-v1-1-0e150336074d@microchip.com/
+... and that ".. raw:: " entries don't depend on previous .rst files.
 
-/Daniel
+> , assuming all of those latex macros would appear in translations.tex
+> in the right order.
+> 
+> I admit it was not ideal, but I could not, and still can not, come up
+> with a more robust approach.
+
+For LaTeX build, ".. raw:: " entries can be unavoidable, but you could
+place it either:
+
+- at conf.py if they're global;
+- on each rst file (that's what we do on media);
+- in the case of translations, for the languages that require CJK.
+
+Grepping it:
+
+	$ git grep kerneldocCJK Documentation/translations/
+	Documentation/translations/index.rst:   \kerneldocCJKoff
+	Documentation/translations/it_IT/index.rst:     \kerneldocCJKoff
+	Documentation/translations/ja_JP/index.rst:     \kerneldocCJKon
+	Documentation/translations/ko_KR/index.rst:     \kerneldocCJKon
+	Documentation/translations/ko_KR/process/howto.rst:     \kerneldocCJKoff
+	Documentation/translations/ko_KR/process/howto.rst:     \kerneldocCJKon
+	Documentation/translations/sp_SP/index.rst:     \kerneldocCJKoff
+	Documentation/translations/zh_CN/index.rst:     \kerneldocCJKon
+	Documentation/translations/zh_TW/index.rst:     \kerneldocCJKon
+
+Indeed it assumes that translations/index.rst will be the last one,
+as it is needed to disable \kerneldocCJKoff.
+
+What I would do is move \kerneldocCJK to each book, e.g.:
+
+   zh_CN/index:	will have a \kerneldocCJK{on/off} pair;
+   zh_TW/index:	will have a \kerneldocCJK{on/off} pair;
+   it_IT/index: won't use it, as it doesn't need CJK fonts;
+   ko_KR/index:	will have a \kerneldocCJK{on/off} pair;
+   ja_JP/index:	will have a \kerneldocCJK{on/off} pair;
+   sp_SP/index:	will have a \kerneldocCJK{on/off} pair;
+   process/index: won't use it, as everything there is in English;
+
+This would likely allow creating each translation on separate books
+like:
+
+	make SPHINXDIRS="translations/zh_CN translations/ko_KR ..." pdfdocs
+
+Heh, the audience for each language is completely different, so
+merging them altogether is actually weird. This doesn't matter 
+much for html output, but for all other outputs, ideally each
+translation should be a separate book.
+
+With the current Makefile-hacky-based-approach, supporting separate
+build books would be very complex, but with a wrapper containing the
+entire building logic, it doesn't sound hard to add support in the
+future to build translations as separate entities.=
+
+Heh, when we added Sphinx support, we have a single Documentation
+directory, but now we have multiple ones:
+
+	$ find . -name Documentation
+	./tools/bpf/bpftool/Documentation
+	./tools/perf/Documentation
+	./tools/memory-model/Documentation
+	./tools/lib/perf/Documentation
+	./tools/objtool/Documentation
+	./tools/build/Documentation
+	./Documentation
+	./drivers/staging/most/Documentation
+	./drivers/staging/greybus/Documentation
+	./drivers/staging/iio/Documentation
+
+Considering that, and considering the some of the above books can
+be in ReST format, it doesn't sound too complex to add a --docdir
+parameter at sphinx-build-wrapper and do things like:
+
+	./tools/docs/sphinx-build-wrapper --docdir Documentation/translations/zh_CN htmldocs
+	./tools/docs/sphinx-build-wrapper --docdir Documentation/translations/zh_TW epubdocs
+	./tools/docs/sphinx-build-wrapper --docdir ./tools/bpf/bpftool/Documentation mandocs
+
+On such scenario, we likely need intersphinx, as translation books contain lots of
+references pointing to the English one.
+
+
+Thanks,
+Mauro
 
