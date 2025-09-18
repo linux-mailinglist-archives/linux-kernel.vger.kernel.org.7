@@ -1,194 +1,188 @@
-Return-Path: <linux-kernel+bounces-822434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE9DB83DEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35039B83E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2079C488263
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:44:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A4F7B83DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7E22F2617;
-	Thu, 18 Sep 2025 09:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1174828489B;
+	Thu, 18 Sep 2025 09:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vM1rP3yV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TJubyxa3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vM1rP3yV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TJubyxa3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CAZq6h5X"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BB42E22B4
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE0B284688
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758188563; cv=none; b=JdKuyc1nCZOkEKESVvmIg4wNb/FUZpPH5k7oteoW9Y2pIrDtNCq+liprp/pyM5S6rmrj1YEajMv36cIifN3SLyuThkAK9peeic1HJfJgS9tDbcDPDH8nw5knONT0r40fHBV5inm34H6bYtvCAQ/VXBip31K1Vyuqi5wQJ2ic8d0=
+	t=1758188625; cv=none; b=mtq9g8hMMaa0FLMgJcc8vElBCw7NBI4v8jNiJGAJjobtxDujpKYBrvjSNs3ciMk2uwG+sgUK8lsDhIc+Y38ozbw4wxRZn4pvy1aYIUDkYXZgs0AMBIE1KgNjwe28rIpEA2jPVZGgdr99Tb+dGNo6tBUg9LJe5X1CtJYf/Lz3YQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758188563; c=relaxed/simple;
-	bh=Wm8k1T+u7ETDP68QPHbX7EbbPEMMuASOg175leXfdXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdLsxxvitC/HVg5YoqUWFk666r5d9k6zfPesSvd2+P1MuSW1KjawcNAdou9rFBuazgRjA08mQ0D6YS1HJ99JDkOMi6OA1bCVZd8KkUsQgUpY9+4/sUPqyTRSUGqXhNONvdFvwakw3H8HLUNh6iyr6nFCjgslh+aKlwpMBr7apLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vM1rP3yV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TJubyxa3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vM1rP3yV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TJubyxa3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B413633791;
-	Thu, 18 Sep 2025 09:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758188559; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kn3ZgAyclABPArVlF1TY0PttSK1zxZNnq9QMfWCaAPA=;
-	b=vM1rP3yVoDEJprHcVN4K/YihR0aStdKiy5VKefWYmZdqbowDWePzQVvz9GZMspE3xQUEYm
-	ehhkiXzrXMiXaOwrumEzK/eGLFMnFfClqqZEV6NulVn7y078j3xq45HN1AhaA//KjmzZjp
-	mhpSS8/F0acW69a6lM+KiPZRQ1VCXTA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758188559;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kn3ZgAyclABPArVlF1TY0PttSK1zxZNnq9QMfWCaAPA=;
-	b=TJubyxa3wx9BJwCMVXvGdNcEwoLSASnM9ekWZGMAMMgR3MCcFODfUd+/WZAhOdNHoDKFXF
-	YGW6X6wpBtkclODA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1758188559; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kn3ZgAyclABPArVlF1TY0PttSK1zxZNnq9QMfWCaAPA=;
-	b=vM1rP3yVoDEJprHcVN4K/YihR0aStdKiy5VKefWYmZdqbowDWePzQVvz9GZMspE3xQUEYm
-	ehhkiXzrXMiXaOwrumEzK/eGLFMnFfClqqZEV6NulVn7y078j3xq45HN1AhaA//KjmzZjp
-	mhpSS8/F0acW69a6lM+KiPZRQ1VCXTA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1758188559;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kn3ZgAyclABPArVlF1TY0PttSK1zxZNnq9QMfWCaAPA=;
-	b=TJubyxa3wx9BJwCMVXvGdNcEwoLSASnM9ekWZGMAMMgR3MCcFODfUd+/WZAhOdNHoDKFXF
-	YGW6X6wpBtkclODA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9BFAF13A51;
-	Thu, 18 Sep 2025 09:42:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id a0QPJg/Uy2jUXwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 18 Sep 2025 09:42:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EFE49A09B1; Thu, 18 Sep 2025 11:42:38 +0200 (CEST)
-Date: Thu, 18 Sep 2025 11:42:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 7/9] net: centralize ns_common initialization
-Message-ID: <kiyr4pnrw2a2oeoc3lavj73glvdg5llsfz2txfnn56bxmytfgw@o6weansm3iyi>
-References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
- <20250917-work-namespace-ns_common-v1-7-1b3bda8ef8f2@kernel.org>
+	s=arc-20240116; t=1758188625; c=relaxed/simple;
+	bh=nVDRdbCkjgVW2Hem9dJFdrSJ8lRD2Z2Fl11Ez5/qXTc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iZ5XJoPJaUHOsWcww2VM6mbNRzrPS6olqhX9dO2taayzxaP7v/dmWBP4T6WNpGQrAqR26GiAYvdb7PVUVk2mtr6YqZ3IIorSWVlmVhsbr2Qc5gShzit/TC4XyVgTwnBwJnJ4N46x0sTnU1nk8n9yBvi++5UZAQ8DCAB6kUjfPIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CAZq6h5X; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32ed19ce5a3so555115a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 02:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758188623; x=1758793423; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kk2Hrw+IHUis21BiwjLiEv7+4Iu+IibQiFHb8JNRLIM=;
+        b=CAZq6h5XSuUQXePYMbyb123UdBdVdAEcateXVkE+od0Ab0yqP7yLKZ6NjYi4o37efG
+         NMA3NMP+5I9Jl0WtuZAcj77tZWr+MCZBhY1ktC8HFBn2QRKnKRgdut6eVkHx41DP1ilg
+         h7PEFWLbd8Sv97MoxcIDmfQJGvzPZ5fX9kCfOLhi4NfGeykgnhGugAqQysyWWvlAFfcN
+         IrepRVkZaGGHZETVDJ5PEpONKJM8bIErSAeRnKfS66Mv+hWy2HPd+BAIE3n7Ri8hjXAP
+         JX9GlFZchE4YGp5PzJi0xOWGimYHrKomyQiCzwmFJo8df81TVwOe8YyoZ/ovASZhQI46
+         jwng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758188623; x=1758793423;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kk2Hrw+IHUis21BiwjLiEv7+4Iu+IibQiFHb8JNRLIM=;
+        b=dK3wliQ76CA/9Ps+80dFZ72Sb8bc0rsQg/55jgZFjhj98uMEObIKudsaC+S1ZqsIAv
+         m3n/3tlQukoAVwF4HZMcAtfnRQw7s9xIGM1O7bcLX3Soy9JOEhx+z7QkQND1cVpbIJDJ
+         E+eLLbidmfD2u+DkzMwOXfnxRzN4gf93m/o17G9vugUZymhPRaEYgplXofeLT197JbGY
+         kUWlrt5DV3g5L0xzZxgqgRDYI2HAQyBs4uLymULfQRD/+MKhEvQlYV2P5DX0zEudGfF+
+         HxPiO0LYo7AsAKhvxCqdMxyvgdcM//VN1ugNjdKZ2fKH5oEdWNAkyl2TJrfGRV3y5dOl
+         BHbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWoCfDWWf3wItXlumn8qWczkIGmfmJl62BYJKck98t7G7AglBwb7KKpPlIDHTUtpDSF7Bdn3OJEOUHmXL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCoLL9MyrffTetQ2p+CMZaLjXxsbESqYJ/lOLtDDNFLXy6qXFK
+	o48LZQ/3zE4/nKm/VWguG7oW6CAnJb2SOGEOcVDoTZbZqpq3bdt9ct0M
+X-Gm-Gg: ASbGncv9Y/0RrQV7eWAEf1HXgD9oDpMOyl1Qdn4DbYQ5Jwh3RwYoBZGIn5u/NeXUwlD
+	n5prX2x2OEjqcr9eLQh53CGEqPzXxoGDlJZjl7ZLz1yejCNA5Wmdq26d3ieQBDK8ozC0KqReXsW
+	ORqy7InoFecsDuAOeE18iVaCeF/9tM2mJJmxrJFeh/2DBcofPVS8jcgG5a9dAH/+oyojYAVgP0T
+	cuhpUERUurD/AFFir6rNW0W0k4NJGG4vpiScfrIBzhSrqf28te/UhTDbViK+YlpYqgYLYHlwHs8
+	DM3b81nYHHksf9W7xAe0iwo9sE9Le5ToNSrRMaZr+ODuL9kn9CGSr0XRpc8dzU+iYY1xMtunGfn
+	RJNDigdJ7jiWHvJHnKop/tl2K5nVvYfb73xQ5vVHbA/lrx4Nrpv8/Gl6U6eVfqDctkDpVRI8Sjn
+	MceA==
+X-Google-Smtp-Source: AGHT+IEgGE0BeH1F+4LDtstgR4GzT3dQ/vnKSyQ7aIVQt/aTAyZb2ZsVJWml9L1MieY7rFzbad5a2A==
+X-Received: by 2002:a17:90b:4c12:b0:32e:5b07:15dd with SMTP id 98e67ed59e1d1-32ee3ec22b6mr6516497a91.1.1758188623083;
+        Thu, 18 Sep 2025 02:43:43 -0700 (PDT)
+Received: from [172.17.0.3] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed276d2f8sm4886810a91.24.2025.09.18.02.43.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 02:43:42 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+Date: Thu, 18 Sep 2025 17:43:06 +0800
+Subject: [PATCH] ARM: dts: aspeed: clemente: add MCTP over I2C support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917-work-namespace-ns_common-v1-7-1b3bda8ef8f2@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,suse.cz,cmpxchg.org,suse.com,linutronix.de];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250918-leo-dts-transceiver-v1-1-3e2580325edc@gmail.com>
+X-B4-Tracking: v=1; b=H4sIACnUy2gC/x3MQQqEMAxG4atI1gZsZWD0KuKitL8zAamSiAjSu
+ 1tcfov3bjKowGhsblKcYrLlCtc2FP8h/8CSqsl3/tMN7ssrNk6H8aEhW4ScUEaKvUMfvQsL1XJ
+ XLHK912ku5QHFt0+wZQAAAA==
+X-Change-ID: 20250918-leo-dts-transceiver-edc31e3c21af
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ george.kw.lee@fii-foxconn.com, bruce.jy.hung@fii-foxconn.com, 
+ leo.jt.wang@fii-foxconn.com, Leo Wang <leo.jt.wang@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758188620; l=2154;
+ i=leo.jt.wang@gmail.com; s=20250618; h=from:subject:message-id;
+ bh=nVDRdbCkjgVW2Hem9dJFdrSJ8lRD2Z2Fl11Ez5/qXTc=;
+ b=gGwy/tJbdh92kaL3iGxdJ0l55f8lVj/pdra8VUU6oBnNsmqeDhiUPxiVekZn/UwIGlSAduWaT
+ s65s9f5gLsNBz2gYwdLOzqRJ9FmS9d3xS2QLQLwQXoz1a7on5CCimYt
+X-Developer-Key: i=leo.jt.wang@gmail.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
-On Wed 17-09-25 12:28:06, Christian Brauner wrote:
-> Centralize ns_common initialization.
-> 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  net/core/net_namespace.c | 23 +++--------------------
->  1 file changed, 3 insertions(+), 20 deletions(-)
-> 
-> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> index a57b3cda8dbc..897f4927df9e 100644
-> --- a/net/core/net_namespace.c
-> +++ b/net/core/net_namespace.c
-> @@ -409,7 +409,7 @@ static __net_init int preinit_net(struct net *net, struct user_namespace *user_n
->  	ns_ops = NULL;
->  #endif
->  
-> -	ret = ns_common_init(&net->ns, ns_ops, false);
-> +	ret = ns_common_init(&net->ns, ns_ops, true);
->  	if (ret)
->  		return ret;
->  
-> @@ -597,6 +597,7 @@ struct net *copy_net_ns(unsigned long flags,
->  		net_passive_dec(net);
->  dec_ucounts:
->  		dec_net_namespaces(ucounts);
-> +		ns_free_inum(&net->ns);
+Enable MCTP communication on the Meta Clemente BMC board:
 
-This looks like a wrong place to put it? dec_ucounts also gets called when we
-failed to create 'net' and thus net == NULL. 
+- Add an MCTP I2C controller node at address 0x10 on I2C0
+- Mark selected I2C mux channels as MCTP controllers
+- Remove unused "i2c-mux-idle-disconnect" properties
 
->  		return ERR_PTR(rv);
->  	}
->  	return net;
-> @@ -718,6 +719,7 @@ static void cleanup_net(struct work_struct *work)
->  #endif
->  		put_user_ns(net->user_ns);
->  		net_passive_dec(net);
-> +		ns_free_inum(&net->ns);
+This allows MCTP devices to be discovered and used for
+management communication on the Clemente platform.
 
-The calling of ns_free_inum() after we've dropped our reference
-(net_passive_dec()) looks suspicious. Given how 'net' freeing works I don't
-think this can lead to actual UAF issues but it is in my opinion a bad
-coding pattern and for no good reason AFAICT.
+Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
+---
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
->  	}
->  	WRITE_ONCE(cleanup_net_task, NULL);
->  }
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
+index a614f947dafc9a6628c3f3d45b62ff3ca9d2b618..a2f0ed6e7bbefbdcec33f7ddebdf2de62adec164 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dts
+@@ -269,18 +269,23 @@ &gpio1 {
+ 
+ &i2c0 {
+ 	status = "okay";
++	multi-master;
++	mctp@10 {
++		compatible = "mctp-i2c-controller";
++		reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
++	};
+ 
+ 	i2c-mux@71 {
+ 		compatible = "nxp,pca9546";
+ 		reg = <0x71>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		i2c-mux-idle-disconnect;
+ 
+ 		i2c0mux0ch0: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux0ch1: i2c@1 {
+@@ -332,6 +337,7 @@ i2c0mux0ch2: i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux0ch3: i2c@3 {
+@@ -457,12 +463,12 @@ i2c-mux@75 {
+ 		reg = <0x75>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-		i2c-mux-idle-disconnect;
+ 
+ 		i2c0mux3ch0: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux3ch1: i2c@1 {
+@@ -514,6 +520,7 @@ i2c0mux3ch2: i2c@2 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <2>;
++			mctp-controller;
+ 		};
+ 
+ 		i2c0mux3ch3: i2c@3 {
 
-								Honza
+---
+base-commit: c65261717599d419e9c683d85f515d3ca2261549
+change-id: 20250918-leo-dts-transceiver-edc31e3c21af
 
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Leo Wang <leo.jt.wang@gmail.com>
+
 
