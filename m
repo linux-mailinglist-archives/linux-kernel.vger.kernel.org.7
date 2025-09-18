@@ -1,202 +1,368 @@
-Return-Path: <linux-kernel+bounces-822260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F097EB83673
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813E7B83B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 11:11:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A659A541DEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08DF4160EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5DC2EC090;
-	Thu, 18 Sep 2025 07:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64F02FFDDF;
+	Thu, 18 Sep 2025 09:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="oCjF36tK"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013031.outbound.protection.outlook.com [40.107.159.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E0dD+TP3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m4trHJRY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HqCcH+2O";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mvJYBXJP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7552EB5B3;
-	Thu, 18 Sep 2025 07:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758182334; cv=fail; b=cW68xzEtmxoXqkFBBDsozmaaz6vUhklR1M/kDRVAPW7tq9xv8HJEiY5Ljq7ervqoA7ayGF2BCnqQc596XeUwWYCfAQwmCUEISq0u/FgaAGXk1JA1Z3DGH7L096vREmGQw9PvWV38SWmxoVtZupnQPuPVCwb4FzLeRZQC351syKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758182334; c=relaxed/simple;
-	bh=70X5BxkEbKO6H2RBwB0blOVPH8iXaaSoeK3z9oDWAok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=e4RjE/EmVxMr9nwJ4LRGDzYg3+OyUEa5D7M2RBZX3DzrqV5w9zg7JDrP7d1IO76PAJwOfEs8a5VC6tJcibgul8+VJSvEzDtiD7KxTJYzab/KOhLe+wF3K7GniYC1qQkXoM5z32N7xoVoBqhfE3Jvo440scD9oRV/7doxSllYALY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=oCjF36tK; arc=fail smtp.client-ip=40.107.159.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sACX3TVbf2F9DbNOXgWcLyEyIn+lVDPAXnakPFr6qfpEDVGMBBbbWKLYXwPSH30XfOsNtSMIZPLWWapt3VtSpYDWgJvZYmN04MUHhGjfKi+ikiUi8BHmMy+nogs/CkrZTwncQUU9TXCmwxPj2vYOyZPDT+zofJf9jMXjBBq5FHwGA8O534AmC9uJiBuhCfuTDkNdcqd6EG00p0Ct+hjjPiTA4qHGXXePWsf7u9+NyJrBzJRamYcJknsMNtF/bb0Sgm7yqhRq2TwXowPZcAVvBjZbcq//MBRWaVsi01Ww9IgqFWLAnXynRo10P+XgRZzLuGr4JOekiMGCIJ56j/x7xA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sSrounOq/Zd/8PMXsRA7PLv0gtstu7jedzIuYhK36D4=;
- b=e11iO9Bmj1+u3uSKrP//eAYg7ou3mD5IiWY0njawMZJd+i1kFYjSrLy2iEcxbCgrT1cz+IVTuj/E7bFvg8G4jWZ2zN+5Yn2beu7ppjWak/tYpram2jwSC/pTllSHGPd0ugtoCau6qPcnkA6lYFX11kGAhfiImwlIDSUYJCU6V62vINHDf1XnXq/GBB3g9YL3js04w5geluFki4rkTWqExFIV1HkxUAXX/cT+k2zOyzxVjGRhpgQ3DtkBj96sDY2tHozmQPA2XEzNf9PIfQEWJa0BBdAagRC85LD6V4zbxWWqR/S0T2aSzRk36RaVIb23x9mNkrUgJSy722YhjLG3QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sSrounOq/Zd/8PMXsRA7PLv0gtstu7jedzIuYhK36D4=;
- b=oCjF36tKOoGW+10uRsR/HoqOxma3PHH9735QRwnfGV5z8HV4vcu+mtuZcfD7NVz6T0F4pihirEHeMKfFoOl3BRwk7itEZNDl1Zdj1Gzft+tkGFpHmboxerpuxsnXCelcPv38gZ5pY79WFRNkwex99nsQUgBY9TmYneuqRPt0/z2wj7FTQcx+Ossf5onPnwegFb8dRytsmykZjQskFIzY9L0CEOzAvE8/EOQZmlihnjOp4eu6jxrD8/+/339DNROAiIbgTTtf09U+Qec2nrqEFhkr8+LN8HpAfYWQ5VEQbKf7faaHQgjhGbOXoEpRE+v7V4XSWjxy6fjO40XO+8KZeA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB9007.eurprd04.prod.outlook.com (2603:10a6:102:20f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
- 2025 07:58:47 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 07:58:47 +0000
-Date: Thu, 18 Sep 2025 17:10:23 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] arm64: dts: imx8mp-venice-gw702x: reduce RGMII CLK
- drive strength
-Message-ID: <20250918091023.GC23028@nxa18884-linux.ap.freescale.net>
-References: <20250916153216.1042625-1-tharvey@gateworks.com>
- <20250916153216.1042625-4-tharvey@gateworks.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916153216.1042625-4-tharvey@gateworks.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: MA1P287CA0001.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a00:35::14) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CF42FE564
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758186673; cv=none; b=JRZVXvPWsgunSiivalXzytFJS7I2Gnn+QOgzF2Rf+V98J3VKzogWrroe0cjri0S/psg6M8wXC+2ezbBIcUPjAgqibvV1rDORMQ9/cpLPlg7n864Q1FRK+X3MXAW4S7/9OG6WMrU19n0KAUFVf5UTD67lhpT5/m3/QcRN8kXog1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758186673; c=relaxed/simple;
+	bh=ROzj7x8f2E0Pg2YMtmuABkw2czH9kN4rhCy5VhmuH3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/XYxtWU5cM2MglwWo7qVNmyOfkQMd4LcwrtiK4DxC7zMDGkdm2RfC6wYYZJ3tTvxqGOPN2+Qig+LNt1JbU2gBLA9SFHWZDSOOl7Lt+wzR6fpGWTu8SKUF708gHAqV40oNq3QpqL74L01ykbK6IlhFbJ+hPVadq33uqojwWiv8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E0dD+TP3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m4trHJRY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HqCcH+2O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mvJYBXJP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D86F01F393;
+	Thu, 18 Sep 2025 09:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758186663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xL+TtOqmZ5Gag6pbcfCwROUJiWuODRMG1zK+9kl5tPY=;
+	b=E0dD+TP3vQjrBnQ/oelOtpFV41KQhpQc2W8SlXqeVXLtihY3dz/7Ag6tJJ26L1p9uQ2Wa/
+	nCUiK1Z0eJZ8YaCl/IJOE9S2xvO9DiAg2Ly/elhfut40j8YEwmAde/JGV+XnAlURcXGpCx
+	3GNJy1ahikrMvXyNfosJQ/6ceML+G8E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758186663;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xL+TtOqmZ5Gag6pbcfCwROUJiWuODRMG1zK+9kl5tPY=;
+	b=m4trHJRY5zHvAEZwA0ZpBIRKHZqZdX5q+cC85KTn2wvebD4U5FXL6/2k7i8DSGs05jwf0F
+	VcO/xFIHxtk/8MCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758186662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xL+TtOqmZ5Gag6pbcfCwROUJiWuODRMG1zK+9kl5tPY=;
+	b=HqCcH+2Okzs3AWdSW93O8xOP/EblM0I/5A82okuPugcNAFwdTGE1bf5Fw+x/Tw4Xhx7uMb
+	F/FoQlOaEEZ7omcEakAbb9OVdgrpWS650dOMkbp4inSIAqbVYJvNrzjdDt27086nb37MvJ
+	i6JdP139bopILs6Mfh50i1GrXb8YQf8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758186662;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xL+TtOqmZ5Gag6pbcfCwROUJiWuODRMG1zK+9kl5tPY=;
+	b=mvJYBXJPwG2sugGeTBbyqr9ePhgDyROO6CWRmvwTL5VVnYvsGlhatcLadmIw+zMJgRw60J
+	rfSM4S54fWggVeBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEDA213A39;
+	Thu, 18 Sep 2025 09:11:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ieSSLqbMy2jLVAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 18 Sep 2025 09:11:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1D2F7A09B1; Thu, 18 Sep 2025 11:11:02 +0200 (CEST)
+Date: Thu, 18 Sep 2025 11:11:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 9/9] ns: add ns_common_free()
+Message-ID: <nn7h3bjzz5ckd5mjhqs5jci4fl4ndjc6uabos54242x2ck7mph@fbobo4nydu7p>
+References: <20250917-work-namespace-ns_common-v1-0-1b3bda8ef8f2@kernel.org>
+ <20250917-work-namespace-ns_common-v1-9-1b3bda8ef8f2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAXPR04MB9007:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58363fb7-609c-4829-5040-08ddf6893274
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?IdLtOQnCM29hfGN8x1smdxarV9kyzG6w6aP0PEdknhmrDdrZkNjseSa9q1p3?=
- =?us-ascii?Q?FT21ErUajzH4BbnTcojSGS6WHCtML5XcVe9losKOaivFlBspkjY1V+7C4erM?=
- =?us-ascii?Q?+TQXzXdh0NtzsnIJYI38BvfvDWCIwPIgFYoRFxEROlg8h1HM53q3HXLxMh69?=
- =?us-ascii?Q?bqeoIyoW4Xq7SxPpcf9CNinG/hkEGkifdm6Ohn+5pG7RF3CTj9C48EIOq5JG?=
- =?us-ascii?Q?cfLKTng0lXdJ6kvC0LB2LoM7M7RGoDMG+eBuNn3+7gHH+PbkzZVFpL3GBV2c?=
- =?us-ascii?Q?rnnlQ0fYoLn3hEuImBovUCLDBK03YJxf5uGkPNaeIttqvI9br3vScBkokQ6n?=
- =?us-ascii?Q?DQxGzOBONMPYGrNOp16707Run44E1xvS6yOg7OOcD/MU60MHYwSVzJFzU5RV?=
- =?us-ascii?Q?SPUz1FOvzfIUgZUkjRbYHVMgM0CEYyUKbXVW2ApBgEHESOjMlIjViNd0tKDR?=
- =?us-ascii?Q?9Qk73IUDp8z+N+bKbHPE5NZIjtJpiPxXojuwYdEhQqmQoN83m8fD1SGgTlag?=
- =?us-ascii?Q?VOq1rg+Qto0UeU01I4J6iktoeg0VnjmB9Zi6KKL89PrPROB0sEjsXnADD9HK?=
- =?us-ascii?Q?DjaRIjSHxTKNI0/U6yD4yzg2UuLCZqjP1h0xop425UQ6NCDUVr8RNEEu2XMO?=
- =?us-ascii?Q?JFqHjHbOQP/51xmIdXayu/d8/8QLUBvd9NaEOnQaVbmIbT/nE0ZtRutYloH9?=
- =?us-ascii?Q?7Gx7erH76IffBR+gMq4h8JPjZKt/4cIHu44UDCaO9tfy6UJ5sDn9IuRGo6jH?=
- =?us-ascii?Q?1yULo8GXsDK0iSHZME0UyhUGbfhCgFNmAi4VcrfyTL1h+a/0op93xl53IIaH?=
- =?us-ascii?Q?lDJ7kyrMkUaFZoJXnXygyv6BKgZYOTN5IMXnjR4CyoxkoPCfe6ndrwVXVDmI?=
- =?us-ascii?Q?wyPKmTSBb0PbzP/+yHJm51mfD5UfrXrh3RgoIUqGsrYDhxrO/PQbimMP1QGf?=
- =?us-ascii?Q?kXCeWkJ35ZwahfnwqNFpjuPKzS+PYEM25uhJw+rYQQB6+hu78013MFqWo7aA?=
- =?us-ascii?Q?D+ioy332vMk/oz4tydVc2yG5BpfBFQl30eA0fVjDk46R75N9UjjIFo/JvbmU?=
- =?us-ascii?Q?lbttzHnxUmFrioNDB3m+DXTK7+QuYpWJ11f2M7m5k/eQJCwWUMkMNLVtdU3l?=
- =?us-ascii?Q?OP7Vz/0tHcZo02VMAL1PKxfWwQNw9CnO0IU2TXdlBnTTktavT3dbaDsFIGL2?=
- =?us-ascii?Q?Er9vlnAWt8V6ZnKT2T/nj8PeG6WceSvyuzFCoNUHTjhyhztsCFatYaJPOiYL?=
- =?us-ascii?Q?hGYP8b7X4/BwTlVUOMuUfLetbYlWPC+NVytfNfvUJp9M9K4zm5GGUj2qo/pS?=
- =?us-ascii?Q?/Q5U2aksZi4jWdSrG2lsEvDXkkY5ZbK5WMpKg+mgTfdhfkuFTn4gF0s5NmQC?=
- =?us-ascii?Q?4SxVXS39uHet5lmxkkABJc8W1u09s6ULlkSvPG7t8b83N5obh0tKcXrkTpNl?=
- =?us-ascii?Q?RtkwKNjzKQec0meHF6xjq+2T91oC8aUpXl2i1FO1UPLhuYI4KFZ12Q=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?JVSSQ0/r2VXhMLj0suMNJOSYFlex4MbVl6Qfy1nv2b4Pp1jyAPutLIecFcBB?=
- =?us-ascii?Q?VZ90zF2NO8+0RBAZX1G3MOo083cKwl0E5aUYfMySlDOvXYwMcNoMRfMmLrEu?=
- =?us-ascii?Q?2rBKz+vZxvSf30W4p4FYli3/1kUO1lbcP3r6y6TLJXG//CEA7j49VQ3txrz0?=
- =?us-ascii?Q?iK/JlfeEXeW/kpmbhHLRZZiLCM4GMYppMD/EeVE4P4QnO9aVK8CMjRUxW7W7?=
- =?us-ascii?Q?3Ni4/sRETK9nH5rhVc7q6jB3Y1BWX0xeMg5pBcvkQhziXmhnJsl4nHI8qJue?=
- =?us-ascii?Q?rBN3o+UBpbvFLmDyO2TzoIREpUc72qnmA9e6JP0KAg7jazGQHzCB4SwlNZoJ?=
- =?us-ascii?Q?hX5xnHlBxgX3SFCqfBElJtTQLW3h+0r6W8LkHBSTfz6Z2MfC4sN86sLSYfDy?=
- =?us-ascii?Q?9kK89mfYkRb8TEvMwj+/SOMoMNvfJv8/S1x4vPpQ1G8zfdKn+1pBCkwSuQJm?=
- =?us-ascii?Q?I4vOX3Hgg0BmFS+RCypNKv/o2D/lKacNrNHt1CMRoMo87awZVyRa+pOKDllE?=
- =?us-ascii?Q?mTsUF6ekKpbQ5bvLxaqf+Bt+E3xlBqSSwBu6s4Iyt46CtMO1gLQmA9CeAOyE?=
- =?us-ascii?Q?JiZlOH1HhmNFZiURi9h5q2dh38nMe2+kwikrdsvUT6evft6ZSTL4X37hfE/c?=
- =?us-ascii?Q?qbMoRV3k8Arz9GYUVOA4E+vHEpBVVQYac9y15E3vDHGCAcn4xt/4uUa0+aUO?=
- =?us-ascii?Q?U5l+IQLLfkXWgYngj9cq8w1dbdELjk3M9gK+zzUyGij1Erj+jUbLS6wTUmq+?=
- =?us-ascii?Q?Qu/N5Bd4qQ2SrpR/k2kRoiEBmm5F0ubgAYZPC+JK3O/yfbNJDDZ/IMS2o+6p?=
- =?us-ascii?Q?FDMBwxiEqOc4YWEgio4pUFmXicHRNZrTn89E9TGBHO8p6yS0yCp3BeLnaU9I?=
- =?us-ascii?Q?+//FxC5Iwv7fHilgEOn0JCZX5SxF6mr67tgwLKiQtrfdjCX+V+IVvyTvzcBK?=
- =?us-ascii?Q?00KAOTMke1aUK6UZTmJnlf/j04j3K4FFjjEcDteznnmqOR6hjNs0NBmc0pFx?=
- =?us-ascii?Q?qTEAxzYKVJL7InhWiGgrYhAds9Hy6Dhr1h6j2LlAbDc0o9vgnpXknB0pMpwp?=
- =?us-ascii?Q?n+bh+WuUCLyGyy6oQzvNeXZqe1VUZuidcOJ4VeAsAqwjJH4V2LHyJBVK0hLT?=
- =?us-ascii?Q?HlwqwBd81V8M5387BH+v810B20EfzRWE2TyxQ3aCMGswPg6UVj8c5371C6ss?=
- =?us-ascii?Q?Y/JVDfUTr9nfI5nMI9AfmEcOX0MfEYBNgdwhjUed8VQnVDGJkJgb32eNT69L?=
- =?us-ascii?Q?dZTk+/Ob5uIRe8jcNI1hHh7dC9WOg/eA95soAxyX3m9uPdFELXto3OcFg3ih?=
- =?us-ascii?Q?KugtF8u7OVIqUHS2BLa/sI6THGlLMmUCZf9Iqlb9JNN7Qei7CpeqHBFF+3Bz?=
- =?us-ascii?Q?XNLyEY7PGIGE0CTNX5k+JD9BdcD+McARlGZ4j+y5zpykp8T+2ADNhUog2JGR?=
- =?us-ascii?Q?BV1keMrwKWeeAdgl24OWHiqU7YRltxfAA9JoAyNU15qJyh3pteF1kFGlSWcS?=
- =?us-ascii?Q?ZDU+SP06CM/KmSvmWeUHgZZDCZkNhQpqeTdBLAE1IEs1IWskWNKZuDUgvuhE?=
- =?us-ascii?Q?x7hRX0Oh5DHUqo0worW3vcNVFb03DLIoBjicXTWG?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58363fb7-609c-4829-5040-08ddf6893274
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 07:58:47.6894
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Cte7FzLU7r8H+FKWPK3/tx0IUH1CI410uEzjuqs/QbygSZiI/htunlDpZ3KgA9/W2NmzKFyuXQi8zYjMUCWW1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9007
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250917-work-namespace-ns_common-v1-9-1b3bda8ef8f2@kernel.org>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,toxicpanda.com,kernel.org,yhndnzj.com,in.waw.pl,0pointer.de,cyphar.com,zeniv.linux.org.uk,suse.cz,cmpxchg.org,suse.com,linutronix.de];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.30
 
-Hi Tim,
-
-On Tue, Sep 16, 2025 at 08:32:12AM -0700, Tim Harvey wrote:
->The i.MX8M Plus EQOS RGMII tracelength is less than 1in and does not
->require a x6 drive strength. Reduce the CLK drive strength to x1 for
->better emissions.
->
->Signed-off-by: Tim Harvey <tharvey@gateworks.com>
->---
-> arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
->index a1232a4f8485..dd9eeb3479fd 100644
->--- a/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
->+++ b/arch/arm64/boot/dts/freescale/imx8mp-venice-gw702x.dtsi
->@@ -462,7 +462,7 @@ MX8MP_IOMUXC_ENET_TD1__ENET_QOS_RGMII_TD1		0x16
-> 			MX8MP_IOMUXC_ENET_TD2__ENET_QOS_RGMII_TD2		0x16
-> 			MX8MP_IOMUXC_ENET_TD3__ENET_QOS_RGMII_TD3		0x16
-> 			MX8MP_IOMUXC_ENET_TX_CTL__ENET_QOS_RGMII_TX_CTL		0x16
->-			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x16
->+			MX8MP_IOMUXC_ENET_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK	0x0
-
-You also changed FSEL from 2 to 0. So I would add this in commit that if this
-matches:
-Since TXC is not a high frequency clock, use slow slew rate for lower emissions
-and better signal quality
-
-Regards
-Peng
-> 		>;
-> 	};
+On Wed 17-09-25 12:28:08, Christian Brauner wrote:
+> And drop ns_free_inum(). Anything common that can be wasted centrally
+> should be wasted in the new common helper.
 > 
->-- 
->2.25.1
->
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Nice. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/namespace.c            | 4 ++--
+>  include/linux/ns_common.h | 3 +++
+>  include/linux/proc_ns.h   | 2 --
+>  ipc/namespace.c           | 4 ++--
+>  kernel/cgroup/namespace.c | 2 +-
+>  kernel/nscommon.c         | 5 +++++
+>  kernel/pid_namespace.c    | 4 ++--
+>  kernel/time/namespace.c   | 2 +-
+>  kernel/user_namespace.c   | 4 ++--
+>  kernel/utsname.c          | 2 +-
+>  net/core/net_namespace.c  | 4 ++--
+>  11 files changed, 21 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 31eb0e8f21eb..03bd04559e69 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -4083,7 +4083,7 @@ static void dec_mnt_namespaces(struct ucounts *ucounts)
+>  static void free_mnt_ns(struct mnt_namespace *ns)
+>  {
+>  	if (!is_anon_ns(ns))
+> -		ns_free_inum(&ns->ns);
+> +		ns_common_free(ns);
+>  	dec_mnt_namespaces(ns->ucounts);
+>  	mnt_ns_tree_remove(ns);
+>  }
+> @@ -4155,7 +4155,7 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
+>  	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
+>  	if (IS_ERR(new)) {
+>  		namespace_unlock();
+> -		ns_free_inum(&new_ns->ns);
+> +		ns_common_free(ns);
+>  		dec_mnt_namespaces(new_ns->ucounts);
+>  		mnt_ns_release(new_ns);
+>  		return ERR_CAST(new);
+> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+> index 284bba2b7c43..5094c0147b54 100644
+> --- a/include/linux/ns_common.h
+> +++ b/include/linux/ns_common.h
+> @@ -41,6 +41,7 @@ struct ns_common {
+>  };
+>  
+>  int __ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops, int inum);
+> +void __ns_common_free(struct ns_common *ns);
+>  
+>  #define to_ns_common(__ns)                              \
+>  	_Generic((__ns),                                \
+> @@ -82,4 +83,6 @@ int __ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
+>  #define ns_common_init_inum(__ns, __ops, __inum) \
+>  	__ns_common_init(&(__ns)->ns, __ops, __inum)
+>  
+> +#define ns_common_free(__ns) __ns_common_free(to_ns_common((__ns)))
+> +
+>  #endif
+> diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+> index 9f21670b5824..08016f6e0e6f 100644
+> --- a/include/linux/proc_ns.h
+> +++ b/include/linux/proc_ns.h
+> @@ -66,8 +66,6 @@ static inline void proc_free_inum(unsigned int inum) {}
+>  
+>  #endif /* CONFIG_PROC_FS */
+>  
+> -#define ns_free_inum(ns) proc_free_inum((ns)->inum)
+> -
+>  #define get_proc_ns(inode) ((struct ns_common *)(inode)->i_private)
+>  
+>  #endif /* _LINUX_PROC_NS_H */
+> diff --git a/ipc/namespace.c b/ipc/namespace.c
+> index 0f8bbd18a475..09d261a1a2aa 100644
+> --- a/ipc/namespace.c
+> +++ b/ipc/namespace.c
+> @@ -97,7 +97,7 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
+>  
+>  fail_put:
+>  	put_user_ns(ns->user_ns);
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  fail_free:
+>  	kfree(ns);
+>  fail_dec:
+> @@ -161,7 +161,7 @@ static void free_ipc_ns(struct ipc_namespace *ns)
+>  
+>  	dec_ipc_namespaces(ns->ucounts);
+>  	put_user_ns(ns->user_ns);
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  	kfree(ns);
+>  }
+>  
+> diff --git a/kernel/cgroup/namespace.c b/kernel/cgroup/namespace.c
+> index d928c557e28b..16ead7508371 100644
+> --- a/kernel/cgroup/namespace.c
+> +++ b/kernel/cgroup/namespace.c
+> @@ -40,7 +40,7 @@ void free_cgroup_ns(struct cgroup_namespace *ns)
+>  	put_css_set(ns->root_cset);
+>  	dec_cgroup_namespaces(ns->ucounts);
+>  	put_user_ns(ns->user_ns);
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  	/* Concurrent nstree traversal depends on a grace period. */
+>  	kfree_rcu(ns, ns.ns_rcu);
+>  }
+> diff --git a/kernel/nscommon.c b/kernel/nscommon.c
+> index c3a90bb665ad..7c1b07e2a6c9 100644
+> --- a/kernel/nscommon.c
+> +++ b/kernel/nscommon.c
+> @@ -18,3 +18,8 @@ int __ns_common_init(struct ns_common *ns, const struct proc_ns_operations *ops,
+>  	}
+>  	return proc_alloc_inum(&ns->inum);
+>  }
+> +
+> +void __ns_common_free(struct ns_common *ns)
+> +{
+> +	proc_free_inum(ns->inum);
+> +}
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 170757c265c2..27e2dd9ee051 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -127,7 +127,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+>  	return ns;
+>  
+>  out_free_inum:
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  out_free_idr:
+>  	idr_destroy(&ns->idr);
+>  	kmem_cache_free(pid_ns_cachep, ns);
+> @@ -152,7 +152,7 @@ static void destroy_pid_namespace(struct pid_namespace *ns)
+>  	ns_tree_remove(ns);
+>  	unregister_pidns_sysctls(ns);
+>  
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  
+>  	idr_destroy(&ns->idr);
+>  	call_rcu(&ns->rcu, delayed_free_pidns);
+> diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
+> index ce8e952104a7..d49c73015d6e 100644
+> --- a/kernel/time/namespace.c
+> +++ b/kernel/time/namespace.c
+> @@ -255,7 +255,7 @@ void free_time_ns(struct time_namespace *ns)
+>  	ns_tree_remove(ns);
+>  	dec_time_namespaces(ns->ucounts);
+>  	put_user_ns(ns->user_ns);
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  	__free_page(ns->vvar_page);
+>  	/* Concurrent nstree traversal depends on a grace period. */
+>  	kfree_rcu(ns, ns.ns_rcu);
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index db9f0463219c..32406bcab526 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -165,7 +165,7 @@ int create_user_ns(struct cred *new)
+>  #ifdef CONFIG_PERSISTENT_KEYRINGS
+>  	key_put(ns->persistent_keyring_register);
+>  #endif
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  fail_free:
+>  	kmem_cache_free(user_ns_cachep, ns);
+>  fail_dec:
+> @@ -220,7 +220,7 @@ static void free_user_ns(struct work_struct *work)
+>  #endif
+>  		retire_userns_sysctls(ns);
+>  		key_free_user_ns(ns);
+> -		ns_free_inum(&ns->ns);
+> +		ns_common_free(ns);
+>  		/* Concurrent nstree traversal depends on a grace period. */
+>  		kfree_rcu(ns, ns.ns_rcu);
+>  		dec_user_namespaces(ucounts);
+> diff --git a/kernel/utsname.c b/kernel/utsname.c
+> index 399888be66bd..95d733eb2c98 100644
+> --- a/kernel/utsname.c
+> +++ b/kernel/utsname.c
+> @@ -98,7 +98,7 @@ void free_uts_ns(struct uts_namespace *ns)
+>  	ns_tree_remove(ns);
+>  	dec_uts_namespaces(ns->ucounts);
+>  	put_user_ns(ns->user_ns);
+> -	ns_free_inum(&ns->ns);
+> +	ns_common_free(ns);
+>  	/* Concurrent nstree traversal depends on a grace period. */
+>  	kfree_rcu(ns, ns.ns_rcu);
+>  }
+> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+> index fdb266bbdf93..fdbaf5f8ac78 100644
+> --- a/net/core/net_namespace.c
+> +++ b/net/core/net_namespace.c
+> @@ -597,7 +597,7 @@ struct net *copy_net_ns(unsigned long flags,
+>  		net_passive_dec(net);
+>  dec_ucounts:
+>  		dec_net_namespaces(ucounts);
+> -		ns_free_inum(&net->ns);
+> +		ns_common_free(net);
+>  		return ERR_PTR(rv);
+>  	}
+>  	return net;
+> @@ -719,7 +719,7 @@ static void cleanup_net(struct work_struct *work)
+>  #endif
+>  		put_user_ns(net->user_ns);
+>  		net_passive_dec(net);
+> -		ns_free_inum(&net->ns);
+> +		ns_common_free(net);
+>  	}
+>  	WRITE_ONCE(cleanup_net_task, NULL);
+>  }
+> 
+> -- 
+> 2.47.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
