@@ -1,147 +1,113 @@
-Return-Path: <linux-kernel+bounces-822968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73786B852A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:19:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F86B85327
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38A277A442F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A075477CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2033D313E26;
-	Thu, 18 Sep 2025 14:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEB731326A;
+	Thu, 18 Sep 2025 14:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9JsUocX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FhpXnzrZ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F68D313D49;
-	Thu, 18 Sep 2025 14:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4730D3126D2;
+	Thu, 18 Sep 2025 14:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204622; cv=none; b=GIRI4JuXVEamcsFDh7Kd/Eme0ZICwFkTPZa+2MuKEOgxpLkp5SzFFecpv0gktQ6Ys9tUb0YwoglkaZga+yDmxqt3R5JeHqfKdijCy79whLIi++uA54gAVKfVUaqzWwcHlym6d1LUgw6qfZybURNnh/7/ujWa5Hz6aB2nImVcjjw=
+	t=1758204607; cv=none; b=dNa8VtONcrvNNZUjfvoPX25IBbOFQY9jemvgVeSF2VDD7h3V8wGLArjd7NyRzxWFX8uYJJNPVqrQ1onByb//f+F+Re+jfqjNgM5Krm2FdKXFOeOrYP+0O+1F0mkoLRFJVRvKDLX0kTzjchkxhQOk1l3iMjZw2eZtUYsJ5zNf+lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204622; c=relaxed/simple;
-	bh=+mItofUWbT/SzLs0Mrc6WXSkqZWGdUCuVYLGJSLcHDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pggQgsnmegsgmukJcKGicAyjzXtFU5qUeJztD8j+HgxM7LIY8EUEQf7V0QuGne7fMqIchCDeI7hmO2r7Y/KwOzeXWzxIoRv2j5H1CDHFawX1xvfHQkYUlLyLVrHpQcQ6ABJXo/vdcCLKMUu2hNIpBOWwTEIjd92Vr39LBcbgdyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9JsUocX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AEFAC4CEFB;
-	Thu, 18 Sep 2025 14:10:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758204622;
-	bh=+mItofUWbT/SzLs0Mrc6WXSkqZWGdUCuVYLGJSLcHDY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V9JsUocXjcR/CRRuPUbMLUrynQTHxnyRZUck8xrjf9keCJjbsa1bH9eWOXAHqWeqU
-	 juQIOVyIP8IsObWlS/GQ+c+Uprfg0vQs/uSvxRKuOSh8ip7nCbACSbb1d2V8B94szO
-	 gm7otPQ0YarFehrESzgfR/EeZvdmrVvboJRbxtk+1PNZhXi9imBesuxF1A4Rpoq0ll
-	 6I34Kw2ZKFhTFUM3h5ErNDcdSGH3nZ6uRpyw5T2To3AYoFeaBoieE+XTvKRGewbaJI
-	 34bqm0hVT5cN07YS2CqWqEONmyD00OuGPY64KYjPokFIOiGj3K230Si2JLMvb8d/wc
-	 XDjD3ji1pCB0g==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	iommu@lists.linux.dev,
-	Juergen Gross <jgross@suse.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH v4 6/6] dma-mapping: remove unused mapping resource callbacks
-Date: Thu, 18 Sep 2025 17:09:29 +0300
-Message-ID: <c1a88f10a387eadf5c466cabf63bc905faddac81.1758203802.git.leon@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1758203802.git.leon@kernel.org>
-References: <cover.1758203802.git.leon@kernel.org>
+	s=arc-20240116; t=1758204607; c=relaxed/simple;
+	bh=nFHi54wCET7igQC5KRhNHkJ7aBYvqs3E5kPuCORPpoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jA3ncoCfzUtWuKl53/JmdlaQlERYjMIIxD9pIX0DifbHRsIMPBUrs9MLKgVFL7upfa6u/gNZYQWxHr19VV8UjD3ZipyVusP9IsA1cz21fG1CgOUXtyBZMaIX1gQv1DvjibdRFO3wt15ftAU70g12XxXsMqCp2tM2UWrPAnP9LXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=FhpXnzrZ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=FFLORDihYCicM5VZt7vNB80L4AErinlH5+UxIfqQxVw=; b=FhpXnzrZcb6mjDFRd2NdWQ823k
+	R1B/DN7Ol8sQnnusRoRVLVERXTDVPwq1oVqpGj/rKM/9/Z6+AG7R2cKBc/su7lPAwG4hsTsFPsI7e
+	yUg2SmC1Fb4dXcWWQwxNoOuGivGonRXsPgGFp6WWOJjmVD3NUrCfzObSrDiF1HqBRLgs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uzFKa-008pbw-Bz; Thu, 18 Sep 2025 16:09:52 +0200
+Date: Thu, 18 Sep 2025 16:09:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] arm64: dts: marvell: cn9132-clearfog: fix
+ multi-lane pci x2 and x4 ports
+Message-ID: <dedd4222-b2ba-4247-98b4-504b5c032f69@lunn.ch>
+References: <20250911-cn913x-sr-fix-sata-v2-0-0d79319105f8@solid-run.com>
+ <20250911-cn913x-sr-fix-sata-v2-3-0d79319105f8@solid-run.com>
+ <9272b233-b710-4e57-b3ff-735f45c03c74@lunn.ch>
+ <dbb10e82-ae10-4987-900b-17d4f4b62099@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbb10e82-ae10-4987-900b-17d4f4b62099@solid-run.com>
 
-From: Leon Romanovsky <leonro@nvidia.com>
+On Thu, Sep 18, 2025 at 10:46:03AM +0000, Josua Mayer wrote:
+> Am 12.09.25 um 00:12 schrieb Andrew Lunn:
+> > On Thu, Sep 11, 2025 at 08:28:06PM +0200, Josua Mayer wrote:
+> >> The mvebu-comphy driver does not currently know how to pass correct
+> >> lane-count to ATF while configuring the serdes lanes.
+> >>
+> >> This causes the system to hard reset during reconfiguration, if a pci
+> >> card is present and has established a link during bootloader.
+> >>
+> >> Remove the comphy handles from the respective pci nodes to avoid runtime
+> >> reconfiguration, relying solely on bootloader configuration - while
+> >> avoiding the hard reset.
+> >>
+> >> When bootloader has configured the lanes correctly, the pci ports are
+> >> functional under Linux.
+> > Does this require a specific bootloader? Can i use mainline grub or
+> > bareboot?
+> 
+> In this case it means U-Boot, i.e. before one would start grub.
+> 
+> I am never quite sure if in this situation I should say "firmware" instead ...
 
-After ARM and XEN conversions to use physical addresses for the mapping,
-there are no in-kernel users for map_resource/unmap_resource callbacks,
-so remove them.
+What you failed to answer is my question about 'mainline'? Do i need a
+specific vendor u-boot, or can i just use mainline u-boot, or mainline
+bareboot.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- include/linux/dma-map-ops.h |  6 ------
- kernel/dma/mapping.c        | 16 ++++------------
- 2 files changed, 4 insertions(+), 18 deletions(-)
+I personally like to replace the bootloader, because the one shipped
+with the board often has useful features disabled, or is old. If i do
+that, will the board work? I would much prefer the kernel makes no
+assumptions about the bootloader. You said:
 
-diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
-index 25603cb273769..a2ec1566aa270 100644
---- a/include/linux/dma-map-ops.h
-+++ b/include/linux/dma-map-ops.h
-@@ -53,12 +53,6 @@ struct dma_map_ops {
- 			enum dma_data_direction dir, unsigned long attrs);
- 	void (*unmap_sg)(struct device *dev, struct scatterlist *sg, int nents,
- 			enum dma_data_direction dir, unsigned long attrs);
--	dma_addr_t (*map_resource)(struct device *dev, phys_addr_t phys_addr,
--			size_t size, enum dma_data_direction dir,
--			unsigned long attrs);
--	void (*unmap_resource)(struct device *dev, dma_addr_t dma_handle,
--			size_t size, enum dma_data_direction dir,
--			unsigned long attrs);
- 	void (*sync_single_for_cpu)(struct device *dev, dma_addr_t dma_handle,
- 			size_t size, enum dma_data_direction dir);
- 	void (*sync_single_for_device)(struct device *dev,
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 4080aebe5debb..32a85bfdf873a 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -157,7 +157,7 @@ dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 	bool is_mmio = attrs & DMA_ATTR_MMIO;
--	dma_addr_t addr;
-+	dma_addr_t addr = DMA_MAPPING_ERROR;
- 
- 	BUG_ON(!valid_dma_direction(dir));
- 
-@@ -171,18 +171,13 @@ dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
- 		addr = iommu_dma_map_phys(dev, phys, size, dir, attrs);
- 	else if (ops->map_phys)
- 		addr = ops->map_phys(dev, phys, size, dir, attrs);
--	else if (is_mmio) {
--		if (!ops->map_resource)
--			return DMA_MAPPING_ERROR;
--
--		addr = ops->map_resource(dev, phys, size, dir, attrs);
--	} else {
-+	else if (!is_mmio && ops->map_page) {
- 		struct page *page = phys_to_page(phys);
- 		size_t offset = offset_in_page(phys);
- 
- 		/*
- 		 * The dma_ops API contract for ops->map_page() requires
--		 * kmappable memory, while ops->map_resource() does not.
-+		 * kmappable memory.
- 		 */
- 		addr = ops->map_page(dev, page, offset, size, dir, attrs);
- 	}
-@@ -227,10 +222,7 @@ void dma_unmap_phys(struct device *dev, dma_addr_t addr, size_t size,
- 		iommu_dma_unmap_phys(dev, addr, size, dir, attrs);
- 	else if (ops->unmap_phys)
- 		ops->unmap_phys(dev, addr, size, dir, attrs);
--	else if (is_mmio) {
--		if (ops->unmap_resource)
--			ops->unmap_resource(dev, addr, size, dir, attrs);
--	} else
-+	else
- 		ops->unmap_page(dev, addr, size, dir, attrs);
- 	trace_dma_unmap_phys(dev, addr, size, dir, attrs);
- 	debug_dma_unmap_phys(dev, addr, size, dir);
--- 
-2.51.0
+> The mvebu-comphy driver does not currently know how to pass correct
+> lane-count to ATF while configuring the serdes lanes.
 
+Why not just teach mvebu-comphy to pass the correct line-count? That
+sounds like the proper fix, and that makes the kernel independent of
+the bootloader.
+
+	Andrew
 
