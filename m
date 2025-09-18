@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-822509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC7E8B8408F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:21:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C412B84098
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 12:22:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270E716A1FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:21:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784621C83033
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A572A302CC4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5D5302CD6;
 	Thu, 18 Sep 2025 10:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3rmf1DL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QN5ra0Bn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E369B2F7AAD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3612302174;
 	Thu, 18 Sep 2025 10:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758190675; cv=none; b=dBxB9ZO1bgKfusSVabsJOMkk2MTA1JFFzPyH0RbdZBZjTRVXFbbfwXSpFIldVW0x5+h0zkwUOHSr6OPXUyGjjxkD2vbmrHaTtJawa7e3MxHlp72JXptA/1k3aqLK77+RQrFIh11PtSmAHmkc2EDmdXocRj967BJ0+ywtjNtb4Mo=
+	t=1758190675; cv=none; b=iIFzi/RzSDWbfbdcmCEVTQ3/EPuMD3zgXAN/T8wu0XjlQgWvQ5bMxNHSBqJHI+BY8109swcmWOIiq+H0tvSNcMASv2eTt2J3fpezUaFggjh+Jl9TWvZ+20cBInsIN//02PC6Gxo2psZ8RLb4LjrVGReXW+5UJ2IlxXxF1WZFwEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758190675; c=relaxed/simple;
-	bh=TClFAeQiiBqNMqlX5lL/MO+NhBy3SSx1O4T3SfYSpPg=;
+	bh=OmlAZwLbOfV/U6YckvaKFi8EfINIzzau42SR+69WELM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OLDhGe26sdzrEfVOu3AftnGDKzakK/1EYvLasXpdDBDohsWJhPs02ipTLwLbCBY/5nsxpl+RC/xvx2FOH5TBIPrhgi5AN799vq2zyKljbWKZH6xBHIqGG7nR+Z75IAuBEELp5BFSa1sgQ2RH8lSGgrmrwQxncpj9DsaKINIhNMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q3rmf1DL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97E6DC4CEFA;
+	 MIME-Version; b=sLbFY67eHlTGP+aRMs0kDnkbwRIgQSUslw4Dmg/awHxR24FLr+zMpvE/VN+hiiVF7+c0itUzcqHgt1qip9+LVbUAYHTodlJ4CGURf0wrq7CuHSfMzLwpAQOqIfgrPTlkHQVTaR2r+d5LF6n9fU4kJnvIhj+OaJmKAPmyHVsqG9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QN5ra0Bn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5485C4CEEB;
 	Thu, 18 Sep 2025 10:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1758190674;
-	bh=TClFAeQiiBqNMqlX5lL/MO+NhBy3SSx1O4T3SfYSpPg=;
+	bh=OmlAZwLbOfV/U6YckvaKFi8EfINIzzau42SR+69WELM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q3rmf1DLlZycaJ92Qtkp86ioEzEb+1T/ca/6MReH8gkXFVJUdFici1LGxWuTUUhZz
-	 HKqSor9rTPDoL9JkVNZuTnWkIlwi5fOXMbZb1QMTmCFZXhTnnPq33C2EVWVHpbP8O9
-	 z5XM+BHHDpAE9LyqZnBaITvxbICUI66lCtgvPNUPIJN8v+moZAMGxXQpKmWHm1+yk6
-	 0V/O6VkGen2nKbhQjw0JOvmVk5iMTd6bxkQ5Dxng2MPcdhBbqQYXUPAzrGM0jSoWwq
-	 WlCFvuMrDDLf4UeYQbEB0hhkblr9PCSi/s/WdWUmIBdJK5ZJTKTpt86AfeG7NO9PGF
-	 Jgo2J+TmnFm3Q==
+	b=QN5ra0BnO82Cl55DDuat1rXGYCdh1ifE0O05l/3GeZyqxp58abTCS9wkzKJfcrTjm
+	 uh7DBao3ybasOXQYhCX6b6hGfiZ6X+3V3o0abCff+B8HvfYuDDbaj1aPj+GwMNGCEf
+	 9gZ93KS/grhpzY1KPRFpDDUZ3I1StGBhXnB6o4IFl86o6qxMcZh0DSBnkakl0qgbXn
+	 RSB/LQ3XJYIO6eM6khfbj1s0fW5dj7e0PrRWbgP9lYcz2KYXC895XLfsREF1pBFgXl
+	 7g9VtTcNoAvKj6W/L93RwI9g8R9N6fSZ6zg1yrn2JyTb9qTiGdyEIyXLxAwCYrht9X
+	 vF4VLpU/sBptw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 176CACE0EFF; Thu, 18 Sep 2025 03:17:54 -0700 (PDT)
+	id 1A52CCE0F82; Thu, 18 Sep 2025 03:17:54 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-Subject: [PATCH v2 3/5] rculist: move list_for_each_rcu() to where it belongs
-Date: Thu, 18 Sep 2025 03:17:50 -0700
-Message-Id: <20250918101752.2592512-3-paulmck@kernel.org>
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Tejun Heo <tj@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH v2 4/5] rcu: replace use of system_wq with system_percpu_wq
+Date: Thu, 18 Sep 2025 03:17:51 -0700
+Message-Id: <20250918101752.2592512-4-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <3773a6e3-8ec8-48c5-9277-264cd8ccbb10@paulmck-laptop>
 References: <3773a6e3-8ec8-48c5-9277-264cd8ccbb10@paulmck-laptop>
@@ -65,79 +64,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
 
-The list_for_each_rcu() relies on the rcu_dereference() API which is not
-provided by the list.h. At the same time list.h is a low-level basic header
-that must not have dependencies like RCU, besides the fact of the potential
-circular dependencies in some cases. With all that said, move RCU related
-API to the rculist.h where it belongs.
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
-Reviewed-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Neeraj Upadhyay (AMD) <neeraj.upadhyay@kernel.org>
-Signed-off-by: "Paul E. McKenney" <paulmck@kernel.org>
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+system_wq is a per-CPU worqueue, yet nothing in its name tells about that
+CPU affinity constraint, which is very often not required by users. Make
+it clear by adding a system_percpu_wq.
+
+queue_work() / queue_delayed_work() mod_delayed_work() will now use the
+new per-cpu wq: whether the user still stick on the old name a warn will
+be printed along a wq redirect to the new one.
+
+This patch add the new system_percpu_wq except for mm, fs and net
+subsystem, whom are handled in separated patches.
+
+The old wq will be kept for a few release cylces.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- include/linux/list.h    | 10 ----------
- include/linux/rculist.h | 10 ++++++++++
- kernel/cgroup/dmem.c    |  1 +
- 3 files changed, 11 insertions(+), 10 deletions(-)
+ kernel/rcu/tasks.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/list.h b/include/linux/list.h
-index e7e28afd28f8ee..e7bdad9b861827 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -686,16 +686,6 @@ static inline void list_splice_tail_init(struct list_head *list,
- #define list_for_each(pos, head) \
- 	for (pos = (head)->next; !list_is_head(pos, (head)); pos = pos->next)
- 
--/**
-- * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-- * @pos:	the &struct list_head to use as a loop cursor.
-- * @head:	the head for your list.
-- */
--#define list_for_each_rcu(pos, head)		  \
--	for (pos = rcu_dereference((head)->next); \
--	     !list_is_head(pos, (head)); \
--	     pos = rcu_dereference(pos->next))
--
- /**
-  * list_for_each_continue - continue iteration over a list
-  * @pos:	the &struct list_head to use as a loop cursor.
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index 1b11926ddd4710..2abba7552605c5 100644
---- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -42,6 +42,16 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
-  */
- #define list_bidir_prev_rcu(list) (*((struct list_head __rcu **)(&(list)->prev)))
- 
-+/**
-+ * list_for_each_rcu - Iterate over a list in an RCU-safe fashion
-+ * @pos:	the &struct list_head to use as a loop cursor.
-+ * @head:	the head for your list.
-+ */
-+#define list_for_each_rcu(pos, head)		  \
-+	for (pos = rcu_dereference((head)->next); \
-+	     !list_is_head(pos, (head)); \
-+	     pos = rcu_dereference(pos->next))
-+
- /**
-  * list_tail_rcu - returns the prev pointer of the head of the list
-  * @head: the head of the list
-diff --git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
-index 10b63433f05737..e12b946278b6c6 100644
---- a/kernel/cgroup/dmem.c
-+++ b/kernel/cgroup/dmem.c
-@@ -14,6 +14,7 @@
- #include <linux/mutex.h>
- #include <linux/page_counter.h>
- #include <linux/parser.h>
-+#include <linux/rculist.h>
- #include <linux/slab.h>
- 
- struct dmem_cgroup_region {
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index f92443561d365a..2dc044fd126eb0 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -553,13 +553,13 @@ static void rcu_tasks_invoke_cbs(struct rcu_tasks *rtp, struct rcu_tasks_percpu
+ 		rtpcp_next = rtp->rtpcp_array[index];
+ 		if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+ 			cpuwq = rcu_cpu_beenfullyonline(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
+-			queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
++			queue_work_on(cpuwq, system_percpu_wq, &rtpcp_next->rtp_work);
+ 			index++;
+ 			if (index < num_possible_cpus()) {
+ 				rtpcp_next = rtp->rtpcp_array[index];
+ 				if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+ 					cpuwq = rcu_cpu_beenfullyonline(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
+-					queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
++					queue_work_on(cpuwq, system_percpu_wq, &rtpcp_next->rtp_work);
+ 				}
+ 			}
+ 		}
 -- 
 2.40.1
 
