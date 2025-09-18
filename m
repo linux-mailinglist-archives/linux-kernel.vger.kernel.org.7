@@ -1,80 +1,119 @@
-Return-Path: <linux-kernel+bounces-823540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABDF7B86C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:54:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC64B86C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:56:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C9514E1001
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:54:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7435D62702C
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C652F9DA4;
-	Thu, 18 Sep 2025 19:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLErXogf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5721B2F83B3;
+	Thu, 18 Sep 2025 19:56:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347C42E266A;
-	Thu, 18 Sep 2025 19:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8E425B301
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758225240; cv=none; b=HQ70d8lrFCDtaedV3RKJ/9I92n2GRpHveCcMvbVFcN94FgpQO5LKg2mfxVlVoZZ1lXZKPpPLWJdEmmvkonDImMECAd6IN/mM0PvIZ3hmaQDSROpX+YOHOZwmkX6Wm51ldsfgKLykb2rP67q2u7eE2zkNJ0A8cLTLGm5Ce6seVio=
+	t=1758225365; cv=none; b=tHLKHwy9SUdyOFDA5NxH8MOOSPIz8wGURAfainijS01mf8rzuQA4RL1hzz0o2Zab3H4L8dI/WDlPOaXZmpvb1Mpq7YqeelRDJyhYjJrcRS8L6cFa051WpEuwF0vgIbske6cfa/O+9teiM6uCh528zYGyNWTQ5VyObcMMh9wEVM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758225240; c=relaxed/simple;
-	bh=XPINndy9CqjB8RtVY9lpJ7pMHtnLQVCK9BiVb/6M/Yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovMS6Puhz0G0clgFyXB038ATV1vEOVClNFy5sEk3SRzsxrhsH9z2C9m1h8MW3tna9nIao5cwFOZwUf6eesOUxtG8Z+1E+e9kFcgMwiy47T8RhQ3NKUISH8jnKFx1NRFekF4MPvUbg/SzjV68X71WMDqpZQnrNVYOo9hsHbLadjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLErXogf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C61DC4CEE7;
-	Thu, 18 Sep 2025 19:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758225239;
-	bh=XPINndy9CqjB8RtVY9lpJ7pMHtnLQVCK9BiVb/6M/Yo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iLErXogfkcD7ZzKJgdDVzD4vRiwcx3YcxGVc2TWPITUnV9Hy9Xhse1y/HqN/FX9YX
-	 pjCf75S8I1ffvj7pk6POyioN6P4FxxiJOdhCTSEVR/lCrh3UehhAKMxY/kdMpa2jMo
-	 AsBKJTZAvCddMtAFgaA+5vrH71sf0v98OPn/tjbFckBpxniaUyhzt48BFDWoDPN+lN
-	 x50K7sD32TX7kQEhMcoTmpdHZg1iPacrdHGUS1+yI7vUS/ADHBJIwBZO/khOSBMZmN
-	 BEUMqJnfCCEGR4huLxKTgnKVmAAYymykUzWXO43lmDR7QFEC7ehwUkkpqr2Twq053m
-	 VFdyuicyKHxWw==
-Date: Thu, 18 Sep 2025 14:53:58 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, Will Deacon <will@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: arm: Add Arm C1 cores and PMUs
-Message-ID: <175822522990.2521066.13725879500851779588.robh@kernel.org>
-References: <20250915140508.2806590-1-robh@kernel.org>
+	s=arc-20240116; t=1758225365; c=relaxed/simple;
+	bh=uEJ5rpoQRsf3231TzWULGSYRK0VjvaGvrl0bDigsSuQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dK1TPHdaRYRYTCjYwT+MeJBlUAi9Zzf1zApZe8mfC9DfKAgGWRfbLXuu9Pk8E5SK1F6kyCThiUdYk6b4JM5iw0ZYxBiDk7KJuz54M2yukP4Ic10/cw7loDnsCIR26XWAfQErdzacFcp19ez9DKcsHd4+rddrZcpXSAUmo/UjJ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-424122ae369so28861455ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 12:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758225362; x=1758830162;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LGTx02BGOXxCMFqWgSyjzgGS4iq6EdbiUVb0K/VeaIs=;
+        b=DUuwdQPhGXdjP4sK7JYL8H8AcNsVjC/AyOa+SBTD+P/YB2zO1Qm3QVFJTN8iaB2dln
+         vFzaTLLyoiiQV99uiFUZ+InV4FROsgnHcWKCcOtSz19xfwR1ujHWeae79I21W93R+xG6
+         PMDi4m91wxmrLN8acAjXt/f/IYmNz2dkd2vD9mLJnCNuNxPgdO8n8vE/b3Kpv9hwO/yl
+         jTQEMEhzs85j+PLeKuXzFytqoBayMEM92MwUhCVzCmGsRd2MoH9cJF9QVvsZduSvmtcH
+         PgTqRWfhzGSATk+6ajIgSP5cKKbHWVQNm013D+9y5MpvThXfhE7KT6sKvbj26+mgNjTG
+         Ao0A==
+X-Gm-Message-State: AOJu0YwSfiTQri5cCrNU6f3Z8PlAuVpWk07TmbiQM4HzyH4sM1/yvQMX
+	IPdcR5PDpwUIGAb8FGykDh7Sumuvhnbta3XcUMVA+MHOOxwcYPc0HO40FEGotIU/uNq0KeJGztP
+	xMrUEcr/5svivfdreDiQ9O2i4obI04XZKnOLeEN9ZQx8gBfRzmFYg5jYaOH0=
+X-Google-Smtp-Source: AGHT+IGHkr5/IdNJ9LHH9Ldu9h5W/AFLcSmi9k/FA4qQs3UZ+ZmBzfl1OIpi8OlkdvKZIKT5A5F2NMItrTacKKd+loaM7Qx0t+yQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250915140508.2806590-1-robh@kernel.org>
+X-Received: by 2002:a05:6e02:219c:b0:40c:c955:b67d with SMTP id
+ e9e14a558f8ab-42481995347mr13497665ab.28.1758225362677; Thu, 18 Sep 2025
+ 12:56:02 -0700 (PDT)
+Date: Thu, 18 Sep 2025 12:56:02 -0700
+In-Reply-To: <20250918193455.115481-1-sidharthseela@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cc63d2.a00a0220.37dadf.0005.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_hdr (3)
+From: syzbot <syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, sidharthseela@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in ntfs_read_hdr
+
+=====================================================
+BUG: KMSAN: uninit-value in ntfs_dir_emit fs/ntfs3/dir.c:335 [inline]
+BUG: KMSAN: uninit-value in ntfs_read_hdr+0xfcc/0x13e0 fs/ntfs3/dir.c:385
+ ntfs_dir_emit fs/ntfs3/dir.c:335 [inline]
+ ntfs_read_hdr+0xfcc/0x13e0 fs/ntfs3/dir.c:385
+ ntfs_readdir+0xf21/0x1a30 fs/ntfs3/dir.c:496
+ iterate_dir+0x452/0x620 fs/readdir.c:108
+ __do_sys_getdents64 fs/readdir.c:410 [inline]
+ __se_sys_getdents64+0x17e/0x550 fs/readdir.c:396
+ __x64_sys_getdents64+0x97/0xe0 fs/readdir.c:396
+ x64_sys_call+0x3a14/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:218
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4197 [inline]
+ slab_alloc_node mm/slub.c:4240 [inline]
+ kmem_cache_alloc_noprof+0x81b/0xec0 mm/slub.c:4247
+ ntfs_lookup+0x60/0x410 fs/ntfs3/namei.c:71
+ lookup_one_qstr_excl+0x23f/0x7a0 fs/namei.c:1697
+ filename_create+0x2cb/0x590 fs/namei.c:4140
+ do_linkat+0x1fb/0x1040 fs/namei.c:4908
+ __do_sys_link fs/namei.c:4958 [inline]
+ __se_sys_link fs/namei.c:4956 [inline]
+ __x64_sys_link+0xd7/0x140 fs/namei.c:4956
+ x64_sys_call+0x162f/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:87
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6379 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(none) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+=====================================================
 
 
-On Mon, 15 Sep 2025 09:05:07 -0500, Rob Herring (Arm) wrote:
-> Add the newly introduced Arm C1-Nano/Pro/Premium/Ultra core and PMU
-> compatible strings. These cores are part of the Lumex CSS. The new names
-> are replacing the long lived Cortex-A/X branding going forward.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.yaml | 4 ++++
->  Documentation/devicetree/bindings/arm/pmu.yaml  | 4 ++++
->  2 files changed, 8 insertions(+)
-> 
+Tested on:
 
-Applied, thanks!
+commit:         cbf658dd Merge tag 'net-6.17-rc7' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1430c0e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b093ccee5a9e08c
+dashboard link: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11383f62580000
 
 
