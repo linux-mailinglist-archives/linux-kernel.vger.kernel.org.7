@@ -1,158 +1,116 @@
-Return-Path: <linux-kernel+bounces-822353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0000EB839C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:54:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBFCB839F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 10:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 506C572199E
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0396724802
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364212FF655;
-	Thu, 18 Sep 2025 08:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE712FF64E;
+	Thu, 18 Sep 2025 08:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k7DK4zkq"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IEi1i8gM"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19702D94AC
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED802FF16D
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758185679; cv=none; b=cQlgpmTrw6e73s1DWCXnf/BP+mPhCD9EqQKTRBnujI92muJrFdV2TRN0RS3sRjNj6uBi/CdKzvQ3wrl5KbXd8gLk6Z2pgKKCk9tk9kBgCQSOaRmLyCxbaZ8V+uHGo+AhI+SrbaeUN502DJC1qX08VHQBiXUfLr/M1rEQR02pM7I=
+	t=1758185704; cv=none; b=hxkjkLG1hba6aEpRebyuuhXrxJhlfZVWT/F3PG85TP7DB7Tdz1vHkRQr6IChzyo4tJEQixbqdzJ+N9ehUm/yvdf1OBgG5ktW7jUkkyllvs5JBUd05hNBhIm29RKTZ5wTZNiHczuR59Lk3N36nOYz4btWKhRXY1NBLBfGskXWhgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758185679; c=relaxed/simple;
-	bh=L1zfXr+TiF68xYIu/QjAZG5Rv3z8es1PBrKaRHiISSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FPSE98FHnpr/QX3vRFqCFawxnedMbaFYqhtGKQA53Y3o/8pb59+7V7/EJo2kiO8j5tWRbkfrTuNXrs4D1JHHeG80LZewWBfrE/ZxrRXgjR89cOavQ+cynhAosj1pviSeMRqXm1KqPZq3X6OWiTAYpWeV3RLA4jMxMEYYpweyCGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k7DK4zkq; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-576d8b85ed1so903303e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 01:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758185676; x=1758790476; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1zfXr+TiF68xYIu/QjAZG5Rv3z8es1PBrKaRHiISSE=;
-        b=k7DK4zkqhrzMkpA1R2KNcl+cx4Md8MTEeX6paffIfE0ar0vbYvqnwemX0Rxg7UUrWa
-         O+4HMnt++NUg6YmbrBuYTQYrv2d2lZ/PZWs0kYXfXTV+SV1dpSPwJXZLoHAmHKuPoBVA
-         +m8oPVnQ0HJ1YkDVozHEG8VDQU5GG7gsnPBNLOA2o+f23EqAWU3KyGFzgERP1uGOVM1B
-         AhLEDbGnL/jISL02MS0JRiHO6krRYbBo2s6jCT/7Ua2kS9UnVYUaNdTZSRACrzs+RZLA
-         nbkUv/QTN4Tb+44b6XSvrYCXk8jxyA/xaPVnBcC6r+R2qyxhax+Kx/dqUnqrpF+6Yzar
-         ui0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758185676; x=1758790476;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L1zfXr+TiF68xYIu/QjAZG5Rv3z8es1PBrKaRHiISSE=;
-        b=JIuRSKbIOBEis3XAzThWMk/IdwWRH965aPECQvBts9+x8tFRfbbhSZnGwcpxBlGOGO
-         HaL+lHimFqJ8L2OwYc9RxSKLUuyJbJbFXjfbiHn6w4TkYebnsVexlmaYHikAmDPG+qU4
-         AfSZz5YCzRhLSaO2IU0uzvmIpP/WAW8BPexZyJdbjm5Smp1rXQvhl/6ppdYGp1Wv5eTC
-         6RaX18J3TRansuhxbB7hB8M+rkM2F7Mjgdeji4hG4XgPbAXSC5uZykhAB8TTmbV1Z8dZ
-         7NKxjMECX9VciWd8YBl7ihAVw3vqy6wGrf9ewVLh0xUn5h4gdJt0d0ALPe2eaKMFwc8w
-         B1Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSY7VrHuguKDZhmPnNrNvD8dYfIx8jIv2+ScxQcwPb3oRyz8cRddr9qc0X41IYfR5jnsiUX4YxqcyKmKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfrtoeePBABtrpdjMjfi8gBYLKX1SFZHZU8A18621CEZEhPPQg
-	ruHTuoP2K2hoWUUygpBGWR7WoFFCQMDJGRljNJgZpyc3XIvt/1NV8TGg
-X-Gm-Gg: ASbGnctD33vp0xR3Zg01OjyRdHFGDOE/+QqXLftmHoqErLQS/mHTU++HpSsdrP/PDrT
-	fZiePmxPIdQmwqGpnWZhcqrTR63h4sukDB28Dm6vR8ac4Q4tJBSUp23rmSRVmqkSBR3T2CPd1aP
-	hV65EX5ZQmd38bFPGS3PqSu/H64GTASy+t+8YFTDtkuR2YiLaCukvJM7hrv5h0cPNlgUtg3NQ4P
-	7JE/MCCNry/wbAxdHMUP88aoH5AjPh+kdStgCO3aFKPMmxMMdG/CvIiFOqJBpSeaNgPAj2qJx0A
-	h8qPkgTFN/h32Xd0ky8vguSKBQpBQpwYuOc7PJX5XsCsS8glI/Iyd6ToCHd1JplonwL6vFr3Kfk
-	jtds7s2PaQJeHaIEQE0SV6HfZapLet+/OJGNrpgY6SIj6AI8Fl0QBdvHcYQl+oPJbDp0tG0QFQj
-	9nH48bprSV8gzF
-X-Google-Smtp-Source: AGHT+IGm2JShN6Sv81lo1T5JnLxBfIgmRooL50eCyiXCHruGwYMx2R2gX19XGt4JW1t8LOnfM1W53w==
-X-Received: by 2002:a05:6512:33d0:b0:573:78df:c19c with SMTP id 2adb3069b0e04-57799fa0ac8mr1911319e87.22.1758185675774;
-        Thu, 18 Sep 2025 01:54:35 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a99507c8sm498643e87.117.2025.09.18.01.54.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 01:54:34 -0700 (PDT)
-Date: Thu, 18 Sep 2025 10:54:32 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sitronix/st7571-i2c: reset position before clearing
- display
-Message-ID: <aMvIyOJkXE39sp8T@gmail.com>
-References: <20250913-st7571-reset-v1-1-ae5f58acdf8d@gmail.com>
- <87o6r9o25m.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1758185704; c=relaxed/simple;
+	bh=r8+mQ+RdYsv3rDfv2JvyVzGHe2KwLSTcDnHh5EcD3E0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=bT1fyLh9mWelnn6u8q5CEVBOrjXShTB+E+mFwFjjenscgDcnw+/ieAdpM7WJcLC51n9DgRztMVTu8jycdZF+4SqVk8MKws8giZC2mDov8tyjH1RYrne3gma2cC54QqGfwdUZy8qEqfJX4UUhdAd7iPfXjLfqkd2Q+NIcdu6D1HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IEi1i8gM; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250918085459epoutp01545b788a01b4efa1410b089ae764ed9f~mVJQc0i4e2902129021epoutp01j
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 08:54:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250918085459epoutp01545b788a01b4efa1410b089ae764ed9f~mVJQc0i4e2902129021epoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758185699;
+	bh=rmBBeWQLJLdBvcEKIt5FmNx+Tdlhgo71aY0OO5PcSIg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=IEi1i8gMN7XRpwrq1jlvNqDl3GdgvjdbqBCDWaWiEL4idn4Fyci88/rfn1jIYqlw0
+	 y3wKRHjBGrcIklb/MTquI1Yt16WxUz2ekSmFHGRnVaGwBoe4bxYWMN4g/OrJP7lprP
+	 9+a4Pg79J97saIxiHYSb2o4AtEOUn05wiyctgJUA=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250918085459epcas5p453b23f97b8a18ada0f3347f30227a5e8~mVJP3CffL3128931289epcas5p41;
+	Thu, 18 Sep 2025 08:54:59 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4cS8bQ0SqQz6B9mH; Thu, 18 Sep
+	2025 08:54:58 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250918085457epcas5p183de37a5d137c6649aa29c66a510a9d4~mVJOQJrju3029730297epcas5p16;
+	Thu, 18 Sep 2025 08:54:57 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250918085454epsmtip22719dfea50c923eee5bf322bf1dd9c07~mVJL1aAhm2272122721epsmtip2U;
+	Thu, 18 Sep 2025 08:54:54 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Raghav Sharma'" <raghav.s@samsung.com>, <krzk@kernel.org>,
+	<s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <sunyeal.hong@samsung.com>, <shin.son@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <chandan.vn@samsung.com>,
+	<dev.tailor@samsung.com>, <karthik.sun@samsung.com>
+In-Reply-To: <20250915095401.3699849-3-raghav.s@samsung.com>
+Subject: RE: [PATCH v2 2/3] clk: samsung: exynosautov920: add clock support
+Date: Thu, 18 Sep 2025 14:24:53 +0530
+Message-ID: <087b01dc2879$e8822770$b9867650$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ug0YIJ+ijkQ2jjPA"
-Content-Disposition: inline
-In-Reply-To: <87o6r9o25m.fsf@minerva.mail-host-address-is-not-set>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIDMWX7dzjI2+lsAsCe3lTeFtXiqgH5gg35ANbkz8C0NAzFkA==
+Content-Language: en-us
+X-CMS-MailID: 20250918085457epcas5p183de37a5d137c6649aa29c66a510a9d4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250915094515epcas5p3210f5c66a24a7a7f23a04075e7636a89
+References: <20250915095401.3699849-1-raghav.s@samsung.com>
+	<CGME20250915094515epcas5p3210f5c66a24a7a7f23a04075e7636a89@epcas5p3.samsung.com>
+	<20250915095401.3699849-3-raghav.s@samsung.com>
 
+Hi Raghav
 
---Ug0YIJ+ijkQ2jjPA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: Raghav Sharma <raghav.s@samsung.com>
+> Sent: Monday, September 15, 2025 3:24 PM
+> To: krzk@kernel.org; s.nawrocki@samsung.com; cw00.choi@samsung.com;
+> alim.akhtar@samsung.com; mturquette@baylibre.com; sboyd@kernel.org;
+> robh@kernel.org; conor+dt@kernel.org; sunyeal.hong@samsung.com;
+> shin.son@samsung.com
+> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; chandan.vn@samsung.com; dev.tailor@samsung.com;
+> karthik.sun@samsung.com; Raghav Sharma <raghav.s@samsung.com>
+> Subject: [PATCH v2 2/3] clk: samsung: exynosautov920: add clock support
+> 
+> Add support for CMU_M2M which provides clocks to M2M block, and register
+> the required compatible and cmu_info for the same.
+> 
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
+> ---
 
-Hello Javier,
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-On Wed, Sep 17, 2025 at 11:32:05AM +0200, Javier Martinez Canillas wrote:
-> Marcus Folkesson <marcus.folkesson@gmail.com> writes:
->=20
-> > We cannot know where the write pointer is, always reset position to
-> > (0,0) before clearing display.
-> >
-> > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > ---
->=20
-> Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
->=20
-> Marcus, do you already have commit rights in drm-misc or do you want me to
-> apply this patch ?
-
-I sent a request for commit rights yesterday, once it is approved I will
-apply this patch myself :-)
-
-
->=20
-> --=20
-> Best regards,
->=20
-> Javier Martinez Canillas
-> Core Platforms
-> Red Hat
->=20
-
-Best regards,
-Marcus Folkesson
-
---Ug0YIJ+ijkQ2jjPA
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmjLyMEACgkQiIBOb1ld
-UjKZmw//WN2aCTIg5Fi513sCawMQyeWG9g8gsNWGqu81U/hM4UOzZnjzhvEND+JT
-Ud1R7lIiAvpcigeZvbNbk1v7WZu+PN47d01G/S07zOyYz+yW5lMy1xeS3sqMyJ5F
-m8lkvz8/XSdG85PjvgHL5fRGAjATi1oxxm/k0V+BUhFqbGw0STm0tG/ReBfUheXg
-O+/90scHHBfuO5e24cfia2kbcaQBg3y8s8S8ionXQIqhJIFogZPsMyhM7twF8xtD
-EpyU/iZccX95WHorgIkVejKk8YNZD9dQPYy2lXOjDm499ZdFomyB/YB6eX3qQgmi
-eHjVcC71f/4A0002avJJ6ywKSA65YKP/D5J9z/jFyPeVbtnaECR3CWJHQu2v5Zwf
-Ak/2ak4M3i9s3Pjua59fQFF1d5405ZRAvpZWVcmky5Hs4dJBFrMHXYVA+4qvLvvG
-ospz+JDo0dDArgetNOCtWrM4AQTZ7zMS+gNf/lLrQPIBy7364JKsxIHIaK3AObQO
-sB+qZIkXsGC129tfFsr6vZnocGSqhKlnRmJUnrLeZK1Yp8cgR6uNZidsDGJpPfTd
-GYs7U1YmD5HTkEDO87edVgDIjwbZSqFra4zHlX5UJ0DpOr0Pgil0bgVoL7Jko1jQ
-pmF0IdOuZLyJVFDPa0d4Vxr1Wpqdy+qQIL6JLLmX8wxUetzWzVA=
-=+vpd
------END PGP SIGNATURE-----
-
---Ug0YIJ+ijkQ2jjPA--
 
