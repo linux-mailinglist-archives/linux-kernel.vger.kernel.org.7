@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-822173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F639B83375
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:52:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34C6B83383
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 08:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FDDD1C8211B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B0B5837CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 06:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC492D9EE2;
-	Thu, 18 Sep 2025 06:50:29 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418AD2D9EF2;
+	Thu, 18 Sep 2025 06:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R39borod"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181AC1C2DB2;
-	Thu, 18 Sep 2025 06:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6F623CF12;
+	Thu, 18 Sep 2025 06:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758178228; cv=none; b=Vr/IX2ffce8BNOhM+FkzPnTFFbjOLt8Q++kazP9vmIyqkYSw3PowcI3GPccPDJ/bb8LnPlXHSBuW0wVuKOdHtYgPIRo3M9lYUeh9BQIAxAOAldk2QcO4YiBAxC9M8kMXAjqvlJcPXkTo6PTOkXmm/7keH6focans6xKCIt4Kweo=
+	t=1758178345; cv=none; b=ap2eqHDZO3cWvpxBniwz1NCbocTHEEPb+hLMUQZmu4PkteqUp9+zWaLI7b3Ui4TA1dur9VFhBqQTjYZmQFG4T/4xSTgVaOEAJf13t6b0zPtbxGMTXp5nXF6q8hKaHG4qVT1yn2ZXuriTkrkIQ3mFjYAQa+2IbpnlY1xuI6ogTbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758178228; c=relaxed/simple;
-	bh=E61AklOCat9VCLqMef8JiiENaQpUakUCY+88tvDoJDg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=L2lUm4+kcz7XUXCmVniR6WhpyUnL77W8PvknLqAfZ/5lMOJ9UN5TyJMEvqWtiaSpwpkOcvKFWeCSw5fh8bGTRcxWKqgWOMtLO8TcXRbs51UuINMm6nry8P6JqmcqnuIUhcHcfFZEwWSe4XVjGjgESuuHmsfFC8Hl51M+CQWvnJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.213.2])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 233a88a56;
-	Thu, 18 Sep 2025 14:50:15 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: wens@kernel.org
-Cc: amadeus@jmu.edu.cn,
-	andre.przywara@arm.com,
-	andrew+netdev@lunn.ch,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	devicetree@vger.kernel.org,
-	edumazet@google.com,
-	jernej@kernel.org,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	samuel@sholland.org
-Subject: Re: [PATCH net-next v6 2/6] net: stmmac: Add support for Allwinner A523 GMAC200
-Date: Thu, 18 Sep 2025 14:50:06 +0800
-Message-Id: <20250918065006.476860-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <CAGb2v640r+TwB7O+UAB9PehZ2FaXDjhVerK6j_CZ2+caJoJ9zA@mail.gmail.com>
-References: <CAGb2v640r+TwB7O+UAB9PehZ2FaXDjhVerK6j_CZ2+caJoJ9zA@mail.gmail.com>
+	s=arc-20240116; t=1758178345; c=relaxed/simple;
+	bh=8guvnPhfYkC4UXz0FVHEuKdw/NOn7dkFZfu4xpqkqzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nkh61g5q1D9O7MRZSjddL3oujx/WCr5xjq+AdFnnlqYzCziMqJbJ3lu5qG0B4xi+Pg6ulQsm0P4ezXXTO+CIr3bVWPthbdClZHqWGUlmp46ZQvJnfqG+YdfuUMI/FwK9UuSxM9mm/Yz8lYySphkJOxyb594ct3gEwM6tSbil14g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R39borod; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758178344; x=1789714344;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8guvnPhfYkC4UXz0FVHEuKdw/NOn7dkFZfu4xpqkqzY=;
+  b=R39borodOMahwic45e+0K3+PKBR5umzJtDlQ3OE2l4QgSURC6eEmE1Os
+   ZEAfRxbWm7wa0hzSkMoOPH2++E8gPD+nnz8iJ/qdKWSfyBhbHhhXM7YAL
+   yE49HPBtaUjcYfmDkrh8qdODw+++r7LEF1sqo5SDZhlf2QKOM0kieA1ML
+   chY9lNpIsgReKZMXuSC5sDMmILnXSSh8uw+76fIyqxxUJ2Oaiqn4yn+5B
+   Lk9GYeeSF2GvABi+cOv5Xbb9zOotA6c0AJcFaJJ0/tLRf5DT3SImlqm6Y
+   amEAwLnGmJ+8Zfjk8m04pyJCdFp5qfucLcRXAQK9HfBC53y2qiOyiF8Z2
+   Q==;
+X-CSE-ConnectionGUID: BQ6KcDJYTaWXuaAigxQNQQ==
+X-CSE-MsgGUID: 4mWpAyWoT6W7raRFZZUhHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="71925018"
+X-IronPort-AV: E=Sophos;i="6.18,274,1751266800"; 
+   d="scan'208";a="71925018"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2025 23:52:23 -0700
+X-CSE-ConnectionGUID: Yc9nWOABRheo1JBzKZ9rOA==
+X-CSE-MsgGUID: t2vfJQZQSTmlR2nJnRGstw==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Sep 2025 23:52:16 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uz8V3-0002ql-1m;
+	Thu, 18 Sep 2025 06:52:13 +0000
+Date: Thu, 18 Sep 2025 14:52:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com,
+	glider@google.com
+Cc: oe-kbuild-all@lists.linux.dev, andreyknvl@gmail.com, andy@kernel.org,
+	brauner@kernel.org, brendan.higgins@linux.dev, davem@davemloft.net,
+	davidgow@google.com, dhowells@redhat.com, dvyukov@google.com,
+	elver@google.com, herbert@gondor.apana.org.au, ignat@cloudflare.com,
+	jack@suse.cz, jannh@google.com, johannes@sipsolutions.net,
+	kasan-dev@googlegroups.com, kees@kernel.org,
+	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
+	rmoar@google.com, shuah@kernel.org, tarasmadan@google.com
+Subject: Re: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7
+ and RSA parsing
+Message-ID: <202509181410.XN0MIpCh-lkp@intel.com>
+References: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a995b96860203a2kunmec52b10073125
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGktDVh4dGEJPThlOThkYTlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVJWVdZFhoPEhUdFFlBWU9LSFVKS0lIQkhCVUpLS1VKQk
-	tLWQY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916090109.91132-8-ethan.w.s.graham@gmail.com>
 
-Hi,
+Hi Ethan,
 
-> I don't have 802.1q enabled so I didn't see this.
->
-> Can you provide the base commit you applied the patches to?
+kernel test robot noticed the following build warnings:
 
-Based on the latest linux-next, 20250917
-with these enabled configurations:
+[auto build test WARNING on akpm-mm/mm-nonmm-unstable]
+[also build test WARNING on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250917]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-CONFIG_IPV6=y
-CONFIG_STP=y
-CONFIG_GARP=y
-CONFIG_MRP=y
-CONFIG_BRIDGE=y
-CONFIG_VLAN_8021Q=y
-CONFIG_STMMAC_ETH=y
-CONFIG_STMMAC_PLATFORM=y
-CONFIG_DWMAC_SUN8I=y
-CONFIG_DWMAC_SUN55I=y
-CONFIG_PCS_XPCS=y
+url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Graham/mm-kasan-implement-kasan_poison_range/20250916-210448
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-nonmm-unstable
+patch link:    https://lore.kernel.org/r/20250916090109.91132-8-ethan.w.s.graham%40gmail.com
+patch subject: [PATCH v1 07/10] crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
+config: x86_64-randconfig-121-20250918 (https://download.01.org/0day-ci/archive/20250918/202509181410.XN0MIpCh-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250918/202509181410.XN0MIpCh-lkp@intel.com/reproduce)
 
-[   38.818801] 8021q: adding VLAN 0 to HW filter on device eth1
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509181410.XN0MIpCh-lkp@intel.com/
 
-When the interface is down:
-~ # ifconfig eth1 down
-[   69.181869] dwmac-sun55i 4510000.ethernet eth1: Timeout accessing MAC_VLAN_Tag_Filter
-[   69.189827] dwmac-sun55i 4510000.ethernet eth1: failed to kill vid 0081/0
+sparse warnings: (new ones prefixed by >>)
+>> crypto/asymmetric_keys/tests/pkcs7_kfuzz.c:15:1: sparse: sparse: symbol '__fuzz_test__test_pkcs7_parse_message' was not declared. Should it be static?
+--
+>> crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:15:1: sparse: sparse: symbol '__fuzz_test__test_rsa_parse_pub_key' was not declared. Should it be static?
+>> crypto/asymmetric_keys/tests/rsa_helper_kfuzz.c:30:1: sparse: sparse: symbol '__fuzz_test__test_rsa_parse_priv_key' was not declared. Should it be static?
 
-Thanks,
-Chukun
+vim +/__fuzz_test__test_pkcs7_parse_message +15 crypto/asymmetric_keys/tests/pkcs7_kfuzz.c
+
+    14	
+  > 15	FUZZ_TEST(test_pkcs7_parse_message, struct pkcs7_parse_message_arg)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
