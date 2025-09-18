@@ -1,131 +1,308 @@
-Return-Path: <linux-kernel+bounces-823504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C662B86AC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:29:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FC5B86ADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 21:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B7F560D3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340C6482E0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB642D5930;
-	Thu, 18 Sep 2025 19:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8252D2D46BC;
+	Thu, 18 Sep 2025 19:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lX531q6R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmfYHpIV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2342935947;
-	Thu, 18 Sep 2025 19:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3BF2D480E;
+	Thu, 18 Sep 2025 19:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758223736; cv=none; b=KY0hvqlf7GqUp1KiGVY8CRbSEiPBuR/28fhvpeKAidyx/msWVMhiioz3yBLaHg5leqwu1CPO40Acs2BGy214cd8HE9eZ7warf0hIU89zFStW9SZnoJWXVQqTR9TfvxF1ypo2JRTlMIgtJ5VFKLdYDJkhp6UtR5D/dr37hjDfSDI=
+	t=1758223829; cv=none; b=DjRbnu/EqW96WTE7m6ahjoK6fvNCccqSYvkLLbBSegcQnUFHKMqkVSINsgvx6v+EeYu0Vl47Sjyn9Gtbl/8n0uAprkqsJPIU1KmnzReYPO7BoBrmJP3urZUQQNIGvSnL4/b2zZAojLtIU5QQ89G7yMG4UCerlPQPNcDKSMUPs9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758223736; c=relaxed/simple;
-	bh=gYMuW0dZsMGQD0qefNZ1sbRCf1NIH0tjuo5RmuqPOjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bKMgl0i7kYGyGebm4655GJ8aaVddSV6znwpebF/Px5s3wf8Ev7Au0h+sFfvLFuzY8UDOOhcNBsX5I3f0CwzD0fvSFW4rB1naew8WYEHB9FuXxbZvu3ji7mSTU1y6PKUTXLuxPYzmg4x/CZXw8Y3uBXcE0/PyA6j+wHvJjEhxjTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lX531q6R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 664FDC4CEE7;
-	Thu, 18 Sep 2025 19:28:55 +0000 (UTC)
+	s=arc-20240116; t=1758223829; c=relaxed/simple;
+	bh=+5YCwqKLVc63p4jRgCYQdSr3lyy+0EyHai1PV57LIZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Vuj48JqEiFRnVIz02nQn1ch6Tt8kCBPLpNnjf8yyNsRsTRk4Q0dIvTz41XxZqYDBmmG4RmI5ZMvbjqZs3Lan3nOav33Og1UjSs5+xqQH7ZT5xxV14HYM4B4D37LKRoaBDLsGIUpCl3HS+0NFKuWRD4jFvanG7XIoSxz9LvgY/94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmfYHpIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBC4C4CEE7;
+	Thu, 18 Sep 2025 19:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758223735;
-	bh=gYMuW0dZsMGQD0qefNZ1sbRCf1NIH0tjuo5RmuqPOjc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=lX531q6RZBl8J0iqrcj8qiYOaIpSgWhsptzweWGqhN2XDeYoTOsclnMx2f1FQzPEK
-	 RwZIYTim7i+vyKxjPug1cE1S2KzTpuBPnL1idIH28qOTOm/06ekMQwlvYxPDDYubwW
-	 U0npmCL+5XnhOsR3869BUOXYR8KgV3Vs/QyXrVCXQ1YO0tNpA696Dt+B/a0airxeT8
-	 3CZEJ/NA3NmyG8c0X+Ph1bjFhn5knlgEgfP+UXGEejZEGvfwFp9rZpzLrdsotWphSj
-	 0kv+uL+/ekUACxkHHszcs4bHuUedlwAlJjum/279b+l43fkMMdNPBzWCpv2lsO/Cit
-	 h/5pI66il75og==
-Date: Thu, 18 Sep 2025 14:28:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: George Abraham P <george.abraham.p@intel.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, giovanni.cabiddu@intel.com,
-	Wei Huang <wei.huang2@amd.com>, Jing Liu <jing2.liu@intel.com>,
-	Paul Luse <paul.e.luse@linux.intel.com>,
-	Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH] PCI/TPH: Skip Root Port completer check for RC_END
- devices
-Message-ID: <20250918192854.GA1916809@bhelgaas>
+	s=k20201202; t=1758223828;
+	bh=+5YCwqKLVc63p4jRgCYQdSr3lyy+0EyHai1PV57LIZQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hmfYHpIVAik1Db2b/J0mNgdgv4akeIofNIw/TjWmPPwPv5A9z069H46fYym2n68vb
+	 WRqYhlsj1dm4ybjR5utG2x2FusDVrW9uteCB7LvwL68HiWnFTFT4JtJhaM02+7cW9g
+	 sRlmF7Fympb+icAxp6DIxFDLWOz4Na/HhDrPn4j324XBCfuIo1ak+CX0FEfb+jdH3S
+	 V27suQ87tE7EABThy7RY0UuMdV1HrJ+legsv7gS9nfnojYs2mNjqvjvW3gYr2wZKvA
+	 oed5m5qmnTMKk+N5Nu/FVlO1T6S/LGg/PrMcBGxGl8rUczzcFW7ONhPL0P4Oc7N0c9
+	 TWmTyKtzSEzQw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	=?UTF-8?q?Fr=C3=A9d=C3=A9ric=20Jouen?= <fjouen@sealsq.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
+Date: Thu, 18 Sep 2025 22:30:18 +0300
+Message-Id: <20250918193019.4018706-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918084940.1334124-1-george.abraham.p@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-[+cc authors of TPH support]
+The current shenanigans for duration calculation introduce too much
+complexity for a trivial problem, and further the code is hard to patch and
+maintain.
 
-On Thu, Sep 18, 2025 at 02:19:40PM +0530, George Abraham P wrote:
-> Root Complex Integrated Endpoint devices (PCI_EXP_TYPE_RC_END) are
-> directly integrated into the root complex and do not have an
-> associated Root Port in the traditional PCIe hierarchy. The current
-> TPH implementation incorrectly attempts to find and check a Root Port's
-> TPH completer capability for these devices.
-> 
-> Add a check to skip Root Port completer type verification for RC_END
-> devices, allowing them to use their full TPH requester capability
-> without being limited by a non-existent Root Port's completer support.
-> 
-> For RC_END devices, the root complex itself acts as the TPH completer,
-> and this relationship is handled differently than the standard
-> endpoint-to-Root-Port model.
+Address these issues with a flat look-up table, which is easy to understand
+and patch. If leaf driver specific patching is required in future, it is
+easy enough to make a copy of this table during driver initialization and
+add the chip parameter back.
 
-I thought maybe the spec would mention TPH Completer Supported for a
-Root Complex in an RCRB, but I looked through PCIe r7.0 and didn't see
-anything in RCRB related to the Root Port TPH Completer Supported
-field in Device Capabilities 2.
+'chip->duration' is retained for TPM 1.x.
 
-It seems sort of surprising that Root Ports have to advertise what
-kinds of TPH Completers they support, but we can assume that Root
-Complexes support both TPH and Extended TPH Completers.  Do you have
-any insight into that?
+As the first entry for this new behavior address TCG spec update mentioned
+in this issue:
 
-But I certainly agree that as-is, TPH is useless for RCiEPs since
-there's no Root Port, so we assume the completer has no TPH Completer
-support at all.
+https://github.com/raspberrypi/linux/issues/7054
 
-Do you think we should add a Fixes: tag for f69767a1ada3 ("PCI: Add
-TLP Processing Hints (TPH) support"), where the TPH support was added?
+Therefore, for TPM_SelfTest the duration is set to 3000 ms.
 
-> Signed-off-by: George Abraham P <george.abraham.p@intel.com>
-> ---
->  drivers/pci/tph.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/tph.c b/drivers/pci/tph.c
-> index cc64f93709a4..c61456d24f61 100644
-> --- a/drivers/pci/tph.c
-> +++ b/drivers/pci/tph.c
-> @@ -397,10 +397,13 @@ int pcie_enable_tph(struct pci_dev *pdev, int mode)
->  	else
->  		pdev->tph_req_type = PCI_TPH_REQ_TPH_ONLY;
->  
-> -	rp_req_type = get_rp_completer_type(pdev);
-> +	/* Check if the device is behind a Root Port */
-> +	if (pci_pcie_type(pdev) != PCI_EXP_TYPE_RC_END) {
-> +		rp_req_type = get_rp_completer_type(pdev);
->  
-> -	/* Final req_type is the smallest value of two */
-> -	pdev->tph_req_type = min(pdev->tph_req_type, rp_req_type);
-> +		/* Final req_type is the smallest value of two */
-> +		pdev->tph_req_type = min(pdev->tph_req_type, rp_req_type);
-> +	}
->  
->  	if (pdev->tph_req_type == PCI_TPH_REQ_DISABLE)
->  		return -EINVAL;
-> 
-> base-commit: c29008e61d8e75ac7da3efd5310e253c035e0458
-> -- 
-> 2.40.1
-> 
+This does not categorize a as bug, given that this is introduced to the
+spec after the feature was originally made.
+
+Cc: Frédéric Jouen <fjouen@sealsq.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2:
+- Add the missing msec_to_jiffies() calls.
+- Drop redundant stuff.
+---
+ drivers/char/tpm/tpm-interface.c |   2 +-
+ drivers/char/tpm/tpm.h           |   2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 127 ++++++++-----------------------
+ include/linux/tpm.h              |   5 +-
+ 4 files changed, 37 insertions(+), 99 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index b71725827743..c9f173001d0e 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -52,7 +52,7 @@ MODULE_PARM_DESC(suspend_pcr,
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ {
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-		return tpm2_calc_ordinal_duration(chip, ordinal);
++		return tpm2_calc_ordinal_duration(ordinal);
+ 	else
+ 		return tpm1_calc_ordinal_duration(chip, ordinal);
+ }
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 7bb87fa5f7a1..2726bd38e5ac 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -299,7 +299,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+ int tpm2_auto_startup(struct tpm_chip *chip);
+ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
+-unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
++unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
+ int tpm2_probe(struct tpm_chip *chip);
+ int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);
+ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 524d802ede26..7d77f6fbc152 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -28,120 +28,57 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+ {
+-	/* Fixed timeouts for TPM2 */
+ 	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
+ 	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
+ 	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
+ 	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
+-
+-	/* PTP spec timeouts */
+-	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
+-	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
+-	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
+-
+-	/* Key creation commands long timeouts */
+-	chip->duration[TPM_LONG_LONG] =
+-		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+-
+ 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+-
+ 	return 0;
+ }
+ 
+-/**
+- * tpm2_ordinal_duration_index() - returns an index to the chip duration table
+- * @ordinal: TPM command ordinal.
+- *
+- * The function returns an index to the chip duration table
+- * (enum tpm_duration), that describes the maximum amount of
+- * time the chip could take to return the result for a  particular ordinal.
+- *
+- * The values of the MEDIUM, and LONG durations are taken
+- * from the PC Client Profile (PTP) specification (750, 2000 msec)
+- *
+- * LONG_LONG is for commands that generates keys which empirically takes
+- * a longer time on some systems.
+- *
+- * Return:
+- * * TPM_MEDIUM
+- * * TPM_LONG
+- * * TPM_LONG_LONG
+- * * TPM_UNDEFINED
++/*
++ * Contains the maximum durations in milliseconds for TPM2 commands.
+  */
+-static u8 tpm2_ordinal_duration_index(u32 ordinal)
+-{
+-	switch (ordinal) {
+-	/* Startup */
+-	case TPM2_CC_STARTUP:                 /* 144 */
+-		return TPM_MEDIUM;
+-
+-	case TPM2_CC_SELF_TEST:               /* 143 */
+-		return TPM_LONG;
+-
+-	case TPM2_CC_GET_RANDOM:              /* 17B */
+-		return TPM_LONG;
+-
+-	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
+-		return TPM_MEDIUM;
+-	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
+-		return TPM_MEDIUM;
+-	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
+-		return TPM_MEDIUM;
+-	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
+-		return TPM_MEDIUM;
+-
+-	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
+-		return TPM_LONG_LONG;
+-
+-	case TPM2_CC_PCR_EXTEND:              /* 182 */
+-		return TPM_MEDIUM;
+-
+-	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
+-		return TPM_LONG;
+-	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
+-		return TPM_LONG;
+-
+-	case TPM2_CC_GET_CAPABILITY:          /* 17A */
+-		return TPM_MEDIUM;
+-
+-	case TPM2_CC_NV_READ:                 /* 14E */
+-		return TPM_LONG;
+-
+-	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
+-		return TPM_LONG_LONG;
+-	case TPM2_CC_CREATE:                  /* 153 */
+-		return TPM_LONG_LONG;
+-	case TPM2_CC_CREATE_LOADED:           /* 191 */
+-		return TPM_LONG_LONG;
+-
+-	default:
+-		return TPM_UNDEFINED;
+-	}
+-}
++static const struct {
++	unsigned long ordinal;
++	unsigned long duration;
++} tpm2_ordinal_duration_map[] = {
++	{TPM2_CC_STARTUP, 750},
++	{TPM2_CC_SELF_TEST, 3000},
++	{TPM2_CC_GET_RANDOM, 2000},
++	{TPM2_CC_SEQUENCE_UPDATE, 750},
++	{TPM2_CC_SEQUENCE_COMPLETE, 750},
++	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
++	{TPM2_CC_HASH_SEQUENCE_START, 750},
++	{TPM2_CC_VERIFY_SIGNATURE, 30000},
++	{TPM2_CC_PCR_EXTEND, 750},
++	{TPM2_CC_HIERARCHY_CONTROL, 2000},
++	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
++	{TPM2_CC_GET_CAPABILITY, 750},
++	{TPM2_CC_NV_READ, 2000},
++	{TPM2_CC_CREATE_PRIMARY, 30000},
++	{TPM2_CC_CREATE, 30000},
++	{TPM2_CC_CREATE_LOADED, 30000},
++};
+ 
+ /**
+- * tpm2_calc_ordinal_duration() - calculate the maximum command duration
+- * @chip:    TPM chip to use.
++ * tpm2_calc_ordinal_duration() - Calculate the maximum command duration
+  * @ordinal: TPM command ordinal.
+  *
+- * The function returns the maximum amount of time the chip could take
+- * to return the result for a particular ordinal in jiffies.
+- *
+- * Return: A maximal duration time for an ordinal in jiffies.
++ * Returns the maximum amount of time the chip is expected by kernel to
++ * take in jiffies.
+  */
+-unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
++unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
+ {
+-	unsigned int index;
++	int i;
+ 
+-	index = tpm2_ordinal_duration_index(ordinal);
++	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
++		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
++			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
+ 
+-	if (index != TPM_UNDEFINED)
+-		return chip->duration[index];
+-	else
+-		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
++	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+ }
+ 
+-
+ struct tpm2_pcr_read_out {
+ 	__be32	update_cnt;
+ 	__be32	pcr_selects_cnt;
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index b0e9eb5ef022..dc0338a783f3 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -228,10 +228,11 @@ enum tpm2_timeouts {
+ 	TPM2_TIMEOUT_B          =   4000,
+ 	TPM2_TIMEOUT_C          =    200,
+ 	TPM2_TIMEOUT_D          =     30,
++};
++
++enum tpm2_durations {
+ 	TPM2_DURATION_SHORT     =     20,
+-	TPM2_DURATION_MEDIUM    =    750,
+ 	TPM2_DURATION_LONG      =   2000,
+-	TPM2_DURATION_LONG_LONG = 300000,
+ 	TPM2_DURATION_DEFAULT   = 120000,
+ };
+ 
+-- 
+2.39.5
+
 
