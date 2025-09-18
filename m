@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-822960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC430B85303
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:23:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299FAB8525D
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3E10561D79
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E76F7B4180
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60AC30C118;
-	Thu, 18 Sep 2025 14:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382A4220F2A;
+	Thu, 18 Sep 2025 14:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADPGgY/O"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6hq4IZi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB6130BBBE
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A3230C35D;
+	Thu, 18 Sep 2025 14:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758204525; cv=none; b=XwKHAmxtveSg0yugTtFAbLajQI50uDLFePPJq335imKRcKxQqlLJ2aqRzGKYkYzayBJsa27X/gqU8mehHsfsYZwX6kJpybrMsQBnOyjw9HIp9LaOR+CAw//EasUkI6978BeAK64K40tPM86ONXpCj71+Ets0RWw95qwJVCGR9iI=
+	t=1758204600; cv=none; b=R1wP0zPrzYBi7oyWcLx9QvLgz/3sqcykvzBJnmqcxSnAgo+Fb5fSoY/ZJ2h3wsIKnZVhf1uTLwZyeVN8R3YkBTJuNX8t+w9T4ZOK8rQthqzf1ML6GI3hLtx/9n3Q36MZy6ci5QV4Y0OWfZScRjC0we6HpBHetfSQspSs2ZulWs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758204525; c=relaxed/simple;
-	bh=lSnptP6fN/pLUqMZp6nJ4V8xc65Uw/ftY6R0OvBqZhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nVfnBszdhIIC2u+Fk2vXA5tL7gexXu+UFMIts+gzSA2jAZFxZdN0dfF/OLJgyFrFXTanhKZ2rHpaH/uR9qhAYnmbwSWLe+GGZoNrOc19oRurfHWN+H7QgCWRUC8+PbqHAx+UbaewWut8mAEtm0G0H35KaZmJLz6CscZHGf1V0MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ADPGgY/O; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so7820355e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:08:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758204522; x=1758809322; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z56yE3RhN98804tu3UJs8TFzZt1QW6pC6iU/RNTk30Q=;
-        b=ADPGgY/O3d7Ayf80+XfBBUf6gknNdspaauC37Mbhmy7SS7B0IfYwiKxfjgMonxY19e
-         feKqHqTN6lmUli3/GebPtzufu2v1ZNd2vUwGgIsplAoa+ucNRjxuHeXWqwayVLSZk5lj
-         uZZn1s7vzZJYULcv5zXKiSZs5/8ybtcYe2jBN2qKJWz9pd/nR177Sv3zHrlgqrfxgsoQ
-         xFLHR2XdFUMgDTKEIUrOCUTrVYPQm+T66XbgrTti4ue+4//1193OPETRanYok5LbUq6P
-         kaA61G6hCSLyvbuOxxYVMQwbCHBjvbljcFoUPvJEQWYACSqXgR7zF0KwTDs45MRLT0ui
-         5MIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758204522; x=1758809322;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z56yE3RhN98804tu3UJs8TFzZt1QW6pC6iU/RNTk30Q=;
-        b=nmpJT4nQum6jpB1VyjMph0G3HOy48E9pt7hj5/aim+c//Tg/bF8YmFKPPU35K/Kf0U
-         94Zi0MhtgeS5yPFDvHYAcyBNqZFAg5gbw4ONEHeVXn7tNHL8YDzJvEgVXh8AOdokNYmZ
-         xf2XRbN+p7No6vfYjbrvGj9ShznSPelqETmwyRdlPGan7Wbgv12VV91EA00UbfL+MaqX
-         60xRdsKXOITazN6qAV1Z9NDuLrblBiHKUhU8z/oKzPQ9ailkquUyODe+6UCzlmkGoRPd
-         VuYHZYC+ORDIkBAJvGpmL+MSBQxjGFuFWY82qZMlqqd8GheJoLR4X4ZeBQ+9OzBPF+gP
-         j7/g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5MN+2Bv5dzw/zjbtV7hJ3zLHNXjrEH7zEep7pq7fb+sDOM2Ob/jDY1BDmlKTHVaoEXo8mWRn+S77PaAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOUFUP0L/fUfkT6j5tM1L9shiK/63BxdZYKA0hjL2MlnM3HsI5
-	cnoYy+eNkPy6pUF2sASQ7Q1p4ASOjFwVz8XDV1RrAVHdzdgI5JJUKp2c7SPBsqbQJ0w=
-X-Gm-Gg: ASbGncv5sgaxu0g5DJQbDdqI/VQB3XrupbxbQ7/u1PPo+u/mxvSZtCIXp0mV/ZWSg3O
-	/OkjcfYOMU67TNHel413Jy3bqWkOBcm3wsAgAKGc/1xuXEe4J317IIusMZ7p5HfTkyq4QhnJVTb
-	i19xVIYVc5nXiuODdEdpOidz+x2P7eC7MvxQcN2KhwttSFFP/1ms61U/GVIz1wmZ3ogF+Fv7Qim
-	VtWC/x2CgxiCO6ixFdJh0VGJVZBt4xR+ScnXZE79k9UEXa/rCGwh9ChzoqDt7MQj/vQD1SkoRmW
-	OimJi1ExifhVkpUpRN8EyTpn+XBJ6x6tXRGZiubIOYQF4gJwCreO6f1bowU/t/TB2DyfH8gmBvE
-	kAeKtYDkziOB4ZhzgRsV1j8UJZUk+ePaCE4omP8NQrVJ3WdqfxqEBJLUlAhuTKQ65vgqnzLArmW
-	orGZ3IUIzFFbxw4Xqo+U65
-X-Google-Smtp-Source: AGHT+IGkVygzuWQOBFP8MPnBERmac2GiMM8U2DkJGQ87TuQtchhlHOXF1i1UYPhRV/h5760ATIh9bA==
-X-Received: by 2002:a05:600c:c0d7:b0:45b:9b9f:88cb with SMTP id 5b1f17b1804b1-464fdf4425emr30646335e9.16.1758204521996;
-        Thu, 18 Sep 2025 07:08:41 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:37e6:ed62:3c8b:2621? ([2a05:6e02:1041:c10:37e6:ed62:3c8b:2621])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-464f5a2850csm42597235e9.19.2025.09.18.07.08.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 07:08:41 -0700 (PDT)
-Message-ID: <32937382-ad81-4e9b-92d7-798dafea64c1@linaro.org>
-Date: Thu, 18 Sep 2025 16:08:40 +0200
+	s=arc-20240116; t=1758204600; c=relaxed/simple;
+	bh=Pi5T819TFc2iqtg/dEe1hcW6EHD16i+UrHXuy/WzDOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fJU7NvwB7PvekmrNEsGw9SuGdojPFnOAT0WVsTKWHJrYbT58CnrbJBmsvZw/Dhw0p8Y4EQ3q/XGC8sPC/tPJhh7QWHplseIikKhLpfel+Ge2XmpBNZNKZ/PAynJdl7xHMv8JlZV9Gl2PZQmp9HDm9IjkPxdWKIzCVLs39wzVIXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6hq4IZi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE6CC4CEE7;
+	Thu, 18 Sep 2025 14:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758204600;
+	bh=Pi5T819TFc2iqtg/dEe1hcW6EHD16i+UrHXuy/WzDOY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N6hq4IZioMzxZVLrqPxIN1sDeyN1/MixcEr36decDtSa4WNTO48EIzoRtCfHURiTP
+	 XMufzHtXGUQWyG32ltphrXys4JlT2/nPQzRJUepSs7aIKZ4Dt/Ss1EyEAK8QkC8zc3
+	 vIl5lD0WF4qeZn8Z3KGVbFo72DRy50Klk5ZEVPZ2yeHGy8hIMfUDG6YgqbV6WFZxca
+	 4kV/RF3TSWU8WIaiPtXWJzI2gXYl0Crd2VqYcMMNL6jc66qQmehT4vZSRFKtxGw7Jr
+	 cRVkT6eGVn1SU0m0y41HUKDXp21LxO+guGGu3EyXnpZKW4XO6cr0Q6FOwPLQ0JkSJE
+	 62ET1qQlR3oRw==
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	iommu@lists.linux.dev,
+	Juergen Gross <jgross@suse.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v4 0/6] Preparation to .map_page and .unmap_page removal
+Date: Thu, 18 Sep 2025 17:09:23 +0300
+Message-ID: <cover.1758203802.git.leon@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, jic23@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, krzk+dt@kernel.org
-Cc: linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20250916202605.2152129-1-daniel.lezcano@linaro.org>
- <20250916202605.2152129-3-daniel.lezcano@linaro.org>
- <f4e52440-fa96-486b-9c50-828fdbbe27eb@wanadoo.fr>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <f4e52440-fa96-486b-9c50-828fdbbe27eb@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Changelog:
+v4:
+ * Added Jason's ROB tags
+ * Added "xen: swiotlb ..." patch to the list of patches which had .map_resource
+ * Added extra patch "ARM: dma-mapping: Reduce ..." to remove struct
+   page as much as possible.
+ * Added call to .map_phys/.unmap_phys to dma_common_*_pages() functions.
+v3: https://lore.kernel.org/all/cover.1758006942.git.leon@kernel.org
+ * Rewrote the series to allow combination of .map_resource and
+ * .map_page
+   to one flow.
+ * Added two new patches to convert and remove .map_resource.
+v2: https://lore.kernel.org/all/cover.1752734252.git.leon@kernel.org/
+ * Added default "else" section without map_phys and map_page
+   callbacks (impossible).
+v1: https://lore.kernel.org/all/cover.1753003879.git.leon@kernel.org
+ * Changed "else if" instead of "if".
+v0: https://lore.kernel.org/all/cover.1752734252.git.leon@kernel.org
+---------------------------------------------------------------------
 
-Hi Christophe,
+This is followup to "dma-mapping: migrate to physical address-based API" series
+https://lore.kernel.org/all/cover.1757423202.git.leonro@nvidia.com
 
-On 16/09/2025 22:53, Christophe JAILLET wrote:
+Thanks
 
-[ ... ]
+Leon Romanovsky (6):
+  dma-mapping: prepare dma_map_ops to conversion to physical address
+  dma-mapping: convert dummy ops to physical address mapping
+  ARM: dma-mapping: Reduce struct page exposure in arch_sync_dma*()
+  ARM: dma-mapping: Switch to physical address mapping callbacks
+  xen: swiotlb: Switch to physical address mapping callbacks
+  dma-mapping: remove unused mapping resource callbacks
 
->> +static int nxp_sar_adc_dma_probe(struct device *dev, struct 
->> nxp_sar_adc *info)
->> +{
->> +    struct device *dev_dma;
->> +    u8 *rx_buf;
->> +
->> +    info->dma_chan = devm_dma_request_chan(dev, "rx");
->> +    if (IS_ERR(info->dma_chan))
->> +        return PTR_ERR(info->dma_chan);
->> +
->> +    dev_dma = info->dma_chan->device->dev;
->> +    rx_buf = dma_alloc_coherent(dev_dma, NXP_SAR_ADC_DMA_BUFF_SZ,
->> +                    &info->rx_dma_buf, GFP_KERNEL);
-> 
-> maybe dmam_alloc_coherent() for the managed version?
-> This would save some LoC.
-
-Ok, thanks for the suggestion, I'll do the change.
-
-
-
-
+ arch/arm/mm/dma-mapping.c   | 180 +++++++++++-------------------------
+ drivers/xen/swiotlb-xen.c   |  63 ++++++-------
+ include/linux/dma-map-ops.h |  13 +--
+ kernel/dma/dummy.c          |  13 ++-
+ kernel/dma/mapping.c        |  20 ++--
+ kernel/dma/ops_helpers.c    |  12 ++-
+ 6 files changed, 113 insertions(+), 188 deletions(-)
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.51.0
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
