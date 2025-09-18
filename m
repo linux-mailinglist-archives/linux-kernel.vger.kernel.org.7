@@ -1,240 +1,457 @@
-Return-Path: <linux-kernel+bounces-822903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5564DB84F03
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AA4B84FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFBD01B28716
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8271C842F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9FC2BEFFE;
-	Thu, 18 Sep 2025 13:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635242F7459;
+	Thu, 18 Sep 2025 14:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="x0uhvtYB"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FrOGpPeh"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30986230BCC;
-	Thu, 18 Sep 2025 13:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1B8221F26
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758203972; cv=none; b=VS1Lrg3QzmQBujKV8QL8ne41C0M12sj5xTjCyqXnrRKnQ2r+UqAwjnzlxPuheBb10hb79m8ADX4/hneQ88j3TNIGT6CCMfNs9s8uYYkdguxZwI8BmkFWcWT55z58hXnV08jqFcaQEn8VTOnh9NVGcHhtdfGfQCkpore+tsau1Zk=
+	t=1758204332; cv=none; b=dAuvocuyynf1RGbAVAt0Mr6CVA6CQKcHlkt52Jw1ClgDsk7OSDPuqJ7nI9AR7dP2IUDZrgRyF4/UME3wxD3EEHwMwx5CcqZT8dwHa0XJ4P8PzvTJ36/zpN4u4mOCZeKiMJaVM3cegXM0DCs8N+anLcrQttt8DABkLTTM1B7YIq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758203972; c=relaxed/simple;
-	bh=PYQn2VLpXq30qPT2Nio97KPnrBpck+Q8SjCmT8+7P+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=laHYPsTfmFfsyDe/ZlVuHIeiaggBp6FFoaFfK2mh8HMss8Ly/VnC/A9rZwQaRGxeTW1h1eaoyk1lT+7hNfxsSOZru7in9zddV6u8VPpu4KDqZ+xJXa8mONMxYynCWEkmgAg3LT7Sz9MkUk2GE7kmfdnM8Sl48EsoaQ9vJPwGJGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=x0uhvtYB; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jZhxEQj8wZgmKlh5JqOaBLYYciKgqt6bF58Ec3MI89Q=; b=x0uhvtYBfqM4ev+QWxKV0Frpwg
-	N9X8yEsVyXlcdquDplWJZyDSlAuYdBR/tphzRSDW0zb1xSWPXb5fyhb6wT625E6bya4WZyk3APlLp
-	GVzyCnyrbryNoM1RQ6h5uepOBsoSK1fQX5fQ9KY3kEC7q/gLhn5VGtaDK7f0zZxqJU4MD8lIEVOp9
-	C+vWkp3FiAdoyUyE+IeL/dsRBWh8fDVUt5eS1Fc01ftOWH7skmHklK/wGzAPgsLg+EfMgPIsZ2krI
-	5P1StXX1neYRSzqDCeJDD34LPKo1UIlSvE9Mm0EohDvCDVEATdxJDVNrtVBUOsUeL0zLiWOp7wQoi
-	93q80zzw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49182)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uzFAC-000000000ng-2pjn;
-	Thu, 18 Sep 2025 14:59:08 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uzFA8-000000001EY-1H75;
-	Thu, 18 Sep 2025 14:59:04 +0100
-Date: Thu, 18 Sep 2025 14:59:04 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Tristram Ha <Tristram.Ha@microchip.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 2/4] net: stmmac: stm32: add WoL from PHY
- support
-Message-ID: <aMwQKERA1p29BeKF@shell.armlinux.org.uk>
-References: <20250917-wol-smsc-phy-v2-0-105f5eb89b7f@foss.st.com>
- <20250917-wol-smsc-phy-v2-2-105f5eb89b7f@foss.st.com>
- <aMriVDAgZkL8DAdH@shell.armlinux.org.uk>
- <72ad4e2d-42fa-41c2-960d-c0e7ea80c6ff@foss.st.com>
+	s=arc-20240116; t=1758204332; c=relaxed/simple;
+	bh=jvD6EbLu6C+1usQPR8tlA6aJATIG8Vj8v16gqqXIbxQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tDbMvZhfQ3JLD3WZKoZ2b91JGieV2nFu/gjCKx6faWFbX0f+ecSdJugZYm+3yC8sfradSScbCehs8LKQhfA57aXvOf1DFMwUs8SUFbRJawlIS8Kk37eMaVxITHCBLjb+S6majZysXKvXMeNaMjjHwrlxNI+tjvrDHroIaw0qZ5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elver.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FrOGpPeh; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elver.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3ecdb10a612so613847f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:05:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758204327; x=1758809127; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wxDWT9Jhe5/U9R8flrhyT53CUNqFwMWNSIwpcA9ZCHg=;
+        b=FrOGpPehSdf8EPA9O8jFjvH7oBHRCYP0bWtZ7uRVh7HtxvnbbI/kejSxCP2Rs7ET0g
+         3SbOf3vrvId+VKmpFldbbA1cv9Dv4+fuZroHQRaLWCDyzY2c9aWLntq8bd0YjOvAgM3z
+         3jqL2tzWIvKKP3YYyO1zWIFBeHeFXF7Ki2FfwkEne36UoMzoa8ZzB9r4P5PFZiDVMv8V
+         8odX3PURcN9fF2WVX3C/uPw4EVWasAhiw8QpFC8k+kskeoGwBf9qHM3qI0VQwbag1hV5
+         YWPzXK1dKW3mZc+Jqid1A2c+XOEduVxTAC47DpZUL0gIbOyLEXMtwl4e/rRe+31cODyl
+         KBkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758204327; x=1758809127;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wxDWT9Jhe5/U9R8flrhyT53CUNqFwMWNSIwpcA9ZCHg=;
+        b=u+kcYnRf5zD4Y5Z2cqvatKD82ZKxThmd7nEnM9iizjYB9CsuLjG9zkVQV3tidxwj69
+         9ZMYkoud8ZmSL1NSu6g/j4tYsafhrr+sWghi33dYdC84j3Lu7vzsxjv9RlOZH+p6k7J1
+         mMuQLFmJMVcD1ZnnQHn708WhEoNqB+7fgFHKJw8sn6VcCG0dVRCTqrxVYEvi2hXL0XRz
+         9YnC4H7CeMOxdVf/3zhirRCSEugE+bcIwMG78VuYKlx3kRF0Ytrmvtwgo9PoxHU1hsqH
+         oXapdaIQBk+Njd/Ldg8Z4qrsAFXE13+0HABMgTf1lcSKEFRygzrqlnHoO7V0leG3PEyB
+         Hgjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXo+K1cWbSW7mdoKfMdUfnMcjIeyWRCdnniltCvPbTA2CeBAZ4mmbbq3jAKR96FwSqPCMgIjAK4/wFeOkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ8EYVKXyWVblX+3KYeqvATw6DO5yXVXeja5aFbaINMGMBIVKL
+	uc0EuHG0F/vb/naIaLme2K5r8WPFYOHCxiLigdXAsDfAm37EFzy8+XAl/KKSqk4l7ISYyrST0M9
+	KWQ==
+X-Google-Smtp-Source: AGHT+IFy9SVTK9lkhhDe0k4MlUcY+fM8F7qwF5+lA1VEUPlhPe12zIpwiGbwOtlWJNddLkgwJGEEi7ziYQ==
+X-Received: from wrbcc12.prod.google.com ([2002:a5d:5c0c:0:b0:3ec:e0b7:7699])
+ (user=elver job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2483:b0:3cd:ef83:a9a1
+ with SMTP id ffacd0b85a97d-3ecdf9c2666mr5663097f8f.20.1758204326802; Thu, 18
+ Sep 2025 07:05:26 -0700 (PDT)
+Date: Thu, 18 Sep 2025 15:59:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72ad4e2d-42fa-41c2-960d-c0e7ea80c6ff@foss.st.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250918140451.1289454-1-elver@google.com>
+Subject: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+From: Marco Elver <elver@google.com>
+To: elver@google.com, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Christoph Hellwig <hch@lst.de>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 18, 2025 at 02:46:54PM +0200, Gatien CHEVALLIER wrote:
-> On 9/17/25 18:31, Russell King (Oracle) wrote:
-> > On Wed, Sep 17, 2025 at 05:36:37PM +0200, Gatien Chevallier wrote:
-> > > If the "st,phy-wol" property is present in the device tree node,
-> > > set the STMMAC_FLAG_USE_PHY_WOL flag to use the WoL capability of
-> > > the PHY.
-> > > 
-> > > Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
-> > > ---
-> > >   drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c | 5 +++++
-> > >   1 file changed, 5 insertions(+)
-> > > 
-> > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> > > index 77a04c4579c9dbae886a0b387f69610a932b7b9e..6f197789cc2e8018d6959158b795e4bca46869c5 100644
-> > > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-> > > @@ -106,6 +106,7 @@ struct stm32_dwmac {
-> > >   	u32 speed;
-> > >   	const struct stm32_ops *ops;
-> > >   	struct device *dev;
-> > > +	bool phy_wol;
-> > >   };
-> > >   struct stm32_ops {
-> > > @@ -433,6 +434,8 @@ static int stm32_dwmac_parse_data(struct stm32_dwmac *dwmac,
-> > >   		}
-> > >   	}
-> > > +	dwmac->phy_wol = of_property_read_bool(np, "st,phy-wol");
-> > > +
-> > >   	return err;
-> > >   }
-> > > @@ -557,6 +560,8 @@ static int stm32_dwmac_probe(struct platform_device *pdev)
-> > >   	plat_dat->bsp_priv = dwmac;
-> > >   	plat_dat->suspend = stm32_dwmac_suspend;
-> > >   	plat_dat->resume = stm32_dwmac_resume;
-> > > +	if (dwmac->phy_wol)
-> > > +		plat_dat->flags |= STMMAC_FLAG_USE_PHY_WOL;
-> > 
-> > I would much rather we found a different approach, rather than adding
-> > custom per-driver DT properties to figure this out.
-> > 
-> > Andrew has previously suggested that MAC drivers should ask the PHY
-> > whether WoL is supported, but this pre-supposes that PHY drivers are
-> > coded correctly to only report WoL capabilities if they are really
-> > capable of waking the system. As shown in your smsc PHY driver patch,
-> > this may not be the case.
-> 
-> So how can we distinguish whether a PHY that implements WoL features
-> is actually able (wired) to wake up the system? By adding the
-> "wakeup-source" property to the PHY node?
+Capability analysis is a C language extension, which enables statically
+checking that user-definable "capabilities" are acquired and released where
+required. An obvious application is lock-safety checking for the kernel's
+various synchronization primitives (each of which represents a "capability"),
+and checking that locking rules are not violated.
 
-Andrew's original idea was essentially that if the PHY reports that it
-supports WoL, then it's functional.
+Clang originally called the feature "Thread Safety Analysis" [1], with
+some terminology still using the thread-safety-analysis-only names. This
+was later changed and the feature became more flexible, gaining the
+ability to define custom "capabilities". Its foundations can be found in
+"capability systems" [2], used to specify the permissibility of
+operations to depend on some capability being held (or not held).
 
-Sadly, that's not the case with many PHY drivers - the driver
-implementers just considered "does this PHY have the ability to detect
-WoL packets" and not "can this PHY actually wake the system."
+Because the feature is not just able to express capabilities related to
+synchronization primitives, the naming chosen for the kernel departs
+from Clang's initial "Thread Safety" nomenclature and refers to the
+feature as "Capability Analysis" to avoid confusion. The implementation
+still makes references to the older terminology in some places, such as
+`-Wthread-safety` being the warning enabled option that also still
+appears in diagnostic messages.
 
-Thankfully, all but one PHY driver does not use
-device_set_wakeup_capable() - my recent patches for realtek look like
-the first PHY driver to use this.
+Enabling capability analysis can be seen as enabling a dialect of Linux
+C with a Capability System.
 
-Thus, if we insist that PHY drivers use device_set_wakeup_capable()
-to indicate that (a) they have WoL capability _and_ are really
-capable of waking the system, we have a knob we can test for.
+Additional details can be found in the added kernel-doc documentation.
+An LWN article covered v2 of the series: https://lwn.net/Articles/1012990/
 
-Sadly, there is no way to really know whether the interrupt that the
-PHY is attached to can wake the system. Things get worse with PHYs
-that don't use interrupts to wake the system. So, I would suggest
-that, as we already have this "wakeup-source" property available for
-_any_ device in DT, we start using this to say "on this system, this
-PHY is connected to something that can wake the system up."
+ [1] https://clang.llvm.org/docs/ThreadSafetyAnalysis.html
+ [2] https://www.cs.cornell.edu/talc/papers/capabilities.pdf
 
-See the past discussion when Realtek was being added - some of the
-context there covers what I mention above.
+=== Development Approach ===
 
-> Therefore, only set the "can wakeup" capability when both the PHY
-> supports WoL and the property is present in the PHY node?
+Prior art exists in the form of Sparse's context tracking. Locking
+annotations on functions exist, so the concept of analyzing locking rules
+is not foreign to the kernel's codebase.
 
-Given that telling the device model that a device is wakeup
-capable causes this to be advertised to userspace, we really do
-not want devices saying that they are wakeup capable when they
-aren't capable of waking the system. So I would say that a call
-to device_set_wakeup_capable(dev, true) should _only_ be made if
-the driver is 100% certain that this device really can, without
-question, wake the platform.
+However, Clang's analysis is more complete vs. Sparse's, with the
+typical trade-offs in static analysis: improved completeness is
+sacrificed for more possible false positives or additional annotations
+required by the programmer. Numerous options exist to disable or opt out
+certain code from analysis.
 
-If we don't have that guarantee, then we're on a hiding to nothing
-and chaos will reign, MAC drivers won't work properly... but I would
-suggest that's the price to be paid for shoddy implementation and
-not adhering to a sensible approach such as what I outline above.
+This series initially aimed to retain compatibility with Sparse, which
+can provide tree-wide analysis of a subset of the capability analysis
+introduced, but it was later decided to drop Sparse compatibility. For
+the most part, the new (and old) keywords used for annotations remain
+the same, and many of the pre-existing annotations remain valid.
 
-> However, this does not solve the actual static pin function
-> configuration for pins that can, if correct alternate function is
-> selected, generate interrupts, in PHY drivers.
-> 
-> It would be nice to be able to apply some kind of pinctrl to configure
-> the PHY pins over the MDIO bus thanks to some kind of pinctrl hogging.
-> This suggests modifying relevant PHY drivers and documentation to be
-> able to handle an optional pinctrl.
+One big question is how to enable this feature, given we end up with a
+new dialect of C -- 2 approaches have been considered:
 
-How would that work with something like the Realtek 8821F which has
-a single pin which can either signal interrupts (including a wake-up)
-or be in PME mode, where it only ever signals a wake-up event.
-Dynamically switching between the two modes is what got us into the
-crazy situation where, when WoL was enabled on this PHY, phylib
-stopped working because the pin was switched to PME mode, and we no
-longer got link status interrupts. So one could enable WoL, plug in
-an ethernet cable, and the kernel has no idea that the link has come
-up.
+  A. Tree-wide all-or-nothing approach. This approach requires tree-wide
+     changes, adding annotations or selective opt-outs. Making additional
+     primitives capability-enabled increases churn, esp. where maintainers
+     are unaware of the feature's existence and how to use it.
 
-So no. In a situation like this, either we want to be in interrupt
-mode (in which case we have an interrupt), or the pin is wired to
-a power management controller and needs to be in PME mode, or it isn't
-wired.
+Because we can't change the programming language (even if from one C
+dialect to another) of the kernel overnight, a different approach might
+cause less friction.
 
-Which it is can be easily identified.
+  B. A selective, incremental, and much less intrusive approach.
+     Maintainers of subsystems opt in their modules or directories into
+     "capability analysis" (via Makefile):
+  
+       CAPABILITY_ANALYSIS_foo.o := y	# foo.o only
+       CAPABILITY_ANALYSIS := y  	# all TUs
+  
+     Most (eventually all) synchronization primitives and more
+     capabilities (including ones that could track "irq disabled",
+     "preemption" disabled, etc.) could be supported.
 
-$1. Is there an interrupt specified (Y/N) ?
-$2. Is there a wakeup-source property (Y/N) ?
+The approach taken by this series is B. This ensures that only
+subsystems where maintainers are willing to deal with any warnings are
+opted-in. Introducing the feature can be done incrementally, without
+large tree-wide changes and adding numerous opt-outs and annotations to
+the majority of code.
 
-States:
-$1  $2
-*   N   we have no idea if an interrupt (if specified) can wake the
-        system, or if there is other wiring from the PHY which might.
-	Legacy driver, or has no wake-up support. We have to fall back
-	on existing approaches to maintain compatibility and void
-	breaking userspace, which may suggest WoL is supported when it
-	isn't. For example, with stmmac, if STMMAC_FLAG_USE_PHY_WOL is
-	set, we must assume the PHY can wake the system in this case.
-Y   Y   interrupt wakes the system, we're good for WoL
-N   Y   non-interrupt method of waking the system, e.g. PME
+  Note: Bart Van Assche concurrently worked on enabling -Wthread-safety:
+  https://lore.kernel.org/all/20250206175114.1974171-1-bvanassche@acm.org/
+  Bart's work has shown what it might take to go with approach A
+  (tree-wide, restricted to 'mutex' usage). This has shown that the
+  analysis finds real issues when applied to enough subsystems!  We hope
+  this serves as motivation to eventually enable the analysis in as many
+  subsystems as possible, particularly subsystems that are not as easily
+  tested by CI systems and test robots.
 
-I'd prefer not to go for a complicated solution to this, e.g. involving
-pinctrl, when we don't know how many PHYs need this, because forcing
-extra complexity on driver authors means we have yet more to review, and
-I think it's fair to say that we're already missing stuff. Getting the
-pinctrl stuff right also requires knowledge of the hardware, and is
-likely something that reviewers can't know if it's correct or not -
-because datasheets giving this information aren't publicly available.
+=== Initial Uses ===
 
-So, I'm all in favour of "keep it damn simple, don't give people more
-work, even if it looks nice in DT" here.
+With this initial series, the following synchronization primitives are
+supported: `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`,
+`seqlock_t`, `bit_spinlock`, RCU, SRCU (`srcu_struct`), `rw_semaphore`,
+`local_lock_t`, `ww_mutex`.
+
+To demonstrate use of the feature on real kernel code, the series also
+enables capability analysis for the following subsystems:
+
+	* kernel/kcov
+	* kernel/kcsan
+	* kernel/sched/
+	* lib/rhashtable
+	* lib/stackdepot
+	* mm/kfence
+	* security/tomoyo
+    	* crypto/
+
+The initial benefits are static detection of violations of locking
+rules. As more capabilities are added, we would see more static checking
+beyond what regular C can provide, all while remaining easy (read quick)
+to use via the Clang compiler.
+
+  Note: The kernel already provides dynamic analysis tools Lockdep and
+  KCSAN for lock-safety checking and data-race detection respectively.
+  Unlike those, Clang's capability analysis is a compile-time static
+  analysis with no runtime impact. The static analysis complements
+  existing dynamic analysis tools, as it may catch some issues before
+  even getting into a running kernel, but is *not* a replacement for
+  whole-kernel testing with the dynamic analysis tools enabled!
+
+=== Appendix ===
+
+A Clang version that supports `-Wthread-safety-pointer` and the new
+alias-analysis of capability pointers is required (from this version
+onwards):
+
+	https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
+
+This series is also available at this Git tree:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/melver/linux.git/log/?h=cap-analysis/dev
+
+=== Changelog ===
+
+v3:
+
+  - Bump min. Clang version to 22+ (unreleased), which now supports:
+
+	* re-entrancy via __attribute__((reentrant_capability));
+	* basic form of capability alias analysis [3] - which is the
+	  biggest improvement since v2.
+
+    This was the result of conclusions from this discussion:
+    https://lore.kernel.org/all/CANpmjNPquO=W1JAh1FNQb8pMQjgeZAKCPQUAd7qUg=5pjJ6x=Q@mail.gmail.com/
+
+  - Rename __asserts_cap/__assert_cap to __assumes_cap/__assume_cap.
+
+  - Switch to DECLARE_LOCK_GUARD_1_ATTRS().
+
+  - Add __acquire_ret and __acquire_shared_ret helper macros - can be
+    used to define function-like macros that return objects which
+    contains a held capabilities. Works now because of capability alias
+    analysis.
+
+  - Add capability_unsafe_alias() helper, where the analysis rightfully
+    points out we're doing strange things with aliases but we don't
+    care.
+
+  - Support multi-argument attributes.
+
+  - Enable for kernel/sched/{core,fair}.c, kernel/kcsan.
+  - Drop drivers/tty changes (revisit later).
+
+v2: https://lore.kernel.org/all/20250304092417.2873893-1-elver@google.com/
+
+  - Remove Sparse context tracking support - after the introduction of
+    Clang support, so that backports can skip removal of Sparse support.
+
+  - Remove __cond_lock() function-like helper.
+
+  - ww_mutex support.
+
+  - -Wthread-safety-addressof was reworked and committed in upstream
+    Clang as -Wthread-safety-pointer.
+
+  - Make __cond_acquires() and __cond_acquires_shared() take abstract
+    value, since compiler only cares about zero and non-zero.
+
+  - Rename __var_guarded_by to simply __guarded_by. Initially the idea
+    was to be explicit about if the variable itself or the pointed-to
+    data is guarded, but in the long-term, making this shorter might be
+    better.
+
+  - Likewise rename __ref_guarded_by to __pt_guarded_by.
+
+  - Introduce common header warning suppressions - this is a better
+    solution than guarding header inclusions with disable_ +
+    enable_capability_analysis(). Header suppressions are disabled when
+    selecting CONFIG_WARN_CAPABILITY_ANALYSIS_ALL=y. This bumps the
+    minimum Clang version required to 20+.
+
+  - Make the data_race() macro imply disabled capability analysis.
+    Writing capability_unsafe(data_race(..)) is unnecessarily verbose
+    and data_race() on its own already indicates something subtly unsafe
+    is happening.  This change was made after analysis of a finding in
+    security/tomoyo.
+
+  - Enable analysis in the following subsystems as additional examples
+    of larger subsystem. Where it was obvious, the __guarded_by
+    attribute was added to lock-guarded variables to improve coverage.
+
+    	* drivers/tty
+	* security/tomoyo
+    	* crypto/
+
+RFC v1: https://lore.kernel.org/lkml/20250206181711.1902989-1-elver@google.com
+
+Marco Elver (35):
+  compiler_types: Move lock checking attributes to
+    compiler-capability-analysis.h
+  compiler-capability-analysis: Add infrastructure for Clang's
+    capability analysis
+  compiler-capability-analysis: Add test stub
+  Documentation: Add documentation for Compiler-Based Capability
+    Analysis
+  checkpatch: Warn about capability_unsafe() without comment
+  cleanup: Basic compatibility with capability analysis
+  lockdep: Annotate lockdep assertions for capability analysis
+  locking/rwlock, spinlock: Support Clang's capability analysis
+  compiler-capability-analysis: Change __cond_acquires to take return
+    value
+  locking/mutex: Support Clang's capability analysis
+  locking/seqlock: Support Clang's capability analysis
+  bit_spinlock: Include missing <asm/processor.h>
+  bit_spinlock: Support Clang's capability analysis
+  rcu: Support Clang's capability analysis
+  srcu: Support Clang's capability analysis
+  kref: Add capability-analysis annotations
+  locking/rwsem: Support Clang's capability analysis
+  locking/local_lock: Include missing headers
+  locking/local_lock: Support Clang's capability analysis
+  locking/ww_mutex: Support Clang's capability analysis
+  debugfs: Make debugfs_cancellation a capability struct
+  compiler-capability-analysis: Remove Sparse support
+  compiler-capability-analysis: Remove __cond_lock() function-like
+    helper
+  compiler-capability-analysis: Introduce header suppressions
+  compiler: Let data_race() imply disabled capability analysis
+  MAINTAINERS: Add entry for Capability Analysis
+  kfence: Enable capability analysis
+  kcov: Enable capability analysis
+  kcsan: Enable capability analysis
+  stackdepot: Enable capability analysis
+  rhashtable: Enable capability analysis
+  printk: Move locking annotation to printk.c
+  security/tomoyo: Enable capability analysis
+  crypto: Enable capability analysis
+  sched: Enable capability analysis for core.c and fair.c
+
+ .../dev-tools/capability-analysis.rst         | 148 +++++
+ Documentation/dev-tools/index.rst             |   1 +
+ Documentation/dev-tools/sparse.rst            |  19 -
+ Documentation/mm/process_addrs.rst            |   6 +-
+ MAINTAINERS                                   |  11 +
+ Makefile                                      |   1 +
+ crypto/Makefile                               |   2 +
+ crypto/acompress.c                            |   6 +-
+ crypto/algapi.c                               |   2 +
+ crypto/api.c                                  |   1 +
+ crypto/crypto_engine.c                        |   2 +-
+ crypto/drbg.c                                 |   5 +
+ crypto/internal.h                             |   2 +-
+ crypto/proc.c                                 |   3 +
+ crypto/scompress.c                            |  24 +-
+ .../net/wireless/intel/iwlwifi/iwl-trans.c    |   4 +-
+ .../net/wireless/intel/iwlwifi/iwl-trans.h    |   6 +-
+ .../intel/iwlwifi/pcie/gen1_2/internal.h      |   5 +-
+ .../intel/iwlwifi/pcie/gen1_2/trans.c         |   4 +-
+ fs/dlm/lock.c                                 |   2 +-
+ include/crypto/internal/acompress.h           |   7 +-
+ include/crypto/internal/engine.h              |   2 +-
+ include/linux/bit_spinlock.h                  |  24 +-
+ include/linux/cleanup.h                       |  17 +
+ include/linux/compiler-capability-analysis.h  | 423 +++++++++++++
+ include/linux/compiler.h                      |   2 +
+ include/linux/compiler_types.h                |  18 +-
+ include/linux/console.h                       |   4 +-
+ include/linux/debugfs.h                       |  12 +-
+ include/linux/kref.h                          |   2 +
+ include/linux/list_bl.h                       |   2 +
+ include/linux/local_lock.h                    |  45 +-
+ include/linux/local_lock_internal.h           |  73 ++-
+ include/linux/lockdep.h                       |  12 +-
+ include/linux/mm.h                            |  33 +-
+ include/linux/mutex.h                         |  35 +-
+ include/linux/mutex_types.h                   |   4 +-
+ include/linux/rcupdate.h                      |  86 +--
+ include/linux/refcount.h                      |   6 +-
+ include/linux/rhashtable.h                    |  14 +-
+ include/linux/rwlock.h                        |  22 +-
+ include/linux/rwlock_api_smp.h                |  43 +-
+ include/linux/rwlock_rt.h                     |  44 +-
+ include/linux/rwlock_types.h                  |  10 +-
+ include/linux/rwsem.h                         |  66 +-
+ include/linux/sched.h                         |   6 +-
+ include/linux/sched/signal.h                  |  16 +-
+ include/linux/sched/task.h                    |   5 +-
+ include/linux/sched/wake_q.h                  |   3 +
+ include/linux/seqlock.h                       |  24 +
+ include/linux/seqlock_types.h                 |   5 +-
+ include/linux/spinlock.h                      |  89 ++-
+ include/linux/spinlock_api_smp.h              |  34 +-
+ include/linux/spinlock_api_up.h               | 112 +++-
+ include/linux/spinlock_rt.h                   |  37 +-
+ include/linux/spinlock_types.h                |  10 +-
+ include/linux/spinlock_types_raw.h            |   5 +-
+ include/linux/srcu.h                          |  60 +-
+ include/linux/srcutiny.h                      |   4 +
+ include/linux/srcutree.h                      |   6 +-
+ include/linux/ww_mutex.h                      |  22 +-
+ kernel/Makefile                               |   2 +
+ kernel/kcov.c                                 |  36 +-
+ kernel/kcsan/Makefile                         |   2 +
+ kernel/kcsan/report.c                         |  11 +-
+ kernel/printk/printk.c                        |   2 +
+ kernel/sched/Makefile                         |   3 +
+ kernel/sched/core.c                           |  89 ++-
+ kernel/sched/fair.c                           |   9 +-
+ kernel/sched/sched.h                          | 110 +++-
+ kernel/signal.c                               |   4 +-
+ kernel/time/posix-timers.c                    |  13 +-
+ lib/Kconfig.debug                             |  45 ++
+ lib/Makefile                                  |   6 +
+ lib/dec_and_lock.c                            |   8 +-
+ lib/rhashtable.c                              |   5 +-
+ lib/stackdepot.c                              |  20 +-
+ lib/test_capability-analysis.c                | 596 ++++++++++++++++++
+ mm/kfence/Makefile                            |   2 +
+ mm/kfence/core.c                              |  20 +-
+ mm/kfence/kfence.h                            |  14 +-
+ mm/kfence/report.c                            |   4 +-
+ mm/memory.c                                   |   4 +-
+ mm/pgtable-generic.c                          |  19 +-
+ net/ipv4/tcp_sigpool.c                        |   2 +-
+ scripts/Makefile.capability-analysis          |  11 +
+ scripts/Makefile.lib                          |  10 +
+ scripts/capability-analysis-suppression.txt   |  33 +
+ scripts/checkpatch.pl                         |   8 +
+ security/tomoyo/Makefile                      |   2 +
+ security/tomoyo/common.c                      |  52 +-
+ security/tomoyo/common.h                      |  77 +--
+ security/tomoyo/domain.c                      |   1 +
+ security/tomoyo/environ.c                     |   1 +
+ security/tomoyo/file.c                        |   5 +
+ security/tomoyo/gc.c                          |  28 +-
+ security/tomoyo/mount.c                       |   2 +
+ security/tomoyo/network.c                     |   3 +
+ tools/include/linux/compiler_types.h          |   2 -
+ 99 files changed, 2370 insertions(+), 589 deletions(-)
+ create mode 100644 Documentation/dev-tools/capability-analysis.rst
+ create mode 100644 include/linux/compiler-capability-analysis.h
+ create mode 100644 lib/test_capability-analysis.c
+ create mode 100644 scripts/Makefile.capability-analysis
+ create mode 100644 scripts/capability-analysis-suppression.txt
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.51.0.384.g4c02a37b29-goog
+
 
