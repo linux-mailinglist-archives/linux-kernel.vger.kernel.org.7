@@ -1,174 +1,206 @@
-Return-Path: <linux-kernel+bounces-822246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 696B4B8360D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:44:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AFB3B83616
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 09:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 252133A5C63
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:44:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC6B18908A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD5A2EBDD9;
-	Thu, 18 Sep 2025 07:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB262EC0BF;
+	Thu, 18 Sep 2025 07:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="v+gxEhpr"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i7U7V58u"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13B9275AF6;
-	Thu, 18 Sep 2025 07:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19A72E7F0B
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758181464; cv=none; b=nC3OQypSRXDqefAPWVBDLgwiJfEXx3PhanA2Ub5JXlPwOJ1QVqtpcLM+w/E2QgEG/mMPe7I0Kh1N6a/iLYZCvQb3VWfi3yjuffNcBDEtp4Z0Vh8cXv5BAEIKmwspsQVJe/Uhz14i5MiXGHAwohWkmflaUcfMxqMGgKw6NsC74vc=
+	t=1758181474; cv=none; b=SoXlcfn9HjLWjQz1a22NvliiQGmK8Jan6d/NKUbBdhYNhUJxcMgK4jKwRgtrivSswt6+d345bBNXSQWQsfRLNnlQHIdpysRG5Dlxfx5+bS3nz/FnX5K5mTrjZYEsL+EwPBstbLNMkFUZeTcVvKAkg8dxgsQ/L7ZUyEf2+0Nns0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758181464; c=relaxed/simple;
-	bh=dmM/nfY9ZGJWZNd9QVwh8AdV4xV1NZFaRSTZnw0XJTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEt93WK7tijZ7c81m718RWtGxbIC6+RXGPq7a1/F2SIAdyu2kPq5lVTBvKCVoAM63Pzyq+1A/6iE8d+cvCuQoF+2PVXEJZbJ2PpKixx4BcYaetFZwVlyaEeVnSfU+eT+Beil9gImLnbJqCvROYYyMZr1HmftKYE1qcluLMsCLOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=v+gxEhpr; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758181416;
-	bh=fKIhYdZo0gbuLJoLY01IaGGDghYLeBAKJXGGD1WoNs4=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=v+gxEhprMaNkI5zdgN3ffLbhETn4ksZ9PUxQaVD6hQ/8w/SXZf/4phNPyGTtjw9GM
-	 KOf7JQlCkrWXY68DIem3/Nl1xVxmZN0zBn3uueOijScjCamido4SQyXYzy1k/jo8VE
-	 6Hb0EL0LBRZyfsrQ0jISm8tlje7qUxIS45au72yo=
-X-QQ-mid: esmtpsz11t1758181409t25a73e83
-X-QQ-Originating-IP: TBFWLYNJiVsLazlBh4iNqndLkAwUI57Zz+YC92McJmE=
-Received: from = ( [120.239.196.247])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 18 Sep 2025 15:43:27 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8956593677624534324
-EX-QQ-RecipientCnt: 17
-Date: Thu, 18 Sep 2025 15:43:27 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH 1/3] dt-bindings: spi: add SpacemiT K1 SPI support
-Message-ID: <D2A109C6A8BDED08+aMu4H4xap2GSP50w@LT-Guozexi>
-References: <20250917220724.288127-1-elder@riscstar.com>
- <20250917220724.288127-2-elder@riscstar.com>
- <20250917231520-GYA1269891@gentoo.org>
- <3b815302-21f2-4ee2-bf83-c1dba77ce3d1@riscstar.com>
- <20250918001632-GYA1270371@gentoo.org>
- <f7e12797-ea17-4e92-bd25-cc562c66d2a7@riscstar.com>
+	s=arc-20240116; t=1758181474; c=relaxed/simple;
+	bh=YBR6J/xTT+tYNygOucvrzlv1Sf553Gi0K8EeE+pFDo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KJqi2BzYFsW+TGnNKaUJUp/Uwc2Zy2rTuMnql8O+kY0Rz4U3YRjgMA7iCWcXSy7kQ8TNisq5tbzZoz3tLiWn7UPFJ+TKQRrbbRG2fEaDH1khiC+eHEYhb/wrkIrZz4P9uOlqEN9ihZ1SbsvKArVEhy7wruBIqJh62onHD+1weSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i7U7V58u; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 8FE24C007B9;
+	Thu, 18 Sep 2025 07:44:07 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 25BCB60630;
+	Thu, 18 Sep 2025 07:44:24 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6A98F102F1870;
+	Thu, 18 Sep 2025 09:44:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758181463; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=MvkDMRbtxk6Ydf/U3xFip5NWPIJs2Mr0IzgXuY8pS/I=;
+	b=i7U7V58u50duMZyYG7RVH6Cpusk/ncywT8GAqowoE0tzvLbjffXsfeGJmxl6ipD+uAzL/X
+	nLI+65+W7Ix6xvSBAbBilnyPGd5FnGVxVJ71sCgos7OUvK1r2nRcv4w6870qb5IeAgQFPB
+	jI1YwuGqpMlUej9rJo10wYviKATweJ+j+tlo/gY7gzuyQq7goOmmL0ZrwXQpGEeiGNecMe
+	nB9EGUrjf1sJnVzRfZTRbWb6roG5vTQ48SMToyQnk72oek8lVzc7qWEFOYZB93B5rbjcc9
+	b5eqY4wEbZZS0qn61YoTkBIJo/O6gtKWjqH/sbTlLRT0HnYZU3rkFXpqwo5FZQ==
+Date: Thu, 18 Sep 2025 09:44:09 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: David Gibson <david@gibson.dropbear.id.au>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Andrew Davis
+ <afd@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Ayush Singh <ayush@beagleboard.org>, Luca Ceresoli
+ <luca.ceresoli@bootlin.com>, devicetree@vger.kernel.org, Jason Kridner
+ <jkridner@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <20250918094409.0d5f92ec@bootlin.com>
+In-Reply-To: <aMt5kEI_WRDOf-Hw@zatzit>
+References: <aLkiNdGIXsogC6Rr@zatzit>
+	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
+	<aL5dNtzwiinq_geg@zatzit>
+	<20250908145155.4f130aec@bootlin.com>
+	<aL-2fmYsbexEtpNp@zatzit>
+	<20250909114126.219c57b8@bootlin.com>
+	<aMD_qYx4ZEASD9A1@zatzit>
+	<20250911104828.48ef2c0e@bootlin.com>
+	<aMebXe-yJy34kST8@zatzit>
+	<20250916084631.77127e29@bootlin.com>
+	<aMt5kEI_WRDOf-Hw@zatzit>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7e12797-ea17-4e92-bd25-cc562c66d2a7@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: MwQdfXoP8nuzwjcN1/JTOvKPKAJ/Oqc5WU5eoCinbQrbmJofDHOfXHAI
-	nD6eYPOhuTd/C7wEbm1r63oWEtnHFHcNqRkPSg0+n+c9wrEL6SyrAnmnZtbFXbRYzqXBZXU
-	aWRKP6zQIz1saboU1rVI2QQzkAqUFHys82st5LEjXxL/53syfVIhhUvUrYLxuAcYPXIAHNQ
-	cju6RjK78O2O/B1d7+fLlNWRjHM9h7/aCGqMieymarcitoYPFChqjLKbuSbJ9N7gqoTURmV
-	Be6DYxdOTlhY0C1vUJZLIPKnuzO7RcE6hwjYLT4JxMcGCy7ucrN0wRXjNbPxBiFb+Fo82Qv
-	Hd4lYreY0eab/MrLrvP1xFTZUbLAEmSuEybLBk4AZkNZLdO/MYH/DlPfW+jsMxl8n4gW12S
-	UIMU8238GPq1qQZXzvHG3zNzdbM4mzulmvjFFhZEWRTxPQP6LOIk+Cp7KdlO6DwYNSR4DTb
-	wuHAUtwHKmTr9wqpTj8ZDSvtgnwE8Z/grF2AcNR0qOHQpX52JXocoo5Trbb8PIIkdOWpMhR
-	7+sNHL/6JFOQ3Hpcx1nJFQxDYttNoUBsiNwL0rw8anViz/cKaGJln6/XqpjvmH0YPnUW1H2
-	+LB0BwGkVf/feuBSiUq5e9vNA25DdD4ynvM8DJ+oCr8AafRdxjcYFv44enLoCOlKoN8vwja
-	zARIVqzTNLNm0gOR4M2F3DcTyzboo6uH3FzjZBPooMyb6N6mSPG/zWVhW2lOrTIq+0kLTb3
-	idXbE0MtaNV2D7yYa56dL0DeXoeZmxonnLgganPp1MBugZSyQxRdi0dLB1ERE/3qpGd03Ie
-	U6/azKQNzEyjt5ANkh7tpcMck9LgFxi54tqVhreuBpGhgbCmwRVhteK9kn+yj3/QVJEI7BS
-	9lHMPop8lqmnptKLu5gy7rCsVIVhud10t5cvK93LQMEy0c/Xub60g0o0/QF9MR2hUgRx5ru
-	+FCtAQRS34wRtd2NkUmQY/dSR9LC/K309IQMt7tb/j0ItNIFwyBvLBjRWUUGat8AqfvHsUp
-	Fb+TWq/g46d6YPeOJa4FXXml8R8iUnKNA7biLb3qqcUcRSFs9xO/FtgwLUV0M=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Sep 17, 2025 at 09:59:35PM -0500, Alex Elder wrote:
-> On 9/17/25 7:16 PM, Yixun Lan wrote:
-> > Hi Alex,
-> > 
-> > On 18:40 Wed 17 Sep     , Alex Elder wrote:
-> > > On 9/17/25 6:15 PM, Yixun Lan wrote:
-> > > > Hi Alex,
-> > > > 
-> > > > On 17:07 Wed 17 Sep     , Alex Elder wrote:
-> > > > > Add support for the SPI controller implemented by the SpacemiT K1 SoC.
-> > > > > 
-> > > > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > > > ---
-> > > > >    .../bindings/spi/spacemit,k1-spi.yaml         | 94 +++++++++++++++++++
-> > > > >    1 file changed, 94 insertions(+)
-> > > > >    create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml b/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-> > > > > new file mode 100644
-> > > > > index 0000000000000..5abd4fe268da9
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-> > ..
-> > > > > +
-> > > > > +  spacemit,k1-ssp-id:
-> > > > > +    description: SPI controller number
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > could you explain a little bit why this vendor specific property should
-> > > > be introduced? I took a look at the code, and didn't get the reason
-> > > > behind.. or what's the problem of simply using "pdev->id"?
-> > > 
-> > > This property was carried over from the vendor code.  It is
-> > inherit from vendor code isn't a valid reason
-> > 
-> > > optional, and if it isn't specified, the platform device ID (-1)
-> > > will be used.  It's just intended to provide a well-defined ID
-> > > for a particular SPI controller.
-> > > 
-> > while looking at the code, it seems you can use alias to map specific id
-> > to the spi controller, it even can do non-linear map, something like
-> > 	spi0 = &spi3;
-> I've never used this before, but yes, it looks like it's exactly
-> what I want.  I'll just get rid of the "spacemit,k1-ssp-id" DT
-> property entirely.  Easy.
-> 
-> > plese check of_alias_get_id()
-> > 
-> > note, I haven't actually verified on board, just look through the code
-This is the right API that Alex what to use.
-I have verified it in i2c driver.
+Hi David,
 
-                - Troy
+On Thu, 18 Sep 2025 13:16:32 +1000
+David Gibson <david@gibson.dropbear.id.au> wrote:
 
+...
+
+> > > Thoughts above suggest a different direction, but here's what I was
+> > > thinking before:
+> > > 
+> > > base board:
+> > > 
+> > > 	connector {
+> > > 		/export/ "i2c" &i2c0;
+> > > 	};
+> > > 
+> > > addon:
+> > > 	eeprom@10 {
+> > > 		compatible = "foo,eeprom";
+> > > 		bus-reg = <&i2c 0x10>;
+> > > 	}
+> > > 
+> > > Or, if the addon had multiple i2c devices, maybe something like:
+> > > 
+> > > 	board-i2c {
+> > > 		compatible = "i2c-simple-bridge";
+> > > 		bus-ranges = <&i2c 0 0x3ff>; /* Whole addr space */
+> > > 		eeprom@10 {
+> > > 			compatible = "foo,eeprom";
+> > > 			reg = <0x10>;
+> > > 		}
+> > > 		widget@20 {
+> > > 			compatible = "vendor,widget";
+> > > 			reg = <0x20>;
+> > > 		}
+> > > 	}
+> > > 
+> > > Writing that, I realise I2C introduces some complications for this.
+> > > Because it has #size-cells = <0>, ranges doesn't really work (without
+> > > listing every single address to be translated).  Likewise, because we
+> > > always need the parent bus phandle, we can't use the trick of an empty
+> > > 'ranges' to mean an identity mapping.
+> > > 
+> > > We could invent encodings to address those, but given the addon with
+> > > multiple connectors case provides another incentive for a single
+> > > connector to allow adding nodes in multiple (but strictly enumerated)
+> > > places in the base device tree provides a better approach.  
 > > 
-> > > > we should really be careful to introduce vendor specific property..
-> > > 
-> > > If there were a standard way of doing this I'd love to use it.
-> 
-> Looks like you have told me the standard way of doing this.
-> 
-> Thank you.
-> 
-> 					-Alex
-> 
-> > > 
-> > > And if it isn't necessary, please just explain to me why.  I
-> > > have no problem removing it.
-> > > 
-> > on the opposite, please have explicit good reason to introduce vendor
-> > speifici property, and if there is generic way, then we shouldn't do it
+> > and the "place in base device tree" is the goal of the extension bus.
 > > 
+> > The strict enumeration of nodes enumerated is done by two means:
+> >  - extension busses at connector level
+> >    Those extensions are described as connector sub-nodes.
+> >    The addon DT can only add nodes in those sub-nodes to describe devices
+> >    connected to the relared extension bus.
+> >  - export symbols
+> >    An addon DT can only use symbols exported to reference symbols outside
+> >    the addon DT itself.
+> > 
+> > Can I assume that bus extensions we proposed (i2c-bus-extension and
+> > spi-bus-extension) could be a correct solution ?  
+> 
+> Maybe?  I prefer the idea of a universal mechanism, not one that's
+> defined per-bus-type.
 > 
 > 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> Also, IIUC the way bus extension operates is a bit different - nodes
+> would be "physically" added under the bus extension node, but treated
+> logically as if they go under the main bus.  What I'm proposing here
+> is something at the actualy overlay application layer that allows
+> nodes to be added to different parts of the base device tree - so you
+> could add your i2c device under the main i2c bus.
+
+I think we should avoid this kind of node dispatching here and there in
+the base DT.
+
+We work on decoupling busses wired to a connector and dispatching nodes
+looks like this decoupling is ignored.
+
+IMHO, keeping devices available on an addon board as nodes under the
+connector is a real hardware representation.
+
+Also, at runtime, once an addon board DT is applied, when you look at
+your current DT either using /proc/device-tree or some links such as
+/sys/bus/devices/.../of_node, the connector and extension bus appear
+and clearly identify devices behind the connector.
+
+> 
+> That approach does complicate removal, but its not as bad as overlays
+> at the moment, because a) it could be limited to adding new nodes, not
+> modifying existing ones and b) the connector would specify exactly the
+> places that additions are allowed.
+> 
+
+I think bus extensions comply with a) and b).
+
+Yes, bus extensions need to be handled per-bus types but they have the
+advantage of keeping the hardware reality well described and visible at
+runtime in term of "wiring" topology.
+
+Whatever the solution, this will already be handled per-bus types.
+Only busses that support runtime DT node addition/removal (OF_RECONFIG_*
+notifications in the kernel implementation) will support adding or
+removing nodes.
+
+Your approach is more complex, dispatch node here and there and actually
+is also a per-bus types solution.
+
+I think, in order to choose between both solutions, the main question is:
+Do we want to dispatch nodes provided by an addon DT everywhere in the base
+DT ?
+
+IMHO, the answer is no.
+
+Rob, others, any opinion ?
+
+Best regards,
+Hervé
 
