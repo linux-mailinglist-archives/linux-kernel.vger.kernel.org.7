@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-823258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C055FB85EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:16:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F216B85F0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 891714A0794
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:16:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E96AD7A9D20
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADAF30BBB2;
-	Thu, 18 Sep 2025 16:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB683128C3;
+	Thu, 18 Sep 2025 16:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vS7mAxYI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xodd5kAz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7B220F5C;
-	Thu, 18 Sep 2025 16:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E9D220F5C;
+	Thu, 18 Sep 2025 16:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758212172; cv=none; b=SD+9QmT9BirDWP+SZoHGz9EP74pefuvKlqS+DqMROUOb3k8/peOjS0WHiB+SUh3S2Uyw0kNUefjwk+efH1jXsXIrvgBiNdcaVtP8U5ciBiQGi1QtqGFampt84ryEbP5pC4dsZuyOnU1crYMHa/Skvkg+OUfixusEBxwt58saHSM=
+	t=1758212289; cv=none; b=YNu6Uit+44TAWoBpS9FqidR78QqeRAklqsuyOA7jBxG6aZfp5EVwtZFjkfg/NGSESfxRo8jOZGPVEe5jhqgeqKgfkc9kmDvDk+lb8M5GwpzDynBFXkBROjj2fMVA/F4rOd8mVCUTEQb+9K0CaWIg62cf4Hx2fT68QUGcSxGHiuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758212172; c=relaxed/simple;
-	bh=t0gATf2rRf3r4s5DY5rn2twU0ZruscwR6dDmkSXx628=;
+	s=arc-20240116; t=1758212289; c=relaxed/simple;
+	bh=2txUjo5Nz+BSEMezG0q7gafb7Kyc4NK7ms7exwCmsW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KRvLR+OU4OBXZlwXbf0qz1aDKRduy/WGQREKDjIOGJBYb/WHJOiieumCwLrznuaYKJcFk459717V4rPcW03Dqb0OMidIMmuwaju/dRH1F7nVXUojAJK6cwz+BH7+2pvkeGarbqTuzC8Dp30log8dWLpoM9u4BRyw5rGQ+G7ErKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vS7mAxYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2AFC4CEE7;
-	Thu, 18 Sep 2025 16:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758212172;
-	bh=t0gATf2rRf3r4s5DY5rn2twU0ZruscwR6dDmkSXx628=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUg4d/xQpp9ZsOLp9f7NVJL0wk5/USqI1P8zDCuVphpmcd73tX7GDpEuLKRieQ9JBO1Cj1VSBhuqj97RlfJO7hIW34AwuCMwk56KTZrJF8sGD+6Dd9Uf9PtrvZLtcuVzx8i0v8RvIOFxzkvIEC8706bUCAa54lowpxg3KIF9XcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xodd5kAz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F107C4CEFA;
+	Thu, 18 Sep 2025 16:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758212288;
+	bh=2txUjo5Nz+BSEMezG0q7gafb7Kyc4NK7ms7exwCmsW4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vS7mAxYILfwxgEQJPmekQ/sj+T+KLhyGre8DkAX/uSLyoAhacxckBtG4jsGtPqek7
-	 +MKy814UhRck438HccblxklWtBlMkTuLGnX7VymiF0226gqPd5Aye5+I2w7WhvebNc
-	 hAyCWcpPuI6tFuHIKny5RlWnY4JcQ0ErBsqk+C88=
-Date: Thu, 18 Sep 2025 18:16:07 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Hans de Goede <hansg@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Lee Jones <lee@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Ming Yu <a0282524688@gmail.com>
-Subject: Re: linux-next: manual merge of the gpio-brgl tree with the usb tree
-Message-ID: <2025091800-demeaning-gills-18df@gregkh>
-References: <aMwUEV6nY4AaJT8X@sirena.org.uk>
+	b=Xodd5kAzjKSidzcOwUfy/6fgewF1HGJQg72D3CA1Jfn8yaBXgmNHGhwtZHLH6tZTs
+	 06RrRksv86C9A5p//EY0jBHNijSo+rlFqmRQJy0ito+YkSHKxP180UwDIFBYORUhfc
+	 7GWw8+4ctW8ex87yLMEMNtGFIxW9+rafkTppCi5t+VAZidIByTxkOY6k29NzrXcZR6
+	 N6tSkfKNF/Pq6cYOezPUtu6tQBYxiKGnljn2xi3VcxNTPZCOVSd7yIN4AgK0CvTewq
+	 FiHMhxNmvVDSBqwatqRTcG/vuOrVX8IwOrujatiodc+NR/4qu/GDxLDSlfmw98yU+8
+	 yM4OfmaxoflDQ==
+Date: Thu, 18 Sep 2025 17:18:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, mptcp@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Kuniyuki Iwashima <kuniyu@google.com>
+Subject: Re: [PATCH net-next] mptcp: reset blackhole on success with
+ non-loopback ifaces
+Message-ID: <20250918161804.GZ394836@horms.kernel.org>
+References: <20250918-net-next-mptcp-blackhole-reset-loopback-v1-1-bf5818326639@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,81 +62,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aMwUEV6nY4AaJT8X@sirena.org.uk>
+In-Reply-To: <20250918-net-next-mptcp-blackhole-reset-loopback-v1-1-bf5818326639@kernel.org>
 
-On Thu, Sep 18, 2025 at 03:15:45PM +0100, Mark Brown wrote:
-> Hi all,
+On Thu, Sep 18, 2025 at 10:50:18AM +0200, Matthieu Baerts (NGI0) wrote:
+> When a first MPTCP connection gets successfully established after a
+> blackhole period, 'active_disable_times' was supposed to be reset when
+> this connection was done via any non-loopback interfaces.
 > 
-> Today's linux-next merge of the gpio-brgl tree got a conflict in:
+> Unfortunately, the opposite condition was checked: only reset when the
+> connection was established via a loopback interface. Fixing this by
+> simply looking at the opposite.
 > 
->   drivers/i2c/busses/Kconfig
+> This is similar to what is done with TCP FastOpen, see
+> tcp_fastopen_active_disable_ofo_check().
 > 
-> between commit:
+> This patch is a follow-up of a previous discussion linked to commit
+> 893c49a78d9f ("mptcp: Use __sk_dst_get() and dst_dev_rcu() in
+> mptcp_active_enable()."), see [1].
 > 
->   daf161343a390 ("i2c: Add Intel USBIO I2C driver")
-> 
-> from the usb tree and commit:
-> 
->   c5cf27dbaeb6e ("i2c: Add Nuvoton NCT6694 I2C support")
-> 
-> from the gpio-brgl tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc drivers/i2c/busses/Kconfig
-> index 9921fd9ea0983,63a2b5a9abc39..0000000000000
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@@ -1357,17 -1357,16 +1357,27 @@@ config I2C_LJC
->   	  This driver can also be built as a module.  If so, the module
->   	  will be called i2c-ljca.
->   
-> + config I2C_NCT6694
-> + 	tristate "Nuvoton NCT6694 I2C adapter support"
-> + 	depends on MFD_NCT6694
-> + 	help
-> + 	  If you say yes to this option, support will be included for Nuvoton
-> + 	  NCT6694, a USB to I2C interface.
-> + 
-> + 	  This driver can also be built as a module. If so, the module will
-> + 	  be called i2c-nct6694.
-> + 
->  +config I2C_USBIO
->  +	tristate "Intel USBIO I2C Adapter support"
->  +	depends on USB_USBIO
->  +	default USB_USBIO
->  +	help
->  +	  Select this option to enable I2C driver for the INTEL
->  +	  USBIO driver stack.
->  +
->  +	  This driver can also be built as a module.  If so, the module
->  +	  will be called i2c_usbio.
->  +
->   config I2C_CP2615
->   	tristate "Silicon Labs CP2615 USB sound card and I2C adapter"
->   	depends on USB
-> diff --cc drivers/i2c/busses/Makefile
-> index 401a79c9767e6,fe8cf6325fc98..0000000000000
-> --- a/drivers/i2c/busses/Makefile
-> +++ b/drivers/i2c/busses/Makefile
-> @@@ -135,7 -135,7 +135,8 @@@ obj-$(CONFIG_I2C_GXP)		+= i2c-gxp.
->   obj-$(CONFIG_I2C_DIOLAN_U2C)	+= i2c-diolan-u2c.o
->   obj-$(CONFIG_I2C_DLN2)		+= i2c-dln2.o
->   obj-$(CONFIG_I2C_LJCA)		+= i2c-ljca.o
-> + obj-$(CONFIG_I2C_NCT6694)	+= i2c-nct6694.o
->  +obj-$(CONFIG_I2C_USBIO)		+= i2c-usbio.o
->   obj-$(CONFIG_I2C_CP2615) += i2c-cp2615.o
->   obj-$(CONFIG_I2C_PARPORT)	+= i2c-parport.o
->   obj-$(CONFIG_I2C_PCI1XXXX)	+= i2c-mchp-pci1xxxx.o
+> Fixes: 27069e7cb3d1 ("mptcp: disable active MPTCP in case of blackhole")
+> Cc: stable@vger.kernel.org
+> Link: https://lore.kernel.org/4209a283-8822-47bd-95b7-87e96d9b7ea3@kernel.org [1]
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> ---
+> Cc: Kuniyuki Iwashima <kuniyu@google.com>
+> Note: sending this fix to net-next, similar to commits 108a86c71c93
+> ("mptcp: Call dst_release() in mptcp_active_enable().") and 893c49a78d9f
+> ("mptcp: Use __sk_dst_get() and dst_dev_rcu() in mptcp_active_enable().").
+> Also to avoid conflicts, and because we are close to the merge windows.
 
-
-
-Looks good to me, thanks!
-
-greg k-h
+Reviewed-by: Simon Horman <horms@kernel.org>
 
