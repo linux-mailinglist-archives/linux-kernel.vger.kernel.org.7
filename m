@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-822816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7347CB84BBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:04:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1D9B84C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36581C25793
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8BE4A4E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4407D306498;
-	Thu, 18 Sep 2025 13:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF6D2FB62B;
+	Thu, 18 Sep 2025 13:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="pcGmz+f8"
-Received: from out28-172.mail.aliyun.com (out28-172.mail.aliyun.com [115.124.28.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RYEetT12"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EB830749E
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A013E1E231E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758200608; cv=none; b=o7bTVcqpVp/OT5DYeK1P5czGPqC2v6JAzwtEnGoScahCBpVqS5vadzMt374htwsIAdgfWTgEIhbQsZCXX11/JV3rskA+ePbAXlj8fW3MDGOqnsySI6QGzb6IeVXlYng5/rm8jhfiAaX5f45fCTdo5R9kyJsj5N7NPb8y5qIZ3ao=
+	t=1758201432; cv=none; b=SIflhvPttwORbPmH01vsR1nzRqaJmguxKMlSr7hOZJuV+IPye+PbKAMvcmrtIYKuRZLpa7wQoYv8HX5McAbSFxkF1fcMm2Q/8CMUE22YVMLXAQIDHXfQsM7gRW/e3K+LaB6+tSZDRXGw7A+O+MqbZeW/rO1fnbw5O3/N2II2Ffg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758200608; c=relaxed/simple;
-	bh=oZQ71Yy3FFXzAfFjGRoYoDt9iQTanIC3d59za0gF9uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5bqp2tzhak6WdihZ/UCneBw2Odb19+U/PLPjDyNPx/ano3JE0/fHCn/26J9BQj0xtU/JfeLjNHcUzY4qw5ydUpir7pX7UNREcp/kv/5CpiIcD0F/FKS67TYup9QvfzqVp9wGttoHXUP/YzI84oR5w1O/0bx68zEdKoq+jEbYsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=pcGmz+f8; arc=none smtp.client-ip=115.124.28.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1758200601; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=FkGC7xMtyZHkHFCU8at9IRUS9IWm3LClfP+d5+rXRK8=;
-	b=pcGmz+f8AdGlNYbumyyyXwyo9jfry9hSWihyLQclpBQcmjTCTXqdxe6WDnt9qjIeTdPMAKOfPQi2LDKddsqPN7kqy5dXBsnkhcZCNsOUyq5/fjhJ3HX7ZvCLnOwO0SN/VouzkL+e0m4qHo9iAbz5pAj6U3gdMQKdC8e/EPJsG38=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.ei7pEXX_1758200600 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Thu, 18 Sep 2025 21:03:20 +0800
-Date: Thu, 18 Sep 2025 21:03:20 +0800
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev,
+	s=arc-20240116; t=1758201432; c=relaxed/simple;
+	bh=VX4s2nGIy0qlhgbtFaRQWAxeR548nrV8nzp8x99o1Qc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TsrNWeTP/nnR7bEPRmzHu2rIxIVPtfd9GMSAm0Ijxdybu9qQA0nSo4XYcQpL/E883HmJ+zidqBJKKyl7dO0EQVkAa7eZYsSvn2XfkhwlhfQD9saPsIkA6af9g5DtaiIFGrnk3IeBb7nhasxfWpO+jl2OeDcEhFRRz7EFvBy7YVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RYEetT12; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758201430; x=1789737430;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VX4s2nGIy0qlhgbtFaRQWAxeR548nrV8nzp8x99o1Qc=;
+  b=RYEetT12KwPsG43+kxurr6M8aj9V9kpLNeVHxY7EN/HxdKcBOaPXC/XU
+   KtRHtKFuiaG7UaTdTvYXfTu8NaVRHeplPzD82ktMF3G/1Y6fy3aKeIPMF
+   DoJe/j+M05uSFc5bk/7BnnE4S0wajzOCR+vbAJht3Bmo0PIfSM4adFFgQ
+   wKUzIjuwmhPV0F+gKr21vrnwM3c/78P1bIu7VX6L2LukcukCseA8zy93r
+   a50eGiqf8h+hhHvFHuaAMIww4mgP6kd7L0fVIR+XOd+Vwx7JRohoMZ3Z5
+   jLm0BpJplY4kcCjEZwf7S4HsthKRRh24quLFimCbgQc1Fqinkx6ZWK2Kn
+   g==;
+X-CSE-ConnectionGUID: XVyDjkVsQaaEjhoEtrhGmA==
+X-CSE-MsgGUID: ZKrrqrzMS+eQeMpYGVia1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11556"; a="77970683"
+X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
+   d="scan'208";a="77970683"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 06:17:10 -0700
+X-CSE-ConnectionGUID: TSLAcijeQIu6rNG0v4QnLw==
+X-CSE-MsgGUID: +HZHTogPSiqHmKK5C04FTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
+   d="scan'208";a="174648773"
+Received: from sannilnx-dsk.jer.intel.com ([10.12.231.107])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 06:17:08 -0700
+From: Alexander Usyskin <alexander.usyskin@intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Reuven Abliyev <reuven.abliyev@intel.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/amd: Ensure GA log notifier callbacks finish
- running before module unload
-Message-ID: <20250918130320.GA119526@k08j02272.eu95sqa>
-References: <20250315031048.2374109-1-seanjc@google.com>
+Subject: [char-misc-next 0/5] mei: connect to card in D3cold
+Date: Thu, 18 Sep 2025 16:04:30 +0300
+Message-ID: <20250918130435.3327400-1-alexander.usyskin@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250315031048.2374109-1-seanjc@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 14, 2025 at 08:10:48PM -0700, Sean Christopherson wrote:
-> Synchronize RCU when unregistering KVM's GA log notifier to ensure all
-> in-flight interrupt handlers complete before KVM-the module is unloaded.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  drivers/iommu/amd/iommu.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-> index b48a72bd7b23..b314523d9194 100644
-> --- a/drivers/iommu/amd/iommu.c
-> +++ b/drivers/iommu/amd/iommu.c
-> @@ -982,6 +982,14 @@ int amd_iommu_register_ga_log_notifier(int (*notifier)(u32))
->  {
->  	iommu_ga_log_notifier = notifier;
->  
-> +	/*
-> +	 * Ensure all in-flight IRQ handlers run to completion before returning
-> +	 * to the caller, e.g. to ensure module code isn't unloaded while it's
-> +	 * being executed in the IRQ handler.
-> +	 */
-> +	if (!notifier)
-> +		synchronize_rcu();
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL(amd_iommu_register_ga_log_notifier);
-> 
-> base-commit: ea9bd29a9c0d757b3384ae3e633e6bbaddf00725
-> -- 
-> 2.49.0.rc1.451.g8f38331e32-goog
-> 
->
-Hi Sean,
+When discrete graphic card enters D3cold th CSC engine is powered down.
 
-Sorry to bother you. I'm reworking the hardware_setup() path in our
-internal multi-KVM, but I didn't see any usage of
-'amd_iommu_register_ga_log_notifier(NULL)' in the KVM code for now. Has
-it not been committed?
+On wakeup from the D3cold full HECI link reset is required.
+The driver should detect that firmware requests link reset and initiate
+the link reset flow.
 
-Thanks!
+In the usual flow the connect IOCTL will trigger the wake from D3cold
+and corresponding link reset.
+The MEI driver invalidates all open handles on link reset including the
+one that triggered the wake rendering this connection unusable.
+To break this loop make connect detect that it is interrupted by link
+reset and retry connect attempt after reset was completed.
+
+Alexander Usyskin (5):
+  mei: me: trigger link reset if hw ready is unexpected
+  mei: make a local copy of client uuid in connect
+  mei: retry connect if interrupted by link reset
+  mei: bus: demote error on connect
+  mei: gsc: demote unexpected reset print
+
+ drivers/misc/mei/bus.c     |  2 +-
+ drivers/misc/mei/hw-me.c   | 59 +++++++++++---------------------------
+ drivers/misc/mei/hw.h      |  2 ++
+ drivers/misc/mei/init.c    | 21 ++------------
+ drivers/misc/mei/main.c    | 43 +++++++++++++++++++++------
+ drivers/misc/mei/mei_dev.h | 12 ++++----
+ 6 files changed, 62 insertions(+), 77 deletions(-)
+
+-- 
+2.43.0
+
 
