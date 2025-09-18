@@ -1,87 +1,51 @@
-Return-Path: <linux-kernel+bounces-823439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDA8B866F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:42:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53441B86710
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 20:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17A551C2531B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446345887DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F292D3EFC;
-	Thu, 18 Sep 2025 18:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7BD42D46B3;
+	Thu, 18 Sep 2025 18:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KH28pdFF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O9EVDpf5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D382D2498
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864B71643B;
+	Thu, 18 Sep 2025 18:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758220936; cv=none; b=imOxIKzOjgG8MhDN/xstzndR72IYs3rAMxtIAX+cjE6YFGpxW135/g9nqH+FE+vOUlOTBMiHL99qdIP8ERthFlvZC4KXvJSnVyqLAhLqb4zeUeVOOowUNE/RRbhb9yKiwsLsQnd7RfTsxZNaaIzAg1He7uSQ0AMeGAJOWD89I6g=
+	t=1758221011; cv=none; b=V2lpnQ7pZ2YJ6aZYzE2p48494Urtcoocy0fRqoAPTnZX2IvMzN+sQngTIfWzNeYj3k17F621raY7dFU7EO5R7nqJwv1AmZ38DP1INnQi0BzuyeJBAa/ZSKxSpRQRNKH91Sy1cPvr3citZSc1Za++qm84KDSB0AIZU/VVYqm1usU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758220936; c=relaxed/simple;
-	bh=po+vLPdEwz+nRrn33wQ6Gz1tHmjdtWHriulevSWkdgs=;
+	s=arc-20240116; t=1758221011; c=relaxed/simple;
+	bh=lOi4oPKaTPDoudyEXtbkS6QEa07mzTiiZ91A7/9u70E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIx3xyvHjCSRXmP4xUq3wN+Z2KtwhKdh/5G6TWqiTzp+gg9H7lpILm2XYo3c9RsxFHs/7h7R8OZcT8Z4FRecqsLinJceY1qERsr/O2bPkeWbO5cXuxNDqVV9DCJaKsoZheKmmg1Hps/RcisvrsT4i9ZtZ7NrCjUurioku136nFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KH28pdFF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IIPdeG029526
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:42:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nF1fA0zbp7Djqf2UTk7dkerj+IhERcStYJUK4pvZ96Y=; b=KH28pdFFlHijuxsQ
-	Tkqdw1reTQqEDndBc+MUD9qCFuM2XNpbvqD4c2uEhhH2V4OCR919S5v1UB7AQEy5
-	3RlVlVzpTBlZBZONRaTU+84KuVpp9SAY40yGm11mLbRM+bgbzopewjHgb0LbM7Ya
-	FGdvtXNzsSTxKCxYO6qfrRFKwN8VwBRaNcPsdcqePqFsn1WGtNZVRw5MqexVIaE/
-	iARYmzkEdCwMMREiX/9LTzrhlVHScA/zUXa9hLhVecVVL/hE33NyS+UkgoQRZ4Lw
-	tdQryztVonOH63nY8jL4OttMdwwXTOVb/VIThGwyw36RIhVMGDrER0/sPyJn89d8
-	9H/keQ==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy0yjk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:42:13 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7761dc1b36dso2442249b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 11:42:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758220933; x=1758825733;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nF1fA0zbp7Djqf2UTk7dkerj+IhERcStYJUK4pvZ96Y=;
-        b=QEdyp9I4gh7/p7TxDdnmBqrhA9JUlhjUPQpBZEoXFkUUOJAQnxSfdhMVJStRKfcm/Q
-         Fd53h6KCP9wptxVq/W74+SboWi0UhHSgrx9Fz/jU+4tDOEn6pdXSiMk88yd8JSzH4voB
-         5NmsGYU4Y19/DITsXtoWgCaJso/DERWVnLGoitvt6TGrGmDN8XtKY0gNgxZUXau8MFEO
-         aPnmMZMC1j1drCWwtnSshyIxPQWuMMTmYUPiK2lppGX+ageUuQJ37SweEn6zSbG8luzp
-         pKnQUOJmTeg+8WGGdg9rjig6pV+zPYwGFZ1U1Sfx7yEL5nMm27TZFRlYA6WwzOG7VTC5
-         P7xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxWGrE5zR/pc4zqkCseDf7kKlfzDbk5e5FITGau+y0qAv1k3SFHR6A/l+ItGE28dLJOISx+52Y+UR9drw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWpBGFPom4HNyviLXHoyeLciCIwNceFrw9nq9s7NEtSJbIJmov
-	dwN+i4biQl6Lw8PKTmN+m9j4gh8vZvug4iYqOuhaUCim8yHyMenxYXyr4l6ZbDy3rKTEfYpwRGp
-	LqIpONLM44rU3issPCI5OHRnNt3p7I6+kCOiLn3rIqbdBvq85EVZ42ij8H9q4o5T9GbA=
-X-Gm-Gg: ASbGncsLLy/xa69x+d2P+RbbTvYg/QK0sdryWeOL049j/E6009ngEitF3QvV7utegqJ
-	5NNB1yDGNPxuTbsEO4Mvk2h7VGygqER6srLTZTtx9xM8K0nNVE6NyPzkE4DzShO6bOZokebB1Ol
-	DXn5xKCfb1ZlDeo3FSnCAHLzKIVyLMJ57QGDJF8hrb+KaYHvNSEKHYPXdMFmJpwA1C897Tdp+BX
-	ZGZVu4uDItCH3rOoilnA8ZC4qUKpebGSGPAfWAc/W2WTuq5XYYbqHllb/OAoJUKMwMMDg+VkLXI
-	1rAZjvEaBCW7leBTy4WFXVYBZKgHmO+Ff7cAy54pAzE9AjaTSxyXV/+oAnNz1g22XlbYOH1O08T
-	OZoB6n/1F2ZtdTLoUDKcNWTTRYQZq1lPyMCiE
-X-Received: by 2002:a05:6a00:3cc9:b0:776:8b9d:85ad with SMTP id d2e1a72fcca58-77e4e8ae21dmr394526b3a.19.1758220932890;
-        Thu, 18 Sep 2025 11:42:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzBPxPNDF/BcchRmyd2ICCvlhe8W1SbwWFUAF0xA+HbKxZJwRAh+LwrobiAdxKNso5yJHRKQ==
-X-Received: by 2002:a05:6a00:3cc9:b0:776:8b9d:85ad with SMTP id d2e1a72fcca58-77e4e8ae21dmr394497b3a.19.1758220932404;
-        Thu, 18 Sep 2025 11:42:12 -0700 (PDT)
-Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfec40601sm3020533b3a.87.2025.09.18.11.42.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Sep 2025 11:42:12 -0700 (PDT)
-Message-ID: <eb3a2ef9-3f93-48be-b6d4-28eeeba84f04@oss.qualcomm.com>
-Date: Thu, 18 Sep 2025 11:42:10 -0700
+	 In-Reply-To:Content-Type; b=VhpKb2c7Nw2G19Ov2pBdS9/rB4ga6jjKK9ePJDt/bLmSxXHQBH/vs1ZDGDg+8c52qE6+Vw/FEGZ6zzgxzm8SOAc31NFQj9l6WiZFAGJIWWGJeNty8208xk93Oy/aP9Y5DscqY+9GgRYj1Bskw+LEpUUg+ea5pVtGDqyaCsjS6TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O9EVDpf5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=liLJhgZknOFrb3ADlwKcsc/J07rUAwg/dZtDpx06Vic=; b=O9EVDpf5g7zgd/J126cLkxpokq
+	67CZ2pUYtUpJvmRk+WYzJi4DRPy27TOexm3lqamKDUh9IAlUGC03Lo2+0dFCanLLcxE4Mq1PqYmfD
+	zsG861c8Yr5xX5D52wzOhnO9imrDSEtHEzBeBr7ShxCDXCN7KUWzGlLz5OtEM/SgQI+7R701O6suA
+	cqJ61q2nppVq1TNR9wmWEcUpWFM/p7f1YIhX+ZAp278XRRDKeWyKepe8MLKNd1KkIFXmrisE/qJNF
+	AeU2q6OwccURPflquwzeQOYrJnhz8Z3QCRMH4kKvxK1qifV6WvifJnGULJgOXEDIPW+XnTMdlRxk4
+	KPFtZ1jw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uzJbK-00000000t2F-3Pb9;
+	Thu, 18 Sep 2025 18:43:26 +0000
+Message-ID: <be6e146b-3429-4264-bf04-2ea15957f010@infradead.org>
+Date: Thu, 18 Sep 2025 11:43:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,64 +53,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/21] ath10k: remove gpio number assignment
-To: Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
-        Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        Jeff Johnson <jjohnson@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
-        ath10k@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250808151822.536879-1-arnd@kernel.org>
- <20250808151822.536879-17-arnd@kernel.org>
- <27c1274c-e021-ba69-175d-a1271c33498b@quicinc.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Subject: Re: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+To: Eugen Hristev <eugen.hristev@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, David Hildenbrand <david@redhat.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, andersson@kernel.org, pmladek@suse.com, corbet@lwn.net,
+ mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+ <20250912150855.2901211-10-eugen.hristev@linaro.org> <87cy7q9k8y.ffs@tglx>
+ <87a52u9jyl.ffs@tglx> <8df2cf28-c15e-4692-a127-6a5c966a965e@linaro.org>
+ <2bd45749-e483-45ea-9c55-74c5ba15b012@redhat.com> <87v7lh891c.ffs@tglx>
+ <95ff36c2-284a-46ba-984b-a3286402ebf8@redhat.com>
+ <24d6a51d-f5f8-44d7-94cb-58b71ebf473a@linaro.org>
+ <7f4aa4c6-7b77-422b-9f7a-d01530c54bff@redhat.com> <87segk9az5.ffs@tglx>
+ <f8d3c2d4-8399-4169-8527-3c87922f2ef1@redhat.com> <87jz1w88zq.ffs@tglx>
+ <c3ab4a21-183f-495a-b3b5-cc74b392eebc@linaro.org>
 Content-Language: en-US
-In-Reply-To: <27c1274c-e021-ba69-175d-a1271c33498b@quicinc.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <c3ab4a21-183f-495a-b3b5-cc74b392eebc@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: SVeUPdr1XLpwfwjUEIA_cEus_SofUw5z
-X-Authority-Analysis: v=2.4 cv=btZMBFai c=1 sm=1 tr=0 ts=68cc5285 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=e70TP3dOR9hTogukJ0528Q==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=FtxLtjK2MU5K6IsP0WQA:9
- a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-GUID: SVeUPdr1XLpwfwjUEIA_cEus_SofUw5z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX0Qq/Ct0zi7IV
- mBvmxxIpY0/BnhWxodp94hAOW1B1QYlg9eydx701DhpjUs4eUyZ9HEpoTBm64Aj5ct73Ktl7HwC
- tV4rd1I5ftIfk4ftF45hTJGKadkk2Xi28RiH1vt5v0QyKRU4D+9jdTsSfdEmaY/0MMHnXXu//Nn
- M6cbcxlSx/Rip5JkGGebtbJfJHSTW8uC3NyPTEfyo/CebvqXMguHgLS31gYZUmSMTcjgsvyoMwk
- kOubwRsQMVwy3vUWtPSotCwwEwB5d04TeVU0xUF6uj17CQps1VN96w4quCbtQ5rrkPzmEwaqcsS
- ZTuMBWsiGop9xzOTTb5s+Qx9wYlBn6N1NbPnHhis5QG+DHEj6FTSGIUSub2tFkeo4YgcoHzyHhT
- 7VWu6tlg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_02,2025-09-18_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 malwarescore=0
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
 
-On 9/17/2025 10:22 PM, Vasanthakumar Thiagarajan wrote:
-> 
-> 
-> On 8/8/2025 8:48 PM, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> The leds-gpio traditionally takes a global gpio number in its platform
->> data, but the number assigned here is not actually such a number but
->> only meant to be used internally to this driver.
->>
->> As part of the kernel-wide cleanup of the old gpiolib interfaces, the
->> 'gpio' number field is going away, so to keep ath10k building, move
->> the assignment into a private structure instead.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->>   drivers/net/wireless/ath/ath10k/leds.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> wifi tag is missing in the patch title.
-> 
 
-I'll fix this when I apply the patch
+
+On 9/18/25 6:53 AM, Eugen Hristev wrote:
+> 
+> 
+> So, one direction to follow from this discussion is to have the
+> inspection entry and inspection table for all these entries.
+> Now, one burning question open for debate, is, should this reside into mm ?
+> mm/inspect.h would have to define the inspection entry struct, and some
+> macros to help everyone add an inspection entry.
+> E.g. INSPECTION_ENTRY(my ptr, my size);
+> and this would be used all over the kernel wherever folks want to
+> register something.
+> Now the second part is, where to keep all the inspection drivers ?
+> Would it make sense to have mm/inspection/inspection_helpers.h which
+> would keep the table start/end, some macros to traverse the tables, and
+> this would be included by the inspection drivers.
+> inspection drivers would then probe via any mechanism, and tap into the
+> inspection table.
+
+Surely someone wants to inspect more than mm/ variables.
+I prefer kernel/inspect/ etc.
+
+> I am thinking that my model with a single backend can be enhanced by
+> allowing any inspection driver to access it. And further on, each
+> inspection driver would register a notifier to be called when an entry
+> is being created or not. This would mean N possible drivers connected to
+> the table at the same time. ( if that would make sense...)
+> Would it make sense for pstore to have an inspection driver that would
+> be connected here to get different kinds of stuff ?
+> Would it make sense to have some debugfs driver that would just expose
+> to user space different regions ? Perhaps something similar with
+> /proc/kcore but not the whole kernel memory rather only the exposed
+> inspection entries.
+> Now, for the dynamic memory, e.g. memblock_alloc and friends ,
+> would it be interesting to have a flag e.g. MEMBLOCK_INSPECT, that would
+> be used when calling it, and in the background, this would request an
+> inspection_entry being created ? Or it makes more sense to call some
+> function like inspect_register as a different call directly at the
+> allocation point ?
+> 
+> Feel free to throw your opinion at each of the above.
+> Thanks for helping out !
+
+In general I like the way that this is going.
+Thanks to all of you for this discussion.
+
+-- 
+~Randy
+
 
