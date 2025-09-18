@@ -1,99 +1,103 @@
-Return-Path: <linux-kernel+bounces-823766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FBCB87665
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97976B87673
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333B81CC096D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CDA37E2179
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 23:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362DA275113;
-	Thu, 18 Sep 2025 23:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB482F25E8;
+	Thu, 18 Sep 2025 23:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ADzNdYSN"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RJvILq70"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BE134BA40
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C5C2C326F
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758239243; cv=none; b=dkjZ96kkpIOJ36Yncfi0JN55odpGiIaOyt+Xq/9bzkOuFPtSk0pXFBfroGtTxJIYqh0Gni87u4+B0Kyq7g+XcVqu/FhymHlopqisqTFUhMHghUL45TQXSskrJHz0/Ja7/8Gzy0A/Az7qP/PuQCbn9XqJE4cTjSvZkVqM3JB25vw=
+	t=1758239246; cv=none; b=GNkHXD/Z8xdJ9dimH7zlMCBdukLEDu846oZsD6HJVFSZPJzn3ubp1qN9NmflgCgqevSrLFqo7f7Q9+zpk5IBKTuGiE+nu4pG6NH4+TXAQB5kwIVzfZmtfxIUJeLttp1SjNihNBydWXgVjQHygCZEHMMIbvR7lIsQAz/gWUOhgss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758239243; c=relaxed/simple;
-	bh=Pq2rpqDxwoTk6V+36ropQRFEMsic1JeXwdhKIYEltEs=;
+	s=arc-20240116; t=1758239246; c=relaxed/simple;
+	bh=W+VZMioL3cyeN/iZzuHFELSbehOTVHCsB7I6ctk9ryY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NENprUmjgS9mlu2TtFtIvsfRmO3Gs8SFqsPkm61RcZcsK89wpCi41NMlRspLMlqJLe3SdvqW0IVgYVAdVhBwN9PfziFjH8Q6NjBDKPJLaiiyvHPRp1M8CUFjzn77WKCWaEe0kgy1eeN9C3ojed6tDWmu6h+Tmdi8BKcjpGH6fd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ADzNdYSN; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version:Content-Type; b=Z1fLid+hoM6wtr914gIMUN9JisznPQuAXtQy0gJv74Vvq+HzFPYOhFsiwmd/tCZ9SnYoz/ubhFH5xk3pJE6gtTRbZu1dL2J412FS6chE2RLoMrsGO9yrdmBiXYyg3cXEpqApELz1wKKFf+7TMNyy2CtKCV7oSpZHsk23CsXJtiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RJvILq70; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58II5S6V018318
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:21 GMT
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58IIUJVb010955
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nLDrKlFQ+TyQOjCDaTNIvkV0oUkgBFPymnp+deo0dNw=; b=ADzNdYSN8RLPCcdD
-	B5kCrmrqnuQqUWi++ZZN1eby5awGlOWD3XqW0abC1ffuangQnvN7d7jYEJpIZ23b
-	WQK+W2a6NyNpN/RjxSRDSBjduW0jjoa2TWFUY1gJgWOJpoI9Mk0aNAxF5hWNz4km
-	VmhugCJPDSqnJgOJ5G4jW18wo8U/aomK6Fdn4fIaJO75fjsPiyc8uTyKj5Y/K3Ss
-	E/BPocum5EPWK5rqaMOP/IXhJv1yaedqtGaut2tgZplFZaofUHrLTotjKYBvYg2B
-	g7P/h7bbRQg7EUvD5kZ5/3ieDIUcYdIrhc/NX1LYPJ5YgFWwkhhXyIg98LliEYE9
-	VIzVqw==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxwgcc2-1
+	GGhKWo06xdjZ1sk8lDnAZ11n0wQycBWzDYLA/JUlzxc=; b=RJvILq70UFY9u+hN
+	ggNWmmvUT3e/O1/W+F+WiF1U/lUOkYNiU/jhnmi6L9piNdrov4I8Iw5yzGqJJkhX
+	XnCDjmN2Hrw8vdMokbROXC1qTWAZ/tJnEZ70VtTzKTcabsJLhAULP2CV66jqxvlT
+	scXp14OszAAckmaKfieWnFHRmTA9VgWKvkj35ak+2obRfebfv4f9+PKwoHzhkCU8
+	gLRujYf1T1aBv6YY4WBcdVvFV3Rep4Qhg5xwKCzJU+gJ3QnrCW0JlLDzdvXJ7V/N
+	4rbCHo13ot8MreZkT7cMh5eCoCTCLu4BLpWM5EQNxzEmgacpIhCW2S1XMkduK40G
+	fd2+gQ==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxy0c7u-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:21 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-25177b75e38so20198825ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:47:21 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 23:47:24 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32eb2b284e4so2667844a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:47:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758239240; x=1758844040;
+        d=1e100.net; s=20230601; t=1758239243; x=1758844043;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nLDrKlFQ+TyQOjCDaTNIvkV0oUkgBFPymnp+deo0dNw=;
-        b=PypivJcxsHPcOd71+lUAP50N6birVPsH8tReYvuV8NymFm7/TgqJ8ldeigA3AbJKo2
-         htO1JNqfenRrDCHgWseJulFb4O2wEcL6Z+QRdOZt/ln9VWBLAnVEz1xOAtK6gDVrOoV9
-         HeUY0E9AJyd3UTFsiCJ4os/Q7JQ6PSVyNjb0/9KZfAlUVK2DiAimN1JA+qaPRfC4PXej
-         4Bw7fVV2oowxeJYFKh4t+BnjxQFf016sYot67FKRiriZR/mN55Y6fdA06sJxQ0OQwbG0
-         WiqHw0QChImftsYdWPZlUEYcgslvap8c0FOd3rbhb/jZQPQecAZcytZmzqd9IZSGtJNL
-         jPoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUo4RlRa9nfRNyk2JWKcrpGGAqrP63u0KA/YkOcsJFeUrp1RNnPESkkqjXtAle7smnWEAq0Kk+kyOKSsNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywspk8Fi0b3oYn4ghU6ZPzsPNeAA4fUpFkHCsqabIzMMy/moACh
-	p2zEHW9/XALXAKTZDWoRVIaLH/bYNU476Xa81i4ltiAj5hjipt2vaMFKqGmTm6n2Pix2uj5+nrj
-	rBaFQ8aXe/YNe+bPDS+Z+dB1sOhKBJIpnRnC92Jiu+2IjW//GsNYM6ODclQY0p7RYJew=
-X-Gm-Gg: ASbGncsr8uw8+0WYtoOe49TccPmKps+imHJRd8mVGXSq4yRY0TtHf4k3oUAADE8Q9hx
-	lQK7YSOdEUdAJbThVxfzE7+4fb3PHUO3uBtokF4kaMjt7w2TLrn8iJvj1wq5N8UN/R1mTugsa77
-	UfIUQYZRmgvzhcCRdfwcOGBro4Io7K9qmzhEkYKUF9Rq/uxhRcu5OXZ+IRWP+NUNml67hTU5DRu
-	/evn4bY6K2WAzCsZWv82N5zvy2xDl/rd9Q0pade3qrQoz5pvQt1NsPp8+RDLTr5qP9SfgtyKjNo
-	X91f8E53STtV+2Ib4avzVQiCYog94HhlxYdFbODAI8w3OeZ7H8AnhblEmCLcpgvBrtLrc2QsYW+
-	/
-X-Received: by 2002:a17:902:db05:b0:25c:19b4:7ae3 with SMTP id d9443c01a7336-269ba476d87mr19514385ad.24.1758239240291;
-        Thu, 18 Sep 2025 16:47:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGD9ekDQzPxbJSmIN93i1sbgAAD3PPG0qDLK6MmIW/8S8pKCsKu6izoBYxkpA5iLsl7JaGyZg==
-X-Received: by 2002:a17:902:db05:b0:25c:19b4:7ae3 with SMTP id d9443c01a7336-269ba476d87mr19514155ad.24.1758239239836;
-        Thu, 18 Sep 2025 16:47:19 -0700 (PDT)
+        bh=GGhKWo06xdjZ1sk8lDnAZ11n0wQycBWzDYLA/JUlzxc=;
+        b=fL36Z6R2fqh2e/QgeVRxC96k6FlLHtB6gpXPgwTrmeZDLR3BnQ/vmw3w0Ln1Jr4D3O
+         jRLvP7F0H3P6CsanRb7UHQNts+3uGjZVuuQPP4W/DsiXcCWfvWQJVTuAd4f0MEKdD1Jd
+         818S99HN0GkaaDl8xhWH1jEoxgt7HVu/O6Ab+EBHX7a9nd6H5gLIgamnB+XPZvseY0Tj
+         iocyka3mMWWCUtxc5KfXXQn2XJoIixDi3AMrEM/uEonV1bI3RxwrAYvaBI/+hYUT34ly
+         lSysakVfAUA+1AaW+ZdLcoEU3SGzg7+EWR1grxb0lTox4KzmxpnQoTble94Ll7hpGrpN
+         4u9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCViQTuppvld85xLCxxssZTO/Ena/UdBRAeFo4hImn3mSfa6tZWBxQPpfGY40wRcggSsQJrmmwETxyAINcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIzQeGF+Wi/lh4NeqH20wccDTZYv9yp+tmHumUX3RD/IebLQTm
+	vt0qf8Qr+z5vAd84gVZ56AjSb+0aVjqbzCSF0zLftUmoBlLix0DCU9a77PXMqSbmCZrm+mrMWRn
+	WFxkzQ16D8x5qZNi5hlxXuEVgBTxCsieAYrPL/GufdRssEO009PLADPCZywlaxZIDVM0=
+X-Gm-Gg: ASbGncsssQsam5Za2IgZxF8+rvuhG/90UI4OJDbSFJGCP35TL1ULlqj6/RE8xUTslAe
+	JUIEJkQI9wdFz7rklhz39Fn8+ulEPxmnnWZAzBGeTDBsGnaLGmqeHN+/XlKqCrEKVKRDTQ72W1M
+	LbT4Na2WWlu14Dt1ZzkgPDWxIdUGoQ7YP/GKfVqI4Kuo+FgNbf9L12PhSFzdn83f6HDkm2XZ9X+
+	I0SlC/7XtzYO2SLy3ykG+I35ZPj40JeLNDkivLY0WLue5iDRq/METvVIEOQdfOoyACMtgZoZJS8
+	Yx/7PicWL2YU68hfRNwUEBennYXVuRCe6bBRHs5SyHD4qXaT8Xhl5CQggxGSH4E8jL+JkDzVYTO
+	Z
+X-Received: by 2002:a17:902:e806:b0:263:a2f7:60a0 with SMTP id d9443c01a7336-269ba54f32dmr18333045ad.48.1758239243523;
+        Thu, 18 Sep 2025 16:47:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGS5ESImz9azKWgPEaT6zJE0wYFMba62mGhYFWVz45LYnnJ/jvGx1WRG7NesaMARFfeVaFrmw==
+X-Received: by 2002:a17:902:e806:b0:263:a2f7:60a0 with SMTP id d9443c01a7336-269ba54f32dmr18332805ad.48.1758239243126;
+        Thu, 18 Sep 2025 16:47:23 -0700 (PDT)
 Received: from [169.254.0.1] (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269aa71c928sm16474705ad.107.2025.09.18.16.47.18
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269aa71c928sm16474705ad.107.2025.09.18.16.47.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 16:47:19 -0700 (PDT)
+        Thu, 18 Sep 2025 16:47:22 -0700 (PDT)
 From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-To: Jeff Johnson <jjohnson@kernel.org>,
-        Baochen Qiang <quic_bqiang@quicinc.com>,
-        Vasanthakumar Thiagarajan <vasanthakumar.thiagarajan@oss.qualcomm.com>,
+To: Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Carl Huang <quic_cjhuang@quicinc.com>,
+        Karthikeyan Periyasamy <quic_periyasa@quicinc.com>,
+        P Praneesh <quic_ppranees@quicinc.com>,
+        Sriram R <quic_srirrama@quicinc.com>,
         Baochen Qiang <baochen.qiang@oss.qualcomm.com>
-Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>
-In-Reply-To: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
-References: <20250804-ath12k-fix-smatch-warning-on-6g-vlp-v1-0-56f1e54152ab@oss.qualcomm.com>
-Subject: Re: [PATCH ath-next 0/2] wifi: ath12k: fix 2 instances of Smatch
- warnings
-Message-Id: <175823923890.3217488.17674946008340249630.b4-ty@oss.qualcomm.com>
-Date: Thu, 18 Sep 2025 16:47:18 -0700
+Cc: linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Balamurugan Selvarajan <quic_bselvara@quicinc.com>,
+        Ramya Gnanasekar <quic_rgnanase@quicinc.com>,
+        ath12k@lists.infradead.org
+In-Reply-To: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-0-f955ddc3ba7a@oss.qualcomm.com>
+References: <20250815-ath-dont-warn-on-ce-enqueue-fail-v1-0-f955ddc3ba7a@oss.qualcomm.com>
+Subject: Re: [PATCH ath-next 0/3] wifi: ath: downgrade logging level for CE
+ buffer enqueue failure
+Message-Id: <175823924196.3217488.6845685039081313219.b4-ty@oss.qualcomm.com>
+Date: Thu, 18 Sep 2025 16:47:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,50 +107,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
-X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68cc9a09 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=3oxmQQPd3Vm5LX_vkI8A:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX2Qlyn2rthLce
- F4Ti8FHMm4vm+5cRM9v3l54KIRs/CKCpe6uDniv3J1W8xAQGSBkMboiPxVUmW9IBRKbqBUvBvUo
- ovNzdZvMRwTWoMQJvKuJTKU68wkosBBdBslYfa9SEF9ZKZjY38SWi1aon8c4rqw7/0Fuu1cxsc5
- J+5ZAw9CwhKN2TzIsrPhSM4j8Ik434zu399nX/uuGgSTPv6MrVCNPUsJ8fhDrcYHWjLNE9YVDbe
- Yt1T7eyUlt5Jqaqk9dUHjgxgfTb0M94A1QKlPrgB2uuPCzbAmFuG5llKxamTRxojBnDLTFdd+q6
- 0eRG/ZjJOIDvr6hUua8R084wXGJnyUya5bsVScbiRfERL5NQJOQlyWBCJ2slMNkzj63ihCJaI8d
- jt/FF4fw
-X-Proofpoint-GUID: WGOVFt4txLk1xqZPo3kG3SzZxiPxYUsx
-X-Proofpoint-ORIG-GUID: WGOVFt4txLk1xqZPo3kG3SzZxiPxYUsx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXwGWamL891668
+ gD1oB0nL9Kq9i64kxN6cPv8lKeumVa3QI1XmbDg9hm7rJDDz/1WXLAhDBc3ygec6hheuZBQhlj8
+ gxFn6mLIXiRh6YAbv2oVCW+8p8tR4TYrcqZ3Zn7UVUk0pQueO4Ye6qyvGjgNs4vfddRnQs0jbY9
+ ohl0EfVAq/Vt7j3hb9VHpCmOirWtcGvwcXzEJV3lE2V3Z82ykmLJv5PiNJleYIz7isgFnJE0j7k
+ pU59SFOdc0Y6bI9fHPKvst6Pur65Tn8Jxps8RBqIXI6yoVLVnYZLktO0lo4jjSQER/VqEr/p0sy
+ 0nCCxQrJoWSwVILqlpcrv22FXoXLM6xzv0Vt6E2eMFqcFhaoOpi87hPuUa4iaK9ciWgQzVWQJDG
+ k56bQnwu
+X-Proofpoint-ORIG-GUID: pOav2TVYwQpVHhd98Q8TO4m00uKbNWJ4
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cc9a0c cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=TpeBPK0GJKfZ0rfD3RcA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-GUID: pOav2TVYwQpVHhd98Q8TO4m00uKbNWJ4
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-18_03,2025-09-18_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
 
-On Mon, 04 Aug 2025 11:03:09 +0800, Baochen Qiang wrote:
-> Fix below two Smatch warnings:
+On Fri, 15 Aug 2025 09:44:55 +0800, Baochen Qiang wrote:
+> The CE buffer enqueue failure won't cause any functional issue, downgrade
+> logging level to avoid misleading.
 > 
-> 1#
-> drivers/net/wireless/ath/ath12k/mac.c:10069
-> ath12k_mac_fill_reg_tpc_info() error: uninitialized symbol 'eirp_power'.
+> Also fix an incorrect debug ID usage for CE.
 > 
-> 2#
-> drivers/net/wireless/ath/ath12k/mac.c:9812
-> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'local_non_psd->power' 5 <= 15
-> drivers/net/wireless/ath/ath12k/mac.c:9812
-> ath12k_mac_parse_tx_pwr_env() error: buffer overflow 'reg_non_psd->power' 5 <= 15
 > 
-> [...]
 
 Applied, thanks!
 
-[1/2] wifi: ath12k: initialize eirp_power before use
-      commit: bba2f9faf41ee9607c78fcd669527b7654543cfe
-[2/2] wifi: ath12k: fix overflow warning on num_pwr_levels
-      commit: ea2b0af4c9e3f7187b5be4b7fc1511ea239046c0
+[1/3] wifi: ath11k: downgrade log level for CE buffer enqueue failure
+      commit: 541a201e9f46c6633aa1a08df4ab17cc7c96bf89
+[2/3] wifi: ath12k: fix wrong logging ID used for CE
+      commit: 43746f13fec67f6f223d64cfe96c095c9b468e70
+[3/3] wifi: ath12k: downgrade log level for CE buffer enqueue failure
+      commit: 8873edecb38888726ce411b32de91b96cf41bbdb
 
 Best regards,
 -- 
