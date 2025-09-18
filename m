@@ -1,217 +1,274 @@
-Return-Path: <linux-kernel+bounces-822829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B81B84C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:13:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1ADB84C78
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF5E62276B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7BC1C8133B
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60F93081CA;
-	Thu, 18 Sep 2025 13:13:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC4B302CD1;
+	Thu, 18 Sep 2025 13:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="TDAGv6i4";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="fVnjzX0m"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D9D215077
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758201211; cv=none; b=FvYD/M325OpS/YDqpHASNRYdUkvIY6T8RGQE8Zm5K4RoK9n6Rnyh6fjxlaXfaCZn1e0tRBSuhC9iWBvbxWWPKlHnHLLrHjXUcd9oOZiLDeI7b8ZWBGYqbQJh68Sa5idSOfl+nnLEJ166KxEVeggyu6WckJAOCtyH2jjWim5FpDQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758201211; c=relaxed/simple;
-	bh=4M7PM54nGrrYuSPJ6d7qRMaIzTjxfXkzd1/iL9kR26A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KW9RTDPlgqcRjaGIYYHsm1QsB35RG7rHB/NgJ1z5QNEA/OAHv2tIHJpBGHfJflFHeLE7HU/b9sxMY710w5D75NxYx6BPLrhhpwm8rFlVBNiQD2dY7E96XyBxAD5N0fHIjVL7cBv8hUpjvYPk4J7d3Fxx7Jso/gOu8hAKrtvlC1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-4020e59b735so21181525ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 06:13:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758201208; x=1758806008;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0Fr32qzqsQYu3FSW8a1jhN046TIMZCnkvZ9M+6PJb3g=;
-        b=qAa+Ju3o0kDbN6jeofC6TWu0h6iSv2GM5a+Vg2jQt4zgHmmZ63Y2vaHfCDO62OGwqB
-         Q6RW74IHxQIziOWrpPxEVp/p9zUTj7OvBC+p86dh35zrzj15+KgqYwnFMZGmes/LnLNP
-         LnRFqh6Pz3Vi9b//S7bwPdr2FfLWhIlhafc5QRP878AD0y9IHyhouIcp4qsjf9O+XyJX
-         +XgXn6mY1gE1FGhhqIT59w7kRdgbVCPQSgI/Pe5mzd6Tws2TjAvnILe3Gaq1tctzHmIv
-         m7aJaDEm1j3T4QPDVt9uSm0KgB4cJuCKC8jN6Zrf2oRknu7VJ6D+Wcda5vgh663Zw2jw
-         twzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwFqYZ7TKCcG8tPPl/aAcv5gjTTTFelkXCkagbS6zt0ES9Gqf1tU0jAVrSN8jdztXC/wXEZu8Da60UONc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/HyBB58CnVmbtm3H79PeaG3vNAcdpeQjveJRUWQBuEK4ZFPPM
-	H3gliGrMZ6yHVIuSNUhtgi52cOtFBPaDUQOIR6GCqgO9eShvAzK9H4vi6tTDTClhedvp5SyW46t
-	FxpNNKW21RW+r1i0Wn7zeRMBGxwvqlSeC2/lvp/GubqPvlpeceSsTbrpJcnc=
-X-Google-Smtp-Source: AGHT+IGSHGIiZgoLQHso+5YU72ewPj69eItK53LS/pEGPOdlOmFDJCugRXh9tVjP52qdFExWNm6AfKlwiBGx08bZgtRLQaWpHMGC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239C319E7F7
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758201570; cv=fail; b=rQ12tYKnunqt3hAhrL2OA0feISi/sVZwzWUocjRwr8Mt+8vz6sr1Cs96no0W9rXllviPekmwEg7Qkf3Ron7gHT/0dR4Iw+TI4RSnVN+IDUpAq4Sz8lzYLBFdgQMwoyI+gHwukF5L/ptxdyZfOfsMeWkawchUjAgUL3xtXABDmmE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758201570; c=relaxed/simple;
+	bh=hk0cmpZdwtBA4Syd8/5+4brGMwG3WVkil0e0/jOlcdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=V83AxICNrjUfE1rpWB3cbr2sj3dE/FEMJU+VurGqYcgfcuPmTe75YKsZ3M0FReeUYAT6pXQaqpZf1qImMmwydPShRu1Dw1E9OnA5ujJHK5yBw6cH8l2CQA9iHkzFNHRr+Xa9m0e2haE8jLtH/g/fgAgGcPRChx21XTLBbgD/zSE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=TDAGv6i4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=fVnjzX0m; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58I7fut6021226;
+	Thu, 18 Sep 2025 13:14:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=q/h5YQ7u/tcS3vV/CJ
+	Pz/UsJST/GQ7iAfIEOGDr/yLk=; b=TDAGv6i4RSfqWdaqvsu3QyQyjZkVF07pIF
+	5GBrYNrLPI43mDjGUE2+yNzJ5RURHaX/CAdAoh1HTixV42ae+HRn/yMmM+fcJnK7
+	05JBSgbByaEomf6bMSwV+GGkpFiIFbVWrO0DahnXz8qoWDlZa+M//+OAVI7uFN5M
+	zkN/jrP93iMGmUONbg4uZeS66d0cp7eiHV6w0ChirxYw3/1ll/3aLY6n7uSXzFpv
+	BTUKHzvmla3dZI2A7Dbx+enn3zaXkYoax+QP0fPxfUfc0ErcXRKYW7bUCeULMYrk
+	y3x/hNAE5u5u1FW29w6q6vo09TxPcJ0j+lfZ23NfgKhsRd2RIJ4g==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fx9uftf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 13:14:05 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58ICrcFw027252;
+	Thu, 18 Sep 2025 13:13:56 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012017.outbound.protection.outlook.com [52.101.53.17])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2ncymq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 13:13:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EHljBEkIJLNaurmMu8fzOkzENdyDGebS9dUfigfzy53aLnEhuQo5wIUHJpS2BN+PXFwa3hqgnSfxqI2ViysiNzJ11Quw249NFtblLN+KoNiopXWJnrsZG4CWmZ/bIoCvhcdjIStRrAvuXpt4DmPgMc07n/YFF/9MG52o/hRE29WwuTr9lbE28KGjF0YBsby+pCjTROmyblZELWSfw980QlPaqFVjHKrpzvtviUnXIshIkLr2fPNamXSNHhPnjLP/oJfRSX9q7+CeEVDw4vUIt+jCA7MyMiySvDwFJMmr1lgcv5ylJdmRo5B1EflITY8Dt+Yt//Re/koh/chtq6Z6sQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q/h5YQ7u/tcS3vV/CJPz/UsJST/GQ7iAfIEOGDr/yLk=;
+ b=uePD5HD6BpqOWWKXg7Nli8LnPHCTN0eqTpqOIVLdAZUk27mW0T+9PT6N/UFyvfUoe9eRXzdjKtyEzofxeARcJcXUFO9PjFN/NltdpESGJjPGOm1nMxEiHORH8UAQSms2B/SPIvJ7NaTR/P8twap3Rl62h2QjKxFwWbMlBf2nzILDCTiCeOa1HLR6LzwQtq6FJVt0UOKCThffixNmR7qIgEWPz494ALGKZCe/0pQ3WS/2ml7yOIGOtkkwUs9AuifcDULcfvGIJWwUKjAlvZKfT+C3cHqonV2HZO9ApOEt4kZVt60M1pcxwGa2JjG5j56FNrXSELngXidBU19fN9oUkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q/h5YQ7u/tcS3vV/CJPz/UsJST/GQ7iAfIEOGDr/yLk=;
+ b=fVnjzX0mF7lLFF3c2CssngejyKC32u6KVaFq9SyEfVVNglhgZteV8w4FC66mYLOShvaA0PO9fJTOQlCGRO75vS/6Kw3zwhrNd1y2gEQ/NBREZRfDEWktHODe/zXWA+57gobQtBaoJ2O8dr0aGpArk0lJDFokC04ez/6divIVoo4=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DS0PR10MB7127.namprd10.prod.outlook.com (2603:10b6:8:df::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
+ 2025 13:13:51 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 13:13:51 +0000
+Date: Thu, 18 Sep 2025 14:13:46 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Kiryl Shutsemau <kas@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH 1/2] mm/fault: Try to map the entire file folio in
+ finish_fault()
+Message-ID: <962c9c49-8603-4a57-ba07-36e395eb48a5@lucifer.local>
+References: <20250918112157.410172-1-kirill@shutemov.name>
+ <20250918112157.410172-2-kirill@shutemov.name>
+ <6e6f596a-1817-45d6-b674-04e8aefde6d4@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e6f596a-1817-45d6-b674-04e8aefde6d4@redhat.com>
+X-ClientProxiedBy: LO4P123CA0552.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:319::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24f:0:b0:423:fc1a:126 with SMTP id
- e9e14a558f8ab-4241a55e27emr83668035ab.32.1758201208638; Thu, 18 Sep 2025
- 06:13:28 -0700 (PDT)
-Date: Thu, 18 Sep 2025 06:13:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cc0578.050a0220.28a605.0006.GAE@google.com>
-Subject: [syzbot] [f2fs?] kernel BUG in folio_end_read (2)
-From: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS0PR10MB7127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9436c7dd-4cfa-460f-1217-08ddf6b53629
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hHkuLsbAZQEG5RxvLvxA2mUlArMkgamHsR6PiT9DcWqUAnt+RM4j8lcYtXJb?=
+ =?us-ascii?Q?xZRApYNYJxQzDjpA/Wo2Yoyr9GfmYjYeKZYTXe+OWV93lCwuLTWRi1Rpfc/g?=
+ =?us-ascii?Q?6AxEDMqT4pm6eKj499nuLGMTQlwNjjgFwe+UwblvQxbdELDmpK/5e4RDTIFg?=
+ =?us-ascii?Q?9J+DJSis+vFutuMpPYHeqWvemagnfByQjbh6Xl0jptnZnlFQQiut64azZMMN?=
+ =?us-ascii?Q?YuxGArvZfY25JX8S4MduaDtpd5pmk6cY5xH0vVOF+juL8JzemqqNIqQDBXTM?=
+ =?us-ascii?Q?txVkKrf2pWoVWmeQgW7slunww42ff9PzlCTxRFHQN5FcfD3udFoBvtx+W82Q?=
+ =?us-ascii?Q?b1o9TnMlrxCQdtxAUolZC3R0ZVNHZMa964CGe49qAzY8OlXxgXSvZHXR0R+P?=
+ =?us-ascii?Q?iBR0ocgbVRVH6FKtItgM78FPvs/rQhGkyjf4sHqUDbHGAQ6/nG7NCGMX8lJ7?=
+ =?us-ascii?Q?8oTHqUeJnLD2OLY7Z+ynK564EQuOtAPKPi6u+H45pRNOjYkU2LHtHflkbgyU?=
+ =?us-ascii?Q?KHTwQuGmur3MuGyCWI5DyksdFpcvbybD3SA/ur1UtptdTxs+G9cQhMqlNJKK?=
+ =?us-ascii?Q?URZufSkgl9KWJtO2htFTDrEYhtxIeSs3cLlXvCOREGJBNkpWixOAubU1gD7P?=
+ =?us-ascii?Q?ClB5hTwlJnTOVVeVT3M6fkGu0JqaUyBdhas3/Hkcq7xo14T7GCnHC5rVwWNA?=
+ =?us-ascii?Q?zDgEYjNoWFRzGQ+GP6rWXmSl9mXMrraUU6sgg3tBrqQZghz9W+9iiXEtcIdu?=
+ =?us-ascii?Q?ZVECAWccoBUPa9SocBsOOKWC1FjxujFgfmV/ftGgMoVlx4B8+lNkrkThMYHC?=
+ =?us-ascii?Q?A9Wmt7pxA0EUh9Kik8FtQqtuEbqF29Fu41RPDZ9c/56Mc4J1CCH++ZUzXCX0?=
+ =?us-ascii?Q?EFhglB3sZ8teo2A6CDIYWmUietOReD20uRKBSP2gpkKMm805EpO8KDc5/EE5?=
+ =?us-ascii?Q?HmTmCi0EwzY6bkqrX/OfzeUqdgNqk3NexWBHlBx6swqLLHwGo8sEpK72+AhB?=
+ =?us-ascii?Q?wMA2cx+ffIR+TiyrQq925gKiPiNtNS6/hYZ+3AuTBFx00OUhZA2TaS6PyY8t?=
+ =?us-ascii?Q?GTuU72MsMx45c51bNbztGlDjMkaxDR2mu9wUMz3OmG0xmYImXRb2VbmudBfC?=
+ =?us-ascii?Q?MIOpFKHi6xUyqUibTepzXX1fzVs9/49qymrPQ01SysfmXTCMpGiZh3GToCmd?=
+ =?us-ascii?Q?uIfWUOCcOIhlHytqKlO6SrbJ5f9OfMwa4oIqixM8VeeoSi1v+958MSutxYOA?=
+ =?us-ascii?Q?yOVBS9doI6VYLHQ58ViH8TdwvVZ9ztCfNuGWqeXou2jZKg49XoSGKI7E5jiO?=
+ =?us-ascii?Q?pCOLBX9xn8qBTPH3TYhbhN7AI8AEMUBdHTDrpwJY5Fz9HqRHUH3C22GPL1Nu?=
+ =?us-ascii?Q?Yduwii1b2f/uKxmV4JL1UybHJU1z?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8DdLMu1ZTagssueNtFlnmkKX4bYtxMGDX0n5v8zsK2QBfMrunoekO0rhK9pF?=
+ =?us-ascii?Q?Wm9nnd47m/c3mc9bLZkEsB4ye7UBurOp5fgIy+5Lfi1BzmYZ68RMNe1jTTwl?=
+ =?us-ascii?Q?cKc2lxrCYAfAodg1Rf8FacIaXhDUD4ThHT9JpFFWzr4FP+JXAQ5z5+TVCitR?=
+ =?us-ascii?Q?3HM6MoVhArFfDMGIFeGJkhTurOK9KMohRHNJnyg0VeqJNA0j/q8Cwrm65AOJ?=
+ =?us-ascii?Q?WPK+oEq30n4A0+Te0oH/p2sP3qfmkP6XXiZ7AhEguxVNnqZcXl/kzpjTBlnl?=
+ =?us-ascii?Q?0yow/j9kD2T8j0T8RW9rAYzwJdmpcAdJ3cLGxQk6ebv2SenTCxrhKFfYs59a?=
+ =?us-ascii?Q?mE/6pog6M/0iy+JjLNWgOvdMSeDUYTFev1ec7GoTE7fBNfcyVl1TEBBcmBrw?=
+ =?us-ascii?Q?pC3R6mksdHptY/S3ynn1qLn0+XUmFNng1WG9H+NWBn9egZjLbddiPz+pNqW5?=
+ =?us-ascii?Q?kExbGNZUq/T0JaaDSZ9ZCHvnlhGAiZbc6l2cSehtowgATP1PtpKE/pWlBCas?=
+ =?us-ascii?Q?2k5cD0G4JPv2qBLpVrKvXZCD5LVPSjzc3wc3TNuZRIAM8xtaU3Y+geRkShzy?=
+ =?us-ascii?Q?boo54hrcyt76h4Jxc7X1e2QGePM69FN9u6VqD9EfaJYQieFgjoK+rYvn3VzI?=
+ =?us-ascii?Q?Q4H4ZMlrbFdJH6OO1/B5LL/xtu6+UBmxtcBXeJM/gVKMEVfOorA7Z6YOab+y?=
+ =?us-ascii?Q?TRr1zCf6zSjfCpJrBlcGRNCtn6KXDaBq/kTFq58MPTJiY1eDPi/ScHJy3pi/?=
+ =?us-ascii?Q?RDFFttc7gqtD8JD79NEopI1SioCAu9p9mVJhhXijWmQ3TjdjMw1S61WGAIT7?=
+ =?us-ascii?Q?MzfKnGjlosAodot25MxJBv43VPb6AJNfkzElO45144xif9SABhYBDZlljnYH?=
+ =?us-ascii?Q?IQy+zHid491Ggkky3hVE+Fu+WIXMqUfD+LjeZyTY7SWVPKVMvnAOhTzeAY30?=
+ =?us-ascii?Q?C05NCf8ATO6GYhGTGB9VWfgVzGbOd3NGRja8TzKRPfWW+qRPw8pI+7thAUFm?=
+ =?us-ascii?Q?TVGxERXVD6CuECiE2eh4Os4i9b3P+LOwCGX5dyWePA2Uwr2Gug4bEBA1J3Wh?=
+ =?us-ascii?Q?XHv4En7TyvuKhnAutBK8ghiAPaa0ed8Dad7P5l4vZq9m2Q7hdLTgicLk/hlc?=
+ =?us-ascii?Q?AM+AbJ688EyJS3FVHhURNNHuvf55+5iIwOlfN0FAlVylYmK4M78w6U6YYKXp?=
+ =?us-ascii?Q?EwAWYcCKkwHhls1gzrcHKC6NYbfiEiZ7CqP7iu9fnp9ZZunVKUf065GI4/Ct?=
+ =?us-ascii?Q?7ZaJNyMEfc7eT0ttoa+YfXnCIkJxS58KEL3FdBKP/Lyf3dPOf9AIGgcBHzdV?=
+ =?us-ascii?Q?lnFdpvwTXHtGOGk+A7mBhRqsN0+x9exDSDtBI3PsrxpUrHjnd6/6jyfL3IYg?=
+ =?us-ascii?Q?/CyJsrnLHR+G/KtbGEESdeNmXxFTIn75K86nossvoGtCF0q4tBwTE8nFzW/R?=
+ =?us-ascii?Q?pDFYjfTOKClH9a56PWiEKvxP3+8fPMVvnlWGKs5mRJ5r/rhofKL+JgFSaPUa?=
+ =?us-ascii?Q?cIPo36/HQVIJWaSc3OEBh2gGieTGYtWYGBmWTkQA+MenyLvHXisFbzs+Cm5s?=
+ =?us-ascii?Q?sCm83AsYfWOVYfNTJIgxBThJ1OArdbQURuosTV7xuJAoYrs31AiDnNc2lu+O?=
+ =?us-ascii?Q?8Q=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	2XpGH+KekDSbnsLJ4ifein9qsSVGy8Iy9pSTT6jNNCOeMuLWz3nQk8h1MvcbB9z3EQl7U1bFcFsitLAZjPmiW0jq4NbB0Df4C9ZfN/hq5udOs701rndgvtz46ZQInl9oFgqpFml3fuYvlTKsalcJ1PeyCBKeS00stkfkdwEnPFPgLbLByIgJeBhXYgI78MDoCzn27N9K3xlOrm09QQbW9L1JSCao7zMlvdGZaHF9nopd8Llp3wuXsyxUIs4riRpbNTHrle7QT28vlq0qXAYX8mKrzt3fBHu0n6y/QFl08cS2JAytBy+/j+eQuWap1afms++to+Jv1u8YkuLTWjcuFPBypKudLhk8gQArU/uk4+8Cr5ptuYV4H5VX6c+TjhUh039VCm7nUxejBdtiyKdFUpPnhuq0+Z4Gd3jp9ZhtGyVql6ch/Mx9W9LI18S36KoIWpNMk0atyWBxMOdYjO4kGyqwHrfA3uClcV+v4OKgyST42SxNrXMj35zhVZ+VZcgYdBwE0L+olzBN8JtESPN+2a4VsfwKsHanNPytKDcm7t8NEWdtBYlPA1rQ7jo+7uw+1H3nDlMx3vqvkdrPEz+vEun/96aZ50Qx3S6NccaNzoE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9436c7dd-4cfa-460f-1217-08ddf6b53629
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 13:13:51.5339
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /IWihjtPN6NOs+clgqVVtm0GF8yT40b9ZixvqXT+2mzMhalvBo999AK0g+Fe37njG2i+DbEBrBw2o+EBbXFlEKe9JlJ9sk+9dJL6YtiGX/c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7127
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_01,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509180123
+X-Proofpoint-ORIG-GUID: rYplyAPDFJLuHxJiLc0Owdrk-7PaL9zV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX7yBJkHzBQd80
+ uNHZR/QWEqS4+YoawV/WcExkeUGnZOu2mbUdLswa7oEiFU7DoYjogjlR3Zkszz0WHDqbuRMYaXz
+ o0qVyv3xh/sYcMATgcipouoKPic//JHC5qJGtM7HD9ZdpdQ1lOcBXtahuKeOjXFxqxl3DEltIOt
+ kw+2KL+R7kEeDi/isVJo3BmqA03mxrYIP6rg6UUTbXalKbms8VsAGC/Nz+23P8noUvkryhNMtXJ
+ IMUKMFFbKsELL6s6lCTSgo9VAnX6rMIKVS+GX1MEehpQlnNxG3sNuKPy00CH8Wkquyic31b+A1U
+ xmZQbHLdzbLm0wPLQ2i/d/ZGdsynn2fGSw+7DyiAKE6mpjwvM3zCIjeYABeM0SlIM+9vGLjvv6I
+ wsn1f3JpWkdmfD2lylKaNx2K649ReA==
+X-Proofpoint-GUID: rYplyAPDFJLuHxJiLc0Owdrk-7PaL9zV
+X-Authority-Analysis: v=2.4 cv=C7vpyRP+ c=1 sm=1 tr=0 ts=68cc059d b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=SRrdq9N9AAAA:8
+ a=nRNfCKwT79iVDUcoIfQA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12083
 
-Hello,
+On Thu, Sep 18, 2025 at 01:30:32PM +0200, David Hildenbrand wrote:
+> On 18.09.25 13:21, kirill@shutemov.name wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> >
+> > The finish_fault() function uses per-page fault for file folios. This
+> > only occurs for file folios smaller than PMD_SIZE.
+> >
+> > The comment suggests that this approach prevents RSS inflation.
+> > However, it only prevents RSS accounting. The folio is still mapped to
+> > the process, and the fact that it is mapped by a single PTE does not
+> > affect memory pressure. Additionally, the kernel's ability to map
+> > large folios as PMD if they are large enough does not support this
+> > argument.
+> >
+> > When possible, map large folios in one shot. This reduces the number of
+> > minor page faults and allows for TLB coalescing.
+> >
+> > Mapping large folios at once will allow the rmap code to mlock it on
+> > add, as it will recognize that it is fully mapped and mlocking is safe.
+> >
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > ---
+> >   mm/memory.c | 9 ++-------
+> >   1 file changed, 2 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 0ba4f6b71847..812a7d9f6531 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -5386,13 +5386,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+> >   	nr_pages = folio_nr_pages(folio);
+> > -	/*
+> > -	 * Using per-page fault to maintain the uffd semantics, and same
+> > -	 * approach also applies to non shmem/tmpfs faults to avoid
+> > -	 * inflating the RSS of the process.
+> > -	 */
+> > -	if (!vma_is_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
+> > -	    unlikely(needs_fallback)) {
+> > +	/* Using per-page fault to maintain the uffd semantics */
+> > +	if (unlikely(userfaultfd_armed(vma)) || unlikely(needs_fallback)) {
+> >   		nr_pages = 1;
+> >   	} else if (nr_pages > 1) {
+> >   		pgoff_t idx = folio_page_idx(folio, page);
+>
+> I could have sworn that we recently discussed that.
+>
+> Ah yes, there it is
+>
+> https://lkml.kernel.org/r/a1c9ba0f-544d-4204-ad3b-60fe1be2ab32@linux.alibaba.com
+>
+> CCing Baolin as he wanted to look into this.
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
-syzbot found the following issue on:
+Yeah Baolin already did work here [0] so let's get his input first I think! :)
 
-HEAD commit:    f83a4f2a4d8c Merge tag 'erofs-for-6.17-rc6-fixes' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16830762580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-f83a4f2a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3e6c4d9a21b6/vmlinux-f83a4f2a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7bbbc8ebb9ba/bzImage-f83a4f2a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3686758660f980b402dc@syzkaller.appspotmail.com
-
-page: refcount:2 mapcount:0 mapping:ffff888043b30220 index:0x1201 pfn:0x1145b
-memcg:ffff88801c6a8d00
-aops:f2fs_meta_aops ino:2
-flags: 0xfff200000000a9(locked|waiters|uptodate|lru|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff200000000a9 ffffea00006927c8 ffffea0000472b08 ffff888043b30220
-raw: 0000000000001201 0000000000000000 00000002ffffffff ffff88801c6a8d00
-page dumped because: VM_BUG_ON_FOLIO(success && folio_test_uptodate(folio))
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x40c40(GFP_NOFS|__GFP_COMP), pid 5369, tgid 5367 (syz.0.0), ts 88439663476, free_ts 88354226936
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
- alloc_frozen_pages_noprof mm/mempolicy.c:2487 [inline]
- alloc_pages_noprof+0xa9/0x190 mm/mempolicy.c:2507
- folio_alloc_noprof+0x1e/0x30 mm/mempolicy.c:2517
- filemap_alloc_folio_noprof+0xdf/0x470 mm/filemap.c:1007
- __filemap_get_folio+0x3f2/0xaf0 mm/filemap.c:1981
- pagecache_get_page+0x2a/0x130 mm/folio-compat.c:81
- f2fs_pagecache_get_page fs/f2fs/f2fs.h:2908 [inline]
- ra_data_block+0x505/0xc90 fs/f2fs/gc.c:1266
- gc_data_segment fs/f2fs/gc.c:1630 [inline]
- do_garbage_collect+0x2f1f/0x6410 fs/f2fs/gc.c:1826
- f2fs_gc+0xc87/0x2590 fs/f2fs/gc.c:1931
- f2fs_balance_fs+0x5f7/0x7f0 fs/f2fs/segment.c:466
- f2fs_write_single_data_page+0xfaf/0x16a0 fs/f2fs/data.c:2906
- f2fs_write_cache_pages fs/f2fs/data.c:3141 [inline]
- __f2fs_write_data_pages fs/f2fs/data.c:3290 [inline]
- f2fs_write_data_pages+0x195b/0x3000 fs/f2fs/data.c:3317
- do_writepages+0x32b/0x550 mm/page-writeback.c:2634
-page last free pid 4841 tgid 4841 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0xbc4/0xd30 mm/page_alloc.c:2895
- __slab_free+0x303/0x3c0 mm/slub.c:4606
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- __kmalloc_cache_noprof+0x1be/0x3d0 mm/slub.c:4402
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- nsim_fib6_rt_create drivers/net/netdevsim/fib.c:547 [inline]
- nsim_fib6_rt_insert drivers/net/netdevsim/fib.c:752 [inline]
- nsim_fib6_event drivers/net/netdevsim/fib.c:856 [inline]
- nsim_fib_event drivers/net/netdevsim/fib.c:889 [inline]
- nsim_fib_event_work+0x1174/0x3180 drivers/net/netdevsim/fib.c:1493
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-------------[ cut here ]------------
-kernel BUG at mm/filemap.c:1525!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 3024 Comm: kworker/u4:11 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: loop0 loop_workfn
-RIP: 0010:folio_end_read+0x22e/0x230 mm/filemap.c:1525
-Code: a5 c7 ff 48 89 df 48 c7 c6 c0 4f b4 8b e8 aa d3 2f ff 90 0f 0b e8 d2 a5 c7 ff 48 89 df 48 c7 c6 20 48 b4 8b e8 93 d3 2f ff 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-RSP: 0018:ffffc9000daa7328 EFLAGS: 00010246
-RAX: 914fe16334449200 RBX: ffffea00004516c0 RCX: 0000000000000000
-RDX: 0000000000000006 RSI: ffffffff8dbbcae2 RDI: 00000000ffffffff
-RBP: 0000000000000001 R08: ffffffff8fc3c537 R09: 1ffffffff1f878a6
-R10: dffffc0000000000 R11: fffffbfff1f878a7 R12: 1ffffd400008a2d9
-R13: 1ffffd400008a2d8 R14: ffffea00004516c8 R15: 0000000000000008
-FS:  0000000000000000(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200001000000 CR3: 0000000011f6e000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- f2fs_finish_read_bio+0x2e1/0x3e0 fs/f2fs/data.c:154
- f2fs_read_end_io+0x360/0x980 fs/f2fs/data.c:-1
- blk_update_request+0x57e/0xe60 block/blk-mq.c:989
- blk_mq_end_request+0x3e/0x70 block/blk-mq.c:1151
- lo_rw_aio_complete drivers/block/loop.c:337 [inline]
- lo_rw_aio+0xd75/0xfa0 drivers/block/loop.c:411
- do_req_filebacked drivers/block/loop.c:-1 [inline]
- loop_handle_cmd drivers/block/loop.c:1919 [inline]
- loop_process_work+0x835/0xf90 drivers/block/loop.c:1954
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x70e/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:folio_end_read+0x22e/0x230 mm/filemap.c:1525
-Code: a5 c7 ff 48 89 df 48 c7 c6 c0 4f b4 8b e8 aa d3 2f ff 90 0f 0b e8 d2 a5 c7 ff 48 89 df 48 c7 c6 20 48 b4 8b e8 93 d3 2f ff 90 <0f> 0b 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa
-RSP: 0018:ffffc9000daa7328 EFLAGS: 00010246
-RAX: 914fe16334449200 RBX: ffffea00004516c0 RCX: 0000000000000000
-RDX: 0000000000000006 RSI: ffffffff8dbbcae2 RDI: 00000000ffffffff
-RBP: 0000000000000001 R08: ffffffff8fc3c537 R09: 1ffffffff1f878a6
-R10: dffffc0000000000 R11: fffffbfff1f878a7 R12: 1ffffd400008a2d9
-R13: 1ffffd400008a2d8 R14: ffffea00004516c8 R15: 0000000000000008
-FS:  0000000000000000(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200001000000 CR3: 00000000114b2000 CR4: 0000000000352ef0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+[0]:https://lore.kernel.org/linux-mm/440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com/
 
