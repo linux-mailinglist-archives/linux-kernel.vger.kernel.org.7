@@ -1,201 +1,108 @@
-Return-Path: <linux-kernel+bounces-822102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D15B8307F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CFDB83073
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 07:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17EF87B402C
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:38:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E08957AD3FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEE02D6E78;
-	Thu, 18 Sep 2025 05:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AA62D73B2;
+	Thu, 18 Sep 2025 05:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Jn+/3YUR"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOFgZ1XM"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0683A34BA2C;
-	Thu, 18 Sep 2025 05:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605E82BE648
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 05:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758174013; cv=none; b=LihxyOimijpdZKrTszIJLjkrSHy4Z/2L5wE+C9gBzbOrYadAFSm8CpT9Bz+IYWgAuE9zj1Ed3+5cdfrxpG2FA//40JqckIxxoQsi2bJFZWcXrUV6QOD9WuM2ec4x9dTEUof5wjmbmH7ZWciXWHZAWWLFT1L7oB8/6nTNPndJ81g=
+	t=1758173981; cv=none; b=Dvxt5ih+dHMS3AleyQLR/21VUPJlL2Sd0FsFWJAXWdwpVe7pdOL5Po9n5VGGqrV49mPFuXPbgIjjNs0iudP/e4wOcwaLE3BhbUsAcK6YRNjrHo9gMr1IdrJkr3DOgdwZ1icTr5sdjjQOCn2jAkSD6MLjgzPES5lxAUe/Nhm/xn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758174013; c=relaxed/simple;
-	bh=DHo36Nw9Mhb8OSdyfEa69N5hMrs1OO6ojIUqj1gz0sE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7dV92keZX352Y8n4P3ZTFIaXskvl5pMz/zdoJF9aDrAAYZ96oADUtouuyuUgUyhInfjXydxiHJA3gpXFSgxbAkRPYX/zknuV3E9E9ZvVUnOFsyas0StAyiSXjws29D/am1YG6JSO1JWvigWlbl4ZCp8J0IDLzPXMCIfbVSKTSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Jn+/3YUR; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58I5dad41676466;
-	Thu, 18 Sep 2025 00:39:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758173976;
-	bh=DKjp6N/ixan1BjatOrTjluVvM3Lvf9IQYxDJwVkTHGI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Jn+/3YUR2Waxjc9kICUNeTvsLCWZ4SzptzZzI552+gi1e+Q2RL8vnGaY9mJvRB210
-	 IBO/CfMwq6N3MSR4jYnGhI4HH7PNUrWg5OaAvNzXbiZrzAR++zhdOj5N7ozg9HZlXF
-	 ng1LpS5A5lLuaRU1bZCJWi9aSylBGdVhX1NZzp+A=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58I5da5Q1878417
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 18 Sep 2025 00:39:36 -0500
-Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 18
- Sep 2025 00:39:35 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE211.ent.ti.com
- (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 18 Sep 2025 00:39:35 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58I5dYu7066935;
-	Thu, 18 Sep 2025 00:39:35 -0500
-Date: Thu, 18 Sep 2025 11:09:34 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Peng Fan <peng.fan@nxp.com>
-CC: Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-        Pavel Machek
-	<pavel@kernel.org>, Peter Chen <peter.chen@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Xu Yang <xu.yang_2@nxp.com>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <imx@lists.linux.dev>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 1/4] pmdomain: core: Introduce
- device_set/get_out_band_wakeup()
-Message-ID: <20250918053934.dweerdmcqdkr342w@lcpd911>
-References: <20250902-pm-v3-0-ffadbb454cdc@nxp.com>
- <20250902-pm-v3-1-ffadbb454cdc@nxp.com>
+	s=arc-20240116; t=1758173981; c=relaxed/simple;
+	bh=tL4EM/uHHsExhCxv0TtPtLPrn+LMaQDa3EkJi0o+RGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXkOAGdqMZXM7JAwZsLzARFbZj8KXslgbsnPmmoDXeCE5883xKp9SWtTp2rG+NGm3Teyi9fhz0XFRkHt7xIxQ1hU4eX2ONcpcQLHJJafSbmVwjSFM1eNbltcHCSoHAY0uxNBH/dR2tthBBnCiNKh57VijRHCLemjAuUn+UHenGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOFgZ1XM; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32dc4faa0d7so375953a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 17 Sep 2025 22:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758173979; x=1758778779; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pYLuLD8UtvBpT7GojTBkQ4oUBcmarrpk57Y1mHE2Pls=;
+        b=lOFgZ1XMgvKiQnC5JiuiEis6T9ipSClYNsvnERzofYAHa1KpxxlPaTlFUJc1wOBrIV
+         yY2dnRqO5lLs+TkLQniGhK1Np7J0XZe4j8PXHe3mQ8QT1hlv3aEEtK1zbP6gexA0Npce
+         oLHduHnm8FRBMubaZmag0HidKP9aEvtk5vb+5evgo97cExML17RPLyjWRZpH383bhj2K
+         DpwF8D8t5sKkAIfT9kuJe3ZHDntwwIwWuu/LMH/fM1czCdZTtxCy0NaL5+Q+V9vAuamc
+         cX21sxWopao8W3EwNamkSMU94rVAth2zkdORPMXH0YwZ5nyNoQlrevHhA+dz8qiy+JtW
+         PusQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758173979; x=1758778779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pYLuLD8UtvBpT7GojTBkQ4oUBcmarrpk57Y1mHE2Pls=;
+        b=LWtRjFYsP8qr3/Ha9+9gZjAf876MwwTNyW4zPODxHaF8yupw1TPll5AyQshsecEqpp
+         wezAZvP4KeXzQDi1MEY9h76SFKI/64NeBQL3mzujIrR75p8ZAnVdzCMkUEQFDfoe/D15
+         rrwzOJATO3cHrMcLEfuYUhfWeoJkc86vJim9mI6W7Ev+suuFiNGa6orzTrnsQNcLAUUA
+         WMHdMj4wZ3NJh4HULxrRK0ktnGHO+vL8mGZvs5pOr+PxZcJitPvU5qHWQajoClpTdesH
+         RBlvnWo5ZRuGiRkLLdBTAs6mQMhJf3UZQkDrepP76xpRPjU3xagQ7I3SzXgyk2hKphc/
+         rdlg==
+X-Gm-Message-State: AOJu0YxH0Ry1969WMh6K4FX8fwjouTbOGM8Nv0WiJS+0mOJYWTALUOwJ
+	M5/76MuGXs8NYn9cqkii7vVVHdFVq0CmM0DEpNEx4Wyy4tiIGU0ss7RX
+X-Gm-Gg: ASbGncsSTC/vmfeSsCNTcV8A1JgGSoEv5LQSXgm5USqcHFzJ631YLxphUzDzu8C9nsH
+	f/QVRhja+//90+gZZi0HneJFaCfv0FmfJSAGmv1FT61R9HZVtJV9HsjHWT1Im7SyISDDR+02dfJ
+	6rV53I2cPb/1AKGVNQNiJ0qr6nbIPGs0U4rA3cez8jApzb5quaW8OGDaJTVcMxnN7XYFdUoJG8M
+	mpUD8Bp106lGytPZx2n8CxYJoklRAsoSdManQRVThlbOrOniJWavcH3NoPNDVu47lKRn6QWdZVv
+	MV1IRFCsINv83b4EiLGX5wL+h9btUWmlsCOIukM1n8prNpyk84vKKUgeXIdDX4RzeSYW/VuMB/C
+	uTAOOnLV4Q0U1ick2x7fAGlUBTrZVxRUCgFQdNHrIsQ==
+X-Google-Smtp-Source: AGHT+IHKTOfJ3BPX9Gvt+4rkN+1gu0cdFOaljvM9zc+7rWxc750973qp3+kLMzRM1HA3dLLSY8sf5Q==
+X-Received: by 2002:a17:90b:384f:b0:32a:34d8:33d3 with SMTP id 98e67ed59e1d1-32ee3dbc98cmr6602993a91.0.1758173979532;
+        Wed, 17 Sep 2025 22:39:39 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:194b:8358:5c91:3d3d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed26a592dsm4145943a91.10.2025.09.17.22.39.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 22:39:39 -0700 (PDT)
+Date: Wed, 17 Sep 2025 22:39:36 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Frank Li <Frank.Li@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Michael Trimarchi <michael@amarulasolutions.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] Input: imx6ul_tsc - use BIT, FIELD_{GET,PREP} and
+ GENMASK macros
+Message-ID: <jfhd77aocqhww5iz5wggmua45nvaf6oyggtkyggltacsjwgknm@juwsglvompqz>
+References: <20250917080534.1772202-1-dario.binacchi@amarulasolutions.com>
+ <20250917080534.1772202-3-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250902-pm-v3-1-ffadbb454cdc@nxp.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250917080534.1772202-3-dario.binacchi@amarulasolutions.com>
 
-On Sep 02, 2025 at 11:33:00 +0800, Peng Fan wrote:
-> For some cases, a device could still wakeup the system even if its power
-> domain is in off state, because the device's wakeup hardware logic is
-> in an always-on domain.
-
-Don't we already have something like wake IRQs [1] for such purposes?
-
-8<----------------------------------------------------------------------
-That may involve turning on a special signal handling logic within the
-platform (such as an SoC) so that signals from a given line are routed
-in a different way during system sleep so as to trigger a system wakeup
-when needed
------------------------------------------------------------------------>8
-
-[1] https://docs.kernel.org/power/suspend-and-interrupts.html#system-wakeup-interrupts-enable-irq-wake-and-disable-irq-wake
-
+On Wed, Sep 17, 2025 at 10:05:07AM +0200, Dario Binacchi wrote:
+> Replace opencoded masking and shifting, with BIT(), GENMASK(),
+> FIELD_GET() and FIELD_PREP() macros.
 > 
-> To support this case, introduce device_set/get_out_band_wakeup() to
-> allow device drivers to control the behaviour in genpd for a device
-> that is attached to it.
-
-Do you have any explanation as to why wake IRQ is not solving this
-problem and you need to introduce these new APIs?
-
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/pmdomain/core.c   |  6 ++++--
->  include/linux/pm.h        |  1 +
->  include/linux/pm_wakeup.h | 17 +++++++++++++++++
->  3 files changed, 22 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index 0006ab3d078972cc72a6dd22a2144fb31443e3da..8e37758cea88a9ee051ad9fb13bdd3feb4f8745e 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -1549,7 +1549,8 @@ static int genpd_finish_suspend(struct device *dev,
->  	if (ret)
->  		return ret;
->  
-> -	if (device_awake_path(dev) && genpd_is_active_wakeup(genpd))
-> +	if (device_awake_path(dev) && genpd_is_active_wakeup(genpd) &&
-> +	    !device_get_out_band_wakeup(dev))
->  		return 0;
->  
->  	if (genpd->dev_ops.stop && genpd->dev_ops.start &&
-> @@ -1604,7 +1605,8 @@ static int genpd_finish_resume(struct device *dev,
->  	if (IS_ERR(genpd))
->  		return -EINVAL;
->  
-> -	if (device_awake_path(dev) && genpd_is_active_wakeup(genpd))
-> +	if (device_awake_path(dev) && genpd_is_active_wakeup(genpd) &&
-> +	    !device_get_out_band_wakeup(dev))
->  		return resume_noirq(dev);
->  
->  	genpd_lock(genpd);
-> diff --git a/include/linux/pm.h b/include/linux/pm.h
-> index cc7b2dc28574c24ece2f651352d4d23ecaf15f31..5b28a4f2e87e2aa34acc709e146ce729acace344 100644
-> --- a/include/linux/pm.h
-> +++ b/include/linux/pm.h
-> @@ -684,6 +684,7 @@ struct dev_pm_info {
->  	bool			smart_suspend:1;	/* Owned by the PM core */
->  	bool			must_resume:1;		/* Owned by the PM core */
->  	bool			may_skip_resume:1;	/* Set by subsystems */
-> +	bool			out_band_wakeup:1;
->  	bool			strict_midlayer:1;
->  #else
->  	bool			should_wakeup:1;
-> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-> index c838b4a30f876ef5a66972d16f461cfba9ff2814..c461c7edef6f7927d696b7d18b59a6a1147f53a3 100644
-> --- a/include/linux/pm_wakeup.h
-> +++ b/include/linux/pm_wakeup.h
-> @@ -94,6 +94,16 @@ static inline void device_set_wakeup_path(struct device *dev)
->  	dev->power.wakeup_path = true;
->  }
->  
-> +static inline void device_set_out_band_wakeup(struct device *dev, bool capable)
-> +{
-> +	dev->power.out_band_wakeup = capable;
-> +}
-> +
-> +static inline bool device_get_out_band_wakeup(struct device *dev)
-> +{
-> +	return dev->power.out_band_wakeup;
-> +}
-> +
->  /* drivers/base/power/wakeup.c */
->  extern struct wakeup_source *wakeup_source_register(struct device *dev,
->  						    const char *name);
-> @@ -162,6 +172,13 @@ static inline bool device_wakeup_path(struct device *dev)
->  
->  static inline void device_set_wakeup_path(struct device *dev) {}
->  
-> +static inline void device_set_out_band_wakeup(struct device *dev, bool capable) {}
-> +
-> +static inline bool device_get_out_band_wakeup(struct device *dev)
-> +{
-> +	return false;
-> +}
-> +
->  static inline void __pm_stay_awake(struct wakeup_source *ws) {}
+
+Applied, thank you.
 
 -- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+Dmitry
 
