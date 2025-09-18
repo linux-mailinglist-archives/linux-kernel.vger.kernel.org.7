@@ -1,202 +1,143 @@
-Return-Path: <linux-kernel+bounces-822986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6283B853BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C99AB853C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC39A1890028
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4091B227CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 14:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6425311C33;
-	Thu, 18 Sep 2025 14:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599383115A0;
+	Thu, 18 Sep 2025 14:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBehxCs3"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mDSdxegK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0136D3115A0
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 14:19:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C7C30CDB1;
+	Thu, 18 Sep 2025 14:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758205158; cv=none; b=krLJK3xtM9ylL5JnplWTtfczAL5lARx3eb50TfSk8xH/K8NBaiQO54ldX0gsAl3mzXs1piH8M7V5htL+AwFmFq7soFr90ygshfVYS9XYCZCToxhWDAaHuIqfdyIgPTURimVB0GF/A6FZHeIuxtF/tklrMfxnaOkUxXqUEbL9Czo=
+	t=1758205172; cv=none; b=Xbcll48xBZO3ObiRMN7aqGKujtLLJ5aKj7f6W8kRriPC9/RTQkyswbjVxd+fpxDMdjsRZJQbjt2NXzC7C1nqFGN7SETnMaMxiQhfc5Z3r/N9CVysgzX2PamEkjEd9R3GGYcXayQia6nTjf5ruIWKD2XMO+TOGBBVixBZgL+XUeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758205158; c=relaxed/simple;
-	bh=RQ9Z1kx85zQlnSoOrFhTvfy5+txdhW6JwPYMb+IwFM0=;
+	s=arc-20240116; t=1758205172; c=relaxed/simple;
+	bh=ZaQal7p/D3lVjO56/+eFW4knjRvXXBe2Az2adf7o3pU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UAUEw+WRsBRgrQ70M8HLz2XvUDjVhKEGjBx4LplFwXiJ6TkLUWWETX/MmpE+H2eYqPoRg5XWf260yPPCjH/CaQuYN3Q2vzP/3Ah6EwxkhQ7/cHrzwZyE/TvD1nRwu5JA4k6qh+dGtcyj1RuAGIJFvYifrAYNu3GdSqBvI5XGu0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBehxCs3; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-ea402199de1so1306202276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 07:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758205156; x=1758809956; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qZ/G6ZSVs4k9erlC2f6Rzvjnd7FrleQnq9KmYnVqgJg=;
-        b=WBehxCs3vtFrsM35NwmQ7LPf7MgcdmoILtiK6r9gsWGdqqVCHrjIH5Mq6V5iGE7IeY
-         v5yRPj19s35dbSVp799ZzhlEWRovJTF9unig734wm4hkcbGXj3RyToULMz/0s2Rd0Zr8
-         rp/FgKVyJmqSpdU76YwCCFKbsgy24VqglXdysbpEsygeIKe+PGRJUk+b2JM+L4cafuE8
-         Gd8sL31OBjzvBrWMj/aVzjgg7AI6XTqZ76m569ffO4C2tI5lyS4L0nvyWXLgVyuXhTwa
-         SeKZHv4T90pTwedcW5YvUBsDh0RqJxXqroL0aMyd9a0eTOCILacDtOGfs4SppDoIP0i2
-         BGIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758205156; x=1758809956;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qZ/G6ZSVs4k9erlC2f6Rzvjnd7FrleQnq9KmYnVqgJg=;
-        b=w5MSOQZu+LF+sUV+e7Oc8tjCktL9McYtsDkR+iz+1kT2GQEAVYBkXUeL1OT4hh8IGX
-         k1bp1SGV/ualCfhP3fxXeIGUbzlZitSzHOdYZBjCo+DCSn4he4MEVohfoKQGiN2R+Iuo
-         3QFn6RAmiE/3iCJVcxRugCTBq/oIjgtNs0U0BMGLeSjU9mxYsdoNbiRU3bvHrh3z3HQi
-         AsQQco+e+cY8HyJxXEl5Ujr8Veo8eGaDdHOOiA8qEAcYMtegkWqWS2rzMQsVN4AdWCRc
-         G4wHwXBxpK9xtYq7q0H3G+cmuc9Ssp6DguXzPq/b8TX7Zu3ZJYdc0rWLyhUfGIirUyT9
-         XMnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Y55vgXeOW6vkrQDzdxSfUgnpeOh857u62T+RcVSg/zkX6ZigcP8s8+UTsSX9mmAkLMxEfH9NQSSYPwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz59Ub2Dn0xEdBHw/7zQRCQzdksNxw+3dIkyBB37VIuSNqH7GP4
-	0TJZWN29GTtnwJQQPKmMKcZJO/MKr8ggQqlkYnEWzeXRGssSY8nxZWiK
-X-Gm-Gg: ASbGncugAWwbGbWa82WSSmLKnUdOrxg4mwp17uEHVASmRNp62f22z8OM+1oo9U7w04p
-	aVYEflSrp5F1KCcL3LjhGYu/BT8wzj540OImp0yjDiW/RqhRFDx7zWsv8Ch5tJOgf+pBAqzOS06
-	KE74Yy3ylWyeN/FOrsv5sud7qO6hxkccY61y5pKvSspeVAbjGdl/AdLGb4D1tSYXaqFkJus0kMD
-	9wVLjhnUfi3/TtcqD6wyzLa6EnGO8I5mde1C0Qb61+nkf3WnSWKefg9s8xNv/NXwSmXI0LzvS65
-	A5B5jW9vM+UNoa/NXPG2mB74KtzkEU+Q6j4ZWOMQLyZk+gxTvzgjKjNXhLdljfYTvlIcbBuzIZT
-	JTf1R2hPr3JcI7RnFraDv2xiwCFGCwnb2lWaRVM7In/TN6uQ6xQZPWY3cccGWc2pIGg==
-X-Google-Smtp-Source: AGHT+IG7gBtevs0hkEsojHqgLcCqhRh/vTUZDf3Hoe3SB7t+1GIpQn7iBnokxxVyhlltzD5uxMls3A==
-X-Received: by 2002:a05:6902:722:b0:ea5:d7bc:1152 with SMTP id 3f1490d57ef6-ea5d7bc1b08mr1568771276.2.1758205155453;
-        Thu, 18 Sep 2025 07:19:15 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:5c::])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-ea5ce974212sm853450276.26.2025.09.18.07.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 07:19:14 -0700 (PDT)
-Date: Thu, 18 Sep 2025 07:19:13 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stanislav Fomichev <sdf@fomichev.me>,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v2 2/3] net: devmem: use niov array for token
- management
-Message-ID: <aMwU4YPF+ERN9qxc@devvm11784.nha0.facebook.com>
-References: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
- <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-2-c80d735bd453@meta.com>
- <CAHS8izPNC65OUr4j1AjWFwRi-kNFobQ=cS4UtwNSVJsZrw19nQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d1HyJjJJssgKoKovf2K8npUHQxX5lpz24LbCJ/7UCkEnsD+ash1TLQHwzAvVwWxjfxtzNhDwSAicV3XxWML6Eqbuu+Fmx9u5+686U9c9C+GZAly0CPgfMn13oD9+a8u0+J7mafeQRjBKH29i55y7mr73rpR5JKoUDzc5+f2peYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mDSdxegK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ICVv4D000437;
+	Thu, 18 Sep 2025 14:19:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=DprqDoKslhG2Vxphcet3gBW4by2OCt
+	LD3p/0yuyogXk=; b=mDSdxegKalYo9emM9i9PNcujkOp4bHhQQxnqmYzRU/Yow2
+	DaL4TDZKRLmyCmFQ9g0/bFGVN8WX2b3ADBNLDJkEgaqm+kj6wyRSPyGo4dXS956N
+	jpjaLGrByxzCqoPPl+5uhOOVkWKFrMkhdWmAg6ZA0fIjh/kmMqWRkoto7U7OpDgW
+	O/JKMntjYOJQK36M5m/O3gmj1j0Y2sh/uhTnRoy4HNagVyrK5hkkFdrYVatY4Zv6
+	yGvvt/oCaypxWzqb61hdfxLdd/scx56cn/Iitw1cHpCLjb64OVhf55jL68HGLnGV
+	2Tq419jPZLwKFemA6msNW196e7rYTUwqwdO5k0wQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4htree-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 14:19:28 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58IEEROu005978;
+	Thu, 18 Sep 2025 14:19:28 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4htreb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 14:19:28 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58IB2OjR019200;
+	Thu, 18 Sep 2025 14:19:27 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 495n5mpt6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 18 Sep 2025 14:19:27 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58IEJNT741419068
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 18 Sep 2025 14:19:23 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B1FCB20043;
+	Thu, 18 Sep 2025 14:19:23 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6BCF320040;
+	Thu, 18 Sep 2025 14:19:23 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 18 Sep 2025 14:19:23 +0000 (GMT)
+Date: Thu, 18 Sep 2025 16:19:22 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+        Kees Cook <kees@kernel.org>,
+        Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Juergen Christ <jchrist@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH v2 0/4] s390: Fix and optimize __flogr() inline assembly
+Message-ID: <c38409b1-fa4e-4fa6-94a8-51616bf1fd6a-agordeev@linux.ibm.com>
+References: <20250916134803.874580-1-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izPNC65OUr4j1AjWFwRi-kNFobQ=cS4UtwNSVJsZrw19nQ@mail.gmail.com>
+In-Reply-To: <20250916134803.874580-1-hca@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 6N_hs30sEL_CvWtwubb2zil0yj7Y07Oh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX6qmWAPCuYGjR
+ LulzjsIPBdnSu3dK9rer8sWqsXlBsQSR3EUbqtv6eni4ana3CZDTcbqxqlAlkyJ+vs3exFoOpkO
+ FuFTb57yI265e/rDDyI6ukJM2Kp4aJwWOII4rzXDamos5QqabBRcMI5xnB4hnLf0BRVojXdKiJB
+ m+LEYYnlQR87xf7S3xXOE7TP9M4fDF4rD2uMk85hglFxet1ZUlz/QmCXR6QsPPN72h9nQq25pOI
+ hzgxcXwAt6SoyYGE0q91VkL8yRhfZ9NCH31SvZXbBfgfSrc0wF/95UqKYHJRRxWYgQDu7R/2ksf
+ y+E5IHOGVI7Cf+fZPduz/VuX6zyn24JVghUe7QynV1SnESpk5kRTlNMMxazEh1nTFNKm9f3L0MW
+ hK4ZHtxC
+X-Proofpoint-GUID: eT4eKIyRBDCi3yCkmH9GexjPMpYsHkAP
+X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68cc14f0 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=9osAhOkfvIjfBw3QZZoA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_01,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160204
 
-On Wed, Sep 17, 2025 at 04:55:34PM -0700, Mina Almasry wrote:
-> On Thu, Sep 11, 2025 at 10:28 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
-> >
-> > From: Bobby Eshleman <bobbyeshleman@meta.com>
-> >
-> > Improve CPU performance of devmem token management by using page offsets
-> > as dmabuf tokens and using them for direct array access lookups instead
-> > of xarray lookups. Consequently, the xarray can be removed. The result
-> > is an average 5% reduction in CPU cycles spent by devmem RX user
-> > threads.
-> >
-> > This patch changes the meaning of tokens. Tokens previously referred to
-> > unique fragments of pages. In this patch tokens instead represent
-> > references to pages, not fragments.  Because of this, multiple tokens
-> > may refer to the same page and so have identical value (e.g., two small
-> > fragments may coexist on the same page). The token and offset pair that
-> > the user receives uniquely identifies fragments if needed.  This assumes
-> > that the user is not attempting to sort / uniq the token list using
-> > tokens alone.
-> >
-> > A new restriction is added to the implementation: devmem RX sockets
-> > cannot switch dmabuf bindings. In practice, this is a symptom of invalid
-> > configuration as a flow would have to be steered to a different queue or
-> > device where there is a different binding, which is generally bad for
-> > TCP flows. This restriction is necessary because the 32-bit dmabuf token
-> > does not have enough bits to represent both the pages in a large dmabuf
-> > and also a binding or dmabuf ID. For example, a system with 8 NICs and
-> > 32 queues requires 8 bits for a binding / queue ID (8 NICs * 32 queues
-> > == 256 queues total == 2^8), which leaves only 24 bits for dmabuf pages
-> > (2^24 * 4096 / (1<<30) == 64GB). This is insufficient for the device and
-> > queue numbers on many current systems or systems that may need larger
-> > GPU dmabufs (as for hard limits, my current H100 has 80GB GPU memory per
-> > device).
-> >
-> > Using kperf[1] with 4 flows and workers, this patch improves receive
-> > worker CPU util by ~4.9% with slightly better throughput.
-> >
-> > Before, mean cpu util for rx workers ~83.6%:
-> >
-> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-> > Average:       4    2.30    0.00   79.43    0.00    0.65    0.21    0.00    0.00    0.00   17.41
-> > Average:       5    2.27    0.00   80.40    0.00    0.45    0.21    0.00    0.00    0.00   16.67
-> > Average:       6    2.28    0.00   80.47    0.00    0.46    0.25    0.00    0.00    0.00   16.54
-> > Average:       7    2.42    0.00   82.05    0.00    0.46    0.21    0.00    0.00    0.00   14.86
-> >
-> > After, mean cpu util % for rx workers ~78.7%:
-> >
-> > Average:     CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-> > Average:       4    2.61    0.00   73.31    0.00    0.76    0.11    0.00    0.00    0.00   23.20
-> > Average:       5    2.95    0.00   74.24    0.00    0.66    0.22    0.00    0.00    0.00   21.94
-> > Average:       6    2.81    0.00   73.38    0.00    0.97    0.11    0.00    0.00    0.00   22.73
-> > Average:       7    3.05    0.00   78.76    0.00    0.76    0.11    0.00    0.00    0.00   17.32
-> >
-> > Mean throughput improves, but falls within a standard deviation (~45GB/s
-> > for 4 flows on a 50GB/s NIC, one hop).
-> >
-> > This patch adds an array of atomics for counting the tokens returned to
-> > the user for a given page. There is a 4-byte atomic per page in the
-> > dmabuf per socket. Given a 2GB dmabuf, this array is 2MB.
-> >
+On Tue, Sep 16, 2025 at 03:47:59PM +0200, Heiko Carstens wrote:
+> A recent optimization of the s390 specific ffs() and ffs64()
+> implementations leads to a new compiler warning. Instead of reverting the
+> optimization address this with the rather new assume attribute, which
+> generates even better code, if supported by compilers.
 > 
-> I think this may be an issue. A typical devmem application doing real
-> work will probably use a dmabuf around this size and will have
-> thousands of connections. For algorithms like all-to-all I believe
-> every node needs a number of connections to each other node, and it's
-> common to see 10K devmem connections while a training is happening or
-> what not.
+> Since the assume attribute may be useful for others as well, add the
+> __assume macro to compiler attributes, so it is kernel wide available,
+> instead of adding an s390 specific optimization.
 > 
-> Having (2MB * 10K) = 20GB extra memory now being required just for
-> this book-keeping is a bit hard to swallow. Do you know what's the
-> existing memory footprint of the xarrays? Were they large anyway
-> (we're not actually adding more memory), or is the 2MB entirely new?
+> Heiko Carstens (4):
+>   s390/bitops: Limit return value range of __flogr()
+>   compiler_types: Add __assume macro
+>   s390/bitops: Use __assume() for __flogr() inline assembly return value
+>   s390/bitops: Cleanup __flogr()
 > 
-> If it's entirely new, I think we may need to resolve that somehow. One
-> option is implement a resizeable array... IDK if that would be more
-> efficient, especially since we need to lock it in the
-> tcp_recvmsg_dmabuf and in the setsockopt.
-> 
+>  arch/s390/include/asm/bitops.h | 21 ++++++++++++++-------
+>  include/linux/compiler_types.h | 23 +++++++++++++++++++++++
+>  init/Kconfig                   | 10 ++++++++++
+>  3 files changed, 47 insertions(+), 7 deletions(-)
 
-I can give the xarray a measurement on some workloads and see. My guess
-is it'll be quite a bit smaller than the aggregate of per-socket arrays.
-
-> Another option is to track the userrefs per-binding, not per socket.
-> If we do that, we can't free user refs the user leaves behind when
-> they close the socket (or crash). We can only clear refs on dmabuf
-> unbind. We have to trust the user to do the right thing. I'm finding
-> it hard to verify that our current userspace is careful about not
-> leaving refs behind. We'd have to run thorough tests and stuff against
-> your series.
-> 
-
-I can give this a try and test on our end too, this would work for us.
-
-Thanks!
-
-Best,
-Bobby
+Applied, thanks!
 
