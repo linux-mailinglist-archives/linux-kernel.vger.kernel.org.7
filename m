@@ -1,324 +1,769 @@
-Return-Path: <linux-kernel+bounces-822826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C1AB84BF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:11:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 222BBB84BFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 15:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257D8188FBFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:11:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0403BA568
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 13:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED7A308F0D;
-	Thu, 18 Sep 2025 13:11:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D09B2DA757
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 13:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758201078; cv=none; b=qncd6iSxNJiBN/iV1ZiJdBYHFm0KtdT0qK2uf6JJAQqZZdBn9dUgxzIzaDQjc/M4VhKlMB7anWnQJFPRkurS2FRe5a7QGGhqqVtiFI3kTegEwaRDDuNUIsPF26LYRAZYPTRf4gzFwMNXClTUI7VEEObLnY8q7UTDD2+Ofy6iUk0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758201078; c=relaxed/simple;
-	bh=WebyKie7+VeDYQg6dtzAHTunaV1voVMydafw+h8npJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jR4sS3vLlrFYVIrgtt+0G2GBRXplGWFCHp2OIQtttdSmX6ogXfQV0NTxVt2uxjCE61hfaoNbHnzRWIGxIt/qbPI1J6dS0ErM0ecs25DWtJjCub9TdYl2is+nGJeIVXdKYrpaiGlg+mOOGfwnkEHyK4M5jA1dYilncEDOawbSMAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA4531A25;
-	Thu, 18 Sep 2025 06:11:07 -0700 (PDT)
-Received: from [10.1.33.171] (XHFQ2J9959.cambridge.arm.com [10.1.33.171])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6ACD93F66E;
-	Thu, 18 Sep 2025 06:11:12 -0700 (PDT)
-Message-ID: <4bb35dc4-4c28-4e0e-a06f-70782264cc5c@arm.com>
-Date: Thu, 18 Sep 2025 14:11:10 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E6D308F2A;
+	Thu, 18 Sep 2025 13:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RNdYQ2zD"
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012044.outbound.protection.outlook.com [40.93.195.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A662DA757;
+	Thu, 18 Sep 2025 13:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758201113; cv=fail; b=kg4Hn3bh9yuZ9vRxCbkIGQc37phFvv9/sdqN/WuhK17T5dxbyt2hBm+1LjxJz4VQvErhgNPYgk34vnVugAtQRxeKVnZk0CE3O57itYkP28hdzhxB5/Lxk2smjTM1dIyaTMFX1lU68LALIdYuTDNdOxpSX+6Yv1/py07J2S7Y1yE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758201113; c=relaxed/simple;
+	bh=NWzotYgXzH5uFJ8Uh+wvG1vJYOiFOiAaec9aVoKixdI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gHni8+P+jbGmXDkyuVMryWX988R1Y+jVzMgAIDstFBswR2xr23OQNfxCpG1gFoaNccrps4B/Mq79A9d5wYaX3w6GOipq04oWX4HYKfIRn7WwOv9tOuBVwEBUvcoUe0D8P9qI2WdXjnILtJ1uj1ZuguRhMrn8XRVHsOA4meAQlPU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RNdYQ2zD; arc=fail smtp.client-ip=40.93.195.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OhVtaI6ZcSfcxtW3MGJXpS+dCNg9WHIg6b7PzuJ2vpAVPDDYrjxA7sFwJX3DKv4MAGkMT6McYwKiXTMAiPQQxQ4eiglyI8jwhZJJNIVNtgIy91RaK1mNr8QcA6q6zigcLgA3BAc5d49gX6W/6Xg66veIc/IFSlCm0cxmvtPnRH60bo2krxAcXiXG4YQpwUBuqHCgZLPoHz7zxOl+TmqMNNvkOnPq901W+ayhM23nwd1+etE5eBeL8TkeyB6iv6R1uU+fRADkZq3wx4W1DjdKrXu70Mx9+rEFFmNwODwJQq7unifvToIxwoMdmc9Wf2Mo8ddXJSYQqhwOaV5VfZ35Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NwIyVjhTRHrxZu5TvSbkXsyZKfMFc+E8gGKruV8Mcww=;
+ b=IMaSMU+GaWUDAjjSs/srFQV0HpFwkC/rEM7y4W8HwEdaYr9OzueM44GLnSvQYtFCUU7nFlTpzO9SYwsv21n9k0rLkxW0dPCNQFPsezq7u271iUNzqukUYs/Qka6DgIS/r0N9u9J7A3eYWBXFwFf4hRWztVBPgwOGVI/EdSlnzpjlyIAAQX3wAJiEdoxXEpfBdtpl+4eL0mnS7oY8s1bo8VvWop9NEayL/Nz/5b3LALeifOnkL/PqWkuc3xFMcVfEakjrH3cUEWT8hJj4ZlLadCso2qjB5Rn7Wu14HnIrkF8zzLVYc2wie4CY/gq7E4qnPxL5qj57BJTkfKlH/FdE+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NwIyVjhTRHrxZu5TvSbkXsyZKfMFc+E8gGKruV8Mcww=;
+ b=RNdYQ2zDQEzRwOYqH5FPYcvDXnQcSkCj7XnJ2DJoFwvafJmeAVcWFkYfhi+BBHnDCDN5GLDsqln7/J2Tyf9tPpff6/vDPPBJOllRsgzG4InMfY3e53zBxNTKGxbUoVEcSdfZ/Tb2K3OpHiIf+R46Ztpi8VSe2jhNcU5k5fUkZgs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by IA1PR12MB6651.namprd12.prod.outlook.com (2603:10b6:208:3a0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Thu, 18 Sep
+ 2025 13:11:47 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
+ 13:11:47 +0000
+Message-ID: <6d37c0a8-5066-4012-96bd-8d37df18312f@amd.com>
+Date: Thu, 18 Sep 2025 15:11:34 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] rust: sync: Add dma_fence abstractions
+To: Philipp Stanner <phasta@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Asahi Lina <lina+kernel@asahilina.net>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Tamir Duberstein <tamird@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ Krishna Ketan Rai <prafulrai522@gmail.com>, Lyude Paul <lyude@redhat.com>,
+ Mitchell Levy <levymitchell0@gmail.com>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev, dri-devel@lists.freedesktop.org
+References: <20250918123100.124738-2-phasta@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250918123100.124738-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL0PR01CA0027.prod.exchangelabs.com (2603:10b6:208:71::40)
+ To PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] arm64, tlbflush: don't TLBI broadcast if page
- reused in write fault
-Content-Language: en-GB
-To: "Huang, Ying" <ying.huang@linux.alibaba.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Yang Shi <yang@os.amperecomputing.com>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Anshuman Khandual
- <anshuman.khandual@arm.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>,
- Yin Fengwei <fengwei_yin@linux.alibaba.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20250915032946.33203-1-ying.huang@linux.alibaba.com>
- <20250915032946.33203-3-ying.huang@linux.alibaba.com>
- <46dcddec-88a9-4b22-920c-8a3edeb2f027@arm.com>
- <87o6r833li.fsf@DESKTOP-5N7EMDA>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <87o6r833li.fsf@DESKTOP-5N7EMDA>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|IA1PR12MB6651:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2fd6da79-9018-461f-718f-08ddf6b4ebcf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SnMybHdsbkpScDA0ZVJQZ3dwTTV0SnJqOTRBSUEzcG5NYzFRZ2xSM3Z0L0NC?=
+ =?utf-8?B?aFV1dlF3bENrQm9QdmhiVThOTTNpS3FIK0Jybmhyd1ZvdnR2NGZPU29sMi9U?=
+ =?utf-8?B?YVUrWGhUOUZ0VUxWQVpBNmFHSGl2NUtOZ3JwZnBwa1AwQ3o4cmZyNHZWM295?=
+ =?utf-8?B?cjE2VFoxOG5SMW8xY0RqczFNL2FWSmxEai9XWXZNMVNyUEFlL3dWN2E5dlJB?=
+ =?utf-8?B?L0IrQUtVVW9XSkhXSVplOVd3QWxpcGJnSFdNMldacmNxcGZEeGp0S2YwRURE?=
+ =?utf-8?B?V1V1ZzlCbXlvN3czODZTaXBGamk3NCtqZzg1MlMyUVhmcWd4am1sb3BjU2ZF?=
+ =?utf-8?B?STQvbnp3ZlhkQmdoUS9iVUM5a1RTK3dsNUV3WmEwalZPSExzOUE3bjgzSHlQ?=
+ =?utf-8?B?cUNQWGR3bnJyZ1pNUG9GK21RS2U0ZmtCNTdkYVpGYnpHOWpHblErRnQwL3dU?=
+ =?utf-8?B?M0NWdVQxOElUdTZrbUpmRjE2d3hTYzcvUG5rUUJKcHpmKzN0RHhvTHEwRHFD?=
+ =?utf-8?B?SFV0ZFlHZGUzUW9nNE1abVc1elg2SUltWmp5STdQMFAvbXlVOGlFQW5MN0E2?=
+ =?utf-8?B?TGdPb3V1UEVwNzN2VDRIamhnOVBEOU9nd2xnL21yMWkwVXBBN0VFMXoycGda?=
+ =?utf-8?B?TmNrMTFDRGNBajBGOE4vWjhmR284bC9PTHhNWFhubzdSa1FOdFpJQ3RLSHlR?=
+ =?utf-8?B?QmNkNzBmblQvcS9sREs0L3BJdDhKZmFWTUgrMXpDWVhWWWJxYWx1VEF2bmU5?=
+ =?utf-8?B?QmcvcDA3dVA2NTB3ekdoNlo3NUdEQ2ZDa3JLQzdpa1RSVk84ZVNJMm85bXlm?=
+ =?utf-8?B?bEhWaDFTT0JDQ1Q4cDQ0R3llYWtobllqZnRqLzVzSW0rY29kWXRqRmdMZ3FO?=
+ =?utf-8?B?MldRSk9aQnVhK0huQllDQmZnb3NnSGR6YW1taUEwUlJHK01DQmh2OVdKY0ox?=
+ =?utf-8?B?RUN3N1duZFNGdWF6ZG1JbkJsWDBBVkNSTDUyWXhmb3NueTMwRUl4UzdEV3ps?=
+ =?utf-8?B?UWtkZTJyYjZsSnFlQUFpTUVPaWpDajJNZFMwUGxXK1U5b0RTNjBLOHhLSXlI?=
+ =?utf-8?B?SDRhblFpaXR1RXhTSmU2T2FTTGxYZml2MVJZZm9jZHp3djd2d0hnc3RoSGE1?=
+ =?utf-8?B?b2tCYjNncnFOVXc1TlU3cmtmQWNkeG1PdVBXOGVoc2tTU0tYemhPY1NDZThE?=
+ =?utf-8?B?OUZxZGpSakhhdkJYaUF6YlpQYlpHSVhDTjVpQldWNmJaL0tDRDJIVnV1MnJF?=
+ =?utf-8?B?R2lTQXBTcnRWRS9BSi9taW9MR2hRVmpzRHA2V0c3T2lWK2FpdDUwb0pBd3Vv?=
+ =?utf-8?B?L2g0VDhXYjFBdm9nckxJak14VFBGODFyeEZ5N3dsUXovL3NXSFZzUlFLNjFO?=
+ =?utf-8?B?eUpHQTFNVXNEQ25LZVNrTlhJTkp0UGNMV2xlSk8ycUJROEFZanBSWFVaTzlG?=
+ =?utf-8?B?aTBmSFFWWDJiSkUzaENqb3pJdnlOZkRDNG16NjBSNmIrRllWL1RyRzV0TW5M?=
+ =?utf-8?B?eHo0dHdyN0hCYUZBSHFPSzAyVzNFcXFrcW1UWlVueVZxeG1oaUk5L0IrdWZl?=
+ =?utf-8?B?eWJPbVpBUnFvRmVkSkxoS2xLYStpcUVGR2lRN3pMMlhXalhxSThwUXg4Q1NI?=
+ =?utf-8?B?M3hpYUdhOTVnYXlKV0NaaVR6endOWHRqNTBFVWEvc3VCWjV6QWlUUWVuWkFC?=
+ =?utf-8?B?YnBmOXY2U1Z1dVVXY2dXNjFwZ3NqczcyMHk2RzlFNWN3a21WYTNQWlZRTXJ5?=
+ =?utf-8?B?TXJ0YkNERG0ya2E1bzJmcTEzZnJwT043bHpUbTl6RDdhd2JZRVJnaUNIcUdF?=
+ =?utf-8?B?cURLenNGMmF6UjJhdlhDZlVmakVjU29rNHFtU0FqbnJTVXVwa0g0dzduMHZF?=
+ =?utf-8?B?MGNzMnBQOHM3MldOSVNqZCs1a2JSa1lBTCtEZHNTV2JPR0E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dmdhOFY5RzllQWdrQVAxa1JlUFBaNFZTd2JIczhtWitMNXp2YU5aWFVnZFI0?=
+ =?utf-8?B?KzdmZklYTlRGdFR5eFhMeEZtVUcwNlNuVnJYZld5YnZtRXJhTWh1eFVPL2xt?=
+ =?utf-8?B?NWNZVGNBMU8vVmtrTmx5NWw1U1JqQmdmdlFrUEltZzlZdmVVdFF6MVk5cHhm?=
+ =?utf-8?B?Mmk0TDQ1Q1dzWVY4eE1VdXRHL1pxNTNCZklLU2NlUFVaemxqZ0ptbGxiQWNq?=
+ =?utf-8?B?Y2RSSmNONVRUN1RadGNqeGVES3cxc25pWW03UHRrOUFwRGJTVmJuNnY2ck1j?=
+ =?utf-8?B?bkxSejZaT3RBZFFSYzFGY0l1bWdsUW01d1pzMEQ1N3diNlQyM2NBd0xPMTZ6?=
+ =?utf-8?B?NVN1MHcxZVRITVRFMnI5ajdxSERPb2pQeVpnbk9mZFF5UVZndkU5VGMrNzAr?=
+ =?utf-8?B?dHVjOWE0YXNQM2w0UElCZjYxS3BYQWk4bEFjbHZ6dDhlS2c1VFZGRTU0OVhI?=
+ =?utf-8?B?UHB1NHB5a1VldFg0TTBEUkRGMVJlaDJMeEJ5ZmZseStpRWR4NUEzY3p3VEZS?=
+ =?utf-8?B?ZlNrV2poZk1hWTg0dWVMMlp0cGNETWkrRjVPT3hRcWxuWXkyNExqczkyUXRw?=
+ =?utf-8?B?cGRoRmpZNmkzQWRJS3BIRk1mV0R5ZjFoVVd5WnlJVVVqSlpOeTBnaTFOMXRu?=
+ =?utf-8?B?ZmNMM29vcC91aDJRMFhSUnU2STVkVy9UcHlBdng5OHRJb1RYc1RDNVdqdnND?=
+ =?utf-8?B?WlJIaVVFL1RtMEN0UUtRa2lCVFh3aFl0Y08vT2JOeDZkSDZKRXRVTWR5aW4x?=
+ =?utf-8?B?QlM2dXhYeWk5a2RiNUx4Ynhvdzg2eTRyTkFzQWJOM0lCL082ZmVOTDQxcGZH?=
+ =?utf-8?B?Y1hSQ2JSdkhnWjRROUY3Q0RYZ3pnS3ZReXpKcFdtTy8rVHI0L1BmdW4rd3l3?=
+ =?utf-8?B?eUF2cTJROTAxZmF3amdYUi9HMmdVUEhFZkF2MWRaT21Dem0rNVdTS0R3cnhE?=
+ =?utf-8?B?U3ZiVGgyWlVyVHpOM0d5aExwalVqQlFaS0czMmZPVWYyaENsUGpTb09OVVF4?=
+ =?utf-8?B?L1JNZFBIMjlaSzA2K0FqS0JyUUtGSEpaaytrdm9hQnJEaStmN2hPcjMwVXlS?=
+ =?utf-8?B?NDVLNjFsSE51NVViNFJQbmFmcERMUFcwaWR1Sk1PY0UrYzdFUmlSZ21GUWty?=
+ =?utf-8?B?bmVTWFp2WVFMNlcwbW1SMFZEL21VV1FFOW0vSHZjZXhDa0NlZWw2YjNvS2xF?=
+ =?utf-8?B?c3BrUHpjRVB4SW5Ld0hTL3NCbHEyc2oxeGhEZExrTmV1RklaWklzbFEvWTZx?=
+ =?utf-8?B?MUs0VlZhdVVJTzN0K2l6dDVsRU5KWEhIR1QrOVkyNXhyTzdwMjhxck5uSHRQ?=
+ =?utf-8?B?c3RhdkRWdUczZ0ZKN1R5VnBFVnVGRCtNbm95b3RkN0VSVmtsdmtkRk40MVpu?=
+ =?utf-8?B?WDdHa3MzNjc0TUlCRldBWXgyUit4NjE3WkptN0tvaXdlS0xWVnNvRTMvRlRI?=
+ =?utf-8?B?Q0NmQStscU9RbWFvaGkxQjkxcHJSc0szUVcwcTl2N0lrUnY4bGIveWhDeEZC?=
+ =?utf-8?B?Unh3Ry9nam5XUGk1TjcwRnNFK3lBemk3bnl2YVZGTkFDRG93ckJNMGdFd0RL?=
+ =?utf-8?B?VkgzLzZXT0w5UVdLZi8vVnNybU1xbXg2eW9JSXFBVGhmUnk0TVVGY1pBTEY3?=
+ =?utf-8?B?cVUvUHNYWHVNTG9oU3YyZ2l6ejByaEI4THVQZ2d2bmlsOXdJMFoyVnA0b0Va?=
+ =?utf-8?B?S2NVSE1rLzZ4L3d6MHNtNU12bjVpaUR0YnA0bVhIYk5pMFRwWFNpZjNseXFp?=
+ =?utf-8?B?ZXNOS1FUTXplYlFTZ2dCZ2JWTmxBampKZEwzNVljM2R0RkEyZXliQ3ZKc2JQ?=
+ =?utf-8?B?TFJrRkdhY1cySjk3TFdXVTgzOVZFTDBsTDhZVE0vbEtleng0K1E0YWEzL2gr?=
+ =?utf-8?B?bTBYOE9Fd0RLSlB2dkFRZ1JaNjdzcWhIbkNIZXRRMUpDSWZHbEtGYUJzazRV?=
+ =?utf-8?B?bk5oakJINEE0WmRTRnRhUHd4RFFaLy9zNHRWTnczWi9tNXUvQ09LYnNVeGly?=
+ =?utf-8?B?cUgxcHBDUzZ0QlQ1ak9DR0lXR3ZQRVd4ZjgwZEZZV3U2WThtdXRDTVQwelVB?=
+ =?utf-8?B?bFdLUGZ0SUQvVkRWeFovQzZGS0xGeTYydDRiSVRxT3l5S29EcWNIbjRVemFW?=
+ =?utf-8?Q?7hewhm2zhlzMEba2V25dToQfF?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fd6da79-9018-461f-718f-08ddf6b4ebcf
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 13:11:47.0461
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xJzSXvPIu0fYSW3WNtGXp2yOT5PB0XZogeJXaRX8JMmqCWdFm4KP+piS8BhvtYyZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6651
 
-On 18/09/2025 03:18, Huang, Ying wrote:
-> Hi, Ryan,
-> 
-> Thanks for reivew!
-> 
-> Ryan Roberts <ryan.roberts@arm.com> writes:
-> 
->> On 15/09/2025 04:29, Huang Ying wrote:
->>> A multi-thread customer workload with large memory footprint uses
->>> fork()/exec() to run some external programs every tens seconds.  When
->>> running the workload on an arm64 server machine, it's observed that
->>> quite some CPU cycles are spent in the TLB flushing functions.  While
->>> running the workload on the x86_64 server machine, it's not.  This
->>> causes the performance on arm64 to be much worse than that on x86_64.
->>>
->>> During the workload running, after fork()/exec() write-protects all
->>> pages in the parent process, memory writing in the parent process
->>> will cause a write protection fault.  Then the page fault handler
->>> will make the PTE/PDE writable if the page can be reused, which is
->>> almost always true in the workload.  On arm64, to avoid the write
->>> protection fault on other CPUs, the page fault handler flushes the TLB
->>> globally with TLBI broadcast after changing the PTE/PDE.  However, this
->>> isn't always necessary.  Firstly, it's safe to leave some stall
->>> read-only TLB entries as long as they will be flushed finally.
->>> Secondly, it's quite possible that the original read-only PTE/PDEs
->>> aren't cached in remote TLB at all if the memory footprint is large.
->>> In fact, on x86_64, the page fault handler doesn't flush the remote
->>> TLB in this situation, which benefits the performance a lot.
->>>
->>> To improve the performance on arm64, make the write protection fault
->>> handler flush the TLB locally instead of globally via TLBI broadcast
->>> after making the PTE/PDE writable.  If there are stall read-only TLB
->>> entries in the remote CPUs, the page fault handler on these CPUs will
->>> regard the page fault as spurious and flush the stall TLB entries.
->>>
->>> To test the patchset, make the usemem.c from
->>> vm-scalability (https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git).
->>> support calling fork()/exec() periodically.  To mimic the behavior of
->>> the customer workload, run usemem with 4 threads, access 100GB memory,
->>> and call fork()/exec() every 40 seconds.  Test results show that with
->>> the patchset the score of usemem improves ~40.6%.  The cycles% of TLB
->>> flush functions reduces from ~50.5% to ~0.3% in perf profile.
->>
->> Overall, this looks like a simple and useful performance optimization - thanks!
->> I'm running this through our performance regression suite to see if it spots any
->> workloads where the change slows things down and will report once we have the
->> results.
-> 
-> Thanks!
-> 
->>> Signed-off-by: Huang Ying <ying.huang@linux.alibaba.com>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: David Hildenbrand <david@redhat.com>
->>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> Cc: Vlastimil Babka <vbabka@suse.cz>
->>> Cc: Zi Yan <ziy@nvidia.com>
->>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Yang Shi <yang@os.amperecomputing.com>
->>> Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>
->>> Cc: Dev Jain <dev.jain@arm.com>
->>> Cc: Barry Song <baohua@kernel.org>
->>> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
->>> Cc: Yicong Yang <yangyicong@hisilicon.com>
->>> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
->>> Cc: Kevin Brodsky <kevin.brodsky@arm.com>
->>> Cc: Yin Fengwei <fengwei_yin@linux.alibaba.com>
->>> Cc: linux-arm-kernel@lists.infradead.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Cc: linux-mm@kvack.org
->>> ---
->>>  arch/arm64/include/asm/pgtable.h  | 14 ++++++++-----
->>>  arch/arm64/include/asm/tlbflush.h | 33 +++++++++++++++++++++++++++++++
->>>  arch/arm64/mm/fault.c             |  2 +-
->>>  3 files changed, 43 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->>> index abd2dee416b3..a9ed8c9d2c33 100644
->>> --- a/arch/arm64/include/asm/pgtable.h
->>> +++ b/arch/arm64/include/asm/pgtable.h
->>> @@ -130,12 +130,16 @@ static inline void arch_leave_lazy_mmu_mode(void)
->>>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>>  
->>>  /*
->>> - * Outside of a few very special situations (e.g. hibernation), we always
->>> - * use broadcast TLB invalidation instructions, therefore a spurious page
->>> - * fault on one CPU which has been handled concurrently by another CPU
->>> - * does not need to perform additional invalidation.
->>> + * We use local TLB invalidation instruction when reusing page in
->>> + * write protection fault handler to avoid TLBI broadcast in the hot
->>> + * path.  This will cause spurious page faults if stall read-only TLB
->>> + * entries exist.
->>>   */
->>> -#define flush_tlb_fix_spurious_fault(vma, address, ptep) do { } while (0)
->>> +#define flush_tlb_fix_spurious_fault(vma, address, ptep)	\
->>> +	local_flush_tlb_page_nonotify(vma, address)
->>> +
->>> +#define flush_tlb_fix_spurious_fault_pmd(vma, address, pmdp)	\
->>> +	local_flush_tlb_page_nonotify(vma, address)
->>
->> It's not really clear to me how important doing local tlb flushes for pmds is
->> for the performance improvement? I'm guessing most of the win comes from the pte
->> level? I suspect you have only added spurious pmd fault handling because the
->> arm64 implementation of __ptep_set_access_flags() actually handles both pte and
->> pmd levels?
->>
->> Given the core kernel didn't previously have support for pmd spurious faults, I
->> wonder if it would be simpler to drop the first patch and rejig
->> __ptep_set_access_flags() so that it has a pgsize parameter and can
->> differentiate based on that? I'm on the fence...
->>
->> If you do end up taking this approach, there is a style I introduced for
->> hugetlb, where the function is suffixed with _anysz and it takes a pgsize param:
->>
->> int __ptep_set_access_flags_anysz(struct vm_area_struct *vma,
->> 				  unsigned long address, pte_t *ptep,
->> 				  pte_t entry, int dirty, unsigned long pgsize);
-> 
-> From the performance point of view, local TLB flushes don't improve
-> performance much.  At least in a test similar to the one above, we don't
-> find observable improvement.
-> 
-> From the design point of view, I personally prefer to use similar logic
-> between PMD and PTE unless it hurts performance.  IMHO, less different
-> logic means less mental overhead.  Do you agree?
+Oh, now it gets funny.
 
-Yeah fair enough, that's a reasonable argument.
+Adding Tvrtko as well since he recently looked into making dma_fences more robust regarding context lifetime.
 
+On 18.09.25 14:30, Philipp Stanner wrote:
+> dma_fence is a synchronization mechanism which is needed by virtually
+> all GPU drivers.
 > 
->>>  
->>>  /*
->>>   * ZERO_PAGE is a global shared page that is always zero: used
->>> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->>> index 18a5dc0c9a54..607b67d8f61b 100644
->>> --- a/arch/arm64/include/asm/tlbflush.h
->>> +++ b/arch/arm64/include/asm/tlbflush.h
->>> @@ -282,6 +282,39 @@ static inline void flush_tlb_mm(struct mm_struct *mm)
->>>  	mmu_notifier_arch_invalidate_secondary_tlbs(mm, 0, -1UL);
->>>  }
->>>  
->>> +static inline void __local_flush_tlb_page_nonotify_nosync(
->>> +	struct mm_struct *mm, unsigned long uaddr)
->>> +{
->>> +	unsigned long addr;
->>> +
->>> +	dsb(nshst);
->>> +	addr = __TLBI_VADDR(uaddr, ASID(mm));
->>> +	__tlbi(vale1, addr);
->>> +	__tlbi_user(vale1, addr);
->>> +}
->>> +
->>> +static inline void local_flush_tlb_page_nonotify(
->>> +	struct vm_area_struct *vma, unsigned long uaddr)
->>> +{
->>> +	__local_flush_tlb_page_nonotify_nosync(vma->vm_mm, uaddr);
->>> +	dsb(nsh);
->>> +}
->>> +
->>> +static inline void __local_flush_tlb_page_nosync(
->>> +	struct mm_struct *mm, unsigned long uaddr)
->>> +{
->>> +	__local_flush_tlb_page_nonotify_nosync(mm, uaddr);
->>> +	mmu_notifier_arch_invalidate_secondary_tlbs(mm, uaddr & PAGE_MASK,
->>> +						(uaddr & PAGE_MASK) + PAGE_SIZE);
->>> +}
->>> +
->>> +static inline void local_flush_tlb_page(struct vm_area_struct *vma,
->>> +					unsigned long uaddr)
->>> +{
->>> +	__local_flush_tlb_page_nosync(vma->vm_mm, uaddr);
->>> +	dsb(nsh);
->>> +}
->>> +
->>
->> You're introducing more variants than you're actually using here. I think you
->> just need local_flush_tlb_page() and local_flush_tlb_page_nonotify(); you could
->> keep __local_flush_tlb_page_nonotify_nosync() and drop
->> __local_flush_tlb_page_nosync() since it's not really adding much?
+> A dma_fence offers many features, among which the most important ones
+> are registering callbacks (for example to kick off a work item) which
+> get executed once a fence gets signalled.
 > 
-> Sure.
+> dma_fence has a number of callbacks. Only the two most basic ones
+> (get_driver_name(), get_timeline_name() are abstracted since they are
+> enough to enable the basic functionality.
 > 
->> But I'm also wondering if we should tidy up this API in general; we have local
->> vs broadcast, sync vs nosync, notify vs nonotify. And page is really just a
->> special case of a range. So perhaps it is better to rework the range API to take
->> some flags and we can tidy up all of this. I know Will also posted an RFC to
->> convert a lot of this to c functions, which should also be included. Not a
->> blocker for this change, I don't think, but there should definitely be some
->> follow up work to tidy it up. (I'm happy to take it on).
+> Callbacks in Rust are registered by passing driver data which implements
+> the Rust callback trait, whose function will be called by the C backend.
 > 
-> This sounds goo to me.  Thanks for working on this!
-
-OK I'll put it on my todo list to have a go at this as follow up.
-
+> dma_fence's are always refcounted, so implement AlwaysRefcounted for
+> them. Once a reference drops to zero, the C backend calls a release
+> function, where we implement drop_in_place() to conveniently marry that
+> C-cleanup mechanism with Rust's ownership concepts.
 > 
->>>  static inline void __flush_tlb_page_nosync(struct mm_struct *mm,
->>>  					   unsigned long uaddr)
->>>  {
->>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
->>> index d816ff44faff..22f54f5afe3f 100644
->>> --- a/arch/arm64/mm/fault.c
->>> +++ b/arch/arm64/mm/fault.c
->>> @@ -235,7 +235,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
->>>  
->>>  	/* Invalidate a stale read-only entry */
->>>  	if (dirty)
->>> -		flush_tlb_page(vma, address);
->>> +		local_flush_tlb_page(vma, address);
->>
->> Given this is called for both pmds and ptes, it's a bit of an abuse to flush a
->> *page*. Yes it is architecturally safe, but it's not exactly self-documenting.
->> If we pass in the pgsize (as per above) it could be optimized given we know the
->> level and we only want to invalidate the last level. e.g. the local equivalent to:
->>
->> __flush_tlb_range(vma, address, address + PMD_SIZE, PMD_SIZE, true, 2);
->>
->> or
->>
->> __flush_tlb_range(vma, address, address + PAGE_SIZE, PAGE_SIZE, true, 3);
->>
->> Again though, perhaps that is part of some follow up tidying work?
+> This patch provides basic functionality, but is still missing:
+>   - An implementation of PinInit<T, Error> for all driver data.
+>   - A clever implementation for working dma_fence_begin_signalling()
+>     guards. See the corresponding TODO in the code.
+>   - Additional useful helper functions such as dma_fence_is_signaled().
+>     These _should_ be relatively trivial to implement, though.
 > 
-> This sounds good to me too.  And, Yes, I think this can be a follow up
-> tidying work.
-
-I'll include this in my follow up.
-
-> 
->> contpte_ptep_set_access_flags() currently does a (broadcast) __flush_tlb_range()
->> on the (pte_write(orig_pte) == pte_write(entry)) path. I think that should be
->> changed to a local range invalidation to be consistent with this change.
-> 
-> Yes.  This should be changed too.  However, it means we need a local
-> variant of __flush_tlb_range() and flush_tlb_mm().  Is it OK to
-> introduce them first and tidy up later?
-
-I think do it as Catalin suggested for now. I'll then refactor as part of the
-tidy up.
-
-Thanks,
-Ryan
-
-> 
->>>  	return 1;
->>>  }
->>>  
-> 
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 > ---
-> Best Regards,
-> Huang, Ying
+> So. ¡Hola!
+> 
+> This is a highly WIP RFC. It's obviously at many places not yet
+> conforming very well to Rust's standards.
+> 
+> Nevertheless, it has progressed enough that I want to request comments
+> from the community.
+> 
+> There are a number of TODOs in the code to which I need input.
+> 
+> Notably, it seems (half-)illegal to use a shared static reference to an
+> Atomic, which I currently use for the dma_fence unit test / docstring
+> test. I'm willing to rework that if someone suggests how.
+> (Still, shouldn't changing a global Atomic always be legal? It can race,
+> of course. But that's kind of the point of an atomic)
+> 
+> What I want comments on the most is the design of the callbacks. I think
+> it's a great opportunity to provide Rust drivers with rust-only
+> callbacks, so that they don't have to bother about the C functions.
+> 
+> dma_fence wise, only the most basic callbacks currently get implemented.
+> For Nova, AFAICS, we don't need much more than signalling fences and
+> registering callbacks.
+> 
+> 
+> Another, solvable, issue I'm having is designing the
+> dma_fence_begin_signallin() abstractions. There are TODOs about that in
+> the code. That should ideally be robust and not racy. So we might want
+> some sort of synchronized (locked?) way for using that abstraction.
+> 
+> 
+> Regarding the manually created spinlock of mine: I so far never need
+> that spinlock anywhere in Rust and wasn't sure what's then the best way
+> to pass a "raw" spinlock to C.
+
+I was hoping to remove that anyway. Maybe it's time to do so now.
+
+Anyway I will need some time to look into it deeper.
+
+Regards,
+Christian.
+
+> 
+> 
+> So much from my side. Hope to hear from you.
+> 
+> (I've compiled and tested this with the unit test on the current -rc3)
+> 
+> Philipp
+> ---
+>  rust/bindings/bindings_helper.h |   1 +
+>  rust/helpers/dma_fence.c        |  23 ++
+>  rust/helpers/helpers.c          |   1 +
+>  rust/helpers/spinlock.c         |   5 +
+>  rust/kernel/sync.rs             |   2 +
+>  rust/kernel/sync/dma_fence.rs   | 388 ++++++++++++++++++++++++++++++++
+>  6 files changed, 420 insertions(+)
+>  create mode 100644 rust/helpers/dma_fence.c
+>  create mode 100644 rust/kernel/sync/dma_fence.rs
+> 
+> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> index 84d60635e8a9..107cb6b6f4a4 100644
+> --- a/rust/bindings/bindings_helper.h
+> +++ b/rust/bindings/bindings_helper.h
+> @@ -48,6 +48,7 @@
+>  #include <linux/cred.h>
+>  #include <linux/device/faux.h>
+>  #include <linux/dma-mapping.h>
+> +#include <linux/dma-fence.h>
+>  #include <linux/errname.h>
+>  #include <linux/ethtool.h>
+>  #include <linux/file.h>
+> diff --git a/rust/helpers/dma_fence.c b/rust/helpers/dma_fence.c
+> new file mode 100644
+> index 000000000000..a9fc4829bbae
+> --- /dev/null
+> +++ b/rust/helpers/dma_fence.c
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/dma-fence.h>
+> +
+> +void rust_helper_dma_fence_get(struct dma_fence *f)
+> +{
+> +	dma_fence_get(f);
+> +}
+> +
+> +void rust_helper_dma_fence_put(struct dma_fence *f)
+> +{
+> +	dma_fence_put(f);
+> +}
+> +
+> +bool rust_helper_dma_fence_begin_signalling(void)
+> +{
+> +	return dma_fence_begin_signalling();
+> +}
+> +
+> +void rust_helper_dma_fence_end_signalling(bool cookie)
+> +{
+> +	dma_fence_end_signalling(cookie);
+> +}
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 7cf7fe95e41d..99a7f7834c03 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -20,6 +20,7 @@
+>  #include "cred.c"
+>  #include "device.c"
+>  #include "dma.c"
+> +#include "dma_fence.c"
+>  #include "drm.c"
+>  #include "err.c"
+>  #include "fs.c"
+> diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+> index 42c4bf01a23e..017ac447ebbd 100644
+> --- a/rust/helpers/spinlock.c
+> +++ b/rust/helpers/spinlock.c
+> @@ -16,6 +16,11 @@ void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+>  #endif /* CONFIG_DEBUG_SPINLOCK */
+>  }
+>  
+> +void rust_helper_spin_lock_init(spinlock_t *lock)
+> +{
+> +	spin_lock_init(lock);
+> +}
+> +
+>  void rust_helper_spin_lock(spinlock_t *lock)
+>  {
+>  	spin_lock(lock);
+> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> index 00f9b558a3ad..6e59526020bc 100644
+> --- a/rust/kernel/sync.rs
+> +++ b/rust/kernel/sync.rs
+> @@ -12,6 +12,7 @@
+>  mod arc;
+>  pub mod aref;
+>  pub mod completion;
+> +pub mod dma_fence;
+>  mod condvar;
+>  pub mod lock;
+>  mod locked_by;
+> @@ -20,6 +21,7 @@
+>  
+>  pub use arc::{Arc, ArcBorrow, UniqueArc};
+>  pub use completion::Completion;
+> +pub use dma_fence::{DmaFence, DmaFenceCtx, DmaFenceNames, DmaFenceCb, DmaFenceCbFunc};
+>  pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
+>  pub use lock::global::{global_lock, GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
+>  pub use lock::mutex::{new_mutex, Mutex, MutexGuard};
+> diff --git a/rust/kernel/sync/dma_fence.rs b/rust/kernel/sync/dma_fence.rs
+> new file mode 100644
+> index 000000000000..a00bb10b2208
+> --- /dev/null
+> +++ b/rust/kernel/sync/dma_fence.rs
+> @@ -0,0 +1,388 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! DmaFence support.
+> +//!
+> +//! Reference: <https://docs.kernel.org/driver-api/dma-buf.html#c.dma_fence>
+> +//!
+> +//! C header: [`include/linux/dma-fence.h`](srctree/include/linux/dma-fence.h)
+> +
+> +use crate::{
+> +    bindings,
+> +    prelude::*,
+> +    str::CStr,
+> +    types::ForeignOwnable,
+> +    types::{ARef, AlwaysRefCounted, Opaque},
+> +};
+> +
+> +use core::{
+> +    ptr::{drop_in_place, NonNull},
+> +    sync::atomic::{AtomicU64, Ordering},
+> +};
+> +
+> +use kernel::sync::{Arc, ArcBorrow};
+> +
+> +/// The C dma_fence backend functions ask for certain name parameters at times. In order to avoid
+> +/// storing those names in [`DmaFence`] (there can be millions of fences at the same time, wasting
+> +/// much memory), the driver must provide associated constants which the C backend will access,
+> +/// ultimately.
+> +pub trait DmaFenceNames {
+> +    /// The driver's name.
+> +    const DRIVER_NAME: &CStr;
+> +    /// The name of the timeline the fence is associated with.
+> +    const TIMELINE_NAME: &CStr;
+> +}
+> +
+> +/// Defines the callback function the dma-fence backend will call once the fence gets signalled.
+> +pub trait DmaFenceCbFunc {
+> +    /// The callback function. `cb` is a container of the data which the driver passed in
+> +    /// [`DmaFence::register_callback`].
+> +    fn callback(cb: Pin<KBox<DmaFenceCb<Self>>>)
+> +    where
+> +        Self: Sized;
+> +}
+> +
+> +/// Container for driver data which the driver gets back in its callback once the fence gets
+> +/// signalled.
+> +#[pin_data]
+> +pub struct DmaFenceCb<T: DmaFenceCbFunc> {
+> +    /// C struct needed for the backend.
+> +    #[pin]
+> +    inner: Opaque<bindings::dma_fence_cb>,
+> +    /// Driver data.
+> +    #[pin]
+> +    pub data: T,
+> +}
+> +
+> +impl<T: DmaFenceCbFunc + 'static> DmaFenceCb<T> {
+> +    fn new(data: impl PinInit<T>) -> Result<Pin<KBox<Self>>> {
+> +        let cb = try_pin_init!(Self {
+> +            inner: Opaque::zeroed(), // This gets initialized by the C backend.
+> +            data <- data,
+> +        });
+> +
+> +        KBox::pin_init(cb, GFP_KERNEL)
+> +    }
+> +
+> +    /// Callback for the C dma_fence backend.
+> +    ///
+> +    /// # Safety
+> +    /// All data used and cast in this function was validly created by
+> +    /// [`DmaFence::register_callback`] and isn't modified by the C backend until this callback
+> +    /// here has run.
+> +    unsafe extern "C" fn callback(
+> +        _fence_ptr: *mut bindings::dma_fence,
+> +        cb_ptr: *mut bindings::dma_fence_cb,
+> +    ) {
+> +        let cb_ptr = Opaque::cast_from(cb_ptr);
+> +
+> +        // SAFETY: The constructor guarantees that `cb_ptr` is always `inner` of a DmaFenceCb.
+> +        let cb_ptr = unsafe { crate::container_of!(cb_ptr, Self, inner) }.cast_mut() as *mut c_void;
+> +        // SAFETY: `cp_ptr` is the heap memory of a Pin<Kbox<Self>> because it was created by
+> +        // invoking ForeignOwnable::into_foreign() on such an instance.
+> +        let cb = unsafe { <Pin<KBox<Self>> as ForeignOwnable>::from_foreign(cb_ptr) };
+> +
+> +        // Pass ownership back over to the driver.
+> +        T::callback(cb);
+> +    }
+> +}
+> +
+> +/// A dma-fence context. A fence context takes care of associating related fences with each other,
+> +/// providing each with raising sequence numbers and a common identifier.
+> +#[pin_data]
+> +pub struct DmaFenceCtx {
+> +    /// An opaque spinlock. Only ever passed to the C backend, never used by Rust.
+> +    #[pin]
+> +    lock: Opaque<bindings::spinlock_t>,
+> +    /// The fence context number.
+> +    nr: u64,
+> +    /// The sequence number for the next fence created.
+> +    seqno: AtomicU64,
+> +}
+> +
+> +impl DmaFenceCtx {
+> +    /// Create a new `DmaFenceCtx`.
+> +    pub fn new() -> Result<Arc<Self>> {
+> +        let ctx = pin_init!(Self {
+> +            // Feed in a non-Rust spinlock for now, since the Rust side never needs the lock.
+> +            lock <- Opaque::ffi_init(|slot: *mut bindings::spinlock| {
+> +                // SAFETY: `slot` is a valid pointer to an uninitialized `struct spinlock_t`.
+> +                unsafe { bindings::spin_lock_init(slot) };
+> +            }),
+> +            // SAFETY: `dma_fence_context_alloc()` merely works on a global atomic. Parameter `1`
+> +            // is the number of contexts we want to allocate.
+> +            nr: unsafe { bindings::dma_fence_context_alloc(1) },
+> +            seqno: AtomicU64::new(0),
+> +        });
+> +
+> +        Arc::pin_init(ctx, GFP_KERNEL)
+> +    }
+> +
+> +    fn get_new_fence_seqno(&self) -> u64 {
+> +        self.seqno.fetch_add(1, Ordering::Relaxed)
+> +    }
+> +}
+> +
+> +impl ArcBorrow<'_, DmaFenceCtx> {
+> +    /// Create a new fence, consuming `data`.
+> +    ///
+> +    /// The fence will increment the refcount of the fence context associated with this
+> +    /// [`DmaFenceCtx`].
+> +    pub fn new_fence<T: DmaFenceNames>(
+> +        &mut self,
+> +        data: impl PinInit<T>,
+> +    ) -> Result<ARef<DmaFence<T>>> {
+> +        let fctx: Arc<DmaFenceCtx> = (*self).into();
+> +        let seqno: u64 = fctx.get_new_fence_seqno();
+> +
+> +        // TODO: Should we reset seqno in case of failure?
+> +        // Pass `fctx` by value so that the fence will hold a reference to the DmaFenceCtx as long
+> +        // as it lives.
+> +        DmaFence::new(fctx, data, &self.lock, self.nr, seqno)
+> +    }
+> +}
+> +
+> +/// A synchronization primitive mainly for GPU drivers.
+> +///
+> +/// DmaFences are always reference counted. The typical use case is that one side registers
+> +/// callbacks on the fence which will perform a certain action (such as queueing work) once the
+> +/// other side signals the fence.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// use kernel::c_str;
+> +/// use kernel::sync::{Arc, ArcBorrow, DmaFence, DmaFenceCtx, DmaFenceNames, DmaFenceCb, DmaFenceCbFunc};
+> +/// use core::sync::atomic::{self, AtomicBool};
+> +///
+> +/// static mut CHECKER: AtomicBool = AtomicBool::new(false);
+> +///
+> +/// struct CallbackData {
+> +///     i: u32,
+> +/// }
+> +///
+> +/// impl CallbackData {
+> +///     fn new() -> Self {
+> +///         Self { i: 9 }
+> +///     }
+> +/// }
+> +///
+> +/// impl DmaFenceCbFunc for CallbackData {
+> +///     fn callback(cb: Pin<KBox<DmaFenceCb<Self>>>) where Self: Sized {
+> +///         assert_eq!(cb.data.i, 9);
+> +///         // SAFETY: Just to have an easy way for testing. This cannot race with the checker
+> +///         // because the fence signalling callbacks are executed synchronously.
+> +///         unsafe { CHECKER.store(true, atomic::Ordering::Relaxed); }
+> +///     }
+> +/// }
+> +///
+> +/// struct DriverData {
+> +///     i: u32,
+> +/// }
+> +///
+> +/// impl DriverData {
+> +///     fn new() -> Self {
+> +///         Self { i: 5 }
+> +///     }
+> +/// }
+> +///
+> +/// impl DmaFenceNames for DriverData {
+> +///     const DRIVER_NAME: &CStr = c_str!("DUMMY_DRIVER");
+> +///     const TIMELINE_NAME: &CStr = c_str!("DUMMY_TIMELINE");
+> +/// }
+> +///
+> +/// let data = DriverData::new();
+> +/// let fctx = DmaFenceCtx::new()?;
+> +///
+> +/// let mut fence = fctx.as_arc_borrow().new_fence(data)?;
+> +///
+> +/// let cb_data = CallbackData::new();
+> +/// fence.register_callback(cb_data);
+> +/// // fence.begin_signalling();
+> +/// fence.signal()?;
+> +/// // Now check wehether the callback was actually executed.
+> +/// // SAFETY: `fence.signal()` above works sequentially. We just check here whether the signalling
+> +/// // actually did set the boolean correctly.
+> +/// unsafe { assert_eq!(CHECKER.load(atomic::Ordering::Relaxed), true); }
+> +///
+> +/// Ok::<(), Error>(())
+> +/// ```
+> +#[pin_data]
+> +pub struct DmaFence<T> {
+> +    /// The actual dma_fence passed to C.
+> +    #[pin]
+> +    inner: Opaque<bindings::dma_fence>,
+> +    /// User data.
+> +    #[pin]
+> +    data: T,
+> +    /// Marks whether the fence is currently in the signalling critical section.
+> +    signalling: bool,
+> +    /// A boolean needed for the C backend's lockdep guard.
+> +    signalling_cookie: bool,
+> +    /// A reference to the associated [`DmaFenceCtx`] so that it cannot be dropped while there are
+> +    /// still fences around.
+> +    fctx: Arc<DmaFenceCtx>,
+> +}
+> +
+> +// SAFETY: `DmaFence` is safe to be sent to any task.
+> +unsafe impl<T> Send for DmaFence<T> {}
+> +
+> +// SAFETY: `DmaFence` is safe to be accessed concurrently.
+> +unsafe impl<T> Sync for DmaFence<T> {}
+> +
+> +// SAFETY: These implement the C backends refcounting methods which are proven to work correctly.
+> +unsafe impl<T: DmaFenceNames> AlwaysRefCounted for DmaFence<T> {
+> +    fn inc_ref(&self) {
+> +        // SAFETY: `self.as_raw()` is a pointer to a valid `struct dma_fence`.
+> +        unsafe { bindings::dma_fence_get(self.as_raw()) }
+> +    }
+> +
+> +    /// # Safety
+> +    ///
+> +    /// `ptr`must be a valid pointer to a [`DmaFence`].
+> +    unsafe fn dec_ref(ptr: NonNull<Self>) {
+> +        // SAFETY: `ptr` is never a NULL pointer; and when `dec_ref()` is called
+> +        // the fence is by definition still valid.
+> +        let fence = unsafe { (*ptr.as_ptr()).inner.get() };
+> +
+> +        // SAFETY: Valid because `fence` was created validly above.
+> +        unsafe { bindings::dma_fence_put(fence) }
+> +    }
+> +}
+> +
+> +impl<T: DmaFenceNames> DmaFence<T> {
+> +    // TODO: There could be a subtle potential problem here? The LLVM compiler backend can create
+> +    // several versions of this constant. Their content would be identical, but their addresses
+> +    // different.
+> +    const OPS: bindings::dma_fence_ops = Self::ops_create();
+> +
+> +    /// Create an initializer for a new [`DmaFence`].
+> +    fn new(
+> +        fctx: Arc<DmaFenceCtx>,
+> +        data: impl PinInit<T>, // TODO: The driver data should implement PinInit<T, Error>
+> +        lock: &Opaque<bindings::spinlock_t>,
+> +        context: u64,
+> +        seqno: u64,
+> +    ) -> Result<ARef<Self>> {
+> +        let fence = pin_init!(Self {
+> +            inner <- Opaque::ffi_init(|slot: *mut bindings::dma_fence| {
+> +                let lock_ptr = &raw const (*lock);
+> +                // SAFETY: `slot` is a valid pointer to an uninitialized `struct dma_fence`.
+> +                // `lock_ptr` is a pointer to the spinlock of the fence context, which is shared
+> +                // among all the fences. This can't become a UAF because each fence takes a
+> +                // reference of the fence context.
+> +                unsafe { bindings::dma_fence_init(slot, &Self::OPS, Opaque::cast_into(lock_ptr), context, seqno) };
+> +            }),
+> +            data <- data,
+> +            signalling: false,
+> +            signalling_cookie: false,
+> +            fctx: fctx,
+> +        });
+> +
+> +        let b = KBox::pin_init(fence, GFP_KERNEL)?;
+> +
+> +        // SAFETY: We don't move the contents of `b` anywhere here. After unwrapping it, ARef will
+> +        // take care of preventing memory moves.
+> +        let rawptr = KBox::into_raw(unsafe { Pin::into_inner_unchecked(b) });
+> +
+> +        // SAFETY: `rawptr` was created validly above.
+> +        let aref = unsafe { ARef::from_raw(NonNull::new_unchecked(rawptr)) };
+> +
+> +        Ok(aref)
+> +    }
+> +
+> +    /// Mark the beginning of a DmaFence signalling critical section. Should be called once a fence
+> +    /// gets published.
+> +    ///
+> +    /// The signalling critical section is marked as finished automatically once the fence signals.
+> +    pub fn begin_signalling(&mut self) {
+> +        // FIXME: this needs to be mutable, obviously, but we can't borrow mutably. *sigh*
+> +        self.signalling = true;
+> +        // TODO: Should we warn if a user tries to do this several times for the same
+> +        // fence? And should we ignore the request if the fence is already signalled?
+> +
+> +        // SAFETY: `dma_fence_begin_signalling()` works on global lockdep data and calling it is
+> +        // always safe.
+> +        self.signalling_cookie = unsafe { bindings::dma_fence_begin_signalling() };
+> +    }
+> +
+> +    const fn ops_create() -> bindings::dma_fence_ops {
+> +        // SAFETY: Zeroing out memory on the stack is always safe.
+> +        let mut ops: bindings::dma_fence_ops = unsafe { core::mem::zeroed() };
+> +
+> +        ops.get_driver_name = Some(Self::get_driver_name);
+> +        ops.get_timeline_name = Some(Self::get_timeline_name);
+> +        ops.release = Some(Self::release);
+> +
+> +        ops
+> +    }
+> +
+> +    extern "C" fn get_driver_name(_ptr: *mut bindings::dma_fence) -> *const c_char {
+> +        T::DRIVER_NAME.as_ptr()
+> +    }
+> +
+> +    extern "C" fn get_timeline_name(_ptr: *mut bindings::dma_fence) -> *const c_char {
+> +        T::TIMELINE_NAME.as_ptr()
+> +    }
+> +
+> +    /// The release function called by the C backend once the refcount drops to 0. We use this to
+> +    /// drop the Rust dma-fence, too. Since [`DmaFence`] implements [`AlwaysRefCounted`], this is
+> +    /// perfectly safe and a convenient way to concile the two release mechanisms of C and Rust.
+> +    unsafe extern "C" fn release(ptr: *mut bindings::dma_fence) {
+> +        let ptr = Opaque::cast_from(ptr);
+> +
+> +        // SAFETY: The constructor guarantees that `ptr` is always the inner fence of a DmaFence.
+> +        let fence = unsafe { crate::container_of!(ptr, Self, inner) }.cast_mut();
+> +
+> +        // SAFETY: See above. Also, the release callback will only be called once, when the
+> +        // refcount drops to 0, and when that happens the fence is by definition still valid.
+> +        unsafe { drop_in_place(fence) };
+> +    }
+> +
+> +    /// Signal the fence. This will invoke all registered callbacks.
+> +    pub fn signal(&self) -> Result {
+> +        // SAFETY: `self` is refcounted.
+> +        let ret = unsafe { bindings::dma_fence_signal(self.as_raw()) };
+> +        if ret != 0 {
+> +            return Err(Error::from_errno(ret));
+> +        }
+> +
+> +        if self.signalling {
+> +            // SAFETY: `dma_fence_end_signalling()` works on global lockdep data. The only
+> +            // parameter is a boolean passed by value.
+> +            unsafe { bindings::dma_fence_end_signalling(self.signalling_cookie) };
+> +        }
+> +
+> +        Ok(())
+> +    }
+> +
+> +    /// Register a callback on a [`DmaFence`]. The callback will be invoked in the fence's
+> +    /// signalling path, i.e., critical section.
+> +    ///
+> +    /// Consumes `data`. `data` is passed back to the implemented callback function when the fence
+> +    /// gets signalled.
+> +    pub fn register_callback<U: DmaFenceCbFunc + 'static>(&self, data: impl PinInit<U>) -> Result {
+> +        let cb = DmaFenceCb::new(data)?;
+> +        let ptr = cb.into_foreign() as *mut DmaFenceCb<U>;
+> +        // SAFETY: `ptr` was created validly directly above.
+> +        let inner_cb = unsafe { (*ptr).inner.get() };
+> +
+> +        // SAFETY: `self.as_raw()` is valid because `self` is refcounted, `inner_cb` was created
+> +        // validly above and was turned into a ForeignOwnable, so it won't be dropped. `callback`
+> +        // has static life time.
+> +        let ret = unsafe {
+> +            bindings::dma_fence_add_callback(
+> +                self.as_raw(),
+> +                inner_cb,
+> +                Some(DmaFenceCb::<U>::callback),
+> +            )
+> +        };
+> +        if ret != 0 {
+> +            return Err(Error::from_errno(ret));
+> +        }
+> +        Ok(())
+> +    }
+> +
+> +    fn as_raw(&self) -> *mut bindings::dma_fence {
+> +        self.inner.get()
+> +    }
+> +}
 
 
