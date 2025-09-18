@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-823244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A3BB85E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:08:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC25B85E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E10113A0502
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:04:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 821CB3AFB33
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930A6311C01;
-	Thu, 18 Sep 2025 16:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD6D314D31;
+	Thu, 18 Sep 2025 16:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VOr72Oha"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="i28v2+q/"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631D43148B1
-	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3801314D0E
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758211451; cv=none; b=JiScg9dVCKbHFrD93sYYb5b9cUWzS7w1nzgTI6PfYS9FnRIVeTbziou9dpm9PTZcRl3gb6JRgZmaycm5nOBHjzfcQx/A+lshpuK48t/J874ajmjFG0s2ViSqJ+QXhXcBZZYoqUWcDlU8TYdiKbeSipae3tgNjrVtyY1SMXrVoTs=
+	t=1758211503; cv=none; b=NUAIfx3/1P8oF/NPdMpCeLtMvhBDM1qHD/UiCpseMPtDX5QdUrgXUZdhmPt2ttB6IFeZKJTEyQ2u7LxC8vWQCw2qLaef2OtWZ0NQgPFH5U1KhrVB7M+saogZbXryRCxE1k7Q42EuM12vgIi/0SZLLmbL/3jWpIC/4Z6J8u/A7Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758211451; c=relaxed/simple;
-	bh=Z5B5dt6wI87+KOD3sTN8FRIoAj7TBjgpAUwP/aqCmqQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bM4NRnoIU7S0J7yA7lYXqcDBPR0rM2hv76yrWDB8q7WZXP16rr865X6BxGAuNbLIsUANHk1LLr6aK7YiTOLl8Do0nxvAhiqFE+F3yxq0WAWuubmtBGZzYMwiSD45Sd7InpO4BQpOSdP0LFMJ9/Q8W3HO57QxQpg5DIzshbjt6FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VOr72Oha; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so1635528a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:04:09 -0700 (PDT)
+	s=arc-20240116; t=1758211503; c=relaxed/simple;
+	bh=lYuuVq2c2mGG8GtYZXdwpj1TRV+Txzn06Yn/v4INq2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g8g8MUFKJqoJ6cSt2vvsHY5WGkro0+dl1j6K4XVCVpo+yn+VCHSnGSlEw2WON9ABYqxwdoZ6xMR2ZI1eVFsGjsdb63/h2/NqtmsNImA5FW0AhNHfCI46mS13aPOBi44og+UC2LeQREiOD5uFvnhNlUQCQavQ1TpJEYsV65NWPDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=i28v2+q/; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-ea5d1270b56so1165026276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 09:05:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758211449; x=1758816249; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tqabNObTrUIXb/BYAEPfcGgxscP8Gw2Vuj2oVftkStA=;
-        b=VOr72OhaMYpzapuIs580oRqi7i5QW15pQ9M7wpE19Y140mgSmxSlSVReqFLOdc+dEJ
-         TNey1BMN6NnoMxNbUCB6x7YhYkHnduajq+EtrEbB4RPOCSqhq6RxkIP52vIQ94Oxpj9n
-         wgd5FY7+hHyR2ZAi9W6K8Fh3rcnD7DvjNqx+s8Ox7BzmO9bSWKRNAAdeaoUZ9OAnWrtq
-         UGKNxq2qcV7Xy2dSdlpMgMs0wXSQ0N0G983D8i9Z2DkJQD6pTjRwSh9ujtkhg+2p0e4z
-         GsxHpfYUP/U/iqEP2WuxUDFFHEB0FM972laqIV+9ueYEzkZ6PvV0xIMG4/HF34G1cagy
-         bS1A==
+        d=amarulasolutions.com; s=google; t=1758211500; x=1758816300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lYuuVq2c2mGG8GtYZXdwpj1TRV+Txzn06Yn/v4INq2g=;
+        b=i28v2+q//rWj7n/cnrIgNw7ydEsWLK6vJyrlQ/t2TZqitsuJx79ghy8Rq7w57qNqCV
+         zBQI3EbC2hTYNn+jHlWREJb/7d+XaT8tKCgDDIQR3JN6uNi/mphP5Z2D7sK5I8TEH5IA
+         FFxhXZ21lvLlmPeuntzGhGuM5AuCEZcrv+7R0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758211449; x=1758816249;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tqabNObTrUIXb/BYAEPfcGgxscP8Gw2Vuj2oVftkStA=;
-        b=ucV+BU8kpapCeN4T4DMrGoeRrTnDOkm8i9zr8yXyTqMaplAkI1BOy3UxlaWyIJiwno
-         /xLga5i/19Rwca/B04AGwVjOj5OYKP747atYqICpgCSU88iYivr8KHJMNWrNPcGtZ83f
-         I0K21e4CIu2Rdb7ODF3IXSENAoLuX4h3zWMvWOClJZ2Au/XTlatLu1HzBDv1yTLSOzsl
-         OxHmKHhz2h3Ottt/vuKSAAtgdzqOn/LuvR4+Iph9m4H0a1zKdqkU7/zkisXzv5D6VDCG
-         gXpywUJALepxZcP2NCMntKIrd5lxwIi4Pzn8lwRMm7T1xdhcTXB4e9sf8cyCrlIkCSyF
-         1MTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7laT+8yWIJ+eC8cFU2XGp0rHE88UFQKaaZJ7Nw9Z2lSdDCPp5yGbXJHZGKIGmdmbLuOD8cHxZw5uy6B8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNkrjAL6hke5oayY6Jo1eZs0TERL5uMFKO1p/edndaquLMYWws
-	jCwDxTCrNaAh1/ZrRyfEIPdeN1eMAQ1UcW2+F9O+w6ZhfQ5JiCT2Y0KK9LzHpOh3LgsA9EZ8TVy
-	YJdN5Nw==
-X-Google-Smtp-Source: AGHT+IGkmbYJfZP5nllHSP5gPnF6lwqm76wSLahcIX1/RcNPCgiykqnALzGjrifpViIQLPrzkR7sDPMdXBM=
-X-Received: from pjp16.prod.google.com ([2002:a17:90b:55d0:b0:329:ec3d:72ad])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f4b:b0:32e:9281:7c7b
- with SMTP id 98e67ed59e1d1-32ee3ebb1e1mr8451052a91.3.1758211448798; Thu, 18
- Sep 2025 09:04:08 -0700 (PDT)
-Date: Thu, 18 Sep 2025 09:04:07 -0700
-In-Reply-To: <20250918154826.oUc0cW0Y@linutronix.de>
+        d=1e100.net; s=20230601; t=1758211500; x=1758816300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lYuuVq2c2mGG8GtYZXdwpj1TRV+Txzn06Yn/v4INq2g=;
+        b=NQjti59JvK2ViT13w093GRDqbmHDOHVSd5vGi4ZdYqwYUDQGn6+FH8j6I/2dK9JFGS
+         26laz3J+Gt8FBxPDlJZ2Eflc5V6w1rTu+iSC//Wbz5ahpHll6jYLhGy1EyexZRl3WLon
+         Te1RFDrSwy3w2x1Ry9SJt47pD3pULZgRFDm0whyxF/BQyj2CsHmG7WAVlqx/aiz+Us/7
+         AQaVUAhoclpQ+owWd7RaRTuPoGYJg+0Jw7BuSJnkzmlpYwJE5Zv7yxMNde8RIj7I0KGw
+         jPIfjxhATJ47L0dfEb6C14v6mgadbw51OFylk8WBxs2jffYOsSl7Pfer8w83G7oH9F7T
+         g6tA==
+X-Gm-Message-State: AOJu0Yy4hfqFK4Y2w4donRXK1gBK+17qrtYlhH5BXHHvHi6+t5MHf3WA
+	w5PJ9IZI73E/SXroHUdKi6hx58LtIcXYvuyAaLIQ+o0ciivLHqvlLPUwrPOczCEz+sumGTeCFJH
+	3kKsUBolbTuyPu6KufH4x65UODIVF8+36lL4xlSQXPA==
+X-Gm-Gg: ASbGncsabVlXooXlynJoAn9W5iGM1V1fp8tRWaCEQdXMnbfjin5jE4BKv/dN8ndkpvb
+	VyKmNGCVDyiW2M9WB+qP3Cj4C0FfKST2FSwq2473Xc/7/q7kKLo5yzokLN2420CfwI7+7ZtKyEC
+	V5Fu6WNNtWyQCTVxeLT2gp/ufhARn5bek/8F0Q0kvtFFqVtKKkdgx+FE4Je96dIQ+U3t6vY0wFO
+	sNIvNQbkAJQkQ7XD+GW0+Xs
+X-Google-Smtp-Source: AGHT+IHxSXi29UFW2nfj2WCiCTSiNTNZ0K9Fav6RAJFsRCcIQzCBj3yv1u6H5MOa6iU2eN8pItlTROtG4gg/yGYd8sQ=
+X-Received: by 2002:a05:6902:e07:b0:ea3:f6c9:ad6b with SMTP id
+ 3f1490d57ef6-ea5c057dd64mr5394869276.43.1758211500339; Thu, 18 Sep 2025
+ 09:05:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250827194107.4142164-1-seanjc@google.com> <20250827201059.EmmdDFB_@linutronix.de>
- <20250918110828-mutt-send-email-mst@kernel.org> <20250918154826.oUc0cW0Y@linutronix.de>
-Message-ID: <aMwtd40q44q5uqwr@google.com>
-Subject: Re: [PATCH v2 0/3] vhost_task: Fix a bug where KVM wakes an exited task
-From: Sean Christopherson <seanjc@google.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250915201748.1712822-1-dario.binacchi@amarulasolutions.com>
+ <20250915201748.1712822-2-dario.binacchi@amarulasolutions.com> <it26gfh7qwemksyqw3btcqyr4obbviwaywmyptsjedil2v52vi@rylzlifvans5>
+In-Reply-To: <it26gfh7qwemksyqw3btcqyr4obbviwaywmyptsjedil2v52vi@rylzlifvans5>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 18 Sep 2025 18:04:49 +0200
+X-Gm-Features: AS18NWClBmtV3TGuBJja7IxKTv258z-H9vTIrPPB1rYqlA078YmgINmcyYbNvFo
+Message-ID: <CABGWkvpPesDoz_-X-rMjA567eX3DQEQ8mpSsp=ShpoKjTWWhjg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] Input: edt-ft5x06 - rename sysfs attribute
+ report_rate to report_rate_hz
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Al Viro <viro@zeniv.linux.org.uk>, Oliver Graute <oliver.graute@kococonnector.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Yu Jiaoliang <yujiaoliang@vivo.com>, 
+	linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025, Sebastian Andrzej Siewior wrote:
-> On 2025-09-18 11:09:05 [-0400], Michael S. Tsirkin wrote:
-> > So how about switching to this approach then?
-> > Instead of piling up fixes like we seem to do now ...
+Hello Dmitry,
 
-I don't have a strong preference for 6.17, beyond landing a fix of some kind.
-I think there are three options for 6.17, in order of "least like to break
-something":
+On Tue, Sep 16, 2025 at 2:38=E2=80=AFAM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+>
+> Hi Dario,
+>
+> On Mon, Sep 15, 2025 at 10:16:32PM +0200, Dario Binacchi wrote:
+> > The sysfs attribute has been renamed to report_rate_hz to match the
+> > report-rate-hz property from device tree, making it clear that the same
+> > parameter can be set via sysfs or device tree and behaves identically.
+>
+> No, this attribute was defined since forever and we should avoid
+> gratuitous renames: they will break existing users.
 
- 1. Sebastian's get_task_struct() fix
- 2. This series, without the KILLED sanity check in __vhost_task_wake()
- 3. This series, with my fixup (with which syzbot was happy)
+OK, I understand.
+Do you think patch 1/2 is correct?
 
-Longer term, I'd still like to land everything though.
+Thanks and regards,
+Dario
 
-> > Sean?
-> 
-> Since I am in To: here. You want me to resent my diff as a proper patch?
+>
+> Thanks.
+>
+> --
+> Dmitry
 
-Ya, I think it makes sense to harden against UAF even if we fix the KVM bug more
-directly.
+
+
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
