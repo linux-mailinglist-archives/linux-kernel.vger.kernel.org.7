@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-823277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE24B8606B
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6CBB86077
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858387C21DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:26:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB2F87C620E
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBECE3195F2;
-	Thu, 18 Sep 2025 16:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AB9314D0F;
+	Thu, 18 Sep 2025 16:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hSP9qlFE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tvloj9fx"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A32244692;
-	Thu, 18 Sep 2025 16:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6471A30BBB2
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 16:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758212642; cv=none; b=e9Q1aEzOvKeogH3YwZFmynb+bjaZ6mOHRye3CJAak8ODndFNBctJpO/7Pl8mbhih3YN73LR4tcZ/ieia9T4LxbJZcCgonc4Mks4kehZLd6eaPFoKbbC7gHdiLUjdxaxlIvmmmCp572PTE3dEron0y03YCXOqYjkokZu+QPRXUlU=
+	t=1758212711; cv=none; b=FBV6RfjZD09Q8no9kHY3SjeME6KNRXv5TmhOjKp6zDyv7nHMVVLUxBI5ptFGTukUPtWXfJv56ejSvxy71AHyDOYTC3d3hNIYV3PJenoQvNHNmyzYUi46WpxDDEpPV4twD5LZvMGuvqSbc0fiaeUvQTjr40zc8PewmgyqbE7uZxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758212642; c=relaxed/simple;
-	bh=qxZffvEGZk3Ux/d97kUEpFcAYo5rdjWgeV+BxpkYyq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRLfMauYoyGEwXJxg2JtINdbC4VPRzYN5fwRsDMun2pqD/WhiZ9JSmdyqo5zyZJ7PYIc3NSi15pXapZ0oLhaIoD4Jvf5o4FaTKLm6rCJm9Ps8x8z6ODNtdW991Rwyq9NhxCGiu68+9gKkqTLFJu0VlfekiDAwKNKKjneNn0c2FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hSP9qlFE; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758212640; x=1789748640;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qxZffvEGZk3Ux/d97kUEpFcAYo5rdjWgeV+BxpkYyq0=;
-  b=hSP9qlFEtpBSuNKXCBklel+xwh6tHl7p5xQTSzfsutH1EdpM8eDxdUpf
-   QIkuWQZxZ3J4MbqnpcJuny2vWB02Q1w7syMhEgDaL2jZDWVhvlD52riA6
-   CHagN3WY1Ce1SObxfhB0a+dEVu9UfXdpphUgI3LCguEBmu45RZLS7V2xz
-   /zruHD9lg4aa48tBwyi3OCetElnRPpHmZKxQEAwcRrQBgtChnoNm0a7AV
-   E3ZWt/VZVR9hcojoh7dFr5UGfCJWNy3fyNiaAhxI13MBM1/IHFaQTeQM4
-   FxS6g5pbVPUNv+r6VihWCWdg5FJMzwFLP9pVA4SuYYocTHurPqdO8Rtzd
-   g==;
-X-CSE-ConnectionGUID: X/PnW/DSSKOk3Cgu0IzGyA==
-X-CSE-MsgGUID: NZsu+535SVO5RMal9iqXqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60242233"
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="60242233"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 09:23:58 -0700
-X-CSE-ConnectionGUID: eKrlZOwzQNCLAbp65zkapA==
-X-CSE-MsgGUID: PgXR132hTEWTscTPsQZC5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,275,1751266800"; 
-   d="scan'208";a="175508435"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa006.fm.intel.com with ESMTP; 18 Sep 2025 09:23:54 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 7142C97; Thu, 18 Sep 2025 18:23:52 +0200 (CEST)
-Date: Thu, 18 Sep 2025 18:23:52 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Jack Pham <quic_jackp@quicinc.com>,
-	Raghavendra Thoorpu <rthoorpu@qti.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Mayank Rana <mayank.rana@oss.qualcomm.com>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH RFC] dt-bindings: thunderbolt: Add Qualcomm USB4 Host
- Router
-Message-ID: <20250918162352.GM2912318@black.igk.intel.com>
-References: <20250916-topic-qcom_usb4_bindings-v1-1-943ecb2c0fa7@oss.qualcomm.com>
- <20250917061236.GF2912318@black.igk.intel.com>
- <e648a71f-a642-4f5d-bcf8-893484cfe601@oss.qualcomm.com>
- <20250918051244.GJ2912318@black.igk.intel.com>
- <035c0d66-bddd-495c-bd23-e1d98570ba7f@oss.qualcomm.com>
- <20250918152322.GK2912318@black.igk.intel.com>
- <af749f54-1406-40c0-97c3-2a418f29b55f@oss.qualcomm.com>
+	s=arc-20240116; t=1758212711; c=relaxed/simple;
+	bh=qc9rH8N+MwYr0XbTZLuuHKlcb4fz/VatMafOdMhw8VI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DcdkgL0I5+IvF2DA/8W9P+Aqou2VoyqdXjwLAruUCHQcW1cD0jrE+9460mt3fuc/zsHoO2Dc/Vc/0wF19x45+a715b/vi5rxRO3HLeLSB8e2Yu5EkAznYu7+DiWHhrPXt+M5wzyjGy4JvvA3xCYwX32YUnWu0kGtBgwUIthM3+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tvloj9fx; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758212705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Ktr+7artqK+DKPq3rxA1E0i5xpWuy9eSkm54v2ZAvwE=;
+	b=tvloj9fxbQgLrXkIqAhnoV02GPNkGl2pQUZ+IZCFmP3o3hvALpAU1ItDdinQ6baoaqQCCh
+	hxp2QuLBfZIRsFeLo+OqWRgb/h1QiYy17ECj5Wmix6UTRzOO2D/nTFdEyJ5IwtXGGqwtRk
+	HuIzrqX1o903GaJ25VcSGfTktpSJbpY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] initrd: Replace simple_strtol with kstrtoint to improve ramdisk_start_setup
+Date: Thu, 18 Sep 2025 18:24:47 +0200
+Message-ID: <20250918162447.331695-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <af749f54-1406-40c0-97c3-2a418f29b55f@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 18, 2025 at 05:38:13PM +0200, Konrad Dybcio wrote:
-> On 9/18/25 5:23 PM, Mika Westerberg wrote:
-> > Hi,
-> > 
-> > On Thu, Sep 18, 2025 at 11:05:42AM +0200, Konrad Dybcio wrote:
-> >>> I it hard to change these DT bindings later on? If yes then I would
-> >>> definitely think forward and make this support MSI from the get-go.
-> >>
-> >> dt-bindings (attempt to) promise an ABI-like interface, so bindings
-> >> for *a given IP block* ("dt-bindings describe the hardware") should
-> >> not change, unless there's something critically wrong (e.g. "this
-> >> could have never really worked").
-> > 
-> > Then I think it is good to think few steps forward and make sure when
-> > Qualcomm adds MSI to their IP it can be easily desribed in the DT bindings.
-> 
-> Your reply makes me believe I glossed over an important detail..
-> 
-> If qcom,x1e80100-hr doesn't have MSIs, qcom,nextsoc-hr can add them
-> without any issues too, just that the X1E80100 binding can't be altered,
-> e.g. "binding" refers to the (compatible, allowed_props, required_props)
-> tuple
+Replace simple_strtol() with the recommended kstrtoint() for parsing the
+'ramdisk_start=' boot parameter. Unlike simple_strtol(), which returns a
+a long, kstrtoint() converts the string directly to an integer and
+avoids implicit casting.
 
-OK then it is all good and allows extension in the future generations.
+Check the return value of kstrtoint() and reject invalid values. This
+adds error handling while preserving existing behavior for valid values,
+and removes use of the deprecated simple_strtol() helper.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ init/do_mounts_rd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa..79d5375ad712 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -28,8 +28,7 @@ int __initdata rd_image_start;		/* starting block # of image */
+ 
+ static int __init ramdisk_start_setup(char *str)
+ {
+-	rd_image_start = simple_strtol(str,NULL,0);
+-	return 1;
++	return kstrtoint(str, 0, &rd_image_start) == 0;
+ }
+ __setup("ramdisk_start=", ramdisk_start_setup);
+ 
+-- 
+2.51.0
+
 
