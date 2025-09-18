@@ -1,202 +1,143 @@
-Return-Path: <linux-kernel+bounces-822003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-822005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9514B82D3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:53:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68162B82D49
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 05:54:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABAA1C24B14
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:53:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2953D7A7E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 03:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DA4213236;
-	Thu, 18 Sep 2025 03:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BAF23D7E9;
+	Thu, 18 Sep 2025 03:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="so1WRwXc"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazolkn19010077.outbound.protection.outlook.com [52.103.2.77])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HXLeHgJ0"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E8A23C4E0;
-	Thu, 18 Sep 2025 03:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758167605; cv=fail; b=c680kbZcE8F1qNbfIV+B9HHeWlGFuiHA14k/nBWN1lLEkygObatxd/jvl6odRAvJJcxK0ZsuqXK2+Vos0bYwr7ygbm9l6u1k0w3scj31+bkhwsJH+FYMw3jQ0wcO31Ve7BcO2uzv9/j9Oct+IWZpk9D8MGukxuhAccNNjOaerts=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758167605; c=relaxed/simple;
-	bh=NAP71ikuLK981fQXcSJH1qF9GvzL/4KCiuafX5iT9KE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dj1+GxMjID5yoeDt6vFW72Kw6gaYb2d7GHfluKFsPRRwgh8ndhph+53kR9Plo6+id8/wnONXxwgHfJasGj2zwBPwEWgajd6Oher01Iwz1hWCtZu0zbK4l7cr8NR6LkUJnJx1LSpnkbAl6vwoJJ44CH5wtEBScfP2t5odJV1fQKU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=so1WRwXc; arc=fail smtp.client-ip=52.103.2.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dKD4NuEEQUlN0tIkidIh4YFvsDVTisdVwKgJj9/X4ooRykdZ7jsgDH8sWPX6ld1ELNp5hboFSrbUSBYuRZK7361TTZ5tjVG3Ejcqw0x57chmYojBfWqiv1JOnhGXO08rJjdtFVieuVdAm0tRKy1S/z8cG0tCOhoRHq+PB2SVFC9WGbKsZKYPjYtFu9ZzCl1niFbYRgLE8YnwxNVBgdPSmVGiLIavwikwUhkNul1Xaz21HV4kF7oUaQzYSil51P9BKRX8p72NpFlOR+yKzlslQYh59szxblDyt1fo6GaY9QNYZ736utHGBElQjclUGRflbP/VQLis0Tn/2pCyW67OBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VO+dR9gXxjbNvrj6YgWRxzVlejGtrlB3tgrBC67j6BI=;
- b=R2w33dJIrdx622V/rcyfw2aTmPqkbY4kaOhWIQgA58ia2fa1gvvnWQy6klEfzdxfSUeBLHhxR7ov6fep3WWzkgGtACD87qpUDDrviib+/+AuU7iXj+KfY7VAVt77TpO0fD41BOxkrsIcsWyP9h6vi1Is7smot0/QVDoY0FX16dflZgCAePEjvuaiFEYJW7JasqB7OY17hTQo0IsxdQ8aoLah6q7jn7Zqgt4GYUToqsgXJ3ZPDX6v+ceyJlkTcCtCK6gfYg3PBtyGDE8quqdwb+H7d675tTjMPrfz1P1QG8T6ypVo566GHdE20Iumy8iN08qU9CxEYMzvMrrOFJ9Jzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VO+dR9gXxjbNvrj6YgWRxzVlejGtrlB3tgrBC67j6BI=;
- b=so1WRwXcjqjWgYrGPT1kf8sAc1ZQog9NXL71z2SHSMQzS6Yb4pg2Rd7Kyl00cu6gcUlLgCF+Zi0eB1d4zndC1FT2hrGyNey6+RpKC2mxIFE7JW/79qmpLj6u56s93L4/8nDm50PWjWVpuUK7YugCXixCmCzoWL1t4EF5JyQDH/6tgNwTuIaEHZKZdbtCB1Ezp+b0t6XK0nygKyxCS2uBZrpDw4nUD46dd319rH/uC8F2fyhiQD8EzB7lIq+1aWV9V/KtUANRIKfFjsPAnnBWBzFvwQv3GzqJCJ2zZxYkGYeVSGZmmLRsKyqBgX46nzmGYmFd7r4oLYcl8nFHymi71g==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by CH2PR02MB6694.namprd02.prod.outlook.com (2603:10b6:610:ae::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
- 2025 03:53:21 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 03:53:21 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
-	<decui@microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 3/3] drivers: hv: vmbus: Fix typos in vmbus_drv.c
-Thread-Topic: [PATCH 3/3] drivers: hv: vmbus: Fix typos in vmbus_drv.c
-Thread-Index: AQHcJOQ8m/oamQAjuka/ZYwsob+x9LSYVWag
-Date: Thu, 18 Sep 2025 03:53:21 +0000
-Message-ID:
- <SN6PR02MB415746FCD52B7D03B83DB095D416A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250913192450.4134957-1-alok.a.tiwari@oracle.com>
- <20250913192450.4134957-3-alok.a.tiwari@oracle.com>
-In-Reply-To: <20250913192450.4134957-3-alok.a.tiwari@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH2PR02MB6694:EE_
-x-ms-office365-filtering-correlation-id: a4468eb6-a99a-45aa-4a23-08ddf666e8fe
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799012|8060799015|8062599012|13091999003|31061999003|461199028|19110799012|40105399003|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?b4p49hDmk/8YpSauPLBo5lqiMRglVJYCLDq0nhEBhY6HKvvPdwIR8SyawjzB?=
- =?us-ascii?Q?xxTGGDjR99PjBT9B2+fFQFtmn76hJ4MW7EJ6EPq2FFgRLPVTaQ1FUCeapjao?=
- =?us-ascii?Q?/dVLJylLs6Sid7vesAZP9RHUzDX/xkfWuYyXWB2sPWOZbiAU5AMnqDcQUzg4?=
- =?us-ascii?Q?l2C1I5LOCnT4I1IOuhlKiL+DKm8R8hg/3qh9k2LQGMzaT2wNBWyENvlCP69x?=
- =?us-ascii?Q?cQvh9Z4Xr6Dp8rn0p+0B/RoJbBIa8K1sfE7FB2exgymbU+mcgAnYAd99PQ27?=
- =?us-ascii?Q?iz8zG8l4LA4VpHxjwB9bcMl06SfzyCqAU1FlnLQigltwyBwNmUdQ7Wd9cCjd?=
- =?us-ascii?Q?ywhmAGm84hUN3R3KaDhbrGTLvVAkDUVoNtnHYqXImSh4VijExnWOO4mwvFEd?=
- =?us-ascii?Q?lzQdtkPgVE6DW6B1x5VKkvKT11Erl3PGvKkSvWdGNj1QKQyJrlOaj00PHA+4?=
- =?us-ascii?Q?EZnvDBbCiXajBgMZgc5dSvsE+eoV/w1s+U3SguDMi5hoHrLuXMrx4jn2kq/i?=
- =?us-ascii?Q?FjAdlvlT6TfAkHYDJw1HCoRUz6BQ6RxFf0sQPABxly21U3iRK9nHgGmmVC+A?=
- =?us-ascii?Q?14ffD2iZejPR0q6TkKfuVfmWxUsmzI6n1p0LM7Enn2bTQz+uvn2WmS+alIeV?=
- =?us-ascii?Q?oeHGFxcpJ1REUxBSSljZdH8zdqgs/gYtR/PFPssc6FSzsUv9WvSuWoCFrROo?=
- =?us-ascii?Q?OZ/dhLboquXVbhwlZAYzfflwap97iQbXd1GH0nQaX2ZjoLOXMA9o3ZwQRCb0?=
- =?us-ascii?Q?QeUuFN0PnqCVqIav9g/TYdESgRPecKuCRs0roWJqmSHYyJUsJSwnzp63J5Tr?=
- =?us-ascii?Q?KrO6hBcDsa7x3pmwwEnL+SXJeqIHligiNSNMC1HlD1s9ZdzWCqgdV50nCcZ0?=
- =?us-ascii?Q?v7TbRXjYLjHNBNKLWJPCEG01wxn67r6NlJ4q4QtTxewX0y3BA9h3lSxU9/M+?=
- =?us-ascii?Q?wAQe10iOjP4yybfsx2Vw6bWhbumZDHYjQ+mk5wU9cT7NedDsM+3InWnQgLi4?=
- =?us-ascii?Q?e0jTcjiTu75t5OBTDJQ+8xr8Cn8QjdOPOAbCvEGGZ7FXYv1uDOdvAkdleoWh?=
- =?us-ascii?Q?c6bEwtYqI7Xht91eZZ0oS0NcsjGVGZkhNHQdrFHIWwtmvbwF1ZS2NtO2iGgk?=
- =?us-ascii?Q?XEiUA6JUucBtkEZJaAWBhx6QXN+htutqLAiD+Sm6ep5fFwh8KYj+mF5GByYn?=
- =?us-ascii?Q?t8kU4ZQwA0obnKzy?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?EjsKusVkQFs80Si0uUzCL9EZ/5rzatyONezH9L0s1v7JoB/ygp8i5jHqL7AD?=
- =?us-ascii?Q?zOHH98WIvXSWgOnXUXeRH2MFArOH28YA+X28Y8G5BSXbCoSlPf3i37qg7u7R?=
- =?us-ascii?Q?0Nyg83KYa7hAUsirzzdOoDroMJeEsIIxvs5p2+km6MJVjsy2BqPT9AyxcAUr?=
- =?us-ascii?Q?QngwLHeLUoskL/6rlm2KDJTi7bhWBx6Tz9qNn8+8wIfmkdol+pbj4UNBz9CV?=
- =?us-ascii?Q?kAP3XRzmCCX6SmjEHEHZKEY6nyxYwcubUhYgfmBqlPGpmcg8exmJSInhkeJE?=
- =?us-ascii?Q?Vf4dkihhcQcWUOGhcoHBLrJMq156XhuBhT7bCib1PzN8VyEU6Dg3eFtTGG+E?=
- =?us-ascii?Q?mOUl4X+M2VKRpT5Cp1WlgPpjtq2ste32VJeZlPLkthJjcHHSz4Phb0DCZY+D?=
- =?us-ascii?Q?JdtiJ6Hi+w5kphVGQdOZrDyS6zlO0aLgYVWhLzNICUtnU3cIqrMLwKEME+LV?=
- =?us-ascii?Q?D6GetzMZ9YJkHqTWc9wd+ZtXLsSSfedBg5QliR3Mge1YQA4pg2KvWClBPy03?=
- =?us-ascii?Q?P0XB6RkPmgmCN9gqkHdQx8cIapbDIpknPjYgu3M8Wt7bj6EjEHLeWk/PJrfP?=
- =?us-ascii?Q?VNLv3V5rvzXHbl5fydpQQkwGK/womtGA/jS6Jy6i7BMJ48sDkhKuP/0w2dXI?=
- =?us-ascii?Q?lP0kDYsIzIohqRw7lvNJYxIP3pSdLhIrPdUnGkC3eQWsn1Hwy8Xem8XTV7xn?=
- =?us-ascii?Q?CRcmG4VSLBVzAXoR/rmmCAV4vmP9FPEHoTshsuzKawGoMODI8j2zcRUxKoMX?=
- =?us-ascii?Q?v080hxZaaFw/UVcJ0MJyLupcEwE8SPQFCbQf1fXRaEfKHcrAxrNsKeN+aspI?=
- =?us-ascii?Q?lbLcFoz4kX8A5pvyZwMjTy/htGHkd/2GQe4Hj5JmxUxq6WAG08oQSLSplto2?=
- =?us-ascii?Q?wZMZhpeV4T9P8juzaC2zOsxfBoZzsElf4xa7uph7AY8HBy4WFHY0QubhPBiy?=
- =?us-ascii?Q?Kg/xm0ckaZ5RtoTB9IfEjcDYl25Gggmjdx8xuaA2GvsQW9wFnCd2po4KzDBH?=
- =?us-ascii?Q?vEMeCtlEH57WZi4xEDhMiH4BnZ7PpUIr6+ezKVgAXaK5tmUsLFlEuJuzVzQ9?=
- =?us-ascii?Q?b9opqr9bBj1RLnxRwAkEU3FU2mQVGxAn2s1/QCCw8ghjNuWz+wF7LfX3Ki6R?=
- =?us-ascii?Q?2iUtEFns+2VpQzuGrz18RZ6rTRG6kXg64UGNhTV4Ih+LyLyPSLw1d2y9D+dw?=
- =?us-ascii?Q?Z2VM9eQj1fO7sBvxIhTDR/9UfpfkdyasuCuGPn+gyNZc+khXNQ3OCzEpm2g?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE0423C51C
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758167633; cv=none; b=kplR3KNn/+S175i4yKV/ZiK2xx44x37ww/vyW8c7aca/dzdYSMPeQdW64cQK260heX8Vg9mtkK77xRr2ROR2oYV9Vy7QJ3JJ9HiC+OiAMOg1CqNiHO2RWekW5AONskYyIoc/jhGP+bclVlJNyG70HKqM7ZfbZG/vdWgBkFZyRAA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758167633; c=relaxed/simple;
+	bh=iul9tOgZqa9zFgNM3hOqAt9YEIrgP+mOQqKU3fOup3Y=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=nlcunpPmhkivvsY7jJkwxgjQtcVBkJqjjfePAnan2ItTQDDKjZae2jmx+iyOKVzLMlS4eA4x+b+jNN9ovubQvbtY+zfJ1GDzFF0A0GxR6ZExIIcUAHyqyYPp6mtITEyH0G3F0MIGSmEew1BTcBh63h19lro8nHRvN3kjmd452sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HXLeHgJ0; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250918035349epoutp0141d25a21deda1b6be2856309e3e2437e~mRCTB-E2q1385013850epoutp011
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 03:53:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250918035349epoutp0141d25a21deda1b6be2856309e3e2437e~mRCTB-E2q1385013850epoutp011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758167629;
+	bh=AG+lskbMnjhh54sDPIao2BdJBgoYc2E3bPl5g1IWvfw=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=HXLeHgJ0Nue9BLNwdCgqYa9Z812NbcXqSTj0Oyy44T/GfAx7lN/3rSzj3kOjGjDNS
+	 ekCdisc0bJVqC3PbICACosZ0Dq7DF9tefeZNHeaqOnPF28F+OugL6t6Jogs7yjxAJ/
+	 j59IvV8JyariZRhPFac0DaigvHJz8EdHpDWlDag8=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20250918035348epcas5p2b3ea48f90fd6e94736469d939870ccde~mRCSdRUnU1541615416epcas5p2F;
+	Thu, 18 Sep 2025 03:53:48 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cS1vv5sk8z2SSKh; Thu, 18 Sep
+	2025 03:53:47 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250918035347epcas5p345d313bce95bf0470d0969ebe30ec80c~mRCRKMjA51063310633epcas5p3N;
+	Thu, 18 Sep 2025 03:53:47 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250918035344epsmtip15d917fc8385d42acf2d7a089c8c59471~mRCOOXWAx0317203172epsmtip1J;
+	Thu, 18 Sep 2025 03:53:43 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Sangwook Shin'" <sw617.shin@samsung.com>, <krzk@kernel.org>,
+	<wim@linux-watchdog.org>, <linux@roeck-us.net>,
+	<semen.protsenko@linaro.org>, <dongil01.park@samsung.com>,
+	<khwan.seo@samsung.com>
+Cc: <linux-arm-kernel@lists.infradead.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <20250818021826.623830-4-sw617.shin@samsung.com>
+Subject: RE: [PATCH v6 3/5] watchdog: s3c2410_wdt: Increase max timeout
+ value of watchdog
+Date: Thu, 18 Sep 2025 09:23:41 +0530
+Message-ID: <06c501dc284f$d5da8e70$818fab50$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4468eb6-a99a-45aa-4a23-08ddf666e8fe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2025 03:53:21.2462
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6694
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMf0cCJ9LyTM0wh7cHpv36iTCHVmgGBxYoXAhK/QGyx9FUV8A==
+Content-Language: en-us
+X-CMS-MailID: 20250918035347epcas5p345d313bce95bf0470d0969ebe30ec80c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250818022433epcas2p1bf8e6a335be945822721b8db1e9571e9
+References: <20250818021826.623830-1-sw617.shin@samsung.com>
+	<CGME20250818022433epcas2p1bf8e6a335be945822721b8db1e9571e9@epcas2p1.samsung.com>
+	<20250818021826.623830-4-sw617.shin@samsung.com>
 
-From: Alok Tiwari <alok.a.tiwari@oracle.com> Sent: Saturday, September 13, =
-2025 12:25 PM
-> To: kys@microsoft.com; haiyangz@microsoft.com; wei.liu@kernel.org;
-> decui@microsoft.com; linux-hyperv@vger.kernel.org
-> Cc: alok.a.tiwari@oracle.com; linux-kernel@vger.kernel.org
-> Subject: [PATCH 3/3] drivers: hv: vmbus: Fix typos in vmbus_drv.c
+Hi Sangwook
+
+> -----Original Message-----
+> From: Sangwook Shin <sw617.shin=40samsung.com>
+> Sent: Monday, August 18, 2025 7:48 AM
+> To: krzk=40kernel.org; alim.akhtar=40samsung.com; wim=40linux-watchdog.or=
+g;
+> linux=40roeck-us.net; semen.protsenko=40linaro.org;
+> dongil01.park=40samsung.com; khwan.seo=40samsung.com
+> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-soc=40vger.kern=
+el.org;
+> linux-watchdog=40vger.kernel.org; linux-kernel=40vger.kernel.org; Sangwoo=
+k Shin
+> <sw617.shin=40samsung.com>
+> Subject: =5BPATCH v6 3/5=5D watchdog: s3c2410_wdt: Increase max timeout v=
+alue of
+> watchdog
 >=20
-> Fix two minor typos in vmbus_drv.c:
-> - Correct "reponsible" -> "responsible" in a comment.
-> - Add missing newline in pr_err() message ("channeln" -> "channel\n").
+> Increase max_timeout value from 55s to 3665038s (1018h 3min 58s) with
+> 38400000 frequency system if the system has 32-bit WTCNT register.
 >=20
-> These are cosmetic changes only and do not affect functionality.
+> cat /sys/class/watchdog/watchdog0/max_timeout
+> 3665038
 >=20
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> =5B    0.330082=5D s3c2410-wdt 10060000.watchdog_cl0: Heartbeat:
+> count=3D1099511400000, timeout=3D3665038, freq=3D300000
+> =5B    0.330087=5D s3c2410-wdt 10060000.watchdog_cl0: Heartbeat:
+> timeout=3D3665038, divisor=3D256, count=3D1099511400000 (fffffc87)
+> =5B    0.330127=5D s3c2410-wdt 10060000.watchdog_cl0: starting watchdog t=
+imer
+> =5B    0.330134=5D s3c2410-wdt 10060000.watchdog_cl0: Starting watchdog:
+> count=3D0xfffffc87, wtcon=3D0001ff39
+> =5B    0.330319=5D s3c2410-wdt 10060000.watchdog_cl0: watchdog active, re=
+set
+> enabled, irq disabled
+>=20
+> If the system has a 32-bit WTCNT, add QUIRK_HAS_32BIT_CNT to its quirk fl=
+ags,
+> and it will operate with a 32-bit counter. If not, it will operate with a=
+ 16-bit
+> counter like in the previous version.
+>=20
+> Reviewed-by: Sam Protsenko <semen.protsenko=40linaro.org>
+> Signed-off-by: Sangwook Shin <sw617.shin=40samsung.com>
 > ---
->  drivers/hv/vmbus_drv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index fbab9f2d7fa6..69591dc7bad2 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -1947,7 +1947,7 @@ static const struct kobj_type vmbus_chan_ktype =3D =
-{
->   * is running.
->   * For example, HV_NIC device is used either by uio_hv_generic or hv_net=
-vsc at any given point of
->   * time, and "ring" sysfs is needed only when uio_hv_generic is bound to=
- that device. To avoid
-> - * exposing the ring buffer by default, this function is reponsible to e=
-nable visibility of
-> + * exposing the ring buffer by default, this function is responsible to =
-enable visibility of
->   * ring for userspace to use.
->   * Note: Race conditions can happen with userspace and it is not encoura=
-ged to create new
->   * use-cases for this. This was added to maintain backward compatibility=
-, while solving
-> @@ -2110,7 +2110,7 @@ int vmbus_device_register(struct hv_device *child_d=
-evice_obj)
->  	ret =3D vmbus_add_channel_kobj(child_device_obj,
->  				     child_device_obj->channel);
->  	if (ret) {
-> -		pr_err("Unable to register primary channeln");
-> +		pr_err("Unable to register primary channel\n");
->  		goto err_kset_unregister;
->  	}
->  	hv_debug_add_dev_dir(child_device_obj);
-> --
-> 2.50.1
->
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-=20
+Reviewed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+
+
 
 
