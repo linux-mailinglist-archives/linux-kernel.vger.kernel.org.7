@@ -1,298 +1,1126 @@
-Return-Path: <linux-kernel+bounces-823390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CEBB864BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:43:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8171B864DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 19:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCAF27E2E2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B17C17EBC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 17:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC9E31E8BD;
-	Thu, 18 Sep 2025 17:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EFA2DBF48;
+	Thu, 18 Sep 2025 17:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="CdMOEMxm";
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="CdMOEMxm"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020110.outbound.protection.outlook.com [52.101.69.110])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="awpOxp5l"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012006.outbound.protection.outlook.com [40.107.209.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2DB319601;
-	Thu, 18 Sep 2025 17:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.110
-ARC-Seal:i=4; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758217243; cv=fail; b=IeMDbT2cQ9DtoBsSJw9VjiJgKdp6sFXeP4BvxpknySJiMyN7G6BFPzpuccrIlnuzacHTHuMpVOjb7ZDowNJkAWNuFgrqwWc8MjhhpMdSDUaS1Es/yA6wNErkcEvfN/hwKG76lQSado++cOfZMriAeQmRMmVnU4+8KTvos53lhHk=
-ARC-Message-Signature:i=4; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758217243; c=relaxed/simple;
-	bh=1vA/rFGng0Ysrft19Mfp9rwjQbFA0x8TDGlqvtMV6dA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oBDwigr0vkL4XV1seydFAOOMlvyG1i4uuIY667RH/Fa4+dT/BtCIOsCwbqjt6udgAkSsk4Plpr2slx8OrT82h5PzAMlNYfnp0dUVoMgIOeRAlytqR7w/9Ru/c/c2YfcxCIM+7r2zsyaCp465OyOs7AMWSD+2wi3WkiWbSI79yOc=
-ARC-Authentication-Results:i=4; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=CdMOEMxm; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=CdMOEMxm; arc=fail smtp.client-ip=52.101.69.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=3; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=Tjm4Yh5JFWKctpvCnVh4aAtc9RrtyIsP8gbPYEthCDf0jn8tCCK7r1ZmOlQ48nWx/FtuCJC40S0Xz5S7PtkHVThyhLw+8DvzrzRSDcSB0hLnFK/+hH5W88xGZUbATdqQsfhac8bSflDbzO5RpZeNUHbE5guUg6Vak9KxqAubI3WKDVTOzd71284mMMVKqZkxC/151EYh/OmdgiLlM+5Q0+8lX3XOJE0DrNgsZmMBrEORkdKQdWt65DZX4kQeP38URvP9xSzuDHE4X2AXPqWeALUyHSwGGL61fN1+UTFBNxdj6YbyusrGEMR1vX9pisZdfAlucdgo60gxm7k+q3GArQ==
-ARC-Message-Signature: i=3; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1vA/rFGng0Ysrft19Mfp9rwjQbFA0x8TDGlqvtMV6dA=;
- b=CnQz3R0fd/FtvPsEj9ssBazwNqXajNWB0F/IxCBf2VPVkX5Upm0iM4zgqvWwrY7wNDdMVX2cHFPfL0eu42ON9YkEKbEGaO+/0zsfqFxa7nW+QIXz7rantBg9+5wncZ2D42hXX5SkdkgK1e7RotH5BVujRHSKHs+5fgCPnwgMLr2LTW1bc6wIrcZI9SiFGKBbseJVuRkSZHoHTojcvu//tueGDtHeT6oGIBh9/EYc3NG9HyOJut/hpS7pkdIsGLtdLHsv30stVGo4mNwxdtpnRlwV7ZWSdkVJ9I18E8cHBAAM13WwYCc6iN20nj9GcO9xTqG5w1Lt+O1UHFhSAHWb3w==
-ARC-Authentication-Results: i=3; mx.microsoft.com 1; spf=fail (sender ip is
- 52.17.62.50) smtp.rcpttodomain=bootlin.com smtp.mailfrom=solid-run.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=solid-run.com;
- dkim=pass (signature was verified) header.d=solidrn.onmicrosoft.com; arc=pass
- (0 oda=1 ltdi=1 spf=[1,1,smtp.mailfrom=solid-run.com]
- dkim=[1,1,header.d=solid-run.com] dmarc=[1,1,header.from=solid-run.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1vA/rFGng0Ysrft19Mfp9rwjQbFA0x8TDGlqvtMV6dA=;
- b=CdMOEMxmg2g9XXdQfy5rlturWVntDHGi2nqNPjJrT15und9++nMr+b9GIq3VcJ8s41fK+uFRogbY0/0eQ3lCKYzWlMXu7mYdkpNqlSXTEEN78oH262842ZyrobQ4rhj6/KSNpWiJLMMgbTv6n6YkoYekbycVrWwaZRa2VErKuKM=
-Received: from DU2PR04CA0227.eurprd04.prod.outlook.com (2603:10a6:10:2b1::22)
- by AM9PR04MB8414.eurprd04.prod.outlook.com (2603:10a6:20b:3ef::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
- 2025 17:40:38 +0000
-Received: from DU6PEPF0000B61C.eurprd02.prod.outlook.com
- (2603:10a6:10:2b1:cafe::b8) by DU2PR04CA0227.outlook.office365.com
- (2603:10a6:10:2b1::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Thu,
- 18 Sep 2025 17:40:38 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 52.17.62.50)
- smtp.mailfrom=solid-run.com; dkim=pass (signature was verified)
- header.d=solidrn.onmicrosoft.com;dmarc=fail action=none
- header.from=solid-run.com;
-Received-SPF: Fail (protection.outlook.com: domain of solid-run.com does not
- designate 52.17.62.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=52.17.62.50; helo=eu-dlp.cloud-sec-av.com;
-Received: from eu-dlp.cloud-sec-av.com (52.17.62.50) by
- DU6PEPF0000B61C.mail.protection.outlook.com (10.167.8.135) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.12
- via Frontend Transport; Thu, 18 Sep 2025 17:40:38 +0000
-Received: from emails-9600462-12-mt-prod-cp-eu-2.checkpointcloudsec.com (ip-10-20-5-207.eu-west-1.compute.internal [10.20.5.207])
-	by mta-outgoing-dlp-467-mt-prod-cp-eu-2.checkpointcloudsec.com (Postfix) with ESMTPS id 3B2687FF21;
-	Thu, 18 Sep 2025 17:40:38 +0000 (UTC)
-ARC-Authentication-Results: i=2; mx.checkpointcloudsec.com; arc=pass;
-  dkim=none header.d=none
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed;
- d=checkpointcloudsec.com; s=arcselector01; t=1758217238; h=from : to :
- subject : date : message-id : content-type : mime-version;
- bh=1vA/rFGng0Ysrft19Mfp9rwjQbFA0x8TDGlqvtMV6dA=;
- b=nzI/kwMqbBM6bdzhCZvWebrbzW5P4F44uB2QFcldh6p+P12+ZpMbJPov/yCMMTWqFWekC
- tUUUS7Tls8Klx1N6vX316ddbv0fQtooeophrQqWFh0Rvw0GDDGvr4vuamEbGAR9Wu6bQPxD
- EVF7iBqT8xSYIOitmvJN1N7KocI09No=
-ARC-Seal: i=2; cv=pass; a=rsa-sha256; d=checkpointcloudsec.com;
- s=arcselector01; t=1758217238;
- b=J6DmChjjYkdhithS0KLiPexbNsLtxq9Y1oD0LWJnSfWvqkLt21WkIr2tWeNN7lFKhauE4
- 93anZz5pPg0Ig3MU7pm1WkoBj2neq3OnMtf1G0psMaLbj0ZqdgEVovXGDY8QOPrpFSk4J1F
- I0rLv5PXPN4MgdWWEa3uYXLdzQhc53w=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9412023AB81
+	for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758217310; cv=fail; b=obKxCsd8Lq6cBLz1z69JP8GNW4Uvf1qUUdRK7U8aWwyb0/K/ChFm2x3SFihZgPIL0ZGfIyGVZk1GJLKwUufjryyRAx9Bi8FYAPOmR6zZewDNafQSJl2EIUNGIOqMoGEwUnL7rGqqDMiotLtlBnvCQPmCywzwNRzgZaPok2lAnq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758217310; c=relaxed/simple;
+	bh=SDHqYp6kV5d0znOgzXtJ8GL0ii22RNM3E6wqbk5EE4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aKB0P9pdKXeQDjdv/xyunUZfmQvbpbIMdkpA3px0ins4JCDEYNDshHidyKKuVK+4AcOzAn4QJkdFoPhpEFnVallhNQi94onaC5xbHXoYBzgPakeYRf0gTytDvkJfPS1oVK7nuZBPDlIDMe1gGIda0Oz6D5MKuTGsNdoW9Qn7bAU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=awpOxp5l; arc=fail smtp.client-ip=40.107.209.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wXjswg8V3XdoAYBz/BSUzV7aIJjEBhe8PmPm/xutD/s1RpkpfAf43u+wWrZIsjCgrqvd0sUNx0t22l1Ev33F9zV50yf5lulS6DooGJl1AYjg/iqEkPfNc8/i855nH7vWzSe04wo6rnwlAFxfhMAEuO15QTKs7A++OASWA8JUt2XHgTfcaEQxZ24ea6/LZc4QU//lVl6a+gr0Sr8gNGz9ub3v0Wl8EclPLoqpvkC9givS9hx+CuJGOdx3FQFp4AwZi7vwBS7poUkJZpJA545PQtxHdZ5z9qh3jAHS16vVKYTo4d43jhUkpadMMor7xngMgW2e50WE/pit7gmGQZTuJg==
+ b=M82qSokmhWQn6Cmxp0UnkzX1G0asH8DhVAlbzKfmr3OLrTamFAVCs+z3lMVQ9p3yuKB0tlsGa2UWOj01f/OCRv67pfGmTQ7+TlLzJQughxBFVaNxyvKeMh/FBleGT1rIRLfEYj71pB78muEPDkKpNmOAxUyl1SJpXj9GY5gpzW4FaAJHyc0bv6Y7DuZnV42SEBhq9c6Em9bbaI6oXMuhsyY62BzmRDLSO+RrLM6HWtXX2eoKsPoJn7fE6SQElco4GBwB9WPYL78+NIWKGZ5tIPJd9peqwNyjGRQNlHS+a9bsdUxczlNLCSivrHAbBvwF8W99inqY4gz2qbj9rb6sWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1vA/rFGng0Ysrft19Mfp9rwjQbFA0x8TDGlqvtMV6dA=;
- b=b6yS54g0FbT0JCVJSQWnYi4rPSBYqO7XvpSyOcgm2C8czHV7X9sEnaVjOo2thFNBP08rshklVwKDKYbjvDZMOZGKXhFOu5Zvh7HVlGHiiE166ba2dQQ813ln1IJZ+DnMeE/yqHOBdzf2CnzKroZ4JrnGRLE2S40MaTwEmKkZmvLEbBQbTDav0Pfb4nngTrIJUTfUEAoMmYiQrxGmT5wwR/eYFlRoxX4THCw1PkRS74cEObmYXSYYtRu8odP0bZWuhkA+Tb4u/CSf2f0C3g+79Wr1lz97NgXfNewsrSJpU+nn17cA2C04rjlXLVuo1ubH5tICgyw8ZTYoHnc8ruMS8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ bh=XDndj/wtXECqp+b5LbNX4orz8seEg2gm+7lA42DX71w=;
+ b=wP5bbCLF7u3BXLw1HjhDpt7dpyzVo2tUxu+j6zkzG5wknjjM6GrKdvRP0aK1hPCIxDCIKOhzipMInYEW0pe7lfGj0No+SBYzbkzDFEc9QIgmfZ+66EHSIkJvJW5YDzTnrQ42gqtNepw3Ih2/YWJKFET5axV24X8qfThlZpgvy6YoUnB7W8AX2EhhcC0XxYTmbfEmGtyIbXVdNd7vIZiglpRkvcn5mdkq1oGQsA0lAlpOQ+UhmfCWX+1SAcHLGtEGSNNDbt+sNCinRhZxeRPzQzxkQmlK08Tx/bGbEw4jkJofklpaU6Ra50kUxvdKi7Oi8XfVuDPrfBNoXzPj/l+4DA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1vA/rFGng0Ysrft19Mfp9rwjQbFA0x8TDGlqvtMV6dA=;
- b=CdMOEMxmg2g9XXdQfy5rlturWVntDHGi2nqNPjJrT15und9++nMr+b9GIq3VcJ8s41fK+uFRogbY0/0eQ3lCKYzWlMXu7mYdkpNqlSXTEEN78oH262842ZyrobQ4rhj6/KSNpWiJLMMgbTv6n6YkoYekbycVrWwaZRa2VErKuKM=
-Received: from PAXPR04MB8749.eurprd04.prod.outlook.com (2603:10a6:102:21f::22)
- by VI1PR04MB10001.eurprd04.prod.outlook.com (2603:10a6:800:1d9::19) with
+ bh=XDndj/wtXECqp+b5LbNX4orz8seEg2gm+7lA42DX71w=;
+ b=awpOxp5lqAAJXNAtqaKEt8lRgCPMDjmRmY4dKkZErAe/dbL/azdg3xdodTGEkAUVgbRMGcMtjbdLc5NAtMhMCXYZZI/5Y+rG2oCSl3ycIjMuLk7hmMMHL7f0OEW7rEBMhqj8F1SZ8eYdWwcrHL1KZASSd6yIqvAVMsEYr5zEVn0=
+Received: from BN9PR03CA0258.namprd03.prod.outlook.com (2603:10b6:408:ff::23)
+ by CY5PR12MB6252.namprd12.prod.outlook.com (2603:10b6:930:20::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Thu, 18 Sep
- 2025 17:40:28 +0000
-Received: from PAXPR04MB8749.eurprd04.prod.outlook.com
- ([fe80::aa83:81a0:a276:51f6]) by PAXPR04MB8749.eurprd04.prod.outlook.com
- ([fe80::aa83:81a0:a276:51f6%4]) with mapi id 15.20.9137.012; Thu, 18 Sep 2025
- 17:40:28 +0000
-From: Josua Mayer <josua@solid-run.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Gregory Clement <gregory.clement@bootlin.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank
- Wunderlich <frank-w@public-files.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] arm64: dts: marvell: cn9132-clearfog: fix
- multi-lane pci x2 and x4 ports
-Thread-Topic: [PATCH v2 3/4] arm64: dts: marvell: cn9132-clearfog: fix
- multi-lane pci x2 and x4 ports
-Thread-Index: AQHcI0ngX3qW4F/IsUCKxCrOhCtl17SOi9YAgApAcYCAADjyAIAAAmMAgAAXR4CAACEsgA==
-Date: Thu, 18 Sep 2025 17:40:28 +0000
-Message-ID: <8a092724-c3e6-468f-9fd8-e4cb7c69438f@solid-run.com>
-References: <20250911-cn913x-sr-fix-sata-v2-0-0d79319105f8@solid-run.com>
- <20250911-cn913x-sr-fix-sata-v2-3-0d79319105f8@solid-run.com>
- <9272b233-b710-4e57-b3ff-735f45c03c74@lunn.ch>
- <dbb10e82-ae10-4987-900b-17d4f4b62099@solid-run.com>
- <dedd4222-b2ba-4247-98b4-504b5c032f69@lunn.ch>
- <eab0cc63-de1b-4b41-bcce-7a2308d4f446@solid-run.com>
- <2589d2df-8482-4648-b63c-5a4a86f01fbb@lunn.ch>
-In-Reply-To: <2589d2df-8482-4648-b63c-5a4a86f01fbb@lunn.ch>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-traffictypediagnostic:
-	PAXPR04MB8749:EE_|VI1PR04MB10001:EE_|DU6PEPF0000B61C:EE_|AM9PR04MB8414:EE_
-X-MS-Office365-Filtering-Correlation-Id: 368529aa-cc1a-479b-8cf9-08ddf6da7b0a
-x-cloud-sec-av-info: solidrun,office365_emails,sent,inline
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700021;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?VGxMQ0E4Y2NBSW1kWHlIbklEV3UxcFhZdytCdURlQXhQNmxJcVRGbFF2K3Zr?=
- =?utf-8?B?MU5DUmU2V2ZTYzYvZW1aZXJJOER4RjlOWXZHb1NtSlNIT1ovZ21mem4xcUlp?=
- =?utf-8?B?d0VheHVyQjk1QUpoc2N1VFYvb1FCUWRkT1paSkl1aVdSdi9nUzA3T3htZjhM?=
- =?utf-8?B?dWFHbVNWdy8rZlJMMlN3WENhTjlBWWt5cy9uNnVkNHF4WE1KWDgyTS9tK1Zr?=
- =?utf-8?B?M0FRVUpaWDlNaUE4bldLcXhKM0N6RG4xTTQybkI2Q2tlTmMzcUhWQXAvZEhv?=
- =?utf-8?B?YklKbGExYWV1dHNQY0tGSkV4RzZvVWk5UXgxM25CcGtLTVJRdkFHNWlXM09R?=
- =?utf-8?B?NnBVZC85Z1c3dHArOTRTc1ZhQ0Q5MVlOYmJaNFZkOGdQdTJ0cXNJY1ZZOTBH?=
- =?utf-8?B?djBPZGhMMVpsdzdERHVGYjlVOEpOMUlJeEtaZWdrNjIwNDZhWkJYczBaTjBF?=
- =?utf-8?B?VGdHOEpoeE9udFVsalJKWGFsdStmUE51WDRZdERFcWZPM1p2YVNHL3FObUww?=
- =?utf-8?B?TnZYdGNVZE1TT3VoaHF4d2tHOTUvbEVPU2E5Q0g4TCt0b0daM3B2RW02NW9T?=
- =?utf-8?B?V1BpbUxGdkwySm55QU9kbzZRTERyK01oSmhkbXRRZ2xUZUhsdVE3RFppS3Aw?=
- =?utf-8?B?Tk1QTGlvMHhWVzdTOEZoL0p5NENDTHhleGRFK1Q5L0RhNnlndGNEUkQyemxy?=
- =?utf-8?B?VDN3azd2MWFMZklJbmtoNDVrMnpudmFZakphVnl0bGJ5NElDQlczekgxb0ox?=
- =?utf-8?B?QVdNajl6d1d3bVRuclBNMmZVNTE1N1UySklPNVp2eFNoVG5KVzNtQTgrekZI?=
- =?utf-8?B?STgxRy9pMWNVWVEzcmdsYnovNFkvOG85cjNEQm1USkxsTkxNeXBHeDNra21u?=
- =?utf-8?B?QVkya0RyOUhiWVZKaWtYWEFpUUtvSHVnK1JvemNTdWJaWDFkWXJrTmhQQ3Rv?=
- =?utf-8?B?QzZYc3V0ZFFraG9WRDA0VUdLdTA3Um1seTIzUk1TV2lBMlZFTmdaeDBmRjJs?=
- =?utf-8?B?L2lOZHNHNGd2M1VOdUE5RWp4Y1I2dnUvaFNKQUJWL0RZenRQVnVMUmlTTVo4?=
- =?utf-8?B?YnN6S1Y5cUtzWW16TndFZmlhS2xJZDNQU25rSXJSVWxEc0FVOEJBOWd1dTFN?=
- =?utf-8?B?ZmxwYXdYYnl6eFNYSzJGa0sxZkJPTmtEdXo0L1NReWlBcCtkcS9HZytPOEo3?=
- =?utf-8?B?N1ZLamhuMld5dS91ZS9VTjNkOVlJelNCT2dOcFhrZDlocHArV2o2U1JoRWhk?=
- =?utf-8?B?SzBEZ2RYKytsa0xhODFEL3NTd0dZSitFYXZLMTl2NExhb3J3V3FLeXhDaDZP?=
- =?utf-8?B?cmJDTjZrSlgyTlVBVlZtaXFyeCtKczdPYWdBYXVWd2RjNkxIOUZMVEFZS0Fi?=
- =?utf-8?B?MVZDSGJpSjV1OElIVE44SmVBbnhXQnY4dTBoTmtUenhsNi9kNm1lNHBuREdm?=
- =?utf-8?B?UGtLbmtGVWRkWFZiaGV6KzkwVHNXZjMxT0RwUFk3MWRETFdlVTh6dG9kTTdj?=
- =?utf-8?B?NUhCNFVyam1zbTg1UmJNelRKbDRzRGpWTnJEcXl1OUhWay9Kd3AxTS92UXl2?=
- =?utf-8?B?dnFzZGZGUWFFcHZjZDFGSWtkYlJVeUV0akV3eDBEbkVBR0FMYlg5TzI2K0RQ?=
- =?utf-8?B?Y1dCUGtxUURnWEJQOHlnVFRDODlBbk9aWkdMRlEzRktzRHNnbk5UK3NvMkhK?=
- =?utf-8?B?dWtpSmZoV0ZTanJDakw5TUE5eFBQWUJsWWk0TmJseFFab0NQSFB1a2ZkZFFR?=
- =?utf-8?B?T2Z3dzBpTDJmZlN4OVBuRU93QWpyQVQvRnFRN1NBNXZiaWxobnFxV3ZnWlNZ?=
- =?utf-8?B?akNxamRlTDRXU2ZKellvM3A4UEY1UEpWK0NWdUFvb2VqR0Y2UW14Tkg5bUln?=
- =?utf-8?B?aC9IVHNIcW9KWVhQSjZjbms5KzQwbjRwY1M0MWYwZEZ3Nmx2WW5JMFBpODlj?=
- =?utf-8?Q?UmYFxN1jA6w=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8749.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700021);DIR:OUT;SFP:1102;
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <04B418F8FF0C78478889F0D6209E678A@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ 2025 17:41:44 +0000
+Received: from BN2PEPF00004FC0.namprd04.prod.outlook.com
+ (2603:10b6:408:ff:cafe::3a) by BN9PR03CA0258.outlook.office365.com
+ (2603:10b6:408:ff::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.22 via Frontend Transport; Thu,
+ 18 Sep 2025 17:41:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN2PEPF00004FC0.mail.protection.outlook.com (10.167.243.186) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Thu, 18 Sep 2025 17:41:44 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 18 Sep
+ 2025 10:41:40 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 18 Sep
+ 2025 10:41:40 -0700
+Received: from [172.19.71.207] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 18 Sep 2025 10:41:39 -0700
+Message-ID: <7cf39bc9-5081-7703-f712-3a49e08d9ff8@amd.com>
+Date: Thu, 18 Sep 2025 10:41:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB10001
-X-CLOUD-SEC-AV-INT-Relay: sent<mta-outgoing-dlp-mt-prod-cp-eu-2.checkpointcloudsec.com>
-X-CLOUD-SEC-AV-UUID: 9f7b28796f014910a2d7ef3e74b5bf12:solidrun,office365_emails,sent,inline:c53c0952b38074a019870a5535e394f9
-Authentication-Results-Original: mx.checkpointcloudsec.com; arc=pass;
- dkim=none header.d=none
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V1] accel/amdxdna: Enhance runtime power management
+Content-Language: en-US
+To: Mario Limonciello <mario.limonciello@amd.com>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <maciej.falkowski@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20250918172439.428139-1-lizhi.hou@amd.com>
+ <cc39e8ba-b465-4f4d-8642-884fda8738de@amd.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <cc39e8ba-b465-4f4d-8642-884fda8738de@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU6PEPF0000B61C.eurprd02.prod.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	88e2935d-f429-4f31-0f13-08ddf6da74ff
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FC0:EE_|CY5PR12MB6252:EE_
+X-MS-Office365-Filtering-Correlation-Id: 330ffd87-1103-4aba-8836-08ddf6daa26b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|14060799003|35042699022|82310400026;
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VWhYMlppaGZ5WEpZQVgyS3BkRXltc0cxT05XOEp1N2pZZGhEcUhvYXF5L2tu?=
- =?utf-8?B?WktTTy9WdFlCSHlXSHhheHhLMWVENWhhTDhCZjY4UjI4QzZIK09wYWZiWUQ5?=
- =?utf-8?B?N2tpQnQ3NWgzRTlwKytNVWRaWmkzejlpV29uVndEYW1ERkkwOVFUcDJDeWND?=
- =?utf-8?B?azZIdkxiM3BzbEU3b2dJUFNMOVkvTlpHVXJFY0VKZ281b0VrYmdzUnVDTDlT?=
- =?utf-8?B?RXlEU1VhNE5QK09DdFNucy9pQXdFcmpvSHhDbTBpYzZpVmtBd2Yyd0FpTnlN?=
- =?utf-8?B?YndzQ2lad2FBNUJaMDBJbEJQMFpLYkVveW5FNWJ6OCtDRU41c25SKzRDTVM4?=
- =?utf-8?B?a3BXQnczV1BCaEZJQTcxTnF6bjFUSHdSYTJuWkNXcFJkLzc2ckg3ckRwRDkr?=
- =?utf-8?B?YVR4VVJJdFIveERXZi9VemIrQW90MFNueXM0Rk9TdjRsaDNRU3V2R0w2WmNu?=
- =?utf-8?B?UlhlMHVHc053NEdnbWxDWHRFdGxKLzBobWpTaFUzK2ZMeGJadGxMR04yUE4y?=
- =?utf-8?B?RHNDbkVnaFdUZ2pEUHR3bElXSTkvanBFazNXbUg5Y1hBTkF5OHN6SDlaVGQz?=
- =?utf-8?B?WkYrYzFmdlhXMlpxSnVaRmFRZkJEcjhNbEljQm0xOVk3N0NJLzk0WExVS0NI?=
- =?utf-8?B?bm5tUTlIdHN6L1ovOWpUNU4zbWtnZzQ1YXE2UlB0N1JNNFFqYi9iNWlLR3Zh?=
- =?utf-8?B?VWRWRysyV3FhSDBCTDFUbTlTQWZ4WXovQkNHWVpoOWhEVlFqdnlOUXU3MkRC?=
- =?utf-8?B?cFNFampWNCtwUUhVTzdkQXVWR3duZnJTTTY5WGVXTFNUd3RvakdhT1pFRTdz?=
- =?utf-8?B?ZlBhUW94cGpBWHZnalIxczlsSGxJVCszbFRHeEF3K3ZCZ1lkb2kxNklnUU14?=
- =?utf-8?B?WXFjK29aNXdqRzJwdk92dzEyZm1nZ05vRWVzM0hLRVc3WC8wVlBPNTBkaWJh?=
- =?utf-8?B?NitEV1hic2p5WmFZTmtJL3JrYWxBVGdTOEIwU1BhbEE0dDJZRnJ1L3hmRXZt?=
- =?utf-8?B?MXNhTUZiUCt6ZmRlOE5nc1A1OGhEelQ0cnVqUE94TmdkMWM5RWIzS2FBN2cx?=
- =?utf-8?B?VGlDOGZsSElpcU9UVkdKUDZqVU1wbEROVTBQMHNnQUcrZVNKY25vMDA3M1pG?=
- =?utf-8?B?Nm53WDZhdFBRbk9xNTFoTG8xc0tsSkZtRGw3NmdibXkxNmcyQ1dZYy9jemJp?=
- =?utf-8?B?RGlEdFRiVHRkT1YyQ3FiNWFBRlI5dGtsS2xJN09uQ1lxVGRQbHNEcUdrTzIy?=
- =?utf-8?B?QXNvZjhEektjRlNTNTdLaUhPbzhhT29xZTAxQmtQZWxOQTJndXJYa0RaZG5G?=
- =?utf-8?B?VWo3bzNXTlVaNWM1NStXQTBkaktHbUdaOHhCUFpXZ0FaNEFkVkZBK2RveUsy?=
- =?utf-8?B?eGF4bFVXeFJXUFllREJvaWs2NUMveU8wTHJEcDQ1QUp1N3BhQnN6dVkxUVd2?=
- =?utf-8?B?ZXhBeTJTSVhkb0Z1UXBYaFFWMjdRWjNKMHpoWTM4dE5yWm9saTVSRm9DclFI?=
- =?utf-8?B?V3NrME1LMTE3SFJGMjFweTNwOXR2eUI5dDh6K3hRcDBCVE04eVVpTUp1MWU3?=
- =?utf-8?B?Z1VVQ29HZzBxY0tzeWpnMnZpN2VjZWcxaTg1SGQzU0c2aWs2RW81UkMwWW1m?=
- =?utf-8?B?a1Z1VC9uUTdKeU1IQnpNZlJHUXo2NFF6cmxwNUVoQlNPL0syRUJhZ1NveG1h?=
- =?utf-8?B?Mm94cUpkZ3E1UVJUT3Y5TnczK3lDQnN5VFo3clM5ZHVtVDEyYSt5V2tudmxw?=
- =?utf-8?B?U1BIQWZ3SFpuMWdWZGYyRnoxR1VCYlpBcDBwSEFkeC82NTIxSjZLcHl5NFdK?=
- =?utf-8?B?U0lTMG1SNHdGK1BRV3pEQ29NRGc1V3VBbVlTbG55Mk5ReTFrZHBWZlhDeVNv?=
- =?utf-8?B?L1FEVG1RdytYRmt0YWl1U3R1Rk5nbFE4b2d1bm1jdXlTMld4NmU3TVg1TmlF?=
- =?utf-8?B?cEFMVVJNUVRXMzNIRFl5SzlQY0sxNVNmTWN5SUZwS2ZqTlFjSnFlMTc2ci82?=
- =?utf-8?B?MkRrMmxXK2d3PT0=?=
+	=?utf-8?B?YkJSNUtxQUZ6WU5qWEJFQlpnVW80Mk83WmEveUZOb1Z0UFhuejNxb3k4VGxT?=
+ =?utf-8?B?TlQ5blhpQzd2OFAvM1NxVTc1NHhUTC9iUitqNE1nQ25oZzVmUk5iaSsxaEFD?=
+ =?utf-8?B?aUNWY2RuVFBPWmZsOEMxdFYwenFmMnRQOW9kb2kzbnRDTVBCSVhsd2RlVkZw?=
+ =?utf-8?B?aDYwZkVoRmgzMkxCTWNPUUNnWGtKTHVwcW4yazNiR1VWWGZJK0EvR2c3ajZD?=
+ =?utf-8?B?VVpUcy9zS24xdG05WWMzNHdNZ1dSNlNKeS81b2NFRVFQU1NyeS9nbnJ2VS9S?=
+ =?utf-8?B?UWltbkpSWExLLzQ5eWQzaVUySjdGTk4zeFF3RnNmeFU2WjQ2dG1kaWhPRTI0?=
+ =?utf-8?B?RVRqdTFNTDhqcW9FSlpMdXlPbkEzYnpmZHlUWVVRblFsbzVDUTc1SHEzUGhr?=
+ =?utf-8?B?SmxmNE85dWMwVW5hUjcxdkFpQ3dCaFBIWkh3elNKUnIvKy9HMktOY0FpQUZv?=
+ =?utf-8?B?UFhlQkFLRXMwcWl0bm0rV3ZEMU8rRFNNS3dHN3d0OEZwQ21icjBPVUk1eGw0?=
+ =?utf-8?B?WlVYdHdlQ1dzYWtpdHViVmw1aCtOa3FuSWppOE4zSU5tY1Q0dnBhMjZudHpt?=
+ =?utf-8?B?dTlVb2pLa2hJb0RsR3FsdDVIc0JjZnYzdmpXaHpKd05ZZDBzSjNaSGk3K3h1?=
+ =?utf-8?B?dkIvWVBSeVY0QXlqWWpRZHYzNUpCWWRZVnZjdlNOSWxVdlAwd1JpNTJqaGVE?=
+ =?utf-8?B?MkJRV05vc29Gc1QrY1RpTi9lUDVEbHJQZHJ0cXZyam50SnFnRGl5b3JYQzlm?=
+ =?utf-8?B?RXBnTUZadnVlbVlvNUYyTjBYMWt0WXkxQW5BZXFWekdRcmlKMUEyMkk5cVVF?=
+ =?utf-8?B?TjNLWlpxQ1hCNWV5S3J2VVg2M3M3ZHFBZ0ZacUxpbmFuV01PcEJDOEdhOFVN?=
+ =?utf-8?B?a2EzUFlYTjE4cmZqN05DcFFQOHFhRUpyTlhMZ0tjY2pWQmh5VUI3eHBMQXdQ?=
+ =?utf-8?B?TkJlWkczVU5VWmlnVDBacEZlWFBURGxpdWhCZUduYUNzU05zWndqeE4rSE16?=
+ =?utf-8?B?WUtBWlhyYzN1bWxIdVpYQVY1RUJ4eWhuSi9pbkZINWZXN0xMelVjUmJ0akxy?=
+ =?utf-8?B?Y1U5ZDgrTDNuYkd6T241ZzVLK0Y2TS95bEkxOWN4UlNuUXhWTE03dXQwWUYw?=
+ =?utf-8?B?bmRBMzhzLzRpU3MxaVJGdUpCZnF5QklSRzFOd0p3cVFwVWVhRTdQREF2N1o2?=
+ =?utf-8?B?dmFuSkRGMWdKZzNOaXRhakEwUkpZOGFtSGJWRm5waDA0SmhYMlJ3RU1LVDJa?=
+ =?utf-8?B?NWgwczJsY2RZbUx4MWpkZGZhbUNFakgwSjQwQWJNQno5Ym9weVgwSTZrOS9E?=
+ =?utf-8?B?c3JjTjJSTkJVWHNDVEJxcHd1d09udHpyTy9DZjFnWmMyY0pDNWhQN05wdkZl?=
+ =?utf-8?B?US9iWnhnNjlmZU9SYU0xMi9KdmZYNEoxVUovZ1lQcTRoVG9WTTdpTmJkMGlZ?=
+ =?utf-8?B?WlAxWHlPc2VvLzIxNVUyQ2VVUnlHNkNOTjliUE9DNWkzNTRJVUFGWW5Pc1pV?=
+ =?utf-8?B?ODJqY2pjdTBEckRPZnNkbXM1bTlrWW83YkNaZ1Yxc0xIcDlTSC9WZmN5VmhM?=
+ =?utf-8?B?S1F3Z2xLNitKckloL0V5WVdiUlZ6d1JORWJqVFc5OGloVGZVWkIzWFVhQzU0?=
+ =?utf-8?B?clZCQStqMzhTbTdQVk00WjJpOXlUK2VtdjExMEdvT2FuaCtmdksyeFFwVG41?=
+ =?utf-8?B?VU90TjNiSjk5WUlweDU3cU9yeWFsOFJiRE04dTRJTVhFb1ZYM1oyVGVCaXM2?=
+ =?utf-8?B?TkVsaWJwWU9ZY3I4L2I1OE1LYlhMODRFOGIxUEtKckFGWEppNXNqYW1SRnZY?=
+ =?utf-8?B?S01HMVZOVWR6Qk9SdlJ0d2MwWC9xOWdoR2hFajNiWE40OEFTSXFyYlBaY3l3?=
+ =?utf-8?B?VnRhSHBnVWw4OTN0YmNocDduWks1UWdBVUlTRDY3VVo0cWRzSnZjVUxzeXV3?=
+ =?utf-8?B?TlJ2VVlIdXlFSE9PSTNudzJtanE3L2ZRSUd6THZNd3VmZGlYeVNJV3hTZGRu?=
+ =?utf-8?B?WnR4OU9nMWs5dzdoUDhyenZOYTBHcjhSckxoUWV3bHdUbFJpVjI0QmU3QXZa?=
+ =?utf-8?Q?yRMAll?=
 X-Forefront-Antispam-Report:
-	CIP:52.17.62.50;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:eu-dlp.cloud-sec-av.com;PTR:eu-dlp.cloud-sec-av.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(14060799003)(35042699022)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 17:40:38.3616
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2025 17:41:44.4323
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 368529aa-cc1a-479b-8cf9-08ddf6da7b0a
-X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a4a8aaf3-fd27-4e27-add2-604707ce5b82;Ip=[52.17.62.50];Helo=[eu-dlp.cloud-sec-av.com]
+X-MS-Exchange-CrossTenant-Network-Message-Id: 330ffd87-1103-4aba-8836-08ddf6daa26b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B61C.eurprd02.prod.outlook.com
+	BN2PEPF00004FC0.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8414
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6252
 
-QW0gMTguMDkuMjUgdW0gMTc6NDEgc2NocmllYiBBbmRyZXcgTHVubjoNCg0KPj4+PiBUaGUgbXZl
-YnUtY29tcGh5IGRyaXZlciBkb2VzIG5vdCBjdXJyZW50bHkga25vdyBob3cgdG8gcGFzcyBjb3Jy
-ZWN0DQo+Pj4+IGxhbmUtY291bnQgdG8gQVRGIHdoaWxlIGNvbmZpZ3VyaW5nIHRoZSBzZXJkZXMg
-bGFuZXMuDQo+Pj4gV2h5IG5vdCBqdXN0IHRlYWNoIG12ZWJ1LWNvbXBoeSB0byBwYXNzIHRoZSBj
-b3JyZWN0IGxpbmUtY291bnQ/IFRoYXQNCj4+PiBzb3VuZHMgbGlrZSB0aGUgcHJvcGVyIGZpeCwg
-YW5kIHRoYXQgbWFrZXMgdGhlIGtlcm5lbCBpbmRlcGVuZGVudCBvZg0KPj4+IHRoZSBib290bG9h
-ZGVyLg0KPj4gVGhhdCB3b3VsZCBiZSBhIGZlYXR1cmUgb24gdGhlIGNvbXBoeSBkcml2ZXIsIG5v
-dCBhIGJ1Zy1maXggYmFja3BvcnRlZA0KPj4gdG8gc3RhYmxlLiBUaGUgY29yZSBnb2FsIHdhcyB0
-byBmaXggYnVncyBmb3VuZCBpbiBEZWJpYW4gMTMuDQo+IEl0IGlzIG5vdCBzbyBzaW1wbGUuDQo+
-DQo+IGh0dHBzOi8vd3d3Lmtlcm5lbC5vcmcvZG9jL2h0bWwvbGF0ZXN0L3Byb2Nlc3Mvc3RhYmxl
-LWtlcm5lbC1ydWxlcy5odG1sDQo+DQo+ICAgSXQgbXVzdCBlaXRoZXIgZml4IGEgcmVhbCBidWcg
-dGhhdCBib3RoZXJzIHBlb3BsZSBvciBqdXN0IGFkZCBhIGRldmljZSBJRA0KPg0KPiBDcmFzaGlu
-ZyBhdCBib290IHdvdWxkIGJlIGEgcmVhbCBidWcgdGhhdCBib3RoZXJzIHBlb3BsZSwgbm90IGp1
-c3QgYQ0KPiBuZXcgZmVhdHVyZS4NCj4NCj4gTGV0cyBzZWUgaG93IGJpZyB0aGUgcGF0Y2ggaXMu
-IElmIGl0cyAxMDAwIGxpbmVzIG9mIGhhcmQgdG8gdW5kZXJzdGFuZA0KPiBjb2RlLCBpdCB3aWxs
-IHByb2JhYmx5IGJlIHJlamVjdGVkIGZvciBzdGFibGUuIElmIGl0cyAxMDAgbGluZXMgb3INCj4g
-bGVzcywgaXQgd2lsbCBsaWtlbHkgYmUgYWNjZXB0ZWQuDQpJIHNlZS4NCj4gSXQgaXMgYWxzbyBo
-YXJkIHRvIGFyZ3VlIHRoZSBEVCBpcyB3cm9uZy4gSXQganVzdCBkZXNjcmliZXMgdGhlDQo+IGhh
-cmR3YXJlLiBJIGFzc3VtZSB0aGUgZGVzY3JpcHRpb24gaXMgYWN0dWFsbHkgY29ycmVjdD8NClRo
-ZSB4NCBwb3J0IGxpbmtlZMKgIGNvbXBoeSBhcyBiZWxvdzoNCg0KcGh5cyA9IDwmY3AwX2NvbXBo
-eTAgMD4sIDwmY3AwX2NvbXBoeTEgMD4sIDwmY3AwX2NvbXBoeTIgMD4sIDwmY3AwX2NvbXBoeTMg
-MD47DQoNCkF0IHRoZSB0aW1lIG9mIHN1Ym1pdHRpbmcgbXkgcGF0Y2ggSSB3YXPCoCBub3QgY29u
-dmluY2VkIHRoZSBhYm92ZSB3YXMgcmlnaHQsIG9yIHdyb25nLg0KSSBsYWJlbGVkIGl0IHdyb25n
-IGZvciBjYXVzaW5nIGEgZmF1bHQgd2hpY2ggSSBzaG91bGQgaGF2ZSBub3RpY2VkIG11Y2ggZWFy
-bGllci4NCg0KVGhlwqAgbnVtZXJpYyBhcmd1bWVudCBhZnRlciB0aGUgY29tcGh5LWxhbmUgaGFu
-ZGxlIGlzIHRoZSBwb3J0IG51bWJlciwNCmZvciB0aG9zZSBmdW5jdGlvbnMgdGhhdCBjYW4gaGF2
-ZSBtdWx0aXBsZSBwb3J0cyAoZS5nLiBldGhlcm5ldCAjMikuDQoNClRoaXMgbWVhbnMgYWJvdmUg
-ZHRzIGxpbmtlZCBwY2kgcG9ydCAwIG9uIGxhbmVzIDAtNCwgd2hpY2ggYXBwZWFycyBjb3JyZWN0
-Lg0KRnVydGhlciBsYW5lcyAxLTMgaGF2ZSBubyBvdGhlciBwY2kgcG9ydHMsIHRoZXJlIGlzIG5v
-IG90aGVyIGNvbmZpZ3VyYXRpb24gdG8gY29uZnVzZSBpdCB3aXRoLg0KDQo+IFRoZSBpc3N1ZSBp
-cw0KPiB0aGUgZHJpdmVyLCBub3QgdGhlIGRlc2NyaXB0aW9uLiBBbHNvLCBpIGFzc3VtZSB0aGlz
-IGFmZmVjdHMgYWxsDQo+IGJvYXJkcyB1c2luZyB0aGlzIFNvQz8gUmVtb3ZpbmcgdGhlIG5vZGVz
-IGluIG9uZSBib2FyZCAnZml4ZXMnIG9uZQ0KPiBib2FyZC4gRml4aW5nIHRoZSBkcml2ZXIgZml4
-ZXMgYWxsIGJvYXJkcy4uLg0KDQpJIG1pc3NlZCB0byBjaGVjayB3aGV0aGVyIG90aGVyIGJvYXJk
-cyBzaGFyZSBzaW1pbGFyIGRlc2NyaXB0aW9uLg0KDQpUb2RheSBJIGZvdW5kIHR3byBvdGhlciBk
-dHMgdGhhdCByZWZlcmVuY2UgbXVsdGlwbGUgbGFuZXM6DQoNCmFyY2gvYXJtNjQvYm9vdC9kdHMv
-bWFydmVsbC9hcm1hZGEtODA0MC1wdXp6bGUtbTgwMS5kdHMNCmFyY2gvYXJtNjQvYm9vdC9kdHMv
-bWFydmVsbC9hcm1hZGEtODA0MC1tY2Jpbi5kdHNpDQoNCkJvdGggY2FzZXMgdGhlIGZ1bmN0aW9u
-IGlzIFBDSSAtIGZpcnN0IG9uZSB4Miwgc2Vjb25keDQuDQoNCkkgd2lsbCB0cnkgdG8gbG9vayBp
-bnRvIGEgbW9yZSBjb3JyZWN0IHNvbHV0aW9uIHNvb24uDQoNCg==
+
+On 9/18/25 10:31, Mario Limonciello wrote:
+>
+>
+> On 9/18/2025 12:24 PM, Lizhi Hou wrote:
+>> Currently, pm_runtime_resume_and_get() is invoked in the driver's open
+>> callback, and pm_runtime_put_autosuspend() is called in the close
+>> callback. As a result, the device remains active whenever an application
+>> opens it, even if no I/O is performed, leading to unnecessary power
+>> consumption.
+>>
+>> Move the runtime PM calls to the AIE2 callbacks that actually interact
+>> with the hardware. The device will automatically suspend after 5 seconds
+>> of inactivity (no hardware accesses and no pending commands), and it 
+>> will
+>> be resumed on the next hardware access.
+>>
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+>> ---
+>>   drivers/accel/amdxdna/Makefile          |  1 +
+>>   drivers/accel/amdxdna/aie2_ctx.c        | 42 ++++++++---
+>>   drivers/accel/amdxdna/aie2_message.c    | 28 ++++----
+>>   drivers/accel/amdxdna/aie2_pci.c        | 79 ++++++++++----------
+>>   drivers/accel/amdxdna/aie2_pci.h        |  3 +-
+>>   drivers/accel/amdxdna/aie2_smu.c        | 28 ++++++--
+>>   drivers/accel/amdxdna/amdxdna_ctx.c     | 54 +++++++-------
+>>   drivers/accel/amdxdna/amdxdna_mailbox.c | 13 ++--
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.c | 56 ++-------------
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.h |  2 +
+>>   drivers/accel/amdxdna/amdxdna_pm.c      | 96 +++++++++++++++++++++++++
+>>   drivers/accel/amdxdna/amdxdna_pm.h      | 18 +++++
+>>   12 files changed, 262 insertions(+), 158 deletions(-)
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pm.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pm.h
+>>
+>> diff --git a/drivers/accel/amdxdna/Makefile 
+>> b/drivers/accel/amdxdna/Makefile
+>> index 6797dac65efa..6344aaf523fa 100644
+>> --- a/drivers/accel/amdxdna/Makefile
+>> +++ b/drivers/accel/amdxdna/Makefile
+>> @@ -14,6 +14,7 @@ amdxdna-y := \
+>>       amdxdna_mailbox.o \
+>>       amdxdna_mailbox_helper.o \
+>>       amdxdna_pci_drv.o \
+>> +    amdxdna_pm.o \
+>>       amdxdna_sysfs.o \
+>>       amdxdna_ubuf.o \
+>>       npu1_regs.o \
+>> diff --git a/drivers/accel/amdxdna/aie2_ctx.c 
+>> b/drivers/accel/amdxdna/aie2_ctx.c
+>> index e9f9b1fa5dc1..691fdb3b008f 100644
+>> --- a/drivers/accel/amdxdna/aie2_ctx.c
+>> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+>> @@ -21,6 +21,7 @@
+>>   #include "amdxdna_gem.h"
+>>   #include "amdxdna_mailbox.h"
+>>   #include "amdxdna_pci_drv.h"
+>> +#include "amdxdna_pm.h"
+>>     static bool force_cmdlist;
+>>   module_param(force_cmdlist, bool, 0600);
+>> @@ -88,7 +89,7 @@ static int aie2_hwctx_restart(struct amdxdna_dev 
+>> *xdna, struct amdxdna_hwctx *hw
+>>           goto out;
+>>       }
+>>   -    ret = aie2_config_cu(hwctx);
+>> +    ret = aie2_config_cu(hwctx, NULL);
+>>       if (ret) {
+>>           XDNA_ERR(xdna, "Config cu failed, ret %d", ret);
+>>           goto out;
+>> @@ -167,14 +168,11 @@ static int aie2_hwctx_resume_cb(struct 
+>> amdxdna_hwctx *hwctx, void *arg)
+>>     int aie2_hwctx_resume(struct amdxdna_client *client)
+>>   {
+>> -    struct amdxdna_dev *xdna = client->xdna;
+>> -
+>>       /*
+>>        * The resume path cannot guarantee that mailbox channel can be
+>>        * regenerated. If this happen, when submit message to this
+>>        * mailbox channel, error will return.
+>>        */
+>> -    drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>>       return amdxdna_hwctx_walk(client, NULL, aie2_hwctx_resume_cb);
+>>   }
+>>   @@ -184,6 +182,8 @@ aie2_sched_notify(struct amdxdna_sched_job *job)
+>>       struct dma_fence *fence = job->fence;
+>>         trace_xdna_job(&job->base, job->hwctx->name, "signaled 
+>> fence", job->seq);
+>> +
+>> +    amdxdna_pm_suspend_put(job->hwctx->client->xdna);
+>>       job->hwctx->priv->completed++;
+>>       dma_fence_signal(fence);
+>>   @@ -531,7 +531,7 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
+>>           .num_rqs = DRM_SCHED_PRIORITY_COUNT,
+>>           .credit_limit = HWCTX_MAX_CMDS,
+>>           .timeout = msecs_to_jiffies(HWCTX_MAX_TIMEOUT),
+>> -        .name = hwctx->name,
+>> +        .name = "amdxdna_js",
+>>           .dev = xdna->ddev.dev,
+>>       };
+>>       struct drm_gpu_scheduler *sched;
+>> @@ -697,6 +697,14 @@ void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx)
+>>       kfree(hwctx->cus);
+>>   }
+>>   +static int aie2_config_cu_resp_handler(void *handle, void __iomem 
+>> *data, size_t size)
+>> +{
+>> +    struct amdxdna_hwctx *hwctx = handle;
+>> +
+>> +    amdxdna_pm_suspend_put(hwctx->client->xdna);
+>> +    return 0;
+>> +}
+>> +
+>>   static int aie2_hwctx_cu_config(struct amdxdna_hwctx *hwctx, void 
+>> *buf, u32 size)
+>>   {
+>>       struct amdxdna_hwctx_param_config_cu *config = buf;
+>> @@ -728,10 +736,14 @@ static int aie2_hwctx_cu_config(struct 
+>> amdxdna_hwctx *hwctx, void *buf, u32 size
+>>       if (!hwctx->cus)
+>>           return -ENOMEM;
+>>   -    ret = aie2_config_cu(hwctx);
+>> +    ret = amdxdna_pm_resume_get(xdna);
+>> +    if (ret)
+>> +        goto free_cus;
+>> +
+>> +    ret = aie2_config_cu(hwctx, aie2_config_cu_resp_handler);
+>>       if (ret) {
+>>           XDNA_ERR(xdna, "Config CU to firmware failed, ret %d", ret);
+>> -        goto free_cus;
+>> +        goto pm_suspend_put;
+>>       }
+>>         wmb(); /* To avoid locking in command submit when check 
+>> status */
+>> @@ -739,6 +751,8 @@ static int aie2_hwctx_cu_config(struct 
+>> amdxdna_hwctx *hwctx, void *buf, u32 size
+>>         return 0;
+>>   +pm_suspend_put:
+>> +    amdxdna_pm_suspend_put(xdna);
+>>   free_cus:
+>>       kfree(hwctx->cus);
+>>       hwctx->cus = NULL;
+>> @@ -862,11 +876,15 @@ int aie2_cmd_submit(struct amdxdna_hwctx 
+>> *hwctx, struct amdxdna_sched_job *job,
+>>           goto free_chain;
+>>       }
+>>   +    ret = amdxdna_pm_resume_get(xdna);
+>> +    if (ret)
+>> +        goto cleanup_job;
+>> +
+>>   retry:
+>>       ret = drm_gem_lock_reservations(job->bos, job->bo_cnt, 
+>> &acquire_ctx);
+>>       if (ret) {
+>>           XDNA_WARN(xdna, "Failed to lock BOs, ret %d", ret);
+>> -        goto cleanup_job;
+>> +        goto suspend_put;
+>>       }
+>>         for (i = 0; i < job->bo_cnt; i++) {
+>> @@ -874,7 +892,7 @@ int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, 
+>> struct amdxdna_sched_job *job,
+>>           if (ret) {
+>>               XDNA_WARN(xdna, "Failed to reserve fences %d", ret);
+>>               drm_gem_unlock_reservations(job->bos, job->bo_cnt, 
+>> &acquire_ctx);
+>> -            goto cleanup_job;
+>> +            goto suspend_put;
+>>           }
+>>       }
+>>   @@ -889,12 +907,12 @@ int aie2_cmd_submit(struct amdxdna_hwctx 
+>> *hwctx, struct amdxdna_sched_job *job,
+>> msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
+>>               } else if (time_after(jiffies, timeout)) {
+>>                   ret = -ETIME;
+>> -                goto cleanup_job;
+>> +                goto suspend_put;
+>>               }
+>>                 ret = aie2_populate_range(abo);
+>>               if (ret)
+>> -                goto cleanup_job;
+>> +                goto suspend_put;
+>>               goto retry;
+>>           }
+>>       }
+>> @@ -920,6 +938,8 @@ int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, 
+>> struct amdxdna_sched_job *job,
+>>         return 0;
+>>   +suspend_put:
+>> +    amdxdna_pm_suspend_put(xdna);
+>>   cleanup_job:
+>>       drm_sched_job_cleanup(&job->base);
+>>   free_chain:
+>> diff --git a/drivers/accel/amdxdna/aie2_message.c 
+>> b/drivers/accel/amdxdna/aie2_message.c
+>> index 9caad083543d..4660e8297ed8 100644
+>> --- a/drivers/accel/amdxdna/aie2_message.c
+>> +++ b/drivers/accel/amdxdna/aie2_message.c
+>> @@ -37,7 +37,7 @@ static int aie2_send_mgmt_msg_wait(struct 
+>> amdxdna_dev_hdl *ndev,
+>>       if (!ndev->mgmt_chann)
+>>           return -ENODEV;
+>>   -    drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
+>> +    drm_WARN_ON(&xdna->ddev, xdna->rpm_on && 
+>> !mutex_is_locked(&xdna->dev_lock));
+>>       ret = xdna_send_msg_wait(xdna, ndev->mgmt_chann, msg);
+>>       if (ret == -ETIME) {
+>>           xdna_mailbox_stop_channel(ndev->mgmt_chann);
+>> @@ -377,15 +377,17 @@ int aie2_register_asyn_event_msg(struct 
+>> amdxdna_dev_hdl *ndev, dma_addr_t addr,
+>>       return xdna_mailbox_send_msg(ndev->mgmt_chann, &msg, TX_TIMEOUT);
+>>   }
+>>   -int aie2_config_cu(struct amdxdna_hwctx *hwctx)
+>> +int aie2_config_cu(struct amdxdna_hwctx *hwctx,
+>> +           int (*notify_cb)(void *, void __iomem *, size_t))
+>>   {
+>>       struct mailbox_channel *chann = hwctx->priv->mbox_chann;
+>>       struct amdxdna_dev *xdna = hwctx->client->xdna;
+>>       u32 shift = xdna->dev_info->dev_mem_buf_shift;
+>> -    DECLARE_AIE2_MSG(config_cu, MSG_OP_CONFIG_CU);
+>> +    struct config_cu_req req = { 0 };
+>> +    struct xdna_mailbox_msg msg;
+>>       struct drm_gem_object *gobj;
+>>       struct amdxdna_gem_obj *abo;
+>> -    int ret, i;
+>> +    int i;
+>>         if (!chann)
+>>           return -ENODEV;
+>> @@ -423,18 +425,12 @@ int aie2_config_cu(struct amdxdna_hwctx *hwctx)
+>>       }
+>>       req.num_cus = hwctx->cus->num_cus;
+>>   -    ret = xdna_send_msg_wait(xdna, chann, &msg);
+>> -    if (ret == -ETIME)
+>> -        aie2_destroy_context(xdna->dev_handle, hwctx);
+>> -
+>> -    if (resp.status == AIE2_STATUS_SUCCESS) {
+>> -        XDNA_DBG(xdna, "Configure %d CUs, ret %d", req.num_cus, ret);
+>> -        return 0;
+>> -    }
+>> -
+>> -    XDNA_ERR(xdna, "Command opcode 0x%x failed, status 0x%x ret %d",
+>> -         msg.opcode, resp.status, ret);
+>> -    return ret;
+>> +    msg.send_data = (u8 *)&req;
+>> +    msg.send_size = sizeof(req);
+>> +    msg.handle = hwctx;
+>> +    msg.opcode = MSG_OP_CONFIG_CU;
+>> +    msg.notify_cb = notify_cb;
+>> +    return xdna_mailbox_send_msg(chann, &msg, TX_TIMEOUT);
+>>   }
+>>     int aie2_execbuf(struct amdxdna_hwctx *hwctx, struct 
+>> amdxdna_sched_job *job,
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.c 
+>> b/drivers/accel/amdxdna/aie2_pci.c
+>> index 6e39c769bb6d..f46a3dcd0580 100644
+>> --- a/drivers/accel/amdxdna/aie2_pci.c
+>> +++ b/drivers/accel/amdxdna/aie2_pci.c
+>> @@ -25,6 +25,7 @@
+>>   #include "amdxdna_gem.h"
+>>   #include "amdxdna_mailbox.h"
+>>   #include "amdxdna_pci_drv.h"
+>> +#include "amdxdna_pm.h"
+>>     static int aie2_max_col = XRS_MAX_COL;
+>>   module_param(aie2_max_col, uint, 0600);
+>> @@ -223,15 +224,6 @@ static int aie2_mgmt_fw_init(struct 
+>> amdxdna_dev_hdl *ndev)
+>>           return ret;
+>>       }
+>>   -    if (!ndev->async_events)
+>> -        return 0;
+>> -
+>> -    ret = aie2_error_async_events_send(ndev);
+>> -    if (ret) {
+>> -        XDNA_ERR(ndev->xdna, "Send async events failed");
+>> -        return ret;
+>> -    }
+>> -
+>>       return 0;
+>>   }
+>>   @@ -257,6 +249,8 @@ static int aie2_mgmt_fw_query(struct 
+>> amdxdna_dev_hdl *ndev)
+>>           return ret;
+>>       }
+>>   +    ndev->total_col = min(aie2_max_col, ndev->metadata.cols);
+>> +
+>>       return 0;
+>>   }
+>>   @@ -338,6 +332,7 @@ static void aie2_hw_stop(struct amdxdna_dev *xdna)
+>>       ndev->mbox = NULL;
+>>       aie2_psp_stop(ndev->psp_hdl);
+>>       aie2_smu_fini(ndev);
+>> +    aie2_error_async_events_free(ndev);
+>>       pci_disable_device(pdev);
+>>         ndev->dev_status = AIE2_DEV_INIT;
+>> @@ -424,6 +419,18 @@ static int aie2_hw_start(struct amdxdna_dev *xdna)
+>>           goto destroy_mgmt_chann;
+>>       }
+>>   +    ret = aie2_mgmt_fw_query(ndev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "failed to query fw, ret %d", ret);
+>> +        goto destroy_mgmt_chann;
+>> +    }
+>> +
+>> +    ret = aie2_error_async_events_alloc(ndev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "Allocate async events failed, ret %d", ret);
+>> +        goto destroy_mgmt_chann;
+>> +    }
+>> +
+>>       ndev->dev_status = AIE2_DEV_START;
+>>         return 0;
+>> @@ -459,7 +466,6 @@ static int aie2_hw_resume(struct amdxdna_dev *xdna)
+>>       struct amdxdna_client *client;
+>>       int ret;
+>>   -    guard(mutex)(&xdna->dev_lock);
+>>       ret = aie2_hw_start(xdna);
+>>       if (ret) {
+>>           XDNA_ERR(xdna, "Start hardware failed, %d", ret);
+>> @@ -565,13 +571,6 @@ static int aie2_init(struct amdxdna_dev *xdna)
+>>           goto release_fw;
+>>       }
+>>   -    ret = aie2_mgmt_fw_query(ndev);
+>> -    if (ret) {
+>> -        XDNA_ERR(xdna, "Query firmware failed, ret %d", ret);
+>> -        goto stop_hw;
+>> -    }
+>> -    ndev->total_col = min(aie2_max_col, ndev->metadata.cols);
+>> -
+>>       xrs_cfg.clk_list.num_levels = ndev->max_dpm_level + 1;
+>>       for (i = 0; i < xrs_cfg.clk_list.num_levels; i++)
+>>           xrs_cfg.clk_list.cu_clk_list[i] = 
+>> ndev->priv->dpm_clk_tbl[i].hclk;
+>> @@ -587,30 +586,10 @@ static int aie2_init(struct amdxdna_dev *xdna)
+>>           goto stop_hw;
+>>       }
+>>   -    ret = aie2_error_async_events_alloc(ndev);
+>> -    if (ret) {
+>> -        XDNA_ERR(xdna, "Allocate async events failed, ret %d", ret);
+>> -        goto stop_hw;
+>> -    }
+>> -
+>> -    ret = aie2_error_async_events_send(ndev);
+>> -    if (ret) {
+>> -        XDNA_ERR(xdna, "Send async events failed, ret %d", ret);
+>> -        goto async_event_free;
+>> -    }
+>> -
+>> -    /* Issue a command to make sure firmware handled async events */
+>> -    ret = aie2_query_firmware_version(ndev, &ndev->xdna->fw_ver);
+>> -    if (ret) {
+>> -        XDNA_ERR(xdna, "Re-query firmware version failed");
+>> -        goto async_event_free;
+>> -    }
+>> -
+>>       release_firmware(fw);
+>> +    amdxdna_rpm_init(xdna);
+>>       return 0;
+>>   -async_event_free:
+>> -    aie2_error_async_events_free(ndev);
+>>   stop_hw:
+>>       aie2_hw_stop(xdna);
+>>   release_fw:
+>> @@ -621,10 +600,8 @@ static int aie2_init(struct amdxdna_dev *xdna)
+>>     static void aie2_fini(struct amdxdna_dev *xdna)
+>>   {
+>> -    struct amdxdna_dev_hdl *ndev = xdna->dev_handle;
+>> -
+>> +    amdxdna_rpm_fini(xdna);
+>>       aie2_hw_stop(xdna);
+>> -    aie2_error_async_events_free(ndev);
+>>   }
+>>     static int aie2_get_aie_status(struct amdxdna_client *client,
+>> @@ -856,6 +833,10 @@ static int aie2_get_info(struct amdxdna_client 
+>> *client, struct amdxdna_drm_get_i
+>>       if (!drm_dev_enter(&xdna->ddev, &idx))
+>>           return -ENODEV;
+>>   +    ret = amdxdna_pm_resume_get(xdna);
+>> +    if (ret)
+>> +        goto dev_exit;
+>> +
+>>       switch (args->param) {
+>>       case DRM_AMDXDNA_QUERY_AIE_STATUS:
+>>           ret = aie2_get_aie_status(client, args);
+>> @@ -882,8 +863,11 @@ static int aie2_get_info(struct amdxdna_client 
+>> *client, struct amdxdna_drm_get_i
+>>           XDNA_ERR(xdna, "Not supported request parameter %u", 
+>> args->param);
+>>           ret = -EOPNOTSUPP;
+>>       }
+>> +
+>> +    amdxdna_pm_suspend_put(xdna);
+>>       XDNA_DBG(xdna, "Got param %d", args->param);
+>>   +dev_exit:
+>>       drm_dev_exit(idx);
+>>       return ret;
+>>   }
+>> @@ -932,6 +916,10 @@ static int aie2_get_array(struct amdxdna_client 
+>> *client,
+>>       if (!drm_dev_enter(&xdna->ddev, &idx))
+>>           return -ENODEV;
+>>   +    ret = amdxdna_pm_resume_get(xdna);
+>> +    if (ret)
+>> +        goto dev_exit;
+>> +
+>>       switch (args->param) {
+>>       case DRM_AMDXDNA_HW_CONTEXT_ALL:
+>>           ret = aie2_query_ctx_status_array(client, args);
+>> @@ -940,8 +928,11 @@ static int aie2_get_array(struct amdxdna_client 
+>> *client,
+>>           XDNA_ERR(xdna, "Not supported request parameter %u", 
+>> args->param);
+>>           ret = -EOPNOTSUPP;
+>>       }
+>> +
+>> +    amdxdna_pm_suspend_put(xdna);
+>>       XDNA_DBG(xdna, "Got param %d", args->param);
+>>   +dev_exit:
+>>       drm_dev_exit(idx);
+>>       return ret;
+>>   }
+>> @@ -980,6 +971,10 @@ static int aie2_set_state(struct amdxdna_client 
+>> *client,
+>>       if (!drm_dev_enter(&xdna->ddev, &idx))
+>>           return -ENODEV;
+>>   +    ret = amdxdna_pm_resume_get(xdna);
+>> +    if (ret)
+>> +        goto dev_exit;
+>> +
+>>       switch (args->param) {
+>>       case DRM_AMDXDNA_SET_POWER_MODE:
+>>           ret = aie2_set_power_mode(client, args);
+>> @@ -990,6 +985,8 @@ static int aie2_set_state(struct amdxdna_client 
+>> *client,
+>>           break;
+>>       }
+>>   +    amdxdna_pm_suspend_put(xdna);
+>> +dev_exit:
+>>       drm_dev_exit(idx);
+>>       return ret;
+>>   }
+>> diff --git a/drivers/accel/amdxdna/aie2_pci.h 
+>> b/drivers/accel/amdxdna/aie2_pci.h
+>> index 91a8e948f82a..289a23ecd5f1 100644
+>> --- a/drivers/accel/amdxdna/aie2_pci.h
+>> +++ b/drivers/accel/amdxdna/aie2_pci.h
+>> @@ -272,7 +272,8 @@ int aie2_map_host_buf(struct amdxdna_dev_hdl 
+>> *ndev, u32 context_id, u64 addr, u6
+>>   int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user 
+>> *buf, u32 size, u32 *cols_filled);
+>>   int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, 
+>> dma_addr_t addr, u32 size,
+>>                    void *handle, int (*cb)(void*, void __iomem *, 
+>> size_t));
+>> -int aie2_config_cu(struct amdxdna_hwctx *hwctx);
+>> +int aie2_config_cu(struct amdxdna_hwctx *hwctx,
+>> +           int (*notify_cb)(void *, void __iomem *, size_t));
+>>   int aie2_execbuf(struct amdxdna_hwctx *hwctx, struct 
+>> amdxdna_sched_job *job,
+>>            int (*notify_cb)(void *, void __iomem *, size_t));
+>>   int aie2_cmdlist_single_execbuf(struct amdxdna_hwctx *hwctx,
+>> diff --git a/drivers/accel/amdxdna/aie2_smu.c 
+>> b/drivers/accel/amdxdna/aie2_smu.c
+>> index d303701b0ded..7f292a615ed8 100644
+>> --- a/drivers/accel/amdxdna/aie2_smu.c
+>> +++ b/drivers/accel/amdxdna/aie2_smu.c
+>> @@ -11,6 +11,7 @@
+>>     #include "aie2_pci.h"
+>>   #include "amdxdna_pci_drv.h"
+>> +#include "amdxdna_pm.h"
+>>     #define SMU_RESULT_OK        1
+>>   @@ -59,12 +60,16 @@ int npu1_set_dpm(struct amdxdna_dev_hdl *ndev, 
+>> u32 dpm_level)
+>>       u32 freq;
+>>       int ret;
+>>   +    ret = amdxdna_pm_resume_get(ndev->xdna);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>>       ret = aie2_smu_exec(ndev, AIE2_SMU_SET_MPNPUCLK_FREQ,
+>> ndev->priv->dpm_clk_tbl[dpm_level].npuclk, &freq);
+>>       if (ret) {
+>>           XDNA_ERR(ndev->xdna, "Set npu clock to %d failed, ret %d\n",
+>>                ndev->priv->dpm_clk_tbl[dpm_level].npuclk, ret);
+>> -        return ret;
+>> +        goto suspend_put;
+>>       }
+>>       ndev->npuclk_freq = freq;
+>>   @@ -73,8 +78,10 @@ int npu1_set_dpm(struct amdxdna_dev_hdl *ndev, 
+>> u32 dpm_level)
+>>       if (ret) {
+>>           XDNA_ERR(ndev->xdna, "Set h clock to %d failed, ret %d\n",
+>>                ndev->priv->dpm_clk_tbl[dpm_level].hclk, ret);
+>> -        return ret;
+>> +        goto suspend_put;
+>>       }
+>> +
+>> +    amdxdna_pm_suspend_put(ndev->xdna);
+>>       ndev->hclk_freq = freq;
+>>       ndev->dpm_level = dpm_level;
+>>   @@ -82,26 +89,35 @@ int npu1_set_dpm(struct amdxdna_dev_hdl *ndev, 
+>> u32 dpm_level)
+>>            ndev->npuclk_freq, ndev->hclk_freq);
+>>         return 0;
+>> +
+>> +suspend_put:
+>> +    amdxdna_pm_suspend_put(ndev->xdna);
+>> +    return ret;
+>>   }
+>>     int npu4_set_dpm(struct amdxdna_dev_hdl *ndev, u32 dpm_level)
+>>   {
+>>       int ret;
+>>   +    ret = amdxdna_pm_resume_get(ndev->xdna);
+>> +    if (ret)
+>> +        return ret;
+>> +
+>>       ret = aie2_smu_exec(ndev, AIE2_SMU_SET_HARD_DPMLEVEL, 
+>> dpm_level, NULL);
+>>       if (ret) {
+>>           XDNA_ERR(ndev->xdna, "Set hard dpm level %d failed, ret %d ",
+>>                dpm_level, ret);
+>> -        return ret;
+>> +        goto suspend_put;
+>>       }
+>>         ret = aie2_smu_exec(ndev, AIE2_SMU_SET_SOFT_DPMLEVEL, 
+>> dpm_level, NULL);
+>>       if (ret) {
+>>           XDNA_ERR(ndev->xdna, "Set soft dpm level %d failed, ret %d",
+>>                dpm_level, ret);
+>> -        return ret;
+>> +        goto suspend_put;
+>>       }
+>>   +    amdxdna_pm_suspend_put(ndev->xdna);
+>>       ndev->npuclk_freq = ndev->priv->dpm_clk_tbl[dpm_level].npuclk;
+>>       ndev->hclk_freq = ndev->priv->dpm_clk_tbl[dpm_level].hclk;
+>>       ndev->dpm_level = dpm_level;
+>> @@ -110,6 +126,10 @@ int npu4_set_dpm(struct amdxdna_dev_hdl *ndev, 
+>> u32 dpm_level)
+>>            ndev->npuclk_freq, ndev->hclk_freq);
+>>         return 0;
+>> +
+>> +suspend_put:
+>> +    amdxdna_pm_suspend_put(ndev->xdna);
+>> +    return ret;
+>>   }
+>>     int aie2_smu_init(struct amdxdna_dev_hdl *ndev)
+>> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c 
+>> b/drivers/accel/amdxdna/amdxdna_ctx.c
+>> index 4bfe4ef20550..c3300eff7460 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
+>> @@ -161,14 +161,9 @@ int amdxdna_drm_create_hwctx_ioctl(struct 
+>> drm_device *dev, void *data, struct dr
+>>       if (args->ext || args->ext_flags)
+>>           return -EINVAL;
+>>   -    if (!drm_dev_enter(dev, &idx))
+>> -        return -ENODEV;
+>> -
+>>       hwctx = kzalloc(sizeof(*hwctx), GFP_KERNEL);
+>> -    if (!hwctx) {
+>> -        ret = -ENOMEM;
+>> -        goto exit;
+>> -    }
+>> +    if (!hwctx)
+>> +        return -ENOMEM;
+>>         if (copy_from_user(&hwctx->qos, u64_to_user_ptr(args->qos_p), 
+>> sizeof(hwctx->qos))) {
+>>           XDNA_ERR(xdna, "Access QoS info failed");
+>> @@ -181,30 +176,36 @@ int amdxdna_drm_create_hwctx_ioctl(struct 
+>> drm_device *dev, void *data, struct dr
+>>       hwctx->num_tiles = args->num_tiles;
+>>       hwctx->mem_size = args->mem_size;
+>>       hwctx->max_opc = args->max_opc;
+>> -    ret = xa_alloc_cyclic(&client->hwctx_xa, &hwctx->id, hwctx,
+>> -                  XA_LIMIT(AMDXDNA_INVALID_CTX_HANDLE + 1, 
+>> MAX_HWCTX_ID),
+>> -                  &client->next_hwctxid, GFP_KERNEL);
+>> -    if (ret < 0) {
+>> -        XDNA_ERR(xdna, "Allocate hwctx ID failed, ret %d", ret);
+>> +
+>> +    guard(mutex)(&xdna->dev_lock);
+>> +
+>> +    if (!drm_dev_enter(dev, &idx)) {
+>> +        ret = -ENODEV;
+>>           goto free_hwctx;
+>>       }
+>>   -    hwctx->name = kasprintf(GFP_KERNEL, "hwctx.%d.%d", 
+>> client->pid, hwctx->id);
+>> +    ret = xdna->dev_info->ops->hwctx_init(hwctx);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "Init hwctx failed, ret %d", ret);
+>> +        goto dev_exit;
+>> +    }
+>> +
+>> +    hwctx->name = kasprintf(GFP_KERNEL, "hwctx.%d.%d", client->pid, 
+>> hwctx->fw_ctx_id);
+>>       if (!hwctx->name) {
+>>           ret = -ENOMEM;
+>> -        goto rm_id;
+>> +        goto fini_hwctx;
+>>       }
+>>   -    mutex_lock(&xdna->dev_lock);
+>> -    ret = xdna->dev_info->ops->hwctx_init(hwctx);
+>> -    if (ret) {
+>> -        mutex_unlock(&xdna->dev_lock);
+>> -        XDNA_ERR(xdna, "Init hwctx failed, ret %d", ret);
+>> +    ret = xa_alloc_cyclic(&client->hwctx_xa, &hwctx->id, hwctx,
+>> +                  XA_LIMIT(AMDXDNA_INVALID_CTX_HANDLE + 1, 
+>> MAX_HWCTX_ID),
+>> +                  &client->next_hwctxid, GFP_KERNEL);
+>> +    if (ret < 0) {
+>> +        XDNA_ERR(xdna, "Allocate hwctx ID failed, ret %d", ret);
+>>           goto free_name;
+>>       }
+>> +
+>>       args->handle = hwctx->id;
+>>       args->syncobj_handle = hwctx->syncobj_hdl;
+>> -    mutex_unlock(&xdna->dev_lock);
+>>         atomic64_set(&hwctx->job_submit_cnt, 0);
+>>       atomic64_set(&hwctx->job_free_cnt, 0);
+>> @@ -214,12 +215,12 @@ int amdxdna_drm_create_hwctx_ioctl(struct 
+>> drm_device *dev, void *data, struct dr
+>>     free_name:
+>>       kfree(hwctx->name);
+>> -rm_id:
+>> -    xa_erase(&client->hwctx_xa, hwctx->id);
+>> +fini_hwctx:
+>> +    xdna->dev_info->ops->hwctx_fini(hwctx);
+>> +dev_exit:
+>> +    drm_dev_exit(idx);
+>>   free_hwctx:
+>>       kfree(hwctx);
+>> -exit:
+>> -    drm_dev_exit(idx);
+>>       return ret;
+>>   }
+>>   @@ -431,11 +432,6 @@ int amdxdna_cmd_submit(struct amdxdna_client 
+>> *client,
+>>           goto unlock_srcu;
+>>       }
+>>   -    if (hwctx->status != HWCTX_STAT_READY) {
+>> -        XDNA_ERR(xdna, "HW Context is not ready");
+>> -        ret = -EINVAL;
+>> -        goto unlock_srcu;
+>> -    }
+>>         job->hwctx = hwctx;
+>>       job->mm = current->mm;
+>> diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c 
+>> b/drivers/accel/amdxdna/amdxdna_mailbox.c
+>> index da1ac89bb78f..24258dcc18eb 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_mailbox.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
+>> @@ -194,7 +194,8 @@ static void mailbox_release_msg(struct 
+>> mailbox_channel *mb_chann,
+>>   {
+>>       MB_DBG(mb_chann, "msg_id 0x%x msg opcode 0x%x",
+>>              mb_msg->pkg.header.id, mb_msg->pkg.header.opcode);
+>> -    mb_msg->notify_cb(mb_msg->handle, NULL, 0);
+>> +    if (mb_msg->notify_cb)
+>> +        mb_msg->notify_cb(mb_msg->handle, NULL, 0);
+>>       kfree(mb_msg);
+>>   }
+>>   @@ -248,7 +249,7 @@ mailbox_get_resp(struct mailbox_channel 
+>> *mb_chann, struct xdna_msg_header *heade
+>>   {
+>>       struct mailbox_msg *mb_msg;
+>>       int msg_id;
+>> -    int ret;
+>> +    int ret = 0;
+>>         msg_id = header->id;
+>>       if (!mailbox_validate_msgid(msg_id)) {
+>> @@ -265,9 +266,11 @@ mailbox_get_resp(struct mailbox_channel 
+>> *mb_chann, struct xdna_msg_header *heade
+>>         MB_DBG(mb_chann, "opcode 0x%x size %d id 0x%x",
+>>              header->opcode, header->total_size, header->id);
+>> -    ret = mb_msg->notify_cb(mb_msg->handle, data, header->total_size);
+>> -    if (unlikely(ret))
+>> -        MB_ERR(mb_chann, "Message callback ret %d", ret);
+>> +    if (mb_msg->notify_cb) {
+>> +        ret = mb_msg->notify_cb(mb_msg->handle, data, 
+>> header->total_size);
+>> +        if (unlikely(ret))
+>> +            MB_ERR(mb_chann, "Message callback ret %d", ret);
+>> +    }
+>>         kfree(mb_msg);
+>>       return ret;
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c 
+>> b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> index 569cd703729d..aa04452310e5 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+>> @@ -13,13 +13,11 @@
+>>   #include <drm/gpu_scheduler.h>
+>>   #include <linux/iommu.h>
+>>   #include <linux/pci.h>
+>> -#include <linux/pm_runtime.h>
+>>     #include "amdxdna_ctx.h"
+>>   #include "amdxdna_gem.h"
+>>   #include "amdxdna_pci_drv.h"
+>> -
+>> -#define AMDXDNA_AUTOSUSPEND_DELAY    5000 /* milliseconds */
+>> +#include "amdxdna_pm.h"
+>>     MODULE_FIRMWARE("amdnpu/1502_00/npu.sbin");
+>>   MODULE_FIRMWARE("amdnpu/17f0_10/npu.sbin");
+>> @@ -61,17 +59,9 @@ static int amdxdna_drm_open(struct drm_device 
+>> *ddev, struct drm_file *filp)
+>>       struct amdxdna_client *client;
+>>       int ret;
+>>   -    ret = pm_runtime_resume_and_get(ddev->dev);
+>> -    if (ret) {
+>> -        XDNA_ERR(xdna, "Failed to get rpm, ret %d", ret);
+>> -        return ret;
+>> -    }
+>> -
+>>       client = kzalloc(sizeof(*client), GFP_KERNEL);
+>> -    if (!client) {
+>> -        ret = -ENOMEM;
+>> -        goto put_rpm;
+>> -    }
+>> +    if (!client)
+>> +        return -ENOMEM;
+>>         client->pid = pid_nr(rcu_access_pointer(filp->pid));
+>>       client->xdna = xdna;
+>> @@ -106,9 +96,6 @@ static int amdxdna_drm_open(struct drm_device 
+>> *ddev, struct drm_file *filp)
+>>       iommu_sva_unbind_device(client->sva);
+>>   failed:
+>>       kfree(client);
+>> -put_rpm:
+>> -    pm_runtime_mark_last_busy(ddev->dev);
+>> -    pm_runtime_put_autosuspend(ddev->dev);
+>>         return ret;
+>>   }
+>> @@ -130,8 +117,6 @@ static void amdxdna_drm_close(struct drm_device 
+>> *ddev, struct drm_file *filp)
+>>         XDNA_DBG(xdna, "pid %d closed", client->pid);
+>>       kfree(client);
+>> -    pm_runtime_mark_last_busy(ddev->dev);
+>> -    pm_runtime_put_autosuspend(ddev->dev);
+>>   }
+>>     static int amdxdna_flush(struct file *f, fl_owner_t id)
+>> @@ -310,19 +295,12 @@ static int amdxdna_probe(struct pci_dev *pdev, 
+>> const struct pci_device_id *id)
+>>           goto failed_dev_fini;
+>>       }
+>>   -    pm_runtime_set_autosuspend_delay(dev, AMDXDNA_AUTOSUSPEND_DELAY);
+>> -    pm_runtime_use_autosuspend(dev);
+>> -    pm_runtime_allow(dev);
+>> -
+>>       ret = drm_dev_register(&xdna->ddev, 0);
+>>       if (ret) {
+>>           XDNA_ERR(xdna, "DRM register failed, ret %d", ret);
+>> -        pm_runtime_forbid(dev);
+>>           goto failed_sysfs_fini;
+>>       }
+>>   -    pm_runtime_mark_last_busy(dev);
+>> -    pm_runtime_put_autosuspend(dev);
+>>       return 0;
+>>     failed_sysfs_fini:
+>> @@ -339,14 +317,10 @@ static int amdxdna_probe(struct pci_dev *pdev, 
+>> const struct pci_device_id *id)
+>>   static void amdxdna_remove(struct pci_dev *pdev)
+>>   {
+>>       struct amdxdna_dev *xdna = pci_get_drvdata(pdev);
+>> -    struct device *dev = &pdev->dev;
+>>       struct amdxdna_client *client;
+>>         destroy_workqueue(xdna->notifier_wq);
+>>   -    pm_runtime_get_noresume(dev);
+>> -    pm_runtime_forbid(dev);
+>> -
+>>       drm_dev_unplug(&xdna->ddev);
+>>       amdxdna_sysfs_fini(xdna);
+>>   @@ -365,29 +339,9 @@ static void amdxdna_remove(struct pci_dev *pdev)
+>>       mutex_unlock(&xdna->dev_lock);
+>>   }
+>>   -static int amdxdna_pmops_suspend(struct device *dev)
+>> -{
+>> -    struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
+>> -
+>> -    if (!xdna->dev_info->ops->suspend)
+>> -        return -EOPNOTSUPP;
+>> -
+>> -    return xdna->dev_info->ops->suspend(xdna);
+>> -}
+>> -
+>> -static int amdxdna_pmops_resume(struct device *dev)
+>> -{
+>> -    struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
+>> -
+>> -    if (!xdna->dev_info->ops->resume)
+>> -        return -EOPNOTSUPP;
+>> -
+>> -    return xdna->dev_info->ops->resume(xdna);
+>> -}
+>> -
+>>   static const struct dev_pm_ops amdxdna_pm_ops = {
+>> -    SYSTEM_SLEEP_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume)
+>> -    RUNTIME_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume, NULL)
+>> +    SYSTEM_SLEEP_PM_OPS(amdxdna_pm_suspend, amdxdna_pm_resume)
+>> +    RUNTIME_PM_OPS(amdxdna_pm_suspend, amdxdna_pm_resume, NULL)
+>>   };
+>>     static struct pci_driver amdxdna_pci_driver = {
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h 
+>> b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>> index 72d6696d49da..626beebf730e 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+>> @@ -6,6 +6,7 @@
+>>   #ifndef _AMDXDNA_PCI_DRV_H_
+>>   #define _AMDXDNA_PCI_DRV_H_
+>>   +#include <drm/drm_print.h>
+>
+> This seems like a spurious header inclusion.  It shouldn't be needed 
+> for adding a bool to the struct.
+>
+>
+>>   #include <linux/workqueue.h>
+>>   #include <linux/xarray.h>
+>>   @@ -99,6 +100,7 @@ struct amdxdna_dev {
+>>       struct amdxdna_fw_ver        fw_ver;
+>>       struct rw_semaphore        notifier_lock; /* for mmu notifier*/
+>>       struct workqueue_struct        *notifier_wq;
+>> +    bool                rpm_on;
+>
+> I'm wondering do you really need a new variable to track the runtime 
+> PM status?  Can't you just use pm_runtime_active() and the appropriate 
+> locking when checking it?
+>
+>>   };
+>>     /*
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pm.c 
+>> b/drivers/accel/amdxdna/amdxdna_pm.c
+>> new file mode 100644
+>> index 000000000000..fad14f60b99b
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/amdxdna_pm.c
+>> @@ -0,0 +1,96 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#include <drm/amdxdna_accel.h>
+>> +#include <drm/drm_drv.h>
+>> +#include <linux/pm_runtime.h>
+>> +
+>> +#include "amdxdna_pm.h"
+>> +
+>> +#define AMDXDNA_AUTOSUSPEND_DELAY    5000 /* milliseconds */
+>> +
+>> +int amdxdna_pm_suspend(struct device *dev)
+>> +{
+>> +    struct amdxdna_dev *xdna = to_xdna_dev(dev_get_drvdata(dev));
+>> +    int ret = -EOPNOTSUPP;
+>> +    bool rpm;
+>> +
+>> +    if (xdna->dev_info->ops->suspend) {
+>> +        rpm = xdna->rpm_on;
+>> +        xdna->rpm_on = false;
+>> +        ret = xdna->dev_info->ops->suspend(xdna);
+>> +        xdna->rpm_on = rpm;
+>> +    }
+>> +
+>> +    XDNA_DBG(xdna, "Suspend done ret %d", ret);
+>> +    return ret;
+>> +}
+>> +
+>> +int amdxdna_pm_resume(struct device *dev)
+>> +{
+>> +    struct amdxdna_dev *xdna = to_xdna_dev(dev_get_drvdata(dev));
+>> +    int ret = -EOPNOTSUPP;
+>> +    bool rpm;
+>> +
+>> +    if (xdna->dev_info->ops->resume) {
+>> +        rpm = xdna->rpm_on;
+>> +        xdna->rpm_on = false;
+>> +        ret = xdna->dev_info->ops->resume(xdna);
+>> +        xdna->rpm_on = rpm;
+>> +    }
+>> +
+>> +    XDNA_DBG(xdna, "Resume done ret %d", ret);
+>> +    return ret;
+>> +}
+>> +
+>> +int amdxdna_pm_resume_get(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct device *dev = xdna->ddev.dev;
+>> +    int ret;
+>> +
+>> +    if (!xdna->rpm_on)
+>> +        return 0;
+>> +
+>> +    ret = pm_runtime_resume_and_get(dev);
+>> +    if (ret) {
+>> +        XDNA_ERR(xdna, "Resume failed: %d", ret);
+>> +        pm_runtime_set_suspended(dev);
+>> +    }
+>> +
+>> +    return ret;
+>> +}
+>> +
+>> +void amdxdna_pm_suspend_put(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct device *dev = xdna->ddev.dev;
+>> +
+>> +    if (!xdna->rpm_on)
+>> +        return;
+>> +
+>> +    pm_runtime_mark_last_busy(dev);
+>> +    pm_runtime_put_autosuspend(dev);
+>> +}
+>> +
+>> +void amdxdna_rpm_init(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct device *dev = xdna->ddev.dev;
+>> +
+>> +    pm_runtime_set_active(dev);
+>> +    pm_runtime_set_autosuspend_delay(dev, AMDXDNA_AUTOSUSPEND_DELAY);
+>> +    pm_runtime_use_autosuspend(dev);
+>> +    pm_runtime_allow(dev);
+>> +    pm_runtime_mark_last_busy(dev);
+>> +    pm_runtime_put_autosuspend(dev);
+>> +    xdna->rpm_on = true;
+>> +}
+>> +
+>> +void amdxdna_rpm_fini(struct amdxdna_dev *xdna)
+>> +{
+>> +    struct device *dev = xdna->ddev.dev;
+>> +
+>> +    xdna->rpm_on = false;
+>> +    pm_runtime_get_noresume(dev);
+>> +    pm_runtime_forbid(dev);
+>> +}
+>> diff --git a/drivers/accel/amdxdna/amdxdna_pm.h 
+>> b/drivers/accel/amdxdna/amdxdna_pm.h
+>> new file mode 100644
+>> index 000000000000..11c295b6d64a
+>> --- /dev/null
+>> +++ b/drivers/accel/amdxdna/amdxdna_pm.h
+>> @@ -0,0 +1,18 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2025, Advanced Micro Devices, Inc.
+>> + */
+>> +
+>> +#ifndef _AMDXDNA_PM_H_
+>> +#define _AMDXDNA_PM_H_
+>> +
+>> +#include "amdxdna_pci_drv.h"
+>> +
+>> +int amdxdna_pm_suspend(struct device *dev);
+>> +int amdxdna_pm_resume(struct device  *dev);
+>> +int amdxdna_pm_resume_get(struct amdxdna_dev *xdna);
+>> +void amdxdna_pm_suspend_put(struct amdxdna_dev *xdna);
+>> +void amdxdna_rpm_init(struct amdxdna_dev *xdna);
+>> +void amdxdna_rpm_fini(struct amdxdna_dev *xdna);
+>
+> Nit: Why rpm for init/fini and pm for all the others?  Wouldn't it 
+> make sense to pick one or the other?
+
+Sure. I will change to _pm_init and _pm_fini.
+
+Thanks,
+
+Lizhi
+
+>
+>> +
+>> +#endif /* _AMDXDNA_PM_H_ */
+>
 
