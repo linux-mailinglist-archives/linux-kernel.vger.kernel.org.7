@@ -1,94 +1,93 @@
-Return-Path: <linux-kernel+bounces-823289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26488B860CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:33:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7732BB860EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 18:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D9C7C23C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A09018916A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 18 Sep 2025 16:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581A313D4E;
-	Thu, 18 Sep 2025 16:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7298A313D4E;
+	Thu, 18 Sep 2025 16:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KoLiEW3a"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="N6yC5m6F"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932482FABEB;
-	Thu, 18 Sep 2025 16:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF8E30EF86;
+	Thu, 18 Sep 2025 16:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758213178; cv=none; b=BuFYeIxyn8GeZnS44NLNPXhuT7pzen7Cx4+spVdMKfNzhsmFnlFbyts4nmm50JmO73+g7kQ4wALgxzKmPUe8qosG1R4PWPMtnJqw2iNhjwDG4Z7Y2aSyOXykBxdWtX/iIIDe72+eqH70vMQ0YTEd/sg8WiKF3Y7ERB39U6df214=
+	t=1758213254; cv=none; b=rkxlsp45zfmtMtvdajgOlxIrat7FfYqHPaCUjsRoYaw736DrIgdh+8WLrGPe93eZZ5QSwuZ4tXHgXuAalRnrudKf39/kpBp2WtBYvqoXql2OnSRSTRHotn19IC5s6aqZPCuYS4Wl0+bphfgA0jBTPPVSIDmadwPceolrKb6m9yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758213178; c=relaxed/simple;
-	bh=E0d0p7FHQ7iasiKux1PPmhGP02qkAuNoAVkbkY/xVK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WaUpX4hFm++JEqG+5naf3vBDEUSNr5Re8Kq7vJeLoLs2uh5xh6HvrLkEenLp3faKJBxFEnW/83qCZ/sXKCNQfvAx27WP0J3A1o5LlQLwJReyPxkZa5AraKAxPGyXIkI1JJSnB5zsksV7T7r+z7eqW48q7Ab9onKLwBHeTsWCCuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KoLiEW3a; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0ks/Dt/gG06zpcviyC2RmuMfALb4spkC/mj20Xhc7U4=; b=KoLiEW3a+FctGMCYTji6G0piKX
-	6+2sXpnGjpyCiB9GZ1aJLpE4MPYaT4SHrv8fw7rBSREmCDqF4nuUIBFZIIYmv+i3ReGtxZ8MGrp+s
-	j+YRd0HmYRcGKfIR/k6IHWq3t+jxGCnOm+ADllcYsPkFk37j3Kv81W5EGdi5YRAO43vk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uzHYr-008qze-89; Thu, 18 Sep 2025 18:32:45 +0200
-Date: Thu, 18 Sep 2025 18:32:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-	linux-mm@kvack.org, imx@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Richard Weinberger <richard@nod.at>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Andreas Larsson <andreas@gaisler.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Message-ID: <f4154621-be77-4c08-89d4-ab931ac3df30@lunn.ch>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <20250917125951.GA1390993@nvidia.com>
- <02b0f383-1c43-4eeb-a76f-830c2970b833@app.fastmail.com>
- <ca6fc8dc-d1ee-41a8-a1c9-11ed2907207f@lunn.ch>
- <ea6562f4-ec8c-4e99-98ec-000c25c34a3e@app.fastmail.com>
+	s=arc-20240116; t=1758213254; c=relaxed/simple;
+	bh=aqwtNK6di5GBXsobB4WCO7ec6zovjJK0WwMrHWilHOI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=h1kXvL7b4Jh6v86w+DWUTx2xYlyuOhU+XXgbMPBWSzT2+rJ/1ulRlUriyL7FoCfNWmWyNiiOewML5jOrn2LWHwUxsR+psr22fMhTpLDi90E8jf11x8Maw8qaV0YMJlStqpBWJd3rAfvM0+dRKc5Xrph012V3OebIZJOBwraTVPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=N6yC5m6F; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0B9B9406FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758213252; bh=QiJQcaqGnpfxXUttN20FBH0tpTUHOeBQntDMRqt269o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=N6yC5m6FqGKcjEW11nfg02qV8Yye79eP9IihS2+8h4f6RbVGwNyWTq1okPe9nDzwN
+	 22PXU/VvThVcrDOzuZQJ2jPiHK++Ed+TBmFm0xmQ/HZtSWQl5CJQIvVNpYYQEcdbVn
+	 BLfGPI/ISrUqjA+qSrtlSJ4VCl/ltL238TeQsJCMsMtvte56GVV902R33AuFnlLCn9
+	 UW89JMfV1G3v3OrcbT4uX6MjAOaP5pHDGJeSmxad26OToQeabY0OUHMQ3LRSUvziY6
+	 K73s+fXQc2pX5w1N2rgEMgYs5pEe7XMcvEaV4ObtrHh6//R1wcLSwBaZGveEbSrpLn
+	 w4As8uDxpnLZg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 0B9B9406FA;
+	Thu, 18 Sep 2025 16:34:11 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Alex Tran <alex.t.tran@gmail.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Tran
+ <alex.t.tran@gmail.com>
+Subject: Re: [PATCH v1 1/3] docs: filesystems: sysfs: remove top level sysfs
+ net directory
+In-Reply-To: <20250902023039.1351270-3-alex.t.tran@gmail.com>
+References: <20250902023039.1351270-1-alex.t.tran@gmail.com>
+ <20250902023039.1351270-3-alex.t.tran@gmail.com>
+Date: Thu, 18 Sep 2025 10:34:11 -0600
+Message-ID: <87a52r90u4.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea6562f4-ec8c-4e99-98ec-000c25c34a3e@app.fastmail.com>
+Content-Type: text/plain
 
-> Do you know of any kirkwood machines beside the OpenBlocks A7
-> that have more than 512MB of RAM?
+Alex Tran <alex.t.tran@gmail.com> writes:
 
-No.
+> The net/ directory is not present as a top level sysfs directory
+> in standard Linux systems. Network interfaces can be accessible
+> via /sys/class/net instead.
+>
+> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+> ---
+>  Documentation/filesystems/sysfs.rst | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/Documentation/filesystems/sysfs.rst b/Documentation/filesystems/sysfs.rst
+> index c32993bc83c7..c50da87f27fa 100644
+> --- a/Documentation/filesystems/sysfs.rst
+> +++ b/Documentation/filesystems/sysfs.rst
+> @@ -299,7 +299,6 @@ The top level sysfs directory looks like::
+>      hypervisor/
+>      kernel/
+>      module/
+> -    net/
+>      power/
 
-	Andrew
+I have applied these three, thanks.
+
+jon
 
