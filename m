@@ -1,217 +1,337 @@
-Return-Path: <linux-kernel+bounces-824276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730C4B888CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:27:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708C3B888D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24AD017AD59
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9751C85F6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838CF2F39C3;
-	Fri, 19 Sep 2025 09:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D522F362E;
+	Fri, 19 Sep 2025 09:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zs2jPYSn"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="W2Lu3BvC"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248772ECD15
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81222ECEB4
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274046; cv=none; b=WEE77wKWi74Hz917jmOfwZnKVc5LJt/tTyhbsmT2T9mZwYo9a4kV7BiLq1YSVST5ydpIYO3fT45/D1V20EYuI3s93z5igTnrVVOZtwoi7xqaEotVE5hMsG7zA0AQNuTKy7ZdoZzmGd6LsusWvmthOGLK9IcjEILRt5/R17TzIEc=
+	t=1758274096; cv=none; b=RXpmg1se4XBZRlJrBKlUY8h4rP/EPW95d0etSbAg2k3hG7kR/sf+Dy/mgac3STVzWZJtYUsA4DOuc7o04VY1+eedlCETJra4Y4TljNIhVniztSWkEBcSA7zFh5CGgzKRFj/OxAz2xphLjCw8TXrgvq4VQNcbH0i7oCBGTO2LQg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274046; c=relaxed/simple;
-	bh=pO9xHI/3NTLDS2M7hbjsA2aT/8nvi3Ps8SWXCVjl6ak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9k9vKArgNOI+brnziVpNz62wdVCLBoNlgu/SIQorgrvG7lg7S72RVULXsd73r7xC5Z/YOPF3sqTQXlccMzMGc5IiUrPIqkukztKuOq2KvHxQHgYDXUzFs6gX8gMHuFQlPk60yzws2zCAZQq0rrKXbmnk+YDPlIgwWAt3lc7FYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zs2jPYSn; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b38d4de61aso26752211cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:27:24 -0700 (PDT)
+	s=arc-20240116; t=1758274096; c=relaxed/simple;
+	bh=buBQGVajJF/1m5lwRo22cHctIaIWABcM5rOL+YdF3lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NrUQRnEXpE9O9kxCWjAjPYbNsnJ8Z0DnY6jLL5P8R7psX8Tlzu5zLLvk7rZ9gsEezIIqbgDzvkPJxK8H43U2geEJazLLkUTcNrknq+UnLUGe+wDVa+9hQ0KgawL+Ih73oXuOoItfbVspFupMigv/oydQFkvJxlDXhYsYLpMAOu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=W2Lu3BvC; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso1548706f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:28:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758274044; x=1758878844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RqbmWWdJDXBgyKwnalFIBvgryIt7TZh4TmAJnnjDHxo=;
-        b=Zs2jPYSnLxqD/U0g1pNHfWyuuXMNZig5gyYtv3Ad7OHWG/rc8j4t6S7zPOoSS8GrS9
-         mPGkVLq0lErTRgjAjv5Slfg6ePCFhRAkUk+tzSF722Cbfr3/R13akutkvuRQffy7HQxt
-         mcFoI9O9LoceBpcoo3X1WbvbUuiVMwRaPFRsO+u/sSH/nm2IAmgfckdQTwLBZmKTGZJE
-         PhojOKrGfjkA1q10hf7mjhVMOg6ddw9M0mwv1V6KSwH4FoY/pFnTct5OMGWJFzGnVlTX
-         SKklj0v/Ey8Pk+yKbIGymOfMPQdsCLGck0GZfBZi/sv6HVOQQqpUdR4QftTRwZlitLKp
-         auAg==
+        d=tuxon.dev; s=google; t=1758274093; x=1758878893; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eX2C6o9JQrp4KbfLBIaQxUWMPEDMSUognUn/sSIXlqA=;
+        b=W2Lu3BvCCZvzOsZOqrJR9hMiazm9QbS2jp6AVNqDjn2yPSO4G3STOHrnQfTwVU1XT3
+         cQFGbR6fDhs+Qfw+bgBtKfA09oqNVw/k119xoh3RwmORiajJwe4mSZLvkXb8w+iGz4PH
+         JU6JEanC/PNiexljU334/PWpHcA+tRmea+vzDKSxHrAIwX/DQ+AESBmKx0v1+gQ/8N1y
+         STLPo0VZ+WUcOZkDdMrycaPBlgmZUeOUAZRHW6trUpFRyjl8ic8JIscAv9A+Qe/1h9Nx
+         pGZRFc/D1OKfxHW5GY+I8fPte8f2webKX433ZF3flLYfn5PR145X/OvqXV9M/A+cNK3l
+         d0jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758274044; x=1758878844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RqbmWWdJDXBgyKwnalFIBvgryIt7TZh4TmAJnnjDHxo=;
-        b=WeTuprh3PCRpPYj+DxgTgrpvEWPuwujIGED4ClNTi/DT7f3EQxJSEK5CHXLcZJ0WsI
-         XireSwD3sM9tXmhxlUaae58bjr+5v3xVNiwQ/TKPi6wBQ8ssJSGt6NQrb0W6HrO9N2FJ
-         qdf2BHgFEST+3wUJ23u3n+QFh/YU/75njD7BULYs/5ljVMQL8g420QtCWmXHU4ksL6CW
-         2H5iV89JepSNF5SZ4q6utj7u0555L9bAfaTBe0uFdgRby0GUltmXIDQKz0BCDYr1mDaZ
-         Ibg5al5yRMfdk1uS/UmvfYMdHNUld/M0D2fzZ9kI6Lo1ILnygGKhOwB+c7dVppMBnCeq
-         7GRg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6x68/u/KnzfYlX4+uBYEojpL+vMxBiuOBw/9ggXzrttvRpY9uqiym6sP5VN7CSJiftFY2PcagQRT42rc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpMXTIpHY+ioOaHoCQQ9jJmWj0qR6tT6DObnbeK73SFrzBQ0pN
-	S9YA+Xe1Tyr6B65DfMx+df62vyiFcq04ew2DntZ8ixKyU0Xxykt/oRGk
-X-Gm-Gg: ASbGnct3kVCeiVBdplZQmjwWaGpNW4XwoRjkDnAX30vblDHvjiI5LQ/3C8Y4Uo3CSZy
-	vWQ7Plp/wA3QeFpMoF71gfd3ZqmLFl9/kBPhlWaigLeAwkPdtB6mVCnzNpCNXRM7VfFjk0vJc1V
-	TiGh0hcf7HXYec0ofptfnxa7FPdu8hKzEc9cLxLyZzcayj/1zpnmsXWwiB/f6TmBIWgGwoPZU4a
-	uCwhKGghokXJr7BMFEjn+TuAyYnlRp4vktavCScRcaWaV/p06cZKtwqTuN4QzQN84hyLVc2xPAm
-	D2ye7B4hPsF40GYuWYfXKu6XQt70sHv1Nhc3zdV6DS9QW+3V8KFP8aEWX68GqciPOCVaQl0UvQ6
-	B8owy8+iI1kp/12+cCcJ/J/vNoi/urMN8Rl3ioZ6cKDNU3c4X/TN31mEvhM3ftCadnPnpMcVASl
-	hL/BAc5XGvHcf2Xyr7MTFYUXo=
-X-Google-Smtp-Source: AGHT+IHZl2gBRa8IPk+yYPfu2t1GBuNovm3HJV6SdeKZiR7k67Eso799bbVcBGWih9MKbRUNcrqhuw==
-X-Received: by 2002:ac8:5a0a:0:b0:4b5:dd39:c43e with SMTP id d75a77b69052e-4c073106a4fmr22277991cf.61.1758274043835;
-        Fri, 19 Sep 2025 02:27:23 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda943c27bsm26085791cf.40.2025.09.19.02.27.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 02:27:23 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 02D66F40066;
-	Fri, 19 Sep 2025 05:27:23 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Fri, 19 Sep 2025 05:27:23 -0400
-X-ME-Sender: <xms:-iHNaBkwO3DYEDxSYsXg8wFkKOiIS8phS8s8pRFCBqf9WzNeuByhgQ>
-    <xme:-iHNaDb6GxEetX6dNAlw9EPxqB50AXD3wsZ75OvBbtgDzfuTJ5gx8JacHPpX4pW-F
-    tmLA_jADSX74pwYZw>
-X-ME-Received: <xmr:-iHNaJVqYf7QNLYw9xEdKS7acp1QcHwgpVGSID7A1pbsOIpPMiQp02_oy0kG>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegkeekhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfh
-    vghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvg
-    hrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeegvddvhedt
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghr
-    shhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvg
-    hngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohep
-    udelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehpvghtvghriiesihhnfhhrrg
-    guvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehruhhsth
-    dqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlkhhmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopeifihhllheskhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:-iHNaLCRh_5ubnQ5AoDgj0PURt6J12rk7W6G0Bo51OsW6gcvAsiRuA>
-    <xmx:-iHNaAxgkz_me4xLOhAjOgp0OAvyCpeBHOoHYU3EfwtLTYO15C4AdQ>
-    <xmx:-iHNaJaheYe0ptx-WRIt8NN0Q3ZCrMN5zvDTgjvwXaPYAHOv_c5D8g>
-    <xmx:-iHNaFRoEH3hpRcwqqW1hUCXOTVWu-FXQjuViF7eL4ZDdR5MrIGGMg>
-    <xmx:-iHNaEgsdDYXWCGRgV2Rv48KkPQtkdknb_aYAmUHDwUGaL9kUZXGC7of>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Sep 2025 05:27:21 -0400 (EDT)
-Date: Fri, 19 Sep 2025 11:27:14 +0200
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lkmm@lists.linux.dev, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	alex.gaynor@gmail.com, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [GIT PULL] [PATCH 0/4] Rust locking changes for v6.18
-Message-ID: <aM0h8oMzSnGwP3R4@tardis-2.local>
-References: <20250919091241.32138-1-boqun.feng@gmail.com>
+        d=1e100.net; s=20230601; t=1758274093; x=1758878893;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eX2C6o9JQrp4KbfLBIaQxUWMPEDMSUognUn/sSIXlqA=;
+        b=dFlnZoJ9jQnwIhuF1bgdpR8c3vpGgDbVSyokZ17z4O2Qci9PWay4b7NY5mE4wsO0sa
+         PNRy225NpRyme34K7BkBnC2ZXN0JM45xNi9JTV5koeXHG8IiJrcN3jkvWBOVNrKaNrpR
+         oJsqKYdt/t4LKp+M2LBxunYCEDMj5XnbvikxUCEZ7Lg64y20984fIK3b3XsVZuKHlqAw
+         PgY1gP3ffRqUuyvSxsan9dd6nAKwx5Wmikze4mhDOXbKjiP9SWVjS1l3yVgNv/dwYLjU
+         7Lt5bn1xH7LcuLUQY1rlp4kGaSHLMq0K09JkAClEDzVi0soDF7r7Bc/xHRc3pmadLVnk
+         D8rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIOqePuxZ76nagmczTkRP7txxPetvv73OfhgMvFGLOlh9TeZGiCDU11eI+vCsTnxaP6/u2Vf5fkVfLme4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUdjyv+Sku1da2sKkGt4/LkqWqHhCvfFGhO2a+WdZOTRVzeTBz
+	dtZ9YO4QCiX4OGztVZlIuBRKfe36qPrG6PD2/Lfv9uIxxNBzFvRAIRW5+xtfnLohBVw=
+X-Gm-Gg: ASbGncuedwPbw43VqxDQlC0fWG0nOV8Uv2HMQL/oDfis4AWD4wR8I4uZmLRrsgjm5wl
+	t+d3ghM1pnL7q/6zpVM31soFS6e5ChKyqk2LJaLKXKkEg8jqKGvvMRmJKT3H5Eh94pPSgCwuug8
+	4uox36Np6RGe+F4l0gHpfR0ic5nP17qZKNXucDU2irVfaWr4w98aW2h+5S0pZdg5hA2ls6vzwxV
+	ZhpqoFH9iQXC5O2dGKUU3bBrClfthPWm8GaYZShOQ7F+QSqMsDuWx56ZKt9Xs83QfUjkfjcuVyQ
+	kR6uKALJWaB1hdRv1P+DssPjrnmF+x5ab16B64E2A1ltOgr5qpmeJ/1jO+dHZUVdrgvi0dBFzqm
+	0cB7BvTB0dRYWHJm9bLIJryPIiqTjUCg=
+X-Google-Smtp-Source: AGHT+IF8SvCo8+93/CF/N3fM2f638seOlv8Zs1arZJ3G7JJNpr7/3DX/KLCOOUOnhqlegFVFvupfZg==
+X-Received: by 2002:a05:6000:605:b0:3ea:5f76:3f7a with SMTP id ffacd0b85a97d-3ee7e0116d6mr1373555f8f.22.1758274092847;
+        Fri, 19 Sep 2025 02:28:12 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f4f6asm6778052f8f.6.2025.09.19.02.28.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 02:28:12 -0700 (PDT)
+Message-ID: <ca1da9cb-5003-49f2-ab8d-70b80a10d8cd@tuxon.dev>
+Date: Fri, 19 Sep 2025 12:28:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919091241.32138-1-boqun.feng@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
+ driver
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, p.zabel@pengutronix.de,
+ linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250912122444.3870284-3-claudiu.beznea.uj@bp.renesas.com>
+ <pnph54wv3736lemzren64ig4karlulffkvmc3dzgrhgyv2cpwu@2mcgvlqdr6wu>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <pnph54wv3736lemzren64ig4karlulffkvmc3dzgrhgyv2cpwu@2mcgvlqdr6wu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[Fixed Peter's email address...]
 
-On Fri, Sep 19, 2025 at 11:12:37AM +0200, Boqun Feng wrote:
-> Hi Peter & Ingo,
+
+On 9/19/25 11:45, Manivannan Sadhasivam wrote:
+> On Fri, Sep 12, 2025 at 03:24:40PM +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>> only as a root complex, with a single-lane (x1) configuration. The
+>> controller includes Type 1 configuration registers, as well as IP
+>> specific registers (called AXI registers) required for various adjustments.
+>>
+>> Hardware manual can be downloaded from the address in the "Link" section.
+>> The following steps should be followed to access the manual:
+>> 1/ Click the "User Manual" button
+>> 2/ Click "Confirm"; this will start downloading an archive
+>> 3/ Open the downloaded archive
+>> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
+>> 5/ Open the file r01uh1014ej*-rzg3s.pdf
+>>
+>> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+> 
+> [...]
+> 
+>> +static void rzg3s_pcie_update_bits(void __iomem *base, u32 offset, u32 mask,
+>> +				   u32 val)
+>> +{
+>> +	u32 tmp;
+>> +
+>> +	tmp = readl(base + offset);
+> 
+> Unless there is an ordering requirement, you can safely use
+> {readl/writel}_relaxed variants throughout the driver.
+
+HW manual lists specific steps to follow when issuing requests. These steps
+are listed in chapter "34.4.2.4 Issuing Special Requests" in the manual
+pointed in patch description.
+
+> 
+>> +	tmp &= ~mask;
+>> +	tmp |= val & mask;
+>> +	writel(tmp, base + offset);
+>> +}
+>> +
+> 
+> [...]
+> 
+>> +static void __iomem *rzg3s_pcie_child_map_bus(struct pci_bus *bus,
+>> +					      unsigned int devfn,
+>> +					      int where)
+>> +{
+>> +	struct rzg3s_pcie_host *host = bus->sysdata;
+>> +	unsigned int dev, func, reg;
+>> +
+>> +	dev = PCI_SLOT(devfn);
+>> +	func = PCI_FUNC(devfn);
+>> +	reg = where & ~0x3;
+>> +
+>> +	/* Set the destination */
+>> +	writel(FIELD_PREP(RZG3S_PCI_REQADR1_BUS, bus->number) |
+>> +	       FIELD_PREP(RZG3S_PCI_REQADR1_DEV, dev) |
+>> +	       FIELD_PREP(RZG3S_PCI_REQADR1_FUNC, func) |
+>> +	       FIELD_PREP(RZG3S_PCI_REQADR1_REG, reg),
+>> +	       host->axi + RZG3S_PCI_REQADR1);
+>> +
+>> +	/* Set byte enable */
+>> +	writel(RZG3S_PCI_REQBE_BYTE_EN, host->axi + RZG3S_PCI_REQBE);
+>> +
+>> +	/*
+>> +	 * rzg3s_pcie_child_map_bus() is used to configure the controller before
+>> +	 * executing requests. It is called only within this driver and not
+>> +	 * through subsystem calls. Since it does not return an address that
+>> +	 * needs to be used later, return NULL.
+>> +	 */
+> 
+> What guarantees that the PCI core will not call this function through
+> pci_ops::map_bus?
+
+As of my code inspection the pci_ops::map_bus is currently called from:
+pci_generic_config_read()
+pci_generic_config_write()
+pci_generic_config_read32()
+pci_generic_config_write32()
+
+As of my code inspection, these are currently called from vendor specific
+drivers. I the core behavior will be changed, I can't guarantee the
+statement from the comment. Please let me know if you want me to drop the
+initialization of rzg3s_pcie_child_ops::map_bus and call
+rzg3s_pcie_child_map_bus() explicitly instead of calling it though
+rzg3s_pcie_child_ops::map_bus
+
+As mentioned in the previous review rounds, this is implemented like this
+as it was suggested in v1 review process.
+
+> 
+>> +	return NULL;
+>> +}
+>> +
+>> +static struct pci_ops rzg3s_pcie_child_ops = {
+>> +	.read		= rzg3s_pcie_child_read,
+>> +	.write		= rzg3s_pcie_child_write,
+>> +	.map_bus	= rzg3s_pcie_child_map_bus,
+>> +};
+>> +
+>> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
+>> +					     unsigned int devfn,
+>> +					     int where)
+>> +{
+>> +	struct rzg3s_pcie_host *host = bus->sysdata;
+>> +
+>> +	if (devfn)
+>> +		return NULL;
+>> +
+>> +	return host->pcie + where;
+>> +}
+>> +
+>> +/* Serialization is provided by 'pci_lock' in drivers/pci/access.c */
+>> +static int rzg3s_pcie_root_write(struct pci_bus *bus, unsigned int devfn,
+>> +				 int where, int size, u32 val)
+>> +{
+>> +	struct rzg3s_pcie_host *host = bus->sysdata;
+>> +
+>> +	/* Enable access control to the CFGU */
+>> +	writel(RZG3S_PCI_PERM_CFG_HWINIT_EN, host->axi + RZG3S_PCI_PERM);
+>> +
+> 
+> I'm not sure if 'host->axi' written above and the address written below are in
+> the same domain or not. 
+
+host->axi and host->pci are both part of the PCI controller address space.
+I don't have more info on it than this. HW manual don't mention anything
+about this.
+
+> If they are, then the writes will be serialized and
+> would be no issues. If they are in different domains, then you would need to do
+> readl() to make sure the above write reaches the hardware before writing below.
+> 
+>> +	pci_generic_config_write(bus, devfn, where, size, val);
+>> +
+>> +	/* Disable access control to the CFGU */
+>> +	writel(0, host->axi + RZG3S_PCI_PERM);
+>> +
+>> +	return PCIBIOS_SUCCESSFUL;
+>> +}
+>> +
+>> +static struct pci_ops rzg3s_pcie_root_ops = {
+>> +	.read		= pci_generic_config_read,
+>> +	.write		= rzg3s_pcie_root_write,
+>> +	.map_bus	= rzg3s_pcie_root_map_bus,
+>> +};
+>> +
+> 
+> [...]
+> 
+>> +static int rzg3s_pcie_intx_setup(struct rzg3s_pcie_host *host)
+>> +{
+>> +	struct device *dev = host->dev;
+>> +
+>> +	for (int i = 0; i < PCI_NUM_INTX; i++) {
+>> +		struct platform_device *pdev = to_platform_device(dev);
+>> +		char irq_name[5] = {0};
+>> +		int irq;
+>> +
+>> +		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + i);
+>> +
+>> +		irq = platform_get_irq_byname(pdev, irq_name);
+>> +		if (irq < 0)
+>> +			return dev_err_probe(dev, -EINVAL,
+>> +					     "Failed to parse and map INT%c IRQ\n",
+>> +					     'A' + i);
+>> +
+>> +		host->intx_irqs[i] = irq;
+>> +		irq_set_chained_handler_and_data(irq,
+>> +						 rzg3s_pcie_intx_irq_handler,
+>> +						 host);
+>> +	}
+>> +
+>> +	host->intx_domain = irq_domain_create_linear(of_fwnode_handle(dev->of_node),
+>> +						     PCI_NUM_INTX,
+>> +						     &rzg3s_pcie_intx_domain_ops,
+>> +						     host);
+>> +	if (!host->intx_domain)
+>> +		return dev_err_probe(dev, -EINVAL,
+>> +				     "Failed to add irq domain for INTx IRQs\n");
+>> +	irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
+>> +
+>> +	return devm_add_action_or_reset(dev, rzg3s_pcie_intx_teardown, host);
+> 
+> Didn't I suggest dropping these devm_add_action_or_reset() calls and use error
+> labels as like other controller drivers?
+
+It has been mentioned like "It is generally preferred to cleanup the
+resources in err path using goto labels."; thorough "generally preferred" I
+understood this as a non-strict rule, thus I asked back if you prefer it
+for this driver as well, but got no further reply. Sorry for any confusion,
+if any.
+
+But before posting this version I also prepared a version that drops the
+devm actions or resets and uses gotos instead. I'll send it in reply to
+this patch for you to check it. I personally consider it complicates the
+failure path. Please let me know your thoughts.
+
+> 
+>> +}
+>> +
+> 
+> [...]
+> 
+>> +static struct platform_driver rzg3s_pcie_driver = {
+>> +	.driver = {
+>> +		.name = "rzg3s-pcie-host",
+>> +		.of_match_table = rzg3s_pcie_of_match,
+>> +		.pm = pm_ptr(&rzg3s_pcie_pm_ops),
+>> +		.suppress_bind_attrs = true,
+>> +	},
+>> +	.probe = rzg3s_pcie_probe,
+> 
+> You could use '.probe_type = PROBE_PREFER_ASYNCHRONOUS' to allow async probing
+> of the devices. This will have a big impact in boot time if you have multiple
+> controllers.
+
+Thank you for the hint. I'll look to it.
+
+Thank you for your review,
+Claudiu
+
+> 
+> - Mani
 > 
 
-Peter, I somehow had a typo in the "To:" field of your email address,
-but you should be still Cced correctly, sorry about that :(
-
-Regards,
-Boqun
-
-> Please pull this (mostly) Rust locking changes to tip. It's a bit late
-> than usual because I was at Kangrejos conference this week, however the
-> changes are relatively small and simple, so I think it's Ok for v6.18.
-> I also try using "git notes" for submission links as Thomas suggests,
-> let see how it goes ;-)
-> 
-> The following changes since commit 17d9f8eaa87d40a2ff66598875a43363e37a909b:
-> 
->   MAINTAINERS: update atomic infrastructure entry to include Rust (2025-09-15 09:38:36 +0200)
-> 
-> are available in the Git repository at:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/ tags/rust-locking.2025.09.19a
-> 
-> for you to fetch changes up to 9622209360c25d78a81048a9db72f1efef7fbc58:
-> 
->   rust: lock: Add a Pin<&mut T> accessor (2025-09-15 22:28:35 -0400)
-> 
-> Regards,
-> Boqun
-> 
-> ----------------------------------------------------------------
-> Locking changes for v6.18:
-> 
-> - Fix a data-race in do_raw_write_lock reported by KCSAN
-> 
-> Rust locking changes for v6.18
-> 
-> - Make `data` in `Lock` structurally pinned.
-> 
->   Previously the `data` field of a `Lock<T>` is not structurally pinned,
->   and it's impossible to initialize the `data` field with a
->   pin-initializer, hence e.g. a `Lock<T>` where T is a pin-initialized
->   type is not supported. This encourages workarounds like
->   `Lock<Pin<KBox<T>>`, which is more complicated and less efficient.
->   Therefore make the `data` field in `Lock` structurally pinned to
->   support pin-initialized types in a `Lock<T>`.
-> 
->   Since the `data` field is structurally pinned, make `Guard<T, ...>`
->   only `DerefMut` is T is Unpin, otherwise `Guard::as_mut()` is added to
->   provide a `Pin<&mut T>`. This is different than normal Rust standand
->   library locks.
-> -----BEGIN PGP SIGNATURE-----
-> 
-> iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAmjNGoEACgkQSXnow7UH
-> +riU8ggAnRUTBam8NTmHJpZfVbbNSfx1ndaARxd9Wb/MLEh8OHYKbVRPJwvWGge+
-> dafO0VYULku7ho1SeIlLXp4Bbjy3YC6o/J6xOpr9xMmysUky7RHi+Ys0y9gKaSmW
-> daPurQEOS8TBUWu5yVxNAfWoRgPEiPULovbzgANKKAV7QsljyoEg7mQCPxLftPze
-> Hr22HxU+lr6SDH5Efc8ihGqXJAvwunk+0mkJymZbjWo3ZF3cuhXlTMcIlu1SK14a
-> R1VQu5UoX8S5y0T0gkJ84UJ11e0wrSZyT0EqmHWSpVBnyGgWk8H1u284hDiGG2iG
-> FvwoSQ9iVuxLhxjhPUSOjq30DzmFfg==
-> =MZj4
-> -----END PGP SIGNATURE-----
-> 
-> ----------------------------------------------------------------
-> Alexander Sverdlin (1):
->       locking/spinlock/debug: Fix data-race in do_raw_write_lock
-> 
-> Daniel Almeida (3):
->       rust: lock: guard: Add T: Unpin bound to DerefMut
->       rust: lock: Pin the inner data
->       rust: lock: Add a Pin<&mut T> accessor
-> 
->  kernel/locking/spinlock_debug.c |  4 ++--
->  rust/kernel/sync/lock.rs        | 41 +++++++++++++++++++++++++++++++++++++----
->  rust/kernel/sync/lock/global.rs |  5 ++++-
->  3 files changed, 43 insertions(+), 7 deletions(-)
 
