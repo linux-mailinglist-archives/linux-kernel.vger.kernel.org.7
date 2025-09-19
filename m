@@ -1,118 +1,161 @@
-Return-Path: <linux-kernel+bounces-824916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E938B8A771
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165E0B8A77A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EAB83BE702
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D285879AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E049431FECF;
-	Fri, 19 Sep 2025 15:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1752C31E8B3;
+	Fri, 19 Sep 2025 15:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDhgMlHZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="OzzEXMb8"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F029320CC2
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F5731D73B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758297520; cv=none; b=ukc+GJugUFi+rzj6kDUnj99+pOk3thX9WLVJ1HxyG8kSx8YlcblxVYjCT9f2CWksXrdUddVkre7uZ2ZwKc7EjxB0XpN8sMtayOCur/qmYNgwfTIqgaA6ciH2NW2H4QY76AKQHek4jFRKF9LIIBZyW69pnCippaYmEMzaz32kvEU=
+	t=1758297561; cv=none; b=lqBdUAw2fE8A9XHPAHQQdhiNS6NTn6+DcMjdzRSI540uA8c74D5UxJMo+vgvjH7zUfNZp9Zw2mfsSPLXJ5oo8lBkdWYRYtH0OCAvSNLGHG/Fb2UJ6UzGIbcEBzEnqrl7ncEXWTdTqMwFa2DeGCNijBHbiFfu8w3gbIQ0fW4HwGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758297520; c=relaxed/simple;
-	bh=t3P2GEOcwivP3t6/urkttM5U23eccg5yH/vgb1kPN6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eZMQs2udPxtSIrrLlrClVI9v/hlO9SeR45Ndythq59lWOv0gfthqJxSNky+i2t5ADtX/miqridSiTF8LaeQDzaU/wYq/GqisXj9tD5nemaNO5rFtj43wETxtwWCQoGrSU794DKWxat6vgBXVPGpg5Pb5AFd7hB5ID2eIFPgZNtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDhgMlHZ; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46897c60e38so5582545e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:58:38 -0700 (PDT)
+	s=arc-20240116; t=1758297561; c=relaxed/simple;
+	bh=e6z+FuB07lTrzgCpwwNvKm6kawfyWQVO1KrgqPQyPRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bkY2Q1c41v0qQFb2vPX0K9WbxatDwlcOpJAyqP6PWD99VRFeC96/WZWpWE8h0NbgXQOindm0xss0I+LD3EwYmkSOLx+RXApnt4HMjrnC8oIoV+AZe+iMny/rPc8mWdVRaIacMbY8m9ONi9zwX5PcxOTrEZcwY4TcB2H0rOVTwm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=OzzEXMb8; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-424197bd073so15890905ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:59:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758297517; x=1758902317; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vnqHCvU7rGwJGGO0ESYLZHhX3MxXPvdCUBjgSC9Fnxk=;
-        b=WDhgMlHZ/7SIcNS/sdeAzbLsJdC9l9L2i1QStGYhztxbV8frEod+OeF6hbWIsLPjcn
-         wNEU/rWo6fAtDwumz4JfIxza7Vk2a6cAV28/zdrh+93EXxPWnjTdKqAOW2MS0o5tDsbK
-         3jEiWFZMAh0eoMhs5dL6w8CIBseTEtY3OPmSRTtQZYy8fC0aQ3Z5lJEQ+babT58AmCQ5
-         /XKcd9I/iwotj+HzjmvBU+ToDTtvJ6Iii0aRoCnhCVsge33I3uCREXO1VcqXCKgIOCFU
-         z+5gtlMO+PkQFWnjdSQBDZ9dXgLmW4rg/uafOmVsB700oQMA0RtCoHX6+mTdwA8mKRtK
-         LVKA==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758297558; x=1758902358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PieohXBDde9aJoeZPffJCOlv0SEwDrquFxpLVqeOn8w=;
+        b=OzzEXMb8iNidjAQ+Q1UitYIq2nxiOkbL1kRhIMg9lv1mtiRnQidlYhI+HI01GL6XsS
+         EU3y7TxNlSH+MYcQekmlB9SqLWtdP30opbXtyeh3nAb7b1QYPkGNhWPe5QIsbMWzNPed
+         wjppShPK7hbqtC4LpoVu1LOb/Q/5uaIXQ+85p7pO+lJD5E3DjZO7k+LOVPzrRkE5YzHN
+         PiYD10sThJ5GpTdpM2L4AtaCobexHPUR+fTU1UFXzVm+skc4U2YJBXsKtgMWcKrB7GfB
+         EZQ+iyVQgKfConJO3WgTdBv2e+t76+e3pGVbNiUTVUnSgaP8NOHYlwRotMSrn9hNXHZI
+         YKsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758297517; x=1758902317;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vnqHCvU7rGwJGGO0ESYLZHhX3MxXPvdCUBjgSC9Fnxk=;
-        b=Xv0MyYY+DJgoJlWZm5+9s1Jb6s88bRCvQz/jc/Ws9PmDUYdMoFZ20SmRa3e2MF+zTu
-         hUHUtua/aTgW104WrqTWspqQun8WOxb+JLa/j87mnKDom6x2ndDLWicmwIUeuvk4qxBh
-         7KMTJWyONYYHap6NgFfg6P/JchzRr8YW/ToOH/Fop1R6d+oQWTrlrFzf+fikNY2Rm3JY
-         Nig15fbzPYfAwuCBqvovQumZMzPcldMHStnNznG8buvncHhSRJzaHjDZDM4fnGJJQozE
-         U0mHUGd851w0VETfj8UVSJKLwnZYYYBs3iKoKtwL+pUd+SC9mF+oZcSn9MZeDpwllCTt
-         1YfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Z4ngOJ/Qn4odsSDfoFwEbIQkBzbLxnZVYN51KN//832ECT8Uh9gWmJBL6uqz4wqvk6QM/HhsPWcHtf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuv7UzUtgEEqa/RZAc5D1pVWglr7QgVgrrBOqnlunMVRT4xd7F
-	2e2r5/7OkwG3lEh2ub6HhK6ixFCl50jUVbmaF2lUqqiFRe1AruK3Cwua5FpHoihAsRk=
-X-Gm-Gg: ASbGncuJuxFKoNkPKy6QKGHng7Fs6MocFCTth8MjAPxlMxR4fQcXIVLVxwIjs7pOlCG
-	BMGFQ9LdFKDxv916aI1/ue3Vwx+HnbQ9vwPUDUuiqzfKug6onV6nKuTQQsXnuTdC175kGg+WqiC
-	SdszWDl9YGrjqQnuwz6D9KEIXkiOrf6g5dJGSqROVL1Ynm7tiX3GCqHiY4VgZfVwF0BEIJ0t4h8
-	UC5lH+YyZJ729f+bvJ4bGxtzs6A1VsaPKDrhD4ToDEa57qXGa3aSMM3uygomshE458I8885Doox
-	Xse98GlQ24XjCDJN70scM3dBjuezJWqTCb4O1KCc8EKmdiqLceAvGGfdB3yyENAzpauYabR1f83
-	3DbBD3Z88zFlt40bkSTRxlwYzEDoC8T6tvcQ0hMocklqbUO5F+gdM9Uuo7mpPC4Dd7vSejLeRoG
-	GRnQ==
-X-Google-Smtp-Source: AGHT+IGiHVqCid6jiNXmY7e2HfatNlHZD3vTyoXsmvvtSGKovpZ2+7Stv4IcOLATQICU8wnyJ6SpuQ==
-X-Received: by 2002:a05:600c:1f90:b0:45d:e110:e690 with SMTP id 5b1f17b1804b1-467eed90607mr31739365e9.14.1758297516735;
-        Fri, 19 Sep 2025 08:58:36 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:8ffd:205a:6719:49c1? ([2a05:6e02:1041:c10:8ffd:205a:6719:49c1])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-464f527d6cdsm106682695e9.12.2025.09.19.08.58.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 08:58:36 -0700 (PDT)
-Message-ID: <54b7e9b7-e2d5-404d-9410-06b62a11d073@linaro.org>
-Date: Fri, 19 Sep 2025 17:58:35 +0200
+        d=1e100.net; s=20230601; t=1758297558; x=1758902358;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PieohXBDde9aJoeZPffJCOlv0SEwDrquFxpLVqeOn8w=;
+        b=ceRq/+KMEFJIPzJqMu8Dj0cFMBW0knYbYG3p+mdMx/T6xhi+ZxVtUg4Xl9ERemXwb5
+         dfs8V2N1OEWhqTKzDxnmC6OWSwJkcCwlZ7JHavfYuWrHSN4xaTW3hazd/IrlqwX2jW12
+         wKkOMCaUFV+EY5FjlZ27DXklbjkGS1ynjhGgm+mIfe4pRwz64xKK4BQ0KEuBpQj+gjpU
+         Uv4ZheOoaRluKmHPLvZbzzdQ4pQtN34EIR8tQnLvp18DR1LUdbFLNpRfuZ24wK6mtYP1
+         O2mekFteP4R6PkYDaSuEDd5bUgknWeogQc8Yl9dxqVYQXGg1H+ZChvlNrOrw0X/7MywQ
+         V6Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjbs9g36SffhGFAPe5AndBJSE51h3jW9J58iBkwJmFq6hfsE8qH5EK/YtNjnGU9D+XoUAndRKUpVZyibc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7hdz9P2WZiQk6Ax7CJgGl9O/YjHTI0r49No8t7Z49TcDZRjA8
+	g7pxkSCzT1kS8BOvjWNGS1QobfPLT1Qdlrg3kqb9Vhaiv7DjOk9lCs/5zbsjLQMeGpM=
+X-Gm-Gg: ASbGncvpb8aTQhQjdJRwHugdjjxlv8xPWbhHV9RGN+nJlNQnHFSdAacQvsHuhfgs3pV
+	68Ak6I9AOMRLi6NZzgbyuS+5vIxxBz8ywFYJe4H1WSNA+81MSv1DIGobYso73XjN6dFFrMdJKfn
+	masVzDXcyTk5GzEVcHk4IyIRdFd7aKoQ/bYT3ol7wki89IpkJSaV9EnPOY6Q3n+u3YEsf/0CmBP
+	ZrexaIpfJZb+VZwprO7iHKrMLbh0MqE6hA2moOvqQO4HPqy6eWpnoIZLn5ZV/bZzllkjEU9hMQR
+	eaFTNt/N/yAGm+DdzkkzHGCfrjj3+WVx/Lo4afS0HdbFXZH2LTHlNO5YVQ3tuKewnHI+tF4btjg
+	sWAVLSKZG3QrWmn/3RJOC1JZaszpWzA1IJsS8l8HmE3IU3r8MbnrqwHdXPNkUkW0TIA==
+X-Google-Smtp-Source: AGHT+IEjqrlSFIoeKxmjUweDtrCLwaQpAtyQ3arbMa+ZmRjzpi9BoH5PVFn/nUo5LPbXaE/8/YT8KA==
+X-Received: by 2002:a92:c5b2:0:b0:411:6759:bfad with SMTP id e9e14a558f8ab-42441af5df5mr105138315ab.10.1758297558106;
+        Fri, 19 Sep 2025 08:59:18 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d50aa460bsm2250898173.52.2025.09.19.08.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 08:59:17 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: dlan@gentoo.org,
+	ziyao@disroot.org,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] spi: support the SpacemiT K1 SPI controller
+Date: Fri, 19 Sep 2025 10:59:10 -0500
+Message-ID: <20250919155914.935608-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/1 RESEND] thermal: thermal-generic-adc: add temp
- sensor function
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20250903162749.109910-1-clamor95@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250903162749.109910-1-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 03/09/2025 18:27, Svyatoslav Ryhel wrote:
-> To avoid duplicating sensor functionality and conversion tables, this
-> design allows converting an ADC IIO channel's output directly into a
-> temperature IIO channel. This is particularly useful for devices where
-> hwmon isn't suitable or where temperature data must be accessible through
-> IIO.
-> 
-> One such device is, for example, the MAX17040 fuel gauge.
-> 
-> ---
+This series adds support for the SPI controller found in the SpacemiT
+K1 SoC.  The driver currently supports only master mode.  The controller
+has two 32-entry FIFOs and supports PIO and DMA for transfers.
 
-Applied, thanks
+Version 2 incorporates changes suggested during review of v1.
 
+					-Alex
+
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/spi-v2
+
+Between version 1 and version 2:
+  - Use enum rather than const for the binding compatible string
+  - Omit the label and status property in the binding example
+  - The spi-spacemit-k1.o make target is now added in sorted order
+  - The SPI_SPACEMIT_K1 config option is added in sorted order
+  - The SPI_SPACEMIT_K1 config does *not* depend on MMP_PDMA,
+    however MMP_PDMA is checked at runtime, and if not enabled,
+    DMA will not be used
+  - Read/modify/writes of registers no longer use an additional
+    "virt" variable to hold the address accessed
+  - The k1_spi_driver_data->ioaddr field has been renamed base
+  - The DMA address for the base address is maintained, rather than
+    saving the DMA address of the data register
+  - The spi-max-frequency property value is now bounds checked
+  - A local variable is now initialized to 0 in k1_spi_write_word()
+  - The driver name is now "k1-spi"
+  - DT aliases are used rather than spacemit,k1-ssp-id for bus number
+  - The order of two pin control properties was changed as requested
+  - Clock names and DMA names are now on one line in the "k1.dtsi"
+  - The interrupts property is used rather than interrupts-extended
+  - The order of two pin control properties was changed as requested
+  - Clock names and DMA names are now on one line in the "k1.dtsi"
+  - The interrupts property is used rather than interrupts-extended
+
+Here is version 1 of this series:
+  https://lore.kernel.org/lkml/20250917220724.288127-1-elder@riscstar.com/
+
+Alex Elder (3):
+  dt-bindings: spi: add SpacemiT K1 SPI support
+  spi: spacemit: introduce SpacemiT K1 SPI controller driver
+  riscv: dts: spacemit: define a SPI controller node
+
+ .../bindings/spi/spacemit,k1-spi.yaml         |  87 ++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |   7 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  20 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  16 +
+ drivers/spi/Kconfig                           |   8 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-spacemit-k1.c                 | 968 ++++++++++++++++++
+ 7 files changed, 1107 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
+ create mode 100644 drivers/spi/spi-spacemit-k1.c
+
+
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.48.1
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
