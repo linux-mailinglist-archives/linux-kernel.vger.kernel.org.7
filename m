@@ -1,201 +1,275 @@
-Return-Path: <linux-kernel+bounces-824171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D828B88454
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD906B88469
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED217C5737
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AE01C878A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032782E8882;
-	Fri, 19 Sep 2025 07:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33A2EAD13;
+	Fri, 19 Sep 2025 07:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="O+EasF2n"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013058.outbound.protection.outlook.com [40.107.201.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Grb3j0HG"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396782BE7C0;
-	Fri, 19 Sep 2025 07:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758268325; cv=fail; b=P07KNf+IjUORvQDplq2iDFPkpQoe0kUngugXW3vOmRuGJenxYb+yeqcEpF3W9z+AU67EMq6AvRSZ5Mw7Nrrw9RFAiAI3jqDdgxc1JwZtiIizuGCdXLUY49zBGWmdk+2lovGi4hUsOPPNKotZ7PXPbyxKdYUkA3+j+QoFd0sTDWI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758268325; c=relaxed/simple;
-	bh=j9v3g2Vg1+FZy48lQT2iUL51qC2lx55X1clneMXlOIQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=io/j6oyuynkAIlN6eOVjfR1nUnStjIFUdmpqgzK6ts6wxiiqP+dBc9mpXT3qhk9hBybv/WNpoLKsQnFliorbOEKdZ+CjMl7V7A9GjYYE66EIYTx3k1cisjPU+vsFtH1fhbdVR98FMtqoY8Vrnet1wZ/A/Ihoo/n/UUHGS6La7Hk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=O+EasF2n; arc=fail smtp.client-ip=40.107.201.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zyjsr6j3abOBSf2AgSS6IchkBYXits3OCxePQSx5B8niHRTpEm8bSY0m1l91qA3gi6Q/Ph3iMfFI68A+cMy1mSS/LDiZJp2qYZ5yVSkY7BqaHV3NDohY8qlfmaEF3VRmJ7agnHPAYPuVMyLXWVl+M9FQRNVyE6inoeKPmh4pIla6xdZ5hiGGQER2BNHKoMtCBmuU+oRjjhNIRJ/lG7eOxdpio/ZdyQoTt362y4SSMU3TsfraRCNtdiG1usvk1Fr7xtyRwI1x5O8+6aUy4NOk4uC2nn/u2oCikfE3rbusAP5BhAY09UkPtF3P9SRYN7VELws5Ro4f7wWW2ZzYIRXotw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j9v3g2Vg1+FZy48lQT2iUL51qC2lx55X1clneMXlOIQ=;
- b=CIuQybjml2oDQtm3XGpkMWzpqLnfbsvEPbQy2qdqWwRa66NbqeY1it46ZZt1ExJ74Y+Ka1yuBtQn3EGErAzj9udnwMCT+y2OzE7q/oBkgazJsIFtf5n5xe9aScOXNiF8wLOvQOzrXOUxVD583NaCQXifxcVX8SYsBKLp8szuWHtLgUTlp3EGuKUkIQ3kB2GLbx2gaIDwFNXUcRdP/4TKYICof8S49V37dKvfCGxqHRegijCVsGWoPO9OvT/C88KjZAqUFq9DysACcjLHyKYri4wozaQKGGbZ9kc74n5qbqOku5VSrQOpaR6xkZl/3hV4aGZapKmM0K1mRFGULG1waA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j9v3g2Vg1+FZy48lQT2iUL51qC2lx55X1clneMXlOIQ=;
- b=O+EasF2nKmJTShgxRfWoQsNwyZKrVz7I5b2/+7s6EfIfMPd0DxcWlLdFckw+P2vuzmFWCMersgZM8KFFfvWcj56uifIa6nzBJe/JMC3GCqR3bcMNDNm+/e8u1QINnxRNYibf2o8fMaQebAOaSXuskN+MmpCnKEWIRp4ihDVpsq0YwOZPSWgSMnJqWXQts9VeXRJ8cCasMX6DLlgsYC8WAPo2IEFr9GlL90W9jriG4kG2FUYDFaYu1ykFcMU/+YyTf7bsZbAqA7kj3/wO0IQCuV2zoVVatd0BD+70TKhqa7iTtflEY/pPICdRI52SPNgTY3vWaXD3u8GOjOk25+qoqw==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by CY8PR12MB7489.namprd12.prod.outlook.com (2603:10b6:930:90::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 07:52:00 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%6]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 07:52:00 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>, Jens Axboe
-	<axboe@kernel.dk>
-CC: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
-	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>, John Garry
-	<john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>, Damien Le Moal
-	<dlemoal@kernel.org>, Christoph Hellwig <hch@lst.de>, Naohiro Aota
-	<naohiro.aota@wdc.com>, Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH 01/21] fix comment for struct blk_trace_setup:
-Thread-Topic: [PATCH 01/21] fix comment for struct blk_trace_setup:
-Thread-Index: AQHcIXn25Iz4/DG6ckmMYnQ14Iw2FLSaMZqA
-Date: Fri, 19 Sep 2025 07:51:59 +0000
-Message-ID: <d4b86321-2826-43da-88e4-d3a4d0921e09@nvidia.com>
-References: <20250909110723.75676-1-johannes.thumshirn@wdc.com>
- <20250909110723.75676-2-johannes.thumshirn@wdc.com>
-In-Reply-To: <20250909110723.75676-2-johannes.thumshirn@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|CY8PR12MB7489:EE_
-x-ms-office365-filtering-correlation-id: ad953164-7dc8-495d-2bd3-08ddf7516a15
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|10070799003|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?MGtFenNvdGxDWWI0UDdtWU9RbUtDa3JGbTQ1K3MzcElnRmFXeHFEMGZOenNl?=
- =?utf-8?B?cVlhKzVudHgyMFNWek45dExTV3hLazRFOU9wbTc1REh0R2VHMWZVRlk3UEt6?=
- =?utf-8?B?bytxUHMxby92b3NpdWdVdDhQbW9WTCsyS1JseEIvTWpCSEQ3SmJiTXFiL0ti?=
- =?utf-8?B?RlNockdycWNTUVBpYzlaa0dYQ3UvMEpsRWxGSytEdHQrU3NGbktGZ0tRNjUy?=
- =?utf-8?B?aGVDUnY2clkwWXZXWC9tQ2FtWTB3SVJZN2JXUStZTk5MeFBKRmRRYTBnNVVy?=
- =?utf-8?B?bjhlN3ZNVktMVVBWVlJnMUlQSnFKUFJab000Q3FCQ1pscndZTVhDakhIY3Qv?=
- =?utf-8?B?dDR2M1B3ZjQ1eUYvRHVIcG9Ia3NZeUNqTXdVT2RYaU9zNTFickhpKzFXOUNl?=
- =?utf-8?B?ZlI1NVBmVUpaS2M2M0dQVFVucjFpOUVXQkR3VTFLOTZYN1BuWHVxeU55cE05?=
- =?utf-8?B?WnR6ZDRKNVNoQkROMXVOY2psS05DTTFGajdUSDdndVVKMGRSTWZram54WEVr?=
- =?utf-8?B?SERFK2FDaStWUWlQcWREN1V6dFJ0bVpSUmxMVzNwRGdKVmtLUnVsRnhtK0Y5?=
- =?utf-8?B?WlJGcWtLanU5Um1tZC9ncjVNNWwxUmIvU0w1eWRFZFk3NlFlT05iWkcvdzJV?=
- =?utf-8?B?MUs3UzhabklxaThzcEZBaklxTEtrZ0cxZ2Q2K0ZUemJHMXBGVWI1bDlvMXEz?=
- =?utf-8?B?NWF5VlJtSWVMMXpjdkllUVhGRlJiZ2RoaXdEdWtLYUo1TW54NFBFS1NVYXA1?=
- =?utf-8?B?cHNObm1aSEZzcHNlUExMWkg4YnhwdEVUKzNBNFNnTmNXVWIvNjFvQUVFUTVu?=
- =?utf-8?B?VWVDMDEyOHh4VHlOSDFxTU9MNlM4TkcwNGlnaVIrSloyR3BaUnFiZW9HcWsw?=
- =?utf-8?B?ZW10SlBNd3lJTDYxRU1kYVp6QnFaWTBXRWJxdnBSWDg3OFJ4QmNONUhaMWFo?=
- =?utf-8?B?d0RpeVMwMVhGZVdab0plQXdHbXpoUlpMaVFjYmRhTE9XU0JMd045UlRyY3Bk?=
- =?utf-8?B?d1Bnc25yMGk2OGpPY2dTMFdvbm54SFRCT2hxcjczV1pEUkRLcXBZTVFhUmJ6?=
- =?utf-8?B?RWRCSU5BYmFSeEcvQWtRbk5DVmlacXZ0aE1ieVdMZ1N3QW9ub0N4YWxzM2hP?=
- =?utf-8?B?SDd5N2RjM1pvemdVeDcyeUthbGVZRnNmWTVUbVB6cXpRbzRDdFZJY3ljaDVY?=
- =?utf-8?B?NlRSZU13SlYwc01TYWNYeERDYjllWVZWOVVSZGs4Vk0rMHBMRkYxSnVaSWxN?=
- =?utf-8?B?UEIrTnVBcXdwaXU3cDY4WWtYbHpML3pRWEtJZytBMmlHRmtIOXlROHBwZHdm?=
- =?utf-8?B?OHNYMklLc3JFZzlrNG9iS2Z0S3dYbjJ4WWRlRFlva0VkUW4wdGx5WEtZZXN4?=
- =?utf-8?B?UnRmcFFKb2hKTGxsMk5XY3VpNDFyTmo0K1Zabi9tZGdlNzVoWVNYQ01kazMr?=
- =?utf-8?B?eUc3VTlza3ArTDgyVmlPSmkyNVd4b21YUStUVS9HZUttMk00bVl6NGQyclB5?=
- =?utf-8?B?YTFTS3VvMjFWdnJudmJocFJJVXZTRVVSUFFNeXA2Y0QzeVRHc2k4Yk9qWFhJ?=
- =?utf-8?B?RlpEelBQbkZRRlVrd1N0ZHN6KzZ6VXlqQnRTU1pPbFBac0dRL2ZUUHZVYmZq?=
- =?utf-8?B?RGx2RGViZmo3QzJ0Q21uYXhSSGE3UW1lNGM1ZDNRTW5HMEhBTjFVUzNrZ01y?=
- =?utf-8?B?MFAwNitKN3FLb2hPZGF3SWlxSUxnaG9rZXJ3YTk3ZXJSUXllR1dteVoyNWFJ?=
- =?utf-8?B?c21ZcjBHTEZwQjdPVTdBMzYvZGh1bitpbkNpaGhMKzQ4aFZ2aFZvd1hGTTF5?=
- =?utf-8?B?SXJYb21uekpzVXhMUnJ0ejdGcS9XRUJKb3J0cmlFYVpDTzJMV3FFSUhJei9q?=
- =?utf-8?B?VG1EQ0c4eXhZQVl5bzR2YnF6TUlueEVHTUdsTlZzWldLeGw3aW8rVExCTjh4?=
- =?utf-8?B?RVJqVGkweFRZWCtxbVVKZE50bnVPZkJwN1gyQzNlVGRwUHk1NUx2Zlk1Y1cr?=
- =?utf-8?B?T0oxWUMrTFh3PT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(10070799003)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VlBCZnVwVEpCQmZyZS9QejdkNTZ4NU4xVHFERXoxS3o1UjRpNGl6VGxydzF6?=
- =?utf-8?B?b1pzaDllWnh4M01vNjBjZUt6TSs1VXg2QTJub0Z0dGF5RVN2MGVFZFhGbW1h?=
- =?utf-8?B?Qk1sQmNRYnl3elJJZlF6MTdKT0pFMlY1Q0d6eDJHRVM2V09aMzJveC9KVUlC?=
- =?utf-8?B?QTh2Yi9POUpCa2ZxSkgrS1hqVlNNTDJoZzg3cUtrbkhOM1BhYmxPVmtWeU9v?=
- =?utf-8?B?UVd2K241eGRGZGNTUUs1T2dTMXBBbGhiV0JJRmlvcHpGSjBSZndVenhLVlJK?=
- =?utf-8?B?bFNRbnhRM243ZmdkS3Q5MFNoUkVCbmk0ZnRkb1J4bWZ5aXVYam9idkY3VmJI?=
- =?utf-8?B?YlZjdUpNNDBIWjltVEh3d1NkNy96R1hkY3hJM0JXS0JFUDlvQWF3MVcrUkRl?=
- =?utf-8?B?UVExaUN3K0ZNZkd1MWlQQ0VESk1IVVpnRnBHaVNJYm9WNjdEb3EyaXpRaU8w?=
- =?utf-8?B?SlUrU3NvdnJwUE9jdkh2NThveC9pMDA0U2MrbStYQld1c3VIM2tURk9rUDZu?=
- =?utf-8?B?bWdHNWJQdTQxSEpDMFROcngxVlY3cHlLSS9LbWIxSFRrUDMwRlZaSm1GMW9S?=
- =?utf-8?B?WGRsdXJ5NG16VTBYZ2hIR2lHWW9ibFByd094TE56dmM5KzF6cEM0Zzc0UW1i?=
- =?utf-8?B?Qi9naGphSmRnM1JGOVhUSHR5THA5b1Q4OFd4QUJrQWFYdE5aWFc2L1k5SkRY?=
- =?utf-8?B?WWQ4aFhUYW15bnhsT0tLWlRQaTdha3N6bUJXLysyNXlCYVE4Ti9BMDZwMFJE?=
- =?utf-8?B?Z1IzRnQrcVVYZjVsTzgrcms0eVg5WkJDWDBBTmo4dEpoQTRVTWkyUlpQNnRn?=
- =?utf-8?B?Qzl1QUNLTHJrMzEyeGNMbVY2Ym5RMVJBZVpBd0xaMzh0dng1OHM3OXJWSEs2?=
- =?utf-8?B?ZEVqSHdkclk4UGhhU3JsOTdWV2hhOUpja1pRUGRaRm42REJNT2cxMXUyWFJx?=
- =?utf-8?B?Y1kvd0VrcG9Ybi9Gb1pQNFd5clJ1WHJEWW5Jb1ZaWEZja2dYQVQ1OUg2MmRK?=
- =?utf-8?B?MVdnZjNFem5LWk9rWk8zaXNvMG5vT0JQRkorNUZyTnZwTWh0dkdSWmZUV1dY?=
- =?utf-8?B?RTB1bWh2MTBGeGVTTUI4VVZOeURIWnRQbU9OV0xmcnQzZEk4ek1TZnpNbk1E?=
- =?utf-8?B?M0lab0htYzRiK0hjdHh0Y25QNXo0bFVSUVVCL2ZEaFJtVHc2Q3NBSU1sZ28z?=
- =?utf-8?B?cVprdXoxZmQwbFg0MVVhTStZbDNtd2svc3NCY0ozUDhKaEk0cmNXWmpDTjcx?=
- =?utf-8?B?VW91aFplbmdjeDlyVWFCc3oybVd2aDFZSjBDQVdVQzVhNTdQMlFLVzRvdFB1?=
- =?utf-8?B?NlUvZ0VMTmluc2ZhR2NTc2dwYVRFeEcxckQ4b0NwbXdPZUpmY2kxS0JMLy9C?=
- =?utf-8?B?UGlzZXNoRnJpSzZXMmN2ajA4YXlJc3N2WEd0SkttcFdxZTB3ZTkrZG9HSmVE?=
- =?utf-8?B?aDdHenRFUENZWXpSMUIyRnBubkxvQmpmLzUvQ0FUTm5DUTVPaVE4bE00MzRw?=
- =?utf-8?B?MnZUSER6U3FYbWRvNTZVTm1OUWRiaGowL3BZTHpORmlsOUlXcEtXNDdGTTdp?=
- =?utf-8?B?N0pwcGF3TFVicEcrNXNZTHI3cFdNRVFKN1F6eGFGRktsTnRoM3VCNGJYWmhk?=
- =?utf-8?B?azYzR2V6c0h3MnBjTmgyVTc1Rk1tNEY4amp2T0w4UjNlTDA4Q1pqdEhJaGhx?=
- =?utf-8?B?OXUxbzlEMTZLcG1sWkFFUjNIUXRXSW5ndE5HTUdFME1FRURLeitJUXRRcVNY?=
- =?utf-8?B?Z0x0clFROUY0cXI1TDhVWU55aDJYaGFZMVNMYlZMOUhtcW9LN1BkdklFcEVj?=
- =?utf-8?B?QW1CYzEwOGNVcmhKMWZiQ0tCOEs4dHdQUktnZEtiRWxBdlAzR01zdWJTbGNW?=
- =?utf-8?B?dm01cUNTcDZtRXRxTUg3VTBaalU3cFptV1dBQUZkWmtKLzBiaFlCYjVFNXF5?=
- =?utf-8?B?UkVWNFg3Nm5OZERqU1FhTnlLWFdEZXJEQkpqNlpaZnU0bUZ4SVE4eGhuQjRB?=
- =?utf-8?B?U0VIa3Qxc0cxbGtMVXpFY1p1d2dJY082VmU0VGlWRzJhdEZXc0ZSam1adzZL?=
- =?utf-8?B?bFI5ck5PNkZ3MlJmSGFtOEo0Q241Mm5SYzFvSVZlL2VPaFQ5dTdHVzhDVmlx?=
- =?utf-8?B?WlJQeDlLVmNrdS9tYWpKU1NiYWMreXJ5K2EyWXJuUTRrcVUwVFNOM2w4VGw4?=
- =?utf-8?Q?qIw5Gu6fnZLVdi0PBO21cEparyl7LF+axKjyYVSY96DZ?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FFF0701948E7CE4BAD28AE8EE97E7CFF@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B41C2EB5C0
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758268340; cv=none; b=XKnU5CMUKx9e4y5D2qmcemh1wHlAVgBceaL/v9CHszi6gfEHMZiTKB8wymzICGWHqP7BwHK+41acqPynpIUO2rVHVAQUxslSnClWn6L+hsFN2hwnlbn77U9e1ULz99d2tv60BVuanWWmigieMPy7C6L//e4gpV4kBCAOnk6nXfg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758268340; c=relaxed/simple;
+	bh=8obywSQJ/xmg3WtDnSG13UUELGZHHwEO04/uTIP+9DU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u98HhFaqNyU2JpxvhvKB/FuznAHQQpRnrQZ65muv38db47U5XUFU1HKnCDB9vnrbMEUGNHqC6MLAJ4Lrf8m+bOsQIUv/uPe0nfWJMZET/Uy6LmXRp6ULQg2IqYfDZEzBkcFHsFn+NshBB0AgnGKog2EFJvyU8BYIlRTuhohXHgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Grb3j0HG; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-3305aceab00so901388fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758268337; x=1758873137; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gP5v61DcWR0npM9XGzP9QRf4i7M8VdPYZ8EzlkbskQY=;
+        b=Grb3j0HGeAO10fOzsrTGPURUvKF49T1wx+k0Nk4GK5GcLOj7GLJDcfKhcs+2BvdHKK
+         CfEJJ4MixQcwRjHchaO3TZWT7WOiw6ykcbWhkJyY2Qp/fhBiosikpp628YksXAfTcGO8
+         LwENYP7EJ9DnW7vyyUwpXYaHz3jBSo+2mFjGBuGzkNNBtSIwFVpTmMGg7kw+o0+UypZc
+         NnKOMRNrK9Iq3dfs0eyh31Y0okcE5FJ52vw6jLmrWupeBlkd95LuaPXqvicJFsZSExvh
+         uxwsmATSeMMm4ur6cZkrtng9tsdL3pw7Fo8K+Q+tViXVwLomtl2frXUr8gmtknVg/vTu
+         3MQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758268337; x=1758873137;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gP5v61DcWR0npM9XGzP9QRf4i7M8VdPYZ8EzlkbskQY=;
+        b=QmgGuFctykO3Y2HWtvcoAf3vwejcgAkI3qbihP2I+w31rKozNjJFMoXURrLzVMata9
+         3RQEr8wCNSUQetK4JPsTcBcLUuulzOUezjVMbEMPXQMBxQg9gF9WEKYlDsOqG0q9FU+u
+         svhT0bcFSvi8rca69M72phkPCPjZCLfYR0ujaERw6wDpHhv+wUWYUJgZwZKLiOXNb8pJ
+         Ll1EaWsRytxdqqdtq0+pfAudASzyz5Pkyp1Cr5ypMtm1ikSod8oKhhF7flsELX3K4R8O
+         Timu64IjJXn9gXBBcZr07rlQtoZDBrRV8vqyc1wPbvg8BzLKDVB3Z1LBFv2j40kSysDU
+         FhmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+yB/hpHPrImPpQaqsMn+ao4Y/YRQarfilcpDzNs7DYSt3gJMhuEykk1KBK0BEzoUJA++YDGnc+6pmFnA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKi6/eRIe3j7rOwl7zI6mOhE0RKhFE3hiyPzrscM75HyOV9oAJ
+	6Fp9Jgcdx345Fr+5jXM4Mm5IkmNzhWKfqTgVfcE4xvkyPy9iJvWTAIab6RoS1id3AO46Gd5VQtl
+	/ic1rdU7hRLvDz3aYErKcBdBY/Zd0QfDeVqKZCV0yD2fzO/FT/sbVkPdGaitv
+X-Gm-Gg: ASbGnctCogrwSgnsvqkooi6hZ2hLhxfSxobh8TaSxF7O5XPppWc0eA+ctPAF9nnk++b
+	QLJGjlF6Lz4miobHMwlMOPQe+JlEUFUJRMArMecOrODOaxqxJ9ppA8iCeJRCoZwYeWfex+8MVJ2
+	jFy6G03OVlLYAZh3Nx2a2Or/Ofun9QLVtSQGQv9YSZl7vEAbZCUJ0y1JNp8SsErmeH7hidV25ae
+	2lAsV8R4ZHmgnWXCFUo
+X-Google-Smtp-Source: AGHT+IEBnW4z9AmI4VxlHxhjfD0na9kXgwRmbwPRjQzLSxtLo50CDbAwqixrAUkenpe9jUFSM4wSS6MadHv2IdRBbEY=
+X-Received: by 2002:a05:6871:7a14:b0:315:a087:71e5 with SMTP id
+ 586e51a60fabf-33bb3ff70a2mr1263523fac.25.1758268337126; Fri, 19 Sep 2025
+ 00:52:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad953164-7dc8-495d-2bd3-08ddf7516a15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2025 07:52:00.0078
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oDNsVjAugxheHSqXmk24seY7dQzSjoMJzII4y1TCllXAaM6RlvXHB6RJCyiw7iX8QjvSB1ipFo1GrENA438G7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7489
+References: <20250919070048.94646-1-cuiyunhui@bytedance.com>
+ <20250919070048.94646-2-cuiyunhui@bytedance.com> <ae93899e-372e-425a-ae23-deb4bbab3eeb@rivosinc.com>
+In-Reply-To: <ae93899e-372e-425a-ae23-deb4bbab3eeb@rivosinc.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Fri, 19 Sep 2025 15:52:05 +0800
+X-Gm-Features: AS18NWDYFZfpbhYXFeekhZPcceSOGnqbfdDxxsO6hWHlOxekMpKbAiofdZPa31c
+Message-ID: <CAEEQ3wkpNwE14o7cLvf-cXc8xWy-s7_p_5-nShJaadqz6kVnBg@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH RFC 1/1] drivers: firmware: riscv: add
+ unknown NMI support
+To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	alex@ghiti.fr, conor@kernel.org, atishp@rivosinc.com, ajones@ventanamicro.com, 
+	apatel@ventanamicro.com, mchitale@ventanamicro.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gOS85LzI1IDA0OjA3LCBKb2hhbm5lcyBUaHVtc2hpcm4gd3JvdGU6DQo+IFNpZ25lZC1vZmYt
-Ynk6IEpvaGFubmVzIFRodW1zaGlybjxqb2hhbm5lcy50aHVtc2hpcm5Ad2RjLmNvbT4NCj4gLS0t
-DQo+ICAgYmxrdHJhY2VfYXBpLmggfCAyICstDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
-aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+DQo+IGRpZmYgLS1naXQgYS9ibGt0cmFjZV9hcGkuaCBi
-L2Jsa3RyYWNlX2FwaS5oDQo+IGluZGV4IDhjNzYwYjguLjE3MmI0YzIgMTAwNjQ0DQo+IC0tLSBh
-L2Jsa3RyYWNlX2FwaS5oDQo+ICsrKyBiL2Jsa3RyYWNlX2FwaS5oDQo+IEBAIC0xMjcsNyArMTI3
-LDcgQEAgc3RydWN0IGJsa19pb19jZ3JvdXBfcGF5bG9hZCB7DQo+ICAgfTsNCj4gICANCj4gICAv
-Kg0KPiAtICogVXNlciBzZXR1cCBzdHJ1Y3R1cmUgcGFzc2VkIHdpdGggQkxLU1RBUlRUUkFDRQ0K
-PiArICogVXNlciBzZXR1cCBzdHJ1Y3R1cmUgcGFzc2VkIHdpdGggQkxLVFJBQ0VTRVRVUA0KPiAg
-ICAqLw0KPiAgIHN0cnVjdCBibGtfdXNlcl90cmFjZV9zZXR1cCB7DQo+ICAgCWNoYXIgbmFtZVsz
-Ml07CQkJLyogb3V0cHV0ICovDQo+IC0tIDIuNTEuMA0KDQpMb29rcyBnb29kLg0KDQpSZXZpZXdl
-ZC1ieTogQ2hhaXRhbnlhIEt1bGthcm5pIDxrY2hAbnZpZGlhLmNvbT4NCg0KLWNrDQoNCg0K
+Hi Cl=C3=A9ment,
+
+On Fri, Sep 19, 2025 at 3:18=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
+osinc.com> wrote:
+>
+>
+>
+> On 19/09/2025 09:00, Yunhui Cui wrote:
+> > Unknown NMI can force the kernel to respond (e.g., panic) when the
+> > system encounters unrecognized critical hardware events, aiding in
+> > troubleshooting system faults. This is implemented via the Supervisor
+> > Software Events (SSE) framework.
+> >
+> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > ---
+> >  arch/riscv/include/asm/sbi.h     |  1 +
+> >  drivers/firmware/riscv/Kconfig   | 10 +++++
+> >  drivers/firmware/riscv/Makefile  |  1 +
+> >  drivers/firmware/riscv/sse_nmi.c | 77 ++++++++++++++++++++++++++++++++
+> >  4 files changed, 89 insertions(+)
+> >  create mode 100644 drivers/firmware/riscv/sse_nmi.c
+> >
+> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.=
+h
+> > index 874cc1d7603a5..5801f90a88f62 100644
+> > --- a/arch/riscv/include/asm/sbi.h
+> > +++ b/arch/riscv/include/asm/sbi.h
+> > @@ -481,6 +481,7 @@ enum sbi_sse_attr_id {
+> >
+> >  #define SBI_SSE_EVENT_LOCAL_HIGH_PRIO_RAS    0x00000000
+> >  #define SBI_SSE_EVENT_LOCAL_DOUBLE_TRAP              0x00000001
+> > +#define SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI                      0x0000000=
+2
+>
+> Was this submitted to the PRS WG ? This a specification modification so
+> it should go through the usual process.
+>
+> >  #define SBI_SSE_EVENT_GLOBAL_HIGH_PRIO_RAS   0x00008000
+> >  #define SBI_SSE_EVENT_LOCAL_PMU_OVERFLOW     0x00010000
+> >  #define SBI_SSE_EVENT_LOCAL_LOW_PRIO_RAS     0x00100000
+> > diff --git a/drivers/firmware/riscv/Kconfig b/drivers/firmware/riscv/Kc=
+onfig
+> > index ed5b663ac5f91..746bac862ac46 100644
+> > --- a/drivers/firmware/riscv/Kconfig
+> > +++ b/drivers/firmware/riscv/Kconfig
+> > @@ -12,4 +12,14 @@ config RISCV_SBI_SSE
+> >         this option provides support to register callbacks on specific =
+SSE
+> >         events.
+> >
+> > +config RISCV_SSE_UNKNOWN_NMI
+> > +     bool "Enable SBI Supervisor Software Events unknown NMI support"
+> > +     depends on RISCV_SBI_SSE
+> > +     default y
+> > +     help
+> > +       This option enables support for delivering unknown Non-Maskable=
+ Interrupt (NMI)
+> > +       notifications via the Supervisor Software Events (SSE) framewor=
+k. When enabled,
+> > +       unknown NMIs can trigger kernel responses (e.g., panic) for unr=
+ecognized critical
+> > +       hardware events, aiding in system fault diagnosis.
+> > +
+> >  endmenu
+> > diff --git a/drivers/firmware/riscv/Makefile b/drivers/firmware/riscv/M=
+akefile
+> > index c8795d4bbb2ea..9242c6cd5e3e9 100644
+> > --- a/drivers/firmware/riscv/Makefile
+> > +++ b/drivers/firmware/riscv/Makefile
+> > @@ -1,3 +1,4 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> >
+> >  obj-$(CONFIG_RISCV_SBI_SSE)          +=3D riscv_sbi_sse.o
+> > +obj-$(CONFIG_RISCV_SSE_UNKNOWN_NMI)  +=3D sse_nmi.o
+> > diff --git a/drivers/firmware/riscv/sse_nmi.c b/drivers/firmware/riscv/=
+sse_nmi.c
+> > new file mode 100644
+> > index 0000000000000..43063f42efff0
+> > --- /dev/null
+> > +++ b/drivers/firmware/riscv/sse_nmi.c
+> > @@ -0,0 +1,77 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +
+> > +#include <linux/mm.h>
+> > +#include <linux/nmi.h>
+> > +#include <linux/riscv_sbi_sse.h>
+> > +#include <linux/sched/debug.h>
+> > +#include <linux/sysctl.h>
+> > +
+> > +#include <asm/irq_regs.h>
+> > +#include <asm/sbi.h>
+> > +
+> > +int panic_on_unknown_nmi =3D 1;
+> > +struct sse_event *evt;
+> > +static struct ctl_table_header *unknown_nmi_sysctl_header;
+> > +
+> > +const struct ctl_table unknown_nmi_table[] =3D {
+> > +     {
+> > +             .procname       =3D "panic_enable",
+> > +             .data           =3D &panic_on_unknown_nmi,
+> > +             .maxlen         =3D sizeof(int),
+> > +             .mode           =3D 0644,
+> > +             .proc_handler   =3D proc_dointvec_minmax,
+> > +             .extra1         =3D SYSCTL_ZERO,
+> > +             .extra2         =3D SYSCTL_ONE,
+> > +     },
+> > +};
+> > +
+> > +static void nmi_handler(struct pt_regs *regs)
+> > +{
+> > +     pr_emerg("NMI received for unknown on CPU %d.\n", smp_processor_i=
+d());
+> > +
+> > +     if (panic_on_unknown_nmi)
+> > +             nmi_panic(regs, "NMI: Not continuing");
+> > +
+> > +     pr_emerg("Dazed and confused, but trying to continue\n");
+> > +}
+>
+> I'm dazed and confused as well ;) What's the point of this except
+> interrupting the kernel with a panic ? It seems like it's a better idea
+> to let the firmware handle that properly and display whatever
+> information are needed. Was your idea to actually force the kernel to
+> enter in some debug mode ?
+
+There is an important scenario: when the kernel becomes unresponsive,
+we need to trigger an unknown NMI to cause the system to panic() and
+then collect the vmcore, and such a requirement is common on x86
+servers.
+
+>
+> Thanks,
+>
+> Cl=C3=A9ment
+>
+> > +
+> > +static int nmi_sse_handler(u32 evt, void *arg, struct pt_regs *regs)
+> > +{
+> > +     nmi_handler(regs);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int sse_nmi_init(void)
+> > +{
+> > +     int ret;
+> > +
+> > +     evt =3D sse_event_register(SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI, 0,
+> > +                              nmi_sse_handler, NULL);
+> > +     if (IS_ERR(evt))
+> > +             return PTR_ERR(evt);
+> > +
+> > +     ret =3D sse_event_enable(evt);
+> > +     if (ret) {
+> > +             sse_event_unregister(evt);
+> > +             return ret;
+> > +     }
+> > +
+> > +     unknown_nmi_sysctl_header =3D register_sysctl("kernel", unknown_n=
+mi_table);
+> > +     if (!unknown_nmi_sysctl_header) {
+> > +             sse_event_disable(evt);
+> > +             sse_event_unregister(evt);
+> > +             return -ENOMEM;
+> > +     }
+> > +
+> > +     pr_info("Using SSE for NMI event delivery\n");
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int __init unknow_nmi_init(void)
+> > +{
+> > +     return sse_nmi_init();
+> > +}
+> > +
+> > +late_initcall(unknow_nmi_init);
+>
+
+Thanks,
+Yunhui
 
