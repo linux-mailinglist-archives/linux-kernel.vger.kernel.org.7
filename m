@@ -1,207 +1,261 @@
-Return-Path: <linux-kernel+bounces-824048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FA5B88002
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75305B8801E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1843A3AC2EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BBDC6262E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C69D299AAF;
-	Fri, 19 Sep 2025 06:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F9F2BD001;
+	Fri, 19 Sep 2025 06:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mk/ZD93M"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dipW1msm"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012021.outbound.protection.outlook.com [40.107.209.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C3628F5;
-	Fri, 19 Sep 2025 06:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758263488; cv=none; b=lGbS95+jiVKr4OsevoDPFzCK0XRLR/cQBCbeKWJHMvVIwv5QE+yekkptqrfkyrEY/5UWJr0J0uDgkK7UaTnYq/QiYSxwNy6SvKWOuZI/skqE5HnmSkGG1jOV3yVItzsFAkCmU6xy2Q1nqokGNozKKTxfkVzSWla/06noUAeDPAw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758263488; c=relaxed/simple;
-	bh=4MhWJlP71VZCOVNN+lHvxaptjhimilXlKctIAYX3Byw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LeoNzhFFSvR7HzWIFOuFNUBAJdwJ3HMIVfEUaNsELhqJKMaCxCA6KOkdxDSOgisnZdsvRhxRwEQwbDm+0d7q97jpRIqusYdjkDOiADrf5E5h9r7/cYNo+3BF4WjZ3NZjh9QMU6temcgIXZh9sKYqRghRtY/MWDYisRNBQi1coUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mk/ZD93M; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J3KlCx011575;
-	Fri, 19 Sep 2025 06:31:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=AKXTRU
-	MWL+ox9rBx/hXoJNoCYAi39BF6mftgBjv8suY=; b=mk/ZD93Muag+UjLD7/ffZS
-	3/OSHdlEixKtDxg/iE0cyOkIJCFgiBDaIfjhXRqvCJtAMWIO7cZhNGV0VDbNviv0
-	4ays7a4m0fbTfLK5VkJ8IWgOaOrDymA+avDlUoTu6UqTFeIFbCGhJ57p9v7YvJwK
-	XiLPV24xC/VBSbhFUebXwsOEnQqd3hKY95b6w2SPWjQsIjwfzoA78YSGBNIHovL0
-	6o5WxXYt7UuiEW8C688Ty3YYJTx/AhjiI9J9cQmmBmHUXxzQa+y0N4M/pCJKWx/m
-	MlakNlRQZnf1sAHkFsKgBf0wTVw5sZLWd7NpPrNRAuM1lnHuxWkGurnoVs5FdvQA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4np9s0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 06:31:18 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58J6VIPR025809;
-	Fri, 19 Sep 2025 06:31:18 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4np9rv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 06:31:18 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58J30QR8009395;
-	Fri, 19 Sep 2025 06:31:17 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 495nn3t8dw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 06:31:17 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58J6VEei37880162
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Sep 2025 06:31:14 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E2E0420043;
-	Fri, 19 Sep 2025 06:31:13 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3138520040;
-	Fri, 19 Sep 2025 06:31:13 +0000 (GMT)
-Received: from [9.111.68.111] (unknown [9.111.68.111])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 19 Sep 2025 06:31:13 +0000 (GMT)
-Message-ID: <d0c954dc-6961-4536-b103-d7fdf1afb313@linux.ibm.com>
-Date: Fri, 19 Sep 2025 08:31:06 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCE734BA52;
+	Fri, 19 Sep 2025 06:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758263636; cv=fail; b=NwBNy/uQLmFZcCLVSmUoI+0NFbL5/Tjryk43IsMQQSW2FjqzTvzzMcmwmlELfE3gd2CDWyqgqrQBbSfJczgNZ27XUJYSUUuR8VQTWMJUOexZee4xqVbjI40EEl+XK8rIOxB/ES6AcepoaxWjmqvHNWSgHLX+6J8fYIbUSCHY8sY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758263636; c=relaxed/simple;
+	bh=Qx6eRN1HgLumOnF4s7rL4H3C98dlKq5FOVIGZQmGnHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HX4JtndTrVHYBvVWb/PtvtI3j0Py4i9Fsd8D9IGVmT6JihzP6ueVhesYz5cHyAUlQHGt8ekDjUueAUDj11sPqzoeIqp40nBi19O50mM1AL2O99no2PcQyYV3l0poqGf3W2qL+nQSteJ8gMhLdIRX5UXe6Vu30p1fhMtdx/JCpTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dipW1msm; arc=fail smtp.client-ip=40.107.209.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ON9jqpG6pC/H+Q5RW5CzeOdGko8ZApvXFWZKoLn5/FKDCYZoMUxly334JBGx7+E1z+cB/8k4Leaf98OCrc4uAuj+LYvHCFyV6f57Ba3UcBcuTLQ1bIgNH81T/CkbZRA2gtcmWoqWqJagoy0Czdw5KL/1eoGVYgwDC2YDqkyP0SqqbvZxiKMGziUpozfihkHTyBiNMB7B7xZDG+7Gr+nj3bQ2tQ927j2cS/2QAwQGogOS1/lZNppx5VhLi9PQeESH4/Znwxp5e059sHfu/VCM+0GGjRV5hnKg7UUjxLdZkalTpE6yGBrlG8IJnEkj0H0QXh7D2lEdvPDYC8ASN5tE3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c1vUxRO98hn4p4qZIjX7PmcLcvXSOwhCwVGfa6hZHDg=;
+ b=dCcpfEPQQhWsKIc1lPzLike2Fy82rUgJ9Q69kpsH7KwUsLAj+9rNj9QkzqsdySHG71FcekL2H/qIKNtSbQAlEnT+FsKswbAOIFo/0hntW4+3YnwbOmZuTvf4qD57IPJLf0d5UrBNjXnpqESxfzIAHRIEKkLC5i66aVaRl/N4wuwxqZV0cUU4dHWdiS67PNFapyKnAS9x8ihOhFrLokG8Nn8PDBxwDJSZ4XFTIAIVX3ZGUV31z4SvEAZVVRYXC89Eevu/idWlXU18g4dKHtyIx8ihHO7tOewJWHuANjMnbV5mzIopy2O36TXUaBbDLuqCs9ePWmyg647vUweeWAksUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c1vUxRO98hn4p4qZIjX7PmcLcvXSOwhCwVGfa6hZHDg=;
+ b=dipW1msm903hmGB4hcVgB5R0M95lLZLswG4Yf8AmF/004Bu4LS6e8iFzZqZt3eFihYountV3vJp9GjQaTKedrhPEkws1TrUQ/zs5eMwfJ9/wbW3gLVrRM/caPrWKf1IQ4sx/PPcC1VP6Dk6B4BxM2KsldhOTzlzMOFSLGADX0hPLcRp7x8KAdLb2Ka6uoOZXmVeG+r/T0Pd35edLullButzDRjIQCYXV7bQIazXimLr49mSsKzZH2/DL/xp4vmhpFWDeR7i/IR2nzgtIIll6J4Z/KqZPZ1X/9OHsDuS4EGAwYrEpa9HTjYn7aH4Hcr22xGmFr7s69QwWuXmBM7qwhw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ MW4PR12MB6803.namprd12.prod.outlook.com (2603:10b6:303:20e::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Fri, 19 Sep
+ 2025 06:33:51 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
+ 06:33:51 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 03/23] clk: tegra30: add CSI pad clock gates
+Date: Fri, 19 Sep 2025 15:33:47 +0900
+Message-ID: <2918362.NG923GbCHz@senjougahara>
+In-Reply-To: <20250906135345.241229-4-clamor95@gmail.com>
+References:
+ <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-4-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCPR01CA0201.jpnprd01.prod.outlook.com
+ (2603:1096:405:7a::18) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] KVM: s390/vfio-ap: Use kvm_is_gpa_in_memslot()
- instead of open coded equivalent
-To: Sean Christopherson <seanjc@google.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>,
-        Halil Pasic <pasic@linux.ibm.com>, Jason Herne <jjherne@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Holger Dengler <dengler@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250919003303.1355064-1-seanjc@google.com>
- <20250919003303.1355064-2-seanjc@google.com>
-Content-Language: en-US
-From: Christian Borntraeger <borntraeger@linux.ibm.com>
-In-Reply-To: <20250919003303.1355064-2-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=MN5gmNZl c=1 sm=1 tr=0 ts=68ccf8b7 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=1XWaLZrsAAAA:8
- a=WMn4R6eJaF8VgN3aVUEA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: md5iwfiyFe2OTejpXCjJPdxQmjbfiyb-
-X-Proofpoint-ORIG-GUID: DXgSIvc5M_qRAWhURQ1HdkyzBqz_Qyoc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX/BVrxPcE3PG2
- qtrYAMokM4pZJJN97Ey//DXDj5ryel8jNsk3kaQAMcY4cvdBVgSqsLzhhuKOhCo6a9s1QjEHT8Z
- LxUZ+NcKDumMSiUjjlnyFpqwglBskTojSluoYSHV3BHtvAzX/1bBW0oyU4JmfjPGoKqLqS6VWWe
- +iPOybn8095kSdqUIUCner1Hq9z6pvyS4nzDuIl+c5gGG62dJGyIgONiorxk2gZozbrEhkKZAEt
- dHVmV0RMF0kKOBKBx9RVyBjTRSjo+bYvNF196+lQPmbLsxKFSPhy+Gu4VcAiFJdliAk09Z2aZ2h
- FWf/tXahLW+IMOrIMTIgckz3ZPcFw+rtayAovz0F3Hn/b/Z743nzTUr+zRpaMtSCXVM2xljoTvV
- UkqgHXkD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_03,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|MW4PR12MB6803:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1fd3fc8e-e165-4ab8-9d5a-08ddf7467f24
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|10070799003|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZitHWEVJdGJBdUh1NXZjbkNSSnA3Skx1V1ZzZmpORlArcVdsMFdhdVZPYlN6?=
+ =?utf-8?B?TEc3eFJ4WU1PSGM1d1lwbXhlZWxBZElIYVphRlh6SnpJaE1iTFE5OCt0anlW?=
+ =?utf-8?B?R04zR3M2bGFGbDZzMm9WU1RZaHpaOTVlTmFFVGFEQ1llZ2NKN0tsRkx0YlIw?=
+ =?utf-8?B?SWliQU9XSzVrRFpqcGFrSUxEWVBURHdsUW9xVEV1VUpqdFFiWlRSRVlvS2ll?=
+ =?utf-8?B?aVpPUmZQNksrdE1CY0VZZnJUUTU2TlVMUWNJMUxtQWNGQmQwVEloWk84dmxT?=
+ =?utf-8?B?Vi9TcmxFaTdQR1FuT1V1NlRRN2VkOHN6WDMrN2xMZ0k1ZHlsaXRnNmtUSmJ2?=
+ =?utf-8?B?T1czZ29DbUNKeVp4R3ZkSGY1bmFjK3I5MjB3UFhNWmVTdFhIRjZPbVQxREtl?=
+ =?utf-8?B?anJaNXZNNnBIeTZDTjNXU29HNHAzSXRiYXFMLzVSTkx6M2U0VSs5dUhUMFNE?=
+ =?utf-8?B?djhtb2N3NFY0eldDNWFtd29KRlNTRkhuZnVwWXB3YklnbEpCbng1ZHY2TWJj?=
+ =?utf-8?B?RE5teHhNbW5zMFBOWTBrd0ZGOE92OTJuVk5Wb3lqaDFFUW1RWVhDVnNqNExB?=
+ =?utf-8?B?TUIyYlk3N29veFJxcVNzbnRxdFFsdnA1OHNsbWtOQzFnQXlMRDJQY3RxODd6?=
+ =?utf-8?B?blUzWGJGWlYwWW1JdGdkQnFRaEwrRkhIbFdHcWtpZmhWMDRLMCtPSzZnRjJa?=
+ =?utf-8?B?VmRXRlVHNVM0cHZQc3RuUzZYYWRnaDNMeFdhMVM4Uk10TVNtSmMyNWd4Z3Uy?=
+ =?utf-8?B?aGJQVm0xNWtJVHJWcUwwaWRFaHc2bmJLd1dDRHdvd0RoQ0Y2RkxGcEF3UU54?=
+ =?utf-8?B?MGQrNG5TQWUvVHNYWUtKaXh6OURRRFI1RUJtcjViNkpZUWpTTHZ5Wkh6bHNi?=
+ =?utf-8?B?MGxhYWcxa1lES1JGcnpnd2hMaCtuVDU3dmFyR3NoQlRLMVdKSGROTVhKK0tP?=
+ =?utf-8?B?M2QycHdHditzYndMWU9TYUFvVDNkNHREc0I5WWh5dC9FN09MSHRyN0F2TzRi?=
+ =?utf-8?B?b1VMQjlxUHJ4eDJWYnpuN0U1WXhPSCtJdW5iV1NqbTNrVnhScExKdWZNamxz?=
+ =?utf-8?B?YXVDS09oUDNweWRKV3RGcmc4SlNsMFFYdVdDRmFiOEFHT0tGbWY4aUl1VFVx?=
+ =?utf-8?B?cVNrUFpJOWRPWjhoNjZSTmhpbytpOEU4VHJLSjJYWkkzMmM3MXVFNzZqMXF3?=
+ =?utf-8?B?WnZ4cDF1cWVGdU5vVXhLblkzZFJ3dDh2ZHo5cWlUMEJJUEREM1FOZ1p0QTVU?=
+ =?utf-8?B?WFF2RFIzZkpaRi9nZ3VoV3pSZDBVWVBGYmE5VmFNSllYTHJQaHlMTndnRmNJ?=
+ =?utf-8?B?MWpPTHdmZ3piUHE2ZEE5UEJaTDdjdlZkNmVteTlMTnFVQVNZYmlCVWcrMW5F?=
+ =?utf-8?B?V3FNNUdiWkJDS05sY0J3ZFZ2TXNkdmw5K3NCN3BNU0lyVXJKWlg0ZktMUGtW?=
+ =?utf-8?B?Szlsc2l4Nm1WUFYrUFAxZitUcFlpNmpWRDIzVjNKN1FKbkdFUnArWkNaRjFs?=
+ =?utf-8?B?ZWFQUlQ1dStkMDJ3WlZJalRpaE13M0tQSXFvVXFaSXMzclYvU2lVM2lKT1p5?=
+ =?utf-8?B?eWxuS2JwZ2FMY1poeXg3Q1JZM20wamVSR0grZkRKcTB0Z0NoVDdLQURGVnFZ?=
+ =?utf-8?B?akExWWRENjJtVGYxTWVQdnBhQ2puUzg3QXIvSFJKd25sUDM1TDJWYmd1QkZP?=
+ =?utf-8?B?amNtLzA0R1ZXSHNNcHpBdTY2ZHhCalVtM0FMNDY3c2s2QUp5Z3RhY29sL2s1?=
+ =?utf-8?B?K2FrS1FmWmlmdW5ldUJqRlFvRVNleFhqYTNqZHQ1ZERNN2w2SHZGa1hodTlq?=
+ =?utf-8?B?R0QxN3Q1ZC9FVHVSZXJhTHNnOUo5SXZvQmlBNEZaamRvNUJTTU5sTFl2dFJm?=
+ =?utf-8?B?QW9GaWpQVWU5VFBTV3g3dCtYQWVTQWdRblNQOUhCa25iWWY2QjBtMWVVR3dy?=
+ =?utf-8?B?cVlrcWE4dW9BZnMxaXFkRVd2UjJwUWtucVJ1SWVPSDQ1VHdoQWZBSktUbGNk?=
+ =?utf-8?B?bzVpa1RHbUFBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YmFXbTlZSW1wRlVmQUZabUxlMDBOb3NiOFRWek0vOVpSdndxM2E1ajlsYlM3?=
+ =?utf-8?B?T2tyU2lJbXBUa3pWRGJneEVjaFBWRkVCSHJBaWZWdGtXWkxGNGEzenBmS0J0?=
+ =?utf-8?B?cDhtYkFIRnN5QWZhQy85eTBSRWYxNnJMc21YeFhEMWlRUGhVUG42d1MzRmZ3?=
+ =?utf-8?B?YVM1L3JOMU9RMkQ1UE0vZzNKcVI0cE9zUGZUMVhNK2VTalpMNWtwck9WaDB6?=
+ =?utf-8?B?cE81bnRHR05GVzRzeHMyYVlEeFhCK0FVVDMwZFQyL1g0WWhCb0Vjclo0SUlo?=
+ =?utf-8?B?eENkbDJqbUlRcWFMZlFPODhlR3hHcnFnMTdyR01tVzlXU3FXbExaTkQwYndQ?=
+ =?utf-8?B?K3RXQ0JrNlRmSlY4bVA1bnBwNVZablF1Sk85eS9yL21LOVN2dVZDVEtLNlh3?=
+ =?utf-8?B?TTJFZlJKWnkrWTVsMVQyMlJzMWFEVTRTa2ZDVi9tbytnbDFRbUUxVXpuSGxn?=
+ =?utf-8?B?dnBaRFFuZGF6WjYydUxnbDlOQ2o5bFdFcDNLS2pFVnB0SE85V0hBZWtVRnk4?=
+ =?utf-8?B?TzY3MzN6dVZualZHdWtJZEpPWXpqTmxkZW5pNEIrZWdGM0xOc0c2Vk9nOGhD?=
+ =?utf-8?B?V1EwUVIvU2JOU1NJTWJRK0ZTc3NIZ2YyRTRHTnhmODR0TW0yZCtjRXk2SHFl?=
+ =?utf-8?B?a2dkVlZrWTJZcVRwYTdkdnQzNmp1ckZQSUYyT3pwYkVycHZRSkE3SGNZZGxr?=
+ =?utf-8?B?ZW9DNE5mMG9KcWtFNHB3YmtsbW1WbWtrd3ZYTExYNFVKM1lDVVF4OWMrRFRN?=
+ =?utf-8?B?L0lqcU03ZkVoOVlaemZzL2ZvU0JRWmJhWHloNHVQM3o5aXJXZmJ4WnZ2dmJs?=
+ =?utf-8?B?MWFDYjBBcENFY3RwQTdLWHRRU3VOR2FlWEd4M3RxcC9kcDRxVHp2cGNWa24r?=
+ =?utf-8?B?QTc4NVpmZGJ2QzZHVGRaOGI5SlZGcm96TU9KUnhKNHFRYStiL2VXL29LYXYr?=
+ =?utf-8?B?djEvRVMxSkhlSzg3VGdOemRudE5WQ2g2UUNONGxvb2EyQzlSdmYyUi96TjRH?=
+ =?utf-8?B?Y0RpeDZhOEJ0OFpPQkE2WXk2MTRldTNucitzTHRwUkhsOTUrd2M0RlVvWDVa?=
+ =?utf-8?B?THRJK3VkazB0cU5vWjYrby9aTnZqRXVWWkhaQjdVNzVCdmdYSldQRzRvdHZG?=
+ =?utf-8?B?UjdXcFJLZzBKWHdqSTBZaW04VTlzSGpTYkJiaStKUlVMSGMrMXRybExXa0FX?=
+ =?utf-8?B?QVNFVWMvTCtDUkdoRkFua2dHSjNsSFVCeXpSYnlKK2FKZU56YU9lOTJUcFJs?=
+ =?utf-8?B?SmRWTU9SRk5naURyM0o5MG8ySzhQdDF4SHd2QWVBd0I0aXFmaFVURHlzbTFX?=
+ =?utf-8?B?TUI2Nk0ydmxSWHBNT1hiZE1BRHl1VXBXWktiL3M3ZVlGWG1CUmJ0T21hTlJY?=
+ =?utf-8?B?MWNXWUY2RWVQbXI4NmZOcDIxR0ZOdFFHTFhKYWZIZTZQQzVGamMwckUvNDNS?=
+ =?utf-8?B?Snh1YnE3eFRZNFl3eVdnaVpFdjZpalNCOHRoRjByS3dsdVZZSk4yTnh1UmRw?=
+ =?utf-8?B?VElJOWZ2cUxZMWYwcUlRMWpiMUVkQ2JJU3NWc2dWUm4zNGwzTEZzc1VtSDVH?=
+ =?utf-8?B?a0szR3I2RHlQNG5nUkd6Z01RV1c1bVozcEtWNU5QWUJad1BrU3diU211TFBM?=
+ =?utf-8?B?SFh4eGllUkdMbUpjZktCZnRpTWJLOXJNQ3o3K01lOXZ1em4vMVBHTnJ5bFRs?=
+ =?utf-8?B?dlhaaG03SSswd0tpL1piNmo4bTJ5a1dxMHFPSXNZQ0xGRy9QNXlOZWVpMWpO?=
+ =?utf-8?B?b1EwN0pVaWxyRGhWWEVGd3NpZGpMY2Nmai81dUhPaXFvYWs5RjFoUUpDNU5S?=
+ =?utf-8?B?R0U3WUd0T1IwaFhXcmhLb2hneXhsTkxrMzRhakE0VklWUkNkUG9GaGJiY3pL?=
+ =?utf-8?B?dFNmTUFncnk3TVVQSmdYa2ljNFlTS1h3bjVmT2ZBT1UwNmRXVXIwaTZSejZt?=
+ =?utf-8?B?SU42WGxFZXBILzZydEUzU0YyaVorT2dUUDZZQWZScWR5dFBqZWRWMFRYODdU?=
+ =?utf-8?B?RWZwM3l2WXhLbHhLaE5aQ2VuaVFaWWt0UUplcE8vSUpQaUM3UE1OcWRia2hV?=
+ =?utf-8?B?NUdsQWY2N2owLy83Nkd4YjRzL3R5TGR3SUtnWXhEbFR0cGtpRnp2Qmlmc1FT?=
+ =?utf-8?B?eEhuQS9ybzFkN1pCSTljOHJOZTFQUWJHZXI4THB1QzNON1hBV3lZMzI3L1E0?=
+ =?utf-8?B?NDQ0cUM4RnN5SVM2WnBiTm4xWGloZ2d4U1dMZTNIZVFqUVBSMnBuM25yNXFm?=
+ =?utf-8?B?QVA3L2Zqbjdzd0NtOXJCL01qRG5BPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fd3fc8e-e165-4ab8-9d5a-08ddf7467f24
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 06:33:51.2068
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s7guAdpXwSk5VzuB/fQK723jUkAkW2phWjETmuTpm2YpLYVBT+gLsqnt1S0t+b0ld4x9O3yBf/z0cMOz2kowcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6803
 
-Am 19.09.25 um 02:32 schrieb Sean Christopherson:
-> Use kvm_is_gpa_in_memslot() to check the validity of the notification
-> indicator byte address instead of open coding equivalent logic in the VFIO
-> AP driver.
-> 
-> Opportunistically use a dedicated wrapper that exists and is exported
-> expressly for the VFIO AP module.  kvm_is_gpa_in_memslot() is generally
-> unsuitable for use outside of KVM; other drivers typically shouldn't rely
-> on KVM's memslots, and using the API requires kvm->srcu (or slots_lock) to
-> be held for the entire duration of the usage, e.g. to avoid TOCTOU bugs.
-> handle_pqap() is a bit of a special case, as it's explicitly invoked from
-> KVM with kvm->srcu already held, and the VFIO AP driver is in many ways an
-> extension of KVM that happens to live in a separate module.
-> 
-> Providing a dedicated API for the VFIO AP driver will allow restricting
-> the vast majority of generic KVM's exports to KVM submodules (e.g. to x86's
-> kvm-{amd,intel}.ko vendor mdoules).
-> 
-> No functional change intended.
-> 
-> Acked-by: Anthony Krowiak <akrowiak@linux.ibm.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel wrote:
+> Tegra30 has CSI pad bits in both PLLD and PLLD2 clocks that are required
+> for the correct work of the CSI block. Add CSI pad A and pad B clock gate=
+s
+> with PLLD/PLLD2 parents, respectively. Add plld2 spinlock, like one plld
+> has to be used for clock gate registration.
 
-Reviewed-by: Christian Borntraeger <borntraeger@linux.ibm.com>
+I might add a note that the spinlocks are needed since both the PLLDx and C=
+SIx_PAD clocks use the same registers.
 
+In any case,
+
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->   arch/s390/include/asm/kvm_host.h  | 2 ++
->   arch/s390/kvm/priv.c              | 8 ++++++++
->   drivers/s390/crypto/vfio_ap_ops.c | 2 +-
->   3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index f870d09515cc..ee25eeda12fd 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -722,6 +722,8 @@ extern int kvm_s390_enter_exit_sie(struct kvm_s390_sie_block *scb,
->   extern int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc);
->   extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
->   
-> +bool kvm_s390_is_gpa_in_memslot(struct kvm *kvm, gpa_t gpa);
+>  drivers/clk/tegra/clk-tegra30.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegr=
+a30.c
+> index ca738bc64615..61fe527ee6c1 100644
+> --- a/drivers/clk/tegra/clk-tegra30.c
+> +++ b/drivers/clk/tegra/clk-tegra30.c
+> @@ -154,6 +154,7 @@ static unsigned long input_freq;
+> =20
+>  static DEFINE_SPINLOCK(cml_lock);
+>  static DEFINE_SPINLOCK(pll_d_lock);
+> +static DEFINE_SPINLOCK(pll_d2_lock);
+> =20
+>  #define TEGRA_INIT_DATA_MUX(_name, _parents, _offset,	\
+>  			    _clk_num, _gate_flags, _clk_id)	\
+> @@ -859,7 +860,7 @@ static void __init tegra30_pll_init(void)
+> =20
+>  	/* PLLD2 */
+>  	clk =3D tegra_clk_register_pll("pll_d2", "pll_ref", clk_base, pmc_base,=
+ 0,
+> -			    &pll_d2_params, NULL);
+> +			    &pll_d2_params, &pll_d2_lock);
+>  	clks[TEGRA30_CLK_PLL_D2] =3D clk;
+> =20
+>  	/* PLLD2_OUT0 */
+> @@ -1008,6 +1009,16 @@ static void __init tegra30_periph_clk_init(void)
+>  				    0, 48, periph_clk_enb_refcnt);
+>  	clks[TEGRA30_CLK_DSIA] =3D clk;
+> =20
+> +	/* csia_pad */
+> +	clk =3D clk_register_gate(NULL, "csia_pad", "pll_d", CLK_SET_RATE_PAREN=
+T,
+> +				clk_base + PLLD_BASE, 26, 0, &pll_d_lock);
+> +	clks[TEGRA30_CLK_CSIA_PAD] =3D clk;
 > +
->   static inline void kvm_arch_free_memslot(struct kvm *kvm,
->   					 struct kvm_memory_slot *slot) {}
->   static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
-> index 9253c70897a8..9a71b6e00948 100644
-> --- a/arch/s390/kvm/priv.c
-> +++ b/arch/s390/kvm/priv.c
-> @@ -605,6 +605,14 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
->   	}
->   }
->   
-> +#if IS_ENABLED(CONFIG_VFIO_AP)
-> +bool kvm_s390_is_gpa_in_memslot(struct kvm *kvm, gpa_t gpa)
-> +{
-> +	return kvm_is_gpa_in_memslot(kvm, gpa);
-> +}
-> +EXPORT_SYMBOL_FOR_MODULES(kvm_s390_is_gpa_in_memslot, "vfio_ap");
-> +#endif
+> +	/* csib_pad */
+> +	clk =3D clk_register_gate(NULL, "csib_pad", "pll_d2", CLK_SET_RATE_PARE=
+NT,
+> +				clk_base + PLLD2_BASE, 26, 0, &pll_d2_lock);
+> +	clks[TEGRA30_CLK_CSIB_PAD] =3D clk;
 > +
->   /*
->    * handle_pqap: Handling pqap interception
->    * @vcpu: the vcpu having issue the pqap instruction
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 766557547f83..eb5ff49f6fe7 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -354,7 +354,7 @@ static int vfio_ap_validate_nib(struct kvm_vcpu *vcpu, dma_addr_t *nib)
->   
->   	if (!*nib)
->   		return -EINVAL;
-> -	if (kvm_is_error_hva(gfn_to_hva(vcpu->kvm, *nib >> PAGE_SHIFT)))
-> +	if (!kvm_s390_is_gpa_in_memslot(vcpu->kvm, *nib))
->   		return -EINVAL;
->   
->   	return 0;
+>  	/* csus */
+>  	clk =3D tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
+>  					     clk_base, 0, TEGRA30_CLK_CSUS,
+>=20
+
+
+
 
 
