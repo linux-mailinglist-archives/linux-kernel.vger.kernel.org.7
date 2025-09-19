@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-823913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30900B87B50
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA26B87B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C6A7C0F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561C42A6BA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB726D4E3;
-	Fri, 19 Sep 2025 02:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2F0239E6F;
+	Fri, 19 Sep 2025 02:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqTUSDke"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uQ1+JcVA"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC2E25784A;
-	Fri, 19 Sep 2025 02:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB53273F9
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758248337; cv=none; b=cNPHKCNThH1nT26yVgfR81E/KWthLjEzV3BRxVsvEV3eOZnXqsHDo4/suqg6C3pymunUfkza4chV7EeHxXz1I4XznqE3ucmPFpJ2bD3gJN58zfJQmmtpowg6UBm67HUPpC2IKIShwql+sHBlfTcUaOOrzFVpOA74zS4nZny1E+c=
+	t=1758248282; cv=none; b=n8vYBkdbpomXEHKwbjLeXy1xTCvEbzesKirQBXtLpfTwEaecFFM5isO5yeXN0Dp1BjI4n7pQZbhn5B+gspz7ZC7RqV/uSSrRJRrewpuOpZj/3mQRi5lk1UFZpXtTYgOCvfRE52JHoek8pA4VwUQosFNJmoy7oRGbD2sUF1fmnPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758248337; c=relaxed/simple;
-	bh=k8TZ0MrGjVQ8MHNSQRVAWklPMEf4TggTJTigNzpkZi0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PzN0lvYPvcklScdrklj/ozDJ4fYPEmGvq+b82dx7zn5S+UrRtiqms+sjwqRFdIwRnRqcLPDjf/I70EVfVRLsiwEkj+5DUeyv1kNRS2XZaqZw//cI49Ze/J9M4/8dhy83sNZITdWkp5HHO1/K1LFEMJ53rWV/Ea4sSpjHME7tedY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqTUSDke; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758248337; x=1789784337;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k8TZ0MrGjVQ8MHNSQRVAWklPMEf4TggTJTigNzpkZi0=;
-  b=dqTUSDke8ZmtTQPStSvXRtaSxHx/H28dxCIlJOMCHv69FVH6bu/i2NWI
-   pCBn0fH1OGI7uAk1cGZqZu+hkouIXncCS7SwMGEdSBdNpRl4kXfE+wpl9
-   dAlb3DQ9L2Fs7tpha53vbKAqAQMkyDRVwA2cz3uGZUFPrRUd4++xF7U4f
-   gOAcM4Y8NCIhJlJ+tn78Ql+12pleCYWTSe6Kwe5/vnMEwfgfI5ZSimzai
-   PaL5HWnse7I23R4Ldea/hRUpr4kky2jPWuNcnthF+mkJ4Eoyj84y1JWpE
-   3O75vttV0JZ6u6vVDaH781Uj2VNaUSG2H9G394OF7l+ORRxVXMPaqIQwT
-   w==;
-X-CSE-ConnectionGUID: D+rLXfoTR4ajkieTEqYx2w==
-X-CSE-MsgGUID: gNj/qIjwTFOLDpD5rLQA7g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="64229168"
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="64229168"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 19:18:56 -0700
-X-CSE-ConnectionGUID: JA9H6aN1SpWt3R2jBTne7w==
-X-CSE-MsgGUID: Yqg3UeuyQDq7sSBwPZJAfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="175535638"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by orviesa007.jf.intel.com with ESMTP; 18 Sep 2025 19:18:53 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Kevin Tian <kevin.tian@intel.com>
-Subject: [Patch v3 6/6] perf tools kvm: Use "cycles" to sample guest for "kvm top" on Intel
-Date: Fri, 19 Sep 2025 10:16:59 +0800
-Message-Id: <20250919021659.1263351-7-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250919021659.1263351-1-dapeng1.mi@linux.intel.com>
-References: <20250919021659.1263351-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1758248282; c=relaxed/simple;
+	bh=8/9X/yl89henGnUcBx4/BE+c1JkAukEdDa3OSuQkd2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cXZkmZ+jHscIdWWc186mlNnjlT8I/grJYrLh3iMnnom5pTDxALPLOUar2LF9Ec7LjnPjjPgVXgiAEaH9DabzguWL0yEqDs7/tMO3Nbg0EPGraRiQfssN8PvFfj4pf8YV/g0ZWVPP3l/hqRYxtuNzWPa3HGwXqXPj7xLjXg3wgXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uQ1+JcVA; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ef942138-7318-4ac9-bf53-ec646c426c82@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758248268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QND3Wr17IEapmHXCoB1iRboFSwrJThe5CdhfJG8oOGY=;
+	b=uQ1+JcVATbyCSETKErS/bSDdzEsha2vI15YCaBeT0csK7FNUNjxgmWj4uE6UHKeH9h/yNm
+	s2nUCzqf1Q6IraYoeUCfsvcXpBZBj8YmZutdZI6r8HMMCdv0iozIkf3tvPsWYZE1y695FM
+	HuCsFRYxCPNLQYoej/R6gG1wpYiWZq0=
+Date: Fri, 19 Sep 2025 10:17:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next v3 2/2] bpftool: Fix UAF in get_delegate_value
+To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250918120908.1255263-1-chen.dylane@linux.dev>
+ <20250918120908.1255263-2-chen.dylane@linux.dev>
+ <226947cd-a28d-4c09-81cb-0fa0a21c7075@kernel.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <226947cd-a28d-4c09-81cb-0fa0a21c7075@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-As same reason with previous patch, use "cyles" instead of "cycles:P"
-event by default to sample guest for "perf kvm top" command on Intel
-platforms.
+在 2025/9/19 04:07, Quentin Monnet 写道:
+> 2025-09-18 20:09 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
+>> The return value ret pointer is pointing opts_copy, but opts_copy
+>> gets freed in get_delegate_value before return, fix this by free
+>> the mntent->mnt_opts strdup memory after show delegate value.
+>>
+>> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   tools/bpf/bpftool/token.c | 90 +++++++++++++++------------------------
+>>   1 file changed, 35 insertions(+), 55 deletions(-)
+>>
+>> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+>> index 82b829e44c8..20c4c78a8a8 100644
+>> --- a/tools/bpf/bpftool/token.c
+>> +++ b/tools/bpf/bpftool/token.c
+> 
+> 
+>> @@ -69,38 +73,29 @@ static void print_items_per_line(const char *input, int items_per_line)
+>>   		printf("%-20s", str);
+>>   		cnt++;
+>>   	}
+>> -
+>> -	free(strs);
+>>   }
+>>   
+>>   #define ITEMS_PER_LINE 4
+>>   static void show_token_info_plain(struct mntent *mntent)
+>>   {
+>> -	char *value;
+>> +	char *opts, *value;
+> 
+> 
+> Thank you! I just have style nits: can you move the declaration of
+> "opts" and "value" inside of the for loop, please? They're not used
+> outside of it.
+>
 
-Reported-by: Kevin Tian <kevin.tian@intel.com>
-Fixes: cf8e55fe50df ("KVM: x86/pmu: Expose CPUIDs feature bits PDCM, DS, DTES64")
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/builtin-kvm.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+No problem, will change it in v4, thanks.
 
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index c0d62add4996..f0f285763f19 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -2084,6 +2084,38 @@ __cmd_buildid_list(const char *file_name, int argc, const char **argv)
- 	return ret;
- }
- 
-+static int __cmd_top(int argc, const char **argv)
-+{
-+	int rec_argc, i = 0, ret;
-+	const char **rec_argv;
-+
-+	/*
-+	 * kvm_add_default_arch_event() may add 2 extra options, so
-+	 * allocate 2 more pointers in adavance.
-+	 */
-+	rec_argc = argc + 2;
-+	rec_argv = calloc(rec_argc + 1, sizeof(char *));
-+	if (!rec_argv)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < argc; i++)
-+		rec_argv[i] = STRDUP_FAIL_EXIT(argv[i]);
-+
-+	BUG_ON(i != argc);
-+
-+	ret = kvm_add_default_arch_event(&i, rec_argv);
-+	if (ret)
-+		goto EXIT;
-+
-+	ret = cmd_top(i, rec_argv);
-+
-+EXIT:
-+	for (i = 0; i < rec_argc; i++)
-+		free((void *)rec_argv[i]);
-+	free(rec_argv);
-+	return ret;
-+}
-+
- int cmd_kvm(int argc, const char **argv)
- {
- 	const char *file_name = NULL;
-@@ -2144,7 +2176,7 @@ int cmd_kvm(int argc, const char **argv)
- 	else if (strlen(argv[0]) > 2 && strstarts("diff", argv[0]))
- 		return cmd_diff(argc, argv);
- 	else if (!strcmp(argv[0], "top"))
--		return cmd_top(argc, argv);
-+		return __cmd_top(argc, argv);
- 	else if (strlen(argv[0]) > 2 && strstarts("buildid-list", argv[0]))
- 		return __cmd_buildid_list(file_name, argc, argv);
- #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+> 
+>>   
+>>   	printf("token_info  %s", mntent->mnt_dir);
+>>   
+>> -	printf("\n\tallowed_cmds:");
+>> -	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
+>> -	print_items_per_line(value, ITEMS_PER_LINE);
+>> -
+>> -	printf("\n\tallowed_maps:");
+>> -	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
+>> -	print_items_per_line(value, ITEMS_PER_LINE);
+>> -
+>> -	printf("\n\tallowed_progs:");
+>> -	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
+>> -	print_items_per_line(value, ITEMS_PER_LINE);
+>> +	for (size_t i = 0; i < ARRAY_SIZE(sets); i++) {
+> 
+> 
+> And could you please move the declaration of variable "i" to the top of
+> the function, for consistency with the rest of the code?>
+
+also will change it in v4, thanks.
+
+> Same comments for the JSON function.
+> 
+> Thanks,
+> Quentin
 -- 
-2.34.1
-
+Best Regards
+Tao Chen
 
