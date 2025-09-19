@@ -1,155 +1,145 @@
-Return-Path: <linux-kernel+bounces-825082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C4BB8AEAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:29:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BC7B8AEBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A120189B7BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91E2356841D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDB1241665;
-	Fri, 19 Sep 2025 18:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1E217F3D;
+	Fri, 19 Sep 2025 18:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RRnz2kIR"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ApD3TEpD";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="LG1sxtYd"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE85205AB6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A373C224B0E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758306576; cv=none; b=dA3fqBB2lYt8jOi4TNi2v8qOJZdvqvejTPqxtzxqttGxjIKA/KKsIjjxQGaX15UwO71xWxnPF1/bcEhpKjGUBiaH3NdFbCQaXv5AQi44qdaWEHuiXxus/D4H2wcywJnNQmJ2URyd5e5FiE521nzHQmDlKA4HOfUxhI1R9nMNjT8=
+	t=1758306666; cv=none; b=OLPArGDc/CT8Wv8xuyh/KMXEReMPlWlTeENqos/pnJreH+hgsX8onKSM3f8f9OxHklKAf9v+zFyEpvxSuIOv7AHqrebjMo2ENdw6GEdIvJBRpFQsXEOP/bvHGlk9/gPOVedGBx5yf6y7rKbC3QpDgKC77I6E94h3J2f7nheDuI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758306576; c=relaxed/simple;
-	bh=5HcGcJPfAGJVWwh47JGBEvlbeUbK69QuVa8rC4DOV5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHulKoUFqd6CieEdAx0PF4ArGYwIlnUtfr1fVi5tqUepGdhko373j/5WNLMj/+57pEeNXcpztkZ+AfM8bjzNr6TZF1c3Q1P7xXihI5/MR62jFVJQ27Gmax16BPIYP1PDWV4VvX9LfpvgSI2CyUfcnAcK9LE28y0+S1n3/G6CtUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RRnz2kIR; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JDgFKP010782
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:29:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=nELkMuG6G4b4hNEzE5++D+4i
-	ykuQu225GTPV54pVjNk=; b=RRnz2kIRHqwrjQd99LcWnGKFoqNlJppKNVg6v/zN
-	74LFRnDceaW9jKBreZkDEvDKElFeX749jroH92Eb0OinTtrVOK/OLHxnPyg52eqn
-	z2yiikSeEf5Qq7G40h/HbIevhMsTjnvwsSXtlHkCl8eCOJ5myA94VAxTu8S02VAw
-	tI5ZRPQOFDswW0M1tCn35ZNF0j49zKygeaWbk8y6GNlLGwAf0HzEX6z1J5ivyG81
-	mi/zh+GtRBC8RgVZOexYC3lNhqsncw25aPQrOc4CZkbkTJ/DmTWG/hWKgV4UTe67
-	+fgKPlWYvjtGzlVqaxWbVoDt/eFGzsZ0juSSyBzxc5da5Q==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxy3dkd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:29:34 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7248ed9f932so35562436d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:29:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758306573; x=1758911373;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nELkMuG6G4b4hNEzE5++D+4iykuQu225GTPV54pVjNk=;
-        b=tlzeN9n0xoCWBbrz6LHiAStHzepZFz/Cvrbfr8s0MvBHj0NhwRnYrm/x0StbwsLRBk
-         foyr9ldzAIobvRA4zVDZGcats6OlS0U/VsDwI/h881YnAWH/LqKeqfn2Bz8oFglvF3s2
-         /QAsFGCHHzIzDQ1cg8HdOqyLO4EqR/JZfXV0rGM2mykqIZ8mYwS63PGVDj7MVFAJfiFG
-         Ys2sq8QjOsTnYsxoE4ammckMtykRtjCI+nAUaNOMPsRFRO0abarpmSElT8BuN7IRiI4V
-         nv53B0lOuC0clHSgS/wbVZINAGFpSXp7zYOn/qom/3s5pH0wlMrWXvlxBEqH4RXKVP5n
-         Gkkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWESM2LRJXGCZQmKWpstwV38kLgcXgcDilRtUugdal/va8vcxjqDU4FgSoymn6dyEMAggi9FDUlkaf6slQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3TLaUb1vi9SVDP2MLcCZJ7Lx6XnMBizmNYgfqHROsGfdSjLSc
-	Z0cnKTOOizjASgkg7bhYrKcTWj50SRgAw7uwXXc3/431QHUIPHyiUJ2U1AOL5tu6JK2k+vV/wRY
-	vM1KkJB/jrrRlIFzxaEql0S/2hXMIY0pJ3VbStZ8z8RFMrZxeqtIXUct6OgPczpIBSO8=
-X-Gm-Gg: ASbGnctIABHq01e3unjDOYsJ/dooY1miyaL3lZ31kH0IqMKd0Dk2ucDWAfqTDI3g22l
-	xe7+qGcC0sicKGNoNNUdS5ksbdT039ovRXkzos2FRIIoIgrcSq0EUqVXw6xxeSox6CXT8541yDy
-	SOTUN1Nqg5zeo0NC8jyC1N+JQA7l6aYOb9bMOCQV/0XciC6sXvi+1NGw8+2lknqLMTo9MiPaEaP
-	aayRtCSGGm5QbQUrkTSm8yVY8p3nfkt/JIHTNrvx6T85YAH8p8gyGZMmHBbMF88/UFdtter2R26
-	MR7hDUrHpN/eBKlqN9xPvAjPjnZ2Aung53SNBVCMPXe0rqaJ9jbHQEHVW18I94IajV0unRXI/0n
-	CX99uFflm+FTFevTpDD65agW7suDKHnXBDqo1NYFSgzcN72Eqe5BV
-X-Received: by 2002:a05:6214:212d:b0:786:8f81:43e with SMTP id 6a1803df08f44-7991a92b751mr45979696d6.33.1758306573162;
-        Fri, 19 Sep 2025 11:29:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1heRt8eGc/n23vl3sA3KqPDKFH72DXCf2ZbAaB5smb4GgH0KGIrCssMBhJrzkGAMEzwdWYw==
-X-Received: by 2002:a05:6214:212d:b0:786:8f81:43e with SMTP id 6a1803df08f44-7991a92b751mr45979186d6.33.1758306572586;
-        Fri, 19 Sep 2025 11:29:32 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-579ae3d9c88sm958682e87.140.2025.09.19.11.29.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 11:29:31 -0700 (PDT)
-Date: Fri, 19 Sep 2025 21:29:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v5 08/14] phy: qcom: qmp-usbc: Add TCSR parsing and PHY
- mode setting
-Message-ID: <j3e7f6fqeilaz4nek2hnh7obsvjwret42dkmwervcg3c74o7ai@pz244lhrwuou>
-References: <20250919-add-displayport-support-for-qcs615-platform-v5-0-eae6681f4002@oss.qualcomm.com>
- <20250919-add-displayport-support-for-qcs615-platform-v5-8-eae6681f4002@oss.qualcomm.com>
+	s=arc-20240116; t=1758306666; c=relaxed/simple;
+	bh=Tpi+OFGYi3RBv3+SM9QgKqWDD6mVDx3IIp9rJ5dpSfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g4zwyBImJbBAltPqNUQs3tD4sY4hTf714PbqgkRgei5BUUY1em+FRNXJKHnKsofbd9bwafHxgTpNApyAbXLw476ZIWUUFZGJUbRljtUWtJWfVbtUxNS5kz13TNtNVE/zY8+cItwG4tfQkwie0o8SeNAhDDPwKAaqs9sG/2R/7UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ApD3TEpD; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=LG1sxtYd; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cT1KY35pTz9tKY;
+	Fri, 19 Sep 2025 20:30:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758306657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qyz89ykv+3PQfLNoFeepyaFSjz8XuaU06hwLEDmgOC8=;
+	b=ApD3TEpDL3JtkZcMbRBV7w6ue1iq2BZ7IewKF1d+SX3q1Sq84uYEwj1oxRXZblyfRyFO1J
+	/UBEf9IsOUKoX+5ESMmbWnKT4B3uJmebK4ydfct95+TYrqBgw26zEUOWYU6HRE7SYmRNrX
+	24CSVde1T0ivKrpmHQTtZPvBWxXeOulNQABPhDhswcjW5s8MHaQt07GfMI5d+fHodb46QN
+	7qmXuZZuHchSz41al43cU0ZxXS8yXGQs7Yz695SdYcGWYuernxD0fn3VZEraul9jdoPpb2
+	ezfY3wos5JRJlR6UUH9nAZqNnS+D3lZOsRB5zv1I3JnkL0Spe0kog/7J2F4B+g==
+From: Marek Vasut <marek.vasut@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1758306655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qyz89ykv+3PQfLNoFeepyaFSjz8XuaU06hwLEDmgOC8=;
+	b=LG1sxtYd/eFsNtegp3v3PU6HGLTkqj1rGHtEqfwftNjZd7Xpk7RIg2aLkeCsHyQVhJBO8g
+	j8MwzOCheFkZwsv8f6SPA1eWRg3i+m/dj729frIFR2SSERRy6ir/dFSPfegxKHnTIxb4nt
+	k1QWLr5MX94AdezOw10jSKdv92AjMiwfNxhFrClxy7Qz3wSuT0V/Lsnuuu95R+mT71v9Fv
+	+TphVj7L1UTZbxuKgqI2AzQPSLUA/O7SGkGn0n4R9UclA7sKa3i5+WOaehjTV6cMjXqjJ2
+	9ERbFiywQ5yb6a3wXWJDr8xCcaZ0q79py+qJTKhCGHaHjZ1f/+YDfjeE9coiNQ==
+To: dri-devel@lists.freedesktop.org
+Cc: Marek Vasut <marek.vasut@mailbox.org>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Simona Vetter <simona@ffwll.ch>,
+	etnaviv@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/etnaviv: add HWDB entry for GC8000 Nano Ultra VIP r6205
+Date: Fri, 19 Sep 2025 20:30:15 +0200
+Message-ID: <20250919183042.273687-1-marek.vasut@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919-add-displayport-support-for-qcs615-platform-v5-8-eae6681f4002@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX+OGezDCEybL/
- UzgMWa+m2t4qTmPJJkGMqj33eCO14WndJnnGjdBsuS93mDOcQ7UosSu9BL8cuVowtLqGbXWYGYQ
- 0Fe90bx3OuSJ3U0Zf2WEJtFXv9bZcr8cSc9DBrGh+4K7E6ZSks2hVts3DYn6jyftcJZp5n+8P2p
- 4ozOoIdGRFDAwkiCX95bwpbyUdvLGzfOZqNIxL32u854bzKmMzsN7km+djMS2BlfQBEaIOWLsbg
- RaelQVtCyowAAa6CFiMC5DsXbff7BbEMJivnLluxTQ5UA5Y80KvWhVWcr6qoXqY0Wgs9XfgxnOH
- AYRGcgvH2gbYK3/PeFHF9tlw4QXWIurqtrQyNMfjGRPm666+TI5QxRwjeBEE1AuS9ElKt1qsY2c
- dBal2HNG
-X-Proofpoint-ORIG-GUID: QjZVgORY94Is37DMcyms3sbRBzNi4oUN
-X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68cda10e cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=fgmTnHYI-UD6AacMZvIA:9 a=CjuIK1q_8ugA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-GUID: QjZVgORY94Is37DMcyms3sbRBzNi4oUN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
- suspectscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: miwz5zh6kzm75e6998mahtbp47czc7fo
+X-MBO-RS-ID: 51cfb359eaed5b08efb
 
-On Fri, Sep 19, 2025 at 10:24:25PM +0800, Xiangxu Yin wrote:
-> Extend TCSR parsing to read optional dp_phy_mode_reg and add
-> qmp_usbc_set_phy_mode() to switch between USB and DP modes when
-> supported.
-> 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 25 +++++++++++++++++++------
->  1 file changed, 19 insertions(+), 6 deletions(-)
-> 
+This is the GPU/NPU combined device found on the ST STM32MP25 SoC.
+Feature bits taken from the downstream kernel driver 6.4.21.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Signed-off-by: Marek Vasut <marek.vasut@mailbox.org>
+---
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Cc: etnaviv@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/gpu/drm/etnaviv/etnaviv_hwdb.c | 32 ++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
+index 8665f2658d51b..32d710baf17fe 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_hwdb.c
+@@ -196,6 +196,38 @@ static const struct etnaviv_chip_identity etnaviv_chip_identities[] = {
+ 		.minor_features10 = 0x90044250,
+ 		.minor_features11 = 0x00000024,
+ 	},
++	{
++		.model = 0x8000,
++		.revision = 0x6205,
++		.product_id = 0x80003,
++		.customer_id = 0x15,
++		.eco_id = 0,
++		.stream_count = 16,
++		.register_max = 64,
++		.thread_count = 512,
++		.shader_core_count = 2,
++		.nn_core_count = 2,
++		.vertex_cache_size = 16,
++		.vertex_output_buffer_size = 1024,
++		.pixel_pipes = 1,
++		.instruction_count = 512,
++		.num_constants = 320,
++		.buffer_size = 0,
++		.varyings_count = 16,
++		.features = 0xe0287c8d,
++		.minor_features0 = 0xc1799eff,
++		.minor_features1 = 0xfefbfad9,
++		.minor_features2 = 0xeb9d4fbf,
++		.minor_features3 = 0xedfffced,
++		.minor_features4 = 0xdb0dafc7,
++		.minor_features5 = 0x7b5ac333,
++		.minor_features6 = 0xfcce6000,
++		.minor_features7 = 0x03fbfa6f,
++		.minor_features8 = 0x00ef0ef0,
++		.minor_features9 = 0x0eca703c,
++		.minor_features10 = 0x898048f0,
++		.minor_features11 = 0x00000034,
++	},
+ 	{
+ 		.model = 0x8000,
+ 		.revision = 0x7120,
 -- 
-With best wishes
-Dmitry
+2.51.0
+
 
