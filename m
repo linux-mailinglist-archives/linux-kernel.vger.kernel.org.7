@@ -1,98 +1,137 @@
-Return-Path: <linux-kernel+bounces-825074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38C7FB8AE10
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:13:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33930B8AE25
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55A03AF362
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C99B170256
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7492E25DD1E;
-	Fri, 19 Sep 2025 18:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64B925393C;
+	Fri, 19 Sep 2025 18:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="FCXAZExy"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YWINuwhM"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA5E246763;
-	Fri, 19 Sep 2025 18:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F624A3E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758305604; cv=none; b=a3fh078dkd1FmmxNidj5FnWBqy0FrpTNuWivrtAaC2ULrq8gmI9RBKMsNGcqAdxShXnZjMpA8nSaBBsmdizipup3PXQK150WLVFuYUyQwf16vMsYL5A2Q3vNE8HPJVM5cuiqcVcm13jmh1XJJVAuTAZpcQ7imxDfew8VNSHAxJA=
+	t=1758305797; cv=none; b=VeHtXo3huw0P+Zgi8BmG87Zd1tQ274FGKeZ5fkGI+gKO+XDpfejsmL5EkX/aRzBiHze2MLvooecX3cpxLOxVLLxfZKkdcKtzZ61D/r90Gi8QFheS5ibTABWO7Q2jkf276TBQjjZ+VAQh9qJFF19/CjO+p4GOcMQTMOeSuffcptc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758305604; c=relaxed/simple;
-	bh=53CY2CJytiIvSVffzkQNZCmuzLgeHbAjU7nGQR1uLqw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QCS5vROn9XW5CXLzSUhl55FtylwH/5NWlh0NGuC1pv79PR0P+14xF6MHAIFJKGUJ/vcB/TM0nXqzR4ZP17opHT2s3RzgPGI0gD0yhPVaVWv5ex+3xIZiHMauBqN8zy2lN3VMF/VjyLCOMvqt4YL4G71pW0bSDo5Ely6I1n8zPuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=FCXAZExy reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4cT0xF0N86z1DDB7;
-	Fri, 19 Sep 2025 20:13:21 +0200 (CEST)
-Received: from [10.10.15.9] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4cT0xD306xz1DHWS;
-	Fri, 19 Sep 2025 20:13:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=simplycom2; t=1758305600;
-	bh=gfXkTRKvzUkoqfK3h14i6FK1ywfHW8/8Amd0DBHRT+s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=FCXAZExy5OGEPe4RlBlBTRfZnQMHFgMHgCjuMPHlGVzbcdmtbcEQ8VnmskUjKvKGk
-	 fxB4NqG4y9ODPUuwSiLGPeuVbl9QqPHsZoC6E2o3kUkbnLa6Fw07OyyV6UaUo60A9K
-	 ZpUoqmpfio4Fo12AJWZWyYnfeqCnw9LN/jjrKcWpwfXsC1uKsK3fMwofNM5DjR8yWx
-	 e2RfQU0fskfuCxE1JsaMjC33XNRhmeH268lkVcySRxXGf2t83qih6GmK9N58thzCuT
-	 xllS9Tt5JYDMLkYRIWIlX9Z7H8mt2qt8IgDMYNiuAxDBru7esU/ihC+o4lBwwMqlIj
-	 1qZrWbZlN2z5Q==
-Message-ID: <d676606e-f448-434b-be26-c839dea4f5d1@gaisler.com>
-Date: Fri, 19 Sep 2025 20:13:19 +0200
+	s=arc-20240116; t=1758305797; c=relaxed/simple;
+	bh=svB4c4RUB6k6TMO/taqKy8jJHs6qQsb6dPdPQdI21nk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=f2skxN56nCVIRQAb6osiyASrq27LwDxSicK/L9Jsg/mUYwZTL1DTgpOtB/QzXcCnbGOhJ01A2t6SitUSEJIU0EnF6/DpwkTlarD6+jMoPmw4lRM8Jm6gvbyaYYvXjslYNtGNpsXSIbxxvP4xC4IX5DC65uxGCzANoDtmz20sOhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YWINuwhM; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-62efab531d8so3393851a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758305794; x=1758910594; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5mgMxXZc6JsWSisIXu5YKjlUPOflnR0WNH38+RWcea4=;
+        b=YWINuwhMarzGUvPo57orz93mG954ydMfwx8z+QtZyGmIHnQ3pnjut6lUj/zxPBOuAA
+         QHUQPqnZCiPYEutD9rOksIT5iPsjAYK1kdKOg09DDILVG3tjeAYzq5vqCNpxzleDRObV
+         k93wcGuAKvVvlLVbKhguaeKCnoel2Ef9o/573SmC6vEB+Gtgpf0IOTADt/b7vlSgZzvj
+         PX6EQ3o8OCMrvnPud8QGGXSmOfa/KGOPGoIuudBWhwR7tGZilJHpBwej7xkQQR1sgJHQ
+         veBle8b9A81Qwn+gFR72//4HqBIL0iTHz29oou8gDQpW/FFc/x+67ScMahZQ6LYxwtfg
+         SPKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758305794; x=1758910594;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5mgMxXZc6JsWSisIXu5YKjlUPOflnR0WNH38+RWcea4=;
+        b=Bz5naI8UwiQIgLrIkW1AHTIJYWv3HE2D2xyYzgBQru2evRYAkGZp/tYILITJoNTo9s
+         fH4LqNWPyV1leWMm4aLf5lCNV/ANzYFsl6pZWyHxKDJz4oLwtO9watFpV0zRsTRGhEw5
+         e+JPlskK+aThOF2gf+/K7siq+w09hhQYkPofskqflY/+OWMf/cSjaSFrEx8Rl86xxadV
+         Qx1PY2v2s84dULTklBM5aAUp6Ni0U0s318GZ4qgh1+bAc88ixWvUC5lOag/cuFfWnGy9
+         bEqX9BZpROliqh5riGU8Hb4rNtXjDlq2OZX5EtZ8AfJpfQ4CAH1sJFlDlOkotwCaoveq
+         9bDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWk94tQ8HDiEo5CDtKvkzKjHiDFMGEEQuaxW60aQf6dm15p1lpDhABMnd1i7za+ZL1hgVJJAQaga0GP7Lw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFhnxm9kZYTKYO1tMIb53OKNOr5WLtMi24rlwIatKIo1b4ndXg
+	UVcI8Jl9KKK5yE2jlo6RACK8E7vsL4f+2+8Dht34Ac3re5K8YrhYmp5cKPdllTEJFLCVwyFIm2D
+	HeeiXhUwxhQ==
+X-Google-Smtp-Source: AGHT+IFBF9Kq0n5zsV/eYossWIuj1G3yQkDPq2/13B/MTXPtyGtmb7OfIX4VaMq0zKbRqqvGUOTUkbhU52En
+X-Received: from edbfi21.prod.google.com ([2002:a05:6402:5515:b0:62f:8b99:d116])
+ (user=czapiga job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:4586:b0:626:1fce:d2f2
+ with SMTP id 4fb4d7f45d1cf-62fc0917f14mr3475109a12.16.1758305793785; Fri, 19
+ Sep 2025 11:16:33 -0700 (PDT)
+Date: Fri, 19 Sep 2025 18:15:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] sparc: PCI: Replace deprecated strcpy() with
- strscpy()
-To: Bjorn Helgaas <helgaas@kernel.org>,
- Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, linux-hardening@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250917155038.GA1852582@bhelgaas>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20250917155038.GA1852582@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
+Message-ID: <20250919181547.2172319-1-czapiga@google.com>
+Subject: [PATCH v2] mtd: spi-nor: core: Check read CR support
+From: Jakub Czapiga <czapiga@google.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Konrad Adamczyk <konrada@google.com>, 
+	Adeel Arshad <adeel.arshad@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Kornel Duleba <korneld@google.com>, Jakub Czapiga <czapiga@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-09-17 17:50, Bjorn Helgaas wrote:
-> On Wed, Sep 17, 2025 at 04:47:30PM +0200, Thorsten Blum wrote:
->> strcpy() is deprecated; use strscpy() instead.
->>
->> No functional changes intended.
->>
->> Link: https://github.com/KSPP/linux/issues/88
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> 
-> No objection from me, but no particular PCI core issue and I don't
-> maintain this file, so up to the sparc folks if they want it.
-> 
-> I would consider making a single patch to address this issue
-> everywhere in arch/sparc so it can all be reviewed together.
+Some SPI controllers like Intel's one on the PCI bus do not support
+opcode 35h. This opcode is used to read the Configuration Register on
+SPI-NOR chips that have 16-bit Status Register configured regardless
+of the controller support for it. Adding a check call in the setup step
+allows disabling use of the 35h opcode and falling back to the manual
+Status Registers management.
 
-Thank you and sorry for the late feedback. I agree with the above.
-Thorsten, could you fix this for all occurrences of strcpy() in
-arch/sparc?
+Before:
+openat(AT_FDCWD, "/dev/mtd0", O_RDWR)   = 4
+ioctl(4, MIXER_WRITE(6) or MEMUNLOCK, {start=0, length=0x2000000}) = -1
+EOPNOTSUPP
 
-Thanks,
-Andreas
+After:
+openat(AT_FDCWD, "/dev/mtd0", O_RDWR)   = 4
+ioctl(4, MIXER_WRITE(6) or MEMUNLOCK, {start=0, length=0x2000000}) = 0
+ioctl(4, MIXER_WRITE(5) or MEMLOCK, {start=0x1800000, length=0x800000}) = 0
+
+Suggested-by: Adeel Arshad <adeel.arshad@intel.com>
+Signed-off-by: Jakub Czapiga <czapiga@google.com>
+---
+Changes since v1:
+- Use spi_nor_spimem_setup_op instead of spi_nor_read_cr to test opcode
+- Check only for spi-mem devices
+- Move check from spi_nor_setup to spi_nor_spimem_adjust_hwcaps
+
+ drivers/mtd/spi-nor/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index ac4b960101cc..0c43fcca3d0a 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -2318,6 +2318,16 @@ spi_nor_spimem_adjust_hwcaps(struct spi_nor *nor, u32 *hwcaps)
+ 					    &params->page_programs[ppidx]))
+ 			*hwcaps &= ~BIT(cap);
+ 	}
++
++	/* Some SPI controllers might not support CR read opcode. */
++	if (!(nor->flags & SNOR_F_NO_READ_CR)) {
++		struct spi_mem_op op = SPI_NOR_RDCR_OP(nor->bouncebuf);
++
++		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
++
++		if (spi_nor_spimem_check_op(nor, &op))
++			nor->flags |= SNOR_F_NO_READ_CR;
++	}
+ }
+ 
+ /**
+-- 
+2.51.0.534.gc79095c0ca-goog
 
 
