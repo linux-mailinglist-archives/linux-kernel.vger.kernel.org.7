@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-824494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7BAB8964A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:15:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EB2B89656
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41EFE16F86C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E315C3B02E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32810307AF5;
-	Fri, 19 Sep 2025 12:15:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8BF3597A
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F6530F94E;
+	Fri, 19 Sep 2025 12:15:08 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D64530F935
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284101; cv=none; b=dbQscITXz+IB4O+UcBBcHj7cN2iAJHNlj14KN/tlv/8H48OOjCw+yA5ZVx2R5hiWC+db+mSdqKZFs+d+CQe1rIgoUIOLUXAY1Bx2Oke4PPyQh1wkVQZa/3gCrJay99Qtk5EJvgfauwTMBji859E6h48wOKlEFXFawt85VjXx8UI=
+	t=1758284107; cv=none; b=FRGkdXm4qTrcn5JrM+8icGEGrxCrb2gU5XEHf0jsWQf/DJxknKlfuBXza0Qb4rEskoOmcbhNCC8JF6LtmWGufOoDZAycy7nUMVOdg/Wa1x7gVj40BTalhH/VQ9bp9RJ59BZPv2NzGTaV2IdasCCjtqpOMOXPzk8gQqd/sNOAUys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284101; c=relaxed/simple;
-	bh=+beKHJIQYtWb6UPelOK+FmlPi9FAXTmHnzAxH9jdvmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L/Xi6Fc1hlrdAwLZMFGJ7u+B+k7u0fP4FHRYjJCCka57i+PnYsUtC/66wfCnYRP3BMr3CsCRLCYvfrNhim4iZ1fs5bgR8syV0AN4ADDB794tz5cB0ToK1Y7CgH+ZpRWU1GuT85ufrsKda48pRZiQXN3RIDR1+tX5SpG5MAHDAWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27447169C;
-	Fri, 19 Sep 2025 05:14:51 -0700 (PDT)
-Received: from [10.164.136.41] (unknown [10.164.136.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D1F23F673;
-	Fri, 19 Sep 2025 05:14:55 -0700 (PDT)
-Message-ID: <b93b0cca-04ac-402c-b522-cda8f39a52bc@arm.com>
-Date: Fri, 19 Sep 2025 17:44:52 +0530
+	s=arc-20240116; t=1758284107; c=relaxed/simple;
+	bh=F52Pe6ZzrWg2xOB535H6naWI5/xjhi+X85EvgHGfIVM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XK7cOo252OsWxyAqnWtjSaMwrx0fqgAtBbLgH3jQGic9CH9VAVCiuRVZzMC/14NlA/NKxrvmQJMLdCsH1CXOrtMGnKjjm3jzQSJ4RPDeTBKEkctj/GY7AWcf0Yg/g9TULpb50QpCRVv07f/fIqQBmdRj1vIYxIWF8tUkKkrPc4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88760a9d5c6so398380239f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:15:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758284105; x=1758888905;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AaASq3nSPIcvtUoCKBtRJSEolffSQ27wcU7lwN8Kr/k=;
+        b=EFr4JBHGy2pp5mG51DL/xYP40gyS0tqokCG4paaSMikUDo5kKIRGdi3UtKceTn4IdV
+         Dr3VaSEcyBsqTnGnFT8pO4JHg6v4QpPKBHQSUvDmaP5rBEn/YPPTWG57xWY5k2UpNq0x
+         R/EFLofb9IP/NVH8jErVbDzMEoJUDV53wcfoQvITLu8bK4GUjPlVVpfH2apPgAGOtmjE
+         G6h5j5zZ6/rUy5M+dzx4WM0yQKVscnY+gayimGi9cILvXiM/jw+XzW3ZrkORmYbqVw4H
+         KWZUwjPaWp/7j4tz2cJUyNZqdLxTbsv/q66NJredHhcRd8SL8uioCett1RkSUJCHhEYn
+         5TGw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+PpkAgcCTqqxPr+IdOK7BznrjlK4zXed2oRpqdd++o8lBfVv2X4xpxedRQYf4jQZ6p0kYD+ceSlB3xr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbfd8jpsyIijf53RfiOOVjfvr5gazFPVtLPqEVW680fHXyqZXB
+	FD0HpkwtovwT5J60v139lXcMnZWZcG37akM5zjh1UX0JZ8E9WZgRpYYEiMKmxxdmFgWXVo346gG
+	TstnOC2yemjaXQNmPu/dLJ2DWeu77tecQ9o3na5EdOlultkNFm6OtWB/8ESo=
+X-Google-Smtp-Source: AGHT+IE1O8Xc6f8LrpO8boudUphXtvq/ClhpDSJmNM3SJDFi102WGVqC7B7iyKEup+Yu/ybdPLc+8ujPyZ6BW73fph6w1dGTVKQY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v5] arm64: Enable vmalloc-huge with ptdump
-To: Will Deacon <will@kernel.org>
-Cc: catalin.marinas@arm.com, anshuman.khandual@arm.com,
- quic_zhenhuah@quicinc.com, ryan.roberts@arm.com, kevin.brodsky@arm.com,
- yangyicong@hisilicon.com, joey.gouly@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- david@redhat.com, mark.rutland@arm.com, urezki@gmail.com,
- jthoughton@google.com
-References: <20250723161827.15802-1-dev.jain@arm.com>
- <aMk8QhkumtEoPVTh@willie-the-truck> <aMrXBArFNLTdwWs3@willie-the-truck>
- <839ac455-f954-428f-b1a7-89778c57ee8b@arm.com>
- <aM0yQwt3_8WuxBC2@willie-the-truck>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <aM0yQwt3_8WuxBC2@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:378f:b0:414:3168:b9fe with SMTP id
+ e9e14a558f8ab-42481991ea9mr59920315ab.29.1758284105478; Fri, 19 Sep 2025
+ 05:15:05 -0700 (PDT)
+Date: Fri, 19 Sep 2025 05:15:05 -0700
+In-Reply-To: <68caf6c7.050a0220.2ff435.0597.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cd4949.050a0220.ba58e.045c.GAE@google.com>
+Subject: Re: [syzbot] [smc?] general protection fault in __smc_diag_dump (4)
+From: syzbot <syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
+	dust.li@linux.alibaba.com, edumazet@google.com, guwen@linux.alibaba.com, 
+	horms@kernel.org, jaka@linux.ibm.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-s390@vger.kernel.org, mjambigi@linux.ibm.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sidraya@linux.ibm.com, syzkaller-bugs@googlegroups.com, 
+	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has bisected this issue to:
 
-On 19/09/25 4:29 pm, Will Deacon wrote:
-> On Fri, Sep 19, 2025 at 03:58:46PM +0530, Dev Jain wrote:
->> On 17/09/25 9:13 pm, Will Deacon wrote:
->>> On Tue, Sep 16, 2025 at 11:30:26AM +0100, Will Deacon wrote:
->>>> I'm currently trying to put together a litmus test with James (cc'd) so
->>>> maybe we can help you out with that part.
->>> Here's what we came up with. There's not a good way to express the IPI
->>> from kick_all_cpus_sync() but it turns out that the ISB from the TLB
->>> invalidation is sufficient anyway. Does it make sense to you?
->>>
->>>
->>> AArch64 ptdump
->>> Variant=Ifetch
->>> {
->>> uint64_t pud=0xa110c;
->>> uint64_t pmd;
->>>
->>> 0:X0=label:"P1:L0"; 0:X1=instr:"NOP"; 0:X2=lock; 0:X3=pud; 0:X4=pmd;
->>>                       1:X1=0xdead;      1:X2=lock; 1:X3=pud; 1:X4=pmd;
->>> }
->>>    P0				| P1				;
->>>    (* static_key_enable *)	| (* pud_free_pmd_page *)	;
->>>    STR	W1, [X0]		| LDR	X9, [X3]		;
->>>    DC	CVAU,X0			| STR	XZR, [X3]		;
->>>    DSB	ISH			| DSB	ISH			;
->>>    IC	IVAU,X0			| ISB				;
->>>    DSB	ISH			|				;
->>>    ISB				| (* static key *)		;
->>> 				| L0:				;
->>>    (* mmap_lock *)		| B	out1			;
->>>    Lwlock:			|				;
->>>    MOV	W7, #1			| (* mmap_lock *)		;
->>>    SWPA	W7, W8, [X2]		| Lrlock:			;
->>> 				| MOV	W7, #1			;
->>> 				| SWPA	W7, W8, [X2]		;
->>>    (* walk pgtable *)		|				;
->>>    LDR	X9, [X3]		| (* mmap_unlock *)		;
->>>    CBZ	X9, out0		| STLR	WZR, [X2]		;
->>>    EOR	X10, X9, X9		|				;
->>>    LDR	X11, [X4, X10]		| out1:				;
->>> 				| EOR	X10, X9, X9		;
->>>    out0:				| STR	X1, [X4, X10]		;
->>>
->>> exists (0:X8=0 /\ 1:X8=0 /\	(* Lock acquisitions succeed *)
->>> 	0:X9=0xa110c /\		(* P0 sees the valid PUD ...*)
->>> 	0:X11=0xdead)		(* ... but the freed PMD *)
->>>
->>>
->>> Will
->> Is the syntax correct? I cannot use the herd7 command to run this.
-> Weird, what happens? It runs for me:
->
-> $ herd7 -version
-> 7.58+1, Rev: e39a86f5d59dee3174d08d9ab5b13155c75936fd
->
-> $ herd7 ptdump.litmus
-> Test ptdump Allowed
-> States 5
-> 0:X8=0; 0:X9=0; 0:X11=0; 1:X8=0;
-> 0:X8=0; 0:X9=0; 0:X11=0; 1:X8=1;
-> 0:X8=0; 0:X9=659724; 0:X11=0; 1:X8=1;
-> 0:X8=0; 0:X9=659724; 0:X11=57005; 1:X8=1;
-> 0:X8=1; 0:X9=0; 0:X11=0; 1:X8=0;
-> No
-> Witnesses
-> Positive: 0 Negative: 9
-> Flag Assuming-common-inner-shareable-domain
-> Condition exists (0:X8=0 /\ 1:X8=0 /\ 0:X9=659724 /\ 0:X11=57005)
-> Observation ptdump Never 0 9
-> Time ptdump 1.65
-> Hash=238908ee9413a36507c61b92a31a366a
+commit 98d4435efcbf37801a3246fb53856c4b934a2613
+Author: Jeongjun Park <aha310510@gmail.com>
+Date:   Thu Aug 29 03:56:48 2024 +0000
 
-I was using some other command :) yup this works.
+    net/smc: prevent NULL pointer dereference in txopt_get
 
-I'll try posting the next version today itself, but will you be
-okay merging this if I post on Monday?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=131dc712580000
+start commit:   5aca7966d2a7 Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=109dc712580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=171dc712580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+dashboard link: https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17aec534580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115a9f62580000
 
->
-> Will
+Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
+Fixes: 98d4435efcbf ("net/smc: prevent NULL pointer dereference in txopt_get")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
