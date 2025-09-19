@@ -1,114 +1,181 @@
-Return-Path: <linux-kernel+bounces-825353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B56B8BA49
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBABBB8BA58
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F2FA5A6B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CB05A6BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7C52D46AC;
-	Fri, 19 Sep 2025 23:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460302D5928;
+	Fri, 19 Sep 2025 23:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDT3FaoZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kKya3Mr5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E9623E32B;
-	Fri, 19 Sep 2025 23:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D951329B237;
+	Fri, 19 Sep 2025 23:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758325809; cv=none; b=CNwl9aBLsGkNcPGjPmCZj6D2huFL9eB4mYASJFf7rwnro5ar3OxTBrq4ZPo4aHgDlZRb38EM7CAe4zmYzH5hpP5XUSHyXmTPc0uE8fCrJh7V2VZ9391vm7w0O4m8Vfz6XrfISZX9GM/VvjV3xvDwrukJTzKKh9vSbKpBSf0Tm2o=
+	t=1758325865; cv=none; b=cb/tL/pryYE1dibhJCG/biyM89PgqAXxBhuyMYn2h1ucKD5cL8BA01GxFn0T1l9MUzhZuEF+s4PZ6IqlruaPSlx7jgkReFRZNfgraO4ulEL51cABvkNASnLVz9OP4slvNjp/lMPbCenhNmj6nvEO8GqEVHTML/qfNtcIwz+W/5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758325809; c=relaxed/simple;
-	bh=8QigjOlBaS7m08E2WSkvhV9bqBra/GagKgAD4hthaiQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jjAKU2bU+XkNPUaiQBJbWD2qpF6Z8fQiJTIlfiZIEv+luF3WhiXPaBAw5y/NKqPrUd1MuivtMbIYkahcR+LO+HG8q6up2r/Nt9133HyjyGnASoBTWI/m5SBMFQLXC4tAikcfUNOFyMa8wFZgfRYuH7n/g4o3to7GAsRdqGjsLNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDT3FaoZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744D8C4CEF0;
-	Fri, 19 Sep 2025 23:50:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758325808;
-	bh=8QigjOlBaS7m08E2WSkvhV9bqBra/GagKgAD4hthaiQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=rDT3FaoZZmUwR4hwYh7mBLaXPlE21Sthax3fGLuyUVYiuzF/Uy1AwMm1H/GIWsnOr
-	 T9Dd+zdFmtwZgany4lC9DK7uCmJp21mI3cLyRNZrR+EvQXSWuEymzoXxzx5xnuMlW0
-	 gSHZQtkTQJ4cFNJeBgm1Jmlj4HCyS1uc4QArlCA1uzAY2YLd6lI8BDydZP44IMzbpN
-	 X9LjuF2dhtMeynWgiAWCKjMMsNgJFnAwvkBnd9hbH9g8h1iAXBMe1Q9N4+vzf5a3J8
-	 6srgRVn6W8gsRtiOBJsnNUrBP3/gF06jEolGgX7YiRbo0qISAH9CLRytr7boZU6d79
-	 BlPOwpEUGHiEA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB01E39D0C20;
-	Fri, 19 Sep 2025 23:50:08 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758325865; c=relaxed/simple;
+	bh=+uc6yA/HzcBIcjnVnLYIsqOuoDvWyZ47/cbbT6/vcl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L4BJXrajySTiGMsAkB3uwNFEP2LIRoG0a+mtdTzKrn3DuHC6dzPxGRyvLSw5eV0SgrdneUHr5tB/C2TJNTjrqdvix3l4G+dbLPMTN8NXnDk87CQl6MuTFgpd+odfCIvFRkgvlVxgGuqKNzO7lghKOZeM/UIpYISV1DI3dIZeFY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kKya3Mr5; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758325862; x=1789861862;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+uc6yA/HzcBIcjnVnLYIsqOuoDvWyZ47/cbbT6/vcl0=;
+  b=kKya3Mr5BqeN/BojMJ23wxNwpQRGqpJ3sn9jj9iP/lzpKEFizLF5CbH+
+   UzQYMJ5JqDWgDOkmmWJRaEKWe2psqnkBXJs6DfiE/CSdxS11Wnvu6Zm6j
+   XObFZvn/UttWgXsLVYPawAXIbebfR4JQBXUoxIFT801D6zVHOT4XD5O78
+   bj228cLiaMrnm2ADVEZoAp5aopx29pnUyV9Hq6tHiACTJtkBib+lxGgHQ
+   pZNRoQWi/HX6t1VinLXhu8ews7prcXlAasNr1M/bexfw7QiLBD5mGv7sB
+   Nc070/pu/tk8MU7tvYUXgGwSsHEAHB97RRM1w3beiiiJh6OArVVLWE2vY
+   w==;
+X-CSE-ConnectionGUID: k+K9qzkZQqaZruhw2ZewiA==
+X-CSE-MsgGUID: pMjc1gx5T26b98IhgsZ3tQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="71356882"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="71356882"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:51:01 -0700
+X-CSE-ConnectionGUID: G/Ju8dwGQ1mh5l1NHByw3Q==
+X-CSE-MsgGUID: zp+VozEzRFmCCyQIm0BA6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="179975589"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.58]) ([10.125.108.58])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:51:01 -0700
+Message-ID: <b66e4c0b-a82f-4c18-8e8b-ba37b6551964@intel.com>
+Date: Fri, 19 Sep 2025 16:50:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] net: tun: Update napi->skb after XDP process
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175832580775.3740319.12992235637381238613.git-patchwork-notify@kernel.org>
-Date: Fri, 19 Sep 2025 23:50:07 +0000
-References: <20250917113919.3991267-1-wangliang74@huawei.com>
-In-Reply-To: <20250917113919.3991267-1-wangliang74@huawei.com>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, sdf@fomichev.me,
- lorenzo@kernel.org, toke@redhat.com, yuehaibing@huawei.com,
- zhangchangzhong@huawei.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 04/20] nvdimm/label: Update mutex_lock() with
+ guard(mutex)()
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134136epcas5p118f18ce5139d489d90ac608e3887c1fc@epcas5p1.samsung.com>
+ <20250917134116.1623730-5-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-5-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 17 Sep 2025 19:39:19 +0800 you wrote:
-> The syzbot report a UAF issue:
+On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+> Updated mutex_lock() with guard(mutex)()
+
+Need a bit more in the commit log on why the change so whomever reads the commit later on has an idea what is happening. 
 > 
->   BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->   BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
->   BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->   Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
->   CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->    print_address_description mm/kasan/report.c:378 [inline]
->    print_report+0xca/0x240 mm/kasan/report.c:482
->    kasan_report+0x118/0x150 mm/kasan/report.c:595
->    skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->    napi_frags_skb net/core/gro.c:723 [inline]
->    napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->    tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->    </TASK>
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/label.c | 36 +++++++++++++++++-------------------
+>  1 file changed, 17 insertions(+), 19 deletions(-)
 > 
-> [...]
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 668e1e146229..3235562d0e1c 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -948,7 +948,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  		return rc;
+>  
+>  	/* Garbage collect the previous label */
+> -	mutex_lock(&nd_mapping->lock);
+> +	guard(mutex)(&nd_mapping->lock);
+>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+>  		if (!label_ent->label)
+>  			continue;
+> @@ -960,20 +960,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	/* update index */
+>  	rc = nd_label_write_index(ndd, ndd->ns_next,
+>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+> -	if (rc == 0) {
+> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> -			if (!label_ent->label) {
+> -				label_ent->label = nd_label;
+> -				nd_label = NULL;
+> -				break;
+> -			}
+> -		dev_WARN_ONCE(&nspm->nsio.common.dev, nd_label,
+> -				"failed to track label: %d\n",
+> -				to_slot(ndd, nd_label));
+> -		if (nd_label)
+> -			rc = -ENXIO;
+> -	}
+> -	mutex_unlock(&nd_mapping->lock);
+> +	if (rc)
+> +		return rc;
+> +
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> +		if (!label_ent->label) {
+> +			label_ent->label = nd_label;
+> +			nd_label = NULL;
+> +			break;
+> +		}
+> +	dev_WARN_ONCE(&nspm->nsio.common.dev, nd_label,
+> +			"failed to track label: %d\n",
+> +			to_slot(ndd, nd_label));
+> +	if (nd_label)
+> +		rc = -ENXIO;
+>  
+>  	return rc;
+>  }
+> @@ -998,9 +998,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>  		label_ent = kzalloc(sizeof(*label_ent), GFP_KERNEL);
+>  		if (!label_ent)
+>  			return -ENOMEM;
+> -		mutex_lock(&nd_mapping->lock);
+> +		guard(mutex)(&nd_mapping->lock);
+>  		list_add_tail(&label_ent->list, &nd_mapping->labels);
+> -		mutex_unlock(&nd_mapping->lock);
 
-Here is the summary with links:
-  - [net] net: tun: Update napi->skb after XDP process
-    https://git.kernel.org/netdev/net/c/1091860a16a8
+I would not mix and match old and new locking flow in a function. If you are going to convert, then do the whole function. I think earlier in this function you may need a scoped_guard() call.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>  	}
+>  
+>  	if (ndd->ns_current == -1 || ndd->ns_next == -1)
+> @@ -1039,7 +1038,7 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>  	if (!preamble_next(ndd, &nsindex, &free, &nslot))
+>  		return 0;
+>  
+> -	mutex_lock(&nd_mapping->lock);
+> +	guard(mutex)(&nd_mapping->lock);
 
+So this change now includes nd_label_write_index() in the lock context as well compare to the old code. So either you should use a scoped_guard() or create a helper function and move the block of code being locked to the helper function with guard() to avoid changing the original code flow.
+
+DJ
+
+>  	list_for_each_entry_safe(label_ent, e, &nd_mapping->labels, list) {
+>  		struct nd_namespace_label *nd_label = label_ent->label;
+>  
+> @@ -1061,7 +1060,6 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>  		nd_mapping_free_labels(nd_mapping);
+>  		dev_dbg(ndd->dev, "no more active labels\n");
+>  	}
+> -	mutex_unlock(&nd_mapping->lock);
+>  
+>  	return nd_label_write_index(ndd, ndd->ns_next,
+>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
 
 
