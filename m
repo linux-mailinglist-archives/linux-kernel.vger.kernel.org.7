@@ -1,85 +1,125 @@
-Return-Path: <linux-kernel+bounces-825188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9968B8B359
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:47:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A6EB8B37B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7B211CC321F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710AD564E73
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CC027B50C;
-	Fri, 19 Sep 2025 20:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C657248F5E;
+	Fri, 19 Sep 2025 20:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="el2P5cI5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EsEu5tP0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC8C1FB3;
-	Fri, 19 Sep 2025 20:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2232206AC;
+	Fri, 19 Sep 2025 20:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758314832; cv=none; b=lj4smv3C96qUCtkj7PhZOte9gyh1QOiHoowkW7qA62fOTknJRiwhYrGTBlAXCyPEhJxAMFnrEQ3eC9kLQ5gfLaESXTd/9WJZLuV8L5La3HhYWmPES53Mb3yyNp5AwTYRlS8xzbpPTUQqA8zX7rAErDU5Lt+IfcckWUsbqci6iXA=
+	t=1758314875; cv=none; b=l5+TJl3A5uIcITRfcYtGFJtyL1O1YEy1VKr7/6T0Hc2t7AGg/HkuFp/JXlINy5z4gAtzlAZLIk6Fc2+GZtosmL8XoxpKl4IuJZEooWKsXXOBZ2b6msillDi29XyQ5SO8iVu0fc6uS8bnpY7aFwRMOe8N8A0zGoTL8KPbDPWwbyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758314832; c=relaxed/simple;
-	bh=8ZdaVlsLZ6+YqF2PuATIawPN2p3wYF0R7tpv5xXnP8I=;
+	s=arc-20240116; t=1758314875; c=relaxed/simple;
+	bh=jDC8h7t5c8O6Q8IkBOy7nxDb1kTMRuXzYJroSv/Rvqg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4FkFTJ76skyv8Ay5+HWkSSrLK3ss8nXjGqIPlHF35w6jYlwsEKnX4y7ixd86+TrV6FOV6bfoc3bf/Tb+9DWQmnFUPP6IXCcjfcCU613aM3AWtLzOFBDYjW1BBkXVdVRVokJBO7rIsuTOti13oqD299S7NN4pznu4G/NUTfI7as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=el2P5cI5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87121C4CEF0;
-	Fri, 19 Sep 2025 20:47:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=deV1f5hg7BDBEi/OzN9VPBS9Pj1P0SpzL0VMqjUDbzVgfBKjZF+gKNXIOb0BfOrZYYCcP/vs6olZxkAQcUyAp/deccQXU42aT8r/BXrAp43KhaTGE7hj6XzONp1ZnMIuLXsX/hGKVmTUqVSdPb9maMJ9UZWQF45T2IBZd0Fq76Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EsEu5tP0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 077B2C4CEF0;
+	Fri, 19 Sep 2025 20:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758314831;
-	bh=8ZdaVlsLZ6+YqF2PuATIawPN2p3wYF0R7tpv5xXnP8I=;
+	s=k20201202; t=1758314875;
+	bh=jDC8h7t5c8O6Q8IkBOy7nxDb1kTMRuXzYJroSv/Rvqg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=el2P5cI5c1PQLUF1JQ9+vMHslN9O+S4VdFuzZEypxycWiaT8dz+kwJvqfmqweFFOp
-	 9o0OxuGVX5XGmf1IRbLnGHAntNslP/aveO+Sk6okFX5gbcM9aLXgyLhdOGZqRXiph6
-	 OB4AN5c+YTkq7a2p4EEMx1+QFOdI7nMPrsgfoL+CrS8o7FR72RJ44qxiCmwuJNdB6q
-	 AshlowEhC8N0XIDT6WaL33UfgkZK4mnkO1g3fpk/pcQ1fbhS3lUxnq/ywcleuQ3Vbx
-	 Q1mO+p56dkqr2MBsFL/GRb8u2ErSty2BwsfQjhmEajtnP3poyJAjYn+rWiNqzWqO+T
-	 i7WgYF5X5t7Jw==
-Date: Fri, 19 Sep 2025 15:47:10 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: alex@ghiti.fr, conor+dt@kernel.org, spacemit@lists.linux.dev,
-	broonie@kernel.org, linux-spi@vger.kernel.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, dlan@gentoo.org,
-	aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
-	krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	ziyao@disroot.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: spi: add SpacemiT K1 SPI support
-Message-ID: <175831481987.2188907.2053375143678932465.robh@kernel.org>
-References: <20250919155914.935608-1-elder@riscstar.com>
- <20250919155914.935608-2-elder@riscstar.com>
+	b=EsEu5tP0qMTUshyVmneAm4wpkV/Tr/raDmQXlY0X8BwsNa4IyPJ5nCORa2WpEEqmt
+	 1Uf3Ch+DOw3dPiv+vmzQ7rwoDv8GA+kZVyyJ/gga1Br8yopDyUpOlNuOODiz5MFCVU
+	 OCG2RioV2tTDBlmReDVFCH8/l7tnlrciITVw6jDS2PvIZgDDWMUlX8E6Bgy9BRQjQ1
+	 qxXZwpOIISYRql8CXy/56IhzgGlb7CgsbDRX6ghIE2aLvPXlpN9BE1tXA0wEAuw2Hl
+	 BLbpMgUGJLLrV92o7kRDOFb+aaTQQqmiwUIG37IyYAI4GDrelFUtmgjtUl1P3mxsHi
+	 LzstBPNehYgUw==
+Date: Fri, 19 Sep 2025 15:47:49 -0500
+From: Eric Biggers <ebiggers@kernel.org>
+To: Stephan Mueller <smueller@chronox.de>
+Cc: David Howells <dhowells@redhat.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Simo Sorce <simo@redhat.com>, linux-crypto@vger.kernel.org,
+	linux-s390@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384,
+ SHA-512, SHAKE128, SHAKE256
+Message-ID: <20250919204749.GB8350@quark>
+References: <20250919190413.GA2249@quark>
+ <3936580.1758299519@warthog.procyon.org.uk>
+ <3975735.1758311280@warthog.procyon.org.uk>
+ <5078839.1IzOArtZ34@tauon>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250919155914.935608-2-elder@riscstar.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5078839.1IzOArtZ34@tauon>
 
-
-On Fri, 19 Sep 2025 10:59:11 -0500, Alex Elder wrote:
-> Add support for the SPI controller implemented by the SpacemiT K1 SoC.
+On Fri, Sep 19, 2025 at 09:53:17PM +0200, Stephan Mueller wrote:
+> Am Freitag, 19. September 2025, 21:48:00 Mitteleuropäische Sommerzeit 
+> schrieb David Howells:
 > 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
-> v2: - Use enum rather than const for the binding compatible string
->     - Omit the label and status property in the binding example
->     - No more spacemit,k1-ssp-id property
->     - Interrupts no longer specified with interrupts-extended
+> Hi David,
 > 
->  .../bindings/spi/spacemit,k1-spi.yaml         | 87 +++++++++++++++++++
->  1 file changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/spi/spacemit,k1-spi.yaml
-> 
+> > > I see you also have a test in sha3_mod_init(), which doesn't make 
+> sense.
+> > > The tests should be in the KUnit test suite(s).  If you intended for 
+> the
+> > > sha3_mod_init() test to be a FIPS pre-operational self-test, then (1) 
+> it
+> > > would first need to be confirmed with the people doing FIPS
+> > > certifications that a FIPS pre-operational self-test is actually
+> > > necessary here, (2) it would need to be fixed to actually fulfill the
+> > > requirements for that type of test such as panicing the kernel on
+> > > failure, and (3) it would need to come in its own patch with its own
+> > > explanation.  But, unless you are sure you actually need the FIPS test,
+> > > just omit it out for now and focus on the real tests.
+> > 
+> > I disagree.  It should have at least a single self-test.  If we fail to 
+> load
+> > any modules because the hash is broken on a particular CPU, it would be
+> > useful to have a note in dmesg.  Loading kunit test modules becomes 
+> tricky
+> > in such a case.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Well, testing is supposed to be done before the kernel is released, not
+on every end user's computer.
 
+If you insist, at least keep it lightweight and make sure it doesn't
+detract from the real tests.
+
+> Just for clarifications of the FIPS requirements: One test of any of the 
+> SHA3/SHAKE algorithms during startup is sufficient for *one* Keccak 
+> implementation. FIPS wants the actual Keccak sponge being tested, it does 
+> not care for the miniscule differences between the different SHA/SHAKE 
+> definitions.
+
+Yes.  But I'm still a bit puzzled why there suddenly seems to be
+interest in a FIPS pre-operational self-test for SHA-3 specifically.
+lib/ has had SHA-1 for two decades without a FIPS pre-operational
+self-test.  If someone actually needs this, surely they would also need
+it, and have already needed it, for other algorithms?
+
+> Yet, if we have multiple Keccak sponge implementations, then each needs its 
+> own self test.
+
+While lib/crypto/ often has multiple implementations of the algorithms,
+only one implementation is used on a given system.
+
+- Eric
 
