@@ -1,51 +1,53 @@
-Return-Path: <linux-kernel+bounces-824876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D47B8A596
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:39:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61979B8A5B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFA137E39A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E1D5A5530
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A279C31B11B;
-	Fri, 19 Sep 2025 15:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951C131B826;
+	Fri, 19 Sep 2025 15:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LC+x2Wjj"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uN217LYl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054493168F4
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E755231A80F;
+	Fri, 19 Sep 2025 15:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296352; cv=none; b=SJ08iAsagM3067ST7xf+wS94l23O6ybT0lP9S5WLp6Hj8swz7z++20/NrqKJ5r0yNd3ufuXVEMhMNbWwfBqBhs4bwjWtc7G8M69Gkv1eCLXFgb5ToYUOIJtaVcorh8tP9+fZnptRn/dF4C6mlH6blSiCknVp63A5jEejljHWSKo=
+	t=1758296362; cv=none; b=iALHBP50eLJf4J1W5LqDlcDEsngZDBSPr5Vpi0bF43QWbFO1BzQ2N2e6Vf0LY8gKg7dwaTe65J73eAahyXTSxzQ+5FHfiNpUv7Gdad+j4Mhl5WQLK+l/6IMcxWAJ5rVj1T5ETE0ulQpDU7NyHBzuvfESAzjkYVfuFNLmAwsc4Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296352; c=relaxed/simple;
-	bh=TubOPYDtOvUoK5ZvGZ5+TgaIrgPOQyKbRgz4FDDrUmc=;
+	s=arc-20240116; t=1758296362; c=relaxed/simple;
+	bh=fGwMYeKkbdVCemNuR6v0rtYwdgVlunDWz15c8oYoB2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qa+spvDNXKQxZZINP8JTCMRot9CQohG9bFajqG0OKLZdWoQOD0Z2ZUXfJLsPwFQoaOdEfI2f+Mo6YdU+5kDv+++x9/nzKPRkTqp2Vqk9sXDqtLfYaXmLeWTIuvhc1vCIXBnTd2v/eVcPRvSIGTvtaBhnQFOQr7tNrvu11I+RVVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LC+x2Wjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F0A3C4CEF0;
-	Fri, 19 Sep 2025 15:39:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPbjORgYu0SEXy+7QrMRDCaLbpfrzq++3tw7ZQVlOtVthTyDon4h2ajg+mYGBTmRZO9QAoiLjrmYSGexi8EmF9vlzX8qUh+Y+coo+bLfp+NuR0y9F0ZeGmYbusIx1y9VDKYgQbNBi5hPrVpdywz7d3kaTqD4qld9fCnb0WZRfbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uN217LYl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FFA1C4CEF1;
+	Fri, 19 Sep 2025 15:39:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758296351;
-	bh=TubOPYDtOvUoK5ZvGZ5+TgaIrgPOQyKbRgz4FDDrUmc=;
+	s=korg; t=1758296361;
+	bh=fGwMYeKkbdVCemNuR6v0rtYwdgVlunDWz15c8oYoB2E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LC+x2Wjjar2m4fzl4zwT+QMBunxGpzzSNzwjzYtw91wM+hI8jpsCIOI/sZjt+5Xq3
-	 aTY7P8zevAN2gknj4caDJMHSXY32QLqsutqmXKJ+YbuWFQvi/6n8k4gVK2unMhNl3v
-	 m9BOVqdRFgTWV3BV1NGI2OC+BLSjrKJuVCzZFmlQ=
-Date: Fri, 19 Sep 2025 17:39:08 +0200
+	b=uN217LYl+fgOURebjwk69C5osGk6PPyVGns+Yx1ZvJhwapYF2WXYcypq4Wyf4TDAI
+	 QOQxFPb8e9HycesVvLg1eFrO0ho9l+gX/02mg1+xmrkHy46Lu55suxyKcz0qsaco4o
+	 jr1pxc++FNGvFqF13+i059HDNGme0mviO6LOwmsU=
+Date: Fri, 19 Sep 2025 17:39:18 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-Cc: Matt Porter <mporter@kernel.crashing.org>,
-	Alexandre Bounine <alex.bou9@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: rapidio: make rio_bus_type const
-Message-ID: <2025091904-shorts-dipped-f7e1@gregkh>
-References: <20250919073201.751348-1-abarnas@google.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Akhil Vinod <akhil.vinod@oss.qualcomm.com>,
+	Sumit Kumar <sumit.kumar@oss.qualcomm.com>,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: Re: [PATCH] drivers: mhi: make mhi_ep_bus_type const
+Message-ID: <2025091913-hurricane-scored-2bea@gregkh>
+References: <20250919074408.868220-1-abarnas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,17 +57,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919073201.751348-1-abarnas@google.com>
+In-Reply-To: <20250919074408.868220-1-abarnas@google.com>
 
-On Fri, Sep 19, 2025 at 07:32:01AM +0000, Adrian Barnaś wrote:
+On Fri, Sep 19, 2025 at 07:44:08AM +0000, Adrian Barnaś wrote:
 > Because driver core can properly handle constant struct bus_type,
-> move the rio_bus_type to be a constant structure as well, placing it into
-> read-only memory which can not be modified at runtime.
+> move the mhi_ep_bus_type to be a constant structure as well, placing it
+> into read-only memory which can not be modified at runtime.
 > 
 > Signed-off-by: Adrian Barnaś <abarnas@google.com>
 > ---
->  drivers/rapidio/rio-driver.c | 2 +-
->  include/linux/rio.h          | 2 +-
+>  drivers/bus/mhi/ep/internal.h | 2 +-
+>  drivers/bus/mhi/ep/main.c     | 2 +-
 >  2 files changed, 2 insertions(+), 2 deletions(-)
 
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
