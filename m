@@ -1,198 +1,191 @@
-Return-Path: <linux-kernel+bounces-824027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9467B87F23
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:55:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511F7B87F26
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 966231C83210
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:55:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CDDA5804FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C015284896;
-	Fri, 19 Sep 2025 05:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9BE28488D;
+	Fri, 19 Sep 2025 05:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OvHglfvY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UP6W36si"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C395F1F7580;
-	Fri, 19 Sep 2025 05:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26D22522BE;
+	Fri, 19 Sep 2025 05:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758261319; cv=none; b=WBn9T4VDCzS2jNZG+95a9BaMUtqe1grCPwnHaHERDQVeBGCZIoKvPR4qLMb4ZslioRnnyv4hv9UhBydeWBJNrbtpYt3NyNlGqmu11shZKPKqSaUgG4uRDVo/x056i6vMrXZZdfYWoDapfT4AHjHPCePaG9JKOun9AjzkoadALdU=
+	t=1758261355; cv=none; b=dB+wc+82ninj4SOzUl65bwQSXWkq+Tn0KAR3uDzZr5Hn8AeyijPbTFRHxJCw05qJyDK6c9ZFtu4TIy30CKjchhnZeGXlfWMp6u9OMqPK+lcrnxKev/zSjQNn/wEhUzEC0RwQw1U2UoYBD/bhWkYq6eHpjjLRXNduruoaZlQZdYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758261319; c=relaxed/simple;
-	bh=GGV1fNHCrNN+yx/CG9dIwyTi9ytFA8RptYOTLFaHYbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fk+47jKg+8XKB4A7VhaSscp7qyRXXsNtl403GsAVGG32g3Af2Ye+Clh/muc+VvIZn35vHKn3QrIzcqHPQs57HOsr7Yphsrf6oyxsOOEvjR0uZhqP93Ih8ZPvkzFJEcJ/bn8wUcUHDTeIVMxcQJSd82/Lk2VzzrR35a3vjPGv/Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OvHglfvY; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758261318; x=1789797318;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GGV1fNHCrNN+yx/CG9dIwyTi9ytFA8RptYOTLFaHYbU=;
-  b=OvHglfvYXM22dBRUh21BcevutImjBOcuE2tCEzo2pj6uA0EU4lHlQYr4
-   92bDj2LNM21Dmn3JYKFEkgjjymTIInG1nwsyOFqn37NpX3Ns5FE8isreX
-   HtvhgzgD6c63kPpN5sPGhcJG53UCrob9OGlJJQVr/ix5++A+9j1F3yJEF
-   UKhntjYpKHMvpo8geEoYm2RkHA/a6H1+J46OEf3sUcWwBrHk6r2QEzn0W
-   q4hQZHzLfFKResqiGnWy5nju9twL2jKmLh9RZbT99neKUe9Cnuw6zDmF5
-   xqhnSfFaoXyR3MEe+S7SGQ4Fn5xlQf/2Z0FLGYB7Q15MlCAlQsot9HkFQ
-   g==;
-X-CSE-ConnectionGUID: LA5YyC6wSAiMA/7ziYPVag==
-X-CSE-MsgGUID: xNXBtkZqRdGNEFsmIMgb6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="71977263"
-X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
-   d="scan'208";a="71977263"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 22:55:15 -0700
-X-CSE-ConnectionGUID: 5YaQtYNqSa2bFgTANIxpCA==
-X-CSE-MsgGUID: SYy7ZPebQIS+pCFRJIk5TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
-   d="scan'208";a="180010102"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.177]) ([10.124.233.177])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 22:55:12 -0700
-Message-ID: <67b81e67-80ba-4cac-b019-1c54f191c3d0@linux.intel.com>
-Date: Fri, 19 Sep 2025 13:55:08 +0800
+	s=arc-20240116; t=1758261355; c=relaxed/simple;
+	bh=fn2LTaeB7nmbRxugxeZG6nhXPDtiqg7HUccKWZc+oZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SK1/3VIcgVePtcz3v+l+St7UcA39jC5SyJjnqvOOZelJ7oWhLGPnvt5ex+8sxKh65AVabvI04vBT4lqdafsCg1CCBElani+pXgI++fG+pREdJK28eVjVILE4RSnK2MkVoavmye343nWRsW32pOe2nwAIcWJgx678teC+3nvuYPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UP6W36si; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB283C4CEF0;
+	Fri, 19 Sep 2025 05:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758261354;
+	bh=fn2LTaeB7nmbRxugxeZG6nhXPDtiqg7HUccKWZc+oZI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UP6W36si3ug6giUmM3i4niYCh2tXKVWIYS9y/iIMkTkw9waIFEbmpCXU73ST69vtT
+	 06S970dwx0vhudb+mQO7ztJ1sB8iszjnGmDX9AjUo+BUfkFE8Yq1dRwaGLdGJCqqs4
+	 MbVvJXCAQiX7CNJbaET6J24nsEaiBUuW9mZ2a2bKyp3oLJ+MZ/LVNrBFyWuen0PYzO
+	 kVGW7sSAn5OXt7QpJaf2DR01NdtZaJz3DL4oFb1KvbH2uf00FyvUGoKWY2Va8JdKIf
+	 p8b7jI/Was7FW6t1wiVVXQ3MZLjJYfxseopvYyf434aiA2CZcGmcv28s+zZoWXVr4L
+	 uD+5Q9RweiEFg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing: Add an option to show symbols in _text+offset for function profiler
+Date: Fri, 19 Sep 2025 14:55:50 +0900
+Message-ID: <175826135058.101165.7219957344129610147.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v7 00/12] arch-PEBS enabling for Intel platforms
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-On 8/28/2025 9:34 AM, Dapeng Mi wrote:
-> Changes:
-> v6 -> v7:
->   * Rebase code to last tip perf/core tree.
->   * Opportunistically remove the redundant is_x86_event() prototype.
->     (Patch 01/12)
->   * Fix PEBS handler NULL event access and record loss issue.
->     (Patch 02/12)
->   * Reset MSR_IA32_PEBS_INDEX at the head of_drain_arch_pebs() instead
->     of end. It avoids the processed PEBS records are processed again in
->     some corner cases like event throttling. (Patch 08/12)
->
-> v5 -> v6:
->   * Rebase code to last tip perf/core tree + "x86 perf bug fixes and
->     optimization" patchset
->  
-> v4 -> v5:
->   * Rebase code to 6.16-rc3
->   * Allocate/free arch-PEBS buffer in callbacks *prepare_cpu/*dead_cpu
->     (patch 07/10, Peter)
->   * Code and comments refine (patch 09/10, Peter)
->
->
-> This patchset introduces architectural PEBS support for Intel platforms
-> like Clearwater Forest (CWF) and Panther Lake (PTL). The detailed
-> information about arch-PEBS can be found in chapter 11
-> "architectural PEBS" of "Intel Architecture Instruction Set Extensions
-> and Future Features".
->
-> This patch set doesn't include the SSP and SIMD regs (OPMASK/YMM/ZMM)
-> sampling support for arch-PEBS to avoid the dependency for the basic
-> SIMD regs sampling support patch series[1]. Once the basic SIMD regs
-> sampling is supported, the arch-PEBS based SSP and SIMD regs
-> (OPMASK/YMM/ZMM) sampling would be supported in a later patch set.
+Function profiler shows the hit count of each function using its symbol
+name. However, there are some same-name local symbols, which we can not
+distinguish.
+To solve this issue, this introduces an option to show the symbols
+in "_text+OFFSET" format. This can avoid exposing the random shift of
+KASLR. The functions in modules are shown as "MODNAME+OFFSET" where the
+offset is from ".text".
 
-Kindly ping.
+E.g. for the kernel text symbols, specify vmlinux and the output to
+ addr2line, you can find the actual function and source info;
 
-Hi Peter,
+  $ addr2line -fie vmlinux _text+3078208
+  __balance_callbacks
+  kernel/sched/core.c:5064
 
-May I know your comments on this patch series? Is it ok to merge this basic
-arch-PEBS enabling patch series first (without SIMD regs sampling support)?
-Is there other new comments about this patch set? Thanks.
+for modules, specify the module file and .text+OFFSET;
 
+  $ addr2line -fie samples/trace_events/trace-events-sample.ko .text+8224
+  do_simple_thread_func
+  samples/trace_events/trace-events-sample.c:23
 
+Suggested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ kernel/trace/ftrace.c |   26 +++++++++++++++++++++++++-
+ kernel/trace/trace.c  |    5 +++--
+ kernel/trace/trace.h  |   10 +++++++++-
+ 3 files changed, 37 insertions(+), 4 deletions(-)
 
->
-> Tests:
->   Run below tests on Clearwater Forest and Pantherlake, no issue is
->   found.
->
->   1. Basic perf counting case.
->     perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
->
->   2. Basic PMI based perf sampling case.
->     perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
->
->   3. Basic PEBS based perf sampling case.
->     perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
->
->   4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
->     perf record -e branches:p -Iax,bx,ip,xmm0 -b -c 10000 sleep 1
->
->   5. User space PEBS sampling case with basic, GPRs and LBR groups
->     perf record -e branches:p --user-regs=ax,bx,ip -b -c 10000 sleep 1
->
->   6. PEBS sampling case with auxiliary (memory info) group
->     perf mem record sleep 1
->
->   7. PEBS sampling case with counter group
->     perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
->
->   8. Perf stat and record test
->     perf test 100; perf test 131
->
->
-> History:
->   v6: https://lore.kernel.org/all/20250821035805.159494-1-dapeng1.mi@linux.intel.com/ 
->   v5: https://lore.kernel.org/all/20250623223546.112465-1-dapeng1.mi@linux.intel.com/
->   v4: https://lore.kernel.org/all/20250620103909.1586595-1-dapeng1.mi@linux.intel.com/
->   v3: https://lore.kernel.org/all/20250415114428.341182-1-dapeng1.mi@linux.intel.com/
->   v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
->   v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
->
-> Ref:
->   [1]: https://lore.kernel.org/all/20250815213435.1702022-1-kan.liang@linux.intel.com/
->
-> Dapeng Mi (12):
->   perf/x86: Remove redundant is_x86_event() prototype
->   perf/x86/intel: Fix NULL event access and potential PEBS record loss
->   perf/x86/intel: Replace x86_pmu.drain_pebs calling with static call
->   perf/x86/intel: Correct large PEBS flag check
->   perf/x86/intel: Initialize architectural PEBS
->   perf/x86/intel/ds: Factor out PEBS record processing code to functions
->   perf/x86/intel/ds: Factor out PEBS group processing code to functions
->   perf/x86/intel: Process arch-PEBS records or record fragments
->   perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
->   perf/x86/intel: Update dyn_constranit base on PEBS event precise level
->   perf/x86/intel: Setup PEBS data configuration and enable legacy groups
->   perf/x86/intel: Add counter group support for arch-PEBS
->
->  arch/x86/events/core.c            |  21 +-
->  arch/x86/events/intel/core.c      | 268 ++++++++++++-
->  arch/x86/events/intel/ds.c        | 621 +++++++++++++++++++++++++-----
->  arch/x86/events/perf_event.h      |  41 +-
->  arch/x86/include/asm/intel_ds.h   |  10 +-
->  arch/x86/include/asm/msr-index.h  |  20 +
->  arch/x86/include/asm/perf_event.h | 116 +++++-
->  7 files changed, 955 insertions(+), 142 deletions(-)
->
->
-> base-commit: f49e1be19542487921e82b29004908966cb99d7c
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index a69067367c29..c759cc392fbe 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -534,7 +534,9 @@ static int function_stat_headers(struct seq_file *m)
+ 
+ static int function_stat_show(struct seq_file *m, void *v)
+ {
++	struct trace_array *tr = trace_get_global_array();
+ 	struct ftrace_profile *rec = v;
++	const char *refsymbol = NULL;
+ 	char str[KSYM_SYMBOL_LEN];
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 	static struct trace_seq s;
+@@ -554,7 +556,29 @@ static int function_stat_show(struct seq_file *m, void *v)
+ 		return 0;
+ #endif
+ 
+-	kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
++	if (tr->trace_flags & TRACE_ITER_PROF_TEXT_OFFSET) {
++		long offset;
++
++		if (core_kernel_text(rec->ip)) {
++			refsymbol = "_text";
++			offset = rec->ip - (unsigned long)_text;
++		} else {
++			struct module *mod;
++
++			guard(rcu)();
++			mod = __module_text_address(rec->ip);
++			if (mod) {
++				refsymbol = mod->name;
++				/* Calculate offset from module's text entry address. */
++				offset = rec->ip - (unsigned long)mod->mem[MOD_TEXT].base;
++			}
++		}
++		if (refsymbol)
++			snprintf(str, sizeof(str), "  %s%+ld", refsymbol, offset);
++	}
++	if (!refsymbol)
++		kallsyms_lookup(rec->ip, NULL, NULL, NULL, str);
++
+ 	seq_printf(m, "  %-30.30s  %10lu", str, rec->counter);
+ 
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index b3c94fbaf002..bd82b28b8d2b 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -522,7 +522,8 @@ EXPORT_SYMBOL_GPL(unregister_ftrace_export);
+ 
+ /* trace_options that are only supported by global_trace */
+ #define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
+-	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD)
++	       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD |	\
++	       TRACE_ITER_PROF_TEXT_OFFSET)
+ 
+ /* trace_flags that are default zero for instances */
+ #define ZEROED_TRACE_FLAGS \
+@@ -11115,7 +11116,7 @@ __init static int tracer_alloc_buffers(void)
+ 
+ #ifdef CONFIG_FUNCTION_TRACER
+ /* Used to set module cached ftrace filtering at boot up */
+-__init struct trace_array *trace_get_global_array(void)
++struct trace_array *trace_get_global_array(void)
+ {
+ 	return &global_trace;
+ }
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 5f4bed5842f9..f698aac73b14 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1359,6 +1359,13 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ # define STACK_FLAGS
+ #endif
+ 
++#ifdef CONFIG_FUNCTION_PROFILER
++# define PROFILER_FLAGS					\
++		C(PROF_TEXT_OFFSET,	"prof-text-offset"),
++#else
++# define PROFILER_FLAGS
++#endif
++
+ /*
+  * trace_iterator_flags is an enumeration that defines bit
+  * positions into trace_flags that controls the output.
+@@ -1397,7 +1404,8 @@ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		FUNCTION_FLAGS					\
+ 		FGRAPH_FLAGS					\
+ 		STACK_FLAGS					\
+-		BRANCH_FLAGS
++		BRANCH_FLAGS					\
++		PROFILER_FLAGS
+ 
+ /*
+  * By defining C, we can make TRACE_FLAGS a list of bit names
+
 
