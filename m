@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-824163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79252B8842B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:51:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F2FB88400
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8355B64C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 643E817F530
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12787469D;
-	Fri, 19 Sep 2025 07:46:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BD22BE7C0
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D3F2E8B94;
+	Fri, 19 Sep 2025 07:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="sU4pEa9h"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48231917ED;
+	Fri, 19 Sep 2025 07:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267987; cv=none; b=O+/JpjJXvl15FsEnw5T/3RPPaQE09UaoJTwoYcdtDJy4IiE/vwQFYLzYKRaRdV65IUba61Mlxv6wI/D352sZ6nXQBjqzC5fMIRDz39q7mxflgfVAY6cS/x07G2baicQuB8ny0sqPD7BnAIb2qpJHOUpj42Lp+imwqEkRsF+DUWk=
+	t=1758267996; cv=none; b=G53P2oOGRiIOCOGulYvPsxTzdur2puLD8tWbT55x9ZsuorApSlSP4B7vQAyIH7D2L5x/4ky/FAsLN0iuO1/U7Z3u89ptLwspPq8wJvPOkebYB0BZELtjJ4pDwXLcy7kGeO4ztvstRgp9vcz55KTLsisPE7ljIEpeKeN9sWf6LNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267987; c=relaxed/simple;
-	bh=F9flJKM7IzkC8ce1hDWca3X0bVH2146bB5hDPYcqi/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZqerQUivBefwtM/QdBadpvt0J7GVtDWZrThkQl8PfMBL6AART3q8YHYG7h0Q6xFCv3J/h2iZvjnXFK/CtkxyXhWnq28AKpI/G+E/nWEKwI1VJio6UyQAss1CcIV1xmFSMVuLwhqBcmCCwS9+xSI82/dmduWPhOdid93JyNlJ14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 912811692;
-	Fri, 19 Sep 2025 00:46:16 -0700 (PDT)
-Received: from [10.164.18.52] (MacBook-Pro.blr.arm.com [10.164.18.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EAA743F66E;
-	Fri, 19 Sep 2025 00:46:20 -0700 (PDT)
-Message-ID: <4f5df85d-b238-4e12-8654-cab771454c49@arm.com>
-Date: Fri, 19 Sep 2025 13:16:18 +0530
+	s=arc-20240116; t=1758267996; c=relaxed/simple;
+	bh=rvrmYUZgL7bQQ6IjrPjE5dSTAS903szh3gdAerd2LU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=opfxsjek97yEGeDZgG+U+emCo56F7HDoGzqEy846xPYTaJFxHuSBigdEc+GbAT5CrWDOFwKFGPRKJQBHY8MSqqvX5lYYp5tkaVBFZjykRezN4FIJBVJL3WDdLPJ+dz50BexMPuGbb8Ddhs4/J3+kK1HnF/KqxKghgr1bFTWhm50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=sU4pEa9h; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.9])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 40B084076723;
+	Fri, 19 Sep 2025 07:46:29 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 40B084076723
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1758267989;
+	bh=vvxr3H1WS7K4t51ln89FsOhtImEKJfiVxLgiE628QEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sU4pEa9h+D76ZLjUJK/7/NZd35pUymq/yu3TJ4+z5lIR6nZ4RTeTTvqK4Yd+vOIhQ
+	 VhNziBWwwh/8iK5Oe2zaH+mdWxmxXV2ES6KGlB9oPWQH8wDjGiF3aohrDPeeN1URrS
+	 T4e0aKdWfrJngbKnxel9i5i0j2+nuAPK12FJjYGE=
+Date: Fri, 19 Sep 2025 10:46:29 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Zong-Zhe Yang <kevin_yang@realtek.com>, 
+	Bitterblue Smith <rtl8821cerfe2@gmail.com>, Bernie Huang <phhuang@realtek.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH rtw v4 2/4] wifi: rtw89: fix tx_wait initialization race
+Message-ID: <20250919102546-7f8366ac69aae3e6d47c65a5-pchelkin@ispras>
+References: <20250917095302.2908617-1-pchelkin@ispras.ru>
+ <20250917095302.2908617-3-pchelkin@ispras.ru>
+ <08b25263c6874a089e4a271cb95a9cb7@realtek.com>
+ <20250918173522-07abe99566c12fa46a096fc5-pchelkin@ispras>
+ <7a53522bc0004a979fd78b1d6f440457@realtek.com>
+ <97aed12182074193b362472d32f0c9a9@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v5] arm64: Enable vmalloc-huge with ptdump
-To: Will Deacon <will@kernel.org>
-Cc: catalin.marinas@arm.com, anshuman.khandual@arm.com,
- quic_zhenhuah@quicinc.com, ryan.roberts@arm.com, kevin.brodsky@arm.com,
- yangyicong@hisilicon.com, joey.gouly@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- david@redhat.com, mark.rutland@arm.com, urezki@gmail.com,
- jthoughton@google.com
-References: <20250723161827.15802-1-dev.jain@arm.com>
- <aMk8QhkumtEoPVTh@willie-the-truck> <aMrXBArFNLTdwWs3@willie-the-truck>
- <aM0F8U-cW6sh62H-@willie-the-truck>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <aM0F8U-cW6sh62H-@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <97aed12182074193b362472d32f0c9a9@realtek.com>
 
+On Fri, 19. Sep 00:50, Ping-Ke Shih wrote:
+> Ping-Ke Shih <pkshih@realtek.com> wrote:
+> > Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> > > That's a good question and it made me rethink the cause of the race
+> > > scenario.  I didn't initially take TX kick off into consideration when
+> > > it actually matters.
+> > 
+> > Do it mean that you pictured the racing scenario in commit message by
+> > code review instead of a real case you met?
 
-On 19/09/25 12:57 pm, Will Deacon wrote:
-> Dev,
->
-> On Wed, Sep 17, 2025 at 04:43:00PM +0100, Will Deacon wrote:
->> On Tue, Sep 16, 2025 at 11:30:26AM +0100, Will Deacon wrote:
->>> I'm currently trying to put together a litmus test with James (cc'd) so
->>> maybe we can help you out with that part.
->> Here's what we came up with. There's not a good way to express the IPI
->> from kick_all_cpus_sync() but it turns out that the ISB from the TLB
->> invalidation is sufficient anyway. Does it make sense to you?
-> Any comments on the litmus test and/or my question about serialisation
-> of the static key? I'll be moving the arm64 tree to "fixes only" soon
-> as far as 6.18 is concerned.
+Yes, the underlying issue for this patch was found by code review only.
+Somehow the negative consequences of the potential race became an "obvious"
+thing after preparing the first commit, and ignorance of TX kick off
+influence made the changelog confusing..
 
-Sorry, I had read your replies but thought I will take time to respond since
-it seemed this patch wouldn't land in 6.18, and I need to recall the discussion :)
-I'll reply to the other mail.
+> > 
+> > >
+> > > The thing is: there might have been another thread initiating TX kick off
+> > > for the same queue in parallel.  But no such thread exists because a taken
+> > > wiphy lock generally protects from such situations. rtw89_core_txq_schedule()
+> > > worker looks like a good candidate but it doesn't operate on the needed
+> > > management queues.
+> > 
+> > Last night I also thought if another thread works in parallel.
+> > Maybe rtw89_ops_tx() could be?
 
->
-> Will
+Well, probably it could.  I thought rtw89_ops_tx() is wiphy locked, too,
+but apparently it's not always the case.
+
+Not that it's a relatively easy-to-hit race I'm going to try to reproduce
+though :)
+
+> > 
+> > >
+> > > So I may conclude this patch doesn't fix any real bug though I'd prefer to
+> > > keep it (with description rewritten of course) because it helps to avoid
+> > > potential issues in future.
+> > 
+> > Agree.
+> > 
+> 
+> Forgot to say. Could you mention this racing scenario was found by core
+> review and your perspective in commit message? 
+
+Sure.
 
