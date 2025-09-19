@@ -1,137 +1,184 @@
-Return-Path: <linux-kernel+bounces-825075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33930B8AE25
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B94FB8AE29
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C99B170256
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAE1758709E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64B925393C;
-	Fri, 19 Sep 2025 18:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF50253359;
+	Fri, 19 Sep 2025 18:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YWINuwhM"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="guDhhs5p"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F624A3E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD4324678C
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758305797; cv=none; b=VeHtXo3huw0P+Zgi8BmG87Zd1tQ274FGKeZ5fkGI+gKO+XDpfejsmL5EkX/aRzBiHze2MLvooecX3cpxLOxVLLxfZKkdcKtzZ61D/r90Gi8QFheS5ibTABWO7Q2jkf276TBQjjZ+VAQh9qJFF19/CjO+p4GOcMQTMOeSuffcptc=
+	t=1758305825; cv=none; b=PIOBRtDrHxBgb6tnFc/+hId4rsiI2UrBFcEgNfI57D4NH78UCvdZSa4Nl7ZWj/zOcRhtMc6QYs8fQltuUs4E/g7klMW8Hgv6g9bHmw+HE4X++V8z6fGTcX+noMnj/tqA4HduNER8ZM8G+KvcFHNa949xCCRTPvCZsGAYgc+CPk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758305797; c=relaxed/simple;
-	bh=svB4c4RUB6k6TMO/taqKy8jJHs6qQsb6dPdPQdI21nk=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=f2skxN56nCVIRQAb6osiyASrq27LwDxSicK/L9Jsg/mUYwZTL1DTgpOtB/QzXcCnbGOhJ01A2t6SitUSEJIU0EnF6/DpwkTlarD6+jMoPmw4lRM8Jm6gvbyaYYvXjslYNtGNpsXSIbxxvP4xC4IX5DC65uxGCzANoDtmz20sOhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YWINuwhM; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--czapiga.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-62efab531d8so3393851a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758305794; x=1758910594; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5mgMxXZc6JsWSisIXu5YKjlUPOflnR0WNH38+RWcea4=;
-        b=YWINuwhMarzGUvPo57orz93mG954ydMfwx8z+QtZyGmIHnQ3pnjut6lUj/zxPBOuAA
-         QHUQPqnZCiPYEutD9rOksIT5iPsjAYK1kdKOg09DDILVG3tjeAYzq5vqCNpxzleDRObV
-         k93wcGuAKvVvlLVbKhguaeKCnoel2Ef9o/573SmC6vEB+Gtgpf0IOTADt/b7vlSgZzvj
-         PX6EQ3o8OCMrvnPud8QGGXSmOfa/KGOPGoIuudBWhwR7tGZilJHpBwej7xkQQR1sgJHQ
-         veBle8b9A81Qwn+gFR72//4HqBIL0iTHz29oou8gDQpW/FFc/x+67ScMahZQ6LYxwtfg
-         SPKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758305794; x=1758910594;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5mgMxXZc6JsWSisIXu5YKjlUPOflnR0WNH38+RWcea4=;
-        b=Bz5naI8UwiQIgLrIkW1AHTIJYWv3HE2D2xyYzgBQru2evRYAkGZp/tYILITJoNTo9s
-         fH4LqNWPyV1leWMm4aLf5lCNV/ANzYFsl6pZWyHxKDJz4oLwtO9watFpV0zRsTRGhEw5
-         e+JPlskK+aThOF2gf+/K7siq+w09hhQYkPofskqflY/+OWMf/cSjaSFrEx8Rl86xxadV
-         Qx1PY2v2s84dULTklBM5aAUp6Ni0U0s318GZ4qgh1+bAc88ixWvUC5lOag/cuFfWnGy9
-         bEqX9BZpROliqh5riGU8Hb4rNtXjDlq2OZX5EtZ8AfJpfQ4CAH1sJFlDlOkotwCaoveq
-         9bDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk94tQ8HDiEo5CDtKvkzKjHiDFMGEEQuaxW60aQf6dm15p1lpDhABMnd1i7za+ZL1hgVJJAQaga0GP7Lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFhnxm9kZYTKYO1tMIb53OKNOr5WLtMi24rlwIatKIo1b4ndXg
-	UVcI8Jl9KKK5yE2jlo6RACK8E7vsL4f+2+8Dht34Ac3re5K8YrhYmp5cKPdllTEJFLCVwyFIm2D
-	HeeiXhUwxhQ==
-X-Google-Smtp-Source: AGHT+IFBF9Kq0n5zsV/eYossWIuj1G3yQkDPq2/13B/MTXPtyGtmb7OfIX4VaMq0zKbRqqvGUOTUkbhU52En
-X-Received: from edbfi21.prod.google.com ([2002:a05:6402:5515:b0:62f:8b99:d116])
- (user=czapiga job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:4586:b0:626:1fce:d2f2
- with SMTP id 4fb4d7f45d1cf-62fc0917f14mr3475109a12.16.1758305793785; Fri, 19
- Sep 2025 11:16:33 -0700 (PDT)
-Date: Fri, 19 Sep 2025 18:15:47 +0000
+	s=arc-20240116; t=1758305825; c=relaxed/simple;
+	bh=6H8DRYkITx0t9mOK8RYJWKONBj4iLpeHg7QIb/1qOLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+aOv6Wz+VL1Yud1Waiy+ppYyCTFJAR83E08r7n+a7n4WNppGgoJmzGbMvpmFdT4yFw538rkkMo7ckz1hx3Bz8MsNutx/LIXUE9lBQ/XdFsAuw3DxPq7/ASAkkTI608wrQ5IkSnYxC28dxVYmc8rR3fYmoi+docaSHYmLL022Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=guDhhs5p; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 94A8D40E01BB;
+	Fri, 19 Sep 2025 18:16:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Wxnng_bB4nsj; Fri, 19 Sep 2025 18:16:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758305812; bh=BQuY+K1ypTJTx2n0xbUdBAlzdTI/9TH/FRIgqi7Q14U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=guDhhs5pmEJZYm1U4nndG8F/xaNJHgEZjQeirWU9diUlLAmW/GgdRtTzyRco20llZ
+	 K3Mk0EUQwk/geHWurdmpnjes3C1GxyKdrkOVGujIoOpoYyE/aViinGraSedTadEZmf
+	 8hk1q6EAOG9M0vChK7C2VT01WHl6fHdPdiW3R79kkZfFIJjUC49lb+XVIL4OXenNBO
+	 +QXUDcMURcGPF37rXToFD0KNgOkroDvwIUbbUbqHTZIZw5aYQYW++iVjVWuXcgnWxF
+	 WAL2D2vjoMyH0Fu31ryVUIvIgVsaR5ZVbtKgWkkkiVHAx4QmNoKjfd8N2BGcV34y3p
+	 tnMTdws8C9LfQls5roitS5G5bd6mxRhx4ARNjhyUOGQq2SP6w0Ro0jWsozXA3le3rX
+	 odh95AQgmMnkSvwZoDNVic4oHn335mQVMPqxlLA3DckBOfFw50nv+vWS5VFAK3qV50
+	 s+VLjj3U3+Z2kHExyJausLesUKFewPmHRDH5LF1CDJzEEfezmvwyMt9hmPXuuaK8YV
+	 5Hs1xNx1RwBP50m0bEVshjZm8+uqMQ1tVfJ8fIW/81o8n/MZiDHPGqiGr3xBaNtQPS
+	 gupJV0XIWWWgi8fMx9iKSWalKNcRTx1SCUOWPeZ2/U/xodv1cF6615VmyprafzkdTh
+	 FZwjc3ZKYfzhi8iea5SBPy+g=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id BA13040E00DA;
+	Fri, 19 Sep 2025 18:16:44 +0000 (UTC)
+Date: Fri, 19 Sep 2025 20:16:35 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Dan Snyder <dansnyder@google.com>
+Subject: Re: [PATCH 1/3] x86/umip: Check that the instruction opcode is at
+ least two bytes
+Message-ID: <20250919181635.GFaM2eA8GFtZ48sfb0@fat_crate.local>
+References: <20250808172358.1938974-1-seanjc@google.com>
+ <20250808172358.1938974-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250919181547.2172319-1-czapiga@google.com>
-Subject: [PATCH v2] mtd: spi-nor: core: Check read CR support
-From: Jakub Czapiga <czapiga@google.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Konrad Adamczyk <konrada@google.com>, 
-	Adeel Arshad <adeel.arshad@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Kornel Duleba <korneld@google.com>, Jakub Czapiga <czapiga@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250808172358.1938974-2-seanjc@google.com>
 
-Some SPI controllers like Intel's one on the PCI bus do not support
-opcode 35h. This opcode is used to read the Configuration Register on
-SPI-NOR chips that have 16-bit Status Register configured regardless
-of the controller support for it. Adding a check call in the setup step
-allows disabling use of the 35h opcode and falling back to the manual
-Status Registers management.
+On Fri, Aug 08, 2025 at 10:23:56AM -0700, Sean Christopherson wrote:
+> When checking for a potential UMIP violation on #GP, verify the decoder
+> found at least two opcode bytes to avoid false positives when the kernel
+> encounters an unknown instruction that starts with 0f.  Because the array
+> of opcode.bytes is zero-initialized by insn_init(), peeking at bytes[1]
+> will misinterpret garbage as a potential SLDT or STR instruction, and can
+> incorrectly trigger emulation.
+> 
+> E.g. if a vpalignr instruction
+> 
+>    62 83 c5 05 0f 08 ff     vpalignr xmm17{k5},xmm23,XMMWORD PTR [r8],0xff
+> 
+> hits a #GP, the kernel emulates it as STR and squashes the #GP (and
+> corrupts the userspace code stream).
+> 
+> Arguably the check should look for exactly two bytes, but no three byte
+> opcodes use '0f 00 xx' or '0f 01 xx' as an escape, i.e. it should be
+> impossible to get a false positive if the first two opcode bytes match
+> '0f 00' or '0f 01'.  Go with a more conservative check with respect to the
+> existing code to minimize the chances of breaking userspace, e.g. due to
+> decoder weirdness.
 
-Before:
-openat(AT_FDCWD, "/dev/mtd0", O_RDWR)   = 4
-ioctl(4, MIXER_WRITE(6) or MEMUNLOCK, {start=0, length=0x2000000}) = -1
-EOPNOTSUPP
+So I did some staring... I guess this fix is trying to address our insn
+decoder shortcoming and calls it "weirdness", right?
 
-After:
-openat(AT_FDCWD, "/dev/mtd0", O_RDWR)   = 4
-ioctl(4, MIXER_WRITE(6) or MEMUNLOCK, {start=0, length=0x2000000}) = 0
-ioctl(4, MIXER_WRITE(5) or MEMLOCK, {start=0x1800000, length=0x800000}) = 0
+$ objdump -d a.out | awk -f ./arch/x86/tools/objdump_reformat.awk | ./arch/x86/tools/insn_decoder_test 
+./arch/x86/tools/insn_decoder_test: warning: Found an x86 instruction decoder bug, please report this.
+./arch/x86/tools/insn_decoder_test: warning:    0:      62 83 c5 05 0f 08 ff    vpalignr $0xff,(%r8),%xmm23,%xmm17{%k5}
+./arch/x86/tools/insn_decoder_test: warning: objdump says 7 bytes, but insn_get_length() says 6
+./arch/x86/tools/insn_decoder_test: warning: Decoded and checked 1 instructions with 1 failures
 
-Suggested-by: Adeel Arshad <adeel.arshad@intel.com>
-Signed-off-by: Jakub Czapiga <czapiga@google.com>
+Looks like it.
+
+a.out has:
+
+0000000000000000 <.text>:
+   0:   62 83 c5 05 0f 08 ff    vpalignr $0xff,(%r8),%xmm23,%xmm17{%k5}
+
+I guess just adding the insn to the table doesn't fix it.
+
+Masami?
+
 ---
-Changes since v1:
-- Use spi_nor_spimem_setup_op instead of spi_nor_read_cr to test opcode
-- Check only for spi-mem devices
-- Move check from spi_nor_setup to spi_nor_spimem_adjust_hwcaps
+diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
+index 262f7ca1fb95..a23ff3c16908 100644
+--- a/arch/x86/lib/x86-opcode-map.txt
++++ b/arch/x86/lib/x86-opcode-map.txt
+@@ -23,7 +23,7 @@
+ #
+ # AVX Superscripts
+ #  (ev): this opcode requires EVEX prefix.
+-#  (es): this opcode requires EVEX prefix and is SCALABALE.
++#  (es): this opcode requires EVEX prefix and is SCALABLE.
+ #  (evo): this opcode is changed by EVEX prefix (EVEX opcode)
+ #  (v): this opcode requires VEX prefix.
+ #  (v1): this opcode only supports 128bit VEX.
+@@ -867,7 +867,7 @@ AVXcode: 3
+ 0c: vblendps Vx,Hx,Wx,Ib (66)
+ 0d: vblendpd Vx,Hx,Wx,Ib (66)
+ 0e: vpblendw Vx,Hx,Wx,Ib (66),(v1)
+-0f: palignr Pq,Qq,Ib | vpalignr Vx,Hx,Wx,Ib (66),(v1)
++0f: palignr Pq,Qq,Ib | vpalignr Vx,Hx,Wx,Ib (66),(v1) | vpalignr Vx,kz,Hx,Wx,Ib (ev)
+ 14: vpextrb Rd/Mb,Vdq,Ib (66),(v1)
+ 15: vpextrw Rd/Mw,Vdq,Ib (66),(v1)
+ 16: vpextrd/q Ey,Vdq,Ib (66),(v1)
 
- drivers/mtd/spi-nor/core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index ac4b960101cc..0c43fcca3d0a 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -2318,6 +2318,16 @@ spi_nor_spimem_adjust_hwcaps(struct spi_nor *nor, u32 *hwcaps)
- 					    &params->page_programs[ppidx]))
- 			*hwcaps &= ~BIT(cap);
- 	}
-+
-+	/* Some SPI controllers might not support CR read opcode. */
-+	if (!(nor->flags & SNOR_F_NO_READ_CR)) {
-+		struct spi_mem_op op = SPI_NOR_RDCR_OP(nor->bouncebuf);
-+
-+		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
-+
-+		if (spi_nor_spimem_check_op(nor, &op))
-+			nor->flags |= SNOR_F_NO_READ_CR;
-+	}
- }
- 
- /**
+> Fixes: 1e5db223696a ("x86/umip: Add emulation code for UMIP instructions")
+> Reported-by: Dan Snyder <dansnyder@google.com>
+> Analyzed-by; Nick Bray <ncbray@google.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kernel/umip.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
+> index 5a4b21389b1d..406ac01ce16d 100644
+> --- a/arch/x86/kernel/umip.c
+> +++ b/arch/x86/kernel/umip.c
+> @@ -156,8 +156,8 @@ static int identify_insn(struct insn *insn)
+>  	if (!insn->modrm.nbytes)
+>  		return -EINVAL;
+>  
+> -	/* All the instructions of interest start with 0x0f. */
+> -	if (insn->opcode.bytes[0] != 0xf)
+> +	/* The instructions of interest have 2-byte opcodes: 0F 00 or 0F 01. */
+> +	if (insn->opcode.nbytes < 2 || insn->opcode.bytes[0] != 0xf)
+>  		return -EINVAL;
+>  
+>  	if (insn->opcode.bytes[1] == 0x1) {
+> -- 
+> 2.50.1.703.g449372360f-goog
+> 
+
 -- 
-2.51.0.534.gc79095c0ca-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
