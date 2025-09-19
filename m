@@ -1,59 +1,94 @@
-Return-Path: <linux-kernel+bounces-824650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD62B89C7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF40B89BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BDA568270
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:02:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53FC11C85A81
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476DF2561C2;
-	Fri, 19 Sep 2025 14:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B8A3128C4;
+	Fri, 19 Sep 2025 13:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="FkfZ9BD6"
-Received: from forward200b.mail.yandex.net (forward200b.mail.yandex.net [178.154.239.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ktD/Nj9d"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D1B1F3D56
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751530EF67
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758290564; cv=none; b=h5/M6rBovYUAweFDN4Hxw2E4kndsbp2DW0zrCaFobzNk0RK1ASjFJrZyfSoFDaN6mi9sEfisK6SF5z5u3b/NDVv/Wj11l37BQRWWO5sBtw/LQl0J+HtQh/C1ApCnMJayTBWG5RzUHij1u2QKwhMBFC0gzV/D2C8Xm7C1OlePRBM=
+	t=1758290193; cv=none; b=FdKvPx7UGoyBFLbbfHuoKubG7Wiqfs+rZ3m2iboHlLxEZiElGt8Du2L+1uSLFCsTp7jplvNGTvDVkJY3D1PJcnpes4x/Qgum0tfsTox/mj7o0iIV/n2f7nMQtaIZUawpe15TK7di/2Ly59Er74pG2+I4Z26I95PKrBcAseBI7kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758290564; c=relaxed/simple;
-	bh=OrJsWhLsTTyW2lra5WwbIAhrk7/5g0JKyP9ZZKoFX0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qG6uSVxO3ItXIxY3NQ6PH9q7evbmW8TntC1ZGq8gTda6cbj0LWCjH5qZsDR8Vq1XCW5JZIQSe/X/FcWCrecikrDLIsJihUx+YjHbzQspMwKgc9yUY4tYjMqieTxhVAdCF9sYAaqKx345oBQZzaEKktrg6LHZArpGpPx3xLC/sfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=FkfZ9BD6; arc=none smtp.client-ip=178.154.239.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
-	by forward200b.mail.yandex.net (Yandex) with ESMTPS id D8B3F82468
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:56:12 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:4419:0:640:5be6:0])
-	by forward103b.mail.yandex.net (Yandex) with ESMTPS id 5B0E2C0085;
-	Fri, 19 Sep 2025 16:56:03 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1uTTw6eM48c0-aUvTvDhQ;
-	Fri, 19 Sep 2025 16:56:03 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1758290163; bh=fqlmACInvcZ6zw+CwXBmhZen3vj8qTOuebjt3QcIS1c=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=FkfZ9BD66+lAh76B41lltffvFvE45i5357T0rpNdS09tltBlVFjRuFI55nxNhn4+y
-	 dTHmMICvBjzgGZ3d1n0323WBaEKtef0+yKtna9m5cYyZiUsorseMJBY3hMitxnkpSq
-	 zNCd8GSJwyu0iL3MKKBAiJEsmoA8do9cu/d9OtsM=
-Authentication-Results: mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org,
-	Dmitry Antipov <dmantipov@yandex.ru>
-Subject: [PATCH RESEND] objtool: speedup subsequent calls to dead_end_function()
-Date: Fri, 19 Sep 2025 16:55:57 +0300
-Message-ID: <20250919135557.280852-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758290193; c=relaxed/simple;
+	bh=3yD5s6iQpt8gmww1Hw5ulogXiK3VTJtqyr1Di45FF4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fOh7T1DW85+91sLZfxV3Z1TXrW38JO6scKl/uyERRFyvcoceUbGJHr+MehVoC2wMY7hO0+KW/OVVPFC7Qt3ZpdXdnJkUFxI1vPSjOvj9S0vCX/Ne6u+F2kAwr1wOdR4Z5elgWitlYCDXpC7Y+fIi7+GAqwMOmRpylvpjx+1mM3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ktD/Nj9d; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45df0cde41bso14158115e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:56:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758290189; x=1758894989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UzU98KDEg5q3PSia+gD9BKqdU2Y47Z8eNhtKqtMKJHI=;
+        b=ktD/Nj9dBo73BEfMexuLtVyPYBkXpi0w65lU2zMR4iS3dnje8vn/WSCj4Nuf1ol4Y1
+         6hvqfoC0a6u2/a8FG39sjmMArLGQQ0kImdEUskkXti3TQJGLAWPXfmqU49Ijf1F7XqjP
+         MQdWxLVsEX+T/oeuHjktuMCiN9j6lxZ9Cp5E4EgygTUivnRLS0xQkrlO3GtlEIWyBjYF
+         UwQUUulI1rw+oES5l3qbuKxJkj12I4xrKzVpqZUkqcBSIMKMve4pZxiFK0SmjU9m1s0+
+         XnIDktJ5JVyd8oFvJrdES2IrFiXpHWmHeCbbms1uKIsWp3fcncGqnpqCkkjFl2L90uz2
+         1R1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758290189; x=1758894989;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UzU98KDEg5q3PSia+gD9BKqdU2Y47Z8eNhtKqtMKJHI=;
+        b=RREoXIbROI77xRmXhohxPHTldrMtrsSytSPpe27Z6A8YoDVKwvpf/pLEaiVUsiXcoS
+         DNFS9AD9KENRrAL3rCr+5RAsW7xE9D3HS3oL6/Q6Jdg3VN/0ruuns5k58e6xt+7rqtXh
+         ymta3imw7WLAkA2L3hjDelvvsis2AyMEfGEWGHXnx45U7rBdtfi8w5EcbdgEdOBb8zdU
+         woCIodBwCLN93q9AOoxtSTVmWKCxPfRAcb8RoZOgLZ1PSUTQSbrkDUoKFcPSdmDB4kxi
+         rlFX1q4NpeoAOCFaPkq1vggDrEyGOpG5CCSibJdGXCOTelgHDv/5JqSWXHX6Hc817g/p
+         NzZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQyGIG82bG46mm8RTcIXmlzuJqYwXAq0Qz5fvSbhzXAgMshVT2NYRrks3gKR3R7JjF36FnWMxhj3nIl1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMdYwCQHW6tEMg4PGxduWEPF/8bNOq09z8OUgpO6DW+vhilDEH
+	jySnoRWjp9iW+mswHa3eik3jtpd1Uh99zj6AAp0HHDajjLZ4WG3q+zWVbHTv4h7iS08=
+X-Gm-Gg: ASbGncug1dDgVeDFZhDu56ZpnNeBNW0n2EWOi7vj9NIkoHJvIy/TJWC0klJlXGBWf5r
+	T46Ws9NFMKnt+g70p60KUKN+tqhWs1VJibAvevR9igDn7AzGOFNy0TBCm0ujVsTMLdQIbFRVwGK
+	F35Yh3+fMxECq/hGoEVpx4csDBeqJ3DAhrZ0erxraT+Id9iXu1NTCPoQQygPM+JRKlhGhQmOba1
+	pKoWqZANnLYROKBt72A0FJgziqOj5fu4cXMPAvbBo/W7J1nv8k23QJzVsP63BB5EVsVY2omeNum
+	3edwRP7N0MNckICNlJbrnGFFTuDIOsoTEoicDQXlL1ZinVOk7Y2iVzgKhgaDldDz05ExWBFjkrw
+	irc/y7h00EaPBlvZRV8u/pEr/U3rYU7Q68iCKdqcKrGk=
+X-Google-Smtp-Source: AGHT+IESmxxI+eSgmE+/tcz2zUxF2KRPYblK1wrRrADGBovoitxj+uzYw8q4YodhSmp3eJmv1Q+Jlg==
+X-Received: by 2002:a05:600c:c48e:b0:45d:f88f:9304 with SMTP id 5b1f17b1804b1-467ebbbfff4mr35278245e9.30.1758290188977;
+        Fri, 19 Sep 2025 06:56:28 -0700 (PDT)
+Received: from mai.box.freepro.com ([2a05:6e02:1041:c10:8ffd:205a:6719:49c1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613d14d212sm144913025e9.12.2025.09.19.06.56.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 06:56:28 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	s32@nxp.com,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	chester62515@gmail.com,
+	mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com
+Subject: [PATCH v4 0/2] NXP SAR ADC IIO driver for s32g2/3 platforms
+Date: Fri, 19 Sep 2025 15:56:16 +0200
+Message-ID: <20250919135618.3065608-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,47 +97,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Running over KASAN-enabled vmlinux.o, some functions comes from the
-sanitizer runtime may be processed by 'dead_end_function()' a lot of
-times, so it's reasonable to record the result in 'struct symbol' of
-the relevant function. Briefly testing over huge 'make allyesconfig'
-vmlinux.o, this may speedup objtool by nearly 10%.
+The S32G2 and S32G3 platforms have a couple of successive
+approximation register (SAR) ADCs with eight channels and 12-bit
+resolution. These changes provide the driver support for these ADCs
+and the bindings describing them.
 
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
----
- tools/objtool/check.c               | 5 ++++-
- tools/objtool/include/objtool/elf.h | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
+The driver is derived from the BSP driver version. It has been partly
+rewritten to conform to upstream criteria.
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index d14f20ef1db1..d4c0ef419b95 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -322,7 +322,10 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
- 
- static bool dead_end_function(struct objtool_file *file, struct symbol *func)
- {
--	return __dead_end_function(file, func, 0);
-+	if (func->functype == UNKNOWN)
-+		func->functype = (__dead_end_function(file, func, 0)
-+				  ? NORETURN : REGULAR);
-+	return func->functype == NORETURN;
- }
- 
- static void init_cfi_state(struct cfi_state *cfi)
-diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objtool/elf.h
-index 0a2fa3ac0079..2c491eb07741 100644
---- a/tools/objtool/include/objtool/elf.h
-+++ b/tools/objtool/include/objtool/elf.h
-@@ -70,6 +70,7 @@ struct symbol {
- 	u8 local_label       : 1;
- 	u8 frame_pointer     : 1;
- 	u8 ignore	     : 1;
-+	enum { UNKNOWN, REGULAR, NORETURN } functype : 2;
- 	struct list_head pv_target;
- 	struct reloc *relocs;
- 	struct section *group_sec;
+https://github.com/nxp-auto-linux/linux/blob/release/bsp44.0-6.6.85-rt/drivers/iio/adc/s32cc_adc.c
+
+After the V1 posting there were some discussions around the DMA code
+to be converted to use the IIO DMA API [1]. Unfortunately this one is
+not yet fully implemented and merged in the framework to support the
+cyclic DMA. The current DMA code in the driver has been used in
+production since several years and even if I agree it can be improved
+with a dedicated IIO DMA API in the future, IMO, it sounds reasonable
+to keep it as is until the IIO DMA API supporting the cyclic DMA is
+merged. I'll be glad to convert the driver code if such an API exists
+and allows to remove code inside the driver.
+
+[1] https://lore.kernel.org/all/c30bb4b6328d15a9c213c0fa64b909035dc7bf40.camel@gmail.com/
+
+Changelog:
+	* V4:
+	  ** Christophe Jaillet **
+	  - Used dmam_alloc_coherent() instead of dma_alloc_coherent()
+
+	* V3:
+	  ** Jonathan Cameron **
+	  - Removed specific IIO_SYSFS_TRIGGER dependency in Kconfig
+	  - Fixed headers
+	  - Avoided macro generic names
+	  - Used IIO_DECLARE_BUFFER_WITH_TS
+	  - Documented buffer and buffer_chan
+	  - Fixed single line comment
+	  - Commented why channel 32 is the timestamp
+	  - Renamed __<prefixed> functions
+	  - Factored out the raw read function to prevent nested goto in the switch
+	  - Returned -EINVAL instead of break
+	  - Removed explict pointer cast
+	  - Used iio_push_to_buffers_with_ts variant
+	  - Fixed ordering operations in postenable / predisable
+	  - Return IRQ_HANDLED even if there is an error in the isr
+	  - Fixed devm_add_action_or_reset() to return directly
+	  - Used sizeof(*var) instead of sizeof(struct myvar)
+	  - Used model name instead of dev_name()
+	  - Used dev_err_probe() in any case in the probe function
+	  - Fixed indentation
+
+	  ** David Lechner **
+	  - Kept alphabetical order in Makefile
+	  - Changed explicit GPL-2.0-only
+	  - Removed clock name in when calling devm_clk_get_enabled()
+
+	  ** Andriy Shevchenko **
+	  - Fixed headers ordering and added the missing ones
+	  - Fixed constant numeric format
+	  - Ran pahole and consolidated the nxp_sar_adc structure
+	  - Fixed semi-column in comments and typos
+	  - Fixed indentation
+	  - Moved data assignment before iio_dev allocation
+
+	* V2:
+	  - Massaged the cover letter changelog to explain the DMA
+	  ** Andriy Shevchenko **
+	  - Added missing headers and use proper header for of.h
+	  - Changed macro offset zero to be consistent
+	  - Remove macros REG_ADC_MCR_NRSMPL_* as they are unused
+	  - Changed delays macro under the form 100000 => 100 * USEC_PER_MSEC
+	  - Replaced PAGE_SIZE by a NXP_PAGE_SIZE = SZ_4K macro
+	  - Replaced read_poll_timeout() by readl_poll_timeout()
+	  - Changed error pattern "error first"
+	  - Replaced variable type 'int' to 'unsigned int'
+	  - Fixed bug right instead of left shift, use BIT(channel)
+	  - Returned directly from switch-case
+	  - Used guard(spinlock_irqsave)()
+	  - One liner function call
+	  - Remove redundant {}
+	  - Write default values litterals instead of temporary variables
+	  - Changed variable name vref -> vref_mV
+	  - Removed unneeded error message
+	  - Used dev_err_probe() consistently
+	  - Removed successful driver probe message
+	  - Removed redundant blank line
+
+	  ** Nuno Sa **
+	  - Replaced of_device_get_match_data() by device_get_match_data()
+	  - Removed iio_device_unregister() because devm_iio_device_register() is used
+	  - Removed "/* sentinel */" comment
+	  - Removed CONFIG_PM_SLEEP defiries
+
+	  ** Krzysztof Kozlowski / David Lechner **
+	  - Removed clock-names in DT bindings
+	  - Fixed minItems by maxItems
+
+	* V1:
+	  - Initial post
+
+Daniel Lezcano (2):
+  dt-bindings: iio: adc: Add the NXP SAR ADC for s32g2/3 platforms
+  iio: adc: Add the NXP SAR ADC support for the s32g2/3 platforms
+
+ .../bindings/iio/adc/nxp,s32g2-sar-adc.yaml   |   63 +
+ drivers/iio/adc/Kconfig                       |   12 +
+ drivers/iio/adc/Makefile                      |    1 +
+ drivers/iio/adc/nxp-sar-adc.c                 | 1021 +++++++++++++++++
+ 4 files changed, 1097 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/nxp,s32g2-sar-adc.yaml
+ create mode 100644 drivers/iio/adc/nxp-sar-adc.c
+
 -- 
-2.51.0
+2.43.0
 
 
