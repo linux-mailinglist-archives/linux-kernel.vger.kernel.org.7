@@ -1,122 +1,90 @@
-Return-Path: <linux-kernel+bounces-824733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6560CB8A082
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:40:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFEDB8A094
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5D5416863A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2344A1BC175F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE6931326D;
-	Fri, 19 Sep 2025 14:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F0313D75;
+	Fri, 19 Sep 2025 14:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="I55mI9xr"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTXw3iGj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2F2EC08F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A8824DCEB;
+	Fri, 19 Sep 2025 14:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292813; cv=none; b=HKgmuzNl0O6bEwT7cwfqL/eNORLHktt9OUemnHzNrPVMzjVL8FacA8pygbNAOdURNFeJbyoo7LiaXLRlTpcjLYlK7RJ3RaA3OH8ps7eiPjIQDEYmoecAaZ//9OIg8dR3BOIwygUwpfa2aVljxY9oM5q5mTN0luH5uayXHfZm7dM=
+	t=1758292844; cv=none; b=GJcdngqz04Bj+aX3DBWrjP9KygSG69kWogYYAvJhCP9aq9rQZWQtaBlk5kHkXogX6cPHH+8IasfcF2L45MEV97Ej2dxDH2J/KBvzjvZFKhBwP5yFd3+YFSHiYeO3S3f+FSDQ5pbvzzX6QFJgVQTE8BNixlhagJ+sO4FzesblbQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292813; c=relaxed/simple;
-	bh=OuJgZQPrT3qPzmfLiDjXnFf/ZhzJWaKiOrvxB6TEg88=;
+	s=arc-20240116; t=1758292844; c=relaxed/simple;
+	bh=Tp0iF6Qs70aaCWdqaFDcXwePAlPgsbZcyXEX+0AZba8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTH05FMiYt0wONAZC3FWA8dl7o4pCdk4FA39RsJ7QeRfm5ZAO6QIocWREiamhTFzMWVHjQu/nkaPY7KawiBJQ5xRBRGi5J5gbikjpN1zcJMJOZsV1HhN7uFnAOZAbapypQnleM0/tKD3VSy5gQbJB8Sq5T4j8FHhF+cZeQnPuOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=I55mI9xr; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=aMz2
-	qyB22U+lq9dp0GoWHHFUbASxQzpgfP2d3vrLpbs=; b=I55mI9xrPuMdiw8CbUpc
-	UHHLhjyA3VGipimsoNw3xQU23RjmEEwVn568/Y+p5qc1qAbNmmnjT67UvFEVxRCn
-	6Ne84l//s1tgYF6ac4KNCB2uffZefoU/fwXg/vzWuxbAeBg92lwwlZ/QzreaSnSv
-	Q/cVJuEBQWGecnbtodxT5+BN4BfEGtj2jfoJ8pDjAc6IY5T4nJ27oHt8FLJh022C
-	ykx9F2FnLq8fYiusqfCmrCDOBSlqC/bA40aQlnux6JWCfKVtRGcMaHhxlCoTAq8O
-	VO0IzwZ/MDLP+t+gnxFIP8Mzv0BtJzto7+yhCOvtZf2MAQjHiKf3uBjGk/7+wB0l
-	FA==
-Received: (qmail 3950640 invoked from network); 19 Sep 2025 16:40:07 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 16:40:07 +0200
-X-UD-Smtp-Session: l3s3148p1@gFAqcig/VlJtKPID
-Date: Fri, 19 Sep 2025 16:40:06 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSOhIkpn7O5OS2IortaLywsQpBPP4EbwHdKDGtgFARMBVBuoVsrolzNki/SPm9PAvAY0BBQuWVwTwiA4lR3YmW44/ig1U3tMFUxIrXqminm5FLAwLREGa0o8WwWOquPnlG3OBkUmdNUjEfWIBhh/MUYVlewCsxYUqpCBKdacHpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTXw3iGj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67BBC4CEF1;
+	Fri, 19 Sep 2025 14:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758292844;
+	bh=Tp0iF6Qs70aaCWdqaFDcXwePAlPgsbZcyXEX+0AZba8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aTXw3iGj5BpNPnS4VZB1PDxjhfJuw4n1u47rXxN+dpgpGRYXHgDr5I4pmu7ZBE9vj
+	 Dl78fOgMKeLFPIcjr999IgGL858FuC0miK2hSZdxG/genbGyOAHbIPrAwOWI2jHw/S
+	 RK8ZIlCHRd4GVR8nTPcs/+ejNXAyzJy8z9eL9EYY07fDCWiJd2MGVgVkzpeqdqszm5
+	 OX2DKRM8dEEq+6NXd/sLk2ctRXpxHY8w0YKqYVaFwVpn0WAYFLINCwW0u2nPEBL7YT
+	 oBhFio/ZPKrM6CyLIaTlyJ6JTef+LTW0i5pHjeTpcXSlvgVdwbNVhsaxSMCNJLWBCy
+	 C7bTjykSy1GxA==
+Date: Fri, 19 Sep 2025 09:40:42 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <aM1rRuiJH9dlwBjL@shikoro>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-8-herve.codina@bootlin.com>
- <aM0lU01x1w2wB3LG@ninjato>
- <20250919151448.14f8719a@bootlin.com>
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	"Derek J. Clark" <derekjohn.clark@gmail.com>,
+	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
+Message-ID: <20250919144042.GA875871-robh@kernel.org>
+References: <20250918-thinkpad-t14s-ec-v5-0-ac0bc6382c5c@collabora.com>
+ <20250918-thinkpad-t14s-ec-v5-1-ac0bc6382c5c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t2Wx4OLguoeAkJCv"
-Content-Disposition: inline
-In-Reply-To: <20250919151448.14f8719a@bootlin.com>
-
-
---t2Wx4OLguoeAkJCv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250918-thinkpad-t14s-ec-v5-1-ac0bc6382c5c@collabora.com>
 
+On Thu, Sep 18, 2025 at 11:20:26PM +0200, Sebastian Reichel wrote:
+> Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
+> which is based on the Qualcomm X1 Elite. Some of the system LEDs
+> and extra keys are only accessible via the EC.
 
-> Rob asked to use only interrupt-map and use directly the interrupt-map index as
-> the hardware index:
->   https://lore.kernel.org/lkml/20250801111753.382f52ac@bootlin.com/
+s/platform/embedded-controller/ in the subject.
 
-I agree with that. Currently an interrupt-map entry looks like:
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Sebastian Reichel <sre@kernel.org>
+> ---
+>  .../lenovo,thinkpad-t14s-ec.yaml                   | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
 
-	interrupt-map = <0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-
-And the number after GIC_SPI determines the index register, no? Can't we
-simply say 'index = <SPI_nr_from_dt> - 103' incl. some sanity checks?
-
-
---t2Wx4OLguoeAkJCv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNa0IACgkQFA3kzBSg
-Kbbwaw/8CZKfPrxNCc2ATSpkToC1wxq06i0+Ll/FugMGgZywOxXD1l6fLSD1BURl
-Jilvgr1aGzxc0ywLsVk2zDnF/Eb92wqhumR9vmoM5HDC5qHJM23PkMikmUwOshe9
-9Miy0CkZG/k43yTVyr5ygHBVJ7aXOcdrKzgOtgK74x0QjIUeyMhhBhcPTUUjMAKZ
-b4dl8FCM/uPu6rDa3DgB2FJyypJ910/ZXDQH2ANFnZjKiKXz8gnTzXjbrJsx03Yi
-lDwJDNuEadfa9MMpgvbqFSyvulAOhiSYPYfLTqIO9VlJ/FM+zTjY3KKzbnEdbfJo
-7m25RnjEpM6gqVo8I+oM1dPwb/HTh68Btbxf1rgabSbd+bxjlXSyq9NUovjfJBey
-3xdMkhV19hoUrxZcCeKixejRFkYqnHOkRp6qNhWq6m6Tw68PMqgy5JVfsn8r+ZNX
-lj3y9Y0RGYkYsBlZf40x7zZ5Y5O8bRAHQSv5X6htyfFIChERmX3uMVQbDKui9LHL
-Z1FQe+9OTPtRoHmHRvRRIOzy9sua9ufI6+8Anbis+L36+6Jjpfw7jrkYde7L866h
-WCIcYZWleAGPE3kjUZLdRLDzhauDV4nrA50T49x8ZPOCWis6xQsW/U8AWyszeHIr
-/JqTSH0H6nZbLTN0ETyt3la2PWTYOCTuHxyh0s667Llcy8y2MQI=
-=duSE
------END PGP SIGNATURE-----
-
---t2Wx4OLguoeAkJCv--
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
