@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-825182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FD3B8B315
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:30:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7ADB8B324
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A1A7B5B41
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A0B5636BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2E6256C6D;
-	Fri, 19 Sep 2025 20:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE1B275B04;
+	Fri, 19 Sep 2025 20:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="tieApSWw"
-Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEivrP8/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82811223DCE
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758313829; cv=pass; b=Ggy4H6VyvFON3VV9alc5hBYqxoykJINMY3/PNewEVpY49EOGpb+LuYChwyx6m07t+AWcttJ8MntZV0d5cIkih7qazJq+WDho6DM/C94gWUbnJh9puG33o2y52CQuPxb2j+ghaRN3Ac8Nh8n938+C9zgMrMOtNFVN2ddzKRjHcNU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758313829; c=relaxed/simple;
-	bh=z3bcblvXjYuG16IjhT2FqtcFfGgnHlT8Shqnk7PRUMA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EcTVUEZg83jsc7rodoIYkL6zQHHCaYm8khLeScLPp2SKsw3auUY85j+GpiP1nVC8AXknfpRllYp8xkuCHVLjGfSkXNmh92YcMppYoaWdgCj7mC8Bn/myhJao03RqGHdb4Jh0uyXvhizzFNC3l2thPSlXEp8rU64qhCwx+eN9o2c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=tieApSWw; arc=pass smtp.client-ip=49.212.207.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
-	(authenticated bits=0)
-	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58JKUIWj010955
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 20 Sep 2025 05:30:19 +0900 (JST)
-	(envelope-from weibu@redadmin.org)
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id ACC4D10E4CA7F;
-	Sat, 20 Sep 2025 05:30:18 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id pwR7-27my8yB; Sat, 20 Sep 2025 05:30:14 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id 5A21110D40E91; Sat, 20 Sep 2025 05:30:14 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1758313814;
-	cv=none; b=PlNXfeku8oj2EzYy6qYuLEKpe9FCHDw+GjVqXYUwlc+eSrwIU/mt/B3WUVwsyKvKyTYwMoRMl1QFgFgPj21J4PBKJe8hK5IFAhfo++YZ04dZ6G4BZ0TRvv0kAE/MdO5CcAQNOucxKou63jDyEjeDkN3PIFds90KRKahX2CRZxhM=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1758313814; c=relaxed/relaxed;
-	bh=hDlAW6pRlmwzieurJae1TG24O8nAZARlUukhneCZTXc=;
-	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=LvRY3ZAWbrVz9fLC9v49hiB0JC5zIE09E0ou9SrqexR81ahtilQZdLQNIi70pV2tG36Cko+P0tTUzNZta5diINbYuqR486zoSA0lRfxgCcneWyGGWnfUmXpBw4kvyL3XwKTxWX6vyemCU5f8cnfu67gpxWSztFfdOfRLVNowUdk=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 5A21110D40E91
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1758313814;
-	bh=hDlAW6pRlmwzieurJae1TG24O8nAZARlUukhneCZTXc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tieApSWw4uiEgzi1g7jJwH8/OsEKYzXnSD4Oo/JsVGVJ5P7aspkZtjlw3c+u02eYj
-	 b2HjpiO7knfd3DvJYNfqBt7maQU/TpB+kvM5KVUjtryx82Xkyjj7twluagBab0VHrA
-	 R0CAKYRgS4HOIVPvJbPIL0ZmtYHxfxmyYg8JTYfs=
-From: Akiyoshi Kurita <weibu@redadmin.org>
-To: amd-gfx@lists.freedesktop.org
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, siqueira@igalia.com,
-        alexander.deucher@amd.com, christian.koenig@amd.com, airlied@gmail.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Akiyoshi Kurita <weibu@redadmin.org>
-Subject: [PATCH] drm/amd/display: kernel-doc: document mpc_color_caps.num_rmcm_3dluts
-Date: Sat, 20 Sep 2025 05:30:11 +0900
-Message-ID: <20250919203011.1833355-1-weibu@redadmin.org>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A9469D;
+	Fri, 19 Sep 2025 20:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758313934; cv=none; b=lQIXRw/pVVangv1ax8n9sp/theSy3gF1vGwEcKg0eYvDAweHAGubQRRFDNwbrAOosG2bZ/aAevnIkNZfFG/H/dKZ2v3t0fDZ5H47t44LI0iRzB7fE3NO7xc/Aq9P5mOCRYNKmVhy4VijIiaIHSso2ZRjoxxV1/RWPZrhX9g4rQM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758313934; c=relaxed/simple;
+	bh=S3n2bU40f4PTbsQs85QjCGeUlVU9YAXSJZHZZh9Whbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+XlBNJvhFaUHBRGxn/EYWGw2EJOxGL4gP3bLiZ3zgfugBK4vA4Cyvo9pe0jkA6TpmlbRAjzenjS+1HLJ7+fYycTonbyvq4gw7NJOHv8VIiAHafd03JQMr/OkWiMHyrsrspkqX3MyCAps/bg7GyszfuJTA5E2G/U+96FcVsky9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEivrP8/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A519C4CEF7;
+	Fri, 19 Sep 2025 20:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758313934;
+	bh=S3n2bU40f4PTbsQs85QjCGeUlVU9YAXSJZHZZh9Whbw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VEivrP8/PIN4+zGNTGt7kkBpdM/r+7M8eHcn6khQeQK7egKD5pvdt5m//UmFqXWtr
+	 MSGNzkNA0mToKRvQYCg8bvC17Vbn1jh+Wlv2YYYwi7Hx1N5pise5wCASfZYVKqyXk+
+	 y0myOMx+5q4XSa5KYZwBxvmVCgZXXPT/KNQZVZ/tCnN81gb1YD4pvcBgONNthnyl5U
+	 tJW/BceQ2IkBwM7WdDRkBJnXdwGtzWVUy86Zwe+4bs3mb4jOSvUHitQZkbl4Zl2fg0
+	 burfE0S/Ww67yh5MwMka5zEdpiis1Zsh/wSAYHnBE9/R3Uax7Dr54z08e4spEurjaP
+	 OzV94xNp7P59g==
+Date: Fri, 19 Sep 2025 15:32:08 -0500
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
+	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384,
+ SHA-512, SHAKE128, SHAKE256
+Message-ID: <20250919203208.GA8350@quark>
+References: <20250919190413.GA2249@quark>
+ <3936580.1758299519@warthog.procyon.org.uk>
+ <3975735.1758311280@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3975735.1758311280@warthog.procyon.org.uk>
 
-Add the missing @num_rmcm_3dluts field description to silence a
-kernel-doc warning. While here, fix a typo in the same block
-("pre-definied" -> "pre-defined") and clarify the oGAM description.
+On Fri, Sep 19, 2025 at 08:48:00PM +0100, David Howells wrote:
+> Eric Biggers <ebiggers@kernel.org> wrote:
+> 
+> > This should be based on libcrypto-next.
+> 
+> This?
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-next
 
-No functional change.
+Yes.
 
-Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
----
- drivers/gpu/drm/amd/display/dc/dc.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> > and that the functions can be called in any context.
+> 
+> "Context" as in?
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/disp=
-lay/dc/dc.h
-index f24e1da68269..144de7b3ed49 100644
---- a/drivers/gpu/drm/amd/display/dc/dc.h
-+++ b/drivers/gpu/drm/amd/display/dc/dc.h
-@@ -231,12 +231,12 @@ struct lut3d_caps {
-  * plane combined blocks
-  *
-  * @gamut_remap: color transformation matrix
-- * @ogam_ram: programmable out gamma LUT
-+ * @ogam_ram: programmable output gamma (oGAM) LUT
-  * @ocsc: output color space conversion matrix
-  * @num_3dluts: MPC 3D LUT; always assumes a preceding shaper LUT
-- * @shared_3d_lut: shared 3D LUT flag. Can be either DPP or MPC, but single
-- * instance
-- * @ogam_rom_caps: pre-definied curve caps for regamma 1D LUT
-+ * @num_rmcm_3dluts: number of RMCM 3D LUT instances supported by MPC (0 i=
-f unsupported)
-+ * @shared_3d_lut: shared 3D LUT flag. Can be either DPP or MPC, but singl=
-e instance
-+ * @ogam_rom_caps: pre-defined curve caps for regamma 1D LUT
-  * @mcm_3d_lut_caps: HW support cap for MCM LUT memory
-  * @rmcm_3d_lut_caps: HW support cap for RMCM LUT memory
-  * @preblend: whether color manager supports preblend with MPC
---=20
-2.47.3
+See the "Function context" section of
+Documentation/doc-guide/kernel-doc.rst
 
+> > The testing situation looks odd.  This patch adds six KUnit test suites:
+> > one for each of the SHA-3 algorithms.  But they only include the
+> > hash-test-template.h test cases, and they don't test the unique behavior
+> > of SHAKE.  The KUnit tests need to fully test the library.
+> 
+> Yes, I'm aware of that.  The hash-test-template template is rather rigid
+
+hash-test-template.h is designed for traditional hash functions.  If
+you'd like to extend it to support XOFs, that's one option.  But I think
+just keeping the XOF testing in sha3_kunit.c would make sense for now.
+
+> and not always correct in its assertions (for instance requiring the
+> final function to have zeroed the context - I had to modify my API to
+> work around the testsuite).
+
+But that's the correct behavior.  Callers may be hashing sensitize data,
+so *_final() zeroizes the context.
+
+The "multiple squeezes" use case should use different functions.
+
+> > I also think that splitting the SHA-3 tests into six KUnit test suites
+> > is awkward.  I know I did something similar for SHA-2, but it made more
+> > sense for SHA-2 because (1) there are only four SHA-2 variants, (2)
+> > SHA-256 and SHA-512 don't share any code, and (3) there wasn't anything
+> > more to add on top of hash-test-template.h.  In contrast, SHA-3 has six
+> > variants, which all share most of their code, and there will need to be
+> > SHA-3 specific tests (for the XOFs).
+> 
+> Yes, but I believe you wanted me to use hash-test-template.  The problem is
+> that it hard-encodes by macroisation of the #include's file various parameters
+> including the hash size.
+
+Did you miss my response at
+https://lore.kernel.org/linux-crypto/20250917192829.GA8743@quark/ ?
+
+- Eric
 
