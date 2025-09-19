@@ -1,329 +1,161 @@
-Return-Path: <linux-kernel+bounces-824575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AEEB89925
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:05:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006B1B8996D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9B15A34E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A1F8172207
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E671723ABBF;
-	Fri, 19 Sep 2025 13:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46469226D02;
+	Fri, 19 Sep 2025 13:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQ01YdCc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NlzSGwrP"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935E14A60C;
-	Fri, 19 Sep 2025 13:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1E821C9E4
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758287108; cv=none; b=ScY2kMq+iSS6CJj2iEV73QWro7htWevperpu2je7pYoyXccr+xanfMf0DHNtS/CnbIOMN8vVPtjlrsLbzCCldwSWQE7ryjIt37HjjBR0l6PAfrbg8TOBMLPUuvJJtIPVOaQEgzPljDJojdEI41rJjwhAwH2Mf/X1fkkOfMWrk9s=
+	t=1758287192; cv=none; b=Ij50ANUR08UhOmzmTnELIk6X8muhy9LNPBnqkVv2A/espJ3lI17RAm60GaoW3pfQVvBwJDskvHZWvkA7r6MGaKcs19fj+AWVE77f5YtRMAKH86LeKggIeMGTH7ZR4gYXYG2rrvT8I4LGkDpG8NCqZ7nVmD+erqh7ZGcNRfFQ+hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758287108; c=relaxed/simple;
-	bh=YlVgAyYZLBI4i4As4VZ2YkhXsCbsQ7l/n3ea7NwzeSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aEzjdr5e4OlFwUFrbXmER98zmKNM00CLMMhmEgFLj7lorEuU0k37r6f2GQblbdl63TZs9FosUHEAv7PyEIM9Ci18kC7+Mc+s54AKE82REZ7yZtIEnh0mW6TM9Th4ENAWMiE8dE1o/W9ktwCjNfWMCmsUB6nGqfh2r5pI8b5IsL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQ01YdCc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C40CC4CEF0;
-	Fri, 19 Sep 2025 13:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758287107;
-	bh=YlVgAyYZLBI4i4As4VZ2YkhXsCbsQ7l/n3ea7NwzeSI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IQ01YdCcxvhfAJBXrwnIMYEcuvwBMfREDONqFBNPZCFSrzsgXUDTdTVFtnrdC0n0l
-	 SiKr6Ybl9lMgZZ5eBCqyuDH7N5oVE4/4v/8XtwfQbF/u/iywzrHi+gtqCK9EUO4T0g
-	 kq/lazNnFEaYiSyTTs8Ja/xEdzevm7qjv+0QRPqy14fD0oaoUMvhkK91e8Bm9e0b8H
-	 7en+FZ7Pz9n319D5jdUMcfF9GWzPIShMulDgUvtc8m2ZUi1/6LOgnIjVNqEXw1FLKA
-	 9nIqW+qoafXM8Z4wha7Z4xcycvBxViRk5B1T04OoqoAReEFTxErL7AlQ6pecW6xzKw
-	 1pZPrKUFFWBLw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: PM runtime auto-cleanup macros
-Date: Fri, 19 Sep 2025 15:05:04 +0200
-Message-ID: <12751070.O9o76ZdvQC@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <87jz1uao65.wl-tiwai@suse.de>
-References:
- <878qimv24u.wl-tiwai@suse.de>
- <CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
- <87jz1uao65.wl-tiwai@suse.de>
+	s=arc-20240116; t=1758287192; c=relaxed/simple;
+	bh=r9AJTIvnzjcfdGx5s5XBeHfnb2DJucUHE/cz3DMfgHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dmhs5egkLVhz6F2j0V3nsoZGuC2Z/QM68ZiCjzjPj2kmden5A5QjbviDb8P0/YhhMsStfvWWPj7YA7mTWHlo9sIvE4Fm7UCtOL3ICcVEfTccu7mFRj8kz4QBgeEEYdmx0mgBaMWCI71IsGyemsWDGwdstAzvmHwxzWmju5bi2M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NlzSGwrP; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b552590d8cdso348691a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758287189; x=1758891989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Y44nOyA0y8OwFwmSdVnNikf+85sx5V+uPvR9b6gSko=;
+        b=NlzSGwrPrHaZRi3wQNBC7Y8ZDF+dCbMg0EPslxHres3uzvhzagQvGApYsDHuGQGhAS
+         WLn8G5I4uaYuTX5w+sYXIrWH+1o1pWLB30pgWfZm53zpwyWswlQnBI4Ph6PjNEDMiUCg
+         9SkRXz7UwqkokizH55jRR0ihpiPt7z47Na1spFomeW2U33YFs9IbFh6QvJ1TV6EECb/D
+         gscMONKPIhLpEBVWKs8/qesjEFOeZszNm1NFGi6Yy/IYJfDTBgsIxG7LteojGHy0xPKj
+         VoEYV34YpcXtYu6mLnxyVmwSL9fxqsJDkBLO5trj57DLFXlNWKNM6UN+sLNRU8nx7+pH
+         5Vhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758287189; x=1758891989;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5Y44nOyA0y8OwFwmSdVnNikf+85sx5V+uPvR9b6gSko=;
+        b=EMJzFNjiLjjJYNOY9J4qcT5msUd5FpdeN4UhKLYv5aeWSODDs0aYCr/GQ3FHp077rP
+         BSQTEJ0IbQRpVP7NDNg49ypemzuwtIAnuux/BV4EAb1JleobFeKsYgR2X/LnVdOsvEHj
+         /0JNeA80spkE1Z5TAO21MlH5eH1/FCG2wo2+4nZBNk5LF1VtOIkMqSKXkiM8zhwwIOm2
+         lkvida4Nh7yw236zRzhWdk6Oq5OusNcFFw8Zn7UKCMxBhHE7etfZI6577cUG9p83noqa
+         vR8aF7y3f00/7JuVypVIIFHuL40SEAs21XRvO+pBstkLF1lOgSrVFhYsSSASUVgu7f/S
+         DkAw==
+X-Gm-Message-State: AOJu0Ywn6ixQj3SvSbMnZCqXjP6wM4I1NedILbtjRrAyBknxLnAlExyP
+	vv2xJ2mSj+0e2njpQViNH6FVdsv4ULOuN0L3hrWv2QxxewwXnruWH6zHswyJR+fSm24=
+X-Gm-Gg: ASbGnct9v/x3EwLHcbiP3XNLGK3eE7tEP9dS2Xnbw8VnqwU96dzsuGs6OipHhv6umkS
+	RQ0ZmS5LLORspvLS1WgvWlrx6JNipofsd1a8vC2Qcy29wdfP0N3VBeeQ2pWFUDmUcGPpUgHCWCv
+	KBfPAM5OqVmiIjeM0YQ0A8SLGQF6vFPKa7WWFLe7bLSn0TkO61SP6glm+pmrj5HLXk+wJSjYSoB
+	UZquPP1ATHFbdRDiLd8zn4++bjsJvkAGrl64DraO96T9B3aVzYlhzbW6fmwEo+ayF+lBzZ8uC4J
+	A7f78WifZJbScKVg3w7Fjt9TFNubAx3mq+xjAD3U2jKiE3bBopAYJx3dSCXeg5KncpiNaonTTHa
+	cMT0lY1jxkiWuyjOKvY4aP9YBzmVEk/d1xM9nnghWyoJYkMw=
+X-Google-Smtp-Source: AGHT+IHbCYvgUOcFkkck27B0rfSlhrmfVapbla8Z6az+fBKLroeJB8snmFXCKURB5BgfWYqSEvjPWA==
+X-Received: by 2002:a17:902:e946:b0:24b:4a9a:703a with SMTP id d9443c01a7336-269ba42b2a8mr46541595ad.17.1758287188922;
+        Fri, 19 Sep 2025 06:06:28 -0700 (PDT)
+Received: from H3DJ4YJ04F.bytedance.net ([2001:c10:ff04:0:1000::d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802e00b3sm54732065ad.90.2025.09.19.06.06.25
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 19 Sep 2025 06:06:28 -0700 (PDT)
+From: Yongting Lin <linyongting@bytedance.com>
+To: anthony.yznaga@oracle.com,
+	khalid@kernel.org,
+	shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	libo.gcs85@bytedance.com,
+	Yongting Lin <linyongting@bytedance.com>
+Subject: [PATCH V2 0/8] Add selftests for mshare
+Date: Fri, 19 Sep 2025 21:06:13 +0800
+Message-Id: <20250919130620.56518-1-linyongting@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Friday, September 19, 2025 9:37:06 AM CEST Takashi Iwai wrote:
-> On Thu, 18 Sep 2025 22:41:32 +0200,
-> Rafael J. Wysocki wrote:
-> >=20
-> > On Thu, Sep 18, 2025 at 10:19=E2=80=AFPM Rafael J. Wysocki <rafael@kern=
-el.org> wrote:
-> > >
-> > > On Thu, Sep 18, 2025 at 1:28=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
-nel.org> wrote:
-> > > >
-> > > > On Thu, Sep 18, 2025 at 9:10=E2=80=AFAM Takashi Iwai <tiwai@suse.de=
-> wrote:
-> > > > >
-> > > > > On Wed, 17 Sep 2025 20:58:36 +0200,
-> > > > > Rafael J. Wysocki wrote:
-> > > > > >
-> > > > > > Hi,
-> > > > > >
-> > > > > > Sorry for the delay.
-> > > > > >
-> > > > > > On Thu, Sep 11, 2025 at 9:31=E2=80=AFAM Takashi Iwai <tiwai@sus=
-e.de> wrote:
-> > > > > > >
-> > > > > > > On Wed, 10 Sep 2025 16:00:17 +0200,
-> > > > > > > Takashi Iwai wrote:
-> > > > > > > >
-> > > > > > > > Hi,
-> > > > > > > >
-> > > > > > > > while I worked on the code cleanups in the drivers with the=
- recent
-> > > > > > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _=
-put*() can
-> > > > > > > > be also managed with the auto-cleanup gracefully, too.  Act=
-ually we
-> > > > > > > > already defined the __free(pm_runtime_put) in commit bfa447=
-7751e9, and
-> > > > > > > > there is a (single) user of it in pci-sysfs.c.
-> > > > > > > >
-> > > > > > > > Now I wanted to extend it to pm_runtime_put_autosuspend() a=
-s:
-> > > > > > > >
-> > > > > > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
-> > > > > > > >            if (_T) pm_runtime_put_autosuspend(_T))
-> > > > > > > >
-> > > > > > > > Then one can use it like
-> > > > > > > >
-> > > > > > > >       ret =3D pm_runtime_resume_and_get(dev);
-> > > > > > > >       if (ret < 0)
-> > > > > > > >               return ret;
-> > > > > > > >       struct device *pmdev __free(pm_runtime_put_autosuspen=
-d) =3D dev;
-> > > > > > > >
-> > > > > > > > that is similar as done in pci-sysfs.c.  So far, so good.
-> > > > > > > >
-> > > > > > > > But, I find putting the line like above at each place a bit=
- ugly.
-> > > > > > > > So I'm wondering whether it'd be better to introduce some h=
-elper
-> > > > > > > > macros, e.g.
-> > > > > > > >
-> > > > > > > > #define pm_runtime_auto_clean(dev, var) \
-> > > > > > > >       struct device *var __free(pm_runtime_put) =3D (dev)
-> > > > > > >
-> > > > > > > It can be even simpler by assigning a temporary variable such=
- as:
-> > > > > > >
-> > > > > > > #define pm_runtime_auto_clean(dev) \
-> > > > > > >         struct device *__pm_runtime_var ## __LINE__ __free(pm=
-_runtime_put) =3D (dev)
-> > > > > >
-> > > > > > Well, if there's something like
-> > > > > >
-> > > > > > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
-> > > > > > {
-> > > > > >         int ret =3D pm_runtime_resume_and_get(dev);
-> > > > > >         if (ret < 0)
-> > > > > >                 return ERR_PTR(ret);
-> > > > > >
-> > > > > >         return dev;
-> > > > > > }
-> > > > > >
-> > > > > > It would be a matter of redefining the FREE to also take error
-> > > > > > pointers into account and you could do
-> > > > > >
-> > > > > > struct device *__dev __free(pm_runtim_put) =3D pm_runtime_resum=
-e_and_get_dev(dev);
-> > > > > > if (IS_ERR(__dev))
-> > > > > >         return PTR_ERR(__dev);
-> > > > >
-> > > > > That'll work, too.  Though, I find the notion of __free() and a
-> > > > > temporary variable __dev a bit too cumbersome; it's used only for
-> > > > > auto-clean stuff, so it could be somewhat anonymous.
-> > > >
-> > > > No, it is not used only for auto-clean, it is also used for return
-> > > > value checking and it represents a reference on the original dev.  =
-It
-> > > > cannot be entirely anonymous because of the error checking part.
-> > > >
-> > > > The point is that this is one statement instead of two and so it is
-> > > > arguably harder to mess up with.
-> > > >
-> > > > > But it's all about a matter of taste, and I'd follow what you and
-> > > > > other guys suggest.
-> > > > >
-> > > > > FWIW, there are lots of code doing like
-> > > > >
-> > > > >         pm_runtime_get_sync(dev);
-> > > > >         mutex_lock(&foo);
-> > > > >         ....
-> > > > >         mutex_unlock(&foo);
-> > > > >         pm_runtime_put(dev);
-> > > > >         return;
-> > > > >
-> > > > > or
-> > > > >
-> > > > >         ret =3D pm_runtime_resume_and_get(dev);
-> > > > >         if (ret)
-> > > > >                 return ret;
-> > > > >         mutex_lock(&foo);
-> > > > >         ....
-> > > > >         mutex_unlock(&foo);
-> > > > >         pm_runtime_put_autosuspend(dev);
-> > > > >         return 0;
-> > > > >
-> > > > > and they can be converted nicely with guard() once when PM runtim=
-e can
-> > > > > be automatically unreferenced.  With my proposed change, it would
-> > > > > become like:
-> > > > >
-> > > > >         pm_runtime_get_sync(dev);
-> > > > >         pm_runtime_auto_clean(dev);
-> > > >
-> > > > For the case in which the pm_runtime_get_sync() return value is
-> > > > discarded, you could define a guard and do
-> > > >
-> > > > guard(pm_runtime_get_sync)(dev);
-> > > >
-> > > > here.
-> > > >
-> > > > The case checking the return value is less straightforward.
-> > > >
-> > > > >         guard(mutex)(&foo);
-> > > > >         ....
-> > > > >         return;
-> > > > >
-> > > > > or
-> > > > >
-> > > > >         ret =3D pm_runtime_resume_and_get(dev);
-> > > > >         if (ret)
-> > > > >                 return ret;
-> > > > >         pm_runtime_auto_clean_autosuspend(dev);
-> > > > >         guard(mutex)(&foo);
-> > > > >         ....
-> > > > >         return 0;
-> > > > >
-> > >
-> > > I guess what I'm saying means basically something like this:
-> > >
-> > > DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
-> > >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put(_T),
-> > > pm_runtime_resume_and_get_dev(dev), struct device *dev)
-> > >
-> > > DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
-> > >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put_autosuspend(_T),
-> > > pm_runtime_resume_and_get_dev(dev), struct device *dev)
-> > >
-> > > and analogously for pm_runtime_get_sync().
-> >=20
-> > And it kind of makes sense either.  Do
-> >=20
-> > CLASS(pm_runtime_resume_and_get, active_dev)(dev);
-> > if (IS_ERR(active_dev))
-> >         return PTR_ERR(active_dev);
-> >=20
-> > and now use active_dev for representing the device until it gets out
-> > of the scope.
->=20
-> Yes, that's what I thought of as an alternative, too, but I didn't
-> consider using only pm_runtime_resume_and_get().  Actually by this
-> action, we can also "clean up" the API usage at the same time to use a
-> single recommended API function, which is a good thing.
->=20
-> That said, I like this way :)
->=20
-> It'd be nice if this change can go into 6.18, then I can put the
-> driver cleanup works for 6.19.  It's a bit late stage for 6.18, but
-> this change is definitely safe and can't break, per se.
+Mshare is a developing feature proposed by Anthony Yznaga and Khalid Aziz
+that enables sharing of PTEs across processes. The V3 patch set has been
+posted for review:
 
-OK, do you mean something like the patch below?
+https://lore.kernel.org/linux-mm/20250820010415.699353-1-anthony.yznaga@oracle.com/
 
-=2D--
- include/linux/pm_runtime.h |   43 ++++++++++++++++++++++++++++++++++++++++=
-+++
- 1 file changed, 43 insertions(+)
+This patch set adds selftests to exercise and demonstrate basic
+functionality of mshare.
 
-=2D-- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -533,6 +533,30 @@ static inline int pm_runtime_resume_and_
- }
-=20
- /**
-+ * pm_runtime_resume_and_get_dev - Resume device and bump up its usage cou=
-nter.
-+ * @dev: Target device.
-+ *
-+ * Resume @dev synchronously and if that is successful, increment its runt=
-ime
-+ * PM usage counter.
-+ *
-+ * Return:
-+ * * 0 if the runtime PM usage counter of @dev has been incremented.
-+ * * Negative error code otherwise.
-+ */
-+static inline struct device *pm_runtime_resume_and_get_dev(struct device *=
-dev)
-+{
-+	int ret;
-+
-+	ret =3D __pm_runtime_resume(dev, RPM_GET_PUT);
-+	if (ret < 0) {
-+		pm_runtime_put_noidle(dev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return dev;
-+}
-+
-+/**
-  * pm_runtime_put - Drop device usage counter and queue up "idle check" if=
- 0.
-  * @dev: Target device.
-  *
-@@ -606,6 +630,25 @@ static inline int pm_runtime_put_autosus
- 	return __pm_runtime_put_autosuspend(dev);
- }
-=20
-+/*
-+ * The way to use the classes defined below is to define a class variable =
-and
-+ * use it going forward for representing the target device until it goes o=
-ut of
-+ * the scope.  For example:
-+ *
-+ * CLASS(pm_runtime_resume_and_get, active_dev)(dev);
-+ * if (IS_ERR(active_dev))
-+ *         return PTR_ERR(active_dev);
-+ *
-+ * ... do something with active_dev (which is guaranteed to never suspend)=
- ...
-+ */
-+DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
-+	     if (!IS_ERR_OR_NULL(_T)) pm_runtime_put(_T),
-+	     pm_runtime_resume_and_get_dev(dev), struct device *dev)
-+
-+DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
-+	     if (!IS_ERR_OR_NULL(_T)) pm_runtime_put_autosuspend(_T),
-+	     pm_runtime_resume_and_get_dev(dev), struct device *dev)
-+
- /**
-  * pm_runtime_put_sync - Drop device usage counter and run "idle check" if=
- 0.
-  * @dev: Target device.
+The initial tests use open, ioctl, and mmap syscalls to establish a shared
+memory mapping between two processes and verify the expected behavior.
 
+Additional tests are included to check interoperability with swap and
+Transparent Huge Pages.
 
+Future work will extend coverage to other use cases such as integration
+with KVM and more advanced scenarios.
+
+This series is intended to be applied on top of mshare V3, which is
+based on mm-new (2025-08-15).
+
+-----------------
+
+V1->V2:
+  - Based on mshare V3, which based on mm-new as of 2025-08-15
+  - (Fix) For test cases in basic.c, Change to use a small chunk of
+    memory(4k/8K for normal pages, 2M/4M for hugetlb pages), as to
+    ensure these tests can run on any server or device.
+  - (Fix) For test cases of hugetlb, swap and THP, add a tips to
+    configure corresponding settings.
+  - (Fix) Add memory to .gitignore file once it exists
+  - (fix) Correct the Changelog of THP test case that mshare support
+    THP only when user configure shmem_enabled as always
+
+V1:
+https://lore.kernel.org/all/20250825145719.29455-1-linyongting@bytedance.com/
+
+Yongting Lin (8):
+  mshare: Add selftests
+  mshare: selftests: Adding config fragments
+  mshare: selftests: Add some helper functions for mshare filesystem
+  mshare: selftests: Add test case shared memory
+  mshare: selftests: Add test case ioctl unmap
+  mshare: selftests: Add some helper functions for configuring and
+    retrieving cgroup
+  mshare: selftests: Add test case to demostrate the swapping of mshare
+    memory
+  mshare: selftests: Add test case to demostrate that mshare partly
+    supports THP
+
+ tools/testing/selftests/mshare/.gitignore |   4 +
+ tools/testing/selftests/mshare/Makefile   |   7 +
+ tools/testing/selftests/mshare/basic.c    | 109 ++++++++++
+ tools/testing/selftests/mshare/config     |   1 +
+ tools/testing/selftests/mshare/memory.c   |  89 ++++++++
+ tools/testing/selftests/mshare/util.c     | 254 ++++++++++++++++++++++
+ 6 files changed, 464 insertions(+)
+ create mode 100644 tools/testing/selftests/mshare/.gitignore
+ create mode 100644 tools/testing/selftests/mshare/Makefile
+ create mode 100644 tools/testing/selftests/mshare/basic.c
+ create mode 100644 tools/testing/selftests/mshare/config
+ create mode 100644 tools/testing/selftests/mshare/memory.c
+ create mode 100644 tools/testing/selftests/mshare/util.c
+
+-- 
+2.20.1
 
 
