@@ -1,132 +1,120 @@
-Return-Path: <linux-kernel+bounces-824272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E51B888AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:25:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C5DB888BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2EF4568227
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF0D3AB2AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36492F5302;
-	Fri, 19 Sep 2025 09:25:15 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532802F9DAD;
+	Fri, 19 Sep 2025 09:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3Ji3x3B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C452D239F;
-	Fri, 19 Sep 2025 09:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8182D239F;
+	Fri, 19 Sep 2025 09:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758273915; cv=none; b=XdPQfJYxzPEq7bF1S4Aa4Rw15z4PRUEor6g+p1KgbkjDYA0bJgdehqXfSk4UiLHl5qLFiGV5XtUJ/bkWaYk1by/0ty3ob9Tmv5WzE2J1nV2wO7M8zN4BM0IhRotn1o9bFR/s0zC7ra60ipeE1fGkiVJwGDl+b6ZpxfnBI0ThXxY=
+	t=1758273989; cv=none; b=GqQfrMcEUmSHCRLRVPCiAkT4z2YUPjHYn47vkd4ScAauwiGwO4IG8YZ+epQXyGkI5YP086uSvjb1x66Z+NddgoeB7Q2TWkGQIopaHZZ51sKJj743d6Tfp/18X0JLwhjPJR2iCZmBKx22QFdYin4+tJx1pxs8MPGDobOi/cfinxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758273915; c=relaxed/simple;
-	bh=+hQV36ermCg3GTswyjokH750Usr+sQ7Ds8u5SZvEtEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OrbclEgFztPEFPAvZDQOohUZr3HDSkk81LXNF/d4kEBv5XK02/Gzf5GJjSgON9PNINtL12s6j9i+pu9QlRDQFTQG1rq0i3dv1aKQPrff6fDVsSMZcc/K/ULwW0Zs6/XIt0NJ2ljRl2Ly3uiBNzQi2ZcGI9UmkjXaZUgUHbsUXVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.158.240.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 649F03420AB;
-	Fri, 19 Sep 2025 09:25:12 +0000 (UTC)
-Date: Fri, 19 Sep 2025 17:25:07 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Mark Brown <broonie@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Vivian Wang <wangruikang@iscas.ac.cn>,
-	David Miller <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alex Elder <elder@riscstar.com>,
-	Networking <netdev@vger.kernel.org>,
-	Guodong Xu <guodong@riscstar.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	soc@kernel.org
-Subject: Re: linux-next: manual merge of the net-next tree with the spacemit
- tree
-Message-ID: <20250919092507-GYA1279412@gentoo.org>
-References: <aMqby4Cz8hn6lZgv@sirena.org.uk>
- <597466da-643d-4a75-b2e8-00cf7cf3fcd0@iscas.ac.cn>
- <76970eed-cb88-4a42-864a-8c2290624b72@sirena.org.uk>
- <20250917123045-GYA1265885@gentoo.org>
- <20250917125947-GYA1266976@gentoo.org>
+	s=arc-20240116; t=1758273989; c=relaxed/simple;
+	bh=QTRMRYKX0MaFllq/94rkyUi9FFuz1LfmIJpbHiO/UfY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gdXlq1gp4ztZp0H2tGbtofln30nQb8piGsNpn9frzBB2EGN23qe2cPl2bZIVGOCZv0Q/733wvDrHkB+m8D1SspZx/PycBPy0cP1sfjOCJbyomJSXVQDGUfsaN28mJgqL0iL8f98kqI8xB/y4Ttt/TBB3L/Tzq0vndBCTjj3bMKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3Ji3x3B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B31BC4CEF0;
+	Fri, 19 Sep 2025 09:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758273989;
+	bh=QTRMRYKX0MaFllq/94rkyUi9FFuz1LfmIJpbHiO/UfY=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=p3Ji3x3BbitPt4pji1kyRyxpk/wbcoaw+nG5MoR8+52rV0fmB2Sad3fYUpl1kcrTK
+	 q3BDoxHY1UYqIg5ZzNwuVlFEaMyplB1QUSb7XbSAwmymH2bXFbCi/I7E6Sw0W9qJZ1
+	 AJBJnFLh1hasSGZiZIIgYrExMcpiNgo1R6E3+6CmbpjnbsgYWD1rF+0fYUNljoGm5w
+	 1IwLK/xvfJ4cwdHnzENrcBE2ZHIaiWj2Ws3LCiPLyxSg+GuBrlC0JIV+5cqoEiU4BQ
+	 ybyJvWMhRGsePrNznQ2K4xDlunk/lMNk4ZyV+0UAsXciPZQ+4QOv3UrJyzL1n+TGoT
+	 bCmD9UksQfT0Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917125947-GYA1266976@gentoo.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 19 Sep 2025 11:26:19 +0200
+Message-Id: <DCWO3V7WQP0G.127BYBORGE85H@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH] rust: io: use const generics for read/write offsets
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Danilo Krummrich"
+ <dakr@kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20250918-write-offset-const-v1-1-eb51120d4117@google.com>
+ <20250918181357.GA1825487@joelbox2> <DCWBCL9U0IY4.NFNUMLRULAWM@kernel.org>
+ <752F0825-6F2E-4AC0-BEBD-2E285A521A22@nvidia.com>
+In-Reply-To: <752F0825-6F2E-4AC0-BEBD-2E285A521A22@nvidia.com>
 
-Hi Paolo, Mark, Arnd
+On Fri Sep 19, 2025 at 9:59 AM CEST, Joel Fernandes wrote:
+> Hello, Danilo,
+>
+>> On Sep 19, 2025, at 1:26=E2=80=AFAM, Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>>=20
+>> =EF=BB=BFOn Thu Sep 18, 2025 at 8:13 PM CEST, Joel Fernandes wrote:
+>>>> On Thu, Sep 18, 2025 at 03:02:11PM +0000, Alice Ryhl wrote:
+>>>> Using build_assert! to assert that offsets are in bounds is really
+>>>> fragile and likely to result in spurious and hard-to-debug build
+>>>> failures. Therefore, build_assert! should be avoided for this case.
+>>>> Thus, update the code to perform the check in const evaluation instead=
+.
+>>>=20
+>>> I really don't think this patch is a good idea (and nobody I spoke to t=
+hinks
+>>> so). Not only does it mess up the user's caller syntax completely, it i=
+s also
+>>=20
+>> I appreacite you raising the concern,
+>> but I rather have other people speak up
+>> themselves.
+>
+> I did not mean to speak for others, sorry it came across like that
+> (and that is certainly not what I normally do). But I discussed the
+> patch in person since we are at a conference and discussing it in
+> person, and I did not get a lot of consensus on this. That is what I
+> was trying to say. If it was a brilliant or great idea, I would have
+> hoped for at least one person to tell me that this is exactly how we
+> should do it.
 
-I'd like to have your attentions, see below
+I'm also not really thrilled to see lots more turbofish syntax. However,
+if we can avoid the nasty build_assert errors then in my opinion it's
+better. (yes we do have Gary's cool klint tool to handle them correctly,
+but not every user will be aware of that tool).
 
-On 20:59 Wed 17 Sep     , Yixun Lan wrote:
-> Hi Mark,
-> 
-> On 20:30 Wed 17 Sep     , Yixun Lan wrote:
-> > Hi Mark,
-> > 
-> > On 13:03 Wed 17 Sep     , Mark Brown wrote:
-> > > On Wed, Sep 17, 2025 at 07:48:34PM +0800, Vivian Wang wrote:
-> > > 
-> > > > Just FYI, Yixun has proposed for net-next to back out of the DTS changes
-> > > > and taking them up through the spacemit tree instead [1], resolving the
-> > > > conflicts in the spacemit tree. This would certainly mean less headaches
-> > > > while managing pull requests, as well as allowing Yixun to take care of
-> > > > code style concerns like node order. However, I do not know what the
-> > > > norms here are.
-> > > 
-> > > Thanks.  They're pretty trivial conflicts so I'm not sure it's critical,
-> > > though like you say node order might easily end up the wrong way round
-> > > depending on how the conflict resolution gets done.
-> > 
-> > Thanks for the help and fixing this, but ..
-> > 
-> > If it's possible to revert the DT patch 3-5, then I'd be happy to take,
-> > but if this is too much job, e.g. the net-next's main branch is imuutable
-> > and reverting it will cause too much trouble, then I'm fine with current
-> > solution - carry the fix via net-next tree..
-> > 
-> > But please use commit: 0f084b221e2c5ba16eca85b3d2497f9486bd0329 of
-> > https://github.com/spacemit-com/linux/tree/k1/dt-for-next as the merge
-> > parent, which I'm about to send to Arnd (the SoC tree)
-> > 
-> No matter which way choose to go, I've created an immutable tag here,
-> 
-> https://github.com/spacemit-com/linux/ spacemit-dt-for-6.18-1
-> 
+Maybe we should ask Rust about adding `const` arguments in their normal
+position again :)
 
-I've sent out the PR of DT changes to SoC tree for inclusion, see 
-https://lore.kernel.org/all/20250919055525-GYC5766558@gentoo.org/
-
-There is a potential conflict with commit from net-next:
- e32dc7a936b11e437298bcc4601476befcbcb88f ("riscv: dts: spacemit: Add Ethernet support for Jupiter")
-
-the conflict itself is quite trivial, and should be easy to fix, and I'm also
-personally fine to have it solved in net-next tree if Arnd has no objection
-
-But if need assistance from my side, just let me know - I can handle it
-- if the ethernet DT patches can be reverted from net-next
-- I can apply them at SpacemiT SoC tree
-- send a incremental v2 PR to the SoC tree
-
-> > BTW, The 'for-next' branch is a merged branch contains clock and DT patches
-> > for SpacemiT SoC tree's which isn't immutable..
-> > 
-> > Let me know what I should proceed, thank you
-> > 
-> 
-
--- 
-Yixun Lan (dlan)
+---
+Cheers,
+Benno
 
