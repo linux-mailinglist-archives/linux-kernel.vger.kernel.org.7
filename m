@@ -1,107 +1,147 @@
-Return-Path: <linux-kernel+bounces-825218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570C8B8B4E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:16:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02484B8B4F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D563BA79A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584297E3982
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC4502D3EC5;
-	Fri, 19 Sep 2025 21:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C06B2D0C78;
+	Fri, 19 Sep 2025 21:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5N+wFrq"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AGCPiX6W"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A762D3733
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E669129BDAD
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316549; cv=none; b=MUH9Gf6Y5PmgRxXWYHCUAQfXTtMfLXlKraVnMCZlPqv1tPX9YZXFG4DhHeygVHQcJ6Mfw3cZ0HXpIM0T8s+lnAdfNCqE0x+BtULo0cvY3pRmuHP17lEzLOb4f1KYyZFF3XTDeZ2g5rYO4WV/WZ0LKmBLRqiVRTVAx/Z56R3D88Q=
+	t=1758316614; cv=none; b=jtL4I6/giPXPByO696Ii7jbplyLz0JwddZH42RuJweGqxm9JYfW8KQoAuY1dVR5dNT0caRbDsL3FFGCtfOEja8zv1FJTl3qyDbV+JjvHFhFCCouuHHn62mzIraCh4kUVzWroei3wobP7ZDGHUKxkUZhlOvBWQdaQtgy+bTx7PzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316549; c=relaxed/simple;
-	bh=75+xMcEBZ4CCJG3zy2Fp8An358EsjOFKAwpWo1duVAk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NxVeVpurf/s4Sv0JIbLR5iek3jh0/OxUNZOUAJpqmwfcegV5DGet3TQzPJxT9tJkgkkBkTDhACSlm7LlPUXLB9R1B3OTW69HX+05DjR1vB4u3ZzvGCthjHzrI5e9uylVl5thIc3/pgmDYFroDVDIr9EBgHmswmMejwFujOgY/rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5N+wFrq; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1758316614; c=relaxed/simple;
+	bh=GvbOndAFg22idUQxnB2Zau3WELPEHRJzinOa5U16QAc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sQMbHIfcO1zTOBONX0wutcSlZtcFQ69lspUa/JXXURMOlD+mirHo9LWnTiqYjTRTeDbESQSJiHUGtTm3iJ7uepqqSbekKP/JYs+GintI4CddpUvS3fus9HOlz/kHjrlzA0cj4hrLiFxyRY2xx77CPpnrQWn3Hnhlgm2UEnD5BWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AGCPiX6W; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-252afdfafe1so26915705ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:15:47 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-26985173d8eso37616985ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:16:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758316547; x=1758921347; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V0+Liys18anQK6gRZATENTJbkZzHDkR1/8jEpmQV1kk=;
-        b=V5N+wFrq6fqFRTC7AmC26PUcdxAZ8h9bG+e3cZ21ID4LzXmZfij2HTgMAGmOQc0rhC
-         Ar+nVd4C5vdVvBX72hAvTyoBACMM7MjTNYUolzviG/e2E+cHlIs2iJRiOgbDCcAm+D40
-         P3mwCkKBKS9IFUW464zmiarb5QrJEBcvN30aMgL6X6BrzFv5S6EBDZgzR82f7zKZ2tid
-         RSO7h4XwwMRP4h+uHWA0QyXvtc+liL3LDpwl1GAJtCG+TNIrt8RES0FkSsoqRCSNhQdR
-         Tpz6uTgQv6uN1VO0eqx7vpZDygwXapnfhuT+cMKG3L0mZ/GKZstsZUAmo/PzpS+drzah
-         HTgA==
+        d=google.com; s=20230601; t=1758316612; x=1758921412; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3vSRPYz/l41886yoT08n72HBlws2OkwcwCFkvly7l+s=;
+        b=AGCPiX6Wr0knH5ZAUxGkx0T/W1SOpOKb+QRR28WlPyn3CC8lLjmpvRuWE41wDmTXHA
+         w7uo86anib+xZyhM/lyms5cZR55BbGZgihJpEI9oikR/y4vg36R4D2VhX/nl+LdlZftj
+         sW+8BmnilusXriEXVlkb7Rdvl4Nvm6bNABq4sBorxI/OPXpmSMXeLQpY/oa+aWiKVSmz
+         C99o5wJE+9duZndzoiIc/dEV80SeZVTkiYVIU9/tMD8MiOJIXrdwdgfG+BWwAhUmzibj
+         2xIWRIz4CS8auSwke0jujvUUdbG1jHbDv3KIjgpD/S4mqhvV2snkwfGQJNXjKWpcSsR/
+         10vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758316547; x=1758921347;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V0+Liys18anQK6gRZATENTJbkZzHDkR1/8jEpmQV1kk=;
-        b=ZDvccz9RsZDkLnl7P1rxwmiLNPg6shWl+Y0PVudGvsaNm6eDvPk8yJb8lnAFIwepMj
-         ZslXLE/MwA0Uis0P29wrrLXxJbCoBALrxyUH2VZEwKtDNetoXz4aDHey3jz8PYQYR3fS
-         l4WIBWaqYLSKYjzrMF5WdlxtKBbSoAhr5c9BYH99OQvgFPTg05MUeJ1bU0PoRbZfCX/P
-         nwhX5Jkbv0KXiuKWLK+pPw+GicotvQjc/FLatbQ3PEvDmRkJNshNfoaZSi0jiiOo9p0Y
-         /w3f0v4vAYbphUoCq1B9AZFSE1B/fv4SGZK5p3emwInTrqPmCnGZWSl9lva2sYNiuNab
-         fQBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoX49AM2oDNqH+OqwBOagAx8HoF2AgiiyhZm/t5vACjPjiIdk+ljuXl2uEl5noYVTCixx1UXUiCUiaKmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxLZBpSMUJVeLQpsfpgmb7k75zRRSXXyCTXQgzRuo5hOZ0kocq
-	7aL9paGaUkVIn9GgJm7A8JT3BNWNuqZtAo1dB8yP06EEHfzHgSdjhq1udItFkgnwlC8WKfTyzty
-	CGHApjA==
-X-Google-Smtp-Source: AGHT+IFdtQnkscwGqsgriF6C5QkossH14ZthE8OI9NmQ2k9LQwcIhxPc2sZV4JW/RFjatX5u3z54HnLVEKs=
-X-Received: from plbjh12.prod.google.com ([2002:a17:903:328c:b0:269:96fe:32ad])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:dac2:b0:25c:e895:6a75
- with SMTP id d9443c01a7336-269ba4f020amr59534475ad.28.1758316546890; Fri, 19
- Sep 2025 14:15:46 -0700 (PDT)
-Date: Fri, 19 Sep 2025 14:15:45 -0700
-In-Reply-To: <20250918181144.Ygo8BZ-R@linutronix.de>
+        d=1e100.net; s=20230601; t=1758316612; x=1758921412;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3vSRPYz/l41886yoT08n72HBlws2OkwcwCFkvly7l+s=;
+        b=OnjM7mskFEWDSq5HEfXhBF9HtCZANXXdEnhSKcfl3e/0gmvQwjKbONZa0xG5o+kzJy
+         NIQtHPu2owyxYPza4grJw6wiKYj1WAeV3RESf3fzO1/nLWGNaBtO6NV4rjgOWtUtpVZI
+         1LAC2hMGy85OnjhH6cyjkvDs3KBQqZRkIPhxk4OcnKw0XYqWGFIsOD5U3yfQzKn9jTat
+         nPIGlNa2xzciKvKl0EbPmnsDd1xHvShGOy2QwhcaqpHGn4jQfsUi9rPLTpg0qGTkaClQ
+         9lPOnHRJN4Z+kYALW1vL0c0qNI08/yUYJoqN5KbLLSLbb3Wxe0JvwA0jQ0L9pjIgVPuI
+         5V+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbs6+e5tjs623PDDjmtSBdrWkNWLLyjQzFYmGMGWMkUgHDT4Q0hgso+cUbL3t2gpAQQXM63+bh9bIlOgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYSUtsHCLiuZCXdaM9sgUz3lyfRMR9d7AErnrH+rWjTQErMtoO
+	/LrLQtHO+5pPPKYltjEYjtfXlM5QqpgukO7k36HpOu+sGi2k+tz2DdOHi5dC1eQJQMY6QQYPMsn
+	fObaZfw==
+X-Google-Smtp-Source: AGHT+IHncTnxtJ6hIK4AtyqUpuFZv8d+5SgVbkA6ZdQhnTI1SZWs27kxNaMHVLrVmScQSISG1aDh/1VNSAk=
+X-Received: from pjbsl14.prod.google.com ([2002:a17:90b:2e0e:b0:32b:58d1:a610])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d54c:b0:269:87a3:43b8
+ with SMTP id d9443c01a7336-269ba40ac1emr57477075ad.4.1758316612303; Fri, 19
+ Sep 2025 14:16:52 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 19 Sep 2025 14:16:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250827194107.4142164-1-seanjc@google.com> <20250827201059.EmmdDFB_@linutronix.de>
- <20250918110828-mutt-send-email-mst@kernel.org> <20250918154826.oUc0cW0Y@linutronix.de>
- <20250918120607-mutt-send-email-mst@kernel.org> <20250918181144.Ygo8BZ-R@linutronix.de>
-Message-ID: <aM3IAaCVx-PDeDsi@google.com>
-Subject: Re: [PATCH] vhost: Take a reference on the task that is reference in
- struct vhost_task.
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250919211649.1575654-1-seanjc@google.com>
+Subject: [PATCH v2] KVM: SEV: Reject non-positive effective lengths during LAUNCH_UPDATE
 From: Sean Christopherson <seanjc@google.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Lendacky <thomas.lendacky@amd.com>, Michael Roth <michael.roth@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 18, 2025, Sebastian Andrzej Siewior wrote:
-> vhost_task_create() creates a task and keeps a reference to its
-> task_struct. That task may exit early via a signal and its task_struct
-> will be released.
-> A pending vhost_task_wake() will then attempt to wake the task and
-> access a task_struct which is no longer there.
-> 
-> Acquire a reference on the task_struct while creating the thread and
-> release the reference while the struct vhost_task itself is removed.
-> If the task exits early due to a signal, then the vhost_task_wake() will
-> still access a valid task_struct. The wake is safe and will be skipped
-> in this case.
-> 
-> Fixes: f9010dbdce911 ("fork, vhost: Use CLONE_THREAD to fix freezer/ps regression")
-> Reported-by: Sean Christopherson <seanjc@google.com>
-> Closes: https://lore.kernel.org/all/aKkLEtoDXKxAAWju@google.com/
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
+Check for an invalid length during LAUNCH_UPDATE at the start of
+snp_launch_update() instead of subtly relying on kvm_gmem_populate() to
+detect the bad state.  Code that directly handles userspace input
+absolutely should sanitize those inputs; failure to do so is asking for
+bugs where KVM consumes an invalid "npages".
 
-Tested-by: Sean Christopherson <seanjc@google.com>
+Keep the check in gmem, but wrap it in a WARN to flag any bad usage by
+the caller.
+
+Note, this is technically an ABI change as KVM would previously allow a
+length of '0'.  But allowing a length of '0' is nonsensical and creates
+pointless conundrums in KVM.  E.g. an empty range is arguably neither
+private nor shared, but LAUNCH_UPDATE will fail if the starting gpa can't
+be made private.  In practice, no known or well-behaved VMM passes a
+length of '0'.
+
+Note #2, the PAGE_ALIGNED(params.len) check ensures that lengths between
+1 and 4095 (inclusive) are also rejected, i.e. that KVM won't end up with
+npages=0 when doing "npages = params.len / PAGE_SIZE".
+
+Cc: Thomas Lendacky <thomas.lendacky@amd.com>
+Cc: Michael Roth <michael.roth@amd.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+
+v2: Check params.len right away. [Tom]
+
+v1: https://lore.kernel.org/all/20250826233734.4011090-1-seanjc@google.com
+
+ arch/x86/kvm/svm/sev.c | 2 +-
+ virt/kvm/guest_memfd.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index cce48fff2e6c..31b3e128e521 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -2370,7 +2370,7 @@ static int snp_launch_update(struct kvm *kvm, struct kvm_sev_cmd *argp)
+ 	pr_debug("%s: GFN start 0x%llx length 0x%llx type %d flags %d\n", __func__,
+ 		 params.gfn_start, params.len, params.type, params.flags);
+ 
+-	if (!PAGE_ALIGNED(params.len) || params.flags ||
++	if (!params.len || !PAGE_ALIGNED(params.len) || params.flags ||
+ 	    (params.type != KVM_SEV_SNP_PAGE_TYPE_NORMAL &&
+ 	     params.type != KVM_SEV_SNP_PAGE_TYPE_ZERO &&
+ 	     params.type != KVM_SEV_SNP_PAGE_TYPE_UNMEASURED &&
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 08a6bc7d25b6..1d323ca178cb 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -716,7 +716,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
+ 	long i;
+ 
+ 	lockdep_assert_held(&kvm->slots_lock);
+-	if (npages < 0)
++
++	if (WARN_ON_ONCE(npages <= 0))
+ 		return -EINVAL;
+ 
+ 	slot = gfn_to_memslot(kvm, start_gfn);
+
+base-commit: c8fbf7ceb2ae3f64b0c377c8c21f6df577a13eb4
+-- 
+2.51.0.470.ga7dc726c21-goog
+
 
