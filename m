@@ -1,194 +1,242 @@
-Return-Path: <linux-kernel+bounces-824744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE3FB8A100
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A518AB8A109
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 510B24E1852
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:47:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BF35868F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7525524C;
-	Fri, 19 Sep 2025 14:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3C8242D70;
+	Fri, 19 Sep 2025 14:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4nXpIPa"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zP2zbEWX"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3474D4502F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EBC273F9
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758293218; cv=none; b=M3xV7GcY/x4rcIACDbfrnSPCMTGvEuFtOe+vPAdFAjMrid4rAPTZT8umA12wHYpveF2mJMNfZY7a4WlrPGZstWdUXXxSrn384Qs6iDd0a4FAxzxOHHKXYnJE2rfI5ChpP3wpSN6bj/ZAefj/IzDoN/02vsJnksecn5WdfPcxHj4=
+	t=1758293248; cv=none; b=MZCp72cljbZWlv7WUVJGyEWfktXgblZ/dfuc6DfCZppE3tQlcp4t9oI+2x9USpi/wuJXn5Q9YZHgX0scJ3dAaDoEx+aSca3chO2vVs8+cjSECbqfq//uEDoeN5icyME1TaxtrkOhnSI0cUXm7KVgj4oEznI8Li3/jKV+YYAOkmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758293218; c=relaxed/simple;
-	bh=rMzpqLEOEhteINqvc5dyan4rtMP3A9UTuyesjbI13LA=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=eDVzfG76JkwdyNC5IFGj+vlJjzRlsdweKg9m3arbTYm8p63wXZP2P0HnBoaYxbsfc/xvPu70Yh12lLHv5E9O3OTrlq6A+BNIB1ppcEnxp0e3uat8zqXHxHyRR7DP8B8IY4U4RqlWUqzrCZo5ztTI3+UX5V8wuqdRs6uhBoLkrVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4nXpIPa; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b79773a389so22771431cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:46:56 -0700 (PDT)
+	s=arc-20240116; t=1758293248; c=relaxed/simple;
+	bh=2DL6uXDg+S2/vhUOkYwzs5WF945Plpqn2YxEZIBpRIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CiYuIt/479Xmqoce9y4gE5yPKy3H4RkslUMuWJiBX6pgb15VqfxpCcHJrgUacKzkXONZ9Ssav0X/pHlofohw8HQcprSPaBP77l1ixi38Vnf4pe06px29vIX7GPIA06NKq607Pa5kOejj+nwIDiDijnZmj1sr7Gl6UMaHANI264Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zP2zbEWX; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso1874775f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:47:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758293216; x=1758898016; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BTCj+e/VtZ/D02X1h15E6NfB/hO2pboJylbEQXWpz8E=;
-        b=A4nXpIPa+2BhjVsulZSLhLIPr3E+ZFHQUuJRXnK3toMeDpl/tIJlbRWgTKMiRShSu2
-         wcSH2+RapQp3ncIktiuybEZ9Nd99ZyBKhUaqw9wrt8zq/woRd5GRzwkukmR7t0Lz3e02
-         eItFjH3S0UmGQltEJH4/lg14WuxXQMfzicM/FysACFU1VzYzcGy4Tvy81wv7XbqcGen/
-         OQKgF9Yyrfvdl9YhVTub/urvZM12PjLLND/k1napHlkkLWnjYuYFlGyeMXKxnmooxdro
-         KYxQFg36h3oqwaABM4TdY73aYeSXG1qARFfVZDZHymcn5P90PYs3bB7cJ91MWjahe0nb
-         ykBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758293216; x=1758898016;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+        d=google.com; s=20230601; t=1758293244; x=1758898044; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=BTCj+e/VtZ/D02X1h15E6NfB/hO2pboJylbEQXWpz8E=;
-        b=MlbmdNTWE8Oo6Ltd5mRFzeBWFAsNYXdhVvWvQ9yqWE+TfC4MthUVIWFzb11gBbuS/e
-         LCboGyfI9Yi6Rn5pfB8m9+iD00/EGaI+DP7WKTeEYwpLcZjaaMypz3FX8YjjfNaWg1B5
-         2QhqrqFpj/leZ0jB2y+bw/bMjd03fH/rYcOvMSkb/89ciMoOPZGlwZlYuqRBSv68EOR6
-         w2TA4Bpdg5wn2kGxLg29t6PCgs5bKni7npyQNBayvjJYtNDaiszmR49KTUVCSYYzlCl1
-         cReMHcKHJ7HnbGtvMaJvdT9wukZZwz4IhAA2MGuGtMPRXIoIUoB7T8QBchOeVV2P1ve3
-         WDcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIBo4HlL1jAX4vbLP/EA+YaaxpMfdQmdhwaKydSVnYXitVwyvvLEwtmFOaGVw6hBS773vyzVOSuMFddZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZDQGi/FTw5PEek/68VfQFTod5skXpyIgwX1eICYcTRG6H3E/y
-	5Ka78+YvHkdQC9YHlQyGVZ4EQ9aApWDAEZ9aVLNF/Cj7fDgc7vl3Pj4/+a3wfA==
-X-Gm-Gg: ASbGncsYiev4ZkvZbFQuP+eoI6ipT0cUSmMwVuvBHZ2rWlttVJEXBsD0kzFczUtpXv5
-	9IYuJmd6Zb7GSRGU5/nEBbiP8SObvZYd6sZlQWjzqHEiyR5CL416uvJR4agGqA+Uyx1InXxcRSw
-	0xkmnx05RJS5ylgr8xvIgOBs0MB5ybYQdMg9eoXyEUR9bNkJdB4ngrNplT2tuEe6YFw1/px5Npl
-	qiVOGlCYUJmRk8aBd7U/7npJHozMlIHSxAmJGNJagtH6bkWzoWmPhZi+AGSnk5z6hQZ+k5DQKbB
-	8Tmv9GLgpAKAM3nmAreH2qBT//S3P5ft4iZ1c6CCSIvkZrGZ8MVUmY/+WMq8j0R7+SGIpZupfbs
-	q4jJMJ1xZTVzCJn16KVkDX6kMBQf3qysGR01WNfuvyqA8nlG4EMVnhJVgda3WNIj6O51QOkRAzU
-	eNvg==
-X-Google-Smtp-Source: AGHT+IEFvwYYDWYJDrNKDVvsS0tm4PJF42EUcN3g1p4ngNtR8j2nRJk0TdRdJI0JYwklpBYJ2GKC1A==
-X-Received: by 2002:a05:622a:5444:b0:4c0:cab7:978 with SMTP id d75a77b69052e-4c0cab70addmr15501021cf.29.1758293215746;
-        Fri, 19 Sep 2025 07:46:55 -0700 (PDT)
-Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4bda279ad7esm30915921cf.19.2025.09.19.07.46.55
+        bh=58JIz+T98xNuJ35TRUpFdQl+tGQMi+ETXxGZ5QmS7Es=;
+        b=zP2zbEWX6Z5SJJjSeNHaBmL1kdD9NJhCNZJVu0OdBI2989PvJfYo2x/im5CjVyX046
+         atN8uZidbfskWGLWHfX2DATNqJM/NDQVnELTp7Y9NlY6PxKvt8UaFPVC7lsSe5xf0cDL
+         VvEsKJ1yTWRPJTo2e1DZ7dO8gO5a3RDUoCF60dRzvF6s8lzSY/1VOMjH+EYy93FSwSY0
+         APrWw5ST+v6Ys8nK6mZp+S9CFVv6jo0tjvYe+6y7yyMG9yJ44h9XTQjxMGNaXOAoWmt3
+         kF6vvJ+t5HNwPX3SPUijMeyoBlTwRQICHyJAUbRbTP+8cpjQsnjNTf+1j43pnutYwFPD
+         WYTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758293244; x=1758898044;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=58JIz+T98xNuJ35TRUpFdQl+tGQMi+ETXxGZ5QmS7Es=;
+        b=p0VkaQbEceFWtNhQN2xMWK9lT7IoRXUTKinogY8akyEHLR7c8vwIK5uKOYyQ2fnQM7
+         pL5X7ic4W8jKnFhN80FLBCo7oX9Rp9w6oa+LhIHjid5rgSVpbVA9yh6ra6OtEai3mPjr
+         41FO62m/T0J/ErTqPza2l705bmkpznFt/WNqOTD2iqq5YQ57p5kbfRGqt2SwIyfEN2pi
+         fkPBtv3DsKFxRcOzaWnzhoXzIgbVfRdb519quAcKqoW/MZs8VRUSmku8yS5ULRtDGBsx
+         jUrylfrilXdDvOk90yWeg8zTT1A65CmMbcy7F2Ox5MsntiFSButq7YuzmiibQ0nEAKAN
+         kzWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLAb5MRQvvFyLqZeEBTt9x4J6pbmcDEyPDNuG6wqwiHSBcHmKlOFe2eL/ZvIXju/JmCfuoqA1UFhs3sbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUTwMyq4AOP5k039BBvSMcaRsKEJlLlSK5OYqlIt8EzKcI5zRO
+	/+cF7q6Y3aUdT3/eDqo3mYzzCX+diI+cKpDmj8y1aTbPD8CuS1vthX060z+jCSbhMA==
+X-Gm-Gg: ASbGncszYsHwjzopkLL5IZREciMIPXbpNDCI9DGLbWnfZTiKtxDygbfGV0Yn4VVkrht
+	CyTZNneKvkB4jgQkwQ3MQFz2sK20FmKS6i0Rse0g0MAr6/YuRqRulvjgdUO5LOwLarJHDuj+4HU
+	lJeQ6Dr2bDl/mpEh2PBbwtHC6UdrPpiX/oYU3T3AxYjfMGwm6XJ+ymzAVhoBBMY+ty49s4P2Ms/
+	2Yq9NnjDOUrUt7bAc0QWe9j1mzB9Waq6Tgbc/ZUd+lc52yQDlSuXYjelbXQlCSl99ThxJAK9lNm
+	N7sqsHWVwNU3SP228pb9oMPM1z5bo3zrZ9hLhqq+z9r2xE/qhbaD8fBe4abnmaSKpDB0/dpdfDw
+	yAo5D+SzGW9pzyQBinnGVHj7VBe0Oe3QH3mrqW3uO+NjKxKC6KLqukDf1
+X-Google-Smtp-Source: AGHT+IEWBbhkJpfige+suf0vsNLGPkLiHAll4OeC7ziC+CAHJCVZxl4IjAKlTlNyPUIiZscBy0gVAw==
+X-Received: by 2002:a05:6000:400c:b0:3ea:9042:e682 with SMTP id ffacd0b85a97d-3ee7c55430amr2895578f8f.11.1758293244246;
+        Fri, 19 Sep 2025 07:47:24 -0700 (PDT)
+Received: from google.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1385adebsm6400131f8f.42.2025.09.19.07.47.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 07:46:55 -0700 (PDT)
-Date: Fri, 19 Sep 2025 10:46:54 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Wang Liang <wangliang74@huawei.com>, 
- willemdebruijn.kernel@gmail.com, 
- jasowang@redhat.com, 
- andrew+netdev@lunn.ch, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- hawk@kernel.org, 
- john.fastabend@gmail.com, 
- sdf@fomichev.me, 
- lorenzo@kernel.org, 
- toke@redhat.com
-Cc: yuehaibing@huawei.com, 
- zhangchangzhong@huawei.com, 
- wangliang74@huawei.com, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org
-Message-ID: <willemdebruijn.kernel.2ecd010c7b725@gmail.com>
-In-Reply-To: <20250917113919.3991267-1-wangliang74@huawei.com>
-References: <20250917113919.3991267-1-wangliang74@huawei.com>
-Subject: Re: [PATCH net] net: tun: Update napi->skb after XDP process
+        Fri, 19 Sep 2025 07:47:23 -0700 (PDT)
+Date: Fri, 19 Sep 2025 14:47:20 +0000
+From: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Dylan Hatch <dylanbhatch@google.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] arch: arm64: Fail module loading if dynamic SCS
+ patching fails
+Message-ID: <aM1s-I0gM_rAf5LU@google.com>
+References: <20250919122321.946462-1-abarnas@google.com>
+ <20250919122321.946462-2-abarnas@google.com>
+ <CAMj1kXEVThBdH7H7NX+Ma8j0_85GevzczFgvvozK-TsqT2geFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMj1kXEVThBdH7H7NX+Ma8j0_85GevzczFgvvozK-TsqT2geFw@mail.gmail.com>
 
-Wang Liang wrote:
-> The syzbot report a UAF issue:
-> 
->   BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->   BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
->   BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->   Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
->   CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
->   Call Trace:
->    <TASK>
->    dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->    print_address_description mm/kasan/report.c:378 [inline]
->    print_report+0xca/0x240 mm/kasan/report.c:482
->    kasan_report+0x118/0x150 mm/kasan/report.c:595
->    skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
->    napi_frags_skb net/core/gro.c:723 [inline]
->    napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
->    tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->    </TASK>
-> 
->   Allocated by task 6079:
->    kasan_save_stack mm/kasan/common.c:47 [inline]
->    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->    unpoison_slab_object mm/kasan/common.c:330 [inline]
->    __kasan_mempool_unpoison_object+0xa0/0x170 mm/kasan/common.c:558
->    kasan_mempool_unpoison_object include/linux/kasan.h:388 [inline]
->    napi_skb_cache_get+0x37b/0x6d0 net/core/skbuff.c:295
->    __alloc_skb+0x11e/0x2d0 net/core/skbuff.c:657
->    napi_alloc_skb+0x84/0x7d0 net/core/skbuff.c:811
->    napi_get_frags+0x69/0x140 net/core/gro.c:673
->    tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
->    tun_get_user+0x77c/0x3e20 drivers/net/tun.c:1784
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
->   Freed by task 6079:
->    kasan_save_stack mm/kasan/common.c:47 [inline]
->    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
->    kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
->    poison_slab_object mm/kasan/common.c:243 [inline]
->    __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
->    kasan_slab_free include/linux/kasan.h:233 [inline]
->    slab_free_hook mm/slub.c:2422 [inline]
->    slab_free mm/slub.c:4695 [inline]
->    kmem_cache_free+0x18f/0x400 mm/slub.c:4797
->    skb_pp_cow_data+0xdd8/0x13e0 net/core/skbuff.c:969
->    netif_skb_check_for_xdp net/core/dev.c:5390 [inline]
->    netif_receive_generic_xdp net/core/dev.c:5431 [inline]
->    do_xdp_generic+0x699/0x11a0 net/core/dev.c:5499
->    tun_get_user+0x2523/0x3e20 drivers/net/tun.c:1872
->    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
->    new_sync_write fs/read_write.c:593 [inline]
->    vfs_write+0x5c9/0xb30 fs/read_write.c:686
->    ksys_write+0x145/0x250 fs/read_write.c:738
->    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->    entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> After commit e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in
-> generic mode"), the original skb may be freed in skb_pp_cow_data() when
-> XDP program was attached, which was allocated in tun_napi_alloc_frags().
-> However, the napi->skb still point to the original skb, update it after
-> XDP process.
-> 
-> Reported-by: syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
-> Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in generic mode")
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+Hi,
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+On Fri, Sep 19, 2025 at 03:59:21PM +0200, Ard Biesheuvel wrote:
+>Hi,
+>
+>On Fri, 19 Sept 2025 at 14:23, Adrian Barnaś <abarnas@google.com> wrote:
+>>
+>> Disallow a module to load if SCS dynamic patching fails for its code. For
+>> module loading, instead of running a dry-run to check for patching errors,
+>> try to run patching in the first run and propagate any errors so module
+>> loading will fail.
+>>
+>> Signed-off-by: Adrian Barnaś <abarnas@google.com>
+>> ---
+>>  arch/arm64/include/asm/scs.h      |  2 +-
+>>  arch/arm64/kernel/module.c        |  6 ++++--
+>>  arch/arm64/kernel/pi/map_kernel.c |  2 +-
+>>  arch/arm64/kernel/pi/patch-scs.c  | 15 +++++++++++----
+>>  arch/arm64/kernel/pi/pi.h         |  2 +-
+>>  5 files changed, 18 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/scs.h b/arch/arm64/include/asm/scs.h
+>> index a76f9b387a26..ffcfcda87f10 100644
+>> --- a/arch/arm64/include/asm/scs.h
+>> +++ b/arch/arm64/include/asm/scs.h
+>> @@ -53,7 +53,7 @@ enum {
+>>         EDYNSCS_INVALID_CFA_OPCODE              = 4,
+>>  };
+>>
+>> -int __pi_scs_patch(const u8 eh_frame[], int size);
+>> +int __pi_scs_patch(const u8 eh_frame[], int size, bool is_module);
+>>
+>
+>Calling the parameter 'is_module' puts the policy in the SCS patching
+>code, which now has to reason about how patching a module differs from
+>patching other code.
+
+Agreed.
+
+>So I'd prefer to call this 'two_pass' or 'dry_run' or whatever, where
+>setting it guarantees that when an error is returned, no function will
+>be left in an inconsistent state.
+
+Maybe `bool skip_dry_run`?
+
+>
+>>  #endif /* __ASSEMBLY __ */
+>>
+>> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
+>> index 40148d2725ce..5d6d228c6156 100644
+>> --- a/arch/arm64/kernel/module.c
+>> +++ b/arch/arm64/kernel/module.c
+>> @@ -484,10 +484,12 @@ int module_finalize(const Elf_Ehdr *hdr,
+>>         if (scs_is_dynamic()) {
+>>                 s = find_section(hdr, sechdrs, ".init.eh_frame");
+>>                 if (s) {
+>> -                       ret = __pi_scs_patch((void *)s->sh_addr, s->sh_size);
+>> -                       if (ret)
+>> +                       ret = __pi_scs_patch((void *)s->sh_addr, s->sh_size, true);
+>> +                       if (ret) {
+>>                                 pr_err("module %s: error occurred during dynamic SCS patching (%d)\n",
+>>                                        me->name, ret);
+>> +                               return -ENOEXEC;
+>> +                       }
+>>                 }
+>>         }
+>>
+>> diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
+>> index 0f4bd7771859..7187eda9e8a5 100644
+>> --- a/arch/arm64/kernel/pi/map_kernel.c
+>> +++ b/arch/arm64/kernel/pi/map_kernel.c
+>> @@ -98,7 +98,7 @@ static void __init map_kernel(u64 kaslr_offset, u64 va_offset, int root_level)
+>>
+>>                 if (enable_scs) {
+>>                         scs_patch(__eh_frame_start + va_offset,
+>> -                                 __eh_frame_end - __eh_frame_start);
+>> +                                 __eh_frame_end - __eh_frame_start, false);
+>>                         asm("ic ialluis");
+>>
+>>                         dynamic_scs_is_enabled = true;
+>> diff --git a/arch/arm64/kernel/pi/patch-scs.c b/arch/arm64/kernel/pi/patch-scs.c
+>> index 55d0cd64ef71..78266fb1fa61 100644
+>> --- a/arch/arm64/kernel/pi/patch-scs.c
+>> +++ b/arch/arm64/kernel/pi/patch-scs.c
+>> @@ -225,7 +225,7 @@ static int scs_handle_fde_frame(const struct eh_frame *frame,
+>>         return 0;
+>>  }
+>>
+>> -int scs_patch(const u8 eh_frame[], int size)
+>> +int scs_patch(const u8 eh_frame[], int size, bool is_module)
+>>  {
+>>         int code_alignment_factor = 1;
+>>         bool fde_use_sdata8 = false;
+>> @@ -276,12 +276,19 @@ int scs_patch(const u8 eh_frame[], int size)
+>>                                 return EDYNSCS_INVALID_CIE_SDATA_SIZE;
+>>                         }
+>>                 } else {
+>> +                       /*
+>> +                        * For loadable module instead of running a dry run try
+>> +                        * to patch scs instruction in place and trigger error
+>> +                        * if failed, to prevent module loading.
+>> +                        */
+>
+>Move this comment to the module loader, and explain why the two pass
+>approach is not needed in this case.
+>
+
+Will do.
+
+>>                         ret = scs_handle_fde_frame(frame, code_alignment_factor,
+>> -                                                  fde_use_sdata8, true);
+>> +                                                  fde_use_sdata8, !is_module);
+>>                         if (ret)
+>>                                 return ret;
+>> -                       scs_handle_fde_frame(frame, code_alignment_factor,
+>> -                                            fde_use_sdata8, false);
+>> +
+>> +                       if (!is_module)
+>> +                               scs_handle_fde_frame(frame, code_alignment_factor,
+>> +                                                    fde_use_sdata8, false);
+>>                 }
+>>
+>>                 p += sizeof(frame->size) + frame->size;
+>> diff --git a/arch/arm64/kernel/pi/pi.h b/arch/arm64/kernel/pi/pi.h
+>> index 46cafee7829f..4ccbba24fadc 100644
+>> --- a/arch/arm64/kernel/pi/pi.h
+>> +++ b/arch/arm64/kernel/pi/pi.h
+>> @@ -27,7 +27,7 @@ extern pgd_t init_pg_dir[], init_pg_end[];
+>>  void init_feature_override(u64 boot_status, const void *fdt, int chosen);
+>>  u64 kaslr_early_init(void *fdt, int chosen);
+>>  void relocate_kernel(u64 offset);
+>> -int scs_patch(const u8 eh_frame[], int size);
+>> +int scs_patch(const u8 eh_frame[], int size, bool is_module);
+>>
+>>  void map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
+>>                int level, pte_t *tbl, bool may_use_cont, u64 va_offset);
+>> --
+>> 2.51.0.534.gc79095c0ca-goog
+>>
+
+Thank you for a review,
+Adrian
+
 
