@@ -1,76 +1,110 @@
-Return-Path: <linux-kernel+bounces-825067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E59B8AD99
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:04:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E48B8ADBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F717B9E75
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25711CC3593
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA42253F1D;
-	Fri, 19 Sep 2025 18:04:02 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49ECB2550D0;
+	Fri, 19 Sep 2025 18:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="jg3RGqYI"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49EF1A2392
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E012E1E3775;
+	Fri, 19 Sep 2025 18:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758305042; cv=none; b=f1lqHw6o6t6kzLFPpKyjfa9M1L4DlDVt2jebl3R4KrwBT44uCNNroIwzNIb0PI+IV/6xW9aEpYXZ17kJ2M1dda/eY531ks4LaOmAV3pbaOcfQ/Yj/pyseXjxMv2ED3ipKb9pn638g7ou2hil2sa19AhOwxDO88JzW/jZcbiFQmI=
+	t=1758305271; cv=none; b=AifPU33/nFINYPm87aN5NboISZHHr1IZx4SrQBdoLsFuQlgJUQ04Zr/UfCH/spxMBGNIwZbnK+5YcrloUU0edTX1DAnX2VK/cVRNfnguSG/uK77gU3MqK+QIivFFt1fCpUOQs0H1WLP1MsAuiCYsZGbsoqo6z0tN58/0G9CtHAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758305042; c=relaxed/simple;
-	bh=fHqiXY9F30VvMHnjpTF1syx8dF7v4pfl9pdm2FAfsNM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qkbIQLfbDXMXSM/QnzPIM4HcZoMheFakSqmKQoVq0i5+PU+byDOUrMgHhuwyhzbVQ7Apffkj50C5OkfrjKDY2R6OvfGI6nL+9UGxgYN2xBn/cvJzEXTjHgXydxOvIj5mr/VDQJ+iNZl4UDRxBhQSLA8OpZhiIPWo1wZaEanvB7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42404e7bc94so60619665ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:04:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758305040; x=1758909840;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fHqiXY9F30VvMHnjpTF1syx8dF7v4pfl9pdm2FAfsNM=;
-        b=XRhuPKVj1ubChr3dT7ZgBK2zT2fzOHPXqFevIV8GXR8chbue2Kt9M9jH21hJy/d1OV
-         zAfEG8CdKLcTqJfquonkGZAraNBCgnR1gbuhJItqVEpxI7OzhJVlzF5ESm+IfilmgCXM
-         l45ZRZ7AdyhJuBeNq/0wQrrzpAFURszl8PTati3yl+DUZE8pfDAjllUiHfmH+c3w9ApN
-         dBQypVHg4MiuGNjvcxeO/1XKUiONXBP8iVMhySZ6ozI+BUsQrwEsNbjglwHyuB8vdzGo
-         OkEUtbDr6jsmz15N+tB/KHkGwwSTrCQ0FIBhv0WtvTTC8cBN1b0jqt2DoJUokVTgVf7R
-         1F6g==
-X-Gm-Message-State: AOJu0YwI11+93INHZTJ+ObZLzmz9RP+hNyEFjyJJKydXTxnCEFcXCuCz
-	0pn++rvcOzyozsBVFBK8YBpydLWzDMQSJwucocjhYwuCRGht5qtbvaWTF/zYhXWYji/HwnHEw93
-	CenCpi4ysXUThGd48uHcXhjNWaxKDZptpQsznAMbIR0wn+sNHsFvI1DCp1Sk=
-X-Google-Smtp-Source: AGHT+IERrPt2t1091VbR8Cr7BZ5eFpnLjTwrBo38WWs/nlQ9IgKz2XPm62DxgjZ8hyxvO3y8OO88D9BMQwUvcnh4D40IAOW1cPfj
+	s=arc-20240116; t=1758305271; c=relaxed/simple;
+	bh=Wu2eGe/mS7p0B/NwQeCMwaT+SVke7lnfsACqDjeip8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bVK8sYYG8svIEZhNM9aQBFjBGtXdvAhYHnRZTURdtlpmUkflxITRAXU2/Gblh//tsKSGF/NPKhQl6LYqnJ22dH2WF3eBy5KUu4ZNmW60yQbk3o1alhIMqCCgBAnjlxeNfkbB+14py9opIi5zBbQ5zl5Hj1SKqmUnpZxrDV5ucw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=jg3RGqYI reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cT0dw1MhMz1FZQ2;
+	Fri, 19 Sep 2025 20:00:04 +0200 (CEST)
+Received: from [10.10.15.9] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cT0dv3wqTz1FZPt;
+	Fri, 19 Sep 2025 20:00:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1758304804;
+	bh=LqvDpcvx2GGFtaGzwciQP0I53j4IeLbgBmByFqDVHuk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=jg3RGqYIkZu/7obRV0oU3eMhOy39tnwUTd+0P/BmInKHXFjQCmypR/IubKJfTg5la
+	 KCHpoRLy0YMfGs3K203wCGu5AbKRuxR4XU0iTZyAnSKTlgIo8X7UiHgAQ1JFdz41wl
+	 3ztVrx19rNA+GOoBXvTKjiqp2oBoJPEoZvVmLz7LK7yEdQ6q3a4cKvEziQiArysMU3
+	 ks7i5cpSQFaxJer32ZINVdx6rDL9TZpY+/nywKHSgg9npsJ0HHejvDrAXD3mDpwyHW
+	 FN5D4fZLHiWEhJ+2n2VUL6yfmQIvAGni88nPxxBjGMRg8g0gOd8hHZuwuWfmnO9M63
+	 v3bfvkNpXjH9w==
+Message-ID: <c3ef33fe-58da-4c43-a0cf-10794b4d867c@gaisler.com>
+Date: Fri, 19 Sep 2025 20:00:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ce:b0:424:7de2:61ca with SMTP id
- e9e14a558f8ab-4248199c624mr61748155ab.20.1758305039887; Fri, 19 Sep 2025
- 11:03:59 -0700 (PDT)
-Date: Fri, 19 Sep 2025 11:03:59 -0700
-In-Reply-To: <68b1f3ab.a70a0220.f8cc2.00ef.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cd9b0f.a00a0220.37dadf.001d.GAE@google.com>
-Subject: Forwarded: WARNING in rtl8150_start_xmit/usb_submit_urb
-From: syzbot <syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] sparc/module: R_SPARC_UA64 handling to help with LLVM
+ IAS enablement
+To: koachan@protonmail.com, "David S. Miller" <davem@davemloft.net>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20250609-b4-sparc-relocs-v1-0-aa52631735af@protonmail.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20250609-b4-sparc-relocs-v1-0-aa52631735af@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 2025-06-09 15:53, Koakuma via B4 Relay wrote:
+> Hello~
+> 
+> This series lets the module loader handle R_SPARC_UA64, which is emitted
+> by LLVM's IAS in certain conditions. Additionally, I put on a small change
+> to the error log to make it clearer that the printed relocation number
+> is in hex.
+> 
+> The intention is to get both the kernel and LLVM in a state where
+> doing a clang+IAS build is possible.
+> 
+> As with before, on the LLVM side the project is tracked here:
+> https://github.com/llvm/llvm-project/issues/40792
+> 
+> Signed-off-by: Koakuma <koachan@protonmail.com>
+> ---
+> Koakuma (2):
+>       sparc/module: Add R_SPARC_UA64 relocation handling
+>       sparc/module: Make it clear that relocation numbers are shown in hex
+> 
+>  arch/sparc/include/asm/elf_64.h | 1 +
+>  arch/sparc/kernel/module.c      | 3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> ---
+> base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+> change-id: 20250305-b4-sparc-relocs-65ac77ca8920
 
-***
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
 
-Subject: WARNING in rtl8150_start_xmit/usb_submit_urb
-Author: viswanathiyyappan@gmail.com
+Picking this up to my for-next.
 
-#syz test
+Thanks,
+Andreas
+
 
