@@ -1,150 +1,156 @@
-Return-Path: <linux-kernel+bounces-823930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39A77B87C14
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:53:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C53B87C1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:53:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9481C20EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E863D3B95FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762392561A7;
-	Fri, 19 Sep 2025 02:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A9B266582;
+	Fri, 19 Sep 2025 02:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g35c4Ak6"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="skDSLzZ+"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6300224466B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D96B262FFC
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758250372; cv=none; b=HTp3YLeDcy4aGHbZi0/1ntPjgGAA96TCi589SLrrZ5149GT8FREYP6i56z+8BEA8OtHhJzHH3aOrML3EfyjZLWmsevoOYrFzPL65jp1ZTR2zssZnh9QRb4oX5qu+oAk/xGpLSmYBuvNYp+P2DnzpTu5jhKUkTrIlnhs2qv3QkhA=
+	t=1758250377; cv=none; b=QzfxhQ0S8STFdTgKY71HmQsBqVrimPM/ZjDs8Rt/b73F0q9Dqbzh7Ak70gs5ZVdbK/iiTXhc2rH4yYK5D4ojFireJBiyvFPBLFmalPs0pqb5Xsqaj7qBaQ+UT8V2qOuuWInACFLGR6lSUC5shp+6bFg+mpfO1JzqO1RjzeG+Ez0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758250372; c=relaxed/simple;
-	bh=98yvKwH2UtIVCSKMJziEGfp4kYGQhk/YviYY9MS7FD0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oBK3G1dDl2jn4dxtdU93h1hJdKFYV1oH0eXAVqbK9C0rT7L3kZ7YFXLEuG4rJL7rmbJ178L9AdygqbvJz4T8FaGL03CYgOe1xcAOQfLLTHVZRxQGcUbPq8y/oDkC+rq6VMMuwkHMkRK2DnJac8z+FdOjF7fa5d+f0oju+oPx49U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g35c4Ak6; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b5229007f31so1253735a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:52:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758250371; x=1758855171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWHSM8M5PEdLO5mZG9/ihvJhFYCqF9T0YZiDT0RrxmE=;
-        b=g35c4Ak6GAov6YXceSt7+wXavS6MTWDLwP32+0z5dG6ADxtry1+X/HK/Oz9SLvD3gT
-         dyI3T4lolf8PTpFgCMcLc+giBNhpfp1TSjEnJPQuKgi0ip2HTxu3BLBqgYG2IIF/JKVe
-         PJ/Dzmnq7cjV2dAXNfZ/FBXt1YGIH49jg2XKKsoLYFvrDwh5EsBf/Oe7s0ZXKUCzLEdD
-         tdXIuedMZEpghfJiDE77BhBBx1vzRUjiIfNHUUy8hoH9LT0vIpxlfwJj4px7yVFjjmnR
-         MdpdOfH2vI/KaQ49DuGWdRNp0WCVmzNoelGvqoVhX+r3J1+LotKeLPbKEhpru+43ZW0u
-         P9wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758250371; x=1758855171;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eWHSM8M5PEdLO5mZG9/ihvJhFYCqF9T0YZiDT0RrxmE=;
-        b=pHRqp+Mecty7la6xwMXicwvwRS5FDlrukbjByOEFuVfMtCzhZ6Xb92mjRdt+IhB6EI
-         uy1cMVksk15Y9gPHlko4IGn/vWYN/HNZS93alPDhiXicL8dNJ98VHSO6jnh1HwHyLUdT
-         3Xvw2ALlfpYxs/s7f02B8Me3VtJLn5VYvDjodamOBhJTdHMTSIVRtjCC/y4LIjwSpbCg
-         Wt3eQ2xevVwd8tkkajM9PeaHHUqbpB47JNdcLXTvYWiIyFGaqI+33OVjtieUHrf05xCN
-         nf5PTRGrjvsJ8+YdBlCPefuxGtG3omAyGC/dFHLq4MNuoWPbcyfGleT/cussgR4pDsqx
-         sDcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWASufPOZnMMZNuwFURZ/CIV/gF0oHr6iG2eD+KWD1MFVvh2mfPicPA154orq3Rll8R56cKv8JLDjV45AY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/6+RlIkWLKUvsvHyxYwC+CB/s8lWRLzTyFHPppmsTcchJl73S
-	K9jqjZvUjGpL7XGQcZpl/BHdnA/L+b9DXVh2YhB2KHO9nDt5HAjM7zGYRVSY1UQ9
-X-Gm-Gg: ASbGncsv9WEa34u+QuY8Uxj15fOU0PshynWzKGSBTZx5mvZL3r+IwpoV7hH7k/jSZ/1
-	HJzvHoZaDujujGK5bhFeOGCSIJidfxWMyCyPfxJJ+ma2oYkeYlepHICSZC4MzDRDi9wxbvqEy8D
-	9c6TlZTv8M/zDRs6f+9Rqy8cl9DigG/Y3FlwqjIeNXna6JUfTiipSiXqcW9kAp4zOvGE/yGXsx8
-	5P/JDhjU5bmjWODsUKb6HoA0lbpILDfHjVF3WPPJeuMRBdiWtpyWuk37stniNw0EA1JHfFyLBsm
-	roZGjJobzqt+IgRCoS3LoplC8exzcQPrp2DDXBjxRax+4VYmKwHi/vGOyt8isHYtczxIBT4cLej
-	kXLkFrfDziy65srQx8b1niP6H/C1P5ecUPiE=
-X-Google-Smtp-Source: AGHT+IHEmNw6zHNNZODOfJtrO3dxHRaOi6uO7+rK6qSFuOnxsr+E4gymoo7BQxMey8Irv6HpdcmwNg==
-X-Received: by 2002:a17:902:fc8f:b0:267:f7bc:673c with SMTP id d9443c01a7336-269ba51ed72mr22845625ad.44.1758250370330;
-        Thu, 18 Sep 2025 19:52:50 -0700 (PDT)
-Received: from localhost.localdomain ([115.42.62.9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26afe6385afsm4393875ad.39.2025.09.18.19.52.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 19:52:49 -0700 (PDT)
-From: Gui-Dong Han <hanguidong02@gmail.com>
-To: zyjzyj2000@gmail.com,
-	jgg@ziepe.ca,
-	leon@kernel.org,
-	yanjun.zhu@linux.dev
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	rpearsonhpe@gmail.com,
-	Gui-Dong Han <hanguidong02@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] RDMA/rxe: Fix race in do_task() when draining
-Date: Fri, 19 Sep 2025 02:52:12 +0000
-Message-Id: <20250919025212.1682087-1-hanguidong02@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1758250377; c=relaxed/simple;
+	bh=PiQCNPunC3FQaQFnasvZXtFdq9x2Gkfp9H0MO9LAFXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iV9ZuivhP5NqbRaG2brx2CqxbHbBsVBsAfGk2z5CI+Hak9anuTs8V+KWy/baoY7VgScQxnb3GZg9ySMyyMA9VOTm0VS2QBxJXf+IjH8oincGLX2hLD2j51BJv0sfWzZKEU7NVieX9SyRZLCQVkLDvLnEyLevc/PXEpaBY0Q7gGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=skDSLzZ+; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758250372; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=gVFSgUKKAuFnEqSEgabfcIAa5Tbls2E1LiZ7DjuSkOM=;
+	b=skDSLzZ+mPBXfnNIPL+k8jhyDEpW2AcATdjj3gzRqrupGROoVY3Utg8SNE7ZDlY1FsO+3/JD+oVyYoYX93Uk8eOkd/mjVhrSApitaRWJVX4H4jG+OmMExARhq+E4/LpdtYRCmQdF43unJW4/0m7TfEItJjmb3/8WDnOa+pyYOfg=
+Received: from 30.74.144.118(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WoIF0kP_1758250369 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 19 Sep 2025 10:52:50 +0800
+Message-ID: <a06fb734-cd3d-42c8-9b06-4b2427d3030b@linux.alibaba.com>
+Date: Fri, 19 Sep 2025 10:52:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm/fault: Try to map the entire file folio in
+ finish_fault()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ David Hildenbrand <david@redhat.com>
+Cc: kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+ Hugh Dickins <hughd@google.com>, Matthew Wilcox <willy@infradead.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Kiryl Shutsemau <kas@kernel.org>, "hughd@google.com" <hughd@google.com>
+References: <20250918112157.410172-1-kirill@shutemov.name>
+ <20250918112157.410172-2-kirill@shutemov.name>
+ <6e6f596a-1817-45d6-b674-04e8aefde6d4@redhat.com>
+ <962c9c49-8603-4a57-ba07-36e395eb48a5@lucifer.local>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <962c9c49-8603-4a57-ba07-36e395eb48a5@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When do_task() exhausts its iteration budget (!ret), it sets the state
-to TASK_STATE_IDLE to reschedule, without a secondary check on the
-current task->state. This can overwrite the TASK_STATE_DRAINING state
-set by a concurrent call to rxe_cleanup_task() or rxe_disable_task().
 
-While state changes are protected by a spinlock, both rxe_cleanup_task()
-and rxe_disable_task() release the lock while waiting for the task to
-finish draining in the while(!is_done(task)) loop. The race occurs if
-do_task() hits its iteration limit and acquires the lock in this window.
-The cleanup logic may then proceed while the task incorrectly
-reschedules itself, leading to a potential use-after-free.
 
-This bug was introduced during the migration from tasklets to workqueues,
-where the special handling for the draining case was lost.
+On 2025/9/18 21:13, Lorenzo Stoakes wrote:
+> On Thu, Sep 18, 2025 at 01:30:32PM +0200, David Hildenbrand wrote:
+>> On 18.09.25 13:21, kirill@shutemov.name wrote:
+>>> From: Kiryl Shutsemau <kas@kernel.org>
+>>>
+>>> The finish_fault() function uses per-page fault for file folios. This
+>>> only occurs for file folios smaller than PMD_SIZE.
+>>>
+>>> The comment suggests that this approach prevents RSS inflation.
+>>> However, it only prevents RSS accounting. The folio is still mapped to
+>>> the process, and the fact that it is mapped by a single PTE does not
+>>> affect memory pressure. Additionally, the kernel's ability to map
+>>> large folios as PMD if they are large enough does not support this
+>>> argument.
+>>>
+>>> When possible, map large folios in one shot. This reduces the number of
+>>> minor page faults and allows for TLB coalescing.
+>>>
+>>> Mapping large folios at once will allow the rmap code to mlock it on
+>>> add, as it will recognize that it is fully mapped and mlocking is safe.
+>>>
+>>> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+>>> ---
+>>>    mm/memory.c | 9 ++-------
+>>>    1 file changed, 2 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/mm/memory.c b/mm/memory.c
+>>> index 0ba4f6b71847..812a7d9f6531 100644
+>>> --- a/mm/memory.c
+>>> +++ b/mm/memory.c
+>>> @@ -5386,13 +5386,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>>    	nr_pages = folio_nr_pages(folio);
+>>> -	/*
+>>> -	 * Using per-page fault to maintain the uffd semantics, and same
+>>> -	 * approach also applies to non shmem/tmpfs faults to avoid
+>>> -	 * inflating the RSS of the process.
+>>> -	 */
+>>> -	if (!vma_is_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
+>>> -	    unlikely(needs_fallback)) {
+>>> +	/* Using per-page fault to maintain the uffd semantics */
+>>> +	if (unlikely(userfaultfd_armed(vma)) || unlikely(needs_fallback)) {
+>>>    		nr_pages = 1;
+>>>    	} else if (nr_pages > 1) {
+>>>    		pgoff_t idx = folio_page_idx(folio, page);
+>>
+>> I could have sworn that we recently discussed that.
+>>
+>> Ah yes, there it is
+>>
+>> https://lkml.kernel.org/r/a1c9ba0f-544d-4204-ad3b-60fe1be2ab32@linux.alibaba.com
+>>
+>> CCing Baolin as he wanted to look into this.
+>>
+>> --
+>> Cheers
+>>
+>> David / dhildenb
+>>
+> 
+> Yeah Baolin already did work here [0] so let's get his input first I think! :)
+> 
+> [0]:https://lore.kernel.org/linux-mm/440940e78aeb7430c5cc8b6d2088ae98265b9809.1751599072.git.baolin.wang@linux.alibaba.com/
 
-Fix this by restoring the original pre-migration behavior. If the state is
-TASK_STATE_DRAINING when iterations are exhausted, set cont to 1 to
-force a new loop iteration. This allows the task to finish its work, so
-that a subsequent iteration can reach the switch statement and correctly
-transition the state to TASK_STATE_DRAINED, stopping the task as intended.
+Thanks CCing me. Also CCing Hugh.
 
-Fixes: 9b4b7c1f9f54 ("RDMA/rxe: Add workqueue support for rxe tasks")
-Cc: stable@vger.kernel.org
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
----
-v2:
-* Rewrite commit message for clarity. Thanks to Zhu Yanjun for the review.
----
- drivers/infiniband/sw/rxe/rxe_task.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Hugh previously suggested adding restrictions to the mapping of file 
+folios (using fault_around_bytes). However, personally, I am not 
+inclined to use fault_around_bytes to control, because:
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_task.c b/drivers/infiniband/sw/rxe/rxe_task.c
-index 6f8f353e9583..f522820b950c 100644
---- a/drivers/infiniband/sw/rxe/rxe_task.c
-+++ b/drivers/infiniband/sw/rxe/rxe_task.c
-@@ -132,8 +132,12 @@ static void do_task(struct rxe_task *task)
- 		 * yield the cpu and reschedule the task
- 		 */
- 		if (!ret) {
--			task->state = TASK_STATE_IDLE;
--			resched = 1;
-+			if (task->state != TASK_STATE_DRAINING) {
-+				task->state = TASK_STATE_IDLE;
-+				resched = 1;
-+			} else {
-+				cont = 1;
-+			}
- 			goto exit;
- 		}
- 
--- 
-2.25.1
+1. This doesn't cause serious write amplification issues.
+2. It will inflate the RSS of the process, but does it matter? It seems 
+not very important.
+3. The default configuration for 'fault_around_bytes' is 65536 (16 
+pages), which is too small for mapping large file folios.
+4. We could try adjusting 'fault_around_bytes' to a larger value, but 
+we've found in real customer environments that 'fault_around_bytes' can 
+lead to more aggressive readahead, impacting performance. So if 
+'fault_around_bytes' controls more, it will bring more different 
+intersecting factors into play.
 
+Therefore, I personally prefer Kiryl's patch (it's what I intended to 
+do, but I haven't had the time:().
 
