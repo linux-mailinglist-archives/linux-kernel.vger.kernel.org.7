@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-824505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECF8B896C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16DBB896CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B899E58653F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C491CC012F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3764E3101D7;
-	Fri, 19 Sep 2025 12:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2693101D8;
+	Fri, 19 Sep 2025 12:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mkKPuCmj"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jS3uOwTZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45045270EBC;
-	Fri, 19 Sep 2025 12:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC430FF2B;
+	Fri, 19 Sep 2025 12:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284446; cv=none; b=m4iUpeNXcpOsloNOX1PbBJol7MF4JZjSQiNn8EqcXDiHANRLWPiFNcnZjZC3OvrzgxFGlOPHyeYm/7/B5FxV8sz8XiN4YGPO42snd0g+QULhyqPWaLp7Uou3wd62rNN+vwMj8Xa6EAu4KlSFSaqM5lsEPP2mPs/oytWy9shflns=
+	t=1758284489; cv=none; b=HVixhXrHknT5jV34kKPhYeSXWjsvN+4k+Gn/jUo9hBJw9pRDTPCyjJ6m0Ut1ZegkeQWOtDcAWgiq7++/hac9NSN7iURpr+r/guhz/tLJOEjQV1SSO5UOBDK1w2Sodm8jb+MN1YPbtzdracwrCwoBCUNvHOM6fNG++7iLqf0W1Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284446; c=relaxed/simple;
-	bh=U2vAZU5qyR8n6Sg+IjocQID7zfyrYA2NzI16U5IRGgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQdD3+/aTDkWojC+/6BDJdxXZiawLdrbqy/B5JgahncV4UrEu0i7Ql7CggEDUHkavRp3/ca7M3FnxTsJKjOp0qSM6iXSl3PTmRTCrzLFYS5a2LU2IejLnOGb49fTFu7iB26JbHD3QCzBrMtVj48BMQfxAzcj/21ffikjIjgjTIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mkKPuCmj; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Gyhc5JpmuafQ1hv3mATi4//QrUF7MvrRrvt3Qg8U5rA=; b=mkKPuCmjDEUdGxT1Vj5V54mZSY
-	q5RCKzvwPmp2on7S4N/gUOeEHuE/AYlDt4s1Ou2pzCAPyNEzDQfAuEeTKYSBT+Q6w8lDPMOvk/N1F
-	ezGMLicml16VbZSd4WRGSgWYokiheCfzCN2CmbXtgdr+LFZlLkgFV7XHmse9IrxX2vt4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uza67-008vz9-OO; Fri, 19 Sep 2025 14:20:19 +0200
-Date: Fri, 19 Sep 2025 14:20:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, liuyonglong@huawei.com,
-	chenhao418@huawei.com, lantao5@huawei.com,
-	huangdonghua3@h-partners.com, yangshuaisong@h-partners.com,
-	huangdengdui@h-partners.com, jonathan.cameron@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 3/3] net: hns3: use user configure after hardware
- reset when using kernel PHY
-Message-ID: <c0c20c46-a4c5-4838-a0c0-f2d5932c2ae8@lunn.ch>
-References: <20250917122954.1265844-1-shaojijie@huawei.com>
- <20250917122954.1265844-4-shaojijie@huawei.com>
- <5188066d-fcd2-41e7-bd8a-ae1dfbdd7731@lunn.ch>
- <59d9add5-a4f5-4ee2-9fd8-a2ced4cbe0d4@huawei.com>
+	s=arc-20240116; t=1758284489; c=relaxed/simple;
+	bh=rXIgbfE716xBftqBoD9rprDY7oYuAFMefpcVDwRQo5A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qWhRt4643nqkW3fEpjPwNjWkbZWe4RG1joK0B2Qpo07CbsmaCkuOI0ZbYDSTniJ89ZLAP3tCs5F4fX++5kIzKvvgLDzSa65xXYiH8uNYgxQ2qc4zb2KtMl3DHJBhLY/b9jtX5QbFh7B+Ul1xjl750WAEzdvCZSFIsS3md66tqWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jS3uOwTZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E9FC4CEF0;
+	Fri, 19 Sep 2025 12:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758284488;
+	bh=rXIgbfE716xBftqBoD9rprDY7oYuAFMefpcVDwRQo5A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jS3uOwTZccJhGlQ88oY6vvJuMdVS+b4JUvSJbriaEq3zMM1lCDyQ9xLYm8QnjUGxV
+	 Q3e/b0rIOaeuj7qBX/hMTRb+HN3EzUR4GBVnnN6e6+a3hCVk8/rbSaAHapg+7rfn5f
+	 Kez/vxrcEtawHzR1oYKr2pHkAfmQB4A++FXiGpv8bIB131Ho67XBEUG7L1qet/QzFJ
+	 hx02lhcMicvrnnI20mb6NCohsqsSLadMZ6QVNXLCo6YbI7/MXTDduM2siRvwKsLglW
+	 5bPAIurwxJiCxhsthP6Y2/CkJKlYKNkJvG1vB4Mc3tBDEPMWeGMBelSunQX/suE+XH
+	 xAHh6gzh/bbrw==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Marco Crivellari <marco.crivellari@suse.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v2 0/3] fs: replace wq users and add WQ_PERCPU to alloc_workqueue() users
+Date: Fri, 19 Sep 2025 14:21:20 +0200
+Message-ID: <20250919-denkfabrik-addition-6e42bfe1d22c@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250916082906.77439-1-marco.crivellari@suse.com>
+References: <20250916082906.77439-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <59d9add5-a4f5-4ee2-9fd8-a2ced4cbe0d4@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1441; i=brauner@kernel.org; h=from:subject:message-id; bh=rXIgbfE716xBftqBoD9rprDY7oYuAFMefpcVDwRQo5A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc9Tr81HJRw+naG1dmHH9/oC41h50vo5g3JkVy4VrTq 7x8ixW7OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSVsfwT0d1/QQx1vq9+l0l ar4tcaHVzy+um7d4l0fQp56yZ4v37GRkWGcvrS0xyed19/2W7vQL14u8uGZdNK5cv5NX+bLOEvn /bAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 02:07:34PM +0800, Jijie Shao wrote:
+On Tue, 16 Sep 2025 10:29:03 +0200, Marco Crivellari wrote:
+> Below is a summary of a discussion about the Workqueue API and cpu isolation
+> considerations. Details and more information are available here:
 > 
-> on 2025/9/18 1:11, Andrew Lunn wrote:
-> > On Wed, Sep 17, 2025 at 08:29:54PM +0800, Jijie Shao wrote:
-> > > When a reset occurring
-> > Why would a reset occur? Is it the firmware crashing?
-> > 
-> > > Consider the case that reset was happened consecutively.
-> > Does that mean the firmware crashed twice in quick succession?
-> > 
-> >       Andrew
+>         "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+>         https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 > 
-> Actually, We can trigger a reset by ethtool:
-> ethtool --reset ethx...
- 
-For that, RTNL should be held. So the configuration cannot change
-while the reset is happening. Two resets in quick success should not
-be an issue, because they will be complete sequential, one finished
-before the next one started.
+> === Current situation: problems ===
+> 
+> [...]
 
-	Andrew
+Applied to the vfs-6.18.workqueue branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.workqueue branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.workqueue
+
+[1/3] fs: replace use of system_unbound_wq with system_dfl_wq
+      https://git.kernel.org/vfs/vfs/c/08621f25a268
+[2/3] fs: replace use of system_wq with system_percpu_wq
+      https://git.kernel.org/vfs/vfs/c/d33fa88429c5
+[3/3] fs: WQ_PERCPU added to alloc_workqueue users
+      https://git.kernel.org/vfs/vfs/c/13549bd48bbf
 
