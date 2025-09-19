@@ -1,229 +1,129 @@
-Return-Path: <linux-kernel+bounces-824548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB545B89866
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:46:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E23CB8986E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AE9527D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2A218847D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96FC1E1E16;
-	Fri, 19 Sep 2025 12:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778C523ABBF;
+	Fri, 19 Sep 2025 12:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Koir+LBn"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBefYxC7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF751487E9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57AB226D0C;
+	Fri, 19 Sep 2025 12:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285948; cv=none; b=Jzisx3ewg/h+uH5md/3PYUUatekkn9UC4GaZM2+9pWrucDM+HilSb9WVeL/l1Y5THteVGh3F58EwI10/RUbrIJgZXYI8QdIL1jlvXbQ+Nseo/Ah0Kpl2gATPC/WRnK9nJHMmw+h8KUpe1DK6fqyE8xjshpLw+5lLag6p8J0EFJQ=
+	t=1758285952; cv=none; b=LO3KrXByppicRBXq1sKByWdUksEin1LNf9x5JJDnlmge1fZETm1H9OWhB0cZ3lMPrrMx1ieGoKXILYkGIiFJC9ja1XqN2KDOBlBeU+4iuYNJk5WHIjyoGUk9Ezw5mMER5rxz1LOYcC2sORCI4ReIW8ank6aR0b1AqzWtYtl6HV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285948; c=relaxed/simple;
-	bh=OdygPpmxey2F85HBKUIiweKLN9HtBWwarVCIyMF2aM0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NlKE6uo6Sjqv3e15u9X51+vx+94X7krEZ+1CDYsoJtvlsJvidQ5LYieSVCC/BjB/bFXFWOmN4KifRRr/gK4ZykO3qz5JQDUlwGYec0PqE4Fi+Ytn0MzPx0uB+l+50+PPArNR1rz3F6ALbFwupefJGXn6BQFVVMFYiGoQwZqS3bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Koir+LBn; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id EC3EF4E40D5E;
-	Fri, 19 Sep 2025 12:45:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BFB0A606A8;
-	Fri, 19 Sep 2025 12:45:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C96C7102F1847;
-	Fri, 19 Sep 2025 14:45:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758285942; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=MjgzZqUkGZtW8y2Dj439Uyqecpqe2is3aaIjBO+I7Qk=;
-	b=Koir+LBnjg3C1xEp5PjdUQfL00B/cbLDleIAal1uoGnhwdNosgmg14sO4nCSGniH+gOPOD
-	LDm5Xtvj5mCn5b9KR41MAMwkd291c3uyNL/O0AJvZPurFsn2GjMhduRl0RiQ5QYtCQnZxt
-	+drqZhWNRFQvVeJl2Vn30WtBAcnb3M+sfmyHqotcNT/xxCPyFZQzVkZKuHyduL+KzUdy4I
-	Q1e/dQaAHg4heZ4vQsAoytZd1Pi/IMDUn/fD5K/yF0tuvi9SDgodOB8NJGSq3pm/M9rGf3
-	8ashqkJto+jk0UtmCvCBzCH4j3LbFZMWSF1q+6n6v78FEdw3leKzUtshAfa4ag==
-Message-ID: <9ca5c4c2-0a73-4994-9f18-6dc88effe41b@bootlin.com>
-Date: Fri, 19 Sep 2025 14:45:36 +0200
+	s=arc-20240116; t=1758285952; c=relaxed/simple;
+	bh=hLgN36Vmop0pX03tZn5+phL+l55fyPTTzrn9wKdIW8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K2GxLAURFTnNbqFZIscG5KkgyNH1+vvgnK7khG4VmuLInh5S1GUWi4yQyArNdaM+h0AbN3lZoAmjHm9BEAWMyjjfxge2J+TSFKohiLvU7JxxUifrDSUiKcuk7WHBRwsAVYHMKhKcjvjNk+MgbcIcvyxgBxwXgrwF/+a3X+veoTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBefYxC7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40A45C4CEFB;
+	Fri, 19 Sep 2025 12:45:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758285952;
+	bh=hLgN36Vmop0pX03tZn5+phL+l55fyPTTzrn9wKdIW8g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OBefYxC7UxYF71jqkxsGstzmHXzIrlfGP+kwca4ApZmxQko2EQPHokXO7G074MTGj
+	 CvYrVSexgayHGXuf87Q6qpoZpN1YqkMS2npesokB+MKryim6pzuVDV+mGzLgU0c6Yb
+	 63GkFYkrr5cbyc41Q/zcdMwWm9/PHdk83SN9hS0qqP0KYuGW1RZUKZQPnXhN1rOTt6
+	 Rv838BO+99BNsIfaDqwB2NNCMthO3Vu+CIXuyaGbTejrsfnwUjcwlxXHa9DmL1SH+F
+	 nL/k26aGOp8EqihZtEUR7ZXJg0GTXDUM9t1J+s3a6xwdbrFGTcVtOQo0k0tN2ICi6x
+	 7k7ZYV/lDYgiw==
+Date: Fri, 19 Sep 2025 13:45:47 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Networking <netdev@vger.kernel.org>
+Cc: Anantha Prabhu <anantha.prabhu@broadcom.com>,
+	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Michael Chan <michael.chan@broadcom.com>,
+	Saravanan Vajravel <saravanan.vajravel@broadcom.com>
+Subject: linux-next: manual merge of the net-next tree with the rdma tree
+Message-ID: <aM1Qe17qO6zCxkpS@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH RFC v2 17/20] drm/vkms: Rename existing color pipeline
- helpers to contain "pre_blend"
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>
-Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
- harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com,
- pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com,
- jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com,
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
- xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com,
- quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com,
- marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com,
- chaitanya.kumar.borah@intel.com, mcanal@igalia.com, kernel@collabora.com,
- daniels@collabora.com, leandro.ribeiro@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Simona Vetter <simona.vetter@ffwll.ch>
-References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
- <20250917-mtk-post-blend-color-pipeline-v2-17-ac4471b44758@collabora.com>
-Content-Language: en-US, fr
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-17-ac4471b44758@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kVAAyrlqOOWrZAjP"
+Content-Disposition: inline
 
 
+--kVAAyrlqOOWrZAjP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le 18/09/2025 à 02:43, Nícolas F. R. A. Prado a écrit :
-> Rename the existing color pipeline helpers so they contain "pre_blend"
-> in the name to make them clearly distinguishable from the post-blend
-> helpers when they're introduced.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Hi all,
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Today's linux-next merge of the net-next tree got a conflict in:
 
-> ---
->   drivers/gpu/drm/vkms/vkms_colorop.c | 8 +++++---
->   drivers/gpu/drm/vkms/vkms_drv.h     | 2 +-
->   drivers/gpu/drm/vkms/vkms_plane.c   | 2 +-
->   3 files changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_colorop.c b/drivers/gpu/drm/vkms/vkms_colorop.c
-> index 0191ac44dec0a9513e001b304f6ead32a96cdb8c..5924ae2bd40fc904048f99bc9b96308140709e25 100644
-> --- a/drivers/gpu/drm/vkms/vkms_colorop.c
-> +++ b/drivers/gpu/drm/vkms/vkms_colorop.c
-> @@ -14,7 +14,9 @@ static const u64 supported_tfs =
->   
->   #define MAX_COLOR_PIPELINE_OPS 4
->   
-> -static int vkms_initialize_color_pipeline(struct drm_plane *plane, struct drm_prop_enum_list *list)
-> +static int
-> +vkms_initialize_pre_blend_color_pipeline(struct drm_plane *plane,
-> +					 struct drm_prop_enum_list *list)
->   {
->   	struct drm_colorop *ops[MAX_COLOR_PIPELINE_OPS];
->   	struct drm_device *dev = plane->dev;
-> @@ -96,13 +98,13 @@ static int vkms_initialize_color_pipeline(struct drm_plane *plane, struct drm_pr
->   	return ret;
->   }
->   
-> -int vkms_initialize_colorops(struct drm_plane *plane)
-> +int vkms_initialize_pre_blend_colorops(struct drm_plane *plane)
->   {
->   	struct drm_prop_enum_list pipeline;
->   	int ret;
->   
->   	/* Add color pipeline */
-> -	ret = vkms_initialize_color_pipeline(plane, &pipeline);
-> +	ret = vkms_initialize_pre_blend_color_pipeline(plane, &pipeline);
->   	if (ret)
->   		return ret;
->   
-> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> index 55440ec6db5209741af1443d4e49e9471e6795c9..37ee569474223b2cf01e3cc0e4f119777533ae23 100644
-> --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> @@ -305,6 +305,6 @@ void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer
->   int vkms_enable_writeback_connector(struct vkms_device *vkmsdev, struct vkms_output *vkms_out);
->   
->   /* Colorops */
-> -int vkms_initialize_colorops(struct drm_plane *plane);
-> +int vkms_initialize_pre_blend_colorops(struct drm_plane *plane);
->   
->   #endif /* _VKMS_DRV_H_ */
-> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> index db8d26810afa8d8fcab48a6db2e691255f26a8a6..8e63a07a7e1b0a350361d0b03b7911bfa9ce3dcc 100644
-> --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> @@ -232,7 +232,7 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
->   					  DRM_COLOR_YCBCR_BT601,
->   					  DRM_COLOR_YCBCR_FULL_RANGE);
->   
-> -	vkms_initialize_colorops(&plane->base);
-> +	vkms_initialize_pre_blend_colorops(&plane->base);
->   
->   	return plane;
->   }
-> 
+  drivers/net/ethernet/broadcom/bnxt/bnxt.c
 
--- 
---
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+between commit:
 
+  217156bb70afb ("bnxt_en: Enhance stats context reservation logic")
 
+=66rom the rdma tree and commit:
+
+  48e619627832c ("bnxt_en: Support for RoCE resources dynamically shared wi=
+thin VFs.")
+
+=66rom the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 872c361700b73,d59612d1e1760..0000000000000
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@@ -9690,8 -9703,8 +9703,10 @@@ static int __bnxt_hwrm_func_qcaps(struc
+  		bp->fw_cap |=3D BNXT_FW_CAP_ROCE_VF_RESC_MGMT_SUPPORTED;
+ =20
+  	flags_ext3 =3D le32_to_cpu(resp->flags_ext3);
+ +	if (flags_ext3 & FUNC_QCAPS_RESP_FLAGS_EXT3_MIRROR_ON_ROCE_SUPPORTED)
+ +		bp->fw_cap |=3D BNXT_FW_CAP_MIRROR_ON_ROCE;
++ 	if (flags_ext3 & FUNC_QCAPS_RESP_FLAGS_EXT3_ROCE_VF_DYN_ALLOC_SUPPORT)
++ 		bp->fw_cap |=3D BNXT_FW_CAP_ROCE_VF_DYN_ALLOC_SUPPORT;
+ =20
+  	bp->tx_push_thresh =3D 0;
+  	if ((flags & FUNC_QCAPS_RESP_FLAGS_PUSH_MODE_SUPPORTED) &&
+
+--kVAAyrlqOOWrZAjP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjNUHoACgkQJNaLcl1U
+h9D4tgf/dkG+5cUsYK+z4xkb9V2+U/NrThKn/Iwb/fb4x1S9nFFhLDsalRwsOK5U
+WrpkNQ7XBVgRJ3b19960vtysKLzv9NoGl5SIq8C7n4vNImKUO8orzoKSmxvM/4eX
++3oSLPzWjqx2lSZNvKXAdPXFj+CMMd5DuDZoAGScBZbG4GNVH739wVaeQxQesAWD
+xhgMg+UkIi68IUfj16u9cB3ZeOg4vDyb719DbuyNd+LKT4sM6C0QU9sQK+zba2v2
+ZX3Oo/qb1IRiudKEBHBji2CoEtZJYmho0sL2AYPdHP2s5dcivXGoYNPj0S/m/hRP
+W5hp+qEXDZcps2K7XLkyXv1/9fUWww==
+=Ijnt
+-----END PGP SIGNATURE-----
+
+--kVAAyrlqOOWrZAjP--
 
