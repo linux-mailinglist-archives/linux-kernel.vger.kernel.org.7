@@ -1,175 +1,87 @@
-Return-Path: <linux-kernel+bounces-825012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993DAB8AB48
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:10:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADD83B8AB45
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50F4A17DD33
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF563A3458
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EE6321F23;
-	Fri, 19 Sep 2025 17:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INK6DqN8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07253218D6;
+	Fri, 19 Sep 2025 17:10:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A321321430;
-	Fri, 19 Sep 2025 17:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DE332129B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758301806; cv=none; b=uyxMDEKY96GBS1TUBCqbohBOAoHodr1H31ZQOyS4jXtPjoipsU8RhClkUt2O7m0TIvEaj9IQQmxTmKXet3jRY3sEoM+wkiyaIY50jTaT2fuGJoQTrZOC9A7yp7OIFvF4z/Gj9SUwzbLJPzqxtK//bbzrOavHp3sl2Wewp+82eMY=
+	t=1758301806; cv=none; b=JbFt3Hn3tVOpQvklEEnDfY+t3uPRBEttAUdl9sIvECuwE4tlwq+f+Ix3PAf/j95NogsTfQMWGGEYbRwgCZaBeRHgximZVIVHSPuHQW89ZcnKI2fwj4u0Lk6E9xd33o/qeXy6Qgi/VSSyuTCKJK5Xjssojv8RGbsn4YVK7TKAIjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758301806; c=relaxed/simple;
-	bh=RIVTddaDHTeQgAHMyaATs+1LIv9y4+UzM0k7v4cBwEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lL6UwwiMYvf8WCiAao6uDB5yN5b4MskqeKFaGOsx32Xm+uYYQqvHUsJe8hS9yCP1mz7exWHfC2HA99bJfPhQxF8X22+pPvY/UxJS/PMIGYOLIGmQzspv2zK0BBClHk06zrC4izPWZiJ2Dm+8yTdMwBDmYXYspTcPZFHTXquX7HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INK6DqN8; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758301804; x=1789837804;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RIVTddaDHTeQgAHMyaATs+1LIv9y4+UzM0k7v4cBwEo=;
-  b=INK6DqN8jYEPRE5FWuCLw3D8sJUBz+XEIJcgy18ZrAAhHtJsfPOUo6J0
-   B5p624ijwtGtrb3jORgCUDAGSVlSEE8RjaW0dd01seif07BOyY2GIOlr+
-   ThAlTsH1E/qVzwc9OMPjflT6Op+jGhQyb563ULHyiy2LBFYWGxgQ3o5Bk
-   eJbKwGqEnoi+etSAJJ23e+C6ZjwzmrkfW5bpnvJCy5C3jEBT+T7ao3SFz
-   7Gvn/FNEHYXzbJcHKu5+0RX2x/2HrhimfrGBqq/boEb1UyRstOmzw61RF
-   hAxmEtgi4QJfSPdcu0iT3y4Fiot3WDY8GPXHBkz+laCAWgOoTpuG3bUup
-   A==;
-X-CSE-ConnectionGUID: kuTG3r9JQiSV1CQgIo1LDw==
-X-CSE-MsgGUID: QIk9LML0TV+E8UU2YHEJLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60598198"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60598198"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 10:10:03 -0700
-X-CSE-ConnectionGUID: 0XTU64C0ScaiG/e30x56hA==
-X-CSE-MsgGUID: AgjWt8pETEGyzUvWx1nL2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,278,1751266800"; 
-   d="scan'208";a="175805685"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 19 Sep 2025 10:10:01 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzecR-0004ZZ-1H;
-	Fri, 19 Sep 2025 17:09:59 +0000
-Date: Sat, 20 Sep 2025 01:09:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: Add an option to show symbols in _text+offset
- for function profiler
-Message-ID: <202509200000.EJ4InVti-lkp@intel.com>
-References: <175826135058.101165.7219957344129610147.stgit@devnote2>
+	bh=C+qzOHCIrbETtZN7+tSpoelBJO9dquwBax7WUhd5+sw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FKihPkUHgf0eQq4y3AyfAsmr4iD3Iay9TVZGj5gQhetSWIbsKSCCS7Vo2YyR83LQSFxC+2p4HOHxNf//w4Dw0FxsImlOGnNmOiIlpL2Gw2CAgivOL4XI5gWYNmLCg6mTFI5Li0jU6+e9kz7zaG5gGu5YThuONsNrgidW82RNBfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42408b5749aso47135065ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:10:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758301804; x=1758906604;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NCwmxXBP5j5JxsKkQuSIJx/M3c88GeLXM9q914Io0aQ=;
+        b=dvYggDJkbOj+id871iuBhRFeVWQ9smagJ3uU1Mggb7zKniJYoVshqB3nZ0lLOe7qCg
+         ekSRkFyeOXWHHV8Y+WF03Nx4MQSqOUDh7z3P89yBGbJf/ydFxIDluLO6a419rLrOl27B
+         z8cwz/4h0Ss3JnvqFIAP5WNO4fnfbBAsDZR/MXkO/lTCInQGG3K7XB578CgSE9eP4Glj
+         0y1swWjfPh2WR3RA/vx6rrdfQ7gEiMbfvWUf+/t49pHhw5J6niLEpOot6U4eUR1QNpTP
+         o6aXqJMEjdBTdFkUmhzXhFhfcYa5Uin6xsB20+gohh4lHEECdkF4Z6iKhZwJ+yWrrmHi
+         OQIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUj+vUgnWYC+rqkGRWcrtA/JKOovTI+CjYYJr8Ff8uVk5f9t/J9inn//z5YPUfRS89uI7LXS5nbgU0KHPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQscGhX7USxnmKWfQBzscQmNcVzVKnUzZyoSPtQKAyaASX7LV8
+	Hima47oVZQ8YlSBCTJ3GDCEY+mP+6BaGHrMLjGF7YH6V9Je0P/vHm+BIOysKsW+BmpKCeg1SChz
+	S16YEFQ4lo2/0ohuTopuzUVNZHxth4O50LwAyLsS5GiFe6j8SMDPuklfoPAU=
+X-Google-Smtp-Source: AGHT+IE0QcP6OfRtVstXQFKvrUTXkJLW43DdUpKWGrEkRn30P7UEDviwhnboU81FTyq0rzQ9ZoHZCGa5PrDOd0ypU4mAn3X6M97N
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175826135058.101165.7219957344129610147.stgit@devnote2>
+X-Received: by 2002:a05:6e02:1a65:b0:422:a9aa:7ff4 with SMTP id
+ e9e14a558f8ab-4248177d49bmr57629205ab.11.1758301803716; Fri, 19 Sep 2025
+ 10:10:03 -0700 (PDT)
+Date: Fri, 19 Sep 2025 10:10:03 -0700
+In-Reply-To: <20250919152337.47803-1-hariconscious@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cd8e6b.a00a0220.37dadf.001c.GAE@google.com>
+Subject: Re: [syzbot] [tipc?] KMSAN: uninit-value in tipc_rcv (2)
+From: syzbot <syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com>
+To: hariconscious@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Masami,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on linus/master v6.17-rc6 next-20250918]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reported-by: syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com
+Tested-by: syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Add-an-option-to-show-symbols-in-_text-offset-for-function-profiler/20250919-135733
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/175826135058.101165.7219957344129610147.stgit%40devnote2
-patch subject: [PATCH] tracing: Add an option to show symbols in _text+offset for function profiler
-config: x86_64-buildonly-randconfig-002-20250919 (https://download.01.org/0day-ci/archive/20250920/202509200000.EJ4InVti-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200000.EJ4InVti-lkp@intel.com/reproduce)
+Tested on:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509200000.EJ4InVti-lkp@intel.com/
+commit:         e8442d5b Merge tag 'sound-6.17-rc7' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=134fc712580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b093ccee5a9e08c
+dashboard link: https://syzkaller.appspot.com/bug?extid=9a4fbb77c9d4aacd3388
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12e79c7c580000
 
-All error/warnings (new ones prefixed by >>):
-
-   In file included from kernel/trace/trace_sched_switch.c:15:
->> kernel/trace/trace.h:1422:37: warning: left shift count >= width of type [-Wshift-count-overflow]
-    1422 | #define C(a, b) TRACE_ITER_##a = (1 << TRACE_ITER_##a##_BIT)
-         |                                     ^~
-   kernel/trace/trace.h:1358:17: note: in expansion of macro 'C'
-    1358 |                 C(PROF_TEXT_OFFSET,     "prof-text-offset"),
-         |                 ^
-   kernel/trace/trace.h:1402:17: note: in expansion of macro 'PROFILER_FLAGS'
-    1402 |                 PROFILER_FLAGS
-         |                 ^~~~~~~~~~~~~~
-   kernel/trace/trace.h:1424:29: note: in expansion of macro 'TRACE_FLAGS'
-    1424 | enum trace_iterator_flags { TRACE_FLAGS };
-         |                             ^~~~~~~~~~~
---
-   In file included from kernel/trace/trace.c:58:
->> kernel/trace/trace.h:1422:37: warning: left shift count >= width of type [-Wshift-count-overflow]
-    1422 | #define C(a, b) TRACE_ITER_##a = (1 << TRACE_ITER_##a##_BIT)
-         |                                     ^~
-   kernel/trace/trace.h:1358:17: note: in expansion of macro 'C'
-    1358 |                 C(PROF_TEXT_OFFSET,     "prof-text-offset"),
-         |                 ^
-   kernel/trace/trace.h:1402:17: note: in expansion of macro 'PROFILER_FLAGS'
-    1402 |                 PROFILER_FLAGS
-         |                 ^~~~~~~~~~~~~~
-   kernel/trace/trace.h:1424:29: note: in expansion of macro 'TRACE_FLAGS'
-    1424 | enum trace_iterator_flags { TRACE_FLAGS };
-         |                             ^~~~~~~~~~~
-   In file included from <command-line>:
-   In function 'tracer_alloc_buffers',
-       inlined from 'early_trace_init' at kernel/trace/trace.c:11144:2:
->> include/linux/compiler_types.h:572:45: error: call to '__compiletime_assert_557' declared with attribute error: BUILD_BUG_ON failed: TRACE_ITER_LAST_BIT > TRACE_FLAGS_MAX_SIZE
-     572 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:553:25: note: in definition of macro '__compiletime_assert'
-     553 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:572:9: note: in expansion of macro '_compiletime_assert'
-     572 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-         |         ^~~~~~~~~~~~~~~~
-   kernel/trace/trace.c:10983:9: note: in expansion of macro 'BUILD_BUG_ON'
-   10983 |         BUILD_BUG_ON(TRACE_ITER_LAST_BIT > TRACE_FLAGS_MAX_SIZE);
-         |         ^~~~~~~~~~~~
-
-
-vim +1422 kernel/trace/trace.h
-
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1416) 
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1417) /*
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1418)  * By redefining C, we can make TRACE_FLAGS a list of masks that
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1419)  * use the bits as defined above.
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1420)  */
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1421) #undef C
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29 @1422) #define C(a, b) TRACE_ITER_##a = (1 << TRACE_ITER_##a##_BIT)
-a3418a364ec3c8f Steven Rostedt (Red Hat  2015-09-29  1423) 
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: testing is done by a robot and is best-effort only.
 
