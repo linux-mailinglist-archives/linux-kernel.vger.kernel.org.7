@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-824638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C554B89BDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:55:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD62B89C7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:02:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D55FC3A1E42
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:55:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BDA568270
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A30E312813;
-	Fri, 19 Sep 2025 13:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476DF2561C2;
+	Fri, 19 Sep 2025 14:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1S2hu/s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="FkfZ9BD6"
+Received: from forward200b.mail.yandex.net (forward200b.mail.yandex.net [178.154.239.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7F73126CF;
-	Fri, 19 Sep 2025 13:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D1B1F3D56
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758290105; cv=none; b=ZQIX61eOjwaWI6+9zh1HubzYH/7AsVt/CzjroJESdPfcTCLQcaPgUS68p5gt2qFVH4OJmzlnU1M5lW7rlRTR390LYtbWBdViqx8pUgdV8fusAY2DzfPrCOzMq+qe3xppQeu9DmA3xHEcYRLwJDSu4lCkyNvKiHbLlhVMhqymVtI=
+	t=1758290564; cv=none; b=h5/M6rBovYUAweFDN4Hxw2E4kndsbp2DW0zrCaFobzNk0RK1ASjFJrZyfSoFDaN6mi9sEfisK6SF5z5u3b/NDVv/Wj11l37BQRWWO5sBtw/LQl0J+HtQh/C1ApCnMJayTBWG5RzUHij1u2QKwhMBFC0gzV/D2C8Xm7C1OlePRBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758290105; c=relaxed/simple;
-	bh=XVzTh4eHn4N/ZmlR3lObvuzKNEutxl5poX823+fHFB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3o11P7lN0XPOJgQRWhube9RVGoaKNYMTNayX6xgO5sSnOsNhKa9rM2UUEYCVVaDJZapzQKt1xnwEYwobEYVB36nyf3ZHc8WnMcp/+qI9F/epibCI2YK7pnDpK4U7W4sZFQMYBOsgd2Bw8HbwympFbIX+T0Q6XcyFWwN4r0kDvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1S2hu/s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312CEC4CEF0;
-	Fri, 19 Sep 2025 13:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758290105;
-	bh=XVzTh4eHn4N/ZmlR3lObvuzKNEutxl5poX823+fHFB4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V1S2hu/sBbuYfL5WeMi1H2qeTqk+hHxic2QzEs4J8ouGVegrgWvMQ6at2y2WAhuBr
-	 fdRhBucjff9iC6fQMtxcVqsSWbu+0GGnRjVXCGngvqnUJug8xoNh5fYGix0z6jgAN/
-	 b/kkxsakBRspu0tTk7C5ZT6pFf7JXURtNW5R6hm7b2ELCDFELfj+0ucEZIIrjEQHL/
-	 XWXw3IZqoqBhzIagQkU7c+lOLImvXc1T06T90aDrKXNNFi9odXwV5x8x/ssygy2mwI
-	 dYiVfw/h7nfRlSMJnmHJJum4OvnQwNDKX5AOBTB6z6hTq70gEjRXMuSvVn0P6E2HiA
-	 Mp4mgt4mLZlPQ==
-Date: Fri, 19 Sep 2025 14:54:59 +0100
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 6/8] arm64/efi: Use a mutex to protect the EFI stack
- and FP/SIMD state
-Message-ID: <aM1gs9rhKbrB2Val@willie-the-truck>
-References: <20250918103010.2973462-10-ardb+git@google.com>
- <20250918103010.2973462-16-ardb+git@google.com>
- <aM0_96QvR-hlYMJJ@willie-the-truck>
- <CAMj1kXHDtTNMzih7OoTYU0vN4M3mOmFL3YOfaPUKReyJQA6uAQ@mail.gmail.com>
+	s=arc-20240116; t=1758290564; c=relaxed/simple;
+	bh=OrJsWhLsTTyW2lra5WwbIAhrk7/5g0JKyP9ZZKoFX0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qG6uSVxO3ItXIxY3NQ6PH9q7evbmW8TntC1ZGq8gTda6cbj0LWCjH5qZsDR8Vq1XCW5JZIQSe/X/FcWCrecikrDLIsJihUx+YjHbzQspMwKgc9yUY4tYjMqieTxhVAdCF9sYAaqKx345oBQZzaEKktrg6LHZArpGpPx3xLC/sfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=FkfZ9BD6; arc=none smtp.client-ip=178.154.239.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward103b.mail.yandex.net (forward103b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d103])
+	by forward200b.mail.yandex.net (Yandex) with ESMTPS id D8B3F82468
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:56:12 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:4419:0:640:5be6:0])
+	by forward103b.mail.yandex.net (Yandex) with ESMTPS id 5B0E2C0085;
+	Fri, 19 Sep 2025 16:56:03 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1uTTw6eM48c0-aUvTvDhQ;
+	Fri, 19 Sep 2025 16:56:03 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1758290163; bh=fqlmACInvcZ6zw+CwXBmhZen3vj8qTOuebjt3QcIS1c=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=FkfZ9BD66+lAh76B41lltffvFvE45i5357T0rpNdS09tltBlVFjRuFI55nxNhn4+y
+	 dTHmMICvBjzgGZ3d1n0323WBaEKtef0+yKtna9m5cYyZiUsorseMJBY3hMitxnkpSq
+	 zNCd8GSJwyu0iL3MKKBAiJEsmoA8do9cu/d9OtsM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-60.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org,
+	Dmitry Antipov <dmantipov@yandex.ru>
+Subject: [PATCH RESEND] objtool: speedup subsequent calls to dead_end_function()
+Date: Fri, 19 Sep 2025 16:55:57 +0300
+Message-ID: <20250919135557.280852-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHDtTNMzih7OoTYU0vN4M3mOmFL3YOfaPUKReyJQA6uAQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 03:42:12PM +0200, Ard Biesheuvel wrote:
-> On Fri, 19 Sept 2025 at 13:35, Will Deacon <will@kernel.org> wrote:
-> >
-> > On Thu, Sep 18, 2025 at 12:30:17PM +0200, Ard Biesheuvel wrote:
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > Replace the spinlock in the arm64 glue code with a mutex, so that
-> > > the CPU can preempted while running the EFI runtime service.
-> > >
-> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > ---
-> > >  arch/arm64/kernel/efi.c | 13 ++++++++++---
-> > >  1 file changed, 10 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/kernel/efi.c b/arch/arm64/kernel/efi.c
-> > > index 0d52414415f3..4372fafde8e9 100644
-> > > --- a/arch/arm64/kernel/efi.c
-> > > +++ b/arch/arm64/kernel/efi.c
-> > > @@ -166,15 +166,22 @@ asmlinkage efi_status_t efi_handle_corrupted_x18(efi_status_t s, const char *f)
-> > >       return s;
-> > >  }
-> > >
-> > > -static DEFINE_RAW_SPINLOCK(efi_rt_lock);
-> > > +static DEFINE_MUTEX(efi_rt_lock);
-> > >
-> > >  bool arch_efi_call_virt_setup(void)
-> > >  {
-> > >       if (!may_use_simd())
-> > >               return false;
-> > >
-> > > +     /*
-> > > +      * This might be called from a non-sleepable context so try to take the
-> > > +      * lock but don't block on it. This should never fail in practice, as
-> > > +      * all EFI runtime calls are serialized under the efi_runtime_lock.
-> > > +      */
-> > > +     if (WARN_ON(!mutex_trylock(&efi_rt_lock)))
-> > > +             return false;
-> >
-> > If it will never fail in practice, why do we need the lock at all? Can we
-> > just assert that the efi_runtime_lock is held instead and rely on that?
-> >
-> 
-> Excellent point.
-> 
-> Do you mean a lockdep assert? efi_runtime_lock is a semaphore, so
-> there is no is_locked() API that we can BUG() on here.
+Running over KASAN-enabled vmlinux.o, some functions comes from the
+sanitizer runtime may be processed by 'dead_end_function()' a lot of
+times, so it's reasonable to record the result in 'struct symbol' of
+the relevant function. Briefly testing over huge 'make allyesconfig'
+vmlinux.o, this may speedup objtool by nearly 10%.
 
-Yes, I was thinking of lockdep. Even though lockdep doesn't tend to be
-enabled in production, just having it in the code is useful documentation
-imo.
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ tools/objtool/check.c               | 5 ++++-
+ tools/objtool/include/objtool/elf.h | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Will
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index d14f20ef1db1..d4c0ef419b95 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -322,7 +322,10 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 
+ static bool dead_end_function(struct objtool_file *file, struct symbol *func)
+ {
+-	return __dead_end_function(file, func, 0);
++	if (func->functype == UNKNOWN)
++		func->functype = (__dead_end_function(file, func, 0)
++				  ? NORETURN : REGULAR);
++	return func->functype == NORETURN;
+ }
+ 
+ static void init_cfi_state(struct cfi_state *cfi)
+diff --git a/tools/objtool/include/objtool/elf.h b/tools/objtool/include/objtool/elf.h
+index 0a2fa3ac0079..2c491eb07741 100644
+--- a/tools/objtool/include/objtool/elf.h
++++ b/tools/objtool/include/objtool/elf.h
+@@ -70,6 +70,7 @@ struct symbol {
+ 	u8 local_label       : 1;
+ 	u8 frame_pointer     : 1;
+ 	u8 ignore	     : 1;
++	enum { UNKNOWN, REGULAR, NORETURN } functype : 2;
+ 	struct list_head pv_target;
+ 	struct reloc *relocs;
+ 	struct section *group_sec;
+-- 
+2.51.0
+
 
