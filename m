@@ -1,150 +1,121 @@
-Return-Path: <linux-kernel+bounces-824203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A87CB885E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:16:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8BAB8860C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D134E3A96F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:16:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3631C1BC7DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DCF2E62A4;
-	Fri, 19 Sep 2025 08:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2650D2EAD09;
+	Fri, 19 Sep 2025 08:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aduFlHHp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cMibZPm2"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180A727FD71;
-	Fri, 19 Sep 2025 08:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EB92E7162
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758269760; cv=none; b=i0b8nmpwvhu3rqyDrehUOaR1X+X/OAK/ipkLbIhx+ja6iQ+V7KBGWBwVmY6u+i1zOc4lJfIWiRiPLXFKSYEpEcLhONgpX8gxKCT9oyOaHZbGZkFvdDGOVhxXPFGGTYnmCa5Uu6lzPU1lze6303+RViuzX08ZKuzEA8tLbBC9ygI=
+	t=1758269889; cv=none; b=OhGXnxDUgiTMF4BIPOqskqCsVyGFkS1IVSbXXYQicgY62UOvjyHts6cyBKbEpbUZ/sEIPc9RNJoW2Zgt1hq1xaOudadn2QE25NCcGDD9BCDNPibE/7S2LfXrFVxRdNcU0tDKinnhNY65v+yJ77jDqDxSc9/PvSaBz/8qCRX/ET8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758269760; c=relaxed/simple;
-	bh=VxTAjSklRSGqESyW8iAN9ut3qajeB4/ZGEoQ1sC9AGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CjqePxo111cBziWdO+xo77qP5OP56ljKQur5giit85mSVjHAxwaqiuDbvHKOfgEBmmtWX8haRC1YxSLK+PSLuDgCtnDGAkI4tWjxC2/uhFhAmyxRqjj/MM0AN4/gJEpis27pQae2Ocp87QMxNEOBUe/lZndv2kwUHlGZsdHzPsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aduFlHHp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8FAC4CEF0;
-	Fri, 19 Sep 2025 08:15:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758269759;
-	bh=VxTAjSklRSGqESyW8iAN9ut3qajeB4/ZGEoQ1sC9AGc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aduFlHHpk5thnaiNT9P64Li/+3xf6NFuLJ0K2/6m57BH17S00nClFhpJJkvSGMcx/
-	 FG2FWJmu0sXcdVr3znKtPHiuysD4gSew11FaMSpfpEnSL/XKzV9NaSdAAzo2CQo3oK
-	 +Npzxtvvafi7SKiQRZDZxvYp/qhXl39HRJa36AOIZsNd2B6JRcO68BIGraQkX1Kz54
-	 ayZTWtsZfE8DjK4AyTvrgxoO0WyOgMVi4ET7aPTph55fEdRmrNpsYZnWZUrHEkoxh9
-	 z3cNG71qmYRzZRM+nu3UauFTAQ/zBMmZP3WNIXwfB0yU8mBVySI1cCsQPrcGSOQJpX
-	 BHabaLVJrQp+w==
-Date: Fri, 19 Sep 2025 13:45:51 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: manivannan.sadhasivam@oss.qualcomm.com, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>, 
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
-	Brian Norris <briannorris@chromium.org>
-Subject: Re: [PATCH v3 4/4] PCI: qcom: Allow pwrctrl core to control PERST#
- if 'reset-gpios' property is available
-Message-ID: <nxcr6ymgspcdofoy7cv4lok34qqucwrm4cxn7a7spqrszgmvin@x3mhucqy2tb3>
-References: <gnaubphg6iyh23vtf2flsjxoot7psgla7cr2c5jpecaozh4vf3@mzcmg74g3ogk>
- <20250918185356.GA1879416@bhelgaas>
+	s=arc-20240116; t=1758269889; c=relaxed/simple;
+	bh=DyMqZzpbMkJgkEnGSTyBtxfZ+e/F+bKP3TSdsbcQBe0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=czbkcDpPX96thDfazwlUMhVdPK4ADj7n9iHtP36Cu6lcmwsRS7L39gddsJQNY0w0SQjjlXza44kzLQnPLzq5gXpzpbJu2rACDLV7UnsbvdGR0oanVByF5bFeKocVhaJshihZErbLZOoE/FvjHQSkdN0E8riIzUc4t8qq7yDL3F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cMibZPm2; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so12251265e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758269886; x=1758874686; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5o43K7Y0uvDLyzASUv52fl9L82q3PGfkNuSA+w+tp4k=;
+        b=cMibZPm2CrHmhNmC3Rwd+2SdeLKp2fBzLJ1RSvd58XZ6JDdxbtd7Jl4ijVrFvRHROM
+         wfS0R5BDcJ5bFaAJLSVr+EPUkDSagLgiaxzolMicHN7dP9Z+9TyKCcmkXg9v6dEOLHZP
+         udD0+BSMZW7MFUQz1m/VsQjCn4hdlmHh7XOIbLraWXlUNWYZxq0VXb13S1TSjUJjCXyQ
+         ZvZfnpwiym2tlPY2JKUbYcfG52uKGk+cOUVnkwfFjhDc/g7CZnc0jQu361m3eXBfHi/H
+         +HTNZcjyBFivxCMNFnraon2nMzXueQrNeKS4Dv3wG22MRh282K3U+4Rsvt8dEe4qszDJ
+         CpsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758269886; x=1758874686;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5o43K7Y0uvDLyzASUv52fl9L82q3PGfkNuSA+w+tp4k=;
+        b=Ji7rXOMkhzCXv8C5A+849e0zNwY4m033b4b8WHUQ77w9N5KDqiNq1F8fs+F+s4bVWo
+         DQKlnb4R3XYsI0PyCJ4d2lPmyanx1cy9gOGYjs1d9x0CpHXoHJ+kbH6j/FcOUfycrKKC
+         QoZKYT2weQu5s1nIqJy05g4Leoocl2m65DWfVoQalzsG44K/G4iRhK4zgugwAmUcqrEc
+         OHPh5k5308tpsRflN4u9h1MDFuN6FQStJvR4Tm6B6auHfJXiEZgEFMqAhu40j2E8WELP
+         BNzXBUre6fpJT4D3Nlwd9PE5y2Ubzqi7VH60vhu0wijQOwJhmS2k1gUsPEx6mhVnknYk
+         UTLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1C8uD1MNLVq/h75elP3ZH5KOGHJEJt16hks4ADQEWbapf5xKISInv/Tp+rfYfxUVMJBUpeCrJorze40s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb8STIbQO1SSLio20DxK22nEbY/nm3sQWzXXdfdoa9bRpZ12u2
+	ejBijOfcC5rmDMBMhjooeSWbyVUIMxxFJ1SSWTzafcNPX1qFv8LEnWNBjNsU3bbjNPrECfbQpgb
+	XjiD2
+X-Gm-Gg: ASbGnctMEV+aEjBG/qnlC5ffeIhBYcAc2qbuT3Le2mlYgav+lst8ep+y+cbFM9EhBFj
+	mdpq6NVqQdqk6xXF2lZNzu9yBiErk/io7cNvPPS3B7mjct0VsIT8CSqWs5/EpAh6gE4kY0Mbo2w
+	IjYasRCJDjgst2pXtRvyHlhuCTjpE24DSsHwskurzCqjb5QAbWOolydQDRzNaOwcmEG9tNH2FPN
+	u9sWKC6INmt0egflNv0E7aqavgKugqhfDSQXGrcmu+LsVgKcO4hN/NO/AYn1aSafZYaKOtC9SQh
+	cgc17nLjKNXssHNWpEoWsOEaJ6Iycy7n41Yz1+tcXna+scqWC8CU7lKZ8Ql6TlMpaa6C+jQuE/U
+	zZQhzFboP8o/9Az3QazHxsM/yMeVXuzbuKnkW8zM9Ito=
+X-Google-Smtp-Source: AGHT+IG9IXvO0ORWH5ghDWSBVfrFKgK8sq0GS7GYB45OO3lu5+7LJG+GncUqXyvk6ZUL/55POHIftg==
+X-Received: by 2002:a05:600c:1c05:b0:459:e025:8c40 with SMTP id 5b1f17b1804b1-4684c13ec71mr17359215e9.10.1758269885811;
+        Fri, 19 Sep 2025 01:18:05 -0700 (PDT)
+Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f4f9f4e4sm85674225e9.13.2025.09.19.01.18.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 01:18:05 -0700 (PDT)
+Message-ID: <679c0f5a-bf19-45c6-b28f-b89fe9c44e66@suse.com>
+Date: Fri, 19 Sep 2025 10:18:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250918185356.GA1879416@bhelgaas>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] module: replace use of system_wq with
+ system_dfl_wq
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Michal Hocko <mhocko@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org
+References: <20250918085525.122429-1-marco.crivellari@suse.com>
+ <20250918085525.122429-2-marco.crivellari@suse.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250918085525.122429-2-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 18, 2025 at 01:53:56PM -0500, Bjorn Helgaas wrote:
-> On Wed, Sep 17, 2025 at 03:53:25PM +0530, Manivannan Sadhasivam wrote:
-> > On Tue, Sep 16, 2025 at 03:48:10PM GMT, Bjorn Helgaas wrote:
-> > > On Fri, Sep 12, 2025 at 02:05:04PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-> > > > 
-> > > > For historic reasons, the pcie-qcom driver was controlling the
-> > > > power supply and PERST# GPIO of the PCIe slot.
-> > > 
-> > > > This turned out to be an issue as the power supply requirements
-> > > > differ between components. For instance, some of the WLAN
-> > > > chipsets used in Qualcomm systems were connected to the Root
-> > > > Port in a non-standard way using their own connectors.
-> > > 
-> > > This is kind of hand-wavy.  I don't know what a non-standard
-> > > connector has to do with this.  I assume there's still a PCIe link
-> > > from Root Port to WLAN, and there's still a PERST# signal to the
-> > > WLAN device and a Root Port GPIO that asserts/deasserts it.
-> > 
-> > If we have a non-standard connector, then the power supply
-> > requirements change.  There is no longer the standard 3.3v, 3.3Vaux,
-> > 1.8v supplies, but plenty more.  For instance, take a look at the
-> > WCN6855 WiFi/BT combo chip in the Lenovo X13s laptop:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts#n414
-> > 
-> > These supplies directly go from the host PMIC to the WCN6855 chip
-> > integrated in the PCB itself. And these supplies need to be turned
-> > on/off in a sequence also, together with the EN/SWCTRL GPIOs, while
-> > sharing with the Bluetooth driver.
+On 9/18/25 10:55 AM, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
 > 
-> It sounds like the WCN6855 power supplies have nothing to do with the
-> qcom PCIe controller, the Root Port, or any switches leading to the
-> WCN6855.  And I guess the same for the wlan-enable, bt-enable, and
-> swctrl GPIOs?
+> This lack of consistentcy cannot be addressed without refactoring the API.
 > 
->   wcn6855-pmu {
->           compatible = "qcom,wcn6855-pmu";
->           wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
->           bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
->           swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
->           regulators {
->                   vreg_pmu_rfa_cmn_0p8: ldo0 {
->                           regulator-name = "vreg_pmu_rfa_cmn_0p8";
->                   ...
+> This specific patch replace system_wq with system_dfl_wq, the new unbound
+> workqueue, because the users does not benefit from a per-cpu wq.
 > 
->   &pcie4_port0 {
->           wifi@0 {
->                   compatible = "pci17cb,1103";
->                   vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
->                   ...
-> 
-> But I guess PERST# isn't described in the same place (not in
-> wcn6855-pmu)?  Looks like maybe it's this, which IIUC is part of the
-> pcie4 host bridge?
-> 
->   &pcie4 {
->           max-link-speed = <2>;
->           perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
->           wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
-> 
-> Does that mean this PERST# signal is driven by a GPIO and routed
-> directly to the WCN6855?  Seems like there's some affinity between the
-> WCN6855 power supplies and the WCN6855 PERST# signal, and maybe they
-> would be better described together?
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-Yes, 'perst-gpios' is the PERST# signal that goes from the host system to the
-WCN6855 chip. But we cannot define this signal in the WCN6855 node as the DT
-binding only allows to define it in the PCI bridge nodes. This is why it is
-currently defined in the host bridge node. But when this platform switches to
-the per-Root Port binding, this property will be moved to the Root Port node as
-'reset-gpios'.
-
-Because of this reason, the host controller driver has to parse PERST# from all
-PCI bridge nodes (like if there is a switch connected, there might be PERST# per
-downstream port) and share them with the pwrctrl framework.
-
-- Mani
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Thanks,
+Petr
 
