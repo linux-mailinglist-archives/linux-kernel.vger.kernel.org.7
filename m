@@ -1,157 +1,260 @@
-Return-Path: <linux-kernel+bounces-824519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D479FB89745
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61388B89754
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A325A30BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0727B1C84949
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAE113D638;
-	Fri, 19 Sep 2025 12:30:35 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E401DE2BF;
+	Fri, 19 Sep 2025 12:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lsUsd2UU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dRt2gYJd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lsUsd2UU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dRt2gYJd"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ACB4502F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F2F19AD89
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285034; cv=none; b=nfj8+KSR7uVAJUKJP6yKMLGIJqX2dqs8NyocPybhJQJ7jHoSAEaIC46LQYAgFYEN8R9FcvxbDAarA2wRXfajefmR7oB/FRl7wiwD2p0LPERiY1sVuxtI6gq1spPBoTdAxCM0rc02SJRhnkORQmTU9mgGIVccbvA2qQ95tAWbcLw=
+	t=1758285135; cv=none; b=dIvvgs0VvCeKFPjta4+pliCvD1EY5qZqzgIEtsZPZt0wYA2+aYPdWEGPFlttvroGSRO5jdYMvXM0fUHh0L3ooV2F9prLZn44gmQ7TvysfM1J6wtYK8v6uIYdBFFkdJwf1K4Bg0r/ACyPQ9U1fU341NimvF4Qqwmi5PYXshTdvM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285034; c=relaxed/simple;
-	bh=jj+inExAUbsFvsAoHvcW6L6sYHa02yk0gKG/4O/EIfI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rxVCeo364UFYSnbk/r7MmpWN/PUgMGUij/9STU4AGFU637e8dvDOGqjhmDRrP1/LdbCtWg3AXFIku3rqry/0f5O8eVIFmtJpDkq+CmZ2BXcgjB9s5CX4HF2CRR12Wad3XfHj7/q+Dob3Zc5cL+qqu39DUMxWegnZqy+jJ0wAbto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42408b5749aso43332735ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:30:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758285032; x=1758889832;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mfmW+GAM56h3CvQewvV1CQQSb+YXqeP7gXYwDwlkbDI=;
-        b=g26AhTjeML7I1ThoLd3xabu9WdqaxQYUfxFiUR05cvksoqAT5h8G6U5kiFQjuhZXi/
-         e0kIC46yV8Mg7iQCsIQPqdMjnxSfVfjqH7wi/btKpDUBt4AToFe0GyWAXba6j4xu0Q3t
-         ofgHt+S6K/zdkiWimj9g007hrSJAWY9Ha0ehmWGoXI0nftJ//NINeupIieW6hoihkJk+
-         CeMawGopZwQAmhsVhpoxraXMa/FoYvB+uRyLtvQWtRX4Tg7uGGzYiEAkxBdiJxXwUwq9
-         a2fVRP/Z4OahZafQMcJeiawuri4KDMcBKwArUTxb3orX97AKgKsetWxc178Cy2poYu57
-         uD4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVFs5Li9B+/VMhBeFq0+howlwosziZVVp6AmfsIpRPy6Vz8SjAuALKPObwJMa4Ygw/roWTMi+a5X2G98hA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAwOvPQ6onxnZ4scBGgYIgvSX5PEffwanfCX4RtDN6RsFMaQd8
-	12eaRyEUH1H8HdiZ3ddVoqeon3OqMIrBWkqrGBNxBRdB3WC/Ld9lZKXVSo7/uNhPOH1uACoPK3K
-	Lc05mXX0iaxYOFQAdP5K4hJubGKilnUd9pqPoPd2nPTDG4v6v40byk691ez8=
-X-Google-Smtp-Source: AGHT+IHuHQvi7jWB2wMCGFEBNaVivefmUoLBpiF4aCIEWV/q4WZ5Vh5vWhUfCvJfaUz5ZUQR+kG2FTmzSoBj/tyIm+ej7FnkuAF9
+	s=arc-20240116; t=1758285135; c=relaxed/simple;
+	bh=rMjNbJA7qcOh5OJv8unaVyReVLTcdwUg64bV87PakBI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NU1VYrvAprOQMH7gbaE3cYHIFc+c4nBiWX3CRjm79bxKOMfCPrwKFSVxM7o2q1FrDEWKfpHTmi1pL+Vrc+mYRBFWmBWooJ1pIpJ0DsSW8OvlFKqHufI8jxnZ3I5rKaL/JBCwaldQnNedz+G/yRVkVuuhrMgNwZKmr63sjUv6nLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lsUsd2UU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dRt2gYJd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lsUsd2UU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dRt2gYJd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 07F1221D67;
+	Fri, 19 Sep 2025 12:32:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758285131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
+	b=lsUsd2UUCCDUjvNnFXxh7NBYeBi9j6LKswtKMsv9hjSokiEL9vBrTGDV2dzvgBjqgYZw7a
+	hCyOv9Re9hOKoFjuQxkLklbkt6NmVViGvlYUcVM+YrJItIRVvBHK1UZUljgfN+isS/i9W4
+	WJ7fOQARqVPYer+tm/JBKcIfka9Jwpg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758285131;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
+	b=dRt2gYJdwCpG9JhWwasqlkSdH46dFEiATF5NEypIU94bl3KzFUBcHogR+w0gpD8UvkDXEN
+	k8xaqD9nVuhDyjAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758285131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
+	b=lsUsd2UUCCDUjvNnFXxh7NBYeBi9j6LKswtKMsv9hjSokiEL9vBrTGDV2dzvgBjqgYZw7a
+	hCyOv9Re9hOKoFjuQxkLklbkt6NmVViGvlYUcVM+YrJItIRVvBHK1UZUljgfN+isS/i9W4
+	WJ7fOQARqVPYer+tm/JBKcIfka9Jwpg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758285131;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
+	b=dRt2gYJdwCpG9JhWwasqlkSdH46dFEiATF5NEypIU94bl3KzFUBcHogR+w0gpD8UvkDXEN
+	k8xaqD9nVuhDyjAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E09213A39;
+	Fri, 19 Sep 2025 12:32:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lyc7HUpNzWhFfAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 12:32:10 +0000
+Date: Fri, 19 Sep 2025 14:32:10 +0200
+Message-ID: <87tt0y8vxx.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Feng Yuan <fengyuan@uniontech.com>,
+	qaqland <anguoli@uniontech.com>,
+	kernel@uniontech.com,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
+In-Reply-To: <20250918-sound-v4-1-82cf8123d61c@uniontech.com>
+References: <20250918-sound-v4-0-82cf8123d61c@uniontech.com>
+	<20250918-sound-v4-1-82cf8123d61c@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aae:b0:424:805a:be98 with SMTP id
- e9e14a558f8ab-4248177d40emr46555385ab.9.1758285032406; Fri, 19 Sep 2025
- 05:30:32 -0700 (PDT)
-Date: Fri, 19 Sep 2025 05:30:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cd4ce8.050a0220.ba58e.045e.GAE@google.com>
-Subject: [syzbot] [overlayfs?] WARNING in ovl_create_real (3)
-From: syzbot <syzbot+59732cea2887c2408d94@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-Hello,
+On Thu, 18 Sep 2025 11:24:30 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
+> --- a/sound/usb/quirks.c
+> +++ b/sound/usb/quirks.c
+> @@ -2446,6 +2446,62 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
+>  	{} /* terminator */
+>  };
+>  
+> +static const char *const snd_usb_audio_quirk_flag_names[] = {
+> +	"get_sample_rate",
+> +	"share_media_device",
 
-syzbot found the following issue on:
+I think it's worth to add a comment that this each entry corresponds
+to QUIRK_FLAG_XXX.  Or another idea would be to define enums like:
 
-HEAD commit:    f83ec76bf285 Linux 6.17-rc6
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1511e762580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=59732cea2887c2408d94
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+enum {
+	QUIRK_TYPE_GET_SAMPLE_RATE,
+	QUIRK_TYPE_SHARE_MEDIA_DEVICE,
+	....
+};
 
-Unfortunately, I don't have any reproducer for this issue yet.
+then redefine QUIRK_FLAG_* like:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-f83ec76b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bdedf70f8797/vmlinux-f83ec76b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5bf9318d9242/bzImage-f83ec76b.xz
+#define QUIRK_FLAG_GET_SAMPLE_RATE	BIT_U32(QUIRK_TYPE_GET_SAMPLE_RATE)
+#define QUIRK_FLAG_SHARE_MEDIA_DEVICE	BIT_U32(QUIRK_TYPE_SHARE_MEDIA_DEVICE)
+....
+ 
+or
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+59732cea2887c2408d94@syzkaller.appspotmail.com
+#define QUIRK_FLAG(x)	BIT_U32(QUIRK_TYPE_ ## x)
 
-overlayfs: ...falling back to redirect_dir=nofollow.
-overlayfs: ...falling back to index=off.
-overlayfs: ...falling back to uuid=null.
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 2192 at fs/overlayfs/dir.c:208 ovl_create_real+0x50f/0x780 fs/overlayfs/dir.c:208
-Modules linked in:
-CPU: 3 UID: 0 PID: 2192 Comm: syz.3.9488 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:ovl_create_real+0x50f/0x780 fs/overlayfs/dir.c:208
-Code: 84 74 fc ff ff e8 b1 32 81 fe 48 63 ed e9 96 fc ff ff e8 a4 32 81 fe e9 2e fd ff ff 48 89 dd e9 84 fc ff ff e8 92 32 81 fe 90 <0f> 0b 90 e8 89 32 81 fe 48 89 ee 48 c7 c7 00 f0 ff ff e8 ea 2d 81
-RSP: 0018:ffffc90007e9f4f0 EFLAGS: 00010283
-RAX: 00000000000151fe RBX: ffff888038a89d60 RCX: ffffc9002b804000
-RDX: 0000000000080000 RSI: ffffffff833a6aae RDI: ffff888038a89dc8
-RBP: ffff888038a89d60 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880332f66a0
-R13: ffff888031447c20 R14: 000000000000a000 R15: 000000000000a000
-FS:  00007f83766e46c0(0000) GS:ffff8880d69b2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2ef21ff8 CR3: 0000000032996000 CR4: 0000000000352ef0
-DR0: 0000000000000002 DR1: 0000000000000005 DR2: 8000000000000000
-DR3: 1000000100000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ovl_create_temp+0x64/0xb0 fs/overlayfs/dir.c:229
- ovl_copy_up_workdir fs/overlayfs/copy_up.c:782 [inline]
- ovl_do_copy_up fs/overlayfs/copy_up.c:1001 [inline]
- ovl_copy_up_one+0xc18/0x38e0 fs/overlayfs/copy_up.c:1202
- ovl_copy_up_flags+0x18d/0x200 fs/overlayfs/copy_up.c:1257
- ovl_rename+0x813/0x1710 fs/overlayfs/dir.c:1145
- vfs_rename+0xfba/0x22c0 fs/namei.c:5129
- do_renameat2+0x7f9/0xc50 fs/namei.c:5278
- __do_sys_renameat2 fs/namei.c:5312 [inline]
- __se_sys_renameat2 fs/namei.c:5309 [inline]
- __x64_sys_renameat2+0xe7/0x130 fs/namei.c:5309
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f837578eba9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f83766e4038 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007f83759d5fa0 RCX: 00007f837578eba9
-RDX: ffffffffffffff9c RSI: 0000200000000180 RDI: ffffffffffffff9c
-RBP: 00007f8375811e19 R08: 0000000000000002 R09: 0000000000000000
-R10: 0000200000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f83759d6038 R14: 00007f83759d5fa0 R15: 00007ffd8123fe08
- </TASK>
+and use like QUIRK_FLAG(GET_SAMPLE_RATE).
+
+With those changes, the above can be defined more safely like
+
+static const char *const snd_usb_audio_quirk_flag_names[] = {
+	[QUIRK_TYPE_GET_SAMPLE_RATE] = "get_sample_rate",
+	....
+
+or even more drastically by defining some macro for each entry like:
+
+#define QUIRK_STRING_ENTRY(x) \
+	[QUIRK_TYPE_ ## x] = __stringify(x)
+
+and put like:
+
+static const char *const snd_usb_audio_quirk_flag_names[] = {
+	QUIRK_STRING_ENTRY(GET_SAMPLE_RATE),
+	....
+};
+
+In this case, it'll become upper letters, so the parse would need to
+deal with the case-insensitive comparison, though.
+
+> +u32 snd_usb_quirk_flags_from_name(char *name)
+
+Use const char *.
+
+> +{
+> +	u32 flag = 0;
+> +	u32 i;
+
+The iterator can be simple int.
+
+> +	if (!name || !*name)
+> +		return 0;
+> +
+> +	for (i = 0; snd_usb_audio_quirk_flag_names[i]; i++) {
+> +		if (strcmp(name, snd_usb_audio_quirk_flag_names[i]) == 0) {
+> +			flag = (1U << i);
+
+Use BIT_U32(i)
+
+> +			break;
+
+We can return the value directly, so flag variable can be dropped.
+
+>  void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
+>  {
+>  	const struct usb_audio_quirk_flags_table *p;
+> @@ -2454,10 +2510,28 @@ void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
+>  		if (chip->usb_id == p->id ||
+>  		    (!USB_ID_PRODUCT(p->id) &&
+>  		     USB_ID_VENDOR(chip->usb_id) == USB_ID_VENDOR(p->id))) {
+> -			usb_audio_dbg(chip,
+> -				      "Set quirk_flags 0x%x for device %04x:%04x\n",
+> -				      p->flags, USB_ID_VENDOR(chip->usb_id),
+> -				      USB_ID_PRODUCT(chip->usb_id));
+> +			unsigned long flags = p->flags;
+> +			unsigned long bit;
+> +
+> +			for_each_set_bit(bit, &flags,
+> +					 BYTES_TO_BITS(sizeof(p->flags))) {
+> +				const char *name =
+> +					snd_usb_audio_quirk_flag_names[bit];
+> +
+> +				if (name)
+> +					usb_audio_dbg(chip,
+> +						      "Set quirk flag %s for device %04x:%04x\n",
+> +						      name,
+> +						      USB_ID_VENDOR(chip->usb_id),
+> +						      USB_ID_PRODUCT(chip->usb_id));
+> +				else
+> +					usb_audio_warn(chip,
+> +						       "Set unknown quirk flag 0x%lx for device %04x:%04x\n",
+> +						       bit,
+> +						       USB_ID_VENDOR(chip->usb_id),
+> +						       USB_ID_PRODUCT(chip->usb_id));
+> +			}
+
+This could be better factored out as a function.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+thanks,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Takashi
 
