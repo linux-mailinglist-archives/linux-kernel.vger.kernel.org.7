@@ -1,334 +1,104 @@
-Return-Path: <linux-kernel+bounces-824409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABCCB891FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:45:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2ECB89249
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5313BFFA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9AC58099A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF803081AC;
-	Fri, 19 Sep 2025 10:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C4E309DA8;
+	Fri, 19 Sep 2025 10:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WVAhBzKQ"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0jxgH2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6E2FE062
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA3D239E61;
+	Fri, 19 Sep 2025 10:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758278583; cv=none; b=rRTnTNCMNck3/sgJqy3/uqR9jYnEVAytL6EqW9H8WFdPXrXFxp2KATwnyI3YrKeb2AVUMYUkA3aC3Etn26LqbDbXMmFGrOEylfdeOwwvc7c1X3xVJ/dynTG3/Z5GQKTE001Ge3DCaNuOWDe81wfpsVPOlYJG+kYzvaKaqI6fNFE=
+	t=1758278969; cv=none; b=Ukgyi/tY9uUoWGN2Cnf1FztG6AyBY1bdLMyVkulI/IqmFkrtTxC/FE8G0rmYNDlnI6I4sLa9iL/56F+hqdcq/NvXPzxOzXMnpn/uM6bTpfTlD52ojjtnyRCg9QQVBJufW4kSwiU5kMYolFhXzlB2eQQtJgj7r78rhVKdAcg3KAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758278583; c=relaxed/simple;
-	bh=+JzZ1lcKi/XwHvN0bT8VLHcok4tzYHYA7niCaXgmp6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vw7LbokuFvED2hQouhrihIN6NByy70XDE6iIRox/rZv/4rO4X6j2l9SSwgVtzXemBPdvctgeNlqU/OlUa57j6eZ8br4Ane0lN2aURtVZ10pPDqgIVcOI5fQDuHAqcS5viynM14iChDQuzvkPVekoxFXJ3YdukkZUxJhuNxpTZQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WVAhBzKQ; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62fa0653cd2so4062282a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:43:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758278579; x=1758883379; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ihYBz/zfcgpG/TQdBCL4wkwIrU8k32PxFeX5ZO16w/k=;
-        b=WVAhBzKQGBD9sR2gD/NgCI/ZNb97yS6XuwbwyEaPQzhtbmAxFJwvQLYOLQ0+DT9C6x
-         jYK2EWpIC+fXVL11nTGw9qiLu81qbc5u+9sL3bK3OV9SfLkofXdGGwDUpDLwg9NFXSQx
-         6sxxtWezQN3+8GtoB4T+tVNdg89XwPISOAc+4HaSUS+74XHtZiuSfXF+2vyUP1NX1FlT
-         VSGL5uRlykCta/CsVgJAf/IKjVMs8gclbAvPk6DEgdkYzHpqLzY60nMFDuYlU8eMVHVr
-         ptaW/Msfk+k2XgM0SAtEGnABI62D7pQ8XNIOWqssoWHBoQ1QCR5p6ZkTuusEg95LtmP7
-         /y7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758278579; x=1758883379;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ihYBz/zfcgpG/TQdBCL4wkwIrU8k32PxFeX5ZO16w/k=;
-        b=A8bLXN6l/pbElPwQQuojH1fEamxN/FL4pQEjLN2t7ruYRrudLz2rkV6eZQzLmxt+uc
-         btQoDepRsbfAaHS0Te8H91CoyitZ52Q8Uc0mrmx/BXviJFkanbZztFK9qQaKhWbXZTP1
-         fVrsHDWwkDay7CZ+dGY77I+PUi1RsQa+t6mYexXyjWZJMYQzjz6i/9IQUorNjEVKFYut
-         5WWKaFWySTQv4C27dxXwlWmq/vFMBStVD+U+wd/GhjziCILv1LSYzKsxJgkXlbGUBt1D
-         z82YGENWzs8XXB3ROGnjpQC/30bELR7t+BFfuexZWbq2PmJFteWaTaJxGBoEOK3d6G3N
-         WOVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+L2Lq6w/MLevU7BpZ20DxKHwnai0r05xXXE260+lpfh5mix2OD4zN41rYiSWuV8q7sonKed72dh4Z+eo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGscVmx4TWkMNhdmImJyqpFXjIsuCISF2MB7Dl7fsp2svM4Oa8
-	SGqmZ2S5IU+Dr0r3IsYxtZ5bDnPW2Kdt5YXdJ8G46tMmtd9iv/80W5ux1ylz9pT/Mas=
-X-Gm-Gg: ASbGncu/U49t8vaKdIURF5EQMZlh4Y0M+0xzpYg6Zq4iwfZZZ9F7iLXpeQUHPH8Z3lg
-	j6vlGyxC9b7xLEpNgbTACm2rp9xpe/CInZ++vRJMoHJx8VzSlfXTrpnQgmegOctTZbN9G91YJmx
-	k9uvfFa6KaLal5N7s/hgCvKIxG3IOp5ZJUfxUb0Ky+6D1lHF4ZL42XsZ9J3NxSaA/+T2Addjuyf
-	ldgricILmgk2LrD0M+OuvOEc8ciXiBovzzgX0oQHaM6FiwuB1WdECKaAdF4Jl9DKZ/eDJmB6akp
-	F6H0vsdQIocEyzTcgl91iuji0HUKyXrSJZWXizMHIl1OosYEyWha2nC9Ulg2Ye8dmWGDTQpey0F
-	Dv1CMTVPnbwAtq3oYh02ByvMF+9ZTDLLVmYHSVrmCra9xIW4=
-X-Google-Smtp-Source: AGHT+IGMSebx4yMVoxYvKBsvfpQu5sA5tumjbV9DOc4mgo8cPctnw+Z/Yl6cbdb2H35TaWYPT0GnrQ==
-X-Received: by 2002:a17:907:6eab:b0:b21:b4f6:d676 with SMTP id a640c23a62f3a-b24eedb9ee5mr320177966b.25.1758278578896;
-        Fri, 19 Sep 2025 03:42:58 -0700 (PDT)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.216.86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc5f44fcesm401731266b.20.2025.09.19.03.42.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 03:42:58 -0700 (PDT)
-Message-ID: <6e2d5351-dbd2-4e28-8bdb-b961fade5ebc@suse.com>
-Date: Fri, 19 Sep 2025 13:42:57 +0300
+	s=arc-20240116; t=1758278969; c=relaxed/simple;
+	bh=cHzHIlxAkWUgQ24eo+IV0iI7C9yYFaGpGxUswY89kBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dckv/xoN9JIrh3Pvzouq1DV9dftWORCwO0Bap3pPzSiT74LBu1/Mrdg4w+46Qhv/+1j5Veo2eXtCwMIBbwgxfouPoLWUfkQDz5YjIEroJnUEgBBqGt4W5eHs/fh1+u3IVaTslHJhlU8h150b6Nf1ifoiGkqeYnlNBK/O/2Or0vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0jxgH2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6DEFC4CEF0;
+	Fri, 19 Sep 2025 10:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758278967;
+	bh=cHzHIlxAkWUgQ24eo+IV0iI7C9yYFaGpGxUswY89kBc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S0jxgH2mqdO6NsiEOQZ+4Mh83PE35MJnNuY7l0f7cDkNko9j+ADn3k17yx0X4LpEb
+	 DQFJPaM5nq/Hdobiacy1/VxkDZWNP4jLbunB/e+4IJvSldQmQMhn9OKEzoW9X3N949
+	 wJiPjM+R4UxnqSVC+CQr3A3zglB3r2e4y2wpo8GgA7BhTk0Q9iN21I52JQNQL+2MYO
+	 BlPCSPcz0k+dImlhxfpK3BuXRZLtGGijlxF5sIh7vC2hW2A0pX4Fk+97IMJpxYVHTK
+	 esQVDVaXhrmAHQ6k068i7k6rSGHp6r5WIXdUcp5p6dM01lMvrGdEZ0TRrU3BiUpPfX
+	 5MRFCGI+nHHlg==
+Date: Fri, 19 Sep 2025 16:12:58 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] KVM: SVM: Enable AVIC for Zen4+ (if x2AVIC)
+Message-ID: <owztdzclln5pmgsuxgzt54vneiejtngdkujaebr7r35zx3f4lj@xvvhwvumkkha>
+References: <20250919002136.1349663-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 15/15] x86/mce: Save and use APEI corrected threshold
- limit
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
- Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-acpi@vger.kernel.org
-References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
- <20250908-wip-mca-updates-v6-15-eef5d6c74b9c@amd.com>
- <64314c7a-5212-4bf0-8181-8bbada0e81b5@suse.com>
- <20250915173332.GA869676@yaz-khff2.amd.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- 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
-In-Reply-To: <20250915173332.GA869676@yaz-khff2.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919002136.1349663-1-seanjc@google.com>
 
-
-
-On 9/15/25 20:33, Yazen Ghannam wrote:
-> On Thu, Sep 11, 2025 at 08:01:17PM +0300, Nikolay Borisov wrote:
->>
->>
->> On 9/8/25 18:40, Yazen Ghannam wrote:
->>> The MCA threshold limit generally is not something that needs to change
->>> during runtime. It is common for a system administrator to decide on a
->>> policy for their managed systems.
->>>
->>> If MCA thresholding is OS-managed, then the threshold limit must be set
->>> at every boot. However, many systems allow the user to set a value in
->>> their BIOS. And this is reported through an APEI HEST entry even if
->>> thresholding is not in FW-First mode.
->>>
->>> Use this value, if available, to set the OS-managed threshold limit.
->>> Users can still override it through sysfs if desired for testing or
->>> debug.
->>>
->>> APEI is parsed after MCE is initialized. So reset the thresholding
->>> blocks later to pick up the threshold limit.
->>>
->>> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
->>> ---
->>>
->>> Notes:
->>>       Link:
->>>       https://lore.kernel.org/r/20250825-wip-mca-updates-v5-20-865768a2eef8@amd.com
->>>       v5->v6:
->>>       * No change.
->>>       v4->v5:
->>>       * No change.
->>>       v3->v4:
->>>       * New in v4.
->>>
->>>    arch/x86/include/asm/mce.h          |  6 ++++++
->>>    arch/x86/kernel/acpi/apei.c         |  2 ++
->>>    arch/x86/kernel/cpu/mce/amd.c       | 18 ++++++++++++++++--
->>>    arch/x86/kernel/cpu/mce/internal.h  |  2 ++
->>>    arch/x86/kernel/cpu/mce/threshold.c | 13 +++++++++++++
->>>    5 files changed, 39 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
->>> index 7d6588195d56..1cfbfff0be3f 100644
->>> --- a/arch/x86/include/asm/mce.h
->>> +++ b/arch/x86/include/asm/mce.h
->>> @@ -308,6 +308,12 @@ DECLARE_PER_CPU(struct mce, injectm);
->>>    /* Disable CMCI/polling for MCA bank claimed by firmware */
->>>    extern void mce_disable_bank(int bank);
->>> +#ifdef CONFIG_X86_MCE_THRESHOLD
->>> +void mce_save_apei_thr_limit(u32 thr_limit);
->>> +#else
->>> +static inline void mce_save_apei_thr_limit(u32 thr_limit) { }
->>> +#endif /* CONFIG_X86_MCE_THRESHOLD */
->>> +
->>>    /*
->>>     * Exception handler
->>>     */
->>> diff --git a/arch/x86/kernel/acpi/apei.c b/arch/x86/kernel/acpi/apei.c
->>> index 0916f00a992e..e21419e686eb 100644
->>> --- a/arch/x86/kernel/acpi/apei.c
->>> +++ b/arch/x86/kernel/acpi/apei.c
->>> @@ -19,6 +19,8 @@ int arch_apei_enable_cmcff(struct acpi_hest_header *hest_hdr, void *data)
->>>    	if (!cmc->enabled)
->>>    		return 0;
->>> +	mce_save_apei_thr_limit(cmc->notify.error_threshold_value);
->>> +
->>>    	/*
->>>    	 * We expect HEST to provide a list of MC banks that report errors
->>>    	 * in firmware first mode. Otherwise, return non-zero value to
->>> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
->>> index b895559e80ad..9b746080351f 100644
->>> --- a/arch/x86/kernel/cpu/mce/amd.c
->>> +++ b/arch/x86/kernel/cpu/mce/amd.c
->>> @@ -489,6 +489,18 @@ static void threshold_restart_bank(unsigned int bank, bool intr_en)
->>>    	}
->>>    }
->>> +/* Try to use the threshold limit reported through APEI. */
->>> +static u16 get_thr_limit(void)
->>> +{
->>> +	u32 thr_limit = mce_get_apei_thr_limit();
->>> +
->>> +	/* Fallback to old default if APEI limit is not available. */
->>> +	if (!thr_limit)
->>> +		return THRESHOLD_MAX;
->>> +
->>> +	return min(thr_limit, THRESHOLD_MAX);
->>> +}
->>> +
->>>    static void mce_threshold_block_init(struct threshold_block *b, int offset)
->>>    {
->>>    	struct thresh_restart tr = {
->>> @@ -497,7 +509,7 @@ static void mce_threshold_block_init(struct threshold_block *b, int offset)
->>>    		.lvt_off		= offset,
->>>    	};
->>> -	b->threshold_limit		= THRESHOLD_MAX;
->>> +	b->threshold_limit		= get_thr_limit();
->>>    	threshold_restart_block(&tr);
->>>    };
->>> @@ -1071,7 +1083,7 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
->>>    	b->address		= address;
->>>    	b->interrupt_enable	= 0;
->>>    	b->interrupt_capable	= lvt_interrupt_supported(bank, high);
->>> -	b->threshold_limit	= THRESHOLD_MAX;
->>> +	b->threshold_limit	= get_thr_limit();
->>>    	if (b->interrupt_capable) {
->>>    		default_attrs[2] = &interrupt_enable.attr;
->>> @@ -1082,6 +1094,8 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
->>>    	list_add(&b->miscj, &tb->miscj);
->>> +	mce_threshold_block_init(b, (high & MASK_LVTOFF_HI) >> 20);
->>
->> Why is this necessary? Shouldn't this patch consist of mainly
->> s/THRESHOLD_MAX/get_thr_limit();
->>
->>
->> In allocate_threshold_block have already properly set threshold_limit. So
->> this change really ensures threshold_restart_block is being called for the
->> given block being initialized. Ignoring the changed threshold limit logic,
->> why is this extra call necessary now and wasn't before?
->>
+On Thu, Sep 18, 2025 at 05:21:30PM -0700, Sean Christopherson wrote:
+> Enable AVIC by default for Zen4+, so long as x2AVIC is supported (which should
+> be the case if AVIC is supported).
 > 
-> It is necessary to apply the threshold limit to the hardware register.
-> The MCA thresholding registers are accessed in two passes: first during
-> per-CPU init, and second when the MCE subsystem devices are created.
+> v3:
+>  - Don't advise the user to enable force_avic. [Naveen]
+>  - Gather AVIC related module params in avic.c (by moving code/helpers to
+>    avic.c).
+>  - Print "AVIC enabled" even when it's forced.
+>  - Enable by default iff x2AVIC is supported.
+>  - Use "auto" to select KVM's automatic/default behavior.
 > 
-> The hardware registers are updated in the first pass, and they are left
-> as-is in the second pass assuming no configuration has changed. That's
-> why there isn't a "reset" in the second pass.
+> v2: https://lore.kernel.org/all/cover.1756993734.git.naveen@kernel.org
 > 
-> The APEI tables are parsed between the first and second passes. So now
-> we need to update the registers during the second pass to apply the
-> value found from HEST.
-
-So APEI is initialized as part of the subsys_initcall which is processed 
-via:
-
-start_kernel
-rest_init
-kernel_init
-kernel_init_freeable
-do_basic_setup
-do_initcalls
-
-And the first mce_threshold_block_init() happens from :
-
-start_kernel
-arch_cpu_finalize_init <---- way before rest_init()
-identify_boot_cpu
-identify_cpu
-mcheck_cpu_init
-mcheck_cpu_init_vendor
-mce_amd_feature_init
-prepare_threshold_block
-mce_threshold_block_init
-
-
-Finally the per-cpu hotplug callback is installed via:
-
-mcheck_init_device <- initiated from a device_initcall, happens after 
-APEI subsys init.
-mce_cpu_online  - called on every cpu from the HP machinery
-mce_threshold_create_device
-threshold_create_bank
-allocate_threshold_blocks
-mce_threshold_block_init - newly added call in alloc block, used to 
-update the register with the new limit
-
-
-Given that mce_cpu_online is already called on every online cpu at the 
-time of installation of the callback, and every subsequent cpu that will 
-come online I can't help but wonder why do we have to do the mce 
-initialization from start_kernel, can't we move the mcheck_cpu_init call 
-into mce_cpu_online, or have the latter subsume the former?
-
-Sorry if I'm being too nitpicky, I just want to have proper 
-understanding of the subsystem and the various (implicit) requirements 
-it has.
-
-
-At the very least I believe this commit message should at least allude 
-to the fact that mce threshold devices have a strict requirement to be 
-created after the APEI subsys has been created.
-
-
+> v1: http://lkml.kernel.org/r/20250626145122.2228258-1-naveen@kernel.org
 > 
-> Thanks,
-> Yazen
+> Naveen N Rao (1):
+>   KVM: SVM: Enable AVIC by default for Zen4+ if x2AVIC is support
+> 
+> Sean Christopherson (5):
+>   KVM: SVM: Move x2AVIC MSR interception helper to avic.c
+>   KVM: SVM: Update "APICv in x2APIC without x2AVIC" in avic.c, not svm.c
+>   KVM: SVM: Always print "AVIC enabled" separately, even when force
+>     enabled
+>   KVM: SVM: Don't advise the user to do force_avic=y (when x2AVIC is
+>     detected)
+>   KVM: SVM: Move global "avic" variable to avic.c
+> 
+>  arch/x86/kvm/svm/avic.c | 149 +++++++++++++++++++++++++++++++++-------
+>  arch/x86/kvm/svm/svm.c  |  62 +----------------
+>  arch/x86/kvm/svm/svm.h  |   4 +-
+>  3 files changed, 125 insertions(+), 90 deletions(-)
+
+Thanks for putting this together! I have confirmed that this correctly 
+enables AVIC by default on a Zen 5 system and does not do so on a Zen 1 
+system.
+
+For the series:
+Tested-by: Naveen N Rao (AMD) <naveen@kernel.org>
+
+
+- Naveen
 
 
