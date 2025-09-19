@@ -1,122 +1,171 @@
-Return-Path: <linux-kernel+bounces-825325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C81BB8B8ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:48:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71727B8B8DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39CA15848EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF341CC3AD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080282DC342;
-	Fri, 19 Sep 2025 22:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F052DEA95;
+	Fri, 19 Sep 2025 22:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J30bSFg3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAB9274FEF;
-	Fri, 19 Sep 2025 22:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MgFAMbo6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9522D5953;
+	Fri, 19 Sep 2025 22:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321340; cv=none; b=oVjV+uOrozt4mRkBAp9tCoYR6wTHWouX22qOudQ380v/frzPUcpHVycr1Yptd7VCzGeLDN4PJNG+LX5unhFMJXT52+TIadA4+eT9Gey/ncIH5/6o81m2CSRy9gK082T2ebEn0YhOz2SGxV2wMF195WPtJkqPp5o8wMwIBGKfYCg=
+	t=1758321427; cv=none; b=Y9q3BL6WEckEyk6TBW0D+ULytCjjDWdXIX00xXz8u3brVUTCNKfYfva/a6rLuqypXU9jvZOPjukNyPAQxXOuSNe2iNK0yCIU4NFoCSpOIUx+Y551dNzca9owJGsKXfX9Im3X/ghvXu+ef/g5nRuoMK0httfJ4APjygLdiaxugbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321340; c=relaxed/simple;
-	bh=6iQk1TtqMRnZxTDnUsr/4j1QRzY2aHmtxH2BaQcgA7o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VsIBbpxK/VpMk0/FFQ6rJGSzH2w4ElF6vNKnfoR8gkmzwREFgTeglJnU8RWdW5CFy/G0A7EG+e1ZnDeUBCorQ4mgVLu9LuqM/Q/aDYPQNwC0s74RM6IAT7QRp48pY+et7OUJQW2QLfw5/31wKlc1w0/SohmStDpMyCK5XzLB+cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J30bSFg3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BF6C4CEF0;
-	Fri, 19 Sep 2025 22:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758321339;
-	bh=6iQk1TtqMRnZxTDnUsr/4j1QRzY2aHmtxH2BaQcgA7o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=J30bSFg3lEWjYKAzl21JfmrrvhZGn7M1cbR0NkpePEr+T4/Cj5xf5Kyy6ghNYpLcP
-	 9mxg1ZmTzNW9e+b991IqeAdGFKuW6ahHAPJKwfr+WTDbJXEtgJ2aIPCrSAA/rFCxna
-	 ph7xYmrcezcHsV6EsTmhGoF+h3bOCotX+DtHMd3bf38RPN3XGCOCXdZD66YaHY9I3/
-	 uvjLFGa6lW7x52/ihcl5kuUF2CwtIACObokJh8DZJmK3/kmSVjZtJhGSZFSkNNknfJ
-	 4sHidVVrSKAnRMuExccBFdsQMtZToKwWVFq+xoVyP0zs4VanP+pK9OBLLcj1cJzWqC
-	 OC3JY7S/fhkBg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: ata: apm,xgene-ahci: Add apm,xgene-ahci-v2 support
-Date: Fri, 19 Sep 2025 17:35:31 -0500
-Message-ID: <20250919223532.2401223-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758321427; c=relaxed/simple;
+	bh=l0hQwWQjuMnkhbLnGu2CBoE/HRzDlx18idwSYypTxLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Su/5UzC0xQLn0IvNlEI2hthnH8ENWWw4t/9tu+JixPyjJqhIKDnOSW7ImeQjt3AuWTusV3/WYrx5XWhMkynXO3AxvnD4RTaaAk9nB2qvAxvqcOko4biibwqy6diT78/uaLy5bvuX1CEFUh8khAxGQ0vCTbyZxxlM+CSURkf49cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MgFAMbo6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.193.225] (unknown [20.236.11.69])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A98572018E60;
+	Fri, 19 Sep 2025 15:37:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A98572018E60
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758321424;
+	bh=Xw/A6yOKSQHfupdUFT86rCIsXwAoxcjBF3Ul3P45H1c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MgFAMbo6e1CQ+Kc/NFBnYoKJTNoxGu24b4lCj+5le30z6/5DL4c69TDQzkOisQeFX
+	 7kWUNsTT2YLMiVCkednx1QHPEZnb1fjmyjSfb4YFm3r8UGXCxNAMpTtAx5tTaz+FpD
+	 ThV8mL8OWBFzCIdzBLPTgdjbco9klSAsg/2elRcc=
+Message-ID: <8d6c6f95-7ccd-4471-a391-39a45f95af04@linux.microsoft.com>
+Date: Fri, 19 Sep 2025 15:37:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] mshv: Get the vmm capabilities offered by the
+ hypervisor
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+ tiala@microsoft.com, anirudh@anirudhrb.com,
+ paekkaladevi@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com
+References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1758066262-15477-4-git-send-email-nunodasneves@linux.microsoft.com>
+ <aMxUe7WLzMXJY16c@skinsburskii.localdomain>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <aMxUe7WLzMXJY16c@skinsburskii.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The "apm,xgene-ahci-v2" compatible has been in use for a long time, but
-was undocumented. It doesn't require clocks or phys.
+On 9/18/2025 11:50 AM, Stanislav Kinsburskii wrote:
+> On Tue, Sep 16, 2025 at 04:44:20PM -0700, Nuno Das Neves wrote:
+>> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>>
+>> Some hypervisor APIs are gated by feature bits in the
+>> "vmm capabilities" partition property. Store the capabilities on
+>> mshv_root module init, using HVCALL_GET_PARTITION_PROPERTY_EX.
+>>
+>> This is not supported on all hypervisors. In that case, just set the
+>> capabilities to 0 and proceed as normal.
+>>
+>> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+>> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+>> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+>> ---
+>>  drivers/hv/mshv_root.h      |  1 +
+>>  drivers/hv/mshv_root_main.c | 22 ++++++++++++++++++++++
+>>  2 files changed, 23 insertions(+)
+>>
+>> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+>> index 4aeb03bea6b6..0cb1e2589fe1 100644
+>> --- a/drivers/hv/mshv_root.h
+>> +++ b/drivers/hv/mshv_root.h
+>> @@ -178,6 +178,7 @@ struct mshv_root {
+>>  	struct hv_synic_pages __percpu *synic_pages;
+>>  	spinlock_t pt_ht_lock;
+>>  	DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
+>> +	struct hv_partition_property_vmm_capabilities vmm_caps;
+>>  };
+>>  
+>>  /*
+>> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+>> index 24df47726363..f7738cefbdf3 100644
+>> --- a/drivers/hv/mshv_root_main.c
+>> +++ b/drivers/hv/mshv_root_main.c
+>> @@ -2201,6 +2201,26 @@ static int __init mshv_root_partition_init(struct device *dev)
+>>  	return err;
+>>  }
+>>  
+>> +static void mshv_init_vmm_caps(struct device *dev)
+>> +{
+>> +	int ret;
+> 
+> nit: this is void function so ret looks redundant.
+> 
 
-Remove the "apm,xgene-ahci-pcie" compatible which isn't used anywhere
-while we're here.
+True, it's not needed.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/ata/apm,xgene-ahci.yaml          | 21 ++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+>> +
+>> +	memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
+> 
+> Zeroying is redundant as mshv_root is a statci variable.
+> 
 
-diff --git a/Documentation/devicetree/bindings/ata/apm,xgene-ahci.yaml b/Documentation/devicetree/bindings/ata/apm,xgene-ahci.yaml
-index 7dc942808656..dc631381f9e1 100644
---- a/Documentation/devicetree/bindings/ata/apm,xgene-ahci.yaml
-+++ b/Documentation/devicetree/bindings/ata/apm,xgene-ahci.yaml
-@@ -9,14 +9,11 @@ title: APM X-Gene 6.0 Gb/s SATA host controller
- maintainers:
-   - Rob Herring <robh@kernel.org>
- 
--allOf:
--  - $ref: ahci-common.yaml#
--
- properties:
-   compatible:
-     enum:
-       - apm,xgene-ahci
--      - apm,xgene-ahci-pcie
-+      - apm,xgene-ahci-v2
- 
-   reg:
-     minItems: 4
-@@ -35,12 +32,22 @@ properties:
- 
- required:
-   - compatible
--  - clocks
--  - phys
--  - phy-names
- 
- unevaluatedProperties: false
- 
-+allOf:
-+  - $ref: ahci-common.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: apm,xgene-ahci
-+    then:
-+      required:
-+        - clocks
-+        - phys
-+        - phy-names
-+
- examples:
-   - |
-     sata@1a400000 {
--- 
-2.51.0
+Good point.
+
+>> +	ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
+>> +						HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
+>> +						0, &mshv_root.vmm_caps,
+> 
+> Also, we align "slow" hypercalls by PAGE_SIZE. Why is it fine to not do
+> it here?
+> 
+
+I guess you're referring to the output argument of the hypercall?
+
+Check the previous patch to see how hv_call_get_partition_property_ex()
+is implemented. It uses the per-cpu input/output args as normal, which
+are HV_HYP_PAGE_SIZE in size, and page-aligned.
+
+> Thanks,
+> Stanislav
+> 
+>> +						sizeof(mshv_root.vmm_caps));
+>> +
+>> +	/*
+>> +	 * HVCALL_GET_PARTITION_PROPERTY_EX or HV_PARTITION_PROPERTY_VMM_CAPABILITIES
+>> +	 * may not be supported. Leave them as 0 in that case.
+>> +	 */
+>> +	if (ret)
+>> +		dev_warn(dev, "Unable to get VMM capabilities\n");
+>> +
+>> +	dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
+>> +}
+>> +
+>>  static int __init mshv_parent_partition_init(void)
+>>  {
+>>  	int ret;
+>> @@ -2253,6 +2273,8 @@ static int __init mshv_parent_partition_init(void)
+>>  	if (ret)
+>>  		goto remove_cpu_state;
+>>  
+>> +	mshv_init_vmm_caps(dev);
+>> +
+>>  	ret = mshv_irqfd_wq_init();
+>>  	if (ret)
+>>  		goto exit_partition;
+>> -- 
+>> 2.34.1
+>>
 
 
