@@ -1,107 +1,194 @@
-Return-Path: <linux-kernel+bounces-824745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83630B8A106
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:47:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE3FB8A100
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7CD5874A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:47:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 510B24E1852
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3621924503C;
-	Fri, 19 Sep 2025 14:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lo7IMgqs"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64B2273F9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758293236; cv=none; b=LnmlqQjI1xjfuRRhucHtyHA0c+FRlPtxHZSoFFp77uhnVf+D+cymolRkubAE22inHrc5wSB9ahB1MSQDBmJnvZ0bpnH0x6uv5yyTvhTbecczNQCvbkTEFeOqxmfkRzjwFugOGTqcUCGrA2knlnvakXue5lBdxoCVI3U6vVp1bZ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758293236; c=relaxed/simple;
-	bh=3es7VilMbt7caBUBG0oE56IXISX60uMW3vw2sFIe7KM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+vHC2iotJhW43D2zbhaeass/CvqIYEFQWP+YB/8EKnbGfWrwXpaoFY5OSdsjIvGs2SWDi18zfeL2WE6G1XwJJxIDc9j4fKU2d9Yx0FrTFInNzRv6CdW/6uHqDMYSBeIuHKKdGO6MX33uMshS8PBK/mfthOFQoHAFS4scarwMP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lo7IMgqs; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B5AE040E01AC;
-	Fri, 19 Sep 2025 14:47:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 5qp47ba4Pu6N; Fri, 19 Sep 2025 14:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758293226; bh=XJkCEhW9XL1Vb5alDd+rFrnd8qVEBJWPMVwO2ZaFLC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lo7IMgqsFMSKoTmc7ne80FD0cH+1whQpfvF8RAbLmIRt0iAaRnacb60TfxaLs1Lgs
-	 zZaRghd8oyc7Nx3asR3X+OWOHxc2Z+PZtKUKZyeFWA6n8YdHzUuetUa/nAp9Qk10rF
-	 RqdY5RG9haHIefY7YX2lZYnHm0tZU+VS4GONUbWFcsOtvdDwRzObQTCP5sySy1SSNI
-	 Se3oKyZbeW6bPOtmErwnaJP56g2Jantv9VIc6Kbqj6g95uxpqjHsKvovFIq27aGigL
-	 QOnnyxyoCd9mFrnpyR13fY0zL8yEa31hYLBeYVZAGXPo5y8JXRgHhQlijUoIX/7fnC
-	 pXixXlimfIS40R1mjBvaimAbms9we6v5m4dHILRel2+WSEj+nI4ASIzfUsd1UjPo++
-	 a65dBlgO7Ddx8C+XOFJm/0+onIvCQlwphA+sHY5M9ZbCpBXK1QhnJITDtUw6fhdBmy
-	 IOhgrlJ5+kxAZH+AELCebLmphm6to76kBivjg+6tyYDC9ftgmTeV8X0SIecvUVF8U0
-	 Dx9Ur1QtbeBGE9dTzFHAkQuiMBV2kvlMdfiIxqSCBuSG2nCWHi+AEa68BrCOX9zqm2
-	 hF6w3r/rqexG8rE24n3/OjRc3GXh++YTrWeHWlewEJxPHYw+lNyIs2BUCcjh4xUPCK
-	 G4MsDIuJ9rPq+kQnuSRRypJ4=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 771BA40E019F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7525524C;
 	Fri, 19 Sep 2025 14:46:59 +0000 (UTC)
-Date: Fri, 19 Sep 2025 16:46:52 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Dan Snyder <dansnyder@google.com>
-Subject: Re: [PATCH 0/3] x86/umip: Fix UMIP insn decoder false positives
-Message-ID: <20250919144652.GDaM1s3CVU5KMMFGkv@fat_crate.local>
-References: <20250808172358.1938974-1-seanjc@google.com>
- <aM1pNN_ById_l6xR@google.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4nXpIPa"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3474D4502F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758293218; cv=none; b=M3xV7GcY/x4rcIACDbfrnSPCMTGvEuFtOe+vPAdFAjMrid4rAPTZT8umA12wHYpveF2mJMNfZY7a4WlrPGZstWdUXXxSrn384Qs6iDd0a4FAxzxOHHKXYnJE2rfI5ChpP3wpSN6bj/ZAefj/IzDoN/02vsJnksecn5WdfPcxHj4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758293218; c=relaxed/simple;
+	bh=rMzpqLEOEhteINqvc5dyan4rtMP3A9UTuyesjbI13LA=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=eDVzfG76JkwdyNC5IFGj+vlJjzRlsdweKg9m3arbTYm8p63wXZP2P0HnBoaYxbsfc/xvPu70Yh12lLHv5E9O3OTrlq6A+BNIB1ppcEnxp0e3uat8zqXHxHyRR7DP8B8IY4U4RqlWUqzrCZo5ztTI3+UX5V8wuqdRs6uhBoLkrVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4nXpIPa; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4b79773a389so22771431cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758293216; x=1758898016; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BTCj+e/VtZ/D02X1h15E6NfB/hO2pboJylbEQXWpz8E=;
+        b=A4nXpIPa+2BhjVsulZSLhLIPr3E+ZFHQUuJRXnK3toMeDpl/tIJlbRWgTKMiRShSu2
+         wcSH2+RapQp3ncIktiuybEZ9Nd99ZyBKhUaqw9wrt8zq/woRd5GRzwkukmR7t0Lz3e02
+         eItFjH3S0UmGQltEJH4/lg14WuxXQMfzicM/FysACFU1VzYzcGy4Tvy81wv7XbqcGen/
+         OQKgF9Yyrfvdl9YhVTub/urvZM12PjLLND/k1napHlkkLWnjYuYFlGyeMXKxnmooxdro
+         KYxQFg36h3oqwaABM4TdY73aYeSXG1qARFfVZDZHymcn5P90PYs3bB7cJ91MWjahe0nb
+         ykBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758293216; x=1758898016;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BTCj+e/VtZ/D02X1h15E6NfB/hO2pboJylbEQXWpz8E=;
+        b=MlbmdNTWE8Oo6Ltd5mRFzeBWFAsNYXdhVvWvQ9yqWE+TfC4MthUVIWFzb11gBbuS/e
+         LCboGyfI9Yi6Rn5pfB8m9+iD00/EGaI+DP7WKTeEYwpLcZjaaMypz3FX8YjjfNaWg1B5
+         2QhqrqFpj/leZ0jB2y+bw/bMjd03fH/rYcOvMSkb/89ciMoOPZGlwZlYuqRBSv68EOR6
+         w2TA4Bpdg5wn2kGxLg29t6PCgs5bKni7npyQNBayvjJYtNDaiszmR49KTUVCSYYzlCl1
+         cReMHcKHJ7HnbGtvMaJvdT9wukZZwz4IhAA2MGuGtMPRXIoIUoB7T8QBchOeVV2P1ve3
+         WDcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIBo4HlL1jAX4vbLP/EA+YaaxpMfdQmdhwaKydSVnYXitVwyvvLEwtmFOaGVw6hBS773vyzVOSuMFddZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZDQGi/FTw5PEek/68VfQFTod5skXpyIgwX1eICYcTRG6H3E/y
+	5Ka78+YvHkdQC9YHlQyGVZ4EQ9aApWDAEZ9aVLNF/Cj7fDgc7vl3Pj4/+a3wfA==
+X-Gm-Gg: ASbGncsYiev4ZkvZbFQuP+eoI6ipT0cUSmMwVuvBHZ2rWlttVJEXBsD0kzFczUtpXv5
+	9IYuJmd6Zb7GSRGU5/nEBbiP8SObvZYd6sZlQWjzqHEiyR5CL416uvJR4agGqA+Uyx1InXxcRSw
+	0xkmnx05RJS5ylgr8xvIgOBs0MB5ybYQdMg9eoXyEUR9bNkJdB4ngrNplT2tuEe6YFw1/px5Npl
+	qiVOGlCYUJmRk8aBd7U/7npJHozMlIHSxAmJGNJagtH6bkWzoWmPhZi+AGSnk5z6hQZ+k5DQKbB
+	8Tmv9GLgpAKAM3nmAreH2qBT//S3P5ft4iZ1c6CCSIvkZrGZ8MVUmY/+WMq8j0R7+SGIpZupfbs
+	q4jJMJ1xZTVzCJn16KVkDX6kMBQf3qysGR01WNfuvyqA8nlG4EMVnhJVgda3WNIj6O51QOkRAzU
+	eNvg==
+X-Google-Smtp-Source: AGHT+IEFvwYYDWYJDrNKDVvsS0tm4PJF42EUcN3g1p4ngNtR8j2nRJk0TdRdJI0JYwklpBYJ2GKC1A==
+X-Received: by 2002:a05:622a:5444:b0:4c0:cab7:978 with SMTP id d75a77b69052e-4c0cab70addmr15501021cf.29.1758293215746;
+        Fri, 19 Sep 2025 07:46:55 -0700 (PDT)
+Received: from gmail.com (141.139.145.34.bc.googleusercontent.com. [34.145.139.141])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4bda279ad7esm30915921cf.19.2025.09.19.07.46.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 07:46:55 -0700 (PDT)
+Date: Fri, 19 Sep 2025 10:46:54 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Wang Liang <wangliang74@huawei.com>, 
+ willemdebruijn.kernel@gmail.com, 
+ jasowang@redhat.com, 
+ andrew+netdev@lunn.ch, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ ast@kernel.org, 
+ daniel@iogearbox.net, 
+ hawk@kernel.org, 
+ john.fastabend@gmail.com, 
+ sdf@fomichev.me, 
+ lorenzo@kernel.org, 
+ toke@redhat.com
+Cc: yuehaibing@huawei.com, 
+ zhangchangzhong@huawei.com, 
+ wangliang74@huawei.com, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org
+Message-ID: <willemdebruijn.kernel.2ecd010c7b725@gmail.com>
+In-Reply-To: <20250917113919.3991267-1-wangliang74@huawei.com>
+References: <20250917113919.3991267-1-wangliang74@huawei.com>
+Subject: Re: [PATCH net] net: tun: Update napi->skb after XDP process
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aM1pNN_ById_l6xR@google.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 07:31:16AM -0700, Sean Christopherson wrote:
-> On Fri, Aug 08, 2025, Sean Christopherson wrote:
-> > Fix two false positives scenarios where the UMIP #GP logic will incorrectly
-> > trigger emulation, e.g. due to a partially decoded instruction, or on
-> > instructions like VMLAUNCH that usurp the register form of '0f 01'.
-> > 
-> > Tested with the hack-a-test patch at the end, but I haven't done any testing
-> > using a real userspace (neither positive nor negative testing).
-> > 
-> > Sean Christopherson (3):
-> >   x86/umip: Check that the instruction opcode is at least two bytes
-> >   x86/umip: Fix decoding of register forms of 0F 01 (SGDT and SIDT
-> >     aliases)
+Wang Liang wrote:
+> The syzbot report a UAF issue:
 > 
-> Ping on these two, looks like they slipped through the cracks.  FWIW, I wouldn't
-> consider these urgent enough to squeeze into 6.17, but it'd be nice to get them
-> into 6.18.
+>   BUG: KASAN: slab-use-after-free in skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
+>   BUG: KASAN: slab-use-after-free in napi_frags_skb net/core/gro.c:723 [inline]
+>   BUG: KASAN: slab-use-after-free in napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
+>   Read of size 8 at addr ffff88802ef22c18 by task syz.0.17/6079
+>   CPU: 0 UID: 0 PID: 6079 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
+>   Call Trace:
+>    <TASK>
+>    dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>    print_address_description mm/kasan/report.c:378 [inline]
+>    print_report+0xca/0x240 mm/kasan/report.c:482
+>    kasan_report+0x118/0x150 mm/kasan/report.c:595
+>    skb_reset_mac_header include/linux/skbuff.h:3150 [inline]
+>    napi_frags_skb net/core/gro.c:723 [inline]
+>    napi_gro_frags+0x6e/0x1030 net/core/gro.c:758
+>    tun_get_user+0x28cb/0x3e20 drivers/net/tun.c:1920
+>    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
+>    new_sync_write fs/read_write.c:593 [inline]
+>    vfs_write+0x5c9/0xb30 fs/read_write.c:686
+>    ksys_write+0x145/0x250 fs/read_write.c:738
+>    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>    </TASK>
+> 
+>   Allocated by task 6079:
+>    kasan_save_stack mm/kasan/common.c:47 [inline]
+>    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+>    unpoison_slab_object mm/kasan/common.c:330 [inline]
+>    __kasan_mempool_unpoison_object+0xa0/0x170 mm/kasan/common.c:558
+>    kasan_mempool_unpoison_object include/linux/kasan.h:388 [inline]
+>    napi_skb_cache_get+0x37b/0x6d0 net/core/skbuff.c:295
+>    __alloc_skb+0x11e/0x2d0 net/core/skbuff.c:657
+>    napi_alloc_skb+0x84/0x7d0 net/core/skbuff.c:811
+>    napi_get_frags+0x69/0x140 net/core/gro.c:673
+>    tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
+>    tun_get_user+0x77c/0x3e20 drivers/net/tun.c:1784
+>    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
+>    new_sync_write fs/read_write.c:593 [inline]
+>    vfs_write+0x5c9/0xb30 fs/read_write.c:686
+>    ksys_write+0x145/0x250 fs/read_write.c:738
+>    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+>   Freed by task 6079:
+>    kasan_save_stack mm/kasan/common.c:47 [inline]
+>    kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+>    kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+>    poison_slab_object mm/kasan/common.c:243 [inline]
+>    __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
+>    kasan_slab_free include/linux/kasan.h:233 [inline]
+>    slab_free_hook mm/slub.c:2422 [inline]
+>    slab_free mm/slub.c:4695 [inline]
+>    kmem_cache_free+0x18f/0x400 mm/slub.c:4797
+>    skb_pp_cow_data+0xdd8/0x13e0 net/core/skbuff.c:969
+>    netif_skb_check_for_xdp net/core/dev.c:5390 [inline]
+>    netif_receive_generic_xdp net/core/dev.c:5431 [inline]
+>    do_xdp_generic+0x699/0x11a0 net/core/dev.c:5499
+>    tun_get_user+0x2523/0x3e20 drivers/net/tun.c:1872
+>    tun_chr_write_iter+0x113/0x200 drivers/net/tun.c:1996
+>    new_sync_write fs/read_write.c:593 [inline]
+>    vfs_write+0x5c9/0xb30 fs/read_write.c:686
+>    ksys_write+0x145/0x250 fs/read_write.c:738
+>    do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>    do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> After commit e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in
+> generic mode"), the original skb may be freed in skb_pp_cow_data() when
+> XDP program was attached, which was allocated in tun_napi_alloc_frags().
+> However, the napi->skb still point to the original skb, update it after
+> XDP process.
+> 
+> Reported-by: syzbot+64e24275ad95a915a313@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=64e24275ad95a915a313
+> Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in generic mode")
+> Signed-off-by: Wang Liang <wangliang74@huawei.com>
 
-Lemme take a look...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
