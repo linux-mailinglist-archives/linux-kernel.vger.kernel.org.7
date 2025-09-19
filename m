@@ -1,233 +1,138 @@
-Return-Path: <linux-kernel+bounces-824439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BA2B8935D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A69B89366
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF887C0C52
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:12:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 130177AB890
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97B230C349;
-	Fri, 19 Sep 2025 11:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0491730C638;
+	Fri, 19 Sep 2025 11:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rwaX9zyf"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011026.outbound.protection.outlook.com [52.101.52.26])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk5LMGmc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076211B87C0;
-	Fri, 19 Sep 2025 11:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758280371; cv=fail; b=gjF2cOc16q1qyfeVF7o/oIvhvva6qYzUzTfNpSZKryTdSluX8B7PnHIfGRN/v0QkVRPcT1+hiXKQkWowOoFDbIjBTA7/3igiGcjPrDJAbngEvhe0LpJz+QRt+O1IvRuH7NVv2L3OCVvcC/bJa076q1RZsVU0Sm/W68Gofb+zK14=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758280371; c=relaxed/simple;
-	bh=QAllc6ht8Fp7jx/tsout+nS1c7iri6AuCFy6zJBJqrM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1GmvkB0aGAJmfesnAzi0wXt6xrgCZF6dipKDh+UykI39t0VExYahRA0pdR8vC+CAR+oWdFLkUYeNM2B+jdZruIt3PqIUw+v+zVmP7VwMOMSIJQzZN7Lrd5zO/YByeirxyKhNpI1JXhFWXP7CPICByEd+JJEJmOxsUqzK1Er7C4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rwaX9zyf; arc=fail smtp.client-ip=52.101.52.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z8JRNEHuNPkJvD2JCf8AijTS725YWYyaVOnsOU5dJ4Jl0S5SUyUyL24MjAuffn+WYKUM4UxpwiBw/oz/Q0yox1fHOfryqNizEpRi8JBrpaKLLecpRt3BJtd7eKHoIaxhrH6DpJevMr+u5YaJ7FdIk1hdiV0zLgRrmso13OFOeVkEwWYJUCe9lzQ6b2RC55oIu9UsiJj9Hc575xXyjHk3Ay0G7hLm4UFEhaQ5CnWXYvi25wJM43mGk1KBvNBLYhN0cHqOQvkjVjzvqGanQE4K6okZzMRjt6B5UU7jTtpaZGtvi5USLjK0BDhNxNht5mMauE6ZPIylEoAgz4YflJ8k+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4ddvenm3cdx2CVKu6wh0C6phlI0If+Ii112F2y8g6Ok=;
- b=WDWLxFB+rztclugGzIiawpONJd+jhmUbaVoiovbFy+D8e6ML/Ucnm1NFCn3Uo30GRYqjrTSmzRwYaKKLdX5AeWeZy6Ga/JF0ofVAeITbojHojOAE5UNt17tsUbO5rTqsTAZ2E0Ej77IKy1ASmEt3igVV5nlLVovsG9KBR+0tPjq9SQjiXodDDLztDmfySR5Qv1sFXTVJPwA879JatQ40ONC0I0y60fqsiQLf4zI7WpO9R1t8ut8YfS5Rn0+tEftCRLigTnf7GB7vEXZ0TIY/tqYAWTkK3v0avpCMgagyEWtD5H8oLZK4JoKsI4Pn0pqZ7FuHfDsTy/XOFiSS4aQ5xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=bootlin.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4ddvenm3cdx2CVKu6wh0C6phlI0If+Ii112F2y8g6Ok=;
- b=rwaX9zyfpeCcccpmPs5s2kpQ/WzNYtdGBIYo57TsaIrTJvzlCTuixjomarLjwSGEe/nG9ASk8e0/azwghewDwK1QElim44J1GIA2myUz0bo1fpga9EABSP1epwjJU78tBQGWDAND0M5MsTwao89d+dDJpoFP78cX4r4rZDG4NxDRkwHeZu56IixC47tuCy6ay6h398fRkvhFiFk2QsbHV+czwRVklgJV9UJZKGy+rzY51vsMxAOwLaWvYhE6qvpH26mVIGMcv/GKbSEt2J6gHjv1G2FoAHD80WYyoQfTMxFIUxwKldhZ7OCTXXQ65bBBZ8l/0GFeOEFErLol/xTsWg==
-Received: from DS7PR03CA0064.namprd03.prod.outlook.com (2603:10b6:5:3bb::9) by
- CY1PR12MB9697.namprd12.prod.outlook.com (2603:10b6:930:107::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.14; Fri, 19 Sep 2025 11:12:46 +0000
-Received: from CY4PEPF0000EE38.namprd03.prod.outlook.com
- (2603:10b6:5:3bb:cafe::d9) by DS7PR03CA0064.outlook.office365.com
- (2603:10b6:5:3bb::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Fri,
- 19 Sep 2025 11:12:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000EE38.mail.protection.outlook.com (10.167.242.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 11:12:45 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 19 Sep
- 2025 04:12:36 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 19 Sep
- 2025 04:12:36 -0700
-Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Fri, 19 Sep 2025 04:12:33 -0700
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <alexandre.belloni@bootlin.com>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <andriy.shevchenko@linux.intel.com>,
-	<linux-rtc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Kartik Rajput <kkartik@nvidia.com>
-Subject: [PATCH] rtc: tegra: Add ACPI support
-Date: Fri, 19 Sep 2025 16:42:32 +0530
-Message-ID: <20250919111232.605405-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5835C1B87C0;
+	Fri, 19 Sep 2025 11:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758280379; cv=none; b=rG+DFXGJpvcTzSLVUkiUUvrCVLsD4EK1C0VMxqTY2IaA4UBUpdjna1hbkeMgirM4YgN8VkTZbVYUR7BPnoiMqzHfs3BZCBf+JmagQ/sHfSIjhOq8VS2fI8lcOg7/LguuDeCm02QeF8Ho4/hA9zOqqTkNKlSc5our1OaveQGxA+0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758280379; c=relaxed/simple;
+	bh=kOxTviwXNRHsQQgggVwmctRXiPP9/ssgo2oomiAxsFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kEUdNQYGmjrInsVjtZWL0/dwtE4blo5VNy7m7SQizag8WpPrzIYcVV1bsaNGOzy5jzvZqiZWhfNqYtCTyYzf18khoIz0/wa9sHH1AgmPA4or1psqY/WCEjXKw0seYOC5RZh+MEuSlwflGMsRfS8irOyiKliHBY65D0BYf3Kh28o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk5LMGmc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C449C4CEF1;
+	Fri, 19 Sep 2025 11:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758280378;
+	bh=kOxTviwXNRHsQQgggVwmctRXiPP9/ssgo2oomiAxsFc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Yk5LMGmcaQ68u3a/5seV1E/lDuF0QXENOW924lwYJOKp41QvCGuzHpUkAE5pjuJBR
+	 N4f8qi6b5OHlgZfuBvzR2EmZ2Zy59tySp4FdvXaMz0vNrAzD8l5rMvWWN05Q6dlN7j
+	 yAOmxtSqqLy6BMYNWD5xraYeEUo3+tLbsuFLZBIJTHvONC65frXsbJMauKIkN6ItAq
+	 SVZK95FAQ/hqmoMj7w2LQCHmhmCI2fDhk7rm2M421I4Z6yFKRfn1xUr4xFqlCrNgl+
+	 /U8fH1Y7hlGyemwngJWdvD2ZLTN8GjqJfvuoHPH4x+XMeNyjkLekdrYX3lYQjMdRiU
+	 0VxMGa3yQwQjw==
+From: Christian Brauner <brauner@kernel.org>
+To: "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	jannh@google.com,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: [PATCH v21 0/8] fork: Support shadow stacks in clone3()
+Date: Fri, 19 Sep 2025 13:12:46 +0200
+Message-ID: <20250919-eruption-apokalypse-75d57366bff4@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250916-clone3-shadow-stack-v21-0-910493527013@kernel.org>
+References: <20250916-clone3-shadow-stack-v21-0-910493527013@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2291; i=brauner@kernel.org; h=from:subject:message-id; bh=kOxTviwXNRHsQQgggVwmctRXiPP9/ssgo2oomiAxsFc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSctdqYt9oywOm76JlGmfeZJin9Ws/P7nuQp6Sfr3vUO FDivoh+RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEROv2D4H/IiyeegzlRBSf+z ck9+Hn/v9sfwzx5xAaGXj5focH72+c/wP6dv7Sv/0203On4bp02I0VnceH+J66Tig1Lr2hWPVLL lsQIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE38:EE_|CY1PR12MB9697:EE_
-X-MS-Office365-Filtering-Correlation-Id: e7e863fd-6018-474e-8072-08ddf76d75a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SfzHJt776P38qaUW+h78F8SIRX4NMHjNkR1mAUQbZ9ENajkZ6fuUkACGH+rE?=
- =?us-ascii?Q?qdYD1+zKwkfzZukV/4n1z/ufuKbJcIvIz54SfVKCDLpFLijd5C7X2NSwbSJ9?=
- =?us-ascii?Q?VHsul4wumtH458G+qNXCRoukUfEIqLUjEOOW7MC/rS1SaFZeNazveUyl6+S8?=
- =?us-ascii?Q?bHG26mmr+lmoZsADAJrNVhJubfDtM/kM/fXuT6m1UfAxHcLclEij20qHbJpO?=
- =?us-ascii?Q?+lV0uOyn8lhzWzgQghjZgOrEShxtyXHVSoDT6Z5Xhu+OyVMO/NZlw8DghDzT?=
- =?us-ascii?Q?ifpBi+gMUM+AigfrOAlJwXZzrhbo2plkG3cmlaxkOQFuWCBfFi3xu1P46pw2?=
- =?us-ascii?Q?le5+70iaUkRb218njd8nyNrEJgLOVgfHFudGb3h8rh5jvnraTE/InwyIvad9?=
- =?us-ascii?Q?6pVDeCe27kZE5TucIXUsWBkYdJ7vVo/twSmYKl77ilHvKGfbi00pTubFY+B/?=
- =?us-ascii?Q?fWEv2pNV7/2AijoTGoQDmgRe6S+GWE3OOD/6BqP5Ip36Tv6RmwmNUco/VWik?=
- =?us-ascii?Q?N1v+WsuIq4iDko7UJC/V0qnyudbvTCCvrZwnyR6/ok+FRrycqW98sxoXGbnc?=
- =?us-ascii?Q?mjUzyZie+CjAfeQX+wBO3HFG4RaP/i5427zKfhBZ2oFByiZ+KVRZ+jB7CbIE?=
- =?us-ascii?Q?QI7VBHUbJDBihzlaUWSXpKtJFTFS6aVMGgPgc1qR8NxknT4t+6bgNAC8oVo4?=
- =?us-ascii?Q?TB868C1lyf510fzk+0dzNpZMv1q7+4TrAqW51+rXdkejmq5FERu3xB7wlKAv?=
- =?us-ascii?Q?qpVOyGWylkc3CSIpmBnKCyU3N8L5K3bHoROJIbvDBR0E8HkKHnGVrOs1Ug53?=
- =?us-ascii?Q?CVWwYYZFRe1TEJWMNHVdciPjqasE6pzNR7/BS460zhoIa8PtuuTQpaq3epHk?=
- =?us-ascii?Q?aDSWamVGSMHmbSR70JYFgHQ+EzP+icknGH4ky9IpGTSEaTSUT0RcF413sJTy?=
- =?us-ascii?Q?tNBo3UutBK+mRJiRfRSO6rj1q4xozX25syEmlvglVMorAZdh/TI8069hrtUS?=
- =?us-ascii?Q?x059Jbo2KuHseNkkz+FhPc87PqsJQLMJEwz1R1AG/yNJv/yiBQavtX7TL0kj?=
- =?us-ascii?Q?EOuFPzaeBgSiNpzH1QeH+26+UvDCA2z0qvymQrg6gJGTDYhxvk/zWaXRCY+9?=
- =?us-ascii?Q?T4NMGna2O0+NgwzDLyOTuXQOy8y5bLsbf2XHTFC/dkgc6oWKE6jb6WJ7+EHX?=
- =?us-ascii?Q?iFjYpffPCEa6tkNmPfKoXsV9tC3CfPN0R/F1NUAbohdwpRHyOnvhVu/rdlyu?=
- =?us-ascii?Q?CmlpIDlStZT9UU/pO68FUNN15rpOivThcvluQJ5jKVBNiL0Va/wgbah6znMK?=
- =?us-ascii?Q?y8EAiJ33yFvkO4tnwf7Z4eyDH6cLt6HSsko9Ecga2UxERB5RlpIeaznOH1Fm?=
- =?us-ascii?Q?AkNgH2haEkY8GhYqQ2JPzEuV0MKHKa9WCFRoLnLuyDeTxofizjKQY1T1mdAj?=
- =?us-ascii?Q?VvXEeG0yKmE+e3tKiZjAsI40f07TjCvPOx9zy3s+sTkN3VNSEQHQIP7uJeZz?=
- =?us-ascii?Q?/cdPDcf1O0pWdsWUdcOMnY71hTkqtmgP3qpf?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 11:12:45.2637
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7e863fd-6018-474e-8072-08ddf76d75a4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE38.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9697
 
-Add ACPI support for Tegra RTC, which is available on Tegra241 and
-Tegra410. Both Tegra241 and Tegra410 use the same ACPI ID 'NVDA0280'.
-The RTC clock is configured by UEFI before the kernel boots.
+On Tue, 16 Sep 2025 00:12:05 +0100, Mark Brown wrote:
+> [ I think at this point everyone is OK with the ABI, and the x86
+>   implementation has been tested so hopefully we are near to being
+>   able to get this merged?  If there are any outstanding issues let
+>   me know and I can look at addressing them.  The one possible issue
+>   I am aware of is that the RISC-V shadow stack support was briefly
+>   in -next but got dropped along with the general RISC-V issues during
+>   the last merge window, rebasing for that is still in progress.  I
+>   guess ideally this could be applied on a branch and then pulled into
+>   the RISC-V tree? ]
+> 
+> [...]
 
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
- drivers/rtc/rtc-tegra.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+Applied to the kernel-6.18.clone3 branch of the vfs/vfs.git tree.
+Patches in the kernel-6.18.clone3 branch should appear in linux-next soon.
 
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index 46788db89953..40617c82070f 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2010-2019, NVIDIA Corporation.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/init.h>
-@@ -274,6 +275,12 @@ static const struct of_device_id tegra_rtc_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, tegra_rtc_dt_match);
- 
-+static const struct acpi_device_id tegra_rtc_acpi_match[] = {
-+	{ "NVDA0280", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, tegra_rtc_acpi_match);
-+
- static int tegra_rtc_probe(struct platform_device *pdev)
- {
- 	struct tegra_rtc_info *info;
-@@ -300,13 +307,15 @@ static int tegra_rtc_probe(struct platform_device *pdev)
- 	info->rtc->ops = &tegra_rtc_ops;
- 	info->rtc->range_max = U32_MAX;
- 
--	info->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(info->clk))
--		return PTR_ERR(info->clk);
-+	if (is_of_node(dev_fwnode(&pdev->dev))) {
-+		info->clk = devm_clk_get(&pdev->dev, NULL);
-+		if (IS_ERR(info->clk))
-+			return PTR_ERR(info->clk);
- 
--	ret = clk_prepare_enable(info->clk);
--	if (ret < 0)
--		return ret;
-+		ret = clk_prepare_enable(info->clk);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
- 	/* set context info */
- 	info->pdev = pdev;
-@@ -338,7 +347,8 @@ static int tegra_rtc_probe(struct platform_device *pdev)
- 	return 0;
- 
- disable_clk:
--	clk_disable_unprepare(info->clk);
-+	if (is_of_node(dev_fwnode(&pdev->dev)))
-+		clk_disable_unprepare(info->clk);
- 	return ret;
- }
- 
-@@ -346,7 +356,8 @@ static void tegra_rtc_remove(struct platform_device *pdev)
- {
- 	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
- 
--	clk_disable_unprepare(info->clk);
-+	if (is_of_node(dev_fwnode(&pdev->dev)))
-+		clk_disable_unprepare(info->clk);
- }
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -404,6 +415,7 @@ static struct platform_driver tegra_rtc_driver = {
- 	.driver = {
- 		.name = "tegra_rtc",
- 		.of_match_table = tegra_rtc_dt_match,
-+		.acpi_match_table = tegra_rtc_acpi_match,
- 		.pm = &tegra_rtc_pm_ops,
- 	},
- };
--- 
-2.43.0
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: kernel-6.18.clone3
+
+[1/8] arm64/gcs: Return a success value from gcs_alloc_thread_stack()
+      https://git.kernel.org/vfs/vfs/c/053b5d3aac29
+[2/8] Documentation: userspace-api: Add shadow stack API documentation
+      https://git.kernel.org/vfs/vfs/c/b495e1f0502e
+[3/8] selftests: Provide helper header for shadow stack testing
+      https://git.kernel.org/vfs/vfs/c/0ba39d41c241
+[4/8] fork: Add shadow stack support to clone3()
+      https://git.kernel.org/vfs/vfs/c/871b4dc7c705
+[5/8] selftests/clone3: Remove redundant flushes of output streams
+      https://git.kernel.org/vfs/vfs/c/c4aef60520c3
+[6/8] selftests/clone3: Factor more of main loop into test_clone3()
+      https://git.kernel.org/vfs/vfs/c/b3925f5b857b
+[7/8] selftests/clone3: Allow tests to flag if -E2BIG is a valid error code
+      https://git.kernel.org/vfs/vfs/c/9012e184d017
+[8/8] selftests/clone3: Test shadow stack support
+      https://git.kernel.org/vfs/vfs/c/c764fa47e7ec
 
