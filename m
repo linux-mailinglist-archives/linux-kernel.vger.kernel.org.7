@@ -1,115 +1,135 @@
-Return-Path: <linux-kernel+bounces-824106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E70B8823C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E58B8824B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3161C52194D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:19:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D8C2A0D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490529D264;
-	Fri, 19 Sep 2025 07:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0LIGtAXJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3C81862A;
-	Fri, 19 Sep 2025 07:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427B32C0266;
+	Fri, 19 Sep 2025 07:22:28 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCA82AD24
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758266361; cv=none; b=K1AWFrXfoVgNCzkY75kg7PqUoLv9j2V5ATzQUb3rnRwG6LlvkVBEk5rWqdk5XsV+eLa63ZpMbrZfalbrsJA2YU66rPl8u+FjEs56naCxOfq+hjUqLd6SXmg2B8u3BpHSCB277Ud65U58X2XS+iAimUODnbDaUnHOtnDu6Ys1ejI=
+	t=1758266547; cv=none; b=bX1EjBURYG76y9egj2FMBPJ9CHemWyrspb4M64eMGfNPdEkcnTI0WS5y6LcKB61PZfA4MOXLu1PCvgyJ44v2vmbboLlJujLCskPrq63XjZqURxlul7zBiOsCARxKvPIyKyPNw+5FqGd+Xax6UEzeqpBzE5RIiPtcJ4KquF/22jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758266361; c=relaxed/simple;
-	bh=h8IcExnL+ufUC/sHx295zmDgmYauyGFmpVaWBmtGSTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZwmEF+Gl4XfsUKDPuRJyHVS3+j/UegeIoG0KNKGFK7XfFCD9KnJGi0fAPlcHao4PkRxO3kce0B16/LNwXHI3Br3Cn8AqFhzSLQ4RED1oYvoyt/KGlyxBJWZQStQOxt1YwEp7YgmxnZYJX6s97ZVRL+GHawag3GKj+36kbmKHME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0LIGtAXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20F91C4CEF0;
-	Fri, 19 Sep 2025 07:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758266360;
-	bh=h8IcExnL+ufUC/sHx295zmDgmYauyGFmpVaWBmtGSTQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0LIGtAXJ1K5y+wMv+yLAQ2cmknYeP4bryMH2uopDreHp/jnIL9xdM4f437xCNBBRE
-	 VxHQn7BWxAuCRUwbA/eF8PUNti8J6zUm42cE16VJwX5zmxV6jFZD6CGSHMJd6yInu5
-	 ei5iQdvr79UBfkGBiPltwpeAvlFVpzDfrhuuJOO4=
-Date: Fri, 19 Sep 2025 09:19:16 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.1 00/78] 6.1.153-rc1 review
-Message-ID: <2025091903-relish-neuron-30e5@gregkh>
-References: <20250917123329.576087662@linuxfoundation.org>
- <CADYN=9Li3gHMJ+weE0khMBmpS1Wcj-XaUeaUZg2Nxdz0qY9sdg@mail.gmail.com>
+	s=arc-20240116; t=1758266547; c=relaxed/simple;
+	bh=+tBvip76XXr+lu0sgkTSqWqXh8t41hAbXy4NTp2PPko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWOog/n1+UGl83gaR0ToF3pmWVRJnhQJyv2q0EAAfPY43OY/xCTKopI9vMwddayKGvOTvVdMIG2kHaz6k9nwJs3s9DT4vVzm/Ct1LSg/gis8sqvz8h4BWIZb/LW+O4nvknnOZ0qH19c8e+7x0cVZXgzRvnkfcCBgnC+LAVPSr88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.89])
+	by gateway (Coremail) with SMTP id _____8CxJ9GtBM1oKSIMAA--.26090S3;
+	Fri, 19 Sep 2025 15:22:21 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.89])
+	by front1 (Coremail) with SMTP id qMiowJAxleSmBM1otiifAA--.54733S2;
+	Fri, 19 Sep 2025 15:22:19 +0800 (CST)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch fixes for v6.17-rc7
+Date: Fri, 19 Sep 2025 15:21:54 +0800
+Message-ID: <20250919072154.2509239-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADYN=9Li3gHMJ+weE0khMBmpS1Wcj-XaUeaUZg2Nxdz0qY9sdg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxleSmBM1otiifAA--.54733S2
+X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxXF4fJw4fZF48CF4DCFy7twc_yoW5XryDpr
+	4a9r9IqF4DGrZ3ZwnIq347uF15trs7Cry2qF42k348JF1Yvr1UJr18Xr1kJFyUJ395Jr10
+	qF1rWwn0kF1UJacCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
+	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
+	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcpBTUUUUU
 
-On Thu, Sep 18, 2025 at 03:28:01PM +0200, Anders Roxell wrote:
-> On Wed, 17 Sept 2025 at 15:01, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 6.1.153 release.
-> > There are 78 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.153-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> While building Linux stable-rc 6.1.153-rc1 the s390 allmodconfig with
-> clang-20 toolchain build failed.
-> 
-> Regression Analysis:
-> - New regression? yes
-> - Reproducibility? yes
-> 
-> Build regression: s390 clang-20-allmodconfig
-> 
-> Build error:
-> arch/s390/kernel/perf_cpum_cf.c:556:10: error: variable 'err' is
-> uninitialized when used here [-Werror,-Wuninitialized]
->   556 |                 return err;
->       |                        ^~~
-> arch/s390/kernel/perf_cpum_cf.c:553:9: note: initialize the variable
-> 'err' to silence this warning
->   553 |         int err;
->       |                ^
->       |                 = 0
-> 1 error generated.
-> 
-> The bad commit pointing to,
->   s390/cpum_cf: Deny all sampling events by counter PMU
->   [ Upstream commit ce971233242b5391d99442271f3ca096fb49818d ]
+The following changes since commit f83ec76bf285bea5727f478a68b894f5543ca76e:
 
-Thanks for the info, I'll go drop this patch from the queue.
+  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
 
-greg k-h
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.17-2
+
+for you to fetch changes up to 8dc5245673cf7f33743e5c0d2a4207c0b8df3067:
+
+  LoongArch: KVM: Avoid copy_*_user() with lock hold in kvm_pch_pic_regs_access() (2025-09-18 19:44:25 +0800)
+
+----------------------------------------------------------------
+LoongArch fixes for v6.17-rc7
+
+Fix some build warnings for RUST-enabled objtool check, align ACPI
+structures for ARCH_STRICT_ALIGN, fix an unreliable stack for live
+patching, add some NULL pointer checkings, and fix some bugs about
+KVM.
+----------------------------------------------------------------
+Bibo Mao (5):
+      LoongArch: KVM: Fix VM migration failure with PTW enabled
+      LoongArch: KVM: Avoid copy_*_user() with lock hold in kvm_eiointc_ctrl_access()
+      LoongArch: KVM: Avoid copy_*_user() with lock hold in kvm_eiointc_regs_access()
+      LoongArch: KVM: Avoid copy_*_user() with lock hold in kvm_eiointc_sw_status_access()
+      LoongArch: KVM: Avoid copy_*_user() with lock hold in kvm_pch_pic_regs_access()
+
+Guangshuo Li (1):
+      LoongArch: vDSO: Check kcalloc() result in init_vdso()
+
+Huacai Chen (1):
+      LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
+
+Tao Cui (3):
+      LoongArch: Check the return value when creating kobj
+      LoongArch: Replace sprintf() with sysfs_emit()
+      LoongArch: KVM: Remove unused returns and semicolons
+
+Tiezhu Yang (6):
+      objtool/LoongArch: Mark types based on break immediate code
+      objtool/LoongArch: Mark special atomic instruction as INSN_BUG type
+      LoongArch: Make LTO case independent in Makefile
+      LoongArch: Handle jump tables options for RUST
+      LoongArch: Update help info of ARCH_STRICT_ALIGN
+      LoongArch: Fix unreliable stack for live patching
+
+ arch/loongarch/Kconfig                  | 12 ++++-
+ arch/loongarch/Makefile                 | 15 ++++--
+ arch/loongarch/include/asm/acenv.h      |  7 ++-
+ arch/loongarch/include/asm/kvm_mmu.h    | 20 ++++++--
+ arch/loongarch/kernel/env.c             |  4 +-
+ arch/loongarch/kernel/stacktrace.c      |  3 +-
+ arch/loongarch/kernel/vdso.c            |  3 ++
+ arch/loongarch/kvm/exit.c               |  6 +--
+ arch/loongarch/kvm/intc/eiointc.c       | 87 ++++++++++++++++++++-------------
+ arch/loongarch/kvm/intc/pch_pic.c       | 21 +++++---
+ arch/loongarch/kvm/mmu.c                |  8 +--
+ tools/arch/loongarch/include/asm/inst.h | 12 +++++
+ tools/objtool/arch/loongarch/decode.c   | 33 +++++++++++--
+ 13 files changed, 162 insertions(+), 69 deletions(-)
+
 
