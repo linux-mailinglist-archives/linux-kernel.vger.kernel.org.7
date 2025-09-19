@@ -1,88 +1,113 @@
-Return-Path: <linux-kernel+bounces-824316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA90B88A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:47:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B08B88A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AA25163231
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:47:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AD6216EDDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0BA2EFDBA;
-	Fri, 19 Sep 2025 09:46:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8BB19D880
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A421CFBA;
+	Fri, 19 Sep 2025 09:47:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398711990C7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758275188; cv=none; b=P2/U04ix2S1j+pd7n8Hlvq8JEMtIdiWL2PMrsZCkAkNMdqGhQ8CMoSxVlo26n0BC3F81Vf5nZTcPltVhhyIHKMyHZ+YML0SrRQmiSOpeQNpd8ElljqDVLx0kds5iMPaqTjJ+AXSULalv1oZAQA+++9wodFiM1+djxNUO+Szde04=
+	t=1758275232; cv=none; b=Eq2gZ62TzFcBLYBiXnndHS2/udqrMiyKAH81AjR+wHiYtD/UB3uVnDL2mYVvp3R5pZT2nm2CQMMb0Z6SzG6coRWAZViwNeItlQMnxO8kBq1UtvTL4VBQVSHr0+cu5Fo/yYh9HsDuQE8JAfgLEgEZumgV2tg5WRqIDgt57DZojiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758275188; c=relaxed/simple;
-	bh=e09q5XFvjtzccVocqXaGgwEjz92VKs5YavBjorGoI2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZApxxNBv2rGJY//iG3HuHYiJQHBNnS/F9R5JORhzAKhp1/gMr08jJfK2aEEZTTLH8++ccwWwBaS15S1qYyLeKEi4/kSOeLxAIEh43Y75wIxLuF4KpE3cxZJkeq0rCVaGavUUvgMaaXRsd77vce0fn1vaVak6Jtl2NtdduTjQhYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6022D2F;
-	Fri, 19 Sep 2025 02:46:12 -0700 (PDT)
-Received: from [10.57.5.234] (unknown [10.57.5.234])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C1E163F66E;
-	Fri, 19 Sep 2025 02:46:19 -0700 (PDT)
-Message-ID: <945085cb-ccfb-498f-b25e-d95f7627d78a@arm.com>
-Date: Fri, 19 Sep 2025 10:46:18 +0100
+	s=arc-20240116; t=1758275232; c=relaxed/simple;
+	bh=clV/2usYaINZmF9NL7aE9dLqGU/w4dBhhYjTesQwgCA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u6Rxh1vstJbNlRd/9XwzWRMJ3P+me3bLJd6TyS3c7Cq7bbpME97bVMp4WrN4tBMy0k6cnZ5fOEJBujsnqc4ANEUtuMIkJR110sacZWik1LdVwHyQUgyR7klkrYVoF5hVmOsTSRg6rr4vagDM/USjl1I0WdXpll9nopd4M7IBlrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1uzXhn-0004Ap-6o; Fri, 19 Sep 2025 11:47:03 +0200
+Message-ID: <1159aa58f8a0ab69f9327a98ae3fbb973f6ee36d.camel@pengutronix.de>
+Subject: Re: [PATCH] arm: gen-mach-types: don't include absolute filename
+From: Lucas Stach <l.stach@pengutronix.de>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de, 
+	linux-kernel@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>
+Date: Fri, 19 Sep 2025 11:46:59 +0200
+In-Reply-To: <20241114130021.2802803-1-m.felsch@pengutronix.de>
+References: <20241114130021.2802803-1-m.felsch@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Bump the minor version number
-To: Boris Brezillon <boris.brezillon@collabora.com>,
- =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250919080700.3949393-1-steven.price@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250919080700.3949393-1-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 19/09/2025 09:07, Steven Price wrote:
-> Commit a017f7b86051 ("drm/panfrost: Expose JM context IOCTLs to UM")
-> added new ioctls to the driver and was meant to bump the version number.
-> However it actually only added a comment and didn't change the exposed
-> version number. Bump the number to be consistent with the comment.
-> 
-> Fixes: a017f7b86051 ("drm/panfrost: Expose JM context IOCTLs to UM")
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
+Hi Russell,
 
-Pushed to drm-misc-next.
+can I ask you to kindly reconsider this patch? The generated header
+ends up in various packages, not just in compiled form where the
+comment wouldn't matter, but also in its raw source code form.
 
-Thanks,
-Steve
+For embedded build systems this mostly affects the debug packages that
+carry the full source code. More general purpose distributions like
+debian ship this file in the linux-headers package as it's part of the
+kapi and they want to allow out-of-tree module builds with the header
+package. All those distributions have to jump through various hoops to
+make those header packages reproducible, while this patch would be an
+easy fix from the kernel side.
 
+I don't think the input file name carries any real value for any of the
+users of this header. Especially now where mach-types is essentially
+static, with no substantial changes in the last 8 years.
+
+Best regards,
+Lucas
+
+Am Donnerstag, dem 14.11.2024 um 14:00 +0100 schrieb Marco Felsch:
+> Don't include the abosulte filename into the generated mach-types.h
+> header and instead make use of arm64 note. The motivation for this
+> change is Yocto emitting a build warning:
+>=20
+> > File /usr/src/debug/linux-raspberrypi/6.11.7/arch/arm/include/generated=
+/asm/mach-types.h in package linux-raspberrypi-src contains reference to TM=
+PDIR [buildpaths]
+>=20
+> So this change brings us one step closer to make the build result
+> reproducible independent of the build path.
+>=20
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 > ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 3af4b4753ca4..22350ce8a08f 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -853,7 +853,7 @@ static const struct drm_driver panfrost_drm_driver = {
->  	.name			= "panfrost",
->  	.desc			= "panfrost DRM",
->  	.major			= 1,
-> -	.minor			= 4,
-> +	.minor			= 5,
->  
->  	.gem_create_object	= panfrost_gem_create_object,
->  	.gem_prime_import_sg_table = panfrost_gem_prime_import_sg_table,
+>  arch/arm/tools/gen-mach-types | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/arch/arm/tools/gen-mach-types b/arch/arm/tools/gen-mach-type=
+s
+> index cbe1c33bb871..fdc4805b9d98 100644
+> --- a/arch/arm/tools/gen-mach-types
+> +++ b/arch/arm/tools/gen-mach-types
+> @@ -24,8 +24,7 @@ NF =3D=3D 3 {
+> =20
+>  END	{
+>  	  printf("/*\n");
+> -	  printf(" * This was automagically generated from %s!\n", FILENAME);
+> -	  printf(" * Do NOT edit\n");
+> +	  printf(" * Generated file - do not edit\n");
+>  	  printf(" */\n\n");
+>  	  printf("#ifndef __ASM_ARM_MACH_TYPE_H\n");
+>  	  printf("#define __ASM_ARM_MACH_TYPE_H\n\n");
 
 
