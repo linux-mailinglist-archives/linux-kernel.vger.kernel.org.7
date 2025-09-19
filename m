@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-824246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D75E6B887EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:59:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABE9B887F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0F31C85C29
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:59:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FB3D17D55C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D052F360B;
-	Fri, 19 Sep 2025 08:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D702F1FE3;
+	Fri, 19 Sep 2025 08:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehuxSC37"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ZXxHTal0"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515162BE63A
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400A12ECEAB
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758272344; cv=none; b=mZlqNF+ojowBNaEaV9pKoOKvfO4MHEOgrkWBa+qhCbGznkl5KxOtkT7liqujEx5uTAG0+kC0d+EU0Qq1X9FhKnweaCd0gpPw9MkrytdwJ/Dmlp6f2w30Yr69zITzxoUk69hImptScnIptCxWgVsKVHuEJZ2W5y11jzmUh1grVPg=
+	t=1758272371; cv=none; b=l1kAiZGicFnRcla16jLsly3PY+BdtRjp83WD2RajJ1EIF3AUTGFDbedYeqWRTWZ6E2QSDe7oIb+qD4IfJygOZ74WksLvLNh81Gk6FnkZkC9dqQAMpEjvwHG/sGslJekkCEL1POA2befYWSkhDKXdDXZ4cLk5o3H0aRodoDNVx5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758272344; c=relaxed/simple;
-	bh=4uHiAhmjz4HvvsRR+6QXMejTe1kxUEwD4XDNCTHMwUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qlv2/ZgRjRYbwT+hDyyH9XnFRcDYDZFqUpJ0BHkmzxzzbQPFofqEBeUrqJ90uitMjnksERfR6tPFVZn9RoCzXdTdvRyuYAXsJiDpTFDWy2iEJxNuMxEdq4iaiwkcWFR3smJhuukiBtDp8slUeHzvk5XvXaSwPBjJ44rOvfRwL+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehuxSC37; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-77f0e9bd80fso59290b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:59:03 -0700 (PDT)
+	s=arc-20240116; t=1758272371; c=relaxed/simple;
+	bh=9ObgdudbHZjNAJMxy34yZ5sg9lOvahRsDrJ71ZljD6U=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=bXqi+pA+QFdIQAUljb1qmR3zaNYi1hbxr0fDUsPvrVhQptBbnTioS3Ca2OHbD6f2zWOPl6scYm8uKp/5xORtjQrGG3ZHubIzyVvEWdl0KUuvhyXRgoglmkHA2w1zcCaQxL2Kv5iiou9yhIk6wRnlx0Qh532PSfxAyJ8BI9YaboE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ZXxHTal0; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso1495316a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:59:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758272343; x=1758877143; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQy537aqBM0rrRlMX24xhM+FaVzNB12yBLDzIALSRMo=;
-        b=ehuxSC37XC8HX9cS4RTJunDrj43oYCoqGukVH3AZHe9RkFvluNWtUMz5tK6yD5u8oW
-         8PzUOxjGmYAirVa5Z8ttX0xvO9nGfbK71sPoF/hw/n8L3cbFxUJ5PSzB85l77O0tI/4q
-         8AljbVM/wATf0LfOylFRxWnhoSZ7HUNanT4NxjMf1+F6Myol2K2z/qozOjSXQ/aKFNeb
-         PLNCfrkdgc8+LwZ2oKSJObRRbSKHbHQtUzDkkAzQIm2sANTjwXeb53G9VUXc/JSjIcmn
-         W/sLPLHPrDqTY5Y6bUaBSl0GNCGEuW1jxodjAAWzn6Nvy/HXCVjTnP/6G09qsBc+lWFS
-         z75A==
+        d=bytedance.com; s=google; t=1758272369; x=1758877169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kd4+r2dhQsnGJWDtpIiRBK1eOzcnNFsZ+J1UvHrl0i8=;
+        b=ZXxHTal0LTynXoiR+T6F2gEuKB7nWgiLy2GeuONiYG1lTdPQ0TXw+uCwwBm0q5mHf/
+         /c8MVoS1Z+7EE3p0kuyAmvn51fUYn6yGXAe7NMHQrBEorT/3c1SB7uPDwU+ZmrOfLcBZ
+         SsBpkbbR/y+et4gk8sLVQGgL5CJw/NRrODjWjVARrjgJSjVvFz9JShoezG6+KfFIFy/m
+         M5l7TJof5Ih7xiYVkD+dBcQ6hgJZzvGb/vB/VshHP7SxRYGHS9/rxb6GWdHqXD3UZKMm
+         9z0M2FV1Xv7eGvv1W8Py8zK+HdGegvbmb0SVUmo6KsiAvPz7dTFmaXxnZkfkwL8ZQrLS
+         D1Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758272343; x=1758877143;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQy537aqBM0rrRlMX24xhM+FaVzNB12yBLDzIALSRMo=;
-        b=NDBK+5W7R/ACLyjHvtf/vtzH+YYP/vGLPL+C1lqdWBTK45O8OpHmtfzk6tdTgjhkJ0
-         4x7Dhi8B7WcWyIZosL0XSyuxkPtlkUYXPi8uQEmuJujNe1CyMHW8Qlmi/uh0OhtrCoX5
-         KF+0ltrp8Ai28wU+pzRTMkDqo2HA8DqAu7NoVIkJrXRqhZUCRxgN1GrIu2Jx8l3xg2uE
-         vu32mEJhkpuqIA2EHFlrlJ9sHg7gQUklzkBv27iSz3N9u67kMqn7Kvpoh3rGLgznKafU
-         i9fx7CvGI/6IABBJoJuqoOqTOlNXJ5wLz/wA6hakmqPaCd4ESa1dzhMFT4U5Bvx3hFTi
-         c5gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbzyt+lxRd80u/lVKwD4eMTko1t89tMMfi1lpjzhgw8JvkE6RK4tdJsYfI4rAKqxvQuHSAxBgs2FDHbhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+WPuufUHIT34UOBFg4ZZygsBQIln7f03uS6hpJw42WA9Jv3dt
-	mEJ6ie7vNDDqVuvvLHVjUWsbxo/yX2CpcUNB0AfB5OITwKabv8XdEEWg
-X-Gm-Gg: ASbGncvl+0tWUm7Wtn/Sp1IDpobeBGCloz/fEP92Ke2Hi5jIjj6zFfe/LRFeajA8+fF
-	ox1UbKcDgt8ryd0O0dVZXRqj2o4uOq+EPgxULtz6Zzr9VUhDC++tgkg3V4KEaqJyRW+YDlEYgHv
-	oY0JoZt4RU0lgmDAYY8+2zpW6UzfBWBjo9f6bfbmPXk5eHgZgy48KkEMdChXjXbfAtPTq/OX5Jl
-	hPUPJsSP8aYXdZ/bwJ+/i4ibEpWB/877WCy3QG+kWahASXWbWHrrJk1aOkls/oJ4N5boL2ccHJq
-	j0e/DTrIReneH7nSb9y/0LIOxwGLNvkD5dh7AiA8DgOn8MCNK5NagppQvPha3QM7isvaUdBbQHi
-	wYQjy7fquizSgWpdl9qrZpx7MfZuxFh9r
-X-Google-Smtp-Source: AGHT+IHoc0/EfneCAyEuRmzL/rc1AObl5i8C5aTuBs/BR4Vdss/Bsj6ETsMBplHwinvw4h0Em3nQSg==
-X-Received: by 2002:aa7:88c9:0:b0:776:1dbf:375b with SMTP id d2e1a72fcca58-77e4d31b70emr3946944b3a.6.1758272342702;
-        Fri, 19 Sep 2025 01:59:02 -0700 (PDT)
-Received: from 7940hx.localnet ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfbb7aba3sm4631771b3a.15.2025.09.19.01.58.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 01:59:02 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: peterz@infradead.org, jolsa@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, kees@kernel.org, samitolvanen@google.com, rppt@kernel.org,
- luto@kernel.org, mhiramat@kernel.org, ast@kernel.org, andrii@kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
-Date: Fri, 19 Sep 2025 16:58:57 +0800
-Message-ID: <5925436.DvuYhMxLoT@7940hx>
-In-Reply-To: <20250919175255.f7c2c77fa03665a42b148046@kernel.org>
-References:
- <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <20250919175255.f7c2c77fa03665a42b148046@kernel.org>
+        d=1e100.net; s=20230601; t=1758272369; x=1758877169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kd4+r2dhQsnGJWDtpIiRBK1eOzcnNFsZ+J1UvHrl0i8=;
+        b=El9EVZ9f4hiuGERtM6Z+fsTHAxcdEVfptcJX9v81oqNsjmqO5aPerScug/sa5goipU
+         n7IyoIk8/HEMzMeASXsIfhmQhSWOshe3L4mN5BJB5icX6PymzSOxXCN1sWro2vm5wy1k
+         QeoD9m/ZBD8v1gTkj4RULgesJx2b3qNz1OTlDkkgjYs9R8bcG1MNulbEDABIpvMK8vT6
+         zdVO3d3MNdGmtczMrodShdvw/kRBhARuaSQhsja/4Ksf7+1UiPpf2qBLm3dh8vPTXaxi
+         gCGBQfVhLVGDiqp9DiHa8sJacMC6CAfCrmfOFByxNuDbziLgkhgxIe+GOuiKGnUHv4NG
+         RsOg==
+X-Forwarded-Encrypted: i=1; AJvYcCW12qTcsIRtLA6PMyMUvQvCROSqL45cxHIJd3MsD9kElfIALpp7IbYInjPCRV1qhgUw1juKOVaw+1FEpBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPxinbTRj2OPTlM24oroWelUo9Un2i0fKJ6XynAwPuuYzl0o5S
+	ru7wk+zFMnOqQrjHbLOBsHMMK6ZqIv3lwv6eZ13tYL6TWf4d7eD+m6hI8K8Q1RylQ40=
+X-Gm-Gg: ASbGncsGF+JZqh7Es2RaLCgX6mwrmP0t2YgggCJbkI+Ms8tNf86H7CTO60DHNsyNMuO
+	lPeauyMXalCuymwapwIr6PveNH9bH/gX67Wa7jFlU90aKHdfLCTZVmD6SUvi7CS/Mb8Q3nLqViV
+	9SOIaHU7clXpp05pejvlOT/3A7Y2Rh7kd3dBJkipKYFcLJcZc4phuxe8e94ULwia31YZVmbHhrx
+	vk8tyubDiAPt83awZNS5gLhE6I0BxXisUiP/RzEtuDo96wVZiQZtC6COJ03Jw/6eGWcbkP68d++
+	Mw1O9WJKoArF+vcGFg7/A3yH9eIEArQ9dWs6u4U4lzWX4U/llsfEs3yJwZ3N5u/XYNMLnlLyiFp
+	FQScWjR+MH4SK9KMDQYHvbFiMycUMv8RzSUwrHBPxz6DJorEPPm9UzDHEfHUtvrA=
+X-Google-Smtp-Source: AGHT+IHKd0DN1mMgIsdoDc2vCyjSm4FEnZTd1jI/4gD2C7NwmhKkFKPKgahyIRBmjtrslXkABEcCGA==
+X-Received: by 2002:a17:90b:2fce:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-33097fee7c1mr2630942a91.13.1758272369344;
+        Fri, 19 Sep 2025 01:59:29 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfbb7ab97sm4687456b3a.14.2025.09.19.01.59.24
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 19 Sep 2025 01:59:29 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	sudeep.holla@arm.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	beata.michalska@arm.com,
+	ptsm@linux.microsoft.com,
+	sumitg@nvidia.com,
+	yangyicong@hisilicon.com,
+	cuiyunhui@bytedance.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/1] Add support for parse_acpi_topology() on RISC-V
+Date: Fri, 19 Sep 2025 16:59:17 +0800
+Message-Id: <20250919085918.5442-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2025/9/19 16:52 Masami Hiramatsu <mhiramat@kernel.org> write:
-> On Thu, 18 Sep 2025 20:09:39 +0800
-> Menglong Dong <menglong8.dong@gmail.com> wrote:
-> 
-> > is_endbr() is called in __ftrace_return_to_handler -> fprobe_return ->
-> > kprobe_multi_link_exit_handler -> is_endbr.
-> > 
-> > It is not protected by the "bpf_prog_active", so it can't be traced by
-> > kprobe-multi, which can cause recurring and panic the kernel. Fix it by
-> > make it notrace.
-> 
-> Ah, OK. This is fprobe's issue. fprobe depends on fgraph to check
-> recursion, but fgraph only detects the recursion in the entry handler.
-> Thus it happens in the exit handler, fprobe does not check the recursion.
-> 
-> But since the fprobe provides users to register callback at exit, it
-> should check the recursion in return path too.
+v1->v2:
+Place the struct cpu_smt_info{} in drivers/base/arch_topology.c instead of arch_topology.h
 
-That's a good idea to provide recursion checking for the exit handler,
-which is able to solve this problem too.
+v2->v3:
+Modify the return values of acpi_pptt_cpu_is_thread()
 
-If so, we don't need to check the recursion on the kprobe-multi anymore.
-Do we?
+Yunhui Cui (1):
+  arch_topology: move parse_acpi_topology() to common code
 
-Thanks!
-Menglong Dong
+ arch/arm64/kernel/topology.c  | 87 +---------------------------------
+ drivers/base/arch_topology.c  | 89 ++++++++++++++++++++++++++++++++++-
+ include/linux/arch_topology.h |  1 +
+ 3 files changed, 90 insertions(+), 87 deletions(-)
 
-> 
-> Thanks,
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-
-
-
+-- 
+2.39.5
 
 
