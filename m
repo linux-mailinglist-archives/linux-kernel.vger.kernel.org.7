@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A460B8B862
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:43:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49EC5B8B86B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1CC81C244D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:43:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17A0E4E1279
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF86130596A;
-	Fri, 19 Sep 2025 22:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEEB306B04;
+	Fri, 19 Sep 2025 22:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZkNcRkZV"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qyaFg7M7"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0EB303A1D
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F43C3054FC
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321252; cv=none; b=VIjWWnfdJI+FCvo8QygmdbqOcOrAHwCMwP9D2obugTW7OlfDqtqtvzrfMWKTBIbKQx0aMXSWbqL+Gcz69iUbf0orAvN3uVAotf5dUotIGvpGjwdZbbiOE+Y5iBbZLZNNHuC3tWJS/HVRAs7o3hULUmazyqjkwem7NGhh80HMJUo=
+	t=1758321253; cv=none; b=YIvqTezNZNnSd/LmcBnGU8vqmZoNyxF+RgDLMgw1IcxGJEU4foa4oZlzMvWea5Gereni7e1xuBz2x07XYca5tIm+W2c+yq0u1S46Oyi18i3WDqlktrWwh/ZCdzqWUxVS66d78HrX09sC1bfDjdhbt72dy2N4Cu4K6G9q6bXU8Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321252; c=relaxed/simple;
-	bh=nKZ5Q7RgK3XRxdc3o7cKqV6DWFuIWGsdh+EcSzBiSww=;
+	s=arc-20240116; t=1758321253; c=relaxed/simple;
+	bh=X20sEQ+xsCLTJe7gE4Qs5AwL/wm1XuF1rIgh80JVcHA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lnQ2dEzVEzeVDNlZSSyf6IhGi7MEFUY6Di8QL4QXrdW+T+VnxzCtz9cNS8HMhLu4q8WPMDrNTKO2GQWaKQEObHB7qBFBoUAaB5MYqWmdx3qvWZlTZan2kwsmq7pxO+KboVq/Gz6ZQWzh3/4Q+bSvdDcrO0dhUlG7TuiEJ9NaM94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZkNcRkZV; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=mLMfnRzW8+i0BG7b7vw6r4YJoqhtFbeNBF9snvg3zp1NcUy2h3JHMueynUugV3IZltVMQBkilPE5wpch8sDOHsYIXDlJeAwfH33jLkUY6y2+m1MJaIKq6lqTYC0adWdZcjlKbESIQLxR1X2uEbeiAEz0k3WMOenI4JRBDqA6Nrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qyaFg7M7; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ea7fcddd8so4983457a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:10 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ee4998c50so2443466a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321250; x=1758926050; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321252; x=1758926052; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYHRrx1Rwo9eQXWeqWJXpUpu9aJ7cOqVN25IkcGdX1A=;
-        b=ZkNcRkZV/lVfWvgwZpfuXapRTN2IuUSGBZt5f/46+pFyf/J63unGfnM9z/hZmHnRMO
-         XQGmwxb0Ix3BPmIEPO5Drl4Q63sHzRPn+C3eDFndrT7Ilz7RmrcmhBb4WE5Czwv87GhQ
-         UjvINhQWdcxKsa3AQOxcpbeCIapWXZEgOcR1onzU5lM9x6VGZOLzw/3sQpa4MRl97QdT
-         Agh7fIwY/bEljUWD5YD1EDYC7kuwuWS9ys4IfC62nzjBAGhGabZ9SeqJEHi2OeJDr1hb
-         /HaNyv7MBr2MW3I4ldUAU5dPR17b4qpt8tTEy5g0BrrSO5KiUzv1rK2Fth7WoU7x351z
-         HUnA==
+        bh=eHR2NLSLCCnmrfYd7kOboVWYopKWMO4BXG1y6UT4JW8=;
+        b=qyaFg7M7riU2wyKee4ZsFrB7unFBf8ILe2bJbHNx8eoIuPcwVDtVGCyosGpoR0UG/a
+         hnNhMuapuhIQVU+NUE3CApxOrn6ABCfmsXUZbTTWjRqSo+0TDtUm7bxxbgiEKLcoWJKY
+         r79tp6HvOo7JyLn+fKiAsJPUcFl1ZGt62+CFjgPCVA5W62zLpcahdgCLP9Qbeexgk8Zy
+         kw/1+Y2ZFYz+QeZI7mo4bFpZI3TDfGZSnYrobe/yK+r42wfP1TjMb5CGvhqAatU+xrDK
+         MXlixHsD29s75g1tGndXJPSunL3CsKk7V2+o67odUEhm6PaJ86lR7raOMNw+ZcnXlKad
+         gCIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321250; x=1758926050;
+        d=1e100.net; s=20230601; t=1758321252; x=1758926052;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cYHRrx1Rwo9eQXWeqWJXpUpu9aJ7cOqVN25IkcGdX1A=;
-        b=LRGOw3rFMPMdSO4C5Lm9KyguXOyd6pPC+TZu+xzxhV4jaPiEl9kPkfJ09+Enldlize
-         TfuzevKAbGx5D4t/0UAs9fVRkC+h0om6Kon7lDriQ47LBuxUbS3qIHOUmgoiciyKoMOp
-         98ays9PSMY3YHKZDcBt3C67kMBXUFU9N9mUEuf8ufCTaVBWxRRIh6Pci/PMXjhQbPVdM
-         EmPmOaxpOpxBCRfsfHixa+oAOmUJcLvTNLeElqyVTGuAzh3kpyxQhrPOQ8ZCmbDfb7xB
-         HSerMhxD/ev3IPT5KASM8TkMzvq967ZmuO6bHBXeQuF/YSZEEaDeTfNRNme1uIr4mC8F
-         pBDw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Hvn27vHk0i44ps/eK181XC2cx76MWGa0Cw0eH1Rxv5slPJRpRUw4UwjVqmvSDYqYXPfl4ZVRGEMM3ZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJddocQtInJG4TSKHA0JmeFYZ8+t5xfD/lb6ZwwnUnbkZLWAZ9
-	qy/rnWQB9Z+cqOtOMurCUsS31qoI4Vw02/bGQwwmX2PmV83F/hv0ZAdLLdO/zAob+JN18ozedbI
-	cX4TQOw==
-X-Google-Smtp-Source: AGHT+IEW7HITViOOE/8pfh1gBFeALqS2Mwkwb0jK0TfcwCqmDCr4DL2x+WvNHZBBQhSy5ImpJhKVudjl1j8=
-X-Received: from pjbpd9.prod.google.com ([2002:a17:90b:1dc9:b0:32b:5548:d659])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d60c:b0:32e:8c1e:1301
- with SMTP id 98e67ed59e1d1-3309838dec4mr5848473a91.34.1758321249933; Fri, 19
- Sep 2025 15:34:09 -0700 (PDT)
+        bh=eHR2NLSLCCnmrfYd7kOboVWYopKWMO4BXG1y6UT4JW8=;
+        b=b6YI19l5n3BZqdCj+pPzPskBBU1HuZp9MccAvse9Iha9PHf8OGCErZb/yGkV4FQFLx
+         RCowm+5UJZgJIT9alodgydXBcOBmLqqLFobO6PaiBr/NYrA3wxAcwCVc++FkpzZaVHK3
+         Yu+hJIwO3NrqtSBYWm15EJl3Q7PgIbWMBNeC3tatl6GvQnggU9rBkxvg0TF2+xHA4rvK
+         OmK0Tu1UGDHvvKk9Fue8IaxW6QCzw5ec00kXXwgHhfI/tZ/e3iNuvgN8i6Fd0PvFp7oZ
+         J34oiO4yRZSEPAQsqq+wLRzTw+42Uo1bjRlwxrRCFUdJq9D+ydfcDDMKuMsC/GcQ5sSY
+         jZKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYDFONUy9B5k1XJrBxTTjC3v3R6Gc0I8CfjjQcbQUTawGHVFKtodQZf1RsIv4gx9HQE/46PtAADCXWNEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvt1LiFvBiKhaHL8261uzUSGj1gVleaibFzLDb9SmYu++Xkfs2
+	Fr/xJHZ2QA2M41eLQfEvchu/AHn/lg6kD05IG84IHEe6g6nHq7OqJRvnplqlER4Hk0zeurR5xuC
+	YS7QYCA==
+X-Google-Smtp-Source: AGHT+IFifa+3ALaHZ5N/ALMtEqJi9pVMuOHdbpWekClGQnveANM6eyoR6/P/Qd3bbbMyzvhBHioRo62qYnU=
+X-Received: from pjl13.prod.google.com ([2002:a17:90b:2f8d:b0:32d:def7:e60f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f87:b0:32e:5d87:8abc
+ with SMTP id 98e67ed59e1d1-3309838e02amr4950519a91.36.1758321251699; Fri, 19
+ Sep 2025 15:34:11 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:43 -0700
+Date: Fri, 19 Sep 2025 15:32:44 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-37-seanjc@google.com>
-Subject: [PATCH v16 36/51] KVM: nSVM: Save/load CET Shadow Stack state to/from vmcb12/vmcb02
+Message-ID: <20250919223258.1604852-38-seanjc@google.com>
+Subject: [PATCH v16 37/51] KVM: SVM: Update dump_vmcb with shadow stack save
+ area additions
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -87,62 +88,48 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Transfer the three CET Shadow Stack VMCB fields (S_CET, ISST_ADDR, and
-SSP) on VMRUN, #VMEXIT, and loading nested state (saving nested state
-simply copies the entire save area).  SVM doesn't provide a way to
-disallow L1 from enabling Shadow Stacks for L2, i.e. KVM *must* provide
-nested support before advertising SHSTK to userspace.
+From: John Allen <john.allen@amd.com>
 
+Add shadow stack VMCB fields to dump_vmcb. PL0_SSP, PL1_SSP, PL2_SSP,
+PL3_SSP, and U_CET are part of the SEV-ES save area and are encrypted,
+but can be decrypted and dumped if the guest policy allows debugging.
+
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Signed-off-by: John Allen <john.allen@amd.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/nested.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ arch/x86/kvm/svm/svm.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 826473f2d7c7..a6443feab252 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -636,6 +636,14 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
- 		vmcb_mark_dirty(vmcb02, VMCB_DT);
- 	}
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 52d2241d8188..e50e6847fe72 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -3410,6 +3410,10 @@ static void dump_vmcb(struct kvm_vcpu *vcpu)
+ 	       "rip:", save->rip, "rflags:", save->rflags);
+ 	pr_err("%-15s %016llx %-13s %016llx\n",
+ 	       "rsp:", save->rsp, "rax:", save->rax);
++	pr_err("%-15s %016llx %-13s %016llx\n",
++	       "s_cet:", save->s_cet, "ssp:", save->ssp);
++	pr_err("%-15s %016llx\n",
++	       "isst_addr:", save->isst_addr);
+ 	pr_err("%-15s %016llx %-13s %016llx\n",
+ 	       "star:", save01->star, "lstar:", save01->lstar);
+ 	pr_err("%-15s %016llx %-13s %016llx\n",
+@@ -3434,6 +3438,13 @@ static void dump_vmcb(struct kvm_vcpu *vcpu)
+ 		pr_err("%-15s %016llx\n",
+ 		       "sev_features", vmsa->sev_features);
  
-+	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
-+	    (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_CET)))) {
-+		vmcb02->save.s_cet  = vmcb12->save.s_cet;
-+		vmcb02->save.isst_addr = vmcb12->save.isst_addr;
-+		vmcb02->save.ssp = vmcb12->save.ssp;
-+		vmcb_mark_dirty(vmcb02, VMCB_CET);
-+	}
++		pr_err("%-15s %016llx %-13s %016llx\n",
++		       "pl0_ssp:", vmsa->pl0_ssp, "pl1_ssp:", vmsa->pl1_ssp);
++		pr_err("%-15s %016llx %-13s %016llx\n",
++		       "pl2_ssp:", vmsa->pl2_ssp, "pl3_ssp:", vmsa->pl3_ssp);
++		pr_err("%-15s %016llx\n",
++		       "u_cet:", vmsa->u_cet);
 +
- 	kvm_set_rflags(vcpu, vmcb12->save.rflags | X86_EFLAGS_FIXED);
- 
- 	svm_set_efer(vcpu, svm->nested.save.efer);
-@@ -1044,6 +1052,12 @@ void svm_copy_vmrun_state(struct vmcb_save_area *to_save,
- 	to_save->rsp = from_save->rsp;
- 	to_save->rip = from_save->rip;
- 	to_save->cpl = 0;
-+
-+	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
-+		to_save->s_cet  = from_save->s_cet;
-+		to_save->isst_addr = from_save->isst_addr;
-+		to_save->ssp = from_save->ssp;
-+	}
- }
- 
- void svm_copy_vmloadsave_state(struct vmcb *to_vmcb, struct vmcb *from_vmcb)
-@@ -1111,6 +1125,12 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
- 	vmcb12->save.dr6    = svm->vcpu.arch.dr6;
- 	vmcb12->save.cpl    = vmcb02->save.cpl;
- 
-+	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK)) {
-+		vmcb12->save.s_cet	= vmcb02->save.s_cet;
-+		vmcb12->save.isst_addr	= vmcb02->save.isst_addr;
-+		vmcb12->save.ssp	= vmcb02->save.ssp;
-+	}
-+
- 	vmcb12->control.int_state         = vmcb02->control.int_state;
- 	vmcb12->control.exit_code         = vmcb02->control.exit_code;
- 	vmcb12->control.exit_code_hi      = vmcb02->control.exit_code_hi;
+ 		pr_err("%-15s %016llx %-13s %016llx\n",
+ 		       "rax:", vmsa->rax, "rbx:", vmsa->rbx);
+ 		pr_err("%-15s %016llx %-13s %016llx\n",
 -- 
 2.51.0.470.ga7dc726c21-goog
 
