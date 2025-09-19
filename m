@@ -1,144 +1,243 @@
-Return-Path: <linux-kernel+bounces-824416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32C5B89267
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:53:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5E8B89279
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0F391C82091
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F503ACB15
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52C730ACED;
-	Fri, 19 Sep 2025 10:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAFC3093BA;
+	Fri, 19 Sep 2025 10:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="m+AxuxFI"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qSYExmxV"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B0C3093BA
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4092244668
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758279175; cv=none; b=gAC2q/IcPAHTIGKfFh0kGzjxIGK8Ls8SQJqcmsKwNPTxt3DXXBiKS8WWqNFPGRrEDeNCvAq0VseUrN+tEB8kOvXXBEODtJm4SS8J124wSsrcpopnPYIYPwEfW2lGEpnI4ekvhKtVYDKbC9F01fd/WO5X7X3AemH1Q7E8WGEBKdg=
+	t=1758279206; cv=none; b=SxclAr6PpbqMQoiD7Wkb8H5iMQ6x+maztut9RGx1SX5bwxJOz3L8qZwrhsETZ9OG3YChcTS289iHQh3+te6nX8DuQzgr0heqRXAqaxKfhVy2h+L/gffBGKOs8Yuf/sycuErr07PvOHCaGvuMbWciI/wHpA86EhChYfq18p9DH+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758279175; c=relaxed/simple;
-	bh=TmC/GnHlrQftISt0Z1IVSPLhIKJsA9OmSpxl1Z3csFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EoOf2z+2RNUrK6n0jq+JA4wFOyRqh5PPWmAQUtEF+Jm1NBLFTKDnjAzA9uA8PaPLuewdc+dOQOEBZXKRobW+IsNhYbT1SQ9jLRelZEx8eyXe0amfdTV5TcqqKMqtV2j6LbDmT7GyeN7cxhxAdBJIc2Lufal+yr87LsOSsujqM9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=m+AxuxFI; arc=none smtp.client-ip=95.215.58.179
+	s=arc-20240116; t=1758279206; c=relaxed/simple;
+	bh=UgWQdhXhcpnwq6tFBZFMlrmIYDePM/s4+k1Epu6ymi4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Csa55NmWNy12eJjRmpqRyjd631FIxs+u8wBZuU9upa4edrUA6R9oevl4vfidrjx6UXiJfQAKoj0wjqMvKkH3ScHiWkyjnYWab2riWo2swkpT1JQYxop9qnKcO37X+YQXTL4S0zjtdvgDCPRq0q8ThSrZMh0ui62HDYcWr2/GtAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qSYExmxV; arc=none smtp.client-ip=91.218.175.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <fa5c3ebc-8d9e-411b-b976-97b88272bfda@linux.dev>
+Message-ID: <dfb303b9-151b-49ec-b7ef-691c71bd5385@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758279170;
+	t=1758279199;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vaewsVgW1iC3I46EuqYekXE6jhi8j1vA8fdWosmeV4A=;
-	b=m+AxuxFIsYei4VE683Ai8LpFP9ftj0+0Q952VmRkO1GYIFMnzGJ/pmw7AHaC+HCLW+xsLc
-	xt9m3e9Ouj2gsgSmv/zN0tg89Rfd/cgmGO74KcdAlzhLR0h3x/l4l/Ssf+icT7D9EfoLsI
-	0K8uGK1PwOl/QFa1+SwImRXHaeBcRU8=
-Date: Fri, 19 Sep 2025 11:52:45 +0100
+	bh=WhpXIa44PXWsjs2uxeORCT8byyhIH3oxkQYJDXpg7eI=;
+	b=qSYExmxViT2E12srT6OQWReC8YdRSo2KFRn2DWjtAvYvVIyjqxrOdS4zegzCzFd0dCTWYY
+	FSyoAUpPigDRkODuI2z4KTcOxmP/rlQ7XAhhG5HTjOvgkcoGgJsuEz6s+ivTGmAzCqQwyu
+	ZWH56bQt9BjCCQCmDdrtFjEh9FVQXRM=
+Date: Fri, 19 Sep 2025 18:53:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [Intel-wired-lan] [PATCH iwl-net v1] igc: fix race condition in
- TX timestamp read for register 0
-To: Jacob Keller <jacob.e.keller@intel.com>,
- Chwee-Lin Choong <chwee.lin.choong@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Richard Cochran <richardcochran@gmail.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Avi Shalev <avi.shalev@intel.com>,
- Song Yoong Siang <yoong.siang.song@intel.com>
-References: <20250918183811.31270-1-chwee.lin.choong@intel.com>
- <0fc877a5-4b35-4802-9cda-e4eca561c5d1@linux.dev>
- <d30d7a43-ca17-445e-b7ae-641be2fcc165@intel.com>
-Content-Language: en-US
+Subject: Re: [PATCH v5 2/6] mm: remap unused subpages to shared zeropage when
+ splitting isolated thp
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <d30d7a43-ca17-445e-b7ae-641be2fcc165@intel.com>
+From: Lance Yang <lance.yang@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: =?UTF-8?B?UXVuLXdlaSBMaW4gKOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "yuzhao@google.com" <yuzhao@google.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "corbet@lwn.net" <corbet@lwn.net>,
+ =?UTF-8?B?QW5kcmV3IFlhbmcgKOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>,
+ "npache@redhat.com" <npache@redhat.com>, "rppt@kernel.org"
+ <rppt@kernel.org>, "willy@infradead.org" <willy@infradead.org>,
+ "kernel-team@meta.com" <kernel-team@meta.com>,
+ "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
+ "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+ "cerasuolodomenico@gmail.com" <cerasuolodomenico@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "ryncsn@gmail.com" <ryncsn@gmail.com>, "surenb@google.com"
+ <surenb@google.com>, "riel@surriel.com" <riel@surriel.com>,
+ "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>,
+ =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?=
+ <chinwen.chang@mediatek.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ =?UTF-8?B?Q2FzcGVyIExpICjmnY7kuK3mpq4p?= <casper.li@mediatek.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "baohua@kernel.org" <baohua@kernel.org>,
+ "kaleshsingh@google.com" <kaleshsingh@google.com>,
+ "zhais@google.com" <zhais@google.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240830100438.3623486-1-usamaarif642@gmail.com>
+ <20240830100438.3623486-3-usamaarif642@gmail.com>
+ <a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com>
+ <434c092b-0f19-47bf-a5fa-ea5b4b36c35e@redhat.com>
+ <CABzRoyYWQMFTGYgfC7N=cWMnL_+5Y05=jrMhFjBf1aKOGxzq5g@mail.gmail.com>
+ <ebedc478-7519-4e30-854e-f6616a7647b0@redhat.com>
+ <120445c8-7250-42e0-ad6a-978020c8fad3@linux.dev>
+ <9d2c3e3e-439d-4695-b7c9-21fa52f48ced@redhat.com>
+ <4cf41cd5-e93a-412b-b209-4180bd2d4015@linux.dev>
+Content-Language: en-US
+In-Reply-To: <4cf41cd5-e93a-412b-b209-4180bd2d4015@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-On 18/09/2025 23:10, Jacob Keller wrote:
-> 
-> 
-> On 9/18/2025 1:47 PM, Vadim Fedorenko wrote:
->> On 18/09/2025 19:38, Chwee-Lin Choong wrote:
->>> The current HW bug workaround checks the TXTT_0 ready bit first,
->>> then reads LOW -> HIGH -> LOW from register 0 to detect if a
->>> timestamp was captured.
->>>
->>> This sequence has a race: if a new timestamp is latched after
->>> reading the TXTT mask but before the first LOW read, both old
->>> and new timestamp match, causing the driver to drop a valid
->>> timestamp.
->>>
->>> Fix by reading the LOW register first, then the TXTT mask,
->>> so a newly latched timestamp will always be detected.
->>>
->>> This fix also prevents TX unit hangs observed under heavy
->>> timestamping load.
->>>
->>> Fixes: c789ad7cbebc ("igc: Work around HW bug causing missing timestamps")
->>> Suggested-by: Avi Shalev <avi.shalev@intel.com>
->>> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
->>> Signed-off-by: Chwee-Lin Choong <chwee.lin.choong@intel.com>
->>> ---
->>>    drivers/net/ethernet/intel/igc/igc_ptp.c | 10 ++++++++--
->>>    1 file changed, 8 insertions(+), 2 deletions(-)
->>>
->>
->> [...]
->>
->>>    		 * timestamp was captured, we can read the "high"
->>>    		 * register again.
->>>    		 */
->>
->> This comment begins with 'read the "high" register (to latch a new
->> timestamp)' ...
->>
->>> -		u32 txstmpl_old, txstmpl_new;
->>> +		u32 txstmpl_new;
->>>    
->>> -		txstmpl_old = rd32(IGC_TXSTMPL);
->>>    		rd32(IGC_TXSTMPH);
->>>    		txstmpl_new = rd32(IGC_TXSTMPL);
->>
->> and a couple of lines later in this function you have
->>
->> 		regval = txstmpl_new;
->> 		regval |= (u64)rd32(IGC_TXSTMPH) << 32;
->>
->> According to the comment above, the value in the register will be
->> latched after reading IGC_TXSTMPH. As there will be no read of "low"
->> part of the register, it will stay latched with old value until the
->> next call to the same function. Could it be the reason of unit hangs?
->>
->> It looks like the value of previous read of IGC_TXSTMPH should be stored
->> and used to construct new timestamp, right?
->>
-> 
-> I wouldn't trust the comment, but instead double check the data sheets.
-> Unfortunately, I don't seem to have a copy of the igc hardware data
-> sheet handy :(
 
-Well, if the register is not latched, the usual pattern of reading
-high->low->high should be applied to avoid overflow scenario, but I
-don't see it in neither original, nor updated code. So I would assume
-the comment is correct. But I totally agree, data sheet would be proper
-source of truth.
+
+On 2025/9/19 16:14, Lance Yang wrote:
+> 
+> 
+> On 2025/9/19 15:55, David Hildenbrand wrote:
+>>>> I think where possible we really only want to identify problematic
+>>>> (tagged) pages and skip them. And we should either look into fixing KSM
+>>>> as well or finding out why KSM is not affected.
+>>>
+>>> Yeah. Seems like we could introduce a new helper,
+>>> folio_test_mte_tagged(struct
+>>> folio *folio). By default, it would return false, and architectures like
+>>> arm64
+>>> can override it.
+>>
+>> If we add a new helper it should instead express the semantics that we 
+>> cannot deduplicate.
+> 
+> Agreed.
+> 
+>>
+>> For THP, I recall that only some pages might be tagged. So likely we 
+>> want to check per page.
+> 
+> Yes, a per-page check would be simpler.
+> 
+>>
+>>>
+>>> Looking at the code, the PG_mte_tagged flag is not set for regular THP.
+>>
+>> I think it's supported for THP per page. Only for hugetlb we tag the 
+>> whole thing through the head page instead of individual pages.
+> 
+> Right. That's exactly what I meant.
+> 
+>>
+>>> The MTE
+>>> status actually comes from the VM_MTE flag in the VMA that maps it.
+>>>
+>>
+>> During the rmap walk we could check the VMA flag, but there would be 
+>> no way to just stop the THP shrinker scanning this page early.
+>>
+>>> static inline bool folio_test_hugetlb_mte_tagged(struct folio *folio)
+>>> {
+>>>     bool ret = test_bit(PG_mte_tagged, &folio->flags.f);
+>>>
+>>>     VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
+>>>
+>>>     /*
+>>>      * If the folio is tagged, ensure ordering with a likely subsequent
+>>>      * read of the tags.
+>>>      */
+>>>     if (ret)
+>>>         smp_rmb();
+>>>     return ret;
+>>> }
+>>>
+>>> static inline bool page_mte_tagged(struct page *page)
+>>> {
+>>>     bool ret = test_bit(PG_mte_tagged, &page->flags.f);
+>>>
+>>>     VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
+>>>
+>>>     /*
+>>>      * If the page is tagged, ensure ordering with a likely subsequent
+>>>      * read of the tags.
+>>>      */
+>>>     if (ret)
+>>>         smp_rmb();
+>>>     return ret;
+>>> }
+>>>
+>>> contpte_set_ptes()
+>>>     __set_ptes()
+>>>         __set_ptes_anysz()
+>>>             __sync_cache_and_tags()
+>>>                 mte_sync_tags()
+>>>                     set_page_mte_tagged()
+>>>
+>>> Then, having the THP shrinker skip any folios that are identified as
+>>> MTE-tagged.
+>>
+>> Likely we should just do something like (maybe we want better naming)
+>>
+>> #ifndef page_is_mergable
+>> #define page_is_mergable(page) (true)
+>> #endif
+> 
+> 
+> Maybe something like page_is_optimizable()? Just a thought ;p
+> 
+>>
+>> And for arm64 have it be
+>>
+>> #define page_is_mergable(page) (!page_mte_tagged(page))
+>>
+>>
+>> And then do
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 1f0813b956436..1cac9093918d6 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -4251,7 +4251,8 @@ static bool thp_underused(struct folio *folio)
+>>
+>>          for (i = 0; i < folio_nr_pages(folio); i++) {
+>>                  kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
+>> -               if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
+>> +               if (page_is_mergable(folio_page(folio, i)) &&
+>> +                   !memchr_inv(kaddr, 0, PAGE_SIZE)) {
+>>                          num_zero_pages++;
+>>                          if (num_zero_pages > khugepaged_max_ptes_none) {
+>>                                  kunmap_local(kaddr);
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index 946253c398072..476a9a9091bd3 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -306,6 +306,8 @@ static bool try_to_map_unused_to_zeropage(struct 
+>> page_vma_mapped_walk *pvmw,
+>>
+>>          if (PageCompound(page))
+>>                  return false;
+>> +       if (!page_is_mergable(page))
+>> +               return false;
+>>          VM_BUG_ON_PAGE(!PageAnon(page), page);
+>>          VM_BUG_ON_PAGE(!PageLocked(page), page);
+>>          VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
+> 
+> Looks good to me!
+> 
+>>
+>>
+>> For KSM, similarly just bail out early. But still wondering if this is 
+>> already checked
+>> somehow for KSM.
+> 
+> +1 I'm looking for a machine to test it on.
+
+Interestingly, it seems KSM is already skipping MTE-tagged pages. My test,
+running on a v6.8.0 kernel inside QEMU (with MTE enabled), shows no merging
+activity for those pages ...
+
 
