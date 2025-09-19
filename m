@@ -1,92 +1,76 @@
-Return-Path: <linux-kernel+bounces-824659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3178DB89D01
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFB6B89D93
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25F81BC82BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:10:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1166A02E12
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBB3313E0F;
-	Fri, 19 Sep 2025 14:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1C330EF92;
+	Fri, 19 Sep 2025 14:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D6LdSlJh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SBl/arBC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9B5313D73
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F2B31355E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758291012; cv=none; b=RkrHsv/zmTzsKoy5VNtexHEpG2wqE1lRV2/Zhf/z6jKbVkv54400GjUSlS0qEBq+4xRhYYL9GdUrfB5NTM/iGDw7quIKQdnQhtmijeT0mmoEDetRExt6bU175IRLFwoywjeUrj0CdLAFQdyk+c963GoI2Moo3OQt67uJLxsJ1OM=
+	t=1758291120; cv=none; b=HB9ZxgG/RDfyE7IH/ravzy1Yi/yXL2LiaBF0tI9IAVyD1OSBQEmcqLCNjKCuD+kd5ksKXCfo0tbHfr5v274kYWLnfp3XV+BL7nSCE6AaqcH2xpFjPt7INP/iT4SS2S5yRsRf44pWmB9+3v4p74HVtUMpSNCUqsMplwC1EWfnxhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758291012; c=relaxed/simple;
-	bh=Ftr7Rk2E1qjIyAAxEeFjq3bv/Y1G9PinJpwEVFKfAsA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K6wu2wYjZOIiqHbs64v1eUGQPoBnJsK4ubRvMtPhzQ127ie0COTKPNCU+ubug8orDX/DPUyIVBGu6e9P3chigr9m/l2lQryK3D2+/hdoB+T88m74w1uC7q9cKlETUQgFByebYVTPJMl3SgVEH0omrkQGgKd6MSJEwj/O5Z5L2sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D6LdSlJh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JA4IG2007410
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:10:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=aU9rrRsxGZJ5bX1FLuguMvGEjwygXeBO7pH
-	/6CBxlLU=; b=D6LdSlJhpc+XiY64JauFr8ypgVbgv7P8ZdpFhuLKe9EPPFpsU3K
-	ns8NKvi/65CNTkcxJqTd0mMHeki/aW/IAdAeOdo0rm53+r9tAwIcqm2grBH/cJLI
-	ZAiZZF7KivCkaow5i0S/seO/exGgAnyVRnGw5eSUbQhd9fUVGoTyOcSJb0YFFcV2
-	uuMvi+HUKMpj7EEFrQ8vvRDWZxV9hYxWMFCmqCjkNIpj+4U9EPPbZO2QetGbZNxl
-	4aGbgKE63aa3pnKtSFORw22Vw/3EGjRb99DJ6Qw2U7Mhsk1GZA5cjV0loRXUgJof
-	lzbGPcTFAsPDU+jLmoFFGjKSPQ5zsowjjzg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 498ebew5kg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:10:09 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32eddb7e714so2118788a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:10:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758291009; x=1758895809;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aU9rrRsxGZJ5bX1FLuguMvGEjwygXeBO7pH/6CBxlLU=;
-        b=cDHsqrUyiBKsBgt5WHq4yfPfPCG+8SokTHa9Fd/+C1zsclG+E6SYzntzxnmKzcSHah
-         oVyNqadqEMcJcR5GDHTFGCTH1ChngZ6O8+ewzLkpwesZDZwM+n6yJ5G0MbjrGk6gcSVJ
-         26lkvGSYbq05XVhK2ltcornGchiTEEedJ94Mbq49OlG//4+EXV/IAozV/L7PVGCs2W9o
-         X5QoHC7gqYk+C3adQLjpRLw3LckIQu+6AcdS4n0jw0bUhKIgP9lgJ/eB1XN6h1SNOoVu
-         MNmH7w+mp541MwO++GvhyfDMM/o8KRAw9xkAPcT6QDfARAhmvltvSYeLVnDFwayl8sxm
-         QVzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0ggQfulvl3JQ2bOY1CirSeSGUopBuZgYMMKJeUJjxr+zE+8R7TB+ol/equm9pFjHw0z5doJdU3c41SnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRSq0e7yMgExjOTcp4Zfjxp+3K7j8IKHv46fp2rqS2VeBJnT3V
-	raKWRy4V7n97CyZK+E/yk/ELMJcwtmfJQzaKAKjUOM4MTT5G886APIeX52kntQhFz8AP81CMIVf
-	zyIxrkbFSeVEipHqpwTGsV1bsHdM53xORtpxFLBNRRca4b2+rQSX7XXm2lDc2cfg/5L/M/32W6x
-	E=
-X-Gm-Gg: ASbGncuLOHdUw5K2AE6+bDsCvRdqizuqxlkcJIOBJqh59zpOd3/UuxqGTusUmGCFsOj
-	pyLyPamZsS2p04pSHT7W9eczOWDMfXt7owMqhKWocP0cMh8+SxZVO5YZHPzB+J+75dvAJu720bS
-	NDnkaCs2EaG7LOzkf7hnhU4Kdz03BI5gWZhC2DRTNUlz4Kj77XrgRBnteAApFr5SMzTdq5I849w
-	BCjZTo3KPiGTLLAFwmbr+TT711/RP7/Usj3nMgPwwhTmZ8LuWoPdESIhtw5WTgVSa00Qfyqc+h/
-	wT0A/7Uy0zwjb9wh5CAl4pdJpFSJ/oQqZsmrU3k2keZQv9Bktoxfh/V/raUW5AeZQTbM5j66hB/
-	8jvu9BHDgg/CsOMU5R48M+Zi+LEtW0twhcIxXOiNkbe5VK5PqH11x+qrGyEE1
-X-Received: by 2002:a17:90b:3e86:b0:32b:cafc:e339 with SMTP id 98e67ed59e1d1-33098398714mr3989295a91.36.1758291008725;
-        Fri, 19 Sep 2025 07:10:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErQzIaSQcEsJdQnvxCy8h4m+hTnW8xaHFZBBjCr29z5XzZ5zG99MiqrvIyNHbXCP515qCgpQ==
-X-Received: by 2002:a17:90b:3e86:b0:32b:cafc:e339 with SMTP id 98e67ed59e1d1-33098398714mr3989250a91.36.1758291008086;
-        Fri, 19 Sep 2025 07:10:08 -0700 (PDT)
-Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33060619245sm5644272a91.1.2025.09.19.07.10.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 07:10:07 -0700 (PDT)
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-To: sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: spmi: add bindings for glymur-spmi-pmic-arb (arbiter v8)
-Date: Fri, 19 Sep 2025 19:39:52 +0530
-Message-Id: <20250919140952.1057737-1-pankaj.patil@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758291120; c=relaxed/simple;
+	bh=eONtddQQnbqYvGQ/e7DXinSw1SDyu5xqRnZ71idAMHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iG9lMVqyTOO4NMu2oYk4anpUuxo+xB7cNGEu0MEc12foYdwZ4UEozpzw2WftqXjgzMbfk0lGnb06UwDJkqbIJwkckUcm7oFkDyGuxKN/Ikq3DzzIQzkbifNi25aqibs4S2ZlQfCQsA/QUMA1fzsh1q3lHfEGLTPclmf5j9BnpAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SBl/arBC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758291117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XecfpbbdW4OE96vMJ/b92ZmJvscUODQiqLFfBLLupG0=;
+	b=SBl/arBCNfwzyFp92A9PsIA3e6e9HVfa8hrofJBFffxASbtkt4y8mJpUKhWCVwblh1dRfh
+	LWdu3n/3DZKpUSbf/kmKbh02AguewJAzwnXMyiTceCw6SsxMCzXHBsFihfHqbYa5bUEJ+l
+	69ZXQuOg/G6HK8rcXPXoStOLq8Ym9ME=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-68-VqgXiSkjO6KSJhSidLveGg-1; Fri,
+ 19 Sep 2025 10:11:53 -0400
+X-MC-Unique: VqgXiSkjO6KSJhSidLveGg-1
+X-Mimecast-MFC-AGG-ID: VqgXiSkjO6KSJhSidLveGg_1758291112
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C87C180034C;
+	Fri, 19 Sep 2025 14:11:52 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.45.224.13])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E47B019560BB;
+	Fri, 19 Sep 2025 14:11:48 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [PATCH v2 18/20] rv: Add support for per-object monitors in DA/HA
+Date: Fri, 19 Sep 2025 16:09:52 +0200
+Message-ID: <20250919140954.104920-19-gmonaco@redhat.com>
+In-Reply-To: <20250919140954.104920-1-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,210 +78,444 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: L-dyiCnwFarAcE2rTx4dU1WTSOJ0fE9T
-X-Authority-Analysis: v=2.4 cv=H6/bw/Yi c=1 sm=1 tr=0 ts=68cd6441 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
- a=t41Tp4pyULMMg2XcS3IA:9 a=iS9zxrgQBfv6-_F4QbHw:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: L-dyiCnwFarAcE2rTx4dU1WTSOJ0fE9T
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE4MDA3NCBTYWx0ZWRfX3pc7dSmjf/jQ
- dQofrsmaoh9/lcFOA4BlEwSCdoBGrc/EiQOJQbHSlq3cOEF/rNsk3MNXYf/Wj9w6eYcD/VD07tf
- /nOVjiJa1OnS3mVLbuCz0T+zBtd/urt9SbKVh7iLmBcWcwMSVeebSEfHeVvw9R24+N3D4olUmsm
- siZ7G4o1Nz/aeD+rbAnVWuvRi8F7mr5pKC1foY0Ho+Zd+2oT7mX1n5vKN/glHRwi1PneEXEcSKC
- td/6T8oj8WjWREqSxORYY0X5wKDVYHdYyY5F5IMk7fP9LG1qsCxyYgKBwGqnL/AdNNBM04XAywd
- 7pmyAvb98MhLNTn+3VWXA7Euw15fSvEGS7y1hUkLg9gOHbJEYIEZTGh/w3zTPNgtqu1mp4HWbxn
- g46Xczg2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 adultscore=0 impostorscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509180074
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+RV deterministic and hybrid automata currently only support global,
+per-cpu and per-task monitors. It isn't possible to write a model that
+would follow some different type of object, like a deadline entity or a
+lock.
 
-SPMI PMIC Arbiter version 8 builds upon version 7 with support for
-up to four SPMI buses.  To achieve this, the register map was
-slightly rearranged.  Add a new binding file and compatible string
-for version 8 using the name 'glymur' as the Qualcomm Technologies,
-Inc. Glymur SoC is the first one to use PMIC arbiter version 8.  This
-specifies the new register ranges needed only for version 8.
+Define the generic per-object monitor implementation which shares part
+of the implementation with the per-task monitors.
+The user needs to provide an id for the object (e.g. pid for tasks) and
+define the data type for the monitor_target (e.g. struct task_struct *
+for tasks). Both are supplied to the event handlers, as the id may not
+be easily available in the target.
 
-Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
-Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+The monitor storage (e.g. the rv monitor, pointer to the target, etc.)
+is stored in a hash table indexed by id. Monitor storage objects are
+automatically allocated unless specified otherwise (e.g. if the creation
+context is unsafe for allocation).
+
+Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 ---
- .../spmi/qcom,glymur-spmi-pmic-arb.yaml       | 158 ++++++++++++++++++
- 1 file changed, 158 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spmi/qcom,glymur-spmi-pmic-arb.yaml
+ include/linux/rv.h      |   1 +
+ include/rv/da_monitor.h | 323 +++++++++++++++++++++++++++++++++++++++-
+ include/rv/ha_monitor.h |   5 +-
+ 3 files changed, 323 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spmi/qcom,glymur-spmi-pmic-arb.yaml b/Documentation/devicetree/bindings/spmi/qcom,glymur-spmi-pmic-arb.yaml
-new file mode 100644
-index 000000000000..e80997a5fb4b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spmi/qcom,glymur-spmi-pmic-arb.yaml
-@@ -0,0 +1,158 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spmi/qcom,glymur-spmi-pmic-arb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/include/linux/rv.h b/include/linux/rv.h
+index 90d51e00e99c..c30a78026764 100644
+--- a/include/linux/rv.h
++++ b/include/linux/rv.h
+@@ -16,6 +16,7 @@
+ #define RV_MON_GLOBAL   0
+ #define RV_MON_PER_CPU  1
+ #define RV_MON_PER_TASK 2
++#define RV_MON_PER_OBJ  3
+ 
+ #ifdef CONFIG_RV
+ #include <linux/bitops.h>
+diff --git a/include/rv/da_monitor.h b/include/rv/da_monitor.h
+index afbe0807ed11..ead24394d146 100644
+--- a/include/rv/da_monitor.h
++++ b/include/rv/da_monitor.h
+@@ -19,6 +19,8 @@
+ #include <linux/stringify.h>
+ #include <linux/bug.h>
+ #include <linux/sched.h>
++#include <linux/slab.h>
++#include <linux/hashtable.h>
+ 
+ #define RV_DA_MON_NAME CONCATENATE(da_mon_, MONITOR_NAME)
+ static struct rv_monitor rv_this;
+@@ -52,11 +54,34 @@ static struct rv_monitor rv_this;
+ 
+ /*
+  * Type for the target id, default to int but can be overridden.
++ * A long type can work as hash table key (PER_OBJ) but will be downgraded to
++ * int in the event tracepoint.
++ * Unused for implicit monitors.
+  */
+ #ifndef da_id_type
+ #define da_id_type int
+ #endif
+ 
++/*
++ * Allow the per-object monitors to run allocation manually, necessary if the
++ * start condition is in a context problematic for allocation (e.g. scheduling).
++ * In such case, if the storage was pre-allocated without a target, set it now.
++ */
++#if RV_MON_TYPE == RV_MON_PER_OBJ
++#ifdef DA_SKIP_AUTO_ALLOC
++static inline struct da_monitor *da_fill_empty_storage(da_id_type id,
++						       monitor_target target,
++						       struct da_monitor *da_mon);
++#define da_monitor_start_hook da_fill_empty_storage
++#else
++#define da_monitor_start_hook(...) da_create_storage(__VA_ARGS__, GFP_NOWAIT)
++static inline struct da_monitor *da_create_storage(da_id_type id,
++						   monitor_target target,
++						   struct da_monitor *da_mon,
++						   gfp_t flags);
++#endif /* DA_SKIP_AUTO_ALLOC */
++#endif
 +
-+title: Qualcomm Technologies, Inc. Glymur SPMI Controller (PMIC Arbiter v8)
+ #ifdef CONFIG_RV_REACTORS
+ 
+ static void cond_react(enum states curr_state, enum events event)
+@@ -241,9 +266,9 @@ static inline struct da_monitor *da_get_monitor(struct task_struct *tsk)
+ }
+ 
+ /*
+- * da_get_task - return the task associated to the monitor
++ * da_get_target - return the task associated to the monitor
+  */
+-static inline struct task_struct *da_get_task(struct da_monitor *da_mon)
++static inline struct task_struct *da_get_target(struct da_monitor *da_mon)
+ {
+ 	return container_of(da_mon, struct task_struct, rv[task_mon_slot].da_mon);
+ }
+@@ -255,7 +280,7 @@ static inline struct task_struct *da_get_task(struct da_monitor *da_mon)
+  */
+ static inline da_id_type da_get_id(struct da_monitor *da_mon)
+ {
+-	return da_get_task(da_mon)->pid;
++	return da_get_target(da_mon)->pid;
+ }
+ 
+ static void da_monitor_reset_all(void)
+@@ -303,6 +328,220 @@ static inline void da_monitor_destroy(void)
+ 	rv_put_task_monitor_slot(task_mon_slot);
+ 	task_mon_slot = RV_PER_TASK_MONITOR_INIT;
+ }
 +
-+maintainers:
-+  - Stephen Boyd <sboyd@kernel.org>
++#elif RV_MON_TYPE == RV_MON_PER_OBJ
++/*
++ * Functions to define, init and get a per-object monitor.
++ */
 +
-+description: |
-+  The Glymur SPMI PMIC Arbiter implements HW version 8 and it's an SPMI
-+  controller with wrapping arbitration logic to allow for multiple on-chip
-+  devices to control up to 4 SPMI separate buses.
++static struct kmem_cache *da_monitor_cache;
 +
-+  The PMIC Arbiter can also act as an interrupt controller, providing interrupts
-+  to slave devices.
++struct da_monitor_storage {
++	da_id_type id;
++	monitor_target target;
++	union rv_task_monitor rv;
++	struct hlist_node node;
++	struct rcu_head rcu;
++};
 +
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,glymur-spmi-pmic-arb
++#ifndef DA_MONITOR_HT_BITS
++#define DA_MONITOR_HT_BITS 10
++#endif
++static DEFINE_HASHTABLE(da_monitor_ht, DA_MONITOR_HT_BITS);
 +
-+  reg:
-+    items:
-+      - description: core registers
-+      - description: tx-channel per virtual slave registers
-+      - description: rx-channel (called observer) per virtual slave registers
-+      - description: channel to PMIC peripheral mapping registers
++/*
++ * da_create_empty_storage - pre-allocate an empty storage
++ */
++static inline struct da_monitor_storage *da_create_empty_storage(da_id_type id,
++								 gfp_t flags)
++{
++	struct da_monitor_storage *mon_storage;
 +
-+  reg-names:
-+    items:
-+      - const: core
-+      - const: chnls
-+      - const: obsrvr
-+      - const: chnl_map
++	mon_storage = kmem_cache_zalloc(da_monitor_cache, flags);
++	if (!mon_storage)
++		return NULL;
 +
-+  ranges: true
++	hash_add_rcu(da_monitor_ht, &mon_storage->node, id);
++	mon_storage->id = id;
++	return mon_storage;
++}
 +
-+  '#address-cells':
-+    const: 2
++/*
++ * da_create_storage - create the per-object storage
++ *
++ * The caller is responsible to synchronise writers, either with locks or
++ * implicitly. For instance, if da_create_storage is only called from a single
++ * event for target (e.g. sched_switch), it's safe to call this without locks.
++ */
++static inline struct da_monitor *da_create_storage(da_id_type id,
++						   monitor_target target,
++						   struct da_monitor *da_mon,
++						   gfp_t flags)
++{
++	struct da_monitor_storage *mon_storage;
 +
-+  '#size-cells':
-+    const: 2
++	if (da_mon)
++		return da_mon;
 +
-+  qcom,ee:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 0
-+    maximum: 5
-+    description: >
-+      indicates the active Execution Environment identifier
++	mon_storage = da_create_empty_storage(id, flags);
++	if (!mon_storage)
++		return NULL;
 +
-+  qcom,channel:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    minimum: 0
-+    maximum: 5
-+    description: >
-+      which of the PMIC Arb provided channels to use for accesses
++	mon_storage->target = target;
++	return &mon_storage->rv.da_mon;
++}
 +
-+patternProperties:
-+  "^spmi@[a-f0-9]+$":
-+    type: object
-+    $ref: /schemas/spmi/spmi.yaml
-+    unevaluatedProperties: false
++/*
++ * __da_get_mon_storage - get the monitor storage from the hash table
++ */
++static inline struct da_monitor_storage *__da_get_mon_storage(da_id_type id)
++{
++	struct da_monitor_storage *mon_storage;
 +
-+    properties:
-+      reg:
-+        items:
-+          - description: configuration registers
-+          - description: interrupt controller registers
-+          - description: channel owner EE mapping registers
++	lockdep_assert_in_rcu_read_lock();
++	hash_for_each_possible_rcu(da_monitor_ht, mon_storage, node, id) {
++		if (mon_storage->id == id)
++			return mon_storage;
++	}
 +
-+      reg-names:
-+        items:
-+          - const: cnfg
-+          - const: intr
-+          - const: chnl_owner
++	return NULL;
++}
 +
-+      interrupts:
-+        maxItems: 1
++/*
++ * da_get_monitor - return the monitor for target
++ */
++static struct da_monitor *da_get_monitor(da_id_type id, monitor_target target)
++{
++	struct da_monitor_storage *mon_storage;
 +
-+      interrupt-names:
-+        const: periph_irq
++	mon_storage = __da_get_mon_storage(id);
++	return mon_storage ? &mon_storage->rv.da_mon : NULL;
++}
 +
-+      interrupt-controller: true
++/*
++ * da_get_target - return the object associated to the monitor
++ */
++static inline monitor_target da_get_target(struct da_monitor *da_mon)
++{
++	return container_of(da_mon, struct da_monitor_storage, rv.da_mon)->target;
++}
 +
-+      '#interrupt-cells':
-+        const: 4
-+        description: |
-+          cell 1: slave ID for the requested interrupt (0-15)
-+          cell 2: peripheral ID for requested interrupt (0-255)
-+          cell 3: the requested peripheral interrupt (0-7)
-+          cell 4: interrupt flags indicating level-sense information,
-+                  as defined in dt-bindings/interrupt-controller/irq.h
++/*
++ * da_get_id - return the id associated to the monitor
++ */
++static inline da_id_type da_get_id(struct da_monitor *da_mon)
++{
++	return container_of(da_mon, struct da_monitor_storage, rv.da_mon)->id;
++}
 +
-+required:
-+  - compatible
-+  - reg-names
-+  - qcom,ee
-+  - qcom,channel
++/*
++ * da_create_conditional - create the per-object storage if not already there
++ *
++ * This needs a lookup so should be guarded by RCU, the condition is checked
++ * directly in da_create_storage()
++ */
++static inline void da_create_conditional(da_id_type id, monitor_target target,
++					 gfp_t flags)
++{
++	guard(rcu)();
++	da_create_storage(id, target, da_get_monitor(id, target), flags);
++}
 +
-+additionalProperties: false
++/*
++ * da_fill_empty_storage - store the target in a pre-allocated storage
++ *
++ * Can be used as a substitute of da_create_storage when starting a monitor in
++ * an environment where allocation is unsafe.
++ */
++static inline struct da_monitor *da_fill_empty_storage(da_id_type id,
++						       monitor_target target,
++						       struct da_monitor *da_mon)
++{
++	if (unlikely(da_mon && !da_get_target(da_mon)))
++		container_of(da_mon, struct da_monitor_storage, rv.da_mon)->target = target;
++	return da_mon;
++}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
++/*
++ * da_get_target_by_id - return the object associated to the id
++ */
++static inline monitor_target da_get_target_by_id(da_id_type id)
++{
++	struct da_monitor_storage *mon_storage;
 +
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
++	guard(rcu)();
++	mon_storage = __da_get_mon_storage(id);
 +
-+        arbiter@c400000 {
-+            compatible = "qcom,glymur-spmi-pmic-arb";
-+            reg = <0x0 0xc400000 0x0 0x3000>,
-+                  <0x0 0xc900000 0x0 0x400000>,
-+                  <0x0 0xc4c0000 0x0 0x400000>,
-+                  <0x0 0xc403000 0x0 0x8000>;
-+            reg-names = "core", "chnls", "obsrvr", "chnl_map";
++	if (unlikely(!mon_storage))
++		return NULL;
++	return mon_storage->target;
++}
 +
-+            qcom,ee = <0>;
-+            qcom,channel = <0>;
++/*
++ * da_destroy_storage - destroy the per-object storage
++ *
++ * The caller is responsible to synchronise writers, either with locks or
++ * implicitly. For instance, if da_destroy_storage is called at sched_exit and
++ * da_create_storage can never occur after that, it's safe to call this without
++ * locks.
++ * This function includes an RCU read-side critical section to synchronise
++ * against da_monitor_destroy().
++ */
++static inline void da_destroy_storage(da_id_type id)
++{
++	struct da_monitor_storage *mon_storage;
 +
-+            #address-cells = <2>;
-+            #size-cells = <2>;
-+            ranges;
++	guard(rcu)();
++	mon_storage = __da_get_mon_storage(id);
 +
-+            spmi@c426000 {
-+                reg = <0x0 0xc426000 0x0 0x4000>,
-+                      <0x0 0xc8c0000 0x0 0x10000>,
-+                      <0x0 0xc42a000 0x0 0x8000>;
-+                reg-names = "cnfg", "intr", "chnl_owner";
++	if (!mon_storage)
++		return;
++	da_monitor_reset(&mon_storage->rv.da_mon);
++	hash_del_rcu(&mon_storage->node);
++	kfree_rcu(mon_storage, rcu);
++}
 +
-+                interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
-+                interrupt-names = "periph_irq";
-+                interrupt-controller;
-+                #interrupt-cells = <4>;
++static void da_monitor_reset_all(void)
++{
++	struct da_monitor_storage *mon_storage;
++	int bkt;
 +
-+                #address-cells = <2>;
-+                #size-cells = <0>;
-+            };
++	rcu_read_lock();
++	hash_for_each_rcu(da_monitor_ht, bkt, mon_storage, node)
++		da_monitor_reset(&mon_storage->rv.da_mon);
++	rcu_read_unlock();
++}
 +
-+            spmi@c437000 {
-+                reg = <0x0 0xc437000 0x0 0x4000>,
-+                      <0x0 0xc8d0000 0x0 0x10000>,
-+                      <0x0 0xc43b000 0x0 0x8000>;
-+                reg-names = "cnfg", "intr", "chnl_owner";
++static inline int da_monitor_init(void)
++{
++	hash_init(da_monitor_ht);
++	da_monitor_cache = kmem_cache_create(__stringify(MONITOR_NAME) "-cache",
++					     sizeof(struct da_monitor_storage),
++					     NULL, 0);
++	if (!da_monitor_cache)
++		return -ENOMEM;
++	return 0;
++}
 +
-+                interrupts-extended = <&pdc 3 IRQ_TYPE_LEVEL_HIGH>;
-+                interrupt-names = "periph_irq";
-+                interrupt-controller;
-+                #interrupt-cells = <4>;
++static inline void da_monitor_destroy(void)
++{
++	struct da_monitor_storage *mon_storage;
++	struct hlist_node *tmp;
++	int bkt;
 +
-+                #address-cells = <2>;
-+                #size-cells = <0>;
-+            };
-+        };
-+    };
++	/*
++	 * This function is called after all probes are disabled, we need only
++	 * worry about concurrency against old events.
++	 */
++	synchronize_rcu();
++	hash_for_each_safe(da_monitor_ht, bkt, tmp, mon_storage, node) {
++		hash_del_rcu(&mon_storage->node);
++		kfree(mon_storage);
++	}
++	rcu_barrier();
++	kmem_cache_destroy(da_monitor_cache);
++}
++
+ #endif /* RV_MON_TYPE */
+ 
+ #if RV_MON_TYPE == RV_MON_GLOBAL || RV_MON_TYPE == RV_MON_PER_CPU
+@@ -336,9 +575,9 @@ static inline da_id_type da_get_id(struct da_monitor *da_mon)
+ 	return 0;
+ }
+ 
+-#elif RV_MON_TYPE == RV_MON_PER_TASK
++#elif RV_MON_TYPE == RV_MON_PER_TASK || RV_MON_TYPE == RV_MON_PER_OBJ
+ /*
+- * Trace events for per_task monitors, report the PID of the task.
++ * Trace events for per_task/per_object monitors, report the target id.
+  */
+ 
+ static inline void da_trace_event(struct da_monitor *da_mon,
+@@ -531,6 +770,80 @@ static inline bool da_handle_start_run_event(struct task_struct *tsk,
+ 		return 0;
+ 	return __da_handle_start_run_event(da_get_monitor(tsk), event, tsk->pid);
+ }
++
++#elif RV_MON_TYPE == RV_MON_PER_OBJ
++/*
++ * Handle event for per object.
++ */
++
++/*
++ * da_handle_event - handle an event
++ */
++static inline void da_handle_event(da_id_type id, monitor_target target, enum events event)
++{
++	struct da_monitor *da_mon;
++
++	guard(rcu)();
++	da_mon = da_get_monitor(id, target);
++	if (likely(da_mon))
++		__da_handle_event(da_mon, event, id);
++}
++
++/*
++ * da_handle_start_event - start monitoring or handle event
++ *
++ * This function is used to notify the monitor that the system is returning
++ * to the initial state, so the monitor can start monitoring in the next event.
++ * Thus:
++ *
++ * If the monitor already started, handle the event.
++ * If the monitor did not start yet, start the monitor but skip the event.
++ */
++static inline bool da_handle_start_event(da_id_type id, monitor_target target,
++					 enum events event)
++{
++	struct da_monitor *da_mon;
++
++	if (!da_monitor_enabled())
++		return 0;
++	guard(rcu)();
++	da_mon = da_get_monitor(id, target);
++	da_mon = da_monitor_start_hook(id, target, da_mon);
++	if (unlikely(!da_mon))
++		return 0;
++	return __da_handle_start_event(da_mon, event, id);
++}
++
++/*
++ * da_handle_start_run_event - start monitoring and handle event
++ *
++ * This function is used to notify the monitor that the system is in the
++ * initial state, so the monitor can start monitoring and handling event.
++ */
++static inline bool da_handle_start_run_event(da_id_type id, monitor_target target,
++					     enum events event)
++{
++	struct da_monitor *da_mon;
++
++	if (!da_monitor_enabled())
++		return 0;
++	guard(rcu)();
++	da_mon = da_get_monitor(id, target);
++	da_mon = da_monitor_start_hook(id, target, da_mon);
++	if (unlikely(!da_mon))
++		return 0;
++	return __da_handle_start_run_event(da_mon, event, id);
++}
++
++static inline void da_reset(da_id_type id, monitor_target target)
++{
++	struct da_monitor *da_mon;
++
++	guard(rcu)();
++	da_mon = da_get_monitor(id, target);
++	if (likely(da_mon))
++		da_monitor_reset(da_mon);
++}
+ #endif /* RV_MON_TYPE */
+ 
+ #endif
+diff --git a/include/rv/ha_monitor.h b/include/rv/ha_monitor.h
+index fb885709b727..dcc2a4d4af65 100644
+--- a/include/rv/ha_monitor.h
++++ b/include/rv/ha_monitor.h
+@@ -190,7 +190,10 @@ static inline void ha_trace_error_env(struct ha_monitor *ha_mon,
+ {
+ 	CONCATENATE(trace_error_env_, MONITOR_NAME)(curr_state, event, env);
+ }
+-#elif RV_MON_TYPE == RV_MON_PER_TASK
++#elif RV_MON_TYPE == RV_MON_PER_TASK || RV_MON_TYPE == RV_MON_PER_OBJ
++
++#define ha_get_target(ha_mon) da_get_target(&ha_mon->da_mon)
++
+ static inline void ha_trace_error_env(struct ha_monitor *ha_mon,
+ 				      char *curr_state, char *event, char *env,
+ 				      da_id_type id)
 -- 
-2.34.1
+2.51.0
 
 
