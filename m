@@ -1,124 +1,189 @@
-Return-Path: <linux-kernel+bounces-824748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E845B8A130
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:48:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6BB8A1AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FD077B75D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A87C272C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B46A314A82;
-	Fri, 19 Sep 2025 14:48:05 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6D23161A7;
+	Fri, 19 Sep 2025 14:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="atNMxuBZ"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3965D31283B;
-	Fri, 19 Sep 2025 14:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758293285; cv=none; b=g2poEhNQy0IR531PsoCHVA22iT1lv5wc/CJ5BLrKYwRhoreZ6CAtJDxh2E9mTV4vmdl0KH6KOZTq5pJGiEJ5ytnhld3IYCnFV1x0gIDWOip4j0oyFOtTQzHmDSYY3TfCbSGR8B7215oJwpJJ1dOOgUN/ZIR45Upi/G9vmMe3thA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758293285; c=relaxed/simple;
-	bh=xXApoE135ME80W1ETlhFWC0gNzuVztqfCYabcm54yKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=balQ+eX3+8xTA2hMsuhOQcZyNdc4Ko/7XFrxK4AspB/sitkPvppi+nVRoMb8meSBFKk1Bm565Wlijm4Twn/8koMMgqR2XaWsfgTuIIOMe1Z624vN5ruadfS/zNJ4hglwTAylz/U7CbPYAzEgFPRScwhEMqm5vnzAyGfvbmcmn3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 0BC7B969; Fri, 19 Sep 2025 09:47:59 -0500 (CDT)
-Date: Fri, 19 Sep 2025 09:47:59 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, linux-integrity@vger.kernel.org,
-	=?iso-8859-1?Q?Fr=E9d=E9ric?= Jouen <fjouen@sealsq.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
-Message-ID: <aM1tH2RNVgRnuZ5w@mail.hallyn.com>
-References: <20250918193019.4018706-1-jarkko@kernel.org>
- <aMzSyCQks3NlMhPI@mail.hallyn.com>
- <aM0A1hceUC-RJdo8@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88761313264;
+	Fri, 19 Sep 2025 14:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758293584; cv=pass; b=cTTC43lkMh0LC08iVAHEwFBmDg0n+E+PqW/c2aYiAPblw6el4SInx4qFHBwl/JzBc6Xc6Pyhw6Cm7cHWuSL15ATFMqMsGMK/YxdCoTX+MlnaMo4X1pVl9uelrOkXEaeXGVIW+MHYwmRuiXfTTd8PNEp4DAkWsHuY55Slm7v2s/M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758293584; c=relaxed/simple;
+	bh=NPU6R/xcCQOM1ggUhPE7hD61oLKixNf8wkoXcLLLXeY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qbn593kK0IxECxpPn3kJ+7vE7Mil6ktk5HCQocBDIt/+Ln5StVegBBguWj1i2zZKAEZ2yr3PvQmO49g2IB6S163dqaY2u81ElvTQUNZP2lK8S1V/kONLC0gYw1kuwn0oaIoY83Tt48pQs8SGaNvozl/fAXDe9L6BhHP6HN6DWDc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net; spf=none smtp.mailfrom=gerhold.net; dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=atNMxuBZ; arc=pass smtp.client-ip=85.215.255.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=gerhold.net
+ARC-Seal: i=1; a=rsa-sha256; t=1758293394; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=acv5eugD5Gq4KPFEfWtA3/fTqwmKOIsFvg1B+hJkTnk0vgRmqFNqjkOkuMbir2or3Z
+    8bjOZ2qOPQ6QwrAFXi2JuKNQBwiNSPN/PyrZIOl/p6cUj62XtbjSu3XaGFy/GQoqQd54
+    ohqvLSaMitlWMEC4KKrWYAM7jX3qqaa67oyaPRJPmZRHIwNfDxqKCYi+zdcS0LNcxYB1
+    q+lM7S4wa9aieaSE1ua8XZbBXnK7RMmMogAdDyMh2pk8zIBvatStL4rSTcEanO9CFTOE
+    ZwZlBc+zHVVDdfeGrOaY3XEtEVJglU9e7PdpP7KlQPhulUGXdNbbICqdP49GBAnAT+1+
+    61ZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758293394;
+    s=strato-dkim-0002; d=strato.com;
+    h=Cc:To:Message-Id:Subject:Date:From:Cc:Date:From:Subject:Sender;
+    bh=61bwaMcPRWuSXCmHhvg6GAB4rPUgzrAWmuHTQsPRxU0=;
+    b=cHcEmvNS+eK0791m83j75JlC7Y4usGSsN9VQZjXSGnPdocITcJ3de8dvAKKyU3YiQH
+    6nGMKfm4O9aoaKhZOVW/zsgMVEDA20lAwXiX52EXB7l5KRDYiBe4CeGsFXu3Qp8v0Mz9
+    k13AzTKfJX8aiFiSSXmgTG8EHz/NwGSGphe/EoObCbo73nqTMRUzcrdNPd7x3cARdr5u
+    LR3d596JN2KOv6zxj7CacF2UlVSdeKOVce1WJkgE4mAQNZC6FXsW4/E/9nQl7hNvHA2q
+    88H/P4znlE3iW+z1OkYQJGe9C0mz3DR0TKFMMuZvs3NRd4pZBqBf/Ro77QLsPGiCWqzJ
+    etIA==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758293394;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=Cc:To:Message-Id:Subject:Date:From:Cc:Date:From:Subject:Sender;
+    bh=61bwaMcPRWuSXCmHhvg6GAB4rPUgzrAWmuHTQsPRxU0=;
+    b=atNMxuBZcv/q+MRebWRNd+obdkHIWmFDCKBqPm45j0nhkkg/Qbfm47kRKtlus6ZmXG
+    lwgen8AJxHYjZkotjqHik9VyIfnL/eODWZDDfR1sCjxENcQ3xNi3Gzwebwqt9N8Ij346
+    k+x9buYOdOs20+SJRt4CBwIUugS8sBR4e6a5QHX3pieUyCJ4fwosL9NjdFkfDWRxz4qE
+    7QMgWXq3k7V0SKDf2fD9kAdf8uvtrkrFs/VbWmuuMXSFvBNvC5DJz9XlrKzeffE8UBLO
+    cyDsY77m/vrediVTYn/896NNOFKfiLx9G04eMRNzTujuvrvsYm2vtlvXFeFO+tX/fE4B
+    5DVw==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXSOYQGpRtZhZnncGoRCMFriGKY/zxVJ2QgPDtEteoYvgoAn2AACU="
+Received: from [127.0.0.2]
+    by smtp.strato.de (RZmta 52.1.2 AUTH)
+    with ESMTPSA id R027cc18JEnsOGm
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 19 Sep 2025 16:49:54 +0200 (CEST)
+From: Stephan Gerhold <stephan@gerhold.net>
+Date: Fri, 19 Sep 2025 16:49:32 +0200
+Subject: [PATCH] arm64: dts: qcom: msm8916-longcheer-l8910: Add touchscreen
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aM0A1hceUC-RJdo8@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250919-msm8916-l8910-touchscreen-v1-1-c46e56ec0a3b@gerhold.net>
+X-B4-Tracking: v=1; b=H4sIAHttzWgC/x2MywqEMAwAf0Vy3kAqvuqvLHvQNmpAqzSrCOK/W
+ 7wMzGHmAuUorNBmF0Q+RGUNScwnAzd1YWQUnxxyykuyxuKiS2NNhXMi4X/d3aQuMgesuSipMH1
+ F3kPqt8iDnO/7+7vvB1E9UUBrAAAA
+X-Change-ID: 20250919-msm8916-l8910-touchscreen-7e45041b60dd
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonathan Albrieux <jonathan.albrieux@gmail.com>, 
+ Stephan Gerhold <stephan@gerhold.net>
+X-Mailer: b4 0.14.2
 
-On Fri, Sep 19, 2025 at 10:05:58AM +0300, Jarkko Sakkinen wrote:
-> On Thu, Sep 18, 2025 at 10:49:28PM -0500, Serge E. Hallyn wrote:
-> > On Thu, Sep 18, 2025 at 10:30:18PM +0300, Jarkko Sakkinen wrote:
-> > > The current shenanigans for duration calculation introduce too much
-> > > complexity for a trivial problem, and further the code is hard to patch and
-> > > maintain.
-> > > 
-> > > Address these issues with a flat look-up table, which is easy to understand
-> > > and patch. If leaf driver specific patching is required in future, it is
-> > > easy enough to make a copy of this table during driver initialization and
-> > > add the chip parameter back.
-> > > 
-> > > 'chip->duration' is retained for TPM 1.x.
-> > > 
-> > > As the first entry for this new behavior address TCG spec update mentioned
-> > > in this issue:
-> > > 
-> > > https://github.com/raspberrypi/linux/issues/7054
-> > > 
-> > > Therefore, for TPM_SelfTest the duration is set to 3000 ms.
+From: Jonathan Albrieux <jonathan.albrieux@gmail.com>
 
-D'oh!  It *was* in the commit message all along, sorry.
+The BQ Aquaris X5 (Longcheer L8910) has a Himax HX852x-ES touchscreen,
+which can now be described with the bindings recently added to linux-next.
+Add it to the device tree to allow using the touchscreen.
 
-> > > This does not categorize a as bug, given that this is introduced to the
-> > > spec after the feature was originally made.
-> > > 
-> > > Cc: Frédéric Jouen <fjouen@sealsq.com>
-> > > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Jonathan Albrieux <jonathan.albrieux@gmail.com>
+Co-developed-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+ .../boot/dts/qcom/msm8916-longcheer-l8910.dts      | 46 ++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-Looks good, thank you.
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
+index 887764dc55b21a5892510f822004b054eb65fa0a..93d5ea279cff1eaf929d2bf0673e02819225d88a 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
+@@ -79,6 +79,19 @@ led-0 {
+ 		};
+ 	};
+ 
++	reg_ts_vcca: regulator-vcca-ts {
++		compatible = "regulator-fixed";
++		regulator-name = "regulator-vcca-ts";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&tlmm 78 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-0 = <&ts_vcca_default>;
++		pinctrl-names = "default";
++	};
++
+ 	usb_id: usb-id {
+ 		compatible = "linux,extcon-usb-gpio";
+ 		id-gpios = <&tlmm 110 GPIO_ACTIVE_HIGH>;
+@@ -176,6 +189,25 @@ imu@68 {
+ 	};
+ };
+ 
++&blsp_i2c5 {
++	status = "okay";
++
++	touchscreen@48 {
++		compatible = "himax,hx8527e", "himax,hx852es";
++		reg = <0x48>;
++
++		interrupts-extended = <&tlmm 13 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&tlmm 12 GPIO_ACTIVE_LOW>;
++		vcca-supply = <&reg_ts_vcca>;
++		vccd-supply = <&pm8916_l6>;
++
++		pinctrl-0 = <&ts_int_reset_default>;
++		pinctrl-names = "default";
++
++		linux,keycodes = <KEY_BACK KEY_HOMEPAGE KEY_APPSELECT>;
++	};
++};
++
+ &blsp_uart2 {
+ 	status = "okay";
+ 	pinctrl-0 = <&blsp_uart2_console_default>;
+@@ -338,6 +370,20 @@ spk_ext_pa_default: spk-ext-pa-default-state {
+ 		bias-disable;
+ 	};
+ 
++	ts_int_reset_default: ts-int-reset-default-state {
++		pins = "gpio12", "gpio13";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
++	ts_vcca_default: ts-vcca-default-state {
++		pins = "gpio78";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-disable;
++	};
++
+ 	usb_id_default: usb-id-default-state {
+ 		pins = "gpio110";
+ 		function = "gpio";
 
-Reviewed-by: Serge Hallyn <serge@hallyn.com>
+---
+base-commit: 8f7f8b1b3f4c613dd886f53f768f82816b41eaa3
+change-id: 20250919-msm8916-l8910-touchscreen-7e45041b60dd
 
+Best regards,
+-- 
+Stephan Gerhold <stephan@gerhold.net>
 
-> > fwiw (which shouldn't be much) looks good to me, but two questions,
-> > one here and one below.
-> > 
-> > First, it looks like in the existing code it is possible for a tpm2
-> > chip to set its own timeouts and then set the TPM_CHIP_FLAG_HAVE_TIMEOUTS
-> > flag to avoid using the defaults, but I don't see anything using that
-> > in-tree.  Is it possible that there are out of tree drivers that will be
-> > sabotaged here?  Or am I misunderstanding that completely?
-> 
-> Good questions, and I can brief a bit about the context of the
-> pre-existing art and this change.
-> 
-> This complexity was formed in 2014 when I originally developed TPM2
-> support and the only available testing plaform was early Intel PTT with
-> a flakky version of TPM2 support (e.g., no localities).
-> 
-> Since then we haven't had per leaf-driver divergence.
-> 
-> Further, I think that this type of layout is actually a  better fit if
-> we ever need to quirks for command durations for a particular device, as
-> then we can migrate to "copy and patch" semantics i.e., have a copy of
-> this map in the chip structure.
-> 
-> As per out-of-tree drivers, it's unfortunate reality of out-of-tree
-> drivers :-) However, this will definitely add some extra work, when
-> backporting fixes (not overwhelmingly much).
-> 
-> BR, Jarkko
 
