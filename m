@@ -1,314 +1,188 @@
-Return-Path: <linux-kernel+bounces-824458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C5DB89491
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F44CB89488
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96407C7A86
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:34:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B695A1E4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3112FC00E;
-	Fri, 19 Sep 2025 11:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF70A30DEB2;
+	Fri, 19 Sep 2025 11:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Ji/BJbBI"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kZMEdtLt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271EE30C100
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758281631; cv=fail; b=ZwKSHlhh2VNAZkO09pg9mZT1lEnt390LBl0qojcyKjaZBwJeP8aJyH5hbZCZUtSLmNprCzvGSc+ErBDg1i2U1KyrBpefjqUBpoJzk9TjOlOAL4kdM4kMxGUThnu5azBNTHAATdQtUNQm8GIUWqpTu6Ja+2OGTnLQpNAqFStNC0Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758281631; c=relaxed/simple;
-	bh=75T08u8qjKkajcoNCXvCRvLQOrKx+TqhjvAhOjicwTg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NeQGWPbn3lo9Q81h8HpePn11lAozcDLyi5sozL5qC++8mf/jAYPxwz93EUt9CBPcKKMsRSt1gMgZ7Yh+GIrbinlkZQPlHgLKInfbnRVX3TEZsyvrpUxrRv1uPRqvcEzwvXqzpQ9a5pZj0nBQnOnS/iO+Zg0ma+diOC7Q3vAlhnI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Ji/BJbBI; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58J6FuUF2080084;
-	Fri, 19 Sep 2025 04:33:19 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
-	 bh=bd0LCvQ78gHNrp1Kat68g6fiUZy0wFvY8BWZVXR9DBc=; b=Ji/BJbBIs1nj
-	4Jl8D11jlXtof1TSjyXIiXzlof8Y7jR+5pllHh4Ykjf+MjOHGYu+8imJxaDTSeoX
-	ozCIkhoweaZQl0Ab7TWz7mN3DR8d8uusSNaYSjEb7uohCLYz6giOhwuUKjtIxZgj
-	xnV5SeOupY/ctz+qtomu96VG8GsH7DDqeqqGq15lQ3IVfe0i4w/Hd3VnWeZtWxoR
-	Z+fHuC33jFINmKLA3OyJRwGeY4hCTRNeKNTy4WAcxwyOFtOC6kb91x51l62rQBCf
-	OBVbiIpHEoYpcIOr7nGwBD0gOSBgU9os+x6p6NJxtQP6eqFWbl3tG8aKPwpmg7j0
-	FFm7Ox0sZw==
-Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010008.outbound.protection.outlook.com [52.101.56.8])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4991rnhh43-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 04:33:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mIUA6ee5bEBNfPSvzIgoKWmfQgHA3j9POIH+MsCSnlJQIAQ2TQ1KbXjShI3Wa0dm1GD437fe/0r5izVWZBzTgCfV/vifq4wUTJgWO2gYzun8knOA4tp0V30ZAVRSkrt177Cyt5fSQabk68pC8WCKD2yX6UyuFcNNtl4a066Dg/CNlaXzHekySOxDb4espBACt4gVvP4YIOUB9zbAPegZvHTjy73X1gWgaCI681zls3frHDa5m5jgtb1kFxz1zi63TiABeGVSwSTBdkrmv43T0vx7GF2HdJJCummRJogRneTY+lWqIjWy/APIuE7f1R4zwGyINfkzUD06+9wGDic5UQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bd0LCvQ78gHNrp1Kat68g6fiUZy0wFvY8BWZVXR9DBc=;
- b=dBnQ+dU1D8isW3wB8i0tXpobN0TEoMS38tr3xKsyoharN79k6mtv9v3bfNKpO2ADU6Ahu9RnzhSX0w8dq9jx3sGr6HVvaDxqZK1k8gD2u7QIQUGBNEM9EqjtPJY8/uuhHfcuqMAbGLUWwbyP/bABawZmHqsT8/bQQDIiDboTEDMutHGI+lLCDXFF36/+DMl4mCsFX1W2JxufDMos5UVEwg35KtnGpOZdPdUKxTmIKTNBLW++MKHnfDlIxzkow24nMgZwVyM6XbOGqAjzpianE2qj/HVyBZ5n8uPnMxU9N39aR0LhT1acA7xBp1sDytXd7APJ/pSMMvd7vxAicAN+Qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
- by DS0PR15MB6144.namprd15.prod.outlook.com (2603:10b6:8:117::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Fri, 19 Sep
- 2025 11:33:17 +0000
-Received: from LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::8102:bfca:2805:316e]) by LV3PR15MB6455.namprd15.prod.outlook.com
- ([fe80::8102:bfca:2805:316e%4]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 11:33:16 +0000
-Message-ID: <21e6367f-7082-4b9e-8562-3d498abb629f@meta.com>
-Date: Fri, 19 Sep 2025 07:33:06 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 05/15] mm/migrate_device: handle partially mapped folios
- during collection
-To: Balbir Singh <balbirs@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        dri-devel@lists.freedesktop.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
-        Matthew Brost <matthew.brost@intel.com>,
-        Francois Dugast <francois.dugast@intel.com>
-References: <20250918164213.2866702-1-clm@meta.com>
- <5e4af716-e4ed-4c03-9ba9-6242977258d8@nvidia.com>
-From: Chris Mason <clm@meta.com>
-Content-Language: en-US
-In-Reply-To: <5e4af716-e4ed-4c03-9ba9-6242977258d8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN9PR03CA0271.namprd03.prod.outlook.com
- (2603:10b6:408:f5::6) To LV3PR15MB6455.namprd15.prod.outlook.com
- (2603:10b6:408:1ad::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0153081DC;
+	Fri, 19 Sep 2025 11:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758281611; cv=none; b=Q/x2N1pihTOTS0/OS3jn6OsV9R2u2NAqW2U9hsF0agsrEFc28MVyVXRL5jOyKx4Ff7Ja98UTqbrOWZSS1KqoGbttYelVtrpkBA+QEh7JLC9ilpSAPBbv7yZGlXNwpvwQOnuYWs0priLeETsr+TpvqYxUh48kA4XUydW7+IS/lB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758281611; c=relaxed/simple;
+	bh=/4VwWOhjauXsfY9ntn6Ue6xTcnqRGvf9YDxTB/1IvnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=owfb6AELCC8NSEUgt5iQ+J4TMdz74S85hf0G2CGrKGl0k4QEIcNGa2QbBQFheYYuXtpMrS9ZZKPgv/Hwf5tHFZw37sdvYFBoH4kp+66gSuDETWnhNxv7U9qebiJi8ZZWqh4Gows6PtJk1k/1vubBCThzMC+c310110Sydf2HjN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kZMEdtLt; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758281610; x=1789817610;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/4VwWOhjauXsfY9ntn6Ue6xTcnqRGvf9YDxTB/1IvnM=;
+  b=kZMEdtLt3gYK6S09/mMz83d8e7qDY8vZIgyS1TvAqYz72TyY6jnMbGgq
+   OxNo6Vdo258QTs5GXUVLgtWllexXDYSGaKgbcCIJjkbLh0rixudW/p5Za
+   egA6haHYNmUM3eyF6ZmleTFIt+g0xklaWIYIhKfW9eCX102cPlmO3GPzR
+   PN8nw1Hq8sh1rWWcR7A+eNCyRO3YfrGERUQ05lmiNvbqkotnSmz+k2KvD
+   HaPnYOHrdHGJ4xTfzEfNMLKMH1NGOlbk4bzt/ilf8dxJl+KjKbH1LxU19
+   aup5xydgjj6oIo8r1X+Ba6Qz2Crg7bv9RPaPC4XLczU2fktMRfXrxeaZb
+   w==;
+X-CSE-ConnectionGUID: bMYBvhkISmiPK9G1UY758A==
+X-CSE-MsgGUID: gGmdEbwYSvi36s7nG+cj9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="83229907"
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="83229907"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 04:33:29 -0700
+X-CSE-ConnectionGUID: IKqascKySYqe3W1E8Eb0Bw==
+X-CSE-MsgGUID: lA89En3tSYqfh8/binHCHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="175372304"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 19 Sep 2025 04:33:26 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzZMh-0004Fr-1r;
+	Fri, 19 Sep 2025 11:33:23 +0000
+Date: Fri, 19 Sep 2025 19:33:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, dhowells@redhat.com,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512,
+ SHAKE128, SHAKE256
+Message-ID: <202509191938.PrHY82Kd-lkp@intel.com>
+References: <3605112.1758233248@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|DS0PR15MB6144:EE_
-X-MS-Office365-Filtering-Correlation-Id: 269f1ae8-2c5d-4ad6-58e3-08ddf770539c
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b25iaVdKdHUxUHBvU04rSHd6Z2xHN0FkSTFSSnlCL1h3TkNJMmFUdWs3emRk?=
- =?utf-8?B?aFgxaVY4cnQ3d0xLdDJuMlNVTm9OcTY1Ykp4L3pjcmxaTTNsQWZkWW9WUWlT?=
- =?utf-8?B?dWM5b2wyR2VKV1RlaWsrQ3VDRHdZNFhuUkxmWmRvVG9GV3R4d0tGaHBNOGVU?=
- =?utf-8?B?OEdteGhDZ09neCsxZDYrVVZrNUZyaFNZZUcvWUoyYjNIUWNoTjNyM1NmUk54?=
- =?utf-8?B?Y1R2bXZISmJVWTRsd0dham50cGhmNkdORTBtQ2pZajBZcmY0OFZwSGVHTnhY?=
- =?utf-8?B?cWtNYnVob1RyK0I1Y0QramNsVHFFa3FuSmlQWW9ZZnRGTU1DL1RNTlpsMWl1?=
- =?utf-8?B?ZEkzOHZpS21hdjcweDhpcDMvNVovMHBoVFpnREh5bTRsQVJvckpvbEhjaVh3?=
- =?utf-8?B?WTZKeDQ1Q29zL3JndWw2VVpOcllYNkVBc0RoTEdQZHR2UStMY1Q0aXVwS1BN?=
- =?utf-8?B?T3FnNEpnVm5KbzB2UXl5cktJU001TFB6NEtwUjNKZnNkeUpzWkpMbkxtQWc3?=
- =?utf-8?B?NENsdDJVVlo0UDVsOC8yVWRMMU1ZcXgyTmYydzNiYWJQU2lKTW1CUHBXMkVF?=
- =?utf-8?B?R21tU3JOWWR5UlhpWEpsUEg2U0hhVW1sc1IrZU9SVkpzd1oydHY4bHVxNHRJ?=
- =?utf-8?B?YTUwaEJrNmhUYVFYN0svdWhidGZKeFovRlBYZVV2OTBvYUtRTWpEUWNsUVk3?=
- =?utf-8?B?L1RiV2ZxUk1BR2MvS1hMQnpsREFkRTgzOUFGOVhqK2NuYTFpYkErdHNJblBq?=
- =?utf-8?B?dkZtdDZ3NnE0UStoSEhrMitDVkNJREtMMW5uNXVaMHo4WlRyTFhGU2VhNFYv?=
- =?utf-8?B?ZVhxOFVacXdJRmJ4TXA1UFFHSDlKc0kzMHE0blRDdVljUDJMMWwzVzdRek5S?=
- =?utf-8?B?UHNJcUpUYnNaWGQ4dG01UVpFZ2pnWEtSUmFwYVlrNW9EdmlhUHAvZ0VTY3Zp?=
- =?utf-8?B?WUk4RUdiTUxSaFE0KzMyM0RrZS9VUVVnejdDU204ZHhvUDVTVmVxNUJ0RzEz?=
- =?utf-8?B?ZUV5bG5MMWVIbkd6UVN5bXlSSXVBNUhLemRTZDV6Lzlubjh3MzcvRDBjcTFC?=
- =?utf-8?B?M0dTbHlqVDZUSEtBc09hRGlrWno3MTRVQ1BhTEE2Y1ptbVZXQ0hUS3pTZldE?=
- =?utf-8?B?V2p1aVYwQlY0UXFydWhWTVliL0pHUzRaQjRQWDhiUW9ISmVrQVFjbElzSW82?=
- =?utf-8?B?UFoydGlIMmlQNzYxdFQvTVcxMDZERXlTTjVIVmdJN1dkRFo1L1lQa1lpRzhQ?=
- =?utf-8?B?SG90ZTBlVXZENTJsaXJWRmNwTXZ4MGUyd3dTd3YvZHFFV2xNRHJHVEVBaTZW?=
- =?utf-8?B?MG5zTHJWTnR6UXVVaDNkbVg2cnlqbGRvZzF2Umo5dVQ2Q2o2dzVweVhnR2Ft?=
- =?utf-8?B?WWp1eUhEaGxyY0ZFS0NHRUhQV25mbjBGcGlFRFBoNmU0WFhFdGdLSE1ZSFdV?=
- =?utf-8?B?d1gyT2ZCNWd3SVAvOWxQeW1JWTFTaCswZGJLeHdmSC9pSDFTNjRqa1RTNUl1?=
- =?utf-8?B?NDVYb29maFFDSHZRZGJNYWl4VDdIYkxVVGx3S1lBU2ZYanBaZy8vTmxDWktE?=
- =?utf-8?B?QnlVSkYrRkpnQ3UrUDk1R2VKSkVBanlVcFQrTk84Mk1URUtUSDNvSjdTcHZR?=
- =?utf-8?B?cEtPK3oycm8rSGtYbHdEVWxhS3VqYVg5MmltM3NEMENKbko1RTN6LzR4dDM5?=
- =?utf-8?B?bCtBcmc1dnE3VXhvS3A4RGZ4bGxLQXBuUytxdldIOWluTHNQZ3V0M2ZGakw5?=
- =?utf-8?B?UjVkV3ZVTURmRVRyQy9jUktGZDEwVFhHRllpc2NDNEU4anBSK09xdmNGS2RP?=
- =?utf-8?B?YlpYRzBlU1RsQ0lJYk9WcGlhRFl2K2JXVm5FQVB2dW1vekx1UDdSOFZTWlh1?=
- =?utf-8?B?aXJ5MmNTcnQ1SU5mTTdpK3IrK0JVUjlWZEtiUXpLM2JRVFVFSUpVenJQWlFJ?=
- =?utf-8?Q?OM1JZR2Z0Dw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MGxGSnhlekJBMkg3NGdpV21RZFNoNTN3Y1dGSWVSbENvRFVhV2I0VGl4Ykhr?=
- =?utf-8?B?K0Q1Q1N3OTRieXZ1QzRkTVVvV1RDVlFJdUtuaVVCY0xzODBrT2VsSHJCQ2gv?=
- =?utf-8?B?QkxJQXJQS3lNaDRtTjRUeHpuNEZ3OWl4SDZvMytONDhnWEFHT242bHF2Zlpn?=
- =?utf-8?B?eE1UbzN4RWN1UDU3NHlxQnVveVdJT0RtZ29UY3FCVGg4SUkxK28wczArTDRp?=
- =?utf-8?B?S0l6RlB4R0d5TzIvckdmcjNvcFFmQjN5WVhOeHpucUxJSFpBQVN6TEZDWFN6?=
- =?utf-8?B?SW0zckJGUEc3UlJja0lkUGhZMnpQbzdPL3ZQT0RxZWpXakI3c2k0U2E1L25x?=
- =?utf-8?B?OE5kOEMrUUQ5ZldCOU5RSlh6NWRSZnRSc0hMMjcwZXpVMDFtS2MybUpnRnJO?=
- =?utf-8?B?K2JzNXR1L3REZ2hOWk0rdkZGRTJzbUxPc1FodVhaWCt5bnpjQ1pmVkhwQlBy?=
- =?utf-8?B?YnpHUjVoaW1BcmlESjFXTzFIRlZvV2RQRmpkT1ErVFpRZUQxMzlUNGk4VjVy?=
- =?utf-8?B?Ni9FY0lGRzF4Q0tNMWVsdXl4YUN0eExXMk9vR0FhNHZoQkRyTDlCTnZkUlRs?=
- =?utf-8?B?OHI4a1JLN0ZGaEQ3TjBtbzFJTHBIaHFVeWlsM0prM2NLTm83WE5UcWFrTnlo?=
- =?utf-8?B?MVh5d3B4L2VWOS9rS0NobTBiUitpbHJtckx5Vkx3T2hiY3R1T1huY1dub0Fr?=
- =?utf-8?B?bTNxRVlUUEY5T0dLaWM1aTcySkY2Q1ByamExN1BYSVRLcVQ5T0dOUnFaNkFN?=
- =?utf-8?B?MktFT2UrMnlwcmF5UFZ6RVoxVDcyZU9lbGtVRnNCVlV5cERNZGdTc1lWbG5a?=
- =?utf-8?B?ck85NzdmK1h4dnVkbGhjN01VaCttVVVIczlKeGhxWUFqZW1qUDRUcWdkcGV5?=
- =?utf-8?B?UHY3T3pScS9nakc4akZTWGFTT0ZWMHhMWGt4T0lsTjhpN0tmR3d4SkhGT1ZE?=
- =?utf-8?B?UzVKYUZFci8xcWVhM3g5THVNaElCSmNvV25vc3gwNVVVWDVoS1R1dUhWdUhF?=
- =?utf-8?B?eWlQMUl1bkxrdzNNYXl3eUNhRVB0anNLcnZJZUc4ZG5WaTF4czFxZmMzd3N6?=
- =?utf-8?B?T1VlOWQ2bm5uQllkNTBDemVjMzNwcHFma2FwZ01BTWNiaFFKWGtpVjB6eUcy?=
- =?utf-8?B?bUZkSFFoUVZocXRsTHZaOUpaNVpyS0Y0aFJpUThheXg2U1dOcm41RlFSdENL?=
- =?utf-8?B?VUZQRlJEaFdhMllBdWpuanllaUUzeVEzdDVNSkpJWXJqc1c2Z1Mrem8vbWhs?=
- =?utf-8?B?eE5vNmJiTFVOR3FkeGovSS9zdGhEOHRpMkZ2K3gwS2EyWWxSUGVsdjZXRUtr?=
- =?utf-8?B?Zk5DNzhaRUxCVHY0MXMvWUhqNEdyYi9mODNEblBXNHBRc25leU1KMjEybStD?=
- =?utf-8?B?WlQ5SkhmUGdsdUczL2c3RnAxdWZycDhNRFFzcXFwQUw0Q2I0b3JRSzlKUHAy?=
- =?utf-8?B?Y0NhRHhuQklRZCszZjluQlB0Zm1PYjF5eDBLOVk4bEdQVWJtdklxVndYVnNY?=
- =?utf-8?B?Z0wvalgvekpIejZZVEN0Qk5KMThycWgyd2V1MkQ0S0tBRlBJN09EclJuREQx?=
- =?utf-8?B?R21kRWQvWVY0QjFaRmN1NGw1ZjZzVGFrY1I3SkUzTUgvVWJhTlBnUGVhTHp0?=
- =?utf-8?B?Z3ljdFF6M3Jpd3h6bXNGQkJMaXRSQjN6K0srK1BWMjZDSkFyK3JQK0RQL083?=
- =?utf-8?B?a1RsZGpuQjJqbXZqZHpkMGdFdi9ZNSt1SVVMRDY5ZHpTcHFnT096M1BQcG52?=
- =?utf-8?B?MHFoQk5DZWJGc3pPYkIwbGVzSG9LcXZ0VjVxOE9wc1gvN2tpOGRYa3FWbUVi?=
- =?utf-8?B?TGt4WGdTVWZxWTN4bC9lVDVHVUgxbnU4L2xLR0cyalhCYUx1T0VxRDFjUC9T?=
- =?utf-8?B?NDFydzVkQ21wUnBkMDkvMUkvVG5yUmhxcDhxZVFaYUtUK3lPQjArVHV4N3Q0?=
- =?utf-8?B?Nk9qVVpzU29FdElLQks1bWd6aGEyN3hsQk5ZU3ZSTExMMXdvc28vZ01KaTNw?=
- =?utf-8?B?d2FjYWZRbUtnOW9OUHduTHk1Q2JTeHVqMkx2TUhGN3pmQXBqSlVMUmxXaGJP?=
- =?utf-8?B?dHB6cEplYWtnOVE1ZXhwdTlhckN4NU9Xd1M1SXVkRU5NSW9hS2NNaXpaSFY1?=
- =?utf-8?Q?ccuY=3D?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 269f1ae8-2c5d-4ad6-58e3-08ddf770539c
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 11:33:16.9175
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Pju9Ud1UY9f/Zao4Um97YaxGwJO3sQoJT3ItyngQ8DXv0dkWwXICIqI/5JSu0Ngy
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR15MB6144
-X-Authority-Analysis: v=2.4 cv=aqmyCTZV c=1 sm=1 tr=0 ts=68cd3f7e cx=c_pps
- a=UZZKR2DsB1PZv1vhPkDPDA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Ikd4Dj_1AAAA:8
- a=ZRQU4wQQffI-jn68eZMA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDEwNyBTYWx0ZWRfXxcACTtAAsVKl
- V62UOBa/iWYHui2PCOHpsjfgo2+8ipCyMX/aulxaIqucjieUqWm53WOb9k0KX5agj+jae4ZePKX
- IXDJUaeFZLFdjjt5UdMzXZBi9EVceLR/5Z9LyvaZ+Sfdbdghw82T2M+B3kh8h55NUyYTRNzMuXK
- i1QwkGy9yDbs3QUmMMVjizYt2emU5lzX6YVl/5SaCMcpm3gjtdoaetcvG425oYdn6FTOvUm1EPt
- MInZu1sG6AKqg1S1vy/c+3EIbdtZsSsfg7quz/Nb22ygSGoyRlBWvoi+nwJTJbx42zLC7IZGK6E
- UblWRKsE4+m+y3blkQwKlwBPfHNcmPt7xU9UqhxRjhN1UGOOTI/JP5e/YC7lQI=
-X-Proofpoint-GUID: uerNRN3zmzjLMCfh8HqpYs6LNJ0PGnLX
-X-Proofpoint-ORIG-GUID: uerNRN3zmzjLMCfh8HqpYs6LNJ0PGnLX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3605112.1758233248@warthog.procyon.org.uk>
 
-On 9/19/25 4:36 AM, Balbir Singh wrote:
-> On 9/19/25 02:42, Chris Mason wrote:
->> On Mon,  8 Sep 2025 10:04:38 +1000 Balbir Singh <balbirs@nvidia.com> wrote:
->>
->>> Extend migrate_vma_collect_pmd() to handle partially mapped large
->>> folios that require splitting before migration can proceed.
->>>
->>> During PTE walk in the collection phase, if a large folio is only
->>> partially mapped in the migration range, it must be split to ensure
->>> the folio is correctly migrated.
->>>
->>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>> ---
->>>  mm/migrate_device.c | 94 +++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 94 insertions(+)
->>>
->>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
->>> index abd9f6850db6..f45ef182287d 100644
->>> --- a/mm/migrate_device.c
->>> +++ b/mm/migrate_device.c
->>> @@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
->>>  	return 0;
->>>  }
->>>  
->>> +/**
->>> + * migrate_vma_split_folio() - Helper function to split a THP folio
->>> + * @folio: the folio to split
->>> + * @fault_page: struct page associated with the fault if any
->>> + *
->>> + * Returns 0 on success
->>> + */
->>> +static int migrate_vma_split_folio(struct folio *folio,
->>> +				   struct page *fault_page)
->>> +{
->>> +	int ret;
->>> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
->>> +	struct folio *new_fault_folio = NULL;
->>> +
->>> +	if (folio != fault_folio) {
->>> +		folio_get(folio);
->>> +		folio_lock(folio);
->>> +	}
->>
->> Can fault_folio ever be non-null and different from folio? Apologies for
->> not knowing the lock ordering rules but this jumps out.
->>
-> 
-> Yes, migration can occur in fault context or be driver driven
-> 
->>> +
->>> +	ret = split_folio(folio);
->>> +	if (ret) {
->>> +		if (folio != fault_folio) {
->>> +			folio_unlock(folio);
->>> +			folio_put(folio);
->>> +		}
->>> +		return ret;
->>> +	}
->>> +
->>> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
->>> +
->>> +	/*
->>> +	 * Ensure the lock is held on the correct
->>> +	 * folio after the split
->>> +	 */
->>> +	if (!new_fault_folio) {
->>> +		folio_unlock(folio);
->>> +		folio_put(folio);
->>> +	} else if (folio != new_fault_folio) {
->>> +		folio_get(new_fault_folio);
->>> +		folio_lock(new_fault_folio);
->>> +		folio_unlock(folio);
->>> +		folio_put(folio);
->>> +	}
->>
->> Same question here, do we need trylocks?
->>
-> 
-> Since we had the folio lock before, the assumption is that we can
-> still grab the lock after split and it's OK to wait, since this
-> is not a hot-path.
+Hi David,
 
-I think the lock ordering rules either let us take two folios without
-trylock or they don't...holding the lock in the past shouldn't change
-things?  The same holds true above, two locks + no ordering, one or both
-of these locking sites should deadlock.
+kernel test robot noticed the following build warnings:
 
-But obviously I'm a tourist here, and I need to refresh the review
-queue, so I'll move on ;)  Thanks for taking a look at it.
+[auto build test WARNING on ebiggers/libcrypto-fixes]
+[also build test WARNING on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250918]
+[cannot apply to ebiggers/libcrypto-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--chris
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Howells/lib-crypto-Add-SHA3-224-SHA3-256-SHA3-384-SHA-512-SHAKE128-SHAKE256/20250919-061024
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-fixes
+patch link:    https://lore.kernel.org/r/3605112.1758233248%40warthog.procyon.org.uk
+patch subject: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128, SHAKE256
+config: arc-randconfig-r112-20250919 (https://download.01.org/0day-ci/archive/20250919/202509191938.PrHY82Kd-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250919/202509191938.PrHY82Kd-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509191938.PrHY82Kd-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> lib/crypto/sha3.c:317:11: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le64 [usertype] *s @@     got unsigned long long * @@
+   lib/crypto/sha3.c:317:11: sparse:     expected restricted __le64 [usertype] *s
+   lib/crypto/sha3.c:317:11: sparse:     got unsigned long long *
+>> lib/crypto/sha3.c:319:36: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned long long [usertype] val @@     got restricted __le64 [usertype] @@
+   lib/crypto/sha3.c:319:36: sparse:     expected unsigned long long [usertype] val
+   lib/crypto/sha3.c:319:36: sparse:     got restricted __le64 [usertype]
+
+vim +317 lib/crypto/sha3.c
+
+   271	
+   272	/**
+   273	 * sha3_final() - Finish computing a SHA3 message digest of any type
+   274	 * @ctx: the context to finalize; must have been initialized
+   275	 * @out: (output) the resulting message digest
+   276	 *
+   277	 * Finish the computation of a SHA3 message digest of any type and perform the
+   278	 * "Keccak sponge squeezing" phase.  The digest is written to @out buffer and
+   279	 * the size of the digest is returned.  Before returning, the context @ctx is
+   280	 * cleared so that the caller does not need to do it.
+   281	 */
+   282	int sha3_final(struct sha3_ctx *ctx, u8 *out)
+   283	{
+   284		struct sha3_state *state = &ctx->state;
+   285		unsigned int digest_size = ctx->digest_size;
+   286		unsigned int bsize = ctx->block_size;
+   287		u8 end_marker = 0x80;
+   288	
+   289		sha3_absorb_xorle(ctx, &ctx->padding, 1);
+   290		ctx->partial = bsize - 1;
+   291		sha3_absorb_xorle(ctx, &end_marker, 1);
+   292		sha3_keccakf(ctx->state.st);
+   293	
+   294	#ifdef __LITTLE_ENDIAN
+   295		for (;;) {
+   296			unsigned int part = umin(digest_size, bsize);
+   297	
+   298			memcpy(out, state->st, part);
+   299			digest_size -= part;
+   300			if (!digest_size)
+   301				goto done;
+   302			out += part;
+   303			sha3_keccakf(ctx->state.st);
+   304		}
+   305	#else
+   306		__le64 *digest = (__le64 *)out, *s;
+   307	
+   308		while (digest_size >= bsize) {
+   309			for (int i = 0; i < bsize / 8; i++)
+   310				put_unaligned_le64(state->st[i], digest++);
+   311			digest_size -= bsize;
+   312			if (!digest_size)
+   313				goto done;
+   314			sha3_keccakf(ctx->state.st);
+   315		}
+   316	
+ > 317		s = state->st;
+   318		for (; digest_size >= 8; digest_size -= 8)
+ > 319			put_unaligned_le64(*s++, digest++);
+   320	
+   321		u8 *sc = (u8 *)s;
+   322		u8 *dc = (u8 *)digest;
+   323	
+   324		for (; digest_size >= 1; digest_size -= 1)
+   325			*dc++ = *sc++;
+   326	#endif
+   327	done:
+   328		digest_size = ctx->digest_size;
+   329		memzero_explicit(ctx, sizeof(*ctx));
+   330		return digest_size;
+   331	}
+   332	EXPORT_SYMBOL_GPL(sha3_final);
+   333	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
