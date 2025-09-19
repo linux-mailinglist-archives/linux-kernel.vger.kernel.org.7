@@ -1,144 +1,111 @@
-Return-Path: <linux-kernel+bounces-823793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4131CB8772E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:09:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B3CB87737
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06B6466CCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:09:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977A17BBC13
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2351517C77;
-	Fri, 19 Sep 2025 00:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D36A2AE89;
+	Fri, 19 Sep 2025 00:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYnzTn/R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eL8KQv8P"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C56D191;
-	Fri, 19 Sep 2025 00:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A37E26AEC
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758240559; cv=none; b=ca/w8v4J9sWb46XL7zw+9xwkncHieflBy6OFE/SJRpRT1cUu8EVeiNbGST0bK3Q4kqpUqd8q5svOr04xnZsfJwcVeJ3B91DiSXFxZiOgGd9EENiCeKsfvxzZHp078qiH3S18ZE7p7/VeDWd0v/Hma/8OEhxytQKF+AOvBIKUqOc=
+	t=1758240675; cv=none; b=n8rThiDwMmZDOykKvdStijJrECn4DKK4eH3nANrKMPY4sCYPKXoRGPkxYwvQnNfTx5MPUAOh8hPtpcLEzNN/vuYTFKLd/sc3J807v3s0QnbtTFbuKaKn/+Hq+Dkexpl3UHMr9yXfP1NNH9iPSpTf/xjOriQZBXuosK0Pk2OcCgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758240559; c=relaxed/simple;
-	bh=mbjZB92TxDhArcKXUR2GBPTMN3cns8vIOAZmwdr2MNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cbFn/Zjs6vusmQipIXtc/kwS2R0eGiau0DnihqVN3tc+7y6GXaH13bYwXgd4bjDYVmDIACcq2RO4KLa6rS82z0lz6KrC8zyguSx0pp8JtLbAHECp8JS5jKapXmOz4bpudMZ1o8zU9ZmOLwsrEC/ZV4u8CQxIFXGquyL5VYdNS8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYnzTn/R; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758240557; x=1789776557;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mbjZB92TxDhArcKXUR2GBPTMN3cns8vIOAZmwdr2MNQ=;
-  b=KYnzTn/RJwGdI6Ge5RUCmhQVf53tMIjodHuhpe6n8S70ftoAFtgt8UAX
-   78gTULawFVdCKQ+3dd0G2ytr3dENNH8uHbm+kBoC1zFuF19b2XrwPUa13
-   FvjFCftwRu58OJchJU7qNs8dfW6paocRiVVpJ/yHFQVO490zFqStLzh3R
-   QLkNH8Q64zhpLyWT99o3UCjmwdYSpBVkLS67zCqdgzvfZUeChZgTmHRm3
-   D1aJlR/gKaMEkev8EtcmGT3ANCwKspLVW4qDLLsty4kfzfuDVmtufKvyB
-   KswX4CNse2W2pmqh05Fkpi9zW8KF2i3a1pKxoOCP7UGYQVvjqorJ7ZlYv
-   Q==;
-X-CSE-ConnectionGUID: wAkNc017TdaUD4B9WcaiOQ==
-X-CSE-MsgGUID: fsjCW0ZjR06nqNnmfsxwjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="64405196"
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="64405196"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 17:09:16 -0700
-X-CSE-ConnectionGUID: HyOZ2EEeQti+glqJKoTEoA==
-X-CSE-MsgGUID: Gk1Q12HRQQK7CJv18XI3VA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="175749657"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.177]) ([10.124.233.177])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 17:09:13 -0700
-Message-ID: <aea7c0f4-e951-484a-962d-f3a9b5b26b57@linux.intel.com>
-Date: Fri, 19 Sep 2025 08:09:08 +0800
+	s=arc-20240116; t=1758240675; c=relaxed/simple;
+	bh=5kZbjwa/6BVoxn5wegMROAiVV9lXMCurcroc08yFVco=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=X5Tf1C/xpnPSHbErXTRQwJAPtT4OSuXK9E9GKW3LYZgVzbsE5IKiWv4aXhJUUmMDUzdUU5QpjO1huzY8XUZj2DbBUYFQU3Fl4B/GhoQBWQURYtECEz8YLO3VMQU5VkAzW/NLplpBwmrrVcLCGkmFbL+w74AXKCbmmMZSoc/pPwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eL8KQv8P; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3304def7909so1504022a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758240672; x=1758845472; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDq+VavY2pE4pyHZXsVu7LM0OhcCfDkB6zYweV3fNcw=;
+        b=eL8KQv8Pstu8SY7UNwZbUO08qZHz+zeR7DquqpSOJDAHBtzGIC6g+cleyHShEfubb6
+         pucUJRKpSR3mBhJFG7YBfaXDLSy4Qi5NQUZ5Ku6GjJjKW1A78e23OBBwtFOH+avA+S1p
+         6aydHGj/mTV5nIEXt49JmK+zjQ5vEDsTJCvQVuBFJWhqrmtFk6u7r5O2yFOTYXI3+SJv
+         lOPjOstzBuZ3wDNDn6y5bAPpuluaRhikHKAF8gjDWl+l4he0fNOnJBboFGzn7Qw2W8Oo
+         LFdELRU493AOlsY9+oVqsartGnLOOiKQ+4y40Dqt2ZC3kDsYs0lUYQXnLr80qFRjWg3J
+         xIgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758240672; x=1758845472;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDq+VavY2pE4pyHZXsVu7LM0OhcCfDkB6zYweV3fNcw=;
+        b=d5GjcaGAbj6Mtr4oR0IPaO1l+wHK8c3C5a2631OwCNlhTE4W+6VGmcT+xFmZDZ1qZW
+         e0O+3EM1zcWQ1VVv45O7KRy8xvj8vfeo7IJAXx5IsfPUFZqcojoOFHVKbLAme0fWC6IS
+         THVDwWtBMOVjf3Ow7I9plEBtOE9ZyhF0/IB/Pz1Ygkc+vuD2RSo23wvrFJbSlb7B6ftZ
+         HVKzGrxlfPub3ga5JEl28WYEcK/PBUvO0HDyhqvTBhpVNsYNaOnw3rE8/313X22fW9mx
+         02xK5559Jg2JjVntajHGwoHQr59Qzl2D2/trQVFUP3MxGNNwMEbafXez7QYb3kVsoNvR
+         ylJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmg53QlcPaY6VGz7jENtFzdS28RNmgYEVcJdJrkNMcFwf2PNS2b8EG1CgA11QBAQrqnAxnnoPJGcbTjH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLFbBuhJvyUQsTziR8QRt+rW+2cIT5ie8YoHt0+6JvXNa823hh
+	K5Krix7sJwtCKyrzgP6ek5q8XtjUCKUdG7bcwDFrqlaHWoE31N2/qytJ9COgFx8iRzmLeOFTbsU
+	2e0qvmA==
+X-Google-Smtp-Source: AGHT+IH/rnw53WJfJ7eWmpB7rOT94jvdcHNYPMI0N+5Kli3XKXZCk6CSFlJKKvZxXUFlpHPnz2Wr4v6yW/M=
+X-Received: from pjbpl18.prod.google.com ([2002:a17:90b:2692:b0:330:6bbd:f57f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:da8b:b0:32e:3552:8c79
+ with SMTP id 98e67ed59e1d1-33098369dcdmr1600058a91.29.1758240672393; Thu, 18
+ Sep 2025 17:11:12 -0700 (PDT)
+Date: Thu, 18 Sep 2025 17:10:48 -0700
+In-Reply-To: <cover.1755721927.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
- <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
- <189e060b-207b-469f-9b6e-314380d12a42@linux.intel.com> <aMxkqnXdrvv9BN8s@x1>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <aMxkqnXdrvv9BN8s@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <cover.1755721927.git.ashish.kalra@amd.com>
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <175824019789.1343495.7167726134042080248.b4-ty@google.com>
+Subject: Re: [PATCH v9 0/2] Add SEV-SNP CipherTextHiding feature support
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, corbet@lwn.net, pbonzini@redhat.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	thomas.lendacky@amd.com, herbert@gondor.apana.org, 
+	Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: akpm@linux-foundation.org, rostedt@goodmis.org, paulmck@kernel.org, 
+	michael.roth@amd.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
+On Wed, 20 Aug 2025 20:49:45 +0000, Ashish Kalra wrote:
+> From: Ashish Kalra <ashish.kalra@amd.com>
+> 
+> Ciphertext hiding prevents host accesses from reading the ciphertext
+> of SNP guest private memory. Instead of reading ciphertext, the host
+> will see constant default values (0xff).
+> 
+> The SEV ASID space is split into SEV and SEV-ES/SNP ASID ranges.
+> Enabling ciphertext hiding further splits the SEV-ES/SEV-SNP ASID space
+> into separate ASID ranges for SEV-ES and SEV-SNP guests.
+> 
+> [...]
 
-On 9/19/2025 3:59 AM, Arnaldo Carvalho de Melo wrote:
-> On Thu, Sep 18, 2025 at 07:52:43AM +0800, Mi, Dapeng wrote:
->> On 9/18/2025 5:12 AM, Ian Rogers wrote:
->>> On Sun, Aug 10, 2025 at 10:56 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->>>> his patch-set fixes perf kvm commands issues, like missed memory
->>>> allocation check/free, out of range memory access and especially the
->>>> issue that fails to sample guest with "perf kvm record/top" commands on
->>>> Intel platforms.
->>>>
->>>> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
->>>>  default event") changes to use PEBS event to do sampling by default
->>>> including guest sampling. This breaks host to sample guest with commands
->>>> "perf kvm record/top" on Intel platforms.
->>> Huh? That change is:
->>> ```
->>> $ git show 634d36f82517
->>> commit 634d36f82517eb5c6a9b9ec7fe3ba19dbbcb7809
->>> Author: Namhyung Kim <namhyung@kernel.org>
->>> Date:   Tue Oct 15 23:23:58 2024 -0700
->>>
->>>     perf record: Just use "cycles:P" as the default event
->>>
->>>     The fallback logic can add ":u" modifier if needed.
->>> ...
->>> -               bool can_profile_kernel = perf_event_paranoid_check(1);
->>> -
->>> -               err = parse_event(rec->evlist, can_profile_kernel ?
->>> "cycles:P" : "cycles:Pu");
->>> +               err = parse_event(rec->evlist, "cycles:P");
->>> ...
->>> ```
->>> isn't the precision the same before and after? I think you've blamed
->>> the wrong patch.
->>>
->>> The change to use cycles:P looks to come from commit 7b100989b4f6
->>> ("perf evlist: Remove __evlist__add_default") but the old code was
->>> doing things like "evsel->precise_max = true;" so I think I was just
->>> carrying forward behavior. The use of precise_max comes from commit
->>> 4e8a5c155137 ("perf evsel: Fix max perf_event_attr.precise_ip
->>> detection") from over 6 years ago, and the behavior before that also
->>> appears to have been to use the maximum supported precision.
->>>
->>> Apart from the blame and commit message being off I think the change
->>> is okay, delta my usual complaint that weak symbols are the devil's
->>> work.
->> Hmm, yeah, you're right. Thanks for correcting this. 
-> Hi Dapeng,
->
-> 	Can you please fix the patch descriptions and Fixes references
-> and resubmit?
+Applied to kvm-x86 ciphertext, with doc and comment fixups.  Thanks!
 
-Sure. would do. Thanks.
+[1/2] KVM: SEV: Introduce new min,max sev_es and sev_snp asid variables
+      https://github.com/kvm-x86/linux/commit/d7fc7d9833f6
+[2/2] KVM: SEV: Add SEV-SNP CipherTextHiding support
+      https://github.com/kvm-x86/linux/commit/6c7c620585c6
 
-
->
-> - Arnaldo
+--
+https://github.com/kvm-x86/linux/tree/next
 
