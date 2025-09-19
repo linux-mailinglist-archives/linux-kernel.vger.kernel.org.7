@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D16B8B859
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:42:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3ECB8B853
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0741A01D7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4BA1C2408F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C81302759;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A740D30217E;
 	Fri, 19 Sep 2025 22:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wDh+FfMy"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mEjFZMh4"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626CB301480
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699C73019C4
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321248; cv=none; b=iMD++V7AMTauwQhNFQWaGHi2X4aIBxgUckC8dKEAhCyj6wRUAyadYEPVOM1JN+U84++F5Dab9TG2jF53SLH2XxYV4ibex9OA95t70CTo3Ev2L1IXspejOvDCGzmwdPE6UDd3s46srQ4Vcj0TjrE4UlbiXMFEzxh35QUqwV8nF20=
+	t=1758321249; cv=none; b=soxTFcdQIoMRZe2emm3EWm0Vb6k4xupwPbXzVNcqyTyAU1dfP+0LJLpTD167Zsbix++K1LKSwsLdbhlkXiKHCU0fapdWX3991U09dUlGv8kIyF+aRNY07bOPFaAkgiTN22/IZWY3aNbGHie3qZ3m2KA+xYT27E3NiJu9rusVyxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321248; c=relaxed/simple;
-	bh=t14sguRWljpbl7x4nvgbWsnJaQOC/jqzlJugxV5H0AE=;
+	s=arc-20240116; t=1758321249; c=relaxed/simple;
+	bh=q6umMK6qW+JPWfNi7ZBDx+lHcmQ5ye31wZcLqFrPb/Y=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aHKSkxSX/FE9PFjWsAz40YHMCKxPSlz97YbvAZ9Iw3DMAFJQTuiLzRRS8Z79I7mQkFyFKiQoRbU+YGN4zZtYCsm8FlbQk12k/4OVqzguY/sAgPE7L57zkrMNVtWc5q9ibl3E7QvILQV5SoKMl2oIlXTExp1MccFDpyRqSvvLNHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wDh+FfMy; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=m82frVFWBJ1AniNmSFNMZeWe/wuYIZeR9eOxx1IrADrpwDnj30tlKdtjPLSLRiIAXhh7/E47OKCP9AIBif3QIL3D/8VpypzitkCObkwgfgn2xdmAVT8/Nr4UCG4yA6U+viuyi+606YxMp9P7C78WJqKEEQRBylsWHJeGVtmqxVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mEjFZMh4; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ecab3865dso3457329a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:05 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-269af520712so22174695ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321245; x=1758926045; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321247; x=1758926047; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=38k12Bd4Ltq5t6WJvitV23HrIZaBz9pCtNZ8LdkHjgw=;
-        b=wDh+FfMylG5pg663/rc/BA7rbgH17VADKdJMcHM+Tgrdo2kTsOB6Cw2eQTo+yxo1xY
-         tbwwNyn0xBpsZgmBIQObXxZI5IA1No7I9Gsqh5/oXSxnWYDwg3sexMKeHk2dAzHWfdq5
-         A6ckT43CTSQ/4rKokQlV6+dJOXWwlFHdcoFPzZ0WR9DvF7bpTYaVdCZ/mJh4BuTu/EbN
-         zqaRLk9N/BnpFCUfpRNHE86VPNLOlf8caKIiuqeA73jNaY1qt1YtaSDEXr61FvGTWq72
-         tutJbBAMS2KxPH0OG16Ca2Kn4R5FUN8sTMvRnFIcfu0ayQ+jGvfkqfSD3ok80ChT5cHL
-         973Q==
+        bh=jwjFFCg0dTIdXUahdn/F9Z3j7jQ6PDvcYGKOHRJDRJk=;
+        b=mEjFZMh4z8PcQStuDd51JX5C8tXJiHgrgA88Ud4I6tparAeSEIMADaTr5VMvsxc4CG
+         Rsg00W+iEf1pFkTRJ6logERhD1gnByxZ9Ywxjoo/5/E6M9uDCntj74Zo6uyR9UtqQgk7
+         CqMhxnz5TYR8wKdgnPcOeFpY9akkxPBK+Idv+PYDdo5f/5jqPCC/MHwN3JJ7gC8mFvAG
+         uTharGTBy08ukDabUhZJH1YKK7FwBMAZenVNMuWX087MufVDeonHzfIXN9gn/GY/78Wl
+         2GHJXWxvKhpuos3Ekgb0DQa30BcI0dI1uU+d8KMOgmr9HoF6UsU3oZVXmP4y0GPwR6vn
+         U69g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321245; x=1758926045;
+        d=1e100.net; s=20230601; t=1758321247; x=1758926047;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=38k12Bd4Ltq5t6WJvitV23HrIZaBz9pCtNZ8LdkHjgw=;
-        b=TOhLsCbkDbYn3pvtT+pill2Yzf8OEum4HaQvOT0q5raIkHuki0hj2yjA7na20/e8vD
-         mzqFVz3ynPoIiq7Z0mQqiFXJerwzPF4VpqwVpjb/g9jizhcIV/6jPoIeipdwOesttO2z
-         tfCBGtIcuWKk3NYZCWX0QTV0UejsiLcg+LSA/XFZ0bX4vsaGpLjqDik/VxZU18qHKMIS
-         rFzJJBXakrPdfwDn6KBXS3P5p1rDKQVr99AGt63pwV8qhGcaaTdJW52GmF0Su1VBNbNR
-         A+XMXebfzDMV5xRiq2LokW+oXoBqOX+iDNwuYvR7cJXvTL/c7jpxEnFOdb54sSEkLMQX
-         zMYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6P92qoWnVct6FuAMZUZYJgEj+KahRDBWz1QGG3huKHnKv6umQOrUPd3r55moB7XEw2Auldi80GMm+Bc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiFKAuK8BlQvSCJE/MWEi8FiqHes6sqpi/RKQ95KaOp9gehOCD
-	kQ84p5OPEjPBWkDRBjCEeRQ7b5bH0oTPxjvMeqJRt62EBOCr9Ca/ZQCn8SR3ZzhpId4egh4EpCy
-	LCyqq6Q==
-X-Google-Smtp-Source: AGHT+IEHgK1RX3CwRx4iZWkfe3lI1+6XS8c26tUS4D9me1aiyAiWrL58aS/PovAB1NZkX/+qh9S5p+eBL7s=
-X-Received: from pjbmf6.prod.google.com ([2002:a17:90b:1846:b0:32e:bd90:3e11])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b11:b0:32f:98da:c38c
- with SMTP id 98e67ed59e1d1-3309835fe90mr5750041a91.26.1758321244658; Fri, 19
- Sep 2025 15:34:04 -0700 (PDT)
+        bh=jwjFFCg0dTIdXUahdn/F9Z3j7jQ6PDvcYGKOHRJDRJk=;
+        b=Vhj5NfSdX/8Jge1pVKwikKaVsQkng3npy0NuVYmd/kgaag7GG0ZIORvimgneRPUo//
+         MiXwSTjJjdCktX3ZmIODjcSmWqUMOZiPRxfbDiy62cGRYhg+mYWKCQqkzeEr0iQX0AoG
+         ar9uTSh/ICyx6Ttkic7MRbhDI24mf9ZNNClFCBPu7qrtzdMYnW2ETusPqGxK+dztk0Oe
+         3vKP8YFcW1YBsWZUkT/MZSBIyRRahS7Drn4mEsuYShYaOePi1su7IBL1zRCxbZnY/TnP
+         SmqbuFWN4QR27aOjty7CqQs7yDziX0UhWEdGgcOGVAzSXc8/S8GKIgIJRx9690J3Yjxx
+         nTAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWciE4yxMRgvTNlZp4UcSfaeGF9XkIjM6CjKvqPLPosGR1hG56fbefW7WfCFTvXjGR9NGuD/MXx/mhmqQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydmd/+VNJ1pr2fo3IWu2F8iaCtRRVV/9kCZCKseUBieG53gGvE
+	+cGTQvb53uy7GULnng15k/RaXzUNv9S+r1kU7556F+R94KmvWLqI1nQXbYuWZDbQmVkG5qiWxqV
+	RGR0HTg==
+X-Google-Smtp-Source: AGHT+IGC4ec144TqZsVwl31X4iIc+jUWFa9rB1zY9Uxm0DUf1TDCRwL54bqXZIygdGVad++/qbIZMsJ1wFk=
+X-Received: from pjoo3.prod.google.com ([2002:a17:90b:5823:b0:32d:a0b1:2b03])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d50c:b0:26e:49e3:55f0
+ with SMTP id d9443c01a7336-26e49e38a46mr27196105ad.16.1758321246864; Fri, 19
+ Sep 2025 15:34:06 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:40 -0700
+Date: Fri, 19 Sep 2025 15:32:41 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-34-seanjc@google.com>
-Subject: [PATCH v16 33/51] KVM: nVMX: Add consistency checks for CET states
+Message-ID: <20250919223258.1604852-35-seanjc@google.com>
+Subject: [PATCH v16 34/51] KVM: nVMX: Advertise new VM-Entry/Exit control bits
+ for CET state
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -89,117 +90,66 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Chao Gao <chao.gao@intel.com>
 
-Introduce consistency checks for CET states during nested VM-entry.
+Advertise the LOAD_CET_STATE VM-Entry/Exit control bits in the nested VMX
+MSRS, as all nested support for CET virtualization, including consistency
+checks, is in place.
 
-A VMCS contains both guest and host CET states, each comprising the
-IA32_S_CET MSR, SSP, and IA32_INTERRUPT_SSP_TABLE_ADDR MSR. Various
-checks are applied to CET states during VM-entry as documented in SDM
-Vol3 Chapter "VM ENTRIES". Implement all these checks during nested
-VM-entry to emulate the architectural behavior.
+Advertise support if and only if KVM supports at least one of IBT or SHSTK.
+While it's userspace's responsibility to provide a consistent CPU model to
+the guest, that doesn't mean KVM should set userspace up to fail.
 
-In summary, there are three kinds of checks on guest/host CET states
-during VM-entry:
+Note, the existing {CLEAR,LOAD}_BNDCFGS behavior predates
+KVM_X86_QUIRK_STUFF_FEATURE_MSRS, i.e. KVM "solved" the inconsistent CPU
+model problem by overwriting the VMX MSRs provided by userspace.
 
-A. Checks applied to both guest states and host states:
-
- * The IA32_S_CET field must not set any reserved bits; bits 10 (SUPPRESS)
-   and 11 (TRACKER) cannot both be set.
- * SSP should not have bits 1:0 set.
- * The IA32_INTERRUPT_SSP_TABLE_ADDR field must be canonical.
-
-B. Checks applied to host states only
-
- * IA32_S_CET MSR and SSP must be canonical if the CPU enters 64-bit mode
-   after VM-exit. Otherwise, IA32_S_CET and SSP must have their higher 32
-   bits cleared.
-
-C. Checks applied to guest states only:
-
- * IA32_S_CET MSR and SSP are not required to be canonical (i.e., 63:N-1
-   are identical, where N is the CPU's maximum linear-address width). But,
-   bits 63:N of SSP must be identical.
-
-Tested-by: Mathias Krause <minipli@grsecurity.net>
-Tested-by: John Allen <john.allen@amd.com>
-Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 Signed-off-by: Chao Gao <chao.gao@intel.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/vmx/nested.c | 47 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/x86/kvm/vmx/nested.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 51c50ce9e011..024bfb4d3a72 100644
+index 024bfb4d3a72..a8a421a8e766 100644
 --- a/arch/x86/kvm/vmx/nested.c
 +++ b/arch/x86/kvm/vmx/nested.c
-@@ -3100,6 +3100,17 @@ static bool is_l1_noncanonical_address_on_vmexit(u64 la, struct vmcs12 *vmcs12)
- 	return !__is_canonical_address(la, l1_address_bits_on_exit);
+@@ -7178,13 +7178,17 @@ static void nested_vmx_setup_exit_ctls(struct vmcs_config *vmcs_conf,
+ 		VM_EXIT_HOST_ADDR_SPACE_SIZE |
+ #endif
+ 		VM_EXIT_LOAD_IA32_PAT | VM_EXIT_SAVE_IA32_PAT |
+-		VM_EXIT_CLEAR_BNDCFGS;
++		VM_EXIT_CLEAR_BNDCFGS | VM_EXIT_LOAD_CET_STATE;
+ 	msrs->exit_ctls_high |=
+ 		VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR |
+ 		VM_EXIT_LOAD_IA32_EFER | VM_EXIT_SAVE_IA32_EFER |
+ 		VM_EXIT_SAVE_VMX_PREEMPTION_TIMER | VM_EXIT_ACK_INTR_ON_EXIT |
+ 		VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
+ 
++	if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
++	    !kvm_cpu_cap_has(X86_FEATURE_IBT))
++		msrs->exit_ctls_high &= ~VM_EXIT_LOAD_CET_STATE;
++
+ 	/* We support free control of debug control saving. */
+ 	msrs->exit_ctls_low &= ~VM_EXIT_SAVE_DEBUG_CONTROLS;
  }
+@@ -7200,11 +7204,16 @@ static void nested_vmx_setup_entry_ctls(struct vmcs_config *vmcs_conf,
+ #ifdef CONFIG_X86_64
+ 		VM_ENTRY_IA32E_MODE |
+ #endif
+-		VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS;
++		VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS |
++		VM_ENTRY_LOAD_CET_STATE;
+ 	msrs->entry_ctls_high |=
+ 		(VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR | VM_ENTRY_LOAD_IA32_EFER |
+ 		 VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL);
  
-+static bool is_valid_cet_state(struct kvm_vcpu *vcpu, u64 s_cet, u64 ssp, u64 ssp_tbl)
-+{
-+	if (!kvm_is_valid_u_s_cet(vcpu, s_cet) || !IS_ALIGNED(ssp, 4))
-+		return false;
++	if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
++	    !kvm_cpu_cap_has(X86_FEATURE_IBT))
++		msrs->exit_ctls_high &= ~VM_ENTRY_LOAD_CET_STATE;
 +
-+	if (is_noncanonical_msr_address(ssp_tbl, vcpu))
-+		return false;
-+
-+	return true;
-+}
-+
- static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
- 				       struct vmcs12 *vmcs12)
- {
-@@ -3169,6 +3180,26 @@ static int nested_vmx_check_host_state(struct kvm_vcpu *vcpu,
- 			return -EINVAL;
- 	}
- 
-+	if (vmcs12->vm_exit_controls & VM_EXIT_LOAD_CET_STATE) {
-+		if (CC(!is_valid_cet_state(vcpu, vmcs12->host_s_cet, vmcs12->host_ssp,
-+					   vmcs12->host_ssp_tbl)))
-+			return -EINVAL;
-+
-+		/*
-+		 * IA32_S_CET and SSP must be canonical if the host will
-+		 * enter 64-bit mode after VM-exit; otherwise, higher
-+		 * 32-bits must be all 0s.
-+		 */
-+		if (ia32e) {
-+			if (CC(is_noncanonical_msr_address(vmcs12->host_s_cet, vcpu)) ||
-+			    CC(is_noncanonical_msr_address(vmcs12->host_ssp, vcpu)))
-+				return -EINVAL;
-+		} else {
-+			if (CC(vmcs12->host_s_cet >> 32) || CC(vmcs12->host_ssp >> 32))
-+				return -EINVAL;
-+		}
-+	}
-+
- 	return 0;
+ 	/* We support free control of debug control loading. */
+ 	msrs->entry_ctls_low &= ~VM_ENTRY_LOAD_DEBUG_CONTROLS;
  }
- 
-@@ -3279,6 +3310,22 @@ static int nested_vmx_check_guest_state(struct kvm_vcpu *vcpu,
- 	     CC((vmcs12->guest_bndcfgs & MSR_IA32_BNDCFGS_RSVD))))
- 		return -EINVAL;
- 
-+	if (vmcs12->vm_entry_controls & VM_ENTRY_LOAD_CET_STATE) {
-+		if (CC(!is_valid_cet_state(vcpu, vmcs12->guest_s_cet, vmcs12->guest_ssp,
-+					   vmcs12->guest_ssp_tbl)))
-+			return -EINVAL;
-+
-+		/*
-+		 * Guest SSP must have 63:N bits identical, rather than
-+		 * be canonical (i.e., 63:N-1 bits identical), where N is
-+		 * the CPU's maximum linear-address width. Similar to
-+		 * is_noncanonical_msr_address(), use the host's
-+		 * linear-address width.
-+		 */
-+		if (CC(!__is_canonical_address(vmcs12->guest_ssp, max_host_virt_addr_bits() + 1)))
-+			return -EINVAL;
-+	}
-+
- 	if (nested_check_guest_non_reg_state(vmcs12))
- 		return -EINVAL;
- 
 -- 
 2.51.0.470.ga7dc726c21-goog
 
