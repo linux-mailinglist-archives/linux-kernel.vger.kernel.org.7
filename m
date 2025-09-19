@@ -1,143 +1,88 @@
-Return-Path: <linux-kernel+bounces-825038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9B4B8AC57
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:33:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32D9B8AC6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867087C37D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98A32565717
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A10321446;
-	Fri, 19 Sep 2025 17:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFBC32253E;
+	Fri, 19 Sep 2025 17:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="trIoGFAE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MluRj6aU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8962773F1
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F0F3D6F;
+	Fri, 19 Sep 2025 17:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758303222; cv=none; b=tyMqwYWzKncafLMH+j1bBx6Z6cQ1EUdRpIdPSeP0mfMNEm8mUbR6ZfDnfFMefeCpGKn/4HEThoiii3U6CNs+N8UzmtcyiLz/kmc5+2IGbd8OGyMpzi3DnNCpSjM7fFFpbT8l1xpK/iW4Ktm/DfaRntMUfwkEf5TgULg6XHBqROs=
+	t=1758303245; cv=none; b=U5wqvQRwp7auuGIfCdtx/6RMiW8/ukvYcr2uyuWVX+1FBpa7biJAB6UsLv+k1RxkiHyclBx2FUBUWt4DEuNm4ELdvPxfrZyerr9QSBWtrLUzhpwKhUtmZ72oXqftUgdBYKKkh76RweqS4XCf4CwsnRXMTbsR2zKnxam2ET1UGts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758303222; c=relaxed/simple;
-	bh=+STrF9PYCBuc8/qsS+R4t2F0Hq1eLV08xgFRkBJD3nc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u8T/rTmicpsMvLV0hUHMQDCPzWxxdi6ZTTpOI2BGZ+76XtuKe7ucBR7KEf8imMrgFQU/7K36EeeP2TwTB826S135+dzJZX1G0Y02wf37UsSj33Kl8dAoguMRSKNSwB1HRF+eJDSGYe7zc+/Bi2bCST/rpSdbISd2UpMr7qBdxUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=trIoGFAE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DFFFC4CEFB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:33:42 +0000 (UTC)
+	s=arc-20240116; t=1758303245; c=relaxed/simple;
+	bh=vCQ6D5J5CAQvg0sdxYgrNskq7byvIRLv4uaL0udKG5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lV73co2PFH5NgcbyC6MXUlKKps1hA9bWegJyHfgabeeAYcNAG5XGvqh1QNP8j6kJ93Vh4N9AGIpsDqfREASMYbIorqfN8VygJcctTsY1hHpHjjVOe1ymdfvFo7bIpW1yM3++VvNdaRPtitp8hHHKFo3aM2BVUg5w8nWy45x6qeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MluRj6aU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20681C4CEF0;
+	Fri, 19 Sep 2025 17:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758303222;
-	bh=+STrF9PYCBuc8/qsS+R4t2F0Hq1eLV08xgFRkBJD3nc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=trIoGFAE4UosNsFMT+rSrmDzqZUOaGqRMFx98wg6sX51fjVkofYbQuqQ86twtURoa
-	 8YF3T77sDkXbCe7VL6Ve0tKbOIb174SO0mRTonUzt3Fgz5BI8Ju/oghIXc3n7U3sqS
-	 Xzv629DmvW8TjdfFM2VsFREnSyTuzMg8r+fwXeaO+WHraHHlnf/Xj8LzZx6g4oA0JQ
-	 OEXbtmxDM/lOAj/Qc5j/9UrCpdy1FCT+QFw/4WvYW0UYn3ElrUIMS2KK/F+Ucc0Fei
-	 Io6wsFBsig40LatLLL6dZ1apRIU0Z/bZ0sIr9fmVwCxh5LyXQgFMxrYmdeI9StMTqA
-	 9BbkWg038aolA==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso3344682a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:33:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWTChKdlhGCekTZvS72kqHsDN+NB2ONWzzjPHlhsHi5Ok8KDdkBdD9myI4Xs2f0fh4IdCMgIdq5mhlfvW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLSo3eNefbw5JC7n4YFrjbzkU7n88hcE8EWLUY3MvS1hxfhKS0
-	dRyDoZQmbl3RzJCnUHPJG4gbv3r/65kN/qMvD1zNYot4aUFal2e+RQ+KxB+0vHX2tb9xl+qjn65
-	tlDVqCi7MXPWG22bkgsFEES46C0fz6Q==
-X-Google-Smtp-Source: AGHT+IFdAHQZ/nDUnKsSSIL9qonNEPFjd3PHBSsoiQD+Q5n/+BJxgmT2/kYpRWAJZfsEz+lU2Sc7msvI1kFYm4PEGLA=
-X-Received: by 2002:a05:6402:35d3:b0:62f:40c7:8543 with SMTP id
- 4fb4d7f45d1cf-62fc08d7695mr3868736a12.6.1758303220768; Fri, 19 Sep 2025
- 10:33:40 -0700 (PDT)
+	s=k20201202; t=1758303245;
+	bh=vCQ6D5J5CAQvg0sdxYgrNskq7byvIRLv4uaL0udKG5Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MluRj6aUTxugWNeqizksmK6Xf8WHDHwsmsc4uKIIr8cLLYnoEFztphItYn9OW2WCW
+	 XH3gl1WUqXBQlkk0WLhI/4Mu/OyHW2QG812cXJK5zagYX8Xu9rxuFPQ5f0i7a2VZlG
+	 WZ1UJS7YS30BZs9kIgLA6HCKtxfyS29SomBCFFYDnUrG+gzDyDf2k3PqQeLap6pFKR
+	 fmKuUt45BHB3lNoihgsPQst6AUY+nM1lZC5Dw6bpT9UDya5VyQ+QGV04aoM2rKtiGf
+	 FKhjZnPxi3nI8QA6ql2faacp35mEAj8KPMQihWTcQNk6H+6tXBZZsbOEo4g/Z527yA
+	 8Bfgge0xchO3g==
+Date: Fri, 19 Sep 2025 18:33:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jic23@kernel.org,
+	michael.hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	corbet@lwn.net, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 2/8] dt-bindings: iio: adc: adi,ad4030: Reference
+ spi-peripheral-props
+Message-ID: <20250919-donor-skimming-8ef77871d68a@spud>
+References: <cover.1758214628.git.marcelo.schmitt@analog.com>
+ <5c1c448e3e731fc013e1e3b3fdcbc31f806d41fe.1758214628.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-7-herve.codina@bootlin.com> <20250918-majestic-mockup-0a0e090db0a7@spud>
- <20250918171502.411c3527@bootlin.com> <20250918-education-resource-aac71b87e979@spud>
- <20250918173915.730bc3db@bootlin.com> <20250918-flakily-thermos-5404fb4bcd1a@spud>
-In-Reply-To: <20250918-flakily-thermos-5404fb4bcd1a@spud>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 19 Sep 2025 12:33:29 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK4CNq-NRDYz8bsTrAqv7rZwd_FYR+z-97o1UfnBp9=Wg@mail.gmail.com>
-X-Gm-Features: AS18NWDOpFL6VIHjLpp_0Gr54mKQd2E6A2Ik4bvpTdMu2EYUpi-oL3EoqZwJsAo
-Message-ID: <CAL_JsqK4CNq-NRDYz8bsTrAqv7rZwd_FYR+z-97o1UfnBp9=Wg@mail.gmail.com>
-Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
- GPIO Interrupt Multiplexer
-To: Conor Dooley <conor@kernel.org>, Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="OIKEdUZQ//aS5+WY"
+Content-Disposition: inline
+In-Reply-To: <5c1c448e3e731fc013e1e3b3fdcbc31f806d41fe.1758214628.git.marcelo.schmitt@analog.com>
 
-On Thu, Sep 18, 2025 at 10:44=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
-ote:
->
-> On Thu, Sep 18, 2025 at 05:39:15PM +0200, Herve Codina wrote:
-> > On Thu, 18 Sep 2025 16:26:59 +0100
-> > Conor Dooley <conor@kernel.org> wrote:
-> >
-> > > On Thu, Sep 18, 2025 at 05:15:02PM +0200, Herve Codina wrote:
-> > > > Hi Conor,
-> > > >
-> > > > On Thu, 18 Sep 2025 16:06:04 +0100
-> > > > Conor Dooley <conor@kernel.org> wrote:
-> > > >
-> > > > > On Thu, Sep 18, 2025 at 12:40:04PM +0200, Herve Codina (Schneider=
- Electric) wrote:
-> > > > > > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Tho=
-se
-> > > > > > interruption lines are multiplexed by the GPIO Interrupt Multip=
-lexer in
-> > > > > > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lin=
-es.
-> > > > > >
-> > > > > > The GPIO interrupt multiplexer IP does nothing but select 8 GPI=
-O
-> > > > > > IRQ lines out of the 96 available to wire them to the GIC input=
- lines.
-> > > > > >
-> > > > > > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@=
-bootlin.com>
-> > > > > > ---
-> > > > > >  .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  | 87 +++++++++++=
-++++++++
-> > > > > >  1 file changed, 87 insertions(+)
-> > > > > >  create mode 100644 Documentation/devicetree/bindings/soc/renes=
-as/renesas,rzn1-gpioirqmux.yaml
-> > > > >
-> > > > > This is an interrupt controller, please move it to that subdirect=
-ory.
-> > > >
-> > > > Not so sure. It is a nexus node. It routes interrupt signals to the
-> > > > interrupt controller (interrupt-map) but it is not an interrupt con=
-troller
-> > > > itself.
-> > > >
-> > > > I am not sure that it should be moved to the interrupt-controller
-> > > > directory.
-> > >
-> > > Your node name choice disagrees with you!
-> >
-> > Oups, you're right, my bad.
-> >
-> > What do you think if I change the node name from "interrupt-controller"=
- to
-> > "interrupt-mux" in the next iteration?
->
-> I guess, sure.
 
-Stick with interrupt-controller. That's what the schema expects and
-'interrupt-mux' (or any other variation) is not in the spec.
+--OIKEdUZQ//aS5+WY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--OIKEdUZQ//aS5+WY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaM2UBQAKCRB4tDGHoIJi
+0sEdAQDxz11ig5hXac9ko6qT98sPo3xb5h8BBmPkcSHyGeyvGwD/a3YEKu1YBCWF
+t0Vxll2Kdg4KTtl++zkY86UxJKnyPAE=
+=LQyr
+-----END PGP SIGNATURE-----
+
+--OIKEdUZQ//aS5+WY--
 
