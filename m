@@ -1,278 +1,133 @@
-Return-Path: <linux-kernel+bounces-823927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AB3B87BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:49:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC92B87C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A5E77A5FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716A81BC6B88
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B2C251793;
-	Fri, 19 Sep 2025 02:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45ECD25A354;
+	Fri, 19 Sep 2025 02:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eYMR3My2"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EDF2561A7
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Lof1pJiM"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958AB35942;
+	Fri, 19 Sep 2025 02:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758250163; cv=none; b=c2B6DUgYYYwmSVlwfXO8KOUDmjBdAD6qynInrKvbCAKApXXBzRfLZg2QKiTq1jk+VnaRV6tODqx5ZcMFuobmGCRnI/FIMYXsXWyK/qwQ6uu63IsIim6Fl8t3rhf11uSYFbj3fghvMdCC+K6f8tybID1ov+6EvEEhD1ZFxgohD34=
+	t=1758250223; cv=none; b=GnSDcPbrtCIu0Xeime6PLJm5o2ggNH7ofHhhoqr9XlsVZLck0SPFpT7fbkYoJV1g1EoeDqfCEucPcxGzEyZBIs0tv4h+tVU0JfAs+ZrxCpGkjzw0vphP0ojcOtHCgjVqdStkgdxUmYafNzZyvByMqWfMsDwdz9FYNS7SLJVZk+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758250163; c=relaxed/simple;
-	bh=CS3SrhHGAuGkBr7hmqNoYLasrhOBrVQu2ZjclyYK/Jw=;
+	s=arc-20240116; t=1758250223; c=relaxed/simple;
+	bh=e61wfCFkrnLoWDwH79oREXQ3lPTB6/MyrBzhdNPwV64=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARAb9DCp6Pt1QUUrRxXV0oTiCQN9NLMVRHsDHfIT7ON5CLj/+seNPwDsJXLMB20eEryqSEzzkEQUbkylJZkPiqyskhgCYuQzDwxwF7+PPFDtb9sTXCXb3STww9N6BVwvAHJ9YWhoPwMn88nW2b4ESUjqpEKsDs6ABfQVa5PSbUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eYMR3My2; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 18 Sep 2025 19:49:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758250147;
+	 Content-Type:Content-Disposition:In-Reply-To; b=VKcNGYHcLQkFc2zUZmCHOoPtpxODBdBHFk5KWUHVljL6CA1aiuP4ALBNfbIV9XZbd+wLglF8OG3gsYsGxiN52IYqwGv2wOv9zDARZW0h5GSwwzf+Y5vHanONK4Ts3FGLStfA6KkTr7tHHKGCTdBuaPqPKt5B51I7DwTXlzP/fC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Lof1pJiM; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 1962614C2D3;
+	Fri, 19 Sep 2025 04:50:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1758250213;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QqZyQZcoeHlrOOiTQqItbAzvsXWRLXScDq7yxQ6zIhg=;
-	b=eYMR3My2q96I0w45HjiMc5eI+Tbb/qiY3f/qo5BwzEzCQO5RiSnBpuHfyj7mt61J+J3bY3
-	PWXDdbCGHKao6O98bht2HJa0iu4W8ploFpkw0O6vbWMpeGFcdtG1FziqynjrtUwpaaBeQy
-	mU2yaeddKDsJyFN2Isg5hUKU4R/IHi8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-Message-ID: <5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd>
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
+	bh=qDl2rXRvrmQPYT8Y/zyjE3gK9Zfk8+TR4UBbLdUOCIY=;
+	b=Lof1pJiMuy/lokXeXA5XKeYnMfqgxUUQuaxPE/W7du4WGEPqWd9OWVJhYnjRdhQUU9jVuq
+	edkuy45EhidZKnJ3B+5qh06hzRREczyk46Dv9+b+RtdTM+miIkXkmBIz2j746BUUpZnh4H
+	9AXamWTQ9retRwqoYXqNRFmbgflbOKgDpSMyDf3Bpy8gjSxL1bg/Lf1Q123kLwPbNSVTCv
+	PsshlG9DYr1SisSLVW9EI3KGYjMIs8LbMWqNR07QwNj4R+rCkXzdSCXXOVbANHaDpB75+C
+	Tq4diZQsCCPHQFyvdVrlz3y5ssSguW43MzLDpw5xTygGMv/O+cxIwaunybMUpQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 907a32a2;
+	Fri, 19 Sep 2025 02:50:09 +0000 (UTC)
+Date: Fri, 19 Sep 2025 11:49:54 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Remi Pommarel <repk@triplefau.lt>
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [RFC PATCH 0/5] 9p: Performance improvements for build workloads
+Message-ID: <aMzE0kbTCADO9QCc@codewreck.org>
+References: <cover.1756635044.git.repk@triplefau.lt>
+ <aMa2Q_BUNonUSOjA@codewreck.org>
+ <aMxazb_dcK3hTATI@pilgrim>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250905201606.66198-1-shakeel.butt@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aMxazb_dcK3hTATI@pilgrim>
 
-On Fri, Sep 05, 2025 at 01:16:06PM -0700, Shakeel Butt wrote:
-> Generally memcg charging is allowed from all the contexts including NMI
-> where even spinning on spinlock can cause locking issues. However one
-> call chain was missed during the addition of memcg charging from any
-> context support. That is try_charge_memcg() -> memcg_memory_event() ->
-> cgroup_file_notify().
+Remi Pommarel wrote on Thu, Sep 18, 2025 at 09:17:33PM +0200:
+> RFC was mainly here to know if a io_wait_event_killable() would made
+> sense before getting the scheduler tree involved. Also as it is my first
+> contribution in v9fs (and fs subsystem) wanted to be sure I wasn't
+> missing something obvious, caching could be a complex subject to grasp.
+> This also comes with some drawbacks, if for example server removes a
+> shared file or modify a symlink the client will be desynchronized, so I
+> wanted first to be sure we were ok with that when using cache=loose.
+
+Ok!
+I think it's completely fine for cache=loose, we're basically telling
+the client we're alone in the world.
+
+> I'll try to monitor the new mount API and rebase the series when that
+> get merged. I'll probably separate the io_wait_event_killable() in its
+> own patchset though.
+
+Thanks, I need to find time to check the v9ses lifetime as I asked about
+after a syzcaller bug showed up[1], so it might not be immediate, but
+I'll get to it eventually
+
+[1] https://lore.kernel.org/v9fs/aKlg5Ci4WC11GZGz@codewreck.org/T/#u
+
+> > Another thing I tried ages ago was making clunk asynchronous,
+> > but that didn't go well;
+> > protocol-wise clunk errors are ignored so I figured it was safe enough
+> > to just fire it in the background, but it caused some regressions I
+> > never had time to look into...
+> > 
+> > As for reusing fids, I'm not sure it's obvious because of things like
+> > locking that basically consider one open file = one fid;
+> > I think we're already re-using fids when we can, but I guess it's
+> > technically possible to mark a fid as shared and only clone it if an
+> > operation that requires an exclusive fid is done...?
+> > I'm not sure I want to go down that hole though, sounds like an easy way
+> > to mess up and give someone access to data they shouldn't be able to
+> > access by sharing a fid opened by another user or something more
+> > subtle..
 > 
-> The possible function call tree under cgroup_file_notify() can acquire
-> many different spin locks in spinning mode. Some of them are
-> cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
-> just skip cgroup_file_notify() from memcg charging if the context does
-> not allow spinning.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Yes I gave that a bit more thinking and came up with quite the same
+> conclusion, I then gave up on this idea. The asynchronous clunk seems
+> interesting though, maybe I'll take a look into that.
 
-Here I am just pasting the irq_work based prototype which is build
-tested only for now and sharing it early to show how it looks. Overall I
-think it is adding too much complexity which is not worth it. We have to
-add per-cpu irq_work and then for each memcg we have to add per-cpu
-lockless node to queue the deferred event update. Also more reasoning is
-needed to make sure the updates are not missed by the deferred work.
+It's been a while, but the last time I rebased the patches was around here:
+https://github.com/martinetd/linux/commits/9p-async-v2/
+(the v1 branch also had clunks async, with this comment
+> This has a few problems, but mostly we can't just replace all clunks
+> with async ones: depending on the server, explicit close() must clunk
+> to make sure the IO is flushed, so these should wait for clunk to finish.
+)
 
-Anyways, this is the early prototype. Unless there are comments on how
-to make it better, I will ask Andrew to just pick the previous patch I
-sent.
+If you have time to play with this, happy to consider it again, but
+it'll definitely need careful testing (possibly implement the clunk part
+as a non-default option? although I'm not sure how that'd fly, linux
+doesn't really like options that sacrifice reliability for performance...)
 
+Anyway, that's something I definitely don't have time for short term,
+but happy to discuss :)
 
-From d58d772f306454f0dffa94bfb32195496c450892 Mon Sep 17 00:00:00 2001
-From: Shakeel Butt <shakeel.butt@linux.dev>
-Date: Thu, 18 Sep 2025 19:25:37 -0700
-Subject: [PATCH] memcg: add support for deferred max memcg event
-
-Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
----
- include/linux/memcontrol.h |  3 ++
- mm/memcontrol.c            | 85 ++++++++++++++++++++++++++++++++++++--
- 2 files changed, 84 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 16fe0306e50e..3f803957e05d 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -69,6 +69,7 @@ struct mem_cgroup_id {
- 	refcount_t ref;
- };
- 
-+struct deferred_events_percpu;
- struct memcg_vmstats_percpu;
- struct memcg1_events_percpu;
- struct memcg_vmstats;
-@@ -268,6 +269,8 @@ struct mem_cgroup {
- 
- 	struct memcg_vmstats_percpu __percpu *vmstats_percpu;
- 
-+	struct deferred_events_percpu __percpu *deferred_events;
-+
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	struct list_head cgwb_list;
- 	struct wb_domain cgwb_domain;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e090f29eb03b..a34cb728c5c6 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -132,6 +132,63 @@ bool mem_cgroup_kmem_disabled(void)
- 	return cgroup_memory_nokmem;
- }
- 
-+struct deferred_events_percpu {
-+	atomic_t max_events;
-+	struct mem_cgroup *memcg_owner;
-+	struct llist_node lnode;
-+};
-+
-+struct defer_memcg_events {
-+	struct llist_head memcg_llist;
-+	struct irq_work work;
-+};
-+
-+static void process_deferred_events(struct irq_work *work)
-+{
-+	struct defer_memcg_events *events = container_of(work,
-+						struct defer_memcg_events, work);
-+	struct llist_node *lnode;
-+
-+	while (lnode = llist_del_first_init(&events->memcg_llist)) {
-+		int i, num;
-+		struct deferred_events_percpu *eventsc;
-+
-+		eventsc = container_of(lnode, struct deferred_events_percpu, lnode);
-+
-+		if (!atomic_read(&eventsc->max_events))
-+			continue;
-+		num = atomic_xchg(&eventsc->max_events, 0);
-+		if (!num)
-+			continue;
-+		for (i = 0; i < num; i++)
-+			memcg_memory_event(eventsc->memcg_owner, MEMCG_MAX);
-+	}
-+}
-+
-+static DEFINE_PER_CPU(struct defer_memcg_events, postpone_events) = {
-+	.memcg_llist = LLIST_HEAD_INIT(memcg_llist),
-+	.work = IRQ_WORK_INIT(process_deferred_events),
-+};
-+
-+static void memcg_memory_max_event_queue(struct mem_cgroup *memcg)
-+{
-+	int cpu;
-+	struct defer_memcg_events *devents;
-+	struct deferred_events_percpu *dmemcg_events;
-+
-+	cpu = get_cpu();
-+	devents = per_cpu_ptr(&postpone_events, cpu);
-+	dmemcg_events = per_cpu_ptr(memcg->deferred_events, cpu);
-+
-+	atomic_inc(&dmemcg_events->max_events);
-+	// barrier here to make sure that if following llist_add returns false,
-+	// the corresponding llist_del_first_init will see our increment.
-+	if (llist_add(&dmemcg_events->lnode, &devents->memcg_llist))
-+		irq_work_queue(&devents->work);
-+
-+	put_cpu();
-+}
-+
- static void memcg_uncharge(struct mem_cgroup *memcg, unsigned int nr_pages);
- 
- static void obj_cgroup_release(struct percpu_ref *ref)
-@@ -2307,12 +2364,13 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	bool drained = false;
- 	bool raised_max_event = false;
- 	unsigned long pflags;
-+	bool allow_spinning = gfpflags_allow_spinning(gfp_mask);
- 
- retry:
- 	if (consume_stock(memcg, nr_pages))
- 		return 0;
- 
--	if (!gfpflags_allow_spinning(gfp_mask))
-+	if (!allow_spinning)
- 		/* Avoid the refill and flush of the older stock */
- 		batch = nr_pages;
- 
-@@ -2348,7 +2406,10 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	if (!gfpflags_allow_blocking(gfp_mask))
- 		goto nomem;
- 
--	memcg_memory_event(mem_over_limit, MEMCG_MAX);
-+	if (allow_spinning)
-+		memcg_memory_event(mem_over_limit, MEMCG_MAX);
-+	else
-+		memcg_memory_max_event_queue(mem_over_limit);
- 	raised_max_event = true;
- 
- 	psi_memstall_enter(&pflags);
-@@ -2414,8 +2475,12 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	 * If the allocation has to be enforced, don't forget to raise
- 	 * a MEMCG_MAX event.
- 	 */
--	if (!raised_max_event)
--		memcg_memory_event(mem_over_limit, MEMCG_MAX);
-+	if (!raised_max_event) {
-+		if (allow_spinning)
-+			memcg_memory_event(mem_over_limit, MEMCG_MAX);
-+		else
-+			memcg_memory_max_event_queue(mem_over_limit);
-+	}
- 
- 	/*
- 	 * The allocation either can't fail or will lead to more memory
-@@ -3689,6 +3754,7 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
- 		free_mem_cgroup_per_node_info(memcg->nodeinfo[node]);
- 	memcg1_free_events(memcg);
- 	kfree(memcg->vmstats);
-+	free_percpu(memcg->deferred_events);
- 	free_percpu(memcg->vmstats_percpu);
- 	kfree(memcg);
- }
-@@ -3704,6 +3770,7 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
- {
- 	struct memcg_vmstats_percpu *statc;
- 	struct memcg_vmstats_percpu __percpu *pstatc_pcpu;
-+	struct deferred_events_percpu *devents;
- 	struct mem_cgroup *memcg;
- 	int node, cpu;
- 	int __maybe_unused i;
-@@ -3729,6 +3796,11 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
- 	if (!memcg->vmstats_percpu)
- 		goto fail;
- 
-+	memcg->deferred_events = alloc_percpu_gfp(struct deferred_events_percpu,
-+						  GFP_KERNEL_ACCOUNT);
-+	if (!memcg->deferred_events)
-+		goto fail;
-+
- 	if (!memcg1_alloc_events(memcg))
- 		goto fail;
- 
-@@ -3738,6 +3810,11 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
- 		statc = per_cpu_ptr(memcg->vmstats_percpu, cpu);
- 		statc->parent_pcpu = parent ? pstatc_pcpu : NULL;
- 		statc->vmstats = memcg->vmstats;
-+
-+		devents = per_cpu_ptr(memcg->deferred_events, cpu);
-+		atomic_set(&devents->max_events, 0);
-+		devents->memcg_owner = memcg;
-+		init_llist_node(&devents->lnode);
- 	}
- 
- 	for_each_node(node)
+Cheers,
 -- 
-2.47.3
-
+Dominique Martinet | Asmadeus
 
