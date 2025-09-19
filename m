@@ -1,307 +1,433 @@
-Return-Path: <linux-kernel+bounces-823994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F529B87E28
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B7EB87E2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:06:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A1C1C86AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:02:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405CD7C34D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE9926B761;
-	Fri, 19 Sep 2025 05:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3377526E16A;
+	Fri, 19 Sep 2025 05:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LNS9DESi"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010060.outbound.protection.outlook.com [52.101.201.60])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="kqp/JMG7";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="T78Yy7Gs"
+Received: from esa9.fujitsucc.c3s2.iphmx.com (esa9.fujitsucc.c3s2.iphmx.com [68.232.159.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82B64315A;
-	Fri, 19 Sep 2025 05:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF7D34BA58;
+	Fri, 19 Sep 2025 05:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.159.90
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758258148; cv=fail; b=E4NsJL7S/nEd76eEW00CdNarrg2zyhz50Gs2J9XXlnEVEUNEZKg/EpoaXmhT/n/CNXtlyQtlNR3+cEHcOHMvsUDHoDghfNrtxSaFHSRVVHztjMQ1T+cRhEbfRdjs+7VkvIiw7IFp1IGhi3PdYpCXeZALYjbeYWBUas3Ig58ek0k=
+	t=1758258386; cv=fail; b=EML32QrWs1lsPaAAUm6Clz9okN/V81dcQyd+xmqAISFxp9MQxwwEcAnO+NA+7ehZ3fJHDMbxf2G0RZKUQWPVnDNu5j/sYO8sp8o3jZQuSx5AEQiWlvbiiIEwrK4lT2+m+ZyPZRs/4UitlZnn5STn0/OgDZiRbJuy0+7neE0FsVI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758258148; c=relaxed/simple;
-	bh=5WP4cKq2d+eTKVNun2Lh+UrLqXQJTIoZIXZxOjeas9w=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TyZMXY5IZSMRz+QpYXTmUL9JWO96texySh+o4Kel3sXkKEtdjkXx2j+ZVtTeSJ6y9LNOmHc7wKGvERnaQAwXIoy87tvWyjZ0dFm/FJpwHB9ZMuL4Pat9JJzmiGQXpbINZn77EqmT8fezKHOHiW+FJ7mbNV1ZuTtow2wWcsVcL2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LNS9DESi; arc=fail smtp.client-ip=52.101.201.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1758258386; c=relaxed/simple;
+	bh=neELSq99Vj+CiThLsI23M/rGj2KXpuzBrs+SvQRTFwM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=luuHp0g9mVUJG5MSbq8Jm+5tStgF4b+5AlBlEYvvnlmKdv9Iz0wuPe94949dWhfDbLAgQbzFKqQTq+tk2QoWZ7OXQF1jwDpdBVUkivDjSyOFQhocj2u3EVW84lCpfjkw+sD3skS3HCpeiY4tgLhrONZgyYfUy9IakAsj2B+OBmM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=kqp/JMG7; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=T78Yy7Gs; arc=fail smtp.client-ip=68.232.159.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1758258385; x=1789794385;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=neELSq99Vj+CiThLsI23M/rGj2KXpuzBrs+SvQRTFwM=;
+  b=kqp/JMG7lbdq2vncMuR9wBjqvbnuJp5qs4GLUNJsTwbCuu36iiPXR5QW
+   iEA2qyuQ7xYH+bODUzE92AZQYtg0j3QZe+s1LZdCsvTuNcue9ZiuFi1rN
+   LwAp7QmwcW/pUBcjh26oOu9RozJmn/MkpS3H9iuaQbVU2LpQwt4Gsub6m
+   vepg3LhlG9yQAZhwnpjWBpQ1gES72DXVCqH4WZ9o6sNYIJQhOceCJgHr+
+   r2TDnC5JZcfvA9IGN2fIHWp76DkJ3AwmVilALfExq8zUEmJvHuMqN8GDx
+   SnPL/ehQdI7xbs9bfZsD6firOnS4FFWKPSoO7OooZSMHm3DphORvPhlDH
+   w==;
+X-CSE-ConnectionGUID: sc/a6vGYRAKJ0CAnqhMH2Q==
+X-CSE-MsgGUID: oG39z9o6Q1eoufcnM7cOIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="168283896"
+X-IronPort-AV: E=Sophos;i="6.18,277,1751209200"; 
+   d="scan'208";a="168283896"
+Received: from mail-japaneastazon11010027.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([52.101.229.27])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 14:05:12 +0900
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W7YmS/BKl2gbAOjRsJWwaElDx94azmc4fcKTo4/k7JPQEotPPyoOnCTLT6lBKVDN8XcpO0bSqTQiviuQxjUxdSdb+QWjWYVI/A0mQeRIHS0Qwjke9HxhvJ3TwdRNIMMeUGcb34Ykbwt8YsVvaqrqKVQHIhTvLMqNDB0xyxKjDDftLO1/JFwre7TNoIIkw2+ymNBRemWzbQA5fV1nvhLPqqvBljoNpGOpjfHSn3ZhlwtJmiRz9MbcMPWMdIjDBkCjr4fh8BH0GA/qNQ2GFRliFJrRhEdyXEmsvIA974CxvHmpncpFDmCCtpxMrxpGNfboikATbpsduzzbp+ACiuJXVA==
+ b=EDdoUastB/Z458dNXY7RqSwE7M9diVB0rO5j23COClOqCL2lOi1prhN5qobCciKf2bXmlcFYaAC6e0z3/QItqG3O22YW5RuNIQKGSrQGFvrspCQKFooDP4fnQ4iIkHmg7UeVDAfGGj56q9CV8Az+MftFPCeFDGWiTnjBmdzvyoNbykuuv7kCQSdIvv89E0A/flmJIk+9UqaK+dzpQiJFSABQoACyRdwv1YND/pYDW8lRsPEejr46mjJAJp4gMEMUXkhpYRHLxe/YcarjGxNz4txR+WBLZouDX8Krjocq71OWttwwG4Ek8654omOoXE7lpVYj3HpTtYMGulwnuke0Ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ar+/pa6R5mhg4pt1ybE3hr6xXIlBDkx9arhl5Zrxhwc=;
- b=uY83zys6KDw7Y0YZWx7tn50mNdFHbyPr0a4iGToADvsIZx8V314VC7dOqSslK4hsyCj7YAKqcXqOjbrVJ8vBKJPuPziojGoT8i80ypFOEHG6n4pLUk+C21sqP49jiHdXxgWYvK0dVWxvSZM5vT3fNzn0zpa1XrWxgvETEH41baidKiOr4gBfm5DwCFAE39FMoUJ63bM/i0mSxkzWH3ObPklk/RE/TA3wR6YXKl6R+NmiWUWvtfLyYuP3dGO6pLfJs+sJcIM/JTxGuBa1QJ+qiG1P0K7BhE5ku45+02A72ZAr3CZq9eJzjIx1EEOOLFDx/HLy2T7qLjCh8LuoCDGUGg==
+ bh=MaVuSHEQlFhtNOWfktL6lecSsOsVWfLwiw7XB/a9Kww=;
+ b=B/QF+uBC5r7vKU5NtHdDlrbkCSPkpBBwUgFchPfRaTy3PpwBoVu+r2jOi7RETHwpSG6rmtgCb7XXOLnWb7NuYffdxK5Z/MRLiL3Io2B21OXfDuoo2ZC2RD/1VbMThRYQj3L/3W2BfgnhXIUZSEJgEeAg/unxjOzFCCdzdXGPIsVCeDlh81krZ8L/aH8CQ85J8fnBR43DdmxF1rvuZvsjBz1XV7N3p3hE2l9T3bONlzES7y6rcdFoyqSat4emyJQuVD1AtRavOZDJ9JOTlryUAoJh2ZcT+71sgZZPABhTomkovUZ0HHzE5BsnlF7YZsn7b/mEpG/R3FS3JmrVzbCctQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ar+/pa6R5mhg4pt1ybE3hr6xXIlBDkx9arhl5Zrxhwc=;
- b=LNS9DESimX/kmrdgG2Ht9cAVjIPZbzHiaVSVf+mSR0JA36c2eSbJo9zqqXBF7upmDV7YNjAqPOP2dBcD7/Y55Igzh05YDEh7Ah/nXnFx5Mk1W6SbCs9D0SH9XxxTSHrryduY53MLYvkck8U37DWczLuZZSVv7tREAK6HMw4ydVQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by DM4PR12MB8452.namprd12.prod.outlook.com (2603:10b6:8:184::18) with
+ bh=MaVuSHEQlFhtNOWfktL6lecSsOsVWfLwiw7XB/a9Kww=;
+ b=T78Yy7Gsfrl2ZmEHy6+1XB6AMD/yYjK/OpoWZ0a2i2Em5GfXx2LiquiJXC0ub8XOKFUpTBdgZlOhueKCMU5kKDm2mqg3oCu7P58K9U9i9pKfSozrI+PqLMy+QllTJspw8oyan27g8knDY1BrsF0NGH09Dxx6p9DVU+RWUzEkQENTBal2WBxIGpTjOhJ8DgtJf0dSPflMOIKelVPkw2t01FSHMo7A9zFPv+VBKWTSQpFHT1+7G6GgHpSCLwZ6OfqitMxmHHfFXVFljegjxdudcU4/GSbtRNIBIA/bQYuxt8ugZ3GI235216n/PHmBgSLCjqb8cWTePzHg8oeOsBfcOQ==
+Received: from TY3PR01MB9983.jpnprd01.prod.outlook.com (2603:1096:400:1dc::6)
+ by TYRPR01MB14127.jpnprd01.prod.outlook.com (2603:1096:405:21f::7) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 05:02:24 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9115.020; Fri, 19 Sep 2025
- 05:02:24 +0000
-Message-ID: <cecdf440-ec7b-4d7f-9121-cf44332702d4@amd.com>
-Date: Fri, 19 Sep 2025 00:02:22 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PROBLEM] c5.metal on AWS fails to kexec after "PCI: Explicitly
- put devices into D0 when initializing"
-To: Matthew Ruffell <matthew.ruffell@canonical.com>,
- "bhelgaas@google.com" <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
- Jay Vosburgh <jay.vosburgh@canonical.com>
-References: <CAKAwkKvmdKxRRA4cR=jJEdyadon6uKXe+aFXaGSe=PNSgwDf9g@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <CAKAwkKvmdKxRRA4cR=jJEdyadon6uKXe+aFXaGSe=PNSgwDf9g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0173.namprd11.prod.outlook.com
- (2603:10b6:806:1bb::28) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+ 2025 05:05:04 +0000
+Received: from TY3PR01MB9983.jpnprd01.prod.outlook.com
+ ([fe80::f8a:4f35:cc76:bdc1]) by TY3PR01MB9983.jpnprd01.prod.outlook.com
+ ([fe80::f8a:4f35:cc76:bdc1%6]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
+ 05:05:04 +0000
+From: "Kazuhiro Abe (Fujitsu)" <fj1078ii@fujitsu.com>
+To: 'Ilkka Koskinen' <ilkka@os.amperecomputing.com>, 'Hanjun Guo'
+	<guohanjun@huawei.com>, 'Sudeep Holla' <sudeep.holla@arm.com>
+CC: 'Lorenzo Pieralisi' <lpieralisi@kernel.org>, "'Rafael J. Wysocki'"
+	<rafael@kernel.org>, 'Len Brown' <lenb@kernel.org>,
+	"'linux-acpi@vger.kernel.org'" <linux-acpi@vger.kernel.org>,
+	"'linux-arm-kernel@lists.infradead.org'"
+	<linux-arm-kernel@lists.infradead.org>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] ACPI: AGDI: Add interrupt signaling mode support
+Thread-Topic: [PATCH v3] ACPI: AGDI: Add interrupt signaling mode support
+Thread-Index: AQHcHh171tqf09K4SkK1ciG0VLTs/LSJqfEAgAPpfaCADGlN8A==
+Date: Fri, 19 Sep 2025 05:05:04 +0000
+Message-ID:
+ <TY3PR01MB9983025D434CAA2CDF83656BD511A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
+References: <20250905042751.945616-1-fj1078ii@aa.jp.fujitsu.com>
+ <bd45c06a-77cc-2ab3-122e-41dee1aee0ac@os.amperecomputing.com>
+ <TY3PR01MB99836C3D57503E70C8B8C9E9D509A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
+In-Reply-To:
+ <TY3PR01MB99836C3D57503E70C8B8C9E9D509A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ActionId=67e4a6db-a8d9-45e9-a9df-263040abeb91;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ContentBits=0;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Enabled=true;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Method=Privileged;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Name=FUJITSU-PUBLIC?;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SetDate=2025-09-11T06:56:54Z;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Tag=10,
+ 0, 1, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB9983:EE_|TYRPR01MB14127:EE_
+x-ms-office365-filtering-correlation-id: e382aebe-12db-4aa4-dce7-08ddf73a1871
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|376014|366016|1580799027|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?SS9qV0tiWU1TT3RoVFJyZU50bVYrTUZzaFVFUDFmRTR4YUVydGVZZG1E?=
+ =?iso-2022-jp?B?SHplMnlVS1Z3UWV3dXZwSnJJWFRXSTFiMW5rWnhQTlc5d3p5ZSs4VDBW?=
+ =?iso-2022-jp?B?dnlDNzROZ2VtMDl0Mkg4UjBoWXRtM3YvTWhJb0s0dFBveFJYTUJHSmdE?=
+ =?iso-2022-jp?B?aHVrWlpDVUxYNGJ0cjJmakp4MGpmWUZVWHNzdXhVTTViRzJ2aDE2S3ZI?=
+ =?iso-2022-jp?B?ZUNka3RJOTJpWTFkbUsrQWNnM05QendTM3FvZHN5SVhYbVN2YzM1UFZD?=
+ =?iso-2022-jp?B?ZHVkZGxwMi9qYXIwVEd5UGlPUS9PazExeEkxUDNIck81Z2F5ZlJNMzhs?=
+ =?iso-2022-jp?B?QXVudjJCSGRCa0RJM3UycHNjOTl4SklidXhlM0wxNkNRV0N2WXJKVmFX?=
+ =?iso-2022-jp?B?TGUzL09mTjkxd0x2czljVTFIc1ZVOFYrbWRSZ3ZLTlRSRDYxOThtZ2RM?=
+ =?iso-2022-jp?B?VWppdHVEdUNvaWpRM1oyaHVlRko1dEJTZmczYkxjcFNKbktRc0kwdnNy?=
+ =?iso-2022-jp?B?ZGhFYndPVDd5S0QxUmlyRmRSQWJHYU9QbFJhOG9QNmhlRGZDT0xaMVd2?=
+ =?iso-2022-jp?B?U01wTjdiTWh3dkJVU0U3T2oydktHa0w2bzBFMEs4OHFFaFF3MzVuK3Z3?=
+ =?iso-2022-jp?B?V3RKdXovMnNwTlQ2ZEhpUFNGcHJ4VjY4cGhOMEpPSDU4TEUzbnZuN0pp?=
+ =?iso-2022-jp?B?a040emtha3pQamJsbWI0SnFMc3d3TSs3dmVoZDJLRDF1TGRZSzI2SWhB?=
+ =?iso-2022-jp?B?NlIrNThFV2M1QjRKbmsxTXhyVVViQmRZME5vYngwLzBrUE0wNG93Qkg4?=
+ =?iso-2022-jp?B?TVZEdFo4a0JHMm82ZkxEZHc2UDJiRVFWOEtNbmlCajMrc0oyUGNpVWVK?=
+ =?iso-2022-jp?B?SFRpUmJWM0p5SVkrUE1SaVEvOUhhR0ZWdklFekdoc0JwNnc0RWRHblVj?=
+ =?iso-2022-jp?B?ZGxWZG9FQjNZY21NNHl4UCtSbmNqaVp5UXQxMUlmNWtEZGloSHNFM2ZJ?=
+ =?iso-2022-jp?B?b0IwL1pzTVA2YUpxYUx1OTNKdndjemZjMmtlMFNxWkgzVVB5N1RtK2sz?=
+ =?iso-2022-jp?B?cjRhNGM3aHdUMXlzTk9KZWVUV2Y0THNTV1NEbGVsSDhlYlZjUG5TUE5R?=
+ =?iso-2022-jp?B?R2phVDNUMkFrWC9DUWlsc1hFeGtQTXJEZU5ncitpQmVSdllscVQxYytD?=
+ =?iso-2022-jp?B?TEVSQVFJR280MTl3eGM1Rk85Y2htb2NtK2M4NGdmWjA4YnQ3WFE0YWts?=
+ =?iso-2022-jp?B?UExBS0xSVWUvejBsUlVyZ1RrcnRKMU94bWlsN0w1L1FUaUxZTW9WVWdB?=
+ =?iso-2022-jp?B?SFFiSVlXTmlpc3hxVk5sZElxcG9ZaGpydGp4SVkxV09xWmVxc3dBUjNI?=
+ =?iso-2022-jp?B?cDRMK1J5eGRVQk9FL0NaQmJ0b1EzK0pCQjlIWXBDN1J5bHBKSUlGS2U4?=
+ =?iso-2022-jp?B?ZC9MOUNUSjZaMzgzTUxjZitPMFgxYm9oT1YvWk9GRmIvZmhJeWV0RmZZ?=
+ =?iso-2022-jp?B?SXlJWjJtRy9FT29hRlcvaHJSbDVjTll0R1pDNDhkTFlqZzdDbmdWT0Nr?=
+ =?iso-2022-jp?B?TWFLQVZqc0N6RnZlZ0xZbyt6MUxZZHJ4dGtlQWxpR2E1MEQrWTQ4VVJ5?=
+ =?iso-2022-jp?B?a2YzTFhFcHl2V0ZweW1IQmFsWlFsK2hGeDBLRkl1Z0ErclFsZHVGRmNi?=
+ =?iso-2022-jp?B?WUdUbXB0L2U3L0gzc3Q2cHJ3VTVpZ1ZUbmRDcndDWDh0NnJNZE9lOU02?=
+ =?iso-2022-jp?B?eE1sa2xac29lY0NlQURQY2h3VFVnQzhzMnVkTjBIR1lyVDRwbk9GWG8y?=
+ =?iso-2022-jp?B?d0QwWFllT09wVzVRUGlmNnk4anJHVVkxM3Rvb1hLM1pCK1puTU52MGho?=
+ =?iso-2022-jp?B?QThzQkpyMXRTaG94ZkJ6SytjT2pSSHhlL05RQ0cvRGtEQUUwR0k2MWxp?=
+ =?iso-2022-jp?B?akxCMTFlZThyNHlBWDRFQXZLbmlVYUJyeWpWMWtPQzNCOVJFck1ZY01o?=
+ =?iso-2022-jp?B?TC9VVDhUdlVsMEZCN1RhbmpsZ0VqeTdVckdhQysyVVVKb25iS1c0dCtr?=
+ =?iso-2022-jp?B?UlRkbkwzYmJUemRBYU16U2V6ajlNcDVhZGE2YmNhekZIRnRFNnF4RjlM?=
+ =?iso-2022-jp?B?Q2RoTnh5ZzZ6Q3NUN3F3QnNCYnYzZHRnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB9983.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(1580799027)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?TEN3cEdZOXNubGp5OVJ6Q3dvRG5HcTV2djY0YUsrbVVqZmNhYWpCNmpi?=
+ =?iso-2022-jp?B?SG9FeGxNbkt2N1NCRGJJd1VhWUlXNDIvSU80bERCeFhXMkVnamhCNU1V?=
+ =?iso-2022-jp?B?L2lQYmY1RmNTRnpzNWtLL2krRlFKQmFFYnRQd1FWY2hsUUw5bWtTV2l3?=
+ =?iso-2022-jp?B?aWxHUHV2cUIyWFQ1cDVZUjl6TUxsRDJGWTlXSDc3c0dlSllkTHpKcTZz?=
+ =?iso-2022-jp?B?cTVYd3lnN3M5SWlCUVdGWWV4Tm5zYjZqMnI0WG81U3RrOGpjTmJUaXQr?=
+ =?iso-2022-jp?B?WjBEWTJOdDFiamdIV1ZSQUNCQkdhdzJLM0REdG93M3d0cTFDYURlcWRC?=
+ =?iso-2022-jp?B?WUhBMGRFZmdQNVJkZ1FUZHlON1BtQTNUcytSWEV0czBuOTFxMy9uTjFo?=
+ =?iso-2022-jp?B?T0Zid2xYZGZFODJrcXdrOTVubGEyZTNIbzM1eWVPRjdOelNORnVTVEJk?=
+ =?iso-2022-jp?B?VXpFSVpFZHBEZVlyREJHamJETU1FbXQ3QkU4Wm5kZmhVYWJ4SjlnYzYw?=
+ =?iso-2022-jp?B?KzkrM1FnK0p2WEdNY0llWC96L3Rpc1hkdlJHL29pck1sVjl6KzdOMDN3?=
+ =?iso-2022-jp?B?MDNwTGZpbi9va3h6VldkYjdyRVprZndlVEY1VERUWXNGZ21iZUg5ajBZ?=
+ =?iso-2022-jp?B?aU83YXpKWE9adFlWKzdER0k0ZjYyZE1MbXUzd1R0RUl0eXh1anprdU05?=
+ =?iso-2022-jp?B?L2pDcmp1NWVRNjJqcjRDTVVYbWtWbCtLM1ZYamRIZUM5VlJ2ZlZnOWkz?=
+ =?iso-2022-jp?B?WG9MVjVpQmQrZS8rR3psZVVnSEdiWmtZZ2ZVMm40bGsrczMrTWx6Y0xm?=
+ =?iso-2022-jp?B?d3FxREFtcml6dThST0wvc2x3NVA3ZTJ2dVFYbXBOcGVVWi9iRGZEU2Uy?=
+ =?iso-2022-jp?B?UWFiSUw3S0FwUlhWQWptMktNenR2akhtemRkVHRnN0pMcTBsZDRVWTJU?=
+ =?iso-2022-jp?B?aGlOMVJTWmp2bEhpTHU2bDZlZGkxTE02L0UwNGZqME81UVF2ZzZvVzdk?=
+ =?iso-2022-jp?B?aXBoRUNDVnkyc1NTRTFEWjFVVCs1WHlxZW5zWkhwUXZJUDBTUXNORlpa?=
+ =?iso-2022-jp?B?NGJzOVBHejZsQkQzUjd3TVloRndiRDN2VWF6VFBFN1k2VVRJZVBlVVZG?=
+ =?iso-2022-jp?B?N2M5aDhzbEloaFlEU0ZUVmFLUnJ1Ym1TK3lnVW9lRjRxODZEa0FtK0ZJ?=
+ =?iso-2022-jp?B?NXFmUDk5VzZpZlJ4Z3hNU2VFUjVhTnYxNjFMaXo4bkUvcS9LbTBjNjVw?=
+ =?iso-2022-jp?B?d2hPMkEvODNVcFJvZzdzbHJ3dEZFMUhzUEtyWVQ3QUtvUEJNUmJ6R0t6?=
+ =?iso-2022-jp?B?Q1k4aVR3YjRsT1VoYWNUbDAvQjUxUU04VEpSNGxoNzZFUW1iUWx0YTNN?=
+ =?iso-2022-jp?B?YkRNaG9wandlRW1MaE1Vb0NxVUZ4cGRvcHQrb1BzZEJRZGZmZTFRcGR2?=
+ =?iso-2022-jp?B?bU4zTFBYZW9hUEJxM2lUd2xrdjhWNC9UTzQzeEdJSmRSOGRZS0thaG5i?=
+ =?iso-2022-jp?B?OE5tVXFSMnl1SVVyMnZ5THNqL0E3TGtzbGdXTU5OTm54d0hFU293cy9o?=
+ =?iso-2022-jp?B?c0NhL29ySTN2RWlRekhIRUVJT0xBaTBvcG5pV2lVZ1FYc01NQmJ4REp0?=
+ =?iso-2022-jp?B?TDEwMUJhaTNCd3dsTXhyanpmS1VJVVptekFyL1VWdDVqOHFwVTV6bXB0?=
+ =?iso-2022-jp?B?clc5K0lweUxTQURzdlpKcGFQQU5idGtqOFQ5MTBqZmRGTlJSNldWT3d3?=
+ =?iso-2022-jp?B?dFlDTm9ZSDVmOHdpR2Z3cmQxTjc0M0toK0x0S2RJZWd0NzVsdmFtb3BD?=
+ =?iso-2022-jp?B?VUpxYVFOVHJsSWtzd0tuUXBjdXR2N2VHNDNZbkNwL0F2MkR6TW9RZnZv?=
+ =?iso-2022-jp?B?d0VxZ2NIc3lURlhGSGhyOWRWR0Q4ajZUM3U2VWdJeWpmUEtMQU9VdU80?=
+ =?iso-2022-jp?B?R0t4ZDV1UUtCUllRcWlJbkg1eWg0aWNXSEwrWHNhbzYrelVJRUJHVUlS?=
+ =?iso-2022-jp?B?TzMyOGl0dFJBczMrYnVCakF6WlVZRUp4QnN1bkF2U0loSlorZEk3K00w?=
+ =?iso-2022-jp?B?VnBGbGtRWHgvc0Z5VExrQ3g5T1p3NE1lN2IxTlBRTW1pS0JFRnpuOUI0?=
+ =?iso-2022-jp?B?MlhlSmcrSWdQcFdUbndjWGEzUnhCZFdvTWVuUUJCRlBLc1g2OGN3bE45?=
+ =?iso-2022-jp?B?RG1DS1lmUDZZTmh6ejh4dGRpQzlBNEduMElOUjZJcWlQR0k4bTRtREVD?=
+ =?iso-2022-jp?B?b05qR2FvcWpGMGpxOUxERUp2NlZ6NzgvZ3oxY0RBYmhDcFZqbW1UZXg4?=
+ =?iso-2022-jp?B?NytMbFpwd21xVTZrbjlxMW05MUI2d2QrU1E9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DM4PR12MB8452:EE_
-X-MS-Office365-Filtering-Correlation-Id: bdaded65-2434-4e7d-20b3-08ddf739b89f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eTVuQWs2bE43S1FEZzdKNHBTZXozZFJXRW9kQkxPYkM2aWxzMGtDTVlQQXUw?=
- =?utf-8?B?N3g4NVpOcHB4Q3krM29KR0IwUXFrdklIYzE1NlRrNHFmay94bFdYRGFhaE5G?=
- =?utf-8?B?dFlNNGhXQ2J5a3M5R2lHM0xNUzdFWGZEMEJFbWZMMjc0alRXUHV4SUxXRGxn?=
- =?utf-8?B?dHBaOWNXejFOaWdGSHJqbkFnSWZnQVVXeXhLSWMzM0dSSUYwYVVkZUY4Wkh6?=
- =?utf-8?B?SHR5Qk5hdWp0bDA0TjhDM2p1NWkwcTR5YTdCRjM1bHlZbE9mRHdLWDRLNmVJ?=
- =?utf-8?B?aFN0bFNqaGhWeTllcDFvME9BQzNEazY0Qlh1K2QxTEhGZjlrcU5DSERKZzNo?=
- =?utf-8?B?UkVHQllVeVl6dGFWc2l6d0xxM1RTT08rZW5RcFoyUFJFZ3A4T2kydzg3aWZT?=
- =?utf-8?B?VmNpZFI1bFFhNWJCMTk3NU8vbGJTREcrUTNwQmlwa2FSWDREd3ZkbzJvVHcr?=
- =?utf-8?B?dFR6ZEdFbEIxSnBJeWNGeVhBU1dkU3F0TUcwakNFZ2Q2bjV6MXM1UkxWZC9j?=
- =?utf-8?B?clAybnpzSUVyVjlCdXRQQ2JQNVFOZ2xnVStEL29ibFBscG96dUdhQituVUJL?=
- =?utf-8?B?R0FlM3ZWQUFjOEV5SWRyaFc0NlR4QjNMVndxVmRrVGJNUDMwb3pSK0NjbXF6?=
- =?utf-8?B?ZGhSd3FDNjVoOU9nbkdNS1hiWnozR2pETnlsM2hpSElCaEs2S1lFanN5Ly9O?=
- =?utf-8?B?NFZDelBsUFZjNG1sRGJxdzdFS1BCVldQMFdpdEduT2ZvZitNSmF4Ni9iM2Ru?=
- =?utf-8?B?SEtaNnE4d1MwaFNRSmM2KytJK05FT2VLWFVLZkxwQVNHSDA5Zjlpa0t6S2tQ?=
- =?utf-8?B?TW42NjNsQUozcXhWUDhIMWl1VXc1S20wR2l0S2I1dnl2eW00QlVydVBOSDV6?=
- =?utf-8?B?WFBORlJEYUV3MCtYazd0WGdvMkFoM0NxUjY4RlhXVlN2S0NDMFA1TWpQSVVj?=
- =?utf-8?B?clNJSTlMdE1BRytrMFBoZFZFQjR0TnFyamFYMU42bFdJU05xSlNmQVZ6ZUVJ?=
- =?utf-8?B?dDRsc3RRNDJCdStMWGJmVm9KakEyN1hOZFk3WXVzaDVXdWVtVWorTWltRWd6?=
- =?utf-8?B?cGdkVEVtNzNkaFlPMklYYWhNb0thcHVlZWYwVmRld20xcHdYcHE0QUFOZ0Zj?=
- =?utf-8?B?QUFTYjZrd3dKdlNVRkNLSEdqaFdlcXlzcHNpT0F0czB1aU9YR29DMnRpOWpC?=
- =?utf-8?B?R2hPU1Fiak1FRlFuTXBKaWhud3NDcmhtaGZpc3Rrb1VnOHJyYkZCVWkzMnNQ?=
- =?utf-8?B?dStKWms5YXA0dm9VZjJUSFJZWWcreGM2d0NMMUtyQkp6Y0REZDRjODVCVElI?=
- =?utf-8?B?M1lTRWhMbEVQL2l1MU9mbTFPOEVvOUpwWUJNMEFDN0JvSVN6b3VMaitFUFd2?=
- =?utf-8?B?anlEQTJLampMT3U3Vi9OS0xRMXRIc1o2ZnM2T1pYQmNXcnlseGVPaHlVRmZn?=
- =?utf-8?B?TlBrbG9hbUhMb0RsUGNyQjN6RytaaTd4WWdLc0U5dUI2T0x4RHNDZUV1U3RK?=
- =?utf-8?B?K09RYTFVUCtCMmRJQ0UyK0ljL01VR1N2TDlINktGZnl5OFlPMjNXL2JINWt4?=
- =?utf-8?B?U0hYYUF6a2tPZEhvNW9CUXVOcUNta0o4OXNsV2dJcFZoa3p3UGVmZWZsdEQ1?=
- =?utf-8?B?cVF1VW15N3FXUmc3Mk5SdFEzbVZmYytWbXBTb0o2MkZPVUNkTzVrUjFRbE82?=
- =?utf-8?B?OTh5bFN5VEdqTElSbFMxUEdPV1RvZkovVTA2SVpEVFBoQVlrdE02akJRRW55?=
- =?utf-8?B?SGEzcHNQOW4wS0toVGNBY0txUXZEUGZtZTFQZGZaTUg0WVlCS2ZUWE5wamww?=
- =?utf-8?B?cGF4STE1QlIwYnRsbCs0bGo4a01LTmJNTjd2Y0xCUW8ySnhJc3kzVHJDV0x5?=
- =?utf-8?Q?wYvNHee5szOYx?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dkR0cFo5TVZrOEI2YmNaQ0tuc1h5YmxNYlFod1c3TDZEM01FcE1PZDJuOFBK?=
- =?utf-8?B?OU1CWXdmejF1SXJqOU4zYUgwYUY1TENJb3FGRHFxMDV3cHNON3BzQUVCVlFo?=
- =?utf-8?B?WTNsdnlCTkNlTXBqWmtQQkRnZUtPd2xJMXJwV1hPdTZBd3VYeTJ4cDNyTC8r?=
- =?utf-8?B?eW8ycGhrSmwwTzB3K3lXVWFwQkJ4amV2SDE4VWFhOUZmYURTbkxWMktqNmha?=
- =?utf-8?B?eWQ2VElWME1Vc1JSck1FTXUveVRPZi9qeWJtMnRqcVRkVWFoQ3N0M0tyMDdM?=
- =?utf-8?B?Sm4xelY3TkhxN3RTczV2VXN2SUVXQnlyYzRvUTIxeTdwTmNzSVF3UnF5dkNJ?=
- =?utf-8?B?MW94aDI4NHU3b2NORlIrQ2NPYnYveWFXb3NiK2xjVkxzb3dJcE5LWlZadnVN?=
- =?utf-8?B?VzJaZEVkNFVSSzhYcWR6RXhadUJEVldXQ0xmL2tCbUs1YWR3dElSWU9PMFFp?=
- =?utf-8?B?YnRsK3V4Y2tSbWx6Z0FoNFJLaHVsVjMyTExGNlhCdGt1Y0JLV1UvYkg2ZEhW?=
- =?utf-8?B?QUJlbW9DTGxlYVZ1QjBLNEJEY2dKeFpPMVRLd011dmoyUk5CZnVLL05DVXRL?=
- =?utf-8?B?YWVXUGk1eFVkMFM1ZmNoRUZNN09ZZ2w3Q1Jrd01Wb3lyc25lbjlRd1NSSXBC?=
- =?utf-8?B?TVNpRHdBbFBoZVJVa1hvVjhWWkx1YlkrRVNLdWF0NGNhUkpsVTJWQ2hTUlI4?=
- =?utf-8?B?dmNIUk1VRjllVFR5UjcrYzRVK014WkpObXhvb2JoVzMyK3dOS2pIdW5LOWZX?=
- =?utf-8?B?b0FyS1RxcmxHSGduRWpSV0xwaTZ2L01mSnhwQzNLQ2c2RlB4bEpTaGlzdHVj?=
- =?utf-8?B?YU1YNk9vZTdxb0ovK0VtNDZWUElGczZpZFpyWjJQVkxqbEovc05XWXlmMElm?=
- =?utf-8?B?YkFBRWlTOUN5SEJkUnd2bzU2bTFWMk5KdjJER0crUG4rY285OURZU3pUcWJY?=
- =?utf-8?B?TzRjbXIzWDlpTUtpZVkyYTVMS3VOYzRXVUVaMkVsc0o4RURkMUNlVWFEc1I3?=
- =?utf-8?B?WXM5b21kZUVaRmtySTk0QTJUZzdoS0xiU2ZJb2dyWC9NdGRtQzQ5TUprbUds?=
- =?utf-8?B?bmpQWmxyOXBGOGVBdUp3d1B3WUN1NzZiV2hEd01NdisvTEkxSVJwemdDUVB5?=
- =?utf-8?B?SkhzendZeXRmTUxmSDUrUUtVMkttSU1WSjJ1U2RwTjVhdlVBanlHQllxRWFY?=
- =?utf-8?B?QjBNQVRQdmFPd2l3b2JINzNsNjNOWG52bkM4WHdJOEJ4dmd2bUxYYVZqRS9a?=
- =?utf-8?B?UThzdVlpNmh6b3hFTmIvNmdIczBBRjI5UXVNZHI2UGNsNUcvY1VvZlplZ1BX?=
- =?utf-8?B?TFF4MElNeVZGN1kzK0JuWnpLdXNBMDl1OWVnVWlhTGhUL1RRQWsvOU5oOUJF?=
- =?utf-8?B?RXlhK2s3U0VjNFdveDBqWW9FNDU1VlZYTHZ4R2lMWTlJaklYczhNZWZoK3RW?=
- =?utf-8?B?ZlBPWkdsWCsyWHlTTmpFbkF5MEQzV3AydktsQmxRYUhtaFpzQmV1NTNRbDlJ?=
- =?utf-8?B?UnQ0R0xSbDFweENZbVZwby9OT1k1REtHQTJQZ2c5WXVzYkliOGxuTVcyNUFU?=
- =?utf-8?B?aVM4SExQQW41LzZIZWlLZk5leExWUGxXVk1kOVRnQ0cxZ3U2czZDQnU4Tkh3?=
- =?utf-8?B?Z2gwU3NFREhVM01HbmJuV3V3Zmp0ZHN5Ulh4S2MwdXg3K0tyMTFUc0IvTjBr?=
- =?utf-8?B?Q0gya2ZheFZZUVFuczVPNTNNS09IVFN4MjNVQUVmTEtyMjlNK2Y4VHM0cG5v?=
- =?utf-8?B?MGlJS0c2cnFqSGZ3WXFYRG1WVjEvTmxDTXlFWjdxdUsybnY4NnEwdGNVckNi?=
- =?utf-8?B?dUU0VFJGakh6a0YwWHZGNWNNYlpCZnYyaVFWRlhkZlNHbVBBY0ZweEQ4T3Fq?=
- =?utf-8?B?QlA0bmZ3NHRhcURKdDNsOVRMTFMrVlpoWVg5d0UzMzY2MVljUmhEdUpXVjgx?=
- =?utf-8?B?ckp0R2V2WnBOYUU0dG9rTUtGc3kySHFrcFE3aFZpSktDTVRIdXJ2RlB5SUxU?=
- =?utf-8?B?djRkeFUzdFRBWlZwQmZWbFhkWFUvQXZicHpaYlQ0MGFmUnhQWGFva3c5enQr?=
- =?utf-8?B?MVBFaUptakhUckFUc014N1JOYzhUVGpxSTZxekxFbUYvM1dhdk51Zm0za25x?=
- =?utf-8?Q?P5c0CXLWm8diZuUJTmVzNXUB+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdaded65-2434-4e7d-20b3-08ddf739b89f
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ieKZnwoqDqgxRV8w2THQc6V5Rde7S3o8/Y5Nt6FETouyUpUBzsF1JJJYBJ9teN7XhVgyVUtLJ6an41jPeGwMSVwSigSvueVKLjBGfD5GxcDzkwiUy1lLJpzHTHIfteSGalx0Qu1i849/frZFsvPdcLOf4j+ec/ihiGqxfIP4hos3bFHbbySqeHUfCWQ6TuuYugbV+5O6uooLxj30cj6vHKebUUV1HV/+m34x1hmoU0XnuilHFxyatYMj4fduUY+NS0lKUpLlPwUqFdboYUp4IAA+nzUq0Z1VLEC619fW9mdmhorhmEGFKb2t0+hqNZ8ZH/Zs/5EEMoYJuHyrcYOANoo9zl2F1BCZhOmQbxjEHrOEfuoMb8yMt/MLhTdtavN5XNOFeVyRz9c8gK3wGgmJjhekW6J4E0Vjbj3ML/a99o0URekhj7o5GC02i2Ko4YBMaLjSUIuZeTeLjJVpu82WY8XvrhmZbtkzg/Yka46d9PIp4nOcu8Ul1QOMnU91ILZVY0XJxyLknIPyb4uQMFFcdCZZP6kM/b6uPnugwrDTnQmjaw7m9VsL836ENBiaNc6ors3ufsTmzX04ZgrNTovmJyebwaIa06qNSLVe8F5R0pcpuoIA4liBBFW2cQMTc2Tv
+X-OriginatorOrg: fujitsu.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 05:02:24.1575
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB9983.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e382aebe-12db-4aa4-dce7-08ddf73a1871
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2025 05:05:04.6146
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qOAHwqVnlkRR1GaSp1Rpe90iYjBFl9Hp2lKvISxdC7WFr9dnX469qD1yDjMS4E7Gw/EM2A0f9ySYRyhRIFV2qg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8452
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9iVXD/Jh+Mo1pEIh1Ty7znRNF2jBVxEe2ER1Wm+7DrmNX2jIqJeY0MCzlYpR8aT74HZ7eR4XFeGBSu18hg2wY+MVUEAozm9Y+NeO3BzZR0Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB14127
 
+Hi Hanjun & Sudeep
 
+> Hi Ilkka
+>=20
+> > Hi Kazuhiro,
+> >
+> > On Fri, 5 Sep 2025, Kazuhiro Abe wrote:
+> > > AGDI has two types of signaling modes: SDEI and interrupt.
+> > > Currently, the AGDI driver only supports SDEI.
+> > > Therefore, add support for interrupt signaling mode The interrupt
+> > > vector is retrieved from the AGDI table, and call panic function
+> > > when an interrupt occurs.
+> > >
+> > > Signed-off-by: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
+> >
+> >
+> > Looks good to me.
+> >
+> > Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> >
+>=20
+> Thanks for your review.
+>=20
+> Best Regards,
+> Kazuhiro Abe
+>=20
+> >
+> > Hanjun & Sudeep, what's your thought on enabling the use of regular
+> > interrupts here? I do agree the spec talks about non-maskable ones and
+> > to my understanding that's what the idea was indeed.
 
-On 9/18/2025 10:52 PM, Matthew Ruffell wrote:
-> Hi Mario, Bjorn,
-> 
-> I am debugging a kexec regression, and I could use some help please.
-> 
-> The AWS "c5.metal" instance type fails to kexec into another kernel, and gets
-> stuck during boot trying to mount the rootfs from the NVME drive, and then moves
-> at a glacier pace and never actually boots:
-> 
-> [   79.172085] EXT4-fs (nvme0n1p1): orphan cleanup on readonly fs
-> [   79.193407] EXT4-fs (nvme0n1p1): mounted filesystem
-> a4f7c460-5723-4ed1-9e86-04496bd66119 ro with ordered data mode. Quota
-> mode: none.
-> [  109.606598] systemd[1]: Inserted module 'autofs4'
-> [  139.786021] systemd[1]: systemd 257.9-0ubuntu1 running in system
-> mode (+PAM +AUDIT +SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT
-> -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN +IPTC
-> +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2
-> +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD
-> +BPF_FRAMEWORK +BTF -XKBCOMMON -UTMP +SYSVINIT +LIBARCHIVE)
-> [  139.943485] systemd[1]: Detected architecture x86-64.
-> [  169.994695] systemd[1]: Hostname set to <ip-172-31-48-167>.
-> [  170.102479] systemd[1]: bpf-restrict-fs: BPF LSM hook not enabled
-> in the kernel, BPF LSM not supported.
-> [  200.503000] systemd[1]: Queued start job for default target graphical.target.
-> [  200.550056] systemd[1]: Created slice system-modprobe.slice - Slice
-> /system/modprobe.
-> [  230.922947] systemd[1]: Created slice system-serial\x2dgetty.slice
-> - Slice /system/serial-getty.
-> [  261.131318] systemd[1]: Created slice system-systemd\x2dfsck.slice
-> - Slice /system/systemd-fsck.
-> [  291.338906] systemd[1]: Created slice user.slice - User and Session Slice.
-> [  321.546200] systemd[1]: Started systemd-ask-password-wall.path -
-> Forward Password Requests to Wall Directory Watch.
-> 
-> I bisected the issue, and the behaviour starts with:
-> 
-> commit 4d4c10f763d7808fbade28d83d237411603bca05
-> Author: Mario Limonciello <mario.limonciello@amd.com>
-> Date:  Wed Apr 23 23:31:32 2025 -0500
-> Subject: PCI: Explicitly put devices into D0 when initializing
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4d4c10f763d7808fbade28d83d237411603bca05
-> 
-> I also tried the follow up commit:
-> 
-> commit 907a7a2e5bf40c6a359b2f6cc53d6fdca04009e0
-> Author: Mario Limonciello <mario.limonciello@amd.com>
-> Date:  Wed Jun 11 18:31:16 2025 -0500
-> Subject: PCI/PM: Set up runtime PM even for devices without PCI PM
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=907a7a2e5bf40c6a359b2f6cc53d6fdca04009e0
-> 
-> and the behaviour still exists.
-> 
-> If I revert both from 6.17-rc3, as well as the downstream Ubuntu stable kernels,
-> the system kexec's successfully as normal.
-> 
-> lspci -vvv as root (nvme device)
-> https://paste.ubuntu.com/p/x7Zyjp8Brr/
-> 
-> lscpi -vvv as root (full output)
-> https://paste.ubuntu.com/p/NTdbByTqjR/
-> 
-> Strangely, the behaviour works like this:
-> 
-> Kernel without 4d4c10f76 -> kernel without 4d4c10f76 = success
-> Kernel without 4d4c10f76 -> kernel with 4d4c10f76 = success
-> Kernel with 4d4c10f76 -> kernel without 4d4c10f76 = failure
-> Kernel with 4d4c10f76 -> kernel with 4d4c10f76 = failure
-> 
-> Steps to reproduce:
-> 1) On AWS, Launch a c5.metal instance type
-> 2) Install a kernel with 4d4c10f76, note it might need AWS specific patches,
-> perhaps try a recent downstream distro kernel such as 6.17.0-1001-aws in Ubuntu
-> Questing with AMI ami-069b93def587ece0f
-> (ubuntu/images-testing/hvm-ssd-gp3/ubuntu-questing-daily-amd64-server-20250822)
-> with a full apt update && apt upgrade
-> 3) sudo reboot, to get a fresh full boot. Note, this takes approx 17 minutes.
-> 4) sudo apt install kexec-tools
-> 5) kernel=6.17.0-1001-aws
-> kexec -l -t bzImage /boot/vmlinuz-$kernel
-> --initrd=/boot/initrd.img-$kernel --reuse-cmdline
-> kexec -e
-> 6) On EC2 console, Actions > Monitor and troubleshoot > EC2 serial console,
-> and watch progress.
-> 
-> I am more than happy to try any patches / debug printk's etc.
-> 
-> Thanks,
-> Matthew
+Do you have any thoughts on this matter?
 
-When you say AWS specific patches, can you be more specific?  What is 
-missing from a mainline kernel to use this hardware?  IE; how do I know 
-there aren't Ubuntu specific patches *causing* this issue.
+Best Regards,
+Kazuhiro Abe
 
-I just glanced through a Ubuntu kernel tree log and there are a ton of 
-"UBUNTU: SAUCE: PCI" patches.  I didn't investigate any of these anymore 
-than a cursory look of the subsystem though, so I have no idea if that 
-has any bearing on this issue.
-
-I remember a while back there was a patch carried by Ubuntu that could 
-break a regular shutdown that never made it upstream.  Don't know what 
-happened with that either.
-
-So I don't doubt you when you say 
-4d4c10f763d7808fbade28d83d237411603bca05 and 
-907a7a2e5bf40c6a359b2f6cc53d6fdca04009e0 caused an issue, but I just 
-want to rule out a bad interaction from other patches.  If it would be 
-possible to reproduce this issue on a mainline kernel (say 6.17-rc6) it 
-might be easier for Bjorn or I to look at.
-
-Now I've never used AWS - do you have an opportunity to do "regular" 
-reboots, or only kexec reboots?
-
-This issue only happens with a kexec reboot, right?
-
-The first thing that jumps out at me is the code in 
-pci_device_shutdown() that clears bus mastering for a kexec reboot.
-If you comment that out what happens?
-
-The next thing I would wonder if if you're compiling with 
-CONFIG_KEXEC_JUMP and if that has an impact to your issue.  When this is 
-defined there is a device suspend sequence in kernel_kexec() that is run 
-which will run various suspend related callbacks.  Maybe the issue is 
-actually in one of those callbacks.
-
-A possible way to determine this would be to run rtcwake to suspend and 
-resume and see if the drive survives.  If it doesn't, it's a hint that 
-there is something going on with power management in this drive or the 
-bridge it's connected to.  Maybe one of them isn't handling D3 very well.
-
-If there is a power management problem with the disk (or the bridge) you 
-can try adding PCI_DEV_FLAGS_NO_D3 to the NVME disk.
+> >
+> > Cheers, Ilkka
+> >
+> >
+> > > ---
+> > > I keep normal IRQ code when NMI cannot be used.
+> > > If there is any concern, please let me know.
+> > >
+> > > v2->v3
+> > > - Fix bug in the return value of agdi_probe function.
+> > > - Remove unnecessary curly braces in the agdi_remove function.
+> > >
+> > > v2:
+> > > https://lore.kernel.org/all/20250829101154.2377800-1-fj1078ii@aa.jp.
+> > > fu
+> > > jitsu.com/
+> > > v1->v2
+> > > - Remove acpica update since there is no need to update define value
+> > >   for this patch.
+> > > ---
+> > > drivers/acpi/arm64/agdi.c | 95
+> > ++++++++++++++++++++++++++++++++++++---
+> > > 1 file changed, 88 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/drivers/acpi/arm64/agdi.c b/drivers/acpi/arm64/agdi.c
+> > > index e0df3daa4abf..2313a46f01cd 100644
+> > > --- a/drivers/acpi/arm64/agdi.c
+> > > +++ b/drivers/acpi/arm64/agdi.c
+> > > @@ -16,7 +16,11 @@
+> > > #include "init.h"
+> > >
+> > > struct agdi_data {
+> > > +	unsigned char flags;
+> > > 	int sdei_event;
+> > > +	unsigned int gsiv;
+> > > +	bool use_nmi;
+> > > +	int irq;
+> > > };
+> > >
+> > > static int agdi_sdei_handler(u32 sdei_event, struct pt_regs *regs,
+> > > void *arg) @@ -48,6 +52,55 @@ static int agdi_sdei_probe(struct
+> > platform_device *pdev,
+> > > 	return 0;
+> > > }
+> > >
+> > > +static irqreturn_t agdi_interrupt_handler_nmi(int irq, void
+> > > +*dev_id) {
+> > > +	nmi_panic(NULL, "Arm Generic Diagnostic Dump and Reset NMI
+> > Interrupt event issued\n");
+> > > +	return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +static irqreturn_t agdi_interrupt_handler_irq(int irq, void
+> > > +*dev_id) {
+> > > +	panic("Arm Generic Diagnostic Dump and Reset Interrupt event
+> > issued\n");
+> > > +	return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +static int agdi_interrupt_probe(struct platform_device *pdev,
+> > > +				struct agdi_data *adata)
+> > > +{
+> > > +	unsigned long irq_flags;
+> > > +	int ret;
+> > > +	int irq;
+> > > +
+> > > +	irq =3D acpi_register_gsi(NULL, adata->gsiv, ACPI_EDGE_SENSITIVE,
+> > ACPI_ACTIVE_HIGH);
+> > > +	if (irq < 0) {
+> > > +		dev_err(&pdev->dev, "cannot register GSI#%d (%d)\n",
+> > adata->gsiv, irq);
+> > > +		return irq;
+> > > +	}
+> > > +
+> > > +	irq_flags =3D IRQF_PERCPU | IRQF_NOBALANCING |
+> IRQF_NO_AUTOEN |
+> > > +		    IRQF_NO_THREAD;
+> > > +	/* try NMI first */
+> > > +	ret =3D request_nmi(irq, &agdi_interrupt_handler_nmi, irq_flags,
+> > > +			  "agdi_interrupt_nmi", NULL);
+> > > +	if (ret) {
+> > > +		ret =3D request_irq(irq, &agdi_interrupt_handler_irq,
+> > > +				  irq_flags, "agdi_interrupt_irq", NULL);
+> > > +		if (ret) {
+> > > +			dev_err(&pdev->dev, "cannot register IRQ %d\n",
+> ret);
+> > > +			acpi_unregister_gsi(adata->gsiv);
+> > > +			return ret;
+> > > +		}
+> > > +		enable_irq(irq);
+> > > +		adata->irq =3D irq;
+> > > +	} else {
+> > > +		enable_nmi(irq);
+> > > +		adata->irq =3D irq;
+> > > +		adata->use_nmi =3D true;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > static int agdi_probe(struct platform_device *pdev) {
+> > > 	struct agdi_data *adata =3D dev_get_platdata(&pdev->dev); @@ -55,12
+> > > +108,15 @@ static int agdi_probe(struct platform_device *pdev)
+> > > 	if (!adata)
+> > > 		return -EINVAL;
+> > >
+> > > -	return agdi_sdei_probe(pdev, adata);
+> > > +	if (adata->flags & ACPI_AGDI_SIGNALING_MODE)
+> > > +		return agdi_interrupt_probe(pdev, adata);
+> > > +	else
+> > > +		return agdi_sdei_probe(pdev, adata);
+> > > }
+> > >
+> > > -static void agdi_remove(struct platform_device *pdev)
+> > > +static void agdi_sdei_remove(struct platform_device *pdev,
+> > > +			     struct agdi_data *adata)
+> > > {
+> > > -	struct agdi_data *adata =3D dev_get_platdata(&pdev->dev);
+> > > 	int err, i;
+> > >
+> > > 	err =3D sdei_event_disable(adata->sdei_event);
+> > > @@ -83,6 +139,29 @@ static void agdi_remove(struct platform_device
+> *pdev)
+> > > 			adata->sdei_event, ERR_PTR(err)); }
+> > >
+> > > +static void agdi_interrupt_remove(struct platform_device *pdev,
+> > > +				  struct agdi_data *adata)
+> > > +{
+> > > +	if (adata->irq !=3D -1) {
+> > > +		if (adata->use_nmi)
+> > > +			free_nmi(adata->irq, NULL);
+> > > +		else
+> > > +			free_irq(adata->irq, NULL);
+> > > +
+> > > +		acpi_unregister_gsi(adata->gsiv);
+> > > +	}
+> > > +}
+> > > +
+> > > +static void agdi_remove(struct platform_device *pdev) {
+> > > +	struct agdi_data *adata =3D dev_get_platdata(&pdev->dev);
+> > > +
+> > > +	if (adata->flags & ACPI_AGDI_SIGNALING_MODE)
+> > > +		agdi_interrupt_remove(pdev, adata);
+> > > +	else
+> > > +		agdi_sdei_remove(pdev, adata);
+> > > +}
+> > > +
+> > > static struct platform_driver agdi_driver =3D {
+> > > 	.driver =3D {
+> > > 		.name =3D "agdi",
+> > > @@ -94,7 +173,7 @@ static struct platform_driver agdi_driver =3D {
+> > > void __init acpi_agdi_init(void) {
+> > > 	struct acpi_table_agdi *agdi_table;
+> > > -	struct agdi_data pdata;
+> > > +	struct agdi_data pdata =3D {0};
+> > > 	struct platform_device *pdev;
+> > > 	acpi_status status;
+> > >
+> > > @@ -104,11 +183,13 @@ void __init acpi_agdi_init(void)
+> > > 		return;
+> > >
+> > > 	if (agdi_table->flags & ACPI_AGDI_SIGNALING_MODE) {
+> > > -		pr_warn("Interrupt signaling is not supported");
+> > > -		goto err_put_table;
+> > > +		pdata.gsiv =3D agdi_table->gsiv;
+> > > +	} else {
+> > > +		pdata.sdei_event =3D agdi_table->sdei_event;
+> > > 	}
+> > >
+> > > -	pdata.sdei_event =3D agdi_table->sdei_event;
+> > > +	pdata.irq =3D -1;
+> > > +	pdata.flags =3D agdi_table->flags;
+> > >
+> > > 	pdev =3D platform_device_register_data(NULL, "agdi", 0, &pdata,
+> > sizeof(pdata));
+> > > 	if (IS_ERR(pdev))
+> > > --
+> > > 2.43.0
+> > >
+> > >
 
