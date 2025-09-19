@@ -1,125 +1,78 @@
-Return-Path: <linux-kernel+bounces-825343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBE6B8B9E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89422B8B9EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E78017D619
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9EB1CC2A9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB0D2D3740;
-	Fri, 19 Sep 2025 23:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90892D2485;
+	Fri, 19 Sep 2025 23:14:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="lIrIa7M5"
-Received: from pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.12.53.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fF087Zcj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6742AD24;
-	Fri, 19 Sep 2025 23:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.12.53.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D77B2AD24;
+	Fri, 19 Sep 2025 23:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758323628; cv=none; b=jdNrvv1r0focrWxQ/iPBSZ6MbVaYdHmnmbg1i2vJZ9AZHuvvlgsC+BikmOOA1Y5ra6bk0xTOwqnitRWcZGxT0qh70lKESv4P66TVzk/Dp/bNXR1x+eI1crC1U6z6xjvHZMgEkJ2XSuHXXziT2Tj1o8PixrohBghINAy/IETnm/s=
+	t=1758323664; cv=none; b=ulN6YK7Q4dVq83XWCQXkZKMKQlaUlHU8Uhbdocsd5G+vqLRvWrN7/uHYBytCKWC5QlX26EYHmVewGKY8CaWmI909Bf7CdAz5Q4893QxbMOcLTq5lgvgfdTiG69RgmvHAJuEM+dmAKNkQ/JS8/SLn9HEcoQh2abOPeJ+mLrNfOQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758323628; c=relaxed/simple;
-	bh=fKWqEXm+bV6JD3TcSIbfJhfnABvxJkTMRf/Bj+lcaRA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iQJC0R9NmvIPfGHVD0uTZuukiOVRzSoKT/zB5z3qopziOA49ZJH6b8d08pY1L7z0VeUyGwTXx+txCcxg7pKJscUL0UHpc6iIc2PmS4Fs8m77W0oR835cy9YNJy5Ma41WkpZIWGyXAss532TJO3qJZmVoeMf6lfTOtpmQnxqUzP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=lIrIa7M5; arc=none smtp.client-ip=52.12.53.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758323626; x=1789859626;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=KfKALAbjgmpFUExvcy5RcZ+OJFmwCOtZwZQBuvDSCqI=;
-  b=lIrIa7M5Qn7C2fA6o7EIK7E/eSgd8rsxxA4iQWs82oVStsV/gXOX9Rbu
-   USD0j9zrCABL3Bh9P9kIUqYFqo4dLN0TDs7jcsIx7YmGh7hd1viTYWCOI
-   XECcu1W1DFHnKi80E8HZQhVbfvsRt96Fl0uQVs5gFc1F0L4wI11sYU8i4
-   mjVDQm017T2Naj2Lhj8QvMl/cyl8AhdFoeqb+Urrc4ZxXiXHJOBY/AP2Q
-   JFbYOVz7ls2hJ6wnuV/YYJTcDIPnctJKMHqZuGkQfmEH6C5VUAs94B9Ks
-   SJYQtwGpmsqYcEL5i6pxk49WZoXEMq4PUhTfORpKYx7QhX0QlTLZPS16E
-   w==;
-X-CSE-ConnectionGUID: svCWeSlkSVC/dSz++PPR0A==
-X-CSE-MsgGUID: h8bxUliVSJGGD7+tUhRflA==
-X-IronPort-AV: E=Sophos;i="6.18,279,1751241600"; 
-   d="scan'208";a="3213750"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-010.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 23:13:46 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:10324]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.53:2525] with esmtp (Farcaster)
- id e14a9c00-d7d3-4833-b24c-5d2c4ebae526; Fri, 19 Sep 2025 23:13:46 +0000 (UTC)
-X-Farcaster-Flow-ID: e14a9c00-d7d3-4833-b24c-5d2c4ebae526
-Received: from EX19D032UWA003.ant.amazon.com (10.13.139.37) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 19 Sep 2025 23:13:45 +0000
-Received: from dev-dsk-ravib-2a-f2262d1b.us-west-2.amazon.com (10.169.187.85)
- by EX19D032UWA003.ant.amazon.com (10.13.139.37) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 19 Sep 2025 23:13:45 +0000
-From: Ravi Kumar Bandi <ravib@amazon.com>
-To: <lpieralisi@kernel.org>, <mani@kernel.org>, <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>
-CC: <kwilczynski@kernel.org>, <robh@kernel.org>, <michal.simek@amd.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] PCI: xilinx-xdma: Enable legacy interrupts
-Date: Fri, 19 Sep 2025 23:13:30 +0000
-Message-ID: <20250919231330.886-1-ravib@amazon.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758323664; c=relaxed/simple;
+	bh=itTTgSsa5I+ezL0P267yKOOOztqAf7Bx/7T/s6IKDPY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mV0fkUd+CIx8n9wWlh4TADnQ9cpPkK6qOFyCl9/wVh1kIO4JanMgAx7XDajctxLj7zMlzrMe+t55NfEVYEKK5jy8qEaCEarYt0C85nNzQ1RShD64gtSbcJIALwHnNEGDSEL0buAEW77WQORlJqPbXgwYCl8JGc6WhHwf+pQT2GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fF087Zcj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED243C4CEF0;
+	Fri, 19 Sep 2025 23:14:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758323664;
+	bh=itTTgSsa5I+ezL0P267yKOOOztqAf7Bx/7T/s6IKDPY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=fF087Zcjxf9aQW58KAVVpmvXnrA9hZDa3LF/XZQhDupDqZWQQPhG7eG1YuucR/UCA
+	 9DmSATG1OuZen/lsRuOQlppSjruTAvgeQpM7vmXYiDQLrGZxuJZ3VwogGGzqyp1Hhq
+	 6sllEeTU3vp68P/NPqbOYl2zVCjYZPkEsDOwulzUeEg3bJwm1bzs1NSvmLXd0GT8mE
+	 cjxOqU4eaCshe/pn1iJXvWK1AqYkuKZAQfMINJmeRqp7P8BfgHtwx1lKNcfJwuOwR5
+	 yXyYE2Abu/tSMOzsVVxr22oXS7Xcvxkcp9JR71jzCxQKOHzsBg+S/3g1Km/0vS1tRe
+	 7E2v3GhQiwfLA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E8A39D0C20;
+	Fri, 19 Sep 2025 23:14:24 +0000 (UTC)
+Subject: Re: [git pull] IOMMU Fixes for Linux v6.17-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <kx4extvxjpt5z6gwvqdl5a7aqvscnjtrphyok3iiswgcm3dptg@n2tmevnllyx7>
+References: <kx4extvxjpt5z6gwvqdl5a7aqvscnjtrphyok3iiswgcm3dptg@n2tmevnllyx7>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <kx4extvxjpt5z6gwvqdl5a7aqvscnjtrphyok3iiswgcm3dptg@n2tmevnllyx7>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.17-rc6
+X-PR-Tracked-Commit-Id: 1e56310b40fd2e7e0b9493da9ff488af145bdd0c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 497b9a7b8df955fffd612d0d4aaf315b03556b10
+Message-Id: <175832366307.3732828.16837656304588472965.pr-tracker-bot@kernel.org>
+Date: Fri, 19 Sep 2025 23:14:23 +0000
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, iommu@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWB002.ant.amazon.com (10.13.139.188) To
- EX19D032UWA003.ant.amazon.com (10.13.139.37)
 
-Starting with kernel 6.6.0, legacy interrupts from PCIe endpoints
-do not flow through the Xilinx XDMA root port bridge because
-interrupts are not enabled after initializing the port.
+The pull request you sent on Fri, 19 Sep 2025 16:29:40 +0200:
 
-This issue is seen after XDMA driver received support for QDMA and
-underwent relevant code restructuring of old xdma-pl driver to
-xilinx-dma-pl (ref commit: 8d786149d78c).
+> git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.17-rc6
 
-This patch re-enables legacy interrupts to use with PCIe endpoints
-with legacy interrupts. Tested the fix on a board with two endpoints
-generating legacy interrupts. Interrupts are properly detected and
-serviced. The /proc/interrupts output shows:
-[...]
-32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
-52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
-[...]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/497b9a7b8df955fffd612d0d4aaf315b03556b10
 
-Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
----
- drivers/pci/controller/pcie-xilinx-dma-pl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thank you!
 
-diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-index b037c8f315e4..cc539292d10a 100644
---- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
-+++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-@@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
- 		return err;
- 	}
- 
-+	/* Enable interrupts */
-+	pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
-+		   XILINX_PCIE_DMA_REG_IMR);
-+	pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
-+		   XILINX_PCIE_DMA_REG_IDRN_MASK);
-+
- 	return 0;
- }
- 
 -- 
-2.47.3
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
