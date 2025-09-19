@@ -1,76 +1,144 @@
-Return-Path: <linux-kernel+bounces-825347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A53B8BA1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:22:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D837EB8BA22
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189FA1C20DFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:22:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E357CA8028C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D30B2D3740;
-	Fri, 19 Sep 2025 23:22:08 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC1A27CCF3;
+	Fri, 19 Sep 2025 23:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cf4vxuDE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C92F2C21D8
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49ABA61FCE;
+	Fri, 19 Sep 2025 23:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758324127; cv=none; b=nzaVLyHGESVrs0f98ElBGkUCHZ+2Ecz+HhgXMUNjDA2TTBA/TyeXunUmWJ5QupbHsk3WtxtzYlB8wwrqZdMCPcWcLwOV6tOXMWVtr6GHI6UGyzKQwk7hDdg6RHkQR8ayJ5fU0w3kyHRQlewvrZt5ZvZmCYVSxz9fHAZs/FN8wmo=
+	t=1758324692; cv=none; b=uSJro4OC8eNFk4oV0onM5yr+ZHQ3+DQA+s0YRtS5s8ckTOVQA8OkwOkaE0/BmRFZvERaXS2Vn3WfXF7Zl8IQFEs4VQ33+/oQBxlOmSyzZQpdcRF9VI45B21xUxLxMl22dgkYVJgBM70WZzzZ1tC39lyLysL3w2/lcwqnUc+4aGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758324127; c=relaxed/simple;
-	bh=xQBneLHGSaWhoWXgwO+HeLkkcwXMKlIllVytZGaj3HU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ANlyRqMMmMG691GbHXak7SmdVHMy3yk4aUnxeOCb4TnIrIkLDDQrIxk0K5N7Mbja1+smM+UHwm8MKOepgKgSIUNKJarsFmQOYUF6U/gH7DNDzcHFbWu/60FPhc68SrTBT4SPbpYyA5ynSddEpOOz8PqDCeaYBffyErECHZDi41c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8936161680bso286613439f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:22:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758324125; x=1758928925;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xQBneLHGSaWhoWXgwO+HeLkkcwXMKlIllVytZGaj3HU=;
-        b=WD2a/D0y5JrXgwBLmukY2yRYE2K6hKf8hmGPyrClfrdN7XCaQrkjlW0XWiGXAfNQAU
-         ySMcpXZxm0YviTviZGNVcojWIe5WCeFOhPE1hXdZ7sHeHPf4SiNlxz0JmqcQqTRipGTb
-         9F5R+2C4GRTlvOSuSs0mNSw7gVXBMFYr3RhnaUmWrZvLG0TF+lsGF0x0VCeziKGxR2pI
-         QFELZ6p/oS4qVf1IXDhfW0hyxcSene4O+2BbR4tAiaJy5gH0X29A6J2Db1X5+Jzm/rvk
-         z2G3UlXz3D/MExN+RxDWcALKziduLhRQ4DETw2k9i+Z42k4l0elWLh6+af0Rk/BxL3ks
-         rIcg==
-X-Gm-Message-State: AOJu0YycMdKYN7jg87WAs9RrXgj/143/TZCAq4b7JbQmCQPV9zizhtSH
-	4CuxE/C8w9aFVEuUW5U0/dyO47/z0t22OjlWDXxX0A0CpsBNGC+bLixtzkfvzagR5NwuwL4fXt4
-	uKV6Bl+gVnlZA3JfKqscLEiW8lXNDmiCrX8FxTsJ+XZQiVeDOO7eRpj3zuIM=
-X-Google-Smtp-Source: AGHT+IFjCmAJunWWqmcTqWksDbMIZnkyIwOt2knAZNZ6OJZf6GouQvYuMhPJwdN+jIW2B57cAWRbuvsJuUoIsNUZpp0Ow+B24JS5
+	s=arc-20240116; t=1758324692; c=relaxed/simple;
+	bh=bKQUk6LpxsJG4cFHoQGpCnCyQDnNHTW8RKsWh6CSCEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AdRLDvuGNH+v8N+w4EutIcWKNBMAqxq7xqx9k8GDYdTKKm4gLwu0Y4LEVLjOJylTfxpPTsVtKxySp13yY4cVIzDgqMQH8wuI3aDq+hdSnIKLe35JW2kcfYgYVmjICcUb5ZHusXM/nSZPJtZ5OgIR5P2PFITfvQOEj+RsMGFIc2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cf4vxuDE; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758324689; x=1789860689;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bKQUk6LpxsJG4cFHoQGpCnCyQDnNHTW8RKsWh6CSCEg=;
+  b=cf4vxuDEZiC0XpTf6w8cI0i8Y1Q+23YvE8AkGiLXOr4mMf4m9NywP6Vg
+   Ys6xSzJ0K/E8zRduZYQ56TUdBRBAfqVZ9ziPfbsb1fWThcnWmVaNhTrlk
+   qrrhzgSpDOUNGGpb+BGNzkE5JL7NPKJjeRzMUmjmmxvmCPMFhOr19GQxk
+   GW2TbeLWGOHq13nnLQZctjc5RiyVo0kMxRBGmaS2VoBHD2UAo7F9R4kcx
+   Cs9W2kmWeYctyXVTCbSDSGauE3SR+8P7e+jHH0/fP59hrRarIjmrLznTj
+   c7JzxvCdQQ9PBGC9w4u0vonSCY06ADOFwUI7xHZJybhv3ttqLwscgOZ3H
+   Q==;
+X-CSE-ConnectionGUID: Wdz6ZZAcTzyVIZcHFJCSUg==
+X-CSE-MsgGUID: P6aj/7SuQC67LkRnqdkm9Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="48251909"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="48251909"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:31:29 -0700
+X-CSE-ConnectionGUID: /eZfpaevTEiXr72h9BOHgQ==
+X-CSE-MsgGUID: E0XyVVntTg+OjFKT6Tu6dQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="206896901"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.58]) ([10.125.108.58])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:31:28 -0700
+Message-ID: <1c9ef334-b087-4990-b1df-ec0d88fa21a7@intel.com>
+Date: Fri, 19 Sep 2025 16:31:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:460e:b0:424:8653:8cd9 with SMTP id
- e9e14a558f8ab-42486538d87mr44734015ab.24.1758324125548; Fri, 19 Sep 2025
- 16:22:05 -0700 (PDT)
-Date: Fri, 19 Sep 2025 16:22:05 -0700
-In-Reply-To: <68c21301.050a0220.3c6139.0031.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cde59d.050a0220.13cd81.000a.GAE@google.com>
-Subject: Forwarded: WARNING in ext4_xattr_inode_update_ref
-From: syzbot <syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 02/20] nvdimm/label: CXL labels skip the need for
+ 'interleave-set cookie'
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Ira Weiny <ira.weiny@intel.com>
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134132epcas5p192c031691ab4cbb905f2b2313bb79dee@epcas5p1.samsung.com>
+ <1891546521.01758169682623.JavaMail.epsvc@epcpadp2new>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <1891546521.01758169682623.JavaMail.epsvc@epcpadp2new>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: WARNING in ext4_xattr_inode_update_ref
-Author: eraykrdg1@gmail.com
+On 9/17/25 6:40 AM, Neeraj Kumar wrote:
+> CXL LSA v2.1 utilizes the region labels stored in the LSA for interleave
+> set configuration instead of interleave-set cookie used in previous LSA
+> versions. As interleave-set cookie is not required for CXL LSA v2.1 format
+> so skip its usage for CXL LSA 2.1 format
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Acked-by: Ira Weiny <ira.weiny@intel.com>
 
-#syz test
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/nvdimm/namespace_devs.c |  8 +++++++-
+>  drivers/nvdimm/region_devs.c    | 10 ++++++++++
+>  2 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 55cfbf1e0a95..3271b1c8569a 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -1684,7 +1684,13 @@ static struct device *create_namespace_pmem(struct nd_region *nd_region,
+>  	int rc = 0;
+>  	u16 i;
+>  
+> -	if (cookie == 0) {
+> +	/*
+> +	 * CXL LSA v2.1 utilizes the region label stored in the LSA for
+> +	 * interleave set configuration. Whereas EFI LSA v1.1 & v1.2
+> +	 * utilizes interleave-set cookie. i.e, CXL labels skip the
+> +	 * need for 'interleave-set cookie'
+> +	 */
+> +	if (!ndd->cxl && cookie == 0) {
+>  		dev_dbg(&nd_region->dev, "invalid interleave-set-cookie\n");
+>  		return ERR_PTR(-ENXIO);
+>  	}
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index de1ee5ebc851..88275f352240 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -858,6 +858,16 @@ u64 nd_region_interleave_set_cookie(struct nd_region *nd_region,
+>  	if (!nd_set)
+>  		return 0;
+>  
+> +	/*
+> +	 * CXL LSA v2.1 utilizes the region label stored in the LSA for
+> +	 * interleave set configuration. Whereas EFI LSA v1.1 & v1.2
+> +	 * utilizes interleave-set cookie. i.e, CXL labels skip the
+> +	 * need for 'interleave-set cookie'
+> +	 */
+> +	if (nsindex && __le16_to_cpu(nsindex->major) == 2
+> +			&& __le16_to_cpu(nsindex->minor) == 1)
+> +		return 0;
+> +
+>  	if (nsindex && __le16_to_cpu(nsindex->major) == 1
+>  			&& __le16_to_cpu(nsindex->minor) == 1)
+>  		return nd_set->cookie1;
+
 
