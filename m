@@ -1,124 +1,184 @@
-Return-Path: <linux-kernel+bounces-824522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D53DB8976E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D15A7B89795
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1375B1C27925
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D761C87D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D78D1E3DDE;
-	Fri, 19 Sep 2025 12:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA001F3BAE;
+	Fri, 19 Sep 2025 12:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZff96pM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hOSWJ7U/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8OLgf1Zr";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="byjqooEg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MqqkmBtT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C361B4F2C;
-	Fri, 19 Sep 2025 12:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCD01E5711
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285309; cv=none; b=lNXH33jC39SA6MI8WvKS/c/iK7LIRIB/kP+SrlKD1jMgLbny10cbwb4MHLxBAmFJvxP1HrLyzvx6GzUIiOIZ4Zh9LiRu17OynC/8RD+UEA7HD1a+rPDALV1ZgZ9KZxB0lRukX6WURd7Xtc3oQZiAeT8qopodvpwB0kyrMXfMARg=
+	t=1758285473; cv=none; b=jYitliBekVrLwMdEt25OgaLJLU9anFpFjtlYlvtXDctNMaY6cKu660JaROrOKjV3j0uTkacoy4h1M2DQ9Z5Np6QIKtRydtpH59NP9w8UuSIWDQG1OxVJ5Uw6hW2heOrAVKwXYbakoDURYAXCprDA4F9dWNCvmNCZm1GziA85a7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285309; c=relaxed/simple;
-	bh=B/LAeSfpF+38Ojzu+TVsThBEqCYyFGk+412u00MRL1Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=er+x6w2jPi4NtcoDxY36VhwwjZZI8Sz45OljifuVN/r4UPjmh9i6eFjSKTuE8ArB1P6Wua2fJ2BM15EClFDd7QsYRKWF/oP9BR/8nqLMYhig35ltxO0CFLHKfDYRDx25Cr/AGqeLuIfQ62zrPgJiCSXyuhEixAUppMMmW8vqA7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZff96pM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D401C4CEF0;
-	Fri, 19 Sep 2025 12:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758285308;
-	bh=B/LAeSfpF+38Ojzu+TVsThBEqCYyFGk+412u00MRL1Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TZff96pMxFcA0LMfL1fVfinD2uaCwHCmZg1t87v+5E8XBkg9tRMbQ2vFeQJL2jttY
-	 s5bIpg2XKyrSzU4F0wpsp3Q6y5OpLqPL2Yp9wCU7ZnAlMScIPGeNdTLdTfjFLP8DCi
-	 UGmcDzTsj+ljEONK7BhrUagg0OZM27qhNlE/xN195gpUikwEwrrVaMPJMH3bK/H3J1
-	 cor3J+RnkgqxC16xS7H5buD7l9wdhNsSjDJSGdr+QdXEKsO/f5Ua5JylO4zsYj/P/v
-	 n6ByozH1Fmhqa9oGwYDCTkppIIH7qU7KPRkTzH2bMWoGkn5QRQTB0GRic8OZP+Xg6y
-	 nYGmSyzoeXuRg==
-Date: Fri, 19 Sep 2025 21:35:02 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Menglong Dong <menglong8.dong@gmail.com>, jolsa@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
- mhiramat@kernel.org, ast@kernel.org, andrii@kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
-Message-Id: <20250919213502.2d621c5b19e059134d0f8991@kernel.org>
-In-Reply-To: <20250918165656.GA3409427@noisy.programming.kicks-ass.net>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
-	<20250918130543.GM3245006@noisy.programming.kicks-ass.net>
-	<CADxym3ae8NGRt70rVO8ZyHa3BvWhczUkRs=dVn=rTRMVzrU9tA@mail.gmail.com>
-	<20250918165656.GA3409427@noisy.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758285473; c=relaxed/simple;
+	bh=E071kAR9Cwiv4tprzrsQd0Wm1nTgm4cnT1ggYiCLipw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PBC5UuNFJ/T4meEwqhFWo71jkMtBWUTmKwh6WwmJbF7EnhbpQ5p8B4Gm49PZHnQlFf+KcNE8Asrf6s8kqT8upo7DAYWcYXp1wfoWmrSxDej5PK4WuxgLvfraX1gvZUI0a+fFHo+S+tSX/GaSGyuXE9Zsnn0BLTiu+qoXno6odb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hOSWJ7U/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8OLgf1Zr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=byjqooEg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MqqkmBtT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0C65B336B4;
+	Fri, 19 Sep 2025 12:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758285469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C6GkLf705dTHn7tuGiBKNFNBqf28JhNLc1I8EUzcjUw=;
+	b=hOSWJ7U/8dYXoWnNnn6X1odf4EaTM1yIxkWtxLQyXvMLITi+f4+C4I1ePsLkj1CUAGcDSl
+	nZkhM9Y071HN0IysIX3E1/H+iPUCBDYwS3C9nDCV1SeMZa1xKCBacEnE4Gy6M4f41UfzKb
+	lvlPCUWYrFzWJiSH2VtWPCjUlLW0H/E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758285469;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C6GkLf705dTHn7tuGiBKNFNBqf28JhNLc1I8EUzcjUw=;
+	b=8OLgf1Zr3oOREDInTDBQpw63Fk0HgEYhgQ+PTEVMQ2ke3lA8G+VSPyT+iQYOcvWZ9yTvqK
+	lOE0k0Js6yQa2WBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758285468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C6GkLf705dTHn7tuGiBKNFNBqf28JhNLc1I8EUzcjUw=;
+	b=byjqooEgqNWSMVsab6feLYA1L0bmd4qz+qeiUHe840D2iqdHcwkEkeGmzxpp5PbYnTHPsS
+	4wL7PGLo/OstegEJr4JNmgHs8ylY2601/bPC9HkAx1IsoaO1M7/nxE628XdUbb37oH2CmI
+	CVkjwiTRcN70uJccnRLUTmCJR6rvaTo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758285468;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C6GkLf705dTHn7tuGiBKNFNBqf28JhNLc1I8EUzcjUw=;
+	b=MqqkmBtTVWRKWn03tZcXSpkWq5S4ylxtoNpOKQpTS7h04IWTuiltf9fwfMtZvoXP6oUcEn
+	GoH2t3o13iLcFXDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7B3C613A39;
+	Fri, 19 Sep 2025 12:37:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Cd2nHJtOzWgofgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 12:37:47 +0000
+Date: Fri, 19 Sep 2025 14:37:47 +0200
+Message-ID: <87segi8vok.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Feng Yuan <fengyuan@uniontech.com>,
+	qaqland <anguoli@uniontech.com>,
+	kernel@uniontech.com,
+	linux-modules@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] param: export param_array related functions
+In-Reply-To: <20250918-sound-v4-2-82cf8123d61c@uniontech.com>
+References: <20250918-sound-v4-0-82cf8123d61c@uniontech.com>
+	<20250918-sound-v4-2-82cf8123d61c@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Thu, 18 Sep 2025 18:56:56 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Thu, Sep 18, 2025 at 09:32:27PM +0800, Menglong Dong wrote:
-> > On Thu, Sep 18, 2025 at 9:05???PM Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > On Thu, Sep 18, 2025 at 08:09:39PM +0800, Menglong Dong wrote:
-> > > > is_endbr() is called in __ftrace_return_to_handler -> fprobe_return ->
-> > > > kprobe_multi_link_exit_handler -> is_endbr.
-> > > >
-> > > > It is not protected by the "bpf_prog_active", so it can't be traced by
-> > > > kprobe-multi, which can cause recurring and panic the kernel. Fix it by
-> > > > make it notrace.
-> > >
-> > > This is very much a riddle wrapped in an enigma. Notably
-> > > kprobe_multi_link_exit_handler() does not call is_endbr(). Nor is that
-> > > cryptic next line sufficient to explain why its a problem.
-> > >
-> > > I suspect the is_endbr() you did mean is the one in
-> > > arch_ftrace_get_symaddr(), but who knows.
-> > 
-> > Yeah, I mean
-> > kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
-> > arch_ftrace_get_symaddr -> is_endbr
-> > actually. And CONFIG_X86_KERNEL_IBT is enabled of course.
-> > 
-> > >
-> > > Also, depending on compiler insanity, it is possible the thing
-> > > out-of-lines things like __is_endbr(), getting you yet another
-> > > __fentry__ site.
-> > 
-> > The panic happens when I run the bpf bench testing:
-> >   ./bench kretprobe-multi-all
-> > 
-> > And skip the "is_endbr" fix this problem.
+On Thu, 18 Sep 2025 11:24:31 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
 > 
-> But why does it panic? Supposedly you've done the analysis; but then
-> forgot to write it down?
-
-Yeah, that is an fprobe's bug. It should not panic. I sent a fix.
-
-https://lore.kernel.org/all/175828305637.117978.4183947592750468265.stgit@devnote2/
-
-Thank you,
-
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
 > 
-> Why is kprobe_multi_link_exit_handler() special; doesn't the issue also
-> exist with kprobe_multi_link_handler() ? If so, removing __fentry__
-> isn't going to help much, you can just stick an actual kprobe in
-> is_endbr(), right?
+> - int param_array_set(const char *val, const struct kernel_param *kp);
+> - int param_array_get(char *buffer, const struct kernel_param *kp);
+> - void param_array_free(void *arg);
 > 
+> It would be helpful for the new module param we designed in
+> snd_usb_audio, in order to run additional custom codes when params
+> are set in runtime, and re-use the extisted codes in param.c
+> 
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+
+Can we do just like below?
+
+static int param_set_quirkp(const char *val, const struct kernel_param *kp)
+{
+	guard(mutex)(&quirk_flags_mutex);
+	return param_set_charp(val, kp);
+}
+
+static const struct kernel_param_ops param_ops_quirkp = {
+	.set = param_set_quirkp,
+	.get = param_get_charp,
+	.free = param_free_charp,
+};
+#define param_check_quirkp param_check_charp
+
+modules_param_parray(quirk_flags, quirkp, NULL, 0644);
+
+Then mutex is locked at each time a parameter is set.
+Optionally, the string value can be verified in param_set_quirkp()
+before passing to param_set_charp(), too.
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+thanks,
+
+Takashi
 
