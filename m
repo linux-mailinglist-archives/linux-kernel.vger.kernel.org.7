@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-824288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CE8B8895C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B925DB8896C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05E8B1C847FD
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20B33BB550
 	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5353043AD;
-	Fri, 19 Sep 2025 09:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934092FE56E;
+	Fri, 19 Sep 2025 09:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S9T2RZK6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="R8FLyzgk"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB12ECEAB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EA42F362E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274484; cv=none; b=oOLIzlClVSVUXePXkMeCMcQ6wf2QWNvxEucxOY2hL5UUrlOQ5Lwfce31tI5Zf8K2jy3tuNesGyEGN6eIH8kEnuxIbOMfykg1uuvhq3kRnXUMCVqdc/N1Aj0shvsgqhKxKnRIQVXIGAO82PA9F3ezkwj5hBt35vyZ9gyk0IWzHW8=
+	t=1758274497; cv=none; b=skcjb6CLd0gVIMLjdCwPE37nN2f2vZ1z6QRnKumZrnLnnGT0f2hIC1j018tMk4bXHSl2iIaJTRMyf04ug18XnNIIQAIX6ARh6+DGO3lsMoQ1Wl/oWvdvm0pDKGS+zL4x+7muFi69nKrHnizh/8jqwrtESScMnRkDW6Q6gOQ2wGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274484; c=relaxed/simple;
-	bh=Z/pKFvEBHtxOP5jR2phobA80ogKglZ89DhR08bGclpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qiR22jfNDRFfJzEionblhNdm8b4dDryjqvmE5pW8j9XdyW6AVZELIw24IwvX81iWj8seQ2gNWBOX2aCxRfxTxUTRIVDamPVPJvExNxwn6ghCEMQdFErBhBvTkmgKhRV0FFUOKkIsHJWWNSK1OVtggRj7UiZ9stKlMkpB24iQt/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S9T2RZK6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758274482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hccOUlPXnLXU/IJ5y5buDrd2kdvNfHWXluEA21aaChQ=;
-	b=S9T2RZK6bwgOKPYGdFmx8I3KpvDz7pDchsqeLqZbcRHZv8/+zZSSaq0YnUAJOiSA21Od0d
-	Hv6n9WrkpCa9tf4DJFleEZ2pDPBAlF5UEhrph1nze1Lzw0Dc1BpU9LXgbYM3yRKHlI656z
-	jl7G7GrnPitlo5qr/gMjSSitrfuRgwE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-g350QPhrM5ihY2gjZ6IaeA-1; Fri,
- 19 Sep 2025 05:34:38 -0400
-X-MC-Unique: g350QPhrM5ihY2gjZ6IaeA-1
-X-Mimecast-MFC-AGG-ID: g350QPhrM5ihY2gjZ6IaeA_1758274477
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 80510195605A;
-	Fri, 19 Sep 2025 09:34:37 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.44.32.69])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E50811800447;
-	Fri, 19 Sep 2025 09:34:32 +0000 (UTC)
-From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-To: "Michael S . Tsirkin " <mst@redhat.com>
-Cc: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	Yongji Xie <xieyongji@bytedance.com>,
-	Maxime Coquelin <mcoqueli@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	virtualization@lists.linux.dev,
-	Cindy Lu <lulu@redhat.com>,
-	jasowang@redhat.com,
-	Laurent Vivier <lvivier@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>
-Subject: [PATCH v3 6/6] vduse: bump version number
-Date: Fri, 19 Sep 2025 11:33:59 +0200
-Message-ID: <20250919093359.961296-7-eperezma@redhat.com>
-In-Reply-To: <20250919093359.961296-1-eperezma@redhat.com>
-References: <20250919093359.961296-1-eperezma@redhat.com>
+	s=arc-20240116; t=1758274497; c=relaxed/simple;
+	bh=2BdxvO+LipVZeGNgRKipvDky26JtE7RkzgLeGlqZKQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9gx5hi9kM7y7d7XFwT5ZEBfUaf3WV5Pt/XrODqwteEgbJJng7iKDFn/wUf/UNCwOJYuuKy1TMS/oUWSPveoxPoz0Qh5cXYKia0ubp/W5p3n8G/IUmrUPs0ZfXU/juUfm388wEl+28+o+PViaGo+26Z0iVcSyXwGbUguoN2Lk7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=R8FLyzgk; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=JncH
+	VkJM8tsT4MR8AdGnli8kK73nfD/36fL18vXO7C0=; b=R8FLyzgkDcm/d4hyYFYW
+	iWvwCAvlNyuEv+CZdMqWnPELgsoJvxV/I2nVjyr4drJ5cbKaJUi4V3nxkkS7IQmK
+	n4jgzYOn00Ew3pKGh16OIQla2fZ5a3L3noNGjnYdhXmVuXFuX5KZ6a6X2i0eSNOV
+	iIGPSC0lB2oYnDaFawb1R9Ga3yNoiOFMc7VyXBTYPZFI1+UKWN3cJL7Cch32feT0
+	7XH4kzHmWTb80hNOqfQzQnb/kPH846mb/EyNZmz0Ktgu5L7av6t5btfJv9JqjUi8
+	60p2VLT+zmmfhY06eUhrZuOVchmC6fL8ejWGC+xNzom7xdCxgpNH2GL+ODJ5hV/R
+	Ww==
+Received: (qmail 3862907 invoked from network); 19 Sep 2025 11:34:51 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 11:34:51 +0200
+X-UD-Smtp-Session: l3s3148p1@rb97LiQ/HpAujns7
+Date: Fri, 19 Sep 2025 11:34:51 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
+ GPIO Interrupt Multiplexer
+Message-ID: <aM0ju74JJbjliQAl@ninjato>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+ <20250918104009.94754-7-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JK9kzNSXnbkqaaBc"
+Content-Disposition: inline
+In-Reply-To: <20250918104009.94754-7-herve.codina@bootlin.com>
 
-Finalize the series by advertising VDUSE API v1 support to userspace.
 
-Now that all required infrastructure for v1 (ASIDs, VQ groups,
-update_iotlb_v2) is in place, VDUSE devices can opt in to the new
-features.
+--JK9kzNSXnbkqaaBc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
----
- drivers/vdpa/vdpa_user/vduse_dev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index c6c70cfd4887..68d086fc19f0 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -2181,7 +2181,7 @@ static long vduse_ioctl(struct file *file, unsigned int cmd,
- 			break;
- 
- 		ret = -EINVAL;
--		if (api_version > VDUSE_API_VERSION)
-+		if (api_version > VDUSE_API_VERSION_1)
- 			break;
- 
- 		ret = 0;
-@@ -2248,7 +2248,7 @@ static int vduse_open(struct inode *inode, struct file *file)
- 	if (!control)
- 		return -ENOMEM;
- 
--	control->api_version = VDUSE_API_VERSION;
-+	control->api_version = VDUSE_API_VERSION_1;
- 	file->private_data = control;
- 
- 	return 0;
--- 
-2.51.0
+> +  interrupt-map:
+> +    description:
+> +      Specifies the mapping from external GPIO interrupt lines to the output
+> +      interrupts. The array items have to be ordered with the first item
+> +      related to the output line 0 (IRQ 103), the next one to the output line 1
+> +      (IRQ 104) and so on up to the output line 8 (IRQ 110).
 
+maxItems 8?
+
+> +        /*
+> +         * The child interrupt number is computed using the following formula:
+> +         *    gpio_bank * 32 + gpio_number
+> +         *
+> +         * with:
+> +         *    - gpio_bank: The GPIO bank number
+> +         *          - 0 for GPIO0A,
+> +         *          - 1 for GPIO1A,
+> +         *          - 2 for GPIO2A
+> +         *    - gpio_number: Number of the gpio in the bank (0..31)
+> +         */
+
+I wonder if this comment wouldn't be better in the interrupt-map
+description above?
+
+
+--JK9kzNSXnbkqaaBc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNI7cACgkQFA3kzBSg
+KbZCcxAAgxPZf4AePiR6qG8VJErIxYZXJ1X3aC0TU9YmDAjfdJjijyML5QKP2j5z
+qz2qBimHfUWZWH66HbxU3ymVo1ruY8SROMQ5RqoORL53KYqQiKI9ewc73F3eIkzf
+eYXHtulP7jMZ8xrKxYV1PNgUhxhgfigEkS5oDzT7oh8azv23JJmDrGbh7Q3EPxqH
+/XCaKwWOlE5MlZVeTWCfhbTW1V86kPxZcjF+41vqIsExpIZZgdD2hYVZphg7r3KM
+Zvby6ndv81+EFMwuhO6DfXX+cKCoPsG3X4V6+zUdpa2ApgtHSbD2dxkF6WgZ6UmQ
+fvLjcqlsyi+JeUOqcPAO/jtY+lqcavocbr58QrqHH0bdWrfhMWjfGiXvPNbeliuv
+mixY07nFnF986HrXWVC4HXpiODeclvaAQFmKV8HoJFeEAahfGMiDqb58wSF3JL50
+n8BV0ipFoW/jMv66UVXRsGnM4EJxakBd5x7mwNbUKXhCLtBqeL3Y75sPe8Qtx3cF
+nCjb86/jsSWz18tiHyr0RAOxEf8GVM3zTj+JBpgf9bJ5xgT/aDeDRDvyqXHph4MO
+pY4PO3CdIkcihfPmyJ0/EBQurc9DPmR3iHNjYReo/GIGaHsEy9RMwCu4zvS3/BfZ
+BhfUkl5WjtB+OKJYSVBqr/DScKbQRk8XVEC7ZKCzrrK7ieWQwuY=
+=mFbO
+-----END PGP SIGNATURE-----
+
+--JK9kzNSXnbkqaaBc--
 
