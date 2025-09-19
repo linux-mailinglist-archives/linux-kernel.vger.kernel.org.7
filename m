@@ -1,126 +1,222 @@
-Return-Path: <linux-kernel+bounces-824078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8533DB8812A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7FAB88136
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44F551BC69FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41FBB1BC2EE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5226D2949E0;
-	Fri, 19 Sep 2025 07:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0752C21EF;
+	Fri, 19 Sep 2025 07:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PqI6tNjO"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcCqVdwb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD332C0F8A
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D482C11C9;
+	Fri, 19 Sep 2025 07:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758265208; cv=none; b=oSHRXk/6MBcD/CmkRflKQpe82luQ0kQG1AUvbogpn7ea0Cry4DhOJMgwDoULZu7EP7u+7yoMbXbcShQDKzUJXpmfVhrdvV2LlPqTEb1Ejnsw+D2mLtejQitBLGs2Grsg3S9mJPN/w/MfmK9KkMfzHYW0rfosaWGpX77Kmf898AQ=
+	t=1758265209; cv=none; b=rLJquh/9Q8ekw3XImwykEYRm2N7alKJLbRIebTzkFkgE5gjGPJIbqV60theMtKCVIdXETisrnuRZ3dfq8bvuia9jhfg4EAFXQCXkhys3doxVgRuFOYxshJnT5bDcaEFTBtO1xy5r8IeI3X4A6rRlUArV0YIohEUbYVbNdu3Cx58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758265208; c=relaxed/simple;
-	bh=uAk+KA/2arGgRYi6RKljz+pNp4Iu/ABT1xGE3Hki/kM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rq2+sMWbXAd1Xg4mQKav2ryXDlwA1GS0aV2FVCTCo1sL1Op8z0G/SXQ5JWhByZQ1uwqIz6jCoN7hxlFUsqY3xm2x3Q+QTvcU2MY0rsi7sjzyGNXkJkZM5q6io99PzgieXbbnt+aTa6feISj/YMVdpszKJ//Wa9Ag8jkjKqq4MWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PqI6tNjO; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-77d94c6562fso1501372b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758265201; x=1758870001; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vqB+YMZcuLYAs8+OHarhQxNJf94rd8pAU5DBCBmw7lU=;
-        b=PqI6tNjOWce3MJsbjzGtyDHkksJ0/LkABbBStkw/InSXyyhJo64aF3FiZjAZmBv2Av
-         j2j9ThiMZg/HmpDZJiHqJURSblgvgaAonZz8uUWGjRP0r99XCLY6y/gQfHGsIXuER3WU
-         9w+CSbJ5bYB48lHdQ3VlmSIUsKZs609zeQuDvDQHk3fCcHwhSte5cXtFg+U1d1/p/wGm
-         77qxX4jMZVAmplZA7EDdQBo+f4cDpgNfc+MvRquUl1dvbHa5VkArHg6h8yHg7XUOxUP6
-         +aWqH4VjoDyUSqqqjB0iiGukmm9+ie8I9+uOu1EH5MTAVdij5EMe8ki3GzJQO8SBk30e
-         DWzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758265201; x=1758870001;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vqB+YMZcuLYAs8+OHarhQxNJf94rd8pAU5DBCBmw7lU=;
-        b=q9O1cAi3MvSy97VwIoQokrK1NJUe+SXm2ZRkru2/CMOOzEHGh1QhvyhLxW0xn4SirE
-         8eYOlLGSai6whT3hdAmuLZCNBT/tg0D6bhqAcYouu5irNxhNu1x+B7Adqk5gzy6GSzk0
-         MZewVM3KQ3Y4AEnVB4AtS1mE3QJ+BtMKt3M8FdiSnlnRGjLerXQJ0/R2of082ZNS74kR
-         Qe4N5gcxjR2MadXCTuHfklt9twrAQ4LOykIg7Y3MAemQ/hWlw08lD7Kf5Q2T/s28xrgS
-         2jRv0qzG7aM0/oybqqvGA8bpC5km0gTEMToWvxJvvrCDfatmBq7yFA5TIHjpfvly/0Ad
-         /LSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Zdi+tCoyYAgAflzBGMtmUUmEuqnzrTC3zoG5uele3+7/RikjUY1eaJaOA1IPX+8qv5u3qipO0E4/p2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5bn32NHRQdJOKf1Gbl6t2+2dMiT38xFe8RPJLzz8orA2vQlVT
-	Wf8X+XtakKyiTCHoRS9UfHTYntkLalaHIXX96jcS8svCIHq9QguIG4DB
-X-Gm-Gg: ASbGncuOqChA/rsX3aH0MdBsbXVqXBmINTmj95rUnCQH/dG2GLORYrtBnwz/ffPbxmX
-	n4ffFnLZI5ze9XnBhadazDPqS+u3e3T/WvviVZdN5nJ9aZfu9d6EhKubvUY5N9MXpha0nfYK+Wb
-	6Lo7nKn19uipATFmiVweOnyWYYAUcfKtHb6FQk0uWMghAoScTB5VEFAlOnGbxahuuestunAbFEa
-	U2lS4+mu3kRX4StHM5iA5bY1GKAko/q++WUKTw+b93YmLnviLmRdF9CLaRdoOY9/8Rw0nea65Zk
-	tKjOZIVnMxKENnSO7aMhn4anQF/9c+4rTlzDCvTfoS9AwCbpZFrEqBUKLZjKF4uOf8MSqC0ikeQ
-	JLpV/fDFhqkVow40PcciBeKSo2w==
-X-Google-Smtp-Source: AGHT+IGRyWOudoRi9Tem9txO7j0k6xxGJSz/N2dM0RUuqwAkPE1QePAX965M+SCjwpij//u2J7rKzg==
-X-Received: by 2002:a05:6a00:4b55:b0:776:1a2a:6baf with SMTP id d2e1a72fcca58-77e4f19fe23mr2906611b3a.32.1758265200897;
-        Fri, 19 Sep 2025 00:00:00 -0700 (PDT)
-Received: from archlinux ([103.105.227.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77e87fb4698sm782455b3a.96.2025.09.18.23.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 23:59:59 -0700 (PDT)
-From: Harishankar <harishankarpp7@gmail.com>
-To: rafael@kernel.org
-Cc: lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	harishankarpp7@gmail.com
-Subject: [PATCH] ACPI: property: fix spacing around colon in pointer macros
-Date: Fri, 19 Sep 2025 12:29:51 +0530
-Message-ID: <20250919065951.156362-1-harishankarpp7@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758265209; c=relaxed/simple;
+	bh=UqGM+RJWa+FNtsOV1ZHcikaGRxXWyM7YzEKdq4dZzYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J2OldBgaEeUvHyLFtn58UmMgeAeoLb+1UNM5xGUDag5i2CKIL6P6EYJKcH+AwWJppRjCUeJaxUyI7u30vDD4v3ZkEZCvbL8+PVukBtoU5nmjt6L4H4rkIO1PHAvwSh6ueHBp8/YwXLxZl7seh701dI5BWY5ckv1bq8ZonJ9gFks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcCqVdwb; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758265203; x=1789801203;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UqGM+RJWa+FNtsOV1ZHcikaGRxXWyM7YzEKdq4dZzYc=;
+  b=kcCqVdwbOWRvHwQUcwIhn/DI0JrVHgYiAYXHc0bc9wJ9zjJsN0/uXMOK
+   TUWNy1x9mT4KpCQLMLx2FDNjpKGyWivNeURsjHBmFrZyMLp4RKb6q6A8N
+   myqUIJeJn9du/Jd5/uXR8iy1U7hxnthbanHR0yW6nVPFd19n5FDkDUEOH
+   4oJ5+GWe5L2DkquRYSyswBLHj6hp4JCCQS8YxJbZkI3M39cwUNsv7FxEA
+   1WAqChIIDMHPYZsOOEjM+yXgLIVPnv5gxLvgH9aw7KGZ3y2NHq70YMw6K
+   BYubU/UFwsXaHHPVjs0gvB67RsuYW/me9ksgGPCp5YEMAv1kMTqQjomV1
+   A==;
+X-CSE-ConnectionGUID: 0oIZPyjBRFKhNyUxMiSKBA==
+X-CSE-MsgGUID: 6bPFD2THTUCEkS5F211dfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60495318"
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="60495318"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 00:00:02 -0700
+X-CSE-ConnectionGUID: 99zDXPWVQ/OHBOZkT+OlTQ==
+X-CSE-MsgGUID: i7cl7rUlTgOOP8Zgcm+NVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="206707511"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Sep 2025 23:59:59 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzV64-00043z-2U;
+	Fri, 19 Sep 2025 06:59:56 +0000
+Date: Fri, 19 Sep 2025 14:59:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: victor.duicu@microchip.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	marius.cristea@microchip.com, victor.duicu@microchip.com
+Subject: Re: [PATCH v5 2/2] iio: temperature: add support for MCP998X
+Message-ID: <202509191411.ej3JBK3f-lkp@intel.com>
+References: <20250918111937.5150-3-victor.duicu@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918111937.5150-3-victor.duicu@microchip.com>
 
-Fix coding style issues reported by checkpatch.pl in
-drivers/acpi/property.c. The colons following pointer
-types in macros were missing the required surrounding
-spaces.
+Hi,
 
-This change makes the code consistent with the Linux
-kernel coding style guidelines.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Harishankar <harishankarpp7@gmail.com>
----
- drivers/acpi/property.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+[auto build test WARNING on 671b9b6d7f4fe17a174c410397e72253877ca64e]
 
-diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-index 436019d96..8905a8b34 100644
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -1108,10 +1108,10 @@ static int acpi_data_prop_read_single(const struct acpi_device_data *data,
- 				break;					\
- 			}						\
- 			if (__items[i].integer.value > _Generic(__val,	\
--								u8 *: U8_MAX, \
--								u16 *: U16_MAX, \
--								u32 *: U32_MAX, \
--								u64 *: U64_MAX)) { \
-+								u8  * : U8_MAX, \
-+								u16 * : U16_MAX, \
-+								u32 * : U32_MAX, \
-+								u64 * : U64_MAX)) { \
- 				ret = -EOVERFLOW;			\
- 				break;					\
- 			}						\
+url:    https://github.com/intel-lab-lkp/linux/commits/victor-duicu-microchip-com/dt-bindings-iio-temperature-add-support-for-MCP998X/20250918-192457
+base:   671b9b6d7f4fe17a174c410397e72253877ca64e
+patch link:    https://lore.kernel.org/r/20250918111937.5150-3-victor.duicu%40microchip.com
+patch subject: [PATCH v5 2/2] iio: temperature: add support for MCP998X
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250919/202509191411.ej3JBK3f-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7c861bcedf61607b6c087380ac711eb7ff918ca6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250919/202509191411.ej3JBK3f-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509191411.ej3JBK3f-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from <built-in>:3:
+   In file included from include/linux/compiler_types.h:171:
+   include/linux/compiler-clang.h:28:9: warning: '__SANITIZE_ADDRESS__' macro redefined [-Wmacro-redefined]
+      28 | #define __SANITIZE_ADDRESS__
+         |         ^
+   <built-in>:371:9: note: previous definition is here
+     371 | #define __SANITIZE_ADDRESS__ 1
+         |         ^
+>> drivers/iio/temperature/mcp9982.c:470:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     470 |                 u8 bulk_read[3];
+         |                 ^
+   drivers/iio/temperature/mcp9982.c:488:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     488 |                 unsigned long *src;
+         |                 ^
+>> drivers/iio/temperature/mcp9982.c:493:4: warning: variable 'src' is uninitialized when used here [-Wuninitialized]
+     493 |                 *src = tmp_reg;
+         |                  ^~~
+   drivers/iio/temperature/mcp9982.c:488:21: note: initialize the variable 'src' to silence this warning
+     488 |                 unsigned long *src;
+         |                                   ^
+         |                                    = NULL
+   drivers/iio/temperature/mcp9982.c:741:2: warning: variable 'iio_idx' is uninitialized when used here [-Wuninitialized]
+     741 |         iio_idx++;
+         |         ^~~~~~~
+   drivers/iio/temperature/mcp9982.c:720:30: note: initialize the variable 'iio_idx' to silence this warning
+     720 |         unsigned int reg_nr, iio_idx;
+         |                                     ^
+         |                                      = 0
+   5 warnings generated.
+
+
+vim +470 drivers/iio/temperature/mcp9982.c
+
+   426	
+   427	static int mcp9982_read_raw(struct iio_dev *indio_dev,
+   428				    struct iio_chan_spec const *chan, int *val,
+   429				    int *val2, long mask)
+   430	{
+   431		unsigned int tmp_reg, reg_status;
+   432		struct mcp9982_priv *priv = iio_priv(indio_dev);
+   433		int ret;
+   434	
+   435		if (test_bit(RUN_STATE, &priv->bit_flags)) {
+   436			/*
+   437			 * When working in Run mode, after modifying a parameter (like sampling
+   438			 * frequency) we have to wait a delay before reading the new values.
+   439			 * We can't determine when the conversion is done based on the BUSY bit.
+   440			 */
+   441			if (test_bit(WAIT_BEFORE_READ, &priv->bit_flags)) {
+   442				if (!time_after(jiffies, priv->time_limit))
+   443					mdelay(jiffies_to_msecs(priv->time_limit - jiffies));
+   444				clear_bit(WAIT_BEFORE_READ, &priv->bit_flags);
+   445			}
+   446		} else {
+   447			ret = regmap_write(priv->regmap, MCP9982_ONE_SHOT_ADDR, 1);
+   448			if (ret)
+   449				return ret;
+   450			/*
+   451			 * In Standby state after writing in OneShot register wait for
+   452			 * the start of conversion and then poll the BUSY bit.
+   453			 */
+   454			mdelay(125);
+   455			ret = regmap_read_poll_timeout(priv->regmap, MCP9982_STATUS_ADDR,
+   456						       reg_status, !(reg_status & MCP9982_STATUS_BUSY),
+   457						       mcp9982_delay_ms[priv->sampl_idx] * USEC_PER_MSEC,
+   458						       0);
+   459			if (ret)
+   460				return ret;
+   461		}
+   462		guard(mutex)(&priv->lock);
+   463	
+   464		switch (mask) {
+   465		case IIO_CHAN_INFO_RAW:
+   466			/*
+   467			 * The Block Read Protocol first returns the number of user readable
+   468			 * bytes, held in bulk_read[0], followed by the data.
+   469			 */
+ > 470			u8 bulk_read[3];
+   471	
+   472			ret = regmap_bulk_read(priv->regmap, MCP9982_TEMP_MEM_BLOCK_ADDR(chan->channel),
+   473					       &bulk_read, sizeof(bulk_read));
+   474			if (ret)
+   475				return ret;
+   476	
+   477			*val = (bulk_read[1] << 8) + (bulk_read[2]);
+   478			return IIO_VAL_INT;
+   479		case IIO_CHAN_INFO_SCALE:
+   480			*val = 0;
+   481			*val2 = MCP9982_SCALE;
+   482			return IIO_VAL_INT_PLUS_NANO;
+   483		case IIO_CHAN_INFO_SAMP_FREQ:
+   484			*val = mcp9982_conv_rate[priv->sampl_idx][0];
+   485			*val2 = mcp9982_conv_rate[priv->sampl_idx][1];
+   486			return IIO_VAL_INT_PLUS_MICRO;
+   487		case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+   488			unsigned long *src;
+   489	
+   490			ret = regmap_read(priv->regmap, MCP9982_RUNNING_AVG_ADDR, &tmp_reg);
+   491			if (ret)
+   492				return ret;
+ > 493			*src = tmp_reg;
+   494			*val = mcp9982_3db_values_map_tbl[priv->sampl_idx][bitmap_weight(src, 2)][0];
+   495			*val2 = mcp9982_3db_values_map_tbl[priv->sampl_idx][bitmap_weight(src, 2)][1];
+   496			return IIO_VAL_INT_PLUS_MICRO;
+   497		case IIO_CHAN_INFO_OFFSET:
+   498			*val = MCP9982_OFFSET;
+   499			return IIO_VAL_INT;
+   500		default:
+   501			return -EINVAL;
+   502		}
+   503	}
+   504	
+
 -- 
-2.51.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
