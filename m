@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-823848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB26AB8790B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:03:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02060B8791A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB4B3AA417
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19E11CC1C93
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741C31C860F;
-	Fri, 19 Sep 2025 01:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C3F1DF24F;
+	Fri, 19 Sep 2025 01:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2S00ee4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K4PKUmhO"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00821369B4
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7905CDF1
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758243798; cv=none; b=RU9+zmDdh2stBPIE3SmN4uW5aqiDy+9axGWwM8e+pRSYMQ1EefsnTS6m/QMMLWcnd4tnjWUqu38y24L37NE1qJFFhGOJC9pR+gBXodp3Hr4jm6ur+rEjGxjBOlbWHwAB2yWBCC/eOu+SyMxVq1+PEXyIVdGLMYevDdItM542rLo=
+	t=1758244002; cv=none; b=MLOMuvnifA3tlT1Z9vz29HuUAB7ogslq8QeeNB3ciG+DF6ETBeUba0A4Q1TRQ7pgv4Smc3rPzkPLm4gEIfu/VbOVxiFcYRs72209+WsilpV9KwUinbZA1hX3eLKeL15qKlPBjPOalwoMf6ODFh5J4dUH0yrVDfWjeTSqBbgmwoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758243798; c=relaxed/simple;
-	bh=NQH0ksGEHbnPyoln1caWKpJK2uzZhjugvlBcdguhXDo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JeLTs2wVs7XhjMZNAqgBRBjjhaptpiVkTkR6c25CP8mhjhfpKRt6yBKw1+YvPx3Sct1ZmpVqJDpl8frZQH4F2zWTp319Io8g5cULBPqGJ/DNwjAc3ZxxV3A6bNWLtdkYnwCsE6IHT+5ZTyswwI7mivbbsiZD7AQ12ZbvuznqffQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2S00ee4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FF79C4AF09
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758243798;
-	bh=NQH0ksGEHbnPyoln1caWKpJK2uzZhjugvlBcdguhXDo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=L2S00ee4j20bXPdIavzxonD3OVNkTYst54XlpEUisTa+sE2U4LfNHsGIKcHDqnIqL
-	 03teC1bd3d/emhnG+Ek38xqNMqTBa4XN7d5M0k+bsneCjSDUCCgZZltl9n+KtIYsvu
-	 voNvvI1O48/moQHV2DZsnxN8al/rxKb5tgsTdbItchrqkNnSYPTsMMYCrgKvhm4UUv
-	 kFXmCMUdAFsGk/QyKh4RbUb5hc0LziYsBkVpiPwfYXNYu0Fnq4OORBN4CRjo77LnW9
-	 bImPlL9QkYi3gTkDfc+BcSUM/mmlFmiLCj4u0KROcXDUDjcBWJbtm30ypRLoUl7NXd
-	 IsT3GJ1Ur+42g==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62ee43b5e5bso2295605a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:03:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcFc4pkz3yNnPuc+F4UARhMR9iOzneYexY9doIn4tadriax6wFNR5xJapkytAWsPxx19hA/OE2HaxryTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfk8cKCaP3cLFN+9fezFflEuBxHaWbtIIZT/wrUlfD0zCQMaCe
-	a7klzfVx+pYLyzyoWyJqy87M3W7+PDw1NPmg/Hs/Nw5bhzWXoXlJb8WvD4cSt1heLUmjuGwumGL
-	I3ivFlgwajBeTaNAR5PdfxfNXTfVcEFM=
-X-Google-Smtp-Source: AGHT+IEWDmIshmLj2G4ukbKcQsu43zLFa0GbZO4GUGnB6KBPcUZ/DzAZy7pv/NlVkIk+CQuw453e7DKWrQHVZlcXTjo=
-X-Received: by 2002:a17:907:1c89:b0:aff:c306:de51 with SMTP id
- a640c23a62f3a-b24eca00e53mr131947766b.4.1758243797028; Thu, 18 Sep 2025
- 18:03:17 -0700 (PDT)
+	s=arc-20240116; t=1758244002; c=relaxed/simple;
+	bh=JUgbWzNIoLmVUsk5ZbbA2sf6t2tLo6ofi8lh17uHRFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IsA+lG31z6CRDWM+DA+5SV06OUtAbduMMkgldF/j14E3eFt3Gu8EFktnzm1wdi4w01E787U6woO32dvErk2Q/dJv/pL2fO4LBPtVWS4b64T7Wa7QW2gDbywqXzBaBobqyaClkKVnYrOke+eJc2GDqmbF1RqsHbuW0OxorbdiHEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K4PKUmhO; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 18 Sep 2025 18:06:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758243995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eSiTM76aEl/ZMy88fSj8fEpGw2fldtJUcgJzMMiasas=;
+	b=K4PKUmhOJz3QkN43tWm8G1oLXgOMrz1mm8x1L4DAY1mO9FqzASio6LRsuSsxzz2EdCdJir
+	f4ppZEuogwRwqYPF4xqu8z96HPQXzTSeCMtLgXPLA3D6N48aXuM2ZaNLy3xPCK/4eQxWKK
+	zYVRvSPu3bhpkVK40cK8926QwQfCYlM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, zhengqi.arch@bytedance.com, 
+	lorenzo.stoakes@oracle.com, hughd@google.com, willy@infradead.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm: vmscan: remove folio_test_private() check in
+ pageout()
+Message-ID: <tombfifwrhx2n4jnj2pgcdcpj42mdv7yizkpxrppnqrtsxd5fw@epnrjqgmmy6z>
+References: <cover.1758166683.git.baolin.wang@linux.alibaba.com>
+ <9ef0e560dc83650bc538eb5dcd1594e112c1369f.1758166683.git.baolin.wang@linux.alibaba.com>
+ <17d1b293-e393-4989-a357-7eea74b3c805@redhat.com>
+ <4e938fa1-c6ea-43fb-abbd-de514842a005@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917112716.24415-1-yangtiezhu@loongson.cn>
- <20250917112716.24415-2-yangtiezhu@loongson.cn> <ym3yf3rkxfq3sukfqbemmbpamjfsx4jjushqh3f54ah5ugamse@qqwabon64umq>
- <64530e20-9bc7-0c0b-d6ea-a4c7df3e85d9@loongson.cn> <pq4h7jgndnt6p45lj4kgubxjd5gidfetugcuf5rcxzxxanzetd@6rrlpjnjsmuy>
-In-Reply-To: <pq4h7jgndnt6p45lj4kgubxjd5gidfetugcuf5rcxzxxanzetd@6rrlpjnjsmuy>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 19 Sep 2025 09:03:04 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSuV0EmeeUb9d5FNw@mail.gmail.com>
-X-Gm-Features: AS18NWBVTb0PQqhU62n6eO284WwNeuQiKwu7o5gUI2msYqvF_VGFdAVdSA6O--M
-Message-ID: <CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSuV0EmeeUb9d5FNw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] objtool/LoongArch: Fix fall through warning about efistub
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Peter Zijlstra <peterz@infradead.org>, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4e938fa1-c6ea-43fb-abbd-de514842a005@linux.alibaba.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 19, 2025 at 8:20=E2=80=AFAM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
->
-> On Thu, Sep 18, 2025 at 09:44:24AM +0800, Tiezhu Yang wrote:
-> > (1) libstub doesn't link to vmlinux.o, only link libstub with vmlinux.o
-> > during the final vmlinux link.
-> >
-> > ----->8-----
-> > diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> > index a3a9759414f4..919c1970ce14 100644
-> > --- a/arch/loongarch/Makefile
-> > +++ b/arch/loongarch/Makefile
-> > @@ -164,7 +164,6 @@ CHECKFLAGS +=3D $(shell $(CC) $(KBUILD_CPPFLAGS)
-> > $(KBUILD_CFLAGS) -dM -E -x c /dev
-> >  endif
-> >
-> >  libs-y +=3D arch/loongarch/lib/
-> > -libs-$(CONFIG_EFI_STUB) +=3D $(objtree)/drivers/firmware/efi/libstub/l=
-ib.a
-> >
-> >  drivers-y              +=3D arch/loongarch/crypto/
-> >
-> > diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-> > index 51367c2bfc21..c664bfb9b15f 100755
-> > --- a/scripts/link-vmlinux.sh
-> > +++ b/scripts/link-vmlinux.sh
-> > @@ -69,6 +69,12 @@ vmlinux_link()
-> >                 libs=3D"${KBUILD_VMLINUX_LIBS}"
-> >         fi
-> >
-> > +       if [ "${SRCARCH}" =3D "loongarch" ]; then
-> > +               if is_enabled CONFIG_EFI_STUB; then
-> > +                       libs=3D"${libs} drivers/firmware/efi/libstub/li=
-b.a"
-> > +               fi
-> > +       fi
->
-> Right, though I think it would need to be something more generic so that
-> other arches can have "post-objtool libs" as well.
-I don't like this solution, but if ARM64, RISC-V and LoongArch are
-changed together, I can accept.
-And please remember to ensure ZBOOT on EFISTUB still works.
+On Thu, Sep 18, 2025 at 05:36:17PM +0800, Baolin Wang wrote:
+> 
+> 
+> On 2025/9/18 14:00, David Hildenbrand wrote:
+> > On 18.09.25 05:46, Baolin Wang wrote:
+> > > The folio_test_private() check in pageout() was introduced by commit
+> > > ce91b575332b ("orphaned pagecache memleak fix") in 2005 (checked from
+> > > a history tree[1]). As the commit message mentioned, it was to address
+> > > the issue where reiserfs pagecache may be truncated while still pinned.
+> > > To further explain, the truncation removes the page->mapping, but the
+> > > page is still listed in the VM queues because it still has buffers.
+> > > 
+> > > In 2008, commit a2b345642f530 ("Fix dirty page accounting leak with ext3
+> > > data=journal") seems to be dealing with a similar issue, where the page
+> > > becomes dirty after truncation, and it provides a very useful call stack:
+> > > truncate_complete_page()
+> > >        cancel_dirty_page() // PG_dirty cleared, decr. dirty pages
+> > >        do_invalidatepage()
+> > >          ext3_invalidatepage()
+> > >            journal_invalidatepage()
+> > >              journal_unmap_buffer()
+> > >                __dispose_buffer()
+> > >                  __journal_unfile_buffer()
+> > >                    __journal_temp_unlink_buffer()
+> > >                      mark_buffer_dirty(); // PG_dirty set, incr.
+> > > dirty pages
+> > > 
+> > > In this commit a2b345642f530, we forcefully clear the page's dirty flag
+> > > during truncation (in truncate_complete_page()).
+> > > 
+> > > Now it seems this was just a peculiar usage specific to reiserfs. Maybe
+> > > reiserfs had some extra refcount on these pages, which caused them
+> > > to pass
+> > > the is_page_cache_freeable() check. With the fix provided by commit
+> > > a2b345642f530
+> > > and reiserfs being removed in 2024 by commit fb6f20ecb121 ("reiserfs: The
+> > > last commit"), such a case is unlikely to occur again. So let's
+> > > remove the
+> > > redundant folio_test_private() checks and related buffer_head
+> > > release logic,
+> > > and just leave a warning here to catch such a bug.
+> > > 
+> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+> > > Acked-by: David Hildenbrand <david@redhat.com>
+> > > Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> > > ---
+> > >   mm/vmscan.c | 12 +++---------
+> > >   1 file changed, 3 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > index f1fc36729ddd..930add6d90ab 100644
+> > > --- a/mm/vmscan.c
+> > > +++ b/mm/vmscan.c
+> > > @@ -701,16 +701,10 @@ static pageout_t pageout(struct folio *folio,
+> > > struct address_space *mapping,
+> > >           return PAGE_KEEP;
+> > >       if (!mapping) {
+> > >           /*
+> > > -         * Some data journaling orphaned folios can have
+> > > -         * folio->mapping == NULL while being dirty with clean buffers.
+> > > +         * Is it still possible to have a dirty folio with
+> > > +         * a NULL mapping? I think not.
+> > >            */
+> > 
+> > I would rephrase slightly (removing the "I think not"):
+> > 
+> > /*
+> >   * We should no longer have dirty folios with clean buffers and a NULL
+> >   * mapping. However, let's be careful for now.
+> >   */
+> 
+> LGTM.
+> 
+> Andrew, could you help squash these comments into this patch? Thanks.
+> 
+> > > -        if (folio_test_private(folio)) {
+> > > -            if (try_to_free_buffers(folio)) {
+> > > -                folio_clear_dirty(folio);
+> > > -                pr_info("%s: orphaned folio\n", __func__);
+> > > -                return PAGE_CLEAN;
+> > > -            }
+> > > -        }
+> > > +        VM_WARN_ON_FOLIO(true, folio);
 
-Huacai
-
->
-> For example, arch/loongarch/Makefile could have
->
->   KBUILD_VMLINUX_LIBS_PRELINK +=3D $(objtree)/drivers/firmware/efi/libstu=
-b/lib.a
->
-> which can be exported by the top-level Makefile:
->
->   export KBUILD_VMLINUX_LIBS_PRELINK
->
-> and then used by scripts/link-vmlinux.sh (untested):
->
->   ${ld} ${ldflags} -o ${output} \
->         ${wl}--whole-archive ${objs} ${wl}--no-whole-archive \
->         ${wl}--start-group ${libs} ${KBUILD_VMLINUX_LIBS_PRELINK} ${wl}--=
-end-group \
->         ${kallsymso} ${btf_vmlinux_bin_o} ${arch_vmlinux_o} ${ldlibs}
->
-> --
-> Josh
+Unexpected but better to use VM_WARN_ON_ONCE_FOLIO here.
 
