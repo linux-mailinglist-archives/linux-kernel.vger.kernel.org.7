@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-824061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6102EB880A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684F3B8807F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:48:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED1F77A9E35
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:47:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F175676A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD3D2BEC3A;
-	Fri, 19 Sep 2025 06:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DC2C0F7B;
+	Fri, 19 Sep 2025 06:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="H21qLmGn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rGD8HbT+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mJkggemw"
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011012.outbound.protection.outlook.com [52.101.57.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863B62C3252;
-	Fri, 19 Sep 2025 06:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698925A326;
+	Fri, 19 Sep 2025 06:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758264515; cv=fail; b=EACR9dXDbbJlo44UcE77tHVoeq10DKaT6gYD1cjLAT0VqdarwkyCZx/XjY+7D/2VP3TClyh7hFrQE3OVe5Y4CDR/t+ehhFexE8AhWYV/GRKjmTbu4JEGDLsD3ovTPE5A5iSe5HSyFQR/4Px9DyNaIQ6VNZtiU6yZB88XaSP05NY=
+	t=1758264466; cv=fail; b=mUy0wPva+sE1ZzMhD8TXwd5Aca2611g1RhjBqgWDNLwsG83GcyG9sfjNboZpVF7bgyp5gSVwmELTmreYdDlUdDt27xrMFRszXyH+w8/X8/0y2Iw4qAmQa34YcasRShdyj/Puq1JsoDra6nlYSNfy55F6hBvbRnnMz6Y77aIV72w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758264515; c=relaxed/simple;
-	bh=ZWBTtP+5p9/bjvfZkiCcal16wCmXACKHudG90dXfcPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qvA/C5qkrGQ3p5jJCZciRmQvCyKQQV5c2xl4iG+RbrtqrG6j7mLfmaa+uGgJ902FshmHSYVqx3M9KrNER+X+7vMLQAhtkPR61nwheyAGDUyAvPdD7CgZJCvWn+hhGA9dzuO7WlmcH4T/m93JZ7oZEHnA75rqWFNN8U+V97jRUt4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=H21qLmGn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rGD8HbT+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ILGH7Z018773;
-	Fri, 19 Sep 2025 06:48:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=ymKZNhEinJEaX4Th2x
-	N/1gjCho+RRZqwilnCPu+sdAk=; b=H21qLmGnneDIR7gt85xOIuc6I0pIEGIuZ3
-	N8P3tcO6fLadotGGd9Ot/r2+Hnlmd5u9qWw2gD3oN7Eq8IY0kkH3IYDpyDk1ncUd
-	Ie+zBJmHZmF9nJRwGmeTrnU7ZlsnJ5qaztJVRgc1qFYfNL5WsX2esL0DuI/KrQhH
-	dRg9h2jTijvBsjD9l+qbH0qcKlCZ8XQHMnxcjCk+lZjjYt9XjOryMlBC1jnZa3r1
-	B5ZgfhI2gvLb3q6Du8Gz8f5+y8Wh1S4NZMiE2GsQU/P96YJ8JsFa25uOfPuWTI3f
-	Qih+NxuSQ9eGTav557FVf+fM6gJ8ZflMbv7qgYTj6AMcJDOVuixA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497g0kd1ng-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Sep 2025 06:48:15 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58J5OQnb027290;
-	Fri, 19 Sep 2025 06:48:14 GMT
-Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012027.outbound.protection.outlook.com [52.101.53.27])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2pdcuj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Sep 2025 06:48:13 +0000
+	s=arc-20240116; t=1758264466; c=relaxed/simple;
+	bh=8eYj8LLDDzB83YtLsF+XsVL0k9KkA7Bc87gF3pfyjwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VDq4u+D0yCaBFg/6y/rCh23LGl0qi2Cgio1bEm1DFASQtLdwtnry/floCCpt7ii0/HubJj+4c9/yJVBrgMWE6Ck5kw2/1q81Z9CbeWMfEi3FoVJS8sIyD3rNB7lmM3S0EcrbdlgnwkxqGf5W2zKy9Aiv/afFtzAbvTOdWUwUhgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mJkggemw; arc=fail smtp.client-ip=52.101.57.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Dr/x8mA++qtmmEkiYsLfgrMXW/uDQTiFsJD/TRVZQc1rssFG0rFQWC2BUf7mRqra4o9QJUSAt/j6fD7tSkIuTVM03TTWcwSvOtFYa4JrRA18NZfgsMzLBZCDstessUHxPBsi2sUQP5nM3KqZcQqs7mvaFrXZA+HZydTC1UfFjw8keHDy20WOk1AmXwW/LnbMYGlX/Y73eD28WgJtUzKr0S4wo1VchHd+7/k3u4RBsZEgyeISf7VS/JKKJLR+FzJuFihvdXX+/kR28yUvPtS60K2FD9UIU8u1dktoW10oX0B03vGAwOccof5ocDyyM2oaDCkElMuVwHrq648BHD4UiA==
+ b=mjfSP+aQNwjfPtAjR8o6eQ9XAcS2QD7yiELQ2FwdTIEwp4DGyx3RdNd8QRArWmcO2dIyrDY5olY/hqj4QGeFT8Z9o5KeeXNqBvhLCqFdr99+DAicI0OMcAjAEXNH8oeCLmeeZBt5X8umngq+g7xNgi7jmD+gErlPDZ1p5zLtfy28/hTE6BMSyFkmDR/1zsmCJT3ZN9XBu6OhwgagreWz+muO3cmE4TvhYO6jsyvh9EfNDdZBbm/DbBRQ6McT1uLhJ+ZF9UkZ64hkmjJ/3OcqkHuZmlpHyGuo0+NQKi+mB1q97NpkOSvJj6KKtmYYz4d4Z/OXNZ4Ez7Ocfa1/+bG9Zw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ymKZNhEinJEaX4Th2xN/1gjCho+RRZqwilnCPu+sdAk=;
- b=MknoCQg9NufwniZKljq5ANyO9WFaXkTnAQNa4Wl4FBzP8nu8DamLoiklBEfNwr8bQdsZbfR7pAFrIgOpoczBeanWncWHjFMvN7D7yolB1WWV1qrD5jIHvqGsr9/wQKmNi7r9nSNQS5tRyxe+GcFD2Rdiw1s+oanxvjOQ+O1eWa0lbevFOJgX7TsLjbbfTU3hBp97Nu0ho0tyZ4tcDlP8Jkc8v728Sn0WNWfvBNjqxHX570sUAtKL4qenEaY85X/xRFbo6twBnWDHqBCheiT4kDuu96VL9lJZbcou/qctcIM2Y9KJvQZi86qXRNB5tryHdR2Gy4af+6fRyBDuKLPrVg==
+ bh=aNp9lMieMP9ZKlnjqKYaajewulwcZAQ2KZrlI3M0+z8=;
+ b=OHFNIP5JeqMMjXgbNhNmTqxWlES54kJv3XWQqb9ePowe0jHoiUYX8cuaCJ3g77yWwFkgH+DiTMRP9NELWyLq5lwnHIsXVgpZC63cqrgbTsbavzegbTh4s3umZm+nQ32+lW2WhRfih4oicb+5P8l9CnuRdf9/YwODnAiKYGC2M+mZB3caPNcdmggNc8sXuHupfws+LMbAbpLCXgubycfwQg48P+WT+RW/RkrSCBVKh5gsqmGWp5a3NFMtKjmR1BgqO96NqXMkqypj7uNlRzBo8bbByCZ5QzrnMFbA7zGJPSEHwgcBQdbcOn0IXD+gwopQC7bYrebm5pqr9JxnH/Er1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ymKZNhEinJEaX4Th2xN/1gjCho+RRZqwilnCPu+sdAk=;
- b=rGD8HbT+npPNibthbCbAsRSAQGq1kvSJ1ll1ROW9dlhVbeUn4Ij2kfDyRK4pqKVAPpp7st0vaCS5TCgY9dtlwVoSCBYib7iEWfabzoXHKqPqzgGkWzp0BdeV+UNTIfmRv/ScRk0htiAN0cTSuv7vHm41yhQuLR8FozM9QMEVvy4=
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
- by SA1PR10MB6342.namprd10.prod.outlook.com (2603:10b6:806:255::5) with
+ bh=aNp9lMieMP9ZKlnjqKYaajewulwcZAQ2KZrlI3M0+z8=;
+ b=mJkggemwzkBzTzpxWOkTDX1lEgO70uod+CMsfxRyyuvuzeAitFBHxDKntzKNgpy78dmWJJgLojO6GSjaNyK+hDbDoOfR3bgoLUsarZxC9A9NGISlzz7oGDdj7c0vLghoIWcsxcCAVvolme3ANLoOtNWFN+QqjeGUXvyX7f1iqzmlZqEp4knrFFQdx2FL6y48R1kxvQJKz4ebMhAjGv1we4PIZqn0foENYB5X7rotSk1TzDyHNFHWAIkv/lRz5CbXssq+7l3+Z3N6P7qKIzB5GaAD4cfnp46JTZvFl662sgoNIgDQlEpm8ATy4le2y0Wz9TMD5LjV1IdJ8oxjv0Eh3w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
+ SJ2PR12MB8691.namprd12.prod.outlook.com (2603:10b6:a03:541::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Fri, 19 Sep
- 2025 06:47:46 +0000
-Received: from CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
- ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 06:47:45 +0000
-Date: Fri, 19 Sep 2025 15:47:34 +0900
-From: Harry Yoo <harry.yoo@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Christoph Lameter <cl@gentwo.org>,
-        David Rientjes <rientjes@google.com>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        maple-tree@lists.infradead.org,
-        "Paul E . McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching
- kfree_rcu() operations
-Message-ID: <aMz8hk3lrWiPQYnw@harry>
-References: <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
- <aMpxnACqmsQl-lp0@hyeyoo>
- <bbda8c25-b575-4e98-b1ae-b103c6598d38@suse.cz>
- <aMqcXyKRlZggLxu_@hyeyoo>
- <6f92eca3-863e-4b77-b2df-dc2752c0ff4e@suse.cz>
- <aMqyn6nenR8V_p1y@hyeyoo>
- <bf8b4741-1025-4cc8-b9ed-5b566bdcb2d7@suse.cz>
- <aMq40h5iOjj8K7cc@hyeyoo>
- <a32bd837-2597-43d0-9da3-1ce5a53b15f4@suse.cz>
- <40461105-a344-444f-834b-9559b6644710@suse.cz>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40461105-a344-444f-834b-9559b6644710@suse.cz>
-X-ClientProxiedBy: SE2P216CA0164.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:2cb::16) To CH3PR10MB7329.namprd10.prod.outlook.com
- (2603:10b6:610:12c::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
+ 2025 06:47:40 +0000
+Received: from DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
+ ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
+ 06:47:40 +0000
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
+ Charan Pedumuru <charan.pedumuru@gmail.com>,
+ Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Subject: Re: [PATCH v2 09/23] gpu: host1x: convert MIPI to use operations
+Date: Fri, 19 Sep 2025 15:47:37 +0900
+Message-ID: <4792993.1IzOArtZ34@senjougahara>
+In-Reply-To: <20250906135345.241229-10-clamor95@gmail.com>
+References:
+ <20250906135345.241229-1-clamor95@gmail.com>
+ <20250906135345.241229-10-clamor95@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-ClientProxiedBy: TYCPR01CA0133.jpnprd01.prod.outlook.com
+ (2603:1096:400:26d::14) To DM4PR12MB6494.namprd12.prod.outlook.com
+ (2603:10b6:8:ba::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,333 +96,481 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|SA1PR10MB6342:EE_
-X-MS-Office365-Filtering-Correlation-Id: e294e95d-ead0-45dc-abb0-08ddf748707d
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SJ2PR12MB8691:EE_
+X-MS-Office365-Filtering-Correlation-Id: eee20b47-18c9-4cef-6af4-08ddf7486d8e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|10070799003|376014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ewxK9HHgcQKqt/+FhRIm/YTUzjUo0lnFFAmA+84u6Px2HJIjPPv4tgbsupUM?=
- =?us-ascii?Q?RxUNTyw6qKEkudsoSaoJwxPhEPrLavlU7+boZmTS8SCu+ntkDHjKb2bLV2If?=
- =?us-ascii?Q?4ENWrqY69nVKuy5Tum39QmBq71nK+QxGswctjJ6goXgGoVHZ5TNm1/9Qq66f?=
- =?us-ascii?Q?599uFuURfcDzQkLkPCS/B0Ly8NPh7GzWFc67FOs0lbctXYPgRcw68OgHfsB3?=
- =?us-ascii?Q?jktvtj2dMfKDvBb8bMPH/51hGcTTMvRPtRWvFu9zuKjZTMAlpgZVh+Rl3eEh?=
- =?us-ascii?Q?GW0TOPPEvBIFkjoJpM8Fo0e+NEVM/L9Shkqk4FrlxDCHYH47Vmtj8HbUZFmR?=
- =?us-ascii?Q?p2V/XkR9G/TrqHLBM8g5NOwQJDWTyaTqNx2ebQwP2x2+Tx/HU4UIxl/wqyKY?=
- =?us-ascii?Q?dWThbls4Qm8ayw0UVt9J7mXice4vkz/1SKPbaJ+kDr2IHSOys3A6KH4FwRX8?=
- =?us-ascii?Q?Vsnm9bef98zwoJRMhGP+rtefptv61xwUHNYfmu3G1v6YiJv/GuwjpbhqMzZV?=
- =?us-ascii?Q?rhvvJbQMiRQ8eEgIq2vnf9QmyGzRsnz1SrbgNSND0NmK8ejwsPCr6L4icX0J?=
- =?us-ascii?Q?iGo3fWLiYpfZiCRAndt1VsJ/Mrk9EwBnk6KLRtV5/qcNME8a9kRcKYCWRn4x?=
- =?us-ascii?Q?eXGQms+2YEKu3TjXVbUpz8vU6/5kmqMEpAFVKZt7oipP7wMgPEz9JqS4aqFz?=
- =?us-ascii?Q?fZEvE4SdcsSVH+o6XTDNFhuHsiH4IceDBcS+wVq5wZJ6gqFrzbh2OzJuTYsr?=
- =?us-ascii?Q?BIsSkPBTkvggPMBb+hc8e+7v9T7plS/j67SqpCB4TyWMW3vQqLWhPx8kNbUm?=
- =?us-ascii?Q?TmhGkHug6DE1jjkuyw/FjNmuQ3EgrWoB9dm8I3YqrNuJZNGZhFzjdoi/gsRb?=
- =?us-ascii?Q?lJwTuHbKcnLTCO5otmd4nQCqyOjUgbIPJUM80WJtJTz8bHguCL2oLGWF5mzN?=
- =?us-ascii?Q?1O5ixrOJuolgxTox/81AdA48x7762xiEsGIpEeMTzeEQkftafJ9Ng2h+ktD+?=
- =?us-ascii?Q?PoRvTwh6O9KjAirsZYmHa55AVviApzftNqsIJQneGFkp8rrTl5OcKFltV7XW?=
- =?us-ascii?Q?W1Yk+vdN7ULImL48k2/3liuYSSFrF5SJcxlHADybdi+phQZBklbxV85oJhSw?=
- =?us-ascii?Q?qKuw48zByjtZ7Db8xQNYTWKbRyhujyeey5czAnZMUO9+HtjFVK8IL0g1BjGQ?=
- =?us-ascii?Q?/alqls6JsabM7uivHGgU20UnHmyM4kh4gCSH7qAUt9MiQEh8Ihz18yjiq/Ph?=
- =?us-ascii?Q?hZo1HJ1dnQdXKLNGJ+Y6yUDfAFe0etcn5rudpPwp1jR1dMRXMYIyjuw5sA2F?=
- =?us-ascii?Q?652mu1yeuVkUydw5qM+28a7PyfxyZ/IC7z7VpoHQTzI0SJvqpZTM+5ZlS+wO?=
- =?us-ascii?Q?L48LjCvlhFV8GCHuMfebra2UNm+3/6u9REEb/3uwiOG7S5g4KUYkbAZSsNqm?=
- =?us-ascii?Q?tEWN1EF0Sa4=3D?=
+	=?utf-8?B?Y2RndXpGUkpSSDZZTnA2RnZKN3VUM282aEF3RWxneU1oQUlxdUZYdlhyWkp1?=
+ =?utf-8?B?THQ4dEpJQkJOY3hEN0tCM3ROa3pSOUp2L2VkMlhBbDd5ci9CanlBVGlMUTJF?=
+ =?utf-8?B?UkhRUVY3UEs3RW54d3Y4bWNVS3NiM0dIeGJETEdRTVp5WlB6Ly9USFN1MHVm?=
+ =?utf-8?B?c1dyZlI1WkRVMkU2OUVsd1lscUt2aE4wVTFqaUl1TmN2NERoRVdLR253ZkY5?=
+ =?utf-8?B?VmkxdzN3di9QbVlDcjVlaW5CeExBMWZHRk03SURMM0VGUy85cTVQMFNLSDN2?=
+ =?utf-8?B?c3BrWUR0ejBYQk5pZmZJR083MElka1htcGFsTkhvVjdRK3FncEhLZWxkb0dz?=
+ =?utf-8?B?aWsvU3hob3hFWXZUdUEzOVNzT1NVeUZjSEU4VHQyczhBeWdPU0dsNXBWanhx?=
+ =?utf-8?B?dEtXYWJmem9ZZFQvUUtrVUtPcDZIS3FIek1iWEI1b24zZG5UL1hDUWN5c21X?=
+ =?utf-8?B?OENsOVRvS2ZuN2M3NEE1N3A5UWlxVXVlbVg0R1hMK0s5R2g2WGdQTmNDR1F0?=
+ =?utf-8?B?ZGFnc2ZQM01uK3FnS1p4Skx1VGh0bENPTGYrUnQxVnZQRmprWUM0a1dYWmR0?=
+ =?utf-8?B?bzRFdHpsNXhOMEt3dzZMZjl5aUZQR0xRRnNyN2kzOE1pT2dRcjZZTjR0dmM1?=
+ =?utf-8?B?Y04zSWdxajlDSC93VFVjK241VW5HaW9tYjR1VGFYTTdLK0k1WHNaaEJNdzNQ?=
+ =?utf-8?B?ZjcxbnRaMTd1ckZ6QTNsR1dnUWE0eGhqdjdMV29YTFA0L3haTTFmbWhPMGJp?=
+ =?utf-8?B?NVVmR1VjTXJyZDY0cDg2YzBJNS9tcmt3cVVIQ2FJdS9mZFR1UTNMY1BMeHBG?=
+ =?utf-8?B?aURIL1VVTkxIL1Jkd2lJMXF5b3ZmSEpyYWJmbCtGZXhzUy9WVzNwUDNES0U3?=
+ =?utf-8?B?d1ZxdTI3dCtwMVN3dEdTbUkxVFcwUzQ4SWtkVE5zSEEraGZVVmNWeDJ5Si9m?=
+ =?utf-8?B?NnBES0RuSFp6cWMwUG5LMEhTQXhwTE9JbW94MitqT3NDSktuQnoxcFpsRmIr?=
+ =?utf-8?B?bjM5UnJtM3had3FUd3paL3B4UkE2Y1h3SlZjV09LVUt6QkJrMmZrTW5ZSXZs?=
+ =?utf-8?B?MTlqUXplSkpyRGlXL25ubUdLMTlZRThLYmczakF4cmtpejQyZlJYQVJCbGtr?=
+ =?utf-8?B?Y3RyTEN5YVA4dEdSMkMwYS9mUlV0RGlxVnJrTDhidXMvbmYyNTVPcm8wb1Yy?=
+ =?utf-8?B?RFErWWR6QlVERWhsaE01UzhKV1FlT1dzNTlUNHg3L2ZVTFNwWGpWYitsR0hs?=
+ =?utf-8?B?OVlxMGRsTStrWkQzakNKQnRMcmpwZnV5YWZhSVZEYzhYeXMvSmdWU2REUE5h?=
+ =?utf-8?B?aThuaUxrQXBKb3dxMFNpL2FWa25OcnFpTVlkKzM2RmE5OGwrZ25PZVlWZ3RD?=
+ =?utf-8?B?VHg3T1AwOHR1S0JyV2FqSm1MVmd6WnkxZXFYdHJXTWxEU2RNK1FhUlAwdGh0?=
+ =?utf-8?B?RDdMdFEwQ05menkyYWQ0TENSc3U3T3Z5Y01KbzUvb1BRYU9vT2RmMlhOSHAy?=
+ =?utf-8?B?LzJza0dBMllmZFRsQm9EYjliOUNEVzFDYWdibFNjL2VwV1BYbkxuTDBDN2VC?=
+ =?utf-8?B?cnJlMVpYMXVUQllVRXluQXpVYVh6YWV1Z0ozb29HTnNNdlVILzFqY2hwdXRD?=
+ =?utf-8?B?dFhmK0NvZ3BHd3NnSVVsZ3o3V3JZUks2VTNQTk1PbHhyYzRqSVlmUmIwRmw3?=
+ =?utf-8?B?SGU3eVNEdk0xcnNKdlB6TXo0azlwZVJPUGZ3RXhwNXVJOENGNmJlSzJKYmor?=
+ =?utf-8?B?RGVjNUtpcmdja0pDME95b1BDU3MzTEVWRWhHcUo0bUZ3bE9iMEJYRUxIQXdq?=
+ =?utf-8?B?VldUdTVPOHZsOTlFcGYzOUpaazBNYTlxYXlzMTNXQlBTamg5RFltM1RrY1FB?=
+ =?utf-8?B?Y1dLZE9kVjBKY2dQZ2t5emxISitXL1d2R1FLK0o0VnpWTnJzdzhmYlFlS245?=
+ =?utf-8?B?ZW5KUmxLQmsxcWxSdC9odjNhb1JpcjYreWNCT2huQ01PME9VZHFTbTFsZHBz?=
+ =?utf-8?B?VjA4bDA3YjRBPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(10070799003)(376014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yuTvh8GSeIK2BaNxTN+73UTo4ZOh6UATWiDP0hVWeXcqF6KKnMy7a9oiwQ8k?=
- =?us-ascii?Q?U+OnMQNgZhP+35iBMIWj8iHNGyeAGrjXcS/g0bGFiL9rkycwQ42YREJKAWeo?=
- =?us-ascii?Q?4mwcI0RQJk7vmsRS0SRnsRRKBzgAQx+sw6maTrXkQlF6ADUpNkQcNh4ztppJ?=
- =?us-ascii?Q?xBKy5oeO9I9AL5JlHRpWqC5VR1KBU+LnVma3xHr4an8uB+SB6ir9KlnsboNa?=
- =?us-ascii?Q?RWOvKkKtPgrYESam83Wl+4PI/PXWiDh2eIJZj70RtxECLHu4P0TaZGYpPp6z?=
- =?us-ascii?Q?RzRTHSU7gidG2KJpJvU4IQd4MeEjqrhwe/8De+BfLDChaaAaZuvJlCwJCqrf?=
- =?us-ascii?Q?EklX8M39idz2IAnqWSmL6foZjiESRMe8TQvAiSBOR9jBVXvhJiHfFtBvFyeb?=
- =?us-ascii?Q?DfAaJlpFarTNLg5k7aZD0UziMFJ4oVr+BIbsJtwbGElDNK4ezdU7dIkYbrYr?=
- =?us-ascii?Q?0xdMc0DZt0UyJnX0f5wsOfMAWKfj//cTSaCwro2P59ur1kzFgle4t+ttOE3K?=
- =?us-ascii?Q?OFzkAMwiWq4g3uviq7ulpBUOu3FBTg3F2t7mjEKh+8728D9aq8uRmynuVwAZ?=
- =?us-ascii?Q?PW8Dxk7OwyLZpkmdYBeMuIFSA4YawR9WBt6RMWnQeej9a7wfO9W0LjM0s2hJ?=
- =?us-ascii?Q?QJM6y8a+SJ4E9TG5eLEiggLkalAknFBE4XWH41Ew8Ls6LieQN/qZFLT8WSN9?=
- =?us-ascii?Q?3trhMMm2F1DwzoLWUh3bhlArKRvkTE/YI2c7Sbav8l1FJzLosrSNlcmSBp4A?=
- =?us-ascii?Q?267Dp9OSWC8CQcEstdd90II7hDwj2pHHwx8ouR7cRHaIJE4HW5vrS0/2gKis?=
- =?us-ascii?Q?ApV3wz5zh2oJ+TiBg54TwlsCTPMBSC6pSFDlhNfBkMWruzhnm4S3bVSlxTaU?=
- =?us-ascii?Q?jdd4n4TpT2GQOtt/EojzNSYfPVhir8+2bt6xa880Nm9mCACht4rRCYENBdf/?=
- =?us-ascii?Q?9PJrkEA8JqpfHu+Q7h/TOoV8CdQHn+GTa+WDfzj0igOrW4gJQN/CR/FXKBdU?=
- =?us-ascii?Q?POwDDRYuOvL8ux+EQNC0SB/TPaLHQ7bm7XD+f+SoeizOI8WoaBte/0t6SlpD?=
- =?us-ascii?Q?Y8Zgtj1FK+08uyCxKkZjK1vrCBEjlLe7/mpZ9tYTI7HaXBrLESuSngLP5t0e?=
- =?us-ascii?Q?rrxYv4cDHWyn3tCOQd/7jjxqCy3E0bsg8BrOkear7YLzg/Omhj/lG+rtTu40?=
- =?us-ascii?Q?V568Yz8LAoYWKRLou6BHEOsDWrZ5TMcPFYgIJHVA9syY6P1r+1sHuC6dOA9F?=
- =?us-ascii?Q?ATR9EDbHJnPJYKGCTPNK72LfmuAEhlY3OXgETMdcdYHJPsBt3x1Dt4CK5Jk2?=
- =?us-ascii?Q?VfZksGyhI6Cnx2Spo8Zd7QnzRDgRckrlqLAYdLZb47amHlBVZoUGKYWzRkYy?=
- =?us-ascii?Q?naIZUGNlp1IYgVIC2H/hRZkBMBG5kO0SP7KwES4t4ZIjlumnurmotyCGoT1Z?=
- =?us-ascii?Q?81AssVEqkCsfCJ+9J54WOTtAJmDE7QsgXQlc05HrNnKAUOAiFoSmw9N9YCdy?=
- =?us-ascii?Q?qYugq9iOemhEc6ZkAQG9hU9hax8ggW0KbtFbKsXD+H34vjbv0BQyUoLlE64F?=
- =?us-ascii?Q?5jyynm7F7g4dgz1bAnEYgFoEgkKxlvT8Bnw2Vz+G?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	rY4kEsigKB15Zv3FptbUYtyiMETa2t5Akvf7lTc45wgJIiOAEMj+Z5ze0NCcmQlDckZqoAcXuAMN4pZqRqpPQf1bmLtaUqML+qGY5Pkjs8OLI8f15IIasBS/HDncv5PmPz41DVdkV2eaLZasf5ou7bLd3uD+RqeI8YzlcaIHbSDqqwqFVQlPsukhCat4SYeS394JdIe0ZasKdqXcPEvINn0jcvS2r9HBlT0V4DUryPxYoKdNXliFI6lLMxRHWEJv56B41qHLzICsZ1fWQnvsSWKIrl+E31W87wWH7g9AM2oLMtRvCKaX8M+nyHeuWsqLTfBS/w9QOw8uIZXJBfmGqK45MN5l1IWBw15BxoLPCEM2+ql5pb3b80XFpPa7FOpuX/8+m+OurNPh1edzQ+yj/i1AoTJIZS632acYcAVi6cw/qcme5zL4t4x73RH43lIMEUe5urURUjnvzX07S3s9Jr+iXw6Sl5NEEe3gWIdCh3+taU1x5EJZbJf0dApByx/maSDvpiBIY7LUDkYqK11P/RcldYvPHtqCMuit5PfV8Ehkhdq2/0pcoG8iJN/GeLUoYRJuKbDpJIyTrEiRp0zNRJZJYifVyF2FuUFDunKlbXM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e294e95d-ead0-45dc-abb0-08ddf748707d
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+	=?utf-8?B?YW56RHBlU0tuOGIwOXRwckZOYjBSYm5BTEVnLzEzajlSOFppS3lZZlBucVJS?=
+ =?utf-8?B?d1ZyYzVxS2RPLzRDd1hDMzVlVmc0cUVVcDlQSGRUcC9KTUlGQVEzTFJqbDYx?=
+ =?utf-8?B?YlNkNkZLejRyWUFoTnd4RmxaNFFTTzAxZSsvRlNLYlpJdzlyZW5BYWFsejlE?=
+ =?utf-8?B?amNYdzBJK2Z5ZHhjQUhSbjJJQ2ZJUFc4T1VzT3g1cHUvWXJwNzdKcVNzTjd6?=
+ =?utf-8?B?bkpxMUllWFJ3L2tVUlhIbmtvT2NGcUxJYVVYSVU2aHlnNWJOY0d5b0N2SnNZ?=
+ =?utf-8?B?cU1SWUZTbGhJT1grWGpTRkFreS9wbXE2UE0zajFnd3pkSUtOdWlQQWlNVUVr?=
+ =?utf-8?B?Nzl4cnk0cTdEa3ppek52bTlpYzNaYkRRRzEzRWxUQWhkRGZjOVZmcHlzb0U2?=
+ =?utf-8?B?REdzZjN6OXExQWIvYmdSb3ZqSGowdXE4SVN5cWxiL05UbnZOcWN0MCtFUzJr?=
+ =?utf-8?B?V1JWNzBoRGVMU0NLRUErQ1FvYWxnZ2RjSkhZVjFqRUxTZDJNdE5EWjYzeWtO?=
+ =?utf-8?B?M3V2cEFYRXJxVnBwZFNDNXlsaUU0anBIby85dHRpd3lGV29LdUwzb2NtNXhQ?=
+ =?utf-8?B?TEgyQzc0UCs2MUFEMDN2d1ZyLzhCRWtCR3hiSFN4MUI0N2daRDdKbEtMM2dh?=
+ =?utf-8?B?SVI3SDNHekpoWFRKeE1RTXF5UFN2QXQ1Z2dMK0lwNnBkV0lvQkhaV212aWJt?=
+ =?utf-8?B?TzREbmU4akh6QzhIdDZTMjVsVnZhUzlqM0N0dnpkam9BUVprZmdlMVIvSm42?=
+ =?utf-8?B?eUtpMnhSaDlIbDB6Vjk3ZUt2cGZ2OUFXdkcyNktmU1BIU2dodEREK2xORFo1?=
+ =?utf-8?B?NjNZcnhMSTFTWThHZEdPUzdPUEluQXIwY0lBUkRHYUpENS9KMWhPRzZPWnpi?=
+ =?utf-8?B?WCtjMi9sZG5YRzZyZVJhZEEvUXpIcVdvSjFWM2NkOXMyMEhpMXV4OStvNU8y?=
+ =?utf-8?B?TEpmdVhYcnNHekVFWlFQVlk0MEhqR0MwdldYWmc5OFhCb1dPNzU1L0dLMTF6?=
+ =?utf-8?B?dXpvYmpJNTNwRjFpazIybGxNeFBDd3FuMGlvZGUwMzU1QmR0TmMrKzJuSllH?=
+ =?utf-8?B?aDJncU12V0VXV2dzc2ZsdDJrWGNERGh5Ty9DNXkySk1lMWFzanE1ZzQ1b2tW?=
+ =?utf-8?B?TVVkNjNocFZpSmd0ZzV2SGt0L1Vhd2l5RnZ5aW9XUW5FZWdiV1M5R3N4alpz?=
+ =?utf-8?B?bkRnVmtWcVcwZkFldlQxV2xHdmtYckJRYTFrZG9IZ09VcU1lRi9kZytuQThV?=
+ =?utf-8?B?SVZYK2VHUU8za3JxekZlWEZqRk12aUwxODhTOW5KaGwwTTJTUDVYMXc5TzlU?=
+ =?utf-8?B?Q1NESDB1MXJaUWpUUTg4aVMrWWozSDFNOTQ3T2FKOXBoTk81eThsckNqTUo1?=
+ =?utf-8?B?bFlBSUFPM1dCYXZZRXM5NEY2OU00c3FBajFPcG1QWWRWTmJBY3FjcDdOK09Q?=
+ =?utf-8?B?OVlHOG1mUElYRzBFKzFNMXg4QzRVT09EU2F6WU1JSGRPRko0WEwrYVl0aXZB?=
+ =?utf-8?B?dlppMkF2MjM2eHI5QStCVEJFQVpid0w5MnE3TVVGdll6MzBVdFllMk41d0xa?=
+ =?utf-8?B?MjRhRktnSVpRME82YjFOK2xWRnorUW1SYThRQkQ4N0lBQW1jYlhzZXVuNmx5?=
+ =?utf-8?B?NFhMYi9MZ2pBNEM1R2FFVk5CK2JxbHNzdHpOUWNycjFtT3diRmIyeWFpd1Zh?=
+ =?utf-8?B?Q0JxaGRaTUZTdm4zQU1HbWx1UTIyS2pHZ2xrbFJZdkdmcFY2dWlBMERWMjFL?=
+ =?utf-8?B?TkFiTHppVnRWVFMzZWlxVTRaNGFRUXpDNXpkZC9TRGtjTHNhNzhDRDdCbE9x?=
+ =?utf-8?B?L1dvelUzdThXTXFqQWQveHhRSUF6b2hWZnoxRHR2b09jaGZZUVUwZmh5MXcv?=
+ =?utf-8?B?ZnIxSzRrMWZxZ0p2NllCV21yZG0yQ2g5aWU4OUt0WHhTUUc4aDRsdUtJS3o0?=
+ =?utf-8?B?d1YvcW9hMHdMdUZYNFdEVi9UY0dBVkM0VC9wdm9jVHQ2bGxlT2dCOHRSOG53?=
+ =?utf-8?B?T1AzdnJxU0JYMWh5U1EyV09qTSthTTFiWVBqK2NMMXhCM21aS2NBckZPVFlL?=
+ =?utf-8?B?RUN4c2E5eFZmRW8wMWxkQkpvQzNRdit2RXBlSUUxK0ZIQmFuYW8rYndYNVVm?=
+ =?utf-8?B?amYrQktxUERNcEd1SC9ad0dTOFJwUFpIZ1k4TzBacEtrSkZQVDRmM0NPNENK?=
+ =?utf-8?B?S202NWZqWFlYWE11Zm9xSXJ4SlVBbXBFVzVOeHNqYXFyM3l2eDlBeUJiYlk1?=
+ =?utf-8?B?MkpWRXNuQ0hXQkU1Z1RtVEhFZ1FnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eee20b47-18c9-4cef-6af4-08ddf7486d8e
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 06:47:45.8122
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 06:47:40.5819
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ez6+7ly6DQjcZiI+48hUwWpBOYGRQUeuidFQxTA2Dyz+K4c2OiyC+QmuqRANpoFxDqBslVWQvX1/bwqvZZorng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6342
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_03,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509190060
-X-Authority-Analysis: v=2.4 cv=b9Oy4sGx c=1 sm=1 tr=0 ts=68ccfcaf b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=ZkBYrEZaL4WzJX-zIJ4A:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:12083
-X-Proofpoint-GUID: S-xrKgo8NQpeCyrYRcmaFQ6srkMY3XiM
-X-Proofpoint-ORIG-GUID: S-xrKgo8NQpeCyrYRcmaFQ6srkMY3XiM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMyBTYWx0ZWRfXzIiZHact+kFe
- J2AI7NPaV5rM4qHaN3o2hZ8do2I5jieN2iIxDd+RayJLHaM+QCKTYiE8wHxB/Q5JUmf/2SmbFIT
- WJoAFV4l0L2zr73j8hy/LFNNo5sxDX07t5eFhL9ADRpZfG45Hvm36jG9ehmvUO8n6Ma7AE62HyH
- tA/Bc28awOYA6TKQ2kcx4r83FHukjB6efCzZvDtsJAEWU1dYjwSBJuNeMvnL4N04DIlkY9jM3kS
- 9ckKf2rMueUL0tXmRDMj9bSBEG1bKJCSq3y/pTbF5Czc48uMN0HX7Ez1RwIhfFMVD92DK0zDrIq
- 6XgBEzQdeBt+Cmdm0s/nTqanM84Gmnuc0SXkCcslhOB/vkj47gvE/UCS5CUVhXcG2nNsNpt8GpX
- PZ5/CVjxF+7goeNTDRw2kDuRWPHCJg==
+X-MS-Exchange-CrossTenant-UserPrincipalName: hpYAR6GnwYE25akL7IR3OBvjJLOZ9mhgCqKjd8D9veltmlP4pXdK0yqFFki0Y9MrEgT6jWsFd+hXodM/oA9VKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8691
 
-On Thu, Sep 18, 2025 at 10:09:34AM +0200, Vlastimil Babka wrote:
-> On 9/17/25 16:14, Vlastimil Babka wrote:
-> > On 9/17/25 15:34, Harry Yoo wrote:
-> >> On Wed, Sep 17, 2025 at 03:21:31PM +0200, Vlastimil Babka wrote:
-> >>> On 9/17/25 15:07, Harry Yoo wrote:
-> >>> > On Wed, Sep 17, 2025 at 02:05:49PM +0200, Vlastimil Babka wrote:
-> >>> >> On 9/17/25 13:32, Harry Yoo wrote:
-> >>> >> > On Wed, Sep 17, 2025 at 11:55:10AM +0200, Vlastimil Babka wrote:
-> >>> >> >> On 9/17/25 10:30, Harry Yoo wrote:
-> >>> >> >> > On Wed, Sep 10, 2025 at 10:01:06AM +0200, Vlastimil Babka wrote:
-> >>> >> >> >> +				sfw->skip = true;
-> >>> >> >> >> +				continue;
-> >>> >> >> >> +			}
-> >>> >> >> >>
-> >>> >> >> >> +			INIT_WORK(&sfw->work, flush_rcu_sheaf);
-> >>> >> >> >> +			sfw->skip = false;
-> >>> >> >> >> +			sfw->s = s;
-> >>> >> >> >> +			queue_work_on(cpu, flushwq, &sfw->work);
-> >>> >> >> >> +			flushed = true;
-> >>> >> >> >> +		}
-> >>> >> >> >> +
-> >>> >> >> >> +		for_each_online_cpu(cpu) {
-> >>> >> >> >> +			sfw = &per_cpu(slub_flush, cpu);
-> >>> >> >> >> +			if (sfw->skip)
-> >>> >> >> >> +				continue;
-> >>> >> >> >> +			flush_work(&sfw->work);
-> >>> >> >> >> +		}
-> >>> >> >> >> +
-> >>> >> >> >> +		mutex_unlock(&flush_lock);
-> >>> >> >> >> +	}
-> >>> >> >> >> +
-> >>> >> >> >> +	mutex_unlock(&slab_mutex);
-> >>> >> >> >> +	cpus_read_unlock();
-> >>> >> >> >> +
-> >>> >> >> >> +	if (flushed)
-> >>> >> >> >> +		rcu_barrier();
-> >>> >> >> > 
-> >>> >> >> > I think we need to call rcu_barrier() even if flushed == false?
-> >>> >> >> > 
-> >>> >> >> > Maybe a kvfree_rcu()'d object was already waiting for the rcu callback to
-> >>> >> >> > be processed before flush_all_rcu_sheaves() is called, and
-> >>> >> >> > in flush_all_rcu_sheaves() we skipped all (cache, cpu) pairs,
-> >>> >> >> > so flushed == false but the rcu callback isn't processed yet
-> >>> >> >> > by the end of the function?
-> >>> >> >> > 
-> >>> >> >> > That sounds like a very unlikely to happen in a realistic scenario,
-> >>> >> >> > but still possible...
-> >>> >> >> 
-> >>> >> >> Yes also good point, will flush unconditionally.
-> >>> >> >> 
-> >>> >> >> Maybe in __kfree_rcu_sheaf() I should also move the call_rcu(...) before
-> >>> >> >> local_unlock().
-> >>> >> >>
-> >>> >> >> So we don't end up seeing a NULL pcs->rcu_free in
-> >>> >> >> flush_all_rcu_sheaves() because __kfree_rcu_sheaf() already set it to NULL,
-> >>> >> >> but didn't yet do the call_rcu() as it got preempted after local_unlock().
-> >>> >> > 
-> >>> >> > Makes sense to me.
-> >>> > 
-> >>> > Wait, I'm confused.
-> >>> > 
-> >>> > I think the caller of kvfree_rcu_barrier() should make sure that it's invoked
-> >>> > only after a kvfree_rcu(X, rhs) call has returned, if the caller expects
-> >>> > the object X to be freed before kvfree_rcu_barrier() returns?
-> >>> 
-> >>> Hmm, the caller of kvfree_rcu(X, rhs) might have returned without filling up
-> >>> the rcu_sheaf fully and thus without submitting it to call_rcu(), then
-> >>> migrated to another cpu. Then it calls kvfree_rcu_barrier() while another
-> >>> unrelated kvfree_rcu(X, rhs) call on the previous cpu is for the same
-> >>> kmem_cache (kvfree_rcu_barrier() is not only for cache destruction), fills
-> >>> up the rcu_sheaf fully and is about to call_rcu() on it. And since that
-> >>> sheaf also contains the object X, we should make sure that is flushed.
-> >> 
-> >> I was going to say "but we queue and wait for the flushing work to
-> >> complete, so the sheaf containing object X should be flushed?"
-> >> 
-> >> But nah, that's true only if we see pcs->rcu_free != NULL in
-> >> flush_all_rcu_sheaves().
-> >> 
-> >> You are right...
-> >> 
-> >> Hmm, maybe it's simpler to fix this by never skipping queueing the work
-> >> even when pcs->rcu_sheaf == NULL?
-> > 
-> > I guess it's simpler, yeah.
-> 
-> So what about this? The unconditional queueing should cover all races with
-> __kfree_rcu_sheaf() so there's just unconditional rcu_barrier() in the end.
-> 
-> From 0722b29fa1625b31c05d659d1d988ec882247b38 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Wed, 3 Sep 2025 14:59:46 +0200
-> Subject: [PATCH] slab: add sheaf support for batching kfree_rcu() operations
-> 
-> Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
-> For caches with sheaves, on each cpu maintain a rcu_free sheaf in
-> addition to main and spare sheaves.
-> 
-> kfree_rcu() operations will try to put objects on this sheaf. Once full,
-> the sheaf is detached and submitted to call_rcu() with a handler that
-> will try to put it in the barn, or flush to slab pages using bulk free,
-> when the barn is full. Then a new empty sheaf must be obtained to put
-> more objects there.
-> 
-> It's possible that no free sheaves are available to use for a new
-> rcu_free sheaf, and the allocation in kfree_rcu() context can only use
-> GFP_NOWAIT and thus may fail. In that case, fall back to the existing
-> kfree_rcu() implementation.
-> 
-> Expected advantages:
-> - batching the kfree_rcu() operations, that could eventually replace the
->   existing batching
-> - sheaves can be reused for allocations via barn instead of being
->   flushed to slabs, which is more efficient
->   - this includes cases where only some cpus are allowed to process rcu
->     callbacks (Android)
-> 
-> Possible disadvantage:
-> - objects might be waiting for more than their grace period (it is
->   determined by the last object freed into the sheaf), increasing memory
->   usage - but the existing batching does that too.
-> 
-> Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
-> implementation favors smaller memory footprint over performance.
-> 
-> Also for now skip the usage of rcu sheaf for CONFIG_PREEMPT_RT as the
-> contexts where kfree_rcu() is called might not be compatible with taking
-> a barn spinlock or a GFP_NOWAIT allocation of a new sheaf taking a
-> spinlock - the current kfree_rcu() implementation avoids doing that.
-> 
-> Teach kvfree_rcu_barrier() to flush all rcu_free sheaves from all caches
-> that have them. This is not a cheap operation, but the barrier usage is
-> rare - currently kmem_cache_destroy() or on module unload.
-> 
-> Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
-> count how many kfree_rcu() used the rcu_free sheaf successfully and how
-> many had to fall back to the existing implementation.
-> 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel wrote:
+> This commit converts the existing MIPI code to use operations, which is a
+> necessary step for the Tegra20/Tegra30 SoCs. Additionally, it creates a
+> dedicated header file, tegra-mipi-cal.h, to contain the MIPI calibration
+> functions, improving code organization and readability.
+
+I'd write out "operation function pointers", at least the first time. Just =
+"operations" isn't clear to me.
+
+Please write the commit message in imperative mood (like you've done in oth=
+er patches).
+
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
+>  drivers/gpu/drm/tegra/dsi.c             |   1 +
+>  drivers/gpu/host1x/mipi.c               |  40 +++------
+>  drivers/staging/media/tegra-video/csi.c |   1 +
+>  include/linux/host1x.h                  |  10 ---
+>  include/linux/tegra-mipi-cal.h          | 111 ++++++++++++++++++++++++
+>  5 files changed, 126 insertions(+), 37 deletions(-)
+>  create mode 100644 include/linux/tegra-mipi-cal.h
+>=20
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index 64f12a85a9dd..278bf2c85524 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset.h>
+> +#include <linux/tegra-mipi-cal.h>
+> =20
+>  #include <video/mipi_display.h>
+> =20
+> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
+> index e51b43dd15a3..2fa339a428f3 100644
+> --- a/drivers/gpu/host1x/mipi.c
+> +++ b/drivers/gpu/host1x/mipi.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+> +#include <linux/tegra-mipi-cal.h>
+> =20
+>  #include "dev.h"
+> =20
+> @@ -116,23 +117,6 @@ struct tegra_mipi_soc {
+>  	u8 hsclkpuos;
+>  };
+> =20
+> -struct tegra_mipi {
+> -	const struct tegra_mipi_soc *soc;
+> -	struct device *dev;
+> -	void __iomem *regs;
+> -	struct mutex lock;
+> -	struct clk *clk;
+> -
+> -	unsigned long usage_count;
+> -};
+> -
+> -struct tegra_mipi_device {
+> -	struct platform_device *pdev;
+> -	struct tegra_mipi *mipi;
+> -	struct device *device;
+> -	unsigned long pads;
+> -};
+> -
+>  static inline u32 tegra_mipi_readl(struct tegra_mipi *mipi,
+>  				   unsigned long offset)
+>  {
+> @@ -261,7 +245,7 @@ void tegra_mipi_free(struct tegra_mipi_device *device=
+)
+>  }
+>  EXPORT_SYMBOL(tegra_mipi_free);
+> =20
+> -int tegra_mipi_enable(struct tegra_mipi_device *dev)
+> +static int tegra114_mipi_enable(struct tegra_mipi_device *dev)
+>  {
+>  	int err =3D 0;
+> =20
+> @@ -273,11 +257,9 @@ int tegra_mipi_enable(struct tegra_mipi_device *dev)
+>  	mutex_unlock(&dev->mipi->lock);
+> =20
+>  	return err;
+> -
+>  }
+> -EXPORT_SYMBOL(tegra_mipi_enable);
+> =20
+> -int tegra_mipi_disable(struct tegra_mipi_device *dev)
+> +static int tegra114_mipi_disable(struct tegra_mipi_device *dev)
+>  {
+>  	int err =3D 0;
+> =20
+> @@ -289,11 +271,9 @@ int tegra_mipi_disable(struct tegra_mipi_device *dev=
+)
+>  	mutex_unlock(&dev->mipi->lock);
+> =20
+>  	return err;
+> -
+>  }
+> -EXPORT_SYMBOL(tegra_mipi_disable);
+> =20
+> -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device)
+> +static int tegra114_mipi_finish_calibration(struct tegra_mipi_device *de=
+vice)
+>  {
+>  	struct tegra_mipi *mipi =3D device->mipi;
+>  	void __iomem *status_reg =3D mipi->regs + (MIPI_CAL_STATUS << 2);
+> @@ -309,9 +289,8 @@ int tegra_mipi_finish_calibration(struct tegra_mipi_d=
+evice *device)
+> =20
+>  	return err;
+>  }
+> -EXPORT_SYMBOL(tegra_mipi_finish_calibration);
+> =20
+> -int tegra_mipi_start_calibration(struct tegra_mipi_device *device)
+> +static int tegra114_mipi_start_calibration(struct tegra_mipi_device *dev=
+ice)
+>  {
+>  	const struct tegra_mipi_soc *soc =3D device->mipi->soc;
+>  	unsigned int i;
+> @@ -384,7 +363,13 @@ int tegra_mipi_start_calibration(struct tegra_mipi_d=
+evice *device)
+> =20
+>  	return 0;
+>  }
+> -EXPORT_SYMBOL(tegra_mipi_start_calibration);
+> +
+> +static const struct tegra_mipi_ops tegra114_mipi_ops =3D {
+> +	.tegra_mipi_enable =3D tegra114_mipi_enable,
+> +	.tegra_mipi_disable =3D tegra114_mipi_disable,
+> +	.tegra_mipi_start_calibration =3D tegra114_mipi_start_calibration,
+> +	.tegra_mipi_finish_calibration =3D tegra114_mipi_finish_calibration,
+> +};
+> =20
+>  static const struct tegra_mipi_pad tegra114_mipi_pads[] =3D {
+>  	{ .data =3D MIPI_CAL_CONFIG_CSIA },
+> @@ -512,6 +497,7 @@ static int tegra_mipi_probe(struct platform_device *p=
+dev)
+> =20
+>  	mipi->soc =3D match->data;
+>  	mipi->dev =3D &pdev->dev;
+> +	mipi->ops =3D &tegra114_mipi_ops;
+> =20
+>  	mipi->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+>  	if (IS_ERR(mipi->regs))
+> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/me=
+dia/tegra-video/csi.c
+> index 74c92db1032f..9e3bd6109781 100644
+> --- a/drivers/staging/media/tegra-video/csi.c
+> +++ b/drivers/staging/media/tegra-video/csi.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/of_graph.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/tegra-mipi-cal.h>
+> =20
+>  #include <media/v4l2-fwnode.h>
+> =20
+> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+> index 9fa9c30a34e6..b1c6514859d3 100644
+> --- a/include/linux/host1x.h
+> +++ b/include/linux/host1x.h
+> @@ -453,16 +453,6 @@ void host1x_client_unregister(struct host1x_client *=
+client);
+>  int host1x_client_suspend(struct host1x_client *client);
+>  int host1x_client_resume(struct host1x_client *client);
+> =20
+> -struct tegra_mipi_device;
+> -
+> -struct tegra_mipi_device *tegra_mipi_request(struct device *device,
+> -					     struct device_node *np);
+> -void tegra_mipi_free(struct tegra_mipi_device *device);
+> -int tegra_mipi_enable(struct tegra_mipi_device *device);
+> -int tegra_mipi_disable(struct tegra_mipi_device *device);
+> -int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
+> -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
+> -
+>  /* host1x memory contexts */
+> =20
+>  struct host1x_memory_context {
+> diff --git a/include/linux/tegra-mipi-cal.h b/include/linux/tegra-mipi-ca=
+l.h
+> new file mode 100644
+> index 000000000000..2bfdbfd3cb77
+> --- /dev/null
+> +++ b/include/linux/tegra-mipi-cal.h
+> @@ -0,0 +1,111 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __TEGRA_MIPI_CAL_H_
+> +#define __TEGRA_MIPI_CAL_H_
+> +
+> +struct tegra_mipi {
+> +	const struct tegra_mipi_soc *soc;
+> +	const struct tegra_mipi_ops *ops;
+> +	struct device *dev;
+> +	void __iomem *regs;
+> +	struct mutex lock;
+> +	struct clk *clk;
+> +
+> +	unsigned long usage_count;
+> +};
+> +
+> +struct tegra_mipi_device {
+> +	struct platform_device *pdev;
+> +	struct tegra_mipi *mipi;
+> +	struct device *device;
+> +	unsigned long pads;
+> +};
 
-Looks good to me,
-Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
+We should avoid putting implementation details / chip-specific things in th=
+e public header. Here's a sketch of what I'm thinking about:
 
-with a nit:
+--- tegra-mipi-cal.h:
 
-> +bool __kfree_rcu_sheaf(struct kmem_cache *s, void *obj)
+struct tegra_mipi_device;
+
+struct tegra_mipi_ops {
+	// ...
+};
+
+int tegra_mipi_add_provider(struct device_node *np, struct tegra_mipi_ops *=
+ops);
+
+int tegra_mipi_enable(...);
+// ...
+
+--- host1x/mipi.c:
+
+// move tegra114-mipi specific stuff to a new file, e.g. host1x/tegra114-mi=
+pi.c
+
+struct tegra_mipi_device {
+	struct tegra_mipi_ops *ops;
+	struct platform_device *pdev;
+};
+
+/* only need to support one provider */
+static struct {
+	struct device_node *np;
+	struct tegra_mipi_ops *ops;
+} provider;
+
+int tegra_mipi_add_provider(struct device_node *np, struct tegra_mipi_ops *=
+ops)
+{
+	if (provider.np)
+		return -EBUSY;
+
+	provider.np =3D np;
+	provider.ops =3D ops;
+
+	return 0;
+}
+
+struct tegra_mipi_device *tegra_mipi_request(struct *device, struct device_=
+node *np)
+{
+	struct device_node *phandle_np =3D /* ... */;
+	struct platform_device *pdev;
+	struct tegra_mipi_device *mipidev;
+
+	if (provider.np !=3D phandle_np)
+		return -ENODEV;
+
+	pdev =3D /* ... */;
+
+	mipidev =3D kzalloc(...);
+	mipidev->ops =3D provider.ops;
+	mipidev->pdev =3D pdev;
+	mipidev->cells =3D phandle_cells;
+
+	return mipidev;
+}
+
+int tegra_mipi_enable(struct tegra_mipi_device *device)
+{
+	return device->ops->enable(platform_get_drvdata(device->pdev), device->cel=
+ls);
+}
+
+> +
+> +/**
+> + * Operations for Tegra MIPI calibration device
+> + */
+> +struct tegra_mipi_ops {
+> +	/**
+> +	 * @tegra_mipi_enable:
+> +	 *
+> +	 * Enable MIPI calibration device
+> +	 */
+> +	int (*tegra_mipi_enable)(struct tegra_mipi_device *device);
+
+The tegra_mipi_ prefix should be dropped for the field names.
+
+> +
+> +	/**
+> +	 * @tegra_mipi_disable:
+> +	 *
+> +	 * Disable MIPI calibration device
+> +	 */
+> +	int (*tegra_mipi_disable)(struct tegra_mipi_device *device);
+> +
+> +	/**
+> +	 * @tegra_mipi_start_calibration:
+> +	 *
+> +	 * Start MIPI calibration
+> +	 */
+> +	int (*tegra_mipi_start_calibration)(struct tegra_mipi_device *device);
+> +
+> +	/**
+> +	 * @tegra_mipi_finish_calibration:
+> +	 *
+> +	 * Finish MIPI calibration
+> +	 */
+> +	int (*tegra_mipi_finish_calibration)(struct tegra_mipi_device *device);
+> +};
+> +
+> +struct tegra_mipi_device *tegra_mipi_request(struct device *device,
+> +					     struct device_node *np);
+> +
+> +void tegra_mipi_free(struct tegra_mipi_device *device);
+> +
+> +static inline int tegra_mipi_enable(struct tegra_mipi_device *device)
 > +{
-> +	struct slub_percpu_sheaves *pcs;
-> +	struct slab_sheaf *rcu_sheaf;
+> +	/* Tegra114+ has a dedicated MIPI calibration block */
+> +	if (device->mipi) {
+> +		if (!device->mipi->ops->tegra_mipi_enable)
+> +			return 0;
 > +
-> +	if (!local_trylock(&s->cpu_sheaves->lock))
-> +		goto fail;
-> +
-> +	pcs = this_cpu_ptr(s->cpu_sheaves);
-> +
-> +	if (unlikely(!pcs->rcu_free)) {
-> +
-> +		struct slab_sheaf *empty;
-> +		struct node_barn *barn;
-> +
-> +		if (pcs->spare && pcs->spare->size == 0) {
-> +			pcs->rcu_free = pcs->spare;
-> +			pcs->spare = NULL;
-> +			goto do_free;
-> +		}
-> +
-> +		barn = get_barn(s);
-> +
-> +		empty = barn_get_empty_sheaf(barn);
-> +
-> +		if (empty) {
-> +			pcs->rcu_free = empty;
-> +			goto do_free;
-> +		}
-> +
-> +		local_unlock(&s->cpu_sheaves->lock);
-> +
-> +		empty = alloc_empty_sheaf(s, GFP_NOWAIT);
-> +
-> +		if (!empty)
-> +			goto fail;
-> +
-> +		if (!local_trylock(&s->cpu_sheaves->lock)) {
-> +			barn_put_empty_sheaf(barn, empty);
-> +			goto fail;
-> +		}
-> +
-> +		pcs = this_cpu_ptr(s->cpu_sheaves);
-> +
-> +		if (unlikely(pcs->rcu_free))
-> +			barn_put_empty_sheaf(barn, empty);
-> +		else
-> +			pcs->rcu_free = empty;
+> +		return device->mipi->ops->tegra_mipi_enable(device);
 > +	}
 > +
-> +do_free:
-> +
-> +	rcu_sheaf = pcs->rcu_free;
-> +
-> +	rcu_sheaf->objects[rcu_sheaf->size++] = obj;
-> +
-> +	if (likely(rcu_sheaf->size < s->sheaf_capacity))
-> +		rcu_sheaf = NULL;
-> +	else
-> +		pcs->rcu_free = NULL;
-> +
-> +	/*
-> +	 * we flush before local_unlock to make sure a racing
-> +	 * flush_all_rcu_sheaves() doesn't miss this sheaf
-> +	 */
-> +	if (rcu_sheaf)
-> +		call_rcu(&rcu_sheaf->rcu_head, rcu_free_sheaf);
-
-nit: now we don't have to put this inside local_lock()~local_unlock()?
-
--- 
-Cheers,
-Harry / Hyeonggon
-
-> +	local_unlock(&s->cpu_sheaves->lock);
-> +
-> +	stat(s, FREE_RCU_SHEAF);
-> +	return true;
-> +
-> +fail:
-> +	stat(s, FREE_RCU_SHEAF_FAIL);
-> +	return false;
+> +	return -ENOSYS;
 > +}
+> +
+> +static inline int tegra_mipi_disable(struct tegra_mipi_device *device)
+> +{
+> +	if (device->mipi) {
+> +		if (!device->mipi->ops->tegra_mipi_disable)
+> +			return 0;
+> +
+> +		return device->mipi->ops->tegra_mipi_disable(device);
+> +	}
+> +
+> +	return -ENOSYS;
+> +}
+> +
+> +static inline int tegra_mipi_start_calibration(struct tegra_mipi_device =
+*device)
+> +{
+> +	if (device->mipi) {
+> +		if (!device->mipi->ops->tegra_mipi_start_calibration)
+> +			return 0;
+> +
+> +		return device->mipi->ops->tegra_mipi_start_calibration(device);
+> +	}
+> +
+> +	return -ENOSYS;
+> +}
+> +
+> +static inline int tegra_mipi_finish_calibration(struct tegra_mipi_device=
+ *device)
+> +{
+> +	if (device->mipi) {
+> +		if (!device->mipi->ops->tegra_mipi_finish_calibration)
+> +			return 0;
+> +
+> +		return device->mipi->ops->tegra_mipi_finish_calibration(device);
+> +	}
+> +
+> +	return -ENOSYS;
+> +}
+> +
+> +#endif /* __TEGRA_MIPI_CAL_H_ */
+>=20
+
+
+
+
 
