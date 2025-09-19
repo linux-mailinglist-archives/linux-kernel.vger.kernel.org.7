@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-824245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C407DB887E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:57:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75E6B887EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4EC173D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0F31C85C29
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C452F3637;
-	Fri, 19 Sep 2025 08:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D052F360B;
+	Fri, 19 Sep 2025 08:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wf0DDs2u"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehuxSC37"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAB12D061F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515162BE63A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758272265; cv=none; b=AJ2xHhYU3fhNIxOT+WWRwrngDy5Mxm9QHyBQVIF4TP3tLvUl63eMnsZuSkK14L7T32IstbR0LD7vwm4gYRb5oAdwPRj3EfwYNv4Ik8wSIyqBWUILO4XWMzVmu1HZfGrFkUnQz8Gu0skysxRiJI4m1RHeI08KzMbeoaRGj/GmCKU=
+	t=1758272344; cv=none; b=mZlqNF+ojowBNaEaV9pKoOKvfO4MHEOgrkWBa+qhCbGznkl5KxOtkT7liqujEx5uTAG0+kC0d+EU0Qq1X9FhKnweaCd0gpPw9MkrytdwJ/Dmlp6f2w30Yr69zITzxoUk69hImptScnIptCxWgVsKVHuEJZ2W5y11jzmUh1grVPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758272265; c=relaxed/simple;
-	bh=JZ8ALzi4l89b67PM7h3d2OpqJrjHcj142Sm+/TmRQXc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E4Rk+xpwX16nGVcQsv/fwbXwrpZdMOcvBPLmdkCfq0sNmtUHYLbumEAKYj02PHzPbBd4JzmpShP84sjYY87PsflveE8fB3LhgGCyyM48O/j6PSXgtYIJWGzDsswpuf6vPOUlNRQ0KgCicvgAftu1zNI9U2hFIf+NNOFAeu1Q0nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wf0DDs2u; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1758272344; c=relaxed/simple;
+	bh=4uHiAhmjz4HvvsRR+6QXMejTe1kxUEwD4XDNCTHMwUY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qlv2/ZgRjRYbwT+hDyyH9XnFRcDYDZFqUpJ0BHkmzxzzbQPFofqEBeUrqJ90uitMjnksERfR6tPFVZn9RoCzXdTdvRyuYAXsJiDpTFDWy2iEJxNuMxEdq4iaiwkcWFR3smJhuukiBtDp8slUeHzvk5XvXaSwPBjJ44rOvfRwL+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehuxSC37; arc=none smtp.client-ip=209.85.210.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2698384978dso15016295ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:57:44 -0700 (PDT)
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-77f0e9bd80fso59290b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758272263; x=1758877063; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IVX4Bv4ex+uyVv1pbESwXdzZsofD0/jfymFeQrylr4k=;
-        b=Wf0DDs2uizMTfq3zfvBcKXu5ATpz+VEOd8RMG064DgUkkDalD60y+yLLeBEiWtKQHy
-         ClYMfxp3q3aQUl6fh6aLBhPK6SjnL6vo0imXY3afGA9TmkfaDjaJ1ttGhFe3PhFfg1/u
-         mD4paJW5zfBi5T6W4B57CTwrG+wb9HSJwtYzKQtBp6+/BkN8clV72/fN6ASniYsiHh1l
-         nn3ZBwGpcfOUFi+PA80U7f7sC5BIKplCLKTBU0pVMHtF3QyDEf4OqLDfCL6yfNiLEEup
-         c2ULObJPLklcWFN+v8ERY88+k2l3lmrcLrOFEM8KP+YZOjtJKIuuzcdx1pV2D7SecLA0
-         KXqg==
+        d=gmail.com; s=20230601; t=1758272343; x=1758877143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OQy537aqBM0rrRlMX24xhM+FaVzNB12yBLDzIALSRMo=;
+        b=ehuxSC37XC8HX9cS4RTJunDrj43oYCoqGukVH3AZHe9RkFvluNWtUMz5tK6yD5u8oW
+         8PzUOxjGmYAirVa5Z8ttX0xvO9nGfbK71sPoF/hw/n8L3cbFxUJ5PSzB85l77O0tI/4q
+         8AljbVM/wATf0LfOylFRxWnhoSZ7HUNanT4NxjMf1+F6Myol2K2z/qozOjSXQ/aKFNeb
+         PLNCfrkdgc8+LwZ2oKSJObRRbSKHbHQtUzDkkAzQIm2sANTjwXeb53G9VUXc/JSjIcmn
+         W/sLPLHPrDqTY5Y6bUaBSl0GNCGEuW1jxodjAAWzn6Nvy/HXCVjTnP/6G09qsBc+lWFS
+         z75A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758272263; x=1758877063;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IVX4Bv4ex+uyVv1pbESwXdzZsofD0/jfymFeQrylr4k=;
-        b=H3anmdxTDYInstnrCFvQckIpiRprokaJW2cgkQAwtVmSJm3rt476412PGdXuS1DZGs
-         vk6Y8JDWuBYMj3RkEBDy/1jOgognaYI01eO723qnI1tZLf+YA6ms2eeqD1UCpzRZC2pw
-         rqCup2JrYT26NlzYo7s+17XP7JItLJppwpyVDVVtOLXT+AxgoVyGoAjsoRXLo8AnYhdc
-         iY/mncdN7wQVwSuEiFiUCCWNpPLU/qqJwQB++7vDZ/yniidrTFRPpghxuBqbTLmkEWnF
-         0GgUCZUlJBdy5Gfu4kGZ8S3ND+JN5EfVGEVcsjpChJzE4IkBDcCeJmRr87WRKs6PM0Hn
-         Kgtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUmC8/odIRPVbca3TqS+eu9tTQF4W97ZU2YKQ7wlR12tK8ldUa98MRb1OOp3cPLdh9NCggbbi1BoqpAng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxEu/z0WX8iOrsGoF4B8ADCD+401O4IlpNtPeNCs/sioBqnRV9
-	3aWqzn2QtCWljfpv9mOc8Xvp1mJCeeyzSjrSvmGmaJzOskQIc/cluXHQwuMhrvQ2X726xK2dVUK
-	+6acUw4Y3Q0cGAFiJCheC7LFyzF8RWBI=
-X-Gm-Gg: ASbGncu2sc8Xv9DKKOjz0kB7PP7vZgn31k/QSv1TFN+5oOq4fOGBvQabTneeCnztXTt
-	D4KR6NYz+7cjWriHuz4/69WbZ3AMa4KTboACjX+hgQ7mJS9KOa4B7Th1CKc2JoVKVy3jCdtAENt
-	e/TisHp1taU6+gj+P0FDIvjensajyOLfHxK3tIAVoPxOW2vJaDv3jKsi//ZGgmIih2B0auI+3Iy
-	oqOLHcNyAGPXRs8axqk
-X-Google-Smtp-Source: AGHT+IHUvEeTq8dbZhTVSYIaod2IJCP9IAd80QKZqmcoGD/pxowUWYdmJQVUNvAlNGoK2mzZTyBH/w0E0uCfSxtDO4k=
-X-Received: by 2002:a17:903:2f08:b0:267:a231:34d0 with SMTP id
- d9443c01a7336-269ba527e91mr32353655ad.42.1758272263501; Fri, 19 Sep 2025
- 01:57:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758272343; x=1758877143;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OQy537aqBM0rrRlMX24xhM+FaVzNB12yBLDzIALSRMo=;
+        b=NDBK+5W7R/ACLyjHvtf/vtzH+YYP/vGLPL+C1lqdWBTK45O8OpHmtfzk6tdTgjhkJ0
+         4x7Dhi8B7WcWyIZosL0XSyuxkPtlkUYXPi8uQEmuJujNe1CyMHW8Qlmi/uh0OhtrCoX5
+         KF+0ltrp8Ai28wU+pzRTMkDqo2HA8DqAu7NoVIkJrXRqhZUCRxgN1GrIu2Jx8l3xg2uE
+         vu32mEJhkpuqIA2EHFlrlJ9sHg7gQUklzkBv27iSz3N9u67kMqn7Kvpoh3rGLgznKafU
+         i9fx7CvGI/6IABBJoJuqoOqTOlNXJ5wLz/wA6hakmqPaCd4ESa1dzhMFT4U5Bvx3hFTi
+         c5gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbzyt+lxRd80u/lVKwD4eMTko1t89tMMfi1lpjzhgw8JvkE6RK4tdJsYfI4rAKqxvQuHSAxBgs2FDHbhs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+WPuufUHIT34UOBFg4ZZygsBQIln7f03uS6hpJw42WA9Jv3dt
+	mEJ6ie7vNDDqVuvvLHVjUWsbxo/yX2CpcUNB0AfB5OITwKabv8XdEEWg
+X-Gm-Gg: ASbGncvl+0tWUm7Wtn/Sp1IDpobeBGCloz/fEP92Ke2Hi5jIjj6zFfe/LRFeajA8+fF
+	ox1UbKcDgt8ryd0O0dVZXRqj2o4uOq+EPgxULtz6Zzr9VUhDC++tgkg3V4KEaqJyRW+YDlEYgHv
+	oY0JoZt4RU0lgmDAYY8+2zpW6UzfBWBjo9f6bfbmPXk5eHgZgy48KkEMdChXjXbfAtPTq/OX5Jl
+	hPUPJsSP8aYXdZ/bwJ+/i4ibEpWB/877WCy3QG+kWahASXWbWHrrJk1aOkls/oJ4N5boL2ccHJq
+	j0e/DTrIReneH7nSb9y/0LIOxwGLNvkD5dh7AiA8DgOn8MCNK5NagppQvPha3QM7isvaUdBbQHi
+	wYQjy7fquizSgWpdl9qrZpx7MfZuxFh9r
+X-Google-Smtp-Source: AGHT+IHoc0/EfneCAyEuRmzL/rc1AObl5i8C5aTuBs/BR4Vdss/Bsj6ETsMBplHwinvw4h0Em3nQSg==
+X-Received: by 2002:aa7:88c9:0:b0:776:1dbf:375b with SMTP id d2e1a72fcca58-77e4d31b70emr3946944b3a.6.1758272342702;
+        Fri, 19 Sep 2025 01:59:02 -0700 (PDT)
+Received: from 7940hx.localnet ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfbb7aba3sm4631771b3a.15.2025.09.19.01.58.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 01:59:02 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: peterz@infradead.org, jolsa@kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, kees@kernel.org, samitolvanen@google.com, rppt@kernel.org,
+ luto@kernel.org, mhiramat@kernel.org, ast@kernel.org, andrii@kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
+Date: Fri, 19 Sep 2025 16:58:57 +0800
+Message-ID: <5925436.DvuYhMxLoT@7940hx>
+In-Reply-To: <20250919175255.f7c2c77fa03665a42b148046@kernel.org>
+References:
+ <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+ <20250919175255.f7c2c77fa03665a42b148046@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFRLqsWnWnDaY2a23HctbxLKquvw7Ax30YB-tdBmS59RtQ4JBw@mail.gmail.com>
-In-Reply-To: <CAFRLqsWnWnDaY2a23HctbxLKquvw7Ax30YB-tdBmS59RtQ4JBw@mail.gmail.com>
-From: haoran zheng <zhenghaoran154@gmail.com>
-Date: Fri, 19 Sep 2025 16:57:34 +0800
-X-Gm-Features: AS18NWC4ROcPlc2EncCLRhcJUzB7R-S8-CSg44ldda1VIZQG8MqmarJKmJUInTc
-Message-ID: <CAKa5YKgAP5L+uBr3R0Au_n_s4N73y0NPFVh0y1XYPaAJyuCB5w@mail.gmail.com>
-Subject: Re: [BUG]: slab-use-after-free Write in sco_conn_put
-To: cen zhang <zzzccc427@gmail.com>
-Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org, 
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, r33s3n6@gmail.com, 
-	linux-bluetooth@vger.kernel.org, "gality369@gmail.com" <gality369@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-> RACE CONDITION SEQUENCE:
->    a) Task 31374 releases socket, eventually leading to sco_conn_free()
->    b) sco_conn_free() sets hcon->sco_data = NULL and calls kfree(conn)
->    c) Task 352 (workqueue) executes hci_conn_failed() -> sco_connect_cfm()
->    d) sco_connect_cfm() calls sco_conn_del(hcon, bt_to_errno(status))
->    e) sco_conn_del() attempts to access already-freed sco_conn via
-> hcon->sco_data
+On 2025/9/19 16:52 Masami Hiramatsu <mhiramat@kernel.org> write:
+> On Thu, 18 Sep 2025 20:09:39 +0800
+> Menglong Dong <menglong8.dong@gmail.com> wrote:
+> 
+> > is_endbr() is called in __ftrace_return_to_handler -> fprobe_return ->
+> > kprobe_multi_link_exit_handler -> is_endbr.
+> > 
+> > It is not protected by the "bpf_prog_active", so it can't be traced by
+> > kprobe-multi, which can cause recurring and panic the kernel. Fix it by
+> > make it notrace.
+> 
+> Ah, OK. This is fprobe's issue. fprobe depends on fgraph to check
+> recursion, but fgraph only detects the recursion in the entry handler.
+> Thus it happens in the exit handler, fprobe does not check the recursion.
+> 
+> But since the fprobe provides users to register callback at exit, it
+> should check the recursion in return path too.
 
-I think this vulnerability should be located at sco_pi(conn->sk)->conn = NULL;
+That's a good idea to provide recursion checking for the exit handler,
+which is able to solve this problem too.
 
-Specifically, when sco_sock_release is called in the Free Path,
-conn->sk is set to NULL under the protection of sco_conn_lock(conn),
-and the TOCTOU problem occurs at line 87 of sco.c. When performing the
-if (conn->sk) judgment, conn->sk has not been free yet. However, when
-sco_sock_release is called After the judgment is executed, resulting
-in conn->sk being free, it causes Use After Free.
+If so, we don't need to check the recursion on the kprobe-multi anymore.
+Do we?
+
+Thanks!
+Menglong Dong
+
+> 
+> Thanks,
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+
+
+
+
 
