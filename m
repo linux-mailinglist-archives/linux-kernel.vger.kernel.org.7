@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-825111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB01BB8B01F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:56:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0955B8B034
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D54D7C7565
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792235645C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7704277032;
-	Fri, 19 Sep 2025 18:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0823426AA98;
+	Fri, 19 Sep 2025 18:56:47 +0000 (UTC)
 Received: from FR4P281CU032.outbound.protection.outlook.com (mail-germanywestcentralazon11022080.outbound.protection.outlook.com [40.107.149.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E0C217F3D;
-	Fri, 19 Sep 2025 18:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CC12797B8;
+	Fri, 19 Sep 2025 18:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.149.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758308202; cv=fail; b=OupvCLkJ+mlA9SxlbuzCcORG5CMEL5IR0CPx/jWv7x/S+sOltNtl+YFKau5L8JZUET3x8QXsruiVWO9f/dgWSUkubAc9n561HBPzn8ca7VCOtEdpqGWcRCXFpv7I31FFQcUsR/wIyTkTRjYJqqQuqVeSi/QK6Gz4fBTydQdMFXk=
+	t=1758308206; cv=fail; b=ojreYxgaj5Vi8ARx/QYyoAiENYdk3XBGUix/oMHy6L7GtOwsqR+5sUaJ559gsOiLVg9vRnwCSoE8q9f8e0ytp//EcGwG7A766YujpDvUR5PvNzpme2T2mmNk01DMD5EzBckpc2YqwJWbmArt/b0hLfv+vt+3Huxh95O/z1S6SYQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758308202; c=relaxed/simple;
-	bh=KtfA/eg44wTScEXxJhePZ++0qcu89FXBRPjaNfinpS0=;
+	s=arc-20240116; t=1758308206; c=relaxed/simple;
+	bh=QdyxkhtYMZkb/Yjzx4C0A26dxAFNfwUAS9lJ2ImlrAY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ofLyFUu1xznbEscUHI3c5Jb3lpJeeafcJRhK4ayQhH0/9T6VXHJvft6W0FJdpF4Vkn+xTpAUIQbVzaj5jO6hAitGam3c6EvVMBaazP4xivOZ7flY2B4CzgS9KBtygr9fBwhMQ2PIYMIltoEFJesemy5BNRb+55eUxv85t7nGeo8=
+	 Content-Type:MIME-Version; b=ZHsndXx4e+5jAhj8LUzucPlIXKOVKDEtSJM/s9/f7mEryNmSoKOz/HS7w3EyvPcui4TPdCySzmzI5UH+UjDq52l6kyBcdtAuMc+QF2FqjhLyuevN4QuoYbZeZ9CpNbNzcNxAm+lYMwbo2riNehQRBsOOMfcBiENc/2PmKhWAM8Y=
 ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siewert.io; spf=pass smtp.mailfrom=siewert.io; arc=fail smtp.client-ip=40.107.149.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siewert.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siewert.io
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NVDq84H55MZq4jr+7PgLTup4u9UhfDVApYKFpeHOI6B9YJ6bOa2zRakrHZrASocn9ijnNm0pqO2Tc5CG24Bdw9iUYec9VssYVQDZjjU63oUDarvFrkac9iKQMyk+kSqYqB4XtRFmEoDvOvm9SacS+JPKZ108kUMH9XgLsFab/YJZQxtZ6OlcairAS7sZ0miXhMXG7uaQFNMG0S8KbRrzPj1z8WdGpEfjYAhqZYuhU3G6m1iJlFBageDYvqJy/ErbH2bAA0zRFhnSlCZK97oCrYMvQsdXc73ehdDSBXLsTFZp9iwJ50NONKuvhq+XUxWKWdyo6dI5kPISBu72kv7yBA==
+ b=PARY9+hwYElg3DDdg/G/A9kToSSDObj8/eqDnY1QlUXlMSGN8lpfLN9yPceGpl2l/p9aF4Vj73+JoUIosFTJVwjsjP3D/d/64TfACl3XQcFnJ/OFIY7Gt07gXzUeJrhe679nbIup1NX6m9NGhGTO7iTcRL6YZFLBJgRTPeUi6/3W4FluS9SNT6s0bYqFSJUQP+cYntjD4gjaGC3Z7rBhctcAeg381G17NA7Jp6dgNpiYl51Fx6W3obuO6sviQ5fVO0wFa0TmKf3SgGN7hb/gQc2MmRFJUrLvchBSDwlxxKCiFlfiDbLLpB4Tkp6IqgxBn1In1/5v1TIpR9o2shhcmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D5IwsHFBZEPo5hYHE/8bLXOBz1ObiAh3u9nS+SZv3tk=;
- b=sGidu6vXxbU5/pOOXOkoWFtmw/mRTWq/NWKygfZP7WInItHyF7Mb4dFpvYJPE1X61gylZAOwToQLLqSxCGG7VYZhtjuka2t/4zFaE/dVJdOTR9VqctYq+1mP8o8KhyTiBFZwssY1BzPGP/VgnOZz9HGfa8/Yrjpvo/uKBcWvFy/L4E+BRLk2ByqQMuV+3FPGJzdcpcp33hwKnPZ7/Rj41aOlpnUV9KTjQa6qmCgHCZ13KYEOPsVGhsjJkBci02MXY5Inc3BftzBQbpHQtIq4m7ZmxWzKmqyfACd2wbmd4m5V9YmxCEydvjuIoJ0vDyVj+DdTEncEMDWXVfEeiOzExg==
+ bh=FKMfdVKqgxO5oKrT4PjQnyc+DSyDPHwr2eU5WMk/hu4=;
+ b=t4+UPUQ4uyLVqX+fKBDXyQIoTpGTnaLI6yvN747SJWzGsuE2diEge5VUV+459/yiAH5KSSmJkJDCiByPiiyQZMoDtzRE+mzeB/W+xTEt6oZUA4XooU0tzo/APG9/h2Ys9vV/sV7M0Ilud+ZqYflv5W6q/3jW/53RFBUwRR6nw7hNk79tIYB1Ad6C3wuneREsUWl2lz2Wxy9cjP/kd+9zgJGH2ApxmrZRq7DGxA8M8QVxspdBbJMc83b8Sr98D8EelifXYTizDrk8l3BQdlxfYGWD+WldrmmZztWR16Y1zBUCx270RMeejAnOZHkqb1ZUgWNvkZjkfC9p7HgFRE9qlg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=siewert.io; dmarc=pass action=none header.from=siewert.io;
  dkim=pass header.d=siewert.io; arc=none
@@ -44,11 +44,11 @@ Received: from FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::4f)
  by BE1PPF39BB4A911.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b18::62d) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 18:56:37 +0000
+ 2025 18:56:38 +0000
 Received: from FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM
  ([fe80::fc7d:1a08:950f:3971]) by FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM
  ([fe80::fc7d:1a08:950f:3971%7]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 18:56:37 +0000
+ 18:56:38 +0000
 From: Tan Siewert <tan@siewert.io>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -60,16 +60,16 @@ Cc: Tan Siewert <tan@siewert.io>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: arm: aspeed: add ASRock X470D4U BMC
-Date: Fri, 19 Sep 2025 20:56:17 +0200
-Message-ID: <20250919185621.6647-2-tan@siewert.io>
+Subject: [PATCH 2/2] ARM: dts: aspeed: add asrock x470d4u bmc
+Date: Fri, 19 Sep 2025 20:56:18 +0200
+Message-ID: <20250919185621.6647-3-tan@siewert.io>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250919185621.6647-1-tan@siewert.io>
 References: <20250919185621.6647-1-tan@siewert.io>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BE1P281CA0066.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:26::17) To FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM
+X-ClientProxiedBy: BE1P281CA0074.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:26::15) To FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM
  (2603:10a6:d18:2::4f)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -79,99 +79,460 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: FR2PPF7274BE471:EE_|BE1PPF39BB4A911:EE_
-X-MS-Office365-Filtering-Correlation-Id: e12afc67-e0ca-46e2-f552-08ddf7ae42a1
+X-MS-Office365-Filtering-Correlation-Id: 2c90bfdd-80be-4ad3-5184-08ddf7ae4333
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IrFGcPQeq43HW5w4gt3kM0NiIhMbHVE0kiFkqFWTLcT/3LBn8NC4XjHaSnw8?=
- =?us-ascii?Q?Dy294MoGlDG3plc2Dr9IdGoz2GQ7OAhJ5D+l59zSPHXwcpD+g0TZ9YJiI0fD?=
- =?us-ascii?Q?s+FcJV7/Cezjx1yZvBUk/7ubL3oWzrnhtigTwdSBD6FfjnA7hYr8IZcQoriS?=
- =?us-ascii?Q?D0iQzOEo/lnnDyqJ0nbs9MWJBm8me2G+gL0/8vzK20LnetQUFSnRNTTVLYxZ?=
- =?us-ascii?Q?U8kYnl8YAJ6qve4a1ph3HrLOjKuoWndL/7GHHc7iiKe0mYGBlMkjr2EfrWC3?=
- =?us-ascii?Q?hlS6z89gzpJHT4irGiqEmHil2mA0/mz9LSrqTfIxZoc2RwNFSSP9OBUWboJp?=
- =?us-ascii?Q?rVsA+uSEKBi2gWTR+J7q6U9erPwlIHJSOHogNV84UVHB41IK5jizrKYNR3CX?=
- =?us-ascii?Q?NJ9FVXAO8cvdFFbQc9+k1bh1H5Yi73BBeLAAN6dqtlUIFFLXgmic7cLDGNlT?=
- =?us-ascii?Q?tuaEcJ5gy+3uEBL39Ge+5TuiiReaptr7yW4sKzttVW9l0DkOqGq1YH2TJu2q?=
- =?us-ascii?Q?rvRgQJAQ8zejcXEYm+jev53jXtCQHdIQAWyV0pzn4ZBDlsxJH8Q0cRcbCjTD?=
- =?us-ascii?Q?2R0PTC72/FvwNpP7shXYaQiUr28AA+IJ24IVH9FZWsP0w1MB/5PDEfPPgJm1?=
- =?us-ascii?Q?w+6v9kp6MQzUzr5n80kdTqLBK/bTe3iOOUKcB8c9MtHYllaVntJO7Nvkkz8V?=
- =?us-ascii?Q?1ki83KAmhiTwOMUDzDc5EiIPMEYqD5OBZBxlGT6VOwrbv8+Qw9aev1kGD2Xf?=
- =?us-ascii?Q?DSFWU7gcOdiQBRoywlIp6cSmmWs+PyB3vW+m4Z8Us1vQefro/sGl7uBkMXzF?=
- =?us-ascii?Q?NJaHGsIESuZ01/eRP4HXx0LGsss1hch765r+29s/2rlDhJjSjimhs+76gcyu?=
- =?us-ascii?Q?+uny67iHD3wYeApH/X6mY0Z/DljsJYs2NLbEjLHyXDoO1OwfYws2nhTaij0g?=
- =?us-ascii?Q?FBCP/eP+vvUQoGSP1clp0Fa0+DGM9Y7RNkBLOyLM0KSYPd0P+Oci+uIYh7Rw?=
- =?us-ascii?Q?8OHQqgQ9eUzfDvqI/g1o7WIuANb8T8r9A1Ql25MBtibBexSG5XhfZvt4goV0?=
- =?us-ascii?Q?/4ygQl1RJ+6q2n0hjYMEJ1saLLwGENEI/p20uO7t20Hn6L6rdEd38fu63Idk?=
- =?us-ascii?Q?H1BrC+8FiN0HGRiS3FFIU9rkr6478CE7I/M1gUDc/fHnjTS4kuEbsufKRABg?=
- =?us-ascii?Q?U38pqAyk/BWudsj8yiKxEa133BnforCdOGTZjHVXvP0zJN7uN6yOdiOfaA35?=
- =?us-ascii?Q?T/5bQ3X4CWVwFv7E3cAa4BN6C4e59+iQ8WLs/FJBE8L56xN8772JZX3+L9dd?=
- =?us-ascii?Q?4xiv/CwwF0BTqJ9LAAWg7vJj9kQDQ/naflMlRpx0Cgh7flNH7aJQGPAaisEJ?=
- =?us-ascii?Q?S8jNZ9rqUERT9yYWkAkeuqrJgtTDRAeIou0nDDRauNTDQmcarpweBTRSytrw?=
- =?us-ascii?Q?7n1QMV/juU0KTgb1Ffq19P9xDlhrCHGuZ9NTmF8sWr0evrkAkBoXBA=3D=3D?=
+	=?us-ascii?Q?mg0BkNbGOKzcIshNAOdHe+FYK02R4ptTNchrzlIPj1qWtWh4/BC90neDbuVh?=
+ =?us-ascii?Q?e/vV49e/RGuEG1R0WzfMuVAsYPI8BBr+5vIPxWiVGdWki4KZxs/TYnc3eu9/?=
+ =?us-ascii?Q?dC4FyS6dFGe3H/7zYygY63xzD6pIy2BxShjWEx+kDT29qIMJ1WNaDB4bY/Nn?=
+ =?us-ascii?Q?831n5IOZKZoBtNGYFnR5EV1EhrTQf+YlXt7Zj9Zh21Y2uUG98U7tQlHvZ5ga?=
+ =?us-ascii?Q?uF3zD9zPwGAyyriQhqrSjM/FPY9py+IAh24hzks6dht5ALwpmol8P7j41u8D?=
+ =?us-ascii?Q?HQYqIvaPv/G/A2Y7PiU7m6VnO8V0G+pcCL7p0cRd0xCl3trqp/y1IBgQcztM?=
+ =?us-ascii?Q?t8rxTJopp9T7pyEX+79JSC1srVTiH0ghoG1mLPcKU+d1QxSaiLDTlqJeJoHu?=
+ =?us-ascii?Q?lL4sW/d9mrWzDBua+R36eftdOXxGMOnuQwZGsZ6nbZwing7qV0WTN6JUIC9h?=
+ =?us-ascii?Q?M7vtNBGZTc7FMob9UkEkJ0DcCMRSmIyCwRJ0lxlpd6ehp4Sy6Mw7VLJw2MeN?=
+ =?us-ascii?Q?K4YniTZqyv/dgvwR1wOki7kLjhlDEbK0khAzUHnztpN7u48ILUxQy2Cc1Lph?=
+ =?us-ascii?Q?JUPplOFe8TF4+AkeeyHi5s1s0mBaCm6TfTmcsKkyE/lJkWT4awpGjRcRxiOa?=
+ =?us-ascii?Q?9oY7P+RH+uhYOJjUtOWSeQlQUiSaoFsHFDvU8WL1b0+HmHYaIii8DmJ7ArZk?=
+ =?us-ascii?Q?bTQvMpksm1fiqhY7L6/SKEO4raHldKGbgUFzdcQjTI/rMIRxxincXiTsj1J5?=
+ =?us-ascii?Q?Cw0yqSZkiUMBdoOJlCOzLvWARIjXQ8R36GloNjvtX4EDjxETGJUddzvXJ2j9?=
+ =?us-ascii?Q?YiFBY5Pl+47Gz+MN3MP+7FQMEMPDCz3mK2rnR4oab/dct0qnOnfX+TlShLCr?=
+ =?us-ascii?Q?R8tmqGD5GyBvgZF11NVQ17UMk7ZA0hJvQR8fAsGwDxgE1PmJDH/xFt6npVez?=
+ =?us-ascii?Q?Vr+6wYaaLYycMX6BS2eeB9GKpsfPUir210oXKd+KWr1K1pT3z5ZAbgQp7hF4?=
+ =?us-ascii?Q?8YrVwXD5/s+/eOe6Qr47s3WYjtkSq0llxemFIx3ZBkIa4+yj/oG69ppn9PDe?=
+ =?us-ascii?Q?fNKuw7pJ5WJR0EOqhhkmhQARzYXGw6CLQYmkRtVvaaRTtqgxZG67fM2W2B+r?=
+ =?us-ascii?Q?z9JAt7zyHe2DU77uIL4ZMCLZ1XEparg3g8k/TkNklEwA8Pc7ErHWOBI36Bbt?=
+ =?us-ascii?Q?niuJoSVuozpu793rlnt3jnoHkCtixIzd9yFoSyH9pE6oA6iEMmF8wvIaVXV7?=
+ =?us-ascii?Q?VUMHsG8dhi1ShkC1+DiUQuKPIlnAZOVmtS48CCYZjQs3SaQMqkenB2+ganll?=
+ =?us-ascii?Q?/q/THimyPOuLs06Km3Cex6f8fOAWMxU8D4P2EQHbfDkHe/sGgKJ3v5D8e4hL?=
+ =?us-ascii?Q?33BdFS5mzjeBw6OMyY0qXQLPSRESoFGP/TNJ+orbkQTtJRBCw2bT08MwbFv/?=
+ =?us-ascii?Q?Ruut56TiXz6n7y3VHc5CTUd0SnQd0kGXl9DuC0a1zAL+d6WL/KAjCw=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DFDOkDJ2qtij+RzaTAUxa52lC5JgDuxmUKqAVht2b8lTwXyKxjle6UARX7Ce?=
- =?us-ascii?Q?6IZhWk9V5SgNPQXEkANykW1PBTBAJL56fIGm9Awpex/Jkkbn4q6SqFBbQuQQ?=
- =?us-ascii?Q?E9hgnv2DjWqSMvOMWUqmuYRlkXf/NRfQmh1s2xO9quZdBPFZy89CDv7Xiw5P?=
- =?us-ascii?Q?/iqWHUR68v050go/kTF9kMyckpi3xA0+2j7GbA2iGONVxU2SRz7VBBHu7L/2?=
- =?us-ascii?Q?9LYSjcDabB1JgWRvNVicm5RCLgSQB7vIZF9iZZqwqRiPoz1jllUTzdGj2ufT?=
- =?us-ascii?Q?Hl098STRZ/29qKNyoqf64SsAKpbKgmDRzQj/DgB4qA6fVEaCTTb0nhpmR0Dl?=
- =?us-ascii?Q?4zdjP4frtMPZuHdRxfot6iKv8SUUebL6Bi9J0tZSgUXz6F0gtjeoUss+rGZe?=
- =?us-ascii?Q?/PhQc3AYT5rwvYdZreIfpF0+NZGlSbEHFjWdK9PIUkMCenGr3JHx4HU8qUNQ?=
- =?us-ascii?Q?VyPfZnIOzETg1VI0FLM0aOLUgrPqan2OpSyq40zuMyaspMExFw24X5NFuQuC?=
- =?us-ascii?Q?BtPfdA6yECrTIF9+3EzCcUe46vdsv/YQmPg+cqVCPRKKbQ5Al0klQ5jShN9c?=
- =?us-ascii?Q?UXTu/QaXahTGxELB/S2LGbysueTqgc7CGocMm/j4nRw+pK2JdQWmkjohwSzN?=
- =?us-ascii?Q?zhdAd9fQ6bjFoUba3sI+Rrg5UgBQ8qluK3rksicadnIzMS1AVDASWCBran3u?=
- =?us-ascii?Q?yD8oFl+8u/IeCjOYfdWrpzWjjs6IVwc6hGzXbOkw27eEx4zRQmzX/G9waYO5?=
- =?us-ascii?Q?FJENluDQ9z6v13PnhTG2YmeRqhHpKhC4Jv+XkXoUfVKixhiSUpJznulEBsF2?=
- =?us-ascii?Q?gFpHLHnRMUCBweoZxOkyr3R6j/BGpRue/xYK+4iNBV9xIm+sevEgkS3qgw3U?=
- =?us-ascii?Q?2OqmGtpFdOO+AHy4IWLQwXWQPzhLa5oDSPM+WZJBrwCAV6QkDBWiAVqIFkcd?=
- =?us-ascii?Q?ixzBK6L+tlVkmQxxoSZK5vIe+skqr7la8pTdCC/wWskYtcslqJNkBmZyyRjD?=
- =?us-ascii?Q?qKwFc+Ely5+wysA/6ifty59KmkOVYhdqKMlZJyitVtW474+QUGp60gDpr75I?=
- =?us-ascii?Q?hsH6Ti0zAyWS62Vefr0pvpV0HrKZ8Y++ifo8ICjIFTPHCkLv5mOCFvzEumCk?=
- =?us-ascii?Q?JcfN96pnR8L4nQs+aqrN5pRSrpfH7hHDzK5UU0ZZ42xeQqnT8MRRL9+Ym4H6?=
- =?us-ascii?Q?+6YsGimu9EAIMBaOWlqHGM959Eh7f/F/MX++md4Vyx8Tt2mtAy3LTZJE8llu?=
- =?us-ascii?Q?lx4PK+iOv+XovpdZFc4FbylNmPqHR1UXd0OJT5bSg7/HVIYancD/RJLFDIhJ?=
- =?us-ascii?Q?U39G9qSSUtT8BLn60ohzThcAReEhrIwas3XE5+n2fsQh0zL7GtrkPrd8fkXf?=
- =?us-ascii?Q?L+jwQXYBFNlP6xSE/xIRVPHNxJOKd2qQMtNmTPszTTXo4ooV/1j0T0qouVTV?=
- =?us-ascii?Q?TqoiHoHfVzCmA2fJ5CSXDjRcNlybf4/3MjjopsrJEDdRUFmEReCOY5GdJSQW?=
- =?us-ascii?Q?eLTIfYLCOcZTNl7DEaYh6gxaqeAABjbIJ7rrXSNNTb9sauBaYd2vQ/pQHoFl?=
- =?us-ascii?Q?I3tuzQiXsMPKXNbBLe8=3D?=
+	=?us-ascii?Q?35XPBUqm8uaCD3tMKkxRWQcTs/Qu7eQGq4qj/lvUXljnH2+StSc8mkLjPT66?=
+ =?us-ascii?Q?KBrwIy+ptzoVdV5Ad3WzyY1BD6FqBRNT+C44wrdFn0WM31LHvvK/GSKIZAYn?=
+ =?us-ascii?Q?5dXWmwbnM8lD6guQb4N/fJYG0RgyH0ypFxnd0CfuC8haOv1iSgmd725DUN/9?=
+ =?us-ascii?Q?x+qbJB/EfhbY3fYpRtD9b3iNyprMpP0dLcNPvhbRGVmiVvR4dmT2WzlYOOHM?=
+ =?us-ascii?Q?SurFyKqirfR+Ft9FHcWm/T0iefzapfsY10/QMcKrWCTSIu1Ju3Gisy0ddfSk?=
+ =?us-ascii?Q?7LjyC728eft5ijCsnrD08KRtKnYjbnW87w7lNLXdGyG6JgKh2cNmG0hn6GPt?=
+ =?us-ascii?Q?kO3UNrDqB44zNCjvDQ4VNsE2W4XYt1gsuuRtS+rJCeZL5MmSHT9wJ5aj7E0P?=
+ =?us-ascii?Q?5oihumAEa1XDI0QQwKJs9NObU4/NuMTfejTVnG8iflF+j0LlCkDXUrAKFZzc?=
+ =?us-ascii?Q?o20CuhNfsjE8wwgTJBCoO2FSd/STSnIyhV+DMdlSlEgz0hHx++1sSWeqeAqM?=
+ =?us-ascii?Q?4jWE+P4vgwTBrP+pEMFzpM/QRqHjRO9PE2EtWcSMb8Q6NNXnetO63iqIxZpp?=
+ =?us-ascii?Q?3Q8dLCUnWzIFo7laFJHj1516X+H9Yhn4d2XBE4tzD52rO3HcnSr1X3SYiTWz?=
+ =?us-ascii?Q?FDdeAdTdHVqmJ3FlGQO7QU9eB8e1uQoN1Zl0ZckH24ajG9J5B0t2Hlj+vtTo?=
+ =?us-ascii?Q?OOI/h2K43s30KRJyhA5ZJmwC6jEejUWsCk4UGcIj0OA48MBfjO89GIKi5Afl?=
+ =?us-ascii?Q?Lq0+hlg78NqT1k35O3XSYvdbxcXMCDTgUqBaA5ApVP9y8t7c1aNtR6pCV3xJ?=
+ =?us-ascii?Q?haEHbGrNJrl2/rJO1J/5Y31omyFKgxf9wPdZ5+j9+J4WHoCp1OAkChkhs1eA?=
+ =?us-ascii?Q?eV8JAtUkYHcZVS4lI57TTyi6NIsWLD3eVd0W/y5B15yOk4064WYCzQZ9vMBS?=
+ =?us-ascii?Q?kHbmjdUSDSwGMIrUET312Tg3BIIwYZ0sbw8isuB9gSDxiQfNvKQnP0jFVGas?=
+ =?us-ascii?Q?CcVgb6E7Wfn9oArmuIkj5S58e1E+y9KBnShnr2Nr2JXPGUD8VMpaeOJv5a2x?=
+ =?us-ascii?Q?GqtnoQbDnLprf+KeQz1291JgZ1drbByzOvDeqITAnJNbtQQRAUVfS2IXJX5d?=
+ =?us-ascii?Q?4nG9TYx2LphQ2YU4ma+UnShTTQXwM7+G062CAdsL4UjwlwI095UgHy2tpMuU?=
+ =?us-ascii?Q?0mva3z72ejI/RFrmXJ6gTytzJRg/sVVCZBfTIQeIZP1kMZQis39Zyub0S+u9?=
+ =?us-ascii?Q?wP0EdCQ4qmC+1Yrt0AZp5V6jUlE9C+9JZAhWIRQz2jIesMfqF1xJcpzcR+jC?=
+ =?us-ascii?Q?cWWmspyaNpqeqNJU2OzPKHrJgakid9SvGOFSPK7MnazolofBtZCDq7n7+gbe?=
+ =?us-ascii?Q?LEe+Oky42KvrhFF6T3lypgnreAUtRXIbljEN8+cPwJaKgUEZrIwCCUhc5SkS?=
+ =?us-ascii?Q?P/Eti9tNcJ3A/3Tzx3pchc/0ou/WWEV28PTAh4x3zQw4OI7d/HfeoFJBP8tZ?=
+ =?us-ascii?Q?CQH2WtUK7jXmN+DgeVhh8MY8GLca929WGBeRYhatJ/qYjhbydF5v0JTJ+nzI?=
+ =?us-ascii?Q?zLbVviCGOlZJ/EedUYw=3D?=
 X-OriginatorOrg: siewert.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: e12afc67-e0ca-46e2-f552-08ddf7ae42a1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c90bfdd-80be-4ad3-5184-08ddf7ae4333
 X-MS-Exchange-CrossTenant-AuthSource: FR2PPF7274BE471.DEUP281.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 18:56:37.1976
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 18:56:38.1576
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: e8b4abbe-444b-4835-b8fd-87ac97451a7e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cTr4CPBzb+IMKgae4Conn1o2FP4Wk++G/bciJ7Xggc8Lfex80xdwLLc5vovV1tbD
+X-MS-Exchange-CrossTenant-UserPrincipalName: AtPjTTWjNw0MGIn4ixV+bAPD0fgdC0u4ApkLdTazHBoj8mr87P9XuK+q2uU5HfHs
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BE1PPF39BB4A911
 
-Document ASRock's X470D4U BMC board compatible.
+The ASRock Rack X470D4U X470D4U is a single-socket X470-based microATX
+motherboard for Ryzen processors with an AST2500 BMC and either 32MB or
+64MB SPI flash.
+
+This mainboard exists in three known "flavors" which only differ in the
+used host NIC, the BMC SPI size and some parts that may be un-populated.
+
+To keep the complexity low with the BMC SPI, use the 32MB layout
+regardless of the used SPI or mainboard flavor.
 
 Signed-off-by: Tan Siewert <tan@siewert.io>
 ---
- Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/aspeed/Makefile             |   1 +
+ .../dts/aspeed/aspeed-bmc-asrock-x470d4u.dts  | 345 ++++++++++++++++++
+ 2 files changed, 346 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x470d4u.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-index 456dbf7b5ec8..dc0fa22db5f7 100644
---- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-+++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-@@ -38,6 +38,7 @@ properties:
-               - asrock,e3c256d4i-bmc
-               - asrock,romed8hm3-bmc
-               - asrock,spc621d8hm3-bmc
-+              - asrock,x470d4u-bmc
-               - asrock,x570d4u-bmc
-               - bytedance,g220a-bmc
-               - facebook,cmm-bmc
+diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
+index aba7451ab749..fae97b5183e5 100644
+--- a/arch/arm/boot/dts/aspeed/Makefile
++++ b/arch/arm/boot/dts/aspeed/Makefile
+@@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
+ 	aspeed-bmc-asrock-e3c256d4i.dtb \
+ 	aspeed-bmc-asrock-romed8hm3.dtb \
+ 	aspeed-bmc-asrock-spc621d8hm3.dtb \
++	aspeed-bmc-asrock-x470d4u.dtb \
+ 	aspeed-bmc-asrock-x570d4u.dtb \
+ 	aspeed-bmc-asus-x4tf.dtb \
+ 	aspeed-bmc-bytedance-g220a.dtb \
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x470d4u.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x470d4u.dts
+new file mode 100644
+index 000000000000..bae2b521f708
+--- /dev/null
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x470d4u.dts
+@@ -0,0 +1,345 @@
++// SPDX-License-Identifier: GPL-2.0+
++/dts-v1/;
++
++#include "aspeed-g5.dtsi"
++#include <dt-bindings/gpio/aspeed-gpio.h>
++#include <dt-bindings/leds/common.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++/ {
++	model = "Asrock Rack X470D4U-series BMC";
++	compatible = "asrock,x470d4u-bmc", "aspeed,ast2500";
++
++	aliases {
++		serial4 = &uart5;
++	};
++
++	chosen {
++		stdout-path = &uart5;
++	};
++
++	iio-hwmon {
++		compatible = "iio-hwmon";
++		io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>, <&adc 4>,
++			<&adc 5>, <&adc 6>, <&adc 7>, <&adc 8>, <&adc 9>,
++			<&adc 10>, <&adc 11>, <&adc 12>;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		heartbeat {
++			/* led-heartbeat-n */
++			gpios = <&gpio ASPEED_GPIO(H, 6) GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "timer";
++		};
++
++		systemfault {
++			/* led-fault-n */
++			gpios = <&gpio ASPEED_GPIO(Z, 2) GPIO_ACTIVE_LOW>;
++			panic-indicator;
++		};
++
++		identify {
++			/* led-identify-n */
++			gpios = <&gpio ASPEED_GPIO(D, 6) GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	memory@80000000 {
++		reg = <0x80000000 0x20000000>;
++	};
++
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		pci_memory: region@9a000000 {
++			no-map;
++			reg = <0x9a000000 0x00010000>; /* 64K */
++		};
++
++		video_engine_memory: jpegbuffer {
++			size = <0x02800000>;	/* 40M */
++			alignment = <0x01000000>;
++			compatible = "shared-dma-pool";
++			reusable;
++		};
++
++		gfx_memory: framebuffer {
++			size = <0x01000000>;
++			alignment = <0x01000000>;
++			compatible = "shared-dma-pool";
++			reusable;
++		};
++	};
++};
++
++&adc {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_adc0_default		/* 3VSB */
++			&pinctrl_adc1_default		/* 5VSB */
++			&pinctrl_adc2_default		/* VCPU */
++			&pinctrl_adc3_default		/* VSOC */
++			&pinctrl_adc4_default		/* VCCM */
++			&pinctrl_adc5_default		/* APU-VDDP */
++			&pinctrl_adc6_default		/* 1V05-PROM-S5 */
++			&pinctrl_adc7_default		/* 2V5-PROM */
++			&pinctrl_adc8_default		/* 1V05-PROM-RUN */
++			&pinctrl_adc9_default		/* VBAT */
++			&pinctrl_adc10_default		/* 3V */
++			&pinctrl_adc11_default		/* 5V */
++			&pinctrl_adc12_default>;	/* 12V */
++};
++
++&ehci1 {
++	status = "okay";
++};
++
++/*
++ * Although some board flavors have a 64MB SPI, use the
++ * 32MB SPI layout to be compatible with all boards.
++ */
++&fmc {
++	status = "okay";
++	flash@0 {
++		status = "okay";
++		label = "bmc";
++		m25p,fast-read;
++		spi-max-frequency = <10000000>;
++#include "openbmc-flash-layout.dtsi"
++	};
++};
++
++&gfx {
++	status = "okay";
++};
++
++&gpio {
++	status = "okay";
++	gpio-line-names =
++	/*  A */ "input-locatorled-n", "", "", "", "", "", "", "",
++	/*  B */ "input-bios-post-cmplt-n", "", "", "", "", "", "", "",
++	/*  C */ "", "", "", "", "", "", "", "",
++	/*  D */ "button-power-n", "control-power-n", "button-reset-n",
++		 "control-reset-n", "", "", "", "",
++	/*  E */ "", "", "", "", "", "", "", "",
++	/*  F */ "", "", "", "", "", "", "", "",
++	/*  G */ "output-hwm-vbat-enable", "input-id0-n", "input-id1-n",
++		 "input-id2-n", "input-aux-smb-alert-n", "",
++		 "input-psu-smb-alert-n", "",
++	/*  H */ "", "", "", "", "input-mfg-mode-n", "",
++		 "led-heartbeat-n", "input-case-open-n",
++	/*  I */ "", "", "", "", "", "", "", "",
++	/*  J */ "output-bmc-ready-n", "output-bios-cs-n", "", "", "", "",
++		 "", "",
++	/*  K */ "", "", "", "", "", "", "", "",
++	/*  L */ "", "", "", "", "", "", "", "",
++	/*  M */ "", "", "", "", "", "", "", "",
++	/*  N */ "", "", "", "", "", "", "", "",
++	/*  O */ "", "", "", "", "", "", "", "",
++	/*  P */ "", "", "", "", "", "", "", "",
++	/*  Q */ "", "", "", "", "input-bmc-smb-present-n", "", "",
++		 "input-pcie-wake-n",
++	/*  R */ "", "", "", "", "", "", "", "",
++	/*  S */ "input-bmc-pchhot-n", "", "", "", "", "", "", "",
++	/*  T */ "", "", "", "", "", "", "", "",
++	/*  U */ "", "", "", "", "", "", "", "",
++	/*  V */ "", "", "", "", "", "", "", "",
++	/*  W */ "", "", "", "", "", "", "", "",
++	/*  X */ "", "", "", "", "", "", "", "",
++	/*  Y */ "input-sleep-s3-n", "input-sleep-s5-n", "", "", "", "",
++		 "", "",
++	/*  Z */ "", "", "led-fault-n", "output-bmc-throttle-n", "", "",
++		 "", "",
++	/* AA */ "input-cpu1-thermtrip-latch-n", "",
++		 "input-cpu1-prochot-n", "", "", "", "", "",
++	/* AB */ "", "input-power-good", "", "hard-power-off", "", "", "", "",
++	/* AC */ "", "", "", "", "", "", "", "";
++};
++
++&i2c0 {
++	/* SMBus on auxiliary panel header (AUX_PANEL1) */
++	status = "okay";
++};
++
++&i2c1 {
++	/* Hardware monitoring SMBus */
++	status = "okay";
++
++	w83773g@4c {
++		compatible = "nuvoton,w83773g";
++		reg = <0x4c>;
++	};
++};
++
++&i2c2 {
++	/* PSU SMBus (PSU_SMB1) */
++	status = "okay";
++};
++
++&i2c3 {
++	status = "okay";
++};
++
++&i2c4 {
++	status = "okay";
++};
++
++&i2c6 {
++	/* SMBus on BMC connector (BMC_SMB_1) */
++	status = "okay";
++};
++
++&i2c7 {
++	/* FRU EEPROM */
++	status = "okay";
++
++	eeprom@57 {
++		compatible = "st,24c128", "atmel,24c128";
++		reg = <0x57>;
++		pagesize = <16>;
++
++		nvmem-layout {
++			compatible = "fixed-layout";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			eth0_macaddress: macaddress@3f80 {
++				reg = <0x3f80 6>;
++			};
++
++			eth1_macaddress: macaddress@3f88 {
++				reg = <0x3f88 6>;
++			};
++		};
++	};
++};
++
++&i2c8 {
++	/* SMBus on intelligent platform management bus header (IPMB_1) */
++	status = "okay";
++};
++
++&kcs3 {
++	status = "okay";
++	aspeed,lpc-io-reg = <0xca2>;
++};
++
++&lpc_ctrl {
++	status = "okay";
++};
++
++&lpc_snoop {
++	status = "okay";
++	snoop-ports = <0x80>;
++};
++
++&mac0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rgmii1_default &pinctrl_mdio1_default>;
++
++	nvmem-cells = <&eth0_macaddress>;
++	nvmem-cell-names = "mac-address";
++};
++
++&mac1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_rmii2_default &pinctrl_mdio2_default>;
++	use-ncsi;
++
++	nvmem-cells = <&eth1_macaddress>;
++	nvmem-cell-names = "mac-address";
++};
++
++&pwm_tacho {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pwm0_default
++				&pinctrl_pwm1_default
++				&pinctrl_pwm2_default
++				&pinctrl_pwm3_default
++				&pinctrl_pwm4_default
++				&pinctrl_pwm5_default>;
++
++	fan@0 {
++		/* FAN1 (4-pin) */
++		reg = <0x00>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
++	};
++
++	fan@1 {
++		/* FAN2 (4-pin) */
++		reg = <0x01>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
++	};
++
++	fan@2 {
++		/* FAN3 (4-pin) */
++		reg = <0x02>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x02>;
++	};
++
++	fan@3 {
++		/* FAN4 (6-pin) */
++		reg = <0x03>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x03 0x0b>;
++	};
++
++	fan@4 {
++		/* FAN5 (6-pin) */
++		reg = <0x04>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x04 0x0d>;
++	};
++
++	fan@5 {
++		/* FAN6 (6-pin) */
++		reg = <0x05>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x05 0x0e>;
++	};
++};
++
++&p2a {
++	status = "okay";
++	memory-region = <&pci_memory>;
++};
++
++&spi1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_spi1_default>;
++	flash@0 {
++		status = "okay";
++		label = "bios";
++		m25p,fast-read;
++		/* Frequency extracted from original ROM */
++		spi-max-frequency = <24000000>; /* 24 MHz */
++	};
++};
++
++&uhci {
++	status = "okay";
++};
++
++&vhub {
++	status = "okay";
++};
++
++&video {
++	status = "okay";
++	memory-region = <&video_engine_memory>;
++};
++
++&vuart {
++	status = "okay";
++	aspeed,lpc-io-reg = <0x2f8>;
++	aspeed,lpc-interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&uart5 {
++	status = "okay";
++};
 -- 
 2.50.1
 
