@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-823819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CA7B8780F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:36:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ECAB87833
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:37:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D99A1CC1EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E23FE3BA97B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2836534BA2F;
-	Fri, 19 Sep 2025 00:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6392A2441B8;
+	Fri, 19 Sep 2025 00:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="tzQp7MX7"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gs9xeE5z"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB3719D89E;
-	Fri, 19 Sep 2025 00:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252C31E9B1A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758242097; cv=none; b=Wa+ph8mzboZ7MDqbRG0GDYqULUQjzrqCnK/HzdxDfO1dZXFY2K2itIXN0X/LGKEofjidBj3Fw26vH8bnRoNeow2IxBFGZKI1TI8UzEmZIXlwt4OUE5qWRrWvMvDOoGksUv+KMYZuZjF7ub6G8IFngJJiHlXLEcsrswTiZdqHc4M=
+	t=1758242226; cv=none; b=bZvQHsAPTJu+Ib8zJ5v3GcR1/KK/C0A8IQiPEnMFoRhCuUfv4/F0rIfyH2d6W9s5724suIAucCxULCvWD0ux9KJAwstKBdlU2hgeqt8rpFOPRR6A3Mz8a0jTG4wN5sFAeyj/pPfEKCoSA6H2/dyn9RV6HN2yqTifzMyGxgcxyJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758242097; c=relaxed/simple;
-	bh=L4W0AzbnKlf7wNawPd0mOCv3aKNs4cLJAM5rgwBnb8U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QRfhQcVKHvgZ9sDUzPyginOvPouB9FW7inq/Ntd2xF3EzQYvWbzXGPwRykSB1sof87W6NAfYorOKhcPbmTj/xhsfrpbV8XJJGWcY/gQgiqJkSozo431d/aJmcWexYmUzoe35AH5JZvY/UXVBX7KLIp45yUKzGuvCGZfw7tV/NbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=tzQp7MX7; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58J0YckoE2852636, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1758242078; bh=L4W0AzbnKlf7wNawPd0mOCv3aKNs4cLJAM5rgwBnb8U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=tzQp7MX7+V2+XVrcGNgwQ1SuUJwbMrSOlAvvKL0CIzJRRRvwJLvdLqwWV7zMpJ6Ic
-	 fpruK/4bq3msudIcfM/PyDk3aHmzMNcz7kLacK0P2k8YbK8Lf3oqM4FQ6LMdnu9zuY
-	 Dajy3YnND0Hh8NxmVpYdc1VQUH2BhHuYko7dtASl4a/tCxBUz6Zwr5RUTtx4c25Qwf
-	 U7BeV7WiSPMZ1moQxPeEF2cBvf7TItofBQUafBi1TmIVNHVr0kcqe3y2wIhCz9VypY
-	 V5iDdxbvi2+0sKnD0uevw7b+8IycbLxGZfMvMf1SyNDy6PkQ7vTytsAlE6pId0aSvq
-	 0KeuY1F3ciDdQ==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58J0YckoE2852636
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Sep 2025 08:34:38 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Fri, 19 Sep 2025 08:34:39 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Fri, 19 Sep 2025 08:34:38 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Fri, 19 Sep 2025 08:34:38 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>,
-        Bernie Huang <phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH rtw v4 2/4] wifi: rtw89: fix tx_wait initialization race
-Thread-Topic: [PATCH rtw v4 2/4] wifi: rtw89: fix tx_wait initialization race
-Thread-Index: AQHcJ7j8gFkFIGygsECCjdEXp53dJbSYbw2QgAAaqwCAAR9BUA==
-Date: Fri, 19 Sep 2025 00:34:38 +0000
-Message-ID: <7a53522bc0004a979fd78b1d6f440457@realtek.com>
-References: <20250917095302.2908617-1-pchelkin@ispras.ru>
- <20250917095302.2908617-3-pchelkin@ispras.ru>
- <08b25263c6874a089e4a271cb95a9cb7@realtek.com>
- <20250918173522-07abe99566c12fa46a096fc5-pchelkin@ispras>
-In-Reply-To: <20250918173522-07abe99566c12fa46a096fc5-pchelkin@ispras>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1758242226; c=relaxed/simple;
+	bh=/zHl7Hocdub5nwWFq/uhyVeik+EKW0ciwzHubkGEnkM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gvPnAqNiYn5pAW4Bf/ZNdKNHf0uoEI94EFvmLTnM5wzTg2tvQyxIEwSVGn/6tACGeV/+PSvVhz0efFuZ6xj75PEc38OO+9ksNM2HNB6xjxJHPDJZkbsL4M+MADBAf0YUwyIQthhW8nGrtH/hnN9MCGj38W2sV/nfGiX+bzxT+H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gs9xeE5z; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2677a4d4ce3so16749825ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:37:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758242224; x=1758847024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNKV2H1bYIOdZ9kzp0zgPBPORIzeOGUyz2fBTqyLjPw=;
+        b=gs9xeE5zIAvPuHixu9CkhcPmKme81+umC4AdGwD0VFrXicHioYAozaol0pFcSEZ9GJ
+         7ZJIII8xxmxw1UT7Q9JetFaA+FdqKWEPnSkwsxFkXfBdid1kFoaW09NP4XBRLrkH2v9R
+         rm0JB/TcD19ZfjglRqmqGhflOwLR74ylAPLm5ya76ri1b0m1OBFHU4NxCCa6bCLynGoK
+         HhJemlqxN0P6oT+PwsH6gFYnQepctRDtIc3NHdMmH8SY7CSpRY/PMGtMKSTPvqcNWiMp
+         a8yDUEgJBHny8IAU3IlsgfbpLVP0kEls8kuBXiZDj0daQyre50rWyNmve4FksFoVubjQ
+         giFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758242224; x=1758847024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xNKV2H1bYIOdZ9kzp0zgPBPORIzeOGUyz2fBTqyLjPw=;
+        b=Huctc2dEKtURFZtQK20wOSGN3YIX9K9un0yK+4MeRZAQZSWcqZNMLxab36nEmpLiMi
+         cMHHkdTX3KGFDlQChXjQg98STU0cp3Ve74xEgOjw9L0VoF9dpdpx+AvqhIETfIituNhf
+         2F9KfZmynItk5GS9l2BA899GmD4VyPt/DhBYJbMupioK/JDusRylMt9ATbI/QK4wZnsy
+         Z5BymS62ulA+dc0fMtJsF/qudqJARMWluCVe7bzBQLF40FOIk1XNkv9Mybofl9Wv0OkX
+         A0ICMUyZu4S8xqmNyNbovG44G8/Ph7Cf+HwqQZ/QfmoQLs6JIGHIjk0zKhoFqM/chotc
+         bszA==
+X-Gm-Message-State: AOJu0Yyu6rqO7sSI3GpFv5JKtycBu/fE+0a0B5r2XLEDrKACqkTP8qEB
+	dX5/VMI2KTmakJlisnEC4gFefLWGAHPXRLVaG7xSXAOfmtohCRWHJ51O
+X-Gm-Gg: ASbGncvvZnncWbgujWs8ootBJyRHzjpCAeJHI2Qe5aG7YT6thcucywDfUp+Zkyx558I
+	rZI4UVwQEUlWSVjSBPym5Ae2b9tFg1UWYjC6hyMrD2J4vhcnRwgP/P1lL8L8BZ1oQtVApJTKcKa
+	9VXOj5y7/t9NFCJmbL/s+yzCPWrK3SrGmn9ipAyuS2rKftsNZX7yIyVIr9LH5zF/dRwj1Z7wx5u
+	QROs6JIBHd26/HsWTsPB7p9WcxRG7631PzY1k1tjriq+qBa0gjW+IfI5taUIUSRPfVTw3a2o+H2
+	m5Q6EOKWSJbnNePA3WID8NDvs1MHNR7ALX/S0xdsCVoEbTIqw7siR4k3fJ3+ot0ZqukzmvI8cnr
+	sU6ODBJOTA5gnrRqInj+4sS94qS76EbHE6IhQx8aY
+X-Google-Smtp-Source: AGHT+IE/yBNlcgm9BPTKttWbmAHCiZjMO8WtHGa5VVD5WcCQjQ2ZZ0IocaszrdjGPXBK2fPfpIuodQ==
+X-Received: by 2002:a17:902:d2d2:b0:25c:e4ab:c424 with SMTP id d9443c01a7336-269ba534e05mr24162985ad.33.1758242224003;
+        Thu, 18 Sep 2025 17:37:04 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698033ff66sm36649275ad.133.2025.09.18.17.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 17:37:02 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id EA12F420B4E0; Fri, 19 Sep 2025 07:36:59 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Framebuffer <linux-fbdev@vger.kernel.org>,
+	Linux DRI Development <dri-devel@lists.freedesktop.org>
+Cc: Helge Deller <deller@gmx.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+	Teddy Wang <teddy.wang@siliconmotion.com>,
+	Bernie Thompson <bernie@plugable.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Arvind Sankar <nivedita@alum.mit.edu>
+Subject: [PATCH 0/3] framebuffer docs toctree index refactoring
+Date: Fri, 19 Sep 2025 07:36:37 +0700
+Message-ID: <20250919003640.14867-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1139; i=bagasdotme@gmail.com; h=from:subject; bh=/zHl7Hocdub5nwWFq/uhyVeik+EKW0ciwzHubkGEnkM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlnllSdYxS+K3jwt99iXc3oxld1K1Pf7Ez88NJ9dk+K9 //qzx07OkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRF4UM/+O/ua3WsUgKtWGW +994d06Y6xeL9kMOz44+b5u9a/7XZG5Ghs2hFX9eNwdKVG6//E5p/97fpw++fPU3LW+bZDbXeiF mWWYA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-RmVkb3IgUGNoZWxraW4gPHBjaGVsa2luQGlzcHJhcy5ydT4gd3JvdGU6DQo+IE9uIFRodSwgMTgu
-IFNlcCAwNTo0NywgUGluZy1LZSBTaGloIHdyb3RlOg0KPiA+IEZlZG9yIFBjaGVsa2luIDxwY2hl
-bGtpbkBpc3ByYXMucnU+IHdyb3RlOg0KPiA+ID4gQEAgLTEwOTQsMjIgKzEwOTQsMTMgQEAgaW50
-IHJ0dzg5X2NvcmVfdHhfa2lja19vZmZfYW5kX3dhaXQoc3RydWN0IHJ0dzg5X2RldiAqcnR3ZGV2
-LCBzdHJ1Y3Qgc2tfYnVmZg0KPiAqc2sNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIGludCBxc2VsLCB1bnNpZ25lZCBpbnQgdGltZW91dCkNCj4gPiA+ICB7DQo+ID4g
-PiAgICAgICAgIHN0cnVjdCBydHc4OV90eF9za2JfZGF0YSAqc2tiX2RhdGEgPSBSVFc4OV9UWF9T
-S0JfQ0Ioc2tiKTsNCj4gPiA+IC0gICAgICAgc3RydWN0IHJ0dzg5X3R4X3dhaXRfaW5mbyAqd2Fp
-dDsNCj4gPiA+ICsgICAgICAgc3RydWN0IHJ0dzg5X3R4X3dhaXRfaW5mbyAqd2FpdCA9IHdpcGh5
-X2RlcmVmZXJlbmNlKHJ0d2Rldi0+aHctPndpcGh5LA0KPiA+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2tiX2RhdGEtPndhaXQp
-Ow0KPiA+DQo+ID4gQ2FuJ3Qgd2UganVzdCBwYXNzICd3YWl0JyBieSBmdW5jdGlvbiBhcmd1bWVu
-dD8NCj4gDQo+IFllcC4NCj4gDQo+ID4NCj4gPiA+ICAgICAgICAgdW5zaWduZWQgbG9uZyB0aW1l
-X2xlZnQ7DQo+ID4gPiAgICAgICAgIGludCByZXQgPSAwOw0KPiA+ID4NCj4gPiA+ICAgICAgICAg
-bG9ja2RlcF9hc3NlcnRfd2lwaHkocnR3ZGV2LT5ody0+d2lwaHkpOw0KPiA+ID4NCj4gPiA+IC0g
-ICAgICAgd2FpdCA9IGt6YWxsb2Moc2l6ZW9mKCp3YWl0KSwgR0ZQX0tFUk5FTCk7DQo+ID4gPiAt
-ICAgICAgIGlmICghd2FpdCkgew0KPiA+ID4gLSAgICAgICAgICAgICAgIHJ0dzg5X2NvcmVfdHhf
-a2lja19vZmYocnR3ZGV2LCBxc2VsKTsNCj4gPiA+IC0gICAgICAgICAgICAgICByZXR1cm4gMDsN
-Cj4gPiA+IC0gICAgICAgfQ0KPiA+ID4gLQ0KPiA+ID4gLSAgICAgICBpbml0X2NvbXBsZXRpb24o
-JndhaXQtPmNvbXBsZXRpb24pOw0KPiA+ID4gLSAgICAgICB3YWl0LT5za2IgPSBza2I7DQo+ID4g
-PiAtICAgICAgIHJjdV9hc3NpZ25fcG9pbnRlcihza2JfZGF0YS0+d2FpdCwgd2FpdCk7DQo+ID4g
-PiAtDQo+ID4NCj4gPiBIZXJlLCBvcmlnaW5hbCBjb2RlIHByZXBhcmVzIGNvbXBsZXRpb24gYmVm
-b3JlIFRYIGtpY2sgb2ZmLiBIb3cgaXQgY291bGQNCj4gPiBiZSBhIHByb2JsZW0/IERvIEkgbWlz
-cyBzb21ldGhpbmc/DQo+IA0KPiBUaGF0J3MgYSBnb29kIHF1ZXN0aW9uIGFuZCBpdCBtYWRlIG1l
-IHJldGhpbmsgdGhlIGNhdXNlIG9mIHRoZSByYWNlDQo+IHNjZW5hcmlvLiAgSSBkaWRuJ3QgaW5p
-dGlhbGx5IHRha2UgVFgga2ljayBvZmYgaW50byBjb25zaWRlcmF0aW9uIHdoZW4NCj4gaXQgYWN0
-dWFsbHkgbWF0dGVycy4NCg0KRG8gaXQgbWVhbiB0aGF0IHlvdSBwaWN0dXJlZCB0aGUgcmFjaW5n
-IHNjZW5hcmlvIGluIGNvbW1pdCBtZXNzYWdlIGJ5IA0KY29kZSByZXZpZXcgaW5zdGVhZCBvZiBh
-IHJlYWwgY2FzZSB5b3UgbWV0PyANCg0KPiANCj4gVGhlIHRoaW5nIGlzOiB0aGVyZSBtaWdodCBo
-YXZlIGJlZW4gYW5vdGhlciB0aHJlYWQgaW5pdGlhdGluZyBUWCBraWNrIG9mZg0KPiBmb3IgdGhl
-IHNhbWUgcXVldWUgaW4gcGFyYWxsZWwuICBCdXQgbm8gc3VjaCB0aHJlYWQgZXhpc3RzIGJlY2F1
-c2UgYSB0YWtlbg0KPiB3aXBoeSBsb2NrIGdlbmVyYWxseSBwcm90ZWN0cyBmcm9tIHN1Y2ggc2l0
-dWF0aW9ucy4gcnR3ODlfY29yZV90eHFfc2NoZWR1bGUoKQ0KPiB3b3JrZXIgbG9va3MgbGlrZSBh
-IGdvb2QgY2FuZGlkYXRlIGJ1dCBpdCBkb2Vzbid0IG9wZXJhdGUgb24gdGhlIG5lZWRlZA0KPiBt
-YW5hZ2VtZW50IHF1ZXVlcy4NCg0KTGFzdCBuaWdodCBJIGFsc28gdGhvdWdodCBpZiBhbm90aGVy
-IHRocmVhZCB3b3JrcyBpbiBwYXJhbGxlbC4gDQpNYXliZSBydHc4OV9vcHNfdHgoKSBjb3VsZCBi
-ZT8gDQoNCj4gDQo+IFNvIEkgbWF5IGNvbmNsdWRlIHRoaXMgcGF0Y2ggZG9lc24ndCBmaXggYW55
-IHJlYWwgYnVnIHRob3VnaCBJJ2QgcHJlZmVyIHRvDQo+IGtlZXAgaXQgKHdpdGggZGVzY3JpcHRp
-b24gcmV3cml0dGVuIG9mIGNvdXJzZSkgYmVjYXVzZSBpdCBoZWxwcyB0byBhdm9pZA0KPiBwb3Rl
-bnRpYWwgaXNzdWVzIGluIGZ1dHVyZS4NCg0KQWdyZWUuDQoNCg0K
+Hi,
+
+Here is simple toctree refactoring for framebuffer documentation,
+based on docs-next tree. Simple because it only splits the toctree
+in patch [3/3] into two sections.
+
+Enjoy!
+
+Bagas Sanjaya (3):
+  Documentation: fb: ep93xx: Demote section headings
+  Documentation: fb: Retitle driver docs
+  Documentation: fb: Split toctree
+
+ Documentation/fb/aty128fb.rst  |  8 ++--
+ Documentation/fb/efifb.rst     |  6 +--
+ Documentation/fb/ep93xx-fb.rst |  4 --
+ Documentation/fb/gxfb.rst      |  8 ++--
+ Documentation/fb/index.rst     | 80 +++++++++++++++++++---------------
+ Documentation/fb/lxfb.rst      |  9 ++--
+ Documentation/fb/matroxfb.rst  |  9 ++--
+ Documentation/fb/pvr2fb.rst    |  6 +--
+ Documentation/fb/sa1100fb.rst  |  9 ++--
+ Documentation/fb/sisfb.rst     |  6 +--
+ Documentation/fb/sm712fb.rst   |  6 +--
+ Documentation/fb/tgafb.rst     |  6 +--
+ Documentation/fb/udlfb.rst     |  6 +--
+ Documentation/fb/vesafb.rst    |  6 +--
+ 14 files changed, 81 insertions(+), 88 deletions(-)
+
+
+base-commit: 348011753d99b146c190aae262ee361d03cb0c5e
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
