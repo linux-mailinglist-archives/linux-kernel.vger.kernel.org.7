@@ -1,175 +1,124 @@
-Return-Path: <linux-kernel+bounces-824304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02402B889E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:41:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A04B88A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB69116DAE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31DD18917D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA092D0274;
-	Fri, 19 Sep 2025 09:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9E52EDD76;
+	Fri, 19 Sep 2025 09:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ichDk/R6"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVN/Olrz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF50239099
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123902D0274;
+	Fri, 19 Sep 2025 09:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274904; cv=none; b=fKepsRWC8Y3ZB3etghjFZaGjEsCaBt+dIFIAobQ0o4WBKsllmbrcnSbygTEOMGC+nDyJCzX5ztra2RQX/jePnhryMEeh7w3fGGy9lxp3ZRb+0GQ8yodOlww3fkE9mULwTGN6HR04/UpoBWnzf73s2lSXADJyEzPpGd8WJdkAHb0=
+	t=1758275368; cv=none; b=tr5h/OFeVrYIuym7LVC5Y3a0jAvXC1gjEYAI7F6ChVG5lg/ZGxAv2ugMkJsSGQN9OcnlOHd9eqj/4Q6+Zh9JPba44BIEUg56brPHsqb1d2niB3qfPAan8/fxkiIllKh7UAg+7yYePgV2TAcC8oZuCT0lz1TXl0ANJ5/WJZHkMkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274904; c=relaxed/simple;
-	bh=0bPvuzitzyiTscSi5P7Y9W8jGQf2+I4dm6kZHg49IV4=;
+	s=arc-20240116; t=1758275368; c=relaxed/simple;
+	bh=D5iZNmBBZ5aKBtfnzqBn7wqTVaUbc/5Lg9CzO28Ivcw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkzZAyePuu7aWxnlIoc+iJKSgwnWLAMlVe0g19qRerv/rAhrdYOq7UVgZPifvsBat4Z6SJEtn6QkfqgPU8ETI1wWssSI3aq8AB17XuMeLeiMneH1BRZ5uKs+2wr8ww4pqRDKMiNxLUKnJgaHlgXx4yNT0o6AlOwvJ9wsfaPzVd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ichDk/R6; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=HmKy
-	wT+0oLACFox0+DX6qQcmQkOKx7tGHsVxWJnODwU=; b=ichDk/R6+aeAn9tyInWx
-	r/hqUAgRu7mC6t9e4LFCNVf9V3/iHReBfHHnLC3jht31k5xN0+9TxWkOsoumY/DY
-	CyYQTsH+uM7At1R7KObUQ9TZyrHWgwbzMo7ehdbYgVsy4E7W7wSqdRry34UEC6Ba
-	+TlUmzzY34c2midmIirbg9FFAzVxxnjlDcTvX8x2Ijvhz3bECsinfG8o7YGDfIrf
-	/ws/XIlr7mOVLv+W7PFyN5vHysOIG4YmphAxzTIvez9ldrAWhyGcfDr3UKEhidSI
-	2rFkAfv+aKWrGZwNAZsRYpSV5H/bk+32oLlTQwqrWEjqy78+tuwiiNfmc3MsBMT2
-	1g==
-Received: (qmail 3865078 invoked from network); 19 Sep 2025 11:41:39 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 11:41:39 +0200
-X-UD-Smtp-Session: l3s3148p1@IuTPRiQ/EJgujns7
-Date: Fri, 19 Sep 2025 11:41:39 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <aM0lU01x1w2wB3LG@ninjato>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-8-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qc7fCtaMuIjNi5Ydb9bn44MBFP1y2Fu6GAm/A5ajvQVe3FWiuh7YngpafgCl9iyYndLhUjR603hYMGeiONSULcoQDaylOc6ao0qaU0tHwRuVdgx8PnkbXYPY6ffxuq9alEhyTM7kivQVqzF7sXjNFijAkIM+wTJnm1PwPZvx0Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVN/Olrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144D2C4CEF1;
+	Fri, 19 Sep 2025 09:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758275367;
+	bh=D5iZNmBBZ5aKBtfnzqBn7wqTVaUbc/5Lg9CzO28Ivcw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iVN/OlrzsjHiJ0qfIx9nbPCv/HafC7cgJXTM9S3s6naTa0+ZyjYy+SxXBvPPP7Aiq
+	 FsBCLS/7MvJGLwIyfDEL7678Qgjq5v5abOVgJuaebnUULmgDJS6mM5UBc6kgXp5Kg0
+	 E+2fSAfDssXrfVX3mfEtVKS8vH4k+i2EBJoFVEUtxdqN1RAvN1GpZpmGEXumA3avag
+	 UOyWAIRRF+381RCQ+UZMlC7LPKlnmWWkm7T3GOuORdyf8YfcMU+bk2lO4Ov+navSJ1
+	 mfB7wXPbPz+zzrHoWlqlzYmEePWLde39ICLtN1iBYci8YBXBPFZTxnq4Hi8WQyUzbt
+	 ueUVTCE/cA29w==
+Date: Fri, 19 Sep 2025 15:12:19 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] KVM: SVM: Update "APICv in x2APIC without x2AVIC"
+ in avic.c, not svm.c
+Message-ID: <i4znbv2qka5nswuirlbm6ycjmeqmxtfflz6rbukzsdpfte7p3e@wez3k34xsrqa>
+References: <20250919002136.1349663-1-seanjc@google.com>
+ <20250919002136.1349663-3-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vTZBuV/2VLZPNxkP"
-Content-Disposition: inline
-In-Reply-To: <20250918104009.94754-8-herve.codina@bootlin.com>
-
-
---vTZBuV/2VLZPNxkP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250919002136.1349663-3-seanjc@google.com>
 
-Hi Herve,
+On Thu, Sep 18, 2025 at 05:21:32PM -0700, Sean Christopherson wrote:
+> Set the "allow_apicv_in_x2apic_without_x2apic_virtualization" flag as part
+> of avic_hardware_setup() instead of handling in svm_hardware_setup(), and
+> make x2avic_enabled local to avic.c (setting the flag was the only use in
+> svm.c).
+> 
+> Opportunistically tag avic_hardware_setup() with __init to make it clear
+> that nothing untoward is happening with svm_x86_ops.
+> 
+> No functional change intended (aside from the side effects of tagging
+> avic_hardware_setup() with __init).
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/avic.c | 6 ++++--
+>  arch/x86/kvm/svm/svm.c  | 4 +---
+>  arch/x86/kvm/svm/svm.h  | 3 +--
+>  3 files changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> index 478a18208a76..683411442476 100644
+> --- a/arch/x86/kvm/svm/avic.c
+> +++ b/arch/x86/kvm/svm/avic.c
+> @@ -77,7 +77,7 @@ static DEFINE_HASHTABLE(svm_vm_data_hash, SVM_VM_DATA_HASH_BITS);
+>  static u32 next_vm_id = 0;
+>  static bool next_vm_id_wrapped = 0;
+>  static DEFINE_SPINLOCK(svm_vm_data_hash_lock);
+> -bool x2avic_enabled;
+> +static bool x2avic_enabled;
+>  
+>  
+>  static void avic_set_x2apic_msr_interception(struct vcpu_svm *svm,
+> @@ -1147,7 +1147,7 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
+>   * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
+>   * - The mode can be switched at run-time.
+>   */
+> -bool avic_hardware_setup(void)
+> +bool __init avic_hardware_setup(struct kvm_x86_ops *svm_ops)
+>  {
+>  	if (!npt_enabled)
+>  		return false;
+> @@ -1182,6 +1182,8 @@ bool avic_hardware_setup(void)
+>  	x2avic_enabled = boot_cpu_has(X86_FEATURE_X2AVIC);
+>  	if (x2avic_enabled)
+>  		pr_info("x2AVIC enabled\n");
+> +	else
+> +		svm_ops->allow_apicv_in_x2apic_without_x2apic_virtualization = true;
 
-> +#define IRQMUX_MAX_IRQS 8
-> +
-> +static int irqmux_setup(struct device *dev, struct device_node *np, u32 __iomem *regs)
+I'm not entirely convinced that this is better since svm_x86_ops fields 
+are now being updated outside of svm.c. But, I do see your point about 
+limiting x2avic_enabled to avic.c
 
-The whole driver would benefit from a 'rzn1_irqmux' instead of 'irqmux'
-prefix, I'd say.
+Would it be better to name this field as svm_x86_ops here too, so it is 
+at least easy to grep and find?
 
-> +	for_each_of_imap_item(&imap_parser, &imap_item) {
-> +		/*
-> +		 * The child #address-cells is 0 (already checked). The first
-> +		 * value in imap item is the src hwirq.
-> +		 *
-> +		 * imap items matches 1:1 the interrupt lines that could
-> +		 * be configured by registers (same order, same number).
-> +		 * Configure the related register with the src hwirq retrieved
-> +		 * from the interrupt-map.
-> +		 */
-
-I haven't looked into the above for_each_of_imap_item-helper. But
-wouldn't it be possibleto retrieve the GIC_SPI number as well and use
-the correct register based on that? That would remove the need of an
-already sorted interrupt-map.
-
-> +		if (index > IRQMUX_MAX_IRQS) {
-> +			of_node_put(imap_item.parent_args.np);
-> +			dev_err(dev, "too much items in interrupt-map\n");
-> +			return -EINVAL;
-
--E2BIG? With such a unique errno, we could even drop the dev_err.
-
-> +		}
-> +
-> +		writel(imap_item.child_imap[0], regs + index);
-> +		index++;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int irqmux_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	u32 __iomem *regs;
-> +	int nr_irqs;
-> +	int ret;
-> +
-> +	regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
-> +
-> +	nr_irqs = of_irq_count(np);
-> +	if (nr_irqs < 0)
-> +		return nr_irqs;
-> +
-> +	if (nr_irqs > IRQMUX_MAX_IRQS) {
-> +		dev_err(dev, "too many output interrupts\n");
-> +		return -ENOENT;
-
--E2BIG? Wait, isn't this the same check twice?
-
-Thanks for this work,
-
-   Wolfram
+Otherwise, for this patch:
+Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
 
 
---vTZBuV/2VLZPNxkP
-Content-Type: application/pgp-signature; name="signature.asc"
+- Naveen
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNJVMACgkQFA3kzBSg
-KbYNbxAApm081D7CgT8raavwb9/q2h+RL2zfI55DFFq1PDoRNvKb7m2OLzc4+iI+
-N39meDXwA3EfWm6MkY1uxdhf38oH07RULjwbRnzjBKVjtb7zlbGsk0jQyUk/qEjE
-fbqkhl47EvWiqegz/n64WGzDfaWaanO6JbyzQqQtUxxD4T4HnfYSUc/nWMATZkG5
-A/M5ZkCE5C5yr2iYGSLy2svvitBfgFeY1+bed4wotijdTyYOxzV38gthMmXSQhEp
-+XCt+TRkZcqmnA8rLgI2DNVSt15Rdb2AEbTf8pQShDrx9Za4LH2KEfLzLh5Ii3MQ
-fZscQN4dLclDkmvCF1eQFbVpiz4U9LKEa0pkCVyxd9+eD22FhZj6nB3nGgqIksGP
-AOKG1tdztTtLuxnah6y9TztJshEmgnqd7ojUUs+cpnjG6TyTjlH+27kDYEeKZpmD
-t9F1yKkU897taYcPXDHPjoJ5CDhywdy8OUEtwDe9/PtLLioyYvtQ95tHe7+fVKEL
-XTZjTTWFdBwg9kBl5NTc1Z0Pta6tSXfM5jwEyA8Uxl74VHmzyWLDvElSQx4zzzB6
-9h5gBqjPQL5qpi40HiKwFhvs250iIsv85UrN01XrQsOGJ0jIXQ5/BFYzFo8gVeEU
-k/oT6kz3gdRAhgguNHCUinduOxwvxpLka46yozY8ZhqyuI+1Eho=
-=qdB/
------END PGP SIGNATURE-----
-
---vTZBuV/2VLZPNxkP--
 
