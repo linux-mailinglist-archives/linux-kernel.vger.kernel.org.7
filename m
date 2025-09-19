@@ -1,59 +1,45 @@
-Return-Path: <linux-kernel+bounces-824372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D47B88E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:25:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11062B88E23
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944777C55FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 034601CC0EF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47097307AF5;
-	Fri, 19 Sep 2025 10:22:35 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8990E30AAD0;
+	Fri, 19 Sep 2025 10:22:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE21307AC6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126582F39CD
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758277354; cv=none; b=HVVz7oZ6bx9U8V58LWWwNUykCBMcOjwWOGZQNszioXfMLPuo8cG+lL0zuMsn8UWifmT42UgWjHN6HjjuVifqsX7fFCeDX913qcOoxp/3ReI4SSIocaJl5Asz4e5lTiQoGNtkf3s7SPFYXEF5k3f+ERE1iREyRhNN9m9ufx/nPQM=
+	t=1758277370; cv=none; b=OHYIuLm0zXHng0zxplP/dT1aKnBrSm8i84LNho5YVVZuBb9fCF5xSdSh1v5SnFvsTid2+nx5leU3AS2gdTa5LgVyvJkbDhh1LjacRmxb4fZy9aG7SBVCaQ7UUEWkLGoJyONNAMeNJuvRQh88rQeVJcpDHZFwnQdDrBHEhFgIfMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758277354; c=relaxed/simple;
-	bh=NJyqgcT0ToOoygv6nJUWxVirKbL2uPJ3S7OumxDo9ao=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RtXHBCQIpwDv3hplAlVWcBm6+9QTwijnJygSvuVO50BIziNAuYhNAsbbTT8lCVzV4SESHc9u5HKWpzLvhRcantYR2toyK04fdOCxZMTbOBJivuHj42lVJRiH7pBN2z4A5TZAybrofF7ghCrQmvSrGmtqHBINWoe4+eT+hEvbGgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 8a6c67b4954211f0b29709d653e92f7d-20250919
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:35d2b3a7-e1c2-4b48-9dc1-dd6e3126be33,IP:0,U
-	RL:0,TC:0,Content:3,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:3
-X-CID-META: VersionHash:6493067,CLOUDID:47cfc50a539eb13cb7ec11c6b1a2fe85,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:4|50,EDM:
-	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
-	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 8a6c67b4954211f0b29709d653e92f7d-20250919
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <pengyu@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 813518812; Fri, 19 Sep 2025 18:22:27 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id DC5CDE009009;
-	Fri, 19 Sep 2025 18:22:26 +0800 (CST)
-X-ns-mid: postfix-68CD2EE2-7977454
-Received: from [10.42.20.31] (unknown [10.42.20.31])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 5EBB4E009008;
-	Fri, 19 Sep 2025 18:22:24 +0800 (CST)
-Message-ID: <8a713303-65f7-47e3-b2e6-6262f044d728@kylinos.cn>
-Date: Fri, 19 Sep 2025 18:22:23 +0800
+	s=arc-20240116; t=1758277370; c=relaxed/simple;
+	bh=jz9DDJfzJNDrP2xb26Lmls6DRZicrZpdLhlX61Qgcl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EHkQZwHXJWzWh+4I0Bkqll6XDnUOO9Us9NpgcgtRZ0FKhturdeFcUKvj4C1rjaGg4QF4WBZ4OI429gEgeSlbw5HcjeIEpSqfHHZIkC+bY7Y8M+Y6KE7EUPAia0UOO+ZhgpgjzkfIqiKLFTGaBoZmOlhwM8gvsWM87bRRMUjwGHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cSpPN0X1tz13Mqq;
+	Fri, 19 Sep 2025 18:18:32 +0800 (CST)
+Received: from kwepemp100011.china.huawei.com (unknown [7.202.195.41])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5AB66180485;
+	Fri, 19 Sep 2025 18:22:44 +0800 (CST)
+Received: from [10.174.178.240] (10.174.178.240) by
+ kwepemp100011.china.huawei.com (7.202.195.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 19 Sep 2025 18:22:43 +0800
+Message-ID: <d07dd312-295e-4703-895b-8ce438acea3c@huawei.com>
+Date: Fri, 19 Sep 2025 18:22:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,189 +47,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: pengyu <pengyu@kylinos.cn>
-Subject: Re: [PATCH] locking/qspinlock: use xchg with _mb in slowpath for
- arm64
-To: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
- boqun.feng@gmail.com, longman@redhat.com, linux-kernel@vger.kernel.org,
- Mark Rutland <mark.rutland@arm.com>, t.haas@tu-bs.de,
- parri.andrea@gmail.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- paulmck@kernel.org, jonas.oberhauser@huaweicloud.com, r.maseli@tu-bs.de,
- lkmm@lists.linux.dev, stern@rowland.harvard.edu
-References: <20250916033903.3374794-1-pengyu@kylinos.cn>
- <20250916141032.GJ3245006@noisy.programming.kicks-ass.net>
- <aMmJlv8JrzyHRCxR@willie-the-truck>
- <31861b75-02ee-495e-b839-15d7510bf7c6@kylinos.cn>
- <aMqdaCkflusKi2hA@willie-the-truck>
-Content-Language: en-US
-In-Reply-To: <aMqdaCkflusKi2hA@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] locktorture: Fix memory leak in param_set_cpumask()
+To: <paulmck@kernel.org>
+CC: Wang Liang <wangliang74@huawei.com>, <dave@stgolabs.net>,
+	<josh@joshtriplett.org>, <frederic@kernel.org>, <yuehaibing@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20250912015737.1209143-1-wangliang74@huawei.com>
+ <6b433670-c79e-4439-9b9a-f10c548a727f@huawei.com>
+ <9d51ece8-cb07-450b-a91a-095abcb8472a@huawei.com>
+ <679d81f3-2610-44b9-bc9a-30ef0f70fa36@paulmck-laptop>
+ <5eccd340-a4bb-4b46-897e-a673f9a5cb86@huawei.com>
+ <9e0595a2-cbba-4635-b57c-a220f2d86fe2@paulmck-laptop>
+From: Zhang Changzhong <zhangchangzhong@huawei.com>
+In-Reply-To: <9e0595a2-cbba-4635-b57c-a220f2d86fe2@paulmck-laptop>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemp100011.china.huawei.com (7.202.195.41)
 
-On 2025/9/17 19:37, Will Deacon wrote:
-> On Wed, Sep 17, 2025 at 06:51:18PM +0800, pengyu wrote:
->> Yes, this issue occurred on a kunpeng920 96-core machine and only
->> affected a small number of systems that had been running for over a
->> year.
+在 2025/9/18 23:20, Paul E. McKenney 写道:
+> On Thu, Sep 18, 2025 at 11:06:45PM +0800, Zhang Changzhong wrote:
+>> 在 2025/9/18 17:03, Paul E. McKenney 写道:
+>>> On Mon, Sep 15, 2025 at 10:13:33AM +0800, Wang Liang wrote:
+>>>> 在 2025/9/12 10:16, Zhang Changzhong 写道:
+>>>>> 在 2025/9/12 9:57, Wang Liang 写道:
+>>>>>> When setting the locktorture module parameter 'bind_writers', the variable
+>>>>>> 'cpumask_var_t bind_writers' is allocated in param_set_cpumask(). But it
+>>>>>> is not freed, when removing module or setting the parameter again.
+>>>>>>
+>>>>>> Below kmemleak trace is seen for this issue:
+>>>>>>
+>>>>>> unreferenced object 0xffff888100aabff8 (size 8):
+>>>>>>    comm "bash", pid 323, jiffies 4295059233
+>>>>>>    hex dump (first 8 bytes):
+>>>>>>      07 00 00 00 00 00 00 00                          ........
+>>>>>>    backtrace (crc ac50919):
+>>>>>>      __kmalloc_node_noprof+0x2e5/0x420
+>>>>>>      alloc_cpumask_var_node+0x1f/0x30
+>>>>>>      param_set_cpumask+0x26/0xb0 [locktorture]
+>>>>>>      param_attr_store+0x93/0x100
+>>>>>>      module_attr_store+0x1b/0x30
+>>>>>>      kernfs_fop_write_iter+0x114/0x1b0
+>>>>>>      vfs_write+0x300/0x410
+>>>>>>      ksys_write+0x60/0xd0
+>>>>>>      do_syscall_64+0xa4/0x260
+>>>>>>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>>>>
+>>>>>> This issue can be reproduced by:
+>>>>>>    insmod locktorture.ko
+>>>>>>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+>>>>>>    rmmod locktorture
+>>>>>>
+>>>>>> or:
+>>>>>>    insmod locktorture.ko
+>>>>>>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+>>>>>>    echo 0-2 > /sys/module/locktorture/parameters/bind_writers
+>>>>>>
+>>>>>> The parameter 'bind_readers' also has the same problem. Free the memory
+>>>>>> when removing module or setting the parameter.
+>>>>>>
+>>>>>> Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
+>>>>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>>>>>> ---
+>>>>>>   kernel/locking/locktorture.c | 9 +++++++++
+>>>>>>   1 file changed, 9 insertions(+)
+>>>>>>
+>>>>>> diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+>>>>>> index ce0362f0a871..cad80c050502 100644
+>>>>>> --- a/kernel/locking/locktorture.c
+>>>>>> +++ b/kernel/locking/locktorture.c
+>>>>>> @@ -70,6 +70,9 @@ static int param_set_cpumask(const char *val, const struct kernel_param *kp)
+>>>>>>   	int ret;
+>>>>>>   	char *s;
+>>>>>> +	free_cpumask_var(*cm_bind);
+>>>>>> +	*cm_bind = NULL;
+>>>>> 这个NULL没必要吧
+>>>
+>>> Assuming this translates to "This NULL is unnecessary", I have to
+>>> agree with Zhang Changzhong.  I would go further and argue that the
+>>> free_cpumask_var() is also unnecessary here.
 >>
->> Vmcore Analysis:
->> =E2=80=A2 Panic triggered by CPU 83 detecting a hard lockup at
->>      queued_spin_lock_slowpath+0x1d8/0x320.
+>> Sorry, I used Chinese by mistake—I didn't notice this was a public thread.
+> 
+> Not a problem!  There is always translation software, not that I ever
+> will completely trust it.  ;-)
+> 
+>> With CONFIG_CPUMASK_OFFSTACK=y, the free_cpumask_var() here seems necessary,
+>> when param_set_cpumask() called multiple times, 'cm_bind' gets overwritten,
+>> and the free_cpumask_var() in lock_torture_cleanup() cannot free the old memory.
+> 
+> So the situation you are worried about is when the user mistakenly puts
+> multiple copies of one of the locktorture.bind_{readers,writers} module
+> parameters on the kernel boot command line or as a modprobe parameter?
+> 
+
+I didn't consider this situation. What I noticed is that bind_{readers,writers}
+are writable interface, and fuzz testing tools like syzkaller can easily write
+to /sys/module/locktorture/parameters/bind_{readers,writers} and trigger memory
+leak.
+
+In this case, the patch fixes the memory leak issue, but the old parameters
+remain in effect instead of the newly written ones. Considering that writing
+to this interface after modprobe has no real effect, how about set the
+permissions to 0444?
+
+> If so, what do we really want to happen in that case?  Do we want the
+> last (say) locktorture.bind_readers value to win?  Or do we want to OR
+> together all such values?
+
+In the case you mentioned, it seems more reasonable that the last
+locktorture.bind_readers wins, which is also the current behavior.
+ >
+> 							Thanx, Paul
+> 
+>>>> Setting global pointer to NULL after free may be more safe. ^-^
+>>>
+>>> In lock_torture_cleanup(), you mean?  I would agree with that.
+>>>
+>>>>>> +
+>>>>>>   	if (!alloc_cpumask_var(cm_bind, GFP_KERNEL)) {
+>>>>>>   		s = "Out of memory";
+>>>>>>   		ret = -ENOMEM;
+>>>>>> @@ -1211,6 +1214,12 @@ static void lock_torture_cleanup(void)
+>>>>>>   			cxt.cur_ops->exit();
+>>>>>>   		cxt.init_called = false;
+>>>>>>   	}
+>>>>>> +
+>>>>>> +	free_cpumask_var(bind_readers);
+>>>>>> +	free_cpumask_var(bind_writers);
+>>>>>> +	bind_readers = NULL;
+>>>>>> +	bind_writers = NULL;
+>>>>> 同上
+>>>
+>>> But here I agree with Wang Liang, as it helps people running debuggers
+>>> on the kernel.  Instead of a dangling pointer, they see a NULL pointer.
+>>>
+>>> Except...  Is this NULLing really the right thing to do for
+>>> CONFIG_CPUMASK_OFFSTACK=n kernels?
+>>>
+>>> 							Thanx, Paul
+>>>
+>>>>>> +
+>>>>>>   	torture_cleanup_end();
+>>>>>>   }
+>>>
 >>
->> =E2=80=A2 Corresponding code:
->>      arch_mcs_spin_lock_contended(&node->locked);
->>
->> =E2=80=A2 The qspinlock involved was the rq lock, which showed a clear=
-ed state:
->>      crash> rq.lock,cpu ffffad96ff2907c0
->>        lock =3D {
->>          raw_lock =3D {
->>            {
->>              val =3D {
->>                counter =3D 0
->>              },
->>              {
->>                locked =3D 0 '\000',
->>                pending =3D 0 '\000'
->>              },
->>              {
->>                locked_pending =3D 0,
->>                tail =3D 0
->>              }
->>            }
->>          }
->>        },
->>        cpu =3D 50,
->>
->> =E2=80=A2 CPU 83=E2=80=99s MCS node remained in a locked=3D0 state, wi=
-th no previous
->> node found in the qnodes list.
->>      crash> p qnodes:83
->>      per_cpu(qnodes, 83) =3D $292 =3D
->>       {{
->>          mcs =3D {
->>            next =3D 0x0,
->>            locked =3D 0,
->>            count =3D 1
->>          }
->>        },
->>      crash> p qnodes | grep 83
->>        [83]: ffffadd6bf7914c0
->>      crash> p qnodes:all | grep ffffadd6bf7914c0
->>      crash>
->>
->> =E2=80=A2 Since rq->lock was cleared, no CPU could notify CPU 83.
->>
->> This issue has occurred multiple times, but the root cause remains
->> unclear. We suspect that CPU 83 may have failed to enqueue itself,
->> potentially due to a failure in the xchg_tail atomic operation.
->=20
-> Hmm. For the lock word to be clear with a CPU spinning on its MCS node
-> then something has gone quite badly wrong. I think that would mean that=
-:
->=20
->    1. The spinning CPU has updated tail to point to its node (xchg_tail=
-())
->    2. The lock-owning CPU then erroneously cleared the tail field
->       (atomic_try_cmpxchg_relaxed())
->=20
-> But for the cmpxchg() to succeed in (2) then the xchg() in (1) must be
-> ordered after it and the lock word wouldn't end up as zero. This is
-> because RmW atomics must be totally ordered for a given memory location
-> and that applies regardless of their memory ordering properties.
->=20
-> Of course, there could be _a_ bug here but, given the information you'v=
-e
-> been able to provide, it's not obviously as "simple" as a missing memor=
-y
-> barrier. Have you confirmed that adding memory barriers makes the probl=
-em
-> go away?
->=20
-
-Could this mean that even with xchg's relaxed version, cmpxchg would be
-impossible to succeed after xchg?
-
-We're unsure of the exact cause, only speculating that memory barriers
-might control CPU Store Buffer flushing so that other CPUs can see the
-modifications immediately=EF=BC=8Cbut our understanding of this is quite =
-limited.
-
-Moreover, each test cycle is lengthy, making it difficult to confirm
-whether adding memory barriers resolves the issue.
-
-> If you're able to check the thread_info (via sp_el0) of CPU83 in your
-> example, it might be interesting to see whether or not the 'cpu' field
-> has been corrupted. For example, if it ends up being read as -1 then we
-> may compute a tail of 0 when enqueuing our MCS node into the lock word.
->=20
-
-I checked the code for xchg_tail:
-   lsr     w1, w2, #16
-   add     x7, x19, #0x2
-   swph    w1, w0, [x7]
-
-x19 is the address of the rq lock, and tail is stored in w2. The dumped
-registers are:
-   x19: ffffad96ff2907c0
-   x2 : 0000000001500000
-
-So CPU 83 should calculate tail as 0x1500000, not 0.
-
->> It has been noted that the _relaxed version is used in xchx_tail, and =
-we
->> are uncertain whether this could lead to visibility issues=E2=80=94for=
- example,
->> if CPU 83 modifies lock->tail, but other CPUs fail to observe the
->> change.
->>
->> We are also checking if this is related=EF=BC=9A
->>      https://lkml.kernel.org/r/cb83e3e4-9e22-4457-bf61-5614cc4396ad@tu=
--bs.de
->=20
-> Hopefully I (or somebody from Arm) can provide an update soon on this
-> topic but I wouldn't necessarily expect it to help you with this new
-> case.
->=20
-> Will
-
-We also have another similar issue:
-=E2=80=A2 Watchdog detected hard LOCKUP on cpu 18
-=E2=80=A2 pc : queued_spin_lock_slowpath+0x2ac
-
-It was stuck in a loop at =EF=BC=9A
-     next =3D smp_cond_load_relaxed(&node->next, (VAL));
-
-The read mcs node->next is 0:
-crash> p qnodes:18
-per_cpu(qnodes, 18) =3D $1 =3D
-  {{
-     mcs =3D {
-       next =3D 0x0,
-       locked =3D 0,
-       count =3D 1
-     }
-   },
-
-This seems consistent with the phenomenon described in (6b), but we
-found that lock->val read by the following code was incorrectly cleared:
-
-  val =3D atomic_cond_read_acquire(&lock->val, !(VAL &
-_Q_LOCKED_PENDING_MASK));
-
-According to the assembly code, lock->val is loaded into w5:
-   ldar    w5, [x19]
-   mov     w0, w5
-   and     w1, w5, #0xffff
-The value of register x5 is 0:
-   x5 : 0000000000000000
-
-If it were just reordering in xchg_tail, I don't think tail would be
-erroneously cleared. Might there be other possibilities for this issue?
-
---=20
-Thanks,
-Yu Peng
+> 
 
 
