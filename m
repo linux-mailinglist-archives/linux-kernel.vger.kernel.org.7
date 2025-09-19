@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-823807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32498B87797
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D10EB877A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D2CA4E048F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B4115263E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9B2356B9;
-	Fri, 19 Sep 2025 00:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A32230274;
+	Fri, 19 Sep 2025 00:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5YgjgKr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z99SU4Z7"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4894C34BA2F;
-	Fri, 19 Sep 2025 00:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D2C1D5170
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758241853; cv=none; b=Oi4YIHey4+gFYkvaHfeQ0UhRvrrYICqAa4yqeQ097MaqZcaUt/erzUA8mTiMhbqEGn0sF0HgLXcAy1TeCx3sLyHh+Nouy6hNiiyeAObQnI4zZlpDsqlYNN2gxBIpqN0UuzsL81QXZHtmJM46keuayCAw79XpKXCzBvND0EltQG4=
+	t=1758241996; cv=none; b=reejqj9YM5joZVSpkox88xK2wWyIIFpf/GqESm23nf3ejm8qot+g7eOjy4dB6CqyXNylOtZzPprC0iHMUuLul1LZelJcDC2NXdeRx5X09vz6xxrI/n5vBNePpT0h5yQ1R2n8pJ2oIqJEjQFfRO1h00nPPTDwtEIVWfC5rWwiKH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758241853; c=relaxed/simple;
-	bh=txV1vWnmrpDvHeycC4Fe2ea2OXZwWkdwSNUAUxRCpEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ERYEFHIbdbKvl65N8T8BpuBw7ulOS1SN8mccrgKk+nBN1rDyGZAXPcnxiNwjyx3Kcz53HU90NNpo95o2bmgikZE/akB0H1UgD1mz2v1GtrMQI3Kea/EjQMY1sxBAYySYaoRJwX5vmH5k2s5+eTbAlpRQRlTELaONVbMXWZGVutc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5YgjgKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30BDC4CEE7;
-	Fri, 19 Sep 2025 00:30:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758241852;
-	bh=txV1vWnmrpDvHeycC4Fe2ea2OXZwWkdwSNUAUxRCpEQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z5YgjgKrBKWymSwGs6RK+OjtokRAdxbD72r5YYkWxdpBqPfvv7H7bk8WBhkrRTSAs
-	 f/aR78zsU8rWBjW9G1CWKqfEgwobcqipLKl+AattPUO/FAhHspB5lEZuKDmX9hQTE6
-	 i7HtmIQbuEuNtzaOU90Gr6wRhq0GwFd2sPrSjJuioqwocB+qhrSKKlk60o23aRxD+L
-	 WMgDCRrTaoeAE0buWFHf6rLJhnzGMj6RyXwIS5/N24L3/Ix8R3yL78PQ2R2aagCYQG
-	 1Fduz8c0DylHZB+PTvF7SIGzEw2q+qzeV7IhTuGoa0+7ebOS0/6GakoMBYgoP1zHvl
-	 jDWr+bfTpf9gw==
-Message-ID: <641256da-e142-4a35-9089-d3833baec6fd@kernel.org>
-Date: Fri, 19 Sep 2025 09:30:48 +0900
+	s=arc-20240116; t=1758241996; c=relaxed/simple;
+	bh=7ou8wxMoGQAGbCdOuqhfRktG4I8uJDQLMhLPE0ujZjc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NaOULsVuWFxK7SNR/nyW1gf1HLYQZ2ncolVsZQBcnVUMkDaCa75DIQ3KxNqdrq6GK/+6tfpG4Df1ETmQF5Fr1FZylHITsp8JKr7GTCeNfty40maW1Hk7Ot1iwhhrY6EOWCYzKWdR1ZwSEtdctIyhP5UvoXHhtAPQHD1l4K1alDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z99SU4Z7; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b550fab38e9so672626a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758241994; x=1758846794; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G1cGeGaHWP255DyHLqElEz4ZozH/AyhNkucTFTu+Syc=;
+        b=Z99SU4Z7p0bSXq9BO5tdEzM8zWh8bKh6zcPA92XUAftoqwA4RYVWP/y9oprH29Sb2i
+         ULob8d7kUJFYnA8C5TSWpC4yvaXF6ya5EG1ULp1lPeweUxzSZ3A0nM+NtsSAjljLP8fd
+         ePDERxd4YnVkj7M/Ep1n/AGc5HEVXrMySO4SlfpPAk65NJeBCEaV2NjQ3aMpjIiBjVpO
+         DNWTx9HojJmc8Cg9+Jf+rRQfPbFo5637ujZVohpxCdGOWe1JxWOkQH+q947fncII6HxQ
+         mgvFp/5pfjGbFoePF7/f/maIw8zPhDKDIE8m9oPIh0Wuy0nZ0pE7ErPqLlOjaXtPzlOm
+         c+pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758241994; x=1758846794;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G1cGeGaHWP255DyHLqElEz4ZozH/AyhNkucTFTu+Syc=;
+        b=wfHeLO8FFQujX8Qx7GTXPTBdxRgRnhx+FkWXhqGYI1f2e3x+Y80pTkqzkWdXL6ZgDO
+         6OJwzMkefnhNqFy1OPlhn5slH+A7qwm023CI3wKvq0ZOhveqxd/RzY+Zz/BKe4KAzild
+         13yt9VypCS3y83yxBcLgSwbr3PKPcAxGNVIDSyM/pvwhnbb6lQ7lm7LR1KOTXT7SQtrC
+         FHpG1UZ+3+bH+XT5ErERYbJkR4ddR0y5nqITOgz50r/U7Fruxtl74VDa+GzFlux9YLLr
+         I+ImDtJSRQMUEpG6aOl3dGr/uhWSw7SKVqcMqOL47XwFH6iFdSLJ/q9MnwDuGNYQ6WHi
+         hN+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQmEcPCCvWNYo8gRnUmYiryRXNlMqu0XhBWUDN6X1RR0udsXlsi6YNu6NuZJaWcU/mZq23BTE+vHjkGvY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG0SV0QrhJomw6SNLJqoq4UJnjRuqwiM6qibeOdvO1SaYCk33e
+	vcjHexVwR6FH1sXXL8but5PcXaerVSz0yC0d8+Erl+EyO2gKMQELYMAATgUOfKc4e9OQGgH9Rdp
+	6Wuw2Ng==
+X-Google-Smtp-Source: AGHT+IHhyh8RoFNFrbu7IWcTsJ8pGyYjiNB6Kv85S1lDZyDd2mWZEdW+4zL3DWhvxw7SMmsA++3rAzK4CyQ=
+X-Received: from pjv14.prod.google.com ([2002:a17:90b:564e:b0:32d:69b3:b7b0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:5491:b0:251:9f29:453e
+ with SMTP id adf61e73a8af0-2926e840fc8mr2025266637.39.1758241993727; Thu, 18
+ Sep 2025 17:33:13 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 18 Sep 2025 17:32:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] serial: qcom_geni: Fix pinctrl deadlock on runtime
- resume
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-Cc: Praveen Talari <praveen.talari@oss.qualcomm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Praveen Talari <quic_ptalari@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- alexey.klimov@linaro.org, dmitry.baryshkov@oss.qualcomm.com,
- andersson@kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
- quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
- quic_arandive@quicinc.com, quic_shazhuss@quicinc.com,
- quic_cchiluve@quicinc.com
-References: <20250917185102.3763398-1-praveen.talari@oss.qualcomm.com>
- <dab18f70-4017-4c06-92c1-91cfd2229540@kernel.org>
- <8e2781ae-34d2-4009-bf8c-56aa1bb6fe85@oss.qualcomm.com>
- <aMuz/C1iT8JtjXbQ@trex> <aMvZ10EsMif/DOP4@trex>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aMvZ10EsMif/DOP4@trex>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250919003303.1355064-1-seanjc@google.com>
+Subject: [PATCH v2 0/5] KVM: Export KVM-internal symbols for sub-modules only
+From: Sean Christopherson <seanjc@google.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Tony Krowiak <akrowiak@linux.ibm.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Jason Herne <jjherne@linux.ibm.com>, 
+	Harald Freudenberger <freude@linux.ibm.com>, Holger Dengler <dengler@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 18/09/2025 19:07, Jorge Ramirez wrote:
-> On 18/09/25 09:25:48, Jorge Ramirez wrote:
->>
->> let's test a bit further Praveen - we need to validate/trace the wake
->> path on a real scenairo to make sure it is not cpu intensive (although I
->> suspect the 2% was due to the storm you described more than to the code
->> path itself)
->>
->> I can then provide the tested-by on the list.
->>
-> 
-> um bluetooh comms are broken - reverting the runtime_pm patch fixes it.
-> and the proposed fix (V2) does not address this scenario.
-> 
-> I agree with the common sentiment, I think the patch should be reverted
-> in linux-next and better test definition shared.
+Use the newfangled EXPORT_SYMBOL_FOR_MODULES() along with some macro
+shenanigans to export KVM-internal symbols if and only if KVM has one or
+more sub-modules, and only for those sub-modules, e.g. x86's kvm-amd.ko
+and/or kvm-intel.ko.
 
-For the record, the revert was already applied.
+Patch 5 gives KVM x86 the full treatment.  If anyone wants to tackle PPC,
+it should be doable to restrict KVM PPC's exports as well.
 
-Any new patch here should carry some more tested-by, before it can get
-applied.
+Based on kvm-x86.  My plan is to take this through the KVM x86 tree as there's
+an annoying conflict with an in-flight patch, and except for the vfio-ap
+change that's been acked, PPC is the only other architecture that's at all
+affected, and KVM PPC is maintained separately.
 
-Best regards,
-Krzysztof
+v2:
+ - Omit the x86 patch, for now.
+ - Drop "GPL" from KVM's macro to match EXPORT_SYMBOL_FOR_MODULES. [Vlastimil]
+
+v1: https://lkml.kernel.org/r/20250729174238.593070-1-seanjc%40google.com
+
+Sean Christopherson (5):
+  KVM: s390/vfio-ap: Use kvm_is_gpa_in_memslot() instead of open coded
+    equivalent
+  KVM: Export KVM-internal symbols for sub-modules only
+  KVM: x86: Move kvm_intr_is_single_vcpu() to lapic.c
+  KVM: x86: Drop pointless exports of kvm_arch_xxx() hooks
+  KVM: x86: Export KVM-internal symbols for sub-modules only
+
+ arch/powerpc/include/asm/kvm_types.h |  15 ++
+ arch/s390/include/asm/kvm_host.h     |   2 +
+ arch/s390/kvm/priv.c                 |   8 +
+ arch/x86/include/asm/kvm_host.h      |   3 -
+ arch/x86/include/asm/kvm_types.h     |  10 ++
+ arch/x86/kvm/cpuid.c                 |  10 +-
+ arch/x86/kvm/hyperv.c                |   4 +-
+ arch/x86/kvm/irq.c                   |  34 +----
+ arch/x86/kvm/kvm_onhyperv.c          |   6 +-
+ arch/x86/kvm/lapic.c                 |  71 ++++++---
+ arch/x86/kvm/lapic.h                 |   4 +-
+ arch/x86/kvm/mmu/mmu.c               |  36 ++---
+ arch/x86/kvm/mmu/spte.c              |  10 +-
+ arch/x86/kvm/mmu/tdp_mmu.c           |   2 +-
+ arch/x86/kvm/pmu.c                   |  10 +-
+ arch/x86/kvm/smm.c                   |   2 +-
+ arch/x86/kvm/x86.c                   | 219 +++++++++++++--------------
+ drivers/s390/crypto/vfio_ap_ops.c    |   2 +-
+ include/linux/kvm_types.h            |  25 ++-
+ virt/kvm/eventfd.c                   |   2 +-
+ virt/kvm/guest_memfd.c               |   4 +-
+ virt/kvm/kvm_main.c                  | 128 ++++++++--------
+ 22 files changed, 324 insertions(+), 283 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/kvm_types.h
+
+
+base-commit: c8fbf7ceb2ae3f64b0c377c8c21f6df577a13eb4
+-- 
+2.51.0.470.ga7dc726c21-goog
+
 
