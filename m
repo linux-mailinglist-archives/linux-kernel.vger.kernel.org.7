@@ -1,260 +1,193 @@
-Return-Path: <linux-kernel+bounces-824520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61388B89754
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:32:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00691B8980A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0727B1C84949
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:32:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629CE5633A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E401DE2BF;
-	Fri, 19 Sep 2025 12:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EED205E3B;
+	Fri, 19 Sep 2025 12:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lsUsd2UU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dRt2gYJd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lsUsd2UU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dRt2gYJd"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b="R+TQUbkj"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F2F19AD89
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B671F152D;
+	Fri, 19 Sep 2025 12:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285135; cv=none; b=dIvvgs0VvCeKFPjta4+pliCvD1EY5qZqzgIEtsZPZt0wYA2+aYPdWEGPFlttvroGSRO5jdYMvXM0fUHh0L3ooV2F9prLZn44gmQ7TvysfM1J6wtYK8v6uIYdBFFkdJwf1K4Bg0r/ACyPQ9U1fU341NimvF4Qqwmi5PYXshTdvM0=
+	t=1758285710; cv=none; b=SICi8NrVJNbT2Da5IEMUbOlls6f+ntjyLX1gD7mNAh1SWdIYNsE9nFmKQAPfbZZmZ5oEXXt6s6DKmMJm8iH4hsEnB9apNENC1F1JzUAwPZfPL56L9qzLk5XDcEB+Z9sT0aCyyv8GLyTWTxjfwgq3K704DyHTBiTOUzGj2wSzl6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285135; c=relaxed/simple;
-	bh=rMjNbJA7qcOh5OJv8unaVyReVLTcdwUg64bV87PakBI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NU1VYrvAprOQMH7gbaE3cYHIFc+c4nBiWX3CRjm79bxKOMfCPrwKFSVxM7o2q1FrDEWKfpHTmi1pL+Vrc+mYRBFWmBWooJ1pIpJ0DsSW8OvlFKqHufI8jxnZ3I5rKaL/JBCwaldQnNedz+G/yRVkVuuhrMgNwZKmr63sjUv6nLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lsUsd2UU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dRt2gYJd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lsUsd2UU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dRt2gYJd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 07F1221D67;
-	Fri, 19 Sep 2025 12:32:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758285131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1758285710; c=relaxed/simple;
+	bh=ym/RfpWNBn+UdG/UgOcvrNKigukIM8ROQPUFBxabl/Y=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=gEO/GHaQbnt3ZxC6GdhL2EdbOvVm9x3gEGyNSJR0m97wkASlrzHe8afiAT/DehYiwmvLR3Zdm0wDQPG+89LtBPbJyaOVFe3Zjh0ouJhOOrH+k1afjqCj2wdTwdLc6bPfiYttMWS1HeWvXxB0QJQxcmfq+JqQkUZISo9eGKuUF2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de; spf=pass smtp.mailfrom=tuxedo.de; dkim=pass (2048-bit key) header.d=tuxedo.de header.i=@tuxedo.de header.b=R+TQUbkj; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tuxedo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedo.de
+Received: from mail.tuxedocomputers.com (localhost [IPv6:::1])
+	(Authenticated sender: cs@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPA id 1B11B2FC0047;
+	Fri, 19 Sep 2025 14:32:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedo.de; s=default;
+	t=1758285141;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
-	b=lsUsd2UUCCDUjvNnFXxh7NBYeBi9j6LKswtKMsv9hjSokiEL9vBrTGDV2dzvgBjqgYZw7a
-	hCyOv9Re9hOKoFjuQxkLklbkt6NmVViGvlYUcVM+YrJItIRVvBHK1UZUljgfN+isS/i9W4
-	WJ7fOQARqVPYer+tm/JBKcIfka9Jwpg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758285131;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
-	b=dRt2gYJdwCpG9JhWwasqlkSdH46dFEiATF5NEypIU94bl3KzFUBcHogR+w0gpD8UvkDXEN
-	k8xaqD9nVuhDyjAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758285131; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
-	b=lsUsd2UUCCDUjvNnFXxh7NBYeBi9j6LKswtKMsv9hjSokiEL9vBrTGDV2dzvgBjqgYZw7a
-	hCyOv9Re9hOKoFjuQxkLklbkt6NmVViGvlYUcVM+YrJItIRVvBHK1UZUljgfN+isS/i9W4
-	WJ7fOQARqVPYer+tm/JBKcIfka9Jwpg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758285131;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H+ecT/d/iO9MHp5q4RbD25dFeGzBgJBi4NJtZOVh5yM=;
-	b=dRt2gYJdwCpG9JhWwasqlkSdH46dFEiATF5NEypIU94bl3KzFUBcHogR+w0gpD8UvkDXEN
-	k8xaqD9nVuhDyjAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E09213A39;
-	Fri, 19 Sep 2025 12:32:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lyc7HUpNzWhFfAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 12:32:10 +0000
-Date: Fri, 19 Sep 2025 14:32:10 +0200
-Message-ID: <87tt0y8vxx.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: cryolitia@uniontech.com
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-sound@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Nie Cheng <niecheng1@uniontech.com>,
-	Zhan Jun <zhanjun@uniontech.com>,
-	Feng Yuan <fengyuan@uniontech.com>,
-	qaqland <anguoli@uniontech.com>,
-	kernel@uniontech.com,
-	linux-modules@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
-In-Reply-To: <20250918-sound-v4-1-82cf8123d61c@uniontech.com>
-References: <20250918-sound-v4-0-82cf8123d61c@uniontech.com>
-	<20250918-sound-v4-1-82cf8123d61c@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=2Fgn+3u0TJ4mDZHVB6HQOPaIDla7NrygN6gCBI9CxgY=;
+	b=R+TQUbkjBajQAsMtOK+KXmXa4mjqWW2xjiNYDxXqmkVXZAAXdjsu1vkHNQLo8Glj0WtJEt
+	Y2d0sTtCFPgu09u28iFj/Wy8MwLWr9IHLa6RjVelcj3ev7kClct5FqEv4/fxrlXXZ+/eKU
+	vNejPs0QZ5lfrKTOia27WFgncKLFGmjOhk3t/euB6wRtZlscASXrlwYctoZhNmgyCGf8ce
+	IsphOP5TM0boqs/thNS6KNRMz7Vbc8uXSh4RqxO2KPnKY8B+Kxeb2kWQEfZMp3pWW991An
+	rGv7Bx574LyaqNhgPV0B43xHBHlEQDMv4Drdn96FSQ4y/dZ9iYbTNjhM6hIfbg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Date: Fri, 19 Sep 2025 14:32:21 +0200
+From: Christoffer Sandberg <cs@tuxedo.de>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Shyam Sundar S K
+ <Shyam-sundar.S-k@amd.com>, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/amd/pmc: Add Stellaris Slim Gen6 AMD to
+ spurious 8042 quirks list
+In-Reply-To: <5f33c919-571b-45b7-b2bb-c755b4195035@kernel.org>
+References: <20250901164216.46740-1-wse@tuxedocomputers.com>
+ <3830aeee-91d7-48ee-b67e-8aefbbd2124e@kernel.org>
+ <c154022c-c00d-46ba-86fb-2030ccab0272@tuxedocomputers.com>
+ <5f33c919-571b-45b7-b2bb-c755b4195035@kernel.org>
+Message-ID: <d4c1b3f882ce2f4522c716c681bbaf7c@tuxedo.de>
+X-Sender: cs@tuxedo.de
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 18 Sep 2025 11:24:30 +0200,
-Cryolitia PukNgae via B4 Relay wrote:
-> --- a/sound/usb/quirks.c
-> +++ b/sound/usb/quirks.c
-> @@ -2446,6 +2446,62 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
->  	{} /* terminator */
->  };
->  
-> +static const char *const snd_usb_audio_quirk_flag_names[] = {
-> +	"get_sample_rate",
-> +	"share_media_device",
+On 2.9.2025 17:25, Mario Limonciello wrote:
+> On 9/2/2025 9:37 AM, Werner Sembach wrote:
+>> 
+>> Am 02.09.25 um 16:15 schrieb Mario Limonciello:
+>>> On 9/1/2025 11:42 AM, Werner Sembach wrote:
+>>>> From: Christoffer Sandberg <cs@tuxedo.de>
+>>>> 
+>>>> Prevents instant wakeup ~1s after suspend
+>>>> 
+>>>> Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
+>>>> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+>>>> ---
+>>>>   drivers/platform/x86/amd/pmc/pmc-quirks.c | 7 +++++++
+>>>>   1 file changed, 7 insertions(+)
+>>>> 
+>>>> diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/ 
+>>>> platform/x86/amd/pmc/pmc-quirks.c
+>>>> index 7ffc659b27944..8b8944483b859 100644
+>>>> --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>>>> +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+>>>> @@ -248,6 +248,13 @@ static const struct dmi_system_id fwbug_list[] 
+>>>> = {
+>>>>               DMI_MATCH(DMI_PRODUCT_NAME, "Lafite Pro V 14M"),
+>>>>           }
+>>>>       },
+>>>> +    {
+>>>> +        .ident = "TUXEDO Stellaris Slim 15 AMD Gen6",
+>>>> +        .driver_data = &quirk_spurious_8042,
+>>>> +        .matches = {
+>>>> +            DMI_MATCH(DMI_BOARD_NAME, "GMxHGxx"),
+>>>> +        }
+>>>> +    },
+>>>>       {}
+>>>>   };
+>>> 
+>>> FYI - this seems to conflict with other changes on review-ilpo-fixes 
+>>> and fixes branches.
+>>> 
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform- 
+>>> drivers-x86.git/commit/drivers/platform/x86/amd/pmc/pmc-quirks.c? 
+>>> h=review-ilpo-fixes&id=c96f86217bb28e019403bb8f59eacd8ad5a7ad1a
+>> Sorry, i will rebase and send a v2.
+>>> 
+>>> Also - a few other comments.
+>>> 
+>>> 1) Do you have line of sight to a firmware (BIOS or EC) fix?  If so; 
+>>> it would be better to specify a specific firmware release that is 
+>>> affected.
+>> 
+>> No
+>> 
+>> @Christoffer you have more knowledge of how realistic it is to get 
+>> this fixed by the odm?
+> 
+> OK, even if you don't get a solution in the firmware in this
+> generation it's good to understand this issue and root cause it so
+> that you can have it fixed properly next generation.
+> 
+> It's not always realistic but ideally bringing a new product to market
+> shouldn't require a quirk.
+> 
 
-I think it's worth to add a comment that this each entry corresponds
-to QUIRK_FLAG_XXX.  Or another idea would be to define enums like:
+Agreed, would of course rather fix it in firmware when it's a firmware 
+problem. Sometimes, like the case for the previous patch (for 
+InfinityBook Pro Gen10) it was unfortunately not possible to locate and 
+solve in time. Was even briefly thought to be fixed before launch 
+because issue disappeared (in that configuration).
 
-enum {
-	QUIRK_TYPE_GET_SAMPLE_RATE,
-	QUIRK_TYPE_SHARE_MEDIA_DEVICE,
-	....
-};
+Another curiosity, this second quirk entry (for the Stellaris Slim Gen6) 
+is actually for previous generation. The issue didn't surface until a 
+major kernel jump. Initially thought to be a regression, however, 
+bisecting ended up in kernels where the issue happened seeming randomly 
+every ~2-3 suspend/resume cycle. Therefore currently thought to be a 
+system configuration dependent race condition whether issue triggers or 
+not.
 
-then redefine QUIRK_FLAG_* like:
+>> 
+>> But even then, we still don't have fwupd support to get the fw update 
+>> out easily
+>> 
+> 
+> 😢
+> 
+>>> 
+>>> 2) Shouldn't you also have DMI_SYS_VENDOR or some other matching keys 
+>>> else set?  Or is it really all these boards with this specific name?
+>> 
+>> I was following the style of the i8042 quirk list where we also always 
+>> only did boardnames
+>> 
+>> Ofc we only tested the boards the odm has sent to us
+>> 
+>> best regards,
+>> 
+>> Werner Sembach
+>> 
+> 
+> But this isn't a hardware problem with the board itself, it's a
+> firmware problem.  The board ID you're using is just a convenient
+> proxy for it.
+> 
 
-#define QUIRK_FLAG_GET_SAMPLE_RATE	BIT_U32(QUIRK_TYPE_GET_SAMPLE_RATE)
-#define QUIRK_FLAG_SHARE_MEDIA_DEVICE	BIT_U32(QUIRK_TYPE_SHARE_MEDIA_DEVICE)
-....
- 
-or
+Firmware is what we're suspecting as well.
 
-#define QUIRK_FLAG(x)	BIT_U32(QUIRK_TYPE_ ## x)
+Small update, according to latest info, a write from Linux, on port 60, 
+supposedly triggers the interrupt. However, so far I have only seen a 
+keyboard reset that is done before suspend and that does not seem to be 
+it.
 
-and use like QUIRK_FLAG(GET_SAMPLE_RATE).
-
-With those changes, the above can be defined more safely like
-
-static const char *const snd_usb_audio_quirk_flag_names[] = {
-	[QUIRK_TYPE_GET_SAMPLE_RATE] = "get_sample_rate",
-	....
-
-or even more drastically by defining some macro for each entry like:
-
-#define QUIRK_STRING_ENTRY(x) \
-	[QUIRK_TYPE_ ## x] = __stringify(x)
-
-and put like:
-
-static const char *const snd_usb_audio_quirk_flag_names[] = {
-	QUIRK_STRING_ENTRY(GET_SAMPLE_RATE),
-	....
-};
-
-In this case, it'll become upper letters, so the parse would need to
-deal with the case-insensitive comparison, though.
-
-> +u32 snd_usb_quirk_flags_from_name(char *name)
-
-Use const char *.
-
-> +{
-> +	u32 flag = 0;
-> +	u32 i;
-
-The iterator can be simple int.
-
-> +	if (!name || !*name)
-> +		return 0;
-> +
-> +	for (i = 0; snd_usb_audio_quirk_flag_names[i]; i++) {
-> +		if (strcmp(name, snd_usb_audio_quirk_flag_names[i]) == 0) {
-> +			flag = (1U << i);
-
-Use BIT_U32(i)
-
-> +			break;
-
-We can return the value directly, so flag variable can be dropped.
-
->  void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
->  {
->  	const struct usb_audio_quirk_flags_table *p;
-> @@ -2454,10 +2510,28 @@ void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
->  		if (chip->usb_id == p->id ||
->  		    (!USB_ID_PRODUCT(p->id) &&
->  		     USB_ID_VENDOR(chip->usb_id) == USB_ID_VENDOR(p->id))) {
-> -			usb_audio_dbg(chip,
-> -				      "Set quirk_flags 0x%x for device %04x:%04x\n",
-> -				      p->flags, USB_ID_VENDOR(chip->usb_id),
-> -				      USB_ID_PRODUCT(chip->usb_id));
-> +			unsigned long flags = p->flags;
-> +			unsigned long bit;
-> +
-> +			for_each_set_bit(bit, &flags,
-> +					 BYTES_TO_BITS(sizeof(p->flags))) {
-> +				const char *name =
-> +					snd_usb_audio_quirk_flag_names[bit];
-> +
-> +				if (name)
-> +					usb_audio_dbg(chip,
-> +						      "Set quirk flag %s for device %04x:%04x\n",
-> +						      name,
-> +						      USB_ID_VENDOR(chip->usb_id),
-> +						      USB_ID_PRODUCT(chip->usb_id));
-> +				else
-> +					usb_audio_warn(chip,
-> +						       "Set unknown quirk flag 0x%lx for device %04x:%04x\n",
-> +						       bit,
-> +						       USB_ID_VENDOR(chip->usb_id),
-> +						       USB_ID_PRODUCT(chip->usb_id));
-> +			}
-
-This could be better factored out as a function.
+> I've seen the debugging for a few issues like this and it can be all
+> across the board.  A few examples:
+> 
+> * polarity issues
+> * debounce issues
+> * incorrectly set PCD (Kinda like a Kconfig for BIOS)
 
 
-thanks,
-
-Takashi
+Thanks for the ideas, any further insights are of course very welcome.
 
