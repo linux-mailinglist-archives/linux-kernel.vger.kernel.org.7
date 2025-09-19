@@ -1,193 +1,120 @@
-Return-Path: <linux-kernel+bounces-824441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E26B8936C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:14:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90AE0B89372
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDA6178247
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:13:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5147C7C063A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAB930C349;
-	Fri, 19 Sep 2025 11:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8901E30CB30;
+	Fri, 19 Sep 2025 11:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="L/j5DNx6"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfM4BSy+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3C142AA9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43C830C100
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758280433; cv=none; b=TwkMZY3/Mpd1l5zj78n/RD9z1gzu0aUKvT/JhASYoijwQIYhJTXfpn73dtVzL9VoZD9nYj2KdLOL+bhGhXoi/O9QnENQLfPOzFsJ77kXKKmXLbbNXNss1DAWS8MKwW0jo4mf58lfzwxRfvOxbbRz8Bc4XTGHQmpzBBQmMyAZYFA=
+	t=1758280468; cv=none; b=EbbbXKW1a9CsWnAoKEf2Q6En/1hUPZpEknHz84VkdcaI07LWxgHTHVTyXrJTFq8VtODTSnn0Sl4NZ53CVJ9VjDMAL52H/c9IrTCNBAQqYJoDpUD4UKwMm2U9NGUjiiIAeWlWMN7fHbG1ZkOgx4v7+hck6muzAZamzQZjNa0mStk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758280433; c=relaxed/simple;
-	bh=zI4hMcJekA4d+GngP6BKcYd/GM0TeioGCxSeoyDd38k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUquZfKOJWTI6MlUMGrmuTeqFH91IQsNfI0vvBtQmLgw0jyQ8THhndWwAazEaojLkmGSzoxm0CTXr80nlhx/qWpq0A6iGn0iOsQyhp6xPWJ6MkFToRpUAZYAMP6JuJkV+5fmaP6uXVk+2BPtKPvKyeD2vvn/xrPEDU6KWuHtkfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=L/j5DNx6; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=7IAnsxZjH5AhBJ/tfYhtdLrenrS33yCd6ZMl51qI+Nk=; b=L/j5DNx6AWdvT0FlzORjKGkjTA
-	oL4SJ9QjArw4uxAdFvmAEFtkBbMIVCAumtYWbxSJKW4gEh4Bxqh+7kmSfC8++euchHKon8xbUIy96
-	BzdDtMsYN9WfDOdMPEuEFvqzSnboGWeg68JtvGrytlT5DlkDnbqEBiVGNixkurpqIJoskcCQiqIEC
-	Z/suW+dy6X18IxjTgU2Mbo3boSl0EGg0P5FBxETSN5qSMA2u/xQlEJFQoRv1VOdyIFcM+tqTIRdZW
-	3gdYlWxtbNVi6VpggaaE+nX3owigyKFgMOQ2ZCYEAO2TKs2a58z9AYnlHKZ0Lkwmi6105qwIZahRs
-	JHa4kY+A==;
-Received: from 179-125-87-227-dinamico.pombonet.net.br ([179.125.87.227] helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uzZ3M-00E3o4-CX; Fri, 19 Sep 2025 13:13:24 +0200
-Date: Fri, 19 Sep 2025 08:13:15 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@mailbox.org>,
-	Huang Rui <ray.huang@amd.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH RFC v2 0/3] drm/ttm: allow direct reclaim to be skipped
-Message-ID: <aM06y7MP6LzHMBK7@quatroqueijos.cascardo.eti.br>
-References: <20250918-ttm_pool_no_direct_reclaim-v2-0-135294e1f8a2@igalia.com>
- <6f92ff06-04c3-440b-becb-50a7693ecc39@amd.com>
- <67c83b24-01b6-4633-8645-52dc746c32e2@igalia.com>
- <96c117bc-389f-42d9-952e-894768aad780@amd.com>
+	s=arc-20240116; t=1758280468; c=relaxed/simple;
+	bh=3oHB5M17fAPCaUOWIy7staPxRqP0sgNkjBo8MB8iCs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QoIbM1sVWKie2JVrMnUDAI1yPVTXpo72y1JauTych+O5eA+5fDHHHXVzYpz2dtQxu0kWRBfLIaS6/trYhWDGIlIbGA2VNkhic0h2JPp4yk7p3JrZJcY2DWMGqh5hOGqQvYZgwzjzXLRHSDcZEJIG/wFyzGxvOaRPyx7TlYujNRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DfM4BSy+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A03C4CEF0
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758280467;
+	bh=3oHB5M17fAPCaUOWIy7staPxRqP0sgNkjBo8MB8iCs0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DfM4BSy+QSCC6rMmSA/D99tHgU9QKq2v2SSL3ogrmPtwbw9X85Lxc4XRLp7e5LorE
+	 /Nu/TtylwU3/qNN3pTVSuKfI9Lknp1+9c7IcwE6SAwoySmEzqjdiog81888bXG0iob
+	 viz/Ylyw8fvwG/24ETNC5yk1dLqk4Gs/jn86IQ70NZVfJbbarKkUoji/WNEXqhuOBM
+	 an31vr4q43dYnDtzcGw0WlfFK84ETFxTjrWCc8hq3Qm2thAcjIn+sxbl+g/pq9N9nv
+	 VfIU+xTrPbbfl+AkrGxUT6BOtznxp+n/o4VosQ6FpHvpynXSfGbaaGnu1Vf7jHfC+f
+	 rFasugLZouMqQ==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-750c5378b96so1067337a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:14:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWr8mFaPVHvWvOgPZAAPnfkmr7aB8y2FNWm5GZXZT25yAhAdudVsyEdwpM2hmZw3rn0BIPJ1L3Cuvbvnak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZeFaOEYyGiC84GnfHBYKGB3CcYajPm0DEdxMoplLicLtZ2mDv
+	EvdoNn9Bi5HdAR9GNMswAINunlNVoR9SrUcPSjMSw5MygheISZkQSycfp7er1zWvGpb4F8Ft5l1
+	2IvdQFu2KYxjdjBz1eTdklmUCS1IVAJo=
+X-Google-Smtp-Source: AGHT+IGLpj/lQRwBPOEbZHrxrK3WqjA8s9QwnWqC1dbMSAnpOxnRlgLPlZlXUMZqO7PDq4hzKwhSrE/rAfQ02rJ74jM=
+X-Received: by 2002:a05:6830:631b:b0:756:d6ab:e7a9 with SMTP id
+ 46e09a7af769-76902d5b77fmr3868391a34.13.1758280461874; Fri, 19 Sep 2025
+ 04:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <96c117bc-389f-42d9-952e-894768aad780@amd.com>
+References: <3374815.aeNJFYEL58@rafael.j.wysocki> <20250919050928.6sprmdpz2pwgydcc@lcpd911>
+In-Reply-To: <20250919050928.6sprmdpz2pwgydcc@lcpd911>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 19 Sep 2025 13:14:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hCaLebTwtm36dxxG0NBOc1DVPj9cjYHKOWm5kApNa1TQ@mail.gmail.com>
+X-Gm-Features: AS18NWBzT6h889TaE7l6WW4Iz6YZGG6Dk_VjK05Co-aXWxzmQI-FiRCRfLLeNjU
+Message-ID: <CAJZ5v0hCaLebTwtm36dxxG0NBOc1DVPj9cjYHKOWm5kApNa1TQ@mail.gmail.com>
+Subject: Re: [PATCH v1] cpuidle: Fail cpuidle device registration if there is
+ one already
+To: Dhruva Gole <d-gole@ti.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 10:01:26AM +0200, Christian König wrote:
-> On 19.09.25 09:43, Tvrtko Ursulin wrote:
-> > On 19/09/2025 07:46, Christian König wrote:
-> >> On 18.09.25 22:09, Thadeu Lima de Souza Cascardo wrote:
-> >>> On certain workloads, like on ChromeOS when opening multiple tabs and
-> >>> windows, and switching desktops, memory pressure can build up and latency
-> >>> is observed as high order allocations result in memory reclaim. This was
-> >>> observed when running on an amdgpu.
-> >>>
-> >>> This is caused by TTM pool allocations and turning off direct reclaim when
-> >>> doing those higher order allocations leads to lower memory pressure.
-> >>>
-> >>> Since turning direct reclaim off might also lead to lower throughput,
-> >>> make it tunable, both as a module parameter that can be changed in sysfs
-> >>> and as a flag when allocating a GEM object.
-> >>>
-> >>> A latency option will avoid direct reclaim for higher order allocations.
-> >>>
-> >>> The throughput option could be later used to more agressively compact pages
-> >>> or reclaim, by not using __GFP_NORETRY.
-> >>
-> >> Well I can only repeat it, at least for amdgpu that is a clear NAK from my side to this.
-> >>
-> >> The behavior to allocate huge pages is a must have for the driver.
-> > 
-> > Disclaimer that I wouldn't go system-wide but per device - so somewhere in sysfs rather than a modparam. That kind of a toggle would not sound problematic to me since it leaves the policy outside the kernel and allows people to tune to their liking.
-> 
-> Yeah I've also wrote before when that is somehow beneficial for nouveau (for example) then I don't have any problem with making the policy device dependent.
-> 
-> But for amdgpu we have so many so bad experiences with this approach that I absolutely can't accept that.
+Hi,
 
-The mechanism here allows it to be set per device. I even considered that
-as a patch in the RFC, but I opted to get it out sooner so we could have
-this discussion.
+On Fri, Sep 19, 2025 at 7:09=E2=80=AFAM Dhruva Gole <d-gole@ti.com> wrote:
+>
+> Hi Rafael,
+>
+> On Sep 18, 2025 at 23:19:20 +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Refuse to register a cpuidle device if the given CPU has a cpuidle
+> > device already and print a message regarding it.
+> >
+> > Without this, an attempt to register a new cpuidle device without
+> > unregistering the existing one leads to the removal of the existing
+> > cpuidle device without removing its sysfs interface.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpuidle/cpuidle.c |    8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > --- a/drivers/cpuidle/cpuidle.c
+> > +++ b/drivers/cpuidle/cpuidle.c
+> > @@ -635,11 +635,17 @@ static void __cpuidle_device_init(struct
+> >  static int __cpuidle_register_device(struct cpuidle_device *dev)
+> >  {
+> >       struct cpuidle_driver *drv =3D cpuidle_get_cpu_driver(dev);
+> > +     unsigned int cpu =3D dev->cpu;
+> >       int i, ret;
+> >
+> >       if (!try_module_get(drv->owner))
+> >               return -EINVAL;
+> >
+> > +     if (per_cpu(cpuidle_devices, cpu)) {
+> > +             pr_info("CPU%d: cpuidle device already registered\n", cpu=
+);
+> > +             return -EEXIST;
+>
+> Here we return prematurely after a try_module_get right?
+> Do we need a module_put() similar to how you do it later by calling
+> unregister_device function by checking ret =3D cpuidle_coupled_register_d=
+evice ?
 
-> 
-> > One side question thought - does AMD benefit from larger than 2MiB contiguous blocks? IIUC the maximum PTE is 2MiB so maybe not? In which case it may make sense to add some TTM API letting drivers tell the pool allocator what is the maximum order to bother with. Larger than that may have diminishing benefit for the disproportionate pressure on the memory allocator and reclaim.
-> 
-> Using 1GiB allocations would allow for the page tables to skip another layer on AMD GPUs, but the most benefit is between 4kiB and 2MiB since that can be handled more efficiently by the L1. Having 2MiB allocations then also has an additional benefit for L2.
-> 
-> Apart from performance for AMD GPUs there are also some HW features which only work with huge pages, e.g. on some laptops you can get for example flickering on the display if the scanout buffer is back by to many small pages.
-> 
-> NVidia used to work on 1GiB allocations which as far as I know was the kickoff for the whole ongoing switch to using folios instead of pages. And from reading public available documentation I have the impression that NVidia GPUs works more or less the same as AMD GPUs regarding the TLB.
-> 
-> Another alternative would be that we add a WARN_ONCE() when we have to fallback to lower order pages, but that wouldn't help the end user either. It just makes it more obvious that you need more memory for a specific use case without triggering the OOM killer.
-> 
-> Regards,
-> Christian.
-> 
-> > 
-> > Regards,
-> > 
-> > Tvrtko
-> > 
-> >> The alternative I can offer is to disable the fallback which in your case would trigger the OOM killer.
-> >>
+Good catch, thanks!
 
-Warning could be as simple as removing __GFP_NOWARN. But I don't think we
-want either a warning or to trigger the OOM killer when allocating lower
-order pages are still possible. That will already happen when we get to 0
-order pages, where there is no fallback available anymore, and, then, it
-makes sense to try harder and warn if no page can be allocated.
-
-Under my current workload, the balance skews torwards 0-order pages,
-reducing the amount of 10 and 9 order pages to half, when comparing runs
-with direct reclaim and without direct reclaim. So, I understand your
-concern in respect to the impact on the GPU TLB and potential flickering.
-Is there a way we can measure it on the devices we are using? And, then, if
-it does not show to be a problem on those devices, would making this be a
-setting per-device be acceptable to you? In a way that we could have in
-userspace a list of devices where it is okay to prefer not to reclaim over
-getting huge pages and that could be set if the workload prefers lower
-latency in those allocations?
-
-Thanks.
-Cascardo.
-
-> >> Regards,
-> >> Christian.
-> >>
-> >>>
-> >>> Other drivers can later opt to use this mechanism too.
-> >>>
-> >>> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> >>> ---
-> >>> Changes in v2:
-> >>> - Make disabling direct reclaim an option.
-> >>> - Link to v1: https://lore.kernel.org/r/20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com
-> >>>
-> >>> ---
-> >>> Thadeu Lima de Souza Cascardo (3):
-> >>>        ttm: pool: allow requests to prefer latency over throughput
-> >>>        ttm: pool: add a module parameter to set latency preference
-> >>>        drm/amdgpu: allow allocation preferences when creating GEM object
-> >>>
-> >>>   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    |  3 ++-
-> >>>   drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  3 ++-
-> >>>   drivers/gpu/drm/ttm/ttm_pool.c             | 23 +++++++++++++++++------
-> >>>   drivers/gpu/drm/ttm/ttm_tt.c               |  2 +-
-> >>>   include/drm/ttm/ttm_bo.h                   |  5 +++++
-> >>>   include/drm/ttm/ttm_pool.h                 |  2 +-
-> >>>   include/drm/ttm/ttm_tt.h                   |  2 +-
-> >>>   include/uapi/drm/amdgpu_drm.h              |  9 +++++++++
-> >>>   8 files changed, 38 insertions(+), 11 deletions(-)
-> >>> ---
-> >>> base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
-> >>> change-id: 20250909-ttm_pool_no_direct_reclaim-ee0807a2d3fe
-> >>>
-> >>> Best regards,
-> >>
-> > 
-> 
+I need to move the new check above the driver module reference counting.
 
