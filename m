@@ -1,157 +1,78 @@
-Return-Path: <linux-kernel+bounces-825129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E8E3B8B0F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:11:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E244BB8B0E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFCA1CC2361
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F4FA04743
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B772848BB;
-	Fri, 19 Sep 2025 19:11:29 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6E7284884;
+	Fri, 19 Sep 2025 19:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agZDBSR6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D1D2848BE
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 19:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E425264A77;
+	Fri, 19 Sep 2025 19:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758309089; cv=none; b=LRCMqRuPADX7oTuhvbFXP/FmhJjy3PBw76CTn5THFZewOVh91lhIHbjT6LmW+UnGUeWDo+5/i3GaP85NnCaF55efc9ulk1g5hAtylEkrogcUtB0MvD/V2w92rEJNGRpZ5n+GmBWsK2hlIkVmyuUO6rDagpsdJ5vrItRJ0weVZBs=
+	t=1758309070; cv=none; b=Fk7fpsOBw3/yTXdWoTAs9Gaon1xXkrlc+jIB0cmi/2Mcb7KvqThd3o9PUXGyfjskZwF73gRhTO/UOHv3y1JGw88HsevHp6zU5aQbV2LlFuZ0M4BeYYIAuK3FSbMtF3h65hkO77aP6O60gt4G9U0syrI9M918mfGwECZe7yky7gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758309089; c=relaxed/simple;
-	bh=fJ9NrCI2MnKJVF0y9MVjIWlY1cIc3TMrxlHdOqfrI0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EM0L9DRo84hlv5FUWLw87ExlabFAliPFwxASbtMdEI2LIUEJNHQin9oBPT0shMI5r1Jrg13Uh1okzYiLvLFeUHV6mYMRYbgu37DhhDWmC/upd1705Z07bDsfx4KGGhdksCf6QiFfYSsf9DaoMN1m0dfFu9dvUy2EgBXpU42hnUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uzgVg-0003TW-4W; Fri, 19 Sep 2025 21:11:08 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uzgVe-0029df-3A;
-	Fri, 19 Sep 2025 21:11:07 +0200
-Received: from pengutronix.de (ip-185-104-138-125.ptr.icomera.net [185.104.138.125])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id BF5294751F9;
-	Fri, 19 Sep 2025 19:11:02 +0000 (UTC)
-Date: Fri, 19 Sep 2025 21:11:00 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Aswath Govindraju <a-govindraju@ti.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
-	Haibo Chen <haibo.chen@nxp.com>, linux-can@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 3/9] phy: phy-can-transceiver: Add dual channel
- support for TJA1048
-Message-ID: <20250919-placid-mauve-crayfish-4bac17-mkl@pengutronix.de>
-References: <20250909-can-v6-0-1cc30715224c@nxp.com>
- <20250909-can-v6-3-1cc30715224c@nxp.com>
+	s=arc-20240116; t=1758309070; c=relaxed/simple;
+	bh=Rh7IHKpMt/9sWFrKE7pmSlw2jayweqCqtPQdopF0wls=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=d9d2MGf3TPnfdf2xTb0oFqxMwZVNhFtaUmaZdGYD6k04AcqMXUcAfnU5rkfAChvNKm4Q379EZQTpwA5Q2P1NTfmf9mvx8nl+WRQU1vbQYGis5m52z9Rw9P2Ws68oc1EYY7/9e7C5MppifzRcamzOxbZmIjcRH7pZRNfPt5dcRuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agZDBSR6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E45AC4CEF7;
+	Fri, 19 Sep 2025 19:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758309070;
+	bh=Rh7IHKpMt/9sWFrKE7pmSlw2jayweqCqtPQdopF0wls=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=agZDBSR6lEGIgGGGi801w6XROoC2WMargyxHmSQSDbM5FteUI3B1ulXCx02OM6Te+
+	 hfZjP/P6AbTaiEwFEEzfKfelbOICJ6K553row+gKSByM7fLD7su3+X+3Mvoecn7b0t
+	 byQanSLQe5Hqh8UTqCAaASZLtvBt0YcoNGLjKkDdmMl0HED3PaXVeA3C4RFXH6q+Rb
+	 g7hgSTT+87FAeaPohebBFojkRQAI4gT3nGdQejgzUyZ+8ab40yOvWEKhbcNukU9U75
+	 cdjtEqs8prMvP5DLP940DF5mN0wZsIg2z2XSREVDXMBosNEqFqUswdX90sOvN7flqe
+	 82QhJqMeRAOqg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE06039D0C20;
+	Fri, 19 Sep 2025 19:11:10 +0000 (UTC)
+Subject: Re: [GIT PULL] MMC fixes for v6.17-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250919104057.152796-1-ulf.hansson@linaro.org>
+References: <20250919104057.152796-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-mmc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250919104057.152796-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.17-rc2-2
+X-PR-Tracked-Commit-Id: 77a436c93d10d68201bfd4941d1ca3230dfd1f40
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ffa7119cd1294dc1814e582dc07ffeb953ae7b26
+Message-Id: <175830906923.3669786.18174875098601188675.pr-tracker-bot@kernel.org>
+Date: Fri, 19 Sep 2025 19:11:09 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ddcs7xwxfzkwj3u5"
-Content-Disposition: inline
-In-Reply-To: <20250909-can-v6-3-1cc30715224c@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+The pull request you sent on Fri, 19 Sep 2025 12:40:57 +0200:
 
---ddcs7xwxfzkwj3u5
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 3/9] phy: phy-can-transceiver: Add dual channel
- support for TJA1048
-MIME-Version: 1.0
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.17-rc2-2
 
-On 09.09.2025 13:40:13, Peng Fan wrote:
-> - Introduce new flag CAN_TRANSCEIVER_DUAL_CH to indicate the phy has two
->   channels.
-> - Alloc a phy for each channel
-> - Support TJA1048 which is a dual high-speed CAN transceiver with sleep
->   mode supported.
-> - Add can_transceiver_phy_xlate for parsing phy
->=20
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/phy/phy-can-transceiver.c | 91 ++++++++++++++++++++++++++++-----=
-------
->  1 file changed, 65 insertions(+), 26 deletions(-)
->=20
-> diff --git a/drivers/phy/phy-can-transceiver.c b/drivers/phy/phy-can-tran=
-sceiver.c
-> index 6415c6af0e8414a6cc8d15958a17ee749a3f28e9..f06b1df76ada023f432dce892=
-c3346f45397ab54 100644
-> --- a/drivers/phy/phy-can-transceiver.c
-> +++ b/drivers/phy/phy-can-transceiver.c
-> @@ -17,6 +17,7 @@ struct can_transceiver_data {
->  	u32 flags;
->  #define CAN_TRANSCEIVER_STB_PRESENT	BIT(0)
->  #define CAN_TRANSCEIVER_EN_PRESENT	BIT(1)
-> +#define CAN_TRANSCEIVER_DUAL_CH		BIT(2)
->  };
-> =20
->  struct can_transceiver_phy {
-> @@ -29,6 +30,7 @@ struct can_transceiver_phy {
->  struct can_transceiver_priv {
->  	struct can_transceiver_phy *can_transceiver_phy;
->  	struct mux_state *mux_state;
-> +	int num_ch;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ffa7119cd1294dc1814e582dc07ffeb953ae7b26
 
-As a flexible array this looks like:
+Thank you!
 
-struct can_transceiver_priv {
-        struct can_transceiver_phy *can_transceiver_phy;
-        int num_ch;
-        struct mux_state mux_state[] __counted_by(num_ch);
-}
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ddcs7xwxfzkwj3u5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjNqsEACgkQDHRl3/mQ
-kZxw3Af+PBvxMN1nt5aRZStLzP5rPgSQdXAJRyW4P7nGZlb7LEBiFIiAeFkNhNOz
-xUXylSex50EhW2f23ZQar/WxcJ77N70yVV0DWbGHllNfK36ZVBPcjQ2qio0qk3rW
-WTlyQYrMjS0WCKpIlWHw9qBCR+Ph7+rzz9+TTQiYEsxW6vG/AAhyK7+0jI+bePdh
-0tDpTPadOfy+fO+sK8Sc8zS+/YDo8VlAJGBlPokJN52ikH8deUo5m1PgB66hM+pS
-JF8fzV9FLUxgD5pNQ6jGryJBwz3VclLmXdx4uR8cF9c1X+OOrgEbKz60t+1qqaZx
-/iXcb09yK9e/3fk7SWEzyT/KniCEuw==
-=XG5h
------END PGP SIGNATURE-----
-
---ddcs7xwxfzkwj3u5--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
