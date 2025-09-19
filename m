@@ -1,112 +1,180 @@
-Return-Path: <linux-kernel+bounces-823987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F083B87DDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:32:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB11B87DED
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7BB1C8434E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED853AF5B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBAC26529A;
-	Fri, 19 Sep 2025 04:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10B9269CE5;
+	Fri, 19 Sep 2025 04:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9GesE2i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8jG/QFb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2311FDA;
-	Fri, 19 Sep 2025 04:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69071FDA;
+	Fri, 19 Sep 2025 04:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758256356; cv=none; b=AJ9JaQxlZ+iXR/FmaCS/0UyyiDz0VOXaFduEpgKT1ui/70ZZmn0oMCyU377RUtDUWaLt22xiNxTrNWgglrfH42rS46jYr9x9WzcVKoXWYfOkDhexzFruCBxRopK4NVA3Bqg4SP53PjSgRYSgWZIkM4qGmc0CkF6heACxobVqy1Y=
+	t=1758256485; cv=none; b=h9Qb/hEjg2ydbEJCmTw/Sy2yBgGUXJJ6z5FwBCgZ3LzSvOyY8LGvFmoLHYQjj292IuOw7NAB3ZJbKadVrY/AKDyHbiwa4b2KlpN1bXNUBFJuFB4tG23Mbu1ZD8ln/zl8Ft1xUOudUSzXsM6GMLwhSZ7bVuMNpD0RqRvI+Msl7vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758256356; c=relaxed/simple;
-	bh=3a5ARfQN6M49MZNrLnb8vQh0OVxHf2I5dFYOmr8qHDY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XpHwbzDSKx4HqJSYzxXSwRhXqekWzzCPnvCKTOKzN9z8xYff/er125vj1EujAIPsQ8UBcsn55XLfo+0THnn1ficA4gWuKP5bvVyU8QiHiRdGzG7jNDCszGguAFdob8MxghcolRysQc7F2n/Zbu23pA5c0zXbIFh3P2vfUW+BCII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9GesE2i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2412FC4CEF0;
-	Fri, 19 Sep 2025 04:32:35 +0000 (UTC)
+	s=arc-20240116; t=1758256485; c=relaxed/simple;
+	bh=BtgRIAv1NeNf0H/TkBpkzJcOUAc+TUTV3AA3RFSt2uA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RFFjO4tjdfc8HVhrWuK5o0gBWS4N66Op5QRn++FsMdbZ3OqakYl356f1qPJol1+L6DKB+O1dDZ44TuHXTXr+uxdTDaDT3lRbiyJg9BJITv0+iIED+7GfrnicG8jja92RambBFKKpfgQcg0yHQSMsD1Rt2L4h2iGWLpCA/rXk6NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8jG/QFb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F31C4CEF0;
+	Fri, 19 Sep 2025 04:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758256355;
-	bh=3a5ARfQN6M49MZNrLnb8vQh0OVxHf2I5dFYOmr8qHDY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=a9GesE2i8kYtgEJK/zxCLE/hVnQBvVSQXSRZLkkOiZU/t4xaOaTE5rLYrHfsjAaEA
-	 e+hacSlEKswWMzU+rONH0cy8S/SNgJrzWmgeza3M9C7khzSWUTQA4w1uVeiWWVOKxH
-	 7DH17A9jhPOPxoaocsdW0vJAqhCAuvHc0b2E7xQ6QniWdc003vWjqyHhOfpRrEod4w
-	 XrdZ22YTQBUNjkyyymtq95l2ItJAAnYtIYbXiOoKm+nbc9tdHxVrHdnyFu2PCUvrhh
-	 imn6tkgLb9x4oeIzzMbMEIDR4uz62paJyWRzyLVvHs6OeULtHEkIdEJjLr4pfd6j6m
-	 KpYEIFLhp8F5Q==
-Date: Thu, 18 Sep 2025 23:32:33 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1758256484;
+	bh=BtgRIAv1NeNf0H/TkBpkzJcOUAc+TUTV3AA3RFSt2uA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N8jG/QFbGCFEov41U0drKBovbF2odF+GKKExLO0IiwmvFF7QIFZSbI2uj0Xvodl2G
+	 GtfUwBtMyt2ggtrFxKO9JPqBXVJ2w5Q7U6ASxkbNZL2omDwcgn/6XvUoExgfTtPUFY
+	 PR/JWro5dkoVc/bz4x5Ay5tL1IYXviSFwQm/OrUNc6DpaHyMk4pVUhwHMvN+nRtPL9
+	 BPsOAaKY8CpnZQgDwvoEyhQZSx+dk9PPI6s4yK/h5mVoouWIOTGfqAWARA0EZEjAE9
+	 F3sa8TeJ8DZv3pfwps6d01Vdi3+Eq4QspJQBAAhmelzbkH3/YVM30rZ3pHU4AFDtjW
+	 sTQ70pg5TwH4Q==
+Message-ID: <6c195b42-d994-4d24-9c40-48d8069304e3@kernel.org>
+Date: Fri, 19 Sep 2025 13:34:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Alan Stern <stern@rowland.harvard.edu>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-In-Reply-To: <20250919025712.719246-4-ryan_chen@aspeedtech.com>
-References: <20250919025712.719246-1-ryan_chen@aspeedtech.com>
- <20250919025712.719246-4-ryan_chen@aspeedtech.com>
-Message-Id: <175825635392.3818629.9388010825543490994.robh@kernel.org>
-Subject: Re: [PATCH v3 3/4] dt-bindings: usb: uhci: Add Aspeed AST2700
- compatible
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
+ QCS8300
+To: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+ Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Kuogee Hsieh <quic_khsieh@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
+ <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
+ <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
+ <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On Fri, 19 Sep 2025 10:57:11 +0800, Ryan Chen wrote:
-> Add the compatible string for Aspeed AST2700 SoC.
+On 18/09/2025 13:14, Yongxing Mou wrote:
 > 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
->  Documentation/devicetree/bindings/usb/usb-uhci.yaml | 10 ++++++++++
->  1 file changed, 10 insertions(+)
 > 
+> On 9/18/2025 9:01 AM, Krzysztof Kozlowski wrote:
+>> On Thu, Sep 11, 2025 at 07:24:03PM +0800, Yongxing Mou wrote:
+>>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
+>>>
+>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+>>
+>> Patch v11 and still basic issues. I am very dissapointed.
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It looks like you received a tag and forgot to add it.
+>>
+>> If you do not know the process, here is a short explanation:
+>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+>> versions of patchset, under or above your Signed-off-by tag, unless
+>> patch changed significantly (e.g. new properties added to the DT
+>> bindings). Tag is "received", when provided in a message replied to you
+>> on the mailing list. Tools like b4 can help here. However, there's no
+>> need to repost patches *only* to add the tags. The upstream maintainer
+>> will do that for tags received on the version they apply.
+>>
+>> Please read:
+>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>
+>> If a tag was not added on purpose, please state why and what changed.
+>> </form letter>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> Hi,
+> Sorry for the confusion. I did intend to remove the Reviewed-by tag, and 
+> I mentioned this in the cover letter, but maybe explanation in 
+> cover-letter was probe not clear at all.
+> 
+> This patch includes three changes:
+> 
+> 1.In the displayport-controller compatible property, "items" was changed 
+> to "contains".
+> 2.Use "qcom,sa8775p-dp" as fallback.
+> 
+> These changes might not be considered significant. So I’ll be more 
+> careful next time. Thanks~
 
-My bot found errors running 'make dt_binding_check' on your patch:
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/usb/usb-uhci.yaml:57:2: [error] syntax error: expected <block end>, but found '<block sequence start>' (syntax)
-./Documentation/devicetree/bindings/usb/usb-uhci.yaml:58:7: [warning] wrong indentation: expected 5 but found 6 (indentation)
-./Documentation/devicetree/bindings/usb/usb-uhci.yaml:62:5: [warning] wrong indentation: expected 3 but found 4 (indentation)
+I really do not expect v12 to receive so significant changes in the
+first place. If you keep sending us buggy code, which then you keep
+changing after review, I will just not do the review. It's easier for me
+to wait for v20...
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/usb-uhci.yaml: ignoring, error parsing file
-./Documentation/devicetree/bindings/usb/usb-uhci.yaml:57:2: expected <block end>, but found '<block sequence start>'
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/usb/usb-uhci.example.dts'
-Documentation/devicetree/bindings/usb/usb-uhci.yaml:57:2: expected <block end>, but found '<block sequence start>'
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/usb/usb-uhci.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250919025712.719246-4-ryan_chen@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Best regards,
+Krzysztof
 
