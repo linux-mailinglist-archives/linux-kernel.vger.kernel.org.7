@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-825179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E379B8B2F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBFFB8B2FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50089A0405E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:22:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A767E3B49
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB24829B22F;
-	Fri, 19 Sep 2025 20:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B6A289E30;
+	Fri, 19 Sep 2025 20:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZykDN+ON"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LLMYRkHR"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3A425DAF0
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BAB1DEFE8
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758313370; cv=none; b=bn3yAVLqiohHnnJw3ZyLZyafHVJR2A7/H2v+tY9O73STdxT5q2l6MwzQAqaTZDs7AavgqBwZeo9nyvpDHWVPl5H49KRsOsfnwkH+NEKqPZycCh9CJcISxqrcvhrx5jClo8Mns+f/Tv+Kwm4j03IgKi5RAE9B0n5kplIrokKNcAw=
+	t=1758313547; cv=none; b=EpZpz6fBSkI4tKebV1euW3K46CejPgGF2BUSYD76mWdIz/1ANXFhn27hdEHAaXfanjRkqpBL251Ol0jyY6pvyFLpISFkDHUWVLlaD6baDfHcNQyumBWaYIdBPtKkjUJVjE0lF04MlEDnPdxdHoRLjRpxBryMwgRIPL4Gmoo4sQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758313370; c=relaxed/simple;
-	bh=rmCarrm6/v36sWR5R5CvJ9C5raSkdoNouVGhkwQpN3k=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rU8lbxeRSqRz1BduK2pW5lhhFBIbC0onpEnB08ulgCCH31ifaMndAI9Tsu/fwBLxJlhOF08Ug2OicX9lRUNxfySw+gCc/JulIEVdxcEDAtdGsiJkTZl5B8NC8zsy2NcMjmVdBhzM5SgkibiBMJsLwDmVM96WXRrHwGwq710uT3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZykDN+ON; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-78f30dac856so29410826d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758313366; x=1758918166; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4Cy206vdHXoNwug0xkOGBRn67z0vWl3+IUBx20uq9Ok=;
-        b=ZykDN+ONryel5Vhd4kacbsQLcr/qSwC22938iJ9zWRy8+48r/0VtWnq0JaPB/22IC0
-         DEe9qXlCRvsbntsYVsIN67V+j+FpmHukGfgpUvk979KGL29sx4rK5fcrVSuoqnn00fVS
-         XA74KN2F8bKPwAymP6q9hy523q68pf16K5++xvRFWGwD97ZMfDY3VKsYn9JoH66QTjxW
-         lRLmnwce5Cnn0Qh6RZX4wNnjALMlaRylAwNfxqCwInanmuzcukdqNzH+jmHRfNqepnsj
-         fB3sXppIyb5brl5RVVV2gHKAYsJbX4yKCrC0CYM68lhwuBoEOhNsX/wPENsmncJ3MfHK
-         Im6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758313367; x=1758918167;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4Cy206vdHXoNwug0xkOGBRn67z0vWl3+IUBx20uq9Ok=;
-        b=c3p2hTFS21VtE9K+CqihKi/oo8Ey/Kovzgemw6JksP0WWNFNqz5BqusdXW01ao/X8E
-         5gezXsINw0G8cp2a/xQy0o+yqCaKW1cl1/V3KMZeZ/XHeFQqvKrMKpTC98jT8GRaSw19
-         g4jtssFlyk0cMhUw6ZA7cZWM81BEhHQOj6spl/wEn4vGHWiD40Ao9ovhHwp9sUtmi2G7
-         tvDt5BjnlFyrEL4h8SQyIL76KzDsmpyq+jUjr4XpGKSfzt+LAFNoK2Gpq38G27qTqbFe
-         tGvUPt1ZV6UqO3pvsL8E1Kg+Yz6aEY/QCdCrZddZsh8/OPA+v9ORQ1SfkESfIr97Ue5N
-         zS5Q==
-X-Gm-Message-State: AOJu0YxUw7VxxKhzaVt24pFBUWG7q4NDmDQcrt9Kc5vOrSAO+FSTJKiP
-	Rop1XMHrwhOWhDuQlYKTyKeLMu4WP5BboiuJNdFdczb/KoRNFEsW+Uw7X0fmDjM1Qc7+xsOg6YM
-	cX8VvSO/b5K6+v6zdgoLFVxXMxRhgcXs=
-X-Gm-Gg: ASbGnct2JITGe6aRu+vkyZmkCvVsZxhp1vigPM4iN1+sJ5HST02J7hw3eN5MCg+cpDc
-	FdvJt/6iqTg8yOjZ6Ecuvskk8FlGmYFovHKUAIjKYIqhf+k6HLr7tOgVLNElvx8+46eLjnnU96V
-	GA7Kp0l98frZTbmsHBEWQ/mA3vfe54A9QvVgHcWeTUtjKt7Op5fDxARjeE+cSpYZaNlciCCCn/R
-	mqwQ38KYcsgvDi6EeW424QNP7AUpfa/oiynsEvbOf7ImNHU/ayuzXOOtNHL87zbXfT77yhd7wns
-	NvpRj+lh00dDinQXhMdwRQ6psBlAOV8sF1yNg+75pzZ//0QJWQLCWVMBaWITU8SbGJoJtiZwKpQ
-	68a5ddBFknptLEQRO5Qv6sQ==
-X-Google-Smtp-Source: AGHT+IGGImSU6vWX0E3XUBvl/H3q20vO7+Ak+1/XGT8LNRyvVP3NfjlHzlDkQ71ErIMJWhX6XIsBjifr13dctqtG2oY=
-X-Received: by 2002:a05:6214:226e:b0:741:52cf:a104 with SMTP id
- 6a1803df08f44-7990fe38074mr52494986d6.5.1758313366488; Fri, 19 Sep 2025
- 13:22:46 -0700 (PDT)
+	s=arc-20240116; t=1758313547; c=relaxed/simple;
+	bh=MLBAvqNYShoxP1EwO8A6CzrlrrIN3Kz0r/q59+Yfg7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZo5fKW55MsVbCvK1NvrnvNxxodMnbrhy72mfZLTMlyj9aHRjb6kTear09RgugPvywfxaKwwfcTn44cnU0yTG+BtNQszg0KmxD2RdNUlqlKYEQQnklKATclwCi2O2t2i30gI3c+YutyG/QWMZpiTMNOWHCHwZK4vISFbU5CRU+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LLMYRkHR; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 19 Sep 2025 13:25:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758313542;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/81rz7H4kqTaEJg0yrE1nrKWbw0pt0losxc3+BVs8Lc=;
+	b=LLMYRkHR5n7vXVAXvJV9hjvFVosmqxbsqFx+Fod17CetTBxu6rA1oalNfEzGU8mnyI2EQT
+	1mQdFOvMyEw16EGrH5WucNVGz9a6dEFHl/hswH58yiZALYaMvWiQ12v+SvzBAqtWDJzNym
+	C6M+WdHy0QcyYv0sibpKNKcsViJYB1A=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCHv2 1/5] mm/page_vma_mapped: Track if the page is mapped
+ across page table boundary
+Message-ID: <7qkpt4ia3qryjp2xo2ywy7qydav6nijghasr7biwctd5ah7dat@t3epq5dzt2sd>
+References: <20250919124036.455709-1-kirill@shutemov.name>
+ <20250919124036.455709-2-kirill@shutemov.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 19 Sep 2025 15:22:35 -0500
-X-Gm-Features: AS18NWBD_WBUHdrEHM7UxAsP6qhd4g7AA9UdPCh_tSXfbHcTmH08YWsTsHv20zk
-Message-ID: <CAH2r5ms1vdZHKz4guZFpR0fMfZFE36eBwdH+fapaW-i1tOTSaw@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919124036.455709-2-kirill@shutemov.name>
+X-Migadu-Flow: FLOW_OUT
 
-Please pull the following changes since commit
-f83ec76bf285bea5727f478a68b894f5543ca76e:
+On Fri, Sep 19, 2025 at 01:40:32PM +0100, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
+> 
+> Add a PVMW_PGTABLE_CROSSSED flag that page_vma_mapped_walk() will set if
+> the page is mapped across page table boundary. Unlike other PVMW_*
+> flags, this one is result of page_vma_mapped_walk() and not set by the
+> caller.
+> 
+> folio_referenced_one() will use it detect if it safe to mlock the folio.
+> 
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
 
-  Linux 6.17-rc6 (2025-09-14 14:21:14 -0700)
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-are available in the Git repository at:
+> ---
+>  include/linux/rmap.h | 5 +++++
+>  mm/page_vma_mapped.c | 1 +
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
+> index 6cd020eea37a..04797cea3205 100644
+> --- a/include/linux/rmap.h
+> +++ b/include/linux/rmap.h
+> @@ -928,6 +928,11 @@ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
+>  /* Look for migration entries rather than present PTEs */
+>  #define PVMW_MIGRATION		(1 << 1)
+>  
+> +/* Result flags */
+> +
+> +/* The page is mapped across page boundary */
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.17-rc6-smb3-client-fixes
+I think you meant "page table boundary" in above comment.
 
-for you to fetch changes up to daac51c7032036a0ca5f1aa419ad1b0471d1c6e0:
-
-  smb: client: fix smbdirect_recv_io leak in smbd_negotiate() error
-path (2025-09-18 16:46:04 -0500)
-
-----------------------------------------------------------------
-Six smb3.1.1 client fixes, all for stable
-- Two unlink fixes: one for rename and one for deferred close
-- Four smbdirect/RDMA fixes: fix buffer leak in negotiate, two fixes for
-  races in smbd_destroy, fix offset and length checks in recv_done
-
-----------------------------------------------------------------
-Paulo Alcantara (2):
-      smb: client: fix filename matching of deferred files
-      smb: client: fix file open check in __cifs_unlink()
-
-Stefan Metzmacher (4):
-      smb: client: let recv_done verify data_offset, data_length and
-remaining_data_length
-      smb: client: use disable[_delayed]_work_sync in smbdirect.c
-      smb: client: let smbd_destroy() call
-disable_work_sync(&info->post_send_credits_work)
-      smb: client: fix smbdirect_recv_io leak in smbd_negotiate() error path
-
- fs/smb/client/cifsproto.h |  4 ++--
- fs/smb/client/inode.c     | 23 ++++++++++++++++++-----
- fs/smb/client/misc.c      | 38 ++++++++++++++++----------------------
- fs/smb/client/smbdirect.c | 33 ++++++++++++++++++++++++++++-----
- 4 files changed, 64 insertions(+), 34 deletions(-)
-
-
--- 
-Thanks,
-
-Steve
+> +#define PVMW_PGTABLE_CROSSSED	(1 << 16)
+> +
+>  struct page_vma_mapped_walk {
+>  	unsigned long pfn;
+>  	unsigned long nr_pages;
+> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+> index e981a1a292d2..a184b88743c3 100644
+> --- a/mm/page_vma_mapped.c
+> +++ b/mm/page_vma_mapped.c
+> @@ -309,6 +309,7 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
+>  				}
+>  				pte_unmap(pvmw->pte);
+>  				pvmw->pte = NULL;
+> +				pvmw->flags |= PVMW_PGTABLE_CROSSSED;
+>  				goto restart;
+>  			}
+>  			pvmw->pte++;
+> -- 
+> 2.50.1
+> 
 
