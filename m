@@ -1,151 +1,168 @@
-Return-Path: <linux-kernel+bounces-824768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1ACB8A1CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:56:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F49B8A1C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9F3564458
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:55:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B167F1C253AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1B52FC03B;
-	Fri, 19 Sep 2025 14:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F25314A61;
+	Fri, 19 Sep 2025 14:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zh7bio4X"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mJxYt1bO"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C083221B9C0
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A028A1F3FEC;
+	Fri, 19 Sep 2025 14:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758293713; cv=none; b=ccVssiIAxCJ+65LOdKOOpFArhMxtLxjfCO/RTE4INp1voV2gw401dnUlFQXdiU3n8WPHsh4nbmKgLqDRxXPOxr3AnO5V0vLSJ1zykT9u86ghroXsNWGIHX6JGuUkxQ66nr0A+8lhRwkqT7K4Oa5JCKMkNaujbx1s0ACToMh2oys=
+	t=1758293764; cv=none; b=ne6q2m1qKVxHEnSJeSnPA4Grv9dxbJNLLP6fihSjdVQ2bNujQnk7D99OpZrxBXbjQnBVD5Tpf4Ryer9Zyo/aJ8tJVfz9fh2ipU2+gKPukOyHuQpfmALJ5YOFrYmkDjjUODocz0qiIwHceaOeYyy259xncYNjlcEHV0oCw082+VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758293713; c=relaxed/simple;
-	bh=AcD69okMOpEbxEQkwsqp0PT3CELtBK6EsZ3jJIbiM+U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lCC17GWYHI1gQM2ObIJKhAiPC+Z9j+lIU4Gq/+6AE7bQ0qfOIXTFI/cW2x8llR80s6L5Yph3voS8v/NIrGaP5Jw9aHQ5dv4Fm6AoLe/+iRWM1btFGaoXnBveP5a4iw8R3rLbInFhI9UW72NVrrc2BSAcmqdHqg1sA0DVbY2mBY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zh7bio4X; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-268141f759aso23445495ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758293711; x=1758898511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ukxipGRfsdTkRjH+xOeneAls5BFz/ZvVQ9NXnmVWsy4=;
-        b=Zh7bio4XtLI0vHUKFeV9Ag3i2wJrvcfCh1Fzdhy+mTXdm4YzYTzE2SoVyVpuyEEI4u
-         eUTka+yykyzLhWlE7buVbAZueOhcqpP1JMHDkUrrQobBpG/YmL/ycnaWue1Eeeb0rLxo
-         URb/Gxfb/hUHCBRRS2z0Z4Xn9RDpaRADHLmYCIkAKj3DzE9iSbeCztpwr2DRpKkrkLzJ
-         Y2VBgyoRI/yAPhB3BiTnhtUuVX21bUf8ShaG2egT5V4qbGsNNXg2ZmczypC3IJqUYG3D
-         t28SR+3HFONtadSYSKVpparHdLFvnPMrL2AiuMoUVO9jt457k9a4XU7gIR3DA2siiPaM
-         Zo3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758293711; x=1758898511;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ukxipGRfsdTkRjH+xOeneAls5BFz/ZvVQ9NXnmVWsy4=;
-        b=DVE3ukxpxROrNFzD9U1GJCxuHTQ7V/VqN/D4HZrgUbuzO+GepGGHSMfjWGFb7q9+MC
-         8CVGYmiJuox57AUu7XIHfL+7PiGpZU3dmcB5n08Yy2JbQL5DGKFa+q2YQc+wq153kncR
-         Hx5PZHFgRmdH8mcOeakOXUlFRMYDFDfr+XLiCLHdxDr5f+8lChGIgzEyrUh5NOJVzRU7
-         e2ZhuzdINW+27Sh752jlkfbbqHXNwo2B8dt/0aRLWw0jS5mxjMnrseKYrpJgsdT66cYp
-         WkS8fNvYCOQg6NR9PvqUVHRykNg3aSneNcf/f+rRJ9Vz9cBc1Rgw3waBDF+pjts9wsu3
-         ivzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIsrOB5WO1P1dud7uEqbqWzjEzhkReF8eJOYEuEqVaKXxR4R2ab2OOoAA+f1RhDNFeAE+A6niMxFSxCf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl27/QlKdh0p2Fn+c2TqXK670OdDiteR4efiDm9WsHRAafmtoZ
-	H1knlFtvxhXVFZRQbqGnhRzQOnzxbQ2hw4ndcbZeAaNqL4hhm2FsAi7zhonvWD3sf11zEM6RgUw
-	WbobqhA==
-X-Google-Smtp-Source: AGHT+IEPv+dMGHlbROIguDvWPOh2MSP4wIEpD1hQevdkOddIgSAniwuj5qvJ5S/5KY6sgA6Wv/GK8O6BCmY=
-X-Received: from pjbnc8.prod.google.com ([2002:a17:90b:37c8:b0:32e:bcc3:ea8e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:46d0:b0:24f:fb79:e25f
- with SMTP id d9443c01a7336-269ba544991mr49200515ad.46.1758293710936; Fri, 19
- Sep 2025 07:55:10 -0700 (PDT)
-Date: Fri, 19 Sep 2025 07:55:09 -0700
-In-Reply-To: <dd2d2e23-083e-46cf-b0bd-7dfb3198d403@linux.intel.com>
+	s=arc-20240116; t=1758293764; c=relaxed/simple;
+	bh=8uIFhtK2IJ/B47NJpWMNwnQqZrSj51H4Icha31JBO1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K3I84clbQc3RwnzR7jJhmFticfAOAJIca5ZcBrKQILDruMS+/1LkwfmMd5M6V7oY+WgPcQl3SbAYH+fKj/Em9OifAieYlup4VfNI6Awp+d6ZdFAoo3oZW7UIXnSA0aJwOxtdAJWEdTIM8apDnBs7mPzd5F3qrPUkf+02KqgogEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mJxYt1bO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J54pgL027133;
+	Fri, 19 Sep 2025 14:55:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=aU/IL1
+	yNGjUFzjuYRWTqCY8LpnItOiXO9jDsErM/ZSw=; b=mJxYt1bO9ZlAJGOriKukNR
+	6DRTT67kcYHIqst30BRLtnh1SMyV+iw+RyyHy1d/pgGo776owZC0aTcq259/Y4PV
+	EtCjbjz9ddjqDVfW/ji/d6eUueeEGNv+e7TJzWKs7S/eQv9i+6Lp6d6yAHZ8YI/r
+	IrN8HV0TfIgPS+/iHqzcCnm8ijIxGoSQ4s2cQggDj9bByZkqTTkP8FLnWYuEp/aR
+	2PBDN2EU2NRR9Aa+T5QlRhVUAWuRZ+ds4Gp4GqkzDg8FxZj9d904SJ15dd3SQMbc
+	Rew2+rgPJd4hk24k6NYLq0ktzrv470p+fO5USmfSUuTgRP/HRH+I6WXsbPWl8HkQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4phff2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 14:55:58 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58JEkpni015466;
+	Fri, 19 Sep 2025 14:55:57 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4phfeq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 14:55:57 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58JE6KCl027308;
+	Fri, 19 Sep 2025 14:55:56 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495menm9bn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 14:55:56 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58JEtqm030998972
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 14:55:52 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2D1202004D;
+	Fri, 19 Sep 2025 14:55:52 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4663920040;
+	Fri, 19 Sep 2025 14:55:51 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.111.70.35])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Fri, 19 Sep 2025 14:55:51 +0000 (GMT)
+Date: Fri, 19 Sep 2025 16:55:49 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Dust Li <dust.li@linux.alibaba.com>,
+        Guangguan Wang
+ <guangguan.wang@linux.alibaba.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Simon
+ Horman <horms@kernel.org>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Sidraya
+ Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Mahanta Jambigi <mjambigi@linux.ibm.com>,
+        Tony Lu
+ <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>
+Subject: Re: [PATCH net-next v2 1/2] net/smc: make wr buffer count
+ configurable
+Message-ID: <20250919165549.7bebfbc3.pasic@linux.ibm.com>
+In-Reply-To: <20250909121850.2635894a.pasic@linux.ibm.com>
+References: <20250908220150.3329433-1-pasic@linux.ibm.com>
+	<20250908220150.3329433-2-pasic@linux.ibm.com>
+	<aL-YYoYRsFiajiPW@linux.alibaba.com>
+	<20250909121850.2635894a.pasic@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919004512.1359828-1-seanjc@google.com> <20250919004512.1359828-6-seanjc@google.com>
- <dd2d2e23-083e-46cf-b0bd-7dfb3198d403@linux.intel.com>
-Message-ID: <aM1uzfweXxoaaLpt@google.com>
-Subject: Re: [PATCH v3 5/5] KVM: selftests: Handle Intel Atom errata that
- leads to PMU event overcount
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yi Lai <yi1.lai@intel.com>, dongsheng <dongsheng.x.zhang@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX7O7GttvqFagT
+ Cdun3QY+uzZBQMr3Un9NEUfVHdWnZ89ljb2eIA+Z180TJxat8rpwzQRJkEPXhPv1dwLpcdnbfrA
+ idK0almy44vfEFXQVDYad9se7l4qKhdVK2eshyDNuctlc4iMua3jHv+SK7LkRzt5RTA/X9YJj+G
+ 1nO1Mi8BVzIkNpOY8xPoPnLCCCb8kdkP3eVICBc7rfp/utcePt7ZZrEBCk8Sa5R2pe8JDMm4fng
+ +KyvkxlYLiuVZDDHSliv+cfO3pOxnidDbxJq2Jb2x68NXI09dkJ1rEsGCDh6SUzv6AOlYbJRI6G
+ t2PvjRxgQEVFepk4Emyj5t0Wt9GvkfazRUxtz6FNIv3+IkVBzVDRf95DuqTXfWHf28BlkY55+jh
+ WB5FYOr/
+X-Proofpoint-ORIG-GUID: LvQE9PCL4m0Y2ALvOcZbGvygtvYCo3uo
+X-Proofpoint-GUID: 1ej1yVyvFNjiPyIa0glrzXpwWEFApiLH
+X-Authority-Analysis: v=2.4 cv=cNzgskeN c=1 sm=1 tr=0 ts=68cd6efe cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=3-ZsZ1Rs_CeAYfPLFTEA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 spamscore=0 bulkscore=0 malwarescore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
 
-On Fri, Sep 19, 2025, Dapeng Mi wrote:
->=20
-> On 9/19/2025 8:45 AM, Sean Christopherson wrote:
-> > diff --git a/tools/testing/selftests/kvm/x86/pmu_counters_test.c b/tool=
-s/testing/selftests/kvm/x86/pmu_counters_test.c
-> > index baa7b8a2d459..acb5a5c37296 100644
-> > --- a/tools/testing/selftests/kvm/x86/pmu_counters_test.c
-> > +++ b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
-> > @@ -163,10 +163,18 @@ static void guest_assert_event_count(uint8_t idx,=
- uint32_t pmc, uint32_t pmc_msr
-> > =20
-> >  	switch (idx) {
-> >  	case INTEL_ARCH_INSTRUCTIONS_RETIRED_INDEX:
-> > -		GUEST_ASSERT_EQ(count, NUM_INSNS_RETIRED);
-> > +		/* Relax precise count check due to VM-EXIT/VM-ENTRY overcount issue=
- */
-> > +		if (this_pmu_has_errata(INSTRUCTIONS_RETIRED_OVERCOUNT))
->=20
-> The pmu_errata_mask is a bitmap, so the argument should be
-> BIT_ULL(INSTRUCTIONS_RETIRED_OVERCOUNT) instead of
-> INSTRUCTIONS_RETIRED_OVERCOUNT?
+On Tue, 9 Sep 2025 12:18:50 +0200
+Halil Pasic <pasic@linux.ibm.com> wrote:
 
-Gah, I just forgot to use BIT_ULL() in this_pmu_has_errata().
+> > >-	link->wr_rx_bufs = kcalloc(SMC_WR_BUF_CNT * 3, link->wr_rx_buflen,
+> > >+	link->wr_rx_bufs = kcalloc(link->lgr->pref_recv_wr, SMC_WR_BUF_SIZE,
+> > > 				   GFP_KERNEL);    
+> 
+> 
+> I will have to do some digging, let's assume for now that it is my
+> mistake. Unfortunately I won't be able to revisit this before next
+> Wednesday.
 
-diff --git a/tools/testing/selftests/kvm/include/x86/pmu.h b/tools/testing/=
-selftests/kvm/include/x86/pmu.h
-index 25d2b476daf4..308c9f6f0d57 100644
---- a/tools/testing/selftests/kvm/include/x86/pmu.h
-+++ b/tools/testing/selftests/kvm/include/x86/pmu.h
-@@ -115,7 +115,7 @@ void kvm_init_pmu_errata(void);
-=20
- static inline bool this_pmu_has_errata(enum pmu_errata errata)
- {
--       return pmu_errata_mask & errata;
-+       return pmu_errata_mask & BIT_ULL(errata);
- }
-=20
- #endif /* SELFTEST_KVM_PMU_H */
+Can maybe Wen Gu and  Guangguan Wang chime in. From what I read
+link->wr_rx_buflen can be either SMC_WR_BUF_SIZE that is 48 in which
+case it does not matter, or SMC_WR_BUF_V2_SIZE that is 8192, if
+!smc_link_shared_v2_rxbuf(lnk) i.e. max_recv_sge == 1. So we talk
+about roughly a factor of 170 here. For a large pref_recv_wr the
+back of logic is still there to save us but I really would not say that
+this is how this is intended to work.
 
+Maybe not supporting V2 on devices with max_recv_sge is a better choice,
+assuming that a maximal V2 LLC msg needs to fit each and every receive
+WR buffer. Which seems to be the case based on 27ef6a9981fe ("net/smc:
+support SMC-R V2 for rdma devices with max_recv_sge equals to 1").
 
->=20
-> Or better, directly define INSTRUCTIONS_RETIRED_OVERCOUNT as a bitmap, li=
-ke
-> this.
->=20
-> diff --git a/tools/testing/selftests/kvm/include/x86/pmu.h
-> b/tools/testing/selftests/kvm/include/x86/pmu.h
-> index 25d2b476daf4..9af448129597 100644
-> --- a/tools/testing/selftests/kvm/include/x86/pmu.h
-> +++ b/tools/testing/selftests/kvm/include/x86/pmu.h
-> @@ -106,8 +106,8 @@ extern const uint64_t intel_pmu_arch_events[];
-> =C2=A0extern const uint64_t amd_pmu_zen_events[];
->=20
-> =C2=A0enum pmu_errata {
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0INSTRUCTIONS_RETIRED_OVERCOUNT,
-> -=C2=A0 =C2=A0 =C2=A0 =C2=A0BRANCHES_RETIRED_OVERCOUNT,
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0INSTRUCTIONS_RETIRED_OVERCOUNT =3D (1 << 0),
-> +=C2=A0 =C2=A0 =C2=A0 =C2=A0BRANCHES_RETIRED_OVERCOUNT=C2=A0 =C2=A0 =C2=
-=A0=3D (1 << 1),
+For me the best course of action seems to be to send a V3 using
+link->wr_rx_buflen. I'm really not that knowledgeable about RDMA or
+the SMC-R protocol, but I'm happy to be part of the discussion on this
+matter.
 
-I want to utilize the auto-incrementing behavior of enums, without having t=
-o
-resort to double-defines or anything.=20
+Regards,
+Halil
 
