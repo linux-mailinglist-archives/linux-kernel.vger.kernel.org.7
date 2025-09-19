@@ -1,160 +1,322 @@
-Return-Path: <linux-kernel+bounces-824140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E7B88322
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:38:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20008B8832E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB9D522B36
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99897C46FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1A22F83A2;
-	Fri, 19 Sep 2025 07:33:33 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDCD28CF52;
+	Fri, 19 Sep 2025 07:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZWQJQVtT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WtIq+78k";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZWQJQVtT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WtIq+78k"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381862D3ED7
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260FC1F7580
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267213; cv=none; b=ryony3Sh1tscZ5x1uN5f/H1r9pJ9Z3kkJQNdWz6Tqkf/9wFlXGqdb94S94lddp251bGQUivsjBeZQDOEx+gzR+I7olgm7rXUJ8u2AttPAgohwHd+/+ZQ255KGHtSuMSd4ply+HlqVkz5nGQPcjNPfA0WVRQFLgZV/8+oSMg5gaw=
+	t=1758267438; cv=none; b=Fg85eWnRKSCTXLQ2QRMG9jrHR0ZT/8TAL9Q84rIPGAgbdPDrN6kZIo6pXvr78vMu+znjF1b1xzzyBL9slJGuQMpmaFP2YhWKBsLZxtNbyFNn1X0ulj7jk5suv4fqP47Ys7P6AnWUMN63srta+Rfu8VS1jh31y1ivOw0GGe9YcjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267213; c=relaxed/simple;
-	bh=+2TJblT6LHI57S9AzaMiROC9Kq8+LmktTXhZRPyPaVc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JK2tttI2wFCKBqYejJXKsXiWy/p8U4ZZOv6cRQOsCrejOf5eD/4OK1rsTrG5Bf5g9mVmGMtiWi+Ji8ow0xS4fWEt8mVFCNwAqTIBrGDFmg+dDKXABS+ysVFNXuaoXFVAlb6mKlZCkcSyqARvw5LDjR3mUWE6dDPaYfSDlEJkfqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4248616fcabso4287835ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:33:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758267210; x=1758872010;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iOLMQZh+p8WZQSf5C0CCnZHd4Mr5OtFWTXlqTXn35ho=;
-        b=PVp4BjzS8eEVKksDbwXlJeCkylXrtufIXKpXCbF21brI0JRkClS88qvGQ882WiXER4
-         CDWuMVRbENHX98jp+eUwA/BrAaI70CjFX5mfN0qOUK9eRnbdDawVrPHt7aVBuQKr3Rp0
-         rppxrMKXHfAf664X4U5+Y+kpx1OgNnwTq0ApDhdBQgwF1VQL+SJotoKZN0k3139RFoqA
-         w9aB++ZzT7b8jC+C9Wq3jeGCXlErue1VZW2rIetv96Wkvls/7HvBT6ffP4NJez1LgNzr
-         cfxf2i3Wsobgx1i2hU/i06wU4VlBDZ6u6o3n40/XFZEcVkwsAKBcWSHJbzKCCSW5x/Ic
-         C1yw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5eAyXWVVMvOIFTA3KQ2wLW4tvbd3Idr3gjvmouiy77Kwyqj0AyFOKlNtE/YqAqYPSKr5oO8DQhw8QTLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsyV10cNbJBkAd1QT2MjEJG7DrlpUcZ8KzjPzBeTxclQYEjFH0
-	Fj12O0itvIoiOPBAnxMiad+Vo3Vs3XC9+uJ0vIHfid5zOFQZZSxc7IwkDQ5r2qacOAjm8PwvEW6
-	EnbNQljKf4D7gEJbEs+qxOHmnYxq7K081XqqDPP8+1XBd15H+tafBvHr+9oQ=
-X-Google-Smtp-Source: AGHT+IGSIL56u0FooE8IiACmPgSgu3KOpk6TzvSGcyHoh57v+4rqxqX50T0Vun0q8H2sFhjYMKpv5vP99iAaB4z28VfmYrUMEs3c
+	s=arc-20240116; t=1758267438; c=relaxed/simple;
+	bh=umsbZFp3ysEk6cX5detYcgTyjViVyfN3apysifuXvZ8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WIxUpruMi/gRDrswmHSB1vqAhPoUKpvLmBPWzC0Oo8YSABWogTEByPedlkvXXFh64pOmCWipXn9zxdT5sdbDhYPGJVI35cGieJIGMM+GW+1xdddcmrwx8EnF/iK6e/CG+yYhST09BlgHpSUydm2G0NWmi9a+8CH98Slf7LgWs0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZWQJQVtT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WtIq+78k; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZWQJQVtT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WtIq+78k; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5F47C336BC;
+	Fri, 19 Sep 2025 07:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758267427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Im1BpbmmZjRUANhcuvyHkY2BviST+CpyeQ5DUgpNrc=;
+	b=ZWQJQVtTqwoySL7LZx8GZzQnZqugbDSErL5HaX5+vE6CYnCIXCg0DUp+WZPQ5QpSXzTMT3
+	ut/rfWeq8XfF84hAsaayTvwJPHuuYZjQohgzWRk3F3saZd6zgrYOI2blwlKVMD3wfzEGM6
+	5ji8p8HLu+u8szzFmAjpy5ReC+8kGMU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758267427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Im1BpbmmZjRUANhcuvyHkY2BviST+CpyeQ5DUgpNrc=;
+	b=WtIq+78kZgEl4q8rSJYBC32gu2jp1QaQcbJi2LvQkA1dpIgaqN4Qgum+wM0WDPco4nryor
+	qWvJf7yEm89wMhDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZWQJQVtT;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=WtIq+78k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758267427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Im1BpbmmZjRUANhcuvyHkY2BviST+CpyeQ5DUgpNrc=;
+	b=ZWQJQVtTqwoySL7LZx8GZzQnZqugbDSErL5HaX5+vE6CYnCIXCg0DUp+WZPQ5QpSXzTMT3
+	ut/rfWeq8XfF84hAsaayTvwJPHuuYZjQohgzWRk3F3saZd6zgrYOI2blwlKVMD3wfzEGM6
+	5ji8p8HLu+u8szzFmAjpy5ReC+8kGMU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758267427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0Im1BpbmmZjRUANhcuvyHkY2BviST+CpyeQ5DUgpNrc=;
+	b=WtIq+78kZgEl4q8rSJYBC32gu2jp1QaQcbJi2LvQkA1dpIgaqN4Qgum+wM0WDPco4nryor
+	qWvJf7yEm89wMhDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F10413A39;
+	Fri, 19 Sep 2025 07:37:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d2PLCSMIzWjPEgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 07:37:07 +0000
+Date: Fri, 19 Sep 2025 09:37:06 +0200
+Message-ID: <87jz1uao65.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: PM runtime auto-cleanup macros
+In-Reply-To: <CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
+References: <878qimv24u.wl-tiwai@suse.de>
+	<87ikhptpgm.wl-tiwai@suse.de>
+	<CAJZ5v0htMKOcCoKts-B9BaE0VpS2oc9-cp=5VnNwS2Qe2iB+Kg@mail.gmail.com>
+	<87tt10b5hq.wl-tiwai@suse.de>
+	<CAJZ5v0hUTByfxkE=-SGSHDDd=mPw694yD7PuuJ1LLRjp-H4=uA@mail.gmail.com>
+	<CAJZ5v0jafoG--WrZNjt+euY0gtQSTqSDH2_cWotf92ziq5wdUw@mail.gmail.com>
+	<CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16c7:b0:424:388:6ced with SMTP id
- e9e14a558f8ab-4248192733bmr40617935ab.14.1758267210259; Fri, 19 Sep 2025
- 00:33:30 -0700 (PDT)
-Date: Fri, 19 Sep 2025 00:33:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cd074a.a00a0220.37dadf.0017.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in dev_shutdown (7)
-From: syzbot <syzbot+c9ecf60a8adb7629821e@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 5F47C336BC
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-Hello,
+On Thu, 18 Sep 2025 22:41:32 +0200,
+Rafael J. Wysocki wrote:
+> 
+> On Thu, Sep 18, 2025 at 10:19 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Thu, Sep 18, 2025 at 1:28 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > >
+> > > On Thu, Sep 18, 2025 at 9:10 AM Takashi Iwai <tiwai@suse.de> wrote:
+> > > >
+> > > > On Wed, 17 Sep 2025 20:58:36 +0200,
+> > > > Rafael J. Wysocki wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > Sorry for the delay.
+> > > > >
+> > > > > On Thu, Sep 11, 2025 at 9:31 AM Takashi Iwai <tiwai@suse.de> wrote:
+> > > > > >
+> > > > > > On Wed, 10 Sep 2025 16:00:17 +0200,
+> > > > > > Takashi Iwai wrote:
+> > > > > > >
+> > > > > > > Hi,
+> > > > > > >
+> > > > > > > while I worked on the code cleanups in the drivers with the recent
+> > > > > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() can
+> > > > > > > be also managed with the auto-cleanup gracefully, too.  Actually we
+> > > > > > > already defined the __free(pm_runtime_put) in commit bfa4477751e9, and
+> > > > > > > there is a (single) user of it in pci-sysfs.c.
+> > > > > > >
+> > > > > > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
+> > > > > > >
+> > > > > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
+> > > > > > >            if (_T) pm_runtime_put_autosuspend(_T))
+> > > > > > >
+> > > > > > > Then one can use it like
+> > > > > > >
+> > > > > > >       ret = pm_runtime_resume_and_get(dev);
+> > > > > > >       if (ret < 0)
+> > > > > > >               return ret;
+> > > > > > >       struct device *pmdev __free(pm_runtime_put_autosuspend) = dev;
+> > > > > > >
+> > > > > > > that is similar as done in pci-sysfs.c.  So far, so good.
+> > > > > > >
+> > > > > > > But, I find putting the line like above at each place a bit ugly.
+> > > > > > > So I'm wondering whether it'd be better to introduce some helper
+> > > > > > > macros, e.g.
+> > > > > > >
+> > > > > > > #define pm_runtime_auto_clean(dev, var) \
+> > > > > > >       struct device *var __free(pm_runtime_put) = (dev)
+> > > > > >
+> > > > > > It can be even simpler by assigning a temporary variable such as:
+> > > > > >
+> > > > > > #define pm_runtime_auto_clean(dev) \
+> > > > > >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime_put) = (dev)
+> > > > >
+> > > > > Well, if there's something like
+> > > > >
+> > > > > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
+> > > > > {
+> > > > >         int ret = pm_runtime_resume_and_get(dev);
+> > > > >         if (ret < 0)
+> > > > >                 return ERR_PTR(ret);
+> > > > >
+> > > > >         return dev;
+> > > > > }
+> > > > >
+> > > > > It would be a matter of redefining the FREE to also take error
+> > > > > pointers into account and you could do
+> > > > >
+> > > > > struct device *__dev __free(pm_runtim_put) = pm_runtime_resume_and_get_dev(dev);
+> > > > > if (IS_ERR(__dev))
+> > > > >         return PTR_ERR(__dev);
+> > > >
+> > > > That'll work, too.  Though, I find the notion of __free() and a
+> > > > temporary variable __dev a bit too cumbersome; it's used only for
+> > > > auto-clean stuff, so it could be somewhat anonymous.
+> > >
+> > > No, it is not used only for auto-clean, it is also used for return
+> > > value checking and it represents a reference on the original dev.  It
+> > > cannot be entirely anonymous because of the error checking part.
+> > >
+> > > The point is that this is one statement instead of two and so it is
+> > > arguably harder to mess up with.
+> > >
+> > > > But it's all about a matter of taste, and I'd follow what you and
+> > > > other guys suggest.
+> > > >
+> > > > FWIW, there are lots of code doing like
+> > > >
+> > > >         pm_runtime_get_sync(dev);
+> > > >         mutex_lock(&foo);
+> > > >         ....
+> > > >         mutex_unlock(&foo);
+> > > >         pm_runtime_put(dev);
+> > > >         return;
+> > > >
+> > > > or
+> > > >
+> > > >         ret = pm_runtime_resume_and_get(dev);
+> > > >         if (ret)
+> > > >                 return ret;
+> > > >         mutex_lock(&foo);
+> > > >         ....
+> > > >         mutex_unlock(&foo);
+> > > >         pm_runtime_put_autosuspend(dev);
+> > > >         return 0;
+> > > >
+> > > > and they can be converted nicely with guard() once when PM runtime can
+> > > > be automatically unreferenced.  With my proposed change, it would
+> > > > become like:
+> > > >
+> > > >         pm_runtime_get_sync(dev);
+> > > >         pm_runtime_auto_clean(dev);
+> > >
+> > > For the case in which the pm_runtime_get_sync() return value is
+> > > discarded, you could define a guard and do
+> > >
+> > > guard(pm_runtime_get_sync)(dev);
+> > >
+> > > here.
+> > >
+> > > The case checking the return value is less straightforward.
+> > >
+> > > >         guard(mutex)(&foo);
+> > > >         ....
+> > > >         return;
+> > > >
+> > > > or
+> > > >
+> > > >         ret = pm_runtime_resume_and_get(dev);
+> > > >         if (ret)
+> > > >                 return ret;
+> > > >         pm_runtime_auto_clean_autosuspend(dev);
+> > > >         guard(mutex)(&foo);
+> > > >         ....
+> > > >         return 0;
+> > > >
+> >
+> > I guess what I'm saying means basically something like this:
+> >
+> > DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
+> >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put(_T),
+> > pm_runtime_resume_and_get_dev(dev), struct device *dev)
+> >
+> > DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
+> >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put_autosuspend(_T),
+> > pm_runtime_resume_and_get_dev(dev), struct device *dev)
+> >
+> > and analogously for pm_runtime_get_sync().
+> 
+> And it kind of makes sense either.  Do
+> 
+> CLASS(pm_runtime_resume_and_get, active_dev)(dev);
+> if (IS_ERR(active_dev))
+>         return PTR_ERR(active_dev);
+> 
+> and now use active_dev for representing the device until it gets out
+> of the scope.
 
-syzbot found the following issue on:
+Yes, that's what I thought of as an alternative, too, but I didn't
+consider using only pm_runtime_resume_and_get().  Actually by this
+action, we can also "clean up" the API usage at the same time to use a
+single recommended API function, which is a good thing.
 
-HEAD commit:    a4d43c1f17b9 Merge 6.17-rc6 into usb-next
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=10a0bb12580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64a9fba56fdb0aef
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9ecf60a8adb7629821e
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+That said, I like this way :)
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6eefb11d9e81/disk-a4d43c1f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6232f2c26d00/vmlinux-a4d43c1f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8d192b0d2295/bzImage-a4d43c1f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c9ecf60a8adb7629821e@syzkaller.appspotmail.com
-
-asix 3-1:7.204 eth1: unregister 'asix' usb-dummy_hcd.2-1, ASIX AX88178 USB 2.0 Ethernet
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 12317 at net/sched/sch_generic.c:1500 dev_shutdown+0x3b6/0x430 net/sched/sch_generic.c:1500
-Modules linked in:
-CPU: 1 UID: 0 PID: 12317 Comm: kworker/1:9 Not tainted syzkaller #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Workqueue: usb_hub_wq hub_event
-
-RIP: 0010:dev_shutdown+0x3b6/0x430 net/sched/sch_generic.c:1500
-Code: 48 c7 c2 60 a6 41 88 be a3 00 00 00 48 c7 c7 20 ab 41 88 c6 05 36 08 4e 04 01 e8 85 71 18 fb e9 8f fd ff ff e8 7b 42 3c fb 90 <0f> 0b 90 e9 5f fe ff ff 4c 89 f7 e8 8a 74 9a fb e9 77 fc ff ff 4c
-RSP: 0018:ffffc90013087498 EFLAGS: 00010283
-RAX: 000000000002f429 RBX: ffff8881355c8488 RCX: ffffc9001024c000
-RDX: 0000000000100000 RSI: ffffffff8641b875 RDI: ffff8881355c8568
-RBP: ffff8881355c8000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff8881355c8438
-R13: ffffed1026ab9003 R14: ffff8881355c8480 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff888268ff6000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c37e36c CR3: 00000000090a4000 CR4: 00000000003506f0
-Call Trace:
- <TASK>
- unregister_netdevice_many_notify+0xcb6/0x2310 net/core/dev.c:12154
- unregister_netdevice_many net/core/dev.c:12229 [inline]
- unregister_netdevice_queue+0x305/0x3f0 net/core/dev.c:12073
- unregister_netdevice include/linux/netdevice.h:3385 [inline]
- unregister_netdev+0x1f/0x60 net/core/dev.c:12247
- usbnet_disconnect+0x109/0x500 drivers/net/usb/usbnet.c:1658
- usb_unbind_interface+0x1da/0x9e0 drivers/usb/core/driver.c:458
- device_remove drivers/base/dd.c:571 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:563
- __device_release_driver drivers/base/dd.c:1274 [inline]
- device_release_driver_internal+0x44b/0x620 drivers/base/dd.c:1297
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
- device_del+0x396/0x9f0 drivers/base/core.c:3878
- usb_disable_device+0x355/0x7d0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x9c0 drivers/usb/core/hub.c:2344
- hub_port_connect drivers/usb/core/hub.c:5406 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
- port_event drivers/usb/core/hub.c:5870 [inline]
- hub_event+0x1aa2/0x5060 drivers/usb/core/hub.c:5952
- process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c5/0x780 kernel/kthread.c:463
- ret_from_fork+0x56d/0x700 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+It'd be nice if this change can go into 6.18, then I can put the
+driver cleanup works for 6.19.  It's a bit late stage for 6.18, but
+this change is definitely safe and can't break, per se.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks!
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Takashi
 
