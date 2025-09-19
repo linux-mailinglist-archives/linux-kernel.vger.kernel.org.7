@@ -1,152 +1,213 @@
-Return-Path: <linux-kernel+bounces-825339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D701B8B987
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7F3B8B996
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5591CC22E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:58:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D929A04813
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0182D5936;
-	Fri, 19 Sep 2025 22:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC95E1F152D;
+	Fri, 19 Sep 2025 23:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HqSQJ9VC"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BMvSaHwL"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010010.outbound.protection.outlook.com [52.101.201.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7652D3ECC
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758322673; cv=none; b=LhsCNJQbSlYFYeQqAFQCr5v5IPGcXWKcfA/56d9zJwwcwnq1ZjGpWCxNaZYhhhaU/+fKzE2rGdOmcveLXwc+lZnVTUWyzjepU073P0GHOehWue7fz6y+9BYcTJKbiUxcbLR6kReA25NVpGVACE8EF9ys2H7ONekAREaSYQ3GEMA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758322673; c=relaxed/simple;
-	bh=w0n0oT4AEY8eEke71r8eB5cNddQs2dgmAUHaPww1Rw4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ouHXqrTvkZBsRTwRSy3ppnLAm+o/zLcei86XhcAFVL8Pfg95Ih4NR3uIxnOESjyADeG8sJvi9F9kJlUZqI1BLNVX7r/RNeagJo1+9b6y1DBFGsyBwFaniEDsiqU0IK0BjlX2Yok8tGhJxj9dDcg/KoogbHwJkX6gFsRCZO4Oty0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HqSQJ9VC; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54ad69f143so3410965a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758322671; x=1758927471; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=k1nL2sHZaVwxxO8gmb5F84AIaQWW4Mnos7VRIHq3uu8=;
-        b=HqSQJ9VCcS6h1Iyb4PEARseHyJ9In8kdbhvPM3lx6qV/PGltmu5giY8fCwhA3ObgSy
-         e9pcoR85X146M/tSyk87AFIacSy6RDy55F6g7lk0rPlV4Hm0OFpDENHWohdfL/ousbc+
-         WtbGhppSBLcgFRS4kWDYV/x95YDasGeKytmus9ZVCg5cNJyFZAH5a81zp4HoPTsy2Quv
-         opbmc+4TenVZ4I30rztSPR9KOvg08wTunycYNRKRvnj3PUzRLUrZEWnMERx/I+E1N7F7
-         6TotlF3bhiRFPpOXwOaJ+nC0a7b7FVSiNJ8JXzMBWaBfEUW/b7mqHr3CxTZ/XROj1rBD
-         z0Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758322671; x=1758927471;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k1nL2sHZaVwxxO8gmb5F84AIaQWW4Mnos7VRIHq3uu8=;
-        b=RvIFPiavVVB8crIL5j/3yUCZ/eZs5LDkBi07w8nFVFaV8r4d/73Hgwn4PAWKA87599
-         VueU/61E7Zc/bFYKBB73OcNJY8Tm5c6b8Ap6BOid1D4QLScRwr/7FSi6K3fjoMeAHxTL
-         2Rwt5lqbTcDLqB6BmVPRzd225c9l8Zy+8+iEBUo0iGfKWIbU0Vcx3FXerGSzCo2vEJE7
-         Z7SZdOmNR4dGcZeQhMidgmEM9rRBb6zb/WcsRSpMdH9ogzOcrukVK+I10wTvqCjHWQaZ
-         n4LLd2jKzSb7X5FjC0xnmtxzVG2JSlvBsTwAvKCEuAdTWSH8ZWpUI734UEnylOA/hckU
-         oUKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO7bR2zoOrkkyFc7G540vgAPsHLDzM3iSuBpLpq2japPhDlTFQKZcdoW7fxfrTh34UP4NGXm/2q/lpZ9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWLFetpzr0PTKClOaVVVX//dhKgzxAaNTWIwDbuhT44dLIlKVX
-	+HTM9Krzum6YF7/sn31GNnuHNpMCjblTtVWuEiu4WBJUJW3izkkltCd9CTkAdkHWsh3SEvcp37h
-	hEUuqkg==
-X-Google-Smtp-Source: AGHT+IFqogJhM5Mui7Rp4qxU0fl/m/BHClbKB37c6LI0q4FxFPT8FIRihkRWutMLOjMrfLVHId/GfrdfgSc=
-X-Received: from pjuw15.prod.google.com ([2002:a17:90a:d60f:b0:330:8c66:4984])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ecd1:b0:269:6052:3536
- with SMTP id d9443c01a7336-269ba5347camr65655375ad.45.1758322671102; Fri, 19
- Sep 2025 15:57:51 -0700 (PDT)
-Date: Fri, 19 Sep 2025 15:57:49 -0700
-In-Reply-To: <d3459026-c935-4738-8b28-49492e88e113@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A172AD24
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758322959; cv=fail; b=OtwabelYeITNa6uk5uyi67cy/7wHyEY1MZyzO3kRhd/w2AXSggPz/dqhIi00lJtuk22bgRnTOMsnO09u1DrdpANcEM0TPFyLpkCbmhjYTollji+XVRISNRyHxQKSnJJnnVdwJx9fcaehwA7XL6Y1JuvBPZ/9mR7t0rUGBCNVDaw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758322959; c=relaxed/simple;
+	bh=7nCknBsWic8Uapr89GDokqmO2X5WzZTLUrakNIlWGys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BnaUp7U8Hb2TPT+5nA00nBlaS5QCUX9nAGcOTlhq/X7n0HWPoTpS/1G+XJayJUEMPbsd7r4MsA+2okj50uXoR8lpdG69VCDMTDt5K1UVfIslw2o/7y6qInrn0v/YPMcOMzEgAFGupAKyBzl+dhRd0tvvqXpDoBcwMsd08LCC/Yg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BMvSaHwL; arc=fail smtp.client-ip=52.101.201.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SP1KIGxX+jamoRioSgioE0iLWIkaWcrMX0+dFzR/kFmJSDypO/txYiyydTeN/oBb1vgmwuNVHE2W49kVv2ZFOxCNZj7x+fNVJMZA6ZG81Y1JujJ3/3EX3t2dyBgeOwZm4uf5+8oNcLS4UEg9ONO5rkj/8zd+aoDJuCr2qxfcDy11x+UukmRcndUSyPhKpKfbp014IC/3HH3885ly7106SsaS1IJ618CmQetiEaHKT7M1FuUwVmv+S7zSPROOBPxVG1PfP9fyvYsyW+NJb8ztqDWeqxlTmhzEEXJBsvbkh4slsTjvKDVK0dEDAHmgvecr2cSfhpj2tpIW9UJa5j+8cQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tlexG0DONbiyAf0E9auLvdEXsGi6joZ4PIGE1SAmZKo=;
+ b=Fq/KAhLm5BxwcTYt36JdKmwJlMAK5DsMWx1CbjCrY+0OZnFrUKNwa9bNd2/sdu43Nom6aLk0YaMhlSOP6n2kuSNH+EaAN57QR4QPCiv6Qnd17IjrFj2wCkMJXvMyTyihpAlBMr7fO8Xz1s2XlfmiFUC9nUmBJQCnPy8Oapcg8LcI9TNgsUdMNb8CAGT1UlcpvRuhI8NnPdoohvYttVdYOouU0sI47OnMLWCnlQGpNhOIoQgnZdc8QUXRJ3wTiY8y0yDnWdZNKBC2v5qPeX86t9XyXIwOlemdYKO3lFtsV/UY+vUs8qYS1wf2FxkgNXdHBZzyvYsGL957sNF7+QOaqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tlexG0DONbiyAf0E9auLvdEXsGi6joZ4PIGE1SAmZKo=;
+ b=BMvSaHwL7tQeAYtBJpq3iRUG3NxR5754G7k9vGCKiEUsle5IVb7jwCUqCi3sRkgFb8rFzOLTpFvwR3GA0YjR2bqfIc5Bgzd7iNZ9wVTcbM429XYB41QV0DxCk1dDx1nU9YWRqSmSjhGzIAULlXQMjzfop/jHkPHWlaFmdO6x41c/AwFUnf9GB+SBTLn58zeTjq+u6BiFdoIZoVlJGXoMIKd7RFt6DEmNITEJoFqmC7Oh5t6mQhuo0sF/JqycOXxNexsuEOexjSkmL0tvTxWV4VwiPa3ytwsjyvMWS/aV1gfa2peVAk6bFzgW1lFGLTGHonb48uVbeFkPZnzlgerdHA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by IA1PR12MB6163.namprd12.prod.outlook.com (2603:10b6:208:3e9::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
+ 2025 23:02:34 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
+ 23:02:34 +0000
+Date: Fri, 19 Sep 2025 19:02:27 -0400
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Yury Norov <yury.norov@gmail.com>, acourbot@nvidia.com
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	dakr@kernel.org, Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v3 5/5] rust: Add KUNIT tests for bitfield
+Message-ID: <20250919230227.GA1901670@joelbox2>
+References: <20250909212039.227221-1-joelagnelf@nvidia.com>
+ <20250909212039.227221-6-joelagnelf@nvidia.com>
+ <aMDq2ln1ivFol_Db@yury>
+ <bbd6c5f8-8ad2-4dac-a3a4-b08de52f187b@nvidia.com>
+ <aMIqGBoNaJ7rUrYQ@yury>
+ <20250916095918.GA1647262@joelbox2>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916095918.GA1647262@joelbox2>
+X-ClientProxiedBy: BLAPR03CA0053.namprd03.prod.outlook.com
+ (2603:10b6:208:32d::28) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-20-seanjc@google.com>
- <d3459026-c935-4738-8b28-49492e88e113@linux.intel.com>
-Message-ID: <aM3f7cwjmSYMYq-K@google.com>
-Subject: Re: [PATCH v15 19/41] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|IA1PR12MB6163:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75a36620-d55e-4835-1b8c-08ddf7d09e5a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dDD6WmqmxFug9+Iq94Rj0dXA7TyXPJBrDzMtm4W5vd20v4tvMjOw2645RKKe?=
+ =?us-ascii?Q?rsQuNs1ZzLNoxiHuADkEUIfGMxACmDPWrFJattsL0ylPxsVylLm9inaFm4on?=
+ =?us-ascii?Q?N9bNBE4pqujfcsW7efI/gigqLH0RxXnbrGlTlbymyC0zaCWTfBeu9qmICS5/?=
+ =?us-ascii?Q?0BJtsysBP7t/AcQ6LsbJbxB4+o1R8wLL08cJgksrhXTLZQM6xOuB5hUOt2En?=
+ =?us-ascii?Q?ZXYaaQbGp7muPO6rtmklisusriB2ixdensUSE1Z9pYhGcBveEx16RnkyjByz?=
+ =?us-ascii?Q?9W9Aho8Bl3xBt+cHVENYNz6H2uI9EdOj0ESlJ1//PnKvQoWfADbRFfYDvMRs?=
+ =?us-ascii?Q?eBVaaH57e/Jhh/8FDC1JnBH4ePAP5l5PU2ZomGPYGjej8tbQ1MjYkWpWsGIA?=
+ =?us-ascii?Q?6wM2Lcqtn/MbJbOEgHCVwrjgovVAZLPfWYh6CSbY72pB13yKkJjUxChYT0yr?=
+ =?us-ascii?Q?VmAnEGVrZjudnuOxCyXoJwcEbx++/vnYE9PJ2t2PGX5JF8Eg3OtERepECbGN?=
+ =?us-ascii?Q?QVc+sT4Hlef8+G0XEHaSv46z7DVYRWCmK1UjJXxqzE/Cy+/8OodDtig7XA3i?=
+ =?us-ascii?Q?X4fa2CW1b2z2tQptbA3rPBUhnhc9oLnxEClZ3+lELEib9XlFLVGwTyFxG19I?=
+ =?us-ascii?Q?B4KDBsEz+wUAA9oIzY5R0tP2s1Nz0EHkPmzoRZT6J8bIC0nennjRh9/ymimN?=
+ =?us-ascii?Q?5pCCGEyKwpfvyqXtk/4GGSrEdOdko9nsCWIOYtm+AAxneog9XIuI3Mesz0Jt?=
+ =?us-ascii?Q?OKZdwm1qDvicmleg6qfvhVMcj2fRmfrR4b8/KOHpvmHNnDPus5vK1EHycFKF?=
+ =?us-ascii?Q?drUwvOFfflRBe4ToDgfHp6NXP9bafWqGelkUV6FCM1Bc8PDMowDynxhBzMrv?=
+ =?us-ascii?Q?xQtFL8VcNeQshym8BODkDwmLwExuIXCTGenMeI4ZhnQmKyqPkd2ts+WcgLJX?=
+ =?us-ascii?Q?9vVneelFTCqehQBgzjQIER0xeIDI6BeKs/598MStw7ZkvU/lAMmKpyTw5Xtc?=
+ =?us-ascii?Q?oQb4dhzjF1OOw86Y2QVeGQjF44wrfFX2ajpiR3e3jaLzi78fB+/p5O2tK/jl?=
+ =?us-ascii?Q?GkimZuTpmxVjUHAt25cEKtln2FOSBXJQR8mQMBBZlBJ/Y1u3bTPrxnIeY+o7?=
+ =?us-ascii?Q?y2H3+B6ObesevUDZeCXXSPnnuz4nXP4bcSAUKknfn1w2PDK1vjrd4KY5csgY?=
+ =?us-ascii?Q?CDoc+LXexc+tRmskU3kD7FH78Hbf4Ci401fMRnmJb/NmDHc63jxqwisu+iuw?=
+ =?us-ascii?Q?8LopiWkXCD8lD2H+/9/QbKJO6cTG0tPtwOU3GdtB2qKBGSGWn8Tlxo7yZHP5?=
+ =?us-ascii?Q?i9lddRoQY14iKJIe4HOMVM4vEPkgdm5ORHrtdg3JCVMtD+sNFK+g4thcfkwC?=
+ =?us-ascii?Q?7mrlBGsxPVANIZ8lt/X4f41ij9lU81UmLHb2/nlBDKXousDkk0YzgwAmbR/R?=
+ =?us-ascii?Q?23RYkqJncj4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?g2MG3tgN9J2nSbGb0aLmYVyELgTIf5VO6UYXCnkAxGY1E/MnHDT8t/KglJwu?=
+ =?us-ascii?Q?fBvpF3PIrJzyAHxNt9OSjkmxYoX4rNb0iT7tR3nA6hmNfD2XU6n4RXb28G2B?=
+ =?us-ascii?Q?kUhfK89U3fRDM5HAPWDISLSEAlsbw1QJ6J9fz7WNgtAfIQepJfGruZJet/sb?=
+ =?us-ascii?Q?9hvbC+iOvaNxFudVKm5nqYihmW0v3cFlqHw6YpDszpFmm4MvDbnGOnh16pw4?=
+ =?us-ascii?Q?MOvx0IZ0vnGmYFNiUjP8/NVI3paqSHBJZvUj5+1u/ndRjskaYTIb9G79SrDm?=
+ =?us-ascii?Q?lUoZIHLAdJcYuPYzjBbi8RkmkiIZJhgLBZJRDyMi4420tSh2v0/AiGnrVyB4?=
+ =?us-ascii?Q?EYzlc3iXQ9ALAtSPAgUu1vCdV6Y0VIt5XkBzvmkazhL4rGDt1/XEPwZqxkLq?=
+ =?us-ascii?Q?Uryxvq3fRon4jjjfx1pneoW9UQqUyeCOOyYi1SVzTuh7CWJExcouz1ZCzUqh?=
+ =?us-ascii?Q?swujC6g+BrP5zwE7mf0V/JbhmKxLx5eMD0MsO1bCEF3kEwMHWjrf0NlC7jyY?=
+ =?us-ascii?Q?pFDXJ7YAQt6Z8XWsYhFfq+mNbAYd+qncgTcWgIj/gPH4VqNXcwkoy1fYXAqQ?=
+ =?us-ascii?Q?EKYlxilD9h1u36E4k7gKnmiRaBE9hozov+r8SQ0dYmnAK4G+BLaYE6sKb4IJ?=
+ =?us-ascii?Q?uh4ir5qxIDaT5xpedEIR06nnSmTrK6vH4OGhNDUU7SxdxLz5Qz10j+B4lV9q?=
+ =?us-ascii?Q?DyTMdI+Vt7AOhSA7DXql0zk9blnoblUudyNvgm0juXqu+DlDzx2DZAnMhvcy?=
+ =?us-ascii?Q?v/3ulEf5vokwOk3VedBhiiV2uXvJbQbkpSS8q6XRJ5Nl7T7hLVZ9uaFVoAgb?=
+ =?us-ascii?Q?93exT6HhcKa3nYSJRWgfSVNAL8TDj3pNi3LD2E8+Vzf2KgfxLLcJ5XQ7ofIv?=
+ =?us-ascii?Q?s/HzzxRCdn3k0xjgvDZtjrAwTJVoePFM/qY0KOTKyLYl083ny7qVJyFvUJZE?=
+ =?us-ascii?Q?gwPjO/5OodbVa5i1J7izbyFnZDShdlo56Uc2YeAIfTdNwyAuxyF8rBP6i4cA?=
+ =?us-ascii?Q?5Zqlt+gg72ahfQ3tMK6tjo4784tjN4c0xF/58ww1OCkKNm3ISTjoav1k5CKl?=
+ =?us-ascii?Q?AYCXs3HqCdfY/xvvSErBj4w1zYPiOX847w5unjFm3tFeQ4WYPx1ID2AZ0ZRe?=
+ =?us-ascii?Q?4V8U0XYvS7i7cecLm1voeXNMbN0CuZYFVQqZv4/7OLBpUGfusUEnN7MXbxyw?=
+ =?us-ascii?Q?bY1NTSngeqIvMvnJiWrtD70DgitTK/mjvF0fPIhanTrIrqf65anUqzo+A2Y5?=
+ =?us-ascii?Q?bZRbbaytpYj2bR5V7PQCWtF+Cs5DpBAThEUCUK0kn62CCk+lDieuS/KoisG4?=
+ =?us-ascii?Q?q+z/drD5l2XF8CGxKzHyPIaksxCK/poc8WPO8vf3SZt/jJadxTHu0NkqIUf+?=
+ =?us-ascii?Q?1W0FNLrz7lsDZUqJp1fK4tndiHoKcWrV0OTpca2gfXumy4aH8Ul8skEG+1HC?=
+ =?us-ascii?Q?SnGHgKk+wETk2+jY8q40ytFKlUZugVem0qlCsdz7C12Vwaj3e+PDFOe1XNaP?=
+ =?us-ascii?Q?Gh+kFuuebaQk1IVbWPHYKrhtT0JCw/OeMusD/+aag6ZgtY4pGvCEfkfwGEmq?=
+ =?us-ascii?Q?QsPfCfuga/F2B/RvVVW+od134FDVmiIaJnGVLtB6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75a36620-d55e-4835-1b8c-08ddf7d09e5a
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 23:02:34.0205
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CdkdCs754P8q7RyXIzeI5iZLI1Pj8oS2zXVSnLyHntcxw273c9zIcwAwGlo24+ujQR5g6UfcnFR+4ZLjiWqvEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6163
 
-On Thu, Sep 18, 2025, Binbin Wu wrote:
+On Tue, Sep 16, 2025 at 05:59:18AM -0400, Joel Fernandes wrote:
+[...]
+> > > > The same question for the setters. What would happen for this:
+> > > > 
+> > > >     let bf = bf::default()
+> > > >              .set_state(0xf)
+> > > >              .set_ready(true);
+> > > > 
+> > > > I think that after the first out-of-boundary in set_state(), you
+> > > > should abort the call chain, make sure you're not touching memory
+> > > > in set_ready() and returning some type of error.
+> > > 
+> > > Here, on out of boundary, we just ignore the extra bits passed to
+> > > set_state. I think it would be odd if we errored out honestly. We are
+> > > using 'as u8' in the struct so we would accept any u8 as input, but
+> > > then if we complained that extra bits were sent, that would be odd.
+> > 
+> > That really depends on your purpose. If your end goal is the safest API
+> > in the world, and you're ready to sacrifice some performance (which is
+> > exactly opposite to the C case), then you'd return to your user with a
+> > simple question: are you sure you can fit this 8-bit number into a 3-bit
+> > storage?   
 > 
-> 
-> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> > From: Yang Weijiang <weijiang.yang@intel.com>
-> > 
-> > Expose CET features to guest if KVM/host can support them, clear CPUID
-> > feature bits if KVM/host cannot support.
-> > 
-> > Set CPUID feature bits so that CET features are available in guest CPUID.
-> > Add CR4.CET bit support in order to allow guest set CET master control
-> > bit.
-> > 
-> > Disable KVM CET feature if unrestricted_guest is unsupported/disabled as
-> > KVM does not support emulating CET.
-> > 
-> > The CET load-bits in VM_ENTRY/VM_EXIT control fields should be set to make
-> > guest CET xstates isolated from host's.
-> > 
-> > On platforms with VMX_BASIC[bit56] == 0, inject #CP at VMX entry with error
-> > code will fail, and if VMX_BASIC[bit56] == 1, #CP injection with or without
-> > error code is allowed. Disable CET feature bits if the MSR bit is cleared
-> > so that nested VMM can inject #CP if and only if VMX_BASIC[bit56] == 1.
-> > 
-> > Don't expose CET feature if either of {U,S}_CET xstate bits is cleared
-> > in host XSS or if XSAVES isn't supported.
-> > 
-> > CET MSRs are reset to 0s after RESET, power-up and INIT, clear guest CET
-> > xsave-area fields so that guest CET MSRs are reset to 0s after the events.
-> > 
-> > Meanwhile explicitly disable SHSTK and IBT for SVM because CET KVM enabling
-> > for SVM is not ready.
-> > 
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > Signed-off-by: Mathias Krause <minipli@grsecurity.net>
-> > Tested-by: Mathias Krause <minipli@grsecurity.net>
-> > Tested-by: John Allen <john.allen@amd.com>
-> > Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Signed-off-by: Chao Gao <chao.gao@intel.com>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> 
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> 
-> One nit below.
-> 
-> [...]
-> > 			\
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 15f208c44cbd..c78acab2ff3f 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -226,7 +226,8 @@ static struct kvm_user_return_msrs __percpu *user_return_msrs;
-> >    * PT via guest XSTATE would clobber perf state), i.e. KVM doesn't support
-> >    * IA32_XSS[bit 8] (guests can/must use RDMSR/WRMSR to save/restore PT MSRs).
-> >    */
-> > -#define KVM_SUPPORTED_XSS     0
-> > +#define KVM_SUPPORTED_XSS	(XFEATURE_MASK_CET_USER | \
-> > +				 XFEATURE_MASK_CET_KERNEL)
-> 
-> Since XFEATURE_MASK_CET_USER and XFEATURE_MASK_CET_KERNEL are always checked or
-> set together, does it make sense to use a macro for the two bits?
+> I think personally I am OK with rejecting requests about this, so we can
+> agree on this.
 
-Good call.  I was going to say "eh, we can do that later", but it's a massive
-improvement for readability.
+It is not possible to reject values passed to set, because it returns Self
+and follows the builder-pattern, to do this we will need to return Result,
+and have the caller unwrap it, and have to rename it to try_set().
+
+Instead of that, I would just extract the bits from the value the user passed
+and ignore the rest (example if 0xff is passed for a 4-bit bitfield, then the
+field is 0xf.)
+
+Alex what do you think, should set_ be fallible?
+
+thanks,
+
+ - Joel
+
 
