@@ -1,154 +1,447 @@
-Return-Path: <linux-kernel+bounces-825102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A0A8B8AF7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2281B8AF89
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62C971B287ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FAE15A7079
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB56C25A2AE;
-	Fri, 19 Sep 2025 18:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C66267B9B;
+	Fri, 19 Sep 2025 18:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K/PK5xiK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cibjwB4f";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="BaHwe9eP"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EF4259CB9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758307385; cv=none; b=FkviinsSAj30ETHqMBpV2VLiUjYN9Mkqq+Ob6xFV+eGQJrFn0ZdXFdNA7GPUoG/NXqxmu0uA++j85oN4Zkrib1zID72jbDJ4PS+MY7uq8AuWNpiCSAVBbiIKbjT99vYf2MBTXz5eXhwc76oqsONh1WrukdALTQuUzUNo7Rd4CCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758307385; c=relaxed/simple;
-	bh=vrkEpEkg6sDXkk+i+SIpLer0i3cfnFivhO+rvdi1vww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gR+MhyyY+VSlUqu9Ubr1cjFIEytc793Kud7FcTxCVlrbjIOqsipeKtQa6rsdQMk3JGqmiJUcg85vDwHEsvI5S+T3qztv0NhcmOzdWXEmHtIN20/XPJqVhGNYJLkRDKTIA+feUIlbP6ZJmNNnzGmPwWppy04y0+lmjykCGvaRSFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K/PK5xiK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JE5SU1021417
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:43:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=iDUVT1j3d1+CSBXfFOTmyvH1
-	fdhZ2PGbb9X8k35Q3Ls=; b=K/PK5xiKgRdHln+rXzsf7M3F+hfCe70jVbWY+97H
-	vb8vd4bOKlTFixKmvI69F2HTXw9VGxrQBm46A6YdcUnOoU/SxCmibMOx3jPVlOdW
-	EN443q8AcfUV/InJZoSJ279xcEKACXMiBb9dq946wlZRV3RynEUHF3+IQJgtNm5A
-	xLR9ytZdCiRF2T8hgyeB9H1YY1+F1PO4SQYthEXMuZX0w58qwerZlXGec1hl44nC
-	FkkhWac4GEz4e31yLaU+3N1wBViYWHKzovqtTJBvA/fVLo6XGJPLwLAi3qD+MNwq
-	5+1T6yT6KtUTFgjiJg0XWSgIuHSLxemc+SaAdWnrcJdS7w==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy5khvk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:43:02 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-718cb6230afso44755286d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:43:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758307382; x=1758912182;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iDUVT1j3d1+CSBXfFOTmyvH1fdhZ2PGbb9X8k35Q3Ls=;
-        b=A7p7o9p1DLD7oBbVveFV8/bVsWWJ9XVxPZoY3pM9pdMV/A5H1fiFRMAjRr1U9iBDCy
-         88gtujFDWqliHPltcoHNbSSmwM6UTE8nJUQpNEITycd7mV1KVXlO1nW9xfwDVAprtYY8
-         6wxTdNC1qNlSQaED3IV8K+crXeJimMCdvk5jGbBVVe6JEfAdSDUOER6TwBU8qqySVsxC
-         Q/Go4zZgqa2vVihOVXIGmFV+umhAr30vVMM/eYhXORt6L/ekr71LOG/oselBqLeXT2yR
-         HL8awsxC/ell8keo+NYwBE/UKTdYV1vXIa+yWXEwp4n3Bj0Hevhsk/vINZerceEByVgI
-         MKGA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0rjyfTx6zzsKl36ac90DHGwO4w9Z5LeI4QXSjEAKYdkwSlQ13s0gyIfW5/gaQ+5kgvDZutTy27HGaeyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE1o1qIdn6j+MiLMbkwwkSRgPYxEfXZ20Hb1H1Zx5y8hyLvy7C
-	x6F4njIxPo5xhSITL8WPxS4/5ZaHORSTH+I+jeZseLQQuWMJ/wXvHuJqa7XEU+hbfP5D0jG8mRE
-	j1ttbgh2k+SqxjATphDnnupG5Gsf3Vq2TiSDa06lmWmOPNOnAKtIjz1yEEkv+RrZmb5w=
-X-Gm-Gg: ASbGncu9uelwllUJnLrlQhmJwQJDAOp/TuS2Ez/UFkGw80mIpd9j3Pu96aUJl1m8Cb2
-	G6DKPraDGYE3L36SmLhcEMWBQc/w8JhudreyJj5ZfL68oOklaU/ERqLhXeMZiWXLJ+1oIXGLO0n
-	ytTZpJYIO2qyG3eYwRYhD5jwmp1KDbqCXQ0t399n9lUO8Q7XHk++qTErqqNAFcmfB83woqLLSO1
-	M7vCkXWs1XEMAw+BYyfgzCrRUIwxAiRYb+EpKWCaA1sY4KbqW+SDKWTm2Jhd25i1eE5sNq5ofa+
-	xIj9WK6Evya4cEKW6ZY/19bKiLKcQC0Aiv7g6MFBHP8kjkS1aJENwWl7QhnOKPrBMtOq7vj0K4J
-	nZwB9N3beXxYqLnmwmyUZ3TEdFW9yLN/PTSZ4d3DJ51CUSTC4bF5n
-X-Received: by 2002:a05:6214:620d:b0:79e:88e2:1e60 with SMTP id 6a1803df08f44-79e88f16526mr13039866d6.29.1758307381839;
-        Fri, 19 Sep 2025 11:43:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBKob9aSVicKYLHzXQPUikT9E64t9XkAJpeGDW6LHYdfXs9n7cQ4eZ9GnUtn4na0s2vbgtzw==
-X-Received: by 2002:a05:6214:620d:b0:79e:88e2:1e60 with SMTP id 6a1803df08f44-79e88f16526mr13039536d6.29.1758307381248;
-        Fri, 19 Sep 2025 11:43:01 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f447f3sm1549103e87.13.2025.09.19.11.43.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 11:43:00 -0700 (PDT)
-Date: Fri, 19 Sep 2025 21:42:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v5 09/14] phy: qcom: qmp-usbc: Add DP PHY ops for USB/DP
- switchable Type-C PHYs
-Message-ID: <zhqm6bqnlx3cu2rlv2wdhbhnuwc35jtia72tjotchyq3utla7x@45ws52wsii3w>
-References: <20250919-add-displayport-support-for-qcs615-platform-v5-0-eae6681f4002@oss.qualcomm.com>
- <20250919-add-displayport-support-for-qcs615-platform-v5-9-eae6681f4002@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AC825F784
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758307467; cv=fail; b=psm+3Jc+kBKWeNT3/OK/0oHdNqnq7Sihj0kbSngzoS5awK5660GcPxeC5C5QuaYbR7d+Pp2QyPrb+Yv4YJw2IEREsQ8mcaEoxpHa7JzN0N8IGW9lJRgP9di9YZ4DSRDoF0fsGVaKAOoSrjjkk0NB7wAE6+DMmfHAFhWUrzJaYj8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758307467; c=relaxed/simple;
+	bh=uu9UF8Je1xyt7SzepItM9BSFicpNHFtDADmqQPrUcHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=FhlSUcHjWirVJMBaPDd7UM7Cpz60sWF5H/a0I6EnGARhl+n4GYWLfc6fN1RC14tWqvcDeH7+RvPduVzOzqWy+mntV1l5EaQrjLTUAdpvxwhRHs5s/C43Zw/7kv5xmp6D+je7bZ3s8nqYi7A7fVWejHt/snVdCj4GJZv7CXjyh2g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cibjwB4f; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=BaHwe9eP; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JDuej9010099;
+	Fri, 19 Sep 2025 18:44:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=MsJ0ouQS/JE/gbUAnZ
+	RgK++0noQ1ageXy2lUp3KX6dA=; b=cibjwB4fzqFGmoaxvin1YDqaZw8NxwyOYk
+	j1rL0crrIN0NN6r0QSQSEhTOj31AuKpTVl1PcHHkYexQuwI9KKOce4p+/wNQDgNn
+	8vDp9Q4IBr5Sxrpv80VtGyNbw0q61W6Oe+j20uyaNlTjuiuK2nR5zHgnTRkSgQvc
+	ROD+X+dudnwY5vXKrwYrsqLNIdQ9pqCdPQ2kbwZiCMSugzHTEJ0lNk8SD6FNrp9D
+	r6HhH0Qs8siw3S21YaY0ArKPQiyhTg5EpYQWcvf7I0hmn2SnQCKTTs6aeJ4PTTYD
+	HAdIUGKFPeE8mNbeMCG65CWsDshqSYQKjVSE7W4W4MEpGqmpMkNA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fxb64qc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 18:44:05 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58JHLJck036750;
+	Fri, 19 Sep 2025 18:44:00 GMT
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazon11011070.outbound.protection.outlook.com [52.101.52.70])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2gv0bc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 18:44:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u3AFpA64HAMk/fcyTLnEZUQJJVnSUSFJf1KwJuvPnurL14TyXshKuVNnnla6Nqn8K+npA0xWsDSbR2whcjPfixv9pI1Jxnye9vbB9KeAY5g2x6mCOzxRLskSsKfzI+psydwoJNMbJNfzYTQZBsQAvn6w6jxJ3u2UV/ejubKbJBeSHih2MAhR8DfcchW+kBygrTkskJS9deu1pQagOS+RgV+VfcD82ESpTabQ2lkzePOfAmNAK85KlGzKMHbeYf8z4ctwM5hwMFy9oE/RmbAFMou2w8DEoSzSJi/JViYTBxcy38zjTth4qXrFNvP82R1Y8qvsnk5oZ3PogEbF1CEwhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MsJ0ouQS/JE/gbUAnZRgK++0noQ1ageXy2lUp3KX6dA=;
+ b=Col68RcvXiVZaTnX4N9GNljlHb7vMFBTuNrUFqkWLTbZSD6DXC2fJOu82V8UN851Y8fX2F0K2y6PfcjygbETDylHtNWGvoenayhSUmJBjgcDF994fvzPB0IaUJTW6pFWnxUjVLsjv+Y6PdQw+eR5QHi0MhBKzYSojNSFJriVIiSZhuynHJoEi32T3l0rmzHIa1F2Y0sIHLNZkfSDEe1jv8Hb/8dRZr5cMJhhcHy7/MFS2uUqxpNCZV3tu/R7QcPgynafrLIFDip9dFWvHNpMllHHCigBPe9BIOqoF1wGLFNNE786cfr9OKa27uvs+PP53tfUQTBIi/U33Vz42eWFXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MsJ0ouQS/JE/gbUAnZRgK++0noQ1ageXy2lUp3KX6dA=;
+ b=BaHwe9eP3ZSfclJsZhdA8WWNydZryRSDCfJJQkBzablTFBvmwpTsnAwNxJ88bcRb4MU0lT5ohIsSaZCpHkAVhXwaTLzECPKHPvYZbf1NU8pGAIZ+eSUKzUJKHoZ0NYbgsugKUd1RfOB1yuPB+dWi+7NyZREqZ8ZWRn4if4lhc4Q=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by PH8PR10MB6313.namprd10.prod.outlook.com (2603:10b6:510:1cc::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Fri, 19 Sep
+ 2025 18:43:57 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9115.022; Fri, 19 Sep 2025
+ 18:43:57 +0000
+Date: Fri, 19 Sep 2025 14:43:54 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Gladyshev Ilya <foxido@foxido.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, maple-tree@lists.infradead.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] maple: fix incorrect rewinding in
+ mas_empty_area_rev
+Message-ID: <gna74zdgw7ob5sa4jvcrgr35wbrbxibtxum7ysdkqdhetkiyiv@gzvdwxybeb25>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Gladyshev Ilya <foxido@foxido.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	maple-tree@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250918182544.1400748-1-foxido@foxido.dev>
+ <4a72mtf5n4mzirudx3z2z6b72ropqs7f4kp2dlezkib4k5em56@hiw63iieahph>
+ <76e0b252-ecbe-4d86-b210-79eb803e0fd7@foxido.dev>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76e0b252-ecbe-4d86-b210-79eb803e0fd7@foxido.dev>
+User-Agent: NeoMutt/20250510
+X-ClientProxiedBy: MW4PR04CA0042.namprd04.prod.outlook.com
+ (2603:10b6:303:6a::17) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919-add-displayport-support-for-qcs615-platform-v5-9-eae6681f4002@oss.qualcomm.com>
-X-Proofpoint-GUID: rDvT9-UW6NiNsK2E6QhD2G2oXpa8F-kd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX7hT8JCZi1raJ
- f6abFgnnw7LSg+txSTFjp7ZY/mrMPLK8QMHWxlJcSnNFpK//pltPZT+ykeLHJjU6M2i9xzxnvPl
- piS1JXll2UlBdlwY2acjOBnvIPE9W6W8tv2SimZWsNHCgXp+EOT6SRIO6RY1Xwfh/H9aCfqFtji
- EwrmEePhfQIHMbl+wGGSC/qI4J46HUyuy9Gr4Wr2trvg0h5I24DiIhhpRpq/N8/as75c1qOtPCh
- eqVkjGZaNSpTAeVmWGXHV2438aNPl/xrkbBOmpjXOA+pfVd9ZZ3R1fUAcCwBdr1RYY3AENqueAl
- DFZ2p5fSZk26ec49uWRpSpj6nZdskdxDkkyqM75XSqA/jCPMxWXi8uItgBQ4rpzme/LW8hHPD0W
- JmkxzOTW
-X-Authority-Analysis: v=2.4 cv=Y+f4sgeN c=1 sm=1 tr=0 ts=68cda436 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=gZRqL4tbKlavufozYNMA:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-ORIG-GUID: rDvT9-UW6NiNsK2E6QhD2G2oXpa8F-kd
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|PH8PR10MB6313:EE_
+X-MS-Office365-Filtering-Correlation-Id: aaf439a9-f004-412f-495e-08ddf7ac7deb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HBRf6xuGtF5ILx9ElXIxQn+rlTvh98iR0yjhfU+CWVT5KRDC39c2qzmUEzVK?=
+ =?us-ascii?Q?dENp6n94cqzD91xFvoz3VOTkkc7ee/ROV/7BpH9UuFq4peySpEH3CqTpmw1m?=
+ =?us-ascii?Q?wy2DV53w5SecA9VkY5d+8atEl0J4opRgjvyR+lexYP2X7Xqzxrg2Eav4Xh3j?=
+ =?us-ascii?Q?qY48EhBdS8iJy9WR8wiQ9CHcP/JPDdzcgC7bc5qgNgYRVq32BhJDC9ZdI9uy?=
+ =?us-ascii?Q?wJ1k+yq7xCeKBa4ij2s6S8RTx+VvmSXUnkTw3sdYh+B3BPg6/P6832B+cZ+u?=
+ =?us-ascii?Q?hu5zmNkDEbcNJ2sajqR5d0txRjyMQBJG/WV0UoJcbc0nYfuXo7lMs/VKC37i?=
+ =?us-ascii?Q?OQpdAvUlFzfPw12deBaBnYw96QfDegRMBMMUI/O1Ere5l76mo0jF+nrcXAkM?=
+ =?us-ascii?Q?bQ8DhjLL/ah9hmv0IM9lsbK+yNfkJr8OmOGIS2GzW8hb6pVnkJqjet/G4nG8?=
+ =?us-ascii?Q?TOomYW3x7/mrJpNWIhYDpoYMgLFheD0uPMmiIIgtAyx+J+rEgIXqO9AX0YnQ?=
+ =?us-ascii?Q?MHdZl8Kgx4HnSacDjdUIyFGQVoXXF5vcrjuS+QL72oWDJ87Km3FDV5F5jNOs?=
+ =?us-ascii?Q?QcYlIyO+aAr8DVJm7kYK3ukIXY8MorvzB40fSQHucgppK39TRs/fOPf28Ttp?=
+ =?us-ascii?Q?0n68MzNKkpHqv8lB/5OMxXnpPRc2i/Kz0DrYp8Yaq84Ok+cJ0aBRjmmTHHYw?=
+ =?us-ascii?Q?oav+0ipghzEzfnTGk4Q3sn+Lh6hBE11v1MlkH6M5RD4ttkigHFnCuCd1jtE2?=
+ =?us-ascii?Q?CeBCggNOEjn9xPPdQ6xaUvRzqFQlk5/MQeLex+5q5kWsAZOP56EHFfZlgPBH?=
+ =?us-ascii?Q?CvudU7DCRVFzz5IKVtLy6r2oYdTukumBam9uL9r1g4VtFu3Vb9qIRmhikFSh?=
+ =?us-ascii?Q?Icm5/rv9wJBt7rrkdCEIeKVxjpm5bJoVnRmGMMCCc5sr4yQmBu/ESco5I8a/?=
+ =?us-ascii?Q?cWtWebkJ+Y6Eqqj5RUTfgZNfFSQmSa7dNV5zDCzJQqoNJB0k+M/RwmPP83ix?=
+ =?us-ascii?Q?VX7YKlWDE5cr8Q8nY2RpcArQigLN3HW28MQ2UgFxfx1hJUZQg85NCpmHOnZa?=
+ =?us-ascii?Q?pEyQdPjplxQoXYJJL2HSDO4syGTGISkf79kDBv+kUcmtrsp/qnbcnQMDHJb6?=
+ =?us-ascii?Q?3gXgTyktU8Q8tqK4ouwv28QzMfUEYrgPBK99bnfp3d0EFfXaeyBbiFi765x+?=
+ =?us-ascii?Q?akb4tc86k27OLrQ9vc8mipIpUk8cO2lPwD6qAXWxqq9fLbxju/h8YH+LG0+2?=
+ =?us-ascii?Q?yd57yvXZEnxhzZ7tNZa3fUmZVzEpaDkKBgtRNyBay4iK2TlD7OVRyES0O0LP?=
+ =?us-ascii?Q?Fh9QDr6l7szhP3fRwd/+6V6468nnSPmKa00KepStbkZR2rmduJk8xpv0nP94?=
+ =?us-ascii?Q?DT1tZ4ROfaPB8P9r/8Km1Gj5vgHkYcyX/82B/hi0dBK2ffN9Q1P3yaJUG6YB?=
+ =?us-ascii?Q?mWZDkwvrE50=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LJBL4H+bM4d2DMjMhcSiVFiDYvvo+WL3mQllsfyAGv3B3DQW2MEgL0YysSak?=
+ =?us-ascii?Q?eE0bp+D3D3L6ptJpAym2+AOJARfVhGz7fzwT5Qm8XDw7BcTYy70Vfpb0FwkS?=
+ =?us-ascii?Q?rYPFpyPeQeeiNIWHvz+/EmGx+I/cb0WlzoUFHMA0SbMdjDoIixlpYxuVeiGw?=
+ =?us-ascii?Q?NoJ+0xyrXtLkTYW6T4HfEBG5BJ/AePSEsC7zuDTE0GQ8bZAbBo93hS8pZ7+T?=
+ =?us-ascii?Q?VHSO7yjIBoNvPhCPj3auUcE1ZANnSqEzF+7yrdKvn7sBez2GtNJKVSAZnPp+?=
+ =?us-ascii?Q?cQU8OmG+Ab5k+K9ii5n2hmypXqRwE2ii7DOoKbCQncPBDdNRPRaExhavg2KX?=
+ =?us-ascii?Q?0ePudgm9om3/EAer1SKg97QYrdSVLdglgrDBHdVrDZA6t3Sr1e4QwqXA1Nxm?=
+ =?us-ascii?Q?tQUdoLCmg6cf/vq3PI6iJq+n9ovXlqvQph4/B6I0XgZ09vq9dGbiNLV6VgiX?=
+ =?us-ascii?Q?OCrh6GIPlLw25/+yqPt0DRZ/uCwTsgs69asNnpiX9di65F7iUpDtReBOQwYd?=
+ =?us-ascii?Q?LrO0ONSdc4U4rpaeLXmCGO0TnLaMx961UqBMKUrXfpgiq0GCkUIlxyZYjr+7?=
+ =?us-ascii?Q?RpEtCzMsfov7fSane5ogBmBK0QFe2jZWFuPr3fJ/h5G2qqQQk7CvtYR5pB+U?=
+ =?us-ascii?Q?JXz5DudOufAjhy4ddJhHNHCqXsvYaxiBMZcAgpkyW/sfSRM3nBPcoZS7GHHE?=
+ =?us-ascii?Q?lO0ZCrCsKjH9ges1P8NIP6fZqidqwHfV/Z/MP5/midHIwR9/OkUKNz3oMqKu?=
+ =?us-ascii?Q?N2aGycF1EMnoqbgTdQMdUInQi5EolN2sZeU2pmH19Q1h0BdwIkdqPjBz8UyV?=
+ =?us-ascii?Q?GK/qmZrftihZEh4xCAZd+sF1cSKHKf3mL0g4kVEGOghIhUFbpCpwhWY9LkVg?=
+ =?us-ascii?Q?w8uNjJQ1w7FKRKV5tpHwRI6poIl92vr/KuQNoUvMLIbdIUg61lWsXu+kCZrb?=
+ =?us-ascii?Q?NEfygCs6SQZKhCoN/dtO9lqTtt7qzZixAiGA8an0cRRVtkiyo24kLdQqsdJb?=
+ =?us-ascii?Q?AD5uAvQEDtS3C1PpNXWWHjIXxDoB0XKIGJKLgxJGqRlK4MTBukYr38GXHfNh?=
+ =?us-ascii?Q?THKCeTHH6KiykEbdHjNH1TEDsXzAzzdGpR0KTsnbAiwl9IqJ1oytlTI3be9b?=
+ =?us-ascii?Q?06kok3+dITt74agZLTZ09P0f/Sd+Ah495sRhQKLMRyBOjXDho7j8ZsNed6xC?=
+ =?us-ascii?Q?ThzE/Y9xGmcBOiPwBReZ3LZOzAGjBTwhbzorenL02FtLxmFe0Z/tPvjIRTlx?=
+ =?us-ascii?Q?/UOTYPye8rAA5bMXj+UsjXvc82TrHUPwm+Mmq3NNnTDqtclYegNjVTKcF/pS?=
+ =?us-ascii?Q?CGrhtjvrnUF+eosECAuLYIaq7ZyDOjuV1I3yYZtgf9xdUZabq2g6xBNC+yfe?=
+ =?us-ascii?Q?QGwb/X6Ow+Ks7eSuqcICGb+eBcGopIzDX91LHPms+9iB4WZUSjIZtxTor0Xv?=
+ =?us-ascii?Q?l9kJlEmaajR559lRgEGzbr0LThyXYlqYP1m8nXnaSMAVikCa6jHLPcVVABq4?=
+ =?us-ascii?Q?ieXVgwuA2znHP+g/0W3JUrrEBd3QLfoyxWOkoelUKuek+Uu5Mxz1sf35chFv?=
+ =?us-ascii?Q?9vue/77Esy+Bp5Da3wky1pMAnVXGawBSyZKaB2hd?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	gFabfPhYPx1aPZIIKq2awdUbtRi/KCxbvu+GvQwM/cXRa1oeW92dbQ8uWgN1kSJzSwLV59Dj6CUIpESJkKov7psxHC9PrlE9P6r60v1zD082Mk0RjSoUUavjv7SZqQhJ5tvOJG4tD2ojv+0C/TESkp1VQV+vuP9MSbAslGURKcPe/ZMVtoWCDaafoJSAT2SnKrEyjvhuZJXRujFYtesk4/33LZ2Q8s2SrsYyuapPUTERj6XRf8yOdjQp7UozWeczyfIvW0TgLGq3ngh+0IT3Le8u/7uoboDwDuXRlpQHia/qT3JXY6P2Ob4s7WQVqeR/yxLJzA9FdJiVAB0PYg4bIYfWjU6gwN9GIVy6r74uOfQGE8Xf0g6/yt3moD4o6VNa/tOQabMU1YLZtlLVrLtFQzO/wm1UIjtpQ3+gheRhENhuiZQvVfYST7r2Zd3MJgAb4KWKkqi0p+x1PGh6/tHYEgojKMy7uEMSRBDcYFM8o/HjaNj+aBAx4yIEvHiQphhH2oBDiebCzfEnf3M1/piWJfpyIuXaLGTNK6oazI6I+crnpJDWJoyt7PshOZoRwKEofCmTyAPrwoC+86G41qFk7DIW1U+bb1TJJ29rYq88FyU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aaf439a9-f004-412f-495e-08ddf7ac7deb
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 18:43:57.7044
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wA2eLPxqb2Etk89rUVjbbz6p7RmrddQP+UG9YAUSirzQZsqeN2RDqT2Iihc42ZGNa4iLgIWKRqC5s+dF0+QIbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6313
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 impostorscore=0 phishscore=0 adultscore=0
- malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxscore=0 spamscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509190175
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX95z7DeaVtw0d
+ tDzOdNNSBV+UeEjZwZXmauWc9cAVcJuIPyFJlSp3WAKK217v7BEgcRo3FW8cDNFRArrAdxQ7JHs
+ Wpm6zynjSBH+IR/5c5608oESvG4Y4cFhIOId8PyrgboNMMFT9rdGYMkeGrInSjHmbtNp1nWcRVq
+ bbEWwFCV6r79QY9PJ81gofKXteN7eLdrS3YH9PN4CO6/ya9AzDeORrJv+zEFTsfTt1362NvmAXp
+ zuuke46OdYRHCWHXgLIbjdW730tJJ3fIsG3AxE0Pfz60eF1aiqYBpkG03UQyPwBuR+fgGfIiP5B
+ Zk+xTZ/r9NG9vZLH9Ew62Yeh9u4WxqiddCGfMm/wIJdhIcjxFoflAk9S2GLDxRbYPbV4nk8nc4Z
+ Kg6O9j8EDaQYkZmVbtNumA57p6SrOA==
+X-Authority-Analysis: v=2.4 cv=KOJaDEFo c=1 sm=1 tr=0 ts=68cda475 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=Y__Fvv8fOEk4SHzWr8AA:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12084
+X-Proofpoint-GUID: mvm6bPJjjjCfpj-u-7aZliuM4LJfBD5y
+X-Proofpoint-ORIG-GUID: mvm6bPJjjjCfpj-u-7aZliuM4LJfBD5y
 
-On Fri, Sep 19, 2025 at 10:24:26PM +0800, Xiangxu Yin wrote:
-> Define qmp_usbc_dp_phy_ops struct to support DP mode on USB/DP
-> switchable PHYs.
+* Gladyshev Ilya <foxido@foxido.dev> [250919 13:14]:
+> On 9/18/25 23:20, Liam R. Howlett wrote:
 > 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> Sorry, I kinda overrushed with this patch and it turned out it wasn't
+> complete. I apologize for that
+
+Well, don't expect me to spend much time on this either, then.
+
+Your testcases are wrong.  You are not using the interface correctly and
+have broken the tree with this patch to pass an invalid test.
+
+> 
+> Below you can find new patch with regression tests. I'll ignore some of your
+> comments (and some of them are fixed) for now, so we can find common ground
+> about semantics of empty_area* functions and later, if it's really is a bug
+> and not my misunderstanding, I will send v2 for review.
+> 
+> > * Gladyshev Ilya <foxido@foxido.dev> [250918 14:26]:
+> >> Previously, mas_empty_area_rev was rewinding to the previous node if
+> >> some offset was cached. This could lead to incorrect results because a
+> >> useful gap could be skipped. However, this was never triggered in the
+> >> kernel because mm subsystem calls mas_empty_area_rev on non cached mas.
+> >
+> > Can you please produce a test case, ideally in lib/test_maple_tree.c or
+> > tools/testing/radix_tree/maple.c that triggers your issue?  I add all
+> > new tests to one of these places so the error does not return.
+> >
+> > You can build maple in tools/testing/radix_tree/ and run it to run the
+> > tests.
+> >
+> > It also helps understand the issue.
+> >
+> >>
+> >> This patch unifies the rewind logic between mas_empty_area_rev and
+> >> mas_empty_area, so they both rewind in their correct directions.
+> >
+> > How are these unified?  They are still different functions..?  What is
+> > the correct direction, in your opinion?
+> 
+> For mas_empty_area we should move towards first slot, for mas_empty_area_rev
+> we should move towards last slot. In both cases empty_area function will
+> rescan last saved child / gap and won't miss anything.
+> From 17707e1117a4d4be23f257c3b911c0a36f55b116 Mon Sep 17 00:00:00 2001
+> From: Gladyshev Ilya <foxido@foxido.dev>
+> Date: Fri, 19 Sep 2025 20:00:26 +0300
+> Subject: [PATCH] maple: fix incorrect rewinding in empty_area functions
+> 
+> todo: full description
+> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
 > ---
->  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 194 ++++++++++++++++++++++++++++++-
->  1 file changed, 193 insertions(+), 1 deletion(-)
+>  lib/maple_tree.c                 | 40 ++++++++++++++--------
+>  tools/testing/radix-tree/maple.c | 57 ++++++++++++++++++++++++++++++++
+>  2 files changed, 84 insertions(+), 13 deletions(-)
 > 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
--- 
-With best wishes
-Dmitry
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index b4ee2d29d7a9..3cc1596e231b 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -4985,13 +4985,10 @@ static inline bool mas_rewind_node(struct ma_state
+> *mas)
+>   */
+>  static inline bool mas_skip_node(struct ma_state *mas)
+>  {
+> -	if (mas_is_err(mas))
+> -		return false;
+> -
+>  	do {
+>  		if (mte_is_root(mas->node)) {
+>  			if (mas->offset >= mas_data_end(mas)) {
+> -				mas_set_err(mas, -EBUSY);
+> +				mas->offset = mas_data_end(mas);
+>  				return false;
+>  			}
+>  		} else {
+> @@ -5003,6 +5000,22 @@ static inline bool mas_skip_node(struct ma_state
+> *mas)
+>  	return true;
+>  }
+> 
+> +/*
+> + * mas_skip_node_err() - Wraps mas_skip_node and errors if there is no next
+> node
+> + */
+> +static inline bool mas_skip_node_err(struct ma_state *mas)
+> +{
+> +	if (mas_is_err(mas))
+> +		return false;
+> +
+> +	if (!mas_skip_node(mas)) {
+> +		mas_set_err(mas, -EBUSY);
+> +		return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  /*
+>   * mas_awalk() - Allocation walk.  Search from low address to high, for a
+> gap of
+>   * @size
+> @@ -5024,7 +5037,7 @@ static inline void mas_awalk(struct ma_state *mas,
+> unsigned long size)
+>  	 */
+>  	while (!mas_is_err(mas) && !mas_anode_descend(mas, size)) {
+>  		if (last == mas->node)
+> -			mas_skip_node(mas);
+> +			mas_skip_node_err(mas);
+>  		else
+>  			last = mas->node;
+>  	}
+> @@ -5089,8 +5102,8 @@ int mas_empty_area(struct ma_state *mas, unsigned long
+> min,
+>  		mas_start(mas);
+>  	else if (mas->offset >= 2)
+>  		mas->offset -= 2;
+> -	else if (!mas_skip_node(mas))
+> -		return -EBUSY;
+> +	else
+> +		mas_rewind_node(mas);
+> 
+>  	/* Empty set */
+>  	if (mas_is_none(mas) || mas_is_ptr(mas))
+> @@ -5128,7 +5141,7 @@ EXPORT_SYMBOL_GPL(mas_empty_area);
+>  int mas_empty_area_rev(struct ma_state *mas, unsigned long min,
+>  		unsigned long max, unsigned long size)
+>  {
+> -	struct maple_enode *last = mas->node;
+> +	struct maple_enode *last;
+> 
+>  	if (min > max)
+>  		return -EINVAL;
+> @@ -5138,21 +5151,22 @@ int mas_empty_area_rev(struct ma_state *mas,
+> unsigned long min,
+> 
+>  	if (mas_is_start(mas))
+>  		mas_start(mas);
+> -	else if ((mas->offset < 2) && (!mas_rewind_node(mas)))
+> -		return -EBUSY;
+> 
+>  	if (unlikely(mas_is_none(mas) || mas_is_ptr(mas)))
+>  		return mas_sparse_area(mas, min, max, size, false);
+> -	else if (mas->offset >= 2)
+> -		mas->offset -= 2;
+> -	else
+> +	else if (!mas->offset)
+>  		mas->offset = mas_data_end(mas);
+> +	else if (mas->offset <= mas_data_end(mas) - 2)
+> +		mas->offset = mas->offset + 2;
+> +	else
+> +		mas_skip_node(mas);
+> 
+> 
+>  	/* The start of the window can only be within these values. */
+>  	mas->index = min;
+>  	mas->last = max;
+> 
+> +	last = mas->node;
+>  	while (!mas_rev_awalk(mas, size, &min, &max)) {
+>  		if (last == mas->node) {
+>  			if (!mas_rewind_node(mas))
+> diff --git a/tools/testing/radix-tree/maple.c
+> b/tools/testing/radix-tree/maple.c
+> index 172700fb7784..bb424f94de1b 100644
+> --- a/tools/testing/radix-tree/maple.c
+> +++ b/tools/testing/radix-tree/maple.c
+> @@ -36655,9 +36655,66 @@ static void test_spanning_store_regression(void)
+>  	__mt_destroy(&tree);
+>  }
+> 
+> +static void test_cached_empty_area_rev_regression(void)
+> +{
+> +	struct maple_tree tree = MTREE_INIT(&tree, MT_FLAGS_ALLOC_RANGE);
+> +	MA_STATE(mas, &tree, 0, 0);
+> +	void *const dataptr = (void *)0x13370;
+> +
+> +	for (int i = 1; i <= 10; ++i) {
+> +		unsigned long start = i * 10000;
+> +		unsigned long end = start + 1000;
+> +		mas_set_range(&mas, start, end);
+> +		mas_store_gfp(&mas, dataptr, GFP_KERNEL);
+> +	}
+> +
+> +	/* NOTE: Still looks unneccecarry for me, but without it cached offset in
+> mas::offset is too incorrect.
+> +	 * Probably couldn't be allowed without disabling caching at all
+> +	*/
+> +	mas_reset(&mas);
+> +
+> +	for (int i = 1; i < 10; ++i) {
+> +		/* NOTE: Wasn't working here without mas_reset */
+> +		// mas_reset(&mas);
+> +		mas_empty_area_rev(&mas, 0, 200000, 10);
+> +		BUG_ON(mas.index != 199991);
+> +	}
+> +
+> +	/* Cleanup. */
+> +	__mt_destroy(&tree);
+> +}
+> +
+> +static void test_cached_empty_area_regression(void)
+> +{
+> +	struct maple_tree tree = MTREE_INIT(&tree, MT_FLAGS_ALLOC_RANGE);
+> +	MA_STATE(mas, &tree, 0, 0);
+> +	void *const dataptr = (void *)0x13370;
+> +
+> +	for (int i = 1; i <= 10; ++i) {
+> +		unsigned long start = i * 10000;
+> +		unsigned long end = start + 1000;
+> +		mas_set_range(&mas, start, end);
+> +		mas_store_gfp(&mas, dataptr, GFP_KERNEL);
+> +	}
+> +
+> +	mas_reset(&mas);
+> +
+> +	for (int i = 1; i < 10; ++i) {
+> +		/* NOTE: Wasn't working here without mas_reset */
+> +		// mas_reset(&mas);
+> +		int res = mas_empty_area(&mas, 0, 200000, 10);
+> +		BUG_ON(mas.index != 0);
+> +		BUG_ON(res);
+> +	}
+> +
+> +	/* Cleanup. */
+> +	__mt_destroy(&tree);
+> +}
+>  static void regression_tests(void)
+>  {
+>  	test_spanning_store_regression();
+> +	test_cached_empty_area_regression();
+> +	test_cached_empty_area_rev_regression();
+>  }
+> 
+>  void maple_tree_tests(void)
+> 
+> base-commit: cbf658dd09419f1ef9de11b9604e950bdd5c170b
+> -- 
+> 2.51.0
+> 
 
