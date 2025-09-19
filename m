@@ -1,102 +1,142 @@
-Return-Path: <linux-kernel+bounces-824496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A93B8965C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:15:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7BAB8964A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 962715251D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41EFE16F86C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A9230FC02;
-	Fri, 19 Sep 2025 12:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="cOvmr4dw"
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E797B30FC2F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32810307AF5;
+	Fri, 19 Sep 2025 12:15:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8BF3597A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284118; cv=none; b=b/mIm4pLZHxdwAzIRfItRFFtsVwkZHL+N1EddrP3h7e3df6gSdYtcXi+WLSceDNi+TfbJcmKSO/59KMljV9HaD9+V7Gxx36o+89tv3plGVQzzSrCoJN7+9G6hUDZ4CYbnbfW1I7xBg+eg8hOnpiIiftVeGv2qtpXAlo46BfFSOk=
+	t=1758284101; cv=none; b=dbQscITXz+IB4O+UcBBcHj7cN2iAJHNlj14KN/tlv/8H48OOjCw+yA5ZVx2R5hiWC+db+mSdqKZFs+d+CQe1rIgoUIOLUXAY1Bx2Oke4PPyQh1wkVQZa/3gCrJay99Qtk5EJvgfauwTMBji859E6h48wOKlEFXFawt85VjXx8UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284118; c=relaxed/simple;
-	bh=ssJLOHTfv4vrnVWFpTFzqBamLlN/sY0S1mhKk81DFZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OzShAoqPKchFoI49S+snqo4DHC6xlFkS/zOzYG4SVBCOmPW8g9Q02DjGYQYEdF6k/jiwmYKLbYzRMOr42F6AqMMhpUGQmiJzSLg56OnUveE89FMkFX1WgziH9YT2Wno9yic9m/uRGarrUdNce2mXlIJH+c/8rPKTejI8tHfo60o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=cOvmr4dw; arc=none smtp.client-ip=185.136.64.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20250919121511a0d88e9d900002079c
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 19 Sep 2025 14:15:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=8U4MhoCvYzcsvxu74c2qr8Quw80+5E5+N9Y7pQSVLd0=;
- b=cOvmr4dwT/Z6UVcHjFlJkCJztR/Uae2vZNVCx7PY6gJPhDQgdiUNAYJuDrK+s3cfYJ9aPw
- CkgpimGqfTC2aQbHxWMHn5tdGzeTMiqtGueG9OC9pPVoBch23K4yMMnykmEdZ65I+rn5J7YQ
- fCA+iSzMnsjnbs4XFG/aY55fBaOngAxhsT4mf8o2E3/z4OqfImuqVvrjRXnGBeoKgrZ8qHwg
- tsu75T+rplW8si32hfgP5zoa0oXtvK2qJIKl1EBxzrtxIXlG7F0KeGVdyqxJOHHKi9kQc57w
- QTnFGLUPXhn8J6jDS+OV4h13KUuGHn/Zxu5AWhpIh7hUJN+k7rWm7+TQ==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	Peter Marko <peter.marko@siemens.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] powerpc/Makefile: use $(objtree) for crtsavres.o
-Date: Fri, 19 Sep 2025 14:14:12 +0200
-Message-ID: <20250919121417.1601020-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1758284101; c=relaxed/simple;
+	bh=+beKHJIQYtWb6UPelOK+FmlPi9FAXTmHnzAxH9jdvmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/Xi6Fc1hlrdAwLZMFGJ7u+B+k7u0fP4FHRYjJCCka57i+PnYsUtC/66wfCnYRP3BMr3CsCRLCYvfrNhim4iZ1fs5bgR8syV0AN4ADDB794tz5cB0ToK1Y7CgH+ZpRWU1GuT85ufrsKda48pRZiQXN3RIDR1+tX5SpG5MAHDAWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27447169C;
+	Fri, 19 Sep 2025 05:14:51 -0700 (PDT)
+Received: from [10.164.136.41] (unknown [10.164.136.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D1F23F673;
+	Fri, 19 Sep 2025 05:14:55 -0700 (PDT)
+Message-ID: <b93b0cca-04ac-402c-b522-cda8f39a52bc@arm.com>
+Date: Fri, 19 Sep 2025 17:44:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v5] arm64: Enable vmalloc-huge with ptdump
+To: Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, anshuman.khandual@arm.com,
+ quic_zhenhuah@quicinc.com, ryan.roberts@arm.com, kevin.brodsky@arm.com,
+ yangyicong@hisilicon.com, joey.gouly@arm.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ david@redhat.com, mark.rutland@arm.com, urezki@gmail.com,
+ jthoughton@google.com
+References: <20250723161827.15802-1-dev.jain@arm.com>
+ <aMk8QhkumtEoPVTh@willie-the-truck> <aMrXBArFNLTdwWs3@willie-the-truck>
+ <839ac455-f954-428f-b1a7-89778c57ee8b@arm.com>
+ <aM0yQwt3_8WuxBC2@willie-the-truck>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <aM0yQwt3_8WuxBC2@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-... otherwise it could be problematic to build external modules:
+On 19/09/25 4:29 pm, Will Deacon wrote:
+> On Fri, Sep 19, 2025 at 03:58:46PM +0530, Dev Jain wrote:
+>> On 17/09/25 9:13 pm, Will Deacon wrote:
+>>> On Tue, Sep 16, 2025 at 11:30:26AM +0100, Will Deacon wrote:
+>>>> I'm currently trying to put together a litmus test with James (cc'd) so
+>>>> maybe we can help you out with that part.
+>>> Here's what we came up with. There's not a good way to express the IPI
+>>> from kick_all_cpus_sync() but it turns out that the ISB from the TLB
+>>> invalidation is sufficient anyway. Does it make sense to you?
+>>>
+>>>
+>>> AArch64 ptdump
+>>> Variant=Ifetch
+>>> {
+>>> uint64_t pud=0xa110c;
+>>> uint64_t pmd;
+>>>
+>>> 0:X0=label:"P1:L0"; 0:X1=instr:"NOP"; 0:X2=lock; 0:X3=pud; 0:X4=pmd;
+>>>                       1:X1=0xdead;      1:X2=lock; 1:X3=pud; 1:X4=pmd;
+>>> }
+>>>    P0				| P1				;
+>>>    (* static_key_enable *)	| (* pud_free_pmd_page *)	;
+>>>    STR	W1, [X0]		| LDR	X9, [X3]		;
+>>>    DC	CVAU,X0			| STR	XZR, [X3]		;
+>>>    DSB	ISH			| DSB	ISH			;
+>>>    IC	IVAU,X0			| ISB				;
+>>>    DSB	ISH			|				;
+>>>    ISB				| (* static key *)		;
+>>> 				| L0:				;
+>>>    (* mmap_lock *)		| B	out1			;
+>>>    Lwlock:			|				;
+>>>    MOV	W7, #1			| (* mmap_lock *)		;
+>>>    SWPA	W7, W8, [X2]		| Lrlock:			;
+>>> 				| MOV	W7, #1			;
+>>> 				| SWPA	W7, W8, [X2]		;
+>>>    (* walk pgtable *)		|				;
+>>>    LDR	X9, [X3]		| (* mmap_unlock *)		;
+>>>    CBZ	X9, out0		| STLR	WZR, [X2]		;
+>>>    EOR	X10, X9, X9		|				;
+>>>    LDR	X11, [X4, X10]		| out1:				;
+>>> 				| EOR	X10, X9, X9		;
+>>>    out0:				| STR	X1, [X4, X10]		;
+>>>
+>>> exists (0:X8=0 /\ 1:X8=0 /\	(* Lock acquisitions succeed *)
+>>> 	0:X9=0xa110c /\		(* P0 sees the valid PUD ...*)
+>>> 	0:X11=0xdead)		(* ... but the freed PMD *)
+>>>
+>>>
+>>> Will
+>> Is the syntax correct? I cannot use the herd7 command to run this.
+> Weird, what happens? It runs for me:
+>
+> $ herd7 -version
+> 7.58+1, Rev: e39a86f5d59dee3174d08d9ab5b13155c75936fd
+>
+> $ herd7 ptdump.litmus
+> Test ptdump Allowed
+> States 5
+> 0:X8=0; 0:X9=0; 0:X11=0; 1:X8=0;
+> 0:X8=0; 0:X9=0; 0:X11=0; 1:X8=1;
+> 0:X8=0; 0:X9=659724; 0:X11=0; 1:X8=1;
+> 0:X8=0; 0:X9=659724; 0:X11=57005; 1:X8=1;
+> 0:X8=1; 0:X9=0; 0:X11=0; 1:X8=0;
+> No
+> Witnesses
+> Positive: 0 Negative: 9
+> Flag Assuming-common-inner-shareable-domain
+> Condition exists (0:X8=0 /\ 1:X8=0 /\ 0:X9=659724 /\ 0:X11=57005)
+> Observation ptdump Never 0 9
+> Time ptdump 1.65
+> Hash=238908ee9413a36507c61b92a31a366a
 
-make[2]: Entering directory '.../kernel-module-hello-world'
-|   CC [M]  hello-world.o
-|   MODPOST Module.symvers
-|   CC [M]  hello-world.mod.o
-|   CC [M]  .module-common.o
-|   LD [M]  hello-world.ko
-| powerpc-poky-linux-ld.bfd: cannot find arch/powerpc/lib/crtsavres.o: No such file or directory
+I was using some other command :) yup this works.
 
-Fixes: da3de6df33f5 ("[POWERPC] Fix -Os kernel builds with newer gcc versions")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
- arch/powerpc/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll try posting the next version today itself, but will you be
+okay merging this if I post on Monday?
 
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 9753fb87217c3..a58b1029592ce 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -58,7 +58,7 @@ ifeq ($(CONFIG_PPC64)$(CONFIG_LD_IS_BFD),yy)
- # There is a corresponding test in arch/powerpc/lib/Makefile
- KBUILD_LDFLAGS_MODULE += --save-restore-funcs
- else
--KBUILD_LDFLAGS_MODULE += arch/powerpc/lib/crtsavres.o
-+KBUILD_LDFLAGS_MODULE += $(objtree)/arch/powerpc/lib/crtsavres.o
- endif
- 
- ifdef CONFIG_CPU_LITTLE_ENDIAN
--- 
-2.51.0
-
+>
+> Will
 
