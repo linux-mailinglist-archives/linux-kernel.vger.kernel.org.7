@@ -1,139 +1,93 @@
-Return-Path: <linux-kernel+bounces-824592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482D3B89A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:17:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A226B89A34
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD8D3AEC35
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74951B22EF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:18:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC07323A9AC;
-	Fri, 19 Sep 2025 13:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE28226D02;
+	Fri, 19 Sep 2025 13:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eyed/DFU"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WuRwWgr5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8321882F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5A01C862E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758287851; cv=none; b=H6y2cCgTNxHzr9/ZWms6uxn/gyj0D/hHzgLHwlnwWDdunZA0XtrnPGEvdIbEhrKrWNKM64PDWtOPEyLl6ZWpv7xbcrS0Sc3qzKzBYOw5UDcD9m12oDAKqSBWKU4GUCG+dV1IKp64wQoS6Ig2/T4AMj9z0SMjcw70049+NSbZ4DY=
+	t=1758287863; cv=none; b=GLjAJwfiAv6EPCa2ydNb7wZHNnffnYZ/PpoWMvJCVBn86Kjk5PL29wMag+tET4NxhRUrsc5Z5aBcMISLFirVj44kBRufaDiKn/KC5WurrJbzYLIk7y7+wGfC8hCZpnNHX/K61KqoXgPuM3XGa+gWGxnQmW3/J97QixUNy4yvbgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758287851; c=relaxed/simple;
-	bh=eSREDETOuCirK9j7pp0KaT4IL5H8FAZmt4obtpK9FwU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=samypQ1vtb9W2BpMabTBGHMZJcPCgVbu3cawblbT8/j3XjosKtzvQaOyNZKR0mRxTKTEaKq/gRUqfGJEbA46WeC0GCNfMyxo8uM3mtiRdBT+XEHCUhzMpzlvRe3O/a1Kq6dR8cbqlvM/7s6JHZVoaaRbRAFQr/flSGvU1Ao01Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Eyed/DFU; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45f2c5ef00fso16946235e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758287848; x=1758892648; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eSREDETOuCirK9j7pp0KaT4IL5H8FAZmt4obtpK9FwU=;
-        b=Eyed/DFUcHC/eY9Dwk4WEIuNjwmF9UxRzgbac3/eRs7vXT7HafKOX9/WmJtUm81cNU
-         16D8oo56DzfuODKP4SnAWxfuawbSO6wrbOP/S29XpuW7QlTl5CLAe2AcDhxsAcvWLtWp
-         sO2wgGz60g91ftbQY/TyVOzIcsOwE/ANEEFKYDxJ+UtuCryb2KAqjWcsjMgUOZiVOlkM
-         oZxAtnmMUnqtcRirGwMxeTIkBuZ0oCn8ET/gfBcTDzzQfCmKEcwjssSWaVjMy0pPEg53
-         iAzCLx/TxSbsgn7IbZrKaCf35X0ILKQBPyonYzO694lTAFZHLrnCthURULfH8ECwFrli
-         OEKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758287848; x=1758892648;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eSREDETOuCirK9j7pp0KaT4IL5H8FAZmt4obtpK9FwU=;
-        b=pE2d1+qGv0kU4l3Py584o4PMF5V5w7GNwsKHRZKTiNRMikISTj4+8M8lrTvQ3p41lf
-         vMmGWXlHYxTwyCoUs2ftKB3WnM+PAwcN4IZLF1QihTp/oA63g8o1HmYqYftD8LD02Zgg
-         TzqzgaaMZCvf8gejxPU+q50DFlCRMr8Z6lDJ29N5AIAKbTbJSGi3A376wJdmKan1zZRN
-         /dBJCz51scbVxzBvmHQv5OsK5J5v8evnKr45eK7wiKBD3O3lEu6x2flZwt6gyb2FLyrN
-         N4rox0uwrpsrWCtyq7kdLhQWJgLwG/EaaoCoT/DyIy92g9Kle/bTVfbWNM5kj+/XUsHj
-         W//g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpxXk5Xd6IZkWhUzdg2KfEB/gR5X0FfUJexoaPabjWQf3MOXyRU/1Dc189glf+lj7tgySovCR517kY/FM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlXfqStWqpF4s0wWaYPWKfH1qWe8EAAcOQWity58r/HcbSHLqY
-	hQ8UpIW05GVs6MMuikXhvUvgBKmaSr8M/yEg+bE82Kik67apltg1xrYiGtq35he9dwo=
-X-Gm-Gg: ASbGnctL6O7HXDMopkA9OXoaTuWSpFf73wVVmAmBS/jVj7xwyTqofJ5zFCiFWzvO+hY
-	R3Nr9wGtUhRNd6r3VTV2WWVQtuFiWknX9mopu/GCWZRhg5py+0loyb9twCON80/8Z+CvgmRo+Kx
-	3PQntnNscTfD7uCYr+QQXd3cmuybxS5VTdoxyjjsySaQh1JGXkXyNlCWHaMQi8Eu0rPt/u1r4wy
-	Eunts1u4ERUWv0at0AG7L0aVVPXAKBbDSF1TVYJMlIWSdMysS9aKOo+cFmZN4qHsvF8gDQIbNU5
-	btEbTFQHmwPkOZNEtdRKciGWYvMlWGLIzmYUdUtHAdEKTdbHrOVi2yF9xTFtmh1+JEkWfgQ2ZTg
-	uQ9SBVutJgsQeSMvFiU0HppyX7qUbemQAYXF/
-X-Google-Smtp-Source: AGHT+IFOEEL5rr0JEeFyk2H6x0E84IJDnhVN8O14E2Hi/9ffavovVbWpQzybBfB+MObNjmkLFHYNTA==
-X-Received: by 2002:a05:600c:6305:b0:45b:868e:7f7f with SMTP id 5b1f17b1804b1-467ee8c56d6mr37027415e9.17.1758287847647;
-        Fri, 19 Sep 2025 06:17:27 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f6695a9dsm88797825e9.24.2025.09.19.06.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 06:17:27 -0700 (PDT)
-Message-ID: <dfde0a91359b87d4eff88815b4112ad17cca9935.camel@linaro.org>
-Subject: Re: [PATCH v6 2/2] dt-bindings: power: supply: add support for
- MAX77759 fuel gauge
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Thomas Antoine <t.antoine@uclouvain.be>, Conor Dooley
- <conor@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Peter Griffin
- <peter.griffin@linaro.org>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, 	devicetree@vger.kernel.org
-Date: Fri, 19 Sep 2025 14:17:26 +0100
-In-Reply-To: <65xrumpt7ug5mqd7mkcknwyqmljrn4sofrqymg46bwvcmjoarr@wmt5fhsj3viz>
-References: <20250915-b4-gs101_max77759_fg-v6-0-31d08581500f@uclouvain.be>
-	 <20250915-b4-gs101_max77759_fg-v6-2-31d08581500f@uclouvain.be>
-	 <20250915-presoak-answering-2df6fca532ad@spud>
-	 <c5f2e6e8-2ada-476a-8557-85273b9a93b7@uclouvain.be>
-	 <a55d7e6e6d9515293ca735f25ffd5c925a6ec617.camel@linaro.org>
-	 <65xrumpt7ug5mqd7mkcknwyqmljrn4sofrqymg46bwvcmjoarr@wmt5fhsj3viz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+	s=arc-20240116; t=1758287863; c=relaxed/simple;
+	bh=P+tk1VfFUOofOPLUQsU/UlXgqHr3TVygBRXFlzWo5xw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lbfiYjdLDuzwW3sV4IvHMHvH/S97DyDo8Zus5H2BGnAKdRNctoZulcaCzViBOD0YWRWz1giGhF6sEiMY2Bmrhl2NS48kp5yRwJY/SLlu6DX05G0PVEaOcJlblUKgmcRYlpOSbWNvDZH1UuRDu7AE8sj7tjQqOF0PjcgA/+C/4y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WuRwWgr5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F5EC4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758287863;
+	bh=P+tk1VfFUOofOPLUQsU/UlXgqHr3TVygBRXFlzWo5xw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WuRwWgr5OhXq/DI7H37tILKtu1xg7sB/EO6Yjny2mVVgfLEyLMI62qgnuW7KBbaHC
+	 InL2lCbxz7IZgFZQ4yiU7b1GvhowypVCUQ3zMJZkG/2ljsDkLrQSrcUhcz4gfLj0KZ
+	 UuAw2BkI9pOnd3YuchbWvuebtBqsir2K4CWrioOHeDStwglbk2VveaBhrXGkbClk6p
+	 HMg5lfyIj/5N/hGGJf84ntT9oBqb43X+NDXEunzf0zvzlaOpDA3RZzJ3rNXE4cB2tJ
+	 i35sga197zXI/AOoe9NYZePNZEgUC86IS0CcTqWMdTXuXSr4Lxh+w0taGzKZU8ZJay
+	 P7tI1DXlWYfsA==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-336dd55aae1so20433861fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:17:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW2jouUdhh8qHq70VRQfMU1KSqdVbEokg3hfLMDN61l4sYzU4a8gqAfnknWNw8Rau7jtbnnL5Pv1CFoNq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHnq/sy9ZcNdDsotlhaytjTOIES8WOgKRiGrj+Hmq4tr79vVKn
+	mqLIVsqpoH0TlnjDK3oqh4nTUrk7/J/ZoJ+M1RFL7oEdtscgrEufy8P7+Phx4IDKsQPqtb7HuyE
+	pDUvknPYZFbdKL7ZM8ivbIDrdxiZU8J4=
+X-Google-Smtp-Source: AGHT+IFNLf++kbEIzx0OThSpG6tJqnAviAc6B/6DY8ZrvAETXBFW5NgJWfZTYT0yTkTslywqHEe3WA/DssvPTebSj54=
+X-Received: by 2002:a05:651c:435a:10b0:338:735:8a79 with SMTP id
+ 38308e7fff4ca-36413c2c413mr8029421fa.1.1758287861610; Fri, 19 Sep 2025
+ 06:17:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250919122321.946462-1-abarnas@google.com>
+In-Reply-To: <20250919122321.946462-1-abarnas@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 19 Sep 2025 15:17:29 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGe=HR7EvMs8D=7Uvr4Vhr7fXp56YQ9A10xdF1V1M71zw@mail.gmail.com>
+X-Gm-Features: AS18NWDEaphGD0PnhTnMmMFn4cfpLzT-Is82GGDvSOsC9sPyIGDQ62hIiSlVl0M
+Message-ID: <CAMj1kXGe=HR7EvMs8D=7Uvr4Vhr7fXp56YQ9A10xdF1V1M71zw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] arm64: modules: Reject loading of malformed modules
+To: =?UTF-8?Q?Adrian_Barna=C5=9B?= <abarnas@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Dylan Hatch <dylanbhatch@google.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hello Adrian,
 
-On Fri, 2025-09-19 at 00:32 +0200, Sebastian Reichel wrote:
+On Fri, 19 Sept 2025 at 14:23, Adrian Barna=C5=9B <abarnas@google.com> wrot=
+e:
+>
 > Hi,
->=20
-> On Thu, Sep 18, 2025 at 02:02:55PM +0100, Andr=C3=A9 Draszik wrote:
-> >=20
-> > Additionally, the FG block can also measure temperature and battery ID.=
- For
-> > those, a combination of (top-level) PMIC and FG registers are needed
-> > unfortunately. Which means that the FG should probably be an MFD child
-> > device, even though the FG itself doesn't depend on the top-level. Othe=
-rwise
-> > it'd be hard to access the top-level PMIC register.
->=20
-> My understanding is, that the FG has a dedicated I2C device address
+>
+> Here are a couple of patches to reject the loading of malformed modules
+> on arm64 when the SCS patching is only partially applied or we detect
+> an alternative callback function used in the module text.
+>
+> The SCS issue is largely theoretical. The code currently performs
+> a "dry-run" (which we remove), and leave module code as-is if failed.
+> However the latter issue was reported to crash the kernel at [1].
+>
 
-Yes, that is correct. It also has its own dedicated interrupt output.
-
-> and thus cannot be a simple MFD child of the PMIC.
-
-The core can still create child devices if a child uses a different
-i2c address, as already done by the max77759 core driver for the charger
-(which e.g. doesn't have its own interrupt). Some MFD other core drivers
-also use such an approach.
-
-
-[...]
-
-> Assuming I understood things correctly, I think I suggest to model
-> things like this for the battery temperature/ID:
-
-Nice, yes, that should work - didn't think of that...
-
-Cheers,
-Andre'
+Why are you fixing this largely theoretical issue along with the
+callback alternatives patching? The referenced thread only talks about
+the latter, right?
 
