@@ -1,329 +1,188 @@
-Return-Path: <linux-kernel+bounces-825266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7527B8B75C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:16:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39252B8B766
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7481A7A93F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC023BCCA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4694C2D5935;
-	Fri, 19 Sep 2025 22:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3E42D3ED1;
+	Fri, 19 Sep 2025 22:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3BERBnF"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="g5S2aZE6"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012068.outbound.protection.outlook.com [52.101.66.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC65624DCE8
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758320156; cv=none; b=IqXd79JrD0A6rUcLz+YpkYefMN3KInkaohyAFsqFbcna4DxmgFO41vqfvQk+b85KPx3thxxveg46l96Pq7SpttZDIU6APpijPbrZQEHndRpohBdH92oYaGCCgPUeNdBRbgO/j9CxfWRbjq3AIs57kSH/CrUdIYF6XVYVq0UKMeA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758320156; c=relaxed/simple;
-	bh=XyootmgLv94+Gy6k5KdIOn9j4pUkYBifYt9ZDg77pwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/FyyLvNCnWdapDWo+6NUR+t/928fH20faZbCLmZp9f5Nsj4lW1ofb331fWCJrRsvr35IHa0Un0ROQAXn+z3nFWQi26quFe8i/AtjKKPo5L5qkPDMAEOOjW7YAjWLvxa5icVRtdvuWqVpq7TTk1wqoxy8mspfil/1GAFHN66Q/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3BERBnF; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso2176539a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:15:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758320154; x=1758924954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ujx1Ir738tmFjVSQJD/txn3QAD2H99LyLRg03qE+w+U=;
-        b=S3BERBnFB+Mai/CBOA0BzqplZPuGeJGBtYcXWtPSdt23T8ppFTHavgZYrhnqITD9g9
-         ywfcXjGAb+XBNyuGGvdAd0kw2HMv0YRfewn3dSeHn4Y6BPgXxQhanZP32ytINiYh+bA9
-         bHSA29IAWekqhW1DgtmYw0uD8CSQ/NP5QlN++VZfuIXkurSGhGq635ThFmUFnLsyatT/
-         YZShP8drfPouVX2oOHtPgstu+3CKL2fo4j8CKHv1H6qJI6Lc7CpW63cD90wA9Ngh8Cln
-         ED8+j7xdh2NHs7p43Xh1WhzADCuo8DviIFUxmAQnhsGOl+jSGeVmRIm+UDVCaAay35+Y
-         7hAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758320154; x=1758924954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ujx1Ir738tmFjVSQJD/txn3QAD2H99LyLRg03qE+w+U=;
-        b=s4iuTrh1WWxGDT+SHDlXPPA4UJArjqfVOF+pMOMOgjRxChWLMtB4WiZq0eIVBLGTrW
-         pskgfMoVFz09RPAomf45Q353AlP4NObHs96nC3085eq73wh6a1yJb6KRQ9/wHTXbK0+3
-         wZqFqvgC2mtnyXCWKRnBRLv7EbNLAwm6YMS2ai6IxQ0qoXEu0UP7kWByqCcx7KKrDRjD
-         0Ktqbr4+0Zqcq0rPsc8wFAy3vaX35ZARfEJCqStwIqmx5K6Yqfhq2OWnIQBjOd8ZLPYc
-         He0H6Yg4SuCrywt/zTLxBpEVjFSEqgLziHZdQ1Dfr+KQc22TaZWnnKuFwaeU1TLepF0v
-         QjAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3PqILz4FgPG91OfZ3k2GcyxRnkcZ92lTUa2YunFlkrTCiK1+CAbRB9CrcEqMzBmrvUnY7t6HL5WfNuAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyCO0AS7ZCqycw3p1DIEs6zbOO1nkBtG4LN44sG2SPsg2NnBdq
-	Zv5osm0dc76i8Cgw2NP18pPHpZdBtzHDul4mebzecRLk6vyg2m+2qoZ0VNPlL5uDecOmvgZUQBh
-	DiEsMRx0AM/5+io9t+5QCia3KG0+cLC8=
-X-Gm-Gg: ASbGnctz7J8+E2vOjPgRb+tcDDBzvrmvkV+vT6D5ZZMux3wQcnScFhoCjDR58KgM7VK
-	Ln8t+0G4l4XQFA2naGrQWMgmKDvJLlDenPd3zRW/CnJRcWN+GRqNnNW+kQsku09ma1ycqDIFkXz
-	x/65DR9pVCwLqdsVdiUJGn1pL0KuCHS6kz71I0/Sip+p+pDn59IpFjveXPNXjyiQjcaQ8E5sPQd
-	4QUtdU6CLAcgaeRV236VcxGPS3ZO5kpBA==
-X-Google-Smtp-Source: AGHT+IECKd/GHWseyORxZ91dOYPAhKL/+IkDewnJuGx1GuQxt/3H3AcpfQSdLAzIhOcZAXVXX8xVdzmgPU4zHvgW1Rk=
-X-Received: by 2002:a17:90b:3905:b0:32e:9da9:3e6c with SMTP id
- 98e67ed59e1d1-3309834b4f7mr5723487a91.23.1758320153934; Fri, 19 Sep 2025
- 15:15:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B1202C5D;
+	Fri, 19 Sep 2025 22:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758320433; cv=fail; b=CYiYmZy8SiLGCxRgwtSFQynWWIpqoE3BCGwTWsXCdRlUYWP+kNki8BCEzSu3i9zx4xErYhPJ2l7rmhHKAhIkRKJalkXQFBHpaRfSEI+HbXv9MIArIZ1SIqLkHBWrgQlsAlRLrZB/e472ifGm/udOoEZk+CUx6G2qRvKdlF9M2KU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758320433; c=relaxed/simple;
+	bh=dazljmAAmJ+Iul7wV5e+vn0h9Ldb8ucTaRmULsZVNT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YFAIkEymF/g0aLVUpzFpm+RWyyoATDHiBnRYEJteZ4tPXZpaXQanKqH6ym5GRc36IVP3CNFUjOFQlKNdbvf7vQCR6IJB/NF6E0EQZ1H4gNNRRZkKS9oUkxR6UY8H9uuH00p26cqZFmsB4SJHQYOpG0FplYocafI5awSJu9wKEwk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=g5S2aZE6; arc=fail smtp.client-ip=52.101.66.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z6lYltRmDkmi57x3R/n5QONUYXng8PziKRszCbRBMy9te/ngL4QnsQAL0f0q2z5F8HDQ3ie0nyQz9P+6/HOAnPDpD0YyW0uJmC/qw1Bnz/4oId6sDpvUZ91em4N6k6n3dqqohceF2t05DdbSbXZ3U3AdwsmQbqKzmj+Xgn4fd6SwCyQUXiTsfU7L4y6DoInNvUrKuuSKd3rRe4L//oiEtyExZbvf/8o/0FdzfkcywFMA4bRB6xJn44TesaK8Bq0u5+oXXp+MQDtezZP3jF05mpLSAFtf5b0boy/7dmF6T+vlr6bK3wpVeDgB8/c05k2WDR69SpoBGa7AM+W2RuLp0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dazljmAAmJ+Iul7wV5e+vn0h9Ldb8ucTaRmULsZVNT4=;
+ b=bX/j3Xp/63iY1U8IEAZmje4EBBvy8yq4Fw85BAxz+vTQDx5Dpw37kYNYcSkpFNdyAiMTs0CBYZnUiUiLkZefrP3h0aYs+u2/pwyeVPa6y75QF1zmXoEzXjfh3irWGWduvHJVHdK014nbXz57qGin+xQmi3h2aSvWVnByKmp7EBAwiF/6YD5HPocWMT+45IteRnXawGgjg7L/wMhiwu99bxuba9lFB9zv9ImgbCMkhDbqlp2XONUG1vloGKArcR8qarXPKwM1uAHhF/eXkafaNRjeGGOUg/USoQcVwIIePueJUJN0+y7G35IHey2KeMxofvRwa8blmS9iDpfC2xRKNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dazljmAAmJ+Iul7wV5e+vn0h9Ldb8ucTaRmULsZVNT4=;
+ b=g5S2aZE6Ag/DwWrir3nIAkTUJEg2hTYrjBjYJBp7MHpt0NI3JsF2HW3J7xOAEeOecd/Jf6osjnmswiS3i9jcL7Qs34gZPLKFGm0VQBhCUDWk/wmMT5Kjt7C/kufgTD5ahrMldv2aE2LEcuTK36ZemUjqO8iMk9Wv9O8z8qbWDcLsAG4u8vvXy3FmYr1geJfwEgUBVLFcX4y/vzxjB3jHpOdrROigjzD57W5+WuoTCbqpXfFSM5alu+puV/E0inuqVBQQn9aGKr19o7MntXB+uyK1aNn7iTzmI22oy23vgChyet5aSqdOhtO4zJjNIWewMLc8HjdqfJvcDE0bP1Gr9g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by GVXPR04MB10304.eurprd04.prod.outlook.com (2603:10a6:150:1e9::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
+ 2025 22:20:26 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
+ 22:20:25 +0000
+Date: Fri, 19 Sep 2025 18:20:14 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"bjorn.andersson@oss.qualcomm.com" <bjorn.andersson@oss.qualcomm.com>
+Subject: Re: [PATCH 2/3] usb: dwc3: add layerscape dwc3 support
+Message-ID: <aM3XHv7VcOGLz3Wo@lizhi-Precision-Tower-5810>
+References: <20250602-ls_dma_coherence-v1-0-c67484d6ab64@nxp.com>
+ <20250602-ls_dma_coherence-v1-2-c67484d6ab64@nxp.com>
+ <20250603012259.gyat6ungxyufhhbe@synopsys.com>
+ <aD8NxfmJjSMeQKOu@lizhi-Precision-Tower-5810>
+ <20250919211703.gbaqcc6mhtgolomt@synopsys.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919211703.gbaqcc6mhtgolomt@synopsys.com>
+X-ClientProxiedBy: SJ0PR03CA0376.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a1::21) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905150641.2078838-1-xukuohai@huaweicloud.com> <20250905150641.2078838-4-xukuohai@huaweicloud.com>
-In-Reply-To: <20250905150641.2078838-4-xukuohai@huaweicloud.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 19 Sep 2025 15:15:38 -0700
-X-Gm-Features: AS18NWBOa3kRS4CIxnhQ1iKphnhHAfhyMXzVDLE5JDbhoX6cwJq4muyT3qZ6bWw
-Message-ID: <CAEf4Bzb65VnL5nESxkGGZCgW0Ow+apwTsqzpFv2s+rd3Y6YkAQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 3/3] selftests/bpf/benchs: Add producer and
- overwrite bench for ring buffer
-To: Xu Kuohai <xukuohai@huaweicloud.com>
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yhs@fb.com>, 
-	Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Willem de Bruijn <willemb@google.com>, 
-	Jason Xing <kerneljasonxing@gmail.com>, Paul Chaignon <paul.chaignon@gmail.com>, 
-	Tao Chen <chen.dylane@linux.dev>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
-	Martin Kelly <martin.kelly@crowdstrike.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GVXPR04MB10304:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51631d23-3450-4e4b-ef87-08ddf7cabb66
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?G1oYcc9jb5HHvQYomOsMLv3zi3NuUuRFiGiYRprtyfyh3Atp3kRQ+Xd8Apiu?=
+ =?us-ascii?Q?5huhHGZ8I2cZIYBQyotkzOqfdCyAz8NefEu/35P2284LLmQxpImdJhilJfu3?=
+ =?us-ascii?Q?bywBKTq+mUdKxzLDqk8VkGtHOJoYhMuSVuWVDBEu5zILb2Qy6/L/vBQUnM3l?=
+ =?us-ascii?Q?N68nI+Tk0CpDxxsUzstcCfwCIboSRjT7AzsOPmU+v/Gq5uYgOjIChKG72Fqw?=
+ =?us-ascii?Q?TMUvvUiJtwADY9OL1Z0U87iDe+5vVLHg40miBYy7qWfZzt7NyOHqmi14ayGg?=
+ =?us-ascii?Q?kTR7544DkJ0Cln1ZYKPw6151gr/4J34BDKLKEvKMHD4Qtd0JXwC5bInalB5L?=
+ =?us-ascii?Q?8R4A3LGUgr8l/mNUOaS/Y0h4PnwoBcNCYxoJ8VRcfoO1PNT2CNKqeP80tXka?=
+ =?us-ascii?Q?NfXw4qKnf+xj0YN4oWlf6PVrsKz7cEFjNtqVb7+EuDMYfRByNtnnd+hxnRb4?=
+ =?us-ascii?Q?j1+Hm5ckXkDb2LRnYRrfxHRtbJvlMeTfxbhahiB/1jt2KNZmcoUnpGdOFpZv?=
+ =?us-ascii?Q?zkxSdocWh2sG3eaMsQUDn5C9FtXux/HgovomUba9tZeC4vs3tKlUZYtCCDRQ?=
+ =?us-ascii?Q?v7jcjfW4MWZpG5lhR4U0BwUng3uguUzksNuLw1Y1CwCB91b4pHWOteBw8xF+?=
+ =?us-ascii?Q?T8PPHw8SGfTlIfOrxlBcv6TAamuAXv/TJ3b1YtQdBLi4qI9ZRI4DixaWyOQC?=
+ =?us-ascii?Q?RnxP9kO1XhPrrFTTfxMISrRofgw+Lc+ZShCvKThODILaOleWEJirak4VWFno?=
+ =?us-ascii?Q?JW1BVX8ybrwyEgkHxDDLYzILgo8rFw0q8VeCrxYq/SSrSj05DbARVXBtXaAM?=
+ =?us-ascii?Q?erBSDbnEAGtJQ1Zm5iNzTAvOBDH1icINEuMh4GfQ+KuIVdmUV1Ruv9s6yiPp?=
+ =?us-ascii?Q?8O7FxvJScmtMxR8kgtllLZiXiy7A/nVP2t3d7rb0slPbvB0jGbB/jpea2DQM?=
+ =?us-ascii?Q?r4ErVmjyBYn0KZa0pop/jInOu2oIqOZzB41BsAK0H/VrAlZdFYUTuRrBL1wE?=
+ =?us-ascii?Q?rMyHW+E4H6uZGXWl3wyxur5Hb4qByUsM8aGJRQ/eocRyr4wSmajWab9jGFeE?=
+ =?us-ascii?Q?xX4ru2D9GbdUfaR+2/ovPC0tivpTkLlXxD0gjtAlWy9DbqSu2ai9J/+65OaH?=
+ =?us-ascii?Q?9MoQvJAQwOYzdkm8wc0bEd5j0fKZ+zHst6P6ZOpbDjM/IvOWu4iBMoNShLZK?=
+ =?us-ascii?Q?OdJURkYSoSiCsCpdTLrbH3a+FePFNJVkAiVR6nKY2G6iM0KMkOuvVEIGqtnR?=
+ =?us-ascii?Q?+ciGfowN67G2mATw8EUvYZEqgWQdyembOextMsMlOkJoynPji6X6KYvkmIfo?=
+ =?us-ascii?Q?qFqgUxufEcwcf4+p7hFQDIrgO8sBd85UHjYOG1ha0F2zZHBilnBKKmjW7km/?=
+ =?us-ascii?Q?5uLJsO5r+k/rogfgyPwHjkZ0Umk+eSVw2eDYpxsXEYdGsXfvSnrXVNFs/7Vo?=
+ =?us-ascii?Q?IwFoYXrUAOMMAHAHGvwgW0T5Ka9rNKxxOELT+7thVMS35GnRB0TS+z/VjgE8?=
+ =?us-ascii?Q?xbiJ8KjLRKvUdqk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IWr0l9b4861x1QSzwK4eBhhVTL2CLlpLW6c2QOfywQmej4aO5PwBoFkLgI3O?=
+ =?us-ascii?Q?3jr45dRUCGikQgwlIZ4W4I7b/2pEXz5zXNOVtkvQY4+ucYWj8iBRXIEBE/Pt?=
+ =?us-ascii?Q?345yVrBEKwYt9OVu3CtZNIYpJLa5sIO8T90AXBVLc/wKme+TP5NBUh3GiNR/?=
+ =?us-ascii?Q?cU6D3K460TMi6K3ZcaguBJNwm6hLoowvRT94lQ2WCR1p+1p+5TaU8Zkcyt5i?=
+ =?us-ascii?Q?lWuSZGnI60BCKn4LFD8C88NaNbYkcHavS+GtfIUB0ngz81KvwpTJ2GqGPm7F?=
+ =?us-ascii?Q?Zfy9UzlL2XMxqXRNvltwVH5k8OBXqD/LDUjuOlZ3x/VRuNhxl5b2ytDX2s0h?=
+ =?us-ascii?Q?3ka2yYLsgHHRQcjpLXzJ5sWX5B/DJGbykYn9zDVeZUpWGpbddesBklQ5MIcp?=
+ =?us-ascii?Q?ov/lAHpj52RGvNqfuqKc/ofOsWKkfp9WDDxGcy9lojA2Lb77FEMZB17pM2+s?=
+ =?us-ascii?Q?4g2I3qW8bNzcnZoGBxPqlstjg4Kp8yC4MpxxvxHB2kXXsHuS2pBOobVwWgSU?=
+ =?us-ascii?Q?6+zySL8ZYqoFr0BsA60z8Cgk/cD/QpKPCMGI85ITQNJ1vIudOYLXzV5NxH9d?=
+ =?us-ascii?Q?53NLRI1vol0GIwOD1gEkTbiBgvp7A3VKnVl/0Mj8lEvQkfi/2S2/PYYv4eu5?=
+ =?us-ascii?Q?jxl0wHs0D8c1wbHt0R4S8331xfRAUdpyP4Z2TeEB1ZBamz7PNH48Pq4QyVCl?=
+ =?us-ascii?Q?8AqvKvQpUs2rhzwNzd45D7abwYRJ1/W64zFbymTpk6VR2cpbDy6ylXfaiGIQ?=
+ =?us-ascii?Q?YAXAuADiYAQzq6WRcSyToHstK4LGrm/kBad78W1KX6Uhnvi6QxQASW60UDOc?=
+ =?us-ascii?Q?WhNUewU41NpxlmzY7F5nkI2FGcICNRZTCo8oumgvmxGU14gkjdSzwzuG6mIm?=
+ =?us-ascii?Q?XUXmI2WshTuBtCxy19Ll85n3EyghyqPykEz8YWjlnnFV+AFL8enge4O6vkyj?=
+ =?us-ascii?Q?9Nw6XK2PrYSgo60+hSYOs5kBcJPcC/iDM999BJQi55k1SRB1M295LmFfCVJC?=
+ =?us-ascii?Q?fowd/gXv+uS5TU40Brh0kqofQe/mu+63xhRNMGxeM6u3UnkzHuSGWXF9Ff6r?=
+ =?us-ascii?Q?YnuLclB0dki4agO1fKwnSo7w3lJuc20v7pootM1lxcYCaumVRolUEr8zxLLc?=
+ =?us-ascii?Q?vWN28FYeAhCBLxXQOLBI4gLr62orBsaO2YPAAh+arMWJS+PIehSLtGgUTkTa?=
+ =?us-ascii?Q?Swl1FEk+u9DGvLyOgpS3teIb3kP5O4Yqi+I/3ONLSlSiJR/Vidl3wiKhZUmk?=
+ =?us-ascii?Q?ywE75yLVJrAseNH4wPtXfradn91WgR6NHwEBxEPC3cL8DQYm36kZVBtNAyGu?=
+ =?us-ascii?Q?kg/BFG1CTalA9oLx0BiqTsKStsPRsQSI78Qk7WAD4h70ZsmIf5BdUb2TiRdP?=
+ =?us-ascii?Q?q6gN/xKt/Vs4RrFIkPRp/PhUoby8dC3YnpNbcEquh3+VNuzipLHhnDmJSN6d?=
+ =?us-ascii?Q?TldgKDUN9AJ7YCvXfaJtQfMVb1e3LOvqnOQUPMLy9abhVnn/XKTDsMHtmG/3?=
+ =?us-ascii?Q?YbzuSmTGu6fNI53py045JSDacfPLq3ethZgoGodxM5W38hl8i2MKLENtn7wf?=
+ =?us-ascii?Q?uB0KqfcjtjZuYAd/QmK22EorHAv4ueCj1471qTiz?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51631d23-3450-4e4b-ef87-08ddf7cabb66
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 22:20:25.7808
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +c6Hte03X4usnbhkHMBXWoqmzUpwjOknftkjuNhKAZLx8mAw9OC3+80D0tPJufsEpkobMkd1g8NbuNoqKKN3xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10304
 
-On Fri, Sep 5, 2025 at 8:13=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.com>=
- wrote:
+On Fri, Sep 19, 2025 at 09:17:04PM +0000, Thinh Nguyen wrote:
+> On Tue, Jun 03, 2025, Frank Li wrote:
+> > On Tue, Jun 03, 2025 at 01:23:03AM +0000, Thinh Nguyen wrote:
+> > >
+> > > Is this something that can be enhanced in dwc3-generic-plat glue from Ze
+> > > Huang:
+> >
+> > Yes, I can base on Zehuang's work with little modify. Please let me know
+> > when his patch merged.
+> >
 >
-> From: Xu Kuohai <xukuohai@huawei.com>
+> Greg picked up Zehuang's changes[*] on his usb-next branch.
 >
-> Add rb-prod test for bpf ring buffer to bench producer performance
-> without counsumer thread. And add --rb-overwrite option to bench
-> ring buffer in overwrite mode.
->
-> For reference, below are bench numbers collected from x86_64 and
-> arm64 CPUs.
->
-> - AMD EPYC 9654 (x86_64)
->
->   Ringbuf, overwrite mode with multi-producer contention, no consumer
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   rb-prod nr_prod 1    32.295 =C2=B1 0.004M/s (drops 0.000 =C2=B1 0.000M/=
-s)
->   rb-prod nr_prod 2    9.591 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 3    8.895 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 4    9.206 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 8    9.220 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 12   4.595 =C2=B1 0.022M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 16   4.348 =C2=B1 0.016M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 20   3.957 =C2=B1 0.017M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 24   3.787 =C2=B1 0.014M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 28   3.603 =C2=B1 0.011M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 32   3.707 =C2=B1 0.011M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 36   3.562 =C2=B1 0.012M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 40   3.616 =C2=B1 0.012M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 44   3.598 =C2=B1 0.016M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 48   3.555 =C2=B1 0.014M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 52   3.463 =C2=B1 0.020M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->
-> - HiSilicon Kunpeng 920 (arm64)
->
->   Ringbuf, overwrite mode with multi-producer contention, no consumer
->   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->   rb-prod nr_prod 1    14.687 =C2=B1 0.058M/s (drops 0.000 =C2=B1 0.000M/=
-s)
->   rb-prod nr_prod 2    22.263 =C2=B1 0.007M/s (drops 0.000 =C2=B1 0.000M/=
-s)
->   rb-prod nr_prod 3    5.736 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 4    4.934 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 8    4.661 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 12   3.753 =C2=B1 0.013M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 16   3.706 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 20   3.660 =C2=B1 0.015M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 24   3.610 =C2=B1 0.016M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 28   3.238 =C2=B1 0.010M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 32   3.270 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 36   2.892 =C2=B1 0.021M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 40   2.995 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 44   2.830 =C2=B1 0.019M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 48   2.877 =C2=B1 0.015M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->   rb-prod nr_prod 52   2.814 =C2=B1 0.015M/s (drops 0.000 =C2=B1 0.000M/s=
-)
->
-> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
-> ---
->  tools/testing/selftests/bpf/bench.c           |  2 +
->  .../selftests/bpf/benchs/bench_ringbufs.c     | 95 +++++++++++++++++--
->  .../bpf/benchs/run_bench_ringbufs.sh          |  4 +
->  .../selftests/bpf/progs/ringbuf_bench.c       | 10 ++
->  4 files changed, 103 insertions(+), 8 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftest=
-s/bpf/bench.c
-> index bd29bb2e6cb5..a98063f6436a 100644
-> --- a/tools/testing/selftests/bpf/bench.c
-> +++ b/tools/testing/selftests/bpf/bench.c
-> @@ -541,6 +541,7 @@ extern const struct bench bench_trig_uretprobe_multi_=
-nop5;
->
->  extern const struct bench bench_rb_libbpf;
->  extern const struct bench bench_rb_custom;
-> +extern const struct bench bench_rb_prod;
->  extern const struct bench bench_pb_libbpf;
->  extern const struct bench bench_pb_custom;
->  extern const struct bench bench_bloom_lookup;
-> @@ -617,6 +618,7 @@ static const struct bench *benchs[] =3D {
->         /* ringbuf/perfbuf benchmarks */
->         &bench_rb_libbpf,
->         &bench_rb_custom,
-> +       &bench_rb_prod,
->         &bench_pb_libbpf,
->         &bench_pb_custom,
->         &bench_bloom_lookup,
-> diff --git a/tools/testing/selftests/bpf/benchs/bench_ringbufs.c b/tools/=
-testing/selftests/bpf/benchs/bench_ringbufs.c
-> index e1ee979e6acc..6d58479fac91 100644
-> --- a/tools/testing/selftests/bpf/benchs/bench_ringbufs.c
-> +++ b/tools/testing/selftests/bpf/benchs/bench_ringbufs.c
-> @@ -19,6 +19,7 @@ static struct {
->         int ringbuf_sz; /* per-ringbuf, in bytes */
->         bool ringbuf_use_output; /* use slower output API */
->         int perfbuf_sz; /* per-CPU size, in pages */
-> +       bool overwrite;
->  } args =3D {
->         .back2back =3D false,
->         .batch_cnt =3D 500,
-> @@ -27,6 +28,7 @@ static struct {
->         .ringbuf_sz =3D 512 * 1024,
->         .ringbuf_use_output =3D false,
->         .perfbuf_sz =3D 128,
-> +       .overwrite =3D false,
->  };
->
->  enum {
-> @@ -35,6 +37,7 @@ enum {
->         ARG_RB_BATCH_CNT =3D 2002,
->         ARG_RB_SAMPLED =3D 2003,
->         ARG_RB_SAMPLE_RATE =3D 2004,
-> +       ARG_RB_OVERWRITE =3D 2005,
->  };
->
->  static const struct argp_option opts[] =3D {
-> @@ -43,6 +46,7 @@ static const struct argp_option opts[] =3D {
->         { "rb-batch-cnt", ARG_RB_BATCH_CNT, "CNT", 0, "Set BPF-side recor=
-d batch count"},
->         { "rb-sampled", ARG_RB_SAMPLED, NULL, 0, "Notification sampling"}=
-,
->         { "rb-sample-rate", ARG_RB_SAMPLE_RATE, "RATE", 0, "Notification =
-sample rate"},
-> +       { "rb-overwrite", ARG_RB_OVERWRITE, NULL, 0, "Overwrite mode"},
->         {},
->  };
->
-> @@ -72,6 +76,9 @@ static error_t parse_arg(int key, char *arg, struct arg=
-p_state *state)
->                         argp_usage(state);
->                 }
->                 break;
-> +       case ARG_RB_OVERWRITE:
-> +               args.overwrite =3D true;
-> +               break;
->         default:
->                 return ARGP_ERR_UNKNOWN;
->         }
-> @@ -95,8 +102,30 @@ static inline void bufs_trigger_batch(void)
->
->  static void bufs_validate(void)
->  {
-> -       if (env.consumer_cnt !=3D 1) {
-> -               fprintf(stderr, "rb-libbpf benchmark needs one consumer!\=
-n");
-> +       bool bench_prod =3D !strcmp(env.bench_name, "rb-prod");
-> +
-> +       if (args.overwrite && !bench_prod) {
-> +               fprintf(stderr, "overwite mode only works with benchmakr =
-rb-prod!\n");
-> +               exit(1);
-> +       }
-> +
-> +       if (bench_prod && env.consumer_cnt !=3D 0) {
-> +               fprintf(stderr, "rb-prod benchmark does not need consumer=
-!\n");
-> +               exit(1);
-> +       }
-> +
-> +       if (bench_prod && args.back2back) {
-> +               fprintf(stderr, "back-to-back mode makes no sense for rb-=
-prod!\n");
-> +               exit(1);
-> +       }
-> +
-> +       if (bench_prod && args.sampled) {
-> +               fprintf(stderr, "sampling mode makes no sense for rb-prod=
-!\n");
-> +               exit(1);
-> +       }
-> +
-> +       if (!bench_prod && env.consumer_cnt !=3D 1) {
-> +               fprintf(stderr, "benchmarks excluding rb-prod need one co=
-nsumer!\n");
->                 exit(1);
->         }
->
-> @@ -132,8 +161,10 @@ static void ringbuf_libbpf_measure(struct bench_res =
-*res)
->         res->drops =3D atomic_swap(&ctx->skel->bss->dropped, 0);
->  }
->
-> -static struct ringbuf_bench *ringbuf_setup_skeleton(void)
-> +static struct ringbuf_bench *ringbuf_setup_skeleton(int bench_prod)
+> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?h=usb-next&id=e0b6dc00c701e600e655417aab1e100b73de821a
 
-int because C doesn't support bool?...
+Thank you very much. Let me work on layerscape base on that.
 
-but really, do we need another benchmark just to set overwritable
-mode?... can't you adapt existing benchmarks to optionally set
-overwritable mode?
+Frank
 
-
-(and please drop sdf@google.com from CC for the next revision, that
-email doesn't exist anymore)
-
-[...]
+>
+> Thanks,
+> Thinh
 
