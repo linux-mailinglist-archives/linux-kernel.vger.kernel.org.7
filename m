@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-825356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0093B8BA67
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD82EB8BA6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1278A80EBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6356A80C40
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981102D595E;
-	Fri, 19 Sep 2025 23:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EB42D5936;
+	Fri, 19 Sep 2025 23:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyDkqVg+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzqYTfKp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49B117A2EA;
-	Fri, 19 Sep 2025 23:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA9517A2EA;
+	Fri, 19 Sep 2025 23:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758326194; cv=none; b=aNjiftTk+eV/8myCLMDvmF/SNVcYof+P1K5pEGSwFz3+u06BV5EPJdd7TqC7ETDHU+ix+uEXwKMOmMqEUskUxpsXITfiup41XOLj3nlYwZCLFCSHx8zNopKDRUCJDUcj9AY3moWaUiW6JFvHYoldhgfrVVTtnJmX7I6V/qc6lbY=
+	t=1758326269; cv=none; b=eIpkxLIot9Gz5H0c4YYhe/wqADNCrBJWQT9PvS9Vv1cVDl3J9+gae1gEcgiwQgV9OBHfVAXu4JS9KcQZM2TtQ6tui7FESJPZb43a4nr/PkHDg2U6ogjrmBxC3Bc7YfB7Npwpf7p4HNNysWufT00k2ukc/bp3CQiLdh87+kbmBcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758326194; c=relaxed/simple;
-	bh=jnQJmZBheVXo3pp3RQRswVKx1JqGxYUBeu7J45F+5VI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=KTd9XyXtT+B7G2g/JxOtq/VXFjoaZq7HD7TQG2TEdGRZCZz8DZPPAoqeJ37I6G0fGQtuEeFtzf3b37QBayzBHzGHqZxskxtig7awFcQh66zlqoB3j+pbpekgLFzvsUhc2PMiX2EmtrtZsmA3cqNv35zEYZagzNn73fcpnlwdiWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyDkqVg+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C490C4CEF5;
-	Fri, 19 Sep 2025 23:56:29 +0000 (UTC)
+	s=arc-20240116; t=1758326269; c=relaxed/simple;
+	bh=G/0NaZRHkE0QjTqR59c6aAdqxCqI7WLim83gK5JQ7uA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EmzVjVjcxy0oVS+mvb1/T5kludUpVlBs0/5yD9wyDsV3ivxIksi40NSwP+52kMy4qEwWNm9mOmVOEqgo0PgmVJPGiOZauDgUoPelGEFbcn3Q5sivGHROzOen13+hP+NIN5mpw/oFQxoE83lTHV4/bddpjqpiYvavmeNZByejAW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzqYTfKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA8BAC4CEF0;
+	Fri, 19 Sep 2025 23:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758326193;
-	bh=jnQJmZBheVXo3pp3RQRswVKx1JqGxYUBeu7J45F+5VI=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=TyDkqVg+ydfmvIpZW3BOrIbUI0oXw4Its1dal9d976p/0B9GgPQAjwfkPIBaEq0Rg
-	 aid6R8BLb/XMF/AyYHcbr44Bs4/ZoukK9O/rZEUzgCSAdRikNPUe1ETkwAxawVqgtp
-	 mYrSFx2Y+XUcsWF+th7mmn5WtFKonD8Z2euUoli+7c6RtoNHRSfvoAfKHIaLuJqm4a
-	 3FV9qDzWYFi80qkdAOB7yarvkcjZk3mgEFb/pSYNoxKvJxkxLVGzJ2VR/Q6dfVjq+F
-	 024+WUopqrL58Fgtx5zqArW7ojZ6L58gT+KLq6nji8SIcxKkTg+nwJZvb3mQx/SySC
-	 4Tz8G3RFVyoaQ==
+	s=k20201202; t=1758326267;
+	bh=G/0NaZRHkE0QjTqR59c6aAdqxCqI7WLim83gK5JQ7uA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hzqYTfKpisba3UBm5gNBe42yqPhNNphsptxr8Hviej0yAhdr2cEkyhTQiwpysvhYN
+	 awEj/B+QTYGcY24kWuzh+vxrplCC0AY06V8rlM5zxg+GUtzI/sDAlGtl6CvJgqKjNU
+	 yJbQqsRC92HAfk0X4A6Xn0KM5c4PgC5K7hnehocqF/se86CC+BQ9nqttjZW6SDvhTo
+	 gdygwPNWAv79l430xJejhGDzOIbJJMhI5Qiqj6/SauXxq4RNPHS0FAKI+X3TiQYNt8
+	 TUFxlCVrr7IzrS6R2BSMR7hr7/5jJwd+Qx9j+ZKkX4BpUkRN8SwVDCFFwbAPkKYmVk
+	 uKcpZhPNUkYsg==
+Date: Fri, 19 Sep 2025 16:57:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, "Sebastian Andrzej Siewior"
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
+ Rostedt <rostedt@goodmis.org>, <netdev@vger.kernel.org>, "Tariq Toukan"
+ <tariqt@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-rt-devel@lists.linux.dev>
+Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
+ wrong CPU
+Message-ID: <20250919165746.5004bb8c@kernel.org>
+In-Reply-To: <20250918084823.372000-1-dtatulea@nvidia.com>
+References: <20250918084823.372000-1-dtatulea@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 20 Sep 2025 01:56:27 +0200
-Message-Id: <DCX6M3BCXV2W.37USDZEDRVA2G@kernel.org>
-Subject: Re: [PATCH] rust: io: use const generics for read/write offsets
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng"
- <boqun.feng@gmail.com>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <linux-pci@vger.kernel.org>
-To: "Gary Guo" <gary@garyguo.net>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250918-write-offset-const-v1-1-eb51120d4117@google.com>
- <20250918181357.GA1825487@joelbox2> <DCWBCL9U0IY4.NFNUMLRULAWM@kernel.org>
- <20250919215634.7a1c184e.gary@garyguo.net>
-In-Reply-To: <20250919215634.7a1c184e.gary@garyguo.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri Sep 19, 2025 at 10:56 PM CEST, Gary Guo wrote:
-> Turbofish is cumbersome to write with just magic numbers, and the
-> fact `{}` is needed to pass in constant expressions made this much
-> worse. If the drivers try hard to avoid magic numbers, you would
-> effective require  all code to be `::<{ ... }>()` and this is ugly.
+On Thu, 18 Sep 2025 11:48:21 +0300 Dragos Tatulea wrote:
+> Direct page releases to cache must be done on the same CPU as where NAPI
+> is running.
 
-In the absolute majority of cases users won't see any of that anyways, sinc=
-e
-they'll use the register!() macro generated types.
+You talk about NAPI..
 
-   // Master Control Register (MCR)
-   //
-   // Stores the offset as associated constant.
-   let mcr =3D regs::MCR::default();
+>  /* Only allow direct recycling in special circumstances, into the
+>   * alloc side cache.  E.g. during RX-NAPI processing for XDP_DROP use-case.
+>   *
+> @@ -768,6 +795,18 @@ static bool page_pool_recycle_in_cache(netmem_ref netmem,
+>  		return false;
+>  	}
+>  
+> +#ifdef CONFIG_DEBUG_PAGE_POOL_CACHE_RELEASE
+> +	if (unlikely(!page_pool_napi_local(pool))) {
+> +		u32 pp_cpuid = READ_ONCE(pool->cpuid);
 
-   // Set the enabled bit.
-   mcr.enable();
+but then you print pp->cpuid?
 
-   // Write the data on the bus.
-   //
-   // Calls `io.write<Self::OFFSET>(self.data())` internally.
-   mcr.write(&io);
-
-For indexed registers it is indeed a problem though.
+The patch seems half-baked. If the NAPI local recycling is incorrect
+the pp will leak a reference and live forever. Which hopefully people
+would notice. Are you adding this check just to double confirm that
+any leaks you're chasing are in the driver, and not in the core?
 
