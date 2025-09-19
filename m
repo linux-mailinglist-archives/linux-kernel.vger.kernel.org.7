@@ -1,97 +1,153 @@
-Return-Path: <linux-kernel+bounces-825081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF51B8AE98
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50572B8AE95
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764AC4E5CA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2168E1892D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3ED25DD0B;
-	Fri, 19 Sep 2025 18:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5D125FA2C;
+	Fri, 19 Sep 2025 18:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubsOj1Pe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GXdhu2Fz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EEtW+YsE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D14334BA40;
-	Fri, 19 Sep 2025 18:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7BE34BA40;
+	Fri, 19 Sep 2025 18:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758306526; cv=none; b=TT/pxA0d9f+RPcLruP6L2i9/F/xowXqLVqf51lc/CWL10+uhZRnjxb2T0GyNZOTDpAOPuybYfCY7VCAOgkhRC/tHGf9pOuoiUNqB3/FlbsUgPiU3CEOcUwDnvk0jTKT3vVcb2RIurq0t8ZeTU3WV2FanVEZ7n1Fm6mbPYk0tU6o=
+	t=1758306459; cv=none; b=ZCZROvI5g3nzEoCkg8L0LdjD9g5nhabZ5AIOYIXpvS73RGXwdjn6ZrEhdJVFQuoW95DkZdixh8Tzoe0w7dqsbdYwFo+w2oYof9blkOuJyT1XOSXHcUu2RyPS9JD1vJK7Dcga01Zm2APtQv5ZcDlP88R6M+Bcd0g2D7aKOcd6MN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758306526; c=relaxed/simple;
-	bh=DO1caKjdwWiEytFz3wuG+prVCNu0No7MAnjxeIVogno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sd7qPmFb4NYKacX0rbGSNvDGL0qJiMCTQw3g9U+qQhoTq2E1zkfkyxOqg135YlKdM8BGiZWSakhaQIm8uCF4V3rghgYR/PRtpvLkPNW3P8J3SQewVeU3W2pMTKCx8fxFIZjIUr4v5yOl8q+n8pcwNoEGYXTrpW93GzV5UAsVcUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubsOj1Pe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE72C4CEF0;
-	Fri, 19 Sep 2025 18:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758306525;
-	bh=DO1caKjdwWiEytFz3wuG+prVCNu0No7MAnjxeIVogno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ubsOj1Pew7RSEEcA1nUpPVmW0jxl+vy4mtZxsiV75MAi3on2SrPyjZAb33JEWjBx8
-	 iWjwT+Vpjuq78+tXQ1+HuJNwJBPMf5hppoZkDWyqiM6+HPbytWGoyY0WGFg3ejCCIe
-	 33CItSTrDJ5XVvzHu5txVMIJbxkcml3Tmo4wAMJmtZco7isyzRADCP3LeZhsKatquX
-	 /jPChCRyzTnejy4QuTf6ksRmXXuPddGAhOwq7p4CahVsBLyoyLBzEwKN/Tbnap61Vg
-	 XotOvzEUHZEz8dqz/b0d8nrsPZferdo3+NuNfhgU1ddeJhPqlOfn2QFY0BvSQ05Omq
-	 2JiJLGx/lfc9Q==
-Date: Fri, 19 Sep 2025 23:57:07 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] KVM: SVM: Move global "avic" variable to avic.c
-Message-ID: <vt5cuym6jynubpyvv2t7b6ygvg4hj5plufet6vsdnr7rc7zu7d@nv5aggxvomzm>
-References: <20250919002136.1349663-1-seanjc@google.com>
- <20250919002136.1349663-6-seanjc@google.com>
- <73txiv6ycd3umvlptnqnepsc6hozuo4rfmyqj4rhtv7ahkm43k@37jbftataicw>
- <aM1sTc36cXIKxCDb@google.com>
+	s=arc-20240116; t=1758306459; c=relaxed/simple;
+	bh=0oKhf9H/k7koggsl3lirtiUd4RzmGFeXGeZu4pUEecg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NPfmOdEWisnSRDyoBupBeg4U2PaHLKxuhN3i0uWBvg6XWimJDnKu9l+QIK8kZejfNYP5216RO5rSlyddALS8179hE8Ynj9rx1+vybpGxq4Rakpl5T5orV6fCYQFCiJXvXpYDH0z6KBLSKC3ryGg9fMysNN5Gd10Mt/tjyBYHB54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GXdhu2Fz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EEtW+YsE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758306455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d9RBmI2iX1ZX7Pcl3gagxnA4YyfCeH7uHTQOBr1mgec=;
+	b=GXdhu2FzEMNv+9P0OmuXv3lu2UlSEj+3hva8irx706eOUEvt8MONPtaRD5qUyw8hqLkyUe
+	tRYHysAoof5su+qo3ytGTqEu1xQXq43cLUbDTETKZYvohRiNFax9s1Wn6G0/mTdDVP/VwF
+	dIyky3OVenLfCELQPiiGRHJBmSMcKNBY40S3Cv5S2M6I5LHunpW6g3bgztGNdQYGlXYCVG
+	rluSrdYuQ8qnGL5kyGJ5FoEFpgAfkyAnmvuak31DMnFlV536wFsXyjY0a9sM77jDocldeh
+	KSx5SAmM0YrR6TTx031rSS0MoMvgm75gL2V+0+UI+kLoxceUsXeQwhD+iCWMQQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758306455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d9RBmI2iX1ZX7Pcl3gagxnA4YyfCeH7uHTQOBr1mgec=;
+	b=EEtW+YsEucAZH23H4LnoTix/0YV5g6BXxI+zZX4U68FNcAEE5qKUH2st++0/6TSBh/qZR7
+	x9v9Ao7pdxDVWBAg==
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra
+ <peterz@infradead.org>, kernel test robot <lkp@intel.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Nathan
+ Chancellor <nathan@kernel.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?Andr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>, x86@kernel.org, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: [patch V2a 1/6] ARM: uaccess: Implement missing __get_user_asm_dword()
+In-Reply-To: <20250916163252.037251747@linutronix.de>
+References: <20250916163004.674341701@linutronix.de>
+ <20250916163252.037251747@linutronix.de>
+Date: Fri, 19 Sep 2025 20:27:33 +0200
+Message-ID: <878qia8fhm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aM1sTc36cXIKxCDb@google.com>
+Content-Type: text/plain
 
-On Fri, Sep 19, 2025 at 07:44:29AM -0700, Sean Christopherson wrote:
-> On Fri, Sep 19, 2025, Naveen N Rao wrote:
-> > On Thu, Sep 18, 2025 at 05:21:35PM -0700, Sean Christopherson wrote:
-> > > @@ -1141,15 +1149,9 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
-> > >  	avic_vcpu_load(vcpu, vcpu->cpu);
-> > >  }
-> > >  
-> > > -/*
-> > > - * Note:
-> > > - * - The module param avic enable both xAPIC and x2APIC mode.
-> > > - * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
-> > > - * - The mode can be switched at run-time.
-> > > - */
-> > > -bool __init avic_hardware_setup(struct kvm_x86_ops *svm_ops)
-> > > +static bool __init avic_want_avic_enable(void)
-> > 
-> > Maybe avic_can_enable()?
-> 
-> That was actualy one of my first names, but I didn't want to use "can" because
-> (to me at least) that doesn't capture that the helper is incorporating input from
-> the user, i.e. that it's also checking what the user "wants".
+When CONFIG_CPU_SPECTRE=n then get_user() is missing the 8 byte ASM
+variant.  This prevents using get_user(u64) in generic code.
 
-Makes sense.
+Implement it as a sequence of two 4-byte reads with LE/BE awareness and
+make the data type for the intermediate variable to read into dependend
+on the target type. For 8,16,32 bit use unsigned long and for 64 bit
+unsigned long long
 
-> 
-> I agree the name isn't great.  Does avic_want_avic_enabled() read any better?
+The __long_type() macro and the idea to solve it was lifted from
+PowerPC. Thanks to Christophe for pointing it out.
 
-Yes, though I think avic_want_enabled() suffices. But, I'm ok if you 
-want it to be explicit.
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org
+Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel.com/
+---
+V2a: Solve the *ptr issue vs. unsigned long long - Russell/Christophe
+V2: New patch to fix the 0-day fallout
+---
+ arch/arm/include/asm/uaccess.h |   26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
 
-
-- Naveen
-
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -283,10 +283,17 @@ extern int __put_user_8(void *, unsigned
+ 	__gu_err;							\
+ })
+ 
++/*
++ * This is a type: either unsigned long, if the argument fits into
++ * that type, or otherwise unsigned long long.
++ */
++#define __long_type(x) \
++	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
++
+ #define __get_user_err(x, ptr, err, __t)				\
+ do {									\
+ 	unsigned long __gu_addr = (unsigned long)(ptr);			\
+-	unsigned long __gu_val;						\
++	__long_type(x) __gu_val;					\
+ 	unsigned int __ua_flags;					\
+ 	__chk_user_ptr(ptr);						\
+ 	might_fault();							\
+@@ -295,6 +302,7 @@ do {									\
+ 	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
+ 	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
+ 	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
++	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
+ 	default: (__gu_val) = __get_user_bad();				\
+ 	}								\
+ 	uaccess_restore(__ua_flags);					\
+@@ -353,6 +361,22 @@ do {									\
+ #define __get_user_asm_word(x, addr, err, __t)			\
+ 	__get_user_asm(x, addr, err, "ldr" __t)
+ 
++#ifdef __ARMEB__
++#define __WORD0_OFFS	4
++#define __WORD1_OFFS	0
++#else
++#define __WORD0_OFFS	0
++#define __WORD1_OFFS	4
++#endif
++
++#define __get_user_asm_dword(x, addr, err, __t)				\
++	({								\
++	unsigned long __w0, __w1;					\
++	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
++	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
++	(x) = ((u64)__w1 << 32) | (u64) __w0;				\
++})
++
+ #define __put_user_switch(x, ptr, __err, __fn)				\
+ 	do {								\
+ 		const __typeof__(*(ptr)) __user *__pu_ptr = (ptr);	\
 
