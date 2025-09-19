@@ -1,205 +1,347 @@
-Return-Path: <linux-kernel+bounces-824683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B304CB89DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:16:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F69CB89DBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0B61C84E24
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1EEF3A2B5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0070D310782;
-	Fri, 19 Sep 2025 14:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6987D263C69;
+	Fri, 19 Sep 2025 14:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="otQm3Lgj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CcWM4oBw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F792F0690
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9308E258ED5
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758291294; cv=none; b=SlCPWfpwG3p+Br9FhVneMD8qPhxgqmrXv/cn3cRRLXPW2yKZEPKOlfMijYkR6wS5t5AynOPJSuKrc6QDCyHFJ9OAata8ppEkG1mCZ1nwISldpBL+SAyG3jwwC06wrVj7mubAo74pme2k6bZes6pouhYVMfU45udL0BIkqEKJNkI=
+	t=1758291427; cv=none; b=uBhiMScZZvavzBLW29TkIYVVvxsJkJgYhelLZSEoXl84gDVBgAi0ZX4VzTU0misGejvaCXEe3rl1RaQuAUEFQXWEAan3xpWP/UEeUfkk5taTQIp+tAkfzyxX2kxufSKHUu3SYk8VJHcnWeFRVRYZoC1njzGA1U456I7thlZmgAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758291294; c=relaxed/simple;
-	bh=H18JYOxIyEwenlKHPH3Q4sdgZATPQK3L6NM+azc19AE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YaWv94+xnWSrutDJCIeLzY9lfpjYru9F58pXkwkrNv/8xpydsT3GOMgZ/nyBSx/bHiIjAOoGG+MwKcewQ3AseQ3tfasJV8BfuEu8kYJOJjrPpfQl3mKBkYrDkFfYKJmru37Kx1/8o/lK7Q3tcJ/FjPy1sG7m04V9Dnc+qlVPfn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=otQm3Lgj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J8k448028290
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:14:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=9EEP86bPrEuFPhyrGPMSKAxoE/r/N527VzL
-	IseJvapk=; b=otQm3LgjLRebVNhPqwJ2r4P4UwvdHcYQW0UiPpHqaB7xzV6HyM9
-	vKzvnzwXzb1wnT0cQiae+vzW+nGogSHtI8Y/yk9twjffddOQV9ORTjnzAgoOYnBY
-	/LIQYPBNpULBHrlS45de4tmaymkz/V9OkN4byh4X/LKbO5/ZxP5CXzUDnJhD7T5r
-	EMMwSNDvPTn0zfqt5u5BGnVIomx8pPNxVUgSwzVlNAy8lipcnaLmC98DrPxTW5iM
-	vKA0+YsKPkjByEDVsFkuU2fv9VS5oanzav6ZORXWagmzJ9x9hHDFo+YawtMmRXyO
-	HETV1gbCN82wR2OYXo0yoi5rOR/IVfupU0w==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497v1jgp7a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:14:51 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b4f8e079bc1so1537675a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:14:51 -0700 (PDT)
+	s=arc-20240116; t=1758291427; c=relaxed/simple;
+	bh=hqbFRkcAwgWhnZtP+r9gQWMBXt4JXtwvzFHyj6GR238=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3b3bWkMG/49mNsRA2Cj3rwrzHU9B+zdIJ52qcf3xJ1y1fAh9KI+E2S1ctehYC8xDhQ18mniAjNz2tMHlfwk8bIHxa9NPL7Y76hKgY+HRjwlGmsGeZTmHTrB47W6D2Tl7j/UQVb2hW4mYZ77XASapQKH3DNL/RjgBbQarXzt9Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CcWM4oBw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758291424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ticqe5qWO2L3qCYZDyiYvfuA1uJgYJW+p6eRr/13AO8=;
+	b=CcWM4oBw8lJesvGlsbxmtZI/QJq1Ng04zshkN5UPx2cQGUk5ISkHM3ORljPbn8ZQ9r3T2R
+	slb4H3QTgZ8jbcNSVEVL7lkVOx7UTAJzWWeRaf1ry0v7Zl58x+dkssBio4U3A22HWfvRUC
+	9MEnP4duQbq5QNlhe4nWVIqAhjPz8e8=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-yWwKiRdENz-Uafwv07tTKQ-1; Fri, 19 Sep 2025 10:17:01 -0400
+X-MC-Unique: yWwKiRdENz-Uafwv07tTKQ-1
+X-Mimecast-MFC-AGG-ID: yWwKiRdENz-Uafwv07tTKQ_1758291421
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-82e5940eeefso470929785a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:17:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758291290; x=1758896090;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9EEP86bPrEuFPhyrGPMSKAxoE/r/N527VzLIseJvapk=;
-        b=MKLDPfHJsJvZSlQ/gzmC4ChPNL+Aa4f5FMfHkp3DOXsRXE8ZN69glxkvH3uxG3XC/m
-         qfZqU4m9C4qj0bTAwXR7j/2Z71k5RpHANaCBGvQIjY/GSN2vcWKfnpRlFxHPY+6N0CJw
-         WgsyzPvC+XBmm5WxwoWmnYMjrt+WUqGyVJIgTaU1NAS+OqcPMG2t8Mf6W4lG9IBr6bp3
-         hIioJv0GwFDzr5YTRj1LuOjd1qibuTbrL46VSxCWHjjljo/k8lTOSUbR3cbJzQeXpvWt
-         dyz7x2IX2G/SHC1A/tzFtQVQQXjj5R7rG1VxoaYNNOh7XIZQb2I0zpERpts9qUCjkq0H
-         9ulQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdnPC4BGsfy/toAmMhC6rQ7j9fvgyykGRhhVrJGr/wUptMMAt69e6isbuDQB9Y8ZwV7Q/nZ1Pnxv9IGoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP18+h1WklLeX5PN761F0nOWufQiRnKweLY3/XF/C6sPCu8gPW
-	km5mqnOzIRsPbMV83SimNWCSds/pGfQ2V/Ek6qsUFmWm5dxDbL+fKJZZDqVXDF8NX01hoYbTeqP
-	kss7L/gHX+NR0N6LgIsoar4bJWzdfxJ1P3iyAKIJ6ZCWbkPdTurSTMxaxdMa27NQpJmHN25yJXr
-	k=
-X-Gm-Gg: ASbGncuTEnmrt52mtnbmvO5hnv9OHtzk3QWKfa7DUXC5HcrUl3OH+i7tE1OivV6KUAu
-	16AEiNc9uROHB+XCj8w6SoiOFEX+bA6ZlloLXoWWdzOCRQe3hK3BqerboONkfz1K0WRwNsfopG2
-	Wc/W7yG2h1M20nARWo+LiCRvXdnH+0Kf30rXhHX13ZVxfzTSuqcGpj3F4J40/kqZ2nCw5ynjhkr
-	Pjv5kioJluWiUdC76PM2Debp+e83U+sFJv7RXxSJR4btk3QncYcXX5m02fKpwfixF0GOLFTtotj
-	2Ou7azWfmVsHGcIx4mXEyeRrIPStz7tRAC+F08dW+nQZvA9uVnWfQvS/saM2QHTbyJBeDArZ7IE
-	reZc24x6+Sn8VNeLfgLGdxMIziALvW7fNB0apeRnsyKNJvcGN1RVYRbHBggKy
-X-Received: by 2002:a17:903:2341:b0:24c:a269:b6d5 with SMTP id d9443c01a7336-269ba27020bmr50046075ad.0.1758291289596;
-        Fri, 19 Sep 2025 07:14:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZEoV1JBT8ltcQHOk66+9wxwccfdS5Zcfmesrj8v0ZFx8i90bAAeizJjd/qgTQvGzs2XP4SQ==
-X-Received: by 2002:a17:903:2341:b0:24c:a269:b6d5 with SMTP id d9443c01a7336-269ba27020bmr50045735ad.0.1758291289091;
-        Fri, 19 Sep 2025 07:14:49 -0700 (PDT)
-Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016d9d5sm56456845ad.53.2025.09.19.07.14.46
+        d=1e100.net; s=20230601; t=1758291420; x=1758896220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ticqe5qWO2L3qCYZDyiYvfuA1uJgYJW+p6eRr/13AO8=;
+        b=up2wUdiXohgIibxLLFHZ/zB3vilFNDYOiXJ4GetDm3fPhcsIGUGoOeV3JUP5RC5IL1
+         7xfsRjHBhzLwvdvB3T0bkNYe5MJNqjAuD8Z9KvxeptZtUxk/hDUvkQjPTnSjpM7m0Qhu
+         9KR+AZVRK5ZlgWq0BiVVkvOHtMr4FQGikxFFNzuqJGbzdnVz4E/ZOKZ9ZADfj/i8/7zR
+         O9cgG6TUEyhI+VrLMEh9Hqh2IXyYqzwEg/rfTiaXIx2evhFSK4BkTA5z7F7WzjpUsBYu
+         ivXRgFUmgR1p+62GAzO/N76W55aTzw9UkmeOnuVyOnYoDdDP4sPsOg1HIIsx+em7uk/4
+         Sziw==
+X-Forwarded-Encrypted: i=1; AJvYcCURTSHIQVMR1tB3HaswgE9WJrww+Hv9PdocGD8/GzAGsrpwW0foz0bxdpd/Digd4n/BEemFs8PUjmiKA7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw67b1fabKYYHeWX7KXIQdCI1V/NaDZfJX5/xnTR0drWeftfXr+
+	zl7fmhNaTGP32IudsISEz1papU1AzC+srZLbNgz9UeSRrNZ6AEtKVzG9BWfpPEj4KBGR9mLqvau
+	1lBL98cG8/KSpMNQpqPr4ukhkfiEHSYxKhDKPbN+mqHXlDeDAon2LPMvW5XpxbHvgU1J+5IBBqg
+	==
+X-Gm-Gg: ASbGncvL2s4vJabl5mZCNyekB3AQ3vBV6SUCntCfynFhzBcXzghb/2bo6PwhIp5xPed
+	lZQyWentyE08UqRn888BlP0nA0urzZxIc/b+6HhbmFvpwJOBSrn0d8gQUeL8+KPRm1tpqPmi4fj
+	ISPcU3lL3K8cENzoV6NiccefPvfFzvygzI7Uh5narv36uVRzar5j+S/oPSisosahkvnvx5T528i
+	oqwyXEtfHw2csW7NWHhFWz9QM5OUvjXktaRHWUuMNLuV4rffdL0YCqAgT9d6Kw1DEG3RN66rdH/
+	CDl25qDhxpnjz1o8buzkQwenlu+rY3AA
+X-Received: by 2002:a05:620a:2552:b0:829:d0e9:bc1b with SMTP id af79cd13be357-83b83bf98cfmr374573585a.7.1758291420048;
+        Fri, 19 Sep 2025 07:17:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGmwp6NIoXqiqR/kixIJFbO80y7cuU3Ya0UiZpIOCrLcj+9fy9PCkWSa9mP1YicitttrWDVOw==
+X-Received: by 2002:a05:620a:2552:b0:829:d0e9:bc1b with SMTP id af79cd13be357-83b83bf98cfmr374569185a.7.1758291419395;
+        Fri, 19 Sep 2025 07:16:59 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-836262b559dsm352820585a.1.2025.09.19.07.16.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 07:14:48 -0700 (PDT)
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-To: andersson@kernel.org, linus.walleij@linaro.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: qcom,pmic-gpio: Add GPIO bindings for Glymur PMICs
-Date: Fri, 19 Sep 2025 19:44:40 +0530
-Message-Id: <20250919141440.1068770-1-pankaj.patil@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        Fri, 19 Sep 2025 07:16:58 -0700 (PDT)
+Date: Fri, 19 Sep 2025 10:16:57 -0400
+From: Peter Xu <peterx@redhat.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Houghton <jthoughton@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aM1l2YMmvBgiXJ8a@x1.local>
+References: <du5pzxmfk6lile3ykpaloylwz4eni6disj2oe25eq6ipzqemiw@ybcouflfnlev>
+ <aMvEu9m7fJLnj862@kernel.org>
+ <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
+ <a1a48a0e-62d3-48d0-b9c2-492eb190b99f@amazon.com>
+ <7cccbceb-b833-4a21-bdc4-1ff9d1d6c14f@lucifer.local>
+ <74b92ce3-9e0e-4361-8117-7abda27f2dd4@redhat.com>
+ <aMxNgyVRuiFq2Sms@x1.local>
+ <cigo2r2x22bk7wzr6qvazcdkmt5kfqhbgb7nslpuff7djufucg@f6xucfuntz3q>
+ <aMx0oGwRpSTcfdnf@x1.local>
+ <swfs7qpgrezamnijhheiggwdfklfqdc6ahp5g7nvprr64m7wz5@msf2mqajzbuz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 4UUVWw3diiMR7cBnKCUqsj1anFRzPAWG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDExMCBTYWx0ZWRfXwZNBIhyc1MEm
- LbSH+6SztT9F7m7YlA1u1rz00Zo9XYWSlZWBOExBnOUtjaJjc3iStUEif78+/O5NALMYuiCBKWa
- tBsUdJUBnsNGZKQhS/dKEqin6peKke6/78DmoVIHJ53CFD+3KuZqeMNIjHDhsSQA3C2lO4l4LaY
- rNInJv3VcwatQb9V7F3ITkgBeRM/Gqagq3H6NwyX+xEMGMKpbnV61VrhPS0eXcMFXcWfmlnkn7l
- s7wKDj3hw3MLr9Jl+CqW3+Q78HcHz7K8nrdlakbHVKmcY2abbU7eO8JXIp0MtksoJMipAO7g45d
- j15hWqNRDSWd0dPpLn7Ux0qO9Zph1fhrL6UQbb+aO0/6gEZH9RgEoFXfdnmd8IFPy/4G9LhBEE9
- VHhBUSct
-X-Authority-Analysis: v=2.4 cv=AeqxH2XG c=1 sm=1 tr=0 ts=68cd655b cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=gVt0xI4JxzluFwnjjo4A:9
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-GUID: 4UUVWw3diiMR7cBnKCUqsj1anFRzPAWG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170110
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <swfs7qpgrezamnijhheiggwdfklfqdc6ahp5g7nvprr64m7wz5@msf2mqajzbuz>
 
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+On Thu, Sep 18, 2025 at 09:50:49PM -0400, Liam R. Howlett wrote:
+> * Peter Xu <peterx@redhat.com> [250918 17:07]:
+> > On Thu, Sep 18, 2025 at 03:43:34PM -0400, Liam R. Howlett wrote:
+> > > * Peter Xu <peterx@redhat.com> [250918 14:21]:
+> > > > On Thu, Sep 18, 2025 at 07:53:46PM +0200, David Hildenbrand wrote:
+> > > > > Re Nikita: If we could just reuse fault() for userfaultfd purposes, that
+> > > > > might actually be pretty nice.
+> > > > 
+> > > > I commented on that.
+> > > > 
+> > > > https://lore.kernel.org/all/aEiwHjl4tsUt98sh@x1.local/
+> > 
+> > [1]
+> > 
+> > > > 
+> > > > That'll need to leak FAULT_FLAG_USERFAULT_CONTINUE which isn't necessary,
+> > > > make it extremely hard to know when to set the flag, and comlicates the
+> > > > fault path which isn't necessary.
+> > > > 
+> > > > I think Mike's comment was spot on, that the new API is literally
+> > > > do_fault() for shmem, but only used in userfaultfd context so it's even an
+> > > > oneliner.
+> > > > 
+> > > > I do not maintain mm, so above is only my two cents, so I don't make
+> > > > decisions.  Personally I still prefer the current approach of keep the mm
+> > > > main fault path clean.
+> > > 
+> > > What we are trying to say is you can have a fault path that takes a type
+> > > enum that calls into a function that does whatever you want.  It can
+> > > even live in mm/userfaultfd.c.  It can then jump off to mm/guest-memfd.c
+> > > which can contain super unique copying of memory if that's needed.
+> > 
+> > Per mentioning of mm/guest-memfd.c, are you suggesting to take guest-memfd
+> > library approach?
+> 
+> > We have in total of at least three proposals:
+> > 
+> > (a) https://lore.kernel.org/all/20250404154352.23078-1-kalyazin@amazon.com/
+> > (b) this one
+> > (c) https://lore.kernel.org/all/20250915161815.40729-1-kalyazin@amazon.com/
+> > 
+> > I reviewd (a) and (c) and I provided my comments.  If you prefer the
+> > library approach, feel free to reply directly to (c) thread against my
+> > email.
+> > 
+> > I chose (b), from when it was posted.
+> 
+> Honestly, I don't know what I'd vote for because I don't like any of
+> them.  I'd chose (d) the do nothing option.
+> 
+> > 
+> > 
+> > > 
+> > > That way driver/i_know_better_that_everyone.c or fs/stature.c don't
+> > > decide they can register their uffd and do cool stuff that totally won't
+> > > tank the system in random strange ways.
+> > 
+> > What is the difference if they are allowed to register ->fault() and tank
+> > the system?
+> 
+> One less problem.
+> 
+> More people with mm experience looking at the handling of folios.
+> 
+> The common code not being cloned and kept up to date when an issue in
+> the original is discovered.
+> 
+> Having to only update a few fault handlers when there is a folio or
+> other mm change.
+> 
+> Hopefully better testing?
+> 
+> > > 
+> > > Seriously, how many fault handlers are you expecting to have here?
+> > 
+> > First of all, it's not about "how many".  We can assume one user as of now.
+> > Talking about any future user doesn't really help.  The choice I made above
+> > on (b) is the best solution I think, with any known possible users.  The
+> > plan might change, when more use cases pops up.  However we can only try to
+> > make a fair decision with the current status quo.
+> 
+> Planning to handle one, five, or two billion makes a difference in what
+> you do.  Your plan right now enables everyone to do whatever they want,
+> where they want.  I don't think we need this sort of flexibility with
+> the limited number of users?
+> 
+> > 
+> > OTOH, the vm_uffd_ops also provides other fields (besides uffd_*() hooks).
+> > I wouldn't be surprised if a driver wants to opt-in with some of the fields
+> > with zero hooks attached at all, when an userfaultfd feature is
+> > automatically friendly to all kinds of memory types.
+> > 
+> > Consider one VMA that sets UFFDIO_WRITEPROTECT but without most of the
+> > rest.
+> > 
+> > As I discussed, IMHO (b) is the clean way to describe userfaultfd demand
+> > for any memory type.
+> > 
+> > > 
+> > > I'd be surprised if a lot of the code in these memory types isn't
+> > > shared, but I guess if they are all over the kernel they'll just clone
+> > > the code and bugs (like the arch code does, but with less of a reason).
+> > > 
+> > > > Besides, this series also cleans up other places all over the places, the
+> > > > vm_uffd_ops is a most simplified version of description for a memory type.
+> > > 
+> > > 6 files changed, 207 insertions(+), 76 deletions(-)
+> > > 
+> > > Can you please point me to which patch has clean up?
+> > 
+> > Patch 4.  If you want me to explain every change I touched that is a
+> > cleanup, I can go into details.  Maybe it's faster if you read them, it's
+> > not a huge patch.
+> 
+> I responded here [1].  I actually put a lot of effort into that response
+> and took a lot of time to dig into some of this to figure out if it was
+> possible, and suggested some ideas.
+> 
+> That was back in July, so the details aren't that fresh anymore.  Maybe
+> you missed my reply?
 
-Update the Qualcomm Technologies, Inc. PMIC GPIO binding documentation
-to include compatible strings for PMK8850, PMH0101, PMH0104, PMH0110
-and PMCX0102 PMICs.
+AFAICT, we made it the other way round.  My reply is here:
 
-Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
----
- .../bindings/pinctrl/qcom,pmic-gpio.yaml          | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+https://lore.kernel.org/all/aMnAscxj_h42wOAC@x1.local/
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-index 5e6dfcc3fe9b..8ae4489637f3 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-@@ -59,7 +59,11 @@ properties:
-           - qcom,pmc8180-gpio
-           - qcom,pmc8180c-gpio
-           - qcom,pmc8380-gpio
-+          - qcom,pmcx0102-gpio
-           - qcom,pmd8028-gpio
-+          - qcom,pmh0101-gpio
-+          - qcom,pmh0104-gpio
-+          - qcom,pmh0110-gpio
-           - qcom,pmi632-gpio
-           - qcom,pmi8950-gpio
-           - qcom,pmi8994-gpio
-@@ -68,6 +72,7 @@ properties:
-           - qcom,pmiv0104-gpio
-           - qcom,pmk8350-gpio
-           - qcom,pmk8550-gpio
-+          - qcom,pmk8850-gpio
-           - qcom,pmm8155au-gpio
-           - qcom,pmm8654au-gpio
-           - qcom,pmp8074-gpio
-@@ -191,6 +196,8 @@ allOf:
-               - qcom,pm8950-gpio
-               - qcom,pm8953-gpio
-               - qcom,pmi632-gpio
-+              - qcom,pmh0104-gpio
-+              - qcom,pmk8850-gpio
-     then:
-       properties:
-         gpio-line-names:
-@@ -303,6 +310,8 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,pmcx0102-gpio
-+              - qcom,pmh0110-gpio
-               - qcom,pmi8998-gpio
-     then:
-       properties:
-@@ -318,6 +327,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,pmh0101-gpio
-               - qcom,pmih0108-gpio
-     then:
-       properties:
-@@ -481,13 +491,18 @@ $defs:
-                  - gpio1-gpio22 for pm8994
-                  - gpio1-gpio26 for pm8998
-                  - gpio1-gpio22 for pma8084
-+                 - gpio1-gpio14 for pmcx0102
-                  - gpio1-gpio4 for pmd8028
-+                 - gpio1-gpio18 for pmh0101
-+                 - gpio1-gpio8 for pmh0104
-+                 - gpio1-gpio14 for pmh0110
-                  - gpio1-gpio8 for pmi632
-                  - gpio1-gpio2 for pmi8950
-                  - gpio1-gpio10 for pmi8994
-                  - gpio1-gpio18 for pmih0108
-                  - gpio1-gpio4 for pmk8350
-                  - gpio1-gpio6 for pmk8550
-+                 - gpio1-gpio8 for pmk8850
-                  - gpio1-gpio10 for pmm8155au
-                  - gpio1-gpio12 for pmm8654au
-                  - gpio1-gpio12 for pmp8074 (holes on gpio1 and gpio12)
+> 
+> I was hoping that, if the code was cleaned up, a solution may be more
+> clear.
+> 
+> I think the ops idea has a lot of positives.  I also think you don't
+> need to return a folio pointer to make it work.
+> 
+> > > 
+> > > How is a generic callback that splits out into, probably 4?, functions
+> > > the deal breaker here?
+> > > 
+> > > How is leaking a flag the line that we won't cross?
+> > > 
+> > > > So IMHO it's beneficial in other aspects as well.  If uffd_copy() is a
+> > > > concern, fine, we drop it.  We don't plan to have more use of UFFDIO_COPY
+> > > > outside of the known three memory types after all.
+> > > 
+> > > EXACTLY!  There are three memory types and we're going to the most
+> > > flexible interface possible, with the most danger.  With guest_memfd
+> > > we're up to four functions we'd need.  Why not keep the mm code in the
+> > > mm and have four functions to choose from?  If you want 5 we can always
+> > > add another.
+> > 
+> > I assume for most of the rest comments, you're suggesting the library
+> > approach.  If so, again, I suggest we discuss explicitly in that thread.
+> > 
+> > The library code may (or may not) be useful for other purposes.  For the
+> > support of userfaultfd, it definitely doesn't need to be a dependency.
+> > OTOH, we may still want some abstraction like this one with/without the
+> > library.  If so, I don't really see why we need to pushback on this.
+> > 
+> > AFAIU, the only concern (after drop uffd_copy) is we'll expose
+> > uffd_get_folio().
+> 
+> If you read my response [1], then you can see that I find the ops
+> underutilized and lacks code simplification.
+
+I tried to explain to you on why what you mentioned is completely
+orthogonal to this change, in above my reply.
+
+> 
+> > Please help explain why ->fault() isn't worse.
+> 
+> I'm not sure it is worse, but I don't think it's necessary to return a
+> folio for 4 users.  And I think it could be better if we handled the
+> operations on the folio internally, if at all possible.
+> 
+> > 
+> > If we accepted ->fault() for all these years, I don't see a reason we
+> > should reject ->uffd_get_folio(), especially one of the goals is to keep
+> > the core mm path clean, per my comment to proposal (a).
+> 
+> I see this argument as saying "there's a hole in our boat so why can't I
+> make another?"  It's not the direction we have to go to get what we need
+> right now, so why are we doing it?  Like you said, it can be evaluated
+> later if things change..
+
+You described ->fault() as "a hole in our boat"?  I'm astonished and do not
+know what to say on this.
+
+There was a great comment saying one may want to make Linux an unikernel.
+I thought it was a good one, but only when it was a joke. Is it not?
+
+> 
+> My thoughts were around an idea that we only really need to do a limited
+> number of operations on that pointer you are returning.  Those
+> operations may share code, and could be internal to mm.  I don't see
+> this as (a), (b), or (c), but maybe an addition to (b)?  Maybe we need
+> more ops to cover the uses?
+
+That's exactly what this proposal is about, isn't it?  Userfaultfd minor
+fault shares almost all the code except the one hook fetching a folio from
+a page cache from the memory type.
+
+"could be internal to mm" is (c) at least.  No one can do what you
+mentioned without moving guest-memfd into mm/ first.
+
+Nikita and I drafted these changes, so likely we may likely have better
+idea what is happening.
+
+Would you perhaps implement your idea, if that's better?  Either you're
+right, we're happy to use it.  Or you found what you're missing.
+
+It's not required, but now I think it might be a good idea if you are so
+strongly pushing back this userfaultfd feature.  I hope it's fair we
+request for a better solution from you when you rejected almost every
+solution.
+
+> 
+> So, I think I do want the vm_uffd_ops idea, but not as it is written
+> right now.
+> 
+> Thanks,
+> Liam
+> 
+> [1]. https://lore.kernel.org/all/e7vr62s73dftijeveyg6lfgivctijz4qcar3teswjbuv6gog3k@4sbpuj35nbbh/
+> 
+
 -- 
-2.34.1
+Peter Xu
 
 
