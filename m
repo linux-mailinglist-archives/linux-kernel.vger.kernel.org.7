@@ -1,287 +1,315 @@
-Return-Path: <linux-kernel+bounces-824066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349BEB880C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:50:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBE2B88103
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFBB1C83864
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:50:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18A397BE6FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C342D5406;
-	Fri, 19 Sep 2025 06:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C832B2C08AA;
+	Fri, 19 Sep 2025 06:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mgUCr252"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E8Qno5vc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4A32D2499;
-	Fri, 19 Sep 2025 06:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20F82BEFE5
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758264530; cv=none; b=UW/JJE6GHW6CxeSsy/h978zRYmHrw/5HOiQ6JN3itzXH/CKtGM/WuVdRzUi3o/95fhYCWJPLw8lQDChS8zlG2J6SUHQN8EkkvwhTZuzkCDGW6j8sIOFnHb38VsOWIsPWxsRkvZe3l3LKqzozHTtEKto9OdQ3XL3VqghH9dHmEFA=
+	t=1758264578; cv=none; b=K3KyamUrABqWP/RLCSrDvPmzTLWobBc+irP9RkdSlGUQ8ZoRwmp/20FBiUn2j2h6cXwtyc+EaRS8iZFufyuWpIGIPML/L8KIiOZ/gNQqhdXQW+FGxzE6zQe+2q4dwo7zX5OYCdc08X2YOrsYmcQBlzuqkEfJ8feEjR6iJBkM7ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758264530; c=relaxed/simple;
-	bh=+Q/vBM7008NAemI0PvMW6eBWXjGySS3eWBUZ6ZGCzi8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PbYz1qwI5PoI/TV4ihT6UmbXQfP2XnlZtTv+x8ApzQfe2l/04q1MSxJO3FN9AldHqAUWO390KnmHZp2NxW/XAabxg2i/u6g9UXNol6zp4iolFnVspQeFGlIWAUCks9iEKJguyWfZkK+q8svpJdaNULX+RZBgrE/fJXJPWVaaLt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mgUCr252; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J2WLt8000352;
-	Fri, 19 Sep 2025 06:48:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=Qi50oiRdPA4zdEsWw
-	o82Eki8KnW/N3w2AfOe2CPDP0U=; b=mgUCr2521B7r3sBU1CC0sGijpR6T2ndpO
-	kIaoKqXri7wOWDljgmFoqQApY8+D2NcafZ3+42RfVRx6r27m5fagqMixNApkA+A9
-	A/mxGjFSdhG6xKWaDju1SoIXMoinp0sqWSE6loPOxOA11kpyqry8YuQPrMGDyiB1
-	8VrFq8tckknjdL/l/KKbjYgFyjsXzJYEsJ+jf/hqKXtSkDV+0v1xx5NXGGV8JEgo
-	+/oPB4DMPmrvSDR8g6/dWLLWIZrwG9LjszubWUaBA+1Xx1zfiHC5a/VMSl/IQVN2
-	0/i9J5NWJIXfIY9j/Ngzwnx+IWFOu0cw9JLTjFhVBf59TOQxinV7w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hxwem-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 06:48:41 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58J6XAcG008034;
-	Fri, 19 Sep 2025 06:48:41 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4hxwed-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 06:48:41 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58J5PEuq022316;
-	Fri, 19 Sep 2025 06:48:40 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kxq2nwa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 19 Sep 2025 06:48:40 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58J6mcol50463100
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Sep 2025 06:48:38 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1232F20043;
-	Fri, 19 Sep 2025 06:48:38 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0AB7820040;
-	Fri, 19 Sep 2025 06:48:35 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.51])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 19 Sep 2025 06:48:34 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
-        john.g.garry@oracle.com, tytso@mit.edu, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH v7 07/12] generic: Add atomic write multi-fsblock O_[D]SYNC tests
-Date: Fri, 19 Sep 2025 12:18:00 +0530
-Message-ID: <3e255a7b60838df5442a6beb971827853eb9f999.1758264169.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1758264169.git.ojaswin@linux.ibm.com>
-References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1758264578; c=relaxed/simple;
+	bh=TSuTs95qyaxmGWCl5QI/IiVi4mhmu6HmD1gGkviGY3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+w+ZuERJvc8hpmG+TY1F1u+dTGdSx1xB8DItWhHIEhE0ll4/88ca8L+C0Ty34Io7iHL3dJJqFVi8VjgGrIdTMO4c2ZPHgPCkmHaxiNcxYn2mcUjyjXgzw0yV2IVAr4vyjdk1bu184jZom1gQnpDKG61gIvmn9wIJUl+J4y8GOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E8Qno5vc; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758264574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NglS1LeOLjiCYpCRleIlmuIOGrUZ54nZq4/o1z62nKQ=;
+	b=E8Qno5vc5f/w8QIHPfQ98JxcRN52V8tvJnMfoTgRxjTnDt+cwEfThBhbF26I0VUF2nSuOM
+	30shxGF9i3hWe3TUiybP1tY70lzws9xU1lEaXNISQA23AvRB0ww5IE0GOYh7EUEtmSjPWR
+	FJVMt/eTR5x6IWsEqwc1AGqcb821zTM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-39-slYl8wlcO8aPnFavrs3aEw-1; Fri,
+ 19 Sep 2025 02:49:31 -0400
+X-MC-Unique: slYl8wlcO8aPnFavrs3aEw-1
+X-Mimecast-MFC-AGG-ID: slYl8wlcO8aPnFavrs3aEw_1758264569
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1CED319560AE;
+	Fri, 19 Sep 2025 06:49:29 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.65])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2AF101955F21;
+	Fri, 19 Sep 2025 06:49:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 19 Sep 2025 08:48:05 +0200 (CEST)
+Date: Fri, 19 Sep 2025 08:48:00 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Hillf Danton <hdanton@sina.com>
+Cc: dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev,
+	pc@manguebit.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+Message-ID: <20250919064800.GA20476@redhat.com>
+References: <68cb3c24.050a0220.50883.0028.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1fRzuiRpwZl3ZUlcREDrCffCsTnqR8b2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfXytga5XznK4tT
- MqWskT6rxy1/p0jtPLP3bFTdgA/w+yXYQ/TicTox83kf6fJ8L5+BduiG9YvnfKRxc/Cjbogjoec
- yoSQOLXwe9Bj+YkIFH1PXf1kwxrMBn+rp9UIOli+c2ncmhNpCKp99JiLFvUQEBPKqDw/UMZ32DK
- DSafbJ1Zf5Ey10vxaIMpUaCzKCDXnGQfPYHakFKHNFRgyqVq5WD0uKq/UxG9HVGitA4h/giVsDJ
- Sbr1nAf6M9q4Tx5ddCFNzO9XlEDZl1qs+t631U1YzYvZDtrTXtizkfjpBM/q+oKAMTY36EjZXDq
- 7nYwSV7KbkkB7HVQG/XsiDUicznhYPETox7BjINNyADy9WpYhxsB53F6BjJ6HnVzyRARczWOuol
- qP3f+Glc
-X-Proofpoint-GUID: psEjK8g7Cgm96cQ_3TXdx-ZlE9BlAud4
-X-Authority-Analysis: v=2.4 cv=co2bk04i c=1 sm=1 tr=0 ts=68ccfcc9 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=VnNF1IyMAAAA:8 a=udGWdZ-Mnbz566dSa5EA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-18_03,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- phishscore=0 malwarescore=0 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160204
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68cb3c24.050a0220.50883.0028.GAE@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-This adds various atomic write multi-fsblock stress tests
-with mixed mappings and O_SYNC, to ensure the data and metadata
-is atomically persisted even if there is a shutdown.
+Dominique,
 
-Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Reviewed-by: John Garry <john.g.garry@oracle.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- tests/generic/1228     | 138 +++++++++++++++++++++++++++++++++++++++++
- tests/generic/1228.out |   2 +
- 2 files changed, 140 insertions(+)
- create mode 100755 tests/generic/1228
- create mode 100644 tests/generic/1228.out
+according to
 
-diff --git a/tests/generic/1228 b/tests/generic/1228
-new file mode 100755
-index 00000000..730bf91e
---- /dev/null
-+++ b/tests/generic/1228
-@@ -0,0 +1,138 @@
-+#! /bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-+#
-+# FS QA Test 1228
-+#
-+# Atomic write multi-fsblock data integrity tests with mixed mappings
-+# and O_SYNC
-+#
-+. ./common/preamble
-+. ./common/atomicwrites
-+_begin_fstest auto quick rw atomicwrites
-+
-+_require_scratch_write_atomic_multi_fsblock
-+_require_atomic_write_test_commands
-+_require_scratch_shutdown
-+_require_xfs_io_command "truncate"
-+
-+_scratch_mkfs >> $seqres.full
-+_scratch_mount >> $seqres.full
-+
-+check_data_integrity() {
-+	actual=$(_hexdump $testfile)
-+	if [[ "$expected" != "$actual" ]]
-+	then
-+		echo "Integrity check failed"
-+		echo "Integrity check failed" >> $seqres.full
-+		echo "# Expected file contents:" >> $seqres.full
-+		echo "$expected" >> $seqres.full
-+		echo "# Actual file contents:" >> $seqres.full
-+		echo "$actual" >> $seqres.full
-+
-+		_fail "Data integrity check failed. The atomic write was torn."
-+	fi
-+}
-+
-+prep_mixed_mapping() {
-+	$XFS_IO_PROG -c "truncate 0" $testfile >> $seqres.full
-+	local off=0
-+	local mapping=""
-+
-+	local operations=("W" "H" "U")
-+	local num_blocks=$((awu_max / blksz))
-+	for ((i=0; i<num_blocks; i++)); do
-+		local index=$((RANDOM % ${#operations[@]}))
-+		local map="${operations[$index]}"
-+		local mapping="${mapping}${map}"
-+
-+		case "$map" in
-+			"W")
-+				$XFS_IO_PROG -dc "pwrite -S 0x61 -b $blksz $off $blksz" $testfile > /dev/null
-+				;;
-+			"H")
-+				# No operation needed for hole
-+				;;
-+			"U")
-+				$XFS_IO_PROG -c "falloc $off $blksz" $testfile >> /dev/null
-+				;;
-+		esac
-+		off=$((off + blksz))
-+	done
-+
-+	echo "+ + Mixed mapping prep done. Full mapping pattern: $mapping" >> $seqres.full
-+
-+	sync $testfile
-+}
-+
-+verify_atomic_write() {
-+	test $bytes_written -eq $awu_max || _fail "atomic write len=$awu_max assertion failed"
-+	check_data_integrity
-+}
-+
-+mixed_mapping_test() {
-+	prep_mixed_mapping
-+
-+	echo -"+ + Performing O_DSYNC atomic write from 0 to $awu_max" >> $seqres.full
-+	if [[ "$1" == "shutdown" ]]
-+	then
-+		bytes_written=$($XFS_IO_PROG -x -dc \
-+				"pwrite -DA -V1 -b $awu_max 0 $awu_max" \
-+				-c "shutdown" $testfile | grep wrote | \
-+				awk -F'[/ ]' '{print $2}')
-+		_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed"
-+	else
-+		bytes_written=$($XFS_IO_PROG -dc \
-+				"pwrite -DA -V1 -b $awu_max 0 $awu_max" $testfile | \
-+				grep wrote | awk -F'[/ ]' '{print $2}')
-+	fi
-+
-+	verify_atomic_write
-+}
-+
-+testfile=$SCRATCH_MNT/testfile
-+touch $testfile
-+
-+awu_max=$(_get_atomic_write_unit_max $testfile)
-+blksz=$(_get_block_size $SCRATCH_MNT)
-+
-+# Create an expected pattern to compare with
-+$XFS_IO_PROG -tc "pwrite -b $awu_max 0 $awu_max" $testfile >> $seqres.full
-+expected=$(_hexdump $testfile)
-+echo "# Expected file contents:" >> $seqres.full
-+echo "$expected" >> $seqres.full
-+echo >> $seqres.full
-+
-+echo "# Test 1: Do O_DSYNC atomic write on random mixed mapping:" >> $seqres.full
-+echo >> $seqres.full
-+
-+iterations=10
-+for ((i=1; i<=$iterations; i++)); do
-+	echo "=== Mixed Mapping Test Iteration $i ===" >> $seqres.full
-+
-+	echo "+ Testing without shutdown..." >> $seqres.full
-+	mixed_mapping_test
-+	echo "Passed!" >> $seqres.full
-+
-+	echo "+ Testing with sudden shutdown..." >> $seqres.full
-+	mixed_mapping_test "shutdown"
-+	echo "Passed!" >> $seqres.full
-+
-+	echo "Iteration $i completed: OK" >> $seqres.full
-+	echo >> $seqres.full
-+done
-+echo "# Test 1: Do O_SYNC atomic write on random mixed mapping ($iterations iterations): OK" >> $seqres.full
-+
-+
-+echo >> $seqres.full
-+echo "# Test 2: Do extending O_SYNC atomic writes: " >> $seqres.full
-+bytes_written=$($XFS_IO_PROG -x -dstc "pwrite -A -V1 -b $awu_max 0 $awu_max" \
-+		-c "shutdown" $testfile | grep wrote | awk -F'[/ ]' '{print $2}')
-+_scratch_cycle_mount >>$seqres.full 2>&1 || _fail "remount failed"
-+verify_atomic_write
-+echo "# Test 2: Do extending O_SYNC atomic writes: OK" >> $seqres.full
-+
-+# success, all done
-+echo "Silence is golden"
-+status=0
-+exit
-diff --git a/tests/generic/1228.out b/tests/generic/1228.out
-new file mode 100644
-index 00000000..1baffa91
---- /dev/null
-+++ b/tests/generic/1228.out
-@@ -0,0 +1,2 @@
-+QA output created by 1228
-+Silence is golden
--- 
-2.49.0
+	https://lore.kernel.org/all/20250919021852.7157-1-hdanton@sina.com/
+	https://lore.kernel.org/all/68ccc372.050a0220.28a605.0016.GAE@google.com/
+
+this is yet another issue seems to be fixed by
+
+	[PATCH] 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+	https://lore.kernel.org/all/20250819161013.GB11345@redhat.com/
+
+are you going to apply it?
+
+Hillf, thanks a lot!
+
+Oleg.
+
+On 09/17, syzbot wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    46a51f4f5eda Merge tag 'for-v6.17-rc' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=144cce42580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3815dce0acab6c55984e
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17692f62580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1361f47c580000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/c4f63dbf3edb/disk-46a51f4f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b110f6d26eda/vmlinux-46a51f4f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/a0b5f2118cec/bzImage-46a51f4f.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
+>
+> INFO: task syz.0.17:6022 blocked for more than 143 seconds.
+>       Not tainted syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:syz.0.17        state:D stack:28976 pid:6022  tgid:6020  ppid:5973   task_flags:0x400040 flags:0x00004004
+> Call Trace:
+>  <TASK>
+>  context_switch kernel/sched/core.c:5357 [inline]
+>  __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+>  __schedule_loop kernel/sched/core.c:7043 [inline]
+>  schedule+0xe7/0x3a0 kernel/sched/core.c:7058
+>  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
+>  rwsem_down_write_slowpath+0x524/0x1310 kernel/locking/rwsem.c:1185
+>  __down_write_common kernel/locking/rwsem.c:1317 [inline]
+>  __down_write kernel/locking/rwsem.c:1326 [inline]
+>  down_write+0x1d6/0x200 kernel/locking/rwsem.c:1591
+>  inode_lock include/linux/fs.h:870 [inline]
+>  vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+>  do_utimes_path fs/utimes.c:99 [inline]
+>  do_utimes fs/utimes.c:140 [inline]
+>  __do_sys_utime fs/utimes.c:221 [inline]
+>  __se_sys_utime fs/utimes.c:210 [inline]
+>  __x64_sys_utime+0x1e2/0x2c0 fs/utimes.c:210
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fabd158eba9
+> RSP: 002b:00007fabd0bdd038 EFLAGS: 00000246 ORIG_RAX: 0000000000000084
+> RAX: ffffffffffffffda RBX: 00007fabd17d6090 RCX: 00007fabd158eba9
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00002000000000c0
+> RBP: 00007fabd1611e19 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fabd17d6128 R14: 00007fabd17d6090 R15: 00007ffd32e714b8
+>  </TASK>
+>
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/31:
+>  #0: ffffffff8e5c15a0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+>  #0: ffffffff8e5c15a0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+>  #0: ffffffff8e5c15a0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6775
+> 2 locks held by getty/5612:
+>  #0: ffff88814d96d0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+>  #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
+> 2 locks held by syz.0.17/6021:
+>  #0: ffff8880787b6428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdb8148 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.0.17/6022:
+>  #0: ffff8880787b6428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdb8148 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdb8148 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.1.18/6047:
+>  #0: ffff888074228428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdb87b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.1.18/6049:
+>  #0: ffff888074228428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdb87b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdb87b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.2.20/6077:
+>  #0: ffff888032842428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805f8c07b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.2.20/6079:
+>  #0: ffff888032842428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805f8c07b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805f8c07b8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.3.21/6103:
+>  #0: ffff888078172428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdb8e28 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.3.21/6104:
+>  #0: ffff888078172428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdb8e28 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdb8e28 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.4.22/6133:
+>  #0: ffff888076a00428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdb9498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.4.22/6134:
+>  #0: ffff888076a00428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdb9498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdb9498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.5.23/6168:
+>  #0: ffff88806b6da428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdb9b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.5.23/6169:
+>  #0: ffff88806b6da428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdb9b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdb9b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.6.26/6203:
+>  #0: ffff888059288428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdba178 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.6.26/6204:
+>  #0: ffff888059288428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdba178 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdba178 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.7.27/6232:
+>  #0: ffff88805cc2a428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805f8c1b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.7.27/6234:
+>  #0: ffff88805cc2a428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805f8c1b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805f8c1b08 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.8.28/6264:
+>  #0: ffff88807b296428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805bdba7e8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.8.28/6265:
+>  #0: ffff88807b296428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805bdba7e8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805bdba7e8 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+> 2 locks held by syz.9.29/6301:
+>  #0: ffff88805912a428 (sb_writers#13){.+.+}-{0:0}, at: do_pwritev+0x1a6/0x270 fs/read_write.c:1153
+>  #1: ffff88805f8c1498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: netfs_start_io_direct+0x116/0x260 fs/netfs/locking.c:188
+> 2 locks held by syz.9.29/6302:
+>  #0: ffff88805912a428 (sb_writers#13){.+.+}-{0:0}, at: vfs_utimes+0x69b/0x820 fs/utimes.c:36
+>  #1: ffff88805f8c1498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: inode_lock include/linux/fs.h:870 [inline]
+>  #1: ffff88805f8c1498 (&sb->s_type->i_mutex_key#20){++++}-{4:4}, at: vfs_utimes+0x3b7/0x820 fs/utimes.c:65
+>
+> =============================================
+>
+> NMI backtrace for cpu 0
+> CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+>  nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+>  trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:328 [inline]
+>  watchdog+0xf0e/0x1260 kernel/hung_task.c:491
+>  kthread+0x3c2/0x780 kernel/kthread.c:463
+>  ret_from_fork+0x56a/0x730 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 UID: 0 PID: 49 Comm: kworker/u8:3 Not tainted syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+> Workqueue: bat_events batadv_nc_worker
+> RIP: 0010:iterate_chain_key kernel/locking/lockdep.c:451 [inline]
+> RIP: 0010:__lock_acquire+0x642/0x1ce0 kernel/locking/lockdep.c:5225
+> Code: 08 45 85 d2 0f 85 6f 04 00 00 4c 89 e7 89 4c 24 08 e8 92 ac ff ff 8b 4c 24 08 48 83 78 40 00 0f 84 c2 0a 00 00 0f b7 44 24 10 <8b> 7c 24 28 44 8b 74 24 20 c1 e0 0d 66 0b 04 24 98 29 f8 8b 7c 24
+> RSP: 0018:ffffc90000b97958 EFLAGS: 00000086
+> RAX: 0000000000000700 RBX: ffff888022ae2f30 RCX: 00000000748bd351
+> RDX: 0000000000000000 RSI: ffff888022ae2f80 RDI: ffff888022ae2f80
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000001
+> R10: 0000000000000002 R11: 0000000000000000 R12: ffff888022ae2f80
+> R13: ffff888022ae2440 R14: 0000000000000002 R15: 0000000000000003
+> FS:  0000000000000000(0000) GS:ffff8881247b2000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000055fb93cf9be0 CR3: 000000000e380000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  lock_acquire kernel/locking/lockdep.c:5868 [inline]
+>  lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5825
+>  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:126 [inline]
+>  _raw_spin_lock_bh+0x33/0x40 kernel/locking/spinlock.c:178
+>  spin_lock_bh include/linux/spinlock.h:356 [inline]
+>  batadv_nc_purge_paths+0xd9/0x3a0 net/batman-adv/network-coding.c:442
+>  batadv_nc_worker+0x958/0x1030 net/batman-adv/network-coding.c:722
+>  process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3236
+>  process_scheduled_works kernel/workqueue.c:3319 [inline]
+>  worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+>  kthread+0x3c2/0x780 kernel/kthread.c:463
+>  ret_from_fork+0x56a/0x730 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
 
