@@ -1,127 +1,115 @@
-Return-Path: <linux-kernel+bounces-824107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C47CB88242
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:20:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E70B8823C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F1037AF8D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:18:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3161C52194D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DFE2BEC5A;
-	Fri, 19 Sep 2025 07:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490529D264;
+	Fri, 19 Sep 2025 07:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Pq7cfChK"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0LIGtAXJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE8A275112;
-	Fri, 19 Sep 2025 07:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3C81862A;
+	Fri, 19 Sep 2025 07:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758266410; cv=none; b=bco63NPPDZKxwaDEHumzy0gKUa/0wEJb/nwVGzxZtRNWLPu0SnWXa/DoJ/aLCywzmfQQVdjtWXtKuZRmqsw8aHHsDPJ3XDdZ8a5z/1uBRMsTBVpJAxha82dpfHeLGy9mBRfwe2F/rmnIUYXtOS//ACpZla+64ep420/iT9B0bZI=
+	t=1758266361; cv=none; b=K1AWFrXfoVgNCzkY75kg7PqUoLv9j2V5ATzQUb3rnRwG6LlvkVBEk5rWqdk5XsV+eLa63ZpMbrZfalbrsJA2YU66rPl8u+FjEs56naCxOfq+hjUqLd6SXmg2B8u3BpHSCB277Ud65U58X2XS+iAimUODnbDaUnHOtnDu6Ys1ejI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758266410; c=relaxed/simple;
-	bh=b6Tw3mttVPfCDgGtYbSaC/pZphbcciOixdTxHxNmyqI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VLOkc2LI6BEJlfPLX5pRCdot94c+0qbu4gtjrHHOG+ndclBovUIj3EEDDvZ64U3uL2NIFA6EtBmNEvrPrjwLsoqn2AQ+w1IstopcksX6K1aL+nYGZ8OX9gORf/bzDA+1UOJvMQSM+0eLnf3Ole8uOIs3jHNQRiyc94wbP6hxnzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Pq7cfChK; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=MU
-	L1gPQPoyj/ZgGBhJEEFe6Bn2eA41tvMvWxnkv0EIU=; b=Pq7cfChK2PIDayrf7p
-	7HknrJMWIl/u8kfWKGp7MbqaZ5hvgvPNfxVlTxWL4iUAbf81CzIqHai7jD9xA+cD
-	t3kJh3WDhc9npGQ8ezsM7nfhQ3IhgfOy091/icAxIyxEEYzrxGdLPbQ5H52DGUIE
-	PHyAN65PS3gY2+xOlqr3tAXd8=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgAnJDXmA81oI1x_Dg--.54587S2;
-	Fri, 19 Sep 2025 15:19:04 +0800 (CST)
-From: Feng Yang <yangfeng59949@163.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mhiramat@kernel.org
-Subject: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64 architecture 
-Date: Fri, 19 Sep 2025 15:19:02 +0800
-Message-Id: <20250919071902.554223-1-yangfeng59949@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1758266361; c=relaxed/simple;
+	bh=h8IcExnL+ufUC/sHx295zmDgmYauyGFmpVaWBmtGSTQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZwmEF+Gl4XfsUKDPuRJyHVS3+j/UegeIoG0KNKGFK7XfFCD9KnJGi0fAPlcHao4PkRxO3kce0B16/LNwXHI3Br3Cn8AqFhzSLQ4RED1oYvoyt/KGlyxBJWZQStQOxt1YwEp7YgmxnZYJX6s97ZVRL+GHawag3GKj+36kbmKHME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0LIGtAXJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20F91C4CEF0;
+	Fri, 19 Sep 2025 07:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1758266360;
+	bh=h8IcExnL+ufUC/sHx295zmDgmYauyGFmpVaWBmtGSTQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0LIGtAXJ1K5y+wMv+yLAQ2cmknYeP4bryMH2uopDreHp/jnIL9xdM4f437xCNBBRE
+	 VxHQn7BWxAuCRUwbA/eF8PUNti8J6zUm42cE16VJwX5zmxV6jFZD6CGSHMJd6yInu5
+	 ei5iQdvr79UBfkGBiPltwpeAvlFVpzDfrhuuJOO4=
+Date: Fri, 19 Sep 2025 09:19:16 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.1 00/78] 6.1.153-rc1 review
+Message-ID: <2025091903-relish-neuron-30e5@gregkh>
+References: <20250917123329.576087662@linuxfoundation.org>
+ <CADYN=9Li3gHMJ+weE0khMBmpS1Wcj-XaUeaUZg2Nxdz0qY9sdg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgAnJDXmA81oI1x_Dg--.54587S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7try8XFy8WFWUWry8JF18Krg_yoW8ZF4Dpa
-	sxZa4akF4rZw43tFW7Ar45XF1Svrs7ZryUCF1rGr13CF4DX3y8JF1xKFW2vFn8urZYg343
-	Z3W7tFy7K397Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtcTLUUUUU=
-X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipRHJeGjHvNu7WQABsu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADYN=9Li3gHMJ+weE0khMBmpS1Wcj-XaUeaUZg2Nxdz0qY9sdg@mail.gmail.com>
 
-When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
-I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
+On Thu, Sep 18, 2025 at 03:28:01PM +0200, Anders Roxell wrote:
+> On Wed, 17 Sept 2025 at 15:01, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 6.1.153 release.
+> > There are 78 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri, 19 Sep 2025 12:32:53 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.153-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> While building Linux stable-rc 6.1.153-rc1 the s390 allmodconfig with
+> clang-20 toolchain build failed.
+> 
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+> 
+> Build regression: s390 clang-20-allmodconfig
+> 
+> Build error:
+> arch/s390/kernel/perf_cpum_cf.c:556:10: error: variable 'err' is
+> uninitialized when used here [-Werror,-Wuninitialized]
+>   556 |                 return err;
+>       |                        ^~~
+> arch/s390/kernel/perf_cpum_cf.c:553:9: note: initialize the variable
+> 'err' to silence this warning
+>   553 |         int err;
+>       |                ^
+>       |                 = 0
+> 1 error generated.
+> 
+> The bad commit pointing to,
+>   s390/cpum_cf: Deny all sampling events by counter PMU
+>   [ Upstream commit ce971233242b5391d99442271f3ca096fb49818d ]
 
-For example:
-diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-index 9e1ca8e34913..844fa88cdc4c 100644
---- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
-+++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-@@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
- __u64 kretprobe_test7_result = 0;
- __u64 kretprobe_test8_result = 0;
- 
-+typedef __u64 stack_trace_t[2];
-+
-+struct {
-+       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
-+       __uint(max_entries, 1024);
-+       __type(key, __u32);
-+       __type(value, stack_trace_t);
-+} stacks SEC(".maps");
-+
- static void kprobe_multi_check(void *ctx, bool is_return)
- {
-        if (bpf_get_current_pid_tgid() >> 32 != pid)
-@@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
- SEC("kprobe.multi")
- int test_kprobe_manual(struct pt_regs *ctx)
- {
-+       int id = bpf_get_stackid(ctx, &stacks, 0);
-        kprobe_multi_check(ctx, false);
-+       bpf_printk("stackid: %d\n", id);
-        return 0;
- }
+Thanks for the info, I'll go drop this patch from the queue.
 
-./test_progs -t kprobe_multi_test/attach_api_pattern
-#155/4   kprobe_multi_test/attach_api_pattern:OK
-#155     kprobe_multi_test:OK
-#156     kprobe_multi_testmod_test:OK
-Summary: 2/1 PASSED, 0 SKIPPED, 0 FAILED
-
-cat /sys/kernel/debug/tracing/trace
-test_progs-68315   [004] ...1. 13377.097527: bpf_trace_printk: stackid: -14
-......
-
-Test Version:
-6ff4a0fa3e1 ("bpf, arm64: Call bpf_jit_binary_pack_finalize() in bpf_jit_free()")
-Linux localhost.localdomain 6.17.0-rc5+ #2 SMP PREEMPT_DYNAMIC Fri Sep 19 10:29:07 CST 2025 aarch64 aarch64 aarch64 GNU/Linux
-clang version 17.0.6 ( 17.0.6-30.p03.ky11)
-gcc (GCC) 12.3.1 (kylin 12.3.1-62.p02.ky11)
-GNU Make 4.4.1
-
+greg k-h
 
