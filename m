@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-824012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CA8B87ED4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:42:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D108B87EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21B30567E7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:42:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC597E12B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFE82E40E;
-	Fri, 19 Sep 2025 05:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6A8265CA7;
+	Fri, 19 Sep 2025 05:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dfnG49GD"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="A+FmHRiT"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182921F462C
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E7325DAF0;
+	Fri, 19 Sep 2025 05:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758260521; cv=none; b=XsfwxajX8DrAFZ4JyFTxhEeeRMNjv7TyX5NOhNo3UJGSTBXiZLjUtYq2ij6A9hR4Ib9+YCnjhpwq0fG4lUAJQSPABO2XFTFapyzL8AXWpiskez02Fp8e5pbS5NsPg7Ie9Betv4MR2HEEUNXNrQGfqXBnXB7WK1nrinqO8HOBegE=
+	t=1758260614; cv=none; b=oI3ewQ698znpTQP4GReZnjiWVHADd7CMEokl7cZyq0ePhNxQvKYcm6Z1aBhql9+I6aaKnYMW8NN3e3Ig8wC6nNqbda2B4npMwpG5mVyBoF9qvvH7cvJ5NQjAXCip/lvAQGU67i8mJdm2QomaBNBx+/EX5YC7J9Jx5VgAYP2TIT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758260521; c=relaxed/simple;
-	bh=4q4/rw5mnD3aV6CATtWOIIeUTbmfcdY4ZrTuAkDyrvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdphNgQEVRiE1okHNKA7Vvmwi+LmRL4bDoSDnznd4qCsFISBlWovMGdDSWxFFVJXWtgp4G93LO/4ogtjQy/v6ghj3+q+9WzsaVcSnZ9hyICXgdvLtqqS6yWGn25MaKsu6PN2I8bjXpzgJZE/ma/j9D7z7ze+FdnxvZ5w8MeCDBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dfnG49GD; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=4q4/
-	rw5mnD3aV6CATtWOIIeUTbmfcdY4ZrTuAkDyrvQ=; b=dfnG49GDha8fXT56thxG
-	XT9hTOWvzhhtDVXTQaTEElgu+xxb7CvyzHzWrTOMcp70IxkaYpOQM0Kya1+sr4BV
-	29aJn76ePhww7F5y4DuTxut1uZ9HMR8KjAQM/asoay8F+jUEossNINNzc6+uYhFt
-	EdZShvQgd8QpfhnxATVhItcQeC2ybTVyLUpRZnsI5yyrxFkncIdy4iQ6U2pm5sT5
-	S+/U0hoP5bE5f/VnsWRH4JwZq3FS/3245jK0A1QmojcR5a5/e4J/UES0jN7NWJkq
-	n+BVaxt3CLe/aLjYbMcUHghx0CM3vyqiOzOQRjeT36A0EZ7nVolAIa/tZ81/S2bf
-	Kg==
-Received: (qmail 3787594 invoked from network); 19 Sep 2025 07:41:49 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 07:41:49 +0200
-X-UD-Smtp-Session: l3s3148p1@yJAV7SA//tgujnsa
-Date: Fri, 19 Sep 2025 07:41:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 0/8] gpio: renesas: Add support for GPIO and related
- interrupts in RZ/N1 SoC
-Message-ID: <aMztGzYMHEPL1GVt@ninjato>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1758260614; c=relaxed/simple;
+	bh=ivSPbVdKipX7Q7V4zcUvxvFhobL0E3ii3lnlqHGQKoU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SbpPNOQ9GI4ozsguEPN+Ts5cRFRN8i9DxXAk3G1BaDORHAcFloYh3WEU+CTwJKVGOPXfkI82vxZEZ1VZTbPJPKTlhk0Ys4gRKcRy34OdM18dP6wyC0SfGUQcHpyVUBm/h3F5W0bB+j54byIg+2uZrMH7GXIbzGfCZwkI9T0pZJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=A+FmHRiT; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=8e
+	xNzx+xoJqlafHrTNqWHrkBAyUceFUk2Em0hLWMCR4=; b=A+FmHRiTcDYWArJ3X4
+	S7UrBsZRxMcC8VWMWXxgini9nvW6hnAlMshg3neLLA3sjrzWYzvWAQNjUv1KmU9n
+	Kgxd1FSzItjx38+Uw+ONIBqyk1b1RXCfvMjj3MnmjyAumKwIlUKkfxNB+5vRg47N
+	MrcPrV60RdABldIBTlBL/jvFQ=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgCnOfNQ7cxoDR8oDg--.24033S2;
+	Fri, 19 Sep 2025 13:42:41 +0800 (CST)
+From: YanLong Dai <dyl_wlc@163.com>
+To: kalesh-anakkur.purayil@broadcom.com
+Cc: jgg@ziepe.ca,
+	leon@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	selvin.xavier@broadcom.com,
+	daiyanlong@kylinos.cn,
+	dyl_wlc@163.com
+Subject: [PATCH rdma-rc] RDMA/bnxt_re: Fix a potential memory leak in destroy_gsi_sqp
+Date: Fri, 19 Sep 2025 13:42:38 +0800
+Message-ID: <20250919054238.5374-1-dyl_wlc@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+NCAvgYw1zCajOLr"
-Content-Disposition: inline
-In-Reply-To: <20250918104009.94754-1-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgCnOfNQ7cxoDR8oDg--.24033S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tw4kKryxZr1kAF13WrW3Jrb_yoW8Xw4kpr
+	43Ga4qk3y5JF4xWFWUAa4UXa15GayIy3ykta9FkwnxAw1rA3Z7XFyfK3ZaqF95CrZ5Gr4I
+	vw15Jrs8Ga47WF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pELvtJUUUUU=
+X-CM-SenderInfo: 5g1os4lof6il2tof0z/1tbiEAPNImjM5S61LAAAsK
 
+From: daiyanlong <daiyanlong@kylinos.cn>
 
---+NCAvgYw1zCajOLr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The current error handling path in bnxt_re_destroy_gsi_sqp() could lead
+to a resource leak. When bnxt_qplib_destroy_qp() fails, the function
+jumps to the 'fail' label and returns immediately, skipping the call
+to bnxt_qplib_free_qp_res().
 
+Continue the resource teardown even if bnxt_qplib_destroy_qp() fails,
+which aligns with the driver's general error handling strategy and
+prevents the potential leak.
 
-> This series adds support for GPIO and GPIO IRQ mux available in the
-> RZ/N1 SoCs.
+Fixes: 8dae419f9ec73 ("RDMA/bnxt_re: Refactor queue pair creation code")
 
-I want to test this series today. From a glimpse, I might have some
-comments, so please wait a little before resending.
+Signed-off-by: daiyanlong <daiyanlong@kylinos.cn>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 260dc67b8b87..15d3f5d5c0ee 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -931,10 +931,9 @@ static int bnxt_re_destroy_gsi_sqp(struct bnxt_re_qp *qp)
+ 
+ 	ibdev_dbg(&rdev->ibdev, "Destroy the shadow QP\n");
+ 	rc = bnxt_qplib_destroy_qp(&rdev->qplib_res, &gsi_sqp->qplib_qp);
+-	if (rc) {
++	if (rc)
+ 		ibdev_err(&rdev->ibdev, "Destroy Shadow QP failed");
+-		goto fail;
+-	}
++
+ 	bnxt_qplib_free_qp_res(&rdev->qplib_res, &gsi_sqp->qplib_qp);
+ 
+ 	/* remove from active qp list */
+@@ -951,8 +950,6 @@ static int bnxt_re_destroy_gsi_sqp(struct bnxt_re_qp *qp)
+ 	rdev->gsi_ctx.sqp_tbl = NULL;
+ 
+ 	return 0;
+-fail:
+-	return rc;
+ }
+ 
+ /* Queue Pairs */
+-- 
+2.43.0
 
---+NCAvgYw1zCajOLr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjM7RcACgkQFA3kzBSg
-KbZqVQ//Z+JQrYUTEYKiVUYjRP3/e3VPEoOzJNLrPBAT0k4udThHiHECeEV72V/j
-jQEv/o2rOTQ8/tR9cN4F8ZbBhbA3LmnLDj3msnHZK4t54ZmrG4DFM0shZYNx8F5y
-iHjBIa/YRoC0Fp0udz9PI2yzDgteKNUJ0WiDqEa5R73OHR54Go6VFTunIe3bujMC
-CU5uKDs14GFxU3K43GKJEaqxf+oF2Xc9M0mslmGsCDCuGRkA4gIM04WwUSEqvmHr
-sXj+v0W6rnhNqtmyHu2ndvr8FTjzSF1hL0AUvwfa6y4hL3knb5XQTuTr5774ZdT/
-7wH7m++QJh5YtolMlWvEiGim5+zyBziRyeJxyIm2c164piYWavyfJvJb/vn3KIHM
-IxMuKo1VOt/oL6C5dSrSnlvGAHedRf9sU0Nkja/reAcUcBF/l7RChTUnzEqg0DEf
-OiXFHpUZrFjXRli040DhILDe3UAszFf4DavvOwzkngYl2YGoFchLano7ws5yxBMC
-oa7HL/51xlW7DGgwGm7SHQ5Rx93z/ZJyY8/uB3+RA1nyVBl4C8qYq5CVOiWQrnna
-sWvVwbNly46K613UZdCCw4nlJWQvPR4oxdXIUZZCWRCdDVeF11nzEHbBgzIOGAux
-jHLh1HMewT/wxlue9Nr6dtQJYKa9QMKdD/MhIQzC8+oqgqEFD8A=
-=I+cJ
------END PGP SIGNATURE-----
-
---+NCAvgYw1zCajOLr--
 
