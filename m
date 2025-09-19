@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-825206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9748FB8B470
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA521B8B483
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2321AB60565
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:05:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5221C81A18
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0904E2D24A2;
-	Fri, 19 Sep 2025 21:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FBE2C0F7D;
+	Fri, 19 Sep 2025 21:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgiQbZlQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="MvwD/OCS"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF172BEC5E;
-	Fri, 19 Sep 2025 21:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5278235942;
+	Fri, 19 Sep 2025 21:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316034; cv=none; b=mdcgRopDfD4fHM1JGthMgD3oXShnkYBw1Eia9LTy5ZiAyzlicm53rFvH7jphDkVZjPLOGvPMHnAJSLmtvV16MYE8YSE2rSvEGNiYAmNk70IC3EuXSKvB24meiOG2KBkHISjFqycx8rDlPaMLuwDGs+pglbtK0lWAm9goRzW7ljI=
+	t=1758316173; cv=none; b=UStCgUe/mKMS0UpimXkgPvwlPc5mSdW8m5domDxqDcLdEuzOSwtqdQG6lzqMrp0/ZE/6XjcDBmVCr82GMS+ctXyPa21wAmcxF1cNicRdewEVMuok15LcbY3Fwh44Rb5Lqg8E2T8GkeMfi5+MTKfQtBh6a7xJpXC0UyvLpFp4mpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316034; c=relaxed/simple;
-	bh=UR3s4Ebp3EGiQYKXabOa8Z3IzeZesJjuj+BGhfF6Z2g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3a1miuicnjwCiwcTjcwkGokylHvLbJ+2j3PNGXaEsuYFKkO8hDu5yDjaE+qD2xYl3326FpBzoSLPwqINURsHovAIhsIIMuHHrri0inJNJUFQmhajDyfO9HhhCS5wMZvu5jXMeNfAd/RWb8wM4OjK5VcRSdpE/X66LThMWJKg2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgiQbZlQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F59C4CEF7;
-	Fri, 19 Sep 2025 21:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758316034;
-	bh=UR3s4Ebp3EGiQYKXabOa8Z3IzeZesJjuj+BGhfF6Z2g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CgiQbZlQBPme+jkZa5Txcm7vvd6tR6oixPn4o9FS3jronEL+OTCRswBkyeFGW6DBC
-	 7G9Q3gZYynxBqFEueIkmPSLFEez8/DLe8aKOsgdjmNIPu9Yu8YMTAjKeMgSr9XVLZa
-	 awyrUoNxVcf9LjKukpGolQiK+7RKmHxoLqKMiyUv7Lqsl6zDgTr01K6kTtrQ2lXfU7
-	 Z8CYglfQefXwIlJmMgs6LSNHmo11Q2e9LVXlhp7BJyLqBwuyKWyW0cz3NX4KBvnPiE
-	 0bUzQPxjwvXDCcAbRNvL5/Ww066t//uDXIaQlLoij/+JzuycpQrUP+urTr8GJ1wswN
-	 3wM2qYz1lplfg==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Clark <james.clark@linaro.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
+	s=arc-20240116; t=1758316173; c=relaxed/simple;
+	bh=O0ZXsbd6AYMKjKrHkcKQIn23yqwianTGxtTIdCG0AwU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qw4LUFwvGKx7NThR5F0do5EFf62vyFntiOdr+yMMi6eUxSiguvA2FdUnqbvxta4/NFhgBZOG7vZRI/PJNCV6KhWZxeStruT7Z1TlmmMzPJ+83yfNwXI0uwMVuILZ5j6JXPHrUT/KKpfHhKDLPRaY6siB5E/FB57Lk+kl3W8Csts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=MvwD/OCS; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from debian.intra.ispras.ru (unknown [10.10.165.9])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 82D3140762F1;
+	Fri, 19 Sep 2025 21:09:20 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 82D3140762F1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1758316160;
+	bh=25wki7cvcxiB7hRlRKZdhsz2xMqyXfX0d8XKeEcmigU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MvwD/OCSxcTfIMdm8G7XTtW0a+15Zf6i1cqYxXPYABAxXmNkDN6LXcQkIFXSA2S5D
+	 +RsBGxBLrALtBlAFNsHzTSU/G/O1ba8khHvD+s/BPuGJoJoRVIuuW23YQkXDs44aYn
+	 7ieyl4yUzRxXK2mfYnRaGKcQwEwQ240rtpNYC/Og=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Bitterblue Smith <rtl8821cerfe2@gmail.com>,
+	Po-Hao Huang <phhuang@realtek.com>,
+	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH 2/2] perf bpf: Check libbpf version to use btf_dump_type_data_opts.emit_strings
-Date: Fri, 19 Sep 2025 18:06:54 -0300
-Message-ID: <20250919210654.317656-3-acme@kernel.org>
+	lvc-project@linuxtesting.org
+Subject: [PATCH rtw-next v5 0/4] wifi: fixes for rtw89
+Date: Sat, 20 Sep 2025 00:08:46 +0300
+Message-ID: <20250919210852.823912-1-pchelkin@ispras.ru>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250919210654.317656-1-acme@kernel.org>
-References: <20250919210654.317656-1-acme@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+v5: - respin at 'rtw-next' (series applies to 'rtw' as well, just in case)
+    - further changelog below --- in the patches
 
-When building perf with LIBBPF_DINAMIC=1 on a fedora system with
-libbpf-devel 1.5 I it was breaking with:
+v4: https://lore.kernel.org/linux-wireless/20250917095302.2908617-1-pchelkin@ispras.ru/
+    - drop USB patch to handle that in a separate series
+    - further changelog below --- in the patches
 
-util/bpf-event.c: In function ‘format_btf_variable’:
-util/bpf-event.c:291:18: error: ‘const struct btf_dump_type_data_opts’ has no member named ‘emit_strings’
-  291 |                 .emit_strings = 1,
-      |                  ^~~~~~~~~~~~
-util/bpf-event.c:291:33: error: initialized field overwritten [-Werror=override-init]
-  291 |                 .emit_strings = 1,
-      |                                 ^
-util/bpf-event.c:291:33: note: (near initialization for ‘opts.skip_names’)
+v3: https://lore.kernel.org/linux-wireless/20250828211245.178843-1-pchelkin@ispras.ru/
+    - further improvements for fix for use-after-free in
+      rtw89_core_tx_kick_off_and_wait(), see changelog below --- in the patch
+    - add patch 3/5 for USB case
 
-Check the version before using that feature.
+v2: https://lore.kernel.org/linux-wireless/20250827120603.723548-1-pchelkin@ispras.ru/
+    - rework fix for use-after-free in rtw89_core_tx_kick_off_and_wait() (Zong-Zhe)
+    - add patches 2/4 and 3/4 for another issues discovered while reworking
+    - use rtw tree instead of rtw-next
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/bpf-event.c | 2 ++
- 1 file changed, 2 insertions(+)
+v1: https://lore.kernel.org/linux-wireless/20250820141441.106156-1-pchelkin@ispras.ru/
 
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index 2298cd396c4235e2..59f84aef91b4a2ec 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -288,7 +288,9 @@ static void format_btf_variable(struct btf *btf, char *buf, size_t buf_size,
- 		.sz = sizeof(struct btf_dump_type_data_opts),
- 		.skip_names = 1,
- 		.compact = 1,
-+#if LIBBPF_CURRENT_VERSION_GEQ(1, 7)
- 		.emit_strings = 1,
-+#endif
- 	};
- 	struct btf_dump *d;
- 	size_t btf_size;
+Fedor Pchelkin (4):
+  wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+  wifi: rtw89: avoid possible TX wait initialization race
+  wifi: rtw89: fix leak in rtw89_core_send_nullfunc()
+  wifi: rtw89: avoid circular locking dependency in ser_state_run()
+
+ drivers/net/wireless/realtek/rtw89/core.c | 66 +++++++++++++++--------
+ drivers/net/wireless/realtek/rtw89/core.h | 38 +++++++++++--
+ drivers/net/wireless/realtek/rtw89/pci.c  |  5 +-
+ drivers/net/wireless/realtek/rtw89/ser.c  |  5 +-
+ 4 files changed, 85 insertions(+), 29 deletions(-)
+
 -- 
 2.51.0
 
