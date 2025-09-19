@@ -1,202 +1,114 @@
-Return-Path: <linux-kernel+bounces-824552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB91B8988C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1583B89898
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C63B87AC3CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EDBB1CC0A60
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93471F473A;
-	Fri, 19 Sep 2025 12:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C346821ADAE;
+	Fri, 19 Sep 2025 12:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pKb0WE2p"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p9FoSdEL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116C41C84CB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D9619DF4F;
+	Fri, 19 Sep 2025 12:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758286117; cv=none; b=MxDQsxHtm6ye7KS+GXJUQTynExthfxnUldK8xlqhZqd6dhk/I6mpc3xFaZ2/3DuYwOdbbcGKmTMGWJf7UtUJVW7kI8PS1PYsZXSLgF3duU+f2gksu1NK7I0A++k7MUFE40dITCsYJTikmQB4uLRkbzaMQbn0ZvbCXyeKOag4f9M=
+	t=1758286157; cv=none; b=rjhdSIa1pv51GhH+kXtbjWsioluElEHinCcR0XBLb07BbhD7ftoYm85IGjPrMWqGMFwi7/jrSFqEXDUb+s7gzLAlsJ2Hsn0kvqU4x2R0fd1UZEvZJ4JUN+Z7EV1T7evNXPSeEexRtpwcf0KCDtL83CID1sO6Ja7K1OhH69G8KyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758286117; c=relaxed/simple;
-	bh=BlehoObITLmTbYOZPiVcFtcMXP7paHKegC9WR6JleHw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tde9+tMtuOfNC4L8TrEQNP3OEWB7AoWbv0d9aAZ6BzVHfAwXSz9Woxnq/vFX16lgAQJcbUzgTzWGtMPhnfJsT6SV9Kz1U8BHzYZb5oCNZUHvSnT0WzE+w5dS8OU43667HUMpAK4Od4Lx7kqidNgSLMt4b+bk9ejNizjjZvP4ees=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pKb0WE2p; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 5D4844E40D0C;
-	Fri, 19 Sep 2025 12:48:33 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1CBAC606A8;
-	Fri, 19 Sep 2025 12:48:33 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 387DC102F17F6;
-	Fri, 19 Sep 2025 14:48:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758286110; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=edgPX+ZMRVJRPce4J9xc4JzLXJtK189YyGXqaQRiUYM=;
-	b=pKb0WE2p9oZ+vyPQSrTFDsWToBhk1qI+JRFaAL2uYifaYBCiPYp5WW0jE2Ut87D1eU2Sl4
-	l3jNBhUv6Slqr5P8gIbv5fkhTGfGAu4Z/nBPM6GNOglhs6QtDsk855jKmHGt3pCjlFjtHC
-	BFA6D8N+FUvjsQwRcIIU/MmMEmXM54qN3dayg7O1OuCNWQQ+aFOUD8uoS/QD1/RpVVwTek
-	tGtfGN7hMLG+HlmUpY58mGNauTowpw9+LIF2oxqs9b09OmbLt/TBGvvjM3SoTXVqnJvBE1
-	P1cnfzlcIHk+l60Yol2+mqpqRtRZzpcKzlx6X4XrOnXYW0G13tDL+l63mvdkRA==
-Message-ID: <0f63d9e1-8ef6-4d1d-83dc-6666a256f81b@bootlin.com>
-Date: Fri, 19 Sep 2025 14:48:18 +0200
+	s=arc-20240116; t=1758286157; c=relaxed/simple;
+	bh=Wcw8Bb2b3IjL/UXk7OwnQYyJjak98CCq8c9JgNaQWQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RVsiLW8bAR6ctwSWDjI4OghlxN8u/CDhp1VK2r3AJYFTYB6m2l0dM1k80aggHb23p0ST7PFTMKKhaqt38ioo/XHCDXgJOzcjZtpti95FUpLE6lJdgb/FvjeA8ERcc2sTupvq1RkRoABTQv0sevjFWCMLiYaPp4ctL/edeQZy/3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p9FoSdEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DA4AC4CEF0;
+	Fri, 19 Sep 2025 12:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758286156;
+	bh=Wcw8Bb2b3IjL/UXk7OwnQYyJjak98CCq8c9JgNaQWQs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=p9FoSdEL858OQfD2jmlJLzgqg8//7frsjpR/+deN3sCZBH5JuU7mQhSss10KN+1qJ
+	 6aDx7GZY+WvH8rfkuX/hjpAWHcFXDyqdNmvry9qzF10cN9AaHELp/R24ps+zDZnMIB
+	 Q3aT9cH9PeXUsvtfvmdGWAo4VCO8d2zSZojvIt76vFhnWq3L/SVdStwUxyB1F/ls7R
+	 hlfL/JBnAgzL12sjqxaFzsO6R7Sc9N6w2vW6uYf5ih5XNT5BtmcPGB+8roL8Cgc1K2
+	 j7vbNZmY2K1uDkVCJA3+Z+maV7KVKFqib26eU4MIJum1zUJ53f2oVzFL3XB8Irp4vN
+	 E4knqz2okszRA==
+Date: Fri, 19 Sep 2025 13:49:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	DRM XE List <intel-xe@lists.freedesktop.org>
+Cc: Daniele Ceraolo Spurio <daniele.ceraolospurio@intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with the drm-fixes tree
+Message-ID: <aM1RSLYqXYokkdh-@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH RFC v2 18/20] drm/vkms: Prepare
- pre_blend_color_transform() for post-blend pipelines
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>
-Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
- harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com,
- pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com,
- jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com,
- agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
- xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com,
- quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com,
- marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com,
- chaitanya.kumar.borah@intel.com, mcanal@igalia.com, kernel@collabora.com,
- daniels@collabora.com, leandro.ribeiro@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Simona Vetter <simona.vetter@ffwll.ch>
-References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
- <20250917-mtk-post-blend-color-pipeline-v2-18-ac4471b44758@collabora.com>
-Content-Language: en-US, fr
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-18-ac4471b44758@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w8DxXwZX3I24XrWE"
+Content-Disposition: inline
 
 
+--w8DxXwZX3I24XrWE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Le 18/09/2025 à 02:43, Nícolas F. R. A. Prado a écrit :
-> As a preparatory step for supporting post-blend color pipelines in VKMS,
-> rename pre_blend_color_transform() to color_transform() and make it take
-> the first colorop instead of a plane state, so it can be shared by both
-> pre- and post-blend color pipeline code paths.
-> 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Hi all,
 
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Today's linux-next merge of the drm-xe tree got a conflict in:
 
-> ---
->   drivers/gpu/drm/vkms/vkms_composer.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> index 31b1dd3cd115d930ec3ed498403a8f44208d76c3..05e1551d6330e4dc14563d3a399b3544d11c6576 100644
-> --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> @@ -189,13 +189,13 @@ static void apply_colorop(struct pixel_argb_s32 *pixel, struct drm_colorop *colo
->   	}
->   }
->   
-> -static void pre_blend_color_transform(const struct vkms_plane_state *plane_state,
-> -				      struct line_buffer *output_buffer)
-> +static void color_transform(struct drm_colorop *first_colorop,
-> +			    struct line_buffer *output_buffer)
->   {
->   	struct pixel_argb_s32 pixel;
->   
->   	for (size_t x = 0; x < output_buffer->n_pixels; x++) {
-> -		struct drm_colorop *colorop = plane_state->base.base.color_pipeline;
-> +		struct drm_colorop *colorop = first_colorop;
->   
->   		/*
->   		 * Some operations, such as applying a BT709 encoding matrix,
-> @@ -449,7 +449,7 @@ static void blend_line(struct vkms_plane_state *current_plane, int y,
->   	 */
->   	current_plane->pixel_read_line(current_plane, src_x_start, src_y_start, direction,
->   				       pixel_count, &stage_buffer->pixels[dst_x_start]);
-> -	pre_blend_color_transform(current_plane, stage_buffer);
-> +	color_transform(current_plane->base.base.color_pipeline, stage_buffer);
->   	pre_mul_alpha_blend(stage_buffer, output_buffer,
->   			    dst_x_start, pixel_count);
->   }
-> 
+  drivers/gpu/drm/xe/xe_guc_submit.c
 
--- 
---
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+between commit:
 
+  26caeae9fb482 ("drm/xe/guc: Set RCS/CCS yield policy")
 
+=66rom the drm-fixes tree and commit:
+
+  88434448438e4 ("drm/xe/guc: Set RCS/CCS yield policy")
+
+=66rom the drm-xe tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/gpu/drm/xe/xe_guc_submit.c
+index e377ba3a39b3a,53024eb5670b7..0000000000000
+--- a/drivers/gpu/drm/xe/xe_guc_submit.c
++++ b/drivers/gpu/drm/xe/xe_guc_submit.c
+
+--w8DxXwZX3I24XrWE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjNUUcACgkQJNaLcl1U
+h9BM2Qf/U7YnuJhXQhR2sDmePIszXt2KXkYvR7GoAjglwqb900EqC69yd5p0Odt6
+aTNYg/ii/akcvz73WbeVCSgQuoHgYrO2mCrk7cSifcRoh3e7MHEiOMq3Y/yKOt5O
+jqGVhuddYxNEA0hKg+CHLz1xPWx3ofkTL2PNxZjJHfQg3eIdsnhxFg8qyiZ7YSrN
+uvldaYCv9MhEN1Au6I/CCCYONQkTwEEtj+/IOfy1js4nG2RL0RKT6lYLtddJefhn
+OS6ttgt82joRi/36sRo2eB+EUVpW+AZEjsLJtQGFtCvODucZdKXMhr/URrXREcKl
+dnkotfeE2IiUJXY7V/Ogt0ci5PFaQA==
+=O46n
+-----END PGP SIGNATURE-----
+
+--w8DxXwZX3I24XrWE--
 
