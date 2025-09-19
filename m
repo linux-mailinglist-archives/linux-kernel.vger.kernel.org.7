@@ -1,235 +1,150 @@
-Return-Path: <linux-kernel+bounces-824202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009AEB885C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:14:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A87CB885E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7A677ADCA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:12:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D134E3A96F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3224830507B;
-	Fri, 19 Sep 2025 08:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DCF2E62A4;
+	Fri, 19 Sep 2025 08:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BmeGBByU"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aduFlHHp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0B26529A
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180A727FD71;
+	Fri, 19 Sep 2025 08:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758269670; cv=none; b=lNS8YQRNK0+jefPcOW7Axf7AM+I4dom0YNulFWljunjLg9lcyeBGnS1mvImYZBkxkyqZc1s5hB/iD+M0bYLX1EOxo6cGWoRXyXatD1YR4ItfbH8dqP93FHEDsz3zoIuJMnZEDb8yOv7OkGwUZbh5Do+lmILOI5734mhGuT+rUWc=
+	t=1758269760; cv=none; b=i0b8nmpwvhu3rqyDrehUOaR1X+X/OAK/ipkLbIhx+ja6iQ+V7KBGWBwVmY6u+i1zOc4lJfIWiRiPLXFKSYEpEcLhONgpX8gxKCT9oyOaHZbGZkFvdDGOVhxXPFGGTYnmCa5Uu6lzPU1lze6303+RViuzX08ZKuzEA8tLbBC9ygI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758269670; c=relaxed/simple;
-	bh=Nhi3iO5jbSaTidCetxGiiL9mF3Bxbx5GuQv0/+Svhn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KGMg3jph67N/XrMLxAaLbudSiI3lmB9vtgZkOB1j+LorpUeMCSHoH7FyAn022UHE+tX73UFiqQrS/kVPmad3EpNYd0wXsIdo4yuN0muH8Leou2a2Fujn7GLzx8hh+vWvMlxws++GHDZZurCYWaTzy2subVcjGAaZnS66lAMPJ0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BmeGBByU; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4cf41cd5-e93a-412b-b209-4180bd2d4015@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758269664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dc53JcOzdrcUIu2iVuDKY0KAeJ//x1/I8rOfO8TAJ0E=;
-	b=BmeGBByUETlTGTM2SzKN9sT+aElM0iDnr9NVCQ0Y4S5LyZS5qVFjUY0/ZQhQcjxmkujkwF
-	lcqoAIrEgGu+qx5juQO8M0lGpLChTPtWmm4PXKC8zXPXthowkvLtjPKwUnGPeV4fEL7kE5
-	GoVQEabwufMTPdzDfKN5emTG80lC0C8=
-Date: Fri, 19 Sep 2025 16:14:11 +0800
+	s=arc-20240116; t=1758269760; c=relaxed/simple;
+	bh=VxTAjSklRSGqESyW8iAN9ut3qajeB4/ZGEoQ1sC9AGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CjqePxo111cBziWdO+xo77qP5OP56ljKQur5giit85mSVjHAxwaqiuDbvHKOfgEBmmtWX8haRC1YxSLK+PSLuDgCtnDGAkI4tWjxC2/uhFhAmyxRqjj/MM0AN4/gJEpis27pQae2Ocp87QMxNEOBUe/lZndv2kwUHlGZsdHzPsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aduFlHHp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F8FAC4CEF0;
+	Fri, 19 Sep 2025 08:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758269759;
+	bh=VxTAjSklRSGqESyW8iAN9ut3qajeB4/ZGEoQ1sC9AGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aduFlHHpk5thnaiNT9P64Li/+3xf6NFuLJ0K2/6m57BH17S00nClFhpJJkvSGMcx/
+	 FG2FWJmu0sXcdVr3znKtPHiuysD4gSew11FaMSpfpEnSL/XKzV9NaSdAAzo2CQo3oK
+	 +Npzxtvvafi7SKiQRZDZxvYp/qhXl39HRJa36AOIZsNd2B6JRcO68BIGraQkX1Kz54
+	 ayZTWtsZfE8DjK4AyTvrgxoO0WyOgMVi4ET7aPTph55fEdRmrNpsYZnWZUrHEkoxh9
+	 z3cNG71qmYRzZRM+nu3UauFTAQ/zBMmZP3WNIXwfB0yU8mBVySI1cCsQPrcGSOQJpX
+	 BHabaLVJrQp+w==
+Date: Fri, 19 Sep 2025 13:45:51 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>, 
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v3 4/4] PCI: qcom: Allow pwrctrl core to control PERST#
+ if 'reset-gpios' property is available
+Message-ID: <nxcr6ymgspcdofoy7cv4lok34qqucwrm4cxn7a7spqrszgmvin@x3mhucqy2tb3>
+References: <gnaubphg6iyh23vtf2flsjxoot7psgla7cr2c5jpecaozh4vf3@mzcmg74g3ogk>
+ <20250918185356.GA1879416@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 2/6] mm: remap unused subpages to shared zeropage when
- splitting isolated thp
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: =?UTF-8?B?UXVuLXdlaSBMaW4gKOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "usamaarif642@gmail.com" <usamaarif642@gmail.com>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "yuzhao@google.com" <yuzhao@google.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "corbet@lwn.net" <corbet@lwn.net>,
- =?UTF-8?B?QW5kcmV3IFlhbmcgKOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>,
- "npache@redhat.com" <npache@redhat.com>, "rppt@kernel.org"
- <rppt@kernel.org>, "willy@infradead.org" <willy@infradead.org>,
- "kernel-team@meta.com" <kernel-team@meta.com>,
- "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
- "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
- "cerasuolodomenico@gmail.com" <cerasuolodomenico@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ryncsn@gmail.com" <ryncsn@gmail.com>, "surenb@google.com"
- <surenb@google.com>, "riel@surriel.com" <riel@surriel.com>,
- "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>,
- =?UTF-8?B?Q2hpbndlbiBDaGFuZyAo5by16Yym5paHKQ==?=
- <chinwen.chang@mediatek.com>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- =?UTF-8?B?Q2FzcGVyIExpICjmnY7kuK3mpq4p?= <casper.li@mediatek.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "baohua@kernel.org" <baohua@kernel.org>,
- "kaleshsingh@google.com" <kaleshsingh@google.com>,
- "zhais@google.com" <zhais@google.com>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <20240830100438.3623486-1-usamaarif642@gmail.com>
- <20240830100438.3623486-3-usamaarif642@gmail.com>
- <a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com>
- <434c092b-0f19-47bf-a5fa-ea5b4b36c35e@redhat.com>
- <CABzRoyYWQMFTGYgfC7N=cWMnL_+5Y05=jrMhFjBf1aKOGxzq5g@mail.gmail.com>
- <ebedc478-7519-4e30-854e-f6616a7647b0@redhat.com>
- <120445c8-7250-42e0-ad6a-978020c8fad3@linux.dev>
- <9d2c3e3e-439d-4695-b7c9-21fa52f48ced@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <9d2c3e3e-439d-4695-b7c9-21fa52f48ced@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250918185356.GA1879416@bhelgaas>
 
+On Thu, Sep 18, 2025 at 01:53:56PM -0500, Bjorn Helgaas wrote:
+> On Wed, Sep 17, 2025 at 03:53:25PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Sep 16, 2025 at 03:48:10PM GMT, Bjorn Helgaas wrote:
+> > > On Fri, Sep 12, 2025 at 02:05:04PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > > > 
+> > > > For historic reasons, the pcie-qcom driver was controlling the
+> > > > power supply and PERST# GPIO of the PCIe slot.
+> > > 
+> > > > This turned out to be an issue as the power supply requirements
+> > > > differ between components. For instance, some of the WLAN
+> > > > chipsets used in Qualcomm systems were connected to the Root
+> > > > Port in a non-standard way using their own connectors.
+> > > 
+> > > This is kind of hand-wavy.  I don't know what a non-standard
+> > > connector has to do with this.  I assume there's still a PCIe link
+> > > from Root Port to WLAN, and there's still a PERST# signal to the
+> > > WLAN device and a Root Port GPIO that asserts/deasserts it.
+> > 
+> > If we have a non-standard connector, then the power supply
+> > requirements change.  There is no longer the standard 3.3v, 3.3Vaux,
+> > 1.8v supplies, but plenty more.  For instance, take a look at the
+> > WCN6855 WiFi/BT combo chip in the Lenovo X13s laptop:
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts#n414
+> > 
+> > These supplies directly go from the host PMIC to the WCN6855 chip
+> > integrated in the PCB itself. And these supplies need to be turned
+> > on/off in a sequence also, together with the EN/SWCTRL GPIOs, while
+> > sharing with the Bluetooth driver.
+> 
+> It sounds like the WCN6855 power supplies have nothing to do with the
+> qcom PCIe controller, the Root Port, or any switches leading to the
+> WCN6855.  And I guess the same for the wlan-enable, bt-enable, and
+> swctrl GPIOs?
+> 
+>   wcn6855-pmu {
+>           compatible = "qcom,wcn6855-pmu";
+>           wlan-enable-gpios = <&tlmm 134 GPIO_ACTIVE_HIGH>;
+>           bt-enable-gpios = <&tlmm 133 GPIO_ACTIVE_HIGH>;
+>           swctrl-gpios = <&tlmm 132 GPIO_ACTIVE_HIGH>;
+>           regulators {
+>                   vreg_pmu_rfa_cmn_0p8: ldo0 {
+>                           regulator-name = "vreg_pmu_rfa_cmn_0p8";
+>                   ...
+> 
+>   &pcie4_port0 {
+>           wifi@0 {
+>                   compatible = "pci17cb,1103";
+>                   vddrfacmn-supply = <&vreg_pmu_rfa_cmn_0p8>;
+>                   ...
+> 
+> But I guess PERST# isn't described in the same place (not in
+> wcn6855-pmu)?  Looks like maybe it's this, which IIUC is part of the
+> pcie4 host bridge?
+> 
+>   &pcie4 {
+>           max-link-speed = <2>;
+>           perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
+>           wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
+> 
+> Does that mean this PERST# signal is driven by a GPIO and routed
+> directly to the WCN6855?  Seems like there's some affinity between the
+> WCN6855 power supplies and the WCN6855 PERST# signal, and maybe they
+> would be better described together?
 
+Yes, 'perst-gpios' is the PERST# signal that goes from the host system to the
+WCN6855 chip. But we cannot define this signal in the WCN6855 node as the DT
+binding only allows to define it in the PCI bridge nodes. This is why it is
+currently defined in the host bridge node. But when this platform switches to
+the per-Root Port binding, this property will be moved to the Root Port node as
+'reset-gpios'.
 
-On 2025/9/19 15:55, David Hildenbrand wrote:
->>> I think where possible we really only want to identify problematic
->>> (tagged) pages and skip them. And we should either look into fixing KSM
->>> as well or finding out why KSM is not affected.
->>
->> Yeah. Seems like we could introduce a new helper,
->> folio_test_mte_tagged(struct
->> folio *folio). By default, it would return false, and architectures like
->> arm64
->> can override it.
-> 
-> If we add a new helper it should instead express the semantics that we 
-> cannot deduplicate.
+Because of this reason, the host controller driver has to parse PERST# from all
+PCI bridge nodes (like if there is a switch connected, there might be PERST# per
+downstream port) and share them with the pwrctrl framework.
 
-Agreed.
+- Mani
 
-> 
-> For THP, I recall that only some pages might be tagged. So likely we 
-> want to check per page.
-
-Yes, a per-page check would be simpler.
-
-> 
->>
->> Looking at the code, the PG_mte_tagged flag is not set for regular THP.
-> 
-> I think it's supported for THP per page. Only for hugetlb we tag the 
-> whole thing through the head page instead of individual pages.
-
-Right. That's exactly what I meant.
-
-> 
->> The MTE
->> status actually comes from the VM_MTE flag in the VMA that maps it.
->>
-> 
-> During the rmap walk we could check the VMA flag, but there would be no 
-> way to just stop the THP shrinker scanning this page early.
-> 
->> static inline bool folio_test_hugetlb_mte_tagged(struct folio *folio)
->> {
->>     bool ret = test_bit(PG_mte_tagged, &folio->flags.f);
->>
->>     VM_WARN_ON_ONCE(!folio_test_hugetlb(folio));
->>
->>     /*
->>      * If the folio is tagged, ensure ordering with a likely subsequent
->>      * read of the tags.
->>      */
->>     if (ret)
->>         smp_rmb();
->>     return ret;
->> }
->>
->> static inline bool page_mte_tagged(struct page *page)
->> {
->>     bool ret = test_bit(PG_mte_tagged, &page->flags.f);
->>
->>     VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
->>
->>     /*
->>      * If the page is tagged, ensure ordering with a likely subsequent
->>      * read of the tags.
->>      */
->>     if (ret)
->>         smp_rmb();
->>     return ret;
->> }
->>
->> contpte_set_ptes()
->>     __set_ptes()
->>         __set_ptes_anysz()
->>             __sync_cache_and_tags()
->>                 mte_sync_tags()
->>                     set_page_mte_tagged()
->>
->> Then, having the THP shrinker skip any folios that are identified as
->> MTE-tagged.
-> 
-> Likely we should just do something like (maybe we want better naming)
-> 
-> #ifndef page_is_mergable
-> #define page_is_mergable(page) (true)
-> #endif
-
-
-Maybe something like page_is_optimizable()? Just a thought ;p
-
-> 
-> And for arm64 have it be
-> 
-> #define page_is_mergable(page) (!page_mte_tagged(page))
-> 
-> 
-> And then do
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 1f0813b956436..1cac9093918d6 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -4251,7 +4251,8 @@ static bool thp_underused(struct folio *folio)
-> 
->          for (i = 0; i < folio_nr_pages(folio); i++) {
->                  kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
-> -               if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
-> +               if (page_is_mergable(folio_page(folio, i)) &&
-> +                   !memchr_inv(kaddr, 0, PAGE_SIZE)) {
->                          num_zero_pages++;
->                          if (num_zero_pages > khugepaged_max_ptes_none) {
->                                  kunmap_local(kaddr);
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 946253c398072..476a9a9091bd3 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -306,6 +306,8 @@ static bool try_to_map_unused_to_zeropage(struct 
-> page_vma_mapped_walk *pvmw,
-> 
->          if (PageCompound(page))
->                  return false;
-> +       if (!page_is_mergable(page))
-> +               return false;
->          VM_BUG_ON_PAGE(!PageAnon(page), page);
->          VM_BUG_ON_PAGE(!PageLocked(page), page);
->          VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
-
-Looks good to me!
-
-> 
-> 
-> For KSM, similarly just bail out early. But still wondering if this is 
-> already checked
-> somehow for KSM.
-
-+1 I'm looking for a machine to test it on.
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
