@@ -1,173 +1,92 @@
-Return-Path: <linux-kernel+bounces-823870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D33B879D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:37:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1676B879E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83AA517E960
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC3DE1B275BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7F723F40C;
-	Fri, 19 Sep 2025 01:37:26 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8CD23D7DC;
+	Fri, 19 Sep 2025 01:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORDUABLg"
+Received: from mail-lf1-f65.google.com (mail-lf1-f65.google.com [209.85.167.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CB134BA29;
-	Fri, 19 Sep 2025 01:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379CA23026B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758245846; cv=none; b=XUeCblrUo8eJsAZQhoz77gUW7V7C3JK4b7mhN6et8488v1+9o8pMAiQR2GTJZ4a5bq0/vu/IuJF3q4x1TWyZbcx0wsvh7GRuKJzLcpHHH/d6nsfc7fbK+Fgq6uthyQ2RJtNHyLdLUi72QZA2w33Hla3nI8m5dVRSYN9mjX1bdj0=
+	t=1758245857; cv=none; b=FMRkMZdF6J4+lAB8V5srXEuLbwuqu9q1OeT6RQ7Bso/llE8Pnm6CVCEiJ1ZimT4mETvG3QfxJyVjBXp89KPMtfR1qKHdnT/LNa6ipwYcEvz2qNWdVopVwsIQ6YNidOp+SSxueofQMttkTLql9Np1wV/Nq1HH+tO03HQ8npA0zCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758245846; c=relaxed/simple;
-	bh=1vv7Rpartk9pOnMFVMB3X4LlMfckIVtDz67kL/p/YfI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TGHyCItrVtSvbA22MipJVRi1P5DsOl1+tPQSXBrOavVAvsVqa5jwPAbel44JtHn5opp99zauWzF8Hux9eXd5FKpk57ziw5TFy9V22VKedPpN9FpMEweSmS3L8QGu3T4OmUrcL14UVbJ1ryGxO6AU0xQTpT/RHHQQCWza05MK/Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cSZr233MVzYQv2h;
-	Fri, 19 Sep 2025 09:37:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 11CC71A16AE;
-	Fri, 19 Sep 2025 09:37:21 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgDHi2POs8xoqghBAA--.17588S3;
-	Fri, 19 Sep 2025 09:37:20 +0800 (CST)
-Message-ID: <6f0f9730-4bbe-7f3c-1b50-690bb77d5d90@huaweicloud.com>
-Date: Fri, 19 Sep 2025 09:37:18 +0800
+	s=arc-20240116; t=1758245857; c=relaxed/simple;
+	bh=oh+YAQYzkzp/kESuO+e6+GbX8Z05sYTm/l6W84It+LY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VzHmfgNT+CK8XuoqoEC43ovHIwGUE/4+fDwJfw5u2stEpMcTFv8XofeZJ91mwLufczfJB5T0DsnJJcs7qbgls1uGIN+P8lfVaKumtx+Z2zDznRQNP3UX+0Ufy4fDmJ/roP9oNFO1ZIsY4aPwZLG5xNzeFStys7Ai1nCfiiZwAIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORDUABLg; arc=none smtp.client-ip=209.85.167.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f65.google.com with SMTP id 2adb3069b0e04-5679dbcf9d8so1542784e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:37:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758245854; x=1758850654; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oh+YAQYzkzp/kESuO+e6+GbX8Z05sYTm/l6W84It+LY=;
+        b=ORDUABLgjgwdrMy3wJEtdlh+jAJpIS4xK2DlintDaOsICYd4mh8Lrw44u0c9jWBNpB
+         2FioAGnpbvQ0bewPIahdtRplkSw+5TXDyUgfTKQP4H4CNXrCUQX76FCXMERzAno5KI1f
+         OxoHLPmsuPCEQfsncKox449QC5QbYyrmnubpQcjkIbf1GtkCu3fDa8qd+FDT+oIiXZ3K
+         s+Hueh3F8tb459N0Jqfh/9Ee0SXfBWQRWGCsn/L1Gg7IcNjebmBpVVZjKvkFnsZKv0UG
+         wa920HXs+cX4mYq/tWmNriUt4hh32SfBuP/BZbCEZPLw2X+4QOg/NASpG7934U5okvQh
+         yo2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758245854; x=1758850654;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oh+YAQYzkzp/kESuO+e6+GbX8Z05sYTm/l6W84It+LY=;
+        b=JgYI8JzAyUPY3axbtpbcWj45+B277qgInR70xFJuefiffk0+K4SdPDl2Xd/aKcXTFk
+         2mZrZcp8HRnmRfWFbYVLvGs8AZdvFcQVvyeFq11UWEnuNAFaLE1NBobbehEKRJwCiL2R
+         /S8snDQ+lwSGmxE+TioaiXuML1C2gapjl8t1EPCxC9yATXroZaL6ukPgYGb7XyZ4QETQ
+         5/kLYoePap2Spl9wjWQeB7anrLbaKkzeoVhEJxg/eqHpWGIi7n/VccVpdUfeq9c/gDHb
+         iV4tD4nxU9GzaNWz7OyNXzahEQ7EGBWgLulhmqVDZwc6oYn/ofkhmJoNBHQamrMnnupQ
+         PuLw==
+X-Gm-Message-State: AOJu0Yz8vDFXR4FAI+EnbtPQYO6devep1YJRW3SANnq7TEPgdzCg5hSS
+	LAUIruHrgJ8vl73G6KeXZ0dUa3GkB+HpUVFuuiHGYn0Av41bXUQ3PaN1hcYZ/Gz20JxGtC7WXp7
+	Yb6odPI665c46NDXpiCTIe28AI/OKUeY=
+X-Gm-Gg: ASbGncsVo9e+N3HPIJnbaH9QW8PzQZ8N+lcHr7Wvv/PGdrHLNCz/bzb02daAodziGJm
+	34CdMbGsB659IuTlnknScx/mX9g3IqAKOJxNsnfPwBeY4TTFt0mU0JIKKTkAIZnwh5DH21GCGga
+	8ezYx6ms/SJCBcbd9CQaOQuWgNVcn4laAKA/5/0wt2BfiyrpGDVXXrnxWFnINqbgaVWLl1uFviF
+	7jaLdpt
+X-Google-Smtp-Source: AGHT+IE6YFcr1LXSicjMAvNHyV5cFPci7myF+1gN+wiyrMKw2tnFFRjv0o/sCqJW+GIukZMFxzfzqtm3teaJ8ye573w=
+X-Received: by 2002:a05:6512:134e:b0:572:1f0b:5ee2 with SMTP id
+ 2adb3069b0e04-579e25fe471mr533873e87.43.1758245853928; Thu, 18 Sep 2025
+ 18:37:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v4 5/9] md/raid1,raid10: Set R{1,10}BIO_Uptodate when
- successful retry of a failed bio
-To: Kenta Akagi <k@mgml.me>, linan666@huaweicloud.com, song@kernel.org,
- yukuai3@huawei.com, mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <010601995d7867c6-b8e08c65-5db3-4616-abd3-ec03a92ec8bc-000000@ap-northeast-1.amazonses.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <010601995d7867c6-b8e08c65-5db3-4616-abd3-ec03a92ec8bc-000000@ap-northeast-1.amazonses.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHi2POs8xoqghBAA--.17588S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF4rWF4xXr1fXFy3tF13urg_yoWrAF1fpr
-	1kJF1UJryUJr18Jr1Utr1UJryUtr1UJ3WUJr18JF1UJr1Utr1jqr1UXr1jgr1UJr48Jr1U
-	Jr1UJr17Zr1UJrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUAxhLUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+References: <20250910084316.356169-1-hupu.gm@gmail.com> <CAKfTPtCyL=ofg4yLtfG7zsoBMDnP48KCeUELT_Hddd3gnWeYEw@mail.gmail.com>
+ <CADHxFxTkexicChcg3To4=AsX8c+s2RNWZ5NfA9UBLMfYRZtmKg@mail.gmail.com> <CADHxFxTp3sMAwsJvwJfPQ+aD2p2Jk34wAvJGSzQjK+EypO43tQ@mail.gmail.com>
+In-Reply-To: <CADHxFxTp3sMAwsJvwJfPQ+aD2p2Jk34wAvJGSzQjK+EypO43tQ@mail.gmail.com>
+From: hupu <hupu.gm@gmail.com>
+Date: Fri, 19 Sep 2025 09:37:22 +0800
+X-Gm-Features: AS18NWC6TmGGVONfsJh6N0ktuCcCxlk6cNIVDtR9lBnsy4gpIAkLMrhOjm8QQ1Q
+Message-ID: <CADHxFxSFqok5NrtV=NkmJ0O5KnUiDn6=OUYYumWmOgVmvK_6NA@mail.gmail.com>
+Subject: Re: [RESEND][RFC] sched: Introduce removed.load_sum for precise load propagation
+To: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com, bsegall@google.com, 
+	rostedt@goodmis.org, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, mgorman@suse.de, vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Resending for your review and discussion.
 
-
-在 2025/9/18 23:36, Kenta Akagi 写道:
-> 
-> 
-> On 2025/09/18 15:39, Li Nan wrote:
->>
->>
->> 在 2025/9/17 21:20, Kenta Akagi 写道:
->>
->>>>>                 if (!narrow_write_error(r1_bio, m))
->>>>> -                md_error(conf->mddev,
->>>>> -                     conf->mirrors[m].rdev);
->>>>> +                md_error(conf->mddev, rdev);
->>>>>                     /* an I/O failed, we can't clear the bitmap */
->>>>> -            rdev_dec_pending(conf->mirrors[m].rdev,
->>>>> -                     conf->mddev);
->>>>> +            else if (test_bit(In_sync, &rdev->flags) &&
->>>>> +                 !test_bit(Faulty, &rdev->flags) &&
->>>>> +                 rdev_has_badblock(rdev,
->>>>> +                           r1_bio->sector,
->>>>> +                           r1_bio->sectors) == 0)
->>>>
->>>> Clear badblock and set R10BIO_Uptodate if rdev has badblock.
->>>
->>> narrow_write_error returns true when the write succeeds, or when the write
->>> fails but rdev_set_badblocks succeeds. Here, it determines that the re-write
->>> succeeded if there is no badblock in the sector to be written by r1_bio.
->>> So we should not call rdev_clear_badblocks here.
->>>
->>
->> I am trying to cleanup narrow_write_error():
->>
->> https://lore.kernel.org/linux-raid/20250917093508.456790-3-linan666@huaweicloud.com/T/#u
->>
->> It may be clearer if narrow_write_error() returns true when all fix IO
->> succeeds.
->>
->> ```
->> @@ -2553,11 +2551,17 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
->>                  bio_trim(wbio, sector - r1_bio->sector, sectors);
->>                  wbio->bi_iter.bi_sector += rdev->data_offset;
->>
->> -               if (submit_bio_wait(wbio) < 0)
->> -                       /* failure! */
->> -                       ok = rdev_set_badblocks(rdev, sector,
->> -                                               sectors, 0)
->> -                               && ok;
->> +               if (submit_bio_wait(wbio) < 0) {
->> +                       ok = false;
->> +                       if (rdev_set_badblocks(rdev, sector, sectors, 0)) {
->> +                               /*
->> +                                * Badblocks set failed, disk marked Faulty.
->> +                                * No further operations needed.
->> +                                */
->> +                               bio_put(wbio);
->> +                               break;
->> +                       }
->> +               }
->>
->>                  bio_put(wbio);
->>                  sect_to_write -= sectors;
->> ```
->>
->> We can clear badblocks and set R10BIO_Uptodate after it. What do you think?
-> 
-> Thanks for the detailed explanation.
-> narrow_write_error now returns whether the retry write succeeded.
-> If rdev_set_badblock fails, narrow_write_error calls md_error. This looks good to me.
-> And after narrow_write_error cleanup, rdev_clear_badblock should be called.
-> 
-> BTW, I'm not familiar with the patch workflow. Should I submit my
-> handle_write_finished patch separately after your cleanup patch merged?
-> 
-
-Sure, please send it separately after my cleanup patch. Thanks.
-
-> Thanks,
-> Akagi
-> 
->> -- 
->> Thanks,
->> Nan
->>
->>
-> 
-> 
-> 
-> .
-
--- 
-Thanks,
-Nan
-
+Thanks.
 
