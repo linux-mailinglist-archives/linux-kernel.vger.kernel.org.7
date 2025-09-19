@@ -1,166 +1,116 @@
-Return-Path: <linux-kernel+bounces-824419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2A7B8929D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:56:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57149B892A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18604E709F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:56:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 37F884E12E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14D230AD0A;
-	Fri, 19 Sep 2025 10:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B3C30AD0A;
+	Fri, 19 Sep 2025 10:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y9rD8d5S"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQc1KjTX"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400D819755B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2219755B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758279363; cv=none; b=h+soqQfPWrkr3WNC31EpY4oVU/9O0uJfYgdPUBO0jxlunAsIASkyHFTOapk9QZrbi01qPmuJKT3hZOjEKZO46KG8ewfyBW98vo8vLK+PfB3NL72Y8IPKXMfI0EHy9RVjb9QSR+wD2TOCFCT3N2A3dd9aPa3UeKJpAXBk6VN+Ebg=
+	t=1758279477; cv=none; b=pFNuoWlzwo3vBJ4tW6bRlJqHyG49hfBdB162vjWQJI/+iPu20AiT/hcgctWsg/pgtB7ODEAmxOJTif7aJLHRau/X+j2pQYxGZECG5h237sCj9Rj714WBQ4qwOHBMID7cDMCmMikAQxEUCyCdjbM5rUpjRfOoyKMGKCEordH3Ks4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758279363; c=relaxed/simple;
-	bh=e23ONrNwd6j0B7ufboHq4DnDsT30NnxZb/YaBTwxzjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rq0gUgOOGkW6eT6zD8VRYPiLwMf//5uenvI4baw6oUbXdnxg+Vxiyh7eSaRQkzGXjKBfgT9KDIvdYHuTmSfxdQKTqwGA0pk5FXWTVdDzHmmcyFLGf+lqTmjkPk8mAJN4BGExHeC4uheiwH40K5DLV1jBXJhabrZGhBa6vQ1Gi7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y9rD8d5S; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9bf5066a-a006-4f93-93fd-38e4c063e59e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758279359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5mmmnjsu9xXx/i0h/Qsh8uWABNz0Q9My1OhrKczY0Xc=;
-	b=Y9rD8d5Sbz9S1OKeW/Jp5GeodEl2YYtUqvdsIE1Yb/Dkhie9iiUVtroew6SRci8G1AQzxU
-	ccyz5npLbFup2oDOEjJZKJjvK7qEJaJnyMZpKfZW+BdC5yjWCe4cVbvHrEQw+l9w5cssY+
-	asYNJxLiThEz/qK2fBy9glSQECLa5ws=
-Date: Fri, 19 Sep 2025 11:55:56 +0100
+	s=arc-20240116; t=1758279477; c=relaxed/simple;
+	bh=dyaK275FFJPRupwFOZJFha2dT0/fk+JjTVNxDnrMlAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L41G0GljbAt3MQsPljP9HvyEwbLjiKX0ai76ozUPushcHzL2Y14K8kYPoKDvXL6J34EhxOFDpUGCdLmqLeqGlRHg3do0p/O23cRq7Bya98FjlY+AFpmohDiYDalsStM8YUvgSRe6GZqVE20G174nuQCj3tukoDigicZZkwjzPrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iQc1KjTX; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e970e624b7cso2909420276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758279475; x=1758884275; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDlYVh7GTbh+tgCNXodsPOOiwVHg3s+VohI00r8zodg=;
+        b=iQc1KjTXf8JoNrSb288v6J2dQSYz6GvN1IkiNl69ZFrWTU0M9B7Bkzj0YoowY9cqID
+         zv4Kj7ye3oQr91neZafkuqC6w9E/u7StHPl3qPly/et8m76JdhF9kfXDKGR7XQdbVKQD
+         ACAy21unPgvnMQblE/ulpGbANsqSe7wJXmajmyohsHbY7GIf6El7LjX1FTdh5OemO67b
+         tVk+L4CXs6e47CZqmTh8NRvyQbvlvPWIX/Gnkube/Cv7Mvf0sDI26MvRjyfNs7TpF6mb
+         PJ36codXRLqBlUY2WLQudA6jEU8gotBIOlg/eAsa/ohyVfxRTmcc1jLQ5Hdl7kT7CCPe
+         VOWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758279475; x=1758884275;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PDlYVh7GTbh+tgCNXodsPOOiwVHg3s+VohI00r8zodg=;
+        b=BrqA/egkaiaH4HD+Dc8BJ1xSUZj09lxqANWDby444MQ0LwUzljRDCrNWfytN0o7AYr
+         fNM0Iqc2QSqB0hsJ7B8KY5OqBfvuS8pTQuRKD+tueFGibw7kaj2Yz7tDStrm0q9n8I1h
+         DuXV192svGWDQj2TdyQQmzj8UJkI2O/v/qrixA21j50fTajspv8v1j7h/Qjpzj6xtoN7
+         g05nkNCjCAUTfjaDqyMZys113pfVtzWspVDCISHbJ6iFQcB83LS/4ducY0J8rRHUPLRZ
+         ZlsqPF1LLvezc+XmFMGE2eJc5QbbPTUGMHtb8Yw4FiMH0s/Ks3VOOuMedP0bfWzf3ORw
+         pr3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUwvnx3EutRKaBCX+QUano9nZl3L4snJ1Z45/0EpIJ6+c5wbgUZmoG35we9WDO2AaOfDhGN0NF/+/FeeJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy6r2ZRhwElNjg/DnUylW6/tt2vXsXWPwmh9rjc2Q/VJjsPKoJ
+	y16BCAOSf53o1U58k2HYxcwGo6wd8pUG9i1Z4I1dBIwnNpwy20kYPklQv4d8OhRo4C+8oeKA60+
+	cA/CLodrqBO+4GwFKFDXg45dLNnmYHEnLtKEvAGAuCQ==
+X-Gm-Gg: ASbGncvBTsMIWOIeVGve0E16pF9cDU4kqTTAg8PNMj50GD0Rhnlmbt0r6ORDJe2oiB6
+	cSm4mBVPrcCIN/ohTBv/t5Tc2dp7DyQicwGmJt2v7H50xCovvCHCajzNqp+cTBIvMRTIW7faFX+
+	6aaKsP8IeBlIvZw+R+ACZzwV1sp4ErlMu3+tsJv7ekC8dKTp+sfldnmEqIatGIGq2qV1jlfPTDy
+	ZygQ5Wg
+X-Google-Smtp-Source: AGHT+IErTnWgZxsd2J1EC6Faj4gYfD5qobVd3VLWos0tsTxFU2Dylts0CyodcC1JPhxZlPN7R/LgecNfJDI31clkpQc=
+X-Received: by 2002:a53:cf0b:0:b0:5fb:cf0:9151 with SMTP id
+ 956f58d0204a3-63477703065mr1941255d50.11.1758279474618; Fri, 19 Sep 2025
+ 03:57:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [Intel-wired-lan] [PATCH iwl-net v1] igc: fix race condition in
- TX timestamp read for register 0
-To: "Choong, Chwee Lin" <chwee.lin.choong@intel.com>,
- "Keller, Jacob E" <jacob.e.keller@intel.com>,
- "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
- "Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Richard Cochran <richardcochran@gmail.com>,
- "Gomes, Vinicius" <vinicius.gomes@intel.com>
-Cc: "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Shalev, Avi" <avi.shalev@intel.com>,
- "Song, Yoong Siang" <yoong.siang.song@intel.com>
-References: <20250918183811.31270-1-chwee.lin.choong@intel.com>
- <0fc877a5-4b35-4802-9cda-e4eca561c5d1@linux.dev>
- <d30d7a43-ca17-445e-b7ae-641be2fcc165@intel.com>
- <SJ5PPF4422C53747941CD81779E97F26C34DA11A@SJ5PPF4422C5374.namprd11.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <SJ5PPF4422C53747941CD81779E97F26C34DA11A@SJ5PPF4422C5374.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250918173323.340738-1-uwu@icenowy.me>
+In-Reply-To: <20250918173323.340738-1-uwu@icenowy.me>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 19 Sep 2025 12:57:18 +0200
+X-Gm-Features: AS18NWDfr4pqweeSDolF_LptT5gjyy5EtVR79t2lNhAD5snr7qdfOv4ibHayFqg
+Message-ID: <CAPDyKFrGyDiPZk7BZYAon+xG7S83SPvp59TNMjyXWX7Okhp=Jg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Poweroff/reboot support for TH1520 via AON
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, Sebastian Reichel <sre@kernel.org>, 
+	Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/09/2025 08:17, Choong, Chwee Lin wrote:
-> 
-> On Friday, September 19, 2025 6:11 AM, Keller, Jacob E <jacob.e.keller@intel.com> wrote:
->> On 9/18/2025 1:47 PM, Vadim Fedorenko wrote:
->>> On 18/09/2025 19:38, Chwee-Lin Choong wrote:
->>>> The current HW bug workaround checks the TXTT_0 ready bit first, then
->>>> reads LOW -> HIGH -> LOW from register 0 to detect if a timestamp was
->>>> captured.
->>>>
->>>> This sequence has a race: if a new timestamp is latched after reading
->>>> the TXTT mask but before the first LOW read, both old and new
->>>> timestamp match, causing the driver to drop a valid timestamp.
->>>>
->>>> Fix by reading the LOW register first, then the TXTT mask, so a newly
->>>> latched timestamp will always be detected.
->>>>
->>>> This fix also prevents TX unit hangs observed under heavy
->>>> timestamping load.
->>>>
->>>> Fixes: c789ad7cbebc ("igc: Work around HW bug causing missing
->>>> timestamps")
->>>> Suggested-by: Avi Shalev <avi.shalev@intel.com>
->>>> Signed-off-by: Song Yoong Siang <yoong.siang.song@intel.com>
->>>> Signed-off-by: Chwee-Lin Choong <chwee.lin.choong@intel.com>
->>>> ---
->>>>    drivers/net/ethernet/intel/igc/igc_ptp.c | 10 ++++++++--
->>>>    1 file changed, 8 insertions(+), 2 deletions(-)
->>>>
->>>
->>> [...]
->>>
->>>>    		 * timestamp was captured, we can read the "high"
->>>>    		 * register again.
->>>>    		 */
->>>
->>> This comment begins with 'read the "high" register (to latch a new
->>> timestamp)' ...
->>>
->>>> -		u32 txstmpl_old, txstmpl_new;
->>>> +		u32 txstmpl_new;
->>>>
->>>> -		txstmpl_old = rd32(IGC_TXSTMPL);
->>>>    		rd32(IGC_TXSTMPH);
->>>>    		txstmpl_new = rd32(IGC_TXSTMPL);
->>>
->>> and a couple of lines later in this function you have
->>>
->>> 		regval = txstmpl_new;
->>> 		regval |= (u64)rd32(IGC_TXSTMPH) << 32;
->>>
->>> According to the comment above, the value in the register will be
->>> latched after reading IGC_TXSTMPH. As there will be no read of "low"
->>> part of the register, it will stay latched with old value until the
->>> next call to the same function. Could it be the reason of unit hangs?
->>>
->>> It looks like the value of previous read of IGC_TXSTMPH should be
->>> stored and used to construct new timestamp, right?
->>>
->>
->> I wouldn't trust the comment, but instead double check the data sheets.
->> Unfortunately, I don't seem to have a copy of the igc hardware data sheet handy :(
->>
->> Thanks,
->> Jake
-> 
-> Flow before this patch:
-> 	1. Read the TXTT bits into mask
-> 	2. if TXTT_0 == 0, go to workaround ->If at this point register 0 captures TX timestamp, and TXTT_0 is set but we think it is 0.
-> 	3. Read LOW to OLD
-> 	4. Read HIGH – this clears the TXTT_0
-> 	5. Read LOW again , now to NEW.
-> 	6. NEW==OLD, so the timestamp is discarded -> causing timestamp timeout
->   
-> Flow after this patch:
-> 	1. Read LOW to OLD
-> 	2. Read the TXTT bits into mask
-> 	3. if TXTT_0 == 0, go to workaround -> If at this point register 0 captures TX timestamp, and TXTT_0 is set but we think it is 0.
-> 	4. Read HIGH – this clears the TXTT_0
-> 	5. Read LOW again , now to NEW.
-> 	6. NEW!=OLD, so we detect this is a valid timestamp
->                7. Read HIGH again and use the timestamp
-> 
-> Let me know if this address your questions?
+On Thu, 18 Sept 2025 at 19:33, Icenowy Zheng <uwu@icenowy.me> wrote:
+>
+> This patchset tries to add support for poweroff/reboot on T-Head TH1520
+> SoC by calling the AON firmware.
+>
+> The first patch creates an auxiliary driver for this, and the second
+> patch makes the driver currently matching thead,th1520-aon create an
+> auxiliary device.
+>
+> Icenowy Zheng (2):
+>   driver: reset: th1520-aon: add driver for poweroff/reboot via AON FW
+>   pmdomain: thead: create auxiliary device for rebooting
+>
+>  MAINTAINERS                                |  1 +
+>  drivers/pmdomain/thead/th1520-pm-domains.c | 14 ++++
+>  drivers/power/reset/Kconfig                |  7 ++
+>  drivers/power/reset/Makefile               |  1 +
+>  drivers/power/reset/th1520-aon-reboot.c    | 98 ++++++++++++++++++++++
+>  5 files changed, 121 insertions(+)
+>  create mode 100644 drivers/power/reset/th1520-aon-reboot.c
+>
 
-Unfortunately, it doesn't. The question is "what will happen to register
-after step 7?" The comment above says it will stay latched until LOW is
-read, will it affect performance/stability?
+Applied for next, thanks!
+
+Kind regards
+Uffe
 
