@@ -1,260 +1,313 @@
-Return-Path: <linux-kernel+bounces-823966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204B4B87D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:48:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0854B87D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633151CC0396
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 676E3580FA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C57254B18;
-	Fri, 19 Sep 2025 03:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bm9mRS1J"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877D4265CBD;
+	Fri, 19 Sep 2025 03:49:40 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C624A16DEB1
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71BD21FF45;
+	Fri, 19 Sep 2025 03:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758253725; cv=none; b=V/9o3EJkIm5LYgxWcDlf5LvMcy0/2oD9sIYvg5DeDHlxvEW8U0TZJN6Y6Pdu4JATnr0ADjwYW8j0MjAeDJzei3ILDs8/vQ3yRydtV9SC5qIwGbBn9l7d2ZLEt7iqHgwy8Jkndxe+6YJoHHNlPgeb/Wv7LyJypIyIVpbIMZ234Hg=
+	t=1758253779; cv=none; b=cOY5JYjEwDpvfeZ5BC4p1gWR/i5kHux+FRACiRQ0lpml2k7L8CYT95ic49klpJEH8J1VI6VoNAhDOXj/5xy/kikkeQz5F17by2nJAEW++nmmwf9N9Q/uyVqiCo/qPnQHof39/Ld4LRQHqP0VjDe32m1ZdrU69EC7nhtiv4e+o8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758253725; c=relaxed/simple;
-	bh=t0TUZMoqcyyvjMgqGMC9XknLcszUmfsJMgTCFnESNn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DzvI89HB7OM1h+Dh6RSMW2Pz94FwHh+BwmHnLKj2O5MRuKkcbURNWs9zpEkZJ2n/N0YTCYZGkoYzZDYTKUAMbNNiBUj7kdzlL5Ma358sqDWg/8aoUmgJr3OJz3xexj6avfe8g1NMQgEiaL/HNQ8mAhrMFaoSq60AZFRBv/+d0Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bm9mRS1J; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758253722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHeYRPdh/rpywj8JSWi2AobwgPPf4ZE2AxzDFpM7ZOg=;
-	b=bm9mRS1J8M189+dpURaALd9jQX+Hm8QsZPHd/Dq3py/MDiAyL9mEIq5i8aEd8Iw61aGDFv
-	Ckdph5ZOopbTBeNO8JRhK4+mmybKqNOFFJUYKvBzzyWPzCgXKdLGxAVrFYW6rEcHCo/s6m
-	zjt1GZ5edY+BMgFVa3UPS/x9sceMQnE=
-From: Tao Chen <chen.dylane@linux.dev>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	chen.dylane@linux.dev
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v4 2/2] bpftool: Fix UAF in get_delegate_value
-Date: Fri, 19 Sep 2025 11:48:16 +0800
-Message-ID: <20250919034816.1287280-2-chen.dylane@linux.dev>
-In-Reply-To: <20250919034816.1287280-1-chen.dylane@linux.dev>
-References: <20250919034816.1287280-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1758253779; c=relaxed/simple;
+	bh=ZKwhkrmf78fE1drA6uOaBAgJGNVlmr5uJlAnb2EaGhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9sjTdsF4eq6SUx5sjUjX3zN8SdetRFqf26uDCMKYZRnmTNnaZO2BBX1z83nNXUNOCCEekCrj3oiG5QNfm1FVMUq8P6ZcbQ5gi9CNVquGsAoLhCsY8Rp2dBco+9eC2HAFzZmy3cAzeHDebd206JB3m9t4kq+DWigRVm54Fzdwk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id CC80C499; Thu, 18 Sep 2025 22:49:28 -0500 (CDT)
+Date: Thu, 18 Sep 2025 22:49:28 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org,
+	=?iso-8859-1?Q?Fr=E9d=E9ric?= Jouen <fjouen@sealsq.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2] tpm: use a map for tpm2_calc_ordinal_duration()
+Message-ID: <aMzSyCQks3NlMhPI@mail.hallyn.com>
+References: <20250918193019.4018706-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250918193019.4018706-1-jarkko@kernel.org>
 
-The return value ret pointer is pointing opts_copy, but opts_copy
-gets freed in get_delegate_value before return, fix this by free
-the mntent->mnt_opts strdup memory after show delegate value.
+On Thu, Sep 18, 2025 at 10:30:18PM +0300, Jarkko Sakkinen wrote:
+> The current shenanigans for duration calculation introduce too much
+> complexity for a trivial problem, and further the code is hard to patch and
+> maintain.
+> 
+> Address these issues with a flat look-up table, which is easy to understand
+> and patch. If leaf driver specific patching is required in future, it is
+> easy enough to make a copy of this table during driver initialization and
+> add the chip parameter back.
+> 
+> 'chip->duration' is retained for TPM 1.x.
+> 
+> As the first entry for this new behavior address TCG spec update mentioned
+> in this issue:
+> 
+> https://github.com/raspberrypi/linux/issues/7054
+> 
+> Therefore, for TPM_SelfTest the duration is set to 3000 ms.
+> 
+> This does not categorize a as bug, given that this is introduced to the
+> spec after the feature was originally made.
+> 
+> Cc: Frédéric Jouen <fjouen@sealsq.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- tools/bpf/bpftool/token.c | 90 ++++++++++++++++-----------------------
- 1 file changed, 37 insertions(+), 53 deletions(-)
+fwiw (which shouldn't be much) looks good to me, but two questions,
+one here and one below.
 
-diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
-index 82b829e44c8..2bbec4c98f2 100644
---- a/tools/bpf/bpftool/token.c
-+++ b/tools/bpf/bpftool/token.c
-@@ -20,6 +20,16 @@
- 
- #define MOUNTS_FILE "/proc/mounts"
- 
-+struct {
-+	const char *header;
-+	const char *key;
-+} sets[] = {
-+	{"allowed_cmds", "delegate_cmds"},
-+	{"allowed_maps", "delegate_maps"},
-+	{"allowed_progs", "delegate_progs"},
-+	{"allowed_attachs", "delegate_attachs"},
-+};
-+
- static bool has_delegate_options(const char *mnt_ops)
- {
- 	return strstr(mnt_ops, "delegate_cmds") ||
-@@ -28,15 +38,14 @@ static bool has_delegate_options(const char *mnt_ops)
- 	       strstr(mnt_ops, "delegate_attachs");
- }
- 
--static char *get_delegate_value(const char *opts, const char *key)
-+static char *get_delegate_value(char *opts, const char *key)
- {
- 	char *token, *rest, *ret = NULL;
--	char *opts_copy = strdup(opts);
- 
--	if (!opts_copy)
-+	if (!opts)
- 		return NULL;
- 
--	for (token = strtok_r(opts_copy, ",", &rest); token;
-+	for (token = strtok_r(opts, ",", &rest); token;
- 			token = strtok_r(NULL, ",", &rest)) {
- 		if (strncmp(token, key, strlen(key)) == 0 &&
- 		    token[strlen(key)] == '=') {
-@@ -44,24 +53,19 @@ static char *get_delegate_value(const char *opts, const char *key)
- 			break;
- 		}
- 	}
--	free(opts_copy);
- 
- 	return ret;
- }
- 
--static void print_items_per_line(const char *input, int items_per_line)
-+static void print_items_per_line(char *input, int items_per_line)
- {
--	char *str, *rest, *strs;
-+	char *str, *rest;
- 	int cnt = 0;
- 
- 	if (!input)
- 		return;
- 
--	strs = strdup(input);
--	if (!strs)
--		return;
--
--	for (str = strtok_r(strs, ":", &rest); str;
-+	for (str = strtok_r(input, ":", &rest); str;
- 			str = strtok_r(NULL, ":", &rest)) {
- 		if (cnt % items_per_line == 0)
- 			printf("\n\t  ");
-@@ -69,38 +73,31 @@ static void print_items_per_line(const char *input, int items_per_line)
- 		printf("%-20s", str);
- 		cnt++;
- 	}
--
--	free(strs);
- }
- 
- #define ITEMS_PER_LINE 4
- static void show_token_info_plain(struct mntent *mntent)
- {
--	char *value;
-+	size_t i;
- 
- 	printf("token_info  %s", mntent->mnt_dir);
- 
--	printf("\n\tallowed_cmds:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
--	print_items_per_line(value, ITEMS_PER_LINE);
--
--	printf("\n\tallowed_maps:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
--	print_items_per_line(value, ITEMS_PER_LINE);
-+	for (i = 0; i < ARRAY_SIZE(sets); i++) {
-+		char *opts, *value;
- 
--	printf("\n\tallowed_progs:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
--	print_items_per_line(value, ITEMS_PER_LINE);
-+		printf("\n\t%s:", sets[i].header);
-+		opts = strdup(mntent->mnt_opts);
-+		value = get_delegate_value(opts, sets[i].key);
-+		print_items_per_line(value, ITEMS_PER_LINE);
-+		free(opts);
-+	}
- 
--	printf("\n\tallowed_attachs:");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
--	print_items_per_line(value, ITEMS_PER_LINE);
- 	printf("\n");
- }
- 
--static void split_json_array_str(const char *input)
-+static void split_json_array_str(char *input)
- {
--	char *str, *rest, *strs;
-+	char *str, *rest;
- 
- 	if (!input) {
- 		jsonw_start_array(json_wtr);
-@@ -108,43 +105,30 @@ static void split_json_array_str(const char *input)
- 		return;
- 	}
- 
--	strs = strdup(input);
--	if (!strs)
--		return;
--
- 	jsonw_start_array(json_wtr);
--	for (str = strtok_r(strs, ":", &rest); str;
-+	for (str = strtok_r(input, ":", &rest); str;
- 			str = strtok_r(NULL, ":", &rest)) {
- 		jsonw_string(json_wtr, str);
- 	}
- 	jsonw_end_array(json_wtr);
--
--	free(strs);
- }
- 
- static void show_token_info_json(struct mntent *mntent)
- {
--	char *value;
-+	size_t i;
- 
- 	jsonw_start_object(json_wtr);
--
- 	jsonw_string_field(json_wtr, "token_info", mntent->mnt_dir);
- 
--	jsonw_name(json_wtr, "allowed_cmds");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
--	split_json_array_str(value);
-+	for (i = 0; i < ARRAY_SIZE(sets); i++) {
-+		char *opts, *value;
- 
--	jsonw_name(json_wtr, "allowed_maps");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
--	split_json_array_str(value);
--
--	jsonw_name(json_wtr, "allowed_progs");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
--	split_json_array_str(value);
--
--	jsonw_name(json_wtr, "allowed_attachs");
--	value = get_delegate_value(mntent->mnt_opts, "delegate_attachs");
--	split_json_array_str(value);
-+		jsonw_name(json_wtr, sets[i].header);
-+		opts = strdup(mntent->mnt_opts);
-+		value = get_delegate_value(opts, sets[i].key);
-+		split_json_array_str(value);
-+		free(opts);
-+	}
- 
- 	jsonw_end_object(json_wtr);
- }
--- 
-2.48.1
+First, it looks like in the existing code it is possible for a tpm2
+chip to set its own timeouts and then set the TPM_CHIP_FLAG_HAVE_TIMEOUTS
+flag to avoid using the defaults, but I don't see anything using that
+in-tree.  Is it possible that there are out of tree drivers that will be
+sabotaged here?  Or am I misunderstanding that completely?
 
+> ---
+> v2:
+> - Add the missing msec_to_jiffies() calls.
+> - Drop redundant stuff.
+> ---
+>  drivers/char/tpm/tpm-interface.c |   2 +-
+>  drivers/char/tpm/tpm.h           |   2 +-
+>  drivers/char/tpm/tpm2-cmd.c      | 127 ++++++++-----------------------
+>  include/linux/tpm.h              |   5 +-
+>  4 files changed, 37 insertions(+), 99 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index b71725827743..c9f173001d0e 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -52,7 +52,7 @@ MODULE_PARM_DESC(suspend_pcr,
+>  unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>  {
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> -		return tpm2_calc_ordinal_duration(chip, ordinal);
+> +		return tpm2_calc_ordinal_duration(ordinal);
+>  	else
+>  		return tpm1_calc_ordinal_duration(chip, ordinal);
+>  }
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 7bb87fa5f7a1..2726bd38e5ac 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -299,7 +299,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+>  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+>  int tpm2_auto_startup(struct tpm_chip *chip);
+>  void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
+> -unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> +unsigned long tpm2_calc_ordinal_duration(u32 ordinal);
+>  int tpm2_probe(struct tpm_chip *chip);
+>  int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip);
+>  int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 524d802ede26..7d77f6fbc152 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -28,120 +28,57 @@ static struct tpm2_hash tpm2_hash_map[] = {
+>  
+>  int tpm2_get_timeouts(struct tpm_chip *chip)
+>  {
+> -	/* Fixed timeouts for TPM2 */
+>  	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
+>  	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
+>  	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
+>  	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
+> -
+> -	/* PTP spec timeouts */
+> -	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
+> -	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
+> -	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
+> -
+> -	/* Key creation commands long timeouts */
+> -	chip->duration[TPM_LONG_LONG] =
+> -		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
+> -
+>  	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+> -
+>  	return 0;
+>  }
+>  
+> -/**
+> - * tpm2_ordinal_duration_index() - returns an index to the chip duration table
+> - * @ordinal: TPM command ordinal.
+> - *
+> - * The function returns an index to the chip duration table
+> - * (enum tpm_duration), that describes the maximum amount of
+> - * time the chip could take to return the result for a  particular ordinal.
+> - *
+> - * The values of the MEDIUM, and LONG durations are taken
+> - * from the PC Client Profile (PTP) specification (750, 2000 msec)
+> - *
+> - * LONG_LONG is for commands that generates keys which empirically takes
+> - * a longer time on some systems.
+> - *
+> - * Return:
+> - * * TPM_MEDIUM
+> - * * TPM_LONG
+> - * * TPM_LONG_LONG
+> - * * TPM_UNDEFINED
+> +/*
+> + * Contains the maximum durations in milliseconds for TPM2 commands.
+>   */
+> -static u8 tpm2_ordinal_duration_index(u32 ordinal)
+> -{
+> -	switch (ordinal) {
+> -	/* Startup */
+> -	case TPM2_CC_STARTUP:                 /* 144 */
+> -		return TPM_MEDIUM;
+> -
+> -	case TPM2_CC_SELF_TEST:               /* 143 */
+> -		return TPM_LONG;
+> -
+> -	case TPM2_CC_GET_RANDOM:              /* 17B */
+> -		return TPM_LONG;
+> -
+> -	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
+> -		return TPM_MEDIUM;
+> -	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
+> -		return TPM_MEDIUM;
+> -	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
+> -		return TPM_MEDIUM;
+> -	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
+> -		return TPM_MEDIUM;
+> -
+> -	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
+> -		return TPM_LONG_LONG;
+> -
+> -	case TPM2_CC_PCR_EXTEND:              /* 182 */
+> -		return TPM_MEDIUM;
+> -
+> -	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
+> -		return TPM_LONG;
+> -	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
+> -		return TPM_LONG;
+> -
+> -	case TPM2_CC_GET_CAPABILITY:          /* 17A */
+> -		return TPM_MEDIUM;
+> -
+> -	case TPM2_CC_NV_READ:                 /* 14E */
+> -		return TPM_LONG;
+> -
+> -	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
+> -		return TPM_LONG_LONG;
+> -	case TPM2_CC_CREATE:                  /* 153 */
+> -		return TPM_LONG_LONG;
+> -	case TPM2_CC_CREATE_LOADED:           /* 191 */
+> -		return TPM_LONG_LONG;
+> -
+> -	default:
+> -		return TPM_UNDEFINED;
+> -	}
+> -}
+> +static const struct {
+> +	unsigned long ordinal;
+> +	unsigned long duration;
+> +} tpm2_ordinal_duration_map[] = {
+> +	{TPM2_CC_STARTUP, 750},
+> +	{TPM2_CC_SELF_TEST, 3000},
+
+I assume you intended to increase TPM2_CC_SELF_TEST from 2000 to 3000
+here?  But it's not mentioned in the commit, so making sure...
+
+> +	{TPM2_CC_GET_RANDOM, 2000},
+> +	{TPM2_CC_SEQUENCE_UPDATE, 750},
+> +	{TPM2_CC_SEQUENCE_COMPLETE, 750},
+> +	{TPM2_CC_EVENT_SEQUENCE_COMPLETE, 750},
+> +	{TPM2_CC_HASH_SEQUENCE_START, 750},
+> +	{TPM2_CC_VERIFY_SIGNATURE, 30000},
+> +	{TPM2_CC_PCR_EXTEND, 750},
+> +	{TPM2_CC_HIERARCHY_CONTROL, 2000},
+> +	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
+> +	{TPM2_CC_GET_CAPABILITY, 750},
+> +	{TPM2_CC_NV_READ, 2000},
+> +	{TPM2_CC_CREATE_PRIMARY, 30000},
+> +	{TPM2_CC_CREATE, 30000},
+> +	{TPM2_CC_CREATE_LOADED, 30000},
+> +};
+>  
+>  /**
+> - * tpm2_calc_ordinal_duration() - calculate the maximum command duration
+> - * @chip:    TPM chip to use.
+> + * tpm2_calc_ordinal_duration() - Calculate the maximum command duration
+>   * @ordinal: TPM command ordinal.
+>   *
+> - * The function returns the maximum amount of time the chip could take
+> - * to return the result for a particular ordinal in jiffies.
+> - *
+> - * Return: A maximal duration time for an ordinal in jiffies.
+> + * Returns the maximum amount of time the chip is expected by kernel to
+> + * take in jiffies.
+>   */
+> -unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> +unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
+>  {
+> -	unsigned int index;
+> +	int i;
+>  
+> -	index = tpm2_ordinal_duration_index(ordinal);
+> +	for (i = 0; i < ARRAY_SIZE(tpm2_ordinal_duration_map); i++)
+> +		if (ordinal == tpm2_ordinal_duration_map[i].ordinal)
+> +			return msecs_to_jiffies(tpm2_ordinal_duration_map[i].duration);
+>  
+> -	if (index != TPM_UNDEFINED)
+> -		return chip->duration[index];
+> -	else
+> -		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> +	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+>  }
+>  
+> -
+>  struct tpm2_pcr_read_out {
+>  	__be32	update_cnt;
+>  	__be32	pcr_selects_cnt;
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index b0e9eb5ef022..dc0338a783f3 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -228,10 +228,11 @@ enum tpm2_timeouts {
+>  	TPM2_TIMEOUT_B          =   4000,
+>  	TPM2_TIMEOUT_C          =    200,
+>  	TPM2_TIMEOUT_D          =     30,
+> +};
+> +
+> +enum tpm2_durations {
+>  	TPM2_DURATION_SHORT     =     20,
+> -	TPM2_DURATION_MEDIUM    =    750,
+>  	TPM2_DURATION_LONG      =   2000,
+> -	TPM2_DURATION_LONG_LONG = 300000,
+>  	TPM2_DURATION_DEFAULT   = 120000,
+>  };
+>  
+> -- 
+> 2.39.5
 
