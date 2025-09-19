@@ -1,111 +1,105 @@
-Return-Path: <linux-kernel+bounces-824924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9905B8A7BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57879B8A7C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846045A1036
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:03:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD555A1357
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565A6319617;
-	Fri, 19 Sep 2025 16:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C103B3168E7;
+	Fri, 19 Sep 2025 16:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMlb4A8E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/Kaoaj7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77991F4C8C;
-	Fri, 19 Sep 2025 16:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282A0314A85;
+	Fri, 19 Sep 2025 16:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758297810; cv=none; b=j/WHB7kljhThuVKAdbX+mMr+tIQWkwyBFdctMhWYIY5TcLpS9vz/VAUg/M5AdZ8ITS4lu3mR+0agEset77TzvK4kFEMKyaKsWscjQ4A84kABoAjF8Po4svFC+iFvt+qDXzPhV6qjfNcAq3z6umDOZA6khwLP0pODjR4l7P48Z4Q=
+	t=1758297817; cv=none; b=XhrR4qlVrn4RvkKxQT+1CTkNV0tgjc5a5KzHUiO2H6b5OtY8ts5HxAVvyNE1dltlhMiR8YTXuui1h/Vw+3W+BL/viGYO126Kl1Ma1e0r6eRt4+RvwT5Bie0QYOm0c7xOSDgnQh+9yjanj5p4QXo/v9tAfGt0g5KbsgxcZR0LEZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758297810; c=relaxed/simple;
-	bh=lpomwfxtk9a4+r9bgZHNE22kfKHJ+s60q4CwLekgFe4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RxT9HtE0rXc/0M2y+dan6SilHp2T5CpwohSahodkBW1pnincvjaO0hFepPCzatGzT7spuMhDnf1lAZyg53ZjLTiodzLXAg6g6s4rTYPPuWWpVyBfKL79MoQWqfyCgHgvXKDmdpDLw7mbZjN36/UwOFik6KSpIMngZx7FnJzrj5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMlb4A8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36CEC4CEF1;
-	Fri, 19 Sep 2025 16:03:23 +0000 (UTC)
+	s=arc-20240116; t=1758297817; c=relaxed/simple;
+	bh=nYGhvaswrglufTThE8Ko8tVUeDykuaH4CIml5aGwjWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+b5brq0IC4GiSllLCodI/zkH42s6bX4uTkZ2/+IStXKQBTvyMwnu/97KZNHMqY1IdIUjsPptBICGZqJd7O2WuGqpitLJDq/w17h7gGnhbbOtkhwxxb1oKFZeK5qYJU0dliRtDMv2bCMxx4wSc999utWE2knSegpNjxNrn25b+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/Kaoaj7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C56C4CEFB;
+	Fri, 19 Sep 2025 16:03:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758297810;
-	bh=lpomwfxtk9a4+r9bgZHNE22kfKHJ+s60q4CwLekgFe4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gMlb4A8Egcyts/MtR5Mw8qBFv4iE/79CmfDyT5HtS+MBA+CAqAnbRrwuwchTk843f
-	 MP2A/1u4QocVvOjuTfBnW5FGSoxChq53xYw4ywv5Vy92rxHo+Ogl2oADs3ienzA0Cv
-	 TMYsYTeQ5GCj4ieQNAMhxKtUZmst7zb2APbrUAe5CzaddCPa4kQskDQEQue5EmpFal
-	 xAgytAAzSl9cxDudQLo3FJhVxOA4Sg3t0QAnea3RIklRNn7Q4D5QMHuPQIHQIEWXF1
-	 bUbDMF7tzwf7tHsIpQjCzfWexQi4O6rs9R0DQZchNfteXsShL47JjMIsbBNeIRxxGs
-	 9vaGXDMsLQtEw==
+	s=k20201202; t=1758297816;
+	bh=nYGhvaswrglufTThE8Ko8tVUeDykuaH4CIml5aGwjWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q/Kaoaj7/JaKRP8O4fGkgim34hTc1efzdwxNkmTCalIwsPZuERsCotfZ+M3jBvKNT
+	 bbWN+hhksHJb4J/UVlIbv4m5g1hJ9He2nlbDGH95Dpe1VXUUIxCv4Oti+JaPplDxjj
+	 uDfc316Y6XPmZn76OhSbG5D8kY4ZWbRARqSeuBGHQ2sUhxuHPUPA5uyO/HEccQ3wGJ
+	 n/iyboyl45ZIy/5B4WgGDS1cmg/D7c1ypIu4/3kLuvPHAfTqbfzqrvmzSERu8jnF05
+	 irTEb38K0lPnapiS1T0rsArdGUhpc2HdseH7SbRGPOY4aYPqUwBCLb6QFO1M4gKh07
+	 fw5M8rTp9y+MQ==
+Date: Fri, 19 Sep 2025 17:03:30 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Varshini Rajendran <varshini.rajendran@microchip.com>
-In-Reply-To: <20250908-microchip-qspi-v2-0-8f3d69fdd5c9@microchip.com>
-References: <20250908-microchip-qspi-v2-0-8f3d69fdd5c9@microchip.com>
-Subject: Re: [PATCH v2 0/5] Add QSPI support for sam9x7 and sama7d65 SoCs
-Message-Id: <175829780315.161854.16031631803406215563.b4-ty@kernel.org>
-Date: Fri, 19 Sep 2025 17:03:23 +0100
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
+	ebiggers@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Kees Cook <keescook@chromium.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 3/5] crypto/arm64: sm4-ce-gcm - Avoid pointless yield of
+ the NEON unit
+Message-ID: <4eb3c865-75af-43e4-a760-46bbb7e34f9b@sirena.org.uk>
+References: <20250918063539.2640512-7-ardb+git@google.com>
+ <20250918063539.2640512-10-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V1bFmzjAwqS0yQHR"
+Content-Disposition: inline
+In-Reply-To: <20250918063539.2640512-10-ardb+git@google.com>
+X-Cookie: Don't read everything you believe.
 
-On Mon, 08 Sep 2025 09:44:15 +0530, Dharma Balasubiramani wrote:
-> This patch series adds support for SAM9X7 and sama7d65 QSPI controller
-> along with the SoC-specific capabilities.
-> 
-> 
 
-Applied to
+--V1bFmzjAwqS0yQHR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+On Thu, Sep 18, 2025 at 08:35:43AM +0200, Ard Biesheuvel wrote:
+> From: Ard Biesheuvel <ardb@kernel.org>
+>=20
+> Kernel mode NEON sections are now preemptible on arm64, and so there is
+> no need to yield it when calling APIs that may sleep.
+>=20
+> Also, move the calls to kernel_neon_end() to the same scope as
+> kernel_neon_begin(). This is needed for a subsequent change where a
+> stack buffer is allocated transparently and passed to
+> kernel_neon_begin().
 
-Thanks!
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-[1/5] dt-bindings: spi: Document sam9x7 QSPI
-      commit: 68f6b403ee90293b6fa4eb094dcee79138b692b2
-[2/5] dt-bindings: spi: Define sama7d65 QSPI
-      commit: f3837edc05c66de0104041d3f300524773b46526
-[3/5] spi: atmel-quadspi: add padcalib, 2xgclk, and dllon capabilities
-      commit: 86d074921e34db6daaa7ea2976b1dfe7d507309b
-[4/5] spi: atmel-quadspi: add support for SAM9X7 QSPI controller
-      commit: 65a977d752d72a53d16ce32b85ef9db9b0747df6
-[5/5] spi: atmel-quadspi: Add support for sama7d65 QSPI
-      commit: 20253f806818e9a1657a832ebcf4141d0a08c02a
+--V1bFmzjAwqS0yQHR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+-----BEGIN PGP SIGNATURE-----
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjNftIACgkQJNaLcl1U
+h9CYGgf/aqFUbV8ym698Sr7+ZwrCHLCSAI7rfHpPa0ePv1UBDBTHcd2TrMYdUHyw
+nsXFJ8JNceHUvk2vT1wYR5Ao+7BxvKAXuC3qw1OR29DJUTLSkRJ9Y15I9Yk6DMH0
+xHrfkGfjyZCpbt6vf7PxbactkGYlOrHlgYRM+53vT7dWecei47BcXWyGEQaDabEA
+jJjJZ5qtCY/D1KWuYfbudHIwhgYfQHWR5L6AF5RSAph9SV4+UseqtW5xnZ6zJSOb
+vU5VG9ojXUELVI7zXMLOTtZYhOcj8g2AHKyeDWwunjEho7MksVoCfNXMIUVUS6xk
+s/1u+CKpHm5yMiN+kmk9YXq+xzw85A==
+=KcOJ
+-----END PGP SIGNATURE-----
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+--V1bFmzjAwqS0yQHR--
 
