@@ -1,110 +1,177 @@
-Return-Path: <linux-kernel+bounces-824352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B328B88C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:04:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667EDB88A56
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7C11C8114B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305D3162E98
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6492D2F362C;
-	Fri, 19 Sep 2025 10:04:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFAC1A5BBC;
+	Fri, 19 Sep 2025 09:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="xE2vwJN9"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA1D23C4FF;
-	Fri, 19 Sep 2025 10:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CB572634
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758276264; cv=none; b=oHQmqwwGxpXB/qWgWZ+QoBzQG3YlIWOt6KkiE/kY9X+FUrNqIP7jAbO1RiUmYI/rbiqntkuj1kuc+hY56N5fjVFui09xCM7dy/8+U8VgSQ71AXAqBpf5KjvSiKMxKMbuN17LRZDtNpV+zvhySYFrpw1iMBTtNlKLTGQHnwK5hSY=
+	t=1758275365; cv=none; b=HPCgL6p4eNE7Ha12kGF7RBKorMQsHZLR4tBISd/RSNb2UCvDd4kehmNVPGxhQOdgCvzyBbEBYm46F+86zDZCOg0XkH5EXDK0/UsN689wmwIjAvB+NpIhKargwF+AwcLP5weWskiiOwseOMF1NqdvpkqfHvYHGMQgVUpWwaDrQic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758276264; c=relaxed/simple;
-	bh=cL2A2v0YTS+Z9Fb+p2DjEm6Ty1kMPrvE6uA+rVXRv+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PlUvu7QvJ3GiCbG5euCX3nluA6FpM/wJZPo7rYfcgbLbF89A03LqzlbEY6WTsGedu/e06QeAKKWHweH+V0yabJ3tIHNMHJa2VCxvZpnBTD3IVEbXwlvW6t86gaD9sE/nZN+OsYpkiffyBMNEytTq2tLLFL5WHO7zPH6Vh9ji/ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cSp4q1hvzzKHNDG;
-	Fri, 19 Sep 2025 18:04:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 1C8F51A19DF;
-	Fri, 19 Sep 2025 18:04:12 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgAncRWZKs1ojDFoAA--.25819S2;
-	Fri, 19 Sep 2025 18:04:11 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH cgroup/for-next] cpuset: fix missing error return in update_cpumask
-Date: Fri, 19 Sep 2025 09:49:03 +0000
-Message-Id: <20250919094903.3060470-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250917060454.2885698-9-chenridong@huaweicloud.com>
-References: <20250917060454.2885698-9-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1758275365; c=relaxed/simple;
+	bh=Tz2BYFvF/M11ZKfSqaimmGgmE3eUTJYVaFA8dA+tDN4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=uQNw7JEpZNvaZhte3WZ05CwS3znz1aYtDPHPLUlobc7vmhPmVuwaA8FRpIYo9PUht4GyDT6J51msnNNiIsS0igwspoEhAfHY8LUGYxgn8bQVyjovcVpPRMK1sPN4a8t6vPu6SewK4k4dVMZlj6dyZNwf5l5gPO6Y7ULq4VTlrDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=xE2vwJN9; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b042cc3954fso351085666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:49:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1758275362; x=1758880162; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bF+fr97ZY8gnHTqJgWFCrdHRcSxw9tzCQyJHijmyQXA=;
+        b=xE2vwJN95mzyOnC4ZTWV9laCOyOgDXALTW4Ju5t4ko0uYUIb+zqCaiTtOgB1K6qHB8
+         IEMj5rHwV9JWQPg3FjvudGXjmU3qLOVgvx4TStrLDAUabmdYW0Z0THb9idND5yR3xGm/
+         YvMxXgKgDXpF02D8n+avVYJ60nyi48ZK5+kKb9JYQtTMtDNrWBMG4nk0gY26gLNUxnZX
+         UCE9MqU4MNaiNkHVXsiSVQI8z1FNK6TskgFVIwdhqUSZB/y1LBKGoWfo8AgQeRwFPAKX
+         iU/Ay8ydvAm3WRR1hI4vPizEXX5b+Sj1hxv2ex99uAySEApJHvXMS2kRh8PSuD1ugjKR
+         Auqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758275362; x=1758880162;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bF+fr97ZY8gnHTqJgWFCrdHRcSxw9tzCQyJHijmyQXA=;
+        b=rmkTUB6WlFfVmnZqVtie3X2AUNgf66PdYC5pxJh9muX0+Aujw1BkKf1njhw0mL0TsC
+         4XK/uOesW0gUnAJvWtssEkUm2hEOnOyGO3bZ/tomTrWUp47p9/qTkXFgXeyaBU9gvm2z
+         0ISr0+3rTl49pS94qLkZ+wby0dKL6iReZfVEV55zMztUdGykcAHBOmIj3TJOLzYqZ+yQ
+         u+jrAfu7yoi0Rghg48xgSvcyN0gbZPf1n1Oqg7Oe0HYmCyfQro1Voz0si0yxQE/GT8g2
+         EVpW2tB2IMlncyT72eJXtXfDS0mfPEMku80MP6dEz/fEqHSmUkJ5R8wJkPeIwSC22zXt
+         W2wQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvWPfnjOgJt+EtsgOyKk0pr6OKduJRCKISwLDcjYIF0FTycgsGV4l6dhy5BDJwjCGblYZJzplMsdF27ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9aXjmstuSf8/aildBDFFG80SHdK/Rfqi26MCELulQB963naXH
+	BHneuj7MUP7cRJdkduK76nZPBRb75xyxOM4UGiX6HqAPcyN0cf0/Wn/lL4ZLm1CF8Ak=
+X-Gm-Gg: ASbGncu1OBQaaB88jNrymuZ/bMpOvS+0e4nqmqE/ZRhmm8Z5n/f/v2YcXEXE5SqxscU
+	K8EYUrOjhzT6OH9MaFzLtyW2v6VvXS3JpIs4RcWVVANDFoWXRM++t5aDrc0D3txAk0Tqduevgn3
+	S144am1pNiyR+2XIyMwHAX9UpFdctPfAbnDVpONSyvJzVRMVIuCaW/YCc8k9vC0wrLxXf3EAJkh
+	AfqTUQn7nwQepxAPosWa1uGRjv3lcwhdTWzZ4oDZ4q060vd+4tbprnwAYaJKmCzf7O/1ICt4fmJ
+	c2WYdLksNFzwWml81/TR0nyNxRF7gjnuW6QR8n188h9eC1NAczIjAjIS8irJFc2WPYC7C4V43iD
+	wSKK2dL/g24B701CkViEPM0jyno3XmRzM/QTFibrTZsxJl0wsBy5/4B+s1A24jaVvPaet
+X-Google-Smtp-Source: AGHT+IEFBu6jYd3DaMItgC8kjB1GxQEyOVsDZz2UShssNFNRiR0gE56ikyqcHlsjZ4qckWKtQlZbDg==
+X-Received: by 2002:a17:907:7292:b0:b0c:4ff9:5c77 with SMTP id a640c23a62f3a-b24f6f91688mr289081966b.54.1758275361898;
+        Fri, 19 Sep 2025 02:49:21 -0700 (PDT)
+Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b26e36ae75dsm15882366b.8.2025.09.19.02.49.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 02:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAncRWZKs1ojDFoAA--.25819S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKFyrtF1fury8uFWxGFyxAFb_yoWDuFX_uw
-	4Ivr10qrW8Xr1Ig3WUK3W3uF1vkr13tr4DAayYyFWIvFsYyFn2yw1Yqa45ZFy5Aa4xur4Y
-	k3srG3ZxWwn2qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUotCzDUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 19 Sep 2025 11:49:20 +0200
+Message-Id: <DCWOLHPCYG3X.32KTGBE4SYMDV@fairphone.com>
+Cc: "Vincent Knecht" <vincent.knecht@mailoo.org>, "Bryan O'Donoghue"
+ <bryan.odonoghue@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] arm64: dts: qcom: msm8916: Add missing MDSS reset
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Stephan Gerhold" <stephan.gerhold@linaro.org>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
+ <20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org>
+In-Reply-To: <20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org>
 
-From: Chen Ridong <chenridong@huawei.com>
+Hi Stephan,
 
-The commit c6366739804f ("cpuset: refactor cpus_allowed_validate_change")
-inadvertently removed the error return when cpus_allowed_validate_change()
-fails. This patch restores the proper error handling by returning retval
-when the validation check fails.
+On Mon Sep 15, 2025 at 3:28 PM CEST, Stephan Gerhold wrote:
+> On most MSM8916 devices (aside from the DragonBoard 410c), the bootloader
+> already initializes the display to show the boot splash screen. In this
+> situation, MDSS is already configured and left running when starting Linu=
+x.
+> To avoid side effects from the bootloader configuration, the MDSS reset c=
+an
+> be specified in the device tree to start again with a clean hardware stat=
+e.
+>
+> The reset for MDSS is currently missing in msm8916.dtsi, which causes
+> errors when the MDSS driver tries to re-initialize the registers:
+>
+>  dsi_err_worker: status=3D6
+>  dsi_err_worker: status=3D6
+>  dsi_err_worker: status=3D6
+>  ...
+>
+> It turns out that we have always indirectly worked around this by buildin=
+g
+> the MDSS driver as a module. Before v6.17, the power domain was temporari=
+ly
+> turned off until the module was loaded, long enough to clear the register
+> contents. In v6.17, power domains are not turned off during boot until
+> sync_state() happens, so this is no longer working. Even before v6.17 thi=
+s
+> resulted in broken behavior, but notably only when the MDSS driver was
+> built-in instead of a module.
 
-Fixes: c6366739804f ("cpuset: refactor cpus_allowed_validate_change")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cpuset.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Do you have a link to the patch that causes this behavior? I've tried
+looking through the git log for drivers/gpu/drm/msm/ but couldn't find
+anything that looks relevant.
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 506a7178f0b3..20dface3c3e0 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2515,7 +2515,8 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- 	compute_trialcs_excpus(trialcs, cs);
- 	trialcs->prs_err = PERR_NONE;
- 
--	if (cpus_allowed_validate_change(cs, trialcs, &tmp) < 0)
-+	retval = cpus_allowed_validate_change(cs, trialcs, &tmp);
-+	if (retval < 0)
- 		goto out_free;
- 
- 	/*
--- 
-2.34.1
+FWIW a similar change to this was also necessary for sc7280 (as done by
+Bjorn) and for sm6350 (will send the patches very soon).
+
+And happily enough for me, with v6.17 and that reset, a long-standing
+issue on sm7225-fairphone-fp4 has been resolved that the display init
+seems to somehow fail the first time after bootup, with the screen
+needing to be turned off once and back on to work. I traced this back
+to some power domain behavior as well back then.
+
+> "mdss_gdsc needs to be off before mdss/dpu probe, this can happen with
+> genpd_power_off_unused but not guaranteed"
+
+Anyways, I'm hoping this is not just a coincidence it works now but
+will stay working on my device. Just the reset in the past didn't seem
+to affect anything.
+
+Regards
+Luca
+
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 305410ffd1b2 ("arm64: dts: msm8916: Add display support")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/=
+qcom/msm8916.dtsi
+> index b50c7e6e0bfcd35ab4f8b84aeabe214fd60e8d7c..de0c10b54c86c7795b7a0d1ec=
+d80652e60e117b6 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+> @@ -1562,6 +1562,8 @@ mdss: display-subsystem@1a00000 {
+> =20
+>  			interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
+> =20
+> +			resets =3D <&gcc GCC_MDSS_BCR>;
+> +
+>  			interrupt-controller;
+>  			#interrupt-cells =3D <1>;
+> =20
 
 
