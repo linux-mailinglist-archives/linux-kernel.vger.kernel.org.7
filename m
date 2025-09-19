@@ -1,182 +1,298 @@
-Return-Path: <linux-kernel+bounces-825061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76679B8AD38
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADE1B8AD41
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703C2164BF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74956A025D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76389322A26;
-	Fri, 19 Sep 2025 17:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693453218B2;
+	Fri, 19 Sep 2025 17:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ohk+ioKN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BGRx+Q7x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096BD3054F2
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901C524677D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758304231; cv=none; b=dA07i44X00D2fHdJ3hSK9ah34EJwq0XSCHwvkwghDUbUqJOZ+njuPhE/1DOwmwiDDeUYiFZXTeWz2kByQcZOIoHqQtxo4e+BT/yRDKShcb+tmEPLlTQRcuOkJP/UeN3wxG+ksPy6pblGo0VKDebjjoIQHyKz5jTh5lJ8IZxhOq8=
+	t=1758304392; cv=none; b=StO08qvgtAU1N1dvUiuzBe54GrV5+9bUTxCtOhmrAxzKlQ17gocwHA03b0jSdBDisQXMePROPrzNI8H2awKxJ4Y1Ym9+LRO8xSkm8Y9e6jbz04lv4oBa80UY8Ds/zhuD1RF3AymF0v91nwNXWycg6UCUHWvH70/woG6TYSU3+ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758304231; c=relaxed/simple;
-	bh=/mPo8lPIeMUbMiGlkP38hUb5Wg6RHjHPXXFrqZymSjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t7gY3mdgdfqjIgtea9o4jAdzl1+EnesQDwkWn6hfa7aW6MQPn7YK7xJr5skY712cgW86mRKHxJiWy7UNHKZR3DmhMWNFd7nH6+U4x2mk87u0+Cprs8RdU012WG5I7WIYNrYGvWFhCk++CIYy6NdJvGMRz0oEZyjV4fiowg5Ic1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ohk+ioKN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J9Feif031000
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:50:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=lUVhA5pzXz07jeB/n45m2bQF4wRz5z2cLhx
-	Sd7PJcPQ=; b=ohk+ioKNN2W3E6EOYRZBoPo4r3rQDfby/DuHAxFp6dCus+XrWMv
-	Pi1/LekuSehpupAOj1hi52L3UpgJ7UCpt6MQ2ITe0TRGoazdcUn1Le+Da+Y2ngSS
-	AgIB59giKn0RBQZ1WR+wVZQ3mTrRb6k8xfGd619saGYQJb+5IGR04lZvhZfK0vim
-	p23uD/9DBKVnBwhCimf9lQCE/hvo6jWg9ODvF5Fy4Ta8OIqeZjlqM+xZDcenl0xS
-	jJKgK/NK8xaQau+qaVIyG0N4jTsHAGtLFYun7HOcbDeOcbQxP44Y5qt/ML5iANby
-	jWZ1ognNFU5IWzBufFlvwL/nempJvjWKZ9Q==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy139yv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:50:29 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2699ebc0319so19625455ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:50:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758304228; x=1758909028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lUVhA5pzXz07jeB/n45m2bQF4wRz5z2cLhxSd7PJcPQ=;
-        b=g8A73/ZP/vL9ndCXM4wky11rAZ72dg3HtXn81c42isJDV8G6Ox5fYma90IBLOkK6HD
-         IyOoH/RutzZm4p1rG0NEZHfElUsus1z37BlZq0UccCp5kCB29TX0VOX+c+DA9PC11Ka7
-         pes1+RYKn5QdKAbzMgL/50BGhCznk7Wt9/2T31MFRCYUwtc0dF1uclkUrNw5Zfiy8OsL
-         P/187BhJr9bbhI/WED+fkrHyUmOxoxFz6BFgqarbtpNiAl428I/zhHO8i/W5jCmlhDw7
-         KBzd/fxnbn58aEhvod3DVlR312B/YHB1+Xnh+F/795KA5hvf1jPz+5imFBcSaUU6iUKx
-         MASg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2/+t7d9cp+FesQyedeZyYypeFeE+wq0glAqKkeR5WT5+7sKA1NyG55thH3z4ISHeLi3CdBPG6xAV3nqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy30VyW+HmsDxLa8eCFWc0ACvoyJn2+eIpHdux31zQI71S7uhGu
-	N3jxOLyn6mXSoTgZRWMqNxW3duRm3N0pBuCuFa0A9iKJrgnxCgLDtRBCiFAjOjmL1/JrGOs4d14
-	67c6LMZw3F/r2faPCxrjqnTCThb5YG+42BXjCKMPjP6VqSTUuqVOs6zJiByf5NJbs89s=
-X-Gm-Gg: ASbGnctWBV1KtESS/tpJW9aeU0bxhhAkkfvJrazWYVLNu2VJEB7ONMH3hS1pZ/PrHa/
-	T92E0+rDvb5ua+c8LhYAgJDSAmrJgnaVh731RPdbajuSha1rwY5EbbVY21Xly8mREjqUtAYaTml
-	7pi+U9Rpf88c0poUSuEvvG/NHr1WT6NIIx+g4CNcfglPKcePJvg+WBQXgf95+N6MU0NyuUU1Evy
-	s2LsYPAUFlNgYVMeszmSEggP/9W9mDTd93UxXZdZaYxmg2R/bGJE164WJLhZ7ePU8EWIcS7bYMH
-	mEyM3OBbCac7znexfKc1zmKpoFzJAERa37eFdKqzknjQLqmvB4dZWFyOCmivmbflVLM56NAPLrq
-	JYbZFycF/7EzM4cLE1GUakPeooU4=
-X-Received: by 2002:a17:903:1b6c:b0:261:1521:17a8 with SMTP id d9443c01a7336-269ba43dfffmr64056355ad.16.1758304228075;
-        Fri, 19 Sep 2025 10:50:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7Kzie8oSdOEBS90XbtwiLTvrynMSVegeI/TKZ5eJjg06eMYGr2szW6HyTo08NoA0zM8CkGw==
-X-Received: by 2002:a17:903:1b6c:b0:261:1521:17a8 with SMTP id d9443c01a7336-269ba43dfffmr64056025ad.16.1758304227603;
-        Fri, 19 Sep 2025 10:50:27 -0700 (PDT)
-Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed26876ffsm8970468a91.3.2025.09.19.10.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 10:50:27 -0700 (PDT)
-From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-To: andersson@kernel.org, konradybcio@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] soc: qcom: pmic_glink: Add support for SOCCP remoteproc channels
-Date: Fri, 19 Sep 2025 10:50:25 -0700
-Message-Id: <20250919175025.2988948-1-anjelique.melendez@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758304392; c=relaxed/simple;
+	bh=zcD4KrKYyKQtSs4RY+qnVbakuHatETbHq+Ctu2gCUfY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNKSrrxxZlRD8o4MmNdA0AkIf7V3a22QL+qsmKjVOMiBIJmPPJK3/MBIzAuG0t6za+nYEN0hzHHXH+VFPHNcVGC5tg4SuJcJo9517MN6eQNGn9UyDmD1zEbsGtRaBjp8oF0j5122TtbWWJ42SqmfMfuCrMVg2sw+3Gs/UsFXiLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BGRx+Q7x; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758304390; x=1789840390;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=zcD4KrKYyKQtSs4RY+qnVbakuHatETbHq+Ctu2gCUfY=;
+  b=BGRx+Q7xnuRdOuUy1POkqCT7H9x671BPm92fK29s6hgmUkcl3sfaJ2t4
+   KbPA6G121HS1C+7kv7IU608T3pRYnojkNJtF5ikcmohqhXfZhFQ1obQ2Q
+   fEMoLAdAvZsx0UiCSLMzw29m+agXYW83Ik8MXf+6Sh9yrG6H8gfw1I3xg
+   fd3FAbek2u42ILilutS23/0Utm5ZELTDnEjVWQr8du9C4wVN5lZ3OpCC2
+   tmAPu8wlKu9f7baqklkzPPXBcbGQTS4Fh/FFNJ6bOumMiNF1TpikVihjm
+   h2Lv1MLjEuLgbhKwmo7Qk/adHF2J9L5IsduH6whVyPq3NDbQmzr8lJmcC
+   w==;
+X-CSE-ConnectionGUID: l0T4qVYPTGWPvu5ZBGRG8Q==
+X-CSE-MsgGUID: A5Fw3w3gTCyi03ph6Wamig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60573937"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60573937"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 10:53:10 -0700
+X-CSE-ConnectionGUID: X+YAV1iHTh2ZMt30KG8C3g==
+X-CSE-MsgGUID: N8CKa8UCR8qKTVHjz9OJ2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,278,1751266800"; 
+   d="scan'208";a="179911950"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 19 Sep 2025 10:53:08 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzfI9-0004cx-0F;
+	Fri, 19 Sep 2025 17:53:05 +0000
+Date: Sat, 20 Sep 2025 01:52:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	linux1394-devel@lists.sourceforge.net
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] firewire: core; eliminate pick_me goto label
+Message-ID: <202509200157.ZsFKlqm4-lkp@intel.com>
+References: <20250918230857.127400-6-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: EJdDXW_se3ROOkvF0iFLPKNQ4JmJSXfb
-X-Authority-Analysis: v=2.4 cv=btZMBFai c=1 sm=1 tr=0 ts=68cd97e5 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=U2TDSMueiEXJ_JPGoVUA:9
- a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-GUID: EJdDXW_se3ROOkvF0iFLPKNQ4JmJSXfb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX6GBixvYQroG2
- X1lVxdkrRbhIk9u29fBGpcqfptD7muwE8xw+wO5ICBqE5yMbSQ/CaWjXSEe5+pwerxf+1khFUGz
- S2OQlktM/9ejMLWVLo27B27WIDmIPmzsR7MY0pf2NhfEi7jIwRcIi9kPsRvDF3OPFMI0RcegbTY
- A2QCaO37NJ29EmuU3PY96h2T1C4/OZ7McIuk2ToWK9hGNPS+HWTGMKnoGDT9ZItWwcGGODtvX34
- 6ZjBcLMPgYgXfAM8Z2KQuqDT0KJh0UWEIoknvG9lHz48h+5wG80QICY6BIP5IEjyXg5kclEbrab
- E2tuymL/QiVlRE3EQAkQbRj7shN1t7e832wOmj/tnhpYU24P7Kvd8EpQy9omF2lilbU+zqnMdhN
- 4zVjxvT+
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 malwarescore=0
- spamscore=0 adultscore=0 phishscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509160202
+In-Reply-To: <20250918230857.127400-6-o-takashi@sakamocchi.jp>
 
-System On Chip Control Processor (SOCCP) is a subsystem that can have
-battery management firmware running on it to support Type-C/PD and
-battery charging. SOCCP does not have multiple PDs and hence PDR is not
-supported. So, if the subsystem comes up/down, rpmsg driver would be
-probed or removed. Use that for notifying clients of pmic_glink for
-PDR events.
+Hi Takashi,
 
-Add support for battery management FW running on SOCCP by adding the
-"PMIC_RTR_SOCCP_APPS" channel name to the rpmsg_match list and
-updating notify_clients logic.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
----
-Changes since V1:
-  - Updated commit message
-  - Removed enum defintions and isntead using booleans
-  - Simplified logic by setting pg->pdr_state directly if pdr is not available
----
- drivers/soc/qcom/pmic_glink.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+[auto build test WARNING on e6d2338b6f3e522872f3a14fcc5e5de2f58bf23b]
 
-diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
-index c0a4be5df926..627f96ca322e 100644
---- a/drivers/soc/qcom/pmic_glink.c
-+++ b/drivers/soc/qcom/pmic_glink.c
-@@ -39,6 +39,7 @@ struct pmic_glink {
- 	struct mutex state_lock;
- 	unsigned int client_state;
- 	unsigned int pdr_state;
-+	bool pdr_available;
- 
- 	/* serializing clients list updates */
- 	spinlock_t client_lock;
-@@ -246,9 +247,12 @@ static int pmic_glink_rpmsg_probe(struct rpmsg_device *rpdev)
- 		return dev_err_probe(&rpdev->dev, -ENODEV, "no pmic_glink device to attach to\n");
- 
- 	dev_set_drvdata(&rpdev->dev, pg);
-+	pg->pdr_available = rpdev->id.driver_data;
- 
- 	guard(mutex)(&pg->state_lock);
- 	pg->ept = rpdev->ept;
-+	if (!pg->pdr_available)
-+		pg->pdr_state = SERVREG_SERVICE_STATE_UP;
- 	pmic_glink_state_notify_clients(pg);
- 
- 	return 0;
-@@ -265,11 +269,14 @@ static void pmic_glink_rpmsg_remove(struct rpmsg_device *rpdev)
- 
- 	guard(mutex)(&pg->state_lock);
- 	pg->ept = NULL;
-+	if (!pg->pdr_available)
-+		pg->pdr_state = SERVREG_SERVICE_STATE_DOWN;
- 	pmic_glink_state_notify_clients(pg);
- }
- 
- static const struct rpmsg_device_id pmic_glink_rpmsg_id_match[] = {
--	{ "PMIC_RTR_ADSP_APPS" },
-+	{.name = "PMIC_RTR_ADSP_APPS", .driver_data = true },
-+	{.name = "PMIC_RTR_SOCCP_APPS", .driver_data = false },
- 	{}
- };
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Takashi-Sakamoto/firewire-core-remove-useless-generation-check/20250919-115832
+base:   e6d2338b6f3e522872f3a14fcc5e5de2f58bf23b
+patch link:    https://lore.kernel.org/r/20250918230857.127400-6-o-takashi%40sakamocchi.jp
+patch subject: [PATCH 5/6] firewire: core; eliminate pick_me goto label
+config: x86_64-randconfig-001-20250919 (https://download.01.org/0day-ci/archive/20250920/202509200157.ZsFKlqm4-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200157.ZsFKlqm4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509200157.ZsFKlqm4-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/firewire/core-card.c:404:6: warning: variable 'stand_for_root' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     404 |         if (card->bm_generation != generation) {
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/firewire/core-card.c:445:7: note: uninitialized use occurs here
+     445 |         if (!stand_for_root) {
+         |              ^~~~~~~~~~~~~~
+   drivers/firewire/core-card.c:404:2: note: remove the 'if' if its condition is always true
+     404 |         if (card->bm_generation != generation) {
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/firewire/core-card.c:391:21: note: initialize the variable 'stand_for_root' to silence this warning
+     391 |         bool stand_for_root;
+         |                            ^
+         |                             = 0
+   1 warning generated.
+
+
+vim +404 drivers/firewire/core-card.c
+
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  380  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  381  static void bm_work(struct work_struct *work)
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  382  {
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  383  	static const char gap_count_table[] = {
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  384  		63, 5, 7, 8, 10, 13, 16, 18, 21, 24, 26, 29, 32, 35, 37, 40
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  385  	};
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  386  	struct fw_card *card __free(card_unref) = from_work(card, work, bm_work.work);
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  387  	struct fw_node *root_node __free(node_unref) = NULL;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  388  	int root_id, new_root_id, irm_id, local_id;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  389  	int expected_gap_count, generation;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  390  	bool do_reset = false;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  391  	bool stand_for_root;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  392  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  393  	if (card->local_node == NULL)
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  394  		return;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  395  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  396  	generation = card->generation;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  397  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  398  	root_node = fw_node_get(card->root_node);
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  399  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  400  	root_id  = root_node->node_id;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  401  	irm_id   = card->irm_node->node_id;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  402  	local_id = card->local_node->node_id;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  403  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19 @404  	if (card->bm_generation != generation) {
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  405  		enum bm_contention_outcome result = contend_for_bm(card);
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  406  
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  407  		switch (result) {
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  408  		case BM_CONTENTION_OUTCOME_WITHIN_WINDOW:
+379b870c28c6a6 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-15  409  			fw_schedule_bm_work(card, msecs_to_jiffies(125));
+25feb1a96e21ae drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  410  			return;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  411  		case BM_CONTENTION_OUTCOME_IRM_HAS_LINK_OFF:
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  412  			stand_for_root = true;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  413  			break;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  414  		case BM_CONTENTION_OUTCOME_IRM_COMPLIES_1394_1995_ONLY:
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  415  			stand_for_root = true;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  416  			break;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  417  		case BM_CONTENTION_OUTCOME_AT_NEW_GENERATION:
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  418  			// BM work has been rescheduled.
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  419  			return;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  420  		case BM_CONTENTION_OUTCOME_LOCAL_PROBLEM_AT_TRANSACTION:
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  421  			// Let's try again later and hope that the local problem has gone away by
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  422  			// then.
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  423  			fw_schedule_bm_work(card, msecs_to_jiffies(125));
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  424  			return;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  425  		case BM_CONTENTION_OUTCOME_IRM_IS_NOT_CAPABLE_FOR_IRM:
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  426  			// Let's do a bus reset and pick the local node as root, and thus, IRM.
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  427  			stand_for_root = true;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  428  			break;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  429  		case BM_CONTENTION_OUTCOME_IRM_HOLDS_ANOTHER_NODE_AS_BM:
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  430  			if (local_id == irm_id) {
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  431  				// Only acts as IRM.
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  432  				allocate_broadcast_channel(card, generation);
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  433  			}
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  434  			fallthrough;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  435  		case BM_CONTENTION_OUTCOME_IRM_HOLDS_LOCAL_NODE_AS_BM:
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  436  		default:
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  437  			card->bm_generation = generation;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  438  			stand_for_root = false;
+e309c29e1b26f4 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  439  			break;
+931c4834c8d1e1 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-01-26  440  		}
+ff94548bbb2edf drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  441  	}
+931c4834c8d1e1 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-01-26  442  
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  443  	// We're bus manager for this generation, so next step is to make sure we have an active
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  444  	// cycle master and do gap count optimization.
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  445  	if (!stand_for_root) {
+91bf158f8cdf6f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-13  446  		if (card->gap_count == GAP_COUNT_MISMATCHED) {
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  447  			// If self IDs have inconsistent gap counts, do a
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  448  			// bus reset ASAP. The config rom read might never
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  449  			// complete, so don't wait for it. However, still
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  450  			// send a PHY configuration packet prior to the
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  451  			// bus reset. The PHY configuration packet might
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  452  			// fail, but 1394-2008 8.4.5.2 explicitly permits
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  453  			// it in this case, so it should be safe to try.
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  454  			stand_for_root = true;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  455  
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  456  			// We must always send a bus reset if the gap count
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  457  			// is inconsistent, so bypass the 5-reset limit.
+7ed4380009e96d drivers/firewire/core-card.c Takashi Sakamoto  2024-02-07  458  			card->bm_retries = 0;
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  459  		} else {
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  460  			// Now investigate root node.
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  461  			struct fw_device *root_device = fw_node_get_device(root_node);
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  462  
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  463  			if (root_device == NULL) {
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  464  				// Either link_on is false, or we failed to read the
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  465  				// config rom.  In either case, pick another root.
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  466  				stand_for_root = true;
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  467  			} else {
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  468  				bool root_device_is_running =
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  469  					atomic_read(&root_device->state) == FW_DEVICE_RUNNING;
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  470  
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  471  				if (!root_device_is_running) {
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  472  					// If we haven't probed this device yet, bail out now
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  473  					// and let's try again once that's done.
+25feb1a96e21ae drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  474  					return;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  475  				} else if (!root_device->cmc) {
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  476  					// Current root has an active link layer and we
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  477  					// successfully read the config rom, but it's not
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  478  					// cycle master capable.
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  479  					stand_for_root = true;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  480  				}
+83db801ce8c644 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-01-26  481  			}
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  482  		}
+cae2d92cdcae3f drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  483  	}
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  484  
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  485  	if (stand_for_root) {
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  486  		new_root_id = local_id;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  487  	} else {
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  488  		// We will send out a force root packet for this node as part of the gap count
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  489  		// optimization on behalf of the node.
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  490  		new_root_id = root_id;
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  491  	}
+de5d138456fb29 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-19  492  
+24d40125f1f59a drivers/firewire/fw-card.c   Stefan Richter    2007-06-18  493  	/*
+24d40125f1f59a drivers/firewire/fw-card.c   Stefan Richter    2007-06-18  494  	 * Pick a gap count from 1394a table E-1.  The table doesn't cover
+24d40125f1f59a drivers/firewire/fw-card.c   Stefan Richter    2007-06-18  495  	 * the typically much larger 1394b beta repeater delays though.
+24d40125f1f59a drivers/firewire/fw-card.c   Stefan Richter    2007-06-18  496  	 */
+24d40125f1f59a drivers/firewire/fw-card.c   Stefan Richter    2007-06-18  497  	if (!card->beta_repeaters_present &&
+15803478fdea96 drivers/firewire/fw-card.c   Stefan Richter    2008-02-24  498  	    root_node->max_hops < ARRAY_SIZE(gap_count_table))
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  499  		expected_gap_count = gap_count_table[root_node->max_hops];
+83db801ce8c644 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-01-26  500  	else
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  501  		expected_gap_count = 63;
+83db801ce8c644 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-01-26  502  
+c781c06d119d04 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-05-07  503  	/*
+25b1c3d8889f98 drivers/firewire/fw-card.c   Stefan Richter    2008-03-24  504  	 * Finally, figure out if we should do a reset or not.  If we have
+25b1c3d8889f98 drivers/firewire/fw-card.c   Stefan Richter    2008-03-24  505  	 * done less than 5 resets with the same physical topology and we
+c781c06d119d04 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-05-07  506  	 * have either a new root or a new gap count setting, let's do it.
+c781c06d119d04 drivers/firewire/fw-card.c   Kristian Høgsberg 2007-05-07  507  	 */
+19a15b937b2663 drivers/firewire/fw-card.c   Kristian Høgsberg 2006-12-19  508  
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  509  	if (card->bm_retries++ < 5 && (card->gap_count != expected_gap_count || new_root_id != root_id))
+25b1c3d8889f98 drivers/firewire/fw-card.c   Stefan Richter    2008-03-24  510  		do_reset = true;
+19a15b937b2663 drivers/firewire/fw-card.c   Kristian Høgsberg 2006-12-19  511  
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  512  	if (do_reset) {
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  513  		int card_gap_count = card->gap_count;
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  514  
+26b4950de174bc drivers/firewire/core-card.c Stefan Richter    2012-02-18  515  		fw_notice(card, "phy config: new root=%x, gap_count=%d\n",
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  516  			  new_root_id, expected_gap_count);
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  517  		fw_send_phy_config(card, new_root_id, generation, expected_gap_count);
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  518  		/*
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  519  		 * Where possible, use a short bus reset to minimize
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  520  		 * disruption to isochronous transfers. But in the event
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  521  		 * of a gap count inconsistency, use a long bus reset.
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  522  		 *
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  523  		 * As noted in 1394a 8.4.6.2, nodes on a mixed 1394/1394a bus
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  524  		 * may set different gap counts after a bus reset. On a mixed
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  525  		 * 1394/1394a bus, a short bus reset can get doubled. Some
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  526  		 * nodes may treat the double reset as one bus reset and others
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  527  		 * may treat it as two, causing a gap count inconsistency
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  528  		 * again. Using a long bus reset prevents this.
+d0b06dc48fb159 drivers/firewire/core-card.c Takashi Sakamoto  2024-02-29  529  		 */
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  530  		reset_bus(card, card_gap_count != 0);
+cbae787c0f288c drivers/firewire/fw-card.c   Stefan Richter    2009-03-10  531  		/* Will allocate broadcast channel after the reset. */
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  532  	} else {
+a4bac55d99d379 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  533  		struct fw_device *root_device = fw_node_get_device(root_node);
+a4bac55d99d379 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  534  
+a4bac55d99d379 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  535  		if (root_device && root_device->cmc) {
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  536  			// Make sure that the cycle master sends cycle start packets.
+b70a5f33381f78 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  537  			__be32 data = cpu_to_be32(CSR_STATE_BIT_CMSTR);
+b70a5f33381f78 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  538  			int rcode = fw_run_transaction(card, TCODE_WRITE_QUADLET_REQUEST,
+c374ab424249b6 drivers/firewire/core-card.c Clemens Ladisch   2010-06-10  539  					root_id, generation, SCODE_100,
+c374ab424249b6 drivers/firewire/core-card.c Clemens Ladisch   2010-06-10  540  					CSR_REGISTER_BASE + CSR_STATE_SET,
+b70a5f33381f78 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  541  					&data, sizeof(data));
+c374ab424249b6 drivers/firewire/core-card.c Clemens Ladisch   2010-06-10  542  			if (rcode == RCODE_GENERATION)
+25feb1a96e21ae drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  543  				return;
+c374ab424249b6 drivers/firewire/core-card.c Clemens Ladisch   2010-06-10  544  		}
+c374ab424249b6 drivers/firewire/core-card.c Clemens Ladisch   2010-06-10  545  
+cbae787c0f288c drivers/firewire/fw-card.c   Stefan Richter    2009-03-10  546  		if (local_id == irm_id)
+cbae787c0f288c drivers/firewire/fw-card.c   Stefan Richter    2009-03-10  547  			allocate_broadcast_channel(card, generation);
+19a15b937b2663 drivers/firewire/fw-card.c   Kristian Høgsberg 2006-12-19  548  	}
+8c2d2fcd6b7934 drivers/firewire/core-card.c Takashi Sakamoto  2025-09-08  549  }
+19a15b937b2663 drivers/firewire/fw-card.c   Kristian Høgsberg 2006-12-19  550  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
