@@ -1,110 +1,160 @@
-Return-Path: <linux-kernel+bounces-824141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B78EFB8831F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E7B88322
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFA31C86CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:38:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB9D522B36
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F072D1303;
-	Fri, 19 Sep 2025 07:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="B6nB/pXd"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1A22F83A2;
+	Fri, 19 Sep 2025 07:33:33 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C963525522B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381862D3ED7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267237; cv=none; b=Hnhv0c0gmr+bvhuHepIAOuFJaUgaZLQRxrJi9QJGNQB+3EqhbIrj5XCUnUgEFZjthgo/LXnexe1o/+jxtC/eYvsdAzmWHDJEVDa3tPmgGFp71SMyt9EXRSFe8c4oVjMzaMHYLwfThaVfbovc0BcCay1bImryvZ2z5DVsg7hItyI=
+	t=1758267213; cv=none; b=ryony3Sh1tscZ5x1uN5f/H1r9pJ9Z3kkJQNdWz6Tqkf/9wFlXGqdb94S94lddp251bGQUivsjBeZQDOEx+gzR+I7olgm7rXUJ8u2AttPAgohwHd+/+ZQ255KGHtSuMSd4ply+HlqVkz5nGQPcjNPfA0WVRQFLgZV/8+oSMg5gaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267237; c=relaxed/simple;
-	bh=iOGGWyFDBu6SA32339IqwHVfXtx4/MbHW4eTf/SxnyU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWkSkNjFS6Slo1sTys0lPXnZuSMwkXYS1UwW0VTsmEjN6QaMn8J1PfHdljKowlSf9ylUM3CIVE1eY3P2rUUkt0ASM0Sy3C5JFMXdERNvFFQxVlGPh0T/kJhPGveMCfqtxbcGpurCV2tiHGEkwoVHmA/cKT2c2B1NVzxIH2s4eus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=B6nB/pXd; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=U91o9Zqc2PJ90qyrV5arZCIif0SuJMRWy4xQnzTZJBk=; b=B6nB/pXdvivQCTb2VWrlgDdWOr
-	eK3tGN1CEn5pQOeMazMIf1lcro9ETZT43ZiswQmrCveEl4DcTg71ZX9vUUZRxoGnbqVcfejzUiQrt
-	Ffb1LNnixJZOhBjw3j8K/Azf8j92g+FHUXZFfXn0qHgiVMPXW8R82qqzs3R6QNco7b7mNnqceoSKe
-	49hT6gQHwleSnd0VSxnWTSXbgix3zN8zUfUtOhaBy6gE1OdT9SWX7bzOKGOL1PHXDlEu9t3Q/OixI
-	B9HWz3B1NBsEqvzQRo/pqtoyTV8j1xHu3paNrMDlm0NgsWQ6lGaGX+3DQ9WICoOJPs+bGyI3/L3Ar
-	PJeB1vXQ==;
-Received: from [84.66.36.92] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uzVcV-00Dzey-JN; Fri, 19 Sep 2025 09:33:27 +0200
-Message-ID: <ad1359c3-86ae-4ed1-ac60-902daa2331a7@igalia.com>
-Date: Fri, 19 Sep 2025 08:33:26 +0100
+	s=arc-20240116; t=1758267213; c=relaxed/simple;
+	bh=+2TJblT6LHI57S9AzaMiROC9Kq8+LmktTXhZRPyPaVc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JK2tttI2wFCKBqYejJXKsXiWy/p8U4ZZOv6cRQOsCrejOf5eD/4OK1rsTrG5Bf5g9mVmGMtiWi+Ji8ow0xS4fWEt8mVFCNwAqTIBrGDFmg+dDKXABS+ysVFNXuaoXFVAlb6mKlZCkcSyqARvw5LDjR3mUWE6dDPaYfSDlEJkfqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4248616fcabso4287835ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:33:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758267210; x=1758872010;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iOLMQZh+p8WZQSf5C0CCnZHd4Mr5OtFWTXlqTXn35ho=;
+        b=PVp4BjzS8eEVKksDbwXlJeCkylXrtufIXKpXCbF21brI0JRkClS88qvGQ882WiXER4
+         CDWuMVRbENHX98jp+eUwA/BrAaI70CjFX5mfN0qOUK9eRnbdDawVrPHt7aVBuQKr3Rp0
+         rppxrMKXHfAf664X4U5+Y+kpx1OgNnwTq0ApDhdBQgwF1VQL+SJotoKZN0k3139RFoqA
+         w9aB++ZzT7b8jC+C9Wq3jeGCXlErue1VZW2rIetv96Wkvls/7HvBT6ffP4NJez1LgNzr
+         cfxf2i3Wsobgx1i2hU/i06wU4VlBDZ6u6o3n40/XFZEcVkwsAKBcWSHJbzKCCSW5x/Ic
+         C1yw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5eAyXWVVMvOIFTA3KQ2wLW4tvbd3Idr3gjvmouiy77Kwyqj0AyFOKlNtE/YqAqYPSKr5oO8DQhw8QTLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsyV10cNbJBkAd1QT2MjEJG7DrlpUcZ8KzjPzBeTxclQYEjFH0
+	Fj12O0itvIoiOPBAnxMiad+Vo3Vs3XC9+uJ0vIHfid5zOFQZZSxc7IwkDQ5r2qacOAjm8PwvEW6
+	EnbNQljKf4D7gEJbEs+qxOHmnYxq7K081XqqDPP8+1XBd15H+tafBvHr+9oQ=
+X-Google-Smtp-Source: AGHT+IGSIL56u0FooE8IiACmPgSgu3KOpk6TzvSGcyHoh57v+4rqxqX50T0Vun0q8H2sFhjYMKpv5vP99iAaB4z28VfmYrUMEs3c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/sched/tests: Remove relict of done_list
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250919064450.147176-2-phasta@kernel.org>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20250919064450.147176-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:16c7:b0:424:388:6ced with SMTP id
+ e9e14a558f8ab-4248192733bmr40617935ab.14.1758267210259; Fri, 19 Sep 2025
+ 00:33:30 -0700 (PDT)
+Date: Fri, 19 Sep 2025 00:33:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cd074a.a00a0220.37dadf.0017.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in dev_shutdown (7)
+From: syzbot <syzbot+c9ecf60a8adb7629821e@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a4d43c1f17b9 Merge 6.17-rc6 into usb-next
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a0bb12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64a9fba56fdb0aef
+dashboard link: https://syzkaller.appspot.com/bug?extid=c9ecf60a8adb7629821e
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6eefb11d9e81/disk-a4d43c1f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6232f2c26d00/vmlinux-a4d43c1f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8d192b0d2295/bzImage-a4d43c1f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c9ecf60a8adb7629821e@syzkaller.appspotmail.com
+
+asix 3-1:7.204 eth1: unregister 'asix' usb-dummy_hcd.2-1, ASIX AX88178 USB 2.0 Ethernet
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 12317 at net/sched/sch_generic.c:1500 dev_shutdown+0x3b6/0x430 net/sched/sch_generic.c:1500
+Modules linked in:
+CPU: 1 UID: 0 PID: 12317 Comm: kworker/1:9 Not tainted syzkaller #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: usb_hub_wq hub_event
+
+RIP: 0010:dev_shutdown+0x3b6/0x430 net/sched/sch_generic.c:1500
+Code: 48 c7 c2 60 a6 41 88 be a3 00 00 00 48 c7 c7 20 ab 41 88 c6 05 36 08 4e 04 01 e8 85 71 18 fb e9 8f fd ff ff e8 7b 42 3c fb 90 <0f> 0b 90 e9 5f fe ff ff 4c 89 f7 e8 8a 74 9a fb e9 77 fc ff ff 4c
+RSP: 0018:ffffc90013087498 EFLAGS: 00010283
+RAX: 000000000002f429 RBX: ffff8881355c8488 RCX: ffffc9001024c000
+RDX: 0000000000100000 RSI: ffffffff8641b875 RDI: ffff8881355c8568
+RBP: ffff8881355c8000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: ffff8881355c8438
+R13: ffffed1026ab9003 R14: ffff8881355c8480 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff888268ff6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c37e36c CR3: 00000000090a4000 CR4: 00000000003506f0
+Call Trace:
+ <TASK>
+ unregister_netdevice_many_notify+0xcb6/0x2310 net/core/dev.c:12154
+ unregister_netdevice_many net/core/dev.c:12229 [inline]
+ unregister_netdevice_queue+0x305/0x3f0 net/core/dev.c:12073
+ unregister_netdevice include/linux/netdevice.h:3385 [inline]
+ unregister_netdev+0x1f/0x60 net/core/dev.c:12247
+ usbnet_disconnect+0x109/0x500 drivers/net/usb/usbnet.c:1658
+ usb_unbind_interface+0x1da/0x9e0 drivers/usb/core/driver.c:458
+ device_remove drivers/base/dd.c:571 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:563
+ __device_release_driver drivers/base/dd.c:1274 [inline]
+ device_release_driver_internal+0x44b/0x620 drivers/base/dd.c:1297
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
+ device_del+0x396/0x9f0 drivers/base/core.c:3878
+ usb_disable_device+0x355/0x7d0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x9c0 drivers/usb/core/hub.c:2344
+ hub_port_connect drivers/usb/core/hub.c:5406 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5706 [inline]
+ port_event drivers/usb/core/hub.c:5870 [inline]
+ hub_event+0x1aa2/0x5060 drivers/usb/core/hub.c:5952
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c5/0x780 kernel/kthread.c:463
+ ret_from_fork+0x56d/0x700 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
-On 19/09/2025 07:44, Philipp Stanner wrote:
-> A rework of the scheduler unit tests removed the done_list. That list is
-> still mentioned in the mock test header.
-> 
-> Remove that relict.
-> 
-> Fixes: 4576de9b7977 ("drm/sched/tests: Implement cancel_job() callback")
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->   drivers/gpu/drm/scheduler/tests/sched_tests.h | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/tests/sched_tests.h b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> index 7f31d35780cc..553d45abd057 100644
-> --- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> +++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-> @@ -31,9 +31,8 @@
->    *
->    * @base: DRM scheduler base class
->    * @test: Backpointer to owning the kunit test case
-> - * @lock: Lock to protect the simulated @hw_timeline, @job_list and @done_list
-> + * @lock: Lock to protect the simulated @hw_timeline and @job_list
->    * @job_list: List of jobs submitted to the mock GPU
-> - * @done_list: List of jobs completed by the mock GPU
->    * @hw_timeline: Simulated hardware timeline has a @context, @next_seqno and
->    *		 @cur_seqno for implementing a struct dma_fence signaling the
->    *		 simulated job completion.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Regards,
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Tvrtko
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
