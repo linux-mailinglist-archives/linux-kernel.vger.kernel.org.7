@@ -1,158 +1,261 @@
-Return-Path: <linux-kernel+bounces-824978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C51BB8A9CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:42:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05363B8A9D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED2CA811C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81226189A939
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E732220F34;
-	Fri, 19 Sep 2025 16:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7521F321437;
+	Fri, 19 Sep 2025 16:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BuDc0AtF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCkb7KXG"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB7E26B75C
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E81A927
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758300091; cv=none; b=XfjYJ1Y/XcwqsVUIHPyMno2wradob6FCex3uQQkhXaKUU7p2oHm3RqjyUkqUz/by9R+5Ccwk2t/j0pTrKNQ3uON20dPoneJtsdpgYvwCbwJmXkW3icOuJbscgnSdy9hQA2ks6dFdcI7FPPxbv5IKvR2dG/NEk5HX77OKEDP2Xv0=
+	t=1758300121; cv=none; b=P1WFdoOxHnod9x7sP2STwPAl70esBSRIHltr3m8ByXrxnlIXNBCxpSP36qrRBwaB+W0/oG/89XzuXPkHUBLPmlvBsQ+XjHAFlzzCEFOWAG8uQMBOrWF7fLNy7oE9b7O0o6Z3zv8Pg5FZODn6fpDRY7in/Gq9wPwuWlzKqDgsbao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758300091; c=relaxed/simple;
-	bh=rVG1xQvibf3lEN+xk9PEqhHrOBOZ5Fo6RcfcMfTCyW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J4MdB3Oq6aSOOhupedRMKfLR5woj0yNIbX6jvlAm6DYGMgo+WyxUIKGBOsDrnKSUHLOu/zm65QTu3rBmg5TllENFj6BNTlKFcSJu/OB+QOwrtrS/Yl8wKmBH+85drpyMwuYCUB0W6zFF1W+O1e9oHuQgnoo0TeGK3eZkPcs0QNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BuDc0AtF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758300088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMnr0JjqCxt7L18nxDYBEj0PJo2Ui1h2PBmCBdsosf8=;
-	b=BuDc0AtFp7r82FFlO8KIoi03Z4nOhwUecS2bDworll8OOY7wGtO+KDTOUHvsOhJVSKrlXx
-	sF75Nwl6p/xh3MJLFeT0whqagyNzwCE2oGpcwjIIgH94taO7SJqvKvSyYyAkgY0n2BQzK9
-	LR6E9j8c7jvFbVCHHfQw9FT3ZNZe8fo=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-pt5BYiItN06uA68UpVl8CQ-1; Fri, 19 Sep 2025 12:41:26 -0400
-X-MC-Unique: pt5BYiItN06uA68UpVl8CQ-1
-X-Mimecast-MFC-AGG-ID: pt5BYiItN06uA68UpVl8CQ_1758300086
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4198fcc4a80so4385735ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:41:26 -0700 (PDT)
+	s=arc-20240116; t=1758300121; c=relaxed/simple;
+	bh=zdQAym0+SExRlmqgwYNy4yL7xgSdDP9l1DnQsZE82X8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sxo1+VLfRdoZpTaQM8fUg3JEsNNuKXpw0SrBoULQ4BgePBDMdtdOVJ1zTaeae0cl9qL28l+7jQ8vSRN84Rdm6c2FJHlRNMZlmtHiFdpRWpctqBLIrfQtipbRiTvM9mIyF6gNOR2uow6nkTeTxbebioheqVH+Te8LYc62jWF32kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCkb7KXG; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b256c8ca246so168255166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758300118; x=1758904918; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JsnyF0VHRrVolM4i341slmIcokZeOpzDL2ggCkMkYCI=;
+        b=hCkb7KXGAWuBGWopgQb97ImEBTB6Lxpp7RxdwNmeTCHWN98bCv/RN+3rxEIVGmuQJr
+         SHt3Qr16Yd7z9YKmaRWGOfFmJXeqooxHhlHKic3KvXwiMTiTh1Y3yMERdT167b9awMfS
+         gOIDX3FPbNP117YU/j3NYm+76EezgJHfIOM9W2XN7CN4D1OUDFfA4SMgrJWnbMZJLFIg
+         JGPQ5D3lkuoH7Lu52ga6C283RF/515ZQaUBPzRmMSjvnW/tgwA1mjJfinJF+zPF5WyDI
+         hWUO0woqcJkaTUFFspIy2uVY7CqoinqJHG61gPiQwcL9tYuNCJ+uBqncUbpkIi0YhEJA
+         x7rA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758300086; x=1758904886;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758300118; x=1758904918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wMnr0JjqCxt7L18nxDYBEj0PJo2Ui1h2PBmCBdsosf8=;
-        b=a2xhM7YnEpYdIzSABvU5Xpu8ZO8h1+aI4UAWyiHJbavuAovNi42oBx6ZcD5qy/+pdG
-         pSZO710Di2WEczL510Q+M+v2wCRTrNDPboUAamzkRI4tMNDEaJXU+Gz+9qFzQAS0SfHY
-         9G0vTtOzcuBC4+ToWP1c4IOly/4UsNNTtnfltUFDd1HfFfleVyAKu1AHWMR9H7L73FhS
-         Kn1ZRgogr2vu+t3OXx4vtfGedI1JgR2L7EWgODsBA1/aEHbyec/SVoRKiTPd4Znwv5qN
-         nUjPHx7lBw5AL13ACGPjKf9oGbwwHmzbeZdRGiXjbiM0TqaiKaMPtbPOoDV4izxJEfYA
-         wtnw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Ib+Y7JrzCJwlncBBDA3iwkg0N8kgjFWTBq+GROcJS1yzRMPkCRNFZeR8NzZvxnJgA5lAx5VMSbwTi2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5/YOF++UhjLUodbjW4WKT1hqltjnkWvsZNcHr7LQgbE5Sv/GH
-	9G18XpxFX/2CKnbvFbMXNgH/WGnZQWX+k7Y9eYro0G2GDKcZ00BKufXKRNxWL40nAW3TXFar7hK
-	y8ijKOCfV3KGP1xGDPfcq/Q2/uiGF9FKcbsDdlepAFcA3+OJJGibh6I+9xJ14J/57pA==
-X-Gm-Gg: ASbGncuu58Iwwroc3iHUg+uPN4282LC4jfgw7VpJSK2JIt4q0CUAH0QlYaZjvT7Uf+g
-	Mb14B8oLeuY0A2EDJZgcIVBzwJ7gj9RVopzUBPYNqwh39VGPmZV29wfwtJ/+PB/hbqBSFDypdRT
-	jI0imfCfx+tSo3wnLWYZ77n8pA1KFZhUkgeV4D3DvgdQpYf3x1MiHAJETxVONehLDe7a0RDKKbr
-	JMM5v+2opggIcSEGIVTAzPSxM797VYtAFyAgtLb7qKa3VNygNzSPfaChAlJpO7iPipeoAziz44/
-	Gq3P2fy8h+cnmxvG9auIwep9rIHv654tC9xi9NykdM0=
-X-Received: by 2002:a05:6e02:3a04:b0:424:1774:6908 with SMTP id e9e14a558f8ab-42481893889mr23313535ab.0.1758300086027;
-        Fri, 19 Sep 2025 09:41:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEkGTze3pso8N67snGJkgIyPitGSBbhChUaN8MICDAEcvJ0w7oy/daTxW1tBJu43MkybRhvg==
-X-Received: by 2002:a05:6e02:3a04:b0:424:1774:6908 with SMTP id e9e14a558f8ab-42481893889mr23313395ab.0.1758300085571;
-        Fri, 19 Sep 2025 09:41:25 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4244b2bafcfsm23752025ab.47.2025.09.19.09.41.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 09:41:24 -0700 (PDT)
-Date: Fri, 19 Sep 2025 10:41:23 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Ajay Garg <ajaygargnsit@gmail.com>
-Cc: iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: How are iommu-mappings set up in guest-OS for
- dma_alloc_coherent
-Message-ID: <20250919104123.7c6ba069.alex.williamson@redhat.com>
-In-Reply-To: <CAHP4M8W+uMHkzcx-fHJ0NxYf4hrkdFBQTGWwax5wHLa0Qf37Nw@mail.gmail.com>
-References: <CAHP4M8W+uMHkzcx-fHJ0NxYf4hrkdFBQTGWwax5wHLa0Qf37Nw@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=JsnyF0VHRrVolM4i341slmIcokZeOpzDL2ggCkMkYCI=;
+        b=db/u4lHSbmafyiFN9P5FQCkaOLr6DsrI6IdWkEPxZYat9KLjEie3artq7UNyEnl0Ev
+         gz+6JCFl6XpAFfHppllevRqM99ERkKQGGWb48+NJGSR2MZQq5aqGxzAk5XHR0X72fc+v
+         VKYDEv5UMj7Op127WKmCKuJHQut086bxv5k6oX4q8Y7B/dJQHFYq1ZebeeyHX09zfy5C
+         IT4R+fnU4qNBQITAPaQV6511h4wDtFwp4akXR1tcytrYCryoSRKBIgam0lsDeDVkrS8O
+         3286VLAHMUp42gYnaJwuHf/T2S2TW6lLydk1tM9gWaIpPe7+4zKABdK7JEgJHvj3wH79
+         gwnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfqcUCKiQo3HObqtszNyj7937q4+rYzcaPszk8Rdxl1rHVmRgniXultb+Dmq7ElK+95dOSzVz56adwKYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy519nWg1B+wdguHme25rffyCose4baQtyvCCJdZ+4YzyKA6iaI
+	sr+900iQT3jf8Tk8iV2BWKPRTwwydUwYWRX/9Sw5vB8ztrcui9zifc4jv0b6KsDffHKN3IpUlsM
+	EIV8HVYJKi41+fJL8aGffzMRUAyO66RA=
+X-Gm-Gg: ASbGncsZ8GSu0eRVvKCn253DJdmdyYnLtSQHRF6WhI/LmSBCkmYtE73mowmfFfwInQ5
+	jPZwQaZDKNlYLLnDG405zwaDORRspqUz+y95u2t1MiCkzX01Uf0Pqk5b+4so5s5PH/RlEv34G4C
+	wEu/UIiiEPBcLLllm+US+cpjn/u3J7SLDxsyPMxna0keGJV8Wp6HibmxMcwSiLgnT7tY5O+wQAs
+	VblLv+72DOgOv1lWSJUcFocxgMuNZ7w5RoydGI=
+X-Google-Smtp-Source: AGHT+IFyj2IGGQ0KzXofzY2LkTHDPpUBMzfl6SZmFJEGyJy+I4TCxmC8lvKEB78M6wg0X5bfvGuqzxh+MZbKrbtE6Ps=
+X-Received: by 2002:a17:906:dc8f:b0:b1d:285d:1869 with SMTP id
+ a640c23a62f3a-b24e23d0f97mr430424966b.0.1758300117737; Fri, 19 Sep 2025
+ 09:41:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250917124404.2207918-1-max.kellermann@ionos.com>
+ <aMs7WYubsgGrcSXB@dread.disaster.area> <CAGudoHHb38eeqPdwjBpkweEwsa6_DTvdrXr2jYmcJ7h2EpMyQg@mail.gmail.com>
+ <CAGudoHEpd++aMp8zcquh6SwAAT+2uKOhHcWRcBEyC6DRS73osA@mail.gmail.com> <aMtlknQpc3NRNSfH@dread.disaster.area>
+In-Reply-To: <aMtlknQpc3NRNSfH@dread.disaster.area>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Fri, 19 Sep 2025 18:41:44 +0200
+X-Gm-Features: AS18NWD8fqrzGhGXWcP16ccmNdsGGV9N_tNdGuH20QcSDTikssGdahdEavd5hZU
+Message-ID: <CAGudoHHtSpoqami61KxAJBsk77G0wCTSy-zvNH9W8Pb+S3PoQA@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: Dave Chinner <david@fromorbit.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Max Kellermann <max.kellermann@ionos.com>, 
+	slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
+	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 18 Sep 2025 23:24:19 +0530
-Ajay Garg <ajaygargnsit@gmail.com> wrote:
+On Thu, Sep 18, 2025 at 3:51=E2=80=AFAM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Thu, Sep 18, 2025 at 02:04:52AM +0200, Mateusz Guzik wrote:
+> > On Thu, Sep 18, 2025 at 1:08=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.co=
+m> wrote:
+> > >
+> > > On Thu, Sep 18, 2025 at 12:51=E2=80=AFAM Dave Chinner <david@fromorbi=
+t.com> wrote:
+> > > > - wait for Josef to finish his inode refcount rework patchset that
+> > > >   gets rid of this whole "writeback doesn't hold an inode reference=
+"
+> > > >   problem that is the root cause of this the deadlock.
+> > > >
+> > > > All that adding a whacky async iput work around does right now is
+> > > > make it harder for Josef to land the patchset that makes this
+> > > > problem go away entirely....
+> > > >
+> > >
+> > > Per Max this is a problem present on older kernels as well, something
+> > > of this sort is needed to cover it regardless of what happens in
+> > > mainline.
+> > >
+> > > As for mainline, I don't believe Josef's patchset addresses the probl=
+em.
+> > >
+> > > The newly added refcount now taken by writeback et al only gates the
+> > > inode getting freed, it does not gate almost any of iput/evict
+> > > processing. As in with the patchset writeback does not hold a real
+> > > reference.
+> > >
+> > > So ceph can still iput from writeback and find itself waiting in
+> > > inode_wait_for_writeback, unless the filesystem can be converted to
+> > > use the weaker refcounts and iobj_put instead (but that's not
+> > > something I would be betting on).
+> >
+> > To further elaborate, an extra count which only gates the struct being
+> > freed has limited usefulness. Notably it does not help filesystems
+> > which need the inode to be valid for use the entire time as evict() is
+> > only stalled *after* ->evict_inode(), which might have destroyed the
+> > vital parts.
+>
+> Not sure I follow you - ->evict_inode() comes after waiting for
+> writeback and other VFS operations to complete. There's nothing in
+> the VFS eviction code that actually blocks after ->evict_inode() is
+> called.
+>
 
-> Hi everyone.
-> 
-> Let's say we have a following setup :
-> 
-> i)
-> x86_64 host-os, booted up with iommu enabled and pass-through mode.
-> 
-> ii)
-> x86_64 guest-os, booted up using vfio+qemu+kvm and a pci-device attached to it.
-> 
-> iii)
-> A guest-os-device-driver calls "dma_alloc_coherent", after which the
-> returned dma-address / iova is programmed to the pci-device's
-> mmio-register.
-> 
-> 
-> In the above case, how are the IOMMU mappings set up during the
-> guest-os-device-driver's "dma_alloc_coherent" call?
-> Does :
-> 
-> a)
-> The VMM / KVM intercept the "dma_alloc_coherent" call, and use the
-> host-iommu to set up things?
-> 
-> OR
-> 
-> b)
-> There is no interception from VMM / KVM, but rather the guest-OS
-> itself has a view of the IOMMU (through the regular ACPI tables
-> populated during guest boot up)?
-> 
-> OR
-> 
-> c)
-> Anything else under the hood?
-> 
-> 
-> Will be grateful for clearing the haze.
+I'm stating that on the stock kernel writeback is indeed guaranteed to
+finish first.
 
+My general note there was that the refcount patchset only gates
+freeing, consequently reducing its usefulness.
 
-Depends on details not revealed about the VM configuration.
+> > For example it
+> > may be ceph needs the full reference in writeback,
+>
+> IMO, we should always hold a full reference in writeback, because
+> doing so addresses the underlying eviction vs writeback race
+> condition that exists. i.e. we currently handle the lack of
+> reference counts in writeback by blocking on I_SYNC in eviction to
+> prevent a UAF.
+>
+> If we have an active reference for writeback in the first
+> place then eviction doesn't need to block on writeback because, by
+> definition, we cannot be performing writeback and eviction at the
+> same time....
+>
 
-If the VM is configured without a vIOMMU or the vIOMMU is inactive in
-the guest, all of the guest physical memory is pinned and mapped
-through the physical IOMMU when the guest is started.  Nothing happens
-regarding the IOMMU when a coherent mapping is created in the guest,
-it's already setup.
+I agree with the benefit
 
-If there is an active vIOMMU in the VM, then the guest act of
-programming the IOMMU results in mappings through to the host IOMMU.
-This is a result of the IOMMU emulation in the VM.  Thanks,
+The problem here is that on the stock kernel writeback is guaranteed
+to never invoke ->evict_inode et al.
 
-Alex
+Just allowing it to hold the ->i_count ref would mean there would be
+corner cases where it has to go through with the actual iput(), which
+imo would constitute a regression.
 
+If iput_async() as a first class citizen showed up, I would be all for
+holding the real ref around writeback.
+
+Looks like we agree something of the sort should be implemented, I
+repeat however that the refcount patchset is imo not the way to get
+there.
+
+> > then the new ref is
+> > of no use here. But for the sake of argument let's say ceph will get
+> > away with the ligher ref instead. Even then this is on the clock for a
+> > different filesystem to show up which can't do it and needs an async
+> > iput and then its developers are looking at "whacky work arounds".
+>
+> Right, that's because we haven't addressed the underlying problem.
+>
+> That is, we need to hold the right references at the VFS level such
+> that filesystems can't drop the last reference to the inode whilst
+> high level VFS inode operations (such as writeback) are in progress
+> on that inode.
+>
+> Done properly, eviction can then be done asynchronously for all
+> inodes because we've guaranteed there are no active or
+> pending active users of the inode....
+>
+> .... and at that point, all the custom async inode garbage
+> collection stuff that XFS does goes away because it is native
+> VFS functionality :)
+>
+
+I completely agree here, I just claim the patchset by Josef does not
+move the kernel in that direction.
+
+> > The actual generic async iput is the actual async iput, not an
+> > arbitrary chunk of it after the inode is partway through processing.
+> > But then any form of extra refcounting is of no significance.
+> >
+> > To that end a non-whacky mechanism to defer iput would be most
+> > welcome, presumably provided by the vfs layer itself. Per remarks by
+> > Al elsewhere, care needs to be taken to make sure all inodes are
+> > sorted out before the super block gets destroyed.
+>
+> Yes, but first we have to get the reference counting right, such
+> that inode eviction only occurs after we've guaranteed there are no
+> other active users of the inode. Page cache residency and dirty
+> inodes are still in active use, we should account for them that way.
+>
+
+I don't have a strong opinion here. If anything I find it suspicious
+that code invoked by writeback can end up issuing iput() on something,
+but that's not something I'm going to die on a hill for.
+
+Also note the refs as proposed by Josef don't fit the idea as they
+allow for majority of iput() to progress.
+
+I claim there are issues concerning flag management (I_WILL_FREE et
+al) which would best sorted out before changes in refcount management
+are implemented (of whatever variety).
+
+> > This suggests expanding the super_block to track all of the deferred
+> > iputs and drain them early in sb destruction. The current struct inode
+> > on LP64 has 2 * 4 byte holes and llist linkage is only 8 bytes, so
+> > this can be added without growing the struct above stock kernel.
+>
+> Right, we already do this lockless llist based async garbage
+> collection under ->destroy_inode with XFS.
+>
+> > I would argue it would be good if the work could be deffered to
+> > task_work if possible (fput-style). Waiting for these should be easy
+> > enough, but arguably the thread which is supposed to get to them can
+> > be stalled elsewhere indefinitely, so perhaps this bit is a no-go.
+>
+> If the reference counting is right, nothing expect a new lookup on
+> the inode should stall on an inode queued for eviction...
+>
+
+The remark about getting stuck did not concern anything
+inode-specific. Rather, any thread can get stuck indefinitely in
+certain parts of the kernel. Should that happen after it has iput to
+process in task_work, that could be a problem for the mechanism.
+
+Anyhow, the *pressing* issue right now is sorting out the deadlock for
+ceph including for kernels older than mainline. And for that I don't
+think the patch as proposed by Max is objectionable. (granted though,
+I thought the vfs layer would wait for all inodes during unmount
+instead of barfing, but ceph is draining the queue the patch postponed
+the work to so it should be fine. extra points for the fact that ceph
+already used to have iput_async).
 
