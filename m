@@ -1,222 +1,304 @@
-Return-Path: <linux-kernel+bounces-824398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF36B89135
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:38:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6884DB891E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA901C23889
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC27A3AD207
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2707307AFB;
-	Fri, 19 Sep 2025 10:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2BD3081A4;
+	Fri, 19 Sep 2025 10:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="X6ohNuRn"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011008.outbound.protection.outlook.com [52.101.52.8])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lZGA1Zzy"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716592EA47E;
-	Fri, 19 Sep 2025 10:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758278293; cv=fail; b=qo69wwEzmspfyknNKeSawKlimqJn8AL0jnEDgWk2K8Dxa31IczMB7q0tQFOwCu6PPCnt/l3EDawKo0u3FjU2pzDauFdqls7qVzTUrUvHluWKBtsD6q2UJGstdcTiQu2eTUIic/KMPAnG/GkScMZtFFSQrJJnBaZhPkF2vDXneik=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758278293; c=relaxed/simple;
-	bh=DrF2pZs4BRNCPUXOJ8cfWKBTMZizjVbM2udTdiVfk/c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CNyNIerDSTCyjgogsYhLs6TPpeFkAdpDpOJIwbQOhvQScvJev6aNtguUanLQRvljr8ZxqC1vlEyiGtzM/jRbgtd87DX47kWH0aZRL0UYiPDSSDNxLcgtyIsgqgRZ1Vey19hp+xhuTNYLx3oF4mgw6eFx66b8rbLz5fdAGigZQ+U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=X6ohNuRn; arc=fail smtp.client-ip=52.101.52.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o6/oVYr3SO6tpUR2OonyCL3sIn4VvxGq2qaYLw7dqWlFHVgfYKfZzekBgOpDn+hpLkrD9SRJdLryW5NCup+U1tKkR/81JOd4HpEDZYvs6AkMx+aRnPV76g1GSj4A8DQgtvlId7OI1D4qaN1kaM53kN09pMIE0vKPObgl14Ze5ZtAzNfCj/D5ebdiaDEVD1+t1c437PInvg17IfZipd46F5VgLU2z30gOCLiM7EiWw6GZhGliSFtca4ydPsaPz478fTMTNSdeAoPVTOLAofpS+uEC514yGss75Y1GOQLty0X2+KE/ftUadNMe3ZGfpK9kuMiHxLDe62iq8fHgjb1rhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=afLm6rwbsT+juiyxM96CmWjNVmk+3TC4ZDiwY+n3t3c=;
- b=OiRXB9KnWwJg5jbYQLNYWheg9MXZFmpGUcol2rlVXUMTfUOOKD54vEx9jxk8XimkYAOA1h66F920V+F4B1Y6Uf8S0YaLSB1yxIg6qXMSaxs1/YUpeGtLHmXZbGJH1Aznx8SKNeKRVEqO7eyyUbbtT3SUL7Kw5GhvAII0P/ihj+IaVgixKVlNMLaMzQSrvNzqgC1+sDlkF5j8Poj+4+gpkwgSpHPC8ZJUW97HxB0G9W5+I1UI3GL13s7G3eLsm0ouhdZr5jD1HkL6tBmta6k17Z7ZlI7aHydxwLEV2qwnzWwjF70+pnX6gd2vdcBWAt4lKtuQ+W14RzjLbeowJil+Xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=afLm6rwbsT+juiyxM96CmWjNVmk+3TC4ZDiwY+n3t3c=;
- b=X6ohNuRn2aaLhVGz4O+Xnc7LV+ua/2mE+pztXakQ0/Qc/bjrPfMnVz2UkkjQH2TCH3Lq2MKwApTvL7K+XWuf9MD0MhEriSPfIp3s8/RYXYHDP/5UEJkHEEz60UCxWIZn6yWWyf3bHCvmypVTtCeI5+B3rAWWFnI+Nwfsfyl5/IQ=
-Received: from BN9PR03CA0141.namprd03.prod.outlook.com (2603:10b6:408:fe::26)
- by CY1PR12MB9601.namprd12.prod.outlook.com (2603:10b6:930:107::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 10:38:01 +0000
-Received: from BL02EPF0001A0FD.namprd03.prod.outlook.com
- (2603:10b6:408:fe:cafe::d) by BN9PR03CA0141.outlook.office365.com
- (2603:10b6:408:fe::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Fri,
- 19 Sep 2025 10:38:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL02EPF0001A0FD.mail.protection.outlook.com (10.167.242.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 10:38:00 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 19 Sep
- 2025 03:37:59 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 19 Sep
- 2025 05:37:59 -0500
-Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 19 Sep 2025 03:37:55 -0700
-From: Suraj Gupta <suraj.gupta2@amd.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <michal.simek@amd.com>,
-	<sean.anderson@linux.dev>, <radhey.shyam.pandey@amd.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <harini.katakam@amd.com>
-Subject: [PATCH net-next V3] net: xilinx: axienet: Fix kernel-doc warnings for missing return descriptions
-Date: Fri, 19 Sep 2025 16:07:54 +0530
-Message-ID: <20250919103754.434711-1-suraj.gupta2@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C398D303A31
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758278422; cv=none; b=csOhDndzzwOMb1mACTQVtcMjwFqIR69rLfvTr8YVjoRBoyzmJj3Piqn74xaZ00owujSmSNmDWgT4LeFb1omxbfvnEXQCYaFbAHojKOc+DXNorK00bGwx+HOHGbgxYsq2TcLQChd7VG1w42E+kU+dagjZTvbD5lMapmvyNMi+p/w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758278422; c=relaxed/simple;
+	bh=jTpABLSEawOw9mvwoIuCbs4/XDey+tgLtwUcUUnw6U8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TL+UytOrFpKQYbDoUAOL6j3SwyLu8X5EB+ejWuY+CHZeDWTq6myKTNB1uNsKr0fmOz1JLPJqJLAmuhiIun9H37Bs1fORI1IjvKt4sBnt0ZFpmNzp6GxalVRigCU1/D3ZCwje66DwalWbYHa2Lzy92B4JHkkABPPlw671lE9Cd3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lZGA1Zzy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J85frs027129
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:40:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=dXfKxZCGajcsFmUbhfW1fP
+	TYCliid4RKFmwYUMeNAJU=; b=lZGA1Zzyv85w/Hj9+bbc4JesZ2U9Ke6UAJ+h4z
+	hAHR4/D5Qr5xEPbRzvWEqfWFTFrs3S6PX8DEGuSBrYEO/Iri2Y/bjVilsnHm2lO0
+	BWJuXhA7R6OEoXAD8RwQFcdK/SwaleuK9EVePaFDvmAdC031/61COka+Y/wXiQqz
+	6AtHpBW3TEo19SB/n1eELnWbNMUYnmGnC6KiopIxt4uvM3wJJdnlfVNkuPa7xN9s
+	GPn69VaWQlzg40CNk4Br2Zo7byft9ND57crxfmVWX1CWrvTMDsyjiTwqvdzcRRKD
+	+2+Cje6yu3nQTVwaLpvCp0JN5/w0AY+ZE8pudrPjXOjKzMRQ==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497v1jg2gb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:40:15 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b54c46337c9so2593243a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:40:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758278414; x=1758883214;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dXfKxZCGajcsFmUbhfW1fPTYCliid4RKFmwYUMeNAJU=;
+        b=o2MmoDrZyyGVHTQ/uBaxUOvB0KO9xGnm9OfaoZfdkDANl5FZo2QUTgvYndeo4ceuqu
+         Cui/OsA+gQL2+w4spzjJEsMfJqThASazZZpW5QRoc7MpKhHxjJ3lneCUdgY0EYHD1NhX
+         qdHIhFG0S6y9OiG8Tjrq+N4skF7T9cH+j71wbyeItia1Q56V8nwkmHDoDe3PnQv4ug5z
+         C1+657ikZmG6TcgcjTv68PlXwiiSUSCrxDuz5+RhOJpb/01/jzknZpc45D6oNITueGli
+         U2PJEPoEp61fLfWBdt3+CoGaAj0woJzyv6ZBgGQ5UWozvWvEtSF+hhXrNltC4jSeaGPV
+         ZniA==
+X-Forwarded-Encrypted: i=1; AJvYcCVb+RsU7kdWNfBdfx7JgsODf43GSGVUSt6v2yTcn0IdWjV9VoKN7dfOFc/8Lyca0L/YuKvrDYfmhcF3mZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWioh66PMkcQGYkEyLpTHUr0lYa4v5J3ipnPWoJxL9t4c9MCaF
+	uASKNrq6/FiEmCwpOCUpnWFJpCJS1NobJE6eqKvxkcizMq7tX/uGAl0l8nj+wbSU5DOLqEVJzBM
+	z0ebuAB1FQThfpZ/t+rUwcsPTwUmv+8oNkvKVeCkzXU3D2a6+JLoEo0mn3Q5xVzVdyQ==
+X-Gm-Gg: ASbGnctzzSXGQ8NOV7H+zgqhNdRMUAU3VeOQkk74/pnASEEQx4VDUQLVtH9hRh3J0QU
+	IhY1QBkd0NOFz1c+pk9vvht4En/DA72P8kFX9lEh3MsFKCGq1YFvwP1yMdVBYACgyDtFBO7Q0fR
+	M2avsNQ1DjMm4UhBGjMKx763Axl2DZ7Fh3HxA+PY8ahxsJnFEji6Aplj+XJUhWTJNNbOHgcNS/t
+	av05kBFcMcNYpF8XBHE4LpjRQinkcx0Xg4Q8BOLLFJu9EK2ca7qU9FykBZS2dXyARTHMCH3f9Ut
+	cOKns7EaLYqW+PueZKHcMaqtzHcAycYE+wZ6zKfWoCW8HWw2XOBAbLg5umL5Jz2sah/omg==
+X-Received: by 2002:a17:903:24e:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-269ba46450cmr45873925ad.18.1758278414159;
+        Fri, 19 Sep 2025 03:40:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCTTuWw3CFA0FVOYTgIav8eEeDbH9S7p+c9gr9IeuB21hOZoiQBATfw7jGkBXR8igiNxwIUg==
+X-Received: by 2002:a17:903:24e:b0:24c:7bc6:7ac7 with SMTP id d9443c01a7336-269ba46450cmr45873555ad.18.1758278413697;
+        Fri, 19 Sep 2025 03:40:13 -0700 (PDT)
+Received: from hu-kotarake-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802df446sm51191745ad.68.2025.09.19.03.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 03:40:13 -0700 (PDT)
+From: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+Date: Fri, 19 Sep 2025 16:09:24 +0530
+Subject: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Update regulator
+ settings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: suraj.gupta2@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FD:EE_|CY1PR12MB9601:EE_
-X-MS-Office365-Filtering-Correlation-Id: da14623a-3c53-4489-3a06-08ddf7689ad8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lJGLoDu6aE95pTlDWtAsPCMK6TpV2NoxVKbioa3Wx///Kqm8l1y7OMn/0BU4?=
- =?us-ascii?Q?Q7Uc5xq9r0paIGIfXB2lBj5ckWAdVayKZ7Jnk7OGZ8lc4hh7A7Kja5hS5v+f?=
- =?us-ascii?Q?v1B81RUrvx34JROwjVyh0McFiZKfSVEKTmrcg4KyWQBEpQrB2bENukvML00P?=
- =?us-ascii?Q?VFqZwf6cttyX8QQomj+4a77yiQsOPAFaJ4g1Xyg7oB8CZjCCaDpLBO/WGVkA?=
- =?us-ascii?Q?CCeWL6YbjxVK3NjlmHAnfDrC5vnPLjMn+YsGYhGfzMzgx2lXL3G4/n7WvSSm?=
- =?us-ascii?Q?EHzOTut+bhh7ufXNPbS4WwSS472mXHVVT15cynPYVpP6tJB/BNydP+gL6CwC?=
- =?us-ascii?Q?Qr1Dg1jZW7dkNwaHflkkyAgsYP9a6G0s5OcLPVbE2r0KZzG9N5/QfDzN4LMa?=
- =?us-ascii?Q?SRswtl6qM9xnfLeh2MEzq+95LGzzck2TRxtV7vIoxNqykiOyeVdXOFEUX/g3?=
- =?us-ascii?Q?sEl/A7iiw340pebqWxg5E2eDUgEvWoPSmfPCrQoYDWQ3F1a93gwLuoVPFhfF?=
- =?us-ascii?Q?frLBnczMPswj47twscV84biOcWMnSSpcsSfEAD07SU2gRoBugbQRsdE5BVnG?=
- =?us-ascii?Q?ojlj2RrYbextxkpvDfEw72cLi3S/jNKyDYrb6dAlzxN64TwXIidkjl4beZwM?=
- =?us-ascii?Q?/YglX1AoYaxDjdbb4qQwZgq0npaLkb7rtma2f4GPjrstx7CyixYCmgdIUpul?=
- =?us-ascii?Q?AbXN4urvh4si7Iz1Rid6ObabHkZrIcMuwFzNL21OaasAoyDWZ/1FoEAh67qO?=
- =?us-ascii?Q?y6cgYmfweflaoakcTcb2bx3JP84z4Uw/bLIJyfQlNHwzfUxvvPw23skoSolq?=
- =?us-ascii?Q?fHckqNECrtNN1Mi4CtLAUM1AI6ORYdR7UgisJAG5oHQ4MO+sPJHkLuFZhdOJ?=
- =?us-ascii?Q?eO4OHxQzE4ohPXMzvKL4nFOJgIMmxhv6SvuRgCBVD63xwRBQgCu21B7dSpi/?=
- =?us-ascii?Q?wdI8d5DZVm0knO+Paochth1n89JNpQNqHu4OMXBeUCfrpjaF/tNVkViZwgRw?=
- =?us-ascii?Q?r+bh9x0YTs6aiFjZRAdksEiiD/0Y3kY8Wtw3xxZ+MWpVBjA2KWqipd0RtH5G?=
- =?us-ascii?Q?jeHfmRYw7KUMDupkSYejMxhCkfYU+Lhh14GvInAqookYMQAxjpO9oSuKIfOn?=
- =?us-ascii?Q?XREdpnXc59nc5SC+JvC9mrn3pqKx0BSJqBulbPY0qcpyHbhe0fFBPPkyUcAG?=
- =?us-ascii?Q?cQwI8RwiHnU7t00rTyNmw2nJm9By8KoidVh/n6ywHZLBqoulhqBYbIa1DdHD?=
- =?us-ascii?Q?VLj/+B2lnQ6yi0Sj9wg7WimeJunQb2ak+jxOW7xDNarN/PjVcsK27Lfp23T6?=
- =?us-ascii?Q?gmyRwSl2/52Sv6ECNSGPMVbg2gu4v2YyZdE3d3g7l045h8AJFmYjjiESNn+A?=
- =?us-ascii?Q?wI+6PzgjJL0hSn3GRHW6AI2HV61T3wceFAD9/fQdNLR1kGPxIcmsAJfENcdL?=
- =?us-ascii?Q?IsIE0S0GBLGjUWze09HkvllVzwbUxhmSJG182NegA6mqlJbV6guCog=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 10:38:00.2558
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: da14623a-3c53-4489-3a06-08ddf7689ad8
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FD.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9601
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250919-b4-rb3gen2-update-regulator-v1-1-1ea9e70d01cb@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIANsyzWgC/x3MwQpAQBAA0F/RnE2xSOtX5LDDWFNamkVK/t3m+
+ C7vgcgqHKHLHlC+JMoWEso8g3FxwTPKlAymME1hS4tUo1LlORg898kdjMr+XN2xKbbUkBldRXN
+ tIQ278iz3v/fD+343FaULbQAAAA==
+X-Change-ID: 20250919-b4-rb3gen2-update-regulator-7b5b2ca3bf49
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+        tingguo.cheng@oss.qualcomm.com,
+        Rakesh Kota <rakesh.kota@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758278409; l=5263;
+ i=rakesh.kota@oss.qualcomm.com; s=20250919; h=from:subject:message-id;
+ bh=jTpABLSEawOw9mvwoIuCbs4/XDey+tgLtwUcUUnw6U8=;
+ b=4bp5h2BTOBGk7AVkBG/wo9T3jCaT8Pe8qv8M6TrUEj5qeeB3JHfnKweATGznKiLjl/PwBTZ4t
+ /xSlfPXfha0BSuLR+Ywbjbe7hcrSnJoRsxogADV3sphybaMvSEJA2I/
+X-Developer-Key: i=rakesh.kota@oss.qualcomm.com; a=ed25519;
+ pk=dFhv9yPC8egZglsSLDMls08cOvZKZkG6QQn1a/ofwNU=
+X-Proofpoint-ORIG-GUID: uVXic_YAKIgAihmYNCkPhLp4OIJqbJ2p
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDExMCBTYWx0ZWRfX5Jo0H/E9oDlR
+ mBfb75YAbsixtUCYHRWkDS2t2aDefGy3COmrL99XmNstmvDLBtYszGZStn5f/ji6q1p+jFGWds0
+ 8nQqhcP03EJc2o70vp3tOu9VCsR2OH9JvEioZ34jVNULKEuiNH1xlWSOmnJ801yRn1GMntiMgz1
+ /vkBSixaP20QPL4CoA7DwPUv8b4A8b2c4x1xB3Yyf3I5nF19beK3cV7ogiCnPputeE6DuqZZgOp
+ OHfqSONyrVDhJARqk9yjJqLD4xLqW+P8LEOfq46oK3zY8LWRB9uOGKD+02oDVjxBfgWd1ckolzG
+ PlYS3pXK6FOls2H1FJm3MZtvJtlJohQjl8upRYJ5TnjAebdTWElhEFBuN92GjNSQ3k03NKa6OY6
+ Gbt7KMz3
+X-Authority-Analysis: v=2.4 cv=AeqxH2XG c=1 sm=1 tr=0 ts=68cd330f cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=xy6SXK4bz0Lwp-duAgIA:9
+ a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: uVXic_YAKIgAihmYNCkPhLp4OIJqbJ2p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_03,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509170110
 
-Add missing "Return:" sections to kernel-doc comments for four functions:
-- axienet_calc_cr()
-- axienet_device_reset()
-- axienet_free_tx_chain()
-- axienet_dim_coalesce_count_rx()
+Update min/max voltage settings for regulators below to align
+with the HW specification
+vreg_l3b_0p504
+vreg_l6b_1p2
+vreg_l11b_1p504
+vreg_l14b_1p08
+vreg_l16b_1p1
+vreg_l17b_1p7
+vreg_s1c_2p19
+vreg_l8c_1p62
+vreg_l9c_2p96
+vreg_l12c_1p65.
 
-Also standardize the return documentation format by replacing inline
-"Returns" text with proper "Return:" tags as per kernel documentation
-guidelines.
+While at it, remove RPMH regulator rails (listed below) as
+these are not to be used on APPS, and any client accidently
+voting on it can potentially cause issues.
+vreg_s2b_0p876
+vreg_s2c_0p752
+vreg_s5c_0p752
+vreg_s7c_0p752
+vreg_s10c_0p752
+vreg_l4b_0p752
+vreg_l5b_0p752.
 
-Fixes below kernel-doc warnings:
-- Warning: No description found for return value of 'axienet_calc_cr'
-- Warning: No description found for return value of 'axienet_device_reset'
-- Warning: No description found for return value of 'axienet_free_tx_chain'
-- Warning: No description found for return value of 
-'axienet_dim_coalesce_count_rx'
-
-Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+Signed-off-by: Rakesh Kota <rakesh.kota@oss.qualcomm.com>
 ---
-V2: https://lore.kernel.org/all/20250917124948.226536-1-suraj.gupta2@amd.com/
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 58 +++++-----------------------
+ 1 file changed, 9 insertions(+), 49 deletions(-)
 
-Changes in V3:
-Fix other similiar kernel-doc warnings.
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 18cea8812001421456dc85547c3c711e2c42182a..6355c1e2c58165757a9a20ab4368e93545904693 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -335,8 +335,6 @@ regulators-0 {
+ 		vdd-s8-supply = <&vph_pwr>;
+ 		vdd-l1-l4-l12-l15-supply = <&vreg_s7b_0p972>;
+ 		vdd-l2-l7-supply = <&vreg_bob_3p296>;
+-		vdd-l3-supply = <&vreg_s2b_0p876>;
+-		vdd-l5-supply = <&vreg_s2b_0p876>;
+ 		vdd-l6-l9-l10-supply = <&vreg_s8b_1p272>;
+ 		vdd-l8-supply = <&vreg_s7b_0p972>;
+ 		vdd-l11-l17-l18-l19-supply = <&vreg_s1b_1p872>;
+@@ -349,12 +347,6 @@ vreg_s1b_1p872: smps1 {
+ 			regulator-max-microvolt = <2040000>;
+ 		};
+ 
+-		vreg_s2b_0p876: smps2 {
+-			regulator-name = "vreg_s2b_0p876";
+-			regulator-min-microvolt = <570070>;
+-			regulator-max-microvolt = <1050000>;
+-		};
+-
+ 		vreg_s7b_0p972: smps7 {
+ 			regulator-name = "vreg_s7b_0p972";
+ 			regulator-min-microvolt = <535000>;
+@@ -385,27 +377,13 @@ vreg_l2b_3p072: ldo2 {
+ 		vreg_l3b_0p504: ldo3 {
+ 			regulator-name = "vreg_l3b_0p504";
+ 			regulator-min-microvolt = <312000>;
+-			regulator-max-microvolt = <910000>;
+-			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+-		};
+-
+-		vreg_l4b_0p752: ldo4 {
+-			regulator-name = "vreg_l4b_0p752";
+-			regulator-min-microvolt = <752000>;
+-			regulator-max-microvolt = <820000>;
+-			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+-		};
+-
+-		reg_l5b_0p752: ldo5 {
+-			regulator-name = "reg_l5b_0p752";
+-			regulator-min-microvolt = <552000>;
+-			regulator-max-microvolt = <832000>;
++			regulator-max-microvolt = <650000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+ 		vreg_l6b_1p2: ldo6 {
+ 			regulator-name = "vreg_l6b_1p2";
+-			regulator-min-microvolt = <1140000>;
++			regulator-min-microvolt = <1200000>;
+ 			regulator-max-microvolt = <1260000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+@@ -436,7 +414,7 @@ vreg_l9b_1p2: ldo9 {
+ 
+ 		vreg_l11b_1p504: ldo11 {
+ 			regulator-name = "vreg_l11b_1p504";
+-			regulator-min-microvolt = <1504000>;
++			regulator-min-microvolt = <1776000>;
+ 			regulator-max-microvolt = <2000000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+@@ -457,7 +435,7 @@ vreg_l13b_0p53: ldo13 {
+ 
+ 		vreg_l14b_1p08: ldo14 {
+ 			regulator-name = "vreg_l14b_1p08";
+-			regulator-min-microvolt = <1080000>;
++			regulator-min-microvolt = <1200000>;
+ 			regulator-max-microvolt = <1304000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+@@ -521,26 +499,8 @@ regulators-1 {
+ 
+ 		vreg_s1c_2p19: smps1 {
+ 			regulator-name = "vreg_s1c_2p19";
+-			regulator-min-microvolt = <2190000>;
+-			regulator-max-microvolt = <2210000>;
+-		};
+-
+-		vreg_s2c_0p752: smps2 {
+-			regulator-name = "vreg_s2c_0p752";
+-			regulator-min-microvolt = <750000>;
+-			regulator-max-microvolt = <800000>;
+-		};
+-
+-		vreg_s5c_0p752: smps5 {
+-			regulator-name = "vreg_s5c_0p752";
+-			regulator-min-microvolt = <465000>;
+-			regulator-max-microvolt = <1050000>;
+-		};
+-
+-		vreg_s7c_0p752: smps7 {
+-			regulator-name = "vreg_s7c_0p752";
+-			regulator-min-microvolt = <465000>;
+-			regulator-max-microvolt = <800000>;
++			regulator-min-microvolt = <2200000>;
++			regulator-max-microvolt = <2208000>;
+ 		};
+ 
+ 		vreg_s9c_1p084: smps9 {
+@@ -600,7 +560,7 @@ vreg_l7c_3p0: ldo7 {
+ 
+ 		vreg_l8c_1p62: ldo8 {
+ 			regulator-name = "vreg_l8c_1p62";
+-			regulator-min-microvolt = <1620000>;
++			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <2000000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+@@ -608,7 +568,7 @@ vreg_l8c_1p62: ldo8 {
+ 		vreg_l9c_2p96: ldo9 {
+ 			regulator-name = "vreg_l9c_2p96";
+ 			regulator-min-microvolt = <2700000>;
+-			regulator-max-microvolt = <35440000>;
++			regulator-max-microvolt = <3544000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
+ 
+@@ -628,7 +588,7 @@ vreg_l11c_2p8: ldo11 {
+ 
+ 		vreg_l12c_1p65: ldo12 {
+ 			regulator-name = "vreg_l12c_1p65";
+-			regulator-min-microvolt = <1650000>;
++			regulator-min-microvolt = <1800000>;
+ 			regulator-max-microvolt = <2000000>;
+ 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+ 		};
 
-Changes in V2:                                                             
-Drop mutex documentation patch.                                            
-Add Reviewed-by tags. 
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+base-commit: 8f7f8b1b3f4c613dd886f53f768f82816b41eaa3
+change-id: 20250919-b4-rb3gen2-update-regulator-7b5b2ca3bf49
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index ec6d47dc984a..284031fb2e2c 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -238,6 +238,8 @@ static u64 axienet_dma_rate(struct axienet_local *lp)
-  *
-  * Calculate a control register value based on the coalescing settings. The
-  * run/stop bit is not set.
-+ *
-+ * Return: Control register value with coalescing settings configured.
-  */
- static u32 axienet_calc_cr(struct axienet_local *lp, u32 count, u32 usec)
- {
-@@ -702,7 +704,8 @@ static void axienet_dma_stop(struct axienet_local *lp)
-  * are connected to Axi Ethernet reset lines, this in turn resets the Axi
-  * Ethernet core. No separate hardware reset is done for the Axi Ethernet
-  * core.
-- * Returns 0 on success or a negative error number otherwise.
-+ *
-+ * Return: 0 on success or a negative error number otherwise.
-  */
- static int axienet_device_reset(struct net_device *ndev)
- {
-@@ -773,7 +776,8 @@ static int axienet_device_reset(struct net_device *ndev)
-  *
-  * Would either be called after a successful transmit operation, or after
-  * there was an error when setting up the chain.
-- * Returns the number of packets handled.
-+ *
-+ * Return: The number of packets handled.
-  */
- static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
- 				 int nr_bds, bool force, u32 *sizep, int budget)
-@@ -2112,6 +2116,8 @@ static void axienet_update_coalesce_rx(struct axienet_local *lp, u32 cr,
- /**
-  * axienet_dim_coalesce_count_rx() - RX coalesce count for DIM
-  * @lp: Device private data
-+ *
-+ * Return: RX coalescing frame count value for DIM.
-  */
- static u32 axienet_dim_coalesce_count_rx(struct axienet_local *lp)
- {
+Best regards,
 -- 
-2.25.1
+Rakesh Kota <rakesh.kota@oss.qualcomm.com>
 
 
