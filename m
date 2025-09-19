@@ -1,224 +1,274 @@
-Return-Path: <linux-kernel+bounces-825068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C906B8ADA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B26B8ADB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5CD1CC34FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7FDA03FA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CCA256C88;
-	Fri, 19 Sep 2025 18:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10722261B9F;
+	Fri, 19 Sep 2025 18:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="dHsqH5Bg"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bRO0GjA7"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010021.outbound.protection.outlook.com [52.101.84.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF60723BCE3
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758305180; cv=none; b=aExM/NgV6cXPflYAs10eLsFTnbwUck87lDQjcEn4iEkDTblrPZCSBr4oFSXaMNl94YHLXnNCtiNODKWIjCRu/nUuRklwot74XLqPy0KT2xB4zwx0eNcj3QmAn6YpbUJaLvU+dQEg/tj7H3xF+Ir0fZZDpUEbgdUQVcxm6FoBzNk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758305180; c=relaxed/simple;
-	bh=hSswRjdQ+04+nrR+tOkaECVX6apGop8z+9eTH/YRAUk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=d2eEW20CiCF6mRl0rMbWIe/2FY5HV0UCHXROC2bMKfHE3vewsb5tkzQNgHEfC2/K8ssEjTlLMi8GgiJOOeoYlYgEJMPmwJ0CdaCosl2KF61+qdWVP48mRalnQWmF0nz6iIxfQuIyRMbbcfz2mrfCIulh1zgOpFrHuSxvUc/ucSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=dHsqH5Bg; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8936326129eso91489239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758305178; x=1758909978; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PyDhfnNhpXNHSy1fs/Ww3WtAuz4kktx1C3rWmJRS220=;
-        b=dHsqH5Bgc3PjRjFN9w+kyyUTNDEg9aObIROFWI3lAPPiU0lvdg7ydYai3FlssN7FaF
-         +/IVRSMTqPjOBAqcPjhdHLPFZ5pdh0o0pLToWwodTdgFmk1IshzHzx4hB8o7NTv+DPZg
-         WE4Rw84f2b1fqfwGmHmD7yajDThRKQ9JEm9lUo5YKKK6ysBQ9ChNdBoib4byRNKJn3iP
-         r69TyVwgl+YMtfd9qAHNUJTeK6J1O3yOSpzK5JAVFQ3B4RypIjxe3ICXWf0w5Zfh87u5
-         6j03EF/K5n0GOzHTZ9cr5bYfTTHvKJoWBdqIfUU5butR+bbHTciazZz47E/5ktC9RQ7m
-         8U4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758305178; x=1758909978;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PyDhfnNhpXNHSy1fs/Ww3WtAuz4kktx1C3rWmJRS220=;
-        b=VYXV4TlHbvoHcV6UG3szsKKuEZB8b/4c9r+Pk6U7h8IHCgm0AbTUS2rEj/RI409St6
-         LALXWDZC0a2x8+pe1Nf4NUTgW9nk0VkEENmjgXovTlVgS4PF+vf9ikjMh/BLYPEF5W2f
-         EyP8GfAqDDMx17tOzc8mkbhkBSEEGN2M2fy68uAycgfmSp42gw2PnEB352mnJsb0iIGK
-         7YgNBzFf7FGfGd9mn3BEW8Qh/BmBZnsA70AdKFF2i6YMzSs/GYY+AGgS4CkvDvlg2YNu
-         qL6fA2JQPimReVyrcwPtiCBthcq7ic1+cjREB51YTtEUL60KbQkr3jFkps41WkLFyqp3
-         GkFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxApNk+l/JSa5VzV5alDgC3z9zbRvfU/BW5TAqvETdCzHf6RJuy+xSpYZyJsOsFDJ8Pf2pn9LsdeEa2lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXzVZGovM6f9q6csUS7yCE5bSqGUEM8K440sjMDh5WJmq5qp3Q
-	6OOLw8lfX0b0i485hh7VzF1usDmDC+5lgid6nuLGGpKdIqoLd0LGpXmmlPnJAY36ijw=
-X-Gm-Gg: ASbGncunipvpRVPVFJ4Evw5VZzMKhAOFwgFmLk4K6GrzWglxsnDneBoCWyn78QCUTCM
-	SR/cGZe7AKt9QR/oWpXz4+hdCH9h7il0ihZa+n9SiX5U2ChGa4DnNFSO1QXbKVUfKNab+VyLELJ
-	6mggoDQDvJsmENeKZycFs3iiYjk/vZWtLDydaB8e/QdIn3UlawphNSlkJe7IReiW994qZrgPsAV
-	qKyYrZxUjAr6iSMo2pXLWmwxUFOGytZayU4wZ4hcofSHkdY8I9KCfGvJtPhsGwrsnNlvkMrC6s8
-	pe5YIm4NWqu0/GtbQBKzh4hgAPFo5oFWp9EMJjVD89P19rgB073MdBLCLl3K9WBnwmegfwbVbz4
-	jm9ilXzs4UasYtyhtv5GwPIfnVeg8Jc11BVGZMI2qgjovGQSFE/wMi10o71aZUw==
-X-Google-Smtp-Source: AGHT+IHsassX7VCPU49903k7FzEDerinifFoBfyC5zAcBlOttmj7mzgkmLRJ6A7BaHGoGe18lpW13w==
-X-Received: by 2002:a05:6e02:148b:b0:424:1c30:a3a7 with SMTP id e9e14a558f8ab-4248197c46emr68662845ab.25.1758305177594;
-        Fri, 19 Sep 2025 11:06:17 -0700 (PDT)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d3a59103csm2326715173.6.2025.09.19.11.06.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 11:06:17 -0700 (PDT)
-Message-ID: <5463beb7-9909-4cb0-bb39-9f2d1aa4d2fd@riscstar.com>
-Date: Fri, 19 Sep 2025 13:06:14 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D5B260588;
+	Fri, 19 Sep 2025 18:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758305199; cv=fail; b=sahzo1NSJQ/cm0RbJr3q1UhL1v0t95R+JRTdwtWjtwCiwM7qBKb0vt/Cz/KsTF3NVNdgJ2nLSJ8Z9qKMVgPb9OxkBQ5oAfuMaUg+/BerdnVrOFWYudIYUeZcBdGWzou6WYSNjtX3eX57wQ1Yu5s5saUGk9RPt3jKIW06K3yCTL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758305199; c=relaxed/simple;
+	bh=IEsY83foor8VRdcCEEblJSn6Bmfnmv4kve3zuow03/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HPWv4lK8XM2CYinL6G3JhvVPcH9LmM91LrjzTgrVLaLDZQz3svG0mxS2FoGVKl5hIw02rpBgyShWtSC2FJt6/efhepR8ftUd6XSa0xJlZCz0MK1MdqLH3g+6vLZi7d2cuR1M4cqu/AROmm27OIXexB19mLGmExW1AQkoMzmFGVw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bRO0GjA7; arc=fail smtp.client-ip=52.101.84.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xphgLFS/Jm4BrOSruf+WAFxV8kZYKlTANcFhjeBDWEMTP4nYinSRb4mjxFgR9mHBOAx2PDprFw4vjDY6ch6AFyTjvkLmMQJamPaxj/MY+3UWIi5xfc+Gp18bXhiSsi6nc1gaqQZvbBw6ldjpqmvanJle/L4sf1720l+/0JKe7ktFPhyYh5NIAgIhxify1E/nSPGFlspNKHMgWCJzjlL0Idr1EcIDn2W9NPAFmtF6LIsbbzRjtWTWJwN74+8eRSNQnj0xXOM7lI8HHr0mJEjd5myKvtyR0n0XcP0QUe6QH20X2jXKvxeYmcgH9UI+PT33vhlyX4lCGqS/4TCMw5c2iQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C8blYu8iTrOW/Oam3iE30DuCBWrrYmmURWdEYXFot3o=;
+ b=PJExRxFevHD3WAZxtMQ60UQOyKTJK9rl9uD0Ptt9CSzTOZrbaOn6D7+S574qLrtMRUG8It6y6H/6ES/py9hIcPbdjlUzT1DAeB5eCRf4EMdxlx2kQf/3D+esWscVWEBzcdjIgpOIntNT3zMjeeYIIXQNWjHF5P5S8SeN4OndjS5mGlK5YWSKoaLrJKfmQgjd1vXMNm/RfOQV+7raQTJIAbYzyCy/epzP28CeoE4L2rbK/F8Lj0WWu9b/Jf7Kc3W9+f7N0hm1TsPSV9Dql4gNDfI4uo1GSLv9yMyTe6y4RbLjS4jFtl7jkEAFc0TbRMO1RcIBgO6ObASyMYsOqBaukg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C8blYu8iTrOW/Oam3iE30DuCBWrrYmmURWdEYXFot3o=;
+ b=bRO0GjA7LZ9mWRDs43q2GWqO+CTeJWEx8iVehyrPqeEHlZmJOU8lWLPV34KWawAEzdCybaKZnEeYZQ++//NiM1RoNs1SneEx7wAfR7eSRqAaOjsiTsziXOjdTXnQhdfBPdLWo4/LWouaMv1z8r4IHPgR82CLzj90gUZpi8DLLHbCCThLNLu1Hrta/3Tda6w/P8ktK7LGz94/XffYbKI7LAEsskL6I4t5vG8egF6+RyRN0noMA11CBTACAqkf8mCbntjZy9Cl9DIqCT14db5JAkNiZhdxTcm4pcvOZPJ/xwTy7it0Y2hI04AarjXjZPZ5JjaoSE6geBqJrj5+bzwhmA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DBBPR04MB7740.eurprd04.prod.outlook.com (2603:10a6:10:1ee::23)
+ by PA1PR04MB10844.eurprd04.prod.outlook.com (2603:10a6:102:493::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.19; Fri, 19 Sep
+ 2025 18:06:33 +0000
+Received: from DBBPR04MB7740.eurprd04.prod.outlook.com
+ ([fe80::7a71:369b:fb82:59d7]) by DBBPR04MB7740.eurprd04.prod.outlook.com
+ ([fe80::7a71:369b:fb82:59d7%5]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
+ 18:06:33 +0000
+Date: Sat, 20 Sep 2025 02:06:17 +0800
+From: Jeff Chen <jeff.chen_1@nxp.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de,
+	brian.hsu@nxp.com
+Subject: Re: [PATCH v5 18/22] wifi: nxpwifi: add core files
+Message-ID: <aM2bmc49cJXDmcf3@nxpwireless-Inspiron-14-Plus-7440>
+References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
+ <20250804154018.3563834-19-jeff.chen_1@nxp.com>
+ <6b8ff5139bb9c361468840046b757dfa5ebe1aba.camel@sipsolutions.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b8ff5139bb9c361468840046b757dfa5ebe1aba.camel@sipsolutions.net>
+X-ClientProxiedBy: SI2PR01CA0038.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::20) To DBBPR04MB7740.eurprd04.prod.outlook.com
+ (2603:10a6:10:1ee::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] PCI: spacemit: introduce SpacemiT PCIe host driver
-From: Alex Elder <elder@riscstar.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, p.zabel@pengutronix.de, tglx@linutronix.de,
- johan+linaro@kernel.org, thippeswamy.havalige@amd.com, namcao@linutronix.de,
- mayank.rana@oss.qualcomm.com, shradha.t@samsung.com, inochiama@gmail.com,
- quic_schintav@quicinc.com, fan.ni@samsung.com, devicetree@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250813212219.GA294849@bhelgaas>
- <5d5eacff-4c32-4df4-8da0-3b55974b74aa@riscstar.com>
-Content-Language: en-US
-In-Reply-To: <5d5eacff-4c32-4df4-8da0-3b55974b74aa@riscstar.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR04MB7740:EE_|PA1PR04MB10844:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0efb5b0d-b976-40fc-c5ef-08ddf7a743ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|19092799006|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?73dQNaYXXxha53WP5Lc5w/krg3Jl3bSgDw7T/Co4seQbyx4dVhevsLCs9HjN?=
+ =?us-ascii?Q?I4TJaGGFv+Mep8aSiiFfAHo0HkVYtSBZf/eN3QzdW53e/s0yqpftqa00F8LR?=
+ =?us-ascii?Q?G/Q7tuEDIq0D6VZgNQp+3P0sOXsDwNueNw9QqDiZ3T3DYICAJ0GlTd9BpvD4?=
+ =?us-ascii?Q?2TjVwtdpMWLdD2wMac2VhRWMxTb+ESOl7mz7PAKUSehPOhcJDbc+tvRW2Wx9?=
+ =?us-ascii?Q?GIIZhi2nBx3mBsLAHT1BzQt0RxAvcoKxwhp3rnRSfPSPRIUmeI6jVaqaAMA8?=
+ =?us-ascii?Q?uj4l7ULx/EasU6VBJNzMcBfo1GMfq1uzwao8gvqmobaxnqCeIKIbNQaTQ5Eo?=
+ =?us-ascii?Q?rbMFDYLQbrCX3z9DouFc4cxfVdXxD2JzjFhYwAwZts4t2K0wHU5dc9NW7/t/?=
+ =?us-ascii?Q?ctwjInfN8R4YWngpVt4YzOgSXh2KO300r7W/BGzyRnKKHwWJOHKGQm26fTeU?=
+ =?us-ascii?Q?JG7AtxbUqTCS0VLFekI1eTxzVHqAQifYWqpuOB8S3nGT9McaX1ojRxG1kxCZ?=
+ =?us-ascii?Q?YrBMR5bv+d3f0GM1YBADEELY2b2rL175pyNJ8/k0wqLaK15q07oKGxsPENJi?=
+ =?us-ascii?Q?57wABAOMXtqwZOw2uUxJkuXTtx4zMnwl15wlVAm1gkG2RZEJNkVqRljPQYNM?=
+ =?us-ascii?Q?L34SxQhIBsvah5wx1PX+niMUBkSBivn/HXRLElEbllwUhPnVLm68yys32vik?=
+ =?us-ascii?Q?NkAz/U+wUy4UOErMm3KTqMbHn7iccPG68vvsLyFx0dyOSMT8CEXYfaqFn/+r?=
+ =?us-ascii?Q?Qyt6L/CMEWkOTVqQCJ1yT6vPbZKUc/E86Ix1pn+1Ptx3RVC9fpQuABJH/ivo?=
+ =?us-ascii?Q?8UF22KiM3IncqY+wWSDm9ajUGW8LJntALjtAvgYwqz3+YsNiZTlwR+E93RxH?=
+ =?us-ascii?Q?lS9xZGMtn5VgJo+e5ZYG8tY4SDqWyh3qTtnpPUaOp9EgUVo+oT5tLo1k/8RQ?=
+ =?us-ascii?Q?rnKpQAYMpx6nbrA5GA1luKRDAzf9Gr3HdmaQp5hxx3JZWntV0Wfvdoei9LKl?=
+ =?us-ascii?Q?8nllkZEE83vDYCQb/ND0p3TbFLp/m8/3n2a/XgfyTFeP2NQ4qZjTjkIqCmoX?=
+ =?us-ascii?Q?e5Oohh3grE/fhb21W1TwGbGTzJPJ9Mitp5jKu0efnvZl6O8ZKsi6gYUamdwl?=
+ =?us-ascii?Q?rr/PcdnfkuSW0xWCZdm7RqMYrwXzZ1gCGxAbuNuMQKwglNCMhEFSqXDFCr3A?=
+ =?us-ascii?Q?7uFlmbTcAXI+k4hlyIfUxD5xblsL3e9GK1J/tR1BemsLJk8W7l2lFUF6cEdi?=
+ =?us-ascii?Q?2CXh0nHliIiZTQ5qFAAbXtOO6JB46eLi6NmCvEFqbcnpW6Ld1JwCXzjgJcgS?=
+ =?us-ascii?Q?bBwTMf0MN4R3cqPN2s/cilwBYyXoWJlMSnhV7fxjIehRfiDCxqVejKETOIBw?=
+ =?us-ascii?Q?OwFROTD/JMZxASoK5ddcQBXau4JuCrxhcHwEEYhW1nP34Tu973eGdbbg1frp?=
+ =?us-ascii?Q?7/nx8Rju5gdT4CLgs3ICdKUkS9q8isJxx93DV3PsdwZLAeC+e/3y6g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7740.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lYp/7SzgHWPUT9FkSqyPu/axNGSz2TkR/9AlBnQmISnFdoX+3GvolfGoUysY?=
+ =?us-ascii?Q?lVKDYGgtll+YiznlGM/qKRc6yEDbi3G/pPrNVKhs3hQocxGx7OxECeVXBOPN?=
+ =?us-ascii?Q?tH++vIcNOa82p9bOalJqscLuxhFDCl+J3547AdADZ33DTZ+0KakS4fkb0TaF?=
+ =?us-ascii?Q?X4OMur0ST9AM/NVSDR8x49klns8ngLIAbZK9z4B4PbvoA/UTuDECNkpQtZkc?=
+ =?us-ascii?Q?W9m8qqCCK4cN07v/A0cF2vMYT4VSKKuYnh5C6jtPRsWe+3p+zOqaY+a/RFtA?=
+ =?us-ascii?Q?lUdQRSYdeE4mOcKpzIzwHixt+mU5xhaPVrLD+OdyJtk/VZvxj1fh4633qrTY?=
+ =?us-ascii?Q?U8Vq8C/X2bT2LYxptAyatZWsZdibxNLHiGWR3H4Jf5NWh2W9b/8LyzDbIy4x?=
+ =?us-ascii?Q?yOJU3RpFOUynNQF/3KZldNXHrCSiIVKAv0oxjHoOAN622xKimHe69WpEFXw+?=
+ =?us-ascii?Q?ceNbifjZFGJDDRBo3BO9bDBh22MNtPywf7cOTaD5sxvsQHYKRBbkVm+KtQtl?=
+ =?us-ascii?Q?hissxIYcDAVIHKBTnEk2pXPV5loBgrZxa3ZvLwOkS+sNUzhHPkiAl5fCuig7?=
+ =?us-ascii?Q?po9JdDWKN2NKmSpM/33Z4m/EI670mAaNri8Bj56ilbaSUesSkDxkzva3QCvi?=
+ =?us-ascii?Q?YZrQ62Vhhvl/N9V8xOC6KSg+5K+5PKjLVwaTPffaX6qlSpi1+WZ6++dWjkNe?=
+ =?us-ascii?Q?GznJN5Ndqm5k6VZyLNPNPpNPeNqamS116J7jNBjHDIOF7oXYMBRl7bTuTfZR?=
+ =?us-ascii?Q?MTaktukaqJCz4UVdUfdLVOmKjP53sFcMZ5H8ZgPZiCLyoZ6wvE/+VlJ8oP8x?=
+ =?us-ascii?Q?YRQ00XR1qL2+0Q7vqw7iwnLSOGDWUTnbc+/X4yq8mLNdp+4svnv/eDY7tvZG?=
+ =?us-ascii?Q?cIkjsWJmmAAeIidKX8SBdm0cvqdj37gZ/U6Bmsyykv1Ao3a1o2tlH0Jhtbx/?=
+ =?us-ascii?Q?bV/8IoFXQR0DN8xhcz8DWbT/1K6vGWAVuxlxGPpAJUNkcizH9cZr5hL9RKGR?=
+ =?us-ascii?Q?A2MxSjURE+lB3PL7EUOBlNeQAbf7gr8fs+6NwhcNZo2bGmLRo2QpVow39xbI?=
+ =?us-ascii?Q?4FUV1jbQbFT5ShxVTZUf5eroKiJ98PrssZoMr9/NpxRNY8kggAp3I/pbK8Fa?=
+ =?us-ascii?Q?5qeYIHUuFj04mRa9XmgmNx5xsAREf+qy/UZNTi/vEDdDsZljL5udq1UEGLAQ?=
+ =?us-ascii?Q?lw2nf1se9KgfL8HvFFNgQC7RovDlPrEthrs7909FazhH15ecwRT2rdWU1A//?=
+ =?us-ascii?Q?E5i9pNQIsz6PEQLNAtBVoeoseujY5WJq0Uf7zMxc+cgh7IPtBqy5RScKyVT5?=
+ =?us-ascii?Q?T272WRWHCi/oYZvVJTHAKJF9jP+ng8COv5KoIVlkwtE40tEaH1AYPKTdudBA?=
+ =?us-ascii?Q?mL7g3dOQFo7knHpt3y+RPGZMnY1hSYAQaIxMszx+R33wRlVHcIU3bgKbHszq?=
+ =?us-ascii?Q?JPmEUeOWPmPvf+KpvaDrpgWXPAo3/C5E9QK5ykTGVcrRp5djSXtja7fGtnL0?=
+ =?us-ascii?Q?JTC4ZSu0Irt3LwP21wEUpzIvFt4P3WdkXrpuanCyrNN0+D436l/ItGbBJnNy?=
+ =?us-ascii?Q?qilRyrv6y+vD7Gu4IcpMr8wFuAs0evsqPhbOkLDw?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0efb5b0d-b976-40fc-c5ef-08ddf7a743ce
+X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7740.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 18:06:33.6584
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 21jbUr8mf7YFQwJxMggPV64VkWj7rZW0xNN1WUyIxJkGQYiCicieM62qjEt1ARDFkR6P3w9Uy1nHITtcIyTN5Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10844
 
-On 8/13/25 4:27 PM, Alex Elder wrote:
-> On 8/13/25 4:22 PM, Bjorn Helgaas wrote:
->> On Wed, Aug 13, 2025 at 01:46:59PM -0500, Alex Elder wrote:
->>> Introduce a driver for the PCIe root complex found in the SpacemiT
->>> K1 SoC.  The hardware is derived from the Synopsys DesignWare PCIe IP.
->>> The driver supports three PCIe ports that operate at PCIe v2 transfer
->>> rates (5 GT/sec).  The first port uses a combo PHY, which may be
->>> configured for use for USB 3 instead.
+On Thu, Sep 04, 2025 at 01:37:20 PM +0200, Johannes Berg wrote:
+> On Mon, 2025-08-04 at 23:40 +0800, Jeff Chen wrote:
+> > 
+> > +/* The main process.
+> > + *
+> > + * This function is the main procedure of the driver and handles various driver
+> > + * operations. It runs in a loop and provides the core functionalities.
+> > + *
+> > + * The main responsibilities of this function are -
+> > + *      - Ensure concurrency control
+> > + *      - Handle pending interrupts and call interrupt handlers
+> > + *      - Wake up the card if required
+> > + *      - Handle command responses and call response handlers
+> > + *      - Handle events and call event handlers
+> > + *      - Execute pending commands
+> > + *      - Transmit pending data packets
+> > + */
+> > +void nxpwifi_main_process(struct nxpwifi_adapter *adapter)
+> > +{
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&adapter->main_proc_lock, flags);
+> > +
+> > +	/* Check if already processing */
+> > +	if (adapter->nxpwifi_processing || adapter->main_locked) {
+> > +		adapter->more_task_flag = true;
+> > +		spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
+> > +		return;
+> > +	}
+> > +
+> > +	adapter->nxpwifi_processing = true;
+> > +	spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
+> 
+> 
+> This makes me very nervous, it at least means it's super hard to
+> understand when this may or may not be running ... It's also the sort of
+> custom locking that's kind of frowned upon.
 
-I'm following up on a few things I said last month.
+Hi Johannes,
 
->> I assume "PCIe v2" means what most people call "PCIe gen2", but the
->> spec encourages avoidance "genX" because it's ambiguous.
-> 
-> Yes, that's what I meant, but I did try to clarify with the
-> transfer rate.
-> 
->>> +config PCIE_K1
->>> +    bool "SpacemiT K1 host mode PCIe controller"
->>
->> Style of nearby entries is:
->>
->>    "SpacemiT K1 PCIe controller (host mode)"
-> 
-> OK I'll fix that.
-> 
->> Please alphabetize by the company name ("SpacemiT") in the menu entry.
-> 
-> OK.
+Thanks for the detailed feedback. We agree this is hard to reason about.
+The use of "main_locked" and "more_task_flag" is a workaround to avoid
+reentrancy and race conditions between SDIO interrupt and workqueue execution.
+However, it introduces implicit state transitions that are difficult to follow.
 
-I will be renaming the Kconfig option to be PCIE_SPACEMIT_K1
-(instead of just PCIE_K1).  I'm renaming the source file to
-be "pcie-spacemit-k1.c" instead of "pcie-k1.c" as well.
+> Could this not be with wiphy mutex and be very clear? Though maybe you
+> wouldn't want TX to go through that ... and maybe it can't since sdio
+> calls it? But that seems odd, why is it both a worker and called for
+> every interrupt? Should it even be a single function for those two
+> cases?
+> 
+> Also it sets more_task_flag when it's entered while already running, but
+> that's just weird? Should other work coming in really get processed by
+> the SDIO interrupt processing?
+> 
+> It seems to me this is one of those awful design things inherited by
+> mwifiex that just happens to work? Can you document it well? If so maybe
+> do that and that can say why it really needs to be this way. If not, you
+> should probably change it completely and redesign it from first
+> principles, i.e. figure out what it has to do and build it accordingly?
 
->>> +#define K1_PCIE_VENDOR_ID    0x201f
->>> +#define K1_PCIE_DEVICE_ID    0x0001
->>
->> I assume this (0x201f) has been reserved by the PCI-SIG?  I don't see
->> it at:
->>
->>    https://pcisig.com/membership/member-companies?combine=0x201f
-> 
-> I hadn't even thought to check that.  I will follow up.  Thanks
-> for pointing this out.
+We plan to remove this custom locking and instead rely solely on the workqueue
+model. Specifically:
 
-I inquired yesterday about this, and was told that this
-will be finalized next week.  I told them that the driver
-would not be accepted upstream unless the vendor ID had
-been properly reserved by PCI-SIG.
+- SDIO interrupt will only queue "main_work", not call "nxpwifi_main_process()"
+  directly.
+- "nxpwifi_main_process()" will be the single consumer of all driver-side tasks.
+- Interrupt status will be latched and processed in "nxpwifi_main_process()" to
+  ensure no events are missed.
 
->> Possibly rename this to PCI_VENDOR_ID_K1 (or maybe
->> PCI_VENDOR_ID_SPACEMIT?) to match the usual format in
->> include/linux/pci_ids.h, since it seems likely to end up there
->> eventually.
-> 
-> OK.
+This change will eliminate the need for, "more_task_flag" and "main_proc_lock",
+reduce concurrency complexity.
 
-I will use PCI_VENDOR_ID_SPACEMIT and PCI_DEVICE_ID_SPACEMIT_K1.
+To better reflect its actual purpose, the main_locked flag will be renamed to
+iface_changing. This flag is specifically used to prevent nxpwifi_main_process()
+from running while cfg80211_ops.change_virtual_intf() is executing.
 
->>> +#define PCIE_RC_PERST            BIT(12)    /* 0: PERST# high; 1: 
->>> low */
->>
->> Maybe avoid confusion by describing as "1: assert PERST#" or similar?
+To ensure proper synchronization, iface_changing is always set/unset under
+wiphy_lock(), which is held during change_virtual_intf(). In nxpwifi_main_process(),
+we only read iface_changing, so to make this safe, we also hold wiphy_lock() while
+reading it. This avoids races and makes the locking model clearer.
+ 
+> The whole function is also everything and the kitchen sink, could use
+> some serious refactoring?
 > 
-> OK.  I struggled with how to express this to avoid confusion.
-> But I do think "assert PERST#" is better.
+> > +		if (adapter->delay_null_pkt && !adapter->cmd_sent &&
+> > +		    !adapter->curr_cmd && !is_command_pending(adapter) &&
+> > +		    (nxpwifi_wmm_lists_empty(adapter) &&
+> > +		     nxpwifi_bypass_txlist_empty(adapter) &&
+> > +		     skb_queue_empty(&adapter->tx_data_q))) {
+> > +			if (!nxpwifi_send_null_packet
+> > +			    (nxpwifi_get_priv(adapter, NXPWIFI_BSS_ROLE_STA),
+> > +			     NXPWIFI_TxPD_POWER_MGMT_NULL_PACKET |
+> > +			     NXPWIFI_TxPD_POWER_MGMT_LAST_PACKET)) {
+> > +				adapter->delay_null_pkt = false;
+> > +				adapter->ps_state = PS_STATE_SLEEP;
+> > +			}
+> > +			break;
+> > +		}
+> > +	} while (true);
 > 
->>> +    /* Wait the PCIe-mandated 100 msec before deasserting PERST# */
->>> +    mdelay(100);
->>
->> I think this is PCIE_T_PVPERL_MS.  Comment is superfluous then.
 > 
-> Excellent, thank you, I'll use that.
-> 
->>> +static int k1_pcie_probe(struct platform_device *pdev)
->>> +{
->>> +    struct device *dev = &pdev->dev;
->>> +    struct dw_pcie_rp *pp;
->>> +    struct dw_pcie *pci;
->>> +    struct k1_pcie *k1;
->>> +    int ret;
->>> +
->>> +    k1 = devm_kzalloc(dev, sizeof(*k1), GFP_KERNEL);
->>> +    if (!k1)
->>> +        return -ENOMEM;
->>> +    dev_set_drvdata(dev, k1);
->>
->> Most neighboring drivers use platform_set_drvdata().  Personally, I
->> would set drvdata after initializing k1 because I don't like to
->> advertise pointers to uninitialized things.
-> 
-> OK, I understand that and will do it the way you suggest.
-> 
->>> +static void k1_pcie_remove(struct platform_device *pdev)
->>> +{
->>> +    struct k1_pcie *k1 = dev_get_drvdata(&pdev->dev);
->>
->> Neighbors use platform_get_drvdata().
-> 
-> Yes, that goes with platform_set_drvdata().
-Actually, many of them use dev_get_drvdata().  And I think
-that's why I used dev_set_drvdata() in the first place, to
-match dev_get_drvdata().
+> Sao that ... those conditions are awful? If this were a separate
+> function at least you could write it in multiple lines with return
+> true/false there.
 
-But in any case, I'll switch to setting and getting platform
-driver data.
+Absolutely agreed. The function is doing too much. We plan to refactor it into smaller,
+purpose-specific helpers.
 
-					-Alex
-
+> > +/* CFG802.11
 > 
->>> +    struct dw_pcie_rp *pp = &k1->pci.pp;
->>> +
->>> +    dw_pcie_host_deinit(pp);
->>> +}
+> (side note: there's really no such thing as "CFG802.11" FWIW, it was
+> always just called "cfg80211")
 > 
-> Thank you very much for your review.
+> johannes
 > 
->                      -Alex
-
 
