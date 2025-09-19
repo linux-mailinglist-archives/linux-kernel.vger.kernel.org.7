@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-825224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1F8B8B529
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:20:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E89EB8B532
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C06A563C2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:20:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D235A175859
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C7A2D0C99;
-	Fri, 19 Sep 2025 21:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5852D027F;
+	Fri, 19 Sep 2025 21:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="N5ZHmvb8"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHx28OaP"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08E0223702;
-	Fri, 19 Sep 2025 21:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.166
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316839; cv=pass; b=Ew9YUz2k/PYHG3jb/z4HmkplYEB33gtw6W3Mjc4hj/IPZhWQXHT/EXsf6kngmG+XXjhlFi4i2YH7YP5arnN9HGFQzpViD9nSpCKsuyqx0IVGmYQiGfhuOLKahw6/cfWRZ3/i7lFq4XigbjdMNw3ajbPwncTFwiAo/NaCDBp4yvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316839; c=relaxed/simple;
-	bh=et7a0xIBeTVDYV6MTLXeECVFQkoVbXTTzVLxvFUQstQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JqBomVl8dFOPvRQj7blE/IY3NdKlTe3gxs3zdNIckGc3+hyPN2IyT9QATKGcCOx7qm9Nn2L1tXfIUsyxAI3iXJ2lKhrohgFi8WcDBu+tszBfypE5DBVFDxK217CV8pfLhrtSmBW+EH32OaG2nIW+jzuMRJoB5z/n+UZrkp2eoew=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=N5ZHmvb8; arc=pass smtp.client-ip=81.169.146.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-ARC-Seal: i=1; a=rsa-sha256; t=1758316833; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=G4j2I9OVl5BPNwLQ3yV4z8Hj70ZcrJeei6XyIgvmKZM2M2wEkIigu6T8x7dkznhQH+
-    BWA4VG2z2BVLNN6nqM8Z1gQlrvcyRVKQgvQcGiJwpGiYHpGlz4cMrPLXVntSjptZHa0D
-    Xm/7KWNbrxaGIAK6HS4SPQ+RV+wUEEAqUj83jMpacwM2xKg/bMq9lIRobs/HfNY/D1un
-    jdGzoVKrWzRB54MVX6o2H112pHmxn3a0y7WDRVbwa/9ZctS7JvHKbWrCB273c4PXyqZR
-    xLBfz79fLuZNRYV+G9V8YedtEmLldlq1i0MP/uRLdmg54zk7Qn5EYzzM3UVyzvwy99F7
-    JdGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758316833;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=vmheLRMDygrXWpSVmbnURUE2CG296RLm+NPL4yIwudE=;
-    b=l6bXmkGnDElMl/256UFdkklSwYbvuHq2B6Yoqqr9TtooZjxV3Jhvl+3fJnSLJR0daB
-    29pLPQh1L1teZRbBc2hQehXry3dBtZYaOYsxxuJucjCGyb1xX7Q/yuiDmvGF1jqqbX3z
-    VeswnhqngXx/ap0sBJJZGvTxt9fN3UGa+WHviCj8qqPzdnM3XQL/J2cNbVtnw9ftutSG
-    CGNDvbX1HjfS/muyMnvx30UdW1wN22D3B1AqZFGOmB64ipHICfstCoSQS0RrM4q8yPgV
-    INxqoZSVMWdqgZcGgbaLD23Kz499eCzvoVZ03HXqxyxvP3aGHbSF/MyIeGd9zj4NA6QC
-    prCg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758316833;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=vmheLRMDygrXWpSVmbnURUE2CG296RLm+NPL4yIwudE=;
-    b=N5ZHmvb8L2/6MzYtBXU7zVyUa96OQlicjdls2hJizBamT7bB3tvlwlMMDmmdsElmJA
-    l0DEF7bpznyrDFQPtFLC4xn7vnJPlXUcVpLWPocD1k1Ex6U3lx5vaRuBImxPWKS0IgmZ
-    r34SpnLp5rUer4PRZolAK85NOi2bu/9zDGHM2gRCXXePxWl1/jLLsoOhGe5CA7HAYd8q
-    iD1uUNq679qMEWeQ+I+ekpbUeIe1RzqXz1ufOVdXwA6KGTnj0KP0I95VRb5XDzEW5tpP
-    8R/QF3TDPhSMYVU0ZFqC0E+kNzlULay+HHDD9SrPwEavCwft1miDQDMZjhpC4ASjpX/c
-    QdBw==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zmwdP57PWmc+BP1jdA=="
-Received: from tauon.localnet
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id f01e6318JLKTLOw
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 19 Sep 2025 23:20:29 +0200 (CEST)
-From: Stephan Mueller <smueller@chronox.de>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: David Howells <dhowells@redhat.com>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>,
- Harald Freudenberger <freude@linux.ibm.com>,
- Holger Dengler <dengler@linux.ibm.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Simo Sorce <simo@redhat.com>,
- linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
- keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512,
- SHAKE128, SHAKE256
-Date: Fri, 19 Sep 2025 23:20:28 +0200
-Message-ID: <3030391.1BCLMh4Saa@tauon>
-In-Reply-To: <20250919204749.GB8350@quark>
-References:
- <20250919190413.GA2249@quark> <5078839.1IzOArtZ34@tauon>
- <20250919204749.GB8350@quark>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1023223702
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758316920; cv=none; b=p6Pkzt3pUsIcsPsN8UBrZOyxbsb+1OUeMHzotrxys1cQpPs0F2bdCJcqfcUbl0gA6lBSsgJYVlEmdug1A7TRwUjsgXwqLMGxcQzvzFRQeHXBXk1OYs2sNriuleZEF0T8E/fv5IRvrmuCkGSAgpb6xDYk3wYCT8pH0GCVMP5h9KQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758316920; c=relaxed/simple;
+	bh=2E3mUBxH6R6Jug+ATNrGmXgQzZyUHAlwKykD5PH+RhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLe7PxZi6cWgZTW2IW2mPLjCPMLV2HeDvoNLhDg44uCO2PJPVLDiEIGuOKTXPyfDJMxK5ENkBsDBY++m1rx4ODFib4hoae7VXqx4R5n6LHrxpgHanpCGHS9Cses9tjgBupNFbbO2NtchazXSokcBK8Zn4pUmrkAwOU4ijeBOKbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHx28OaP; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso592743a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:21:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758316918; x=1758921718; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+G5BcJeXL6jDC2bAibkklgz8WdwIScxof/3Q9gcq9M=;
+        b=dHx28OaPX3uHpx0R1XnCwagNlUq2dTYn4vmQ6cm2w3X8N6MPRInBq2jJ5pFmFwraKg
+         agVawfYANqsrWqUxj6Q5YPbU3zW592WDR/JL9/VGn15Ol28hF6dqpLcVb1cAcDTIYXnc
+         SiyYdZncu8gWakKVlgmJ7/utdty12dtAeW9Gys58ed6ZgzAN/VEa6v65jjwsQ5ckOsD6
+         JGUWMSzPO7KoohDSsR+4K5I4K1/RGWcO1HWSJvk71aBC/BZ1dS4qTXDXfrKgYx+KDwWx
+         xdySYnSBr00E4LZycAWn6ItHQJZJZIfB2BgffepLYAmzPkJBmSb8sJiF9hb50F0MnoZk
+         qFxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758316918; x=1758921718;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U+G5BcJeXL6jDC2bAibkklgz8WdwIScxof/3Q9gcq9M=;
+        b=hAoySpqxCIIdjHhibwdPj7UTPkLFprSyM/Iujj883SLpxoDpcuGCqqCgLLJjtLevI0
+         afJy6pkShWcp6nvXwgryq3zcCDASsJo2/T4TwmZkziZW2M/R96mk8Cwwipnj0zDUQ5Gp
+         uBYjrub/h6tIelcOiAFr2Gk3tzdoY0S4sG/xYGnOm7zPj0+vLLpWOxoXrDKePgjgGBR7
+         XxNJVvgSMayAmJCdATe8ggjcBtn29y0e5iX1AhIpdN5UKEdPwBGKR8pr0zuEqhGPzMqQ
+         kLUX+D1BWsC2k3TkI9s/ukaSN1QFkevov7GxvpSs2RseyfNti+zwpmyqdKLxoGEWHfCS
+         D5eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIFoMrumCLlqMPzyT8KFB0QP2LZUwJ1ikDwWtVLZ4El7ROSy/AWhIV2F0hutuhO2AT/YIvtfx2vAIXhsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbRWIieBDpQVP0a4T+UEIk5iUjVZMUx9H1GRsjo6Bs5L3uUQO6
+	5gbBfRbk8zw7yIEgUD8xRDmYVxfkSR6A/hO25nSXaPIN2zBhqaIbfAsa
+X-Gm-Gg: ASbGncttmkypTghSzotbEBGmtHHP1oTbH+00yR8gskgceE5vqjBvDzFEVjAMhvaOWQt
+	xRnwcxsaKjv4eoj6sd/PuKliF9xePHNbmPFbB08OoCLdnuAtmGeQS2GyTfGxAzZjWO3zc7u9VFu
+	0eyF6N/22knwqnrHwuWbLKXUtutXVEp6uy7YKlCL2M9QA8I8lc4o06P9c+SaR39g+ZEPLLNvPD8
+	a+SfeXa2iIAli8El/X/twO/E8rpkdFGRHBB9Ra1ZXwnwU0zJLLrc47UYEkYEFlKbnKE/OBeudtE
+	7TPjGclb1/7OFzr6513gOAPai98ljwVyG+ocxpLUHSbkJfbg471GfKvzDUEeDpSTtC0zlVGvGVZ
+	/q6X2fRHogkFHPNZesdLKR3U=
+X-Google-Smtp-Source: AGHT+IHorHQlFTnVCe5ov/QTPuyR/Y4MFsYkLceh7+ZdUsDWDbJsmQQ7ToA9HVIPBaE6+4IcBOkXJQ==
+X-Received: by 2002:a17:902:f64e:b0:246:80ef:87fc with SMTP id d9443c01a7336-269ba563fb1mr74693975ad.45.1758316917923;
+        Fri, 19 Sep 2025 14:21:57 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:5621:6657:a035:d5ee])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269800541adsm64377475ad.4.2025.09.19.14.21.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 14:21:57 -0700 (PDT)
+Date: Fri, 19 Sep 2025 14:21:55 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Arnd Bergmann <arnd@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] x86-android-tablets: convert to use GPIO
+ references
+Message-ID: <ley47cmpwn5lhacf7ddfufeaqhe7rqemmkp2sjrhxitdv3l6cm@ktafyk6eeeft>
+References: <20250810-x86-andoroid-tablet-v2-0-9c7a1b3c32b2@gmail.com>
+ <bc463249-a159-466d-8804-399805b8fa3f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc463249-a159-466d-8804-399805b8fa3f@kernel.org>
 
-Am Freitag, 19. September 2025, 22:47:49 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb=20
-Eric Biggers:
+Hi Hans,
 
-Hi Eric,
+On Fri, Sep 19, 2025 at 09:53:53PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 11-Aug-25 4:22 AM, Dmitry Torokhov wrote:
+> > This series came about because now software nodes can be used to
+> > describe GPIOs (via PROPERTY_ENTRY_GPIO() macros) and I would like to
+> > eventually get rid of gpio_keys_platform_data structure.
+> > 
+> > So while I was doing the conversions from GPIO_LOOKUP() tables for
+> > gpio_keys devices I decided to convert the rest of them as well. Maybe
+> > some time in the future we can drop support for GPIO_LOOKUP() and rely
+> > on device properties exclusively.
+> > 
+> > This is completely untested.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> Thank you for this series. While reviewing this I've found
+> a couple of issues. I've fixed these in my own tree and
+> I'll send out a v3 with this fixed + some extra patches.
+> 
+> The issues which I've found and fixed are:
+> 
+> - lenovo_yoga_tab2_830_1050_init_codec() is missing a pinctrl_put()
+>   in error-exit paths after the pinctrl_get_select() succeeds
+> 
+> - Adding a swnode to the yt3 spi device changes the name of the SPI/codec
+>   device and the sound/soc/intel/boards/bytcr_wm5102.c machine driver looks
+>   up the code by name, update the machine driver to use the new name.
+> 
+> - In the "convert Yoga Tab2 fast charger to GPIO references" references
+>   the fwnode is added to the wrong device. The node should be added to
+>   the "serial0-0" device but that gets instantiated by
+>   drivers/platform/x86/lenovo/yoga-tab2-pro-1380-fastcharger.c
+>   I've made yoga-tab2-pro-1380-fastcharger.c propagate the fwnode set on
+>   the platform-device to the serdev it creates to fix this.
+> 
+> - Fix the commit message of "platform/x86: x86-android-tablets: convert
+>   gpio_keys devices to GPIO references" which contained a stray reference
+>   to wm5102.
 
-> Yes.  But I'm still a bit puzzled why there suddenly seems to be
-> interest in a FIPS pre-operational self-test for SHA-3 specifically.
-> lib/ has had SHA-1 for two decades without a FIPS pre-operational
-> self-test.  If someone actually needs this, surely they would also need
-> it, and have already needed it, for other algorithms?
+Thank you Hans for looking over the series and fixing up all the issues
+that I introduced.
 
-I just answered on the FIPS requirements as I interpreted your question in=
-=20
-this regard. I am not saying it needs to be added here.
+> 
+> I've also added some follow-up patches with some cleanups, see the v3
+> cover-letter for details.
 
-I am currently a bit confused between crypto vs lib/crypto with its FIPS vs=
-=20
-non-FIPS support. That, perhaps, contributed to my answer.
+I've reviewed ones that I felt comfortable reviewing, thanks again.
 
-Ciao
-Stephan
-
-
+-- 
+Dmitry
 
