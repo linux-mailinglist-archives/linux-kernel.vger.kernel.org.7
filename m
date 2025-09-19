@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-824560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70CEB898C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:54:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25686B898CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A9D1C83CD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:54:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA67E6219D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D261E222580;
-	Fri, 19 Sep 2025 12:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1A3238C36;
+	Fri, 19 Sep 2025 12:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qvq4w+58"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8T4+LPr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E6E1E47A3
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4C82356C6;
+	Fri, 19 Sep 2025 12:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758286440; cv=none; b=T2SPOiVKrr/kWQJ7bM7aav5ARiAlxP2qcKhX80CT71P07l/5SgOfuvQkYbfmgog9Izrpw+EOF9RDKJmu66ZG6v1gEB7Hv/aV3jVZLsmHmxZE5PuE5Vn5CkMU55vXTAGgVkmG97wXZ8QtkCC/gZNcixZ38w+c7AAdoohUH0D+yqs=
+	t=1758286442; cv=none; b=SxUKI8G6bfSq6/Qcdvsf5TiWX6IqI4X9OFsryhHCNsRLKQ3Lj/wJqXEqDAzWPVob88F3ppXGXsK/P4ByRMKBseJv9bpMr2m1AOko6dP+7yjwb8juF+UWVSodG/coD0WUQROz9Pi50qnRXmmXvVNziExwzH/wjFJMcpXKxw20Wwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758286440; c=relaxed/simple;
-	bh=cd/+b49O1n7SbTNaNWcrWFsVrS7EIcr5G7uqfnlT5jM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LecO979hubuqBJ6Og3WXpbRPq31NVnws0HUCX68Gox83SQ3YyMrE82o4Kd8RkTyuO36Cdk73EHdLfIyKccorYnKEuL1BaLRqshgPoxTEqslxYukjn9hBV/Ogwo6ZdvIFaAwgTuAR6mkpZL/Y2pennTniXMG6JqbcAxb6tLSJbUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qvq4w+58; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J9i4TZ007556
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:53:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cd/+b49O1n7SbTNaNWcrWFsVrS7EIcr5G7uqfnlT5jM=; b=Qvq4w+58TTDFyu4k
-	fS/FNA92Ff6RSioAbCFg5crhyjzsq1PAm7q63oK/hcMZwt21oTP7oRp/raAI+SqV
-	nRs9qIqgrKjFmw0qjSv1KkJmC4q1KjAVw3/5qwKBA/54Tn+dtGhIhQJK3CYNEUOd
-	smfHH+huKXBuJrmYjPmTDeml9z+iBb7U7OIv9XD7x4aMngVgZL/qxw/f0WWUQlWB
-	CDOrkDCUlwQP16HHBqUoddQ7C+nGXvKLMqWVTgBj1UfxyWgwirv0IhwwWg4WsjJF
-	+Jv+cYNLJHDM0c2MEKxbRqklH6/jPirnzWzY90UxoXY/20ox/QvA9Gne8NIVYZqk
-	TJValQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 498ebevy3b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:53:57 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58JCruoR013586
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:53:57 GMT
-Received: from hu-ckantibh-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Fri, 19 Sep 2025 05:53:55 -0700
-From: Sanjay Chitroda <quic_ckantibh@quicinc.com>
-To: <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] libbpf: increase probe_name buffer size to avoid format-truncation
-Date: Fri, 19 Sep 2025 18:23:47 +0530
-Message-ID: <20250919125347.2607229-1-quic_ckantibh@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAEf4BzbM+mG5EYQKdp1r4mntP2bXTb-KgJWg4ir6zzrSRrQURA () mail ! gmail ! com>
-References: <CAEf4BzbM+mG5EYQKdp1r4mntP2bXTb-KgJWg4ir6zzrSRrQURA () mail ! gmail ! com>
+	s=arc-20240116; t=1758286442; c=relaxed/simple;
+	bh=1pfZgGzNVtn0yABMX7hwUhOXHqmt1khayMvA9KMbUsA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=enOf6h2vag0RchXHHgXUK5YQjmQKbqpZ1j2N9MWrluU0/nedjYXVoH+ElAFdUrhcz6Upgbq4/nwC/qFtLmPqStqYVu95QP4ia6lqqyHkoJRswMtP+tiWSPem4L8TWxwN0vS/GClz/JxAJMePckmCdRjaCUtvJDEUKV0It2oWGio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8T4+LPr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA8CBC4CEFB;
+	Fri, 19 Sep 2025 12:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758286442;
+	bh=1pfZgGzNVtn0yABMX7hwUhOXHqmt1khayMvA9KMbUsA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=p8T4+LPrhdJj5Duof9QvtkvUewrLT7QKstuFUZFwoUgWL3d86Fcy8aBZsLApyPrIV
+	 gn+npxGwewAWxoWNFy8Wd39olzrswZUqM/5+wI8W+WaKyncLy9hO7/vOMRhsTKkKW9
+	 ms2iExHNBnNKw8Ws7RaM/1senuunK7PZr7egiStzNXZKsSL3pVhaVw+9G9+uYOVUN7
+	 MFH4MA7FtUZMjA/13S3ziBnxlEjKx28z6YuAvW1nuQrtZdlZpKEDp2ytInYESGtXzE
+	 hTPvXJVd82HMAzniuGi8IBS2vUxLPG7MzYicBunhkLmSeAUTmBgCztrY4B//UVnaip
+	 SeGHbCiblUSxg==
+From: Mark Brown <broonie@kernel.org>
+To: peter.ujfalusi@linux.intel.com, yung-chuan.liao@linux.intel.com, 
+ ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: sound-open-firmware@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+In-Reply-To: <20250819160525.423416-1-rf@opensource.cirrus.com>
+References: <20250819160525.423416-1-rf@opensource.cirrus.com>
+Subject: Re: [PATCH] ASoC: SOF: ipc4-pcm: Fix incorrect comparison with
+ number of tdm_slots
+Message-Id: <175828644050.102649.9531212152341579882.b4-ty@kernel.org>
+Date: Fri, 19 Sep 2025 13:54:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UhhnyHBIvxnmf2ChJ3qNIOZdqGJ9r0FQ
-X-Authority-Analysis: v=2.4 cv=H6/bw/Yi c=1 sm=1 tr=0 ts=68cd5265 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=LeRpRGh6yfgUX0Gnmp8A:9
- a=TfFxjrhefX8A:10
-X-Proofpoint-GUID: UhhnyHBIvxnmf2ChJ3qNIOZdqGJ9r0FQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE4MDA3NCBTYWx0ZWRfX9Vd68Aka3mnX
- HSn1PPmClekst0R6ypzfG/zQrhEeP92rLx+6/Tr4LhDL1i0tcfFcsm+W/zTJ1BfTtPBZ7ogjsny
- LZl+cDaJzlOAofHEFLK2t5kuXsVEiKhU2Vrq9kIfPTt+LpWMRAcL/oj3uDoZwf49AYfaGAZt4oB
- Mc2cnrl+Yr8KZ0bTPdBEIdTc4N3Byo7AQufRx5SV7q5ZMCok/bGqybT+KsGpvo4qCq4JUES+F9u
- FYaFcgPkyh1/IPVZUMaUtbW0CdjTTOkYs0xL/E6hkwV3J99NBcxQ6tq6BOGHvl2fiemNJlb3JWm
- RQJDjUNnPio2zuBngGcV5EeJ/kX5TevF11Z87KgSOQbAvUubeDppC6clFRerDQDf1NRbHHIDl7X
- 6Ck8JM+5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 adultscore=0 impostorscore=0 suspectscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509180074
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-56183
 
-Yes, This is due to GCC being overly aggressive with its warning.
-Also, Here is regression commit:
-https://github.com/torvalds/linux/commit/4dde20b1aa85d69c4281eaac9a7cf
+On Tue, 19 Aug 2025 17:05:25 +0100, Richard Fitzgerald wrote:
+> In ipc4_ssp_dai_config_pcm_params_match() when comparing params_channels()
+> against hw_config->tdm_slots the comparison should be a <= not a ==.
+> 
+> The number of TDM slots must be enough for the number of required channels.
+> But it can be greater. There are various reason why a I2S/TDM link has more
+> TDM slots than a particular audio stream needs.
+> 
+> [...]
+
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: SOF: ipc4-pcm: Fix incorrect comparison with number of tdm_slots
+      commit: 62a7b3bbb6b873fdcc85a37efbd0102d66c8a73e
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
