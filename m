@@ -1,237 +1,445 @@
-Return-Path: <linux-kernel+bounces-824989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB5AB8AA52
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:54:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A15CB8AA5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754B57E5847
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E3F7E5912
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84AA31FEFC;
-	Fri, 19 Sep 2025 16:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C22E320393;
+	Fri, 19 Sep 2025 16:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LJM4bOWK"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010062.outbound.protection.outlook.com [52.101.193.62])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bLtBJnLv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C77478F26;
-	Fri, 19 Sep 2025 16:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758300849; cv=fail; b=ras3Xb0G5HhvpQH57s+b8AOigDFqXg+VFhMQdH5HETZFhih/0sdcVJbkxQjh9vzLqG0Qxb1X8LYAJx3wJDaIDKhGO/UGbAM2f6IMV3/2cyNfACQhQq+mua1uzus/BrLkmcfON9uJg2eXnw6adKdQ2f4G+477ZfwkHn/SCIQPbfs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758300849; c=relaxed/simple;
-	bh=NB1cUBhUO3Wc1UpgseKttTapBEZfQc2ElKfy/61FI3Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GXyNDrbyR+28b/7seV5t12YlS1ko88pnN7FnkxgF1o8oMKfYqJY/B7EA9qLSj6ASWiMSCggqOE+P5cxtWpBz3tgsdBubnLM2V0APQeZsulFDeMWpICzrqB1byTODkEuATK0f2YSyD1eZttZZPUjRiJKmAx93mOd+Oc1Z5V/yiQY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LJM4bOWK; arc=fail smtp.client-ip=52.101.193.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G5sQFhNKsZsStjTOTcQu6k62xLURC3cnO6vr9dmidQZJ5HgYsw0uyQqJMB4IDjEeMv8Yg+n0gf3XaNRkh2mqhzrmpq4Pb/x0vs40wnObpW9zp8Gm/GcF1nArvI2zTJAeuHZ0/eo7lhD2ZAwNqFILcmQHeKYDVpBo+bwmq+euMK+BKGj+4XNdAHxDyehQuRknxhoSdgEUzSA7AtNm37zKbb5vfzEe7leOHL3PUqybNxWd2qti4YPYLi67EuTRtcKL79268o0QqWi8bsLInsOMdrdwVjdwAVNVf+7raiuGalO6YvBn5PjTlAQH2OTqugwAZoKQ1go7TrAW0Fm/BAK5lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y/KpIB0/rx0dPdjzmN6sf3HPJtW/ok5/ZXsX5VhbCIc=;
- b=B6sw9f1D5O/bPvCcCIAP7TwQ3G1amXyMqmyGX6VuajE9KQr5kcFmpnFpd8psO2IDMbu30YAOZ1Dfmammq3dt6XYKhHx+NqW8KMyGoAz6yB2CO/95h6lgfR5IHntBVUHTfTSVNR16b742SNCrAr6hVOs92IVbLFtf+A84scOcjKedlqw+zGCzdXDILK/lhqdL1wlJeqD80WZWCxqDI81vunEhH6E01/3MMOt/BY0Sydw5v6wYSWTwb5XX+45fModL7oP2lfKwfgqR/RcNipsGH0P2IiNgd7c2qj2epQ+DKHhhvZ+JY4e29n7shh9WkbM4N01bERBTnimnoLIpSPp+5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y/KpIB0/rx0dPdjzmN6sf3HPJtW/ok5/ZXsX5VhbCIc=;
- b=LJM4bOWKFw1+U4UAytTgfDpXhSZ4EUWwSVfBVyqJBAk5IrB5veYz4tu3KpVUk0O4jIc+Bij103qVqeoyzJGL8Gk7BIPDzEzQg/R4CbixZG5fpQ/tVxtqzKRLk6Jd/UiDSqGGL/o/2EHs4TYT2AiGVRx/5t9QlwuzqGEIAJpDkrY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by MW6PR12MB8897.namprd12.prod.outlook.com
- (2603:10b6:303:24a::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 19 Sep
- 2025 16:54:04 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::8d61:56ca:a8ea:b2eb]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::8d61:56ca:a8ea:b2eb%8]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
- 16:54:04 +0000
-Message-ID: <f45a8fbc-6639-40a4-ba40-3a7a9c680fc7@amd.com>
-Date: Fri, 19 Sep 2025 11:53:58 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 03/10] x86,fs/resctrl: Detect io_alloc feature
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
- Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, kas@kernel.org,
- rick.p.edgecombe@intel.com, akpm@linux-foundation.org, paulmck@kernel.org,
- pmladek@suse.com, pawan.kumar.gupta@linux.intel.com, rostedt@goodmis.org,
- kees@kernel.org, arnd@arndb.de, fvdl@google.com, seanjc@google.com,
- thomas.lendacky@amd.com, manali.shukla@amd.com, perry.yuan@amd.com,
- sohil.mehta@intel.com, xin@zytor.com, peterz@infradead.org,
- mario.limonciello@amd.com, gautham.shenoy@amd.com, nikunj@amd.com,
- dapeng1.mi@linux.intel.com, ak@linux.intel.com, chang.seok.bae@intel.com,
- ebiggers@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, kvm@vger.kernel.org
-References: <cover.1756851697.git.babu.moger@amd.com>
- <c9c594dddd02b53498a184db0fda4377bcef5e89.1756851697.git.babu.moger@amd.com>
- <13a1d78b-4bcd-4216-93cd-b95961a12369@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <13a1d78b-4bcd-4216-93cd-b95961a12369@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0039.namprd04.prod.outlook.com
- (2603:10b6:806:120::14) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616A130DEA7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758300864; cv=none; b=csCTWhTW5RZfBHMGu/+dJwBfRtFofPvPobSeAX/fSHbA+SJTst9HieNtVNGfXMGVmMn2mEhX2gJIwrESn5xBLVrI12yBgpAmg4Gy3rVaH9OpcJO8V97DUWQ73XcO22fJZkGNW3a4LgjUpzBKZCp/5A8L5f8YS1xJNCW8CP61YlI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758300864; c=relaxed/simple;
+	bh=VSHJYCourAAIuvwWkTqwOXUbwvt9OGPOVDGL+CHFzbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iu6QhaIngQ8jpk7FphJEuqbzFfb9OkxBHaeRJlsLseql7n/e40YiEauVtDREJFPfBCKdN5875LrooqJnnYAeVz2jPaQBtYwXYpgA8daGV4jJcLm9na9T6tp8B0JRFKZDO5w6rfvAka2LiJdeyOFOIqBu1ehsKUPR2S/+510IDJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bLtBJnLv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JDVAMg032456
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:54:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=+K8jgjXE/pFDboWmw82TxVnx
+	/ChcscN2444xVbv5dwg=; b=bLtBJnLvTwEztyJqulAf1AACHbB1lScYCBC/JhBO
+	W0i+Ay01eSWdhN1PqpTjNnKfadL9dXn8MHtBlUvXeDmU5D/VDKcqKGwMzqXvcjFE
+	aMBzMEoU9qL0FztKFLWLbSvzad6X5R1Sje76Bxzunn4W+N1nziW1B75xIP8GkTCp
+	ksGN0EpXMbn6neB6/a1LagLwdGVWl1TSRq4qYlOJY8mCOTBkAmX0H5s7hpO1f1aM
+	6845tLhUJe/UIsGV5tHQVjBthTOq5ExXy5ws3wxK8B8F6r9slFQTvLs4ZXJ+Lbfq
+	regCk9noxm0/RSDEKQJ1zb5xDuXXEjnsyIu2C4Iu22NH3Q==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxyu5sb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:54:21 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-78de70c9145so35041436d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:54:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758300860; x=1758905660;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+K8jgjXE/pFDboWmw82TxVnx/ChcscN2444xVbv5dwg=;
+        b=SMOmXCRR+Y3QpEMJx3a1Ixak3GO1tH8aRKj1RLvRwrI/oqp8kYj7EXIFyTff1ze9Vi
+         dccDfRgSC+tnutp7+Wv+vCL7z2IvTIPnZTSs0wEUBFKU9TSJUerw8cjiATh7fzj0WiAx
+         aSB2/z4MgnYP8c8PJI2vRedRxHxRPTbE7BNF/FfNCU+rxxuUtcueYJyPglF5PS7Ry2e/
+         xzdaTJpnTPDesyVSJlRIpt4QU6/SFhy7wJjmR+BHbRm93Iy1zTmlkiGQ19LzLIjd47fQ
+         XePNmQh3t6fn00HvTqWF4qSSq9jYR8pM06g6NlshxWiruX0PJ7naB81P25SrVA0Z8c6q
+         CFlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqpCC9J0t5QsFAA1vVwe7kP5RUXj0ulMirvQh9rBR0c1h3zkWz9tdgMKYL93hR0fe9qhpZk49RSxDGtlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGaidu8YXalPX7NNrPY99jri1ooNMbRQT1gyMEESMv7z3ncSjV
+	reymq5z3LI8kyJZH/zuM0ERYGDF8uQE40cnQxgr2RaW4O9rLz4X/SSL8isEUV14mAT/wzuSBBbg
+	U3OWTM/lc5M7PPMLTQc6kWmAZzy5IrxD8mkwMGwTv0uvJ2eI2hB1QMT6yTWSuWC/Jwx8=
+X-Gm-Gg: ASbGncs6no+WrF1LKkwQYQdIEoaHRRU3hBfwT+lQ0FlEDkQiAPLMKd/YkVp0I5+flC0
+	REkCsoEUvn8OwZEUsoIH9P/5BGou/yMK9hJdLa3OrxdwHCK71O/1eYbE3C9JWZcF22y2WsgGWgc
+	/0uA3KR5+wDTYu2f3RNV9lNVpTZKc87QfTd3DV2UoKqJwrhsxHXxopVDuyA3kygUKTT5IB3hawB
+	xD6vSI+YMvAVvTXmdAn2WTQ9Le0MjcEr2t/Eu0Nse4+0NFYDTXSmPsT7EvvVFPx/QF7WFsgDkvv
+	KRHkfmMbcQLJBC5yCUbNrdmGSL80Q/E3wBQlinPBWN75oQLWBqu+Off/PWLXOQBxPG+Keivqdki
+	mNbL4ZzKR7cBxsrvkSdhCxeZ9unAVHELTIKE1AK/1yk+PeCeJy69c
+X-Received: by 2002:ad4:5d62:0:b0:780:9df5:62a with SMTP id 6a1803df08f44-7991a92e5bbmr49548446d6.37.1758300859753;
+        Fri, 19 Sep 2025 09:54:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEYwjHgarhNWvducF7GWWboTJDl6AnQTIpGVlBaBwCyGFu3dV++wP7cmOEYjPAX+nRIJmjV0Q==
+X-Received: by 2002:ad4:5d62:0:b0:780:9df5:62a with SMTP id 6a1803df08f44-7991a92e5bbmr49547986d6.37.1758300859078;
+        Fri, 19 Sep 2025 09:54:19 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a90a21b6sm1474230e87.78.2025.09.19.09.54.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 09:54:18 -0700 (PDT)
+Date: Fri, 19 Sep 2025 19:54:16 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+Cc: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: iris: Add support for QC08C format for decoder
+Message-ID: <d2qkd3k7pv7cv3rf76nf3wxedqagg7egz7q2vipiddxzbac5oj@rva7gymbaof7>
+References: <20250919-video-iris-ubwc-enable-v1-0-000d11edafd8@oss.qualcomm.com>
+ <20250919-video-iris-ubwc-enable-v1-1-000d11edafd8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|MW6PR12MB8897:EE_
-X-MS-Office365-Filtering-Correlation-Id: e623e5c2-f775-416b-1512-08ddf79d2411
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NVUvdG5WYjVDVytBQmpjSVEySVpFVEQxTHliVHBhRTVEa2FUVzhESXRYaGRJ?=
- =?utf-8?B?YVkrb2N5alMzbVQ5UkxrM1RiS2U4d2ZMcUovL09vb2FXK1JWTUxjRUViTGQy?=
- =?utf-8?B?c2NSbjgyVHQ4YTVFVlk0QlVWaWhpbVpGZ0VZM1QwMjE0MXUxRDFwQ0czenBM?=
- =?utf-8?B?MzdSaUpiUzJFbFk3ZGVzaWd5Vm1wUnpvd1M4Qml6VjhvZHFtZVk5TmZwcmgz?=
- =?utf-8?B?R1lpOWxsTkxTNjNpL0tueFc3V2RlUmF1UXIycHBrNENDWmE5Z295WjlrdTlu?=
- =?utf-8?B?cmp6bkx2dTVtZm5uYnVkVFVpMmZSVVRnc2FIaTdvbWpmbkdudTVLc3Q1RTB4?=
- =?utf-8?B?bVZpc0JsMVZFenNyR20rWjhNNjdqMnNzdnhkSlZ1M0diYXNuWUJpVFltYldV?=
- =?utf-8?B?RVVlOHNNQzBvQmw1ZDdMeDVlZC9WMUZiN1pjRlZ1MUpYT1R4R3FGcUxzK1NS?=
- =?utf-8?B?S2J4RGJKOXMweExRZGNrcW9zK3ZXd1FpSGlrRVptem1Sa1Z5UHlUN0kyUjhv?=
- =?utf-8?B?YS9EeEgzMnp4d2tGYU00VmkwZEVIRzRnN091TEgvZDZyOUFwRktWT2ErRGlC?=
- =?utf-8?B?aHZqTmZoU1k0U0tieTNNbVRlYmhTSlhRWVBWeXNJWUltUGt4bUo2WEIxVmhs?=
- =?utf-8?B?RFMrYlZOWnh1UmNzeENiTWdCeUgzcE0vdksvSGVwMmlnUTZoUFBnS1l0dnZE?=
- =?utf-8?B?MnB6ajFxeTg2b3NMZ0ZqTElCUFdneU9wL3I1N2FSZHlVVFRpdC9IOXlrajZy?=
- =?utf-8?B?N0xQcXQ3Qnl5ZVptVUZlUkFCSVFEMVJGMCtWSEJuMlB5YkJOVThWNkQ3bml5?=
- =?utf-8?B?dTVPL2dvOGFCQ3grWjUvaUlxTC9ydldSVUFCU2E5bTlJVVNLNTRnVkh6Ri9z?=
- =?utf-8?B?eXIxdENwbURpeGZRa2laSVhPczhhSzZXb3QyVy9rV3Y5dzR6QitYR0l4eG9r?=
- =?utf-8?B?U01Kem41NXRRbG96SGJDZGRyVkJ5QzNhQXZ3QTlCY1Z6dDRVYmtzSlBuUVUv?=
- =?utf-8?B?STRpWnpLdDUwU0xhVGVpRHFxMkNkRTQrSnBGejlIVDc5NjM0Ukd5Ukd2VG5P?=
- =?utf-8?B?TWtGNjNUaGZWcHV5UjZPbi9ocDFlMTk4Z0RpR0FrRlk5dW1MZHlzY2ZzZTZJ?=
- =?utf-8?B?NUluZ3pJdW1aTVpJTmN3M0tVSnpUelpEMmFEa1BjbG1kazEvSzlNd2FvSHpt?=
- =?utf-8?B?L0VTTzFOb2o5c1Y1RXQ5ZkNseUJWbFFnbjMzRG9Fdi9wc2VvT2h4ZlBkTkRF?=
- =?utf-8?B?OC9oQ3JObG9MdUxLOXJOL0w3aHRtMW9odGxuYmd2QmgzT1NnTHd6R2s1QVJk?=
- =?utf-8?B?dmpscE5DazZZTENGR0xFR1FNWnlka0d0bmw3Tk94MHlDbmRTZGxyMnFYVEhD?=
- =?utf-8?B?QVRWRTdybDNXVEhNZzQ4MFVjRXRTT1lQVjhyNW5zV3F1Q090RzRVUzIwQ1Nt?=
- =?utf-8?B?R3AzWHpnVUFqQ1doWFNBd2hPQUlyS1dPcUlWTUp1OTF3TENCRHNOdFo1NGNY?=
- =?utf-8?B?eW9jaXNFVG9pZ2pJVTBmdnl1Wi9ta3pGK29QOVNvQVhEMjg1UGJBakpyVU1k?=
- =?utf-8?B?Y0hEeTc1Qjl6ZEhrUUJOUzh4ZnVCOUExNHRYa2xHcEhWLzNsVVlnNnE2UjM1?=
- =?utf-8?B?TE4zV3p3ckhvNmNiQnZVamZMTDVHUFArWkJoWG1aamVKajRIelpJOVErUFYy?=
- =?utf-8?B?Z3pPRGdVMGExbUZiM2FQa1QrOTBwdjdab0xkUThBWHVkcnU3UDlZSkErdk12?=
- =?utf-8?B?dHJjdFFWYjkyNjdabk95TEJ2SEFLNklEblBRakpDYXhnUnN5Zy9zbThORmc2?=
- =?utf-8?B?NnRaandBUUVQQjhmcndlUTd6QTlab0d4U0pjYzE5K1dsMUNjMkQvQ2tkbW5x?=
- =?utf-8?B?ZnFNTGlNamNQY3VReXZOV296VW8rS1pCdGd0OERNSVR6bGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MjkwVEpVWGppMXRFWTdVaDBWbEtmc3JWUkRJcWNqSEpPUmtFU29rUEQrRkcr?=
- =?utf-8?B?V0VCZG1wVERvV3Y5N2tnbUlrYzFSbTUzT3VrU25HRVhETG10eEtaYThYZUN6?=
- =?utf-8?B?NVNZZnZSMlpmLzh3VEVuUGJQb0tEUzNnNTR5Y3VXcVA1TlF4bEd3SUdLT2tk?=
- =?utf-8?B?eVVOV3BDUldWbVI3RFJlUTFEQkFGekdIRUt4SFduSmZmbC9MYXdVRmdjTEZ4?=
- =?utf-8?B?RHRjaC8xelFuRDFNRXV4RnNRMDBqd0d6UVJPNjlSUS9CdXVBMzNOSTNzVkI1?=
- =?utf-8?B?Z1ptYzBZUERyM3I2aTEwVnBiV29SaStOSXFhdDlnWEhzWWRpREs4RWNmLzEr?=
- =?utf-8?B?eThrak01SE5iSlVIK0pJbGMvR2R0b2piL3Z2UzJjdjZkcmdmdjVZWU5wY0FV?=
- =?utf-8?B?bTVab0F5TlpvU0pmYTlsYmJRZWpiT1g0WEhFeGV5SlpNV1A1TDBmcnBOcHVp?=
- =?utf-8?B?NW9HdjB3TENRc3pLaWExMGRGbnBHSXdlbS9Vblc3T3FvUkg2VjhHaStWN2ln?=
- =?utf-8?B?eVNZRzY5Q0cxU2trZk1HTy9sUkVra0EyVkhnUlZ3Q3VnSVJ0VEhweG9NclpC?=
- =?utf-8?B?MEJ0YnVIK0MvckJGK2R4cE9lVjVNM3Evcll4ZXdLNkh2MHBHU2tWL3RDeUFE?=
- =?utf-8?B?ZHU5Qjk3U1pXT3JBRHZORmtQMTlYak9SSHlkQTBOTmI2WEU0dTZwYlowUWor?=
- =?utf-8?B?Y1NLbnh5bDNVbVR6U3FMUG9vZ2diMnhmR1JNWEVWSEdUNkxnN1lVM1BUaWo3?=
- =?utf-8?B?elJQUHFqY0Q4UkhLQnBFWlR6Wkw2b1VaWk1QeXZYK3JaRVlSM3dTV1dlQnVN?=
- =?utf-8?B?Z3U4NWowR24wSjVaNlExdHF4TDQ1WHJRVkxzUnNpbjhsdG5TdkEzbWo1REc5?=
- =?utf-8?B?S2JHNFg4YUtmRG5iV2l0dzJJdEhDeE9FdHJXNU1BckNTZG8vOGtvV1pnS2JY?=
- =?utf-8?B?UGlNVXhmTGhjZ2l0U0NLVlBJdEJpQWhXeDEzUHU1dmdyL2pKbnlCVWQrL1Fs?=
- =?utf-8?B?UHF4NlhZTjRSS2YyYUtGNlpBTEhSeGdvWkFiMjRPaWpBUm00RDhuZW5sRmJr?=
- =?utf-8?B?SmZIYW1yVXpzbis5cUY0K2F3S3lJVWRDdlptbWY1SGJhVS9TbVNZeHdUTUpK?=
- =?utf-8?B?Z0NXTVRPTkdQL0I1cjVEcmp0YmR6MTllbTljQmppWnY2Q0xjaWhOY0pLUlNJ?=
- =?utf-8?B?emxWYm4yMG8zRlY4dFRYNi9ubWFJTjRIdU9RMXU4NW1nZEl6cTVTSDJKd3NR?=
- =?utf-8?B?QUdHL1dPbGJEVkFrNlRyQVFyamV1Y1ZHN3NzR09aUGN1ZDNFbmFOVkp0R0NC?=
- =?utf-8?B?eGhYd3ZaYUpLdnFwdWxqcUhybnlnRTlMVnpaRHo1MHNHcm1sUmV3empQLzBs?=
- =?utf-8?B?SlNnTi9ySUhGdDFLWVVTaGVtNVJqaGNsYnhhc1pLUFJtaWE1RElZSzVkZTlw?=
- =?utf-8?B?cm5kVDZrUnV4VnpRY2d5WHRUc0tIb3BTYjlxYVJTb09JNjBWeXVxY1N4Szlr?=
- =?utf-8?B?S1FuakZOZXRvUllVRUhrbzNQbHF5dmZLUFloK0xWeUF1WGJwUDk3WkEyelR6?=
- =?utf-8?B?emt1ZnlVQjJXeGREYzBmdnYzVjVhV1daNVMvUWJsOU5EMllyQjFwcG1WN0Zx?=
- =?utf-8?B?Q09wa1c4UzhIVW51dWhORnhXeFhMb0FZOFhqZWk4OFVTY0xRS3psOGhwcWUv?=
- =?utf-8?B?K0xxbXREcHp0Y29yVTNmRTljQlRQaU1Ic3h0TkJ2SXA0YW8yVU83bjJXT0xX?=
- =?utf-8?B?Yk5OcGtRY0lscmNUdXlmOFI1cDBEOXBueGQ4Mm5nSEdFMTdMa3R3VWxBTXZo?=
- =?utf-8?B?dGJzcTIwNmZOc2VjQ2k3NGVwMHVCRFpaTkh6ZHBERGpndUVYQktONXBHNExa?=
- =?utf-8?B?eHBjMG9VRDlCamdyWjdPR2FYcEh0eGNCSTkwSDM5TjNoQTg3TE9BM1VYS3JG?=
- =?utf-8?B?OW53RWhJSzdJd3Q5ZThjZkdFSis0OWN4a2tKRURIMHRQMGs0RytRblZQdkRC?=
- =?utf-8?B?Yk0rbHpGTFJ6b0JEZG1CVnhSWG5vM0dzeHg3UkloYXB4VWs5N2xrMUt1M3pH?=
- =?utf-8?B?VlR3cUxkTHJvYVVJQXk3aytUNEVLTURnWm5MS3FWeERSRS9BNE5mM3VtVFI3?=
- =?utf-8?Q?K2cI=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e623e5c2-f775-416b-1512-08ddf79d2411
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 16:54:04.4967
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vHgdIe7lavAKkW902GbGfsXNHlPZMm/pnJzEvJ/wJDlidOk5KbaykfV50Y+aje3R
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8897
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919-video-iris-ubwc-enable-v1-1-000d11edafd8@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=e50GSbp/ c=1 sm=1 tr=0 ts=68cd8abd cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=XQYPtZJ1ybOpo95NIg8A:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-GUID: ljbh5FqQVABJ9XRoTy1oaRvzwqPcxMzn
+X-Proofpoint-ORIG-GUID: ljbh5FqQVABJ9XRoTy1oaRvzwqPcxMzn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXwxDG2qAX6aX7
+ WztVCyE8Jgy0fOadUpiZHO96+HusTNj1LmH+oUxOhXnfvqf2Mjn9HsQhM+CeAGaunHMqvsEnREG
+ /qwOKmNb0zdg1Ah0mb//jl+8hChpLy6Bnfx5n3rQfdPCo5/uQs+RNqqrfFICpoipUa39rq9pHhq
+ Jws0cngi5KqV+HWubuhdS3tXhxgZcjghWggeE0FD8aDJX2XQqwh3IyUQwBJW4Zwcv6TQEM17fuC
+ EeJCEzh45+Vk1D1Udd0jrHz3In1aP48AaG9/TG/Op2ZWB3jobE7vHSn0hCKn8j/rZdELJuNDGMS
+ eRK3zI8FihJO75+fzJVP/ujpFpt4LCv2bqJuhXb7qUYaZblwDOnqRacWBke+hD/esIvKQu+L6Nw
+ hNluIuqH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 clxscore=1015 spamscore=0 priorityscore=1501
+ phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-Hi Reinette,
+On Fri, Sep 19, 2025 at 09:17:16PM +0530, Dikshita Agarwal wrote:
+> Introduce handling for the QC08C format in the decoder.
+> Update format checks and configuration to enable decoding of QC08C
+> streams.
 
-On 9/18/2025 12:15 AM, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 9/2/25 3:41 PM, Babu Moger wrote:
->> Smart Data Cache Injection (SDCI) is a mechanism that enables direct
->> insertion of data from I/O devices into the L3 cache. It can reduce the
->> demands on DRAM bandwidth and reduces latency to the processor consuming
->> the I/O data.
-> 
-> This copy&pasted text found in cover letter and patch 1 and now here seems to be the
-> type of annoying repetitive text that Boris referred to [1]. Looking at this changelog
-> again it may also be confusing to start with introduction of one feature (SDCI), but
-> end with another SDCIAE.
-> 
-> Here is a changelog that attempts to address issues, please feel free to improve:
-> 
-> 	AMD's SDCIAE (SDCI Allocation Enforcement) PQE feature enables system software
-> 	to control the portions of L3 cache used for direct insertion of data from
-> 	I/O devices into the L3 cache.
->                                                                                  
-> 	Introduce a generic resctrl cache resource property "io_alloc_capable" as the
-> 	first part of the new "io_alloc" resctrl feature that will support AMD's
-> 	SDCIAE.	Any architecture can set a cache resource as "io_alloc_capable" if a
-> 	portion	of the cache can be allocated for I/O traffic.
->                                                                                  
-> 	Set the "io_alloc_capable" property for the L3 cache resource on x86
-> 	(AMD) systems that support SDCIAE.
-> 
->   
+What is QC08C? Is it supported on all devices?
 
-Looks good. thank you.
+> 
+> Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_buffer.c     |  5 +-
+>  .../platform/qcom/iris/iris_hfi_gen1_command.c     | 12 +++--
+>  .../platform/qcom/iris/iris_hfi_gen2_command.c     | 18 ++++++-
+>  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  1 +
+>  drivers/media/platform/qcom/iris/iris_instance.h   |  7 ++-
+>  .../media/platform/qcom/iris/iris_platform_gen2.c  |  1 +
+>  drivers/media/platform/qcom/iris/iris_utils.c      |  3 +-
+>  drivers/media/platform/qcom/iris/iris_vdec.c       | 61 ++++++++++++++++++----
+>  8 files changed, 89 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+> index c0900038e7defccf7de3cb60e17c71e36a0e8ead..83dcf49e57ec1473bc4edd26c48ab0b247d23818 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> @@ -261,7 +261,10 @@ int iris_get_buffer_size(struct iris_inst *inst,
+>  		case BUF_INPUT:
+>  			return iris_dec_bitstream_buffer_size(inst);
+>  		case BUF_OUTPUT:
+> -			return iris_yuv_buffer_size_nv12(inst);
+> +			if (inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_QC08C)
+> +				return iris_yuv_buffer_size_qc08c(inst);
+> +			else
+> +				return iris_yuv_buffer_size_nv12(inst);
+>  		case BUF_DPB:
+>  			return iris_yuv_buffer_size_qc08c(inst);
+>  		default:
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> index e1788c266bb1080921f17248fd5ee60156b3143d..e458d3349ce09aadb75d056ae84e3aab95f03078 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
+> @@ -774,20 +774,21 @@ static int iris_hfi_gen1_set_raw_format(struct iris_inst *inst, u32 plane)
+>  		pixelformat = inst->fmt_dst->fmt.pix_mp.pixelformat;
+>  		if (iris_split_mode_enabled(inst)) {
+>  			fmt.buffer_type = HFI_BUFFER_OUTPUT;
+> -			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ?
+> -				HFI_COLOR_FORMAT_NV12_UBWC : 0;
+> +			fmt.format = HFI_COLOR_FORMAT_NV12_UBWC;
 
->> Introduce cache resource property "io_alloc_capable" that an architecture
->> can set if a portion of the cache can be allocated for I/O traffic.
->>
->> Set this property on x86 systems that support SDCIAE (L3 Smart Data Cache
->> Injection Allocation Enforcement). This property is set only for the L3
->> cache resource on systems that support SDCIAE.
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
->> ---
+This needs some explanation.
+
+>  
+>  			ret = hfi_gen1_set_property(inst, ptype, &fmt, sizeof(fmt));
+>  			if (ret)
+>  				return ret;
+>  
+>  			fmt.buffer_type = HFI_BUFFER_OUTPUT2;
+> -			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FORMAT_NV12 : 0;
+> +			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ?
+> +				HFI_COLOR_FORMAT_NV12 : HFI_COLOR_FORMAT_NV12_UBWC;
+>  
+>  			ret = hfi_gen1_set_property(inst, ptype, &fmt, sizeof(fmt));
+>  		} else {
+>  			fmt.buffer_type = HFI_BUFFER_OUTPUT;
+> -			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FORMAT_NV12 : 0;
+> +			fmt.format = pixelformat == V4L2_PIX_FMT_NV12 ?
+> +				HFI_COLOR_FORMAT_NV12 : HFI_COLOR_FORMAT_NV12_UBWC;
+>  
+>  			ret = hfi_gen1_set_property(inst, ptype, &fmt, sizeof(fmt));
+>  		}
+> @@ -806,6 +807,9 @@ static int iris_hfi_gen1_set_format_constraints(struct iris_inst *inst, u32 plan
+>  	const u32 ptype = HFI_PROPERTY_PARAM_UNCOMPRESSED_PLANE_ACTUAL_CONSTRAINTS_INFO;
+>  	struct hfi_uncompressed_plane_actual_constraints_info pconstraint;
+>  
+> +	if (inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_QC08C)
+> +		return 0;
+> +
+>  	pconstraint.buffer_type = HFI_BUFFER_OUTPUT2;
+>  	pconstraint.num_planes = 2;
+>  	pconstraint.plane_format[0].stride_multiples = 128;
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> index 4ce71a14250832440099e4cf3835b4aedfb749e8..5ad202d3fcdc57a2b7b43de15763a686ce0f7bd7 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> @@ -422,6 +422,20 @@ static int iris_hfi_gen2_set_level(struct iris_inst *inst, u32 plane)
+>  						  sizeof(u32));
+>  }
+>  
+> +static int iris_hfi_gen2_set_opb_enable(struct iris_inst *inst, u32 plane)
+> +{
+> +	u32 port = iris_hfi_gen2_get_port(inst, plane);
+> +	u32 opb_enable = iris_split_mode_enabled(inst);
+> +
+> +	return iris_hfi_gen2_session_set_property(inst,
+> +						  HFI_PROP_OPB_ENABLE,
+> +						  HFI_HOST_FLAGS_NONE,
+> +						  port,
+> +						  HFI_PAYLOAD_U32,
+> +						  &opb_enable,
+> +						  sizeof(u32));
+> +}
+> +
+>  static int iris_hfi_gen2_set_colorformat(struct iris_inst *inst, u32 plane)
+>  {
+>  	u32 port = iris_hfi_gen2_get_port(inst, plane);
+> @@ -429,7 +443,8 @@ static int iris_hfi_gen2_set_colorformat(struct iris_inst *inst, u32 plane)
+>  
+>  	if (inst->domain == DECODER) {
+>  		pixelformat = inst->fmt_dst->fmt.pix_mp.pixelformat;
+> -		hfi_colorformat = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FMT_NV12 : 0;
+> +		hfi_colorformat = pixelformat == V4L2_PIX_FMT_NV12 ?
+> +			HFI_COLOR_FMT_NV12 : HFI_COLOR_FMT_NV12_UBWC;
+>  	} else {
+>  		pixelformat = inst->fmt_src->fmt.pix_mp.pixelformat;
+>  		hfi_colorformat = pixelformat == V4L2_PIX_FMT_NV12 ? HFI_COLOR_FMT_NV12 : 0;
+> @@ -527,6 +542,7 @@ static int iris_hfi_gen2_session_set_config_params(struct iris_inst *inst, u32 p
+>  		{HFI_PROP_SIGNAL_COLOR_INFO,          iris_hfi_gen2_set_colorspace             },
+>  		{HFI_PROP_PROFILE,                    iris_hfi_gen2_set_profile                },
+>  		{HFI_PROP_LEVEL,                      iris_hfi_gen2_set_level                  },
+> +		{HFI_PROP_OPB_ENABLE,                 iris_hfi_gen2_set_opb_enable             },
+>  		{HFI_PROP_COLOR_FORMAT,               iris_hfi_gen2_set_colorformat            },
+>  		{HFI_PROP_LINEAR_STRIDE_SCANLINE,     iris_hfi_gen2_set_linear_stride_scanline },
+>  		{HFI_PROP_TIER,                       iris_hfi_gen2_set_tier                   },
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> index aa1f795f5626c1f76a32dd650302633877ce67be..1b6a4dbac828ffea53c1be0d3624a033c283c972 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> @@ -91,6 +91,7 @@ enum hfi_seq_header_mode {
+>  #define HFI_PROP_BUFFER_MARK			0x0300016c
+>  #define HFI_PROP_RAW_RESOLUTION		0x03000178
+>  #define HFI_PROP_TOTAL_PEAK_BITRATE		0x0300017C
+> +#define HFI_PROP_OPB_ENABLE			0x03000184
+>  #define HFI_PROP_COMV_BUFFER_COUNT		0x03000193
+>  #define HFI_PROP_END				0x03FFFFFF
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
+> index 5982d7adefeab80905478b32cddba7bd4651a691..11134f75c26dd1f6c92ba72fbf4e56e41a72de64 100644
+> --- a/drivers/media/platform/qcom/iris/iris_instance.h
+> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
+> @@ -15,12 +15,17 @@
+>  #define DEFAULT_WIDTH 320
+>  #define DEFAULT_HEIGHT 240
+>  
+> -enum iris_fmt_type {
+> +enum iris_fmt_type_out {
+>  	IRIS_FMT_H264,
+>  	IRIS_FMT_HEVC,
+>  	IRIS_FMT_VP9,
+>  };
+>  
+> +enum iris_fmt_type_cap {
+> +	IRIS_FMT_NV12,
+> +	IRIS_FMT_UBWC,
+
+UBWC is not a format on its own, it's a modifier of the format. Please
+come up with a better naming.
+
+> +};
+> +
+>  struct iris_fmt {
+>  	u32 pixfmt;
+>  	u32 type;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index 36d69cc73986b74534a2912524c8553970fd862e..69c952c68e939f305f25511e2e4763487ec8e0de 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -691,6 +691,7 @@ static const u32 sm8550_venc_input_config_params[] = {
+>  };
+>  
+>  static const u32 sm8550_vdec_output_config_params[] = {
+> +	HFI_PROP_OPB_ENABLE,
+>  	HFI_PROP_COLOR_FORMAT,
+>  	HFI_PROP_LINEAR_STRIDE_SCANLINE,
+>  };
+> diff --git a/drivers/media/platform/qcom/iris/iris_utils.c b/drivers/media/platform/qcom/iris/iris_utils.c
+> index 85c70a62b1fd2c409fc18b28f64771cb0097a7fd..e2f1131de43128254d8211343771e657e425541e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_utils.c
+> +++ b/drivers/media/platform/qcom/iris/iris_utils.c
+> @@ -34,7 +34,8 @@ int iris_get_mbpf(struct iris_inst *inst)
+>  
+>  bool iris_split_mode_enabled(struct iris_inst *inst)
+>  {
+> -	return inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_NV12;
+> +	return inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_NV12 ||
+> +		inst->fmt_dst->fmt.pix_mp.pixelformat == V4L2_PIX_FMT_QC08C;
+>  }
+>  
+>  void iris_helper_buffers_done(struct iris_inst *inst, unsigned int type,
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+> index ae13c3e1b426bfd81a7b46dc6c3ff5eb5c4860cb..7fa745c6bf8950d192c2d2fc1770c4b6fd7b8c4c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+> @@ -67,7 +67,7 @@ void iris_vdec_inst_deinit(struct iris_inst *inst)
+>  	kfree(inst->fmt_src);
+>  }
+>  
+> -static const struct iris_fmt iris_vdec_formats[] = {
+> +static const struct iris_fmt iris_vdec_formats_out[] = {
+>  	[IRIS_FMT_H264] = {
+>  		.pixfmt = V4L2_PIX_FMT_H264,
+>  		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+> @@ -82,12 +82,35 @@ static const struct iris_fmt iris_vdec_formats[] = {
+>  	},
+>  };
+>  
+> +static const struct iris_fmt iris_vdec_formats_cap[] = {
+
+s/formats_cap/formats_capture/
+
+> +	[IRIS_FMT_NV12] = {
+> +		.pixfmt = V4L2_PIX_FMT_NV12,
+> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+> +	},
+> +	[IRIS_FMT_UBWC] = {
+> +		.pixfmt = V4L2_PIX_FMT_QC08C,
+> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+> +	},
+> +};
+> +
+>  static const struct iris_fmt *
+>  find_format(struct iris_inst *inst, u32 pixfmt, u32 type)
+>  {
+> -	unsigned int size = ARRAY_SIZE(iris_vdec_formats);
+> -	const struct iris_fmt *fmt = iris_vdec_formats;
+> +	const struct iris_fmt *fmt = NULL;
+> +	unsigned int size = 0;
+>  	unsigned int i;
+> +	switch (type) {
+> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+> +		fmt = iris_vdec_formats_out;
+> +		size = ARRAY_SIZE(iris_vdec_formats_out);
+> +		break;
+> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> +		fmt = iris_vdec_formats_cap;
+> +		size = ARRAY_SIZE(iris_vdec_formats_cap);
+> +		break;
+> +	default:
+> +		return NULL;
+> +	}
+>  
+>  	for (i = 0; i < size; i++) {
+>  		if (fmt[i].pixfmt == pixfmt)
+> @@ -103,8 +126,21 @@ find_format(struct iris_inst *inst, u32 pixfmt, u32 type)
+>  static const struct iris_fmt *
+>  find_format_by_index(struct iris_inst *inst, u32 index, u32 type)
+>  {
+> -	const struct iris_fmt *fmt = iris_vdec_formats;
+> -	unsigned int size = ARRAY_SIZE(iris_vdec_formats);
+> +	const struct iris_fmt *fmt = NULL;
+> +	unsigned int size = 0;
+> +
+> +	switch (type) {
+> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+> +		fmt = iris_vdec_formats_out;
+> +		size = ARRAY_SIZE(iris_vdec_formats_out);
+> +		break;
+> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> +		fmt = iris_vdec_formats_cap;
+> +		size = ARRAY_SIZE(iris_vdec_formats_cap);
+> +		break;
+> +	default:
+> +		return NULL;
+> +	}
+>  
+>  	if (index >= size || fmt[index].type != type)
+>  		return NULL;
+> @@ -126,9 +162,10 @@ int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f)
+>  		f->flags = V4L2_FMT_FLAG_COMPRESSED | V4L2_FMT_FLAG_DYN_RESOLUTION;
+>  		break;
+>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> -		if (f->index)
+> +		fmt = find_format_by_index(inst, f->index, f->type);
+> +		if (!fmt)
+>  			return -EINVAL;
+> -		f->pixelformat = V4L2_PIX_FMT_NV12;
+> +		f->pixelformat = fmt->pixfmt;
+>  		break;
+>  	default:
+>  		return -EINVAL;
+> @@ -157,7 +194,7 @@ int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  		}
+>  		break;
+>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> -		if (f->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12) {
+> +		if (!fmt) {
+>  			f_inst = inst->fmt_dst;
+>  			f->fmt.pix_mp.pixelformat = f_inst->fmt.pix_mp.pixelformat;
+>  			f->fmt.pix_mp.width = f_inst->fmt.pix_mp.width;
+> @@ -238,10 +275,11 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  		inst->crop.height = f->fmt.pix_mp.height;
+>  		break;
+>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> +		if (!(find_format(inst, f->fmt.pix_mp.pixelformat, f->type)))
+> +			return -EINVAL;
+> +
+>  		fmt = inst->fmt_dst;
+>  		fmt->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> -		if (fmt->fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12)
+> -			return -EINVAL;
+>  		fmt->fmt.pix_mp.pixelformat = f->fmt.pix_mp.pixelformat;
+>  		fmt->fmt.pix_mp.width = ALIGN(f->fmt.pix_mp.width, 128);
+>  		fmt->fmt.pix_mp.height = ALIGN(f->fmt.pix_mp.height, 32);
+> @@ -268,7 +306,8 @@ int iris_vdec_validate_format(struct iris_inst *inst, u32 pixelformat)
+>  {
+>  	const struct iris_fmt *fmt = NULL;
+>  
+> -	if (pixelformat != V4L2_PIX_FMT_NV12) {
+> +	fmt = find_format(inst, pixelformat, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+> +	if (!fmt) {
+>  		fmt = find_format(inst, pixelformat, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
+>  		if (!fmt)
+>  			return -EINVAL;
 > 
-> Reinette
-> 
-> 
-> [1] https://lore.kernel.org/lkml/20250911150850.GAaMLmAoi5fTIznQzY@fat_crate.local/
-> 
+> -- 
+> 2.34.1
 > 
 
+-- 
+With best wishes
+Dmitry
 
