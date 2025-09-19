@@ -1,115 +1,254 @@
-Return-Path: <linux-kernel+bounces-824895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A81B8A64A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:48:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D36AB8A65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899771C84C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4792C3BFDB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54C8270553;
-	Fri, 19 Sep 2025 15:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B5C31E88A;
+	Fri, 19 Sep 2025 15:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iRx/Ku4b"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PN0uEklB"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B132505AF
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ABF318146
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296912; cv=none; b=rUIxo6U1RwP8J0JaTS/SZHlKQuCqK9Iiwe42xKkLa0IGerze4iOb8wnPnfAv/x8fXMPVzWeCSPFBuWzrd5xYTycgSXwO+msT+g35A63KBiAniuJSDnlEXJWAF9yLwubqZjBG+p4nPewx4eUA9T+/WjwfqDmhyv1wtpkafWWPEdM=
+	t=1758296956; cv=none; b=Ha1pqPlpKvUGnyaS7BuBLLwzYzcAcDE4P3Y+tzs9KtxgoGfHIF84E14Re8sh2VkawJs4MSCH+jBZG/cFoGETBvyxtmcMS8Qgt8R6ufY+BBO3AQopcOzVCRvZS8104BMCWGjzKGBfhbqYVIqNpnz3WGZ08fCHosXrUTk3n9C/ej4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296912; c=relaxed/simple;
-	bh=u0vGF1+Z1rrRnWW+KC1hbB8IFqjlexdvrw2BH4hB5Lk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BiNqZnUtQs7DXVaaLTNEKr9Hs0d2fKSqLNpb2PVro16SiqNtN4A0+hP+sUw0XjbfSGaMnhcI7lYXeCHNkVc2m6bwlOPcbLSctzXwTs8/svkxdseWx0zs9gZXlDHisJCVErAG8kEBvm12oO81nhDtQzPXmvW3MsZwX1Pjbn9d9PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iRx/Ku4b; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=u0vG
-	F1+Z1rrRnWW+KC1hbB8IFqjlexdvrw2BH4hB5Lk=; b=iRx/Ku4bNLZg+n2rHgKS
-	qAxbw7syg0QyihGUmqyNwUuEfrXC3WL29J5ndVK+RcHw0BTTJ4IXuQQnltJbuTLD
-	lOrhO4Je+JGzMF5A9yiM1tfcmsDkgMQBaMU5yBm4zfz97qHmoRE+Jpf6Ezy667XS
-	PDS77XcKmo8l/DVudCIEHeajrygf6D0IZrjNxAger6pZujRzW6HvY11CdyT86ruw
-	zdFEfvaqWZIpPGr15ngwW3wH4obAMPeO+pY9P56OIrsSLTjyToO5J0U0D/43j4tl
-	ZHdb9CaKKJUSFBSTo2aawhgz47WdltyOmDNvtWrGGbLN+u/KCbBxH3bx7/hvBKHC
-	Hw==
-Received: (qmail 3968457 invoked from network); 19 Sep 2025 17:48:28 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 17:48:28 +0200
-X-UD-Smtp-Session: l3s3148p1@4kOaZik/5LwgAwDPXxLYAMR913XberYj
-Date: Fri, 19 Sep 2025 17:48:27 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 0/8] gpio: renesas: Add support for GPIO and related
- interrupts in RZ/N1 SoC
-Message-ID: <aM17S8VWTNvPAaDN@shikoro>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <aMztGzYMHEPL1GVt@ninjato>
- <aM0ltldIXG5gwsDn@ninjato>
- <aM0ocJOCjctW6Lad@ninjato>
+	s=arc-20240116; t=1758296956; c=relaxed/simple;
+	bh=WzMigsI8XU1Mz2+AbYO0H8GUDTcyXuAAvNIV83fgeQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JbmfIt3GZ4RcMu5K4DjuES0D7VJWC/f7OggBOGbfann+VAorv6qeg17MBC2u8H5PE6EOkeENaNLHHBebL6PIRrf7pcYJZcJPagpr7FUHerznGOr4TFE4YPfEeUa1nxSVhHBdqQ64ToVgzCqIUflR4eG9slAFoyXs+Z6sEvgcTz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PN0uEklB; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45b9c35bc0aso24444825e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758296952; x=1758901752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CXzD2xToz4myOdiuXS9HZSpzaqk5AwYCBtvdB4YBjyk=;
+        b=PN0uEklBHgpCgn//Emm0AXpUS6cZUg637Lj00tnQ+t6su9H1XK1u++Ghm1I0boekgj
+         FLOm+I2Pwn97z7zB/jR1H9OC9OoaZYIyaezc5AtmjKWvSwxPwD9a6CQJoiOub08SKoLf
+         SS3/33ifcVRO6ynEuof8X05nYkfxB+qsjUXs7wafjdOreLxs2kE688XnhrXOq9VSfcuL
+         cFwz4mw8u8waEjcaWj7kBHHf8XS3FuNLjKeHdz/nqwaBEdYNpVoPbZDRSfX8gvxTQDy2
+         vLb+kBf0GmeAjTZPH9TBfD+406kFlG7fxWfonYiQtHFE8p3K+qX0IzIIA/+30kGfNMW+
+         9NUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758296952; x=1758901752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CXzD2xToz4myOdiuXS9HZSpzaqk5AwYCBtvdB4YBjyk=;
+        b=ep5QbCCHhlJM/0rAVQY+wiEKet58zcZbJMT9x5Ixf8kvZr5JqEtiWcRkDw+n9sMlkJ
+         NcbX08QaI6iouy+HArQQQP7hFAerlMDYLA3G5ndIOSIPxKzMKuZlnREP3nofxwyCybUR
+         b7MB2GQ9E4UIaYmuvuH5SdqOWx2oGS2BuN6oT6XLK6jiWFPzWLm2dGRifCh9iZIxIzos
+         K3MWA7YqxQgKzSqPuKsC4L0Ws9g14dBK/Bzya1+meNXhoiTu5KQFOYLsez6CiXax3F3K
+         Pmp+TMUj8nSpk2NkiOIfYDDMr1Xcigv7c+iLWDepAQI18nQC/rIVDYFZwkxA3N4sBi++
+         gxaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVacg9iFFAlFs5T/vBAt8jVg7dboWnW27YurSwZIxTMNpnW5o8V+jeHTxn20nl1BOl761b8dgM9AAJhicY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzs+6LD9JZuwD5AP/R7z1TIBevU3RjvaML9c7GKN4DclwmYxsg
+	lxrWWGe81Y1o15FcpUhfaQyb7Yjv9/1dSJv/ffq8Iii9zfYXzFbsjnDT
+X-Gm-Gg: ASbGnctRX2mhkP0c2a6/tG2fZd0BcNoTAOCNsFxgNKwoC8yNWJNmJrWFmOBOTTKv5Ce
+	tZJyvUcVOFzXrKiEHPM82ASxuQGRZJ17GyM7OUmWIEx3yAVnplAeUDdw5U4Lz58xSsXklFz3O1G
+	TeGqUFjyASFYD7r3UyMAKIbGnzYlu5B11vdaz5hsaBjDD+eMinxK7PYd1Inc1voYc7B7UtBymWg
+	alTtEHwOK/AhSUVLm5x9NpeTCeagS51YRfy006HFFnZy3xkGuK0yfJKhkMZa+l0V0kP9Uzr55eL
+	FirdIhg4jA9VWwRh0KzKphOttY6lkneKPoanjODKau+K4XjocDvOcL993R5T/gD80TRqIp3HWa6
+	654CzwZV5Cz1mWYJnEN4I3vKzP8rB4qH4s9DbV37gnzvruZOYxostouUwU9GhhGAbkwpyP0mH13
+	ehpOloRJg=
+X-Google-Smtp-Source: AGHT+IEbFuXtdTSkzWivIeO3XAAKwZOU9is/JOJp4hfdLKzSu67HGXZJVYrLPblPcD5dEqny6zTaoA==
+X-Received: by 2002:a05:600c:45c9:b0:45f:286e:49a8 with SMTP id 5b1f17b1804b1-467eaa88162mr40026405e9.30.1758296952033;
+        Fri, 19 Sep 2025 08:49:12 -0700 (PDT)
+Received: from f.. (cst-prg-88-146.cust.vodafone.cz. [46.135.88.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f53c4sm8446746f8f.3.2025.09.19.08.49.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 08:49:11 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com,
+	kernel-team@fb.com,
+	amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v5 0/4] hide ->i_state behind accessors
+Date: Fri, 19 Sep 2025 17:49:00 +0200
+Message-ID: <20250919154905.2592318-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2paa0KuInPy4P9RY"
-Content-Disposition: inline
-In-Reply-To: <aM0ocJOCjctW6Lad@ninjato>
+Content-Transfer-Encoding: 8bit
 
+This is generated against:
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries
 
---2paa0KuInPy4P9RY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+First commit message quoted verbatim with rationable + API:
 
+[quote]
+Open-coded accesses prevent asserting they are done correctly. One
+obvious aspect is locking, but significantly more can checked. For
+example it can be detected when the code is clearing flags which are
+already missing, or is setting flags when it is illegal (e.g., I_FREEING
+when ->i_count > 0).
 
-> Maybe I can test patch 4 later today on my RZ/A1-Genmai.
+Given the late stage of the release cycle this patchset only aims to
+hide access, it does not provide any of the checks.
 
-That needs to wait until v3 of this series.
+Consumers can be trivially converted. Suppose flags I_A and I_B are to
+be handled, then:
 
+state = inode->i_state  	=> state = inode_state_read(inode)
+inode->i_state |= (I_A | I_B) 	=> inode_state_add(inode, I_A | I_B)
+inode->i_state &= ~(I_A | I_B) 	=> inode_state_del(inode, I_A | I_B)
+inode->i_state = I_A | I_B	=> inode_state_set(inode, I_A | I_B)
+[/quote]
 
---2paa0KuInPy4P9RY
-Content-Type: application/pgp-signature; name="signature.asc"
+Right now this is one big NOP, except for READ_ONCE/WRITE_ONCE for every access.
 
------BEGIN PGP SIGNATURE-----
+Given this, I decided to not submit any per-fs patches. Instead, the
+conversion is done in 2 parts: coccinelle and whatever which was missed.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNe0sACgkQFA3kzBSg
-KbYi2w/8Dg1l6YOqbIoSLU0xqdeJfmKpPpzvmGsJBDAym+QXKjw04nDtczDHi31J
-ks2l6oz9NznwoqNRgT+ogoUGwBPvAdxQPqskvA3d3jvUm21ItVRU/xsNWh6S2a2Q
-6bIf1uNAGe0qwSrUbG6aW4Ov2NvnLES9qwoNz/8f6Y5rMi+MP52xIXYzg/C8uOYk
-22qjFaUblYXQ+V9Hc8WPl2WRPiTbwwhN3rOwt3wc6N+eBeu5RNBUv027O5uUBQ+c
-wiDLqTexGA5vifkyRUIF42a/JKT3NQF3ze8wHqOnNA16Q6ZLDoXjWyaFwvokoFGM
-k6E4uwNm4Nk5JcO5anfkSiOo15cyTFL5WEkwKgpLSfdfDeCwGr7CLk/0pn7Z26EE
-uFsDAwYwKnHntNGR6MTdMvoS8RJzSvifm2c6KCDEMqfm+YxYv/kLmNqBL9FQ/73E
-N4ZEOC9PyugOKSL6Yvrc/Boic9OOi+uXLeH9aJPgLR0d+6IXO5e3JlN2BT1yg94r
-0op4weAOBzFRSGKs7G/cS7rrkfU2h/20rCF6Xuzi6n7KLp8ErNQ8G8iNSoG1CyfL
-C3pj//s56DeJs7kUxhlwlYRF/JR7h3i1jEkjuCLqx2755lOhBx2iNNXEE5pFT6dI
-15dv1syP1JaeUIb+aFbEyuTnuNwwdoUn35Zd67yShVB7x6gX/MU=
-=te5E
------END PGP SIGNATURE-----
+v5:
+- drop lockdep for the time being
 
---2paa0KuInPy4P9RY--
+v4:
+https://lore.kernel.org/linux-fsdevel/CAGudoHFViBUZ4TPNuLWC7qyK0v8LRwxbpZd9Mx3rHdh5GW9CrQ@mail.gmail.com/T/#m866b3b5740691de9b4008184a9a3f922dfa8e439
+
+Mateusz Guzik (4):
+  fs: provide accessors for ->i_state
+  Convert the kernel to use ->i_state accessors
+  Manual conversion of ->i_state uses
+  fs: make plain ->i_state access fail to compile
+
+ Documentation/filesystems/porting.rst |   2 +-
+ block/bdev.c                          |   4 +-
+ drivers/dax/super.c                   |   2 +-
+ fs/9p/vfs_inode.c                     |   2 +-
+ fs/9p/vfs_inode_dotl.c                |   2 +-
+ fs/affs/inode.c                       |   2 +-
+ fs/afs/dynroot.c                      |   6 +-
+ fs/afs/inode.c                        |   6 +-
+ fs/bcachefs/fs.c                      |   8 +-
+ fs/befs/linuxvfs.c                    |   2 +-
+ fs/bfs/inode.c                        |   2 +-
+ fs/btrfs/inode.c                      |  10 +--
+ fs/buffer.c                           |   4 +-
+ fs/ceph/cache.c                       |   2 +-
+ fs/ceph/crypto.c                      |   4 +-
+ fs/ceph/file.c                        |   4 +-
+ fs/ceph/inode.c                       |  28 +++---
+ fs/coda/cnode.c                       |   4 +-
+ fs/cramfs/inode.c                     |   2 +-
+ fs/crypto/keyring.c                   |   2 +-
+ fs/crypto/keysetup.c                  |   2 +-
+ fs/dcache.c                           |   8 +-
+ fs/drop_caches.c                      |   2 +-
+ fs/ecryptfs/inode.c                   |   6 +-
+ fs/efs/inode.c                        |   2 +-
+ fs/erofs/inode.c                      |   2 +-
+ fs/ext2/inode.c                       |   2 +-
+ fs/ext4/inode.c                       |  10 +--
+ fs/ext4/orphan.c                      |   4 +-
+ fs/f2fs/data.c                        |   2 +-
+ fs/f2fs/inode.c                       |   2 +-
+ fs/f2fs/namei.c                       |   4 +-
+ fs/f2fs/super.c                       |   2 +-
+ fs/freevxfs/vxfs_inode.c              |   2 +-
+ fs/fs-writeback.c                     | 121 +++++++++++++-------------
+ fs/fuse/inode.c                       |   4 +-
+ fs/gfs2/file.c                        |   2 +-
+ fs/gfs2/glops.c                       |   2 +-
+ fs/gfs2/inode.c                       |   4 +-
+ fs/gfs2/ops_fstype.c                  |   2 +-
+ fs/hfs/btree.c                        |   2 +-
+ fs/hfs/inode.c                        |   2 +-
+ fs/hfsplus/super.c                    |   2 +-
+ fs/hostfs/hostfs_kern.c               |   2 +-
+ fs/hpfs/dir.c                         |   2 +-
+ fs/hpfs/inode.c                       |   2 +-
+ fs/inode.c                            | 100 ++++++++++-----------
+ fs/isofs/inode.c                      |   2 +-
+ fs/jffs2/fs.c                         |   4 +-
+ fs/jfs/file.c                         |   4 +-
+ fs/jfs/inode.c                        |   2 +-
+ fs/jfs/jfs_txnmgr.c                   |   2 +-
+ fs/kernfs/inode.c                     |   2 +-
+ fs/libfs.c                            |   6 +-
+ fs/minix/inode.c                      |   2 +-
+ fs/namei.c                            |   8 +-
+ fs/netfs/misc.c                       |   8 +-
+ fs/netfs/read_single.c                |   6 +-
+ fs/nfs/inode.c                        |   2 +-
+ fs/nfs/pnfs.c                         |   2 +-
+ fs/nfsd/vfs.c                         |   2 +-
+ fs/nilfs2/cpfile.c                    |   2 +-
+ fs/nilfs2/dat.c                       |   2 +-
+ fs/nilfs2/ifile.c                     |   2 +-
+ fs/nilfs2/inode.c                     |  10 +--
+ fs/nilfs2/sufile.c                    |   2 +-
+ fs/notify/fsnotify.c                  |   2 +-
+ fs/ntfs3/inode.c                      |   2 +-
+ fs/ocfs2/dlmglue.c                    |   2 +-
+ fs/ocfs2/inode.c                      |  10 +--
+ fs/omfs/inode.c                       |   2 +-
+ fs/openpromfs/inode.c                 |   2 +-
+ fs/orangefs/inode.c                   |   2 +-
+ fs/orangefs/orangefs-utils.c          |   6 +-
+ fs/overlayfs/dir.c                    |   2 +-
+ fs/overlayfs/inode.c                  |   6 +-
+ fs/overlayfs/util.c                   |  10 +--
+ fs/pipe.c                             |   2 +-
+ fs/qnx4/inode.c                       |   2 +-
+ fs/qnx6/inode.c                       |   2 +-
+ fs/quota/dquot.c                      |   2 +-
+ fs/romfs/super.c                      |   2 +-
+ fs/smb/client/cifsfs.c                |   2 +-
+ fs/smb/client/inode.c                 |  14 +--
+ fs/squashfs/inode.c                   |   2 +-
+ fs/sync.c                             |   2 +-
+ fs/ubifs/file.c                       |   2 +-
+ fs/ubifs/super.c                      |   2 +-
+ fs/udf/inode.c                        |   2 +-
+ fs/ufs/inode.c                        |   2 +-
+ fs/xfs/scrub/common.c                 |   2 +-
+ fs/xfs/scrub/inode_repair.c           |   2 +-
+ fs/xfs/scrub/parent.c                 |   2 +-
+ fs/xfs/xfs_bmap_util.c                |   2 +-
+ fs/xfs/xfs_health.c                   |   4 +-
+ fs/xfs/xfs_icache.c                   |   6 +-
+ fs/xfs/xfs_inode.c                    |   6 +-
+ fs/xfs/xfs_inode_item.c               |   4 +-
+ fs/xfs/xfs_iops.c                     |   2 +-
+ fs/xfs/xfs_reflink.h                  |   2 +-
+ fs/zonefs/super.c                     |   4 +-
+ include/linux/backing-dev.h           |   3 +-
+ include/linux/fs.h                    |  42 ++++++++-
+ include/linux/writeback.h             |   4 +-
+ include/trace/events/writeback.h      |   8 +-
+ mm/backing-dev.c                      |   2 +-
+ security/landlock/fs.c                |   2 +-
+ 107 files changed, 342 insertions(+), 304 deletions(-)
+
+-- 
+2.43.0
+
 
