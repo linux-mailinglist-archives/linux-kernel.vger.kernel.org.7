@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-825330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BB4B8B91B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:49:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D7CB8B954
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3212A825A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B335DB66D37
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BFE2D878C;
-	Fri, 19 Sep 2025 22:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F08C2D9EC8;
+	Fri, 19 Sep 2025 22:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCI3vAvx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D703C2D8781
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gU8/m8eP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205162D94B7;
+	Fri, 19 Sep 2025 22:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321725; cv=none; b=PoF9OUZkiglz7gSF4R4ijE996Hpyo13WIJvE7et0TCS9XQWZ/rvhFWlKXVFRLdxTMgt/tWcdX/Cdwywj0NZcrCCOqE3zQcTCBUOq3HMFHd9W+ZOInrI/5F3BV9oowF5LsmL5AgS9bcS3bkpQvEwmiCCdUYRMD5dbtoWixeMAlDE=
+	t=1758321900; cv=none; b=JKTGhcQRljoW65/0bmsjlmy/DMdtxKPYk760uE8WJLM5JHRAMCeJ3OiIpMG1ywK9vMPVCAvYtkA56TLcb7qUOCla78ky+tmcLSlDCuZJzsfb+LRpjY9aPzGsEDAAobK4xNuVbLT+C+/SRe4steI90jqnT2GiJI/mDMMfHlxbyoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321725; c=relaxed/simple;
-	bh=Zm1M3jHb9CJ3r71mYFzgfrQOp48B7ZOWK1X98tIDqzI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JwNg1gAWDNH3ki7RfvI5UTD9MN4Cw3NFQ6EnjkTMAcO2qeyKwuKsnzuPm89igWwT/JfItR0w2eiFslsg8QXo3X93SdyWGxujvBqBc4Jv8g+zvJI6erqQvJnf9D5fKSLidOTNXaaq6KVbOUGfFqyQdWsSaYUd1pUACD7IV+EHXso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCI3vAvx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86669C4CEFD
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758321725;
-	bh=Zm1M3jHb9CJ3r71mYFzgfrQOp48B7ZOWK1X98tIDqzI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iCI3vAvxCZ1fdHW7PlbAGgZvqXMeRuoIhAE1SwbMhBQZhtPLhQxkxks6Xv1ecCjYK
-	 zA+FyJo4ZycF/1Sa82O00r7ip4tY4ljZuZWU+YmeOgzp6+RIkU8pt5PaB/xnzAa6yV
-	 xa1MCA2nc54d+OvT0vC3mru5Nyj+XwGKbzpGABAYMqAXDJSi5YlRurCl2wtE1zPNTp
-	 tCeEPynuKTvxw3pZSrxbYlsgT8Uptgsd8VDf7bMwvdRAMGopUy1S0mZQ2rz6CEZIBW
-	 LAah1wVrsCTzVK5Bq0YHJyKwv+5Mpy6Bvs5C0pjvuJKi7Fd2KmgiwIIv5rregCROJY
-	 Vng59aOXu+rHA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3601012fdfdso21960941fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:42:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXxYND+OIsz0p0uXjDDbRZY7oAH3D8whZOLXq90c3S7QaVUsfXFIPKT5OkLDIsEBOmr5upBWZQ8y/VbY6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUQDlE3AGuEH1Qa/nJamkRr2hfgBQyIvngmn9qJWugjTcU+eAb
-	x81FPuXRViMw2iukyLVwx0x0vGOiKOH3fJci3DhF6y7Lpjyr0x0aNTIjXGdHzjrLEK2bRoqzeMr
-	MHrwZtMRshdjKnUU0jpjY+XpQPG9zd14=
-X-Google-Smtp-Source: AGHT+IFHcKMAvs4PQQTYZlUVDWSc5ZK0PVWE4ileGQsev+UZeJzNDCdz1kpAlU2C8sOjUFnO06qBBhVnBMPRCeiLVIc=
-X-Received: by 2002:a2e:8a8e:0:b0:35f:ddb1:96c4 with SMTP id
- 38308e7fff4ca-36419785d45mr9902251fa.29.1758321723793; Fri, 19 Sep 2025
- 15:42:03 -0700 (PDT)
+	s=arc-20240116; t=1758321900; c=relaxed/simple;
+	bh=PJwldsfvkWRk+/jymc6dF/H97iqcuzdBcvBDXWoqBL0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NEmL3MOYUt4LY5ghLlhFjy2aKzlJ1gX0b2nKPU8i8bS/CzR0PmArcZU7M93nzjD8Q2KZ1pXsw8rkVruT9awenZj5Y+FNcvwE7KdzfqJCvCT9S1ZGZ82RXIZvfPRXEfMC09pe0mgGSs4myp0Z2pVokNkuG+QKG0d8QpJ2GnFRN7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gU8/m8eP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.193.225] (unknown [20.236.11.42])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3594F2018E6A;
+	Fri, 19 Sep 2025 15:44:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3594F2018E6A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758321898;
+	bh=W7ObVF+H+rGR8iIdFsHqoTyyXX+GcheBvXyIRPKXfYQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gU8/m8ePc+dA492zyqYzbe1zCZR1PHM8tqiS2SPAvw3ec/MiT93R6gIFrkhvUXIlA
+	 oDVxxB35EOeCYo50Cvnf/E42dJNxGF3i0UEsjGOSvo7xtTaz73U0qoQsZNB5ymg1GA
+	 ZnBE1R70/MMaDSpKkYhfGn3gjksi0OKOXvppqruI=
+Message-ID: <43d27c68-f92f-4236-830d-9f28a1b52931@linux.microsoft.com>
+Date: Fri, 19 Sep 2025 15:44:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918063539.2640512-7-ardb+git@google.com> <20250919193221.GB2249@quark>
-In-Reply-To: <20250919193221.GB2249@quark>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 20 Sep 2025 00:41:51 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFOS4n4HNCZuoSUT3KUs+pM6OqSYz3Pv5z1dmZJZ70meQ@mail.gmail.com>
-X-Gm-Features: AS18NWAn8XZaWe_Iq5DVEqnG3m8nSgWuT9HLn9m4iHtAqolG9uEsGI6YX_WDbKI
-Message-ID: <CAMj1kXFOS4n4HNCZuoSUT3KUs+pM6OqSYz3Pv5z1dmZJZ70meQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] arm64: Move kernel mode FPSIMD buffer to the stack
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	herbert@gondor.apana.org.au, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] mshv: Introduce new hypercall to map stats page
+ for L1VH partitions
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
+ tiala@microsoft.com, anirudh@anirudhrb.com,
+ paekkaladevi@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com,
+ Jinank Jain <jinankjain@linux.microsoft.com>
+References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1758066262-15477-6-git-send-email-nunodasneves@linux.microsoft.com>
+ <aMxjORzTO0DgWq9q@skinsburskii.localdomain>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <aMxjORzTO0DgWq9q@skinsburskii.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 19 Sept 2025 at 21:32, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Thu, Sep 18, 2025 at 08:35:40AM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
-> > context switch out of struct thread_struct, and onto the stack, so that
-> > the memory cost is not imposed needlessly on all tasks in the system.
-> >
-> > Patches #1 - #3 contains some prepwork so that patch #4 can tighten the
-> > rules around permitted usage patterns of kernel_neon_begin() and
-> > kernel_neon_end(). This permits #5 to provide a stack buffer to
-> > kernel_neon_begin() transparently, in a manner that ensures that it will
-> > remain available until after the associated call to kernel_neon_end()
-> > returns.
-> >
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Mark Brown <broonie@kernel.org>
-> >
-> > Ard Biesheuvel (5):
-> >   crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
-> >   crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
-> >   crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
-> >   arm64/fpsimd: Require kernel NEON begin/end calls from the same scope
-> >   arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
-> >
-> >  arch/arm64/crypto/aes-ce-ccm-glue.c |  5 +--
-> >  arch/arm64/crypto/sm4-ce-ccm-glue.c | 10 ++----
-> >  arch/arm64/crypto/sm4-ce-gcm-glue.c | 10 ++----
-> >  arch/arm64/include/asm/neon.h       |  7 ++--
-> >  arch/arm64/include/asm/processor.h  |  2 +-
-> >  arch/arm64/kernel/fpsimd.c          | 34 +++++++++++++-------
-> >  6 files changed, 34 insertions(+), 34 deletions(-)
->
-> This looks like the right decision: saving 528 bytes per task is
-> significant.  528 bytes is a lot to allocate on the stack too, but
-> functions that use the NEON registers are either leaf functions or very
-> close to being leaf functions, so it should be okay.
->
+On 9/18/2025 12:53 PM, Stanislav Kinsburskii wrote:
+> On Tue, Sep 16, 2025 at 04:44:22PM -0700, Nuno Das Neves wrote:
+>> From: Jinank Jain <jinankjain@linux.microsoft.com>
+>>
+> 
+> <snip>
+> 
+>> +static int hv_call_map_stats_page2(enum hv_stats_object_type type,
+>> +				   const union hv_stats_object_identity *identity,
+>> +				   u64 map_location)
+>> +{
+>> +	unsigned long flags;
+>> +	struct hv_input_map_stats_page2 *input;
+>> +	u64 status;
+>> +	int ret;
+>> +
+>> +	if (!map_location || !mshv_use_overlay_gpfn())
+>> +		return -EINVAL;
+>> +
+>> +	do {
+>> +		local_irq_save(flags);
+>> +		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+>> +
+>> +		memset(input, 0, sizeof(*input));
+>> +		input->type = type;
+>> +		input->identity = *identity;
+>> +		input->map_location = map_location;
+>> +
+>> +		status = hv_do_hypercall(HVCALL_MAP_STATS_PAGE2, input, NULL);
+>> +
+>> +		local_irq_restore(flags);
+>> +		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+>> +			if (hv_result_success(status))
+>> +				break;
+>> +			hv_status_debug(status, "\n");
+> 
+> It looks more natural to check for success first and break the loop, and
+> only then handle errors.
+> Maybe even set ret for both success and error messages and break and
+> handle only the unsufficient memory status.
+> 
 
-Indeed.
+Something like this?
 
-> The implementation is a bit unusual, though:
->
->    #define kernel_neon_begin()  do { __kernel_neon_begin(&(struct user_fpsimd_state){})
->    #define kernel_neon_end()    __kernel_neon_end(); } while (0)
->
-> It works, but normally macros don't start or end code blocks behind the
-> scenes like this.
+	local_irq_restore(flags);
 
-That is kind of the point, as it restricts the use of them to an idiom
-that guarantees that the stack variable lives long enough.
+	ret = hv_result_to_errno(status);
 
-> Perhaps it should be more like s390's
-> kernel_fpu_begin(), where the caller provides the buffer that the
-> registers are stored in?
->
+	if (!ret)
+		break;
 
-If we're happy to change the API on both arm64 and ARM, then we could
-make it more explicit. It's a lot more work, though.
+	if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+		hv_status_debug(status, "\n");
+		break;
+	}
+
+	ret = hv_call_deposit_pages(NUMA_NO_NODE,
+				    hv_current_partition_id, 1);
+
+>> @@ -865,6 +931,19 @@ int hv_call_unmap_stat_page(enum hv_stats_object_type type,
+>>  	return hv_result_to_errno(status);
+>>  }
+>>  
+>> +int hv_unmap_stats_page(enum hv_stats_object_type type, void *page_addr,
+>> +			const union hv_stats_object_identity *identity)
+>> +{
+> 
+> Should this function be type of void?
+> 
+
+The return type is consistent with the other hypercall helpers. It's true that
+in practice we don't ever check if the unmap succeeded. I think it's fine as-is.
+
+> Thanks,
+> Stanislav
+
 
