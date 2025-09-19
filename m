@@ -1,506 +1,235 @@
-Return-Path: <linux-kernel+bounces-824943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF2DB8A847
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:11:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F76B8A856
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1973B7B6C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B90C1C26F49
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C3B31E0EF;
-	Fri, 19 Sep 2025 16:11:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3E0320CA3;
-	Fri, 19 Sep 2025 16:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758298274; cv=none; b=qYQXiadnPtnjThUG/QvS5HJxLDBJumm4uYCakMLdCEVfwktyuojkL/lRBiRtw64NB4QaCeefjCcwv4Xw3ixoqHt9YksAAE9vqFg9Vpz8VKnYybGU+oiYw0NteMIB5eqaRpIeTyad+lwCZK9uOkXV9qA4szumy8wFGKjY9NCG9VU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758298274; c=relaxed/simple;
-	bh=QM55JGt32VBvX7JQ1SzRF/QRg0WsTEETvdDiuvMMysk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVg5zgQgNONRqL8m+u9rbA8+Lg5il/9IDbc/5i6nIVETlwPCj1MQldXPc62pGnfs0CZFJOKueg5PkiUSzaGhJyFE/Nh60FdmNCi9Ot1yl+0Wd1vCWacG3/GXUSfmVbJtvZDTkaBRq3GSy/NJi1mzBObe0lo4mQkgPcpLMrvFCoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 482A91C01;
-	Fri, 19 Sep 2025 09:11:03 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A6B63F66E;
-	Fri, 19 Sep 2025 09:11:06 -0700 (PDT)
-Message-ID: <334e0e8b-3f30-48b7-896f-0b31111d2b41@arm.com>
-Date: Fri, 19 Sep 2025 17:11:03 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A392531E8B7;
+	Fri, 19 Sep 2025 16:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gFxdpiUD"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013006.outbound.protection.outlook.com [40.107.162.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A0730DECE;
+	Fri, 19 Sep 2025 16:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758298311; cv=fail; b=FWvypl9Z+KTHxxO0J0fmVh+nzpt243wvcBrFlqx96aYXvDRiKWJ9X+gtg4mClZNBEEVzH8NmKhrcgiVVR6lRSThRZTQgaF5vBUJw8BBV89pljctmdfWi/R1qhFUneVpwRD66jZo68vueo2ORKN8cEkKSqj50FC3hEuEZGFJWNls=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758298311; c=relaxed/simple;
+	bh=k6CQWHIm6hs7veaS0XPkpITKF6We58Q9MHk0/ePt68I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cYC6Ug8twcMBcIp13ETbUvtM1RbvJwGec3zbks+LZcdRJhC9BsUg862R/QlF2MV53S6apQZtU3bmICcmZDG8gnkLvkTFRvDp/o/1BFFahYnK7zdJJ9aiVUILTL/QoZEVAhmfUIlxsZZ/8rvsw8WupBJyO0iYQxUPb2Cm5Cn/gWI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gFxdpiUD; arc=fail smtp.client-ip=40.107.162.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ca+3aA90ABWG6pteAT1bO6jVQ7dlw0TNSZLYSGaiYVtKNwpD9z4keP+xPzj96Ep3YdCOWJTwb0AXaBsu9ALv6D6xtm7eUx8SB2TnBb2IA6msJoXlqyIYA9zMuYJ07Vc1MrS32izpzxwgtk771LTTHRJvgDWI3H5TduQ4hZlikJ5Zk7a0Sb4kkCWBlU4inqVQHF7AnV5CRfsl0jXverDWJxSF+t5AAjWHXn72i0Je85VBIuh2BF2Te1DpypVUXzSHuymPs733HQv0idXyEep1ogCKNAok/Ahrt1XArFABTI8lq+9rLj4k1k52Upf+Pv4p0VyFmj4nQlWFhLkYOo62IA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gz6/xl9i18NPJ/U8MC1y590pyHQBU3fCNs+5vzWNFco=;
+ b=lW6dmH+Obr+z+976qhzq+B7wH0j3eHIthTqO3KXWoydMu7G97+eGl3RudlUSYNTW/z/Movbdnq9wawV4JJl8bE7+o5E7YFqXQjqDs9zQHp7bqDkm6TOTo4CJ2ANS25wFqtPvq48WWl4EGRI8sMMl6Ns1BudrAMsbimXPmvWUgbBxAgJGZMSpad3bU5GWA/L2RRxBj4lxNpQBbxGhnb6dXClwoSAcKTAPgYZbG9oQx4L7Pj0xrkUyjNsbj05VAY87gg9ho6bvSFNd2PFwxYBYlqGFKSHHJh5o05R5CpSJSiXb77BmQtCNcwHKwCHnnpQmXl0gxClY9wxb8+LWGXgeIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gz6/xl9i18NPJ/U8MC1y590pyHQBU3fCNs+5vzWNFco=;
+ b=gFxdpiUDetZI2BMfi+DN4byMlu5GKGnpBEmr3JAZYtnnh9n5ZLBP6W38fnxArzKa47IhGC2PvuUNSA9OSgTg9/ZvzPb8gZu9gTFhIkcMDkMKQ066C1ZQ847drsU0emjEMCkaH+fBpGzSH9IstqYEB7FMt2/j0kuDzgBaeGZmzT1T3CkkuzU8rs2slyY2ELUMvqtmYkXMPElZrji3NTaZ3VkyMKu++11TJqP9+vUV6L+sJMdJC+L87PglZAtV5GAxCsy6qiKMwC4s0o+Q19YbwGa9W6mEKY54LU3Ik2ub5NXlPZ9R2pCpZ4fzRNRJ534X6T7qyNDE8lTichr1f/BiRw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS8PR04MB7846.eurprd04.prod.outlook.com (2603:10a6:20b:2a0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Fri, 19 Sep
+ 2025 16:11:46 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
+ 16:11:46 +0000
+Date: Fri, 19 Sep 2025 12:11:38 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: "G.N. Zhou" <guoniu.zhou@nxp.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Alice Yuan <alice.yuan@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 0/5] media: imx91: Add ISI support
+Message-ID: <aM2AurOTxTB4raSg@lizhi-Precision-Tower-5810>
+References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
+ <AS8PR04MB90801C7CE8D06EDC8CAA6750FA11A@AS8PR04MB9080.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AS8PR04MB90801C7CE8D06EDC8CAA6750FA11A@AS8PR04MB9080.eurprd04.prod.outlook.com>
+X-ClientProxiedBy: PH7PR10CA0007.namprd10.prod.outlook.com
+ (2603:10b6:510:23d::7) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/29] ACPI / MPAM: Parse the MPAM table
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
- Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-7-james.morse@arm.com>
- <20250911141726.00002f0c@huawei.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250911141726.00002f0c@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB7846:EE_
+X-MS-Office365-Filtering-Correlation-Id: 556f74fb-ee40-4b1d-7c4c-08ddf7973b4e
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|19092799006|7416014|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?us-ascii?Q?HBIqLaM1f7Aci+tZZG2SrOTc6CjjkEwh7HCsWpNA7gL32f9V2HweXwro+Hwi?=
+ =?us-ascii?Q?0lFXVZa1Yq1q8p60MRxRoyMIVEFe5/gtve4ZRKwtZCwVf7Lw+haA22xf0GUs?=
+ =?us-ascii?Q?//sz61blRN/E/pOPfBJ+HEWXWc3a8ukfI3XNt2sR6V71Xy8FwPyFPRII4YLF?=
+ =?us-ascii?Q?JNkkXzU9g8Rp7FtfOeZbh6CjTpYD7cLP++VorMaTto6sWuWtavBoWkgq9FKW?=
+ =?us-ascii?Q?kC4QOgdM1qkFmbXni11WuxsKW8bf7yqThsjyzVB1tTrXzbZG8BPmmqR3LWFF?=
+ =?us-ascii?Q?3lIwddggBGiglZ7iWQRlow8EQoRBdE3NkwR1JOct8E1IknCMw+ooXNkmrJI7?=
+ =?us-ascii?Q?cMbjY6JXj1hpF+NodU9qiaIfMWD60zSXdi/G0gsDSKmeTtRKLtstQ1Dv4x6X?=
+ =?us-ascii?Q?JVOjhSG75evnVxhboToeVZm0kg+bM4Yli0tdo7K1A+u8KvFDuCGINC2zOBm+?=
+ =?us-ascii?Q?9ze85JJjfRmepzgH3FwDknDn7KHLiF1Yvl8FyFUnrU5d0ygjDmBPRba5DFZg?=
+ =?us-ascii?Q?jkigtRM3zz2bl+3Gck1DaC+NYMYJj4eDat5OtWeKsjmIKxghf+aXzCb5j77w?=
+ =?us-ascii?Q?FIfFVAWqLJiGK5j/DgZ9vWsR7bng0vYeCB6iNfY5J/YhTFLs7CD8M+ZUCkt9?=
+ =?us-ascii?Q?DpFUOJpj+o6XlfznPYOd1lXDMvQFAMlsZsnceIarl11WPdiTqMkhtxuCqbCg?=
+ =?us-ascii?Q?RijIr6qiL36Yvxpj7Ymrpe8HkZOLykwgZLo9F/oJWbA/KWb2tk+QCrydLkKk?=
+ =?us-ascii?Q?r7//mig+7WLKhPqo26B387pFE1oY7xcm6tC3+jp6bJeDauE7ahPXfeAFBu2p?=
+ =?us-ascii?Q?xN7g+BU3cNDOjzkZ4nCO1wJn0tsiu8tjQwmEke3IFGkdIwoDHWvwl5TCR7tT?=
+ =?us-ascii?Q?OgCGNuGSUED47YKooLzuYHr2DpJb5l8X5XjLC1olBtlB5m3AL9yVWOFo2KIP?=
+ =?us-ascii?Q?elUkZur2mZXVLrHgvgQgZX9J8YaiMtwaz/LIhndzu6PV87PHFiLUvQDJwYBK?=
+ =?us-ascii?Q?XnFpEmkc7VUWhJeG31CO9sGgH/U1BrKB8bgSePfD5XjgdspygBh3jB2+B6su?=
+ =?us-ascii?Q?5zLKGwe3GgACI4yCqVVpBRvEdXAjWPqro6E839RBNzyfYebSXnDl7sFlB5Sm?=
+ =?us-ascii?Q?TJ9yXNDDMqP5/FTonJYGZfcg1Spt6nSfHG23O8vvJ/iLoIAJIVTD+uhX8P36?=
+ =?us-ascii?Q?p5J9pUYSqhX49kQDcEi5MfR6ixdr98aJXvJwNg9JLRGvz4QbCqTDZhecStG7?=
+ =?us-ascii?Q?WiDY3sQlOfZtIsfs5SeWN6qlhjPVOfk5ivLum5gOlDSOja+3dzDYaqjYP7T5?=
+ =?us-ascii?Q?hBfcR0gZTV3KU4lem7hGNjvaL4lNBNvRoGjbZF10YGRWIFOnwqRXyWE4ga0g?=
+ =?us-ascii?Q?KTJQj4KXsckyNTCTjMCsOFQHx9GuZvLchi0qWjUEKiCGrRgexv0VujbAhou2?=
+ =?us-ascii?Q?BRMN7aHNkJlTJGMcJeNsHOWQV+IUXDmXaAPo8/MOL5elgTlzpiytDAGHP1ZS?=
+ =?us-ascii?Q?xCdtdGlDZ/KFdbs=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?us-ascii?Q?TOWnCW7rkKasI7XyiKbSnZnd3Gbu57RDMwjDW2ke5Gkd5mF2Fkp1bsGEZivD?=
+ =?us-ascii?Q?2okFNztfXHnFouOg0Tk2lSeS/J/flEWtAvcpRTxfxDVbbVa1kZJW61LTkWwi?=
+ =?us-ascii?Q?nLt8QHkzFO01HE3oiRnVBE3mLkLB70hGaDzOqnY5bneZhlE+WdsWt4GAhjJd?=
+ =?us-ascii?Q?xbSYRiYBi0VLn3MHMz/ka5Wh/HS4RtDKEVNORZevBS2BQnyeBrhLSxzYFZgJ?=
+ =?us-ascii?Q?szZV7SVhGJJO3OLlcta/7t78EpvRzuhUMMhr3qcHIkrO/051cRy9uDsN0/bT?=
+ =?us-ascii?Q?ZMq+B40fRtlc8D1ZCJSFiEo15dIt0dnY2LphfS/O3pOc7IHcD9uM64qqTZUz?=
+ =?us-ascii?Q?NhbZd1VpYcAvsFZ+dvbh91OFu7q3TYGxPaLoTvaMMVtp+ByZ1mDZvSzCkwB5?=
+ =?us-ascii?Q?c5fXEp5qma8eQXwXdmaL6pFrqjUl2/oElrYvqX4aMIzQexw9Zl6Ddb8M6fmi?=
+ =?us-ascii?Q?6LeNev+3qJRWOhIgnwvji47OQGCQpH+0LhfR2YDoIAq3hvi6knc8+YqX+V34?=
+ =?us-ascii?Q?fS7mMbsuFblvMvmcbEy/+Wwk+CwYrl6/DpwwL6y/Yrl09wfo2MPkUHKJpx3M?=
+ =?us-ascii?Q?6AxJoXrYqeSjM2qmnS1OEFWUv3JnYVbXBw8bQXCEy0P8v4M7cXnBj0ySPzLh?=
+ =?us-ascii?Q?YMZbjFkIFxZiachophVkxtbSrfMDeDQc1GT8ullmi1sddXRYKP768wt6m7wy?=
+ =?us-ascii?Q?7CjHXqvhepplO3eXsDaz1e9Ey8NUCIaD1Ahu8AMvIPEotliPECvS76NoLgmW?=
+ =?us-ascii?Q?VhIf4glrVqe6oKAZ2+bUikFbmmBKhbAtf8kN80lOntNIMTTZHuXhzm5mOWCw?=
+ =?us-ascii?Q?TXPjgBW+kEJzEJUy3YXU0CqfBg9oFJDtbzeqq7/qw3KMvqC4MZ1+937tr9lc?=
+ =?us-ascii?Q?2/Quo7bXYV5Cg4WTuicrNeC7KtG4a9yjbUUAmPEFxv+8Yg1+vUkNgZ8Lokj1?=
+ =?us-ascii?Q?mEAWzXOJmp9ZL2DUheaDFTkh1mg8kV1vF574MWXefKN3PQl/lbDptI4Md21O?=
+ =?us-ascii?Q?+32/RE8ljIAycGZgX5c/P0C6q8me/9Xv4fDRpDWDP/Y3Q+ZBy/77DmQjZAMr?=
+ =?us-ascii?Q?WMqNyjbEMDCCeSisCPIlN3udtLytmY/IvvrgasbXcIY0IqemPDyYZtaWSr0R?=
+ =?us-ascii?Q?6PnggBww47BDHUeAiaYxNG8724eb4cf3crDwRVh8rC3a/r+6CF+3rDoe2kO9?=
+ =?us-ascii?Q?NbFeGTanjS92URafiPejsm9+cF9ruIAQF9c4/QtNQCwF2IebNgizLS3NW2bx?=
+ =?us-ascii?Q?Co6wWLekvNgLELrvMsWMgAlH7iznbg0zdKprIACVQVxrjX/5zhynaw7V3u9t?=
+ =?us-ascii?Q?qTpiddORlFTCxNNl7WWk3Ic/9NWoMAX4UjKef5z+OuRdzf4F7fEYg6Upy2ys?=
+ =?us-ascii?Q?Np9MlGF3nau5y82P3J2f/v8shA3lX+6wxzz0VauVkNx1JDBVSKiW8rnNx6fg?=
+ =?us-ascii?Q?KGw1Hws9QBGcSbnRQge5rwD0d991CBCcUGQrPp1r0sE0za9IuicSmOxzKnu0?=
+ =?us-ascii?Q?NUEwBJC10KtGxwkhRJykl6cY2rn3Z8PZRSj6ii4WN9BpV1foXNk/XDVciLQ+?=
+ =?us-ascii?Q?B0k7POxqRChoHkmzVXtvBX0KtxnwIN1S1lO6gu4+?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 556f74fb-ee40-4b1d-7c4c-08ddf7973b4e
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 16:11:46.4695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s4LPhxqtdGh4Po4TOYse8upUgLp45JsGJk0pjfw1kJKLkx/F70i0ZflDtL0tCEn0srBscPS+xqPUwQ11ugWudg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7846
 
-Hi Jonathan,
+On Fri, Sep 19, 2025 at 02:40:01AM +0000, G.N. Zhou wrote:
+> Hi,
+>
+> Could you help to please review the patches which I have submitted some time back to linux media community and move forward driver part if possible.
+> Your feedback will be very appreciated. Thanks.
+>
+> Best Regards
+> G.N Zhou
+>
 
-On 11/09/2025 14:17, Jonathan Cameron wrote:
-> On Wed, 10 Sep 2025 20:42:46 +0000
-> James Morse <james.morse@arm.com> wrote:
-> 
->> Add code to parse the arm64 specific MPAM table, looking up the cache
->> level from the PPTT and feeding the end result into the MPAM driver.
->>
->> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
->> the MPAM driver with optional discovered data.
+Laurent Pinchart:
 
-> A few comments inline.  Note I've more or less completely forgotten
-> what was discussed in RFC 1 so I might well be repeating stuff that
-> you replied to then.  Always a problem for me with big complex patch sets!
+	Could you please consider pickup these patches? Consider these
+related simple changes, is my Reviewed-by enough?
 
-No worries - I'll have forgotten too. If we can't work it out, it should have had a comment.
+Frank
 
-
->> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
->> new file mode 100644
->> index 000000000000..fd9cfa143676
->> --- /dev/null
->> +++ b/drivers/acpi/arm64/mpam.c
-> 
-> 
->> +static int acpi_mpam_parse_resource(struct mpam_msc *msc,
->> +				    struct acpi_mpam_resource_node *res)
->> +{
->> +	int level, nid;
->> +	u32 cache_id;
->> +
->> +	switch (res->locator_type) {
->> +	case ACPI_MPAM_LOCATION_TYPE_PROCESSOR_CACHE:
->> +		cache_id = res->locator.cache_locator.cache_reference;
->> +		level = find_acpi_cache_level_from_id(cache_id);
->> +		if (level <= 0) {
->> +			pr_err_once("Bad level (%u) for cache with id %u\n", level, cache_id);
->> +			return -EINVAL;
->> +		}
->> +		return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_CACHE,
->> +				       level, cache_id);
->> +	case ACPI_MPAM_LOCATION_TYPE_MEMORY:
->> +		nid = pxm_to_node(res->locator.memory_locator.proximity_domain);
->> +		if (nid == NUMA_NO_NODE)
->> +			nid = 0;
->> +		return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_MEMORY,
->> +				       255, nid);
->> +	default:
->> +		/* These get discovered later and treated as unknown */
-> 
-> are treated?
-
-Sure,
-
-
->> +		return 0;
->> +	}
->> +}
-> 
->> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
->> +				     struct platform_device *pdev,
->> +				     u32 *acpi_id)
->> +{
->> +	char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1];
->> +	bool acpi_id_valid = false;
->> +	struct acpi_device *buddy;
->> +	char uid[11];
->> +	int err;
->> +
->> +	memset(&hid, 0, sizeof(hid));
-> 
->  = {}; above and skip the memset.
-
-Sure,
-
-
->> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
->> +	       sizeof(tbl_msc->hardware_id_linked_device));
->> +
->> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
->> +		*acpi_id = tbl_msc->instance_id_linked_device;
->> +		acpi_id_valid = true;
->> +	}
->> +
->> +	err = snprintf(uid, sizeof(uid), "%u",
->> +		       tbl_msc->instance_id_linked_device);
->> +	if (err >= sizeof(uid)) {
->> +		pr_debug("Failed to convert uid of device for power management.");
->> +		return acpi_id_valid;
->> +	}
->> +
->> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
->> +	if (buddy)
->> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
->> +
->> +	return acpi_id_valid;
->> +}
-> 
->> +
->> +static int __init acpi_mpam_parse(void)
->> +{
->> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
->> +	char *table_end, *table_offset = (char *)(table + 1);
->> +	struct property_entry props[4]; /* needs a sentinel */
-
-> Perhaps move this and res into the loop and use = {};
-
->> +	struct acpi_mpam_msc_node *tbl_msc;
->> +	int next_res, next_prop, err = 0;
->> +	struct acpi_device *companion;
->> +	struct platform_device *pdev;
->> +	enum mpam_msc_iface iface;
->> +	struct resource res[3];
-> 
-> Add a comment here or a check later on why this is large enough.
-
-These two are now in the loop and look like this:
-| 		/* pcc, nrdy, affinity and a sentinel */
-| 		struct property_entry props[4] = { 0 };
-| 		/* mmio, 2xirq, no sentinel. */
-|		struct resource res[3] = { 0 };
-
-
->> +	char uid[16];
->> +	u32 acpi_id;
->> +
->> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
->> +		return 0;
->> +
->> +	if (table->revision < 1)
->> +		return 0;
->> +
->> +	table_end = (char *)table + table->length;
->> +
->> +	while (table_offset < table_end) {
->> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
->> +		table_offset += tbl_msc->length;
->> +
->> +		if (table_offset > table_end) {
->> +			pr_debug("MSC entry overlaps end of ACPI table\n");
->> +			break;
-
-> That this isn't considered an error is a bit subtle and made me wonder
-> if there was a use of uninitialized pdev (there isn't because err == 0)
-
-Its somewhat a philosophical arguement. I don't expect the kernel to have to validate
-these tables, they're not provided by the user and there quickly becomes a point where
-you have to trust them, and they have to be correct.
-At the other extreme is the asusmption the table is line-noise and we should check
-everything to avoid out of bounds accesses. Dave wanted the diagnostic messages on these.
-
-As this is called from an initcall, the best you get is an inexplicable print message.
-(what should we say - update your firmware?)
-
-
-Silently failing in this code is always safe as the driver has a count of the number of
-MSC, and doesn't start accessing the hardware until its found them all.
-(this is because to find the system wide minimum value - and its not worth starting if
- its not possible to finish).
-
-
-> Why not return here?
-
-Just because there was no other return in the loop, and I hate surprise returns.
-
-I'll change it if it avoids thinking about how that platform_device_put() gets skipped!
-
-
-> 
->> +		}
->> +
->> +		/*
->> +		 * If any of the reserved fields are set, make no attempt to
->> +		 * parse the MSC structure. This MSC will still be counted,
->> +		 * meaning the MPAM driver can't probe against all MSC, and
->> +		 * will never be enabled. There is no way to enable it safely,
->> +		 * because we cannot determine safe system-wide partid and pmg
->> +		 * ranges in this situation.
->> +		 */
-
-> This is decidedly paranoid. I'd normally expect the architecture to be based
-> on assumption that is fine for old software to ignore new fields.  ACPI itself
-> has fairly firm rules on this (though it goes wrong sometimes :)
-
-Yeah - the MPAM table isn't properly structured as subtables. I don't see how they are
-going to extend it if they need to.
-
-The paranoia is that anything set in these reserved fields probably indicates something
-the driver needs to know about: a case in point is the way PCC was added.
-
-I'd much prefer we skip creation of MSC devices that have properties we don't understand.
-acpi_mpam_count_msc() still counts them - which means the driver never finds all the MSC,
-and never touches the hardware.
-
-MPAM isn't a critical feature, its better that it be disabled than make things worse.
-(the same attitude holds with the response to the MPAM error interrupt - reset everything
- and pack up shop. This is bettern than accidentally combining important/unimportant
- tasks)
-
-
-> I'm guessing there is something out there that made this necessary though so
-> keep it if you actually need it.
-
-It's a paranoid/violent reaction to the way PCC was added - without something like this,
-that would have led to the OS trying to map the 0 page and poking around in it - never
-likely to go well.
-
-Doing this does let them pull another PCC without stable kernels going wrong.
-Ultimately I think they'll need to replace the table with one that is properly structured.
-For now - this is working with what we have.
-
-
->> +		if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc->reserved2) {
->> +			pr_err_once("Unrecognised MSC, MPAM not usable\n");
->> +			pr_debug("MSC.%u: reserved field set\n", tbl_msc->identifier);
->> +			continue;
->> +		}
->> +
->> +		if (!tbl_msc->mmio_size) {
->> +			pr_debug("MSC.%u: marked as disabled\n", tbl_msc->identifier);
->> +			continue;
->> +		}
->> +
->> +		if (decode_interface_type(tbl_msc, &iface)) {
->> +			pr_debug("MSC.%u: unknown interface type\n", tbl_msc->identifier);
->> +			continue;
->> +		}
->> +
->> +		next_res = 0;
->> +		next_prop = 0;
->> +		memset(res, 0, sizeof(res));
->> +		memset(props, 0, sizeof(props));
->> +
->> +		pdev = platform_device_alloc("mpam_msc", tbl_msc->identifier);
-> 
-> https://lore.kernel.org/all/20241009124120.1124-13-shiju.jose@huawei.com/
-> was a proposal to add a DEFINE_FREE() to clean these up.  Might be worth a revisit.
-> Then Greg was against the use it was put to and asking for an example of where
-> it helped.  Maybe this is that example.
-> 
-> If you do want to do that, I'd factor out a bunch of the stuff here as a helper
-> so we can have the clean ownership pass of a return_ptr().  
-> Similar to what Shiju did here (this is the usecase for platform device that
-> Greg didn't like).
-> https://lore.kernel.org/all/20241009124120.1124-14-shiju.jose@huawei.com/
-> 
-> Even without that I think factoring some of this out and hence being able to
-> do returns on errors and put the if (err) into the loop would be a nice
-> improvement to readability.
-
-If you think its more readable I'll structure it like that.
-
-
->> +		if (!pdev) {
->> +			err = -ENOMEM;
->> +			break;
->> +		}
->> +
->> +		if (tbl_msc->length < sizeof(*tbl_msc)) {
->> +			err = -EINVAL;
->> +			break;
->> +		}
->> +
->> +		/* Some power management is described in the namespace: */
->> +		err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
->> +		if (err > 0 && err < sizeof(uid)) {
->> +			companion = acpi_dev_get_first_match_dev("ARMHAA5C", uid, -1);
->> +			if (companion)
->> +				ACPI_COMPANION_SET(&pdev->dev, companion);
->> +			else
->> +				pr_debug("MSC.%u: missing namespace entry\n", tbl_msc->identifier);
->> +		}
->> +
->> +		if (iface == MPAM_IFACE_MMIO) {
->> +			res[next_res++] = DEFINE_RES_MEM_NAMED(tbl_msc->base_address,
->> +							       tbl_msc->mmio_size,
->> +							       "MPAM:MSC");
->> +		} else if (iface == MPAM_IFACE_PCC) {
->> +			props[next_prop++] = PROPERTY_ENTRY_U32("pcc-channel",
->> +								tbl_msc->base_address);
->> +			next_prop++;
-> 
-> Why the double increment? Needs a comment if that is right thing to do.
-
-That's a bug.
-I'll add some WARN_ON() when these are consumed as per your earlier suggestion.
-
-
->> +		}
->> +
->> +		acpi_mpam_parse_irqs(pdev, tbl_msc, res, &next_res);
->> +		err = platform_device_add_resources(pdev, res, next_res);
->> +		if (err)
->> +			break;
->> +
->> +		props[next_prop++] = PROPERTY_ENTRY_U32("arm,not-ready-us",
->> +							tbl_msc->max_nrdy_usec);
->> +
->> +		/*
->> +		 * The MSC's CPU affinity is described via its linked power
->> +		 * management device, but only if it points at a Processor or
->> +		 * Processor Container.
->> +		 */
->> +		if (parse_msc_pm_link(tbl_msc, pdev, &acpi_id)) {
->> +			props[next_prop++] = PROPERTY_ENTRY_U32("cpu_affinity",
->> +								acpi_id);
->> +		}
->> +
->> +		err = device_create_managed_software_node(&pdev->dev, props,
->> +							  NULL);
->> +		if (err)
->> +			break;
->> +
->> +		/* Come back later if you want the RIS too */
->> +		err = platform_device_add_data(pdev, tbl_msc, tbl_msc->length);
->> +		if (err)
->> +			break;
->> +
->> +		err = platform_device_add(pdev);
->> +		if (err)
->> +			break;
->> +	}
->> +
->> +	if (err)
->> +		platform_device_put(pdev);
->> +
->> +	return err;
->> +}
->> +
->> +int acpi_mpam_count_msc(void)
->> +{
->> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
->> +	char *table_end, *table_offset = (char *)(table + 1);
->> +	struct acpi_mpam_msc_node *tbl_msc;
->> +	int count = 0;
->> +
->> +	if (IS_ERR(table))
->> +		return 0;
->> +
->> +	if (table->revision < 1)
->> +		return 0;
->> +
->> +	table_end = (char *)table + table->length;
-
-> Trivial so feel free to ignore.
-> Perhaps should aim for consistency.  Whilst I prefer pointers for this stuff
-> PPTT did use unsigned longs.
-
-I prefer the pointers, and as it's a separate file, I don't think it needs to be
-concistent with PPTT.
-
-
->> +
->> +	while (table_offset < table_end) {
->> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
->> +		if (!tbl_msc->mmio_size)
->> +			continue;
->> +
->> +		if (tbl_msc->length < sizeof(*tbl_msc))
->> +			return -EINVAL;
->> +		if (tbl_msc->length > table_end - table_offset)
->> +			return -EINVAL;
->> +		table_offset += tbl_msc->length;
->> +
->> +		count++;
->> +	}
->> +
->> +	return count;
->> +}
->> +
-
-> Could reorder to put acpi_mpam_parse and this use of it together?
-
-mpam_msc_driver_init() calls this from subsys_initcall() to know whether its worth
-registering the driver at all. Even with that fixed, its still potentially racy: once the
-first MSC has been platform_device_add()ed, I figure the driver can probe against that,
-and needs to know if this first MSC was the last one.
-acpi_mpam_count_msc() needs to be safe to race with acpi_mpam_parse().
-
-This could be forced far enough away in time by only registering the driver after
-subsys_initcall_sync() has completed - but the list of dependencies on those is ugly
-enough as it is.
-
-I'll add a comment:
-/**
- * acpi_mpam_count_msc() - Count the number of MSC described by firmware.
- *
- * Returns the number of of MSC, or zero for an error.
- *
- * This can be called before or in parallel with acpi_mpam_parse().
- */
-
-
->> +/*
->> + * Call after ACPI devices have been created, which happens behind acpi_scan_init()
->> + * called from subsys_initcall(). PCC requires the mailbox driver, which is
->> + * initialised from postcore_initcall().
->> + */
->> +subsys_initcall_sync(acpi_mpam_parse);
-
->> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
->> index c5fd92cda487..af449964426b 100644
->> --- a/include/linux/acpi.h
->> +++ b/include/linux/acpi.h
->> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
->>  void acpi_table_init_complete (void);
->>  int acpi_table_init (void);
->>  
->> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
->> +{
->> +	struct acpi_table_header *table;
->> +	int status = acpi_get_table(signature, instance, &table);
->> +
->> +	if (ACPI_FAILURE(status))
->> +		return ERR_PTR(-ENOENT);
->> +	return table;
->> +}
->> +DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
-
-> I'd use if (!IS_ERR_OR_NULL(_T)) not because it is functionally necessary but
-> because it will let the compiler optimize this out if it can tell that in a given
-> path _T is NULL (I think it was Peter Z who pointed this out in a similar interface
-> a while back).
-
-Makes sense,
-
-> I'd like an opinion from Rafael on this in general.
-
-
-
-Thanks,
-
-James
+> >
+> > Add ISI support for i.MX91 chip.
+> >
+> > The bellow patch refine code, no functions changed.
+> >    media: nxp: imx8-isi: Simplify code by using helper macro
+> >    media: nxp: imx8-isi: Reorder the platform data
+> >
+> > The bindings and driver patch for i.MX91 ISI.
+> >    media: dt-bindings: nxp,imx8-isi: Add i.MX91 ISI compatible string
+> >    media: nxp: imx8-isi: Add ISI support for i.MX91
+> >
+> > Add parallel camera input for i.MX93 ISI.
+> >    media: nxp: imx8-isi: Add parallel camera input support
+> >
+> > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> > ---
+> > Changes in v2:
+> > - Update commit log in patch 5 to better describe why introduce it.
+> > - Include two header files in patch 2 since kernel test robot report build
+> >   issue when arch is riscv and compiler is clang-22.
+> >   #include <linux/bitfield.h>
+> >   #include <linux/bits.h>
+> > - Link to v1: https://lore.kernel.org/all/20250827-isi_imx93-v1-0-
+> > 83e6b4b50c4d@nxp.com
+> >
+> > ---
+> > Alice Yuan (2):
+> >       media: dt-bindings: nxp,imx8-isi: Add i.MX91 ISI compatible string
+> >       media: nxp: imx8-isi: Add parallel camera input support
+> >
+> > Guoniu Zhou (3):
+> >       media: nxp: imx8-isi: Simplify code by using helper macro
+> >       media: nxp: imx8-isi: Reorder the platform data
+> >       media: nxp: imx8-isi: Add ISI support for i.MX91
+> >
+> >  .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 13 +++++-
+> >  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 50 ++++++++++++++--------
+> >  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  1 +
+> >  .../media/platform/nxp/imx8-isi/imx8-isi-gasket.c  | 18 ++++++--
+> >  4 files changed, 59 insertions(+), 23 deletions(-)
+> > ---
+> > base-commit: 603957ae903e81fb80d3788297c0f58a68802dfc
+> > change-id: 20250826-isi_imx93-4a59288b33e4
+> >
+> > Best regards,
+> > --
+> > Guoniu Zhou <guoniu.zhou@nxp.com>
+>
 
