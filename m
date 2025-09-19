@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-825349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0D2B8BA2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D91B8BA31
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4035817A5EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9EA1BC819A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C3727E041;
-	Fri, 19 Sep 2025 23:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C1527E041;
+	Fri, 19 Sep 2025 23:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A01+nJEj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aRxFc2qG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B60523A;
-	Fri, 19 Sep 2025 23:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D321B1E32B9;
+	Fri, 19 Sep 2025 23:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758324846; cv=none; b=ieKD+OBjBWN1wR31NoRWPzecWdjhY06yWDb9yauMMizcOvMJLPMJWE1U5lmOPrfcjJ+LNdUokrfEoXq7R6wlS42d6KnSCd6aUgkO30FErroKKczYjfpPM4m0Y484pyWlbBrmlVdmcMOo1lb+mS9eBw+Wdy1FQsOxbHSpeQInEOo=
+	t=1758324856; cv=none; b=EroLMv6yMBKl0ChISFaREBxgjzZkn7GYuL/kiJH6njLVvT7mYgCNF82DX3qPhMz6Y+Woopl7/AZcpb69AU/rBU9SL1c07RfeS1Ve0htPXhHq1d2JSljD2KDtCkQjErLkhwZXJT2Tsu77dzcD7K3tqIpz4t6awMdzAA/PYnKA8hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758324846; c=relaxed/simple;
-	bh=Kot04m3JebeuguS1IxyvQpD3d0BuR5ZYLFS9ssS3oQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsSKFxoMfcbPb6YvPQAeIu3U7wTtSd8yf08ok70TX0NMZHtFtsH8copZawYW0oOLqP6CD0iKAvD5A3csGiyERqwd3yH7H21abtx4tHAZdZHETMK0x3FU0h7FhtvhXfztagzoPr7Czo1UjvD2zFo2TqIQ8Ug0MI71mNu2vKBl3d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A01+nJEj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35F8BC4CEF0;
-	Fri, 19 Sep 2025 23:34:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758324845;
-	bh=Kot04m3JebeuguS1IxyvQpD3d0BuR5ZYLFS9ssS3oQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A01+nJEj6CRn7EQvzk6UHgBogoIdLUpBHREyHJZ/KzSIZy1k9D50tGm1OvjIhl5eD
-	 XBFDaWov4sydmsL2+x7xLx49d8qfyJ1YAf58inJcHUEUDbEO8Lt7dIbqFcaNBweEyp
-	 qyGyLp/8Ga3MjDehRlC6fXgCIjPV7ub2T6FWQULh7xgnQndbrhbwdbfafA0E/n829O
-	 ZjymGRxjFo1qkuvoqB2Umm75flLR2ZETV3zqET56Ks6dv520rGTnYYk691B75PCHV1
-	 /fYDjPahjdLZfhw9CmuFY+CiDKrI7gN7jDvNKG6WQtEH9YPzID0zEFAFErFvvspWAD
-	 reuTa7VtP/0xg==
-Date: Fri, 19 Sep 2025 16:34:02 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
-	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
-	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Kees Cook <kees@kernel.org>, 
-	Carlos O'Donell <codonell@redhat.com>
-Subject: Re: [RESEND][PATCH v15 0/4] perf: Support the deferred unwinding
- infrastructure
-Message-ID: <pde32olzdlqvbom5bya5exndcrfgsw7lmffy6uav5yoplonzj3@ddb2b5sihlpx>
-References: <20250908171412.268168931@kernel.org>
- <20250918114610.GZ3419281@noisy.programming.kicks-ass.net>
- <20250918111853.5dc424df@gandalf.local.home>
- <20250918172414.GC3409427@noisy.programming.kicks-ass.net>
- <20250918173220.GA3475922@noisy.programming.kicks-ass.net>
- <20250918151018.7281647b@batman.local.home>
+	s=arc-20240116; t=1758324856; c=relaxed/simple;
+	bh=d3zGKIZuyyxwE/xv6aG96jzmf4NvjpivczUTXWgbtI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efFn/V7QnBejdne1pR+jI9VKygmM433PFdD9cDhWXmlomXjw94jcn+slIEdBS7o1i+ZE/8dPx4ElanJ7deXbkNDydzxOd0x5jkw3Y3AlpvbPOhXzY6xfix/trkZlow3aOyjCrDihxSdVCluemJ3HRNO4S3gWDaeksnOPaTfyVB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aRxFc2qG; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758324855; x=1789860855;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=d3zGKIZuyyxwE/xv6aG96jzmf4NvjpivczUTXWgbtI4=;
+  b=aRxFc2qGAO+1w9A0gG9N1XzxxE1cYqPEScdTYzWdf4HI5ca6mVhR3Vca
+   JUb490iE97q/WDcVcu78eYxRU3d7xzKLIOCOOOgsRkcm+LFDRjGpL3BEU
+   Nh7PgDP4LzTrwzq5RcD3YIIP3UJBfkKTVYz3WeYzf+pslX3iYx02ub05X
+   uQg89x5NIUiqmmORkNuSz+rSJHWuNGnzvdcnY8+Nlq2qdV1pxlbTjtS5W
+   NVmS/V9dxPITicfnKO1XM0X4rBAfQvoemi38p+13+8T3xqCC4rtAEdYs5
+   u35RUsxV8RV1ryP1kqS2Dz6t/n6Y/d/4C42rCLfGjt9uUfx7uwRmPMkgN
+   A==;
+X-CSE-ConnectionGUID: eZRG9R+cRXmdjZFNYFkjew==
+X-CSE-MsgGUID: fgUMexSMTCKfohB9H2z21w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="60605496"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="60605496"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:34:14 -0700
+X-CSE-ConnectionGUID: Hr0PMIDuQXyiWPCP9RSxMg==
+X-CSE-MsgGUID: zYOEuUsDTZOM3cJm9apd9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="176390562"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.58]) ([10.125.108.58])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:34:13 -0700
+Message-ID: <7622b25c-a0d8-47b6-910b-9b2e42e099e4@intel.com>
+Date: Fri, 19 Sep 2025 16:34:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250918151018.7281647b@batman.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 03/20] nvdimm/label: Modify nd_label_base() signature
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134134epcas5p3f64af9556015ed9dfb881f852ea854c4@epcas5p3.samsung.com>
+ <20250917134116.1623730-4-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-4-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 18, 2025 at 03:10:18PM -0400, Steven Rostedt wrote:
-> On Thu, 18 Sep 2025 19:32:20 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
+
+
+On 9/17/25 6:40 AM, Neeraj Kumar wrote:
+> nd_label_base() was being used after typecasting with 'unsigned long'. Thus
+> modified nd_label_base() to return 'unsigned long' instead of 'struct
+> nd_namespace_label *'
 > 
-> > > Now, task_work_run() is in the exit_to_user_mode_loop() which is notably
-> > > *before* exit_to_user_mode() which does the unwind_reset_info().
-> > > 
-> > > What happens if we get an NMI requesting an unwind after
-> > > unwind_reset_info() while still very much being in the kernel on the way
-> > > out?  
-> > 
-> > AFAICT it will try and do a task_work_add(TWA_RESUME) from NMI context,
-> > and this will fail horribly.
-> > 
-> > If you do something like:
-> > 
-> > 	twa_mode = in_nmi() ? TWA_NMI_CURRENT : TWA_RESUME;
-> > 	task_work_add(foo, twa_mode);
-> > 
-> > it might actually work.
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+Just a nit below:
+
+
+> ---
+>  drivers/nvdimm/label.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> Ah, the comment for TWA_RESUME didn't express this restriction.
-> 
-> That does look like that would work as the way I expected task_work to
-> handle this case.
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 0a9b6c5cb2c3..668e1e146229 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -271,11 +271,11 @@ static void nd_label_copy(struct nvdimm_drvdata *ndd,
+>  	memcpy(dst, src, sizeof_namespace_index(ndd));
+>  }
+>  
+> -static struct nd_namespace_label *nd_label_base(struct nvdimm_drvdata *ndd)
+> +static unsigned long nd_label_base(struct nvdimm_drvdata *ndd)
+>  {
+>  	void *base = to_namespace_index(ndd, 0);
+>  
+> -	return base + 2 * sizeof_namespace_index(ndd);
+> +	return (unsigned long) (base + 2 * sizeof_namespace_index(ndd));
 
-BTW, I remember Peter had a fix for TWA_NMI_CURRENT, I guess it got lost
-in the shuffle or did something else happen in the meantime?
+Space is not needed between casting and the var. Also applies to other instances in this commit.
 
-  https://lore.kernel.org/20250122124228.GO7145@noisy.programming.kicks-ass.net
+DJ
 
--- 
-Josh
+>  }
+>  
+>  static int to_slot(struct nvdimm_drvdata *ndd,
+> @@ -284,7 +284,7 @@ static int to_slot(struct nvdimm_drvdata *ndd,
+>  	unsigned long label, base;
+>  
+>  	label = (unsigned long) nd_label;
+> -	base = (unsigned long) nd_label_base(ndd);
+> +	base = nd_label_base(ndd);
+>  
+>  	return (label - base) / sizeof_namespace_label(ndd);
+>  }
+> @@ -293,7 +293,7 @@ static struct nd_namespace_label *to_label(struct nvdimm_drvdata *ndd, int slot)
+>  {
+>  	unsigned long label, base;
+>  
+> -	base = (unsigned long) nd_label_base(ndd);
+> +	base = nd_label_base(ndd);
+>  	label = base + sizeof_namespace_label(ndd) * slot;
+>  
+>  	return (struct nd_namespace_label *) label;
+> @@ -684,7 +684,7 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
+>  			nd_label_next_nsindex(index))
+>  		- (unsigned long) to_namespace_index(ndd, 0);
+>  	nsindex->otheroff = __cpu_to_le64(offset);
+> -	offset = (unsigned long) nd_label_base(ndd)
+> +	offset = nd_label_base(ndd)
+>  		- (unsigned long) to_namespace_index(ndd, 0);
+>  	nsindex->labeloff = __cpu_to_le64(offset);
+>  	nsindex->nslot = __cpu_to_le32(nslot);
+
 
