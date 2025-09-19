@@ -1,292 +1,584 @@
-Return-Path: <linux-kernel+bounces-824956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D21B8A8D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:23:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313A5B8A8E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F6F5A7B60
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9001CC2232
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9709321274;
-	Fri, 19 Sep 2025 16:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6C132127C;
+	Fri, 19 Sep 2025 16:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ej8Vhxqx"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxRWiL3z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D0731E106
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DABB223DE7;
+	Fri, 19 Sep 2025 16:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758299010; cv=none; b=utLRRFSDQK7qnpEKLvNc9fDGRrc/YJ2N6kGM2kMWVPQH7b6HcSmDPDF4SlKTHE1jXqoTq46+hw3/V1bS+ZKFF79KMFeYxHh9CLZRRlT5/HGtGlnziD5LDXFYOXtvmL/YpfF+vhj4oro8DJVn1jbaNVwICavPGP9pa8VHN/DupFg=
+	t=1758299062; cv=none; b=bBEWdWOfHFLNLSIE413xCpk/wsYWJKNx3hpE24xM0SYotq00EASsVeJPiK+yDhP5FfRIPBD835huMnxt35fue4h193GTzEtleMmDEmVQEx7MqXjf6HdowP3SUuoFEmL0ihTFWJb68F9q4F4jJMzHrYVD+0Q+JQrrj0V8aXmaI1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758299010; c=relaxed/simple;
-	bh=o+JmEvBu7MRG0FR5BBM6u6yNDcuq0zrETHuEcnSo6ZE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=szsU2mZzt1oVYIIQAEABmp4Ub/5mjmlOwJbZhE4tzHqnZcoV8qdb5BOILgVBqWGbBhtj0vtuHxr8Qsly36cyr04+n0Zrxii10WuE3dowZgh565sbIrqdiWWpaG/08RgODKtWlAqffUa4NBjUXbkwZ7n1oEzCA8aCO9WFlCXLFYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ej8Vhxqx; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77f18d99ebaso8846b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758299007; x=1758903807; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4CkjkLFnbWsqOFWSnZjaXIU/dPJiCCdZNrv4DrVKug=;
-        b=ej8VhxqxadIwoMx99laEWgVPlsjmrxDg7eEjV3GTRM7woVVSPi/8r7zmfebJL+5zqh
-         0W5BedG7XCBcM17ODUSuBMvEwcLX9YkPKjOVTVcNN5SM6mF69iMd1Vc2jyjux5hLPQ4i
-         mpPMtj4jdjFNa27kyxvhTzSB403HhLx3uRjRPCs7/h2zMIIpSKcdhRIr9yn/EKJgvtVn
-         EddKEZiYjjCKuqyvmCjU5Yl3kthuc0SXSIO1Q8CRoi3xG4RJuh1xunxzU6+6S5TbwuFg
-         HsTQEflEXqYYFVKI+JFaT/wG1DaZpBmujc/3SsVeD6SJ6ZEvWLPC2HNJ8qxMMeJ286cO
-         lvpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758299007; x=1758903807;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P4CkjkLFnbWsqOFWSnZjaXIU/dPJiCCdZNrv4DrVKug=;
-        b=Dgi7vjLuPazqocL6t0FEghepnNh2TjbIbJNpd5oFo66GDd5PS3qnvIuA2GBSR6uikk
-         oJ65LSnYvarDLYnzxNClmRcON6ucEncKSJuoVvpT/EQR/fy+fzHX3A5KFOMmeSfBETDO
-         WJoOXeLq/+VEzzuDXRL4BcuZqPu978BytPSHNBoF7N6AowSJn2G37y5DVF31o485aldJ
-         0L8Z4dDBiF3eknCOeNPM7hdEheEdm/heFy45p9zgTPaz0x67me7U0eIASXxeZLm75bCG
-         Evi3TEJVEESTbhHBB+uq6bkg3KZVjhjjW/LZ/ak5lQM1dTNatEh/aJgznqrO4DdUCOvD
-         QH9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX8l1MLQBP4e9Jjra9Gkp9Vjtmuj0eyp+DF9T7D6tjNWN6go8mGcmL81QhEcejW5H8rk0F7RrOD5A/wIR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH8114E35T5bSLCVhmrGB41K1YUQeGWpUfUbwZza01mnitNFga
-	MTbGl2KFWZCbd1O/3OYUY8hoHyD412UZ5a63w48Vb/77c9L8mDKaw3UNywqrlG4bTNlqbsfrFP8
-	mDzzvFw==
-X-Google-Smtp-Source: AGHT+IFsIJ9fZX8xD6w4IgrFqpCt5VcYPGzLRJ5JTAJQke9Nrf+zY87uqxGcHBF8BSu++yAI3dtr5opWMlY=
-X-Received: from pjbqx3.prod.google.com ([2002:a17:90b:3e43:b0:32b:61c4:e48b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3293:b0:250:9175:96e3
- with SMTP id adf61e73a8af0-2926e08bb46mr5515672637.30.1758299007601; Fri, 19
- Sep 2025 09:23:27 -0700 (PDT)
-Date: Fri, 19 Sep 2025 09:23:26 -0700
-In-Reply-To: <20250919131535.GA73646@k08j02272.eu95sqa>
+	s=arc-20240116; t=1758299062; c=relaxed/simple;
+	bh=SHEH22RcaVF0+MY0PIn5jpD+x87RtQxXb0LMN5IwLzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4r25a7hocNURC+j/eUi41Bv8SNs1APYthpFbwY95CCxvSGoqbTh/ywWaD3qmDwbM72Fnfbe7FhlxD5+2o7tplbiwc0q6KA4UUsMd0y+Bn6GnJikxXm+5XiDn0Udcmeg3QGBxtBcpJ2y8nszljsMqbR6pDs+c/PmzO6rH4b7Sqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxRWiL3z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1DCC4CEF0;
+	Fri, 19 Sep 2025 16:24:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758299061;
+	bh=SHEH22RcaVF0+MY0PIn5jpD+x87RtQxXb0LMN5IwLzw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WxRWiL3z1Hm9V6sMZnSdhEJGiyDnw7VINWklZvidV6e4e7DYCMBXsX3Gxmq40V+kt
+	 5RuAXUEGnMCUvC8ThR1f61GYGQJ7cpHL9+UsbQvyrh5Go9MW3HJ6VI75HZdmAXkXB6
+	 H1m4z8p8ipSI97DYHTwX64JuI5W/UIA5BNq7xXIH7dBctl98ogC0bmKNl9+w+bM8pJ
+	 WII+pBa6mtxlNYDhPr2ueRtb73Dk1yHKuifj0nnzgt8c+ltjVnfaaUrR0jlMy90rkj
+	 5bvFLoOhy7wmfnF9bKtqSy+Ql7cEcwkJe8SyN2AKeYZlgTwHSRy0nYln7xpDE0pH/n
+	 g1RmztOiqeWQA==
+Date: Fri, 19 Sep 2025 18:24:09 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 02/10] man/man2/fsopen.2: document "new" mount API
+Message-ID: <zrifsd6vqj6ve25uipyeteuztncgwtzfmfnfsxhcjwcnxf2wen@xjx3y2g77uin>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-2-1261201ab562@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <05a018a6997407080b3b7921ba692aa69a720f07.1758166596.git.houwenlong.hwl@antgroup.com>
- <9da5eb48ccf403e1173484195d3d7d96978125b7.1758166596.git.houwenlong.hwl@antgroup.com>
- <9991df11-fe7c-41e1-9890-f0c38adc8137@amd.com> <20250919131535.GA73646@k08j02272.eu95sqa>
-Message-ID: <aM2Dfu0n-JyYttaH@google.com>
-Subject: Re: [PATCH 2/2] KVM: SVM: Use cached value as restore value of
- TSC_AUX for SEV-ES guest
-From: Sean Christopherson <seanjc@google.com>
-To: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, kvm@vger.kernel.org, 
-	Lai Jiangshan <jiangshan.ljs@antgroup.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fk2sxccfotbwat6m"
+Content-Disposition: inline
+In-Reply-To: <20250919-new-mount-api-v4-2-1261201ab562@cyphar.com>
 
-On Fri, Sep 19, 2025, Hou Wenlong wrote:
-> On Thu, Sep 18, 2025 at 01:47:06PM -0500, Tom Lendacky wrote:
-> > On 9/17/25 22:38, Hou Wenlong wrote:
-> > > The commit 916e3e5f26ab ("KVM: SVM: Do not use user return MSR support
-> > > for virtualized TSC_AUX") assumes that TSC_AUX is not changed by Linux
-> > > post-boot, so it always restores the initial host value on #VMEXIT.
-> > > However, this is not true in KVM, as it can be modified by user return
-> > > MSR support for normal guests. If an SEV-ES guest always restores the
-> > > initial host value on #VMEXIT, this may result in the cached value in
-> > > user return MSR being different from the hardware value if the previous
-> > > vCPU was a non-SEV-ES guest that had called kvm_set_user_return_msr().
-> > > Consequently, this may pose a problem when switching back to that vCPU,
-> > > as kvm_set_user_return_msr() would not update the hardware value because
-> > > the cached value matches the target value. Unlike the TDX case, the
-> > > SEV-ES guest has the ability to set the restore value in the host save
-> > > area, and the cached value in the user return MSR is always the current
-> > > hardware value. Therefore, the cached value could be used directly
-> > > without RDMSR in svm_prepare_switch_to_guest(), making this change
-> > > minimal.
-> > 
-> > I'm not sure I follow. If Linux never changes the value of TSC_AUX once it
-> > has set it, then how can it ever be different? Have you seen this issue?
-> > 
-> > Thanks,
-> > Tom
-> >
-> Hi, Tom.
-> 
-> IIUD, the normal guest still uses the user return MSR to load the guest
-> TSC_AUX value into the hardware when TSC_AUX virtualization is
-> supported.  However, the user return MSR only restores the host value
-> when returning to userspace, rather than when the vCPU is scheduled out.
-> This may lead to an issue during vCPU switching on a single pCPU, which
-> appears as follows:
-> 
->        normal vCPU -> SEV-ES vCPU -> normal vCPU
-> 
-> When the normal vCPU switches to the SEV-ES vCPU, the hardware TSC_AUX
-> value remains as the guest value set in kvm_set_user_return_msr() by the
-> normal vCPU.  After the #VMEXIT from the SEV-ES vCPU, the hardware value
-> becomes the host value. However, the cached TSC_AUX value in the user
-> return MSR remains the guest value of previous normal vCPU. Therefore,
-> when switching back to that normal vCPU, kvm_set_user_return_msr() does
-> not perform a WRMSR to load the guest value into the hardware, because
-> the cached value matches the target value. As a result, during the
-> execution of the normal vCPU, the normal vCPU would get an incorrect
-> TSC_AUX value for RDTSCP/RDPID.
-> 
-> I didn't find the available description of TSC_AUX virtualization in
-> APM; all my analysis is based on the current KVM code.
 
-I'm guessing TSC_AUX virtualization works like SEV-ES, where hardware context
-switches the MSR on VMRUN/#VMEXIT.
+--fk2sxccfotbwat6m
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 02/10] man/man2/fsopen.2: document "new" mount API
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-2-1261201ab562@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250919-new-mount-api-v4-2-1261201ab562@cyphar.com>
 
-> Am I missing something?
+Hi Aleksa,
 
-Nope, I don't think so.  I also found the changelog a bit confusing though.  I
-would say omit the details about Linux not changing the value, and instead focus
-on the need to re-load the current hardware value.  That should be intuitive for
-all readers, and is correct regradless of what/whose value is currently in hardware.
+On Fri, Sep 19, 2025 at 11:59:43AM +1000, Aleksa Sarai wrote:
+> This is loosely based on the original documentation written by David
+> Howells and later maintained by Christian Brauner, but has been
+> rewritten to be more from a user perspective (as well as fixing a few
+> critical mistakes).
+>=20
+> Co-authored-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-authored-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  man/man2/fsopen.2 | 384 ++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 384 insertions(+)
+>=20
+> diff --git a/man/man2/fsopen.2 b/man/man2/fsopen.2
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..7cdbeac7d64b7e5c969dee619=
+a039ec947d1e981
+> --- /dev/null
+> +++ b/man/man2/fsopen.2
+> @@ -0,0 +1,384 @@
+> +.\" Copyright, the authors of the Linux man-pages project
+> +.\"
+> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
+> +.\"
+> +.TH fsopen 2 (date) "Linux man-pages (unreleased)"
+> +.SH NAME
+> +fsopen \- create a new filesystem context
+> +.SH LIBRARY
+> +Standard C library
+> +.RI ( libc ,\~ \-lc )
+> +.SH SYNOPSIS
+> +.nf
+> +.B #include <sys/mount.h>
+> +.P
+> +.BI "int fsopen(const char *" fsname ", unsigned int " flags );
+> +.fi
+> +.SH DESCRIPTION
+> +The
+> +.BR fsopen ()
+> +system call is part of
+> +the suite of file descriptor based mount facilities in Linux.
 
-I also think we should handle setting hostsa->tsc_aux in
-sev_es_prepare_switch_to_guest().  That obviously requires duplicating some of
-logic related to SEV-ES and TSC_AUX, but I think I prefer that to splitting the
-handling of the host save area.
+Minor nitpick (I can amend that; no worries):
 
-How's this look? (compile tested only)
+Because 'file-descriptor-based' works as a single modifier of
+facilities, it goes with hyphens.
 
---
-Subject: [PATCH] KVM: SVM: Re-load current, not host, TSC_AUX on #VMEXIT from
- SEV-ES guest
+> +.P
+> +.BR fsopen ()
+> +creates a blank filesystem configuration context within the kernel
+> +for the filesystem named by
+> +.I fsname
+> +and places it into creation mode.
+> +A new file descriptor
+> +associated with the filesystem configuration context
+> +is then returned.
+> +The calling process must have the
+> +.B \%CAP_SYS_ADMIN
+> +capability in order to create a new filesystem configuration context.
+> +.P
+> +A filesystem configuration context is
+> +an in-kernel representation of a pending transaction,
+> +containing a set of configuration parameters that are to be applied
+> +when creating a new instance of a filesystem
+> +(or modifying the configuration of an existing filesystem instance,
+> +such as when using
+> +.BR fspick (2)).
+> +.P
+> +After obtaining a filesystem configuration context with
+> +.BR fsopen (),
+> +the general workflow for operating on the context looks like the followi=
+ng:
+> +.IP (1) 5
+> +Pass the filesystem context file descriptor to
+> +.BR fsconfig (2)
+> +to specify any desired filesystem parameters.
+> +This may be done as many times as necessary.
+> +.IP (2)
+> +Pass the same filesystem context file descriptor to
+> +.BR fsconfig (2)
+> +with
+> +.B \%FSCONFIG_CMD_CREATE
+> +to create an instance of the configured filesystem.
+> +.IP (3)
+> +Pass the same filesystem context file descriptor to
+> +.BR fsmount (2)
+> +to create a new detached mount object for
+> +the root of the filesystem instance,
+> +which is then attached to a new file descriptor.
+> +(This also places the filesystem context file descriptor into
+> +reconfiguration mode,
+> +similar to the mode produced by
+> +.BR fspick (2).)
+> +Once a mount object has been created with
+> +.BR fsmount (2),
+> +the filesystem context file descriptor can be safely closed.
+> +.IP (4)
+> +Now that a mount object has been created,
+> +you may
+> +.RS
+> +.IP (4.1) 7
+> +use the detached mount object file descriptor as a
+> +.I dirfd
+> +argument to "*at()" system calls; and/or
+> +.IP (4.2) 7
 
-Prior to running an SEV-ES guest, set TSC_AUX in the host save area to the
-current value in hardware, as tracked by the user return infrastructure,
-instead of always loading the host's desired value for the CPU.  If the
-pCPU is also running a non-SEV-ES vCPU, loading the hosts value on #VMEXIT
-could clobber the other vCPU's value, e.g. if the SEV-ES vCPU preempted
-the non-SEV-ES vCPU.
+I'll paste here the formatted part of this page:
 
-Note, unlike TDX, which blindly _zeroes_ TSC_AUX on exit, SEV-ES CPUs
-can load an arbitrary value.  Stuff the current value in the host save
-area instead of refreshing the user return cache so that KVM doesn't need
-to track whether or not the vCPU actually enterred the guest and thus
-loaded TSC_AUX from the host save area.
+        (4)  Now that a mount object has been created, you may
+=20
+             (4.1)  use the detached mount object file descrip=E2=80=90
+                    tor as a dirfd argument to "*at()" system
+                    calls; and/or
+=20
+             (4.2)  attach the mount object to a mount point by
+                    passing the mount object file descriptor to
+                    move_mount(2).  This will also prevent the
+                    mount object from being unmounted and de=E2=80=90
+                    stroyed when the mount object file descrip=E2=80=90
+                    tor is closed.
 
-Fixes: 916e3e5f26ab ("KVM: SVM: Do not use user return MSR support for virtualized TSC_AUX")
-Cc: stable@vger.kernel.org
-Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-[sean: handle the SEV-ES case in sev_es_prepare_switch_to_guest()]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/sev.c | 14 +++++++++++++-
- arch/x86/kvm/svm/svm.c | 26 +++++++-------------------
- arch/x86/kvm/svm/svm.h |  4 +++-
- 3 files changed, 23 insertions(+), 21 deletions(-)
+             The mount object file descriptor will remain asso=E2=80=90
+             ciated with the mount object even after doing the
+             above operations, so you may repeatedly use the
+             mount object file descriptor with move_mount(2)
+             and/or "*at()" system calls as many times as neces=E2=80=90
+             sary.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index cce48fff2e6c..95767b9d0d55 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -4664,7 +4664,9 @@ int sev_vcpu_create(struct kvm_vcpu *vcpu)
- 	return 0;
- }
- 
--void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_area *hostsa)
-+void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm,
-+				    struct sev_es_save_area *hostsa,
-+				    int tsc_aux_uret_slot)
- {
- 	struct kvm *kvm = svm->vcpu.kvm;
- 
-@@ -4712,6 +4714,16 @@ void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_are
- 		hostsa->dr2_addr_mask = amd_get_dr_addr_mask(2);
- 		hostsa->dr3_addr_mask = amd_get_dr_addr_mask(3);
- 	}
-+
-+	/*
-+	 * TSC_AUX is always virtualized for SEV-ES guests when the feature is
-+	 * available, i.e. TSC_AUX is loaded on #VMEXIT from the host save area.
-+	 * Set the save area to the current hardware value, i.e. the current
-+	 * user return value, so that the correct value is restored on #VMEXIT.
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_V_TSC_AUX) &&
-+	    !WARN_ON_ONCE(tsc_aux_uret_slot < 0))
-+		hostsa->tsc_aux = kvm_get_user_return_msr(tsc_aux_uret_slot);
- }
- 
- void sev_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector)
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 67f4eed01526..662cf680faf7 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -577,18 +577,6 @@ static int svm_enable_virtualization_cpu(void)
- 
- 	amd_pmu_enable_virt();
- 
--	/*
--	 * If TSC_AUX virtualization is supported, TSC_AUX becomes a swap type
--	 * "B" field (see sev_es_prepare_switch_to_guest()) for SEV-ES guests.
--	 * Since Linux does not change the value of TSC_AUX once set, prime the
--	 * TSC_AUX field now to avoid a RDMSR on every vCPU run.
--	 */
--	if (boot_cpu_has(X86_FEATURE_V_TSC_AUX)) {
--		u32 __maybe_unused msr_hi;
--
--		rdmsr(MSR_TSC_AUX, sev_es_host_save_area(sd)->tsc_aux, msr_hi);
--	}
--
- 	return 0;
- }
- 
-@@ -1400,16 +1388,17 @@ static void svm_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
- 	 */
- 	vmsave(sd->save_area_pa);
- 	if (sev_es_guest(vcpu->kvm))
--		sev_es_prepare_switch_to_guest(svm, sev_es_host_save_area(sd));
-+		sev_es_prepare_switch_to_guest(svm, sev_es_host_save_area(sd),
-+					       tsc_aux_uret_slot);
- 
- 	if (tsc_scaling)
- 		__svm_write_tsc_multiplier(vcpu->arch.tsc_scaling_ratio);
- 
- 	/*
--	 * TSC_AUX is always virtualized for SEV-ES guests when the feature is
--	 * available. The user return MSR support is not required in this case
--	 * because TSC_AUX is restored on #VMEXIT from the host save area
--	 * (which has been initialized in svm_enable_virtualization_cpu()).
-+	 * TSC_AUX is always virtualized (context switched by hardware) for
-+	 * SEV-ES guests when the feature is available.  For non-SEV-ES guests,
-+	 * context switch TSC_AUX via the user_return MSR infrastructure (not
-+	 * all CPUs support TSC_AUX virtualization).
- 	 */
- 	if (likely(tsc_aux_uret_slot >= 0) &&
- 	    (!boot_cpu_has(X86_FEATURE_V_TSC_AUX) || !sev_es_guest(vcpu->kvm)))
-@@ -3004,8 +2993,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		 * TSC_AUX is always virtualized for SEV-ES guests when the
- 		 * feature is available. The user return MSR support is not
- 		 * required in this case because TSC_AUX is restored on #VMEXIT
--		 * from the host save area (which has been initialized in
--		 * svm_enable_virtualization_cpu()).
-+		 * from the host save area.
- 		 */
- 		if (boot_cpu_has(X86_FEATURE_V_TSC_AUX) && sev_es_guest(vcpu->kvm))
- 			break;
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index 5d39c0b17988..4fda677e8ab3 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -831,7 +831,9 @@ void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm);
- int sev_es_string_io(struct vcpu_svm *svm, int size, unsigned int port, int in);
- void sev_es_recalc_msr_intercepts(struct kvm_vcpu *vcpu);
- void sev_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
--void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_area *hostsa);
-+void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm,
-+				    struct sev_es_save_area *hostsa,
-+				    int tsc_aux_uret_slot);
- void sev_es_unmap_ghcb(struct vcpu_svm *svm);
- 
- #ifdef CONFIG_KVM_AMD_SEV
+That sublist seems to be an unordered one.  I think we should use
+a bullet list for those items (the outer list 1,2,3,4 is okay as is).
 
-base-commit: 60e396349c19320485a249005256d1fafee60290
---
+       Bullet lists
+              Elements are preceded by bullet symbols  (\[bu]).
+              Anything  that  doesn't  fit elsewhere is usually
+              covered by this type of list.
+
+> +attach the mount object to a mount point
+> +by passing the mount object file descriptor to
+> +.BR move_mount (2).
+> +This will also prevent the mount object from
+> +being unmounted and destroyed when
+> +the mount object file descriptor is closed.
+> +.RE
+> +.IP
+> +The mount object file descriptor will
+> +remain associated with the mount object
+> +even after doing the above operations,
+> +so you may repeatedly use the mount object file descriptor with
+> +.BR move_mount (2)
+> +and/or "*at()" system calls
+> +as many times as necessary.
+> +.P
+> +A filesystem context will move between different modes
+> +throughout its lifecycle
+> +(such as the creation phase
+> +when created with
+> +.BR fsopen (),
+> +the reconfiguration phase
+> +when an existing filesystem instance is selected with
+> +.BR fspick (2),
+> +and the intermediate "awaiting-mount" phase
+> +.\" FS_CONTEXT_AWAITING_MOUNT is the term the kernel uses for this.
+> +between
+> +.BR \%FSCONFIG_CMD_CREATE
+> +and
+> +.BR fsmount (2)),
+> +which has an impact on
+> +what operations are permitted on the filesystem context.
+> +.P
+> +The file descriptor returned by
+> +.BR fsopen ()
+> +also acts as a channel for filesystem drivers to
+> +provide more comprehensive diagnostic information
+> +than is normally provided through the standard
+> +.BR errno (3)
+> +interface for system calls.
+> +If an error occurs at any time during the workflow mentioned above,
+> +calling
+> +.BR read (2)
+> +on the filesystem context file descriptor
+> +will retrieve any ancillary information about the encountered errors.
+> +(See the "Message retrieval interface" section
+> +for more details on the message format.)
+> +.P
+> +.I flags
+> +can be used to control aspects of
+> +the creation of the filesystem configuration context file descriptor.
+> +A value for
+> +.I flags
+> +is constructed by bitwise ORing
+> +zero or more of the following constants:
+> +.RS
+> +.TP
+> +.B FSOPEN_CLOEXEC
+> +Set the close-on-exec
+> +.RB ( FD_CLOEXEC )
+> +flag on the new file descriptor.
+> +See the description of the
+> +.B O_CLOEXEC
+> +flag in
+> +.BR open (2)
+> +for reasons why this may be useful.
+> +.RE
+> +.P
+> +A list of filesystems supported by the running kernel
+> +(and thus a list of valid values for
+> +.IR fsname )
+> +can be obtained from
+> +.IR /proc/filesystems .
+> +(See also
+> +.BR proc_filesystems (5).)
+> +.SS Message retrieval interface
+> +When doing operations on a filesystem configuration context,
+> +the filesystem driver may choose to provide
+> +ancillary information to userspace
+> +in the form of message strings.
+> +.P
+> +The filesystem context file descriptors returned by
+> +.BR fsopen ()
+> +and
+> +.BR fspick (2)
+> +may be queried for message strings at any time by calling
+> +.BR read (2)
+> +on the file descriptor.
+> +Each call to
+> +.BR read (2)
+> +will return a single message,
+> +prefixed to indicate its class:
+> +.RS
+> +.TP
+> +\fBe\fP <\fImessage\fP>
+
+We don't use '<' and '>' for indicating variable parts.  We already use
+italics for that.  The reason to avoid the '<' and '>' is that it is
+confusing: it is often unclear if the '<' are literal or placeholders.
+
+We only use '<' when they're literal.
+
+I suspect your want
+
+	.BI e\~ message
+
+BTW, I'm assuming there's one space between the letter and the message,
+and there are no literal '<'/'>', right?
+
+
+Have a lovely day!
+Alex
+
+> +An error message was logged.
+> +This is usually associated with an error being returned
+> +from the corresponding system call which triggered this message.
+> +.TP
+> +\fBw\fP <\fImessage\fP>
+> +A warning message was logged.
+> +.TP
+> +\fBi\fP <\fImessage\fP>
+> +An informational message was logged.
+> +.RE
+> +.P
+> +Messages are removed from the queue as they are read.
+> +Note that the message queue has limited depth,
+> +so it is possible for messages to get lost.
+> +If there are no messages in the message queue,
+> +.B read(2)
+> +will return \-1 and
+> +.I errno
+> +will be set to
+> +.BR \%ENODATA .
+> +If the
+> +.I buf
+> +argument to
+> +.BR read (2)
+> +is not large enough to contain the entire message,
+> +.BR read (2)
+> +will return \-1 and
+> +.I errno
+> +will be set to
+> +.BR \%EMSGSIZE .
+> +(See BUGS.)
+> +.P
+> +If there are multiple filesystem contexts
+> +referencing the same filesystem instance
+> +(such as if you call
+> +.BR fspick (2)
+> +multiple times for the same mount),
+> +each one gets its own independent message queue.
+> +This does not apply to multiple file descriptors that are
+> +tied to the same underlying open file description
+> +(such as those created with
+> +.BR dup (2)).
+> +.P
+> +Message strings will usually be prefixed by
+> +the name of the filesystem or kernel subsystem
+> +that logged the message,
+> +though this may not always be the case.
+> +See the Linux kernel source code for details.
+> +.SH RETURN VALUE
+> +On success, a new file descriptor is returned.
+> +On error, \-1 is returned, and
+> +.I errno
+> +is set to indicate the error.
+> +.SH ERRORS
+> +.TP
+> +.B EFAULT
+> +.I fsname
+> +is NULL
+> +or a pointer to a location
+> +outside the calling process's accessible address space.
+> +.TP
+> +.B EINVAL
+> +.I flags
+> +had an invalid flag set.
+> +.TP
+> +.B EMFILE
+> +The calling process has too many open files to create more.
+> +.TP
+> +.B ENFILE
+> +The system has too many open files to create more.
+> +.TP
+> +.B ENODEV
+> +The filesystem named by
+> +.I fsname
+> +is not supported by the kernel.
+> +.TP
+> +.B ENOMEM
+> +The kernel could not allocate sufficient memory to complete the operatio=
+n.
+> +.TP
+> +.B EPERM
+> +The calling process does not have the required
+> +.B \%CAP_SYS_ADMIN
+> +capability.
+> +.SH STANDARDS
+> +Linux.
+> +.SH HISTORY
+> +Linux 5.2.
+> +.\" commit 24dcb3d90a1f67fe08c68a004af37df059d74005
+> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
+> +glibc 2.36.
+> +.SH BUGS
+> +.SS Message retrieval interface and \fB\%EMSGSIZE\fP
+> +As described in the "Message retrieval interface" subsection above,
+> +calling
+> +.BR read (2)
+> +with too small a buffer to contain
+> +the next pending message in the message queue
+> +for the filesystem configuration context
+> +will cause
+> +.BR read (2)
+> +to return \-1 and set
+> +.BR errno (3)
+> +to
+> +.BR \%EMSGSIZE .
+> +.P
+> +However,
+> +this failed operation still
+> +consumes the message from the message queue.
+> +This effectively discards the message silently,
+> +as no data is copied into the
+> +.BR read (2)
+> +buffer.
+> +.P
+> +Programs should take care to ensure that
+> +their buffers are sufficiently large
+> +to contain any reasonable message string,
+> +in order to avoid silently losing valuable diagnostic information.
+> +.\" Aleksa Sarai
+> +.\"   This unfortunate behaviour has existed since this feature was merg=
+ed, but
+> +.\"   I have sent a patchset which will finally fix it.
+> +.\"   <https://lore.kernel.org/r/20250807-fscontext-log-cleanups-v3-1-8d=
+91d6242dc3@cyphar.com/>
+> +.SH EXAMPLES
+> +To illustrate the workflow for creating a new mount,
+> +the following is an example of how to mount an
+> +.BR ext4 (5)
+> +filesystem stored on
+> +.I /dev/sdb1
+> +onto
+> +.IR /mnt .
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd;
+> +\&
+> +fsfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_PATH, "source", "/dev/sdb1", AT_FDCWD);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0)
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_RELATIME);
+> +move_mount(mntfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> +.EE
+> +.in
+> +.P
+> +First,
+> +an ext4 configuration context is created and attached to the file descri=
+ptor
+> +.IR fsfd .
+> +Then, a series of parameters
+> +(such as the source of the filesystem)
+> +are provided using
+> +.BR fsconfig (2),
+> +followed by the filesystem instance being created with
+> +.BR \%FSCONFIG_CMD_CREATE .
+> +.BR fsmount (2)
+> +is then used to create a new mount object attached to the file descriptor
+> +.IR mntfd ,
+> +which is then attached to the intended mount point using
+> +.BR move_mount (2).
+> +.P
+> +The above procedure is functionally equivalent to
+> +the following mount operation using
+> +.BR mount (2):
+> +.P
+> +.in +4n
+> +.EX
+> +mount("/dev/sdb1", "/mnt", "ext4", MS_RELATIME,
+> +      "ro,noatime,acl,user_xattr,iversion");
+> +.EE
+> +.in
+> +.P
+> +And here's an example of creating a mount object
+> +of an NFS server share
+> +and setting a Smack security module label.
+> +However, instead of attaching it to a mount point,
+> +the program uses the mount object directly
+> +to open a file from the NFS share.
+> +.P
+> +.in +4n
+> +.EX
+> +int fsfd, mntfd, fd;
+> +\&
+> +fsfd =3D fsopen("nfs", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "example.com/pub/linux", 0=
+);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
+> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
+> +fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mntfd =3D fsmount(fsfd, 0, MOUNT_ATTR_NODEV);
+> +fd =3D openat(mntfd, "src/linux-5.2.tar.xz", O_RDONLY);
+> +.EE
+> +.in
+> +.P
+> +Unlike the previous example,
+> +this operation has no trivial equivalent with
+> +.BR mount (2),
+> +as it was not previously possible to create a mount object
+> +that is not attached to any mount point.
+> +.SH SEE ALSO
+> +.BR fsconfig (2),
+> +.BR fsmount (2),
+> +.BR fspick (2),
+> +.BR mount (2),
+> +.BR mount_setattr (2),
+> +.BR move_mount (2),
+> +.BR open_tree (2),
+> +.BR mount_namespaces (7)
+>=20
+> --=20
+> 2.51.0
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--fk2sxccfotbwat6m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjNg6MACgkQ64mZXMKQ
+wqnJ2xAAo2WI6i6gCc/BKqjuo+J/UEDWIQch0hww8FwlY7VWE2aU+haQWaD9yGgU
+OUbx0uEcyV6ikYFTuMgXNSo15Kn3jycayDOBZZ8+Y9+f/DWghq5P4ZzhnThnqt7W
+8G9w3hUAEJtH4s7btKiUmgGlJXk5/DSaipMLyFc78OVvWTXaZDMUnlutSoOvwf51
+fkAxVbtTq2e7zKBlj54Gdh1OEGAz/a2JScvef310NQZKftoZnbaQQlQUr2MOQUGz
+IzEVbhh+4gSCbkGFO4rvlsEHxSDk+OLdNLdt0Kc+W9W90bufL4B/AtMdO15m2DQc
+BDbMrvIgt6rFQtw63iirhj/kQenbH2Bjy7piXSgyziv+qW+sZf3uEKAoN6NhDQCf
+2MuK9W6/oZbSJbhi852D8+9SbWLcg/K03x/vh5WUGaVdc0zre+apQbjSrtE3CS2Y
+JC7dx8cGxkWwlPovPOtryD8twOOyFOpgWiQjYcDxdNxhHvBqwTRQFFB5D2EOUEnJ
+CRqqitBC/SL4bjkXZJdp3VPdKaTmRUyn6lBZeJpaH2IDV3ZSk7By3WeQiNAYI/ix
+napBZpSZCHICQKTPFWThY+B4wl5iOdCF78nUT83EBNkbX0Yd6Ban2KYdPJv1Httn
+yGE9xSbfDKpySARskZpn0s+NbkGi86SyfgQkmsahgQ2lolU/dD0=
+=ceZc
+-----END PGP SIGNATURE-----
+
+--fk2sxccfotbwat6m--
 
