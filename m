@@ -1,181 +1,173 @@
-Return-Path: <linux-kernel+bounces-824687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC59B89DD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:20:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DBECB89DE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E2795A2552
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:20:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10D543A9262
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F4330E0C2;
-	Fri, 19 Sep 2025 14:20:39 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80945313530;
+	Fri, 19 Sep 2025 14:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f6gI4Ftw"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0D71DEFE8
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476623081AC
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758291638; cv=none; b=ExX6sW/lMYNRurb+6XckcpKv4Ysk/SRIqGQ7OLw/Yo5xgG22DZRWvVTbrJrD0hw7bFKTgsulIu77sjdqIfjd8Sk8ZNDkh6JD+lJYeQL7ry3C0kmoyJXbwPJG6odxNk2H/EhJnXzNy1QT4Yw+smLiTvbAwEmUHOlN8ZeX3k1A+hA=
+	t=1758291712; cv=none; b=rSv4ktB1SUutWmwYiap53uy/IVsL8Fm+IDgDv28m88uscpGJRSt1F9INVpttwrikDUA7AbtxySptcidN5fyJeuG6eqwGG/ek+0qb7uzyLc9kuHyTricMmEFLsZbn7ARVcXa0Q/myJiFitu6HAfBo1Jk3rJwsagtL82BeGr6jhc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758291638; c=relaxed/simple;
-	bh=yyHzu7LU6UfA/2ViB685lY1SCHRlisjwkZH35/UJBDs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O9dONVlhSLKKr5wjK2MVave7wORqrMk+M8zmUH0lRCkc9W2N10DbtYBpKCrh0I5oebn4GWJsSHC9BgZshFshLJnwZz+INk2jH8RCBVPlAlRWzX10HPYoJL3uOu/1+7o5KxpdARfuUyu1i7iL28eNg3Q7TMYBiXb9a/BvEJQyr6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4241c41110eso46596645ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:20:36 -0700 (PDT)
+	s=arc-20240116; t=1758291712; c=relaxed/simple;
+	bh=2enupyLx6F97KhRTrAfwg8Fz0mcQGLhYQ0KBpTHeq4I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gDMcJSMGDu7OZQIrCXxw6wfZvETHL/ienwr072ZpqdrbyN6UXEcB3WF+6ADwtjOWcdrsPOVbheBryPvYjt2fzVgYsSdIbgnV9Hugz1EpxAW1JGz/2G5TqpCqjFRyzHY8lVxiR3QAUZRhJ1QbWXtcYSvwH1NURlx1tkcUsesSRP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f6gI4Ftw; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ec67fcb88so1980208a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:21:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758291710; x=1758896510; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V/uLHhxqIz3m8Vu42q2Oa1AvnZOlqtDYHdgC57Vb9XU=;
+        b=f6gI4FtwkVZ0ujdMpBFjSY0HmKeSV/JjK944DIg9d+3QUQkwUYmcJ0nK/q9Rq6wnsA
+         /u0kfAocrisJDS3zvcrcuO4TbHRMqZAcq9Ro+vxrw6FfPb9Kil72hp/iOSbSlT8nsde6
+         fw5TL2XTGPq1QSkXjnVxGfnGrPfEOtggD4fD0901ko9joB2XP7sLMpWy5A8U1c5jZ9ta
+         XjTezV6TlAeEk60OSB8GlJT1jzNBkcQ0Q6kgp2pJyMejc2W/JeNEdQBekrxmvcJzqJeT
+         rJ4jZ+o9dfnPpKR49Gc3yogC/kAzZDowCZKjphRrKFb6SVCMV/TmufS58AZSaRYGVP0D
+         9tSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758291636; x=1758896436;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4GbzlWauoCPLt/KdIunfCOqOx+l+jd7WNBw7s5fAcc=;
-        b=HTc8jbkLQwXCOYqIGZ/FR1RwGYYhkyRNtlchDfukC+zAYD+DvXD2eB2p99neXDj50u
-         kux+CoapxZjicwvd9oPeerBxQ+3Til58dTML7+aeFkOhR0wbDQUPMhCgAKqzTJdJAMLq
-         pdS+3i/KMrVmlQg5JWELxBTbmSALi2MAx/ufVUR23VTL0Hb42SgjBSyC+q3EEe5QCfhs
-         QeEGDN6imH7Tmud0RWXCDri374qdMOKpYkIKvX+Hk6owpVNVJyWQ6GSgdyNkcx/0xup2
-         IfU0xpu8kGB0JpQWQizvdQSALNLQQCVRz3kI7SclJCZ+j4tKHwYSOjbdijKXpPma1XoA
-         1eTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXERsg6xD3Uk5LdyQt6kiW1L+mJR3Dh4SijzHtzr1+vUTVmwgRHweqIbH8YIDJ9zr0zcMXYvbkvuYOcHaU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFd2UyGQ9/GqiZdqsBl+Jhu6aL6TR1usbpB4K3tAHDw5kgdbmR
-	Re/1psGmU6zn6gqF9i0tFvyKI60rycDWPrHx8i90i79Uiee9rd4IU7ohXFHKHSgyjrbZx6fGAP3
-	02AYh28dSI++z0dQ/p2ZLpRpuvUdTpOtEjtR2XQC4pYjdAMszlv0jdJR0Pd4=
-X-Google-Smtp-Source: AGHT+IHptP33yYtPA/hPB7VlA/qo5/m+4BnaVJm9r2lCaoHLdmJGLCxFZ8S8jen0SfTFLsgSyaGtWr7jx6EIxmUqo3jsnUIzS0p6
+        d=1e100.net; s=20230601; t=1758291710; x=1758896510;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V/uLHhxqIz3m8Vu42q2Oa1AvnZOlqtDYHdgC57Vb9XU=;
+        b=nM/xCs+XifIfGczc1arv2TLvch+GPCz1O4esxIE3VHYSLYi35szBU1tE6UZAiD48bf
+         /SySScqfqwBP2Xp8hjU+QRH+cIOoBnGuUXbWZGYs2GxPHYEZB27uFcIddQSHvfPIT4gq
+         OhYHh6fnh4lCYXQiewjh1+L/PX8VQWOeAaZai0gnXG3Bm9LAobU9XpJ9cjTfk5eWQKzl
+         br2hBpaM2JbubXMF/OITPVs0Gfrfpzj80LLVK2agQCabnr8bZe1y6Yrdgn65f626e0N5
+         4sG9FhPrL9qHX5KMJgsXIN1Vut23xXi6TsSXM8ySuWOxdcrFIX/NJsIcUF7p00xHrPC7
+         3rFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW8b7KKnuiBwO0fLBtzGMj9KFHdz8psUYzEw/6QyL9TaUoTYlbPQiwE8uujbYe4nlYkH5V0l1T3ZNDpxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwiSrbd3WvivACZYiylP2zdr7sMGVvut5YaWrwYFRSiPXQ6TLE
+	0s7l8g1ppk48t4KOC1aA5E5AWQAfmICQDuUKRXp99t9rJTisKKJrst+KZJYVzy8OFTh0gzxAcHf
+	hu1t49A==
+X-Google-Smtp-Source: AGHT+IHeBhJRfXhX1utSR8FjMcRgOkPNwY6NH5APDiYqEBsMttZnRUvgdZ5oli+OY4U49DKENaA5x4J3i7A=
+X-Received: from pjbsq12.prod.google.com ([2002:a17:90b:530c:b0:32e:cc38:a694])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3f48:b0:32e:2059:ee88
+ with SMTP id 98e67ed59e1d1-33097fd0ec5mr4556569a91.6.1758291710340; Fri, 19
+ Sep 2025 07:21:50 -0700 (PDT)
+Date: Fri, 19 Sep 2025 07:21:49 -0700
+In-Reply-To: <i4znbv2qka5nswuirlbm6ycjmeqmxtfflz6rbukzsdpfte7p3e@wez3k34xsrqa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2185:b0:40d:e50a:35b0 with SMTP id
- e9e14a558f8ab-4248199ec8fmr53120515ab.32.1758291632840; Fri, 19 Sep 2025
- 07:20:32 -0700 (PDT)
-Date: Fri, 19 Sep 2025 07:20:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cd66b0.050a0220.139b6.000f.GAE@google.com>
-Subject: [syzbot] [kvmarm?] kernel BUG in kvm_s2_put_page
-From: syzbot <syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com>
-To: catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	maz@kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, 
-	syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250919002136.1349663-1-seanjc@google.com> <20250919002136.1349663-3-seanjc@google.com>
+ <i4znbv2qka5nswuirlbm6ycjmeqmxtfflz6rbukzsdpfte7p3e@wez3k34xsrqa>
+Message-ID: <aM1mVMXptK-sko3f@google.com>
+Subject: Re: [PATCH v3 2/6] KVM: SVM: Update "APICv in x2APIC without x2AVIC"
+ in avic.c, not svm.c
+From: Sean Christopherson <seanjc@google.com>
+To: Naveen N Rao <naveen@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, Xin Li <xin@zytor.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Yan Zhao <yan.y.zhao@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hello,
++Intel folks (question at the bottom regarding vt_x86_ops)
 
-syzbot found the following issue on:
+On Fri, Sep 19, 2025, Naveen N Rao wrote:
+> On Thu, Sep 18, 2025 at 05:21:32PM -0700, Sean Christopherson wrote:
+> > Set the "allow_apicv_in_x2apic_without_x2apic_virtualization" flag as part
+> > of avic_hardware_setup() instead of handling in svm_hardware_setup(), and
+> > make x2avic_enabled local to avic.c (setting the flag was the only use in
+> > svm.c).
+> > 
+> > Opportunistically tag avic_hardware_setup() with __init to make it clear
+> > that nothing untoward is happening with svm_x86_ops.
+> > 
+> > No functional change intended (aside from the side effects of tagging
+> > avic_hardware_setup() with __init).
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/kvm/svm/avic.c | 6 ++++--
+> >  arch/x86/kvm/svm/svm.c  | 4 +---
+> >  arch/x86/kvm/svm/svm.h  | 3 +--
+> >  3 files changed, 6 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
+> > index 478a18208a76..683411442476 100644
+> > --- a/arch/x86/kvm/svm/avic.c
+> > +++ b/arch/x86/kvm/svm/avic.c
+> > @@ -77,7 +77,7 @@ static DEFINE_HASHTABLE(svm_vm_data_hash, SVM_VM_DATA_HASH_BITS);
+> >  static u32 next_vm_id = 0;
+> >  static bool next_vm_id_wrapped = 0;
+> >  static DEFINE_SPINLOCK(svm_vm_data_hash_lock);
+> > -bool x2avic_enabled;
+> > +static bool x2avic_enabled;
+> >  
+> >  
+> >  static void avic_set_x2apic_msr_interception(struct vcpu_svm *svm,
+> > @@ -1147,7 +1147,7 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
+> >   * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
+> >   * - The mode can be switched at run-time.
+> >   */
+> > -bool avic_hardware_setup(void)
+> > +bool __init avic_hardware_setup(struct kvm_x86_ops *svm_ops)
+> >  {
+> >  	if (!npt_enabled)
+> >  		return false;
+> > @@ -1182,6 +1182,8 @@ bool avic_hardware_setup(void)
+> >  	x2avic_enabled = boot_cpu_has(X86_FEATURE_X2AVIC);
+> >  	if (x2avic_enabled)
+> >  		pr_info("x2AVIC enabled\n");
+> > +	else
+> > +		svm_ops->allow_apicv_in_x2apic_without_x2apic_virtualization = true;
+> 
+> I'm not entirely convinced that this is better since svm_x86_ops fields 
+> are now being updated outside of svm.c.
 
-HEAD commit:    62e68218ab58 Merge branch kvm-arm64/nv-debug into kvmarm-m..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1551cf62580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b1bafe30fc85201
-dashboard link: https://syzkaller.appspot.com/bug?extid=c41f3ddb8299a30a98b5
-compiler:       Debian clang version 20.1.8 (++20250708123704+0de59a293f7a-1~exp1~20250708003721.134), Debian LLD 20.1.8
-userspace arch: arm64
+That doesn't bother me, e.g. the pmu_ops buried in svm_x86_ops come from
+arch/x86/kvm/svm/pmu.c.  Eww, and arch/x86/kvm/svm/svm_onhyperv.h already accesses
+svm_x86_ops, but in the grossest way possible.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+FWIW, I don't love splitting the APIC virtualization updates between
+svm_hardware_setup() and avic_hardware_setup(), but overall I do think that's the
+best balance between bundling all code together and making it easy(ish) for
+readers to figure out what's going on.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-62e68218.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/99c4e665c20d/vmlinux-62e68218.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4204d63db4b5/Image-62e68218.gz.xz
+> But, I do see your point about  limiting x2avic_enabled to avic.c
+> 
+> Would it be better to name this field as svm_x86_ops here too, so it is 
+> at least easy to grep and find?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com
+I didn't want to create a potential variable shadowing "problem".  The alternative
+would be to expose svm_x86_ops via svm.h.  That's not my first choice, but it's
+the route that was taken for the TDX vs. VMX split (vt_init_ops and vt_x86_ops
+are globally visible, even though they _could_ have been explicitly passed in
+as parameters to {tdx,vmx}_hardware_setup()).
 
-raw: 01ffea8000000000 ffffc1ffc0807c48 ffffc1ffc080a888 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-------------[ cut here ]------------
-kernel BUG at ./include/linux/mm.h:1036!
-Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 4079 Comm: syz.1.200 Not tainted syzkaller #0 PREEMPT 
-Hardware name: linux,dummy-virt (DT)
-pstate: 60402009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : put_page_testzero include/linux/mm.h:1036 [inline]
-pc : folio_put_testzero include/linux/mm.h:1042 [inline]
-pc : folio_put include/linux/mm.h:1359 [inline]
-pc : put_page include/linux/mm.h:1429 [inline]
-pc : kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264
-lr : put_page_testzero include/linux/mm.h:1036 [inline]
-lr : folio_put_testzero include/linux/mm.h:1042 [inline]
-lr : folio_put include/linux/mm.h:1359 [inline]
-lr : put_page include/linux/mm.h:1429 [inline]
-lr : kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264
-sp : ffff80008edd7570
-x29: ffff80008edd7570 x28: a4f00000202a2000 x27: a4f00000202a2000
-x26: 00000000000000ff x25: ffff80008734e000 x24: ffffc1ffc0000000
-x23: ffffc1ffc0806908 x22: 0000000000000000 x21: ffffc1ffc0806934
-x20: 0000000000000000 x19: ffffc1ffc0806900 x18: 000000004afc0585
-x17: 0000000004687c8c x16: 000000004af050f5 x15: 0000000089957307
-x14: ffffffffffffffff x13: fff0000012103b08 x12: 0000000000000001
-x11: 0000000000080000 x10: 0000000000031ed7 x9 : c866620449182600
-x8 : c866620449182600 x7 : ffff80008039fbc8 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : ffff800080390dd0
-x2 : 0000000000000002 x1 : 0000000100000000 x0 : 000000000000003e
-Call trace:
- put_page_testzero include/linux/mm.h:1036 [inline] (P)
- folio_put_testzero include/linux/mm.h:1042 [inline] (P)
- folio_put include/linux/mm.h:1359 [inline] (P)
- put_page include/linux/mm.h:1429 [inline] (P)
- kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264 (P)
- stage2_free_walker+0x1b0/0x264 arch/arm64/kvm/hyp/pgtable.c:1549
- kvm_pgtable_visitor_cb arch/arm64/kvm/hyp/pgtable.c:130 [inline]
- __kvm_pgtable_visit arch/arm64/kvm/hyp/pgtable.c:212 [inline]
- __kvm_pgtable_walk+0x7d8/0xa68 arch/arm64/kvm/hyp/pgtable.c:237
- _kvm_pgtable_walk arch/arm64/kvm/hyp/pgtable.c:260 [inline]
- kvm_pgtable_walk+0x294/0x468 arch/arm64/kvm/hyp/pgtable.c:283
- kvm_pgtable_stage2_destroy_range+0x60/0xb4 arch/arm64/kvm/hyp/pgtable.c:1563
- stage2_destroy_range arch/arm64/kvm/mmu.c:924 [inline]
- kvm_stage2_destroy arch/arm64/kvm/mmu.c:935 [inline]
- kvm_free_stage2_pgd+0x198/0x28c arch/arm64/kvm/mmu.c:1112
- kvm_uninit_stage2_mmu+0x20/0x38 arch/arm64/kvm/mmu.c:1023
- kvm_arch_flush_shadow_all+0x1a8/0x1e0 arch/arm64/kvm/nested.c:1113
- kvm_flush_shadow_all virt/kvm/kvm_main.c:343 [inline]
- kvm_mmu_notifier_release+0x48/0xa8 virt/kvm/kvm_main.c:884
- mmu_notifier_unregister+0x128/0x42c mm/mmu_notifier.c:815
- kvm_destroy_vm virt/kvm/kvm_main.c:1295 [inline]
- kvm_put_kvm+0x6a0/0xfa8 virt/kvm/kvm_main.c:1353
- kvm_vcpu_release+0x70/0x9c virt/kvm/kvm_main.c:4100
- __fput+0x4ac/0x980 fs/file_table.c:468
- ____fput+0x20/0x58 fs/file_table.c:496
- task_work_run+0x1bc/0x254 kernel/task_work.c:227
- get_signal+0x13ec/0x1554 kernel/signal.c:2807
- do_signal+0x23c/0x4dd0 arch/arm64/kernel/signal.c:1618
- do_notify_resume+0xb0/0x270 arch/arm64/kernel/entry-common.c:152
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:173 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:182 [inline]
- el0_svc+0xb8/0x164 arch/arm64/kernel/entry-common.c:880
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-Code: f00375a1 9112fc21 aa1303e0 97f9c9f2 (d4210000) 
----[ end trace 0000000000000000 ]---
+Question then.  Does anyone have a preference/opinion between explicitly passing
+in ops to vendor specific helpers, vs. making {svm,vt}_x86_ops globally visible?
 
+I don't love creating "hidden" dependencies, in quotes because in this case it's
+relatively easy to establish that the setup() helpers modify {svm,vt}_x86_ops,
+i.e. surprises should be rare.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On the other hand, I do agree it's helpful to be able to see exactly where
+{svm,vt}_x86_ops are updated.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+And most importantly, I want to be consistent between VMX and SVM, i.e. I want
+to pick one and stick with it.
 
