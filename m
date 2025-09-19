@@ -1,100 +1,134 @@
-Return-Path: <linux-kernel+bounces-824719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A932B89FA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:31:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF7CB89F62
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9766C1886BF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:30:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EB05A0690
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877023161B5;
-	Fri, 19 Sep 2025 14:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFB83164BE;
+	Fri, 19 Sep 2025 14:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="BQOMoimQ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyfwT/sP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716DA315783;
-	Fri, 19 Sep 2025 14:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2C43164AD;
+	Fri, 19 Sep 2025 14:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292191; cv=none; b=aSSR+r98No2kVRctKiz+1HzVIe2b2F4z2byWSrS2oJVV8crOHzOmfv8gQ5IRi2em8GbhP7SjRkx3OFkp6qCeJ6W2vYY2YxBtsYpO40I4O6KVm7q8RlPL6qAwG/n+kvgHnGN7RdCxkRhSe0fnyzxDlFt5UPQnZMrRfQwrI2Rxtj4=
+	t=1758292021; cv=none; b=FYU+nEdIAoMG1Nm5cHfpywbEGoizJ6J1xFhqDcgqIsyP5SogXMaN10Sg0TUJo9T/RNjUtGMISAZaGeuoQ9o/G4Pht+U1Vvt5nqtgMxt6vRJAJcXE/VPBmr/wgQd7FrgmCuSouwgBpX4qHoxT6KkhFvckSIHQCu15/NkIZSeJ/zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292191; c=relaxed/simple;
-	bh=81PMYlqM/y1cobIvGWv6NmLT8uHoL246gy0zJP1C1Hk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r8Of90LDgcea2gxeAuqPbhapq3I5ZJSJkqpCbGh/ErB+u+1K5B1Q3eBZYKa/J/lk24fnuaDtobh6HoTHuuXBPbm9uPHbM0UtRdvxash5Spt/bPkZHCHqP070n6cTj2SUCqhxJJ1XHuWd9j73nsWhBIQhPrzItBEaE85hueMfRu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=BQOMoimQ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 059042054C;
-	Fri, 19 Sep 2025 16:29:48 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id tBBtd3IQlEy2; Fri, 19 Sep 2025 16:29:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1758292186; bh=81PMYlqM/y1cobIvGWv6NmLT8uHoL246gy0zJP1C1Hk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BQOMoimQpdAVlc0FjdRCdRXrc9RdGZlN5x5GcNVaZTZroEZ4irVCJF+dvkIeNZ4yd
-	 F+YHKnSE3/oSxm5E6USKGj4LaChrpfN4ZVmClHDRtvQYi/lQsUWKdf5zgwvbeXr4Gc
-	 r7An77PaG7TYJA8d1JqqQb/0Vi6DwVmSrOrtxAt+hc0KNtSCpnx/OagWgkMuOLfnR6
-	 gJ1Q1bgfy1ckEjOzwlIdFrLVUwHNHtNiP+n/aQXZyR95JqDpP1e2ZnLlG6mmzIVkl0
-	 J9k+g5S+DFWrc8P6KOteGN6FCPL1La1AHw9S6kbyJyMlS3OwghbVursrksVnp9MHjm
-	 d7vEjb8yD3Oyw==
-From: Yao Zi <ziyao@disroot.org>
-To: Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1758292021; c=relaxed/simple;
+	bh=DzaesBYWo5gYh/9yDXkynFQps02fTLxsraKzoj6MxuQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M/5pvbEcjQi6LZF5Sqw934iiWS+drei11R9+et580ovY9iMKYXwhNCoaZhOV53gCCIiyaKuoxNUTTGYw2CLCXdQKDxXnssACKWuRhHVt58+T2dNYndipqppwQcJfyYDNDgBu0CarSPzuAkT8re7LimRp1LXZUBVXlX+1vfEOJ5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyfwT/sP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E457EC4CEF0;
+	Fri, 19 Sep 2025 14:27:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758292020;
+	bh=DzaesBYWo5gYh/9yDXkynFQps02fTLxsraKzoj6MxuQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FyfwT/sPaHbrPC7jbD8zPDjbtinrUavFc01JHGHsrlxGCYZoAk3dSlt4B0k98G19h
+	 AJlMwtio9XIyhS9She0XqcMPpy2eeO3ILXWoExq5W3V2v20TQg0yqOu32316RpOVIj
+	 MLZZSEmVVdPwuiqy0bvaGMa/RcyIQjlJb5ntvEbGbRNqJITbwgoD5ugdJdR1gHEcMW
+	 X/i8aI15ZTAu2CPiqVEbcxr+79xWF+6PZvLBdaLb/7OH8B1288oKt9U+Mo7OzJua0Y
+	 LjM+b8oxQ5dwOXVLYw4LGhSL5rVek0uHulZH+ENvwFpg/6nmN6HPd6aattPbgob+pB
+	 66ete9HqSaF+w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uzc4g-00000007nub-3U8t;
+	Fri, 19 Sep 2025 14:26:58 +0000
+Date: Fri, 19 Sep 2025 15:26:58 +0100
+Message-ID: <871po2zff1.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: syzbot <syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com>
+Cc: catalin.marinas@arm.com,
+	joey.gouly@arm.com,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v4 8/8] LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever Pi
-Date: Fri, 19 Sep 2025 14:26:49 +0000
-Message-ID: <20250919142649.58859-9-ziyao@disroot.org>
-In-Reply-To: <20250919142649.58859-1-ziyao@disroot.org>
-References: <20250919142649.58859-1-ziyao@disroot.org>
+	oliver.upton@linux.dev,
+	suzuki.poulose@arm.com,
+	syzkaller-bugs@googlegroups.com,
+	will@kernel.org,
+	yuzenghui@huawei.com
+Subject: Re: [syzbot] [kvmarm?] kernel BUG in kvm_s2_put_page
+In-Reply-To: <68cd66b0.050a0220.139b6.000f.GAE@google.com>
+References: <68cd66b0.050a0220.139b6.000f.GAE@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com, catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The property isn't required anymore as the supply clock of UART0 has
-been described.
+On Fri, 19 Sep 2025 15:20:32 +0100,
+syzbot <syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com> wrote:
+> 
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    62e68218ab58 Merge branch kvm-arm64/nv-debug into kvmarm-m..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1551cf62580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1b1bafe30fc85201
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c41f3ddb8299a30a98b5
+> compiler:       Debian clang version 20.1.8 (++20250708123704+0de59a293f7a-1~exp1~20250708003721.134), Debian LLD 20.1.8
+> userspace arch: arm64
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-62e68218.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/99c4e665c20d/vmlinux-62e68218.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4204d63db4b5/Image-62e68218.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com
+> 
+> raw: 01ffea8000000000 ffffc1ffc0807c48 ffffc1ffc080a888 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+> ------------[ cut here ]------------
+> kernel BUG at ./include/linux/mm.h:1036!
+> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 4079 Comm: syz.1.200 Not tainted syzkaller #0 PREEMPT 
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 60402009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : put_page_testzero include/linux/mm.h:1036 [inline]
+> pc : folio_put_testzero include/linux/mm.h:1042 [inline]
+> pc : folio_put include/linux/mm.h:1359 [inline]
+> pc : put_page include/linux/mm.h:1429 [inline]
+> pc : kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264
+> lr : put_page_testzero include/linux/mm.h:1036 [inline]
+> lr : folio_put_testzero include/linux/mm.h:1042 [inline]
+> lr : folio_put include/linux/mm.h:1359 [inline]
+> lr : put_page include/linux/mm.h:1429 [inline]
+> lr : kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts | 1 -
- 1 file changed, 1 deletion(-)
+This is likely caused by the S2 refcounting issue that has just been
+reverted in Linus' tree, and that is not in the kvmarm/next branch.
 
-diff --git a/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts b/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts
-index a033c086461f..1bdfff7fae92 100644
---- a/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts
-+++ b/arch/loongarch/boot/dts/loongson-2k0300-ctcisz-forever-pi.dts
-@@ -40,6 +40,5 @@ linux,cma {
- };
- 
- &uart0 {
--	clock-frequency = <100000000>;
- 	status = "okay";
- };
+	M.
+
 -- 
-2.50.1
-
+Jazz isn't dead. It just smells funny.
 
