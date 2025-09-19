@@ -1,162 +1,177 @@
-Return-Path: <linux-kernel+bounces-824279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B76F7B888E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:32:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F802B8891E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787455A1EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B8D3BD2C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268CB2D8DC2;
-	Fri, 19 Sep 2025 09:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805B42BEFE3;
+	Fri, 19 Sep 2025 09:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmdPocJX"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Svxjoygm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2020325B2FE
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4072125B2FE
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274356; cv=none; b=Lo1lp1I1JHzsugRWtUx7jxpz4Cq4grkTXEG/Bu7rfKWIzGcL5cPdm1eq/lm4TdwVbU6JgHNNPeffMlOY6hbtzkyVq2DgKY5aAXYNhS4hzcG7gDZdptSFyHIBHDjiXwBsG7VZYSnPoARh4Dzv60ItBB5QqcxoffiHAAdp18TfWTI=
+	t=1758274450; cv=none; b=uSYRsAgET+kqWLD2qBE652UZTrOSuNf2xmHIRI301nhP6/VJDRv6a1u5+ER7uwSX7iD2MP0oUOA1X9L3pEwNHCG9mI+J5ex+TP7ISR6S1hFREpJAFWua/e3BU2wqpu0V5gqaOdONYhD4thPGyy/S+CxANGH/V+nNbMj6sL9kEZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274356; c=relaxed/simple;
-	bh=PVuuLjxikcu1c+qB2O9qsLWbdD534LCwFYe+PcSify8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LCCwJ4rPbeITZuLrGqnOHaLiyxZvuK8x384n/2J1VCJXp43DE1kJ3tfbW4sgMk777YKBpzk6dv4E1s3MpfGzTVrROgcY1t9dXW/fiuxpAfSRON2F8dNre5Nds32HqdoUddClXz+wClmItb6mdNYUKeBZHC4fH9KlJTWH/IHy8fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jmdPocJX; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-77256e75eacso1774774b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:32:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758274354; x=1758879154; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+CV5IehE1Tn53nX+JiK34yeLAu07RSWt3CuophQO1BE=;
-        b=jmdPocJXqHH2tQWqUDx3AEW/0qWKK9CKgIfzFatHZFHZwUtBw0qTzJU37UnmoI7/3w
-         twL0dEmTJyYiAFCpG37ZMi2o67BdgO4+1Pt9miDUbcwJxJqDMpi4WozvmJysjGcZ+nmP
-         anXedMgdRdgscsPy6eiX7zFEB58valSDT/Q2YoXaZi7HpuZ5fRLW35sRPEAWjB9YawbZ
-         ObFhLTBRO0+Jtw2TY9vrhQkwGBRMJARvnuRc2hMZixyDlxRhKcrUIw4FtHdgwXXVnhqG
-         tKO1UBacOGniXLvGWeVNFvvncg2NsyPFzhRlXcHhm3IV1O0t49j0SDmUbL+eEM7MwvCR
-         1UBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758274354; x=1758879154;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+CV5IehE1Tn53nX+JiK34yeLAu07RSWt3CuophQO1BE=;
-        b=evpt8sgvdoVr5adfwH3LluzcYOpKW/HVFfWB5LOfNZQJmtV35WG5BGY9hKqpxmPSSR
-         pp66IlMqVsutkKjx2gX1mf89mMuQDkRrM78tVyu9COxdvOImRx3Ipw9VeWafPByu0Niy
-         bOQ0ooPo7uIxDd1rtsJh+IXsEGsnSVlW8S/wCXKtc0lNhWu1UfbL0tR2u2yuDsxUN2Y3
-         y+AECi4eY7lBPgoIIquX9kjnmgQdY7iesCXtTs3fT739SobmdnlC9KOpFzpvQENCD0gC
-         9KLmjz8lM1YMtxyB92EYIplsB8fOk0HlOxXTJOhpusBTQEzwfC9iQFchlpp2eNQ+ig1P
-         ku5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjXyZIGirUvxymJ8WS7AiGcpVz/G1Omq2uQ0oQip8MVxQ6Py0visrFjy8HM9HsBPkh08DYifeUN1Z/6NU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR2CsNDqhsBzwCYvB2z+/Z1Qr6xn0hq78mbdLfiuN6zEVUk1js
-	BXD4OPb1HvhXWJXH+Br0T5x/7FFg4GzhRdxkeznWK7+J3kZCVfCUjeUYzQuU7Q==
-X-Gm-Gg: ASbGncvrLsvTR/ZENsPl8m7zanrovNoLZNLD0d1G7lnLISg4yzsmYhUOPlyIWbrbUXO
-	0N5zr3L7HYaThQydJ3+kRFaSeE47h94kouD1dKWxx6K9QYmV0t81YHFku728/0lFZNzpLdeOanB
-	EsUyDJ9A/srJzTUxlRz/VbZGqBSjTjOm0R4aqSTx/OLP41lEiSrw8Hjl94ADVi72vjz9Xh5SBYu
-	4EWRvHVtfPhBafthBQOmT/TDyuFmn8eogjTra7Pep0/Vu4DoSBY2Y7HDIfHvrE+QrtQH8qyU9O8
-	fe2mHfhxs38abvI40vrzgbDjFtV7S5Dc7ITCy6X7V58uFmYQ/e1ivWYu51oPTfq6ZpYHLrrAnba
-	b8n7bqdHPUO8E+iL+3EDSrCLX+ZZh9SJ5cSuwUv1H+P7E5VT+ROsuhQBYHPhBjvgkruikwqwdHi
-	bdnPYumufd
-X-Google-Smtp-Source: AGHT+IGAtV3xKWu/RSfZaRRvZO9qgcxXvW6souPS+g60+Hps7w3owsEq6q+LE1rVNe0azOw7xoT+Vw==
-X-Received: by 2002:a05:6a20:7284:b0:248:1d25:28b3 with SMTP id adf61e73a8af0-2925f5746d0mr3945266637.17.1758274354122;
-        Fri, 19 Sep 2025 02:32:34 -0700 (PDT)
-Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b55268e73f6sm530156a12.21.2025.09.19.02.32.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 02:32:33 -0700 (PDT)
-Date: Fri, 19 Sep 2025 18:32:30 +0900
-Message-ID: <m27bxu949d.wl-thehajime@gmail.com>
-From: Hajime Tazaki <thehajime@gmail.com>
-To: johannes@sipsolutions.net
-Cc: linux-um@lists.infradead.org,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU dependency to PCI driver
-In-Reply-To: <6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
-References: <cover.1758181109.git.thehajime@gmail.com>
-	<4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
-	<a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
-	<m28qib8g1r.wl-thehajime@gmail.com>
-	<6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758274450; c=relaxed/simple;
+	bh=QyBw9V3MrwIBLTNTHmBzydrQVjWnsneezFu885BPIXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uPJaTyyH6y6XVrZUQ1mfHY/xoP5ZsFeh2cAdwFjFWtGOPEdxED/xhwKzbFPx82naUIbRxiz8zf0+ZJKaXxN1YAzaWB0AUGgOG2wSgRdl2uwe/AGALhufDfAkDtZ0K8SZLuAkzfVOyDzW68SLkzcDUMA/HdpDZTpJqCxOxQXMwnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Svxjoygm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758274448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DEy+og7tihPhXp1E3SsxMGMOW3TK1N+nPInsY12TsqE=;
+	b=SvxjoygmSu8mkw9OXyTwh7zt8oa2YlxS8gunAc6zFn6qXTfgcnQ0Hy0bckU0ai9p471HoI
+	p/sZVdAa54w+bo8BARtRd2aFoBXGROzhtoKZ3tHpYHCM3B8hDesT14QWpkYxs9gOlQqsT9
+	iZRWK1zq3NxaFwJSPxWjaIEZzC8Pel4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-rmZG_ZI1NouvRNvz7MnUNg-1; Fri,
+ 19 Sep 2025 05:34:06 -0400
+X-MC-Unique: rmZG_ZI1NouvRNvz7MnUNg-1
+X-Mimecast-MFC-AGG-ID: rmZG_ZI1NouvRNvz7MnUNg_1758274445
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7916E19560A7;
+	Fri, 19 Sep 2025 09:34:05 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.69])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 491E51800446;
+	Fri, 19 Sep 2025 09:34:00 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: "Michael S . Tsirkin " <mst@redhat.com>
+Cc: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Yongji Xie <xieyongji@bytedance.com>,
+	Maxime Coquelin <mcoqueli@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	virtualization@lists.linux.dev,
+	Cindy Lu <lulu@redhat.com>,
+	jasowang@redhat.com,
+	Laurent Vivier <lvivier@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH v3 0/6] Add multiple address spaces support to VDUSE
+Date: Fri, 19 Sep 2025 11:33:53 +0200
+Message-ID: <20250919093359.961296-1-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+When used by vhost-vDPA bus driver for VM, the control virtqueue
+should be shadowed via userspace VMM (QEMU) instead of being assigned
+directly to Guest. This is because QEMU needs to know the device state
+in order to start and stop device correctly (e.g for Live Migration).
 
-On Fri, 19 Sep 2025 16:24:07 +0900,
-Johannes Berg wrote:
-> 
-> On Fri, 2025-09-19 at 09:03 +0900, Hajime Tazaki wrote:
-> > > This doesn't make a lot of sense to me. Why would we even want to build
-> > > PCI on NOMMU-UML if PCI in general is dependent on MMU now?
-> > > 
-> > > It's not like ARCH=um with PCI and NOMMU has any value even for testing
-> > > if such a configuration cannot exist in reality?
-> > 
-> > totally understand your point.
-> > 
-> > now I see that we don't have to have this work around by using
-> > --kconfig_add option to kunit.py.
-> > 
-> > # like --kconfig_add CONFIG_UML_PCI_OVER_VIRTIO=n (in addition to
-> >   --kconfig_add CONFIG_MMU=n).
-> 
-> That's not what I mean. I think it should be made impossible to build
-> the broken code.
+This requies to isolate the memory mapping for control virtqueue
+presented by vhost-vDPA to prevent guest from accessing it directly.
 
-okay.
-# I think now I lost the point...
+This series add support to multiple address spaces in VDUSE device
+allowing selective virtqueue isolation through address space IDs (ASID).
 
-currently, drivers/pci/Kconfig (CONFIG_PCI) marks as depends on MMU,
-so we cannot select it when CONFIG_MMU=n.
+The VDUSE device needs to report:
+* Number of virtqueue groups
+* Association of each vq group with each virtqueue
+* Number of address spaces supported.
 
-but it's different with kunit when using them via kunit.py config,
+Then, the vDPA driver can modify the ASID assigned to each VQ group to
+isolate the memory AS.  This aligns VDUSE with vdpa_sim and nvidia mlx5
+devices which already support ASID.
 
-it first adds
+This helps to isolate the environments for the virtqueues that will not
+be assigned directly. E.g in the case of virtio-net, the control
+virtqueue will not be assigned directly to guest.
 
- CONFIG_VIRTIO_UML=y
- CONFIG_UML_PCI_OVER_VIRTIO=y
+Also, to be able to test this patch, the user needs to manually revert
+56e71885b034 ("vduse: Temporarily fail if control queue feature requested").
 
-via tools/testing/kunit/configs/arch_uml.config, and then add
+PATCH v3:
+* Make the default group an invalid group as long as VDUSE device does
+  not set it to some valid u32 value.  Modify the vdpa core to take that
+  into account (Jason).  Adapt all the virtio_map_ops callbacks to it.
+* Make setting status DRIVER_OK fail if vq group is not valid.
+* Create the VDUSE_DEV_MAX_GROUPS and VDUSE_DEV_MAX_AS instead of using a magic
+  number
+* Remove the _int name suffix from struct vduse_vq_group.
+* Get the vduse domain through the vduse_as in the map functions (Jason).
+* Squash the patch implementing the AS logic with the patch creating the
+  vduse_as struct (Jason).
 
- CONIFG_MMU=n
+PATCH v2:
+* Now the vq group is in vduse_vq_config struct instead of issuing one
+  VDUSE message per vq.
+* Convert the use of mutex to rwlock (Xie Yongji).
 
-via --kconfig_add CONFIG_MMU=n.
+PATCH v1:
+* Fix: Remove BIT_ULL(VIRTIO_S_*), as _S_ is already the bit (Maxime)
+* Using vduse_vq_group_int directly instead of an empty struct in union
+  virtio_map.
 
-and then execute make ARCH=um olddefconfig, which in turn enables
-CONFIG_UML_PCI_OVER_VIRTIO.
+RFC v3:
+* Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+  value to reduce memory consumption, but vqs are already limited to
+  that value and userspace VDUSE is able to allocate that many vqs.  Also, it's
+  a dynamic array now.  Same with ASID.
+* Move the valid vq groups range check to vduse_validate_config.
+* Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
+* Use of array_index_nospec in VDUSE device ioctls.
+* Move the umem mutex to asid struct so there is no contention between
+  ASIDs.
+* Remove the descs vq group capability as it will not be used and we can
+  add it on top.
+* Do not ask for vq groups in number of vq groups < 2.
+* Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
+  VDUSE_IOTLB_GET_INFO.
 
-if we append "--kconfig_add CONFIG_UML_PCI_OVER_VIRTIO=n" to kunit.py,
-it will overwrite the arch_uml.config.
+RFC v2:
+* Cache group information in kernel, as we need to provide the vq map
+  tokens properly.
+* Add descs vq group to optimize SVQ forwarding and support indirect
+  descriptors out of the box.
+* Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
+  part of the struct is the same.
+* Fixes detected testing with OVS+VDUSE.
 
-# I don't know how kunit handles those appended CONFIG entries, though..
+Eugenio Pérez (6):
+  vduse: make domain_lock an rwlock
+  vduse: add v1 API definition
+  vduse: add vq group support
+  vduse: return internal vq group struct as map token
+  vduse: add vq group asid support
+  vduse: bump version number
 
-my goal is simple; to test !MMU code via kunit.
-my original patch or the additional kconfig argument (--kconfig_add)
-satisfies this goal.
+ drivers/vdpa/ifcvf/ifcvf_main.c    |   2 +-
+ drivers/vdpa/mlx5/net/mlx5_vnet.c  |   2 +-
+ drivers/vdpa/vdpa_sim/vdpa_sim.c   |   2 +-
+ drivers/vdpa/vdpa_user/vduse_dev.c | 506 ++++++++++++++++++++++-------
+ drivers/vhost/vdpa.c               |  11 +-
+ include/linux/vdpa.h               |   5 +-
+ include/linux/virtio.h             |   6 +-
+ include/uapi/linux/vduse.h         |  65 +++-
+ 8 files changed, 467 insertions(+), 132 deletions(-)
 
-> The problem is probably UML_PCI_OVER_VIRTIO selecting UML_PCI selecting
-> various PCI code, but nothing depends on PCI in the first place. Which
-> it should, then?
+-- 
+2.51.0
 
-I don't understand the 'nothing depends on PCI...' part.  care to
-elaborate ?
-
-thanks,
-
--- Hajime
 
