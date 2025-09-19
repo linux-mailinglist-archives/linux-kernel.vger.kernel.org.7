@@ -1,237 +1,348 @@
-Return-Path: <linux-kernel+bounces-824931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759DDB8A7ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:05:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB66CB8A7FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5131C24AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:05:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CD06165A5F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B571A31DD8A;
-	Fri, 19 Sep 2025 16:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFE431D728;
+	Fri, 19 Sep 2025 16:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPBv3DG/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WNzOav2N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hlvBFp6z";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WNzOav2N";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hlvBFp6z"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DC623C4F3;
-	Fri, 19 Sep 2025 16:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C4321ABD0
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758297906; cv=none; b=akWUe0npdfMec2LBnpr2V3xGJpPojR/CdKaFQ8XlT2xmOxFCDjt5v1rDyDZIkI/XDaKF/ZtO78gEGiMkLNguD+/IZ9352DGhxExcGzwGrxGRDJpVRGZKeVoEE/Q/g97TL38p/QJe8kTdNPijR+W1b01xKT+UzlmeuHauTp0b4Q4=
+	t=1758297984; cv=none; b=J1xI14JNUBDQQtdkrzqI+jsmIlG3nyuXJbT6XfDvFo/o8KYlg2ukD8ajAtKZC3oIRsA22WVd6qJBGcqUP1MQptiVdUJtgQ9RitSvh4Bibv7fd2XMc4u2xmnX9QqF53+Bgd7dwlHNZIHAnH/bTy+QA9pE+CXMcQmYkNTsTOn5zjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758297906; c=relaxed/simple;
-	bh=PMtrmBAyu9kJj4TQ0/QkV3dgRzc5oA5tHBt+BRc/7l0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIgwKqRvLXKDOupIAZp0NgRtD3CF1etFLbM8NVn3pho3U2WG8/wNjwTBvDuveOJd8sY2Q3JhN3Fgi8j2lMnLbH9y0ZSixSFjioRZcRQ6OGKmvz/zq8geytKyomkRbsKexOOjLuVQyeOXZkxypp+6IbR8bC9tdAF7j9zvm68GkKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPBv3DG/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC783C4CEF0;
-	Fri, 19 Sep 2025 16:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758297905;
-	bh=PMtrmBAyu9kJj4TQ0/QkV3dgRzc5oA5tHBt+BRc/7l0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KPBv3DG/SEJExSAlUbMHF1lQpLovcWtBuMrKsfp7T7A0xn5bqwAPjBLgTowk32Mt5
-	 xZUSGMSXvWiL+MUvg6zW/679WPfzkbD3N5DYZk/tPg/woG6dTTtazjF6TSGijniD/G
-	 kPVAgvaoiCQZ1/4odPLFllRnB6jvHOP0De7C9+JgpYThKgXu18ef3sQihx9Ux8AmWa
-	 vt1mSv2jUG2QU7dTtg2yT0quogL2EDXNPuYgg2XceEpEacYzDEOtjNs8lgjIDBJLrO
-	 VXtaEWFMAovdRGVT7vPSEU6zPb2z4e0HA+DJ4+hLzBYBjsXKD2v2df3LryiVqlycHC
-	 IRUYBFZUjUUhg==
-Date: Fri, 19 Sep 2025 18:04:57 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 01/10] man/man2/mount_setattr.2: move mount_attr
- struct to mount_attr(2type)
-Message-ID: <r5fqew7m7vfg2mp5mgivxeghotymhzxpdnducp6jejxlbkaphw@7gi63phcgpfd>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-1-1261201ab562@cyphar.com>
+	s=arc-20240116; t=1758297984; c=relaxed/simple;
+	bh=DMj2fKg23DwYf73juw4+Sr+8OGK4EW7M3Y7RF9KL8qs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mkd/CEV0x1beeSCdKAi+JG0Cn4oo8+BWNRxkHS8sN+8tC6tg0egz/MU3Svo7FF17ywgeFBZkjugd3MYLdDUsxF7Ge+ciw0mJu/pkX880elCK6qJDUrniErQhBJ7we+JGisBkH+T67Fd7JwXxudjD05MlpGiB+nlOOCFceHpVK2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WNzOav2N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hlvBFp6z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WNzOav2N; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hlvBFp6z; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A5B79220B2;
+	Fri, 19 Sep 2025 16:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758297980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ucOqcRQjLG2lr6EznCJzeShpyd167oEDoWFpYd0D44g=;
+	b=WNzOav2N9oHYhUjdb2XJ7x4svGgDrWCn+IUEJqTVaKr95gIq5At0uTZhIT7BQtGsk7pd5U
+	p2RwMkck0hzm9wPv1mDPLOkArtWEfAeCUw5ULXfyXC9+jlOyLqqMCNqcVzfxbf6vXUYIpt
+	fh2NGV6lhSprvPGysxcGOK//XvQGjvw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758297980;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ucOqcRQjLG2lr6EznCJzeShpyd167oEDoWFpYd0D44g=;
+	b=hlvBFp6zC8G+6HxvoyBR1yoIuIvuMiguYTeH556FulJ59zEC5dq4SNZmc8bTP1Sijk+bq7
+	97PapnG2RKbnqaDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WNzOav2N;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=hlvBFp6z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758297980; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ucOqcRQjLG2lr6EznCJzeShpyd167oEDoWFpYd0D44g=;
+	b=WNzOav2N9oHYhUjdb2XJ7x4svGgDrWCn+IUEJqTVaKr95gIq5At0uTZhIT7BQtGsk7pd5U
+	p2RwMkck0hzm9wPv1mDPLOkArtWEfAeCUw5ULXfyXC9+jlOyLqqMCNqcVzfxbf6vXUYIpt
+	fh2NGV6lhSprvPGysxcGOK//XvQGjvw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758297980;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ucOqcRQjLG2lr6EznCJzeShpyd167oEDoWFpYd0D44g=;
+	b=hlvBFp6zC8G+6HxvoyBR1yoIuIvuMiguYTeH556FulJ59zEC5dq4SNZmc8bTP1Sijk+bq7
+	97PapnG2RKbnqaDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 81A9313A39;
+	Fri, 19 Sep 2025 16:06:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WZdQHnx/zWglSwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 16:06:20 +0000
+Date: Fri, 19 Sep 2025 18:06:20 +0200
+Message-ID: <878qia8m0z.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: PM runtime auto-cleanup macros
+In-Reply-To: <CAJZ5v0jJjYoTceD2_pgvKgKuPypo+8osnAuCefgAjrzY_w2n8A@mail.gmail.com>
+References: <878qimv24u.wl-tiwai@suse.de>
+	<CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
+	<87jz1uao65.wl-tiwai@suse.de>
+	<12751070.O9o76ZdvQC@rafael.j.wysocki>
+	<87ldma8sq1.wl-tiwai@suse.de>
+	<CAJZ5v0jJjYoTceD2_pgvKgKuPypo+8osnAuCefgAjrzY_w2n8A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gsbr7iv2jhmeqccn"
-Content-Disposition: inline
-In-Reply-To: <20250919-new-mount-api-v4-1-1261201ab562@cyphar.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: A5B79220B2
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -3.51
+
+On Fri, 19 Sep 2025 17:52:32 +0200,
+Rafael J. Wysocki wrote:
+> 
+> On Fri, Sep 19, 2025 at 3:41 PM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Fri, 19 Sep 2025 15:05:04 +0200,
+> > Rafael J. Wysocki wrote:
+> > >
+> > > On Friday, September 19, 2025 9:37:06 AM CEST Takashi Iwai wrote:
+> > > > On Thu, 18 Sep 2025 22:41:32 +0200,
+> > > > Rafael J. Wysocki wrote:
+> > > > >
+> > > > > On Thu, Sep 18, 2025 at 10:19 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > >
+> > > > > > On Thu, Sep 18, 2025 at 1:28 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Thu, Sep 18, 2025 at 9:10 AM Takashi Iwai <tiwai@suse.de> wrote:
+> > > > > > > >
+> > > > > > > > On Wed, 17 Sep 2025 20:58:36 +0200,
+> > > > > > > > Rafael J. Wysocki wrote:
+> > > > > > > > >
+> > > > > > > > > Hi,
+> > > > > > > > >
+> > > > > > > > > Sorry for the delay.
+> > > > > > > > >
+> > > > > > > > > On Thu, Sep 11, 2025 at 9:31 AM Takashi Iwai <tiwai@suse.de> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Wed, 10 Sep 2025 16:00:17 +0200,
+> > > > > > > > > > Takashi Iwai wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > Hi,
+> > > > > > > > > > >
+> > > > > > > > > > > while I worked on the code cleanups in the drivers with the recent
+> > > > > > > > > > > auto-cleanup macros, I noticed that pm_runtime_get*() and _put*() can
+> > > > > > > > > > > be also managed with the auto-cleanup gracefully, too.  Actually we
+> > > > > > > > > > > already defined the __free(pm_runtime_put) in commit bfa4477751e9, and
+> > > > > > > > > > > there is a (single) user of it in pci-sysfs.c.
+> > > > > > > > > > >
+> > > > > > > > > > > Now I wanted to extend it to pm_runtime_put_autosuspend() as:
+> > > > > > > > > > >
+> > > > > > > > > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device *,
+> > > > > > > > > > >            if (_T) pm_runtime_put_autosuspend(_T))
+> > > > > > > > > > >
+> > > > > > > > > > > Then one can use it like
+> > > > > > > > > > >
+> > > > > > > > > > >       ret = pm_runtime_resume_and_get(dev);
+> > > > > > > > > > >       if (ret < 0)
+> > > > > > > > > > >               return ret;
+> > > > > > > > > > >       struct device *pmdev __free(pm_runtime_put_autosuspend) = dev;
+> > > > > > > > > > >
+> > > > > > > > > > > that is similar as done in pci-sysfs.c.  So far, so good.
+> > > > > > > > > > >
+> > > > > > > > > > > But, I find putting the line like above at each place a bit ugly.
+> > > > > > > > > > > So I'm wondering whether it'd be better to introduce some helper
+> > > > > > > > > > > macros, e.g.
+> > > > > > > > > > >
+> > > > > > > > > > > #define pm_runtime_auto_clean(dev, var) \
+> > > > > > > > > > >       struct device *var __free(pm_runtime_put) = (dev)
+> > > > > > > > > >
+> > > > > > > > > > It can be even simpler by assigning a temporary variable such as:
+> > > > > > > > > >
+> > > > > > > > > > #define pm_runtime_auto_clean(dev) \
+> > > > > > > > > >         struct device *__pm_runtime_var ## __LINE__ __free(pm_runtime_put) = (dev)
+> > > > > > > > >
+> > > > > > > > > Well, if there's something like
+> > > > > > > > >
+> > > > > > > > > struct device *pm_runtime_resume_and_get_dev(struct device *dev)
+> > > > > > > > > {
+> > > > > > > > >         int ret = pm_runtime_resume_and_get(dev);
+> > > > > > > > >         if (ret < 0)
+> > > > > > > > >                 return ERR_PTR(ret);
+> > > > > > > > >
+> > > > > > > > >         return dev;
+> > > > > > > > > }
+> > > > > > > > >
+> > > > > > > > > It would be a matter of redefining the FREE to also take error
+> > > > > > > > > pointers into account and you could do
+> > > > > > > > >
+> > > > > > > > > struct device *__dev __free(pm_runtim_put) = pm_runtime_resume_and_get_dev(dev);
+> > > > > > > > > if (IS_ERR(__dev))
+> > > > > > > > >         return PTR_ERR(__dev);
+> > > > > > > >
+> > > > > > > > That'll work, too.  Though, I find the notion of __free() and a
+> > > > > > > > temporary variable __dev a bit too cumbersome; it's used only for
+> > > > > > > > auto-clean stuff, so it could be somewhat anonymous.
+> > > > > > >
+> > > > > > > No, it is not used only for auto-clean, it is also used for return
+> > > > > > > value checking and it represents a reference on the original dev.  It
+> > > > > > > cannot be entirely anonymous because of the error checking part.
+> > > > > > >
+> > > > > > > The point is that this is one statement instead of two and so it is
+> > > > > > > arguably harder to mess up with.
+> > > > > > >
+> > > > > > > > But it's all about a matter of taste, and I'd follow what you and
+> > > > > > > > other guys suggest.
+> > > > > > > >
+> > > > > > > > FWIW, there are lots of code doing like
+> > > > > > > >
+> > > > > > > >         pm_runtime_get_sync(dev);
+> > > > > > > >         mutex_lock(&foo);
+> > > > > > > >         ....
+> > > > > > > >         mutex_unlock(&foo);
+> > > > > > > >         pm_runtime_put(dev);
+> > > > > > > >         return;
+> > > > > > > >
+> > > > > > > > or
+> > > > > > > >
+> > > > > > > >         ret = pm_runtime_resume_and_get(dev);
+> > > > > > > >         if (ret)
+> > > > > > > >                 return ret;
+> > > > > > > >         mutex_lock(&foo);
+> > > > > > > >         ....
+> > > > > > > >         mutex_unlock(&foo);
+> > > > > > > >         pm_runtime_put_autosuspend(dev);
+> > > > > > > >         return 0;
+> > > > > > > >
+> > > > > > > > and they can be converted nicely with guard() once when PM runtime can
+> > > > > > > > be automatically unreferenced.  With my proposed change, it would
+> > > > > > > > become like:
+> > > > > > > >
+> > > > > > > >         pm_runtime_get_sync(dev);
+> > > > > > > >         pm_runtime_auto_clean(dev);
+> > > > > > >
+> > > > > > > For the case in which the pm_runtime_get_sync() return value is
+> > > > > > > discarded, you could define a guard and do
+> > > > > > >
+> > > > > > > guard(pm_runtime_get_sync)(dev);
+> > > > > > >
+> > > > > > > here.
+> > > > > > >
+> > > > > > > The case checking the return value is less straightforward.
+> > > > > > >
+> > > > > > > >         guard(mutex)(&foo);
+> > > > > > > >         ....
+> > > > > > > >         return;
+> > > > > > > >
+> > > > > > > > or
+> > > > > > > >
+> > > > > > > >         ret = pm_runtime_resume_and_get(dev);
+> > > > > > > >         if (ret)
+> > > > > > > >                 return ret;
+> > > > > > > >         pm_runtime_auto_clean_autosuspend(dev);
+> > > > > > > >         guard(mutex)(&foo);
+> > > > > > > >         ....
+> > > > > > > >         return 0;
+> > > > > > > >
+> > > > > >
+> > > > > > I guess what I'm saying means basically something like this:
+> > > > > >
+> > > > > > DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
+> > > > > >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put(_T),
+> > > > > > pm_runtime_resume_and_get_dev(dev), struct device *dev)
+> > > > > >
+> > > > > > DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
+> > > > > >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put_autosuspend(_T),
+> > > > > > pm_runtime_resume_and_get_dev(dev), struct device *dev)
+> > > > > >
+> > > > > > and analogously for pm_runtime_get_sync().
+> > > > >
+> > > > > And it kind of makes sense either.  Do
+> > > > >
+> > > > > CLASS(pm_runtime_resume_and_get, active_dev)(dev);
+> > > > > if (IS_ERR(active_dev))
+> > > > >         return PTR_ERR(active_dev);
+> > > > >
+> > > > > and now use active_dev for representing the device until it gets out
+> > > > > of the scope.
+> > > >
+> > > > Yes, that's what I thought of as an alternative, too, but I didn't
+> > > > consider using only pm_runtime_resume_and_get().  Actually by this
+> > > > action, we can also "clean up" the API usage at the same time to use a
+> > > > single recommended API function, which is a good thing.
+> > > >
+> > > > That said, I like this way :)
+> > > >
+> > > > It'd be nice if this change can go into 6.18, then I can put the
+> > > > driver cleanup works for 6.19.  It's a bit late stage for 6.18, but
+> > > > this change is definitely safe and can't break, per se.
+> > >
+> > > OK, do you mean something like the patch below?
+> >
+> > Yes!
+> 
+> OK
+> 
+> > An easy follower is the patch like below.
+> > (It's the only user of __free(pm_runtime_*) in linux-next as of now.)
+> 
+> So the __free(pm_runtime_*) could be dropped after this patch I suppose?
+
+Yes, for now it seems so.  It was the only user as far as I can see in
+linux-next.
+
+> In that case, let me send a series of 3 patches which will add the new
+> class definitions, switch over PCI to using them (your patch), and
+> drop the existing pm_runtime_put FREE.
+
+OK, will do that.
 
 
---gsbr7iv2jhmeqccn
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 01/10] man/man2/mount_setattr.2: move mount_attr
- struct to mount_attr(2type)
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-1-1261201ab562@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250919-new-mount-api-v4-1-1261201ab562@cyphar.com>
-
-On Fri, Sep 19, 2025 at 11:59:42AM +1000, Aleksa Sarai wrote:
-> As with open_how(2type), it makes sense to move this to a separate man
-> page.  In addition, future man pages added in this patchset will want to
-> reference mount_attr(2type).
->=20
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-
-Hi Aleksa,
-
-Thanks!  I've applied this patch.
-
-
-Have a lovely day!
-Alex
-
-> ---
->  man/man2/mount_setattr.2      | 17 ++++--------
->  man/man2type/mount_attr.2type | 61 +++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 66 insertions(+), 12 deletions(-)
->=20
-> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> index 586633f48e894bf8f2823aa7755c96adcddea6a6..4b55f6d2e09d00d9bc4b3a085=
-f310b1b459f34e8 100644
-> --- a/man/man2/mount_setattr.2
-> +++ b/man/man2/mount_setattr.2
-> @@ -114,18 +114,11 @@ .SH DESCRIPTION
->  .I attr
->  argument of
->  .BR mount_setattr ()
-> -is a structure of the following form:
-> -.P
-> -.in +4n
-> -.EX
-> -struct mount_attr {
-> -    __u64 attr_set;     /* Mount properties to set */
-> -    __u64 attr_clr;     /* Mount properties to clear */
-> -    __u64 propagation;  /* Mount propagation type */
-> -    __u64 userns_fd;    /* User namespace file descriptor */
-> -};
-> -.EE
-> -.in
-> +is a pointer to a
-> +.I mount_attr
-> +structure,
-> +described in
-> +.BR mount_attr (2type).
->  .P
->  The
->  .I attr_set
-> diff --git a/man/man2type/mount_attr.2type b/man/man2type/mount_attr.2type
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f5c4f48be46ec1e6c0d3a211b=
-6724a1e95311a41
-> --- /dev/null
-> +++ b/man/man2type/mount_attr.2type
-> @@ -0,0 +1,61 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH mount_attr 2type (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +mount_attr \- what mount properties to set and clear
-> +.SH LIBRARY
-> +Linux kernel headers
-> +.SH SYNOPSIS
-> +.EX
-> +.B #include <sys/mount.h>
-> +.P
-> +.B struct mount_attr {
-> +.BR "    u64 attr_set;" "     /* Mount properties to set */"
-> +.BR "    u64 attr_clr;" "     /* Mount properties to clear */"
-> +.BR "    u64 propagation;" "  /* Mount propagation type */"
-> +.BR "    u64 userns_fd;" "    /* User namespace file descriptor */"
-> +    /* ... */
-> +.B };
-> +.EE
-> +.SH DESCRIPTION
-> +Specifies which mount properties should be changed with
-> +.BR mount_setattr (2).
-> +.P
-> +The fields are as follows:
-> +.TP
-> +.I .attr_set
-> +This field specifies which
-> +.BI MOUNT_ATTR_ *
-> +attribute flags to set.
-> +.TP
-> +.I .attr_clr
-> +This field specifies which
-> +.BI MOUNT_ATTR_ *
-> +attribute flags to clear.
-> +.TP
-> +.I .propagation
-> +This field specifies what mount propagation will be applied.
-> +The valid values of this field are the same propagation types described =
-in
-> +.BR mount_namespaces (7).
-> +.TP
-> +.I .userns_fd
-> +This field specifies a file descriptor that indicates which user namespa=
-ce to
-> +use as a reference for ID-mapped mounts with
-> +.BR MOUNT_ATTR_IDMAP .
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.12.
-> +.\" commit 2a1867219c7b27f928e2545782b86daaf9ad50bd
-> +glibc 2.36.
-> +.P
-> +Extra fields may be appended to the structure,
-> +with a zero value in a new field resulting in
-> +the kernel behaving as though that extension field was not present.
-> +Therefore, a user
-> +.I must
-> +zero-fill this structure on initialization.
-> +.SH SEE ALSO
-> +.BR mount_setattr (2)
->=20
-> --=20
-> 2.51.0
->=20
->=20
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---gsbr7iv2jhmeqccn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjNfygACgkQ64mZXMKQ
-wqmTIQ/+NHy8YgPxvcmYQgOyqfDHhQiCy83I0LH5TUHrfK7J53AanIHUvdESOaMS
-sciSRRcfcxU9EOO/GNR2tAAyRxYTeYfYM2jXihF0Vvk57+dVHir9oEp7AnrS9pP7
-EA3V7xHskyvNJLfNWnQClSW5l6y6+QdzghOO5Vp3BGi/SjtSfpFcKNWFUUIFID6S
-pNRw9wjRcbQ/MC7AswhXFwbvCgNIEiNCAf6K9uCt8gcr9R1Pg06z31K92BrOQrSg
-dGax1hYFDymM1jRRr98dkF6GkQ/vtxepMlRFlu2F7URNIN+G5cT2yPiJiXCrY5Kx
-oLmM1PmFX02C6uTwTlXunRyI11p7dyy37OKn8fXipJNcIDwxGn/8lsa2beNyLMJu
-n5ZH4L33pZEw2gm1nGz/tfcrOzX9LSnz6RODGxOBYSil3AYT5QC1NeOreCLBH4eu
-kSdPSWyDhd2wSJvOmpcU7ILqgx5lyZnaWAJ1ZV0ECYYlc+f3A40KAqly/838+/8a
-yuyYbh7ZPSzOoh5EhV20O2cutiRYVO1QQOkxppvr1i3YLwYB514e+ojrQWiO5man
-xqlm3GfPBgbq41V2w7V5oxX5xzcQy3glKqEy3ct5/UThJe1+JwAQSAOS1NFqTElj
-RmqqSIB0pPBSYhQ01qYVM9/4rAr20zFbP+ezWaWBMbujmwNT/SI=
-=JcSz
------END PGP SIGNATURE-----
-
---gsbr7iv2jhmeqccn--
+Takashi
 
