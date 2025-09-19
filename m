@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-824891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9453AB8A61D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:47:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB75AB8A629
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4197A3B987F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:47:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC9477B6D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250F931CA4E;
-	Fri, 19 Sep 2025 15:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1122631D73B;
+	Fri, 19 Sep 2025 15:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cZawCdZY"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CZYye9+P"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B3031A804
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D995231A559
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:47:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296831; cv=none; b=O4W2Vx1+5GMEinxu3bTlU8IeROaW88avYBgoKIslcsFNkCr3yNXeDayEyOhgltT/sgYPX6HsGGEKIX5f8qCTdgPWTYOo9v+R3emycRiOc8Ix8trcWMokat5Lufg3Pv6UBmvN9gGWfUPKX5h9IMkUiTGEHUswFbSklLhtWjwMVsE=
+	t=1758296846; cv=none; b=GUc6KmZ0IPTUv799IiQFCrtKxtA7fBGVoMLNrYTDb98RWjYRzvjD4/jy4tqfSwbGtc09Ss4RImh2P2CBotzJ4beUQybIoX26NFXOVDMxj2ZDlCT7DYmhJfvYzsjMQshTvAS7ohcK34MO4ussb3tXXWFitXTobGxnKSVp4jWpTjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296831; c=relaxed/simple;
-	bh=bZhMTjNs0YcdGY/cp9K2ELuzBsbeI/AjHbVeOQdERBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9jcnraR5SKOhH5EoWMAB1XEmNkXFWEmZMAL9eUWysUyVPYatrjHtf1vnvWcvss2hXUgMH9G/KHAY51i7rKER1okIky9sVT7z1h0v1wZMyfMbH+Mw8uJc3mRJn9rF6mpVAouiZrsy5lMqPA+yLV7PDhIzCP+Hv/PuqneGz48Log=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cZawCdZY; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=C1Yt
-	3wDpRx/hWaDw4sYAQXyPZ9mCqlXDREwSUU83R8o=; b=cZawCdZYRZw2+cukQmNB
-	KoVXCO7O35/qLi+uwN+K9k6g+kRzjuI3+zMVPXaBeKDQcta+QlRUn2KyjN3TphD7
-	zwCnM1bwzp28nuDWFwFO21fPWFd1jyx3hDrslDM6IYknlQJoClmvuCxho1XuuAEy
-	KoOskgCPGML8nkNlIVnzVXRUBhjeKcMjgJP1Ox6SmYYvhMBmu8L+M1QHaMovGJaZ
-	xC3YY4CMJow5pqegyE+TlFdNQYpCG6x6ZutCSnMbL0ugi7QR07T9UO2EGVXAlXEW
-	y12uTTciltBqH6JrItrqjTekEBpWMN6NcNJMHUAKNSJiMZYKSVFSmg0fbRI3QoPc
-	Lw==
-Received: (qmail 3967997 invoked from network); 19 Sep 2025 17:47:05 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 17:47:05 +0200
-X-UD-Smtp-Session: l3s3148p1@0sWqYSk/PKwgAwDPXxLYAMR913XberYj
-Date: Fri, 19 Sep 2025 17:47:04 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <aM16-DDi7OVSRbjG@shikoro>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-8-herve.codina@bootlin.com>
- <aM0lU01x1w2wB3LG@ninjato>
- <20250919151448.14f8719a@bootlin.com>
- <aM1rRuiJH9dlwBjL@shikoro>
- <20250919173011.4b32a928@bootlin.com>
+	s=arc-20240116; t=1758296846; c=relaxed/simple;
+	bh=Z6FgwU81RDmLwktIOUwsJhCbJ0jXwiGcGxLTvLDX+HA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=D6hNxO9fuJ1lQDtqRqvBysHuMHtB6Mju/dG7MGUvg8xL/l8eE2glZeEUhp9IkEhiAhcPyGocZL8xYZEg9k0bLCzMcZ+vk/pBBPEjCe/9EoU61cPG+/kIt9M5doyso4OpEdIf5Y842QUpuBTDbjXXoZUOFPjG6fJofDJAiwpDwZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CZYye9+P; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JFHULv029741
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:47:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=f5IZjZihMBMzwST8n68PWi
+	/t6dztWGpRaZ8IqEGg2Po=; b=CZYye9+Pb49wLLIf6SMEQIT9aZQOEOP/MD1OI8
+	wLzN7wH2GcH/kATEA6yHhYAhr0wRaOfPAy0ezGg2SlGNX0YsaQoe6n0bGL2d17IZ
+	0DUdWjRqHRTgIJGupqooPG1EXW8jkv176yW6xCkTCWm4Rj9AuzkUIA2KQC1HMjPI
+	3ZGz+jj15lsc8PvdiPdiivWSekzFU/UPHMDNuCQyowyJAmQPkVNZanqRiD6KJ9uN
+	x1jvBIqtVj5nV3xdxA5wstfXBUvri70O7ZmQCsb8JODzAxK/Ft2n5VBmnDqT548u
+	/KLxc7Y9QaNheipCxwW0WD78/5mT+ai+jrGKaHiNRpdCHufA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fy12xg1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:47:24 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77dff701fb8so1271885b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:47:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758296842; x=1758901642;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f5IZjZihMBMzwST8n68PWi/t6dztWGpRaZ8IqEGg2Po=;
+        b=LongLMr/hsXb2GMwLB/Rp8Prwn3IoiDDtV0wxSBqWffFLkk3OcP7EvDnD1Jkbkncwn
+         VejG33XSg4uXzCzfJC5yy9IpwGnJXp0hDabm6c75lfB8wvrsM3IPrWjyrlDNvaVxlLRr
+         Ah0khAAkOXzgcoJSsJDrgj2kyrlPWfeMcOccR+FRntJqkN50UpVIHGntFN0ectWMdh/a
+         GRidIUFZV1zB4HgznadmWazbd7k4LEPMZE3GxGTBGrn7dVODOc3/KuMjLZFHQLZCXLF+
+         dnlh1jqlInXps1QFm6HjLObzAjPKk87XPovUNSz6wte8jvFYtYKIJJF8I0hr8Zt8LpU1
+         zBSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvIgOkSA7TUxNd9S9ZqeW8AuRNcQPo9mjo3YKPLa0VEbbqkRPxauwo9bh1zF50TKa3ICDswc6pbf8qAqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIxwWLBHFUJXWUwJHdR3QlU0bHyyX2Stqj5Ti1i1v73TMKlAO1
+	hK6mU/WUIShFxR/b41fdaO67ldyWwGzHZ/NOAGOQCghw2m/W4oSUSFJvo+xFlgEfQymtyFU7GPb
+	0VfjbrKbcbvpeC0XW597I3f0Hm2m1yt4J+cv7WWZ5CGz+m5R3Ewr4TtpEAMy0agzK9DY=
+X-Gm-Gg: ASbGncveanfI13sQkfNtJwddUurEGhNukKiKni7VC6AZGSRiisYSA9K3QRyaYMBaWgz
+	C1q85YDEzn1/Qd6+cghKRKuGN5tXWPR/TNRE7lCo3LAruN0zzW1C6p84k+tUk+lqkqyKxtq3m8h
+	FoxxPqdN2pNABcOXf2MynUby05kN0hYPxbXRNef8tHGhG/jSUiWN8G4YB43GlUkGu1Nvm3Umj1S
+	0BZrFgk+DqsusDQJAhgHjMKnREGHr0oFtwwcN0Lgde/uodCNku9FSVECQRtqasvSRLw5lp5FzgT
+	U5h+jBBeUxn0AP6aFW6sdYSADr3aAs0OPw6S0wAe1KrZhrmOgEniiGrTrLdqdYHtUijHYUleRq0
+	iFA==
+X-Received: by 2002:a05:6a00:2196:b0:76e:885a:c338 with SMTP id d2e1a72fcca58-77e4ecc2cdbmr4401573b3a.30.1758296842142;
+        Fri, 19 Sep 2025 08:47:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+yk51eby4vIViBz1hHHz/Jp2vtK0V7tofw4pUoeiMpPq8lWAssXvf2irjZp4uaYpxiu/Mcg==
+X-Received: by 2002:a05:6a00:2196:b0:76e:885a:c338 with SMTP id d2e1a72fcca58-77e4ecc2cdbmr4401542b3a.30.1758296841539;
+        Fri, 19 Sep 2025 08:47:21 -0700 (PDT)
+Received: from hu-dikshita-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfc2490dcsm5706653b3a.36.2025.09.19.08.47.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 08:47:20 -0700 (PDT)
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+Subject: [PATCH 0/2] Add support for QC08C format in iris driver
+Date: Fri, 19 Sep 2025 21:17:15 +0530
+Message-Id: <20250919-video-iris-ubwc-enable-v1-0-000d11edafd8@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lGy/8oDdan6XB7Xf"
-Content-Disposition: inline
-In-Reply-To: <20250919173011.4b32a928@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAN7zWgC/x3MSQqAMBAF0atIr20w4nwVcRHjjzZIlAQHEO9uc
+ PkWVQ8FeEGgLnnI45Qgm4tQaUJm0W4GyxRNeZaXWasaPmXCxuIl8DFehuH0uIKbGtpUtlBWFxT
+ j3cPK/Y/74X0/yIW/jmgAAAA=
+X-Change-ID: 20250918-video-iris-ubwc-enable-87eac6f41fa4
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758296838; l=2036;
+ i=dikshita.agarwal@oss.qualcomm.com; s=20240917; h=from:subject:message-id;
+ bh=Z6FgwU81RDmLwktIOUwsJhCbJ0jXwiGcGxLTvLDX+HA=;
+ b=g7ozL1iwLNp7t/Ze9vXUFdfksEfaCuT8urcXbUxwIAnFimMFl3f6j/5Py7IQgKajRVKsCefzh
+ 5MPCRF1eFTfB+OwebiAy1kq9f4V4WI4GqlHu3tRftWzA0enc/z01xVe
+X-Developer-Key: i=dikshita.agarwal@oss.qualcomm.com; a=ed25519;
+ pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
+X-Proofpoint-ORIG-GUID: unLmIF75JYWmF0gJDDuzrX4KkL8NOWct
+X-Authority-Analysis: v=2.4 cv=btZMBFai c=1 sm=1 tr=0 ts=68cd7b0c cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=8fPvZrEDet3th6y22BEA:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: unLmIF75JYWmF0gJDDuzrX4KkL8NOWct
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX+h/OvVK4vl4k
+ JCWxuD/vfFTJonObjjJCC//FH3hK3E23oiKl7g03WLaKto3kunA3UZ+bLSioYTuFEFGwDNXqeAl
+ yvWsWhrOyBHDI2Qq/lUNjPdZ4UFwxQJpkpw4kUM395BzZQCqaW6cAzD3EkE5pQxOSc4aLzEQpRT
+ Q9slh2GIanQvHME4YgXMk6HjdeFiVbnF6zzbOGmTPe7I4eteDMYi9cxa33mykHNLTeYxKWvYDlN
+ 0PPOhRUDDlqGIrr28Zs5jgYZ79Dn0iEyUr9wXxCi2QtSsr8BbVo3aP6v/qkr5/WEbUCyd3modQs
+ wH0ulDiJKDS3stMoVLM9P4DNxeYGykE5cEwBX180BaCFvew9ykIkdK5UV4SLSnqR9fNqphXaBYv
+ Rf/oM18+
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 adultscore=0 phishscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160202
 
+Add support for the QC08C color format in both the encoder and decoder 
+paths of the iris driver. The changes include:
 
---lGy/8oDdan6XB7Xf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+- Adding QC08C format handling in the driver for both encoding and 
+decoding.
+- Updating format enumeration to properly return supported formats.
+- Ensuring the correct HFI format is set for firmware communication.
+-Making all related changes required for seamless integration of QC08C 
+support.
 
+The changes have been validated using v4l2-ctl, compliance, and GStreamer (GST) tests.
+Both GST and v4l2-ctl tests were performed using the NV12 format, as 
+these clients do not support the QCOM-specific QC08C format, and all 
+tests passed successfully.
 
-> kind of:
->   static u8 reg_index[8] =3D {103, 104, 105, ... , 110};
->=20
-> Base on GIC IRQ number retrieve from the interrupt-map item, we search for
-> the index in reg_index that match this number. The index found is the ind=
-ex
-> used to access the register.
->=20
-> What do you think about this?
+During v4l2-ctl testing, a regression was observed when using the NV12 
+color format after adding QC08C support. A fix for this regression has 
+also been posted [1].
 
-I sure like it better than a fixed ordering in DT. And the advantage
-compared to subtracting 103 is that reg_index can be flexible in case we
-want to support other SoCs than RZ/N1?
+[1]: https://lore.kernel.org/linux-media/20250918103235.4066441-1-dikshita.agarwal@oss.qualcomm.com/T/#u 
 
+Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+---
+Dikshita Agarwal (2):
+      media: iris: Add support for QC08C format for decoder
+      media: iris: Add support for QC08C format for encoder
 
---lGy/8oDdan6XB7Xf
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/media/platform/qcom/iris/iris_buffer.c     | 17 ++++--
+ .../platform/qcom/iris/iris_hfi_gen1_command.c     | 15 ++++--
+ .../platform/qcom/iris/iris_hfi_gen2_command.c     | 21 +++++++-
+ .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  1 +
+ drivers/media/platform/qcom/iris/iris_instance.h   |  7 ++-
+ .../media/platform/qcom/iris/iris_platform_gen2.c  |  1 +
+ drivers/media/platform/qcom/iris/iris_utils.c      |  3 +-
+ drivers/media/platform/qcom/iris/iris_vdec.c       | 61 ++++++++++++++++++----
+ drivers/media/platform/qcom/iris/iris_venc.c       | 59 +++++++++++++++++----
+ 9 files changed, 152 insertions(+), 33 deletions(-)
+---
+base-commit: 40b7a19f321e65789612ebaca966472055dab48c
+change-id: 20250918-video-iris-ubwc-enable-87eac6f41fa4
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNevQACgkQFA3kzBSg
-KbbK3w/9EAnr3+PwQmgvwpXfxXsG5pvpSDSa74RKDXBPik4xj/2AxbEQbjuI6ThV
-hdWPaPzEZIms40E0+1Ei8dzmO2EbNzExXs0VO+bIoizSECCo7btYJq0vItZgKAcQ
-tqTskGmEBGdCYBg+F75T9GvYgBhfiQ45WgnJCtFKoZiSaMGVlFowY8DiQlY9P/V7
-MRWkdcpIDU9NIOU8i52+DxDeCZnJ9fSJsmZUwtGFRjJpDNvB3ErVxf6XzsLDKupP
-oQEYULzP97xC+k33org7ek8n7YKoSN0SPZFtDx6HoqJAi4YTpJ15zSodVbOFa89t
-LpFFAArkTlIYoVcbu59Ceilw1+xhIF7Tgr05R8jo4HP7nyb7/lRTfQBpAZVMs8FY
-tvBl/j6Pn1baMxT1f4YJVELap/yDTYG/Nazqpjz61MqEUWytFlfmqHyDDj79F8nF
-oTTXC2hWEb41Fgvama5jCGL5GBPa19FApzmviDiYAFPMl+btAtc7jbxGz80xdL9u
-9qMeO7/LTqQ9C7MP3UZvhHsfpewM+JhFUDH/H3WO8m/tMZ5dvweH+WHXzaLoS0b7
-X1lQ79s9MMJehn0K6+H2LA7Bx9AutSF66aO6wZmNMYfVvy/5FmN0ZI4Y8zfmr2eI
-VLsFQBk620BUoKRR7VnrM5FjGY+Conp/g7CJfpJzvetRkr+UOfo=
-=f6/y
------END PGP SIGNATURE-----
-
---lGy/8oDdan6XB7Xf--
 
