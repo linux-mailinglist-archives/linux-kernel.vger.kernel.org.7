@@ -1,153 +1,216 @@
-Return-Path: <linux-kernel+bounces-824491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AEEB8962C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:13:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22ABB8963E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45AB87BD782
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 689D73BD36D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA51D30F538;
-	Fri, 19 Sep 2025 12:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BD62F291B;
+	Fri, 19 Sep 2025 12:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="i3L5hTO+"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jg6lgA9+"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012033.outbound.protection.outlook.com [52.101.48.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EF430E844
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758283948; cv=none; b=HKWZGohyTyDhN1ormf54ej4Dk5zQ7Beg0rnEiMfoE6Vmq1XzuJdzPKyyyCUGXY1HgkmJ9Ch+fxIlFYj9sGNCRVI98R29Jirm4KlOOX4xR+i/m1RhQqGWWRglwMw5imYRN2mPP+BYMQCR1Otfkru/8EeiXC9WQ4/kCMKTigowlpY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758283948; c=relaxed/simple;
-	bh=40LHT+10W2MVoOVX/TuobAQ0nf6X5e/oMpwW9iNer2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NsB3cT2JS+GWSUk0EATXzmCNfCoVW6aMQeQp+LpXsKqziQV8ijvHdS96Cn1BsI8riZzSOoWFw96Lundaie4hcpswaFF+3U9Ne6IfzVNtuHRLjNmhK5JjC74IxAARoWJqRHumW3BJhgzR0/n2YXZQVU8SLq5ngq6r4j4MpSj1+F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=i3L5hTO+; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-330a4d4359bso335445a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758283946; x=1758888746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t2HMMNKqDgzt194tG8vLKUMKuY47t2DmDtqHxNeA0cA=;
-        b=i3L5hTO+OK0u16+FMy8g/o/GtRBwoIAWTx+0t5TyjL2n1ZnFuFaSg+ag/W0sq9Ods6
-         7ZROy0ix55Pwfo5EWpUQQsd+hFmWAfnKKcK2d4iwGwOOzwbZgJr7enaZNgsAmta3ApYR
-         cVP9Q0rLGKcLmiPm6aXPABjzh2uiFLsit79pAP+6hEOykLypQz6UfZl+fcyaArJvBRjQ
-         rddxlzns+YXwp/e59lBVfjTf5bnDzjCWAY87bGQCwlx4qnYPiXOW4zxUIbeHJTXT5A8F
-         iUvpEvozC2b9xMJh5Skr2rDn9ColV4103N2r5m7huefr4L2LtR1fjd3qN3ttXo1sUs9T
-         9Aqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758283946; x=1758888746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t2HMMNKqDgzt194tG8vLKUMKuY47t2DmDtqHxNeA0cA=;
-        b=Csbw8S7GY9+u1O56edBJx27PJrZpB32QWml+NVp960P1j4d18ZSi+p64O9VzvMRH2z
-         f4c/vtjzdDOdFgNqJ17CNtve5yflJywkWblK0CnZi7DWGEY4UXi9d+R0tJGPF8/aHALL
-         0nQIOfqp4MU+xZPLcPVM4GxeW+d6JHHgfGFd7V09LipEaDIyOLfh/jGIpvwCb/8CFmxo
-         Z4vl7BZouCO9SdBNdEjmSI0UrMRHNMuurqUkCvXTRoIvz8yMklUpyF3SSQ3qrSnWd9u7
-         sc8Vodt1oQaddjWC9u2NqDxH3F367oqm6U20DGP80tV3e1r8DoWBVJxG8wgttXM/Mh3X
-         5UXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKzmOlyJg3mKoZ6s0qzb3xz/tNxx3ibQX6755qXnl2fpHDSnp+52bXZD8fOFD0OYIHFAJS99BJfxsdIIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxbj7z8pRnPscrPHJs6OnpEl4rmbcnhmYs/EY32+Yws+aPrYKoU
-	KYceLIoa8I57wrEf0kPsMHMLPZk1sGXIdnjXssdFu3m5qVPObAxmV0bTTqkuCy6dYpnf7w5/4S3
-	MQlOasZXgMvF5XbQSVcYeL/Tf1Fu8pF6MzspAN6xS9g==
-X-Gm-Gg: ASbGncuyrjXYlaghAQyvSbryvDxVTeSZREbw9REHAMAu2sM84vN4oCy5e4KFl9rUjdQ
-	rPhI0jAWjzfRAA0+oMyWoSUVUjHnm3HekTZ4FsPFWKM9S2qiHJsw2adi82R94ijlCiM4VXvEZjG
-	a7ySUkfn4ysoNkB9uumBX8+KvKbU3xFU6zBy7mckNJ8goli5An/noq+LKv2pWplVF1bH/79mJv9
-	FUocc6ppbTPb9bbPGTN5t9BIVlz+23YhkwhZRCdN6fXI1YCqMNR
-X-Google-Smtp-Source: AGHT+IGm4y1poVxGUSiB4FXU7penSJROWpZ9IBJ4RsACGtjYuoj82wxnXamn8PKPxeWN3xAf3wDL9CKqcfW9WQHchPw=
-X-Received: by 2002:a17:90a:d40d:b0:32e:3f93:69f5 with SMTP id
- 98e67ed59e1d1-3309836a969mr3636748a91.26.1758283945619; Fri, 19 Sep 2025
- 05:12:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5275B3093C9;
+	Fri, 19 Sep 2025 12:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758283995; cv=fail; b=tVrPG+ADP1PGSgfua4RVLsjmDOrBEHUD2QAupLNGelJ30YNrf16ULPhRdr74MyOCoFRObgmjwwOLp4RGch7EMzb+xYbQ7bALznn68FMSkO8p2DqlaLAMP9VsxS5XK3ZzPHrCIIQGNSIsPu1+s8Ujfl0qz45szSPC08RwQPONeJ8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758283995; c=relaxed/simple;
+	bh=N5c/07c8Alew8ydzs6rIhrGTU7Tx29E1ZFpPuNHMiFU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h0iG4IISha7o0qYsLelDqLGZoDW0I8LI07r3T2SicC+dA9fb9kz4aOyWQZbRb9VcPk/UowFDTMdN9Cl9k4dtWJKYWO5pXhTTeGKagyqRDcKxPzoh5nU2THqV9XYiXQwl63KR5PaP/XK7oFeLzMebnyoJ31FNin9siMHfKpDdeE4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jg6lgA9+; arc=fail smtp.client-ip=52.101.48.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F2UFSau6QcWEkN3R9nVEp9ShK/fS/zXZnKS4ezi2IuEQgxAV9Jgv+E9yOYZNkwJyp8bNlfZTdqgp5WAbTo1Xx9gTx/fif9F7m2p/FB5LToh4Ep6SYls6e+jx/cgvVtzRoEKAJod/Cdz5poj3tMqQnTQecDL9uN6epzEIbtQe4r+SkfKwD6crgSmb4kf76DJD7EzdhfVv3crEcBoI5SnHYV9A1L88Ag2I2Z6vksUCaI3zNKVlSv2WWEvn7ksEI6vMRXc/l7IC+5RMr016WAoyh8ddlqr/4faS1egPORQT626ahJcBypl1XtZnhbcvY0l9Ybv1tL726vs4f0HO4+PZXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2zV3rLMBMWQxxWOftzPhWzNDvxA51oIWG1MZfCH5hq0=;
+ b=wqBI4a/UvFJi1u8GxPAMrE4ZKjrf/x8VhUccAHY+aNxg0fJ4pcFk/wpK2EGAQiwhDEc2alOQSsu5Zg/kTem3TAFnTvnTDfyeVvfGRFynGQaQsMa4jK7qsSuXC0Xno437b0XvqOuBtHE9jrAbkLkkE52gvmzYpwy6ZpQpQnkLBJYFmTo83mV2LV8j5IOhgaeduew+4Ue8QtdBmdoeXOsDBItki454EcA/nfP5X+pkuUYH4xP49L6AVM6444/UQJvG8BZOhFNgEIs+fIqJnYhtzuasv678dpYzELw3MUUg+etxV+cTFYBsnn2DIZaoQ8FmwXSaTv6sTMwhvQauyv98mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=ziepe.ca smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2zV3rLMBMWQxxWOftzPhWzNDvxA51oIWG1MZfCH5hq0=;
+ b=jg6lgA9+DYLK8mQPerq3KcQ4b4gFKHv1z3JDbRkTderuQ0X+wVYxM8+FVxd/2ngBO8u5QfH7ccHM6H+u+CldrWHM4D2NwvcS89wdyqcE/wAHHUgS1u8k34+KZjDEOT/OSg2kkniQvc6E4hFdMoQ2zZWImRxAFTTPTIs9ZjFVKQA=
+Received: from DS7PR05CA0020.namprd05.prod.outlook.com (2603:10b6:5:3b9::25)
+ by MW4PR12MB6801.namprd12.prod.outlook.com (2603:10b6:303:1e8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.21; Fri, 19 Sep
+ 2025 12:13:11 +0000
+Received: from DS1PEPF0001709C.namprd05.prod.outlook.com
+ (2603:10b6:5:3b9:cafe::b1) by DS7PR05CA0020.outlook.office365.com
+ (2603:10b6:5:3b9::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Fri,
+ 19 Sep 2025 12:13:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS1PEPF0001709C.mail.protection.outlook.com (10.167.18.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 12:13:10 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 19 Sep
+ 2025 05:13:10 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 19 Sep
+ 2025 05:13:09 -0700
+Received: from xhdabhijitg41x.xilinx.com (10.180.168.240) by
+ satlexmb07.amd.com (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17
+ via Frontend Transport; Fri, 19 Sep 2025 05:13:07 -0700
+From: Abhijit Gangurde <abhijit.gangurde@amd.com>
+To: <jgg@ziepe.ca>, <leon@kernel.org>
+CC: <allen.hubbe@amd.com>, <linux-rdma@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Abhijit Gangurde <abhijit.gangurde@amd.com>
+Subject: [PATCH rdma-next 1/2] RDMA/ionic: Fix build failure on SPARC due to xchg() operand size
+Date: Fri, 19 Sep 2025 17:43:00 +0530
+Message-ID: <20250919121301.1113759-1-abhijit.gangurde@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919073714.83063-1-luxu.kernel@bytedance.com>
- <aM0qlTNPiaQRY2Nv@andrea> <CAPYmKFsP+=S56Cj2XT0DjdvBT_SY84moM4LVeqxHTVWbtq4EVw@mail.gmail.com>
- <CAPYmKFsV_ZPifJBtvPOdqM6_Mzhac9A4-PH9zt8TirOqAwKGhw@mail.gmail.com> <aM05J6FU0xG3SBzR@andrea>
-In-Reply-To: <aM05J6FU0xG3SBzR@andrea>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Fri, 19 Sep 2025 20:12:14 +0800
-X-Gm-Features: AS18NWC1LrBbaCsNeBFlqUXUWaqY8b6JknWKL06v5j39bQDtG4KDuo4wYFErj1E
-Message-ID: <CAPYmKFunbrughXdG9Fpum6bxHVu9jmjQdgLVSJ_JA9z+GDsZbA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v3 0/8] riscv: Add Zalasr ISA extension support
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com, 
-	mark.rutland@arm.com, ajones@ventanamicro.com, brs@rivosinc.com, 
-	anup@brainfault.org, atish.patra@linux.dev, pbonzini@redhat.com, 
-	shuah@kernel.org, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, apw@canonical.com, joe@perches.com, 
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709C:EE_|MW4PR12MB6801:EE_
+X-MS-Office365-Filtering-Correlation-Id: 63339ad6-810d-4584-1cf4-08ddf775e6a9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LBloDdcyqtd7AG+OB1dfWzUNKPgiWzRFTIgRkTtAAHl+AntpxWcXQ38cdBTm?=
+ =?us-ascii?Q?tRl/BHpwHwWq3wyeOKtKeinQFZs7E66qIkBJUN2nIZzl0K9Zoh4OtzM4nPbN?=
+ =?us-ascii?Q?JPh9qKaGcsnwseJ+RKwFfSvZlRftEjP2bfwuquRK7/WcU8wWWPu5KB2CXC3c?=
+ =?us-ascii?Q?Ts3gFCPjyCzkQTlL0EOEANNHn56bBKHGwe5by6OhYQ1LHxETF6u/YfI2tW6Q?=
+ =?us-ascii?Q?tw6IEwwFabYgUuOuhSSeIR19KpWgDU5vevLBbmgzES4uof8Zs2jkTG4Fek8D?=
+ =?us-ascii?Q?i6hifh+ZGiK/2vQBUuCILFu6EFWp3xdsc82PoC+/xeNIUfFT6Wk66bvH6xLV?=
+ =?us-ascii?Q?sI1CKf7trv8GvG4MZcb+j03rZPm7yodEmUPhrD2bUUfJTd5LBZUZsR0cUjo9?=
+ =?us-ascii?Q?2ZXfafGYrRMKdFkORa3PwHVirziqtK4hDn0WcCgbA9DOnRyBZJnyJIzYrCsf?=
+ =?us-ascii?Q?wM27zFCl08hlIewqQXJ76j3W5o1OrbgCPoGEGy9+m6QCwmrK1dMpwnJrv27B?=
+ =?us-ascii?Q?llN3U2d1Ounbbuq8RGOCF0Rg5iLA6sf5s4RmMpOu7RC7wJc/D47dH4s+Ehid?=
+ =?us-ascii?Q?FtbMZNk57bm2d5jwaiu8rvGLW8n8gelhvbXAdzvC0wpnQHRJy9UK/3M0Oonj?=
+ =?us-ascii?Q?+WMgIRcyEWn6UxT2Hbg/EpwcTuDf54hqWlV4yc3KBt1lBOG8FWvSpeCH00ug?=
+ =?us-ascii?Q?lTGaAdJtgeEHie8adfd55VDzWkvmfqKuD/5MjdEAWgkq3+ia+GZMPA1Q/B9x?=
+ =?us-ascii?Q?TJFvlyvtiR5Qabd7EGwevjGBUnHHcm2VAkR4AuOMiBc+iKpp+r2/Zd8RqrJy?=
+ =?us-ascii?Q?8e3i4RrDL0mRnxBBauaWvV2WZKY/l7PCPPLS7+c8dDjY446fGq+KWWK7YnwA?=
+ =?us-ascii?Q?FyTCAORujyVSzAh48+s6ODAYfinxpUrOOLTigBa+VYQxezg0E18hovqeChLG?=
+ =?us-ascii?Q?67tD99kYls7xLA2uS3sMUezGYQSvtgoK3u25umxf60ZqjIY/dHAwaNuT41Rj?=
+ =?us-ascii?Q?3HJcsGxYdRQY1cFo8WUZp4t57brX6phs47Y72jp24HzELRHS0MssTEiZMtch?=
+ =?us-ascii?Q?G7D2VD51K/x3W0MMq6Ax38+6ejRT2eDMhYdMNFYxyy2iaQ5wYItcYQBkjBap?=
+ =?us-ascii?Q?V5IzUSqjaNMgk6hsN8LtmAJiG6wz4RM/IRnRM1HEggbiqQMM6UOBEQ583mC1?=
+ =?us-ascii?Q?CAewByQcl9XvjM4BY6/zdcX1YDsx0nLFbUNyKEKMjzYhw+POVck7JnshwAfM?=
+ =?us-ascii?Q?zx1asnSdviu4XAiRoFC7RxUZ+iAX6biUx5bGtGrPHHxNHJeSzyiYA6m0eslo?=
+ =?us-ascii?Q?9jgM2s44ggy2z3mj5Cu+b4vMJhw2ceGAPf1K4RjmbS0mQjXccSFq9Y0GCrRd?=
+ =?us-ascii?Q?OFX82BQdHtLUx5XRIXHsUUty0Zk8t/+0OGKl2LWfOJT3mZiLsu5sXSdYN1GW?=
+ =?us-ascii?Q?tGxcRbvNrkKWzMxUZubEeO6Lp7QZlIEfkYxlz7gVt7gIkCSDyMerCw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 12:13:10.8759
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63339ad6-810d-4584-1cf4-08ddf775e6a9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709C.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6801
 
-On Fri, Sep 19, 2025 at 7:06=E2=80=AFPM Andrea Parri <parri.andrea@gmail.co=
-m> wrote:
->
-> > > > (not a review, just looking at this diff stat) is changing the fast=
-path
-> > > >
-> > > >   read_unlock()
-> > > >   read_lock()
-> > > >
-> > > > from something like
-> > > >
-> > > >   fence rw,w
-> > > >   amodadd.w
-> > > >   amoadd.w
-> > > >   fence r,rw
-> > > >
-> > > > to
-> > > >
-> > > >   fence rw,rw
-> > > >   amoadd.w
-> > > >   amoadd.w
-> > > >   fence rw,rw
-> > > >
-> > > > no matter Zalasr or !Zalasr.  Similarly for other atomic operations=
- with
-> > > > release or acquire semantics.  I guess the change was not intention=
-al?
-> > > > If it was intentional, it should be properly mentioned in the chang=
-elog.
-> > >
-> > > Sorry about that. It is intended. The atomic operation before
-> > > __atomic_acquire_fence or operation after __atomic_release_fence can
-> > > be just a single ld or sd instruction instead of amocas or amoswap. I=
-n
-> > > such cases, when the store release operation becomes 'sd.rl', the
-> > > __atomic_acquire_fence via 'fence r, rw' can not ensure FENCE.TSO
-> > > anymore. Thus I replace it with 'fence rw, rw'.
->
-> But you could apply similar changes you performed for xchg & cmpxchg: use
-> .AQ and .RL for other atomic RMW operations as well, no?  AFAICS, that is
-> what arm64 actually does in arch/arm64/include/asm/atomic_{ll_sc,lse}.h .
+xchg() is used to safely handle the event queue arming.
+However SPARC xchg operates only 4B of variable.
+Change variable type from bool to int.
 
-I see. I will study the implementation of ARM and refine my patch. Thanks a=
- lot.
+Unverified Error/Warning (likely false positive, kindly check if interested):
 
-Best regards,
-Xu Lu
+    ERROR: modpost: "__xchg_called_with_bad_pointer" [drivers/infiniband/hw/ionic/ionic_rdma.ko] undefined!
 
->
->   Andrea
->
->
-> > This is also the common implementation on other architectures who use
-> > aq/rl instructions like ARM. And you certainly already knew it~
+Error/Warning ids grouped by kconfigs:
+
+recent_errors
+`-- sparc-allmodconfig
+    `-- ERROR:__xchg_called_with_bad_pointer-drivers-infiniband-hw-ionic-ionic_rdma.ko-undefined
+
+Fixes: f3bdbd42702c ("RDMA/ionic: Create device queues to support admin operations")
+Reported-by: Leon Romanovsky <leon@kernel.org>
+Closes: https://lore.kernel.org/lkml/20250918180750.GA135135@unreal/
+Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
+---
+ drivers/infiniband/hw/ionic/ionic_admin.c | 8 ++++----
+ drivers/infiniband/hw/ionic/ionic_ibdev.h | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/infiniband/hw/ionic/ionic_admin.c b/drivers/infiniband/hw/ionic/ionic_admin.c
+index 1ba7a8ecc073..d9221ef134c4 100644
+--- a/drivers/infiniband/hw/ionic/ionic_admin.c
++++ b/drivers/infiniband/hw/ionic/ionic_admin.c
+@@ -945,7 +945,7 @@ static void ionic_poll_eq_work(struct work_struct *work)
+ 				   npolled, 0);
+ 		queue_work(ionic_evt_workq, &eq->work);
+ 	} else {
+-		xchg(&eq->armed, true);
++		xchg(&eq->armed, 1);
+ 		ionic_intr_credits(eq->dev->lif_cfg.intr_ctrl, eq->intr,
+ 				   0, IONIC_INTR_CRED_UNMASK);
+ 	}
+@@ -954,10 +954,10 @@ static void ionic_poll_eq_work(struct work_struct *work)
+ static irqreturn_t ionic_poll_eq_isr(int irq, void *eqptr)
+ {
+ 	struct ionic_eq *eq = eqptr;
+-	bool was_armed;
++	int was_armed;
+ 	u32 npolled;
+ 
+-	was_armed = xchg(&eq->armed, false);
++	was_armed = xchg(&eq->armed, 0);
+ 
+ 	if (unlikely(!eq->enable) || !was_armed)
+ 		return IRQ_HANDLED;
+@@ -968,7 +968,7 @@ static irqreturn_t ionic_poll_eq_isr(int irq, void *eqptr)
+ 				   npolled, 0);
+ 		queue_work(ionic_evt_workq, &eq->work);
+ 	} else {
+-		xchg(&eq->armed, true);
++		xchg(&eq->armed, 1);
+ 		ionic_intr_credits(eq->dev->lif_cfg.intr_ctrl, eq->intr,
+ 				   0, IONIC_INTR_CRED_UNMASK);
+ 	}
+diff --git a/drivers/infiniband/hw/ionic/ionic_ibdev.h b/drivers/infiniband/hw/ionic/ionic_ibdev.h
+index b7a1a57bae03..82fda1e3cdb6 100644
+--- a/drivers/infiniband/hw/ionic/ionic_ibdev.h
++++ b/drivers/infiniband/hw/ionic/ionic_ibdev.h
+@@ -126,7 +126,7 @@ struct ionic_eq {
+ 
+ 	struct ionic_queue	q;
+ 
+-	bool			armed;
++	int			armed;
+ 	bool			enable;
+ 
+ 	struct work_struct	work;
+-- 
+2.43.0
+
 
