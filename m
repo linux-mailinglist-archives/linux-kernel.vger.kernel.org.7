@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-824462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156ACB894B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:38:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F51B894BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5A0E1C87F54
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7E87C50E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23E030C100;
-	Fri, 19 Sep 2025 11:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4110030CB49;
+	Fri, 19 Sep 2025 11:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCwf0nIJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FZtZrkuu"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438C819755B;
-	Fri, 19 Sep 2025 11:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D319755B;
+	Fri, 19 Sep 2025 11:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758281904; cv=none; b=ZKB6CwKHvOjylZrOGA1PIUGGn5XA4CyceAfx4oBwzktRsWm5vl8+Zz3GVCPFTYmiAuz/5lGp+ZLL5/EVJ++9EzcioqA6TlOr9PRLqNlxFZ5I6daQWBpsEz5vlqSVQxOn5+LFjsZQsHsIhrwBQvgWFFoNGQcOLQksOsDXnXpwEPU=
+	t=1758281971; cv=none; b=VDJIp/YC2x8qyI9pRiJaYjJLfBn34REZCTW24VEZLbDqu2RhUGykbGvQtisp/bPr3SknO3Bp9cZLrUG3SfeKcB1r+Gv5Sac9of1XFKtOG2W4n8wV1yIhPGIsdOCZ/kpg8maC09nzlpBQ8tFjsQnwEB9ZaN+/+17uqi9hqa2W7Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758281904; c=relaxed/simple;
-	bh=vidOkY7U3aiEQG+l70hGzhfUzsMhfAF1dJHgRebiUMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DZr8xJ7n94nTbqRkVrsoUKdj5jnMkEBL55/sEI/VfwXBz9weW+gDjziq/+rCI154jNETe3uwQ1w9E06gjKuJgKc4VEntrDB28YNrmJptAn2m5VBdVcvv964SmKb4psQ5kyt/KwsLt6hp6nwJ690qB+hj93pfaD1BrM08NNvYGIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BCwf0nIJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1168C4CEF0;
-	Fri, 19 Sep 2025 11:38:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758281903;
-	bh=vidOkY7U3aiEQG+l70hGzhfUzsMhfAF1dJHgRebiUMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BCwf0nIJ2NO0jzAzO+tjoHLC4pkI79O4txtEutDJD9H2tq0ue553u1NLK/+A8vg+4
-	 1Ta+BjvEMnzptkOy52E7ECxAXzxxA1OwtNBnzPaupKpynRp7lcStlZtwT0lOqrcDVh
-	 G2/RuxROojKq4iU0mE9Ahggzk1IOt3siUdkaPgRSezTueqbPdAnarIIHa5hRkHz8yf
-	 ltVlDqcR5Sh4apOY0wFBtZwQ9JMXyH3qBTLwt3X+7T3TUpue/oBWe7qp3AyM/D/yKS
-	 HnTNyDC/jN/ZK2mTNp+bTsxsLXdiTYbsiQnxAZtyCXBdv7S04DWfSGlyznCTmvIYnu
-	 16s1S6eEiS+iA==
-Date: Fri, 19 Sep 2025 12:38:18 +0100
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 0/8] arm64: Make EFI calls preemptible
-Message-ID: <aM1AqmHc7boSipIl@willie-the-truck>
-References: <20250918103010.2973462-10-ardb+git@google.com>
- <CAMj1kXGndZxxe+u3st6FCebrdutUibspA7tJUpqGMgpj9UTFnA@mail.gmail.com>
+	s=arc-20240116; t=1758281971; c=relaxed/simple;
+	bh=g7diReALNzSEMHJDHkJDR+uRhAHHqz3AfeCCGQYWV2Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ix4jL1GC1hRQmyi34UKv0OKcEE7tnvyuSkGBQnu4GrOwY3Fc1MeZQbRzR9LhBDCgnsVyU/BPTaBnHxbj9pzi5W1eFEtedAT5Wc1roM3vNfx4Y6Vl3B8K9K0D+9by8FGn5qr7NkGfarfXNYg0PZV7qpfO7I/tFgLIpKDte1BV7+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FZtZrkuu; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58JBdOQD233572;
+	Fri, 19 Sep 2025 06:39:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758281964;
+	bh=2eA38zpgEpyx51uHfBOU7titOPtXUmVDwaR8LrY3/rw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=FZtZrkuu3KueCka7ZVpKi5TOdmpmLfQPhXnxAX2QV+eHjPYGVSH8I2lPg8T6luryh
+	 onMNI0n44FTo5EEu1TkTVJqMhBIoCZ5169Sz1SVx2qEP6DAYZ3merPlmN1hUrt8Spl
+	 CmdxEwNofwapG6BwMHuLIoY8g9uWkMdJv91N6QRQ=
+Received: from DFLE20.ent.ti.com (dfle20.ent.ti.com [10.64.6.57])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58JBdONQ3121770
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 19 Sep 2025 06:39:24 -0500
+Received: from flwvowa02.ent.ti.com (10.64.41.53) by DFLE20.ent.ti.com
+ (10.64.6.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.20; Fri, 19 Sep
+ 2025 06:39:24 -0500
+Received: from DFLE203.ent.ti.com (10.64.6.61) by flwvowa02.ent.ti.com
+ (10.64.41.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.55; Fri, 19 Sep
+ 2025 06:39:23 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 19 Sep 2025 06:39:23 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58JBdMGW2508551;
+	Fri, 19 Sep 2025 06:39:23 -0500
+Date: Fri, 19 Sep 2025 17:09:22 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v2] cpuidle: Fail cpuidle device registration if there is
+ one already
+Message-ID: <20250919113922.7tozmbts6cs3y5va@lcpd911>
+References: <12749587.O9o76ZdvQC@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGndZxxe+u3st6FCebrdutUibspA7tJUpqGMgpj9UTFnA@mail.gmail.com>
+In-Reply-To: <12749587.O9o76ZdvQC@rafael.j.wysocki>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 18, 2025 at 01:33:48PM +0200, Ard Biesheuvel wrote:
-> On Thu, 18 Sept 2025 at 12:30, Ard Biesheuvel <ardb+git@google.com> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > The arm64 port permits the use of the baseline FP/SIMD register file in
-> > kernel mode, and no longer requires preemption to be disabled. Now that
-> > the EFI spec is being clarified to state that EFI runtime services may
-> > only use baseline FP/SIMD, the fact that EFI may code may use FP/SIMD
-> > registers (while executing at the same privilege level as the kernel) is
-> > no longer a reason to disable preemption when invoking them.
-> >
-> > This means that the only remaining reason for disabling preemption is
-> > the fact that the active mm is swapped out and replaced with efi_mm in a
-> > way that is hidden from the scheduler, and so scheduling is not
-> > supported currently. However, given that virtually all (*) EFI runtime
-> > calls are made from the efi_rts_wq workqueue, the efi_mm can simply be
-> > loaded into the workqueue worker kthread while the call is in progress,
-> > and this does not require preemption to be disabled.
-> >
-> > Note that this is only a partial solution in terms of RT guarantees,
-> > given that the runtime services execute at the same privilege level as
-> > the kernel, and can therefore disable interrupts (and therefore
-> > preemption) directly. But it should prevent scheduling latency spikes
-> > for EFI calls that simply take a long time to run to completion.
-> >
-> > Changes since v2:
-> > - Permit ordinary kernel mode FP/SIMD with IRQs disabled, so that the
-> >   special EFI case only deals with invocations in hardirq or NMI context
-> > - Disallow EFI runtime calls in hardirq or NMI context, so that the
-> >   special FP/SIMD handling for EFI can be dropped entirely
-> > - Use a mutex rather than a semaphore for the arm64 EFI runtime lock,
-> >   now that it is never trylock()ed in IRQ or NMI context.
-> >
-> > Changes since v1/RFC:
-> > - Disable uaccess for SWPAN before updating the preserved TTBR0 value
-> > - Document why disabling migration is needed
-> > - Rebase onto v6.17-rc1
-> >
-> > (*) only efi_reset_system() and EFI pstore invoke EFI runtime services
-> >     without going through the workqueue, and the latter only when saving
-> >     a kernel oops log to the EFI varstore
-> >
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Mark Brown <broonie@kernel.org>
-> >
-> > Ard Biesheuvel (8):
-> >   efi: Add missing static initializer for efi_mm::cpus_allowed_lock
-> >   efi/runtime: Return success/failure from arch_efi_call_virt_setup()
-> >   efi/runtime: Deal with arch_efi_call_virt_setup() returning failure
+Hi Rafael,
+
+On Sep 19, 2025 at 13:22:20 +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Unless anyone objects, I am going to queue up these 3 patches ^^^ via
-> the EFI tree.
+> Refuse to register a cpuidle device if the given CPU has a cpuidle
+> device already and print a message regarding it.
 > 
-> >   arm64/fpsimd: Permit kernel mode NEON with IRQs off
-> >   arm64/fpsimd: Drop special handling for EFI runtime services
-> >   arm64/efi: Use a mutex to protect the EFI stack and FP/SIMD state
-> >   arm64/efi: Move uaccess en/disable out of efi_set_pgd()
-> >   arm64/efi: Call EFI runtime services without disabling preemption
-> >
+> Without this, an attempt to register a new cpuidle device without
+> unregistering the existing one leads to the removal of the existing
+> cpuidle device without removing its sysfs interface.
 > 
-> ... so the rest can go in via the arm64 tree in the next cycle.
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> v1 -> v2:
+>    * Add the new check before the driver module reference counting (Dhruva).
 
-As discussed off-list, that's probably the best plan for now. I've left
-a few small comments on some of the arm64 bits and it would be good to
-give them some soak time in -next.
+Thanks for addressing!
 
-Cheers,
+> 
+> ---
+>  drivers/cpuidle/cpuidle.c |    8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/cpuidle/cpuidle.c
+> +++ b/drivers/cpuidle/cpuidle.c
+> @@ -635,8 +635,14 @@ static void __cpuidle_device_init(struct
+>  static int __cpuidle_register_device(struct cpuidle_device *dev)
+>  {
+>  	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
+> +	unsigned int cpu = dev->cpu;
+>  	int i, ret;
+>  
+> +	if (per_cpu(cpuidle_devices, cpu)) {
+> +		pr_info("CPU%d: cpuidle device already registered\n", cpu);
 
-Will
+Sorry for not pointing this earlier,
+perhaps pr_err makes more sense?
+
+Anyway if you respin/ fix while applying:
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
