@@ -1,118 +1,133 @@
-Return-Path: <linux-kernel+bounces-824476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA08B8955D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:58:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FAB5B89566
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B981798EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6366F7B9725
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB9130E0D9;
-	Fri, 19 Sep 2025 11:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cJ5CvvFi"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC12D2D061F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D405F30DD01;
+	Fri, 19 Sep 2025 12:00:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B340CEAE7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758283090; cv=none; b=QX5SrBqYR0DDaMYYF/zCJkdewzL8UgplrtbEQlOhaTF/Tuk3MZk98doF03yix4d1VdGZff3jWnE2IE4HCUNkawiblBv8hlckY/zQVZhE44OzGHkka7f8KCywYWgV3oTGmCH64VPYxri7y3cREJ/3CvFHKWHiExChR47OmoWc9mI=
+	t=1758283256; cv=none; b=BPg3uN4VoxBVe4ziDewoVIAG4wxG5DaMnDZl8TGEaQ4w0ZEzGDlA7L3PPVHZ0Gk3F6Y3ju/uadhEoqskqG86yGq0K2gjt2gbwG+9uSYdmv3yIcZoyv9yet4AyCO+2HWpfyFc9EJ9ZKNSLXC67VP/WC5vsLKWsPF0HIq0Pls3K0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758283090; c=relaxed/simple;
-	bh=z76f63pK7iULjhkDPA2cDB1JEhtZUbriGGo8ro5LyIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUOPBu9EFPVJj9wB2vqG5CY9DSNcEf9nFDIEvOUWTRk+NWwgXQYrWVIsrJCGBH9u+pK/JMZrCgTam5TcurL/4/6f28VMFrqbq0iNaz9cCmjMDrV6u1fFTUsreCIpAKef8JatZ5/UDQ13J7lTfTlCHF/kBrCA1agBXJGlWlqmHss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cJ5CvvFi; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b7997a43ceso23465721cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:58:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758283088; x=1758887888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XqkzJ715IFhAdPqz34JG4QrSrgL1I3NolvpeVSTSpSM=;
-        b=cJ5CvvFi4Ux+0g+c5NdMmNIvSoh9f0ftQC7qisliChqhhYmJADWMtZsVY6vpSY7DLj
-         TBgjaYj/OnvG9ksqbX3WS86N8ABjCPYhprhE4/XH21TFNY9E43PpuILUj9GnbrN0KYdy
-         ipUrG6JPg7GuZqbgRRadQfXMX9723oLaKMWW1vkyKhQ3MYvb2x8ETUrPgV69g/CHkk3+
-         LnIDz9f7/C6qPMAthQ4jSeIleIvcDdbG3J3V2hcRB1Wvcc8inf13L5DBxq8QX0lrc1zp
-         CSlkrOeh/Ky2FQoWjbOIYFUV2p6+ChCrFzm1zCxV6q2QEe4EIiIkZPtMuVSD9EN7d9Xi
-         bgoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758283088; x=1758887888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XqkzJ715IFhAdPqz34JG4QrSrgL1I3NolvpeVSTSpSM=;
-        b=l7sOhmRKX1fZ8kSSsA4p6f8Fnt/fHgvIC/3pQ46F0LmEFcBkcwc8hAh4qupgtLc7Y3
-         wuwtDkVZ7ecpfxyLxYbFCx41phpDkcAjUciHlJi9VAPw9tV9JtkYUm4grwJZ0Pb2Xx2Y
-         5G6gWqjru6Xepkgx/KfnaCJzqtyjtc6dBH+nI4K5hf4szGTtCOGKvPYciXhwb61SLu1X
-         nY+D4G2nvhM6xSnlBRALN6YeFa4KBZWLtfRppRqOT83yKCmt7M1hVJhmyN55qre5rjiV
-         5Tt4CuLESzC4v+wQlVnm2RSdRWiQQWhlz6zaZzzLRSwwdu5zVOS6V2kA2Aria6rafNf4
-         p4Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfiUxDYHstffOT2mItLLtcJ8dU0TRvoSl1Nw0yT35tnG3VfYpZGrJLM9VQcX7LhRKUZmJXhg9cs4qJews=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV2ZqhIdkTBpj0isPxUnXHQ1ecI2iZI985L94GiO/4FQDuLu7+
-	WW2neDgLwbXy3LM/NRAEW1kYiCoE1IcrBaGvbFXrMl69Ce2w7Qreubm7yQ7kVZAqdiE=
-X-Gm-Gg: ASbGncvxegV7siRFyRUw9sOZnnxAvJ8K8xjU1TyqBmCUssgV2Fr6gAF6W1w0vuZQJRU
-	KsC/F36OILkTODfHZA3Od2QOdCPRhCxsu59KaM+NOtaHcZx4mDmCs6p98axZ2HppeXNX+yW+dAo
-	rFIFSO4TjJUU/cvJN2K55J7rS1Z5hnrg2N403JQYoRc0BFPz9ALyIonv0g+tal95W50vZDDMBMj
-	3Wd9fvgt+iw/zpkXrg4gk+FV3cTizVCKO8aa+S6mD9XaqCSX9dLy9dSKmNql2S5RWXFZuq8ABGo
-	B+owh0NJ2splGYuZKF6Z/PgksUUKPGUTJJxKJgmngssuI65N5OtX+cmxjHRPfW8VwkVvDVzs
-X-Google-Smtp-Source: AGHT+IHAUUCTifYO3tvHTIggD1bty3WA1tAmCInvXz11D2JOt+J25vVYjGygxn7PDvPC0VZaaS2K+Q==
-X-Received: by 2002:ac8:594d:0:b0:4b2:cf75:bf10 with SMTP id d75a77b69052e-4c06cbe95ebmr27476741cf.17.1758283087738;
-        Fri, 19 Sep 2025 04:58:07 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363198ad41sm325729185a.46.2025.09.19.04.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 04:58:06 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uzZkb-000000097c5-40qZ;
-	Fri, 19 Sep 2025 08:58:05 -0300
-Date: Fri, 19 Sep 2025 08:58:05 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: Keith Busch <kbusch@kernel.org>, Alex Mastro <amastro@fb.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, David Reiss <dreiss@meta.com>,
-	Joerg Roedel <joro@8bytes.org>, Leon Romanovsky <leon@kernel.org>,
-	Li Zhe <lizhe.67@bytedance.com>, Mahmoud Adam <mngyadam@amazon.de>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	"Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend
- more granular access to client processes
-Message-ID: <20250919115805.GU1326709@ziepe.ca>
-References: <20250918214425.2677057-1-amastro@fb.com>
- <20250918225739.GS1326709@ziepe.ca>
- <aMyUxqSEBHeHAPIn@kbusch-mbp>
- <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1758283256; c=relaxed/simple;
+	bh=I3O9qtSdkffH4c4C6pb0Q3vjAqdorAWTvw5qYpeCdeM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=llYWBGXjTEIJ2BgmgT/5qo+qk0TyD1qByEGUGSPJ1nzCzNfKPMdIbOnwwCLAakrhEzItpfX2ofz3ZFwrEYwwl4AdFhtqfYHgIxZW4PweHrWGBoC9YrhdI3COhpFiOCfnbJDRHrHIeD5OYW5592DsnGByDXFBYcV0qZx6XsgPUzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3B35169C;
+	Fri, 19 Sep 2025 05:00:45 -0700 (PDT)
+Received: from [10.57.95.38] (unknown [10.57.95.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92CAB3F673;
+	Fri, 19 Sep 2025 05:00:51 -0700 (PDT)
+Message-ID: <38fa4717-9105-4bca-a2cd-914afc109570@arm.com>
+Date: Fri, 19 Sep 2025 13:00:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/5] arm64: support FEAT_BBM level 2 and large block
+ mapping when rodata=full
+Content-Language: en-GB
+To: Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, ardb@kernel.org, dev.jain@arm.com,
+ scott@os.amperecomputing.com, cl@gentwo.org,
+ Yang Shi <yang@os.amperecomputing.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
+ <175822779944.710258.10028837182267037801.b4-ty@kernel.org>
+ <fc43aa07-d4ad-47d5-8381-61d4a9b8c467@arm.com>
+ <aM0-FQlepoxxGkRd@willie-the-truck>
+ <ceaf604f-8ad7-4e19-812e-7eeace10d835@arm.com>
+ <aM1E34lRjKg7nlRu@willie-the-truck>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <aM1E34lRjKg7nlRu@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 07:00:04AM +0000, Tian, Kevin wrote:
-> memory of other clients and the USD... there is no hw isolation 
-> within a partitioned IOAS unless the device supports PASID then 
-> each client can be associated to its own IOAS space.
+On 19/09/2025 12:56, Will Deacon wrote:
+> On Fri, Sep 19, 2025 at 12:49:22PM +0100, Ryan Roberts wrote:
+>> On 19/09/2025 12:27, Will Deacon wrote:
+>>> On Fri, Sep 19, 2025 at 11:08:47AM +0100, Ryan Roberts wrote:
+>>>> On 18/09/2025 22:10, Will Deacon wrote:
+>>>>> On Wed, 17 Sep 2025 12:02:06 -0700, Yang Shi wrote:
+>>>>>> On systems with BBML2_NOABORT support, it causes the linear map to be mapped
+>>>>>> with large blocks, even when rodata=full, and leads to some nice performance
+>>>>>> improvements.
+>>>>>>
+>>>>>> Ryan tested v7 on an AmpereOne system (a VM with 12G RAM) in all 3 possible
+>>>>>> modes by hacking the BBML2 feature detection code:
+>>>>>>
+>>>>>> [...]
+>>>>>
+>>>>> Applied patches 1 and 3 to arm64 (for-next/mm), thanks!
+>>>>>
+>>>>> [1/5] arm64: Enable permission change on arm64 kernel block mappings
+>>>>>       https://git.kernel.org/arm64/c/a660194dd101
+>>>>> [3/5] arm64: mm: support large block mapping when rodata=full
+>>>>>       https://git.kernel.org/arm64/c/a166563e7ec3
+>>>>>
+>>>>> I also picked up the BBML allow-list addition (second patch) on
+>>>>> for-next/cpufeature.
+>>>>>
+>>>>> The fourth patch ("arm64: mm: split linear mapping if BBML2 unsupported
+>>>>> on secondary CPUs") has some really horrible conflicts. These are partly
+>>>>> due to some of the type cleanups on for-next/mm but I think mainly due
+>>>>> to Kevin's kpti rework that landed after -rc1.
+>>>>
+>>>> Thanks Will, although I'm nervous that without this patch, some platforms might
+>>>> not boot; Wikipedia tells me that there are some Google, Mediatek and Qualcomm
+>>>> SoCs that pair X4 CPUs (which is on the BBML2_NOABORT allow list) with A720
+>>>> and/or A520 (which are not). See previous mail at [1].
+>>>
+>>> I'd be surprised if these SoCs are booting on the X4 but who knows.
+>>
+>> Ahh. You can probably tell I'm a bit naive to some of this system level stuff...
+>> I had assumed they would want to boot on the big CPU to reduce boot time.
+> 
+> One of the problems is that the boot CPU becomes CPU0 and that inevitably
+> means it ends up being responsible for a tonne of extra stuff (interrupts,
+> TZ, etc) and in many cases can't be offlined. So it's all a trade-off.
+> 
+>>> Lemme have another look at applying the patch with fresh eyes, but I do
+>>> wonder whether having X4 on the allow list really makes any sense. Are
+>>> there any SoCs out there that _don't_ pair it with CPUs that aren't on
+>>> the allow list? (apologies for the double negative).
+>>
+>> Hmm, that's a fair question. I'm not aware of any. So I guess the simplest
+>> solution is to remove X4 from the allow list and ditch fourth patch.
+> 
+> That's probably a good idea but I have a horrible feeling we _are_ going
+> to need your patch once the errata start flying about :)
+> 
+> So how about we:
+> 
+>   - Remove X4 from the list
+>   - I try harder to apply your patch for secondary CPUs...
+>   - ... if I fail, we can apply it next time around
+> 
+> Sound reasonable?
 
-If the device does support pasid then both of the suggestions make
-a lot more security sense..
+Yeah that works for me. Cheers!
 
-Jsaon
+> 
+> Will
+
 
