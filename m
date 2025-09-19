@@ -1,102 +1,97 @@
-Return-Path: <linux-kernel+bounces-825079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A2AB8AE89
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF51B8AE98
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EECC188C4E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:25:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764AC4E5CA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4BB25FA2C;
-	Fri, 19 Sep 2025 18:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3ED25DD0B;
+	Fri, 19 Sep 2025 18:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pk7eWoom"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubsOj1Pe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F7760B8A;
-	Fri, 19 Sep 2025 18:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D14334BA40;
+	Fri, 19 Sep 2025 18:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758306293; cv=none; b=d/gbNQnrTI55cFEBFXjmVPSTP34abIxguQAaMW5GbhiOSF0lDpdR0EEa3t2IlAsCFSmjACoPeljyi2sii6nLeIkOM4p1yR0Lx8zbw4mt7ESKmg/PRwfiSDaG9yqg8axBQbAl+AM3hcU3GYbEoWNoBFeGuhgKrjAVB48OrnyyYQE=
+	t=1758306526; cv=none; b=TT/pxA0d9f+RPcLruP6L2i9/F/xowXqLVqf51lc/CWL10+uhZRnjxb2T0GyNZOTDpAOPuybYfCY7VCAOgkhRC/tHGf9pOuoiUNqB3/FlbsUgPiU3CEOcUwDnvk0jTKT3vVcb2RIurq0t8ZeTU3WV2FanVEZ7n1Fm6mbPYk0tU6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758306293; c=relaxed/simple;
-	bh=1IVG3kWb+ICcP1ix8L0I8381OKaoshV+1ehyxxb90qI=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=i//BbN8IVHS6aZ69IY8ByXOQ5K2ord3gE65Np+ubCslwYJm62cRZ7UVZeU/QmgkedhQ7AgmTyLz+WK09oCaYoUAqJuaZmi1nHapeZeaY7DJhTussaepPyqOSnOhgLyfPL6CGxby2KeSqGQ3BwWdv/nP9fMliPTDqmGla2CECGmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pk7eWoom; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A5EC4CEF7;
-	Fri, 19 Sep 2025 18:24:42 +0000 (UTC)
+	s=arc-20240116; t=1758306526; c=relaxed/simple;
+	bh=DO1caKjdwWiEytFz3wuG+prVCNu0No7MAnjxeIVogno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sd7qPmFb4NYKacX0rbGSNvDGL0qJiMCTQw3g9U+qQhoTq2E1zkfkyxOqg135YlKdM8BGiZWSakhaQIm8uCF4V3rghgYR/PRtpvLkPNW3P8J3SQewVeU3W2pMTKCx8fxFIZjIUr4v5yOl8q+n8pcwNoEGYXTrpW93GzV5UAsVcUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubsOj1Pe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CE72C4CEF0;
+	Fri, 19 Sep 2025 18:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758306292;
-	bh=1IVG3kWb+ICcP1ix8L0I8381OKaoshV+1ehyxxb90qI=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=Pk7eWoomJsWIx9HJ6D+Y6bg4qhA4bCOdOkCqIjVW9FyxhSyS2alujMBAzhHKQVgcD
-	 bbgJl43wjtGflgVAwQbn6dJ/HhYuug/632sNIh1jOrApA56Xff3HZVCtesk57OqnV+
-	 gR4ADg8CbPI231jRgHPSxaoDkaT8wK+s6oLXLM77Or06aNdj5AiVRQ6//tge4ML3Lg
-	 P3eM1UvAVPyTMmgZaZolBKKmMINhHvhcIoxOKuUk/mutNKsqO54QIK7IFWHw1mhDs2
-	 QozwvHCyIGiJmBHsQIf5OXgdAowSs/7hIfJCA+8UE0mYR2i27LYaOlgYbPdX7aHDQm
-	 mFkpvoagxU6lA==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: kwilczynski@kernel.org, u.kleine-koenig@baylibre.com, 
- aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de, bwawrzyn@cisco.com, 
- bhelgaas@google.com, unicorn_wang@outlook.com, conor+dt@kernel.org, 
- 18255117159@163.com, inochiama@gmail.com, kishon@kernel.org, 
- krzk+dt@kernel.org, lpieralisi@kernel.org, palmer@dabbelt.com, 
- paul.walmsley@sifive.com, robh@kernel.org, s-vadapalli@ti.com, 
- tglx@linutronix.de, thomas.richard@bootlin.com, sycamoremoon376@gmail.com, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org, 
- sophgo@lists.linux.dev, rabenda.cn@gmail.com, chao.wei@sophgo.com, 
- xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com, jeffbai@aosc.io, 
- Chen Wang <unicornxw@gmail.com>
-In-Reply-To: <cover.1757643388.git.unicorn_wang@outlook.com>
-References: <cover.1757643388.git.unicorn_wang@outlook.com>
-Subject: Re: (subset) [PATCH v3 0/7] Add PCIe support to Sophgo SG2042 SoC
-Message-Id: <175830628258.24420.13208135130254060127.b4-ty@kernel.org>
-Date: Fri, 19 Sep 2025 23:54:42 +0530
+	s=k20201202; t=1758306525;
+	bh=DO1caKjdwWiEytFz3wuG+prVCNu0No7MAnjxeIVogno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ubsOj1Pew7RSEEcA1nUpPVmW0jxl+vy4mtZxsiV75MAi3on2SrPyjZAb33JEWjBx8
+	 iWjwT+Vpjuq78+tXQ1+HuJNwJBPMf5hppoZkDWyqiM6+HPbytWGoyY0WGFg3ejCCIe
+	 33CItSTrDJ5XVvzHu5txVMIJbxkcml3Tmo4wAMJmtZco7isyzRADCP3LeZhsKatquX
+	 /jPChCRyzTnejy4QuTf6ksRmXXuPddGAhOwq7p4CahVsBLyoyLBzEwKN/Tbnap61Vg
+	 XotOvzEUHZEz8dqz/b0d8nrsPZferdo3+NuNfhgU1ddeJhPqlOfn2QFY0BvSQ05Omq
+	 2JiJLGx/lfc9Q==
+Date: Fri, 19 Sep 2025 23:57:07 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] KVM: SVM: Move global "avic" variable to avic.c
+Message-ID: <vt5cuym6jynubpyvv2t7b6ygvg4hj5plufet6vsdnr7rc7zu7d@nv5aggxvomzm>
+References: <20250919002136.1349663-1-seanjc@google.com>
+ <20250919002136.1349663-6-seanjc@google.com>
+ <73txiv6ycd3umvlptnqnepsc6hozuo4rfmyqj4rhtv7ahkm43k@37jbftataicw>
+ <aM1sTc36cXIKxCDb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aM1sTc36cXIKxCDb@google.com>
 
-
-On Fri, 12 Sep 2025 10:35:10 +0800, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
+On Fri, Sep 19, 2025 at 07:44:29AM -0700, Sean Christopherson wrote:
+> On Fri, Sep 19, 2025, Naveen N Rao wrote:
+> > On Thu, Sep 18, 2025 at 05:21:35PM -0700, Sean Christopherson wrote:
+> > > @@ -1141,15 +1149,9 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
+> > >  	avic_vcpu_load(vcpu, vcpu->cpu);
+> > >  }
+> > >  
+> > > -/*
+> > > - * Note:
+> > > - * - The module param avic enable both xAPIC and x2APIC mode.
+> > > - * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
+> > > - * - The mode can be switched at run-time.
+> > > - */
+> > > -bool __init avic_hardware_setup(struct kvm_x86_ops *svm_ops)
+> > > +static bool __init avic_want_avic_enable(void)
+> > 
+> > Maybe avic_can_enable()?
 > 
-> Sophgo's SG2042 SoC uses Cadence PCIe core to implement RC mode.
+> That was actualy one of my first names, but I didn't want to use "can" because
+> (to me at least) that doesn't capture that the helper is incorporating input from
+> the user, i.e. that it's also checking what the user "wants".
+
+Makes sense.
+
 > 
-> This is a completely rewritten PCIe driver for SG2042. It inherits
-> some previously submitted patch codes (not merged into the upstream
-> mainline), but the biggest difference is that the support for
-> compatibility with old 32-bit PCIe devices has been removed in this
-> new version. This is because after discussing with community users,
-> we felt that there was not much demand for support for old devices,
-> so we made a new design based on the simplified design and practical
-> needs. If someone really needs to play with old devices, we can provide
-> them with some necessary hack patches in the downstream repository.
-> 
-> [...]
+> I agree the name isn't great.  Does avic_want_avic_enabled() read any better?
 
-Applied, thanks!
+Yes, though I think avic_want_enabled() suffices. But, I'm ok if you 
+want it to be explicit.
 
-[1/7] dt-bindings: pci: Add Sophgo SG2042 PCIe host
-      commit: 4e4a4f58bed19e1a3a5a7c3a18ce3b927b76fcd3
-[2/7] PCI: cadence: Check pcie-ops before using it
-      commit: 49a6c160ad4812476f8ae1a8f4ed6d15adfa6c09
-[3/7] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-      commit: 1c72774df028429836eec3394212f2921bb830fc
 
-Best regards,
--- 
-Manivannan Sadhasivam <mani@kernel.org>
+- Naveen
 
 
