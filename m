@@ -1,130 +1,86 @@
-Return-Path: <linux-kernel+bounces-824040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC8DB87FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:17:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C5EB87F87
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1993B62578F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:17:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9083580D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B09285C80;
-	Fri, 19 Sep 2025 06:17:27 +0000 (UTC)
-Received: from mail-m8330.xmail.ntesmail.com (mail-m8330.xmail.ntesmail.com [156.224.83.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60E928CF5F;
+	Fri, 19 Sep 2025 06:07:59 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BF02459CF;
-	Fri, 19 Sep 2025 06:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.224.83.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE9C225779;
+	Fri, 19 Sep 2025 06:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758262647; cv=none; b=nRaqV6F5imSfTYgP9OembnJ+Qf15KCZDMg0+q5r8JJJFn5r/QEpBA9SjyCQ6jaySjIBk561XHws7emDdsKaIMzMJSIRwZe7kLZ80eEDqKCKVYIpDEAm2Ichd7OIesvKgVlPPXj1jkDNKr4k3T4Q98ZUsXzEn8DZg+7Dy0mGIRqQ=
+	t=1758262079; cv=none; b=jY1sU/VNTg/eiuzBZlTCgLKzdK9nqLugArtX5ZzQMWDKr05/9DbX/iVaWeDFxZWB1SDzoP7SA/QYs4L2b/byHpaXChET2MiZTv07M4vUzK7HyQyJfkY8B2qllzA1rZ8khAK4kxoH8Y6GjWNbWH50WOOPmOsUwOBcG+9p8GjCEjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758262647; c=relaxed/simple;
-	bh=uBsupi6zocxC70qFPqLT5y7jVYq6ckmci2eDs1o6cZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PjdpH3UMjpqgSqgoIFBsCZ1Wvh1yRgTdltlu8L45V3hCvy7zaMSTidlXKAtv8nVRKz9bFTeSp3Oscuoaa5ghdEymr/fV15FBlgfT54Tghq8KEMfPqwYVPBCHlIOBDVrbEGkwgIvoumH/OnqgSM35E8xENjBasnRcw/vIt0fPmNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=156.224.83.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from localhost.localdomain (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 106bec673;
-	Fri, 19 Sep 2025 11:54:49 +0800 (GMT+08:00)
-From: Zhen Ni <zhen.ni@easystack.cn>
-To: daniel.lezcano@linaro.org,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	Zhen Ni <zhen.ni@easystack.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v4] clocksource: clps711x: Fix resource leaks in error paths
-Date: Fri, 19 Sep 2025 11:54:37 +0800
-Message-Id: <20250919035437.587540-1-zhen.ni@easystack.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250814123324.1516495-1-zhen.ni@easystack.cn>
-References: <20250814123324.1516495-1-zhen.ni@easystack.cn>
+	s=arc-20240116; t=1758262079; c=relaxed/simple;
+	bh=hbhuV7aeox1o2fdIgInq9Tkb2Qwf2AVg9cScK/j+cXA=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AuE32buqIafYaLbLTJ5pmPgSSjqr/TBbAkgOzzGuO59DptlNiqmGhaQzV1e9ld9YnNLZwfCb7bjSYIrWuSaxj1Y6mRHmOIM3Sa7pclv1L+VAj/xPOU8INs0UcJqstZwf+nI7i50g59/oyXMcfeAJ9z47kLHrJ5GfQtlRxYXufwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cShlB6Bd2z13MkW;
+	Fri, 19 Sep 2025 14:03:34 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id E2B70180080;
+	Fri, 19 Sep 2025 14:07:46 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 19 Sep 2025 14:07:45 +0800
+Message-ID: <59d9add5-a4f5-4ee2-9fd8-a2ced4cbe0d4@huawei.com>
+Date: Fri, 19 Sep 2025 14:07:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99601c42eb0229kunmd8cb4e7b18b882
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSUoeVktDSBgdTUhMH0hIS1YVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<horms@kernel.org>, <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <lantao5@huawei.com>,
+	<huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
+	<huangdengdui@h-partners.com>, <jonathan.cameron@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 3/3] net: hns3: use user configure after hardware
+ reset when using kernel PHY
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20250917122954.1265844-1-shaojijie@huawei.com>
+ <20250917122954.1265844-4-shaojijie@huawei.com>
+ <5188066d-fcd2-41e7-bd8a-ae1dfbdd7731@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <5188066d-fcd2-41e7-bd8a-ae1dfbdd7731@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-The current implementation of clps711x_timer_init() has multiple error
-paths that directly return without releasing the base I/O memory mapped
-via of_iomap(). Fix of_iomap leaks in error paths.
 
-Fixes: 04410efbb6bc ("clocksource/drivers/clps711x: Convert init function to return error")
-Fixes: 2a6a8e2d9004 ("clocksource/drivers/clps711x: Remove board support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
----
-changes in v4:
-- Change the default value of ret from 0 to -INVAL
-- Do not release the iomap in success paths
-changes in v3:
-- Change "err" to "error" in the commit message.
-changes in v2:
-- Add tags of 'Fixes' and 'Cc'
-- Reduce detailed enumeration of err paths
-- Omit a pointer check before iounmap()
-- Change goto target from out to unmap_io
----
- drivers/clocksource/clps711x-timer.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+on 2025/9/18 1:11, Andrew Lunn wrote:
+> On Wed, Sep 17, 2025 at 08:29:54PM +0800, Jijie Shao wrote:
+>> When a reset occurring
+> Why would a reset occur? Is it the firmware crashing?
+>
+>> Consider the case that reset was happened consecutively.
+> Does that mean the firmware crashed twice in quick succession?
+>
+>       Andrew
 
-diff --git a/drivers/clocksource/clps711x-timer.c b/drivers/clocksource/clps711x-timer.c
-index e95fdc49c226..84dbcd049c25 100644
---- a/drivers/clocksource/clps711x-timer.c
-+++ b/drivers/clocksource/clps711x-timer.c
-@@ -78,24 +78,33 @@ static int __init clps711x_timer_init(struct device_node *np)
- 	unsigned int irq = irq_of_parse_and_map(np, 0);
- 	struct clk *clock = of_clk_get(np, 0);
- 	void __iomem *base = of_iomap(np, 0);
-+	int ret = -EINVAL;
- 
- 	if (!base)
- 		return -ENOMEM;
- 	if (!irq)
--		return -EINVAL;
--	if (IS_ERR(clock))
--		return PTR_ERR(clock);
-+		goto unmap_io;
-+	if (IS_ERR(clock)) {
-+		ret = PTR_ERR(clock);
-+		goto unmap_io;
-+	}
- 
- 	switch (of_alias_get_id(np, "timer")) {
- 	case CLPS711X_CLKSRC_CLOCKSOURCE:
- 		clps711x_clksrc_init(clock, base);
-+		ret = 0;
- 		break;
- 	case CLPS711X_CLKSRC_CLOCKEVENT:
--		return _clps711x_clkevt_init(clock, base, irq);
-+		ret =  _clps711x_clkevt_init(clock, base, irq);
-+		break;
- 	default:
--		return -EINVAL;
-+		break;
- 	}
-+	if (!ret)
-+		return ret;
- 
--	return 0;
-+unmap_io:
-+	iounmap(base);
-+	return ret;
- }
- TIMER_OF_DECLARE(clps711x, "cirrus,ep7209-timer", clps711x_timer_init);
--- 
-2.20.1
+Actually, We can trigger a reset by ethtool:
+ethtool --reset ethx...
+
 
 
