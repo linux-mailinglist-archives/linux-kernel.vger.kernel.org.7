@@ -1,458 +1,204 @@
-Return-Path: <linux-kernel+bounces-824998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E82AB8AAAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A613B8AAB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBAE51CC41CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:59:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0572B17C116
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DF0321260;
-	Fri, 19 Sep 2025 16:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAD03218B9;
+	Fri, 19 Sep 2025 16:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/TXNmQs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="L0IiUNXg"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010037.outbound.protection.outlook.com [52.101.69.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A2617B50A
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758301143; cv=none; b=g2J70v6z7P73xf//aC4xi0rUE9fdCQTemKMkQmUWxPx+YAguusv11jS3SEto+DLIozUWPLnDCsLbx46b2SDvSAA9PF3x+CLhMScND1HDT29BjSuFk962gpneEZch4eV+6rdTJSehpCIC1Iih5JtMttQlruJncF/Fj5qe3BQyO1c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758301143; c=relaxed/simple;
-	bh=q4Fp3CwUIPHFmgTHIUppL23eh3nlnofaufwG77k+LlA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=knwUwFx30HOjtQ+dObjykzZ8nVHVsBeflCNzSPjm+Ca0ompGiDBAyZ27LZy5H/wS+ombFF0w4/tvv4sb15FtsiURO8KkuKPb1kkGcCJt42LxLkwUCsTRjAGezoOfM1SOw+jHMGaao9tEvGKv8TpgT5U9Hjq3NiSgbWW9MC5p4rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/TXNmQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52519C4CEFB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758301143;
-	bh=q4Fp3CwUIPHFmgTHIUppL23eh3nlnofaufwG77k+LlA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u/TXNmQsVwT9GdWiTLlodqvwxgeIBeNISKxnMa3sKLkPqgnZGkstP5f1rTyV/Jn1C
-	 mru4paNJm4Q9ISfJvaWvu9kNz4hbX2MrUAz5WJ/oWQGB8AdI+n4VNGoi2K2NhwIC6A
-	 HN9Fho1r3apqjJ1eNPBgrO4MSArvvKwqU5MJu98f4A9zC8JDPardasTD0iMbkC10ag
-	 l8ISnt7b6wpoiSr1tjoCW4J90DkttjwvQqzn2K5GcyTs6mOjdp8JwFYBBcp6AJCMTs
-	 wN0Hi58LRPiL1sXaubrHBOAStHtND0iBp8WgTnnH1vanMGYF747ZeaSlAAmp+uzsds
-	 51VmDQTgYmT3A==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-61ff7638f4eso1068707eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:59:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXT5hV/naVRPBXWsVYmoDa5ZzN2NLbuX3LzxqUAotAFxFUq8dHAwGi0fEm7uP2u5Uz7exVoOaKgJz9/HoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr+vGu/Ow5I8R2/THfEUSu9XAgPHtl59GvGtCtI7y9ComubzuX
-	wF/vQrHpW9O7JDw1Fj7opccVwDRAjmjCibmeJEcZEqC4HaP1cSpVcripBI0BtRgDqK038dSMgrr
-	qfAu7yyXx5Y6Brw0zCktS8k1YE+k2P+w=
-X-Google-Smtp-Source: AGHT+IEN5uNA6xwmKPM+zTn2tvbvIWNMHkGGjepwuB8he2VIqxjyrUozAaybsK7toSY+XDye/pfu3GWMMxYcZqpOKrE=
-X-Received: by 2002:a05:6820:50a:b0:621:71a0:5b67 with SMTP id
- 006d021491bc7-6272abec283mr1750335eaf.7.1758301142426; Fri, 19 Sep 2025
- 09:59:02 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1060831CA4E;
+	Fri, 19 Sep 2025 16:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758301152; cv=fail; b=tV2pAPynALTH76FHzRbTMO0TK0pA592UzK0Lm3PStYMMbu4oeQpIdOY/8t/ccgYye9vbfS7V6/crwOsm2ro/A47I56Hw7HsrQXmwBdPvfclRMpOW6jDC+yc19KcglgcULY0+pnFsB+Xk68r+Zhh4LvFSzWJ4U8+K7BwuQdrPOf4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758301152; c=relaxed/simple;
+	bh=F0013r+UpafVyjRQXSLaehhQpZi6b1J+Lku5Q55MDh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=S725r4jJQAh47aDh4t5LAPXSWeFGtoZtFeX1ZM7t5tJ4LnNrcaB7d8mceoJM6UWp2EsoXs6HftKinCVem1yqTUqUkFGvzL70ovUr88YpqDJpjT3qA/9lUfIm7sjQkg6Nfll7Jhk+76G89wPdOh0mWNSLokJlhBTFjOEZ/lqZ7BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=L0IiUNXg; arc=fail smtp.client-ip=52.101.69.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cG/ZeZa2IFWyFYkZRLlVCaMLpnJGEfbhxovnUgnACMXBEj+4c9T5MAwLGP6YGPK3SIq3mtw4hc3ZS69IEXfQWOQzDFs3Mvcn0zkNVlISfutR/bFJeoiH+ALNn5W/kd1l9FB9FlCab0N0CUwCJwXcdINDFwwF6tOIe52fKZW/cp55C02t/d0XHQERqNChrnfpuTQvRn++A5x6Vygdc7RDMyrsUvqieAXxgrqKVyXVC+dff8nO9Gdf7dvwV//yXt2sPqBbyf2nvWVpzK1jp1smLlb0szOtYEhzcINRJunaqQslqWmAX0YeyWRwn569Gdw2S/5G9G6gl0MB4A4ezczj6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HWOdJrCsnYanaP8JouiirI2ajLlTJB6sVZiACaYGgt8=;
+ b=cd5w0LCHL64VU/R1oehCIjQzxOhnfFrh+MW5IWDz/9WH77y+bF2fpu20R1xnMHhjuiq41nszPhPdHUN250jKIEUOZvAKrV5sWJy/TFzZFYp7ukf78J4RGOb8PeK+4+se4s6j1yhMiS5Q+hdbtrysQiJpVqGqPG3qBdH+BDTMSFwhEk4t6EIMRDzr6EFHqQvUqe+rHqhPMjoPEokSuxHRYj2I06RtCFDUpalZEQ1XmOLn6h+1Me3DFZPIxIUlzibW9y5+5oYo0WujiboQrP9J3VYGYV7rXQl7g28Une5jAB76Wk+Na7gLd53w60kneCxmkqErWBsMdsENvqZY1RHXAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWOdJrCsnYanaP8JouiirI2ajLlTJB6sVZiACaYGgt8=;
+ b=L0IiUNXgqD/kZgwKPb7xrilJqEMpPz3+lmDYM+bg+jbA+H7iszY52bV6tPAQVvB6cxnaj1Ox+qlXt4frmTA8JhyhanSfO9Jqhp/usWLlYo+UFwsjjrosLRgDtfVTcvnSF5r0hnCht7ITGgi3klI4GsMfETHx9RDfO1m9RUAlqcZVjEUt+pvFopKZ0HqbQzKY0fEN6QdNLp+E8+7BH0SFAS1PEP+V7oxxBEjHO5EmYPx+68+NSFSUbMA2T9dotcwbywLjshaJUfSo98SWfV4DdGvaJvetBW7RBolcoSuKnfqH9YnElOj0/aFq99jjbwOYYhOPPiNTj3nRj4ntHBNgZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by DU4PR04MB10646.eurprd04.prod.outlook.com (2603:10a6:10:58e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Fri, 19 Sep
+ 2025 16:59:06 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
+ 16:59:06 +0000
+Date: Fri, 19 Sep 2025 12:58:56 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: chester62515@gmail.com, mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com, s32@nxp.com, bhelgaas@google.com,
+	jingoohan1@gmail.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com,
+	Ghennadi.Procopciuc@nxp.com, ciprianmarian.costea@nxp.com,
+	bogdan.hamciuc@nxp.com, linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	cassel@kernel.org
+Subject: Re: [PATCH 3/3 v2] MAINTAINERS: Add MAINTAINER for NXP S32G PCIe
+ driver
+Message-ID: <aM2L0C4SsGTzLQwi@lizhi-Precision-Tower-5810>
+References: <20250919155821.95334-1-vincent.guittot@linaro.org>
+ <20250919155821.95334-4-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919155821.95334-4-vincent.guittot@linaro.org>
+X-ClientProxiedBy: PH5P222CA0012.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:510:34b::8) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250829003319.2785282-1-briannorris@chromium.org>
- <CAJZ5v0gGKsR0bVayyTXy1W9FLwVfG1S+gseH7jPKtggzZFNpfA@mail.gmail.com> <aMHjOJGaKi9cwbsn@google.com>
-In-Reply-To: <aMHjOJGaKi9cwbsn@google.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 19 Sep 2025 18:58:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iELLPYBS6FKmX=DhoyQ2tDq9F9DAzuV0A8etv0dGeJvQ@mail.gmail.com>
-X-Gm-Features: AS18NWA8_TAHfGLVKv_dX2GxSJIZKvVsremuwn0SmzDiFIvj_CkIUa4PRWpq0KY
-Message-ID: <CAJZ5v0iELLPYBS6FKmX=DhoyQ2tDq9F9DAzuV0A8etv0dGeJvQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] PM: runtime: Add basic kunit tests for API contracts
-To: Brian Norris <briannorris@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, kunit-dev@googlegroups.com, 
-	Len Brown <lenb@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|DU4PR04MB10646:EE_
+X-MS-Office365-Filtering-Correlation-Id: bdc1d2e8-ab34-433b-63a8-08ddf79dd7a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|19092799006|366016|1800799024|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yKHA7yf1huwGj89qr3UrIjEXhFIXX4+fdQOABrCEJJFpVV1MQB3L4SULiu9H?=
+ =?us-ascii?Q?7aNcU3pV5vmfrnvHMMi78vLq00Cqcu60SZEscr05KrJXqHFzNduzlYnNHE+x?=
+ =?us-ascii?Q?XlEREXv6CWZWaY2l7lGQThUmsg88zaIqcMLUeIJBCj0CwJycp8LfkGc/Tjq9?=
+ =?us-ascii?Q?x81ljIMQQ3ntWdNcQ7vT/AoFvdaMtlGsPjjV+nbzUucAXVAJ1MUafCbbwWe5?=
+ =?us-ascii?Q?Kaz2yi5dbDaeXT2dvfe+1KJHYT0nIZ3rBxZn8v+eyHBYd8cPl+7FbdV+Z3Ef?=
+ =?us-ascii?Q?DvrRQjEjvUd90lhdxiwdA+oOis29P38WWxTqV9uU8O9DR0MgFSPiAcLOjtwW?=
+ =?us-ascii?Q?sCDnue8rRT04m2VGIoIK3XMOGZUy0dOdmAKasWRzm3A3hO1EiFvbzitvHvUE?=
+ =?us-ascii?Q?WUacphZnBp3lt+ueIVUZFK8YAgd2pwLJCgJxwK+oNsAgegLK5j53XlQ7VkC2?=
+ =?us-ascii?Q?o7OAYzB5S1vaM5T46Zn7hZh3b2B8+q7PQTpOd5O87eyokprHXsKjUmNNOUsk?=
+ =?us-ascii?Q?Oe0qYPmUw0+yJrN63Phz8M0JPPxfEZ5JTG1I+5C1yqiG2zsw/uswetBU5gRw?=
+ =?us-ascii?Q?MD1w5enLeLCEvHfFUiR5f6t5e30U2Mu6RVVEYIPPlnKNPDLuSQiZlczQVMrr?=
+ =?us-ascii?Q?PG7pg32S0uWKIP/tewnq3JL/ifw4oGHLK7MlpJwUV+0zv1miN3Tv8CDaJtKo?=
+ =?us-ascii?Q?7fVvPYaDf+CA0q+hfdTqTCde1/VPJdkWOSJhs/cdT2W67UmFIf1K7b+tf7qY?=
+ =?us-ascii?Q?JDmmVuBtsaDlUFckYUfxUmmcqeDCte5MJiW86BFR4tldEY9vcRYSuWtFDi+W?=
+ =?us-ascii?Q?RUrCadmWOGgKu3iohtYTIfacpBEPTRp06ZB2yeXiHkuW+xW8BLbURFd12BSV?=
+ =?us-ascii?Q?P86nJv23ug/eipGdAePaqjDicYheSWp1+qFc0V/1Xt2AbeXS+rIsQnr0zNKt?=
+ =?us-ascii?Q?jmCojdFLZxRfbm2qtKxxkyRUVvQcotFsugfFLxHDz91urU+Pf4RCQoarDodS?=
+ =?us-ascii?Q?aFR+HSlS857sZiwRzOA4h0sz4CRlgnAcUETqZc4QKORwiDTnOuPuD+Eeyrag?=
+ =?us-ascii?Q?NwZxSNnsIk0fVMiBsVtau0sONtleSvFqhzFa2DN8/Na7VS8oLGdTLLqCR3k3?=
+ =?us-ascii?Q?qhY89JfDjICsvkH8J7X0EHfHTH4ULUk0btE/VGwOadV1W6nUrXzR1/Q7e1Ix?=
+ =?us-ascii?Q?5OvV5KnwH9ajK4W3+AGKJkTIdaU9JkrD7R2hXR+gWA7an5Qa1/4uoM7ivHFS?=
+ =?us-ascii?Q?PEd9H5oxPD++ktB+cD2v5SB+1hOPb74KFT+0rHywvBab+0aoT4B06jCagZoO?=
+ =?us-ascii?Q?sSnWl1d/wxYb8ihCjnQF44UhWypRWUW1tU3vwuUTVWP5oZv1ok1HLyVP6rpB?=
+ =?us-ascii?Q?wIkJfX4aAK4eJ+mcZE/XIoFdlnyENnIfTFejrB9/+ODQIU9NYylTMhKER+DQ?=
+ =?us-ascii?Q?LiuFAo0j5A76OEAJGtUZqB/iajTofFgBsnGJ4Xx6fvn237yMZK6IEQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(19092799006)(366016)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?P3XnHnID2202HnDRfNomURbXxYUynoSgHbEV5tGz7Btb9nviTZv+jebhmYph?=
+ =?us-ascii?Q?1oqFspC2hMSF80ZtCmeO1ApQXXBCaNqEiBTahRtSP5WunXvgwRcEe+DVeADo?=
+ =?us-ascii?Q?29WD7h4SpTZEzoKvN6Ko4VIuYCCanXlt/TJfKr+b4kabmRP+0vvehjVq0RVJ?=
+ =?us-ascii?Q?EvIbHRp9tSySlVYOuaIGFaH5KkzcApu49vk67jOsXvP+fJwNCRyWWFy9EjvN?=
+ =?us-ascii?Q?SSM72TSA7+ch6tSLMoRyroscMCS8Gev/uPTStBvUkgK6Pzb8mi5XaqVTSFcb?=
+ =?us-ascii?Q?2Q2M3GQpoCvv+FI7HxxxI7ygSZd2JqFE6oyC1BvokP9eZSelNSJK3BswFRAV?=
+ =?us-ascii?Q?2Rb19x0S8FTv9EfMGM4WKJHQO5PvUbowXc/7St9n0UfyFRAlvdvObmLscDa5?=
+ =?us-ascii?Q?4WN+iJCHP7SbF/4yGjnr4wTcSwymXGTVfuat+GCqcy2VEbke0Z4T6At+6ixg?=
+ =?us-ascii?Q?iUwnENEL4k291+bjR/7JlYZS2P0pQ7eG5KV1TY8BZf6aeT+lzee7T75jQRqd?=
+ =?us-ascii?Q?WEs7DvnDLP3sCxDmkcTn0RINiFyB217T1kcSzyLvblE0D3GQWU7gOLGR++br?=
+ =?us-ascii?Q?rNlbIed+isakjF5gc1df0K92fmWA85LJXyw6I4kHy2k33NIXHqJarUOEMN/l?=
+ =?us-ascii?Q?vmfdXGkq/2OSe4iROzOktxBSYt5b//goPI0tSd3cBJJCKhqNH9rPzcyVdDeX?=
+ =?us-ascii?Q?HhamZlyQYYJuQ4RNJTW0wqYimMYh64GgDBwAIO87twRUEsUpzcHLq0X3LnYA?=
+ =?us-ascii?Q?v975PYfnoyTg+wYjubjblKTQC5YIDG6bCHpZe3Qvhdye3s1o4xg2OidLdjfE?=
+ =?us-ascii?Q?a4t7r7tUFDsSlNDBJm4A9KYcZYEliaBo2OwQqbEj8Rxpzr5b51vJFeppLGbS?=
+ =?us-ascii?Q?A+HK+QzVanCcPYZD9Z4Q1oZYLVIAs6EkTDyXb+IFA/OwiS+FG2C3Y8WjV5HR?=
+ =?us-ascii?Q?+FEup6YHNKl3XkDeX+kwoqEKmCp9vOuaOrcu+Irps4WpwNxf7xjSTlvLp85a?=
+ =?us-ascii?Q?MTPnRhespyCGcKf2jGL8eWJF6aR6Kml8vo7VEhRr0hQFTyMRIWfW5uBzuiWG?=
+ =?us-ascii?Q?Z/I6i7MpI/s664V7NGJZewAv1OQlqIvNqwi5XdF1Rbl+onCARY//4nwWFm4V?=
+ =?us-ascii?Q?qZVeLBABzr6x9+jYbphCLBow+AfHjgviWAGBY6+BnhMmFpvtEDHVRo8q7Cgs?=
+ =?us-ascii?Q?KJWnRv6YodTklKvOvB56aZoFMFDD7tnhcIvAWpDalPVY94ZI/ePQ8Mtf3/q5?=
+ =?us-ascii?Q?eiBZsq8ShMnECZPHGy/MGW8pwYvQ0GFUfh3nf5hTRlD/Kx8BV2JFd2laDren?=
+ =?us-ascii?Q?l0KPa/3HKkiIbQAh7aDa4j/OsQjICPOFxpup8ag6vXd/cz6pF9TPD+S3QFaC?=
+ =?us-ascii?Q?Jtri2WpuQYaGhJFOp7crUEEYtSA75cninpmhNLRX4tzP7UmgiyM5Y3oNRRNi?=
+ =?us-ascii?Q?SJmnGOLIDUD3YZNOaNDzFtWSfWJ9KRsBVPGhGosxBO/QKaFOYQYhKQsKFJdo?=
+ =?us-ascii?Q?1k06eFvf/Sz7FSN0LgRrSrxyTxvQna5oKcvSTS5ZPVoc9IK3f/f4XGv5PNXu?=
+ =?us-ascii?Q?DetsEXaNtP55gYQF9tSx6qs0rMrY+SqS273xWKse?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bdc1d2e8-ab34-433b-63a8-08ddf79dd7a8
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 16:59:05.9382
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /rhcNJ/f5lyUbGdkun2vL8LPR9xJ0/j8PwW/Ehr662hPrr2XZY3iwOj9j2pqH82Mqn+wwXe+lU14emNscXFokw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10646
 
-Hi Brian,
+On Fri, Sep 19, 2025 at 05:58:21PM +0200, Vincent Guittot wrote:
+> Add the s32g PCIe driver under the ARM/NXP S32G ARCHITECTURE entry.
 
-On Wed, Sep 10, 2025 at 10:44=E2=80=AFPM Brian Norris <briannorris@chromium=
-.org> wrote:
->
-> Hi Rafael,
->
-> On Fri, Sep 05, 2025 at 07:37:38PM +0200, Rafael J. Wysocki wrote:
-> > On Fri, Aug 29, 2025 at 2:33=E2=80=AFAM Brian Norris <briannorris@chrom=
-ium.org> wrote:
-> > >
-> > > In exploring the various return codes and failure modes of runtime PM
-> > > APIs, I found it helpful to verify and codify many of them in unit
-> > > tests, especially given that even the kerneldoc can be rather complex=
- to
-> > > reason through, and it also has had subtle errors of its own.
-> > >
-> > > Signed-off-by: Brian Norris <briannorris@chromium.org>
-> >
-> > This is nice in general, but I have a couple of questions/comments (see=
- below).
->
-> Thanks for looking. There's certainly some matter of opinion on how
-> exactly to test things, and I'm still getting up to speed on some of the
-> runtime PM API details, so I appreciate the care you've given.
->
-> Replies inline.
->
-> > > ---
-> > >
-> > >  drivers/base/Kconfig              |   6 +
-> > >  drivers/base/power/Makefile       |   1 +
-> > >  drivers/base/power/runtime-test.c | 259 ++++++++++++++++++++++++++++=
-++
-> > >  3 files changed, 266 insertions(+)
-> > >  create mode 100644 drivers/base/power/runtime-test.c
-> > >
-> > > diff --git a/drivers/base/Kconfig b/drivers/base/Kconfig
-> > > index 064eb52ff7e2..1786d87b29e2 100644
-> > > --- a/drivers/base/Kconfig
-> > > +++ b/drivers/base/Kconfig
-> > > @@ -167,6 +167,12 @@ config PM_QOS_KUNIT_TEST
-> > >         depends on KUNIT=3Dy
-> > >         default KUNIT_ALL_TESTS
-> > >
-> > > +config PM_RUNTIME_KUNIT_TEST
-> > > +       tristate "KUnit Tests for runtime PM" if !KUNIT_ALL_TESTS
-> > > +       depends on KUNIT
-> > > +       depends on PM
-> > > +       default KUNIT_ALL_TESTS
-> > > +
-> > >  config HMEM_REPORTING
-> > >         bool
-> > >         default n
-> > > diff --git a/drivers/base/power/Makefile b/drivers/base/power/Makefil=
-e
-> > > index 01f11629d241..2989e42d0161 100644
-> > > --- a/drivers/base/power/Makefile
-> > > +++ b/drivers/base/power/Makefile
-> > > @@ -4,5 +4,6 @@ obj-$(CONFIG_PM_SLEEP)  +=3D main.o wakeup.o wakeup_s=
-tats.o
-> > >  obj-$(CONFIG_PM_TRACE_RTC)     +=3D trace.o
-> > >  obj-$(CONFIG_HAVE_CLK) +=3D clock_ops.o
-> > >  obj-$(CONFIG_PM_QOS_KUNIT_TEST) +=3D qos-test.o
-> > > +obj-$(CONFIG_PM_RUNTIME_KUNIT_TEST) +=3D runtime-test.o
-> > >
-> > >  ccflags-$(CONFIG_DEBUG_DRIVER) :=3D -DDEBUG
-> > > diff --git a/drivers/base/power/runtime-test.c b/drivers/base/power/r=
-untime-test.c
-> > > new file mode 100644
-> > > index 000000000000..263c28d5fc50
-> > > --- /dev/null
-> > > +++ b/drivers/base/power/runtime-test.c
-> > > @@ -0,0 +1,259 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Copyright 2025 Google, Inc.
-> > > + */
-> > > +
-> > > +#include <linux/cleanup.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +#include <kunit/device.h>
-> > > +#include <kunit/test.h>
-> > > +
-> > > +#define DEVICE_NAME "pm_runtime_test_device"
-> > > +
-> > > +static void pm_runtime_depth_test(struct kunit *test)
-> > > +{
-> > > +       struct device *dev =3D kunit_device_register(test, DEVICE_NAM=
-E);
-> > > +
-> > > +       KUNIT_ASSERT_PTR_NE(test, NULL, dev);
-> > > +
-> > > +       pm_runtime_enable(dev);
-> > > +
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_get_sync(dev));
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_active(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_runtime_get_sync(dev)); /* "alrea=
-dy active" */
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_put_sync(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_put_sync(dev));
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +}
-> > > +
-> > > +/* Test pm_runtime_put() and friends when already suspended. */
-> > > +static void pm_runtime_already_suspended_test(struct kunit *test)
-> > > +{
-> > > +       struct device *dev =3D kunit_device_register(test, DEVICE_NAM=
-E);
-> > > +
-> > > +       KUNIT_ASSERT_PTR_NE(test, NULL, dev);
-> > > +
-> > > +       pm_runtime_enable(dev);
-> > > +
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +       pm_runtime_get_noresume(dev);
-> > > +
-> > > +       /* Flush, in case the above (non-sync) triggered any work. */
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_barrier(dev)); /* no wake=
-up needed */
-> >
-> > Why do you run pm_runtime_barrier(dev) here?  It is guaranteed that no
-> > requests are pending at this point.
->
-> I suppose my thought is as somewhat of an outsider, that's not really
-> familiar with exactly how each API is supposed to work. So without
-> looking into the details of the implementation, it's not clear to me
-> that a "get_noresume()" will never queue any work. Admittedly, that's a
-> pretty weak reason.
->
-> OTOH, it does serve to test the 0 side of the API contract:
->
-> """
->  * 1, if there was a resume request pending and the device had to be woke=
-n up,
->  * 0, otherwise
-> """
->
-> So IMO, it's a reasonable thing to run in this test, although I probably
-> should drop the "Flush" comment.
+I think common ARCH maintainer part should only include core port of SOC.
 
-Yeah, changing the comment would help.
+PCI driver should be sperated entry.
 
-> > > +
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> >
-> > This has already been tested above.
->
-> I'm not really an expert on unit testing and style, but the whole point
-> of this test (named "already_suspended") is that we're testing each
-> operation when the device is suspended. So it's many series of:
->
-> 1. set up some precondition
-> 2. assert that the device is (still) suspended
-> 3. test that an API returns the expected value for "already suspended"
->
-> Even if #1/#3 aren't likely to affect #2 for a later sequence, it seems
-> like a good pattern to actually test that this continues to remain true
-> each time. If the test changes in the future such that we perform
-> something different in #1, we might find ourselves not testing "already
-> suspended" behavior in #3.
->
-> Alternatively, I could split each #1/#2/#3 sequence into its own
-> subtest, but that might get a little excessive.
->
-> Anyway, like I said, it's probably some matter of opinion/style. I can
-> drop some of these checks if you still think they have no place here.
+see PCI DRIVER FOR IMX6
 
-I would do just two of them, one at the beginning and one at the end.
-It should be an invariant for everything in between.
-
-> > > +       /*
-> > > +        * We never actually left RPM_SUSPENDED, but rpm_idle() still=
- treats
-> > > +        * this as -EAGAIN / "runtime PM status change ongoing".
-> >
-> > No, this means "Conditions are not suitable, but may change".
+Frank
 >
-> I'm just quoting the API docs for put():
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> ---
+>  MAINTAINERS | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
-> """
-> * * -EAGAIN: Runtime PM usage_count non-zero or Runtime PM status change =
-ongoing.
-> """
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index cd7ff55b5d32..fa45862cb1ea 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3084,12 +3084,16 @@ R:	Chester Lin <chester62515@gmail.com>
+>  R:	Matthias Brugger <mbrugger@suse.com>
+>  R:	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
+>  R:	NXP S32 Linux Team <s32@nxp.com>
+> +L:	imx@lists.linux.dev
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+> +F:	Documentation/devicetree/bindings/pci/nxp,s32-pcie.yaml
+>  F:	Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
+>  F:	arch/arm64/boot/dts/freescale/s32g*.dts*
+> +F:	drivers/pci/controller/dwc/pci-s32g*
+>  F:	drivers/pinctrl/nxp/
+>  F:	drivers/rtc/rtc-s32g.c
+> +F:	include/linux/pcie/nxp-s32g-pcie-phy-submode.h
 >
-> If that's the wrong language, then we should update the API doc. At any
-> rate, I'm not sure what's "unsuitable" about a suspended device when we
-> call put(). It's not unsuitable -- it's already in the target state!
+>  ARM/NXP S32G/S32R DWMAC ETHERNET DRIVER
+>  M:	Jan Petrous <jan.petrous@oss.nxp.com>
+> --
+> 2.43.0
 >
-> Notably, I'm also changing this behavior in patch 2, since I think it's
-> an API bug. And the comment then goes away.
-
-Yeah, so I'd prefer to change this particular thing entirely,
-especially in the face of
-
-https://lore.kernel.org/linux-pm/5049058.31r3eYUQgx@rafael.j.wysocki/
-
-which quite obviously doesn't take the return value of
-pm_runtime_put() and pm_runtime_put_sutosuspend() into account.
-
-I would like these two functions to be void.
-
-Of course, there are existing users that check their return values,
-but I'm not sure how much of a real advantage from doing that is.  At
-least some of those users appear to not exactly know what they are
-doing.
-
-> > > +        */
-> > > +       KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_put(dev));
-> > > +
-> > > +       pm_runtime_get_noresume(dev);
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> >
-> > This has been tested already twice and why would it change?
->
-> Addressed above. I can drop it if you think it's excessive.
->
-> > > +       KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_put_sync(dev));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_runtime_suspend(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_runtime_autosuspend(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_request_autosuspend(dev));
-> > > +
-> > > +       pm_runtime_get_noresume(dev);
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> >
-> > There's no way by which it could change above.
->
-> Same.
->
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_runtime_put_sync_autosuspend(dev)=
-);
-> > > +
-> > > +       pm_runtime_get_noresume(dev);
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_runtime_put_autosuspend(dev));
-> > > +
-> > > +       /* Grab 2 refcounts */
-> > > +       pm_runtime_get_noresume(dev);
-> > > +       pm_runtime_get_noresume(dev);
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +       /* The first put() sees usage_count 1 */
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_put_autosuspend(dev));
-> > > +       /* The second put() sees usage_count 0 but tells us "already =
-suspended". */
-> > > +       KUNIT_EXPECT_EQ(test, 1, pm_runtime_put_autosuspend(dev));
-> > > +
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> >
-> > Again, there is no way this can change in the whole test.
->
-> Same.
->
-> > > +}
-> > > +
-> > > +static void pm_runtime_idle_test(struct kunit *test)
-> > > +{
-> > > +       struct device *dev =3D kunit_device_register(test, DEVICE_NAM=
-E);
-> > > +
-> > > +       KUNIT_ASSERT_PTR_NE(test, NULL, dev);
-> > > +
-> > > +       pm_runtime_enable(dev);
-> > > +
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_get_sync(dev));
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_active(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_idle(dev));
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_active(dev));
-> > > +       pm_runtime_put_noidle(dev);
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_active(dev));
-> > > +       KUNIT_EXPECT_EQ(test, 0, pm_runtime_idle(dev));
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EAGAIN, pm_runtime_idle(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EAGAIN, pm_request_idle(dev));
-> > > +}
-> > > +
-> > > +static void pm_runtime_disabled_test(struct kunit *test)
-> > > +{
-> > > +       struct device *dev =3D kunit_device_register(test, DEVICE_NAM=
-E);
-> > > +
-> > > +       KUNIT_ASSERT_PTR_NE(test, NULL, dev);
-> > > +
-> > > +       /* Never called pm_runtime_enable() */
-> > > +       KUNIT_EXPECT_FALSE(test, pm_runtime_enabled(dev));
-> > > +
-> > > +       /* "disabled" is treated as "active" */
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_active(dev));
-> > > +       KUNIT_EXPECT_FALSE(test, pm_runtime_suspended(dev));
-> > > +
-> > > +       /*
-> > > +        * Note: these "fail", but they still acquire/release refcoun=
-ts, so
-> > > +        * keep them balanced.
-> > > +        */
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_get(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_put(dev));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_get_sync(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_put_sync(dev));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_get(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_put_autosuspend(dev=
-));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_resume_and_get(dev)=
-);
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_idle(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_request_idle(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_request_resume(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_request_autosuspend(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_suspend(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_resume(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EACCES, pm_runtime_autosuspend(dev));
-> > > +
-> > > +       /* Still active */
-> >
-> > Still disabled rather.
->
-> Ack, will change.
->
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_active(dev));
-> > > +}
-> > > +
-> > > +static void pm_runtime_error_test(struct kunit *test)
-> > > +{
-> > > +       struct device *dev =3D kunit_device_register(test, DEVICE_NAM=
-E);
-> > > +
-> > > +       KUNIT_ASSERT_PTR_NE(test, NULL, dev);
-> > > +
-> > > +       pm_runtime_enable(dev);
-> > > +       KUNIT_EXPECT_TRUE(test, pm_runtime_suspended(dev));
-> > > +
-> > > +       /* Fake a .runtime_resume() error */
-> > > +       dev->power.runtime_error =3D -EIO;
-> > > +
-> > > +       /*
-> > > +        * Note: these "fail", but they still acquire/release refcoun=
-ts, so
-> > > +        * keep them balanced.
-> > > +        */
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_get(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_put(dev));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_get_sync(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_put_sync(dev));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_get(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_put_autosuspend(dev=
-));
-> > > +
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_resume_and_get(dev)=
-);
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_idle(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_request_idle(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_request_resume(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_request_autosuspend(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_suspend(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_resume(dev));
-> > > +       KUNIT_EXPECT_EQ(test, -EINVAL, pm_runtime_autosuspend(dev));
-> > > +
-> > > +       /* Still suspended */
-> >
-> > Error is still pending.
->
-> Your statement is true, but I'm not quite sure what you're suggesting.
-> Are you suggesting I should
->
->         KUNIT_EXPECT_EQ(test, -EIO, dev->power.runtime_error);
->
-> ?
->
-> Or are you suggesting I change the comment?
-
-Change the comment.
-
-> I'm thinking I'll do both.
-
-That will work too.
 
