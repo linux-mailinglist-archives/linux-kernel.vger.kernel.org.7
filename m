@@ -1,437 +1,276 @@
-Return-Path: <linux-kernel+bounces-823991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27647B87E14
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:51:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB03AB87E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80C207B2A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:50:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B9F1C84220
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7818225A355;
-	Fri, 19 Sep 2025 04:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B91F26E16A;
+	Fri, 19 Sep 2025 04:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z8MkYVos"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010042.outbound.protection.outlook.com [52.101.85.42])
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="JHbqVxpU"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE87225D6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758257495; cv=fail; b=WyHXPEGPeNgjjwTrn8qTiS3AQmHW7nOnnGCkZyuzBOiWbTTKrn46TBBQ4tsj1b7x0PS9eczhPRcsNT955YHQs/9IjHrm9QTcQ306PjfjSSg1P1zxs+tgGgB6nQFuGD6pBELayqIPujDqKJ+DjULpzzPAu4qNp/yg5u42QrVSYzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758257495; c=relaxed/simple;
-	bh=fW+tg0IHjz+U6njWUzimJOgow4+V6SL5sVNPYWZt4M8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pkwtltBqbt3Cu9agQgEAl1S5JGBhff2nyAsCdwp0a1xfmnvAHXjRg7sRyey41gNBodAb8dLUgftUcgexGdlKMPrEQO30JV8G7DESK56GIUKKbZ5zNeBQPz4kIeHCwDTNRDTM+2xnk/1DmmgnuFT+25agw0dVRU1yRXvCmuLtmFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z8MkYVos; arc=fail smtp.client-ip=52.101.85.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vAuNwus/TVrbmGcf9wwJAHCQgvmGPGNe6MVEx6+jC5JtaZBIp9VAUOep+AeTm9/LbTEwupshSBjzSFhb0xyWeCW3fiq3C231x5iL5P+geCVuGhlPZ7Qj3aDbxefn3A/edNmU+lMmBDOcMzdX9ffDMwXU3ONnxuXB6ZUEoeeLVVyCT6a656N7nmgKR+3lWHuoMTVe0IcqB/GpZeFHlOi5bU0tfKfK79tkLVngTsBtbYssejTwD3BWKR/S5S8IJIzWYMZGD+9JdcMlwG6QZ6gSU0uxkVUsOTvRXHR2GidKZXjEY62DofB4Xs2zqTwxwghV+Yb7EHxnfpMeSX4n7DpOcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EsAstO579vDi/kBFDhyR/KaZwekQUHXAGBhjfoPozPI=;
- b=i9bf0hUjVKT+5JwvcuetM9cVVOqWSRpM5w8HfnTeq8OOdtYT+j8Jzh2O/g31rKVLgaBQnBIPPz9/WHAXbm2ZY7o+Y5/N9/oVEFCJxyThlztyX8THaEJLLwb5G+GprPCdSB9LRko67fXyn6D75+p1qEAv7KFWItXWwGpTJVSiT4ojGIgNCvp1eK2YbedtbcRjMnLRbal+VVzChoQkV80Y6VnNJc74jMKC8+lZyRJCqoUQb0gH0ZM3yTMWXz3NtTphdeesf48LFbTzJKQnZY1fb1VRQk4tT3rm/xwwygz5tzui+8eQheZfdXlNxtY38tPE4cPrF9cdfheGQBpsZ5wskw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EsAstO579vDi/kBFDhyR/KaZwekQUHXAGBhjfoPozPI=;
- b=Z8MkYVos93QoYQaecFgZ7yUZAOw3diIkWHI3k0QwgVhVV7jiESKEq/8UByjm7DCEowRiLzGELgD2T8eemaQQTXkXk7zOOAj/M5226zOzm7AgQxK5W+ZE/yuubv80h9ZoSMTj6S+r7Ms2U0RBJNIKQwrNr0Y/OKKNcgMqjNTKe85+66t5JB+M3ivXRliaNnijUXUEEB9IWgManfueffLdkS4ZIRdde3P2dMTEutlY7gsSaI0Y9rZXVvH+W3A1E6gADPfhJYzQbakCOZioVGS3sAexLD9myoKg3DaM0iuuPjqExHPKWhJnBIHIS0FSmbJ3nApZJCuist4c2EY52RtzDA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by DM4PR12MB6376.namprd12.prod.outlook.com (2603:10b6:8:a0::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.23; Fri, 19 Sep
- 2025 04:51:28 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 04:51:27 +0000
-Message-ID: <5b9da42e-49a2-4229-81ce-625ce00ed7b2@nvidia.com>
-Date: Fri, 19 Sep 2025 14:51:20 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 02/15] mm/huge_memory: add device-private THP support to PMD
- operations
-To: Zi Yan <ziy@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
- dri-devel@lists.freedesktop.org, Matthew Brost <matthew.brost@intel.com>,
- David Hildenbrand <david@redhat.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Alistair Popple <apopple@nvidia.com>,
- Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-3-balbirs@nvidia.com>
- <2A0E854D-0B0B-48A8-A87F-E9D38C6823EF@nvidia.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <2A0E854D-0B0B-48A8-A87F-E9D38C6823EF@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR04CA0017.namprd04.prod.outlook.com
- (2603:10b6:a03:40::30) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E2225D6;
+	Fri, 19 Sep 2025 04:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758257600; cv=none; b=HqqKBnaSrO7mqNHICaRBte7R7OAu4/2dG2RaY4U2J1tkVZbv1yEwrlKJFzjedKJygMPISqQeK9IQP8rg/WMdurJzjx2QFjd5D0/TFMcoh1Tti2YixauDPWT/AykPMjdw7+nIC5CZnfBwM0KtcwIyTgfuNy0ZTXrsziIq7JLe5fU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758257600; c=relaxed/simple;
+	bh=niu7L+XutTuM3epi/bM8qF5I6wt7+HOjmYexFOsl1UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahXOluqpbufmlUMktjBi8ktgiCLll4dCRUNE0w4fbfhQF/RJN3aP0j4yHwMVsxhn8fUGPv8DZm+yo4C+kJbLX1IunrUKsLVYdJHX/Sl4zrztlo9QNJVhfidCxDcwkWiPDkO9ZQDyY4itj65dPxiAwjtCDI4nwxHaU1qSNCPR0ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=JHbqVxpU; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=gibson.dropbear.id.au; s=202508; t=1758257587;
+	bh=onjWscOdRIHhKfOV71/ABj9CnTyOdEOjdicJ6axOKFA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JHbqVxpUH0n3TUEyNVoowW7u18AX60XuyY14nUNseZtxgqh30HFFEgjXhKPFCJ+iK
+	 rnYelAGmNpeYRKZL3axvFw/4BYVtT4Y7+qJncABpLid18YCMy0Oh2Eru3+8Iz7z3DX
+	 C5AG6RkDmcycxJqbhMHF6Lg1Uih99a7frIoQpYtcZ1F2405nTz/xm/suiuo620t/Fy
+	 ogZ9V9X8IYqmI7RK5eHjWFEhabj1m+t0knsFV0J2Ha0rMauiJJSX0fD3P9KDz3CrNE
+	 +bhKSxkFFy0iM2s2EwINK1IKAhPRNJaoM6Jh3+b3K/qGnKDfrTSEo/0IoIdFlW+uHf
+	 /FZpuLiCgWHxA==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4cSg9v5DF3z4wCP; Fri, 19 Sep 2025 14:53:07 +1000 (AEST)
+Date: Fri, 19 Sep 2025 14:52:16 +1000
+From: David Gibson <david@gibson.dropbear.id.au>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+	Andrew Davis <afd@ti.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ayush Singh <ayush@beagleboard.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <aMzhgDYOuG4qNcc0@zatzit>
+References: <aL5dNtzwiinq_geg@zatzit>
+ <20250908145155.4f130aec@bootlin.com>
+ <aL-2fmYsbexEtpNp@zatzit>
+ <20250909114126.219c57b8@bootlin.com>
+ <aMD_qYx4ZEASD9A1@zatzit>
+ <20250911104828.48ef2c0e@bootlin.com>
+ <aMebXe-yJy34kST8@zatzit>
+ <20250916084631.77127e29@bootlin.com>
+ <aMt5kEI_WRDOf-Hw@zatzit>
+ <20250918094409.0d5f92ec@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|DM4PR12MB6376:EE_
-X-MS-Office365-Filtering-Correlation-Id: 528f0d3e-6826-4ec6-00b0-08ddf7383140
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|10070799003|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c2xxeUZoS0lseURlTnN1Q1d0WGhGNkpGYlMzV0dQNTR0ZTFaWGlYUjl6TXhR?=
- =?utf-8?B?M3M1RFNJZEpzdmVIRktzSDBaOVF4UXk2RkNaNUJEbGtQWTdVTHVlZmNxbFZD?=
- =?utf-8?B?ajgzSkhxZUh2QUU1R256L0tKb1NNcng0d2R4dXdrbjNkV01vYXBZbnA2STRu?=
- =?utf-8?B?VE1UOHlWVHZiNTkrMkhPTHJzYnY1TThZVk5YelF0dzdVWW9hS0tqVlJRL091?=
- =?utf-8?B?NGh0WldhTkNiTXRoZk1vK3JWTFF2Vml4SFh3SGREemtWNG02dm54R1I0RWxM?=
- =?utf-8?B?TU8raGQ2K1FkbXV0M3ZSVjMrRkU0N0Q3YzlOWGRFbTQrM2dRSndzdzE2N2gv?=
- =?utf-8?B?VGJnVFRIL3M0NWlCTTR5KzA5Tk1xNzBVRThCMW9ldmZIQ1MwcFpzR0hYK2wy?=
- =?utf-8?B?MjFCT1lOaHNZb0dEaVBOZ05kTHFTYUJCeDBBZkcrRzROUE5sWmp0TkEwbzcw?=
- =?utf-8?B?ZXlCakdQTC8xLzdwMDVaanhMRzl2WCt0NTJEMXdhekx6YlNhYW03R1lpN0w2?=
- =?utf-8?B?TFBzUW5DKzJnbVFseW9qK2Y5eFpFbE1FaTNEdVFsWEswSndhTmRLSEhzSmtv?=
- =?utf-8?B?SzlJTmQ4Tml1czQ2U0dRYTNjSkJVYnJaWTd5Wk90MXA2MXM1bHFnQjlBL29S?=
- =?utf-8?B?V2RCR0R0SGM1cEhDOE5IdmNta3dPbVRnN21zemdQNXNpWUcwb2JoRWptbzZz?=
- =?utf-8?B?NXpSdU5QaUhmdk11YW04Tll2SDRmNGNmWlk1TGtJQ0dpV00wZkFEazFtVExj?=
- =?utf-8?B?ZVF5ZllVcWpodG5oSkJMd2svM3UwOFZtbXF6OEdiTElZNEUyMXBjYmVVR2xs?=
- =?utf-8?B?TjJvdEVXMjRvMHRvelJiTTEyUlA0ZDFBazJoZlZVa04wdVhKR2NON0hIMktB?=
- =?utf-8?B?ZGJHSTNqWVZJc2NQcGZUNlE0N1c5bU9yTkZUbXlrMkRPOVFVVkxqMUlBOGFF?=
- =?utf-8?B?dG4vZnd0clpFMitMbEQrVzhvSHo0WlNpdmxxdFVLZ1hTUjNqNmVCMUVIK2t6?=
- =?utf-8?B?RCtHNjhCNGJhZk91T3l3ZFVkTEFWc1JHakRaSDRyRzhKUERaeTRyVWs3RFVk?=
- =?utf-8?B?aUZTOTJ2SXVhUVlOb2krWWNQbk5aVnZ4YnNMaU1uVWQvUi9SRldIZUFIeUIw?=
- =?utf-8?B?amY4N2x3STNaTmJmc3BaUWRvZFhSUUt2VllpYi82cUNYd3dJRzlxeVovNnZh?=
- =?utf-8?B?eEhtVUhBV04yaDlPbVdNTUZhWnRxeWFoRnY3VW9Yam5Hem1vU2RzZDNpMUE1?=
- =?utf-8?B?T1grOG1CREVORU43YWhHVHhIN3k0R29iUWhETzBuOENwL0tWNkJlVCs5SUVk?=
- =?utf-8?B?dXpJTDBxREtwdlJsMGJKZGJvTUkySjc5NnV4RTk4UlFsaGpiQXEwZDNKdFdh?=
- =?utf-8?B?ZmdaczNvRkVZSXRDcitnNTVaMC9VZ3JDL0Fwbmk3TjM5K1gvM3lhOEpKenYx?=
- =?utf-8?B?R2ZoT0dPbkhCNnBRYklrd0wvOEdyY0NUWGFsdFB3Vm5MRkVFRlp4SllxZ1Js?=
- =?utf-8?B?RVAyM0V5U25BanVmRXZkQ3Bld3VWSkRYb2hmWTRwdlZpUlp1YlFrb1EreTVo?=
- =?utf-8?B?cXoyWnREK0JzTFFGd2hMV1JWQWJSdmRIVzUxdnJqeTAzWHhzQnNsWGRSMzVG?=
- =?utf-8?B?RUZ1SHJ1TW1iSlhqRXZOVzB3RW9SdE5sczBLOFdKRTdJUmdUUFdJTWF1SGw4?=
- =?utf-8?B?SGx5OVJYRldJanlIOFUrMkRoY0dBemlmTEtlTzNvdHpCSnY0Wnp6dytFK0gv?=
- =?utf-8?B?eHQ4N3RvNkVrTTV3RGVkalFWNW1vQmFBcnBHenFuTGpMclY4OWlQQWZ4RTFU?=
- =?utf-8?B?aWp0cmJLWXcxWVRFZ2xmU0xWU3BFVEhWbGQ3SUpLai9kZ21vc000WTROaHJB?=
- =?utf-8?B?ZEcxRHNUSjd0SWJrR1RjQzRyaGhOSkU5NmtTeVVjekpONlZFSGFVdkRxZnRE?=
- =?utf-8?Q?IoKT9w1bJMM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WS9IaTBjRDBkMDN3M09YNUx3eTY5bnpnaGhDRjhGaWVkZ3hYU3FCdGFsbzhX?=
- =?utf-8?B?NmF2Zklzc0oxb0JNTlFRM2NuMnRESlZtb1UyaVdEeDl2SzBxWFR5eEh5cW1B?=
- =?utf-8?B?MjlNNXJ2VFMwWmdOY2Ura0NERDBiT20wK0cybTVjNnE3L09OVDluWi9ib3J5?=
- =?utf-8?B?WTVFWXZtcm5yVHhzb0FSZDJRTHJIb2xqaWlQZ0txdVVWdU56djdVVmFhdEZw?=
- =?utf-8?B?Z2lMSTJFZlpZMHlzSTd6bjB4VGZoUS9qMFc2MXBFb01IbXVkMEdIdlJqTm8r?=
- =?utf-8?B?L29iYUYwVTBZMkZnMHE2OXh3YmdVRG1TTnNNYUROdjZoRXl1ZjZYVTNyN2t3?=
- =?utf-8?B?MEJxNmFTdXpUeW93U3d4dVR4dGdpbnAxcjkvR0xZUFlhdFpxTWtvNTV4aEhR?=
- =?utf-8?B?cFpNV0dRYjlXRDJDUlhhUXdwYkI2UmE1dldtdnB2K2NkZG1IR1pSRlNWR2NX?=
- =?utf-8?B?TDNNU25qNUZJeFB5Y0hZbElQZU0rYkoybnJtT2dCL3orbFRUQXpCOFdwOHRz?=
- =?utf-8?B?RWxnWTg5Rnl2VjJoWU9vU3pDUnY3MTRtRjZob0ozdUpSQ3RlTG16QUh5bm1G?=
- =?utf-8?B?RU40Nmp4bzNmcG9UL2hPeDVmaDA2dW5tNDhMdCtNeGorK281ZmZQOW1IOWxL?=
- =?utf-8?B?a0gxY1BzaTVZOXQrNmJEcldnWGs3QWNPSlhxQ0FRMUpoN2YwZEVpVllZMWh5?=
- =?utf-8?B?cVVTWDdNRVhGZ0NqOHNZbXBreWd3b3VCczk1VlVaNUdvajl5TG5LelpMdktp?=
- =?utf-8?B?WU95aTlhb2FHM1NxVFpZNzFPVDh3a3d5M1hPc0x0UWl6MHJxcGQyVU1EalQr?=
- =?utf-8?B?SHBnMXZSeFdua3lWMldmMFI0RnVmaERoM1MzUkZGMW1TRkFZVlhldWFScU40?=
- =?utf-8?B?bXl6dWpmV2tLK1liT2VOeEFYRmdyK0poWEhWb2xONVZjSHBuYlQwcm8yZlZz?=
- =?utf-8?B?VGFLcTJiKzAyRGtGc3d2TTFkL1d0aFRZdGg1ZnhXVkF2TmZ0SkZMQUNkZzVv?=
- =?utf-8?B?ODYrODFqZEZTcGVJbmQ0ZVl2WjByajNCNnEybEFjUURteVBOaDljOHZMU0JX?=
- =?utf-8?B?NkZYb29JWXA1OFF3emNlZUo1T0Roa0daKzF2b3V2dFg1eGljcUlpdWpkeGp1?=
- =?utf-8?B?dkNMWEF5VnMxamxHelljQXZmTVhoSTZTa0s0S2xvczJzZENtVXB5dGMrMnRp?=
- =?utf-8?B?eHdXVTFlTHIzc1FQeVVhVnM4MVV3SkpSdlZ2MEdRQ0IyRGErOHVoM2c2NjN5?=
- =?utf-8?B?eFFIbmE2TSs0TUh5MUIyNDRxbGl6TkFCUUFDOWc0enRyMEFNYW1GZTkvTW9Z?=
- =?utf-8?B?K1J2eCtPejRrRmU3Uk5vZmt1RkFWOU9pZnRQaWErN08ydHcvazJsVkFxV0Nv?=
- =?utf-8?B?em0ydXAzYTR3NFhHZDBtdnJzMnhYaDRNVXFFMHhpRkhEYWFDVnU4Z1RNM0h6?=
- =?utf-8?B?NkdrOStJRnBuYmxTUTF5THdpQ2JQeDlHRXRMT3JIT2tTUEpLUDl4em1MWXRP?=
- =?utf-8?B?cDFha1ljOEFWeGFGRVBpc0ZCanRqUjhOMEFxYmdid25GcDJQNjFUT2VjV0J0?=
- =?utf-8?B?aHF3LzRiclMzU2tHWWs2Qk90cUhVMFYvaEgyTVlZMElCZWt2OE9vT0hHU1dF?=
- =?utf-8?B?cE1Mbk1aT3dOVnVUUWwxcGlDMEVCeEtXb2pQYWFlZEZVTVp2TkNVek5PbUE0?=
- =?utf-8?B?ZFNmcjhCSWxGTXZlTzlYY2UxOUg2VmFtT2x5aHU0TTdtQW13eEhJUXNEeEp6?=
- =?utf-8?B?ZVJLQWc3OVNuVzZOOHZ0cWl3UW1ZUUVDL1RoOVZzYlhYRStKcnB4aHJBdk16?=
- =?utf-8?B?dUdXQXV2dVYwSmdEeGFsZ3RBTGRaUW4xL3JpSEltdy9od2h1ZDY5UzJDVUNw?=
- =?utf-8?B?NHVmS0t6bFJDMWNtVUsxOVJlNjRxRy9EVnVFdTgrd3h3d05nQmdFUTBKSEwx?=
- =?utf-8?B?Wm1ON0s1SjFaZllyeWVGaXRUaHZ4elZVRGU1K1IyeVlBVXlTWmhXQlpCQ0lE?=
- =?utf-8?B?Z2loOGdDRzFuRkRkSHlQbE5kcnR5YkpSRGV5SHdsd21mUTY3NWIwNkdXR2hH?=
- =?utf-8?B?dHhITHByengxT0hRNHpqdkxlVU9xSEs1NlY4S3I4UHJqY2duSmtKdHhDQWNy?=
- =?utf-8?B?aVNyNFMyeFpNTjRjczJkNUhHZytnMVJtZUdOVmwvbUwzeXZlSEVJcFdZcWV5?=
- =?utf-8?Q?MPNYVV6Y9P1Pk8xKM0gtiquq9u4pcuPovj6Yc/tG/llj?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 528f0d3e-6826-4ec6-00b0-08ddf7383140
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 04:51:27.5336
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eGqWPaJBWS9wodzUyMuTk9A4G+4AtThMSjXgKDIRvalkQCMd85b7NstNXmF0W5xWPwXG/Vf+T9X3/SCcNTgCdA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6376
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H7/fQSG5jrECq+gd"
+Content-Disposition: inline
+In-Reply-To: <20250918094409.0d5f92ec@bootlin.com>
 
-On 9/19/25 04:45, Zi Yan wrote:
-> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
-> 
->> Extend core huge page management functions to handle device-private THP
->> entries.  This enables proper handling of large device-private folios in
->> fundamental MM operations.
->>
->> The following functions have been updated:
->>
->> - copy_huge_pmd(): Handle device-private entries during fork/clone
->> - zap_huge_pmd(): Properly free device-private THP during munmap
->> - change_huge_pmd(): Support protection changes on device-private THP
->> - __pte_offset_map(): Add device-private entry awareness
->>
->> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
->> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->> Cc: Rakie Kim <rakie.kim@sk.com>
->> Cc: Byungchul Park <byungchul@sk.com>
->> Cc: Gregory Price <gourry@gourry.net>
->> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->> Cc: Alistair Popple <apopple@nvidia.com>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Lyude Paul <lyude@redhat.com>
->> Cc: Danilo Krummrich <dakr@kernel.org>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Ralph Campbell <rcampbell@nvidia.com>
->> Cc: Mika Penttilä <mpenttil@redhat.com>
->> Cc: Matthew Brost <matthew.brost@intel.com>
->> Cc: Francois Dugast <francois.dugast@intel.com>
->> ---
->>  include/linux/swapops.h | 32 +++++++++++++++++++++++
->>  mm/huge_memory.c        | 56 ++++++++++++++++++++++++++++++++++-------
->>  mm/pgtable-generic.c    |  2 +-
->>  3 files changed, 80 insertions(+), 10 deletions(-)
->>
->> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
->> index 64ea151a7ae3..2687928a8146 100644
->> --- a/include/linux/swapops.h
->> +++ b/include/linux/swapops.h
->> @@ -594,10 +594,42 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
->>  }
->>  #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
->>
->> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
->> +
->> +/**
->> + * is_pmd_device_private_entry() - Check if PMD contains a device private swap entry
->> + * @pmd: The PMD to check
->> + *
->> + * Returns true if the PMD contains a swap entry that represents a device private
->> + * page mapping. This is used for zone device private pages that have been
->> + * swapped out but still need special handling during various memory management
->> + * operations.
->> + *
->> + * Return: 1 if PMD contains device private entry, 0 otherwise
->> + */
->> +static inline int is_pmd_device_private_entry(pmd_t pmd)
->> +{
->> +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
->> +}
->> +
->> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
->> +
->> +static inline int is_pmd_device_private_entry(pmd_t pmd)
->> +{
->> +	return 0;
->> +}
->> +
->> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
->> +
->>  static inline int non_swap_entry(swp_entry_t entry)
->>  {
->>  	return swp_type(entry) >= MAX_SWAPFILES;
->>  }
->>
->> +static inline int is_pmd_non_present_folio_entry(pmd_t pmd)
->> +{
->> +	return is_pmd_migration_entry(pmd) || is_pmd_device_private_entry(pmd);
->> +}
->> +
-> 
-> non_present seems too vague. Maybe just open code it.
 
-This was David's suggestion from the previous posting, there is is_swap_pfn_entry()
-but it's much larger than we would like for our use case.
+--H7/fQSG5jrECq+gd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> 
->>  #endif /* CONFIG_MMU */
->>  #endif /* _LINUX_SWAPOPS_H */
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 5acca24bbabb..a5e4c2aef191 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1703,17 +1703,45 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->>  	if (unlikely(is_swap_pmd(pmd))) {
->>  		swp_entry_t entry = pmd_to_swp_entry(pmd);
->>
->> -		VM_BUG_ON(!is_pmd_migration_entry(pmd));
->> -		if (!is_readable_migration_entry(entry)) {
->> -			entry = make_readable_migration_entry(
->> -							swp_offset(entry));
->> +		VM_WARN_ON(!is_pmd_non_present_folio_entry(pmd));
->> +
->> +		if (is_writable_migration_entry(entry) ||
->> +		    is_readable_exclusive_migration_entry(entry)) {
->> +			entry = make_readable_migration_entry(swp_offset(entry));
->>  			pmd = swp_entry_to_pmd(entry);
->>  			if (pmd_swp_soft_dirty(*src_pmd))
->>  				pmd = pmd_swp_mksoft_dirty(pmd);
->>  			if (pmd_swp_uffd_wp(*src_pmd))
->>  				pmd = pmd_swp_mkuffd_wp(pmd);
->>  			set_pmd_at(src_mm, addr, src_pmd, pmd);
->> +		} else if (is_device_private_entry(entry)) {
->> +			/*
->> +			 * For device private entries, since there are no
->> +			 * read exclusive entries, writable = !readable
->> +			 */
->> +			if (is_writable_device_private_entry(entry)) {
->> +				entry = make_readable_device_private_entry(swp_offset(entry));
->> +				pmd = swp_entry_to_pmd(entry);
->> +
->> +				if (pmd_swp_soft_dirty(*src_pmd))
->> +					pmd = pmd_swp_mksoft_dirty(pmd);
->> +				if (pmd_swp_uffd_wp(*src_pmd))
->> +					pmd = pmd_swp_mkuffd_wp(pmd);
->> +				set_pmd_at(src_mm, addr, src_pmd, pmd);
->> +			}
->> +
->> +			src_folio = pfn_swap_entry_folio(entry);
->> +			VM_WARN_ON(!folio_test_large(src_folio));
->> +
->> +			folio_get(src_folio);
->> +			/*
->> +			 * folio_try_dup_anon_rmap_pmd does not fail for
->> +			 * device private entries.
->> +			 */
->> +			folio_try_dup_anon_rmap_pmd(src_folio, &src_folio->page,
->> +							dst_vma, src_vma);’
-> 
-> folio_get() and folio_try_dup_anon_rmap_pmd() are needed, because
-> contrary to the migration entry case, this folio exists as
-> a device private one.
-> 
+On Thu, Sep 18, 2025 at 09:44:09AM +0200, Herve Codina wrote:
+> Hi David,
+>=20
+> On Thu, 18 Sep 2025 13:16:32 +1000
+> David Gibson <david@gibson.dropbear.id.au> wrote:
+>=20
+> ...
+>=20
+> > > > Thoughts above suggest a different direction, but here's what I was
+> > > > thinking before:
+> > > >=20
+> > > > base board:
+> > > >=20
+> > > > 	connector {
+> > > > 		/export/ "i2c" &i2c0;
+> > > > 	};
+> > > >=20
+> > > > addon:
+> > > > 	eeprom@10 {
+> > > > 		compatible =3D "foo,eeprom";
+> > > > 		bus-reg =3D <&i2c 0x10>;
+> > > > 	}
+> > > >=20
+> > > > Or, if the addon had multiple i2c devices, maybe something like:
+> > > >=20
+> > > > 	board-i2c {
+> > > > 		compatible =3D "i2c-simple-bridge";
+> > > > 		bus-ranges =3D <&i2c 0 0x3ff>; /* Whole addr space */
+> > > > 		eeprom@10 {
+> > > > 			compatible =3D "foo,eeprom";
+> > > > 			reg =3D <0x10>;
+> > > > 		}
+> > > > 		widget@20 {
+> > > > 			compatible =3D "vendor,widget";
+> > > > 			reg =3D <0x20>;
+> > > > 		}
+> > > > 	}
+> > > >=20
+> > > > Writing that, I realise I2C introduces some complications for this.
+> > > > Because it has #size-cells =3D <0>, ranges doesn't really work (wit=
+hout
+> > > > listing every single address to be translated).  Likewise, because =
+we
+> > > > always need the parent bus phandle, we can't use the trick of an em=
+pty
+> > > > 'ranges' to mean an identity mapping.
+> > > >=20
+> > > > We could invent encodings to address those, but given the addon with
+> > > > multiple connectors case provides another incentive for a single
+> > > > connector to allow adding nodes in multiple (but strictly enumerate=
+d)
+> > > > places in the base device tree provides a better approach. =20
+> > >=20
+> > > and the "place in base device tree" is the goal of the extension bus.
+> > >=20
+> > > The strict enumeration of nodes enumerated is done by two means:
+> > >  - extension busses at connector level
+> > >    Those extensions are described as connector sub-nodes.
+> > >    The addon DT can only add nodes in those sub-nodes to describe dev=
+ices
+> > >    connected to the relared extension bus.
+> > >  - export symbols
+> > >    An addon DT can only use symbols exported to reference symbols out=
+side
+> > >    the addon DT itself.
+> > >=20
+> > > Can I assume that bus extensions we proposed (i2c-bus-extension and
+> > > spi-bus-extension) could be a correct solution ? =20
+> >=20
+> > Maybe?  I prefer the idea of a universal mechanism, not one that's
+> > defined per-bus-type.
+> >=20
+> >=20
+> > Also, IIUC the way bus extension operates is a bit different - nodes
+> > would be "physically" added under the bus extension node, but treated
+> > logically as if they go under the main bus.  What I'm proposing here
+> > is something at the actualy overlay application layer that allows
+> > nodes to be added to different parts of the base device tree - so you
+> > could add your i2c device under the main i2c bus.
+>=20
+> I think we should avoid this kind of node dispatching here and there in
+> the base DT.
 
-Is that a question?
+Until I saw Geert's multi-connector case, I would have agreed.  That
+case makes me thing differently: in order to support that case we
+already have to handle adding information in multiple places (under
+all of the connectors the addon uses).  Given we have to handle that
+anyway, I wonder if it makes more sense to lean into that, and allow
+updates to multiple (strictly enumerated) places.
 
->>  		}
->> +
->>  		add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->>  		mm_inc_nr_ptes(dst_mm);
->>  		pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
->> @@ -2211,15 +2239,16 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->>  			folio_remove_rmap_pmd(folio, page, vma);
->>  			WARN_ON_ONCE(folio_mapcount(folio) < 0);
->>  			VM_BUG_ON_PAGE(!PageHead(page), page);
->> -		} else if (thp_migration_supported()) {
->> +		} else if (is_pmd_non_present_folio_entry(orig_pmd)) {
->>  			swp_entry_t entry;
->>
->> -			VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
-> 
-> It implies thp_migration_supported() is true here. We could have
-> VM_WARN_ONCE_ON(!thp_migration_supported()), but that might be too much.
-> 
+> We work on decoupling busses wired to a connector and dispatching nodes
+> looks like this decoupling is ignored.
 
-Yes, since we've validated that this is a pmd migration or device
-private entry.
+I don't really follow what you're saying here.
 
->>  			entry = pmd_to_swp_entry(orig_pmd);
->>  			folio = pfn_swap_entry_folio(entry);
->>  			flush_needed = 0;
->> -		} else
->> -			WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
->> +
->> +			if (!thp_migration_supported())
->> +				WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
->> +		}
->>
->>  		if (folio_test_anon(folio)) {
->>  			zap_deposited_table(tlb->mm, pmd);
->> @@ -2239,6 +2268,12 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->>  				folio_mark_accessed(folio);
->>  		}
->>
->> +		if (folio_is_device_private(folio)) {
->> +			folio_remove_rmap_pmd(folio, &folio->page, vma);
->> +			WARN_ON_ONCE(folio_mapcount(folio) < 0);
->> +			folio_put(folio);
->> +		}
->> +
->>  		spin_unlock(ptl);
->>  		if (flush_needed)
->>  			tlb_remove_page_size(tlb, &folio->page, HPAGE_PMD_SIZE);
->> @@ -2367,7 +2402,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->>  		struct folio *folio = pfn_swap_entry_folio(entry);
->>  		pmd_t newpmd;
->>
->> -		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
->> +		VM_WARN_ON(!is_pmd_non_present_folio_entry(*pmd));
->>  		if (is_writable_migration_entry(entry)) {
->>  			/*
->>  			 * A protection check is difficult so
->> @@ -2380,6 +2415,9 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->>  			newpmd = swp_entry_to_pmd(entry);
->>  			if (pmd_swp_soft_dirty(*pmd))
->>  				newpmd = pmd_swp_mksoft_dirty(newpmd);
->> +		} else if (is_writable_device_private_entry(entry)) {
->> +			entry = make_readable_device_private_entry(swp_offset(entry));
->> +			newpmd = swp_entry_to_pmd(entry);
->>  		} else {
->>  			newpmd = *pmd;
->>  		}
->> diff --git a/mm/pgtable-generic.c b/mm/pgtable-generic.c
->> index 567e2d084071..0c847cdf4fd3 100644
->> --- a/mm/pgtable-generic.c
->> +++ b/mm/pgtable-generic.c
->> @@ -290,7 +290,7 @@ pte_t *___pte_offset_map(pmd_t *pmd, unsigned long addr, pmd_t *pmdvalp)
->>
->>  	if (pmdvalp)
->>  		*pmdvalp = pmdval;
->> -	if (unlikely(pmd_none(pmdval) || is_pmd_migration_entry(pmdval)))
->> +	if (unlikely(pmd_none(pmdval) || !pmd_present(pmdval)))
->>  		goto nomap;
->>  	if (unlikely(pmd_trans_huge(pmdval)))
->>  		goto nomap;
->> -- 
->> 2.50.1
-> 
-> Otherwise, LGTM. Acked-by: Zi Yan <ziy@nvidia.com>
-> 
+> IMHO, keeping devices available on an addon board as nodes under the
+> connector is a real hardware representation.
 
-Thanks Zi!
-Balbir
+It's *a* real hardware representation, but it's not the only real
+hardware representation.  Placing the new nodes under connectors
+prioritises the physical connections.  Placing them under various
+nodes on the base board prioritises the logical-bus connections.  I'd
+argue that the latter is slightly more important, since the primary
+consumer of the device tree is the OS, to which the logical
+connections are usually more important.
+
+But in any case, real hardware isn't necessarily a tree, so we have to
+compromise somewhere.
+
+> Also, at runtime, once an addon board DT is applied, when you look at
+> your current DT either using /proc/device-tree or some links such as
+> /sys/bus/devices/.../of_node, the connector and extension bus appear
+> and clearly identify devices behind the connector.
+
+That's certainly nice, but we already lose this in the multi-connector
+case, so I don't think it can be a hard requirement.
+
+> > That approach does complicate removal, but its not as bad as overlays
+> > at the moment, because a) it could be limited to adding new nodes, not
+> > modifying existing ones and b) the connector would specify exactly the
+> > places that additions are allowed.
+>=20
+> I think bus extensions comply with a) and b).
+
+Bus extensions aren't directly relevant to (a) and (b) - those are
+about the actual overlay/addon application mechanism.  Bus extensions
+are one of several possible approaches to allowing a more restrictive
+(and therefore manageable) way of dynamically updating the dt, while
+still being able to represent multi-bus devices.
+
+> Yes, bus extensions need to be handled per-bus types but they have the
+> advantage of keeping the hardware reality well described and visible at
+> runtime in term of "wiring" topology.
+>=20
+> Whatever the solution, this will already be handled per-bus types.
+> Only busses that support runtime DT node addition/removal (OF_RECONFIG_*
+> notifications in the kernel implementation) will support adding or
+> removing nodes.
+
+First, I don't see that the implementation need affect the spec here.
+Second, bus-reg has possible applications even if there isn't dynamic
+reconfiguration.
+>=20
+> Your approach is more complex, dispatch node here and there and actually
+> is also a per-bus types solution.
+
+Again, I don't follow you.
+
+> I think, in order to choose between both solutions, the main question is:
+> Do we want to dispatch nodes provided by an addon DT everywhere in the ba=
+se
+> DT ?
+>=20
+> IMHO, the answer is no.
+
+Everywhere, no, absolutely not.  That's one of the things that's awful
+about the current overlay mechanism.
+
+Multiple places - as specified by the base board / connector, maybe.
+
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
+
+--H7/fQSG5jrECq+gd
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjM4XAACgkQzQJF27ox
+2GeEbQ//XLxZeZ3BQAikMK2v7m4TegAdD5MPyneNrnkXJqSFLS4LuEn85drE9pHg
+ILQAxP7oLutvBIVrbLsizEQG+Qp38o82K92Pksgr8uqt/D4qFN4/okKCd1Bhu3Y/
+YgWWCeg7/Zy8n1CM69ZV7CSWc0qlKwpXxFf0i1pmw9grnpoe+/Y6iZunjUAB2WFw
+4acoFD5DfdVJbnRgPkjyWQjQnWg3g4buzpsRI4b6gka5Xwrl5HEEH1Ms2td+1NPd
+cNckBlvYeC+f2QU6ogmRvMZb7B+0pxGSscrg36toGbwpU9KDWXfGnsWxAHE8LCjY
+fGGjyzCU9nvbHTukKTcPbk3nJaNWZo95S30ueJRuF7UxCny54dvwzg+z94HZv3Ed
+g9jGHzYdw6UImBhT+1vPzHY6AUOdPpjXR/wRgAsagyud3fAsfO52lLHsong049ZB
+BsUwg5Q33092QlRUe7/0YNtHdLui4ILQ7C9L+UXoaD2kiqQ4EJv9pL5KnDoXDp0U
+ajWxEaPdgE15f6M6aILE4TVIdFCh1RBm+yfDAeAy35pN7wlArBr/RC8h2ZIdxCHU
+esgnB8yMicMqEq6nlKl3rhoo0TxpY9WowVNOM9/YuQreexkSeGQUmKeI6l/OXJPF
+Vd1tSNzkP5jsPCGoRVZE3IHIzH8S5RHyt2Lp3EcCXLz4AWDsDhY=
+=xXWq
+-----END PGP SIGNATURE-----
+
+--H7/fQSG5jrECq+gd--
 
