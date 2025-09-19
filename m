@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-824428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516F5B892E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0C4B892DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B35997C0183
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A8C93B4D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DFA30BB8F;
-	Fri, 19 Sep 2025 11:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752BF3093DE;
+	Fri, 19 Sep 2025 11:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mSAkDwth"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSsGBKbs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676E630AD12
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B911D3081A4;
+	Fri, 19 Sep 2025 11:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758279820; cv=none; b=UHJHg5btqQo099BaZzewTJd5KO3P/HeAzPX5BlzBg9WbBNIttbYJSFZccXYpBebfUrWS1t1Hc3zA6I/MWJCdtIMEiZ+goCHtOTlZAFRAfYUT17a/l6ND7HWNgD6pvQ7Y9ypeFD37/sTj5ktH0oIdveFW+SYo4YiRIumwz/+Wrww=
+	t=1758279816; cv=none; b=h5fcOIwf11+4JjH0RiJkiuVF/2lGX++GcPp/XTdB7Q2gKoFgym83OlU8q+UBcR7JZ22N3Ra2CkpGj5uhmxwlgIkBRoL2WiMjOKzgbsQjBhd3mQzUEY2FV0s6CWC+BQwuGBxJmc00Af9XBWvS+PQXg7vWNw0T3gImvREUhM+i/Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758279820; c=relaxed/simple;
-	bh=obw3ashUlqPk4FkMTpBpd5Bd5mRdWlEF53ttd7z3Vpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cuXdDuWvB86C3El55nRbBzOLBOndrMhWnnZ5yIL8OmI2bOQhBAV9GOOdmwxdsn2z+pOHqTRiLmUjz/phCrRbeaCrQXJuWuoQCI2pwg8+uZ/U8LmbMPEJhCcVnExADoRRYRyEw+JPnjGI+cLsxE1UJch1DbwEOM9Va0p9EOGc7AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mSAkDwth; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <fedb5429-2e8d-42df-8080-9a8706407ad2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758279816;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E8TlZFBQd/L7DGLy8SikgtOTjeISh9OICFpRvOtXwTw=;
-	b=mSAkDwthkxKTt/LIWXKtni05eWiAobQe3tInsCCE6sdrwoqFL6DzV9d/FvHTTGsutJl1zz
-	IWE7GPWS/yDMMv3o29j3ZF3NKUZoxvyV43pcju5Vc+ZrIjqcgfCiDYS1cA+uCYd0oztUsG
-	+Lwc4hdZWRkxIMGPl3BAw3uFjKrxgp0=
-Date: Fri, 19 Sep 2025 12:03:33 +0100
+	s=arc-20240116; t=1758279816; c=relaxed/simple;
+	bh=U1yswzr9NJ42cTAHUxi3QmznSW6rxKPBQpnoa3VAfqA=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=fLlnDSyklCb11hR3niJ46OAiy0uL/cnP1mkdyF7eD7VnQ+jwUMz2FPPQRCYxHRRqVDF+i6VrFcuXNIG5R25y5KTl2p2t+YJGwLFSJYZYA9U6pNj5+li5x/fR5oLwPBWQAUGGXx8fFOCBGAGmPvLkLCxWabPic9sR0/LLce9X/8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSsGBKbs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 042B8C4CEF0;
+	Fri, 19 Sep 2025 11:03:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758279816;
+	bh=U1yswzr9NJ42cTAHUxi3QmznSW6rxKPBQpnoa3VAfqA=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=LSsGBKbs02r0B+Zf0+JrkYFAGJdzhLvMNxSTJDc4FxhUvnuFkypn2CQm11jYEgCGc
+	 CLodiJWQPvKfsyDVyRlmW+nEsXAJXk28W9IOYQMpZJ9MIsEN0F7vilmYcrcdxskpxL
+	 adRWvABxUEhzc/ZD0bQwjrP/yucPJcqDV7p/Nmh97NglS/UE8qVRWeFZvsHsWWMLPa
+	 pmzIKTeNU+OPp11l5RInd6eyxtP8ZLFeaq3fyUo0sgIuTUsbtgv07wUT+kwTUEALpZ
+	 OmeK54n0o/lsnlJsdsu48YA3Jg4LUBCD5dhJ7EZE81w50SgO4wKLjMiANBgCCVF6sD
+	 q/MQzQNvhM8Ug==
+From: Mark Brown <broonie@kernel.org>
+To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Matthew Gerlach <matthew.gerlach@altera.com>, 
+ Niravkumar L Rabara <nirav.rabara@altera.com>, 
+ Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>, 
+ Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+In-Reply-To: <910aad68ba5d948919a7b90fa85a2fadb687229b.1757491372.git.khairul.anuar.romli@altera.com>
+References: <910aad68ba5d948919a7b90fa85a2fadb687229b.1757491372.git.khairul.anuar.romli@altera.com>
+Subject: Re: [PATCH 1/1] spi: cadence-qspi: defer runtime support on
+ socfpga if reset bit is enabled
+Message-Id: <175827981475.43867.14880057766309432470.b4-ty@kernel.org>
+Date: Fri, 19 Sep 2025 12:03:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net 2/3] broadcom: fix support for PTP_EXTTS_REQUEST2
- ioctl
-To: Jacob Keller <jacob.e.keller@intel.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Kory Maincent <kory.maincent@bootlin.com>
-Cc: Richard Cochran <richardcochran@gmail.com>,
- Yaroslav Kolomiiets <yrk@meta.com>, James Clark <jjc@jclark.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250918-jk-fix-bcm-phy-supported-flags-v1-0-747b60407c9c@intel.com>
- <20250918-jk-fix-bcm-phy-supported-flags-v1-2-747b60407c9c@intel.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250918-jk-fix-bcm-phy-supported-flags-v1-2-747b60407c9c@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-Mailer: b4 0.15-dev-56183
 
-On 19/09/2025 01:33, Jacob Keller wrote:
-> Commit 7c571ac57d9d ("net: ptp: introduce .supported_extts_flags to
-> ptp_clock_info") modified the PTP core kernel logic to validate the
-> supported flags for the PTP_EXTTS_REQUEST ioctls, rather than relying on
-> each individual driver correctly checking its flags.
+On Wed, 10 Sep 2025 16:06:32 +0800, Khairul Anuar Romli wrote:
+> Enabling runtime PM allows the kernel to gate clocks and power to idle
+> devices. On SoCFPGA, a warm reset does not fully reinitialize these
+> domains.This leaves devices suspended and powered down, preventing U-Boot
+> or the kernel from reusing them after a warm reset, which breaks the boot
+> process.
 > 
-> The bcm_ptp_enable() function implements support for PTP_CLK_REQ_EXTTS, but
-> does not check the flags, and does not forward the request structure into
-> bcm_ptp_extts_locked().
 > 
-> When originally converting the bcm-phy-ptp.c code, it was unclear what
-> edges the hardware actually timestamped. Thus, no flags were initialized in
-> the .supported_extts_flags field. This results in the kernel automatically
-> rejecting all userspace requests for the PTP_EXTTS_REQUEST2 ioctl.
-> 
-> This occurs because the PTP_STRICT_FLAGS is always assumed when operating
-> under PTP_EXTTS_REQUEST2. This has been the case since the flags
-> introduction by commit 6138e687c7b6 ("ptp: Introduce strict checking of
-> external time stamp options.").
-> 
-> The bcm-phy-ptp.c logic never properly supported strict flag validation,
-> as it previously ignored all flags including both PTP_STRICT_FLAGS and the
-> PTP_FALLING_EDGE and PTP_RISING_EDGE flags.
-> 
-> Reports from users in the field prove that the hardware timestamps the
-> rising edge. Encode this in the .supported_extts_flags field. This
-> re-enables support for the PTP_EXTTS_REQUEST2 ioctl.
-> 
-> Reported-by: James Clark <jjc@jclark.com>
-> Fixes: 7c571ac57d9d ("net: ptp: introduce .supported_extts_flags to ptp_clock_info")
-> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-> ---
->   drivers/net/phy/bcm-phy-ptp.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/phy/bcm-phy-ptp.c b/drivers/net/phy/bcm-phy-ptp.c
-> index 1cf695ac73cc..d3501f8487d9 100644
-> --- a/drivers/net/phy/bcm-phy-ptp.c
-> +++ b/drivers/net/phy/bcm-phy-ptp.c
-> @@ -738,6 +738,7 @@ static const struct ptp_clock_info bcm_ptp_clock_info = {
->   	.n_per_out	= 1,
->   	.n_ext_ts	= 1,
->   	.supported_perout_flags = PTP_PEROUT_DUTY_CYCLE,
-> +	.supported_extts_flags = PTP_STRICT_FLAGS | PTP_RISING_EDGE,
->   };
->   
->   static void bcm_ptp_txtstamp(struct mii_timestamper *mii_ts,
-> 
+> [...]
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: cadence-qspi: defer runtime support on socfpga if reset bit is enabled
+      commit: 30dbc1c8d50f13c1581b49abe46fe89f393eacbf
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
