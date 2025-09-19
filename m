@@ -1,185 +1,136 @@
-Return-Path: <linux-kernel+bounces-825088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C94B8AEEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:35:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1B9B8AF02
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8A8F1C83133
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:36:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18AB8B606E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A23258ECE;
-	Fri, 19 Sep 2025 18:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4400F26529B;
+	Fri, 19 Sep 2025 18:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="YV9ytXFo"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdrwFbGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F985211A28;
-	Fri, 19 Sep 2025 18:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758306945; cv=pass; b=smWkOah8CZ+58S0yygopmoEX5A1iwbrVpHTM9otr3pW8ApR2MUomSZwLYiwauESpO1b7TuIrtSjjPfpO5oMbr1gfy5/2+8Qm3HxBe5X6DmDWjyP1TJ0vENtcvx9r8TYF1/o72IfeRf/zoYKbrscpkIqBWsorh5lgaX2hNyjLS8k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758306945; c=relaxed/simple;
-	bh=jwmcTQDxHnCEVCjF/im4fIO6wwzyKkjwMBLb+svDjF0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B120211A28;
+	Fri, 19 Sep 2025 18:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758306949; cv=none; b=AjldrDDLfOFmAjVktW0l34GogjKhP7NhlB94TMGe/Lvy+Drs4Z4l0KvRLw8mUU9kLDqsUbR+RxMC77368vjQqN3LCz1hF+s/naFgXCgfQbwe3SbJ9FwjA1CFuKCFdtcK3qX3PSmlxyNLSdpQnublKAHPdUub1GEfTp6ga05umw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758306949; c=relaxed/simple;
+	bh=oo7MnNncuxbbEuJjYzS+KOutOdZkuh1LO0HXaCxkr0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdmLu7Fex1r+TbYAUY47WQqLkwzTZMckhILEf4IpsrSmWw4doeqe2pv1g2XwT6IZaRziDTP6K+/AJke+ijYIj8g3+9cVF7g202SolSxsrOaIb2iA4tK6Xa7Vgt4ZEoJrilZRmF6G/XzVraMjDwzwKvOwACJPgewBDUtcrR3qN78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=YV9ytXFo; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758306920; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=htG9dmLjIm0MG2EAmEP+UrylffFxxizBi0dVjBCvRmBURsoNR8MsxJEFhYRutXp0Fysgs5mJKW7LfTA5S/FAV2whT6yUFacOAcZlhHvoYl+10VZS/sx90FewlnYaoq68DudIs3X+V2TBk685Gg5Ygd4AqsgFdxZuC8fbBbvziQ4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758306920; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=dYelWx50Z6ZFoqvuH3SnrsBA9SoBu2/C8F6gLHongwI=; 
-	b=KoRWFVnAJBHxlBFqLIUDk52BG3W7aMbzso37/jhmFISHK4UId+Rl0cj8jZ5+jJNzepmRHLWRnFzFDVyzzp+/MKuPSovrns7RNliKv6pjUAIB5kNchHQm28Etg6gP92ZPsXeD4Hu2i4bo5ErBFpvAYAVwKzvqxIAorGctH1UX47Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758306920;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=dYelWx50Z6ZFoqvuH3SnrsBA9SoBu2/C8F6gLHongwI=;
-	b=YV9ytXFotHoYhZPB6OmOKBkk7wp37V53wLcLRgPnQ7jQ5ctaacXRy15U7vNqy6Rx
-	2tYGRW4dTr3xn1cHgAvvUGPovYReGbHaciguqaBHCJnXyrdSjYm3sJvVl+V9vZp6yik
-	s2lEVJE5pOef9f3Q4VKNXQg1quHIJA9IltV8iLrg=
-Received: by mx.zohomail.com with SMTPS id 1758306917364249.0348507446621;
-	Fri, 19 Sep 2025 11:35:17 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 1DCFD1805C8; Fri, 19 Sep 2025 20:35:12 +0200 (CEST)
-Date: Fri, 19 Sep 2025 20:35:12 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Diederik de Haas <didi.debian@cknow.org>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	kernel@collabora.com
-Subject: Re: [PATCH v2 3/3] dt-bindings: thermal: rockchip: tighten grf
- requirements
-Message-ID: <wtwdpqi4tk3ixzmrvdyv2aguf6pjlmnz6q5gvhlajl2hk6mdys@fmkugriedhqe>
-References: <20250820-thermal-rockchip-grf-warning-v2-0-c7e2d35017b8@kernel.org>
- <20250820-thermal-rockchip-grf-warning-v2-3-c7e2d35017b8@kernel.org>
- <20250820-await-chomp-9812902c0f74@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IJqB9USV83xWjHCm8aXPDoRfDLzXAzRdTGKQ4tBDjwkCiVFevMCpB1z70ee/8mkTDwC69jZ1juJ2lAStI2Qhh8sAUmbKL1fKL4UfcOHl9cC8ce+rx3sIzIdLop+Fyr4n7VdxsY4nSqoNmqiil5xbDUBm4FJ1udAhOi+oTHASO4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdrwFbGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8416C4CEF7;
+	Fri, 19 Sep 2025 18:35:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758306949;
+	bh=oo7MnNncuxbbEuJjYzS+KOutOdZkuh1LO0HXaCxkr0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IdrwFbGNBg+mcvrizzNAt938gwJnXeswj9demaxuYxuALGgDanebsnojheH/LeTzJ
+	 9zpYxwBE4U4OObrIalWu5Azd0xgXyIe7ef5TUkP9SXKVp+Dm6iabs9fPwjGAL54A6l
+	 zvPlmsCPiHxpeVc75UBZzAaSRhSe480HrH60JEfrG5qPZc0uCIvKKTx+47NF/0++0D
+	 akeE47J1lxg4PC9L9ZJTxuUfImYiQl4JK4sh5BC2NQR8p08XW1frHb+DOOxi0arqtQ
+	 GP6UCIKLk4gfk5efeBDwblvyTTWLJ/CqFpZCoKhJo4rMMkmI4xO5H5tafJQwa55POk
+	 t79asfELyLhKg==
+Date: Sat, 20 Sep 2025 00:05:38 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
+	qiang.yu@oss.qualcomm.com, mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com, 
+	shradha.t@samsung.com, quic_schintav@quicinc.com, inochiama@gmail.com, 
+	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com, 
+	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v2 06/10] PCI: keystone: Add ks_pcie_free_intx_irq()
+ helper for cleanup
+Message-ID: <7sbyvk6vyrbyox5ghvhokrv67r2el4s4f6k42aygmfo3rltj27@6v5pjxbhdl5w>
+References: <20250912122356.3326888-1-s-vadapalli@ti.com>
+ <20250912122356.3326888-7-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z6crpzxibzcnj3de"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250820-await-chomp-9812902c0f74@spud>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.269.22
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250912122356.3326888-7-s-vadapalli@ti.com>
 
+On Fri, Sep 12, 2025 at 05:46:17PM +0530, Siddharth Vadapalli wrote:
+> Introduce the helper function ks_pcie_free_intx_irq() which will undo the
+> configuration performed by the ks_pcie_config_intx_irq() function. This
+> will be required for implementing a future helper function to undo the
+> configuration performed by the ks_pcie_host_init() function.
+> 
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
---z6crpzxibzcnj3de
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 3/3] dt-bindings: thermal: rockchip: tighten grf
- requirements
-MIME-Version: 1.0
+Please squash all patches introducing new helpers.
 
-Hi,
+- Mani
 
-On Wed, Aug 20, 2025 at 08:48:23PM +0100, Conor Dooley wrote:
-> On Wed, Aug 20, 2025 at 07:40:49PM +0200, Sebastian Reichel wrote:
-> > Instead of having an optional rockchip,grf property, forbid using it on
-> > platforms without registers in a GRF being needed for thermal monitoring
-> > and make it mandatory on the platforms actually needing it.
->=20
-> I am assuming that "needing it" means that it was actually mandatory but
-> the binding was just missing the required required entry. If so
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> 
+> v1: https://lore.kernel.org/r/20250903124505.365913-7-s-vadapalli@ti.com/
+> No changes since v1.
+> 
+>  drivers/pci/controller/dwc/pci-keystone.c | 29 +++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 81c3686688c0..074566fb1d74 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -745,6 +745,35 @@ static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
+>  	return ret;
+>  }
+>  
+> +static void ks_pcie_free_intx_irq(struct keystone_pcie *ks_pcie)
+> +{
+> +	struct device_node *np = ks_pcie->np;
+> +	struct device_node *intc_np;
+> +	int irq_count, i;
+> +	u32 val;
+> +
+> +	/* Nothing to do if INTx Interrupt Controller does not exist */
+> +	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
+> +	if (!intc_np)
+> +		return;
+> +
+> +	/* irq_count should be non-zero. Else, ks_pcie_host_init would have failed. */
+> +	irq_count = of_irq_count(intc_np);
+> +
+> +	/* Disable all legacy interrupts */
+> +	for (i = 0; i < PCI_NUM_INTX; i++) {
+> +		val = ks_pcie_app_readl(ks_pcie, IRQ_ENABLE_SET(i));
+> +		val &= ~INTx_EN;
+> +		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), val);
+> +	}
+> +
+> +	irq_domain_remove(ks_pcie->intx_irq_domain);
+> +	for (i = 0; i < irq_count; i++)
+> +		irq_set_chained_handler(ks_pcie->intx_host_irqs[i], NULL);
+> +
+> +	of_node_put(intc_np);
+> +}
+> +
+>  static int ks_pcie_config_intx_irq(struct keystone_pcie *ks_pcie)
+>  {
+>  	struct device *dev = ks_pcie->pci->dev;
+> -- 
+> 2.43.0
+> 
 
-I just noticed, that I never replied: The GRF configuration is
-required for proper functionality as far as I can tell. Technically
-it might be skipped, if the bootloader already configured the
-registers correctly. but I don't think this is something anyone wants
-to rely on and with the same argument we could describe almost any
-resource as optional :) The upstream kernel DT always had the GRF
-specified for these platforms (and thus most likely has never been
-tested without it).
-
-Greetings,
-
--- Sebastian
-
->=20
-> >=20
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >  .../devicetree/bindings/thermal/rockchip-thermal.yaml     | 15 +++++++=
-++++++++
-> >  1 file changed, 15 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/thermal/rockchip-thermal=
-=2Eyaml b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> > index 573f447cc26ed7100638277598b0e745d436fd01..9fa5c4c49d76e3a689f3179=
-7875124e7fb30d3df 100644
-> > --- a/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> > +++ b/Documentation/devicetree/bindings/thermal/rockchip-thermal.yaml
-> > @@ -119,6 +119,21 @@ required:
-> >    - resets
-> > =20
-> >  allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - rockchip,px30-tsadc
-> > +              - rockchip,rk3366-tsadc
-> > +              - rockchip,rk3399-tsadc
-> > +              - rockchip,rk3568-tsadc
-> > +    then:
-> > +      required:
-> > +        - rockchip,grf
-> > +    else:
-> > +      properties:
-> > +        rockchip,grf: false
-> >    - if:
-> >        not:
-> >          properties:
-> >=20
-> > --=20
-> > 2.50.1
-> >=20
-
-
-
---z6crpzxibzcnj3de
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjNolcACgkQ2O7X88g7
-+prySQ/+Plmvb6VuG/3iqahgjq/5DSN+60ggmi/i0BADm5v2odvaNmggYliwfw6+
-xjNfvblePAiRBF5bIfp8PYoBDmoOR1l56cVxPmtg90/UOA6Q8ZbGoPZGLoMWmANx
-3WoqzlXwRG6yXus0PTlKarXalAbSShc5wXkN+KgscOGdIxx5XXhGwjUSWVdiuy8q
-L0q5fBR1uYU6QHNUGNzM/H6GEPylQHbApFj2UEkQm4cb1QvSEq9I2HJ8bV+yOfhv
-0WmIk0fzyVn5FREYCVT+DQmd7Z3VRcWHtwgtXIzonxJIRLmJJWwl2iLTSPBulWYN
-EKAIHiqq4ak6FI/COHHid8czjM0/Tk7oMlDPkk8gJT9SgPzwvwR+xeLrOI+Nyk2f
-aBqBUTL7Y+LfrOe3I4TA2ljQtD7qL2oDixqqf/cTIR7Mk9R83A5Zem3R4qdyGvOt
-FoFbQ4mcmhqYeXxglKyDExMuxUC5vxcAL/fq2KFl+aNWX2Adzue3Kkjow0NMeQA+
-3880RR6Pn+tU2RikQvBhwk5WG6CTcPjgH5PgzzBZ4N8zhUARf8/J1bctqaCMYBiV
-XSWG1x+3Rtsxq0DHZVR640Ly89r9BWMTQxH5UKNhbrGmXum0V1RUerIT132ew7M8
-5afmV/udl4nk7VNzgkip02aBFKkpaLCGAk03LWDs0U0rPgksp4s=
-=9GvR
------END PGP SIGNATURE-----
-
---z6crpzxibzcnj3de--
+-- 
+மணிவண்ணன் சதாசிவம்
 
