@@ -1,215 +1,231 @@
-Return-Path: <linux-kernel+bounces-824550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106E5B89874
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:47:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7302B89880
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99641C80C69
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F45A1744
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D689521ADAE;
-	Fri, 19 Sep 2025 12:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E012192F5;
+	Fri, 19 Sep 2025 12:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ReYMIQ7d"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011038.outbound.protection.outlook.com [40.93.194.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y/UF8xXE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="S7iKHHi3";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xaPwq3kP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zMw0MRkS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F6920B7E1;
-	Fri, 19 Sep 2025 12:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758286020; cv=fail; b=Nle20qQ6E4La2JiNS1z2yjNNa058gle8VdXbU4Kl7kQUw6gIZB+7/B5spuzwHhef6jHVf/PAX+HcLKYer9R+8r7jyY5JgXLk41zHChJ5z1kN+VnuM3in6rjM+2J5aRIa9+o+Dzuv6ZXoCUyc+JEguoy0/qA4klnDWvDOeQlKwp0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758286020; c=relaxed/simple;
-	bh=joUjRxqdNA1ghHZEHS54EZikIu5ndRmw2bOQU/rDXgM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MBs56gR4/3jHa0WpwTBi+lbHY9Gz/FbuPmfeufPpetClto/d/UewF8cnsBB2vTLVlBRjUCsh9d6bV6JqylW+BgBCwy7nvJ0bPlfhOhgYQ4MOUjmQEe4NCPLv2ZTt7OWZJBGBCWUSOqk7stTpyYyGJJSAa/MZ/2Wmqgc9AeLzWMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ReYMIQ7d; arc=fail smtp.client-ip=40.93.194.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xJDwX83W0nEWTeC95wR1I2d6DXHqNBIo1I8G8E00mvobKBn9WQLCJq2g5niCYSJ4X4X7jrbo4hask7TAvxagHeMkAkzaxngwHeTjCQflOvgq5L7u9IqB2V/l6ekMKaDwiKENObEOlpPt8mWfIZZuf9BlB5O3v0U4HyNUVrv+jVvm6UkmGo9wyH2fVE4rZEL5rTxkrIh/wtG0o4C2y0K1B0Z+HtpXoNnLPkvTzLM/j8QauqPKiA3cNIGda5peb24UqSUX72RtpHwYvp/4fuu56O7uaHSuQJyC+BP0M9sa57A0eTrJf2rCqsSgn+xoyiec1u6hXPQriKNEq3yIuisC5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZmLCQqSExcjLoVWRlKFbIJuvdi1l3fJ4xFfPsFgolvo=;
- b=qR5NypNEOwvcyAWWDSM9aLdpK0cLNtXCGzPzWRM+rLrCQAjLx0YIb8Jp4i0vxgxZbLMTQU5MHYNIDktY3/ZSYLyKLCV12vTxsMJPwIcbxte19RxLS6K/d6WGpy2+PANgBoqzljhmoXqkuzW4GR+SCMu6iQXYUDOzx/ghDmGNqrERglz9bI9pI95CohJuv2rmrd+ShfLNNdwLyGFXi/cK450Rl5jv+qKheNDbeAPnnZqkvCo7tJBrbjPnyd/bD3ZnjID4tBv1NpWz0EgIhIGZa8dt0+MWGZeE4b+4QgRd/oZ5oFlIBFhm6eVzIj1oNSJCwVQwcIz5Z8ImhaQbTTfdGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZmLCQqSExcjLoVWRlKFbIJuvdi1l3fJ4xFfPsFgolvo=;
- b=ReYMIQ7duATyKL6qFPhxCn72vX2SRKSOMGQePV0xpYdrnYPjD4OIOM+ZbvKeCdE30vzBl6+jP4CHBeftKE0QzuUn2Gpda9Qc95fb4xJjFWrbFjHqfLxWvkXsqpb41j/9+qFdNpAcrMEhkWn8ztKytQOHbs75uxXqnOocfyroOlZQ0YED63Lq5VmycTxWV2RMB7AhCmDtXeyfZIRPOjGqGLauaY/+gXTqiEWZqT9BkWoVVNMGAnriy6pU88mPw4R4VrY9GPBmryP3xXuJmHFQCaSxGALePelBODqgihKMyNqDx5xJJTCz1zk3hrQUnMdSPWtBJXJEN+f72KwE8p6/NQ==
-Received: from SN7PR12MB7324.namprd12.prod.outlook.com (2603:10b6:806:29b::12)
- by CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
- 2025 12:46:54 +0000
-Received: from SN7PR12MB7324.namprd12.prod.outlook.com
- ([fe80::36df:d252:e8a1:b651]) by SN7PR12MB7324.namprd12.prod.outlook.com
- ([fe80::36df:d252:e8a1:b651%7]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
- 12:46:54 +0000
-From: Ciju Rajan K <crajank@nvidia.com>
-To: =?iso-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Hans de
- Goede <hdegoede@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, LKML
-	<linux-kernel@vger.kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-CC: "christophe.jaillet@wanadoo.fr" <christophe.jaillet@wanadoo.fr>,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	Vadim Pasternak <vadimp@nvidia.com>
-Subject: RE: [PATCH platform-next 2/2] platform/mellanox: mlxreg-hotplug: Add
- support for handling interrupt storm
-Thread-Topic: [PATCH platform-next 2/2] platform/mellanox: mlxreg-hotplug: Add
- support for handling interrupt storm
-Thread-Index: AQHcJs1494jJsQwTC0i1mT7assuunrSVk+yAgATkDyA=
-Date: Fri, 19 Sep 2025 12:46:53 +0000
-Message-ID:
- <SN7PR12MB73247244E8D925D264EABA7AD611A@SN7PR12MB7324.namprd12.prod.outlook.com>
-References: <20250916054731.1412031-1-crajank@nvidia.com>
- <20250916054731.1412031-3-crajank@nvidia.com>
- <34d028ac-f907-1505-a2fc-f455a10cfa5e@linux.intel.com>
-In-Reply-To: <34d028ac-f907-1505-a2fc-f455a10cfa5e@linux.intel.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN7PR12MB7324:EE_|CH3PR12MB7500:EE_
-x-ms-office365-filtering-correlation-id: 3122393e-b106-4f9f-7217-08ddf77a9c81
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?HMjUwH8v83HDyn579dcgHd7M5/jiDD9hiEQ/Qeecbr1zq26OZ9LpUrKuLg?=
- =?iso-8859-1?Q?L2yxL/qYZRwAgM0oG/A7b7BJ8GrSsJO8Smbzr1K3yW3Xk0Qv8krX2SnH+u?=
- =?iso-8859-1?Q?/mp+a5aSTOmhwThM0y1uDBiO3CPmT3QRIhxTGvbZDIlwn6CgXi/YrCWz+B?=
- =?iso-8859-1?Q?boK2SNDO2vg1amS3ecd2kXSb0BNjxYiws7YCoktxJgsHyRx29BONIkNOj+?=
- =?iso-8859-1?Q?5R/85kAJPpH/RZA+Fu92MIR7KkEq6aYqvt8oPgMKJxl8YZIjHqlgqSf90m?=
- =?iso-8859-1?Q?URMz5i2X/kes26V7WgRx+24gZllKiv21o/2F//Qyv2lPcrsNRhZaHeHO6e?=
- =?iso-8859-1?Q?vKRvExUNN9vmpR2SXZxoH1uGcTxBc9lYPBVxZXxetAoEhlRGfWchqKOefT?=
- =?iso-8859-1?Q?0Ekt6F2aAyUbaE46459bQKDodwWTpp8oEMfD9SYDsobOTDE5FSmyevTwHo?=
- =?iso-8859-1?Q?4Ts83GjqQQbo2nzLxQwyhfTEl3NFwUT8MfUkyFjwxDtjY7Kk+V6OW8ibf2?=
- =?iso-8859-1?Q?YfhGnUwWg9ZPdOVFU3i47+MW6/qaN2NugsNw8Qoa0cMhbZf5effGPRe8GM?=
- =?iso-8859-1?Q?O1n97y58igk16KpGyUcRLs+8Du1pBAjuUKsICTZqcXvH4cflOH1TyCwdq0?=
- =?iso-8859-1?Q?rnpaX78wVacQJU9Muk7G7iAcXFoyYaNXvyZXRYjYpMjPdLykDtm0RuWZLi?=
- =?iso-8859-1?Q?iTjrJFySU2V/oTPupUVQ7YFPvcjgOSyecrzeA2KT8TGA7kGN7T4Pd3nv6r?=
- =?iso-8859-1?Q?b8c2yBnYDx8FADouzJDxQXEOP0yBxJv4mG96n1/PKGbxZNWjEDeO1VET5o?=
- =?iso-8859-1?Q?nNY81+/NyoKCOTT43RrO9YIkd0t1mK4F1U/bllN2y9XXqdeyCRxbDxQEWX?=
- =?iso-8859-1?Q?phrdohnxJrHiMn5dA1ufXc0xFbw+UD+PL5ynNMP6h4k+usCAsGc5zIO9bt?=
- =?iso-8859-1?Q?e/6O29SXdvxaieDYlxirw+HJSlQdITPQJbsJl7jbgWBe8Yiy0jAmHkYN1H?=
- =?iso-8859-1?Q?pSUG5xPVlmJNPbWgoIcC6Y4Kt0P9R6m/32ojqwVMRQN1ydW9YOMm0myKbJ?=
- =?iso-8859-1?Q?bbRs9QE5aR19FkkxX91h0ymH5Yp4NECLAATQXqOqSkHr5oIgaZmaOYhUDG?=
- =?iso-8859-1?Q?hDMjXx9ogRzZr/9NDnvKT51aFXXaNDZu+l8s1VdMVY6foMngnfwBF06lyM?=
- =?iso-8859-1?Q?b6vPpqyv7znJCCRw8bO2cg+MA7kT6URTf74k/uee2WwU6Z8pIVoU6zY2Ac?=
- =?iso-8859-1?Q?15dREE1melBPRXYVPTlrEKt5kE3ZcZVhawGulhyZWGyI75yAJ3BJvO/Zeu?=
- =?iso-8859-1?Q?nUkk5ZXkTXfftrn4BntWmnTLOPOsE+MXkj9+wmRHOLK2tWF2PvdDoZnSEU?=
- =?iso-8859-1?Q?jXY3jy0aZOysK1JIiCbftnGmUc9DFHfDEt1BG7MfE32CBDUMSVoJ7ndMkb?=
- =?iso-8859-1?Q?BTbtAGpkQq082yW9GuUa0s1QZ3G5cxb05UniwI27Ox752kqXWIwaxruXdz?=
- =?iso-8859-1?Q?Xx6NHHH4HFfur5Mz6yp0rH37mW0BHk+zy2+0/+dwgAPA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB7324.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?cAQvm392wbQBWglnlm3MDI3w/DLNPEJJmPcUxOG9b+f4MXpukZgmMGlBXW?=
- =?iso-8859-1?Q?HLcLx/KWrZ6BDvcGPbkNs/9wn63RxtC4+IC7Cy6valhgigH6HA6oelmfrF?=
- =?iso-8859-1?Q?Fz/JumIkikuYrj3ys6tocbVgI4aBZyvAsdHgh7QY0PefAow8NDcGMYYdeb?=
- =?iso-8859-1?Q?XKRfNmKspivmkq2IGVGlVwjRyZqDnPpBX2jxAOmLqI56Pwq+Jo1ofjdFUj?=
- =?iso-8859-1?Q?1Hcwee9Bk+TbHhbed5iKSyQpTTpd1VB3Yp85y3hQhYQ7KamgIiqmqB2cRq?=
- =?iso-8859-1?Q?mUDPKOmIyE3QSn+w0mMwawmv9yMlVQtX6MMOSSUoJG1R/crzt6FHPHl/bw?=
- =?iso-8859-1?Q?00/xwSYMQnAPlH4AELufMc3R6v3gYW8MoR4HV6p6I7id8cYlYmYETEn5Ji?=
- =?iso-8859-1?Q?KGd9MN4bBBx6wMnyh0z1/noe1EHxmRqveiqT5cVO6KM0bS5wZHr4RhtLZL?=
- =?iso-8859-1?Q?MOyj/PfwraEuJhG6nuTx5LGDYB5NwD1XdEi+s5JtW3NpvLarQJKIETE9bh?=
- =?iso-8859-1?Q?tx6SZQHxIIeurFCVo/t2FRmBm6hct64GTTIdM/RnvBiuvThQPKYxzA/SoY?=
- =?iso-8859-1?Q?74kPiAflNSTIlSfIVUUlbdPv5LHVVXRkWGn4GzdaYTnjMI+6U7yc2CuCJb?=
- =?iso-8859-1?Q?8wuW6pdEud3oQGqWMwDLoZTKqrhZ7zcqDO/WNRlE3zZyDs2scG+2mCaunm?=
- =?iso-8859-1?Q?5zKFrFHgozK1h5ph7xPe6Y3GOKB4LcW3hvffaVm8lEDDXnvxxTNjtOhnkE?=
- =?iso-8859-1?Q?nK0ahWQyfGTSGDN746Ur9w2HSm77pjST2GLslUD6jcLExOr/9bizdX8f2k?=
- =?iso-8859-1?Q?vEksJixkaOmq+buMQuKG2L4KrL75IzKg1lEYe+fod0qdPBMB/vH23unG51?=
- =?iso-8859-1?Q?9L3il2Jh4yhkYNNDXlnRDGuLlDXDnWvjA6RYDm+V64DhacVBJqOvQpfDK7?=
- =?iso-8859-1?Q?ClxEM9mN33TmQC2eCFQwShLjHpp2NjAmF4L5YNSNDL3vVYCiYt2jQoYcJb?=
- =?iso-8859-1?Q?AoQTTZmAdwd0gPJabsQJdd/kn9cd4gvdrJjsTbRsnIiREVoGVU27g783tB?=
- =?iso-8859-1?Q?HEuOvSwSieae/xTGaYLxl6VTI2m3bNr5Ej+dfLA4g5PvkWY6FmYWu7TrIs?=
- =?iso-8859-1?Q?zRBOGF0V3C21FEHj3MTG4X2zzjHiCU6sgehE9Js6QgJTjp0fRVZD+Ad1wm?=
- =?iso-8859-1?Q?17lRI/K3Tpay2H3gfFKnfKOhgyjFGW42vyorO35lT7FcA0x6LD39fuYpI9?=
- =?iso-8859-1?Q?/yCVvskrDC25B96kCLNgRbG8F/hV0idXfzIAVaWuWV64vWcg6IIGgU9mJ1?=
- =?iso-8859-1?Q?CdfqBBBi1BJh0Aajp8q6dnl7rKSJsUKdLcjVSDDfB3HOM2FK4kLqSO2oJt?=
- =?iso-8859-1?Q?MQYfgepYwIp6FSM3FUawImUWJ1deypmJaZQQLk1AoiK3NmYjvcXUUBwUp9?=
- =?iso-8859-1?Q?y4rxlm90GGlCxQowF6I810kNHuxf+dttKjyOORXzjb0o31PXzn+f+MJdPp?=
- =?iso-8859-1?Q?D5SH3Bk2rLZ4oSKS2VG7REzjt7DL6gogTeoyFVEkS/izExafI7kSZT1oY2?=
- =?iso-8859-1?Q?/z8se/0yV8aXbcN5yevCn9iXkm4R2YUFogI8uxlxciqKGyOaAHu7PqeqlO?=
- =?iso-8859-1?Q?9C8e3Av6IYe3c=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D43218AAD
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758286072; cv=none; b=eTXYSLZwcGhLvlMyfA83QEnn2Qj5gxGgsUF2YW09QouK6tniK7kidj57xH4dXyJIwJa3JEcVSfisQrXsV8W81ZS15V0IUxmsgeJB8p78ulPklVN7JqJx4AcIboSypOFtxz07uqHcp1iwK5HHTmAQsZ+xw8mQNEfOt1ILvFHoeoM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758286072; c=relaxed/simple;
+	bh=iNxcvG6B7+iDbjP3eeNJDrtINQljCA+BpTp4TS4X6DU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A9uJlDybrIROqcHGDmgU8b+ZCpzECo6m3Y0hesrm4gWWmzwiCVQ1Z7QomYO8SVAE9R2HDbFFvp5qOkkb/EnwE/0VH2zPmvGeLaj36jIHe5IS+IwH3Ltd7ez4mIixHuuIwgOiJZuTqXzzZTM6Ltvk4vKy1E7X84tlrzmPfXWQsQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y/UF8xXE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=S7iKHHi3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xaPwq3kP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zMw0MRkS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 180AB1F7D9;
+	Fri, 19 Sep 2025 12:47:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758286063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
+	b=Y/UF8xXETeEW83Q/DgOSsD4SL6rV31h793/tzfWVyU+8wIRjIESz27y4H2iawXnRsfNGwL
+	1QDvv3o+juw69LEPQuwz68RG0AgAbohGtTmybiMU5rBE/WlZkwSZf/Oe73360lwEUGYk0P
+	lRF5jUtMAN90UZFppKhVlclxGi2o4p0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758286063;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
+	b=S7iKHHi3fvDdgUJqgQ03ZxOCsEHB0mF053q7Xdg90YwAmpCWSkl0EuWfr2IQddu9qe7mTd
+	vEmLUIjvWiMViVDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758286062; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
+	b=xaPwq3kPsMCYqrbS0e8aGYzqdDFV4lykmBS3wI4Pl0eZhMo8EHtNpkvq3ZJPKzHpOdmyMr
+	iVWiOWfWF2fDj0M8QVkBeUxiZlfHMTrgudG9hRfiYe3CwS/Vn6Gk9j1srycw2bWMjxOzhY
+	1KEQfZSIXiyB/xbLDdeA+HD8OqG3eCA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758286062;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
+	b=zMw0MRkS572Pe/PFWODVhBKpHki+CvqRQE2P7Whd8ihEjdM9ZTurjMPknIijvBTQQxRrI7
+	8zRnJXXcL7/IySAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 648DE13A78;
+	Fri, 19 Sep 2025 12:47:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qGfzFe1QzWgJAwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 12:47:41 +0000
+Date: Fri, 19 Sep 2025 14:47:40 +0200
+Message-ID: <87qzw28v83.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: cryolitia@uniontech.com
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Nie Cheng <niecheng1@uniontech.com>,
+	Zhan Jun <zhanjun@uniontech.com>,
+	Feng Yuan <fengyuan@uniontech.com>,
+	qaqland <anguoli@uniontech.com>,
+	kernel@uniontech.com,
+	linux-modules@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>
+Subject: Re: [PATCH v4 3/5] ALSA: usb-audio: improve module param quirk_flags
+In-Reply-To: <20250918-sound-v4-3-82cf8123d61c@uniontech.com>
+References: <20250918-sound-v4-0-82cf8123d61c@uniontech.com>
+	<20250918-sound-v4-3-82cf8123d61c@uniontech.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB7324.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3122393e-b106-4f9f-7217-08ddf77a9c81
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2025 12:46:54.0080
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CeQC2H4XTTW00nwJiEfVWMLkAT7YWa8dBc1sbE+11zjceQxaJpg43YljWgLoEjUbAAS5MK9SncNa2Cz7gAYo6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7500
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,uniontech.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-Hi Ilpo,
+On Thu, 18 Sep 2025 11:24:32 +0200,
+Cryolitia PukNgae via B4 Relay wrote:
+> 
+> From: Cryolitia PukNgae <cryolitia@uniontech.com>
+> 
+> For apply and unapply quirk flags more flexibly though param
+> 
+> Co-developed-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+> ---
+>  sound/usb/card.c     |   9 ++--
+>  sound/usb/quirks.c   | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>  sound/usb/quirks.h   |   3 +-
+>  sound/usb/usbaudio.h |   3 ++
+>  4 files changed, 126 insertions(+), 8 deletions(-)
+> 
+> diff --git a/sound/usb/card.c b/sound/usb/card.c
+> index 0265206a8e8cf31133e8463c98fe0497d8ace89e..5837677effa1787ef9d7d02714c3ae43b1a8bc79 100644
+> --- a/sound/usb/card.c
+> +++ b/sound/usb/card.c
+> @@ -73,8 +73,8 @@ static bool lowlatency = true;
+>  static char *quirk_alias[SNDRV_CARDS];
+>  static char *delayed_register[SNDRV_CARDS];
+>  static bool implicit_fb[SNDRV_CARDS];
+> -static unsigned int quirk_flags[SNDRV_CARDS];
+>  
+> +char *quirk_flags[SNDRV_CARDS];
 
-Thank you very much for the review.
+My preference is to keep this static, but pass the string value to a
+function.  That is, define snd_usb_init_quirk_flags() in main.c:
 
-> > +
-> > +             /* Interrupt storm handling logic. */
-> > +             if (data->wmark_low_cntr =3D=3D 0)
-> > +                     data->wmark_low_ts =3D jiffies;
-> > +
-> > +             if (data->wmark_low_cntr =3D=3D MLXREG_HOTPLUG_WM_COUNTER=
- -
-> 1) {
-> > +                     data->wmark_high_ts =3D jiffies;
->=20
-> Why does this timestamp have to be saved?
+static void snd_usb_init_quirk_flags(struct snd_usb_audio *chip, int indx)
+{
+	/* old style option found: the position-based integer value */
+	if (quirk_flags[idx] &&
+	    !kstrtou32(quirk_flags[idx], 0, &chip->quirk_flags)) {
+		usb_audio_dbg(chip,
+			      "Set quirk flags 0x%x from param based on position %d for device %04x:%04x\n",
+			      chip->quirk_flags, idx,
+			      USB_ID_VENDOR(chip->usb_id),
+			      USB_ID_PRODUCT(chip->usb_id));
+		return;
+	}
 
-Good point, I will remove it in the next version.
+	/* take the default quirk from the quirk table */
+	snd_usb_init_quirk_flags_table(chip);
 
->=20
-> > +                     wmark_low_ts_window =3D data->wmark_low_ts +
-> > +
-> msecs_to_jiffies(MLXREG_HOTPLUG_WM_WINDOW);
->=20
-> Why not just calculate the ending of the window right at the beginning?
-> I'd call the member e.g. ->wmark_window (or ->wmark_window_end).
+	/* add or correct quirk bits from options */
+	for (i = 0; i < ARRAY_SIZE(quirk_flags); i++) {
+		char *val __free(kfree) = NULL;
 
-ACK. Will introduce a new variable in the next version.
+		if (!quirk_flags[i] || !*quirk_flags[i])
+			continue;
+		
+		val = kstrdup(quirk_flags[i], GFP_KERNEL);
+		if (!val)
+			return;
 
->=20
-> > +                     if (time_after(data->wmark_high_ts, wmark_low_ts_=
-window)) {
-> > +                             dev_err(priv->dev, "Storming bit %d (labe=
-l: %s) - interrupt
-> masked permanently. Replace broken HW.",
-> > +                                     bit, data->label);
-> > +                             /* Mark bit as storming. */
-> > +                             item->storming_bits |=3D BIT(bit);
->=20
-> Why not using continue here for consistency with the other skip above?
->=20
-> If you add the continue, you can remove the else and deindent the zero
-> assignment by one level:
+		snd_usb_parse_quirk_string(chip, val);
+	}
+}
+	
+static int snd_usb_audio_create(....)
+{
+	....
+	snd_usb_init_quirk_flags(chip, idx);
+	....
+}
 
-Yes. Agree. Will change it in the next version.
+The function snd_usb_parse_quirk_string() is defined in quirks.c,
 
-Thanks
-Ciju
+void snd_usb_parse_quirk_string(struct snd_usb_audio *chip, char *val)
+{
+	for (p = val; p && *p;) {
+		/* Each entry consists of VID:PID:flags */
+		field = strsep(&p, ":");
+		if (!field)
+			break;
+		.....
+	}
+}
+
+
+thanks,
+
+Takashi
 
