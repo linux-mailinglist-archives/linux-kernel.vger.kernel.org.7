@@ -1,114 +1,329 @@
-Return-Path: <linux-kernel+bounces-825265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE19B8B731
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:11:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7527B8B75C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B255A4E7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:11:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7481A7A93F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2922D6E78;
-	Fri, 19 Sep 2025 22:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4694C2D5935;
+	Fri, 19 Sep 2025 22:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fxSDVPG8"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3BERBnF"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2342D3740
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC65624DCE8
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758319883; cv=none; b=dx/nCh9mZIpJBI2ox44aOsOdabJxOGtwve7QRpDNmJpujxOCABcrJj3OeepFvRtCDblz9jH0NYLHuWnttx0kiXorMOzJdqFC6cEu5n2JFswCtR8N34uzaMnktuZgIcPCHojwbzQpBwsYBWb24vYJpDrT7JqsZfwMkJDbXgJ2/AU=
+	t=1758320156; cv=none; b=IqXd79JrD0A6rUcLz+YpkYefMN3KInkaohyAFsqFbcna4DxmgFO41vqfvQk+b85KPx3thxxveg46l96Pq7SpttZDIU6APpijPbrZQEHndRpohBdH92oYaGCCgPUeNdBRbgO/j9CxfWRbjq3AIs57kSH/CrUdIYF6XVYVq0UKMeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758319883; c=relaxed/simple;
-	bh=W0X6Mhm7wS8fcpKTCZiYFQOzjq2PAz99VFyTZFOC08k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FTXZ7PY7giaJkb1sFyET90cqkFZJArfIR3LByq+3riUuFIZvIgDBCNTVdaVrAfWDyraDvRTOi7U4bn8bUfUJUqFOQTcUYBZMygGDr5EkvsywdEFgWusb1elNxxD+bY2kSWGGItukt2EPSppEeDk9v3nj3JG5jcacnYPhfb7cPM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fxSDVPG8; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eae48beaaso2687031a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:11:22 -0700 (PDT)
+	s=arc-20240116; t=1758320156; c=relaxed/simple;
+	bh=XyootmgLv94+Gy6k5KdIOn9j4pUkYBifYt9ZDg77pwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U/FyyLvNCnWdapDWo+6NUR+t/928fH20faZbCLmZp9f5Nsj4lW1ofb331fWCJrRsvr35IHa0Un0ROQAXn+z3nFWQi26quFe8i/AtjKKPo5L5qkPDMAEOOjW7YAjWLvxa5icVRtdvuWqVpq7TTk1wqoxy8mspfil/1GAFHN66Q/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S3BERBnF; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso2176539a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758319881; x=1758924681; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtooCHjprRGWJDpmHrwAkRKW/eZFKp/kjai25858VaA=;
-        b=fxSDVPG8JnR2VLFT70zTAqQy/C6eAK+iQK8rHSDk9sKUqZqIljK7luoqFYOwuLPeQx
-         UkFosrvfGgwc6UWhDWpp3XHEuGETVwqF94dNrRuLAAEUg0xdV2BzOTmk+aYtFJiErDIl
-         4BTRYalrgeXfGtl4PQlOtel6COcUc+Ku3G3RDpnfvMiskm/mcwmQjctoParU6Hn9n396
-         mHr2Rq3X/qn5DyLDhwSiujYLOPKvG/0YpDMgGbS6Kk+bpTNtPtvkZFjHCUobkx7xJR1R
-         sR2liyjuY9BFbDhlmEfJrh8DiGksX4+/iyEa6GlsCG6N02g1DuXlUt3ePTct0dr6Gn6l
-         zxaw==
+        d=gmail.com; s=20230601; t=1758320154; x=1758924954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ujx1Ir738tmFjVSQJD/txn3QAD2H99LyLRg03qE+w+U=;
+        b=S3BERBnFB+Mai/CBOA0BzqplZPuGeJGBtYcXWtPSdt23T8ppFTHavgZYrhnqITD9g9
+         ywfcXjGAb+XBNyuGGvdAd0kw2HMv0YRfewn3dSeHn4Y6BPgXxQhanZP32ytINiYh+bA9
+         bHSA29IAWekqhW1DgtmYw0uD8CSQ/NP5QlN++VZfuIXkurSGhGq635ThFmUFnLsyatT/
+         YZShP8drfPouVX2oOHtPgstu+3CKL2fo4j8CKHv1H6qJI6Lc7CpW63cD90wA9Ngh8Cln
+         ED8+j7xdh2NHs7p43Xh1WhzADCuo8DviIFUxmAQnhsGOl+jSGeVmRIm+UDVCaAay35+Y
+         7hAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758319881; x=1758924681;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtooCHjprRGWJDpmHrwAkRKW/eZFKp/kjai25858VaA=;
-        b=QSiGwK8xcqqNaMaEkNc6Z6Xb1iwy6ahECZrzlplZiH4v5WAHS+Xsbea5gnrREERQ3V
-         Ht8eCpTZBl7CyJx/ot/lD6zIqr4JphK4nsFClbNWO04q2vohmgqkNdn6iV1Zk+o5gWnH
-         JVx8XIVCCu2zJDUFFjkqCZVC6uuSLLyVtA/CqfFrJ4hKgZlqUqPPgjBQoiBd/92TsSU0
-         xn7zfimbSp2lpJRUEaqOKTIk8y/3YRoKOSqSJZMFb80YCo9uYA12u9XjD8NQLVNJUg20
-         2ARE42qGXYEprwNsGuQRXfgmTXaw6AfkBRw/0TytQcvyNbdmNpcvfFwsj1gWX5LXRdy4
-         76Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUX83REHQtVtrlR3F1gqbSrYRAW+cfmko12XaEt5zX24Mf+x0JhSC1Sva9hfUpgDom8B5B9HQyxLjxMh5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfm48v6Hk4pYRfAsTTrBxu+T5abF/F79W7RmdmVG1JGl12qgVK
-	kMBSpRZUaofDHu8+G9f8iDAZ+fNHqVLZR1Q7K7RBBbpCls0pwuQAsuAWKUfJ2ADm6NwI+xbgoTZ
-	Mv60YZQ==
-X-Google-Smtp-Source: AGHT+IEEeeVSif0fn4CCkYFDfSXy3qALrL675gG1rH9irmCC+LZWwFQ7hk0JYzvlmgkTNPObdwsCgxTAvo8=
-X-Received: from pjbsv5.prod.google.com ([2002:a17:90b:5385:b0:32d:a0b1:2b14])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1e12:b0:32d:fcd8:1a9
- with SMTP id 98e67ed59e1d1-33098385bd1mr5008198a91.32.1758319881426; Fri, 19
- Sep 2025 15:11:21 -0700 (PDT)
-Date: Fri, 19 Sep 2025 15:11:20 -0700
-In-Reply-To: <5afee11a-c4e9-4f44-85b8-006ab1b1433f@intel.com>
+        d=1e100.net; s=20230601; t=1758320154; x=1758924954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ujx1Ir738tmFjVSQJD/txn3QAD2H99LyLRg03qE+w+U=;
+        b=s4iuTrh1WWxGDT+SHDlXPPA4UJArjqfVOF+pMOMOgjRxChWLMtB4WiZq0eIVBLGTrW
+         pskgfMoVFz09RPAomf45Q353AlP4NObHs96nC3085eq73wh6a1yJb6KRQ9/wHTXbK0+3
+         wZqFqvgC2mtnyXCWKRnBRLv7EbNLAwm6YMS2ai6IxQ0qoXEu0UP7kWByqCcx7KKrDRjD
+         0Ktqbr4+0Zqcq0rPsc8wFAy3vaX35ZARfEJCqStwIqmx5K6Yqfhq2OWnIQBjOd8ZLPYc
+         He0H6Yg4SuCrywt/zTLxBpEVjFSEqgLziHZdQ1Dfr+KQc22TaZWnnKuFwaeU1TLepF0v
+         QjAw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3PqILz4FgPG91OfZ3k2GcyxRnkcZ92lTUa2YunFlkrTCiK1+CAbRB9CrcEqMzBmrvUnY7t6HL5WfNuAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyCO0AS7ZCqycw3p1DIEs6zbOO1nkBtG4LN44sG2SPsg2NnBdq
+	Zv5osm0dc76i8Cgw2NP18pPHpZdBtzHDul4mebzecRLk6vyg2m+2qoZ0VNPlL5uDecOmvgZUQBh
+	DiEsMRx0AM/5+io9t+5QCia3KG0+cLC8=
+X-Gm-Gg: ASbGnctz7J8+E2vOjPgRb+tcDDBzvrmvkV+vT6D5ZZMux3wQcnScFhoCjDR58KgM7VK
+	Ln8t+0G4l4XQFA2naGrQWMgmKDvJLlDenPd3zRW/CnJRcWN+GRqNnNW+kQsku09ma1ycqDIFkXz
+	x/65DR9pVCwLqdsVdiUJGn1pL0KuCHS6kz71I0/Sip+p+pDn59IpFjveXPNXjyiQjcaQ8E5sPQd
+	4QUtdU6CLAcgaeRV236VcxGPS3ZO5kpBA==
+X-Google-Smtp-Source: AGHT+IECKd/GHWseyORxZ91dOYPAhKL/+IkDewnJuGx1GuQxt/3H3AcpfQSdLAzIhOcZAXVXX8xVdzmgPU4zHvgW1Rk=
+X-Received: by 2002:a17:90b:3905:b0:32e:9da9:3e6c with SMTP id
+ 98e67ed59e1d1-3309834b4f7mr5723487a91.23.1758320153934; Fri, 19 Sep 2025
+ 15:15:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-15-seanjc@google.com>
- <5afee11a-c4e9-4f44-85b8-006ab1b1433f@intel.com>
-Message-ID: <aM3VCPaq8apAJLoW@google.com>
-Subject: Re: [PATCH v15 14/41] KVM: VMX: Emulate read and write to CET MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250905150641.2078838-1-xukuohai@huaweicloud.com> <20250905150641.2078838-4-xukuohai@huaweicloud.com>
+In-Reply-To: <20250905150641.2078838-4-xukuohai@huaweicloud.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 19 Sep 2025 15:15:38 -0700
+X-Gm-Features: AS18NWBOa3kRS4CIxnhQ1iKphnhHAfhyMXzVDLE5JDbhoX6cwJq4muyT3qZ6bWw
+Message-ID: <CAEf4Bzb65VnL5nESxkGGZCgW0Ow+apwTsqzpFv2s+rd3Y6YkAQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 3/3] selftests/bpf/benchs: Add producer and
+ overwrite bench for ring buffer
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yhs@fb.com>, 
+	Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Willem de Bruijn <willemb@google.com>, 
+	Jason Xing <kerneljasonxing@gmail.com>, Paul Chaignon <paul.chaignon@gmail.com>, 
+	Tao Chen <chen.dylane@linux.dev>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	Martin Kelly <martin.kelly@crowdstrike.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2025, Xiaoyao Li wrote:
-> On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> > From: Yang Weijiang <weijiang.yang@intel.com>
-> > 
-> > Add emulation interface for CET MSR access. The emulation code is split
-> > into common part and vendor specific part. The former does common checks
-> > for MSRs, e.g., accessibility, data validity etc., then passes operation
-> > to either XSAVE-managed MSRs via the helpers or CET VMCS fields.
-> > 
-> > SSP can only be read via RDSSP. Writing even requires destructive and
-> > potentially faulting operations such as SAVEPREVSSP/RSTORSSP or
-> > SETSSBSY/CLRSSBSY. Let the host use a pseudo-MSR that is just a wrapper
-> > for the GUEST_SSP field of the VMCS.
-> > 
-> > Suggested-by: Sean Christopherson <seanjc@google.com>
-> > Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> > Tested-by: Mathias Krause <minipli@grsecurity.net>
-> > Tested-by: John Allen <john.allen@amd.com>
-> > Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Signed-off-by: Chao Gao <chao.gao@intel.com>
-> > [sean: drop call to kvm_set_xstate_msr() for S_CET, consolidate code]
-> 
-> Is the change/update of "drop call to kvm_set_xstate_msr() for S_CET" true
-> for this patch?
+On Fri, Sep 5, 2025 at 8:13=E2=80=AFAM Xu Kuohai <xukuohai@huaweicloud.com>=
+ wrote:
+>
+> From: Xu Kuohai <xukuohai@huawei.com>
+>
+> Add rb-prod test for bpf ring buffer to bench producer performance
+> without counsumer thread. And add --rb-overwrite option to bench
+> ring buffer in overwrite mode.
+>
+> For reference, below are bench numbers collected from x86_64 and
+> arm64 CPUs.
+>
+> - AMD EPYC 9654 (x86_64)
+>
+>   Ringbuf, overwrite mode with multi-producer contention, no consumer
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   rb-prod nr_prod 1    32.295 =C2=B1 0.004M/s (drops 0.000 =C2=B1 0.000M/=
+s)
+>   rb-prod nr_prod 2    9.591 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 3    8.895 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 4    9.206 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 8    9.220 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 12   4.595 =C2=B1 0.022M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 16   4.348 =C2=B1 0.016M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 20   3.957 =C2=B1 0.017M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 24   3.787 =C2=B1 0.014M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 28   3.603 =C2=B1 0.011M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 32   3.707 =C2=B1 0.011M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 36   3.562 =C2=B1 0.012M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 40   3.616 =C2=B1 0.012M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 44   3.598 =C2=B1 0.016M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 48   3.555 =C2=B1 0.014M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 52   3.463 =C2=B1 0.020M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>
+> - HiSilicon Kunpeng 920 (arm64)
+>
+>   Ringbuf, overwrite mode with multi-producer contention, no consumer
+>   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   rb-prod nr_prod 1    14.687 =C2=B1 0.058M/s (drops 0.000 =C2=B1 0.000M/=
+s)
+>   rb-prod nr_prod 2    22.263 =C2=B1 0.007M/s (drops 0.000 =C2=B1 0.000M/=
+s)
+>   rb-prod nr_prod 3    5.736 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 4    4.934 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 8    4.661 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 12   3.753 =C2=B1 0.013M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 16   3.706 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 20   3.660 =C2=B1 0.015M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 24   3.610 =C2=B1 0.016M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 28   3.238 =C2=B1 0.010M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 32   3.270 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 36   2.892 =C2=B1 0.021M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 40   2.995 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 44   2.830 =C2=B1 0.019M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 48   2.877 =C2=B1 0.015M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>   rb-prod nr_prod 52   2.814 =C2=B1 0.015M/s (drops 0.000 =C2=B1 0.000M/s=
+)
+>
+> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+> ---
+>  tools/testing/selftests/bpf/bench.c           |  2 +
+>  .../selftests/bpf/benchs/bench_ringbufs.c     | 95 +++++++++++++++++--
+>  .../bpf/benchs/run_bench_ringbufs.sh          |  4 +
+>  .../selftests/bpf/progs/ringbuf_bench.c       | 10 ++
+>  4 files changed, 103 insertions(+), 8 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftest=
+s/bpf/bench.c
+> index bd29bb2e6cb5..a98063f6436a 100644
+> --- a/tools/testing/selftests/bpf/bench.c
+> +++ b/tools/testing/selftests/bpf/bench.c
+> @@ -541,6 +541,7 @@ extern const struct bench bench_trig_uretprobe_multi_=
+nop5;
+>
+>  extern const struct bench bench_rb_libbpf;
+>  extern const struct bench bench_rb_custom;
+> +extern const struct bench bench_rb_prod;
+>  extern const struct bench bench_pb_libbpf;
+>  extern const struct bench bench_pb_custom;
+>  extern const struct bench bench_bloom_lookup;
+> @@ -617,6 +618,7 @@ static const struct bench *benchs[] =3D {
+>         /* ringbuf/perfbuf benchmarks */
+>         &bench_rb_libbpf,
+>         &bench_rb_custom,
+> +       &bench_rb_prod,
+>         &bench_pb_libbpf,
+>         &bench_pb_custom,
+>         &bench_bloom_lookup,
+> diff --git a/tools/testing/selftests/bpf/benchs/bench_ringbufs.c b/tools/=
+testing/selftests/bpf/benchs/bench_ringbufs.c
+> index e1ee979e6acc..6d58479fac91 100644
+> --- a/tools/testing/selftests/bpf/benchs/bench_ringbufs.c
+> +++ b/tools/testing/selftests/bpf/benchs/bench_ringbufs.c
+> @@ -19,6 +19,7 @@ static struct {
+>         int ringbuf_sz; /* per-ringbuf, in bytes */
+>         bool ringbuf_use_output; /* use slower output API */
+>         int perfbuf_sz; /* per-CPU size, in pages */
+> +       bool overwrite;
+>  } args =3D {
+>         .back2back =3D false,
+>         .batch_cnt =3D 500,
+> @@ -27,6 +28,7 @@ static struct {
+>         .ringbuf_sz =3D 512 * 1024,
+>         .ringbuf_use_output =3D false,
+>         .perfbuf_sz =3D 128,
+> +       .overwrite =3D false,
+>  };
+>
+>  enum {
+> @@ -35,6 +37,7 @@ enum {
+>         ARG_RB_BATCH_CNT =3D 2002,
+>         ARG_RB_SAMPLED =3D 2003,
+>         ARG_RB_SAMPLE_RATE =3D 2004,
+> +       ARG_RB_OVERWRITE =3D 2005,
+>  };
+>
+>  static const struct argp_option opts[] =3D {
+> @@ -43,6 +46,7 @@ static const struct argp_option opts[] =3D {
+>         { "rb-batch-cnt", ARG_RB_BATCH_CNT, "CNT", 0, "Set BPF-side recor=
+d batch count"},
+>         { "rb-sampled", ARG_RB_SAMPLED, NULL, 0, "Notification sampling"}=
+,
+>         { "rb-sample-rate", ARG_RB_SAMPLE_RATE, "RATE", 0, "Notification =
+sample rate"},
+> +       { "rb-overwrite", ARG_RB_OVERWRITE, NULL, 0, "Overwrite mode"},
+>         {},
+>  };
+>
+> @@ -72,6 +76,9 @@ static error_t parse_arg(int key, char *arg, struct arg=
+p_state *state)
+>                         argp_usage(state);
+>                 }
+>                 break;
+> +       case ARG_RB_OVERWRITE:
+> +               args.overwrite =3D true;
+> +               break;
+>         default:
+>                 return ARGP_ERR_UNKNOWN;
+>         }
+> @@ -95,8 +102,30 @@ static inline void bufs_trigger_batch(void)
+>
+>  static void bufs_validate(void)
+>  {
+> -       if (env.consumer_cnt !=3D 1) {
+> -               fprintf(stderr, "rb-libbpf benchmark needs one consumer!\=
+n");
+> +       bool bench_prod =3D !strcmp(env.bench_name, "rb-prod");
+> +
+> +       if (args.overwrite && !bench_prod) {
+> +               fprintf(stderr, "overwite mode only works with benchmakr =
+rb-prod!\n");
+> +               exit(1);
+> +       }
+> +
+> +       if (bench_prod && env.consumer_cnt !=3D 0) {
+> +               fprintf(stderr, "rb-prod benchmark does not need consumer=
+!\n");
+> +               exit(1);
+> +       }
+> +
+> +       if (bench_prod && args.back2back) {
+> +               fprintf(stderr, "back-to-back mode makes no sense for rb-=
+prod!\n");
+> +               exit(1);
+> +       }
+> +
+> +       if (bench_prod && args.sampled) {
+> +               fprintf(stderr, "sampling mode makes no sense for rb-prod=
+!\n");
+> +               exit(1);
+> +       }
+> +
+> +       if (!bench_prod && env.consumer_cnt !=3D 1) {
+> +               fprintf(stderr, "benchmarks excluding rb-prod need one co=
+nsumer!\n");
+>                 exit(1);
+>         }
+>
+> @@ -132,8 +161,10 @@ static void ringbuf_libbpf_measure(struct bench_res =
+*res)
+>         res->drops =3D atomic_swap(&ctx->skel->bss->dropped, 0);
+>  }
+>
+> -static struct ringbuf_bench *ringbuf_setup_skeleton(void)
+> +static struct ringbuf_bench *ringbuf_setup_skeleton(int bench_prod)
 
-Yes?  My comment there is stating what I did relative to the patch Chao sent.
-It's not relative to any existing code.
+int because C doesn't support bool?...
+
+but really, do we need another benchmark just to set overwritable
+mode?... can't you adapt existing benchmarks to optionally set
+overwritable mode?
+
+
+(and please drop sdf@google.com from CC for the next revision, that
+email doesn't exist anymore)
+
+[...]
 
