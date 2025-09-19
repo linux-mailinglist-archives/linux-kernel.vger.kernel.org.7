@@ -1,198 +1,169 @@
-Return-Path: <linux-kernel+bounces-824845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFDBFB8A48E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:27:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03214B8A482
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E3A586B72
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D688E7BE1E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE03E318143;
-	Fri, 19 Sep 2025 15:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C/6yRpic"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013012.outbound.protection.outlook.com [40.107.159.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFC73195FC;
+	Fri, 19 Sep 2025 15:26:45 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1A73148DA;
-	Fri, 19 Sep 2025 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758295651; cv=fail; b=TATXi7XUIx5omDtlU5jjPctzPhJQgqVsqMxzBQeuqcuQQV0xhGS7cDkolalp4AIGDitCTE5z24vxsB0/fe+SR0+OwrBSjKswhJl6x9jtV6rMWDRvu3ExaaIdhJtBO2ulzHRtPThdtSAHEQfI6aqK+K4FrzXk+zQhlaHKQQ7SXZc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758295651; c=relaxed/simple;
-	bh=dS6+YBtiL2RNA872EyzomW8SG/aw6P7BI966xz6DqIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MZ1kjyAIo7LBQMGqRCSjmSQVz2fi/FtOqb+hvLNUSlJJb55sfKTLnAuJDNtjf99itPpafIOsObON9wYaATliQoaAHd6zCtxe3Y1h3C5XB7uhArpfUF8R4pWn68W5NuySw6ZOFT8n+o0j+zDPUWcqJqj0EfAYGkEk4HG3fnZZ1zw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C/6yRpic; arc=fail smtp.client-ip=40.107.159.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MDpZTXFE+rBuNKZcKAAFOLdFLB8vaXulRGQYqwKSSgYsZPBgipz/bxju/JniVn2X6RLrX++nTDGDkOQi738KWQV5khEIXIap8fg6+5r62k+s1ReOd55SU5SuJSaAcOk43Y4MmSHHi0w4QLLttXrSXh0U2gFonCMq2wG15+A4ugdceLj2q6fXOie8LdXI9+DTfkeXwC1WX1+VCWQJlrGyACF0q8ya3ZUlPy7BWKzyIyKDZAU1aflktpsEvdCEVh7tq1yHgR9z6Koqu5Fp4f0v5QAeFmXdTHD6HhzAkOjbXRnepBHCeQgPgI2hLJwAZzgg9H1CstqV/thdaMVNtW4FQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jwbEbjuH3N6BlIDjbWtXaMISGvxTGrtwBxOHPqEB0Q8=;
- b=Hy43RI5khfntVpiFZJR0+3QMGS5FNzsa/mKnLO5dcwERc9JLdFWrQSai3LjnWaEOgPeTfpEeUXkdaRmxN++/6k+Yed+JtHqsE11n1yV8agLhHjMk21QRXMBuCNinQWhXx8/SjhmbAWtZ30JJW8MXFQtkPRQYqxoDpy4+8XhAYOqPgfjpYuAEaSSM9bLa5BPKcexlpbl+s8ONh9gyw0WG6QcssjxXq3Wh9L7erMedfr+Xz/veNbKBwG61H0MOdv+xg2sA2Bz77pvuGUErRuHeHgMTNvxumFd+F7EuZA3UksGzZKNirbH0Pll7oT24yHT1QaCd39Yg7V+L4P9OzFjmYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jwbEbjuH3N6BlIDjbWtXaMISGvxTGrtwBxOHPqEB0Q8=;
- b=C/6yRpicTiD/Qkx5w+039XJbefYhobF2HyYWblyBxwPbZrDDqpbiLN16GRnz6AusC9JWWTROI8R2R50TZYiB+MU+0mXpN3h+jkEf3KG3Q57k+79fc/8KVd0vPusybUaGrmjAflEuLY0vY7XG2Me4SEy+5InOcIU4oNvcytosTbqHDcA+TD17VrrbnMvH9p3+Kiscco21ySHqQBCYCrbPdMVSkhSF73DXWpQ7XCGyf/XJwTnedqnPYYu9Ziaa8x64Fa9qqNVBiv+foHPKjqQtJ70P5bPpqb1lSMqWYI/B8jLMmSL6d7Zj7y3nnxhJlXzKbVhDvxoiO7bHpJzIBNi5EQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by PA1PR04MB10098.eurprd04.prod.outlook.com (2603:10a6:102:45b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Fri, 19 Sep
- 2025 15:27:27 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
- 15:27:27 +0000
-Date: Fri, 19 Sep 2025 11:27:18 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/14] drm/imx: dc-ed: Drop initial source selection
-Message-ID: <aM12Vp95NRGqqpX1@lizhi-Precision-Tower-5810>
-References: <20250704-imx8-dc-prefetch-v1-0-784c03fd645f@nxp.com>
- <20250704-imx8-dc-prefetch-v1-11-784c03fd645f@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704-imx8-dc-prefetch-v1-11-784c03fd645f@nxp.com>
-X-ClientProxiedBy: SJ0PR05CA0107.namprd05.prod.outlook.com
- (2603:10b6:a03:334::22) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC3F31813F;
+	Fri, 19 Sep 2025 15:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758295605; cv=none; b=Kj9xD6NZuovg8hWmrKnT3wexsHm80HaA+mRRKa0yLtc9Ns8vQbpKllptpj8CfF/FKcD2e2PY8BzLMkpX3A7iNbbYtmxzFuXgfJv9cg/P71GyIpHF0qhqzAVoUFTFYB59zRwbKDuPVVg8XPQjK4MUM7oj93RcHXWgssNasmAp9vA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758295605; c=relaxed/simple;
+	bh=Ot5AWc2cOtHpOR605EtLUH9ddgtXMMhC2NVrDEB1sgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V7ST4Wt4xs8qZ1CE5iRXZ/Ac5UdAEvvSauMGpFzYzJDM601wtrPYCIdiIErnMPN5pmdg+VgNJQkrI3r5LfkuzcC+/XJfxqmziz83HJxckPYNLqZ+U2brLfetasM1AGoQBIpyotNat9WCqXr4vsqu1cN3fgzyVG5xS6OlSCuXvjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id A5B41C06F3;
+	Fri, 19 Sep 2025 15:26:39 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id E5E5020026;
+	Fri, 19 Sep 2025 15:26:35 +0000 (UTC)
+Date: Fri, 19 Sep 2025 11:27:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
+ <rostedt@kernel.org>, Menglong Dong <menglong8.dong@gmail.com>,
+ jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+ ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-ID: <20250919112746.09fa02c7@gandalf.local.home>
+In-Reply-To: <175828305637.117978.4183947592750468265.stgit@devnote2>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+	<175828305637.117978.4183947592750468265.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PA1PR04MB10098:EE_
-X-MS-Office365-Filtering-Correlation-Id: f964a136-092a-4f7b-ba45-08ddf7910a83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YRoVewRbhib/QhWpe0DwCPzvOTaicKwRc7xnPHhqsYf1OSB0nQ63SYZLHkmQ?=
- =?us-ascii?Q?7PeYfZ8QCLNprqprG0MPHG0mBjhP0u++FJcGzTTsUJFmsceMhO95sQBZSniA?=
- =?us-ascii?Q?CY1TeGgtrepL5MFKgVB0iB4+0pASzkpnhj4udMnpcAwWTt3cldlmQxoodpz2?=
- =?us-ascii?Q?H5q0wNWiXqPK8k/CANoEN8TtGSfszS+iw92YihTpwO+R8vdEtGYR1dIBb1MS?=
- =?us-ascii?Q?7Hux1ZE4KV+Vby10BTjlKqErz3unV0X6ROZw67rGsXgKt/DZoXGUiOdTAf1O?=
- =?us-ascii?Q?zmydTtvPaGsEnfiAMN0PPUQ9HX5k5OJ4XrNnwtbEOhb73Knh86xXKSghVSfw?=
- =?us-ascii?Q?nsKe19H+/yGFhtB6aTxitwfV7tTEW9SDrUiD0lOS79X7t92yoXuBDAwbiQS1?=
- =?us-ascii?Q?+bKQue/epz/NhaF6wChkcNHv5hA+OHNJeSOfYKIS1//MiIZDLUoer7B/uWnr?=
- =?us-ascii?Q?beAUVnFS0/a4wrX2/TbaFRl9d6v3RZZ+CeSl3/sWlOZc7niqy2qIz0yP9Usb?=
- =?us-ascii?Q?oCFwSES67gAgGaypnpbH3opeMsdii2v+aUca21QSXGqya+dGN0JJcvRjlmxm?=
- =?us-ascii?Q?5kVZmxZpdcFtuXF+VQDnOSncLs/20BF9S2FtDQq1ZeJeDKvPjl1mGPYc++sw?=
- =?us-ascii?Q?HhQMOSDEhTTMJyIWikV3uJkO+yOUtiFff0UNbyQf3Re5us8ZEZj9SexAEczT?=
- =?us-ascii?Q?IEElf8zy6Zz4K7vd1VCrtRCos70EtM4O875YhhBNoztKnhb5NtC6nYld48Zg?=
- =?us-ascii?Q?5kFVBzNxafroBv1XF7e1NFuUrzfU/yUpAztwFssA6QPyAjxhq56bBlN1pgzV?=
- =?us-ascii?Q?2ECZVCmUNQ4fZuYbMZM1sUWcZXRIrMF9JqAXFodLJnVzpKBWeQ5xeetnjPxy?=
- =?us-ascii?Q?z07D9Suil1w09E6XEk62jfUG4v0wUbzlBbof4yiIxxn37ulJCsr7F5xHLYTw?=
- =?us-ascii?Q?UhVdVeY4PS8AK4+i+rtKr2Fpf3NPY0/dtKB8kx1zZTLLz8te0XiZPPda76lY?=
- =?us-ascii?Q?Dcu1E733X3g/ha/d0lnpE0fUzCTELGIb2laoxng9HfpR7awmgHDtpU0a5AUJ?=
- =?us-ascii?Q?yQHYNClHjWpWnYu6+x6EKT8+AnjKXGoO3Uibz72It9UTlK1E6uMAJ7XWLa/g?=
- =?us-ascii?Q?QgQgrMp6I/04nKEwC24r+lAMBLGhVEaZ1UrhhzvLMcF6EVYOD9nE3VB5ScUR?=
- =?us-ascii?Q?wT7/vgMQ3uPLuDFYCysMv66fDxdKzVotNPYUDvwGNLd3nt5L29+UckUL9RGh?=
- =?us-ascii?Q?Tl3NFE6jrkgzroC3kGo+bgr6cswS4IMIvRHuDBP49hohflBzkzje6OZfbI1L?=
- =?us-ascii?Q?elhsu4dAE4cqNWKI1Vdgbo8kWcT6KFyAsC+iZIDOH/HWOTpIQlnY5huW4Pcn?=
- =?us-ascii?Q?mGGZH4qsc6yl1qKzeNVKwyCJHUuEnZKtapRvv3ebnjz/VdIyF2jy3Vq7R45n?=
- =?us-ascii?Q?9d6G8ssZQDlutofCiujC5ydQ0yIW2QTpAxn6IsjFgGjxxBzWZREceg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?b7K/XnSz0M0RY6RTIZuOEgGMV3B4S7WXxNLSV0wsf/DRUPX+XXmBNeq1KBjX?=
- =?us-ascii?Q?r3DVZ9/3/4XWdqZ00R+Z34yS4bXpvsZODUhuD2ykjhr3x+umfl+/SsIZMkJb?=
- =?us-ascii?Q?FwaNHnwnTdAAFKjEfjmbsvK02CKN3jFN4+rQ8DE3Jlhp5SpcVei5PtKekmBi?=
- =?us-ascii?Q?TFb1IJFvucgtS2RwcyzFILPomHmcJRJQbeUV5A+rw+hS8Kt5mQClyhCOj2tR?=
- =?us-ascii?Q?VZtVupRmJ/87d8LQ13elSQE4fa3Fohip5z956hZM5+zs0I51Md8GxnI3Ai/k?=
- =?us-ascii?Q?AcEUdaz+D+fgF31nS2the7Z/ShXJiUfJEx8hM/ZbpKGO0JpYYC9gCcm8l1I3?=
- =?us-ascii?Q?NDMoIz/qY7TereT8ZCzn4UIUY9J9Atq+kF5qdSZ4nG16hL3BISq0k5CKyRaf?=
- =?us-ascii?Q?/oc9Vi9mKV3T9as/KVLJFyr5j0ytb8N56IIQwVB5S4d5HBk2DY271UCUnk0b?=
- =?us-ascii?Q?sLPeamJ4ymWiiedk19/GvRVnqZqbkpXcI2fWkZj8KeEQatZtl/ZJQbIeNRu7?=
- =?us-ascii?Q?cd+R1rlS6s9+ms8eUOEwu/7aE1LebLTEocegDBgIr0jcxiQsODaQ9EaWU9Sm?=
- =?us-ascii?Q?Dca5VIQrrPNccYApCggIn5c0CgcPe9yrsbNenLMrgak5DWwtS2Mt9qTfEj1U?=
- =?us-ascii?Q?/xDT+VyH3/n8Dw9SD2VaiZbvF8MK7pjaosc1q8sj/b9UUGmw73O8aLHLZXpU?=
- =?us-ascii?Q?GyphDumKS0szI721mcmjO7rb6l4HT+F5+W8my4rEbLowrObVJDISWXdFa3F3?=
- =?us-ascii?Q?4zBaObsP8+0VTS82K9KesjqpfwZE1K4Sa+C7jtWodTDtOxYCVrdWDduQX/s/?=
- =?us-ascii?Q?3BjGbSG8y6h5QccSsRMrl3GVBjXnInKDl7dWF3BWfaRUKIlOQ6U9+5DxUtiX?=
- =?us-ascii?Q?kpEaisJlx14qdpx+gYV5cxCSOP8JZRvdvI8ZfwIKn3yODUCSzfaFyJ5WaGY3?=
- =?us-ascii?Q?tgAZEehbDAx5aO5pBB+URjkTiNkler+dgNiX82SDiPoE47KcIzyEhM5ia7Fy?=
- =?us-ascii?Q?Z3agJjUt6Iv4XmwtJl7SfZ/wWgaO5X3VQww0SglSFDriGkr3rkwyzLvqrYSJ?=
- =?us-ascii?Q?+dRwQJsIh8DOO866vil2g411s/ATtLoJYRhBjDbv8fYlft/cN1Pk7mQkJhXJ?=
- =?us-ascii?Q?ZrJuevAuE/rqda6z1GBJ0n3ueJ6+rKJ6cBYM6lW4MCECw1M+ytVnWnM7auEH?=
- =?us-ascii?Q?VOVDgtUDG7KVhw0Q7eIKROsjW5tMdU5/wzXPftuyePweKatmWw32gjr/2ulO?=
- =?us-ascii?Q?DyWnTLPtyxfrrJMlMAnEmIlbTncwLKONrwhVi3QIfNcBTEYd7sWMm8GcN7YS?=
- =?us-ascii?Q?xYdd4NeGVrh2kXNTaFMpbZ2nu2SgP8WhkYqSr7mLNtDNIZmrvqSue9o/cdUF?=
- =?us-ascii?Q?U0vME7pzbF9kUsVDCbx076NFBk6I+dzIEl7SYHs9tHTfP6lxf5/NCDmxyClp?=
- =?us-ascii?Q?1c9IbXUJQYl/ZTYnOr/LQtEwNe03lfJEZwcpgkbpCBB07+BdWDWSBFoMfZ+B?=
- =?us-ascii?Q?3SOkr4ZekZPHFs8yx6Ie+SJftelfeFpT+8igMVskjn8WqnpKgn9by51XUV0j?=
- =?us-ascii?Q?LDVFzohvxsKWZ0kNyl4KO+pMGJDe/i9w4lgofF+U?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f964a136-092a-4f7b-ba45-08ddf7910a83
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 15:27:27.8470
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KnDBxK0iHTJCoPqOboD2ZXVV6cC1G7BHB78QIT+r+WNnVWFag8Je/Y60MyzhCBd4DwO72WSRqHyzW89bC2n/pA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10098
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: uju6gemxdjzzxrbni6owfwzggyjmzyd7
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: E5E5020026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+EmSphq/kZv9gnziFEVTi8jXD3oWa6Njs=
+X-HE-Tag: 1758295595-286850
+X-HE-Meta: U2FsdGVkX1/QKPmBrti2d6QA5vCDvCGlltvv8KOQymEJHcVLCn9z7tQdSlDkMx0mWg7nM02FJFLE/KavMbyC++gg9G3il93RP22csb+AciNt45EJXgfCdkEMK7eule26KSubI/oYQ8X9n9WqBblOu90FbrTBMz991I6Ar39CoYXOoceuF0xfEKRRKx2Dz61YaMtqmUSQWSSBtW9G3OGHaY+GXcK9v5i2sekDHFbf9MOlQQER0QeEWI7v7KHDluxRpshM84uQiVFtUQrM9gbUo0fh+0cehNqgsWV7MeyWFzTidgcQ3TV65UjbdNvY8WZEnG48cD03/jt4zi0NirAkkF78yDD1lHtadPuCFDe+FWGgldMWRzSAjw==
 
-On Fri, Jul 04, 2025 at 05:03:58PM +0800, Liu Ying wrote:
-> It's unnecessary to set initial ExtDst source selection because KMS
-> driver would do that when doing atomic commits.  Drop the selection.
-> This is needed as a preparation for reading ExtDst source selection
-> when trying to disable CRTC at boot in an upcoming commit.
->
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+On Fri, 19 Sep 2025 20:57:36 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> function_graph_enter_regs() prevents itself from recursion by
+> ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+> which is called at the exit, does not prevent such recursion.
+> Therefore, while it can prevent recursive calls from
+> fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+> to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+> This can lead an unexpected recursion bug reported by Menglong.
+> 
+>  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+>   -> kprobe_multi_link_exit_handler -> is_endbr.  
+
+So basically its if the handler for the return part calls something that it
+is tracing, it can trigger the recursion?
+
+> 
+> To fix this issue, acquire ftrace_test_recursion_trylock() in the
+> __ftrace_return_to_handler() after unwind the shadow stack to mark
+> this section must prevent recursive call of fgraph inside user-defined
+> fgraph_ops::retfunc().
+> 
+> This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+> fprobe on function-graph tracer"), because before that fgraph was
+> only used from the function graph tracer. Fprobe allowed user to run
+> any callbacks from fgraph after that commit.
+
+I would actually say it's because before this commit, the return handler
+callers never called anything that the entry handlers didn't already call.
+If there was recursion, the entry handler would catch it (and the entry
+tells fgraph if the exit handler should be called).
+
+The difference here is with fprobes, you can have the exit handler calling
+functions that the entry handler does not, which exposes more cases where
+recursion could happen.
+
+> 
+> Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+> Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+> Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > ---
+>  kernel/trace/fgraph.c |   12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 1e3b32b1e82c..08dde420635b 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  	unsigned long bitmap;
+>  	unsigned long ret;
+>  	int offset;
+> +	int bit;
+>  	int i;
+>  
+>  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  	if (fregs)
+>  		ftrace_regs_set_instruction_pointer(fregs, ret);
+>  
+> +	bit = ftrace_test_recursion_trylock(trace.func, ret);
+> +	/*
+> +	 * This must be succeeded because the entry handler returns before
+> +	 * modifying the return address if it is nested. Anyway, we need to
+> +	 * avoid calling user callbacks if it is nested.
+> +	 */
+> +	if (WARN_ON_ONCE(bit < 0))
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+I'm not so sure we need the warn on here. We should probably hook it to the
+recursion detection infrastructure that the function tracer has.
 
->  drivers/gpu/drm/imx/dc/dc-ed.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/imx/dc/dc-ed.c b/drivers/gpu/drm/imx/dc/dc-ed.c
-> index b514790bb765329295553f89d16ee1167ef411dd..1b141ced57b895c24b6358332cbe5e308dad7c01 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-ed.c
-> +++ b/drivers/gpu/drm/imx/dc/dc-ed.c
-> @@ -203,7 +203,6 @@ static inline void dc_ed_disable_gamma_apply(struct dc_ed *ed)
->
->  void dc_ed_init(struct dc_ed *ed)
->  {
-> -	dc_ed_pec_src_sel(ed, LINK_ID_NONE);
->  	dc_ed_pec_enable_shden(ed);
->  	dc_ed_pec_poweron(ed);
->  	dc_ed_pec_sync_mode_single(ed);
->
-> --
-> 2.34.1
->
+The reason I would say not to have the warn on, is because we don't have a
+warn on for recursion happening at the entry handler. Because this now is
+exposed by fprobe allowing different routines to be called at exit than
+what is used in entry, it can easily be triggered.
+
+-- Steve
+
+
+
+> +		goto out;
+> +
+>  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+>  	trace.retval = ftrace_regs_get_return_value(fregs);
+>  #endif
+> @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+>  		}
+>  	}
+>  
+> +	ftrace_test_recursion_unlock(bit);
+> +out:
+>  	/*
+>  	 * The ftrace_graph_return() may still access the current
+>  	 * ret_stack structure, we need to make sure the update of
+
 
