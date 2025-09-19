@@ -1,128 +1,152 @@
-Return-Path: <linux-kernel+bounces-824253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F389B8881B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:05:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CD9B88820
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0823ABE10
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE54C1C81C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA0D2EB853;
-	Fri, 19 Sep 2025 09:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEBB2ECD15;
+	Fri, 19 Sep 2025 09:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEQfYBVF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fOZ5QFge"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F621BEF7E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B8E1BEF7E;
+	Fri, 19 Sep 2025 09:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758272716; cv=none; b=ry0+96S9U76+/ydM4ryt8WN2Faqx8OnWQQkGkvh7HU8QfEvUVUfojNDYMd+3VockcTqKg+10UN9ypMPFT+saSyPJ+JH1gocrt+BVVpZPYIDgZr2YDxODPX3tXixYXmNI+UWGiGdAwQEGrzoyBRkEHjy1FEaMCVI4q+Me+1fJWZc=
+	t=1758272815; cv=none; b=tBAYmBd2QOenQCa9ogn2X6jjoxfdhEtC/tOzDIkkp311FgyeENoVxhpTyYG1PZDjgHmYhK+kOQWR8qVPNACn95xuTZfmdiE0YX4GAfM/d96f3Ysy+qUP95RdGUg5NuA+PDitnYyE+HU80gEZ02ViwuZTGh0nZrymof2Pzg5eOsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758272716; c=relaxed/simple;
-	bh=zJ0SjfgXXTUUnk4huOKfaCwNac4EUk7FP0wHBE8bpMY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZcf2ypoLBdcvWjSPS0Tyky+5ewvtcUIppFPmsP+ylSRVsen8tRWA4CgnKtd+3qt7oqQpDn7CQBFCorW1jI7ZptQ/lc/edaKPBxuR/pw9RKMJvtqFHKLBm3YuYuPToFlDxRWAezdIw3v2G3oEISHhxVRdn66b5AUJQOed1/nyME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEQfYBVF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31ED8C4CEF0;
-	Fri, 19 Sep 2025 09:05:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758272716;
-	bh=zJ0SjfgXXTUUnk4huOKfaCwNac4EUk7FP0wHBE8bpMY=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=eEQfYBVFHz8m3XUwc47GQ8nRASXr13i6epRajw7PQnSfSQkAevDpXLmGSN0jbAuK/
-	 1IKCyy8Soxwtnn9LSoy97u5JXEiq5bL1JvvzgqoEE8lpvMcAdk8LS8bNdaDLELEzA5
-	 sd09AODeRewtQ4s5iljD9BaafvExaTJjoIXjIvPTRTjzyGPvLbRwKgLBBHzPuxUr3W
-	 8TFy2c1e+sIgARhqlJfzfKH2/x2SSLpfzMaYNyuTVr6kwJp7AbYaAPcfbGVPTpSiHQ
-	 Ti+p2P4f4MeID2Rr5tcNVKLIrOArhcXZsmasCTLVwkos6RaxTvdu6kUjeM57eZmC6/
-	 IzTj7GQ71WQVw==
-Date: Fri, 19 Sep 2025 12:05:06 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>
-Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <aM0cwg1GcXUY31wj@kernel.org>
-References: <aGfsaIIzHWfjcNFd@x1.local>
- <e7vr62s73dftijeveyg6lfgivctijz4qcar3teswjbuv6gog3k@4sbpuj35nbbh>
- <930d8830-3d5d-496d-80d8-b716ea6446bb@amazon.com>
- <jxekhkhbn7uk23oe24svxrs3vfuhseae57sqagndqgh2e7h33o@kfkygmrvjb5n>
- <aMp-kW3OLqtZs8sh@kernel.org>
- <du5pzxmfk6lile3ykpaloylwz4eni6disj2oe25eq6ipzqemiw@ybcouflfnlev>
- <aMvEu9m7fJLnj862@kernel.org>
- <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
- <aMxJ3inEs_RRyqen@kernel.org>
- <2rkvuudmsf5tv66wya4f7m5niwnodu42owzmro5jzyc4fcep5n@lre7hir4qjli>
+	s=arc-20240116; t=1758272815; c=relaxed/simple;
+	bh=1yW7A+oComf/wcAUSW0nWfvML7FUNggSBtaw622QSOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ivh8JCr/WxCtmy6+17cnsoykm3ujp/KvvGMEFcCVx/LqdeUnNqc4VJW1OfVDSzBleaqPTxrTdOAanEUSKsiIRuxHSNRZjAeDyxEljTSODEIw3JOa6ydKWAGJsZP4lXg0F2Sj/41OVuzWNazQNbuBQdO4YkDv88/nPxIKeFybPM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fOZ5QFge; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B64F940E01A3;
+	Fri, 19 Sep 2025 09:06:50 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2qjkM8NXCu5T; Fri, 19 Sep 2025 09:06:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758272806; bh=wGHRDwqpnW3oFoks5BATinRh9aEQBXbKrHaBS+ur7ww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fOZ5QFgevnHtJt0zKv1lcNNgyEYUi6N8xK3UhNLQiCaNEj3akCCp3itoaX7XnnFZD
+	 6pmX9+97hyLNFlrkv5S+FKC8dBVlGKfNNgCtZrbcCbW4IS9pjHnP39HYb6cPmB0k0Z
+	 uogOHwDg5SQoRqPGJveZnxRRNZ0FMRgr65z4XxUT8NQHTyUCxEITt0dHk6sPsy/jiX
+	 PfCM11+ZPBo39JvUaEWbaWEjsSoT82N9Ud6orUGQq9M/KoLMjVctYRRZ5NBFLk4QZO
+	 bAPek+3GZMcq5S/ozy3Pu0ezKYra+Rkiz+us9lW7QVcuSV6sYFGn754TkFNsLqeZcB
+	 hQKw3P7EK/1YqKWA1cgQTQHCKzEItUKTJixChmKBkNtIoBfCuR7vOilR+ylWfrnkdU
+	 voRo7+8pG2SIXeFYHnGbufBtE+a3eQKpLouYK60BTNQTdfaqTL2ixDDJXgLiN4yGUq
+	 1/QuXiFKVezl7Sf1RGJeU2dYO83/k1OyPpWLR9gkiINBeqy4w2RxRoo4BiNm0knehf
+	 xWoHLSdLfGAQ9/r/W+fPCEreIdTIzfoktMfmRerkUujvdTCgZPxNDg8Car05r0bMXx
+	 Xf6MeEzjYDTNI9YppOmx4DBUd/gOzzJdy4uqb/DiBtpb9fh1JKSt/l6UdYgtrfo+1e
+	 LGzKEfkRDi1sFa5EWwe6DNcw=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 9BBCA40E019E;
+	Fri, 19 Sep 2025 09:06:31 +0000 (UTC)
+Date: Fri, 19 Sep 2025 11:06:25 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Michael Kelley <mhklinux@outlook.com>,
+	Mukesh R <mrathor@linux.microsoft.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"arnd@arndb.de" <arnd@arndb.de>
+Subject: Re: [PATCH v1 4/6] x86/hyperv: Add trampoline asm code to transition
+ from hypervisor
+Message-ID: <20250919090625.GBaM0dEegelsB724bZ@fat_crate.local>
+References: <20250910001009.2651481-1-mrathor@linux.microsoft.com>
+ <20250910001009.2651481-5-mrathor@linux.microsoft.com>
+ <SN6PR02MB41570D14679ED23C930878CCD415A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <79f5d0ac-0b3e-70fc-2cbe-8a2352642746@linux.microsoft.com>
+ <SN6PR02MB4157CAE4FA74E482A96471B1D416A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2rkvuudmsf5tv66wya4f7m5niwnodu42owzmro5jzyc4fcep5n@lre7hir4qjli>
+In-Reply-To: <SN6PR02MB4157CAE4FA74E482A96471B1D416A@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-On Thu, Sep 18, 2025 at 02:32:31PM -0400, Liam R. Howlett wrote:
-> * Mike Rapoport <rppt@kernel.org> [250918 14:05]:
-> 
-> ...
-> 
-> >  
-> > > I am under the impression that we don't need to return the folio, but
-> > > may need to do work on it.  That is, we can give the mm side what it
-> > > needs to call the related memory type functions to service the request.
-> > > 
-> > > For example, one could pass in the inode, pgoff, and memory type and the
-> > > mm code could then call the fault handler for that memory type?
+On Thu, Sep 18, 2025 at 11:52:35PM +0000, Michael Kelley wrote:
+> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Tuesday, September 16, 2025 2:31 PM
 > > 
-> > How calling the fault handler differs conceptually from calling
-> > uffd_get_folio?
-> > If you take a look at UFFD_CONTINUE for shmem, this is pretty much what's
-> > happening. uffd side finds inode and pgoff and calls to a shmem_get_folio()
-> > that's very much similar to shmem->fault().
-> 
-> I believe the location of the code that handles the folio.  One would
-> decouple the folio processing from the mm while the other would decouple
-> which processing of the folio is done within the mm.
-> 
-> Does that make sense?
+> > On 9/15/25 10:55, Michael Kelley wrote:
+> > > From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Tuesday, September 9, 2025 5:10 PM
+> > >>
+> > >> Introduce a small asm stub to transition from the hypervisor to linux
+> > >
+> > > I'd argue for capitalizing "Linux" here and in other places in commit
+> > > text and code comments throughout this patch set.
+> > 
+> > I'd argue against it. A quick grep indicates it is a common practice,
+> > and in the code world goes easy on the eyes :).
 
-No :)
+But not in commit messages.
 
-In short, uffd_get_folio() is a special case of ->fault().
+Commit messages should be maximally readable and things should start in
+capital letters if that is their common spelling.
 
-tl;dr version is that the whole processing is page fault handling with a
-brief excursion to userspace. For VMAs registered with uffd, page faults
-are intercepted by uffd and delivered as events to userpsace. There are
-several ways for userspace to resolve a page fault, in this case we are
-talking about UFFD_CONTINUE. Its semantics is similar to a minor fault - if
-the faulted folio is already in the page cache of the address space backing
-the VMA, it is mapped into the page table. If the folio is not in the page
-cache uffd returns -EFAULT.
+When it comes to "Linux", yeah, that's so widespread so you have both. If I'm
+referring to what Linux does as a policy or in general or so on, I'd spell it
+capitalized but I don't think we've enforced that too strictly...
 
-So the processing of the folio that uffd_get_folio() is exactly what
-->fault() would do for a folio found in the page cache of inode backing the
-VMA. And unlike ->fault(), uffd_get_folio() should not allocate a new folio
-if its not in the page cache.
+> I'll offer a final comment on this topic, and then let it be. There's
+> a history of Greg K-H, Marc Zyngier, Boris Petkov, Sean Christopherson,
+> and other maintainers giving comments to use the capitalized form
+> of "Linux", "MSR", "RAM", etc. See:
+
+MSR, RAM and other abbreviations are capitalized and that's the only correct
+way to spell them.
+
+> > >> upon devirtualization.
+
+What is "devirtualization"?
+
+> > since control comes back to linux at the callback here, i fail to
+> > understand what is vague about it. when hyp completes devirt,
+> > devirt is complete.
+
+This "speak" is what gets on my nerves. You're writing here as if everyone is
+in your head and everyone knows what "hyp" and "devirt" is.
+
+Commit mesages are not code and they should be maximally readable and
+accessible to the widest audience, not only to the three people who develop
+the feature.
+
+If this patch were aimed at the things I maintain, it'll need a serious commit
+message scrubbing and sanitizing first.
+
+HTH.
 
 -- 
-Sincerely yours,
-Mike.
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
