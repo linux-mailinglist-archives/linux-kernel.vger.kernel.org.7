@@ -1,90 +1,117 @@
-Return-Path: <linux-kernel+bounces-824734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFEDB8A094
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14FDB8A0A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2344A1BC175F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B746716AB6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F0313D75;
-	Fri, 19 Sep 2025 14:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8932E313E1A;
+	Fri, 19 Sep 2025 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTXw3iGj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bo+ti9sV"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A8824DCEB;
-	Fri, 19 Sep 2025 14:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2736230F7E3
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292844; cv=none; b=GJcdngqz04Bj+aX3DBWrjP9KygSG69kWogYYAvJhCP9aq9rQZWQtaBlk5kHkXogX6cPHH+8IasfcF2L45MEV97Ej2dxDH2J/KBvzjvZFKhBwP5yFd3+YFSHiYeO3S3f+FSDQ5pbvzzX6QFJgVQTE8BNixlhagJ+sO4FzesblbQU=
+	t=1758292869; cv=none; b=CXLKUF8XnJ+igQ6kV0sPX3GlrGyny48IWqu8VYRE/pr74zwZv4kHumlGSA3VlzuOHe40XxYhgSQozpDyM0djz5LZ0UUwIhqwtfvypz5mxucJY3i73KR3/tlxLR0ko2COsgwVwKG8dBeanrsbNN3roIRVdInoomt8SCKDjv0xQDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292844; c=relaxed/simple;
-	bh=Tp0iF6Qs70aaCWdqaFDcXwePAlPgsbZcyXEX+0AZba8=;
+	s=arc-20240116; t=1758292869; c=relaxed/simple;
+	bh=vg+VLVnVm1/uOlgwx6+NHyakWpf7CT1+wvh0cm/sJhQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KSOhIkpn7O5OS2IortaLywsQpBPP4EbwHdKDGtgFARMBVBuoVsrolzNki/SPm9PAvAY0BBQuWVwTwiA4lR3YmW44/ig1U3tMFUxIrXqminm5FLAwLREGa0o8WwWOquPnlG3OBkUmdNUjEfWIBhh/MUYVlewCsxYUqpCBKdacHpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTXw3iGj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A67BBC4CEF1;
-	Fri, 19 Sep 2025 14:40:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758292844;
-	bh=Tp0iF6Qs70aaCWdqaFDcXwePAlPgsbZcyXEX+0AZba8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aTXw3iGj5BpNPnS4VZB1PDxjhfJuw4n1u47rXxN+dpgpGRYXHgDr5I4pmu7ZBE9vj
-	 Dl78fOgMKeLFPIcjr999IgGL858FuC0miK2hSZdxG/genbGyOAHbIPrAwOWI2jHw/S
-	 RK8ZIlCHRd4GVR8nTPcs/+ejNXAyzJy8z9eL9EYY07fDCWiJd2MGVgVkzpeqdqszm5
-	 OX2DKRM8dEEq+6NXd/sLk2ctRXpxHY8w0YKqYVaFwVpn0WAYFLINCwW0u2nPEBL7YT
-	 oBhFio/ZPKrM6CyLIaTlyJ6JTef+LTW0i5pHjeTpcXSlvgVdwbNVhsaxSMCNJLWBCy
-	 C7bTjykSy1GxA==
-Date: Fri, 19 Sep 2025 09:40:42 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+FJEKNGwah2TFT0fRiHpBDX+eBuRm8EFgIGO0mA0+kVHYDv2Ji84OQ2xVwDxSTRhTqMdJKMoRRKPq0kWIhyWXHDphAnpYdsPCPz0jSCHMwHW3akc37OU3NQmLjqdJtU2Ne5ixStPzjATrRTNZQKcAqRB+C1ASnnWit19UU7+6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bo+ti9sV; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=vg+V
+	LVnVm1/uOlgwx6+NHyakWpf7CT1+wvh0cm/sJhQ=; b=bo+ti9sVXAtjzg/a3wLp
+	2r4Qt1xEKhK2iVNYSy4O3V0EUAy0vmeoCRdZzhtaKnwTtFhLkCC6vmRwiW5vMGhP
+	InB8LHgIUa7+6VMcEnw3sbShIlu7kl2r3vi3rrCRSGfXxpZEBRPEk84lkPsexw2C
+	ZX1tIk6rdvdecNxzl+pft/m0AmJNedTAxM+6uTt4+GJNsXc/lw+dAa3Aw5vm17gZ
+	cP2KiPyWNXdW0jvGH3S+O6EKewW6SYcbOfpMdDDq8FxzXLdJxB+F0Guu3QUOCJGr
+	PAakYORziKajsMb9UGcrI5GK4nBZMDmrDQq+NcTlUyN4O/sKU7qEGxxbCN6/qDl6
+	iw==
+Received: (qmail 3951065 invoked from network); 19 Sep 2025 16:41:05 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 16:41:05 +0200
+X-UD-Smtp-Session: l3s3148p1@zjuldSg/IyVtKPID
+Date: Fri, 19 Sep 2025 16:41:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"Derek J. Clark" <derekjohn.clark@gmail.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 1/3] dt-bindings: platform: Add Lenovo Thinkpad T14s EC
-Message-ID: <20250919144042.GA875871-robh@kernel.org>
-References: <20250918-thinkpad-t14s-ec-v5-0-ac0bc6382c5c@collabora.com>
- <20250918-thinkpad-t14s-ec-v5-1-ac0bc6382c5c@collabora.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Phil Edworthy <phil.edworthy@renesas.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 8/8] ARM: dts: r9a06g032: Add support for GPIO
+ interrupts
+Message-ID: <aM1rgY9CCF54c_Pg@shikoro>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+ <20250918104009.94754-9-herve.codina@bootlin.com>
+ <aM0llhn054OI9rA8@ninjato>
+ <20250919155910.4d106256@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="cI7BpyPbBSmbEbfX"
+Content-Disposition: inline
+In-Reply-To: <20250919155910.4d106256@bootlin.com>
+
+
+--cI7BpyPbBSmbEbfX
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250918-thinkpad-t14s-ec-v5-1-ac0bc6382c5c@collabora.com>
 
-On Thu, Sep 18, 2025 at 11:20:26PM +0200, Sebastian Reichel wrote:
-> Add binding for the EC found in the Thinkpad T14s Gen6 Snapdragon,
-> which is based on the Qualcomm X1 Elite. Some of the system LEDs
-> and extra keys are only accessible via the EC.
 
-s/platform/embedded-controller/ in the subject.
+> 'interrupt-map' is a required property. If the board doesn't use any interrupt
+> GPIO, its dts has no reason to set the interrupt-map.
 
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Sebastian Reichel <sre@kernel.org>
-> ---
->  .../lenovo,thinkpad-t14s-ec.yaml                   | 50 ++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
+Why is 'interrupt-map' then a required property? Can we drop it from the
+requirements?
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
+--cI7BpyPbBSmbEbfX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNa4AACgkQFA3kzBSg
+KbbH5A/+KFV1JaIWgdLWXWHARzjzFnlQtriKenzhqLJBCz4lQU+Mzb5VeB7p7ys7
+kTu2fYEhPy5TZYH7BTBmQlt/DT9oD9IuvAyzCA7jBDRcI0gBLwNIAUzd6MkIVjTU
+88qzoij2nyjRQgDe9qwTx12eu2MnD8s86qp18lTjLsSoMoGdcg9R10rsK0wC3s5J
+NEzPQa/WjFReCXS4yPrNk9OWHBXOZs+IW4dLPP9dF9EIkJRUvr0Z72nco7T9f0Rv
+4RuGrZdbc0PbseDiYFxFeG8ajxwZEu9CS69jpoO4zmmQOD75VaCV+tR9O+3fDQJW
+ZETEIw4uOwpUlF+oWpq4X6tAeUyRBy4KX4OBnfbbkpdiQnfIfvzQf1U9D+Pi9j39
+lfR36k7PxBCsMJ0wmVfJcIDhtKNKBUnBWe8UHyDXW79lLU9+eLPn7+FYQEUZnSt2
+2oaCRgfXKAwKCK7AWMnKoUTvkxDWEPCMwCFLUoKhrF0xBOUWue7UFwzCUMpgXowm
+6pyV8V7886NqBnCpEojZ2rwVBwx2C/HhdFgYc6dSJwmDazB+AUor4Ix290W6NzF3
+PWn2ynIEtiVNSGp2g7R0X7uexRMNr1jUp1IQoMYT81+F3WNxZ+ypGnny/dBnGEac
+gKbLs/0lWgA11ijNXck092CTdQw1iRBCMEIILOvYzLEjxI8dryE=
+=lIeI
+-----END PGP SIGNATURE-----
+
+--cI7BpyPbBSmbEbfX--
 
