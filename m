@@ -1,129 +1,159 @@
-Return-Path: <linux-kernel+bounces-823899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825D1B87B01
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:11:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523A2B87B0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477C81C24BD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122237C08D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E3F246BB6;
-	Fri, 19 Sep 2025 02:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAAC24111D;
+	Fri, 19 Sep 2025 02:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnkUIm6a"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oHX4to2G"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7950239E6F
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FC119E7F7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758247896; cv=none; b=LiMZ2kuvPAd0K9DSJDw4nRBsnBADnE4tDWSlDzIgtOc9dsICI/EocAkVjx4uT1eOkXuzOCoMwMV5TiK2cJCGwM6qWRqA8fmTgGR3HsHtLJyo2PG+87UGBFcs0cF2Zh+F2fBgSFBAUZm35xFaHCRLRyBmM8oPOxiN974WH1XT3/w=
+	t=1758247950; cv=none; b=NC3hDS2OKg4mSvFnZM2ZhI8Y1cmV9rvpydwOEXB7f8wddGggBBzFIxBirsYNf59UM50WdMdDoWrg8F+1/+eheTQFEEyLzwpwLmTpa/AkBCP0nGODlvVO2R144B7OMYdoZBUmPsimWtRaUEsjMtreDXaiF/b0RxuNix/RdxDTY7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758247896; c=relaxed/simple;
-	bh=ziXcd/mGn2ry+d/Ov28rbQ3Z8WS0immtLzwgvpIlto0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZMnCqmck3Nt5+XaAgQOSm+4hmQfFMFi5FbRdWmZHEZ+xav1asTiGf+g5/5Ex3MXD4ItIf1kiTW5Zy+ivaf+JQtSeLc1DegpyzmbLhUkL6+3WQS1cTn6Z8AjtV7O8ns5a0XQf+cqWcytAtYFTvUhECA1/MKsuMUenjyMTYEien+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnkUIm6a; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5516255bedso433081a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:11:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758247894; x=1758852694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qZzkp8nCuA3tTuaf6Pt6AXsPGQNEt3CNxtrSQfVvzGo=;
-        b=RnkUIm6aoS5bTEJdbZVIq91ZN9KEsN1bIt4Bf1Y4+j4OmXDYuEdYfmf5DTXf7sJPT0
-         xN3lGH3WXJQ59LC01wsLdM2oIOWMBE5TvPI1CgfPyRRQy1gp+KU+xThDtgQzhbxS6v6x
-         Y3MovN39rpu+jcHzw2rXM0yVG2iBSt6LYtaHyhXUKrLKQ1YJK+3VFYNf68HwoIy+G+go
-         Cn00Hlc2upxJ8EMHe11nJq2TAYchXqdNLaakBd+IrKj3E8dkR7tuC8jxEH0LFiqj/V7g
-         Y75ZbOzl8uZcY/fw4zuNhULI4OiUEZjoioMDu7QEULWXDbcej/VCOEicv4iBa1U18NXS
-         Y1xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758247894; x=1758852694;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qZzkp8nCuA3tTuaf6Pt6AXsPGQNEt3CNxtrSQfVvzGo=;
-        b=DMHbGD8sMQEMpF+ZMe4TRo9cv0UAaRaZXLIlLqyTM/mGFqx9CiVm4Wvy+LYEHyPDmh
-         HxQLoJYsiQSCblHIl0eQ1SJ2cySMb3yMq6P+uM4/DXQPxhPjotRBifLmTRfv6yeyFX4O
-         mBxtT7k2NBoXvXHVrXbW0DQLNUlm/NJLk0rpvK6cvExdBVLOealWmvuw+YEK9daqAz6m
-         uqjMKokwu+iNT4/tW62kYvGgaDtcD4LtDifNt038vg5eji1Sn0fhXLV+9AIn4K53GJE0
-         dk3VlvbMAT5sr+9WTSKWKHWt8jL8VagqAfB3pBlM6YdHaACHPX1BzLjJ5TMLZn1E6jbO
-         sIZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzF0nNEkJoS122eM/XZNw1QjYWbGimlqi1JHEHJ/s29SuXv5dFfGXXKRWIHLL7GKcYq/m24ZjG2dP36h4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGdn0VzOyRV8zPRK1F9Ddrt5Md4hCxmxboZPTp2dwAxxGd+dQI
-	fogwJ43I70IIS4JCiLSpWvfqzfaHFS/99lPD2tIDevGgmytKjCnWZU/3
-X-Gm-Gg: ASbGnctsTA2QuRCQNVNffItFApqak1tvAfgkQ4NEdMEhwEPyTJt1Tm2N2g+pW2V2Pme
-	CeJG0ghdqD1EkG+wbJxIo//zJ+llQNFR5EeCXm4OuOzWYBX/73IifNqt+8YZ1+jcgHUxDrwJ3o3
-	stDznCvpFlLHmJeU3XnT6lq/kjIfLghFIMF8BUnHTITZ+Y+AYHOT5Ilu4tJ3al/DmjtArZ9apIq
-	lbgG828ydHZtIfFZ2b4v9qJhgyRayUHYTiztOPYMoGatYfou9jnCEHFZ0Nct/4qRPr1gzmCg0Tp
-	e9V6yl7M+9gELsR8QZIa2JTLY0u1LhTRxJPdonz7cKJr8oztHUSYdw9HMr9GKg3pvzdgDj/HuSM
-	GdrV8rcS0c2yt/OFZcOeAUqAM
-X-Google-Smtp-Source: AGHT+IFai2xzlAnilWh4m4u+vIgxxJ3TsFPhkwgF6XAkrIfE2ErA7mqnopPzZJz605+TwLFG1Fausw==
-X-Received: by 2002:a17:902:dad1:b0:267:d772:f845 with SMTP id d9443c01a7336-269ba55f8f5mr26364635ad.52.1758247894071;
-        Thu, 18 Sep 2025 19:11:34 -0700 (PDT)
-Received: from lgs.. ([2408:8418:1100:9530:23e9:7ba2:72c2:e926])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802fdfdfsm38785405ad.102.2025.09.18.19.11.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 19:11:33 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: HighPoint Linux Team <linux@highpoint-tech.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	James Bottomley <James.Bottomley@SteelEye.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] scsi: hptiop: Add check for device-provided context pointer in ITL callback
-Date: Fri, 19 Sep 2025 10:11:04 +0800
-Message-ID: <20250919021104.3726271-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758247950; c=relaxed/simple;
+	bh=V+IiGmNy69YZSWa2z6+ePLi0MW0LW2EXg+YgYtwvyEs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gKzx0xUL2GrMJYa0CYLTloxllQjoAV5qIPyIgaCd/drB324esz3zehtfZngYpU2GBChrVSbrbhbStH+0UR2pUyLbIm2GKAxWjnRnF7/X1rO7s73OnltvODfBI/lYoCct9MLtZa+7eqEiC0KeAoVsII/OTh0OQPVwisa3GgFFcss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oHX4to2G; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758247935; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=m6BSTlEv4BxYzmuMdizgJCn5FFRfQjdUu4Ddm03+goQ=;
+	b=oHX4to2GbSvdroH64hl9VjMqlFCKQFdYkY8oDLn/iBiQXpEqWPLODJ7HkMrc36omKrPOFlAL8OVWSd6V3wvzRBYTBeC21iJKYly+XPRsiPdEle+nTkxIV7qQsl6a7weH4LwB1LKunr2vdLV0tEQhat0VlSH6uvNEdRAGd1lbOh4=
+Received: from 30.74.144.118(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WoHs.rR_1758247933 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 19 Sep 2025 10:12:14 +0800
+Message-ID: <787dc1a4-d0b7-4559-8160-55de987beac3@linux.alibaba.com>
+Date: Fri, 19 Sep 2025 10:12:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm: vmscan: remove folio_test_private() check in
+ pageout()
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, mhocko@kernel.org, zhengqi.arch@bytedance.com,
+ lorenzo.stoakes@oracle.com, hughd@google.com, willy@infradead.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1758166683.git.baolin.wang@linux.alibaba.com>
+ <9ef0e560dc83650bc538eb5dcd1594e112c1369f.1758166683.git.baolin.wang@linux.alibaba.com>
+ <17d1b293-e393-4989-a357-7eea74b3c805@redhat.com>
+ <4e938fa1-c6ea-43fb-abbd-de514842a005@linux.alibaba.com>
+ <tombfifwrhx2n4jnj2pgcdcpj42mdv7yizkpxrppnqrtsxd5fw@epnrjqgmmy6z>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <tombfifwrhx2n4jnj2pgcdcpj42mdv7yizkpxrppnqrtsxd5fw@epnrjqgmmy6z>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-An untrusted device may return a NULL context pointer in the request
-header. hptiop_iop_request_callback_itl() dereferences that pointer
-unconditionally to write result fields and to invoke arg->done(), which
-can cause a NULL pointer dereference.
 
-Add a NULL check for the reconstructed context pointer. If it is NULL,
-acknowledge the request by writing the tag to the outbound queue and
-return early.
 
-Fixes: ede1e6f8b432 ("[SCSI] hptiop: HighPoint RocketRAID 3xxx controller driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- drivers/scsi/hptiop.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On 2025/9/19 09:06, Shakeel Butt wrote:
+> On Thu, Sep 18, 2025 at 05:36:17PM +0800, Baolin Wang wrote:
+>>
+>>
+>> On 2025/9/18 14:00, David Hildenbrand wrote:
+>>> On 18.09.25 05:46, Baolin Wang wrote:
+>>>> The folio_test_private() check in pageout() was introduced by commit
+>>>> ce91b575332b ("orphaned pagecache memleak fix") in 2005 (checked from
+>>>> a history tree[1]). As the commit message mentioned, it was to address
+>>>> the issue where reiserfs pagecache may be truncated while still pinned.
+>>>> To further explain, the truncation removes the page->mapping, but the
+>>>> page is still listed in the VM queues because it still has buffers.
+>>>>
+>>>> In 2008, commit a2b345642f530 ("Fix dirty page accounting leak with ext3
+>>>> data=journal") seems to be dealing with a similar issue, where the page
+>>>> becomes dirty after truncation, and it provides a very useful call stack:
+>>>> truncate_complete_page()
+>>>>         cancel_dirty_page() // PG_dirty cleared, decr. dirty pages
+>>>>         do_invalidatepage()
+>>>>           ext3_invalidatepage()
+>>>>             journal_invalidatepage()
+>>>>               journal_unmap_buffer()
+>>>>                 __dispose_buffer()
+>>>>                   __journal_unfile_buffer()
+>>>>                     __journal_temp_unlink_buffer()
+>>>>                       mark_buffer_dirty(); // PG_dirty set, incr.
+>>>> dirty pages
+>>>>
+>>>> In this commit a2b345642f530, we forcefully clear the page's dirty flag
+>>>> during truncation (in truncate_complete_page()).
+>>>>
+>>>> Now it seems this was just a peculiar usage specific to reiserfs. Maybe
+>>>> reiserfs had some extra refcount on these pages, which caused them
+>>>> to pass
+>>>> the is_page_cache_freeable() check. With the fix provided by commit
+>>>> a2b345642f530
+>>>> and reiserfs being removed in 2024 by commit fb6f20ecb121 ("reiserfs: The
+>>>> last commit"), such a case is unlikely to occur again. So let's
+>>>> remove the
+>>>> redundant folio_test_private() checks and related buffer_head
+>>>> release logic,
+>>>> and just leave a warning here to catch such a bug.
+>>>>
+>>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+>>>> Acked-by: David Hildenbrand <david@redhat.com>
+>>>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>>> ---
+>>>>    mm/vmscan.c | 12 +++---------
+>>>>    1 file changed, 3 insertions(+), 9 deletions(-)
+>>>>
+>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>>> index f1fc36729ddd..930add6d90ab 100644
+>>>> --- a/mm/vmscan.c
+>>>> +++ b/mm/vmscan.c
+>>>> @@ -701,16 +701,10 @@ static pageout_t pageout(struct folio *folio,
+>>>> struct address_space *mapping,
+>>>>            return PAGE_KEEP;
+>>>>        if (!mapping) {
+>>>>            /*
+>>>> -         * Some data journaling orphaned folios can have
+>>>> -         * folio->mapping == NULL while being dirty with clean buffers.
+>>>> +         * Is it still possible to have a dirty folio with
+>>>> +         * a NULL mapping? I think not.
+>>>>             */
+>>>
+>>> I would rephrase slightly (removing the "I think not"):
+>>>
+>>> /*
+>>>    * We should no longer have dirty folios with clean buffers and a NULL
+>>>    * mapping. However, let's be careful for now.
+>>>    */
+>>
+>> LGTM.
+>>
+>> Andrew, could you help squash these comments into this patch? Thanks.
+>>
+>>>> -        if (folio_test_private(folio)) {
+>>>> -            if (try_to_free_buffers(folio)) {
+>>>> -                folio_clear_dirty(folio);
+>>>> -                pr_info("%s: orphaned folio\n", __func__);
+>>>> -                return PAGE_CLEAN;
+>>>> -            }
+>>>> -        }
+>>>> +        VM_WARN_ON_FOLIO(true, folio);
+> 
+> Unexpected but better to use VM_WARN_ON_ONCE_FOLIO here.
 
-diff --git a/drivers/scsi/hptiop.c b/drivers/scsi/hptiop.c
-index 21f1d9871a33..2b29cd83ce5e 100644
---- a/drivers/scsi/hptiop.c
-+++ b/drivers/scsi/hptiop.c
-@@ -812,6 +812,11 @@ static void hptiop_iop_request_callback_itl(struct hptiop_hba *hba, u32 tag)
- 		(readl(&req->context) |
- 			((u64)readl(&req->context_hi32)<<32));
- 
-+	if (!arg) {
-+		writel(tag, &hba->u.itl.iop->outbound_queue);
-+		return;
-+	}
-+
- 	if (readl(&req->result) == IOP_RESULT_SUCCESS) {
- 		arg->result = HPT_IOCTL_RESULT_OK;
- 
--- 
-2.43.0
-
+Um, I don't think it makes much difference, because we should no longer 
+hit this.
 
