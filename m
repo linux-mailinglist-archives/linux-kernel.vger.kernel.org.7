@@ -1,122 +1,214 @@
-Return-Path: <linux-kernel+bounces-825132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DA2B8B117
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:18:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8C4B8B126
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E618E3AFB94
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85EB95A445C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A0E286D50;
-	Fri, 19 Sep 2025 19:18:54 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AF82BD586;
+	Fri, 19 Sep 2025 19:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2GtAhd8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE4B2641C3
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 19:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C85226E711;
+	Fri, 19 Sep 2025 19:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758309534; cv=none; b=c0jc20X175or6Vb3l7TXGrzpNKNZ3vWtZmQKkf8jTgiDRwo7rktqo2xHLn5CXyUak6fzsBnV7KIIcYSLm46Y158+H+erJxS60grTpnWKEWsFKZmiqaHSKmBiBJfAMptHOb4ykW8wmSsINrk8bR9NUQDEWHRQruk/d0yQMIkd4F0=
+	t=1758309583; cv=none; b=jkcakOP1XQPKZEnKc8yWoLUGH8RaaRqiVtk14LIEx5d3OgPXY9SXMcUFSHTP0365LZbf/hTpCwOQuAP/EzI6ubaLir5dNc8aLkJfPN6DPWf94JAsSOU2/uUkjUzrlWUd7dS5xikXCYAm3vinF7W4c1EwKDVT9pQfFvQ5I9vdFmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758309534; c=relaxed/simple;
-	bh=Nm+atkHlX329nBUD+ou4VUp5OVx7b5SAjbLtVdyGzew=;
+	s=arc-20240116; t=1758309583; c=relaxed/simple;
+	bh=RIu4F7qAgYmGH6tNvm+4CzefUV0zH2vjCBJ8h0ToUAo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrNHy+A4PpC16f7vqKLckV9tgOKIY4xZnUJMMCYalix+85vP+pDT5DvSYrppOOkDRl7PFlmtsXSs0hzVS7Hz/J3Vty04E2b1J+pCTnsT2PqGkI4ngqebDWwXN9n7BQxVzb6ttTOv+133yNlnrGtJ2MqaF5SzhVbUyHtEOyNsO1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uzgcr-0004Qj-VG; Fri, 19 Sep 2025 21:18:33 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1uzgcq-0029eE-2e;
-	Fri, 19 Sep 2025 21:18:32 +0200
-Received: from pengutronix.de (ip-185-104-138-125.ptr.icomera.net [185.104.138.125])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id B75A847520E;
-	Fri, 19 Sep 2025 19:18:29 +0000 (UTC)
-Date: Fri, 19 Sep 2025 21:18:21 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Aswath Govindraju <a-govindraju@ti.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
-	Haibo Chen <haibo.chen@nxp.com>, linux-can@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 5/9] phy: phy-can-transceiver: Propagate return value
- of gpiod_set_value_cansleep
-Message-ID: <20250919-lovely-amethyst-bullmastiff-5cef8b-mkl@pengutronix.de>
-References: <20250909-can-v6-0-1cc30715224c@nxp.com>
- <20250909-can-v6-5-1cc30715224c@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cxaxpf4BTVTvDBtSHqZKmOaQQHxJDlVto4F3Bt42GeZkI+jNe5oFf4+b6/rujJjhXnlD5Iwsl/oh+996qtzVnheaW2Wr2TsZWTNiaZdYbXEz1rle/7oGPYaqiwJBVX0XopzYR/KAF3/U3PuqYjQHzFRrOdR/ljMksblg8ZsEB3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2GtAhd8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083E6C4CEF0;
+	Fri, 19 Sep 2025 19:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758309583;
+	bh=RIu4F7qAgYmGH6tNvm+4CzefUV0zH2vjCBJ8h0ToUAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i2GtAhd8bUf2jG0nPz6QS+Fnc1JDbjL0PYpNDaajz77TqZvhRvhLX375Esu4LPoIX
+	 Zic8Xef1180RGF6uIFCGGIBllcoVDHNazkwmTXJj4H+EJY6pce8JBGtyF16UFy4p1p
+	 dLJVg5VGwtDQyOaMXxRLBLjj4cPHxQfG6v42OKABqtovOAYnhm1nSGR2G6YmQm/w60
+	 on+yLOj2bqnr/s4CLiAKCfaPDP9nLLXlJfhAD51wCvIGpC8GhNNQlYm4uT7Q0F/7An
+	 VT+NF2S7AL9sj63auOqbZ1DET9Bq3OB+Hf2NyaclfqbTydCsXoTef/O7uHV5+bwSRO
+	 F6oKvMERskMBw==
+Date: Fri, 19 Sep 2025 12:19:42 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ethan Graham <ethan.w.s.graham@gmail.com>
+Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com,
+	andy@kernel.org, brauner@kernel.org, brendan.higgins@linux.dev,
+	davem@davemloft.net, davidgow@google.com, dhowells@redhat.com,
+	dvyukov@google.com, elver@google.com, herbert@gondor.apana.org.au,
+	ignat@cloudflare.com, jack@suse.cz, jannh@google.com,
+	johannes@sipsolutions.net, kasan-dev@googlegroups.com,
+	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
+	rmoar@google.com, shuah@kernel.org, sj@kernel.org,
+	tarasmadan@google.com
+Subject: Re: [PATCH v2 09/10] fs/binfmt_script: add KFuzzTest target for
+ load_script
+Message-ID: <202509191208.D2BCFD366F@keescook>
+References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com>
+ <20250919145750.3448393-10-ethan.w.s.graham@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t6u4zda4cx5kdnck"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250909-can-v6-5-1cc30715224c@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250919145750.3448393-10-ethan.w.s.graham@gmail.com>
 
+On Fri, Sep 19, 2025 at 02:57:49PM +0000, Ethan Graham wrote:
+> From: Ethan Graham <ethangraham@google.com>
+> 
+> Add a KFuzzTest target for the load_script function to serve as a
+> real-world example of the framework's usage.
+> 
+> The load_script function is responsible for parsing the shebang line
+> (`#!`) of script files. This makes it an excellent candidate for
+> KFuzzTest, as it involves parsing user-controlled data within the
+> binary loading path, which is not directly exposed as a system call.
+> 
+> The provided fuzz target in fs/tests/binfmt_script_kfuzz.c illustrates
+> how to fuzz a function that requires more involved setup - here, we only
+> let the fuzzer generate input for the `buf` field of struct linux_bprm,
+> and manually set the other fields with sensible values inside of the
+> FUZZ_TEST body.
+> 
+> To demonstrate the effectiveness of the fuzz target, a buffer overflow
+> bug was injected in the load_script function like so:
+> 
+> - buf_end = bprm->buf + sizeof(bprm->buf) - 1;
+> + buf_end = bprm->buf + sizeof(bprm->buf) + 1;
+> 
+> Which was caught in around 40 seconds by syzkaller simultaneously
+> fuzzing four other targets, a realistic use case where targets are
+> continuously fuzzed. It also requires that the fuzzer be smart enough to
+> generate an input starting with `#!`.
+> 
+> While this bug is shallow, the fact that the bug is caught quickly and
+> with minimal additional code can potentially be a source of confidence
+> when modifying existing implementations or writing new functions.
+> 
+> Signed-off-by: Ethan Graham <ethangraham@google.com>
+> 
+> ---
+> PR v2:
+> - Introduce cleanup logic in the load_script fuzz target.
+> ---
+> ---
+>  fs/binfmt_script.c             |  8 +++++
+>  fs/tests/binfmt_script_kfuzz.c | 58 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 66 insertions(+)
+>  create mode 100644 fs/tests/binfmt_script_kfuzz.c
+> 
+> diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+> index 637daf6e4d45..c09f224d6d7e 100644
+> --- a/fs/binfmt_script.c
+> +++ b/fs/binfmt_script.c
+> @@ -157,3 +157,11 @@ core_initcall(init_script_binfmt);
+>  module_exit(exit_script_binfmt);
+>  MODULE_DESCRIPTION("Kernel support for scripts starting with #!");
+>  MODULE_LICENSE("GPL");
+> +
+> +/*
+> + * When CONFIG_KFUZZTEST is enabled, we include this _kfuzz.c file to ensure
+> + * that KFuzzTest targets are built.
+> + */
+> +#ifdef CONFIG_KFUZZTEST
+> +#include "tests/binfmt_script_kfuzz.c"
+> +#endif /* CONFIG_KFUZZTEST */
+> diff --git a/fs/tests/binfmt_script_kfuzz.c b/fs/tests/binfmt_script_kfuzz.c
+> new file mode 100644
+> index 000000000000..26397a465270
+> --- /dev/null
+> +++ b/fs/tests/binfmt_script_kfuzz.c
+> @@ -0,0 +1,58 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * binfmt_script loader KFuzzTest target
+> + *
+> + * Copyright 2025 Google LLC
+> + */
+> +#include <linux/binfmts.h>
+> +#include <linux/kfuzztest.h>
+> +#include <linux/slab.h>
+> +#include <linux/sched/mm.h>
+> +
+> +struct load_script_arg {
+> +	char buf[BINPRM_BUF_SIZE];
+> +};
+> +
+> +FUZZ_TEST(test_load_script, struct load_script_arg)
+> +{
+> +	struct linux_binprm bprm = {};
+> +	char *arg_page;
+> +
+> +	arg_page = (char *)get_zeroed_page(GFP_KERNEL);
+> +	if (!arg_page)
+> +		return;
+> +
+> +	memcpy(bprm.buf, arg->buf, sizeof(bprm.buf));
+> +	/*
+> +	 * `load_script` calls remove_arg_zero, which expects argc != 0. A
+> +	 * static value of 1 is sufficient for fuzzing.
+> +	 */
+> +	bprm.argc = 1;
+> +	bprm.p = (unsigned long)arg_page + PAGE_SIZE;
+> +	bprm.filename = kstrdup("fuzz_script", GFP_KERNEL);
+> +	if (!bprm.filename)
+> +		goto cleanup;
+> +	bprm.interp = kstrdup(bprm.filename, GFP_KERNEL);
+> +	if (!bprm.interp)
+> +		goto cleanup;
+> +
+> +	bprm.mm = mm_alloc();
+> +	if (!bprm.mm)
+> +		goto cleanup;
+> +
+> +	/*
+> +	 * Call the target function. We expect it to fail and return an error
+> +	 * (e.g., at open_exec), which is fine. The goal is to survive the
+> +	 * initial parsing logic without crashing.
+> +	 */
+> +	load_script(&bprm);
+> +
+> +cleanup:
+> +	if (bprm.mm)
+> +		mmput(bprm.mm);
+> +	if (bprm.interp)
+> +		kfree(bprm.interp);
+> +	if (bprm.filename)
+> +		kfree(bprm.filename);
+> +	free_page((unsigned long)arg_page);
+> +}
 
---t6u4zda4cx5kdnck
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v6 5/9] phy: phy-can-transceiver: Propagate return value
- of gpiod_set_value_cansleep
-MIME-Version: 1.0
+Yay fuzzing hooks! I'm excited about this series overall, but I'm not
+a fan of this "manual" init/clean up of bprm.
 
-On 09.09.2025 13:40:15, Peng Fan wrote:
-> gpiod_set_value_cansleep might return failure, propagate the return value
-> of gpiod_set_value_cansleep to parent.
+If you're going to set up a bprm that passes through load_script(), it
+needs to be both prepared correctly (alloc_bprm) and cleaned up correctly
+(free_bprm). Otherwise, you may be fuzzing impossible states created by
+the fuzztest setup. And having a second init/cleanup path in here makes
+future refactoring work more of a burden/fragile.
 
-Are there any expectations of the phy framework from the driver if the
-switch on or off fails? Do you have to roll back any changes in case of
-an error?
+But this is also kind of not a great example of fuzztest utility because
+load_script _is_ actually directly accessible from syscalls: it is trivial
+to externally fuzz load_script by just writing the buffer to a file and
+execve'ing it. :)
 
-Marc
+-Kees
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---t6u4zda4cx5kdnck
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjNrHoACgkQDHRl3/mQ
-kZwqYQf/c1/IXd7aRBuqdaMALPyXhUQLb5zDa8xv15HZudLAlb4N3ZCTwnOa8WuR
-6C1PiBoxg6JPbbcgfCADKc3ADq/+nxjr8fk1rU3bPf/9t3p+BNJFfX8jiwL7B42w
-X/Yt9MEtmxWaOBWeNXedyM4pFB2qT+GJncKrl6lBIjyjIRkhABKaiNyt/M/DFenK
-rA+xEFrZVljI5iLMktjI92K1FlNaRiaEyOvCSYrM33pHz8RQWPECEF0T4D9z9siI
-XPy/dP9YRUkUszZ1kp+vh//bd2I8Z1R7fwNBWZf+ZwLMISDDx/lt06ohQQwTcLgs
-fHVzHn541sJjrfMO6kikrs8r0W3FQg==
-=qpEC
------END PGP SIGNATURE-----
-
---t6u4zda4cx5kdnck--
+-- 
+Kees Cook
 
