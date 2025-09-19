@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B2FB8B87E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C611DB8B884
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CB7172D45
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D6A179331
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535C631E0F2;
-	Fri, 19 Sep 2025 22:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6AA3218C8;
+	Fri, 19 Sep 2025 22:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cTgbiLit"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1+IY7lD"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D05C30648E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BB9314B86
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321258; cv=none; b=VLYnoo+ye3GdDXviFOb1GnpJRYvSEh4nvJPUa8tceGpZTWOUjvwWEhGmV3Ziz/530u4aYUjW8jecdH4h0GH1QeDz3/VEeGP5ZJ6dgsA4xWghClz9u4xaLmATz2qkikh9m/SiWA2wjmcM1VNdrNbIvoCIXPSQyB8m8KKbxqadEms=
+	t=1758321259; cv=none; b=XkxK3l70zSXN8yfwWzsNoED09NpQiVRXgYBUeIiSGuZxYsxRvNqoan3wFsWZ43wwCb7pKVLUSzjdXB+SDeNlGJIp16CTBR95U10nSHCAlwlgfRpIIwCwbRLGp0R65EpjzQwsRWOF9tOVrBPmY3YRcpgedh0J3mWi785DZmNnffE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321258; c=relaxed/simple;
-	bh=8PRqVNvtJzh+ZpaClWIkz+QMaHPq9nVT+VsmB/6rcek=;
+	s=arc-20240116; t=1758321259; c=relaxed/simple;
+	bh=YWutoHj6w4COgn2+/X6HQXHVNZltIoT7LPB1tDxHCkY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k28CWFqp5uzQyJp5Pd3SPR6OKjAnTR75dN6bIsgfWcJzM4Fv4l7MdgimUjJ8FKZdK6waEslVlQs06wipwmADtjvpJnGaPnE9aO0IPZWKBxDX9SH89Y0TtEbxcjJrAlTQYNzwTZf0lmjNmzGfjiHaWFzDLEd5XBW3PsGjB3LxH94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cTgbiLit; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=Em4A5lutTEqJoxpC2QmRXVN9PMCHWUrmXpKJZQ2QSMDvviaGFp3XDnk9NOG4DQHz9ullOCnUQ2kF1G0FrpBJPGCdyzc8Zwo2sm3+nFM/1061jq4wKKJsQiIvdDUtbU6TJ5djuwPk3TaAMLy/8n3znszfK60dpd9BJUnnqNUnaTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1+IY7lD; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581ce13aso48902725ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:15 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2ea9366aso2448351b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321255; x=1758926055; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321257; x=1758926057; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lmjv7m743ORHFla75w2cvbk6s7USbNyWaxznp0sV74A=;
-        b=cTgbiLitZ7g+53RLVWZSfDXiMZuXesT4yCX7/B9C/71ceUsjT7uWmSy00fr9A7tKje
-         bCoefRa70RN46ww9SigiH6yaqJT+5S7qU4Y3XuxKg3VHXOGZO/WcX2Dak+bGsROEVZHF
-         hZjiMQL27sy/48ugi0DEFVimk8DfoB59SGkgpbpVDL34iMu1qNIGDpoNUZSE3oRw1Sme
-         0qZJz6RKwCHDswEfi8pXg5kGgRUfO4qfdMdCk7jUADf7jLlO6yN8LDhmMaVwGUDvVY8r
-         MPFM+yrR6mlTN2wi5lAb2gKzifRIuHzG7CNPXGtbaiDnM0W3SDWlD0bEa0mk6p+IYvyB
-         Jnzw==
+        bh=VYZLHKF8pF5KDs3SsZEerHn8ojDfpKPYyWB28d/RJk8=;
+        b=v1+IY7lDiteZ7bMd0KONkBV5/52n6suxCbwybR9Op3oDqAC+bPCL47bDOVWCNfpzeY
+         zFsSFm/DF15uhD0QX0UaHfMCXgNQSndZCpTOBNvD5E38PZPqwjz92UNMO7pobMlULKXY
+         3Ory0Qi+tOx0QvUrAcp4SWl/goSjDWgrLM7bfHFhvxs2exz7Zuvcsu2QpVzzqhOyj86s
+         gE2BRMCJsGW3R3D3mV6iYIY0nJtMoAijmAaidxfFOiOdUd+x8oio73el2UN2KMMjuPsQ
+         gTp56EUzT8xIWkYsz3vdkrkbbPy4M7Vv/dQeK/SQsx6io3I++01XaEipcNa6T16LD+xO
+         4JrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321255; x=1758926055;
+        d=1e100.net; s=20230601; t=1758321257; x=1758926057;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Lmjv7m743ORHFla75w2cvbk6s7USbNyWaxznp0sV74A=;
-        b=kQ8B1P/Yi3VnYqJ8Za5wPasAQVhZ09UuGZxAHvhUgXI7WW4xwTgtBehH1MmP+vHzih
-         UV2CvNPKHI6DU9zufQj8Pb2AbfstgHDh1D19028X0N6VB7xPA80rkAKTGerJy0rRA6mk
-         0WHeCbms/EpYxwlrsSQ5WGpEuWH/QjE69l90GQATG4HiLmgLWnrfJIPZB3SqYHL9fggD
-         2/VMjCXe0elsKUBNJzYdRGG75UINqNJ5eVrB5V/ByyQzuPcIFUab4vCY3tupXK+/BHFP
-         cbqQaFjaHjVzyOD/IDU9XtYe15agqPEVF+lvHLlMdYWkhoR/8KOv3PJIA7LIL5QsBhCp
-         D6XA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjIcqe2A4Zy1uz4ECugCHyfdi4cgaXvXjBO4hwP+hy7WhVYhFZarAMjfnjlE/MhNaIm5SG0T6PtB2HBmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDpRrRIuUxY9K2ToW7tmqe5W0jG7QBQeQic8jeGhFPkzvJ/WVN
-	AKQYX+yGYHuNrELKsJu9NTSNRYSazXqkCCfeopt7KqJPbv0snWchK6HXX9FHu2s11aVYFBy0fmD
-	YQVOGmQ==
-X-Google-Smtp-Source: AGHT+IHQvz8EQEYC+3Q2dR14cDca69hLVvd5EVswQ5O/zITiUduAJL+HAN0BvQ56Qn7wIX3EDQJtXUXduMQ=
-X-Received: from pjbnc16.prod.google.com ([2002:a17:90b:37d0:b0:32e:c154:c2f6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:b48:b0:24b:bbf2:4791
- with SMTP id d9443c01a7336-269ba511bd3mr67840065ad.39.1758321255488; Fri, 19
- Sep 2025 15:34:15 -0700 (PDT)
+        bh=VYZLHKF8pF5KDs3SsZEerHn8ojDfpKPYyWB28d/RJk8=;
+        b=Wco/OyDy2Q+/dmKUdxHyVnMtp4lDsKwgtsQ4mW/tMuLYYMczWo2W5dZPDH9nX2WzbU
+         hLffxtR8K4n0GXZsEj91WRfZ8KqNtohI5uwO2Sl4Fpj0U0lry0kVn7Sl/xGrWuHQaxR4
+         73LAiRZ/dzxVhhJoF5Vzv21jWuVCbN3sXDvm4oA3FJmJyLHJpbW4PV+sbf0ncBXukqlq
+         aI5qs6x2KVFTeXurZ7xw0sf8Xdr/i2m8u4Z1dqgyoYjVQe7k2JigmU8qSXExyDaXglya
+         2R7qvH5V+IwUBgB0wrAnF3m/z1IINhoABpHng2kF93QqWYF0uGBMCE2ec+BntNIURF9j
+         qZxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVC2790SlxR5Atdf8mFHrL+zMATtO8VqcWfCejcWx8nlZnsz2VPjaio11UeO/VbztkilWAvVQVUAmW3C0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPfT2ZQEMy05zp7H+LxHP7A6lPGmHpum/+UXHsTzFxPmhCZV1U
+	nlyxACvmjfLG9qBa5OuzBl2OQ3Tb9CETKDgAaJqJn0h5ZLT+2gd6TvOMrpRjhY9vTu9PSftDbdP
+	KWaAi4w==
+X-Google-Smtp-Source: AGHT+IHtxklkKMMTcCO+WLaxD30r3xUhNsd0DkrdB/jDO3hy+P4nkad/sYddyvamMtLnm9uHw94OGdFNKz4=
+X-Received: from pfbg17.prod.google.com ([2002:a05:6a00:ae11:b0:77f:138f:8b8f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:3e13:b0:77c:ddd1:749e
+ with SMTP id d2e1a72fcca58-77e4eab77fdmr5276946b3a.19.1758321257328; Fri, 19
+ Sep 2025 15:34:17 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:46 -0700
+Date: Fri, 19 Sep 2025 15:32:47 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-40-seanjc@google.com>
-Subject: [PATCH v16 39/51] KVM: SEV: Synchronize MSR_IA32_XSS from the GHCB
- when it's valid
+Message-ID: <20250919223258.1604852-41-seanjc@google.com>
+Subject: [PATCH v16 40/51] KVM: SVM: Enable shadow stack virtualization for SVM
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -88,79 +87,32 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Synchronize XSS from the GHCB to KVM's internal tracking if the guest
-marks XSS as valid on a #VMGEXIT.  Like XCR0, KVM needs an up-to-date copy
-of XSS in order to compute the required XSTATE size when emulating
-CPUID.0xD.0x1 for the guest.
+From: John Allen <john.allen@amd.com>
 
-Treat the incoming XSS change as an emulated write, i.e. validatate the
-guest-provided value, to avoid letting the guest load garbage into KVM's
-tracking.  Simply ignore bad values, as either the guest managed to get an
-unsupported value into hardware, or the guest is misbehaving and providing
-pure garbage.  In either case, KVM can't fix the broken guest.
+Remove the explicit clearing of shadow stack CPU capabilities.
 
-Explicitly allow access to XSS at all times, as KVM needs to ensure its
-copy of XSS stays up-to-date.  E.g. KVM supports migration of SEV-ES guests
-and so needs to allow the host to save/restore XSS, otherwise a guest
-that *knows* its XSS hasn't change could get stale/bad CPUID emulation if
-the guest doesn't provide XSS in the GHCB on every exit.  This creates a
-hypothetical problem where a guest could request emulation of RDMSR or
-WRMSR on XSS, but arguably that's not even a problem, e.g. it would be
-entirely reasonable for a guest to request "emulation" as a way to inform
-the hypervisor that its XSS value has been modified.
-
-Note, emulating the change as an MSR write also takes care of side effects,
-e.g. marking dynamic CPUID bits as dirty.
-
-Suggested-by: John Allen <john.allen@amd.com>
-base-commit: 14298d819d5a6b7180a4089e7d2121ca3551dc6c
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Signed-off-by: John Allen <john.allen@amd.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/sev.c | 3 +++
- arch/x86/kvm/svm/svm.c | 4 ++--
- arch/x86/kvm/svm/svm.h | 1 +
- 3 files changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/kvm/svm/svm.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 85e84bb1a368..94d9acc94c9a 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -3354,6 +3354,9 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
- 	if (kvm_ghcb_xcr0_is_valid(svm))
- 		__kvm_set_xcr(vcpu, 0, kvm_ghcb_get_xcr0(svm));
- 
-+	if (kvm_ghcb_xss_is_valid(svm))
-+		__kvm_emulate_msr_write(vcpu, MSR_IA32_XSS, kvm_ghcb_get_xss(svm));
-+
- 	/* Copy the GHCB exit information into the VMCB fields */
- 	exit_code = kvm_ghcb_get_sw_exit_code(svm);
- 	control->exit_code = lower_32_bits(exit_code);
 diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index cabe1950b160..d48bf20c865b 100644
+index d48bf20c865b..54ca0ec5ea57 100644
 --- a/arch/x86/kvm/svm/svm.c
 +++ b/arch/x86/kvm/svm/svm.c
-@@ -2721,8 +2721,8 @@ static int svm_get_feature_msr(u32 msr, u64 *data)
- static bool sev_es_prevent_msr_access(struct kvm_vcpu *vcpu,
- 				      struct msr_data *msr_info)
- {
--	return sev_es_guest(vcpu->kvm) &&
--	       vcpu->arch.guest_state_protected &&
-+	return sev_es_guest(vcpu->kvm) && vcpu->arch.guest_state_protected &&
-+	       msr_info->index != MSR_IA32_XSS &&
- 	       !msr_write_intercepted(vcpu, msr_info->index);
- }
+@@ -5262,10 +5262,7 @@ static __init void svm_set_cpu_caps(void)
+ 	kvm_set_cpu_caps();
  
-diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
-index e072f91045b5..a6a1daa3fc89 100644
---- a/arch/x86/kvm/svm/svm.h
-+++ b/arch/x86/kvm/svm/svm.h
-@@ -941,5 +941,6 @@ DEFINE_KVM_GHCB_ACCESSORS(sw_exit_info_1)
- DEFINE_KVM_GHCB_ACCESSORS(sw_exit_info_2)
- DEFINE_KVM_GHCB_ACCESSORS(sw_scratch)
- DEFINE_KVM_GHCB_ACCESSORS(xcr0)
-+DEFINE_KVM_GHCB_ACCESSORS(xss)
+ 	kvm_caps.supported_perf_cap = 0;
+-	kvm_caps.supported_xss = 0;
  
- #endif
+-	/* KVM doesn't yet support CET virtualization for SVM. */
+-	kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
+ 	kvm_cpu_cap_clear(X86_FEATURE_IBT);
+ 
+ 	/* CPUID 0x80000001 and 0x8000000A (SVM features) */
 -- 
 2.51.0.470.ga7dc726c21-goog
 
