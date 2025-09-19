@@ -1,158 +1,250 @@
-Return-Path: <linux-kernel+bounces-825191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62964B8B3DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:51:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9109DB8B405
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE2CA005C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:50:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26AB67BDC2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359E52C3276;
-	Fri, 19 Sep 2025 20:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B442C325C;
+	Fri, 19 Sep 2025 20:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mW0BX05Y"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E/ulTYMW"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010001.outbound.protection.outlook.com [52.101.201.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B97279DB6
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758315048; cv=none; b=bYEZdAGu1bJXu4Bj74tDuVeGaJ7vigAD22ZFRl+q1RdFl0x0KzthGEm9OmCYisqanemUsd9x8vVwzhIcIev1BPaCBSORas6pxX4WggZ4aoNUDgi4dB6W/diLJYnbp9RPUqt9d2ykHNTwCXzB7hRYf9YnIWl1G9Il8cZGycONgWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758315048; c=relaxed/simple;
-	bh=T1pjRY/F/SkgSjWuJdk27VR8oZOxZjfSXUdbtPBD4jY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PWMLrGhm0Grl5AhxTywOO9GkMqSPVZnzTsTDfrwF1fpmsrHNGN6dXqo6L+sc7FqgJG91sAKFX6hLpkjqbB9MJVr/951rypFHyhtxT2SAlsOjMweIPjB2eOoTupOLjbUTQKjqG6SYdzS6NdgRd7Twyh5ckDOkEtZLH2nIBwOxThk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mW0BX05Y; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-62355a687e6so1745344eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:50:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758315044; x=1758919844; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9S8gTyZHpLrd3UuYpDvVcBF3/jRK8JAKEasp6QLRjXQ=;
-        b=mW0BX05YycfX/KGzsAnoAoAX3MoQk0A4QcFXcGhPE9NOO8GzHn+k3NcxzNqPL4BHyW
-         eEJ0N3oB6mwO7qNpqqlYdCMz3PVSS5osA2SCWe9UjSdajlynAlnPYaAZQFT+tD3woLWB
-         ep6cgxB495R6+XYXPE+qUOONXVKubx/WyI8vsmLZzUDcZGJcw6mD92XvCVwW0ygrRICl
-         f7ZDr+gV6hEzOW15ewfmKFGsf4EQQkMC08CV/NHYjzuOq92sW0wg06tB7m86XAofdrvh
-         GmrzJUxH0LxY61VI3f4YeilG8/pXAOwKbiheMGJQLCyizEGHyigJ6ADuScUKEm1ndceA
-         7PaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758315044; x=1758919844;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9S8gTyZHpLrd3UuYpDvVcBF3/jRK8JAKEasp6QLRjXQ=;
-        b=sDkg3DNqXx2y6SwO4ojvHM41XYVcvd9tysJe1mo9fAfxflKR2P5aiUnNG0b3lRA9Ip
-         JEc0MM7t6CtT6NibDLZuAwE1HrISqck8uXeH4OBQlqIh/5CG+I92zDfkaa9g/cYIMSrN
-         l1T30AxEY3qMIFw2KMGSt9HWCDKDr8v3rBlZH1jabiVndTcnIUGTpiWU412I1ybU3KOJ
-         R51cSAkN5tcDoPxkPtyPi+t1w9Du0D8lHVzV2akB+P5wTIRisvv8QnRLgIPt2OmKW3Nc
-         kxL5flElbkM5CoR3DO0687pGKbbKM0qYkBY4ExVFzS5EYmYnsuaiat68s683fvdgUwcV
-         9M+g==
-X-Forwarded-Encrypted: i=1; AJvYcCU40Yq8jgPE+yWYRV21yXSRQ1tZqKJk8SY2p8TKL2jyk3EubDz9sssg8oycPPWi+EpZA5kFlwDkq1QF3sE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEQXztVnwaTiWQo3wuYWFtocmVvKqm1oquzBbPm2JN2iUm6KUO
-	PlZQo9Ft5Ww9cRkuuoIAGpeqdgXEsyGLMU3WuGotwfqouU72M0KlQDuSI5ppQ4qyG3W1I/d/a5N
-	Pbvm/c1s=
-X-Gm-Gg: ASbGncuWu6az5zc2iwgSGNrfn2hDI+TBSZnKRIWdACrZHHPc4tANDME97+0iOHfChzy
-	Lu+cCUi7bbNNEWNiIN4Xu6JAUBE5AfSgAxun6dODX5j2jfAh7/upWm1bDNr5NacYN0gPgvgW+LL
-	ZOr9I4Yjxq6o0RSIhYw/xsE/7rpy3br0EiUMQisFoZwO78z8tJIz9GO76fAp3JNOQvjuzJpBSGr
-	dZjbuufauZN4xdyEWoUeW7RhzRmNH92U4n6mqJFK0nouT/bQ0pPxDbz3MK6W4sfa3hX2PtW84+D
-	+DmXdNvbCHIcXff/82Wi8WzWK2yIhmzqgRSfqaxEzautkS5quBuCzo65Bd0YB+W4r0Im8ljvdRn
-	i4R1vwWW0jU+DaerlmMuVqPVw8CDd
-X-Google-Smtp-Source: AGHT+IHFg+e4fOqvz7ofLnsec4K9Ow95HzlRIYWNVVd1U5YPgRsw3+v0zPkEBD11PFRkIVjO7utBIg==
-X-Received: by 2002:a05:6808:3a13:b0:43a:f438:ef46 with SMTP id 5614622812f47-43d6c279c3bmr1952918b6e.36.1758315044441;
-        Fri, 19 Sep 2025 13:50:44 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:3838:157c:c9f9:2e3f])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43d5c68cad0sm2353369b6e.2.2025.09.19.13.50.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 13:50:44 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 19 Sep 2025 15:50:34 -0500
-Subject: [PATCH] iio: adc: ad7380: fix SPI offload trigger rate
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D35223702;
+	Fri, 19 Sep 2025 20:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758315200; cv=fail; b=RCeN0mcCnfy34Fqz0a4Klzt8rExULE86/SQOtmbG4SPNrZrt8iD/1+QujXI+uyI8u13I1yO4qnROhSLqGfFa93F4m+adN5Ot0O4W97E1FBKFLctmvjYZ0RiKAXk3e76XDcVV3FxSjkCGb6y9/nDfQHtgAKzH31IkrBHL8H1O4oQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758315200; c=relaxed/simple;
+	bh=V4Y82xJ1aGxMUTt++kO5cOq/eEo0xda4E9cGN6xLtwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=cX+cbbPgIc4WBRiXvYNwZ6wjaUtja5l3Xd9y10MtkglqxBgHgJiwZUH8fmlMA9pbewSofsvgGvkCOEi/JCQs7njvEhl0PyJzPPA7lYq+XFC6fqWcGJKWaCLyqJOFJQQkI+/e0jG0Pt6v+NMFT27IW91faLqESCNDcag+gay+9TQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E/ulTYMW; arc=fail smtp.client-ip=52.101.201.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PJma8TKpUmN12Amn3aZ3KozYkIgGWNOTCB3LAZ/QEP7wYvYSY6b8bbHOPRfdWX/tt/hK0P6sfYj89BApOzaaw9bCNaKOkPlsXqCbT/ttdfVq+eUsYmyuUttPTJT52N4lQLhiiWsW2Havov8h8IfPC9NVAJYcdQCizQRs4xvGjmjmboL/7VYnoegtdGlx8oNtzRWQrtzW5Ll7l3m30guxGObzhqZ7h2xL7AB9rS+fkm2+Wgv15FcsF9ourQtz9leU5KfaqVR9sigfsTqNx1ALXUprdKeT2s8RQ2S+rumRgZRakcUH9t7HzdD1dYghfWl8xP7yoF+hXLD7A7E5HzH+ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MIndlFx9soNLql2Vs2kIyd4NWEY22Grcba9EsiVs3j0=;
+ b=D+SQ2blWlx86zj2seeDCA4Mz2PoJ8rWaiqJvOQQsHZyQ2KIUyqk3RdKzvJbBbbwAo6Sw9wgD8Y1NcszM6FgyAmz5WHqrU6kk5vUBQTEDbuYKD7g648o2ROWoipULHIahSv4m2e71TdGuegcON2YwC5xT8NYpZAiT3AVSj6UzRDnMRJ5EmGVs26/U+kBp6A548BgtT5Aar8zTpuyVZ2Z/I2jbe88aDzNUifmBHQiCqV1CBxOnABCfN6f/+ZkbSPFUEND25Z+9iKT+GglN+iAEKnJ8EPpNEMGHPo0ZIti8dX0KHyI/SxXVtMjgyJvIgYFZMAilg8mzewIid/h1P2z02A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MIndlFx9soNLql2Vs2kIyd4NWEY22Grcba9EsiVs3j0=;
+ b=E/ulTYMW2kZVRwTaoxabXqUUZ+IEdO/7CqIwTcRQ8mDdx3vTCKBrLNUB1Kmc8rkox3agu5K3KCf5wM7yZlaeSbyrwgwf2VkBqNbnB/DRvMtJoDD0TJGTEJJ3EBqJ3sPH0motMvZ/kkc7jqtdnoMfwolWQknrZuYvRe0t00pqJ6wjaEydSJCgvX6UIP0wgjyoox52FgzDeGhsn6KByhIBI92jPVUPDm8RBkz6BbfF8+vB3kKqtIssomIv6BkXL2gXkfvoeJX707rwWETrkVqf/bAnLKVTK7OMxrzUrt9aC2E/7wBSgJ1rQX7xbfeaNnshvy2C9N7DXA6YqFCyMwD15Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SA1PR12MB6824.namprd12.prod.outlook.com (2603:10b6:806:25f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
+ 2025 20:53:15 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
+ 20:53:15 +0000
+Date: Fri, 19 Sep 2025 16:53:14 -0400
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH] rust: io: use const generics for read/write offsets
+Message-ID: <20250919205314.GA1884303@joelbox2>
+References: <20250918-write-offset-const-v1-1-eb51120d4117@google.com>
+ <20250918181357.GA1825487@joelbox2>
+ <DCWBCL9U0IY4.NFNUMLRULAWM@kernel.org>
+ <752F0825-6F2E-4AC0-BEBD-2E285A521A22@nvidia.com>
+ <DCWO3V7WQP0G.127BYBORGE85H@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DCWO3V7WQP0G.127BYBORGE85H@kernel.org>
+X-ClientProxiedBy: BN9PR03CA0626.namprd03.prod.outlook.com
+ (2603:10b6:408:106::31) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-iio-adc-ad7380-fix-sampling-frequency-for-single-ended-chips-v1-1-7b2d761766cf@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIABnCzWgC/x2NQQrCMBBFr1Jm7UBSKSZeRVykyaQdqEnMoCild
- 3dw8RfvL97bQagzCVyHHTq9WbgWBXsaIK6hLISclGE042S89chcMaSou5ydwcwflPBoG5cFc6f
- ni0r8Yq4dRa+NkEqihHHlJmimec4UnPM2giZaJxX887f7cfwAkbOiMI4AAAA=
-X-Change-ID: 20250919-iio-adc-ad7380-fix-sampling-frequency-for-single-ended-chips-05bbfea8891c
-To: Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
- Angelo Dureghello <adureghello@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1854; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=T1pjRY/F/SkgSjWuJdk27VR8oZOxZjfSXUdbtPBD4jY=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBozcIcFW04iCCjadrwSaGczrKUaG0IEGgBkE20b
- bW/dRX4XYOJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaM3CHAAKCRDCzCAB/wGP
- wEDbB/4lhrG0PaqMDHU7r9Lhw/vVXA8D2Wd6uxaAbiFtMM1t44VSbMLauy0B8u52G3+r1nEZvNr
- G0Fh2EpB66tc+LJBrsE6JcFS+hKDoHDkZhDewPKGXfM95FJtCutPYXTRIWtb/fY23Rvrx+2hna8
- k8lIU7t/L0720J2rbtxN0p1idDAJdPLVmM0vVXWplR/c0KG1bgIYS/FBbzkEE/zi2jwRwQBivHn
- VYk4Orbcz4x8/mnZ6WZo6wRd/cJqJG6a8scLAO/EADuqBQLeT7YWn6GfCP8Na6kJ0lEBfVihXMm
- ItD4G/0lj1lPbp23MKD7lxQbiCs8EOVFCyyqdCWI/qlBPudH
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB6824:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81c08be1-a713-4638-0f8e-08ddf7be8e05
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUVmNDV4MDQ3VlRJOXB1OTlwUUNSQ0dnaHQwU0txTVNuUXArcm9WbjVzN2tU?=
+ =?utf-8?B?aERxNURrVnJkUFp6RHB3R3pLN3J4Z3g5SUNaT21oaDZFV2FEeGl2T3N2N0Yv?=
+ =?utf-8?B?OG9vUWtOQ1YvV0dMN1ErUDdDWUhUa0N3MHRnRjZtQnoraG8vL3lkSXJnNjIx?=
+ =?utf-8?B?QWQ5S096ZGxrczhTNnQ1ZVIyNGVSbmEvWGdKNm0zRHhHU0FFTWJ0RzFxdDJh?=
+ =?utf-8?B?a3RKZHhJcUJSUC9FRmdSQXk2eVJKdWhrRDdNdWJZVlFtSjBVWXJyWCtnU1pL?=
+ =?utf-8?B?OU9ZZWJUUHo4eFdKZys5RmRQRi9sZS9XWGxac3Y5a085SmwvRHRJWW52b2Q5?=
+ =?utf-8?B?MmE5NXUzd3dDMWxHWU5nWncyckx6M2YxUk5sUVZLT01mUExGV2ZVcnpNOGdi?=
+ =?utf-8?B?d0JzTU1VMUFoSUpadnd0TDd0VS9LTHhDTXQvSGRpR3M4Y3dTVFNMOEhlT0NY?=
+ =?utf-8?B?WGxKekZrZDVkdDFwUDhLMFQrTldGV0Q2bWFHUkxTbXJtWXU5THRvMmEybUMw?=
+ =?utf-8?B?enhWNUpLSkRkRktpNk8zRnVFODJHQXY5MWJqVk0rTHFvUU9IMitWVUZsNVBZ?=
+ =?utf-8?B?ZHJodEEwSGlxWG8rZmlyMloya2FoTDFQZTgzL1B4TEg3SkdqQUYzMnNZN2lB?=
+ =?utf-8?B?M1RIZ0dHbGNDb0h1N0lKTyt1OG5VdDh2S1o0NGx6alYrRGF3MzdKYzBZaERt?=
+ =?utf-8?B?TmZvVTVpUDRaZzZBT3diVE04VVY0MlU5L3NwdDhMMzRvQzVTRk5FaGM3YnhS?=
+ =?utf-8?B?eWp1ZURYR3RPeGJ3ejFJMFNXWWpGK1kwd2prRTNSL3FUT28vNU9pNVRmTjBU?=
+ =?utf-8?B?V1BJSFFtd1NrZEQ4VEdYOHNKZmRZajd3akt6TmllVjBwMkdjS1MrYWFXT2dQ?=
+ =?utf-8?B?c05NRXdGdG5oNXhReWNOb1IvT0pRaStBUDNXc2tUUDhzWklON2l0czhsakJZ?=
+ =?utf-8?B?N2hUMFBUZzMrNFFRRG41aHc1cFkzWmpvOGl6bzFVT3RYL1Zmelp2dGxaMmxB?=
+ =?utf-8?B?RThzVlNxeDdWSHhTRXR5UWI3NlBoUWJGSXJQOHVFd0NXQUtGSithK2JtU2FR?=
+ =?utf-8?B?Z21uU29zbS9DeGp4dmJWL0EyYldlek1RcjhlbElza0ZiWUN6eExxL2Mxb0Fn?=
+ =?utf-8?B?bk9OcTkybi9zK3ZjUSszeU5YM3ZPRTRnZlg5YmY4YW8wQ1BVOFVhOFBlaDBP?=
+ =?utf-8?B?UHVaeTY1cjlvc1RQTnF6OUQ5a0ZNU1FuZE1Db2p3R0lnZi9JUEczODBCSlFq?=
+ =?utf-8?B?eWdIUG9iM1NmeG5wV2tZMXA0clgvUXduck1EWjRLMXRLTzBRcXM2Yy9maTZ4?=
+ =?utf-8?B?MkVKZG9qbXVVZC92VFc0bGo2dTNYL2FNWGtkaGtsVjZ3aXhjUHNnRThUZnJE?=
+ =?utf-8?B?SWgrT00ycFdiRHU0b1YvdXhIZGFweFFjTVBobEtvaHZ4RnUwZ1pycDNjRStQ?=
+ =?utf-8?B?Y3N3N3Bva2sxWVBVZDZrVjlBV2txRkRtUjRybTZxY1hqc2RQUVhQTFdJMTVY?=
+ =?utf-8?B?ZEsyYUZDeFhtWXpiQUJPbG9IZi9nZUtZR1RNOEFGOU5lc3VDS2owRXlxem04?=
+ =?utf-8?B?TDRsL3llWlhXMlorQ3EzM2FDeTlRM3pDVFdrbERHeGxuR2JHSVVkM1oxQndV?=
+ =?utf-8?B?ckVXQkcrUGpWQXkwUTBzWnFGZTlUQ1V1eFUvTzlWUEYvdXV6dlVMZVhoanZk?=
+ =?utf-8?B?clp4UkFmZVliUWxUZVdtNmtNTkc4SDd2cHJpMm1kRXNRR243dzBTZVZuM3BW?=
+ =?utf-8?B?UGFpUHRRMWx5MUVqL0o5djZseFB0QkN4SE9zWWZMUGx3TXNYaDEzVWJqWTBV?=
+ =?utf-8?B?aGxVWllRc2pjQm5NY0FYa21wT3NHczVhQWY2RUZmcENnVlc5Z3ZKUmJpRkt4?=
+ =?utf-8?B?NXRHYUVQNlEzM1lPckZvZ0VmNVQzd3A3a2YrUkowWnNFMCtjbGw3TDdGU3Jy?=
+ =?utf-8?Q?oNxpc7NSo0U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UGs2NHJLcGwvQXdDWHNyZzNmcWtpS1R6am0wa0xSemk0Q3lNMkVqeDBhWC9J?=
+ =?utf-8?B?REdwdmF0dXBpY1JXQlE1eVpFS3NSUW1hQ3M3eitLMTVvdENoeFVPMkp4ditO?=
+ =?utf-8?B?Q3BsdkcraFc1N1BjYVM1d0JUelpXQmhTRlI5OFVabDlWTyszL3h3cEI0T00x?=
+ =?utf-8?B?V0YrUUJRV242RGJER3I1b2YzZWNsU3BxSU4vWWZnS0RPQWhUVWl2TlR3aERH?=
+ =?utf-8?B?NSszVFFBd3NjZVZqRUtubHk0UStPM2xJaU9xVysySnY1a2srZEltNk1TZi9w?=
+ =?utf-8?B?bWRnSDBHWFA5WXBkNk9aZlZBSkdYL3ptazJhVTRwVWc1T2J5SnVFRDRHZm9F?=
+ =?utf-8?B?am5CSW1CdVJkUDdLWlpmZER6R3Z5ZVZZRTJ6Q3pSczRPbkU0NlIwVmJRMjdE?=
+ =?utf-8?B?Q1g1a3ppTEp2dG16NmVZQU5CTUdQcC9tWjQzVFNyY3hRb0dNbkVDM0d5eXE5?=
+ =?utf-8?B?VndqMkI2bzdLYlp6K3Nad3lFeVM2VGx3L3cvMy9xTDVIdElQYTZoZ25lcXFr?=
+ =?utf-8?B?ejZsSUIreUZXMWhjQjZiTGFjcWIrdnZ5am5nSk9SM2tEdWorMkxRb1gwemRq?=
+ =?utf-8?B?REVuV3FUZ1d1THh1NzBpRWsxdzhsWEExNzI4M3o2cFdOaDdiTkQ0UGZGWVZG?=
+ =?utf-8?B?cEUrK2dCVkRMWG80NXFaWE1JWGJQTFhRakU5ZE1XVDRKUTlaZ0dpU1pGaUJV?=
+ =?utf-8?B?M0x0ZjdYK2VGK2tacVlFaUVHcGQwZ1A4QXRMcGNreld2UlRKblI4UjNxbWE0?=
+ =?utf-8?B?elg2Qit0RVBLcTRYYk5XLzh6SzRLTWdtS1l2bDVXZHhRVXdKRSs3RU0yZjRw?=
+ =?utf-8?B?aFp6WFBEc3JUNDhOMGQrR3Q0R0hjVDVjK29yQlY0QllkakhLNmVFVnBIMTFi?=
+ =?utf-8?B?YWtRZDNLV3NMNXAvMnlDc3hrVEFJVWVKTFBsSHpEY1hYNkN4RktmSERrSEVW?=
+ =?utf-8?B?bkZmUndqZTRIRmYvQWFIQUEvU0RMUXdURm9iM1JRUEx3UGhOb0c1OEhmVUJi?=
+ =?utf-8?B?bHlWeDVLMTFCdWVHck80YXpESEdvWUxVeHFSQkIzZ0lrYVJjenp0ZXdGZGls?=
+ =?utf-8?B?aHRZRVNXQTlqM21IZ0tWQ2Q5LzI3bVN2UHpkaktBekN3UHZFaUZPZ0g3T01v?=
+ =?utf-8?B?K3FWZmoyOXpvQXNqMFExdTM5ejE5TlowU1JxQVZ6WGlBbU51cEtheWg3OE9S?=
+ =?utf-8?B?T1ZFd1Avdm1aU2N5TXpXMVo0OVZyblEvdkVYaURXTUpzd3B4RGlSMVRKRnZR?=
+ =?utf-8?B?RHpXdWRQSm52K3FEK3pKSi9haDdaTC9zemFha3lwV1EvMlA5aXdwQTU4cXJz?=
+ =?utf-8?B?ZE5vWDFzWXRwVmdmeFl6VGh0aWp6dmtrYUFacG1MN2FsK3hHbzBFL2p4YTNQ?=
+ =?utf-8?B?MTZyV3RPZ1FVdXhtbGhxUkF6aVB2TDkyd3hWVGlGQUlUN3F6TGJxa25uU2w5?=
+ =?utf-8?B?TU5nMTQyYmk2L0p4UlZRRXR2U01JWml5N2p6cEdHQVg2L2dVTUdSKy9STUF3?=
+ =?utf-8?B?NjllTDVqUVFPb000ZHMzQXBMVUZHQU0xUzNPRFVEbkM4TmlVeS9tbENVeGlq?=
+ =?utf-8?B?eUtxd25xRGtWVHBtWkNYNXlNKzA4MnBjd0RQRm5YSldiMDVZSnVzMFExbmYv?=
+ =?utf-8?B?NjdlWTNKeEpkakViaDhtMWJFNjd4VzAyeTNma0plNVNaa003OUxLTWErY3Nj?=
+ =?utf-8?B?Tzd0MUdzYXhRMFh4U3JCdUZDZHQ5eEJrNEVkUVZnWHgyS1NYeERtL3l5VUNl?=
+ =?utf-8?B?cDk4SDEwbDdQUVpkL1F3cUczRUxrU0plUG5QNWRmQ1EyOStkcGh3aWNpdC9L?=
+ =?utf-8?B?c3p1KzBKZUE4SkQrc1RQK1o5bUhOam1LaG1SQkxuMzVmUzlRblF2NW41Zm13?=
+ =?utf-8?B?Z1Q1UWdQYUFkbnF0RVVVdGY5Z2puRWhPdmRVQmdsajhKbnBuZEFQVmkrYlN4?=
+ =?utf-8?B?ck5VcUU4QlJzZTdSWUprcm91M3JyTHhRaDA2c3ZINXFaTE9xUXo2RkFqNlQ1?=
+ =?utf-8?B?K2gzVExUMHlPdG9TV01IR2ozeXJlaXBjQ0lQTldxV3FwQll0TFFkdDBieE9v?=
+ =?utf-8?B?bFk1eXlyT0pGTmtIYi9pQkZtNVE2OUY0Y2Jxb0tpOHFob2RRcThoTVFmajVt?=
+ =?utf-8?Q?XAlCykIWngHh4AN1CCpvpOaEK?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81c08be1-a713-4638-0f8e-08ddf7be8e05
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 20:53:15.6441
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AMbMxyxBMaQyzeCA7MqNK87mTCqiDlylOA59amuOEATKJ2OzBEHvozRws4ZGx5lZjdEzvXFOEEOPCEgaaiV90Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6824
 
-Add a special case to double the SPI offload trigger rate when all
-channels of a single-ended chip are enabled in a buffered read.
+On Fri, Sep 19, 2025 at 11:26:19AM +0200, Benno Lossin wrote:
+> On Fri Sep 19, 2025 at 9:59 AM CEST, Joel Fernandes wrote:
+> > Hello, Danilo,
+> >
+> >> On Sep 19, 2025, at 1:26 AM, Danilo Krummrich <dakr@kernel.org> wrote:
+> >> 
+> >> On Thu Sep 18, 2025 at 8:13 PM CEST, Joel Fernandes wrote:
+> >>>> On Thu, Sep 18, 2025 at 03:02:11PM +0000, Alice Ryhl wrote:
+> >>>> Using build_assert! to assert that offsets are in bounds is really
+> >>>> fragile and likely to result in spurious and hard-to-debug build
+> >>>> failures. Therefore, build_assert! should be avoided for this case.
+> >>>> Thus, update the code to perform the check in const evaluation
+> >>>> instead.
+> >>> 
+> >>> I really don't think this patch is a good idea (and nobody I spoke to
+> >>> thinks so). Not only does it mess up the user's caller syntax
+> >>> completely, it is also
+> >> 
+> >> I appreacite you raising the concern,
+> >> but I rather have other people speak up
+> >> themselves.
+> >
+> > I did not mean to speak for others, sorry it came across like that
+> > (and that is certainly not what I normally do). But I discussed the
+> > patch in person since we are at a conference and discussing it in
+> > person, and I did not get a lot of consensus on this. That is what I
+> > was trying to say. If it was a brilliant or great idea, I would have
+> > hoped for at least one person to tell me that this is exactly how we
+> > should do it.
+> 
+> I'm also not really thrilled to see lots more turbofish syntax. However,
+> if we can avoid the nasty build_assert errors then in my opinion it's
+> better. (yes we do have Gary's cool klint tool to handle them correctly,
 
-The single-ended chips in the AD738x family can only do simultaneous
-sampling of half their channels and have a multiplexer to allow reading
-the other half. To comply with the IIO definition of sampling_frequency,
-we need to trigger twice as often when the sequencer is enabled to so
-that both banks can be read in a single sample period.
+Yes, thanks. Also I tried to apply this patch and it doesn't always work
+because of array indexing usecase in nova, where we compute the offset based
+on a runtime register index  (**/nova-core/**/macros.rs). Here idx is not a
+constant:
 
-Fixes: bbeaec81a03e ("iio: ad7380: add support for SPI offload")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
-There was some unresolved discussion about this when we were adding
-SPI offload support to the ad7380 driver, but it turns out that handling
-the sampling frequency correctly for single-ended chips is actually
-quite simple.
----
- drivers/iio/adc/ad7380.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+            /// Read the array register at index `idx` from its address in `io`.
+            #[inline(always)]
+            pub(crate) fn read<const SIZE: usize, T>(
+                io: &T,
+                idx: usize,
+            ) -> Self where
+                T: ::core::ops::Deref<Target = ::kernel::io::Io<SIZE>>,
 
-diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
-index fa251dc1aae6ab0a0d36792fa37b2cc22b99dfe6..bfd908deefc0f40b42bd8a44bfce7a2510b2fdf1 100644
---- a/drivers/iio/adc/ad7380.c
-+++ b/drivers/iio/adc/ad7380.c
-@@ -1227,6 +1227,14 @@ static int ad7380_offload_buffer_postenable(struct iio_dev *indio_dev)
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * When the sequencer is required to read all channels, we need to
-+	 * trigger twice per sample period in order to read one complete set
-+	 * of samples.
-+	 */
-+	if (st->seq)
-+		config.periodic.frequency_hz *= 2;
-+
- 	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger, &config);
- 	if (ret)
- 		spi_unoptimize_message(&st->offload_msg);
+In **/ga102.rs, we have the following usage where ucode_idx cannot be const:
 
----
-base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
-change-id: 20250919-iio-adc-ad7380-fix-sampling-frequency-for-single-ended-chips-05bbfea8891c
+regs::NV_FUSE_OPT_FPF_SEC2_UCODE1_VERSION::read(bar, ucode_idx).data()
 
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
+So I am afraid this wont work. Also even if it did work, it means now we have
+to also put idx as a const generic (turbofish syntax).
+
+thanks,
+
+ - Joel
 
 
