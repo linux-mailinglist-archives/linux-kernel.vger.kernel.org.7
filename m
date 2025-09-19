@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-824497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE4AB89662
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:16:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B49ADB8966C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA716273F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C327E420F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C028530DD10;
-	Fri, 19 Sep 2025 12:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF5830F522;
+	Fri, 19 Sep 2025 12:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAwI2HSW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk1oRAv7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7713101BB;
-	Fri, 19 Sep 2025 12:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0346630E836;
+	Fri, 19 Sep 2025 12:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284119; cv=none; b=OLTC+8665ADejB/8MbSNW09jUQO4nuHBeLVmmULjY4vDsELmvCPlFkY8MOExZXZJGKO+ZFVZMPmcQ1GydBqWfInslae0iHYKsV+EbCqo0kc1nScel/cGQBAW9WVgrLTIBMH6YVHmQeKpAtgFrmKXdywRfsWJOVxBoFQpEM4kvOc=
+	t=1758284179; cv=none; b=FhqpOXp56+VgxuFOXR0VBZh8apbmM+7n2tdM22cASXpbckHT6xXRm0+upPREtjW5yyqO4pnVLvBJuK2HkAq/azmQ5Y3vzoIv6Py3XhUINUsXyTstkKReHcdnUoEeI6QlywPUg+gvlNgT8dTY0jP1g2O9H0btTP5ma0hHWzjTLL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284119; c=relaxed/simple;
-	bh=rp2xQFUJfJ+ExiBl7itF5T5i2YWJ2EFn0MVZJbBYNfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hnavAHUFGXjs8UxvEcO29OMJjEy4yNhaRR5HkjGpTveahmY7Lu/7LbvpAERYFWDWOkhsv84Wj4CqtjUSBh2GMTN6bE0J3CGXoUMaplSeAW7OEniGXJQrJCa+YsJhfayVyw6/48VMTO8mvVYpmkLZWI5U/vwopF07IbfE9V3URNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAwI2HSW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADDFC4CEF1;
-	Fri, 19 Sep 2025 12:15:15 +0000 (UTC)
+	s=arc-20240116; t=1758284179; c=relaxed/simple;
+	bh=Jq+uV7DerM2WNwCWTFS0Xta6WG3HpiW8FkneVrMyWA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TqEKl4lAEZIkUVZb7osXs2wOkSsA6NENOpAk3eF99aiBaIESyP2oNzwALsnyaVaXtJsCSWpwB+BqJkZXAmmpjDujw/7SV3tI3OpjsZY3IFt5IaNvw7xYWCUaLi31oQj/rc1W/tvJOTN5x0qkrdhLiSZsltVguZDIMrH1CA4/KoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk1oRAv7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B77C4CEF0;
+	Fri, 19 Sep 2025 12:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758284117;
-	bh=rp2xQFUJfJ+ExiBl7itF5T5i2YWJ2EFn0MVZJbBYNfk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IAwI2HSW+pHwoY6rtzTuqEtr+TkoectxvJ7SkUbL2SUuNEyc1XOxm3WHlu6z2Ft+E
-	 DWwp1iDE+08CdXxZwBQ9ctZ4ZkOLRFlev0yl7wzJAqDM2vFQiTR83yYH/eRY+9VU1H
-	 iva85USxaA4vTi0ab6tx7VWAtCIl4gMaH+kwP+eocOGxPLuP9mz7qJQ6fBWq7IHPXI
-	 lSCaWJYWvpG7NzdY0HFXqDc946u9BK+OlH/oue+js5lj3l3X3cCAYYSHOvaOA0LI/R
-	 3IcePujCv/NcyOhzBUhn1Ha/qI1ElmiPn0glh/pNOoBd/7d8/oZD187rNJgulsl3qe
-	 qf9h7N0XWt6xg==
-From: Christian Brauner <brauner@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: add might_sleep() annotation to iput() and more
-Date: Fri, 19 Sep 2025 14:15:07 +0200
-Message-ID: <20250919-willkommen-seefahrt-df4b03ade004@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250917153632.2228828-1-max.kellermann@ionos.com>
-References: <20250917153632.2228828-1-max.kellermann@ionos.com>
+	s=k20201202; t=1758284178;
+	bh=Jq+uV7DerM2WNwCWTFS0Xta6WG3HpiW8FkneVrMyWA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yk1oRAv70m1CzPsg5kYDfioJDLx8DU+85LpFs/kda5V8dZ4eZ4PnkHlPNz+4Gyljm
+	 NYKDBmi4hp2fG/rYUV1/Kk5lBcQt6CUgL8/LRiIBUDlib2RUstK+VXcY+6/WV2THXn
+	 ixy1VWKPbpGIjNb5C3XO4Mu08RCzGpbZxmUip6+yhIPmsSziN/Kvx5z/pGRGyK61uz
+	 RLHczb8tzwgPvp7goAyq1nX3NHqJavzZwzrqDnZeAeg1wf0dhOSfYp3Y59nwqkjjWm
+	 owHrRqIij5mJClEq1M3fafYIvEmKmxltigZama2JVG435RmQbhBJl6FDnAUWH4qDDH
+	 2IkgcFvx6yBNA==
+Date: Fri, 19 Sep 2025 15:16:14 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Stefan Berger <stefanb@linux.ibm.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	ross.philipson@oracle.com, trenchboot-devel@googlegroups.com,
+	daniel.kiper@oracle.com
+Subject: Re: [PATCH v7] tpm: Make TPM buffer allocations more robust
+Message-ID: <aM1Jjgo2fZmFI3kH@kernel.org>
+References: <20250919112448.2543343-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1343; i=brauner@kernel.org; h=from:subject:message-id; bh=rp2xQFUJfJ+ExiBl7itF5T5i2YWJ2EFn0MVZJbBYNfk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc9Qw47rR6SVaikW5rRvvpDu8H6cpmvGyLftZvt/68k O2Rp49mRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESU2hkZlhhsiFvU6FOV4Jn8 bpLN3cbJF82jUxobJr1ae0XP5fKUAob/1fstKk7O1N5VPWV35F4rVc0KfgZns2NCDFksGWzvj0u zAAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919112448.2543343-1-jarkko@kernel.org>
 
-On Wed, 17 Sep 2025 17:36:31 +0200, Max Kellermann wrote:
-> When iput() drops the reference counter to zero, it may sleep via
-> inode_wait_for_writeback().  This happens rarely because it's usually
-> the dcache which evicts inodes, but really iput() should only ever be
-> called in contexts where sleeping is allowed.  This annotation allows
-> finding buggy callers.
+On Fri, Sep 19, 2025 at 02:24:47PM +0300, Jarkko Sakkinen wrote:
+> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 > 
-> Additionally, this patch annotates a few low-level functions that can
-> call iput() conditionally.
+> Drop 'tpm_buf_init', 'tpm_buf_init_sized' and 'tpm_buf_free'. Refine
+> 'struct tpm_buf' to hold capacity in order to enable stack allocation and
+> sizes other than page size.
 > 
-> [...]
+> The updated 'struct tpm_buf' can be allocated either from stack or heap.
+> 
+> The contract is the following:
+> 
+> 1. 'tpm_buf_reset' and 'tpm_buf_reset_size' expect that on the first run
+>    the passed buffer is zeroed by the caller (e.g. via memset or kzalloc).
+> 2. The same buffer can be reused. On the second and subsequent resets the
+>    aforementioned functions verify that 'buf_size' has the same value, and
+>    emits warning if not.
+> 
+> As a consequence 'struct tpm_buf' instance can be easily wrapped into
+> managed allocation:
+> 
+> 	struct tpm_buf *buf __free(kfree) buf = kzalloc(PAGE_SIZE,
+> 							GFP_KERNEL);
+> 
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-Applied to the vfs-6.18.inode.refcount.preliminaries branch of the vfs/vfs.git tree.
-Patches in the vfs-6.18.inode.refcount.preliminaries branch should appear in linux-next soon.
+We need this type of robustness to address:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+1. More complex use cases such as HMAC encryption. No giving up on this but
+   it is easier to experiment when the tools are solid.
+2. More decoupled types might be needed for TrenchBoot / D-RTM use cases
+   that some people are working on. The most likely use case in this are would
+   be to make 'tpm2-cmd.c' a set of builders, and decouple tpm_transmit() from
+   it entirely.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+While I can describe this motivation only broadly, especially bullet 2 will
+be tedious, if tpm buffers are no uplifted a bit (obviously that would also
+require header split for tpm_buf* buf that is the trivial step).
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Thus, it is right time to do this type of overturn. I.e., it does not
+any of these particular paint points but we get a better playing field.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.18.inode.refcount.preliminaries
-
-[1/1] fs: add might_sleep() annotation to iput() and more
-      https://git.kernel.org/vfs/vfs/c/2ef435a872ab
+BR, Jarkko
 
