@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-824318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 667EDB88A56
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC02B88A65
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305D3162E98
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F96A16EBA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFAC1A5BBC;
-	Fri, 19 Sep 2025 09:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D92C2264D5;
+	Fri, 19 Sep 2025 09:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="xE2vwJN9"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="SoxxNhd4"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CB572634
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CC97082D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758275365; cv=none; b=HPCgL6p4eNE7Ha12kGF7RBKorMQsHZLR4tBISd/RSNb2UCvDd4kehmNVPGxhQOdgCvzyBbEBYm46F+86zDZCOg0XkH5EXDK0/UsN689wmwIjAvB+NpIhKargwF+AwcLP5weWskiiOwseOMF1NqdvpkqfHvYHGMQgVUpWwaDrQic=
+	t=1758275389; cv=none; b=VLJ6mwj5uLuB34mk7JYCB4egeSNWhotJ/O1tOoKqPOF0WVhh8DB4yun+tEUNMaAwbBYv3pvJoqiSwf+tObv/yeDJfM43ixVpJG1yNp+DRAm3zw5g/rpXi6+pWXZg3PjJobLBQgZNg7tAw4Xo/HwyQ4YCLyKNF2HmFrVIkoJudNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758275365; c=relaxed/simple;
-	bh=Tz2BYFvF/M11ZKfSqaimmGgmE3eUTJYVaFA8dA+tDN4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=uQNw7JEpZNvaZhte3WZ05CwS3znz1aYtDPHPLUlobc7vmhPmVuwaA8FRpIYo9PUht4GyDT6J51msnNNiIsS0igwspoEhAfHY8LUGYxgn8bQVyjovcVpPRMK1sPN4a8t6vPu6SewK4k4dVMZlj6dyZNwf5l5gPO6Y7ULq4VTlrDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=xE2vwJN9; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b042cc3954fso351085666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:49:23 -0700 (PDT)
+	s=arc-20240116; t=1758275389; c=relaxed/simple;
+	bh=+vn2beOL9iMmMYtBKIdblfpGt0ByFQU+AXOHY7wMakQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sN+jtHwjEz6FijABpoBuNt8MD/Ye/juIYyPmZLuo0KYAExV/Aobb77IRaa5PCI9Z0yoscGuCo39ldKgI9clFWZLCbPNtD/mI7uLF9/RZroCThz74NKrM9mnPqcX00vpZqI5srmCv+Cg/ikDdSRMJQ02TQJfyc+5s8zUPOOviu2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=SoxxNhd4; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-7238b5d5780so24966257b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1758275362; x=1758880162; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bF+fr97ZY8gnHTqJgWFCrdHRcSxw9tzCQyJHijmyQXA=;
-        b=xE2vwJN95mzyOnC4ZTWV9laCOyOgDXALTW4Ju5t4ko0uYUIb+zqCaiTtOgB1K6qHB8
-         IEMj5rHwV9JWQPg3FjvudGXjmU3qLOVgvx4TStrLDAUabmdYW0Z0THb9idND5yR3xGm/
-         YvMxXgKgDXpF02D8n+avVYJ60nyi48ZK5+kKb9JYQtTMtDNrWBMG4nk0gY26gLNUxnZX
-         UCE9MqU4MNaiNkHVXsiSVQI8z1FNK6TskgFVIwdhqUSZB/y1LBKGoWfo8AgQeRwFPAKX
-         iU/Ay8ydvAm3WRR1hI4vPizEXX5b+Sj1hxv2ex99uAySEApJHvXMS2kRh8PSuD1ugjKR
-         Auqg==
+        d=cloudflare.com; s=google09082023; t=1758275387; x=1758880187; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlTmVi594nSn7MW0oziVF2PMwb+/b26nYZTh/X3jURo=;
+        b=SoxxNhd4qxOPCLTfLfMyg6V9quHrYYl76RID6alKKtBo6kSdEaRQ6YS1QrseFaoY7P
+         CJhZdQcB54vDQQ2IdGSiEov7Qn1vi8frxMjWyIYszXAZmPk8U1VjXO3bLAKDiVur/3Ro
+         GZACoi0x6f5tFzeY/IA9M9u9q+7qV4RLZkU3BhfW8EPmvhF6gB5IwMWzPEcjTNLf9Joa
+         CaNhs8DNsoJgYaUkdrxLZlAy+uyuOtkQqfoGVQe7uXmPDREcI0cs0mQDhzPuiY7CoUe5
+         q6CkNkg7MMMIQ3WB3tOCNoGQFb02gUXSKl5B4PD7D2FJL80fxULaKHo/EtzK6getU9Op
+         dhuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758275362; x=1758880162;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bF+fr97ZY8gnHTqJgWFCrdHRcSxw9tzCQyJHijmyQXA=;
-        b=rmkTUB6WlFfVmnZqVtie3X2AUNgf66PdYC5pxJh9muX0+Aujw1BkKf1njhw0mL0TsC
-         4XK/uOesW0gUnAJvWtssEkUm2hEOnOyGO3bZ/tomTrWUp47p9/qTkXFgXeyaBU9gvm2z
-         0ISr0+3rTl49pS94qLkZ+wby0dKL6iReZfVEV55zMztUdGykcAHBOmIj3TJOLzYqZ+yQ
-         u+jrAfu7yoi0Rghg48xgSvcyN0gbZPf1n1Oqg7Oe0HYmCyfQro1Voz0si0yxQE/GT8g2
-         EVpW2tB2IMlncyT72eJXtXfDS0mfPEMku80MP6dEz/fEqHSmUkJ5R8wJkPeIwSC22zXt
-         W2wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvWPfnjOgJt+EtsgOyKk0pr6OKduJRCKISwLDcjYIF0FTycgsGV4l6dhy5BDJwjCGblYZJzplMsdF27ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9aXjmstuSf8/aildBDFFG80SHdK/Rfqi26MCELulQB963naXH
-	BHneuj7MUP7cRJdkduK76nZPBRb75xyxOM4UGiX6HqAPcyN0cf0/Wn/lL4ZLm1CF8Ak=
-X-Gm-Gg: ASbGncu1OBQaaB88jNrymuZ/bMpOvS+0e4nqmqE/ZRhmm8Z5n/f/v2YcXEXE5SqxscU
-	K8EYUrOjhzT6OH9MaFzLtyW2v6VvXS3JpIs4RcWVVANDFoWXRM++t5aDrc0D3txAk0Tqduevgn3
-	S144am1pNiyR+2XIyMwHAX9UpFdctPfAbnDVpONSyvJzVRMVIuCaW/YCc8k9vC0wrLxXf3EAJkh
-	AfqTUQn7nwQepxAPosWa1uGRjv3lcwhdTWzZ4oDZ4q060vd+4tbprnwAYaJKmCzf7O/1ICt4fmJ
-	c2WYdLksNFzwWml81/TR0nyNxRF7gjnuW6QR8n188h9eC1NAczIjAjIS8irJFc2WPYC7C4V43iD
-	wSKK2dL/g24B701CkViEPM0jyno3XmRzM/QTFibrTZsxJl0wsBy5/4B+s1A24jaVvPaet
-X-Google-Smtp-Source: AGHT+IEFBu6jYd3DaMItgC8kjB1GxQEyOVsDZz2UShssNFNRiR0gE56ikyqcHlsjZ4qckWKtQlZbDg==
-X-Received: by 2002:a17:907:7292:b0:b0c:4ff9:5c77 with SMTP id a640c23a62f3a-b24f6f91688mr289081966b.54.1758275361898;
-        Fri, 19 Sep 2025 02:49:21 -0700 (PDT)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b26e36ae75dsm15882366b.8.2025.09.19.02.49.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 02:49:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758275387; x=1758880187;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlTmVi594nSn7MW0oziVF2PMwb+/b26nYZTh/X3jURo=;
+        b=ngDCq2CRjjF+BXkOiTvZz5GRli6LFFjCfzNrNYPniivX5LfJvowBtNSbT55IvzXW5m
+         fHGlTDzC0t931PIo8TsyO21geRpIY/QsfLW/lKWSqqc/2Nt4OP75WFZ/gntyTCYnSexO
+         2J5hqHCUiEPKpAvUzwL1FcRLMtasfLB5cxurBOLf8FWk4EA3NrXpzVIXW4T9g0KZJNBl
+         URMm7sOnw5MWjPzCVujcM4ga38cmB3IH9QzXq4vK1WKLrFucMj1jMELVTisSN8Yc5Gsq
+         NsEJlhFmoBBcUdHZnQeFnUwtB3AeEWar+JTOrDZAV4VjtH3kd8E5XGu4Vv6RBjfzH3cK
+         Tekg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbQmC+yYk00u14WTZoppZjzmBQs6toQOufe86j691rNNv0pZ/8wtZc2Fb/h0VF9k5XcvahcZfAY0qKT0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWdJ2w6kF3ucj7PDQQaJvKKgzH5jCEh4dmdhZZtjc0/grtDIZ0
+	6dVh5X2sO8pkwk1nFRet5vujhogJ3wWXRT5mQiixjys7gmmeuJn9lrv8yGvfm/IZii8=
+X-Gm-Gg: ASbGncuY4SqCyqws8oxQwT810Je1TTICKAAghkqNPLSsDhzVEzXXlmq9zftnj6ITi1B
+	s1mTM1aAHj5XG/8MFnqLhEKUBEufdHEGbJsUq0glT5yVniFBndpzwWrCSReRelB3HvEw5575AcY
+	nSqXBlRttAPT56FUF8pU1qJBPlobZOwe13oQC726rII6RXwB5pwRZN64Jhn8LE649bJRkMw6bVl
+	iv4rnkuHsqzBodfLGQXh7ijvjZ86p3OYlQCf6plc1EeCdZy1/gEaWa933nXVcHK+mj40rQldORZ
+	Cty9poHeJfBxUbITHdEa4xqyE4rD3bK3B22t09n7riiPEeGMMvFSZquaiMuwZG6M0Wn+3mIVHR3
+	cAx+QOzjIrZfOgw==
+X-Google-Smtp-Source: AGHT+IFpVVlH/GN9+lAL03mMctGhSJiZkSMnotDqIFxVyomur2G0cmwXdfQol97zehSveNubfzRMoQ==
+X-Received: by 2002:a05:690c:2502:b0:71a:2a13:1e44 with SMTP id 00721157ae682-73cc45b4c3cmr26463757b3.4.1758275386983;
+        Fri, 19 Sep 2025 02:49:46 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac6:d677:2432::39b:31])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-633bcd08b24sm1610356d50.8.2025.09.19.02.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 02:49:46 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Michal Luczaj <mhal@rbox.co>
+Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
+ <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
+ KaFai Lau <martin.lau@linux.dev>,  Eduard Zingerman <eddyz87@gmail.com>,
+  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
+  John Fastabend <john.fastabend@gmail.com>,  KP Singh
+ <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
+ <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Mykola Lysenko
+ <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,  bpf@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next 2/5] selftests/bpf: sockmap_redir: Fix OOB
+ handling
+In-Reply-To: <20250905-redir-test-pass-drop-v1-2-9d9e43ff40df@rbox.co> (Michal
+	Luczaj's message of "Fri, 05 Sep 2025 13:11:42 +0200")
+References: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
+	<20250905-redir-test-pass-drop-v1-2-9d9e43ff40df@rbox.co>
+Date: Fri, 19 Sep 2025 11:49:44 +0200
+Message-ID: <87jz1uu5zb.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 19 Sep 2025 11:49:20 +0200
-Message-Id: <DCWOLHPCYG3X.32KTGBE4SYMDV@fairphone.com>
-Cc: "Vincent Knecht" <vincent.knecht@mailoo.org>, "Bryan O'Donoghue"
- <bryan.odonoghue@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] arm64: dts: qcom: msm8916: Add missing MDSS reset
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Stephan Gerhold" <stephan.gerhold@linaro.org>, "Bjorn Andersson"
- <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250915-msm8916-resets-v1-0-a5c705df0c45@linaro.org>
- <20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org>
-In-Reply-To: <20250915-msm8916-resets-v1-1-a5c705df0c45@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-Hi Stephan,
+Sorry for the super-long time-to-feedback.
 
-On Mon Sep 15, 2025 at 3:28 PM CEST, Stephan Gerhold wrote:
-> On most MSM8916 devices (aside from the DragonBoard 410c), the bootloader
-> already initializes the display to show the boot splash screen. In this
-> situation, MDSS is already configured and left running when starting Linu=
-x.
-> To avoid side effects from the bootloader configuration, the MDSS reset c=
-an
-> be specified in the device tree to start again with a clean hardware stat=
-e.
+On Fri, Sep 05, 2025 at 01:11 PM +02, Michal Luczaj wrote:
+> In some test cases, OOB packets might have been left unread. Flush them out
+> and introduce additional checks.
 >
-> The reset for MDSS is currently missing in msm8916.dtsi, which causes
-> errors when the MDSS driver tries to re-initialize the registers:
->
->  dsi_err_worker: status=3D6
->  dsi_err_worker: status=3D6
->  dsi_err_worker: status=3D6
->  ...
->
-> It turns out that we have always indirectly worked around this by buildin=
-g
-> the MDSS driver as a module. Before v6.17, the power domain was temporari=
-ly
-> turned off until the module was loaded, long enough to clear the register
-> contents. In v6.17, power domains are not turned off during boot until
-> sync_state() happens, so this is no longer working. Even before v6.17 thi=
-s
-> resulted in broken behavior, but notably only when the MDSS driver was
-> built-in instead of a module.
-
-Do you have a link to the patch that causes this behavior? I've tried
-looking through the git log for drivers/gpu/drm/msm/ but couldn't find
-anything that looks relevant.
-
-FWIW a similar change to this was also necessary for sc7280 (as done by
-Bjorn) and for sm6350 (will send the patches very soon).
-
-And happily enough for me, with v6.17 and that reset, a long-standing
-issue on sm7225-fairphone-fp4 has been resolved that the display init
-seems to somehow fail the first time after bootup, with the screen
-needing to be turned off once and back on to work. I traced this back
-to some power domain behavior as well back then.
-
-> "mdss_gdsc needs to be off before mdss/dpu probe, this can happen with
-> genpd_power_off_unused but not guaranteed"
-
-Anyways, I'm hoping this is not just a coincidence it works now but
-will stay working on my device. Just the reset in the past didn't seem
-to affect anything.
-
-Regards
-Luca
-
->
-> Cc: stable@vger.kernel.org
-> Fixes: 305410ffd1b2 ("arm64: dts: msm8916: Add display support")
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> Signed-off-by: Michal Luczaj <mhal@rbox.co>
 > ---
->  arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  tools/testing/selftests/bpf/prog_tests/sockmap_redir.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >
-> diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/=
-qcom/msm8916.dtsi
-> index b50c7e6e0bfcd35ab4f8b84aeabe214fd60e8d7c..de0c10b54c86c7795b7a0d1ec=
-d80652e60e117b6 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> @@ -1562,6 +1562,8 @@ mdss: display-subsystem@1a00000 {
-> =20
->  			interrupts =3D <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-> =20
-> +			resets =3D <&gcc GCC_MDSS_BCR>;
-> +
->  			interrupt-controller;
->  			#interrupt-cells =3D <1>;
-> =20
+> diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> index c1bf1076e8152b7d83c3e07e2dce746b5a39cf7e..4997e72c14345b274367f3f2f4115c39d1ae48c9 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_redir.c
+> @@ -184,6 +184,19 @@ static void handle_unsupported(int sd_send, int sd_peer, int sd_in, int sd_out,
+>  			FAIL_ERRNO("unsupported: packet missing, retval=%zd", n);
+>  	}
+>  
+> +	/* af_unix send("ab", MSG_OOB) spits out 2 packets, but only the latter
+> +	 * ("b") is designated OOB. If the peer is in a sockmap, the OOB packet
+> +	 * will be silently dropped. Otherwise OOB stays in the queue and should
+> +	 * be taken care of.
+> +	 */
+> +	if ((send_flags & MSG_OOB) && !pass && !drop) {
 
+Nit: There's a similar check a few lines before that:
+
+	if (pass == 0 && drop == 0 && (status & UNSUPPORTED_RACY_VERD)) {
+
+For readability it might make sense to introduce a helper flag:
+
+        bool no_verdict = !pass && !drop; /* prog didn't run */
+
+> +		errno = 0;
+> +		n = recv_timeout(sd_peer, &recv_buf, 1, MSG_OOB, IO_TIMEOUT_SEC);
+> +		/* Ignore unsupported sk_msg error */
+> +		if (n != 1 && errno != EOPNOTSUPP)
+> +			FAIL_ERRNO("recv(OOB): retval=%zd", n);
+> +	}
+> +
+>  	/* Ensure queues are empty */
+>  	fail_recv("bpf.recv(sd_send)", sd_send, 0);
+>  	if (sd_in != sd_send)
+> @@ -192,6 +205,9 @@ static void handle_unsupported(int sd_send, int sd_peer, int sd_in, int sd_out,
+>  	fail_recv("bpf.recv(sd_out)", sd_out, 0);
+>  	if (sd_recv != sd_out)
+>  		fail_recv("bpf.recv(sd_recv)", sd_recv, 0);
+> +
+> +	fail_recv("recv(sd_peer, OOB)", sd_peer, MSG_OOB);
+> +	fail_recv("recv(sd_out, OOB)", sd_out, MSG_OOB);
+>  }
+>  
+>  static void test_send_redir_recv(int sd_send, int send_flags, int sd_peer,
+
+Reviewed-by: Jakub Sitnicki <jakub@cloudflare.com>
 
