@@ -1,225 +1,274 @@
-Return-Path: <linux-kernel+bounces-824225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B775B886EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:33:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4382B886FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CA41C86798
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8CB5644BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6972FDC59;
-	Fri, 19 Sep 2025 08:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5046030147D;
+	Fri, 19 Sep 2025 08:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nClz5dy3"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nLH3gLeF"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010016.outbound.protection.outlook.com [52.101.193.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3542D9491
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758270779; cv=none; b=T0zMCEwRAc4WerHnEm4CjoXP7471fZKBjduH1j1kzq3U0fLeSy1CyQst4SIQuYr61TR5fvAUT3rIMm4nAK1BDGkoX+7yJO5kfq37JlH2jBnwtoWVnVGG1GNW2h61xahMm2XYvJVrKHxUQAL6GZUZCYC7xKaoCuhTLDje9UFtr2I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758270779; c=relaxed/simple;
-	bh=a0jGbuINXDYYLHXrX6+Ip5hZUOHKxpyoBXTqd81umCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MLa13PzRTfJwVN7r0EeJyv7bpEEusuoMHu0h3lj2GC6bxu3vfV9Hs82fkLiUGjY+4FweTwtG/Ew6kTUaOted5+O8sVc0ZILLZ0AsVErp1ah9TnOczc0rc+yPfpn1uE9S7K8uSR8v1Z0OPSTRDHtEyUcOjqGHPC3jVKHb/grX0i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nClz5dy3; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 071D24E40D50;
-	Fri, 19 Sep 2025 08:32:49 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id CEAAB606A8;
-	Fri, 19 Sep 2025 08:32:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C3354102F1D07;
-	Fri, 19 Sep 2025 10:32:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758270768; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=aYSdvv1PGdJwPuRoTj/5x3ILygoqiHtqkDX7UP6C+Dk=;
-	b=nClz5dy3UJ39xi0U6noITgt5NHEUm6oO1ha0PnBdfDaOwm8+x0bhPbBb3KSQm94KHGcl2t
-	u+HQ/9nB3Rf5bzRM9ydQe1uyFDTOaokNI0Kn4YZlfgkOKWiaM/Z+UPc8A2b6ieCIF13moG
-	corSAPx3GLssAcX79ej3TV+uNKdC8W5KtN7aqrP+x6VNIXj/Og3MfzwuGw5wLMjgb61ua5
-	E/WdwxkoX4ICiMotZhMMJl3wGeV5bL4gaosK2ihAmiNI2rO4f4SWv/yu1HMn52g3GGImbz
-	gCyGfH/VokpSWoFEGA9f/A7SqKgkKAza3mGoKxO+YZ7zgbUN+4UEmNfJkvS4Ug==
-Date: Fri, 19 Sep 2025 10:32:32 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, claudiu.manoil@nxp.com,
- xiaoning.wang@nxp.com, yangbo.lu@nxp.com, richardcochran@gmail.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, Frank.Li@nxp.com, imx@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: enetc: use generic interfaces to get
- phc_index for ENETC v1
-Message-ID: <20250919103232.6d668441@kmaincent-XPS-13-7390>
-In-Reply-To: <20250918124823.t3xlzn7w2glzkhnx@skbuf>
-References: <20250918074454.1742328-1-wei.fang@nxp.com>
-	<20250918124823.t3xlzn7w2glzkhnx@skbuf>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4442E7162
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758270981; cv=fail; b=LwrdrfpeRgL52LIoeJ7dwlGisKLAMbXKcJBuV4IS+Dc3iF89ELbuTR06+2uer1KHofsFq3ZJw9VL7ZwumtL2ool85FshJrEWn/FguZD3X9j6TVfVZHEmdVmPDswDEUsasbq67FCwiNf0DjFpWjiMpstL1blicWufvt0Ad5LCFJg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758270981; c=relaxed/simple;
+	bh=WuOCP7XxuqwPQSn9HNcXlJEdc8ZlsjmrrWNZ+sWkooY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JD04URJ/C1k5lmeh/Ixhe/eXrhkXTJlhrA/4Xq46tgjEmUUA+NvJkmP2aXaa5VVWDccjICtbeFo1j/8nyK7GkgOSgl7gUQ4gxTx0trgxRIB7lBNuOwY4cdF1366pYOUHbNULs0xWflXE6jIEZov3na8woSsMZlCk9hs06cYG+YU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nLH3gLeF; arc=fail smtp.client-ip=52.101.193.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TJkl00sL+LEgIryLozqv/5nitZtiyg/9rD1SASE0OWlyzK8FiQfijLG4B44rdg6kVOQOaa8GYGbdCmrQJQDeFFZWNnZHaUSfoU2s6wGBuuNQK1iJ9NCtmVySZveBcMJijDT66RipOSPl0vRAPHIzE6LF8dkNTx0WftHrAtlYctxYiA5Bc//kGgoqFSC0EL9Qkdqne6mj88XIQtasqISxsRLk8P/MlUdnSaIf3P8JG4Ovb96vR5Cg0wXlT9D4cBs2m2koyisxl4e0G1ySssC/eD181nNGKFtPR+IQf+7SaEy557/hGqoKHTZQ7xmG/3Xo44aPmDBsliIl55wj3DptpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jXDYdHOJmboi90gsc/Dxg6RLKfdYuW6ueYEtK/dqCus=;
+ b=QhK6yIWfDK0CAVbL4skpKpMlbw84sSxK47RsvMjkcBppBg5YDQmBWGZ5IJE7mbwQkaApG+80JdUIOh0fha5TVgl4Zw7xnR/Uqq+7C7o+SMNAx6BIHRpOHIZXVHr+4QPrp/i84RIg9mIE2XBxmUfQQa3XythxKmNxcGrzWAidvM6ISN46rcuGEhLdTYqod5FaM0iorcPPjmkXkwZbuvrMxtf3Oh1CViPwyd2qT1jhXSiHl5m4FrbyWlv2WhcwMiCEvJl+mXXCbBeYDGT29L4WCQ7ySnGBPhbai1H3PB7YmjE56vBPr2bOSTOHsuEM2lApfePcbJu6cIMNTv/voRDxCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jXDYdHOJmboi90gsc/Dxg6RLKfdYuW6ueYEtK/dqCus=;
+ b=nLH3gLeF6nS+/gWvfhVQoNbGwhmETRFdRvb+mlXHFkkY4xEYhPcxiso4tDd1POhke1df3Z+X6uJEYgAO4KRNxvSE9EHi9otg3SOLidi7T79rmyxDiMLd0x70Hc4ySPlN675w+jwyjbDyvRuEHDkMjSd8XvQ1BGNd3J2YPcRtoQZXA+Qn9Dzo46gpEgKEi4ztA7EQ/0mQby75FbnDkW/8vsqcPUDM+RZ0HAYoEhtmrAx8QvznPEzxJoRQ6t5KWJEoZtAfaMryvcxJ4+GIx1LYVoYDWtR1c0WBaNBPTDHTW7Hrdro4KnCcoRWcSwaFk3KZ4s16pIpaSCroLRTbzi/2Eg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by CH2PR12MB9494.namprd12.prod.outlook.com (2603:10b6:610:27f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 19 Sep
+ 2025 08:36:16 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
+ 08:36:16 +0000
+Message-ID: <5e4af716-e4ed-4c03-9ba9-6242977258d8@nvidia.com>
+Date: Fri, 19 Sep 2025 18:36:09 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 05/15] mm/migrate_device: handle partially mapped folios
+ during collection
+To: Chris Mason <clm@meta.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250918164213.2866702-1-clm@meta.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <20250918164213.2866702-1-clm@meta.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR04CA0019.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::29) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CH2PR12MB9494:EE_
+X-MS-Office365-Filtering-Correlation-Id: d011201b-e528-41cf-caa4-08ddf757997e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YmlPaGVvekpPOVQxd2JlSC8rVldDWVpCQ1VKZTErcnQzTmsxZkkwK0VzcnhC?=
+ =?utf-8?B?ZStMbUJ2d0FVSEhOc25ITE5yclh0OGllRlZUM1ZlREEycG02K1dLVktUQkdy?=
+ =?utf-8?B?a3M3VE9yUUZKdmxMLytweGY5MERRZmRFdjdFQUFpbW94Ny9NL2VoUWdZbm5E?=
+ =?utf-8?B?RmFITnVMTHpoVGEzdTZqRE1DVDRlY015N29ReGdQd2c1UmVVV1p2QmhSU2NV?=
+ =?utf-8?B?WC8xaUFrTG90M1NOY0dsZ3NJckhCeW1ZSy95R2pDaStMNmhKVmptL0NmbHo1?=
+ =?utf-8?B?VU02cGQ5RXpJYUtIRWNjMGZzNklKcGJudnIzNS84RkI2OWptcFhrQ3k3QlZM?=
+ =?utf-8?B?dEIrUS82blhqTitNWSt6TVYwUWtHMTBNWVZ3dGV0ZHFCR2JrbzRHSmY4TnQv?=
+ =?utf-8?B?NC8weVZHbUI5OGQ4bkpaV0I5RWEzNnpyVU8rb3FjdmwzMW9zcFhVY1ZHMmxZ?=
+ =?utf-8?B?d0ZMUzlIOVh0MWp6MmY4SW5RZnEvMzZ3TjR6Y3cya3BjSFM3b00vS1VSMUtN?=
+ =?utf-8?B?WnArMU5mRUZNYXdlLzBlMGIwOG5aOW1oY1Jtb2ZwYkZqTEtyb0o1SUNnSU1I?=
+ =?utf-8?B?UUUxaFRzZFlvcUxwMlgwT3Vybm0zcjMwaWpNM25nOFVYVi93ZzlCUGRJV1ZS?=
+ =?utf-8?B?YWwvbVlTRW9SWkdtWG81b3F2NUxwRVRQbWRONW5tNmxiUkZlSlFkWjNVR0tx?=
+ =?utf-8?B?TGVtNFdKMHc5dVpSaS8vb2x0dWY3eEVicGgzR1RsYlF2NlE4YmFxeDdXRU9j?=
+ =?utf-8?B?NlNiSWh5VmRTTDA4dmR4Y1hBTFJpaHBFOWprQ2t2eVJobXI0UDJzNi9aTFpw?=
+ =?utf-8?B?VU9jVVU4UnhhNS9WeXY4Nm5kTzIvblpmOHZXaHhDY2oxazc2eFFWdUQ5WHQ2?=
+ =?utf-8?B?TEttTGtZNXFIeWhzQ3M2elljaG1sbnVzNXhPa1k2aFdIOFlVSVhiT3NUK0ZO?=
+ =?utf-8?B?R08ySXd4L0hLdXBCNEJYOUdNWWU5SXBITFNWZDhKemZCeDBxVGpFS2lOZXNX?=
+ =?utf-8?B?MHJSZlhoQm1uQXdsMG9XUEhPNXkvTnNkc3FsVStxRkphL25IeXhCVW9RM0la?=
+ =?utf-8?B?bUpsNkVrNW1ZUURaQjlSNWFNQWdYYUNDUDFXdE9PditCdldyWGJ6YStUK0Rp?=
+ =?utf-8?B?Z2Y0Mk14L3BINGpCaU4vR0lpMFlmOFdjY2dEUTEvajFYNFZwRGIxRUJMdEM0?=
+ =?utf-8?B?NUw5MDdzcHBwS09mT0VYRDZYbkpOSmtCbGJkL3ROL1BVOHRtUmJ3ME91aTh0?=
+ =?utf-8?B?L1RCbDJPMmJvZUgzeUczbWR1Zzk0V1FWZzNUKzErZUpJcXduc1FHdmNFV0pJ?=
+ =?utf-8?B?VVd6dktRYU45dGtIKzlFSFM2UmZBOXozWU8wWkxVZVFzenkrMXQwWUxsaTFF?=
+ =?utf-8?B?ZzJsTUdSMExxeldteTJLckFVT3JLeVB0WGNDNHlsSGZHR0FJVG1XZjVzZWkv?=
+ =?utf-8?B?VC8yRk9wYVl3Z0Q1MDY5VVhRZUd1SVdyY1dRRExaanJqNVZCN1BjbFdDWnoz?=
+ =?utf-8?B?Y04wTXNXV3V0YjB0M3FaTWwraUlCT2c3OXFjbTA3N3pvUVBNazY2TzJwK05l?=
+ =?utf-8?B?bFhrT2xEMUVSMTdQek9GOHVUZ3JlNXRGTUJ4c0JSSENkdVd6azgvSjdUUjdH?=
+ =?utf-8?B?OXp0ZlRxcmlFd0dTRHh2Ym52Vno1ZUpwSDZiMVpGYmFyRXA3c3FlcUdEck9M?=
+ =?utf-8?B?WTNrdDJqR2cwbHdBeENEWTdVZUZUaUgrMS9wS3FOUFZzWi9GOWI2b3Zibkha?=
+ =?utf-8?B?cGwya3ZwNmJFK3Y2RVpxWUhFR3lnT01JVWFhaGtGcStId0VGZVl3c09na3p1?=
+ =?utf-8?B?QlNzSUpFTlpTZnpuYWlBckJuaWN1OUJvTWdSRjBqaENwOVV0TERmTUtVaThE?=
+ =?utf-8?B?dEJvQWNLWU5IRWwyMkl6UnJVcWxwNlZ0dU9QOFFrZkNCekNqYjVrUDdWdzVC?=
+ =?utf-8?Q?ijFlWsvaLVE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VjFUaXNBemlwMXNjRnpzOW9SZjJFelhkc2w4S1hWbktVdEM5SzU0SnozTzZR?=
+ =?utf-8?B?QlRJTmlUanFFMEx6TGNEbjc4cUMrOTE3bVd6UVFXakkxVTFTblkwQjM3dUtm?=
+ =?utf-8?B?L2p5VWdOd2NyRS9oWXdGdERSbU5RYzVWRTNuWFhUQVJyMFJMZ0dzNUVxU0p5?=
+ =?utf-8?B?Z1BpWGFDRURleFF3RE1FSWxrWlptSHAzcnZST1RlTndSVzh1ZERpcUwzRG5G?=
+ =?utf-8?B?d3Rqbmd2UnErMWY5Z0VWbFZRaWtMeUc0VjR2eXQxVFA4UWt0cnFNeEQxMnFI?=
+ =?utf-8?B?UGgyd1ExMTJMRlBsandSOFB6dlBZRjgxa1R1V2tmYjNrN0FFc1VlWjhzQWFt?=
+ =?utf-8?B?UWNNS2ZGcXVPT0dlQk40VFRXYktqRHpQMDRqK1NkRDU4N29sVTcwbWRvazN5?=
+ =?utf-8?B?TXlMTHdncnJMbkZNbmRRRzkwSjNPVnYyM2tFSDJxUTVWVkxrYzhudG9vczJp?=
+ =?utf-8?B?M1pBTEJTcWhOZ1ljZUFlRkFzMXo0dkJIVzN3bjJUODNxOC9vTi9DRUFRQnZ1?=
+ =?utf-8?B?T0ZScndwMG81QUR2K1g0L2pmV0gzTkp1dWRyNGRzNVozS2JxOWc4TmhwSkt1?=
+ =?utf-8?B?R0lSUWRpY2NlbnBLOWwrZDZYMFl1a3B1VkNxT2ZOT2tNek1lOTlRdUVZSGF1?=
+ =?utf-8?B?ci9RbSswR01ES1E3ZmNybDdDTytJeXp1L25pM0VqUUdFMWpRcFZSalNvZVky?=
+ =?utf-8?B?SWdjTHlpUzFZdlhDRDJHelJQRDFIa0NsVGlXKzdOR3FsWmovSkNoaXlaNUIv?=
+ =?utf-8?B?YmxGOFYxNjcxaCtUdit2TThYOWhEK2pERXNjc3lGV2VzWmtCRVlDa0c3MEhX?=
+ =?utf-8?B?ekcwbkppS1JnQzVvNXpqSmphT1lkSnZBeW9PMVpTZW8ydWJhZmJ3bmpGSjdt?=
+ =?utf-8?B?Mjg0T01COU9saXBpVit4Z3MzNlAwRTZIRG5XQlYyQ0FzbkZrMjdtZTFGRUFh?=
+ =?utf-8?B?c2VoZ3NtRTBQS1VVbTJESW5xT0gyZDZFMFZmNm1iQlA5eDJmSEQ5cGJmU21S?=
+ =?utf-8?B?eGIvNFRxalR4a250UktCeG02SFVDMWZnNFFTQlRtUGRmSnBWV3E2U05wTTdu?=
+ =?utf-8?B?NG5FS25XSEdON3Vqdjl6MGw1KzFYVlhVemp4RURJSjB5SFZLUGpmbzF5cW4y?=
+ =?utf-8?B?RlJBcDVZOFlpSHIva1RuMURCejVReFFkY0FRdFR6U1Y1OEMxQm5EQTNGZ0JD?=
+ =?utf-8?B?Rk5jcXRBUGF6cy8xZ1d6UnFQOUMyYmp5YXppeUpmNHQyMDQwRGFJOG5meXRx?=
+ =?utf-8?B?TDIyQ2F2TDVpSG9UUWhUOU5adzV2ZnpkUFRzZmFaZ0dwZXRETklNSlk2Zklm?=
+ =?utf-8?B?QWhXQS9hcHlzWDNCRHFUQUZoT0ZEaU5mLzAyWFIyS2xPc3dBc3d1WFlteTNK?=
+ =?utf-8?B?a3VlWFA3VEpkb1d5clQzVWN0QUpFUHZka0c4UHdjVnF5eHZRVG9kQ2ZXWWpN?=
+ =?utf-8?B?M3AvV1FhNlpYRklrWkdKMWVneWhLbzY2NVV1NXVpQzhMbmdpc3Y3aUZqdEJp?=
+ =?utf-8?B?YzFSb0R3R3loTE9aaktuSEFmelNSZzFPUUk4NmFTdEZPSklsc3ZOWkV6RzZF?=
+ =?utf-8?B?QTFtUW1mYzlkeWZ2T2RWVHFwNmtqQmlETDl0UHpnVkI1dUx1UVl3TlpxTGNJ?=
+ =?utf-8?B?NWYyWDBDZEFMMVBiUGhKSDF5SHlxanVoNk9oQTlKbE5GbFFncWl4MFRycjRE?=
+ =?utf-8?B?SEgyL1VJdnQzd3JWeEFXTmZWbW50dWsvdThJclBENlk5UVd1YWNSOGJTRjF5?=
+ =?utf-8?B?bUxpMFJVRFdNQ0kyTmh6SmovVXlNWXk1TnVUdE5LZlIwV2hoOEFiRUUySTlD?=
+ =?utf-8?B?elE0dEJEdU05VmdNWi9EZjV1NW9IRDBQSytESGF4UnpTTVlEbk81azcvWnBl?=
+ =?utf-8?B?TXhPT0ppazZ4Y0dsVmtWcWRVbTNTY1dQbEc1Ris1L1F1TVpOOUVZWGEweXZC?=
+ =?utf-8?B?bmZaMHJCblUxT2dUMXBxOEViVXV2SWYrMVo5WGQ5cEQ2VzIxd014c0dkejRU?=
+ =?utf-8?B?RGt0ZGhjdC80ZUJsNnBJWEtrczl3SWpjV01ZL1k3QmZhWkU2ZzFXWnNDTXM3?=
+ =?utf-8?B?SW8vcXJNRGNVdzZiYksybGNqeVUySjUybzFTMmY4RWtvNVdOSFc2Q3c3WFkz?=
+ =?utf-8?B?dS9GeHVKT2t3VDZpSFptY3lqWHU4RVVnSUdlaXc1OCs1U0Ftc2xHUEp2UDNR?=
+ =?utf-8?Q?QlljJfPgsfb7zK8e2CacwAdpCsmENnyM7uKfj/4DFjxQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d011201b-e528-41cf-caa4-08ddf757997e
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 08:36:16.7496
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Nlni/zXMXXAQnuEOEVZx56SJ5DZ2yn5/1CHpBg+yEAg4xmcYzPw1zv+SvszhcRAapGS0VKKcA9D6irpKZNuhTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9494
 
-On Thu, 18 Sep 2025 15:48:23 +0300
-Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
+On 9/19/25 02:42, Chris Mason wrote:
+> On Mon,  8 Sep 2025 10:04:38 +1000 Balbir Singh <balbirs@nvidia.com> wrote:
+> 
+>> Extend migrate_vma_collect_pmd() to handle partially mapped large
+>> folios that require splitting before migration can proceed.
+>>
+>> During PTE walk in the collection phase, if a large folio is only
+>> partially mapped in the migration range, it must be split to ensure
+>> the folio is correctly migrated.
+>>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> ---
+>>  mm/migrate_device.c | 94 +++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 94 insertions(+)
+>>
+>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+>> index abd9f6850db6..f45ef182287d 100644
+>> --- a/mm/migrate_device.c
+>> +++ b/mm/migrate_device.c
+>> @@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
+>>  	return 0;
+>>  }
+>>  
+>> +/**
+>> + * migrate_vma_split_folio() - Helper function to split a THP folio
+>> + * @folio: the folio to split
+>> + * @fault_page: struct page associated with the fault if any
+>> + *
+>> + * Returns 0 on success
+>> + */
+>> +static int migrate_vma_split_folio(struct folio *folio,
+>> +				   struct page *fault_page)
+>> +{
+>> +	int ret;
+>> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
+>> +	struct folio *new_fault_folio = NULL;
+>> +
+>> +	if (folio != fault_folio) {
+>> +		folio_get(folio);
+>> +		folio_lock(folio);
+>> +	}
+> 
+> Can fault_folio ever be non-null and different from folio? Apologies for
+> not knowing the lock ordering rules but this jumps out.
+> 
 
-> On Thu, Sep 18, 2025 at 03:44:54PM +0800, Wei Fang wrote:
-> > @@ -954,17 +957,9 @@ static int enetc_get_ts_info(struct net_device *nd=
-ev,
-> >  	if (!enetc_ptp_clock_is_enabled(si))
-> >  		goto timestamp_tx_sw;
-> > =20
-> > -	if (is_enetc_rev1(si)) {
-> > -		phc_idx =3D symbol_get(enetc_phc_index);
-> > -		if (phc_idx) {
-> > -			info->phc_index =3D *phc_idx; =20
->=20
-> phc_idx remains unused in enetc_get_ts_info() after this change, and it
-> produces a build warning.
->=20
-> > -			symbol_put(enetc_phc_index);
-> > -		}
-> > -	} else {
-> > -		info->phc_index =3D enetc4_get_phc_index(si);
-> > -		if (info->phc_index < 0)
-> > -			goto timestamp_tx_sw;
-> > -	}
-> > +	info->phc_index =3D enetc_get_phc_index(si);
-> > +	if (info->phc_index < 0)
-> > +		goto timestamp_tx_sw;
-> > =20
-> >  	enetc_get_ts_generic_info(ndev, info);
-> >   =20
->=20
-> Also, testing reveals:
->=20
-> root@fii:~# ethtool -T eno2
-> [   43.374227] BUG: sleeping function called from invalid context at
-> kernel/locking/rwsem.c:1536 [   43.383268] in_atomic(): 0, irqs_disabled(=
-):
-> 0, non_block: 0, pid: 460, name: ethtool [   43.392076] preempt_count: 0,
-> expected: 0 [   43.396454] RCU nest depth: 1, expected: 0
-> [   43.400908] 3 locks held by ethtool/460:
-> [   43.405206]  #0: ffffcb976c5fb608 (cb_lock){++++}-{4:4}, at:
-> genl_rcv+0x30/0x60 [   43.412886]  #1: ffffcb976c5e9f88
-> (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x28/0x40 [   43.420931]  #2:
-> ffffcb976c0b32d0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x=
-48 [
->   43.429785] CPU: 1 UID: 0 PID: 460 Comm: ethtool Not tainted 6.17.0-rc5+
-> #2920 PREEMPT [   43.429796] Call trace: [   43.429799]  show_stack+0x24/=
-0x38
-> (C) [   43.429814]  dump_stack_lvl+0x40/0xa0
-> [   43.429822]  dump_stack+0x18/0x24
-> [   43.429828]  __might_resched+0x200/0x218
-> [   43.429837]  __might_sleep+0x54/0x90
-> [   43.429844]  down_read+0x3c/0x1f0
-> [   43.429852]  pci_get_slot+0x30/0x88
-> [   43.429860]  enetc_get_ts_info+0x108/0x1a0
-> [   43.429867]  __ethtool_get_ts_info+0x140/0x218
-> [   43.429875]  tsinfo_prepare_data+0x9c/0xc8
-> [   43.429881]  ethnl_default_doit+0x1cc/0x410
-> [   43.429888]  genl_rcv_msg+0x2d8/0x358
-> [   43.429896]  netlink_rcv_skb+0x124/0x148
-> [   43.429903]  genl_rcv+0x40/0x60
-> [   43.429910]  netlink_unicast+0x198/0x358
-> [   43.429916]  netlink_sendmsg+0x22c/0x348
-> [   43.429923]  __sys_sendto+0x138/0x1d8
-> [   43.429928]  __arm64_sys_sendto+0x34/0x50
-> [   43.429933]  invoke_syscall+0x4c/0x110
-> [   43.429940]  el0_svc_common+0xb8/0xf0
-> [   43.429946]  do_el0_svc+0x28/0x40
-> [   43.429953]  el0_svc+0x4c/0xe0
-> [   43.429960]  el0t_64_sync_handler+0x78/0x130
-> [   43.429967]  el0t_64_sync+0x198/0x1a0
-> [   43.429974]
-> [   43.537263] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [   43.541282] [ BUG: Invalid wait context ]
-> [   43.545301] 6.17.0-rc5+ #2920 Tainted: G        W
-> [   43.550891] -----------------------------
-> [   43.554909] ethtool/460 is trying to lock:
-> [   43.559016] ffffcb976c26ab80 (pci_bus_sem){++++}-{4:4}, at:
-> pci_get_slot+0x30/0x88 [   43.566628] other info that might help us debug
-> this: [   43.571694] context-{5:5}
-> [   43.574317] 3 locks held by ethtool/460:
-> [   43.578251]  #0: ffffcb976c5fb608 (cb_lock){++++}-{4:4}, at:
-> genl_rcv+0x30/0x60 [   43.585603]  #1: ffffcb976c5e9f88
-> (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x28/0x40 [   43.593301]  #2:
-> ffffcb976c0b32d0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x=
-48 [
->   43.601786] stack backtrace: [   43.604672] CPU: 1 UID: 0 PID: 460 Comm:
-> ethtool Tainted: G        W           6.17.0-rc5+ #2920 PREEMPT [
-> 43.604679] Tainted: [W]=3DWARN [   43.604683] Call trace:
-> [   43.604685]  show_stack+0x24/0x38 (C)
-> [   43.604692]  dump_stack_lvl+0x40/0xa0
-> [   43.604699]  dump_stack+0x18/0x24
-> [   43.604706]  __lock_acquire+0xab4/0x31f8
-> [   43.604713]  lock_acquire+0x11c/0x278
-> [   43.604720]  down_read+0x6c/0x1f0
-> [   43.604726]  pci_get_slot+0x30/0x88
-> [   43.604732]  enetc_get_ts_info+0x108/0x1a0
-> [   43.604738]  __ethtool_get_ts_info+0x140/0x218
-> [   43.604745]  tsinfo_prepare_data+0x9c/0xc8
-> [   43.604750]  ethnl_default_doit+0x1cc/0x410
-> [   43.604757]  genl_rcv_msg+0x2d8/0x358
-> [   43.604765]  netlink_rcv_skb+0x124/0x148
-> [   43.604771]  genl_rcv+0x40/0x60
-> [   43.604778]  netlink_unicast+0x198/0x358
-> [   43.604784]  netlink_sendmsg+0x22c/0x348
-> [   43.604790]  __sys_sendto+0x138/0x1d8
-> [   43.604795]  __arm64_sys_sendto+0x34/0x50
-> [   43.604799]  invoke_syscall+0x4c/0x110
-> [   43.604806]  el0_svc_common+0xb8/0xf0
-> [   43.604812]  do_el0_svc+0x28/0x40
-> [   43.604818]  el0_svc+0x4c/0xe0
-> [   43.604825]  el0t_64_sync_handler+0x78/0x130
-> [   43.604832]  el0t_64_sync+0x198/0x1a0
-> Time stamping parameters for eno2:
-> Capabilities:
->         hardware-transmit
->         software-transmit
->         hardware-receive
->         software-receive
->         software-system-clock
->         hardware-raw-clock
-> PTP Hardware Clock: 0
-> Hardware Transmit Timestamp Modes:
->         off
->         on
->         onestep-sync
-> Hardware Receive Filter Modes:
->         none
->         all
->=20
-> It looks like we have a problem and can't call pci_get_slot(), which
-> sleeps on down_read(&pci_bus_sem), from ethtool_ops :: get_ts_info(),
-> which can't sleep, as of commit 4c61d809cf60 ("net: ethtool: Fix
-> suspicious rcu_dereference usage").
->=20
-> K=C3=B6ry, do you have any comments or suggestions? Patch is here:
-> https://lore.kernel.org/netdev/20250918074454.1742328-1-wei.fang@nxp.com/
+Yes, migration can occur in fault context or be driver driven
 
-This is annoying indeed. I don't know how this enetc drivers works but why
-ts_info needs this pci_get_slot() call? It seems this call seems to not be
-used in ndo_hwtstamp_get/set while ts_info which does not need any hardware
-communication report only a list of capabilities.
+>> +
+>> +	ret = split_folio(folio);
+>> +	if (ret) {
+>> +		if (folio != fault_folio) {
+>> +			folio_unlock(folio);
+>> +			folio_put(folio);
+>> +		}
+>> +		return ret;
+>> +	}
+>> +
+>> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
+>> +
+>> +	/*
+>> +	 * Ensure the lock is held on the correct
+>> +	 * folio after the split
+>> +	 */
+>> +	if (!new_fault_folio) {
+>> +		folio_unlock(folio);
+>> +		folio_put(folio);
+>> +	} else if (folio != new_fault_folio) {
+>> +		folio_get(new_fault_folio);
+>> +		folio_lock(new_fault_folio);
+>> +		folio_unlock(folio);
+>> +		folio_put(folio);
+>> +	}
+> 
+> Same question here, do we need trylocks?
+> 
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Since we had the folio lock before, the assumption is that we can
+still grab the lock after split and it's OK to wait, since this
+is not a hot-path.
+
+Balbir Singh
+
 
