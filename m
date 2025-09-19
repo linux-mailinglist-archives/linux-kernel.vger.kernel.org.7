@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-825192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6390B8B3E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62964B8B3DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB64A585F8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE2CA005C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC10C2C234F;
-	Fri, 19 Sep 2025 20:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359E52C3276;
+	Fri, 19 Sep 2025 20:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AEw63Uh+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mW0BX05Y"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6142765ED;
-	Fri, 19 Sep 2025 20:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B97279DB6
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758315093; cv=none; b=VnY15FKO7aF3FerslSsPsdxeC5V9YqBlVSctnQVcfdjERMnMzl2AF6o6RNalXSMfSv17WethkVEjrFPcdrUUWd6vyE/1Ev7KQ+e5EPM83gpYuRP1tG32S0rws3EYxZVvO34W6IjmSIOoylhzz0xwoTbg9jdOCpD+JoV/zeX9Vws=
+	t=1758315048; cv=none; b=bYEZdAGu1bJXu4Bj74tDuVeGaJ7vigAD22ZFRl+q1RdFl0x0KzthGEm9OmCYisqanemUsd9x8vVwzhIcIev1BPaCBSORas6pxX4WggZ4aoNUDgi4dB6W/diLJYnbp9RPUqt9d2ykHNTwCXzB7hRYf9YnIWl1G9Il8cZGycONgWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758315093; c=relaxed/simple;
-	bh=WT/AtW2xlYNnS+78n8UELvwDofVsJ6EkkO2i5EOJ8R8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5zkSSxjMUcRnu3CDgAFuWTZ7lkQoI5QscEHpgPm1wwAmS9sEvpEB7o4f9+c+Z3Jl6dKZi4LyWUJFEXX7gM3nZMRvcXZHAvVQu59aT02Y0fC95eSD/797tvyMfu25A7Wf/itF1odwGA0zq6wcansIyBUpuMtBV+B7thyZ0ESEn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AEw63Uh+; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758315090; x=1789851090;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WT/AtW2xlYNnS+78n8UELvwDofVsJ6EkkO2i5EOJ8R8=;
-  b=AEw63Uh+gdvP8TBnHl1KmtGek+0aYVhxjw+pxhqAY03igZaKu0VQdI08
-   ZZzvzxWyfQb9H3ewefaKarkH0YmUB1jjrqQLjd3hDJGsnGkPQifphP+M/
-   N2vJunhgNfOs78LId1GkRhx4qWmm8PuMa/yiOcl+t+82gvMa0WMpUsR6/
-   3RmZMvqiXJ7rCdCnFQ8C//Mg7ijtbiNyoXtjnR5iekDikPL+8xtndMxqZ
-   ZosUeaNTO+cH1Y9ZJY8ojAaM0j4sHbVLeYihGvcvapYYtEdaqQP70rZFa
-   eRyEu4Dz1y5HvjWdIsFjQytvW/8mjubBGqkI9RYRgYgho2ehwFo66s6GK
-   g==;
-X-CSE-ConnectionGUID: EpoJiZEDQxyLoxLtcTxrfw==
-X-CSE-MsgGUID: 9Nmgt+lgRQ2z8qBwhqGBqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64469596"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64469596"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 13:51:29 -0700
-X-CSE-ConnectionGUID: XwD47sDGR+igIFw7EOnX+A==
-X-CSE-MsgGUID: mlNyeTdkTUyEuCqKl1bt8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="175847193"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 19 Sep 2025 13:51:27 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzi4i-0004nP-3C;
-	Fri, 19 Sep 2025 20:51:24 +0000
-Date: Sat, 20 Sep 2025 04:50:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Benjamin Berg <benjamin@sipsolutions.net>, linux-um@lists.infradead.org,
-	Willy Tarreau <w@1wt.eu>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	linux-kselftest@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Benjamin Berg <benjamin.berg@intel.com>
-Subject: Re: [PATCH v2 11/11] um: switch ptrace FP register access to nolibc
-Message-ID: <202509200433.l6pWDPhh-lkp@intel.com>
-References: <20250919153420.727385-12-benjamin@sipsolutions.net>
+	s=arc-20240116; t=1758315048; c=relaxed/simple;
+	bh=T1pjRY/F/SkgSjWuJdk27VR8oZOxZjfSXUdbtPBD4jY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PWMLrGhm0Grl5AhxTywOO9GkMqSPVZnzTsTDfrwF1fpmsrHNGN6dXqo6L+sc7FqgJG91sAKFX6hLpkjqbB9MJVr/951rypFHyhtxT2SAlsOjMweIPjB2eOoTupOLjbUTQKjqG6SYdzS6NdgRd7Twyh5ckDOkEtZLH2nIBwOxThk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mW0BX05Y; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-62355a687e6so1745344eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758315044; x=1758919844; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9S8gTyZHpLrd3UuYpDvVcBF3/jRK8JAKEasp6QLRjXQ=;
+        b=mW0BX05YycfX/KGzsAnoAoAX3MoQk0A4QcFXcGhPE9NOO8GzHn+k3NcxzNqPL4BHyW
+         eEJ0N3oB6mwO7qNpqqlYdCMz3PVSS5osA2SCWe9UjSdajlynAlnPYaAZQFT+tD3woLWB
+         ep6cgxB495R6+XYXPE+qUOONXVKubx/WyI8vsmLZzUDcZGJcw6mD92XvCVwW0ygrRICl
+         f7ZDr+gV6hEzOW15ewfmKFGsf4EQQkMC08CV/NHYjzuOq92sW0wg06tB7m86XAofdrvh
+         GmrzJUxH0LxY61VI3f4YeilG8/pXAOwKbiheMGJQLCyizEGHyigJ6ADuScUKEm1ndceA
+         7PaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758315044; x=1758919844;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9S8gTyZHpLrd3UuYpDvVcBF3/jRK8JAKEasp6QLRjXQ=;
+        b=sDkg3DNqXx2y6SwO4ojvHM41XYVcvd9tysJe1mo9fAfxflKR2P5aiUnNG0b3lRA9Ip
+         JEc0MM7t6CtT6NibDLZuAwE1HrISqck8uXeH4OBQlqIh/5CG+I92zDfkaa9g/cYIMSrN
+         l1T30AxEY3qMIFw2KMGSt9HWCDKDr8v3rBlZH1jabiVndTcnIUGTpiWU412I1ybU3KOJ
+         R51cSAkN5tcDoPxkPtyPi+t1w9Du0D8lHVzV2akB+P5wTIRisvv8QnRLgIPt2OmKW3Nc
+         kxL5flElbkM5CoR3DO0687pGKbbKM0qYkBY4ExVFzS5EYmYnsuaiat68s683fvdgUwcV
+         9M+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU40Yq8jgPE+yWYRV21yXSRQ1tZqKJk8SY2p8TKL2jyk3EubDz9sssg8oycPPWi+EpZA5kFlwDkq1QF3sE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEQXztVnwaTiWQo3wuYWFtocmVvKqm1oquzBbPm2JN2iUm6KUO
+	PlZQo9Ft5Ww9cRkuuoIAGpeqdgXEsyGLMU3WuGotwfqouU72M0KlQDuSI5ppQ4qyG3W1I/d/a5N
+	Pbvm/c1s=
+X-Gm-Gg: ASbGncuWu6az5zc2iwgSGNrfn2hDI+TBSZnKRIWdACrZHHPc4tANDME97+0iOHfChzy
+	Lu+cCUi7bbNNEWNiIN4Xu6JAUBE5AfSgAxun6dODX5j2jfAh7/upWm1bDNr5NacYN0gPgvgW+LL
+	ZOr9I4Yjxq6o0RSIhYw/xsE/7rpy3br0EiUMQisFoZwO78z8tJIz9GO76fAp3JNOQvjuzJpBSGr
+	dZjbuufauZN4xdyEWoUeW7RhzRmNH92U4n6mqJFK0nouT/bQ0pPxDbz3MK6W4sfa3hX2PtW84+D
+	+DmXdNvbCHIcXff/82Wi8WzWK2yIhmzqgRSfqaxEzautkS5quBuCzo65Bd0YB+W4r0Im8ljvdRn
+	i4R1vwWW0jU+DaerlmMuVqPVw8CDd
+X-Google-Smtp-Source: AGHT+IHFg+e4fOqvz7ofLnsec4K9Ow95HzlRIYWNVVd1U5YPgRsw3+v0zPkEBD11PFRkIVjO7utBIg==
+X-Received: by 2002:a05:6808:3a13:b0:43a:f438:ef46 with SMTP id 5614622812f47-43d6c279c3bmr1952918b6e.36.1758315044441;
+        Fri, 19 Sep 2025 13:50:44 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:3838:157c:c9f9:2e3f])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-43d5c68cad0sm2353369b6e.2.2025.09.19.13.50.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 13:50:44 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Fri, 19 Sep 2025 15:50:34 -0500
+Subject: [PATCH] iio: adc: ad7380: fix SPI offload trigger rate
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919153420.727385-12-benjamin@sipsolutions.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250919-iio-adc-ad7380-fix-sampling-frequency-for-single-ended-chips-v1-1-7b2d761766cf@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIABnCzWgC/x2NQQrCMBBFr1Jm7UBSKSZeRVykyaQdqEnMoCild
+ 3dw8RfvL97bQagzCVyHHTq9WbgWBXsaIK6hLISclGE042S89chcMaSou5ydwcwflPBoG5cFc6f
+ ni0r8Yq4dRa+NkEqihHHlJmimec4UnPM2giZaJxX887f7cfwAkbOiMI4AAAA=
+X-Change-ID: 20250919-iio-adc-ad7380-fix-sampling-frequency-for-single-ended-chips-05bbfea8891c
+To: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
+ Angelo Dureghello <adureghello@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1854; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=T1pjRY/F/SkgSjWuJdk27VR8oZOxZjfSXUdbtPBD4jY=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBozcIcFW04iCCjadrwSaGczrKUaG0IEGgBkE20b
+ bW/dRX4XYOJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaM3CHAAKCRDCzCAB/wGP
+ wEDbB/4lhrG0PaqMDHU7r9Lhw/vVXA8D2Wd6uxaAbiFtMM1t44VSbMLauy0B8u52G3+r1nEZvNr
+ G0Fh2EpB66tc+LJBrsE6JcFS+hKDoHDkZhDewPKGXfM95FJtCutPYXTRIWtb/fY23Rvrx+2hna8
+ k8lIU7t/L0720J2rbtxN0p1idDAJdPLVmM0vVXWplR/c0KG1bgIYS/FBbzkEE/zi2jwRwQBivHn
+ VYk4Orbcz4x8/mnZ6WZo6wRd/cJqJG6a8scLAO/EADuqBQLeT7YWn6GfCP8Na6kJ0lEBfVihXMm
+ ItD4G/0lj1lPbp23MKD7lxQbiCs8EOVFCyyqdCWI/qlBPudH
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-Hi Benjamin,
+Add a special case to double the SPI offload trigger rate when all
+channels of a single-ended chip are enabled in a buffered read.
 
-kernel test robot noticed the following build errors:
+The single-ended chips in the AD738x family can only do simultaneous
+sampling of half their channels and have a multiplexer to allow reading
+the other half. To comply with the IIO definition of sampling_frequency,
+we need to trigger twice as often when the sequencer is enabled to so
+that both banks can be read in a single sample period.
 
-[auto build test ERROR on uml/next]
-[also build test ERROR on uml/fixes shuah-kselftest/next shuah-kselftest/fixes linus/master v6.17-rc6 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Fixes: bbeaec81a03e ("iio: ad7380: add support for SPI offload")
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+There was some unresolved discussion about this when we were adding
+SPI offload support to the ad7380 driver, but it turns out that handling
+the sampling frequency correctly for single-ended chips is actually
+quite simple.
+---
+ drivers/iio/adc/ad7380.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Benjamin-Berg/tools-compiler-h-fix-__used-definition/20250919-233959
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux next
-patch link:    https://lore.kernel.org/r/20250919153420.727385-12-benjamin%40sipsolutions.net
-patch subject: [PATCH v2 11/11] um: switch ptrace FP register access to nolibc
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20250920/202509200433.l6pWDPhh-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7c861bcedf61607b6c087380ac711eb7ff918ca6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200433.l6pWDPhh-lkp@intel.com/reproduce)
+diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+index fa251dc1aae6ab0a0d36792fa37b2cc22b99dfe6..bfd908deefc0f40b42bd8a44bfce7a2510b2fdf1 100644
+--- a/drivers/iio/adc/ad7380.c
++++ b/drivers/iio/adc/ad7380.c
+@@ -1227,6 +1227,14 @@ static int ad7380_offload_buffer_postenable(struct iio_dev *indio_dev)
+ 	if (ret)
+ 		return ret;
+ 
++	/*
++	 * When the sequencer is required to read all channels, we need to
++	 * trigger twice per sample period in order to read one complete set
++	 * of samples.
++	 */
++	if (st->seq)
++		config.periodic.frequency_hz *= 2;
++
+ 	ret = spi_offload_trigger_enable(st->offload, st->offload_trigger, &config);
+ 	if (ret)
+ 		spi_unoptimize_message(&st->offload_msg);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509200433.l6pWDPhh-lkp@intel.com/
+---
+base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
+change-id: 20250919-iio-adc-ad7380-fix-sampling-frequency-for-single-ended-chips-05bbfea8891c
 
-All error/warnings (new ones prefixed by >>):
-
->> arch/x86/um/os-Linux/registers.c:11:10: fatal error: 'sys/user.h' file not found
-      11 | #include <sys/user.h>
-         |          ^~~~~~~~~~~~
-   1 error generated.
---
->> clang: warning: no such include directory: './arch/um/include/shared' [-Wmissing-include-dirs]
-
-
-vim +11 arch/x86/um/os-Linux/registers.c
-
-14c8a77e1bbd69 arch/um/os-Linux/sys-i386/registers.c Jeff Dike          2008-06-12 @11  #include <sys/user.h>
-38b64aed786d59 arch/x86/um/os-Linux/registers.c      Richard Weinberger 2011-08-18  12  #endif
-37185b33240870 arch/x86/um/os-Linux/registers.c      Al Viro            2012-10-08  13  #include <longjmp.h>
-37185b33240870 arch/x86/um/os-Linux/registers.c      Al Viro            2012-10-08  14  #include <sysdep/ptrace_user.h>
-a78ff1112263fd arch/x86/um/os-Linux/registers.c      Eli Cooper         2016-03-20  15  #include <sys/uio.h>
-a78ff1112263fd arch/x86/um/os-Linux/registers.c      Eli Cooper         2016-03-20  16  #include <asm/sigcontext.h>
-a78ff1112263fd arch/x86/um/os-Linux/registers.c      Eli Cooper         2016-03-20  17  #include <linux/elf.h>
-dbba7f704aa0c3 arch/x86/um/os-Linux/registers.c      Al Viro            2021-09-20  18  #include <registers.h>
-3f17fed2149192 arch/x86/um/os-Linux/registers.c      Benjamin Berg      2024-10-23  19  #include <sys/mman.h>
-^1da177e4c3f41 arch/um/os-Linux/sys-i386/registers.c Linus Torvalds     2005-04-16  20  
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+David Lechner <dlechner@baylibre.com>
+
 
