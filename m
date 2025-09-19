@@ -1,117 +1,90 @@
-Return-Path: <linux-kernel+bounces-823978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E8DB87D8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:02:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0319DB87D93
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB331C2018C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3271523422
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3D425487C;
-	Fri, 19 Sep 2025 04:02:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5B41F12E0;
-	Fri, 19 Sep 2025 04:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2387F242D84;
+	Fri, 19 Sep 2025 04:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iX/15VGS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0F41C862F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758254523; cv=none; b=vDmAfdOyEBFA24ygT094QFTFJdLb9NQJd8U/0+cuzfOIceKaMYnMtBx7/EX0H/En5EiLYM6bD4VTF9A2qVk7e2tY5EKGjW37Z0aqB3yEbIEQGSupYNW/WhWYjz2n87cw/aVUZDWq4hJhoPCw5peqqlM/GO2pzRGGnoT4ewPZZFg=
+	t=1758254665; cv=none; b=k+SjJ4V69VIQAITjpHgzKIR7/RcKZBgTiYCiblCJ8Vzz19mYGoYL0MguLFfbzithJVFyoT+7gzWzNdYgsckQIPqJYK4H27AVrajf6SkA4cScXOVYbFpHkIlo4oG4zfNnizOnizQBfNya5sweQcsOLBDAF8wkB1sGOZbqYNFyuXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758254523; c=relaxed/simple;
-	bh=J0X3/qOcIhQPImwvFRyFoOTpMSuDc7j7KO334CJhEDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o130Nnx9ngVJ2SPO37ZBTWcwUSXJhMEPGoVF3nkrroqbW5BBJHGkRoWCcL1tPELj4q3wN/prHPbr62WUesqXp3/ZDQ6UtxITcjV1/AqBH87Efp0G+/9ZIMAexWmbn06k7eIsA9vSXdII0xQryCo4ZyV/7eyBhJRyfLhnBZPdLsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F98C1758;
-	Thu, 18 Sep 2025 21:01:51 -0700 (PDT)
-Received: from [10.164.18.52] (MacBook-Pro.blr.arm.com [10.164.18.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 700843F673;
-	Thu, 18 Sep 2025 21:01:57 -0700 (PDT)
-Message-ID: <70958792-2d11-4fab-be78-e35434f2e524@arm.com>
-Date: Fri, 19 Sep 2025 09:31:54 +0530
+	s=arc-20240116; t=1758254665; c=relaxed/simple;
+	bh=NqkZnCizAbX+o9YIAhQw0thbKtUrquiDNFODHQ1hcyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCsUVAYHd4Ny+WQen98B47jrHN6LBRJQi3a7wrvp2rdg3+5+KjuzoH3klXJ5Z6EKiKMJqT/9F4MhTMU8Sqr6BA3aeGSVvdOeRkYyORn2kaGOBWZrjlie1kxK5e5kQUv1pDxTzcPg1kvATglZmVEBjQ4SpN6zVTX1HS3/2eW0QTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iX/15VGS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758254662;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WJFVTJYb2/ev/ctsj3imyOHvTHcYX61/HGTQGEX5Mzw=;
+	b=iX/15VGSdbfdcw7LqyIbeJCTbqnuS0cTNUzIMiWthf0jDrkjU8+LTaowk4qJ+Ud2/b2MqK
+	OTzNP5/QRu0Z8AgnKTgBI68zO5y0xzG7ndWmi65LPy7eCWShPqKlx9lzdDZMeoSCCih8NB
+	is6EMKIne8QRqcSYjSIjrIyhgSx9WoY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-465-lpOjRzIAOV-ZhHf9oUdMcQ-1; Fri,
+ 19 Sep 2025 00:04:21 -0400
+X-MC-Unique: lpOjRzIAOV-ZhHf9oUdMcQ-1
+X-Mimecast-MFC-AGG-ID: lpOjRzIAOV-ZhHf9oUdMcQ_1758254660
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 879681800576;
+	Fri, 19 Sep 2025 04:04:19 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.15])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA9571955F21;
+	Fri, 19 Sep 2025 04:04:15 +0000 (UTC)
+Date: Fri, 19 Sep 2025 12:04:09 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/17] ublk: don't pass q_id to ublk_queue_cmd_buf_size()
+Message-ID: <aMzWOWxelzLme6ZV@fedora>
+References: <20250918014953.297897-1-csander@purestorage.com>
+ <20250918014953.297897-3-csander@purestorage.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 PATCH] arm64: kprobes: call set_memory_rox() for kprobe page
-To: Will Deacon <will@kernel.org>, Yang Shi <yang@os.amperecomputing.com>
-Cc: catalin.marinas@arm.com, ryan.roberts@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250918162349.4031286-1-yang@os.amperecomputing.com>
- <aMxAwDr11M2VG5XV@willie-the-truck>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <aMxAwDr11M2VG5XV@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918014953.297897-3-csander@purestorage.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+On Wed, Sep 17, 2025 at 07:49:38PM -0600, Caleb Sander Mateos wrote:
+> ublk_queue_cmd_buf_size() only needs the queue depth, which is the same
+> for all queues. Get the queue depth from the ublk_device instead so the
+> q_id parameter can be dropped.
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 
-On 18/09/25 10:56 pm, Will Deacon wrote:
-> On Thu, Sep 18, 2025 at 09:23:49AM -0700, Yang Shi wrote:
->> The kprobe page is allocated by execmem allocator with ROX permission.
->> It needs to call set_memory_rox() to set proper permission for the
->> direct map too. It was missed.
->>
->> Fixes: 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in alloc_insn_page")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->> ---
->> v2: Separated the patch from BBML2 series since it is an orthogonal bug
->>      fix per Ryan.
->>      Fixed the variable name nit per Catalin.
->>      Collected R-bs from Catalin.
->>
->>   arch/arm64/kernel/probes/kprobes.c | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
->> index 0c5d408afd95..8ab6104a4883 100644
->> --- a/arch/arm64/kernel/probes/kprobes.c
->> +++ b/arch/arm64/kernel/probes/kprobes.c
->> @@ -10,6 +10,7 @@
->>   
->>   #define pr_fmt(fmt) "kprobes: " fmt
->>   
->> +#include <linux/execmem.h>
->>   #include <linux/extable.h>
->>   #include <linux/kasan.h>
->>   #include <linux/kernel.h>
->> @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->>   static void __kprobes
->>   post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs *);
->>   
->> +void *alloc_insn_page(void)
->> +{
->> +	void *addr;
->> +
->> +	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
->> +	if (!addr)
->> +		return NULL;
->> +	set_memory_rox((unsigned long)addr, 1);
->> +	return addr;
->> +}
-> Why isn't execmem taking care of this? It looks to me like the
-> execmem_cache_alloc() path calls set_memory_rox() but the
-> execmem_vmalloc() path doesn't?
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
-Ryan has raised this issue here -
-https://lore.kernel.org/all/d4019be7-e24c-4715-a42a-4f1fc39a9bd4@arm.com/
+Thanks,
+Ming
 
->
-> It feels a bit bizarre to me that we have to provide our own wrapper
-> (which is identical to what s390 does). Also, how does alloc_insn_page()
-> handle the direct map alias on x86?
->
-> Will
->
 
