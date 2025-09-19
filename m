@@ -1,149 +1,118 @@
-Return-Path: <linux-kernel+bounces-824474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99929B89552
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:57:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA08B8955D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650271C27831
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2B981798EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375FD30DEAF;
-	Fri, 19 Sep 2025 11:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB9130E0D9;
+	Fri, 19 Sep 2025 11:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzlEMCBM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cJ5CvvFi"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED0030CB48;
-	Fri, 19 Sep 2025 11:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC12D2D061F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758283062; cv=none; b=Ugm6QqxEDBrABCS2UlDvk9YpvdbeBapXWuHafmyvfFbK/K+75IsurtnDphUtcbqfZuu4pJ6puwu+416ZAl0cgd9fSxcoQY1N4V54WZv6XZTBRMOKX7OzAnti+g1IvdOteeb9JKYIoQ8Dgcy5WqyvWa610sj2dNRrTJ+hRWxotAQ=
+	t=1758283090; cv=none; b=QX5SrBqYR0DDaMYYF/zCJkdewzL8UgplrtbEQlOhaTF/Tuk3MZk98doF03yix4d1VdGZff3jWnE2IE4HCUNkawiblBv8hlckY/zQVZhE44OzGHkka7f8KCywYWgV3oTGmCH64VPYxri7y3cREJ/3CvFHKWHiExChR47OmoWc9mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758283062; c=relaxed/simple;
-	bh=Lcy/LWJQGp1/4CfwoBEK/ZhTJbVy7tMzyjNO9hVTaMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kz5E4C0Tgbc97XCD72RfNDhizpGTYwlYqqLj6OB/lDPSs15QC/z72Aqy1GCmAlOrmOEEW82lCX966m73T7ftNG1L6JUwZm6rBq+XAZUuGW2gBAQ69aRd9N4uqH63YsQ32VAv+gGMHP67uLrwJGb+dFe8vFf7TMf7SioSP3+jvYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzlEMCBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B10BC4CEF0;
-	Fri, 19 Sep 2025 11:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758283062;
-	bh=Lcy/LWJQGp1/4CfwoBEK/ZhTJbVy7tMzyjNO9hVTaMU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DzlEMCBMTdGBAMyDFjAFalB2ZZnO8+6CUxsS5eJYbk7dUBh96KvFwC7fbALMHqdfE
-	 erRyehOSNupMvxnpg2zQglmHtRZ29+VerLJQl7RsKLS9XvafqULUPB8vqeFdhytodS
-	 PLWwd77MHueYpfG1AC3PbfRy/hC9Pgw6jJ9rVgI1FZKeptKgaeOF82Cm1ybMxhYCEI
-	 GXYm3e7st+lVz/3miMX6Zco386UoSRYuL98drNowG34PXORFLF5Zd/oAxqrokYsJiH
-	 YdMj4Gu11Ryff8yvgrHhdifJP1i6FuR9mHaMnRiijDhF7Z2Ec6bbO8WfPrCLqQF81T
-	 2QlhRhlWazKZA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>
-Cc: jolsa@kernel.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	kees@kernel.org,
-	samitolvanen@google.com,
-	rppt@kernel.org,
-	luto@kernel.org,
-	mhiramat@kernel.org,
-	ast@kernel.org,
-	andrii@kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH] tracing: fgraph: Protect return handler from recursion loop
-Date: Fri, 19 Sep 2025 20:57:36 +0900
-Message-ID: <175828305637.117978.4183947592750468265.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1758283090; c=relaxed/simple;
+	bh=z76f63pK7iULjhkDPA2cDB1JEhtZUbriGGo8ro5LyIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KUOPBu9EFPVJj9wB2vqG5CY9DSNcEf9nFDIEvOUWTRk+NWwgXQYrWVIsrJCGBH9u+pK/JMZrCgTam5TcurL/4/6f28VMFrqbq0iNaz9cCmjMDrV6u1fFTUsreCIpAKef8JatZ5/UDQ13J7lTfTlCHF/kBrCA1agBXJGlWlqmHss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cJ5CvvFi; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b7997a43ceso23465721cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1758283088; x=1758887888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XqkzJ715IFhAdPqz34JG4QrSrgL1I3NolvpeVSTSpSM=;
+        b=cJ5CvvFi4Ux+0g+c5NdMmNIvSoh9f0ftQC7qisliChqhhYmJADWMtZsVY6vpSY7DLj
+         TBgjaYj/OnvG9ksqbX3WS86N8ABjCPYhprhE4/XH21TFNY9E43PpuILUj9GnbrN0KYdy
+         ipUrG6JPg7GuZqbgRRadQfXMX9723oLaKMWW1vkyKhQ3MYvb2x8ETUrPgV69g/CHkk3+
+         LnIDz9f7/C6qPMAthQ4jSeIleIvcDdbG3J3V2hcRB1Wvcc8inf13L5DBxq8QX0lrc1zp
+         CSlkrOeh/Ky2FQoWjbOIYFUV2p6+ChCrFzm1zCxV6q2QEe4EIiIkZPtMuVSD9EN7d9Xi
+         bgoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758283088; x=1758887888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XqkzJ715IFhAdPqz34JG4QrSrgL1I3NolvpeVSTSpSM=;
+        b=l7sOhmRKX1fZ8kSSsA4p6f8Fnt/fHgvIC/3pQ46F0LmEFcBkcwc8hAh4qupgtLc7Y3
+         wuwtDkVZ7ecpfxyLxYbFCx41phpDkcAjUciHlJi9VAPw9tV9JtkYUm4grwJZ0Pb2Xx2Y
+         5G6gWqjru6Xepkgx/KfnaCJzqtyjtc6dBH+nI4K5hf4szGTtCOGKvPYciXhwb61SLu1X
+         nY+D4G2nvhM6xSnlBRALN6YeFa4KBZWLtfRppRqOT83yKCmt7M1hVJhmyN55qre5rjiV
+         5Tt4CuLESzC4v+wQlVnm2RSdRWiQQWhlz6zaZzzLRSwwdu5zVOS6V2kA2Aria6rafNf4
+         p4Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfiUxDYHstffOT2mItLLtcJ8dU0TRvoSl1Nw0yT35tnG3VfYpZGrJLM9VQcX7LhRKUZmJXhg9cs4qJews=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV2ZqhIdkTBpj0isPxUnXHQ1ecI2iZI985L94GiO/4FQDuLu7+
+	WW2neDgLwbXy3LM/NRAEW1kYiCoE1IcrBaGvbFXrMl69Ce2w7Qreubm7yQ7kVZAqdiE=
+X-Gm-Gg: ASbGncvxegV7siRFyRUw9sOZnnxAvJ8K8xjU1TyqBmCUssgV2Fr6gAF6W1w0vuZQJRU
+	KsC/F36OILkTODfHZA3Od2QOdCPRhCxsu59KaM+NOtaHcZx4mDmCs6p98axZ2HppeXNX+yW+dAo
+	rFIFSO4TjJUU/cvJN2K55J7rS1Z5hnrg2N403JQYoRc0BFPz9ALyIonv0g+tal95W50vZDDMBMj
+	3Wd9fvgt+iw/zpkXrg4gk+FV3cTizVCKO8aa+S6mD9XaqCSX9dLy9dSKmNql2S5RWXFZuq8ABGo
+	B+owh0NJ2splGYuZKF6Z/PgksUUKPGUTJJxKJgmngssuI65N5OtX+cmxjHRPfW8VwkVvDVzs
+X-Google-Smtp-Source: AGHT+IHAUUCTifYO3tvHTIggD1bty3WA1tAmCInvXz11D2JOt+J25vVYjGygxn7PDvPC0VZaaS2K+Q==
+X-Received: by 2002:ac8:594d:0:b0:4b2:cf75:bf10 with SMTP id d75a77b69052e-4c06cbe95ebmr27476741cf.17.1758283087738;
+        Fri, 19 Sep 2025 04:58:07 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363198ad41sm325729185a.46.2025.09.19.04.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 04:58:06 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uzZkb-000000097c5-40qZ;
+	Fri, 19 Sep 2025 08:58:05 -0300
+Date: Fri, 19 Sep 2025 08:58:05 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Keith Busch <kbusch@kernel.org>, Alex Mastro <amastro@fb.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, David Reiss <dreiss@meta.com>,
+	Joerg Roedel <joro@8bytes.org>, Leon Romanovsky <leon@kernel.org>,
+	Li Zhe <lizhe.67@bytedance.com>, Mahmoud Adam <mngyadam@amazon.de>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	"Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend
+ more granular access to client processes
+Message-ID: <20250919115805.GU1326709@ziepe.ca>
+References: <20250918214425.2677057-1-amastro@fb.com>
+ <20250918225739.GS1326709@ziepe.ca>
+ <aMyUxqSEBHeHAPIn@kbusch-mbp>
+ <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Fri, Sep 19, 2025 at 07:00:04AM +0000, Tian, Kevin wrote:
+> memory of other clients and the USD... there is no hw isolation 
+> within a partitioned IOAS unless the device supports PASID then 
+> each client can be associated to its own IOAS space.
 
-function_graph_enter_regs() prevents itself from recursion by
-ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
-which is called at the exit, does not prevent such recursion.
-Therefore, while it can prevent recursive calls from
-fgraph_ops::entryfunc(), it is not able to prevent recursive calls
-to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
-This can lead an unexpected recursion bug reported by Menglong.
+If the device does support pasid then both of the suggestions make
+a lot more security sense..
 
- is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
-  -> kprobe_multi_link_exit_handler -> is_endbr.
-
-To fix this issue, acquire ftrace_test_recursion_trylock() in the
-__ftrace_return_to_handler() after unwind the shadow stack to mark
-this section must prevent recursive call of fgraph inside user-defined
-fgraph_ops::retfunc().
-
-This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
-fprobe on function-graph tracer"), because before that fgraph was
-only used from the function graph tracer. Fprobe allowed user to run
-any callbacks from fgraph after that commit.
-
-Reported-by: Menglong Dong <menglong8.dong@gmail.com>
-Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
-Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
-Cc: stable@vger.kernel.org
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/fgraph.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 1e3b32b1e82c..08dde420635b 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 	unsigned long bitmap;
- 	unsigned long ret;
- 	int offset;
-+	int bit;
- 	int i;
- 
- 	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
-@@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 	if (fregs)
- 		ftrace_regs_set_instruction_pointer(fregs, ret);
- 
-+	bit = ftrace_test_recursion_trylock(trace.func, ret);
-+	/*
-+	 * This must be succeeded because the entry handler returns before
-+	 * modifying the return address if it is nested. Anyway, we need to
-+	 * avoid calling user callbacks if it is nested.
-+	 */
-+	if (WARN_ON_ONCE(bit < 0))
-+		goto out;
-+
- #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
- 	trace.retval = ftrace_regs_get_return_value(fregs);
- #endif
-@@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 		}
- 	}
- 
-+	ftrace_test_recursion_unlock(bit);
-+out:
- 	/*
- 	 * The ftrace_graph_return() may still access the current
- 	 * ret_stack structure, we need to make sure the update of
-
+Jsaon
 
