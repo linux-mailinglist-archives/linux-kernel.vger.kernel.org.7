@@ -1,140 +1,110 @@
-Return-Path: <linux-kernel+bounces-824127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8A3B882C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:34:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B78EFB8831F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74AC8468111
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FFA31C86CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AD92D97A6;
-	Fri, 19 Sep 2025 07:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F072D1303;
+	Fri, 19 Sep 2025 07:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b="DQ0s/RSc"
-Received: from mail0.khirnov.net (red.khirnov.net [176.97.15.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="B6nB/pXd"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7782D2381;
-	Fri, 19 Sep 2025 07:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.97.15.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C963525522B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267163; cv=none; b=qyRTO1LwY1t6uaAPxe1X4PlBNfevcUapzCICBFRkTXfr26oYK3iHWYpBGIGybpa262rBpbh9XQFt5SsqROj3mGE8b7iZ+DXdbtnOx3bcnNMYMv/yX/JY138DAxGh/14MZCj3FLpXlC9IoyQyMrASITtet9/5K0czMCDtGvoqfsQ=
+	t=1758267237; cv=none; b=Hnhv0c0gmr+bvhuHepIAOuFJaUgaZLQRxrJi9QJGNQB+3EqhbIrj5XCUnUgEFZjthgo/LXnexe1o/+jxtC/eYvsdAzmWHDJEVDa3tPmgGFp71SMyt9EXRSFe8c4oVjMzaMHYLwfThaVfbovc0BcCay1bImryvZ2z5DVsg7hItyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267163; c=relaxed/simple;
-	bh=7kKBDdra4SQwhLuuuWbqpMtlj/F7FDSZGSMO1U+Gqk0=;
-	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
-	 Message-ID:MIME-Version; b=ilBYVIJX/lBpztc56wwLIXfDVGoiL8DUvnPNnhvCwGlQYr2iTrQLkyzdOPi0uQnUmk6Lp9f+fsKROqlIa3lfVO64+aMksSiMhMXG7ovf9z4ht7samxo3c0Dj90hZ0UbG/puVbs5sGvMc02EYw8eB+HmoMA2H0UNEjSEyITpwhCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net; spf=pass smtp.mailfrom=khirnov.net; dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b=DQ0s/RSc; arc=none smtp.client-ip=176.97.15.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=khirnov.net
-Authentication-Results: mail0.khirnov.net;
-	dkim=pass (2048-bit key; unprotected) header.d=khirnov.net header.i=@khirnov.net header.a=rsa-sha256 header.s=mail header.b=DQ0s/RSc;
-	dkim-atps=neutral
-Received: from localhost (localhost [IPv6:::1])
-	by mail0.khirnov.net (Postfix) with ESMTP id 6C65C245F51;
-	Fri, 19 Sep 2025 09:32:37 +0200 (CEST)
-Received: from mail0.khirnov.net ([IPv6:::1])
- by localhost (mail0.khirnov.net [IPv6:::1]) (amavis, port 10024) with ESMTP
- id 1FMtlWRBHSjV; Fri, 19 Sep 2025 09:32:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=khirnov.net; s=mail;
-	t=1758267156; bh=7kKBDdra4SQwhLuuuWbqpMtlj/F7FDSZGSMO1U+Gqk0=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
-	b=DQ0s/RScALqPnuyj1OdUG+EN4KkIzi7DXf24X5fyk8wR1jaN//rx030/8hRiD8eFX
-	 tn6Rl9qwVGNwKzWV70lZ58NNQzzFDGtM5wpqi7n4Xtvi9DLHz6FfKJcbX9LlJ3rzWT
-	 eQqylGQDJ878LDVfVeGjL/pPY8RSTvJ37Fy0Lm6WuvWdrFzcnSzy+Y94QY7E2NlBjO
-	 erJFWkBGJ1K7atTnog67j5KbiCoFBXNfvI5H3uxVt5uvKyf1951gzjvvXOidHXekYp
-	 8mzuebPkJIsGR2JlAyxY7LtTbnhL7NQpnua6JhiAb84CB8t2LoRMryhf78DjIvjzR3
-	 0D0QNn4J7cjMg==
-Received: from lain.khirnov.net (lain.khirnov.net [IPv6:2001:67c:1138:4306::3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "lain.khirnov.net", Issuer "smtp.khirnov.net SMTP CA" (verified OK))
-	by mail0.khirnov.net (Postfix) with ESMTPS id EDFB0245938;
-	Fri, 19 Sep 2025 09:32:36 +0200 (CEST)
-Received: by lain.khirnov.net (Postfix, from userid 1000)
-	id D083F1601BA; Fri, 19 Sep 2025 09:32:36 +0200 (CEST)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Subject:  Re: [PATCH v2 1/2] Input: allocate a keycode for Fn+space
-From:  Anton Khirnov <anton@khirnov.net>
-To:  "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-Cc:  Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones" <luke@ljones.dev>,
- Hans de Goede <hansg@kernel.org>,
- Ilpo =?utf-8?q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org
-In-Reply-To:  <c49cf225-c508-4e23-8786-5110a166d7c4@kernel.org>
-References:  <20250714150756.21197-1-anton@khirnov.net>
- <20250714150756.21197-2-anton@khirnov.net>
- <u3qzdpgoe2appwnmv2rkcmyg6htrmltna3geymp7llootdwbts@ycmhljii34bz>
- <c49cf225-c508-4e23-8786-5110a166d7c4@kernel.org>
-Date: Fri, 19 Sep 2025 09:32:36 +0200
-Message-ID: <175826715682.18450.2507719983975659600@lain.khirnov.net>
-User-Agent: alot/0.8.1
+	s=arc-20240116; t=1758267237; c=relaxed/simple;
+	bh=iOGGWyFDBu6SA32339IqwHVfXtx4/MbHW4eTf/SxnyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWkSkNjFS6Slo1sTys0lPXnZuSMwkXYS1UwW0VTsmEjN6QaMn8J1PfHdljKowlSf9ylUM3CIVE1eY3P2rUUkt0ASM0Sy3C5JFMXdERNvFFQxVlGPh0T/kJhPGveMCfqtxbcGpurCV2tiHGEkwoVHmA/cKT2c2B1NVzxIH2s4eus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=B6nB/pXd; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=U91o9Zqc2PJ90qyrV5arZCIif0SuJMRWy4xQnzTZJBk=; b=B6nB/pXdvivQCTb2VWrlgDdWOr
+	eK3tGN1CEn5pQOeMazMIf1lcro9ETZT43ZiswQmrCveEl4DcTg71ZX9vUUZRxoGnbqVcfejzUiQrt
+	Ffb1LNnixJZOhBjw3j8K/Azf8j92g+FHUXZFfXn0qHgiVMPXW8R82qqzs3R6QNco7b7mNnqceoSKe
+	49hT6gQHwleSnd0VSxnWTSXbgix3zN8zUfUtOhaBy6gE1OdT9SWX7bzOKGOL1PHXDlEu9t3Q/OixI
+	B9HWz3B1NBsEqvzQRo/pqtoyTV8j1xHu3paNrMDlm0NgsWQ6lGaGX+3DQ9WICoOJPs+bGyI3/L3Ar
+	PJeB1vXQ==;
+Received: from [84.66.36.92] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uzVcV-00Dzey-JN; Fri, 19 Sep 2025 09:33:27 +0200
+Message-ID: <ad1359c3-86ae-4ed1-ac60-902daa2331a7@igalia.com>
+Date: Fri, 19 Sep 2025 08:33:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sched/tests: Remove relict of done_list
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250919064450.147176-2-phasta@kernel.org>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <20250919064450.147176-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Mario,
-Quoting Mario Limonciello (AMD) (kernel.org) (2025-09-19 07:36:31)
-> On 9/19/2025 12:12 AM, Dmitry Torokhov wrote:
-> > Hi Anton,
-> >=20
-> > On Mon, Jul 14, 2025 at 05:07:57PM +0200, Anton Khirnov wrote:
-> >> The Asus ExpertBook B9 laptop sends a WMI event when Fn+space is
-> >> pressed. Since I could not find any information on what this combination
-> >> is intended to do on this or any other Asus laptop, allocate a
-> >> KEY_FN_SPACE keycode for it.
-> >>
-> >> Signed-off-by: Anton Khirnov <anton@khirnov.net>
-> >> ---
-> >>   include/uapi/linux/input-event-codes.h | 1 +
-> >>   1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux=
-/input-event-codes.h
-> >> index 3b2524e4b667..a49b0782fd8a 100644
-> >> --- a/include/uapi/linux/input-event-codes.h
-> >> +++ b/include/uapi/linux/input-event-codes.h
-> >> @@ -548,6 +548,7 @@
-> >>   #define KEY_FN_S		0x1e3
-> >>   #define KEY_FN_B		0x1e4
-> >>   #define KEY_FN_RIGHT_SHIFT	0x1e5
-> >> +#define KEY_FN_SPACE		0x1e6
-> >=20
-> > I'd rather we did not add more codes with no defined meaning. I regret
-> > that we have KEY_FN_* (with the exception of KEY_FN itself). Since
-> > nobody knows what this key is supposed to do maybe map it to
-> > KEY_RESERVED and whoever wants to use it can map it to a concrete key
-> > code via udev?
-> >=20
-> > Thanks.
-> >=20
->=20
-> Any chance you can look at Windows and see what the key actually does=20
-> when you have the matching OEM software installed?
 
-Unfortunately I removed Windows from this machine right after buying it,
-and reinstalling it would be too invasive. I did ask someone to test on
-a different Asus laptop running Windows, the key did not seem to do
-anything.
+On 19/09/2025 07:44, Philipp Stanner wrote:
+> A rework of the scheduler unit tests removed the done_list. That list is
+> still mentioned in the mock test header.
+> 
+> Remove that relict.
+> 
+> Fixes: 4576de9b7977 ("drm/sched/tests: Implement cancel_job() callback")
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+>   drivers/gpu/drm/scheduler/tests/sched_tests.h | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/tests/sched_tests.h b/drivers/gpu/drm/scheduler/tests/sched_tests.h
+> index 7f31d35780cc..553d45abd057 100644
+> --- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
+> +++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
+> @@ -31,9 +31,8 @@
+>    *
+>    * @base: DRM scheduler base class
+>    * @test: Backpointer to owning the kunit test case
+> - * @lock: Lock to protect the simulated @hw_timeline, @job_list and @done_list
+> + * @lock: Lock to protect the simulated @hw_timeline and @job_list
+>    * @job_list: List of jobs submitted to the mock GPU
+> - * @done_list: List of jobs completed by the mock GPU
+>    * @hw_timeline: Simulated hardware timeline has a @context, @next_seqno and
+>    *		 @cur_seqno for implementing a struct dma_fence signaling the
+>    *		 simulated job completion.
 
-> I've seen a bunch of laptops that FN+SPACE turns on/off keyboard=20
-> backlight.  Maybe that's what it does.
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-Fn+F7 toggles keyboard backlight on this laptop, so probably not. I'm
-willing to believe it's a leftover from older hardware where it did do
-something and they just forgot to disable it.
+Regards,
 
-Cheers,
---=20
-Anton Khirnov
+Tvrtko
+
 
