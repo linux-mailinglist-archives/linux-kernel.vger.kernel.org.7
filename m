@@ -1,52 +1,64 @@
-Return-Path: <linux-kernel+bounces-824007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C9BB87EB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9963FB87EB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8961C256FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659C91C801AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCB5248F57;
-	Fri, 19 Sep 2025 05:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F1B24BC0A;
+	Fri, 19 Sep 2025 05:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="E0LnbaDT"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZF9HLF9b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7FA221544;
-	Fri, 19 Sep 2025 05:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1308B2E40E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758259577; cv=none; b=saDN/nl/l3VjEJO3gUTedvYo9Ozpw7/Dm6vxRE21XZJOkVJVSexAEl6gUChexgs1Us8HobcvExvtlr5hQXpE95BCMSqpzAd+/mxjxkA+tGXm65pL4iwJfVH//HGG8E87hX609+Xmr5Az1a6DsT6FZE5creKlg8XGXnAb9N1yLBQ=
+	t=1758260060; cv=none; b=Fw1sYCJEAcV9UtPQxLfFA4pW6tt5gumQu7S0J+el1ln8m+jurHMfuRB4FyNoPTBzD9JqbImTL9g17gFmaUPd/Xf6Zcs4OZGPoA+nnvNIIcMpsaHZ22ISsbxQ8KJHGDnvVDL8gPWimnpXWFghY/xTkLoTe7YfnCS1sXzwAYjDnmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758259577; c=relaxed/simple;
-	bh=6r4jkJdeIG14qcprpmzE8FnhltEYwQM6z8RdBo+8MmI=;
+	s=arc-20240116; t=1758260060; c=relaxed/simple;
+	bh=9SxHfrcqskz5jRgs+Z6aXfQaOLQgnlPW6FQQBEu6sYs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LykZixHT971YN2BvBV/hO0DOorjOMFva7IMihLud1VZXQnxIGuT2XlVjblVZILu/4gc94wzwMP0MqWwnBzyxXWkz4fGIcrkRlIs5ZxuDyos64hPaKk0J/l+lKRZnPxhB5TEHZBVfY1MGMQL6qYe32Omjs8NApu/jYxyNamtzBk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=E0LnbaDT; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=APGCrIWwUZU9xTDPwf41AxSbF6mMd4oZliNSkrRCWfU=; t=1758259576;
-	x=1758691576; b=E0LnbaDTEDAHZ2z19Jlgwg6R95IRWMenyiYw5FsKwJqOIZ966LAL9Iuzpsdt/
-	aU4YEzXip1wfFh9z+GWPoStv02bZHjrsPQmmyYe+8Q+MXZ3rSHtn+8OsOPXka9TFD340+b2V8aXEX
-	1EaNAUHrltMyOwGgRPEOYh82hiISsO3DTnuOMUr75PAElqjcSD+y1NpYbu3aQpjl4vUaAX/RmjWA+
-	9O6yq4pBVha37WdFT6ntlMg1yh9heY/0qgIFXdQSVYo8g9a9Efmgpm0hBDeh6ZfdQkrSvD/9rQPEu
-	Mn2WCm/lpeHfKjT3URG9rBQ29lTIhqzTIbE3Q2ihBeEk4322yQ==;
-Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-	id 1uzTdH-00E6Rr-12;
-	Fri, 19 Sep 2025 07:26:07 +0200
-Message-ID: <b8c4ed52-260d-4963-8d8f-4976229dd4e5@leemhuis.info>
-Date: Fri, 19 Sep 2025 07:26:06 +0200
+	 In-Reply-To:Content-Type; b=r6+csy5c0/2LhS5en5FAKiHj3HlZTkFpqE1Gd3x6QCmizse7DD2xDSapY5kPj7gqYfVR1XebkFVn6trDHuND2/x2J0fPny2EeVoWYYHu8Gph6M2Hn4jRWnr7WfjL8hldVOUWtnPBr/RSq1rzSrZgR5RP4BSPwVOnTaO/sEEzdSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZF9HLF9b; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758260058; x=1789796058;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9SxHfrcqskz5jRgs+Z6aXfQaOLQgnlPW6FQQBEu6sYs=;
+  b=ZF9HLF9bApun9txyh9wgHVyMcsvnhqJ7FmdxAbl8/DXDToGsI6PQ9i+b
+   8ccXD4tyx3TlZKESgmokwBPisoRBN2nf/HhGfZcSnNpvsBtNIzMSVQJaV
+   1zbKyujHw7FKZ9TJD7dMwgteV2HqBrAhT8Dxk/OAG+saNgqCtzPDVrpmC
+   3+BqRzil+rYCPpKhEWn92L4jYZ+ooFCdX1WOt/lFrpkZnU7Zh9/EIQibg
+   cZjq3/w44mCnw3gLsdviyZAJmRmSYrxUz+PTaJjvLj5q/j6fBroLj8VSx
+   tg+/9HHXyUznOrDSTGV7Mw7+STNvJDEXZyzxmdq5Xo0f6nf/OWeBJ7WLx
+   w==;
+X-CSE-ConnectionGUID: Dj3QqsfqRBC5QaVrpe+2vw==
+X-CSE-MsgGUID: eEW7IXlVTnODDbfnKsE/1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60548051"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60548051"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 22:34:17 -0700
+X-CSE-ConnectionGUID: Yn7nF68pQyWlTCBAyVY3fQ==
+X-CSE-MsgGUID: 0aE4g3U1S76D8CaE26qk0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="175568596"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 22:34:12 -0700
+Message-ID: <eced5393-16f1-4756-9703-3bae05160ade@linux.intel.com>
+Date: Fri, 19 Sep 2025 13:31:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,48 +66,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Build break due to merge commit in linux-next 20250916
-To: Christian Heusel <christian@heusel.eu>, Mark Brown <broonie@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev, Bert Karwatzki <spasswolf@web.de>
-References: <0fee48bb-7411-4414-b4e7-395a8c3d0f6c@heusel.eu>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: de-DE, en-US
-In-Reply-To: <0fee48bb-7411-4414-b4e7-395a8c3d0f6c@heusel.eu>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v4 5/8] x86/mm: Use pagetable_free()
+To: Dave Hansen <dave.hansen@intel.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+ iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org
+References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
+ <20250905055103.3821518-6-baolu.lu@linux.intel.com>
+ <20250905184115.GQ616306@nvidia.com>
+ <04983c62-3b1d-40d4-93ae-34ca04b827e5@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <04983c62-3b1d-40d4-93ae-34ca04b827e5@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1758259576;a749e26e;
-X-HE-SMSGID: 1uzTdH-00E6Rr-12
 
-CCing Bert, who ran into a similar problem and send a similar patch.
+On 9/6/25 04:11, Dave Hansen wrote:
+> On 9/5/25 11:41, Jason Gunthorpe wrote:
+>>> --- a/arch/x86/mm/init_64.c
+>>> +++ b/arch/x86/mm/init_64.c
+>>> @@ -1013,7 +1013,7 @@ static void __meminit free_pagetable(struct page *page, int order)
+>>>   		free_reserved_pages(page, nr_pages);
+>>>   #endif
+>>>   	} else {
+>>> -		free_pages((unsigned long)page_address(page), order);
+>>> +		pagetable_free(page_ptdesc(page));
+>>>   	}
+>>>   }
+>> Er.. So if bootmem happens to be under the table and we happen to free
+>> it due to memory hotplug we don't go through the SVA fixing path?
+>>
+>> Seems wrong??
+> 
+> On second thought...
+> 
+> Yes, freeing bootmem with no SVA fixing is wrong. It should be fixed.
+> Period. But, it's wrong one time for something super rare: memory unplug
+> of memory that was present at boot. It also can't be triggered by
+> unprivileged users.
+> 
+> As-is, this series fixes vfree(). That path is not nearly rare, can
+> happen an arbitrary number of times on each boot, and might even be
+> triggered by folks that are less than root.
+> 
+> So I kinda think we should just make clear that this series leaves
+> _some_ holes, but I do think it should go in mostly as-is.
+> 
 
-On 16.09.25 16:45, Christian Heusel wrote:
-> 
-> I have noticed that the recent linux-next release fails to build due to
-> a syntax error in the rust code:
-> 
->       EXPORTS rust/exports_bindings_generated.h
->       RUSTC L rust/kernel.o
->     error: expected one of `,` or `}`, found `;`
->       --> rust/kernel/block/mq/gen_disk.rs:12:23
->        |
->     12 |     fmt::{self, Write};
->        |                       ^
->        |                       |
->        |                       expected one of `,` or `}`
->        |                       help: missing `,`
-> 
->     error: aborting due to 1 previous error
-> 
->     make[2]: *** [rust/Makefile:553: rust/kernel.o] Error 1
-> 
-> It seems like this error was introduced in 6e86e08cdc19 ("Merge branch
-> 'rust-next' of https://github.com/Rust-for-Linux/linux.git") and
-> introduced with the merge, the attached patch fixes it.
+Okay, I will put this in the commit message and update this series with
+a new version.
 
-Mark, that error from next-20250916 was gone in next-20250917, but came
-back with next-20250918 yesterday. Maybe due to something git rerere had
-recorded? But whatever, just wanted to let you know.
-
-Ciao, Thorsten
+Thanks,
+baolu
 
