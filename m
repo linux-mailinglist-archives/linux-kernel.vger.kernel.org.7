@@ -1,179 +1,132 @@
-Return-Path: <linux-kernel+bounces-823804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE837B87774
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:23:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56A7B87785
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965B21CC1E64
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E0A1BC3E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6B5258EEE;
-	Fri, 19 Sep 2025 00:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB23235045;
+	Fri, 19 Sep 2025 00:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rj4f3aMY"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="BD5hhems"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E1D2580E1
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB262227EA8;
+	Fri, 19 Sep 2025 00:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758241312; cv=none; b=q/qSQH95o0jFV9baqs9nW/jgS4ElQ2/7Jyk5FLVGOX7mpbXYoIhfTvfLE1or41H5UAcyEhdqUt0bgu+iuBG//IEtW2V2JOK6jecps0SbbRTxC4llxr3IZ3pKW+MX0GcU7Bu0+EW8WZO2NJXYSLXS6npSTNubfrmG7dK9eEWsmZk=
+	t=1758241680; cv=none; b=OR0oayK2ezY5C8Q6fZAQ4CH6iYAaigQJqci4DKK6IglqdzysvapKbbPtMLqgEYubhKMjKJYdeNmCs9xfjDRMnKB8+2vAodP5qtevGI5B94sivSdkdRsHYZkRGuOIphM8w+F3+sQyEFFgSiSBunv6M9flErh7rtsU3el79h0vINU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758241312; c=relaxed/simple;
-	bh=eAdWQ20STC+aO22I2NiOUBHDbeTXMI50HdJIM8a1srw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dtoPEJiEXCgVYT+48oQnU48xmEg/jda93QOnl5ESlyYAdsT2WrkhhWv1XbEyKUNAAsEJIYnw+Ox7ZTvHHbp1C8jT/Czsl55tER35B9zmTyvOm0kmL41Z1oTFM5kOYRvl/N2qq8wvUxK2S5+QQNl9mH60fzbRgCG5xg7UvssU7c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rj4f3aMY; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b54a2ab0f2aso1080667a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758241310; x=1758846110; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=/XnisBKELA9d2tGgdsS2eYQoo8Hi6oyi85jDkjSCWOk=;
-        b=Rj4f3aMYA++cvtreyg3LVVAwAf0DMoNqJXWpBAzpv9yPFt/jhBb1r/HRrPVbwMOO09
-         +XuoOhBW6SIvS3bwMPX32amjZkmNMCoRufvr2//aRJYxp/wUFiGl0bAo3Rf9aq8ETIGP
-         14VRpnKqZwJRc97KExS7Cjgu8yri5hy3Oc5KwXSKt4RTtZHHVcQInnMM5QJJUyggOlyX
-         Gts3nujYjDm8uQwo2irWPXhMjR3cH0bRDA+AuL2pYR+HJAkL+GplPyCXmj2ARM3AN8ad
-         iDHvgzB8PunXt0TFC51jyII2qaUadnjaTdHYLvPMn/MRJjjcNe7XKcJ5N8ovUaA5JCTr
-         s8Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758241310; x=1758846110;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/XnisBKELA9d2tGgdsS2eYQoo8Hi6oyi85jDkjSCWOk=;
-        b=daQzndahTxe7Yf4WPVrnR3BzKv6gilw9LFROf4612waOXr3ar3RCQ2B3SJ4NEnlOCg
-         miWyvkdX2NYqyilb9rVhBYvbG7w/y260h/XpkG9a2Q9PjGNzjMFyHq/XMv4jtM2/kgKS
-         VVpaAOb+jVWgqr/d/W5feRFVvwg4QhXWHzzVTT6axwsUZYJc3ZCedUDPsNyCbOEkM++1
-         QyPNjB+1QaQfEHkwbG5/aMxKfao4nmwRAsvsWrS6IRSX3HwClKCe4w/FrDRGuRCC01tf
-         yqyTcTH/qcs/B4IlT5FqqQ8BA0QGYEYuZ56PhyteSC8QusmVweZ9bAvTY0xZJeUaBI7+
-         NBgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXu/riCBMWSIUQcI+fY/18+TJu1kYmvlDlsoD7T6DS/aWJLFUx3zmCEmRlw5pmpDhFxu7Zk/E6tsFNsWYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzse0GZWOKySZW2RpG2Cj05Tmlh9QqwFwiD1cuA0BF4d8jKb0sD
-	2WHIFK+xdJoXkxeVlo8FiLGr5Mx0am02hSuFrLAz1aTEmBleUNz4cnwm4KVOaTPUy+KXa8S53Ol
-	5rXGpFQ==
-X-Google-Smtp-Source: AGHT+IHetFezI39yArnj+htGSxD3veR1qrJfTAeWbX6VuCSVOeIs07E0erJA6DVDdazEQt3+OKd6+pSGb4o=
-X-Received: from pga10.prod.google.com ([2002:a05:6a02:4f8a:b0:b54:928e:2e3e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a114:b0:240:1e4a:64cc
- with SMTP id adf61e73a8af0-2844f6c7b0fmr8375584637.12.1758241310153; Thu, 18
- Sep 2025 17:21:50 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 18 Sep 2025 17:21:36 -0700
-In-Reply-To: <20250919002136.1349663-1-seanjc@google.com>
+	s=arc-20240116; t=1758241680; c=relaxed/simple;
+	bh=WW+/egz9vF68C4v2j/ZgH4I4aDqVJ7b2Dy0xwN5debo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=fJFT1OlqyUoaVJuplZc78dchyyTDTZVdQQpbVHOXfI5k0YSn+XXce2W68wKH/YgLaL3Iu3vIQWHrSM2anBJan0FZmjSBsWb6iXUJkjePhjHdJ0hSlCc9On6+sg8z9Nm4ua8xdQBr9SkzTIx5cHtebYIGwf5ScZlI6GYpIPcgbqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=BD5hhems; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58J0RXK202829389, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1758241653; bh=WW+/egz9vF68C4v2j/ZgH4I4aDqVJ7b2Dy0xwN5debo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=BD5hhemsna9cjKhD5bKSPbi4yDcJe0y3RiA7r2Y3poKQhwGTCfwc70yv0+l4hGZxL
+	 p3IyNJGiNPvFuUKAmD5s3oPI6UvxauIM/if0CPPhYabZHnZsY5WcI8G7ZxqnW+yPDB
+	 cDAox54mDTYuorRJaoFyQ0BJh85YIOqZvU6U1qGY5WCtpGmtwk5K6Mrvao711HSc+e
+	 +0A/3tnyY9x1qSyqWsCWgUtTCHml3XFmK+FeFXQd8its0s3KzIXSmTfDp/TujuCLKI
+	 s87e+3w6+Dj9Dvwv6fbQ1JYl8hS3aswGEHPzsaV51A/HAPAGSquDj/e5MrzLL4Evdh
+	 BMcO1I8DxiZJA==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58J0RXK202829389
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 08:27:33 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Fri, 19 Sep 2025 08:27:33 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
+ 15.02.1544.027; Fri, 19 Sep 2025 08:27:33 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>,
+        Bernie Huang <phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
+Thread-Topic: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in
+ rtw89_core_tx_kick_off_and_wait()
+Thread-Index: AQHcJ7j9ihvmCigyUEi4g4qppzNcU7SYSUhg//+OAICAAJEK0IAABBcAgAE8YFA=
+Date: Fri, 19 Sep 2025 00:27:33 +0000
+Message-ID: <e4153922734d4c8f8b394b3542b9cf58@realtek.com>
+References: <20250917095302.2908617-1-pchelkin@ispras.ru>
+ <20250917095302.2908617-2-pchelkin@ispras.ru>
+ <391e7cc762a549b7826e72090b61ebb2@realtek.com>
+ <5d1be8c759c243f9a331c672cc301bbc@realtek.com>
+ <8aa1fe0b49dd49408dc26ad48ba9a605@realtek.com>
+ <20250918160829-9fbf03ca95d5c4a93143afef-pchelkin@ispras>
+In-Reply-To: <20250918160829-9fbf03ca95d5c4a93143afef-pchelkin@ispras>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919002136.1349663-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919002136.1349663-7-seanjc@google.com>
-Subject: [PATCH v3 6/6] KVM: SVM: Enable AVIC by default for Zen4+ if x2AVIC
- is support
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Naveen N Rao <naveen@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 
-From: Naveen N Rao <naveen@kernel.org>
-
-AVIC and x2AVIC are fully functional since Zen 4, with no known hardware
-errata.  Enable AVIC and x2AVIC by default on Zen4+ so long as x2AVIC is
-supported (to avoid enabling partial support for APIC virtualization by
-default).
-
-Internally, convert "avic" to an integer so that KVM can identify if the
-user has asked to explicitly enable or disable AVIC, i.e. so that KVM
-doesn't override an explicit 'y' from the user.  Arbitrarily use -1 to
-denote auto-mode, and accept the string "auto" for the module param in
-addition to standard boolean values, i.e. continue to allow to the user
-configure the "avic" module parameter to explicitly enable/disable AVIC.
-
-To again maintain backward compatibility with a standard boolean param,
-set KERNEL_PARAM_OPS_FL_NOARG, which tells the params infrastructure to
-allow empty values for %true, i.e. to interpret a bare "avic" as "avic=y".
-Take care to check for a NULL @val when looking for "auto"!
-
-Lastly, always print "avic" as a boolean, since auto-mode is resolved
-during module initialization, i.e. the user should never see "auto" in
-sysfs.
-
-Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/avic.c | 39 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index e059dcae6945..5cccee755213 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -64,12 +64,31 @@
- 
- static_assert(__AVIC_GATAG(AVIC_VM_ID_MASK, AVIC_VCPU_IDX_MASK) == -1u);
- 
-+#define AVIC_AUTO_MODE -1
-+
-+static int avic_param_set(const char *val, const struct kernel_param *kp)
-+{
-+	if (val && sysfs_streq(val, "auto")) {
-+		*(int *)kp->arg = AVIC_AUTO_MODE;
-+		return 0;
-+	}
-+
-+	return param_set_bint(val, kp);
-+}
-+static const struct kernel_param_ops avic_ops = {
-+	.flags = KERNEL_PARAM_OPS_FL_NOARG,
-+	.set = avic_param_set,
-+	.get = param_get_bool,
-+};
-+
- /*
-- * enable / disable AVIC.  Because the defaults differ for APICv
-- * support between VMX and SVM we cannot use module_param_named.
-+ * Enable / disable AVIC.  In "auto" mode (default behavior), AVIC is enabled
-+ * for Zen4+ CPUs with x2AVIC (and all other criteria for enablement are met).
-  */
--static bool avic;
--module_param(avic, bool, 0444);
-+static int avic = AVIC_AUTO_MODE;
-+module_param_cb(avic, &avic_ops, &avic, 0444);
-+__MODULE_PARM_TYPE(avic, "bool");
-+
- module_param(enable_ipiv, bool, 0444);
- 
- static bool force_avic;
-@@ -1151,6 +1170,18 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
- 
- static bool __init avic_want_avic_enable(void)
- {
-+	/*
-+	 * In "auto" mode, enable AVIC by default for Zen4+ if x2AVIC is
-+	 * supported (to avoid enabling partial support by default, and because
-+	 * x2AVIC should be supported by all Zen4+ CPUs).  Explicitly check for
-+	 * family 0x19 and later (Zen5+), as the kernel's synthetic ZenX flags
-+	 * aren't inclusive of previous generations, i.e. the kernel will set
-+	 * at most one ZenX feature flag.
-+	 */
-+	if (avic == AVIC_AUTO_MODE)
-+		avic = boot_cpu_has(X86_FEATURE_X2AVIC) &&
-+		       (boot_cpu_data.x86 > 0x19 || cpu_feature_enabled(X86_FEATURE_ZEN4));
-+
- 	if (!avic || !npt_enabled)
- 		return false;
- 
--- 
-2.51.0.470.ga7dc726c21-goog
-
+RmVkb3IgUGNoZWxraW4gPHBjaGVsa2luQGlzcHJhcy5ydT4gd3JvdGU6DQo+IE9uIFRodSwgMTgu
+IFNlcCAwNToyMywgUGluZy1LZSBTaGloIHdyb3RlOg0KPiA+IFpvbmctWmhlIFlhbmcgPGtldmlu
+X3lhbmdAcmVhbHRlay5jb20+IHdyb3RlOg0KPiA+ID4gUGluZy1LZSBTaGloIDxwa3NoaWhAcmVh
+bHRlay5jb20+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiBGZWRvciBQY2hlbGtpbiA8cGNoZWxr
+aW5AaXNwcmFzLnJ1PiB3cm90ZToNCj4gPiA+ID4NCj4gPiA+ID4gWy4uLl0NCj4gPiA+ID4NCj4g
+PiA+ID4gPiBAQCAtNjE4MSw2ICs2MTg3LDI3IEBAIHJ0dzg5X2Fzc29jX2xpbmtfcmN1X2RlcmVm
+ZXJlbmNlKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldiwNCj4gPiA+ID4gdTggbWFjaWQpDQo+ID4g
+PiA+ID4gICAgICAgICBsaXN0X2ZpcnN0X2VudHJ5X29yX251bGwoJnAtPmRsaW5rX3Bvb2wsDQo+
+ID4gPiA+ID4gdHlwZW9mKCpwLT5saW5rc19pbnN0KSwgZGxpbmtfc2NoZCk7IFwNCj4gPiA+ID4g
+PiAgfSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgcnR3ODlfdHhf
+d2FpdF9yZWxlYXNlKHN0cnVjdCBydHc4OV90eF93YWl0X2luZm8NCj4gPiA+ID4gPiArKndhaXQp
+IHsNCj4gPiA+ID4gPiArICAgICAgIGRldl9rZnJlZV9za2JfYW55KHdhaXQtPnNrYik7DQo+ID4g
+PiA+ID4gKyAgICAgICBrZnJlZV9yY3Uod2FpdCwgcmN1X2hlYWQpOw0KPiA+ID4gPiA+ICt9DQo+
+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgcnR3ODlfdHhfd2FpdF9s
+aXN0X2NsZWFyKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldikNCj4gPiA+ID4gPiArew0KPiA+ID4g
+PiA+ICsgICAgICAgc3RydWN0IHJ0dzg5X3R4X3dhaXRfaW5mbyAqd2FpdCwgKnRtcDsNCj4gPiA+
+ID4gPiArDQo+ID4gPiA+ID4gKyAgICAgICBsb2NrZGVwX2Fzc2VydF93aXBoeShydHdkZXYtPmh3
+LT53aXBoeSk7DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsgICAgICAgbGlzdF9mb3JfZWFjaF9l
+bnRyeV9zYWZlKHdhaXQsIHRtcCwgJnJ0d2Rldi0+dHhfd2FpdHMsIGxpc3QpIHsNCj4gPiA+ID4g
+PiArICAgICAgICAgICAgICAgaWYgKCF3YWl0X2Zvcl9jb21wbGV0aW9uX3RpbWVvdXQoJndhaXQt
+PmNvbXBsZXRpb24sDQo+ID4gPiA+ID4gKw0KPiA+ID4gPiBSVFc4OV9UWF9XQUlUX0RFRkFVTFRf
+VElNRU9VVCkpDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQo+
+ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IFdoeSBzaG91bGQgd2Ugd2FpdCAxMG1zPyBKdXN0IHRy
+eV93YWl0X2Zvcl9jb21wbGV0aW9uKCk/DQo+ID4gPiA+DQo+ID4gPiA+IFNpbmNlIFRYIGNvbXBs
+ZXRpb24gbWlnaHQgYmUgbWlzc2luZyAocnR3ODlfY29yZV9zdG9wKCksIGZvciBleGFtcGxlKSwg
+c2hvdWxkbid0IHdlDQo+ID4gPiA+IHVuY29uZGl0aW9uYWxseSBmcmVlIGFsbCBpbiB3YWl0IGxp
+c3QgZm9yIHRoYXQgY2FzZT8NCj4gPiA+ID4NCj4gPiA+DQo+ID4gPiBJbiBoY2kgcmVzZXQgKHdo
+ZW4gd2UgcmVsZWFzZSBwZW5kaW5nIHNrYiksIHRoZSBjb25kaXRpb24gd2lsbCBiZWNvbWUgdHJ1
+ZS4NCj4gPiA+IFNvLCBhbGwgbGVmdCB3aWxsIGJlIGZyZWVkIGF0IHRoYXQgdGltZS4gQmVmb3Jl
+IHRoYXQsIHRoZXJlIGlzIG5vIGxvZ2ljIHRvIGVuc3VyZSBubw0KPiA+ID4gbW9yZSBjb21wbGV0
+aW5nIHNpZGUsIHNvIGl0IGNhbm5vdCBiZSB1bmNvbmRpdGlvbmFsbHkgZnJlZWQgdW5sZXNzIHdl
+IGRvbid0DQo+ID4gPiB3YW50IHRvIGRvdWJsZSBjaGVjayBpZiB0aG9zZSwgd2hpY2ggdGltZWQg
+b3V0LCBhcmUgZG9uZSBhdCBzb21lIG1vbWVudC4NCj4gPiA+DQo+ID4gPiAoZS5nLiBjb3JlIHN0
+b3Agd2lsbCBkbyBoY2kgcmVzZXQpDQo+ID4NCj4gPiBUaGFua3MgZm9yIHRoZSBleHBsYW5hdGlv
+bi4NCj4gPg0KPiA+IEp1c3QgY29uc2lkZXIgdHJ5X3dhaXRfZm9yX2NvbXBsZXRpb24oKSB0aGVu
+Lg0KPiANCj4gT0suICBjb21wbGV0aW9uX2RvbmUoKSBsb29rcyBhcHByb3ByaWF0ZSBoZXJlIGFz
+IHdlbGwuDQo+IA0KPiA+DQo+ID4gQnkgdGhlIHdheSwgaWYgd2FudCBhIGRlbGF5IGZvciB0aW1l
+b3V0IGNhc2UsIHVzZSBkZWxheWVkIHdvcmsgZm9yIHR4X3dhaXRfd29yaw0KPiA+IGluc3RlYWQu
+DQo+IA0KPiBUaGF0IG1ha2VzIHNlbnNlLCB0aGFua3MuICBTbyB0aGUgbmV4dCB0aW1lIEknbGwg
+Z28gd2l0aCBkZWxheWVkDQo+IHR4X3dhaXRfd29yayBwZXJmb3JtaW5nIGNvbXBsZXRpb25fZG9u
+ZSgpOiB3b3JrIGRlbGF5IDUwMCBtcywgbG9va3MNCj4gbmVpdGhlciB0b28gc21hbGwgbm9yIHRv
+byBiaWcgZm9yIGZyZWVpbmcgcG90ZW50aWFsbHkgdGltZWQgb3V0IGl0ZW1zLg0KDQpCb3RoIGxv
+b2sgcmVhc29uYWJsZSB0byBtZS4gDQoNCg==
 
