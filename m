@@ -1,93 +1,127 @@
-Return-Path: <linux-kernel+bounces-823880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239F6B87A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 183EBB87A43
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C145C1C24695
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95491C280F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1531F23D28F;
-	Fri, 19 Sep 2025 01:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D73523D7F3;
+	Fri, 19 Sep 2025 01:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hQw3IMoJ"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011066.outbound.protection.outlook.com [52.101.52.66])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l0ASlmUW";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LZ+yCTgI"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F835231845
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4819F231845
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758246575; cv=fail; b=egQyPVAuCEMT6KqTQWQ6xafcSg13u/sLSsEK+ihoZV3egRcEjZjyuVBm6xIECqVkYArO4tB4qxUQZXHNv1KEkrTnBnDJfFkJnnyPYAfkzncOy9QC4ypRYVi+lHYSbYl/lB0Am6sjmoGMX5gQICTZP9n24U8fQQN9QSBpfZlRGNM=
+	t=1758246698; cv=fail; b=EEnva2cTJIeTdTWGj6AouSGwoa6AsKfIkbulIhyqLNCnMZw2UFRK/+6pByqEgjYIVzXKHLEw/uNZ+nP1iwgKDhNd17ISZjHhFgZE0kZLgJR2J/YEnopqIXfCgWgrqZNcWEjmm8KSuMA2SXEdTJyy9eDHV/raSfMFOiJZPDrgypk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758246575; c=relaxed/simple;
-	bh=JbMZYSM7UHAfALlniADLHDITD20/FJdFlerEo+PDFZw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=j5qnpdMlecJ9PAyY+nEHM470W8jgq9qoljCyXbNdogu9yFTk7vcPMubx8CPpZ8kcYZSbBCDNylo8cH4H/pkH551PdJOWeKjYlZSv2ja/FbL/TjSADUb+o4muev5V+KUNTu3z4Ib+N7ZbRx2O6utZ3Mt36OE1udJAdUwWKvaIxZc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hQw3IMoJ; arc=fail smtp.client-ip=52.101.52.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1758246698; c=relaxed/simple;
+	bh=d62nl3HX94EJsCEIPrPVgE5yAETQBsfHa/ebY6bpz7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mKd7/sCKNmmzoe0ypWHU+svhdVwKWIrZpAF0jB5lYSBZcAuhaHuJVJO3fK0ouYQGFXTOeWDEGelZspU7aWVFxX+c8tPZ2arQhOE0DmQmDeIfSUQfjSbnX9v55N3Mjl2aWBYHQynHFYmbhpBOKhCnd+9D5EwYJ3A7QehELPZPE/Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=l0ASlmUW; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LZ+yCTgI; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ILFUIH007018;
+	Fri, 19 Sep 2025 01:50:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=l2HbhpgdTEsSggjpkk
+	4g1vOI4erXgAjeoUZ5ATaqUJo=; b=l0ASlmUWUnGSzH0dNX3ddEF45v1TItf4aB
+	Zym6+qClAGEbSPl/CCy8n7krlV8/cBlKG/JhCDsHjDC83hl8+GxXU0gZ6xHBfwam
+	vOmevUJVBTxTJxsyEQ7tCFLftLFE8S5IUxsya6f3vbSLp2XF1sFEVpjJ5lUcHDL6
+	fQJ5EvlrbV1fjPKfyh7UgJOU7iCa5IN0jgZszN1z0WSw8kpXvC5hjnFK/TfRKSkC
+	u73dZm+SF/k2bjNDSy3sk0AVFBcpgh/cVMW82aW9ptX8s8jUpodNfCxlT2oDHCVf
+	MiGqTBcTbyBFCdwL1G93FjioUmqWmFrdnW3EuRP8l5Ij3WvL0epg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 497fx6mpsp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 01:50:57 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58J1ofAN027235;
+	Fri, 19 Sep 2025 01:50:56 GMT
+Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11012018.outbound.protection.outlook.com [40.93.195.18])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 494y2p6atf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 01:50:56 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RLTv3XyYm5J+qkjMwqyfAwnXSzChfkeLAP16DXvlW4vZ0eDuZP6MVOIdtTc1LVp6q9JkIVjXONCnbupUR8iPyxAaztwANkcO89I/u93NBGa56QXnxc6yKprR+s8zOaBov8Yupf5idmDoUc/lcxDL2vyIMO8HZ5AUreU/t1UY7wHIBPJ7XoTO/9uSJ+wUOrmL7hd9U3GkFU62rxSGGnNDNQL2By4Fiafmk8IUbuFPXGWPfL+5od3xEHortYCEJygYZICf3/3lYbrkTdr3qHs3qzm396gSg0HuqzA03YO9GkCFxQCjRuaC4Lr/Gw1TiqZ4HLqmmr/l26QF9luiuGJMRQ==
+ b=CH5lzoHzX67da8GCWjSs2ZLTFENWlIKOXKcK37vUBqCerXliDIzkReZb8p3NXs5RNMoFGSwG0aOGBrCLzIUBaFuvOwjnoepr+P8grLdMBUISGKwDPx/A5LBuug1sD3YfEuJ2L8F0UJizdwuH7Jl4ruTLKw/61UwdeL4M3apBq7IbDqCGIqfDsoHpGSaUQw5k8mOLFMRzsoU4sn/6y/qBD3YrGSmn1EVUiG1W06QKR524HaSSndNYigmSFJvGQdcFFdcz63Rz4oAoeEPVy4xwrgIkjwTwcJjSVNgfaXdNVSRQBHx4/nDdE+gkfxWEJZhO5VSAqRI2GEjNxH4g4mAydw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=33BaAsCWK71xp5Ewce/weN1NbP8pGc5lsLiYK8p9CkI=;
- b=A91RECeNC5oirk8BWxOY0bgs1kyiNYCqPQ4z9LaIZBAC5hU1nBItDrb/vX0KeCF7GxRbAHgRF0UYXDSqy0kRosLk2lejCzW8tbQMRjNlcGuklkpwXDmtAvbTEG8nNRJJ4ga7QMZRu6hh4ETMqf+LpwkMiVuQx6NVWaYgCBZcNMBk8aUA4BSpmzPbifJr3j17xK4M4HSbPI0lFSdcPi4j1fxGoENPYpXA9lkfKgkVmGq6fEWYps6hxw0QwDGxV+rXxEEW7LqZ1c6TiipWKzVOL8pd2gz0oVPkf2FOU7DTycSdDMU98FHrR6MujIX8HwRz/SAbOh7Bgxjf/+C8K3tmyg==
+ bh=l2HbhpgdTEsSggjpkk4g1vOI4erXgAjeoUZ5ATaqUJo=;
+ b=EUg7vosPgxVNGG3JDiLdRvMJksDhXQQphFu0cxXfp/F/y2BRz8eQS6Yr7mLJSbEFfpVrJ+Yn6V5st1G/x8R6I2crW5UVSZKrvFZIcJKSPIb7Lug99b3xo2TtC/NDuH0pIrIDmGZST6jBNwCtZ+uN7wq1ixB6tLdkD/0WfbklKH5NmF9rMYkpCNJb+IfNFfbSEcF0MXBIJ82bzUbYX+Mbb3xvAsp8nmtI/gwuXJC4hzW8CHZezZRGeRNWjG4uTulUSeT/+reY7YBM6TimacDAifqPQ8fFEnZsO3rDxKQB9muWDuLHIdIwS2HIOA402yS8opN/1Xu2XMNIDwR+8cvnvw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=33BaAsCWK71xp5Ewce/weN1NbP8pGc5lsLiYK8p9CkI=;
- b=hQw3IMoJ9iToY5NQOZXstf7oTxiHZ+PncGEHaOMyhR8MTNip0yomg0kFbl/Hgv44jgK3/b13uPrBUCxa5RaVaU1CcYuC7pwK0SEFuY0MDcylnFeCJzMpIY9/3U/7Ry8pNqRBU8OWhZxKxGU8WMshkVlHkLyUuVXzlbAw1hWdU+vgCywDKCO9kNzWzG+zzpsorfXXW2/IrIZqP1I5Brt4R0CwknTTca2Cq7G46vMqk2/wDr7MmwjC3Q/rqGhQgxHc5DCSzKXkduuCSZp3wBCBDIlESQCfSI0GUVn3l6wYlbGQVGD48fmLnH6UCfSTwZb9T9PsmS385aByWPuU5lKI/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by IA1PR12MB6625.namprd12.prod.outlook.com (2603:10b6:208:3a3::22) with
+ bh=l2HbhpgdTEsSggjpkk4g1vOI4erXgAjeoUZ5ATaqUJo=;
+ b=LZ+yCTgI4jeSuia0n7jaRQU7egndbz8mBYXZ0ANyRODKppFMuIrQP0RMPRnq+4vpP99ataY5ryfQK3IV5tDmyd7ExGjYn4q4VG89xYYklsH2uQETu9izhojPpqB6T79qhnPbZmDgzMa3Fb8PtZt4X5Ia5YND/qrmmqG8rcetMWE=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by SA2PR10MB4441.namprd10.prod.outlook.com (2603:10b6:806:11d::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 01:49:28 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 01:49:28 +0000
-Message-ID: <ab236dfe-5680-4fa5-89e2-3a56cfe67ba5@nvidia.com>
-Date: Fri, 19 Sep 2025 11:49:20 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 01/15] mm/zone_device: support large zone device private
- folios
-To: Chris Mason <clm@meta.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250918122813.1440093-1-clm@meta.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <20250918122813.1440093-1-clm@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR17CA0045.namprd17.prod.outlook.com
- (2603:10b6:a03:167::22) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
+ 2025 01:50:54 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%5]) with mapi id 15.20.9115.022; Fri, 19 Sep 2025
+ 01:50:54 +0000
+Date: Thu, 18 Sep 2025 21:50:49 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Nikita Kalyazin <kalyazin@amazon.com>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        James Houghton <jthoughton@google.com>, Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Ujwal Kundur <ujwal.kundur@gmail.com>
+Subject: Re: [PATCH v2 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <swfs7qpgrezamnijhheiggwdfklfqdc6ahp5g7nvprr64m7wz5@msf2mqajzbuz>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Nikita Kalyazin <kalyazin@amazon.com>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>, 
+	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, James Houghton <jthoughton@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Andrea Arcangeli <aarcange@redhat.com>, 
+	Oscar Salvador <osalvador@suse.de>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Ujwal Kundur <ujwal.kundur@gmail.com>
+References: <aMp-kW3OLqtZs8sh@kernel.org>
+ <du5pzxmfk6lile3ykpaloylwz4eni6disj2oe25eq6ipzqemiw@ybcouflfnlev>
+ <aMvEu9m7fJLnj862@kernel.org>
+ <4czztpp7emy7gnigoa7aap2expmlnrpvhugko7q4ycfj2ikuck@v6aq7tzr6yeq>
+ <a1a48a0e-62d3-48d0-b9c2-492eb190b99f@amazon.com>
+ <7cccbceb-b833-4a21-bdc4-1ff9d1d6c14f@lucifer.local>
+ <74b92ce3-9e0e-4361-8117-7abda27f2dd4@redhat.com>
+ <aMxNgyVRuiFq2Sms@x1.local>
+ <cigo2r2x22bk7wzr6qvazcdkmt5kfqhbgb7nslpuff7djufucg@f6xucfuntz3q>
+ <aMx0oGwRpSTcfdnf@x1.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMx0oGwRpSTcfdnf@x1.local>
+User-Agent: NeoMutt/20250510
+X-ClientProxiedBy: MW2PR2101CA0011.namprd21.prod.outlook.com
+ (2603:10b6:302:1::24) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,185 +129,290 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|IA1PR12MB6625:EE_
-X-MS-Office365-Filtering-Correlation-Id: dee1e836-dcfa-44a9-89d0-08ddf71ec4cb
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|SA2PR10MB4441:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f3dc9a8-5362-4532-d8ac-08ddf71ef803
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|10070799003|366016|1800799024;
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MU1HdEp2eGJRNnFRazJzNVFhMWNXVUg3aXlMYTdzYkRPVmpmRVpleGJPMVdS?=
- =?utf-8?B?cURGbTA4bXJZdVZMbjZEZFZBd3IyV2pHSUdjZkRmZ1VydEs2bTNsamovRkIv?=
- =?utf-8?B?SHBXRElqVjlNZWNlazE0Z0wzMERWUDk5YnJKUW1Gb3ZrNlkwV0lxT3RNdlR0?=
- =?utf-8?B?SFRocHdsRWdXOW9UdWNCV0VuZ3ppYUdnWDZObmVyUG5Mb0RpR05Xbks3dXRo?=
- =?utf-8?B?QXFRa0pxakRQNmFTOEtRcHlZbzFmM1drZGZySVhkRklrYUFGRk1zRWVaazVC?=
- =?utf-8?B?SWZ2WHVvTkJXemJCSkFweFg1Z3k2LzY1VmtpNDlFNjBvbVN6Nm95TGd6T24r?=
- =?utf-8?B?d0FvLzdrM01kaG14VlJ5bS9YbUxPUEJXb01SditYZzltWHVUM25RK296Y1ZZ?=
- =?utf-8?B?Sk9nM2ZhVWVrMzRQNzdWNUREZ0QvN2JBMXVWNWo4MTJOK0dXSVhEWk5BTFB6?=
- =?utf-8?B?R3NLVFNPZ2VnaTdybm91a3BEUlRUOVRJYXI1T2NsWk80NjZ2eWVLWk8yWm9h?=
- =?utf-8?B?NFBMOUVuckFvcXlEZGROcGc1SHE1OHZiMzhYbEdEMnFtRlM5Ull3L0pMdW5k?=
- =?utf-8?B?ajh5Q2NLLzVKSXFQY1ZzOVI0a3o3QXhsZHpuZjZaTXBxdXR1Y2NhdUZaSkp6?=
- =?utf-8?B?dGFkSDNYTEdRbGd2UE9YUE1mV1dUVUZtRm0xazdLY3MvWEp2ZnlqV0k4Z2xl?=
- =?utf-8?B?WERxaWNiNHlPUmRvVzlXY0d2RXYyRUNHV3ZGeDFTWlNkM2NvZXN5ZWdoaEsv?=
- =?utf-8?B?VUMrUkplenI1dzR5TVZPbHloOEFaQ0x4WHRoSmZrRktoUHVzcTYxL1liUWNW?=
- =?utf-8?B?enpqVW85QzZPbE9mU3ZGNTIxLzlIUDVtdllPL2xBWkc3ZFo2UThzQXQzcjds?=
- =?utf-8?B?WDcvUmk1VGYwUXFCaUE3a2pXN0FFcjRpM0toTFhqTFJWaWtBbndYUXIydFNO?=
- =?utf-8?B?dkR5bGtNQ2Y4QnQ2eFh6MVBwaFl6MmF4cUIzLy85TnAwQmNZK1VWcnQ2b3Ro?=
- =?utf-8?B?UlQvU3A5dGNWN3N3NHBhRngyd2hXaGJvZ2F5YVpiOG5ySCs3YzNrL29HT2FH?=
- =?utf-8?B?aGlmL3hIczVlbnA5U3dUQmZkNFY1T1dnd1I2NVJRT2pWcWkvdjlNUG1mN0N1?=
- =?utf-8?B?UURvMk92eEp5dUhXU3pSajUrRnpuSklIUUlLcUJVQXZQR2hnaUJKWW13Ymow?=
- =?utf-8?B?RjZLN1lTa2FaL3JqMzRZM3JFaEFHVUhQYmRXTHRjV09NVk9NVmhpeVF3UWtZ?=
- =?utf-8?B?TjRYUGRReDZmTUNtakZkSS9LNktqckRENWJLMVFvSzlaSlhIMVBYdEttK05v?=
- =?utf-8?B?MGpkaS9ML2t0OU5RUnI0YS9RKzg5L2NaakUxSDR2L2FDRVFuQ0g0VnBLVVpU?=
- =?utf-8?B?a21PL0JKeCtZL3NZMVFIQ1V1eGpKMzZBMjIzSDl3aFJ3dTVDWkNpNHZaVSts?=
- =?utf-8?B?cmlxN2oyRlVrckR3d05IMUFqS2xhYlAvbk5FMWt1UnN0M1lITSt6WmxON1NN?=
- =?utf-8?B?REtMWnVxSHRBMlZWTWdobUVaZHhCc3d0Z2ROek13dk0ybkFSNEEvb1JyaGJu?=
- =?utf-8?B?dzZ5NmQvUVhZS2Q5ZWhyaCtQYTRsNnNkc0FoaE13SHp0UlJNdXpQS1I3Y3dt?=
- =?utf-8?B?d2xZenRidHV4Vkc3dGhkWXNkUnFKWEJOWW9FcEFOVllTZ2hWdFBCaWFDQ0Jn?=
- =?utf-8?B?TG41OGMzK1hMZGROem1UQmVQbkpaZS9odUpzdWtQNCs1N08yaWRlcFpnR1Ev?=
- =?utf-8?B?bHRZSUp0V1VhblNxeko2TmhHZ3FLUlBiZks2dVZtMXRveEVSL1ZXaWhWZkhG?=
- =?utf-8?B?T0FyOENxajZvRk81eVg2aVZianNYSFhKaFlZQnc2KzJLMnRxM0o0akhaRHFE?=
- =?utf-8?B?NWhnZnBaKzhUY2JSdG84eGVaRGpJYlNzQUJtSU4xSTFwaTV6VkUyckc5Ui91?=
- =?utf-8?Q?bHIGOadIUns=3D?=
+	=?us-ascii?Q?Kx/E1J/y/u9nbRL2fiKfa9odfXsGOxm+8uggxP0S+g5DNmisWKmsu2ETcu8k?=
+ =?us-ascii?Q?p1sWHQdPyRAXaD4U5CtAbhB3rXsk4oH/nUx5R9SmA6fIkBxxkpPK4SdUqqVS?=
+ =?us-ascii?Q?m0UR3aZTkFNWW41pdJ048so6VRxOY5FOxtofWSURwwyl6OygGIi4J4GIBY63?=
+ =?us-ascii?Q?v/OOoR1+BmgKubUYB7bqZfWRTigAlp7eJXt+n3DaBi6qe0mJuzTAXlZiCU/b?=
+ =?us-ascii?Q?zZNUWXHZq28V6XwBoRCMXmTkzNgxb45SjzZYQdXtNlOfYhQPIk6z5ib9ah2V?=
+ =?us-ascii?Q?LbGWmF8S4wBaUqIi94e0ZZe2aFwM3EIp2rv9ZnP7bXWlaia12r+7GUL0Ee0V?=
+ =?us-ascii?Q?8DFvnLRdpYt7O+FCTpGXN9hHmb7tH1OGbKCkSzwlZBGMUNK9RBzoJk62DDj0?=
+ =?us-ascii?Q?0CgP4DxDVZ6V97O475YY4oNxK06vjnhqoTkXuC7agkoZfQJFPPHCN61/LIy4?=
+ =?us-ascii?Q?lVl1lvGKcYrsvPuwoSTdextVO1wwLOhiOjRnUWtg37ohgFPmF3qEVHk+L9sE?=
+ =?us-ascii?Q?IQFtjIBCgF3MPEubtXnVBofyExs7kBVlq9PrH+yhFWdTUpLim5mdaWh72oF3?=
+ =?us-ascii?Q?tS4JQosqJxMH0f1jYddkpjDUbPYIyhIO4nf+VQx4W3F5/ghuM1uAwlElJ3Pv?=
+ =?us-ascii?Q?3rPKQ3VpqRLEgwrqeiKOfNYwZ/tJJVXuakLl6461SV9TH1SChsxBQIl4ImKt?=
+ =?us-ascii?Q?enyVUNHgQ6lJ58bYwlXhcozeQmBxI+DAIcTOWfO4f6p/AN1/90q8knjclmOn?=
+ =?us-ascii?Q?cVH4YIkmFS3uCJeHnqzRUquGW+8jNsQ16ODnd/L4SFXqRrV/f/R2cNNHXdJg?=
+ =?us-ascii?Q?0lrY/BampnvGN7u+CI0BqiUGTpHqyXNcGKPQgvmlGVDE6yPbH2T0O7cb0DlS?=
+ =?us-ascii?Q?gZYCLsVQZfqpE09d8E163wq4J9hmbmhRleqEyAFEXN7aNUSELHZYqhXLFy1j?=
+ =?us-ascii?Q?t98oVhvfcvjyIgvIBnXMSrjF+AFV+sAIZiKwp2pCCRkTUeXyd7AVowzpi01t?=
+ =?us-ascii?Q?U2dj2ubzYRIlniVK5jqKQxwyQdrba+cX/wBvxf2179OB6NZzhXkyZRHG8FHy?=
+ =?us-ascii?Q?DaeZXCw6xu8dgRrv3y3SAxWirig20+VwM64mtMd5PULsv6iwKP8dLhzE4oAp?=
+ =?us-ascii?Q?QZFn+BW0zxU5T58DErQG/f9yj+7mRfdxZ5NhxUrup2qORN8LTO4Vz0D+jqk6?=
+ =?us-ascii?Q?ljD6G/52SraPn4kMddgKHhthaJF7OAtec5VK2vHCHLe/N2XigFnKuU5yMY0J?=
+ =?us-ascii?Q?E3GozyYWbQr1pPQJJTZ6sYaTzRB9f/woC7pyT+a/bLe6jaPtBwnPL+tdDdky?=
+ =?us-ascii?Q?YvathWIGDB59Sd56xqS7SqDTa7FHmFCWgKqT53SckP/E44cFsb860JzeXS5z?=
+ =?us-ascii?Q?Vi9CvPbGIvSNcFxYd6U9ts/VrVgk?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SndYa3g3QVRoeVFOblRxNHJlK3FNWnlsWU1wa3FHMnpFR0x6SDBqN3daZDI0?=
- =?utf-8?B?SlZiaEYzRlZYcnF3VzVmSGFpTUg4LzFzc3FIdHI5U3RnWXlRWkR2Wjk4TVE5?=
- =?utf-8?B?Rnc3Z3V0ZFhCT1JqdFIwQjl1dTZMTjF2eVNEMjlrK1BmMlk4NTdlNTVpS0hP?=
- =?utf-8?B?TnlmUlFlZkUrL1FwS2dZTDRmd2gvYUxVbTQ3MzR6U2lRenQrNml6S1FidUJw?=
- =?utf-8?B?VjRwek1GUWtiOVp6KzU0UjluY01FS0gvYW9DU2lyem9BT2NkS2l0Q0ZNaGYz?=
- =?utf-8?B?ZzJVTkVkakZZenNrczZMMFNyR3llMlRMbUFjOVI2YWhaSnBvU1o5ak9qd2dG?=
- =?utf-8?B?eWEyZFdra2NSeFZsM0VKQS9hOCtXS2N6Q2w4czZEZmNIcUw5cWFxeVRLVktI?=
- =?utf-8?B?OFpkNXFSbktDUXg2OHJBSUR6bElZQ3E1SURuRjlZeW02cWdNUXkrWDhlajAv?=
- =?utf-8?B?WHVsVm1IbDY4VFhEdGF6anQ3VWdEN3NEek15emZLcFk3SFRONXZic0Y0aXZ4?=
- =?utf-8?B?MzF6a2V3SmhBU01GQXhUdXpzcmlNVHRlM0Iybjg5WUNHd1ZTSFJ6Q0JZYWZQ?=
- =?utf-8?B?c0pGRitvaFJvcm9uNzdBSUJ2RnA1TDVPNDAwOFpuNXRiT3k3WjJxVVd1d2or?=
- =?utf-8?B?MmRlS3dLcW5ET1luWUNoNUR6N0tzUHFNMndoQVkrZ0JLY3hrQlJMdDBiZkN5?=
- =?utf-8?B?aTgrc3c0OVBkR1lPUkNHbVl1QmV3OTAzRzVid3Fadzl5VWVpN1NPaUZzVk5o?=
- =?utf-8?B?bG1YOU9BOTZaUFJ2VUt2UlYyQ1puQ1RlSlhhYUEvcTJMSGMzMks1S1A1SnZC?=
- =?utf-8?B?N0V4aEYyUkVVSGowUitFQVhpQ1RtWXRXNVozVDkrd2Q4VjNMWHllRlhubEh4?=
- =?utf-8?B?MjVCTDM5UTVnTnJjMWxJaHRRWTVRaWFEeUsrZDR3Y0x5ZXFOZWE0bnNQVmdx?=
- =?utf-8?B?Mnp4WGtIc3dqWnR4NDg3V3NlME42WmZnYURzbVFJZWRKR1c4ZElrYlhtMDhS?=
- =?utf-8?B?YmlFWEFpUkFqMkQ0eXpsbVh5Zm85TWZnMHVQYi8zTGs2MWhsRmJ2YUJuS3Mx?=
- =?utf-8?B?SmUrU21KUm9IQVRTRi95MkxuZ29rS2t1YitUTzRHTmJlSEtFWSsxVjRXQzc2?=
- =?utf-8?B?aVBuUEs5SlVpZVJqcHdPVXo1MlZYbHlPSDBncDB6RUxSNG1MMXJrNFlKYWcz?=
- =?utf-8?B?cWxBakxUZkdJdVlLOFhkRXZOcjZ2SVVOZHNPOXNRRDY5MGZUM1FPZDNMOUNi?=
- =?utf-8?B?ekQ2UzF0eGxTK2UxUk1Cd0Q1NVZVZXF0RDNnNm0vREFLTmUxUFFwbUE5NUNO?=
- =?utf-8?B?WmRPZHJ5N3hERWppSzFPb0RDMXU1NFAvNkZaUVZld2tZa01NUWQ2TVc0R0lY?=
- =?utf-8?B?UHA1QjhkcmNKbzlzWVJIL25pMnBZdEswczlRWDcwNiszUWNiRU15MnVlNFZS?=
- =?utf-8?B?d3BWNFRkVWFtTXgreUo1SngyMVFJdXE3d2tkZFhvMlhxUTlQODR2dTM3UmY3?=
- =?utf-8?B?ZnFmSnlGVHZaVm9Ob2FpSllBVnVEZmVjVG5PejNVeE5jTk1PNHV3VGdCb1Uz?=
- =?utf-8?B?MUlIUVJhSm0rL0NtMlVUbVd5ZVoxQklSZ1dLdnlmdUhBWHhCUGUrVzlpM3Nm?=
- =?utf-8?B?QkZ4WEdlcFduQ2FDQmZ6ZnA3WTA4OWY2RmNmQUNjV2xFeDF2TXUvajFOenNh?=
- =?utf-8?B?TGYvdFd2YUorZUZ5UTNyOHdUbi9sNFNBQ242aWxWdG8xaVhLYWZzckc0amkw?=
- =?utf-8?B?RmV3Y0lqQmtvMDlaL0pnTElFY0dOQVEzV0RNaTYydnZOZVBkY0NXOXJTZHJ5?=
- =?utf-8?B?QnVTTFExc082dkdDMkczMUtPRFJ6YUd1SGhLMk9rT1lSVE5TTzdkRmpSbk5F?=
- =?utf-8?B?Mk1zQzIxRndBZE83cmY0bkhMNCtoYXVnNS9mdXBQdnJ0NysyNXVuRlhDQUhJ?=
- =?utf-8?B?VFUya0NhNGhPcG9ITWk0RHdEUFZ2K1BhemRMOXF3Mm9ubkRGRUxhT2R3TEEx?=
- =?utf-8?B?V0lFbCs5K2pQdGRMbjRETm9GU3A4TWJncnVMc0hOY3NGTHNpQnRVcmNIM0xS?=
- =?utf-8?B?VjRZdEdITWVEWEhYQ1F2ZUcxVmdKbTFjWXlmRlpBamIxUFdFNk96M0ZzZWVl?=
- =?utf-8?B?SWttTUl4QWFJdHpkZ09UOXJYMjNSYktzU0FFRmRXUlBrenE5VjVFTThtQ1gz?=
- =?utf-8?Q?8muIwbsGUUL8UO0ajcZzmBo1LSwfifEjrzVD30Ln+SK6?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dee1e836-dcfa-44a9-89d0-08ddf71ec4cb
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+	=?us-ascii?Q?z51mLFqhpKCCyzKtcuidA7GWpzybOgQ5kt2Y6YZKyKzSnrUyivZrEzlaVZLl?=
+ =?us-ascii?Q?YDJNE6c0pD5awAW7nBe/XZxzbpjscN12lCu3qoVkFJqAsRNKzSXtNz1PobUf?=
+ =?us-ascii?Q?N9VeW12dYhSo8FgjFMkUJgc/RkQ5rqfdAfY2p4CJQzqlUw57x/AU/T+LoGH7?=
+ =?us-ascii?Q?3VZE1nWaLFo+kPPgU/wPzPaLImZKG+AkLylSzYVMLAcmCLwHFDaQC3h0xjLh?=
+ =?us-ascii?Q?V5mmAal6z2kjrua/5uyDjY2FkAWd3u4zIlvlaviWsCEU7kKxm7YxSCGnN/3+?=
+ =?us-ascii?Q?X5fSkHRJOr3YJNpE+FWlnyfBYO1B0vdyGgx0UpCN23u0E94+Y2mYTTR6KOAl?=
+ =?us-ascii?Q?bSYvtKNxUtYb1M4WsbRoAxOZzzGGmvBpefkP3oc3UTMiXcIjjZ7Ue+hjEc/y?=
+ =?us-ascii?Q?/Eemf8XDtY1JFc1OCTssXSrHC/oN4vrtETSny0vxBYlUQnNxF7Np4ABwGyM/?=
+ =?us-ascii?Q?SiqTiZqnYP6TEUpQHk5M1jrx1CQEDwTALtbZLQKN955s8dguLuwUQpwfsWHr?=
+ =?us-ascii?Q?/yjC4FLjcbybTFiSY16rzW8RxmW+pDFHtks2vLYT5PcojTU5LmRR2NmWDn+w?=
+ =?us-ascii?Q?Kp3nKH/OYon5IFfSWZ8SQhelK2K8VPgo+QGbxm8QzUS9cHbH204wEnwi/Z0b?=
+ =?us-ascii?Q?K9QnEy9HOUDiH6wCS4yGXtEj2viYYIowk3DRiX41GpvWlzpr/wivF/V+zapr?=
+ =?us-ascii?Q?eR5tCEw7+EgrbuTX/SwlsEIt3yCGH81M/jaRGFB5AM5+bwvWQ4gOE8mC/vph?=
+ =?us-ascii?Q?cu8fKF5oMr7mOxNMa+1bextOuRvE10kUyC0G8aHaAOWKeW96f3+nIdgsAEgS?=
+ =?us-ascii?Q?Kj0a5XCbQQ9ZuT1+8D5XnOezxFiPjzInJfZQ8UfKsNdXmmODvIDapEUs4UKi?=
+ =?us-ascii?Q?psKxX/JOBS1GexPTz9nWHatw3+UJDW0hiejRBux7gBWE7J/vOeEfGfUMeN4y?=
+ =?us-ascii?Q?tJ1J0npn2pg5miFxfbtGALN0e2NQc8lxD3MrhgFM1q65SUKRkfaokX+xvu/X?=
+ =?us-ascii?Q?nD/He9bd9Uo6xN0Ko/Y/O6G7D5oxj7wZLyjQewVNqRJtXs6inFMqmwpP8E3h?=
+ =?us-ascii?Q?eoB0MXYfbdT82jS3kJwfZ4jRb6zCEUY8i+rb6aA+5FY7weviRS0OuwfxqR9T?=
+ =?us-ascii?Q?0IhECEv12HZfcBOT79QQ7Z9TDoUnw6PmcfjIUnmN33xeNj6SsoehexHEAkWk?=
+ =?us-ascii?Q?CXDiXD95EGOtdfi3vgbOlSCQDULi1vKa4F8s7GecDF92Slm5HQnpYAt/WPHx?=
+ =?us-ascii?Q?+nGKPfWhze46CGX5rYAvDbsH4zYPO5/OWUtY74Wl+MhxyIlWfRg/R1sMfGNr?=
+ =?us-ascii?Q?HAaLtwcyvjn8EKsYoQL05AeDzMMTTKgJhEzMqXz0qzW4GQYdQziRkvJO8+jS?=
+ =?us-ascii?Q?uvoqegjrj6UmU8FRPAw2/lHBnwM7wZxDgd638zubSi60aVfRG7yrIljoOU6M?=
+ =?us-ascii?Q?Ny/9lCz+RUiQ6ue3tFeoEWHRpLGNSWfQS44Quu7axqF4QFBQlaNNRmxKlRME?=
+ =?us-ascii?Q?oz3CMXgwrlBt2m8yvEpWnKeFmlbXOlEnfQiSuyI5bHEKuq6QQkqz+hXu8WMD?=
+ =?us-ascii?Q?fADJgAXLIEU5p0TouFruAeOFbTNy+jr58CRNl2F+?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	LrVxx99GGsaAcELdKqU95xeGGpRcqDAKNEFj3j4FAKHbHp3VWLC8Qzcblj8YnRPKzxU9rehl2IRp/7FQTXnnYHuBPfRq2cNmtSGVjj8G6YYEkUVH4hhBbp1Jt0W9GZ88g1qkU0Ypq8dvFUMURpVvIJ6CmQd3PfX2cvHcXnDkG4aJ2PjmtD+qG5nHlxgAHrbzmRlhNSbXAe/UHCKpFns2Iogfe0OibajHemn2xh8b3XAQtGmfnBGEoEjJfFZEbc+LqwrzVM+YDQWrvtZGRtpiGtX7CwsLFoMGf/XO1Da4pAF5iR02LrN/zvzOQPi1+8hyaCVxRowliJGnE5ODwdbHSPNKQAXjVJBDlAn9SRVu5JtZApq0BocNKu7gOjkxdTg9ykon9IiqQKmAso3t+WAPjNLf+MXF47iG0iUXvav3xMUjgu1bdpz+fStVQyewI/jb1DIVTgxvrD1XO9M+VFc46QeX0lH2ZWIjGxLZCObEtV6pHjcz61IvZtUMOgomFrMFEAqFYjOdN9t3BVPcZNvXcTin/T1OVVb7Z8Uz96lnuTUGGowHkYVLDx6hmxAiAyqcG/n4nJzbi6Oqd+SxkwfutIAFoMbGumnmoYcwTuF3LUk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f3dc9a8-5362-4532-d8ac-08ddf71ef803
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 01:49:28.0960
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 01:50:54.0518
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A84XLnvUVKboFa4lMxb2+BD3ziM/QETkuPICMJhokwvzrgDuOIr59JFDKJhkXj9Q0hBx4Y26r4CBPjK/A7mWdA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6625
+X-MS-Exchange-CrossTenant-UserPrincipalName: /L/F+NMbT0vRthAkViUbUjRBV7NB3zUYN6/5hV+IwIa7he/I7VWZ29c3wOSoQJDq0AyUXZE/2cYGpnIJ6AQPuQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4441
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_03,2025-09-18_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 malwarescore=0 spamscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509190015
+X-Authority-Analysis: v=2.4 cv=TqbmhCXh c=1 sm=1 tr=0 ts=68ccb701 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=vggBfdFIAAAA:8
+ a=20KFwNOVAAAA:8 a=ezW0XxNm-LSnuw-XBWoA:9 a=CjuIK1q_8ugA:10 cc=ntf
+ awl=host:12083
+X-Proofpoint-GUID: jQUJgGnu00E2Lt6eFJXMnw22eET1tep7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX7bPUVNL+HDGx
+ RE/pFFERMA3uz1kyCizNKyO51y/6sye6wZxgYWNlTeJ1eo5Vzf5Ap9mcHKakjH/u38Ff4/wpf+5
+ 3xYA7uqkIH4Q8RilPFvPgMg8CQBqr64jlYjZgM2vBYfZVMLNdx68EKSNWo6LBnILkUHB+bwdrUZ
+ HdU+hO+rtEJzLxWKny6JwdHOYr15ZrYp9YAi9QfrD7gXJFONF/uN039BVvnvxvTfnjEyshoWG/F
+ NpcYQGa4m9JMbJxn1wOA8oKN/gQeiJvRec0kP0l4pVZkm1F7M8tVh5JlY/QT7544JitwRSOp7FI
+ bSCabWdqyzV42SEGTm8XkYSu+PQvMVPlsWEAEGPIa0Ia5UEJCBtKQapsiYFg8dzbeXQzpQs4ya5
+ 5BppV4LdwyKSR8eiqqmbmkVtSquOkw==
+X-Proofpoint-ORIG-GUID: jQUJgGnu00E2Lt6eFJXMnw22eET1tep7
 
-On 9/18/25 22:27, Chris Mason wrote:
+* Peter Xu <peterx@redhat.com> [250918 17:07]:
+> On Thu, Sep 18, 2025 at 03:43:34PM -0400, Liam R. Howlett wrote:
+> > * Peter Xu <peterx@redhat.com> [250918 14:21]:
+> > > On Thu, Sep 18, 2025 at 07:53:46PM +0200, David Hildenbrand wrote:
+> > > > Re Nikita: If we could just reuse fault() for userfaultfd purposes, that
+> > > > might actually be pretty nice.
+> > > 
+> > > I commented on that.
+> > > 
+> > > https://lore.kernel.org/all/aEiwHjl4tsUt98sh@x1.local/
 > 
-> [ apologies for resending this, debugging sendmail ]
+> [1]
 > 
-> Hi Balbir,
+> > > 
+> > > That'll need to leak FAULT_FLAG_USERFAULT_CONTINUE which isn't necessary,
+> > > make it extremely hard to know when to set the flag, and comlicates the
+> > > fault path which isn't necessary.
+> > > 
+> > > I think Mike's comment was spot on, that the new API is literally
+> > > do_fault() for shmem, but only used in userfaultfd context so it's even an
+> > > oneliner.
+> > > 
+> > > I do not maintain mm, so above is only my two cents, so I don't make
+> > > decisions.  Personally I still prefer the current approach of keep the mm
+> > > main fault path clean.
+> > 
+> > What we are trying to say is you can have a fault path that takes a type
+> > enum that calls into a function that does whatever you want.  It can
+> > even live in mm/userfaultfd.c.  It can then jump off to mm/guest-memfd.c
+> > which can contain super unique copying of memory if that's needed.
 > 
-> On Mon,  8 Sep 2025 10:04:34 +1000 Balbir Singh <balbirs@nvidia.com> wrote:
->> Add routines to support allocation of large order zone device folios
->> and helper functions for zone device folios, to check if a folio is
->> device private and helpers for setting zone device data.
->>
->> When large folios are used, the existing page_free() callback in
->> pgmap is called when the folio is freed, this is true for both
->> PAGE_SIZE and higher order pages.
->>
->> Zone device private large folios do not support deferred split and
->> scan like normal THP folios.
-> 
-> [ ... ]
-> 
->> diff --git a/mm/memremap.c b/mm/memremap.c
->> index 46cb1b0b6f72..66f9186b5500 100644
->> --- a/mm/memremap.c
->> +++ b/mm/memremap.c
->> @@ -453,11 +452,15 @@ void free_zone_device_folio(struct folio *folio)
->>  
->>  	switch (pgmap->type) {
->>  	case MEMORY_DEVICE_PRIVATE:
->> +		percpu_ref_put_many(&folio->pgmap->ref, nr);
-> 
-> Here we're dropping nr refs
-> 
->> +		pgmap->ops->page_free(&folio->page);
->> +		folio->page.mapping = NULL;
->> +		break;
->>  	case MEMORY_DEVICE_COHERENT:
->>  		if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
->>  			break;
->> -		pgmap->ops->page_free(folio_page(folio, 0));
->> -		put_dev_pagemap(pgmap);
->> +		pgmap->ops->page_free(&folio->page);
->> +		percpu_ref_put(&folio->pgmap->ref);
-> 
-> Here we're dropping one ref?
-> 
->>  		break;
->>  
->>  	case MEMORY_DEVICE_GENERIC:
->> @@ -480,14 +483,23 @@ void free_zone_device_folio(struct folio *folio)
->>  	}
->>  }
->>  
->> -void zone_device_page_init(struct page *page)
->> +void zone_device_folio_init(struct folio *folio, unsigned int order)
->>  {
->> +	struct page *page = folio_page(folio, 0);
->> +
->> +	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
->> +
->>  	/*
->>  	 * Drivers shouldn't be allocating pages after calling
->>  	 * memunmap_pages().
->>  	 */
->> -	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_pgmap(page)->ref));
->> -	set_page_count(page, 1);
->> +	WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
-> 
-> Here we always bump by 1 << order
-> 
-> I hesitate to send this one because I don't know the code at all, but the
-> AI review prompts keep flagging this apparent refcount mismatch, and it looks
-> real to me.
-> 
-> Are the differences in refcount handling inside free_zone_device_folio()
-> intentional?
-> 
+> Per mentioning of mm/guest-memfd.c, are you suggesting to take guest-memfd
+> library approach?
 
-Thanks for the review! I've posted a v6, but in general
+> We have in total of at least three proposals:
+> 
+> (a) https://lore.kernel.org/all/20250404154352.23078-1-kalyazin@amazon.com/
+> (b) this one
+> (c) https://lore.kernel.org/all/20250915161815.40729-1-kalyazin@amazon.com/
+> 
+> I reviewd (a) and (c) and I provided my comments.  If you prefer the
+> library approach, feel free to reply directly to (c) thread against my
+> email.
+> 
+> I chose (b), from when it was posted.
 
-1. Large folios for supported for device-private pages, hence the nr (from folio_order)
-2. The user of the folios specifies the order (for mTHP), a folio gets get created
-   with that order
-3. What you are seeing with the percpu_ref_put for two different cases
-   MEMORY_DEVICE_COHERENT and MEMORY_DEVICE_PRIVATE
+Honestly, I don't know what I'd vote for because I don't like any of
+them.  I'd chose (d) the do nothing option.
 
-The reason I point you to v6, is that the diff is a little bit different there
+> 
+> 
+> > 
+> > That way driver/i_know_better_that_everyone.c or fs/stature.c don't
+> > decide they can register their uffd and do cool stuff that totally won't
+> > tank the system in random strange ways.
+> 
+> What is the difference if they are allowed to register ->fault() and tank
+> the system?
 
-Balbir
+One less problem.
+
+More people with mm experience looking at the handling of folios.
+
+The common code not being cloned and kept up to date when an issue in
+the original is discovered.
+
+Having to only update a few fault handlers when there is a folio or
+other mm change.
+
+Hopefully better testing?
+
+> > 
+> > Seriously, how many fault handlers are you expecting to have here?
+> 
+> First of all, it's not about "how many".  We can assume one user as of now.
+> Talking about any future user doesn't really help.  The choice I made above
+> on (b) is the best solution I think, with any known possible users.  The
+> plan might change, when more use cases pops up.  However we can only try to
+> make a fair decision with the current status quo.
+
+Planning to handle one, five, or two billion makes a difference in what
+you do.  Your plan right now enables everyone to do whatever they want,
+where they want.  I don't think we need this sort of flexibility with
+the limited number of users?
+
+> 
+> OTOH, the vm_uffd_ops also provides other fields (besides uffd_*() hooks).
+> I wouldn't be surprised if a driver wants to opt-in with some of the fields
+> with zero hooks attached at all, when an userfaultfd feature is
+> automatically friendly to all kinds of memory types.
+> 
+> Consider one VMA that sets UFFDIO_WRITEPROTECT but without most of the
+> rest.
+> 
+> As I discussed, IMHO (b) is the clean way to describe userfaultfd demand
+> for any memory type.
+> 
+> > 
+> > I'd be surprised if a lot of the code in these memory types isn't
+> > shared, but I guess if they are all over the kernel they'll just clone
+> > the code and bugs (like the arch code does, but with less of a reason).
+> > 
+> > > Besides, this series also cleans up other places all over the places, the
+> > > vm_uffd_ops is a most simplified version of description for a memory type.
+> > 
+> > 6 files changed, 207 insertions(+), 76 deletions(-)
+> > 
+> > Can you please point me to which patch has clean up?
+> 
+> Patch 4.  If you want me to explain every change I touched that is a
+> cleanup, I can go into details.  Maybe it's faster if you read them, it's
+> not a huge patch.
+
+I responded here [1].  I actually put a lot of effort into that response
+and took a lot of time to dig into some of this to figure out if it was
+possible, and suggested some ideas.
+
+That was back in July, so the details aren't that fresh anymore.  Maybe
+you missed my reply?
+
+I was hoping that, if the code was cleaned up, a solution may be more
+clear.
+
+I think the ops idea has a lot of positives.  I also think you don't
+need to return a folio pointer to make it work.
+
+> > 
+> > How is a generic callback that splits out into, probably 4?, functions
+> > the deal breaker here?
+> > 
+> > How is leaking a flag the line that we won't cross?
+> > 
+> > > So IMHO it's beneficial in other aspects as well.  If uffd_copy() is a
+> > > concern, fine, we drop it.  We don't plan to have more use of UFFDIO_COPY
+> > > outside of the known three memory types after all.
+> > 
+> > EXACTLY!  There are three memory types and we're going to the most
+> > flexible interface possible, with the most danger.  With guest_memfd
+> > we're up to four functions we'd need.  Why not keep the mm code in the
+> > mm and have four functions to choose from?  If you want 5 we can always
+> > add another.
+> 
+> I assume for most of the rest comments, you're suggesting the library
+> approach.  If so, again, I suggest we discuss explicitly in that thread.
+> 
+> The library code may (or may not) be useful for other purposes.  For the
+> support of userfaultfd, it definitely doesn't need to be a dependency.
+> OTOH, we may still want some abstraction like this one with/without the
+> library.  If so, I don't really see why we need to pushback on this.
+> 
+> AFAIU, the only concern (after drop uffd_copy) is we'll expose
+> uffd_get_folio().
+
+If you read my response [1], then you can see that I find the ops
+underutilized and lacks code simplification.
+
+> Please help explain why ->fault() isn't worse.
+
+I'm not sure it is worse, but I don't think it's necessary to return a
+folio for 4 users.  And I think it could be better if we handled the
+operations on the folio internally, if at all possible.
+
+> 
+> If we accepted ->fault() for all these years, I don't see a reason we
+> should reject ->uffd_get_folio(), especially one of the goals is to keep
+> the core mm path clean, per my comment to proposal (a).
+
+I see this argument as saying "there's a hole in our boat so why can't I
+make another?"  It's not the direction we have to go to get what we need
+right now, so why are we doing it?  Like you said, it can be evaluated
+later if things change..
+
+My thoughts were around an idea that we only really need to do a limited
+number of operations on that pointer you are returning.  Those
+operations may share code, and could be internal to mm.  I don't see
+this as (a), (b), or (c), but maybe an addition to (b)?  Maybe we need
+more ops to cover the uses?
+
+So, I think I do want the vm_uffd_ops idea, but not as it is written
+right now.
+
+Thanks,
+Liam
+
+[1]. https://lore.kernel.org/all/e7vr62s73dftijeveyg6lfgivctijz4qcar3teswjbuv6gog3k@4sbpuj35nbbh/
 
