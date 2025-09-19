@@ -1,84 +1,104 @@
-Return-Path: <linux-kernel+bounces-824303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB04B889D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:39:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D1D9B8896F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1133516DF9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:39:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AF33B6E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DE32FD1A5;
-	Fri, 19 Sep 2025 09:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1822F5A17;
+	Fri, 19 Sep 2025 09:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJV6Kf0k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="GfGmo4Vq"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469B92F25EF;
-	Fri, 19 Sep 2025 09:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274768; cv=none; b=PazOO4uVMxSYF3PELBs5mFGtGKpJq3dOQOYH3gugS7Sg4qGnfpdjysbBnH+IoQO3iNXfn6fp/j1OfcGDf878bAXBBFGJ8b9WEcn3QxZdOQe2E66vw530Bca6/nzoHjKJp3Lw8i2k2yDAyTOTk+Jm/g1KqE1yTrbijrXIn+zTvpo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274768; c=relaxed/simple;
-	bh=KwLzMQLT7wi5XfbeBsM5cIPpIimjD49D5PPQYk+Dueg=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BDF2ECEAB
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758274537; cv=pass; b=shOWzHFZXYElWOHSg+zWk8A4GjZTPse75VpucqPgOLRjS7L7sTnNkpce5ckuprgoNur88YADiga5C2rsEBSu6nxbAGspMAYoAznyunpe01gYVLo7aHXRBwgAKSRrSTCQePJaEST43OrJ76xzmByb/cf0DXhKyzUIePUppQ6ZEPs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758274537; c=relaxed/simple;
+	bh=4m+AxGVJUfIpRSL/uquYuv5dLWJVM25j7KnoFxT8J6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5crTvxiYSWDmfEwrRh1qe9uMB4vWqBItbzuHn3lDBU85YRMqMQppzJU0X6DRqqo8/AHNrIm//d0mSPNs0db0bZkHFhgfYZ2gm2aPemnfEfi/Zjo3af18L35CueGPVPsYvSSySVfjJ8BSYXLKwBA8NNjIzO3QzOOZliYV/AG6+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJV6Kf0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 467B1C4CEF0;
-	Fri, 19 Sep 2025 09:39:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758274767;
-	bh=KwLzMQLT7wi5XfbeBsM5cIPpIimjD49D5PPQYk+Dueg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lJV6Kf0kzv3UBOQN4+VkMEWTvgavXdln5W95vWAHRfbyIkw9VADK5+96/AKqHzlkp
-	 fp3qOPgmwTAbNt/TqKZmZh9mXwpjNy/XhVyHEepfBeT52ATo6MMYyGfz2RYA2bFWeU
-	 tqPbpBknmkn0+1Zxa3WqMqYr7LfsuV9i6khbM+VK2fl710gtg/d+Bbne+NfYeVxNat
-	 vk5u9qvyJIoPtPozTQ8PqDtktVcMJl98ge9W0wK6mEWFiazNUsoDJLK64TTz3Qx7O6
-	 ginM0xPHQf4ggG3hpMQnzYEdTRrNoTEsZ0yTajev2QhRobHrKxyYEUaoPwf3FTXTtb
-	 XfzCR5X+HTzZw==
-Date: Fri, 19 Sep 2025 15:05:08 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] KVM: SVM: Move x2AVIC MSR interception helper to
- avic.c
-Message-ID: <34dkuvu3s47ypxivxaqeyxdvgia6npjiw7b43mkvciqmngra4h@5hl5y7fzcyv5>
-References: <20250919002136.1349663-1-seanjc@google.com>
- <20250919002136.1349663-2-seanjc@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yaf5PlOD7Qq6uCL0IMjjG6tsYuxBWyQQ30HV4+TUJdImJ2Tqc4T2iW389Nq2/udq87+cZ3wRW2ECMmeAkmx9NXLbDu09e/pxBiyZhgl73GGl6+zLdRCNggLT4fOxvTJlSAUgRe96knf7F6cmEvpvS0AblT0rdfzWR4SVDdX9xRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=GfGmo4Vq; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758274530; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ia/weqB67JSOOFDADLRgnZnK1FSgsllrjF7nnMivBIzpsKy4d/24ygj7PjZkuX3hLKveVj9spU13OIgC6sYgHIrYa3x07YqoF8mXEH8Qpb07REJTaQ+EXYOAKMfqSzB7oqFDr7Aa7dr57x1Wlqw9I3O1M2Ldi0P9RBDs3dzhj50=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758274530; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Q4AgxNNAIA3/Y/jnWgb7B4t21i6FI8oSC22E+XxRvPA=; 
+	b=aZEpgt7OJ92jBCcTdVl+9pF09w/UFhZUmiUnhzBFVx0f1+C00bGBHTa5W4w45DjZbUL/bsIx4xAealShlTCKoA10dHPR3fp2rgbHX1rZhVnblwuEGl1tJ1sJxij+EffGtnw7HxxNTXG7sSspluj88TAzyqDR9u4mooyFme9m4wM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758274530;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=Q4AgxNNAIA3/Y/jnWgb7B4t21i6FI8oSC22E+XxRvPA=;
+	b=GfGmo4VqF9j3Te3raCUUXsUy7ppKdoQm/P+I4RWLjPumoDI1atAwH8F5zvAfixqH
+	tpJXAVKiBEQUwlWEeq/Akcl+wTv5qWqRiEA1weaBHJ3JgXXK9ndf70lYX7pLz2UxUP8
+	TVRGxlfr3HIAX6N8mqEc9UudqUKR0nAFU0XokrMA=
+Received: by mx.zohomail.com with SMTPS id 1758274529027121.54735845958476;
+	Fri, 19 Sep 2025 02:35:29 -0700 (PDT)
+Date: Fri, 19 Sep 2025 10:35:25 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panfrost: Bump the minor version number
+Message-ID: <76ob3x7aeflkz3q2sm44zz7wk55sarrprxixixzq32xi2qkjm3@gmctkhzl5w3c>
+References: <20250919080700.3949393-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250919002136.1349663-2-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250919080700.3949393-1-steven.price@arm.com>
 
-On Thu, Sep 18, 2025 at 05:21:31PM -0700, Sean Christopherson wrote:
-> Move svm_set_x2apic_msr_interception() to avic.c as it's only relevant
-> when x2AVIC is enabled/supported and only called by AVIC code.  In
-> addition to scoping AVIC code to avic.c, this will allow burying the
-> global x2avic_enabled variable in avic.
-> 
-> Opportunistically rename the helper to explicitly scope it to "avic".
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+
+On 19.09.2025 09:07, Steven Price wrote:
+> Commit a017f7b86051 ("drm/panfrost: Expose JM context IOCTLs to UM")
+> added new ioctls to the driver and was meant to bump the version number.
+> However it actually only added a comment and didn't change the exposed
+> version number. Bump the number to be consistent with the comment.
+>
+> Fixes: a017f7b86051 ("drm/panfrost: Expose JM context IOCTLs to UM")
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  arch/x86/kvm/svm/avic.c | 57 ++++++++++++++++++++++++++++++++++++++---
->  arch/x86/kvm/svm/svm.c  | 49 -----------------------------------
->  arch/x86/kvm/svm/svm.h  |  1 -
->  3 files changed, 54 insertions(+), 53 deletions(-)
+>  drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 3af4b4753ca4..22350ce8a08f 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -853,7 +853,7 @@ static const struct drm_driver panfrost_drm_driver = {
+>  	.name			= "panfrost",
+>  	.desc			= "panfrost DRM",
+>  	.major			= 1,
+> -	.minor			= 4,
+> +	.minor			= 5,
+>
+>  	.gem_create_object	= panfrost_gem_create_object,
+>  	.gem_prime_import_sg_table = panfrost_gem_prime_import_sg_table,
+> --
+> 2.39.5
 
-Reviewed-by: Naveen N Rao (AMD) <naveen@kernel.org>
-
-- Naveen
-
+Adrian Larumbe
 
