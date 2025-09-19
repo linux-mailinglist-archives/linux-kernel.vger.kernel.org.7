@@ -1,60 +1,66 @@
-Return-Path: <linux-kernel+bounces-825122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210D9B8B0A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:04:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33923B8B0BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19C2D5A4B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:04:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CDA47AE479
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93CE279346;
-	Fri, 19 Sep 2025 19:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5016827F728;
+	Fri, 19 Sep 2025 19:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNanpnCj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJcrt6+g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B82264636;
-	Fri, 19 Sep 2025 19:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A742325CC5E;
+	Fri, 19 Sep 2025 19:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758308661; cv=none; b=MBE9quc8XjfP5oTSdV/7FRjWayzSqKX2fyzVSeQwWhcC4EPFE7fyZh/UOcJIrLhspQ6/HUsZEeyKzGcQ/7bpdnHjZ4lN+D6C8LtmKlQ8UEynhaWNJ/6wU3rmhuM5xTXBZG93M77wuKv4ZuO5x/kl5v7UL6rfuJskRxa9iNELA5I=
+	t=1758308831; cv=none; b=RMMOP3BGu90wbOYLNY++nQrCr0YCnwrAZsIY03Ff5M5mUJZlLpWzkA0pLRj82wohSYc9zxYPmEW/K7OioN1UFa08Drjs6E1FzuluLvfrrC1u1azn9ef1oJwChMSyICRa+YaR3T6yp/uzUnQIUjBTBev84ZQoYDfIHgWb4KRPCek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758308661; c=relaxed/simple;
-	bh=+1gH9nh7Z9jLWMfLfJ0dorAYo0y8h0IdTCU2qgAMylM=;
+	s=arc-20240116; t=1758308831; c=relaxed/simple;
+	bh=2EWSU5zaOh1m7kgeYGxcKNHLBxvAF5AG40zT/LkNSL8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swYlnnjAWyF5694egKSZ4wSAr88mRhcR1oDB0/lv29QFfynEG+CLV3lHsC+yVWc8ilyxk3QH6tsEg8YDm+u6DF3CX0gNTODj6sf/zXAzEpgxyKU2jS33lYR1OzMUijaltrfOxwL6ZUwYZGxgGt+BCJHVf88DLeED5NXVM3MSFD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oNanpnCj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86C1C4CEF0;
-	Fri, 19 Sep 2025 19:04:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKncTr4FEMx4CAZWNp+JLi3rkE7oxzgW3a/R/2rKrg/zkrtzK0VlzAUosC4NK0qMZl848Wxxxxcqy16qRh1gqsWJVR0nAcmw2yIeAcspkp/VnOepwQUAj1ieTCtYIzs7v2d60NKFEXdANrtPzTD18yv3tq+ePx5TdR6VLs+B1TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJcrt6+g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A319C4CEF0;
+	Fri, 19 Sep 2025 19:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758308658;
-	bh=+1gH9nh7Z9jLWMfLfJ0dorAYo0y8h0IdTCU2qgAMylM=;
+	s=k20201202; t=1758308831;
+	bh=2EWSU5zaOh1m7kgeYGxcKNHLBxvAF5AG40zT/LkNSL8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oNanpnCjSjsll5K2MuYanlRd4lQmwPAdpDsKOByL4FDhlwNKLVMWRpEMQ8JwfHYzQ
-	 EbRS5CEdk1MKvwQS4YWvyNe5I4QwimcJsNv2MfIZtIKna3+FtziWMzz4P1AQiuIAQr
-	 mN1BEDVpW6rSeBcWeaXgk2z9TmJr62oMLPGsFBAgShUSKOYJpkTWbcUahsgI55KPyy
-	 ghL13KQIKGbyjfUTSnfLUwRiN2Epqhd75pjPC1uPVV5WaZdC0Oem/coNbupssSoXnU
-	 QfTQt3uEaVbyv9WKfn2cmLbDgEwNjPlS63rwKHU4viKw7D+OgSNTvYPCIDADeWN/aB
-	 ZxLbcQrzXQHCg==
-Date: Fri, 19 Sep 2025 14:04:13 -0500
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
-	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384,
- SHA-512, SHAKE128, SHAKE256
-Message-ID: <20250919190413.GA2249@quark>
-References: <3936580.1758299519@warthog.procyon.org.uk>
+	b=LJcrt6+gCMig6aP2MmfT/JwKHY4uCfsHxqib4IaUpGHz4naW73cUM247Qcw+vjCAb
+	 O9R//gfUWc0yZny/XUtddUAiaLWoFVxf1ZxyakKaADPiUMMkfa86iobprUE9hMMXuu
+	 jSDRW0e9pzqqo0t4kkVlZqvoOM55Wi4bRqXO4RctFZAqAt2fstd8UmkkU34obVqAlQ
+	 6cBb8BhYQ9C0g9zYk9+v1m7v+7ewtfF/jUJqlcr/Oqb+Rj4jApVwPEgUlugZGvArKh
+	 oH2ioahvtgrBhitEfUaO1FjIA8qgNH6jUJ1zEtEtxr0hI3p7vJhk9yzcj6uMoEDHJq
+	 ipZiYyZ8lLHng==
+Date: Fri, 19 Sep 2025 16:07:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Michael Petlan <mpetlan@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	James Clark <james.clark@linaro.org>,
+	Tomas Glozar <tglozar@redhat.com>, Yuzhuo Jing <yuzhuo@google.com>,
+	Quentin Monnet <qmo@kernel.org>, Leo Yan <leo.yan@arm.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1] tools build: Make libperl opt-in rather than opt-out,
+ deprecate
+Message-ID: <aM2p2up90BM0zwEz@x1>
+References: <20250908181918.3533480-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,152 +69,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3936580.1758299519@warthog.procyon.org.uk>
+In-Reply-To: <20250908181918.3533480-1-irogers@google.com>
 
-On Fri, Sep 19, 2025 at 05:31:59PM +0100, David Howells wrote:
-> Add SHA3, providing SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128 and
-> SHAKE256 to lib/crypto.
+On Mon, Sep 08, 2025 at 11:19:18AM -0700, Ian Rogers wrote:
+> If libperl is installed then the perf tool build will build against
+> it. There appears to be limited interest in the scripting support for
+> perl so let's make it opt-in and deprecate it.
 > 
-> The state array handling is simplified from what's in crypto/sha3_generic.c
-> by keeping the state array (a u64[25]) in LE form and byteswapping all the
-> entries before and after applying the keccak function on a BE system.  This
-> means no byteswapping is required when XOR'ing data into the state array or
-> when extracting the digest.  Further, this is a no-op on LE systems.
-> 
-> Also:
-> 
->  - Perform a multistage shake256 hash check in the module initialisation.
-> 
->  - Add kunit tests for each algorithm based on the gen-hash-testvecs.
-> 
->  - The conflicting static s390x crypto function names are renamed to have
->    an s390_ prefix.
-> 
->  - gen-hash-testvecs.py had to be modified to be able to generate SHAKE
->    hashes because Python's hashlib requires the output digest size
->    supplying for those two algorithms as they produce arbitrary length
->    digests.
-> 
-> Notes:
-> 
->  (1) I've left hooks in sha3.c for asm-optimised variants, but as I don't
->      entirely know what those might look like, not having implemented any,
->      the hooks' usability is uncertain.
-> 
->  (2) The SHAKE algorithms will be required for ML-DSA.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Eric Biggers <ebiggers@kernel.org>
-> cc: Jason A. Donenfeld <Jason@zx2c4.com>
-> cc: Ard Biesheuvel <ardb@kernel.org>
-> cc: Harald Freudenberger <freude@linux.ibm.com>
-> cc: Holger Dengler <dengler@linux.ibm.com>
-> cc: Herbert Xu <herbert@gondor.apana.org.au>
-> cc: Stephan Mueller <smueller@chronox.de>
-> cc: linux-crypto@vger.kernel.org
-> cc: linux-s390@vger.kernel.org
-> ---    
->  Changes
->  =======
->  v2)
->   - Simplify the endianness handling.
->  
->   - Rename sha3_final() to sha3_squeeze() and don't clear the context at the
->     end as it's permitted to continue calling sha3_final() to extract
->     continuations of the digest (needed by ML-DSA).
->  
->   - Don't reapply the end marker to the hash state in continuation
->     sha3_squeeze() unless sha3_update() gets called again (needed by
->     ML-DSA).
->  
->   - Give sha3_squeeze() the amount of digest to produce as a parameter
->     rather than using ctx->digest_size and don't return the amount digested.
->  
->   - Reimplement sha3_final() as a wrapper around sha3_squeeze() that
->     extracts ctx->digest_size amount of digest and then zeroes out the
->     context.  The latter is necessary to avoid upsetting
->     hash-test-template.h.
->  
->   - Provide a sha3_reinit() function to clear the state, but to leave the
->     parameters that indicate the hash properties unaffected, allowing for
->     reuse.
->  
->   - Provide a sha3_set_digestsize() function to change the size of the
->     digest to be extracted by sha3_final().  sha3_squeeze() takes a
->     parameter for this instead.
->  
->   - Don't pass the digest size as a parameter to shake128/256_init() but
->     rather default to 128/256 bits as per the function name.
->  
->   - Provide a sha3_clear() function to zero out the context.
-> 
->  arch/s390/crypto/sha3_256_s390.c          |   26 -
->  include/crypto/sha3.h                     |  160 +++++++-
->  lib/crypto/Kconfig                        |    7 
->  lib/crypto/Makefile                       |    6 
->  lib/crypto/sha3.c                         |  597 ++++++++++++++++++++++++++++++
->  lib/crypto/tests/Kconfig                  |   12 
->  lib/crypto/tests/Makefile                 |    7 
->  lib/crypto/tests/sha3_224_kunit.c         |   32 +
->  lib/crypto/tests/sha3_224_testvecs.h      |  231 +++++++++++
->  lib/crypto/tests/sha3_256_kunit.c         |   32 +
->  lib/crypto/tests/sha3_256_testvecs.h      |  231 +++++++++++
->  lib/crypto/tests/sha3_384_kunit.c         |   32 +
->  lib/crypto/tests/sha3_384_testvecs.h      |  281 ++++++++++++++
->  lib/crypto/tests/sha3_512_kunit.c         |   32 +
->  lib/crypto/tests/sha3_512_testvecs.h      |  331 ++++++++++++++++
->  lib/crypto/tests/sha3_shake128_kunit.c    |   37 +
->  lib/crypto/tests/sha3_shake128_testvecs.h |  181 +++++++++
->  lib/crypto/tests/sha3_shake256_kunit.c    |   37 +
->  lib/crypto/tests/sha3_shake256_testvecs.h |  231 +++++++++++
->  scripts/crypto/gen-hash-testvecs.py       |    8 
->  20 files changed, 2495 insertions(+), 16 deletions(-)
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Thanks for working on this!  Some preliminary comments (it will take a
-few days for me to find time to fully review this):
+Applied, after the slight change below, to keep the tip for fedora/rhel
+systems.
 
-This should be based on libcrypto-next.  And as with any kernel patch,
-it should include a base-commit so that people know where it applies to.
+Thanks,
 
-This should be split into three patches: (1) the arch/s390/ changes, (2)
-adding the library functions themselves, and (3) adding the tests.
+- Arnaldo
 
-We'll also need to integrate the existing arch-optimized SHA-3 code, and
-reimplement the SHA-3 crypto_shash algorithms on top of the library.
-Let me know whether you're planning to do that to.  If not, I can do it.
-
-In kerneldoc comments, please make it clear that lengths are measured in
-bytes, and that the functions can be called in any context.
-
-The testing situation looks odd.  This patch adds six KUnit test suites:
-one for each of the SHA-3 algorithms.  But they only include the
-hash-test-template.h test cases, and they don't test the unique behavior
-of SHAKE.  The KUnit tests need to fully test the library.
-
-I see you also have a test in sha3_mod_init(), which doesn't make sense.
-The tests should be in the KUnit test suite(s).  If you intended for the
-sha3_mod_init() test to be a FIPS pre-operational self-test, then (1) it
-would first need to be confirmed with the people doing FIPS
-certifications that a FIPS pre-operational self-test is actually
-necessary here, (2) it would need to be fixed to actually fulfill the
-requirements for that type of test such as panicing the kernel on
-failure, and (3) it would need to come in its own patch with its own
-explanation.  But, unless you are sure you actually need the FIPS test,
-just omit it out for now and focus on the real tests.
-
-I also think that splitting the SHA-3 tests into six KUnit test suites
-is awkward.  I know I did something similar for SHA-2, but it made more
-sense for SHA-2 because (1) there are only four SHA-2 variants, (2)
-SHA-256 and SHA-512 don't share any code, and (3) there wasn't anything
-more to add on top of hash-test-template.h.  In contrast, SHA-3 has six
-variants, which all share most of their code, and there will need to be
-SHA-3 specific tests (for the XOFs).
-
-I think what I'd recommend is creating a single sha3_kunit test suite.
-Make it instantiate hash-test-template.h once to test one of the
-algorithms, maybe SHA3-256.  Then add test cases (that is, additional
-KUnit test cases in the same KUnit test suite) that cover the code
-specific to the other variants, including the XOFs.
-
-- Eric
+diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+index 5457762f7dd59425..7fd054760e47847b 100644
+--- a/tools/perf/builtin-check.c
++++ b/tools/perf/builtin-check.c
+@@ -49,7 +49,7 @@ struct feature_status supported_features[] = {
+ 	FEATURE_STATUS("libelf", HAVE_LIBELF_SUPPORT),
+ 	FEATURE_STATUS("libnuma", HAVE_LIBNUMA_SUPPORT),
+ 	FEATURE_STATUS("libopencsd", HAVE_CSTRACE_SUPPORT),
+-	FEATURE_STATUS_TIP("libperl", HAVE_LIBPERL_SUPPORT, "Deprecated, use LIBPERL=1 and install libperl-dev to build with it"),
++	FEATURE_STATUS_TIP("libperl", HAVE_LIBPERL_SUPPORT, "Deprecated, use LIBPERL=1 and install perl-ExtUtils-Embed/libperl-dev to build with it"),
+ 	FEATURE_STATUS("libpfm4", HAVE_LIBPFM),
+ 	FEATURE_STATUS("libpython", HAVE_LIBPYTHON_SUPPORT),
+ 	FEATURE_STATUS("libslang", HAVE_SLANG_SUPPORT),
 
