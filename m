@@ -1,82 +1,90 @@
-Return-Path: <linux-kernel+bounces-825059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE0DB8AD20
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25992B8AD27
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97B91CC634E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFDE1CC6434
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76499322C80;
-	Fri, 19 Sep 2025 17:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCC43233FF;
+	Fri, 19 Sep 2025 17:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Qaua9is0"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11020088.outbound.protection.outlook.com [52.101.201.88])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="syfxA6a8"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013010.outbound.protection.outlook.com [40.107.201.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D1A30DD38
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64F2322C85;
+	Fri, 19 Sep 2025 17:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.10
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758304182; cv=fail; b=YNInP/QIcCfIJLM4ddeyx7S7nzDLzHJuc5Q0ODW9OlAETnNyEBdVql87GA9If6g9KBmwJxnAmOAAsBf9JSKhSWKMHtF9hTtwOwWwymkwF+TLwDVHjm+yNiI4ixoe6bIH8Yy3IJJiGYyw1fplplG2OxQ13MefzT5cEM/edxZCRhc=
+	t=1758304186; cv=fail; b=YJiDv9J6jcSZyX+FN4wlyWopkAwqjkSZ+Xyij55QHBt58Ml+4Tsp7IfVwa9VCb/LsQyOxhdznSZllvAlrADRNlOw3MmOfJsRcAs9tk6mAxzCcEh+CAtygxqciPIAFOo8prrj1gi06rgVUIp1CrVRh2i+aucquhFkSKa31Oors+I=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758304182; c=relaxed/simple;
-	bh=kr0I14z2ha46VqaXHfL51TiX8IM5IANDqvhOpm5NbfM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=s+XynJKPgcIaIMPeU8vlDyzgKsN+VYbcl1V3wuTtE7OTfj1d72sNkyIgctKJcfgnelxG3iOiPluxTfohfOJ9I0JATnoL+rNaoDXK5oyj649sqpNWm11iGXVDo1WpzIrsyhM6H/uABiZDjK5U5rCVyibvD6TldLrnQF1OoV/gLhg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Qaua9is0; arc=fail smtp.client-ip=52.101.201.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1758304186; c=relaxed/simple;
+	bh=/lOVLda1Fv6ajdgzjbht8fw1TsTKyy6Ylv/sNHkozwA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jzUTTRfcbcTUGJFfO3QY6vpQMNLxI08yynRZ7WFHDwIrnWG3KlPqNeFv7T7j4zNDgmCYq/v+iK+xNnevz79yocZYeiHw4PumdYVPwxfhHl469Bz+BqbQazPE9AiQFHxuUjHQCmolx85aFfAbOcPzl46IAawYELT9/6RSz3TGqVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=syfxA6a8; arc=fail smtp.client-ip=40.107.201.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EpSPiAv95CsMgnHB0sXsfRZ7oQ4OsIZnrggHfB6F087AiOEw0B3UrPRZFER0ei/UFLJeIP/Eel2taLJOcaSu10GMDzC4tWZYvgpDZEKsmh9O8gtF00ZvGA2MP+HExfne6kExCCE1X7S/W329JD4TIT08N/BzIZneqjXDd/Fl0SL8xR3jwDUHudJy+N5fsEoorhBDC8lsDQvGQ7RpFvtHRcdwCQoEukGhdwjpX5Z6DVK5d1vb0wmLr7GMNo1KLrOvblqR9CWUxs/t/fEf43g5Klm2dX+lisRZuNuQB//TMJFkjXJ/WEBFJSZWAwIOTtP9atqldaaDH952tEIx+jncig==
+ b=dbVUrPCEK1Oa5Am1V+ogLiNrRbf0Hww9tHC5UNzDFOSz6P5QDNkxZ/LgVLOy3p26S8+aAW1eLlo1Whm0bVBF9qCW5Kl0DgdiO5/fjgyydd2C1hm03v/1ZkZT6j/CI1oZprG+DIIXncsEjezG/1jbmF4LInLS/OtLfOQmDHcIMJSU5BP+BY3YBwVhh0aEzHNnV11zns3obLKXTsIWKWx/SuYjmaUDAO70s4eKdgmxKu6bq8/oWMc7OQzf9dCmBmpY0wJhZkdDP4D+fYfX91NpycgXK01tEv03sz0Q8vOayLTv2UDuQ5PInrI+ICQmb+89BGVP+IY4b3c3CF7JZOmR/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KuWwvRBLWRt1IcUC+T9VtvQdlRq+dkuYEjt7Lccqviw=;
- b=t7XheImcdjQPDF1ArA46FdMytH8HOvOv9bMpEzXojkUzGYsuc/ouV69W0VvoEtgmYlL8Z6ZNKELSlCT/oV+QvYZfhlUpeP4yZHGJvXwPL5BSwdfO66QNi/klyqJZakSqJbe/LznQ92ayfj6SVJS9f389dWtJmf2wnTkFu9Z7b5a4mFOWmux89/GcGGBUcNAMiBpLzcc2GMs5lrgbI1QpUMeTRUkf0h9GkJet+rg7f7gSh+MxeqTPPAibFzL47d/l4zxrwo9ihwf5urf7BP0muhlUTDndlC8Sh2ZUyOyDbjECAzLew3QrwejG8EiXDti8B3ozJ38ssE5NZ1hHdMiiww==
+ bh=tUJ7ZrVnVCvCSdaFa190kRY9yu1xGdpVMGKgoHIryno=;
+ b=IQC8newwO7fkkaNPGPSEjErIXQ+S7afPfwI6vSOzrsv35V26uVoDRn1hWx6l+c5m6V4yc8g8TDPgXq2KLuswjASa0j2bECf4yMtGS3Ddh0Y63bc1R6QPlrBsutw63J4jcKZIPhYvrL+GuoIo49KNVoAbW89f+zHzEujSic+fE6dL4vcDlCrqU4RYu6YYCA0FSv/Q4gIftlyJIabKWgXLEbJzcq/ZkqlkxCOccWl+3Xvak6Wzhhv5S0nBWAPx/SGy/sJ2PHbsTHAnmL0Q8ajDpWVOLoR6XvHAqK2RlwD6rsyeakaD/vmlbHdElgmsrxbBB7fF6s1a/1kyv1bw81OtnA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KuWwvRBLWRt1IcUC+T9VtvQdlRq+dkuYEjt7Lccqviw=;
- b=Qaua9is0vyF+/7nS1XVUxvTQBlVGulfjRdxP2aXkD+O6CN2z1g7tJmU/3/iDnZJtg+QF9eRbhfO7ZKbc4itXE78alE1XBMugsxgsZBf48wl4H+bYcXU4gIQoN49Kjave+JFEcEFTdCm0DB13mN/oJddCzoMd58qLHNA9LztgiGk=
+ bh=tUJ7ZrVnVCvCSdaFa190kRY9yu1xGdpVMGKgoHIryno=;
+ b=syfxA6a8iiDvi/MNczh5Xgxrfv/quEdX6KrH7R+QNTOmMcbbiZ90J7zzSlQWHFX8pHq4hLdAJeKbb1HdEnB31HqXNJUPSq2/DvVcGnR4KuSpAnnQA91hZbxEQb0ZMSJ52sn88EHfmXLllo6j6znvmSWekrmi/2vzvyoX0Fhkrt4=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BN0PR01MB6862.prod.exchangelabs.com (2603:10b6:408:161::11) by
- CH0PR01MB7017.prod.exchangelabs.com (2603:10b6:610:106::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.16; Fri, 19 Sep 2025 17:49:36 +0000
-Received: from BN0PR01MB6862.prod.exchangelabs.com
- ([fe80::8a1e:34a8:2ad9:7f83]) by BN0PR01MB6862.prod.exchangelabs.com
- ([fe80::8a1e:34a8:2ad9:7f83%2]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
- 17:49:36 +0000
-From: Carl Worth <carl@os.amperecomputing.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	Jie Gan <quic_jiegan@quicinc.com>
-Cc: coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] coresight: Fix data arguments to coresight enable/disable helpers
-Date: Fri, 19 Sep 2025 10:49:32 -0700
-Message-Id: <20250919174932.3490404-1-carl@os.amperecomputing.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <e1a2ee99-07bc-40f3-8742-a0cb1c273350@oss.qualcomm.com>
-References: <e1a2ee99-07bc-40f3-8742-a0cb1c273350@oss.qualcomm.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0065.namprd04.prod.outlook.com
- (2603:10b6:303:6b::10) To BN0PR01MB6862.prod.exchangelabs.com
- (2603:10b6:408:161::11)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc) by SJ2PR12MB8157.namprd12.prod.outlook.com
+ (2603:10b6:a03:4fa::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Fri, 19 Sep
+ 2025 17:49:40 +0000
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::8d61:56ca:a8ea:b2eb]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::8d61:56ca:a8ea:b2eb%8]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
+ 17:49:40 +0000
+Message-ID: <c6102b72-3458-41c6-8650-7e70b175cc2a@amd.com>
+Date: Fri, 19 Sep 2025 12:49:33 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 05/10] fs/resctrl: Introduce interface to display
+ "io_alloc" support
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
+ Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, kas@kernel.org,
+ rick.p.edgecombe@intel.com, akpm@linux-foundation.org, paulmck@kernel.org,
+ pmladek@suse.com, pawan.kumar.gupta@linux.intel.com, rostedt@goodmis.org,
+ kees@kernel.org, arnd@arndb.de, fvdl@google.com, seanjc@google.com,
+ thomas.lendacky@amd.com, manali.shukla@amd.com, perry.yuan@amd.com,
+ sohil.mehta@intel.com, xin@zytor.com, peterz@infradead.org,
+ mario.limonciello@amd.com, gautham.shenoy@amd.com, nikunj@amd.com,
+ dapeng1.mi@linux.intel.com, ak@linux.intel.com, chang.seok.bae@intel.com,
+ ebiggers@google.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, kvm@vger.kernel.org
+References: <cover.1756851697.git.babu.moger@amd.com>
+ <5f368e4f65629c5bf377466e9004733b625c5807.1756851697.git.babu.moger@amd.com>
+ <7b1452b2-38d7-49e1-bd34-ea61eca01419@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <7b1452b2-38d7-49e1-bd34-ea61eca01419@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DM6PR08CA0005.namprd08.prod.outlook.com
+ (2603:10b6:5:80::18) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,419 +92,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR01MB6862:EE_|CH0PR01MB7017:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a24d3fc-cb2c-4eac-a364-08ddf7a4e5b2
-X-MS-Exchange-AtpMessageProperties: SA
+X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|SJ2PR12MB8157:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2396184c-dc04-4dfe-b32e-08ddf7a4e821
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FUqjTxFDBeL2+F8DtJhLJVE5F8qMRHEDORLIMSQ8+u2Yt6TBko4H8asjPyz/?=
- =?us-ascii?Q?TKxfDJvrjm2R3ZDRm5bab0uLkyj3k25M6RZ6LKo47acLprUN1EGacrmouzLe?=
- =?us-ascii?Q?eel87+8lnW0fQQc+eNp2FT6j88DvzIadJ9FhnsPsnojNxi+jqY/WbiEiAdGx?=
- =?us-ascii?Q?XTtyFbrmnynUxchTfL6aRnEk9FJbXlKCdoKYFd8PwuFXu9wshEbslftQqaEd?=
- =?us-ascii?Q?hDCD5rQjfoDQCURw+41u3VsgVHkkBOLWW1FvcQgM9PHDvXOtRfIJwEZ5/Axj?=
- =?us-ascii?Q?+dP/YZtcyNW0pDt7m1mY0Dot7rKao5/kqkMU5kw+fPMfITsdwtBNqw7qPqSL?=
- =?us-ascii?Q?eaBgGgSglctbCb8vAAymZ8pCTleb/TrYwWI5zarJzo0jH2CEKSN9nUKyMZkj?=
- =?us-ascii?Q?B+UxggHrIxxaTnPvw7GmPwG9P1MFiJSxvp7qxZ70PrrfeeZgfeO4l3/IQ/Eq?=
- =?us-ascii?Q?8z0RLaXlDr6zpW5bCebF4bqas0tKPcnB73KzUM8A6lADiECQhVh0tkyVwCx5?=
- =?us-ascii?Q?Cy/BqmWWk4LVPdYsRNd60raeEAN9oHHXNfs/p651OvXPXBQ9wYNCQyQAbHWO?=
- =?us-ascii?Q?U6bs7qkqk0OSPl32yCc1CTg/n0+4RSwC2pBZ/gG3xTG4OPJrZ8kePae1D/im?=
- =?us-ascii?Q?JtxwE+w35+VzMpNwpIAN0YfQIWt8dxsWxfd3APUZ9FFlnA5PaR79hBmC+xTP?=
- =?us-ascii?Q?7v0U9o1/jEWZAg5uC4zVuaT13PP922rQ8rxDwDIo5oDUDKZZWlttP9et1H3K?=
- =?us-ascii?Q?ggrCxI65bQ34xrEe+ZoU/jz0xeLI/N3CZsm5/lMYnXPWZgeEhFhZleQbZPTS?=
- =?us-ascii?Q?AZ/RnyEsPIU4sI+05qdGU/kZqnK9Yza/I6GyiKGH5KDA6cWHEE3W4+QkLhro?=
- =?us-ascii?Q?78pS70cCuaicChMVDVVsBHnJTtPxs3g5olMJGNEe8cN8ldeeHvmr/mu+QTBG?=
- =?us-ascii?Q?OYouHQ8UmJJzJBpZkELB6x/k2wTWGS5bAbP/J85yrRWVZu0Jw39+9bVr4n0b?=
- =?us-ascii?Q?BS43akanwVGffzmHDFDC12XnMMeGXI3XFty/IhzG4scRuDCNPxAtH4XIe+b5?=
- =?us-ascii?Q?MidOPwa7DlyVTa4Xw4lim1MSvFOWZrD2v3O1A1wTg+X0BBNhKp769NGhpWx2?=
- =?us-ascii?Q?PnQzX3V5QgdqX7riVgbJEyqUDjL4UcjGp7cNNcuHnQWeayEqijZN+tn2/WNY?=
- =?us-ascii?Q?0uOdhjiU45HIloaS79JBtWr5tXsRzBfuYZqCpAWU7zuZyNW4gZSCBbr7ynSI?=
- =?us-ascii?Q?Jj/MBl44DSFtwQygi++PYctOWk0fupblMris1ItlgCpXz1j3GbckyZB2uZ/q?=
- =?us-ascii?Q?HpzmzyWCiF+avZOYtSy+v0diptfdQYGP/fBTIuyngeTJ6qWVKyY4rYvjDT4C?=
- =?us-ascii?Q?FuvTNQF1mq46bTHy+sUDGJjItT37IVoTDe+88IjSbo+CyhE5BuYCCjcT/sVV?=
- =?us-ascii?Q?4AqznEQWMcKqmSUdjOGLUMduRGRPYJUBGN1uXJYMVhHpng9w/IqsJQ=3D=3D?=
+	=?utf-8?B?Q256eFhWSjlUM0phSWIyR1FJOTZVYW5ES1J4ZzF0alVEK1haOVpuWlhSR1I0?=
+ =?utf-8?B?MGVqWVZBVnpud2NPNFRJYW1PU2hNSUlHN2J2VUdKdGJlM1FjK2Qxbm9iL2lW?=
+ =?utf-8?B?T0FLd0hEQ0ZqcHFRSldPclRna1VjeDdLd0V3TmhqZWdKUEdoU0JsR3NWVW0w?=
+ =?utf-8?B?U2pDaHhLZStnTWlNRW4xNW44V2pPTm05SmVEOTF3N1gwOWo3aWdCVlIyZkRz?=
+ =?utf-8?B?YUFTUzU0R0NkTy8zTmt5RnpVK1NPa0hQbkIzanlLN2xQOENwUUl1dGp6TnJi?=
+ =?utf-8?B?Tk5aUzV3bUdaNU43Y1hKbmdldUdUcy9HSmZxWjhZRWU1MVYrNGhUN1NGbjZx?=
+ =?utf-8?B?WXlNcThiN3RoaklhQjlENlVzNmFaNmI2ZnVyOHJXMHVyN1VOQXZFU1dYTjFO?=
+ =?utf-8?B?LzdrR3pNMzNQTXJHUzYzZC9obTdpMG9aUnFDaWZLQ2laNHQ3YkQ0TWx5TkVE?=
+ =?utf-8?B?cXhveFRnNjU4eEx3NGhwV1kxeG1TYzFLNTAyWUFzQkFydTJMZ0FjRjRFbGpC?=
+ =?utf-8?B?TExHc3ZyZG94bFNLeFBENkRnbm1nUGUrV2JvSHQ0RW8yRm5MMW52c09SRUZB?=
+ =?utf-8?B?VUVkTzlXVThXblY2ZHkvekowRlJjeWhuQnZUWmJrVGNyaXNGb2hmdDVEWXJU?=
+ =?utf-8?B?OVc4ckpwR3lwL21YamVBUjZ1UmlVNFJMZXltM28ya0t2ZnR1bkw2bVBxbGNn?=
+ =?utf-8?B?dUJJRVJPNlUraE4zdFBvVndwclhkMGVudWMvaklsakV0dzZqTWtOVVFDc2VZ?=
+ =?utf-8?B?Z25tbGh1UUliV05Mc0YwNHZPMVVNOGpTYTJlazFOeWhCRnV1aTlESHhTVklh?=
+ =?utf-8?B?YWhvcXJHenNmbllyK29iZmppUFh2NVNXSzE5ekRJb1VGUFcvTVJKV29KcmtS?=
+ =?utf-8?B?ckw1MGdraUF3RVlHcnZWMUlTdHc5aDRIYStJcHloUUY5Mld1bEJtbjlLdUQ5?=
+ =?utf-8?B?ajNDdkU2SWdLai9sQ3BxaEhxU25BVzR6c2o4K05IbGdlZW04eGhGRFh3ZCsx?=
+ =?utf-8?B?U3N3djFSMmUzaWxNakFMSTllYVZTVjFXdGQrWG5UMGZtVlBrV0REWHhIVGhW?=
+ =?utf-8?B?Q2VHK3ZIeG0xUndiK3lPRGV2N1Qva3FTUGxVYzlOOGVTU3dVRmlXUFRkKzV2?=
+ =?utf-8?B?NWdFcitFelpQeE1yTk9aaGJlNHZHbHdoVlQyUzJEeWE4TWMwaTBVOU9KSFhr?=
+ =?utf-8?B?cnB6RHhvcUlxRkJxazExWCtEOExKL3QwLzMvSWI4b1lMSGdyQmZTbDhDcXNX?=
+ =?utf-8?B?dVowVHZQbitRNE04RzhXcldORlYzcDZmK3poQ3Bwbk1UajFLQnd3a1dncmJC?=
+ =?utf-8?B?Q0dDUGJCMWxwakVrbHNnVUFSVjhKTXlZVGlxclRqSkNjQUYydVZGTXhaaFE2?=
+ =?utf-8?B?Wmd3UzFtVmV5YUVqVVc4MDg3Z1RVbnFPZytHTWw1clJoaHg4RTd1UUNjQWJE?=
+ =?utf-8?B?MWdXdktUemRrNE0wUVFjMU9IZEdUeDgwTGlKS0N0Q0l1aGRnK3NvS29QMSth?=
+ =?utf-8?B?dmhsd3JBNlpZQ1doUXgraUZnbGcwMWVBbnVDWHN5bkVDcVZMS3BVTWRrc3Nm?=
+ =?utf-8?B?bENVMnhud0gwQ0RUMWRoQzRjY0JQN2Jid1lRWGdsQVUzVU5wMThab2YyMjZy?=
+ =?utf-8?B?VUlmZUN1d2Ztb05TM0NMdG9qcVpRR0tnck9pUDI5U0pFNlNHdWRwZEsrRzFJ?=
+ =?utf-8?B?Qng1bmdxOXdPRTlXeXQ4cHE1TWd6VG5iRnU0cERtalZOaDNYUm9HdjBoSytp?=
+ =?utf-8?B?dkMzSTNzOUZYZTB2ZS9HVy9iSFpMMGszanlTRGF6TlhnbE4yS3lOeUlqRDhk?=
+ =?utf-8?B?MFdBVlN5S1pId3M1Z01hMkxUK1MrVExkYlBaZGRCUGovUTFKYVM5UXZ0UnE2?=
+ =?utf-8?B?YStwdk5CeXlzOVlXYVRidzBZRGlHT3FtckxEbVlXT3JkYXpLZjB6cEhnWU5n?=
+ =?utf-8?B?VlNnUDdZaUpGVzl2RWowQ0QvalEwVENyU1dLcHl0cVVDQXpGY1pMNWpRV2wx?=
+ =?utf-8?B?VFo2U092cnR3PT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR01MB6862.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vLDVwttW5Gm2s+oDAY1lkIBIM1tYSWOQd1zFMehuNLklJSwIRs/vPJrU2Y9L?=
- =?us-ascii?Q?+XkCM+7kHhVBE2mAN8d7zWav/00FDXErDvEPCd3QfHuCMpvH1lCRAiSyTuSS?=
- =?us-ascii?Q?sxCfED43XEoWabdFTraX66xr3qwN8oTvhMUBCn03sopTxeBVGT0hZFevLZSp?=
- =?us-ascii?Q?nud9X3f3WQThkb9ll/+4/93JEdakVhgRsSGcvPMT6htJJefQJpTMOOXIwuPl?=
- =?us-ascii?Q?6iVAwzxMsqrKP9DaNrICX9hj9irZGhped1lweGHJbCZDdP+p7KOKW1sy33p7?=
- =?us-ascii?Q?Xfyp3XtCrTL3ikS/Eo7YiduoJZVYq+zV8LrAC+/S7d/ggy1V4lQrmhKzJfHG?=
- =?us-ascii?Q?CRSnUFgzN3xvS8h0R0OfKWIb8Q1t3yJOZz4KZwffAmvKtZSZNL/TiT+47j7K?=
- =?us-ascii?Q?23ZjjrAn+myPO/EY9RG01d8J5GFi5rCgFSP00964Ldydyi7AT6WQ47RFFaku?=
- =?us-ascii?Q?8VMO8Ukbnal8mA9GbBpQsLl0wQeaQnvzd5p+EMdO4kzvzz1YvgPrOl/hrrLP?=
- =?us-ascii?Q?Covy3RG5J3Ty6Yb2BIvPmdMUyZBjKkK/lLJ0Cwjb1RFAffzwdFfVN50fs0Wo?=
- =?us-ascii?Q?Jrn4XJ7UkfDV6K22wVjP6D3C9HeRLP2qGplijNXNryFsQko0WAzDIMX82IB4?=
- =?us-ascii?Q?qG7s3tHOxKa4i2VJ+V9WAIkPqMDAK5cMjvPiSt+ah5WuCgdpsBBvhYNpH3kq?=
- =?us-ascii?Q?3M3ilN5EJJKX3yKrw/BqzhpFsXFqJASqjkhzwhIeiTuqPBH2Tm/BJ1WiaxEk?=
- =?us-ascii?Q?L7VYok8ibtaTSlKF/fUJxbxbO7BMue5oLPT7aZ0dazCFC/UXxJ9UBdFheS83?=
- =?us-ascii?Q?Hi46R+fq5V0O6u6hHwPGItbPu8EE1+FRcIUVyHWY4iPKrq4aHU66moRBoD+u?=
- =?us-ascii?Q?arbVEUYbrZhwziDtUqN5KOIqpMJfnA6B0zczxN+y5xsYC7gQU7mv5+/8gA3o?=
- =?us-ascii?Q?SEXxtw5iLkusIdoolv75FiiuSlFoQL1Q3AlQKEDQOjeJ6L9Ow9qWK4m5fpfz?=
- =?us-ascii?Q?mWsxcMFArRmNeNq9At8/nwJX/8zbenrY/jy6So954P0U7yQV9z6NOIgb6iGE?=
- =?us-ascii?Q?fvxO5TI8mmdPOQ3F8KeBM9S7M8Nc8JgnzLAbT+UXrlrFEFra2KFXH17c4BaB?=
- =?us-ascii?Q?QEommKlOs09uzAMtl//5s2rwv6SWhBU2KDF7A1dCaVFrfLwLkb5tEjlyaQ43?=
- =?us-ascii?Q?oN4OISs5aG/Y7XEuAI2IgfCVf0VPS8z758ahJhAjXuDr8jbVfneKM9ySheBL?=
- =?us-ascii?Q?x4IlCgHBHKCazNFgJehkltoEjK7yG1wxnO2iZ56sdzjeeHQtOjCzAd9tjws1?=
- =?us-ascii?Q?ScBO6orPHaqi+4JlhioVbhowrffa22gEne5Sv/oIPVGTDQbFKYyhKSNswJRo?=
- =?us-ascii?Q?btMO3b+MABgV0k3Hj2fAnrXHpux/jGPfeZyzT5U47xYkhdHjzxCmas06NO4V?=
- =?us-ascii?Q?kpmKMfNNRfWWF+VWIyBCG0MV/kmoVnq8hBiJxAYpgu3H7UYfm5EETvCSRSMH?=
- =?us-ascii?Q?xiSs8hk2OWSUpsDJiCZB//KiUAiHSrI7V1jrMj9SlSG4Ys5CdjZppfTxCO3n?=
- =?us-ascii?Q?SZunlJOMAsZ5GBCO9mdv7Dc39NLFubWetvbBk51JEYpwm2Oko8oPsF4mi1pU?=
- =?us-ascii?Q?Q1YI4zCOQOFhfLWobNHplIo=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a24d3fc-cb2c-4eac-a364-08ddf7a4e5b2
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR01MB6862.prod.exchangelabs.com
+	=?utf-8?B?MnZwWkpVK2V5eDVMM0R1dU95czVkWTZQcGJ2TklLVTRuaFRFKzR0U1NOZ1Va?=
+ =?utf-8?B?S1BLWkQ1dDFmaHExZFdwNGxuWi85V240cFhlbHhheUFWZ1YvM3F4UGVDczhG?=
+ =?utf-8?B?K1Q5b3FjUk9wdnFYZWEvY0hKZkdpT2krNTd3Zzl5cWNPTnc3YXFnMktwZGc0?=
+ =?utf-8?B?S3F0UXNjOGhNTXZnL0E0REJobHRKejhMQWpvZkdDcG5lVkZHSXlrRGt2bGlB?=
+ =?utf-8?B?UEZVTTJ6SGRWTUNpbmVLNTBIa3VnQTZqQUQ2dHViekhJZk5hY2lQd0ZqSXZm?=
+ =?utf-8?B?bWdJU3lENGdWSnN5TGFiQmtEVlpncWZaWlBuU2d2SDR2UjlyemFyc3pvRWE5?=
+ =?utf-8?B?cE01eEc3MUR1OXNJUmtvYkpMMXhLMDRyNkJ5a1Ezdi9TdEtEUEVIOHY0U2Nz?=
+ =?utf-8?B?OEZrZEs1ZzJKOEE4UlhHL1E3VE5LYXI0UnZCUmhEZE1lVjJ1Snc4cW1vbTlt?=
+ =?utf-8?B?UmliVlNmU2JyZ0dKZWN6VXU0TFlHaGx5Z3RnYVhDaWUvQUFtN2xkZFN2b2J2?=
+ =?utf-8?B?cU5RczlIc2RqVkYwWFRKVkxXSndLV3lGQmU1NlRLdS9kMSt4WTMyK2hJL0NH?=
+ =?utf-8?B?cUR1b3BzejBjZDNQSGRjU1VjcFFFVXdDdWsva0gxcTBjTHNEN3B0bWl3aDIy?=
+ =?utf-8?B?U2RHUU9iNThRSFFkNDEzV0pQSTBVdC8vbmFCQmFNM1dqUVU4MXNnNG0rVmIv?=
+ =?utf-8?B?dE1YYXNUbEJabldtWlJ3dk9JdXpLVkEwOU43RkRZMnBFTWVkZ2t6cVhqVW5Y?=
+ =?utf-8?B?aDl0bU4rMFpCRU10Y3Y5Q05xanRGNEFoVWJMUzZSQkNZMTlWTXpBQmt0V1ZK?=
+ =?utf-8?B?UHJvdGdBYVZWMnJzVFRxcWhURCsxUTJQK3d6VVJDb0xTSC9DMzlVVnp2WDJP?=
+ =?utf-8?B?VUpoYnMxTEI4VHdrODJvUTNKb0ZXSFJ3WHhxYTg0dHo0dVBBQkFPN3NyaWlP?=
+ =?utf-8?B?MVZKeFI3UUJzck51ZmZGTVdWWjdUdTJtWHZjNGErdDF6dnE4YmdVcUZpejg3?=
+ =?utf-8?B?YWpPNUNuMyttMDJJNEduNWJ5OW0rMlprRjF0OFFZa01NLzdNZzlIaTRpdXRM?=
+ =?utf-8?B?WGpTQ3dwZWJkcU1BSlA5RGJ1andQMjh6ci9nUFdWN1NiZTlVMHNQbjljV0pi?=
+ =?utf-8?B?bnpEL2ZPNnF0Tm53L3JCcW9NUWN0eXgwRXhNWkU1dWFUc0pVZk9qVXpmeUpY?=
+ =?utf-8?B?bm5DaXRuNlNWQUZNbHJ5YTRNaFdjRFdOa0V3aUtGZndlS2xBTE5lMlNyUlFL?=
+ =?utf-8?B?c05Nd250ODVicnhVMlcyak5CdXZocVJyYWRwZU5nMFczUUNUckVYU0FNWDl2?=
+ =?utf-8?B?ZUw0cGo0bEZGdFZuMk1WbFoxMVovMUR1dUdTazZNNEFpa1dSTVBDejAvWmhm?=
+ =?utf-8?B?V1YwZDZrZURnNE9Ua1VTM2tjanVjSWMzS3ZQQzFEWkgwR2tVSFBGWkg4NXFH?=
+ =?utf-8?B?OHl3MHV3NDNHaExFaFo0WDFjMmlMcGpNeW9jZWE3S2xpaUxCR21hUDVwRTF2?=
+ =?utf-8?B?eXg3SXhYZWN1TUVvbDRjdnBKd2tUdURZbnJ6U1RrZnlEQU1KeVFYWnBYeGo3?=
+ =?utf-8?B?WVY0RHk0OHdkRmFDTkE4QU1DeE42Z2xkcGZCZ2hRbXZaeVh3dVFrWjZIWlVZ?=
+ =?utf-8?B?NnpuZHU5UHZKTXR0MTgxb2xjRHJ5NlY5NWJkLzJVdjJGVnBld2FnaXdwOUFO?=
+ =?utf-8?B?THIyaDRUaVpsdnVrdmRCbUZ3ZXNCYlR2bXJ4R0tnOUJPRUZmRUFaMk9lbEk0?=
+ =?utf-8?B?WEIvaDJGNE5mMWRyWlRva1daNHFHUklWTTluYmEyMG5NZzY2ZjlWWmtObUhJ?=
+ =?utf-8?B?Q0N4STJBT29OZ2llSWoybW00YlpJS081NkpMakkxUEpPenZTaWhtOHlwdUxR?=
+ =?utf-8?B?MHBnenB1bzB1Y3lDZzYxVVE1akNIYXliWVV1MUJLU25nZGU2UmZHSkZyT1Jx?=
+ =?utf-8?B?b3hqVEw2WGprODV0T3RwaEVlaTdhS0M5M1JIdFNvaEhiSmtoZ3A3bFpGOWdv?=
+ =?utf-8?B?Q0tCOS9ZalhwakJzVlM0bEpPMWlFR0dUUjNuUUF0RlFqYXhEUVN2NXFlUjdH?=
+ =?utf-8?B?S3ZSemkvWHl4Vm93cVpnWFRWSERvc3MvbDZJRndiUG1hZVdnZ3RKRU5pdDRS?=
+ =?utf-8?Q?6xyQ=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2396184c-dc04-4dfe-b32e-08ddf7a4e821
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 17:49:35.9048
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 17:49:39.9657
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fR5NIyQ4bO7bm8+zIugJG7172bgUptQbbnZX+WoOLN4wYQKPkntdYiEr23p2AquCPdonVnTBJz0Jrdjm/PPPrZ8Oz3EnwwC2aqOpgaOtokg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB7017
+X-MS-Exchange-CrossTenant-UserPrincipalName: nU+xuxeh5jZUiZ8HtexFsEQYbMfqJDWl7qQccNNPaDMY0Dq3xIdxxUhY+2Rlb+tl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8157
 
-In the commit being fixed, coresight_enable_path() was changed to call
-coresight_enable_helpers() by passing a struct coresight_path*
-as the final void* 'path' argument, rather passing 'sink_data'
-as was being passed previously. This set the groundwork for the
-subsequent addition of the ctcu_enable function which interprets
-void* data as a struct coresight_path*, but it also broke the
-existing catu_enable function which interprets void* data
-as a struct perf_output_handle*.
+Hi Reinette,
 
-The compiler could not flag the error since there are several layers
-of function calls treating the pointer as void*.
+On 9/18/2025 12:28 AM, Reinette Chatre wrote:
+> Hi Babu,
+> 
+> On 9/2/25 3:41 PM, Babu Moger wrote:
+>> "io_alloc" feature in resctrl allows direct insertion of data from I/O
+>> devices into the cache.
+>>
+>> Introduce the 'io_alloc' resctrl file to indicate the support for the
+>> feature.
+> 
+> Changelog that aims to address feeback received in ABMC series (avoid repetition
+> and document any non-obvious things), please feel free to improve:
+> 
+> 	Introduce the "io_alloc" resctrl file to the "info" area of a cache
+> 	resource, for example /sys/fs/resctrl/info/L3/io_alloc. "io_alloc"
+> 	indicates support for the "io_alloc" feature that allows direct
+> 	insertion of data from I/O devices into the cache.
+>                                                                                  
+> 	Restrict exposing support for "io_alloc" to the L3 resource that is the
+> 	only resource where this feature can be backed by AMD's L3 Smart Data Cache
+> 	Injection Allocation Enforcement (SDCIAE). With that, the "io_alloc" file is only
+> 	visible to user space if the L3 resource supports "io_alloc". Doing
+> 	so makes the file visible for all cache resources though, for example also L2
+> 	cache (if it supports cache allocation). As a consequence, add capability for
+> 	file to report expected "enabled" and "disabled", as well as "not supported".
+> 
+> 
 
-Fix both users simultaneously by adding an additional argument to the
-enable helper interface. So now both the struct coresight_path and the
-struct perf_output_handle pointers are passed. Also, eliminate all
-usages of the void* from these code paths and use explicit types
-instead to make all of this code more robust.
+Looks good. Thanks
 
-Note: The disable function is also changed from void* to
-struct coresight_path* but no implementations of this function
-need the struct perf_output_handle* so it is not added to the interface.
+>>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> 
+> ...
+> 
+>> ---
+>>   Documentation/filesystems/resctrl.rst | 30 +++++++++++++++++++++++++++
+>>   fs/resctrl/ctrlmondata.c              | 21 +++++++++++++++++++
+>>   fs/resctrl/internal.h                 |  5 +++++
+>>   fs/resctrl/rdtgroup.c                 | 24 ++++++++++++++++++++-
+>>   4 files changed, 79 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
+>> index 4866a8a4189f..89aab17b00cb 100644
+>> --- a/Documentation/filesystems/resctrl.rst
+>> +++ b/Documentation/filesystems/resctrl.rst
+>> @@ -136,6 +136,36 @@ related to allocation:
+>>   			"1":
+>>   			      Non-contiguous 1s value in CBM is supported.
+>>   
+>> +"io_alloc":
+>> +		"io_alloc" enables system software to configure the portion of
+>> +		the cache allocated for I/O traffic. File may only exist if the
+>> +		system supports this feature on some of its cache resources.
+>> +
+>> +			"disabled":
+>> +			      Resource supports "io_alloc" but the feature is disabled.
+>> +			      Portions of cache used for allocation of I/O traffic cannot
+>> +			      be configured.
+>> +			"enabled":
+>> +			      Portions of cache used for allocation of I/O traffic
+>> +			      can be configured using "io_alloc_cbm".
+>> +			"not supported":
+>> +			      Support not available for this resource.
+>> +
+> 
+> After trying to rework the changelogs I believe the portion of doc below is better suited for
+> the next patch that adds support for enable/disable where CLOSIDs are relevant.
 
-The existing bug can be reproduced with:
+Sure.
 
-# perf record -e cs_etm//k -C 0-9 dd if=/dev/zero of=/dev/null
-
-Showing an oops as follows:
-
-Unable to handle kernel paging request at virtual address 000f6e84934ed19e
-
-Call trace:
- tmc_etr_get_buffer+0x30/0x80 [coresight_tmc] (P)
- catu_enable_hw+0xbc/0x3d0 [coresight_catu]
- catu_enable+0x70/0xe0 [coresight_catu]
- coresight_enable_path+0xb0/0x258 [coresight]
-
-Fixes: 080ee83cc361 ("Coresight: Change functions to accept the coresight_path")
-Signed-off-by: Carl Worth <carl@os.amperecomputing.com>
----
-
-Jie, I looked into your suggestion of adding the struct
-perf_output_handle* to the struct coresight_path, but I couldn't
-justify adding event-related data to the path structure, which has
-nothing to do with it.
-
-So, instead I took the approach in this patch to plumb both arguments
-through the enable path, (and changed away from void* as you agreed
-to).
-
-Note: I've tested that this fixes the bug for catu_enable. This patch
-also obviously touches ctcu_enable, which I believe is correct, but I
-have not tested since I don't have ready access to the necessary
-hardware. I will appreciate other testing.
-
--Carl
-
- drivers/hwtracing/coresight/coresight-catu.c  | 12 ++++++----
- drivers/hwtracing/coresight/coresight-core.c  | 23 +++++++++++--------
- .../hwtracing/coresight/coresight-ctcu-core.c | 11 ++++-----
- .../hwtracing/coresight/coresight-cti-core.c  |  7 ++++--
- .../hwtracing/coresight/coresight-cti-sysfs.c |  2 +-
- drivers/hwtracing/coresight/coresight-cti.h   |  6 +++--
- drivers/hwtracing/coresight/coresight-priv.h  |  2 +-
- .../hwtracing/coresight/coresight-tmc-etr.c   |  4 ++--
- drivers/hwtracing/coresight/coresight-tmc.h   |  3 ++-
- include/linux/coresight.h                     |  6 +++--
- 10 files changed, 45 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index 5058432233da..724c25d0afa4 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -397,7 +397,7 @@ static int catu_wait_for_ready(struct catu_drvdata *drvdata)
- }
- 
- static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
--			  void *data)
-+			  struct perf_output_handle *handle)
- {
- 	int rc;
- 	u32 control, mode;
-@@ -425,7 +425,7 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
- 	etrdev = coresight_find_input_type(
- 		csdev->pdata, CORESIGHT_DEV_TYPE_SINK, etr_subtype);
- 	if (etrdev) {
--		etr_buf = tmc_etr_get_buffer(etrdev, cs_mode, data);
-+		etr_buf = tmc_etr_get_buffer(etrdev, cs_mode, handle);
- 		if (IS_ERR(etr_buf))
- 			return PTR_ERR(etr_buf);
- 	}
-@@ -455,7 +455,8 @@ static int catu_enable_hw(struct catu_drvdata *drvdata, enum cs_mode cs_mode,
- }
- 
- static int catu_enable(struct coresight_device *csdev, enum cs_mode mode,
--		       void *data)
-+		       struct coresight_path *path,
-+		       struct perf_output_handle *handle)
- {
- 	int rc = 0;
- 	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
-@@ -463,7 +464,7 @@ static int catu_enable(struct coresight_device *csdev, enum cs_mode mode,
- 	guard(raw_spinlock_irqsave)(&catu_drvdata->spinlock);
- 	if (csdev->refcnt == 0) {
- 		CS_UNLOCK(catu_drvdata->base);
--		rc = catu_enable_hw(catu_drvdata, mode, data);
-+		rc = catu_enable_hw(catu_drvdata, mode, handle);
- 		CS_LOCK(catu_drvdata->base);
- 	}
- 	if (!rc)
-@@ -488,7 +489,8 @@ static int catu_disable_hw(struct catu_drvdata *drvdata)
- 	return rc;
- }
- 
--static int catu_disable(struct coresight_device *csdev, void *__unused)
-+static int catu_disable(struct coresight_device *csdev,
-+			struct coresight_path *__unused)
- {
- 	int rc = 0;
- 	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index fa758cc21827..cc449d5196a4 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -353,14 +353,17 @@ static bool coresight_is_helper(struct coresight_device *csdev)
- }
- 
- static int coresight_enable_helper(struct coresight_device *csdev,
--				   enum cs_mode mode, void *data)
-+				   enum cs_mode mode,
-+				   struct coresight_path *path,
-+				   struct perf_output_handle *handle)
- {
--	return helper_ops(csdev)->enable(csdev, mode, data);
-+	return helper_ops(csdev)->enable(csdev, mode, path, handle);
- }
- 
--static void coresight_disable_helper(struct coresight_device *csdev, void *data)
-+static void coresight_disable_helper(struct coresight_device *csdev,
-+				     struct coresight_path *path)
- {
--	helper_ops(csdev)->disable(csdev, data);
-+	helper_ops(csdev)->disable(csdev, path);
- }
- 
- static void coresight_disable_helpers(struct coresight_device *csdev, void *data)
-@@ -477,7 +480,9 @@ void coresight_disable_path(struct coresight_path *path)
- EXPORT_SYMBOL_GPL(coresight_disable_path);
- 
- static int coresight_enable_helpers(struct coresight_device *csdev,
--				    enum cs_mode mode, void *data)
-+				    enum cs_mode mode,
-+				    struct coresight_path *path,
-+				    struct perf_output_handle *handle)
- {
- 	int i, ret = 0;
- 	struct coresight_device *helper;
-@@ -487,7 +492,7 @@ static int coresight_enable_helpers(struct coresight_device *csdev,
- 		if (!helper || !coresight_is_helper(helper))
- 			continue;
- 
--		ret = coresight_enable_helper(helper, mode, data);
-+		ret = coresight_enable_helper(helper, mode, path, handle);
- 		if (ret)
- 			return ret;
- 	}
-@@ -496,7 +501,7 @@ static int coresight_enable_helpers(struct coresight_device *csdev,
- }
- 
- int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
--			  void *sink_data)
-+			  struct perf_output_handle *handle)
- {
- 	int ret = 0;
- 	u32 type;
-@@ -510,7 +515,7 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
- 		type = csdev->type;
- 
- 		/* Enable all helpers adjacent to the path first */
--		ret = coresight_enable_helpers(csdev, mode, path);
-+		ret = coresight_enable_helpers(csdev, mode, path, handle);
- 		if (ret)
- 			goto err_disable_path;
- 		/*
-@@ -526,7 +531,7 @@ int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
- 
- 		switch (type) {
- 		case CORESIGHT_DEV_TYPE_SINK:
--			ret = coresight_enable_sink(csdev, mode, sink_data);
-+			ret = coresight_enable_sink(csdev, mode, handle);
- 			/*
- 			 * Sink is the first component turned on. If we
- 			 * failed to enable the sink, there are no components
-diff --git a/drivers/hwtracing/coresight/coresight-ctcu-core.c b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-index c6bafc96db96..9f6d71c59d4e 100644
---- a/drivers/hwtracing/coresight/coresight-ctcu-core.c
-+++ b/drivers/hwtracing/coresight/coresight-ctcu-core.c
-@@ -156,17 +156,16 @@ static int ctcu_set_etr_traceid(struct coresight_device *csdev, struct coresight
- 	return __ctcu_set_etr_traceid(csdev, traceid, port_num, enable);
- }
- 
--static int ctcu_enable(struct coresight_device *csdev, enum cs_mode mode, void *data)
-+static int ctcu_enable(struct coresight_device *csdev, enum cs_mode mode,
-+		       struct coresight_path *path,
-+		       struct perf_output_handle *handle)
- {
--	struct coresight_path *path = (struct coresight_path *)data;
--
- 	return ctcu_set_etr_traceid(csdev, path, true);
- }
- 
--static int ctcu_disable(struct coresight_device *csdev, void *data)
-+static int ctcu_disable(struct coresight_device *csdev,
-+			struct coresight_path *path)
- {
--	struct coresight_path *path = (struct coresight_path *)data;
--
- 	return ctcu_set_etr_traceid(csdev, path, false);
- }
- 
-diff --git a/drivers/hwtracing/coresight/coresight-cti-core.c b/drivers/hwtracing/coresight/coresight-cti-core.c
-index 8fb30dd73fd2..f92e3be4607c 100644
---- a/drivers/hwtracing/coresight/coresight-cti-core.c
-+++ b/drivers/hwtracing/coresight/coresight-cti-core.c
-@@ -799,14 +799,17 @@ static void cti_pm_release(struct cti_drvdata *drvdata)
- }
- 
- /** cti ect operations **/
--int cti_enable(struct coresight_device *csdev, enum cs_mode mode, void *data)
-+int cti_enable(struct coresight_device *csdev, enum cs_mode mode,
-+	       struct coresight_path *path,
-+	       struct perf_output_handle *handle)
- {
- 	struct cti_drvdata *drvdata = csdev_to_cti_drvdata(csdev);
- 
- 	return cti_enable_hw(drvdata);
- }
- 
--int cti_disable(struct coresight_device *csdev, void *data)
-+int cti_disable(struct coresight_device *csdev,
-+		struct coresight_path *path)
- {
- 	struct cti_drvdata *drvdata = csdev_to_cti_drvdata(csdev);
- 
-diff --git a/drivers/hwtracing/coresight/coresight-cti-sysfs.c b/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-index 572b80ee96fb..2bb6929eeb19 100644
---- a/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-+++ b/drivers/hwtracing/coresight/coresight-cti-sysfs.c
-@@ -112,7 +112,7 @@ static ssize_t enable_store(struct device *dev,
- 		ret = pm_runtime_resume_and_get(dev->parent);
- 		if (ret)
- 			return ret;
--		ret = cti_enable(drvdata->csdev, CS_MODE_SYSFS, NULL);
-+		ret = cti_enable(drvdata->csdev, CS_MODE_SYSFS, NULL, NULL);
- 		if (ret)
- 			pm_runtime_put(dev->parent);
- 	} else {
-diff --git a/drivers/hwtracing/coresight/coresight-cti.h b/drivers/hwtracing/coresight/coresight-cti.h
-index 8362a47c939c..73954369654c 100644
---- a/drivers/hwtracing/coresight/coresight-cti.h
-+++ b/drivers/hwtracing/coresight/coresight-cti.h
-@@ -216,8 +216,10 @@ int cti_add_connection_entry(struct device *dev, struct cti_drvdata *drvdata,
- 			     const char *assoc_dev_name);
- struct cti_trig_con *cti_allocate_trig_con(struct device *dev, int in_sigs,
- 					   int out_sigs);
--int cti_enable(struct coresight_device *csdev, enum cs_mode mode, void *data);
--int cti_disable(struct coresight_device *csdev, void *data);
-+int cti_enable(struct coresight_device *csdev, enum cs_mode mode,
-+	       struct coresight_path *path,
-+	       struct perf_output_handle *handle);
-+int cti_disable(struct coresight_device *csdev, struct coresight_path *path);
- void cti_write_all_hw_regs(struct cti_drvdata *drvdata);
- void cti_write_intack(struct device *dev, u32 ackval);
- void cti_write_single_reg(struct cti_drvdata *drvdata, int offset, u32 value);
-diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
-index 33e22b1ba043..65c4984d98c0 100644
---- a/drivers/hwtracing/coresight/coresight-priv.h
-+++ b/drivers/hwtracing/coresight/coresight-priv.h
-@@ -136,7 +136,7 @@ static inline void CS_UNLOCK(void __iomem *addr)
- 
- void coresight_disable_path(struct coresight_path *path);
- int coresight_enable_path(struct coresight_path *path, enum cs_mode mode,
--			  void *sink_data);
-+			  struct perf_output_handle *handle);
- struct coresight_device *coresight_get_sink(struct coresight_path *path);
- struct coresight_device *coresight_get_sink_by_id(u32 id);
- struct coresight_device *
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index b07fcdb3fe1a..2ed7fa2366ce 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1325,9 +1325,9 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- }
- 
- struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
--				   enum cs_mode mode, void *data)
-+				   enum cs_mode mode,
-+				   struct perf_output_handle *handle)
- {
--	struct perf_output_handle *handle = data;
- 	struct etr_perf_buffer *etr_perf;
- 
- 	switch (mode) {
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 6541a27a018e..b6e2b00d393a 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -440,7 +440,8 @@ struct coresight_device *tmc_etr_get_catu_device(struct tmc_drvdata *drvdata);
- void tmc_etr_set_catu_ops(const struct etr_buf_operations *catu);
- void tmc_etr_remove_catu_ops(void);
- struct etr_buf *tmc_etr_get_buffer(struct coresight_device *csdev,
--				   enum cs_mode mode, void *data);
-+				   enum cs_mode mode,
-+				   struct perf_output_handle *handle);
- extern const struct attribute_group coresight_etr_group;
- 
- #endif
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 4ac65c68bbf4..450cccd46f38 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -422,8 +422,10 @@ struct coresight_ops_source {
-  */
- struct coresight_ops_helper {
- 	int (*enable)(struct coresight_device *csdev, enum cs_mode mode,
--		      void *data);
--	int (*disable)(struct coresight_device *csdev, void *data);
-+		      struct coresight_path *path,
-+		      struct perf_output_handle *data);
-+	int (*disable)(struct coresight_device *csdev,
-+		       struct coresight_path *path);
- };
- 
- 
-
-base-commit: 46a51f4f5edade43ba66b3c151f0e25ec8b69cb6
--- 
-2.39.5
+Thanks
+Babu
+> 
+>> +		The underlying implementation may reduce resources available to
+>> +		general (CPU) cache allocation. See architecture specific notes
+>> +		below. Depending on usage requirements the feature can be enabled
+>> +		or disabled.
+>> +
+>> +		On AMD systems, io_alloc feature is supported by the L3 Smart
+>> +		Data Cache Injection Allocation Enforcement (SDCIAE). The CLOSID for
+>> +		io_alloc is the highest CLOSID supported by the resource. When
+>> +		io_alloc is enabled, the highest CLOSID is dedicated to io_alloc and
+>> +		no longer available for general (CPU) cache allocation. When CDP is
+>> +		enabled, io_alloc routes I/O traffic using the highest CLOSID allocated
+>> +		for the instruction cache (L3CODE), making this CLOSID no longer
+>> +		available for general (CPU) cache allocation for both the L3CODE and
+>> +		L3DATA resources.
+>> +
+>>   Memory bandwidth(MB) subdirectory contains the following files
+>>   with respect to allocation:
+>>   
+> 
+> Reinette
+> 
+> 
 
 
