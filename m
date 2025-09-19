@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-825133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8C4B8B126
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4224DB8B12C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85EB95A445C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1D9176B2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AF82BD586;
-	Fri, 19 Sep 2025 19:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583302BD5A2;
+	Fri, 19 Sep 2025 19:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2GtAhd8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmBx1L3f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C85226E711;
-	Fri, 19 Sep 2025 19:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB8D27511E;
+	Fri, 19 Sep 2025 19:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758309583; cv=none; b=jkcakOP1XQPKZEnKc8yWoLUGH8RaaRqiVtk14LIEx5d3OgPXY9SXMcUFSHTP0365LZbf/hTpCwOQuAP/EzI6ubaLir5dNc8aLkJfPN6DPWf94JAsSOU2/uUkjUzrlWUd7dS5xikXCYAm3vinF7W4c1EwKDVT9pQfFvQ5I9vdFmg=
+	t=1758309710; cv=none; b=m7h4XrciqE8rFGSKobS9/NpiwP1mfjfcUUP0P5siNIKbXnwWKc9GDf5vOGwzGh2rtaoZARZm/GdLpRvslG1I5lj7buKmscbOzFlQuJNyTGSiAVNOojo/1zk9Jp/pxyvuT+O/LqykShdCk99CpOwNXMASj8ErpyLqqTBDCtcPBBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758309583; c=relaxed/simple;
-	bh=RIu4F7qAgYmGH6tNvm+4CzefUV0zH2vjCBJ8h0ToUAo=;
+	s=arc-20240116; t=1758309710; c=relaxed/simple;
+	bh=tvrdwVbBASlH/KuZoVbAmvS3Odq/Ure2qLJP6zfXhQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cxaxpf4BTVTvDBtSHqZKmOaQQHxJDlVto4F3Bt42GeZkI+jNe5oFf4+b6/rujJjhXnlD5Iwsl/oh+996qtzVnheaW2Wr2TsZWTNiaZdYbXEz1rle/7oGPYaqiwJBVX0XopzYR/KAF3/U3PuqYjQHzFRrOdR/ljMksblg8ZsEB3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2GtAhd8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 083E6C4CEF0;
-	Fri, 19 Sep 2025 19:19:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQVikd9o46QhsQEMrgUt5BxEQg16hELCzJsfZYy7nPPcSbuu0z+/ZEcnkOd+ZFgFUfJrGQhg8F2Is86bOqJsvyRbUeQxOJdORQa3dkJPb7T57j6B9BgQ3nJBrRJjpxNc6bbFAQNZvgdMZX6taEkH3OvtNekhK7Yh6v/NE2TNfRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmBx1L3f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68671C4CEF0;
+	Fri, 19 Sep 2025 19:21:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758309583;
-	bh=RIu4F7qAgYmGH6tNvm+4CzefUV0zH2vjCBJ8h0ToUAo=;
+	s=k20201202; t=1758309710;
+	bh=tvrdwVbBASlH/KuZoVbAmvS3Odq/Ure2qLJP6zfXhQ4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i2GtAhd8bUf2jG0nPz6QS+Fnc1JDbjL0PYpNDaajz77TqZvhRvhLX375Esu4LPoIX
-	 Zic8Xef1180RGF6uIFCGGIBllcoVDHNazkwmTXJj4H+EJY6pce8JBGtyF16UFy4p1p
-	 dLJVg5VGwtDQyOaMXxRLBLjj4cPHxQfG6v42OKABqtovOAYnhm1nSGR2G6YmQm/w60
-	 on+yLOj2bqnr/s4CLiAKCfaPDP9nLLXlJfhAD51wCvIGpC8GhNNQlYm4uT7Q0F/7An
-	 VT+NF2S7AL9sj63auOqbZ1DET9Bq3OB+Hf2NyaclfqbTydCsXoTef/O7uHV5+bwSRO
-	 F6oKvMERskMBw==
-Date: Fri, 19 Sep 2025 12:19:42 -0700
-From: Kees Cook <kees@kernel.org>
-To: Ethan Graham <ethan.w.s.graham@gmail.com>
-Cc: ethangraham@google.com, glider@google.com, andreyknvl@gmail.com,
-	andy@kernel.org, brauner@kernel.org, brendan.higgins@linux.dev,
-	davem@davemloft.net, davidgow@google.com, dhowells@redhat.com,
-	dvyukov@google.com, elver@google.com, herbert@gondor.apana.org.au,
-	ignat@cloudflare.com, jack@suse.cz, jannh@google.com,
-	johannes@sipsolutions.net, kasan-dev@googlegroups.com,
-	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de,
-	rmoar@google.com, shuah@kernel.org, sj@kernel.org,
-	tarasmadan@google.com
-Subject: Re: [PATCH v2 09/10] fs/binfmt_script: add KFuzzTest target for
- load_script
-Message-ID: <202509191208.D2BCFD366F@keescook>
-References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com>
- <20250919145750.3448393-10-ethan.w.s.graham@gmail.com>
+	b=EmBx1L3fMIMaV+eE/PiDD5MrEa/K0WO8lQZtQYTN8fOFtDgX9B2L+pf5ttNXOE/Dm
+	 wzVMWoCWRu1cZ/mOPDXSnHT2k9mJ9dFK6cZPxonpjx/FwVZ6VLQhXGbc5P6FfLdrIh
+	 6y1p0XwXZ2kSdw6RfrwBFkpmkFny5dhxc7/sDXxsEPcvf2wCO7Dq8nLJ5U9kD5WefR
+	 tgIpDYNJjhv+UNA/pW8UNXobYYIPLbmFkYI4RWMCoUNUd9yto6Joj5tzmiyDBB6PhY
+	 0WCKs5bon0UyD3HONbJNpp56T1l86OF17Ckp0GexgoRs65QS8XY3pWDBvHDGYUSfuJ
+	 DpkypqvgL/S/A==
+Date: Fri, 19 Sep 2025 16:21:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dapeng Mi <dapeng1.mi@intel.com>, Kevin Tian <kevin.tian@intel.com>
+Subject: Re: [Patch v3 5/6] perf tools kvm: Use "cycles" to sample guest for
+ "kvm record" on Intel
+Message-ID: <aM2tSh6RGo2hB-XM@x1>
+References: <20250919021659.1263351-1-dapeng1.mi@linux.intel.com>
+ <20250919021659.1263351-6-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,149 +63,173 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250919145750.3448393-10-ethan.w.s.graham@gmail.com>
+In-Reply-To: <20250919021659.1263351-6-dapeng1.mi@linux.intel.com>
 
-On Fri, Sep 19, 2025 at 02:57:49PM +0000, Ethan Graham wrote:
-> From: Ethan Graham <ethangraham@google.com>
+On Fri, Sep 19, 2025 at 10:16:58AM +0800, Dapeng Mi wrote:
+> After KVM supports PEBS for guest on Intel platforms
+> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+
+So this isn't something selectable, i.e. with the patch above there is
+no way to disable precise samples on the guest and instead allow the
+host to use perf kvm with cycles:P to have a more precise view of guest
+samples?
+
+I.e. wouldn't it be better to make cycles:P be accepted and since it
+fails, it drops precise_ip to zero as its the "most precise" it can use
+on the host when the guest is "hoarding"/using PEBS?
+
+> host loses the capability to sample guest with PEBS since all PEBS related
+> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+> fails to sample guest on Intel platforms since "cycles:P" event is used to
+> sample guest by default as below case shows.
+
+Or it is even worse than I thought, the host _can_ ask for cycles:P, get
+it but then _when the guest_ vm-entries and while it is running, the
+host doesn't have access to it?
+
+Isn't there any programmatic way for the host to know if the guest is
+with PEBS and thus make cycles:P turn into plain "cycles"?
+
+- Arnaldo
+
+> sudo perf kvm record -a
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
 > 
-> Add a KFuzzTest target for the load_script function to serve as a
-> real-world example of the framework's usage.
+> So to ensure guest record can be sampled successfully, use "cycles"
+> instead of "cycles:P" to sample guest record by default on Intel
+> platforms. With this patch, the guest record can be sampled
+> successfully.
+
+but unconditionally not having access to PEBS :-\
+
+- Arnaldo
+ 
+> sudo perf kvm record -a
+> ^C[ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
 > 
-> The load_script function is responsible for parsing the shebang line
-> (`#!`) of script files. This makes it an excellent candidate for
-> KFuzzTest, as it involves parsing user-controlled data within the
-> binary loading path, which is not directly exposed as a system call.
-> 
-> The provided fuzz target in fs/tests/binfmt_script_kfuzz.c illustrates
-> how to fuzz a function that requires more involved setup - here, we only
-> let the fuzzer generate input for the `buf` field of struct linux_bprm,
-> and manually set the other fields with sensible values inside of the
-> FUZZ_TEST body.
-> 
-> To demonstrate the effectiveness of the fuzz target, a buffer overflow
-> bug was injected in the load_script function like so:
-> 
-> - buf_end = bprm->buf + sizeof(bprm->buf) - 1;
-> + buf_end = bprm->buf + sizeof(bprm->buf) + 1;
-> 
-> Which was caught in around 40 seconds by syzkaller simultaneously
-> fuzzing four other targets, a realistic use case where targets are
-> continuously fuzzed. It also requires that the fuzzer be smart enough to
-> generate an input starting with `#!`.
-> 
-> While this bug is shallow, the fact that the bug is caught quickly and
-> with minimal additional code can potentially be a source of confidence
-> when modifying existing implementations or writing new functions.
-> 
-> Signed-off-by: Ethan Graham <ethangraham@google.com>
-> 
+> Reported-by: Kevin Tian <kevin.tian@intel.com>
+> Fixes: cf8e55fe50df ("KVM: x86/pmu: Expose CPUIDs feature bits PDCM, DS, DTES64")
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 > ---
-> PR v2:
-> - Introduce cleanup logic in the load_script fuzz target.
-> ---
-> ---
->  fs/binfmt_script.c             |  8 +++++
->  fs/tests/binfmt_script_kfuzz.c | 58 ++++++++++++++++++++++++++++++++++
->  2 files changed, 66 insertions(+)
->  create mode 100644 fs/tests/binfmt_script_kfuzz.c
+>  tools/perf/arch/x86/util/kvm-stat.c | 51 +++++++++++++++++++++++++++++
+>  tools/perf/builtin-kvm.c            | 10 ------
+>  tools/perf/util/kvm-stat.h          | 10 ++++++
+>  3 files changed, 61 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-> index 637daf6e4d45..c09f224d6d7e 100644
-> --- a/fs/binfmt_script.c
-> +++ b/fs/binfmt_script.c
-> @@ -157,3 +157,11 @@ core_initcall(init_script_binfmt);
->  module_exit(exit_script_binfmt);
->  MODULE_DESCRIPTION("Kernel support for scripts starting with #!");
->  MODULE_LICENSE("GPL");
+> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+> index 424716518b75..bff36f9345ea 100644
+> --- a/tools/perf/arch/x86/util/kvm-stat.c
+> +++ b/tools/perf/arch/x86/util/kvm-stat.c
+> @@ -3,9 +3,11 @@
+>  #include <string.h>
+>  #include "../../../util/kvm-stat.h"
+>  #include "../../../util/evsel.h"
+> +#include "../../../util/env.h"
+>  #include <asm/svm.h>
+>  #include <asm/vmx.h>
+>  #include <asm/kvm.h>
+> +#include <subcmd/parse-options.h>
+>  
+>  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
+>  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
+> @@ -211,3 +213,52 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+>  
+>  	return 0;
+>  }
 > +
 > +/*
-> + * When CONFIG_KFUZZTEST is enabled, we include this _kfuzz.c file to ensure
-> + * that KFuzzTest targets are built.
-> + */
-> +#ifdef CONFIG_KFUZZTEST
-> +#include "tests/binfmt_script_kfuzz.c"
-> +#endif /* CONFIG_KFUZZTEST */
-> diff --git a/fs/tests/binfmt_script_kfuzz.c b/fs/tests/binfmt_script_kfuzz.c
-> new file mode 100644
-> index 000000000000..26397a465270
-> --- /dev/null
-> +++ b/fs/tests/binfmt_script_kfuzz.c
-> @@ -0,0 +1,58 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * binfmt_script loader KFuzzTest target
+> + * After KVM supports PEBS for guest on Intel platforms
+> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+> + * host loses the capability to sample guest with PEBS since all PEBS related
+> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
+> + * sample guest by default.
 > + *
-> + * Copyright 2025 Google LLC
+> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
+> + * by default to sample guest on Intel platforms.
 > + */
-> +#include <linux/binfmts.h>
-> +#include <linux/kfuzztest.h>
-> +#include <linux/slab.h>
-> +#include <linux/sched/mm.h>
-> +
-> +struct load_script_arg {
-> +	char buf[BINPRM_BUF_SIZE];
-> +};
-> +
-> +FUZZ_TEST(test_load_script, struct load_script_arg)
+> +int kvm_add_default_arch_event(int *argc, const char **argv)
 > +{
-> +	struct linux_binprm bprm = {};
-> +	char *arg_page;
+> +	const char **tmp;
+> +	bool event = false;
+> +	int ret = 0, i, j = *argc;
 > +
-> +	arg_page = (char *)get_zeroed_page(GFP_KERNEL);
-> +	if (!arg_page)
-> +		return;
+> +	const struct option event_options[] = {
+> +		OPT_BOOLEAN('e', "event", &event, NULL),
+> +		OPT_BOOLEAN(0, "pfm-events", &event, NULL),
+> +		OPT_END()
+> +	};
 > +
-> +	memcpy(bprm.buf, arg->buf, sizeof(bprm.buf));
-> +	/*
-> +	 * `load_script` calls remove_arg_zero, which expects argc != 0. A
-> +	 * static value of 1 is sufficient for fuzzing.
-> +	 */
-> +	bprm.argc = 1;
-> +	bprm.p = (unsigned long)arg_page + PAGE_SIZE;
-> +	bprm.filename = kstrdup("fuzz_script", GFP_KERNEL);
-> +	if (!bprm.filename)
-> +		goto cleanup;
-> +	bprm.interp = kstrdup(bprm.filename, GFP_KERNEL);
-> +	if (!bprm.interp)
-> +		goto cleanup;
+> +	if (!x86__is_intel_cpu())
+> +		return 0;
 > +
-> +	bprm.mm = mm_alloc();
-> +	if (!bprm.mm)
-> +		goto cleanup;
+> +	tmp = calloc(j + 1, sizeof(char *));
+> +	if (!tmp)
+> +		return -ENOMEM;
 > +
-> +	/*
-> +	 * Call the target function. We expect it to fail and return an error
-> +	 * (e.g., at open_exec), which is fine. The goal is to survive the
-> +	 * initial parsing logic without crashing.
-> +	 */
-> +	load_script(&bprm);
+> +	for (i = 0; i < j; i++)
+> +		tmp[i] = argv[i];
 > +
-> +cleanup:
-> +	if (bprm.mm)
-> +		mmput(bprm.mm);
-> +	if (bprm.interp)
-> +		kfree(bprm.interp);
-> +	if (bprm.filename)
-> +		kfree(bprm.filename);
-> +	free_page((unsigned long)arg_page);
+> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
+> +	if (!event) {
+> +		argv[j++] = STRDUP_FAIL_EXIT("-e");
+> +		argv[j++] = STRDUP_FAIL_EXIT("cycles");
+> +		*argc += 2;
+> +	}
+> +
+> +	free(tmp);
+> +	return 0;
+> +
+> +EXIT:
+> +	free(tmp);
+> +	return ret;
 > +}
-
-Yay fuzzing hooks! I'm excited about this series overall, but I'm not
-a fan of this "manual" init/clean up of bprm.
-
-If you're going to set up a bprm that passes through load_script(), it
-needs to be both prepared correctly (alloc_bprm) and cleaned up correctly
-(free_bprm). Otherwise, you may be fuzzing impossible states created by
-the fuzztest setup. And having a second init/cleanup path in here makes
-future refactoring work more of a burden/fragile.
-
-But this is also kind of not a great example of fuzztest utility because
-load_script _is_ actually directly accessible from syscalls: it is trivial
-to externally fuzz load_script by just writing the buffer to a file and
-execve'ing it. :)
-
--Kees
-
--- 
-Kees Cook
+> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+> index d297a7b2c088..c0d62add4996 100644
+> --- a/tools/perf/builtin-kvm.c
+> +++ b/tools/perf/builtin-kvm.c
+> @@ -1636,16 +1636,6 @@ static int kvm_events_report_vcpu(struct perf_kvm_stat *kvm)
+>  	return ret;
+>  }
+>  
+> -#define STRDUP_FAIL_EXIT(s)		\
+> -	({	char *_p;		\
+> -		_p = strdup(s);		\
+> -		if (!_p) {		\
+> -			ret = -ENOMEM;	\
+> -			goto EXIT;	\
+> -		}			\
+> -		_p;			\
+> -	})
+> -
+>  int __weak setup_kvm_events_tp(struct perf_kvm_stat *kvm __maybe_unused)
+>  {
+>  	return 0;
+> diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
+> index 4249542544bb..53db3d56108b 100644
+> --- a/tools/perf/util/kvm-stat.h
+> +++ b/tools/perf/util/kvm-stat.h
+> @@ -190,5 +190,15 @@ static inline struct kvm_info *kvm_info__new(void)
+>  #define kvm_info__zput(ki) do { } while (0)
+>  #endif /* HAVE_KVM_STAT_SUPPORT */
+>  
+> +#define STRDUP_FAIL_EXIT(s)		\
+> +	({	char *_p;		\
+> +		_p = strdup(s);		\
+> +		if (!_p) {		\
+> +			ret = -ENOMEM;	\
+> +			goto EXIT;	\
+> +		}			\
+> +		_p;			\
+> +	})
+> +
+>  extern int kvm_add_default_arch_event(int *argc, const char **argv);
+>  #endif /* __PERF_KVM_STAT_H */
+> -- 
+> 2.34.1
 
