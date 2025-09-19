@@ -1,171 +1,133 @@
-Return-Path: <linux-kernel+bounces-825326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71727B8B8DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:47:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E55B8B8F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF341CC3AD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:48:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB5F64E2437
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F052DEA95;
-	Fri, 19 Sep 2025 22:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0302DFF19;
+	Fri, 19 Sep 2025 22:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MgFAMbo6"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9522D5953;
-	Fri, 19 Sep 2025 22:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpNU1SxH"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2590D2D6604
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321427; cv=none; b=Y9q3BL6WEckEyk6TBW0D+ULytCjjDWdXIX00xXz8u3brVUTCNKfYfva/a6rLuqypXU9jvZOPjukNyPAQxXOuSNe2iNK0yCIU4NFoCSpOIUx+Y551dNzca9owJGsKXfX9Im3X/ghvXu+ef/g5nRuoMK0httfJ4APjygLdiaxugbQ=
+	t=1758321492; cv=none; b=FMvVyg1LfmO+Cd8jfG8VRKuXLTEdmCBPyJgScHxpGpmD1cSXqA5w21haUzHIwEp9BEboevfwO36WS+5iI3eaJElZscNLopI8/uJDC1bhRn1F5vqP6DTjuGQ/pA6Qm6sxELEFR4d1tL67wrpUViXvI6EndCvrVYHHFU8bH6t1oxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321427; c=relaxed/simple;
-	bh=l0hQwWQjuMnkhbLnGu2CBoE/HRzDlx18idwSYypTxLI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Su/5UzC0xQLn0IvNlEI2hthnH8ENWWw4t/9tu+JixPyjJqhIKDnOSW7ImeQjt3AuWTusV3/WYrx5XWhMkynXO3AxvnD4RTaaAk9nB2qvAxvqcOko4biibwqy6diT78/uaLy5bvuX1CEFUh8khAxGQ0vCTbyZxxlM+CSURkf49cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MgFAMbo6; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.193.225] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A98572018E60;
-	Fri, 19 Sep 2025 15:37:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A98572018E60
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758321424;
-	bh=Xw/A6yOKSQHfupdUFT86rCIsXwAoxcjBF3Ul3P45H1c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MgFAMbo6e1CQ+Kc/NFBnYoKJTNoxGu24b4lCj+5le30z6/5DL4c69TDQzkOisQeFX
-	 7kWUNsTT2YLMiVCkednx1QHPEZnb1fjmyjSfb4YFm3r8UGXCxNAMpTtAx5tTaz+FpD
-	 ThV8mL8OWBFzCIdzBLPTgdjbco9klSAsg/2elRcc=
-Message-ID: <8d6c6f95-7ccd-4471-a391-39a45f95af04@linux.microsoft.com>
-Date: Fri, 19 Sep 2025 15:37:03 -0700
+	s=arc-20240116; t=1758321492; c=relaxed/simple;
+	bh=1QDuwK6JmCs3mQmCp7IrqlLAjWOOFGEICh6QKC1G0Xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dlKxbBkzWgtr8UBq7h+eItgwC8IPwVykIceN5e/eux/X06D+HeqcfIpOf8Ge9zPTB+CyuMOPPjxf76YCcPS/94VXFAhRwtxAzKFuv7eV0oBlu9rM8+7yr7K2AKquLVws79z+yzZSqGpL99BD8EoMHBD6RXv3AcpL5Am23LSM3Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VpNU1SxH; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5515eaefceso1476005a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:38:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758321490; x=1758926290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fwMdv+p19BGi7esfYOG2GhYtNoTlMjkcb80apKjxE8M=;
+        b=VpNU1SxHpu+eFxeyFow1pdCBSvXPPckHzlBkpLfYY12XjLxazMH7hYUZUJYrejH1o7
+         lpaY+d2FpMZWDGb6OP57OUjm18iu7lkvOhvp7psYfU7a1U1T/noMQY7VMKGLlVmx7ei7
+         MZxpoi94vtoArZdl8McxgzAHhypVeiQF2Gkxf1I8mjjYVGo3t0gKtcraaq48WSyVJw00
+         q+E+BKwSvmRMJBIr7qgwMz7LBW+S/Gg4o1doy+RfMGYA353nRmMxZDLf/Le0XveKOOQF
+         uMlHxnUyrdRYrNak/UNZTG6hFDgkLhRhU4FLpbgWvL1F39EmoI69nduLNMDNISPmW0aF
+         YvJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758321490; x=1758926290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fwMdv+p19BGi7esfYOG2GhYtNoTlMjkcb80apKjxE8M=;
+        b=MQn9BfAz6NAVBPq4o6jRCgO5kcTeqlxSFv3Hc9jA28TVhcLWGJ7n9jTHruXMEe3Aol
+         aheNLw5UA8mVfrJJWkKTPS1rmwMbFhxIkQmnZJWo6f6TwJtTHjIzIgS7unUZiW+ViGJ9
+         0GEQ/qUbAFsTDd5seovI3PpviwRuT9BdJJVy0rqGGXltbWCLvsjwiT5qsuDn37VAixDw
+         YTi4K4NURkqqNzbY97YvVQFsnCEHkSQ6Fv3FcfuNujS8pjboImA6Qy2fBe1Sykqjf13Z
+         ZRnVg7pCTrSmhU01m2gbPfjOZx0m7zchmI5FaG/vQD2GG/cymoDyxyn50Q9jkpDRdnIC
+         eUNg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/LQQvR4wk/SL2/XQUXhHHkaDimkxW5pOIpNBNmydZBZDZNWQqr8XM73hW6tV5eSclKkZIMgnZdfOU4E0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNcqD4DQFDhjR1NAG0TdJ71P5dhzdXSq2ixE+V899qw/fejFtD
+	PRC5lGb9WUuKI6y3B+9vKWXO/abYK+/XTkEc4Leo1x7tTQDi8he7RGg2neFwCcIfE96kULQ/JVy
+	BZZAutdNzuk6Qh8LK38nHRaS4YFHnFs0=
+X-Gm-Gg: ASbGncsj8sOvl0pvALmn8TjDQDqOUjudxx1lPu9TZegxi9Bz6yELOS4NJRTOAwfgQBW
+	oDPzgL8kpYvlS+IEvFvTszWAslvm3zY8YUJvI8ryrkeK87oWzxilklGd4GQvH+DD0VwXhPl8Po2
+	iiFejJNsbW1KMif5dJC5dwUnzhMmMK0JUO2bDXcbCUhOSrMaBjgaQi/7FhZhI64c3IuWPxRd4rN
+	SId0i+V5MHf2myyWwCoyNE=
+X-Google-Smtp-Source: AGHT+IG5geaR0OTD/awjdGs5/vlEzVQFwf3QVLO4VifwvhZLe07HajKCLeG+iAVevYXk6ErhK7TN/q52Y2EL8n/fzcs=
+X-Received: by 2002:a17:902:ccd1:b0:264:8a8d:92e8 with SMTP id
+ d9443c01a7336-269ba5782a1mr68547505ad.59.1758321490463; Fri, 19 Sep 2025
+ 15:38:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] mshv: Get the vmm capabilities offered by the
- hypervisor
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
- tiala@microsoft.com, anirudh@anirudhrb.com,
- paekkaladevi@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com
-References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1758066262-15477-4-git-send-email-nunodasneves@linux.microsoft.com>
- <aMxUe7WLzMXJY16c@skinsburskii.localdomain>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <aMxUe7WLzMXJY16c@skinsburskii.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250919034816.1287280-1-chen.dylane@linux.dev> <20250919034816.1287280-2-chen.dylane@linux.dev>
+In-Reply-To: <20250919034816.1287280-2-chen.dylane@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 19 Sep 2025 15:37:55 -0700
+X-Gm-Features: AS18NWB691QlcmBJKikgcgx1RsqS2VESdVs2gFgHpIjJauaKsboNjsk2CHaQDRk
+Message-ID: <CAEf4BzbmTK9HtR0RwY30bPa1oObALv_prfZJ2sZq3eZku6pTzw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 2/2] bpftool: Fix UAF in get_delegate_value
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/18/2025 11:50 AM, Stanislav Kinsburskii wrote:
-> On Tue, Sep 16, 2025 at 04:44:20PM -0700, Nuno Das Neves wrote:
->> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
->>
->> Some hypervisor APIs are gated by feature bits in the
->> "vmm capabilities" partition property. Store the capabilities on
->> mshv_root module init, using HVCALL_GET_PARTITION_PROPERTY_EX.
->>
->> This is not supported on all hypervisors. In that case, just set the
->> capabilities to 0 and proceed as normal.
->>
->> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
->> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
->> Reviewed-by: Tianyu Lan <tiala@microsoft.com>
->> ---
->>  drivers/hv/mshv_root.h      |  1 +
->>  drivers/hv/mshv_root_main.c | 22 ++++++++++++++++++++++
->>  2 files changed, 23 insertions(+)
->>
->> diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
->> index 4aeb03bea6b6..0cb1e2589fe1 100644
->> --- a/drivers/hv/mshv_root.h
->> +++ b/drivers/hv/mshv_root.h
->> @@ -178,6 +178,7 @@ struct mshv_root {
->>  	struct hv_synic_pages __percpu *synic_pages;
->>  	spinlock_t pt_ht_lock;
->>  	DECLARE_HASHTABLE(pt_htable, MSHV_PARTITIONS_HASH_BITS);
->> +	struct hv_partition_property_vmm_capabilities vmm_caps;
->>  };
->>  
->>  /*
->> diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
->> index 24df47726363..f7738cefbdf3 100644
->> --- a/drivers/hv/mshv_root_main.c
->> +++ b/drivers/hv/mshv_root_main.c
->> @@ -2201,6 +2201,26 @@ static int __init mshv_root_partition_init(struct device *dev)
->>  	return err;
->>  }
->>  
->> +static void mshv_init_vmm_caps(struct device *dev)
->> +{
->> +	int ret;
-> 
-> nit: this is void function so ret looks redundant.
-> 
+On Thu, Sep 18, 2025 at 8:48=E2=80=AFPM Tao Chen <chen.dylane@linux.dev> wr=
+ote:
+>
+> The return value ret pointer is pointing opts_copy, but opts_copy
+> gets freed in get_delegate_value before return, fix this by free
+> the mntent->mnt_opts strdup memory after show delegate value.
+>
+> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+> ---
+>  tools/bpf/bpftool/token.c | 90 ++++++++++++++++-----------------------
+>  1 file changed, 37 insertions(+), 53 deletions(-)
+>
+> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
+> index 82b829e44c8..2bbec4c98f2 100644
+> --- a/tools/bpf/bpftool/token.c
+> +++ b/tools/bpf/bpftool/token.c
+> @@ -20,6 +20,16 @@
+>
+>  #define MOUNTS_FILE "/proc/mounts"
+>
+> +struct {
 
-True, it's not needed.
+this should have been static, fixed up when applying
 
->> +
->> +	memset(&mshv_root.vmm_caps, 0, sizeof(mshv_root.vmm_caps));
-> 
-> Zeroying is redundant as mshv_root is a statci variable.
-> 
 
-Good point.
+> +       const char *header;
+> +       const char *key;
+> +} sets[] =3D {
+> +       {"allowed_cmds", "delegate_cmds"},
+> +       {"allowed_maps", "delegate_maps"},
+> +       {"allowed_progs", "delegate_progs"},
+> +       {"allowed_attachs", "delegate_attachs"},
+> +};
+> +
+>  static bool has_delegate_options(const char *mnt_ops)
+>  {
+>         return strstr(mnt_ops, "delegate_cmds") ||
 
->> +	ret = hv_call_get_partition_property_ex(HV_PARTITION_ID_SELF,
->> +						HV_PARTITION_PROPERTY_VMM_CAPABILITIES,
->> +						0, &mshv_root.vmm_caps,
-> 
-> Also, we align "slow" hypercalls by PAGE_SIZE. Why is it fine to not do
-> it here?
-> 
-
-I guess you're referring to the output argument of the hypercall?
-
-Check the previous patch to see how hv_call_get_partition_property_ex()
-is implemented. It uses the per-cpu input/output args as normal, which
-are HV_HYP_PAGE_SIZE in size, and page-aligned.
-
-> Thanks,
-> Stanislav
-> 
->> +						sizeof(mshv_root.vmm_caps));
->> +
->> +	/*
->> +	 * HVCALL_GET_PARTITION_PROPERTY_EX or HV_PARTITION_PROPERTY_VMM_CAPABILITIES
->> +	 * may not be supported. Leave them as 0 in that case.
->> +	 */
->> +	if (ret)
->> +		dev_warn(dev, "Unable to get VMM capabilities\n");
->> +
->> +	dev_dbg(dev, "vmm_caps=0x%llx\n", mshv_root.vmm_caps.as_uint64[0]);
->> +}
->> +
->>  static int __init mshv_parent_partition_init(void)
->>  {
->>  	int ret;
->> @@ -2253,6 +2273,8 @@ static int __init mshv_parent_partition_init(void)
->>  	if (ret)
->>  		goto remove_cpu_state;
->>  
->> +	mshv_init_vmm_caps(dev);
->> +
->>  	ret = mshv_irqfd_wq_init();
->>  	if (ret)
->>  		goto exit_partition;
->> -- 
->> 2.34.1
->>
-
+[...]
 
