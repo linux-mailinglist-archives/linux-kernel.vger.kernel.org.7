@@ -1,231 +1,202 @@
-Return-Path: <linux-kernel+bounces-824551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7302B89880
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:48:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB91B8988C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F45A1744
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:48:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C63B87AC3CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E012192F5;
-	Fri, 19 Sep 2025 12:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93471F473A;
+	Fri, 19 Sep 2025 12:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y/UF8xXE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="S7iKHHi3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xaPwq3kP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zMw0MRkS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pKb0WE2p"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D43218AAD
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116C41C84CB
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758286072; cv=none; b=eTXYSLZwcGhLvlMyfA83QEnn2Qj5gxGgsUF2YW09QouK6tniK7kidj57xH4dXyJIwJa3JEcVSfisQrXsV8W81ZS15V0IUxmsgeJB8p78ulPklVN7JqJx4AcIboSypOFtxz07uqHcp1iwK5HHTmAQsZ+xw8mQNEfOt1ILvFHoeoM=
+	t=1758286117; cv=none; b=MxDQsxHtm6ye7KS+GXJUQTynExthfxnUldK8xlqhZqd6dhk/I6mpc3xFaZ2/3DuYwOdbbcGKmTMGWJf7UtUJVW7kI8PS1PYsZXSLgF3duU+f2gksu1NK7I0A++k7MUFE40dITCsYJTikmQB4uLRkbzaMQbn0ZvbCXyeKOag4f9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758286072; c=relaxed/simple;
-	bh=iNxcvG6B7+iDbjP3eeNJDrtINQljCA+BpTp4TS4X6DU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A9uJlDybrIROqcHGDmgU8b+ZCpzECo6m3Y0hesrm4gWWmzwiCVQ1Z7QomYO8SVAE9R2HDbFFvp5qOkkb/EnwE/0VH2zPmvGeLaj36jIHe5IS+IwH3Ltd7ez4mIixHuuIwgOiJZuTqXzzZTM6Ltvk4vKy1E7X84tlrzmPfXWQsQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y/UF8xXE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=S7iKHHi3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xaPwq3kP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zMw0MRkS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 180AB1F7D9;
-	Fri, 19 Sep 2025 12:47:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758286063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
-	b=Y/UF8xXETeEW83Q/DgOSsD4SL6rV31h793/tzfWVyU+8wIRjIESz27y4H2iawXnRsfNGwL
-	1QDvv3o+juw69LEPQuwz68RG0AgAbohGtTmybiMU5rBE/WlZkwSZf/Oe73360lwEUGYk0P
-	lRF5jUtMAN90UZFppKhVlclxGi2o4p0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758286063;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
-	b=S7iKHHi3fvDdgUJqgQ03ZxOCsEHB0mF053q7Xdg90YwAmpCWSkl0EuWfr2IQddu9qe7mTd
-	vEmLUIjvWiMViVDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758286062; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
-	b=xaPwq3kPsMCYqrbS0e8aGYzqdDFV4lykmBS3wI4Pl0eZhMo8EHtNpkvq3ZJPKzHpOdmyMr
-	iVWiOWfWF2fDj0M8QVkBeUxiZlfHMTrgudG9hRfiYe3CwS/Vn6Gk9j1srycw2bWMjxOzhY
-	1KEQfZSIXiyB/xbLDdeA+HD8OqG3eCA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758286062;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBiZKKxnPHMmQmNm1unV7jDvvhBaThzW9jKejI52qTw=;
-	b=zMw0MRkS572Pe/PFWODVhBKpHki+CvqRQE2P7Whd8ihEjdM9ZTurjMPknIijvBTQQxRrI7
-	8zRnJXXcL7/IySAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 648DE13A78;
-	Fri, 19 Sep 2025 12:47:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qGfzFe1QzWgJAwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 12:47:41 +0000
-Date: Fri, 19 Sep 2025 14:47:40 +0200
-Message-ID: <87qzw28v83.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: cryolitia@uniontech.com
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	linux-sound@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Nie Cheng <niecheng1@uniontech.com>,
-	Zhan Jun <zhanjun@uniontech.com>,
-	Feng Yuan <fengyuan@uniontech.com>,
-	qaqland <anguoli@uniontech.com>,
-	kernel@uniontech.com,
-	linux-modules@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH v4 3/5] ALSA: usb-audio: improve module param quirk_flags
-In-Reply-To: <20250918-sound-v4-3-82cf8123d61c@uniontech.com>
-References: <20250918-sound-v4-0-82cf8123d61c@uniontech.com>
-	<20250918-sound-v4-3-82cf8123d61c@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758286117; c=relaxed/simple;
+	bh=BlehoObITLmTbYOZPiVcFtcMXP7paHKegC9WR6JleHw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tde9+tMtuOfNC4L8TrEQNP3OEWB7AoWbv0d9aAZ6BzVHfAwXSz9Woxnq/vFX16lgAQJcbUzgTzWGtMPhnfJsT6SV9Kz1U8BHzYZb5oCNZUHvSnT0WzE+w5dS8OU43667HUMpAK4Od4Lx7kqidNgSLMt4b+bk9ejNizjjZvP4ees=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pKb0WE2p; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 5D4844E40D0C;
+	Fri, 19 Sep 2025 12:48:33 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1CBAC606A8;
+	Fri, 19 Sep 2025 12:48:33 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 387DC102F17F6;
+	Fri, 19 Sep 2025 14:48:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758286110; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
+	bh=edgPX+ZMRVJRPce4J9xc4JzLXJtK189YyGXqaQRiUYM=;
+	b=pKb0WE2p9oZ+vyPQSrTFDsWToBhk1qI+JRFaAL2uYifaYBCiPYp5WW0jE2Ut87D1eU2Sl4
+	l3jNBhUv6Slqr5P8gIbv5fkhTGfGAu4Z/nBPM6GNOglhs6QtDsk855jKmHGt3pCjlFjtHC
+	BFA6D8N+FUvjsQwRcIIU/MmMEmXM54qN3dayg7O1OuCNWQQ+aFOUD8uoS/QD1/RpVVwTek
+	tGtfGN7hMLG+HlmUpY58mGNauTowpw9+LIF2oxqs9b09OmbLt/TBGvvjM3SoTXVqnJvBE1
+	P1cnfzlcIHk+l60Yol2+mqpqRtRZzpcKzlx6X4XrOnXYW0G13tDL+l63mvdkRA==
+Message-ID: <0f63d9e1-8ef6-4d1d-83dc-6666a256f81b@bootlin.com>
+Date: Fri, 19 Sep 2025 14:48:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,uniontech.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH RFC v2 18/20] drm/vkms: Prepare
+ pre_blend_color_transform() for post-blend pipelines
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>
+Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
+ harry.wentland@amd.com, leo.liu@amd.com, ville.syrjala@linux.intel.com,
+ pekka.paalanen@collabora.com, contact@emersion.fr, mwen@igalia.com,
+ jadahl@redhat.com, sebastian.wick@redhat.com, shashank.sharma@amd.com,
+ agoins@nvidia.com, joshua@froggi.es, mdaenzer@redhat.com, aleixpol@kde.org,
+ xaver.hugl@gmail.com, victoria@system76.com, uma.shankar@intel.com,
+ quic_naseer@quicinc.com, quic_cbraga@quicinc.com, quic_abhinavk@quicinc.com,
+ marcan@marcan.st, Liviu.Dudau@arm.com, sashamcintosh@google.com,
+ chaitanya.kumar.borah@intel.com, mcanal@igalia.com, kernel@collabora.com,
+ daniels@collabora.com, leandro.ribeiro@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Simona Vetter <simona.vetter@ffwll.ch>
+References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
+ <20250917-mtk-post-blend-color-pipeline-v2-18-ac4471b44758@collabora.com>
+Content-Language: en-US, fr
+Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
+ 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
+In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-18-ac4471b44758@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 18 Sep 2025 11:24:32 +0200,
-Cryolitia PukNgae via B4 Relay wrote:
+
+
+Le 18/09/2025 à 02:43, Nícolas F. R. A. Prado a écrit :
+> As a preparatory step for supporting post-blend color pipelines in VKMS,
+> rename pre_blend_color_transform() to color_transform() and make it take
+> the first colorop instead of a plane state, so it can be shared by both
+> pre- and post-blend color pipeline code paths.
 > 
-> From: Cryolitia PukNgae <cryolitia@uniontech.com>
-> 
-> For apply and unapply quirk flags more flexibly though param
-> 
-> Co-developed-by: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
 > ---
->  sound/usb/card.c     |   9 ++--
->  sound/usb/quirks.c   | 119 ++++++++++++++++++++++++++++++++++++++++++++++++++-
->  sound/usb/quirks.h   |   3 +-
->  sound/usb/usbaudio.h |   3 ++
->  4 files changed, 126 insertions(+), 8 deletions(-)
+>   drivers/gpu/drm/vkms/vkms_composer.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/sound/usb/card.c b/sound/usb/card.c
-> index 0265206a8e8cf31133e8463c98fe0497d8ace89e..5837677effa1787ef9d7d02714c3ae43b1a8bc79 100644
-> --- a/sound/usb/card.c
-> +++ b/sound/usb/card.c
-> @@ -73,8 +73,8 @@ static bool lowlatency = true;
->  static char *quirk_alias[SNDRV_CARDS];
->  static char *delayed_register[SNDRV_CARDS];
->  static bool implicit_fb[SNDRV_CARDS];
-> -static unsigned int quirk_flags[SNDRV_CARDS];
->  
-> +char *quirk_flags[SNDRV_CARDS];
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index 31b1dd3cd115d930ec3ed498403a8f44208d76c3..05e1551d6330e4dc14563d3a399b3544d11c6576 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -189,13 +189,13 @@ static void apply_colorop(struct pixel_argb_s32 *pixel, struct drm_colorop *colo
+>   	}
+>   }
+>   
+> -static void pre_blend_color_transform(const struct vkms_plane_state *plane_state,
+> -				      struct line_buffer *output_buffer)
+> +static void color_transform(struct drm_colorop *first_colorop,
+> +			    struct line_buffer *output_buffer)
+>   {
+>   	struct pixel_argb_s32 pixel;
+>   
+>   	for (size_t x = 0; x < output_buffer->n_pixels; x++) {
+> -		struct drm_colorop *colorop = plane_state->base.base.color_pipeline;
+> +		struct drm_colorop *colorop = first_colorop;
+>   
+>   		/*
+>   		 * Some operations, such as applying a BT709 encoding matrix,
+> @@ -449,7 +449,7 @@ static void blend_line(struct vkms_plane_state *current_plane, int y,
+>   	 */
+>   	current_plane->pixel_read_line(current_plane, src_x_start, src_y_start, direction,
+>   				       pixel_count, &stage_buffer->pixels[dst_x_start]);
+> -	pre_blend_color_transform(current_plane, stage_buffer);
+> +	color_transform(current_plane->base.base.color_pipeline, stage_buffer);
+>   	pre_mul_alpha_blend(stage_buffer, output_buffer,
+>   			    dst_x_start, pixel_count);
+>   }
+> 
 
-My preference is to keep this static, but pass the string value to a
-function.  That is, define snd_usb_init_quirk_flags() in main.c:
-
-static void snd_usb_init_quirk_flags(struct snd_usb_audio *chip, int indx)
-{
-	/* old style option found: the position-based integer value */
-	if (quirk_flags[idx] &&
-	    !kstrtou32(quirk_flags[idx], 0, &chip->quirk_flags)) {
-		usb_audio_dbg(chip,
-			      "Set quirk flags 0x%x from param based on position %d for device %04x:%04x\n",
-			      chip->quirk_flags, idx,
-			      USB_ID_VENDOR(chip->usb_id),
-			      USB_ID_PRODUCT(chip->usb_id));
-		return;
-	}
-
-	/* take the default quirk from the quirk table */
-	snd_usb_init_quirk_flags_table(chip);
-
-	/* add or correct quirk bits from options */
-	for (i = 0; i < ARRAY_SIZE(quirk_flags); i++) {
-		char *val __free(kfree) = NULL;
-
-		if (!quirk_flags[i] || !*quirk_flags[i])
-			continue;
-		
-		val = kstrdup(quirk_flags[i], GFP_KERNEL);
-		if (!val)
-			return;
-
-		snd_usb_parse_quirk_string(chip, val);
-	}
-}
-	
-static int snd_usb_audio_create(....)
-{
-	....
-	snd_usb_init_quirk_flags(chip, idx);
-	....
-}
-
-The function snd_usb_parse_quirk_string() is defined in quirks.c,
-
-void snd_usb_parse_quirk_string(struct snd_usb_audio *chip, char *val)
-{
-	for (p = val; p && *p;) {
-		/* Each entry consists of VID:PID:flags */
-		field = strsep(&p, ":");
-		if (!field)
-			break;
-		.....
-	}
-}
+-- 
+--
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
-thanks,
-
-Takashi
 
