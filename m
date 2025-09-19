@@ -1,98 +1,213 @@
-Return-Path: <linux-kernel+bounces-824053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5778EB88049
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:45:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F50B8804C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C013567020
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6808627C02
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D41A2BE7A7;
-	Fri, 19 Sep 2025 06:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41219288C39;
+	Fri, 19 Sep 2025 06:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dyBwHguv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v5YiIpPk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q4Mi42fy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="v5YiIpPk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q4Mi42fy"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F972BEFE5
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C162594BE
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758264303; cv=none; b=RZyIXDDDMasWsJBthTGFh5zjpQ6Rdy6Bsa5qYa0EZ8nnljggvC63LuaHMC4QoKbrkyQ0MXVRgQHsOz8TpvFL3IoWau/sVkwSsUhEE1pHgAS9vCUmiZGfz+WcmtvF33YxyDAZNqAr2DEnzoCH7Q/iIMBiNqinHXsUsdVqYZgS8Ks=
+	t=1758264371; cv=none; b=Bc8f+n3CpjYaLfsj2HKNesxeeoCl0xxxgAIPcme8qIz0rvbnYfqGfApbza9FeK2NzZZ/FD10DRtIJEvTM+eDHZr1tl5+3qdzmFt4668rpBHxjsiNyB0ik9BTCaFcYT14wLbCf959fzhP7IigHRgiQ+isyAJO5LrJk6dh1NRY8pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758264303; c=relaxed/simple;
-	bh=KIA8ppq75AqYjHD54M5PYbqoYphNBHtZ2oKI5v22ZqU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQQEf2FIiujve+4kSAQc//jImAPsTQ1V3LpjBKprZgYh3ifiiCR3uO/LyXCwq5hOB2RLtUNK63Q12epCkp32jPKEsnxpspKrtwC4JRxfmrQ/CJh0MnNZHqa+5mpbqLMt/qgt61QH4fa0ORImwbeeBLHrtVavGqEYdfn9SzIsMdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dyBwHguv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1524DC4CEF0;
-	Fri, 19 Sep 2025 06:44:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758264302;
-	bh=KIA8ppq75AqYjHD54M5PYbqoYphNBHtZ2oKI5v22ZqU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dyBwHguvoM78TJs5sViPOZnCVV/sDlfpQLmH69bIhmJYgrUl8I3ePjSfRE0WqZnAz
-	 lHHsWG2wmj7HyeEfMiV+Vkxmu3WmSpszgR/QQXraK2wbUTnOkPx/5+TOWq88S+JYTV
-	 bhs5XyPRVmuYr6pjVyo/PK3Zq/BcKsYw+GCqrqtVaWva5fzjkPdTQ+BLLW/6JkDVt4
-	 7y6hpuRWe370SOwrZEXHrZe9dZZ9rqN6D3OVdUSNyQq6JhmkJLLRThTYtEP3vNCzGp
-	 hHhuLUb5aV0OFGFXfMZR5sNU7QuZOnK1A5v4UylVhMTnI/HDtMV8sK8NNxvYcLMXIv
-	 bdSvkqQAh6d7Q==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/sched/tests: Remove relict of done_list
-Date: Fri, 19 Sep 2025 08:44:51 +0200
-Message-ID: <20250919064450.147176-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1758264371; c=relaxed/simple;
+	bh=b0tFMN7xdZoU6ysz3tpyFt+M7cNe+fIZ5K6eg0PYevU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c2B969WyNQxmKUR+1dPyW7bFEbS6occiLAPDz2teIp4ICuZMWiZwbijTDjStkZ9aIcweHAVR4wum6LOzl/0KfL2Eo8qnSbNAbYIfealsGAtfxd8zDxHNvEDy4qpsWdW0dKjr420B/OrP6jQJQfNipQ5ENRS6ZFRg+yiOeXpk2Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v5YiIpPk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q4Mi42fy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=v5YiIpPk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q4Mi42fy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1965F21FD2;
+	Fri, 19 Sep 2025 06:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758264366; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KDGGyeA/RK80z6sO+bdZ8MAsem2abesqIqZO0Jb7ekU=;
+	b=v5YiIpPkbl1xKSfBAShcQy3ID7av6mYdAQLTzaqMl3DOejnJyhAQaO6rHs/ESWsgZUEBpD
+	D7D5Kk1chPjet6+OYaD/apIDA21b75XczbgW2D6vuMpGvc3SFRopd87PZ2PjeYMlHoasxm
+	kk6rCkVyVF09OF856vUwxCoFIBkp+pU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758264366;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KDGGyeA/RK80z6sO+bdZ8MAsem2abesqIqZO0Jb7ekU=;
+	b=q4Mi42fy/iMPlMiNymx/6t6BuRBXU3WhsNOBW0rWZAbe6wEtZRKNDOY/b4nXCMmPeS2/lH
+	SHNIMVx0SPQVLzAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758264366; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KDGGyeA/RK80z6sO+bdZ8MAsem2abesqIqZO0Jb7ekU=;
+	b=v5YiIpPkbl1xKSfBAShcQy3ID7av6mYdAQLTzaqMl3DOejnJyhAQaO6rHs/ESWsgZUEBpD
+	D7D5Kk1chPjet6+OYaD/apIDA21b75XczbgW2D6vuMpGvc3SFRopd87PZ2PjeYMlHoasxm
+	kk6rCkVyVF09OF856vUwxCoFIBkp+pU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758264366;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KDGGyeA/RK80z6sO+bdZ8MAsem2abesqIqZO0Jb7ekU=;
+	b=q4Mi42fy/iMPlMiNymx/6t6BuRBXU3WhsNOBW0rWZAbe6wEtZRKNDOY/b4nXCMmPeS2/lH
+	SHNIMVx0SPQVLzAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA99813A39;
+	Fri, 19 Sep 2025 06:46:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EI8uOC38zGiGAgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 19 Sep 2025 06:46:05 +0000
+Message-ID: <e8121724-a436-47d5-af3a-a16f81cd0649@suse.cz>
+Date: Fri, 19 Sep 2025 08:46:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/show_mem: update printk/pr_info messages and replace
+ legacy printk(KERN_CONT ...) with pr_cont()
+To: Manish Kumar <manish1588@gmail.com>, akpm@linux-foundation.org
+Cc: surenb@google.com, mhocko@suse.com, jackmanb@google.com,
+ hannes@cmpxchg.org, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250918181403.93812-1-manish1588@gmail.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250918181403.93812-1-manish1588@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,linux-foundation.org];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-A rework of the scheduler unit tests removed the done_list. That list is
-still mentioned in the mock test header.
+Changelog should not be empty even for trivial patches.
 
-Remove that relict.
+On 9/18/25 20:14, Manish Kumar wrote:
+> Signed-off-by: Manish Kumar <manish1588@gmail.com>
 
-Fixes: 4576de9b7977 ("drm/sched/tests: Implement cancel_job() callback")
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/gpu/drm/scheduler/tests/sched_tests.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+This changes 2 of X in the file. Why only these 2? And no, I'm not
+encouraging to resend with a full file changes. We do these modernizations
+to new APIs only while changing the code for other reasons, not separately,
+if there's nothing wrong otherwise with the legacy api. The churn isn't
+worth it.
 
-diff --git a/drivers/gpu/drm/scheduler/tests/sched_tests.h b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-index 7f31d35780cc..553d45abd057 100644
---- a/drivers/gpu/drm/scheduler/tests/sched_tests.h
-+++ b/drivers/gpu/drm/scheduler/tests/sched_tests.h
-@@ -31,9 +31,8 @@
-  *
-  * @base: DRM scheduler base class
-  * @test: Backpointer to owning the kunit test case
-- * @lock: Lock to protect the simulated @hw_timeline, @job_list and @done_list
-+ * @lock: Lock to protect the simulated @hw_timeline and @job_list
-  * @job_list: List of jobs submitted to the mock GPU
-- * @done_list: List of jobs completed by the mock GPU
-  * @hw_timeline: Simulated hardware timeline has a @context, @next_seqno and
-  *		 @cur_seqno for implementing a struct dma_fence signaling the
-  *		 simulated job completion.
--- 
-2.49.0
+> ---
+>  mm/show_mem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/show_mem.c b/mm/show_mem.c
+> index 0cf8bf5d832d..798949d10ce1 100644
+> --- a/mm/show_mem.c
+> +++ b/mm/show_mem.c
+> @@ -26,7 +26,7 @@ unsigned long totalcma_pages __read_mostly;
+>  static inline void show_node(struct zone *zone)
+>  {
+>  	if (IS_ENABLED(CONFIG_NUMA))
+> -		printk("Node %d ", zone_to_nid(zone));
+> +		pr_info("Node %d ", zone_to_nid(zone));
+>  }
+>  
+>  long si_mem_available(void)
+> @@ -156,7 +156,7 @@ static void show_migration_types(unsigned char type)
+>  	}
+>  
+>  	*p = '\0';
+> -	printk(KERN_CONT "(%s) ", tmp);
+> +	pr_cont("(%s) ", tmp);
+>  }
+>  
+>  static bool node_has_managed_zones(pg_data_t *pgdat, int max_zone_idx)
 
 
