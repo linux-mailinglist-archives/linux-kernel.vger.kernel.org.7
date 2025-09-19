@@ -1,97 +1,208 @@
-Return-Path: <linux-kernel+bounces-825341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A807FB8B99F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7591FB8B9DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60D3EA05300
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3898C3A2E0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF092221FB1;
-	Fri, 19 Sep 2025 23:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5966E2D3745;
+	Fri, 19 Sep 2025 23:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyJSa5Yk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gvY/gl8s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDC22AD24
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1EA21ABC9;
+	Fri, 19 Sep 2025 23:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758323179; cv=none; b=KF1PPvSgDn7WbmFw/eTa4cglHx9noVzLtGOX7zCihjR8LbiZf9eVOSApgy6ZLoPG6nYZ2aev+gqmvCYo2fRWC56lJi9WfPWJhehaUe+SPyrCcrY6yh4hh+ns4klwY5uUbwJMsBIVMNiRCH3trxEh6QFugseAtKep0ovrcFigiPw=
+	t=1758323445; cv=none; b=KaK5iVG5zZVCIWeaPJ3lFLxOyldbGcxgDIcW8LvRcWaIWHZbX7qw7fTH2WeTLbO3S0FoHHeADNeGqMNna9FFCBbl8Y9yqeBUfkuszyOdzUXTm62zrE+n6DagUcEUyrD6rot7FXDN5uRaTH8IQWuUuBfJPyRqJNYMsXnf4jFPAJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758323179; c=relaxed/simple;
-	bh=SXKQM429Gul4wuugVn+b5LOXdKXoIRDss44wvRTpTno=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sIDmvxIq2Bame3wM8TLpq8vQ/flrLt/XBbmKdH1BeMImzQfCwh6AqwW55x66iNxejSNtBsGRb9sAQZe7YSHVR2+yKXiOCxaPo/qu4b6boGEX1QdS7PsReffb22xU2kkxqdzP6f5I1hoxVDYfUOzEnQ2FJtQudHAwDA6QCayMKuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyJSa5Yk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99A3DC2BC86
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758323178;
-	bh=SXKQM429Gul4wuugVn+b5LOXdKXoIRDss44wvRTpTno=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hyJSa5Ykk/esl79UdkOV+hUdnov1Nd8kxete2wH+Vcb7BiyPNHH7OjmxxldTNyXff
-	 dmddiZKahwOnfZwe2USbAGA94+qNbv1oJafzYWEOLtI5I0h9g6jMAoOQH3aP1imR1s
-	 aDhPCzVBz7CZCtYpfOyu3HkwqwY5r3Co3+8rvNXUERNmtoQlS7Y1ivoiLZ7Bg/EZkk
-	 KEZuh1ab9MTv446zzdNFtI/8PAmxikA88+tGSQ3UqIja2LtYWA6YRrD9ZKq1tobMid
-	 8QYqDn/Pfh0+91/N1DLsfNoJ0aLQ5EC8U3vnvzHz7efFxr14EEK6Cne3afRRZxuQwE
-	 4IXAYDIH/UlHw==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62fc0b7bf62so1957779a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:06:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqF2TMwGHY+rDQQdVNaOMQAYzBtImYEFtyp8q+Fmxu5HaVnAwVRHL2p2Z+bXQC2z/ZkUQ98rKjaUk9oJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0XQpkiSzVD2BFZNi9Af3YZBCac8Gz8n+nLzOvc4tFUqb3VjlX
-	XXHtB96dCFgKW4QamrVkg8D7Gn/zdH7GtY8tKM2yQxQ/Neh6Vhkw8EZhY9l+R4Ob/RY2NmmPpgg
-	1Vl1zzYODchSkYgORu2GvcarZAYU9zOQ=
-X-Google-Smtp-Source: AGHT+IEPyqD8Z/uIMR4y+FnBrXjdCn1SCouJbFidF3JwRW1s2eKnHCGY/aZJCC2e/Tj8N5brMU8zVowHw3mTY8x0rSk=
-X-Received: by 2002:a17:907:c0a:b0:b04:20c0:b1f9 with SMTP id
- a640c23a62f3a-b24f547fdc3mr488417266b.52.1758323176877; Fri, 19 Sep 2025
- 16:06:16 -0700 (PDT)
+	s=arc-20240116; t=1758323445; c=relaxed/simple;
+	bh=QwrDeSssU3xjd1R5pyvj2jC0q4WMlzrV2GqmzoBys5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z9ovK6b0S344J6bVt0ra9cqrNOQYYEvtVvc1SxQQmLh5Yrnm/Fj02Er1grPBircII2N5bw1Lutf8OTVApBzaS/GonP9n//B7MalK6ftyLwOC7cGr1rDuVFlzuYa/v2qh67Ea1bP38zXGK5yxKtXwzweQ8/+ACKBnICIvJDbEHuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gvY/gl8s; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758323443; x=1789859443;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QwrDeSssU3xjd1R5pyvj2jC0q4WMlzrV2GqmzoBys5A=;
+  b=gvY/gl8sWkpSFba0JdlZtet1HKjnLwAm7jTnjDkfla1TUCgqVI09ojug
+   9BKiJKmyM+RVixrYpGFbMRSYxqFmrnBHfztnuraNWzQyAxuSgMm/shott
+   kYBnMRM/GflUkXa46BLzEK122/DTSuo9sh2H6WLllVbXNoTEi17d7+J3z
+   DwxMTep9OEQpxSW8YFIKwAvWB6te1nKg0PPHd+h9MGFX0lFnZYQWH8wpc
+   Ol7uZTyUH9V2BzAVOECtBsU+EnAILG1GLp55A5j7v29oAJrgnfbS89gfp
+   LLKs7ZxSCErhwMR44dYA0EMN/sQEeywIYhhefyYRlv1SKA96XblpeywCW
+   Q==;
+X-CSE-ConnectionGUID: FCmzhp9RTRiO3qrzwlM1zA==
+X-CSE-MsgGUID: 18B3rRlYT9yDDKvdhi5JgA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60619567"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60619567"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:10:42 -0700
+X-CSE-ConnectionGUID: uzPYOIjhT3e9o5K/M3peJA==
+X-CSE-MsgGUID: Wp2sEuumTmmLFoAtuRGA8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="176334302"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.58]) ([10.125.108.58])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:10:41 -0700
+Message-ID: <8c6bb8fc-7801-45d3-8563-054b12295df0@intel.com>
+Date: Fri, 19 Sep 2025 16:10:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827082015.959430-1-apopple@nvidia.com> <20250827082015.959430-9-apopple@nvidia.com>
-In-Reply-To: <20250827082015.959430-9-apopple@nvidia.com>
-From: Timur Tabi <timur@kernel.org>
-Date: Fri, 19 Sep 2025 18:05:39 -0500
-X-Gmail-Original-Message-ID: <CAOZdJXU1oxxPxz4kUTtPseYmfE9Sa1U9nmFoqaoK1ekEv_EwFA@mail.gmail.com>
-X-Gm-Features: AS18NWCcdeo5PWwM8QfmwAkG8tyE42lft8TtEs06JJT0OA22EkpZij9s3VQ3tXA
-Message-ID: <CAOZdJXU1oxxPxz4kUTtPseYmfE9Sa1U9nmFoqaoK1ekEv_EwFA@mail.gmail.com>
-Subject: Re: [PATCH 08/10] gpu: nova-core: falcon: Add support to check if
- RISC-V is active
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 01/20] nvdimm/label: Introduce NDD_REGION_LABELING flag
+ to set region label
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134130epcas5p417d7c26bc564d64d1bcea6e04d55704d@epcas5p4.samsung.com>
+ <20250917134116.1623730-2-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-2-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 27, 2025 at 3:28=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
-> wrote:
->
-> +register!(NV_PRISCV_RISCV_CPUCTL @ PFalconBase[0x00001388] {
-> +    7:7     active_stat as bool;
-> +    0:0     halted as bool;
-> +});
 
-Two more things I've noticed:
 
-1) I think the convention is to list the bits in increase position.
-That is, 'active_stat' should be on the line below 'halted''
+On 9/17/25 6:40 AM, Neeraj Kumar wrote:
+> Prior to LSA 2.1 version, LSA contain only namespace labels. LSA 2.1
+> introduced in CXL 2.0 Spec, which contain region label along with
+> namespace label.
+> 
+> NDD_LABELING flag is used for namespace. Introduced NDD_REGION_LABELING
+> flag for region label. Based on these flags nvdimm driver performs
+> operation on namespace label or region label.
+> 
+> NDD_REGION_LABELING will be utilized by cxl driver to enable LSA 2.1
+> region label support
+> 
+> Accordingly updated label index version
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 
-2) I think that this should actually be PFalcon2Base[0x00000388]
+With the change noted below,
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+> ---
+>  drivers/nvdimm/dimm.c      |  1 +
+>  drivers/nvdimm/dimm_devs.c |  7 +++++++
+>  drivers/nvdimm/label.c     | 21 +++++++++++++++++----
+>  drivers/nvdimm/nd.h        |  1 +
+>  include/linux/libnvdimm.h  |  3 +++
+>  5 files changed, 29 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/dimm.c b/drivers/nvdimm/dimm.c
+> index 91d9163ee303..bda22cb94e5b 100644
+> --- a/drivers/nvdimm/dimm.c
+> +++ b/drivers/nvdimm/dimm.c
+> @@ -62,6 +62,7 @@ static int nvdimm_probe(struct device *dev)
+>  	if (rc < 0)
+>  		dev_dbg(dev, "failed to unlock dimm: %d\n", rc);
+>  
+> +	ndd->cxl = nvdimm_check_region_label_format(ndd->dev);
+>  
+>  	/*
+>  	 * EACCES failures reading the namespace label-area-properties
+> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+> index 21498d461fde..918c3db93195 100644
+> --- a/drivers/nvdimm/dimm_devs.c
+> +++ b/drivers/nvdimm/dimm_devs.c
+> @@ -18,6 +18,13 @@
+>  
+>  static DEFINE_IDA(dimm_ida);
+>  
+> +bool nvdimm_check_region_label_format(struct device *dev)
+
+Should be called nvdimm_region_label_supported() since a bool return is expected instead of resolving the checking in the function.
+
+DJ
+
+> +{
+> +	struct nvdimm *nvdimm = to_nvdimm(dev);
+> +
+> +	return test_bit(NDD_REGION_LABELING, &nvdimm->flags);
+> +}
+> +
+>  /*
+>   * Retrieve bus and dimm handle and return if this bus supports
+>   * get_config_data commands
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 04f4a049599a..0a9b6c5cb2c3 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -688,11 +688,24 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
+>  		- (unsigned long) to_namespace_index(ndd, 0);
+>  	nsindex->labeloff = __cpu_to_le64(offset);
+>  	nsindex->nslot = __cpu_to_le32(nslot);
+> -	nsindex->major = __cpu_to_le16(1);
+> -	if (sizeof_namespace_label(ndd) < 256)
+> +
+> +	/* Set LSA Label Index Version */
+> +	if (ndd->cxl) {
+> +		/* CXL r3.2: Table 9-9 Label Index Block Layout */
+> +		nsindex->major = __cpu_to_le16(2);
+>  		nsindex->minor = __cpu_to_le16(1);
+> -	else
+> -		nsindex->minor = __cpu_to_le16(2);
+> +	} else {
+> +		nsindex->major = __cpu_to_le16(1);
+> +		/*
+> +		 * NVDIMM Namespace Specification
+> +		 * Table 2: Namespace Label Index Block Fields
+> +		 */
+> +		if (sizeof_namespace_label(ndd) < 256)
+> +			nsindex->minor = __cpu_to_le16(1);
+> +		else /* UEFI 2.7: Label Index Block Definitions */
+> +			nsindex->minor = __cpu_to_le16(2);
+> +	}
+> +
+>  	nsindex->checksum = __cpu_to_le64(0);
+>  	if (flags & ND_NSINDEX_INIT) {
+>  		unsigned long *free = (unsigned long *) nsindex->free;
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index cc5c8f3f81e8..158809c2be9e 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -522,6 +522,7 @@ void nvdimm_set_labeling(struct device *dev);
+>  void nvdimm_set_locked(struct device *dev);
+>  void nvdimm_clear_locked(struct device *dev);
+>  int nvdimm_security_setup_events(struct device *dev);
+> +bool nvdimm_check_region_label_format(struct device *dev);
+>  #if IS_ENABLED(CONFIG_NVDIMM_KEYS)
+>  int nvdimm_security_unlock(struct device *dev);
+>  #else
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index 28f086c4a187..5696715c33bb 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -44,6 +44,9 @@ enum {
+>  	/* dimm provider wants synchronous registration by __nvdimm_create() */
+>  	NDD_REGISTER_SYNC = 8,
+>  
+> +	/* dimm supports region labels (LSA Format 2.1) */
+> +	NDD_REGION_LABELING = 9,
+> +
+>  	/* need to set a limit somewhere, but yes, this is likely overkill */
+>  	ND_IOCTL_MAX_BUFLEN = SZ_4M,
+>  	ND_CMD_MAX_ELEM = 5,
+
 
