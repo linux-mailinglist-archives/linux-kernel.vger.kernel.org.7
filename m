@@ -1,84 +1,120 @@
-Return-Path: <linux-kernel+bounces-824301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F25FB889C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DC4B889CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1EF3AB396
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1968172FE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7D32F3600;
-	Fri, 19 Sep 2025 09:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2696C2FE56E;
+	Fri, 19 Sep 2025 09:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="gYQq2/Jo"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+16I5It"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BED2C2347
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4E32C2347
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274726; cv=none; b=K8167NsQAK4VpFPuw/3WuCT5p4guIAUCFZG5ZsX/B168f8LTfguYly0B8e+6ycLyPDsN7mTrzITj5mKVMAhx4NYGFV42L+f0GTH6innKQpS4bYe4liYB8fmZD1RLWro0fidOh/gEWWcmP6MHlA8vTSez5qWkekOGMM+t6MYQjM8=
+	t=1758274747; cv=none; b=eZlh1fY77M/k7/I/718li4sVhhhwzyCfLMqEU2F04creIrD89TAz3cSeFToXuUt9juPGPbj9xAR4rgGhDVtcu6r8zKFZ8EUt+an3V4Ja92aJhW4EtsC5UuV7wvTlyolOBSrUH3ix7F6iQwrf7yXX2+cYM/QZZRaCzPN6E9lwiyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274726; c=relaxed/simple;
-	bh=PoICDzH2/VRmvGDHWLmPf6AlqNG0CMWG+Nk9x/31v0A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FWt9sgj6nIBbazIV7V/Bp+8uxel8LOHRbh6LEqq8XBcoPwk1EkDyxpFe1+0dceYLOgCy9UrsQYyapwHkBvepuejH0+QYNqSLC/u6zWbbWdOJq+Io5vOiTsM1sR7QU1GZ0XfXW7Lj+PUYiOyY25MkgGN0VbdiYSAS2h7TAJrQ72w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=gYQq2/Jo; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=PoICDzH2/VRmvGDHWLmPf6AlqNG0CMWG+Nk9x/31v0A=;
-	t=1758274725; x=1759484325; b=gYQq2/JoFO8qZoZ04Maz2mw7KKkX5FVsyAGqbtYjinx/kEa
-	1gufc4C/o0Say55HMNChUIFloSQIiy+gzthvINqbpd2TOFDVfAvCNG2/IMUHaE73N/4l6VOp07Lmt
-	ALJviub+4Ap2uNEoy0eGop0cYdX49Et6VZ/szCKG/cHRh0OxeG0tQ2he7+GqNx2r4tBbn/D5QEf4j
-	OskjKiOm50Wo9ImvyPnY1/k40U/SqUt2th6h6vEAOsUdtRUp47wB3pS9RO+F0EJ33JJUqyGH0vOl0
-	Js1MVWSmy/iLd/E37nIOUjDAGu8wH/zzqDrGa+zQzMl0dKjdtyE4n3zxfinwcsMQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uzXZh-0000000FdhH-3S1z;
-	Fri, 19 Sep 2025 11:38:42 +0200
-Message-ID: <78c173c1f5f61430ef33e22559e3d1539db36395.camel@sipsolutions.net>
-Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU
- dependency to PCI driver
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Hajime Tazaki <thehajime@gmail.com>
-Cc: linux-um@lists.infradead.org, ricarkol@google.com,
- Liam.Howlett@oracle.com, 	linux-kernel@vger.kernel.org
-Date: Fri, 19 Sep 2025 11:38:40 +0200
-In-Reply-To: <da39f51b76cca54e5304064f7e34a8863442605d.camel@sipsolutions.net>
-References: <cover.1758181109.git.thehajime@gmail.com>
-			<4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
-			<a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
-			<m28qib8g1r.wl-thehajime@gmail.com>
-			<6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
-		 <m27bxu949d.wl-thehajime@gmail.com>
-	 (sfid-20250919_113237_926194_6AC3D71B) <da39f51b76cca54e5304064f7e34a8863442605d.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758274747; c=relaxed/simple;
+	bh=iy0PkhwSAeIQTwMFfchedmIPC64gR38fveVhC+odks8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/wGq7R+cKD9G4Uu97XVHekmvyvkgUPdW4yWuE9qiL2ZdblEYCwSPVRtYQaLlqPSLuBnSWj1M46EFC/iENsqF6nxLtkAgBbP/8j7S9p7yUonT84+yhfoe+gOQdwkJKxlwo+tEFNIvfjuMvo+GBhjgEIMGZCPoEI/ZKZYRDi8oTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+16I5It; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A02C4CEF0;
+	Fri, 19 Sep 2025 09:39:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758274747;
+	bh=iy0PkhwSAeIQTwMFfchedmIPC64gR38fveVhC+odks8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P+16I5ItE4NigMLF+gUX2mklFfKkn0bfLr6xnufPmH6qMsaiHLwD2JbcijwbcgQTa
+	 Wn0tNgD1sd4YNTL2Iax15QZppkB5yofteUI0CT1FRsS3/Ply1QPkXbsFlXt/yes+as
+	 9iNFx4+9Id/9E2cvRGMP5ojYG0MFbqoc+C161/PQ7oDU3ROoVyYa9ctzkQTtjMHv+n
+	 u7dFQHFBKJbJ9b0MDodzt1I5ZUajv2QX0dB48p2CiRAGzWtWmZCrMKjkUaYG922iTr
+	 HPHJyx5grT1pIJ2D20jL4kUb9f0WFpZiMVC57Ts8ebcvlkPvH07L00ZZC4L39LQBNH
+	 3rm9PbScYbN5w==
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 9ABE4F40066;
+	Fri, 19 Sep 2025 05:39:05 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Fri, 19 Sep 2025 05:39:05 -0400
+X-ME-Sender: <xms:uSTNaOXjS7vj5wKwyKZ1QzdscSM7PwZciE4tAFFoMs-KYqcU0gEGcw>
+    <xme:uSTNaNhcuXjqVI247lPwJH4bF5K871bvnlg0hraO2XQDwViTtaOuMkPyxQFBPAwBA
+    EwD6YaIKusgO-cXASc>
+X-ME-Received: <xmr:uSTNaGljeO99XidBUfesO5bGMhTPZzgUzbo1V-zjFgf2184BdtzmXIszyF4rAw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegkeekjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
+    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
+    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
+    grmhgvpdhnsggprhgtphhtthhopeefgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpdhrtghpthhtoh
+    epsghpsegrlhhivghnkedruggvpdhrtghpthhtoheptghhrghordhgrghosehinhhtvghl
+    rdgtohhmpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlh
+    drtghomhdprhgtphhtthhopehishgrkhhurdihrghmrghhrghtrgesihhnthgvlhdrtgho
+    mhdprhgtphhtthhopehkrghirdhhuhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoh
+    epkhhvmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgt
+    ohgtoheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:uSTNaCgtD_IEe6sxYUgk8eWuuoOAeMFHO_ICOasHws4WKK9F5GLaZg>
+    <xmx:uSTNaE6S1mbioVgBF0u-LX375LuJ3JP_ro7_IJTh9QLrlHRGoBg2Rg>
+    <xmx:uSTNaOubdh-vyQ1rVepsNkajrf66fO0gFUqvK_8mRJvA_6L560LeqQ>
+    <xmx:uSTNaJzNog_0qTp6VIn7OrGs5XnEREWEZ_Foa2N5VysOwnk-NCgVmQ>
+    <xmx:uSTNaPwoaLLl8uTqlhNy9zadD92pgk-ZNrelWIl6EJlXn-A87BhIBU7A>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 19 Sep 2025 05:39:04 -0400 (EDT)
+Date: Fri, 19 Sep 2025 10:39:02 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: bp@alien8.de, chao.gao@intel.com, dave.hansen@linux.intel.com, 
+	isaku.yamahata@intel.com, kai.huang@intel.com, kvm@vger.kernel.org, 
+	linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de, x86@kernel.org, 
+	yan.y.zhao@intel.com, vannapurve@google.com, 
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH v3 08/16] x86/virt/tdx: Optimize tdx_alloc/free_page()
+ helpers
+Message-ID: <yexfu34vq5wrctlhafkrhvwfdcp5aenkleq6zolgqquz74dmzh@5336rz6kfulo>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+ <20250918232224.2202592-9-rick.p.edgecombe@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918232224.2202592-9-rick.p.edgecombe@intel.com>
 
-On Fri, 2025-09-19 at 11:38 +0200, Johannes Berg wrote:
-> My gut feeling is that UML_PCI_OVER_VIRTIO should depend on PCI but I
-> don't know if that then doesn't end up in some kind of circular
-> dependency.
+On Thu, Sep 18, 2025 at 04:22:16PM -0700, Rick Edgecombe wrote:
+> +		} else if (IS_TDX_HPA_RANGE_NOT_FREE(tdx_status)) {
+> +			/*
+> +			 * Less obviously, another CPU's call to tdx_pamt_put() could have
+> +			 * decremented the refcount before entering its lock section.
+> +			 * In this case, the PAMT is not actually removed yet. Luckily
+> +			 * TDX module tells about this case, so increment the refcount
+> +			 * 0-1, so tdx_pamt_put() skips its pending PAMT.REMOVE.
+> +			 *
+> +			 * The call didn't need the pages though, so free them.
+> +			 */
+>  			atomic_inc(pamt_refcount);
 
-And all the discussion is also true for UML_PCI_OVER_VFIO which also
-selects UML_PCI.
+It is still 0->1 transition. atomic_set(pamt_refcount, 1) would be
+slightly faster here.
 
-johannes
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
