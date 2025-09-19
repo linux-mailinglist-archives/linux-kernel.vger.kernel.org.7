@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-824926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57879B8A7C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:03:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB1BB8A7C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD555A1357
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5BB85A156C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C103B3168E7;
-	Fri, 19 Sep 2025 16:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAE731D729;
+	Fri, 19 Sep 2025 16:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/Kaoaj7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHIUoG5I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282A0314A85;
-	Fri, 19 Sep 2025 16:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EB031E0EF;
+	Fri, 19 Sep 2025 16:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758297817; cv=none; b=XhrR4qlVrn4RvkKxQT+1CTkNV0tgjc5a5KzHUiO2H6b5OtY8ts5HxAVvyNE1dltlhMiR8YTXuui1h/Vw+3W+BL/viGYO126Kl1Ma1e0r6eRt4+RvwT5Bie0QYOm0c7xOSDgnQh+9yjanj5p4QXo/v9tAfGt0g5KbsgxcZR0LEZo=
+	t=1758297813; cv=none; b=c9MXCIhTsRpUgDIZlcRklwxck6S8n1hfTfnmZAhvr5GwP9VB0Rxk5NNu9GGTC4FTcchEh8HyX5D6u7ZUX0KHzgCF43uUTtsl7HRqTFr0KVMVHtCkZwD/uZQ/X5+NK4GW6RMwf/vjwdQ2QZ3HtJWeWcUJamsIPifDR5UNy+dAwjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758297817; c=relaxed/simple;
-	bh=nYGhvaswrglufTThE8Ko8tVUeDykuaH4CIml5aGwjWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+b5brq0IC4GiSllLCodI/zkH42s6bX4uTkZ2/+IStXKQBTvyMwnu/97KZNHMqY1IdIUjsPptBICGZqJd7O2WuGqpitLJDq/w17h7gGnhbbOtkhwxxb1oKFZeK5qYJU0dliRtDMv2bCMxx4wSc999utWE2knSegpNjxNrn25b+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/Kaoaj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C56C4CEFB;
-	Fri, 19 Sep 2025 16:03:34 +0000 (UTC)
+	s=arc-20240116; t=1758297813; c=relaxed/simple;
+	bh=GvnqDnWIKf8bdAkEc9f6iDS6tA/AxRcZVSoMZ2CD1mk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=q6DNV/xy85e8gUiFuIA/1m9/BH0CRQZ7GrXF8s2Ksrhdjf0scW8zGdRMQKsELX+83VTc2u7W8KfP6fqihjwnf4UVMCcJe8R/bvfX8BRD1pajFsn2fWDCWofsOBsVmraJHI0KiwN2BjkXuzvd3WNFDwIWUoKSZvXs+u3UKp+muqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHIUoG5I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C427DC4CEF0;
+	Fri, 19 Sep 2025 16:03:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758297816;
-	bh=nYGhvaswrglufTThE8Ko8tVUeDykuaH4CIml5aGwjWI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q/Kaoaj7/JaKRP8O4fGkgim34hTc1efzdwxNkmTCalIwsPZuERsCotfZ+M3jBvKNT
-	 bbWN+hhksHJb4J/UVlIbv4m5g1hJ9He2nlbDGH95Dpe1VXUUIxCv4Oti+JaPplDxjj
-	 uDfc316Y6XPmZn76OhSbG5D8kY4ZWbRARqSeuBGHQ2sUhxuHPUPA5uyO/HEccQ3wGJ
-	 n/iyboyl45ZIy/5B4WgGDS1cmg/D7c1ypIu4/3kLuvPHAfTqbfzqrvmzSERu8jnF05
-	 irTEb38K0lPnapiS1T0rsArdGUhpc2HdseH7SbRGPOY4aYPqUwBCLb6QFO1M4gKh07
-	 fw5M8rTp9y+MQ==
-Date: Fri, 19 Sep 2025 17:03:30 +0100
+	s=k20201202; t=1758297813;
+	bh=GvnqDnWIKf8bdAkEc9f6iDS6tA/AxRcZVSoMZ2CD1mk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qHIUoG5I7IDeVsUXeHXVI1sSPkiNeIbJv8lx0rSrR4n2o1VRmP5hBQi8TnbXKivAl
+	 /M3v62MpnO5NmdelbAQGDQ1ktZuTX6sjcf0GGyhl5vN9ZUw8YWBgWfKu6bKtgF5DIV
+	 8CQGI0+UUsV9LVinSIfYYsQGFsMSvnRXQkXwjZ7/oQiZwXoC10T6QwStPfPL6op1FD
+	 B9HvSQ0T301zyEurSLWvkJ9z9nz8kO2tzhroB62lA0vv1ViZ5YgiALl32LIaFG6fZ3
+	 VWTe5x+/BxGuxxtPDQbmRPV5Nx+Mk9qJQFJ5liEbiT6WQZZkdy1byrelL0GDtnfJIJ
+	 i+t1W8BsEZ2aA==
 From: Mark Brown <broonie@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-	ebiggers@kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Kees Cook <keescook@chromium.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH 3/5] crypto/arm64: sm4-ce-gcm - Avoid pointless yield of
- the NEON unit
-Message-ID: <4eb3c865-75af-43e4-a760-46bbb7e34f9b@sirena.org.uk>
-References: <20250918063539.2640512-7-ardb+git@google.com>
- <20250918063539.2640512-10-ardb+git@google.com>
+To: Han Xu <han.xu@nxp.com>, Yogesh Gaur <yogeshgaur.83@gmail.com>, 
+ Frank Li <frank.li@nxp.com>, Haibo Chen <haibo.chen@nxp.com>
+Cc: linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+In-Reply-To: <20250917-flexspi-ddr-v2-0-bb9fe2a01889@nxp.com>
+References: <20250917-flexspi-ddr-v2-0-bb9fe2a01889@nxp.com>
+Subject: Re: [PATCH v2 0/5] spi: spi-nxp-fspi: add DTR mode support
+Message-Id: <175829781053.161854.17379770923486529628.b4-ty@kernel.org>
+Date: Fri, 19 Sep 2025 17:03:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V1bFmzjAwqS0yQHR"
-Content-Disposition: inline
-In-Reply-To: <20250918063539.2640512-10-ardb+git@google.com>
-X-Cookie: Don't read everything you believe.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-56183
 
+On Wed, 17 Sep 2025 15:27:05 +0800, Haibo Chen wrote:
+> this patch set add DTR mode support for flexspi.
+> For DTR mode, flexspi only support 8D-8D-8D mode.
+> 
+> Patch 1~2 extract nxp_fspi_dll_override(), prepare for adding the DTR mode.
+>         in nor suspend, it will disable DTR mode, and enable DTR mode back
+> 	in nor resume. this require the flexspi driver has the ability to
+> 	set back to dll override mode in STR mode when clock rate < 100MHz.
+> Patch 3 Add the DDR LUT command support. flexspi use LUT command to handle
+> 	the dtr/str mode.
+> Patch 4 add the logic of sample clock source selection for STR/DTR mode
+> 	STR use the default mode 0, sample based on the internal dummy pad.
+> 	DTR use the mode 3, sample based on the external DQS pad, so this
+> 	board and device connect the DQS pad.
+> 	adjust the clock rate for DTR mode, when detect the DDR LUT command,
+> 	flexspi will automatically div 2 of the root clock and output to device.
+> Patch 5 finally add the DTR support in default after the upper 4 patches's
+> 	prepareation. Since lx2160a do not implement DQS pad, so can't support
+> 	this DTR mode.
+> 
+> [...]
 
---V1bFmzjAwqS0yQHR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Thu, Sep 18, 2025 at 08:35:43AM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
->=20
-> Kernel mode NEON sections are now preemptible on arm64, and so there is
-> no need to yield it when calling APIs that may sleep.
->=20
-> Also, move the calls to kernel_neon_end() to the same scope as
-> kernel_neon_begin(). This is needed for a subsequent change where a
-> stack buffer is allocated transparently and passed to
-> kernel_neon_begin().
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+Thanks!
 
---V1bFmzjAwqS0yQHR
-Content-Type: application/pgp-signature; name="signature.asc"
+[1/5] spi: spi-nxp-fspi: extract function nxp_fspi_dll_override()
+      commit: 614180a54d5f21ccb4f60042d19744694d31d3f8
+[2/5] spi: spi-nxp-fspi: set back to dll override mode when clock rate < 100MHz
+      commit: a9888b3222ec73d055447a39cf9a0118f67497f4
+[3/5] spi: spi-nxp-fspi: Add the DDR LUT command support
+      commit: 3c1000e15fd0eb387fcca420c9fb36ae07887782
+[4/5] spi: spi-nxp-fspi: add the support for sample data from DQS pad
+      commit: c07f270323175b83779c2c2b80b360ed476baec5
+[5/5] spi: spi-nxp-fspi: Add OCT-DTR mode support
+      commit: 0f67557763accbdd56681f17ed5350735198c57b
 
------BEGIN PGP SIGNATURE-----
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjNftIACgkQJNaLcl1U
-h9CYGgf/aqFUbV8ym698Sr7+ZwrCHLCSAI7rfHpPa0ePv1UBDBTHcd2TrMYdUHyw
-nsXFJ8JNceHUvk2vT1wYR5Ao+7BxvKAXuC3qw1OR29DJUTLSkRJ9Y15I9Yk6DMH0
-xHrfkGfjyZCpbt6vf7PxbactkGYlOrHlgYRM+53vT7dWecei47BcXWyGEQaDabEA
-jJjJZ5qtCY/D1KWuYfbudHIwhgYfQHWR5L6AF5RSAph9SV4+UseqtW5xnZ6zJSOb
-vU5VG9ojXUELVI7zXMLOTtZYhOcj8g2AHKyeDWwunjEho7MksVoCfNXMIUVUS6xk
-s/1u+CKpHm5yMiN+kmk9YXq+xzw85A==
-=KcOJ
------END PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
---V1bFmzjAwqS0yQHR--
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
