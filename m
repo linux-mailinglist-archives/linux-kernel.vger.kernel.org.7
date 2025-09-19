@@ -1,172 +1,502 @@
-Return-Path: <linux-kernel+bounces-824663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC721B89D24
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42045B89D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C90DA028DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:11:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F0B5A34F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EEA314B81;
-	Fri, 19 Sep 2025 14:10:35 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ABA314A75;
+	Fri, 19 Sep 2025 14:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cHIn2lNk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C2B314A6D;
-	Fri, 19 Sep 2025 14:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F3B31355D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758291035; cv=none; b=ReTYHkgwWyYnx2V1Snj5eR3wV7mbaNWljFNblmq15OW/Az0zVFwdU8Rb6TITrMH8bzBc6USwwSyU1d48ID+TOQ0lcMrGIspd/XA2QhWI3Qx2N4doYcklxruprAMyclq27Y1/6M8PyR52HPZDzbDrcqQsj5pgN0LxGWi1KjY26J8=
+	t=1758291027; cv=none; b=W75ytGuMivuUYLVFLD/S96r++hbSpLLWG2z6ZMIA/4uRMgrtPEI3DTNtoOEgcViLi+c9xPK2BIhOe9WRWgjlm0m0Z5I2qKowELtA9AbwkwGcEigHo154RtuX44uh5GGi/ArZwgrIsPj+o5jBjkcSRcQQzdl2HuAhVIKk1Q62c8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758291035; c=relaxed/simple;
-	bh=0hXwFoGYuDdVPmME9wVaGprT/NOSamKumbeC1/ux5Ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=axHM/2+NY0rpmPLVj3yqYzYbHjAxlQ1EuINpvYdqWhF6fKyRFSOSKwUJ3D+9mmR0BT8BmqjbLM6OF84hAG2CgwTB0XE93RH/oVLwKf8yOgd5kn+USn1/6piu+RCGLjjEOhnyp8FTmah9p6x9px3+aU1wWHXB/bSnGw1QBgQ3nvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpgz8t1758290981t77ee29e2
-X-QQ-Originating-IP: c8xff3gMJrx6BoNwsH+6nJBZVwySXY19XV/90FS6mw8=
-Received: from [127.0.0.1] ( [116.234.80.13])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 19 Sep 2025 22:09:38 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13887952541491144058
-Message-ID: <C0056DA1635FC14E+7d3d6fb4-f43e-4107-baab-bbb871264c7a@radxa.com>
-Date: Fri, 19 Sep 2025 22:09:37 +0800
+	s=arc-20240116; t=1758291027; c=relaxed/simple;
+	bh=uXJ19UsBCCwtWr/Uu3gRU34B/NBLv3J6S8FqCWIo95k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aK/uLjDZ+yXBtvD/MfNSQg+0sQ6HYytX3RT+pnh81V13JwPMMGho/cN0BVVK9UYRHasAlauGWXD99GbxAEio8iURn4hwyqvwgZ5I0ZSxhJYVCfypt4+hM3VSZ+NeE/RjQSbPYeP1cqN5JvFqr91aoguteHSloiTmYTIB7vVdDL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cHIn2lNk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758291024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TzirTRvak70nt9DhTAuEoq5pJMualJlcFq+O4xhjsg8=;
+	b=cHIn2lNkQDnlgHH0gu53as3Ihtmlh67ubeMO+NGrvwi3fHPEPNaJo8moUJ8xYUV4OKD681
+	h/L8u6QyuNZHUOmpTDLPxrEdAOwIE/ynNlOj3PIT6EGc1hW8cWBOCyk9IBQlWH84aKwU1P
+	AKHFpl3iO+mheIQQi91rx/I0fH1nonU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-150-toFIqLgHN1uRD4iKxY4Ypg-1; Fri,
+ 19 Sep 2025 10:10:22 -0400
+X-MC-Unique: toFIqLgHN1uRD4iKxY4Ypg-1
+X-Mimecast-MFC-AGG-ID: toFIqLgHN1uRD4iKxY4Ypg_1758291021
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E00E1956053;
+	Fri, 19 Sep 2025 14:10:21 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.45.224.13])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3024119560BB;
+	Fri, 19 Sep 2025 14:10:16 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: [PATCH v2 03/20] rv: Unify DA event handling functions across monitor types
+Date: Fri, 19 Sep 2025 16:09:37 +0200
+Message-ID: <20250919140954.104920-4-gmonaco@redhat.com>
+In-Reply-To: <20250919140954.104920-1-gmonaco@redhat.com>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] phy: qcom: edp: Add missing ref clock to x1e80100
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Sibi Sankar <quic_sibis@quicinc.com>,
- Rajendra Nayak <quic_rjendra@quicinc.com>, Johan Hovold <johan@kernel.org>,
- Taniya Das <quic_tdas@quicinc.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
- <6A43111ED3D39760+a88e4a65-5da8-4d3b-b27e-fa19037462c8@radxa.com>
- <qohctzmztibeoy4jv6unsvevdawfh2h3drrneo5wmbfkirokog@pfaz3vht5kjz>
-Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-In-Reply-To: <qohctzmztibeoy4jv6unsvevdawfh2h3drrneo5wmbfkirokog@pfaz3vht5kjz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NqN/wpVFVRYXTETqIpE/ShUxpxhxFZIAAZG5TEJxdn8+jwImr19vh0ik
-	qXPnnemUr8vRPLvlxpUf7oVQ6trGgUadog3xRDslkBhICa8QW4wCchpoHB2SOspORTqmPeq
-	KAzaFuOSa6mpe3xh2aRhgBKu62Z2zVEgjX9YDd1LOBchTyxp06jjAayWXhfvzYtgSC8cAmQ
-	D15/pHX3A+qTfXnrfHPSEbwTR8oMVO38urrs8dlQoagk7Vv9F57S5VuPsBfeduvPCkibenw
-	1VvgLifKmTDnt9I/+X5E5HszmCfTjjdLtRuIEjG8VeOHzFQInaOOStIVQQHu1jT9aYP05iB
-	P+QKuhwIjAjf11WrGmRqGM5soSGrh9zzuRVzxZ31s4jsGz4xoWGcJu91rY0e8B0eKNaGwos
-	IXNn9XjeXdODM7rEhPC1ZsiYxRcpXV8CNX4eE6Ra95cLj59lUSapyd+xBp9JV7GCnyBNo9s
-	9ekmGWbZ8xqyuwxd79XR3fHuIWxlvEQN6y+GEqgJCpM4K3xsmoQB3U2bQiGPBRRdZKuNuh0
-	92MMB6aYv/L6fp8rzuIlz5FvKJhbhKVShByd+nG0BTym95D+mmdmQMn/7HdfrkOxZeZ7JDq
-	ZA45IIHCQMVK71nBIb0S/G4YystNtMyjNNgLV/aK6ZyEXy4v7p0V6iz494iOjjKCWYHhn8C
-	LDlgUf52MA6EoIOgV5coqz0FvDCO+EKplexh2tO8CmG/36CrLqzuI6FjuYxuOfBvAtaDLXx
-	R7nWj9R4y6KiXUoJISEQwxd21kTK3jYCQgSy3po4tSyNF9VZ4KHUOpQ//BiedCAjg89JqVA
-	lNnp38L0Mk72yGZG7TyKUtPqgJvS2+Y2UmDMtvkVajyTQNEAbEomu043gdNjLqGyE2JWxBQ
-	MWOGV8ROvCTuB2seEK8omKWl5qFZnBKNpOMYfIAe8L5Pm9g0HBkJ9bRpNvM/cky+h0P7sA3
-	yeqXuZ3j1RfkAOCFKgJ/jmFJFajJeVKseA+4K7IK+97Fp553uY65wYiRiaOzs42RqlXA2a+
-	vLwhtWGBYy+XVtDyEVzemc9mfsED6fBCn1E6BGtAQxeq9l+FJRVxK2sSsT/Fw=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 9/19/2025 7:54 PM, Abel Vesa wrote:
-> On 25-09-19 19:06:36, Xilin Wu wrote:
->> On 9/9/2025 3:33 PM, Abel Vesa wrote:
->>> According to documentation, the DP PHY on x1e80100 has another clock
->>> called ref.
->>>
->>> The current X Elite devices supported upstream work fine without this
->>> clock, because the boot firmware leaves this clock enabled. But we should
->>> not rely on that. Also, when it comes to power management, this clock
->>> needs to be also disabled on suspend. So even though this change breaks
->>> the ABI, it is needed in order to make we disable this clock on runtime
->>> PM, when that is going to be enabled in the driver.
->>>
->>> So rework the driver to allow different number of clocks, fix the
->>> dt-bindings schema and add the clock to the DT node as well.
->>>
->>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
->>> ---
->>> Changes in v3:
->>> - Use dev_err_probe() on clocks parsing failure.
->>> - Explain why the ABI break is necessary.
->>> - Drop the extra 'clk' suffix from the clock name. So ref instead of
->>>     refclk.
->>> - Link to v2: https://lore.kernel.org/r/20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org
->>>
->>> Changes in v2:
->>> - Fix schema by adding the minItems, as suggested by Krzysztof.
->>> - Use devm_clk_bulk_get_all, as suggested by Konrad.
->>> - Rephrase the commit messages to reflect the flexible number of clocks.
->>> - Link to v1: https://lore.kernel.org/r/20250730-phy-qcom-edp-add-missing-refclk-v1-0-6f78afeadbcf@linaro.org
->>>
->>> ---
->>> Abel Vesa (3):
->>>         dt-bindings: phy: qcom-edp: Add missing clock for X Elite
->>>         phy: qcom: edp: Make the number of clocks flexible
->>>         arm64: dts: qcom: Add missing TCSR ref clock to the DP PHYs
->>>
->>>    .../devicetree/bindings/phy/qcom,edp-phy.yaml      | 28 +++++++++++++++++++++-
->>>    arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 12 ++++++----
->>>    drivers/phy/qualcomm/phy-qcom-edp.c                | 16 ++++++-------
->>>    3 files changed, 43 insertions(+), 13 deletions(-)
->>> ---
->>> base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
->>> change-id: 20250730-phy-qcom-edp-add-missing-refclk-5ab82828f8e7
->>>
->>> Best regards,
->>
->> Hi,
->>
->> I'm observing what looks like a related clock failure on sc8280xp when
->> booting without a monitor connected to a DP-to-HDMI bridge on mdss0_dp2.
-> 
-> Am I to understand that this is triggered by this patchset ?
-> 
-Sorry, it's not indeed. I just saw this patchset and wondered if it can 
-fix the issue on sc8280xp. Just now I tried adding the missing 
-GCC_EDP2_PHY_CLKREF_EN to DT and gcc driver, but it didn't fix the issue. :(
+The DA event handling functions are mostly duplicated because the
+per-task monitors need to propagate the task to use the pid in the trace
+events. This is a maintenance burden for a little advantage.
+The task can be obtained with some pointer arithmetic from the da_mon,
+hence only the function tracing events really need to differ.
 
-> I don't see how though.
-> 
->>
->> Do you think sc8280xp might require a similar fix, or could this be a
->> different issue?
-> 
-> There is no TCSR clock controller on sc8280xp, so it must be something
-> else. My feeling is that this is probably triggered by the link clock
-> source not being parented to the clock generated by the PHY, or PHY PLL
-> isn't locked yet at that point, but I'm not sure.
-> 
-> I'm not able to reproduce this issue on my x13s.
-> 
+Unify all code handling the events, create da_trace_event() and
+da_trace_error() that only call the tracepoint function.
+Propagate the monitor id through the calls, the do_trace_ functions use
+the id (pid) in case of per-task monitors but ignore it for implicit
+monitors.
 
-It only happens when mdss0_dp2 is not connected to a display during 
-boot. I believe laptops usually use mdss0_dp3, and it's always connected.
+Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+---
+ include/rv/da_monitor.h | 303 +++++++++++++++++++---------------------
+ 1 file changed, 142 insertions(+), 161 deletions(-)
 
-I guess the Windows Dev Kit may have the same issue, since it also uses 
-mdss0_dp2 as an external mini-DP port.
-
+diff --git a/include/rv/da_monitor.h b/include/rv/da_monitor.h
+index 7c3540d0f64e..05b216f90f93 100644
+--- a/include/rv/da_monitor.h
++++ b/include/rv/da_monitor.h
+@@ -23,6 +23,13 @@
+ #define RV_DA_MON_NAME CONCATENATE(da_mon_, MONITOR_NAME)
+ static struct rv_monitor rv_this;
+ 
++/*
++ * Type for the target id, default to int but can be overridden.
++ */
++#ifndef da_id_type
++#define da_id_type int
++#endif
++
+ #ifdef CONFIG_RV_REACTORS
+ 
+ static void cond_react(enum states curr_state, enum events event)
+@@ -99,90 +106,6 @@ static inline bool da_monitor_handling_event(struct da_monitor *da_mon)
+ 	return 1;
+ }
+ 
+-#if RV_MON_TYPE == RV_MON_GLOBAL || RV_MON_TYPE == RV_MON_PER_CPU
+-/*
+- * Event handler for implicit monitors. Implicit monitor is the one which the
+- * handler does not need to specify which da_monitor to manipulate. Examples
+- * of implicit monitor are the per_cpu or the global ones.
+- *
+- * Retry in case there is a race between getting and setting the next state,
+- * warn and reset the monitor if it runs out of retries. The monitor should be
+- * able to handle various orders.
+- */
+-
+-static inline bool da_event(struct da_monitor *da_mon, enum events event)
+-{
+-	enum states curr_state, next_state;
+-
+-	curr_state = READ_ONCE(da_mon->curr_state);
+-	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {
+-		next_state = model_get_next_state(curr_state, event);
+-		if (next_state == INVALID_STATE) {
+-			cond_react(curr_state, event);
+-			CONCATENATE(trace_error_, MONITOR_NAME)(
+-				    model_get_state_name(curr_state),
+-				    model_get_event_name(event));
+-			return false;
+-		}
+-		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {
+-			CONCATENATE(trace_event_, MONITOR_NAME)(
+-				    model_get_state_name(curr_state),
+-				    model_get_event_name(event),
+-				    model_get_state_name(next_state),
+-				    model_is_final_state(next_state));
+-			return true;
+-		}
+-	}
+-
+-	trace_rv_retries_error(__stringify(MONITOR_NAME), model_get_event_name(event));
+-	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)
+-		" retries reached for event %s, resetting monitor %s",
+-		model_get_event_name(event), __stringify(MONITOR_NAME));
+-	return false;
+-}
+-
+-#elif RV_MON_TYPE == RV_MON_PER_TASK
+-/*
+- * Event handler for per_task monitors.
+- *
+- * Retry in case there is a race between getting and setting the next state,
+- * warn and reset the monitor if it runs out of retries. The monitor should be
+- * able to handle various orders.
+- */
+-
+-static inline bool da_event(struct da_monitor *da_mon, struct task_struct *tsk,
+-			    enum events event)
+-{
+-	enum states curr_state, next_state;
+-
+-	curr_state = READ_ONCE(da_mon->curr_state);
+-	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {
+-		next_state = model_get_next_state(curr_state, event);
+-		if (next_state == INVALID_STATE) {
+-			cond_react(curr_state, event);
+-			CONCATENATE(trace_error_, MONITOR_NAME)(tsk->pid,
+-				    model_get_state_name(curr_state),
+-				    model_get_event_name(event));
+-			return false;
+-		}
+-		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {
+-			CONCATENATE(trace_event_, MONITOR_NAME)(tsk->pid,
+-				    model_get_state_name(curr_state),
+-				    model_get_event_name(event),
+-				    model_get_state_name(next_state),
+-				    model_is_final_state(next_state));
+-			return true;
+-		}
+-	}
+-
+-	trace_rv_retries_error(__stringify(MONITOR_NAME), model_get_event_name(event));
+-	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)
+-		" retries reached for event %s, resetting monitor %s",
+-		model_get_event_name(event), __stringify(MONITOR_NAME));
+-	return false;
+-}
+-#endif /* RV_MON_TYPE */
+-
+ #if RV_MON_TYPE == RV_MON_GLOBAL
+ /*
+  * Functions to define, init and get a global monitor.
+@@ -288,6 +211,14 @@ static inline struct da_monitor *da_get_monitor(struct task_struct *tsk)
+ 	return &tsk->rv[task_mon_slot].da_mon;
+ }
+ 
++/*
++ * da_get_task - return the task associated to the monitor
++ */
++static inline struct task_struct *da_get_task(struct da_monitor *da_mon)
++{
++	return container_of(da_mon, struct task_struct, rv[task_mon_slot].da_mon);
++}
++
+ static void da_monitor_reset_all(void)
+ {
+ 	struct task_struct *g, *p;
+@@ -337,33 +268,144 @@ static inline void da_monitor_destroy(void)
+ 
+ #if RV_MON_TYPE == RV_MON_GLOBAL || RV_MON_TYPE == RV_MON_PER_CPU
+ /*
+- * Handle event for implicit monitor: da_get_monitor() will figure out
+- * the monitor.
++ * Trace events for implicit monitors. Implicit monitor is the one which the
++ * handler does not need to specify which da_monitor to manipulate. Examples
++ * of implicit monitor are the per_cpu or the global ones.
+  */
+ 
+-static inline void __da_handle_event(struct da_monitor *da_mon,
+-				     enum events event)
++static inline void da_trace_event(struct da_monitor *da_mon,
++				  char *curr_state, char *event,
++				  char *next_state, bool is_final,
++				  da_id_type id)
++{
++	CONCATENATE(trace_event_, MONITOR_NAME)(curr_state, event, next_state,
++						is_final);
++}
++
++static inline void da_trace_error(struct da_monitor *da_mon,
++				  char *curr_state, char *event,
++				  da_id_type id)
++{
++	CONCATENATE(trace_error_, MONITOR_NAME)(curr_state, event);
++}
++
++#elif RV_MON_TYPE == RV_MON_PER_TASK
++/*
++ * Trace events for per_task monitors, report the PID of the task.
++ */
++
++static inline void da_trace_event(struct da_monitor *da_mon,
++				  char *curr_state, char *event,
++				  char *next_state, bool is_final,
++				  da_id_type id)
++{
++	CONCATENATE(trace_event_, MONITOR_NAME)(id, curr_state, event,
++						next_state, is_final);
++}
++
++static inline void da_trace_error(struct da_monitor *da_mon,
++				  char *curr_state, char *event,
++				  da_id_type id)
++{
++	CONCATENATE(trace_error_, MONITOR_NAME)(id, curr_state, event);
++}
++#endif /* RV_MON_TYPE */
++
++/*
++ * da_event - handle an event for the da_mon
++ *
++ * This function is valid for both implicit and id monitors.
++ * Retry in case there is a race between getting and setting the next state,
++ * warn and reset the monitor if it runs out of retries. The monitor should be
++ * able to handle various orders.
++ */
++static inline bool da_event(struct da_monitor *da_mon, enum events event, da_id_type id)
++{
++	enum states curr_state, next_state;
++
++	curr_state = READ_ONCE(da_mon->curr_state);
++	for (int i = 0; i < MAX_DA_RETRY_RACING_EVENTS; i++) {
++		next_state = model_get_next_state(curr_state, event);
++		if (next_state == INVALID_STATE) {
++			cond_react(curr_state, event);
++			da_trace_error(da_mon, model_get_state_name(curr_state),
++				       model_get_event_name(event), id);
++			return false;
++		}
++		if (likely(try_cmpxchg(&da_mon->curr_state, &curr_state, next_state))) {
++			da_trace_event(da_mon, model_get_state_name(curr_state),
++				       model_get_event_name(event),
++				       model_get_state_name(next_state),
++				       model_is_final_state(next_state), id);
++			return true;
++		}
++	}
++
++	trace_rv_retries_error(__stringify(MONITOR_NAME), model_get_event_name(event));
++	pr_warn("rv: " __stringify(MAX_DA_RETRY_RACING_EVENTS)
++		" retries reached for event %s, resetting monitor %s",
++		model_get_event_name(event), __stringify(MONITOR_NAME));
++	return false;
++}
++
++static inline void __da_handle_event_common(struct da_monitor *da_mon,
++					    enum events event, da_id_type id)
+ {
+ 	bool retval;
+ 
+-	retval = da_event(da_mon, event);
++	retval = da_event(da_mon, event, id);
+ 	if (!retval)
+ 		da_monitor_reset(da_mon);
+ }
+ 
+-/*
+- * da_handle_event - handle an event
+- */
+-static inline void da_handle_event(enum events event)
++static inline void __da_handle_event(struct da_monitor *da_mon,
++				     enum events event, da_id_type id)
+ {
+-	struct da_monitor *da_mon = da_get_monitor();
+ 	bool retval;
+ 
+ 	retval = da_monitor_handling_event(da_mon);
+ 	if (!retval)
+ 		return;
+ 
+-	__da_handle_event(da_mon, event);
++	__da_handle_event_common(da_mon, event, id);
++}
++
++static inline bool __da_handle_start_event(struct da_monitor *da_mon,
++					   enum events event, da_id_type id)
++{
++	if (unlikely(!da_monitoring(da_mon))) {
++		da_monitor_start(da_mon);
++		return 0;
++	}
++
++	__da_handle_event_common(da_mon, event, id);
++
++	return 1;
++}
++
++static inline bool __da_handle_start_run_event(struct da_monitor *da_mon,
++					       enum events event, da_id_type id)
++{
++	if (unlikely(!da_monitoring(da_mon)))
++		da_monitor_start(da_mon);
++
++	__da_handle_event_common(da_mon, event, id);
++
++	return 1;
++}
++
++#if RV_MON_TYPE == RV_MON_GLOBAL || RV_MON_TYPE == RV_MON_PER_CPU
++/*
++ * Handle event for implicit monitor: da_get_monitor() will figure out
++ * the monitor.
++ */
++
++/*
++ * da_handle_event - handle an event
++ */
++static inline void da_handle_event(enum events event)
++{
++	__da_handle_event(da_get_monitor(), event, 0);
+ }
+ 
+ /*
+@@ -378,21 +420,9 @@ static inline void da_handle_event(enum events event)
+  */
+ static inline bool da_handle_start_event(enum events event)
+ {
+-	struct da_monitor *da_mon;
+-
+ 	if (!da_monitor_enabled())
+ 		return 0;
+-
+-	da_mon = da_get_monitor();
+-
+-	if (unlikely(!da_monitoring(da_mon))) {
+-		da_monitor_start(da_mon);
+-		return 0;
+-	}
+-
+-	__da_handle_event(da_mon, event);
+-
+-	return 1;
++	return __da_handle_start_event(da_get_monitor(), event, 0);
+ }
+ 
+ /*
+@@ -403,19 +433,9 @@ static inline bool da_handle_start_event(enum events event)
+  */
+ static inline bool da_handle_start_run_event(enum events event)
+ {
+-	struct da_monitor *da_mon;
+-
+ 	if (!da_monitor_enabled())
+ 		return 0;
+-
+-	da_mon = da_get_monitor();
+-
+-	if (unlikely(!da_monitoring(da_mon)))
+-		da_monitor_start(da_mon);
+-
+-	__da_handle_event(da_mon, event);
+-
+-	return 1;
++	return __da_handle_start_run_event(da_get_monitor(), event, 0);
+ }
+ 
+ #elif RV_MON_TYPE == RV_MON_PER_TASK
+@@ -423,29 +443,12 @@ static inline bool da_handle_start_run_event(enum events event)
+  * Handle event for per task.
+  */
+ 
+-static inline void __da_handle_event(struct da_monitor *da_mon,
+-				     struct task_struct *tsk, enum events event)
+-{
+-	bool retval;
+-
+-	retval = da_event(da_mon, tsk, event);
+-	if (!retval)
+-		da_monitor_reset(da_mon);
+-}
+-
+ /*
+  * da_handle_event - handle an event
+  */
+ static inline void da_handle_event(struct task_struct *tsk, enum events event)
+ {
+-	struct da_monitor *da_mon = da_get_monitor(tsk);
+-	bool retval;
+-
+-	retval = da_monitor_handling_event(da_mon);
+-	if (!retval)
+-		return;
+-
+-	__da_handle_event(da_mon, tsk, event);
++	__da_handle_event(da_get_monitor(tsk), event, tsk->pid);
+ }
+ 
+ /*
+@@ -461,21 +464,9 @@ static inline void da_handle_event(struct task_struct *tsk, enum events event)
+ static inline bool da_handle_start_event(struct task_struct *tsk,
+ 					 enum events event)
+ {
+-	struct da_monitor *da_mon;
+-
+ 	if (!da_monitor_enabled())
+ 		return 0;
+-
+-	da_mon = da_get_monitor(tsk);
+-
+-	if (unlikely(!da_monitoring(da_mon))) {
+-		da_monitor_start(da_mon);
+-		return 0;
+-	}
+-
+-	__da_handle_event(da_mon, tsk, event);
+-
+-	return 1;
++	return __da_handle_start_event(da_get_monitor(tsk), event, tsk->pid);
+ }
+ 
+ /*
+@@ -487,19 +478,9 @@ static inline bool da_handle_start_event(struct task_struct *tsk,
+ static inline bool da_handle_start_run_event(struct task_struct *tsk,
+ 					     enum events event)
+ {
+-	struct da_monitor *da_mon;
+-
+ 	if (!da_monitor_enabled())
+ 		return 0;
+-
+-	da_mon = da_get_monitor(tsk);
+-
+-	if (unlikely(!da_monitoring(da_mon)))
+-		da_monitor_start(da_mon);
+-
+-	__da_handle_event(da_mon, tsk, event);
+-
+-	return 1;
++	return __da_handle_start_run_event(da_get_monitor(tsk), event, tsk->pid);
+ }
+ #endif /* RV_MON_TYPE */
+ 
 -- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
+2.51.0
+
 
