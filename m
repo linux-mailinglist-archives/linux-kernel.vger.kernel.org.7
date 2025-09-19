@@ -1,119 +1,172 @@
-Return-Path: <linux-kernel+bounces-825008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C7EB8AB2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:06:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AF4B8AB39
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7781217BD66
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:06:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 322387AB394
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4682C3218AD;
-	Fri, 19 Sep 2025 17:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D0C321441;
+	Fri, 19 Sep 2025 17:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="dEu51Wd4"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pkqlk/jV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569C325C804
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495BE25C804
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758301599; cv=none; b=rEWT97QayX94WEObUmm2U7GjW75F8WDTLb9AsAMQd6AKcQ2oXLaOq0GhaaVgw7EBGYc48Ym3w04HMWR5XYvD9FK1WsNn0o3pItoER5x28Qrfi229uyL+XyDiaTDk5DCuHVM/7A5tFo3W+xW7qPVQ2myAo/xdJkuul/2U8Hwn1Jw=
+	t=1758301668; cv=none; b=J+drda6WJrI77IzwbxozQ7WcmNUkSXH46PGa+RmQmgYQaQpA1PTXdKIfPq4NN3/vPe1wjBRRNfctZaCuMSyusc/Zo/nRyROs8Ypng67x43pt5MlsotjRFDZ7krEPywMvUm3JXWf2Qlse89soYVoSXgLgoXQjQqOP6He+wfrphjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758301599; c=relaxed/simple;
-	bh=q8hVKWTJYFegeK+gcBPDI5sNVfJB9gAyqBbqKkBR/hM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=G8yr9dUt8GxKxfmqgKih0lRi7d6TqjGkPDTtExKOOmJWU0uxkPenKtKduBzNdGxM77g6Aw4wr9vdQobXmFLEO15LOyokY/JSrj26XAqvcxfHnvz+hXF9QTGYN6FwQvYmpvosjxe3piaQGZcu7Lb7HjSrFqKtcwGh0Z3wkzfhlZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=dEu51Wd4; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-89336854730so86514239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:06:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758301596; x=1758906396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+xszZQkvWINK5WulR3oXM0DZacWHWOr6o1TKTnr/+EE=;
-        b=dEu51Wd4iY0tT1PRC8AXmYSzNp3/M8jEPAX6Osol236IDICTFPF55YSrhkTm2MQIVv
-         H666IJi5qpiTdbcdBgSs082G8iK0qXKiuc0mVH98lxTsrIOcmZ/aS3E6ZrTN3P7t5tps
-         LDpRxtPP9zNZrRtFc82w4IEcdc3IExPt86EAaB29DbFCErqsbQEUZh7TrPDLDWgxDBGm
-         YjjZhrNm0Mu7d1SXy76GFAZUu1jAXZudorY/Q/CxX0pap1u0UEwwEIAu3Hqbqd71HlpQ
-         7rSYD4MDdU3TrCEjxbipzfAIXkErFV2VF2J4MEsH9TAphUtAGHI5D1k9Z3t2UcC2b6js
-         vJZw==
+	s=arc-20240116; t=1758301668; c=relaxed/simple;
+	bh=3qp6q9LRUoe6q3bo7J359SoUE/ClQLHaiAfa3bIxl3w=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=I1BcnCImglawq1HIsDVW7u4ZDCDkjdXJoTGMGSVompCWV6SVVFfxlYqSb8HXHujNeTe721dGY6xqP/TleX/9rdpsHpzc+ALwzbcaTInOIGvvonGJqjIeQlPEzwdhPAd+HXaTbtrNqJaQ+JffmltL0NkquyU0X2Ft/ogpKjf2xdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pkqlk/jV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758301665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3qp6q9LRUoe6q3bo7J359SoUE/ClQLHaiAfa3bIxl3w=;
+	b=Pkqlk/jVDqX6gVxD0Ax/qKSyHMqOMX3W4Nq2ZiYM3oZgCP9WqkrABDUPZ8j7rEZETBbP3e
+	OrXoaVaghe0bP529Ad8DW1tPwULRwgHSKQSR1q+mII3r9lLFguhVfwLfX07Mln1qm5OU6y
+	uI0DP+1XsWW6trPsXWpfJiWws7CaJ9s=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-47JwMH1aOEOOcSlRKpig9g-1; Fri, 19 Sep 2025 13:07:43 -0400
+X-MC-Unique: 47JwMH1aOEOOcSlRKpig9g-1
+X-Mimecast-MFC-AGG-ID: 47JwMH1aOEOOcSlRKpig9g_1758301662
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ed9557f976so2191633f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:07:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758301596; x=1758906396;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+xszZQkvWINK5WulR3oXM0DZacWHWOr6o1TKTnr/+EE=;
-        b=Ql93MrOrN0mzavuJOz3p3/A3RJwC2EUXpyjusohJENYqgMojuNikBqF16E8pYkRzGT
-         /pTGey+Neo9ueDu022DxnGC3yFPmi3zOltwgTcRhsrkzmIQiZsauq+YycdVd+C1THZDx
-         VDX1CALTSaAout2+/myCU5yWeiN0PK2DD1D+D2EQ4uCR3Zp1385cxcoF3zOs2a20cvXV
-         44EGvCOJQH7hcfW7zF+1oggS2LR0efSUymdTr6zG/I04jEmACGnDDCOw5biKxx1/Iu7d
-         NZwKho/Mi4eUoBljGV4tx2+8iHzsNnc/fDxjmvOek/C1i2vnoBpDjhqaab96Mx2xGYG5
-         JkeA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5jngrUg17R8gf853wUAuuXh+yp3uVjY2E4K3LANRm/e+84PGfieF9Tw6jPPNA4YUP+6Z/ZsJ/YJal9j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA3NRYkyP1sah1bzkPDUr81xUKK8WX7MPrnplqAR2v3ljwroSB
-	2YOT0LGZSK+iAWaK4febqrmyi3h8xa2av5p+HhNRkvzZTdDFaRo3wsfy1i4ZrexBpRc=
-X-Gm-Gg: ASbGncvqsKw0NXr0V+7++S5RBjpR74B7caDeWMlPaipsnKKoaAY5JdNXcuHnARvGd8K
-	HUi2kN4VGQeoLAlWY1+Ni9FF4RgyQEKLMmCYTBLXwrm9TgxsMMJnb7bhPMK18zKctjC4ubgFDcx
-	kL8KDOUNm00lfNxQjYq02epgd3pcAuk7fPupYqI+QgDUQegM2XbKNgG6re1MWS1uhAwSogpmxG2
-	CRGXdz/484kcaBlqj8tBk60Za3QanNfvHrl5hOupqUQsVd7l4S1WPtN4TMkHeBpCe8dl7AP7yJw
-	wyVl67MXUeq7XhshkBhJSXJG+HXjP6XWrbsaq0/yWQkcr3gFVB05Xjx2+T2wLiASS6IKm720HAZ
-	cb/wgLqIKX2GjrA==
-X-Google-Smtp-Source: AGHT+IEWozrJP43M4DVIrxcb0S2DwxZPhA4LrRW0lqAN04mhddqVBixtfK+2/UInAStgyEXg1YXAIA==
-X-Received: by 2002:a05:6602:164b:b0:887:3ae9:c3d9 with SMTP id ca18e2360f4ac-8adcd809f54mr646108739f.2.1758301596382;
-        Fri, 19 Sep 2025 10:06:36 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8a46a68330fsm188484939f.2.2025.09.19.10.06.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 10:06:35 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Caleb Sander Mateos <csander@purestorage.com>, 
- Ming Lei <ming.lei@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Uday Shankar <ushankar@purestorage.com>
-Cc: linux-block@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250918-ublk_features-v2-0-77d2a3064c15@purestorage.com>
-References: <20250918-ublk_features-v2-0-77d2a3064c15@purestorage.com>
-Subject: Re: [PATCH v2 0/3] selftests: ublk: kublk: fix feature list
-Message-Id: <175830159548.906981.4104343901277988094.b4-ty@kernel.dk>
-Date: Fri, 19 Sep 2025 11:06:35 -0600
+        d=1e100.net; s=20230601; t=1758301662; x=1758906462;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3qp6q9LRUoe6q3bo7J359SoUE/ClQLHaiAfa3bIxl3w=;
+        b=CRlL+g7+b6gj8hP0keSUzMi3B1sFd6x48vf9fx8BVeefof0djszYlBoklbN4H5jBFy
+         fFste2JLkqG2aJobPJy2QOsFCLMuCGoT2Tc3ymK24yT8T5E9Iu+hSzfiPiaJAiamg2OS
+         GVbFX2HhEJXzAIJintmYcAAYHF5Nc9biatd8E4IVYzxvX7sKLqSGzlIHUztCNa3tyPMb
+         Kqnuevd8eNgK4aUL5jlWJs35Q3yr8QAi8pzNJCUDw9hx9fkYnmweifR8vYACETMDky0A
+         Su7enPhqfYfQ1vCMTPn8ZSqTOkWyu0VsTjR0uQE6vtXiEwVd38GtZ66M5mj+H56AeHsk
+         5FuA==
+X-Gm-Message-State: AOJu0YyF8yup8uU643+Z9vMaJlUgtxhqpOmof5NppsJYegBT2vx4l3q2
+	c1ckYtLPyBBmyeeVundaG5jzdNWR68Dutu+gjbi+/PjtQDmqDAaH0EfOt/Yr3enFjXoS1zpnhCB
+	jojx3aRfYTITgGSTksD/4A9ZQmC76CbzjxbmUZ34VFe/kY1G4PO4RwC0SIrt2ztLDBg==
+X-Gm-Gg: ASbGnctFZ/eWdXaPV7UektS7DetYT5PPeLxw864NYgopPrPcJXh8g496fiqth57+Lfb
+	6gHzno8lkcEpgDfhFZxxWpE9DSgNw6MijjY/gbayVlC+kLfYShTlleo98alJ2bS7OtzhP1u9sl/
+	OYif3jtmK9fL12E/D+o7oVDQAa7B1MYEmkh37D9GXOuHm6TZyuJFf7ibPSp8sdrO7nvS5gwfPVO
+	kqX9C6J9eDAXWt4NFxT8LF2OzNLeqkvcYHTBkOwPkOPdfL1lMi4flsfWETKdTqFFPsYE1gvlBdP
+	miGpX4Wt6rcocYL8Kz2475AJCXKwnaShCvI9
+X-Received: by 2002:a5d:64e5:0:b0:3ea:ac25:b6b9 with SMTP id ffacd0b85a97d-3ee7da56ff7mr2979534f8f.11.1758301662176;
+        Fri, 19 Sep 2025 10:07:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgsMyuWn2Qvd0H7mVqIwWFUhFqllortDrLxiWpPoSxTPoDr2zxCfkYtR+1fTUa0yG7RVSidw==
+X-Received: by 2002:a5d:64e5:0:b0:3ea:ac25:b6b9 with SMTP id ffacd0b85a97d-3ee7da56ff7mr2979510f8f.11.1758301661712;
+        Fri, 19 Sep 2025 10:07:41 -0700 (PDT)
+Received: from [127.0.0.1] ([195.174.132.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f4669sm8270429f8f.4.2025.09.19.10.07.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 10:07:41 -0700 (PDT)
+Date: Fri, 19 Sep 2025 17:07:14 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nam Cao <namcao@linutronix.de>, Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org
+Message-ID: <7a446e09-4333-409f-bba1-246a27d91db8@redhat.com>
+In-Reply-To: <20250919113749.7ee1f249@gandalf.local.home>
+References: <20250919140954.104920-1-gmonaco@redhat.com> <20250919140954.104920-17-gmonaco@redhat.com> <20250919113749.7ee1f249@gandalf.local.home>
+Subject: Re: [PATCH v2 16/20] sched: Export hidden tracepoints to modules
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <7a446e09-4333-409f-bba1-246a27d91db8@redhat.com>
 
+2025-09-19T15:36:50Z Steven Rostedt <rostedt@goodmis.org>:
 
-On Thu, 18 Sep 2025 13:34:06 -0600, Uday Shankar wrote:
-> This patch simplifies kublk's implementation of the feature list
-> command, fixes a bug where a feature was missing, and adds a test to
-> ensure that similar bugs do not happen in the future.
-> 
-> 
+> On Fri, 19 Sep 2025 16:09:50 +0200
+> Gabriele Monaco <gmonaco@redhat.com> wrote:
+>
+>> The tracepoints sched_entry, sched_exit and sched_set_need_resched
+>> are not exported to tracefs as trace events, this allows only kernel
+>> code to access them. Helper modules like [1] can be used to still have
+>> the tracepoints available to ftrace for debugging purposes, but they do
+>> rely on the tracepoints being exported.
+>>
+>> Export the 3 not exported tracepoints.
+>> Note that sched_set_state is already exported as the macro is called
+>> from modules.
+>>
+>> [1] - https://github.com/qais-yousef/sched_tp.git
+>>
+>> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+>
+> Note, for all the scheduler changes, we need an acked-by from the schedul=
+er
+> maintainers.
+>
 
-Applied, thanks!
+Alright got it.
 
-[1/3] selftests: ublk: kublk: simplify feat_map definition
-      commit: 1f924cf781de47432f220185bb2beeb12c666aa1
-[2/3] selftests: ublk: kublk: add UBLK_F_BUF_REG_OFF_DAEMON to feat_map
-      commit: 742bcc1101bcaca92901fe3fe434e4b1a467b5e8
-[3/3] selftests: ublk: add test to verify that feat_map is complete
-      commit: a755da0dd0530e53aa026fd4d08b3097e1be6455
+> After you have acks and are satisfied with the code (hopefully someone el=
+se
+> can review them), you can send me a pull request to be added into linux-n=
+ext.
 
-Best regards,
--- 
-Jens Axboe
+Usually Nam does a very good job reviewing them.
 
+> I'll still run them through my own tests.
+>
+> Which BTW, there should be a bunch of tests in:
+>
+> =C2=A0 tools/testing/selftests/verification/
+>
+> (which doesn't yet exist).
 
+Yeah that's the next thing in my imaginary list, or perhaps something inspi=
+red on what's done in rtla.
+
+Thanks,
+Gabriele
+
+>
+> -- Steve
+>
+>
+>> ---
+>> kernel/sched/core.c | 3 +++
+>> 1 file changed, 3 insertions(+)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index ccba6fc3c3fe..334ff5b214d7 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -117,6 +117,9 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_cfs_tp);
+>> EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_se_tp);
+>> EXPORT_TRACEPOINT_SYMBOL_GPL(sched_update_nr_running_tp);
+>> EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
+>> +EXPORT_TRACEPOINT_SYMBOL_GPL(sched_entry_tp);
+>> +EXPORT_TRACEPOINT_SYMBOL_GPL(sched_exit_tp);
+>> +EXPORT_TRACEPOINT_SYMBOL_GPL(sched_set_need_resched_tp);
+>>
+>> DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+>>
 
 
