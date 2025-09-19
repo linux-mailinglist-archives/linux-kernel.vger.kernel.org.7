@@ -1,218 +1,133 @@
-Return-Path: <linux-kernel+bounces-824948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C562AB8A871
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:14:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9676AB8A880
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3217E5AAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C76D5A84A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE9E320393;
-	Fri, 19 Sep 2025 16:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A8A321260;
+	Fri, 19 Sep 2025 16:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GYnKfRFA"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010049.outbound.protection.outlook.com [52.101.56.49])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ao9vjwtQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5040C31FEC6;
-	Fri, 19 Sep 2025 16:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758298432; cv=fail; b=ho3yWjfQR9I9E75dtZfJUL0cTpMfpy9tV7EQqn69k/e1i3tN4O4WKIaN8Fj0m0renuNPG+M7pUpp5MA37J5RER6hs3ixFSsq3s/3WgXcuhwcTq2sMgrHNKCQEeuXLy7YYVegfrMO5eWHPY0w/mzDwecp7T4W4PW1yHu+9Kw/vEA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758298432; c=relaxed/simple;
-	bh=g/h/bVzMmrHSeUjA4+yQJXt93/d863bx63vfhizXlZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=EduB9LViWIJgVTBA80k2LZiiuDA0RgC6cXhjE9uTZqCNnMh0nbW77FPtLdnsP61JwBkNPUearptevt7w5rQDicp/ZhKIaikuRyraxfzQC1J5n2xp5sZl6reXNenLIdWE6ok1BjZ6veau1nLoVVMF8GosGF6IWDVAwZ3M0IyQZnQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GYnKfRFA; arc=fail smtp.client-ip=52.101.56.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AvKTrVWHXqU5ISTUtPtr3gDK8vqcP7g7aCdoCNit8+fDm/RnLtwmxGbWky5BL3kfP/M4icPlLzwOWxm1Q2iBFcWbd88II100j/4ESoxa4q9O4Zwn82tGGWtFA+CT7Qgcy37X/a51vHDQFSrRwB4AXRrX+1GdIC4v8nd7kCspl5S4Rp1BdRNxOo6zlusCDlHZon8WrQLZ1WpqzWjgfPZYIgn1eL7vkDHxG5Nhvu28ctU8Iw7Fe0bGgrg4a+HOmrPygLR2XgsVMtwB4o7TA1ejSKw26Mq6mQbtr4lmB6U4hqBKcnrGh8zCSL4FYVrvtGHFmhDYXz0b+DyiHN7fSbPx/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oFZWwiDJJ1F/0U76J5x2UbFGRNuRJ8c0fhhf25OiybM=;
- b=VQSI0cShdvdSJLMB+OwYAzKb/q0SF1YAIIdjlWPqq7CPJF1cxvgrGjg/2/2GpOcM4B13485aXLhYOJKGcD5vlb4WVkiO2FqKy32REXesvX2cJqAzhk6gm9azP3ISLo6sHLxsc5s0Eg8vB8fJq0OFkrDL4GI16Yn9jDA97pIXpdwbeDJJAvbpo95Rg74EL0HXXdZVyqt8qFyNLFQQTaPYPcZye9ikOfctMvph30505iCrSrzG4sQfmLK/gGN0E7KWnZ+TIY6cH5Fo5bphrQRVksDmf6mMCp4qYkU5SEgK9jG/qbPyOSMgU2b8icQsTv/fbLVDx18XlpN/9qR/yqpbHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oFZWwiDJJ1F/0U76J5x2UbFGRNuRJ8c0fhhf25OiybM=;
- b=GYnKfRFAq1J/ygo0SzBWW6qCjT6YnjOg3rUVRNas5m9iKnXf1GqxREJ3T0rpX3mc4CxQqX7azGD4CqHh3R7LdGveH1X24WO076uSS7hzTYImcpv8D20QDGU/U1ZsbKXngfhs5BGV/lbbTZshaInK4V+3R8+1AplD59XegkaZQ8M=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
- by DM4PR12MB8474.namprd12.prod.outlook.com (2603:10b6:8:181::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.14; Fri, 19 Sep
- 2025 16:13:47 +0000
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::4c66:bb63:9a92:a69d]) by BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::4c66:bb63:9a92:a69d%3]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
- 16:13:47 +0000
-Date: Fri, 19 Sep 2025 11:13:36 -0500
-From: John Allen <john.allen@amd.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Gao, Chao" <chao.gao@intel.com>,
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"minipli@grsecurity.net" <minipli@grsecurity.net>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"mlevitsk@redhat.com" <mlevitsk@redhat.com>
-Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
- GHCB when it's valid
-Message-ID: <aM2BMM+hw+v893Qt@AUSJOHALLEN.amd.com>
-References: <aMnJYWKf63Ay+pIA@AUSJOHALLEN.amd.com>
- <aMnY7NqhhnMYqu7m@google.com>
- <aMnq5ceM3l340UPH@AUSJOHALLEN.amd.com>
- <aMxiIRrDzIqNj2Do@AUSJOHALLEN.amd.com>
- <aMxs2taghfiOQkTU@google.com>
- <aMxvHbhsRn40x-4g@google.com>
- <aMx4TwOLS62ccHTQ@AUSJOHALLEN.amd.com>
- <c64a667d9bcb35a7ffee07391b04334f16892305.camel@intel.com>
- <aMyFIDwbHV3UQUrx@AUSJOHALLEN.amd.com>
- <2661794f-748d-422a-b381-6577ee2729ee@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2661794f-748d-422a-b381-6577ee2729ee@amd.com>
-X-ClientProxiedBy: SJ0PR05CA0056.namprd05.prod.outlook.com
- (2603:10b6:a03:33f::31) To BL1PR12MB5995.namprd12.prod.outlook.com
- (2603:10b6:208:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CA6320CD5
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758298530; cv=none; b=YYtHLXGeyf2juErLnwC1JmkPflHiLVvgs3sebhnE4tBF5qJHYEUe6tX/IkyVMlEvoPZ2uVn4UoYB0uMvDmejAvFIjPjdfuK2ZVGsnU4k+9YxwgG6dhNHZRA3tWwhGkr3LS0hW0ZGUW8YdMn6b2/xYh3mPrwKf45XYQHHeNKcGeg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758298530; c=relaxed/simple;
+	bh=nqdyMymN425TI/5K5SDgLswxxxGJi9ZID2KaXox7sOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIw7XlBeY8NYojHWhDWhvbHz4RePrineGwdQiIbtV31Lv57YSaG15K563Jp280S2ui7GTpNqV4ZPPwFEXBWzwCZvabXBb3BZvkNGde9YF9F1+jBo/RP1Dm1iIJizagHMHJ6OHoJQQdtJ1c/GyXPR3kjRNFcWLTU7EKa3EhaOyqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ao9vjwtQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758298527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tFSWc29Bem6BFsJUg23DgE4402gn/p4b5SW0MKkdQF0=;
+	b=Ao9vjwtQEE/7oz9VwMycwSyidUzcVtV8HHXh6BAQitZmnoYWW8A6yjH2NEiNmsHhLNcGEf
+	rsSrQdFnqOsB84st5zdd+6XfxlyAVwnOJlCxSkdidmb3MRLtp6/lEqp+zG1ky1Fe+FOvjC
+	iboJqGldilDVmrVdRqB0/0n+inqU00s=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-9jy5j-zZNyOFIxt8m5gdKw-1; Fri,
+ 19 Sep 2025 12:15:23 -0400
+X-MC-Unique: 9jy5j-zZNyOFIxt8m5gdKw-1
+X-Mimecast-MFC-AGG-ID: 9jy5j-zZNyOFIxt8m5gdKw_1758298521
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30F1519560B5;
+	Fri, 19 Sep 2025 16:15:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.8])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A981519560BB;
+	Fri, 19 Sep 2025 16:15:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 19 Sep 2025 18:13:57 +0200 (CEST)
+Date: Fri, 19 Sep 2025 18:13:54 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Matt Fleming <mfleming@cloudflare.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, John Stultz <jstultz@google.com>,
+	kernel-team <kernel-team@cloudflare.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Chris Arges <carges@cloudflare.com>
+Subject: Re: Debugging lost task in wait_task_inactive() when delivering
+ signal (6.12)
+Message-ID: <20250919161353.GB22933@redhat.com>
+References: <CAGis_TWyhciem6bPzR98ysj1+gOVPHRGqSUNiiyvS1RnEidExw@mail.gmail.com>
+ <20250919143611.GA22933@redhat.com>
+ <CAGis_TUp9_V-kBn9CF55f08NVR+Bx3iyP=O=+PH0QAf73eGY2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|DM4PR12MB8474:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b9b2172-71a8-4726-24a4-08ddf7978314
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4p1RSIKG3giHBEGH6qB/djdUzYzreWFX9ZnIuTi+d0pUsE1pVMWRd6KiWI5Y?=
- =?us-ascii?Q?BRG7/lZRFnBXJOutboGoszeltPsR8ChouNDcEcaJgTg4lyrqQfTot+2Ef05b?=
- =?us-ascii?Q?vTqXOiOurdGXsZvE2lriskt77YjPLHs8Gf9xT7j+G4MfRgqa2doWbqQLrLj5?=
- =?us-ascii?Q?m9vOuFVDDkSGin6Q9iJL2TrZImEQgT9axcOlvCy7H2qPahPb/atRYOyRKDb/?=
- =?us-ascii?Q?0N+P1AHnR6WVgC8vNIAdPFTRlW5YxeHdflh7nUYfhHDIA9Qz0+wZr9JxuE3M?=
- =?us-ascii?Q?74QTc4ZSghtB8hDp51gJIXr9R39riNnN83oWYzypWA2k7gt7inIrjeeuJUN4?=
- =?us-ascii?Q?eAxGLas3/x9DTvjPcKOY9isHWfbGDssmGjKLEskFAmDOMsKnZN8RE8hVlQQy?=
- =?us-ascii?Q?RM4xSen+EhG/8FkcA2xTjHA2lA8pwYgw6kdik7/VOHk7rwWg+tw2wSwDJGY3?=
- =?us-ascii?Q?D2wIO1uxRRIevQMZdnlL4QuR/YNn1Iv5HQXjB71NO0ONupVaKdjMsLQiGZZB?=
- =?us-ascii?Q?Gu+FKo7pSxLZBotHHUoEFMB0d08UPLyDLdtx0OMLFZJ/lcbQCP27oCeopy5/?=
- =?us-ascii?Q?kouskX/yovbN/JMcmom7pQXC+CbdM4UusJB9S/WSwMwnOC6j3mbusD8IAnuH?=
- =?us-ascii?Q?a3CKjht3kuoa/IDVZyH59amWYIPovT3j3aehSdA7hqkECaWIASe1abwRQADq?=
- =?us-ascii?Q?/Q6DTXWtM7q6hwoGNrxuRrVs6VKQh3P3xGnR0x1/7FHXukARFna+drByy9Zx?=
- =?us-ascii?Q?kM7vcJWIsRjmJmPvb9eCEY7YVQlGLrQS/y7MWxY155vxTA60BHtgPdvh3nhO?=
- =?us-ascii?Q?EMZR2oWGgtZzrSEus/CiQkjSZQ6KZqLwqkbNSZAHgH1akjlP7KePuvs9LJ6v?=
- =?us-ascii?Q?/DuNAkV6Tfo3MC+RPjCDSQ46a9Ap0142vZExfuuTbD6nkRPiYQzDzxS4ndua?=
- =?us-ascii?Q?5cF4FuVtMXg7XqhKvPkVP7x/WGF8Oo7zjVnHsOBd7mS5qFC9ikG0Kex3IKD6?=
- =?us-ascii?Q?EcOer4i/wQm2wMSuxTPSvjqIKROjGWmZUt6kd/jx/vWku+paYH3UDWPeGieA?=
- =?us-ascii?Q?4mYX+eKNrPPN/MePn8CbkD8AL6IzDtoSUuwIDHPhTHGditIliCErPW/Ahx8r?=
- =?us-ascii?Q?Z3TwQPcrJKzeNSPZqbeURhDr0Vi7Anoujx22BpUgpBh3w9RqzenhJql7vPI7?=
- =?us-ascii?Q?88UM7I6ZA0zDt2S9lGn5BKmsCS470lgznEZgKNLRua92/TrT3QPwEEnJu/B/?=
- =?us-ascii?Q?4RnHmgPQTRZhAxCmRQjKpBb7TcKp7zdiDuBnzCB/uvFUzkl+eYHNxfcS+C95?=
- =?us-ascii?Q?7qYlfFZb3Rdh+0Pp+caN8IaZeMKRh1Sb7yTaBd4tvt8l2r3IXijWnQTr32IH?=
- =?us-ascii?Q?2iWrrxu962ci2WKGxRes3ZIZtivw5x74e4FDYoVIo+piKRjIOM3TUh/PtHqq?=
- =?us-ascii?Q?a7+1siz9+yQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nwcmvqj8StID5nm4HEUHNq9UqO4WCqqT1hrvBlYScBAEVleFYFeDbzVK/8S9?=
- =?us-ascii?Q?p7M2Az4EVmphR9JSjewQ4ggdWHM8nAvPgbw7GiHPxOq/b2nqjzq3zQdlA2wn?=
- =?us-ascii?Q?d/s2GfB4BpsxRrCzPB3tMr7mkEWlTyZr/R9V24A8UnXBvwq0WtSHPgCn5BOA?=
- =?us-ascii?Q?V9QTyuYW6kTDgV0yjMgw0wM1pcQvSfBM2rqnG1mKIkS8CWAKV9SB6d2ObtEi?=
- =?us-ascii?Q?ckI31r8Cx9GM9RJPF2cpRqaHwaqtnmOUVXATMq/CzzZYnBSj/J0HuDGtKkkv?=
- =?us-ascii?Q?HWHgc+DMh6F1t8Z+uKqr4FNUjelHv/DvDTIPHWRw9fRl/zBIjEpjKnoFl9iL?=
- =?us-ascii?Q?ImSCuOjYED+ezi0Q60CfEXTufkSseA+/WvOVSruKIWvhClc7CJhwI2lW4hYq?=
- =?us-ascii?Q?OJMgrJEgjL18P4zxilm++0tGOvXMualb5wShK4VvHY0qPGiN+s4BLAsqvy4W?=
- =?us-ascii?Q?+q7BWKrEG8VcS/clKJOa41uJBVqv4bhFtAcqzGTa1ifuSNwGyIVz2LyDiEsg?=
- =?us-ascii?Q?sPn03AyCNz85jnlg3uoIyhgR+6FhKr9MpLNOdYq3SgX5yfPtL9jYuDU6NYNZ?=
- =?us-ascii?Q?MPIDrecKbfkLClWtxnyPSxiQUrzWDXuXzDLO3urulDqkHXzJD9wHwzUS9o4P?=
- =?us-ascii?Q?mhGqneDyYkOI41/h4yxKNfL5VbrK8zx+bp6ZRjiJrfFvssVhmcJnVfATHB/l?=
- =?us-ascii?Q?05KWM6rHmIADOdGtJqJMiRTVSE/nHFdfIlw0D0dlM7ONW/IHay3qWOyi0ce3?=
- =?us-ascii?Q?keoc0kYryws/lOOeiVwSTg3NLF9Zsg4hxDpPrhrEpPPtRIoW4rpc3HMa97YU?=
- =?us-ascii?Q?FJfo3CDDRC4lY+uwpuvgW2Xuyz2QA2P3pAFT3TAkB4q3demSSeRm7Oyd3YhO?=
- =?us-ascii?Q?UKIn7Di1aNZAUaoqT1W/LKwVNBYytDwoIBNzlpmJ/iBo+RUvMcuFblkgQn+v?=
- =?us-ascii?Q?NB0KA4apR8aoF3wDkMEm157mTGRBvDH/kl59NSmfKXpGOqqV4mWYsFT6TO6Y?=
- =?us-ascii?Q?zOfsyU/kZp99q+XP5Sd0eVPYpr+aAEWPuTY4e4hG5jHaffpwbQCiGYAbA/2k?=
- =?us-ascii?Q?pYBJjBugSDKXAGHCEyUrdU4CzTBrX0h6cBWNWJbbzCB+c9O+s51jSWrWajkc?=
- =?us-ascii?Q?YYNbaCS/yVw8YH6nJrxyaJHC2MjWocb8qHRTgyigPWqO1vffOKwc3PQldLtz?=
- =?us-ascii?Q?stNUWNXYFkfs9yy92XgfhyBcAxSHA2/og2UH4D/alr156rdfrgemjDWUGNs1?=
- =?us-ascii?Q?kviVexIW7FogrPS14QtZ5QMip86eE8HONjynvpHpPHKyPW1OE4+hVbatAh5y?=
- =?us-ascii?Q?/EhuGwPwQO4+ssh3tXDDQTvWOE29i0grMLN0Q2s16w8FkogjI+c5lCWJA59G?=
- =?us-ascii?Q?bYtnOVb28MfAP+lqGA4JOF0U9exRhfa7aN3lLPZoxUgBGQsrr3kC+OWDJTxV?=
- =?us-ascii?Q?Yrxyctod8JJgyF76AbpDAtQxLPKBpYqxaSSBJ3h3dz3XN68GGvDmviiB/Qg4?=
- =?us-ascii?Q?06c0a7sK3qRXBGxRx3UU5EPE3/FpCYZW6rsvru7o/is6UamS+QI9JwgztQv2?=
- =?us-ascii?Q?S/ECxGLSS3fIKh99tzcbuxIrRWVIKM7g8uKFOK7Y?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b9b2172-71a8-4726-24a4-08ddf7978314
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 16:13:47.0503
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4SQ42WVoktzrXLs9rXE+QAwxa4sRt4vT74Bob1jAWRX81DqLMNXDYN8AYZ0uWZKw5yx819puW0PSfK9pkq/sNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8474
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGis_TUp9_V-kBn9CF55f08NVR+Bx3iyP=O=+PH0QAf73eGY2Q@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri, Sep 19, 2025 at 08:40:15AM -0500, Tom Lendacky wrote:
-> On 9/18/25 17:18, John Allen wrote:
-> > On Thu, Sep 18, 2025 at 09:42:21PM +0000, Edgecombe, Rick P wrote:
-> >> On Thu, 2025-09-18 at 16:23 -0500, John Allen wrote:
-> >>> The 32bit selftest still doesn't work properly with sev-es, but that was
-> >>> a problem with the previous version too. I suspect there's some
-> >>> incompatibility between sev-es and the test, but I haven't been able to
-> >>> get a good answer on why that might be.
-> >>
-> >> You are talking about test_32bit() in test_shadow_stack.c?
-> > 
-> > Yes, that's right.
-> > 
-> >>
-> >> That test relies on a specific CET arch behavior. If you try to transition to a
-> >> 32 bit compatibility mode segment with an SSP with high bits set (outside the 32
-> >> bit address space), a #GP will be triggered by the HW. The test verifies that
-> >> this happens and the kernel handles it appropriately. Could it be platform/mode
-> >> difference and not KVM issue?
-> > 
-> > I'm fairly certain that this is an issue with any sev-es guest. The
-> > unexpected seg fault happens when we isolate the sigaction32 call used
-> > in the test regardless of shadow stack support. So I wonder if it's
-> > something similar to the case that the test is checking for. Maybe
-> > something to do with the C bit.
-> 
-> Likely something to do with the encryption bit since, if set, will
-> generate an invalid address in 32-bit, right?
-> 
-> For SEV-ES, we transition to 64-bit very quickly because of the use of the
-> encryption bit, which is why, for example, we don't support SEV-ES /
-> SEV-SNP in the OvmfIa32X64.dsc package.
+Let me repeat that currently I have no idea, so let me ask another stupid
+question...
 
-Ok, I knew this sounded familiar. This came up in a discussion a while
-back. The reason this doesn't work is "int 0x80" is blocked in
-SEV/SEV-ES guests. See:
-b82a8dbd3d2f ("x86/coco: Disable 32-bit emulation by default on TDX and SEV")
+On 09/19, Matt Fleming wrote:
+>
+> I do have some info. The callstack for the lost thread is:
+>
+> Call Trace:
+>  <TASK>
+>  __schedule+0x4fb/0xbf0
+>  ? srso_return_thunk+0x5/0x5f
+>  schedule+0x27/0xf0
+>  do_exit+0xdd/0xaa0
+>  ? __pfx_futex_wake_mark+0x10/0x10
+>  do_group_exit+0x30/0x80
+>  get_signal+0x81e/0x860
+>  ? srso_return_thunk+0x5/0x5f
+>  ? futex_wake+0x177/0x1a0
+>  arch_do_signal_or_restart+0x2e/0x1f0
+>  ? srso_return_thunk+0x5/0x5f
+>  ? srso_return_thunk+0x5/0x5f
+>  ? __x64_sys_futex+0x10c/0x1d0
+>  syscall_exit_to_user_mode+0xa5/0x130
+>  do_syscall_64+0x57/0x110
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-So I don't think this should be a blocker for this series, but it is
-something we'll want to address in the selftest. However, I'm not sure
-how we can check if we're running from an SEV or SEV-ES guest from
-userspace. Maybe we could attempt the int 0x80 and catch the seg fault
-in which case we assume that we're running under SEV or SEV-ES or some
-other situation where int 0x80 isn't supported? Seems hacky and like it
-could mask other failures.
+OK, thanks. Nothing "interesting" at first glance.
 
-Thanks,
-John
+> do_exit+0xdd is here in coredump_task_wait():
+>
+>                 for (;;) {
+>                         set_current_state(TASK_IDLE|TASK_FREEZABLE);
+>                         if (!self.task) /* see coredump_finish() */
+>                                 break;
+>                         schedule();
+>                 }
+>
+> i.e. the task calls schedule() and never comes back.
+
+Are you sure it never comes back and doesn't loop?
+
+> The waiting task
+> sees p->on_rq=1 for this lost thread
+
+Strange...
+
+Oleg.
+
 
