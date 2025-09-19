@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-824424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237ABB892C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB04B892D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8715F1BC143B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:00:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BEC658630E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B98230BBB2;
-	Fri, 19 Sep 2025 11:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774093093A5;
+	Fri, 19 Sep 2025 11:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="Rn4GAO1I"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IvISChoI"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE1730B52E;
-	Fri, 19 Sep 2025 11:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CD119755B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758279613; cv=none; b=XdemOGgboq65lYFFa4Phe9tc1tsssSQDKqB53LHuizbU4ZE5+DsLaEK9ypFg/sAPvmsjEOfwwaxrHcoBAHWYbIrhaOn/qB9Cco3taaIeC20Q9iRMfV+oQkreEeTN2mYgVj0sIgemdqkPXDo+e5TiuYoM0mMkHHHga4XfcFFVi08=
+	t=1758279743; cv=none; b=mga2WKTSHGSsfNOTFSmuigD+JLLtUte6L7ZGHJ8tn7JK98e7v+j13bzpE6nTVohBDrLlrm6J8MXWpMQFvr7slkBmCCQYZsP1FE6fgT8Yap//DzDpwMLicjGM0366kYF5ua1ZJ/NG/ASP1f3z2p+BWMoPVLtT1tr+qydKZ5fgn3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758279613; c=relaxed/simple;
-	bh=iTara4sSupdozHepYizRgHeOHDqwbp9HFBUwDlsXipA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DpXyNUrn868cisu/aFpLrc+g03PyCbO2euZXrZQ1bVxMCPJ5/IVR6xxmrP/M+OSPsIni18ZCYtpQXIJpTBZdxDQE2Y9BQp9d+XL1CAaEoDa49/rzkm0REM02N8J4eLhNq/4jKKSCKsVNd+BAJihNSZyCBuC/QhL5U0QJExM/9v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=Rn4GAO1I; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost (unknown [10.10.165.9])
-	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 8805040762F1;
-	Fri, 19 Sep 2025 11:00:06 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 8805040762F1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1758279606;
-	bh=olnDf6EjI1UvqfPCSzcCme6oOerL4VfaqpGnzGziL7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rn4GAO1ItFgGjRkwKawJxdyqJp+B3jhg+qVmGs8FGyzWGyasdL6YsRjhaWbMpasmD
-	 q2wDnVCZyHJr8U77EkxNHflu2DdSVv8zbZtomgTlQy9q3maytCjacmjUY9REBiCGZ8
-	 AhoGLeb3aqbj84eW3nYICbolkCrzzQyRivm9bK0I=
-Date: Fri, 19 Sep 2025 14:00:06 +0300
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Zong-Zhe Yang <kevin_yang@realtek.com>, 
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>, Bernie Huang <phhuang@realtek.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH rtw v4 4/4] wifi: rtw89: avoid circular locking
- dependency in ser_state_run()
-Message-ID: <20250919133124-ffdfc2386e03e9d646af8d93-pchelkin@ispras>
-References: <20250917095302.2908617-1-pchelkin@ispras.ru>
- <20250917095302.2908617-5-pchelkin@ispras.ru>
- <0b56e5a8cd7048a19625764bc323ba46@realtek.com>
- <20250918182202-29915c8fb7da60280f86084d-pchelkin@ispras>
- <bb36bb617cef49d7973ba92d4bd094d8@realtek.com>
+	s=arc-20240116; t=1758279743; c=relaxed/simple;
+	bh=DMCaAdrM0iJ/a493sS7cg4Tb2ciW6M68+j/honBH2IQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkIIWHHKROWDtOIF1azQfvZBpycNlfbDDOta+rNBckKfj09GLPVUFPPSpnnpMAnz+w4JiFlwvgdI7XZSQMNtikGMnIvSJvUm8+9EiTrUQr3Z6fDbwcTVxAIijTzcBCwnZhL9hSj11Qq4EIfc9F9/F4c5XGZHbIpPIYk2sS+QXwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IvISChoI; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <dbfe6e10-f7f1-4a79-abc1-37151235bc5c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758279728;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hhzxfG7cjXwgON863eIP76FtEayQp7q6bAEfRNlUZAM=;
+	b=IvISChoIUAIGIvSkT8rjV5NjUggLeHa931OhW1LluXBXZ019yTkVBmBTUpI+cu5Je9myd1
+	O37yZPdxYVfAu4sDSsoRpWPszzN2I3Slc7oi9dJecXXyPrJP+2Wx/Edx9kqfpuk9UErQoH
+	ugipUP3spN70fM90vBqN7+IeKoGhhxQ=
+Date: Fri, 19 Sep 2025 12:02:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bb36bb617cef49d7973ba92d4bd094d8@realtek.com>
+Subject: Re: [PATCH net 1/3] broadcom: fix support for PTP_PEROUT_DUTY_CYCLE
+To: Jacob Keller <jacob.e.keller@intel.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Kory Maincent <kory.maincent@bootlin.com>
+Cc: Richard Cochran <richardcochran@gmail.com>,
+ Yaroslav Kolomiiets <yrk@meta.com>, James Clark <jjc@jclark.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250918-jk-fix-bcm-phy-supported-flags-v1-0-747b60407c9c@intel.com>
+ <20250918-jk-fix-bcm-phy-supported-flags-v1-1-747b60407c9c@intel.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250918-jk-fix-bcm-phy-supported-flags-v1-1-747b60407c9c@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 19. Sep 00:46, Ping-Ke Shih wrote:
-> Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > On Thu, 18. Sep 05:52, Ping-Ke Shih wrote:
-> > > Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> > > By the way, you mark this patchset as 'rtw'. Does it mean this patchset is
-> > > urgent to you? If not, it will be more smooth (avoid possible merge conflict)
-> > > if it goes via 'rtw-next'. Let me know your preference.
-> > 
-> > The first patch of the series is rather urgent compared to the others
-> > because it addresses the issue occasionally banging on a working system.
-> > The other ones are less urgent.
-> > 
-> > TBH I'm not aware of your development process in details.  It's v6.17-rc6
-> > at the moment.  If I target all patches at rtw-next, are they to land in
-> > upcoming merge window for v6.18 release (a couple of weeks from now)?
-> > If yes then no hurries from me, rtw-next is ok.
+On 19/09/2025 01:33, Jacob Keller wrote:
+> The bcm_ptp_perout_locked() function has support for handling
+> PTP_PEROUT_DUTY_CYCLE, but its not listed in the supported_perout_flags.
+> Attempts to use the duty cycle support will be rejected since commit
+> d9f3e9ecc456 ("net: ptp: introduce .supported_perout_flags to
+> ptp_clock_info"), as this flag accidentally missed while doing the
+> conversion.
 > 
-> It's v6.17-rc6 (-rc eve), so I don't plan to send a pull-request.
+> Drop the unnecessary supported flags check from the bcm_ptp_perout_locked()
+> function and correctly set the supported_perout_flags. This fixes use of
+> the PTP_PEROUT_DUTY_CYCLE support for the broadcom driver.
 > 
-> Originally I plan to send the last pull-request to v6.18 today, so I did
-> review this patchset yesterday to see if I can merge it before sending. 
-> Since only two or three minor changes are needed, I can wait a while and
-> send the pull-request next Monday if you can re-spin the patchset this
-> weekend. 
+> Reported-by: James Clark <jjc@jclark.com>
+> Fixes: d9f3e9ecc456 ("net: ptp: introduce .supported_perout_flags to ptp_clock_info")
+> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+> ---
+>   drivers/net/phy/bcm-phy-ptp.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> If not, I can still merge this patchset in v6.18-rc cycle to rtw tree.
-> However, this might cause merge conflict with -next, so I don't prefer
-> this. Upper maintainers need to spend extra time to resolve conflicts.
+> diff --git a/drivers/net/phy/bcm-phy-ptp.c b/drivers/net/phy/bcm-phy-ptp.c
+> index eba8b5fb1365..1cf695ac73cc 100644
+> --- a/drivers/net/phy/bcm-phy-ptp.c
+> +++ b/drivers/net/phy/bcm-phy-ptp.c
+> @@ -597,10 +597,6 @@ static int bcm_ptp_perout_locked(struct bcm_ptp_private *priv,
+>   
+>   	period = BCM_MAX_PERIOD_8NS;	/* write nonzero value */
+>   
+> -	/* Reject unsupported flags */
+> -	if (req->flags & ~PTP_PEROUT_DUTY_CYCLE)
+> -		return -EOPNOTSUPP;
+> -
+>   	if (req->flags & PTP_PEROUT_DUTY_CYCLE)
+>   		pulse = ktime_to_ns(ktime_set(req->on.sec, req->on.nsec));
+>   	else
+> @@ -741,6 +737,7 @@ static const struct ptp_clock_info bcm_ptp_clock_info = {
+>   	.n_pins		= 1,
+>   	.n_per_out	= 1,
+>   	.n_ext_ts	= 1,
+> +	.supported_perout_flags = PTP_PEROUT_DUTY_CYCLE,
+>   };
+>   
+>   static void bcm_ptp_txtstamp(struct mii_timestamper *mii_ts,
+> 
 
-One thing that I forgot to mention is about rtw89 USB part.
-
-"BUG: KFENCE: use-after-free write in rtw89_core_tx_kick_off_and_wait"
-which is fixed by the first patch of the current series is reproduced
-reliably with USB HCI because there is no TX completion there yet, i.e.
-rtw89_core_tx_kick_off_and_wait() always exits with a timeout and touches
-skb parts which are most probably already freed by the call to
-ieee80211_tx_status_irqsafe() from URB completion callback.  I've got
-a dongle now and confirm the bug.  Turns out it was reported here [1] by
-Bitterblue Smith as well.
-
-[1]: https://lore.kernel.org/linux-wireless/1e5e97d4-8267-4f77-a4bf-1fe23ea40f77@gmail.com/
-
-The first patch does avoid use-after-free bug for USB, too.  But, as
-there is no TX ACK completion implemented for USB yet, tx_wait_list will
-be piled up with wasted items which can't be freed due to the lack of
-completion.  It's better than crash but still a problem.
-
-Bitterblue suggested [2] implementing the missing TX completion parts for
-USB to fix this entirely.  I've got a bunch of patches for it which will
-send as a separate USB-series today or tomorrow.  I expect it'll require
-time for review and it probably should have to be improved/reworked in
-several places.  Anyway I'll send it soon so you've got a more complete
-picture and some time until Monday to decide how to handle it.
-
-[2]: https://lore.kernel.org/linux-wireless/0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com/
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
