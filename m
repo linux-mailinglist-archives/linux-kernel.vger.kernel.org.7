@@ -1,118 +1,130 @@
-Return-Path: <linux-kernel+bounces-824696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F3FB89EB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59A8B89F50
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D1F5846F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F93D1CC18F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA651314B64;
-	Fri, 19 Sep 2025 14:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654F8314D09;
+	Fri, 19 Sep 2025 14:27:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="siktNYbf"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="D8t47JzY"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD97313E3D
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5017F313D50;
+	Fri, 19 Sep 2025 14:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758291922; cv=none; b=diktS6D8UXoCPlo9V/D5yfHOyUc2Vytiu6Erzdzkq0RxuQyCxiwLzd8n11zTTToQ8AzI1F+/+hf4IEQSakxAhV9Hk8HOdNQE37dYFaSI3vevFUGxwSpOZCbG7A+prqDqRavR/kaTcxn3RhchkJG+nKKnKagF4ifbggqc5zhTVlE=
+	t=1758292046; cv=none; b=VRzUqP/W2H2oDB3g/G1Oh7RTFli9dpVB7uP49E7SJqpYMTZ2IA6CqqUlD5Asy/ZDoNGpJEuDPESXUCNn85cTfxWZOiS+3cGI+QQMmGb4xaFDrSEVeqkl/OB6VMmWg6AU9mL7TO5paBN2Dyqt9WdzozNF//7XPwn9+lBjVVFTObE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758291922; c=relaxed/simple;
-	bh=7W9wumr16Wg3vvyAELbNqNIP362OxWQp2AoZc56V6Nc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LdNeC6Jyv38MRmwN5n8GZ7X+KrCjetXfzRVGH7keMBOXFholwB97TBnmMEvr4XLnGYnuHXXc53c5CiJHGT1oaVYAp94/N4Q17SBOpdXBL1hTmeqTMTS2d93u48t6xhnuahQO0XFOyBWqvDULkqgiFED7jcXmWG1kVC6rPm5nQKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=siktNYbf; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7725c995dd0so2181870b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758291920; x=1758896720; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Es4wbZQJbCTMrRymYAsVRRwPE+x7eh/fwfma+fUrYSQ=;
-        b=siktNYbfmSuPcOljG1/TcozWlHTVO5loOaAYMt6qcc+gQcQSqyognOLwdqMahOCHsO
-         sHafcSYF6sp68CEgsHln6cl8hDwripNzPcSQnZGRfV1gjWOrv7945oc4TNNZg9tz6KBB
-         I/rVplr2FF/oUvrsS7tsYkmn4dhDITNC9A5plVVRixYZxDYoRGidWJFP+ELWrsO2nb59
-         E5mMY5NSRPAS4QWNt/BgZOJxsFXMf0bzmV1duYH+RHUF2kprSJkaXuxsCUl75TIUDNcn
-         v+rG/pIEV1LKLyr/E4NR+f2vdo22Qf9Hp6k9vbWVq2QmtlKZp+OW9BmfUZnibE3QpDqK
-         Z5mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758291920; x=1758896720;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Es4wbZQJbCTMrRymYAsVRRwPE+x7eh/fwfma+fUrYSQ=;
-        b=NMYeTdo8KvZHCq7BHy0ypQFsAoTgBgR69eJ8LgfmfFrQtqcsEaRS/5XCEH0B+C1lV6
-         KOHlhYOz3LDJhHIV2zd6S/j19Y5h6xIZqUxCILcLyovOFSJ9b8Nu8e5pT1HM6dpNSg8l
-         uRAUUNwo2i5DFBtQOZrZ+IQBR2BsdOiZtFs6JXomnP/lCJebdhKrWu1QJ0xpGNmoPIsE
-         Cpd5k2ud5k+gFN7U6lhHcnddoWJkYH9nu0k1yJJzufe4ST4zVyaJED18xylTXgUXR4Dc
-         Fha/GR7vQwOd+y3/f7LconES/+cl9eClDRzv1kIWq3gCMzVIKAhTZpQ1NjeCUDlIUkv9
-         Yoxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbXt2qn4CETqeRIj9XmJZgdYbQGuxr748C5sNQ50kgpXTygiwhBg80kk55PIeeH6iSXDtIjN/ae0c3OMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqQcy7dIdMvigKYQ16ugvKFpuwU/xuPnRCOQYotOouCwJMUUK3
-	xwLhZdGhC49djLE/Woli6pa/2OwfgWAH7IWxl0m1Zki0ymkhjQla5oki2JlZqYccHnMBHbp66mV
-	7QXsnfA==
-X-Google-Smtp-Source: AGHT+IFkOCaOupHcOkaXlHgn3Y4agoGfsg6u9VbIjaB+GyxpgmVATWVgXTBSwUQQUyL8VMUgJ9cUfq4k9rs=
-X-Received: from pjoo3.prod.google.com ([2002:a17:90b:5823:b0:32d:a0b1:2b03])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9150:b0:246:682:83f1
- with SMTP id adf61e73a8af0-29271ee19e2mr5659020637.43.1758291919771; Fri, 19
- Sep 2025 07:25:19 -0700 (PDT)
-Date: Fri, 19 Sep 2025 07:25:18 -0700
-In-Reply-To: <9cedb525-a4a7-4a84-b07f-c6d9b793d9db@intel.com>
+	s=arc-20240116; t=1758292046; c=relaxed/simple;
+	bh=wG7HP8U4mFstc/9UQjpKbDZQqvBNpc0oXj8XRRmh6HI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sUVfsPhCSfwzeuJHqyuF4bHvRxCyCi4Qb5/N5AhRKAXfn8h6/HTbdfVO0zkD8YmTihyFSdIvsejzn04172R0VW7CBr0+9Pwv78X6CDHLqLJF6e1g/CDw13a4FylvPuxel8bU62hdW/dKujPcKuwpsdKYSBV3WjntZT5IxVEOEik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=D8t47JzY; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id E1DFB20CA1;
+	Fri, 19 Sep 2025 16:27:20 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id G4GDa5VZ5iKv; Fri, 19 Sep 2025 16:27:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1758292039; bh=wG7HP8U4mFstc/9UQjpKbDZQqvBNpc0oXj8XRRmh6HI=;
+	h=From:To:Cc:Subject:Date;
+	b=D8t47JzYnRkojo9f1P59p7RXww3Wj+XBEcyQvo2qfY7mNl3xNxwJjVztZsvbXNN3r
+	 bCaEEwX24aaGl+MVIOsdat88lOZrg0RaGbKRRfXUcwdk8T8UCEJuD5LtKutg/5Feoo
+	 lOg6jdbG4+wHzR2ka8+R6ImRk/NKxUh60yPvnaB5kMZ+n4OAzh9WebLCr7YBdy9BRI
+	 NXIlKsbIM5BpHTE5pj2e3U4jwrsGYFV7mjCfsf0tliBwIEXiGM2kFr8Jn3OhJ9AGHr
+	 8/FQLDKXgDprG0yDVT9dRMKf+3IVhVELq9VR6kWiR6N3lUuZmU+7crWsMuSfe/It+6
+	 SBG1nD1717WeQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v4 0/8] Add clock support for Loongson 2K0300 SoC
+Date: Fri, 19 Sep 2025 14:26:41 +0000
+Message-ID: <20250919142649.58859-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com> <20250912232319.429659-20-seanjc@google.com>
- <c140cdd4-b2cf-45d3-bb6a-b51954b78568@linux.intel.com> <aMxKA8toSFQ6hCTc@google.com>
- <9cedb525-a4a7-4a84-b07f-c6d9b793d9db@intel.com>
-Message-ID: <aM1nzrldhASNKqOn@google.com>
-Subject: Re: [PATCH v15 19/41] KVM: x86: Enable CET virtualization for VMX and
- advertise to userspace
-From: Sean Christopherson <seanjc@google.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025, Xiaoyao Li wrote:
-> On 9/19/2025 2:05 AM, Sean Christopherson wrote:
-> > On Thu, Sep 18, 2025, Binbin Wu wrote:
-> > > On 9/13/2025 7:22 AM, Sean Christopherson wrote:
-> > > [...]
-> > > > +static inline bool cpu_has_vmx_basic_no_hw_errcode(void)
-> > > > +{
-> > > > +	return	vmcs_config.basic & VMX_BASIC_NO_HW_ERROR_CODE_CC;
-> > > > +}
-> > > > +
-> > > 
-> > > I think "_cc" should be appended to the function name, although it would make
-> > > the function name longer. Without "_cc", the meaning is different and confusing.
-> > 
-> > +1, got it fixed up.
-> 
-> May I ask what the 'CC' means?
+This series adds support for Loongson-2K0300's clock controller.
+Loongson 2 clock driver is prepared to support more clock variants and
+its flexibility is improved. All clock hardwares except the output one
+for GMAC module are then defined.
 
-Consistency Check.  It's obviously a bit terse in this context, but it's a well-
-established acronym in KVM, so I think/hope someone that really wanted to figure
-out what it means could so with a bit of searching.
+A clock tree dump could be obtained here[1]. Devicetree changes (PATCH 7
+and 8) depends on v3 of series "Initial support for CTCISZ Forever Pi"[2]
+to apply.
 
-$ git grep -w CC | grep define
-svm/nested.c:#define CC KVM_NESTED_VMENTER_CONSISTENCY_CHECK
-vmx/hyperv.c:#define CC KVM_NESTED_VMENTER_CONSISTENCY_CHECK
-vmx/nested.c:#define CC KVM_NESTED_VMENTER_CONSISTENCY_CHECK
+[1]: https://gist.github.com/ziyao233/5261c5983d7ccb0a4299cfd7f26b2027
+[2]: https://lore.kernel.org/all/20250523095408.25919-1-ziyao@disroot.org/
 
-$ git grep -w CC | wc -l
-156
+Changed from v3:
+- Collect review tags
+- Change "Loongson 2K0300" to "Loongson-2K0300", and "2K0300" to
+  "LS2K0300" in commit messages
+- dt-bindings
+  - Merge loongson,ls2k0300-clk.h into loongson,ls2k-clk.h
+  - Change LS2K0300_PLL_{NODE,DDR,PIX} to LS2K0300_{NODE,DDR,PIX}_PLL
+    for consistency
+- driver
+  - Fold clock definition into a single line if possible
+- Link to v3: https://lore.kernel.org/all/20250805150147.25909-1-ziyao@disroot.org/
+
+Changed from v2:
+- Disallow clock-names property for loongson,2k0300-clk's binding, avoid
+  overriding content of clock-names property within an allOf block
+- Correct clock-controller's MMIO-region size in SoC devicetree
+- Link to v2: https://lore.kernel.org/all/20250617162426.12629-1-ziyao@disroot.org/
+
+Changed from v1:
+- Fold loongson,ls2k0300-clk.yaml into loongson,ls2k-clk.yaml
+- Include the new binding header in MAINTAINERS
+- Link to v1: https://lore.kernel.org/all/20250523104552.32742-1-ziyao@disroot.org/
+
+Yao Zi (8):
+  dt-bindings: clock: loongson2: Add Loongson-2K0300 compatible
+  clk: loongson2: Allow specifying clock flags for gate clock
+  clk: loongson2: Support scale clocks with an alternative mode
+  clk: loongson2: Allow zero divisors for dividers
+  clk: loongson2: Avoid hardcoding firmware name of the reference clock
+  clk: loongson2: Add clock definitions for Loongson-2K0300 SoC
+  LoongArch: dts: Add clock tree for Loongson-2K0300
+  LoongArch: dts: Remove clock-frquency from UART0 of CTCISZ Forever Pi
+
+ .../bindings/clock/loongson,ls2k-clk.yaml     |  18 ++-
+ .../dts/loongson-2k0300-ctcisz-forever-pi.dts |   1 -
+ arch/loongarch/boot/dts/loongson-2k0300.dtsi  |  16 ++-
+ drivers/clk/clk-loongson2.c                   | 122 +++++++++++++++---
+ include/dt-bindings/clock/loongson,ls2k-clk.h |  36 ++++++
+ 5 files changed, 166 insertions(+), 27 deletions(-)
+
+-- 
+2.50.1
+
 
