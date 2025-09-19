@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-824240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B800B887B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:53:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4E1B887C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F889587A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:53:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 019003ACC6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF922EC0A5;
-	Fri, 19 Sep 2025 08:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSqfka2F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076F52ECEAB;
+	Fri, 19 Sep 2025 08:55:23 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F21191F6A
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53959219A7E;
+	Fri, 19 Sep 2025 08:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758272015; cv=none; b=anC+c5oz3qwRhk8sAsSHFw4J3Xgojr2OL85Szg/rgBxuxVi7lro5RdCRdZqW2yESxhx2+zPik+yJVSNWJm1NXgN1exyfCIyJCj38In5n6cgqEe+dghhx/59e/niTptGfIwbwJroFr4cyeEmhGV/NnRHUBSfl21QY3zrSXDA+6Kw=
+	t=1758272122; cv=none; b=i6/djmCb1vJddXMxtbSG0iozVn4RwdjRrfpp8ROv46Lf1/x7hwm9X75lScn1EaL5JsOqiLFqZ2HQmIINFrJ/PbPjQyhz/vkkq6wetc/W6oHsJuQBMWE/t/1rkbB/xmf9e/NTHq7m7tSxu04XsWCOYnF76+v2jU1PnZmYJJ5g1hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758272015; c=relaxed/simple;
-	bh=XfI+sGbTQXXVwK2LBxhz4Z0zlLXtyhsjoaXYurOGQzg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qiPGPOzk5VWTtfM27PNcX0hy+LiJKYLD2aAVsA3dsy0DvYmo/ZuDDMAG8HYWWID3kfv1T8OLTQgXi2mbzsyoUQqzGZqPto/okz8T6lSt79yWsT9ljD5y1Nt0BEdYaVm9JnLSiQb/7YJdvH4PnEi5h+eeHeaHoxu+4ppjyWLKrI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSqfka2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 30070C4CEF0;
-	Fri, 19 Sep 2025 08:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758272015;
-	bh=XfI+sGbTQXXVwK2LBxhz4Z0zlLXtyhsjoaXYurOGQzg=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=MSqfka2FFNzAnjBDm+lB5wS09SwXHDws5uog21zLQXZjCTdxH6CrQdp1hFYDDsK2I
-	 K6jcEd9ZYLq9lFYvGxQF9ZyR5sYfts6t8daKmAzvxCz+sVPix/PirgL2zXCSSW+BKd
-	 E8Byz3dxT2KVWSwt9ssK3CM+z/TB0G/JPCrIct1kpfKQ6uNPuCrHTCje93b6XwDvYk
-	 dHZyo1dTvJ4mNJXeIMB3YodVL9bm/PXrkso4C8/C6N3Sp+fU0x2smgIHxOI5ZMl8nu
-	 IWVXaiFFVZxWj7MLHWkfTy50BfkU8RNhM9oKsMGhwSBmydiyoCRgGiq3vrmMPlrjOS
-	 yuFjt8HM7IcNQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB16CAC59A;
-	Fri, 19 Sep 2025 08:53:35 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Fri, 19 Sep 2025 16:53:33 +0800
-Subject: [PATCH] checkpatch: Suppress warnings when Reported-by: is
- followed by Link:
+	s=arc-20240116; t=1758272122; c=relaxed/simple;
+	bh=MxZDacxNXOiKS5PN5/vgRiUlqrC/te+ID8PxAHyhgYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ksQxUBykV681xl+m0dbY3u39yzSX7RByRrl2iARj2ch+k2yxA5la8aECA+K1PmXwa7ZDlwVv7fuKAP6m52UwJeS3bsaHU6pTnNH0tJyhJs4mMJvn+SSHg7p5WYUMfZZC2dUN5+NjpuYzxkwfS/6Ho6vhIGEVbpYtLhvmg7gaOlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.3.223] (unknown [124.16.136.211])
+	by APP-03 (Coremail) with SMTP id rQCowAD3PnkUGs1oZXWwAw--.135S2;
+	Fri, 19 Sep 2025 16:53:41 +0800 (CST)
+Message-ID: <c3f2bc47-b7d3-4054-ae09-3265470c2306@iscas.ac.cn>
+Date: Fri, 19 Sep 2025 16:53:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-checkpatch-v1-1-d889973932fa@uniontech.com>
-X-B4-Tracking: v=1; b=H4sIAAwazWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDS0NL3eSM1OTsgsSS5AxdAyNzM3ML89SktKRUJaCGgqLUtMwKsGHRsbW
- 1AG4CVdhcAAAA
-X-Change-ID: 20250919-checkpatch-0276787ebfbe
-To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
- Dwaipayan Ray <dwaipayanray1@gmail.com>, 
- Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: linux-kernel@vger.kernel.org, niecheng1@uniontech.com, 
- zhanjun@uniontech.com, Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758272014; l=1763;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=Iyk6yjBAdRxSTomegUDUJm0OiNce0KlYMkESMKoKGyk=;
- b=0hOu1V1/1ECrRUw2hyfnfh4IfkHPYcD+eTUzyG1iEzyK3LZ1oMmLtHteADCJYzSdoYKZxL+5D
- +OaR3TwnuivAu7rLi4UGKGxW5p+CaPRpF/POVW46nJpy1jpDrFyyc+w
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 0/5] Add Ethernet MAC support for SpacemiT K1
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: Vivian Wang <uwu@dram.page>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+ Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
+ Andrew Lunn <andrew@lunn.ch>
+References: <20250914-net-k1-emac-v12-0-65b31b398f44@iscas.ac.cn>
+ <CGME20250919082706eucas1p1fa29f9e90e1afdf3894b5effd734cf3f@eucas1p1.samsung.com>
+ <a52c0cf5-0444-41aa-b061-a0a1d72b02fe@samsung.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <a52c0cf5-0444-41aa-b061-a0a1d72b02fe@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3PnkUGs1oZXWwAw--.135S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4rtFW3Xr4kXF1fXFWDJwb_yoW8WFW3pa
+	ykAas0kr1Dtr42kr4jgr4vyayIva1kKF1Durn5Kry09a98AFn7tr9Ygw45A34jvrZ7Zr4Y
+	yayUX395JFyDCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Sb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxV
+	CFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r10
+	6r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxV
+	WUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG
+	6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UYxBIdaVFxhVjvjDU0xZFpf9x07jBYLkUUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Hi Marek,
 
-> The tag should be followed by a Closes: tag pointing to the report,
-> unless the report is not available on the web. The Link: tag can be
-> used instead of Closes: if the patch fixes a part of the issue(s)
-> being reported.
+Thanks for the testing.
 
-Accroding to Documentation/process/submitting-patches.rst , Link: is
-also acceptable to followed a Reported-by:
+On 9/19/25 16:27, Marek Szyprowski wrote:
+> Hi All,
+>
+> On 14.09.2025 06:23, Vivian Wang wrote:
+>> SpacemiT K1 has two gigabit Ethernet MACs with RGMII and RMII support.
+>> Add devicetree bindings, driver, and DTS for it.
+>>
+>> Tested primarily on BananaPi BPI-F3. Basic TX/RX functionality also
+>> tested on Milk-V Jupiter.
+>>
+>> I would like to note that even though some bit field names superficially
+>> resemble that of DesignWare MAC, all other differences point to it in
+>> fact being a custom design.
+>>
+>> Based on SpacemiT drivers [1]. These patches are also available at:
+>>
+>> https://github.com/dramforever/linux/tree/k1/ethernet/v12
+>>
+>> [1]: https://github.com/spacemit-com/linux-k1x
+> This driver recently landed in linux-next as commit bfec6d7f2001 ("net: 
+> spacemit: Add K1 Ethernet MAC"). In my tests I found that it 
+> triggers lock dep warnings related to stats_lock acquisition. In the 
+> current code it is being acquired with spin_lock(). For tests I've 
+> changed that to spin_lock_irqsave() and the warnings went away, but I'm 
+> not sure that this is the proper fix. I've also checked the driver 
+> history and 'irqsave' locking was used in pre-v7 version, but it was 
+> removed later on Jakub's request and described a bit misleading as 
+> "Removed scoped_guard usage".
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- scripts/checkpatch.pl | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Oops, I had assumed that irqsave was unnecessary and missed that the
+statistics functions are called with softirq enabled during
+register_netdev. The ones called at probe time should be changed to
+_irqsave or some other variant.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index e722dd6fa8ef3d7062988e2b3ec8f5872bdfefeb..f09e3d0536d71d60184f15018202cc36a5f3832e 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3200,10 +3200,10 @@ sub process {
- 			if ($sign_off =~ /^reported(?:|-and-tested)-by:$/i) {
- 				if (!defined $lines[$linenr]) {
- 					WARN("BAD_REPORTED_BY_LINK",
--					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . "\n");
--				} elsif ($rawlines[$linenr] !~ /^closes:\s*/i) {
-+					     "Reported-by: should be immediately followed by Closes: or Link: with a URL to the report\n" . $herecurr . "\n");
-+				} elsif ($rawlines[$linenr] !~ /^(closes|link):\s*/i) {
- 					WARN("BAD_REPORTED_BY_LINK",
--					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
-+					     "Reported-by: should be immediately followed by Closes: or Link: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
- 				}
- 			}
- 		}
+I'll take a look at the details myself and send a fix.
 
----
-base-commit: 097a6c336d0080725c626fda118ecfec448acd0f
-change-id: 20250919-checkpatch-0276787ebfbe
-
-Best regards,
--- 
-Cryolitia PukNgae <cryolitia@uniontech.com>
-
+Thanks,
+Vivian "dramforever" Wang
 
 
