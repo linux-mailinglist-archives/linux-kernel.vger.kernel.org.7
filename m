@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-825136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB8AAB8B16B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:32:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39332B8B17B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:35:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B0097B11B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:30:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEF75A065F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0825828643F;
-	Fri, 19 Sep 2025 19:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96D828751B;
+	Fri, 19 Sep 2025 19:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pgi9APbb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="du/t96Rq"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA70226D04;
-	Fri, 19 Sep 2025 19:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1326B256C70;
+	Fri, 19 Sep 2025 19:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758310346; cv=none; b=KBvxSe9Cq52mI3z4U8Nsq9AtZoPt71YI9LgHM6oJL5WQKcDsCezwDwA9ncIYG26iB/6hX9QB/AAWGvYkMcifN6PaiAeksT9CWyZc4uRWiQc5K+QM8PzsD0N2cPBoFUtNcNpcpXvZJDjXhqnSa90vxcTOSRbtEwq7MRCR7NTbu6c=
+	t=1758310496; cv=none; b=upkEq75dmt0y6e9CFCt9lObdoiDfavCqcZJ/jKHr/0K1yKFsC569LG4R57/Vuq834QGKBSlOmMe414CnSKCRf5LblF2dqGUkHlbJ6XUE+l1IojCq5TvYr11aaiCiK2+x5HaxoeAr7Bnc/RL4cAojfkaBrLIk09mDEUHR4aaJu2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758310346; c=relaxed/simple;
-	bh=Q4PEuEuP9alXqKgQvbxJXKjAtS2HMA+4AJTY/GWd7HI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6MOSTd4Z6uTgkUAKSKJDG3THMOAtsV4APrdig2Ged8+CpvvHc5pVhCPZrTEROKq3WVIVhhVq3+9qSdkPc9sV6d5cXroAkMFYiTVzNvMZBbozIoce5h0GzhU3Fohe8Kvi5VcVQU3JkJDOtu91w35VJes85H3A3Qe/LqFyHpXl8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pgi9APbb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07598C4CEF0;
-	Fri, 19 Sep 2025 19:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758310345;
-	bh=Q4PEuEuP9alXqKgQvbxJXKjAtS2HMA+4AJTY/GWd7HI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pgi9APbbq/5rG7Ho2J+TZJGVkq0W10UPMkV2zbAclCur7Yzs+JdYB0hM6X2u2i3HP
-	 IqxlioxzxNjshOFUgcQ6MMPJCvAm1L/aS8fva/rK3xgGEyv1evQY+lKGOv9iLfTJW+
-	 PmodCLjEoKLgErL9k0J4bO/3yv1SSWkFe38PBY8G6v/Ti+XS6AvZMOGkuOveTF/61c
-	 +ruGnQQS7vbuByVzAbe15qbNWNWgdpCd52SJWvCOW3mzTSbY8QTRmHjefxzkbfgJgQ
-	 Lv2QGTOJ7yKk3E2GWAVY4O9sPkWiY8EzWq8ZEl0ONR5VpUjaXk5bhB2EMCTF9O+Vkp
-	 8+PAuWAXcY94g==
-Date: Fri, 19 Sep 2025 14:32:21 -0500
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Kees Cook <keescook@chromium.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 0/5] arm64: Move kernel mode FPSIMD buffer to the stack
-Message-ID: <20250919193221.GB2249@quark>
-References: <20250918063539.2640512-7-ardb+git@google.com>
+	s=arc-20240116; t=1758310496; c=relaxed/simple;
+	bh=rRgtaSBogQ9OXl3HAtx2DncBhgZdCZT7YigyFbtUo5k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ojKiQNVdaxbs5P8RWUhVm6DhlA7U7MWCGoeGebXxZn9yicm3VHb6QROZotMhKk7UybsXRMBt0rsVazO8q367lT4zLeJLQp15vd5ny60/7eWE8rD1KLjZrzzS4urcgT8mkidchzEpTNAu+MUHz/U1QGO7CO3Xd4PtffpPtH2DxPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=du/t96Rq; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58JJYVnd309082;
+	Fri, 19 Sep 2025 14:34:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758310471;
+	bh=4e+vM8y65RFB7t9z0rUFFvypiNgEA9GqKV1KkIOAjaw=;
+	h=From:To:CC:Subject:Date;
+	b=du/t96Rqu8z/S9y/E8DMnrXo9Sdt/i5dE5RVObEXS3ejwua+k1Lq79523nhCeQO00
+	 ZTmqtS+kG6lNgNqsEfrcU27dzoW1qNEIWWd8RWZqj+7JPVHmUBOs5eBKU/bCqM9cxS
+	 ekflEfqY3L+UCV/UvrVkoudRIAEFrA47KMcRj04g=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58JJYVIE2559652
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 19 Sep 2025 14:34:31 -0500
+Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 19
+ Sep 2025 14:34:30 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE201.ent.ti.com
+ (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 19 Sep 2025 14:34:31 -0500
+Received: from rs-desk.dhcp.ti.com (rs-desk.dhcp.ti.com [128.247.81.144])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58JJYVKA3079903;
+	Fri, 19 Sep 2025 14:34:31 -0500
+From: <rs@ti.com>
+To: <mwalle@kernel.org>, <afd@ti.com>, <conor+dt@kernel.org>,
+        <frank.binns@imgtec.com>, <kristo@kernel.org>, <krzk+dt@kernel.org>,
+        <matt.coster@imgtec.com>, <nm@ti.com>, <robh@kernel.org>,
+        <vigneshr@ti.com>
+CC: <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <detheridge@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am62p: Fix memory ranges for GPU
+Date: Fri, 19 Sep 2025 14:33:42 -0500
+Message-ID: <20250919193341.707660-2-rs@ti.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918063539.2640512-7-ardb+git@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Sep 18, 2025 at 08:35:40AM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
-> context switch out of struct thread_struct, and onto the stack, so that
-> the memory cost is not imposed needlessly on all tasks in the system.
-> 
-> Patches #1 - #3 contains some prepwork so that patch #4 can tighten the
-> rules around permitted usage patterns of kernel_neon_begin() and
-> kernel_neon_end(). This permits #5 to provide a stack buffer to
-> kernel_neon_begin() transparently, in a manner that ensures that it will
-> remain available until after the associated call to kernel_neon_end()
-> returns.
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> 
-> Ard Biesheuvel (5):
->   crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
->   crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
->   crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
->   arm64/fpsimd: Require kernel NEON begin/end calls from the same scope
->   arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
-> 
->  arch/arm64/crypto/aes-ce-ccm-glue.c |  5 +--
->  arch/arm64/crypto/sm4-ce-ccm-glue.c | 10 ++----
->  arch/arm64/crypto/sm4-ce-gcm-glue.c | 10 ++----
->  arch/arm64/include/asm/neon.h       |  7 ++--
->  arch/arm64/include/asm/processor.h  |  2 +-
->  arch/arm64/kernel/fpsimd.c          | 34 +++++++++++++-------
->  6 files changed, 34 insertions(+), 34 deletions(-)
+From: Randolph Sapp <rs@ti.com>
 
-This looks like the right decision: saving 528 bytes per task is
-significant.  528 bytes is a lot to allocate on the stack too, but
-functions that use the NEON registers are either leaf functions or very
-close to being leaf functions, so it should be okay.
+Update the memory region listed in the k3-am62p.dtsi for the BXS-4-64
+GPU to match the Main Memory Map described in the TRM [1].
 
-The implementation is a bit unusual, though:
+[1] https://www.ti.com/lit/ug/spruj83b/spruj83b.pdf
 
-   #define kernel_neon_begin()	do { __kernel_neon_begin(&(struct user_fpsimd_state){})
-   #define kernel_neon_end()	__kernel_neon_end(); } while (0)
+Fixes: 29075cc09f43 ("arm64: dts: ti: Introduce AM62P5 family of SoCs")
+Signed-off-by: Randolph Sapp <rs@ti.com>
+---
 
-It works, but normally macros don't start or end code blocks behind the
-scenes like this.  Perhaps it should be more like s390's
-kernel_fpu_begin(), where the caller provides the buffer that the
-registers are stored in?  
+Requirement for the following series:
+https://lore.kernel.org/all/20250915143440.2362812-1-mwalle@kernel.org/
 
-- Eric
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/ti/k3-am62p.dtsi b/arch/arm64/boot/dts/ti/k3-am62p.dtsi
+index 75a15c368c11..dd24c40c7965 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62p.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62p.dtsi
+@@ -59,7 +59,7 @@ cbass_main: bus@f0000 {
+ 			 <0x00 0x01000000 0x00 0x01000000 0x00 0x01b28400>, /* First peripheral window */
+ 			 <0x00 0x08000000 0x00 0x08000000 0x00 0x00200000>, /* Main CPSW */
+ 			 <0x00 0x0e000000 0x00 0x0e000000 0x00 0x01d20000>, /* Second peripheral window */
+-			 <0x00 0x0fd00000 0x00 0x0fd00000 0x00 0x00020000>, /* GPU */
++			 <0x00 0x0fd80000 0x00 0x0fd80000 0x00 0x00080000>, /* GPU */
+ 			 <0x00 0x20000000 0x00 0x20000000 0x00 0x0a008000>, /* Third peripheral window */
+ 			 <0x00 0x30040000 0x00 0x30040000 0x00 0x00080000>, /* PRUSS-M */
+ 			 <0x00 0x30101000 0x00 0x30101000 0x00 0x00010100>, /* CSI window */
+-- 
+2.51.0
+
 
