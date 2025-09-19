@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9135B8B7C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:36:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A179BB8B7C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2C77B6C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E62189A6DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1378D2DCF65;
-	Fri, 19 Sep 2025 22:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857A2E06E4;
+	Fri, 19 Sep 2025 22:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QHy6EdgX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zsRXvhyq"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D412B2DA763
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FF12DF3E8
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321195; cv=none; b=LDoq7Uddv8wL6aHbY4OmcVlHBYHPJx9yjcvpkk6vK6A1cG1+E2xz5ZsL1Xkc7IXGS2peOoj9V8v/8wbh65M0O7Ba2qZwqTjfJPvu40+uFy5rY2pcp+pmDH9gRRaLwrcny5CutjbzZc9zDJhUJBdlvg66Sa3AAwafX66Av1tgaLM=
+	t=1758321199; cv=none; b=tK7HoRHiUA8zxzHXwpafH5N1EGqW5fpLflSZmVR0HLnAlJx5sfGjqUdKzUYFqnIJYCyI5lUbGJg+J6QbeutinrYcdRaj39pSF5+442fKkUBGH8yL2Xg67S2VGUbxfdqWM4atAbEqfzyFBLx8dEzPj3gwEERPjk/4fu0DWn/0+7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321195; c=relaxed/simple;
-	bh=jfGM7wnBghMUHDjlWPZeTxsMZ4TuIPSbh4OJ4877SKE=;
+	s=arc-20240116; t=1758321199; c=relaxed/simple;
+	bh=+2aUDwdBf5VX5aNs40ryCKzqWZJxUH2DBk9jyBgiLiI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=t9vXxN0V9YFPnJhai66JO2i5TzPM4uOtvs+xwnfFByEaf/saCGltsiJKqt7TbDWCapD+y9D9WDWkVuluw0iRjMzZED4r09GS2qmTVa2GUCR1Vy4W2g/DTjDE/Y7+igeiokoI/kE5Z9FU+G1D/79RZUCDqAPofG0EBy4Q7zB8hf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QHy6EdgX; arc=none smtp.client-ip=209.85.214.202
+	 To:Cc:Content-Type; b=P7LwlgsOtCNx4lvpEX2ufXEfhpNnmWxT2fQGgM5uOkxhD8nXnFxeXD3mQl9uG4Iyj+lqIcG7Y7hrvLnxHc5YEEMx0C7WYlqy2u+6Ogke785VsqzBVYc2yUfehenvC3lOSHQTcdHmSYDlJC1XLQ8zR+y0dZIT33OFQNdECe/HXtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zsRXvhyq; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2641084fb5aso27537225ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:33:13 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2665e11e120so27431385ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:33:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321193; x=1758925993; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321195; x=1758925995; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=5RFaqBNYsacXxOfISRfTRH70w0K5ILYhOxRUNM9RFhg=;
-        b=QHy6EdgX5T0QKozMYLUk8rvzyowRczHkhtrlYPbFMBK/QTen86DGV4LcDeN2TRphvT
-         1XPHqKHp3zoD5vcPoR8/h9XSaaB0TRPMM5c1fm0IFy+IBGMZFFuS4rZXGGQsNRdiHYw1
-         5FK/UCfCI9MCCrvrbBqeTM8C52b1bfXerFxeONpBtVofte6EXHlm48huMCU2evH3gIh7
-         b/JElVeM82n9FvtwgEI8XuuUIfTQIPeG1atYuukAwqWYqwbhpyh5D8hefYm5GJzGLGBy
-         h/mAgIkJ+NSD4d/A9gGJ/z2DWYzT0dB6j8Iknj8sk8tfojw6ZiUFDg4fnod4Sw8rEgdr
-         y/9A==
+        bh=WxyHpgsKcQtDez3DsslxS7ZG1Vf1q8npPkky8cqh6mc=;
+        b=zsRXvhyqhZfq+LGc72f0F0ZDzZ34hVTRg48Amm35ywXu3tV/fbCEIhrGT5BFMrXH2H
+         tm8HPbXhZXqAEGJNJyKR1iuWNaV+dpTrjF/68WSFt38P5fPg4axMshQIDe4om3PHRXGs
+         osk2Kaql/5sIpkUt1++V8FkMkQAIBDfy8ymjKVBocwOPF79b1kXv6e1raSr12DFJ7uuy
+         kzoEP/+f6LPMFMxrgTJpUMyG1TtcA0phKu3i3sHGEUu7iLDxzBGIPB0zX8EolGfxUBw+
+         jbgWGeKxq4rOZTXTOUebJRKokizdx8r68ivZmBka8zcoI++zENoBdC/x63G70WxLJnx3
+         F79A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321193; x=1758925993;
+        d=1e100.net; s=20230601; t=1758321195; x=1758925995;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5RFaqBNYsacXxOfISRfTRH70w0K5ILYhOxRUNM9RFhg=;
-        b=NR8MWYLPfFp/qEFxGJ/whFoz0Zb/0a2ieGhysYAJiRTu8wHEyXh0Rqwe4yOmaIj+jL
-         YiAkbipS5ApjwXHnedqiZPib4/CtMri8BkKzOiJQcRrFyakGwkRxCQwQUVlQuttyQcd0
-         BtjFPdbvN2OZ6jYohfNhP0/qivL4MRjBXqPs1LJKkOGrTiNX6BHdQ9af9TIgAxD6Zrk2
-         XoIm3oLAARtH6v42SgWwPxSwIXAORwec4Q9xXxqW3HyliAWGGd2d8xhODfJDvaLRNFE7
-         VSOn055Y4RPsMpCjyptQH30yzsVl+GoW2sTX7RBY8iFttSDfQ8v8qb9BuXeGUVP56JjB
-         p2BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOkC153ha94xH9egrJWU6C0a8jieig/chT/nwT/UIVqKjYu7LhGMTIRuYfpuVhZ8CoUTJWK2XdiYZreKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXizFfLtRmglUemrEEjvFe5ildmggdw2XwxmiiJApQfPyXRIah
-	oKM2rL27lpc4uFRjOQKxjnockuoZSZnl35LSMHtGU2xbGD03QRbVi/MXYGx5+CPTj/Oegue66nk
-	eXzl2Xg==
-X-Google-Smtp-Source: AGHT+IFrIb3fr2s0qtkeK56mPEY5NS7nbXqbWpySC13gAxRV2LfepKkyhFqcJVi5Ognn5W5Agd2I0Y29i9E=
-X-Received: from pjm8.prod.google.com ([2002:a17:90b:2fc8:b0:32d:df7e:6696])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b10:b0:24d:64bc:1495
- with SMTP id d9443c01a7336-269ba528961mr55393775ad.41.1758321193262; Fri, 19
- Sep 2025 15:33:13 -0700 (PDT)
+        bh=WxyHpgsKcQtDez3DsslxS7ZG1Vf1q8npPkky8cqh6mc=;
+        b=JbVW8iMNheoljm2UwfeDoVF/IxMCOtqGkXliCeajSTfs7YpN8B3N+qVAoR6FLAjOr3
+         BfU2MI5+RRrVdor2ujIIrqPZYPoYPMLxnUXHCtQ0guPMAjp1RmNpF0+2+SZ5Ml/YXy3N
+         mX478rTfCJvlIWFbce2j8uo0aKeFhrySbgLHjrTbG+c6eP7mTm9PUfS+7Q4DIefgZHaW
+         /006CpuaD6QXt3w/bRlIfLbvGGcrsIJ6c9H4CBWqOhwAim1t90JuRBkg1hMbY1dzZ+/F
+         +Lm45EXWNFPOpnp1WKXPwROFnGx/w0EwziuZK1sWxaQraVu/y2UCV5PuFkdvMGkVr+N3
+         GeJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvARV6d4TNJ8P/CJaSRa+DluMqmIXCqW/4DCL4pvpKokRvECNql6g3vtcHmk7VpRUej4wt1+xnyCYsN0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqWdhZjjDQZmADQIOTQVeuv8vHqLobyGDiMeca/PZhB2XNhj40
+	FhjiRq7c1tneRwczyHpgdSr/etGXrwtJ0irW8UrojLhcgOOkWcoinfw08mPbuYGoJGBMl33WGC5
+	uPGiQvw==
+X-Google-Smtp-Source: AGHT+IHyGMuRch1NMw5bn170EMBOJ+XOXpveOIhzOqOnVTBwfaBx1NBMPmhB0U1bZLjZA351DafhPoYPm3M=
+X-Received: from pjbsq12.prod.google.com ([2002:a17:90b:530c:b0:32e:cc38:a694])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3fd0:b0:330:852e:2bcc
+ with SMTP id 98e67ed59e1d1-3309834e1f2mr5304908a91.21.1758321194783; Fri, 19
+ Sep 2025 15:33:14 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:13 -0700
+Date: Fri, 19 Sep 2025 15:32:14 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-7-seanjc@google.com>
-Subject: [PATCH v16 06/51] KVM: x86: Check XSS validity against guest CPUIDs
+Message-ID: <20250919223258.1604852-8-seanjc@google.com>
+Subject: [PATCH v16 07/51] KVM: x86: Refresh CPUID on write to guest MSR_IA32_XSS
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -87,101 +87,64 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Chao Gao <chao.gao@intel.com>
+From: Yang Weijiang <weijiang.yang@intel.com>
 
-Maintain per-guest valid XSS bits and check XSS validity against them
-rather than against KVM capabilities. This is to prevent bits that are
-supported by KVM but not supported for a guest from being set.
+Update CPUID.(EAX=0DH,ECX=1).EBX to reflect current required xstate size
+due to XSS MSR modification.
+CPUID(EAX=0DH,ECX=1).EBX reports the required storage size of all enabled
+xstate features in (XCR0 | IA32_XSS). The CPUID value can be used by guest
+before allocate sufficient xsave buffer.
 
-Opportunistically return KVM_MSR_RET_UNSUPPORTED on IA32_XSS MSR accesses
-if guest CPUID doesn't enumerate X86_FEATURE_XSAVES. Since
-KVM_MSR_RET_UNSUPPORTED takes care of host_initiated cases, drop the
-host_initiated check.
+Note, KVM does not yet support any XSS based features, i.e. supported_xss
+is guaranteed to be zero at this time.
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
+Opportunistically skip CPUID updates if XSS value doesn't change.
+
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Reviewed-by: Chao Gao <chao.gao@intel.com>
 Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Tested-by: Mathias Krause <minipli@grsecurity.net>
+Tested-by: John Allen <john.allen@amd.com>
+Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Chao Gao <chao.gao@intel.com>
 Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h |  3 ++-
- arch/x86/kvm/cpuid.c            | 12 ++++++++++++
- arch/x86/kvm/x86.c              |  7 +++----
- 3 files changed, 17 insertions(+), 5 deletions(-)
+ arch/x86/kvm/cpuid.c | 3 ++-
+ arch/x86/kvm/x86.c   | 2 ++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 8695967b7a31..7a7e6356a8dd 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -815,7 +815,6 @@ struct kvm_vcpu_arch {
- 	bool at_instruction_boundary;
- 	bool tpr_access_reporting;
- 	bool xfd_no_write_intercept;
--	u64 ia32_xss;
- 	u64 microcode_version;
- 	u64 arch_capabilities;
- 	u64 perf_capabilities;
-@@ -876,6 +875,8 @@ struct kvm_vcpu_arch {
- 
- 	u64 xcr0;
- 	u64 guest_supported_xcr0;
-+	u64 ia32_xss;
-+	u64 guest_supported_xss;
- 
- 	struct kvm_pio_request pio;
- 	void *pio_data;
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index efee08fad72e..6b8b5d8b13cc 100644
+index 6b8b5d8b13cc..32fde9e80c28 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -263,6 +263,17 @@ static u64 cpuid_get_supported_xcr0(struct kvm_vcpu *vcpu)
- 	return (best->eax | ((u64)best->edx << 32)) & kvm_caps.supported_xcr0;
+@@ -316,7 +316,8 @@ static void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+ 	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
+ 	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+ 		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+-		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
++		best->ebx = xstate_required_size(vcpu->arch.xcr0 |
++						 vcpu->arch.ia32_xss, true);
  }
  
-+static u64 cpuid_get_supported_xss(struct kvm_vcpu *vcpu)
-+{
-+	struct kvm_cpuid_entry2 *best;
-+
-+	best = kvm_find_cpuid_entry_index(vcpu, 0xd, 1);
-+	if (!best)
-+		return 0;
-+
-+	return (best->ecx | ((u64)best->edx << 32)) & kvm_caps.supported_xss;
-+}
-+
- static __always_inline void kvm_update_feature_runtime(struct kvm_vcpu *vcpu,
- 						       struct kvm_cpuid_entry2 *entry,
- 						       unsigned int x86_feature,
-@@ -424,6 +435,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
- 	}
- 
- 	vcpu->arch.guest_supported_xcr0 = cpuid_get_supported_xcr0(vcpu);
-+	vcpu->arch.guest_supported_xss = cpuid_get_supported_xss(vcpu);
- 
- 	vcpu->arch.pv_cpuid.features = kvm_apply_cpuid_pv_features_quirk(vcpu);
- 
+ static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d202d9532eb2..d4c192f4c06f 100644
+index d4c192f4c06f..c87ed216f72a 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -3984,15 +3984,14 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		}
- 		break;
- 	case MSR_IA32_XSS:
--		if (!msr_info->host_initiated &&
--		    !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
--			return 1;
-+		if (!guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
-+			return KVM_MSR_RET_UNSUPPORTED;
- 		/*
- 		 * KVM supports exposing PT to the guest, but does not support
- 		 * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
- 		 * XSAVES/XRSTORS to save/restore PT MSRs.
+@@ -3993,6 +3993,8 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
  		 */
--		if (data & ~kvm_caps.supported_xss)
-+		if (data & ~vcpu->arch.guest_supported_xss)
+ 		if (data & ~vcpu->arch.guest_supported_xss)
  			return 1;
++		if (vcpu->arch.ia32_xss == data)
++			break;
  		vcpu->arch.ia32_xss = data;
  		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+ 		break;
 -- 
 2.51.0.470.ga7dc726c21-goog
 
