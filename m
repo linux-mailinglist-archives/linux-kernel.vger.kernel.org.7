@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-824721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BEFB89FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:32:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5A8B89FBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1F6188C2FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:31:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5F81B2571C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135963161B7;
-	Fri, 19 Sep 2025 14:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AB7318142;
+	Fri, 19 Sep 2025 14:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5N37Xzh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKYidIdo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521D6314B70;
-	Fri, 19 Sep 2025 14:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED0A3164DA;
+	Fri, 19 Sep 2025 14:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292224; cv=none; b=j0o17/H2ZjaxGr/IddBCs+pKSGLM8oMW8u+wgbF9wgmlma6wRABDMAiazdkGll6cgcHQF63jqXlT08BAjaprp56WebNN046cU2gYrBciAzA5ndYXeQqtlOXJaGjLauMPSN1knsx42ljnbkN11qdZcJxxcazF7zb+FPmr2iPFpmo=
+	t=1758292227; cv=none; b=LXtJXOp97/rYF6Vh0mpkoQwjvGHMxunAD+qGvN9W+YCml0Jenm/73nxcidq0sM76HkmJ9ei8yGoJvGNNUxgWvXvaRt4Uqh3gH808EEjpc8TVzW2tFgMc7w1ZMxyWHnnU2+buu1DLa9qtATKE0fCNwGI+TsHwCzNFc4XDzxMiLu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292224; c=relaxed/simple;
-	bh=9jnMOdrjgatuoKYIL/8vKkBJZet0KQ1s5vSx3987tZM=;
+	s=arc-20240116; t=1758292227; c=relaxed/simple;
+	bh=om7IHFxUqBk57l+hzSxJYXmlW0dohVfqH7wx9gm7LsQ=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AP0vfsIdJle/CrE62OiBlBTio6HEvuaGvfOAa8MPYrL+tqF3IGSqmfHWhQ/nemnM/05AYYqnK7sUY0+yPvA0TNo9d4nVKSaf7EhKrFjSFOQVXY1OqLwdV8edO6g4GxKC/zQUzRdLgjNMTxbjngdl1/WNytPAoyoRkbOOw01C3Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5N37Xzh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEFB9C4CEF0;
-	Fri, 19 Sep 2025 14:30:23 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=cbYjHR5nFRq35J/xUqMqbm8uVfBBDNV1B85GXpqOTm1JZSHSJBmUPW6sDf0qTnGZaq1RRVGXyRQA5Ovysjstn3nYEzLmD6/Os9wpyfQDOPIVAzbTCmTrmxLVAGW9Rlh7lLXWQkAIVNsm5vV+TSvzsIPeZHFepYyv5JZsiSrIoCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKYidIdo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744CAC4CEF0;
+	Fri, 19 Sep 2025 14:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758292223;
-	bh=9jnMOdrjgatuoKYIL/8vKkBJZet0KQ1s5vSx3987tZM=;
+	s=k20201202; t=1758292226;
+	bh=om7IHFxUqBk57l+hzSxJYXmlW0dohVfqH7wx9gm7LsQ=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=s5N37XzhyaHtRTL8qlGgpsai0QuLVTzq18YU0DTnM/blSyfpLx0lR1R1pOZHwXMGR
-	 Z7CpqnxsBMTiuJfGFNAcr3WcbfEkG+ecI/ZLV5Uo5fSO5JWwxwdQagf3x0DzvT1a27
-	 47kDAG7pixoxMOJemL3nkPk1KR9qEPy98sZhJGx6MSEU5aGE6pAJTgakQjPiFnSItp
-	 g11lvv0jQVgX4C+3oQ0KckNU95Ii8Dvunqycs+nhgJzn9oI9BckcGsNBuaLpwmwLSN
-	 lgO5E381H7mdoYOnPh4cw5s0qY+MtiDq4iFDvNbr3JXadbcfz5DrbmXefjt4R48vld
-	 osvkGFycH51Zw==
+	b=uKYidIdoOAgpzhd2SpMHR61DatOztYePJmLjsZz71t2b+GYrakR3GDj8Dklln8YDf
+	 5qKtMF35YuwHED5dRGmZJtBoh+9e5u329FdSyIRoZqP1frv79l97ToV7uhyd9apCZA
+	 D20R0nO63su5vqCTqaFLmRViyQ4mIVgN2/lM0MZCN2qC/rwE858PUF5K7tknHc9UJv
+	 9wC96543Bs+GPr1jsazQUQNVivEytVengW4REBZ5bRHycTiV5vhprQjMdJYq3WA+XK
+	 Le8zadwSLkw+HYeSWpGunPgbaks849jnO2NQgj/IKkd519+l3h5uGzLw+Dwn0Y5Qbx
+	 UtDCpn3FtcRFw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DDC39D0C20;
-	Fri, 19 Sep 2025 14:30:24 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B3439D0C20;
+	Fri, 19 Sep 2025 14:30:27 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,40 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] r8169: set EEE speed down ratio to 1
+Subject: Re: [PATCH net-next] hinic3: Fix NULL vs IS_ERR() check in
+ hinic3_alloc_rxqs_res()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175829222324.3219626.3424279690978099587.git-patchwork-notify@kernel.org>
-Date: Fri, 19 Sep 2025 14:30:23 +0000
-References: <20250918023425.3463-1-hau@realtek.com>
-In-Reply-To: <20250918023425.3463-1-hau@realtek.com>
-To: ChunHao Lin <hau@realtek.com>
-Cc: hkallweit1@gmail.com, nic_swsd@realtek.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+ <175829222574.3219626.8716643732005745835.git-patchwork-notify@kernel.org>
+Date: Fri, 19 Sep 2025 14:30:25 +0000
+References: <aMvUywhgbmO1kH3Z@stanley.mountain>
+In-Reply-To: <aMvUywhgbmO1kH3Z@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: gongfan1@huawei.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ zhuyikai1@h-partners.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 18 Sep 2025 10:34:25 +0800 you wrote:
-> EEE speed down means speed down MAC MCU clock. It is not from spec.
-> It is kind of Realtek specific power saving feature. But enable it
-> may cause some issues, like packet drop or interrupt loss. Different
-> hardware may have different issues.
+On Thu, 18 Sep 2025 12:45:47 +0300 you wrote:
+> The page_pool_create() function never returns NULL, it returns
+> error pointers.  Update the check to match.
 > 
-> EEE speed down ratio (mac ocp 0xe056[7:4]) is used to set EEE speed
-> down rate. The larger this value is, the more power can save. But it
-> actually save less power then we expected. And, as mentioned above,
-> will impact compatibility. So set it to 1 (mac ocp 0xe056[7:4] = 0)
-> , which means not to speed down, to improve compatibility.
-> 
-> [...]
+> Fixes: 73f37a7e1993 ("hinic3: Queue pair resource initialization")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/net/ethernet/huawei/hinic3/hinic3_rx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [net-next,v2] r8169: set EEE speed down ratio to 1
-    https://git.kernel.org/netdev/net-next/c/bf7154ffb1c6
+  - [net-next] hinic3: Fix NULL vs IS_ERR() check in hinic3_alloc_rxqs_res()
+    https://git.kernel.org/netdev/net-next/c/c4bdef8b3d2a
 
 You are awesome, thank you!
 -- 
