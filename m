@@ -1,53 +1,79 @@
-Return-Path: <linux-kernel+bounces-824234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E534B88776
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91973B8877C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F3054E29E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:47:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 778294E11FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72842C0276;
-	Fri, 19 Sep 2025 08:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EC52E0924;
+	Fri, 19 Sep 2025 08:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="pK/GKjrs"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YTD5LzHs"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2152940B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992822882DB
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758271642; cv=none; b=lHZL4ffi1UKvJ8wxDPQ66z3ghsR1kCT6/egWilA6s8vxCA9fsO39XM410oHGb7VOLgn+CRCfr3noZBy50a9/6rNNkZyTQnZWLWSNA+Pfb5bVRBbMkikEkz01gCxluiSr0wwLf4PMY2owyD9kaQEpCzxRgZI2eGm5wCUvxPB5QDY=
+	t=1758271692; cv=none; b=ENKqUB/ZhqXG0TJHU8O5u6sM+4XstdXAGl9FTQcLTyXaYoqmW/BGF5NIOL0Wc4y7dipFvxOnR0ruFpJDXxSeM/QGy7OjJSO+WnBJ7K/QzBx9xBdP+SLuXjLNGkwGe81XTNjDRn8IE3J/jWj0bDgsWqWdh4qvV59IScnAZBP+UaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758271642; c=relaxed/simple;
-	bh=H1ilV6rGw3hY7PKWHa+0IT2IJUlfOnWE1T8kkZULro8=;
+	s=arc-20240116; t=1758271692; c=relaxed/simple;
+	bh=DRKQQo7E0XXI5t1Nl2xKgdV9ZjFBGXh+yL905d9NgOY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ewhr+BVwCCHPkGvGz/qDQl2oRmOYKrd/vpT3OGddwzxP2ESnjIn+AaaxgmxqRe1WXQzzbVdvz39XWttRpekFWaZYLPhGdakjkCDtIeiQPK5ki1ZnmnvB41HxYQi7SAy4En523omJFji8hUvVs5IvkPjTsxCc2euINZv0uw/t4Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=pK/GKjrs; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8RTViDZT+J/z4RR+d5SoyTf3sfJaI4OVNgODzV7vQ5Q=; b=pK/GKjrsilOkSbSPMeXozaMh5O
-	d4A9BZoambXsXqu0EpzvXV9EXZVB8HOHPhdN5/TsfQE52YUedUpGmVVrGcz5onitqi+ui+XVKQRvA
-	wbtVte33GvJfaBjbW2Kf81Ro9o/4J6tfpWjh26rCRgFatWagfTOuwttiiGIajXFyYNF1cdyNFjAaB
-	mJ9O/pmAzm+110FhW9o2OrWcC7Zmbhjwp64zlET8aRNctYjHUsc+hNm/CUd2y5X+doET3vA0G3gdm
-	qXqlQ0n7jin9C3Rx8dKfoiVa9oN6Ggz8wTaaRAzxPx1bdltFpal2xG+pX3hvdjAkJAD9JToHKIvid
-	9WQl2y0g==;
-Received: from [84.66.36.92] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uzWlU-00E190-Qg; Fri, 19 Sep 2025 10:46:48 +0200
-Message-ID: <76861e33-8d07-4b97-9f91-4c5651732e91@igalia.com>
-Date: Fri, 19 Sep 2025 09:46:47 +0100
+	 In-Reply-To:Content-Type; b=rRaiyTHh6iH1rAKQzcqVZB3Va3qJnWTSUur+LOVWN9/OJgaafvPG+q50Bhc/h/KQssNFBgwWETDgg3nshOdxD1PTl8hAv7oLhF35KFJW1mljZmxekdZESBRX8f9Z4SSgXTFk8SL961E67Q50iMMX9G8S2f/WHIyo52NBWoeUkvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YTD5LzHs; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45decc9e83eso18116345e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:48:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1758271689; x=1758876489; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eeKy21799Hcr7FkiQNz9qpF/GKHks2yWa5KvVvnnvBs=;
+        b=YTD5LzHs/2JghmXjuOtJLVaVWPiSNLYgNIeuGJ8sHtXycY/v5FjZCotRh2WKCxEFEo
+         JraQFBcpSLdvPh2MYd9mzXDnyc12btnHSYK5qoHZOSsxtrf8YR7iyBAC7HQaD4VDS7hv
+         w66rlaqAAwVGwdXf+ckp2C5J1lPFLNDQwQxh2sMG50TOAqKF/qneRLtAAlsVrwzn7fBJ
+         1VptB56yQW2oL7+mTi9gY31Nu+OO4728nQs58ZFA2WcJ7/ZdlQLIppWUFYiOKkDE+TLU
+         3G4J5xzfgF0WLGb2wwzBoUk4MA4RpHXdL4dRqrv6tkLd+jkejk4JVJJ8rR7Hp3wVEoel
+         0JEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758271689; x=1758876489;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eeKy21799Hcr7FkiQNz9qpF/GKHks2yWa5KvVvnnvBs=;
+        b=tvfc9dkftraEh3aIPlD2dg3PnJTvDN1VmI2+b+bRKiDIShAecm8mODs0L5fivZgbzb
+         ztrpCtaf/+kJ+fHYrlFHv2Vnkm/vWxgz79Qm1UzZmSjpEzT6qK6UYNIgwRFN9t68+GC5
+         3VYQ6PMuPHAd3uAeBSi48hLR5pmxQ7ys1omUCIXaxT34QnS6+D5ViLiZ5ndUrurSvn3H
+         GxcIQ19qHINXXM0W0E8jpbjVvcClKPdxwfOEs2nXyXGDUDaJ5dWO6X+ZE2igc7T9xllh
+         J3ZYoggzHC6RPzA73zA4xKJGKDl/mfe3D7cAHqwwDyUmuGrePTUDzgUkNxYVr7c/Fl0I
+         Lm7g==
+X-Forwarded-Encrypted: i=1; AJvYcCX7kqse/5YIm4u2Uz6I3iBaipoNCMQaDI46UlEGTn66nqUpr1iSR104/Ei7Kr9T3mmwS5Zir73WkELK1eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBd3angXrcAwd2eTnsVqertvYKZuiUfww18aaxF1UqrmC145CB
+	3+ns/FDfwnpMuvTgetxkgzYf23qYazKm/E2jiKtvejufkQLCPQ0CZOgR74qnGQWjFrs=
+X-Gm-Gg: ASbGncvyxiFZ43QI+MWpYYFKo6J2jQq2TFFhib6NclLr6JDMOr7EUw+y1Vlq/9Ydf96
+	jWDmoOFp0Y+P/rM/frXUlDio9SryRcwhTI8XqKAe92lpjM9gEXIzsjmew246WT+bCqB/5UVkp22
+	b8vfFFl95YFsDMd0nNMlkFC5FmiJtXquJWPnk2EHGI5xD0aejMwGikvHz2XPa607Ejc3gzAFAKt
+	yP06fGLZwGhNsA88/lYFwWUt+YYwN9mX9QI4D2Gk22D0XCvkx4auRXIGhXrzmKyVic9u0WTMP/m
+	umrezdPwWoAmcjuX/QvSr+tJYqPrtoeu3lJZHPAXJ6dL4uYTiB8zootat2HRHnAAo30iYChW3FY
+	fdUZH/g3A+M0R5gxT02wTa0V1/dsCmHc=
+X-Google-Smtp-Source: AGHT+IEcfSBKA6EVtbz44CtdpDIr7jJoD+o0et3ddP2anoSqvYQpa11KA6TpHEkqTDry3s/PDolXgw==
+X-Received: by 2002:a05:600c:c4aa:b0:45b:8f5e:529a with SMTP id 5b1f17b1804b1-467e7120cf3mr18971265e9.14.1758271688605;
+        Fri, 19 Sep 2025 01:48:08 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e849a41sm115536495e9.20.2025.09.19.01.48.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 01:48:08 -0700 (PDT)
+Message-ID: <a3ce3fd1-6aca-49e4-b86b-75557526d62e@tuxon.dev>
+Date: Fri, 19 Sep 2025 11:48:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,243 +81,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 0/3] drm/ttm: allow direct reclaim to be skipped
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
- =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250918-ttm_pool_no_direct_reclaim-v2-0-135294e1f8a2@igalia.com>
- <6f92ff06-04c3-440b-becb-50a7693ecc39@amd.com>
- <67c83b24-01b6-4633-8645-52dc746c32e2@igalia.com>
- <96c117bc-389f-42d9-952e-894768aad780@amd.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <96c117bc-389f-42d9-952e-894768aad780@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 4/6] arm64: dts: renesas: rzg3s-smarc-som: Update
+ dma-ranges for PCIe
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250912122444.3870284-5-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWP638eB_p9xMAqZmOnuc6n7=n31h6AqV+287uvqQEdww@mail.gmail.com>
+ <c2fc5f6b-0e7c-464e-89a6-35dc76177d18@tuxon.dev>
+ <CAMuHMdWeHoUe-=7TDetnDQbLQsKGf4pDGpSdz3xEVLs_Rst9qQ@mail.gmail.com>
+ <0a20c765-ff72-4c03-af84-dff3f4850fa4@tuxon.dev>
+ <lunqwki2orbf5gjyo4a5kz6ko3rs5w6fspbantqcv7b2vxe5ku@734remr6z4lp>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <lunqwki2orbf5gjyo4a5kz6ko3rs5w6fspbantqcv7b2vxe5ku@734remr6z4lp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-On 19/09/2025 09:01, Christian König wrote:
-> On 19.09.25 09:43, Tvrtko Ursulin wrote:
->> On 19/09/2025 07:46, Christian König wrote:
->>> On 18.09.25 22:09, Thadeu Lima de Souza Cascardo wrote:
->>>> On certain workloads, like on ChromeOS when opening multiple tabs and
->>>> windows, and switching desktops, memory pressure can build up and latency
->>>> is observed as high order allocations result in memory reclaim. This was
->>>> observed when running on an amdgpu.
->>>>
->>>> This is caused by TTM pool allocations and turning off direct reclaim when
->>>> doing those higher order allocations leads to lower memory pressure.
->>>>
->>>> Since turning direct reclaim off might also lead to lower throughput,
->>>> make it tunable, both as a module parameter that can be changed in sysfs
->>>> and as a flag when allocating a GEM object.
->>>>
->>>> A latency option will avoid direct reclaim for higher order allocations.
->>>>
->>>> The throughput option could be later used to more agressively compact pages
->>>> or reclaim, by not using __GFP_NORETRY.
+
+On 9/19/25 11:25, Manivannan Sadhasivam wrote:
+> On Fri, Sep 19, 2025 at 10:38:52AM +0300, Claudiu Beznea wrote:
+>> Hi, Geert,
+>>
+>> On 9/18/25 13:00, Geert Uytterhoeven wrote:
+>>> Hi Claudiu,
 >>>
->>> Well I can only repeat it, at least for amdgpu that is a clear NAK from my side to this.
+>>> On Thu, 18 Sept 2025 at 11:47, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+>>>> On 9/18/25 12:09, Geert Uytterhoeven wrote:
+>>>>> On Fri, 12 Sept 2025 at 14:24, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>
+>>>>>> The first 128MB of memory is reserved on this board for secure area.
+>>>>>> Secure area is a RAM region used by firmware. The rzg3s-smarc-som.dtsi
+>>>>>> memory node (memory@48000000) excludes the secure area.
+>>>>>> Update the PCIe dma-ranges property to reflect this.
+>>>>>>
+>>>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>
+>>>>> Thanks for your patch!
+>>>>>
+>>>>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>>>>>> @@ -214,6 +214,16 @@ &sdhi2 {
+>>>>>>  };
+>>>>>>  #endif
+>>>>>>
+>>>>>> +&pcie {
+>>>>>> +       /* First 128MB is reserved for secure area. */
+>>>>>
+>>>>> Do you really have to take that into account here?  I believe that
+>>>>> 128 MiB region will never be used anyway, as it is excluded from the
+>>>>> memory map (see memory@48000000).
+>>>>>
+>>>>>> +       dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
+>>>>>
+>>>>> Hence shouldn't you add
+>>>>>
+>>>>>     dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
 >>>
->>> The behavior to allocate huge pages is a must have for the driver.
->>
->> Disclaimer that I wouldn't go system-wide but per device - so somewhere in sysfs rather than a modparam. That kind of a toggle would not sound problematic to me since it leaves the policy outside the kernel and allows people to tune to their liking.
-> 
-> Yeah I've also wrote before when that is somehow beneficial for nouveau (for example) then I don't have any problem with making the policy device dependent.
-> 
-> But for amdgpu we have so many so bad experiences with this approach that I absolutely can't accept that.
-> 
->> One side question thought - does AMD benefit from larger than 2MiB contiguous blocks? IIUC the maximum PTE is 2MiB so maybe not? In which case it may make sense to add some TTM API letting drivers tell the pool allocator what is the maximum order to bother with. Larger than that may have diminishing benefit for the disproportionate pressure on the memory allocator and reclaim.
-> 
-> Using 1GiB allocations would allow for the page tables to skip another layer on AMD GPUs, but the most benefit is between 4kiB and 2MiB since that can be handled more efficiently by the L1. Having 2MiB allocations then also has an additional benefit for L2.
-> 
-> Apart from performance for AMD GPUs there are also some HW features which only work with huge pages, e.g. on some laptops you can get for example flickering on the display if the scanout buffer is back by to many small pages.
-> 
-> NVidia used to work on 1GiB allocations which as far as I know was the kickoff for the whole ongoing switch to using folios instead of pages. And from reading public available documentation I have the impression that NVidia GPUs works more or less the same as AMD GPUs regarding the TLB.
-
-1GiB is beyond the TTM pool allocator scope, right?
-
- From what you wrote it sounds like my idea would actually be okay. A 
-very gentle approach (minimal change in behaviour) to only disable 
-direct reclaim above the threshold set by the driver. Along the lines of:
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c 
-b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-index 428265046815..06b243f05edd 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-@@ -1824,7 +1824,7 @@ static int amdgpu_ttm_pools_init(struct 
-amdgpu_device *adev)
-  	for (i = 0; i < adev->gmc.num_mem_partitions; i++) {
-  		ttm_pool_init(&adev->mman.ttm_pools[i], adev->dev,
-  			      adev->gmc.mem_partitions[i].numa.node,
--			      false, false);
-+			      false, false, get_order(2 * SZ_1M));
-  	}
-  	return 0;
-  }
-@@ -1865,7 +1865,8 @@ int amdgpu_ttm_init(struct amdgpu_device *adev)
-  			       adev_to_drm(adev)->anon_inode->i_mapping,
-  			       adev_to_drm(adev)->vma_offset_manager,
-  			       adev->need_swiotlb,
--			       dma_addressing_limited(adev->dev));
-+			       dma_addressing_limited(adev->dev),
-+			       get_order(2 * SZ_1M));
-  	if (r) {
-  		dev_err(adev->dev,
-  			"failed initializing buffer object driver(%d).\n", r);
-diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
-index baf27c70a419..5d54e8373230 100644
---- a/drivers/gpu/drm/ttm/ttm_pool.c
-+++ b/drivers/gpu/drm/ttm/ttm_pool.c
-@@ -726,8 +726,12 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, 
-struct ttm_tt *tt,
-
-  	page_caching = tt->caching;
-  	allow_pools = true;
--	for (order = ttm_pool_alloc_find_order(MAX_PAGE_ORDER, alloc);
--	     alloc->remaining_pages;
-+
-+	order = ttm_pool_alloc_find_order(MAX_PAGE_ORDER, alloc);
-+	if (order > pool->max_beneficial_order)
-+		gfp_flags &= ~__GFP_DIRECT_RECLAIM;
-+
-+	for (; alloc->remaining_pages;
-  	     order = ttm_pool_alloc_find_order(order, alloc)) {
-  		struct ttm_pool_type *pt;
-
-@@ -745,6 +749,8 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, 
-struct ttm_tt *tt,
-  		if (!p) {
-  			page_caching = ttm_cached;
-  			allow_pools = false;
-+			if (order <= pool->max_beneficial_order)
-+				gfp_flags |= __GFP_DIRECT_RECLAIM;
-  			p = ttm_pool_alloc_page(pool, gfp_flags, order);
-  		}
-  		/* If that fails, lower the order if possible and retry. */
-@@ -1064,7 +1070,8 @@ long ttm_pool_backup(struct ttm_pool *pool, struct 
-ttm_tt *tt,
-   * Initialize the pool and its pool types.
-   */
-  void ttm_pool_init(struct ttm_pool *pool, struct device *dev,
--		   int nid, bool use_dma_alloc, bool use_dma32)
-+		   int nid, bool use_dma_alloc, bool use_dma32,
-+		   unsigned int max_beneficial_order)
-  {
-  	unsigned int i, j;
-
-@@ -1074,6 +1081,7 @@ void ttm_pool_init(struct ttm_pool *pool, struct 
-device *dev,
-  	pool->nid = nid;
-  	pool->use_dma_alloc = use_dma_alloc;
-  	pool->use_dma32 = use_dma32;
-+	pool->max_beneficial_order = max_beneficial_order;
-
-  	for (i = 0; i < TTM_NUM_CACHING_TYPES; ++i) {
-  		for (j = 0; j < NR_PAGE_ORDERS; ++j) {
-
-
-That should have the page allocator working less hard and lower the 
-latency with large buffers.
-
-Then a more aggressive change on top could be:
-
-diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
-index 5d54e8373230..152164f79927 100644
---- a/drivers/gpu/drm/ttm/ttm_pool.c
-+++ b/drivers/gpu/drm/ttm/ttm_pool.c
-@@ -726,12 +726,8 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, 
-struct ttm_tt *tt,
-
-  	page_caching = tt->caching;
-  	allow_pools = true;
--
--	order = ttm_pool_alloc_find_order(MAX_PAGE_ORDER, alloc);
--	if (order > pool->max_beneficial_order)
--		gfp_flags &= ~__GFP_DIRECT_RECLAIM;
--
--	for (; alloc->remaining_pages;
-+	for (order = ttm_pool_alloc_find_order(pool->max_beneficial_order, alloc);
-+	     alloc->remaining_pages;
-  	     order = ttm_pool_alloc_find_order(order, alloc)) {
-  		struct ttm_pool_type *pt;
-
-@@ -749,8 +745,6 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, 
-struct ttm_tt *tt,
-  		if (!p) {
-  			page_caching = ttm_cached;
-  			allow_pools = false;
--			if (order <= pool->max_beneficial_order)
--				gfp_flags |= __GFP_DIRECT_RECLAIM;
-  			p = ttm_pool_alloc_page(pool, gfp_flags, order);
-  		}
-  		/* If that fails, lower the order if possible and retry. */
-
-Ie. don't even bother trying to allocate orders above what the driver 
-says is useful. Could be made a drivers choice as well.
-
-And all could be combined with some sort of a sysfs control, as Cascardo 
-was suggesting, to disable direct reclaim completely if someone wants that.
-
-Regards,
-
-Tvrtko
-
-> Another alternative would be that we add a WARN_ONCE() when we have to fallback to lower order pages, but that wouldn't help the end user either. It just makes it more obvious that you need more memory for a specific use case without triggering the OOM killer.
-> 
-> Regards,
-> Christian.
-> 
->>
->> Regards,
->>
->> Tvrtko
->>
->>> The alternative I can offer is to disable the fallback which in your case would trigger the OOM killer.
+>>> Oops, I really meant (forgot to edit after copying it):
 >>>
->>> Regards,
->>> Christian.
+>>>     dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x0 0x40000000>;
+>>>
+>>>>>
+>>>>> to the pcie node in arch/arm64/boot/dts/renesas/r9a08g045s33.dtsi
+>>>>> instead, like is done for all other Renesas SoCs that have PCIe?
+>>>>
+>>>> I chose to add it here as the rzg3s-smarc-som.dtsi is the one that defines
+>>>> the available memory for board, as the available memory is something board
+>>>> dependent.
+>>>
+>>> But IMHO it is independent from the amount of memory on the board.
+>>> On other SoCs, it has a comment:
+>>>
+>>>      /* Map all possible DDR as inbound ranges */
 >>>
 >>>>
->>>> Other drivers can later opt to use this mechanism too.
->>>>
->>>> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
->>>> ---
->>>> Changes in v2:
->>>> - Make disabling direct reclaim an option.
->>>> - Link to v1: https://lore.kernel.org/r/20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com
->>>>
->>>> ---
->>>> Thadeu Lima de Souza Cascardo (3):
->>>>         ttm: pool: allow requests to prefer latency over throughput
->>>>         ttm: pool: add a module parameter to set latency preference
->>>>         drm/amdgpu: allow allocation preferences when creating GEM object
->>>>
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    |  3 ++-
->>>>    drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  3 ++-
->>>>    drivers/gpu/drm/ttm/ttm_pool.c             | 23 +++++++++++++++++------
->>>>    drivers/gpu/drm/ttm/ttm_tt.c               |  2 +-
->>>>    include/drm/ttm/ttm_bo.h                   |  5 +++++
->>>>    include/drm/ttm/ttm_pool.h                 |  2 +-
->>>>    include/drm/ttm/ttm_tt.h                   |  2 +-
->>>>    include/uapi/drm/amdgpu_drm.h              |  9 +++++++++
->>>>    8 files changed, 38 insertions(+), 11 deletions(-)
->>>> ---
->>>> base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
->>>> change-id: 20250909-ttm_pool_no_direct_reclaim-ee0807a2d3fe
->>>>
->>>> Best regards,
+>>>> If you consider it is better to have it in the SoC file, please let me know.
 >>>
+>>> Hence yes please.
+>>>
+>>> However, I missed you already have:
+>>>
+>>>     /* Map all possible DRAM ranges (4 GB). */
+>>>     dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x1 0x0>;
+>>>
+>>> in r9a08g045.dtsi, so life's good.
+>>>
+>>> +
+>>>>>> +};
+>>>>>> +
+>>>>>> +&pcie_port0 {
+>>>>>> +       clocks = <&versa3 5>;
+>>>>>> +       clock-names = "ref";
+>>>>>> +};
+>>>>>
+>>>>> This is not related.
+>>>>
+>>>> Ah, right! Could you please let me know if you prefer to have another patch
+>>>> or to update the patch description?
+>>>
+>>> Given the dma-ranges changes is IMHO not needed,
 >>
+>> I kept it here as the driver configures the PCIe registers for the inbound
+>> windows with the values passed though the dma-ranges. This is done through
+>> rzg3s_pcie_set_inbound_windows() -> rzg3s_pcie_set_inbound_window(). The
+>> controller will be aware that the secure area zone is something valid to
+>> work with. In that case, if my understanding of PCIe windows is right, I
+>> added this in the idea that an endpoint (a malicious one?) could DMA
+>> into/from secure area if we don't exclude it here?
+>>
+> 
+> That's true. But do you really have an usecase to setup inbound window for the
+> endpoints? What does the endpoint do with this memory?
+
+I don't have a usecase for this. I did this update just to be safe for the
+described scenario.
+
+> 
+> - Mani
 > 
 
 
