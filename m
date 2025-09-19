@@ -1,248 +1,147 @@
-Return-Path: <linux-kernel+bounces-824838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F59B8A40E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:24:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBD17B8A41C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F143B6844
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:24:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B2E1BC761B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9743168E2;
-	Fri, 19 Sep 2025 15:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035863191D6;
+	Fri, 19 Sep 2025 15:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="D6b4ty0R"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013039.outbound.protection.outlook.com [40.107.159.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DU3dHtFI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF9E3148DA;
-	Fri, 19 Sep 2025 15:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758295458; cv=fail; b=HfI5j2/fv8JQXyRfhysZPYw+X5IqD7uHa4HSW8iWxZzNw1D6/6+YYmmc6ZtYOHcFQu86UIgRcaDNe4DGeYPVi7PE8gB6GxLuKptydO83ojOr3xhGIAkVkzbaxIVs/AK26IqSXfcwUZ7hhp12hLKulNl+1jgj5JOrFkCA+frJQGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758295458; c=relaxed/simple;
-	bh=nxUwUkaWyGzVB1ISVdcg/7OoWP+GtCoLnJ/fR7oD4BY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=b+Wx31quiOyInZgt5KyywC+KiWUPWzIMFHYbT8zai16aRXNxDo7jCMc6g4lOxdxJ7iQPuRsObV2TF/hOmHz8KQHgla7UuWhBimAt0L3AUqHY3ivGet5AjEu2R7OALlmOViKrhOn4vwCR8ROVlK0w16G3U7eIewjwUGdxDMzit9U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=D6b4ty0R; arc=fail smtp.client-ip=40.107.159.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IF7zE9D1xa6Qfvw5gjvnjpsPopq7jjxVudmfASaCyXdibNnW6mYZRcS6SMZquMur3EeD9B99Ab9ew/yNux0kGOI4Pn9ta9KifR82BaUvqPMDKCwS8/lq/h3brL57Hw3B/Y2oqwJyJmflxYERWOCkJR40Ks9A9NKqZt2GsUVE58NLrp6bO8WSO00TZKCZDSGlNP28e6iRXli1noQDU1EiZrsQZCcaPMdJynbd7lj7v9lP2whCqXP2/E8arBokg21zz75v0xWwOACN0OiDcFXeVRBWQXCUYHf+dZspW+O6DmP0zkYvMJHrQpveR4h+mDWxX1mxynQpxnIDm848kFH9nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sbTEaHXcSG0bMUynS4Y3uIy4Ioib+TByI31MmhYhWSE=;
- b=Cu8Nba90Ds8D3ULlkns6KI7Oe2LMIuKfiVLHJLhGO3b9/H1mbUG0lx1C8LEsoHSdMLcGCMuyMMi9EmAX7dB5jyPQpg4Vlh/wZ/sEW2jmoyIvKBHvBTmQOVxJLkwEEQ0cscBEJOYNhjETsEi7OuACC4BKg9U+xb5n3f2tnthynYmFRmkwuGqt9QNQotcWq+y+IISPKdN35jWS7EEJ2OZaj0IabxnN6NZaaQDinEQJ587t2gRm7nZotXtJU8mpVrUd8okHpMSC7BaM2pxGQNBhwq86MZFvmSGHXeg6a263ahZSD6LaXIqj0zLw39SdsbYkH5JP2U5Zma4hpqqJOX6Kng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sbTEaHXcSG0bMUynS4Y3uIy4Ioib+TByI31MmhYhWSE=;
- b=D6b4ty0Rv54Pz0evo5wtbfKX7vJj2lnxfcb4bDnBm8TbpObDj0yalXnS+2UTYl3G+lim2Aek7niA+KjyGWIRvXrYXULwK5+JAa1hOL+ZzrleF67jTVCyQSm55P6mjd1SBSuuZR0e2LPVlwknbpIHcRmpdg4ZUDxqHjRFeX+AhRebfF3RG5AKQbwuOBBma0sIl3U4p00vf56sZPDyJMh+P6P+MJZvFJm9O+naOLmvAsHwq2mH8yYO1fJ6Ip+lCF6AfbdCQCS3DlwPnJc+ZqZmKH2xrXv/S9YBhcoCl2UbB4LbGpNwHFyfde+CrjqAfRZI4lKpOLhQLiCGuVyolo9N5Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by PA1PR04MB10098.eurprd04.prod.outlook.com (2603:10a6:102:45b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Fri, 19 Sep
- 2025 15:24:10 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
- 15:24:10 +0000
-Date: Fri, 19 Sep 2025 11:24:00 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A84318151;
+	Fri, 19 Sep 2025 15:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758295462; cv=none; b=F86irA1e1f8rF/4cfM1NZ7jAUQnpUI9ppn7+XC5UmBI6NvlWoSPDV+0S9S5G30PH+XmqU6OFSpdJUDglkvZp3bpXo8sZBFqkcM7gDdSF0pYBPgkiO5yenpyIPYJAjfBuJyT7xJlOoVGMfHmmMApmYDXR/telfBZWhL9H1fXvDP8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758295462; c=relaxed/simple;
+	bh=ABPSXlxAq7jRyiDCS/EVwlVL/meoOY0nO0Ad+jU4kDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXTep4CrG4E+Iw5IEfZkoiZBrGwdYQ4DJpYfM0/Tz5/bjxFUZoMuYaK4Rkyb9yevrICtVdGNdUdRKf4CEuPEA8+78LjC9zSKoOpKs0IGN50R7jrwJb4povObhrdXq7AT1IyZwMVL0PFmKqohgTybleT+Cr+bPSrM4vXv0LPeF/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DU3dHtFI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6B27C4CEF0;
+	Fri, 19 Sep 2025 15:24:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758295461;
+	bh=ABPSXlxAq7jRyiDCS/EVwlVL/meoOY0nO0Ad+jU4kDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DU3dHtFIBsAxB7Pt5UVMSZJt7VS4WcAeAutUWseQBKC3/LV2iFNdTkOSl/JwGx2i/
+	 sLZdGnErEYEAnsGyaijiiaZ6WDIOVntvtMC7lgCKAFrGN08e1if82OrLI+K3F7dmpO
+	 MLBQHh9Ijh22VanE3obrw/2WwaxYSWN3nwNB4Cu3c+AFaFgX6iNk5WStniMZxlCaAQ
+	 DDBhLjgbgo56vcWx/G2yobWmdru3hZbMEUfkasPAqnoC5ixr+oewGsXXV9oTTPY9PM
+	 keZff9OUrkv1q5YI9gzQkiqRnXErR7arzVhi76QCBOFtJ7n+GzOoVaz5akrRgRb9y8
+	 5XFW5AMSHhUNA==
+Date: Fri, 19 Sep 2025 10:24:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/14] drm/imx: dc: Use TCON operation mode
-Message-ID: <aM11kCDCGaAFO7cv@lizhi-Precision-Tower-5810>
-References: <20250704-imx8-dc-prefetch-v1-0-784c03fd645f@nxp.com>
- <20250704-imx8-dc-prefetch-v1-8-784c03fd645f@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250704-imx8-dc-prefetch-v1-8-784c03fd645f@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0091.namprd03.prod.outlook.com
- (2603:10b6:a03:333::6) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] dt-bindings: soc: fsl: qe: Add support of IRQ in
+ QE GPIO
+Message-ID: <20250919152414.GB852815-robh@kernel.org>
+References: <cover.1758212309.git.christophe.leroy@csgroup.eu>
+ <7269082e90d20cf2cb4c11ceb61e24f0520d0154.1758212309.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PA1PR04MB10098:EE_
-X-MS-Office365-Filtering-Correlation-Id: ad6d43df-13f1-4356-4759-08ddf79094bd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rkn0OO+NhE4OfypkOYv+hfeLuP6WfzElywRHY4K3YS2qRPj68z5CJgkjfgoK?=
- =?us-ascii?Q?ni5iwED48k4afloQtSju+xldYG/ua0YM1MZy/zf5MYGVknoJTPh6xvi+zpxw?=
- =?us-ascii?Q?SKRgHgy6DIWQnR1Aem8kntzAS0pgHy0sVbgLquw8ZUBiC7hNNQ5QrJz7tGLo?=
- =?us-ascii?Q?bxNR9hsvkhcFQo5OY0i3w2gXa3w2bz9RnlaGLcXbyL+xGiSmuy+4TGlrPwWZ?=
- =?us-ascii?Q?oi0pDeFFibJgjlpvfxFO6BrIMcStRGjQ/mQwSjaIBUJ09xpUeTRnlsYaT1lA?=
- =?us-ascii?Q?dbH8RfQQJmebyVEkUbz5tW4Rbf0V6FgTh+EAkn9oyUzSsmmckv8RPtVCyWFp?=
- =?us-ascii?Q?IAlCSOTXVvsSbknxr0v2JZsGaIhZBuhyeUDh4ln5/XWP42HpA8Gda0vVIet6?=
- =?us-ascii?Q?llmKA1jLDLbZW6aXS1mkrGoXmVZEVVN+2R88cvfAPVztMUQLFJSeGt/c6Ve/?=
- =?us-ascii?Q?A/MU6/Lg5Z39ydOnC+veR+CrblxdxHpUjNk9A6OrddiMQRgInWPL9QFDitF2?=
- =?us-ascii?Q?NAtJpDgwfNxPGN4zmph/z+p3klFAi2Z2i7FUYYzepqzZ7YiWPmX3n6q33wN/?=
- =?us-ascii?Q?5GMQxZP3eJRxVgmUVvTWFLkq5h2rJQD1Adrmgdgl0Dl4/747jeH9NIA/e4Cf?=
- =?us-ascii?Q?gzZcfmRzu1RhG+G0hYG31sL37e+OjXGseXlTCSQoyRAgG7jVEl1ek+xty/d+?=
- =?us-ascii?Q?zH1jrcjzUe4egUq3QtZDmpPgyHOpQ3a/az1B8vUKpM/ebBXzqwRoO3U5xBga?=
- =?us-ascii?Q?3y9y87pqsms+6k4Z0KbE8QO5PD0JzIfK5ZI9mDiKdft7TpcDwKqh9wfC9X12?=
- =?us-ascii?Q?+NMOVgmrtLsqiXuIbxmQOuqzaQZsmZtRoiJPWIL6l3rAFWaJeF/85g5dWcj/?=
- =?us-ascii?Q?ne1LcMjByN9w9d4lUbFhvyUf0R/SNpQbjEgqnkatnRjR9N37hP2YILKYQshW?=
- =?us-ascii?Q?1n0EhGjkVaHsSCNkj9ytlBSCnv+FEht8W6We/lowgXvEoZNBoKwGdpRX5WpW?=
- =?us-ascii?Q?F5Ja7/ZrxicJwSfOQ5OQ/uO4be0lGmTbKAGsCX65+hAK6ltVdybaDEy/KLFy?=
- =?us-ascii?Q?qWES4qkCCdhheC+QSFuTUDmaaEJldXoN9uAsvlvBxph4GqQxyQPGLmUKUljb?=
- =?us-ascii?Q?OnxYUlxPBhId+jvYilKi8V2QtkIKSPdW1W5B+R8SaCf2LMHZYWui/UzMbTSY?=
- =?us-ascii?Q?bSjnZcUBypqYEYydBlJGlKwPS6Bma3kP9YYmPE9ciZ5kX8bYM1wx51YXSlYi?=
- =?us-ascii?Q?pfB7Vmr2pd79lLUinDcIKqWEyq7RSjIqA+DuSs22NqD6cS5KB63bUx6PlfBR?=
- =?us-ascii?Q?e0WfEhrRKsemRwFHJrrEw5yZZIiu2sn62QXzpA1M/l/sZQAd1xe2+SBsE6Ri?=
- =?us-ascii?Q?tXO3X4udAQireifZDwnzQfeSAlA+t5pfnYi5tHVlZls5Rja9CNIo6mN2YRCq?=
- =?us-ascii?Q?cX+709lNDxy3ZWDdouMbINgcZgVzkudzHMljUicnyTFUJBYnp8bq/A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4WhHSshqTcrB4mmYRQQtAjhO+33ehTxU7hfoUO03gET2h+dEf6Tm0tIrTIaR?=
- =?us-ascii?Q?dKVJgsj4HbP51sgJynQVCBe/MoId5dn7j+yFaw54uTCkyBVdK4NvHprmCL34?=
- =?us-ascii?Q?QTr0NN/GJjxMvwsQXRQtDtObRZP0wRtxNu2WHfPa33A8Sqo/9HRG2NKUslDZ?=
- =?us-ascii?Q?bDL/Ai3Gc5nkFQ+VvfJZupRX/K2A/kx2XmoGzJlGaV8WE8OdNVoxdPvaP1dv?=
- =?us-ascii?Q?yn/EeiwoGVCRdZdYkdn8Fy3N/2sU8kFlj4D8VDCc8jnjsn8Yz3w1W7vCkrcD?=
- =?us-ascii?Q?epzk+avn0H9tHw4Pr2JO4ZZb2tzZswKGp54HHIhJfpBkZa2d7a9QP+khGKyi?=
- =?us-ascii?Q?z5xW3vHAznwDRU1LUHXz52TCtPIOUxGAU8VUZLjn4Y6Zus+AEbaWBOWFWazN?=
- =?us-ascii?Q?RyK5ofn6feEi3LqTOo6sLC7uEPYfik9HI0qWG7AnG7fEa3cALRwp6+51Tnmw?=
- =?us-ascii?Q?ySVKhLr1/IP6r0dwjYSlVz4xEkLb21hlbURtKC387I2q/vSjaYgOyCiTuIJC?=
- =?us-ascii?Q?cdbM4KgV+x5NXbJe3PbwSW+42AUDufR4MSH2XK0mT8klGYxRF8/ujIlXNoWW?=
- =?us-ascii?Q?j8nye0rRZNkhpbDwsnahBFN4DB+Uw3vkcw29UsMo37Cxp6dxRl4b+M6UUqFl?=
- =?us-ascii?Q?Jl2t0hmJ/zadFTfvcWWkNivRSgPjOyAwE7Xqj+xWUFIfugU6ecq/SRa2YAJZ?=
- =?us-ascii?Q?hIHZOjBYTt5VeTVQLOqlKrtIfqNi+ps5JHHJ0NPwm2Gmqi3oLcDYpwF7Sx07?=
- =?us-ascii?Q?AO5dh8gKBeAVO/D2qin2m4UH54p17iKufStjxXqrXIuBt8kk56ejXwTbcuee?=
- =?us-ascii?Q?ECtyoj5OeUL39M7TuWpqVZjbahSm4pavew25F16QZYVajdgYEh0K5dFSc9HL?=
- =?us-ascii?Q?B29nbrzwStO+00aHN7IZGMbjblea9SHOPxFZpvK9lizyFGihjjUHGRWw0n1k?=
- =?us-ascii?Q?KqgqwfoOLPEw1VOCcNQU1bQEwf4qixyZWl1gcj669KTLn2z2mZyqV+FAwNH/?=
- =?us-ascii?Q?yaBRMxojZ2P4GYtn+stxbAneURx32WeAMPT7iJHPa/2uMLuLgZV/ePm68W8E?=
- =?us-ascii?Q?XUJCJggMfkO0kv7WtLP5wdkUD/lb+pvksg5eqv2RvFmzA4IX5bkgYOJfI+r9?=
- =?us-ascii?Q?khysKw8vmi2C5ze+QMgSDmkBGksWa661Mk1P9kuFLCByXzu1dvPum9nWiNt1?=
- =?us-ascii?Q?ga4p+lo2pf2D82qAOVLxehO/u8aXphG/YouShqebj3MIu3BySdjAGf9cufrq?=
- =?us-ascii?Q?qFyi1fZKM7qVUDtOxsCYGz2PsW7POojA61bZ8XuMDJ12+Q+/Hq9GbaQ2zUVw?=
- =?us-ascii?Q?nTRQ6HCJ1fZb/ZJEmaK6RTherD2FJxW8Nu9wvu1xhwtOdZJPcR5xyJcZRV4D?=
- =?us-ascii?Q?eIK/pwNZsAIgzuQMpWGn0243FM01RiUC8Tj/a9bt49p9hcS2X+nXPZvPJqjl?=
- =?us-ascii?Q?4lzNXBil+bVJ1QKhos1IIJXvz2M6kStXcQGJDmW4Avra19ojizjVBECIOU21?=
- =?us-ascii?Q?WRpz/k1BqlMx8tcE54XrFwaosDROkjQRoxBijCFN+xShzaikYxwKv5WFT32g?=
- =?us-ascii?Q?EKZvFAzo6SPKIuvgV6LP71vO8NNx310KkU/qi3Zb?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad6d43df-13f1-4356-4759-08ddf79094bd
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 15:24:10.0578
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yOinoX/tBugHac+mxb/cd1rQGde1mfST3sZu1xYtagZnVbhanQK+Ge55MrBZJjnXfMWim6sWtSYEB7soluIAoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7269082e90d20cf2cb4c11ceb61e24f0520d0154.1758212309.git.christophe.leroy@csgroup.eu>
 
-On Fri, Jul 04, 2025 at 05:03:55PM +0800, Liu Ying wrote:
-> In TCON operation mode, sync signals from FrameGen are ignored, but
-> a much more customized output timing can be generated by the TCON
-> module.  By using TCON operaton mode, generate KACHUNK signal along
-> with HSYNC/VSYNC/data enable signals.  The KACHUNK signal is used as
-> a synchronization signal inside the prefetch engine(DPRC + PRG(s),
-> attached to FetchUnit(s)).  Carefully switch TCON bypass mode to TCON
-> operation mode when CRTC is being enabled so that the prefetch engine
-> may evade the first dumb frame generated by the display controller.
->
-> Since TCON BYPASS bit is controlled by KMS driver when doing atomic
-> commits, drop the bit setting when initializing TCON.  This also
-> avoids accidentally initializing TCON BYPASS bit to 1 when driver
-> module removing and re-installing where an upcoming patch would
-> disable a CRTC at boot in TCON operation mode if needed.
->
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+On Thu, Sep 18, 2025 at 06:23:27PM +0200, Christophe Leroy wrote:
+> In the QE, a few GPIOs have an associated IRQ to notify changes.
+> Add IRQ support to QE GPIO.
+> 
+> As not all GPIOs have an associated IRQ, the driver needs to know
+> to which GPIO corresponds each provided IRQ. This is provided via
+> multiple compatible properties:
+> 
+> 	compatible = "fsl,mpc8323-qe-pario-bank-a"
+> 	compatible = "fsl,mpc8323-qe-pario-bank-b"
+> 	compatible = "fsl,mpc8323-qe-pario-bank-c"
+> 
+> 	compatible = "fsl,mpc8360-qe-pario-bank-a"
+> 	compatible = "fsl,mpc8360-qe-pario-bank-b"
+> 	compatible = "fsl,mpc8360-qe-pario-bank-c"
+> 	compatible = "fsl,mpc8360-qe-pario-bank-d"
+> 	compatible = "fsl,mpc8360-qe-pario-bank-e"
+> 	compatible = "fsl,mpc8360-qe-pario-bank-f"
+> 	compatible = "fsl,mpc8360-qe-pario-bank-g"
+> 
+> 	compatible = "fsl,mpc8568-qe-pario-bank-a"
+> 	compatible = "fsl,mpc8568-qe-pario-bank-b"
+> 	compatible = "fsl,mpc8568-qe-pario-bank-c"
+> 	compatible = "fsl,mpc8568-qe-pario-bank-d"
+> 	compatible = "fsl,mpc8568-qe-pario-bank-e"
+> 	compatible = "fsl,mpc8568-qe-pario-bank-f"
+> 
+> When not using IRQ and for banks having no IRQ (like bank D on mpc8323)
+> the origin compatible = "fsl,mpc8323-qe-pario-bank" is still valid.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 > ---
->  drivers/gpu/drm/imx/dc/dc-crtc.c |  28 ++++++++++
->  drivers/gpu/drm/imx/dc/dc-de.h   |   2 +
->  drivers/gpu/drm/imx/dc/dc-kms.h  |   2 +
->  drivers/gpu/drm/imx/dc/dc-tc.c   | 114 +++++++++++++++++++++++++++++++++++++--
->  4 files changed, 142 insertions(+), 4 deletions(-)
->
-...
-> @@ -249,6 +260,7 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->  	enable_irq(dc_crtc->irq_ed_safe_shdload);
->
->  	dc_fg_cfg_videomode(dc_crtc->fg, adj);
-> +	dc_tc_cfg_videomode(dc_crtc->tc, adj);
->
->  	dc_cf_framedimensions(dc_crtc->cf_cont,
->  			      adj->crtc_hdisplay, adj->crtc_vdisplay);
-> @@ -273,7 +285,22 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
->  	dc_ed_pec_sync_trigger(dc_crtc->ed_cont);
->  	dc_ed_pec_sync_trigger(dc_crtc->ed_safe);
->  	dc_fg_shdtokgen(dc_crtc->fg);
-> +
-> +	/* Don't relinquish CPU until TCON is set to operation mode. */
-> +	local_irq_save(flags);
-> +	preempt_disable();
-> +
->  	dc_fg_enable(dc_crtc->fg);
-> +	/*
-> +	 * Turn TCON into operation mode as soon as the first dumb
-> +	 * frame is generated by DC(we don't relinquish CPU to ensure
-> +	 * this).  This makes DPR/PRG be able to evade the frame.
-> +	 */
-> +	DC_CRTC_WAIT_FOR_FRAMEGEN_FRAME_INDEX_MOVING(dc_crtc->fg);
-> +	dc_tc_set_operation_mode(dc_crtc->tc);
-> +
-> +	local_irq_restore(flags);
-> +	preempt_enable();
+>  .../gpio/fsl,mpc8323-qe-pario-bank.yaml       | 27 +++++++++++++++++--
+>  1 file changed, 25 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml b/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
+> index 0dd9c0e6ca39..c34aeea119e0 100644
+> --- a/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml
+> @@ -14,6 +14,22 @@ properties:
+>      items:
+>        - enum:
+>            - fsl,chip-qe-pario-bank
+> +          - fsl,mpc8323-qe-pario-bank-a
+> +          - fsl,mpc8323-qe-pario-bank-b
+> +          - fsl,mpc8323-qe-pario-bank-c
+> +          - fsl,mpc8360-qe-pario-bank-a
+> +          - fsl,mpc8360-qe-pario-bank-b
+> +          - fsl,mpc8360-qe-pario-bank-c
+> +          - fsl,mpc8360-qe-pario-bank-d
+> +          - fsl,mpc8360-qe-pario-bank-e
+> +          - fsl,mpc8360-qe-pario-bank-f
+> +          - fsl,mpc8360-qe-pario-bank-g
+> +          - fsl,mpc8568-qe-pario-bank-a
+> +          - fsl,mpc8568-qe-pario-bank-b
+> +          - fsl,mpc8568-qe-pario-bank-c
+> +          - fsl,mpc8568-qe-pario-bank-d
+> +          - fsl,mpc8568-qe-pario-bank-e
+> +          - fsl,mpc8568-qe-pario-bank-f
 
-Does it need reverised order?
+Is this supposed to be mpc8569? I don't see any existing 
+"fsl,mpc8568-qe-pario-bank" compatibles.
 
->
->  	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(ed_safe_shdload_done);
->  	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(ed_cont_shdload_done);
-> @@ -561,6 +588,7 @@ int dc_crtc_init(struct dc_drm_device *dc_drm, int crtc_index)
->  	dc_crtc->ed_cont = pe->ed_cont[crtc_index];
->  	dc_crtc->ed_safe = pe->ed_safe[crtc_index];
->  	dc_crtc->fg = de->fg;
-> +	dc_crtc->tc = de->tc;
->
->  	dc_crtc->irq_dec_framecomplete = de->irq_framecomplete;
->  	dc_crtc->irq_dec_seqcomplete = de->irq_seqcomplete;
-> diff --git a/drivers/gpu/drm/imx/dc/dc-de.h b/drivers/gpu/drm/imx/dc/dc-de.h
-> index 211f3fcc1a9ad642617d3b22e35ea923f75e645b..c39f2ef5eea98c3eb6ae9b5392f9bf9f7e33e7c5 100644
-> --- a/drivers/gpu/drm/imx/dc/dc-de.h
-> +++ b/drivers/gpu/drm/imx/dc/dc-de.h
-> @@ -54,6 +54,8 @@ enum drm_mode_status dc_fg_check_clock(struct dc_fg *fg, int clk_khz);
->  void dc_fg_init(struct dc_fg *fg);
->
-...
+This breaks the ABI. If the OS relied on "fsl,mpc8360-qe-pario-bank" for 
+example, you just broke it.
 
->
-> --
-> 2.34.1
->
+As the GPIO bank doesn't do any interrupt handling itself 
+(mask/unmask/ack), you can just do this (using 
+fsl,mpc8360-qe-pario-bank-a case):
+
+interrupt-map-mask = <0x1f 0>;
+interrupt-map = <15 0 &qepic 0>,
+                <16 0 &qepic 1>,
+                <29 0 &qepic 2>,
+                <30 0 &qepic 3>;
+
+And then a user of the GPIO interrupt just says "interrupts = <15 0>;".
+
+Rob
 
