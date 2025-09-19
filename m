@@ -1,138 +1,172 @@
-Return-Path: <linux-kernel+bounces-824211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248A4B8864A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:23:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8323B8868F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035571C8400B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:23:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF0716B8D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9262ECE95;
-	Fri, 19 Sep 2025 08:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014BE2F7465;
+	Fri, 19 Sep 2025 08:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReD1NdMi"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jc1G9Gh9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767192D0622
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438342C0266;
+	Fri, 19 Sep 2025 08:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758270201; cv=none; b=EDq08uYPRgmUOSz3d2nSKD+aju1YQAft1uhKzLBMTqdWGeBoP92S7o1gLYZB5Mn5b19Zb4nKt1hDQ9LnaMG5o1FbRYdRfwgJlF1IcW4VdgMbvQQrGuCMGZS4pWbM/vJTv6qGphjNF3pdEOlw0VhrFfwnHE+IfmPEoCs1AfyXPIo=
+	t=1758270363; cv=none; b=n9EiiVDb6U33JqyL9j8ZOH+rxnWN7GXhAzNO+f4WbASpXSeIefxJOUJB4ZpknOmM/O13Cs4D1ObSOTB/cDLW1bT8/do/pCBorKmfr3XYqNTzPU8sqkmWR/09EmRkCM013cDLzzgmHBfMqO0w9P7PdIbcdHqdAaAYQ5u1PPJK8MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758270201; c=relaxed/simple;
-	bh=usjY+o/8CLlwfSa4Vymf4+fsSkyqM1VeZm3AMQMgllE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HKFWVe2ChX2GLhiTjtPvSctpGFBedd4BNS09xEZ0MnXj+zVQg77QVfWu8IpIqKgX0PwVnuWz4lf6VKZTAVY1XDBKNalu0IMZRADMpBXp9+andSi4ps3oTtP2KKnRSickw03L2iMVqCKXSplyQbZtUGnLhALsG/qj4tYQOiYgiuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ReD1NdMi; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-26058a9e3b5so13727485ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:23:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758270200; x=1758875000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XVujP+zprKI6yaucjxQ+AnFkVr/LyLnb8WhpE7+IVts=;
-        b=ReD1NdMihbvvhRTb9ehLxOmIBaTXzBb9LYzNbXi5Wv225oDnyHGfyZJYf4I1oZ8K3E
-         f/YdE5aBFSG5VM9GVw47ZTZc+p+tJY6unwWgDuI4XAGsBxTI1dqS1rNBaYD1RWaPNFKQ
-         W+GaU2h5m9idoA+T1y+1pCmfwpoHhvFJRo3U2rXdvnmZS5f91BiIBPIZJnKIfrTQqMEm
-         hB6hn17BikAcyflOtdgO0DxAKLeGwazWm9Yf5tEXm98YvVZ8Rh7X5gYQu8M+NYy/aoor
-         mRnvUuAlyh4ncHYC2w7SSvKh9UBEs3BSRafOOu/6rmZSYi4dPVs+uT12pbyholhKqbIO
-         Jjkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758270200; x=1758875000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XVujP+zprKI6yaucjxQ+AnFkVr/LyLnb8WhpE7+IVts=;
-        b=nSaJMPMHvJ5EQgROeVVwoV22kSytw01oA5Vox5vno5uhh5IVq0oZyTYgAvED+guvPe
-         +jfrSn7FjywTwIm7OkPlDD1hrirAVkF6PZBRYmLTmyeAdKMcdaHkhllHVgTTso6rj1Ai
-         cgk43D+CPkBcdXE7svnqI60cs0S7JWtjqG89CIXYNCNnFtwzXtkjkmDb91Y8PWflv0m2
-         ClHZVN52wNxru0diyysDt0lwFiseOGHvIGkJ32KaKlbqR8sUjdqCxwpBJowxWRzwdXie
-         4+5Di/Dg3NivWT2ZJfEN+5UL4G90iNams//qhwJ/LlqVwzxa/868F/J7l15UKzjIdaKg
-         WFlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRE7BLXv8DoQxRnYxBYyqvyES9hsLfWIxrOMlvc43P/GDmEKt5+c/6Uui5g6Its9tWR+vDvA1Imphe/7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkw5PY4tloQICYT8a3zvq6r67d6OrF/Vj/eHKccVQQzoEjF7PM
-	j96C+STMPLqZ1g5XwGNYgffHtYUjPivOHSgQOWl9+qJdQSrjnfBoigIrJ5rcIMFXzV02RkHeUjf
-	c3bvAJ7DfHuaXcw8vCYacdb+oZXmafuc=
-X-Gm-Gg: ASbGncsayY6ewEEOuXtZPGFeEawAHKwgAUEcjivuclRhdLJWLWPCkdplk0OKmI3g4w5
-	ewPNNADUW8xc1izNblGxHkCAJspi38ZHCunmcBeFWVnrCwsZOsTQmxry1Ygz5YZYsV+mjpgEzBf
-	DmVCuDpCJ8w+MKixlkrfdQrRFyT0Rs5E9ihyJ6YhAs1rVPVkpmkuUzmScI6B4M4c+0Sf5h34D+b
-	vxL5C6wBm00IYmkIO8xRMRR1pZ1XpVKmXfj
-X-Google-Smtp-Source: AGHT+IGkUgFKopsVCvKH/I4NVsJnRweFemKrfKJemNsyC+3rmEF/RNRSqYb65QnzlOCE75UW6MFYdTLXvs3rT8z5p6M=
-X-Received: by 2002:a17:903:24e:b0:267:e3af:ae38 with SMTP id
- d9443c01a7336-269ba4643bcmr39630535ad.24.1758270199791; Fri, 19 Sep 2025
- 01:23:19 -0700 (PDT)
+	s=arc-20240116; t=1758270363; c=relaxed/simple;
+	bh=94XJgyA9heUKGaNQHHvoXRU6/+9lv/JiUASGkCrs2sA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ha55g/yffvKboLLFc/9TsHsjulT4dWKGqvlUb3k/aQxk8BmaqJ4G+3fjkl2HHbRTvW3TQ4runzLVcD8ruarJaXm9x3rrO526AbmxiUYrLaR2fwGs37vmXAF2oRVk9c0jut9ftdsTrE4PLOsR+B0CflWkyEulNsBb8XM1DRq4cMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jc1G9Gh9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8886BC4CEF0;
+	Fri, 19 Sep 2025 08:25:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758270362;
+	bh=94XJgyA9heUKGaNQHHvoXRU6/+9lv/JiUASGkCrs2sA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jc1G9Gh9G9MUDfv02eB8f66vHm/pTD3oBEghnT8jfZnaSBfuYevs9E1aFWZSQIgz4
+	 Oei6unoME5dYatMYUzkhwTYB91ailhf/tFZw+YwTUbGsd/TkO8y0YdHvS1n/oMxHi7
+	 15fiMqI4Ix0oxHgqjkywhSBLV0BOqvGNvpMPIN+whapbnJBtmFX8lbdm4tfSj6L11a
+	 KlKrpc0yl4Nh2/YJDxb+H5RyCAV3aTZWK7IURNwW7XOXHw3j+EWNgVnPHUMdKrlzdo
+	 G0DDBXLcPKPUZxZmSWqafP0T3SoTaDnR2SH62qsLrpalJMvAwOkc5p1oKeB4WNcKfO
+	 c7Q5E43MopcMw==
+Date: Fri, 19 Sep 2025 13:55:53 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, bhelgaas@google.com, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, p.zabel@pengutronix.de, 
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v4 4/6] arm64: dts: renesas: rzg3s-smarc-som: Update
+ dma-ranges for PCIe
+Message-ID: <lunqwki2orbf5gjyo4a5kz6ko3rs5w6fspbantqcv7b2vxe5ku@734remr6z4lp>
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250912122444.3870284-5-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWP638eB_p9xMAqZmOnuc6n7=n31h6AqV+287uvqQEdww@mail.gmail.com>
+ <c2fc5f6b-0e7c-464e-89a6-35dc76177d18@tuxon.dev>
+ <CAMuHMdWeHoUe-=7TDetnDQbLQsKGf4pDGpSdz3xEVLs_Rst9qQ@mail.gmail.com>
+ <0a20c765-ff72-4c03-af84-dff3f4850fa4@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918-imx_rproc_c2-v1-0-deec8183185f@nxp.com>
- <20250918-imx_rproc_c2-v1-1-deec8183185f@nxp.com> <CAEnQRZB2ZkcRirj1SZkfbsPHyyGr5PfnCDfv+ZuMu_Mj6XKBEQ@mail.gmail.com>
- <PAXPR04MB8459216DAA827DB05BF675AA8811A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB8459216DAA827DB05BF675AA8811A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Fri, 19 Sep 2025 11:25:38 +0300
-X-Gm-Features: AS18NWA2ML_75oP-q69uMA6bYWYFWGOMeEfKy11gSalmyDGfNKtTFsYUY529N_o
-Message-ID: <CAEnQRZC34KuJZDcv3TLJQrOcT9NFsYtD9q5Rj6+5MUKSBub6-w@mail.gmail.com>
-Subject: Re: [PATCH 1/5] remoteproc: imx_rproc: Simplify clock enable logic
- using dcfg flags
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a20c765-ff72-4c03-af84-dff3f4850fa4@tuxon.dev>
 
-On Fri, Sep 19, 2025 at 5:02=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
->
-> Hi Daniel,
->
-> > Subject: Re: [PATCH 1/5] remoteproc: imx_rproc: Simplify clock enable
-> > logic using dcfg flags
-> > > +       /* Remote core is under control of Linux or clock is not
-> > > + managed by firmware */
-> >
-> > I see that you negate the comment from imx_rproc_clk_enable but
-> > with the negation OR becomes AND.
-> >
-> > So, the comment should be:
-> >
-> > /* Handle clocks when remote core is under control of Linux AND the
-> > clocks are not managed by remote side  FW */
->
-> I thought this flag is clear that clk should be managed by driver.
-> I will update the comment.
->
-> >
-> > Also, do we really need this flag?
-> > Shouldn't we just make a decision based on the fact that clk is in the
-> > device tree or not?
->
-> From hardware perspective, there is always clk for the remote cores.
-> So DT describe hardware, a clk property should be there.
->
-> But NXP system firmware manages the CLK automatically, no need
-> driver to do that.  So this flag is required here.
+On Fri, Sep 19, 2025 at 10:38:52AM +0300, Claudiu Beznea wrote:
+> Hi, Geert,
+> 
+> On 9/18/25 13:00, Geert Uytterhoeven wrote:
+> > Hi Claudiu,
+> > 
+> > On Thu, 18 Sept 2025 at 11:47, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+> >> On 9/18/25 12:09, Geert Uytterhoeven wrote:
+> >>> On Fri, 12 Sept 2025 at 14:24, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>>
+> >>>> The first 128MB of memory is reserved on this board for secure area.
+> >>>> Secure area is a RAM region used by firmware. The rzg3s-smarc-som.dtsi
+> >>>> memory node (memory@48000000) excludes the secure area.
+> >>>> Update the PCIe dma-ranges property to reflect this.
+> >>>>
+> >>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>>
+> >>> Thanks for your patch!
+> >>>
+> >>>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> >>>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> >>>> @@ -214,6 +214,16 @@ &sdhi2 {
+> >>>>  };
+> >>>>  #endif
+> >>>>
+> >>>> +&pcie {
+> >>>> +       /* First 128MB is reserved for secure area. */
+> >>>
+> >>> Do you really have to take that into account here?  I believe that
+> >>> 128 MiB region will never be used anyway, as it is excluded from the
+> >>> memory map (see memory@48000000).
+> >>>
+> >>>> +       dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
+> >>>
+> >>> Hence shouldn't you add
+> >>>
+> >>>     dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0x0 0x38000000>;
+> > 
+> > Oops, I really meant (forgot to edit after copying it):
+> > 
+> >     dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x0 0x40000000>;
+> > 
+> >>>
+> >>> to the pcie node in arch/arm64/boot/dts/renesas/r9a08g045s33.dtsi
+> >>> instead, like is done for all other Renesas SoCs that have PCIe?
+> >>
+> >> I chose to add it here as the rzg3s-smarc-som.dtsi is the one that defines
+> >> the available memory for board, as the available memory is something board
+> >> dependent.
+> > 
+> > But IMHO it is independent from the amount of memory on the board.
+> > On other SoCs, it has a comment:
+> > 
+> >      /* Map all possible DDR as inbound ranges */
+> > 
+> >>
+> >> If you consider it is better to have it in the SoC file, please let me know.
+> > 
+> > Hence yes please.
+> > 
+> > However, I missed you already have:
+> > 
+> >     /* Map all possible DRAM ranges (4 GB). */
+> >     dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0x1 0x0>;
+> > 
+> > in r9a08g045.dtsi, so life's good.
+> > 
+> > +
+> >>>> +};
+> >>>> +
+> >>>> +&pcie_port0 {
+> >>>> +       clocks = <&versa3 5>;
+> >>>> +       clock-names = "ref";
+> >>>> +};
+> >>>
+> >>> This is not related.
+> >>
+> >> Ah, right! Could you please let me know if you prefer to have another patch
+> >> or to update the patch description?
+> > 
+> > Given the dma-ranges changes is IMHO not needed,
+> 
+> I kept it here as the driver configures the PCIe registers for the inbound
+> windows with the values passed though the dma-ranges. This is done through
+> rzg3s_pcie_set_inbound_windows() -> rzg3s_pcie_set_inbound_window(). The
+> controller will be aware that the secure area zone is something valid to
+> work with. In that case, if my understanding of PCIe windows is right, I
+> added this in the idea that an endpoint (a malicious one?) could DMA
+> into/from secure area if we don't exclude it here?
+> 
 
+That's true. But do you really have an usecase to setup inbound window for the
+endpoints? What does the endpoint do with this memory?
 
-OK, makes sense. Thanks. With comment changed you can add my
+- Mani
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-
-
-thanks,
-Daniel.
+-- 
+மணிவண்ணன் சதாசிவம்
 
