@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-824544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913B6B89847
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:45:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A870B8984C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB021B228DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A601C845FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0D32153EA;
-	Fri, 19 Sep 2025 12:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B33A218845;
+	Fri, 19 Sep 2025 12:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="th2rq283"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MoJTAGnc"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0D820C488
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF012153EA
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285903; cv=none; b=q7EOsrtFFZ/GyXqp83pCt5Le0x0IOX4/g40zCPDeCMqqIoqnBte7KGHNoNSASHaMqLZhynPvYGSJsXN3qZ+zdiPovnBzVhkWCLA2f4BafOgLdICux3b5yfrWLMWsXvSaTCkWLHJ8Gqg1/tcoEhfaUySp6VxW5wwPAoCx1XvkHO4=
+	t=1758285911; cv=none; b=c5/w0IuEPVZMwaikT6gOg4UkZe2cDxO63Aceid7fO1fH90baekD6MACWKmL2eahuKz7stP/SpsqjfaIfitkfYh1sS8dqUF5dBDzVVoLsW8ph1cMJuX61hEDKoJlEUSaxov7u4XGioxdmzEBKr+ihWeagqpIF4PV3gzm6TR8KTgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285903; c=relaxed/simple;
-	bh=3vSCaZCQ+AHct40ixuJnr/KdpCyKXo81DtmCeBxAcyg=;
+	s=arc-20240116; t=1758285911; c=relaxed/simple;
+	bh=ljgAfIA3UwNv7Hvi9w2Tr5HLSpGrei0A9v3ZhOEfRoU=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Sq+MD95gd5tSJNngshJQTfPpcrMrN0uqn+PvfEXf5DzqIesK8QxOeVHhurWkg5uNj+N/Wze8V+wf17BIDRLeNmx5eS7sIIRvqqHpzM20piOKjMTJVRK2+lOT7w5LUVpsQGexouludGsr0WtjNc841yfuWKMBxNFfWKNfRFIYy2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=th2rq283; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:Content-Type; b=NT8WLYM3XVVoBFTOlkIgvRfem3aRvxsaXE4VGcm7oaFOfysg4LVSNlg4t6E36/ldf/UdCd2yfiKJk5aoebWrkiOaTCj4W94hyH7Re/N1mjyhWIHFJHl3XApHyk6IFYQA5JjOuirA+/BtOx3o7U6532siO4dScxy2Rm3fwl6YIR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MoJTAGnc; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 5555D1A0F14;
-	Fri, 19 Sep 2025 12:44:59 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 4C2AB4E40D6B;
+	Fri, 19 Sep 2025 12:45:08 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 28367606A8;
-	Fri, 19 Sep 2025 12:44:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1CD77102F1847;
-	Fri, 19 Sep 2025 14:44:50 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1F872606A8;
+	Fri, 19 Sep 2025 12:45:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A8CE6102F1935;
+	Fri, 19 Sep 2025 14:45:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758285897; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1758285906; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=neXUHU1dgfhW/ZIhEbzf7+s3YtAgYqzJf5bFOrphH8I=;
-	b=th2rq2838qdfzoJkuE5lVKAtom2qutsm9nVzGRaoWG0Tzyng7Nz4I3gkgnsZHj2JsApYY9
-	Up56b9Ga0U2Hd/gqo6+P7HN2pVJSEKmNyIsF7rRUSCIhN57pu042A++EfZo/gP/VQT2lHx
-	TSaXfMSh59iImkaWIlEEryo247JZ60QxFVyKbp5+Hvmo9pEWhqalKYDiByWFRov1BQ6ToI
-	jdLBLCu1cR/8dl56udsitOkOJ2On4lSH/VNqbwVKZaasqFiJUBehbt+H/HILyYHCGpxbwZ
-	6jiq6nhvQvyGQe9W8g91YDRlvacezoggL2uIH0an6byTlPRLxHxXNBFg6ynajw==
-Message-ID: <bc2b7afa-96c0-4b33-a413-3758ab8fd571@bootlin.com>
-Date: Fri, 19 Sep 2025 14:44:49 +0200
+	bh=39Br2zJ6N21AM51+p0Pu7+qrwc/3pZIDCexOHBe3F24=;
+	b=MoJTAGnc5y72Blm478u0d+hw5TowFDR2Z8Ubq+oSfBuSFsVArQsbqVeAs+v//d+HfHxHQ0
+	Dic6/c12EEInQg8hpov1XlPVvS+mKIfHbQ/YejY85+5lj0sBqmTK70lMyYYDBiJJd8WyQ/
+	QprR4T6ub/xDtjF0GVPdYmyGQxweVSYPsFbhq2/JOx9wDD1RWl9UK1Oy3U2hfMVEW2IoKZ
+	7Ws5gkw4qppWLbMBmKVWK3wjDgZ6M1FufgbD1/0QptALdawsyVHWBzzCzhMx84GUQBiKvV
+	Tpl3sLbxUBiK9yAuTyx4LYI0B3h35N2J313djtU3gFRlFjwMOenYOHh/km9CJA==
+Message-ID: <e26063ca-ead1-495b-89f9-6d702f16994d@bootlin.com>
+Date: Fri, 19 Sep 2025 14:45:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,7 +57,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH RFC v2 02/20] drm/colorop: Allow parenting colorop to CRTC
+Subject: Re: [PATCH RFC v2 01/20] drm/crtc: Add color pipeline to CRTC state
 To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -82,7 +82,7 @@ Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
  linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  Simona Vetter <simona.vetter@ffwll.ch>
 References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
- <20250917-mtk-post-blend-color-pipeline-v2-2-ac4471b44758@collabora.com>
+ <20250917-mtk-post-blend-color-pipeline-v2-1-ac4471b44758@collabora.com>
 Content-Language: en-US, fr
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -138,7 +138,7 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  wDN7ORknPndzxrq3CyB7b/Tk1e8Qx+6HU/pnMb4ZqwwMwZAMk24TZpsgg28o9MQiUNzad0h2
  gIszbeej9ryrtLHxMzyK8yKhHoI2i2ovxy5O+hsWeAoCPE9xwbqnAjLjOn4Jzd/pPovizrq/
  kUoX66YgvCuHfQMC/aBPLnVunZSP23J2CrkTrnsUzw==
-In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-2-ac4471b44758@collabora.com>
+In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-1-ac4471b44758@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
@@ -146,47 +146,36 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 
 Le 18/09/2025 à 02:43, Nícolas F. R. A. Prado a écrit :
-> In order to allow for post-blend color pipelines, colorops need to be
-> assigned to a crtc rather than a plane. Add a crtc to the colorop
-> struct to enable this. Either the plane or the crtc will be set for any
-> given colorop depending on whether it is part of a pre- or post-blend
-> color pipeline.
+> Add a color pipeline to the CRTC state to allow post-blend color
+> pipelines.
 > 
 > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->   include/drm/drm_colorop.h | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/drm/drm_colorop.h b/include/drm/drm_colorop.h
-> index d61c6c40e47162cb8b1e7db58b6746c43ac5d202..7a4e0d0c4a3d594abecef304b1d5990434cdb231 100644
-> --- a/include/drm/drm_colorop.h
-> +++ b/include/drm/drm_colorop.h
-> @@ -206,10 +206,16 @@ struct drm_colorop {
->   	/**
->   	 * @plane:
->   	 *
-> -	 * The plane on which the colorop sits. A drm_colorop is always unique
-> -	 * to a plane.
-> +	 * The plane on which the colorop sits if it is a pre-blend colorop.
-> +	 * In this case it is unique to the plane.
-> +	 *
-> +	 * @crtc:
-> +	 *
-> +	 * The CRTC on which the colorop sits if it is a post-blend colorop.
-> +	 * In this case it is unique to the CRTC.
->   	 */
 
-If there is a v3 of this series, I think it could be nice to have 
-something like "plane and CRTC are mutually exclusive".
-
-With or without this:
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
->   	struct drm_plane *plane;
-> +	struct drm_crtc *crtc;
+> ---
+>   include/drm/drm_crtc.h | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index caa56e039da2a748cf40ebf45b37158acda439d9..77c0c04a5910a2263923e06cf37535697e20e1c9 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -274,6 +274,14 @@ struct drm_crtc_state {
+>   	 */
+>   	struct drm_property_blob *gamma_lut;
 >   
+> +	/**
+> +	 * @color_pipeline:
+> +	 *
+> +	 * The first colorop of the active color pipeline, or NULL, if no
+> +	 * color pipeline is active.
+> +	 */
+> +	struct drm_colorop *color_pipeline;
+> +
 >   	/**
->   	 * @state:
+>   	 * @target_vblank:
+>   	 *
 > 
 
 -- 
