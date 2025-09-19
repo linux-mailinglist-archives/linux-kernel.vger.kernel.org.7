@@ -1,258 +1,123 @@
-Return-Path: <linux-kernel+bounces-824414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73392B89258
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:50:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276BEB89261
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82D2F7A819B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:48:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A1D1C8223F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBCD30B50D;
-	Fri, 19 Sep 2025 10:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAED309DA8;
+	Fri, 19 Sep 2025 10:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GsYR9uuc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bktwdl+7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NalluPQd"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B282FBE1A;
-	Fri, 19 Sep 2025 10:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D5B244668
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758279005; cv=none; b=SBj0PtTqqJZzWdju7yDXhR4I1JmBaIoqvgwONuHrugfuwN5SrIbv8GdrLKARR28FbYoHA2g/mLvo/DZkk6fdTlvTI7excUsy0rjeVzAEbfjNTE+S169Q9jbkJNSlc2AzmYKJkpzk/IW3A6ff+Ld4ZRUfJCRnfgm1YodgFkAR6SM=
+	t=1758279152; cv=none; b=QE1TdvuOxGcDyPEABROOF8AEFcjVweRXRS9wW4wnM4eYJFxsh59ezzcVw+gbutoP0aeWWuiJFA0nKrzdSnvkmXU36HOdR4j4syMy+euxOu3kC4Ik4LNafVWqk4GtZHUoFha/DTVlxGQQxXGz+ZQ6r9ZbGG7HN0qt79GrbMIxbqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758279005; c=relaxed/simple;
-	bh=acFE/oh1Dc7mGV6VIuQDL65dlXqmFOyHtSOCfH234nw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VNcbiDtr4vp67ZOoWu7/Ifxvw2v2Zm1hIIMj+v5miZ2ssBST0xs0yxnFn0LyPAE7Rgwa+X+yAYEBw+TXNH5ZRB2v5YAqtsURMx0Qs6VMhLhdc7VwhUNCT0rlzMMtawncYVwnvJ223Z02ghaP2OD3fo3g8DRoH+k4gxyIXkOgNxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GsYR9uuc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bktwdl+7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758279001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5NrgksehHdmbItvDaxvO7eMDRhdzNTOYzcCKDnaeckQ=;
-	b=GsYR9uuc2nE/aHwLS0Isy41A7POkGFTk3hVfOqBvTjcfQMksmIPiXgGvbqFCpFgqggBHeM
-	i+CVAQXiY0b/eHlpymtCHQBgzhpV0GBaHu+ooVWHJxqRAq21NgFNu6yN46zB+UdXq/Bwkd
-	FM/NDWLhbE2CtoyEoxRmD8Jpy6qPaPh8rF+KtSyZB9EDQlK4Kc1dK1zLFuGhrN8KEw54Tk
-	vjp2FL3sTWcGfhSsmYETItKm0NBsouQwzt/HXwI0iGlLKMoCk6JA07WSMfHX6Ydz0J0Y6G
-	trFDscBx0M6WqHtpADU/D60VL0XSQJFygdhNZ6XDJGDYvRTkkkKODx9KbW49vg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758279001;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5NrgksehHdmbItvDaxvO7eMDRhdzNTOYzcCKDnaeckQ=;
-	b=Bktwdl+7EBE50XAQt2Prdmcb9+OlVMrqMTEzOjDCcfjeUDKrce0KemwqG2hJ7JL6rcQ7Za
-	LsyoN5YSvow+LLAA==
-Date: Fri, 19 Sep 2025 12:49:56 +0200
-Subject: [PATCH] rv: Add signal reactor
+	s=arc-20240116; t=1758279152; c=relaxed/simple;
+	bh=Uh7RA+SkqfZ23yJNTc2e3SnZ3wd3GErf0OaU341/ICM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fJHn957DRyVArHu6U+NFjQA3vlSH2TZ1jOCAl+fCmfQo2Tu5aw2Fv6F7fRbxr7PLEEMicQ+1AG2UrpEwCCuBV+Fwsh8ibYYGieYxxBqOAGDe4afQqLpBgA+ZMwpTWpalMovRT+z9RWSQCIl37wrzqPj6QageDlzx5yTfUtWhBak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NalluPQd; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea856357c38so605074276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:52:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758279149; x=1758883949; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nzzD9mUUMKzw0ugA88AiWwEs70VRCzFRfuxqcw3uI/U=;
+        b=NalluPQd+xpui/McZFiH5eDsZZOgNdvLbkiZaPoYffERpDGPIMK1jK+JnCNnJPMGXS
+         83XTY+Po/9JzwFdYRKwuobHZfi4nB0giKzlHWaMUv0ZZRNCFcPx+onM7uux98Ky0Xsfs
+         n6+Jl1ympyLMiEjazlJ6fxzHkA9mOBBxCqc5C2fhA2uTGtmn5+9RS3t7xJTqnKwAm0ah
+         /u6vW7l78YVNZFJn02uCNM5jtPfb7ukWHmVNY2jmXnAeyIeAsM+DNAb3KyUFHo8g8do5
+         VlqE1ZphnZQzIwKlgVgFoq9S67xY2AJe/H3fCvN4TzBUGY3oGke8z2cwNELGt1GpR7rr
+         IadA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758279149; x=1758883949;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nzzD9mUUMKzw0ugA88AiWwEs70VRCzFRfuxqcw3uI/U=;
+        b=LdoGe57a37qliJDPcvVmxYOF+GYKKg7jbluoTM8izfwPGme9rrMMXILk02hasLf4p1
+         Ec/QQuCiovsa85dmZNU1scWV/DDpQgSZPq0oQnBHsuFBYAkHPeozMeqxTJ06M+lPXatU
+         aaN76kgnk5XLDIBPzzll/4FTeSh9anwQDgSTGi77OLAjKLDaPXyrd6Cjowa1uXYeVf2F
+         nleNi2nfSd0+hRIT0QXYmXu6A+k0eoaixs0iNhWfd7XuvjA32/dMDQEmk6/lgISSbesY
+         5l9PSdYQFwvIyqGcBpc87e8dnV5cXY8rl3Nyr9V+1Hv4yTN3/LNyydOcL5ngQc6VWh6U
+         QTsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAy3F1T1JFdmFw7Jtj7YwVnsP4BJFA9MzWKL5ELrUm3z80MTAnMMVYe28iX/mKgx7+kOAZFU+9MqNmY9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVWBrfsiGDb7tYlGapsYtfebW5OfxL345Z1vE5A8eCL2lIbRFC
+	Nrj86ncCEHxSLYOWMwOt92CySGI1xsYzuSYcl2cTT0w6TXT29Lfx4n7hXPKnevRjU4Z1ntnpel0
+	NXIYfxAW+a2FrDYRrHr2SUnaTlQk+zg3SNPU6OMG3Ow==
+X-Gm-Gg: ASbGncu18Es0528fsZZC4ycDntPrkVrXGHdUqeUMM6AjHaWN7xFCTNHrtA4YFFyo0if
+	ctMzvLAaByztO1P/+Ot0IOe7UwItZXRcHv56RIzCwZ6ccP/J9QOKKNplc7zP83VNUEVSYO0xYXW
+	8x28z5WpeeNMRyp8GynMmkStKe8hCMiRWi6ul8JX128/sZHXg3JhyNzIOAAPIX2D1VNOXIwnsKc
+	8SnJRfz
+X-Google-Smtp-Source: AGHT+IHI9nO8lq5Pp2KudwoTpRKFpuZ3FdUKlTe15qwsxTFT/SmijXYfhYuulGFKS6hWzbTrYiBzrkFA3kl3zO1cVww=
+X-Received: by 2002:a05:690e:1449:b0:633:b7cf:cb16 with SMTP id
+ 956f58d0204a3-6347f5937b3mr2337155d50.26.1758279148519; Fri, 19 Sep 2025
+ 03:52:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAFM1zWgC/x3MTQqAIBBA4avErBtQwf6uEi3MphoIizEkCO+et
- PwW770QSZgiDNULQokjn6FA1xX43YWNkJdiMMpY1SuNklDI+fsUjLwFd+BsbdORao1xPZTuElr
- 5+Z/jlPMHaDlp8WMAAAA=
-X-Change-ID: 20250901-rv-reactor-signal-b5568e0722a9
-To: Gabriele Monaco <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758278999; l=5848;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=acFE/oh1Dc7mGV6VIuQDL65dlXqmFOyHtSOCfH234nw=;
- b=gtT9aGm1fDjD2EfUKLAOusauLST9NuH/Wt2S796yrrebjuUcFnlD/jDa5l+Y3hkidPtiiCOyR
- i90MgWqhzaLCadynJlDHPguMJeLbQDRkaA2Z/xXK6QEhjwLd4REc+R2
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+References: <20250912084112.2795848-1-mikko.rapeli@linaro.org> <175822973684.1568500.2874531983654815490.b4-ty@sntech.de>
+In-Reply-To: <175822973684.1568500.2874531983654815490.b4-ty@sntech.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 19 Sep 2025 12:51:51 +0200
+X-Gm-Features: AS18NWAi0MBQy69KlaoQfcok2GqNKVNbSAgXUL0xqECXbJKR8EN79nmBjPlkClA
+Message-ID: <CAPDyKFogz=nym2CGh0LJpVad5hmycdfeoYta4DPfY4b4ozDMVA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: select ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-mmc@vger.kernel.org, Mikko Rapeli <mikko.rapeli@linaro.org>, 
+	linux-kernel@vger.kernel.org, adrian.hunter@intel.com, 
+	victor.shih@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw, 
+	geert+renesas@glider.be, angelogioacchino.delregno@collabora.com, 
+	dlan@gentoo.org, arnd@arndb.de, zhoubinbin@loongson.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reactions of the existing reactors are not easily detectable from programs
-and also not easily attributable to the triggering task.
-This makes it hard to test the monitors themselves programmatically.
+On Thu, 18 Sept 2025 at 23:09, Heiko Stuebner <heiko@sntech.de> wrote:
+>
+>
+> On Fri, 12 Sep 2025 11:41:11 +0300, Mikko Rapeli wrote:
+> > On rk3399 based rockpi4b, mounting rootfs from mmc fails unless
+> > ROCKCHIP_PM_DOMAINS is enabled. Accoriding to
+> > Heiko St=C3=BCbner <heiko@sntech.de> all SoCs since 2012 have power
+> > domains so the support should be enabled by default.
+> >
+> > Failing boot without CONFIG_ROCKCHIP_PM_DOMAINS=3Dy:
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [1/2] arm64: select ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
+>       commit: aff3de3b9a597763bec5d1c56c11b56fb2613085
+> [2/2] ARM: rockchip: select ROCKCHIP_PM_DOMAINS
+>       commit: 47c9bfdf7376e8b1842699b064ae3b052e2c3c1b
 
-The signal reactors allows applications to validate the correct operations
-of monitors either by installing custom signal handlers or by forking a
-child and waiting for the expected exit code.
+Looks like you picked the old version of the patches. Did you intend
+to pick the v4? Then it's the one below you want.
+https://lore.kernel.org/all/20250915083317.2885761-5-mikko.rapeli@linaro.or=
+g/
 
-For now only SIGBUS is supported, but additional signals can be added.
+Note, I have picked the other patches from the v4 via my pmdomain/mmc trees=
+.
 
-As the reactors are called from tracepoints they need to be able to run in
-any context. To avoid taking any of the looks used during signal delivery
-from an invalid context, schedule it through task_work. The delivery will
-be delayed, for example when then sleep monitor detects an invalid sleep.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- kernel/trace/rv/Kconfig          |   8 +++
- kernel/trace/rv/Makefile         |   1 +
- kernel/trace/rv/reactor_signal.c | 114 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 123 insertions(+)
-
-diff --git a/kernel/trace/rv/Kconfig b/kernel/trace/rv/Kconfig
-index 5b4be87ba59d3fa5123a64efa746320c9e8b73b1..dc7b546615a67c811ce94c43bb1db2826cd00c77 100644
---- a/kernel/trace/rv/Kconfig
-+++ b/kernel/trace/rv/Kconfig
-@@ -93,3 +93,11 @@ config RV_REACT_PANIC
- 	help
- 	  Enables the panic reactor. The panic reactor emits a printk()
- 	  message if an exception is found and panic()s the system.
-+
-+config RV_REACT_SIGNAL
-+	bool "Signal reactor"
-+	depends on RV_REACTORS
-+	default y
-+	help
-+	  Enables the signal reactor. The signal reactors sends a signal to the
-+	  task triggering an exception.
-diff --git a/kernel/trace/rv/Makefile b/kernel/trace/rv/Makefile
-index 42ff5d5aa9dde3ed2964e0b8d4ab7b236f498319..adf56bbd03ffa0d48de1f0d86ca5fcce1628bdba 100644
---- a/kernel/trace/rv/Makefile
-+++ b/kernel/trace/rv/Makefile
-@@ -23,3 +23,4 @@ obj-$(CONFIG_RV_MON_OPID) += monitors/opid/opid.o
- obj-$(CONFIG_RV_REACTORS) += rv_reactors.o
- obj-$(CONFIG_RV_REACT_PRINTK) += reactor_printk.o
- obj-$(CONFIG_RV_REACT_PANIC) += reactor_panic.o
-+obj-$(CONFIG_RV_REACT_SIGNAL) += reactor_signal.o
-diff --git a/kernel/trace/rv/reactor_signal.c b/kernel/trace/rv/reactor_signal.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..e123786d94371a240beb63b2d1b2f3044a466404
---- /dev/null
-+++ b/kernel/trace/rv/reactor_signal.c
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2025 Thomas Weißschuh, Linutronix GmbH
-+ *
-+ * Signal RV reactor:
-+ *   Prints the exception msg to the kernel message log and sends a signal to the offending task.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/cpumask.h>
-+#include <linux/init.h>
-+#include <linux/mempool.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/rv.h>
-+#include <linux/sched/signal.h>
-+#include <linux/task_work.h>
-+
-+struct rv_signal_work {
-+	struct callback_head twork;
-+	int signal;
-+	char message[256];
-+};
-+
-+static mempool_t *rv_signal_task_work_pool;
-+
-+static void rv_signal_force_sig(int signal, const char *message)
-+{
-+	/* The message already contains a subsystem prefix, so use raw printk() */
-+	printk(KERN_WARNING "%s", message);
-+	pr_warn("Killing PID %d with signal %d", task_pid_nr(current), signal);
-+	force_sig(signal);
-+}
-+
-+static void rv_signal_task_work(struct callback_head *cbh)
-+{
-+	struct rv_signal_work *work = container_of_const(cbh, struct rv_signal_work, twork);
-+
-+	rv_signal_force_sig(work->signal, work->message);
-+
-+	mempool_free(work, rv_signal_task_work_pool);
-+}
-+
-+static void rv_reaction_signal(int signal, const char *fmt, va_list args)
-+{
-+	struct rv_signal_work *work;
-+	char message[256];
-+
-+	work = mempool_alloc_preallocated(rv_signal_task_work_pool);
-+	if (!work) {
-+		pr_warn_ratelimited("Unable to signal through task_work, sending directly\n");
-+		vsnprintf(message, sizeof(message), fmt, args);
-+		rv_signal_force_sig(signal, message);
-+		return;
-+	}
-+
-+	init_task_work(&work->twork, rv_signal_task_work);
-+	work->signal = signal;
-+	vsnprintf(work->message, sizeof(work->message), fmt, args);
-+
-+	/*
-+	 * The reactor can be called from any context through tracepoints.
-+	 * To avoid any locking or other operations not usable from all contexts, use TWA_RESUME.
-+	 * The signal might be delayed, but that shouldn't be an issue.
-+	 */
-+	task_work_add(current, &work->twork, TWA_RESUME);
-+}
-+
-+__printf(1, 2)
-+static void rv_reaction_sigbus(const char *fmt, ...)
-+{
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	rv_reaction_signal(SIGBUS, fmt, args);
-+	va_end(args);
-+}
-+
-+static struct rv_reactor rv_sigbus = {
-+	.name		= "sigbus",
-+	.description	= "Kill the current task with SIGBUS",
-+	.react		= rv_reaction_sigbus,
-+};
-+
-+static int __init register_react_signal(void)
-+{
-+	int ret;
-+
-+	rv_signal_task_work_pool = mempool_create_kmalloc_pool(num_possible_cpus(),
-+							       sizeof(struct rv_signal_work));
-+	if (!rv_signal_task_work_pool)
-+		return -ENOMEM;
-+
-+	ret = rv_register_reactor(&rv_sigbus);
-+	if (ret) {
-+		mempool_destroy(rv_signal_task_work_pool);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit unregister_react_signal(void)
-+{
-+	rv_unregister_reactor(&rv_sigbus);
-+	mempool_destroy(rv_signal_task_work_pool);
-+}
-+
-+module_init(register_react_signal);
-+module_exit(unregister_react_signal);
-+
-+MODULE_AUTHOR("Thomas Weißschuh <thomas.weissschuh@linutronix.de>");
-+MODULE_DESCRIPTION("signal rv reactor: send a signal if an exception is found.");
-
----
-base-commit: adbdaac63f5024a9a117ef8ce9732a4272fbc931
-change-id: 20250901-rv-reactor-signal-b5568e0722a9
-
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+Kind regards
+Uffe
 
