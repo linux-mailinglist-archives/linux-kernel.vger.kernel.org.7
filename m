@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-824538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA06B89822
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AC0B8981C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 401F84E6BBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:42:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08EA5669DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989D51E32CF;
-	Fri, 19 Sep 2025 12:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D7120C488;
+	Fri, 19 Sep 2025 12:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zd/+/Z9G"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EtMqj0m/"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661F91B4223
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9387A1B4223
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285743; cv=none; b=ajLaLYoil64G9F67yhe+3QAZvBoebWLH17WuTQmgj8ly154rKwdZkAZFcTsCZjz3eeAVNmVxovv/QUuV9EHRF0P6tsRK3dzl0LyisPiCNjahZDvwYwarkvMuCwGZZtB+fz5Jzf3rPhF+VQiWQ3+gg7DzBZOFYc7J/Oe/CnxOrOU=
+	t=1758285771; cv=none; b=kvRkH4u36jVJrKJP8JwQiiJrzYfkCXGS5nPAx1tU9mdANxEy2kU/IPqHYYvLJ0iT+MprmtItTH6tsOtRhhWEQZPtuQQp0LiygZIQTZ/xkMMNzzsbR2icK1v3kLEXb+fgIM4R1yCcDjnOTn3MDeWErUCQi6qSIt9b7tmUioF28Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285743; c=relaxed/simple;
-	bh=bX6jW7SLqOncUQnNV6lzEHrEWdRpB51icP7/BBJ2d94=;
+	s=arc-20240116; t=1758285771; c=relaxed/simple;
+	bh=t5Md9pW8s6Mk0gG9abhDbhcQbZ5ihE6SnyLysLi1YmM=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=EGUXu6p/LzwaMBr7w/L+iHu8bKwCA3WBzNUUKqPKLl0NFan4QE41wYYAroYY4pZCQ+IdfiTUA9nFBT9gBry1u2iHUQWncsyGB0qKgUACZgqw1vPqPXWJqwgGYm8XLi4glGDjdrBrLK/cd/r0tyCPK4W6FF8WhCt24Q5nqylvOtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zd/+/Z9G; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:Content-Type; b=pcwt0v/7u0Ou74z1SXMG7cQkXo2UBhFtV0GtHSMsavBWGAIzcxaquX3QB9jmbHvAGaIXF9tEAtDwo9jR/YM08Ht4Kla0dqfuDk8c55ZBz8zbdJcjra60xpoF5Jf2As8NWrAsJJF47EHXFCzUf+NQNt4jwOHC923cQwIsDYLp4DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EtMqj0m/; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id EDDB41A0EE0;
-	Fri, 19 Sep 2025 12:42:18 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 38B55C8F1C5;
+	Fri, 19 Sep 2025 12:42:31 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BF8E5606A8;
-	Fri, 19 Sep 2025 12:42:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AF9D1102F1847;
-	Fri, 19 Sep 2025 14:42:04 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DB066606A8;
+	Fri, 19 Sep 2025 12:42:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8B9A1102F1D6A;
+	Fri, 19 Sep 2025 14:42:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758285736; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1758285765; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:content-language:in-reply-to:references:autocrypt;
-	bh=pF6S2n12ihmfw6Owi7mvI6HnUYzbwIKoV4SOiJpX+FU=;
-	b=Zd/+/Z9Gmb0MWkFM+e6T8e78S8xmV2yUB908d2t/3tqCdHDhYKPRiJlRUkCjqISJ2vtIaZ
-	X+KCkoCTdxL+5nolYaeYH13jcqmtfBp3KpAx7R1nPmrYEzcHNY83w/Pv653CClEm//O8qN
-	6i+OkE04uQZI2vN3IoPpAZ9bDMwTt7h2TzN/uD1RfqUigTnaDP4cRMEJ5yumyZuBRYplls
-	Ka+zFKFLzI9EQgG56y+VZn+JOcwc6tkctBGJUFZfOHukoj2Z65NkAUiaxThOwAZxXCHpTT
-	MIGF0Fp+TRIrwKvTOdDKjTlffLNwYp/YBWVBZfSg9TNtpZ25RG8lnYNWRbEW+g==
-Message-ID: <7a5eaa8d-17ec-4252-a926-7a61f1e02de2@bootlin.com>
-Date: Fri, 19 Sep 2025 14:42:04 +0200
+	bh=txIL/6sn7rDsWZ3Jss4FRuOg6qlu557XN73hNeK0jMg=;
+	b=EtMqj0m/Jh3nRkXVaHgqWnverCsXarFUIpHXQgt2TYlPTr3rguoxI5QF2HEfePaDgaTp9U
+	hzLYj+Dm1oWKkcwZaHNX4aV2k+nUfs8iOv03plhUN1lgCjsAbsg4hxqooT4iMdPSWH65gA
+	RKSag58DNFhfncKyNuWkcIq/st1PkQSm9bS/M+ygSOtj7SnTeRrwE7DkN9/bEt1UdnDz4E
+	HTff9hL3F5x866mrc6Z84vxLsH4WHQ4aJlHt0TLhVSCULNQIEMnkZ8Zrg78XZ340f/b/W3
+	ZvqaqyO/oQNLMc2T3c0OAxeuIY7n4lidoVI4DXFDt6TngUcR5++55y/EYGxZow==
+Message-ID: <ff53599d-fd7f-4791-a3e1-3269386c6b3e@bootlin.com>
+Date: Fri, 19 Sep 2025 14:42:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,8 +57,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Subject: Re: [PATCH RFC v2 06/20] drm: Introduce
- DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE
+Subject: Re: [PATCH RFC v2 05/20] drm: Introduce
+ DRM_CAP_POST_BLEND_COLOR_PIPELINE
 To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
@@ -83,7 +83,7 @@ Cc: Alex Hung <alex.hung@amd.com>, wayland-devel@lists.freedesktop.org,
  linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
  Simona Vetter <simona.vetter@ffwll.ch>
 References: <20250917-mtk-post-blend-color-pipeline-v2-0-ac4471b44758@collabora.com>
- <20250917-mtk-post-blend-color-pipeline-v2-6-ac4471b44758@collabora.com>
+ <20250917-mtk-post-blend-color-pipeline-v2-5-ac4471b44758@collabora.com>
 Content-Language: en-US, fr
 Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
@@ -139,7 +139,7 @@ Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
  wDN7ORknPndzxrq3CyB7b/Tk1e8Qx+6HU/pnMb4ZqwwMwZAMk24TZpsgg28o9MQiUNzad0h2
  gIszbeej9ryrtLHxMzyK8yKhHoI2i2ovxy5O+hsWeAoCPE9xwbqnAjLjOn4Jzd/pPovizrq/
  kUoX66YgvCuHfQMC/aBPLnVunZSP23J2CrkTrnsUzw==
-In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-6-ac4471b44758@collabora.com>
+In-Reply-To: <20250917-mtk-post-blend-color-pipeline-v2-5-ac4471b44758@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
@@ -147,191 +147,67 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 
 Le 18/09/2025 à 02:43, Nícolas F. R. A. Prado a écrit :
-> Introduce DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE which a DRM client
-> can set to enable the usage of post-blend color pipelines instead of the
-> now deprecated CRTC color management properties: "GAMMA_LUT",
-> "DEGAMMA_LUT" and "CTM".
+> Add a new cap that drivers can set to signal they support post-blend
+> color pipelines.
 > 
 > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
->   drivers/gpu/drm/drm_atomic_uapi.c   | 15 +++++++++++++++
->   drivers/gpu/drm/drm_connector.c     |  1 +
->   drivers/gpu/drm/drm_crtc_internal.h |  1 +
->   drivers/gpu/drm/drm_ioctl.c         |  9 +++++++++
->   drivers/gpu/drm/drm_mode_object.c   |  9 +++++++++
->   include/drm/drm_file.h              |  7 +++++++
->   include/uapi/drm/drm.h              | 19 +++++++++++++++++++
->   7 files changed, 61 insertions(+)
+>   drivers/gpu/drm/drm_ioctl.c | 3 +++
+>   include/drm/drm_drv.h       | 6 ++++++
+>   include/uapi/drm/drm.h      | 6 ++++++
+>   3 files changed, 15 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atomic_uapi.c
-> index 063c142fd9b656e228cfc660d005a3fbb4640d32..f5125fa3fa28ff2a6ff07fd7cf07d4bdf77ab738 100644
-> --- a/drivers/gpu/drm/drm_atomic_uapi.c
-> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
-> @@ -452,6 +452,11 @@ static int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
->   	} else if (property == config->prop_vrr_enabled) {
->   		state->vrr_enabled = val;
->   	} else if (property == config->degamma_lut_property) {
-> +		if (file_priv->post_blend_color_pipeline) {
-> +			drm_dbg_atomic(dev,
-> +				"Setting DEGAMMA_LUT CRTC property not permitted with DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE client cap\n");
-> +			return -EINVAL;
-> +		}
->   		ret = drm_property_replace_blob_from_id(dev,
->   					&state->degamma_lut,
->   					val,
-> @@ -460,6 +465,11 @@ static int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
->   		state->color_mgmt_changed |= replaced;
->   		return ret;
->   	} else if (property == config->ctm_property) {
-> +		if (file_priv->post_blend_color_pipeline) {
-> +			drm_dbg_atomic(dev,
-> +				"Setting CTM CRTC property not permitted with DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE client cap\n");
-> +			return -EINVAL;
-> +		}
->   		ret = drm_property_replace_blob_from_id(dev,
->   					&state->ctm,
->   					val,
-> @@ -468,6 +478,11 @@ static int drm_atomic_crtc_set_property(struct drm_crtc *crtc,
->   		state->color_mgmt_changed |= replaced;
->   		return ret;
->   	} else if (property == config->gamma_lut_property) {
-> +		if (file_priv->post_blend_color_pipeline) {
-> +			drm_dbg_atomic(dev,
-> +				"Setting GAMMA_LUT CRTC property not permitted with DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE client cap\n");
-> +			return -EINVAL;
-> +		}
->   		ret = drm_property_replace_blob_from_id(dev,
->   					&state->gamma_lut,
->   					val,
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 4d6dc9ebfdb5bc730b1aff7a184448af7b93f078..f58cfd2131139ff3e613adc4dbb9ddbedf724dc7 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -3440,6 +3440,7 @@ int drm_mode_getconnector(struct drm_device *dev, void *data,
->   	 */
->   	ret = drm_mode_object_get_properties(&connector->base, file_priv->atomic,
->   			file_priv->plane_color_pipeline,
-> +			file_priv->post_blend_color_pipeline,
->   			(uint32_t __user *)(unsigned long)(out_resp->props_ptr),
->   			(uint64_t __user *)(unsigned long)(out_resp->prop_values_ptr),
->   			&out_resp->count_props);
-> diff --git a/drivers/gpu/drm/drm_crtc_internal.h b/drivers/gpu/drm/drm_crtc_internal.h
-> index e3dbdcbfa385b940ec0b5476adde6146fe4afde1..c53f154e5392a10c326c844b7321666275f9ac02 100644
-> --- a/drivers/gpu/drm/drm_crtc_internal.h
-> +++ b/drivers/gpu/drm/drm_crtc_internal.h
-> @@ -169,6 +169,7 @@ void drm_mode_object_unregister(struct drm_device *dev,
->   				struct drm_mode_object *object);
->   int drm_mode_object_get_properties(struct drm_mode_object *obj, bool atomic,
->   				   bool plane_color_pipeline,
-> +				   bool post_blend_color_pipeline,
->   				   uint32_t __user *prop_ptr,
->   				   uint64_t __user *prop_values,
->   				   uint32_t *arg_count_props);
 > diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
-> index 01592d10e3465ddceddef94bc417f98d3ec12087..ea9600f5392f520a2b42ba7ef363d2f08ce19812 100644
+> index ff193155129e7e863888d8958458978566b144f8..01592d10e3465ddceddef94bc417f98d3ec12087 100644
 > --- a/drivers/gpu/drm/drm_ioctl.c
 > +++ b/drivers/gpu/drm/drm_ioctl.c
-> @@ -383,6 +383,15 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
->   			return -EINVAL;
->   		file_priv->plane_color_pipeline = req->value;
+> @@ -304,6 +304,9 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>   		req->value = drm_core_check_feature(dev, DRIVER_ATOMIC) &&
+>   			     dev->mode_config.async_page_flip;
 >   		break;
-> +	case DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE:
-> +		if (!file_priv->atomic)
-> +			return -EINVAL;
-> +		if (req->value > 1)
-> +			return -EINVAL;
-> +		if (!drm_core_check_feature(dev, DRIVER_POST_BLEND_COLOR_PIPELINE))
-> +			return -EINVAL;
-> +		file_priv->post_blend_color_pipeline = req->value;
+> +	case DRM_CAP_POST_BLEND_COLOR_PIPELINE:
+> +		req->value = drm_core_check_feature(dev, DRIVER_POST_BLEND_COLOR_PIPELINE);
 > +		break;
 >   	default:
 >   		return -EINVAL;
 >   	}
-> diff --git a/drivers/gpu/drm/drm_mode_object.c b/drivers/gpu/drm/drm_mode_object.c
-> index b45d501b10c868c6d9b7a5a8760eadbd7b372a6a..5e6c3de9456b997985142a68b9cef57771a58bdc 100644
-> --- a/drivers/gpu/drm/drm_mode_object.c
-> +++ b/drivers/gpu/drm/drm_mode_object.c
-> @@ -388,6 +388,7 @@ EXPORT_SYMBOL(drm_object_property_get_default_value);
->   /* helper for getconnector and getproperties ioctls */
->   int drm_mode_object_get_properties(struct drm_mode_object *obj, bool atomic,
->   				   bool plane_color_pipeline,
-> +				   bool post_blend_color_pipeline,
->   				   uint32_t __user *prop_ptr,
->   				   uint64_t __user *prop_values,
->   				   uint32_t *arg_count_props)
-> @@ -416,6 +417,13 @@ int drm_mode_object_get_properties(struct drm_mode_object *obj, bool atomic,
->   				continue;
->   		}
->   
-> +		if (!post_blend_color_pipeline && obj->type == DRM_MODE_OBJECT_CRTC) {
-> +			struct drm_crtc *crtc = obj_to_crtc(obj);
-> +
-> +			if (prop == crtc->color_pipeline_property)
-> +				continue;
-> +		}
-> +
->   		if (*arg_count_props > count) {
->   			ret = __drm_object_property_get_value(obj, prop, &val);
->   			if (ret)
-> @@ -475,6 +483,7 @@ int drm_mode_obj_get_properties_ioctl(struct drm_device *dev, void *data,
->   
->   	ret = drm_mode_object_get_properties(obj, file_priv->atomic,
->   			file_priv->plane_color_pipeline,
-> +			file_priv->post_blend_color_pipeline,
->   			(uint32_t __user *)(unsigned long)(arg->props_ptr),
->   			(uint64_t __user *)(unsigned long)(arg->prop_values_ptr),
->   			&arg->count_props);
-> diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
-> index 1a3018e4a537b3341acb50187d47371f6b781b9d..42b9a43baa18079af8ec2ea5b1484b23c497beb0 100644
-> --- a/include/drm/drm_file.h
-> +++ b/include/drm/drm_file.h
-> @@ -213,6 +213,13 @@ struct drm_file {
+> diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+> index 42fc085f986dee9261f8b08c4fc7d93b8d6d9769..6b0f4904e69766232283d430c2540d30afef850f 100644
+> --- a/include/drm/drm_drv.h
+> +++ b/include/drm/drm_drv.h
+> @@ -122,6 +122,12 @@ enum drm_driver_feature {
+>   	 * the cursor planes to work correctly).
 >   	 */
->   	bool plane_color_pipeline;
->   
+>   	DRIVER_CURSOR_HOTSPOT           = BIT(9),
 > +	/**
-> +	 * @post_blend_color_pipeline:
+> +	 * @DRIVER_POST_BLEND_COLOR_PIPELINE:
 > +	 *
-> +	 * True if client understands post-blend color pipelines
+> +	 * Driver supports post-blend color pipeline.
 > +	 */
-> +	bool post_blend_color_pipeline;
-> +
->   	/**
->   	 * @was_master:
->   	 *
+> +	DRIVER_POST_BLEND_COLOR_PIPELINE		= BIT(10),
+>   
+>   	/* IMPORTANT: Below are all the legacy flags, add new ones above. */
+>   
 > diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-> index c6c53e57958e951204154ce41a69696a6876f0e8..f9ac10b3e4876f71005a87dedefa4aed320566f0 100644
+> index 27cc159c1d275c7a7fe057840ef792f30a582bb7..c6c53e57958e951204154ce41a69696a6876f0e8 100644
 > --- a/include/uapi/drm/drm.h
 > +++ b/include/uapi/drm/drm.h
-> @@ -927,6 +927,25 @@ struct drm_get_cap {
+> @@ -812,6 +812,12 @@ struct drm_gem_change_handle {
+>    * commits.
 >    */
->   #define DRM_CLIENT_CAP_PLANE_COLOR_PIPELINE	7
->   
+>   #define DRM_CAP_ATOMIC_ASYNC_PAGE_FLIP	0x15
 > +/**
-> + * DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE
+> + * DRM_CAP_POST_BLEND_COLOR_PIPELINE
 > + *
-> + * If set to 1 the DRM core will allow setting the COLOR_PIPELINE
-> + * property on a &drm_crtc, as well as drm_colorop properties.
-> + *
-> + * Setting of these crtc properties will be rejected when this client
-> + * cap is set:
-> + * - GAMMA_LUT
-> + * - DEGAMMA_LUT
-> + * - CTM
-> + *
-> + * The client must enable &DRM_CLIENT_CAP_ATOMIC first.
-> + *
-> + * This client cap can only be set if the driver sets the corresponding driver
-> + * cap &DRM_CAP_POST_BLEND_COLOR_PIPELINE.
+> + * If set to 1, the driver supports post-blend color pipelines.
 > + */
-> +#define DRM_CLIENT_CAP_POST_BLEND_COLOR_PIPELINE	8
-> +
->   /* DRM_IOCTL_SET_CLIENT_CAP ioctl argument type */
->   struct drm_set_client_cap {
->   	__u64 capability;
+> +#define DRM_CAP_POST_BLEND_COLOR_PIPELINE	0x16
+>   
+>   /* DRM_IOCTL_GET_CAP ioctl argument type */
+>   struct drm_get_cap {
 > 
 
 -- 
