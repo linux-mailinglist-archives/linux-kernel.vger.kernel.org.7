@@ -1,132 +1,144 @@
-Return-Path: <linux-kernel+bounces-823792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFC8B87725
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:03:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4131CB8772E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84EB27C5DD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06B6466CCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEABD1A3178;
-	Fri, 19 Sep 2025 00:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2351517C77;
+	Fri, 19 Sep 2025 00:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLbHb9Qt"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KYnzTn/R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF982286A9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C56D191;
+	Fri, 19 Sep 2025 00:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758240199; cv=none; b=EfDsxFhwGTUMLpmExRzxTKGk3Av/96G5vC8TU5IcaCRYJ82ijmqaPvnJmfCt1ymIELN3q3VMcNd5PwzOcD0NluqySUR9jpsPrqThAhy7vOA/JbLKQ6p72hIe7W6tBLbTY0jaKDEkTpAuL180/vw4xbpT99pj5Kz9LL+OozuwIgs=
+	t=1758240559; cv=none; b=ca/w8v4J9sWb46XL7zw+9xwkncHieflBy6OFE/SJRpRT1cUu8EVeiNbGST0bK3Q4kqpUqd8q5svOr04xnZsfJwcVeJ3B91DiSXFxZiOgGd9EENiCeKsfvxzZHp078qiH3S18ZE7p7/VeDWd0v/Hma/8OEhxytQKF+AOvBIKUqOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758240199; c=relaxed/simple;
-	bh=UbPsriC3QrbOJZ1ayqcmZNmKEipc4ibxvlJqaquyJfk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IRpVmzDkhoSiF2tE+7W8NGr7hxw255wb+k/W98sMrhInStTSkFp2JqmCcO0aduqmuBuvfTuhY1O86NGdXxB2ZdyJ/Lm92DjG/+zr1Z1JJxW1aMskmD+zLgS2yTnFUff784L/luF0rC8TNsiz8x2e6UVEdVw0JVoY1W24AmMJt7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLbHb9Qt; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b54b3cafdcaso1099625a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 17:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758240197; x=1758844997; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7hI40T119u35xMB16MFk6zQZpzcNd2m9zwdEQjzTmVk=;
-        b=FLbHb9QtowEo82GmDINgWU+Hol1liI5jQZWoPoPtA5PZRfcqzxk9ay3wiF/k7exZQd
-         XEy0GZ3KAEshfBmXnDUv1cias8p9HTZhCHYawKEeLlg5+DFPNqJ6//wwblSkj5PANDza
-         LuScuMk7Pjt6YNNOzhHW2DqDkb8/9Vm3+bvHSMMgmIY8e+weaobaaa/0V0z7meAozQmd
-         ZXzh6afWlKOuPykcgVzEz4buARqsnWKkPz0HzzelIMJQwR3/Juh8l6BzJxLd1XpBcTfl
-         luVvPffy8ZHoxdKBH2iT/bl36NsP6wbd+qkp4CB2xbpbo9gzpUhySU56Xyyxn8t1Pn8u
-         LUCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758240197; x=1758844997;
-        h=mime-version:user-agent:references:in-reply-to:subject:cc:to:from
-         :message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7hI40T119u35xMB16MFk6zQZpzcNd2m9zwdEQjzTmVk=;
-        b=PIa1hCy6Hyk0alMS+EvVjzivhtp1rfanTdEedVtrgsD+qP/NdkuWhMaLL1jtfAhL5+
-         iw0W9NcyMhzwjtBweVXerr4T62sfsMG3AIyCw3qNsgT/W1PIMxso6LquFVTAlOOrml3p
-         bZFohtjfHgqI86PBCYfC7YfCT7eJr0bDcua8rO2vUC/sRbDcoqJSgvfaFziH/IbEyT9i
-         E8YaleefSnx4vEG8EvcqkuPfDpzD3hz5ePGipQlj6/RK278McB55FATCTBLx+aI2pvOr
-         dtBP8dGQLzI3HHZVdiODsHOfssW2RqP+wjScQi1JmdWp9URNu/pyfWt0Cj41aemj3KCj
-         801g==
-X-Forwarded-Encrypted: i=1; AJvYcCVlTnOYzjQqvUvH8EyJjRaxJz+VU7QpE/ASGBd/8Ge0X9RJzpM9RTyWG0ctzpQkVGE6tpBu6TpM1ZT6JYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOhuzGLofPMePY7hWW3L3e7yV95Idb8F/Ze1Z6wpzRFXKKLV8o
-	vvXyTmj1pjmjmeO9DBKz+QqPcu6qqDF3iNao/k62C3OZI0jU3Yc7aeiY
-X-Gm-Gg: ASbGncvPPHGiKMV69hx+xFWWWku1ixRL8iraKR4gDxxRXjid6QrCB5j9/gwxkC5/QFR
-	bAVEBgL933GfdcxZ2j7Wh50vVzHUh6LTjipS04jzUmt+PbtV9pw+lAdR1pbA2OupiHxUZB91C60
-	oZxwW0dDR36riH8ZkDkxNw8fec52+Vy5U+sgAtGznSlnPBZcSxlOxy1MR69ZtJk7gEOpJBg1BY/
-	uPvbUnpWSw0obfaWadWDtLOOO1aOT6xDRuKuALfv0U/vSthO46e/FVcGWyMesLy2REbMJaMU568
-	sI19DqhEBRJs2vo/6NWXHJtiLne3ToGjGj7Djk/HXB3V0K0XYEhCQXI+cU6Dfh6TUnyX4ncVNL4
-	mot3u/CqP5LumGMhhqeZJs0c+j8y/DM2Xfoij30v7tM00lN2RiK23f6ca8YiUhUFSsX9KQcJ+g7
-	CIU6EciY8Z
-X-Google-Smtp-Source: AGHT+IE4CCFgX6WgpfruOqzSmBceJrAO3FeeVjUEHkbLe2Vz0fVtKjVcqofxxG2CJYN54iLsGj3qsg==
-X-Received: by 2002:a17:902:ca91:b0:269:a75f:e9d5 with SMTP id d9443c01a7336-269ba5628f2mr11631335ad.42.1758240196866;
-        Thu, 18 Sep 2025 17:03:16 -0700 (PDT)
-Received: from mars.local.gmail.com (221x241x217x81.ap221.ftth.ucom.ne.jp. [221.241.217.81])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff35aa47sm3388607a12.5.2025.09.18.17.03.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Sep 2025 17:03:15 -0700 (PDT)
-Date: Fri, 19 Sep 2025 09:03:12 +0900
-Message-ID: <m28qib8g1r.wl-thehajime@gmail.com>
-From: Hajime Tazaki <thehajime@gmail.com>
-To: johannes@sipsolutions.net
-Cc: linux-um@lists.infradead.org,
-	ricarkol@google.com,
-	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU dependency to PCI driver
-In-Reply-To: <a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
-References: <cover.1758181109.git.thehajime@gmail.com>
-	<4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
-	<a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758240559; c=relaxed/simple;
+	bh=mbjZB92TxDhArcKXUR2GBPTMN3cns8vIOAZmwdr2MNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cbFn/Zjs6vusmQipIXtc/kwS2R0eGiau0DnihqVN3tc+7y6GXaH13bYwXgd4bjDYVmDIACcq2RO4KLa6rS82z0lz6KrC8zyguSx0pp8JtLbAHECp8JS5jKapXmOz4bpudMZ1o8zU9ZmOLwsrEC/ZV4u8CQxIFXGquyL5VYdNS8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KYnzTn/R; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758240557; x=1789776557;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mbjZB92TxDhArcKXUR2GBPTMN3cns8vIOAZmwdr2MNQ=;
+  b=KYnzTn/RJwGdI6Ge5RUCmhQVf53tMIjodHuhpe6n8S70ftoAFtgt8UAX
+   78gTULawFVdCKQ+3dd0G2ytr3dENNH8uHbm+kBoC1zFuF19b2XrwPUa13
+   FvjFCftwRu58OJchJU7qNs8dfW6paocRiVVpJ/yHFQVO490zFqStLzh3R
+   QLkNH8Q64zhpLyWT99o3UCjmwdYSpBVkLS67zCqdgzvfZUeChZgTmHRm3
+   D1aJlR/gKaMEkev8EtcmGT3ANCwKspLVW4qDLLsty4kfzfuDVmtufKvyB
+   KswX4CNse2W2pmqh05Fkpi9zW8KF2i3a1pKxoOCP7UGYQVvjqorJ7ZlYv
+   Q==;
+X-CSE-ConnectionGUID: wAkNc017TdaUD4B9WcaiOQ==
+X-CSE-MsgGUID: fsjCW0ZjR06nqNnmfsxwjw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="64405196"
+X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
+   d="scan'208";a="64405196"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 17:09:16 -0700
+X-CSE-ConnectionGUID: HyOZ2EEeQti+glqJKoTEoA==
+X-CSE-MsgGUID: Gk1Q12HRQQK7CJv18XI3VA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
+   d="scan'208";a="175749657"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.177]) ([10.124.233.177])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 17:09:13 -0700
+Message-ID: <aea7c0f4-e951-484a-962d-f3a9b5b26b57@linux.intel.com>
+Date: Fri, 19 Sep 2025 08:09:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 0/6] Perf kvm commands bug fix
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250811055546.296678-1-dapeng1.mi@linux.intel.com>
+ <CAP-5=fWcf7F1QvWXzAD_KMpOnnKGw9PFM7mNtgzp_jh4Vi6V-w@mail.gmail.com>
+ <189e060b-207b-469f-9b6e-314380d12a42@linux.intel.com> <aMxkqnXdrvv9BN8s@x1>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aMxkqnXdrvv9BN8s@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-On Thu, 18 Sep 2025 17:30:22 +0900,
-Johannes Berg wrote:
-> 
-> On Thu, 2025-09-18 at 16:39 +0900, Hajime Tazaki wrote:
-> > The commit 8fe743b5eba0 ("PCI: Add CONFIG_MMU dependency") restricts the
-> > PCI base driver to depend on MMU.  While nommu UML _can_ implement PCI
-> > drivers over PCI devices (e.g., virtio-pci), the current nommu UML
-> > doesn't implement it.
-> > 
-> > But without PCI drivers kunit complains as config for kunit
-> > (arch_uml.config) defines the dependency to PCI drivers.
-> > 
-> > This commit fixes the issue of this compile failures when building PCI
-> > drivers with nommu UML.  In particular, the fix is to undefine the
-> > constant PCI_IOBASE to be able to bypass pci_unmap_iospace() call.
-> 
-> This doesn't make a lot of sense to me. Why would we even want to build
-> PCI on NOMMU-UML if PCI in general is dependent on MMU now?
-> 
-> It's not like ARCH=um with PCI and NOMMU has any value even for testing
-> if such a configuration cannot exist in reality?
+On 9/19/2025 3:59 AM, Arnaldo Carvalho de Melo wrote:
+> On Thu, Sep 18, 2025 at 07:52:43AM +0800, Mi, Dapeng wrote:
+>> On 9/18/2025 5:12 AM, Ian Rogers wrote:
+>>> On Sun, Aug 10, 2025 at 10:56 PM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
+>>>> his patch-set fixes perf kvm commands issues, like missed memory
+>>>> allocation check/free, out of range memory access and especially the
+>>>> issue that fails to sample guest with "perf kvm record/top" commands on
+>>>> Intel platforms.
+>>>>
+>>>> The commit 634d36f82517 ("perf record: Just use "cycles:P" as the
+>>>>  default event") changes to use PEBS event to do sampling by default
+>>>> including guest sampling. This breaks host to sample guest with commands
+>>>> "perf kvm record/top" on Intel platforms.
+>>> Huh? That change is:
+>>> ```
+>>> $ git show 634d36f82517
+>>> commit 634d36f82517eb5c6a9b9ec7fe3ba19dbbcb7809
+>>> Author: Namhyung Kim <namhyung@kernel.org>
+>>> Date:   Tue Oct 15 23:23:58 2024 -0700
+>>>
+>>>     perf record: Just use "cycles:P" as the default event
+>>>
+>>>     The fallback logic can add ":u" modifier if needed.
+>>> ...
+>>> -               bool can_profile_kernel = perf_event_paranoid_check(1);
+>>> -
+>>> -               err = parse_event(rec->evlist, can_profile_kernel ?
+>>> "cycles:P" : "cycles:Pu");
+>>> +               err = parse_event(rec->evlist, "cycles:P");
+>>> ...
+>>> ```
+>>> isn't the precision the same before and after? I think you've blamed
+>>> the wrong patch.
+>>>
+>>> The change to use cycles:P looks to come from commit 7b100989b4f6
+>>> ("perf evlist: Remove __evlist__add_default") but the old code was
+>>> doing things like "evsel->precise_max = true;" so I think I was just
+>>> carrying forward behavior. The use of precise_max comes from commit
+>>> 4e8a5c155137 ("perf evsel: Fix max perf_event_attr.precise_ip
+>>> detection") from over 6 years ago, and the behavior before that also
+>>> appears to have been to use the maximum supported precision.
+>>>
+>>> Apart from the blame and commit message being off I think the change
+>>> is okay, delta my usual complaint that weak symbols are the devil's
+>>> work.
+>> Hmm, yeah, you're right. Thanks for correcting this. 
+> Hi Dapeng,
+>
+> 	Can you please fix the patch descriptions and Fixes references
+> and resubmit?
 
-totally understand your point.
+Sure. would do. Thanks.
 
-now I see that we don't have to have this work around by using
---kconfig_add option to kunit.py.
 
-# like --kconfig_add CONFIG_UML_PCI_OVER_VIRTIO=n (in addition to
-  --kconfig_add CONFIG_MMU=n).
-
-so I'll drop this patch in the next version.
-
-thanks,
--- Hajime
+>
+> - Arnaldo
 
