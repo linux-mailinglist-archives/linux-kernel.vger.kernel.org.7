@@ -1,135 +1,100 @@
-Return-Path: <linux-kernel+bounces-824473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB03AB89542
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A78E6B8955A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAC2A7B80FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236237E1D2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A19630E0C3;
-	Fri, 19 Sep 2025 11:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2203430DEAF;
+	Fri, 19 Sep 2025 11:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YtXz7lXE"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E7tAE8H4"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9C130BB97
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F4D30CDB9;
+	Fri, 19 Sep 2025 11:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758283014; cv=none; b=CceRMR35Q3JA7fLl/4T6Mv+1zLtZP3Jr6dEUK2sOnOTtExLiqDMbZA0H5xUzr4wV/1c1hWkmgzUhlVDWWRBZB4JV6QpgkbK9XS8LvayeaoFWF0VhNTXV/IYBMxh7hCUOK2XfNFRM8q8DcRTQR6NENDcTJ55EzniHIq7nN4xZ9BM=
+	t=1758283077; cv=none; b=Zorc9j9jLC53Pr/XC+/WEXSrjd7jKyxlLQYiHZX9VZtJ/HDYOsInlRKaWzrZwiY4gSzPOI4+VUFpupmKvO2nIAJlBUzvwPSE9mP5GRo8MmJRC5SsO40aSrerV3V2Sdg51YEnGyhCoRO+AO8wGUZcLMly9ir243Mpi4TQt015aiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758283014; c=relaxed/simple;
-	bh=nVhwZwqjhePDpn3hIqHifRon6Z2bn7ZMu+Qm0ssc/jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhrsjWPRWnioH3tojGq0fo3MbTsbcEVNTM9ioBxZtpzgohaVo6Dks3t8F9JPQMND6E+KN1h+MhyRMh3iSlIbD3uO40FIac8UPTxHmnGwrGWzWw98SaWXvARFpRTlYz0tH24RnVrpiyHG/QMx8VupAVX9C+7Lz8YGJvdq6tu2+CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YtXz7lXE; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-7900952fb89so17702366d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1758283012; x=1758887812; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VuUmQ3adky/B0QCA1sMQ2Ao6Tuz3Fbnr+xuaWjpQ1Bo=;
-        b=YtXz7lXErKOixL9lZnfianefYxnRSYSkpF4dAeSgXlSS/jhyjIk2SY4yYbcezDyQ3x
-         FwDO8MgSmR+bNeyO2t0xfXauSkND/yoIk21FcQSfWajlAwinkLAjno/DMMZg6FKEHf4b
-         pW5tofpw/3giwRZ79QAU7PmwfgTlbfjLb2jTF46seWUaHdVmkjDRAbwkeA0XjoE5i+D4
-         ludgQpc65SUVUG6BbN9vee/kZy3c0/Lq0oIf99SbYF8FPT+bOzj5V3eHWzpL9XHFZj5h
-         vzfpZ+lc0zDS2QzixsUoFIj6IUhaO1vzi8+Yz2PtJ0XxEZ1OV22spRLFbbvzzY05nurM
-         mEVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758283012; x=1758887812;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VuUmQ3adky/B0QCA1sMQ2Ao6Tuz3Fbnr+xuaWjpQ1Bo=;
-        b=V/QjAC8+vsS4ijlzA5xTGa3NiipyAHnQ6Y/HgZiaUcSepYAJk/AYfvI2/+nXbYHoEZ
-         FxoEKPjhC9T6E98NlK3TBabhlb8elt+qHwZe024fYtk531VX46a00ohhGK/NzuMz9IGp
-         sjuWnA8V+cDAiE4yn9Ubep5qJmDReAbOFK2ATX4Se39JHgQ44xxDGF9cjYiBQIrIcG0r
-         rmTjhAR7I5la50hCb7AHdiIgtBOqUK/PbQT0ApYd3ra11iGq/C657QxXiHsR2dWPX395
-         JwQZcUTq4hxC4OAmx1ZB9Q3GGAKYGDAMPrLxi5KWEc9xdZzWlVP26Gfk73DU4y12y6xh
-         x19A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOxRO48DtEjwW/mt1HQfdkB593J7De05OlbMMoxdHeTzOHGY1cDBVEju/0UGOpdjqRGqzHvbRmKTckEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydMVRW6WJjt/OTmTLxD5BO5LqwfrYddNtZEAaHDOp2w1eaHprW
-	t717lBgBoHpGUwWPMmJqvqU5h7YcOH9wQ/78WjTk6yVHpGhdVinKWQzTg9IuSfnH4pM=
-X-Gm-Gg: ASbGncvz0QnYuQytRkbrpO7B53uOiXbbssaYq+khMeLuta6+OkrrbXFNQ5v+HDcm5TM
-	RS9Hsl4WAcrmaseXtz2gTbvm1Fs2XKEY3izpZTt2x0x5KLg9Y4Urkj2N6MtVTgeqt0RWg3CNZfo
-	+M8nrgkugCuH4NvgQjv5kY3uziAzIX7bmn6MtPbCjET5NBDmFSzqD38RIoUcQCf00JwSbWPfKms
-	htNWmDj2hZLJzCo7oGxFgQVMETp1E4fGpaFw0D+qOgONwmJMb3fybTEMbh0YdSEjRHBviyKWQud
-	qzCCGwQGR4lUbPfDsbmbHBKH2mrrlZL2NU7naKQhOTLlQXv++o+kcLJGz55pqMGSNZt5NeM4
-X-Google-Smtp-Source: AGHT+IEoljyrBkccAFYLb8MBbUlKdAn3Qg4zbFh0M7v+yWUepkG0OFhXgg8yQQRY7r/ed8cRG3kFFg==
-X-Received: by 2002:a05:6214:dac:b0:719:50da:4a08 with SMTP id 6a1803df08f44-7991cbb2d82mr33802106d6.45.1758283011689;
-        Fri, 19 Sep 2025 04:56:51 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-793516d729csm28635246d6.43.2025.09.19.04.56.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 04:56:51 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uzZjO-000000097bU-19eX;
-	Fri, 19 Sep 2025 08:56:50 -0300
-Date: Fri, 19 Sep 2025 08:56:50 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Alex Mastro <amastro@fb.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, David Reiss <dreiss@meta.com>,
-	Joerg Roedel <joro@8bytes.org>, Leon Romanovsky <leon@kernel.org>,
-	Li Zhe <lizhe.67@bytedance.com>, Mahmoud Adam <mngyadam@amazon.de>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	kvm@vger.kernel.org
-Subject: Re: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend
- more granular access to client processes
-Message-ID: <20250919115650.GT1326709@ziepe.ca>
-References: <20250918214425.2677057-1-amastro@fb.com>
- <20250918225739.GS1326709@ziepe.ca>
- <aMyUxqSEBHeHAPIn@kbusch-mbp>
+	s=arc-20240116; t=1758283077; c=relaxed/simple;
+	bh=KR3FJmlJvtd65Muxd63xrmx06R6KmJHYs2/e7ruIfO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uJ7GFA+OuMIsMCwtwLJ9qRjElIHqO2YGbMIv/nZsUWwi06ySETcZ/RsgnDrJSiU4y9p4LKjbTVbKD2pCCI/e73cCfdaarcn5o4Tp9F44c/oxMiekXZ4AVYN7dvIoEEZs8ova7QQlUN2pgrLvzm2mb9RIThyChKwLYI9mgKtx5l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E7tAE8H4; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758283072;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0rO2wW68rSedEDCCjxodwfMESNI+P46hNUk5VIQj2Q8=;
+	b=E7tAE8H4EQD8W9wBoVdXJMOZSTvCmrAkzwtUTL0r1B7chlkuIT7pgpKH6um+Gs4jrmqLEo
+	I0WwYgwffaRKjGZnrI83ilK+bw8dNjiohiYE3gt9W/PPx7rEt0BYTJ3N9By2BqVqZOFX3P
+	95gAEYPc63gPvSEH2rkJixr0mXfEKlU=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Rex Nie <rex.nie@jaguarmicro.com>,
+	Jann Horn <jannh@google.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: core: replace kmalloc + copy_from_user with memdup_user
+Date: Fri, 19 Sep 2025 13:56:50 +0200
+Message-ID: <20250919115654.1011141-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMyUxqSEBHeHAPIn@kbusch-mbp>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 18, 2025 at 05:24:54PM -0600, Keith Busch wrote:
-> I read this as more about having the granularity to automatically
-> release resources associated with a client process when it dies (as
-> mentioned below) rather than relying on the bootstrapping process to
-> manage it all. Not really about hostile ioctls, but that an ungraceful
-> ending of some client workload doesn't even send them.
+Replace kmalloc() followed by copy_from_user() with memdup_user() to
+simplify and improve proc_do_submiturb(). Replace the hard-coded 8 bytes
+with the size of 'struct usb_ctrlrequest'.
 
-You could achieve this between co-operating processes by monitoring
-the child with a pidfd, or handing it a pipe and watching for the pipe
-to close..
+Return early if an error occurs, and avoid manually setting 'ret' and
+using 'goto error'.
 
-> > > - It would be nice if mappings created with the restricted IOMMU fd were
-> > >   automatically freed when the underlying kernel object was freed (if the client
-> > >   process were to exit ungracefully without explicitly performing unmap cleanup
-> > >   after itself).
-> > 
-> > Maybe the BPF could trigger an eventfd or something when the FD closes?
-> 
-> I wouldn't have considered a BPF dependency for this. I'll need to think
-> about that one for a moment.
+No functional changes intended.
 
-Well, if you are going to be using BPF for policy then may as well use
-it for all policy. It would not be hard to also invoke the BPF duing
-the file descriptor close and presumably it can somehow to signal the
-vendor process in some easy BPF way?
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/usb/core/devio.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-Jason
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index f6ce6e26e0d4..3bc54a5c59ff 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -1670,13 +1670,9 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
+ 		/* min 8 byte setup packet */
+ 		if (uurb->buffer_length < 8)
+ 			return -EINVAL;
+-		dr = kmalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL);
+-		if (!dr)
+-			return -ENOMEM;
+-		if (copy_from_user(dr, uurb->buffer, 8)) {
+-			ret = -EFAULT;
+-			goto error;
+-		}
++		dr = memdup_user(uurb->buffer, sizeof(struct usb_ctrlrequest));
++		if (IS_ERR(dr))
++			return PTR_ERR(dr);
+ 		if (uurb->buffer_length < (le16_to_cpu(dr->wLength) + 8)) {
+ 			ret = -EINVAL;
+ 			goto error;
+-- 
+2.51.0
+
 
