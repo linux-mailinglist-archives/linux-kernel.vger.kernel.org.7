@@ -1,77 +1,76 @@
-Return-Path: <linux-kernel+bounces-824583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C3FB8999D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:07:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F270B899BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389721C8836E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:08:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A34617E4F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:07:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC55311972;
-	Fri, 19 Sep 2025 13:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3157B23B62A;
+	Fri, 19 Sep 2025 13:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cTRcqis9"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jaVaMUFL"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FC9311956
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1672322541B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758287216; cv=none; b=Hh6o/Zu9DzxqMBp/WCcGUCOot0gOD3CNTAaLjTV6c6wxP5MUeLmggIQsueIJWTfhgzWgz1v/u8WWcYAYoOe1MRN+frOmwTQWHjc6upcZtc1+sngALV4zP8XnjCxGML0s6hvG/ecDDs4cEcyQJjyhYytZ9+OgPVSCB7UJhtEQzfY=
+	t=1758287220; cv=none; b=FlNYnTw3Kd6qw706MCZcCDYVUMOZP4Fk0HbZ5FYMeQqNGR+VJQks3B9DMrYlkT8DVPuO/lb8LJCGRLFG92iRnOS7s9CO9XXcdv8X8sQz3+F5Qa9pzlBEUMhVDbtXC+iOjOW+slZm1fje/02C4agEb9WXr5XY787DVrCfE8jAutE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758287216; c=relaxed/simple;
-	bh=CEQREJ+9sE8ZRNG+NfCcDfGBdfafdlTZitq1Fenri1I=;
+	s=arc-20240116; t=1758287220; c=relaxed/simple;
+	bh=Gza32SKoO3l1Cxp11yE7x1EtLYd/1eQwu8OxMPOOBuE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ash9YPjSH3oj2eR77Dlt/cZugiNG2PSldSyDZiPJX6qZiAbc0pj6dG+xhN8oDuMQGJDLGuXNuol4k/WaW4opbIKRmg4AMAMGreMTd0TKG8Z7BfoTh+0DBJH0ityXv/vhg9N60x56MhyuM1cYJcG9mbVq5ZvTJ6ktTK1VeKM1+no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cTRcqis9; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=lOgTtqkqEIdXk2D6O2YoXdb6KB0p+pipQOluXNmNlXzHVVhrBc0Y2+4A4pcKHTUnsHQF6o4otMxCM6pp3bhbHjcro39/z1fbPSA3aEsVELiaAT3B7ZlDMYMuotds+C9MY/qm46V1QO7XB30T+BF3GokwTpTxE9GwFpsdpkBtGK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jaVaMUFL; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24c8ef94e5dso17802395ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:06:54 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2680cf68265so15920595ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1758287214; x=1758892014; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1758287218; x=1758892018; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5GkofW6KtUkwUdgZb+yZah5ECJQKBkU1k3qjUK5RSSQ=;
-        b=cTRcqis9cKl9x7JwLatZtNO1/juB+u+uQMPi3oh7nttj5EhC1BtX50l1tKUzBkPLYr
-         GnDkTVJvwVxkxBQixXev0Qk4j7Yrmluad1JNAaIVMfOMM5SDw+eP9XsocXRkU6rkOsGB
-         AVjyqGIv6o7QtpWrLTaAobg0+KSO6qORco4gH7yCpFTuSYlgwsR7jmbbLFgWRWrqNhoe
-         MJSKMp9jSUJOr8hzPWbHygV7P4y1fNFJHIBqZJidtfs58f43Tre/8gv4XEVYwc9fUqKg
-         xoFDBqFVEYPN8WOwiQttnu+U8vbBcZZbkGxsUfFA7zpLcSVJntKl6AijIQqcNVhSfOrc
-         8V7Q==
+        bh=Urmko1apH8CcrUCNE6fCIsulid4np4tADfs+rqxRds4=;
+        b=jaVaMUFLBvkQl00wFJ74x0+km4Mlw3eOfdQoUv4Y4f4TzNi0CO5fWjWfoPn6oiVtmW
+         ILvZpAwzitJLNt8ytnl2dmr/wVSOt5rQsYWzzMh5nxzjfcKaj4MOI5zeGyv6MMt6mKOn
+         qskiu2SVsMeJ1OmT11kGRKDSBwaiC9opIW3UKfPD1dOfaffESCNY24O+3BnQVFLLqfIw
+         LexCnWDOnzBLH5uvZx36vLDwIVZCQp02thmrUetSXrkNSFZGSv2OtLULieC3UKOBe8c+
+         K+RD2v2mrpjJIQPAYa6fIq1SGi57SC8dC4LJqEa5PxspNcLWVbGoIYy8/B6Yz02fguKW
+         0V5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758287214; x=1758892014;
+        d=1e100.net; s=20230601; t=1758287218; x=1758892018;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5GkofW6KtUkwUdgZb+yZah5ECJQKBkU1k3qjUK5RSSQ=;
-        b=A1HUqSnxp2rFUOoNqX3/nJ4BP/wZyFzTNVEkGC6rX1Qa2OfQmT5pY+eL9WS6lb4zgu
-         ka/92EXPrY1b1Z8tFTFdlr/sg3OtzRVvcshgda03x8WgwmJWJDFlkSWIatP8KkWMrJdN
-         DRNIcDhEkPT3Q2pVfY+Dp2A5N42CX9CAGfC6OQwQlGy0lpYgrSHtkB6iwiokvC2SQr2o
-         aEKdIWO4b2pvi3va7weiHrAckhn/RkhGC4cHQTK2PHWrk4ByBHAjvYo1FMKG6J8REuo4
-         ZsfX9XgKO5OCxFgKg3leVgg/HSsj0SDcMF91ePTN8rusc/JIyF8LTNAlF7apqUrSYwNO
-         OfjQ==
-X-Gm-Message-State: AOJu0Yxn9F2L7CoQIZ5xeiNyhuRdK1xBvDNW0Ca3cT/rBohrVRTn6Sxf
-	BFpfCWmJzxIIY4S0KDzu//66cjgv9dTlVhNwwEeWgN9ZEifdNcS+PCxrm+6PZ/6VlapOHbvqZbw
-	tBXPO
-X-Gm-Gg: ASbGncuBhwTyScu5T2T9S61tybYrZnxKs2P0YHk3tYNcfvGrzPWgVxizBV4/OarXIjk
-	HPd46JXKQwQ6W5Hefn5+wdInLdf/aTuzMhWjBWmZTvHF2ZsiE8e/hVbCo0rg6mrYYD+vzU5ZU8M
-	2ZR1asd6AcTtzDyV8TeWyWSt6EAvq5MiMMYDtj7cCc4CT12Fko9KNb6z14gDRctrKvwzDV2JL9S
-	uX2wqCMCxbayFVq3XbjdLhFlLEYNgC1vSwT528W00vFo0mjdu/re4U0x/YAnwbwM+AdN/dVIfaN
-	dyCvIK5vDKccVnGrihTfEdiNW8C6MBdBSIcZdUzyR4KV+SVbyrAeDeGCp2WhPyG3cvqtXzePyuW
-	+ON2Dt6za09gKcKpZeCtsUe/Ah6GiXx5PxgnQdJiY1A62rBE=
-X-Google-Smtp-Source: AGHT+IHr5sMr/zdX7WDbCbAlnraq6nlmulLXz9ca/DHI8paZd8/0/Lo0LvgEROpUt8AfOZfHDDWsjg==
-X-Received: by 2002:a17:902:cf01:b0:24c:e9de:ee11 with SMTP id d9443c01a7336-269b8ef73b0mr50156855ad.17.1758287214209;
-        Fri, 19 Sep 2025 06:06:54 -0700 (PDT)
+        bh=Urmko1apH8CcrUCNE6fCIsulid4np4tADfs+rqxRds4=;
+        b=kWcHhdXRdHM0iz2/rSh7Wx6mKOLJwi9V3dxcNDGNXo2MlgK6RhxccyRtiSNWztwQT8
+         O3PtrjcaXdO1JpIK0B7tEUuJvI8asP5cc1Dl7Vm6+nt/1xtJDcywCtLqKCuETlo8lbgF
+         rq+fhzZVdWWnQjjLa3P2u7y5+yHt9q6SRRm8HCewMwNQEaGNMJTMlavLRadcvetW/39L
+         /kXvTDmph9RfSblHxgNjwdZYetZ26UX17DJfon0vIgRK5CAw4kvHFbNPFNFGedoSRqlD
+         iqbIIXlx8hcrXVHVde7FcxR/nU4EMfwBVIcyDI/S1bsRrRHnfYgxBYfdbqwFTDAyACfN
+         apdg==
+X-Gm-Message-State: AOJu0YzzvM9uE6rqysOEnRbm7VdmPocLypN6GUjNNRezfVmPUILQt4ve
+	/jnp9+Zp9zNJt3TM0kxWtXmgvMdGb6mFxKtEJcvPnPAjD8+eq+sU8VSxCkhoaVMkAu8=
+X-Gm-Gg: ASbGncvY4gYCzVFfhZycgNnLdZ6tf6tvV2AsYw0eiNCKIfXeXLZuJR6ok7m3DYv5mG/
+	j7pr1uKR5DhkeiD+aJnaj8EQtxDY4GIMPYuwn++mnBttrd4m7u0sEO8b8SE2fwfRhfOqNWgNu4z
+	tfUP1gDmfFLB6GHc55gOCsqJuRdnjCDoBhLZdTYTF+1zF5k3bdQ1+gCIJtNan7PjB9z3nLZgNkc
+	jeh/ZvtaUkf/AhJXk1TJaSu39JLApTvJ+quZMvEz5vjTRedyb37fN7MTiKN4AmkYQIuead4rXOC
+	tS6cRibM9jA7znB9dqVFnIlSE/fZATpIlTUNU1OkLCVmIsCr8WIOVI5kc2qTtLPPaszl9is68En
+	V9XRgaW7nwYD/B1/0vlpOgnMDeOd1jJKMVTU7DxX/GhfQMknvMqSV1cjkrQ==
+X-Google-Smtp-Source: AGHT+IGQm2BwTZf4DiWqvF+5ZIqZW3gwljLzK2HSeWpzsuqCCgPkWpl1dn6miiJgWhzknn4pwOCtSg==
+X-Received: by 2002:a17:903:17cf:b0:264:567b:dd92 with SMTP id d9443c01a7336-269ba55253fmr48189625ad.52.1758287218434;
+        Fri, 19 Sep 2025 06:06:58 -0700 (PDT)
 Received: from H3DJ4YJ04F.bytedance.net ([2001:c10:ff04:0:1000::d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802e00b3sm54732065ad.90.2025.09.19.06.06.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802e00b3sm54732065ad.90.2025.09.19.06.06.54
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 19 Sep 2025 06:06:53 -0700 (PDT)
+        Fri, 19 Sep 2025 06:06:58 -0700 (PDT)
 From: Yongting Lin <linyongting@bytedance.com>
 To: anthony.yznaga@oracle.com,
 	khalid@kernel.org,
@@ -82,9 +81,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	libo.gcs85@bytedance.com,
 	Yongting Lin <linyongting@bytedance.com>
-Subject: [PATCH V2 7/8] mshare: selftests: Add test case to demostrate the swapping of mshare memory
-Date: Fri, 19 Sep 2025 21:06:19 +0800
-Message-Id: <20250919130620.56518-7-linyongting@bytedance.com>
+Subject: [PATCH V2 8/8] mshare: selftests: Add test case to demostrate that mshare partly supports THP
+Date: Fri, 19 Sep 2025 21:06:20 +0800
+Message-Id: <20250919130620.56518-8-linyongting@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250919130620.56518-1-linyongting@bytedance.com>
 References: <20250919130620.56518-1-linyongting@bytedance.com>
@@ -96,116 +95,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This case is quit simple by using madvise(MADV_PAGEOUT), but for verifying
-the memory size of being swappd, we need to setup the memcg and attach test
-process to this memcg before perform the test.
+Currently, mshare doesn't support madvise(MADV_HUGEPAGE) to make pages
+become THP page.
+
+Thus we need to set /sys/kernel/mm/transparent_hugepage/shmem_enabled
+to 'always', enabling mshare to acquire THP pages in a best effort way.
+
+This case is quit simple that set up a mshare memory with 2MB size,
+than use memset to fill the physical memory and verify whether THP
+was allocated by reading memory.stat.
 
 Signed-off-by: Yongting Lin <linyongting@bytedance.com>
 ---
- tools/testing/selftests/mshare/.gitignore |  1 +
- tools/testing/selftests/mshare/Makefile   |  2 +-
- tools/testing/selftests/mshare/memory.c   | 71 +++++++++++++++++++++++
- 3 files changed, 73 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/mshare/memory.c
+ tools/testing/selftests/mshare/memory.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/tools/testing/selftests/mshare/.gitignore b/tools/testing/selftests/mshare/.gitignore
-index 406f31bd432c..116774fa2b82 100644
---- a/tools/testing/selftests/mshare/.gitignore
-+++ b/tools/testing/selftests/mshare/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
- basic
-+memory
-diff --git a/tools/testing/selftests/mshare/Makefile b/tools/testing/selftests/mshare/Makefile
-index 651658d091c5..b0418b8c30f2 100644
---- a/tools/testing/selftests/mshare/Makefile
-+++ b/tools/testing/selftests/mshare/Makefile
-@@ -2,6 +2,6 @@
- 
- CFLAGS = $(KHDR_INCLUDES) -Wall -g -O2
- 
--TEST_GEN_PROGS := basic
-+TEST_GEN_PROGS := basic memory
- 
- include ../lib.mk
 diff --git a/tools/testing/selftests/mshare/memory.c b/tools/testing/selftests/mshare/memory.c
-new file mode 100644
-index 000000000000..4bb0d22b9c03
---- /dev/null
+index 4bb0d22b9c03..5132210b1465 100644
+--- a/tools/testing/selftests/mshare/memory.c
 +++ b/tools/testing/selftests/mshare/memory.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/mman.h>
-+
-+#include "../kselftest_harness.h"
-+#include "util.c"
-+
-+FIXTURE(memory)
+@@ -68,4 +68,22 @@ TEST_F(memory, swap)
+ 	ASSERT_GT(swap_size, MB(2) * 9 / 10);
+ }
+ 
++TEST_F(memory, thp)
 +{
-+	char filename[128];
-+	int fd;
-+
-+	char cgroup[128];
-+
-+	void *addr;
-+	size_t align_size;
-+};
-+
-+FIXTURE_SETUP(memory)
-+{
-+	ASSERT_NE(create_mshare_test_cgroup(self->cgroup, sizeof(self->cgroup)), -1);
-+
-+	attach_to_cgroup(self->cgroup);
-+
-+	self->align_size = mshare_get_info();
-+	self->fd = create_mshare_file(self->filename, sizeof(self->filename));
-+	ASSERT_NE(self->fd, -1);
-+	ASSERT_NE(ftruncate(self->fd, self->align_size), -1);
-+
-+	ASSERT_NE(mshare_ioctl_mapping(self->fd, MB(2),
-+				MAP_ANONYMOUS | MAP_SHARED | MAP_FIXED),
-+			-1);
-+	self->addr = mmap(NULL, self->align_size, PROT_READ | PROT_WRITE,
-+						MAP_SHARED, self->fd, 0);
-+	ASSERT_NE(self->addr, MAP_FAILED);
-+}
-+
-+FIXTURE_TEARDOWN(memory)
-+{
-+	ASSERT_NE(munmap(self->addr, self->align_size), -1);
-+	close(self->fd);
-+
-+	ASSERT_NE(unlink(self->filename), -1);
-+	dettach_from_cgroup(self->cgroup);
-+
-+	ASSERT_NE(remove_cgroup(self->cgroup), -1);
-+}
-+
-+TEST_F(memory, swap)
-+{
-+	size_t swap_size;
-+
 +	/* fill physical memory */
 +	memset(self->addr, 0x01, MB(2));
 +
-+	/* force to reclaim the memory of mshare */
-+	ASSERT_NE(madvise(self->addr, MB(2), MADV_PAGEOUT), -1);
++	size_t huge = read_huge_from_cgroup(self->cgroup);
 +
-+	swap_size = read_swap_from_cgroup(self->cgroup);
-+	ASSERT_NE(swap_size, -1);
++	/*
++	 * mshare only allocate in the best effort way, and
++	 * don't support madvise(MADV_HUGEPAGE) to change pages
++	 * into THP or khuged to replace pages with THP.
++	 */
++	ksft_print_msg("Tip: Please enable transparent hugepages for shmem before running this test.\n"
++			"For example: echo always > /sys/kernel/mm/transparent_hugepage/shmem_enabled\n");
 +
-+	/* convert to bytes */
-+	swap_size *= 4096;
-+
-+	ksft_print_msg("Tip: Please configure swap space before running this test.\n");
-+
-+	/* allow an error of 10% */
-+	ASSERT_GT(swap_size, MB(2) * 9 / 10);
++	ASSERT_GE(huge, MB(2));
 +}
 +
-+TEST_HARNESS_MAIN
+ TEST_HARNESS_MAIN
 -- 
 2.20.1
 
