@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-825168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814B7B8B280
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:58:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D6BB8B24A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D0F3B0F17
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:57:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5743A1BC4867
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C353233E6;
-	Fri, 19 Sep 2025 19:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF6732276A;
+	Fri, 19 Sep 2025 19:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OgT552HE"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnLCW/Zj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212F4313D4C
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 19:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5190F2BEFE5;
+	Fri, 19 Sep 2025 19:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758311777; cv=none; b=sLxOfLzbryo980tX6o1QMvB44xOvuoxZECfD18zB504jL6iwvq10eT2YWuPocKvBmcHknFt++i9l33qVpq+aLwyOopg4FPlw5faV4f/L7OWjzuk2MJM+jbb4keW3cJnoLUVeDzbVd1h3tn4YssFLqd+K7o1YSIa1n1YlacISLLo=
+	t=1758311692; cv=none; b=jG3GqHaodfND1Zo6alUFFXwpTt/0iaxN33Oj3Fy5gwtpqpTq36s+PQXUfD5nr0ehvthJ1rbAVz4b8smRby0Ctpnzrnxk+G0JTC1k5vmJH0IpVNS3aE18Zybaeesis98HdvponCSis54c7JMnuRTsvQ0Z5J/eQkqhwsOaTBT0iww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758311777; c=relaxed/simple;
-	bh=dDkSkpwtoZrTlkFZMAI0mqnwSlbEy/nA428w4GDe7w8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fzDk8ZKtY3CEYq3G2kOyz3FFCl4ssqVcW+PeXCaG8y85x58z/M4Jy5dlYKuGmZl/wxFx1sb28luffYAQyHHJ8BYFpvBNajdx7yVgOwDfytU39cISeuRUtI+GhMJJGdWheAt0OGb0cW/+HrzBrSWCvXORymiaLXXZv7cYmWf0j2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OgT552HE; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4694ac46ae0so9086535e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758311773; x=1758916573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XPY2Tn2Mb7JuAb06hN2e4t/ofroDDllAnh7eFZOr6yY=;
-        b=OgT552HEXsL0NOS/zbihPc7f/G0kOS2h89v6j1oZCCKUmS6bRLIfyWKBvA9kNtrjWu
-         tEIDp2rZ+YzJPC2Z1d3q0rE0jtd9QaQzaFLI1SQjfZVxfl9PBDWblYk2/u0zFY4DXg+Z
-         gWcFD+ya8AanmYTJbYUmuoVhGVFi59dLIPNoFX3Y3es2QoblVOk0sLVsye8T/uOLcdO1
-         mbLpMRqo/hxxWASFPeuMZSOGKIW5Xw/7z2VnA+oolo1Pcg+XKqzUSIB06H9Uw4Q1fvSo
-         Kr6gg67w/a55kVclotSzRGBb1EShrO2fd+Rpya+GLDKZNjMlsQP+TYHm/NjjG0Qlw3JN
-         08VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758311773; x=1758916573;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XPY2Tn2Mb7JuAb06hN2e4t/ofroDDllAnh7eFZOr6yY=;
-        b=We8xi3vuh2rhpUXMrBiDvBazAARZLw4tGreCke1rx2bwLbr5NTSCnB7AXk40TeTVXB
-         cR9uebzh4qQZqwM1WeBPc0QVSYj64zVM91WoRkQijClmDm2nnb4ZDPyIcuTLKUfECPVt
-         WqytBoDAkaDeCVznhhR5ss0CUU+4nOGo/9Kf9MPWWImc3umpvK/tdbiIYoZBuCv4hhpF
-         8A8+F7uEFMq3VWiWS+eUSc3xN6HTu7jSZa6yDx47cvY525DAMu0/ROUDLsxllu12CuSG
-         /tRyMmiW7FMmU2MVRGZogd7QLRdL5fXKneN5yWWjMrYTf/IKA9YMhteJ118g34dgUTOo
-         ZjTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyrOtroGgmQKTE+ulQAxNRCTb9/jPJ9Xymyb8HYIrerNzvZdR9dhjvL7esILUHTJy49O75Iy5N14vyAhw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlnIl3Cfmss3B5pXLbDvvM+LPI9i01UiBj/vbv+W7cj90HWYly
-	Z59+2pLHNDadrz98ZMEXdQrJoa6DF0SCP4pIYDnmKTkIdaEmjrpFIjkWAdGEGg==
-X-Gm-Gg: ASbGncu48iKz7LkvY8JLiJZyR48gzfL0YpsgaSTxUWpGZ7BXENFsiY0cl3JoVNTTXqV
-	EfrNhmU5fon9qdy/wE9aZ5xGKHVCUke7U10WKXlm4Vl7g1jKTjaC9shT2Innagt1aYHe5M9h9rL
-	WMxkAwa7rr3qSuDIxQtW4QpgCn8P2kVP00gHD0LXTCz0U/XCx/5F7cqDNP9Ina16LgwolzUdQbO
-	Zlr3Q3gqbzha4ry0OhH2M1BAYvU0o4sDm+7Z4ZNuWUPvNO5VpmM4k1ngb52aL8NYk0c3k4vyV7H
-	+UDVgewGwk9i4QlzXVo1SwwMdvkNI3t6fV0KRVa/i3eedNzDeEakvrTuZqmq/NbzoTPAKtyZvz+
-	uKQyDKQXTeGpULGTQSrI7+vkH5LcrOvZkaihAsnl9wXss
-X-Google-Smtp-Source: AGHT+IEgTiTJuz94ag+tJSft9FOBLt7CZgjwjCyLiyY35QFZoa70BQ/zWgPe1wUsBzivSfwUjFP2YA==
-X-Received: by 2002:a05:600c:4baa:b0:45f:2962:5ad9 with SMTP id 5b1f17b1804b1-4684c13ebf3mr26459675e9.6.1758311773308;
-        Fri, 19 Sep 2025 12:56:13 -0700 (PDT)
-Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f162726bsm97025485e9.7.2025.09.19.12.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 12:56:12 -0700 (PDT)
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-Subject: [PATCH 6/6] staging: axis-fifo: drop debug print of remapped base address
-Date: Fri, 19 Sep 2025 22:54:00 +0300
-Message-ID: <20250919195400.3180039-6-ovidiu.panait.oss@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250919195400.3180039-1-ovidiu.panait.oss@gmail.com>
-References: <20250919195400.3180039-1-ovidiu.panait.oss@gmail.com>
+	s=arc-20240116; t=1758311692; c=relaxed/simple;
+	bh=/u9N2N5fkn6zovj4uW2ex3jJMI8hcVQzf0p9IAFiSNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CiHn/bwa4Ybcs1E6brYRHpBz0WU13meemU9PwJx8Ub5+E1DvdawDAGwfqdxCHpcIsGsnd+mbQ6k7pjexRUHbcEH7i3PREOCLkfhLH2pl9F6TLb+gKbnMMvYH//HpWkFiT+IqnBYGkafTK1/AXrWgyPk3edhVKbkYAKPSTQXMEp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnLCW/Zj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ABA1C4CEF0;
+	Fri, 19 Sep 2025 19:54:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758311690;
+	bh=/u9N2N5fkn6zovj4uW2ex3jJMI8hcVQzf0p9IAFiSNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bnLCW/ZjKV/mJzg120Hg9/9vzwnNvU1uYA4tCeIIcekwdjGBltOO5J6XEp0LbNyu/
+	 HTkp5eLEwPT9f98mAovq4LMPooRc6IAL1f6nMoX7BDtSERQZ0ujVQZu8m7XqCkpNH6
+	 jyPr1dX3X7YRSaqomFexfSZ9LClBohexvrkOkgFBkYmr9sOhV2LFnwQ5Ue0Gtw7bax
+	 SA6X1BFKEVZcicgvJGjVhVkZHcSaSWq6GSfoRfK/faXTomHCj2Aj7mQw2XKP/AAgO6
+	 1oWCZ+RCZmvw8nh2mFFjlhy2+lzancIjHuBYrjC6qDgxy63x9yJbD602sSuqIJJpKj
+	 jOFv12/Otf5RA==
+Date: Fri, 19 Sep 2025 16:54:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf evsel: Ensure the fallback message is always
+ written to
+Message-ID: <aM21BtgwBRBWrEEs@x1>
+References: <20250918172416.1247940-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918172416.1247940-1-irogers@google.com>
 
-The probe function prints the remapped base address with dev_dbg().
-This message is not useful and printing kernel addresses is discouraged,
-so remove the debug print.
+On Thu, Sep 18, 2025 at 10:24:15AM -0700, Ian Rogers wrote:
+> The fallback message is unconditionally printed in places like
+> record__open. If no fallback is attempted this can lead to printing
+> uninitialized data, crashes, etc.
+> 
+> Fixes: c0a54341c0e8 ("perf evsel: Introduce event fallback method")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
----
- drivers/staging/axis-fifo/axis-fifo.c | 2 --
- 1 file changed, 2 deletions(-)
+Thanks, applied to perf-tools-next,
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index 881abd61cefd..d15e2bcbcacf 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -594,8 +594,6 @@ static int axis_fifo_probe(struct platform_device *pdev)
- 	if (IS_ERR(fifo->base_addr))
- 		return PTR_ERR(fifo->base_addr);
- 
--	dev_dbg(fifo->dt_device, "remapped memory to 0x%p\n", fifo->base_addr);
--
- 	/* ----------------------------
- 	 *          init IP
- 	 * ----------------------------
--- 
-2.50.0
+- Arnaldo
 
+> ---
+>  tools/perf/util/evsel.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 477cddf08c5c..814ef6f6b32a 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -3565,7 +3565,7 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+>  
+>  		/* If event has exclude user then don't exclude kernel. */
+>  		if (evsel->core.attr.exclude_user)
+> -			return false;
+> +			goto no_fallback;
+>  
+>  		/* Is there already the separator in the name. */
+>  		if (strchr(name, '/') ||
+> @@ -3573,7 +3573,7 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+>  			sep = "";
+>  
+>  		if (asprintf(&new_name, "%s%su", name, sep) < 0)
+> -			return false;
+> +			goto no_fallback;
+>  
+>  		free(evsel->name);
+>  		evsel->name = new_name;
+> @@ -3596,17 +3596,19 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
+>  			sep = "";
+>  
+>  		if (asprintf(&new_name, "%s%sH", name, sep) < 0)
+> -			return false;
+> +			goto no_fallback;
+>  
+>  		free(evsel->name);
+>  		evsel->name = new_name;
+>  		/* Apple M1 requires exclude_guest */
+> -		scnprintf(msg, msgsize, "trying to fall back to excluding guest samples");
+> +		scnprintf(msg, msgsize, "Trying to fall back to excluding guest samples");
+>  		evsel->core.attr.exclude_guest = 1;
+>  
+>  		return true;
+>  	}
+> -
+> +no_fallback:
+> +	scnprintf(msg, msgsize, "No fallback found for '%s' for error %d",
+> +		  evsel__name(evsel), err);
+>  	return false;
+>  }
+>  
+> -- 
+> 2.51.0.470.ga7dc726c21-goog
 
