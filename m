@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-824715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D674B89F77
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F7CB89F80
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DB741894F25
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:30:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5C01CC3937
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5D23164AE;
-	Fri, 19 Sep 2025 14:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199E41DEFE8;
+	Fri, 19 Sep 2025 14:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="hpLN04iC"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ccmU0ebx"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2382E31328D;
-	Fri, 19 Sep 2025 14:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7839B23A9AC;
+	Fri, 19 Sep 2025 14:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292128; cv=none; b=sVcjTd+v55A94d44vWIitDOVfUsXM/6WWzIVKkGHep+atN9soqHq8Zc2XsRZbpX02B9tjK/MKCnwNBPjDcFLMFGyS/Nb1aPKUklQRNKeiwFegbCB/1UBAVIY1V8JLBuuVKcshAJW+eE6LTPOI1uY/juuz0C1g5YkDC7hS7AD9eU=
+	t=1758292176; cv=none; b=JOwSh2cCcwsnN8u4VViJR6MWUVpDqLoSs1/9j+5w/lmdgwMvqfNzQWwt5XyJYGvdebRxB7Unk8fLfqX5/iSRjF4U2qH4GfV1OyNmf9Qn9LIgSdOzDvDbdt8KU8p/AAQy5EdJ6/d+QNTIbk9+mB2hj1hiXy1F3/Gg2tkImmQNzR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292128; c=relaxed/simple;
-	bh=fXriGpas1T/jPUZ6vBPoj62Ye2txanRp2HpIWpZxBeU=;
+	s=arc-20240116; t=1758292176; c=relaxed/simple;
+	bh=rkiaPWg7Eq83couSMaMiPo8zFCv01nHTaMo5FT+mw8o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qXVA/zc8+d2TlMAAaGfmgPcaxzycCAA7y06rwFphqFvFWtD4Uy+j/k2gpUnbl/gNeAVDS/vDF2wKLIn/TXFwgLQzvEanmrXeUAg2yYr/2RIIwStdhjQdKhQsF7Byl9hXb7xnts+vk6x0scXH2Oi4etyHxLNwdxsDv37Zyhcg7AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=hpLN04iC; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=Y9Hf5+sOUopNooaN0PQVMwEXVXTE22HQG1KEzrrNcx2Bm1PVRYbszoE1ow/fD4AgaVCIisv233spr3Bzrn+ONBww0v/r7bu3POrPiQIc3ZVJZ2f9hrQO+sothyDZ7U8iIfBVA9eHticznnXfh63Mt1d8c2cuKLKzzwZalq9pdQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ccmU0ebx; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id AC4BB25EE0;
-	Fri, 19 Sep 2025 16:28:44 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 0FA7C2054C;
+	Fri, 19 Sep 2025 16:29:33 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id TKAIbFlNk6pz; Fri, 19 Sep 2025 16:28:43 +0200 (CEST)
+ id 30aw1ciX8gjA; Fri, 19 Sep 2025 16:29:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1758292123; bh=fXriGpas1T/jPUZ6vBPoj62Ye2txanRp2HpIWpZxBeU=;
+	t=1758292171; bh=rkiaPWg7Eq83couSMaMiPo8zFCv01nHTaMo5FT+mw8o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=hpLN04iCgxBMMbR/GjM6ZZKPgnBHOBlldL7xMOB64U4WZr6H5Dka9G34gYKDizpv8
-	 RKM/W0sKMAqnxPAKniXBGGZZ+WE0/pxs4ZQOEz3N+hN/k2Eor7oFAG/xXo8OZWO5Ej
-	 AhIezE/NytzTGMPl4+PQkJJ1IySEoqsPvCAG1W7VcJKpqg5T7lCyZS8TlwKVTVveJd
-	 awN4ntCYBN1nLmsh3gDfMHp6jXTyo4OUVSfctWhGVagXTkurS6JMfenCI3QCeRQclV
-	 EcRoDIDBRFk+/p8S1CSo8FNptkHMVmL4HlAttcXa9Mz+tH2GZd75nNBPsbJpcUoYqu
-	 dKCEdY70WkCyw==
+	b=ccmU0ebxtB+npnOwEYQvNr2ryib7pPM+1K6Zm5VDN11rhGfxdcQRCgF16RN5sI/5b
+	 nxJLKsPr98SX/CRhWw5HSDQuWIz6KpJRaD2N6VBCfjUTn9+ozX47DS+UwCJhY9l7uw
+	 dqqk5BVJYxhbco6JtVWTyjAyBsC6cXjcHCjzGFuYIv0pGHdIdG+p2A2f7v3XnL969R
+	 kJflgCwgZLRA8GHKqjm0dagCnHvPNApBsy+tXgs3s2kD5tg7Up/TyFx1yJsf2JiRUn
+	 AQSxI6xb735QcGbSg3YdRDFGA0W/MGzh0IO0fKLH1Qe5nwTtw9XnmwYrzo2LvgVQ3X
+	 z0V1TmHtRzw8A==
 From: Yao Zi <ziyao@disroot.org>
 To: Yinbo Zhu <zhuyinbo@loongson.cn>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -62,9 +62,9 @@ Cc: linux-clk@vger.kernel.org,
 	Mingcong Bai <jeffbai@aosc.io>,
 	Kexy Biscuit <kexybiscuit@aosc.io>,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v4 5/8] clk: loongson2: Avoid hardcoding firmware name of the reference clock
-Date: Fri, 19 Sep 2025 14:26:46 +0000
-Message-ID: <20250919142649.58859-6-ziyao@disroot.org>
+Subject: [PATCH v4 6/8] clk: loongson2: Add clock definitions for Loongson-2K0300 SoC
+Date: Fri, 19 Sep 2025 14:26:47 +0000
+Message-ID: <20250919142649.58859-7-ziyao@disroot.org>
 In-Reply-To: <20250919142649.58859-1-ziyao@disroot.org>
 References: <20250919142649.58859-1-ziyao@disroot.org>
 Precedence: bulk
@@ -75,118 +75,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Loongson-2K0300 requires a reference clock with a frequency different
-from previous SoCs (120MHz v.s. 100MHz), thus hardcoding the firmware
-name of the reference clock as ref_100m isn't a good idea.
+The clock controller of Loongson-2K0300 consists of three PLLs, requires
+an 120MHz external reference clock to function, and generates clocks in
+various frequencies for SoC peripherals.
 
-This patch retrives the clock name of the reference clock dynamically
-during probe, avoiding the hardcoded pdata structure and preparing for
-support of future SoCs.
+Clock definitions for previous SoC generations could be reused for most
+clock hardwares. There're two gates marked as critical, clk_node_gate
+and clk_boot_gate, which supply the CPU cores and the system
+configuration bus. Disabling them leads to a SoC hang.
 
 Signed-off-by: Yao Zi <ziyao@disroot.org>
 ---
- drivers/clk/clk-loongson2.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+ drivers/clk/clk-loongson2.c | 46 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
 diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index 7a916c7d2718..52a9f1c2794a 100644
+index 52a9f1c2794a..9c4c6c99db3e 100644
 --- a/drivers/clk/clk-loongson2.c
 +++ b/drivers/clk/clk-loongson2.c
-@@ -13,10 +13,6 @@
- #include <linux/io-64-nonatomic-lo-hi.h>
- #include <dt-bindings/clock/loongson,ls2k-clk.h>
+@@ -137,6 +137,51 @@ struct loongson2_clk_board_info {
+ 		.fixed_rate	= _rate,			\
+ 	}
  
--static const struct clk_parent_data pdata[] = {
--	{ .fw_name = "ref_100m", },
--};
--
- enum loongson2_clk_type {
- 	CLK_TYPE_PLL,
- 	CLK_TYPE_SCALE,
-@@ -275,7 +271,8 @@ static const struct clk_ops loongson2_freqscale_recalc_ops = {
- 	.recalc_rate = loongson2_freqscale_recalc_rate,
- };
- 
--static struct clk_hw *loongson2_clk_register(struct loongson2_clk_provider *clp,
-+static struct clk_hw *loongson2_clk_register(const char *parent,
-+					     struct loongson2_clk_provider *clp,
- 					     const struct loongson2_clk_board_info *cld,
- 					     const struct clk_ops *ops)
- {
-@@ -292,11 +289,7 @@ static struct clk_hw *loongson2_clk_register(struct loongson2_clk_provider *clp,
- 	init.ops   = ops;
- 	init.flags = 0;
- 	init.num_parents = 1;
--
--	if (!cld->parent_name)
--		init.parent_data = pdata;
--	else
--		init.parent_names = &cld->parent_name;
-+	init.parent_names = &parent;
- 
- 	clk->reg	= clp->base + cld->reg_offset;
- 	clk->div_shift	= cld->div_shift;
-@@ -321,11 +314,17 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct loongson2_clk_provider *clp;
- 	const struct loongson2_clk_board_info *p, *data;
-+	const char *refclk_name, *parent_name;
- 
- 	data = device_get_match_data(dev);
- 	if (!data)
- 		return -EINVAL;
- 
-+	refclk_name = of_clk_get_parent_name(dev->of_node, 0);
-+	if (IS_ERR(refclk_name))
-+		return dev_err_probe(dev, PTR_ERR(refclk_name),
-+				     "failed to get refclk name\n");
++static const struct loongson2_clk_board_info ls2k0300_clks[] = {
++	/* Reference Clock */
++	CLK_PLL(LS2K0300_NODE_PLL, "pll_node",   0x00, 15, 9, 8, 7),
++	CLK_PLL(LS2K0300_DDR_PLL,  "pll_ddr",    0x08, 15, 9, 8, 7),
++	CLK_PLL(LS2K0300_PIX_PLL,  "pll_pix",    0x10, 15, 9, 8, 7),
++	CLK_FIXED(LS2K0300_CLK_STABLE, "clk_stable", NULL, 100000000),
++	CLK_FIXED(LS2K0300_CLK_THSENS, "clk_thsens", NULL, 10000000),
++	/* Node PLL */
++	CLK_DIV(LS2K0300_CLK_NODE_DIV, "clk_node_div", "pll_node", 0x00, 24, 7),
++	CLK_DIV(LS2K0300_CLK_GMAC_DIV, "clk_gmac_div", "pll_node", 0x04, 0, 7),
++	CLK_DIV(LS2K0300_CLK_I2S_DIV,  "clk_i2s_div",  "pll_node", 0x04, 8, 7),
++	CLK_GATE(LS2K0300_CLK_NODE_PLL_GATE,   "clk_node_pll_gate", "clk_node_div", 0x00, 0),
++	CLK_GATE(LS2K0300_CLK_GMAC_GATE,       "clk_gmac_gate",	    "clk_gmac_div", 0x00, 1),
++	CLK_GATE(LS2K0300_CLK_I2S_GATE,	       "clk_i2s_gate",	    "clk_i2s_div", 0x00, 2),
++	CLK_GATE_FLAGS(LS2K0300_CLK_NODE_GATE, "clk_node_gate",     "clk_node_scale", 0x24, 0,
++		       CLK_IS_CRITICAL),
++	CLK_SCALE_MODE(LS2K0300_CLK_NODE_SCALE, "clk_node_scale", "clk_node_pll_gate", 0x20, 0, 3,
++		       3),
++	/* DDR PLL */
++	CLK_DIV(LS2K0300_CLK_DDR_DIV, "clk_ddr_div", "pll_ddr", 0x08, 24, 7),
++	CLK_DIV(LS2K0300_CLK_NET_DIV, "clk_net_div", "pll_ddr", 0x0c, 0, 7),
++	CLK_DIV(LS2K0300_CLK_DEV_DIV, "clk_dev_div", "pll_ddr", 0x0c, 8, 7),
++	CLK_GATE(LS2K0300_CLK_NET_GATE,		"clk_net_gate", "clk_net_div", 0x08, 1),
++	CLK_GATE(LS2K0300_CLK_DEV_GATE,		"clk_dev_gate",	"clk_dev_div", 0x08, 2),
++	CLK_GATE_FLAGS(LS2K0300_CLK_DDR_GATE,	"clk_ddr_gate",	"clk_ddr_div", 0x08, 0,
++		       CLK_IS_CRITICAL),
++	/* PIX PLL */
++	CLK_DIV(LS2K0300_CLK_PIX_DIV,	 "clk_pix_div",	   "pll_pix", 0x10, 24, 7),
++	CLK_DIV(LS2K0300_CLK_GMACBP_DIV, "clk_gmacbp_div", "pll_pix", 0x14, 0, 7),
++	CLK_GATE(LS2K0300_CLK_PIX_PLL_GATE, "clk_pix_pll_gate",	"clk_pix_div", 0x10, 0),
++	CLK_GATE(LS2K0300_CLK_PIX_GATE,	    "clk_pix_gate",	"clk_pix_scale", 0x24, 6),
++	CLK_GATE(LS2K0300_CLK_GMACBP_GATE,  "clk_gmacbp_gate",	"clk_gmacbp_div", 0x10, 1),
++	CLK_SCALE_MODE(LS2K0300_CLK_PIX_SCALE, "clk_pix_scale", "clk_pix_pll_gate", 0x20, 4, 3, 7),
++	/* clk_dev_gate */
++	CLK_DIV(LS2K0300_CLK_SDIO_SCALE, "clk_sdio_scale", "clk_dev_gate", 0x20, 24, 4),
++	CLK_GATE(LS2K0300_CLK_USB_GATE,	 "clk_usb_gate",	"clk_usb_scale", 0x24, 2),
++	CLK_GATE(LS2K0300_CLK_SDIO_GATE, "clk_sdio_gate",	"clk_sdio_scale", 0x24, 4),
++	CLK_GATE(LS2K0300_CLK_APB_GATE,  "clk_apb_gate",	"clk_apb_scale", 0x24, 3),
++	CLK_GATE_FLAGS(LS2K0300_CLK_BOOT_GATE, "clk_boot_gate",	"clk_boot_scale", 0x24, 1,
++		       CLK_IS_CRITICAL),
++	CLK_SCALE_MODE(LS2K0300_CLK_USB_SCALE,  "clk_usb_scale",  "clk_dev_gate", 0x20, 12, 3, 15),
++	CLK_SCALE_MODE(LS2K0300_CLK_APB_SCALE,  "clk_apb_scale",  "clk_dev_gate", 0x20, 16, 3, 19),
++	CLK_SCALE_MODE(LS2K0300_CLK_BOOT_SCALE, "clk_boot_scale", "clk_dev_gate", 0x20, 8, 3, 11),
++};
 +
- 	for (p = data; p->name; p++)
- 		clks_num = max(clks_num, p->id + 1);
+ static const struct loongson2_clk_board_info ls2k0500_clks[] = {
+ 	CLK_PLL(LOONGSON2_NODE_PLL,   "pll_node", 0,    16, 8, 8, 6),
+ 	CLK_PLL(LOONGSON2_DDR_PLL,    "pll_ddr",  0x8,  16, 8, 8, 6),
+@@ -393,6 +438,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
+ }
  
-@@ -347,18 +346,20 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < clks_num; i++) {
- 		p = &data[i];
-+		parent_name = p->parent_name ? p->parent_name : refclk_name;
-+
- 		switch (p->type) {
- 		case CLK_TYPE_PLL:
--			hw = loongson2_clk_register(clp, p,
-+			hw = loongson2_clk_register(parent_name, clp, p,
- 						    &loongson2_pll_recalc_ops);
- 			break;
- 		case CLK_TYPE_SCALE:
--			hw = loongson2_clk_register(clp, p,
-+			hw = loongson2_clk_register(parent_name, clp, p,
- 						    &loongson2_freqscale_recalc_ops);
- 			break;
- 		case CLK_TYPE_DIVIDER:
- 			hw = devm_clk_hw_register_divider(dev, p->name,
--							  p->parent_name, 0,
-+							  parent_name, 0,
- 							  clp->base + p->reg_offset,
- 							  p->div_shift, p->div_width,
- 							  CLK_DIVIDER_ONE_BASED |
-@@ -366,15 +367,15 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 							  &clp->clk_lock);
- 			break;
- 		case CLK_TYPE_GATE:
--			hw = devm_clk_hw_register_gate(dev, p->name, p->parent_name,
-+			hw = devm_clk_hw_register_gate(dev, p->name, parent_name,
- 						       p->flags,
- 						       clp->base + p->reg_offset,
- 						       p->bit_idx, 0,
- 						       &clp->clk_lock);
- 			break;
- 		case CLK_TYPE_FIXED:
--			hw = devm_clk_hw_register_fixed_rate_parent_data(dev, p->name, pdata,
--									 0, p->fixed_rate);
-+			hw = devm_clk_hw_register_fixed_rate(dev, p->name, parent_name,
-+							     0, p->fixed_rate);
- 			break;
- 		default:
- 			return dev_err_probe(dev, -EINVAL, "Invalid clk type\n");
+ static const struct of_device_id loongson2_clk_match_table[] = {
++	{ .compatible = "loongson,ls2k0300-clk", .data = &ls2k0300_clks },
+ 	{ .compatible = "loongson,ls2k0500-clk", .data = &ls2k0500_clks },
+ 	{ .compatible = "loongson,ls2k-clk", .data = &ls2k1000_clks },
+ 	{ .compatible = "loongson,ls2k2000-clk", .data = &ls2k2000_clks },
 -- 
 2.50.1
 
