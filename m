@@ -1,178 +1,157 @@
-Return-Path: <linux-kernel+bounces-825173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 406B3B8B2B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:02:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721DBB8B290
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CFD2A8282B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9E301BC7D9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDEA2D3A68;
-	Fri, 19 Sep 2025 20:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BE42857DE;
+	Fri, 19 Sep 2025 20:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VaJ8arMt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J6kV3lHX"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BF72D3217
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0C407262A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758312063; cv=none; b=RZfXMm3IJ33OyT/sFtF7wxMGQQvtsKDVdCrH3DM8WSGcAgrbcvMRXXo5WJo79+wFfknTI7kDLHqwcjQBzvRdZ7C+6PJdln3lclo7ansyyLsD/Kd4Cj3aVHrb0lFZ0gPNwqK8o64BziQHsol/oreBc5FkuSlkmguPVO1SzT8W85Y=
+	t=1758312046; cv=none; b=X3B9Wg+VPMhXyh1lEt2qGwM6RQrd4VSRwBAmiwG3o6N+sA1Fyu0izBUmUH2pIcW7+U8cceB418R4M04LEwQYQBAGki7+ruP/aTi3DdrZmSivpo4u1pKJ5C6KQMcPojCERacNvP4rk4BqSsTKuGt0Zo3ysMRGXEfMH2RFOmFau8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758312063; c=relaxed/simple;
-	bh=/aCT6AMn+DEBAszM+FafwAQnaRRZOfmB16zLDUBpxGk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mLmAuoySpRAZk1sL+yuP0Vfn/CScVGyHWm0K/fXFolEj71YvLpisnd/ROgbpwIWdmRzyl+5HPraiOF2u7mbQ4b0OiABflV416I2H/HYDoT9ep5ssjQi0/2R3sJ2d/wymQXAnMDJ7a+iaqk9fKeRlHE33NjSq/z2lvr4MV7pWnlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VaJ8arMt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JDxXb5017023
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:01:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	K94gZNJCyxLLjXcq/8C3d4M0HAtuU0U9u9rzRHmSpBg=; b=VaJ8arMt0sXK/vvc
-	WuySYrcuoPxGJJCb1R1P0X1NmCc3yuBq49+DLeO0euViY2TQBRYRQw7k850Xy2i3
-	rOFs13rCv/2ZagvX0IgUtUgieuotIPAibSqEF+F9KFTNt4BPjLwK59da5mDtH5iU
-	8sMcAG0A6WrXS+wOJm+3WpRJ3Ehwot2dT7euNYxUXlBsTjkSzxuK+BV8MfbvXTjb
-	uOr6QZ3+NPOVP5KiKw93SYHUy7BQPAWxW9SDFyozD9+SLWJt4Jz41XXPbSpqXWT6
-	RLz3wv56yjSD9k8QnuY0mjlt9beP99935OBs0YlYHGlzNAfjMQCUux0JjX9xZGsR
-	x6j1FQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4982degapa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:00:59 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-24ced7cfa07so24696625ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:00:59 -0700 (PDT)
+	s=arc-20240116; t=1758312046; c=relaxed/simple;
+	bh=mUyhu5Ib1FnKppXOvrrqiSnIjb16ncn2O1iIgAZRVsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rSrqJg/Lr2jJIYO/4rd5l1PA8MNFh7PY+MEPjv4I+AyCvP2nFSBY+32fUbGMbl4SfrI2ccUGEu3PRgzPaW9LW/5e42Ymt7WyalQpY5CdR4SOFH7FIbl1706jS1H3HvpVY9/rg3EMQVPdAu+A//4Kk9i8gb6Gx/YqrVrsLLUfByE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J6kV3lHX; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b61161c35cso39571741cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:00:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758312044; x=1758916844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xp/m6uTz9B3XRHACC+VVqzRN8m54e23vlXvsETQm1ho=;
+        b=J6kV3lHXqPAS8KQw0cJ/CCMdgkPrwFpprw2cT0uhgVsdorLC/6VG7//InWwSDPDu18
+         hjT4bqKJtgjT+e7u+qTkdPm8xDAoUwJl7PaBteyrSleRiL4FjR+OsDxJnlALKslNokIM
+         ZD97FUWEwy8khomI1th2DK5JpGQaPtZoML7Lfv3V0ch8iP2iSjYgfsp5cjr+PHufDlq5
+         mSAac7Ql3V2TseUFHm0W9jQO6JLAG6vm8MVfcnFddj6k/rQUR+MzE6I9OKinNMWc9YFp
+         uBYDH1XAuLFkDMzhnr8JA2uihuOE6I0Y4MIySEetQWr0fzzEWqKExfiSquqrZYXInV7n
+         nj9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758312058; x=1758916858;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1758312044; x=1758916844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=K94gZNJCyxLLjXcq/8C3d4M0HAtuU0U9u9rzRHmSpBg=;
-        b=MOUnUn27c4oNB5y7PT8ESv6mmV7esnE7LlfBpdWrm3V5j+vyf0fGr/UH0lkD0+sINj
-         vETXk8L1RYd5AbJeFQ7E5hb9xP+9SVk/yl2//5SMoqmJBnOf+jD9NQe8j9mdv9p9lfFp
-         7De702EHaHi/TILcEbBBGHhQzKf+VEpT+c2RLqwlvhHpjO65L1CQ0lGYfXFwn1nkZltZ
-         mMjBnpaEvnPn/rHzc5UA9o0x3AHKSAwfiVmllx2fUlgdylV8HeNuQlGQnhuzrVJPjopU
-         5BgQ5GF1pMhirLEXcYdkUxxX02UgstMkdAShnNe9nzxLxaDNAk40Oc6wKV3r99sP+rkW
-         aZPQ==
-X-Gm-Message-State: AOJu0YwVbWQ+XCyFi0Sgj6XwB0iB4jAiVrZxW+UDZoOSHj0WwlAFhyop
-	D+YP27bnQl7FSXiUtStJKkdzTD+x/b7MINXfj5Ka2eXB7mpXefjSTMTNEDw4Q2jh3u5rm/i/uke
-	lJgXZ8MTaWZJGfGUhB2yeClpxv/a4RYxT4aIleEJUUQeN4CrpiwgaKBADClQdiiYhJmsJMtqFLd
-	k=
-X-Gm-Gg: ASbGnct/29CTkFUHsy8zXlDTo7A1+yBBgAJClU5s+upkROqPzz0a+W6MBRzRcZ5XByC
-	7hB83/7DZmp4iqhGhMGecDT0v6Z2bCGzCUGNsju3lkS7D6b/iNryfWixnxuad19qlYX5Z1hs9Hh
-	I2OIVSwCQhZ4/FkQgWOlBqgow4JivczDx3G/3Y6l/AnweM91pUJOFeEWviI81i2TQvJeUKNIL2p
-	zxeHOuNR58LMa7mYtdNadnInJk0hUx6Ftb3BI4YGtCQonzxlAXqrBG9zCfTLsGJi7luGl4/2iM1
-	qDRSuSrKnBfVRV+iYvmXh7zNP2Yav4mmwU36L7FkXU23BuBS0BhZSYeqJD+PcgNHAQgpE2qYRIy
-	p3UQIN5ezfz/fgD4UUOzR9ZWwPQ==
-X-Received: by 2002:a17:903:2ace:b0:26c:bcb5:1573 with SMTP id d9443c01a7336-26cbcb51803mr27453845ad.53.1758312057967;
-        Fri, 19 Sep 2025 13:00:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFqRMuKYms0JN+AnMSRPMr6bwLIE6pahTEbvacteRwGgkGEd+6lWHLIQ8iRIIeo2zWClmYa9Q==
-X-Received: by 2002:a17:903:2ace:b0:26c:bcb5:1573 with SMTP id d9443c01a7336-26cbcb51803mr27453585ad.53.1758312057420;
-        Fri, 19 Sep 2025 13:00:57 -0700 (PDT)
-Received: from hu-kamalw-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698030ee20sm63053905ad.109.2025.09.19.13.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 13:00:57 -0700 (PDT)
-From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Date: Sat, 20 Sep 2025 01:30:11 +0530
-Subject: [PATCH 3/3] pinctrl: qcom: spmi-gpio: add support for {LV_VIN2,
- MV_VIN3}_CLK subtypes
+        bh=xp/m6uTz9B3XRHACC+VVqzRN8m54e23vlXvsETQm1ho=;
+        b=VuFMjm2p9xuQ61UuyE8BJm7pktl3o3F94BHVA/uaz7qxRNKFCVTYOr7zxyxKAHWx4X
+         pBYfmqniW+331ajvnLYRovTrzI+FqzU6jaDHHDzrg+craKmmwc97Gvq6gtMQyTBnxzFO
+         ZUgaMk9zXMoOjggAIrxhFtoGZi9i26CmILshzwOE88+RMv6cNtdRlZoLXBS8jcq8qcN8
+         FDgDTOdo4BVuztjPKEQdjkwVAPo6Xbnp++hYqO8dwag7L4GJx2CgI0xA1jBE2efJe+3X
+         DRx2aaDQSr4QIYKaNm9LlKyeBxFD55IhGNIcEeMOk7dV3itzkWm33veu3NvujmiTtFv7
+         IP9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXZa7PhVjk9kmvVSSFdI9Vn2NKlLgfwbm+73FhimPQkkhS2n5DE/s7w2tX86u2X04Cwx6jBl6Fx0Eb7gtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjCqO51QIxZOcu2U5VIPhUwj9mxAhz/HWIgkumeFvsUzgAJIVr
+	IiAI6U9Qk+pQ9OXdotj0Aj95T2bGMA/uzFiHbWCsRGatxpGJNHLnJHf3U2V8JCy9ppAfnH42Uhl
+	y6JYN2IDnkNFnq1G4wuo57Ix2tsipCeqqjwKdgaJyJ396f410QV20/q9+b9w=
+X-Gm-Gg: ASbGncuGC9dgHgHtUx8M5CzTKGfLQePLUwU4LA05W/UMAVLG5Bq4e91QXTCj/+/5DQQ
+	7fOV2IzL55h5x4i+RuFG/xhmnAQZbFrlZZE9HGRpMj+gMb1MkyNp9goSMA5WHxMj3sQLb5GH2t4
+	ybnfdI2CIosE3irkDnnryTFj2y/BN0DcmZpoC1bJEIlrLQrniAGEP2CH9aC6M88OzW34/A2Mvdc
+	2ip4w==
+X-Google-Smtp-Source: AGHT+IF3ZI2PakK5vfRLTA9vbrVBSGGqN8qKvTGqG6nCslabpr86PGk/bBecwCjRguQygRFK4vQJnSEe79LLY7h/VLc=
+X-Received: by 2002:a05:622a:54a:b0:4b7:a7b6:eafc with SMTP id
+ d75a77b69052e-4c06d67e991mr65850331cf.13.1758312043211; Fri, 19 Sep 2025
+ 13:00:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250920-glymur-spmi-v8-gpio-driver-v1-3-23df93b7818a@oss.qualcomm.com>
-References: <20250920-glymur-spmi-v8-gpio-driver-v1-0-23df93b7818a@oss.qualcomm.com>
-In-Reply-To: <20250920-glymur-spmi-v8-gpio-driver-v1-0-23df93b7818a@oss.qualcomm.com>
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758312044; l=1502;
- i=kamal.wadhwa@oss.qualcomm.com; s=20241018; h=from:subject:message-id;
- bh=CiPyfA3fDFL/yWTIk0JCWKj4mCCnWYx7OMCyiFzL4yM=;
- b=vo+kuP/Xa2OvNsoMoxwqxQFsPysvdPfhVd51JJgJuNtTZukkJyMaY/f1cuqegwm6AyIdjsir8
- UXFGdIxN1wQB/CjSgADfVbjao/uan0KuM/qJ2gFdrRmCMofjXkol4xT
-X-Developer-Key: i=kamal.wadhwa@oss.qualcomm.com; a=ed25519;
- pk=XbPE6DM5/mJi2tsiYwMCJCZ4O5XPMqColJRlGVcM7Hs=
-X-Authority-Analysis: v=2.4 cv=YfO95xRf c=1 sm=1 tr=0 ts=68cdb67b cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=_LkKalIgBaL7gH2Y5XQA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-GUID: pL-4DJ8YhOTh4W958-FSrmXeCKyPQMEs
-X-Proofpoint-ORIG-GUID: pL-4DJ8YhOTh4W958-FSrmXeCKyPQMEs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDE4MiBTYWx0ZWRfX0vKOvXK9PsC2
- PzVYhEemTtggTTZTktSt/WuXjYvH7JWOJMRkdqhAIXsZcMpzuAtdLcT5XPrWh98VViYxb0Ppuyv
- ViW5Y9Qkn1l4nlvD1BqUA3+JzDp5/dGrnXRhU67LDBp+Nz47slABmFo04E6jI9OUoq4bGMhiiTD
- 648xZgaDvMre4Q0oOE1SXlb8qpA4mZYcDwmS7utUxE+qv/ykwS1OoDqBZY+oFdIJWnHmHnwzGbW
- E9s/vSLWQbUZGB4+dI3SVskH9QCaU0zCIrGVEtHk8CBGPKUgwn/AGXdv0mHV3dedx78VQf27yU/
- jujSrXk0yl2u35ufwX10hXSx0E+SULEKbtQFX6fpuRXUrl7wHsAidfik+rHSqPy+NVcycr7D0Tz
- Vy6l0DnG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- spamscore=0 phishscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509170182
+References: <20250919173016.3454395-1-wokezhong@tencent.com>
+In-Reply-To: <20250919173016.3454395-1-wokezhong@tencent.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 19 Sep 2025 13:00:31 -0700
+X-Gm-Features: AS18NWCOYkxk_9vEU9rqYC-HLCcGEi5xhsjCte00EyRLLFSQcndBSvS9Zql3p08
+Message-ID: <CANn89i+0bmXUz=T+cGPexiMpS-epfhbz+Ds84A+Lewrj880TBg@mail.gmail.com>
+Subject: Re: [RFC net v1] net/tcp: fix permanent FIN-WAIT-1 state with
+ continuous zero window packets
+To: HaiYang Zhong <wokezhong@gmail.com>
+Cc: ncardwell@google.com, kuniyu@google.com, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, wokezhong@tencent.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>
+On Fri, Sep 19, 2025 at 10:30=E2=80=AFAM HaiYang Zhong <wokezhong@gmail.com=
+> wrote:
+>
+> When a TCP connection is in FIN-WAIT-1 state with the FIN packet blocked =
+in
+> the send buffer, and the peer continuously sends zero-window advertisemen=
+ts,
+> the current implementation reset the zero-window probe timer while mainta=
+ining
+> the current `icsk->icsk_backoff`, causing the connection to remain perman=
+ently
+> in FIN-WAIT-1 state.
+>
+> Reproduce conditions:
+> 1. Peer's receive window is full and actively sending continuous zero win=
+dow
+>    advertisements.
+> 2. Local FIN packet is blocked in send buffer due to peer's zero-window.
+> 3. Local socket has been closed (entered orphan state).
+>
+> The root cause lies in the tcp_ack_probe() function: when receiving a zer=
+o-window ACK,
+> - It reset the probe timer while keeping the current `icsk->icsk_backoff`=
+.
+> - This would result in the condition `icsk->icsk_backoff >=3D max_probes`=
+ false.
+> - Orphaned socket cannot be set to close.
+>
+> This patch modifies the tcp_ack_probe() logic: when the socket is dead,
+> upon receiving a zero-window packet, instead of resetting the probe timer=
+,
+> we maintain the current timer, ensuring the probe interval grows accordin=
+g
+> to 'icsk->icsk_backoff', thus causing the zero-window probe timer to even=
+tually
+> timeout and close the socket.
+>
+> Signed-off-by: HaiYang Zhong <wokezhong@tencent.com>
+> ---
+>  net/ipv4/tcp_input.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index 71b76e98371a..22fc82cb6b73 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -3440,6 +3440,8 @@ static void tcp_ack_probe(struct sock *sk)
+>         } else {
+>                 unsigned long when =3D tcp_probe0_when(sk, tcp_rto_max(sk=
+));
+>
+> +               if (sock_flag(sk, SOCK_DEAD) && icsk->icsk_backoff !=3D 0=
+)
+> +                       return;
+>                 when =3D tcp_clamp_probe0_to_user_timeout(sk, when);
+>                 tcp_reset_xmit_timer(sk, ICSK_TIME_PROBE0, when, true);
+>         }
+> --
+> 2.43.7
 
-Add support for SPMI PMIC GPIO subtypes GPIO_LV_VIN2_CLK and
-GPIO_MV_VIN3_CLK.
+Hi there. Seems reasonable, but could you provide a packetdrill test ?
 
-Signed-off-by: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>
-Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
----
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Also, what if the FIN was already sent, but the peer retracted its RWIN ?
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index c4f7d2d7a017684cd9c0d0850cb8d998668b543e..83f940fe30b26ae06373860616c54955c3b2253e 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -42,6 +42,8 @@
- #define PMIC_GPIO_SUBTYPE_GPIO_MV		0x11
- #define PMIC_GPIO_SUBTYPE_GPIO_LV_VIN2		0x12
- #define PMIC_GPIO_SUBTYPE_GPIO_MV_VIN3		0x13
-+#define PMIC_GPIO_SUBTYPE_GPIO_LV_VIN2_CLK	0x14
-+#define PMIC_GPIO_SUBTYPE_GPIO_MV_VIN3_CLK	0x15
- 
- #define PMIC_MPP_REG_RT_STS			0x10
- #define PMIC_MPP_REG_RT_STS_VAL_MASK		0x1
-@@ -852,11 +854,13 @@ static int pmic_gpio_populate(struct pmic_gpio_state *state,
- 		pad->lv_mv_type = true;
- 		break;
- 	case PMIC_GPIO_SUBTYPE_GPIO_LV_VIN2:
-+	case PMIC_GPIO_SUBTYPE_GPIO_LV_VIN2_CLK:
- 		pad->num_sources = 2;
- 		pad->have_buffer = true;
- 		pad->lv_mv_type = true;
- 		break;
- 	case PMIC_GPIO_SUBTYPE_GPIO_MV_VIN3:
-+	case PMIC_GPIO_SUBTYPE_GPIO_MV_VIN3_CLK:
- 		pad->num_sources = 3;
- 		pad->have_buffer = true;
- 		pad->lv_mv_type = true;
-
--- 
-2.25.1
-
+tcp_ack_probe() would return early (if (!head) return;)
 
