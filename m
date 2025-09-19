@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-824848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D78FB8A4AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08DCB8A4A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B54BE7BFE5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52A071BC4FEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08D231A566;
-	Fri, 19 Sep 2025 15:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341593176FA;
+	Fri, 19 Sep 2025 15:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="hDp+3sSm"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eN9YkC58"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA5331A546
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3548E31A04F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758295821; cv=none; b=t8h/pGpDntDVY2Y9q5GINABpy0cB1DQqUEeX2/qYbnD0vbUVHVsfVNH+zYZHbBArfT7NJ3y6w2pcbUt+X4hDnw/0AYaFMUtfXTp6Ymt08AtsOsB8+QwoAI4mBby9eXqnVgLM2FgjEZG/9ky6Ed0iYq571MT2J+z4GenEfabZmSM=
+	t=1758295822; cv=none; b=eOS/akUUDm16Umkf/4nOH5qU9dRL1IW+NaBWLBqsnSFmq8dTfjrCMM7NDPl3Ukplcd7KQFB7Yvp18GnmFh2YKqgUTL0VBtlosgmXk+ZTv84K+W514gwoq9cLbniKZXTtS6ZL2PhmAvxIemwmi+WH86IiU0ZEeqnbIWOMRW1BomY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758295821; c=relaxed/simple;
-	bh=gnm9chVz5ZG3NpnAbeiWQiWcPR/Yg+OBKfb9xKaxZec=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fPGZeeYjO8LjaDqcVGJys0+awmdNfGVYRQ7QByymMoVi9zhFo7mct9Af+/C35mO2lr5PqFv+c0RjuBerXzmJMa7KCSkZ0l2aCslrCApTT7Lml2WOwB6Tcoe6p6BxCsEjpvgNG8San0F5mx3Kt9MyFxaH4+U1Xzb0LNtPyeR9zMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=hDp+3sSm; arc=none smtp.client-ip=209.85.221.66
+	s=arc-20240116; t=1758295822; c=relaxed/simple;
+	bh=GJ3i4+LsfKc9WpQ1wcBHCTr8SB3qVGwdJnEdU4cpqZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uQI+EV3Zp7gFD2QWBY+a30wOPy5EzKUsYWkNfCf6hqaRqFF9MW6Gx1DfHXIgCYZdoNi/5xZihal7NgiuofIR6TLH3nzGaCN2QVwszLOv1Q78t3D+9QwW0ySXoqqa1Y+5S2qamvQJsnLgV192wOXe47TnwtwfE6wfmNwlK2Xp1lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eN9YkC58; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so575594f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:30:18 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4687b41fb56so5318645e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:30:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1758295817; x=1758900617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kpRkKxn7tjXF76vLWsxNTd8HfSJGm7UW72C1XTlcArM=;
-        b=hDp+3sSmt4L+qlCELXLijHqtZYeIHVCv2W0I4WreVQ3hXMlHdVFyckMsthO14PiNNK
-         p0HNp13IWJfqnPoiFs5wkU2BjNSpYQOFnTwnMKkwhOwDDW5eEAhUX9+HWm0EOsE3PA6L
-         Mh1/0ulRmhvSNGKhGyP7ge9IWazjVaOn/i5WpId2q+Gv0+r70lZgS/ouQVtIkwH7QxbV
-         FBHg2LvYa1YLd23lOa4rscC+gum9pU9SIrSZv1ojRIQhiEXK1Lu/1JbCcPojcoozEXNZ
-         i7h5PuckC0fL7tAN+k5lhrwLgQf6Jct34K00jtnMMb7bqvc9odLmPJtwW8/V+I1Af+0K
-         ZBKw==
+        d=suse.com; s=google; t=1758295818; x=1758900618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tO/IQPVYDqqtlB2rmmi4bluyAFwpFc08AwpJDhqIZj0=;
+        b=eN9YkC589iYkhLd9+CqO7lKvM/xed9r0Gc8sYs7W0T68d7SdKtl0+7tDCvkw+kdf9j
+         lTb0XSKeBluX3xlVi4mFVM/+mSvSfFR6bpQNlwoZjsCy6wUCYan0DKxnQPpEjooYm9VB
+         X0AiC1kwerXJeAj8uBqkbCND8cU+WuhTXfgu4vqjAQXK3QZ6zHQKDklFM2iF4CT3I2p9
+         kChM+DXnFr2FR/5Kof8Y7ODE9Tjz/U1yPS8LbKa3D7KKNAAJtQpDRHjsco3D/OOJFMOS
+         KaChG95BWe7JGaCIWKu/D+j8RwNuxrjddAz7kxfrwDtigJL2SWplE+Iwk9HcOyPELe2p
+         1cVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758295817; x=1758900617;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kpRkKxn7tjXF76vLWsxNTd8HfSJGm7UW72C1XTlcArM=;
-        b=VT6Q9R9h3WVyDHxLvtk1IcD3hg10qEgZCGfcUW60C785m7d7kd11DKxj0qM5bptgaH
-         4L4AfaFntzVQww/DPAYLjHt1wR0D+rrS6BrI0DPWDF+y3YQM1d5GADXcVX8YHzGrPiju
-         eDpfX4GIKX8+prQ09hZjDH0kWxa1gXAEP7HLGKjOSnaXiFCHqUc9melnbf5eQmDk3CqL
-         USp09x6DiBBKU6LJcE5aFvwf7JBPYhEgzt9fh50TeIO6oWWCSWlcIvKfRTj/RvX5ZvDa
-         ZO1qpEH2qTNBVAXWbHzcqcgJctuAfm+SIUtvKmMPoEjwV2jItY27Uov++cZA/HagQDcK
-         uR7Q==
-X-Gm-Message-State: AOJu0Yxw2/IdBLwGP2Ai5grn3Jd7EN4C47XL20t7JSK36KMsLYs2j8UZ
-	i+oKfYO1U37j8tbm7dmh/KrS3kUeT3lP1O38v1V1S5tN6TAHjpfyxFZ6S7a7Ft75GoH7V7wXBMD
-	58YEQAE05Nw==
-X-Gm-Gg: ASbGncu2ZZWD9GI2+t54VXPD/A9oFGVRXYnW81QZi/sL6lwQ7s+WjX8e6TVV5kF2BT8
-	dgbJDpdERDTi/9dCTZeVrRJWYpLHsLmO1v/7wcD2Fnp49hQtMWQzwFh3nAaKt2seMQQ9/JKtvJ/
-	6/KsUlm/QmC6tqI8PjHjTtsDDmNTrznD8iA7kwA4HFOBHdlcanrgwCQ21CFjs/agCD57GwfX67g
-	4D90x7TgI3F0oaRazjUchnKPs/LeR4s4Vx8hyDNmCSVaianalcIa2CXVga5l3vo7Ggf7WF3oNHN
-	m2IGx2B655mo5SD1Gy7oy1JaMezHD/ScrC1F3ihCQGDtX9YE3C5Y+60vGo5BYov+amRE9aRVh9f
-	fmphMjvW5+Ct38pgacBr4XEDvTC5BJqbqZ2aaqMCe7fDQQQ==
-X-Google-Smtp-Source: AGHT+IGGLUHgftanRqnt6pFBM7QU+24mNVwxyAUgdJ5qN+HGMiXatVpfDKxcCdUk2TKtKGgN2DDBGg==
-X-Received: by 2002:a05:6000:2911:b0:3e9:b7a5:5dd6 with SMTP id ffacd0b85a97d-3ee83da05camr2855515f8f.40.1758295817190;
-        Fri, 19 Sep 2025 08:30:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758295818; x=1758900618;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tO/IQPVYDqqtlB2rmmi4bluyAFwpFc08AwpJDhqIZj0=;
+        b=ZLNPwdmc+vElIDTfyeRNHHHQBKGD8XJtDN0KqIt1oaTbr+DueJXf34gVceLofjHdXU
+         tML++8w/Qce6QHJD/R1jz4Snz7A541SpEm8ui0L8VYwv5H7zDFfXwswlRQCbsNGeb9Id
+         J66Yp+ew15M5fRqBbKc4J09CGqc/g0HdPQR6qmuYwrJPb7ibf4OuGeP2cJy4yxumVI3A
+         d+aaEE66hoXAtY3T/q3JPrqYMS/BBkL7aK8jn/svDTTOaKwxlCXQ94rJ3/aw/JH55PU8
+         tFqeYJ64uG6cCp0dnAVyLFI8w72QQyVJOL+wIWlhLqyaVESs45GZ3xpAd4OWKptm8O9y
+         EQlg==
+X-Gm-Message-State: AOJu0Yxjsxhq4BENzaTioPsUlPNDVCIJOp8mNOv+DbRRCd6CDX9QhlSh
+	RXFu5lDTGciev8pFcKGHRlOWTBYhL8pyGYVYSkfLMbsgxD3gFa6N/X/aYLb0iBmgX7j9UDvRNnV
+	D0I5eacU=
+X-Gm-Gg: ASbGncs0HQyQ0SAPq+iQf1ByGSO8lNRSZUWuopXkc0SBvig+U5CerUCwXIysiKop2EO
+	2iw7N2CzRb82Ky3o3LxBGpzlxRjlvj//MRQ4wXKbl6iAsaaSQkwPRKy8XLp9hBq7tfzY93pej93
+	NkcLn4PmvYs9p3SGYdEMz3RFNMP3z2eNMGTDYKlF7MMpQecipoQ7x53DbqvG6YveqOBqozCIVZy
+	PnMJXLcTQnsicpW4SYro3qbKryM9oBNmGzKEN2MoosxHyYn8WMSNZYhtxJBlpAkuolcMBfnXuOE
+	OGQXRb7UVpGFzjGPNXyVaiiAlk+jCT9InirkNaDzIUtn0uIbENVfiLD7WGFIPmCEpRHjIEbSilv
+	ZlRF1LUnWU+QGk1Spkf1iDv8Jw8UT/8EcJHHQAXOnURfZaQ==
+X-Google-Smtp-Source: AGHT+IHtwaXYVf8fILtIiK8C6Q78828xfzfcrquxMpn/rQtlsYUSo9WhEXFxmG3bJTL6e/1UkHJSUw==
+X-Received: by 2002:a5d:5f87:0:b0:3ec:42f9:953e with SMTP id ffacd0b85a97d-3edd43b5c0dmr8087717f8f.7.1758295818149;
+        Fri, 19 Sep 2025 08:30:18 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7284sm8619156f8f.33.2025.09.19.08.30.16
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7284sm8619156f8f.33.2025.09.19.08.30.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 08:30:16 -0700 (PDT)
+        Fri, 19 Sep 2025 08:30:17 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-pm@vger.kernel.org
@@ -82,10 +84,12 @@ Cc: Tejun Heo <tj@kernel.org>,
 	"Rafael J . Wysocki" <rafael@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
 	Len Brown <len.brown@intel.com>
-Subject: [PATCH v2 0/1] PM: WQ_UNBOUND added to pm_wq
-Date: Fri, 19 Sep 2025 17:30:07 +0200
-Message-ID: <20250919153008.324338-1-marco.crivellari@suse.com>
+Subject: [PATCH v2 1/1] PM: WQ_UNBOUND added to pm_wq workqueue
+Date: Fri, 19 Sep 2025 17:30:08 +0200
+Message-ID: <20250919153008.324338-2-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250919153008.324338-1-marco.crivellari@suse.com>
+References: <20250919153008.324338-1-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,97 +99,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi!
-
-Below is a summary of a discussion about the Workqueue API and cpu isolation
-considerations. Details and more information are available here:
-
-        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
-        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
-
-=== Current situation: problems ===
-
-Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
-set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
-
-This leads to different scenarios if a work item is scheduled on an isolated
-CPU where "delay" value is 0 or greater then 0:
-        schedule_delayed_work(, 0);
-
-This will be handled by __queue_work() that will queue the work item on the
-current local (isolated) CPU, while:
-
-        schedule_delayed_work(, 1);
-
-Will move the timer on an housekeeping CPU, and schedule the work there.
-
 Currently if a user enqueue a work item using schedule_delayed_work() the
 used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
 WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
 schedule_work() that is using system_wq and queue_work(), that makes use
 again of WORK_CPU_UNBOUND.
-
 This lack of consistentcy cannot be addressed without refactoring the API.
 
-=== Plan and future plans ===
+alloc_workqueue() treats all queues as per-CPU by default, while unbound
+workqueues must opt-in via WQ_UNBOUND.
 
-This patchset is the first stone on a refactoring needed in order to
-address the points aforementioned; it will have a positive impact also
-on the cpu isolation, in the long term, moving away percpu workqueue in
-favor to an unbound model.
+This default is suboptimal: most workloads benefit from unbound queues,
+allowing the scheduler to place worker threads where they’re needed and
+reducing noise when CPUs are isolated.
 
-These are the main steps:
-1)  API refactoring (that this patch is introducing)
-    -   Make more clear and uniform the system wq names, both per-cpu and
-        unbound. This to avoid any possible confusion on what should be
-        used.
+This change add the WQ_UNBOUND flag to pm_wq, to make explicit this
+workqueue can be unbound and that it does not benefit from per-cpu work.
 
-    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
-        introduced in this patchset and used on all the callers that are not
-        currently using WQ_UNBOUND.
+Once migration is complete, WQ_UNBOUND can be removed and unbound will
+become the implicit default.
 
-        WQ_UNBOUND will be removed in a future release cycle.
-
-        Most users don't need to be per-cpu, because they don't have
-        locality requirements, because of that, a next future step will be
-        make "unbound" the default behavior.
-
-2)  Check who really needs to be per-cpu
-    -   Remove the WQ_PERCPU flag when is not strictly required.
-
-3)  Add a new API (prefer local cpu)
-    -   There are users that don't require a local execution, like mentioned
-        above; despite that, local execution yeld to performance gain.
-
-        This new API will prefer the local execution, without requiring it.
-
-=== Introduced Changes by this series ===
-
-1) [P 1] add WQ_UNBOUND to pm_wq (alloc_workqueue() flag)
-
-        Every alloc_workqueue() caller should use one among WQ_PERCPU or
-        WQ_UNBOUND. Add WQ_UNBOUND to pm_wq to make it explicit this wq is
-		unbound.
-
-        WQ_UNBOUND will be removed in a next release cycle.
-
-
-Thanks!
-
-
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
-Changes in v2:
-- WQ_PERCPU removed from pm_wq.
-
-- WQ_UNBOUND has been added to pm_wq to make explicit this wq is unbound.
-
-
-Marco Crivellari (1):
-  PM: WQ_UNBOUND added to pm_wq workqueue
-
  kernel/power/main.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 3cf2d7e72567..33a47ed15994 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -1056,7 +1056,7 @@ EXPORT_SYMBOL_GPL(pm_wq);
+ 
+ static int __init pm_start_workqueue(void)
+ {
+-	pm_wq = alloc_workqueue("pm", WQ_FREEZABLE, 0);
++	pm_wq = alloc_workqueue("pm", WQ_FREEZABLE | WQ_UNBOUND, 0);
+ 
+ 	return pm_wq ? 0 : -ENOMEM;
+ }
 -- 
 2.51.0
 
