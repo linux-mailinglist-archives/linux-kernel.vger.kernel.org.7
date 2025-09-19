@@ -1,104 +1,144 @@
-Return-Path: <linux-kernel+bounces-823959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9D5B87D1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:33:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74C1B87D23
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22483AEAB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605135652B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1CE23182D;
-	Fri, 19 Sep 2025 03:33:43 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C754F25C80E;
+	Fri, 19 Sep 2025 03:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SG4ZYQLK"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05D270809
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2095F25A355
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758252823; cv=none; b=QjRQqFfXJyUIkeyMuuw9gpj4PBhQqV0bUGYhzCOsg7suCrlrnJ/Vnx68sj3OciRghWeQlz43zzxdFdzMpD+P8Mn8G/NYTRXsSpsxirQoaPrljZ06+Cc3t+y3dYGJTI5W3mFAIjsfya3pnCF+ZWvCga6aCi0tQPdxKg6xrgCpcQo=
+	t=1758252862; cv=none; b=d72171gzbfpIA+yV6FipbmwWBWG1X699gfSrmACGcKybpAoGqV9aB598fiM7dI+Zk1GTI1x4u9RL/2Z6o7arx76B5bwmwbEJiboN1pqpHMgJnhIdoO385Dg+cZC/qqDQ+WjlMkQeFG/SN0C64ShzTvNhHNvjIoCTJzLAmia3iPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758252823; c=relaxed/simple;
-	bh=/UnOPcKFFbGPfThcVC8B9TUSk04qGoNtpPu9CnsDKpA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aDvQwU4WBRLeLa6nEk919pbvfB3izKYkzKxibRXHMvVpKiDoF9bmYYIDE/7PpweZC69XF7iR8sKvTZPLIAGZUiGSV1TWxoABsekU9MnaYEUYiH4gY6v1O1GoEiTtnAl3YScDLf1hIH8tTbFIhfE25GBBmJle2QPfauLeqjoU07M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 6a81237e950911f0b29709d653e92f7d-20250919
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:dec5a508-240c-4c0a-ad30-88249f5b3bae,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:6493067,CLOUDID:1dbd459edc4a7cb8f4dadc86968a2d0d,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102|850,TC:nil,Content:0|50,EDM:5,IP:nil
-	,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 6a81237e950911f0b29709d653e92f7d-20250919
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 723830363; Fri, 19 Sep 2025 11:33:32 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 0BF80E009009;
-	Fri, 19 Sep 2025 11:33:32 +0800 (CST)
-X-ns-mid: postfix-68CCCF0A-47649798
-Received: from localhost.localdomain (unknown [10.42.20.41])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 2371AE009008;
-	Fri, 19 Sep 2025 11:33:29 +0800 (CST)
-From: Li Qiang <liqiang01@kylinos.cn>
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Li Qiang <liqiang01@kylinos.cn>
-Subject: [PATCH] arm64: add unlikely hint to MTE async fault check in el0_svc_common
-Date: Fri, 19 Sep 2025 11:33:27 +0800
-Message-Id: <20250919033327.1942730-1-liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1758252862; c=relaxed/simple;
+	bh=g6jvA3VCV7B+4YWnBLz+G/a9z+tD7ceTJS80Z6TyM7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f1Lg5g1uk7KIma8A/Bjs6IqCWw+vqddrKOnJmikkZWYggz0S6TEjXWGPUGD3aSLDauCy5HTciMhyKpb1SkXKjoscH/rVJ21XapKXGon3bYHm99UEdKeN5JdTcdl1FsUnbQSciEGvQqHrvMVH1FHCCIy61EkAsDWlALHBPf3j/8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SG4ZYQLK; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <af66aaaa-9652-497a-9ff3-9ce8d9417acb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758252857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IMjFu7SVR95qSNzgCJYmzYUNzwf9n1HS7Sx7fQIOgfY=;
+	b=SG4ZYQLKRvqHXnEoTxh1cvMz3hiaM6ZElAjyjuHPKfUn38WjqZWgHb5fOhLCQdaTGVRD+K
+	Jop2ChIZ7x3SXAvdh2Eu1HIkcE//1SEKc6qw1gdr+IBHu/Kb+gCeT4NA3TSX7tDasm7pWI
+	Z6R+2Tf8GatMpaUW4oX4h4zAej9nP0Q=
+Date: Fri, 19 Sep 2025 11:34:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on guard
+ PTEs
+Content-Language: en-US
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, Zi Yan <ziy@nvidia.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, baohua@kernel.org, ioworker0@gmail.com,
+ kirill@shutemov.name, hughd@google.com, mpenttil@redhat.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250918050431.36855-1-lance.yang@linux.dev>
+ <20250918050431.36855-3-lance.yang@linux.dev>
+ <6BAE5498-D0AB-40F5-85F8-B92A05CA72AD@nvidia.com>
+ <20e0fb73-3476-4b1c-959e-c1af38f8e1a0@linux.dev>
+ <7ca12da2-4ddc-4b4e-a8da-a1d9d2c44e03@linux.alibaba.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <7ca12da2-4ddc-4b4e-a8da-a1d9d2c44e03@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Add unlikely() hint to the _TIF_MTE_ASYNC_FAULT flag check in
-el0_svc_common() since asynchronous MTE faults are expected to be
-rare occurrences during normal system call execution.
 
-This optimization helps the compiler to improve instruction caching
-and branch prediction for the common case where no asynchronous
-MTE faults are pending, while maintaining correct behavior for
-the exceptional case where such faults need to be handled prior
-to system call execution.
 
-Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
----
- arch/arm64/kernel/syscall.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2025/9/19 11:18, Baolin Wang wrote:
+> 
+> 
+> On 2025/9/19 10:44, Lance Yang wrote:
+>>
+>>
+>> On 2025/9/19 03:12, Zi Yan wrote:
+>>> On 18 Sep 2025, at 1:04, Lance Yang wrote:
+>>>
+>>>> From: Lance Yang <lance.yang@linux.dev>
+>>>>
+>>>> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
+>>>> lightweight guard regions.
+>>>>
+>>>> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail 
+>>>> when
+>>>> encountering such a range.
+>>>>
+>>>> MADV_COLLAPSE fails deep inside the collapse logic when trying to 
+>>>> swap-in
+>>>> the special marker in __collapse_huge_page_swapin().
+>>>>
+>>>> hpage_collapse_scan_pmd()
+>>>>   `- collapse_huge_page()
+>>>>       `- __collapse_huge_page_swapin() -> fails!
+>>>>
+>>>> khugepaged's behavior is slightly different due to its max_ptes_swap 
+>>>> limit
+>>>> (default 64). It won't fail as deep, but it will still needlessly 
+>>>> scan up
+>>>> to 64 swap entries before bailing out.
+>>>>
+>>>> IMHO, we can and should detect this much earlier.
+>>>>
+>>>> This patch adds a check directly inside the PTE scan loop. If a guard
+>>>> marker is found, the scan is aborted immediately with 
+>>>> SCAN_PTE_NON_PRESENT,
+>>>> avoiding wasted work.
+>>>>
+>>>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>>>> ---
+>>>>   mm/khugepaged.c | 10 ++++++++++
+>>>>   1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>>> index 9ed1af2b5c38..70ebfc7c1f3e 100644
+>>>> --- a/mm/khugepaged.c
+>>>> +++ b/mm/khugepaged.c
+>>>> @@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct 
+>>>> mm_struct *mm,
+>>>>                       result = SCAN_PTE_UFFD_WP;
+>>>>                       goto out_unmap;
+>>>>                   }
+>>>> +                /*
+>>>> +                 * Guard PTE markers are installed by
+>>>> +                 * MADV_GUARD_INSTALL. Any collapse path must
+>>>> +                 * not touch them, so abort the scan immediately
+>>>> +                 * if one is found.
+>>>> +                 */
+>>>> +                if (is_guard_pte_marker(pteval)) {
+>>>
+>>> pteval is already is_swap_pte(), would is_guard_swp_entry() be a better
+>>> choice here? Save one is_swap_pte() call.
+> 
+> Agree. Then seems we don't need to move the is_guard_pte_marker() into a 
+> header file.
 
-diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-index c442fcec6b9e..7eb13f4c87da 100644
---- a/arch/arm64/kernel/syscall.c
-+++ b/arch/arm64/kernel/syscall.c
-@@ -96,7 +96,7 @@ static void el0_svc_common(struct pt_regs *regs, int sc=
-no, int sc_nr,
- 	 * (Similarly for HVC and SMC elsewhere.)
- 	 */
-=20
--	if (flags & _TIF_MTE_ASYNC_FAULT) {
-+	if (unlikely(flags & _TIF_MTE_ASYNC_FAULT)) {
- 		/*
- 		 * Process the asynchronous tag check fault before the actual
- 		 * syscall. do_notify_resume() will send a signal to userspace
---=20
-2.25.1
+Got it. I'll only remove the redundant check in #01 patch.
 
 
