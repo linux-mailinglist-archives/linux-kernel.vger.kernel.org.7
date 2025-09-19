@@ -1,79 +1,54 @@
-Return-Path: <linux-kernel+bounces-824277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708C3B888D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02736B888DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A9751C85F6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB92E1C865D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D522F362E;
-	Fri, 19 Sep 2025 09:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7923B2F3C32;
+	Fri, 19 Sep 2025 09:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="W2Lu3BvC"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b="feONaI8L"
+Received: from mail1.nippynetworks.com (mail1.nippynetworks.com [91.220.24.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81222ECEB4
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8361247291;
+	Fri, 19 Sep 2025 09:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.220.24.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274096; cv=none; b=RXpmg1se4XBZRlJrBKlUY8h4rP/EPW95d0etSbAg2k3hG7kR/sf+Dy/mgac3STVzWZJtYUsA4DOuc7o04VY1+eedlCETJra4Y4TljNIhVniztSWkEBcSA7zFh5CGgzKRFj/OxAz2xphLjCw8TXrgvq4VQNcbH0i7oCBGTO2LQg0=
+	t=1758274143; cv=none; b=YbxGxSEsv26uMyzp2BErXLAB5tEz0eDTgRKz08aaELmvydEs9KvF4idS6s9R4aipsyIYdq5NRG6EHbSpPpE/X6Go4FFAAFrr1jcSxnaJ2uIKuSEr2xsfOzXkDLUe52bWYBGqpFAL8ijgkyrZulW+8SfXxSuM+66NobRSb3EAXu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274096; c=relaxed/simple;
-	bh=buBQGVajJF/1m5lwRo22cHctIaIWABcM5rOL+YdF3lY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NrUQRnEXpE9O9kxCWjAjPYbNsnJ8Z0DnY6jLL5P8R7psX8Tlzu5zLLvk7rZ9gsEezIIqbgDzvkPJxK8H43U2geEJazLLkUTcNrknq+UnLUGe+wDVa+9hQ0KgawL+Ih73oXuOoItfbVspFupMigv/oydQFkvJxlDXhYsYLpMAOu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=W2Lu3BvC; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso1548706f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:28:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1758274093; x=1758878893; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eX2C6o9JQrp4KbfLBIaQxUWMPEDMSUognUn/sSIXlqA=;
-        b=W2Lu3BvCCZvzOsZOqrJR9hMiazm9QbS2jp6AVNqDjn2yPSO4G3STOHrnQfTwVU1XT3
-         cQFGbR6fDhs+Qfw+bgBtKfA09oqNVw/k119xoh3RwmORiajJwe4mSZLvkXb8w+iGz4PH
-         JU6JEanC/PNiexljU334/PWpHcA+tRmea+vzDKSxHrAIwX/DQ+AESBmKx0v1+gQ/8N1y
-         STLPo0VZ+WUcOZkDdMrycaPBlgmZUeOUAZRHW6trUpFRyjl8ic8JIscAv9A+Qe/1h9Nx
-         pGZRFc/D1OKfxHW5GY+I8fPte8f2webKX433ZF3flLYfn5PR145X/OvqXV9M/A+cNK3l
-         d0jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758274093; x=1758878893;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eX2C6o9JQrp4KbfLBIaQxUWMPEDMSUognUn/sSIXlqA=;
-        b=dFlnZoJ9jQnwIhuF1bgdpR8c3vpGgDbVSyokZ17z4O2Qci9PWay4b7NY5mE4wsO0sa
-         PNRy225NpRyme34K7BkBnC2ZXN0JM45xNi9JTV5koeXHG8IiJrcN3jkvWBOVNrKaNrpR
-         oJsqKYdt/t4LKp+M2LBxunYCEDMj5XnbvikxUCEZ7Lg64y20984fIK3b3XsVZuKHlqAw
-         PgY1gP3ffRqUuyvSxsan9dd6nAKwx5Wmikze4mhDOXbKjiP9SWVjS1l3yVgNv/dwYLjU
-         7Lt5bn1xH7LcuLUQY1rlp4kGaSHLMq0K09JkAClEDzVi0soDF7r7Bc/xHRc3pmadLVnk
-         D8rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIOqePuxZ76nagmczTkRP7txxPetvv73OfhgMvFGLOlh9TeZGiCDU11eI+vCsTnxaP6/u2Vf5fkVfLme4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUdjyv+Sku1da2sKkGt4/LkqWqHhCvfFGhO2a+WdZOTRVzeTBz
-	dtZ9YO4QCiX4OGztVZlIuBRKfe36qPrG6PD2/Lfv9uIxxNBzFvRAIRW5+xtfnLohBVw=
-X-Gm-Gg: ASbGncuedwPbw43VqxDQlC0fWG0nOV8Uv2HMQL/oDfis4AWD4wR8I4uZmLRrsgjm5wl
-	t+d3ghM1pnL7q/6zpVM31soFS6e5ChKyqk2LJaLKXKkEg8jqKGvvMRmJKT3H5Eh94pPSgCwuug8
-	4uox36Np6RGe+F4l0gHpfR0ic5nP17qZKNXucDU2irVfaWr4w98aW2h+5S0pZdg5hA2ls6vzwxV
-	ZhpqoFH9iQXC5O2dGKUU3bBrClfthPWm8GaYZShOQ7F+QSqMsDuWx56ZKt9Xs83QfUjkfjcuVyQ
-	kR6uKALJWaB1hdRv1P+DssPjrnmF+x5ab16B64E2A1ltOgr5qpmeJ/1jO+dHZUVdrgvi0dBFzqm
-	0cB7BvTB0dRYWHJm9bLIJryPIiqTjUCg=
-X-Google-Smtp-Source: AGHT+IF8SvCo8+93/CF/N3fM2f638seOlv8Zs1arZJ3G7JJNpr7/3DX/KLCOOUOnhqlegFVFvupfZg==
-X-Received: by 2002:a05:6000:605:b0:3ea:5f76:3f7a with SMTP id ffacd0b85a97d-3ee7e0116d6mr1373555f8f.22.1758274092847;
-        Fri, 19 Sep 2025 02:28:12 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee073f4f6asm6778052f8f.6.2025.09.19.02.28.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 02:28:12 -0700 (PDT)
-Message-ID: <ca1da9cb-5003-49f2-ab8d-70b80a10d8cd@tuxon.dev>
-Date: Fri, 19 Sep 2025 12:28:10 +0300
+	s=arc-20240116; t=1758274143; c=relaxed/simple;
+	bh=/bBCEPU2/0tv/K9YmbIdh5G90E4fXWa6Xx5dfbkFTiY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=O5BTU2bYcG0x+z3E58zsftHANfM13Mt9osfmOydPLOlbrUL6zSoHQH0AzqMLB9TiCC5BCu9Om0PggxaUhP9i/JFEE3QFZKO0MBhn2S0vyrchwYkd7sg6hpWHfTRUjeAFNlYQX/SRGrglEbytcMDYyMcN5gJ0AKI8y8M+Lx0PRMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com; spf=pass smtp.mailfrom=wildgooses.com; dkim=pass (1024-bit key) header.d=wildgooses.com header.i=@wildgooses.com header.b=feONaI8L; arc=none smtp.client-ip=91.220.24.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wildgooses.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wildgooses.com
+Received: from [192.168.8.153] (unknown [94.228.36.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ed@wildgooses.com)
+	by mail1.nippynetworks.com (Postfix) with ESMTPSA id 4cSnJ75j6rzkd2v;
+	Fri, 19 Sep 2025 10:28:55 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wildgooses.com;
+	s=dkim; t=1758274139;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/bBCEPU2/0tv/K9YmbIdh5G90E4fXWa6Xx5dfbkFTiY=;
+	b=feONaI8Lw64SjaoDRMMiIvlGMwvLCFWYcp5EFABRsaS8yWkOIE3/uxBdPMBw+ds7phhE+u
+	ILyaf27i9LOJdFQlkn02/HVKGg25a+4nn6RKmIG0wQIrPnPfw25MmbNo4kesaYOzxNnIlu
+	+oIoDq8x2vqMfIeswxMTGhjx06poDfs=
+Message-ID: <da24e503-cb43-45e7-99ff-38eab11a203b@wildgooses.com>
+Date: Fri, 19 Sep 2025 10:28:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,257 +56,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/6] PCI: rzg3s-host: Add Renesas RZ/G3S SoC host
- driver
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, p.zabel@pengutronix.de,
- linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
- <20250912122444.3870284-3-claudiu.beznea.uj@bp.renesas.com>
- <pnph54wv3736lemzren64ig4karlulffkvmc3dzgrhgyv2cpwu@2mcgvlqdr6wu>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <pnph54wv3736lemzren64ig4karlulffkvmc3dzgrhgyv2cpwu@2mcgvlqdr6wu>
+Subject: Re: [PATCH 1/2] arm64: dts: rockchip: correct uart mux for Radxa
+ ZERO3
+To: FUKAUMI Naoki <naoki@radxa.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
+ <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250917114932.25994-1-lists@wildgooses.com>
+ <FBB5B30DE8FEABD7+59ee6f48-2ad1-45dd-8cf1-8b58a03513a9@radxa.com>
+ <adbc2396-d5f0-4dd6-a65e-0dd78a58b9a4@wildgooses.com>
+ <2325560.3ZeAukHxDK@diego>
+ <0DB47BC84E90B0E6+694b1274-4826-4ec1-9aa2-ca8aa790f61a@radxa.com>
+From: Ed W <lists@wildgooses.com>
+Content-Language: en-GB
+In-Reply-To: <0DB47BC84E90B0E6+694b1274-4826-4ec1-9aa2-ca8aa790f61a@radxa.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 9/19/25 11:45, Manivannan Sadhasivam wrote:
-> On Fri, Sep 12, 2025 at 03:24:40PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 19/09/2025 00:57, FUKAUMI Naoki wrote:
+> Hi Heiko, Ed,
+>
+> On 9/19/25 01:18, Heiko St=C3=BCbner wrote:
+>> Am Donnerstag, 18. September 2025, 17:23:04 Mitteleurop=C3=A4ische Som=
+merzeit schrieb Ed W:
+>>> Personally, and I'm saying this as a user who is technical enough to =
+fix the definitions, it
+>>> took me
+>>> quite a few days to figure out what was wrong with the definitions an=
+d understand the intricate
+>>> tree
+>>> of dtsi includes, to finally figure out why I couldn't just do a "sta=
+tus =3D "okay";" to enable the
+>>> UARTs... (which is roughly what is shown in several radxa supplied ov=
+erlays to enable uarts on
+>>> various boards)
+>>>
+>>> So my vote would be to correctly define all the hardware for a given =
+board. Then users can
+>>> simply do
+>>> a status=3D"okay" to enable and off they go.
 >>
->> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->> only as a root complex, with a single-lane (x1) configuration. The
->> controller includes Type 1 configuration registers, as well as IP
->> specific registers (called AXI registers) required for various adjustments.
+>> And I'd agree with that argument. Setting up the needed pinctrl settin=
+gs
+>> for the peripherals described in the device documentation
+>> ( https://docs.radxa.com/en/zero/zero3/hardware-design/hardware-interf=
+ace#gpio-interface )
 >>
->> Hardware manual can be downloaded from the address in the "Link" section.
->> The following steps should be followed to access the manual:
->> 1/ Click the "User Manual" button
->> 2/ Click "Confirm"; this will start downloading an archive
->> 3/ Open the downloaded archive
->> 4/ Navigate to r01uh1014ej*-rzg3s-users-manual-hardware -> Deliverables
->> 5/ Open the file r01uh1014ej*-rzg3s.pdf
->>
->> Link: https://www.renesas.com/en/products/rz-g3s?queryID=695cc067c2d89e3f271d43656ede4d12
->> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
-> 
-> [...]
-> 
->> +static void rzg3s_pcie_update_bits(void __iomem *base, u32 offset, u32 mask,
->> +				   u32 val)
->> +{
->> +	u32 tmp;
->> +
->> +	tmp = readl(base + offset);
-> 
-> Unless there is an ordering requirement, you can safely use
-> {readl/writel}_relaxed variants throughout the driver.
+>> is the sensible thing to do. While keeping the peripherals itself disa=
+bled
+>> and for the user to decide which peripheral to enable.
+>
+> I'm not strongly opposed to this policy, but I thought if you're going =
+to do this, you should do
+> it for everything, not just UARTs.
+>
+> Best regards,
+>
+> --=20
+> FUKAUMI Naoki
+> Radxa Computer (Shenzhen) Co., Ltd.
 
-HW manual lists specific steps to follow when issuing requests. These steps
-are listed in chapter "34.4.2.4 Issuing Special Requests" in the manual
-pointed in patch description.
 
-> 
->> +	tmp &= ~mask;
->> +	tmp |= val & mask;
->> +	writel(tmp, base + offset);
->> +}
->> +
-> 
-> [...]
-> 
->> +static void __iomem *rzg3s_pcie_child_map_bus(struct pci_bus *bus,
->> +					      unsigned int devfn,
->> +					      int where)
->> +{
->> +	struct rzg3s_pcie_host *host = bus->sysdata;
->> +	unsigned int dev, func, reg;
->> +
->> +	dev = PCI_SLOT(devfn);
->> +	func = PCI_FUNC(devfn);
->> +	reg = where & ~0x3;
->> +
->> +	/* Set the destination */
->> +	writel(FIELD_PREP(RZG3S_PCI_REQADR1_BUS, bus->number) |
->> +	       FIELD_PREP(RZG3S_PCI_REQADR1_DEV, dev) |
->> +	       FIELD_PREP(RZG3S_PCI_REQADR1_FUNC, func) |
->> +	       FIELD_PREP(RZG3S_PCI_REQADR1_REG, reg),
->> +	       host->axi + RZG3S_PCI_REQADR1);
->> +
->> +	/* Set byte enable */
->> +	writel(RZG3S_PCI_REQBE_BYTE_EN, host->axi + RZG3S_PCI_REQBE);
->> +
->> +	/*
->> +	 * rzg3s_pcie_child_map_bus() is used to configure the controller before
->> +	 * executing requests. It is called only within this driver and not
->> +	 * through subsystem calls. Since it does not return an address that
->> +	 * needs to be used later, return NULL.
->> +	 */
-> 
-> What guarantees that the PCI core will not call this function through
-> pci_ops::map_bus?
+I would most definitely be in favour of doing this for all peripherals! Y=
+es please!
 
-As of my code inspection the pci_ops::map_bus is currently called from:
-pci_generic_config_read()
-pci_generic_config_write()
-pci_generic_config_read32()
-pci_generic_config_write32()
+I have a selection of Zero 3W and E devices here. We are going to potenti=
+ally use them in an OEM
+capacity, and I might have some I2C devices to plug into them in the futu=
+re, and for example would
+like to get the I2C working on the pins (is it 2 and 4?). It will be at l=
+east some weeks before I
+can work on that, but if you want to offer some support to fixup at least=
+ that device I won't decline!
 
-As of my code inspection, these are currently called from vendor specific
-drivers. I the core behavior will be changed, I can't guarantee the
-statement from the comment. Please let me know if you want me to drop the
-initialization of rzg3s_pcie_child_ops::map_bus and call
-rzg3s_pcie_child_map_bus() explicitly instead of calling it though
-rzg3s_pcie_child_ops::map_bus
+Thanks for making these boards
 
-As mentioned in the previous review rounds, this is implemented like this
-as it was suggested in v1 review process.
-
-> 
->> +	return NULL;
->> +}
->> +
->> +static struct pci_ops rzg3s_pcie_child_ops = {
->> +	.read		= rzg3s_pcie_child_read,
->> +	.write		= rzg3s_pcie_child_write,
->> +	.map_bus	= rzg3s_pcie_child_map_bus,
->> +};
->> +
->> +static void __iomem *rzg3s_pcie_root_map_bus(struct pci_bus *bus,
->> +					     unsigned int devfn,
->> +					     int where)
->> +{
->> +	struct rzg3s_pcie_host *host = bus->sysdata;
->> +
->> +	if (devfn)
->> +		return NULL;
->> +
->> +	return host->pcie + where;
->> +}
->> +
->> +/* Serialization is provided by 'pci_lock' in drivers/pci/access.c */
->> +static int rzg3s_pcie_root_write(struct pci_bus *bus, unsigned int devfn,
->> +				 int where, int size, u32 val)
->> +{
->> +	struct rzg3s_pcie_host *host = bus->sysdata;
->> +
->> +	/* Enable access control to the CFGU */
->> +	writel(RZG3S_PCI_PERM_CFG_HWINIT_EN, host->axi + RZG3S_PCI_PERM);
->> +
-> 
-> I'm not sure if 'host->axi' written above and the address written below are in
-> the same domain or not. 
-
-host->axi and host->pci are both part of the PCI controller address space.
-I don't have more info on it than this. HW manual don't mention anything
-about this.
-
-> If they are, then the writes will be serialized and
-> would be no issues. If they are in different domains, then you would need to do
-> readl() to make sure the above write reaches the hardware before writing below.
-> 
->> +	pci_generic_config_write(bus, devfn, where, size, val);
->> +
->> +	/* Disable access control to the CFGU */
->> +	writel(0, host->axi + RZG3S_PCI_PERM);
->> +
->> +	return PCIBIOS_SUCCESSFUL;
->> +}
->> +
->> +static struct pci_ops rzg3s_pcie_root_ops = {
->> +	.read		= pci_generic_config_read,
->> +	.write		= rzg3s_pcie_root_write,
->> +	.map_bus	= rzg3s_pcie_root_map_bus,
->> +};
->> +
-> 
-> [...]
-> 
->> +static int rzg3s_pcie_intx_setup(struct rzg3s_pcie_host *host)
->> +{
->> +	struct device *dev = host->dev;
->> +
->> +	for (int i = 0; i < PCI_NUM_INTX; i++) {
->> +		struct platform_device *pdev = to_platform_device(dev);
->> +		char irq_name[5] = {0};
->> +		int irq;
->> +
->> +		scnprintf(irq_name, ARRAY_SIZE(irq_name), "int%c", 'a' + i);
->> +
->> +		irq = platform_get_irq_byname(pdev, irq_name);
->> +		if (irq < 0)
->> +			return dev_err_probe(dev, -EINVAL,
->> +					     "Failed to parse and map INT%c IRQ\n",
->> +					     'A' + i);
->> +
->> +		host->intx_irqs[i] = irq;
->> +		irq_set_chained_handler_and_data(irq,
->> +						 rzg3s_pcie_intx_irq_handler,
->> +						 host);
->> +	}
->> +
->> +	host->intx_domain = irq_domain_create_linear(of_fwnode_handle(dev->of_node),
->> +						     PCI_NUM_INTX,
->> +						     &rzg3s_pcie_intx_domain_ops,
->> +						     host);
->> +	if (!host->intx_domain)
->> +		return dev_err_probe(dev, -EINVAL,
->> +				     "Failed to add irq domain for INTx IRQs\n");
->> +	irq_domain_update_bus_token(host->intx_domain, DOMAIN_BUS_WIRED);
->> +
->> +	return devm_add_action_or_reset(dev, rzg3s_pcie_intx_teardown, host);
-> 
-> Didn't I suggest dropping these devm_add_action_or_reset() calls and use error
-> labels as like other controller drivers?
-
-It has been mentioned like "It is generally preferred to cleanup the
-resources in err path using goto labels."; thorough "generally preferred" I
-understood this as a non-strict rule, thus I asked back if you prefer it
-for this driver as well, but got no further reply. Sorry for any confusion,
-if any.
-
-But before posting this version I also prepared a version that drops the
-devm actions or resets and uses gotos instead. I'll send it in reply to
-this patch for you to check it. I personally consider it complicates the
-failure path. Please let me know your thoughts.
-
-> 
->> +}
->> +
-> 
-> [...]
-> 
->> +static struct platform_driver rzg3s_pcie_driver = {
->> +	.driver = {
->> +		.name = "rzg3s-pcie-host",
->> +		.of_match_table = rzg3s_pcie_of_match,
->> +		.pm = pm_ptr(&rzg3s_pcie_pm_ops),
->> +		.suppress_bind_attrs = true,
->> +	},
->> +	.probe = rzg3s_pcie_probe,
-> 
-> You could use '.probe_type = PROBE_PREFER_ASYNCHRONOUS' to allow async probing
-> of the devices. This will have a big impact in boot time if you have multiple
-> controllers.
-
-Thank you for the hint. I'll look to it.
-
-Thank you for your review,
-Claudiu
-
-> 
-> - Mani
-> 
+Ed W
 
 
