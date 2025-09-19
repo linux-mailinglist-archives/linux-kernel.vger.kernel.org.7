@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-823806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3205BB8778E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:29:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32498B87797
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4FD56491F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:29:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D2CA4E048F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A799235045;
-	Fri, 19 Sep 2025 00:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D9B2356B9;
+	Fri, 19 Sep 2025 00:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEkiIOLL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5YgjgKr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDF44A3E;
-	Fri, 19 Sep 2025 00:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4894C34BA2F;
+	Fri, 19 Sep 2025 00:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758241760; cv=none; b=iZLxnWPs65YQ91hFqtewTtNg6/Y6kbNxLDjAopt75SAKdUPHKEc6qTcWvakiacw6SIFtdXIe2CyF3nnzh22c7cxJWqGs+JOJLXy/pvgwDS+Q3eMC4gDbYxLCV9Oqc8m5v/a2l9YH0K1GyqMJ/j0St5WYDS+J3xJVWTlQpzqGAt4=
+	t=1758241853; cv=none; b=Oi4YIHey4+gFYkvaHfeQ0UhRvrrYICqAa4yqeQ097MaqZcaUt/erzUA8mTiMhbqEGn0sF0HgLXcAy1TeCx3sLyHh+Nouy6hNiiyeAObQnI4zZlpDsqlYNN2gxBIpqN0UuzsL81QXZHtmJM46keuayCAw79XpKXCzBvND0EltQG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758241760; c=relaxed/simple;
-	bh=rUZMRwKfJQIUT6+1NgJgtotbl/gzBIiQfywFOchXLW4=;
+	s=arc-20240116; t=1758241853; c=relaxed/simple;
+	bh=txV1vWnmrpDvHeycC4Fe2ea2OXZwWkdwSNUAUxRCpEQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YtulF7wlSGlhyvi5jaklap+tZ4oJSEGRB8LhmdSzLt5hYEU9rY7gZUnD8NBOv3Uf/lik6FuSkWPWljGCY39dz6juMV3DZQZg/QeAqmX/tOA+0s3J3aORfmeVqipZC/AhHNbxkmseji08Cjt6glPPKkodYJ76JMGjPMavLDZY2Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEkiIOLL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4A8C4CEE7;
-	Fri, 19 Sep 2025 00:29:15 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ERYEFHIbdbKvl65N8T8BpuBw7ulOS1SN8mccrgKk+nBN1rDyGZAXPcnxiNwjyx3Kcz53HU90NNpo95o2bmgikZE/akB0H1UgD1mz2v1GtrMQI3Kea/EjQMY1sxBAYySYaoRJwX5vmH5k2s5+eTbAlpRQRlTELaONVbMXWZGVutc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5YgjgKr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A30BDC4CEE7;
+	Fri, 19 Sep 2025 00:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758241759;
-	bh=rUZMRwKfJQIUT6+1NgJgtotbl/gzBIiQfywFOchXLW4=;
+	s=k20201202; t=1758241852;
+	bh=txV1vWnmrpDvHeycC4Fe2ea2OXZwWkdwSNUAUxRCpEQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DEkiIOLLA0RQTZ5hhIdQMlCD0lO3IRsf1YXx19L5OXy88YzR45VJuNTP2tGgzolCc
-	 QYqi2t+FfZ7c3+TjX9Rr3jI3HR79dVBG8bm+7T2QOoT1ClZgO5H8otYNlcKpoInwYn
-	 1F6Earh5v8Bc5WSG5s7sRIucxcn7Fyz2nwTEyJVpYKIDUMx+H5fdosoFxgnM6Zo/sY
-	 TCd+fvW9ciWxHtDPS27/oyVvrqp1htABi5SXwpakrbb+ycNB/StUoAKutBDVd4aZlQ
-	 nxSlKNglFxHatTPZPFgiHc0btJA0BfqAaoWyfuwIiv0Zb+moR+4pcU/q0xjO4Yl0JV
-	 fmO67ZYPai80g==
-Message-ID: <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
-Date: Fri, 19 Sep 2025 09:29:13 +0900
+	b=Z5YgjgKrBKWymSwGs6RK+OjtokRAdxbD72r5YYkWxdpBqPfvv7H7bk8WBhkrRTSAs
+	 f/aR78zsU8rWBjW9G1CWKqfEgwobcqipLKl+AattPUO/FAhHspB5lEZuKDmX9hQTE6
+	 i7HtmIQbuEuNtzaOU90Gr6wRhq0GwFd2sPrSjJuioqwocB+qhrSKKlk60o23aRxD+L
+	 WMgDCRrTaoeAE0buWFHf6rLJhnzGMj6RyXwIS5/N24L3/Ix8R3yL78PQ2R2aagCYQG
+	 1Fduz8c0DylHZB+PTvF7SIGzEw2q+qzeV7IhTuGoa0+7ebOS0/6GakoMBYgoP1zHvl
+	 jDWr+bfTpf9gw==
+Message-ID: <641256da-e142-4a35-9089-d3833baec6fd@kernel.org>
+Date: Fri, 19 Sep 2025 09:30:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
- igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
- <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
- <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
+Subject: Re: [PATCH v2] serial: qcom_geni: Fix pinctrl deadlock on runtime
+ resume
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+Cc: Praveen Talari <praveen.talari@oss.qualcomm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Praveen Talari <quic_ptalari@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ alexey.klimov@linaro.org, dmitry.baryshkov@oss.qualcomm.com,
+ andersson@kernel.org, psodagud@quicinc.com, djaggi@quicinc.com,
+ quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+ quic_arandive@quicinc.com, quic_shazhuss@quicinc.com,
+ quic_cchiluve@quicinc.com
+References: <20250917185102.3763398-1-praveen.talari@oss.qualcomm.com>
+ <dab18f70-4017-4c06-92c1-91cfd2229540@kernel.org>
+ <8e2781ae-34d2-4009-bf8c-56aa1bb6fe85@oss.qualcomm.com>
+ <aMuz/C1iT8JtjXbQ@trex> <aMvZ10EsMif/DOP4@trex>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,24 +112,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
+In-Reply-To: <aMvZ10EsMif/DOP4@trex>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/09/2025 20:55, Pritam Manohar Sutar wrote:
+On 18/09/2025 19:07, Jorge Ramirez wrote:
+> On 18/09/25 09:25:48, Jorge Ramirez wrote:
+>>
+>> let's test a bit further Praveen - we need to validate/trace the wake
+>> path on a real scenairo to make sure it is not cpu intensive (although I
+>> suspect the 2% was due to the storm you described more than to the code
+>> path itself)
+>>
+>> I can then provide the tested-by on the list.
+>>
 > 
-> Yes, we have already discussed this and convergence was to use the 
-> conventions which are mentioned in the Data-book. So, I updated the 
-> supply names accordingly. 
+> um bluetooh comms are broken - reverting the runtime_pm patch fixes it.
+> and the proposed fix (V2) does not address this scenario.
 > 
-> Please see the below communications for the same. 
-> 
-> https://lore.kernel.org/linux-phy/83dc9435-5850-425d-b345-52e84ef9262c@kernel.org/
-> https://lore.kernel.org/linux-phy/6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org/
-Ah, ok, although next time I might ask the same, since commit msg does
-not explain that.
+> I agree with the common sentiment, I think the patch should be reverted
+> in linux-next and better test definition shared.
 
-I still cannot find constraints for the rest of properties, though.
+For the record, the revert was already applied.
+
+Any new patch here should carry some more tested-by, before it can get
+applied.
+
 Best regards,
 Krzysztof
 
