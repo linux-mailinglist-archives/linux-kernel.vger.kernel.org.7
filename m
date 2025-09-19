@@ -1,123 +1,140 @@
-Return-Path: <linux-kernel+bounces-824116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66139B88280
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:32:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8A3B882C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2178252114E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74AC8468111
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4812BE7B2;
-	Fri, 19 Sep 2025 07:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AD92D97A6;
+	Fri, 19 Sep 2025 07:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qoPTt1AT"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b="DQ0s/RSc"
+Received: from mail0.khirnov.net (red.khirnov.net [176.97.15.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D241139D
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7782D2381;
+	Fri, 19 Sep 2025 07:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.97.15.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267127; cv=none; b=Uy0dJ7WLwfZ3QzFSJLbEwgZSKBX3EiWUoYpiQDFMHOCr+ja46SlKzg62ObNVJENBHPnoPb0cAxfOn8dfqD4Q1n5LEdqxyM3wKaasxLCi4Rt11sEWEIZsLleTxQZaR5Q9CKBCKJYiSL7PRWsGFembdrAkTEm5HdtaUdWLzJ45hOs=
+	t=1758267163; cv=none; b=qyRTO1LwY1t6uaAPxe1X4PlBNfevcUapzCICBFRkTXfr26oYK3iHWYpBGIGybpa262rBpbh9XQFt5SsqROj3mGE8b7iZ+DXdbtnOx3bcnNMYMv/yX/JY138DAxGh/14MZCj3FLpXlC9IoyQyMrASITtet9/5K0czMCDtGvoqfsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267127; c=relaxed/simple;
-	bh=wt4kTbK1OFFwOwKQjoxNLzwQB22NiKqqduDfS9iQmdA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lLo12stYHhbB0OoL2hEYklDvg7rnw8+7qTapMQa7HUlTke1Y2TJSlkBcmtvmTnG18r/G+O2vAIFj/3Txii4g5MyNtAiFhaD+HU5bDJOrBwVE9cVoLco6xjh7yUskk1+MAC/qbpD6BWfokKrPa/XCHZ1Yd7g/ru7ZJfNxSnQ4X54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qoPTt1AT; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45dd9a66c3fso5942185e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 00:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758267124; x=1758871924; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cTPVmES82odJDGA+CLGTeyXy0AuTwdVk1zEwZ9AQgIY=;
-        b=qoPTt1ATXn2AR3kv1GrSaIZAnuLLaka88z3F4/QH++kkKe75iqvRiAW/KaxgdkKUBg
-         0T66mPSwlaLVqja/Hna+vjgvfnwJ0hvyNosmZFBqrcasttmXGu3FzQcTRugL3baM55I3
-         P8uSrs+8b/lu1T1qrJB4McCf+ZGrku6ku15moFA1OCQw6CzTeTkfXXIwCo0o0Ob8qZ+X
-         7HDZIgSsQheCPz08D1549sEbS4gxBt2RK9gFU6M8iazRV6Du0Ng+nJbdIItI/FNGWKGZ
-         J/nAVyX/QedKOk6M7Ufe/ryoEu6voSWuB4+tlf4tN/4XXgQ/21KdAd/bOhwDiwgdHaTS
-         8+Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758267124; x=1758871924;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cTPVmES82odJDGA+CLGTeyXy0AuTwdVk1zEwZ9AQgIY=;
-        b=uf5r9ofXv57YmPdPNHwX4sMappIrXX+V3eaJ7/R5m0V/23y2gsuaFpnd69+9ivCIme
-         nZH0zoqbhkCUF7pLE+4JcofDcS9Q28d+FSouDhNzbsjR4+pPHa+g+5IFUrA/Hl+yJjlC
-         OVODBfbCWnUpoSfkyL9kdhjl7RS0BkejeDS7/uvw3kDJd4qWUVIBTUXWdQIP3fMgej1K
-         24mPHqBcwIV/Q/5Wp5DOH1syAhD5tU3NQNvqfPw5SKaY+Rv8GMSZZLR7Tk0qtusCSFXZ
-         Rj36FdlSvuCTC+lpaLcX+wjb0L9e/my0eBzAVsYJccQN+hwhsk6ReJGfghH3WDwjnbKA
-         L1SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeXadZscm5i9a2iAE3IUdGp8MY7wSc6AyaiMiZSH4YvNn4L+gslc8X58xHvoCpnSIOjmx2+VECd0UtLQs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzifk9ucPhOwI5m0vxCHb7bekFu9pLQ7miamBboF4gnW6YJe4oR
-	oVead53X6IRYNP1l6M8Pjvxl6mu7bIdM5aEFV2LTVHomKXUWNZD80NpI6Sh3SY4GSnHPV/1Fc3m
-	mbNe1ru5IwA==
-X-Google-Smtp-Source: AGHT+IESu4JDMN7PgmfEMFn6QSaJImsolN+62PXX7kbWKDbNIcYpMJOrBufzNDmE5qMK7Of1XKMXHqAp3fy5
-X-Received: from wmbay39.prod.google.com ([2002:a05:600c:1e27:b0:45b:9c60:76bb])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:314c:b0:45c:b56c:4183
- with SMTP id 5b1f17b1804b1-467ee8c56bcmr15125485e9.18.1758267123982; Fri, 19
- Sep 2025 00:32:03 -0700 (PDT)
-Date: Fri, 19 Sep 2025 07:32:01 +0000
+	s=arc-20240116; t=1758267163; c=relaxed/simple;
+	bh=7kKBDdra4SQwhLuuuWbqpMtlj/F7FDSZGSMO1U+Gqk0=;
+	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
+	 Message-ID:MIME-Version; b=ilBYVIJX/lBpztc56wwLIXfDVGoiL8DUvnPNnhvCwGlQYr2iTrQLkyzdOPi0uQnUmk6Lp9f+fsKROqlIa3lfVO64+aMksSiMhMXG7ovf9z4ht7samxo3c0Dj90hZ0UbG/puVbs5sGvMc02EYw8eB+HmoMA2H0UNEjSEyITpwhCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net; spf=pass smtp.mailfrom=khirnov.net; dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b=DQ0s/RSc; arc=none smtp.client-ip=176.97.15.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=khirnov.net
+Authentication-Results: mail0.khirnov.net;
+	dkim=pass (2048-bit key; unprotected) header.d=khirnov.net header.i=@khirnov.net header.a=rsa-sha256 header.s=mail header.b=DQ0s/RSc;
+	dkim-atps=neutral
+Received: from localhost (localhost [IPv6:::1])
+	by mail0.khirnov.net (Postfix) with ESMTP id 6C65C245F51;
+	Fri, 19 Sep 2025 09:32:37 +0200 (CEST)
+Received: from mail0.khirnov.net ([IPv6:::1])
+ by localhost (mail0.khirnov.net [IPv6:::1]) (amavis, port 10024) with ESMTP
+ id 1FMtlWRBHSjV; Fri, 19 Sep 2025 09:32:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=khirnov.net; s=mail;
+	t=1758267156; bh=7kKBDdra4SQwhLuuuWbqpMtlj/F7FDSZGSMO1U+Gqk0=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+	b=DQ0s/RScALqPnuyj1OdUG+EN4KkIzi7DXf24X5fyk8wR1jaN//rx030/8hRiD8eFX
+	 tn6Rl9qwVGNwKzWV70lZ58NNQzzFDGtM5wpqi7n4Xtvi9DLHz6FfKJcbX9LlJ3rzWT
+	 eQqylGQDJ878LDVfVeGjL/pPY8RSTvJ37Fy0Lm6WuvWdrFzcnSzy+Y94QY7E2NlBjO
+	 erJFWkBGJ1K7atTnog67j5KbiCoFBXNfvI5H3uxVt5uvKyf1951gzjvvXOidHXekYp
+	 8mzuebPkJIsGR2JlAyxY7LtTbnhL7NQpnua6JhiAb84CB8t2LoRMryhf78DjIvjzR3
+	 0D0QNn4J7cjMg==
+Received: from lain.khirnov.net (lain.khirnov.net [IPv6:2001:67c:1138:4306::3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
+	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
+	(Client CN "lain.khirnov.net", Issuer "smtp.khirnov.net SMTP CA" (verified OK))
+	by mail0.khirnov.net (Postfix) with ESMTPS id EDFB0245938;
+	Fri, 19 Sep 2025 09:32:36 +0200 (CEST)
+Received: by lain.khirnov.net (Postfix, from userid 1000)
+	id D083F1601BA; Fri, 19 Sep 2025 09:32:36 +0200 (CEST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Subject:  Re: [PATCH v2 1/2] Input: allocate a keycode for Fn+space
+From:  Anton Khirnov <anton@khirnov.net>
+To:  "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
+Cc:  Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D. Jones" <luke@ljones.dev>,
+ Hans de Goede <hansg@kernel.org>,
+ Ilpo =?utf-8?q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org
+In-Reply-To:  <c49cf225-c508-4e23-8786-5110a166d7c4@kernel.org>
+References:  <20250714150756.21197-1-anton@khirnov.net>
+ <20250714150756.21197-2-anton@khirnov.net>
+ <u3qzdpgoe2appwnmv2rkcmyg6htrmltna3geymp7llootdwbts@ycmhljii34bz>
+ <c49cf225-c508-4e23-8786-5110a166d7c4@kernel.org>
+Date: Fri, 19 Sep 2025 09:32:36 +0200
+Message-ID: <175826715682.18450.2507719983975659600@lain.khirnov.net>
+User-Agent: alot/0.8.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250919073201.751348-1-abarnas@google.com>
-Subject: [PATCH] drivers: rapidio: make rio_bus_type const
-From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-To: Matt Porter <mporter@kernel.crashing.org>, Alexandre Bounine <alex.bou9@gmail.com>, 
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 
-Because driver core can properly handle constant struct bus_type,
-move the rio_bus_type to be a constant structure as well, placing it into
-read-only memory which can not be modified at runtime.
+Hi Mario,
+Quoting Mario Limonciello (AMD) (kernel.org) (2025-09-19 07:36:31)
+> On 9/19/2025 12:12 AM, Dmitry Torokhov wrote:
+> > Hi Anton,
+> >=20
+> > On Mon, Jul 14, 2025 at 05:07:57PM +0200, Anton Khirnov wrote:
+> >> The Asus ExpertBook B9 laptop sends a WMI event when Fn+space is
+> >> pressed. Since I could not find any information on what this combination
+> >> is intended to do on this or any other Asus laptop, allocate a
+> >> KEY_FN_SPACE keycode for it.
+> >>
+> >> Signed-off-by: Anton Khirnov <anton@khirnov.net>
+> >> ---
+> >>   include/uapi/linux/input-event-codes.h | 1 +
+> >>   1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux=
+/input-event-codes.h
+> >> index 3b2524e4b667..a49b0782fd8a 100644
+> >> --- a/include/uapi/linux/input-event-codes.h
+> >> +++ b/include/uapi/linux/input-event-codes.h
+> >> @@ -548,6 +548,7 @@
+> >>   #define KEY_FN_S		0x1e3
+> >>   #define KEY_FN_B		0x1e4
+> >>   #define KEY_FN_RIGHT_SHIFT	0x1e5
+> >> +#define KEY_FN_SPACE		0x1e6
+> >=20
+> > I'd rather we did not add more codes with no defined meaning. I regret
+> > that we have KEY_FN_* (with the exception of KEY_FN itself). Since
+> > nobody knows what this key is supposed to do maybe map it to
+> > KEY_RESERVED and whoever wants to use it can map it to a concrete key
+> > code via udev?
+> >=20
+> > Thanks.
+> >=20
+>=20
+> Any chance you can look at Windows and see what the key actually does=20
+> when you have the matching OEM software installed?
 
-Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
----
- drivers/rapidio/rio-driver.c | 2 +-
- include/linux/rio.h          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Unfortunately I removed Windows from this machine right after buying it,
+and reinstalling it would be too invasive. I did ask someone to test on
+a different Asus laptop running Windows, the key did not seem to do
+anything.
 
-diff --git a/drivers/rapidio/rio-driver.c b/drivers/rapidio/rio-driver.c
-index 238250e69005..bcfe0b45b377 100644
---- a/drivers/rapidio/rio-driver.c
-+++ b/drivers/rapidio/rio-driver.c
-@@ -227,7 +227,7 @@ struct class rio_mport_class =3D {
- };
- EXPORT_SYMBOL_GPL(rio_mport_class);
-=20
--struct bus_type rio_bus_type =3D {
-+const struct bus_type rio_bus_type =3D {
- 	.name =3D "rapidio",
- 	.match =3D rio_match_bus,
- 	.dev_groups =3D rio_dev_groups,
-diff --git a/include/linux/rio.h b/include/linux/rio.h
-index 3c29f40f3c94..2c29f21ba9e5 100644
---- a/include/linux/rio.h
-+++ b/include/linux/rio.h
-@@ -78,7 +78,7 @@
- #define RIO_CTAG_RESRVD	0xfffe0000 /* Reserved */
- #define RIO_CTAG_UDEVID	0x0001ffff /* Unique device identifier */
-=20
--extern struct bus_type rio_bus_type;
-+extern const struct bus_type rio_bus_type;
- extern struct class rio_mport_class;
-=20
- struct rio_mport;
+> I've seen a bunch of laptops that FN+SPACE turns on/off keyboard=20
+> backlight.  Maybe that's what it does.
+
+Fn+F7 toggles keyboard backlight on this laptop, so probably not. I'm
+willing to believe it's a leftover from older hardware where it did do
+something and they just forgot to disable it.
+
+Cheers,
 --=20
-2.51.0.534.gc79095c0ca-goog
-
+Anton Khirnov
 
