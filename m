@@ -1,182 +1,276 @@
-Return-Path: <linux-kernel+bounces-825257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F35BB8B6F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:02:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E118B8B6BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085455A4435
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23F581CC25B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C861E2DFF13;
-	Fri, 19 Sep 2025 21:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1152D59E3;
+	Fri, 19 Sep 2025 21:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JPECOsGO"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WQFl79Ps"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63C72DC784
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758319191; cv=none; b=DvDVTiIlTg2PWio3l6jIhA/q4d+NhR3BDt2acFcLMwPa4E8tM18A0KfZq7af/UmXNVljd/whILgsY8UYYeSPl1GP5m/O1DMdlxnmBeuEuic+tLZJOzIoMAkWvg1S3GUfZWWiWAwq+mv4pBIn6aA7XRH7iRi2vSYIf7qgMzOqJOc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758319191; c=relaxed/simple;
-	bh=gsn2LS9MZ0/r32Bz+FAmilAqbI9lmLhCm/3NWyexLkw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KOyHq1KyPmPeqsxaJu/Xlgt+X9yy1tMFZZtvAr9M4d8TtSn4TqWRXZBuro/WTcK33Lxjmw5wnOB+PX8cjyK+i1KycdNeaho+vqxA8LV+W+VTaJ7C6P8MNlEocYPUCMnUzo8C4w9BvkdBHUQQk3K+BsqIToLigPpcHW6xG9fKVUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JPECOsGO; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54a30515cfso2772065a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:59:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758319188; x=1758923988; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tb2CJ3cAd7NGczYuI0z0dLZESADxvuqEmD3PjMDN8y4=;
-        b=JPECOsGOWfa2hEkQ7wl8nWl7uaYEgXMI03KPjTV9H3KaWUxP00UImRrYo/zMKLQj0w
-         uRKcKKQ15fZtFKeaRgB9q7t54nu85HIOQmKIcK2nkTAsl4IbC4MlO/CTpQnqZDMEnzf4
-         vxKVhCrRD2kKpx81AUyPJS3yu3E8J2CeSi33R7yy9YKz5QM1hJ1G5bBcwPgpvkncNqXl
-         5BF2ukp7USHtyAZV9nUpt90sZYeoi+Ss00ARAHVg+07/e4TNC1x+JB5furDHwUMSZbPR
-         f8IxxkjpiS84EbZYQeH2oMlUtIJsYhJ39E2KMetDCr7yUGWdAIIO/9YJyzQ6VK/svv/T
-         OCuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758319188; x=1758923988;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tb2CJ3cAd7NGczYuI0z0dLZESADxvuqEmD3PjMDN8y4=;
-        b=s6DE1q/eMG3jABSEALTpyGPumUGZMH8K5L3ywUxOpoZslO6bnviWQczj2PtNpkKgbs
-         c9ps/ZdI8QRM+hTEB0gxyjuE82xFAXXFMRnLMepiCZr0dhkI3GeicYryBSLHxX9hi01W
-         HMJAid7Lb0CSn4x8nz9K5okJmwbmfDc4bi1kezQkFO+aknleh8WrClsGGPVXDOhFm8zm
-         a+kw/yLl9Ci5RNxKfsuKmWT0GJVT6RZ1LOdV9CGUIJ4FNbF21kVIDhlpIIw90U+v9f4H
-         se7XzjEVEym+E1pq6XFEroHLL7/8AxDleSJUWDn1cGk+q4p1D7HubSh81YpBujk+ChVS
-         PEug==
-X-Forwarded-Encrypted: i=1; AJvYcCVxO1a+QEPkLIwcypxr8KWxQ1wq6qGmwcWs/COHOeKZEiEGytPAIdDzL5AzTgnwADDTqB8UZqrYRIqfjUg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1BRT/Q/gKOxdleNKxhYBCBFcnsfTvAhoJ7Wl8F2D05Rc21oto
-	3hRGdYLCnYhmvBk4rNFjzRSbfOvZ0ttPr8/cwvlx16xxTDvyqlb1o3PQaYAP2lWa13iWBW0RkLB
-	43FX6gg==
-X-Google-Smtp-Source: AGHT+IHFJR0vBTAZhUhFWYQATSw48DKFzjt9Py0RyOipJEiS7BJGMQ6J8RRVJHpyIkCK2VMmnqt8BdNygEI=
-X-Received: from pjcc8.prod.google.com ([2002:a17:90b:5748:b0:32e:8ff7:495])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1cc7:b0:32d:e309:8d76
- with SMTP id 98e67ed59e1d1-33093851ef6mr6452139a91.10.1758319188191; Fri, 19
- Sep 2025 14:59:48 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 14:59:34 -0700
-In-Reply-To: <20250919215934.1590410-1-seanjc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8D22D3745;
+	Fri, 19 Sep 2025 21:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758319121; cv=fail; b=tdbY+SVe5HFqcQTAUa7QDeFXfOBljEepvIGw/ta28LxcIKO6RzQUvkF8vxlaLs8hIjux3GoUKN6Bn3LWSXpo9WJ5z1GIarKCAemyvBYqm+Zjz2GQNe0xonS4lcNbqSFi2djs5V9Z166uDprF9SwUb2xwpbbt2aqutBcZv8hoKco=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758319121; c=relaxed/simple;
+	bh=u8mMHXT7rX9VaP4j4YOW/GDQtBk8kyAATny3jIElGn8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Jv0nYvVNi3J5WmiZ07ZnGSiyBbIS0KE912hDqrJ8r5wYGWFc22j0CmndMM/uikSjLiXNHRJS4Q0J6OhUN2idQLr/FFPehH98mepZlqAJaknfK9Q5kyESlTFwW0uPFx5WQFLQOdI22pJEq5ok3PqGrQsUC3Gk+pLKjrRiQm3J+PM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WQFl79Ps; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758319120; x=1789855120;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=u8mMHXT7rX9VaP4j4YOW/GDQtBk8kyAATny3jIElGn8=;
+  b=WQFl79PsIqi1Lus7pz6agZhisBRcnnObdv7JJIpHgtJsTOVIEiE3fdu5
+   ZmS3k43VDRyevS8fa0oQJoTnaJrknyO9RVKS3a4X7R+Xm3A/VeNy+5qMd
+   CHTFbgkHcb0lI+Uns1fNTO2LoJoV/v2utldgqlhrNfM9rt7gf5p/OAFo0
+   t0HECJQYpYeSgYOPMeLtSzQFsAC9Va5xwbFkbm4cXYxwXUi11XgpYXdgk
+   6WSOSRPebvb8S17KWOAuH9yWkl7YQYWq1w9UHry0gkzCXXiD8FdAiSDW+
+   jLkZb+DryUKxl81b/bvFKPplyQM3yuakR0hSe8Psw3x/7FmeChGs0wwvA
+   Q==;
+X-CSE-ConnectionGUID: S41ICBozQzGFvD2rpCF4hw==
+X-CSE-MsgGUID: M4QWZZtOS1GeMKfWBIyNOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="78112720"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="78112720"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 14:58:39 -0700
+X-CSE-ConnectionGUID: KMWhxsEjR52fT04h9b8Ssw==
+X-CSE-MsgGUID: yEoubORVQ3CLvQxh9G0nkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="206686088"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 14:58:38 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 19 Sep 2025 14:58:37 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 19 Sep 2025 14:58:37 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.69)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 19 Sep 2025 14:58:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a1ssT8z75NMerlGPxl8LtWtEqAmPVDeeg1mJJgYLV69aHKKTADagM+myyZ958jZb20PsekP+qdelekcwSZkLTkzerSbQ7pQpW7B8+L2YqdJZCVoBz07Zg/frF9MRbvchPYcJWZ/7rjtwU9/qQNegXCm63lTMx4Yfu+8iUaQYp6ruMDoi96SZ9+gMLXRq/F0a45mtzrSC703RVca8EtBm99mcWvZ4DcySqe+P3psS5F3+j83bU4AXz3FrDM6WKVvqtYO+n6atr/+kbH3zCmgyFcOlzI5YbazR7comTBhBt0En5iXl0riXI3eXv4+21AaIS1RB34MYBEEb4xed/2CFiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Do0H/gK4dG43PA4Xf533vn7upeG26XpTqbrMGnpK3cA=;
+ b=qGy9eVvcGtfaYsT87JaPREtsCfCV3hlvXKQDQOX3vFCu16SLc3h+KvASRJHZS/JnJXVqSOcp58URJlr+yAs4sntlYh+XDhLxQv8Y6iMvZChNXcQluxzDl62Iit2Z/ug7RmhKy9zsZoaZw6ybyHIAIaWfeJ1iesQQ+fX4fXD7yNjmPJ+k/mT33YLc44acxvLtDsjGKWrnXejfe8rWm6pgnCi+PW3imQbwWyYGAycevMYrNfyC6k2eoQxhRn2ZzNWxSKg8sREg1NTo+X1v7PHp6+Wjkllf3EQzsAhTlMkXVQOuu7br0jX4lhslJAQrGx8WcDUa0I4gFVyO7/bUUcAlag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA4PR11MB9131.namprd11.prod.outlook.com (2603:10b6:208:55c::11)
+ by SA2PR11MB5147.namprd11.prod.outlook.com (2603:10b6:806:118::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Fri, 19 Sep
+ 2025 21:58:35 +0000
+Received: from IA4PR11MB9131.namprd11.prod.outlook.com
+ ([fe80::7187:92a3:991:56e2]) by IA4PR11MB9131.namprd11.prod.outlook.com
+ ([fe80::7187:92a3:991:56e2%5]) with mapi id 15.20.9115.020; Fri, 19 Sep 2025
+ 21:58:35 +0000
+Date: Fri, 19 Sep 2025 17:00:33 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>, <linux-cxl@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<gost.dev@samsung.com>
+CC: <a.manzanares@samsung.com>, <vishak.g@samsung.com>,
+	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>, Neeraj Kumar
+	<s.neeraj@samsung.com>
+Subject: Re: [PATCH V3 05/20] nvdimm/namespace_label: Add namespace label
+ changes as per CXL LSA v2.1
+Message-ID: <68cdd281bd9bf_1a2a1729410@iweiny-mobl.notmuch>
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134138epcas5p2b02390404681df79c26f7a1a0f0262b8@epcas5p2.samsung.com>
+ <20250917134116.1623730-6-s.neeraj@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250917134116.1623730-6-s.neeraj@samsung.com>
+X-ClientProxiedBy: MW4PR04CA0342.namprd04.prod.outlook.com
+ (2603:10b6:303:8a::17) To IA4PR11MB9131.namprd11.prod.outlook.com
+ (2603:10b6:208:55c::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919215934.1590410-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919215934.1590410-8-seanjc@google.com>
-Subject: [PATCH v4 7/7] KVM: SVM: Enable AVIC by default for Zen4+ if x2AVIC
- is support
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Naveen N Rao <naveen@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA4PR11MB9131:EE_|SA2PR11MB5147:EE_
+X-MS-Office365-Filtering-Correlation-Id: 051c672c-0c5c-48b2-eb8b-08ddf7c7ae94
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Ly9Cgxp4qIQkVzsBjQK2HgFoXALru5Jdc69kBN/2NtNzAR8N5aJBhvTi5NQL?=
+ =?us-ascii?Q?RNQaJabMJ0PQR0equ3Yf5tAVcDR3u/yEoJrSPlH4Zmywjf1KOvfd1QyRAsZp?=
+ =?us-ascii?Q?hVRNDQEFAY1DLUvlJ5FuXzSA4QbPRG/1uYtEFc6TpalaS5X5XQLoFhMu5o67?=
+ =?us-ascii?Q?KYF952EHo4op7GnNls5cyyXJXx5DRJUe5XhlQbCB2X3T6ws/eg7FuE8dQKL8?=
+ =?us-ascii?Q?reBS9z0pACcWSTBhm8Y3nxYk4C1FJy1pfCKnjRSqPAgtViZni31gkxcSum/8?=
+ =?us-ascii?Q?wkhzOX2LJD57AKaDRk0XWmowyyR3z5y3AcdZdeLeO5T/nyavZM2FFfEMSl6L?=
+ =?us-ascii?Q?LSpF0cnq93G8/wyT6+1vm9OyVRFkDXW/iGdKuFCLv5RbqCRinGX1ZzbWo2h3?=
+ =?us-ascii?Q?SV41LaxGUzFLmdqXjPrz4UhLdjPFCZnoBZ8L3b5ju2vK2DaJdvciMm/1ybQf?=
+ =?us-ascii?Q?Ier6TqCWJUl6byTgCRm1DbiDbV7zoV9f8EuakFdBnzh+YoLIxFtoZYt5rqsB?=
+ =?us-ascii?Q?X07v3ngXAEVZZJxc3tIMHvOLtWpK++lzTExQdhQurFcC+o6R8cs++5kl1sBv?=
+ =?us-ascii?Q?i/6LMuIHRyewzzMiN351fBeCs4o/wKNCKzOG9SEGsMv1XacxvudbhKdnpF+y?=
+ =?us-ascii?Q?f5OonOaPQDosvIWu+LYSKPja/ZlsscJV18DcAYI+YGyvFlUBWcUmX0M5LXI5?=
+ =?us-ascii?Q?dcBvWnFH2duwr5GnY3wVv3xNPxuOT8t4n5QlmH8l5LNbMInR7FKGstO/xbGD?=
+ =?us-ascii?Q?tLEGWhSJQd80/ix1sCZyNbOxw9mpYk1XiMb3rWBWpiprZcsoA2qz888ObPED?=
+ =?us-ascii?Q?abs/lO63pMA0LSKFXFjG8W97O7FK3tsRYa0Hyq/MOKDzB8ZUvhxHzliZRvdG?=
+ =?us-ascii?Q?9dSt5d8Y3Z/S1TvRP2itNTswAzHX9G3hgD6ZhsF+/mwtdf21L+Ia/F8dN56a?=
+ =?us-ascii?Q?w71cDUovAZDeGPqtyw+ZI8xQ/UyqBFf1HbEfTjhy+rVaB5KHhbX+wSIk7D0z?=
+ =?us-ascii?Q?PstnoUP9LhG9KKs/gAuXnS3ysMhq2NrX31GZusAL1HGiHgNhFo2u0n1WqNU8?=
+ =?us-ascii?Q?8LFyQjPTDW+XXCcoDh2Jt6OhZuzWA6UDhUU+dOHQs3lRNjYEyHLB1HK3BrM9?=
+ =?us-ascii?Q?0LFsifoCNCQuo7XOAzTTVF0YO/NEMQZ2eqICWXm62H4Jlyw/NIIvnOAQLr78?=
+ =?us-ascii?Q?TcJBNljnXWhd1Zxj2xD487wsgcyM8CjwwYvx2Y/m0lCX7I15EYb8jwsewz0r?=
+ =?us-ascii?Q?pVF5b7YkbJsPUCw7uIEpkP34+wXR1Pe5Q3Xt24L9wQbHkpIHVikiuCwxEChk?=
+ =?us-ascii?Q?JAxG3GfeM9DFByXuojxyj0RFEsteTjI25ffX30xx4uxyA3Z782wlL3sAO3KX?=
+ =?us-ascii?Q?Ekk8TnKQfn9Lv6A+kjfHqZFr+UTGg9lDeElcI+/ENwT8QCLvcw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA4PR11MB9131.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?w9SlZWFu3epXcnAFZ8JF028T840nX/qPzCy+t7SD+hw0H68RCgaROqSnX/or?=
+ =?us-ascii?Q?1PmyYBogFe3aMvyXwpM7n5ihhkEJWTa2IajFw1zxz/DePnE0dE7SJZIADB44?=
+ =?us-ascii?Q?MiWasK1b4gquH6RHq2f2hVzwFIWLTxrqwWgqFW9oSCui73S/LlcoaOAb1Xnx?=
+ =?us-ascii?Q?j1x4JjsZJRK6OL1OsSefJzlNSR4LcnbYKz5NzyPVHeAUCIjs4kZ7irQIXttc?=
+ =?us-ascii?Q?j07tq4Qxl+AxatgSmHrxDLkKuvoem/wApPMEZW6/0LHeqRe4tQSenZ6WOQsc?=
+ =?us-ascii?Q?sX+JFFIGrqBbLRSCmLw8PyLMBDX6CFnhc/w2i6jUtd+quGwTved0zUdmZaFv?=
+ =?us-ascii?Q?vFyUes6rmOw84GH4NGnVfboJoS6sjKMZYncZN6tsoOssuHE0ItEFRwJSOHtj?=
+ =?us-ascii?Q?ALWpkV/zQHuM714Z/P7Z5MVUq2Vyw1+9yHzU2gDsAizhYoVml5/0BxfT6jjd?=
+ =?us-ascii?Q?h02WSaHIqBEzwgkRYV8mjS0E7lhMcZwkM1O7XDJHBf9AjGvldjNCvmPpupMn?=
+ =?us-ascii?Q?Xbh2AToh/MDZCkQF5ONa+dNzVMxC6zQtV/bxCdk6F2LrTf4TUCJoADx2qA5C?=
+ =?us-ascii?Q?Pj53Oo66nrII5TyxoXlloBIpYOJcSnpWBGR7sMWx2AKWUyi9vsOeGnSaoQhH?=
+ =?us-ascii?Q?GC7nuSpfnu1uRdqMvVkI87I5n5j9/HMMp5/TBWuwx1T5SkEgWEINC+xjSsUT?=
+ =?us-ascii?Q?CJoFsQjhbXoUiSPp/vR7D/8gWE9tDco/coIbPizcllyYBOb+4/9oA/XG29JB?=
+ =?us-ascii?Q?p5suEdRnf9MHWpEwDnNqopWjXvUWpB0JWlZ+udF9577AWCXuTqJDu1KIzn3S?=
+ =?us-ascii?Q?QRU3t6RfiHnqAP9En+yeK1OBciovo7fm9ZG4Tfe+jewREiEnzDWNOZOOXXTZ?=
+ =?us-ascii?Q?dhTePkg2K5kKeTnshjSqgN261pQgxM3ET0YPkXbFcNjvnhTvrWQ4IV4FrvSy?=
+ =?us-ascii?Q?dzMACNGb8VkE0/wshDn+zzAzNCsM4XsrdHM329YrVDR0uNmQTR21X9krRP1W?=
+ =?us-ascii?Q?+FNkMfap4sfJk6rFSToH4tOn5K+Hur0tuBMrOYNfyicBuB5tGKhTeRHPv7Y+?=
+ =?us-ascii?Q?O4T2YYYppP3b+HKjvVxhH/1mOxxw3mvTnkPMFhC7wLpHbP5/t5+Muu1eTNn4?=
+ =?us-ascii?Q?mKWKvQsd39Fq8vN4FJf6J8Iexl0zc0mRXcfXIfEnklDLeMzzKosU3hi8U17d?=
+ =?us-ascii?Q?KxkEDsF8gwcbSjL1hQKtESPXL9PHSe/4Q1zVl3B7qWrzGnT+zMaZhkPSZDtc?=
+ =?us-ascii?Q?91zEAcQ3t5TTrdfms880emgnSrbMuIizJ1h1CkrXQGb8o3Hsv+1vX27bPXcc?=
+ =?us-ascii?Q?Gnti6axrAcMV4gbfkIQAmMpjQaZ8kEAqheHTEj9p1o70/buKlHnaeLFt+uhI?=
+ =?us-ascii?Q?uPqsBPRCxCAkH41VzZjJTrOEGG+UKhVdP7u0i9KIvA8MZ3kDOxLEDzmJ3Wlz?=
+ =?us-ascii?Q?igBfzIboNa6pvokx5PqnuaWEM6W+KJhdPRPqnCjEhwdnG7BHUtXoNCucNyTq?=
+ =?us-ascii?Q?is535LIZ5QFV/+pn91ywIMxkDPz/WrXYTqwTwCkhyBhC6I3NOpMg6BKyhvub?=
+ =?us-ascii?Q?KpXnRbNWk/60ciA0Il2VhPaA/nwkMPDo7vwelNDX?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 051c672c-0c5c-48b2-eb8b-08ddf7c7ae94
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9131.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 21:58:35.8237
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mEbVi+e9vhy66myQcE45uoUdoWsg7eiMaZ/Za/YVO2hbYH3sojR2C8VAuv3pgdVnO3bnpiOnSDlUsKKeP2WKqw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5147
+X-OriginatorOrg: intel.com
 
-From: Naveen N Rao (AMD) <naveen@kernel.org>
+Neeraj Kumar wrote:
+> CXL 3.2 Spec mentions CXL LSA 2.1 Namespace Labels at section 9.13.2.5
+> Modified __pmem_label_update function using setter functions to update
+> namespace label as per CXL LSA 2.1
 
-AVIC and x2AVIC are fully functional since Zen 4, with no known hardware
-errata.  Enable AVIC and x2AVIC by default on Zen4+ so long as x2AVIC is
-supported (to avoid enabling partial support for APIC virtualization by
-default).
+Again I'm curious as to why?
 
-Internally, convert "avic" to an integer so that KVM can identify if the
-user has asked to explicitly enable or disable AVIC, i.e. so that KVM
-doesn't override an explicit 'y' from the user.  Arbitrarily use -1 to
-denote auto-mode, and accept the string "auto" for the module param in
-addition to standard boolean values, i.e. continue to allow the user to
-configure the "avic" module parameter to explicitly enable/disable AVIC.
+Is it to be able to use the setter's later?  I see a call to
+nsl_set_type() added later in the series but then deleted in an even later
+patch.  (??)
 
-To again maintain backward compatibility with a standard boolean param,
-set KERNEL_PARAM_OPS_FL_NOARG, which tells the params infrastructure to
-allow empty values for %true, i.e. to interpret a bare "avic" as "avic=y".
-Take care to check for a NULL @val when looking for "auto"!
+I don't have time ATM to really follow this through but giving a why in
+the commit message may have made this a simple patch to review.  Now I'm
+not clear if it is ok or not.
 
-Lastly, always print "avic" as a boolean, since auto-mode is resolved
-during module initialization, i.e. the user should never see "auto" in
-sysfs.
+Ira
 
-Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
-Tested-by: Naveen N Rao (AMD) <naveen@kernel.org>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/svm/avic.c | 40 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/label.c |  3 +++
+>  drivers/nvdimm/nd.h    | 23 +++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 3235562d0e1c..182f8c9a01bf 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -924,6 +924,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  
+>  	nd_label = to_label(ndd, slot);
+>  	memset(nd_label, 0, sizeof_namespace_label(ndd));
+> +	nsl_set_type(ndd, nd_label);
+>  	nsl_set_uuid(ndd, nd_label, nspm->uuid);
+>  	nsl_set_name(ndd, nd_label, nspm->alt_name);
+>  	nsl_set_flags(ndd, nd_label, flags);
+> @@ -935,7 +936,9 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	nsl_set_lbasize(ndd, nd_label, nspm->lbasize);
+>  	nsl_set_dpa(ndd, nd_label, res->start);
+>  	nsl_set_slot(ndd, nd_label, slot);
+> +	nsl_set_alignment(ndd, nd_label, 0);
+>  	nsl_set_type_guid(ndd, nd_label, &nd_set->type_guid);
+> +	nsl_set_region_uuid(ndd, nd_label, NULL);
+>  	nsl_set_claim_class(ndd, nd_label, ndns->claim_class);
+>  	nsl_calculate_checksum(ndd, nd_label);
+>  	nd_dbg_dpa(nd_region, ndd, res, "\n");
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 158809c2be9e..e362611d82cc 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -295,6 +295,29 @@ static inline const u8 *nsl_uuid_raw(struct nvdimm_drvdata *ndd,
+>  	return nd_label->efi.uuid;
+>  }
+>  
+> +static inline void nsl_set_type(struct nvdimm_drvdata *ndd,
+> +				struct nd_namespace_label *ns_label)
+> +{
+> +	if (ndd->cxl && ns_label)
+> +		uuid_parse(CXL_NAMESPACE_UUID, (uuid_t *) ns_label->cxl.type);
+> +}
+> +
+> +static inline void nsl_set_alignment(struct nvdimm_drvdata *ndd,
+> +				     struct nd_namespace_label *ns_label,
+> +				     u32 align)
+> +{
+> +	if (ndd->cxl)
+> +		ns_label->cxl.align = __cpu_to_le32(align);
+> +}
+> +
+> +static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
+> +				       struct nd_namespace_label *ns_label,
+> +				       const uuid_t *uuid)
+> +{
+> +	if (ndd->cxl && uuid)
+> +		export_uuid(ns_label->cxl.region_uuid, uuid);
+> +}
+> +
+>  bool nsl_validate_type_guid(struct nvdimm_drvdata *ndd,
+>  			    struct nd_namespace_label *nd_label, guid_t *guid);
+>  enum nvdimm_claim_class nsl_get_claim_class(struct nvdimm_drvdata *ndd,
+> -- 
+> 2.34.1
+> 
+> 
 
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index ec214062d136..f286b5706d7c 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -64,12 +64,32 @@
- 
- static_assert(__AVIC_GATAG(AVIC_VM_ID_MASK, AVIC_VCPU_IDX_MASK) == -1u);
- 
-+#define AVIC_AUTO_MODE -1
-+
-+static int avic_param_set(const char *val, const struct kernel_param *kp)
-+{
-+	if (val && sysfs_streq(val, "auto")) {
-+		*(int *)kp->arg = AVIC_AUTO_MODE;
-+		return 0;
-+	}
-+
-+	return param_set_bint(val, kp);
-+}
-+
-+static const struct kernel_param_ops avic_ops = {
-+	.flags = KERNEL_PARAM_OPS_FL_NOARG,
-+	.set = avic_param_set,
-+	.get = param_get_bool,
-+};
-+
- /*
-- * enable / disable AVIC.  Because the defaults differ for APICv
-- * support between VMX and SVM we cannot use module_param_named.
-+ * Enable / disable AVIC.  In "auto" mode (default behavior), AVIC is enabled
-+ * for Zen4+ CPUs with x2AVIC (and all other criteria for enablement are met).
-  */
--static bool avic;
--module_param(avic, bool, 0444);
-+static int avic = AVIC_AUTO_MODE;
-+module_param_cb(avic, &avic_ops, &avic, 0444);
-+__MODULE_PARM_TYPE(avic, "bool");
-+
- module_param(enable_ipiv, bool, 0444);
- 
- static bool force_avic;
-@@ -1151,6 +1171,18 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
- 
- static bool __init avic_want_avic_enabled(void)
- {
-+	/*
-+	 * In "auto" mode, enable AVIC by default for Zen4+ if x2AVIC is
-+	 * supported (to avoid enabling partial support by default, and because
-+	 * x2AVIC should be supported by all Zen4+ CPUs).  Explicitly check for
-+	 * family 0x19 and later (Zen5+), as the kernel's synthetic ZenX flags
-+	 * aren't inclusive of previous generations, i.e. the kernel will set
-+	 * at most one ZenX feature flag.
-+	 */
-+	if (avic == AVIC_AUTO_MODE)
-+		avic = boot_cpu_has(X86_FEATURE_X2AVIC) &&
-+		       (boot_cpu_data.x86 > 0x19 || cpu_feature_enabled(X86_FEATURE_ZEN4));
-+
- 	if (!avic || !npt_enabled)
- 		return false;
- 
--- 
-2.51.0.470.ga7dc726c21-goog
 
 
