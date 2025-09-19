@@ -1,213 +1,293 @@
-Return-Path: <linux-kernel+bounces-824791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDAF6B8A274
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:03:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F629B8A26B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2E63A6596
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:02:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 803321C82D92
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451D73148D7;
-	Fri, 19 Sep 2025 15:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FA5238C36;
+	Fri, 19 Sep 2025 15:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xy7CI/gi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqH5Vu/g"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D4730DEA7
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B20524111D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758294084; cv=none; b=I+hVsBlKtrXVwvR3ZRCy6DsWUK0V1BVV8kv+7ed1O2dLRpv1Hr94IjuPj6ZlFUl2JL8daUQWcOIX6vkghmEVVLtldtC5OiQSLqx0ZqqHUDtCo2CTe8PTCqrEC/4IVn1Mn5F147OShza09mJDym1Z0wbek7Rj3ZooAcGNabEh3JU=
+	t=1758294182; cv=none; b=kqMhf1OLBtaLCKdyto4qZPkZhkY978qVHh5WlcJqBFkQrlxHJo7OXSwyeJYa39GYXYUgwpF+jA1k9/Ggcb82soiyr/RtEmsmpfeu+oxZtGdwJxw3Fgdg+51lnPWxfuDi7HGaOsNmKCQuTsRyk7YHcipE+1+TgmCyzviTFmZIcZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758294084; c=relaxed/simple;
-	bh=saE+P8goRmOxpFQW3uWKh8mknX6g84clIecZEkZdkuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m+EiIo1sIfXGlMH++sSQbh5J79F7+MQsNCeI3rRowFwBkKAYXrRJVnCNur/atwN4TPJEc6QMyYDdqwurzitZ7OZRmJLP4CPGxKXJfkrZqHkP3s46fvxZy89EfIcU+G1aAK5VPgLWUcVztGDtxWXAD4rIfihzlxBr0gbU4FyFolQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xy7CI/gi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF1AFC4CEF9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758294083;
-	bh=saE+P8goRmOxpFQW3uWKh8mknX6g84clIecZEkZdkuI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Xy7CI/giaaaBvJWRDCSy9L6ftAHnAg6Gqy4+JwmD+scZSxbnlgwqQRINUPWzJEzF2
-	 rpi4FDWBqO4aNJGdJIjgG6/wg2zyE9gBbuLEoXTxIzmbsD4RmKQFU2wgsLgUrPbzXT
-	 Bq7gNPLx+Y6YL3gqnuVGk8nNhjVv7U0nKm1joiOK16soR398CHmn+kgo+BrBg+5k1R
-	 xs1G6ux7LqtknGv2urqi3RsZxJEm3xruXPUZT+cqVlOWzDUMDgZXDTQOcWSnHbCMKy
-	 eQinIFNiLRzFZ+sOFal+7tWJcQbhKgRLbiq4hxErHJ3F1Kk0IXx7RpX9q9skpSWpEC
-	 r7YgxskivslgQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-560888dc903so2522803e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:01:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXhE4dkhyKjT01Tl9pMvU51ddvX5qfsrVvkwOYe4ADPPVSBKHAJTqgggCfoMWnXlVfWUxuPZbXa1WUkyhU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr7ba/65NQ9wnr0d8VhgxY/iQsuXjyLHZuE8h5+RDnH1OWA/11
-	LwBMcuEsBrU0valCpNe6/xUGso27014+TE59Zug6zryEThL6jgBC8jOVcdw7dJn4XDklOIxTmHa
-	Yf8TrWMN52w70axGTW5zrAgIMLzWfnQ0=
-X-Google-Smtp-Source: AGHT+IGXT7xaqc0MehSYJATRk3j62bszDZlJ0+REGqc7MOVjw7hPH0tRwYf2DbMtCBLbqWw090Xrj/qth/5cVerp7FI=
-X-Received: by 2002:ac2:5f1b:0:b0:55b:8afb:e644 with SMTP id
- 2adb3069b0e04-579e375ca38mr1096947e87.31.1758294081307; Fri, 19 Sep 2025
- 08:01:21 -0700 (PDT)
+	s=arc-20240116; t=1758294182; c=relaxed/simple;
+	bh=yJDbiEVUS07mmti0ILNgyNrCuuyjwpOfHFogMMEzfLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBxv0d1bjdXmZ5IWv2xfJm/A/KussdX91lnzUxddASejYxb/ZUmjCbYH2WHaF2YsnmaXaZ1v2i4zw/Pv60aEss41uQXLXhI6ZTQVyoRt0B0QRkbWTsFEB+YDZ19Bh/bVYtmcMEz/44nSD+BEh0mDTxBhTfxN5qbgIGArEs+Gv1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqH5Vu/g; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-b0787fa12e2so337604666b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:02:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758294177; x=1758898977; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RuhmeiLRDOZblDBgAns4hX7zt5ydWj4wdgPVrc0nj58=;
+        b=lqH5Vu/gBEodaaOyTpEOiAf9pJ9krRfuophAPcgH6n1USEDzWicu0lItL5tKLv/KI0
+         Eb/TRCI2oFGip88b5OXQVSGauGZwmHDsIlRy14e8FyOfsbZ9R8Qwt+ALchD23uhvjFyg
+         pZfI3m8pX1kVOFXHsjWcbUJd5n94a5aTDEfGZrT5M96US8Va/mT64Ij+ywevp1SHALbA
+         C9g02KUKHzVL8KEfnvpvLmKoufb6Y7r5l9eUrZOjHd4tOcwe8txh9tyrVFLIOsEpM5Qt
+         DsTNJPGukqghCcI4Tb8dfIPJvLcvkkW5yXACppDfsBDEY2Zr1PS+7AyJbcA3kX00RLn2
+         TMRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758294177; x=1758898977;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RuhmeiLRDOZblDBgAns4hX7zt5ydWj4wdgPVrc0nj58=;
+        b=bb9C+14q4XuQSGoUCTfZKurzAZnz0GfF1u6N58+3zmzo4YxzdMMaRwEwSvE1q9OLp1
+         C1qfEBVyNQQd6EViB/5BeSlxrqN3qqZnxynIFnumZ3B8JA1K9/qd+8DI1fVIZ9bdCfmz
+         6uX+yv0A/crR8hIDvLApXDmuiYKrAcG0QltEVOC8/02IoWk+nx8vVhzXd5OI4YF8fSAb
+         BO53hwRNbfIQqJXylYqPzMA4xfAw4sesDuh+vEv128AcEhvl/291Zv4Y4EM2B/lKG2qo
+         RGSsMYZybMQbGAvgnqiX59ZYkSq1sbO+zXOExMuD9QwkRuHC/Dp67jmu5MTZrYbw3/J0
+         11mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV46L14G7Rm4kDONIr8TzvW/v7oDx9mmgUalA1Ts6IT+onX4AiG8g5MOV7h11S2UCxTSBVQ+uvs7wRJjZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX+2s3uOvZOz3QrGE8liSnoZk1F+of70RFvP59tJeRaYDo4mtb
+	jA9Y2sYJDEch2WL/6+Tm80xc66zh7InD/rqbU8+BOTDK7xOWsayTSAS+KMk1Awlh83o=
+X-Gm-Gg: ASbGncsXxEBGHww5oCSxoh617ovgxgE1CcqiFse0aQGneqsBHY/Z7zeCHOOoDAQX1Qx
+	tQ40z/3RCe9yc9j8UfAkbXDn1Ta6GMZYzwi1oiGkmUhxJ2Q0i2jVd7+kLaQUQ7U4EVmsUtk17BK
+	ekfEnkUJznZmI71lGMvbLi4q+MC4OUcH6fGiIKZcX6g3ipcLWWpLQRiyS5f063bTH/qLqUb02ws
+	TEZ2F/bdFhnb5D8iphxXqFhK96FXnXpY+qbABX8Kxlu4pOuZ0OdhYcjxmvhdtWhBcoVYxm17fVT
+	2e2bfBwzxdCMsoZ+LJlEzI8xy8qVt1V82Iw9QqDwxn6FN3VHt0QOS/0FfjDgCdXOyWHWe8j3/Lz
+	q41cYuUrdrfDOJPSxz4ScztKXbqt+n2T9
+X-Google-Smtp-Source: AGHT+IFfO0W8JQzVl/Y/fMJyVo1TEp0T/8tQQYw78b9ni5HcTOJsYbcXUUCxll2lkB3I4VDq0l24kg==
+X-Received: by 2002:a17:906:bc94:b0:b04:7232:3ea9 with SMTP id a640c23a62f3a-b24f56858a3mr307356066b.50.1758294177283;
+        Fri, 19 Sep 2025 08:02:57 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:b511:37d7:e73a:6aaa])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fd1102093sm458529066b.83.2025.09.19.08.02.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 08:02:56 -0700 (PDT)
+Date: Fri, 19 Sep 2025 17:02:52 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Xilin Wu <sophon@radxa.com>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] phy: qcom: edp: Add missing ref clock to x1e80100
+Message-ID: <aM1wnAw0mA-iNgJy@linaro.org>
+References: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
+ <6A43111ED3D39760+a88e4a65-5da8-4d3b-b27e-fa19037462c8@radxa.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919122321.946462-1-abarnas@google.com> <20250919122321.946462-3-abarnas@google.com>
-In-Reply-To: <20250919122321.946462-3-abarnas@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 19 Sep 2025 17:01:09 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGaT5Kf9=v0rSxW5TB__vDN=iPK7=+gDNBO=vTPrd_4Zg@mail.gmail.com>
-X-Gm-Features: AS18NWC-Kn0GPVDh-zCsx0l7aHJimokOHFMUz7N4ftIprt3RNfvD9-Lo50sjvYY
-Message-ID: <CAMj1kXGaT5Kf9=v0rSxW5TB__vDN=iPK7=+gDNBO=vTPrd_4Zg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arch: arm64: Reject modules with internal alternative callbacks
-To: =?UTF-8?Q?Adrian_Barna=C5=9B?= <abarnas@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Dylan Hatch <dylanbhatch@google.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Fanqin Cui <cuifq1@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6A43111ED3D39760+a88e4a65-5da8-4d3b-b27e-fa19037462c8@radxa.com>
 
-Hi Adrian,
+On Fri, Sep 19, 2025 at 07:06:36PM +0800, Xilin Wu wrote:
+> On 9/9/2025 3:33 PM, Abel Vesa wrote:
+> > According to documentation, the DP PHY on x1e80100 has another clock
+> > called ref.
+> > 
+> > The current X Elite devices supported upstream work fine without this
+> > clock, because the boot firmware leaves this clock enabled. But we should
+> > not rely on that. Also, when it comes to power management, this clock
+> > needs to be also disabled on suspend. So even though this change breaks
+> > the ABI, it is needed in order to make we disable this clock on runtime
+> > PM, when that is going to be enabled in the driver.
+> > 
+> > So rework the driver to allow different number of clocks, fix the
+> > dt-bindings schema and add the clock to the DT node as well.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> > Changes in v3:
+> > - Use dev_err_probe() on clocks parsing failure.
+> > - Explain why the ABI break is necessary.
+> > - Drop the extra 'clk' suffix from the clock name. So ref instead of
+> >    refclk.
+> > - Link to v2: https://lore.kernel.org/r/20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org
+> > 
+> > Changes in v2:
+> > - Fix schema by adding the minItems, as suggested by Krzysztof.
+> > - Use devm_clk_bulk_get_all, as suggested by Konrad.
+> > - Rephrase the commit messages to reflect the flexible number of clocks.
+> > - Link to v1: https://lore.kernel.org/r/20250730-phy-qcom-edp-add-missing-refclk-v1-0-6f78afeadbcf@linaro.org
+> > 
+> > ---
+> > Abel Vesa (3):
+> >        dt-bindings: phy: qcom-edp: Add missing clock for X Elite
+> >        phy: qcom: edp: Make the number of clocks flexible
+> >        arm64: dts: qcom: Add missing TCSR ref clock to the DP PHYs
+> > 
+> >   .../devicetree/bindings/phy/qcom,edp-phy.yaml      | 28 +++++++++++++++++++++-
+> >   arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 12 ++++++----
+> >   drivers/phy/qualcomm/phy-qcom-edp.c                | 16 ++++++-------
+> >   3 files changed, 43 insertions(+), 13 deletions(-)
+> > ---
+> > base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
+> > change-id: 20250730-phy-qcom-edp-add-missing-refclk-5ab82828f8e7
+> > 
+> > Best regards,
+> 
+> Hi,
+> 
+> I'm observing what looks like a related clock failure on sc8280xp when
+> booting without a monitor connected to a DP-to-HDMI bridge on mdss0_dp2.
+> 
+> Do you think sc8280xp might require a similar fix, or could this be a
+> different issue?
+> 
+> 
+> [    0.390390] ------------[ cut here ]------------
+> [    0.390398] disp0_cc_mdss_dptx2_link_clk_src: rcg didn't update its
+> configuration.
+> [    0.390419] WARNING: CPU: 0 PID: 63 at drivers/clk/qcom/clk-rcg2.c:136
+> update_config+0xa4/0xb0
+> [    0.390439] Modules linked in:
+> [    0.390448] CPU: 0 UID: 0 PID: 63 Comm: kworker/u32:1 Not tainted 6.16.3+
+> #45 PREEMPT(lazy)
+> [    0.390455] Hardware name: Qualcomm QRD, BIOS
+> 6.0.250905.BOOT.MXF.1.1.c1-00167-MAKENA-1 09/ 5/2025
+> [    0.390460] Workqueue: events_unbound deferred_probe_work_func
+> [    0.390476] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
+> BTYPE=--)
+> [    0.390482] pc : update_config+0xa4/0xb0
+> [    0.390492] lr : update_config+0xa4/0xb0
+> [    0.390500] sp : ffff80008351b9e0
+> [    0.390504] x29: ffff80008351b9e0 x28: 0000000000000000 x27:
+> ffff0000850ec3c0
+> [    0.390515] x26: ffff800081205320 x25: 0000000000000002 x24:
+> 0000000000000000
+> [    0.390523] x23: ffff8000812052a0 x22: ffff000080467800 x21:
+> ffff800081207ef0
+> [    0.390531] x20: ffff8000822ad6f0 x19: 0000000000000000 x18:
+> ffffffffffc06b68
+> [    0.390539] x17: 616c707369642e30 x16: 3030313065613a6d x15:
+> ffff800081474230
+> [    0.390547] x14: ffffffffff806b67 x13: 2e6e6f6974617275 x12:
+> 6769666e6f632073
+> [    0.390556] x11: 0000000000000058 x10: 0000000000000018 x9 :
+> ffff8000814742b8
+> [    0.390565] x8 : 0000000000afffa8 x7 : 0000000000000179 x6 :
+> ffff800081f742b8
+> [    0.390574] x5 : ffff800081f742b8 x4 : 0000000000000178 x3 :
+> 00000000fffdffff
+> [    0.390582] x2 : ffff8000814741f8 x1 : ffff00008091cec0 x0 :
+> 0000000100000000
+> [    0.390591] Call trace:
+> [    0.390595]  update_config+0xa4/0xb0 (P)
+> [    0.390606]  clk_rcg2_set_parent+0x58/0x68
+> [    0.390617]  clk_core_set_parent_nolock+0xc4/0x1e0
+> [    0.390630]  clk_set_parent+0x40/0x144
+> [    0.390638]  of_clk_set_defaults+0x12c/0x520
+> [    0.390645]  platform_probe+0x38/0xdc
+> [    0.390652]  really_probe+0xc0/0x390
+> [    0.390657]  __driver_probe_device+0x7c/0x150
+> [    0.390663]  driver_probe_device+0x40/0x120
+> [    0.390667]  __device_attach_driver+0xbc/0x168
+> [    0.390673]  bus_for_each_drv+0x74/0xc0
+> [    0.390684]  __device_attach+0x9c/0x1ac
+> [    0.390688]  device_initial_probe+0x14/0x20
+> [    0.390694]  bus_probe_device+0x9c/0xa0
+> [    0.390703]  deferred_probe_work_func+0xa8/0xf8
+> [    0.390713]  process_one_work+0x150/0x2b0
+> [    0.390725]  worker_thread+0x2d0/0x3ec
+> [    0.390731]  kthread+0x118/0x1e0
+> [    0.390738]  ret_from_fork+0x10/0x20
+> [    0.390751] ---[ end trace 0000000000000000 ]---
+> [    0.390760] clk: failed to reparent disp0_cc_mdss_dptx2_link_clk_src to
+> aec2a00.phy::link_clk: -16
+> [    0.401093] ------------[ cut here ]------------
+> [    0.401096] disp0_cc_mdss_dptx2_pixel0_clk_src: rcg didn't update its
+> configuration.
+> [    0.401112] WARNING: CPU: 0 PID: 63 at drivers/clk/qcom/clk-rcg2.c:136
+> update_config+0xa4/0xb0
+> [    0.401126] Modules linked in:
+> [    0.401132] CPU: 0 UID: 0 PID: 63 Comm: kworker/u32:1 Tainted: G   W
+> 6.16.3+ #45 PREEMPT(lazy)
+> [    0.401141] Tainted: [W]=WARN
+> [    0.401144] Hardware name: Qualcomm QRD, BIOS
+> 6.0.250905.BOOT.MXF.1.1.c1-00167-MAKENA-1 09/ 5/2025
+> [    0.401147] Workqueue: events_unbound deferred_probe_work_func
+> [    0.401159] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS
+> BTYPE=--)
+> [    0.401164] pc : update_config+0xa4/0xb0
+> [    0.401174] lr : update_config+0xa4/0xb0
+> [    0.401182] sp : ffff80008351b9e0
+> [    0.401185] x29: ffff80008351b9e0 x28: 00000000fffffff0 x27:
+> ffff0000850ec3c0
+> [    0.401194] x26: ffff800081205320 x25: 0000000000000002 x24:
+> 0000000000000000
+> [    0.401203] x23: ffff8000812052a0 x22: ffff000080467800 x21:
+> ffff800081207ea0
+> [    0.401211] x20: ffff8000822ad640 x19: 0000000000000000 x18:
+> ffffffffffc07528
+> [    0.401219] x17: 32636561206f7420 x16: 0001020ef3c08cb3 x15:
+> ffff800081474230
+> [    0.401227] x14: ffffffffff807527 x13: 2e6e6f6974617275 x12:
+> 6769666e6f632073
+> [    0.401235] x11: 0000000000000058 x10: 0000000000000018 x9 :
+> ffff8000814742b8
+> [    0.401243] x8 : 0000000000afffa8 x7 : 00000000000001a4 x6 :
+> ffff800081f742b8
+> [    0.401252] x5 : ffff800081f742b8 x4 : 00000000000001a3 x3 :
+> 00000000fffdffff
+> [    0.401260] x2 : ffff8000814741f8 x1 : ffff00008091cec0 x0 :
+> 0000000100000000
+> [    0.401268] Call trace:
+> [    0.401271]  update_config+0xa4/0xb0 (P)
+> [    0.401281]  clk_rcg2_set_parent+0x58/0x68
+> [    0.401291]  clk_core_set_parent_nolock+0xc4/0x1e0
+> [    0.401299]  clk_set_parent+0x40/0x144
+> [    0.401308]  of_clk_set_defaults+0x12c/0x520
+> [    0.401314]  platform_probe+0x38/0xdc
+> [    0.401321]  really_probe+0xc0/0x390
+> [    0.401325]  __driver_probe_device+0x7c/0x150
+> [    0.401330]  driver_probe_device+0x40/0x120
+> [    0.401335]  __device_attach_driver+0xbc/0x168
+> [    0.401340]  bus_for_each_drv+0x74/0xc0
+> [    0.401349]  __device_attach+0x9c/0x1ac
+> [    0.401353]  device_initial_probe+0x14/0x20
+> [    0.401358]  bus_probe_device+0x9c/0xa0
+> [    0.401367]  deferred_probe_work_func+0xa8/0xf8
+> [    0.401377]  process_one_work+0x150/0x2b0
+> [    0.401384]  worker_thread+0x2d0/0x3ec
+> [    0.401390]  kthread+0x118/0x1e0
+> [    0.401395]  ret_from_fork+0x10/0x20
+> [    0.401405] ---[ end trace 0000000000000000 ]---
+> [    0.401412] clk: failed to reparent disp0_cc_mdss_dptx2_pixel0_clk_src to
+> aec2a00.phy::vco_div_clk: -16
+> 
 
-On Fri, 19 Sept 2025 at 14:23, Adrian Barna=C5=9B <abarnas@google.com> wrot=
-e:
->
-> During module loading, check if there is a callback function used by the
-> alternatives specified in the '.altinstruction' ELF section and block
-> loading the module if such a function is present.
->
+The same happens on the X1E Devkit if there is nothing connected to the
+HDMI port. I believe you are looking for my patch series instead. :-)
 
-Why?
+https://lore.kernel.org/r/20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org/T/
 
-AIUI, the issue being addressed is the fact that we cannot yet execute
-code from the module itself when alternatives are being applied, and
-so the callback must live in the core kernel, or in another module.
+If it works for you, replying with a Tested-by there would be much
+appreciated. I'm still trying to convince folks that the approach of the
+series is the best way to move forward with this issue. :-)
 
-So this is a really big hammer, given that it disallows all callback
-alternatives, including ones that we could easily support.
-
-I don't object to the approach per se, but please explain why this
-solution is reasonable (after you've explained the problem)
-
-
-
-> Reported-by: Fanqin Cui <cuifq1@chinatelecom.cn>
-> Closes: https://lore.kernel.org/all/20250807072700.348514-1-fanqincui@163=
-.com/
-> Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
-> ---
->  arch/arm64/include/asm/alternative.h |  4 ++--
->  arch/arm64/kernel/alternative.c      | 15 ++++++++++-----
->  arch/arm64/kernel/module.c           |  8 ++++++--
->  3 files changed, 18 insertions(+), 9 deletions(-)
->
-> diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/as=
-m/alternative.h
-> index 00d97b8a757f..6eab2517c809 100644
-> --- a/arch/arm64/include/asm/alternative.h
-> +++ b/arch/arm64/include/asm/alternative.h
-> @@ -26,9 +26,9 @@ void __init apply_alternatives_all(void);
->  bool alternative_is_applied(u16 cpucap);
->
->  #ifdef CONFIG_MODULES
-> -void apply_alternatives_module(void *start, size_t length);
-> +int apply_alternatives_module(void *start, size_t length);
->  #else
-> -static inline void apply_alternatives_module(void *start, size_t length)=
- { }
-> +static inline int apply_alternatives_module(void *start, size_t length) =
-{ }
->  #endif
->
->  void alt_cb_patch_nops(struct alt_instr *alt, __le32 *origptr,
-> diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternat=
-ive.c
-> index 8ff6610af496..69fae94c843a 100644
-> --- a/arch/arm64/kernel/alternative.c
-> +++ b/arch/arm64/kernel/alternative.c
-> @@ -139,15 +139,18 @@ static noinstr void clean_dcache_range_nopatch(u64 =
-start, u64 end)
->         } while (cur +=3D d_size, cur < end);
->  }
->
-> -static void __apply_alternatives(const struct alt_region *region,
-> -                                bool is_module,
-> -                                unsigned long *cpucap_mask)
-> +static int __apply_alternatives(const struct alt_region *region,
-> +                               bool is_module,
-> +                               unsigned long *cpucap_mask)
->  {
->         struct alt_instr *alt;
->         __le32 *origptr, *updptr;
->         alternative_cb_t alt_cb;
->
->         for (alt =3D region->begin; alt < region->end; alt++) {
-> +               if (ALT_HAS_CB(alt) && is_module)
-> +                       return -EPERM;
-
-Nit: is EPERM the appropriate error code here?
-
-> +
->                 int nr_inst;
->                 int cap =3D ALT_CAP(alt);
->
-> @@ -193,6 +196,8 @@ static void __apply_alternatives(const struct alt_reg=
-ion *region,
->                 bitmap_and(applied_alternatives, applied_alternatives,
->                            system_cpucaps, ARM64_NCAPS);
->         }
-> +
-> +       return 0;
->  }
->
->  static void __init apply_alternatives_vdso(void)
-> @@ -277,7 +282,7 @@ void __init apply_boot_alternatives(void)
->  }
->
->  #ifdef CONFIG_MODULES
-> -void apply_alternatives_module(void *start, size_t length)
-> +int apply_alternatives_module(void *start, size_t length)
->  {
->         struct alt_region region =3D {
->                 .begin  =3D start,
-> @@ -287,7 +292,7 @@ void apply_alternatives_module(void *start, size_t le=
-ngth)
->
->         bitmap_fill(all_capabilities, ARM64_NCAPS);
->
-> -       __apply_alternatives(&region, true, &all_capabilities[0]);
-> +       return __apply_alternatives(&region, true, &all_capabilities[0]);
->  }
->  #endif
->
-> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-> index 5d6d228c6156..aeefc50229e3 100644
-> --- a/arch/arm64/kernel/module.c
-> +++ b/arch/arm64/kernel/module.c
-> @@ -478,8 +478,12 @@ int module_finalize(const Elf_Ehdr *hdr,
->         int ret;
->
->         s =3D find_section(hdr, sechdrs, ".altinstructions");
-> -       if (s)
-> -               apply_alternatives_module((void *)s->sh_addr, s->sh_size)=
-;
-> +       if (s) {
-> +               ret =3D apply_alternatives_module((void *)s->sh_addr, s->=
-sh_size);
-> +               if (ret < 0)
-> +                       pr_err("module %s: error occurred when applying a=
-lternatives\n", me->name);
-> +                       return ret;
-> +       }
->
->         if (scs_is_dynamic()) {
->                 s =3D find_section(hdr, sechdrs, ".init.eh_frame");
-> --
-> 2.51.0.534.gc79095c0ca-goog
->
+Thanks,
+Stephan
 
