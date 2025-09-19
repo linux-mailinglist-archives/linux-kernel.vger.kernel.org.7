@@ -1,100 +1,149 @@
-Return-Path: <linux-kernel+bounces-824475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78E6B8955A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:58:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99929B89552
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236237E1D2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 650271C27831
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2203430DEAF;
-	Fri, 19 Sep 2025 11:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375FD30DEAF;
+	Fri, 19 Sep 2025 11:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E7tAE8H4"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzlEMCBM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F4D30CDB9;
-	Fri, 19 Sep 2025 11:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED0030CB48;
+	Fri, 19 Sep 2025 11:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758283077; cv=none; b=Zorc9j9jLC53Pr/XC+/WEXSrjd7jKyxlLQYiHZX9VZtJ/HDYOsInlRKaWzrZwiY4gSzPOI4+VUFpupmKvO2nIAJlBUzvwPSE9mP5GRo8MmJRC5SsO40aSrerV3V2Sdg51YEnGyhCoRO+AO8wGUZcLMly9ir243Mpi4TQt015aiE=
+	t=1758283062; cv=none; b=Ugm6QqxEDBrABCS2UlDvk9YpvdbeBapXWuHafmyvfFbK/K+75IsurtnDphUtcbqfZuu4pJ6puwu+416ZAl0cgd9fSxcoQY1N4V54WZv6XZTBRMOKX7OzAnti+g1IvdOteeb9JKYIoQ8Dgcy5WqyvWa610sj2dNRrTJ+hRWxotAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758283077; c=relaxed/simple;
-	bh=KR3FJmlJvtd65Muxd63xrmx06R6KmJHYs2/e7ruIfO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uJ7GFA+OuMIsMCwtwLJ9qRjElIHqO2YGbMIv/nZsUWwi06ySETcZ/RsgnDrJSiU4y9p4LKjbTVbKD2pCCI/e73cCfdaarcn5o4Tp9F44c/oxMiekXZ4AVYN7dvIoEEZs8ova7QQlUN2pgrLvzm2mb9RIThyChKwLYI9mgKtx5l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E7tAE8H4; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758283072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0rO2wW68rSedEDCCjxodwfMESNI+P46hNUk5VIQj2Q8=;
-	b=E7tAE8H4EQD8W9wBoVdXJMOZSTvCmrAkzwtUTL0r1B7chlkuIT7pgpKH6um+Gs4jrmqLEo
-	I0WwYgwffaRKjGZnrI83ilK+bw8dNjiohiYE3gt9W/PPx7rEt0BYTJ3N9By2BqVqZOFX3P
-	95gAEYPc63gPvSEH2rkJixr0mXfEKlU=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Rex Nie <rex.nie@jaguarmicro.com>,
-	Jann Horn <jannh@google.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] USB: core: replace kmalloc + copy_from_user with memdup_user
-Date: Fri, 19 Sep 2025 13:56:50 +0200
-Message-ID: <20250919115654.1011141-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758283062; c=relaxed/simple;
+	bh=Lcy/LWJQGp1/4CfwoBEK/ZhTJbVy7tMzyjNO9hVTaMU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kz5E4C0Tgbc97XCD72RfNDhizpGTYwlYqqLj6OB/lDPSs15QC/z72Aqy1GCmAlOrmOEEW82lCX966m73T7ftNG1L6JUwZm6rBq+XAZUuGW2gBAQ69aRd9N4uqH63YsQ32VAv+gGMHP67uLrwJGb+dFe8vFf7TMf7SioSP3+jvYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzlEMCBM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B10BC4CEF0;
+	Fri, 19 Sep 2025 11:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758283062;
+	bh=Lcy/LWJQGp1/4CfwoBEK/ZhTJbVy7tMzyjNO9hVTaMU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DzlEMCBMTdGBAMyDFjAFalB2ZZnO8+6CUxsS5eJYbk7dUBh96KvFwC7fbALMHqdfE
+	 erRyehOSNupMvxnpg2zQglmHtRZ29+VerLJQl7RsKLS9XvafqULUPB8vqeFdhytodS
+	 PLWwd77MHueYpfG1AC3PbfRy/hC9Pgw6jJ9rVgI1FZKeptKgaeOF82Cm1ybMxhYCEI
+	 GXYm3e7st+lVz/3miMX6Zco386UoSRYuL98drNowG34PXORFLF5Zd/oAxqrokYsJiH
+	 YdMj4Gu11Ryff8yvgrHhdifJP1i6FuR9mHaMnRiijDhF7Z2Ec6bbO8WfPrCLqQF81T
+	 2QlhRhlWazKZA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@kernel.org>,
+	Menglong Dong <menglong8.dong@gmail.com>
+Cc: jolsa@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	kees@kernel.org,
+	samitolvanen@google.com,
+	rppt@kernel.org,
+	luto@kernel.org,
+	mhiramat@kernel.org,
+	ast@kernel.org,
+	andrii@kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] tracing: fgraph: Protect return handler from recursion loop
+Date: Fri, 19 Sep 2025 20:57:36 +0900
+Message-ID: <175828305637.117978.4183947592750468265.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Replace kmalloc() followed by copy_from_user() with memdup_user() to
-simplify and improve proc_do_submiturb(). Replace the hard-coded 8 bytes
-with the size of 'struct usb_ctrlrequest'.
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Return early if an error occurs, and avoid manually setting 'ret' and
-using 'goto error'.
+function_graph_enter_regs() prevents itself from recursion by
+ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+which is called at the exit, does not prevent such recursion.
+Therefore, while it can prevent recursive calls from
+fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+This can lead an unexpected recursion bug reported by Menglong.
 
-No functional changes intended.
+ is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+  -> kprobe_multi_link_exit_handler -> is_endbr.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+To fix this issue, acquire ftrace_test_recursion_trylock() in the
+__ftrace_return_to_handler() after unwind the shadow stack to mark
+this section must prevent recursive call of fgraph inside user-defined
+fgraph_ops::retfunc().
+
+This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+fprobe on function-graph tracer"), because before that fgraph was
+only used from the function graph tracer. Fprobe allowed user to run
+any callbacks from fgraph after that commit.
+
+Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+Cc: stable@vger.kernel.org
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- drivers/usb/core/devio.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ kernel/trace/fgraph.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
-index f6ce6e26e0d4..3bc54a5c59ff 100644
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1670,13 +1670,9 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
- 		/* min 8 byte setup packet */
- 		if (uurb->buffer_length < 8)
- 			return -EINVAL;
--		dr = kmalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL);
--		if (!dr)
--			return -ENOMEM;
--		if (copy_from_user(dr, uurb->buffer, 8)) {
--			ret = -EFAULT;
--			goto error;
--		}
-+		dr = memdup_user(uurb->buffer, sizeof(struct usb_ctrlrequest));
-+		if (IS_ERR(dr))
-+			return PTR_ERR(dr);
- 		if (uurb->buffer_length < (le16_to_cpu(dr->wLength) + 8)) {
- 			ret = -EINVAL;
- 			goto error;
--- 
-2.51.0
+diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+index 1e3b32b1e82c..08dde420635b 100644
+--- a/kernel/trace/fgraph.c
++++ b/kernel/trace/fgraph.c
+@@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+ 	unsigned long bitmap;
+ 	unsigned long ret;
+ 	int offset;
++	int bit;
+ 	int i;
+ 
+ 	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+@@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+ 	if (fregs)
+ 		ftrace_regs_set_instruction_pointer(fregs, ret);
+ 
++	bit = ftrace_test_recursion_trylock(trace.func, ret);
++	/*
++	 * This must be succeeded because the entry handler returns before
++	 * modifying the return address if it is nested. Anyway, we need to
++	 * avoid calling user callbacks if it is nested.
++	 */
++	if (WARN_ON_ONCE(bit < 0))
++		goto out;
++
+ #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+ 	trace.retval = ftrace_regs_get_return_value(fregs);
+ #endif
+@@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+ 		}
+ 	}
+ 
++	ftrace_test_recursion_unlock(bit);
++out:
+ 	/*
+ 	 * The ftrace_graph_return() may still access the current
+ 	 * ret_stack structure, we need to make sure the update of
 
 
