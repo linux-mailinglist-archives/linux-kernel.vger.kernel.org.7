@@ -1,128 +1,96 @@
-Return-Path: <linux-kernel+bounces-824133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142C9B882F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:36:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD59B8824E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574C0526786
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D1C3ABD20
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00942ECE8F;
-	Fri, 19 Sep 2025 07:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F86E2C08BC;
+	Fri, 19 Sep 2025 07:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b="KFw2AhVf"
-Received: from mail0.khirnov.net (red.khirnov.net [176.97.15.12])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="xJu4s+wo"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434A72E040A;
-	Fri, 19 Sep 2025 07:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.97.15.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F262AD24
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267184; cv=none; b=tTn829BMxwPvmTUARh7rQ9upIigk1f+LeSlti/dliccJ+G76PITSkPKxLT6IN9ZLL6SFJ5eDoDcOWV31osMRrt0lhf8JiwnHiCoQ4OGIK0WL3toU1xfG2ZzpULFOz7dCkE1Pg8F5A4vHkPzbCLg6+FvBAwiPByPT4AvRfJTo8XI=
+	t=1758266654; cv=none; b=ZJFfKjanvjHKChybfU8YvNzWIlr0syHVcvJciH0Cpits/B4U1UI8ukb6sej7x9iBwJqEps/cFOdEX70o7EWWvg2WSnm79kQpHTRT1b3+4jiA9ud0ogqE6PyK2tfAaYDSZA6xKtr23POXr7zeNQmsPGWr5ZEP5t930tH2O/Oglb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267184; c=relaxed/simple;
-	bh=KiOt8ViSetF92dGbwwJJbXNBeCN9qgGrUeYjqjUWq84=;
-	h=Content-Type:Subject:From:To:Cc:In-Reply-To:References:Date:
-	 Message-ID:MIME-Version; b=r5kBWtMtfyjLf6qrw9Wo+gqBvJvEVAafvM/cz8+v8vvBANvdYq1C06OFIJr9HXs7GJo7eXJPRL6btkHcSw+08cHRB6u2Z9zrIwkb0S6bDral7kiBOJXXRm31a36Qeul67Z4zJePSWRb0rx3wMjP7gJOQzpTEsgM4iyth9xtXhZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net; spf=pass smtp.mailfrom=khirnov.net; dkim=pass (2048-bit key) header.d=khirnov.net header.i=@khirnov.net header.b=KFw2AhVf; arc=none smtp.client-ip=176.97.15.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=khirnov.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=khirnov.net
-Authentication-Results: mail0.khirnov.net;
-	dkim=pass (2048-bit key; unprotected) header.d=khirnov.net header.i=@khirnov.net header.a=rsa-sha256 header.s=mail header.b=KFw2AhVf;
-	dkim-atps=neutral
-Received: from localhost (localhost [IPv6:::1])
-	by mail0.khirnov.net (Postfix) with ESMTP id D4A6F245F5C;
-	Fri, 19 Sep 2025 09:23:55 +0200 (CEST)
-Received: from mail0.khirnov.net ([IPv6:::1])
- by localhost (mail0.khirnov.net [IPv6:::1]) (amavis, port 10024) with ESMTP
- id H9t21pwlKzaw; Fri, 19 Sep 2025 09:23:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=khirnov.net; s=mail;
-	t=1758266635; bh=KiOt8ViSetF92dGbwwJJbXNBeCN9qgGrUeYjqjUWq84=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
-	b=KFw2AhVfxRfL3h3d4/47fe/skYYyncitBk2ObWWwSAfbJgIPg7UMBCUGSWtKoo6jZ
-	 YsDsn03iSY0tT9380LHIoK98yTcGAgtXeC0TL5QxZA5C9Q79hDLHO5qIr5Mbv8GqEN
-	 0yZNpP+tN0wT/6R4RoTLpWr8X05Kp9t8IPh+IutIWVmCkKwrWB8dbNl0sndeRvpD8Q
-	 oVavc+qOvhCQJjssm0nHF+J4bNoXr3MVHqZkGTRbYB6H3P6HM5IY3BQt3YrMNX1n/0
-	 uQfXtL91W3unYfw9iXOdMTdK7fVKr/jmOkWz5y2MabBNlwB3GN98dFxK8ypau8eW77
-	 r9nwI7OZGBiXw==
-Received: from lain.khirnov.net (lain.khirnov.net [IPv6:2001:67c:1138:4306::3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256
-	 client-signature RSA-PSS (2048 bits) client-digest SHA256)
-	(Client CN "lain.khirnov.net", Issuer "smtp.khirnov.net SMTP CA" (verified OK))
-	by mail0.khirnov.net (Postfix) with ESMTPS id DFA05245F57;
-	Fri, 19 Sep 2025 09:23:54 +0200 (CEST)
-Received: by lain.khirnov.net (Postfix, from userid 1000)
-	id C25F51601BA; Fri, 19 Sep 2025 09:23:54 +0200 (CEST)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758266654; c=relaxed/simple;
+	bh=fxZ6sw+WOs4GrG1rHnmaUuy4Gb5tuosew1fSlKu+7iA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZwInDbNkA0nce9a9vB65HC2Wy+vzzRCOGKoab6jopLQiT3gwocg2ZuJtcNrHOK1VqePNmvtNbDfnBXduoIc7IdcTzpvITmcByTOG0pO4LKoFhJ12PnfS93AdnO3AT2Fj4HliaQyPg8CyRgBqnK/sLP6ZmNC1su6/Dt+lQUAFoT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=xJu4s+wo; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=3Z4perxsP8d9vCjAkHxZUXQ59H6PCtwERdPNDJe/SyI=;
+	t=1758266653; x=1759476253; b=xJu4s+wo1t+S+Gw9xRfmyv/VJ0eT2eca8ra4N2PMmntWoiu
+	lxig2g5S5WqnO+eqY8zVjahulpIVwUXAiuYwPl0ru+I8Vde8zJWprYJyBvUF43BvNE/mx4StFgWbp
+	BicxuvTegFVhpk3g96rN/I5/BnIiykcZCmHJd7uKk8iAPGzGnN6d50DpSOQL97hK3NJ0Ou1ATuLQT
+	59PqNjJFMEOhxwV43dNhuUh7zyR85qHi5vnIfSRPKI/4vqNlRWzssElJRS4ynwDbadxCl6qMt7wFg
+	VXCP5Kl1WU3c7ol8XDT6iuqATgpuyCVcIV4QnoPFHl0oyPBDB6EQp1bfeZnII6VQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uzVTU-0000000FTLC-196i;
+	Fri, 19 Sep 2025 09:24:08 +0200
+Message-ID: <6b1abe384237c8129e8043ecdfdad77758d2fd2f.camel@sipsolutions.net>
+Subject: Re: [PATCH RESEND v11 10/13] um: nommu: a work around for MMU
+ dependency to PCI driver
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Hajime Tazaki <thehajime@gmail.com>
+Cc: linux-um@lists.infradead.org, ricarkol@google.com,
+ Liam.Howlett@oracle.com, 	linux-kernel@vger.kernel.org
+Date: Fri, 19 Sep 2025 09:24:07 +0200
+In-Reply-To: <m28qib8g1r.wl-thehajime@gmail.com> (sfid-20250919_020320_735898_47C8CCD7)
+References: <cover.1758181109.git.thehajime@gmail.com>
+		<4a9dde10c586883d20a8201ca7d76e6d7d52eaf4.1758181109.git.thehajime@gmail.com>
+		<a58620ecefa207e141a435c36492647c3d5bd3df.camel@sipsolutions.net>
+	 <m28qib8g1r.wl-thehajime@gmail.com> (sfid-20250919_020320_735898_47C8CCD7)
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject:  Re: [PATCH v2 1/2] Input: allocate a keycode for Fn+space
-From:  Anton Khirnov <anton@khirnov.net>
-To:  Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:  Corentin Chary <corentin.chary@gmail.com>,
- "Luke D. Jones" <luke@ljones.dev>, Hans de Goede <hansg@kernel.org>,
- Ilpo =?utf-8?q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-input@vger.kernel.org
-In-Reply-To:
-  <u3qzdpgoe2appwnmv2rkcmyg6htrmltna3geymp7llootdwbts@ycmhljii34bz>
-References:  <20250714150756.21197-1-anton@khirnov.net>
- <20250714150756.21197-2-anton@khirnov.net>
- <u3qzdpgoe2appwnmv2rkcmyg6htrmltna3geymp7llootdwbts@ycmhljii34bz>
-Date: Fri, 19 Sep 2025 09:23:54 +0200
-Message-ID: <175826663475.18450.7037268164142228744@lain.khirnov.net>
-User-Agent: alot/0.8.1
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-malware-bazaar: not-scanned
 
-Hi Dmitry,
-Quoting Dmitry Torokhov (2025-09-19 07:12:38)
-> Hi Anton,
->=20
-> On Mon, Jul 14, 2025 at 05:07:57PM +0200, Anton Khirnov wrote:
-> > The Asus ExpertBook B9 laptop sends a WMI event when Fn+space is
-> > pressed. Since I could not find any information on what this combination
-> > is intended to do on this or any other Asus laptop, allocate a
-> > KEY_FN_SPACE keycode for it.
+On Fri, 2025-09-19 at 09:03 +0900, Hajime Tazaki wrote:
+> > This doesn't make a lot of sense to me. Why would we even want to build
+> > PCI on NOMMU-UML if PCI in general is dependent on MMU now?
 > >=20
-> > Signed-off-by: Anton Khirnov <anton@khirnov.net>
-> > ---
-> >  include/uapi/linux/input-event-codes.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/=
-input-event-codes.h
-> > index 3b2524e4b667..a49b0782fd8a 100644
-> > --- a/include/uapi/linux/input-event-codes.h
-> > +++ b/include/uapi/linux/input-event-codes.h
-> > @@ -548,6 +548,7 @@
-> >  #define KEY_FN_S		0x1e3
-> >  #define KEY_FN_B		0x1e4
-> >  #define KEY_FN_RIGHT_SHIFT	0x1e5
-> > +#define KEY_FN_SPACE		0x1e6
+> > It's not like ARCH=3Dum with PCI and NOMMU has any value even for testi=
+ng
+> > if such a configuration cannot exist in reality?
 >=20
-> I'd rather we did not add more codes with no defined meaning. I regret
-> that we have KEY_FN_* (with the exception of KEY_FN itself). Since
-> nobody knows what this key is supposed to do maybe map it to
-> KEY_RESERVED and whoever wants to use it can map it to a concrete key
-> code via udev?
+> totally understand your point.
+>=20
+> now I see that we don't have to have this work around by using
+> --kconfig_add option to kunit.py.
+>=20
+> # like --kconfig_add CONFIG_UML_PCI_OVER_VIRTIO=3Dn (in addition to
+>   --kconfig_add CONFIG_MMU=3Dn).
 
-The problem with that approach is that on this laptop we have TWO keys
-with unknown meanings - fn+space and fn+f (KEY_FN_F already exists).
-Using KEY_RESERVED for one of them would be inconsistent then.
+That's not what I mean. I think it should be made impossible to build
+the broken code.
 
-Could you elaborate on why are you against KEY_FN_* codes? I understand
-they can be abused, but in some cases (such as this one) it genuinely
-seems the least bad way to characterize a key.
+The problem is probably UML_PCI_OVER_VIRTIO selecting UML_PCI selecting
+various PCI code, but nothing depends on PCI in the first place. Which
+it should, then?
 
-Cheers,
---=20
-Anton Khirnov
+johannes
 
