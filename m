@@ -1,222 +1,87 @@
-Return-Path: <linux-kernel+bounces-823924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0E7B87BE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:45:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A025B87BD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B19566C61
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:45:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BC33B6985
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1858C25A354;
-	Fri, 19 Sep 2025 02:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="nmZKtH2N"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD82D2472BF;
+	Fri, 19 Sep 2025 02:44:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB17B2512DE;
-	Fri, 19 Sep 2025 02:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.164
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758249949; cv=pass; b=Owksg8t/Gy72NkIrq97dj6dYL8TXZ69ok5osP6fpncw37I7VOB+U8iAWG4XMwvyIKRsRezLaXIhAOw3o6yOAR0fKzZFvBP2puKdCwfa2k1eIaoMqUUfWZQIk1kv2uRSbBYVMNTC22jn1/ssMP8x7T9EqrkX8KwvZkVz75ZU26C8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758249949; c=relaxed/simple;
-	bh=s/t2Wxrg+mbF7K5Pyum3QBpF+g+FSOPlAlQsbnljWzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R+aqBYmLQLGtPwqk96jy7GnTU1ToPGEnAmQh+u/CLn7CI4QwF2K/iNPdukQ7LXbF0CTYvAReeL6ZBC2VgsGQKqV8EPFgr766GpNaFHZvL0J6mIuusFGCUBIx+Chdw8tHLRDTp8MUUMca035Uoyq7rTAbDw2xDbP9x5fzVJCgTsE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=nmZKtH2N; arc=pass smtp.client-ip=81.169.146.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
-ARC-Seal: i=1; a=rsa-sha256; t=1758249755; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=FO+JDYqEfQhY5yJDCBt4iFDPV8ofMfSy3Q88N/xQQYWhtQR6g4iG95pYHZ151lwKoS
-    8p2irwBmW8azrqf1r00IvQ51PdCw35E8pLW47vxESR/zVbF3i1eiCvzkRjMMi9S+MMjH
-    TyYeE5KmD52vJkg1U2AUz10Qdd7PQppYmmjbLLnqfUcRaa99Nmr5Rzu5jYL9WMsIQjER
-    zAhSohRqe6iQJx7+kuGXmJE6G7NXIHdf2SmGxCrvnjKvZQ0wTHsYZBcOgsaekz2PCPtL
-    q+7gvAGrUo6yZhsEzcw9VShWSyBrW73L7TyQIz0jXvSuXRv9q4b4td35L/uHFORUflY5
-    ja1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758249755;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=DwpWtLn/k646AVPru0zB96UTBYAxfzxxROtH+P666Hg=;
-    b=fWEKhP6Yov3Ho35zZCw0Modmgk6/aHWG9mMxbXxQIYVDCS8VLJjGv/6nkf35fXh5lI
-    panCBrfzsEG/fKbiPvqSYI+rWcrhZFJLDf7TsOHwUJbW8lomoLRi0Kp5Od+53chCSlaV
-    l65A+6WbXiPRylYq27dVL2pk3Da8JaC7HQSueCzB1K8IvfQCbnlyEhcxYe21rJxOZUj5
-    hNteejoM9A79ayW739on0DfNyVDJ6vw6HV+eczektRVrAsRkwJ+qW08gDXJ7OMfsVT+F
-    Z1CuRPh6TG+3NEt9jhoJJCra3+hd8VbaW+pufyOLWJriP1me1yaq3phJwgmZi7hSnE8z
-    NlgQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758249755;
-    s=strato-dkim-0002; d=chronox.de;
-    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=DwpWtLn/k646AVPru0zB96UTBYAxfzxxROtH+P666Hg=;
-    b=nmZKtH2NOSNDD7UnjwsbVrIRaJFI7RrXJ7VlDwEB6FPluxhkjmn2bF5aeVEkGQ3dvY
-    r1gkaEJRSWKhpg0IwvxYYWW8qsowCiAnMwHq8asehCtPgHn1+XO7SnAQCuaVJzJnMpeR
-    3eBQ98q4CctFSXxRDdV7LnSWobJau7hGvDRPCsHfSbjyJcHoCDbTHh/IdqgCA/UlPsi+
-    DxUsc9HYw1579IHjK/aTKYsrH6SusWZ9QjasnOgwWnwpfN3jdv0aG6xmgczJ28MSoxeu
-    vMLiSdwpHNBqLRUs6DrJJ8dIbu+VNhTFS4BtY2+feiU7dbKCTkRl+Z0BWRyOdbkFpD++
-    fspQ==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zm0FKX05o/ir7Vyg9+o="
-Received: from graviton.chronox.de
-    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
-    with ESMTPSA id f01e6318J2gWHl9
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 19 Sep 2025 04:42:32 +0200 (CEST)
-From: Stephan =?UTF-8?B?TcO8bGxlcg==?= <smueller@chronox.de>
-To: Eric Biggers <ebiggers@kernel.org>, David Howells <dhowells@redhat.com>
-Cc: dhowells@redhat.com, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Ard Biesheuvel <ardb@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
- linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512,
- SHAKE128, SHAKE256
-Date: Fri, 19 Sep 2025 04:42:29 +0200
-Message-ID: <2952535.lGaqSPkdTl@graviton.chronox.de>
-In-Reply-To: <3605112.1758233248@warthog.procyon.org.uk>
-References: <3605112.1758233248@warthog.procyon.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E15221294
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758249844; cv=none; b=VaxcWg9sG/n1vw+gn19xsh67yjGCjvvJdbQHDAFWYXf4v5/ir9TEx1MSem8n1oEeW+yNN8UM4m/DcdKtAqOHYtvquRIQBKgTHcX+m9nFxRH+87IPf0DWJasFI196PxtOkZX3kC9l1IQX5haLoFsXUIP4/on4tfw056bs5svqqwk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758249844; c=relaxed/simple;
+	bh=qWLSbdYhZF6N4jaF7tOwLoOWMzvLIYzP0oFrJUtzq+c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iQ2QukocFKfwbPHS0ktcIey1SLTGgh8wjVHsDrOwueYbU4Z9PMtaFoCSLGVLqUoYnQ4cXe7WTwieN8pgPgViSfjYJaaAedm41HX7Y6FVegxubtchf6GAuRdSJd6CB0yT3PECumkvA1XoQvdzyjb5DVp7JIX2udX+OkuLcP4psKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42408f6ecaaso22586275ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:44:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758249842; x=1758854642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lSWEPjA29tF6yViPpxpj8zXJtFYi6+inhhKM7thvcBA=;
+        b=tFvWDwK5kK4UWTw5OSil5K+jrHMBQFDgXAwmTh83ag1SdTJjOxHeNqSn+lfTgMM/zl
+         mcw5e1aAYwtMPv90QrUDooloZ/WVe36HtTW2iYUu6rxOZdaZzf9vcTr9k1icIX1CFUuf
+         2KH67F+WN7ZM+QXsPCI88Fe5ry3rfRSuAwPi1xDw89uXTIooemUIe4iH/ES/dpM/PN1R
+         Yaivm7TV/zVX9JJ7k4GuctMHrPb0sGADxX9nxziytTEZuNPDiE3VKxiTNAPqSkRW71ZQ
+         84iC0dyL9AQaz2t/5w/DUdJsypDqxEVu5ALZ77R+W4H6/MvhYb8rJIHDCTTCOldX4s8J
+         I4gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSaz12bx6m7Zp+K9BZZ4Kkrwe6nReB9fi8zXdXGDupd58J6B37/OJm6ffwNoor1U000azqoLt6MM4w2qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTKvLgYymN0w7TCEzbWPztZouWatAF59NGqvVnrT5OBs4ka+fb
+	pjodxnjzvFu7LIGsJc+x/0yfusvHncDFMin+Gu2CZIv/ZdM3BWNGmwNzF5tDC9H9h7u8uyZ7THh
+	kY6W2+UHRDGZrp5lJc8IRcMfRB+d56x4R7nh29KZxhoZR8x90HJAnklPZSVg=
+X-Google-Smtp-Source: AGHT+IGbAeyXjZWIbV4cZqSg5KeYT+LWlAjVRWjB8PNvFzOY2qIAiIDIzL8TCXWoFFKPoCzB0zPkIE+h6vsPpYDaNncgpQ+VdgbQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Autocrypt: addr=smueller@chronox.de;
- keydata=
- mFIEZZK4/xMIKoZIzj0DAQcCAwTDaDnchhDYEXH6dbfhyHMkiZ0HPYDF5xwHuMB8Z24SuXYdMfh
- pnovdsgwpi6LNAvnI/lGPrvDc/Mv0GQvHDxN0tCVTdGVwaGFuIE3DvGxsZXIgPHNtdWVsbGVyQG
- Nocm9ub3guZGU+iJYEExMIAD4CGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQQ0LE46O
- epfGZCb44quXQ2j/QkjUwUCZZK6YwIZAQAKCRCuXQ2j/QkjU/bVAP9CVqPG0Pu6L0GxryzpRkvj
- uifi4IzEoACd5oUIGmUX7AD8DxesdicM2ugqAxHgEZKl9xhi36Eq7usa/A6c6kFmyHK0HVN0ZXB
- oYW4gTcO8bGxlciA8c21AZXBlcm0uZGU+iJMEExMIADsWIQQ0LE46OepfGZCb44quXQ2j/QkjUw
- UCZZK6QgIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgAAKCRCuXQ2j/QkjU8HNAQDdTmzs+
- Cls6FMoFrzoWdYtOGCW5im7x1G5M/L0L3VOvgEA6m9edpqCc0irbdNXVjoZwTXkSsLOxs2t7aDX
- 2vFX54m0KVN0ZXBoYW4gTcO8bGxlciA8c211ZWxsZXJAbGVhbmNyeXB0by5vcmc+iJMEExMIADs
- WIQQ0LE46OepfGZCb44quXQ2j/QkjUwUCZb+zewIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBw
- IXgAAKCRCuXQ2j/QkjU1pIAQDemuxTaZdMGsJp/7ghbB7gHwV5Rh5d1wghKypI0z/iYgEAxdR7t
- 6KrazO07Ia9urxEAQWqi0nf6yKluD0+gmOCmsW4UgRlkrj/EwgqhkjOPQMBBwIDBBo6QjEMU/1V
- DD+tVj9qJ39qtZe5SZKFetDzXtyqRpwL+u8IbdIjv0Pvz/StziFMeomh8chRB7V/Hjz19jajK3C
- IeAQYEwgAIBYhBDQsTjo56l8ZkJvjiq5dDaP9CSNTBQJlkrj/AhsgAAoJEK5dDaP9CSNTLQwA/1
- WxGz4NvAj/icSJu144cMWOhyeIvHfgAkG9sg9HZXGdAPsGzKo4SezAYCwqgFKnyUIAjKYl1EW79
- pSCOFS36heQvbhWBGWSuP8SCCqGSM49AwEHAgMEiEhJatNBgxidg8XJFTy8Ir7EsTCeoVY2vJAN
- rysZeAAmSaUWFD4pvXE5RYQFeCYTWTG419H7ocNGUz5u1dgKhAMBCAeIeAQYEwgAIBYhBDQsTjo
- 56l8ZkJvjiq5dDaP9CSNTBQJlkrj/AhsMAAoJEK5dDaP9CSNTGCAA/A2i1CxhQJmYh2MwfeM5Hy
- Wk6EeWruSA1OgSWmaJaoGaAP4mARD2CviJgz8s3Gw07ZTk8SYHOTnv70hUbaziZ3/tjA==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Received: by 2002:a05:6e02:cae:b0:424:81c1:9481 with SMTP id
+ e9e14a558f8ab-42481c1950bmr18050685ab.8.1758249842141; Thu, 18 Sep 2025
+ 19:44:02 -0700 (PDT)
+Date: Thu, 18 Sep 2025 19:44:02 -0700
+In-Reply-To: <20250919021852.7157-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ccc372.050a0220.28a605.0016.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+From: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Freitag, 19. September 2025, 00:07:28 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb=20
-David Howells:
+Hello,
 
-Hi David,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-as you mentioned that this patch as a basis for ML-DSA then may I outline t=
-he=20
-following: the ML-DSA code requires a multi-staged squeeze operation. For=20
-example:
+Reported-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
+Tested-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
 
-squeeze(state, 10 bytes);
-squeeze(state, 10 bytes);
+Tested on:
 
-must be identical to
+commit:         097a6c33 Merge tag 'trace-rv-v6.17-rc5' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ccc712580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+dashboard link: https://syzkaller.appspot.com/bug?extid=3815dce0acab6c55984e
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1574c712580000
 
-squeeze(state, 20 bytes);
-
-With this in mind, may I highlight that potentially the following code does=
-=20
-not support this notion:
-
-> +/**
-> + * sha3_final() - Finish computing a SHA3 message digest of any type
-> + * @ctx: the context to finalize; must have been initialized
-> + * @out: (output) the resulting message digest
-> + *
-> + * Finish the computation of a SHA3 message digest of any type and perfo=
-rm
-> the + * "Keccak sponge squeezing" phase.  The digest is written to @out
-> buffer and + * the size of the digest is returned.  Before returning, the
-> context @ctx is + * cleared so that the caller does not need to do it.
-> + */
-> +int sha3_final(struct sha3_ctx *ctx, u8 *out)
-> +{
-> +	struct sha3_state *state =3D &ctx->state;
-> +	unsigned int digest_size =3D ctx->digest_size;
-> +	unsigned int bsize =3D ctx->block_size;
-> +	u8 end_marker =3D 0x80;
-> +
-> +	sha3_absorb_xorle(ctx, &ctx->padding, 1);
-> +	ctx->partial =3D bsize - 1;
-> +	sha3_absorb_xorle(ctx, &end_marker, 1);
-> +	sha3_keccakf(ctx->state.st);
-
-This logic above should only be invoked for the first squeeze operation.
-
-May I suggest you consider the code at:
-
-https://github.com/smuellerDD/leancrypto/blob/master/hash/src/sha3_c.c#L625
-
-> +
-> +#ifdef __LITTLE_ENDIAN
-> +	for (;;) {
-> +		unsigned int part =3D umin(digest_size, bsize);
-> +
-> +		memcpy(out, state->st, part);
-> +		digest_size -=3D part;
-> +		if (!digest_size)
-> +			goto done;
-> +		out +=3D part;
-> +		sha3_keccakf(ctx->state.st);
-> +	}
-
-This loop needs to honor a starting offset in case the previous call only=20
-requested a subset of the rate.
-
-May I suggest to consider the code at:
-
-https://github.com/smuellerDD/leancrypto/blob/master/hash/src/sha3_c.c#L643
-
-
-> +#else
-> +	__le64 *digest =3D (__le64 *)out, *s;
-> +
-> +	while (digest_size >=3D bsize) {
-> +		for (int i =3D 0; i < bsize / 8; i++)
-> +			put_unaligned_le64(state->st[i], digest++);
-> +		digest_size -=3D bsize;
-> +		if (!digest_size)
-> +			goto done;
-> +		sha3_keccakf(ctx->state.st);
-> +	}
-> +
-> +	s =3D state->st;
-> +	for (; digest_size >=3D 8; digest_size -=3D 8)
-> +		put_unaligned_le64(*s++, digest++);
-> +
-> +	u8 *sc =3D (u8 *)s;
-> +	u8 *dc =3D (u8 *)digest;
-> +
-> +	for (; digest_size >=3D 1; digest_size -=3D 1)
-> +		*dc++ =3D *sc++;
-> +#endif
-> +done:
-> +	digest_size =3D ctx->digest_size;
-> +	memzero_explicit(ctx, sizeof(*ctx));
-
-=46or a multi-stage squeeze, it is perhaps not helpful to zeroize the conte=
-xt=20
-here.
-
-Ciao
-Stephan
-
-
+Note: testing is done by a robot and is best-effort only.
 
