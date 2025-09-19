@@ -1,134 +1,91 @@
-Return-Path: <linux-kernel+bounces-824709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF7CB89F62
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D79B89FCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EB05A0690
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D58B3B811C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFB83164BE;
-	Fri, 19 Sep 2025 14:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FyfwT/sP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2C43164AD;
-	Fri, 19 Sep 2025 14:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCD23164D4;
+	Fri, 19 Sep 2025 14:30:24 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E11E314A85;
+	Fri, 19 Sep 2025 14:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292021; cv=none; b=FYU+nEdIAoMG1Nm5cHfpywbEGoizJ6J1xFhqDcgqIsyP5SogXMaN10Sg0TUJo9T/RNjUtGMISAZaGeuoQ9o/G4Pht+U1Vvt5nqtgMxt6vRJAJcXE/VPBmr/wgQd7FrgmCuSouwgBpX4qHoxT6KkhFvckSIHQCu15/NkIZSeJ/zI=
+	t=1758292224; cv=none; b=RkTm43N2UswicBxMdg1j0X7i+A1igk1c+P+KKdH91gG4NSXnblHUBKAIdr3e9tCOzZHZcStWe7mVJV58GCc7zeOrZP8pdLVrzZ+96xUqNljt9Z/bDe6sztAylLheiq4pD68x/whCYhYeiGUf8NrWbMtyTe5uHiU19VsRHNHS9hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292021; c=relaxed/simple;
-	bh=DzaesBYWo5gYh/9yDXkynFQps02fTLxsraKzoj6MxuQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M/5pvbEcjQi6LZF5Sqw934iiWS+drei11R9+et580ovY9iMKYXwhNCoaZhOV53gCCIiyaKuoxNUTTGYw2CLCXdQKDxXnssACKWuRhHVt58+T2dNYndipqppwQcJfyYDNDgBu0CarSPzuAkT8re7LimRp1LXZUBVXlX+1vfEOJ5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FyfwT/sP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E457EC4CEF0;
-	Fri, 19 Sep 2025 14:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758292020;
-	bh=DzaesBYWo5gYh/9yDXkynFQps02fTLxsraKzoj6MxuQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FyfwT/sPaHbrPC7jbD8zPDjbtinrUavFc01JHGHsrlxGCYZoAk3dSlt4B0k98G19h
-	 AJlMwtio9XIyhS9She0XqcMPpy2eeO3ILXWoExq5W3V2v20TQg0yqOu32316RpOVIj
-	 MLZZSEmVVdPwuiqy0bvaGMa/RcyIQjlJb5ntvEbGbRNqJITbwgoD5ugdJdR1gHEcMW
-	 X/i8aI15ZTAu2CPiqVEbcxr+79xWF+6PZvLBdaLb/7OH8B1288oKt9U+Mo7OzJua0Y
-	 LjM+b8oxQ5dwOXVLYw4LGhSL5rVek0uHulZH+ENvwFpg/6nmN6HPd6aattPbgob+pB
-	 66ete9HqSaF+w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uzc4g-00000007nub-3U8t;
-	Fri, 19 Sep 2025 14:26:58 +0000
-Date: Fri, 19 Sep 2025 15:26:58 +0100
-Message-ID: <871po2zff1.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: syzbot <syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com>
-Cc: catalin.marinas@arm.com,
-	joey.gouly@arm.com,
-	kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1758292224; c=relaxed/simple;
+	bh=jR5hXSe5Rb2lJevs7VVywEayah8UQ+hzgixju+gCauo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r9NZ/qRfuB2twSrIZ5Cj9s94dMfSuskTuTwtXGg5YuTNfuEgvLum74p8TkbEp5pZCCF7GrcgrttaoWDLCd1JN4lDEPQVNLbnPFuxLBYeRDfGAwNgrDfP5dt2ysLrTwPNE7V/nalnaFYo+H8UwTERSrGjF6+j029/SllIoTlD6U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: QoxrVUnMQTSZrC+KOJJF5A==
+X-CSE-MsgGUID: QMmjvF3MRJu2R/nyXL2UxA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Sep 2025 23:30:13 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.70])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2EAF940083FA;
+	Fri, 19 Sep 2025 23:30:09 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	suzuki.poulose@arm.com,
-	syzkaller-bugs@googlegroups.com,
-	will@kernel.org,
-	yuzenghui@huawei.com
-Subject: Re: [syzbot] [kvmarm?] kernel BUG in kvm_s2_put_page
-In-Reply-To: <68cd66b0.050a0220.139b6.000f.GAE@google.com>
-References: <68cd66b0.050a0220.139b6.000f.GAE@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] nvmem: rcar-efuse: add missing MODULE_DEVICE_TABLE
+Date: Fri, 19 Sep 2025 17:28:53 +0300
+Message-ID: <20250919142856.2313927-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com, catalin.marinas@arm.com, joey.gouly@arm.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, suzuki.poulose@arm.com, syzkaller-bugs@googlegroups.com, will@kernel.org, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 19 Sep 2025 15:20:32 +0100,
-syzbot <syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com> wrote:
-> 
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    62e68218ab58 Merge branch kvm-arm64/nv-debug into kvmarm-m..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1551cf62580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=1b1bafe30fc85201
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c41f3ddb8299a30a98b5
-> compiler:       Debian clang version 20.1.8 (++20250708123704+0de59a293f7a-1~exp1~20250708003721.134), Debian LLD 20.1.8
-> userspace arch: arm64
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-62e68218.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/99c4e665c20d/vmlinux-62e68218.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/4204d63db4b5/Image-62e68218.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c41f3ddb8299a30a98b5@syzkaller.appspotmail.com
-> 
-> raw: 01ffea8000000000 ffffc1ffc0807c48 ffffc1ffc080a888 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-> ------------[ cut here ]------------
-> kernel BUG at ./include/linux/mm.h:1036!
-> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 4079 Comm: syz.1.200 Not tainted syzkaller #0 PREEMPT 
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 60402009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : put_page_testzero include/linux/mm.h:1036 [inline]
-> pc : folio_put_testzero include/linux/mm.h:1042 [inline]
-> pc : folio_put include/linux/mm.h:1359 [inline]
-> pc : put_page include/linux/mm.h:1429 [inline]
-> pc : kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264
-> lr : put_page_testzero include/linux/mm.h:1036 [inline]
-> lr : folio_put_testzero include/linux/mm.h:1042 [inline]
-> lr : folio_put include/linux/mm.h:1359 [inline]
-> lr : put_page include/linux/mm.h:1429 [inline]
-> lr : kvm_s2_put_page+0x374/0x3a0 arch/arm64/kvm/mmu.c:264
+The nvmem-rcar-efuse driver can be compiled as a module. Add missing
+MODULE_DEVICE_TABLE so it can be matched by modalias and automatically
+loaded by udev.
 
-This is likely caused by the S2 refcounting issue that has just been
-reverted in Linus' tree, and that is not in the kvmarm/next branch.
+Cc: stable@vger.kernel.org
+Fixes: 1530b923a514 ("nvmem: Add R-Car E-FUSE driver")
+Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 
-	M.
+V2:
+ * add stable to CC
+ * pick up Reviewed-by
 
+ drivers/nvmem/rcar-efuse.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/nvmem/rcar-efuse.c b/drivers/nvmem/rcar-efuse.c
+index f24bdb9cb5a7..d9a96a1d59c8 100644
+--- a/drivers/nvmem/rcar-efuse.c
++++ b/drivers/nvmem/rcar-efuse.c
+@@ -127,6 +127,7 @@ static const struct of_device_id rcar_fuse_match[] = {
+ 	{ .compatible = "renesas,r8a779h0-otp", .data = &rcar_fuse_v4m },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, rcar_fuse_match);
+ 
+ static struct platform_driver rcar_fuse_driver = {
+ 	.probe = rcar_fuse_probe,
 -- 
-Jazz isn't dead. It just smells funny.
+2.51.0
+
 
