@@ -1,145 +1,213 @@
-Return-Path: <linux-kernel+bounces-825332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D7CB8B954
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:53:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B2CB8B95A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B335DB66D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:47:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD698B66EFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F08C2D9EC8;
-	Fri, 19 Sep 2025 22:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4542D7387;
+	Fri, 19 Sep 2025 22:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gU8/m8eP"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205162D94B7;
-	Fri, 19 Sep 2025 22:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W2eokLCV"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A908320DD72
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321900; cv=none; b=JKTGhcQRljoW65/0bmsjlmy/DMdtxKPYk760uE8WJLM5JHRAMCeJ3OiIpMG1ywK9vMPVCAvYtkA56TLcb7qUOCla78ky+tmcLSlDCuZJzsfb+LRpjY9aPzGsEDAAobK4xNuVbLT+C+/SRe4steI90jqnT2GiJI/mDMMfHlxbyoc=
+	t=1758322005; cv=none; b=OSMD3jrwYreUG8fnqKlNKTGcSY5QhZHt9abr3ybVfyBZUMQsZfu4tsWo6Wri0AwJ/PYtD+5R36eESsUayDnK3jlEehCy++GvKWD2YNit78XH+9oqN0wUdhsvpw06+a/DX1C8Kjh7tsAtl5sgJtHtRgDI2LfC5aJ8Fu+NkrR8Lqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321900; c=relaxed/simple;
-	bh=PJwldsfvkWRk+/jymc6dF/H97iqcuzdBcvBDXWoqBL0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NEmL3MOYUt4LY5ghLlhFjy2aKzlJ1gX0b2nKPU8i8bS/CzR0PmArcZU7M93nzjD8Q2KZ1pXsw8rkVruT9awenZj5Y+FNcvwE7KdzfqJCvCT9S1ZGZ82RXIZvfPRXEfMC09pe0mgGSs4myp0Z2pVokNkuG+QKG0d8QpJ2GnFRN7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gU8/m8eP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.193.225] (unknown [20.236.11.42])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3594F2018E6A;
-	Fri, 19 Sep 2025 15:44:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3594F2018E6A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1758321898;
-	bh=W7ObVF+H+rGR8iIdFsHqoTyyXX+GcheBvXyIRPKXfYQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gU8/m8ePc+dA492zyqYzbe1zCZR1PHM8tqiS2SPAvw3ec/MiT93R6gIFrkhvUXIlA
-	 oDVxxB35EOeCYo50Cvnf/E42dJNxGF3i0UEsjGOSvo7xtTaz73U0qoQsZNB5ymg1GA
-	 ZnBE1R70/MMaDSpKkYhfGn3gjksi0OKOXvppqruI=
-Message-ID: <43d27c68-f92f-4236-830d-9f28a1b52931@linux.microsoft.com>
-Date: Fri, 19 Sep 2025 15:44:56 -0700
+	s=arc-20240116; t=1758322005; c=relaxed/simple;
+	bh=/0yTUQ6OsN2xzS+Pgvii5s7x3os1zEtvAWCswrn0kbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDY3d29v/m9VEHaYP6vYU50CtBtWni9hjhzM3zI+UNXxXb4J3qoMCgf9q/ktTnWCKCelE+i2itNk/ouRH7h9rMIhd5xlEIm8S7tL5YICQ9STc+irNL7naChkdxGO2PM0PEOMnOr7IlOfOASeljO2F2UVHCgRNvkgdCPyzuEDUTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=W2eokLCV; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-88432e1af6dso210864639f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1758322003; x=1758926803; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GuH2MBotnVgm/KcFiuPMrEV+WdPjTxaJwI5CcIOrjDY=;
+        b=W2eokLCVU2TqEkuiGjOr7j6J7r2FYmkpzjWQV4RzQmN32MYCpzzta5mfxCw8tOwNuo
+         /hJzvFxyMwtQVFm8AlFOHIQfwBi5dYY7ctUUQa53Yhp8i9y4Tt8YF0ZL5H9pSTz9TAgs
+         LBHNZ7HOSGD+bCvpE9H60qkovnDIAX3u/ThgU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758322003; x=1758926803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GuH2MBotnVgm/KcFiuPMrEV+WdPjTxaJwI5CcIOrjDY=;
+        b=ZLE39866h4avx/VqEtcdlqTc3YJ1+rqfdWFPQUcVsEARCL1tqOyryCRVNeFyBqeF6S
+         hbc+Ty9Ue6mdj8oV931hqyT1dVERU+MKnWNIkXlh3MkeEESgcxG13DlPq7CgOwz+e07F
+         z6ic+jD9q4PoeE0L9clHSRzhGoS/xAun8tGbRVQiK5m9nRUNbwv2l60DFwqwM4uhnTOz
+         s+VWCgkA0fVB4Dcm6jR2d5raBdDrOCbYJ5JjwvLp5lPwOmkww3MHDo51UeXKPaDOzjVx
+         e33dwtVjo08Z9NorPSgne7TTwX5wvCPCr/AP09TTCl3KBW1Luw8Q589s6262ZPr9dIdD
+         GaCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJey71hjfmL1Q7QXcohbVGLxRVBbxkAOH17rIXfa8ayw40tdBA3hZzBbXLvLee4dEnZT7wEC0ndOE8Vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAoZpHPnVS+T1oN92uhnQnDQSW8DB4zzw7wiSbACIzb5tuQ/be
+	tpITcsdERmAG+7m8soNU8SRnp9FmYZvPQ+2cjkC1Cc85hCsw6r7Ys0ZJWuYhOFQ5mw==
+X-Gm-Gg: ASbGnctq3B54HAmWTAoTnTUzQzCGYbZxOtwzfDZ2MxiHGhn58zkdNL+kEVSpIK+pfWF
+	x/lALYrR7GUIE+3gD9bRMmFk3ae8KkAKLkyVM9V4BG9HKbXHWoxWYq8NaZWuRS2tlrwdYautnbV
+	GcKTwR5gKaVOfo2RxuiX9CrwNJ0bNJyTlaj1ynF+VcuZGItfnpvbn4iXFYaOk3g55mLdqSfcJP6
+	B7c2/q9gg6wHqhGmGrsxD3/HjP+KGaO70jZm2UuB4hAqCKYOGGAumCsXO5q4qQcvT6LLNL2Y5X2
+	CnrXB5eyK1V8/SDm3+UP9pZ7LpnwQFpYFyXUMVgGx0hTvmLgDEQ8UxVgOSwUabJGMIosgBrAd6t
+	x6OBWjkTq4qjYrz7V
+X-Google-Smtp-Source: AGHT+IH1joaNFFBUlmJSRWwYgfP/Jl1wfWiGMU8D8ShdnjXorvf9uY1FmfBG1WmwA8Z3f8m8D9fxdg==
+X-Received: by 2002:a05:6e02:1c21:b0:408:4492:c9c2 with SMTP id e9e14a558f8ab-424819115acmr78580765ab.10.1758322002709;
+        Fri, 19 Sep 2025 15:46:42 -0700 (PDT)
+Received: from chromium.org ([96.79.232.53])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d58bed61bsm2581743173.82.2025.09.19.15.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 15:46:42 -0700 (PDT)
+From: Simon Glass <sjg@chromium.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Tom Rini <trini@konsulko.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	=?UTF-8?q?J=20=2E=20Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Simon Glass <sjg@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] scripts/make_fit: Support an initial ramdisk
+Date: Fri, 19 Sep 2025 16:46:24 -0600
+Message-ID: <20250919224639.1122848-1-sjg@chromium.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] mshv: Introduce new hypercall to map stats page
- for L1VH partitions
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- prapal@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
- tiala@microsoft.com, anirudh@anirudhrb.com,
- paekkaladevi@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com,
- Jinank Jain <jinankjain@linux.microsoft.com>
-References: <1758066262-15477-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1758066262-15477-6-git-send-email-nunodasneves@linux.microsoft.com>
- <aMxjORzTO0DgWq9q@skinsburskii.localdomain>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <aMxjORzTO0DgWq9q@skinsburskii.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/18/2025 12:53 PM, Stanislav Kinsburskii wrote:
-> On Tue, Sep 16, 2025 at 04:44:22PM -0700, Nuno Das Neves wrote:
->> From: Jinank Jain <jinankjain@linux.microsoft.com>
->>
-> 
-> <snip>
-> 
->> +static int hv_call_map_stats_page2(enum hv_stats_object_type type,
->> +				   const union hv_stats_object_identity *identity,
->> +				   u64 map_location)
->> +{
->> +	unsigned long flags;
->> +	struct hv_input_map_stats_page2 *input;
->> +	u64 status;
->> +	int ret;
->> +
->> +	if (!map_location || !mshv_use_overlay_gpfn())
->> +		return -EINVAL;
->> +
->> +	do {
->> +		local_irq_save(flags);
->> +		input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->> +
->> +		memset(input, 0, sizeof(*input));
->> +		input->type = type;
->> +		input->identity = *identity;
->> +		input->map_location = map_location;
->> +
->> +		status = hv_do_hypercall(HVCALL_MAP_STATS_PAGE2, input, NULL);
->> +
->> +		local_irq_restore(flags);
->> +		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
->> +			if (hv_result_success(status))
->> +				break;
->> +			hv_status_debug(status, "\n");
-> 
-> It looks more natural to check for success first and break the loop, and
-> only then handle errors.
-> Maybe even set ret for both success and error messages and break and
-> handle only the unsufficient memory status.
-> 
+FIT (Flat Image Tree) allows an ramdisk to be included in each
+configuration. Add support for this to the script.
 
-Something like this?
+This feature is not available via 'make image.fit' since the ramdisk
+likely needs to be built separately anyway, e.g. using modules from
+the kernel build.
 
-	local_irq_restore(flags);
+Signed-off-by: Simon Glass <sjg@chromium.org>
+---
 
-	ret = hv_result_to_errno(status);
+Changes in v2:
+- Don't compress the ramdisk as it is already compressed
 
-	if (!ret)
-		break;
+ scripts/make_fit.py | 46 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 40 insertions(+), 6 deletions(-)
 
-	if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
-		hv_status_debug(status, "\n");
-		break;
-	}
+diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+index 1683e5ec6e67..b4caa127d2c3 100755
+--- a/scripts/make_fit.py
++++ b/scripts/make_fit.py
+@@ -10,10 +10,12 @@
+ Usage:
+     make_fit.py -A arm64 -n 'Linux-6.6' -O linux
+         -o arch/arm64/boot/image.fit -k /tmp/kern/arch/arm64/boot/image.itk
+-        @arch/arm64/boot/dts/dtbs-list -E -c gzip
++        -r /boot/initrd.img-6.14.0-27-generic @arch/arm64/boot/dts/dtbs-list
++        -E -c gzip
+ 
+-Creates a FIT containing the supplied kernel and a set of devicetree files,
+-either specified individually or listed in a file (with an '@' prefix).
++Creates a FIT containing the supplied kernel, an optional ramdisk, and a set of
++devicetree files, either specified individually or listed in a file (with an
++'@' prefix).
+ 
+ Use -E to generate an external FIT (where the data is placed after the
+ FIT data structure). This allows parsing of the data without loading
+@@ -29,8 +31,6 @@ looks at the .cmd files produced by the kernel build.
+ 
+ The resulting FIT can be booted by bootloaders which support FIT, such
+ as U-Boot, Linuxboot, Tianocore, etc.
+-
+-Note that this tool does not yet support adding a ramdisk / initrd.
+ """
+ 
+ import argparse
+@@ -81,6 +81,8 @@ def parse_args():
+           help='Specifies the operating system')
+     parser.add_argument('-k', '--kernel', type=str, required=True,
+           help='Specifies the (uncompressed) kernel input file (.itk)')
++    parser.add_argument('-r', '--ramdisk', type=str,
++          help='Specifies the ramdisk/initrd input file')
+     parser.add_argument('-v', '--verbose', action='store_true',
+                         help='Enable verbose output')
+     parser.add_argument('dtbs', type=str, nargs='*',
+@@ -133,7 +135,28 @@ def write_kernel(fsw, data, args):
+         fsw.property_u32('entry', 0)
+ 
+ 
+-def finish_fit(fsw, entries):
++def write_ramdisk(fsw, data, args):
++    """Write out the ramdisk image
++
++    Writes a ramdisk node along with the required properties
++
++    Args:
++        fsw (libfdt.FdtSw): Object to use for writing
++        data (bytes): Data to write (possibly compressed)
++        args (Namespace): Contains necessary strings:
++            arch: FIT architecture, e.g. 'arm64'
++            fit_os: Operating Systems, e.g. 'linux'
++    """
++    with fsw.add_node('ramdisk'):
++        fsw.property_string('description', 'Ramdisk')
++        fsw.property_string('type', 'ramdisk')
++        fsw.property_string('arch', args.arch)
++        fsw.property_string('os', args.os)
++        fsw.property('data', data)
++        fsw.property_u32('load', 0)
++
++
++def finish_fit(fsw, entries, has_ramdisk=False):
+     """Finish the FIT ready for use
+ 
+     Writes the /configurations node and subnodes
+@@ -143,6 +166,7 @@ def finish_fit(fsw, entries):
+         entries (list of tuple): List of configurations:
+             str: Description of model
+             str: Compatible stringlist
++        has_ramdisk (bool): True if a ramdisk is included in the FIT
+     """
+     fsw.end_node()
+     seq = 0
+@@ -154,6 +178,8 @@ def finish_fit(fsw, entries):
+                 fsw.property_string('description', model)
+                 fsw.property('fdt', bytes(''.join(f'fdt-{x}\x00' for x in files), "ascii"))
+                 fsw.property_string('kernel', 'kernel')
++                if has_ramdisk:
++                    fsw.property_string('ramdisk', 'ramdisk')
+     fsw.end_node()
+ 
+ 
+@@ -274,6 +300,14 @@ def build_fit(args):
+     size += os.path.getsize(args.kernel)
+     write_kernel(fsw, comp_data, args)
+ 
++    # Handle the ramdisk if provided. Compression is not supported as it is
++    # already compressed.
++    if args.ramdisk:
++        with open(args.ramdisk, 'rb') as inf:
++            data = inf.read()
++        size += len(data)
++        write_ramdisk(fsw, data, args)
++
+     for fname in args.dtbs:
+         # Ignore non-DTB (*.dtb) files
+         if os.path.splitext(fname)[1] != '.dtb':
+-- 
+2.43.0
 
-	ret = hv_call_deposit_pages(NUMA_NO_NODE,
-				    hv_current_partition_id, 1);
-
->> @@ -865,6 +931,19 @@ int hv_call_unmap_stat_page(enum hv_stats_object_type type,
->>  	return hv_result_to_errno(status);
->>  }
->>  
->> +int hv_unmap_stats_page(enum hv_stats_object_type type, void *page_addr,
->> +			const union hv_stats_object_identity *identity)
->> +{
-> 
-> Should this function be type of void?
-> 
-
-The return type is consistent with the other hypercall helpers. It's true that
-in practice we don't ever check if the unmap succeeded. I think it's fine as-is.
-
-> Thanks,
-> Stanislav
-
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+branch: fit
 
