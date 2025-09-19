@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EAF0B8B6E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F35BB8B6F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB97317E0B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 085455A4435
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DACC2DCC1A;
-	Fri, 19 Sep 2025 21:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C861E2DFF13;
+	Fri, 19 Sep 2025 21:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5o6JzBI"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JPECOsGO"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D92DA771
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63C72DC784
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758319188; cv=none; b=MXGpHPUgnBWpvLXgJCzaLAhuCV1FxoHXWCq+WN49ZDAdSldrDjUgn6djnkHoKHzoioAiDpREf05IuUCmYnzOtwnOQcVchBFxC1A7J9GfMBSKVUQZWinCMxv1fRuFyekMnUnEisH3287Yuo5zTqQwnFxtjvULUb8teUDaQE8+b0Q=
+	t=1758319191; cv=none; b=DvDVTiIlTg2PWio3l6jIhA/q4d+NhR3BDt2acFcLMwPa4E8tM18A0KfZq7af/UmXNVljd/whILgsY8UYYeSPl1GP5m/O1DMdlxnmBeuEuic+tLZJOzIoMAkWvg1S3GUfZWWiWAwq+mv4pBIn6aA7XRH7iRi2vSYIf7qgMzOqJOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758319188; c=relaxed/simple;
-	bh=i9Iimsx4v+q1gBX8cJfdi0XkMDcu7LvFrbMJ+LPx1OQ=;
+	s=arc-20240116; t=1758319191; c=relaxed/simple;
+	bh=gsn2LS9MZ0/r32Bz+FAmilAqbI9lmLhCm/3NWyexLkw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AZer4jh3i/n9kOS39Uf1kDbeg7eAKPyP7zbbLM606d1QU9r57QiqH9U65ds1vfqgv1C5n9pll1nsSLIs+lG4Jt/9wxoFDpTqkXE/rIAmbLH94MnCyilRYdPCLMgr8WkMrTwhEOygJpWcRrpE2DrTXPmWqH9Jsdm33wK+MdMJnUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V5o6JzBI; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=KOyHq1KyPmPeqsxaJu/Xlgt+X9yy1tMFZZtvAr9M4d8TtSn4TqWRXZBuro/WTcK33Lxjmw5wnOB+PX8cjyK+i1KycdNeaho+vqxA8LV+W+VTaJ7C6P8MNlEocYPUCMnUzo8C4w9BvkdBHUQQk3K+BsqIToLigPpcHW6xG9fKVUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JPECOsGO; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32d4e8fe166so3308863a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:59:47 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54a30515cfso2772065a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758319187; x=1758923987; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758319188; x=1758923988; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=9y6Hp1rf7kd+0Pe5dJOMQ6fwcx2skAdjzi47qVJrNpQ=;
-        b=V5o6JzBImqfAX5iPUlMOMr4FddgiowU77AGzXf/YJdPz7GOj09AR8hWQjanGnWoTiQ
-         /6dGglGWfDbJZWzmdEOlk3L2ZWSyRS5zw5zcCvBYfWX5OBnVpVTl6TNsL+dcNhH7OVUr
-         pyXbQa/uUbpjZtaI09vfTYTOxhXKI/q2liyW3zefy/V97SlWesqVjpiRoNyFDW2/g22C
-         kAbl/cTNOGhEhw3S5TtVuHjFwcALJw6Y6vCIbzhgxf2JKGI5IHwNwyuk1lKSqBsKbr5p
-         2byYjbzsSrIggeCcKGb49thVss8a32J42Zao3mvPlUMChXuTk7VGkbZSgiIst2KibUoJ
-         QNdg==
+        bh=Tb2CJ3cAd7NGczYuI0z0dLZESADxvuqEmD3PjMDN8y4=;
+        b=JPECOsGOWfa2hEkQ7wl8nWl7uaYEgXMI03KPjTV9H3KaWUxP00UImRrYo/zMKLQj0w
+         uRKcKKQ15fZtFKeaRgB9q7t54nu85HIOQmKIcK2nkTAsl4IbC4MlO/CTpQnqZDMEnzf4
+         vxKVhCrRD2kKpx81AUyPJS3yu3E8J2CeSi33R7yy9YKz5QM1hJ1G5bBcwPgpvkncNqXl
+         5BF2ukp7USHtyAZV9nUpt90sZYeoi+Ss00ARAHVg+07/e4TNC1x+JB5furDHwUMSZbPR
+         f8IxxkjpiS84EbZYQeH2oMlUtIJsYhJ39E2KMetDCr7yUGWdAIIO/9YJyzQ6VK/svv/T
+         OCuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758319187; x=1758923987;
+        d=1e100.net; s=20230601; t=1758319188; x=1758923988;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9y6Hp1rf7kd+0Pe5dJOMQ6fwcx2skAdjzi47qVJrNpQ=;
-        b=Z0I+tBWlhJ913x7+uXFMCoDYLUn1usMartScN/XAlzN2dUbXI5S+sY+qcKqPkwmK/n
-         h0kKKRMVN63GJO5n0qcgBh/Ng/r5eF0q5n9FlyBr3t9110FTaqdHs2ZwszK7J76xcqaF
-         qGVdRggzLgmY6xOmuxkHjXtxi6gXUz+OS/TEAOf5JtmuuBebsjF5RoJY5Zp0/oXSWG2M
-         mnZpuczHlRwPJD1nhYfEiPj0LvtMgJAdBNVL4lJZd8rqZNEy4HYGLEbu6l+DOmmUGeFZ
-         gJJmM3PmiQGObv0OWopi1Jt3SRIJXVmpg2ZzgrFS5lKvR4SKP5Cz9UDG8IpL7LO8Za2F
-         Sbag==
-X-Forwarded-Encrypted: i=1; AJvYcCWq4OSTsv/jMarmx4prQN0geBbgOBBZoPJMnFgZnlb/fo0arLHYzStu9JZV+DEWtUq0I1IOBvkRnlFXzsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBKuDrgDZ0AiAHCTMP13r+D1oLSd0ZrQIRczAAhFZRMjsxBOUm
-	5le0t/H/FsywF1RgHjiF6NpboorUtbZ7eHtCompNJskxjRNs1dkeu4I05g3lumR3LLlOvfwDu3P
-	wZ/JjEw==
-X-Google-Smtp-Source: AGHT+IE6eTCiYTaQBQ+5vfeBwBizOafjNWBZnVxWV3RwWacoWhikBPshDUc3hoEkxzJWDlK5a82nK4RpcvQ=
-X-Received: from pjbpb2.prod.google.com ([2002:a17:90b:3c02:b0:330:6d2f:1b62])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e703:b0:32b:8b8d:c2d1
- with SMTP id 98e67ed59e1d1-33098246221mr5801081a91.21.1758319186659; Fri, 19
- Sep 2025 14:59:46 -0700 (PDT)
+        bh=Tb2CJ3cAd7NGczYuI0z0dLZESADxvuqEmD3PjMDN8y4=;
+        b=s6DE1q/eMG3jABSEALTpyGPumUGZMH8K5L3ywUxOpoZslO6bnviWQczj2PtNpkKgbs
+         c9ps/ZdI8QRM+hTEB0gxyjuE82xFAXXFMRnLMepiCZr0dhkI3GeicYryBSLHxX9hi01W
+         HMJAid7Lb0CSn4x8nz9K5okJmwbmfDc4bi1kezQkFO+aknleh8WrClsGGPVXDOhFm8zm
+         a+kw/yLl9Ci5RNxKfsuKmWT0GJVT6RZ1LOdV9CGUIJ4FNbF21kVIDhlpIIw90U+v9f4H
+         se7XzjEVEym+E1pq6XFEroHLL7/8AxDleSJUWDn1cGk+q4p1D7HubSh81YpBujk+ChVS
+         PEug==
+X-Forwarded-Encrypted: i=1; AJvYcCVxO1a+QEPkLIwcypxr8KWxQ1wq6qGmwcWs/COHOeKZEiEGytPAIdDzL5AzTgnwADDTqB8UZqrYRIqfjUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1BRT/Q/gKOxdleNKxhYBCBFcnsfTvAhoJ7Wl8F2D05Rc21oto
+	3hRGdYLCnYhmvBk4rNFjzRSbfOvZ0ttPr8/cwvlx16xxTDvyqlb1o3PQaYAP2lWa13iWBW0RkLB
+	43FX6gg==
+X-Google-Smtp-Source: AGHT+IHFJR0vBTAZhUhFWYQATSw48DKFzjt9Py0RyOipJEiS7BJGMQ6J8RRVJHpyIkCK2VMmnqt8BdNygEI=
+X-Received: from pjcc8.prod.google.com ([2002:a17:90b:5748:b0:32e:8ff7:495])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1cc7:b0:32d:e309:8d76
+ with SMTP id 98e67ed59e1d1-33093851ef6mr6452139a91.10.1758319188191; Fri, 19
+ Sep 2025 14:59:48 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 14:59:33 -0700
+Date: Fri, 19 Sep 2025 14:59:34 -0700
 In-Reply-To: <20250919215934.1590410-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919215934.1590410-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919215934.1590410-7-seanjc@google.com>
-Subject: [PATCH v4 6/7] KVM: SVM: Move global "avic" variable to avic.c
+Message-ID: <20250919215934.1590410-8-seanjc@google.com>
+Subject: [PATCH v4 7/7] KVM: SVM: Enable AVIC by default for Zen4+ if x2AVIC
+ is support
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -84,118 +85,97 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Naveen N Rao <naveen@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Move "avic" to avic.c so that it's colocated with the other AVIC specific
-globals and module params, and so that avic_hardware_setup() is a bit more
-self-contained, e.g. similar to sev_hardware_setup().
+From: Naveen N Rao (AMD) <naveen@kernel.org>
 
-Deliberately set enable_apicv in svm.c as it's already globally visible
-(defined by kvm.ko, not by kvm-amd.ko), and to clearly capture the
-dependency on enable_apicv being initialized (svm_hardware_setup() clears
-several AVIC-specific hooks when enable_apicv is disabled).
+AVIC and x2AVIC are fully functional since Zen 4, with no known hardware
+errata.  Enable AVIC and x2AVIC by default on Zen4+ so long as x2AVIC is
+supported (to avoid enabling partial support for APIC virtualization by
+default).
 
-Alternatively, clearing of the hooks (and enable_ipiv) could be moved to
-avic_hardware_setup(), but that's not obviously better, e.g. it's helpful
-to isolate the setting of enable_apicv when reading code from the generic
-x86 side of the world.
+Internally, convert "avic" to an integer so that KVM can identify if the
+user has asked to explicitly enable or disable AVIC, i.e. so that KVM
+doesn't override an explicit 'y' from the user.  Arbitrarily use -1 to
+denote auto-mode, and accept the string "auto" for the module param in
+addition to standard boolean values, i.e. continue to allow the user to
+configure the "avic" module parameter to explicitly enable/disable AVIC.
 
-No functional change intended.
+To again maintain backward compatibility with a standard boolean param,
+set KERNEL_PARAM_OPS_FL_NOARG, which tells the params infrastructure to
+allow empty values for %true, i.e. to interpret a bare "avic" as "avic=y".
+Take care to check for a NULL @val when looking for "auto"!
 
-Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
+Lastly, always print "avic" as a boolean, since auto-mode is resolved
+during module initialization, i.e. the user should never see "auto" in
+sysfs.
+
+Signed-off-by: Naveen N Rao (AMD) <naveen@kernel.org>
 Tested-by: Naveen N Rao (AMD) <naveen@kernel.org>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/avic.c | 33 +++++++++++++++++++++++++--------
- arch/x86/kvm/svm/svm.c  | 11 +----------
- 2 files changed, 26 insertions(+), 18 deletions(-)
+ arch/x86/kvm/svm/avic.c | 40 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index 35dde7d89f56..ec214062d136 100644
+index ec214062d136..f286b5706d7c 100644
 --- a/arch/x86/kvm/svm/avic.c
 +++ b/arch/x86/kvm/svm/avic.c
-@@ -64,6 +64,14 @@
+@@ -64,12 +64,32 @@
  
  static_assert(__AVIC_GATAG(AVIC_VM_ID_MASK, AVIC_VCPU_IDX_MASK) == -1u);
  
-+/*
-+ * enable / disable AVIC.  Because the defaults differ for APICv
-+ * support between VMX and SVM we cannot use module_param_named.
-+ */
-+static bool avic;
-+module_param(avic, bool, 0444);
-+module_param(enable_ipiv, bool, 0444);
++#define AVIC_AUTO_MODE -1
 +
- static bool force_avic;
- module_param_unsafe(force_avic, bool, 0444);
- 
-@@ -1141,15 +1149,9 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
- 	avic_vcpu_load(vcpu, vcpu->cpu);
- }
- 
--/*
-- * Note:
-- * - The module param avic enable both xAPIC and x2APIC mode.
-- * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
-- * - The mode can be switched at run-time.
-- */
--bool __init avic_hardware_setup(void)
-+static bool __init avic_want_avic_enabled(void)
- {
--	if (!npt_enabled)
-+	if (!avic || !npt_enabled)
- 		return false;
- 
- 	/* AVIC is a prerequisite for x2AVIC. */
-@@ -1173,6 +1175,21 @@ bool __init avic_hardware_setup(void)
- 	if (!boot_cpu_has(X86_FEATURE_AVIC))
- 		pr_warn("AVIC unsupported in CPUID but force enabled, your system might crash and burn\n");
- 
-+	return true;
++static int avic_param_set(const char *val, const struct kernel_param *kp)
++{
++	if (val && sysfs_streq(val, "auto")) {
++		*(int *)kp->arg = AVIC_AUTO_MODE;
++		return 0;
++	}
++
++	return param_set_bint(val, kp);
 +}
 +
-+/*
-+ * Note:
-+ * - The module param avic enable both xAPIC and x2APIC mode.
-+ * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
-+ * - The mode can be switched at run-time.
-+ */
-+bool __init avic_hardware_setup(void)
-+{
-+	avic = avic_want_avic_enabled();
-+	if (!avic)
-+		return false;
++static const struct kernel_param_ops avic_ops = {
++	.flags = KERNEL_PARAM_OPS_FL_NOARG,
++	.set = avic_param_set,
++	.get = param_get_bool,
++};
 +
- 	pr_info("AVIC enabled\n");
- 
- 	/* AVIC is a prerequisite for x2AVIC. */
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 45ede8fcf5d2..c7799fc72f29 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -158,14 +158,6 @@ module_param(lbrv, int, 0444);
- static int tsc_scaling = true;
- module_param(tsc_scaling, int, 0444);
- 
--/*
+ /*
 - * enable / disable AVIC.  Because the defaults differ for APICv
 - * support between VMX and SVM we cannot use module_param_named.
-- */
++ * Enable / disable AVIC.  In "auto" mode (default behavior), AVIC is enabled
++ * for Zen4+ CPUs with x2AVIC (and all other criteria for enablement are met).
+  */
 -static bool avic;
 -module_param(avic, bool, 0444);
--module_param(enable_ipiv, bool, 0444);
--
- module_param(enable_device_posted_irqs, bool, 0444);
++static int avic = AVIC_AUTO_MODE;
++module_param_cb(avic, &avic_ops, &avic, 0444);
++__MODULE_PARM_TYPE(avic, "bool");
++
+ module_param(enable_ipiv, bool, 0444);
  
- bool __read_mostly dump_invalid_vmcb;
-@@ -5354,8 +5346,7 @@ static __init int svm_hardware_setup(void)
- 			goto err;
- 	}
+ static bool force_avic;
+@@ -1151,6 +1171,18 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
  
--	enable_apicv = avic = avic && avic_hardware_setup();
--
-+	enable_apicv = avic_hardware_setup();
- 	if (!enable_apicv) {
- 		enable_ipiv = false;
- 		svm_x86_ops.vcpu_blocking = NULL;
+ static bool __init avic_want_avic_enabled(void)
+ {
++	/*
++	 * In "auto" mode, enable AVIC by default for Zen4+ if x2AVIC is
++	 * supported (to avoid enabling partial support by default, and because
++	 * x2AVIC should be supported by all Zen4+ CPUs).  Explicitly check for
++	 * family 0x19 and later (Zen5+), as the kernel's synthetic ZenX flags
++	 * aren't inclusive of previous generations, i.e. the kernel will set
++	 * at most one ZenX feature flag.
++	 */
++	if (avic == AVIC_AUTO_MODE)
++		avic = boot_cpu_has(X86_FEATURE_X2AVIC) &&
++		       (boot_cpu_data.x86 > 0x19 || cpu_feature_enabled(X86_FEATURE_ZEN4));
++
+ 	if (!avic || !npt_enabled)
+ 		return false;
+ 
 -- 
 2.51.0.470.ga7dc726c21-goog
 
