@@ -1,73 +1,98 @@
-Return-Path: <linux-kernel+bounces-823953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21370B87CF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CBD7B87CF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A7E7C3BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A353A868C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148E323C8C7;
-	Fri, 19 Sep 2025 03:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E113266582;
+	Fri, 19 Sep 2025 03:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qdl8Y53U"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a9EIKckv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741AB261B9D;
-	Fri, 19 Sep 2025 03:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A79B2367D3
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758252559; cv=none; b=LiGe43YVfriDXes+v3K68AEEQ87MvJkw3TB9HtI8ZKkMZ+uKT3sQUn/jgVr5Pb//6A8cA6xXrnzMWVYlQF/68tOhsy0NnjW5HvLHPmJFw5LkVJZtmw/k2AL7RdaJ3pUIn35N+Eza7yQ7O6LIQTbuJxRlFuwfTvX3Kzw0Ce2SAd0=
+	t=1758252612; cv=none; b=J80PN5X4pNv50/sBjMkNF0jsAfcR+zl3d127tHx75XmuiLrqpdIqWOSNbAbWvVgJurTYjwYdMK9hbFYt4ntLeKFh/DBHJJ8rPig9gcp3mY3d/BL6T3w+gbl2OCcoGg7NLVOQ8R+5VbhLo84gx1wRXc29IOXHYUM6gEn1FmAIh3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758252559; c=relaxed/simple;
-	bh=XX/ETdVeB+tWiTK6nhzx1udiFh8XwGiFmQJIW3mpeHo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SQPFC58WHvzPKbjKocposzQz0nhuEPy3kd2gED4e57k4lN2v29V6pIX7ms/80bkcy/ytd1Vy9EPfHwGDwjABSwodwUrTnVb2KDBYVpSEClGpPt/8AhcZbitVrFig5yeHbWrK8KcQkjUSvPylblxCvARuBane5wDJ580wdddevvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qdl8Y53U; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58J3TAdj151745;
-	Thu, 18 Sep 2025 22:29:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758252550;
-	bh=LY00hGaHj82HQ41hMnhsfZ2aVqFf+c85vwEv6CG/hV8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Qdl8Y53USuhdTiunKo6fQa1kmkalr2rwMIlXc+e+xwlV5rBVYStbd6KMRaqkCHIhI
-	 xvgDXGuzujZKGsbjZ8iwDAnsul5PLLeukW07Sn5byg23qn2vigU6kSMm8JWWygBACh
-	 cZ1qUMb3TGHrPnPTvihf5GiYt2b01ReLPnFgxCRM=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58J3TAsQ2029083
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 18 Sep 2025 22:29:10 -0500
-Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 18
- Sep 2025 22:29:10 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 18 Sep 2025 22:29:10 -0500
-Received: from localhost (ula0502350.dhcp.ti.com [172.24.233.249])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58J3T8mY1901500;
-	Thu, 18 Sep 2025 22:29:09 -0500
-From: Paresh Bhagat <p-bhagat@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <khasim@ti.com>, <v-singh1@ti.com>, <afd@ti.com>, <bb@ti.com>,
-        <s-ramamoorthy@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am62d2-evm: Enable PMIC
-Date: Fri, 19 Sep 2025 08:58:06 +0530
-Message-ID: <20250919032806.707926-3-p-bhagat@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250919032806.707926-1-p-bhagat@ti.com>
-References: <20250919032806.707926-1-p-bhagat@ti.com>
+	s=arc-20240116; t=1758252612; c=relaxed/simple;
+	bh=sNOICaGpO8PzTN7zbuLpyD642t8/tobHiZnf890tHSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kfAyuFlFEB7lsvP+eM6YQ3BSapbPAj8lQAqgPKZy5W9XofCdXgygABcV4zP7WPahiRq7ZQCqm5UgymueAbhnrLwKnkxrJX9KXtwJmKJhMtxnDuruvdMKeMxJAh6ev7xdThY8sV7gSMlUVzJdN6DcQoFvSTiTI12Q7D1NN6RH1D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a9EIKckv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758252609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hARynVBx6wUtc+ogEnVgwz4bGXfrmnzWAy4AkQM2lGY=;
+	b=a9EIKckv8gRJPuZMXVhfJV33rwHxmJ3pIrQe64fewlt7VEDsftSIdIrQARJYFiq2m42Hwh
+	waV2nYrIEWb3JyoSYV8Hdnv6I5orXJPcO+Z/atBYFVeUC7yQfYDVa0D8fbSzawh9At/XYP
+	O5dP3tBITURE/39TqbG/IzpbVgB0AUM=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-613-_o1DR180Nu2_CIbMF5RUVg-1; Thu, 18 Sep 2025 23:30:07 -0400
+X-MC-Unique: _o1DR180Nu2_CIbMF5RUVg-1
+X-Mimecast-MFC-AGG-ID: _o1DR180Nu2_CIbMF5RUVg_1758252607
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-25d21fddb85so30987485ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 20:30:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758252606; x=1758857406;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hARynVBx6wUtc+ogEnVgwz4bGXfrmnzWAy4AkQM2lGY=;
+        b=KrjuZUWCanIls+jDgQQD4caGk4CS+iIw4v1HAO92dZd4OXQb842HFjdRBN8PYW02i4
+         C6t0+5o9gon25XGdscsBp/e5h4C5PkXHWaz2e2/kud2pkm0jMJyB9k2plsGqj92cbNLp
+         pcmniPAmGg8UtQ2JTWyBhO4MtnOv2zNRvjBiK8JOaQajDBQQpa/sSYmDiOnDMX1zmmfB
+         KFbqx/ruHvFNXFYYJ777CU+MdH9x1wAaLX/JjHMWYTZcWCBa9x+rhMc24je25WXRfZOJ
+         LCbVJl+GY93UOMvyJ2ySj/0XKpEYq+V/1jbAwdNN8T5Ia9EmZqd6KzVqca+5JL9reQJJ
+         5t9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXmUnsOYBuliz3oPthHGexl7f/cYaTTEe/6aootihOn1puqbtU1fPY1STy0SYw+mkaKHbNqq0AjecPX6rA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFYaqq86iZWEWjX2gmaHoEGnh/ZruDq3h/6IO/gxXZTfFnAHL+
+	jEFAW5efMfsPcF2j2DLfUvMK5jg+Q+n7a9OmhE46S1gQLYcnw1NhAT42wAOfM25Q1NwoCW0gmYe
+	sOnTFvjxj7CEe0k4Y18nrCEeRHK0mVOobadPZczstUiXR4LP+ifjPvDYFOC4HVoiRdQ==
+X-Gm-Gg: ASbGncswO9t7Gd1xNIGZVvoQ1QXSgWHoMD9kGlKrfgIsvjqwVYV/p+MSyg0gnjZSRi4
+	Kyg/FTFe5q1OrXUphZzQ1fJ+taODBEKzfvCioV9l+nMk4LRfqeKEgfxoO7FwQDEnwFhUlg4vn3r
+	7jcvwtLaqZlLr0zN4zJ4C8JkbAEjTDFyM2aDjd5yoEPk6TXHtASRB81nuaEdJe7apYrppdMDlpF
+	1B2tnjW6CtmN8DSAyR6sfIy704FuUbaL4A5yRXgpimxA4lunL8fkJPxVrhmUBr97v6nBNjRn9wh
+	GtQWw1n75fDfykJ2Pn8B+GHFiBT+KsjuVG4=
+X-Received: by 2002:a17:903:b48:b0:269:8c12:909a with SMTP id d9443c01a7336-269ba51175amr24401415ad.31.1758252606570;
+        Thu, 18 Sep 2025 20:30:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHsOZ+qyws+SGDCdwtAw9gyecdBjV3fndhavA2LPihQIkNaarPBI9MMby+SKHSIxbr1bqlpGQ==
+X-Received: by 2002:a17:903:b48:b0:269:8c12:909a with SMTP id d9443c01a7336-269ba51175amr24401005ad.31.1758252606138;
+        Thu, 18 Sep 2025 20:30:06 -0700 (PDT)
+Received: from zeus ([2405:6580:83a0:7600:6e93:a15a:9134:ae1f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-330606509e9sm4054289a91.9.2025.09.18.20.30.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Sep 2025 20:30:05 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: zack.rusin@broadcom.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	jfalempe@redhat.com,
+	ian.forbes@broadcom.com
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH drm-misc-next v3 0/1] add drm_panic_support for vmwgfx-stdu
+Date: Fri, 19 Sep 2025 12:29:29 +0900
+Message-ID: <20250919032936.2267240-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,128 +100,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add support for TPS65224 PMIC family on wakeup I2C0 bus. This 
-device provides regulators (bucks and LDOs), along with GPIOs, 
-and monitors SOC's MCU error signal.
+Add drm_panic support for stdu in vmwgfx. This patch was tested in a VM
+with VMSVGA on Virtual Box.
 
-Signed-off-by: Paresh Bhagat <p-bhagat@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62d2-evm.dts | 91 ++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+Based on the feedback for v2 patch, I've made the following updates in
+my v3 patch.
+- Use MEMREMAP_WB | MEMREMAP_DEC flags for memremap
+- Use vmw_priv->initial_height and initial_width for sb and VRAM
+- Move all panic related functions to the vmwgfx_kms.c file
+- Ensure if the current display unit is 0 in get_scanout_buffer()
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
-index 9a74df221f2a..155abd97b799 100644
---- a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
-@@ -214,6 +214,14 @@ AM62DX_MCU_IOPAD(0x0030, PIN_OUTPUT, 0) /* (C8) WKUP_UART0_RTSn */
- 		>;
- 		bootph-all;
- 	};
-+
-+	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
-+		pinctrl-single,pins = <
-+			AM62DX_MCU_IOPAD(0x004c, PIN_INPUT, 0) /* (D13) WKUP_I2C0_SCL */
-+			AM62DX_MCU_IOPAD(0x0050, PIN_INPUT, 0) /* (E13) WKUP_I2C0_SDA */
-+		>;
-+		bootph-all;
-+	};
- };
- 
- /* WKUP UART0 is used for DM firmware logs */
-@@ -464,6 +472,89 @@ &main_i2c2 {
- 	status = "okay";
- };
- 
-+&wkup_i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&wkup_i2c0_pins_default>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	tps65224: pmic@48 {
-+		compatible = "ti,tps65224-q1";
-+		reg = <0x48>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq_pins_default>;
-+		interrupt-parent = <&main_gpio1>;
-+		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
-+		ti,primary-pmic;
-+
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		buck12-supply = <&vcc_3v3_sys>;
-+		buck3-supply = <&vcc_3v3_sys>;
-+		buck4-supply = <&vcc_3v3_sys>;
-+		ldo1-supply = <&vcc_3v3_sys>;
-+		ldo2-supply = <&vcc_3v3_sys>;
-+		ldo3-supply = <&vcc_3v3_sys>;
-+
-+		regulators {
-+			buck12: buck12 {
-+				regulator-name = "vdd_core";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				bootph-all;
-+			};
-+
-+			buck3: buck3 {
-+				regulator-name = "dvdd1v8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				bootph-all;
-+			};
-+
-+			buck4: buck4 {
-+				regulator-name = "vdds_ddr";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				bootph-all;
-+			};
-+
-+			ldo1: ldo1 {
-+				regulator-name = "vdda_1v8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				bootph-all;
-+			};
-+
-+			ldo2: ldo2 {
-+				regulator-name = "dvdd3v3";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				bootph-all;
-+			};
-+
-+			ldo3: ldo3 {
-+				regulator-name = "vddr_core";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				bootph-all;
-+			};
-+		};
-+	};
-+};
-+
- &sdhci0 {
- 	/* eMMC */
- 	non-removable;
+I did not apply all of Ian's feedback in this v3 patch for the reasons
+outlined below.
+
+> 1. You can call `vmw_kms_write_svga` directly in `panic_flush`. There
+> is no need to mark the buffer as dirty or send any commands.
+
+In my test environment (VirtualBox), the panic screen appears unstably 
+without dirty command's submission. Without it, the screen sometimes
+appears immediately as expected, and at other times, there's a delay
+of 15 to 20 seconds. I've also observed that it sometimes only appears
+after switching between the VirtualBox console window and other windows.
+
+With command submission, we can stably get a panic screen. Even if it
+fails, we may get the panic screen ultimately. Therefore, I think we
+should retain vmw_kms_panic_do_bo_dirty() to submit commands.
+
+> 2. The format should be hardcoded to RGB565 to minimize the risk of
+> overrunning VRAM. Adjust the pitch accordingly to 2x width.
+
+While it's possible to output the panic screen with RGB565 by adjusting
+pitch and width, and BPP on the (virtual) hardware side, this approach
+causes debugfs to fail. It appears that the BPP must be reset after the
+panic screen is displayed, and there is no way to wait for the screen
+to be fully displayed within the drm_panic handler code.
+
+In my test environment, as VRAM has enough space even when using
+XRGB8888 (32 bits), I think the risk of overruning VRAM is low. So I've
+kept the default format and CPP size.
+
+v1:
+https://lore.kernel.org/all/20250901083701.32365-1-ryasuoka@redhat.com/
+
+v2:
+https://lore.kernel.org/all/20250908141152.221291-2-ryasuoka@redhat.com/
+- Map a scanout_buffer to VRAM in .get_scanout_buffer
+- And then write to VRAM directly using fifo in legacy mode to avoid
+allocations or command submissions.
+
+
+Ryosuke Yasuoka (1):
+  drm/vmwgfx: add drm_panic support for stdu mode
+
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h  |   4 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c  | 165 +++++++++++++++++++++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c |   2 +
+ 3 files changed, 171 insertions(+)
+
+
+base-commit: d41c79838c47bc822534cd53628fe5e0f8ad2424
 -- 
-2.34.1
+2.51.0
 
 
