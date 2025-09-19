@@ -1,142 +1,107 @@
-Return-Path: <linux-kernel+bounces-824736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6C2B8A0AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:42:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4FCB8A0BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFE61BC17FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:42:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678A43B2120
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D1A227EA8;
-	Fri, 19 Sep 2025 14:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="G2DwRoqW"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FF031326D;
+	Fri, 19 Sep 2025 14:42:35 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3657A24DCEB;
-	Fri, 19 Sep 2025 14:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BE730F541
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292925; cv=none; b=cnPd3olKk+NjI7BmpkMCxKeK5qqwQNyAkCFs4N2uiRESG+ZlSZgdCOwkd06QHMfPW4LXYgls2ytw8mq9/8LXtWftK44WwqMB377ZcyG8CmIce0xvwNkz1DgYTwz0Z7EPrVt/Kkd+uRbHQkeyhakfOHH7+I8ttZVLJhRxjpk7jJU=
+	t=1758292955; cv=none; b=P7d7FP11iYlDP5c7B4FLK++kyf+PbeIKExEnDoLSb6vuCLwjsmTVSa+Rwh/ORWrbxpIBx483xHw80W/NFkyWxVUEeBYdgE++gsrfsRhxpzIYNuLtAOvS34sBDbSJMqjdp4xYCIDIh0Vfs0mf/Ekm6pB99kCVZbCgXnv6o0K+5To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292925; c=relaxed/simple;
-	bh=BUXNR1hckyrk8jBBQv+MEaTsb/Yxf7QPZcopTVXtsc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nBm4p9YnDLAWcKZkp7EUQCIdjhsW5fHTh6G/T+GEZW2aX3so+qdYemGvO0cPd+UYZLL664PNPrOC0TXbdtAsv0C3N507uVGHuPw0ivifKB0dzrWVo7R4lL5fdyYD9CmJ6y+aOPk1xxAIaVDtCA0zX5p3JVyz/ACK9/VCRIMlgXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=G2DwRoqW; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758292924; x=1789828924;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BUXNR1hckyrk8jBBQv+MEaTsb/Yxf7QPZcopTVXtsc0=;
-  b=G2DwRoqWAFwBoeiHRW1PnVtBdkifBZ1fDCZYhjljRvAG10hTiyDtoaMm
-   nVcvcUxm89ol5y5wO8MIGUwm4xR32rrdIIU/AC3D53XJ+o+uDcEHowrUJ
-   /2Cezw4LW9el7AD1n6rods7WJpDafF+ZMP3id8XYE1XkhV/14uYSfydb3
-   y9/j1K/spGAfBpKUewoyEqGBvZMFuQoTfJB2KmPagCMtMJm+uzFfIH5Kp
-   Qe48WopOgTVvDZLpDD+/TSUKtDyaAHChh7QWG/ebYkrQaGPYLIlXdluUz
-   H0oLzljSE8xSBBoOLPKZuIMBRU1xXomaMTMysJvHwkP/c0OpCOch6VFAK
-   w==;
-X-CSE-ConnectionGUID: rCtXrXuCRuWl+rA3xsHEKA==
-X-CSE-MsgGUID: EJ/u+s4TQLuYDQ4Fe3Jepw==
-X-IronPort-AV: E=Sophos;i="6.18,278,1751266800"; 
-   d="scan'208";a="52617186"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Sep 2025 07:42:02 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 19 Sep 2025 07:41:32 -0700
-Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 19 Sep 2025 07:41:27 -0700
-Message-ID: <cc027fae-8d34-41ca-bd35-569c415fc657@microchip.com>
-Date: Fri, 19 Sep 2025 16:41:26 +0200
+	s=arc-20240116; t=1758292955; c=relaxed/simple;
+	bh=eYug5nY1kLWNqPv0F9P3ohehG5w9Djll2U58geBLulE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RmCyeOSWaGTpLKx235+7zAwYDK1nUHkOWNO7wXBfpgtUR43Oe0xR7HqvML/dUBCp0I5hnHsBcrqG3VrorhfsCU51CR4VztYLwl6/O5zhx5NX9/NDK7i02/jnRKnU2Gtqfzui6y2Z43NuHpBSqYof46+OMFVOe920SZPNxc2jZbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8876712ea4bso440525439f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:42:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758292952; x=1758897752;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pAMs2+dv285mVlWJA8sr/wQEoMByjVHUfh3jerhKeq8=;
+        b=HYcOtF45IhGi/6q8Ntd5XSLbNYXrsus8Ab397reQ1Fy+5mb5NpG/s5WA19xPIwef+S
+         +l9AcbYDsQGBjnotzR7SDuiZ6ASUp14FURaaOWE/SikUEQ9TaSWhAozPRwtWBZwSiL45
+         bNJs4u0oPy8EA1QaCXXrTolUrA+lu+YC7yQJuEpRmDtLaWz6ovcbHO3xGCvX8ApugaMJ
+         ltNmGS8ViDs/ps5Vl3IKKjpM721jXVHqAfldnvGFF7y+kc4uS7Q7aWr30h0fV1t9rYVp
+         0Pl1mnrouX7dD4rS6R02fT6o94PhV20NesSkLEqLW3DB7zLkOTvQmMuaiHF5zU/YbV60
+         VVfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUntE8cpt4zKbKMOZbUwDGMzMeCcHq3I4nLvDYRfHCr62yMT1jaFUGTkvc79GkgBPotOFfW9yTITkzMYa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9i7nWwa+8OoP7Hb7q58Qcf0nY/bs9ajxqlyRyPqN34tOlHZfJ
+	SZFz8kabhmzpMKAxuJsAgooNWGLOFXDaKGQsSXbBzmv1gejiUY03EnNg9HlhltnQbcnx/XQ5zhj
+	zsYeqxnaXZknruxJJ9YlandJlMfzH24wQJ/XtVVBYRugqSUWNZLQvGjVvozU=
+X-Google-Smtp-Source: AGHT+IFL69chW45OJ+YdbOPP4b6VMa0jjV3dnzR4T5WW/fF7ucF7RSBtGHHzwyJ4vvYtui8tXLhb/VNVwBVichO/CcPDUZWGGx0d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>
-CC: Jason Gunthorpe <jgg@nvidia.com>, <ksummit@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <imx@lists.linux.dev>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Richard Weinberger <richard@nod.at>, Lucas
- Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>, Ankur Arora
-	<ankur.a.arora@oracle.com>, David Hildenbrand <david@redhat.com>, Mike
- Rapoport <rppt@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Ira
- Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Alexander Sverdlin
-	<alexander.sverdlin@gmail.com>, "Chester A. Unal"
-	<chester.a.unal@arinc9.com>, Sergio Paracuellos
-	<sergio.paracuellos@gmail.com>, Andreas Larsson <andreas@gaisler.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <20250917125951.GA1390993@nvidia.com>
- <02b0f383-1c43-4eeb-a76f-830c2970b833@app.fastmail.com>
- <CAMuHMdVecUeLZ2LPpa457C0a=uduvDhQ4KZJx-++dEFJraRi3w@mail.gmail.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <CAMuHMdVecUeLZ2LPpa457C0a=uduvDhQ4KZJx-++dEFJraRi3w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:258a:b0:424:7f6c:78c5 with SMTP id
+ e9e14a558f8ab-4248190b437mr48957965ab.7.1758292952511; Fri, 19 Sep 2025
+ 07:42:32 -0700 (PDT)
+Date: Fri, 19 Sep 2025 07:42:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cd6bd8.a00a0220.37dadf.001b.GAE@google.com>
+Subject: [syzbot] riscv/for-next build error
+From: syzbot <syzbot+8ea9d12facf13c334f88@syzkaller.appspotmail.com>
+To: alex@ghiti.fr, aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Geert,
+Hello,
 
-On 19/09/2025 at 09:17, Geert Uytterhoeven wrote:
-> Hi Arnd,
-> 
-> On Thu, 18 Sept 2025 at 15:13, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Wed, Sep 17, 2025, at 14:59, Jason Gunthorpe wrote:
->>> On Tue, Sep 09, 2025 at 11:23:37PM +0200, Arnd Bergmann wrote:
->>>
->>>> I'm still collecting information about which of the remaining highmem
->>>> users plan to keep updating their kernels and for what reason.
->>>
->>> On this topic of removing some parts of highmem, can we say goodbye to
->>> kmap_high_get()? Only ARM uses it and only for
->>> !cache_is_vipt_nonaliasing() systems.
->>
->> Good idea. I think we are almost there, just need to verify that
->> there is actually no impact for existing users. I already knew
->> that there is very little highmem usage on ARMv6 and earlier, but
->> I tried to recheck all platforms that might be affected:
-> 
->> * Microchip SAM9x7 is the newest ARMv5 chip, clearly does
->>    get kernel updates, and the only one I can think of with
->>    DDR3 support, but seems to be limited to 256MB total memory.
-> 
-> Are they limited to DDR3?
+syzbot found the following issue on:
 
-For sam9x75:
-- DDR2
-- DDR3  (DLL Off/On mode)
-- DDR3L (DLL Off/On mode)
+HEAD commit:    a054965b36af riscv: errata: Fix the PAUSE Opcode for MIPS ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=150c1858580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a6ae75a6b3af4c52
+dashboard link: https://syzkaller.appspot.com/bug?extid=8ea9d12facf13c334f88
+compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: riscv64
 
-For (older) sam9x60:
-- LPDDR1
-- DDR2
-- SDRAM & Mobile SDRAM
-> IIRC, someone (you? ;-) told me at ELCE that Microchip keeps on spinning
-> new variants of old SoCs, to accommodate the changing DDR landscape
-> and market.  So perhaps they also accept larger RAM sizes?
-No, in fact we address 256 M Bytes max on sam9x60 and sam9x75 as well.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8ea9d12facf13c334f88@syzkaller.appspotmail.com
 
-Regards,
-   Nicolas
+arch/riscv/kernel/entry.S:78: Error: unrecognized opcode `alternative("sfence.vma", "nop",0,86,1)'
+arch/riscv/kernel/entry.S:446: Error: unrecognized opcode `alternative(".dword do_trap_insn_fault", ".dword sifive_cip_453_insn_fault_trp",0x489,0,1)'
+arch/riscv/kernel/entry.S:458: Error: unrecognized opcode `alternative(".dword do_page_fault", ".dword sifive_cip_453_page_fault_trp",0x489,0,1)'
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
