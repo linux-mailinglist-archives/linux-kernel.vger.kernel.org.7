@@ -1,248 +1,192 @@
-Return-Path: <linux-kernel+bounces-824588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9291B899FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:15:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02085B89A06
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17B817A3323
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:13:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BB8158564A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E5D23C8C5;
-	Fri, 19 Sep 2025 13:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE32FABFF;
+	Fri, 19 Sep 2025 13:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="PKFnfDqZ"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Axz3FXF4"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380D52AD16
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139CA20468E;
+	Fri, 19 Sep 2025 13:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758287694; cv=none; b=t4K1jNT3Nw/MajZhxBzbwIZ1HJJTM8FvpmfpQZ0kOy7r6uLfK0cFfHXkXKQnafgw2OScscHEG+yZybGeTSjLCi5kbNecJor7FrVwRblss1wdiJxB6oswVc8jM+OhJrsPr5tbjgZ40mo88jqr7yH14bxkqzLTgWIcG5h5UpeHgA4=
+	t=1758287707; cv=none; b=oTaV8I631pHPMKBTjg7l5qyKZ7LasEf9RCfz3Zo75MbVoz8JHLvQL3YA4aJpGAbJlA90JIVyRed4glwW5HQI2RchBt6FViLSSpabx9ddOm2MENAL7wRs8tcpViN5WrErPYVBmagiILZ3QmQevSiqP89fVjhIPdvF0Ng0ny6fin4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758287694; c=relaxed/simple;
-	bh=9uNRaKLm/UkEWXz6L6vPG9AM0/2z8XI4VFYyvvZye5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuuYbw7slNQeBF90zFOPSkPz8RYZ1k8DDLGDt+XV2NR2c51rCtZfchJM0a/8D4d0IjRjeTY+p3ZRlucv11z2vmEqkIRJX85ngdo5SVSGSrLvenufZurswvwXcdFOavh4obo4Ivv86mGqOYDN03pknmOhOFswVyFQ+9lQVd0IxUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=PKFnfDqZ; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b548745253so34004741cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1758287691; x=1758892491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4TO8ldCpCwaQtoLKPhvsFlsBIhB9gZdGySwv7zH4ykU=;
-        b=PKFnfDqZ2XWhcDzyes2A/wyUHVilZHsLqlmlIGtFavXL5r+pHj+TuLLbnVqdq+cgNJ
-         a4SvkmK8xKrr+5unP34aF31+YtwVQiUya2JU2lEmJup5PXJ7RXggQDTo3MBlMaldC6VW
-         DKOmYGKgECPKA0kWuSQy8rye7tEU+I2PtEXj+K+/P/9amgoBSWyBklKg24rP3sON33NM
-         fgCl84fGTMUS3/QfeSyf2uJA7AwmtamtxNJHRv4IGS7cc9UHxCjleIzNiaSeuQQ/kiwu
-         sQjF+l3bkfc7dCVolUf3et+7ZYPc0p3YgiGcsQPoskwqCieTtBwS7c2VoZ9k/aIspZv+
-         F8PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758287691; x=1758892491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4TO8ldCpCwaQtoLKPhvsFlsBIhB9gZdGySwv7zH4ykU=;
-        b=XQuVf0oUQT0JPzc5K2SMTP1BMO30nS60D494xgxFP81UDzUTA6rg87AM/toZFpR8sN
-         MiNWG27PaJq6bLD0nBqLlzoz5TUHDNFVDOAgDz8RAYx5okMj+qcBBcB+iL8Lgs+qkt9X
-         MHErGGBfyrr+fuuPVcNl+1SMtUmtOln+IgPy9Yy9Q4tcwrCuu9vb4bKia4/cxbWHzPXP
-         EEJoZvlCj5JGWRyp8YpZhzru7ZnmikVBNTu4UDsNhJvunyRdA9H3RLE8mSLsy+kwjL2W
-         saXBe13hkOuKHjFB8yxFN2TvCV0kNFn74VQcwlfTrZNLjW/pgD595aKXvj4BS7owXOOt
-         22Bw==
-X-Gm-Message-State: AOJu0Yz3HG1M8RygloD5Jn5W7MzWrTlxFN56/jR1NIidmeyzmdiQbUm5
-	9dDqZg/4o3L1Vl9Xk6QgGM3D8PrPEWSLhTn3Qa8JioMCi3Fn7Rx91zwaSsy4X0mVOTpPBeXRCoR
-	XVWXSuZKbg2X+IjSNvr0uzbhAzTFPjlY4TswHyBI3YA==
-X-Gm-Gg: ASbGncuX/agdVzuMVWviyHdeKLQeLDoJMea8GvMsUuH8yAP17EqrLonYF0U0vhjiRIT
-	dszgla3JqwoicuoUQLwshWuSH7lad/K6wOAdxppN9ILMFEAs3VufcfwDNqno4DomsbMGm7Hj+KN
-	2+XkyIJ9qtbD/jY2QVDIrf8AC54PNj4NpqlOFfhRwWUUatEZ++4HhgIKs1AqUKDHS/kAj2dD8Kj
-	/Q5
-X-Google-Smtp-Source: AGHT+IFP5OPPTxwZ8V54f9/k+r549Cc9+2zxQm2wZ1tAr4n+kgl+fwpljr133j453kMoly6d472Qfg2qfJWHUKMsWzY=
-X-Received: by 2002:a05:622a:1a02:b0:4b5:da5f:d9b7 with SMTP id
- d75a77b69052e-4c073ab0dd8mr34737991cf.78.1758287690916; Fri, 19 Sep 2025
- 06:14:50 -0700 (PDT)
+	s=arc-20240116; t=1758287707; c=relaxed/simple;
+	bh=4fc6a0O2Ct2ACGyTZVA9k3181Dr2+/nX0D6D+4aFGQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ahg6ZFBX8URHyQqQkZCVHSM117+XcmXcvTd7CCuc2XhsY/H7/ebITUFDxkLrqHsfL0GdvNQB0Xa5S/XhJucHbp346WVLKTENmWwIxaXIBVmZ/oFUkv11pna4qwFFNZ9w7tneMcnhXaRshpz2TqMyKPf0zY5y/zXmdVfsdmabzGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Axz3FXF4; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 62F10C8F1C5;
+	Fri, 19 Sep 2025 13:14:45 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id DB47F606A8;
+	Fri, 19 Sep 2025 13:15:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B0E50102F17C5;
+	Fri, 19 Sep 2025 15:14:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758287699; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=zkLSfTCSK30R9rnBMrwgwQurzUY0AzbDvB3qzxOn7Vc=;
+	b=Axz3FXF42lf4Jr7BG20uduI+4cHtaPmCNT+YGAtHgjs2YaI3lAqfOF52VepQXDiDCSqyIW
+	2NNkJIXmbC5KnEdJUJe1VCrwIFmjDyjUQNGaPzY3eIh1cpWzs2SFTCNwOjuKz5CYMr+53u
+	kRWOTUAydDlzosgQ+snn7FdhPrHmyC4XHPzlViUbtTqd4n6eT7LmLXORk/0b8IbhsS49kQ
+	ycXbS/oneOwhVtcHgJ1tKE6kbACHX/HpH+27DGH6VaSlEH0gCb3iCP/XgIOP/5BPP46a7X
+	3wPkVjOTgkkNTnEx6tMUxx0tmQi6qfRmOYVszE+GUbjO1dWCynOvzzBPOwJqAg==
+Date: Fri, 19 Sep 2025 15:14:48 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
+ Eberhard <pascal.eberhard@se.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <20250919151448.14f8719a@bootlin.com>
+In-Reply-To: <aM0lU01x1w2wB3LG@ninjato>
+References: <20250918104009.94754-1-herve.codina@bootlin.com>
+	<20250918104009.94754-8-herve.codina@bootlin.com>
+	<aM0lU01x1w2wB3LG@ninjato>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
-In-Reply-To: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 19 Sep 2025 09:14:12 -0400
-X-Gm-Features: AS18NWCzyLEt0N2rB1CWsx_n5vr6VC5G7l3ExS6vuWkIq3v8_7YkqfncY9X_FkM
-Message-ID: <CA+CK2bD3D_XFu1E60qBYwdDzK0c7_bN0BkGBE7h6h_sxmmfvAQ@mail.gmail.com>
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Cong Wang <cwang@multikernel.io>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, Changyuan Lyu <changyuanl@google.com>, 
-	kexec@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Sep 18, 2025 at 6:26=E2=80=AFPM Cong Wang <xiyou.wangcong@gmail.com=
-> wrote:
->
-> This patch series introduces multikernel architecture support, enabling
-> multiple independent kernel instances to coexist and communicate on a
-> single physical machine. Each kernel instance can run on dedicated CPU
-> cores while sharing the underlying hardware resources.
->
-> The multikernel architecture provides several key benefits:
-> - Improved fault isolation between different workloads
-> - Enhanced security through kernel-level separation
-> - Better resource utilization than traditional VM (KVM, Xen etc.)
-> - Potential zero-down kernel update with KHO (Kernel Hand Over)
+Hi Wolfram,
 
-Hi Cong,
+On Fri, 19 Sep 2025 11:41:39 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
-Thank you for submitting this; it is an exciting series.
+> Hi Herve,
+> 
+> > +#define IRQMUX_MAX_IRQS 8
+> > +
+> > +static int irqmux_setup(struct device *dev, struct device_node *np, u32 __iomem *regs)  
+> 
+> The whole driver would benefit from a 'rzn1_irqmux' instead of 'irqmux'
+> prefix, I'd say.
 
-I experimented with this approach about five years ago for a Live
-Update scenario. It required surprisingly little work to get two OSes
-to boot simultaneously on the same x86 hardware. The procedure I
-followed looked like this:
+Agree, I will used the 'rzn1_irqmux' prefix.
 
-1. Create an immutable kernel image bundle: kernel + initramfs.
-2. The first kernel is booted with memmap parameters, setting aside
-the first 1G for its own operation, the second 1G for the next kernel
-(reserved), and the rest as PMEM for the VMs.
-3. In the first kernel, we offline one CPU and kexec the second kernel
-with parameters that specify to use only the offlined CPU as the boot
-CPU and to keep the other CPUs offline (i.e., smp_init does not start
-other CPUs). The memmap specify the first 1G reserved, and the 2nd 1G
-for its own operations, and the rest  is PMEM.
-4. Passing the VMs worked by suspending them in the old kernel.
-5. The other CPUs are onlined in the new kernel (thus killing the old kerne=
-l).
-6. The VMs are resumed in the new kernel.
+> 
+> > +	for_each_of_imap_item(&imap_parser, &imap_item) {
+> > +		/*
+> > +		 * The child #address-cells is 0 (already checked). The first
+> > +		 * value in imap item is the src hwirq.
+> > +		 *
+> > +		 * imap items matches 1:1 the interrupt lines that could
+> > +		 * be configured by registers (same order, same number).
+> > +		 * Configure the related register with the src hwirq retrieved
+> > +		 * from the interrupt-map.
+> > +		 */  
+> 
+> I haven't looked into the above for_each_of_imap_item-helper. But
+> wouldn't it be possibleto retrieve the GIC_SPI number as well and use
+> the correct register based on that? That would remove the need of an
+> already sorted interrupt-map.
 
-While this approach was easy to get to the experimental PoC, it has
-some fundamental problems that I am not sure can be solved in the long
-run, such as handling global machine states like interrupts. I think
-the Orphaned VM approach (i.e., keeping VCPUs running through the Live
-Update procedure) is more reliable and likely to succeed for
-zero-downtime kernel updates.
+Hum, this give the knowledge of the GIC interrupt number in the driver itself.
 
-Pasha
+Not sure that the mapping between the output interrupt line number N (handled
+by register index N) and the GIC interrupt number X should be hardcoded in
+the driver.
 
->
-> Architecture Overview:
-> The implementation leverages kexec infrastructure to load and manage
-> multiple kernel images, with each kernel instance assigned to specific
-> CPU cores. Inter-kernel communication is facilitated through a dedicated
-> IPI framework that allows kernels to coordinate and share information
-> when necessary.
->
-> Key Components:
-> 1. Enhanced kexec subsystem with dynamic kimage tracking
-> 2. Generic IPI communication framework for inter-kernel messaging
-> 3. Architecture-specific CPU bootstrap mechanisms (only x86 so far)
-> 4. Proc interface for monitoring loaded kernel instances
->
-> Patch Summary:
->
-> Patch 1/7: Introduces basic multikernel support via kexec, allowing
->            multiple kernel images to be loaded simultaneously.
->
-> Patch 2/7: Adds x86-specific SMP INIT trampoline for bootstrapping
->            CPUs with different kernel instances.
->
-> Patch 3/7: Introduces dedicated MULTIKERNEL_VECTOR for x86 inter-kernel
->            communication.
->
-> Patch 4/7: Implements generic multikernel IPI communication framework
->            for cross-kernel messaging and coordination.
->
-> Patch 5/7: Adds arch_cpu_physical_id() function to obtain physical CPU
->            identifiers for proper CPU management.
->
-> Patch 6/7: Replaces static kimage globals with dynamic linked list
->            infrastructure to support multiple kernel images.
->
-> Patch 7/7: Adds /proc/multikernel interface for monitoring and debugging
->            loaded kernel instances.
->
-> The implementation maintains full backward compatibility with existing
-> kexec functionality while adding the new multikernel capabilities.
->
-> IMPORTANT NOTES:
->
-> 1) This is a Request for Comments (RFC) submission. While the core
->    architecture is functional, there are numerous implementation details
->    that need improvement. The primary goal is to gather feedback on the
->    high-level design and overall approach rather than focus on specific
->    coding details at this stage.
->
-> 2) This patch series represents only the foundational framework for
->    multikernel support. It establishes the basic infrastructure and
->    communication mechanisms. We welcome the community to build upon
->    this foundation and develop their own solutions based on this
->    framework.
->
-> 3) Testing has been limited to the author's development machine using
->    hard-coded boot parameters and specific hardware configurations.
->    Community testing across different hardware platforms, configurations,
->    and use cases would be greatly appreciated to identify potential
->    issues and improve robustness. Obviously, don't use this code beyond
->    testing.
->
-> This work enables new use cases such as running real-time kernels
-> alongside general-purpose kernels, isolating security-critical
-> applications, and providing dedicated kernel instances for specific
-> workloads etc..
->
-> Signed-off-by: Cong Wang <cwang@multikernel.io>
->
-> ---
->
-> Cong Wang (7):
->   kexec: Introduce multikernel support via kexec
->   x86: Introduce SMP INIT trampoline for multikernel CPU bootstrap
->   x86: Introduce MULTIKERNEL_VECTOR for inter-kernel communication
->   kernel: Introduce generic multikernel IPI communication framework
->   x86: Introduce arch_cpu_physical_id() to obtain physical CPU ID
->   kexec: Implement dynamic kimage tracking
->   kexec: Add /proc/multikernel interface for kimage tracking
->
->  arch/powerpc/kexec/crash.c          |   8 +-
->  arch/x86/include/asm/idtentry.h     |   1 +
->  arch/x86/include/asm/irq_vectors.h  |   1 +
->  arch/x86/include/asm/smp.h          |   7 +
->  arch/x86/kernel/Makefile            |   1 +
->  arch/x86/kernel/crash.c             |   4 +-
->  arch/x86/kernel/head64.c            |   5 +
->  arch/x86/kernel/idt.c               |   1 +
->  arch/x86/kernel/setup.c             |   3 +
->  arch/x86/kernel/smp.c               |  15 ++
->  arch/x86/kernel/smpboot.c           | 161 +++++++++++++
->  arch/x86/kernel/trampoline_64_bsp.S | 288 ++++++++++++++++++++++
->  arch/x86/kernel/vmlinux.lds.S       |   6 +
->  include/linux/kexec.h               |  22 +-
->  include/linux/multikernel.h         |  81 +++++++
->  include/uapi/linux/kexec.h          |   1 +
->  include/uapi/linux/reboot.h         |   2 +-
->  init/main.c                         |   2 +
->  kernel/Makefile                     |   2 +-
->  kernel/kexec.c                      | 103 +++++++-
->  kernel/kexec_core.c                 | 359 ++++++++++++++++++++++++++++
->  kernel/kexec_file.c                 |  33 ++-
->  kernel/multikernel.c                | 314 ++++++++++++++++++++++++
->  kernel/reboot.c                     |  10 +
->  24 files changed, 1411 insertions(+), 19 deletions(-)
->  create mode 100644 arch/x86/kernel/trampoline_64_bsp.S
->  create mode 100644 include/linux/multikernel.h
->  create mode 100644 kernel/multikernel.c
->
-> --
-> 2.34.1
->
+In my v1 series iteration, I used the 'interrupts' property to provide this
+missing information:
+   interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /* line 0 (reg index 0) route to GIC 103 */
+                <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>, /* line 1 (reg index 1) route to GIC 104 */
+                <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>, /* line 2 (reg index 2) route to GIC 105 */
+                ...
+
+Base on the interrupts table and the interrupt-map, I deduce the reg index:
+  - From interrupt-map, got a GIC interrupt number
+  - From interrupts table and the GIC interrupt number, got the line/reg index.
+
+Rob asked to use only interrupt-map and use directly the interrupt-map index as
+the hardware index:
+  https://lore.kernel.org/lkml/20250801111753.382f52ac@bootlin.com/
+
+> 
+> > +		if (index > IRQMUX_MAX_IRQS) {
+> > +			of_node_put(imap_item.parent_args.np);
+> > +			dev_err(dev, "too much items in interrupt-map\n");
+> > +			return -EINVAL;  
+> 
+> -E2BIG? With such a unique errno, we could even drop the dev_err.
+
+Yes sure.
+
+> 
+> > +		}
+> > +
+> > +		writel(imap_item.child_imap[0], regs + index);
+> > +		index++;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int irqmux_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct device_node *np = dev->of_node;
+> > +	u32 __iomem *regs;
+> > +	int nr_irqs;
+> > +	int ret;
+> > +
+> > +	regs = devm_platform_ioremap_resource(pdev, 0);
+> > +	if (IS_ERR(regs))
+> > +		return PTR_ERR(regs);
+> > +
+> > +	nr_irqs = of_irq_count(np);
+> > +	if (nr_irqs < 0)
+> > +		return nr_irqs;
+> > +
+> > +	if (nr_irqs > IRQMUX_MAX_IRQS) {
+> > +		dev_err(dev, "too many output interrupts\n");
+> > +		return -ENOENT;  
+> 
+> -E2BIG? Wait, isn't this the same check twice?
+
+This is not the same check but this one should not be there.
+
+Indeed of_irq_count() counts the number of items available in the
+'interrupts' property. This is not used anymore.
+
+I missed to remove it from v1 to v2 updates (and also from v2 to v3).
+
+The of_irq_count() call and related checks will be remove in the next
+iteration.
+
+Best regards,
+Hervé
 
