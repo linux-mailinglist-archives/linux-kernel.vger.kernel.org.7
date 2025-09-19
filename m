@@ -1,119 +1,181 @@
-Return-Path: <linux-kernel+bounces-823862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F61B87982
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:27:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA36BB8793B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3786E7C307C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:27:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF49582128
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91BE24169F;
-	Fri, 19 Sep 2025 01:27:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9263A22069A;
+	Fri, 19 Sep 2025 01:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjY9hrsJ"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F94321FF26;
-	Fri, 19 Sep 2025 01:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E4B273F9
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758245267; cv=none; b=WRwILl3tFLmZ8MHz52wIV5fj8k2O+WdSRmQiVYWr6DwqZnchna4KJ5IwewJS22RN7kNOa3DG7wjl4XO0DwAbeCAqZ/GviLfe01fomd6yUWKDG14p+LbGrzutr3fzAvNUgAjgsMGgfPHqIl5IL6fu66fZ7mPcdopd6LZEr3zD77c=
+	t=1758244408; cv=none; b=sNht0pAI+Do4XheYAy2HzNw7+Vwk5iVfeAOsMQvTmkkWVd1oV6nIGlmYZLQ4+8vbODo+fR9GBgDOJHPfns++AEyARD+D5rRcHM0JXjYV/uB535gOYCgRxYa1G7ZQfZMeOK6vPJvw+4FSS2G3Tz/czdqoicRvu3f6FpaXwwvbKkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758245267; c=relaxed/simple;
-	bh=2pTkT+Qr9pnG2khrWA49OOhhcaiwndfNV2lzhimkRbc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uSON94/vGRKW4XTT+6sJathNw/kLoEFfLLXXnmZHu/14V19zASOJz5d5WGGabAIJF2ZIiINP1dt9ZdTuhX3gFablFSU66EgB2vPs0TsjQXuEK+KjSpsisZuLVadV/RJhtimdl5vkCPDfx6W/+oojqKQUETEZsoUzAOtHKURmJ5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cSZcw6RbQzYQtpl;
-	Fri, 19 Sep 2025 09:27:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 834201A094D;
-	Fri, 19 Sep 2025 09:27:43 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgAXYRWFscxoHmk_AA--.4996S4;
-	Fri, 19 Sep 2025 09:27:43 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com,
-	tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com
-Subject: [PATCH cgroup/for-next v2 2/2] cpuset: Use new excpus for nocpu error check when enabling root partition
-Date: Fri, 19 Sep 2025 01:12:27 +0000
-Message-Id: <20250919011227.2991696-3-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250919011227.2991696-1-chenridong@huaweicloud.com>
-References: <20250919011227.2991696-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1758244408; c=relaxed/simple;
+	bh=NVCINHnu5XyfIfTH/bt86LXIAcWVL7rBMtyraEGrHC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J7hR6DJswxvYjNyNjA4ZSOr40TIcS7NKSlgjM6Am4u98YU7duCyGYTlgkW7mUFaXz/f08g9ltbQ6+Ygxhc+uXVEAb8EUfRHzR47BuhidU6IqlxO5rJhg+DbgNEjpFO6Oz832qenVPyJXhZZvw0dVwgmJT1bQMbUm4GXLmq+INaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjY9hrsJ; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-ea5cbca279aso1194936276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758244406; x=1758849206; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EaDUMudIdIoXqVSWD7aQteCIRPR13lkKvGy+vWqzuRs=;
+        b=PjY9hrsJpWRZjxUKvfRPzJ0MAMN9MBU9Xx/35oozjr7wXcKJmWZzKgDNVNECOaJ3S4
+         yPstgd2eTT1np2B7TzMwTU1aPdTiBPdGoA28Fb80BMXXTKgaswPWS0zzIepfUTfee88h
+         qs5jw/5yHVlPoNjArPh9RMrgUiCE2FvuARw7/sK8wOuK5Sl7wn2BdKExDIvVTHnEqZPe
+         jj69BjUBjGDWQK+tXFrDRmcwdBjak1SSQTTVkcOH2uImgMXlaspS+pY4TicYPj6VUs6v
+         w1nhVAyRmDVw0iSfQ/gohVPSP1yviZZgn+TBagrxGwgWgIJKtQHa07cgSGk7TN6XKkQW
+         IYOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758244406; x=1758849206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EaDUMudIdIoXqVSWD7aQteCIRPR13lkKvGy+vWqzuRs=;
+        b=wvp3gu0UmyXQQTpCFKex+KO80xK6gkHpfbqDC/GhHDFup+aNj4jelB8eSzhYpjZVOV
+         Oml+kQuRg7SmeMYN+AYfg/ueszPs+owYxmMn0JnLlUceLjAAePuLEJ44oCwK3166MUlF
+         wQ6XQWHfq2q/AXUgpYYARhjQNUmQw1dlF9gAq+3qdXDSWnvR16ENxpHNs8klaNzR87tm
+         z+CtsvrfKMkgntHph0591yTm5vnHES4putQHyyOBqjugIqjhupa9UYczn8QbMEHTZMRk
+         w3WKRTmvXYfjAZFGLDTtaFe+DFpKHUgAu7C1krEL/UIhBLbNIsT1YULF5c1FlU1c8s9l
+         QrcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWaOeobFCGE72v9LNBguWTthSGm2fzc8/ZXx2CtvJClXD7t5LzLT833ZcWZAnwlMnpvxQL6w7GpY3sUuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDxh6mTAaL8NkPYEvwzXIQOnNKtUgrYKYqXD0WrjPpmSs9hOlb
+	fGxPOkEUp8fIqm7eZism916zBmrd/aiygP+fL097oPSy+EvmB561yvSpEM7/a0nM/ISzeat1CnG
+	rORR6MacOTwe+bo4uUZB+KovAD6RkJiM=
+X-Gm-Gg: ASbGnctm6AYDooSwIuXK65hHurTsQ3SY111FLlV3rp/37rrRTGCQLbubW2mwJ1yuFM6
+	+eSVeLRcpaR7W8GLHRo4b6Ty0FoE1FydGbyhgC0LmU8Ps8S1MP6fU7N4tDeAwv1X4yh3NUsgYOw
+	TalPh97IFQGcbx32gx/i7qWVo/qgzmCEhjMdjNeKzO1YPzEH49p5eO1euyElDfHrsAO9Y+AOyaN
+	AeH3t789TXez9VYC1iO7uSR7A==
+X-Google-Smtp-Source: AGHT+IEumflFqxMIDelqzF9utD7SHQtq+byoVXjwm9PjmcKO8ElbCCJANIQDmAQLixQbUCfi+eavIP+X7gcIDmKJF5k=
+X-Received: by 2002:a05:690c:39c:b0:732:39a:8218 with SMTP id
+ 00721157ae682-73d32a37511mr14712097b3.20.1758244406202; Thu, 18 Sep 2025
+ 18:13:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgAXYRWFscxoHmk_AA--.4996S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr1kZFW7tr4rXw4rJF1DWrg_yoW8JF4fpF
-	W3Ga1Ut3yYga1UC3sFqa95u34rWws3JF1Ut3WkGa4xZa43J3W0kryq9ws0qryjqFZ3Cayj
-	qF4avw4Svayqy37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr4
-	1l4c8EcI0Ec7CjxVAaw2AFwI0_JF0_Jw1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r
-	43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-	2FApUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+ <20250918130543.GM3245006@noisy.programming.kicks-ass.net>
+ <CADxym3ae8NGRt70rVO8ZyHa3BvWhczUkRs=dVn=rTRMVzrU9tA@mail.gmail.com>
+ <CAADnVQ+hOdOpCR6s_GyO_7xxehCPBHSttidia38P5xFie6yjnw@mail.gmail.com>
+ <20250918165935.GB3409427@noisy.programming.kicks-ass.net> <CAADnVQLP6-s_dtGpEcnFaVJfDW12rTOS2qk5k0Fyvn=4Gn7gBw@mail.gmail.com>
+In-Reply-To: <CAADnVQLP6-s_dtGpEcnFaVJfDW12rTOS2qk5k0Fyvn=4Gn7gBw@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 19 Sep 2025 09:13:15 +0800
+X-Gm-Features: AS18NWAZ9aDs6021Mx5sft0htLC24LyiQ02L56VQS2hwJXPhGzNa1P40F0wX_NM
+Message-ID: <CADxym3Z6Ed5xjDMvh4ChRvrw_aLidkGrkgbK+076Exfmp=m3SA@mail.gmail.com>
+Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
+To: Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Mike Rapoport <rppt@kernel.org>, Andy Lutomirski <luto@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Ridong <chenridong@huawei.com>
+On Fri, Sep 19, 2025 at 1:54=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Thu, Sep 18, 2025 at 9:59=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
+org> wrote:
+> >
+> > On Thu, Sep 18, 2025 at 09:02:31AM -0700, Alexei Starovoitov wrote:
+> > > On Thu, Sep 18, 2025 at 6:32???AM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+> > > >
+> > > > On Thu, Sep 18, 2025 at 9:05???PM Peter Zijlstra <peterz@infradead.=
+org> wrote:
+> > > > >
+> > > > > On Thu, Sep 18, 2025 at 08:09:39PM +0800, Menglong Dong wrote:
+> > > > > > is_endbr() is called in __ftrace_return_to_handler -> fprobe_re=
+turn ->
+> > > > > > kprobe_multi_link_exit_handler -> is_endbr.
+> > > > > >
+> > > > > > It is not protected by the "bpf_prog_active", so it can't be tr=
+aced by
+> > > > > > kprobe-multi, which can cause recurring and panic the kernel. F=
+ix it by
+> > > > > > make it notrace.
+> > > > >
+> > > > > This is very much a riddle wrapped in an enigma. Notably
+> > > > > kprobe_multi_link_exit_handler() does not call is_endbr(). Nor is=
+ that
+> > > > > cryptic next line sufficient to explain why its a problem.
+> > > > >
+> > > > > I suspect the is_endbr() you did mean is the one in
+> > > > > arch_ftrace_get_symaddr(), but who knows.
+> > > >
+> > > > Yeah, I mean
+> > > > kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
+> > > > arch_ftrace_get_symaddr -> is_endbr
+> > > > actually. And CONFIG_X86_KERNEL_IBT is enabled of course.
+> > >
+> > > All this makes sense to me.
+> >
+> > As written down, I'm still clueless.
 
-A previous patch fixed a bug where new_prs should be assigned before
-checking housekeeping conflicts. This patch addresses another potential
-issue: the nocpu error check currently uses the xcpus which is not updated.
-Although no issue has been observed so far, the check should be performed
-using the new effective exclusive cpus.
+Ok, let me describe the problem in deetail.
 
-The comment has been removed because the function returns an error if
-nocpu checking fails, which is unrelated to the parent.
+First of all, it has nothing to do with kprobe. The bpf program of type
+kprobe-multi based on fprobe, and fprobe base on fgraph. So it's all
+about the ftrace, which means __fentry__.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Reviewed-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Second, let me explain the recur detection of the kprobe-multi. Let's
+take the is_endbr() for example. When it is hooked by the bpf program
+of type kretprobe-multi, following calling chain will happen:
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 2b7e2f17577e..44d65890326a 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -1818,11 +1818,7 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
- 		if (prstate_housekeeping_conflict(new_prs, xcpus))
- 			return PERR_HKEEPING;
- 
--		/*
--		 * A parent can be left with no CPU as long as there is no
--		 * task directly associated with the parent partition.
--		 */
--		if (nocpu)
-+		if (tasks_nocpu_error(parent, cs, xcpus))
- 			return PERR_NOCPUS;
- 
- 		/*
--- 
-2.34.1
+  is_endbr -> __ftrace_return_to_handler -> fprobe_return ->
+  kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
+  arch_ftrace_get_symaddr -> is_endbr
 
+Look, is_endbr() is called again during the ftrace handler, so it will
+trigger the ftrace handler(__ftrace_return_to_handler) again, which
+causes recurrence.
+
+Such recurrence can be detected. In kprobe_multi_link_prog_run(),
+the percpu various "bpf_prog_active" will be increased by 1 before we
+run the bpf progs, and decrease by 1 after the bpf progs finish. If the
+kprobe_multi_link_prog_run() is triggered again during bpf progs run,
+it will check if bpf_prog_active is zero, and return directly if it is not.
+Therefore, recurrence can't happen within the "bpf_prog_active" protection.
+
+However, the calling to is_endbr() is not within that scope, which makes
+the recurrence happen.
+
+Hope I described it clearly =F0=9F=98=89
+
+Thanks!
+Menglong Dong
+
+> >
+> > > __noendbr bool is_endbr(u32 *val) needs "notrace",
+> > > since it's in alternative.c and won't get inlined (unless LTO+luck).
+> >
+> > notrace don't help with kprobes in general, only with __fentry__ sites.
+>
+> Are you sure ? Last time I checked "notrace" prevents kprobing
+> anywhere in that function.
 
