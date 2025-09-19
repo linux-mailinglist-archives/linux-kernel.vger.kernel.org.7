@@ -1,168 +1,248 @@
-Return-Path: <linux-kernel+bounces-824594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF106B89A40
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:20:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9291B899FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1897188ECF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:20:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17B817A3323
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64138258EEF;
-	Fri, 19 Sep 2025 13:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E5D23C8C5;
+	Fri, 19 Sep 2025 13:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FJ5SMBs1"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010010.outbound.protection.outlook.com [52.101.56.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="PKFnfDqZ"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A701B21BD;
-	Fri, 19 Sep 2025 13:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758287991; cv=fail; b=RvT23YTyNrQxOYhNq+yGqh1Xf3blNp8375BONg4nCIkVpk3HCvf/vfp/RhQ9/PZ/CH9r/KUFJD3FSUch4+9uYT7dPqwwTFdMECvM+0xmWfthXqIwch+qytRxwhlfgXQSSyVKla00TXeS3qQj26Le+GYAQsQY0CQ/fz/rOv8tlrY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758287991; c=relaxed/simple;
-	bh=c7ZdBa5zG2/z1CEWIB6S4nDfQ7RB5pQAj+OH6EWvw/Q=;
-	h=References:From:To:CC:Subject:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=nOsRkZ9hoIUoNcfg8Leu0KfxyotCIE56GHMALPgPt35hka5meMlT8XW2Xnopp6hdY+DthBk5Fglikl8V18EMCun+Sfi5L3O2rSFb23hk0yC1e0p/3nKW5TLR8o3eO7IBOAvoI7Yd0T2MHbPrjCbwCeeg0oVrQO0zhGbzf7C+Fcg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FJ5SMBs1; arc=fail smtp.client-ip=52.101.56.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a6PLxXFGvYWWvwP/NTev5ddBZOK9VqB3ydBwydxrdqDGXGEt2OwSFzqnYS5fjcNPQsAHwG2t9VK6oDb9+xMx4lq5sRjET6pUkIO5MlI/XesXmWPqXCLbhTTmERev+jfuM1YuvcMa/CSs6TqlExsYWAUodHw2FIuKymP2DRpFEAD1LPCH4seNhQQy9G3rXmn2NKCvK1YCc5W6+rhUrNCu1joPY9XuHw5YGF3dY6xqBXl7gikuv6/hbmAMuf2qrvcmmOGluznI38a4oj2433bL1c9Yo9ug9nb4w8w3zt4+zpk0jZD3IO529e3h94cbaz9kRVHCDJLsvWho1I0TaNHvIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EhrG/XxFULHvRu6Rscg6wc07Ge1sytNunEl+X0lP4gY=;
- b=U0KeyGTGWSSH+uXkab/JfEUI80sEKhBGjS7rAzS8BWaceD8mUOrUX2tgogZLhTKllGQf8Cbi5fEsJRNjFQr5lZChmthmOu9cMorWgFZB4CnSoD/ZJKy41PJcBZ5c2/HgaOAOU8GOgfd9Iun1PxSOoZoCw0QFuh1chltYpLGKjjTsbgOfvm/3X0CY5+hOmHIxMRwTlRStbQfcIiQ9xzJEaix+edCEclGThDV5OE4mcd3ylvvCkvIofVZwtSG7ovNwltnKZfhzp/oYl0frjLp4qKHqF9AZeBljcSWI0FudgOMWC7rLPkGsSHECakhcmxdFT/6MEFMkFFAaA8J/iNwvjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EhrG/XxFULHvRu6Rscg6wc07Ge1sytNunEl+X0lP4gY=;
- b=FJ5SMBs1lNi+kR43UqRtr2N78y5y4xucI1lvVZ2qSSw3UnojI9bIF5KiuaG2jrG/ookCsUxECM0JnOe5dLE/k/FZfTKPuBkR5XoVqoatcnna8x/FUGLgV4cIAQu1HWjDak0XjMzvVknsxCHHkYSI1SFnnjPzFpZDwPB8gwPAkb410iw9MXlfNWKFZZz3L27HlFYFDek8JjjJ5s6C/ySS95DklFX0Ud28AaWNkas86OTi6zFWRmcbZnloqStgh0/si4h0VYjOnOjCGWjXGvCRa4Z61vxU1J3IWRsXTHFj2wpC4VapR8x9OQ810BZId7uUR2AOQfxy7d1RcVEGnGoNdg==
-Received: from BN1PR14CA0016.namprd14.prod.outlook.com (2603:10b6:408:e3::21)
- by MN6PR12MB8492.namprd12.prod.outlook.com (2603:10b6:208:472::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 13:19:44 +0000
-Received: from BN2PEPF00004FBF.namprd04.prod.outlook.com
- (2603:10b6:408:e3:cafe::1e) by BN1PR14CA0016.outlook.office365.com
- (2603:10b6:408:e3::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.14 via Frontend Transport; Fri,
- 19 Sep 2025 13:19:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF00004FBF.mail.protection.outlook.com (10.167.243.185) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.12 via Frontend Transport; Fri, 19 Sep 2025 13:19:43 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 19 Sep
- 2025 06:19:29 -0700
-Received: from fedora (10.126.230.35) by rnnvmail201.nvidia.com (10.129.68.8)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Fri, 19 Sep
- 2025 06:19:22 -0700
-References: <20250919053538.1106753-1-mmyangfl@gmail.com>
-User-agent: mu4e 1.8.14; emacs 30.2
-From: Petr Machata <petrm@nvidia.com>
-To: David Yang <mmyangfl@gmail.com>
-CC: <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Shuah Khan
-	<shuah@kernel.org>, Petr Machata <petrm@nvidia.com>, Amit Cohen
-	<amcohen@nvidia.com>, Li Shuang <shuali@redhat.com>, Alessandro Zanni
-	<alessandro.zanni87@gmail.com>, Hangbin Liu <liuhangbin@gmail.com>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3] selftests: forwarding: Reorder (ar)ping
- arguments to obey POSIX getopt
-Date: Fri, 19 Sep 2025 15:12:08 +0200
-In-Reply-To: <20250919053538.1106753-1-mmyangfl@gmail.com>
-Message-ID: <87frcimvhg.fsf@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380D52AD16
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758287694; cv=none; b=t4K1jNT3Nw/MajZhxBzbwIZ1HJJTM8FvpmfpQZ0kOy7r6uLfK0cFfHXkXKQnafgw2OScscHEG+yZybGeTSjLCi5kbNecJor7FrVwRblss1wdiJxB6oswVc8jM+OhJrsPr5tbjgZ40mo88jqr7yH14bxkqzLTgWIcG5h5UpeHgA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758287694; c=relaxed/simple;
+	bh=9uNRaKLm/UkEWXz6L6vPG9AM0/2z8XI4VFYyvvZye5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iuuYbw7slNQeBF90zFOPSkPz8RYZ1k8DDLGDt+XV2NR2c51rCtZfchJM0a/8D4d0IjRjeTY+p3ZRlucv11z2vmEqkIRJX85ngdo5SVSGSrLvenufZurswvwXcdFOavh4obo4Ivv86mGqOYDN03pknmOhOFswVyFQ+9lQVd0IxUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=PKFnfDqZ; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b548745253so34004741cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1758287691; x=1758892491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4TO8ldCpCwaQtoLKPhvsFlsBIhB9gZdGySwv7zH4ykU=;
+        b=PKFnfDqZ2XWhcDzyes2A/wyUHVilZHsLqlmlIGtFavXL5r+pHj+TuLLbnVqdq+cgNJ
+         a4SvkmK8xKrr+5unP34aF31+YtwVQiUya2JU2lEmJup5PXJ7RXggQDTo3MBlMaldC6VW
+         DKOmYGKgECPKA0kWuSQy8rye7tEU+I2PtEXj+K+/P/9amgoBSWyBklKg24rP3sON33NM
+         fgCl84fGTMUS3/QfeSyf2uJA7AwmtamtxNJHRv4IGS7cc9UHxCjleIzNiaSeuQQ/kiwu
+         sQjF+l3bkfc7dCVolUf3et+7ZYPc0p3YgiGcsQPoskwqCieTtBwS7c2VoZ9k/aIspZv+
+         F8PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758287691; x=1758892491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4TO8ldCpCwaQtoLKPhvsFlsBIhB9gZdGySwv7zH4ykU=;
+        b=XQuVf0oUQT0JPzc5K2SMTP1BMO30nS60D494xgxFP81UDzUTA6rg87AM/toZFpR8sN
+         MiNWG27PaJq6bLD0nBqLlzoz5TUHDNFVDOAgDz8RAYx5okMj+qcBBcB+iL8Lgs+qkt9X
+         MHErGGBfyrr+fuuPVcNl+1SMtUmtOln+IgPy9Yy9Q4tcwrCuu9vb4bKia4/cxbWHzPXP
+         EEJoZvlCj5JGWRyp8YpZhzru7ZnmikVBNTu4UDsNhJvunyRdA9H3RLE8mSLsy+kwjL2W
+         saXBe13hkOuKHjFB8yxFN2TvCV0kNFn74VQcwlfTrZNLjW/pgD595aKXvj4BS7owXOOt
+         22Bw==
+X-Gm-Message-State: AOJu0Yz3HG1M8RygloD5Jn5W7MzWrTlxFN56/jR1NIidmeyzmdiQbUm5
+	9dDqZg/4o3L1Vl9Xk6QgGM3D8PrPEWSLhTn3Qa8JioMCi3Fn7Rx91zwaSsy4X0mVOTpPBeXRCoR
+	XVWXSuZKbg2X+IjSNvr0uzbhAzTFPjlY4TswHyBI3YA==
+X-Gm-Gg: ASbGncuX/agdVzuMVWviyHdeKLQeLDoJMea8GvMsUuH8yAP17EqrLonYF0U0vhjiRIT
+	dszgla3JqwoicuoUQLwshWuSH7lad/K6wOAdxppN9ILMFEAs3VufcfwDNqno4DomsbMGm7Hj+KN
+	2+XkyIJ9qtbD/jY2QVDIrf8AC54PNj4NpqlOFfhRwWUUatEZ++4HhgIKs1AqUKDHS/kAj2dD8Kj
+	/Q5
+X-Google-Smtp-Source: AGHT+IFP5OPPTxwZ8V54f9/k+r549Cc9+2zxQm2wZ1tAr4n+kgl+fwpljr133j453kMoly6d472Qfg2qfJWHUKMsWzY=
+X-Received: by 2002:a05:622a:1a02:b0:4b5:da5f:d9b7 with SMTP id
+ d75a77b69052e-4c073ab0dd8mr34737991cf.78.1758287690916; Fri, 19 Sep 2025
+ 06:14:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBF:EE_|MN6PR12MB8492:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6822f50f-7060-44ee-2ecd-08ddf77f32d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?n1j179gzq95/rmCpUDYFNQsGhnWeRUa0oZV9ZyqyqLMpY6tBS+/JSydSVlTz?=
- =?us-ascii?Q?nuyzJ+Sjj4GfhcGgzbMj+8TcpAIOd8S/kIi3igaO0YC1sT9xgCCGLjdwFQ7m?=
- =?us-ascii?Q?gkX2xqOZ74auJXlg68+0CLBRU/epZY3Qlv9xiRHy9deCEZYroNPKjuMJ9meF?=
- =?us-ascii?Q?qL2bjonz4yMotr0sOaB5o1F4xbee303GbYI//bygWHV52f3nWMUNYDK5mWmg?=
- =?us-ascii?Q?6bo7TOWYkoMVFSE8UapnVfg4zu5qpgC9PXd7ib6wV5jogIzjD7TsbBOCTEt0?=
- =?us-ascii?Q?NzE/qOC80dseo5qHxahXahzDyboz5c7/1O0t45VwY6dDsblksmYJY2RWy9hT?=
- =?us-ascii?Q?fKnMfTe7JVnh4+Q3GOuQchm/jMCtY+aFPDC9Fw8oIa89HwJq61Xuvj3AcylD?=
- =?us-ascii?Q?A/sg9kHo0of2lExvpHLeI/WuhPjy/FnFzE11Zi2ltssjMR1BBUGH6td8881R?=
- =?us-ascii?Q?vQYZmadXQ/O7GBXiHLT7Pjoha3EnFSZiPZH1Ii2vgTqqQFkcgIEJfiFAbHFl?=
- =?us-ascii?Q?Qrl3tkvFzaJ1Y9BfIKj9/0MfY8yXDMLHbQHlMWAahW/0DksT+KtgkL/D53hm?=
- =?us-ascii?Q?XVhtlWjIfozunzJed3b/4/cpGZ+FtDNdFDclKm+7F5G9DO+Mub7+6wMl3Vix?=
- =?us-ascii?Q?jISN1GDlXfV/oCa3vfMT7V8+mrI7SkPVmvr4XBakeofrUVCC3RadOCce78+D?=
- =?us-ascii?Q?Hqeyq3RpwGLCc9TSIseha/UAr8MA0knRd+YFuQa+hwQlvOJ4H79xvr/fxbTH?=
- =?us-ascii?Q?Yz50YgkGGabvUZ3RizR+ozuzUqAsqy06WxUIXKlsj6czEZN7RzIV+opUehZg?=
- =?us-ascii?Q?ai8vbC/nzGBEHjN40PdUjUOnW6XK70R2dgesNZLzugYym9xzAfwuEozxO7zb?=
- =?us-ascii?Q?hXs7YCf2soBcrT24q5quBTPwXnedVzFVw9C+OWfH5eQzmBrCGjY+N49phqdH?=
- =?us-ascii?Q?ey/xDrAoG+cIbcw3m+aUY9UWzdGkeBxeeWXnn5Qhx2UVwx+qWRf9Zfa3YGxz?=
- =?us-ascii?Q?7xcNnrcM/12FsZ81/GS5HbesNVwkrXHYTelLdm7+k+fTJ1tQJc45VCIq8NIh?=
- =?us-ascii?Q?110H997zNNmDdDfdkF/pq949sWc0pTkoW3d9aZoUh3rBioZT+gV5K24hh7Id?=
- =?us-ascii?Q?DZKBRsUqPTILF7IOSfp0Ps4eKgwIaXUv0GWgnw+0Mjfu+iLrGcbdXnegvQAZ?=
- =?us-ascii?Q?MGenIWzXN2ZCv0kV8Q4QNolEjNPl67urwi3jsph6lhK6eVhoqfLRQJTlHrUs?=
- =?us-ascii?Q?yilexkz4nYRse/ZnGYL7xl6ChjWGFz5KslQHRug8lXznvqdzAe5xaw17a51v?=
- =?us-ascii?Q?85onogyz6Xvpn0wNwoLQRtM+P17vXiHJ+dAfuKDkosRHD1Q+F+Vx2jLjS93k?=
- =?us-ascii?Q?xEwFbGhfeuheH3DY41T0YFKP1PlsqeWNCzL2thU7keLqGUmUdHNwK+AjcODD?=
- =?us-ascii?Q?GfQKOCmBuiKm9ulaA4rroWRjYeP9MVVj+R/b8IUljRxubylxcxMzu36lVOec?=
- =?us-ascii?Q?OQCFgsR18oF5+8OsbNRSNiQiWSQ9JiKMX78z?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 13:19:43.8825
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6822f50f-7060-44ee-2ecd-08ddf77f32d0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF00004FBF.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8492
+References: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+In-Reply-To: <20250918222607.186488-1-xiyou.wangcong@gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 19 Sep 2025 09:14:12 -0400
+X-Gm-Features: AS18NWCzyLEt0N2rB1CWsx_n5vr6VC5G7l3ExS6vuWkIq3v8_7YkqfncY9X_FkM
+Message-ID: <CA+CK2bD3D_XFu1E60qBYwdDzK0c7_bN0BkGBE7h6h_sxmmfvAQ@mail.gmail.com>
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
+To: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Cong Wang <cwang@multikernel.io>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, Changyuan Lyu <changyuanl@google.com>, 
+	kexec@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-David Yang <mmyangfl@gmail.com> writes:
-
-> Quoted from musl wiki:
+On Thu, Sep 18, 2025 at 6:26=E2=80=AFPM Cong Wang <xiyou.wangcong@gmail.com=
+> wrote:
 >
->   GNU getopt permutes argv to pull options to the front, ahead of
->   non-option arguments. musl and the POSIX standard getopt stop
->   processing options at the first non-option argument with no
->   permutation.
+> This patch series introduces multikernel architecture support, enabling
+> multiple independent kernel instances to coexist and communicate on a
+> single physical machine. Each kernel instance can run on dedicated CPU
+> cores while sharing the underlying hardware resources.
 >
-> Thus these scripts stop working on musl since non-option arguments for
-> tools using getopt() (in this case, (ar)ping) do not always come last.
-> Fix it by reordering arguments.
->
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> The multikernel architecture provides several key benefits:
+> - Improved fault isolation between different workloads
+> - Enhanced security through kernel-level separation
+> - Better resource utilization than traditional VM (KVM, Xen etc.)
+> - Potential zero-down kernel update with KHO (Kernel Hand Over)
 
-Reviewed-by: Petr Machata <petrm@nvidia.com>
+Hi Cong,
+
+Thank you for submitting this; it is an exciting series.
+
+I experimented with this approach about five years ago for a Live
+Update scenario. It required surprisingly little work to get two OSes
+to boot simultaneously on the same x86 hardware. The procedure I
+followed looked like this:
+
+1. Create an immutable kernel image bundle: kernel + initramfs.
+2. The first kernel is booted with memmap parameters, setting aside
+the first 1G for its own operation, the second 1G for the next kernel
+(reserved), and the rest as PMEM for the VMs.
+3. In the first kernel, we offline one CPU and kexec the second kernel
+with parameters that specify to use only the offlined CPU as the boot
+CPU and to keep the other CPUs offline (i.e., smp_init does not start
+other CPUs). The memmap specify the first 1G reserved, and the 2nd 1G
+for its own operations, and the rest  is PMEM.
+4. Passing the VMs worked by suspending them in the old kernel.
+5. The other CPUs are onlined in the new kernel (thus killing the old kerne=
+l).
+6. The VMs are resumed in the new kernel.
+
+While this approach was easy to get to the experimental PoC, it has
+some fundamental problems that I am not sure can be solved in the long
+run, such as handling global machine states like interrupts. I think
+the Orphaned VM approach (i.e., keeping VCPUs running through the Live
+Update procedure) is more reliable and likely to succeed for
+zero-downtime kernel updates.
+
+Pasha
+
+>
+> Architecture Overview:
+> The implementation leverages kexec infrastructure to load and manage
+> multiple kernel images, with each kernel instance assigned to specific
+> CPU cores. Inter-kernel communication is facilitated through a dedicated
+> IPI framework that allows kernels to coordinate and share information
+> when necessary.
+>
+> Key Components:
+> 1. Enhanced kexec subsystem with dynamic kimage tracking
+> 2. Generic IPI communication framework for inter-kernel messaging
+> 3. Architecture-specific CPU bootstrap mechanisms (only x86 so far)
+> 4. Proc interface for monitoring loaded kernel instances
+>
+> Patch Summary:
+>
+> Patch 1/7: Introduces basic multikernel support via kexec, allowing
+>            multiple kernel images to be loaded simultaneously.
+>
+> Patch 2/7: Adds x86-specific SMP INIT trampoline for bootstrapping
+>            CPUs with different kernel instances.
+>
+> Patch 3/7: Introduces dedicated MULTIKERNEL_VECTOR for x86 inter-kernel
+>            communication.
+>
+> Patch 4/7: Implements generic multikernel IPI communication framework
+>            for cross-kernel messaging and coordination.
+>
+> Patch 5/7: Adds arch_cpu_physical_id() function to obtain physical CPU
+>            identifiers for proper CPU management.
+>
+> Patch 6/7: Replaces static kimage globals with dynamic linked list
+>            infrastructure to support multiple kernel images.
+>
+> Patch 7/7: Adds /proc/multikernel interface for monitoring and debugging
+>            loaded kernel instances.
+>
+> The implementation maintains full backward compatibility with existing
+> kexec functionality while adding the new multikernel capabilities.
+>
+> IMPORTANT NOTES:
+>
+> 1) This is a Request for Comments (RFC) submission. While the core
+>    architecture is functional, there are numerous implementation details
+>    that need improvement. The primary goal is to gather feedback on the
+>    high-level design and overall approach rather than focus on specific
+>    coding details at this stage.
+>
+> 2) This patch series represents only the foundational framework for
+>    multikernel support. It establishes the basic infrastructure and
+>    communication mechanisms. We welcome the community to build upon
+>    this foundation and develop their own solutions based on this
+>    framework.
+>
+> 3) Testing has been limited to the author's development machine using
+>    hard-coded boot parameters and specific hardware configurations.
+>    Community testing across different hardware platforms, configurations,
+>    and use cases would be greatly appreciated to identify potential
+>    issues and improve robustness. Obviously, don't use this code beyond
+>    testing.
+>
+> This work enables new use cases such as running real-time kernels
+> alongside general-purpose kernels, isolating security-critical
+> applications, and providing dedicated kernel instances for specific
+> workloads etc..
+>
+> Signed-off-by: Cong Wang <cwang@multikernel.io>
+>
+> ---
+>
+> Cong Wang (7):
+>   kexec: Introduce multikernel support via kexec
+>   x86: Introduce SMP INIT trampoline for multikernel CPU bootstrap
+>   x86: Introduce MULTIKERNEL_VECTOR for inter-kernel communication
+>   kernel: Introduce generic multikernel IPI communication framework
+>   x86: Introduce arch_cpu_physical_id() to obtain physical CPU ID
+>   kexec: Implement dynamic kimage tracking
+>   kexec: Add /proc/multikernel interface for kimage tracking
+>
+>  arch/powerpc/kexec/crash.c          |   8 +-
+>  arch/x86/include/asm/idtentry.h     |   1 +
+>  arch/x86/include/asm/irq_vectors.h  |   1 +
+>  arch/x86/include/asm/smp.h          |   7 +
+>  arch/x86/kernel/Makefile            |   1 +
+>  arch/x86/kernel/crash.c             |   4 +-
+>  arch/x86/kernel/head64.c            |   5 +
+>  arch/x86/kernel/idt.c               |   1 +
+>  arch/x86/kernel/setup.c             |   3 +
+>  arch/x86/kernel/smp.c               |  15 ++
+>  arch/x86/kernel/smpboot.c           | 161 +++++++++++++
+>  arch/x86/kernel/trampoline_64_bsp.S | 288 ++++++++++++++++++++++
+>  arch/x86/kernel/vmlinux.lds.S       |   6 +
+>  include/linux/kexec.h               |  22 +-
+>  include/linux/multikernel.h         |  81 +++++++
+>  include/uapi/linux/kexec.h          |   1 +
+>  include/uapi/linux/reboot.h         |   2 +-
+>  init/main.c                         |   2 +
+>  kernel/Makefile                     |   2 +-
+>  kernel/kexec.c                      | 103 +++++++-
+>  kernel/kexec_core.c                 | 359 ++++++++++++++++++++++++++++
+>  kernel/kexec_file.c                 |  33 ++-
+>  kernel/multikernel.c                | 314 ++++++++++++++++++++++++
+>  kernel/reboot.c                     |  10 +
+>  24 files changed, 1411 insertions(+), 19 deletions(-)
+>  create mode 100644 arch/x86/kernel/trampoline_64_bsp.S
+>  create mode 100644 include/linux/multikernel.h
+>  create mode 100644 kernel/multikernel.c
+>
+> --
+> 2.34.1
+>
 
