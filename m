@@ -1,133 +1,84 @@
-Return-Path: <linux-kernel+bounces-824290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B925DB8896C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB04B889D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20B33BB550
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1133516DF9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934092FE56E;
-	Fri, 19 Sep 2025 09:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DE32FD1A5;
+	Fri, 19 Sep 2025 09:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="R8FLyzgk"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJV6Kf0k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EA42F362E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469B92F25EF;
+	Fri, 19 Sep 2025 09:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274497; cv=none; b=skcjb6CLd0gVIMLjdCwPE37nN2f2vZ1z6QRnKumZrnLnnGT0f2hIC1j018tMk4bXHSl2iIaJTRMyf04ug18XnNIIQAIX6ARh6+DGO3lsMoQ1Wl/oWvdvm0pDKGS+zL4x+7muFi69nKrHnizh/8jqwrtESScMnRkDW6Q6gOQ2wGA=
+	t=1758274768; cv=none; b=PazOO4uVMxSYF3PELBs5mFGtGKpJq3dOQOYH3gugS7Sg4qGnfpdjysbBnH+IoQO3iNXfn6fp/j1OfcGDf878bAXBBFGJ8b9WEcn3QxZdOQe2E66vw530Bca6/nzoHjKJp3Lw8i2k2yDAyTOTk+Jm/g1KqE1yTrbijrXIn+zTvpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274497; c=relaxed/simple;
-	bh=2BdxvO+LipVZeGNgRKipvDky26JtE7RkzgLeGlqZKQM=;
+	s=arc-20240116; t=1758274768; c=relaxed/simple;
+	bh=KwLzMQLT7wi5XfbeBsM5cIPpIimjD49D5PPQYk+Dueg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9gx5hi9kM7y7d7XFwT5ZEBfUaf3WV5Pt/XrODqwteEgbJJng7iKDFn/wUf/UNCwOJYuuKy1TMS/oUWSPveoxPoz0Qh5cXYKia0ubp/W5p3n8G/IUmrUPs0ZfXU/juUfm388wEl+28+o+PViaGo+26Z0iVcSyXwGbUguoN2Lk7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=R8FLyzgk; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=JncH
-	VkJM8tsT4MR8AdGnli8kK73nfD/36fL18vXO7C0=; b=R8FLyzgkDcm/d4hyYFYW
-	iWvwCAvlNyuEv+CZdMqWnPELgsoJvxV/I2nVjyr4drJ5cbKaJUi4V3nxkkS7IQmK
-	n4jgzYOn00Ew3pKGh16OIQla2fZ5a3L3noNGjnYdhXmVuXFuX5KZ6a6X2i0eSNOV
-	iIGPSC0lB2oYnDaFawb1R9Ga3yNoiOFMc7VyXBTYPZFI1+UKWN3cJL7Cch32feT0
-	7XH4kzHmWTb80hNOqfQzQnb/kPH846mb/EyNZmz0Ktgu5L7av6t5btfJv9JqjUi8
-	60p2VLT+zmmfhY06eUhrZuOVchmC6fL8ejWGC+xNzom7xdCxgpNH2GL+ODJ5hV/R
-	Ww==
-Received: (qmail 3862907 invoked from network); 19 Sep 2025 11:34:51 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 11:34:51 +0200
-X-UD-Smtp-Session: l3s3148p1@rb97LiQ/HpAujns7
-Date: Fri, 19 Sep 2025 11:34:51 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
- GPIO Interrupt Multiplexer
-Message-ID: <aM0ju74JJbjliQAl@ninjato>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-7-herve.codina@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O5crTvxiYSWDmfEwrRh1qe9uMB4vWqBItbzuHn3lDBU85YRMqMQppzJU0X6DRqqo8/AHNrIm//d0mSPNs0db0bZkHFhgfYZ2gm2aPemnfEfi/Zjo3af18L35CueGPVPsYvSSySVfjJ8BSYXLKwBA8NNjIzO3QzOOZliYV/AG6+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJV6Kf0k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 467B1C4CEF0;
+	Fri, 19 Sep 2025 09:39:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758274767;
+	bh=KwLzMQLT7wi5XfbeBsM5cIPpIimjD49D5PPQYk+Dueg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lJV6Kf0kzv3UBOQN4+VkMEWTvgavXdln5W95vWAHRfbyIkw9VADK5+96/AKqHzlkp
+	 fp3qOPgmwTAbNt/TqKZmZh9mXwpjNy/XhVyHEepfBeT52ATo6MMYyGfz2RYA2bFWeU
+	 tqPbpBknmkn0+1Zxa3WqMqYr7LfsuV9i6khbM+VK2fl710gtg/d+Bbne+NfYeVxNat
+	 vk5u9qvyJIoPtPozTQ8PqDtktVcMJl98ge9W0wK6mEWFiazNUsoDJLK64TTz3Qx7O6
+	 ginM0xPHQf4ggG3hpMQnzYEdTRrNoTEsZ0yTajev2QhRobHrKxyYEUaoPwf3FTXTtb
+	 XfzCR5X+HTzZw==
+Date: Fri, 19 Sep 2025 15:05:08 +0530
+From: Naveen N Rao <naveen@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] KVM: SVM: Move x2AVIC MSR interception helper to
+ avic.c
+Message-ID: <34dkuvu3s47ypxivxaqeyxdvgia6npjiw7b43mkvciqmngra4h@5hl5y7fzcyv5>
+References: <20250919002136.1349663-1-seanjc@google.com>
+ <20250919002136.1349663-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JK9kzNSXnbkqaaBc"
-Content-Disposition: inline
-In-Reply-To: <20250918104009.94754-7-herve.codina@bootlin.com>
-
-
---JK9kzNSXnbkqaaBc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250919002136.1349663-2-seanjc@google.com>
 
+On Thu, Sep 18, 2025 at 05:21:31PM -0700, Sean Christopherson wrote:
+> Move svm_set_x2apic_msr_interception() to avic.c as it's only relevant
+> when x2AVIC is enabled/supported and only called by AVIC code.  In
+> addition to scoping AVIC code to avic.c, this will allow burying the
+> global x2avic_enabled variable in avic.
+> 
+> Opportunistically rename the helper to explicitly scope it to "avic".
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/avic.c | 57 ++++++++++++++++++++++++++++++++++++++---
+>  arch/x86/kvm/svm/svm.c  | 49 -----------------------------------
+>  arch/x86/kvm/svm/svm.h  |  1 -
+>  3 files changed, 54 insertions(+), 53 deletions(-)
 
-> +  interrupt-map:
-> +    description:
-> +      Specifies the mapping from external GPIO interrupt lines to the output
-> +      interrupts. The array items have to be ordered with the first item
-> +      related to the output line 0 (IRQ 103), the next one to the output line 1
-> +      (IRQ 104) and so on up to the output line 8 (IRQ 110).
+Reviewed-by: Naveen N Rao (AMD) <naveen@kernel.org>
 
-maxItems 8?
+- Naveen
 
-> +        /*
-> +         * The child interrupt number is computed using the following formula:
-> +         *    gpio_bank * 32 + gpio_number
-> +         *
-> +         * with:
-> +         *    - gpio_bank: The GPIO bank number
-> +         *          - 0 for GPIO0A,
-> +         *          - 1 for GPIO1A,
-> +         *          - 2 for GPIO2A
-> +         *    - gpio_number: Number of the gpio in the bank (0..31)
-> +         */
-
-I wonder if this comment wouldn't be better in the interrupt-map
-description above?
-
-
---JK9kzNSXnbkqaaBc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNI7cACgkQFA3kzBSg
-KbZCcxAAgxPZf4AePiR6qG8VJErIxYZXJ1X3aC0TU9YmDAjfdJjijyML5QKP2j5z
-qz2qBimHfUWZWH66HbxU3ymVo1ruY8SROMQ5RqoORL53KYqQiKI9ewc73F3eIkzf
-eYXHtulP7jMZ8xrKxYV1PNgUhxhgfigEkS5oDzT7oh8azv23JJmDrGbh7Q3EPxqH
-/XCaKwWOlE5MlZVeTWCfhbTW1V86kPxZcjF+41vqIsExpIZZgdD2hYVZphg7r3KM
-Zvby6ndv81+EFMwuhO6DfXX+cKCoPsG3X4V6+zUdpa2ApgtHSbD2dxkF6WgZ6UmQ
-fvLjcqlsyi+JeUOqcPAO/jtY+lqcavocbr58QrqHH0bdWrfhMWjfGiXvPNbeliuv
-mixY07nFnF986HrXWVC4HXpiODeclvaAQFmKV8HoJFeEAahfGMiDqb58wSF3JL50
-n8BV0ipFoW/jMv66UVXRsGnM4EJxakBd5x7mwNbUKXhCLtBqeL3Y75sPe8Qtx3cF
-nCjb86/jsSWz18tiHyr0RAOxEf8GVM3zTj+JBpgf9bJ5xgT/aDeDRDvyqXHph4MO
-pY4PO3CdIkcihfPmyJ0/EBQurc9DPmR3iHNjYReo/GIGaHsEy9RMwCu4zvS3/BfZ
-BhfUkl5WjtB+OKJYSVBqr/DScKbQRk8XVEC7ZKCzrrK7ieWQwuY=
-=mFbO
------END PGP SIGNATURE-----
-
---JK9kzNSXnbkqaaBc--
 
