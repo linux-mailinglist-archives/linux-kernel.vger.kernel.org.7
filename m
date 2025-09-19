@@ -1,143 +1,182 @@
-Return-Path: <linux-kernel+bounces-825214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F2FEB8B4B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:11:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C366B8B4CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3FB5A8009
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA580A820B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEA92D322E;
-	Fri, 19 Sep 2025 21:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CDA29BDAD;
+	Fri, 19 Sep 2025 21:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fpZuJVBb"
-Received: from mail-io1-f65.google.com (mail-io1-f65.google.com [209.85.166.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcK/X7nf"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440162D29D5
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7A28DB54
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316222; cv=none; b=nwgoRP8dgWQHEV5I0BO7RyqrEHP65mlNCpY+qdfbLMPP8L1xX7U+20GdwETijmQqxLcAjE97zZhYsUwQxzkSNcqq46+jgvqbcJkNOG4/RfWvP8n4GQJYB4Ncth4kl0cd1Ic/QsZmeZzu3Y5+YehOFupDftNMdPu2oZjPFFAYQhA=
+	t=1758316285; cv=none; b=lfwwolt4XDLCX3wOlRa3jrnjernj7pOYf/8BFtm670QxI9pzQfxlY1XfZD1tRu9fLjoiCFOWdBXUNDzuZ9k5cTzHmCaeojDVtidYW10a0BsNt7GPbYwPG56saj0DQa+BbisfImznLsloElX1LzBLFlCaM4Wij6lr3V3SkADCunc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316222; c=relaxed/simple;
-	bh=9O/mYVm3rlTMJz+QEyobbi99Nm4fjTo6dG+H36IOUmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JjXUOo2qaz4VDnDCsPak5K0X04c36B4NEai1CNtxgQqHEiwXA09H9W7vbtw+QVLE8P3nE7HivM5qHqYiLXz3fDGxKgGGFFryigbQlkgBRhjFRm3aDbnYeOHXdLru6re1Mgjj6+reDV+fpeNgXlR8+LX58h0xaCZFndNI65OR+9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fpZuJVBb; arc=none smtp.client-ip=209.85.166.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-io1-f65.google.com with SMTP id ca18e2360f4ac-89737fcb219so191745539f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:10:20 -0700 (PDT)
+	s=arc-20240116; t=1758316285; c=relaxed/simple;
+	bh=G5ZTT0/2dA6G2tttpKgcyUVjFhq8OBnLoSkHTTYjaCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KD+hDzaNfI1EBOAR/cDEeJW5rKzM+5ijhvs9XM24DMG7qRKQ1GuTmR1n2f9rQaChkCTez+Ze8z+9rp7MFi8+Ccv7oQ27jbEZwiJ4wJq+Qb1iAr8pNgLfK8Bqlk553C+F2Zv3dMBJChIbLy5XUhqSvzGV0k35tkvucVQrHMSTfls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcK/X7nf; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77dedf198d4so2408033b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:11:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1758316219; x=1758921019; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6UxhaBuaC7q264UUKsUJVW5OUbIqA/R+5FTafCFNdtk=;
-        b=fpZuJVBbuH9xxIzA0qRW5gTGh2o3XPAkT07DbxrRL554LvqlmTB0Bdyc8p8yi5okmC
-         ujXjG/1jBpQPPEyxlDlsPycTCYpoWExZp+dlpev4QIeGKVA6uBXh8DFG5l80uubq16Ot
-         SR5MyaSCc2BU7E07Dc5E5m4dGX6DXZ4vnwJB0=
+        d=gmail.com; s=20230601; t=1758316283; x=1758921083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zFD2PiGcX7JoCeN4pUYUathAXqzYxKQBC02xv/EkTPU=;
+        b=bcK/X7nfY8Xd4ZED9wwZgphkp8AxTLwPqYqkTiDciDH8g6T2EMRCzwHaxmv2/ySE+U
+         tck9XxMyPZu5WmtwFWeVIppt2j5bDmma0cfwSitExWQTbo6QXa0CNN6Y1BS4nb8a53Tu
+         ZlXyLSSAI3mqDOqs7B3HbgZAc0gqC9Cr1v+TlQKlX58Sim7iLMSNsVBye8aqS96BuDRQ
+         ZZmGP7SMViHZ1vXCfK/cwNj2Jc8WNMBnLi96aG28ikbeN/DOJhLRqW7dm4CByxmDS8jK
+         vSbnd37clSNy/MyI1n1C3Gu057gizkT58S3KnqahHKH+rskIlANIF+gz0nqRdapNo8Zx
+         qSAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758316219; x=1758921019;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6UxhaBuaC7q264UUKsUJVW5OUbIqA/R+5FTafCFNdtk=;
-        b=cXcpZJ5mZHo5ziIz+TQySafCl8TyXdCu5aC/J3t92NHX9dBSgMutHFB1A+RnFbUuAD
-         6z1RJKu7OanukpRzTh3ghCsM4Fhprj75GE6vvV9F1lu9E0HlAZQ/TdmJX2VjxQavxYRd
-         bhrFVmtVorKzh87CVomkBGNK/vAZ+HHrIkR/ruQLY9FgR+dUzeoA6imTXPAUDGiEclHn
-         LvgaewgkiN+e4k28ek6RF7YaBipK2788003U1HY00qCcn7cKjX4JGg27d32Er3X170h1
-         HaI6TP59VCgDDsLRkV4k9WJa5l9j7KW22yEFPeskXy/p5mhXXAYmjS2bDoTn2MoQC4uw
-         uoQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbUD0i7m85ebgHew3ugi8h2g5RjWm3FLs2azRARzR/Ng5WID6nOmr5Vog5+unEJg/AIy2DIU8/T6j9t24=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9TDrI4EdGgXZsNupDiNcofvMlRLHMLM3hEww8MEaQWlfyGhVv
-	habMFQNfs1dsaUFL92zBdksDSS4Q7D7wL1v1S3LaLuBHfbPH1p59ekJ5bidWOs3NLA==
-X-Gm-Gg: ASbGncuyH0IBMCoQrRdEXLz8MzX8TBor9SNoYwkmAYfAV8OpWp3QLtqxHiSRozANJzA
-	T7Fina0qjK1ePKZZhVJIO7rExFpmm+mreZtPMonfCy1Y3GMXJbvOwa4ZaQAXKjN1JASDsD5D2HO
-	e8JUKxU7ZJe7133JK17F4pkl3DSKUnKv83G7GErRbQVWw7RI7bKRHKSIA0+CnPEHJj95YRYJ2ox
-	2VR1ogqDgXhfajsWpKYfQSEkSq3vmnZoAWcaWjFtcik2AxsqXg+00zisTkFq0oeiarWkWFfTNlb
-	eFatQB+aI6+j1/3lkoCUEzTzS2Jz5EDVQ5eZMGJZed7QfjI055Sq9KVTR1+BJ/JRCa+FlASipP8
-	FwuKDhMQtPv2etNq8
-X-Google-Smtp-Source: AGHT+IEyFLXaC5Y5KS/njQ9p6SBYpgmleLVwj5VVwDmLYgKztxHwdMcd0U4JQzV9WEe2+IwhzwTg/Q==
-X-Received: by 2002:a05:6e02:1aa8:b0:423:fac4:d8aa with SMTP id e9e14a558f8ab-42481909d99mr70513475ab.8.1758316219490;
-        Fri, 19 Sep 2025 14:10:19 -0700 (PDT)
-Received: from chromium.org ([96.79.232.53])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d56e41ec1sm2513604173.72.2025.09.19.14.10.18
+        d=1e100.net; s=20230601; t=1758316283; x=1758921083;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zFD2PiGcX7JoCeN4pUYUathAXqzYxKQBC02xv/EkTPU=;
+        b=XzuuCZsJeF7Nq2qGc24Oj0n3rf6L2Otk/z/F6WBlaDkRmOR7p/LCCLcqD7Cmq7DGwk
+         EuJMD02lyLA7kRsHUXx4fz3Ax/vMvxI8twE3STlgnPAvl71cF1gfxA0xmLlH1x4xDQWF
+         dCErRFinhulSZnTmJEg9r5WK1v13K/M29Yj3/MdSOcAFRX25TqaEDhlRmTn2HNMhKTtf
+         SOVJllL9uWvR/w6REyOJguzQGDnkmjxyy2a5je53pwrVJjM6C0s8NlzagfbkNX68TW8X
+         KjDdVO7STASxHf5BiSbALVqg7ctgTYHrk/Vwr0lqj703+MULtk5zROeb5va6SEumfAC2
+         u0LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqCDGcEluL97Mvm4+cNysO382nuEe6ukaCUUGPCvHoD/pJsfGHwq4wql4ojPVRbwF+YxcA9UEI5VVWbGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKbw7DAf0WFcCBTjzRwclxoK8g8TlaZT/JJ96sJm+hnUPKjpdy
+	HqjQiu3zYpc4Iu5M2A/PV8JyjhxffPCVhmiqIGs69D4eGB9zXlHwRLMG
+X-Gm-Gg: ASbGncsxwdBilwT1fUQ0QUb//7GdWEWz/BMiYbrKkOdI6nbdGyp6nZpZFcNW2H65OSk
+	Zmv1qAVlCBSqtpy3VsmsFmHD8kEagEVi1yl9TvMc5ou0eB7/oEvz8tAfMTb/Y2oQ6mujojmrFvw
+	NALGg/sfslXZx2Y7QizGWrP5v95vLRsE28LzP4C4l1xR+m7hJ22ii6QBqAo62HOnSj8V5mDGLND
+	eHlyMfE0+Hfe2+BGtRCzlc7O8/XQ6YIweloza8dHg5tEnqSXrZXEAwVv69fTcZaH73jWVe5SckN
+	xGob7ampBadbxuAhNAJ9wvqoTJb1jeshuThrk20Vvm0nH+azFaT71PJPFXcYPvMNuDZEDixnQj3
+	js2XCkF23DPLlui2mcaC9C5di/Gq3Hr0=
+X-Google-Smtp-Source: AGHT+IFuIiW4juUqRqMj5seaAf5fiJdyitd63hqZHOD9nE/8E7rUafQl57TENToxffffGCpntb7bcw==
+X-Received: by 2002:a05:6a00:17a6:b0:776:20e7:d6f6 with SMTP id d2e1a72fcca58-77e4eac2ac7mr5701354b3a.22.1758316282737;
+        Fri, 19 Sep 2025 14:11:22 -0700 (PDT)
+Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77cfec3f379sm6089705b3a.74.2025.09.19.14.11.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 14:10:18 -0700 (PDT)
-From: Simon Glass <sjg@chromium.org>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	=?UTF-8?q?J=20=2E=20Neusch=C3=A4fer?= <j.ne@posteo.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Tom Rini <trini@konsulko.com>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Simon Glass <sjg@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] scripts/make_fit: Speed up operation
-Date: Fri, 19 Sep 2025 15:09:58 -0600
-Message-ID: <20250919211000.1045267-2-sjg@chromium.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250919211000.1045267-1-sjg@chromium.org>
-References: <20250919211000.1045267-1-sjg@chromium.org>
+        Fri, 19 Sep 2025 14:11:22 -0700 (PDT)
+Date: Fri, 19 Sep 2025 18:12:05 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jic23@kernel.org, michael.hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	corbet@lwn.net
+Subject: Re: [PATCH v2 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
+ and ADAQ4224
+Message-ID: <aM3HJY0GWJmP8-do@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1758214628.git.marcelo.schmitt@analog.com>
+ <2d6bca62056e1254f91b45f70f4ba4614e659c1c.1758214628.git.marcelo.schmitt@analog.com>
+ <20250919-unsure-mounted-0fc49ce72216@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919-unsure-mounted-0fc49ce72216@spud>
 
-The kernel is likely at least 16MB so we may as well use that as a step
-size when reallocating space for the FIT in memory. Pack the FIT at the
-end, so there is no wasted space.
+On 09/19, Conor Dooley wrote:
+> On Thu, Sep 18, 2025 at 02:39:29PM -0300, Marcelo Schmitt wrote:
+> > ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
+> > PGA (programmable gain amplifier) that scales the input signal prior to it
+> > reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
+> > and A1) that set one of four possible signal gain configurations.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> > Change log v1 -> v2
+> > - Use pattern to specify devices that require gain related properties.
+> > - Disallow gain related properties for devices that don't come with embedded PGA.
+> > - Documented VDDH and VDD_FDA supplies for ADAQ4216 and ADAQ4224.
+> > - Updated PGA gain constants.
+> > 
+> >  .../bindings/iio/adc/adi,ad4030.yaml          | 65 +++++++++++++++++--
+> >  1 file changed, 60 insertions(+), 5 deletions(-)
+> > 
+...
+> >  
+> > +  pga-gpios:
+> > +    description:
+> > +      A0 and A1 pins for gain selection. For devices that have PGA configuration
+> > +      input pins, pga-gpios should be defined if adi,gain-milli is absent.
+> > +    minItems: 2
+> > +    maxItems: 2
+> > +
+> > +  adi,pga-value:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> How come this is "value" rather than "gain"?
 
-This reduces the time to pack by an order of magnitude, or so.
+Because, for this one, I drew inspiration from ad7191 bindings [1] in the hopes
+of avoiding creating new properties or using discontinued/deprecated
+nomenclature [2].
 
-Signed-off-by: Simon Glass <sjg@chromium.org>
+The thing is, we now have ADC chips coming with PGA circuitry in front of ADC
+inputs. Those PGAs are usually set/configured through hardware connections
+(e.g. dedicated GPIOs or pin-strapped) and have been described in dt-bindings.
+Though, since these added PGAs don't follow a pattern with respect to the
+provided gain, different properties began to appear. ad7380 and ad4000 use
+adi,gain-milli to describe PGA gain [3, 4], ad7191 uses adi,pga-value and,
+more recently, adaq7768-1 has been proposed with adi,aaf-gain-bp [5].
+adaq7768-1 is arguably a slightly different case since the signal gain stems
+from an anti-aliasing filter, but it nevertheless results in signal attenuation
+much like some PGAs.
 
----
+I personally like the -milli (or even -permille) nomenclature because 4 digits
+have been more than enough to describe the gains (at least so far). Though, I
+acknowledge the base points suffix (-bp) which is documented in
+property-units.yaml [6]. The only thing I don't like much about -bp for
+describing PGA gain is that PGA gains are often described in terms of unitless
+scale factors, while bp implies the value to be described as a percent.
 
- scripts/make_fit.py | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Anyways, whatever property name is chosen, it will probably be better settle to
+something rather than arguing about property names each time a new ADC comes
+with an integrated PGA.
 
-diff --git a/scripts/make_fit.py b/scripts/make_fit.py
-index c43fd9d60809..a8ea41fdaf08 100755
---- a/scripts/make_fit.py
-+++ b/scripts/make_fit.py
-@@ -100,7 +100,7 @@ def setup_fit(fsw, name):
-         fsw (libfdt.FdtSw): Object to use for writing
-         name (str): Name of kernel image
-     """
--    fsw.INC_SIZE = 65536
-+    fsw.INC_SIZE = 16 << 20
-     fsw.finish_reservemap()
-     fsw.begin_node('')
-     fsw.property_string('description', f'{name} with devicetree set')
-@@ -331,10 +331,12 @@ def build_fit(args):
- 
-         entries.append([model, compat, files_seq])
- 
--    finish_fit(fsw, entries)
-+    finish_fit(fsw, entries, bool(args.ramdisk))
- 
-     # Include the kernel itself in the returned file count
--    return fsw.as_fdt().as_bytearray(), seq + 1, size
-+    fdt = fsw.as_fdt()
-+    fdt.pack()
-+    return fdt.as_bytearray(), seq + 1, size
- 
- 
- def run_make_fit():
--- 
-2.43.0
 
-base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
-branch: fit
+[1] Documentation/devicetree/bindings/iio/adc/adi,ad7191.yaml
+[2] https://lore.kernel.org/linux-iio/510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org/
+[3] Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
+[4] Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+[5] https://lore.kernel.org/linux-iio/46842d4cf2c1149bd64188f94c60ce5e4f3b2beb.1757001160.git.Jonathan.Santos@analog.com/
+[6] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
+
+> 
+> > +    description: |
+> > +      Should be present if PGA control inputs are pin-strapped. The values
+> > +      specify the gain per mille. For example, 333 means the input signal is
+> > +      scaled by a 0.333 factor (i.e. attenuated to one third of it's original
+> > +      magnitude). Possible values:
+> > +      Gain 333 (A1=0, A0=0)
+> > +      Gain 555 (A1=0, A0=1)
+> > +      Gain 2222 (A1=1, A0=0)
+> > +      Gain 6666 (A1=1, A0=1)
+> > +      If defined, pga-gpios must be absent.
+> > +    enum: [333, 555, 2222, 6666]
+> > +
+
+Thanks,
+Marcelo
 
