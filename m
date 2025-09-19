@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-825183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7ADB8B324
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A653DB8B342
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A0B5636BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C6305A3C0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE1B275B04;
-	Fri, 19 Sep 2025 20:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AD62877C5;
+	Fri, 19 Sep 2025 20:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEivrP8/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="d6bAacwE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A9469D;
-	Fri, 19 Sep 2025 20:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CE5225D6;
+	Fri, 19 Sep 2025 20:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758313934; cv=none; b=lQIXRw/pVVangv1ax8n9sp/theSy3gF1vGwEcKg0eYvDAweHAGubQRRFDNwbrAOosG2bZ/aAevnIkNZfFG/H/dKZ2v3t0fDZ5H47t44LI0iRzB7fE3NO7xc/Aq9P5mOCRYNKmVhy4VijIiaIHSso2ZRjoxxV1/RWPZrhX9g4rQM=
+	t=1758314667; cv=none; b=EdrlfDoIi/VsFPGYvcc/CKX8uAwwRR/a2jqV/YHEPx/5al9AJce0i/Vmln7AQQQRg1X4TWYA2fqDhqXzbEnVsVxSubIgjVqqCWcJj8FgWA394vxnHKaSDCSYXLTtgAI1vqUoAGL//vIa6L5VKL8gU70pSpI3RIYDCzLEjljiDlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758313934; c=relaxed/simple;
-	bh=S3n2bU40f4PTbsQs85QjCGeUlVU9YAXSJZHZZh9Whbw=;
+	s=arc-20240116; t=1758314667; c=relaxed/simple;
+	bh=XSsHouukci34LDKNJRaLQcWAJVMiiijA5K6/oNjb/0w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+XlBNJvhFaUHBRGxn/EYWGw2EJOxGL4gP3bLiZ3zgfugBK4vA4Cyvo9pe0jkA6TpmlbRAjzenjS+1HLJ7+fYycTonbyvq4gw7NJOHv8VIiAHafd03JQMr/OkWiMHyrsrspkqX3MyCAps/bg7GyszfuJTA5E2G/U+96FcVsky9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEivrP8/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A519C4CEF7;
-	Fri, 19 Sep 2025 20:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758313934;
-	bh=S3n2bU40f4PTbsQs85QjCGeUlVU9YAXSJZHZZh9Whbw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=mnISSplnQmGYYryIvC2FG5GCudveKSvODJ0iS7OB6fIXltUznOz882CyclztXB/3ar2ypavBE5avcNNgNQU9GufFEknzGS4gbq6w3RpQ5ThiqsKXXkBOgmuq7BeSkR+kFLhKLhqILdcePVbf8b3k+nBpyxptIGddpbQukhc+77A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=d6bAacwE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8070340E01AC;
+	Fri, 19 Sep 2025 20:44:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2uXJAggRLCsu; Fri, 19 Sep 2025 20:44:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758314652; bh=ogLSSDPgWHiSXjhfA6iLzlBNOW9gCGPBOfCNPe2G088=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VEivrP8/PIN4+zGNTGt7kkBpdM/r+7M8eHcn6khQeQK7egKD5pvdt5m//UmFqXWtr
-	 MSGNzkNA0mToKRvQYCg8bvC17Vbn1jh+Wlv2YYYwi7Hx1N5pise5wCASfZYVKqyXk+
-	 y0myOMx+5q4XSa5KYZwBxvmVCgZXXPT/KNQZVZ/tCnN81gb1YD4pvcBgONNthnyl5U
-	 tJW/BceQ2IkBwM7WdDRkBJnXdwGtzWVUy86Zwe+4bs3mb4jOSvUHitQZkbl4Zl2fg0
-	 burfE0S/Ww67yh5MwMka5zEdpiis1Zsh/wSAYHnBE9/R3Uax7Dr54z08e4spEurjaP
-	 OzV94xNp7P59g==
-Date: Fri, 19 Sep 2025 15:32:08 -0500
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, Simo Sorce <simo@redhat.com>,
-	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384,
- SHA-512, SHAKE128, SHAKE256
-Message-ID: <20250919203208.GA8350@quark>
-References: <20250919190413.GA2249@quark>
- <3936580.1758299519@warthog.procyon.org.uk>
- <3975735.1758311280@warthog.procyon.org.uk>
+	b=d6bAacwEbRmcZc9dXYAzIC58xdAOB3KgH5nQI5Zih9sGO3LdwKpofPsKRbcFv1GKX
+	 maGCsGTtAH1k9uvEaykmNFAA/0PlSL5QdXp3NEUihXgp6QHsvSNZkZB/dRVUfxni5q
+	 L2mSWlcaBVj/OFJ35LxRV/ByS0JKqehLXTs10j4N+GFccE17hVCAeGhJ0j356xFNSC
+	 uJVANmzB8fJTtMIcZm8WBrbl9e9RIIbde4zKD8ULpjZFmcsDiEKNFDUfEFa3lRzCnE
+	 yNZuvqNqZ2KoGfFq1U8cTChiByxl0OY+sIlQdk1LDjRziaNIuBiBkxTVWbaoXsuMR3
+	 xpvuyBcQeofgAhV06dtRL8tGmNkNuFBzDJKzIBXTXYJlyn2fyUr8xtYynLXU8hFOcy
+	 hlQ6PCzpKWrQWbdv9T8H+aNge1mZzZWKELmwKtfVwRHzpxowPHTIkaetWXRtXEmH07
+	 giTXT3NlmtVNIJtIG2kUGNrTr8kc4j679qX8FxeY/vK49cThW+1Z8031x4ghckeOMV
+	 tNq6rXXP0n4h4tIacItZ7xcHrqMNwKj0WN+Mq1GbCQXd2B+iXpRkqAsA/m5LJiV1dl
+	 /rajUJZRhVbuYaH13joMdWbMb7DNsQj/pAk5quFX7HeRwmecyhn9qm7eOu+ZeUciFo
+	 PgAgbat7iYNJdEhyoJizNv+M=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1F96D40E01A3;
+	Fri, 19 Sep 2025 20:44:03 +0000 (UTC)
+Date: Fri, 19 Sep 2025 22:43:55 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mark Brown <broonie@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the crypto tree
+Message-ID: <20250919204355.GHaM3AiwTM25LiOKAb@fat_crate.local>
+References: <aM1bJqhtojdLhp3c@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3975735.1758311280@warthog.procyon.org.uk>
+In-Reply-To: <aM1bJqhtojdLhp3c@sirena.org.uk>
 
-On Fri, Sep 19, 2025 at 08:48:00PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers@kernel.org> wrote:
+On Fri, Sep 19, 2025 at 02:31:18PM +0100, Mark Brown wrote:
+> Hi all,
 > 
-> > This should be based on libcrypto-next.
+> Today's linux-next merge of the tip tree got a conflict in:
 > 
-> This?
+>   drivers/crypto/ccp/sev-dev.c
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-next
-
-Yes.
-
-> > and that the functions can be called in any context.
+> between commits:
 > 
-> "Context" as in?
-
-See the "Function context" section of
-Documentation/doc-guide/kernel-doc.rst
-
-> > The testing situation looks odd.  This patch adds six KUnit test suites:
-> > one for each of the SHA-3 algorithms.  But they only include the
-> > hash-test-template.h test cases, and they don't test the unique behavior
-> > of SHAKE.  The KUnit tests need to fully test the library.
+>   45d59bd4a3e0f ("crypto: ccp - Introduce new API interface to indicate SEV-SNP Ciphertext hiding feature")
+>   33cfb80d1910b ("crypto: ccp - Add support for SNP_FEATURE_INFO command")
 > 
-> Yes, I'm aware of that.  The hash-test-template template is rather rigid
-
-hash-test-template.h is designed for traditional hash functions.  If
-you'd like to extend it to support XOFs, that's one option.  But I think
-just keeping the XOF testing in sha3_kunit.c would make sense for now.
-
-> and not always correct in its assertions (for instance requiring the
-> final function to have zeroed the context - I had to modify my API to
-> work around the testsuite).
-
-But that's the correct behavior.  Callers may be hashing sensitize data,
-so *_final() zeroizes the context.
-
-The "multiple squeezes" use case should use different functions.
-
-> > I also think that splitting the SHA-3 tests into six KUnit test suites
-> > is awkward.  I know I did something similar for SHA-2, but it made more
-> > sense for SHA-2 because (1) there are only four SHA-2 variants, (2)
-> > SHA-256 and SHA-512 don't share any code, and (3) there wasn't anything
-> > more to add on top of hash-test-template.h.  In contrast, SHA-3 has six
-> > variants, which all share most of their code, and there will need to be
-> > SHA-3 specific tests (for the XOFs).
+> from the crypto tree and commit:
 > 
-> Yes, but I believe you wanted me to use hash-test-template.  The problem is
-> that it hard-encodes by macroisation of the #include's file various parameters
-> including the hash size.
+>   e09701dcdd9ca ("crypto: ccp - Add new HV-Fixed page allocation/free API")
 
-Did you miss my response at
-https://lore.kernel.org/linux-crypto/20250917192829.GA8743@quark/ ?
+Pff, in hindsight those should probably all go through the crypto tree so that
+there's no unnecessary conflicts.
 
-- Eric
+Herbert, lemme know if I should undo them here and you take all three:
+
+648dbccc03a0 crypto: ccp - Add AMD Seamless Firmware Servicing (SFS) driver
+e09701dcdd9c crypto: ccp - Add new HV-Fixed page allocation/free API
+e4c00c4ce2aa x86/sev: Add new dump_rmp parameter to snp_leak_pages() API
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
