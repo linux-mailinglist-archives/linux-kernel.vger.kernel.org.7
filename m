@@ -1,200 +1,261 @@
-Return-Path: <linux-kernel+bounces-824513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CBBB89703
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BADD8B8970F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602AF4E0C4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705E93BEFF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919C0311C32;
-	Fri, 19 Sep 2025 12:24:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC083112C9;
+	Fri, 19 Sep 2025 12:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="KEG8D4RK"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="F+Xk3glO"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA731079C;
-	Fri, 19 Sep 2025 12:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3793101BC
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284647; cv=none; b=M8exR3H1hCKCV9Lgv6JpMYpcD4/74jwTDUPr+rfwiKu/HJpComA6pV7ZBrAIa6CSSX/5QalQ3g9U8xddFNDgGZhcEz7UnbUtzGU5obhnaXRBDRRQ6n3jipJwTt9eQM57bNDgdQ7kg5WVZLaR5pB6+v/dXxammwQKDFWULzwjAHI=
+	t=1758284752; cv=none; b=kYc6lOTCzzb3X5x2tUIXsRmOtxl+7WESfocqVJuy5Is3Ko+atoa0+iDHTVwSXY+VU2ZZ7nQKJW7S+RUMmhDETF8MA9J3efJqPLfoCCOSk5J7eULBHOtwFIg2FdWzpUhMqvy+nsGt7yRXVY+dJpi+d+JWRud71R1DrzoLR0656Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284647; c=relaxed/simple;
-	bh=48XYnCxrzuH16uBlEv1kRze0Jj/p7JOo3IlEZ/mmKos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2xH6VVSVlb94Q/2BMA2cSNFJPPHvHr4fP8GFti+fqjbgFNLuszvAJqq/6QVoGHdtKRgEATwCF96VWn+uYSTgblSyA/8wt+O0y2u2Y1ezjg222++LCQJMO7TNSLuxvaWiQD+LHAv0+Du8iA7GK6zTUyJcjdjpQ4usrDBN9t5IFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=KEG8D4RK; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cSsB95mHJz9tKf;
-	Fri, 19 Sep 2025 14:24:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1758284641;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rh6Z5Z0CEMmSPdcpAoas408EgFHWJGPGyj0yviBdFn8=;
-	b=KEG8D4RKebUI06Gm9mQZw9ngooUIOQAtlgV5Xkymn4K6M3Qho1aVrId6iVlFhAar/SaMGL
-	VX3VouqWmVxvMPTMX5p+YqdmvOnsRpzhvT5lWEislxA1c86w5XeVuGk0sJ7oIqRqHCtATc
-	fKDNyJjhNNBkEaAYYqwIJqBS0Umdg9fqc6/cL1A1WMV9LlFZyAcQbZhrn7CHxqmnR8GRtf
-	hS/Eg3ui1ZdYh8QEii5K2h7rbPmIY5zp5daGzXnnlsI2+zwJ/ILpfPHauz4nfVmWE8ZkDN
-	JnZZALSIBAqEGyAkUlH9N7qURGAVBoD18se7CX0VEnAZGcQjbSGb04Bsg1cbiQ==
-Date: Fri, 19 Sep 2025 22:23:47 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 10/10] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
-Message-ID: <2025-09-19-retro-married-traction-cinch-dgVzgj@cyphar.com>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
+	s=arc-20240116; t=1758284752; c=relaxed/simple;
+	bh=vYAp2B9j9qt6EzipuEAQ4I8GMhjImCOP7cCNEmb6aqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=soGiiwwY1y/zNgEDZ0mONpie7Zgu+YKOg5P1uJExkZWNhQfxjuJKKZkPC2nKuG+FZOg6q/m9mBfza5XiWk/cficU0JqXHaF4HwEuLDZ0zIqhn/9iTpVLnYhNM5SQYUdrr7hpX7BgrSAswLo4y1H5/f9Nu/y4WSozob0gf9js1z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=F+Xk3glO; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250919122548euoutp01206cd0bf6c561ed961a0fda06dc2719a~mrqm-kthf0436304363euoutp01S
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:25:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250919122548euoutp01206cd0bf6c561ed961a0fda06dc2719a~mrqm-kthf0436304363euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1758284748;
+	bh=xSKIjPyrA9OEriZopMFlNAyxpcs3It57Viautl04tXI=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=F+Xk3glO2cgewx7e1iKp9JX1qLwGgul+qkbyUSnqJFUujLqQCD+JHqtjvA6C3plYu
+	 tb6XPaK8AiHnvh314NhvSLRtAY4447tqqdUgXWoNLeXPOAmqkxv+8RUKDUaNPnreiy
+	 X7XwGpQUJq2P149JjEd996iP8UKxN6e0DQeU8y+U=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250919122548eucas1p1ef58c5c747bee71acd5f9d6476e7c29c~mrqmcuafh2548325483eucas1p1m;
+	Fri, 19 Sep 2025 12:25:48 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250919122546eusmtip2896ff33c135295219ae1f797110c7a94~mrqk2ipmP1691216912eusmtip2-;
+	Fri, 19 Sep 2025 12:25:46 +0000 (GMT)
+Message-ID: <7605453a-ac62-497b-b77a-76d73e9a6741@samsung.com>
+Date: Fri, 19 Sep 2025 14:25:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="esn6txawyawfxu7d"
-Content-Disposition: inline
-In-Reply-To: <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH net-next] net: spacemit: Make stats_lock softirq-safe
+To: Vivian Wang <wangruikang@iscas.ac.cn>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+	Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Yixun Lan <dlan@gentoo.org>, Maxime Chevallier
+	<maxime.chevallier@bootlin.com>, Troy Mitchell
+	<troy.mitchell@linux.spacemit.com>, Vadim Fedorenko
+	<vadim.fedorenko@linux.dev>
+Cc: netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Vivian Wang
+	<uwu@dram.page>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250919-k1-ethernet-fix-lock-v1-1-c8b700aa4954@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250919122548eucas1p1ef58c5c747bee71acd5f9d6476e7c29c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250919120522eucas1p224c42d0cc2a59903d85e6c80dfdfa727
+X-EPHeader: CA
+X-CMS-RootMailID: 20250919120522eucas1p224c42d0cc2a59903d85e6c80dfdfa727
+References: <CGME20250919120522eucas1p224c42d0cc2a59903d85e6c80dfdfa727@eucas1p2.samsung.com>
+	<20250919-k1-ethernet-fix-lock-v1-1-c8b700aa4954@iscas.ac.cn>
 
-
---esn6txawyawfxu7d
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 10/10] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
-MIME-Version: 1.0
-
-On 2025-09-19, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> This was not particularly well documented in mount(8) nor mount(2), and
-> since this is a fairly notable aspect of the new mount API, we should
-> probably add some words about it.
->=20
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+On 19.09.2025 14:04, Vivian Wang wrote:
+> While most of the statistics functions (emac_get_stats64() and such) are
+> called with softirqs enabled, emac_stats_timer() is, as its name
+> suggests, also called from a timer, i.e. called in softirq context.
+>
+> All of these take stats_lock. Therefore, make stats_lock softirq-safe by
+> changing spin_lock() into spin_lock_bh() for the functions that get
+> statistics.
+>
+> Also, instead of directly calling emac_stats_timer() in emac_up() and
+> emac_resume(), set the timer to trigger instead, so that
+> emac_stats_timer() is only called from the timer. It will keep using
+> spin_lock().
+>
+> This fixes a lockdep warning, and potential deadlock when stats_timer is
+> triggered in the middle of getting statistics.
+>
+> Fixes: bfec6d7f2001 ("net: spacemit: Add K1 Ethernet MAC")
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Closes: https://lore.kernel.org/all/a52c0cf5-0444-41aa-b061-a0a1d72b02fe@samsung.com/
+> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  man/man2/fsconfig.2      | 12 ++++++++++++
->  man/man2/mount_setattr.2 | 40 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
->=20
-> diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-> index 5a18e08c700ac93aa22c341b4134944ee3c38d0b..d827a7b96e08284fb025f94c3=
-348a4acc4571b7d 100644
-> --- a/man/man2/fsconfig.2
-> +++ b/man/man2/fsconfig.2
-> @@ -579,6 +579,18 @@ .SS Generic filesystem parameters
->  Linux Security Modules (LSMs)
->  are also generic with respect to the underlying filesystem.
->  See the documentation for the LSM you wish to configure for more details.
-> +.SS Mount attributes and filesystem parameters
-> +Some filesystem parameters
-> +(traditionally associated with
-> +.BR mount (8)-style
-> +options)
-> +have a sibling mount attribute
-> +with superficially similar user-facing behaviour.
-> +.P
-> +For a description of the distinction between
-> +mount attributes and filesystem parameters,
-> +see the "Mount attributes and filesystem parameters" subsection of
-> +.BR mount_setattr (2).
->  .SH CAVEATS
->  .SS Filesystem parameter types
->  As a result of
-> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> index b27db5b96665cfb0c387bf5b60776d45e0139956..f7d0b96fddf97698e36cab020=
-f1d695783143025 100644
-> --- a/man/man2/mount_setattr.2
-> +++ b/man/man2/mount_setattr.2
-> @@ -790,6 +790,46 @@ .SS ID-mapped mounts
->  .BR chown (2)
->  system call changes the ownership globally and permanently.
->  .\"
-> +.SS Mount attributes and filesystem parameters
-> +Some mount attributes
-> +(traditionally associated with
-> +.BR mount (8)-style
-> +options)
-> +have a sibling mount attribute
-> +with superficially similar user-facing behaviour.
-> +For example, the
-> +.I -o ro
-> +option to
-> +.BR mount (8)
-> +can refer to the
-> +"read-only" filesystem parameter,
-> +or the "read-only" mount attribute.
-> +Both of these result in mount objects becoming read-only,
-> +but they do have different behaviour.
-> +.P
-> +The distinction between these two kinds of option is that
-> +mount object attributes are applied per-mount-object
-> +(allowing different mount objects
-> +derived from a given filesystem instance
-> +to have different attributes),
-> +while filesystem instance parameters
-> +("superblock flags" in kernel-developer parlance)
-> +apply to all mount objects
-> +derived from the same filesystem instance.
-> +.P
-> +When using
-> +.BR mount (2),
-> +the line between these two types of mount options was blurred.
-> +However, with
-> +.BR mount_setattr ()
-> +and
-> +.BR fsconfig (2),
-> +the distinction is made much clearer.
-> +Mount attributes are configured with
-> +.BR mount_setattr (),
-> +while filesystem parameters can be configured using
-                               are configured using
+> Thanks a lot for catching this, Marek!
+> ---
+>   drivers/net/ethernet/spacemit/k1_emac.c | 30 +++++++++++++++---------------
+>   1 file changed, 15 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
+> index 928fea02198c3754f63a7b33fc25c5dd8c2b59f9..e1c5faff3b71c7d4ceba2ea194d9c888f0e71b70 100644
+> --- a/drivers/net/ethernet/spacemit/k1_emac.c
+> +++ b/drivers/net/ethernet/spacemit/k1_emac.c
+> @@ -135,7 +135,7 @@ struct emac_priv {
+>   	bool flow_control_autoneg;
+>   	u8 flow_control;
+>   
+> -	/* Hold while touching hardware statistics */
+> +	/* Softirq-safe, hold while touching hardware statistics */
+>   	spinlock_t stats_lock;
+>   };
+>   
+> @@ -1239,7 +1239,7 @@ static void emac_get_stats64(struct net_device *dev,
+>   	/* This is the only software counter */
+>   	storage->tx_dropped = emac_get_stat_tx_drops(priv);
+>   
+> -	spin_lock(&priv->stats_lock);
+> +	spin_lock_bh(&priv->stats_lock);
+>   
+>   	emac_stats_update(priv);
+>   
+> @@ -1261,7 +1261,7 @@ static void emac_get_stats64(struct net_device *dev,
+>   	storage->rx_missed_errors = rx_stats->stats.rx_drp_fifo_full_pkts;
+>   	storage->rx_missed_errors += rx_stats->stats.rx_truncate_fifo_full_pkts;
+>   
+> -	spin_unlock(&priv->stats_lock);
+> +	spin_unlock_bh(&priv->stats_lock);
+>   }
+>   
+>   static void emac_get_rmon_stats(struct net_device *dev,
+> @@ -1275,7 +1275,7 @@ static void emac_get_rmon_stats(struct net_device *dev,
+>   
+>   	*ranges = emac_rmon_hist_ranges;
+>   
+> -	spin_lock(&priv->stats_lock);
+> +	spin_lock_bh(&priv->stats_lock);
+>   
+>   	emac_stats_update(priv);
+>   
+> @@ -1294,7 +1294,7 @@ static void emac_get_rmon_stats(struct net_device *dev,
+>   	rmon_stats->hist[5] = rx_stats->stats.rx_1024_1518_pkts;
+>   	rmon_stats->hist[6] = rx_stats->stats.rx_1519_plus_pkts;
+>   
+> -	spin_unlock(&priv->stats_lock);
+> +	spin_unlock_bh(&priv->stats_lock);
+>   }
+>   
+>   static void emac_get_eth_mac_stats(struct net_device *dev,
+> @@ -1307,7 +1307,7 @@ static void emac_get_eth_mac_stats(struct net_device *dev,
+>   	tx_stats = &priv->tx_stats;
+>   	rx_stats = &priv->rx_stats;
+>   
+> -	spin_lock(&priv->stats_lock);
+> +	spin_lock_bh(&priv->stats_lock);
+>   
+>   	emac_stats_update(priv);
+>   
+> @@ -1325,7 +1325,7 @@ static void emac_get_eth_mac_stats(struct net_device *dev,
+>   	mac_stats->FramesAbortedDueToXSColls =
+>   		tx_stats->stats.tx_excessclsn_pkts;
+>   
+> -	spin_unlock(&priv->stats_lock);
+> +	spin_unlock_bh(&priv->stats_lock);
+>   }
+>   
+>   static void emac_get_pause_stats(struct net_device *dev,
+> @@ -1338,14 +1338,14 @@ static void emac_get_pause_stats(struct net_device *dev,
+>   	tx_stats = &priv->tx_stats;
+>   	rx_stats = &priv->rx_stats;
+>   
+> -	spin_lock(&priv->stats_lock);
+> +	spin_lock_bh(&priv->stats_lock);
+>   
+>   	emac_stats_update(priv);
+>   
+>   	pause_stats->tx_pause_frames = tx_stats->stats.tx_pause_pkts;
+>   	pause_stats->rx_pause_frames = rx_stats->stats.rx_pause_pkts;
+>   
+> -	spin_unlock(&priv->stats_lock);
+> +	spin_unlock_bh(&priv->stats_lock);
+>   }
+>   
+>   /* Other statistics that are not derivable from standard statistics */
+> @@ -1393,14 +1393,14 @@ static void emac_get_ethtool_stats(struct net_device *dev,
+>   	u64 *rx_stats = (u64 *)&priv->rx_stats;
+>   	int i;
+>   
+> -	spin_lock(&priv->stats_lock);
+> +	spin_lock_bh(&priv->stats_lock);
+>   
+>   	emac_stats_update(priv);
+>   
+>   	for (i = 0; i < ARRAY_SIZE(emac_ethtool_rx_stats); i++)
+>   		data[i] = rx_stats[emac_ethtool_rx_stats[i].offset];
+>   
+> -	spin_unlock(&priv->stats_lock);
+> +	spin_unlock_bh(&priv->stats_lock);
+>   }
+>   
+>   static int emac_ethtool_get_regs_len(struct net_device *dev)
+> @@ -1769,7 +1769,7 @@ static int emac_up(struct emac_priv *priv)
+>   
+>   	netif_start_queue(ndev);
+>   
+> -	emac_stats_timer(&priv->stats_timer);
+> +	mod_timer(&priv->stats_timer, jiffies);
+>   
+>   	return 0;
+>   
+> @@ -1807,14 +1807,14 @@ static int emac_down(struct emac_priv *priv)
+>   
+>   	/* Update and save current stats, see emac_stats_update() for usage */
+>   
+> -	spin_lock(&priv->stats_lock);
+> +	spin_lock_bh(&priv->stats_lock);
+>   
+>   	emac_stats_update(priv);
+>   
+>   	priv->tx_stats_off = priv->tx_stats;
+>   	priv->rx_stats_off = priv->rx_stats;
+>   
+> -	spin_unlock(&priv->stats_lock);
+> +	spin_unlock_bh(&priv->stats_lock);
+>   
+>   	pm_runtime_put_sync(&pdev->dev);
+>   	return 0;
+> @@ -2111,7 +2111,7 @@ static int emac_resume(struct device *dev)
+>   
+>   	netif_device_attach(ndev);
+>   
+> -	emac_stats_timer(&priv->stats_timer);
+> +	mod_timer(&priv->stats_timer, jiffies);
+>   
+>   	return 0;
+>   }
+>
+> ---
+> base-commit: 315f423be0d1ebe720d8fd4fa6bed68586b13d34
+> change-id: 20250919-k1-ethernet-fix-lock-c99681a9aa5d
+>
+> Best regards,
 
-probably reads a bit better here. I'll include it in the next version if
-this isn't merged, but I won't resend the whole patchset for a one-word
-change.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-> +.BR fsconfig (2).
-> +.\"
->  .SS Extensibility
->  In order to allow for future extensibility,
->  .BR mount_setattr ()
->=20
-> --=20
-> 2.51.0
->=20
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---esn6txawyawfxu7d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaM1LUxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG+KdQEAmB6gnRX4SP/rkb3R9Oan
-CRdJBvXYZpUFgqVlaibiN+IA/jJ7rIeFWwI6HFxhFM0CYosCsidSJxb/tlHaE8Pb
-YRoO
-=Q2XP
------END PGP SIGNATURE-----
-
---esn6txawyawfxu7d--
 
