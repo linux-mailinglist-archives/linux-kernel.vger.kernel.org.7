@@ -1,242 +1,198 @@
-Return-Path: <linux-kernel+bounces-824746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A518AB8A109
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:47:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF03BB8A11E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15BF35868F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:47:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580091BC5BDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3C8242D70;
-	Fri, 19 Sep 2025 14:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA96D273F9;
+	Fri, 19 Sep 2025 14:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zP2zbEWX"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TSoOv53s"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EBC273F9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A443235360
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758293248; cv=none; b=MZCp72cljbZWlv7WUVJGyEWfktXgblZ/dfuc6DfCZppE3tQlcp4t9oI+2x9USpi/wuJXn5Q9YZHgX0scJ3dAaDoEx+aSca3chO2vVs8+cjSECbqfq//uEDoeN5icyME1TaxtrkOhnSI0cUXm7KVgj4oEznI8Li3/jKV+YYAOkmk=
+	t=1758293280; cv=none; b=gkDKXVla86UMWfS2e43XOpTNguducUqj6S1dr7pUO/NbHfP9HG1frbD1fEsGNlhBjueFiTVuik6otNSBICC2lrzuIhvJtiAKAndRzGYXYSw/tLSK2ycGNw8Lq3GpSHFek9TFO/5FeTkyvMW8sQSnf5nfBfhyowYG1+IDVrMmQK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758293248; c=relaxed/simple;
-	bh=2DL6uXDg+S2/vhUOkYwzs5WF945Plpqn2YxEZIBpRIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CiYuIt/479Xmqoce9y4gE5yPKy3H4RkslUMuWJiBX6pgb15VqfxpCcHJrgUacKzkXONZ9Ssav0X/pHlofohw8HQcprSPaBP77l1ixi38Vnf4pe06px29vIX7GPIA06NKq607Pa5kOejj+nwIDiDijnZmj1sr7Gl6UMaHANI264Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zP2zbEWX; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso1874775f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:47:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758293244; x=1758898044; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=58JIz+T98xNuJ35TRUpFdQl+tGQMi+ETXxGZ5QmS7Es=;
-        b=zP2zbEWX6Z5SJJjSeNHaBmL1kdD9NJhCNZJVu0OdBI2989PvJfYo2x/im5CjVyX046
-         atN8uZidbfskWGLWHfX2DATNqJM/NDQVnELTp7Y9NlY6PxKvt8UaFPVC7lsSe5xf0cDL
-         VvEsKJ1yTWRPJTo2e1DZ7dO8gO5a3RDUoCF60dRzvF6s8lzSY/1VOMjH+EYy93FSwSY0
-         APrWw5ST+v6Ys8nK6mZp+S9CFVv6jo0tjvYe+6y7yyMG9yJ44h9XTQjxMGNaXOAoWmt3
-         kF6vvJ+t5HNwPX3SPUijMeyoBlTwRQICHyJAUbRbTP+8cpjQsnjNTf+1j43pnutYwFPD
-         WYTA==
+	s=arc-20240116; t=1758293280; c=relaxed/simple;
+	bh=Fl5lFtsaSa0aoM45do82bT/2mdUhsFtwUajVfM1OfJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cpRyfK+CyHVhM4FewxMTi4sX7KQAnWSsKFazBPWMTHgoWQrEhT2nwAlft17A4L8VguVyub+goKder5FLvvobGcCYIFKwvTNBs1/Ef9E9HDN0vLOa+BAXxyiA84hQeCnz29t+L6KZYMFipldpD7BFH4ZCd4cbbua+kyNt9It4nuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TSoOv53s; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J6UrcH017736
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:47:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pK2jgFklNvRIcwSxKwSrC3IauNiUyVaZo9Kihcuf/aM=; b=TSoOv53s95HnPGUZ
+	G9ZPE3fkYDb8rK+oDBaGytclIOY9/aj7djbQYx61LabICSlgXRLu5IFUqPXd1sYk
+	27ZTtmYgEb2NmFDfhZYvP3VV9n72wDA9bs5pVcvxAlPi4R0vslN3/Xp7x9qJ12L0
+	fUE0B/kNyhlh/QOncVdMmdYAnRaM/sLCSmcyeTWd7vCgzJ7Dsqmdi69NQsC95cHc
+	4mE23Fs0bav6Rq0Lzi+167lhCMrOxWoC6x9l4s3uo9I1aPy+8OjyRHIJzVFRoltv
+	Cl7NGrxSjcTSqVA8jI+ohs6hAztWrVTfVb7/8U73MvARARgiWR1Ih/j3pB2lAzZj
+	sGGIJg==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4982defbjr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:47:57 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77b73bddbdcso2396744b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:47:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758293244; x=1758898044;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1758293276; x=1758898076;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=58JIz+T98xNuJ35TRUpFdQl+tGQMi+ETXxGZ5QmS7Es=;
-        b=p0VkaQbEceFWtNhQN2xMWK9lT7IoRXUTKinogY8akyEHLR7c8vwIK5uKOYyQ2fnQM7
-         pL5X7ic4W8jKnFhN80FLBCo7oX9Rp9w6oa+LhIHjid5rgSVpbVA9yh6ra6OtEai3mPjr
-         41FO62m/T0J/ErTqPza2l705bmkpznFt/WNqOTD2iqq5YQ57p5kbfRGqt2SwIyfEN2pi
-         fkPBtv3DsKFxRcOzaWnzhoXzIgbVfRdb519quAcKqoW/MZs8VRUSmku8yS5ULRtDGBsx
-         jUrylfrilXdDvOk90yWeg8zTT1A65CmMbcy7F2Ox5MsntiFSButq7YuzmiibQ0nEAKAN
-         kzWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLAb5MRQvvFyLqZeEBTt9x4J6pbmcDEyPDNuG6wqwiHSBcHmKlOFe2eL/ZvIXju/JmCfuoqA1UFhs3sbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUTwMyq4AOP5k039BBvSMcaRsKEJlLlSK5OYqlIt8EzKcI5zRO
-	/+cF7q6Y3aUdT3/eDqo3mYzzCX+diI+cKpDmj8y1aTbPD8CuS1vthX060z+jCSbhMA==
-X-Gm-Gg: ASbGncszYsHwjzopkLL5IZREciMIPXbpNDCI9DGLbWnfZTiKtxDygbfGV0Yn4VVkrht
-	CyTZNneKvkB4jgQkwQ3MQFz2sK20FmKS6i0Rse0g0MAr6/YuRqRulvjgdUO5LOwLarJHDuj+4HU
-	lJeQ6Dr2bDl/mpEh2PBbwtHC6UdrPpiX/oYU3T3AxYjfMGwm6XJ+ymzAVhoBBMY+ty49s4P2Ms/
-	2Yq9NnjDOUrUt7bAc0QWe9j1mzB9Waq6Tgbc/ZUd+lc52yQDlSuXYjelbXQlCSl99ThxJAK9lNm
-	N7sqsHWVwNU3SP228pb9oMPM1z5bo3zrZ9hLhqq+z9r2xE/qhbaD8fBe4abnmaSKpDB0/dpdfDw
-	yAo5D+SzGW9pzyQBinnGVHj7VBe0Oe3QH3mrqW3uO+NjKxKC6KLqukDf1
-X-Google-Smtp-Source: AGHT+IEWBbhkJpfige+suf0vsNLGPkLiHAll4OeC7ziC+CAHJCVZxl4IjAKlTlNyPUIiZscBy0gVAw==
-X-Received: by 2002:a05:6000:400c:b0:3ea:9042:e682 with SMTP id ffacd0b85a97d-3ee7c55430amr2895578f8f.11.1758293244246;
-        Fri, 19 Sep 2025 07:47:24 -0700 (PDT)
-Received: from google.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1385adebsm6400131f8f.42.2025.09.19.07.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 07:47:23 -0700 (PDT)
-Date: Fri, 19 Sep 2025 14:47:20 +0000
-From: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Dylan Hatch <dylanbhatch@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/2] arch: arm64: Fail module loading if dynamic SCS
- patching fails
-Message-ID: <aM1s-I0gM_rAf5LU@google.com>
-References: <20250919122321.946462-1-abarnas@google.com>
- <20250919122321.946462-2-abarnas@google.com>
- <CAMj1kXEVThBdH7H7NX+Ma8j0_85GevzczFgvvozK-TsqT2geFw@mail.gmail.com>
+        bh=pK2jgFklNvRIcwSxKwSrC3IauNiUyVaZo9Kihcuf/aM=;
+        b=Ix5ummjo1/6IzOYT6HRXEcSV1BJggZ5uB3AdVHp+HhT0Fgwt5vdETbKD8SpsJKPdSg
+         AnAQz7wMlUsGpushAyBc+Y2ddstvYGXLmLvU/iL7uqFmAN7bp690zNl/NS70VtTFht9l
+         BnHzyBhKVhvbvpqYFSYEG9+fub6dsemNnlol3x788ru5KnICsI7hpW4osenNtcqwcZKj
+         VjX8pDPVJPg7sEE8xrgoC1jpLIG+Nj3OuyXX4Z1J4d0hQViHbiay9saX5/WffKOvyoLf
+         hiRpZV5gswCHcyhjfPOh1jVSQooB/2uhgwv9Kt3ZuxXO6N3eIHTCBoQmXjO8mL8CZ6hx
+         rtzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfJymvKXSD0+akE22gBLD1eYh7DPIukTA6fq+gKPqrM3I45J8oBrYNOLwa6b3mf1gTLvCorlNiDx8lw5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyen0MG+UbH1+qsKOh4FT9J03W6dkw2WtO9Ois4CPZJHGaYM8xv
+	SBFEOLvd408v3C0hV9aQaLqrYrq5YviM1HrcmRiI8dIiKGKp+DKKhukurk442sa7MfbH8cy+l1F
+	e31/t66aWoTM35qI5r6ZhV4/cItwo/GD/59zjRuiHg/R9Z4AFL+wTZXNi/cAthZHyQZo=
+X-Gm-Gg: ASbGncvW7jUtElOyBoFqFZxG3G7r8VqqOBUR7kbLW8gqf0IiZDYleo4ZjfljNFr766Y
+	u+KuRHMdiXGkUwH0V1SPNzravO4Gy3ekYfNsX1EL0KdVIdxqCsxjQ7svemn60dMWxU0Ah4axX7z
+	T0eGiWaDdBDmjyKYLoWqlzvwrm5+v0hF1V7CfvrtzRTBG6+6mk7gSljgnbxc3F1rtdKf4Xx0itR
+	3l7TXEU+EMYjGat71npWdMPN+u3LMDEx+uC2xjd8BjpzCwBjHAWyRYdi1aBjGHaQPSIgXJligZR
+	MPmcj6yVGkfk3ArNc6/zY8ON47YQJQ4MQEhlumOjIuQ6CqQnC5XGEI0vtGq3z8PCCkYe8Qfs
+X-Received: by 2002:a05:6a00:bd13:b0:771:e5f3:8840 with SMTP id d2e1a72fcca58-77e36935457mr4738818b3a.13.1758293275509;
+        Fri, 19 Sep 2025 07:47:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDki/w/fEHcXQU3dq0la/SG+rDFch45lCNFYev7lQ2LKW5H7+gmQs1YUohBh/js4fBRzZI7g==
+X-Received: by 2002:a05:6a00:bd13:b0:771:e5f3:8840 with SMTP id d2e1a72fcca58-77e36935457mr4738768b3a.13.1758293274969;
+        Fri, 19 Sep 2025 07:47:54 -0700 (PDT)
+Received: from [10.217.217.28] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f097b60e7sm1386902b3a.1.2025.09.19.07.47.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 07:47:54 -0700 (PDT)
+Message-ID: <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
+Date: Fri, 19 Sep 2025 20:17:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMj1kXEVThBdH7H7NX+Ma8j0_85GevzczFgvvozK-TsqT2geFw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
+ Gen3 ADC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        agross@kernel.org, andersson@kernel.org, lumag@kernel.org,
+        dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+        daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org,
+        thara.gopinath@gmail.com, lee@kernel.org, rafael@kernel.org,
+        subbaraman.narayanamurthy@oss.qualcomm.com,
+        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
+        kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com,
+        lukasz.luba@arm.com, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
+        neil.armstrong@linaro.org, stephan.gerhold@linaro.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
+ <20250829-classic-dynamic-clam-addbd8@kuoka>
+ <5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
+ <4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
+ <a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
+ <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
+Content-Language: en-US
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=YfO95xRf c=1 sm=1 tr=0 ts=68cd6d1d cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=zIrsKRvHLvAX-MREBNgA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: IS1ZhDxy6BSLnVREMqKjjNb8E7TIrSfW
+X-Proofpoint-ORIG-GUID: IS1ZhDxy6BSLnVREMqKjjNb8E7TIrSfW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE3MDE4MiBTYWx0ZWRfX84ZAVl1Lwfm6
+ g8TlX53IfsaAFcyM484WhgqG3OzGx9142eG94y6c4IM5StYLnWm1jYkUa23wkELVOuHzcagPxYb
+ bG+6oLh7ExMKv1thPnwojqh5lMfZYBrCVEa+oW0w44I6fpiQj3svYj/QTWL8SytiCCHRcXrtwVs
+ ACRXA2PvGeqv/HMrfkACwck8GgUNXF2H9dOwxPZFllBUFXDP16MDaLFXkGQqZf+9wW/awms9oBV
+ ybjrqMvUcHPuG5Aok3lbNw7ovMUaKFhpin1eGaswDsVoNw3Iov0r3bxwwCx0Vz3kRQPXpJduFcM
+ oJ54KDQB7LoNOUcmS+aJLTWBi8OM0/1auZe8P0B36cY6DC0HnOPAksv+FzeBuOBCjXBRK+wST9B
+ fxRJF3oM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 phishscore=0 malwarescore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509170182
 
-Hi,
+Hi Krzysztof,
 
-On Fri, Sep 19, 2025 at 03:59:21PM +0200, Ard Biesheuvel wrote:
->Hi,
->
->On Fri, 19 Sept 2025 at 14:23, Adrian Barnaś <abarnas@google.com> wrote:
+On 9/18/2025 5:45 AM, Krzysztof Kozlowski wrote:
+> On 18/09/2025 04:47, Jishnu Prakash wrote:
+>> Hi Krzysztof,
 >>
->> Disallow a module to load if SCS dynamic patching fails for its code. For
->> module loading, instead of running a dry-run to check for patching errors,
->> try to run patching in the first run and propagate any errors so module
->> loading will fail.
+>> On 9/17/2025 5:59 AM, Krzysztof Kozlowski wrote:
+>>> On 16/09/2025 16:28, Jishnu Prakash wrote:
+>>>>> You cannot have empty spaces in ID constants. These are abstract
+>>>>> numbers.
+>>>>>
+>>>>> Otherwise please point me to driver using this constant.
+>>>>
+>>>> These constants are for ADC channel numbers, which are fixed in HW.
+>>>>
+>>>> They are used in this driver: drivers/iio/adc/qcom-spmi-adc5-gen3.c,
+>>>> which is added in patch 4 of this series.
+>>>>
+>>>> They can be found in the array named adc5_gen3_chans_pmic[].
+>>>
+>>> Really? So point me to the line there using ADC5_GEN3_VREF_BAT_THERM.
+>>>
 >>
->> Signed-off-by: Adrian Barnaś <abarnas@google.com>
->> ---
->>  arch/arm64/include/asm/scs.h      |  2 +-
->>  arch/arm64/kernel/module.c        |  6 ++++--
->>  arch/arm64/kernel/pi/map_kernel.c |  2 +-
->>  arch/arm64/kernel/pi/patch-scs.c  | 15 +++++++++++----
->>  arch/arm64/kernel/pi/pi.h         |  2 +-
->>  5 files changed, 18 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/scs.h b/arch/arm64/include/asm/scs.h
->> index a76f9b387a26..ffcfcda87f10 100644
->> --- a/arch/arm64/include/asm/scs.h
->> +++ b/arch/arm64/include/asm/scs.h
->> @@ -53,7 +53,7 @@ enum {
->>         EDYNSCS_INVALID_CFA_OPCODE              = 4,
->>  };
->>
->> -int __pi_scs_patch(const u8 eh_frame[], int size);
->> +int __pi_scs_patch(const u8 eh_frame[], int size, bool is_module);
->>
->
->Calling the parameter 'is_module' puts the policy in the SCS patching
->code, which now has to reason about how patching a module differs from
->patching other code.
+>> We may not be using all of these channels right now - we can add them
+>> later based on requirements coming up. For now, I'll remove the channels
+>> not used in adc5_gen3_chans_pmic[].
+> 
+> You are not implementing the feedback then. Please read it carefully.
+> 
 
-Agreed.
+Sorry, I misunderstood - so you actually meant I should remove the
+empty spaces in the definitions, like this?
 
->So I'd prefer to call this 'two_pass' or 'dry_run' or whatever, where
->setting it guarantees that when an error is returned, no function will
->be left in an inconsistent state.
+-#define ADC5_GEN3_VREF_BAT_THERM               0x15
++#define ADC5_GEN3_VREF_BAT_THERM 0x15
 
-Maybe `bool skip_dry_run`?
+I thought this at first, but I somehow doubted this later, as I saw some
+other recently added files with empty spaces in #define lines, like:
 
->
->>  #endif /* __ASSEMBLY __ */
->>
->> diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
->> index 40148d2725ce..5d6d228c6156 100644
->> --- a/arch/arm64/kernel/module.c
->> +++ b/arch/arm64/kernel/module.c
->> @@ -484,10 +484,12 @@ int module_finalize(const Elf_Ehdr *hdr,
->>         if (scs_is_dynamic()) {
->>                 s = find_section(hdr, sechdrs, ".init.eh_frame");
->>                 if (s) {
->> -                       ret = __pi_scs_patch((void *)s->sh_addr, s->sh_size);
->> -                       if (ret)
->> +                       ret = __pi_scs_patch((void *)s->sh_addr, s->sh_size, true);
->> +                       if (ret) {
->>                                 pr_err("module %s: error occurred during dynamic SCS patching (%d)\n",
->>                                        me->name, ret);
->> +                               return -ENOEXEC;
->> +                       }
->>                 }
->>         }
->>
->> diff --git a/arch/arm64/kernel/pi/map_kernel.c b/arch/arm64/kernel/pi/map_kernel.c
->> index 0f4bd7771859..7187eda9e8a5 100644
->> --- a/arch/arm64/kernel/pi/map_kernel.c
->> +++ b/arch/arm64/kernel/pi/map_kernel.c
->> @@ -98,7 +98,7 @@ static void __init map_kernel(u64 kaslr_offset, u64 va_offset, int root_level)
->>
->>                 if (enable_scs) {
->>                         scs_patch(__eh_frame_start + va_offset,
->> -                                 __eh_frame_end - __eh_frame_start);
->> +                                 __eh_frame_end - __eh_frame_start, false);
->>                         asm("ic ialluis");
->>
->>                         dynamic_scs_is_enabled = true;
->> diff --git a/arch/arm64/kernel/pi/patch-scs.c b/arch/arm64/kernel/pi/patch-scs.c
->> index 55d0cd64ef71..78266fb1fa61 100644
->> --- a/arch/arm64/kernel/pi/patch-scs.c
->> +++ b/arch/arm64/kernel/pi/patch-scs.c
->> @@ -225,7 +225,7 @@ static int scs_handle_fde_frame(const struct eh_frame *frame,
->>         return 0;
->>  }
->>
->> -int scs_patch(const u8 eh_frame[], int size)
->> +int scs_patch(const u8 eh_frame[], int size, bool is_module)
->>  {
->>         int code_alignment_factor = 1;
->>         bool fde_use_sdata8 = false;
->> @@ -276,12 +276,19 @@ int scs_patch(const u8 eh_frame[], int size)
->>                                 return EDYNSCS_INVALID_CIE_SDATA_SIZE;
->>                         }
->>                 } else {
->> +                       /*
->> +                        * For loadable module instead of running a dry run try
->> +                        * to patch scs instruction in place and trigger error
->> +                        * if failed, to prevent module loading.
->> +                        */
->
->Move this comment to the module loader, and explain why the two pass
->approach is not needed in this case.
->
+include/dt-bindings/iio/adc/mediatek,mt6373-auxadc.h
+include/dt-bindings/regulator/st,stm32mp15-regulator.h
 
-Will do.
+I can make this change, if you prefer this. Please let me know
+if I'm still missing something.
 
->>                         ret = scs_handle_fde_frame(frame, code_alignment_factor,
->> -                                                  fde_use_sdata8, true);
->> +                                                  fde_use_sdata8, !is_module);
->>                         if (ret)
->>                                 return ret;
->> -                       scs_handle_fde_frame(frame, code_alignment_factor,
->> -                                            fde_use_sdata8, false);
->> +
->> +                       if (!is_module)
->> +                               scs_handle_fde_frame(frame, code_alignment_factor,
->> +                                                    fde_use_sdata8, false);
->>                 }
->>
->>                 p += sizeof(frame->size) + frame->size;
->> diff --git a/arch/arm64/kernel/pi/pi.h b/arch/arm64/kernel/pi/pi.h
->> index 46cafee7829f..4ccbba24fadc 100644
->> --- a/arch/arm64/kernel/pi/pi.h
->> +++ b/arch/arm64/kernel/pi/pi.h
->> @@ -27,7 +27,7 @@ extern pgd_t init_pg_dir[], init_pg_end[];
->>  void init_feature_override(u64 boot_status, const void *fdt, int chosen);
->>  u64 kaslr_early_init(void *fdt, int chosen);
->>  void relocate_kernel(u64 offset);
->> -int scs_patch(const u8 eh_frame[], int size);
->> +int scs_patch(const u8 eh_frame[], int size, bool is_module);
->>
->>  void map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
->>                int level, pte_t *tbl, bool may_use_cont, u64 va_offset);
->> --
->> 2.51.0.534.gc79095c0ca-goog
->>
+Also please let me know if you want me to remove the unused
+channels - I would prefer to keep them if there's no issue,
+as we might need them later.
 
-Thank you for a review,
-Adrian
+Thanks,
+Jishnu
+
+> Best regards,
+> Krzysztof
 
 
