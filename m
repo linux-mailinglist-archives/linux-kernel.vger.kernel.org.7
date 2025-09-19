@@ -1,87 +1,144 @@
-Return-Path: <linux-kernel+bounces-823922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A025B87BD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 307EDB87BDA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BC33B6985
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A69851896B9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD82D2472BF;
-	Fri, 19 Sep 2025 02:44:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B887318BBB9;
+	Fri, 19 Sep 2025 02:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kkZnUCqS"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E15221294
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589891F875A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758249844; cv=none; b=VaxcWg9sG/n1vw+gn19xsh67yjGCjvvJdbQHDAFWYXf4v5/ir9TEx1MSem8n1oEeW+yNN8UM4m/DcdKtAqOHYtvquRIQBKgTHcX+m9nFxRH+87IPf0DWJasFI196PxtOkZX3kC9l1IQX5haLoFsXUIP4/on4tfw056bs5svqqwk=
+	t=1758249926; cv=none; b=IlOL6KfzpTkNh9kvbiy3hO2pUAGZKk8ho3cEA6YEjIA/aSkEl+JL4v3fiyBr2kH59SiMOH9wsiKkdgbdi3xAKNwhAQpQyC63O2ONFUHyze2rW7gGnLnmIBPUIVri7+SQaRaLgoF+1D0Z+W0DKnYfzGiH7H7crmCpXvkuA+NS2Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758249844; c=relaxed/simple;
-	bh=qWLSbdYhZF6N4jaF7tOwLoOWMzvLIYzP0oFrJUtzq+c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iQ2QukocFKfwbPHS0ktcIey1SLTGgh8wjVHsDrOwueYbU4Z9PMtaFoCSLGVLqUoYnQ4cXe7WTwieN8pgPgViSfjYJaaAedm41HX7Y6FVegxubtchf6GAuRdSJd6CB0yT3PECumkvA1XoQvdzyjb5DVp7JIX2udX+OkuLcP4psKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42408f6ecaaso22586275ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:44:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758249842; x=1758854642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lSWEPjA29tF6yViPpxpj8zXJtFYi6+inhhKM7thvcBA=;
-        b=tFvWDwK5kK4UWTw5OSil5K+jrHMBQFDgXAwmTh83ag1SdTJjOxHeNqSn+lfTgMM/zl
-         mcw5e1aAYwtMPv90QrUDooloZ/WVe36HtTW2iYUu6rxOZdaZzf9vcTr9k1icIX1CFUuf
-         2KH67F+WN7ZM+QXsPCI88Fe5ry3rfRSuAwPi1xDw89uXTIooemUIe4iH/ES/dpM/PN1R
-         Yaivm7TV/zVX9JJ7k4GuctMHrPb0sGADxX9nxziytTEZuNPDiE3VKxiTNAPqSkRW71ZQ
-         84iC0dyL9AQaz2t/5w/DUdJsypDqxEVu5ALZ77R+W4H6/MvhYb8rJIHDCTTCOldX4s8J
-         I4gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSaz12bx6m7Zp+K9BZZ4Kkrwe6nReB9fi8zXdXGDupd58J6B37/OJm6ffwNoor1U000azqoLt6MM4w2qE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTKvLgYymN0w7TCEzbWPztZouWatAF59NGqvVnrT5OBs4ka+fb
-	pjodxnjzvFu7LIGsJc+x/0yfusvHncDFMin+Gu2CZIv/ZdM3BWNGmwNzF5tDC9H9h7u8uyZ7THh
-	kY6W2+UHRDGZrp5lJc8IRcMfRB+d56x4R7nh29KZxhoZR8x90HJAnklPZSVg=
-X-Google-Smtp-Source: AGHT+IGbAeyXjZWIbV4cZqSg5KeYT+LWlAjVRWjB8PNvFzOY2qIAiIDIzL8TCXWoFFKPoCzB0zPkIE+h6vsPpYDaNncgpQ+VdgbQ
+	s=arc-20240116; t=1758249926; c=relaxed/simple;
+	bh=6zFDx2Zuzm7i23PZ+F83cFt4yBUktJbixiLg31FQI5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JkxTFska/4m7Qh681jkzdcjtjIxyk6mxittFKpqhBJ6JrlfW8QmWNwJUcPvTRG3eKna+i/ujxauv0oeyILYsoHMrqPoTYkWo6IhdL+WWy6h0kUEwfax3UxVL3OtUkNBJDvhSlQuQrXTiIPh/e5lTcI1upIlO7VmlONX7Z4gKUJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kkZnUCqS; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <20e0fb73-3476-4b1c-959e-c1af38f8e1a0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758249922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pEd4CRxp0Qy3iytKkYSUgyoNAPH5uPPdhfTDAiqFt+Q=;
+	b=kkZnUCqSVKS2D7eOJzEGuV3v+zGK9iIe7bTiuC/CxNG5peUXCkMg8QwHhrIUCzAA3fPGtj
+	H5dS3iVmdASVXo6qgjNsHY2nKaNPMk5MXf8dk4yu9aiRvB+36+Nq6NC4YvSuED6HU0WwFj
+	/DE5F2zJxguD24b6ukaUVsKcEQQp55k=
+Date: Fri, 19 Sep 2025 10:44:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:cae:b0:424:81c1:9481 with SMTP id
- e9e14a558f8ab-42481c1950bmr18050685ab.8.1758249842141; Thu, 18 Sep 2025
- 19:44:02 -0700 (PDT)
-Date: Thu, 18 Sep 2025 19:44:02 -0700
-In-Reply-To: <20250919021852.7157-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ccc372.050a0220.28a605.0016.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
-From: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on guard
+ PTEs
+Content-Language: en-US
+To: Zi Yan <ziy@nvidia.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, kirill@shutemov.name, hughd@google.com,
+ mpenttil@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250918050431.36855-1-lance.yang@linux.dev>
+ <20250918050431.36855-3-lance.yang@linux.dev>
+ <6BAE5498-D0AB-40F5-85F8-B92A05CA72AD@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <6BAE5498-D0AB-40F5-85F8-B92A05CA72AD@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
-Tested-by: syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com
+On 2025/9/19 03:12, Zi Yan wrote:
+> On 18 Sep 2025, at 1:04, Lance Yang wrote:
+> 
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
+>> lightweight guard regions.
+>>
+>> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
+>> encountering such a range.
+>>
+>> MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
+>> the special marker in __collapse_huge_page_swapin().
+>>
+>> hpage_collapse_scan_pmd()
+>>   `- collapse_huge_page()
+>>       `- __collapse_huge_page_swapin() -> fails!
+>>
+>> khugepaged's behavior is slightly different due to its max_ptes_swap limit
+>> (default 64). It won't fail as deep, but it will still needlessly scan up
+>> to 64 swap entries before bailing out.
+>>
+>> IMHO, we can and should detect this much earlier.
+>>
+>> This patch adds a check directly inside the PTE scan loop. If a guard
+>> marker is found, the scan is aborted immediately with SCAN_PTE_NON_PRESENT,
+>> avoiding wasted work.
+>>
+>> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> ---
+>>   mm/khugepaged.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> index 9ed1af2b5c38..70ebfc7c1f3e 100644
+>> --- a/mm/khugepaged.c
+>> +++ b/mm/khugepaged.c
+>> @@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>>   					result = SCAN_PTE_UFFD_WP;
+>>   					goto out_unmap;
+>>   				}
+>> +				/*
+>> +				 * Guard PTE markers are installed by
+>> +				 * MADV_GUARD_INSTALL. Any collapse path must
+>> +				 * not touch them, so abort the scan immediately
+>> +				 * if one is found.
+>> +				 */
+>> +				if (is_guard_pte_marker(pteval)) {
+> 
+> pteval is already is_swap_pte(), would is_guard_swp_entry() be a better
+> choice here? Save one is_swap_pte() call.
 
-Tested on:
+Yeah. Good spot! Will do ;)
 
-commit:         097a6c33 Merge tag 'trace-rv-v6.17-rc5' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ccc712580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=3815dce0acab6c55984e
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1574c712580000
+Thanks,
+Lance
 
-Note: testing is done by a robot and is best-effort only.
+> 
+>> +					result = SCAN_PTE_NON_PRESENT;
+>> +					goto out_unmap;
+>> +				}
+>>   				continue;
+>>   			} else {
+>>   				result = SCAN_EXCEED_SWAP_PTE;
+>> -- 
+>> 2.49.0
+> 
+> 
+> Best Regards,
+> Yan, Zi
+
 
