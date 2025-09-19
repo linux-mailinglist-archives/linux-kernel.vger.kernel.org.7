@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-824274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C5DB888BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3A8B888C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBF0D3AB2AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 563633B2019
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532802F9DAD;
-	Fri, 19 Sep 2025 09:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2A02F39C3;
+	Fri, 19 Sep 2025 09:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3Ji3x3B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y1BKNLPF"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8182D239F;
-	Fri, 19 Sep 2025 09:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDC32F25EF
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758273989; cv=none; b=GqQfrMcEUmSHCRLRVPCiAkT4z2YUPjHYn47vkd4ScAauwiGwO4IG8YZ+epQXyGkI5YP086uSvjb1x66Z+NddgoeB7Q2TWkGQIopaHZZ51sKJj743d6Tfp/18X0JLwhjPJR2iCZmBKx22QFdYin4+tJx1pxs8MPGDobOi/cfinxU=
+	t=1758274008; cv=none; b=tUfiGGTxfy+fxFqJITLhU6wWAMTyYaiq0PDQhcIyUiXXkgG2hgDEk5tkMI6fTMZa6PnD8EB/t7d0Mgbyl54ftmITZegiuFidsAhHCoqctd520KJvKM9HeTZarmj6dbSAHHBokoYd/SG0EX8gjR5H63M30CDK5faVmULq7gc09fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758273989; c=relaxed/simple;
-	bh=QTRMRYKX0MaFllq/94rkyUi9FFuz1LfmIJpbHiO/UfY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=gdXlq1gp4ztZp0H2tGbtofln30nQb8piGsNpn9frzBB2EGN23qe2cPl2bZIVGOCZv0Q/733wvDrHkB+m8D1SspZx/PycBPy0cP1sfjOCJbyomJSXVQDGUfsaN28mJgqL0iL8f98kqI8xB/y4Ttt/TBB3L/Tzq0vndBCTjj3bMKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3Ji3x3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B31BC4CEF0;
-	Fri, 19 Sep 2025 09:26:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758273989;
-	bh=QTRMRYKX0MaFllq/94rkyUi9FFuz1LfmIJpbHiO/UfY=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=p3Ji3x3BbitPt4pji1kyRyxpk/wbcoaw+nG5MoR8+52rV0fmB2Sad3fYUpl1kcrTK
-	 q3BDoxHY1UYqIg5ZzNwuVlFEaMyplB1QUSb7XbSAwmymH2bXFbCi/I7E6Sw0W9qJZ1
-	 AJBJnFLh1hasSGZiZIIgYrExMcpiNgo1R6E3+6CmbpjnbsgYWD1rF+0fYUNljoGm5w
-	 1IwLK/xvfJ4cwdHnzENrcBE2ZHIaiWj2Ws3LCiPLyxSg+GuBrlC0JIV+5cqoEiU4BQ
-	 ybyJvWMhRGsePrNznQ2K4xDlunk/lMNk4ZyV+0UAsXciPZQ+4QOv3UrJyzL1n+TGoT
-	 bCmD9UksQfT0Q==
+	s=arc-20240116; t=1758274008; c=relaxed/simple;
+	bh=dKCx85s/6PwtEqwRZtinMLXnxG+yVQJWnrxtNuzd434=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J9Z1FjAhBvnJoWBFWbDTBcbZe/A7WAIgkom3kL4ZIbz+c9uwmtGIYkzqiqka5eRSIifqoi5SLu7fFL4/rlh5f45kSK5q0fNvxYjz1lZOTRRerD5RXWArunGefv8WTKK2sSVTJNP3gybSwi+TOusrW6zHJZbdSTElGge5JKDZSrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y1BKNLPF; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758274003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lHA5A5Q3mB9GbMIkMKtbrVhd8m+plyRqseHgs1TRbeY=;
+	b=Y1BKNLPF8QBUOjfsyh8CesFs2DtdZ4NcSYe4o46wSglwMTeH6OYmrpmRTbJzfhbDyj17a4
+	REyo+KMhfE7FJjpOHi3vrGyh+UpI3frvlLhri+4enDMz4FIPviMOS5Yw71DboNfksh1Q6f
+	miPC5vWjez+XGDlpmBE5zijqtec6zLY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Don Brace <don.brace@microchip.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Mike Miller <mikem@beardog.cce.hp.com>,
+	James Bottomley <James.Bottomley@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alex Chiang <achiang@hp.com>,
+	"Stephen M. Cameron" <scameron@beardog.cce.hp.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	stable@vger.kernel.org,
+	storagedev@microchip.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] scsi: hpsa: Fix potential memory leak in hpsa_big_passthru_ioctl()
+Date: Fri, 19 Sep 2025 11:26:37 +0200
+Message-ID: <20250919092637.721325-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 19 Sep 2025 11:26:19 +0200
-Message-Id: <DCWO3V7WQP0G.127BYBORGE85H@kernel.org>
-Cc: "Alice Ryhl" <aliceryhl@google.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH] rust: io: use const generics for read/write offsets
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Danilo Krummrich"
- <dakr@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20250918-write-offset-const-v1-1-eb51120d4117@google.com>
- <20250918181357.GA1825487@joelbox2> <DCWBCL9U0IY4.NFNUMLRULAWM@kernel.org>
- <752F0825-6F2E-4AC0-BEBD-2E285A521A22@nvidia.com>
-In-Reply-To: <752F0825-6F2E-4AC0-BEBD-2E285A521A22@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri Sep 19, 2025 at 9:59 AM CEST, Joel Fernandes wrote:
-> Hello, Danilo,
->
->> On Sep 19, 2025, at 1:26=E2=80=AFAM, Danilo Krummrich <dakr@kernel.org> =
-wrote:
->>=20
->> =EF=BB=BFOn Thu Sep 18, 2025 at 8:13 PM CEST, Joel Fernandes wrote:
->>>> On Thu, Sep 18, 2025 at 03:02:11PM +0000, Alice Ryhl wrote:
->>>> Using build_assert! to assert that offsets are in bounds is really
->>>> fragile and likely to result in spurious and hard-to-debug build
->>>> failures. Therefore, build_assert! should be avoided for this case.
->>>> Thus, update the code to perform the check in const evaluation instead=
-.
->>>=20
->>> I really don't think this patch is a good idea (and nobody I spoke to t=
-hinks
->>> so). Not only does it mess up the user's caller syntax completely, it i=
-s also
->>=20
->> I appreacite you raising the concern,
->> but I rather have other people speak up
->> themselves.
->
-> I did not mean to speak for others, sorry it came across like that
-> (and that is certainly not what I normally do). But I discussed the
-> patch in person since we are at a conference and discussing it in
-> person, and I did not get a lot of consensus on this. That is what I
-> was trying to say. If it was a brilliant or great idea, I would have
-> hoped for at least one person to tell me that this is exactly how we
-> should do it.
+Replace kmalloc() followed by copy_from_user() with memdup_user() to fix
+a memory leak that occurs when copy_from_user(buff[sg_used],,) fails and
+the 'cleanup1:' path does not free the memory for 'buff[sg_used]'. Using
+memdup_user() avoids this by freeing the memory internally.
 
-I'm also not really thrilled to see lots more turbofish syntax. However,
-if we can avoid the nasty build_assert errors then in my opinion it's
-better. (yes we do have Gary's cool klint tool to handle them correctly,
-but not every user will be aware of that tool).
+Since memdup_user() already allocates memory, use kzalloc() in the else
+branch instead of manually zeroing 'buff[sg_used]' using memset(0).
 
-Maybe we should ask Rust about adding `const` arguments in their normal
-position again :)
-
+Cc: stable@vger.kernel.org
+Fixes: edd163687ea5 ("[SCSI] hpsa: add driver for HP Smart Array controllers.")
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
-Cheers,
-Benno
+ drivers/scsi/hpsa.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index c73a71ac3c29..1c6161d0b85c 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -6522,18 +6522,21 @@ static int hpsa_big_passthru_ioctl(struct ctlr_info *h,
+ 	while (left) {
+ 		sz = (left > ioc->malloc_size) ? ioc->malloc_size : left;
+ 		buff_size[sg_used] = sz;
+-		buff[sg_used] = kmalloc(sz, GFP_KERNEL);
+-		if (buff[sg_used] == NULL) {
+-			status = -ENOMEM;
+-			goto cleanup1;
+-		}
++
+ 		if (ioc->Request.Type.Direction & XFER_WRITE) {
+-			if (copy_from_user(buff[sg_used], data_ptr, sz)) {
+-				status = -EFAULT;
++			buff[sg_used] = memdup_user(data_ptr, sz);
++			if (IS_ERR(buff[sg_used])) {
++				status = PTR_ERR(buff[sg_used]);
+ 				goto cleanup1;
+ 			}
+-		} else
+-			memset(buff[sg_used], 0, sz);
++		} else {
++			buff[sg_used] = kzalloc(sz, GFP_KERNEL);
++			if (!buff[sg_used]) {
++				status = -ENOMEM;
++				goto cleanup1;
++			}
++		}
++
+ 		left -= sz;
+ 		data_ptr += sz;
+ 		sg_used++;
+-- 
+2.51.0
+
 
