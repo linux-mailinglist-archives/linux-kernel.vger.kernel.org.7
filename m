@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-824495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5EB2B89656
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE4AB89662
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E315C3B02E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA716273F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F6530F94E;
-	Fri, 19 Sep 2025 12:15:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C028530DD10;
+	Fri, 19 Sep 2025 12:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAwI2HSW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D64530F935
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7713101BB;
+	Fri, 19 Sep 2025 12:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758284107; cv=none; b=FRGkdXm4qTrcn5JrM+8icGEGrxCrb2gU5XEHf0jsWQf/DJxknKlfuBXza0Qb4rEskoOmcbhNCC8JF6LtmWGufOoDZAycy7nUMVOdg/Wa1x7gVj40BTalhH/VQ9bp9RJ59BZPv2NzGTaV2IdasCCjtqpOMOXPzk8gQqd/sNOAUys=
+	t=1758284119; cv=none; b=OLTC+8665ADejB/8MbSNW09jUQO4nuHBeLVmmULjY4vDsELmvCPlFkY8MOExZXZJGKO+ZFVZMPmcQ1GydBqWfInslae0iHYKsV+EbCqo0kc1nScel/cGQBAW9WVgrLTIBMH6YVHmQeKpAtgFrmKXdywRfsWJOVxBoFQpEM4kvOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758284107; c=relaxed/simple;
-	bh=F52Pe6ZzrWg2xOB535H6naWI5/xjhi+X85EvgHGfIVM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XK7cOo252OsWxyAqnWtjSaMwrx0fqgAtBbLgH3jQGic9CH9VAVCiuRVZzMC/14NlA/NKxrvmQJMLdCsH1CXOrtMGnKjjm3jzQSJ4RPDeTBKEkctj/GY7AWcf0Yg/g9TULpb50QpCRVv07f/fIqQBmdRj1vIYxIWF8tUkKkrPc4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88760a9d5c6so398380239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:15:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758284105; x=1758888905;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AaASq3nSPIcvtUoCKBtRJSEolffSQ27wcU7lwN8Kr/k=;
-        b=EFr4JBHGy2pp5mG51DL/xYP40gyS0tqokCG4paaSMikUDo5kKIRGdi3UtKceTn4IdV
-         Dr3VaSEcyBsqTnGnFT8pO4JHg6v4QpPKBHQSUvDmaP5rBEn/YPPTWG57xWY5k2UpNq0x
-         R/EFLofb9IP/NVH8jErVbDzMEoJUDV53wcfoQvITLu8bK4GUjPlVVpfH2apPgAGOtmjE
-         G6h5j5zZ6/rUy5M+dzx4WM0yQKVscnY+gayimGi9cILvXiM/jw+XzW3ZrkORmYbqVw4H
-         KWZUwjPaWp/7j4tz2cJUyNZqdLxTbsv/q66NJredHhcRd8SL8uioCett1RkSUJCHhEYn
-         5TGw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+PpkAgcCTqqxPr+IdOK7BznrjlK4zXed2oRpqdd++o8lBfVv2X4xpxedRQYf4jQZ6p0kYD+ceSlB3xr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbfd8jpsyIijf53RfiOOVjfvr5gazFPVtLPqEVW680fHXyqZXB
-	FD0HpkwtovwT5J60v139lXcMnZWZcG37akM5zjh1UX0JZ8E9WZgRpYYEiMKmxxdmFgWXVo346gG
-	TstnOC2yemjaXQNmPu/dLJ2DWeu77tecQ9o3na5EdOlultkNFm6OtWB/8ESo=
-X-Google-Smtp-Source: AGHT+IE1O8Xc6f8LrpO8boudUphXtvq/ClhpDSJmNM3SJDFi102WGVqC7B7iyKEup+Yu/ybdPLc+8ujPyZ6BW73fph6w1dGTVKQY
+	s=arc-20240116; t=1758284119; c=relaxed/simple;
+	bh=rp2xQFUJfJ+ExiBl7itF5T5i2YWJ2EFn0MVZJbBYNfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hnavAHUFGXjs8UxvEcO29OMJjEy4yNhaRR5HkjGpTveahmY7Lu/7LbvpAERYFWDWOkhsv84Wj4CqtjUSBh2GMTN6bE0J3CGXoUMaplSeAW7OEniGXJQrJCa+YsJhfayVyw6/48VMTO8mvVYpmkLZWI5U/vwopF07IbfE9V3URNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAwI2HSW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADDFC4CEF1;
+	Fri, 19 Sep 2025 12:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758284117;
+	bh=rp2xQFUJfJ+ExiBl7itF5T5i2YWJ2EFn0MVZJbBYNfk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IAwI2HSW+pHwoY6rtzTuqEtr+TkoectxvJ7SkUbL2SUuNEyc1XOxm3WHlu6z2Ft+E
+	 DWwp1iDE+08CdXxZwBQ9ctZ4ZkOLRFlev0yl7wzJAqDM2vFQiTR83yYH/eRY+9VU1H
+	 iva85USxaA4vTi0ab6tx7VWAtCIl4gMaH+kwP+eocOGxPLuP9mz7qJQ6fBWq7IHPXI
+	 lSCaWJYWvpG7NzdY0HFXqDc946u9BK+OlH/oue+js5lj3l3X3cCAYYSHOvaOA0LI/R
+	 3IcePujCv/NcyOhzBUhn1Ha/qI1ElmiPn0glh/pNOoBd/7d8/oZD187rNJgulsl3qe
+	 qf9h7N0XWt6xg==
+From: Christian Brauner <brauner@kernel.org>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: add might_sleep() annotation to iput() and more
+Date: Fri, 19 Sep 2025 14:15:07 +0200
+Message-ID: <20250919-willkommen-seefahrt-df4b03ade004@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250917153632.2228828-1-max.kellermann@ionos.com>
+References: <20250917153632.2228828-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:378f:b0:414:3168:b9fe with SMTP id
- e9e14a558f8ab-42481991ea9mr59920315ab.29.1758284105478; Fri, 19 Sep 2025
- 05:15:05 -0700 (PDT)
-Date: Fri, 19 Sep 2025 05:15:05 -0700
-In-Reply-To: <68caf6c7.050a0220.2ff435.0597.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cd4949.050a0220.ba58e.045c.GAE@google.com>
-Subject: Re: [syzbot] [smc?] general protection fault in __smc_diag_dump (4)
-From: syzbot <syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	dust.li@linux.alibaba.com, edumazet@google.com, guwen@linux.alibaba.com, 
-	horms@kernel.org, jaka@linux.ibm.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-s390@vger.kernel.org, mjambigi@linux.ibm.com, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sidraya@linux.ibm.com, syzkaller-bugs@googlegroups.com, 
-	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1343; i=brauner@kernel.org; h=from:subject:message-id; bh=rp2xQFUJfJ+ExiBl7itF5T5i2YWJ2EFn0MVZJbBYNfk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSc9Qw47rR6SVaikW5rRvvpDu8H6cpmvGyLftZvt/68k O2Rp49mRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESU2hkZlhhsiFvU6FOV4Jn8 bpLN3cbJF82jUxobJr1ae0XP5fKUAob/1fstKk7O1N5VPWV35F4rVc0KfgZns2NCDFksGWzvj0u zAAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+On Wed, 17 Sep 2025 17:36:31 +0200, Max Kellermann wrote:
+> When iput() drops the reference counter to zero, it may sleep via
+> inode_wait_for_writeback().  This happens rarely because it's usually
+> the dcache which evicts inodes, but really iput() should only ever be
+> called in contexts where sleeping is allowed.  This annotation allows
+> finding buggy callers.
+> 
+> Additionally, this patch annotates a few low-level functions that can
+> call iput() conditionally.
+> 
+> [...]
 
-commit 98d4435efcbf37801a3246fb53856c4b934a2613
-Author: Jeongjun Park <aha310510@gmail.com>
-Date:   Thu Aug 29 03:56:48 2024 +0000
+Applied to the vfs-6.18.inode.refcount.preliminaries branch of the vfs/vfs.git tree.
+Patches in the vfs-6.18.inode.refcount.preliminaries branch should appear in linux-next soon.
 
-    net/smc: prevent NULL pointer dereference in txopt_get
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=131dc712580000
-start commit:   5aca7966d2a7 Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=109dc712580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=171dc712580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17aec534580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115a9f62580000
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
-Fixes: 98d4435efcbf ("net/smc: prevent NULL pointer dereference in txopt_get")
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.18.inode.refcount.preliminaries
+
+[1/1] fs: add might_sleep() annotation to iput() and more
+      https://git.kernel.org/vfs/vfs/c/2ef435a872ab
 
