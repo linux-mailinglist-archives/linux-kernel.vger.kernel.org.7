@@ -1,136 +1,90 @@
-Return-Path: <linux-kernel+bounces-825221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3B6B8B505
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:18:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC02B8B508
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ACF8561648
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:18:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57697561B06
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3E035942;
-	Fri, 19 Sep 2025 21:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D168F2C0F7D;
+	Fri, 19 Sep 2025 21:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkPkluym"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nGJg7hTy"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E0125DAFF
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEF435942
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316718; cv=none; b=Akz2yBeAXZIB9mY0L4ltH57ba4wOy1gfjP2RZZ0nA8GMdlAijQvehIwtT2oPuL3PIuma9uRIxwR7JPPWaTd3kCb1QMzkhbFAvhrtlMZltO5vntX9pmfujklulQZ+mXDvmheAbP7s4O6AJpE1N1X+q8I2P3Ili0wZIaaxoJ1XGJ4=
+	t=1758316749; cv=none; b=b+KAfERN3KsDmVeaNWw90b2wnAxOvjbchbhXR+6YWaphsCsBL8b2M6/5d46iunbJZm2Def28zjGVsDKw6IUF5d7/6BFUInAaGshVcaFbzSmBuPBbSZRrVpOqU31kVGMBwfLKB2qBNp56BBko/i7I8JT9CruRZi+qQHU3oUMEEKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316718; c=relaxed/simple;
-	bh=VWhVVsKPXQmKSTE/YpJOpJ4/wxJWWS1WWkQWAjV/pgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BUBx2eSPzLXsjwFJivsWeNaN8t1DOLn5aQCGL6YebD9KUWz+dcwoWcHhw+XkDQ82Gw5htd/h4TLvWlZZ6WFdp1hq+njkguwFgzY9F12hA5WGPyM9OhzUt/zOdEk4RFRA5ThYnUMWEsZWCGPEyZWz9jA5ERQAoTT1nyxImrQyfGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkPkluym; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF2DC4CEFB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:18:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758316718;
-	bh=VWhVVsKPXQmKSTE/YpJOpJ4/wxJWWS1WWkQWAjV/pgQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XkPkluymf4/RnWnwk4NluJMKaeo32Zahupxjh5qWxznfhVhbsaJunCTW+FJABvEZh
-	 t4GBlV75jUUvrQV/Mh8WAZ+MkAzlgViyI/TmAgiq1yhCeHaP9DoIy+gOL21wBCHJOa
-	 rhJHrfiQI0docUehM0+yCUq+FmmsnnJu7bqlh+omUtQIjJ6pWSbExz9Gnv0lPNB/UX
-	 nGxkVO0RRgVn4TMenpbeIyZNN9yx/uJdTaak1xvMfZ6PWj8cEafe+OWu3suZDYdvkv
-	 baOEOOb9gOlvQM8DuihsVG4L0FH5Yef3mVOaoEKgn8OTXI/rKca8wkN0vfKFH/q/Up
-	 bmvpIG96xRpbQ==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-62355a687e6so1757851eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:18:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXcnwXpl3pH4U1iy9hdyA7lA8cYKO/t1k659NgOVNQCjhS7Z14go7+Ki34hO3juwSKfQXAcb0EaIj4Rdq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGPZg2WWg65oxraowhhXYvenT74LuEEsXhJMpEV8P2qSDi8s+q
-	5HuyDbsTy15SkBXI1IbTP3wWMlRwVQb6y2pG4edQKKVbCDnzSkesJ+QUjNd1nYpILp4334ycTkt
-	u4R3leKKbHi8t1Z41NiBiCShe3PQSqTI=
-X-Google-Smtp-Source: AGHT+IHOcRkStXEvU/UDmJJ0KW1jphVIgoFFDb68U8uwojftCCW7Ubd8b32AMvWaONyE5WoAyPpMPTJOMCuyqXnRUJU=
-X-Received: by 2002:a05:6808:11cd:b0:43d:2454:b69f with SMTP id
- 5614622812f47-43d6c115e33mr2383359b6e.10.1758316717432; Fri, 19 Sep 2025
- 14:18:37 -0700 (PDT)
+	s=arc-20240116; t=1758316749; c=relaxed/simple;
+	bh=nFIdNXUQ0J4yPbhWlGr9aHfFmOfSLhqbDPBZKmNFhJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqcQv+qmTcCEngiVVvJt7Q2JvEYlozWrM8n+nTV65rP/HE7BVDAQdiV2AZO3s5CgfRYVJ3vUVLqNjsWwcNwFRILVp0JRtre4u47vqLXkwu1ksnE+GitxQ28uzeBWUvwWoaPr5zEUv/1XkwuKw9rZaiw6Rd9226NbPhOb9PRxU0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nGJg7hTy; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 19 Sep 2025 14:18:56 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758316743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p12cTL26ZHFVM4Qm9V+H+3b/qs9Q3cDSdyY4Ygtksps=;
+	b=nGJg7hTyy/6oFsvUnre0j5HvVRBGA2A/LqgWlsORgFlczoEBROH9HQMg62fACPXS1A7Nwh
+	Gy1z3upufBIMiWNXB5t7yz4zdT7NdHcSq/AOuE9C0xGupOFO7BYLin6X2tiCp/zeiOEfL5
+	YccEWsq/XtqO8eeMHeYqFnY/GoJr8f4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
+	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Kiryl Shutsemau <kas@kernel.org>
+Subject: Re: [PATCHv2 2/5] mm/rmap: Fix a mlock race condition in
+ folio_referenced_one()
+Message-ID: <vc7lycvsvehisjr5drbng2lupytme3grubxbtgavvvjknkgzd6@axgctxng4424>
+References: <20250919124036.455709-1-kirill@shutemov.name>
+ <20250919124036.455709-3-kirill@shutemov.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250915070250.416423-1-zhangzihuan@kylinos.cn>
-In-Reply-To: <20250915070250.416423-1-zhangzihuan@kylinos.cn>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 19 Sep 2025 23:18:26 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i4V=ayEXRfJXduR-15jvVHgP_Cmc80WfhQoDv7N5xGjw@mail.gmail.com>
-X-Gm-Features: AS18NWCv7xrYZHNlJnFt8d_URS0ZeCcGF5OtJtum09A_RS7WmlieUWXU1zfkwx4
-Message-ID: <CAJZ5v0i4V=ayEXRfJXduR-15jvVHgP_Cmc80WfhQoDv7N5xGjw@mail.gmail.com>
-Subject: Re: [PATCH v1] cpufreq: Replace pointer subtraction with iteration macros
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919124036.455709-3-kirill@shutemov.name>
+X-Migadu-Flow: FLOW_OUT
 
-In the subject, this is just one macro, not multiple macros.
+On Fri, Sep 19, 2025 at 01:40:33PM +0100, Kiryl Shutsemau wrote:
+> From: Kiryl Shutsemau <kas@kernel.org>
+> 
+> The mlock_vma_folio() function requires the page table lock to be held
+> in order to safely mlock the folio. However, folio_referenced_one()
+> mlocks a large folios outside of the page_vma_mapped_walk() loop where
+> the page table lock has already been dropped.
+> 
+> Rework the mlock logic to use the same code path inside the loop for
+> both large and small folios.
+> 
+> Use PVMW_PGTABLE_CROSSED to detect when the folio is mapped across a
+> page table boundary.
+> 
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
 
-On Mon, Sep 15, 2025 at 9:03=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
-n> wrote:
->
-> The cpufreq documentation suggests avoiding direct pointer
-> subtraction when working with entries in driver_freq_table, as
-> it is relatively costly. Instead, the recommended approach is
-> to use the provided iteration macros:
->
->   - cpufreq_for_each_valid_entry_idx()
->
-> Update freq_table.c accordingly to replace pointer difference
-> calculations with the proper macros.
+Nice, this simplifies the code.
 
-And here too.
-
-> This improves code clarity
-> and follows the established cpufreq coding style.
->
-> No functional change intended.
->
-> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
-> ---
->  drivers/cpufreq/freq_table.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/cpufreq/freq_table.c b/drivers/cpufreq/freq_table.c
-> index d5111ee56e38..ca06a0236e70 100644
-> --- a/drivers/cpufreq/freq_table.c
-> +++ b/drivers/cpufreq/freq_table.c
-> @@ -33,16 +33,17 @@ int cpufreq_frequency_table_cpuinfo(struct cpufreq_po=
-licy *policy)
->         struct cpufreq_frequency_table *pos, *table =3D policy->freq_tabl=
-e;
->         unsigned int min_freq =3D ~0;
->         unsigned int max_freq =3D 0;
-> +       unsigned int i =3D 0;
-
-This initialization isn't necessary because
-cpufreq_for_each_valid_entry_idx() will initialize i to 0 to start
-with AFAICS.
-
->         unsigned int freq;
->
-> -       cpufreq_for_each_valid_entry(pos, table) {
-> +       cpufreq_for_each_valid_entry_idx(pos, table, i) {
->                 freq =3D pos->frequency;
->
->                 if ((!cpufreq_boost_enabled() || !policy->boost_enabled)
->                     && (pos->flags & CPUFREQ_BOOST_FREQ))
->                         continue;
->
-> -               pr_debug("table entry %u: %u kHz\n", (int)(pos - table), =
-freq);
-> +               pr_debug("table entry %u: %u kHz\n", i, freq);
->                 if (freq < min_freq)
->                         min_freq =3D freq;
->                 if (freq > max_freq)
-> --
-> 2.25.1
->
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
