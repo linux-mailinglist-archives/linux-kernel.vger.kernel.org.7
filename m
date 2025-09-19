@@ -1,86 +1,57 @@
-Return-Path: <linux-kernel+bounces-823920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB49B87BCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:42:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AB3B87BFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6C367AD168
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:40:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A5E77A5FB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2460257828;
-	Fri, 19 Sep 2025 02:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B2C251793;
+	Fri, 19 Sep 2025 02:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a5kAr5h2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eYMR3My2"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5150C2264AD;
-	Fri, 19 Sep 2025 02:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EDF2561A7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758249711; cv=none; b=sLYcuS/r46xPWKrk/+WlsMjqqWq/eLFYTikPe7t7lw5eCVZWDUhE8ktJbtFrdz1h6nWs/+Dnwda7qKa0fqZaLjbQZJGUOQEA92Z/dd18YeLudURq2U1uf7C4g7upSsRXkD9vwm4xXJ2gyTqFYFS/KGjdRcZL2kbTwqXUZ63EGXo=
+	t=1758250163; cv=none; b=c2B6DUgYYYwmSVlwfXO8KOUDmjBdAD6qynInrKvbCAKApXXBzRfLZg2QKiTq1jk+VnaRV6tODqx5ZcMFuobmGCRnI/FIMYXsXWyK/qwQ6uu63IsIim6Fl8t3rhf11uSYFbj3fghvMdCC+K6f8tybID1ov+6EvEEhD1ZFxgohD34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758249711; c=relaxed/simple;
-	bh=6xG4xuP98J5/wZamd8W2Oyr/1PetV/Dyo3VkqLNWTck=;
+	s=arc-20240116; t=1758250163; c=relaxed/simple;
+	bh=CS3SrhHGAuGkBr7hmqNoYLasrhOBrVQu2ZjclyYK/Jw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cE2SYtTM4hRaRy1ZbJL+BUR+pK8weTFEimXBDnlv246g/cUPTuQb6o0HL+f2yOUjchT1OTBX2dU1wmH73QFdUgtGbe9woMgf1JiBOlU5pSyRGOhupJ0piZU20LHyChnBikHwTjeOd451Nf9Ry7Qi4AxBz+cXxBdP0DMfDMEdgoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a5kAr5h2; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758249709; x=1789785709;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6xG4xuP98J5/wZamd8W2Oyr/1PetV/Dyo3VkqLNWTck=;
-  b=a5kAr5h2prwjQhRyul2UoEpkJd6pQw34YuxxkXvfeoP9LrIWywNxnp0X
-   TaE9JPU0/hJLGwfSbOYrM6n2e7lT4GCY1lo9jHlzz0DcyDhmp/YEstt4c
-   QPjhmS4GFEyi024izv/eqPqDketcmbzMx2K+2mwCPJJKrYOPwIJTvupwF
-   KCoMEJsyZrpu7WnA4mPKf5o/JMgATTjvnoVTFRzGdYPG46pPKlstZMKm2
-   jI3E8TdN86qPW2aN9Qw4AsVB+b9+HvCXABQgWIyS97BavnzuTWN+pQNmG
-   4xWR0Tn2x+7ljZzH/cZIKec5249PUBt6/MEK5ZrIpS53Lx9ea6+DyzzOY
-   g==;
-X-CSE-ConnectionGUID: tsJU4hp3QTiGd9JBgGdJEQ==
-X-CSE-MsgGUID: QBlc6D6FS9eabB7PAKfKVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="86032992"
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="86032992"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 19:41:49 -0700
-X-CSE-ConnectionGUID: 8mVBPbn0TLSdkRUSgIEVpw==
-X-CSE-MsgGUID: YAkvs1+vQUi+Atke9qd2VA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
-   d="scan'208";a="199418711"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 19:41:48 -0700
-Date: Thu, 18 Sep 2025 19:47:39 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: "x86@kernel.org" <x86@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	KY Srinivasan <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Michael Kelley <mhklinux@outlook.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
-	Chris Oo <cho@microsoft.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ricardo Neri <ricardo.neri@intel.com>
-Subject: Re: [EXTERNAL] [PATCH v5 10/10] x86/hyperv/vtl: Use the wakeup
- mailbox to boot secondary CPUs
-Message-ID: <20250919024739.GB9139@ranerica-svr.sc.intel.com>
-References: <20250627-rneri-wakeup-mailbox-v5-0-df547b1d196e@linux.intel.com>
- <20250627-rneri-wakeup-mailbox-v5-10-df547b1d196e@linux.intel.com>
- <DS3PR21MB5878BD23A845865D898E3C4DBF08A@DS3PR21MB5878.namprd21.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ARAb9DCp6Pt1QUUrRxXV0oTiCQN9NLMVRHsDHfIT7ON5CLj/+seNPwDsJXLMB20eEryqSEzzkEQUbkylJZkPiqyskhgCYuQzDwxwF7+PPFDtb9sTXCXb3STww9N6BVwvAHJ9YWhoPwMn88nW2b4ESUjqpEKsDs6ABfQVa5PSbUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eYMR3My2; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 18 Sep 2025 19:49:01 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758250147;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QqZyQZcoeHlrOOiTQqItbAzvsXWRLXScDq7yxQ6zIhg=;
+	b=eYMR3My2q96I0w45HjiMc5eI+Tbb/qiY3f/qo5BwzEzCQO5RiSnBpuHfyj7mt61J+J3bY3
+	PWXDdbCGHKao6O98bht2HJa0iu4W8ploFpkw0O6vbWMpeGFcdtG1FziqynjrtUwpaaBeQy
+	mU2yaeddKDsJyFN2Isg5hUKU4R/IHi8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
+Message-ID: <5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd>
+References: <20250905201606.66198-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,31 +60,219 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DS3PR21MB5878BD23A845865D898E3C4DBF08A@DS3PR21MB5878.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20250905201606.66198-1-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 12, 2025 at 08:47:52PM +0000, Dexuan Cui wrote:
-> > From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > Sent: Friday, June 27, 2025 8:35 PM
-> > [...]
-> > The hypervisor is an untrusted entity for TDX guests. It cannot be used
-> > to boot secondary CPUs. The function hv_vtl_wakeup_secondary_cpu() cannot
-> > be used.
-> > 
-> > Instead, the virtual firmware boots the secondary CPUs and places them in
-> > a state to transfer control to the kernel using the wakeup mailbox.
-> > 
-> > The kernel updates the APIC callback wakeup_secondary_cpu_64() to use
-> > the mailbox if detected early during boot (enumerated via either an ACPI
-> > table or a DeviceTree node).
-> > 
-> > Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-> > Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-> > ---
+On Fri, Sep 05, 2025 at 01:16:06PM -0700, Shakeel Butt wrote:
+> Generally memcg charging is allowed from all the contexts including NMI
+> where even spinning on spinlock can cause locking issues. However one
+> call chain was missed during the addition of memcg charging from any
+> context support. That is try_charge_memcg() -> memcg_memory_event() ->
+> cgroup_file_notify().
 > 
-> LGTM
+> The possible function call tree under cgroup_file_notify() can acquire
+> many different spin locks in spinning mode. Some of them are
+> cgroup_file_kn_lock, kernfs_notify_lock, pool_workqeue's lock. So, let's
+> just skip cgroup_file_notify() from memcg charging if the context does
+> not allow spinning.
 > 
-> Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Thank you for your review!
+Here I am just pasting the irq_work based prototype which is build
+tested only for now and sharing it early to show how it looks. Overall I
+think it is adding too much complexity which is not worth it. We have to
+add per-cpu irq_work and then for each memcg we have to add per-cpu
+lockless node to queue the deferred event update. Also more reasoning is
+needed to make sure the updates are not missed by the deferred work.
+
+Anyways, this is the early prototype. Unless there are comments on how
+to make it better, I will ask Andrew to just pick the previous patch I
+sent.
+
+
+From d58d772f306454f0dffa94bfb32195496c450892 Mon Sep 17 00:00:00 2001
+From: Shakeel Butt <shakeel.butt@linux.dev>
+Date: Thu, 18 Sep 2025 19:25:37 -0700
+Subject: [PATCH] memcg: add support for deferred max memcg event
+
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+---
+ include/linux/memcontrol.h |  3 ++
+ mm/memcontrol.c            | 85 ++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 84 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 16fe0306e50e..3f803957e05d 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -69,6 +69,7 @@ struct mem_cgroup_id {
+ 	refcount_t ref;
+ };
+ 
++struct deferred_events_percpu;
+ struct memcg_vmstats_percpu;
+ struct memcg1_events_percpu;
+ struct memcg_vmstats;
+@@ -268,6 +269,8 @@ struct mem_cgroup {
+ 
+ 	struct memcg_vmstats_percpu __percpu *vmstats_percpu;
+ 
++	struct deferred_events_percpu __percpu *deferred_events;
++
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 	struct list_head cgwb_list;
+ 	struct wb_domain cgwb_domain;
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e090f29eb03b..a34cb728c5c6 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -132,6 +132,63 @@ bool mem_cgroup_kmem_disabled(void)
+ 	return cgroup_memory_nokmem;
+ }
+ 
++struct deferred_events_percpu {
++	atomic_t max_events;
++	struct mem_cgroup *memcg_owner;
++	struct llist_node lnode;
++};
++
++struct defer_memcg_events {
++	struct llist_head memcg_llist;
++	struct irq_work work;
++};
++
++static void process_deferred_events(struct irq_work *work)
++{
++	struct defer_memcg_events *events = container_of(work,
++						struct defer_memcg_events, work);
++	struct llist_node *lnode;
++
++	while (lnode = llist_del_first_init(&events->memcg_llist)) {
++		int i, num;
++		struct deferred_events_percpu *eventsc;
++
++		eventsc = container_of(lnode, struct deferred_events_percpu, lnode);
++
++		if (!atomic_read(&eventsc->max_events))
++			continue;
++		num = atomic_xchg(&eventsc->max_events, 0);
++		if (!num)
++			continue;
++		for (i = 0; i < num; i++)
++			memcg_memory_event(eventsc->memcg_owner, MEMCG_MAX);
++	}
++}
++
++static DEFINE_PER_CPU(struct defer_memcg_events, postpone_events) = {
++	.memcg_llist = LLIST_HEAD_INIT(memcg_llist),
++	.work = IRQ_WORK_INIT(process_deferred_events),
++};
++
++static void memcg_memory_max_event_queue(struct mem_cgroup *memcg)
++{
++	int cpu;
++	struct defer_memcg_events *devents;
++	struct deferred_events_percpu *dmemcg_events;
++
++	cpu = get_cpu();
++	devents = per_cpu_ptr(&postpone_events, cpu);
++	dmemcg_events = per_cpu_ptr(memcg->deferred_events, cpu);
++
++	atomic_inc(&dmemcg_events->max_events);
++	// barrier here to make sure that if following llist_add returns false,
++	// the corresponding llist_del_first_init will see our increment.
++	if (llist_add(&dmemcg_events->lnode, &devents->memcg_llist))
++		irq_work_queue(&devents->work);
++
++	put_cpu();
++}
++
+ static void memcg_uncharge(struct mem_cgroup *memcg, unsigned int nr_pages);
+ 
+ static void obj_cgroup_release(struct percpu_ref *ref)
+@@ -2307,12 +2364,13 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	bool drained = false;
+ 	bool raised_max_event = false;
+ 	unsigned long pflags;
++	bool allow_spinning = gfpflags_allow_spinning(gfp_mask);
+ 
+ retry:
+ 	if (consume_stock(memcg, nr_pages))
+ 		return 0;
+ 
+-	if (!gfpflags_allow_spinning(gfp_mask))
++	if (!allow_spinning)
+ 		/* Avoid the refill and flush of the older stock */
+ 		batch = nr_pages;
+ 
+@@ -2348,7 +2406,10 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (!gfpflags_allow_blocking(gfp_mask))
+ 		goto nomem;
+ 
+-	memcg_memory_event(mem_over_limit, MEMCG_MAX);
++	if (allow_spinning)
++		memcg_memory_event(mem_over_limit, MEMCG_MAX);
++	else
++		memcg_memory_max_event_queue(mem_over_limit);
+ 	raised_max_event = true;
+ 
+ 	psi_memstall_enter(&pflags);
+@@ -2414,8 +2475,12 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	 * If the allocation has to be enforced, don't forget to raise
+ 	 * a MEMCG_MAX event.
+ 	 */
+-	if (!raised_max_event)
+-		memcg_memory_event(mem_over_limit, MEMCG_MAX);
++	if (!raised_max_event) {
++		if (allow_spinning)
++			memcg_memory_event(mem_over_limit, MEMCG_MAX);
++		else
++			memcg_memory_max_event_queue(mem_over_limit);
++	}
+ 
+ 	/*
+ 	 * The allocation either can't fail or will lead to more memory
+@@ -3689,6 +3754,7 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
+ 		free_mem_cgroup_per_node_info(memcg->nodeinfo[node]);
+ 	memcg1_free_events(memcg);
+ 	kfree(memcg->vmstats);
++	free_percpu(memcg->deferred_events);
+ 	free_percpu(memcg->vmstats_percpu);
+ 	kfree(memcg);
+ }
+@@ -3704,6 +3770,7 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
+ {
+ 	struct memcg_vmstats_percpu *statc;
+ 	struct memcg_vmstats_percpu __percpu *pstatc_pcpu;
++	struct deferred_events_percpu *devents;
+ 	struct mem_cgroup *memcg;
+ 	int node, cpu;
+ 	int __maybe_unused i;
+@@ -3729,6 +3796,11 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
+ 	if (!memcg->vmstats_percpu)
+ 		goto fail;
+ 
++	memcg->deferred_events = alloc_percpu_gfp(struct deferred_events_percpu,
++						  GFP_KERNEL_ACCOUNT);
++	if (!memcg->deferred_events)
++		goto fail;
++
+ 	if (!memcg1_alloc_events(memcg))
+ 		goto fail;
+ 
+@@ -3738,6 +3810,11 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
+ 		statc = per_cpu_ptr(memcg->vmstats_percpu, cpu);
+ 		statc->parent_pcpu = parent ? pstatc_pcpu : NULL;
+ 		statc->vmstats = memcg->vmstats;
++
++		devents = per_cpu_ptr(memcg->deferred_events, cpu);
++		atomic_set(&devents->max_events, 0);
++		devents->memcg_owner = memcg;
++		init_llist_node(&devents->lnode);
+ 	}
+ 
+ 	for_each_node(node)
+-- 
+2.47.3
+
 
