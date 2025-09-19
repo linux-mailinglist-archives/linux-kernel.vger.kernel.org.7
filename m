@@ -1,226 +1,143 @@
-Return-Path: <linux-kernel+bounces-824115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC16B8827A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3424EB882C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 986677A6FA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:29:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5740C7B7B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2742C325C;
-	Fri, 19 Sep 2025 07:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1D12D59E3;
+	Fri, 19 Sep 2025 07:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JoFrzCsc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="pZW+VN/z"
+Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E06723FC54;
-	Fri, 19 Sep 2025 07:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92FA2D3EDF
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758267057; cv=none; b=S5D5EK0cM4036otQRiERchbF6j+dscc8fI0DO9y17s+EDzQgykv5uTQZ6+VETZX5GNdJzJv82CyyGRUlwIedZSEBclf3REE9VdmhnQr5eRgF+FObVp4xiba3xU+NoEVgBk80crwfMcBzJwafnmdFcDuFMAYb9LvQaXlR4HB1hkU=
+	t=1758267153; cv=none; b=OJ/IUam4unEHZ4uPCYsLSwHgHccWCsQJVh2inIOg1dFpb7XVQL5W6kIVTn2PBrJ0SMIZNuYb+DVH762K5II1+6c/j90SzaGqzsQwMNNXsjbUiDEFtOj+Z1HJREmu/V+B9hm032MwH1Q5FS/oCSLdrzkr8gP+eC10dc/GJi0wF0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758267057; c=relaxed/simple;
-	bh=tu4lV9ZsXWbxctsqdTowl+LlLmz17QLXWzaI2s1TGOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boXX6xFUjf41ZVcLus/N+GjQJIeTBeKpqpBjfmceXdsdAEmj433wlS2csF9hinGcyDpc0q70GgXGMLGZA0WacE9lHY6up/g2ZbbDmHyewzspGU4k4WdFJ30/stHqh5m21ASD4BCgPw8kMA2BSFNM0JQI9IMRqlj5/7jKpwOk5wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JoFrzCsc; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758267055; x=1789803055;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=tu4lV9ZsXWbxctsqdTowl+LlLmz17QLXWzaI2s1TGOg=;
-  b=JoFrzCsc5DPYem6uiEvr81WYX70xrVI/u+CLGyR4y+9rjPEdUb/GWhas
-   DvjKCBMtvHTR4g8kPe/s+10Q2yH/Rl5NzAcmkF4IRLMVrDJ4lIzBG3Nc1
-   7fhQndEEnMfuWH6gpzV35SX7tZUKAAnRSmR1PSrUXvuZFMjndk/t+zUC0
-   HdDnVirbVmjC+QYOa3LKy8XojILQ/VgVM0jJFVzumCiw7jnOMnT4isk6r
-   CGW5OZA/mky4gCeHQRZkN0sRSRzdv03QjfwfjDCFcxcIXZGvwyTJB8H45
-   gMV84sOtqH/pVDgVpVWIjd3cVhiGsRaBorkCgrDPAOXKWtXKe2RSsXgxw
-   g==;
-X-CSE-ConnectionGUID: LnT7KWZ/SAWijXBaNNgqPA==
-X-CSE-MsgGUID: sbd4maSvRPKS6+UdyPpvDg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="86049698"
-X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
-   d="scan'208";a="86049698"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 00:30:55 -0700
-X-CSE-ConnectionGUID: 11jwXtONR1epQQOa6x/e6w==
-X-CSE-MsgGUID: M8Mg0OhASJWUb8784G4aEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
-   d="scan'208";a="176207226"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa009.fm.intel.com with ESMTP; 19 Sep 2025 00:30:53 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 7D2F495; Fri, 19 Sep 2025 09:30:52 +0200 (CEST)
-Date: Fri, 19 Sep 2025 09:30:52 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: =?utf-8?B?5p2O5L2z5oCh?= <lijiayi@kylinos.cn>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] thunderbolt: Re-add DP resources on resume
-Message-ID: <20250919073052.GO2912318@black.igk.intel.com>
-References: <20250917082456.1790252-1-lijiayi@kylinos.cn>
- <0540df54-efd6-4b79-90f9-ec305e1f5f7e@kylinos.cn>
- <20250917125017.GI2912318@black.igk.intel.com>
- <f0a04f70-5539-42bd-ac15-07054878acfb@kylinos.cn>
- <20250918162059.GL2912318@black.igk.intel.com>
- <20250918164330.GN2912318@black.igk.intel.com>
- <a3dd4fc5-4312-4c06-a6d7-645ae0f7b68b@kylinos.cn>
+	s=arc-20240116; t=1758267153; c=relaxed/simple;
+	bh=QDBKRYM86Xj8SvcY0SO2armSTunx77RSYXQE6GhjxRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X7c2ew2kElnYums1WQcjrJkWpSUrwuGUxJwhChITy2akXoKFV+JPHFpBUTAc9mMXd8TUkW/gOgLNDQcyp8FD4BycvulmOQ8SKF8/7QcN8F2FMtkQMJrb+1DN1w2FdyKLClyLnvPnS8VT1Z7qfwMsAVdKGC1zO8V3ZNS0x6Zi8X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=pZW+VN/z; arc=none smtp.client-ip=94.124.121.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=hb4JA4fTwI5S97+qQFy6E++mwXzjCgpI2x6Kz7sl75c=;
+	b=pZW+VN/zunUr8uqIHPr8ZaMHKz5+wpBS9g8mkldWI1GlhOZ01lslSu5UYQzFFEQjJGU6szmDdCNKa
+	 ySq3Dw2xuCzKeSw0pwSskYbqCuz5OEfnY7UVSvHFYKJCvZo6jQszXDWFPZ9S0lHA5mO4bq7UxDJs1q
+	 xBBj42CcHzqdnv8cwgal4DV4B9DJtas2zLBBc+SXtplp2DWYC4MvM8ZMDPG+mJQw0QhmfFYwq5zgRO
+	 jhAfBFwCAQrZ41fpzXDmJErIh4nugZek44vJMRmcedZPGs7MtWD1uwQ/GB2R2Bj0uLtVXBoG70fM67
+	 tPnUN4xs3iJtqwqVRpwzZVXsJ+2N6Yg==
+X-MSG-ID: a2929316-952a-11f0-8678-0050568164d1
+Date: Fri, 19 Sep 2025 09:31:19 +0200
+From: David Jander <david@protonic.nl>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jonas Rebmann <jre@pengutronix.de>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH v2 3/3] arm64: dts: add Protonic PRT8ML board
+Message-ID: <20250919093119.24d2711a@erd003.prtnl>
+In-Reply-To: <aMzlXerFpsfdHnwB@pengutronix.de>
+References: <20250918-imx8mp-prt8ml-v2-0-3d84b4fe53de@pengutronix.de>
+	<20250918-imx8mp-prt8ml-v2-3-3d84b4fe53de@pengutronix.de>
+	<af554442-aeec-40d2-a35a-c7ee5bfcb99a@lunn.ch>
+	<20250918165156.10e55b85@erd003.prtnl>
+	<7f1d9289-4102-4db9-a2bb-ff270e8871b7@lunn.ch>
+	<20250918173347.28db5569@erd003.prtnl>
+	<aMzlXerFpsfdHnwB@pengutronix.de>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a3dd4fc5-4312-4c06-a6d7-645ae0f7b68b@kylinos.cn>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 03:24:20PM +0800, 李佳怡 wrote:
-> 
-> 
-> 在 2025/9/19 00:43, Mika Westerberg 写道:
-> > On Thu, Sep 18, 2025 at 06:20:59PM +0200, Mika Westerberg wrote:
-> > > Hi,
+On Fri, 19 Sep 2025 07:08:45 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+
+> On Thu, Sep 18, 2025 at 05:33:47PM +0200, David Jander wrote:
+> > On Thu, 18 Sep 2025 17:04:55 +0200
+> > Andrew Lunn <andrew@lunn.ch> wrote:
+> >   
+> > > > Yes, unfortunately the SJA1105Q does not support PAUSE frames, and the i.MX8MP
+> > > > FEC isn't able to sustain 1000Mbps (only about 400ish) due to insufficient
+> > > > internal bus bandwidth. It will generate PAUSE frames, but the SJA1105Q
+> > > > ignores these, leading to packet loss, which is obviously worse than
+> > > > restricting this link to 100Mbps. Ironically both chips are from the same
+> > > > manufacturer, yet are incompatible in this regard.    
 > > > 
-> > > On Thu, Sep 18, 2025 at 04:34:31PM +0800, 李佳怡 wrote:
-> > > > 
-> > > > 
-> > > > 在 2025/9/17 20:50, Mika Westerberg 写道:
-> > > > > On Wed, Sep 17, 2025 at 06:12:31PM +0800, 李佳怡 wrote:
-> > > > > > 
-> > > > > > As requested, I've attached the complete dmesg output (from boot to after
-> > > > > > resume) reproducing the issue.
-> > > > > > 
-> > > > > > Testing Methodology:
-> > > > > > 1. Start with the Targus Thunderbolt dock already connected to the system
-> > > > > > 2. Enter S3 suspend (sleep) with no DP monitor connected to the dock
-> > > > > > 3. Resume from S3
-> > > > > > 4. After the system has fully resumed, connect the DP monitor to the dock
-> > > > > 
-> > > > > Thanks! It is badly line wrapped. I wonder if you can just attach it?
-> > > > > Anyways I found some unexpected things there:
-> > > > > 
-> > > > > > [    8.647850] With USB4 patch v1.0.0
-> > > > > 
-> > > > > What is this? ;-)
-> > > > 
-> > > > Thanks for your help!
-> > > > 
-> > > > This is a self-compiled kernel based on version 5.4 with backported
-> > > > Thunderbolt drivers. I will also attach the kernel log from a build using
-> > > > the linux-6.6.y branch of the community linux-stable repository.
-> > > 
-> > > Okay but I really suggest using more recent kernel. 6.16 is current stable
-> > > so that would be good.
-> > > 
-> > > > > > [    8.647860] ACPI: bus type thunderbolt registered
-> > > > > > [    8.664660] [7] nhi_probe:1326: thunderbolt 0000:2c:00.0: total paths: 21
-> > > > > > [    8.665209] [7] tb_ring_alloc:586: thunderbolt 0000:2c:00.0: allocating
-> > > > > > TX ring 0 of size 10
-> > > > > > [    8.665243] [7] tb_ring_alloc:586: thunderbolt 0000:2c:00.0: allocating
-> > > > > > RX ring 0 of size 10
-> > > > > > [    8.665267] [7] tb_ctl_alloc:665: thunderbolt 0000:2c:00.0: control
-> > > > > > channel created
-> > > > > > [    8.665272] [7] icm_probe:2549: thunderbolt 0000:2c:00.0: ICM not
-> > > > > > supported on this controller
-> > > > > > [    8.665285] [7] tb_ring_free:840: thunderbolt 0000:2c:00.0: freeing RX
-> > > > > > ring 0
-> > > > > > [    8.665294] [7] tb_ring_free:840: thunderbolt 0000:2c:00.0: freeing TX
-> > > > > > ring 0
-> > > > > 
-> > > > > What is this?
-> > > > > 
-> > > > > Is this Intel TB/USB4 controller or something else? All USB4 compliant
-> > > > > controllers should go directly to tb.c as that's the part dealing with
-> > > > > software connection manager. The above looks like it tries first with the
-> > > > > firmware connection manager and that should not happen outside of Intel
-> > > > > Thunderbolt 3 hosts.
-> > > > 
-> > > > Yes, there is a mistake. I discovered that during the USB4_NATIVE_CONTROL
-> > > > negotiation in the firmware, an OSC_CAPABILITIES_MASK_ERROR bit was being
-> > > > set incorrectly, which should not have happened.
-> > > > 
-> > > > The log I will attach next has been modified to fix this issue.
-> > > 
-> > > [..]
-> > > 
-> > > > [    0.498976] [1] tb_switch_reset:1666: thunderbolt 0000:2c:00.0: 0: resetting
-> > > > [    0.533329] [1] tb_add_dp_resources:217: thunderbolt 0000:2c:00.0: 0:10: DP IN resource available
-> > > > [    0.533959] [1] tb_add_dp_resources:217: thunderbolt 0000:2c:00.0: 0:11: DP IN resource available
-> > > 
-> > > The DP IN resources were added here.
-> > > 
-> > > [..]
-> > > 
-> > > > [   19.035726] [171] tb_switch_set_wake:3445: thunderbolt 0000:2c:00.0: 0: enabling wakeup: 0x3f
-> > > > [   19.037401] [171] tb_ring_stop:768: thunderbolt 0000:2c:00.0: stopping RX ring 0
-> > > > [   19.037412] [171] ring_interrupt_active:141: thunderbolt 0000:2c:00.0: disabling interrupt at register 0x38200 bit 21 (0x200001 -> 0x1)
-> > > > [   19.037439] [171] tb_ring_stop:768: thunderbolt 0000:2c:00.0: stopping TX ring 0
-> > > > [   19.037449] [171] ring_interrupt_active:141: thunderbolt 0000:2c:00.0: disabling interrupt at register 0x38200 bit 0 (0x1 -> 0x0)
-> > > > [   19.037463] [171] tb_ctl_stop:733: thunderbolt 0000:2c:00.0: control channel stopped
-> > > 
-> > > Runtime suspend.
-> > > 
-> > > (and a couple more)
-> > > 
-> > > > [  266.399800] [3870] tb_ctl_start:703: thunderbolt 0000:2c:00.0: control channel starting...
-> > > > [  266.399808] [3870] tb_ring_start:693: thunderbolt 0000:2c:00.0: starting TX ring 0
-> > > > [  266.399821] [3870] ring_interrupt_active:141: thunderbolt 0000:2c:00.0: enabling interrupt at register 0x38200 bit 0 (0x0 -> 0x1)
-> > > > [  266.399826] [3870] tb_ring_start:693: thunderbolt 0000:2c:00.0: starting RX ring 0
-> > > > [  266.399837] [3870] ring_interrupt_active:141: thunderbolt 0000:2c:00.0: enabling interrupt at register 0x38200 bit 21 (0x1 -> 0x200001)
-> > > > [  266.399848] [3870] tb_switch_resume:3478: thunderbolt 0000:2c:00.0: 0: resuming switch
-> > > > [  266.399852] [3870] tb_switch_configure:2590: thunderbolt 0000:2c:00.0: restoring Switch at 0x0 (depth: 0, up port: 5)
-> > > > [  266.400032] [3870] tb_switch_set_wake:3447: thunderbolt 0000:2c:00.0: 0: disabling wakeup
-> > > 
-> > > Around this time you should see the hotplug events coming to the DP IN
-> > > adapters. But there is none.
-> > > 
-> > > There is a bit in the DP adapter config space (DHP) that can be used to
-> > > disable this but the spec says it defaults to 0. Anyways I suggest to check
-> > > that (and also the Plugged bit). You can dump these using tbtools [1]. Let
-> > > me know if you want help with that.
+> > > Thanks for the explanation. Maybe add a comment that the bandwidth is
+> > > limited due to the lack of flow control resulting in packet loss in
+> > > the FEC.
+> > >
+> > > Anything which looks odd deserves a comment, otherwise somebody will
+> > > question it....  
 > > 
-> > Nevermind about the Plugged bit, that's not applicable here.
+> > Yes! This is a golden tip. Ironically what I said above is incorrect. Sorry
+> > for the noise.
 > > 
-> > Here's how to dump the DHP bit. This is from Intel host:
+> > Ftr: I wrote this DT about 4 years ago, so my memory failed me, and a comment
+> > in the code would have saved me this embarrassment ;-)
 > > 
-> > # tbdump -vv -r 0 -N 1 -a 5 ADP_CS_5
-> > 0x0005 0x00004809 0b00000000 00000000 01001000 00001001 ..H. ADP_CS_5
-> >    [00:06]        0x9 Max Input HopID
-> >    [11:17]        0x9 Max Output HopID
-> >    [22:28]        0x0 Link Credits Allocated
-> >    [29:29]        0x0 HEC Error Enable (HEE)
-> >    [30:30]        0x0 Flow Control Error Enable (FCEE)
-> >    [31:31]        0x0 Disable Hot Plug Events (DHP)
+> > The comment above applies to the i.MX6 SoC's which had this limitation. On the
+> > i.MX8MP we had a different problem that also caused the SJA1105Q not to work
+> > reliably at 1000Mbps either. We haven't been able to find the issue, but so far
+> > this switch hasn't been able to work at 1000Mbps reliable on any platform,
+> > possibly for different reasons in each case.  
 > 
-> Thank you for your help. As you suggested, I tried kernel 6.16, but the
-> issue still persists.
-> 
-> The logs and device vendor information are included in the attachment. I
-> also ran the tbdump command, and the result shows the DHP bit is set to 0.
-> Does this indicate there might still be other issues?
-> 
-> # tbdump -vv -r 0 -N 1  -a 5 ADP_CS_5
+> May be it is doe to RGMII clock switching issue and the requirement to
+> have specific silence time for proper clock frequency detection on the
+> switch side?
 
-Please run it against the DP IN adapters. That's 10 and 11. The 5 above was
-just an example from Intel HW.
+I doubt it is that, because it works well at 100Mbps still in RGMII mode, and
+according to the documentation the delay line is active for all rates.
 
-# tbdump -vv -r 0 -N 1  -a 10 ADP_CS_5
+OTOH, this switch probably has some other issues related to the RXC delay
+line. It is always the RX path (RX at the switch, TX at the MAC) that
+randomly does not work.
 
-and
+OT (but still posting in case someone here knows something):
+Coincidentally I am currently working on a different design with a SJA1105Q
+switch connected to a LAN743X MAC. The complication is that this MAC cannot
+disable the TXC (RXC at the switch) at all. Still working on this, but right
+now it looks like not even with the RX delay line deactivated (doing the delay
+at the MAC) is the switch working reliably (at 1000Mbps). Investigation still
+on-going so take with grain of salt.
 
-# tbdump -vv -r 0 -N 1  -a 11 ADP_CS_5
+> Or it is just artifact from iMX6 platform and it should be retested?
 
-The lspci dump indicates this is ASMedia host controller. I did not even
-know that they have such thing. I thought they only have device (which
-should be working in Linux). The host side may require some additional
-enablement.
+I remember having tested it and it not working reliably, but that was 4 years
+ago or so. Drivers have evolved since, so maybe it is worth testing again?
+
+Best regards,
+
+-- 
+David Jander
+
 
