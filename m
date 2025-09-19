@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-824857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D65B8A50F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EA0B8A51D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92C2917C882
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89AE43AA819
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F428315D4A;
-	Fri, 19 Sep 2025 15:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67279314A68;
+	Fri, 19 Sep 2025 15:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="adYonroL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AoKi0E0+"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5E124DD0E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE0224DD0E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296089; cv=none; b=ITABUsiZcieRpnC6nqGgeOhlVfog7VDe7W+pKEdxNPxro26E79sXOuubyCgHFZQTsMGyB912TsZTr5ed3fCx5squaHPrCdiOuchdXIWwBPoCiZUgkDWCIipMixG33aLOC65BVprCw+BJls0G1n79AageQDWUzal/oDOYIvnD66Q=
+	t=1758296110; cv=none; b=RVXpv4U1O9MPYC7iXH6l/t5SpdrOHqbxXQNsZGVpGbTjK14+m2ui8iRf6YmwGHiWVPCBPCmqoFjnt9BcfPGSSBTs4+ZoFdi1/dlJPIfTEq2YYomaXvsVbo+wxH7eXXFpd8clWYFT2JLgKKohnsw4+rxxINR8h7J4jenTIPWKK5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296089; c=relaxed/simple;
-	bh=Ue1Vx4FYQrX5dCM08CjZdMK7j411yWuuKLF8iHVnj1Y=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=YGp6BdGcQGFWb7kar8rYjDXHtWhILQBMh2C41EE04scLQSJoeIpVAbnloozQg1npc3RrIAjFIz9nQ61cit5DH/6svDkAB3Bjr6G9Oi8pKy3zDN/hf1Dh+vtXh2gklWe/wcoLXVXLvI6g+88ybuYsUL3BOgVZg7ixnwfsZ3TaH8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=adYonroL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758296087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ue1Vx4FYQrX5dCM08CjZdMK7j411yWuuKLF8iHVnj1Y=;
-	b=adYonroL2aYYG1PxYLdMF6b5K3B7z8sWfgsTfHRHUvVmvPxjKa48yy/ZE224H6vRX987H0
-	93epG2RxgHl6OzkmoJS7eV+EjPIcNPFqWs7mJH6+cerFrP0HXP2GrOtLDXC6B+DBJogXFU
-	MeVC1P2jWps2x6hjPhO6ZYWa4xUX6lI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-258-lf8UawQ5NIi7Ct5wjQC1Cw-1; Fri,
- 19 Sep 2025 11:34:42 -0400
-X-MC-Unique: lf8UawQ5NIi7Ct5wjQC1Cw-1
-X-Mimecast-MFC-AGG-ID: lf8UawQ5NIi7Ct5wjQC1Cw_1758296081
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A50D195608B;
-	Fri, 19 Sep 2025 15:34:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.155])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7A78A30002C5;
-	Fri, 19 Sep 2025 15:34:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <2df4e63a5c34354ebeb6603f81a662380517fbc4.camel@redhat.com>
-References: <2df4e63a5c34354ebeb6603f81a662380517fbc4.camel@redhat.com> <2952535.lGaqSPkdTl@graviton.chronox.de> <3605112.1758233248@warthog.procyon.org.uk> <3788819.1758262666@warthog.procyon.org.uk>
-To: Simo Sorce <simo@redhat.com>
-Cc: dhowells@redhat.com,
-    Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>,
-    Eric Biggers <ebiggers@kernel.org>,
-    "Jason A. Donenfeld" <Jason@zx2c4.com>,
-    Ard Biesheuvel <ardb@kernel.org>,
-    Herbert Xu <herbert@gondor.apana.org.au>,
-    linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128, SHAKE256
+	s=arc-20240116; t=1758296110; c=relaxed/simple;
+	bh=eTWf0PO9mv+rTbVMmJ0b0B+mt8XNGOqlZu172ARy+Zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VmwOy2XCiJ/7fEK11jQlO4GyltLDYUiHoQ3PFHwpCt3nkUZ78sqrWG8/ZPsarPp2nqrZtD+EEl5LREsX6mMVLyxUAHETYEtK6b+xXd28ce843lgPJZ4zVd3l73XkB0Oej2jA/C3AeHVxJbDJpz5qOixpuBF/ryWS6bYVesINnA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AoKi0E0+; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45decc9e83eso22735315e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:35:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758296107; x=1758900907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Sg77gnAfv1VmZ7w/Slv7Z+RDQVw26Pq4VwEULeHQZFo=;
+        b=AoKi0E0+zbXV6pwQhkC5STDf/iOc7ZySP4oGbYXB2bBuMzX6g7sBnknSRVK1PWag/t
+         UmlmKiijet+6tegsWbw/izjd4Iw0UfyJ+ZkpLqGWXgB8iXggHTZPTbz6iToyahK+b5eW
+         xRpW1W8V/a1psM7bic4Mu5JG70LzVv9KeT6fGDLc8KCIPnA6qG7Pzn10T0ot/CfdC8Lc
+         ZoOrQIs8jFSYxeN5yNHub57zEwoLKX8kQeMuGb6qVdjul+hEOBOSDq1KR9jwz/3O/b0O
+         k1lf1dPMs2XQiTPms8sIHTn4qcfu2+tecx0fs0PtxKpPBaXVve2IjUvesxy+K+DDjGsE
+         gJ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758296107; x=1758900907;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sg77gnAfv1VmZ7w/Slv7Z+RDQVw26Pq4VwEULeHQZFo=;
+        b=CBdoOxOKkhGmAIk6d0tLrItwUfQ2Zx7LB2JeFz66gKRH9Xcr2Aux4MLPYRXpaknA+T
+         OeGfDQlfe58I1xECxEL1QOgWJYe1ZSWAE2nY/oK0hpE4T1S9G8UML/kZz2Rvpv+TNMAB
+         seF9jp6mpPwpaYnV/fkw/gx7vwZEU/oB8reATLq/SUgetAeWD9CwtJdInTSRNVgKXVq7
+         qDD/ioeF0VcaZrAfkte2CqVJkwKMaAlninKLqVr49iNvwAm+zETAZeVTUpsLnZoRPETj
+         GLcDMNiA/LM0xZsil8jf4kOqdj9x3NAwQZaA/8K/taHbff6Wf53J/2gsFCvG2el2DltD
+         oSLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhH459LOfzf6xIKNdrs/TVJX4UdY3uYUmoDY/V14XW3TfxyjH5ZQc6evfzGQ69OJ/cwygV8dsgmIItDC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx322BYhB8qFwcy7a4ZwV8ZMfwIOFwVHMNBfk+qCa8JfsVVyhiC
+	biraaK+lVgBaK+rksxY1VWvnKPpG/CoPI2ZDQsgqXUdlfc/4A0Yfcj+F5wtT4mCkBtk=
+X-Gm-Gg: ASbGncsMPbPsYvvopsqHfRCnC+9QeJzCbQKu/hEbCou1wD6falTERAR5DS7ECeeDWOg
+	EVLsgudLZgGdQz5zqL1k+cVy4H+qf/mF7HECSD6HXNChpkfjbNYXeXa1s3HZoq3+CK7hNmQ4nif
+	FlihT6Jt9nS5zjsXEMy2T+xlubcnCYyG0oel9ypqvP8dpy1HquW+U0zkMn5RM8sD+JYdXgEs0Sq
+	KRABsOoSmQNBFSdLU8VijLF+hXp7pZXfH+/chZillhMcqEJQSalpFEYYuFJIH/yZ2Eh6/pvO0mH
+	ry0j2yi/BtYCHWXtYyzkezOn/9giA++Jp3DNaPzPoqjW9hXXpew4HbbqDoIhgbgNKNBTuAys9/R
+	/ooVSYeN/+hX7sUELZfbwk6M5tPrp/Q1K07TKvjClylGxyb6pph6nZ8FL1nJ0lTd2xq2LVp6rFd
+	cL/g==
+X-Google-Smtp-Source: AGHT+IFy7Dj8N6gYfL+jhWcvEkvYrz3Su9+hU8mu+33/hZoSVy239ih6pL/rb05L3vQtZWkPx65Y3w==
+X-Received: by 2002:a05:600c:3587:b0:45b:80ff:58f7 with SMTP id 5b1f17b1804b1-467eb603b52mr32347595e9.36.1758296107505;
+        Fri, 19 Sep 2025 08:35:07 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:8ffd:205a:6719:49c1? ([2a05:6e02:1041:c10:8ffd:205a:6719:49c1])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-46139123102sm128369815e9.9.2025.09.19.08.35.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 08:35:06 -0700 (PDT)
+Message-ID: <013d1911-50f8-4891-823b-566bd90a0601@linaro.org>
+Date: Fri, 19 Sep 2025 17:35:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3878471.1758296076.1@warthog.procyon.org.uk>
-Date: Fri, 19 Sep 2025 16:34:36 +0100
-Message-ID: <3878472.1758296076@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250828055104.8073-1-clamor95@gmail.com>
+ <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
+ <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
+ <amc5e3sffmwqguivwch6b5vtmlgu5dlwxm7bsrn6nd3rllbvxg@koqmavn6uuy5>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <amc5e3sffmwqguivwch6b5vtmlgu5dlwxm7bsrn6nd3rllbvxg@koqmavn6uuy5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Simo Sorce <simo@redhat.com> wrote:
+On 12/09/2025 12:26, Thierry Reding wrote:
+> On Thu, Sep 11, 2025 at 08:56:12PM +0200, Daniel Lezcano wrote:
 
-> I strongly suggest creating a test vector where multiple absorb and
-> squeeze operations are done in intermixed order, and then use that test
-> vector in your Kunit tests to ensure changes to the code do not break
-> this fundamental property of the keccak sponge algorithm.
+[ ... ]
 
-I'm putting such a beast in the module init function at least.
+>>
+>> I can take the patches 2-5. Regarding a shared branch or wait for the next
+>> version, I would prefer the latter
+> 
+> Alright, let's do it that way. I've picked up patch 1. If you take
+> patches 2-5 now I'll pick up patch 6 once v6.18-rc1 has released.
 
-Annoyingly, Eric's hash-test-template.h makes some unwarranted assumptions
-about the hashes it is testing - such as the final function zeroing out the
-hash struct.
+Applied 2-5, thanks
 
-David
 
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
