@@ -1,192 +1,324 @@
-Return-Path: <linux-kernel+bounces-824793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7432FB8A29E
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE96B8A290
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED185175F0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646E41C81E98
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DBA3148C3;
-	Fri, 19 Sep 2025 15:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C61731328D;
+	Fri, 19 Sep 2025 15:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="AV7yuJwf"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jaAESvus"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011008.outbound.protection.outlook.com [52.101.65.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BAC70830
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758294204; cv=none; b=R5PLBHO6mpg5UqoBPZuoGVlVztMKrN64/Wa95qtb8sXGhav+31K9vWZ8H2R/6rlSoSuj+bzCkAvLHCLt6IArp8FXe9K9xfW6zy+hrz9rUM+OkXO2LenadlSIIvksRVMingIbHLG4RbY6XguAykPyM8kTjZQMkw9L+1qgBnAYm80=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758294204; c=relaxed/simple;
-	bh=VpWztYwxlC4gMifd+Ha6GcloBpo1TRsrsojMqZ6IwKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQLYu6ubIdB35911XYSdOKRFn5xmK9kXDNmL1M+oqdf/CglOCdImorsMGx40uN4A2Oh9QJ6tfV8fQAsjDV+0lU7GHzBmGIYnOR8wMsX9L57Af7f/26pz0FVGMyJR+IMbBsbHfGJ8Dw+dJbRugCI8NLgSmIBkE+bIz5oztUNYlBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=AV7yuJwf; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-81999b1e9ccso227120885a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:03:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1758294201; x=1758899001; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h4yk0L0m2YyOV3Nsx1VlOk0MGMOAEd0mQJ4qs4qAJKA=;
-        b=AV7yuJwfMpAWDh9609+yB12v2hIAuX02dpTRybfODTnbO+j+FxxIOiWJPDI9SZcL1e
-         sx1qAxuEev7l+pdiDSLaBYs+AzLYA3qMpJ5XwgtT6GkTBSeEyiVwaUD65r1e+GgZ0XQ9
-         Bk82VGxulW/XKJzsCfq9oFZ2CKWicJbZQeELSc5eYgimG9Zar7vuUdH0uEzEB4tze75a
-         ze8tDavJbKn6vS8eX7rFLpYMOyrEeCZOCwRcAIFMeeRSIRxP2JonXmnbrPb12tUwFbuz
-         Bz3hG/fNgwldzRebgAnrLX/vINq4yJPqO9bZpKgeX5Suws2ZnUAIgNoG6o5BgMNDAjxQ
-         rlmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758294201; x=1758899001;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4yk0L0m2YyOV3Nsx1VlOk0MGMOAEd0mQJ4qs4qAJKA=;
-        b=hEYyp8EkNtXFq/q57cshSow00kJR3ETFkouoPIBh+XmIcroAoeCnS1FMXWzOD3vEPr
-         XoPoweT6zl2wWJnM5ONvIzGI5ZvFPWzPLQCHy+XoTfVr3iYPZt8+K7mBRye/adxU55wS
-         6WDEXPC5MA1zRb9yGs/lVRZzrzvHr3KnxVBvPORecSbjXVJo3qtNzog/0Yk2VU3whKKZ
-         G95n2YV+5Jttn08WJRKSuZvjDDjWCQUrpCl9OSsTA5nf6hSh4OlZXdee1WJfWWz73Of5
-         jgOP0fws3octJYEARoNAbhwTEVWqTARpiwjpFGoYovLVQLGJFtPSSOMpKC1KkJCvjPi3
-         hysQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3RlBQT9Pj2KmAOgunowvbtR3zkgmSbI8sVLKvB4a4ioWicmhiwd9L4Tl19fNKZm9RYhhBPQ0qD2Uuuuw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDkonsGyuenSYd6SRiWc3M2GOO7WcVz403G9dt2E+LN991ShgD
-	HAxRS6FST/KbTM7XeyRzHy9ZcwpQs7HHQDLEoaWF941J6tnTLQOgcszF9xSGuwrUEQ==
-X-Gm-Gg: ASbGnctAFjH+M1qobITiPqevjQw+fcyRy78a2tGAGLfbG0hEGjwPWFuQf1HaBUrQZBg
-	82wCweKYsnCzLx1lRzCt01n7R0aX4XiTwlH/jhS4vQ9miwbjM4XQdQ+w82YK2VX1zjPSBmLAuOQ
-	P3xcCYzHsiSvWQBaZ6PMSQWBQxKmK6zKF2HwisdGUNd2L8IdVwbAlUxKzwXuiusdtbgdJX59Tgs
-	6tATW3exRHjqMdxIndaVYdHWoQjDd/DSKI5ffN/oqpSdMhW8+Jn/EXqzB660GTx4MtbTKWoT12S
-	QtOwORFhP7GAu1MDCC4lWZ5bGSiXpKNaM2bugio8rbOrJKDcTTiF2HtJvRqQJvzG3hWyYWA8qgi
-	/ZQYivTYddKzHHHoqytYLrUQR0mt94G1mBzk=
-X-Google-Smtp-Source: AGHT+IFp77cMd6GqPBGe5WvLIisHAqV/1FC5no9jIM9sJ2NZm/RlCjBbuh5QO7SS6a/+S22CdYggrQ==
-X-Received: by 2002:a05:620a:520a:b0:825:dd8f:1a61 with SMTP id af79cd13be357-83ba2c93824mr366464385a.3.1758294201220;
-        Fri, 19 Sep 2025 08:03:21 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:d03:1700::bb27])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-836304820e7sm350662085a.40.2025.09.19.08.03.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 08:03:20 -0700 (PDT)
-Date: Fri, 19 Sep 2025 11:03:17 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 485071C862E;
+	Fri, 19 Sep 2025 15:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758294255; cv=fail; b=jYOmWmvDjO/D6Vud0Axl0H65AwpRDORjKevClG56tfGjA1uqKfn3Dwv6EbGx3ncNvRHC+b9We0cJFJOA895HYVvpvWjieeyqmp3SdfviJoBYLs4QWXShqqlHQE7Ay7P8wsTVDsREApGJAeChEtkVZgkxWnaRRFDm3D2wuqXDIjU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758294255; c=relaxed/simple;
+	bh=H/Eq1Pq1seh4xHGw1CGcLORKJjD4MMrSUlFt5EcB5Vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=fwbHw8zpx1suI6mv+xqVxX/+AQbKpbgkh9I/YTZJktd5trTH0SXC2Y97zw1aMc0lr+2pojdQGXi4lyBtkvweyoCLZg4hmvCwe59kZfne5vy2MVq+ww7WEHAhhofeXD2CksiNFjQZXaU3QlAil+pVUjGwbOsC3t2KT9Ux4ckTsJc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jaAESvus; arc=fail smtp.client-ip=52.101.65.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U26tYJOuqNNAkIWEUf5lppqXLTQDeMBoLWh0laW74fXHhNKY2qXwekn0FtOhDleCVX/0An8Y5cbu8PcWf4wPys5bn/vwaISlW70ocsKj0Dvys3olfOuB/jbxyg8XDGM1jh05mnhCMdHLinR2EoiEjqpwQJLhdabFP0iRgzxD51ivNnqO+Sc4gsOm6rhjA4N3irJl+/Q5ejuV/XNaLtCd0Y2H6bk2AYyS3MyV5ou6hl7Ri455WA7CwdLEUROGCtSRmWJHQxxLbbrpyaJhMKQVKTsrO+O1OgFRDZlOlbbsZ1ouhPTS+uzDNxuTq7otWur72IssjBkb/sNeS2+UpQbSyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hnlQvBij3DkvbsGPse+HcfQpLDrJbbH5Mh3diu1dv/Q=;
+ b=Dm4QUF5WbW9kN4EvrYoyKk9U/NLM5ylkNhgBVZDV6Z68w85cWAZbKBVklkbei1EpI6aVmBemkZhHMfvArdtmW0M3V+Ed5YZ1lMmDJ8UJWWQ1qamC6W7OQQUZG9K8wdlG8cFUnEnTYQkNtzNuUt+jWAuODke7dkWjULSUVIexHU+Wny3NzWnDvHgDEPNCUl5PPmhncAHtIx7P8jLDlswUVKcLocPPUw6Z1BoOD7jdorpWZeXpyhxgdE4rxxGjnMs6cEhSKI5VHlt/FhVdd5JAr2skdJ3bSYDGi/IenPDGDqxn+QleDbvixkVK3J6/UuZVq2Fm3YFzUNmG2BeSVMqaVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hnlQvBij3DkvbsGPse+HcfQpLDrJbbH5Mh3diu1dv/Q=;
+ b=jaAESvus7UQAH8zz77TEGFJuBidieMCB8Dr5NND2p4vW32z9TJapUJaHsHJJ2cd2szCaTAEcRDWfsSXLXhhNeBW2Wga5cHP4Vs6XQEvWF+Z2NhLAaumfn+dKPO6ZPClEsK7dRczvsEVu7Z9smGVdJPDhb38VPrcJmuSwcWYq71JLtedmPLhKdE8CByf6Cz134dCoTUNkBQAcL5I+Cj1IT7Ya/cWy1V0kOvG0Rhi+41U9nn91A8HGetQVW3zVw2u73XPq7UYaFfcnokEzT5D2L1T0qHz4hvMMU66SYRi051W18Veawzx25ADXP3/lf+/mkCyWY5Ea9MSBqNGOfXc6cg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by PA4PR04MB7743.eurprd04.prod.outlook.com (2603:10a6:102:b8::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Fri, 19 Sep
+ 2025 15:04:10 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9137.015; Fri, 19 Sep 2025
+ 15:04:10 +0000
+Date: Fri, 19 Sep 2025 11:04:01 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] usb: uhci: Add reset control support
-Message-ID: <9c867c34-047d-4771-b9a6-a2c88dd1f800@rowland.harvard.edu>
-References: <20250919025712.719246-1-ryan_chen@aspeedtech.com>
- <20250919025712.719246-3-ryan_chen@aspeedtech.com>
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/14] drm/imx: dc-crtc: Disable at boot
+Message-ID: <aM1w4URkELrmK7No@lizhi-Precision-Tower-5810>
+References: <20250704-imx8-dc-prefetch-v1-0-784c03fd645f@nxp.com>
+ <20250704-imx8-dc-prefetch-v1-5-784c03fd645f@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250704-imx8-dc-prefetch-v1-5-784c03fd645f@nxp.com>
+X-ClientProxiedBy: PH0P220CA0020.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:510:d3::34) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919025712.719246-3-ryan_chen@aspeedtech.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|PA4PR04MB7743:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28cc43b1-5ad3-4f77-9fb5-08ddf78dc9e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8cVvUuefnQ13BIcFAEtRIo86UVS7UWP3AVib91+yWAvMlxlh2htUc73FEHOd?=
+ =?us-ascii?Q?nDTTvvXC8ggvoLQWLZbVj20TfUSvHH/0t0uXu/ZFMnHdh12dtl8JA/GrSr33?=
+ =?us-ascii?Q?RTAty9RtX9wk48J4JYA9MmVxGHQOqFA0lTV5zKQvaAy8sRdgfERLR9kh2Zz1?=
+ =?us-ascii?Q?7OnVnTDdC+I88iy2Tmq7HZuSCLlYCi6rfbFWt1oNLJpxfQ7iD0J8rRNSGQGA?=
+ =?us-ascii?Q?BH+9G3JABJKj10k3rg5j0M6vRDzxwaWjv2XZyB5RnZBrkI3JMM1ZlPyAqFUO?=
+ =?us-ascii?Q?ICJciYuddYHSfffqGfoCrTrivGZs6Uz3sd+xDljF2I4e0p5UnrHb4qy9miSD?=
+ =?us-ascii?Q?Cxxy8s/RZhmK9GgRWlUCumbaAhuBY0b4Shq2mPyHPGO0tXKpPB0sgX46GqBf?=
+ =?us-ascii?Q?kASKQpl16qRhVvwYrMFlhW0N6n/4gm1YwVaWBvCAR819Hv1nsJYRh7jmSojh?=
+ =?us-ascii?Q?lHbE2d6tVrtjd7bmL4Y1Tf2Kj0eEI3jxX1lUBVG6HUaykwBUdA8qYl/l63FH?=
+ =?us-ascii?Q?9xoUtySKFOgXqnHrrYZNuKsbh2kT2WUd0pa2LCaS8xMoaVoMR+Yj3dhEBLDz?=
+ =?us-ascii?Q?X/0gIq/lsBJANiH2YlLQ1hIMIQjN6yJPFYBfLNFxLD8MAWVKrPbTLsom9e2S?=
+ =?us-ascii?Q?usi5nx+D4WmvUos2LEDhaOkJ1AZr92m2WGHHwJcrvlz/9a664Zq7xTO2Tnij?=
+ =?us-ascii?Q?fh9S/uk7QJsr4t8nUS7h1SITwF5T5sDcOxH9EYocqbSTHxyl6o6zWPTd25E8?=
+ =?us-ascii?Q?KbuR0Dgsjepq/K2QQf+uMWOrEAkJXPBeUDO7yGyjQIg5JxPWy2jtgzSbx+Ox?=
+ =?us-ascii?Q?j+6Rjd+RS9tZhRv7pBHvIpOD0bUBu6BrFaLJj/oo9ViLJUXStCRQ09osxorN?=
+ =?us-ascii?Q?kWOkCorxhV8zGIVpjJ5cTlaDBzGUE/qUXIZZyCS0YOR2JrEJ+RjMQMklhj+x?=
+ =?us-ascii?Q?D/xRzfBAxi+W6Nx9pg/ty2VyQjgLLiDWoF2YVGYuOdcw6aEfH4zZHd67Ylpa?=
+ =?us-ascii?Q?9/U3qLAvTn/dCiWriYGHbz7ZE7WoLGKszaILvgJIBxagZFfqgmVnBheUy3ha?=
+ =?us-ascii?Q?tzxWhupXIN9sScrxBw0/k8hvk0/Jg2KmXhGeU2bUhojnHldwY43CaGgr4V83?=
+ =?us-ascii?Q?ag97R0LjjFcTdqvwd2LG4ipBq8xY7bSShNwooe7maAivzRGcetBx2dCz/52s?=
+ =?us-ascii?Q?03Qf0WZKqnwkQS+2YoiZSjPND5u5d6UI7RxgXow1pHgo9jEtsQAc77EPni2F?=
+ =?us-ascii?Q?zfW7vW3QS9ozTQChyZvEOrfKWiIb7ztrhcxDlTQnNBR13ir75RyJ+TTpl9Sk?=
+ =?us-ascii?Q?NZ85YEESXIbPdCmAXBT+CkadfJDdhiCfxiMPfQViT5MZy0d3zvoEHwWPjEuO?=
+ =?us-ascii?Q?7DY2cwULYTVrSXxjR46DeO+3nqGO9X72DbHolD6t8T8B5wkk1F3jrGNL5nan?=
+ =?us-ascii?Q?G66WbpEOUA0sqpoLtrfJriQ1hWC+BbJzbM8eusQC6uuIdET+7Fo4aA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?bGS/Re0SFx3xOlQaWW+AierLmtHE/vTiMa4CK21OHpL4CtVPmtMcdBF1RFca?=
+ =?us-ascii?Q?fxGi2ePT5UN1goUETrssbw6+5FA29KND86IOOV6lx6E5oqcs9Jv0A+ogALuG?=
+ =?us-ascii?Q?Q6cHJbtYPPfS17zQAjXfK2dnuQlTS5E3JdsD4tPkz0w4JcaT7sEZV+KKr/Ad?=
+ =?us-ascii?Q?OfZHfqFQf3XZ8vtTuTz5bgXzAqTIh9Wi81uEdlz8aYubUx41RiZe4uTf6jSq?=
+ =?us-ascii?Q?uj5H9nABIQ9XrNp9DdkhcMJx/WKD0TM8MINCyv+iegFVFEQhmzoSsjFlC2op?=
+ =?us-ascii?Q?t4uojiea3bR962O0hGZA/VqKbBN/mKA5dDIcgHF0/Xl5T6W39x1Ik4TGUY/T?=
+ =?us-ascii?Q?DdIedlqIh5QXqVztPIssGZ6ybQlOKkNnJzk/CDdtPIIVgy+s4UJemALBLZCu?=
+ =?us-ascii?Q?148XqWER1EKP/x0WdRFn2uq8U+O7tB9Z847IQ5r2cHiHyF64hQel6v/zqmOw?=
+ =?us-ascii?Q?dzA05AUM7sgLK/OXABVMZ/Xnz9s/ku6ZnknSg1R5qawSykLF17pQpvXxYzvR?=
+ =?us-ascii?Q?OnIQYSXNEf+Y2DJC5nqkOx3+2L3oZR1rkNgvX7zoyoHDS6wbsAtHViCIuChd?=
+ =?us-ascii?Q?prB3djccih59hijSQ3gY5h23Eh4J1ATZwXQfLqnFaZdjlDe/WsrMEuhtj9L6?=
+ =?us-ascii?Q?cR9YL4Of58cu/jitbRwGelf3qUHLUfO7zHrGxjNWjtfF+GN9jxv07at5qLMv?=
+ =?us-ascii?Q?VnTkVPzTSpvqkKALxiHDPbqiMPgxYByHn8NJpEY9OLxaIQKddBW0h4aQWfvX?=
+ =?us-ascii?Q?g77tmRAwCAU0fLH0tLyCgQbuHQzQDpkrctdQ42GADaHcS6CZe88IxjMOywZh?=
+ =?us-ascii?Q?C+ekaqflnzTt+aIwFHYRM+YMN0grI0XGPagJ5bXa3TPWJuvd0zF5x5rlLakJ?=
+ =?us-ascii?Q?ov23O4Na2tVXeEEucvxqnUdgI0y5CsGnpp9ZN8QTtlIiRfRshemG0s8WRyUG?=
+ =?us-ascii?Q?H/ni8GwuATGIlOd6vC5jbhEhR/QhK7aVcov3Hu3Bjrtnp5p9b20/FGOhFPv2?=
+ =?us-ascii?Q?k5vzO4E/cgv9OCDpcViP4GcRVssVBMZhfHnvoYQ8e3Qajeypf70fXDpE/pU6?=
+ =?us-ascii?Q?1Kiymd+/jTkpwYVMJzE1Elg01K0XH3JvaYJ006XETW1yJfrduLJe8B+Ru6z5?=
+ =?us-ascii?Q?vSpJ2wlSjKt2zHOpMCA1JLb7SOWm+/XUG6T8liEcZ3VgBPDbpp3W0wx1uRo6?=
+ =?us-ascii?Q?8k8vSfFBB3R57gPq23277O2rfcKy/UYVnE4FAdmQ949XyDBSffZ8INsvfjuz?=
+ =?us-ascii?Q?cY2yWQbAz8UZZFASVgEtvdZQw0AKNSgtGcMMurlIs08R/dxUpZ1pNDBN8I4d?=
+ =?us-ascii?Q?OLMbV2rqCzVLqruGxL1jzRo76hsPeNO/W7GbzOSScyBCdxmlQd6c9bvknm7Z?=
+ =?us-ascii?Q?ap6l9aP6igoQmO/po7ME8a7QLMMyhFnf6Zpi/7sw9BKuFadnnr41L2ivPNC1?=
+ =?us-ascii?Q?L51mlo3M2uA/9IAHcPc4ep8PE02aNbcsiHHXA/RpIBoqujJG5uHL1PLUOYPs?=
+ =?us-ascii?Q?ixtsBt9mTObiwOiGJ65PVrRCdWnuSRfvcC6aIJwbp5E9LTGjH5CD/eWqKtNp?=
+ =?us-ascii?Q?ol+v+0BYwUhsWV8cr+i1NLclLNKRFENtlPOcg0im?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28cc43b1-5ad3-4f77-9fb5-08ddf78dc9e6
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 15:04:10.7688
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 62tNBOLDYqw0zmj3w5P/jKlNS9X2UZw+iazClRIm3VGTB8/jGvfr6dTxlmaYu3rVAQqkM2I/ZXll0Y5QcYQUSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7743
 
-On Fri, Sep 19, 2025 at 10:57:10AM +0800, Ryan Chen wrote:
-> Some SoCs, such as the Aspeed AST2700, require the UHCI controller
-> to be taken out of reset before it can operate. Add optional reset
-> control support to the UHCI platform driver.
-> 
-> The driver now acquires an optional reset line from device tree,
-> deasserts it during probe, and asserts it again in the error path
-> and shutdown.
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+On Fri, Jul 04, 2025 at 05:03:52PM +0800, Liu Ying wrote:
+> CRTC(s) could still be running after the DRM device is unplugged by
+> calling drm_dev_unplug(), because the CRTC disablement logic is
+> protected and bypassed by the drm_dev_enter()/drm_dev_exit() pair.
+> Hence, Pixel Engine's AXI clock use count(managed by Pixel Engine
+> driver's runtime PM) and pixel clock use count could be inbalanced
+> after removing and re-installing the driver module.  To fix this,
+> add a helper dc_crtc_disable_at_boot() and call it to properly
+> disable all CRTCs before advertising DRM device to user-space by
+> calling drm_dev_register().
+>
+> Fixes: 711a3b878366 ("drm/imx: Add i.MX8qxp Display Controller KMS")
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 > ---
->  drivers/usb/host/uhci-hcd.h      |  1 +
->  drivers/usb/host/uhci-platform.c | 18 ++++++++++++++++--
->  2 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/usb/host/uhci-hcd.h b/drivers/usb/host/uhci-hcd.h
-> index 13ee2a6144b2..4326d1f3ca76 100644
-> --- a/drivers/usb/host/uhci-hcd.h
-> +++ b/drivers/usb/host/uhci-hcd.h
-> @@ -445,6 +445,7 @@ struct uhci_hcd {
->  	short load[MAX_PHASE];			/* Periodic allocations */
->  
->  	struct clk *clk;			/* (optional) clock source */
-> +	struct reset_control *rsts;		/* (optional) clock reset */
->  
->  	/* Reset host controller */
->  	void	(*reset_hc) (struct uhci_hcd *uhci);
-> diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
-> index 62318291f566..f255358d6242 100644
-> --- a/drivers/usb/host/uhci-platform.c
-> +++ b/drivers/usb/host/uhci-platform.c
-> @@ -11,6 +11,7 @@
->  #include <linux/of.h>
->  #include <linux/device.h>
->  #include <linux/platform_device.h>
-> +#include <linux/reset.h>
->  
->  static int uhci_platform_init(struct usb_hcd *hcd)
->  {
-> @@ -132,17 +133,29 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
->  		goto err_rmr;
->  	}
->  
-> +	uhci->rsts = devm_reset_control_array_get_optional_shared(&pdev->dev);
-> +	if (IS_ERR(uhci->rsts)) {
-> +		ret = PTR_ERR(uhci->rsts);
-> +		goto err_clk;
-> +	}
-> +	ret = reset_control_deassert(uhci->rsts);
-
-Does this work right if uhci->rsts is NULL?
-
-> +	if (ret)
-> +		goto err_clk;
+>  drivers/gpu/drm/imx/dc/dc-crtc.c | 50 ++++++++++++++++++++++++++++++++++++----
+>  drivers/gpu/drm/imx/dc/dc-drv.c  |  5 ++++
+>  drivers/gpu/drm/imx/dc/dc-drv.h  |  3 +++
+>  3 files changed, 53 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/imx/dc/dc-crtc.c b/drivers/gpu/drm/imx/dc/dc-crtc.c
+> index 31d3a982deaf7a0390937285c9d5d00100323181..45a87df1ad6a8bd768aa5ed38d6f03f14052b3d7 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-crtc.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-crtc.c
+> @@ -293,6 +293,16 @@ dc_crtc_atomic_enable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+>  	dc_crtc_queue_state_event(new_crtc_state);
+>  }
+>
+> +static inline void __dc_crtc_disable_fg(struct drm_crtc *crtc)
+> +{
+> +	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
 > +
->  	ret = platform_get_irq(pdev, 0);
->  	if (ret < 0)
-> -		goto err_clk;
-> +		goto err_reset;
->  
->  	ret = usb_add_hcd(hcd, ret, IRQF_SHARED);
+> +	enable_irq(dc_crtc->irq_dec_seqcomplete);
+> +	dc_fg_disable(dc_crtc->fg);
+> +	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
+> +	disable_irq(dc_crtc->irq_dec_seqcomplete);
+> +}
+> +
+>  static void
+>  dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+>  {
+> @@ -305,11 +315,7 @@ dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+>  	if (!drm_dev_enter(crtc->dev, &idx))
+>  		goto out;
+>
+> -	enable_irq(dc_crtc->irq_dec_seqcomplete);
+> -	dc_fg_disable(dc_crtc->fg);
+> -	DC_CRTC_WAIT_FOR_COMPLETION_TIMEOUT(dec_seqcomplete_done);
+> -	disable_irq(dc_crtc->irq_dec_seqcomplete);
+> -
+> +	__dc_crtc_disable_fg(crtc);
+>  	dc_fg_disable_clock(dc_crtc->fg);
+>
+>  	/* request pixel engine power-off as plane is off too */
+> @@ -337,6 +343,40 @@ dc_crtc_atomic_disable(struct drm_crtc *crtc, struct drm_atomic_state *state)
+>  	spin_unlock_irq(&crtc->dev->event_lock);
+>  }
+>
+> +void dc_crtc_disable_at_boot(struct drm_crtc *crtc)
+> +{
+> +	struct dc_drm_device *dc_drm = to_dc_drm_device(crtc->dev);
+> +	struct dc_crtc *dc_crtc = to_dc_crtc(crtc);
+> +	int ret;
+> +
+> +	ret = pm_runtime_resume_and_get(dc_crtc->de->dev);
+> +	if (ret < 0) {
+> +		dc_crtc_err(crtc, "failed to get DC display engine RPM: %d\n",
+> +			    ret);
+> +		return;
+> +	}
+> +
+> +	if (!dc_fg_wait_for_frame_index_moving(dc_crtc->fg)) {
+> +		dc_crtc_dbg(crtc, "FrameGen frame index isn't moving\n");
+> +		goto out;
+> +	}
+> +
+> +	dc_crtc_dbg(crtc, "disabling at boot\n");
+> +	__dc_crtc_disable_fg(crtc);
+> +	dc_fg_disable_clock(dc_crtc->fg);
+> +
+> +	if (!dc_drm->pe_clk_axi_disabled) {
+> +		clk_disable_unprepare(dc_drm->pe->clk_axi);
+> +		dc_drm->pe_clk_axi_disabled = true;
+> +	}
+
+look like dc_crtc_disable_at_boot() call by dc_drm_bind(), does it call
+twice without call unbind()? Most like other place paired function have
+not correct.
+
+Frank
+
+> +
+> +out:
+> +	ret = pm_runtime_put(dc_crtc->de->dev);
+> +	if (ret < 0)
+> +		dc_crtc_err(crtc, "failed to put DC display engine RPM: %d\n",
+> +			    ret);
+> +}
+> +
+>  static bool dc_crtc_get_scanout_position(struct drm_crtc *crtc,
+>  					 bool in_vblank_irq,
+>  					 int *vpos, int *hpos,
+> diff --git a/drivers/gpu/drm/imx/dc/dc-drv.c b/drivers/gpu/drm/imx/dc/dc-drv.c
+> index 04f021d2d6cfc93972aa8d9073be24d347152602..f93766b6bfbfae8510db05278d104820ca0719c4 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-drv.c
+> +++ b/drivers/gpu/drm/imx/dc/dc-drv.c
+> @@ -17,6 +17,7 @@
+>
+>  #include <drm/clients/drm_client_setup.h>
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_crtc.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_fbdev_dma.h>
+>  #include <drm/drm_fourcc.h>
+> @@ -96,6 +97,7 @@ static int dc_drm_bind(struct device *dev)
+>  	struct dc_priv *priv = dev_get_drvdata(dev);
+>  	struct dc_drm_device *dc_drm;
+>  	struct drm_device *drm;
+> +	struct drm_crtc *crtc;
+>  	int ret;
+>
+>  	dc_drm = devm_drm_dev_alloc(dev, &dc_drm_driver, struct dc_drm_device,
+> @@ -118,6 +120,9 @@ static int dc_drm_bind(struct device *dev)
 >  	if (ret)
-> -		goto err_clk;
-> +		goto err_reset;
->  
->  	device_wakeup_enable(hcd->self.controller);
->  	return 0;
->  
-> +err_reset:
-> +	if (!IS_ERR_OR_NULL(uhci->rsts))
-> +		reset_control_assert(uhci->rsts);
-
-How could this code ever execute if uhci->rsts is an ERR_PTR?
-
-Also, why does this code test for NULL...
-
->  err_clk:
->  	clk_disable_unprepare(uhci->clk);
->  err_rmr:
-> @@ -156,6 +169,7 @@ static void uhci_hcd_platform_remove(struct platform_device *pdev)
->  	struct usb_hcd *hcd = platform_get_drvdata(pdev);
->  	struct uhci_hcd *uhci = hcd_to_uhci(hcd);
->  
-> +	reset_control_assert(uhci->rsts);
-
-when this code doesn't?
-
-Alan Stern
-
->  	clk_disable_unprepare(uhci->clk);
->  	usb_remove_hcd(hcd);
->  	usb_put_hcd(hcd);
-> -- 
+>  		return ret;
+>
+> +	drm_for_each_crtc(crtc, drm)
+> +		dc_crtc_disable_at_boot(crtc);
+> +
+>  	ret = drm_dev_register(drm, 0);
+>  	if (ret) {
+>  		dev_err(dev, "failed to register drm device: %d\n", ret);
+> diff --git a/drivers/gpu/drm/imx/dc/dc-drv.h b/drivers/gpu/drm/imx/dc/dc-drv.h
+> index eb61b8c7626933adc7688f046139e2167665dad1..68e99ba7cedbca1b8bdc0d8ced7a610a1056bfc7 100644
+> --- a/drivers/gpu/drm/imx/dc/dc-drv.h
+> +++ b/drivers/gpu/drm/imx/dc/dc-drv.h
+> @@ -50,6 +50,8 @@ struct dc_drm_device {
+>  	struct dc_pe *pe;
+>  	/** @tc: tcon list */
+>  	struct dc_tc *tc[DC_DISPLAYS];
+> +	/** @pe_clk_axi_disabled: disablement flag at boot */
+> +	bool pe_clk_axi_disabled;
+>  };
+>
+>  struct dc_subdev_info {
+> @@ -96,6 +98,7 @@ static inline int dc_subdev_get_id(const struct dc_subdev_info *info,
+>  	return -EINVAL;
+>  }
+>
+> +void dc_crtc_disable_at_boot(struct drm_crtc *crtc);
+>  void dc_de_post_bind(struct dc_drm_device *dc_drm);
+>  void dc_pe_post_bind(struct dc_drm_device *dc_drm);
+>
+>
+> --
 > 2.34.1
-> 
+>
 
