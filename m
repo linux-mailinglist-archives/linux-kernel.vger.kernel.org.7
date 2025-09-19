@@ -1,124 +1,183 @@
-Return-Path: <linux-kernel+bounces-824319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A04B88A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:49:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05B1B88A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31DD18917D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B595E7BE592
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9E52EDD76;
-	Fri, 19 Sep 2025 09:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038B630147D;
+	Fri, 19 Sep 2025 09:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVN/Olrz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWCnsrOu"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123902D0274;
-	Fri, 19 Sep 2025 09:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66732EF64F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758275368; cv=none; b=tr5h/OFeVrYIuym7LVC5Y3a0jAvXC1gjEYAI7F6ChVG5lg/ZGxAv2ugMkJsSGQN9OcnlOHd9eqj/4Q6+Zh9JPba44BIEUg56brPHsqb1d2niB3qfPAan8/fxkiIllKh7UAg+7yYePgV2TAcC8oZuCT0lz1TXl0ANJ5/WJZHkMkY=
+	t=1758275085; cv=none; b=el5gt5A5Q9sN3lPJNR992urUGE/DUrB0niUGz7chsniW/ZquNrviUUT+LyaMCTKnUCJWrmv6qL2x5LUEz06K+lOUFzUKHQu8n0XmgTKFMynOq5ooRcEo6ERwrFrR+5qgwmeyFS4KnjPBzi7gEmKcHfS8NS+AIW6nHRKGEECmPDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758275368; c=relaxed/simple;
-	bh=D5iZNmBBZ5aKBtfnzqBn7wqTVaUbc/5Lg9CzO28Ivcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qc7fCtaMuIjNi5Ydb9bn44MBFP1y2Fu6GAm/A5ajvQVe3FWiuh7YngpafgCl9iyYndLhUjR603hYMGeiONSULcoQDaylOc6ao0qaU0tHwRuVdgx8PnkbXYPY6ffxuq9alEhyTM7kivQVqzF7sXjNFijAkIM+wTJnm1PwPZvx0Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iVN/Olrz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 144D2C4CEF1;
-	Fri, 19 Sep 2025 09:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758275367;
-	bh=D5iZNmBBZ5aKBtfnzqBn7wqTVaUbc/5Lg9CzO28Ivcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iVN/OlrzsjHiJ0qfIx9nbPCv/HafC7cgJXTM9S3s6naTa0+ZyjYy+SxXBvPPP7Aiq
-	 FsBCLS/7MvJGLwIyfDEL7678Qgjq5v5abOVgJuaebnUULmgDJS6mM5UBc6kgXp5Kg0
-	 E+2fSAfDssXrfVX3mfEtVKS8vH4k+i2EBJoFVEUtxdqN1RAvN1GpZpmGEXumA3avag
-	 UOyWAIRRF+381RCQ+UZMlC7LPKlnmWWkm7T3GOuORdyf8YfcMU+bk2lO4Ov+navSJ1
-	 mfB7wXPbPz+zzrHoWlqlzYmEePWLde39ICLtN1iBYci8YBXBPFZTxnq4Hi8WQyUzbt
-	 ueUVTCE/cA29w==
-Date: Fri, 19 Sep 2025 15:12:19 +0530
-From: Naveen N Rao <naveen@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	s=arc-20240116; t=1758275085; c=relaxed/simple;
+	bh=gnx8OYowmPyG0eptXXAsJ5VUa6MtNRmMjpLwkcj7adg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q382gvn2ben4tp8JzBVC8KHhwpYX6cN6uSjJ1Z3UfYdB8tVJmY2s80llsC8D7RMxVxv2qIBuY/M9cYEhgiYbLwz2tYNiqKET/JmwOAyEa3DZ0uQ0iOubFxcSXMoCVmBSIhMtHtHdDsENrjyNfraPtNpFKn0SpOEUP2m0jv8BvLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWCnsrOu; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2445806df50so16242815ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758275083; x=1758879883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghigviIYQNJPpAFnESMX7MJpiIxsVP2mVPVT90nq2C4=;
+        b=GWCnsrOuWgGUfqiyi10waekdXHZPGdj4K1jJicM9MWKUH12cBEb2MYzULka0yJmMjl
+         bgQcda4y+COuDHF00P2+9wE68P/lEp7P8gJeMH8W2WNsbiARY3hKNHMDfL9qsl1KUXt+
+         BMaYSfnpjyq11RjaXgQEgfMZg2F738AUZLmfiiKdQTwhyD9ajZiYQ74ssabPuIJUh4Cg
+         RlUaQxNdV6MvBBKXuuWulnbePPk9i3XO2J0j9WkhPusxcjv0ezGQt+dowA8OKX2HEVOM
+         BMi07Cx63/nq9SRzRnTI60GDlt7w+VhN9mOx18niklg7EgviZ/chQv9uuzdTdJQIOyyf
+         pWkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758275083; x=1758879883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ghigviIYQNJPpAFnESMX7MJpiIxsVP2mVPVT90nq2C4=;
+        b=K/Ss2FyCk0PUFll/Dlck+rPpxXnrvtQxgMHSgFS72EztPmjcee4sHBuXpOHAky+qTf
+         MiaKWgv54MKI8MkTA1MmuashaMf84LhPGVUgfHQtI7txsD+rXPO3NpxBtboF8Bt3dSSX
+         1ZZKqyYYkBDm8zp1X0UQ0+fdMpzEA6fVrAjHyQQqalX7uG5LNLdma5yZwPdJJnUyAe17
+         PszFk6pYLjnj+vqTqaVGZVVSt+74h8DmLMVIx0C9XyMTEvNjdUSP0uwRkyi5Oyx7UR8q
+         OfLfM0hCBL6SLNhX4sVGMqXYWHR6kD+Zm6hZHAN3i46IO+aQ2QFED5H1y+txIlE9qEwM
+         5h8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWLcIB/wardKJ/BmX9n1pj2/FIRTNvjviXD3o1AyJzU2MrIQvUPWaNNfLlV+o6wxBYsgOmfqDK7ZLTygww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFz8E8D38zA+3cGYfXz0xAowiU71Xeo9EgTjStC9wumIuiu8FX
+	ZQunrUgt/fMMb4pq0OXzENomdIvl+B2wvm1rU9g9Cx/Ga2c/VRwmzavb
+X-Gm-Gg: ASbGncuhz+vuErqxSMlfc8shkXHW9iULjKYOiFAAl9XjX2j9o6ZuPzhkYtZ4fvalnMA
+	Bhu/xvs3SNMLrNBCyrfviNM8dMHLdjWqGENkPfz+SKMsy3Gs/b5ioo6F6+DPq9GmUkTjcfgqbWC
+	o5CM+Z0xH1c9uuMUSBUOVf7utq7X1QOJdzwICDAWSju6Uq4++P8zy5cpk7TrNunDLxFNEvFeULA
+	9LIaDskBTMsV89G7lBjvCq34UuF/69KcYWLoJTIJhcGotMTFzzXAtWnB1HBPlzumRD3K1/1lrLb
+	3tp4nDwYZXtOR7ijXHuPSAZUMRgLe4ke+ibcZCi+GIm3JsK6PoWlZUxBvnj9NoxOfmCXL7xuumg
+	8fNjDA2/BnjqJI11npSl7upoR5vnHIw==
+X-Google-Smtp-Source: AGHT+IEoz1Z5V2ruf2DnZV6qmz/HIkkQybi10jLkFCL/cc2Z2qwAM1tXJQSJS68O1MmTO0ljYoJnaw==
+X-Received: by 2002:a17:902:e84c:b0:267:9a29:7800 with SMTP id d9443c01a7336-269ba58007amr38353735ad.59.1758275082995;
+        Fri, 19 Sep 2025 02:44:42 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([45.32.227.231])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3304a1d22cfsm6221873a91.7.2025.09.19.02.44.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 02:44:42 -0700 (PDT)
+From: David Yang <mmyangfl@gmail.com>
+To: netdev@vger.kernel.org
+Cc: David Yang <mmyangfl@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] KVM: SVM: Update "APICv in x2APIC without x2AVIC"
- in avic.c, not svm.c
-Message-ID: <i4znbv2qka5nswuirlbm6ycjmeqmxtfflz6rbukzsdpfte7p3e@wez3k34xsrqa>
-References: <20250919002136.1349663-1-seanjc@google.com>
- <20250919002136.1349663-3-seanjc@google.com>
+Subject: [PATCH net-next v10 0/5] net: dsa: yt921x: Add support for Motorcomm YT921x
+Date: Fri, 19 Sep 2025 17:42:25 +0800
+Message-ID: <20250919094234.1491638-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919002136.1349663-3-seanjc@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 18, 2025 at 05:21:32PM -0700, Sean Christopherson wrote:
-> Set the "allow_apicv_in_x2apic_without_x2apic_virtualization" flag as part
-> of avic_hardware_setup() instead of handling in svm_hardware_setup(), and
-> make x2avic_enabled local to avic.c (setting the flag was the only use in
-> svm.c).
-> 
-> Opportunistically tag avic_hardware_setup() with __init to make it clear
-> that nothing untoward is happening with svm_x86_ops.
-> 
-> No functional change intended (aside from the side effects of tagging
-> avic_hardware_setup() with __init).
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/svm/avic.c | 6 ++++--
->  arch/x86/kvm/svm/svm.c  | 4 +---
->  arch/x86/kvm/svm/svm.h  | 3 +--
->  3 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-> index 478a18208a76..683411442476 100644
-> --- a/arch/x86/kvm/svm/avic.c
-> +++ b/arch/x86/kvm/svm/avic.c
-> @@ -77,7 +77,7 @@ static DEFINE_HASHTABLE(svm_vm_data_hash, SVM_VM_DATA_HASH_BITS);
->  static u32 next_vm_id = 0;
->  static bool next_vm_id_wrapped = 0;
->  static DEFINE_SPINLOCK(svm_vm_data_hash_lock);
-> -bool x2avic_enabled;
-> +static bool x2avic_enabled;
->  
->  
->  static void avic_set_x2apic_msr_interception(struct vcpu_svm *svm,
-> @@ -1147,7 +1147,7 @@ void avic_vcpu_unblocking(struct kvm_vcpu *vcpu)
->   * - Hypervisor can support both xAVIC and x2AVIC in the same guest.
->   * - The mode can be switched at run-time.
->   */
-> -bool avic_hardware_setup(void)
-> +bool __init avic_hardware_setup(struct kvm_x86_ops *svm_ops)
->  {
->  	if (!npt_enabled)
->  		return false;
-> @@ -1182,6 +1182,8 @@ bool avic_hardware_setup(void)
->  	x2avic_enabled = boot_cpu_has(X86_FEATURE_X2AVIC);
->  	if (x2avic_enabled)
->  		pr_info("x2AVIC enabled\n");
-> +	else
-> +		svm_ops->allow_apicv_in_x2apic_without_x2apic_virtualization = true;
+Motorcomm YT921x is a series of ethernet switches developed by Shanghai
+Motorcomm Electronic Technology, including:
 
-I'm not entirely convinced that this is better since svm_x86_ops fields 
-are now being updated outside of svm.c. But, I do see your point about 
-limiting x2avic_enabled to avic.c
+  - YT9215S / YT9215RB / YT9215SC: 5 GbE phys
+  - YT9213NB / YT9214NB: 2 GbE phys
+  - YT9218N / YT9218MB: 8 GbE phys
 
-Would it be better to name this field as svm_x86_ops here too, so it is 
-at least easy to grep and find?
+and up to 2 serdes interfaces.
 
-Otherwise, for this patch:
-Acked-by: Naveen N Rao (AMD) <naveen@kernel.org>
+This patch adds basic support for a working DSA switch.
 
+v9: https://lore.kernel.org/r/20250913044404.63641-1-mmyangfl@gmail.com
+  - add PHY_INTERFACE_MODE_REVSGMII
+  - remove mdio_verify()
+  - remove uncessary fdb flush opeartions
+  - rework mib reading
+  - set port pvid by port_set_pvid()
+v8: https://lore.kernel.org/r/20250912024620.4032846-1-mmyangfl@gmail.com
+  - rework register polling
+  - rework mib reading
+  - other suggested code style changes
+v7: https://lore.kernel.org/r/20250905181728.3169479-1-mmyangfl@gmail.com
+  - simplify locking scheme
+v6: https://lore.kernel.org/r/20250824005116.2434998-1-mmyangfl@gmail.com
+  - handle unforwarded packets in tag driver
+  - move register and struct definitions to header file
+  - rework register abstraction and implement a driver lock
+  - implement *_stats and use a periodic work to fetch MIB
+  - remove EEPROM dump
+  - remove sysfs attr and other debug leftovers
+  - remove ds->user_mii_bus assignment
+  - run selftests and fix any errors found
+v5: https://lore.kernel.org/r/20250820075420.1601068-1-mmyangfl@gmail.com
+  - use enum for reg in dt binding
+  - fix phylink_mac_ops in the driver
+  - fix coding style
+v4: https://lore.kernel.org/r/20250818162445.1317670-1-mmyangfl@gmail.com
+  - remove switchid from dt binding
+  - remove hsr from tag driver
+  - use ratelimited log in tag driver
+v3: https://lore.kernel.org/r/20250816052323.360788-1-mmyangfl@gmail.com
+  - fix words and warnings in dt binding
+  - remove unnecessary dev_warn_ratelimited and u64_from_u32
+  - remove lag and mst
+  - check for mdio results and fix a unlocked write in conduit_state_change
+v2: https://lore.kernel.org/r/20250814065032.3766988-1-mmyangfl@gmail.com
+  - fix words in dt binding
+  - add support for lag and mst
+v1: https://lore.kernel.org/r/20250808173808.273774-1-mmyangfl@gmail.com
+  - fix coding style
+  - add dt binding
+  - add support for fdb, vlan and bridge
 
-- Naveen
+David Yang (5):
+  dt-bindings: ethernet-phy: add reverse SGMII phy interface type
+  net: phy: introduce PHY_INTERFACE_MODE_REVSGMII
+  dt-bindings: net: dsa: yt921x: Add Motorcomm YT921x switch support
+  net: dsa: tag_yt921x: add support for Motorcomm YT921x tags
+  net: dsa: yt921x: Add support for Motorcomm YT921x
+
+ .../bindings/net/dsa/motorcomm,yt921x.yaml    |  169 +
+ .../bindings/net/ethernet-controller.yaml     |    1 +
+ drivers/net/dsa/Kconfig                       |    7 +
+ drivers/net/dsa/Makefile                      |    1 +
+ drivers/net/dsa/yt921x.c                      | 2897 +++++++++++++++++
+ drivers/net/dsa/yt921x.h                      |  505 +++
+ include/linux/phy.h                           |    4 +
+ include/net/dsa.h                             |    2 +
+ include/uapi/linux/if_ether.h                 |    1 +
+ net/dsa/Kconfig                               |    6 +
+ net/dsa/Makefile                              |    1 +
+ net/dsa/tag_yt921x.c                          |  141 +
+ 12 files changed, 3735 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+ create mode 100644 drivers/net/dsa/yt921x.c
+ create mode 100644 drivers/net/dsa/yt921x.h
+ create mode 100644 net/dsa/tag_yt921x.c
+
+-- 
+2.51.0
 
 
