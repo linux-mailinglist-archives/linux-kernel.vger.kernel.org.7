@@ -1,136 +1,234 @@
-Return-Path: <linux-kernel+bounces-825089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1B9B8AF02
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF0B7B8AEFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18AB8B606E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:34:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B5DA5A6A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4400F26529B;
-	Fri, 19 Sep 2025 18:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D5D258EF5;
+	Fri, 19 Sep 2025 18:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IdrwFbGN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cOTSP/1S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B120211A28;
-	Fri, 19 Sep 2025 18:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15622571AA
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758306949; cv=none; b=AjldrDDLfOFmAjVktW0l34GogjKhP7NhlB94TMGe/Lvy+Drs4Z4l0KvRLw8mUU9kLDqsUbR+RxMC77368vjQqN3LCz1hF+s/naFgXCgfQbwe3SbJ9FwjA1CFuKCFdtcK3qX3PSmlxyNLSdpQnublKAHPdUub1GEfTp6ga05umw4=
+	t=1758306962; cv=none; b=PFXnNEs6KJzxotrQEbaaFbK+OggSE3C9xLFVJk35GOYV7z+xXy+aZA3OlB0wKCn03VZRTyOO2t5pZSxz5kcgyysNXSoYy3t2ER1yikiJOFieZwWVgXFS7iwTGtbGjbUDI2oaPOh4ZOf2TngeYYCmBIJl4I7+kGqmXwFPzx9M4zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758306949; c=relaxed/simple;
-	bh=oo7MnNncuxbbEuJjYzS+KOutOdZkuh1LO0HXaCxkr0c=;
+	s=arc-20240116; t=1758306962; c=relaxed/simple;
+	bh=nsHDFCSLMbfUoLiMn5Yiz27+9m/uyIT+Ag5Qqg71p3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IJqB9USV83xWjHCm8aXPDoRfDLzXAzRdTGKQ4tBDjwkCiVFevMCpB1z70ee/8mkTDwC69jZ1juJ2lAStI2Qhh8sAUmbKL1fKL4UfcOHl9cC8ce+rx3sIzIdLop+Fyr4n7VdxsY4nSqoNmqiil5xbDUBm4FJ1udAhOi+oTHASO4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IdrwFbGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8416C4CEF7;
-	Fri, 19 Sep 2025 18:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758306949;
-	bh=oo7MnNncuxbbEuJjYzS+KOutOdZkuh1LO0HXaCxkr0c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IdrwFbGNBg+mcvrizzNAt938gwJnXeswj9demaxuYxuALGgDanebsnojheH/LeTzJ
-	 9zpYxwBE4U4OObrIalWu5Azd0xgXyIe7ef5TUkP9SXKVp+Dm6iabs9fPwjGAL54A6l
-	 zvPlmsCPiHxpeVc75UBZzAaSRhSe480HrH60JEfrG5qPZc0uCIvKKTx+47NF/0++0D
-	 akeE47J1lxg4PC9L9ZJTxuUfImYiQl4JK4sh5BC2NQR8p08XW1frHb+DOOxi0arqtQ
-	 GP6UCIKLk4gfk5efeBDwblvyTTWLJ/CqFpZCoKhJo4rMMkmI4xO5H5tafJQwa55POk
-	 t79asfELyLhKg==
-Date: Sat, 20 Sep 2025 00:05:38 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
-	qiang.yu@oss.qualcomm.com, mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com, 
-	shradha.t@samsung.com, quic_schintav@quicinc.com, inochiama@gmail.com, 
-	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com, 
-	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v2 06/10] PCI: keystone: Add ks_pcie_free_intx_irq()
- helper for cleanup
-Message-ID: <7sbyvk6vyrbyox5ghvhokrv67r2el4s4f6k42aygmfo3rltj27@6v5pjxbhdl5w>
-References: <20250912122356.3326888-1-s-vadapalli@ti.com>
- <20250912122356.3326888-7-s-vadapalli@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6CljcERq1ME3EuETJ5sVaJDq/0/E4kUul447Vj2EokMYq13XDKhQkK5J1hdOJQJz86EO7HPGEaFK8Yz4yDDf5yBdfRJF6D8S255YK2OBAguEVUWouAivIUEgxldym7WRZXDKqbVIsO3PeZLyHL7Hnh63+5XA3YvzgXjhPHs63Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cOTSP/1S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JE2rqw018300
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:36:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hTmf9magk+DlWQu9tHn8bu4Z
+	O0Ceo1+biZ46108Y4Yo=; b=cOTSP/1Si9D8QIE7AZqfda7fhE13dZtI1sZzIZFT
+	zYGx41Ank5l8RvlgRoLsqWYTCbYrU3ZgYxixZS+G+qpL8MwRT/9hZEFEc30xNEo7
+	Q2X4/XnGTfzqY+ajRCBlrf1/wN8EcUazYFJJBN9/FU+lUTsUX2VL81OqA3wAKcfb
+	r4MYeljpxHsumH6XSPoZB0X6Zp86hU9T4+P8RHMwHG+nE67I7USju7p/BdWE89Oy
+	JGuxTBlck+IhYwjo8ew7QJICsSmFG46x0BtVzpeqkEqwz/y87QUxDGcWU/r+1bVy
+	hDizSpU/ePmsmeX4dHbh4MQEOQDcwqycD2hbIuWpsMexHw==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxwkevb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:35:59 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-726a649957dso42864636d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:35:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758306958; x=1758911758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hTmf9magk+DlWQu9tHn8bu4ZO0Ceo1+biZ46108Y4Yo=;
+        b=XHWZj3a7OPANmACExzVfBc3ccDXHga5uNhUfPHsMnHL5FJhKoDnfnHQKefPFVcM1Ek
+         XvK0Am0HQoKb3vlvkNM9cPUqi+2X6zi8Z0ZU/B/TKilFD8wTdwyXIxCQMc6eW9DwsgdQ
+         hFauwO8I+7vdIj0XMa7zVKZx+BD6a/E027hXmd+uH+NrfjO/V7cyFH/MapzAg/eE2eWK
+         yJs28SjK2QcTixm6Tlu7TlcaWaMupPz2idLhQUnNqcilMPoI0wYG9x5J6kmVhf8K9Qe1
+         7hXBqRGjm5cavQhjYNwfEaxAz2aCOmncKnEawdDPN3GO4c9EUg9bvjMFHt1EnvYhv8ib
+         a7ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXrtLzYhP1AQKPni4b0WLAFl7FzCVMfF8p1gQU3SaGYe33LnDZb+HCbGanOBWnIkE8CPcAJMlfoLfHFQhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvdIurd+ZFIP4Hinr4X9n9DLHBvT/CWStg9IkgbscNG3trD6cR
+	E2R684Dwi5WZOikM1bbVzLnd5A58lFmJagz+zpYzZMKpLlVDxCMvUwYWdDQETZDSK/wM6WmlssW
+	rbbdJO60nDVtLBZEpprtdA08dz6nXlP/JsAIJLtTF1FRTqgsQxP0bPkb2lzw8H4zO/gA=
+X-Gm-Gg: ASbGncvzYBXoZ+T5Fj7DTq/ABDlYtHzSrrShOJduMDaLpylLnWFcXOtupy3gs4C5T9i
+	E5c0Sk5yhb1I6MA0VrZGPvbQt+8xwcvPWc/VtjTbIS8XSi6U7c/k/r4NU4oUnOvZcXiIkYqz1On
+	rLazClM1ZNLHQJ8D8yYMxlHCRVyBdJCSrYAQzhiOWPELZ+JJh3QqHi0rNmNkWwBCkLY9kOhPnD7
+	sHNSZuEWUDps2A7UTco09hYH3sDv+HZ5b/VmeQk6oY4zZ0u990IsViJvRyWnMugKSIIhO51JvkS
+	TDhKEKwFqlC30zwX+vxmWY5KrzyqIFqZyguDhevOfleTYqLtNSgbuDjOTgTZ3zndzEjp6hLOtnf
+	NPxHriDV3BPtoJJ8zj5DnLNMgd3mYlOJGJMyw4azACzkQCOp/wDAY
+X-Received: by 2002:a05:6214:e6a:b0:794:518e:b176 with SMTP id 6a1803df08f44-799129826ddmr46888836d6.21.1758306958351;
+        Fri, 19 Sep 2025 11:35:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFOqy99Klf3VfxARITMXbbN0KY4DghVg+miJJ/vqzrCYCaw3nxehJtISCH41+5KegCo/Yw3Jw==
+X-Received: by 2002:a05:6214:e6a:b0:794:518e:b176 with SMTP id 6a1803df08f44-799129826ddmr46888316d6.21.1758306957787;
+        Fri, 19 Sep 2025 11:35:57 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57b3528c49dsm84989e87.134.2025.09.19.11.35.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 11:35:56 -0700 (PDT)
+Date: Fri, 19 Sep 2025 21:35:55 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v5 14/14] drm/msm/dp: Add support for lane mapping
+ configuration
+Message-ID: <j7ooyi5vih6ofnjigdgj6uk3ycutugunpm5pu5zf55pu5ua6r2@agg73zakjicn>
+References: <20250919-add-displayport-support-for-qcs615-platform-v5-0-eae6681f4002@oss.qualcomm.com>
+ <20250919-add-displayport-support-for-qcs615-platform-v5-14-eae6681f4002@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250912122356.3326888-7-s-vadapalli@ti.com>
+In-Reply-To: <20250919-add-displayport-support-for-qcs615-platform-v5-14-eae6681f4002@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=HbIUTjE8 c=1 sm=1 tr=0 ts=68cda28f cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=QVMBky1v5tPz4CN-K1AA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX6dU6//tb+8GT
+ osayYk7itMIOO/WPGkcnaJEEWI6x9tS59c2fwZfoGx6SYrksJe8TLbI3ysYCDdtW6mPLtjm7gOH
+ zXwVp46gXVuFrtV7omHMUoO1bdlE7jEK/Zv5Fsq6e/jPinfs98XNAZQZhH2MxUORAnl0Wrmsx8x
+ PTFlflfGqDT1s0m1/BYEESYHw1tSgVBltlT+Lp40HWytHe8tOZRPuE4X0bUHFJvWIbr/AFpvPut
+ 0mfdGlGN0OETJ9M/rl65nAOM4wtF2X8KHXU4vIa0KnUs2CynK8kbRgtnlyb4pXdHD1YTLuBECvX
+ WaGkwgo5trj1Z3j6XJPoK9yyRXjI3l9XJ/4EeMtlAS/CYd8OqDvv/Eh2DEsONa0QgZ5MxiDN3o4
+ m0VKtv2R
+X-Proofpoint-GUID: 5ZWyW9CHzuqCw0p7AcTye-OHML0h4Gaj
+X-Proofpoint-ORIG-GUID: 5ZWyW9CHzuqCw0p7AcTye-OHML0h4Gaj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ adultscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-On Fri, Sep 12, 2025 at 05:46:17PM +0530, Siddharth Vadapalli wrote:
-> Introduce the helper function ks_pcie_free_intx_irq() which will undo the
-> configuration performed by the ks_pcie_config_intx_irq() function. This
-> will be required for implementing a future helper function to undo the
-> configuration performed by the ks_pcie_host_init() function.
+On Fri, Sep 19, 2025 at 10:24:31PM +0800, Xiangxu Yin wrote:
+> QCS615 platform requires non-default logical-to-physical lane mapping due
+> to its unique hardware routing. Unlike the standard mapping sequence
+> <0 1 2 3>, QCS615 uses <3 2 0 1>, which necessitates explicit
+> configuration via the data-lanes property in the device tree. This ensures
+> correct signal routing between the DP controller and PHY.
 > 
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-
-Please squash all patches introducing new helpers.
-
-- Mani
-
+> For partial definitions, fill remaining lanes with unused physical lanes
+> in ascending order.
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
 > ---
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c | 10 +++----
+>  drivers/gpu/drm/msm/dp/dp_link.c | 60 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_link.h |  1 +
+>  3 files changed, 66 insertions(+), 5 deletions(-)
 > 
-> v1: https://lore.kernel.org/r/20250903124505.365913-7-s-vadapalli@ti.com/
-> No changes since v1.
-> 
->  drivers/pci/controller/dwc/pci-keystone.c | 29 +++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> index 81c3686688c0..074566fb1d74 100644
-> --- a/drivers/pci/controller/dwc/pci-keystone.c
-> +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> @@ -745,6 +745,35 @@ static int ks_pcie_config_msi_irq(struct keystone_pcie *ks_pcie)
->  	return ret;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_link.c b/drivers/gpu/drm/msm/dp/dp_link.c
+> index 2aeb3ecf76fab2ee6a9512b785ca5dceebfc3964..34a91e194a124ef5372f13352f7b3513aa88da2a 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_link.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_link.c
+> @@ -1236,6 +1236,61 @@ static u32 msm_dp_link_link_frequencies(struct device_node *of_node)
+>  	return frequency;
 >  }
 >  
-> +static void ks_pcie_free_intx_irq(struct keystone_pcie *ks_pcie)
+> +/*
+> + * Always populate msm_dp_link->lane_map with 4 lanes.
+> + * - Use DTS "data-lanes" if present; otherwise fall back to default mapping.
+> + * - For partial definitions, fill remaining entries with unused lanes in
+> + *   ascending order.
+> + */
+> +static int msm_dp_link_lane_map(struct device *dev, struct msm_dp_link *msm_dp_link)
 > +{
-> +	struct device_node *np = ks_pcie->np;
-> +	struct device_node *intc_np;
-> +	int irq_count, i;
-> +	u32 val;
+> +	struct device_node *of_node = dev->of_node;
+> +	struct device_node *endpoint;
+> +	int cnt = msm_dp_link->max_dp_lanes;
+> +	u32 tmp[DP_MAX_NUM_DP_LANES];
+> +	u32 map[DP_MAX_NUM_DP_LANES] = {0, 1, 2, 3}; /* default 1:1 mapping */
+> +	bool used[DP_MAX_NUM_DP_LANES] = {false};
+> +	int i, j = 0, ret = -EINVAL;
 > +
-> +	/* Nothing to do if INTx Interrupt Controller does not exist */
-> +	intc_np = of_get_child_by_name(np, "legacy-interrupt-controller");
-> +	if (!intc_np)
-> +		return;
-> +
-> +	/* irq_count should be non-zero. Else, ks_pcie_host_init would have failed. */
-> +	irq_count = of_irq_count(intc_np);
-> +
-> +	/* Disable all legacy interrupts */
-> +	for (i = 0; i < PCI_NUM_INTX; i++) {
-> +		val = ks_pcie_app_readl(ks_pcie, IRQ_ENABLE_SET(i));
-> +		val &= ~INTx_EN;
-> +		ks_pcie_app_writel(ks_pcie, IRQ_ENABLE_SET(i), val);
+> +	endpoint = of_graph_get_endpoint_by_regs(of_node, 1, -1);
+> +	if (endpoint) {
+> +		ret = of_property_read_u32_array(endpoint, "data-lanes", tmp, cnt);
+> +		if (ret)
+> +			dev_dbg(dev, "endpoint data-lanes read failed (ret=%d)\n", ret);
 > +	}
 > +
-> +	irq_domain_remove(ks_pcie->intx_irq_domain);
-> +	for (i = 0; i < irq_count; i++)
-> +		irq_set_chained_handler(ks_pcie->intx_host_irqs[i], NULL);
+> +	if (ret) {
+> +		ret = of_property_read_u32_array(of_node, "data-lanes", tmp, cnt);
+> +		if (ret) {
+> +			dev_info(dev, "data-lanes not defined, set to default\n");
+> +			goto out;
+> +		}
+> +	}
 > +
-> +	of_node_put(intc_np);
+> +	for (i = 0; i < cnt; i++) {
+> +		if (tmp[i] >= DP_MAX_NUM_DP_LANES) {
+> +			dev_err(dev, "data-lanes[%d]=%u out of range\n", i, tmp[i]);
+> +			return -EINVAL;
+> +		}
+> +		used[tmp[i]] = true;
+> +		map[i] = tmp[i];
+> +	}
+> +
+> +	/* Fill the remaining entries with unused physical lanes (ascending) */
+> +	for (i = cnt; i < DP_MAX_NUM_DP_LANES && j < DP_MAX_NUM_DP_LANES; j++) {
+
+Nit: i = cnt, j = 0; Don't init loop variables at the top of the
+function.
+
+Other than that:
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+> +		if (!used[j])
+> +			map[i++] = j;
+> +	}
+> +
+> +out:
+> +	if (endpoint)
+> +		of_node_put(endpoint);
+> +
+> +	dev_dbg(dev, "data-lanes count %d <%d %d %d %d>\n", cnt, map[0], map[1], map[2], map[3]);
+> +	memcpy(msm_dp_link->lane_map, map, sizeof(map));
+> +	return 0;
 > +}
 > +
->  static int ks_pcie_config_intx_irq(struct keystone_pcie *ks_pcie)
+>  static int msm_dp_link_parse_dt(struct device *dev, struct msm_dp_link *msm_dp_link)
 >  {
->  	struct device *dev = ks_pcie->pci->dev;
-> -- 
-> 2.43.0
-> 
+>  	struct device_node *of_node = dev->of_node;
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With best wishes
+Dmitry
 
