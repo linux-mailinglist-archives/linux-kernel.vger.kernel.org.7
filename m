@@ -1,333 +1,196 @@
-Return-Path: <linux-kernel+bounces-824901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7965AB8A6C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6A1B8A71D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5434E1090
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC643B50E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D533320A3B;
-	Fri, 19 Sep 2025 15:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9414B31D738;
+	Fri, 19 Sep 2025 15:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8H4AVhb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X8GYnsw5"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6853E321263
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DAB270553
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296969; cv=none; b=NiaEuaPZL5+MbC/zRhhr93GETALzicJVfhQF7ZDvbFh6AR6Npy8xluNEl7g+b0lUvy/aXghvaOAjUb/qkH/NxhQ7LzPx7sOmMXyQ6+VosOl0Le45iXXbE+UpWPa3HgQ9QPtGxDQ/BfjJ0ngAB63hthn83tBPrVDO/uV66MmfX+c=
+	t=1758297339; cv=none; b=u1vWql2afX05QMjE/f32Z/0LRpFdwV2JFw4YQndWAGPiRtja78T2Sb5brjOiYSaZ/lVCZTEJ+RxmbabhoPHWAS3u+LWnA908ufj8ae+RjEd+fafTF8GjAeA8hnbVYlaVFPPXoFt92rn7jkPYEVA5sdscZLvdbtAf6urZzhq+q+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296969; c=relaxed/simple;
-	bh=OjeUS1xUO9VKQqDyPDEKkqWfbtIP9n1TJO8kyFgx4Fo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ajzdPk+BC778WaTBql0l5SJGiFh8nBPPpVBrqulqffTuVuef5LbI8lEsVX18Af15hK7jlVb88GCmre/AtZFs0d34sQoaHI01YZi+jFCG7tAiPDMnCTU9gnTKnlXSs8uaecqtum7Mw0475OQD3JZwFqkBzUbJRyg0ZZ2EvUsY/LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8H4AVhb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111F9C4CEF0
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758296969;
-	bh=OjeUS1xUO9VKQqDyPDEKkqWfbtIP9n1TJO8kyFgx4Fo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=m8H4AVhbdj79oX4PtqPt6/LsXicElgzLJlU65dEcUvYdqgh+kzzQdma3aLQrWrTsl
-	 tKtGSAGfLgGwl8uk4AqA087EVjchomJT1Qq54Y91zGvCYBiHUZ2jhw2ffxq8Z3s1WH
-	 xoUA7DRcfjCnRS06JIAVUa5F3lOLqW2aVLeBRmyp6T57m6xJAtFyEtLEmsREOCjEjM
-	 a3Mx0P5ZhG/O2OHNH7nPTCh+lfmiXsbtzx09nWtUfpiiK/5nnhANq+TZ9rBRDIoawn
-	 Y1S1jO6YEb+dti4b7wvNVWCkBDP+4VWw3zY8Q9MByerRP3K70RMS9Vu8NtIWe4Bmyv
-	 t2oTwXvHu6IcA==
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-62189987b54so1216318eaf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:49:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVC96sy3364cawdW4FN+Dr5D1rzDgElMLetiBu5U36TtFrtAZNj8g5IiNwYMF1MP1s2VxudoGTO5jN0r0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLdReEvmKw6yAxE4FennpxXUaWNnB/sROxPYuWAP1jmfxMDjBk
-	AnuPsUauVr8PDaYSXVmqiZiKCfNDPL6xkpBBaFFTQFKHyJiQJPDS81dDEJwy5pDxrkGGa1F9CZ8
-	5uzyeM6Pxw85pCDvq54IYGYeYOAsH/Fg=
-X-Google-Smtp-Source: AGHT+IG0LxZ/DsMKuutYisOP3A4z7jBmYhlzCwVDoi7MSN6EsWz+45UfZ9ff30swMbXGa2XMvHFdAq1gt8b2ZSXJnxQ=
-X-Received: by 2002:a05:6808:11cd:b0:43d:2454:b69f with SMTP id
- 5614622812f47-43d6c115e33mr1815898b6e.10.1758296968354; Fri, 19 Sep 2025
- 08:49:28 -0700 (PDT)
+	s=arc-20240116; t=1758297339; c=relaxed/simple;
+	bh=q+ltlpOidKXc+Gs5FbxaUoBvp/0NlBvUil7jiGSbDrA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=vCfSLtWzZaM5kQ/e2zBmOgMzQ4dUnBrRXE9SNnS3y2Nb1vcLJmmpk5/gbP3YQQhs/fAcJd6zeZ1yTSUCOgWNT1kudL8EwBK0jxxzzbPRBInfWjIEZl0wsku9EnRFm7xPdt7eQRdWehUGbXhbF6fss4Tmq4GwdHiykNAMj2sWN+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X8GYnsw5; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45b986a7b8aso12218015e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758297336; x=1758902136; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FOKSGqynaN2anerij2SkIETe5RaqqxOUKLRkUOiDZeU=;
+        b=X8GYnsw5uJlDKS7gXwNHlXmCVLIWTlyCAiXzLGNZmislSeNLJ3rErQcn7cREeAfBpB
+         1AbX2XY94BunKVodmHqtpLmt2XnYXSeuZoO8zOXoHbkii3vU/UJVkN3gSx3We0A5QE/8
+         tiUC8Zpf0cgek/pDvC8ug6EpLc6x3Hfq3Feh+rAHclQHO+X5pXnth5kXuQY84EyRcibQ
+         pF6jhJ5HTleodtuDTCS/xepn4RLCIzwwM4os7v+LRxWNY8t/WO8ciE6UyAd5H83s2YiM
+         av/W5Q1MhGOtuCAnRRwt8XB+wZ0GCHxr2/IzjoZGSoOlxrj5PxyGTS2hvYt6MtptdFsj
+         dJLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758297336; x=1758902136;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FOKSGqynaN2anerij2SkIETe5RaqqxOUKLRkUOiDZeU=;
+        b=TTH0lyshEcn2RlSZDcTjWDdlmj75+thECtQNS2OM3bMtanuKUNTm0N3q/a6Zv3ENk6
+         eUbSzpAiSZ/FRzOv/IgL0QkycwaFXeDCujJnhhUUOJKRiIZkMAL47hhpYkwHiWQa+DmP
+         nYgw19czQSkphumFOdvs+wKR85tboWYpoxK25oHr3T56fm8c9AjpdBPdDIMnlM76QyoH
+         m96ltbP+GGAT6osMpdAWdzsg24R4Fv+DTvIr7YpzOdNimhkYKW9243/H0VQ+Ob/9y0L6
+         GSwrQ6rCKPQ/hjmv8DEfFdFYCohuPgdUreLcvM/WIz0bbYJVxpLCUFVYVw5nhRVolceX
+         LN0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWRoBxz/nBkySe1+Ws8t8SKAOfWqPpSB8pCNgvEVflp+pHudLK8NtxF181MOij0PysnGPF08SKU/141iRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqnV710rbcP5ObWsYRBm8Rzr0jcAbmeTl8Gy8WJvCzireoGITn
+	xDqfgmBGx37d5HqIQz+X817NZaQz5wKwpObxFF5eMCdNctaJDL2DbCiukXEqhCEQcCpiGE2Lub/
+	UjQpUP84VfeMJDELttTDEmg==
+X-Google-Smtp-Source: AGHT+IEUFCbcLzkaHmj5mVgMPnutmJZ9S4AToUJFiYuLUhCLRphe53uMI81/4ePc9pYVhpGPJ8joXqow1Xo/ILf8
+X-Received: from wmbei25.prod.google.com ([2002:a05:600c:3f19:b0:45b:6337:ab6b])
+ (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4748:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-467f2242a87mr36001815e9.23.1758297336691;
+ Fri, 19 Sep 2025 08:55:36 -0700 (PDT)
+Date: Fri, 19 Sep 2025 16:50:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <878qimv24u.wl-tiwai@suse.de> <CAJZ5v0hJvsuOTj5j-0Jn-c9TPnbm70wPvdBkop2hRrdweoncDg@mail.gmail.com>
- <87jz1uao65.wl-tiwai@suse.de> <12751070.O9o76ZdvQC@rafael.j.wysocki>
- <87ldma8sq1.wl-tiwai@suse.de> <87jz1u8sn9.wl-tiwai@suse.de>
-In-Reply-To: <87jz1u8sn9.wl-tiwai@suse.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 19 Sep 2025 17:49:16 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ggvL420OmU2G=0kEGeiJct3hiBPTHCn5wFwwLkQpugCw@mail.gmail.com>
-X-Gm-Features: AS18NWDicNoivABKnZkYyPyfwGfiStk5PMDvvuyS4L5rsYDOpnP5PW5u-umpprA
-Message-ID: <CAJZ5v0ggvL420OmU2G=0kEGeiJct3hiBPTHCn5wFwwLkQpugCw@mail.gmail.com>
-Subject: Re: PM runtime auto-cleanup macros
-To: Takashi Iwai <tiwai@suse.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250919155056.2648137-1-vdonnefort@google.com>
+Subject: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
+From: Vincent Donnefort <vdonnefort@google.com>
+To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, 
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, 
+	will@kernel.org
+Cc: qperret@google.com, sebastianene@google.com, keirf@google.com, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Vincent Donnefort <vdonnefort@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 3:43=E2=80=AFPM Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Fri, 19 Sep 2025 15:41:42 +0200,
-> Takashi Iwai wrote:
-> >
-> > On Fri, 19 Sep 2025 15:05:04 +0200,
-> > Rafael J. Wysocki wrote:
-> > >
-> > > On Friday, September 19, 2025 9:37:06 AM CEST Takashi Iwai wrote:
-> > > > On Thu, 18 Sep 2025 22:41:32 +0200,
-> > > > Rafael J. Wysocki wrote:
-> > > > >
-> > > > > On Thu, Sep 18, 2025 at 10:19=E2=80=AFPM Rafael J. Wysocki <rafae=
-l@kernel.org> wrote:
-> > > > > >
-> > > > > > On Thu, Sep 18, 2025 at 1:28=E2=80=AFPM Rafael J. Wysocki <rafa=
-el@kernel.org> wrote:
-> > > > > > >
-> > > > > > > On Thu, Sep 18, 2025 at 9:10=E2=80=AFAM Takashi Iwai <tiwai@s=
-use.de> wrote:
-> > > > > > > >
-> > > > > > > > On Wed, 17 Sep 2025 20:58:36 +0200,
-> > > > > > > > Rafael J. Wysocki wrote:
-> > > > > > > > >
-> > > > > > > > > Hi,
-> > > > > > > > >
-> > > > > > > > > Sorry for the delay.
-> > > > > > > > >
-> > > > > > > > > On Thu, Sep 11, 2025 at 9:31=E2=80=AFAM Takashi Iwai <tiw=
-ai@suse.de> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Wed, 10 Sep 2025 16:00:17 +0200,
-> > > > > > > > > > Takashi Iwai wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > Hi,
-> > > > > > > > > > >
-> > > > > > > > > > > while I worked on the code cleanups in the drivers wi=
-th the recent
-> > > > > > > > > > > auto-cleanup macros, I noticed that pm_runtime_get*()=
- and _put*() can
-> > > > > > > > > > > be also managed with the auto-cleanup gracefully, too=
-.  Actually we
-> > > > > > > > > > > already defined the __free(pm_runtime_put) in commit =
-bfa4477751e9, and
-> > > > > > > > > > > there is a (single) user of it in pci-sysfs.c.
-> > > > > > > > > > >
-> > > > > > > > > > > Now I wanted to extend it to pm_runtime_put_autosuspe=
-nd() as:
-> > > > > > > > > > >
-> > > > > > > > > > > DEFINE_FREE(pm_runtime_put_autosuspend, struct device=
- *,
-> > > > > > > > > > >            if (_T) pm_runtime_put_autosuspend(_T))
-> > > > > > > > > > >
-> > > > > > > > > > > Then one can use it like
-> > > > > > > > > > >
-> > > > > > > > > > >       ret =3D pm_runtime_resume_and_get(dev);
-> > > > > > > > > > >       if (ret < 0)
-> > > > > > > > > > >               return ret;
-> > > > > > > > > > >       struct device *pmdev __free(pm_runtime_put_auto=
-suspend) =3D dev;
-> > > > > > > > > > >
-> > > > > > > > > > > that is similar as done in pci-sysfs.c.  So far, so g=
-ood.
-> > > > > > > > > > >
-> > > > > > > > > > > But, I find putting the line like above at each place=
- a bit ugly.
-> > > > > > > > > > > So I'm wondering whether it'd be better to introduce =
-some helper
-> > > > > > > > > > > macros, e.g.
-> > > > > > > > > > >
-> > > > > > > > > > > #define pm_runtime_auto_clean(dev, var) \
-> > > > > > > > > > >       struct device *var __free(pm_runtime_put) =3D (=
-dev)
-> > > > > > > > > >
-> > > > > > > > > > It can be even simpler by assigning a temporary variabl=
-e such as:
-> > > > > > > > > >
-> > > > > > > > > > #define pm_runtime_auto_clean(dev) \
-> > > > > > > > > >         struct device *__pm_runtime_var ## __LINE__ __f=
-ree(pm_runtime_put) =3D (dev)
-> > > > > > > > >
-> > > > > > > > > Well, if there's something like
-> > > > > > > > >
-> > > > > > > > > struct device *pm_runtime_resume_and_get_dev(struct devic=
-e *dev)
-> > > > > > > > > {
-> > > > > > > > >         int ret =3D pm_runtime_resume_and_get(dev);
-> > > > > > > > >         if (ret < 0)
-> > > > > > > > >                 return ERR_PTR(ret);
-> > > > > > > > >
-> > > > > > > > >         return dev;
-> > > > > > > > > }
-> > > > > > > > >
-> > > > > > > > > It would be a matter of redefining the FREE to also take =
-error
-> > > > > > > > > pointers into account and you could do
-> > > > > > > > >
-> > > > > > > > > struct device *__dev __free(pm_runtim_put) =3D pm_runtime=
-_resume_and_get_dev(dev);
-> > > > > > > > > if (IS_ERR(__dev))
-> > > > > > > > >         return PTR_ERR(__dev);
-> > > > > > > >
-> > > > > > > > That'll work, too.  Though, I find the notion of __free() a=
-nd a
-> > > > > > > > temporary variable __dev a bit too cumbersome; it's used on=
-ly for
-> > > > > > > > auto-clean stuff, so it could be somewhat anonymous.
-> > > > > > >
-> > > > > > > No, it is not used only for auto-clean, it is also used for r=
-eturn
-> > > > > > > value checking and it represents a reference on the original =
-dev.  It
-> > > > > > > cannot be entirely anonymous because of the error checking pa=
-rt.
-> > > > > > >
-> > > > > > > The point is that this is one statement instead of two and so=
- it is
-> > > > > > > arguably harder to mess up with.
-> > > > > > >
-> > > > > > > > But it's all about a matter of taste, and I'd follow what y=
-ou and
-> > > > > > > > other guys suggest.
-> > > > > > > >
-> > > > > > > > FWIW, there are lots of code doing like
-> > > > > > > >
-> > > > > > > >         pm_runtime_get_sync(dev);
-> > > > > > > >         mutex_lock(&foo);
-> > > > > > > >         ....
-> > > > > > > >         mutex_unlock(&foo);
-> > > > > > > >         pm_runtime_put(dev);
-> > > > > > > >         return;
-> > > > > > > >
-> > > > > > > > or
-> > > > > > > >
-> > > > > > > >         ret =3D pm_runtime_resume_and_get(dev);
-> > > > > > > >         if (ret)
-> > > > > > > >                 return ret;
-> > > > > > > >         mutex_lock(&foo);
-> > > > > > > >         ....
-> > > > > > > >         mutex_unlock(&foo);
-> > > > > > > >         pm_runtime_put_autosuspend(dev);
-> > > > > > > >         return 0;
-> > > > > > > >
-> > > > > > > > and they can be converted nicely with guard() once when PM =
-runtime can
-> > > > > > > > be automatically unreferenced.  With my proposed change, it=
- would
-> > > > > > > > become like:
-> > > > > > > >
-> > > > > > > >         pm_runtime_get_sync(dev);
-> > > > > > > >         pm_runtime_auto_clean(dev);
-> > > > > > >
-> > > > > > > For the case in which the pm_runtime_get_sync() return value =
-is
-> > > > > > > discarded, you could define a guard and do
-> > > > > > >
-> > > > > > > guard(pm_runtime_get_sync)(dev);
-> > > > > > >
-> > > > > > > here.
-> > > > > > >
-> > > > > > > The case checking the return value is less straightforward.
-> > > > > > >
-> > > > > > > >         guard(mutex)(&foo);
-> > > > > > > >         ....
-> > > > > > > >         return;
-> > > > > > > >
-> > > > > > > > or
-> > > > > > > >
-> > > > > > > >         ret =3D pm_runtime_resume_and_get(dev);
-> > > > > > > >         if (ret)
-> > > > > > > >                 return ret;
-> > > > > > > >         pm_runtime_auto_clean_autosuspend(dev);
-> > > > > > > >         guard(mutex)(&foo);
-> > > > > > > >         ....
-> > > > > > > >         return 0;
-> > > > > > > >
-> > > > > >
-> > > > > > I guess what I'm saying means basically something like this:
-> > > > > >
-> > > > > > DEFINE_CLASS(pm_runtime_resume_and_get, struct device *,
-> > > > > >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put(_T),
-> > > > > > pm_runtime_resume_and_get_dev(dev), struct device *dev)
-> > > > > >
-> > > > > > DEFINE_CLASS(pm_runtime_resume_and_get_auto, struct device *,
-> > > > > >          if (!IS_ERR_OR_NULL(_T)) pm_tuntime_put_autosuspend(_T=
-),
-> > > > > > pm_runtime_resume_and_get_dev(dev), struct device *dev)
-> > > > > >
-> > > > > > and analogously for pm_runtime_get_sync().
-> > > > >
-> > > > > And it kind of makes sense either.  Do
-> > > > >
-> > > > > CLASS(pm_runtime_resume_and_get, active_dev)(dev);
-> > > > > if (IS_ERR(active_dev))
-> > > > >         return PTR_ERR(active_dev);
-> > > > >
-> > > > > and now use active_dev for representing the device until it gets =
-out
-> > > > > of the scope.
-> > > >
-> > > > Yes, that's what I thought of as an alternative, too, but I didn't
-> > > > consider using only pm_runtime_resume_and_get().  Actually by this
-> > > > action, we can also "clean up" the API usage at the same time to us=
-e a
-> > > > single recommended API function, which is a good thing.
-> > > >
-> > > > That said, I like this way :)
-> > > >
-> > > > It'd be nice if this change can go into 6.18, then I can put the
-> > > > driver cleanup works for 6.19.  It's a bit late stage for 6.18, but
-> > > > this change is definitely safe and can't break, per se.
-> > >
-> > > OK, do you mean something like the patch below?
-> >
-> > Yes!
-> >
-> > An easy follower is the patch like below.
->
-> Err, I forgot to refresh before generating a patch.
-> The proper one is below.
->
->
-> Takashi
->
-> -- 8< --
-> Subject: [PATCH] PCI: Use PM runtime class macro for the auto cleanup
->
-> The newly introduced class macro can simplify the code.
-> Also, add the proper error handling for the PM runtime get, too.
->
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> ---
->  drivers/pci/pci-sysfs.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 5eea14c1f7f5..87c2311494bf 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -1475,8 +1475,9 @@ static ssize_t reset_method_store(struct device *de=
-v,
->                 return count;
->         }
->
-> -       pm_runtime_get_sync(dev);
-> -       struct device *pmdev __free(pm_runtime_put) =3D dev;
-> +       CLASS(pm_runtime_resume_and_get, pmdev)(dev);
-> +       if (IS_ERR(pmdev))
-> +               return PTR_ERR(pmdev);
+There's currently no verification for host issued ranges in most of the
+pKVM memory transitions. The subsequent end boundary might therefore be
+subject to overflow and could evade the later checks.
 
-This error will propagate to user space AFAICS and some of the values
-may be confusing in that respect, so it may be better to return -ENXIO
-here.
+Close this loophole with an additional check_range_args() check on a per
+public function basis.
 
->
->         if (sysfs_streq(buf, "default")) {
->                 pci_init_reset_methods(pdev);
-> --
+host_unshare_guest transition is already protected via
+__check_host_shared_guest(), while assert_host_shared_guest() callers
+are already ignoring host checks.
+
+Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+
+---
+
+ v1 -> v2:
+   - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
+   - Rename to check_range_args().
+
+diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+index 8957734d6183..65fcd2148f59 100644
+--- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
++++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+@@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
+ 	return check_page_state_range(&vm->pgt, addr, size, &d);
+ }
+ 
++static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
++{
++	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
++		return false;
++
++	return start < (start + *size);
++}
++
+ int __pkvm_host_share_hyp(u64 pfn)
+ {
+ 	u64 phys = hyp_pfn_to_phys(pfn);
+@@ -772,10 +780,13 @@ int __pkvm_host_unshare_hyp(u64 pfn)
+ int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
+ {
+ 	u64 phys = hyp_pfn_to_phys(pfn);
+-	u64 size = PAGE_SIZE * nr_pages;
+ 	void *virt = __hyp_va(phys);
++	u64 size;
+ 	int ret;
+ 
++	if (!check_range_args(phys, nr_pages, &size))
++		return -EINVAL;
++
+ 	host_lock_component();
+ 	hyp_lock_component();
+ 
+@@ -800,10 +811,13 @@ int __pkvm_host_donate_hyp(u64 pfn, u64 nr_pages)
+ int __pkvm_hyp_donate_host(u64 pfn, u64 nr_pages)
+ {
+ 	u64 phys = hyp_pfn_to_phys(pfn);
+-	u64 size = PAGE_SIZE * nr_pages;
+ 	u64 virt = (u64)__hyp_va(phys);
++	u64 size;
+ 	int ret;
+ 
++	if (!check_range_args(phys, nr_pages, &size))
++		return -EINVAL;
++
+ 	host_lock_component();
+ 	hyp_lock_component();
+ 
+@@ -884,9 +898,12 @@ void hyp_unpin_shared_mem(void *from, void *to)
+ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages)
+ {
+ 	u64 phys = hyp_pfn_to_phys(pfn);
+-	u64 size = PAGE_SIZE * nr_pages;
++	u64 size;
+ 	int ret;
+ 
++	if (!check_range_args(phys, nr_pages, &size))
++		return -EINVAL;
++
+ 	host_lock_component();
+ 	ret = __host_check_page_state_range(phys, size, PKVM_PAGE_OWNED);
+ 	if (!ret)
+@@ -899,9 +916,12 @@ int __pkvm_host_share_ffa(u64 pfn, u64 nr_pages)
+ int __pkvm_host_unshare_ffa(u64 pfn, u64 nr_pages)
+ {
+ 	u64 phys = hyp_pfn_to_phys(pfn);
+-	u64 size = PAGE_SIZE * nr_pages;
++	u64 size;
+ 	int ret;
+ 
++	if (!check_range_args(phys, nr_pages, &size))
++		return -EINVAL;
++
+ 	host_lock_component();
+ 	ret = __host_check_page_state_range(phys, size, PKVM_PAGE_SHARED_OWNED);
+ 	if (!ret)
+@@ -945,6 +965,9 @@ int __pkvm_host_share_guest(u64 pfn, u64 gfn, u64 nr_pages, struct pkvm_hyp_vcpu
+ 	if (prot & ~KVM_PGTABLE_PROT_RWX)
+ 		return -EINVAL;
+ 
++	if (!check_range_args(phys, nr_pages, &size))
++		return -EINVAL;
++
+ 	ret = __guest_check_transition_size(phys, ipa, nr_pages, &size);
+ 	if (ret)
+ 		return ret;
+
+base-commit: 8b789f2b7602a818e7c7488c74414fae21392b63
+-- 
+2.51.0.470.ga7dc726c21-goog
+
 
