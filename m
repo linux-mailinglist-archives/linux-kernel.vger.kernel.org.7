@@ -1,165 +1,188 @@
-Return-Path: <linux-kernel+bounces-823854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB93FB8794F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:18:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5240B87953
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DAB47BB8BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A11D53B7F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B447230274;
-	Fri, 19 Sep 2025 01:18:11 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D64224AF0;
+	Fri, 19 Sep 2025 01:20:26 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7E9635;
-	Fri, 19 Sep 2025 01:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B44189;
+	Fri, 19 Sep 2025 01:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758244691; cv=none; b=sEc6qpHza6Su8J/shrRwI7iJfWy3go7lK+G7H4u2bNuTv5LUVjm+jMYpeUaWCt0U/WSRkHlml/ZB/Yk4IymnlxLCX0NoXfYmyZqtqsZYFB8CHNvySvt6Nhp3vzi9y3dGGt7QGRhyNldWvS+i9YkZq5YSnLlJIQan9Xx3nyeX8GQ=
+	t=1758244826; cv=none; b=Bg6l+siNiavvSG4qCQ8em3muze8sQPuG0qmRHxZmR9SY8O/KiUi1D5Q2NPa0n22ob26tBxSLksMJJeyikn2glnVYvCfF5iX0vZNhkt3lPtiBfZeJOqIxUmjZHLKPsmKWJdbg2N7EQD2nxZa8nt6yO3nYK+OkNb2o/1ODLl9f4OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758244691; c=relaxed/simple;
-	bh=KfIMDG1uhk7mdManaKAb7Xl0e41w4jmdmNJOvYjMtmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vhff6p4+0A1JgOm7jVvlRjvtjHUrmDid/5u1PBNQX4KU0wdd9t626LuWEeZEkr1p7cOuvEWC+iBN5P2anxlxEJZqE7YHG/yUVdYxaf9oM2uSV7Ex+ZDLhu5vWQeS4D14OXM+bMNIE8jKkIG97Gqc66xCD5z214ZV2XKhcrg4bmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz14t1758244656t34bd8618
-X-QQ-Originating-IP: 98o6iFAarl7VbsuD0/5ogEYv6yQqe2Fnbu8FQliCn4s=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 19 Sep 2025 09:17:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11517621768531048136
-Date: Fri, 19 Sep 2025 09:17:33 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com, kees@kernel.org,
-	gustavoars@kernel.org, rdunlap@infradead.org, joerg@jo-so.de,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v12 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <3E609187B0C91716+20250919011733.GA174153@nic-Precision-5820-Tower>
-References: <20250916112952.26032-1-dong100@mucse.com>
- <20250916112952.26032-5-dong100@mucse.com>
- <3058c061-3a17-4077-8d4e-c91ad72b3831@linux.dev>
- <D7EC5E8B6F6E685E+20250917110540.GA91482@nic-Precision-5820-Tower>
- <fb8f876a-c2e5-49b0-bc64-bdf18ecd1ce4@linux.dev>
+	s=arc-20240116; t=1758244826; c=relaxed/simple;
+	bh=xXyIzunXd5NjpgjdxNdhn7TYRafAn4h2vFE5ACY9XfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kZOKAEy/BWqrNyFVfMH7VlZhP9kyzqjiRxFHyVTYM7j32wJeCtViGinGrLQGfFgBuRhhtpKcmXsdwqMDXGiswa2o2zdoNj9NHyT3fZM1gBi1B5kaqdTXvS5Uk56F8HNIZlKkVHjvE41m6RLVn25aiS/ewVhNWfYlREsBNkuk5tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cSZSL10rRzKHMf6;
+	Fri, 19 Sep 2025 09:20:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F1A711A0BD3;
+	Fri, 19 Sep 2025 09:20:18 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgAn6mHQr8xovq4_AA--.17348S3;
+	Fri, 19 Sep 2025 09:20:18 +0800 (CST)
+Message-ID: <c0bf86fe-7cd5-8ea5-b177-b8662bdb34ab@huaweicloud.com>
+Date: Fri, 19 Sep 2025 09:20:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb8f876a-c2e5-49b0-bc64-bdf18ecd1ce4@linux.dev>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OF6/1i2Al/nJzNgnnrzdpHialpMuzFFg1E0Mt0PxzLZcwzoBP3UhvWtC
-	aDGBwL72GcWN1OtQkNmsua+D6kYeO1g4ZXxaR5ZFniJVSGjOCR7/HQnfqZeDQH4VcLzBGx8
-	eWMv6HkK2hox7eBurez0ZkBlhtIWNSmORd1gblgjkGGMMsEhrqtgTTL/Wt751ZkgvN+mGf4
-	StKhZ9fNs//IwuzCnk3H8Nf3AmZGOrxD0zplZ6Nlc5WCUASXSEHPxm+ohKyoqiwr+PN0rnG
-	J0KdTdWdJ2E7yQ42KK05uW0OsbamrnJapigbJ6lcSpNHY3FbqxdsakmDgq58kC/WeN0Lrwj
-	zTshZpbZRe8/E04zBkJVW5j8kYDiSaNERUVDXJfHxMi//Pn/ivBdUZKlJD9kOOV548E/9Td
-	1V+xlCiq+uZsfIM4iejRPbDmuQ1x9ABCkGPefz9uGXN4KNJqZ9rfKXgiBDNzU0zSf6jiRTk
-	sRIL7x9rr6TKa+lzPHnb47LQ+SaN1E8zjdhsQo7BJDsLmPWkfhMw+f3WEIEoRop6kbW+9Hp
-	thzZFKy0BM7UIiR9irk6vnwKlUrnwwjqBIosVPEtG0HXpMqKMV/0Vwl7D9FfGsbwa2zkYkO
-	IZkjEWmvyMhujj1cshNFub7wgXnQl0vLwkrXuQYYHX2qm3+3dG7gcRu6szUbzJzmxJ9cuOC
-	ajp/8nG3PIblhYIpSvxHN9y2lsnxdnbkLPNRuNdY0rxrxM++Fyl8r9lCxQdWmUdcqvd91NY
-	KW/Aay6ML60I5nzRylq7y6qH0wML9MlR/FuYcObG2EIaMS9IOnjJJe9T4KzGnObDhlB9TsU
-	kdlJ1bIttAnNQdDAJNY2KWnTaZ/kMtWxNlNZ51sBznN77km/R+B2Au6MrBQh8JsNXd6ZdVI
-	yXdj8QbwwbAazLkkdIBZEm2O9wmO28l8TDNGL80Odnt0U2eCbbNrVrkXWvGcKM3v80A+FUF
-	tR0E2Rhgc7y8nmtzT07vteSgST3WYGwM7iCszN54Mq70Y9/+v61/nwVvt
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v4 7/9] md/raid10: fix failfast read error not rescheduled
+To: Kenta Akagi <k@mgml.me>, linan666@huaweicloud.com, song@kernel.org,
+ yukuai3@huawei.com, mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <010601995d99b3dc-e860902f-c7c4-4d04-8adb-c49a551a616a-000000@ap-northeast-1.amazonses.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <010601995d99b3dc-e860902f-c7c4-4d04-8adb-c49a551a616a-000000@ap-northeast-1.amazonses.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAn6mHQr8xovq4_AA--.17348S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWrWUZr15Ar4kur4DCr4fuFg_yoW5CFWkp3
+	s3JFyakryUJ348Aw12gry7ZFyrtr4Ut3WUXr18GFy8XasIvFnIgFWUXry0gryDXrW8Zw17
+	Zr1UJrsrZF1UtFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Wed, Sep 17, 2025 at 03:02:13PM +0100, Vadim Fedorenko wrote:
-> On 17/09/2025 12:05, Yibo Dong wrote:
-> > On Wed, Sep 17, 2025 at 11:45:31AM +0100, Vadim Fedorenko wrote:
-> > > On 16/09/2025 12:29, Dong Yibo wrote:
-> > > > Add fundamental firmware (FW) communication operations via PF-FW
-> > > > mailbox, including:
-> > > > - FW sync (via HW info query with retries)
-> > > > - HW reset (post FW command to reset hardware)
-> > > > - MAC address retrieval (request FW for port-specific MAC)
-> > > > - Power management (powerup/powerdown notification to FW)
-> > > > 
-> > > > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > > 
-> > > Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-> > > 
-> > > small nits below
-> > > 
-> > > 
-> > > > +static void build_get_hw_info_req(struct mbx_fw_cmd_req *req)
-> > > > +{
-> > > > +	req->flags = 0;
-> > > > +	req->opcode = cpu_to_le16(GET_HW_INFO);
-> > > > +	req->datalen = cpu_to_le16(MUCSE_MBX_REQ_HDR_LEN);
-> > > > +	req->reply_lo = 0;
-> > > > +	req->reply_hi = 0;
-> > > > +}
-> > > 
-> > > All these build*() functions re-init flags and reply to 0, but all
-> > > mbx_fw_cmd_req are zero-inited on the stack. Might be better clean
-> > > things assignments, but no strong opinion because the code is explicit
-> > > 
-> > > If you will think of refactoring this part, it might be a good idea to
-> > > avoid build*() functions at all and do proper initialization of
-> > > mbx_fw_cmd_req in callers?
-> > > 
-> > > > +
-> > > > +/**
-> > > > + * mucse_mbx_get_info - Get hw info from fw
-> > > > + * @hw: pointer to the HW structure
-> > > > + *
-> > > > + * mucse_mbx_get_info tries to get hw info from hw.
-> > > > + *
-> > > > + * Return: 0 on success, negative errno on failure
-> > > > + **/
-> > > > +static int mucse_mbx_get_info(struct mucse_hw *hw)
-> > > > +{
-> > > > +	struct mbx_fw_cmd_reply reply = {};
-> > > > +	struct mbx_fw_cmd_req req = {};
-> > > 
-> > > something like:
-> > > 
-> > > struct mbx_fw_cmd_req req =
-> > > 	{
-> > > 	  .opcode = cpu_to_le16(GET_HW_INFO),
-> > > 	  .datalen = cpu_to_le16(MUCSE_MBX_REQ_HDR_LEN),
-> > > 	}
-> > > 
-> > > 
-> > > 
-> > 
-> > That's a good idea! That makes the code more compact.
-> > I think I should update this as your suggestion.
-> > 
-> > Regarding adding your "Reviewed-by" tag in the next version:
-> > Would it be acceptable to include it when I submit the updated patch (with
-> > the initialization logic adjusted), or should I wait for your further
-> > review of the modified code first?
+
+
+在 2025/9/19 0:12, Kenta Akagi 写道:
 > 
-> If you will submit another version with this refactoring, I'll better do
-> another review.
 > 
+> On 2025/09/18 16:38, Li Nan wrote:
+>>
+>>
+>> 在 2025/9/15 11:42, Kenta Akagi 写道:
+>>> raid10_end_read_request lacks a path to retry when a FailFast IO fails.
+>>> As a result, when Failfast Read IOs fail on all rdevs, the upper layer
+>>> receives EIO, without read rescheduled.
+>>>
+>>> Looking at the two commits below, it seems only raid10_end_read_request
+>>> lacks the failfast read retry handling, while raid1_end_read_request has
+>>> it. In RAID1, the retry works as expected.
+>>> * commit 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
+>>> * commit 2e52d449bcec ("md/raid1: add failfast handling for reads.")
+>>>
+>>> I don't know why raid10_end_read_request lacks this, but it is probably
+>>> just a simple oversight.
+>>
+>> Agreed, these two lines can be removed.
+> 
+> I will revise the commit message.
+> 
+>>
+>> Other than that, LGTM.
+>>
+>> Reviewed-by: Li Nan <linan122@huawei.com>
+> 
+> Thank you. However, there is a WARNING due to the comment format that needs to be fixed.
+> I also received a failure email from the RAID CI system.
+> 
+> ------------------------------------------------------------------------
+> patch-v4/v4-0007-md-raid10-fix-failfast-read-error-not-rescheduled.patch
+> ------------------------------------------------------------------------
+> WARNING: Block comments use a trailing */ on a separate line
+> #39: FILE: drivers/md/raid10.c:405:
+> +                * want to retry */
+> 
+> total: 0 errors, 1 warnings, 11 lines checked
+> 
+> 
+> I will apply the corrections below and resubmit as v5.
+> Is it okay to add a Reviewed-by tag in this case?
+> Sorry to bother you.
 
-I see, I will submit another version later, with this refactoring.
-Looking forward to your next review.
+Yes, please feel free to add it.
 
-Thanks for your feedback.
+> 
+> +       } else if (test_bit(FailFast, &rdev->flags) &&
+> +                test_bit(R10BIO_FailFast, &r10_bio->state)) {
+> +               /* This was a fail-fast read so we definitely
+
+
+/*
+  * This was ...
+  */
+
+This way is better.
+
+> +                * want to retry
+> +                */
+> +               ;
+> 
+> Thanks,
+> Akagi
+> 
+>>
+>>>
+>>> This commit will make the failfast read bio for the last rdev in raid10
+>>> retry if it fails.
+>>>
+>>> Fixes: 8d3ca83dcf9c ("md/raid10: add failfast handling for reads.")
+>>> Signed-off-by: Kenta Akagi <k@mgml.me>
+>>> ---
+>>>    drivers/md/raid10.c | 5 +++++
+>>>    1 file changed, 5 insertions(+)
+>>>
+>>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>>> index 92cf3047dce6..86c0eacd37cb 100644
+>>> --- a/drivers/md/raid10.c
+>>> +++ b/drivers/md/raid10.c
+>>> @@ -399,6 +399,11 @@ static void raid10_end_read_request(struct bio *bio)
+>>>             * wait for the 'master' bio.
+>>>             */
+>>>            set_bit(R10BIO_Uptodate, &r10_bio->state);
+>>> +    } else if (test_bit(FailFast, &rdev->flags) &&
+>>> +         test_bit(R10BIO_FailFast, &r10_bio->state)) {
+>>> +        /* This was a fail-fast read so we definitely
+>>> +         * want to retry */
+>>> +        ;
+>>>        } else if (!raid1_should_handle_error(bio)) {
+>>>            uptodate = 1;
+>>>        } else {
+>>
+>> -- 
+>> Thanks,
+>> Nan
+>>
+>>
+> 
+> 
+> .
+
+-- 
+Thanks,
+Nan
 
 
