@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67E6EB8B833
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB34B8B83E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F15188CFB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:41:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF643BAB97
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAEC2FF143;
-	Fri, 19 Sep 2025 22:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BA02FE05A;
+	Fri, 19 Sep 2025 22:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4nqAvOya"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jUqeZECN"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516362D837B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4282FE075
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321238; cv=none; b=H32OKR2yb4ton42iM+D2c7+WX8G33PJ4ZewaxY0GWLyldHCwhUGE2dQkjXfpc2jXz5D3nK6XFn5EOzXyj5nXE2Q8awno+Hcjo3i1v7wYCuatAC+qI8OWO7DMF9QLZkNjfxTZR79Jub+6iiR0jnpP1UDKCSn6p0kI8n9ib4Ec4/s=
+	t=1758321240; cv=none; b=jmdxqAYiFyC8jb2DQXiKAHL/73UvqTGASIg4oaHES9qgCzKgoXikLEl+R7or143OUupC0BppZeJRUZNJiO1nQMzfYOGtK6h4t6xZQvHJXyTtVnGyFth20txg1m481MBdi5sGCFuoNcf1wCjwVIUVMuftHKKL1aNQ4WGsR1toi54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321238; c=relaxed/simple;
-	bh=81bLgs7WWEP4RHsG/996GiM8z8fF+N7LKbDI/yvDNY8=;
+	s=arc-20240116; t=1758321240; c=relaxed/simple;
+	bh=WR4i1/hdD/UAQYUG4b+D0r37b5OVC230JQ21pAZcWyk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=i85/shFmjxtnXuMHo0AB+sfcffKDjP4WxBll1K2fyy3puuGOPiu3R9gJdLtNgb395nyEGiY3rU2pEUCYePLhnWg/nUJIPA1i5kH2rnDbdRGFTiStk6Q93AzrNThmFAFGZUbcDsg1vE5WvxFlDiWrOJJlMaXvSYzG/hDN8cNlYDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4nqAvOya; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=VmTP64DbPQh2Xa3lSxaa/LKnonRBVbJEkbRisy76C0XzkHeirIi8By2ec9CDCC0hTodAEKrK/M3is0zlRKKCgVzmxuZcrrNinLE1+/oFctDojJ/17gE4LVPymNDlp+tKXN3Zs3+M+kPFs9QQWOxbpg3P6sJgdNHokAmYmvInXNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jUqeZECN; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b521995d498so2045413a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:33:57 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77ecac44d33so891395b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321237; x=1758926037; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321238; x=1758926038; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=FWNNcPWz59Ty6udq/sKrbnnVGPaggW2BoAcUNvSRGEE=;
-        b=4nqAvOya8oWkMwRW9lTWPdMGuzfUyXO6PohB5NwmPrY54YNaPnpNTGEhtu8OtWZQN/
-         5HZEl6IrviQj1k6c/Hhu2RK5ItQk4T99C9+4RzmLhGi5ppkB7kRGS0P0tWOFByr6JI1I
-         mw1zn4LhpI2IaatYLhqsoO9tdPnL0kkLYEZ9h73SAP/VC4eH+SGfzfdE462xc4R4nCmY
-         ikasrDzcfA58qK1DwBBK/JrCxLulx8LOkp5LgLXxDOf3P9ovouNZanVj/bZQMNZo4IiW
-         FVG6V+Zfi6BrxQOJ9mqKnDApGel1rTAABr8oyBo6/0PZYoryBqbsDbBEvubYcoczl0bR
-         NaHw==
+        bh=mCZj1AprmeC+Fo0fgebUJJjVh7kTElMFVQRkgXXYJBc=;
+        b=jUqeZECN7+FGCKK57puJdziSWrcYnyaQEIdI3PT6LnHzROaGDQOwdimwoxHrvk8vdp
+         mLtOFWF2pDtYk1bq365bEwLMo9EBFsHQo9ZEKXAbFm6bbO0Lw6v0dA/Fe+V6yNgC/amq
+         2bUPcOR+NkOxZs/xs8zAJGlNEr7G76zd/Kaa9LQL7HFHURKdqg8TqWZntxjplcQouU0/
+         qnyCrlxdrxw5PZVUOxhDTfwGkmRJpo1h99Chh7VpxUxMa1xiplORRL+zKCr7h+RfLP9J
+         Lll2MDjnFJLUggOGIuazEcIAZfDxMfXE6W3Z1nEVIe08+MKwLJDZytmM5favt/u984JH
+         YYDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321237; x=1758926037;
+        d=1e100.net; s=20230601; t=1758321238; x=1758926038;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FWNNcPWz59Ty6udq/sKrbnnVGPaggW2BoAcUNvSRGEE=;
-        b=VMeSMbj536eibdBwx1G8wnB6sXD1YLocyHS2Ga4N7QrTezXWf5F4D5f3igNIPZp7Ej
-         opI5AVv2mP7fapEdvTmMjm9Eb6IQS7urRcpR2KHto3cayix+FV6DSbOLrEOPWIK2AoNv
-         ewVryBV5wLycb89uzzOB3DR6otLJPr7GR8lvLsQO+UPVwH2H/d0sc4da4ccp8S0fJTXd
-         pqoclJ6tEn1mmSP0JZ1d32fbQo6PTtYUArMmt2iB5gDwK/mO5DPkMG2gRG/+sdi58iCX
-         WjHAv9YEVi67apdPmIKbuH08ocRnxy+u8CSeWvplizM54mEWrFlNv+lLLnfNDtymt2Fe
-         tJDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWymjdTZzKWoI8lWnxwDqs2VFyJkmep1y9mQ2XkVnwptf6poaBxVabgnkrC3okWZtsFmb8dVsxAVeMaiCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJsLSJYIKjEBMaliMOHjG/hXIC8lv6SVZVpJKdLiz9ZOivILRe
-	tFBJM/8AWCQsUM2OYknU9lzkkK46wpKoSKuPL2CywyWFRa9w2562ItNVFSHkHIAERLKxDSBovpE
-	/ElJHGg==
-X-Google-Smtp-Source: AGHT+IHcBUk+tK3zNAtEgLO3ydAANiXuYpE2t7HChEGpqmf2Wh2ALYrEVAwmFv0js2gMpqhaC2ppaWjmLHk=
-X-Received: from pjbpd9.prod.google.com ([2002:a17:90b:1dc9:b0:31f:b2f:aeed])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:9991:b0:220:10e5:825d
- with SMTP id adf61e73a8af0-29257e10c37mr7147586637.8.1758321236618; Fri, 19
- Sep 2025 15:33:56 -0700 (PDT)
+        bh=mCZj1AprmeC+Fo0fgebUJJjVh7kTElMFVQRkgXXYJBc=;
+        b=JwVP9AmLi7mxHkIpNQk8KRIPj3SMgocoul1yH+gTUhM16zLhG+BPYnHgqeSRa2mzo/
+         pJIJ/6whJBLJLRjiwGJ7ljwl8oa/CNiPYxeyIVeJj0wAASZ2s121r3VX1X/RQAs6m444
+         TGhV8o2VplNA2aUQ96HXFDCjTem0EYpvWwDyk9aZ0USEibm9lnokmvnZYUmkA0QSpjpJ
+         XCAxmmGq0teOvuzPsSHFawrS9xUGj8Kd5/BbB8NLAdLwSxArR2ZMKHx0EIAZGW0F2OXM
+         CtVqdqNAf9pTor/A13YKLh9kyerSBZ5qbzmiboVf/JW8/0D+obrDCzFtfO2gGZokKU+o
+         Ev6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVg8BsaIJG1t7Ytv+BrqavimaJ91c7JdUk8pBW5hfO7Wi7vEozsUn6BtONyty/tpi5B4CMm3BsAk5KEafk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTd2G4dGRmkLhpxr0qNqiBDTSXCvNpHdlAVWu0zoLQxAQz63pl
+	dHoPG0gmSy+mAWDk+q14yiYH4kJ2ufzkOAoa6//z92xrlDRLCgKEuVOArzWleKsPHQ507N4Alak
+	/E090AQ==
+X-Google-Smtp-Source: AGHT+IE08Knot0aER/MkKkj+clVf2474u3XY/LuEAkLxWcUdGc2j5TSeDcijAGM3iVwTU0f6XUf1HFNdKhE=
+X-Received: from pjuw14.prod.google.com ([2002:a17:90a:d60e:b0:32e:ddac:6ea5])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:939f:b0:262:9461:2e59
+ with SMTP id adf61e73a8af0-2926dcb867emr7398660637.39.1758321238233; Fri, 19
+ Sep 2025 15:33:58 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:36 -0700
+Date: Fri, 19 Sep 2025 15:32:37 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-30-seanjc@google.com>
-Subject: [PATCH v16 29/51] KVM: VMX: Configure nested capabilities after CPU capabilities
+Message-ID: <20250919223258.1604852-31-seanjc@google.com>
+Subject: [PATCH v16 30/51] KVM: nVMX: Virtualize NO_HW_ERROR_CODE_CC for L1
+ event injection to L2
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -87,56 +88,106 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Swap the order between configuring nested VMX capabilities and base CPU
-capabilities, so that nested VMX support can be conditioned on core KVM
-support, e.g. to allow conditioning support for LOAD_CET_STATE on the
-presence of IBT or SHSTK.  Because the sanity checks on nested VMX config
-performed by vmx_check_processor_compat() run _after_ vmx_hardware_setup(),
-any use of kvm_cpu_cap_has() when configuring nested VMX support will lead
-to failures in vmx_check_processor_compat().
+From: Yang Weijiang <weijiang.yang@intel.com>
 
-While swapping the order of two (or more) configuration flows can lead to
-a game of whack-a-mole, in this case nested support inarguably should be
-done after base support.  KVM should never condition base support on nested
-support, because nested support is fully optional, while obviously it's
-desirable to condition nested support on base support.  And there's zero
-evidence the current ordering was intentional, e.g. commit 66a6950f9995
-("KVM: x86: Introduce kvm_cpu_caps to replace runtime CPUID masking")
-likely placed the call to kvm_set_cpu_caps() after nested setup because it
-looked pretty.
+Per SDM description(Vol.3D, Appendix A.1):
+"If bit 56 is read as 1, software can use VM entry to deliver a hardware
+exception with or without an error code, regardless of vector"
 
+Modify has_error_code check before inject events to nested guest. Only
+enforce the check when guest is in real mode, the exception is not hard
+exception and the platform doesn't enumerate bit56 in VMX_BASIC, in all
+other case ignore the check to make the logic consistent with SDM.
+
+Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Tested-by: Mathias Krause <minipli@grsecurity.net>
+Tested-by: John Allen <john.allen@amd.com>
+Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Signed-off-by: Chao Gao <chao.gao@intel.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/vmx/vmx.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx/nested.c | 27 ++++++++++++++++++---------
+ arch/x86/kvm/vmx/nested.h |  5 +++++
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 69e35440cee7..29e1bc118479 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -8602,6 +8602,13 @@ __init int vmx_hardware_setup(void)
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 846c07380eac..b644f4599f70 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -1272,9 +1272,10 @@ static int vmx_restore_vmx_basic(struct vcpu_vmx *vmx, u64 data)
+ {
+ 	const u64 feature_bits = VMX_BASIC_DUAL_MONITOR_TREATMENT |
+ 				 VMX_BASIC_INOUT |
+-				 VMX_BASIC_TRUE_CTLS;
++				 VMX_BASIC_TRUE_CTLS |
++				 VMX_BASIC_NO_HW_ERROR_CODE_CC;
  
- 	setup_default_sgx_lepubkeyhash();
+-	const u64 reserved_bits = GENMASK_ULL(63, 56) |
++	const u64 reserved_bits = GENMASK_ULL(63, 57) |
+ 				  GENMASK_ULL(47, 45) |
+ 				  BIT_ULL(31);
  
-+	vmx_set_cpu_caps();
+@@ -2949,7 +2950,6 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
+ 		u8 vector = intr_info & INTR_INFO_VECTOR_MASK;
+ 		u32 intr_type = intr_info & INTR_INFO_INTR_TYPE_MASK;
+ 		bool has_error_code = intr_info & INTR_INFO_DELIVER_CODE_MASK;
+-		bool should_have_error_code;
+ 		bool urg = nested_cpu_has2(vmcs12,
+ 					   SECONDARY_EXEC_UNRESTRICTED_GUEST);
+ 		bool prot_mode = !urg || vmcs12->guest_cr0 & X86_CR0_PE;
+@@ -2966,12 +2966,19 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
+ 		    CC(intr_type == INTR_TYPE_OTHER_EVENT && vector != 0))
+ 			return -EINVAL;
+ 
+-		/* VM-entry interruption-info field: deliver error code */
+-		should_have_error_code =
+-			intr_type == INTR_TYPE_HARD_EXCEPTION && prot_mode &&
+-			x86_exception_has_error_code(vector);
+-		if (CC(has_error_code != should_have_error_code))
+-			return -EINVAL;
++		/*
++		 * Cannot deliver error code in real mode or if the interrupt
++		 * type is not hardware exception. For other cases, do the
++		 * consistency check only if the vCPU doesn't enumerate
++		 * VMX_BASIC_NO_HW_ERROR_CODE_CC.
++		 */
++		if (!prot_mode || intr_type != INTR_TYPE_HARD_EXCEPTION) {
++			if (CC(has_error_code))
++				return -EINVAL;
++		} else if (!nested_cpu_has_no_hw_errcode_cc(vcpu)) {
++			if (CC(has_error_code != x86_exception_has_error_code(vector)))
++				return -EINVAL;
++		}
+ 
+ 		/* VM-entry exception error code */
+ 		if (CC(has_error_code &&
+@@ -7217,6 +7224,8 @@ static void nested_vmx_setup_basic(struct nested_vmx_msrs *msrs)
+ 	msrs->basic |= VMX_BASIC_TRUE_CTLS;
+ 	if (cpu_has_vmx_basic_inout())
+ 		msrs->basic |= VMX_BASIC_INOUT;
++	if (cpu_has_vmx_basic_no_hw_errcode_cc())
++		msrs->basic |= VMX_BASIC_NO_HW_ERROR_CODE_CC;
+ }
+ 
+ static void nested_vmx_setup_cr_fixed(struct nested_vmx_msrs *msrs)
+diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
+index 6eedcfc91070..983484d42ebf 100644
+--- a/arch/x86/kvm/vmx/nested.h
++++ b/arch/x86/kvm/vmx/nested.h
+@@ -309,6 +309,11 @@ static inline bool nested_cr4_valid(struct kvm_vcpu *vcpu, unsigned long val)
+ 	       __kvm_is_valid_cr4(vcpu, val);
+ }
+ 
++static inline bool nested_cpu_has_no_hw_errcode_cc(struct kvm_vcpu *vcpu)
++{
++	return to_vmx(vcpu)->nested.msrs.basic & VMX_BASIC_NO_HW_ERROR_CODE_CC;
++}
 +
-+	/*
-+	 * Configure nested capabilities after core CPU capabilities so that
-+	 * nested support can be conditional on base support, e.g. so that KVM
-+	 * can hide/show features based on kvm_cpu_cap_has().
-+	 */
- 	if (nested) {
- 		nested_vmx_setup_ctls_msrs(&vmcs_config, vmx_capability.ept);
- 
-@@ -8610,8 +8617,6 @@ __init int vmx_hardware_setup(void)
- 			return r;
- 	}
- 
--	vmx_set_cpu_caps();
--
- 	r = alloc_kvm_area();
- 	if (r && nested)
- 		nested_vmx_hardware_unsetup();
+ /* No difference in the restrictions on guest and host CR4 in VMX operation. */
+ #define nested_guest_cr4_valid	nested_cr4_valid
+ #define nested_host_cr4_valid	nested_cr4_valid
 -- 
 2.51.0.470.ga7dc726c21-goog
 
