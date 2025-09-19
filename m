@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-824015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E979B87EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:43:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387F1B87EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30F27E04F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C34835680B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 05:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAB725D216;
-	Fri, 19 Sep 2025 05:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41A125E816;
+	Fri, 19 Sep 2025 05:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EDCbuFfg"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ef/pAWxo"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C092517AF
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CF625DCE0
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758260566; cv=none; b=ceHGy9rXkqiPMxd61zPujcLbILoEnmJscnictSZffhUzCpwW19+Q6aJCCkv61+YAt/mEw0k7xZf1pv2ngYpaUfmer3jRXJpvBPMetqfIsmftbBpoWrrwbAKNhj2uU1KH2XR5s4J8ThUvKmerVYBHZvvsy06z70XASZAuIXcwrPI=
+	t=1758260571; cv=none; b=fFA33wTDRzSxWAurkRiX7E84anLd8kIS9M+Dm2okIyS4BvNGqS5oZVdUqPDj651g6MopPfGZoWwL2glL7n2JA6RAhpGbBJZyD72vvILqSmQsT7bqydmUcPRTBmkxPOPmrwDeEKWhv9zxuPYT6K0fHD6G7hovVhjWiUyatMnbBb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758260566; c=relaxed/simple;
-	bh=Dg5FMFxijPdUqcW/Tef7765KtNVvQQKVcrGVoDEOYaA=;
+	s=arc-20240116; t=1758260571; c=relaxed/simple;
+	bh=on6Ag9NJz0vk1kj+5aoSFuQQtRI0JdB9JVEfIv+bEQw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AkNxiBcGoRD+TU5XaeElPayxYii/wSV05VVCsURP1dAnt8SICKV+KYYAlxzH+WcO4IxLn15LpZoIjNDNL6Yfy2mr9a4/iI1fl1gTM0dGsJv9XvAq1Mj7zQ8Ozei3EkIhDJUhu6YYwWsyXAjvyeNJBaLIJuxd28LVWwqKLXB4KlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EDCbuFfg; arc=none smtp.client-ip=192.198.163.13
+	 MIME-Version; b=l+rHwHyHlNfZa7+sYZKAKCaya0mk0lgiX52/ll4bjoCVJSFTJWxJMxEQ5HZL72fYljlOPQQacrWUsPmwfmhpf8aIgm4P76DrO7IU3/3+mru3TOfPrHiLH03ah+jZO0fSXlCGylMRl6EuV8xUU0REsVN6e2XLqVH5c9NmTdgX0nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ef/pAWxo; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758260565; x=1789796565;
+  t=1758260571; x=1789796571;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Dg5FMFxijPdUqcW/Tef7765KtNVvQQKVcrGVoDEOYaA=;
-  b=EDCbuFfgNGumufU3ql2fYJprgEfZYQPQyfeHuI5b6NMmARcwdmnOjRyv
-   UJmkj4iYIMeluA3QmIva3uHzt9/Vtb+4oRLF/W0TcgqGjmTb32ElzkCpD
-   Ap5v20eQsCmwIuuTXzAkabVhNkuVo88/p2XiVu0m3Lg0K+9/3JyBBjLrq
-   caE7yFaUGagK3cKFFxD4eWyUSQAVSN5Dlf3XnSI4YnZaqLJ0ozB8hOIFN
-   O9XDNhcVwE7+mmwMuW6Quqa9k/+dLYGgRpwK/GF663gZfYNkHBA1Cxxn0
-   7LNDwaa/lnhNEswDPgeFna+SFk2VBTT8L8C/Qwh0AMwc8kxCmu6dSTAte
-   A==;
-X-CSE-ConnectionGUID: gEUgKiC1TvOA1ybkiWlH3w==
-X-CSE-MsgGUID: C1qQ91QUSWKhfkqqj69n/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="63235751"
+  bh=on6Ag9NJz0vk1kj+5aoSFuQQtRI0JdB9JVEfIv+bEQw=;
+  b=Ef/pAWxoqZbaz1tnEp1AITYHGYQnNO3pLm41JvC1Qk41ehlnadfJ/28P
+   myxzCct91DcgtIeNQYRwierBYn3wPBqQn0Rw1rMHTRoUvpqPx5AD1o18U
+   NOCgc9XZSX83RSITIwyYuKwI/8uggYa9NUdKRD/MjvyW8+NlmcE2/So3E
+   Bnhmjx4V4sDIL8hXnpi5aAk/weQuYLYR+ijy/2rMk0kGhqO4ARrQsZ8n0
+   lbqJl/OQOanuBhJn+D1wXeuIUDbaL+mfb/xhUW3OXGDLBf4fRBuwF6vbu
+   syiDHBSOTN+eKFgillIlSmOj16svJF1HGMpqzyIjXs14mtx5X9NzY2O/D
+   w==;
+X-CSE-ConnectionGUID: JtMB9KfwQ1WYdamPqUtvFA==
+X-CSE-MsgGUID: 3w+kKv0kT9Wq3qzuFNRfQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="63235778"
 X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
-   d="scan'208";a="63235751"
+   d="scan'208";a="63235778"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 22:42:45 -0700
-X-CSE-ConnectionGUID: oGGKEl6tSHuZAt92ENdozg==
-X-CSE-MsgGUID: ogkZWCFtQg6LavjO4eounQ==
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 22:42:50 -0700
+X-CSE-ConnectionGUID: qkeOHv3KQkWG9mTRxGTyJw==
+X-CSE-MsgGUID: rMlp4P4RS12+n9gODhJ2ag==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
-   d="scan'208";a="180858596"
+   d="scan'208";a="180858628"
 Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by orviesa005.jf.intel.com with ESMTP; 18 Sep 2025 22:42:38 -0700
+  by orviesa005.jf.intel.com with ESMTP; 18 Sep 2025 22:42:44 -0700
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>,
@@ -82,9 +82,9 @@ Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v5 2/8] mm: Actually mark kernel page table pages
-Date: Fri, 19 Sep 2025 13:40:00 +0800
-Message-ID: <20250919054007.472493-3-baolu.lu@linux.intel.com>
+Subject: [PATCH v5 3/8] x86/mm: Use 'ptdesc' when freeing PMD pages
+Date: Fri, 19 Sep 2025 13:40:01 +0800
+Message-ID: <20250919054007.472493-4-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250919054007.472493-1-baolu.lu@linux.intel.com>
 References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
@@ -98,94 +98,71 @@ Content-Transfer-Encoding: 8bit
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Now that the API is in place, mark kernel page table pages just
-after they are allocated. Unmark them just before they are freed.
+There are a billion ways to refer to a physical memory address.
+One of the x86 PMD freeing code location chooses to use a 'pte_t *' to
+point to a PMD page and then call a PTE-specific freeing function for
+it.  That's a bit wonky.
 
-Note: Unconditionally clearing the 'kernel' marking (via
-ptdesc_clear_kernel()) would be functionally identical to what
-is here. But having the if() makes it logically clear that this
-function can be used for kernel and non-kernel page tables.
+Just use a 'struct ptdesc *' instead. Its entire purpose is to refer
+to page table pages. It also means being able to remove an explicit
+cast.
+
+Right now, pte_free_kernel() is a one-liner that calls
+pagetable_dtor_free(). Effectively, all this patch does is
+remove one superfluous __pa(__va(paddr)) conversion and then
+call pagetable_dtor_free() directly instead of through a helper.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 ---
- include/asm-generic/pgalloc.h | 18 ++++++++++++++++++
- include/linux/mm.h            |  3 +++
- 2 files changed, 21 insertions(+)
+ arch/x86/mm/pgtable.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/asm-generic/pgalloc.h b/include/asm-generic/pgalloc.h
-index 3c8ec3bfea44..b9d2a7c79b93 100644
---- a/include/asm-generic/pgalloc.h
-+++ b/include/asm-generic/pgalloc.h
-@@ -28,6 +28,8 @@ static inline pte_t *__pte_alloc_one_kernel_noprof(struct mm_struct *mm)
- 		return NULL;
- 	}
- 
-+	ptdesc_set_kernel(ptdesc);
-+
- 	return ptdesc_address(ptdesc);
- }
- #define __pte_alloc_one_kernel(...)	alloc_hooks(__pte_alloc_one_kernel_noprof(__VA_ARGS__))
-@@ -146,6 +148,10 @@ static inline pmd_t *pmd_alloc_one_noprof(struct mm_struct *mm, unsigned long ad
- 		pagetable_free(ptdesc);
- 		return NULL;
- 	}
-+
-+	if (mm == &init_mm)
-+		ptdesc_set_kernel(ptdesc);
-+
- 	return ptdesc_address(ptdesc);
- }
- #define pmd_alloc_one(...)	alloc_hooks(pmd_alloc_one_noprof(__VA_ARGS__))
-@@ -179,6 +185,10 @@ static inline pud_t *__pud_alloc_one_noprof(struct mm_struct *mm, unsigned long
- 		return NULL;
- 
- 	pagetable_pud_ctor(ptdesc);
-+
-+	if (mm == &init_mm)
-+		ptdesc_set_kernel(ptdesc);
-+
- 	return ptdesc_address(ptdesc);
- }
- #define __pud_alloc_one(...)	alloc_hooks(__pud_alloc_one_noprof(__VA_ARGS__))
-@@ -233,6 +243,10 @@ static inline p4d_t *__p4d_alloc_one_noprof(struct mm_struct *mm, unsigned long
- 		return NULL;
- 
- 	pagetable_p4d_ctor(ptdesc);
-+
-+	if (mm == &init_mm)
-+		ptdesc_set_kernel(ptdesc);
-+
- 	return ptdesc_address(ptdesc);
- }
- #define __p4d_alloc_one(...)	alloc_hooks(__p4d_alloc_one_noprof(__VA_ARGS__))
-@@ -277,6 +291,10 @@ static inline pgd_t *__pgd_alloc_noprof(struct mm_struct *mm, unsigned int order
- 		return NULL;
- 
- 	pagetable_pgd_ctor(ptdesc);
-+
-+	if (mm == &init_mm)
-+		ptdesc_set_kernel(ptdesc);
-+
- 	return ptdesc_address(ptdesc);
- }
- #define __pgd_alloc(...)	alloc_hooks(__pgd_alloc_noprof(__VA_ARGS__))
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 1ae97a0b8ec7..f3db3a5ebefe 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2895,6 +2895,9 @@ static inline void pagetable_free(struct ptdesc *pt)
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index ddf248c3ee7d..2e5ecfdce73c 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -729,7 +729,7 @@ int pmd_clear_huge(pmd_t *pmd)
+ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
  {
- 	struct page *page = ptdesc_page(pt);
+ 	pmd_t *pmd, *pmd_sv;
+-	pte_t *pte;
++	struct ptdesc *pt;
+ 	int i;
  
-+	if (ptdesc_test_kernel(pt))
-+		ptdesc_clear_kernel(pt);
-+
- 	__free_pages(page, compound_order(page));
+ 	pmd = pud_pgtable(*pud);
+@@ -750,8 +750,8 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+ 
+ 	for (i = 0; i < PTRS_PER_PMD; i++) {
+ 		if (!pmd_none(pmd_sv[i])) {
+-			pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
+-			pte_free_kernel(&init_mm, pte);
++			pt = page_ptdesc(pmd_page(pmd_sv[i]));
++			pagetable_dtor_free(pt);
+ 		}
+ 	}
+ 
+@@ -772,15 +772,15 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+  */
+ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
+ {
+-	pte_t *pte;
++	struct ptdesc *pt;
+ 
+-	pte = (pte_t *)pmd_page_vaddr(*pmd);
++	pt = page_ptdesc(pmd_page(*pmd));
+ 	pmd_clear(pmd);
+ 
+ 	/* INVLPG to clear all paging-structure caches */
+ 	flush_tlb_kernel_range(addr, addr + PAGE_SIZE-1);
+ 
+-	pte_free_kernel(&init_mm, pte);
++	pagetable_dtor_free(pt);
+ 
+ 	return 1;
  }
- 
 -- 
 2.43.0
 
