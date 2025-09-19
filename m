@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-824294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 148A2B88987
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6313FB8899C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011463ACEED
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A491898EC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC26306D3E;
-	Fri, 19 Sep 2025 09:36:29 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274A4305055;
-	Fri, 19 Sep 2025 09:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F292F25E0;
+	Fri, 19 Sep 2025 09:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C+i68S5a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537ED2F39CD
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274589; cv=none; b=tr+t5QpSCpV+hzCq7AgfL3x/agVcAxhL+4A4n65FDh71R8hRHYjfktubdxwJXS1lBAYfyBXZLay3Jxpl2XGV7iYLyouU4SEuv0He9UqvXnx3AEu1/OFhHjgPTPMSlwyGslNqDbOgJcX0NfEI0GqNk8cXyHuAxdz1yW4cUWsef0E=
+	t=1758274617; cv=none; b=lQnzX27FXKxyJVjrlwyP5oPoYIx6scHrKwiv57klHA7JMRSDRyEvtyDt2w9D4uUEy7ZcH4MtOsf3COWCoRnyRXIkAzw8cI26YbxKdnh90maWp4bez4RuBWxVGryo6BeRTI8vhxvgd/L9jTrXxTFBXKvK+ouEETLNVNWhdqFyFAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274589; c=relaxed/simple;
-	bh=Ccq6B67Koku2aQcukSI63wdlDqiQtEG8xW8WNmTx/3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lTeQbWUcw86LSww0ct/w2LMkMYcVCcDfKYeLmbQKYsrBh5cQpv42EqvjIuFC/tbG1t/qJxO4lK0ohssMUeIdFM9HLpoiX101l+3qRzDw2Gfp0y19jC5b08/oas9Wwdj9SlANEuXOOBkUlxKlksNK+jBnEnJHVrmPpNhSdlI0NtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxudEYJM1opi0MAA--.26778S3;
-	Fri, 19 Sep 2025 17:36:24 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJDxbMEPJM1oMmufAA--.61162S4;
-	Fri, 19 Sep 2025 17:36:20 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-efi@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/3] arm64: Only link libstub to final vmlinux
-Date: Fri, 19 Sep 2025 17:36:14 +0800
-Message-ID: <20250919093615.30235-3-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20250919093615.30235-1-yangtiezhu@loongson.cn>
-References: <20250919093615.30235-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1758274617; c=relaxed/simple;
+	bh=ruz9kdaDLCE4+rPabbd12pnH5qUqJwoy8Vr7fc+q3tI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWWfED/2WSux7CUzR+gZYQaXpEwXKJvyQc8pETk68Kj0HGH8IBBijKvwrCyrIQCqvh01m6XDMuV2F/dD5VULCzNzYv2Ki0p+uitl+gO+TtXfoeln33YvGTQyEIRtOy6UbIPmw7ZzfMiXCkjcCCIqOuzKXp+5EkqNtNTVx58J3Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C+i68S5a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758274615;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ruz9kdaDLCE4+rPabbd12pnH5qUqJwoy8Vr7fc+q3tI=;
+	b=C+i68S5alGFqUp/oSmO0vElMnerPRWOTFbr+K+7LxwhC1bWtdlgeAD34UuJAESiRDOWIcm
+	TZBKtdR+PeFrYLuGqc7jzv+7UrxwjfFPmvmUqpjpZykxoKKPBQ/y8qAntvG9FszWUhijEx
+	urZ9eZy5sEPf4eQqRHxgm/GzE7HMc2U=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-541-h6EL3GFtNhmX5mgiZReQLw-1; Fri, 19 Sep 2025 05:36:53 -0400
+X-MC-Unique: h6EL3GFtNhmX5mgiZReQLw-1
+X-Mimecast-MFC-AGG-ID: h6EL3GFtNhmX5mgiZReQLw_1758274612
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-733ff1a73dcso34681337b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:36:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758274612; x=1758879412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ruz9kdaDLCE4+rPabbd12pnH5qUqJwoy8Vr7fc+q3tI=;
+        b=XPtwO3Iy3Wci1VzwDv+a9Dqv5/GOJzbmFRt/2wR9Jh6zhtwxWDhfhtsmtlTWskZMQV
+         nI6l/80OmU53GqY16fArTh/iH2hsO5dP2RUl4S8P5RdIjmzoAClNpy7tjV/KRpcBYHOQ
+         SlCCfgExJrv8bmksN7XXDvo5+yUEdpaum5elh2KqiiOzH8LAl0YuRaLel1VBmn3fUnCD
+         e3V24UF+skPraKdIlYoCfvgCREtSxLANFexTGNgbflBR63qVt0Ea7eonFdX7oNEvCb//
+         ijv2j5b6lpglIy0wSy9gYvUoYHGCFIyPxbATEhmnI3rDMOMtKWR7m0OprKtcy4nVPZ5d
+         z8cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWttBQi+RzdVUDX/6ITWCHrxqZIICwpoClxUQ1g/kjLGGlESIn3hnFw1cvhA2kqUFcviZZvDCxfylTi37g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2yF9tAqredsTlaiLW4utb0I9n51c1Zm+6lWnIm8SF0azMZt/R
+	S2TL5frThXDfwLeHS+GtGCPwCJdVcnwpwToMGEXBMUqVXoE4Eh1gNW5JhZaSmcQd/dBdYBYcRq+
+	bGrxhFZl6glVg07llWu0syMO6p7ncEr3Q9q7VkhZ+WdH9qQOeghOxFNZoU/ZbDK3rYjhDrkQSY8
+	klcZ6PSqsRczlu3NsiUAmHmBUQsh3/tNs7S1HN5AG9ttQERd0lUDw=
+X-Gm-Gg: ASbGncsiLE7HNjaT2nfUs5UF9g+RELR78qZrVMLkZptPWbgmJNknO0Iz4enXFUk61Aq
+	fog9bReHhkfFc7azMllPFZ/l+Rq6NXvKnmAaXa4I6u2FLcZ1h0Dx+zMt9GZT7YGmMzzeDYra0gY
+	lPG/mWRjO4/nw9kkrllOBbhskDt+FXiUHHgziruOyRDjdLhQkhfRuezWSgizXoD1FUm9L25WKJY
+	hxe8f/+
+X-Received: by 2002:a05:690c:690f:b0:737:6973:fca8 with SMTP id 00721157ae682-73d3e2a15cdmr22403227b3.51.1758274612331;
+        Fri, 19 Sep 2025 02:36:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcPKXVRQHM5BX6WlYQ2cBNEMEDhW1rNSC30sedm/I330JAJc5f9vDousTwUFG5/BlT/57DXfjYaIWiVnMmx4Q=
+X-Received: by 2002:a05:690c:690f:b0:737:6973:fca8 with SMTP id
+ 00721157ae682-73d3e2a15cdmr22403137b3.51.1758274611905; Fri, 19 Sep 2025
+ 02:36:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJDxbMEPJM1oMmufAA--.61162S4
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7ZrW8GryUWw17Ar45tF4fWFX_yoW8Jw4rpw
-	s0kF4qkr4qgrW8Xa4rKa17Xw1Ykws8XrsIgFykZry5tw45Z3s7Wr15GFWSkF4kXr18Jayf
-	Gw1ayFy8CF4DG3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
-	8JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0epB3UUUUU==
+References: <20250919093231.960393-1-eperezma@redhat.com>
+In-Reply-To: <20250919093231.960393-1-eperezma@redhat.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Fri, 19 Sep 2025 11:36:15 +0200
+X-Gm-Features: AS18NWBUmghOHNLPQI_96FL6YYrZHCEaA7Y_8tydnZj0vxyJbupjglhz-WKCBg8
+Message-ID: <CAJaqyWcymm-O+ED2veDojVhcH1pAnekYLnYXe_P-9VA3rOcuQg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Add multiple address spaces support to VDUSE
+To: "Michael S . Tsirkin" <mst@redhat.com>
+Cc: Maxime Coquelin <mcoqueli@redhat.com>, jasowang@redhat.com, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
+	Laurent Vivier <lvivier@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, Cindy Lu <lulu@redhat.com>, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since the efistub functions are useless for stack unwinder, they can be
-ignored by objtool. No need to link libstub to the vmlinux.o, only link
-libstub to the final vmlinux. Otherwise, there may be objtool warnings
-when arm64 supports objtool, this is to make consistent with the other
-archs that use libstub.
+On Fri, Sep 19, 2025 at 11:32=E2=80=AFAM Eugenio P=C3=A9rez <eperezma@redha=
+t.com> wrote:
+>
 
-Link: https://lore.kernel.org/lkml/pq4h7jgndnt6p45lj4kgubxjd5gidfetugcuf5rcxzxxanzetd@6rrlpjnjsmuy/
-Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/arm64/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+[...]
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 73a10f65ce8b..038f37ef2143 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -156,7 +156,10 @@ KBUILD_CPPFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
- KBUILD_AFLAGS += -DKASAN_SHADOW_SCALE_SHIFT=$(KASAN_SHADOW_SCALE_SHIFT)
- 
- libs-y		:= arch/arm64/lib/ $(libs-y)
--libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-+
-+ifdef CONFIG_EFI_STUB
-+KBUILD_VMLINUX_LIBS_PRELINK += $(objtree)/drivers/firmware/efi/libstub/lib.a
-+endif
- 
- # Default target when executing plain make
- boot		:= arch/arm64/boot
--- 
-2.42.0
+Sorry I hit Ctrl-C in the wrong terminal, so this series lacks the
+final patches.
 
 
