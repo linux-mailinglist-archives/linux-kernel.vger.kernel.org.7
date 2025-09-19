@@ -1,134 +1,142 @@
-Return-Path: <linux-kernel+bounces-825034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E2AB8AC3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:29:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600D4B8AC42
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E575A3FD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169E05A40E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADA2322A18;
-	Fri, 19 Sep 2025 17:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A38C322A1D;
+	Fri, 19 Sep 2025 17:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsG07qKK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4Cl3pj9"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3070322771;
-	Fri, 19 Sep 2025 17:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9BC322766
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758302976; cv=none; b=ttnFho523+RnyadqHHaRoBHHsmBCd3JrFmmi2ChFLENxBITGo1OLjc4hAy5HDQItSenv5ZcccT7zE9Mr9nNGYmXjzfrVN9amun2oNuqs39/ZyWS9zZlH+cgUhleNnwdU9O7eUF4rk+cxu5nM2ENKZqVci56tmNt0tfrLt0d1uUw=
+	t=1758303027; cv=none; b=Wd7AJw4Yc8xWn036LTzc6fStw9+bNfFbb0rhKxXso6fRXThsCMN5twxBBE1Xa1/s1XD7tlm5F6ooqqXX5QugX3E7wQCMhK4imAKsiEaMMHKGcgBqUd8lvrA2TrTgjFbPKgctIhWYDQrFvqJgMaRPPVqPQzs0Gb6YN1N6E3/rro8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758302976; c=relaxed/simple;
-	bh=yolyFSvAZQSCV4o00YkI5zTRWR/ZeCIulMzo4rybVAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V5scXZJ2v3BeLsjIR9LdmKK6YL3xupG4BOvl9aMR6FYgFUX+lqKrlVG/Fjkr9MkcSiKIPMePVvW4y4NksBZcE8Iet5B2XAccrylaEY4/UZTpRH49N6uorNfQhLelLuvtbngi159a06nSUNaW8mh1aBgIri+EeTzW4k6EuCYDlC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsG07qKK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B17C4CEF7;
-	Fri, 19 Sep 2025 17:29:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758302975;
-	bh=yolyFSvAZQSCV4o00YkI5zTRWR/ZeCIulMzo4rybVAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bsG07qKKniEd6O+WrjI6ci8uYXes5STUKUnnn1PvaSz+EKY86M11/ZMhIhci10tzs
-	 p8k+yFATL57JcJ6e4eUFBGnYFK6s8rRT6SzdtgSoHJtAhzcKfOVOiGa2mOsAf9fXmO
-	 dEuMIZ6eT2TVXmZGs/5eWPO6O8TF4p9yh61hdpiZSI0GaYZVKDDbxr2uQOdcLDcgih
-	 WWlXl78spe/elw1zwYpOpcfjBhjtGwKdNiS44ScY9yL3EQALA4GHfdu4WN1/YtN27D
-	 93jxldHmhlVhShxGlfZZ0JRxGuA8vYpzLN+ZgRw1fAqoiXLQl52U4xX8J8ObOyiduT
-	 yQgD80c8KB/oQ==
-Date: Fri, 19 Sep 2025 18:29:29 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, michael.hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, andy@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
-	marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v2 2/8] dt-bindings: iio: adc: adi,ad4030: Reference
- spi-peripheral-props
-Message-ID: <20250919-paramount-headstand-c9b5d4d03c58@spud>
-References: <cover.1758214628.git.marcelo.schmitt@analog.com>
- <5c1c448e3e731fc013e1e3b3fdcbc31f806d41fe.1758214628.git.marcelo.schmitt@analog.com>
- <f7d7f400-cc43-41d9-bc97-39d308363f14@baylibre.com>
+	s=arc-20240116; t=1758303027; c=relaxed/simple;
+	bh=JZj9auJ7JYGycI9LrR62D2gYRthD2d4QaIrDPfu4Mqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EtwUXy197oSWK4Rl703Q3nRRhtSjuc6r8Q7xCOzzJsYFSi4Dn+GqmhCH5VRuYcO6FXFYyCf7yAlYX0fspyZ2isyO5efG5n2AI9ETgnTnwEcdWRyF8QIYG9xixsQN0IoObVaWJt9vse1Jj5HDwrFUUOcP0J0Wei3v1LgU9WM/7NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4Cl3pj9; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24457f581aeso24401205ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758303025; x=1758907825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=szAE+bPsPINah1q0UtkV9PIi4Hs5RhSjEz/DHr/a1dA=;
+        b=O4Cl3pj94Y74HTI235JeXeAuHXdQRYeQsydVKpBRkTj1lkDJZ24cUdjOAz9XLuu6lA
+         mWCNpygvRP0OCCBSuzarLOkUmE+6fho3SCB4zy4O88di1zviUXC/VkTqJCqLXUxHmLWt
+         4LGAS1OQnlPUEysmxw4Pol2r69+SVjfuCLH0/ND2KBuQkc70x0EgRIvjtaJ/MDZVlNKV
+         SFdhK6CzpI5nl6A6pG2ZzoxbcK7PK4VrkcIhn4wHfMSQEobNzZfU+AuXckqAk8B7cLyP
+         /hDwsz/F+7kGpPm0xUUlNDiVxqXyyTtldDqaoN4fnzQAmWvoK7rmSJzdx4VrbNWBwl/X
+         lw+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758303025; x=1758907825;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=szAE+bPsPINah1q0UtkV9PIi4Hs5RhSjEz/DHr/a1dA=;
+        b=hPjQUDoInp2kF2s9DwmLzgeyqx+0zUg2IcC36GDS58H45WSFmT0sXVZ8JfPKw7gaB8
+         RxV/mC0iZFOdqabF8ITHOq8LEDu25Tyd80asFP9FfGQVM8IGY6jsTnFOhgzWvMZnnM4u
+         7TzM9RGcL7pIBnY0B03DjUzne69SJS3ffEhNT2u0TgYbl/hQLOnAnZHedSIJ2zahRhnr
+         vD0njzsPFbby6J9XZVWNT1fRfjqXU78Uo4WtZF5xtze8sMF8lEw6P7jZ6g7wQ8lFwbCQ
+         bwYz5OuV/UEUkAG/MQQ34UUGektNrgDcnV5V0GQXvDIskVwVXDKO/YJNCNbJHuyshqSO
+         0g8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUa2WP0J+GxXdRM0PYh+bB7TKLDbHCYkXCXIRitxVVqSAV2KjWNZQnZWsoo8lj+KM07AQCe5pIwvNRm4Do=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRIEwxS8rWl1mdGPq4zUHoXjXTbxveW43ksKzP3aXstv3fND+H
+	cOXX6x4/OhqgpUNfBIussext1LRK/uXcR9+cp15CFwPuolTUnl5JEm0o
+X-Gm-Gg: ASbGncuY/dg3vUgEiPW/tFUbfszkPhSfiZNG16uSyH9EIpBKjPvX5tR4kK94oQIp+wR
+	hOLsJQE5W7ksdjktam57cSCHbtB23SweGZtgfExCaIP8i0ZJmdx5NAGnL2N/Rl3DqQRoHeITbvT
+	NkMO7saNdg/AQDljRKbMaIGAI3i8U+BiK1yGWXJEhpUp/fB8e/uwrHIryYMcEKAgpo9xS5HX4gz
+	ZugDRzWMeYmOLyF5COLPXF1VVHK733OIW97f8qEUomdDXId2QZY2RRRnsff/7cDt/PdoDDPBwLx
+	8/Z91GiOEjth6LvfvxJNRGxioULbElBLcDEhVO9xuLFYpYEN6uYWwV9trmowgf3W4ACXWVMc/aB
+	b/5UkHUY8uu8pXbhfO58AMEicrq3dO4f2WLw=
+X-Google-Smtp-Source: AGHT+IH4tmDryks4lpWMvZ7RPdjoVOLv7Whjz+fTz4uGIXQE7YrtEn7NauesGMcUefMfTnayFjWwpA==
+X-Received: by 2002:a17:902:8bc3:b0:269:b2a5:8827 with SMTP id d9443c01a7336-269ba467eebmr44697195ad.16.1758303025452;
+        Fri, 19 Sep 2025 10:30:25 -0700 (PDT)
+Received: from localhost.localdomain ([150.109.25.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980053ef0sm60865185ad.28.2025.09.19.10.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 10:30:24 -0700 (PDT)
+From: HaiYang Zhong <wokezhong@gmail.com>
+X-Google-Original-From: HaiYang Zhong <wokezhong@tencent.com>
+To: edumazet@google.com,
+	ncardwell@google.com,
+	kuniyu@google.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wokezhong@tencent.com
+Subject: [RFC net v1] net/tcp: fix permanent FIN-WAIT-1 state with continuous zero window packets
+Date: Sat, 20 Sep 2025 01:30:15 +0800
+Message-ID: <20250919173016.3454395-1-wokezhong@tencent.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eiMpNmTU9mjnvz9W"
-Content-Disposition: inline
-In-Reply-To: <f7d7f400-cc43-41d9-bc97-39d308363f14@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
+When a TCP connection is in FIN-WAIT-1 state with the FIN packet blocked in
+the send buffer, and the peer continuously sends zero-window advertisements,
+the current implementation reset the zero-window probe timer while maintaining
+the current `icsk->icsk_backoff`, causing the connection to remain permanently
+in FIN-WAIT-1 state.
 
---eiMpNmTU9mjnvz9W
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reproduce conditions:
+1. Peer's receive window is full and actively sending continuous zero window
+   advertisements.
+2. Local FIN packet is blocked in send buffer due to peer's zero-window.
+3. Local socket has been closed (entered orphan state).
 
-On Thu, Sep 18, 2025 at 02:39:01PM -0500, David Lechner wrote:
-> On 9/18/25 12:38 PM, Marcelo Schmitt wrote:
-> > AD4030 and similar devices all connect to the system as SPI peripherals.
-> > Reference spi-peripheral-props so common SPI peripheral can be used from
-> > ad4030 dt-binding.
-> >=20
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml =
-b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> > index 54e7349317b7..a8fee4062d0e 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> > @@ -20,6 +20,8 @@ description: |
-> >    * https://www.analog.com/media/en/technical-documentation/data-sheet=
-s/ad4630-24_ad4632-24.pdf
-> >    * https://www.analog.com/media/en/technical-documentation/data-sheet=
-s/ad4630-16-4632-16.pdf
-> > =20
-> > +$ref: /schemas/spi/spi-peripheral-props.yaml#
->=20
-> I think this is already referenced for all child nodes of a SPI
-> controller because of pattern matching of:
->=20
-> patternProperties:
->   "^.*@[0-9a-f]+$":
->     type: object
->     $ref: spi-peripheral-props.yaml
->=20
-> in Documentation/devicetree/bindings/spi/spi-controller.yaml
->=20
-> So perhaps not strictly necessary?
->=20
-> Would be curious to know if there is some difference.
+The root cause lies in the tcp_ack_probe() function: when receiving a zero-window ACK,
+- It reset the probe timer while keeping the current `icsk->icsk_backoff`.
+- This would result in the condition `icsk->icsk_backoff >= max_probes` false.
+- Orphaned socket cannot be set to close.
 
-I think it's good form if you're actually referencing the properties. I
-don't know if it actually makes a difference in the end result of
-dtbs_check but it may in terms of making sure properties in this binding
-are properly typed when it is tested against. In this case, it appears
-you're only looking at uint32 properties so it mightn't have any impact.
-Rob would know for sure.
+This patch modifies the tcp_ack_probe() logic: when the socket is dead,
+upon receiving a zero-window packet, instead of resetting the probe timer,
+we maintain the current timer, ensuring the probe interval grows according
+to 'icsk->icsk_backoff', thus causing the zero-window probe timer to eventually
+timeout and close the socket.
 
+Signed-off-by: HaiYang Zhong <wokezhong@tencent.com>
+---
+ net/ipv4/tcp_input.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---eiMpNmTU9mjnvz9W
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 71b76e98371a..22fc82cb6b73 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -3440,6 +3440,8 @@ static void tcp_ack_probe(struct sock *sk)
+ 	} else {
+ 		unsigned long when = tcp_probe0_when(sk, tcp_rto_max(sk));
+ 
++		if (sock_flag(sk, SOCK_DEAD) && icsk->icsk_backoff != 0)
++			return;
+ 		when = tcp_clamp_probe0_to_user_timeout(sk, when);
+ 		tcp_reset_xmit_timer(sk, ICSK_TIME_PROBE0, when, true);
+ 	}
+-- 
+2.43.7
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaM2S+QAKCRB4tDGHoIJi
-0rJvAP9pbgnWHcefL9cZQwGDDaXr8+UfIrd0gSsrfedRiYie+AD8DsnTAienjOR2
-JqyWaPj65PIXAeCWs5vwNEf5aUxIMQU=
-=n/GA
------END PGP SIGNATURE-----
-
---eiMpNmTU9mjnvz9W--
 
