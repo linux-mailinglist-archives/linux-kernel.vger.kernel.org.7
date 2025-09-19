@@ -1,147 +1,76 @@
-Return-Path: <linux-kernel+bounces-825066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970BBB8AD93
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:04:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E59B8AD99
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 20:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 647DE1CC2C04
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:04:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97F717B9E75
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF6A254AF5;
-	Fri, 19 Sep 2025 18:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="hDLzIyHf"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA42253F1D;
+	Fri, 19 Sep 2025 18:04:02 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E30E1A2392;
-	Fri, 19 Sep 2025 18:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49EF1A2392
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758305036; cv=none; b=RL34hcaM5hIxn7/CvDsR6WU1Xo+LFhkmeGgFRJzTFDn4qq+I9cCM2w4JQ0OwXxPNIvoeOJwvFtN4nrTS5mFp4PVNTsgCv20+yumIXzDAH7qC+9LadObgtxA2sUTVfNwkhEDReLKKqNQgHToo7dVkKmV/k+bcuu/7W6xeoRdhkms=
+	t=1758305042; cv=none; b=f1lqHw6o6t6kzLFPpKyjfa9M1L4DlDVt2jebl3R4KrwBT44uCNNroIwzNIb0PI+IV/6xW9aEpYXZ17kJ2M1dda/eY531ks4LaOmAV3pbaOcfQ/Yj/pyseXjxMv2ED3ipKb9pn638g7ou2hil2sa19AhOwxDO88JzW/jZcbiFQmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758305036; c=relaxed/simple;
-	bh=+vfFD0ksVBgDxGvIVOQTciLG+bWf6363nTSY63/+W58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mwz/Ue9QrnwnYcKmMZzENIxCALpFf9Hh/PDcBz3VBS5boXV682qBgscBlQEXac6RWHEklG/r+HE5A2Haf6qTNhXLuyRm+nIfX6At5vZB3WtCwcD3qvhQ2n0ynbdq4I+azXKJc+8Y0e2wdKbxuj9bc/2Ld3vqZJk33GaBI/yLF0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=hDLzIyHf reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4cT0kJ0dncz1FZPj;
-	Fri, 19 Sep 2025 20:03:52 +0200 (CEST)
-Received: from [10.10.15.9] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4cT0kH3N94z1DDBW;
-	Fri, 19 Sep 2025 20:03:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=simplycom2; t=1758305031;
-	bh=B3SCEV+fNn/h4NElp2MlmrRvOvxvwaw75GPNbscASAI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=hDLzIyHfeogJAt4ydFcTzgxoAt2YqWNyBh/kvkdMvtPtQMKpRuTcGeV6y0s7U+KC9
-	 lT4o1Gz6qtNRiobb3BcJRdlfiTkUvUsm5f4iRhBCUy/c6zdM7bA4rtLSX5plQ2TP1B
-	 hOrhbhbxjSBDi76KpGjCCQ5i59j4H0cwCm87TIV1X/OiplGAYS4IPN8U7kOWLj2NTT
-	 ht75V7/PlsITo01JJy2vWLqmvZprLM/d79kV/rq/ugwn8/SMu3rg4dhhGJAiK+VijY
-	 BN+JBvUtJZOKl2++OnQeiHFdL8JQ8DZGU1upEV0TD1qnkvqlBP2w0NMdHesmsCpZwU
-	 CxwofrV++XriQ==
-Message-ID: <8d32507a-dd01-4785-946d-00ad28b1fd58@gaisler.com>
-Date: Fri, 19 Sep 2025 20:03:50 +0200
+	s=arc-20240116; t=1758305042; c=relaxed/simple;
+	bh=fHqiXY9F30VvMHnjpTF1syx8dF7v4pfl9pdm2FAfsNM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qkbIQLfbDXMXSM/QnzPIM4HcZoMheFakSqmKQoVq0i5+PU+byDOUrMgHhuwyhzbVQ7Apffkj50C5OkfrjKDY2R6OvfGI6nL+9UGxgYN2xBn/cvJzEXTjHgXydxOvIj5mr/VDQJ+iNZl4UDRxBhQSLA8OpZhiIPWo1wZaEanvB7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42404e7bc94so60619665ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:04:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758305040; x=1758909840;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fHqiXY9F30VvMHnjpTF1syx8dF7v4pfl9pdm2FAfsNM=;
+        b=XRhuPKVj1ubChr3dT7ZgBK2zT2fzOHPXqFevIV8GXR8chbue2Kt9M9jH21hJy/d1OV
+         zAfEG8CdKLcTqJfquonkGZAraNBCgnR1gbuhJItqVEpxI7OzhJVlzF5ESm+IfilmgCXM
+         l45ZRZ7AdyhJuBeNq/0wQrrzpAFURszl8PTati3yl+DUZE8pfDAjllUiHfmH+c3w9ApN
+         dBQypVHg4MiuGNjvcxeO/1XKUiONXBP8iVMhySZ6ozI+BUsQrwEsNbjglwHyuB8vdzGo
+         OkEUtbDr6jsmz15N+tB/KHkGwwSTrCQ0FIBhv0WtvTTC8cBN1b0jqt2DoJUokVTgVf7R
+         1F6g==
+X-Gm-Message-State: AOJu0YwI11+93INHZTJ+ObZLzmz9RP+hNyEFjyJJKydXTxnCEFcXCuCz
+	0pn++rvcOzyozsBVFBK8YBpydLWzDMQSJwucocjhYwuCRGht5qtbvaWTF/zYhXWYji/HwnHEw93
+	CenCpi4ysXUThGd48uHcXhjNWaxKDZptpQsznAMbIR0wn+sNHsFvI1DCp1Sk=
+X-Google-Smtp-Source: AGHT+IERrPt2t1091VbR8Cr7BZ5eFpnLjTwrBo38WWs/nlQ9IgKz2XPm62DxgjZ8hyxvO3y8OO88D9BMQwUvcnh4D40IAOW1cPfj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] Fix accurate exception reporting in SPARC assembly
-To: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Anthony Yznaga <anthony.yznaga@oracle.com>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
- <rene@exactcode.com>, Jonathan 'theJPster' Pallant
- <kernel@thejpster.org.uk>, Magnus Lindholm <linmag7@gmail.com>,
- Tony Rodriguez <unixpro1970@gmail.com>
-References: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20250905-memcpy_series-v4-0-1ca72dda195b@mkarcher.dialup.fu-berlin.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:18ce:b0:424:7de2:61ca with SMTP id
+ e9e14a558f8ab-4248199c624mr61748155ab.20.1758305039887; Fri, 19 Sep 2025
+ 11:03:59 -0700 (PDT)
+Date: Fri, 19 Sep 2025 11:03:59 -0700
+In-Reply-To: <68b1f3ab.a70a0220.f8cc2.00ef.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cd9b0f.a00a0220.37dadf.001d.GAE@google.com>
+Subject: Forwarded: WARNING in rtl8150_start_xmit/usb_submit_urb
+From: syzbot <syzbot+78cae3f37c62ad092caa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025-09-05 00:03, Michael Karcher wrote:
-> In 2018, David Miller implemented accurate exception reporting in
-> copy_from_user and copy_to_user by handling exceptions on each load
-> or store instruction that accesses userspace memory and calculating
-> the remaining bytes from the processor context. As issues with
-> transparent huge page support and folio support in ext4 were due
-> to a bogus return value from copy_from_user, I wrote a comprehensive
-> testsuite for the generic variant, and the machine-specific variants
-> for UltraSPARC I/II, UltraSPARC III, Niagara, Niagara 2/3,
-> Niagara 4 and M7, see
-> 
-> https://github.com/karcherm/sparc-cfu-bug-reproducer
-> 
-> despite the name of the project, it does not only test copy_from_user,
-> but also copy_to_user, and it also contains fixes to a very small amount
-> of exception handler references that were calculating the result in
-> a wrong way.
-> 
-> For UltraSPARC III, I chose to adjust the memcpy code itself instead of
-> adding complexity to multiple exception handlers. That fix has already
-> been tested to fix stability issues observed by Adrian Glaubitz which
-> kicked off the investigation. On all other architectures, the changes
-> are just to the exception handlers.
-> 
-> Kind regards,
->   Michael Karcher
-> 
-> Signed-off-by: Michael Karcher <kernel@mkarcher.dialup.fu-berlin.de>
-> ---
-> Changes in v4:
-> - Add further credit for running tests on machines with this patch applied
-> - Link to v3: https://lore.kernel.org/r/20250904-memcpy_series-v3-0-906655a5a7ad@mkarcher.dialup.fu-berlin.de
-> 
-> Changes in v3:
-> - Fix bad formatting in commit messages (missing line wrap,
->   extra empty line after Fixes:)
-> - Consistently add hardware to Tested-By lines
-> - Link to v2: https://lore.kernel.org/r/20250904-memcpy_series-v2-0-9806dd1784e7@mkarcher.dialup.fu-berlin.de
-> 
-> Changes in v2:
-> - More verbose description on how these issues were found
-> - Add M7 change, previously separate in
->   https://lore.kernel.org/r/20250828121844.2250-1-kernel@mkarcher.dialup.fu-berlin.de
-> - Link to v1: https://lore.kernel.org/r/20250826160312.2070-1-kernel@mkarcher.dialup.fu-berlin.de
-> 
-> ---
-> Michael Karcher (5):
->       sparc: fix accurate exception reporting in copy_{from_to}_user for UltraSPARC
->       sparc: fix accurate exception reporting in copy_{from_to}_user for UltraSPARC III
->       sparc: fix accurate exception reporting in copy_{from_to}_user for Niagara
->       sparc: fix accurate exception reporting in copy_to_user for Niagara 4
->       sparc: fix accurate exception reporting in copy_{from,to}_user for M7
-> 
->  arch/sparc/lib/M7memcpy.S     | 20 ++++++++++----------
->  arch/sparc/lib/Memcpy_utils.S |  9 +++++++++
->  arch/sparc/lib/NG4memcpy.S    |  2 +-
->  arch/sparc/lib/NGmemcpy.S     | 29 ++++++++++++++++++-----------
->  arch/sparc/lib/U1memcpy.S     | 19 ++++++++++---------
->  arch/sparc/lib/U3memcpy.S     |  2 +-
->  6 files changed, 49 insertions(+), 32 deletions(-)
-> ---
-> base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-> change-id: 20250902-memcpy_series-b3bdd5542ca7
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+***
 
-Picking this up to my for-next.
+Subject: WARNING in rtl8150_start_xmit/usb_submit_urb
+Author: viswanathiyyappan@gmail.com
 
-Thanks,
-Andreas
-
+#syz test
 
