@@ -1,123 +1,225 @@
-Return-Path: <linux-kernel+bounces-824224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3EAAB886E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:32:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B775B886EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F05B56226C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:32:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CA41C86798
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2072ECE95;
-	Fri, 19 Sep 2025 08:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6972FDC59;
+	Fri, 19 Sep 2025 08:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAwQveQ8"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nClz5dy3"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D71C2D9491
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3542D9491
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758270749; cv=none; b=a/0fw6rArTRvPRA7qvu754R4aR45AL8KkF4Ujc2GZ5DUUQ+WBqPUjQvO302lIztxeHsq1+wH91Zo+E2fxhOxlRIJksEBh0cqcK0FP5KKlxULOiFPXA0vPOw8paj36GfIQwkSqC3PvbCzWXxGToesUpX8Qec425zPWUhzfbAFWRo=
+	t=1758270779; cv=none; b=T0zMCEwRAc4WerHnEm4CjoXP7471fZKBjduH1j1kzq3U0fLeSy1CyQst4SIQuYr61TR5fvAUT3rIMm4nAK1BDGkoX+7yJO5kfq37JlH2jBnwtoWVnVGG1GNW2h61xahMm2XYvJVrKHxUQAL6GZUZCYC7xKaoCuhTLDje9UFtr2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758270749; c=relaxed/simple;
-	bh=UWAvoZGlA50FgS0o5z1upfJK5o23+YuDcbIqNegbrgA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MmFEYOy+/l1+ehmmEiJz1OX+8J3X1idK2HjwUrQOq8ybyItzi8qY0ti8KAHrRvJ2yu7i5bwh8Qi9GnWoBckDxi3Se8Q6yPwKioH/xFwkPUugGK+SJ9wYLjWo0es5+i9rahdpnBxMgYX/+aPaizTdCethtWnsz2mK3cdcEvMVyTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAwQveQ8; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77f0e9bd80fso40275b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:32:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758270748; x=1758875548; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NsQBw1Dh8LHuiz7ZJyDcP8aEgIquMXPJj17sT8M1LHA=;
-        b=NAwQveQ8XrCJPPaSGFnckHUBM5XucQBwbn1m7I8XQOPDF53ZtPkm1xY9E3A5K4iC87
-         4NXLxRjyx+z/HveShM3G0/hrsxugbUBOf0rBPs73If2T9cXFijxzoDmq1D3lCoUn03Tx
-         fByVVGT4E+kg7DJ5Z9kCg4o5JOqmh3L4BZZyWqH3z7RHuB5ferMoDXpRnBxw1IOAnUyl
-         0nzhCUmgKK6cu9yLAtSvUjqoNI0TxIV7QltD/5AQBEE2xJQ3nr9/4fVSXeN6/wo7Yrp0
-         9bO9gbQ+nRqXRjNMYsQmpU0ETC5ltHr8y/exHEy0qYc5aRK/TisTFc4w8r5t3wV+W0CU
-         FS8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758270748; x=1758875548;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NsQBw1Dh8LHuiz7ZJyDcP8aEgIquMXPJj17sT8M1LHA=;
-        b=l2NMOlRfirFcIXoY2ua/ululE1rOg2yzGqujntr+9mgJjRPaw1I2GurocVKqhpjMYc
-         kwB7HNvRq21oINr5xF9ndgSApZG4Wol96hlHYJQh8qTuBBCZEBeEFsdK8CjczAkFLH4N
-         2uIO9GvFyipi69fUxPwycgq2rmEfxp4ptAL8ai3JnGTMoQb75mcevHX+o24oVLkRDbrr
-         xBdaW6k/vic4DkLJsKH7LLbzlkznEAtvoJDU6xHa0jVSsgYnjwhnQWwJ5ukYouFoe26X
-         904bzzy05/yspgNXUClWMfji3T0cGKiFbV6ck1mIqhIui+VgZiQYPzbkaJURI6YC0jgO
-         KGRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV769gIBrMJieBNtJ7PVOqbzCsewkmpeg4oHDzL/7SXBSFybcWT/2aHHue0eaF2W+XUMqj+aCidCzMir+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2FAknmvZLcwCvVygDjYML3m3AmWxcJZNN6eGbXlQHPbM10fW8
-	kFlW4gsHK3WAxYKI/Md+TTwwk+OrA22TWbyU4RJKmLTbAuYMfPusKafx
-X-Gm-Gg: ASbGncs63aUWh8/MTuGeQOkMZgGHJLEn4Eic1gqkHWR9Ks/Lys5d9YZv+FKgVGHBNNW
-	HxbksUXPGoppQ0Twom/a/f7kW/P2GgRbQ0NtWa3IYKRS1F2fcxMzKtZX4711MomjQV9J1oehSPN
-	D50DzHE2oyuVVByqD38BlGKwEMvsMdVqXjWqackIYQSbZWFEgfyZcfNWNT+kuP+1gDoCNrHg5zL
-	5JbIAzkMV2SHrMJ7SOBzoaD8ji0T9Kvwi/fdJCMEqX8f9uBwcbi9ksEBqJSdDTGFkVnRMRiaR3B
-	mpgLeODvxNvaeIgoz8RgxCRZqZq0qDUaKWYF6Qc8HmEv7mn0TfTduJLT+nFsBQHx7LwMeG2XgFD
-	NI/amLYQIdAU+j7ZJq85nPkiv
-X-Google-Smtp-Source: AGHT+IFELQ3f6NPUjdohjrHMcMhPlg1pHDmoCsPi5apVaUNTHNt55Juz3QmARBoFQ1xFCdRTMG4z2w==
-X-Received: by 2002:a05:6a20:938c:b0:262:82a6:d93e with SMTP id adf61e73a8af0-2926f4b8ff7mr3896745637.32.1758270747541;
-        Fri, 19 Sep 2025 01:32:27 -0700 (PDT)
-Received: from archlinux ([36.255.84.61])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3309c81f50bsm1324622a91.23.2025.09.19.01.32.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 01:32:27 -0700 (PDT)
-From: Madhur Kumar <madhurkumar004@gmail.com>
-To: mirq-linux@rere.qmqm.pl
-Cc: arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	Madhur Kumar <madhurkumar004@gmail.com>
-Subject: [PATCH] misc: cb710: Replace deprecated PCI functions
-Date: Fri, 19 Sep 2025 14:02:14 +0530
-Message-ID: <20250919083214.1052842-1-madhurkumar004@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758270779; c=relaxed/simple;
+	bh=a0jGbuINXDYYLHXrX6+Ip5hZUOHKxpyoBXTqd81umCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MLa13PzRTfJwVN7r0EeJyv7bpEEusuoMHu0h3lj2GC6bxu3vfV9Hs82fkLiUGjY+4FweTwtG/Ew6kTUaOted5+O8sVc0ZILLZ0AsVErp1ah9TnOczc0rc+yPfpn1uE9S7K8uSR8v1Z0OPSTRDHtEyUcOjqGHPC3jVKHb/grX0i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nClz5dy3; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 071D24E40D50;
+	Fri, 19 Sep 2025 08:32:49 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CEAAB606A8;
+	Fri, 19 Sep 2025 08:32:48 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C3354102F1D07;
+	Fri, 19 Sep 2025 10:32:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758270768; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=aYSdvv1PGdJwPuRoTj/5x3ILygoqiHtqkDX7UP6C+Dk=;
+	b=nClz5dy3UJ39xi0U6noITgt5NHEUm6oO1ha0PnBdfDaOwm8+x0bhPbBb3KSQm94KHGcl2t
+	u+HQ/9nB3Rf5bzRM9ydQe1uyFDTOaokNI0Kn4YZlfgkOKWiaM/Z+UPc8A2b6ieCIF13moG
+	corSAPx3GLssAcX79ej3TV+uNKdC8W5KtN7aqrP+x6VNIXj/Og3MfzwuGw5wLMjgb61ua5
+	E/WdwxkoX4ICiMotZhMMJl3wGeV5bL4gaosK2ihAmiNI2rO4f4SWv/yu1HMn52g3GGImbz
+	gCyGfH/VokpSWoFEGA9f/A7SqKgkKAza3mGoKxO+YZ7zgbUN+4UEmNfJkvS4Ug==
+Date: Fri, 19 Sep 2025 10:32:32 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Wei Fang <wei.fang@nxp.com>, claudiu.manoil@nxp.com,
+ xiaoning.wang@nxp.com, yangbo.lu@nxp.com, richardcochran@gmail.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, Frank.Li@nxp.com, imx@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: enetc: use generic interfaces to get
+ phc_index for ENETC v1
+Message-ID: <20250919103232.6d668441@kmaincent-XPS-13-7390>
+In-Reply-To: <20250918124823.t3xlzn7w2glzkhnx@skbuf>
+References: <20250918074454.1742328-1-wei.fang@nxp.com>
+	<20250918124823.t3xlzn7w2glzkhnx@skbuf>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-pcim_iomap_table() and pcim_iomap_regions() have been deprecated.
-Replace them with pcim_iomap_region().
+On Thu, 18 Sep 2025 15:48:23 +0300
+Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
 
-Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
----
- drivers/misc/cb710/core.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> On Thu, Sep 18, 2025 at 03:44:54PM +0800, Wei Fang wrote:
+> > @@ -954,17 +957,9 @@ static int enetc_get_ts_info(struct net_device *nd=
+ev,
+> >  	if (!enetc_ptp_clock_is_enabled(si))
+> >  		goto timestamp_tx_sw;
+> > =20
+> > -	if (is_enetc_rev1(si)) {
+> > -		phc_idx =3D symbol_get(enetc_phc_index);
+> > -		if (phc_idx) {
+> > -			info->phc_index =3D *phc_idx; =20
+>=20
+> phc_idx remains unused in enetc_get_ts_info() after this change, and it
+> produces a build warning.
+>=20
+> > -			symbol_put(enetc_phc_index);
+> > -		}
+> > -	} else {
+> > -		info->phc_index =3D enetc4_get_phc_index(si);
+> > -		if (info->phc_index < 0)
+> > -			goto timestamp_tx_sw;
+> > -	}
+> > +	info->phc_index =3D enetc_get_phc_index(si);
+> > +	if (info->phc_index < 0)
+> > +		goto timestamp_tx_sw;
+> > =20
+> >  	enetc_get_ts_generic_info(ndev, info);
+> >   =20
+>=20
+> Also, testing reveals:
+>=20
+> root@fii:~# ethtool -T eno2
+> [   43.374227] BUG: sleeping function called from invalid context at
+> kernel/locking/rwsem.c:1536 [   43.383268] in_atomic(): 0, irqs_disabled(=
+):
+> 0, non_block: 0, pid: 460, name: ethtool [   43.392076] preempt_count: 0,
+> expected: 0 [   43.396454] RCU nest depth: 1, expected: 0
+> [   43.400908] 3 locks held by ethtool/460:
+> [   43.405206]  #0: ffffcb976c5fb608 (cb_lock){++++}-{4:4}, at:
+> genl_rcv+0x30/0x60 [   43.412886]  #1: ffffcb976c5e9f88
+> (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x28/0x40 [   43.420931]  #2:
+> ffffcb976c0b32d0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x=
+48 [
+>   43.429785] CPU: 1 UID: 0 PID: 460 Comm: ethtool Not tainted 6.17.0-rc5+
+> #2920 PREEMPT [   43.429796] Call trace: [   43.429799]  show_stack+0x24/=
+0x38
+> (C) [   43.429814]  dump_stack_lvl+0x40/0xa0
+> [   43.429822]  dump_stack+0x18/0x24
+> [   43.429828]  __might_resched+0x200/0x218
+> [   43.429837]  __might_sleep+0x54/0x90
+> [   43.429844]  down_read+0x3c/0x1f0
+> [   43.429852]  pci_get_slot+0x30/0x88
+> [   43.429860]  enetc_get_ts_info+0x108/0x1a0
+> [   43.429867]  __ethtool_get_ts_info+0x140/0x218
+> [   43.429875]  tsinfo_prepare_data+0x9c/0xc8
+> [   43.429881]  ethnl_default_doit+0x1cc/0x410
+> [   43.429888]  genl_rcv_msg+0x2d8/0x358
+> [   43.429896]  netlink_rcv_skb+0x124/0x148
+> [   43.429903]  genl_rcv+0x40/0x60
+> [   43.429910]  netlink_unicast+0x198/0x358
+> [   43.429916]  netlink_sendmsg+0x22c/0x348
+> [   43.429923]  __sys_sendto+0x138/0x1d8
+> [   43.429928]  __arm64_sys_sendto+0x34/0x50
+> [   43.429933]  invoke_syscall+0x4c/0x110
+> [   43.429940]  el0_svc_common+0xb8/0xf0
+> [   43.429946]  do_el0_svc+0x28/0x40
+> [   43.429953]  el0_svc+0x4c/0xe0
+> [   43.429960]  el0t_64_sync_handler+0x78/0x130
+> [   43.429967]  el0t_64_sync+0x198/0x1a0
+> [   43.429974]
+> [   43.537263] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   43.541282] [ BUG: Invalid wait context ]
+> [   43.545301] 6.17.0-rc5+ #2920 Tainted: G        W
+> [   43.550891] -----------------------------
+> [   43.554909] ethtool/460 is trying to lock:
+> [   43.559016] ffffcb976c26ab80 (pci_bus_sem){++++}-{4:4}, at:
+> pci_get_slot+0x30/0x88 [   43.566628] other info that might help us debug
+> this: [   43.571694] context-{5:5}
+> [   43.574317] 3 locks held by ethtool/460:
+> [   43.578251]  #0: ffffcb976c5fb608 (cb_lock){++++}-{4:4}, at:
+> genl_rcv+0x30/0x60 [   43.585603]  #1: ffffcb976c5e9f88
+> (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock+0x28/0x40 [   43.593301]  #2:
+> ffffcb976c0b32d0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x=
+48 [
+>   43.601786] stack backtrace: [   43.604672] CPU: 1 UID: 0 PID: 460 Comm:
+> ethtool Tainted: G        W           6.17.0-rc5+ #2920 PREEMPT [
+> 43.604679] Tainted: [W]=3DWARN [   43.604683] Call trace:
+> [   43.604685]  show_stack+0x24/0x38 (C)
+> [   43.604692]  dump_stack_lvl+0x40/0xa0
+> [   43.604699]  dump_stack+0x18/0x24
+> [   43.604706]  __lock_acquire+0xab4/0x31f8
+> [   43.604713]  lock_acquire+0x11c/0x278
+> [   43.604720]  down_read+0x6c/0x1f0
+> [   43.604726]  pci_get_slot+0x30/0x88
+> [   43.604732]  enetc_get_ts_info+0x108/0x1a0
+> [   43.604738]  __ethtool_get_ts_info+0x140/0x218
+> [   43.604745]  tsinfo_prepare_data+0x9c/0xc8
+> [   43.604750]  ethnl_default_doit+0x1cc/0x410
+> [   43.604757]  genl_rcv_msg+0x2d8/0x358
+> [   43.604765]  netlink_rcv_skb+0x124/0x148
+> [   43.604771]  genl_rcv+0x40/0x60
+> [   43.604778]  netlink_unicast+0x198/0x358
+> [   43.604784]  netlink_sendmsg+0x22c/0x348
+> [   43.604790]  __sys_sendto+0x138/0x1d8
+> [   43.604795]  __arm64_sys_sendto+0x34/0x50
+> [   43.604799]  invoke_syscall+0x4c/0x110
+> [   43.604806]  el0_svc_common+0xb8/0xf0
+> [   43.604812]  do_el0_svc+0x28/0x40
+> [   43.604818]  el0_svc+0x4c/0xe0
+> [   43.604825]  el0t_64_sync_handler+0x78/0x130
+> [   43.604832]  el0t_64_sync+0x198/0x1a0
+> Time stamping parameters for eno2:
+> Capabilities:
+>         hardware-transmit
+>         software-transmit
+>         hardware-receive
+>         software-receive
+>         software-system-clock
+>         hardware-raw-clock
+> PTP Hardware Clock: 0
+> Hardware Transmit Timestamp Modes:
+>         off
+>         on
+>         onestep-sync
+> Hardware Receive Filter Modes:
+>         none
+>         all
+>=20
+> It looks like we have a problem and can't call pci_get_slot(), which
+> sleeps on down_read(&pci_bus_sem), from ethtool_ops :: get_ts_info(),
+> which can't sleep, as of commit 4c61d809cf60 ("net: ethtool: Fix
+> suspicious rcu_dereference usage").
+>=20
+> K=C3=B6ry, do you have any comments or suggestions? Patch is here:
+> https://lore.kernel.org/netdev/20250918074454.1742328-1-wei.fang@nxp.com/
 
-diff --git a/drivers/misc/cb710/core.c b/drivers/misc/cb710/core.c
-index 55b7ee0e8f93..033e9e6d37db 100644
---- a/drivers/misc/cb710/core.c
-+++ b/drivers/misc/cb710/core.c
-@@ -223,13 +223,12 @@ static int cb710_probe(struct pci_dev *pdev,
- 	if (err)
- 		return err;
- 
--	err = pcim_iomap_regions(pdev, 0x0001, KBUILD_MODNAME);
--	if (err)
--		return err;
- 
- 	spin_lock_init(&chip->irq_lock);
- 	chip->pdev = pdev;
--	chip->iobase = pcim_iomap_table(pdev)[0];
-+	chip->iobase = pcim_iomap_region(pdev, 0, KBUILD_MODNAME);
-+	if(!chip->iobase)
-+		return -ENOMEM;
- 
- 	pci_set_drvdata(pdev, chip);
- 
--- 
-2.51.0
+This is annoying indeed. I don't know how this enetc drivers works but why
+ts_info needs this pci_get_slot() call? It seems this call seems to not be
+used in ndo_hwtstamp_get/set while ts_info which does not need any hardware
+communication report only a list of capabilities.
 
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
