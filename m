@@ -1,169 +1,169 @@
-Return-Path: <linux-kernel+bounces-824810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA1B8A31C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:09:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E82FB8A331
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6FCD1C87D61
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:09:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C0816912B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7ED63164CE;
-	Fri, 19 Sep 2025 15:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BEF314B81;
+	Fri, 19 Sep 2025 15:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="U826dbrf"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="TRX/sHYK"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C337D3164C7;
-	Fri, 19 Sep 2025 15:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD51313E3D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758294537; cv=none; b=gzJuZGDa3cVaPYmWknUTRlj/RxGslx9kwEzUbajE39tN7qbl3vPCgrOOyzd5bRkPQab9FmbR2RamtcX23sN8rYuAhFx3eluJs+L9yzsNCJ928y6XKtokLK8zMYb+p6QX8wA8zuYRFhg9YG+udAgzOQa30C2v2zO0BwBHIH5JcxE=
+	t=1758294529; cv=none; b=YmSNLvMbFwMvKFMApBKfhrTAqLl443wh0V/LUIERMxxFo3LCYdRSqY2lFCp8nuthwjlYxSdmn+MinzI3gOIv5lwbH+Nj/8sn0Fr4F2KScZDn8bHphFN0mwr+pgcQ511iJ3VSMFnTdv+yUUy+sbaUSRwMd4ZvwZkgezxmOOnBQsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758294537; c=relaxed/simple;
-	bh=8ryEgTZTMEPj8syckr/YTW94b0ggpKy61vp5LUHsNX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U55MK3FEaFiFEPCv1PNKiQt6F/XeMNpND38nDzeeYD7Lxfvlb5TN7yQodWZ1P2T0Cqk2nk5ZxFQR/GU006JSWJtJH44wwrsBAT6nQ1FYHFzU2JLjWAFpOk4MZZ1XT9lROotuFEvEZR+JZRW8ZWHZ2Nx5Yg3ZRMR7VBaTdHbD+P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=U826dbrf; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id D0573C8F1D8;
-	Fri, 19 Sep 2025 15:08:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 55895606A8;
-	Fri, 19 Sep 2025 15:08:52 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C38A0102F1D79;
-	Fri, 19 Sep 2025 17:08:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758294530; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=kVkUIo4dQVT4SOntZ8cZ5+tgvO9vk9zBQavLp3x8Y90=;
-	b=U826dbrfoYbVfNFx4Z8CHR+MxQoqEzgV6pb0s//raOyvHWb+CQ0/CKQ/dvTw3eNBDb9BPb
-	YXZdxuRY6vu3bawS6Tje2jgmpPLMKsT2HtUB/94Pm6vym/Dk6voLAxKbxJ99iDghwh67TQ
-	8NBtm1FzWB9pywWDF1xjX5IQFCA13ZXh+ost/xZ51KAXR2V3X44lQNmgFJJexbXTwG7ACf
-	McDDbYEbyeudr/9TpAMH8iXWVGDFn2dSle/rGdtMiRcZdDI9+xSyG45ewNpQlB/MxyB4d1
-	zTQFL5Q1gGkaGrJ27v+uP1jKiK8KBld0WRlbQ6IAyT9U3oRWGv6aT32Z5MxPag==
-Date: Fri, 19 Sep 2025 17:08:24 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Shengjiu Wang
- <shengjiu.wang@nxp.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org,
- dianders@chromium.org, cristian.ciocaltea@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- l.stach@pengutronix.de, perex@perex.cz, tiwai@suse.com,
- linux-sound@vger.kernel.org
-Subject: Re: [PATCH v5 4/7] drm/bridge: dw-hdmi: Add API
- dw_hdmi_set_sample_iec958() for iec958 format
-Message-ID: <20250919170824.63df1d6e@booty>
-In-Reply-To: <CAA+D8AP8eJ8_pueq1ZSb-ORzTJbNT7HOwKFOO5ZCXqgqoQ1qGQ@mail.gmail.com>
-References: <20250821073131.2550798-1-shengjiu.wang@nxp.com>
-	<20250821073131.2550798-5-shengjiu.wang@nxp.com>
-	<20250901185208.394cd162@booty>
-	<CAA+D8AOCTqb5jLeRapYk4wRGZrsrPiuAR=ow3OA1B0+M9X4k7w@mail.gmail.com>
-	<20250909-omniscient-honeybee-of-development-adca8a@houat>
-	<CAA+D8AM=aRU-0QcgtxZ+=YBZ2+kMrP2uzSE3e+NJs3Z3zkrSVg@mail.gmail.com>
-	<CAA+D8AP8eJ8_pueq1ZSb-ORzTJbNT7HOwKFOO5ZCXqgqoQ1qGQ@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758294529; c=relaxed/simple;
+	bh=/a0kQx40XROJgZ3EOPUHwIoezHFZS6LbJ+em6MLV0LU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adI0XHZ4J14CM/az3Wd+EkR2hZDRctxRSvfVVpt1bRPTAnc/n3IjP2TEznfccqF0C3246dcM2BMeT56LvG2uo2b5BR/x4JoRsaWMHgAtP+ivEM4YW7Lnotuj2WWrLpTTejNj8m1Z0cUrpYfkeX90W0xjOmwoK56zyzZvbks+HkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=TRX/sHYK; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-78defc1a2afso26979246d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1758294526; x=1758899326; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/cJcwvwR+y6h1p4tywJwvr+RXXJL/piF54RClFTejJg=;
+        b=TRX/sHYKm84dQYwnoHQPhZP1r/huy/qUdqvHlov6LeD3s7OlAKbDCdzKiCvuGhG0SY
+         88sVXWaLOUKtlxiGzBHkmZqbvXa78OFx6SkkPBcFFGCtz8E00OU4+TOQRKz1D7DxSp1F
+         7IjqJNuIeS+QzTMhbnn6UpFmrhIeTteGqv46ASHxw9Q9l0hZJBxfG9IDa71kfL+aHD2j
+         FoIi6MbI/IJggupnumy3RYwdogzZ4iosuUx+IsMgelddwICG0P9X5behPcyD9PRB0lZP
+         MlgJCjqxoIT3TaKXAVsDSbhF15Bk9t+M7EKFYzCn2mTUmCn8Uoo4a/5qNzek4cLfrdfX
+         rPXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758294526; x=1758899326;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/cJcwvwR+y6h1p4tywJwvr+RXXJL/piF54RClFTejJg=;
+        b=e+DAZ/2Jh16nDM/WfYNnxqW9jB/i5xEeUU5QZkUBqzFqkYz8KLG2UeuYXMZG9qBGf4
+         9NxQLhI65QkXQ0uMFSWhV7ZksuSp9dIdFcRnZnFWMOk0E83wFHoiO4tu8+OHSTm7hlbr
+         cI/7elPc6BsgqcRd+Pt92ONqwY6cpQ5O7wg/CHi0QSkbprVZkNWa901JzNSQBaeKxsLE
+         Kn3cNEk6ardmuNVfTrqtkil7gv9irohDPpONq9gh4P0DW445V/rkBDIYgkF1bx9ZS/pK
+         OoZKN+A9Lsq05VMOL3+2KelJtRwhiK3zEaPwTXK4EwW7arNg33YSATRLzdPH0ncL6Cid
+         QiKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiKJDhqKH1d0g4MDXQqI/7h5kKZb6EqGC2U0f0G7KKFWaMVPzyxfGntgu+BCabZKMvTp56MsvzlumLTB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmQ768Xh/oezt/KwjF4+62Xr2INgXRe8CkYYOOJrm/H1sqt++i
+	SEmeHKLjoFYouMnf6NzysCle2bCP0z07Z6hW8IUXlR+Qap53shoXtDvTIoWkTJYxxA==
+X-Gm-Gg: ASbGncv4jjxHE7qIntpZLZxwoCj6Ymc6hH3C7QBaF9l7Bmr3aL/Og22TZlTW8SD86hJ
+	/+ybL7lVQk7UMHiuw1YpK5I9dH48VG7a9nunqsUnknm5Lylmpp2OMXduZ3+FC+IS4TDeeQIRnWp
+	29SP0KoTc/BgoYjAcR8j1atdU3QWazVX5pRBiWSUOwHR6bmQEG4wEQI/enhWxMn6pm6sXnztYCC
+	uxuFuM0z65Z0nfIOVBL4niV3ZGvwL2I6FHw9eSNeqB4xoIHBNLVDpnUpbLWTSgEVKVFYIrKloNz
+	FK8CNY8o0oFHADxYH2XCLKQuFYnHEdZFkl7Nm0svloNkooUrxXsiqYyoTzKcIYtEpXy0ZHTfn8o
+	MjD3k5/f2K6oGu87p8h8nO31uXg/t5LU6R5Q=
+X-Google-Smtp-Source: AGHT+IHbpkXQZhe+Jnrr9L+se/U4Bba6Omx0NL0JhE8vgSxjcjks/kfv+u5a4rDegESNS9rEBeb68Q==
+X-Received: by 2002:a05:6214:daf:b0:77a:29ba:1b68 with SMTP id 6a1803df08f44-799212d1809mr46426076d6.63.1758294526374;
+        Fri, 19 Sep 2025 08:08:46 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:d03:1700::bb27])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-79351b9ddffsm30204296d6.37.2025.09.19.08.08.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 08:08:45 -0700 (PDT)
+Date: Fri, 19 Sep 2025 11:08:43 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] usb: uhci: Add Aspeed AST2700 support
+Message-ID: <9bb18e89-13bc-469b-8c05-61f8d55a558e@rowland.harvard.edu>
+References: <20250919025712.719246-1-ryan_chen@aspeedtech.com>
+ <20250919025712.719246-5-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919025712.719246-5-ryan_chen@aspeedtech.com>
 
-Hello Shengjiu,
+On Fri, Sep 19, 2025 at 10:57:12AM +0800, Ryan Chen wrote:
+> Unlike earlier Aspeed SoCs (AST2400/2500/2600) which are limited to
+> 32-bit DMA addressing, the UHCI controller in AST2700 supports 64-bit
+> DMA. Update the platform UHCI driver to select the appropriate DMA
+> mask based on the device tree compatible string.
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  drivers/usb/host/uhci-platform.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
+> index f255358d6242..5b4be9a5764a 100644
+> --- a/drivers/usb/host/uhci-platform.c
+> +++ b/drivers/usb/host/uhci-platform.c
+> @@ -71,6 +71,7 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+>  	struct usb_hcd *hcd;
+>  	struct uhci_hcd	*uhci;
+>  	struct resource *res;
+> +	u64 *dma_mask_ptr;
+>  	int ret;
+>  
+>  	if (usb_disabled())
+> @@ -81,7 +82,8 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+>  	 * Since shared usb code relies on it, set it here for now.
+>  	 * Once we have dma capability bindings this can go away.
+>  	 */
+> -	ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> +	dma_mask_ptr = (u64 *)of_device_get_match_data(&pdev->dev);
+> +	ret = dma_coerce_mask_and_coherent(&pdev->dev, *dma_mask_ptr);
 
-On Fri, 19 Sep 2025 11:43:05 +0800
-Shengjiu Wang <shengjiu.wang@gmail.com> wrote:
+What will happen here if of_device_get_match_data() returns 0 or an 
+error?  Shouldn't you test for that and then use dma_mask_32 as the 
+default mask?
 
-> Hi Luca
->=20
-> On Wed, Sep 10, 2025 at 6:29=E2=80=AFPM Shengjiu Wang <shengjiu.wang@gmai=
-l.com> wrote:
-> >
-> > Hi
-> >
-> > On Tue, Sep 9, 2025 at 2:39=E2=80=AFPM Maxime Ripard <mripard@kernel.or=
-g> wrote: =20
-> > >
-> > > Hi,
-> > >
-> > > On Wed, Sep 03, 2025 at 06:41:05PM +0800, Shengjiu Wang wrote: =20
-> > > > On Tue, Sep 2, 2025 at 12:52=E2=80=AFAM Luca Ceresoli <luca.ceresol=
-i@bootlin.com> wrote: =20
-> > > > >
-> > > > > Hello Shengjiu,
-> > > > >
-> > > > > On Thu, 21 Aug 2025 15:31:28 +0800
-> > > > > Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
-> > > > > =20
-> > > > > > Add API dw_hdmi_set_sample_iec958() for IEC958 format because a=
-udio device
-> > > > > > driver needs IEC958 information to configure this specific sett=
-ing.
-> > > > > >
-> > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > > > Acked-by: Liu Ying <victor.liu@nxp.com> =20
-> > > > >
-> > > > > [...]
-> > > > > =20
-> > > > > > +void dw_hdmi_set_sample_iec958(struct dw_hdmi *hdmi, unsigned =
-int iec958)
-> > > > > > +{
-> > > > > > +     mutex_lock(&hdmi->audio_mutex);
-> > > > > > +     hdmi->sample_iec958 =3D iec958;
-> > > > > > +     mutex_unlock(&hdmi->audio_mutex);
-> > > > > > +} =20
-> > > > >
-> > > > > Apologies for jumping in the discussion as late as in v5, but I n=
-oticed
-> > > > > this patch and I was wondering whether this mutex_lock/unlock() is
-> > > > > really needed, as you're copying an int. =20
-> > > >
-> > > > Thanks for your comments.
-> > > >
-> > > > Seems it is not necessary to add mutex here. I just follow the code=
- as
-> > > > other similar functions.  I will send a new version to update it. =
-=20
-> > >
-> > > Let's not be smart about it. Next thing you know, someone will add
-> > > another field in there that would absolutely require a mutex and now
-> > > you're not race free anymore.
-> > >
-> > > Unless there's a real concern, the mutex must stay.
-> > > =20
-> >
-> > Ok, thanks for comments.  Then Patch v6 need to be dropped.
-> >
-> > Is there any other comments for this Patch v5?
-> > If no, can this series be accepted?
-> > =20
->=20
-> Can we have a conclusion that keeps the mutex as Maxime's comments?
+And if you do this then do you need to add the .data fields to the 
+existing entries in the platform_uhci_ids table below?
 
-If Maxime wants the mutex to be kept, it's fine.
+Alan Stern
 
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -114,7 +116,8 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
+>  		}
+>  		if (of_device_is_compatible(np, "aspeed,ast2400-uhci") ||
+>  		    of_device_is_compatible(np, "aspeed,ast2500-uhci") ||
+> -		    of_device_is_compatible(np, "aspeed,ast2600-uhci")) {
+> +		    of_device_is_compatible(np, "aspeed,ast2600-uhci") ||
+> +		    of_device_is_compatible(np, "aspeed,ast2700-uhci")) {
+>  			uhci->is_aspeed = 1;
+>  			dev_info(&pdev->dev,
+>  				 "Enabled Aspeed implementation workarounds\n");
+> @@ -189,9 +192,13 @@ static void uhci_hcd_platform_shutdown(struct platform_device *op)
+>  	uhci_hc_died(hcd_to_uhci(hcd));
+>  }
+>  
+> +static const u64 dma_mask_32 =	DMA_BIT_MASK(32);
+> +static const u64 dma_mask_64 =	DMA_BIT_MASK(64);
+> +
+>  static const struct of_device_id platform_uhci_ids[] = {
+> -	{ .compatible = "generic-uhci", },
+> -	{ .compatible = "platform-uhci", },
+> +	{ .compatible = "generic-uhci", .data = &dma_mask_32},
+> +	{ .compatible = "platform-uhci", .data = &dma_mask_32},
+> +	{ .compatible = "aspeed,ast2700-uhci", .data = &dma_mask_64},
+>  	{}
+>  };
+>  MODULE_DEVICE_TABLE(of, platform_uhci_ids);
+> -- 
+> 2.34.1
+> 
 
