@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-825355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458E7B8BA5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:56:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0093B8BA67
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038A35A70D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1278A80EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF942D46AC;
-	Fri, 19 Sep 2025 23:56:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981102D595E;
+	Fri, 19 Sep 2025 23:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyDkqVg+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58417A2EA
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49B117A2EA;
+	Fri, 19 Sep 2025 23:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758326165; cv=none; b=CwESf47szR2TFVb2mQFew9+L2yLVEfjiDbJoFjltEnV39dKFYje+hbGeSjVrj+soI+eEYBLB+NJN38CkwBF7NZxCFmC4a7gyE301Tj7VoN8JBuTvY7HZl5ksb3ry39CZG962WminWO0jXvZAwej68DEYyjUScQHR+B2xIEpCdN4=
+	t=1758326194; cv=none; b=aNjiftTk+eV/8myCLMDvmF/SNVcYof+P1K5pEGSwFz3+u06BV5EPJdd7TqC7ETDHU+ix+uEXwKMOmMqEUskUxpsXITfiup41XOLj3nlYwZCLFCSHx8zNopKDRUCJDUcj9AY3moWaUiW6JFvHYoldhgfrVVTtnJmX7I6V/qc6lbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758326165; c=relaxed/simple;
-	bh=9X5R2goBB8jp1Nriv9LEMzB0pYDuwx/Wb9x+QDf29vM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j7liEPFUeU4v0hs0EC+YQ2+o7+aoxVukgJhnx6bWsRDHH3Wg6epu+kQvKg+8Qg5CsfWwUDINIEadKXzvH4j02jKiWJD1o/k0ccRb+R8Ic5j/CQgy0FQnI7GvpclYVnXNS5oUByOwcLbcR+EOcLAcRogGbnEtEaRYuNbM+XtpcaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4247661a0c9so29051015ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758326162; x=1758930962;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dLpxAsq3TAKmv+q8Abaa/51h1lJbJW44lPcHIzBtNQE=;
-        b=ayedojxRrftwNQaySN90tbKsxr50jeRhW+WeYmotVFSzU6yVS1Ehwk2s03KnTT02E6
-         J/ZD6xnZb/ctzbDecaIq212NxRFZDz9QlsSh1Lqo12GPp3HUkq+3E0wvCbGqMcRTSnRs
-         WjZPDhTLbr1NS57hvsnLy+IFbDTeBQRk8rNtMty6hQNJ0YpjOriR2jh03bafupI8BPf/
-         PktZvzoa8oXZJT+LTNvKZJFRPuAtuohbjAvq9ITgRnHHpveAj+5IuGUKxJ0Igdnpuv0Q
-         qDSgur7ShEZwE1GuVaO/OaA7P/4k30d8evC/hbEKdprCVYheSgyu2CSyX2pza3BCoqKM
-         8cYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfmnmRR2LIxPrJ/GwlZD5vlaQF7hMCWINkE9PPhiVW0g99yHmdvwFoVOVpE3dTYcJgXkEzjEyhYecZALo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLC7Sa/euEr94o1cMVgnWKYlSVXLhA0LxAdPeIZqAdxV4bVLSJ
-	qeAE4k8b+GdwWfRlLihYiKPpGvyhtxSJ+yp2s24/NutqgeCheYcxVPCsNvP2AIN/fR+PlTs3i9b
-	eW+f899W8ZzqBNcoDCVnF2CkyRm2bsyYGHPt6rsgt02zgiPuaOJXWOKGMyJQ=
-X-Google-Smtp-Source: AGHT+IF5B/2JN+uZpFWbtkAlBXZY2igI8ZUoA1rETn0NiN7NgiahSs5RxpeXjnj30JegUBlCXuwxs+NRe71rK3AnK6Q8Qp4Yas01
+	s=arc-20240116; t=1758326194; c=relaxed/simple;
+	bh=jnQJmZBheVXo3pp3RQRswVKx1JqGxYUBeu7J45F+5VI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=KTd9XyXtT+B7G2g/JxOtq/VXFjoaZq7HD7TQG2TEdGRZCZz8DZPPAoqeJ37I6G0fGQtuEeFtzf3b37QBayzBHzGHqZxskxtig7awFcQh66zlqoB3j+pbpekgLFzvsUhc2PMiX2EmtrtZsmA3cqNv35zEYZagzNn73fcpnlwdiWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyDkqVg+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C490C4CEF5;
+	Fri, 19 Sep 2025 23:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758326193;
+	bh=jnQJmZBheVXo3pp3RQRswVKx1JqGxYUBeu7J45F+5VI=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=TyDkqVg+ydfmvIpZW3BOrIbUI0oXw4Its1dal9d976p/0B9GgPQAjwfkPIBaEq0Rg
+	 aid6R8BLb/XMF/AyYHcbr44Bs4/ZoukK9O/rZEUzgCSAdRikNPUe1ETkwAxawVqgtp
+	 mYrSFx2Y+XUcsWF+th7mmn5WtFKonD8Z2euUoli+7c6RtoNHRSfvoAfKHIaLuJqm4a
+	 3FV9qDzWYFi80qkdAOB7yarvkcjZk3mgEFb/pSYNoxKvJxkxLVGzJ2VR/Q6dfVjq+F
+	 024+WUopqrL58Fgtx5zqArW7ojZ6L58gT+KLq6nji8SIcxKkTg+nwJZvb3mQx/SySC
+	 4Tz8G3RFVyoaQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168f:b0:401:9e1:ce68 with SMTP id
- e9e14a558f8ab-424819298d8mr91424615ab.13.1758326162465; Fri, 19 Sep 2025
- 16:56:02 -0700 (PDT)
-Date: Fri, 19 Sep 2025 16:56:02 -0700
-In-Reply-To: <CAHxJ8O9EHnwSkBNOmBOEg3GvDxcnqsQ5cURd+uG8G2EvUcXYfg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cded92.050a0220.13cd81.000c.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref
-From: syzbot <syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com>
-To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 20 Sep 2025 01:56:27 +0200
+Message-Id: <DCX6M3BCXV2W.37USDZEDRVA2G@kernel.org>
+Subject: Re: [PATCH] rust: io: use const generics for read/write offsets
+Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng"
+ <boqun.feng@gmail.com>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-pci@vger.kernel.org>
+To: "Gary Guo" <gary@garyguo.net>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250918-write-offset-const-v1-1-eb51120d4117@google.com>
+ <20250918181357.GA1825487@joelbox2> <DCWBCL9U0IY4.NFNUMLRULAWM@kernel.org>
+ <20250919215634.7a1c184e.gary@garyguo.net>
+In-Reply-To: <20250919215634.7a1c184e.gary@garyguo.net>
 
-Hello,
+On Fri Sep 19, 2025 at 10:56 PM CEST, Gary Guo wrote:
+> Turbofish is cumbersome to write with just magic numbers, and the
+> fact `{}` is needed to pass in constant expressions made this much
+> worse. If the drivers try hard to avoid magic numbers, you would
+> effective require  all code to be `::<{ ... }>()` and this is ugly.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+In the absolute majority of cases users won't see any of that anyways, sinc=
+e
+they'll use the register!() macro generated types.
 
-Reported-by: syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com
-Tested-by: syzbot+0be4f339a8218d2a5bb1@syzkaller.appspotmail.com
+   // Master Control Register (MCR)
+   //
+   // Stores the offset as associated constant.
+   let mcr =3D regs::MCR::default();
 
-Tested on:
+   // Set the enabled bit.
+   mcr.enable();
 
-commit:         cd89d487 Merge tag '6.17-rc6-smb3-client-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=167ca0e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
-dashboard link: https://syzkaller.appspot.com/bug?extid=0be4f339a8218d2a5bb1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14551858580000
+   // Write the data on the bus.
+   //
+   // Calls `io.write<Self::OFFSET>(self.data())` internally.
+   mcr.write(&io);
 
-Note: testing is done by a robot and is best-effort only.
+For indexed registers it is indeed a problem though.
 
