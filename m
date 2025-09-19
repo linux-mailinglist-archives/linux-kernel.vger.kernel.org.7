@@ -1,276 +1,412 @@
-Return-Path: <linux-kernel+bounces-823992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB03AB87E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:53:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B959B87E22
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B9F1C84220
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:53:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2D287B368E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B91F26E16A;
-	Fri, 19 Sep 2025 04:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3935241665;
+	Fri, 19 Sep 2025 05:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="JHbqVxpU"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HJr7Y5Xv"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012043.outbound.protection.outlook.com [52.101.53.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7E2225D6;
-	Fri, 19 Sep 2025 04:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758257600; cv=none; b=HqqKBnaSrO7mqNHICaRBte7R7OAu4/2dG2RaY4U2J1tkVZbv1yEwrlKJFzjedKJygMPISqQeK9IQP8rg/WMdurJzjx2QFjd5D0/TFMcoh1Tti2YixauDPWT/AykPMjdw7+nIC5CZnfBwM0KtcwIyTgfuNy0ZTXrsziIq7JLe5fU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758257600; c=relaxed/simple;
-	bh=niu7L+XutTuM3epi/bM8qF5I6wt7+HOjmYexFOsl1UU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ahXOluqpbufmlUMktjBi8ktgiCLll4dCRUNE0w4fbfhQF/RJN3aP0j4yHwMVsxhn8fUGPv8DZm+yo4C+kJbLX1IunrUKsLVYdJHX/Sl4zrztlo9QNJVhfidCxDcwkWiPDkO9ZQDyY4itj65dPxiAwjtCDI4nwxHaU1qSNCPR0ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=JHbqVxpU; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=gibson.dropbear.id.au; s=202508; t=1758257587;
-	bh=onjWscOdRIHhKfOV71/ABj9CnTyOdEOjdicJ6axOKFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JHbqVxpUH0n3TUEyNVoowW7u18AX60XuyY14nUNseZtxgqh30HFFEgjXhKPFCJ+iK
-	 rnYelAGmNpeYRKZL3axvFw/4BYVtT4Y7+qJncABpLid18YCMy0Oh2Eru3+8Iz7z3DX
-	 C5AG6RkDmcycxJqbhMHF6Lg1Uih99a7frIoQpYtcZ1F2405nTz/xm/suiuo620t/Fy
-	 ogZ9V9X8IYqmI7RK5eHjWFEhabj1m+t0knsFV0J2Ha0rMauiJJSX0fD3P9KDz3CrNE
-	 +bhKSxkFFy0iM2s2EwINK1IKAhPRNJaoM6Jh3+b3K/qGnKDfrTSEo/0IoIdFlW+uHf
-	 /FZpuLiCgWHxA==
-Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
-	id 4cSg9v5DF3z4wCP; Fri, 19 Sep 2025 14:53:07 +1000 (AEST)
-Date: Fri, 19 Sep 2025 14:52:16 +1000
-From: David Gibson <david@gibson.dropbear.id.au>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Andrew Davis <afd@ti.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ayush Singh <ayush@beagleboard.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <aMzhgDYOuG4qNcc0@zatzit>
-References: <aL5dNtzwiinq_geg@zatzit>
- <20250908145155.4f130aec@bootlin.com>
- <aL-2fmYsbexEtpNp@zatzit>
- <20250909114126.219c57b8@bootlin.com>
- <aMD_qYx4ZEASD9A1@zatzit>
- <20250911104828.48ef2c0e@bootlin.com>
- <aMebXe-yJy34kST8@zatzit>
- <20250916084631.77127e29@bootlin.com>
- <aMt5kEI_WRDOf-Hw@zatzit>
- <20250918094409.0d5f92ec@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616B4315A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758258087; cv=fail; b=KTH2qvaqBwG/KAzmMprcInvc9S23Gi3qvUYyTAjCdeJQWXz/Zqaq/V7VRw6E4Dt2r1x8gRr6kEQJdo8Uh260j2J5n/n8v5uCMVMfNkON2Do87I1dWqfgN78N5Dwcm0wxtXEhfzo0QFF7kemjx+ZOBkqpKdZUaSidxkQFywuThOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758258087; c=relaxed/simple;
+	bh=0dttRbaLuxA18YtkrggB/exNp61gJTI1dSAfeUO4E9s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=o8CjSGh3aUimFGTl3TkCBZlB5cvwndHhhN9f1mXw/7WUnbGN9dlgOoR/qr30UJaNpn5o/VI4NN+r3K9FrWsIJeVhDc1VHfKYd3zbRpJSmh34mT9k3Kbm9wkTxlTcmUWnhABWRd3i4eDEc/tFjoeZo5jTXJB2qFyS5QvmluLo1YY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HJr7Y5Xv; arc=fail smtp.client-ip=52.101.53.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zMtlpnvPKYBPrVEjU6jmDueGIP+UcXRYAFZs1zw9OrFFW06qVLU8fyWcIuO4a7HedvKtxrvehS+cmjcWGixSPz2YkTolKQx+coHmOoyAwtBeXkmnT+x3GwPxr/yYvLHYjo9BHJuiZGdRN1mEGQ6AemiYcFaOm0kFVeXX51jA56C2I1IvL5Ej7tTzLUHGBmMh4wgT5tgY49PzrWIRM2NIiqobBA2U0NURALSb5gxQHTR52rZdV8dCT12F5+k4Tc6v6eXFrC+xbhq3ULu+trNBHFsGQRKO5b0cvY6AOqs14G1/Z82eGXHARaXVhmtNaFw2vqwjOjpezdqf/nrRGDRkKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sJOb5JoAR7WLbMJyYInCbH0lcgrTYgrBU+y+OvfHdX8=;
+ b=sKRsmSyiEK7GWJCPHl78enARPHZuNQt1eD/5DdrAFVOLe2xu7v/U7assRXC1liTYgMO3LXQvbuVvcvhI++Z19Z+scWl6BPk/hmKZdA9vJDXcGFaZr358mFZ/TY9yu+X68ZUPdiuMxB7VbAdCZ3wjUf+Dbv5mKjFBM3mxrrtPg+oU85bYXn/7dkK0TU/itI3+MDyJ+/Q+BoxEeUSI3spwrgezV8BE2+oGUCkZ3YUg2fgSsgDkvY9hX1RbSnHn33R9pvtfTXzxPTgqsEZYHOvkkJnxjptDlMHEwP2wZCVkPCDlUSa9kwGjChddgJ1+MI8LVk+MVOG/c96QVJMEg5kGOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sJOb5JoAR7WLbMJyYInCbH0lcgrTYgrBU+y+OvfHdX8=;
+ b=HJr7Y5XvPW7Lllhfp076HVGyzUIgXVr+bhHDhKGRUCfKJ3mzETuWWX7CkXTgjn0013+DQ5oQNJxI2u0UCs4FpqoKUl0XNj3esFx8/Xim51nKghBs+9A4j3lizP10hTX+Gpr4pvpFlXjr9/LEVdxpMyDAkgETe9gZbrvaAihtUuzdCC/CdM4uCgQUBf0Kzvhpx2zW2Iz6lj5mj7bYZwL8p/u8kTYTG38dsmDgJ0Upc/4HgqRTvC7xh47QjVy28D+hywDaPapMIgWh3Wj0mZZyGPts9XUO1p7c09v6Sj1Y2og8FOzt6fF6xC5at8XGXzJimcihyxO/CiLsWeJHRBBb0A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by DS7PR12MB8370.namprd12.prod.outlook.com (2603:10b6:8:eb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
+ 2025 05:01:22 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
+ 05:01:22 +0000
+Message-ID: <f026c5a1-ec51-4fa5-bc58-c2d690f9248c@nvidia.com>
+Date: Fri, 19 Sep 2025 15:01:15 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v6 01/15] mm/zone_device: support large zone device private
+ folios
+To: Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>,
+ Alistair Popple <apopple@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, damon@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
+ Gregory Price <gourry@gourry.net>, Ying Huang
+ <ying.huang@linux.alibaba.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250916122128.2098535-1-balbirs@nvidia.com>
+ <20250916122128.2098535-2-balbirs@nvidia.com>
+ <882D81FA-DA40-4FF9-8192-166DBE1709AF@nvidia.com>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <882D81FA-DA40-4FF9-8192-166DBE1709AF@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BY5PR04CA0014.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::24) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H7/fQSG5jrECq+gd"
-Content-Disposition: inline
-In-Reply-To: <20250918094409.0d5f92ec@bootlin.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|DS7PR12MB8370:EE_
+X-MS-Office365-Filtering-Correlation-Id: cc97dc4f-b1da-40dc-1529-08ddf73993f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZzhIMzQxeGVpeVZKdmp2b0tHRWVwNWFPNGdMcTQwU1o2ZURpTkxiMnBqTDc3?=
+ =?utf-8?B?aFVnbm1lNlh0TE13MzBCTmg1YXh0aE1ic1NLMmhVaUNVdjBCeFZZK0VmU3ZH?=
+ =?utf-8?B?Y2JZT3hQZEtMYXBFbGN6TGxVR3RYeHVseWtPT0EyRWtPWktSbGR2eEtoVUI0?=
+ =?utf-8?B?MDNQRnJnWHFBUzFQY1lWdTkzazRPa3BXbjk0NWlMZENIdmNZL1ZjanlGT0dq?=
+ =?utf-8?B?REdld0ZyWU5RSlZnakpEWUhENkt0aC91MmxKSUpBUnRvek9zbXdqd1I2Mnpa?=
+ =?utf-8?B?cXdiZnFKd1BITkcxUmwvUFhKdmhOdEU5eHN3LzFKSlhsMEpCeGQ0OEZSdCsy?=
+ =?utf-8?B?Y1E1b1M3d1NzL2NERGcrZ1ZLdHhkMVl3U1A4TXlvMkVjR1hLUWh0eVdicHZG?=
+ =?utf-8?B?dy8vdHVZTVFoTGNMbGxZbVl1TXNEeVRwN2dPYVlnbG0xYmdUeE5RcysrNkZp?=
+ =?utf-8?B?aklPQkdqb3RXcmprRHVFY215eS92UWxIajMzaTBWcTFQZmhiVWg0ZXZ6ZVhN?=
+ =?utf-8?B?U0ZobUZrc2hyd2JRRVRLZFB3bW5zaWo0TGtYMEl6Zld6QitIS1d6bjdsb0dy?=
+ =?utf-8?B?dmVKR1RjbjVmZ2N2b0E2RXNXaWZ3SlZySlUzM1UrVndyU2lueWtRV2c0TDl2?=
+ =?utf-8?B?ZmE0YkhDK2hZdGRURHRlUkxjMmdZaE90QitSazRuRStyZlVyTUt5MHRIT1lT?=
+ =?utf-8?B?SkppQ1FQUnlBa0MvWjRlbElQUVhTbEIzcDM4N202UitnaWg2R0NRcjhKZUJF?=
+ =?utf-8?B?OWcrOXZtdkI0ZFlYWmx1ZlFNOG9LcEVaeERoZjMvR0hCd2ZDa0E3NW1xL0RE?=
+ =?utf-8?B?MjRqL0MyQWg5ckJCN2dSeEVnL0ZwN1NVbGo2ciswNHQxREhOa2M0ZzBybmhU?=
+ =?utf-8?B?Mk51Nlc5di9YL1JlYTNaTXRiYVlHMlM3My9wQnVVN0V0NzFmejRYdUtWWnpU?=
+ =?utf-8?B?WHFZWFFtb2xWLysveXIvL2JaS1VINEo3cUNNMWl0QlZ4Zng0VWl6c3BWaytT?=
+ =?utf-8?B?elR4TDB1ekl4QWhEaWd1SlNTZUNpRTl3aUIwNnVSK1h6RFI4YnVsQmhWRTVt?=
+ =?utf-8?B?WmR0eEJkamo0VS9OOEMzcFVlaE9CWHdBNjNrWEhZbkdmMWZvMGh4TFJJRXZJ?=
+ =?utf-8?B?dFdob1daUTlUckQ2STVzdkI3UTBMRG96VnpIQmpraWZwZlZETlVkUDhHNUJr?=
+ =?utf-8?B?N3VvT2I3dVM1cGNYbklZL2VuOFJkYUQzbE5UaEVRdlNNYXI4YnRrZ01UM3Z2?=
+ =?utf-8?B?U0QvdzRUaGk2ZHdvMm5rc0Z4bWN0dWxsRHdaZ1VuOENBdjVGMXhIaTd1V0J1?=
+ =?utf-8?B?NlFxN0NNMHQrUURtTXhXMDVSK3VHejRKSDZZbVVwRGlEVWRuV25CZnd5c1R2?=
+ =?utf-8?B?K2trVG96V3dNVHBzSTJibTZXNVZCZktoWEdBb3N2UzZOT2NITVZRT0RDa2cx?=
+ =?utf-8?B?TzNPNFYzSmg5YmhpQzFrV2l1K1FTTmpIb29wc0Q3UzMvVnEyM2FTU2FML3FY?=
+ =?utf-8?B?WmY0U0VDanJ1TkhlUWNqYjVxMzZaa2t1T0JmSGdXYXI5czBWUnZFMWJiZitK?=
+ =?utf-8?B?NktiM09HYmVweVoyM09DTStjZ3RyOHZPWXZuclZFMHdob1Q2ejdTRk01bXF6?=
+ =?utf-8?B?YmpRZkcxRnNWMFhwQ0lKdFljNmppOVg3T3VDK0FkT2VudGpCVzlvcWlQbFpS?=
+ =?utf-8?B?UWY0dkthOXZjMVRqS2dkL3IyWWJmL3NVNzBOVkNvcklNYWN5UlZtVzV5V2ty?=
+ =?utf-8?B?T2pTdCtFRjVxVVMwOFZ1cGgzeW5qb2YwekxWNmxMYkNEc1liemJoWGdFWWRJ?=
+ =?utf-8?B?d3F5RlhrSWJscndqKzNFSGFGYlBEQkhrQVJqZmUyZ3hNZUI2U1VpQUJZRWl4?=
+ =?utf-8?B?aUtIS1o3YlNId1k5a3RLMk50TU9TZXM2djBoZ0FtMk1IZHdsM0NJN1o3ZTVC?=
+ =?utf-8?Q?dRG7QcXPfHI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c1ZsNit0SFA1OVU0U0VpS2tTZ3d2dWs2enhCRzY4Ym9XeVpRaUpoM0l0Umwr?=
+ =?utf-8?B?NHIyNlBDTnpuS2VuU3NNK1NtVWV4WHo0eExDUi9VenJKSnM4QXU1eGJZcCth?=
+ =?utf-8?B?RlZFUWwwMGNhZXJtR3ZZb3I0Vml0Q21EVzNjQlB1aWhmNS9mS0dlS2dnRDRp?=
+ =?utf-8?B?dUV3dUFSQkdnaWp5Q0FNWWpXWEtHbkl3akd0bmRzdEZkS2p4WVJWemhTb1RM?=
+ =?utf-8?B?WHpIUmJSbERpZUxjMjhkeFgvSHNOMEtqeStKQUNUbkhCWFZSRUtSbTN1WkJB?=
+ =?utf-8?B?akVoeUxQZDZSNlJyWi9uSVl4L3NRVERzRUJ2bDdmdHdJRHh0U0ptM3gzUEJs?=
+ =?utf-8?B?UWg4QXFqeERzV1VZb2xnS1BaVko5TjBtR3hxQ0RXNHkyaEtpR2c3bFNjTXU3?=
+ =?utf-8?B?cHNJSFRtKy9ZMnpKVGdxbVNxNDJycXpiYXZYT3VRdjBGZ2F0OXdueVlKL1RN?=
+ =?utf-8?B?MmpRRU56cDY1eUlaeE4zNjlFSUtTQjMxLy9GOEx4dDBJT0trZFRDa3NXZXk5?=
+ =?utf-8?B?VDJPUW45NktFNFFZOXUyT0lpMVFwVTU0NHdYMDBGYVo4R29UQ2YxbndWdWk4?=
+ =?utf-8?B?WFFLKzJibXdCKzNlMmdTbzFxQmxCWGluQit0VzFGeU5rRlM1NW9JNDF6M3ZP?=
+ =?utf-8?B?RnFZeVlLdVpyZ3h6V1k3QU1Kc0tEd1A4dWdBSGpLRW8rVW41ODdFMzJFR01U?=
+ =?utf-8?B?SmZXeFlNekRnLzJ1RElOTDdmc1J5QW5xNmJMc2hxVTJvUURmTGJZaCtXZDNN?=
+ =?utf-8?B?ZExmNHBYQUMzS0xNMS90VmppaDZNV282SDNSVXp1ZCtveW9DQ0FJQnFoSzhB?=
+ =?utf-8?B?Y1M1NkNJc3F2akhja25LekdGdTNQZ1EweEVoUHJTTWg2N1I4dUpXV2l2LzBP?=
+ =?utf-8?B?WXhGbFZIdkJOS2tPRlM0K1ZoWkJ6U29hUDd2WkFVczY3NVd2TFNiamlra1p1?=
+ =?utf-8?B?dHY3bVVGSHdiSHpLTXdERDlaUkZRbTNNeHhrZGtHY29WSmh1eTY1UmJwL1Vj?=
+ =?utf-8?B?M2cvdHBEMkdxVVlqcmh4bkh1Y2lZSWZFT1JPdGVpWXlFL29pbHY2RzJkK3Rq?=
+ =?utf-8?B?aU1LendRMFFGL2tMT0s2RXZqTDAxOEtoSXJEaytBQ0sweDJpTUlHc2p2NTdz?=
+ =?utf-8?B?VVhuVVJIc245SHk1NEFDZ0NuTXY3SGllUytoYVRrak94Z2c0VUVlODI3WUtm?=
+ =?utf-8?B?ckN0bnNUemt6c0s0MGl4YXFibSt0YUd0M2lldkpZckJiVmoyM05oVmlSNjZU?=
+ =?utf-8?B?Y2hXclhLWHNod0ttTjdiK2pwOWJJOGFkWG1PbkdFR0RWWDJyQytpK1VtV1ZK?=
+ =?utf-8?B?amJWQTBOMHhZME0rNEdkMlgxd0M2TWc4ODZ6Nmd4WkdtbElnV2NubkVYakhI?=
+ =?utf-8?B?YVErWlA3dllRTlJ0bkUxNDNYSGRNNmxLSEdrNFVrYWl0UHhJOHlRUHgxS0Nu?=
+ =?utf-8?B?RXNZVDkvT3hVWE5ZYWVock9BVnNkYjZxbFBtbnJ0OVhQTURkaFNBNlNxV3Ja?=
+ =?utf-8?B?OXJ0eFBjMnhhb2RZaVN0T2loMjRUTFlWSFlaTUtJQ1JvU1UyZmtjN3FzMVRF?=
+ =?utf-8?B?RHdib2hNYi9VM0V4K3FlNTAwVm9HaVBwczlyTXRLQUdpbEZ4bHkvTzNuYndk?=
+ =?utf-8?B?eTRlNW80TUJ2Y1FwY01wSFhGRUgxNDJDajVGOHhWQUs5OHpRakRRN1JLbGVC?=
+ =?utf-8?B?ZGphWlJmSmxYd3kwWmVrN2Z0ejgxWEFCVSs2K3NIa29SYmJKQlZmNU91d3pL?=
+ =?utf-8?B?MXF5eWFhbXM5SDdQWEpReU9kSW1sRUg4dlIvaDlOMHYxUjU3S3ZlajYvL3NY?=
+ =?utf-8?B?WWc5SmRDWmdFb2lKUHB1dXkzMER4VjRzYnlKYSthMSs0S2hsVnUwS1NRU244?=
+ =?utf-8?B?ZHFhTnBYdkg2RThMYjZrZG55SThOQWFWVnRKN1hkZXNucC9IK2VYSmE1YWpr?=
+ =?utf-8?B?anVXdlAzNHVJandIcVZ3THNGYTNVQ2lCRXVaaHN5ajFoUFpMOUhLVE90djd6?=
+ =?utf-8?B?MXNmTm9Edyt4YXhtSWFKSklpenEwKzBIYWZjZ0p5emZ2d05UWHBseUxockIw?=
+ =?utf-8?B?WWhrZG1rVGp2QTY4MFFTTm85NFNSZDUwbjNvZWtkZ1RhcCtOQTJhQTYyeFhp?=
+ =?utf-8?B?b0dxRTFCcVMvK29KeVFodE03b3FLTlpoTkY5cEsvb2dlSzZtd1NFVUQ3dk96?=
+ =?utf-8?Q?Kb34SSMHjx0p2InYumqtm+rR+d7m9PWqQHByJ/+gS+Rb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc97dc4f-b1da-40dc-1529-08ddf73993f8
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 05:01:22.5711
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /4o0OMU37rpq3+whPJQ/ny7hSBuK5FaUCxv8H40/3SJgwdbC89BhLGuT/CymiE+D6ymTW6MxYl2aE+d6uxYdWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8370
 
+On 9/18/25 12:49, Zi Yan wrote:
+> On 16 Sep 2025, at 8:21, Balbir Singh wrote:
+> 
+>> Add routines to support allocation of large order zone device folios
+>> and helper functions for zone device folios, to check if a folio is
+>> device private and helpers for setting zone device data.
+>>
+>> When large folios are used, the existing page_free() callback in
+>> pgmap is called when the folio is freed, this is true for both
+>> PAGE_SIZE and higher order pages.
+>>
+>> Zone device private large folios do not support deferred split and
+>> scan like normal THP folios.
+>>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> Cc: Rakie Kim <rakie.kim@sk.com>
+>> Cc: Byungchul Park <byungchul@sk.com>
+>> Cc: Gregory Price <gourry@gourry.net>
+>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Lyude Paul <lyude@redhat.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>> Cc: Matthew Brost <matthew.brost@intel.com>
+>> Cc: Francois Dugast <francois.dugast@intel.com>
+>> ---
+>>  include/linux/memremap.h | 10 +++++++++-
+>>  mm/memremap.c            | 34 +++++++++++++++++++++-------------
+>>  mm/rmap.c                |  6 +++++-
+>>  3 files changed, 35 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+>> index e5951ba12a28..9c20327c2be5 100644
+>> --- a/include/linux/memremap.h
+>> +++ b/include/linux/memremap.h
+>> @@ -206,7 +206,7 @@ static inline bool is_fsdax_page(const struct page *page)
+>>  }
+>>
+>>  #ifdef CONFIG_ZONE_DEVICE
+>> -void zone_device_page_init(struct page *page);
+>> +void zone_device_folio_init(struct folio *folio, unsigned int order);
+>>  void *memremap_pages(struct dev_pagemap *pgmap, int nid);
+>>  void memunmap_pages(struct dev_pagemap *pgmap);
+>>  void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
+>> @@ -215,6 +215,14 @@ struct dev_pagemap *get_dev_pagemap(unsigned long pfn);
+>>  bool pgmap_pfn_valid(struct dev_pagemap *pgmap, unsigned long pfn);
+>>
+>>  unsigned long memremap_compat_align(void);
+>> +
+>> +static inline void zone_device_page_init(struct page *page)
+>> +{
+>> +	struct folio *folio = page_folio(page);
+>> +
+>> +	zone_device_folio_init(folio, 0);
+> 
+> I assume it is for legacy code, where only non-compound page exists?
+> 
+> It seems that you assume @page is always order-0, but there is no check
+> for it. Adding VM_WARN_ON_ONCE_FOLIO(folio_order(folio) != 0, folio)
+> above it would be useful to detect misuse.
+> 
+>> +}
+>> +
+>>  #else
+>>  static inline void *devm_memremap_pages(struct device *dev,
+>>  		struct dev_pagemap *pgmap)
+>> diff --git a/mm/memremap.c b/mm/memremap.c
+>> index 46cb1b0b6f72..a8481ebf94cc 100644
+>> --- a/mm/memremap.c
+>> +++ b/mm/memremap.c
+>> @@ -416,20 +416,19 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
+>>  void free_zone_device_folio(struct folio *folio)
+>>  {
+>>  	struct dev_pagemap *pgmap = folio->pgmap;
+>> +	unsigned long nr = folio_nr_pages(folio);
+>> +	int i;
+>>
+>>  	if (WARN_ON_ONCE(!pgmap))
+>>  		return;
+>>
+>>  	mem_cgroup_uncharge(folio);
+>>
+>> -	/*
+>> -	 * Note: we don't expect anonymous compound pages yet. Once supported
+>> -	 * and we could PTE-map them similar to THP, we'd have to clear
+>> -	 * PG_anon_exclusive on all tail pages.
+>> -	 */
+>>  	if (folio_test_anon(folio)) {
+>> -		VM_BUG_ON_FOLIO(folio_test_large(folio), folio);
+>> -		__ClearPageAnonExclusive(folio_page(folio, 0));
+>> +		for (i = 0; i < nr; i++)
+>> +			__ClearPageAnonExclusive(folio_page(folio, i));
+>> +	} else {
+>> +		VM_WARN_ON_ONCE(folio_test_large(folio));
+>>  	}
+>>
+>>  	/*
+>> @@ -456,8 +455,8 @@ void free_zone_device_folio(struct folio *folio)
+>>  	case MEMORY_DEVICE_COHERENT:
+>>  		if (WARN_ON_ONCE(!pgmap->ops || !pgmap->ops->page_free))
+>>  			break;
+>> -		pgmap->ops->page_free(folio_page(folio, 0));
+>> -		put_dev_pagemap(pgmap);
+>> +		pgmap->ops->page_free(&folio->page);
+>> +		percpu_ref_put_many(&folio->pgmap->ref, nr);
+>>  		break;
+>>
+>>  	case MEMORY_DEVICE_GENERIC:
+>> @@ -480,14 +479,23 @@ void free_zone_device_folio(struct folio *folio)
+>>  	}
+>>  }
+>>
+>> -void zone_device_page_init(struct page *page)
+>> +void zone_device_folio_init(struct folio *folio, unsigned int order)
+>>  {
+>> +	struct page *page = folio_page(folio, 0);
+> 
+> It is strange to see a folio is converted back to page in
+> a function called zone_device_folio_init().
+> 
+>> +
+>> +	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+>> +
+>>  	/*
+>>  	 * Drivers shouldn't be allocating pages after calling
+>>  	 * memunmap_pages().
+>>  	 */
+>> -	WARN_ON_ONCE(!percpu_ref_tryget_live(&page_pgmap(page)->ref));
+>> -	set_page_count(page, 1);
+>> +	WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+>> +	folio_set_count(folio, 1);
+>>  	lock_page(page);
+>> +
+>> +	if (order > 1) {
+>> +		prep_compound_page(page, order);
+>> +		folio_set_large_rmappable(folio);
+>> +	}
+> 
+> OK, so basically, @folio is not a compound page yet when zone_device_folio_init()
+> is called.
+> 
+> I feel that your zone_device_page_init() and zone_device_folio_init()
+> implementations are inverse. They should follow the same pattern
+> as __alloc_pages_noprof() and __folio_alloc_noprof(), where
+> zone_device_page_init() does the actual initialization and
+> zone_device_folio_init() just convert a page to folio.
+> 
+> Something like:
+> 
+> void zone_device_page_init(struct page *page, unsigned int order)
+> {
+> 	VM_WARN_ON_ONCE(order > MAX_ORDER_NR_PAGES);
+> 
+> 	/*
+> 	 * Drivers shouldn't be allocating pages after calling
+> 	 * memunmap_pages().
+> 	 */
+> 
+>     WARN_ON_ONCE(!percpu_ref_tryget_many(&page_pgmap(page)->ref, 1 << order));
+> 	
+> 	/*
+> 	 * anonymous folio does not support order-1, high order file-backed folio
+> 	 * is not supported at all.
+> 	 */
+> 	VM_WARN_ON_ONCE(order == 1);
+> 
+> 	if (order > 1)
+> 		prep_compound_page(page, order);
+> 
+> 	/* page has to be compound head here */
+> 	set_page_count(page, 1);
+> 	lock_page(page);
+> }
+> 
+> void zone_device_folio_init(struct folio *folio, unsigned int order)
+> {
+> 	struct page *page = folio_page(folio, 0);
+> 
+> 	zone_device_page_init(page, order);
+> 	page_rmappable_folio(page);
+> }
+> 
+> Or
+> 
+> struct folio *zone_device_folio_init(struct page *page, unsigned int order)
+> {
+> 	zone_device_page_init(page, order);
+> 	return page_rmappable_folio(page);
+> }
+> 
+> 
+> Then, it comes to free_zone_device_folio() above,
+> I feel that pgmap->ops->page_free() should take an additional order
+> parameter to free a compound page like free_frozen_pages().
+> 
+> 
+> This is my impression after reading the patch and zone device page code.
+> 
+> Alistair and David can correct me if this is wrong, since I am new to
+> zone device page code.
+> 	
 
---H7/fQSG5jrECq+gd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, I did not want to change zone_device_page_init() for several
+drivers (outside my test scope) that already assume it has an order size of 0.
 
-On Thu, Sep 18, 2025 at 09:44:09AM +0200, Herve Codina wrote:
-> Hi David,
->=20
-> On Thu, 18 Sep 2025 13:16:32 +1000
-> David Gibson <david@gibson.dropbear.id.au> wrote:
->=20
-> ...
->=20
-> > > > Thoughts above suggest a different direction, but here's what I was
-> > > > thinking before:
-> > > >=20
-> > > > base board:
-> > > >=20
-> > > > 	connector {
-> > > > 		/export/ "i2c" &i2c0;
-> > > > 	};
-> > > >=20
-> > > > addon:
-> > > > 	eeprom@10 {
-> > > > 		compatible =3D "foo,eeprom";
-> > > > 		bus-reg =3D <&i2c 0x10>;
-> > > > 	}
-> > > >=20
-> > > > Or, if the addon had multiple i2c devices, maybe something like:
-> > > >=20
-> > > > 	board-i2c {
-> > > > 		compatible =3D "i2c-simple-bridge";
-> > > > 		bus-ranges =3D <&i2c 0 0x3ff>; /* Whole addr space */
-> > > > 		eeprom@10 {
-> > > > 			compatible =3D "foo,eeprom";
-> > > > 			reg =3D <0x10>;
-> > > > 		}
-> > > > 		widget@20 {
-> > > > 			compatible =3D "vendor,widget";
-> > > > 			reg =3D <0x20>;
-> > > > 		}
-> > > > 	}
-> > > >=20
-> > > > Writing that, I realise I2C introduces some complications for this.
-> > > > Because it has #size-cells =3D <0>, ranges doesn't really work (wit=
-hout
-> > > > listing every single address to be translated).  Likewise, because =
-we
-> > > > always need the parent bus phandle, we can't use the trick of an em=
-pty
-> > > > 'ranges' to mean an identity mapping.
-> > > >=20
-> > > > We could invent encodings to address those, but given the addon with
-> > > > multiple connectors case provides another incentive for a single
-> > > > connector to allow adding nodes in multiple (but strictly enumerate=
-d)
-> > > > places in the base device tree provides a better approach. =20
-> > >=20
-> > > and the "place in base device tree" is the goal of the extension bus.
-> > >=20
-> > > The strict enumeration of nodes enumerated is done by two means:
-> > >  - extension busses at connector level
-> > >    Those extensions are described as connector sub-nodes.
-> > >    The addon DT can only add nodes in those sub-nodes to describe dev=
-ices
-> > >    connected to the relared extension bus.
-> > >  - export symbols
-> > >    An addon DT can only use symbols exported to reference symbols out=
-side
-> > >    the addon DT itself.
-> > >=20
-> > > Can I assume that bus extensions we proposed (i2c-bus-extension and
-> > > spi-bus-extension) could be a correct solution ? =20
-> >=20
-> > Maybe?  I prefer the idea of a universal mechanism, not one that's
-> > defined per-bus-type.
-> >=20
-> >=20
-> > Also, IIUC the way bus extension operates is a bit different - nodes
-> > would be "physically" added under the bus extension node, but treated
-> > logically as if they go under the main bus.  What I'm proposing here
-> > is something at the actualy overlay application layer that allows
-> > nodes to be added to different parts of the base device tree - so you
-> > could add your i2c device under the main i2c bus.
->=20
-> I think we should avoid this kind of node dispatching here and there in
-> the base DT.
-
-Until I saw Geert's multi-connector case, I would have agreed.  That
-case makes me thing differently: in order to support that case we
-already have to handle adding information in multiple places (under
-all of the connectors the addon uses).  Given we have to handle that
-anyway, I wonder if it makes more sense to lean into that, and allow
-updates to multiple (strictly enumerated) places.
-
-> We work on decoupling busses wired to a connector and dispatching nodes
-> looks like this decoupling is ignored.
-
-I don't really follow what you're saying here.
-
-> IMHO, keeping devices available on an addon board as nodes under the
-> connector is a real hardware representation.
-
-It's *a* real hardware representation, but it's not the only real
-hardware representation.  Placing the new nodes under connectors
-prioritises the physical connections.  Placing them under various
-nodes on the base board prioritises the logical-bus connections.  I'd
-argue that the latter is slightly more important, since the primary
-consumer of the device tree is the OS, to which the logical
-connections are usually more important.
-
-But in any case, real hardware isn't necessarily a tree, so we have to
-compromise somewhere.
-
-> Also, at runtime, once an addon board DT is applied, when you look at
-> your current DT either using /proc/device-tree or some links such as
-> /sys/bus/devices/.../of_node, the connector and extension bus appear
-> and clearly identify devices behind the connector.
-
-That's certainly nice, but we already lose this in the multi-connector
-case, so I don't think it can be a hard requirement.
-
-> > That approach does complicate removal, but its not as bad as overlays
-> > at the moment, because a) it could be limited to adding new nodes, not
-> > modifying existing ones and b) the connector would specify exactly the
-> > places that additions are allowed.
->=20
-> I think bus extensions comply with a) and b).
-
-Bus extensions aren't directly relevant to (a) and (b) - those are
-about the actual overlay/addon application mechanism.  Bus extensions
-are one of several possible approaches to allowing a more restrictive
-(and therefore manageable) way of dynamically updating the dt, while
-still being able to represent multi-bus devices.
-
-> Yes, bus extensions need to be handled per-bus types but they have the
-> advantage of keeping the hardware reality well described and visible at
-> runtime in term of "wiring" topology.
->=20
-> Whatever the solution, this will already be handled per-bus types.
-> Only busses that support runtime DT node addition/removal (OF_RECONFIG_*
-> notifications in the kernel implementation) will support adding or
-> removing nodes.
-
-First, I don't see that the implementation need affect the spec here.
-Second, bus-reg has possible applications even if there isn't dynamic
-reconfiguration.
->=20
-> Your approach is more complex, dispatch node here and there and actually
-> is also a per-bus types solution.
-
-Again, I don't follow you.
-
-> I think, in order to choose between both solutions, the main question is:
-> Do we want to dispatch nodes provided by an addon DT everywhere in the ba=
-se
-> DT ?
->=20
-> IMHO, the answer is no.
-
-Everywhere, no, absolutely not.  That's one of the things that's awful
-about the current overlay mechanism.
-
-Multiple places - as specified by the base board / connector, maybe.
-
---=20
-David Gibson (he or they)	| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
-				| around.
-http://www.ozlabs.org/~dgibson
-
---H7/fQSG5jrECq+gd
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjM4XAACgkQzQJF27ox
-2GeEbQ//XLxZeZ3BQAikMK2v7m4TegAdD5MPyneNrnkXJqSFLS4LuEn85drE9pHg
-ILQAxP7oLutvBIVrbLsizEQG+Qp38o82K92Pksgr8uqt/D4qFN4/okKCd1Bhu3Y/
-YgWWCeg7/Zy8n1CM69ZV7CSWc0qlKwpXxFf0i1pmw9grnpoe+/Y6iZunjUAB2WFw
-4acoFD5DfdVJbnRgPkjyWQjQnWg3g4buzpsRI4b6gka5Xwrl5HEEH1Ms2td+1NPd
-cNckBlvYeC+f2QU6ogmRvMZb7B+0pxGSscrg36toGbwpU9KDWXfGnsWxAHE8LCjY
-fGGjyzCU9nvbHTukKTcPbk3nJaNWZo95S30ueJRuF7UxCny54dvwzg+z94HZv3Ed
-g9jGHzYdw6UImBhT+1vPzHY6AUOdPpjXR/wRgAsagyud3fAsfO52lLHsong049ZB
-BsUwg5Q33092QlRUe7/0YNtHdLui4ILQ7C9L+UXoaD2kiqQ4EJv9pL5KnDoXDp0U
-ajWxEaPdgE15f6M6aILE4TVIdFCh1RBm+yfDAeAy35pN7wlArBr/RC8h2ZIdxCHU
-esgnB8yMicMqEq6nlKl3rhoo0TxpY9WowVNOM9/YuQreexkSeGQUmKeI6l/OXJPF
-Vd1tSNzkP5jsPCGoRVZE3IHIzH8S5RHyt2Lp3EcCXLz4AWDsDhY=
-=xXWq
------END PGP SIGNATURE-----
-
---H7/fQSG5jrECq+gd--
+Balbir Singh
 
