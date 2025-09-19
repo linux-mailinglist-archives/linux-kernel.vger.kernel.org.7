@@ -1,154 +1,222 @@
-Return-Path: <linux-kernel+bounces-824362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2CAB88C8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:17:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57780B88D6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A185567E98
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:17:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1947D7AE517
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F352A2FB969;
-	Fri, 19 Sep 2025 10:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B792E307AD6;
+	Fri, 19 Sep 2025 10:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="m97Fghak"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hUKJqkLJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5A12E8DE9;
-	Fri, 19 Sep 2025 10:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2904307AE5;
+	Fri, 19 Sep 2025 10:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758277059; cv=none; b=UmER/R4dTJ0mvOkYpec7kW0IM53k16PsR+0mkt1vZKymfauFMDVgbkJgSovaaBeA/5OkgWLSDp5X5AGUL027ZTShnvN9I3C+E0nB4sF/iNQdxhLaCJT1stRSGyYX75ngyZvBiMyET+hIbLM0NV3S+dMW7smfv6/ukpCjfIE81qo=
+	t=1758277284; cv=none; b=ZP8Lo/YpuAeE3RXr1rRJ4qOMyA/RvwbiLZSWG+ahHN07fky30nT0muHSezbT4vanHBxm7TqKLW8O19jGEX/ztyCDH2B6HCYubNVJcg5ELNe00z04vrInBDrDB4V6EAElkiO6/sJlLicwbb1+n7FRL56FcFKdXZvyjsOHMLGp3iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758277059; c=relaxed/simple;
-	bh=AaMJMX/umNULrcGEgKJlRZR7C4PD7YTrpkq40L4KBHc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sfi36OW5HUn5X9ZwPysKTBin8Kr2eg64DNEKl523Yqj7f7pzv6pSakXnptkvZmpzOL41rawH7QnlZv2dVBuSMpFRBrutgIzGJJibT6wSUt9Dv/ClYOzEl4J9YaF0eqRXFvISxFKx/PvEP5RnuP5P3thROL+KfAqhhjUbWZmSkPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=m97Fghak; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:To:From:Reply-To:Cc;
-	bh=AaMJMX/umNULrcGEgKJlRZR7C4PD7YTrpkq40L4KBHc=; b=m97FghaklI6Mh+XLjeYg/ACj+Y
-	59uf6lQkpa4JFaU5j+EH/ZzQjNRhgbdhVreCHInAydmdAgSlJJfW4kKoRNHVYOpbp5FcNigPqgTfA
-	pCI/hl18DgxzPsWSlB3JUmD3PbKulXmf3dAMX/xHCUS+RryKRAhoSqjx+QH3ff/m9o8VwvuGUP+YH
-	nJUNBn2H0lkhvtS74t31UFhEaC0yV4bX36LO9x9qGeyvZBPNpRXTXYA/9+p22GGdbcQJo6b8nIs+Y
-	ADYHuy5ccq4UckYxaBuQCjxDGCm49OzOzGTU6NIqvxIcWEy4AuZYKrI6hjlVkQqsNWSb7hr3JRpd9
-	ZeV8SDlw==;
-Received: from i53875b0f.versanet.de ([83.135.91.15] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uzYBG-0007nN-9m; Fri, 19 Sep 2025 12:17:30 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Ed W <lists@wildgooses.com>,
- FUKAUMI Naoki <naoki@radxa.com>
-Subject:
- Re: [PATCH 1/2] arm64: dts: rockchip: correct uart mux for Radxa ZERO3
-Date: Fri, 19 Sep 2025 12:17:29 +0200
-Message-ID: <1971910.g5d078U9FE@diego>
-In-Reply-To: <0DB47BC84E90B0E6+694b1274-4826-4ec1-9aa2-ca8aa790f61a@radxa.com>
-References:
- <20250917114932.25994-1-lists@wildgooses.com> <2325560.3ZeAukHxDK@diego>
- <0DB47BC84E90B0E6+694b1274-4826-4ec1-9aa2-ca8aa790f61a@radxa.com>
+	s=arc-20240116; t=1758277284; c=relaxed/simple;
+	bh=vo3mFVbOD1gbm726Eeresb/lGnylnNiMb51Lk9E0sbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjOZz0oSnC0VW4n79J+XS6us9aH+Z9DIFbkY6FxnANQjRu5cEzp6DslO8rDF3dzT1fL+7rCBqLMZIrweTKO5EZFN3T4hDaatohjiJGoo4iZ7eAL6uppKW3zpbC+SSZteqVtKQArWlDyVevwT01QofOxmQ+mduHNZVGBY+I3E/sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hUKJqkLJ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758277283; x=1789813283;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vo3mFVbOD1gbm726Eeresb/lGnylnNiMb51Lk9E0sbs=;
+  b=hUKJqkLJiClJc8+JNjw9AWGGDhi/33PwbwL2N+Bu/OObkmBWiT1h43TO
+   9WASMGPcXLhMwiE5u/QlOmILFDeyjO2Zj8GiX1u+7bjCUibOcs0yvdDm6
+   TsyKDIFniEglSspSuLpNgtDEHmN8+PGEmsE5LuN3i4690jxtYxmtNobht
+   kFYyhsz+HhdNR5XcUT86lR5Prp2mWOvFtjjEVGE00Pt+clEu7i6WjJYCi
+   2Q7BMzFl0toY1p1/ZRdEu9WTcTLcE5EF7TRAFmO20SLGEOPrCNzcKeSRf
+   BLWBl1ZdaekcGpeFXsefyVPF/Va/z5nHzUu1nop65S7OnSG5fcXcB2gYN
+   Q==;
+X-CSE-ConnectionGUID: 7TtyxpRFS3Or1sfXiEKFJA==
+X-CSE-MsgGUID: uagltAZ/Rr+3ev1TsCNtvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64425847"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64425847"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 03:21:21 -0700
+X-CSE-ConnectionGUID: 4RVgT/nkQoSuYg7xkigZiQ==
+X-CSE-MsgGUID: EEX/WbvuTrS8eqgbphm3Vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="176244624"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 19 Sep 2025 03:21:18 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzYEu-0004Ch-0y;
+	Fri, 19 Sep 2025 10:21:16 +0000
+Date: Fri, 19 Sep 2025 18:20:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Howells <dhowells@redhat.com>, Eric Biggers <ebiggers@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, dhowells@redhat.com,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512,
+ SHAKE128, SHAKE256
+Message-ID: <202509191807.9daDknje-lkp@intel.com>
+References: <3605112.1758233248@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3605112.1758233248@warthog.procyon.org.uk>
 
-Am Freitag, 19. September 2025, 01:57:57 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb FUKAUMI Naoki:
-> Hi Heiko, Ed,
->=20
-> On 9/19/25 01:18, Heiko St=C3=BCbner wrote:
-> > Am Donnerstag, 18. September 2025, 17:23:04 Mitteleurop=C3=A4ische Somm=
-erzeit schrieb Ed W:
-> >> On 18/09/2025 05:53, FUKAUMI Naoki wrote:
-> >>> Hi Ed,
-> >>>
-> >>> Thank you very much for your work.
-> >>>
-> >>> On 9/17/25 20:49, Ed Wildgoose wrote:
-> >>>> The rk3566 has multiplexed pins and the uarts can be moved to a choi=
-ce
-> >>>> of 2 pin groups. The default rk356x-base.dtsi appears to default to =
-mux0
-> >>>> for all uarts, however, specific hardware might choose to implement
-> >>>> alternatives
-> >>>>
-> >>>> The Radxa zero 3 shows that is uses M1 for uarts:
-> >>>> - uart4
-> >>>> - uart5
-> >>>> - uart9
-> >>>>
-> >>>> These aren't normally enabled, but we should at least correct the
-> >>>> default pinctrl definitions. Without these changes there will be
-> >>>> conflicts with mmc0/mmc1, leading to the SD or eMMC going missing.
-> >>>
-> >>> Sorry, but why do we need these definitions for disabled nodes?
-> >>>
-> >>> Or why don't we do similar definitions for nodes other than uart?
-> >>> For example, PWM12, I2S3, and SPI3 also use M1. Are they not related =
-to SD/eMMC and therefore
-> >>> don't need to be defined?
-> >>>
-> >>> If users want to use UARTs on pin headers, they will refer to the cor=
-rect documentation[1] to
-> >>> determine which pins are UARTs and will of course write the correct p=
-inctrl definition.
-> >>>
-> >>> [1] https://docs.radxa.com/en/zero/zero3/hardware-design/hardware-int=
-erface#gpio-interface
-> >>>
-> >>> Best regards,
-> >>>
-> >>
-> >>
-> >> Personally, and I'm saying this as a user who is technical enough to f=
-ix the definitions, it took me
-> >> quite a few days to figure out what was wrong with the definitions and=
- understand the intricate tree
-> >> of dtsi includes, to finally figure out why I couldn't just do a "stat=
-us =3D "okay";" to enable the
-> >> UARTs... (which is roughly what is shown in several radxa supplied ove=
-rlays to enable uarts on
-> >> various boards)
-> >>
-> >> So my vote would be to correctly define all the hardware for a given b=
-oard. Then users can simply do
-> >> a status=3D"okay" to enable and off they go.
-> >=20
-> > And I'd agree with that argument. Setting up the needed pinctrl settings
-> > for the peripherals described in the device documentation
-> > ( https://docs.radxa.com/en/zero/zero3/hardware-design/hardware-interfa=
-ce#gpio-interface )
-> >=20
-> > is the sensible thing to do. While keeping the peripherals itself disab=
-led
-> > and for the user to decide which peripheral to enable.
->=20
-> I'm not strongly opposed to this policy, but I thought if you're going=20
-> to do this, you should do it for everything, not just UARTs.
+Hi David,
 
-yes, exactly
-So patches for the other header peripherals welcome :-) .
+kernel test robot noticed the following build errors:
 
-But still it's nice to do it in steps like this one, as it makes reviewing =
-easier.
+[auto build test ERROR on ebiggers/libcrypto-fixes]
+[also build test ERROR on herbert-cryptodev-2.6/master herbert-crypto-2.6/master linus/master v6.17-rc6 next-20250918]
+[cannot apply to ebiggers/libcrypto-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Howells/lib-crypto-Add-SHA3-224-SHA3-256-SHA3-384-SHA-512-SHAKE128-SHAKE256/20250919-061024
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git libcrypto-fixes
+patch link:    https://lore.kernel.org/r/3605112.1758233248%40warthog.procyon.org.uk
+patch subject: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512, SHAKE128, SHAKE256
+config: s390-randconfig-001-20250919 (https://download.01.org/0day-ci/archive/20250919/202509191807.9daDknje-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250919/202509191807.9daDknje-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509191807.9daDknje-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/s390/crypto/sha3_256_s390.c:22:12: error: conflicting types for 'sha3_256_init'
+    static int sha3_256_init(struct shash_desc *desc)
+               ^~~~~~~~~~~~~
+   In file included from arch/s390/crypto/sha3_256_s390.c:13:
+   include/crypto/sha3.h:71:20: note: previous definition of 'sha3_256_init' was here
+    static inline void sha3_256_init(struct sha3_ctx *ctx)
+                       ^~~~~~~~~~~~~
+>> arch/s390/crypto/sha3_256_s390.c:99:12: error: conflicting types for 'sha3_224_init'
+    static int sha3_224_init(struct shash_desc *desc)
+               ^~~~~~~~~~~~~
+   In file included from arch/s390/crypto/sha3_256_s390.c:13:
+   include/crypto/sha3.h:59:20: note: previous definition of 'sha3_224_init' was here
+    static inline void sha3_224_init(struct sha3_ctx *ctx)
+                       ^~~~~~~~~~~~~
 
 
-Heiko
+vim +/sha3_256_init +22 arch/s390/crypto/sha3_256_s390.c
 
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   21  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  @22  static int sha3_256_init(struct shash_desc *desc)
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   23  {
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   24  	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   25  
+6f90ba7065515d Herbert Xu        2025-04-18   26  	sctx->first_message_part = test_facility(86);
+6f90ba7065515d Herbert Xu        2025-04-18   27  	if (!sctx->first_message_part)
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   28  		memset(sctx->state, 0, sizeof(sctx->state));
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   29  	sctx->count = 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   30  	sctx->func = CPACF_KIMD_SHA3_256;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   31  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   32  	return 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   33  }
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   34  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   35  static int sha3_256_export(struct shash_desc *desc, void *out)
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   36  {
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   37  	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
+73c2437109c3ea Herbert Xu        2025-05-23   38  	union {
+73c2437109c3ea Herbert Xu        2025-05-23   39  		u8 *u8;
+73c2437109c3ea Herbert Xu        2025-05-23   40  		u64 *u64;
+73c2437109c3ea Herbert Xu        2025-05-23   41  	} p = { .u8 = out };
+73c2437109c3ea Herbert Xu        2025-05-23   42  	int i;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   43  
+6f90ba7065515d Herbert Xu        2025-04-18   44  	if (sctx->first_message_part) {
+73c2437109c3ea Herbert Xu        2025-05-23   45  		memset(out, 0, SHA3_STATE_SIZE);
+73c2437109c3ea Herbert Xu        2025-05-23   46  		return 0;
+6f90ba7065515d Herbert Xu        2025-04-18   47  	}
+73c2437109c3ea Herbert Xu        2025-05-23   48  	for (i = 0; i < SHA3_STATE_SIZE / 8; i++)
+73c2437109c3ea Herbert Xu        2025-05-23   49  		put_unaligned(le64_to_cpu(sctx->sha3.state[i]), p.u64++);
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   50  	return 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   51  }
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   52  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   53  static int sha3_256_import(struct shash_desc *desc, const void *in)
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   54  {
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   55  	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
+73c2437109c3ea Herbert Xu        2025-05-23   56  	union {
+73c2437109c3ea Herbert Xu        2025-05-23   57  		const u8 *u8;
+73c2437109c3ea Herbert Xu        2025-05-23   58  		const u64 *u64;
+73c2437109c3ea Herbert Xu        2025-05-23   59  	} p = { .u8 = in };
+73c2437109c3ea Herbert Xu        2025-05-23   60  	int i;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   61  
+73c2437109c3ea Herbert Xu        2025-05-23   62  	for (i = 0; i < SHA3_STATE_SIZE / 8; i++)
+73c2437109c3ea Herbert Xu        2025-05-23   63  		sctx->sha3.state[i] = cpu_to_le64(get_unaligned(p.u64++));
+6f90ba7065515d Herbert Xu        2025-04-18   64  	sctx->count = 0;
+6f90ba7065515d Herbert Xu        2025-04-18   65  	sctx->first_message_part = 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   66  	sctx->func = CPACF_KIMD_SHA3_256;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   67  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   68  	return 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   69  }
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   70  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   71  static int sha3_224_import(struct shash_desc *desc, const void *in)
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   72  {
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   73  	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   74  
+6f90ba7065515d Herbert Xu        2025-04-18   75  	sha3_256_import(desc, in);
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   76  	sctx->func = CPACF_KIMD_SHA3_224;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   77  	return 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   78  }
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   79  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   80  static struct shash_alg sha3_256_alg = {
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   81  	.digestsize	=	SHA3_256_DIGEST_SIZE,	   /* = 32 */
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   82  	.init		=	sha3_256_init,
+6f90ba7065515d Herbert Xu        2025-04-18   83  	.update		=	s390_sha_update_blocks,
+6f90ba7065515d Herbert Xu        2025-04-18   84  	.finup		=	s390_sha_finup,
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   85  	.export		=	sha3_256_export,
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   86  	.import		=	sha3_256_import,
+6f90ba7065515d Herbert Xu        2025-04-18   87  	.descsize	=	S390_SHA_CTX_SIZE,
+6f90ba7065515d Herbert Xu        2025-04-18   88  	.statesize	=	SHA3_STATE_SIZE,
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   89  	.base		=	{
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   90  		.cra_name	 =	"sha3-256",
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   91  		.cra_driver_name =	"sha3-256-s390",
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   92  		.cra_priority	 =	300,
+6f90ba7065515d Herbert Xu        2025-04-18   93  		.cra_flags	 =	CRYPTO_AHASH_ALG_BLOCK_ONLY,
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   94  		.cra_blocksize	 =	SHA3_256_BLOCK_SIZE,
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   95  		.cra_module	 =	THIS_MODULE,
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   96  	}
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   97  };
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14   98  
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  @99  static int sha3_224_init(struct shash_desc *desc)
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  100  {
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  101  	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  102  
+6f90ba7065515d Herbert Xu        2025-04-18  103  	sha3_256_init(desc);
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  104  	sctx->func = CPACF_KIMD_SHA3_224;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  105  	return 0;
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  106  }
+3c2eb6b76cabb7 Joerg Schmidbauer 2019-08-14  107  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
