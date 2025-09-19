@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-824981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB27AB8A9DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5D7B8AA16
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 18:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D35DD7B659B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:41:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAEEF189AEC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E46272805;
-	Fri, 19 Sep 2025 16:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0C831FEF8;
+	Fri, 19 Sep 2025 16:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eZBiefNz"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dJ8WGonn"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549D4253954
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758300173; cv=none; b=D04MkkNFA1g9jMqqZaYojLTmMAmZ9KKreLb+am8bY914VjRMJJ96IMY46zObgcvIdHSrFf9eihcWFJYajPbjuxvX0satsyP/L5yDVA8i0gzhutt0z1ykj4dtj3U2C5gIqPdCeQgBwCm6jvZFMSEcy7nBQVb7Ti9MBxTDx0BLsZY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758300173; c=relaxed/simple;
-	bh=9g2fIQ+OFpk7Lg3JarP2LvlyLe5rYR9EVzGRid9/yZ4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hSYGYKMZ5TtAQeXvPAliu3gWPzWRQNu6xK31tIy9nIf1oa7wL9XFGbUa2kj22OhjHoK+C/r0vQ4QPSV9Jhk3DeNVAiCegnaN1Q0ayJgjW2duWVBFdxBc+e52r1Op5Bwf/5Sr1T/0lVcW1bRHb/qzlFTZpMQNsYurmQ+UvHoG97M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eZBiefNz; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5512bffc0dso1188998a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:42:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758300171; x=1758904971; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3zgCKvyBzGE7zMZD/86Ru8E8ycbpLo3QTwgzItIYQkY=;
-        b=eZBiefNzZnylJ+1h/C7KHnpURciLTdoUJ+LhJy3eNbw7lC45NuU2iwRNxs8mdftPSz
-         kgBWwpXYWiYfgZWryZ4wLYsW7M2qzoeqngLNfbqzLmhbcNiT2y6+KWC2mpdCPnaXE5iv
-         BXzTBYe4JSTMY3jgCLzETMXMbcYoPzQpvPZ8T8yOcRXX8gbToFOlnn02PE1qMRP782OE
-         LiqZFzzqLx2gjwjj6dgMMHOzGq+2hTuwIyhnvVlj8t7Aso18VbPpfeYvG2FX0qp4nKTY
-         2pZ/oLKd5+ETgbGDGyAuDH9TWtEyN+tLRIB616+n32ciLex0EkA2zAogyuQyZjaddTb6
-         LFKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758300171; x=1758904971;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3zgCKvyBzGE7zMZD/86Ru8E8ycbpLo3QTwgzItIYQkY=;
-        b=Lfrmmn/rf0pb7cNi892XjApGz3HgeCYEF4AYi9Tc1uA8/FC3YvT/yPqs2WScc78IxA
-         DdzHMFiShGVV1sugWgp+kZ4156etuE3yLqqg5FIChVRgBo6jLIqK7Gu8YWYkoUyYTLoU
-         fAi28S1gXuG0gdQdLNcD2MoZ/206zl5g872q8qgu8HmnlYzpwn6dBB0DhllbfK2UgMMc
-         hgXGWq2sfUWUr+wJ0I68gNz7G5hE1xNVgpF4Mh+4YSrgt+JwYqBzjyECscUOovBQKFFf
-         HM0Uxq08GAVSAZcMYH6lifDIvhetTYS4vgNEVK8M9wFE+Ci4Jt/yBqxNPSEHaV3mFHOG
-         fEUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXURBVDlalpx2vfCUWB6Ofnx2D68Jea9T9AT/pUd6UYWPHFEJ3NFxzKq/+1ITicN+c9XCQYbPVQCQaXOyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9x7RICADjBXSdhT3wlNX0/ntOP+AV7lpqKrgrxi7KWEqkqdET
-	DobU6MKMxdor6n2pEVpJtwbcXjFC+NTY9XB3itKxZjikk5WDMd/qz74mkppyIt0SXpD5MgCi2Zu
-	DjerNcA==
-X-Google-Smtp-Source: AGHT+IHXyf8VM+KPY7bCN9ynVvPY9Q3CFknMXWu4BowlO4hA1C/tN3u/8nQsk9be8dFfpYU9qo1o0XAdoSg=
-X-Received: from pjbov14.prod.google.com ([2002:a17:90b:258e:b0:330:82c6:d413])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4ccb:b0:32b:9750:10e4
- with SMTP id 98e67ed59e1d1-3309836e684mr4630409a91.27.1758300171553; Fri, 19
- Sep 2025 09:42:51 -0700 (PDT)
-Date: Fri, 19 Sep 2025 09:42:50 -0700
-In-Reply-To: <aM1uzfweXxoaaLpt@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A42264617
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 16:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758300321; cv=pass; b=H7Aqiqv0MYJIBDhFJH//5+CKYXwY6OloZds6dXeYMule582HCADArGq8Qjl7u0zW/eanFpOeqZtsajrizDKDd+HTdK9C4czBZPOCfJEFX1M/QHRHoWI5xC2+DEwJCbZ54dghgMs8Q7+X+5x9W3FwRswyBSC2oz9KZqDB/hLoHqU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758300321; c=relaxed/simple;
+	bh=eYbYJTyOBmZaa4wji18fy2G9SUA4SOUqceyb3LBb8jU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qz9jzrdr8tpZ4Ep8kZD1/mHsyuMt95ky+o6yk8bPJrTwxcfAIQadK5srXBrbkCk8le7/m84gIErk6BD4KcRqA3m9AXxy+j3og0wg21OFH8H38fKXWxrkHuFm8rXHmlzahmdoQYEkzkfzYF+JDfD3h8saURaf50OWk0eCNGEb6xU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dJ8WGonn; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758300298; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=HQZjaYV32yBRAhVULxJX2VoCyAQF0YmxGq9Iz+VpE5PUHBwY+jhERUiEZkUoju3nwmeuGcVOzP/3tY6O9NNSQ8BG6eehlq81P7b+7Ga4VyfF8viMqlUsmQvzr2UObQ0lo1wsye7GHOi5SxHpnopl0bQTmqZ5laPtUhTq+p3WOi8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758300298; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=rkbul+5GmuUcM0b/MWyFiAkpc0VDM1F5kI2ZnfPs5a8=; 
+	b=lj7ACw438mqV9CQe8+DsiAN171JgVIz/OLTnJ0tpO5tKCkRnEvLtcRNOjV4oqc41WGA1kBJ8T3GAigV3aHvpr6BHrubCasYmLMgpPco7mEphUdzoOUBc2uH6yJqv3P31u/Wz8RibSyMLm2rzeFBQhxpg3VBBYwPio7+RsBOpce4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758300298;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=rkbul+5GmuUcM0b/MWyFiAkpc0VDM1F5kI2ZnfPs5a8=;
+	b=dJ8WGonnv4HMqDd2D3N1MShnahK34JQ4+CVLVM1yRp7UXEhSxug61YtnhkULyfTN
+	goXJm/Jf7YpkYYgEhB6fH3Sl80PVcXOzQmCExLkmqDQ9kZRkPB0j6cLFB2C2jFFzfI7
+	25k7PBhltZ31xc2iL1ggPJrqC3Vp6NEHA74wiLn8=
+Received: by mx.zohomail.com with SMTPS id 1758300297314473.47222430101465;
+	Fri, 19 Sep 2025 09:44:57 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Steven Price <steven.price@arm.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH] drm/panthor: Defer scheduler entitiy destruction to queue release
+Date: Fri, 19 Sep 2025 17:43:48 +0100
+Message-ID: <20250919164436.531930-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919004512.1359828-1-seanjc@google.com> <20250919004512.1359828-6-seanjc@google.com>
- <dd2d2e23-083e-46cf-b0bd-7dfb3198d403@linux.intel.com> <aM1uzfweXxoaaLpt@google.com>
-Message-ID: <aM2ICvFxB7gWnW0H@google.com>
-Subject: Re: [PATCH v3 5/5] KVM: selftests: Handle Intel Atom errata that
- leads to PMU event overcount
-From: Sean Christopherson <seanjc@google.com>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yi Lai <yi1.lai@intel.com>, dongsheng <dongsheng.x.zhang@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025, Sean Christopherson wrote:
-> On Fri, Sep 19, 2025, Dapeng Mi wrote:
-> > Or better, directly define INSTRUCTIONS_RETIRED_OVERCOUNT as a bitmap, =
-like
-> > this.
-> >=20
-> > diff --git a/tools/testing/selftests/kvm/include/x86/pmu.h
-> > b/tools/testing/selftests/kvm/include/x86/pmu.h
-> > index 25d2b476daf4..9af448129597 100644
-> > --- a/tools/testing/selftests/kvm/include/x86/pmu.h
-> > +++ b/tools/testing/selftests/kvm/include/x86/pmu.h
-> > @@ -106,8 +106,8 @@ extern const uint64_t intel_pmu_arch_events[];
-> > =C2=A0extern const uint64_t amd_pmu_zen_events[];
-> >=20
-> > =C2=A0enum pmu_errata {
-> > -=C2=A0 =C2=A0 =C2=A0 =C2=A0INSTRUCTIONS_RETIRED_OVERCOUNT,
-> > -=C2=A0 =C2=A0 =C2=A0 =C2=A0BRANCHES_RETIRED_OVERCOUNT,
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0INSTRUCTIONS_RETIRED_OVERCOUNT =3D (1 << 0)=
-,
-> > +=C2=A0 =C2=A0 =C2=A0 =C2=A0BRANCHES_RETIRED_OVERCOUNT=C2=A0 =C2=A0 =C2=
-=A0=3D (1 << 1),
->=20
-> I want to utilize the auto-incrementing behavior of enums, without having=
- to
-> resort to double-defines or anything.=20
+Commit de8548813824 ("drm/panthor: Add the scheduler logical block")
+handled destruction of a group's queues' drm scheduler entities early
+into the group destruction procedure.
 
-The counter-argument to that is we need to remember to use BIT_ULL() when
-generating the mask in get_pmu_errata().  But I think overall I prefer hidi=
-ng
-the use of a bitmask.
+However, that races with the group submit ioctl, because by the time
+entities are destroyed (through the group destroy ioctl), the submission
+procedure might've already obtained a group handle, and therefore the
+ability to push jobs into entities. This is met with a DRM error message
+within the drm scheduler core as a situation that should never occur.
+
+Fix by deferring drm scheduler entity destruction to queue release time.
+
+Fixes: de8548813824 ("drm/panthor: Add the scheduler logical block")
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+---
+ drivers/gpu/drm/panthor/panthor_sched.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+index 0cc9055f4ee5..f5e01cb16cfc 100644
+--- a/drivers/gpu/drm/panthor/panthor_sched.c
++++ b/drivers/gpu/drm/panthor/panthor_sched.c
+@@ -898,8 +898,7 @@ static void group_free_queue(struct panthor_group *group, struct panthor_queue *
+ 	if (IS_ERR_OR_NULL(queue))
+ 		return;
+ 
+-	if (queue->entity.fence_context)
+-		drm_sched_entity_destroy(&queue->entity);
++	drm_sched_entity_destroy(&queue->entity);
+ 
+ 	if (queue->scheduler.ops)
+ 		drm_sched_fini(&queue->scheduler);
+@@ -3609,11 +3608,6 @@ int panthor_group_destroy(struct panthor_file *pfile, u32 group_handle)
+ 	if (!group)
+ 		return -EINVAL;
+ 
+-	for (u32 i = 0; i < group->queue_count; i++) {
+-		if (group->queues[i])
+-			drm_sched_entity_destroy(&group->queues[i]->entity);
+-	}
+-
+ 	mutex_lock(&sched->reset.lock);
+ 	mutex_lock(&sched->lock);
+ 	group->destroyed = true;
+-- 
+2.51.0
+
 
