@@ -1,143 +1,265 @@
-Return-Path: <linux-kernel+bounces-824432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A53B8930C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:06:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7635DB89321
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455781BC7FA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319781636C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA6A3093C7;
-	Fri, 19 Sep 2025 11:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8SC6C39"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1504F30B52A;
+	Fri, 19 Sep 2025 11:07:52 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C6E19755B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FAC1B87C0;
+	Fri, 19 Sep 2025 11:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758279985; cv=none; b=iYOus5DFfAqMtwS8sy/9TcLNd5NpCi2xPRProf8oLTR8Y6ACbE9cEGq5xJR1Esli0ymx2Rt2L5WKhnbTeQKnjQs8Gef9wG1VI1mMfp7T54hEomIwJE+OuIjxkMTpVCN2mupePcMrYc9WwrGulbVy2DNFOTuLrKOY+p0HhIJR33Q=
+	t=1758280071; cv=none; b=ewBecGoS21asiBtuGgRlR7A3R/Q8jQMtmSyr5cD+btYdwpej17S8haBW+hFYL0puumrirF5kEi42pvlkufg2sBMiReWJj0XMrgMHF2ypzovzPSBWTkrL7GV6qI2vz5XDsFJ0KVNpSULj2dtiEOrF/oPzx9MEDH4ag50d4eJ88RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758279985; c=relaxed/simple;
-	bh=FeRgsSRi/iWOgqISnP+r+zKDQoLdP8inVV16qsd7MGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNH29HDj0l7Tgt/K6cY9J7ZwuBdH2HBboNIccijDIOk1cuvCN53NrTS9MeD9SqIFntn8T0qTi5oYPX2wulTbI8fmyCAAj0U/hs+JyvOqY3cBsKJDfZy5jf0eU7FWFfG6nPnG3QqvR/w/zFWFFD2gx2slJr3aq5ft64Q/jKA7vIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8SC6C39; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so1812343f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:06:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758279982; x=1758884782; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=E0gpwB10/6E2U+Sby0w+MPfG8NeegflF3tJftb7joqA=;
-        b=Q8SC6C39HSzMllgd/UNkS5pHqobCWsVLBjBEoSNzLAi1wsLTx93PZqvd4EabCCHfh6
-         cMHspRcNaxe1EUOPs1/THG2wDGA3vz51R9eOdzC/3l3r4e/iQd7To8YerJGalNMfVJqC
-         uiTF0rDFb5fx5D9veDlLBTYsbpNcME9/bbEld9/ZGMIf1TlCyonJUAKCmx5vMZkm7D7X
-         tQXLJa+AwBiM/GRvYgxFU7pDgyWOKdyD2J/kznrNiArhSTDytaR7xmFm+cCYX1LDG24o
-         /8c/T8JCJDl3Yhlwn41FOJWVLglJoXkfu4FjDDbjHn/fkX+AsKjHR5nWxq05trMcuq1A
-         eOWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758279982; x=1758884782;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E0gpwB10/6E2U+Sby0w+MPfG8NeegflF3tJftb7joqA=;
-        b=A6Eu+HM2YVMQvGu/RLbV8gBpAXsC2CLOAHoG8Xfo5KFB9/nQ+2dJsMck9aLvfS7Xdq
-         Ri8XP801FNimwVD5lxHC4PcVRCrcFwxZP3aTTAhgC90mv/PkxPUiQReHahSMLkRQk1rX
-         tQJ11ETLqVU1uBj1LNuOdj7+5QVFOgDoX5lQdc2SLOC+y2bcMq6O+4JTuCJymI+nxzaz
-         npJaBfcg+suG+CdAiSL3eZdI/whwZs9W4ZcM6Lz5Su17CXP0iBTrQ5CWQpYuMbNO5Z8v
-         rHIpwUJh4pWxjpP4zdpAQVcks0lF5k3rp/ss3pSwvE7+y/qJT5iEE2FHV+deR+TW/kqr
-         SQZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUJ7L8IAdjpiHzoqmWpU8dkHtBCdWei145nJTZjQosQOcr1weA8kROet20Xa5O9ZpnVU+jLMOsZ0I+XjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRFAbL+xDMckL2IUYJrbVPtBCRpqraveFXK4sg7ORG6RrRu+7X
-	4CEIEaJXIv+3mr11cVm31cfKEkbxI2tC9uzK83eKXm5bl/DQVsGXDMgG
-X-Gm-Gg: ASbGncvL3ueZQ2Bx6AIahJZHNFo8W+ShXli5j74cQBb51hqqC0rf5zeMcwYwqBnm8Mt
-	aO5RL/DU4PuB/8MUgjSoznqhJVVvTONyUwlEivlhrhOGHPbPL/BsL1RJi0nEX20uT/dPsL6+7yo
-	TRWk2Vk8Qm4bSGb5uRXHOrIWCWZw+kAluoTDH4dyg3ahfrDjFiRA9jzJ/L1oSPkx2d4ccEm/i00
-	XXuu7kRk9/FZbgSwNkTwM7BT0rHWieNR2SQJJEqzAE4hUBxZA04S1jV9uNa1v4PIdOo89oLFm9m
-	xVLh6hq+mOPiR7/lUNBMiZn8WVdWwDJW1ts7TrJs6O0XjeAWCoqgjsKQFtkj3GurtmLm18C92Fa
-	PIWVgQ8u/ea3Pty87bseR
-X-Google-Smtp-Source: AGHT+IF2Z0bInAWZqDYYETRVnCkFEjbkAn2Fex4pkyig1CAMuVquXF5ao4cQ8XxsbTLy1k2XXr+50A==
-X-Received: by 2002:a05:6000:2881:b0:3eb:dcf:bfa4 with SMTP id ffacd0b85a97d-3ee868a75b0mr2033940f8f.54.1758279981950;
-        Fri, 19 Sep 2025 04:06:21 -0700 (PDT)
-Received: from andrea ([176.201.192.207])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46138694957sm139550595e9.4.2025.09.19.04.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 04:06:21 -0700 (PDT)
-Date: Fri, 19 Sep 2025 13:06:15 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: corbet@lwn.net, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, alex@ghiti.fr, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, mark.rutland@arm.com,
-	ajones@ventanamicro.com, brs@rivosinc.com, anup@brainfault.org,
-	atish.patra@linux.dev, pbonzini@redhat.com, shuah@kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, apw@canonical.com, joe@perches.com,
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org
-Subject: Re: [External] Re: [PATCH v3 0/8] riscv: Add Zalasr ISA extension
- support
-Message-ID: <aM05J6FU0xG3SBzR@andrea>
-References: <20250919073714.83063-1-luxu.kernel@bytedance.com>
- <aM0qlTNPiaQRY2Nv@andrea>
- <CAPYmKFsP+=S56Cj2XT0DjdvBT_SY84moM4LVeqxHTVWbtq4EVw@mail.gmail.com>
- <CAPYmKFsV_ZPifJBtvPOdqM6_Mzhac9A4-PH9zt8TirOqAwKGhw@mail.gmail.com>
+	s=arc-20240116; t=1758280071; c=relaxed/simple;
+	bh=1l6Jo+E2F7SRb6Grq0z99ldybpF7wMJxwQI7wETQJUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RP1w25AwEGRfhiOWDJE+uRxCZP/oOB2JfcpQSMaxHSacjlR5J8z3nO4RV6bnZ81ZqVBALJWV7iH/XYCTRS2/t7VxVclqeQpa04KK02MFSJQc5pyNPDYFnQxEEIWgxs8TOw/gSOLZjfmADo7qcxCNSwgLcpXRhL3KeNr+AsOzCLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip4t1758279999ta3f00b4f
+X-QQ-Originating-IP: i72m7E3iBcPJtgcIq5/NRPUu1KkgvtSDgFZaLVlhGOY=
+Received: from [127.0.0.1] ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 19 Sep 2025 19:06:36 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 17733966522101854755
+Message-ID: <6A43111ED3D39760+a88e4a65-5da8-4d3b-b27e-fa19037462c8@radxa.com>
+Date: Fri, 19 Sep 2025 19:06:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPYmKFsV_ZPifJBtvPOdqM6_Mzhac9A4-PH9zt8TirOqAwKGhw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] phy: qcom: edp: Add missing ref clock to x1e80100
+To: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Sibi Sankar <quic_sibis@quicinc.com>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
+Content-Language: en-US
+From: Xilin Wu <sophon@radxa.com>
+In-Reply-To: <20250909-phy-qcom-edp-add-missing-refclk-v3-0-4ec55a0512ab@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MfQnJH+7WKv6vO748leV/yMGJfZZEefnkSIwbKDu1HeDYD3Z1pbPwWxV
+	I3dftWmPRmQEbKSalxrT2DUfP1TI7arqINfVggcoK2loYPTOdbOMOVww9OayYNG8n2S9hOb
+	gJK5UVYES+AtNdSNpGgfu2K6/PxO5KqC6wFH6T+M8MGdhgBlo2sg6ogRW32YFiGjb8E66Ot
+	02Ibr1FpIQ1Y1p9GbDLmhNCCVrXQ6cydgxt8HzgIretpoF4zTyxADMwjr7Rmcjlc4veZZAD
+	PpFtx+qQ48jldRDYCo1JToqCNLYt4UsQ9v4bzb2Uz27A7+k+1uuUwEL2SP945OIxh1vqw6l
+	4Nfr/V7jce/241msQloeDQIHVSjhspJssrwlUKqCKlv8UA6VE0NFiInTBHvbEkpjNyOQ83h
+	P2HZMoVxLfaIkfGBmhEK/J3YqAA1Istz8GNPZdhz6uyRBaLzkoeVtY6lpEfGxtVW5V/qBDG
+	9ssu+XRvESKyUxBpm0sgBbOZIMjNCrBCUXinBHGwY7V0ixMVxt0yd7HT1/Q88Z31nT54UBd
+	TiMtdq7Ydfx1n6YULAL7LdPqTiC3coF7Gpp3bYSJS2OwRDP/PlSlqNRfnygr3J9Mxz7RnrO
+	dV0UMH1FPT6Y1Sx+qycEcmDOYbW3DEjJocBJ7rBNrUOMehjAl9Dfi5AT2jXjPTuoYQQE7/t
+	yLTFruh0sjQyKgt3cwjJQYCDKTOVw0jv9AjlTLymLXlnjUnmne0NHz4p4ZehT7r1keUkEIj
+	CsFaYMM/P37DUaMYG73Cdyu2mVbtNWz3HtPf1u2S92VUbzoE7gD6eUqi3qvvNntDMfM3CEv
+	p6j7xh6EW5sFJWOMeYB+/OBbTfF/sZPrvPY2TtqU9f4NsOdfFK42CgAUCZsm4VYtKaR5o3F
+	lwStn3wYCV66k0pJkdBwzVaTwPaAVnT7hw4gYzxA19IFUygnEyjFurd/T+2t5Cfrtr95Hel
+	k5rNqKGS6ecuQ0cqWr4tLjyNPqZr1bp71KtE/cqtVtILVzjqIP11x8ggBHCQ7BatMjKM76M
+	kavMzRWTJqe9Fgxiqk
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-> > > (not a review, just looking at this diff stat) is changing the fastpath
-> > >
-> > >   read_unlock()
-> > >   read_lock()
-> > >
-> > > from something like
-> > >
-> > >   fence rw,w
-> > >   amodadd.w
-> > >   amoadd.w
-> > >   fence r,rw
-> > >
-> > > to
-> > >
-> > >   fence rw,rw
-> > >   amoadd.w
-> > >   amoadd.w
-> > >   fence rw,rw
-> > >
-> > > no matter Zalasr or !Zalasr.  Similarly for other atomic operations with
-> > > release or acquire semantics.  I guess the change was not intentional?
-> > > If it was intentional, it should be properly mentioned in the changelog.
-> >
-> > Sorry about that. It is intended. The atomic operation before
-> > __atomic_acquire_fence or operation after __atomic_release_fence can
-> > be just a single ld or sd instruction instead of amocas or amoswap. In
-> > such cases, when the store release operation becomes 'sd.rl', the
-> > __atomic_acquire_fence via 'fence r, rw' can not ensure FENCE.TSO
-> > anymore. Thus I replace it with 'fence rw, rw'.
+On 9/9/2025 3:33 PM, Abel Vesa wrote:
+> According to documentation, the DP PHY on x1e80100 has another clock
+> called ref.
+> 
+> The current X Elite devices supported upstream work fine without this
+> clock, because the boot firmware leaves this clock enabled. But we should
+> not rely on that. Also, when it comes to power management, this clock
+> needs to be also disabled on suspend. So even though this change breaks
+> the ABI, it is needed in order to make we disable this clock on runtime
+> PM, when that is going to be enabled in the driver.
+> 
+> So rework the driver to allow different number of clocks, fix the
+> dt-bindings schema and add the clock to the DT node as well.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> Changes in v3:
+> - Use dev_err_probe() on clocks parsing failure.
+> - Explain why the ABI break is necessary.
+> - Drop the extra 'clk' suffix from the clock name. So ref instead of
+>    refclk.
+> - Link to v2: https://lore.kernel.org/r/20250903-phy-qcom-edp-add-missing-refclk-v2-0-d88c1b0cdc1b@linaro.org
+> 
+> Changes in v2:
+> - Fix schema by adding the minItems, as suggested by Krzysztof.
+> - Use devm_clk_bulk_get_all, as suggested by Konrad.
+> - Rephrase the commit messages to reflect the flexible number of clocks.
+> - Link to v1: https://lore.kernel.org/r/20250730-phy-qcom-edp-add-missing-refclk-v1-0-6f78afeadbcf@linaro.org
+> 
+> ---
+> Abel Vesa (3):
+>        dt-bindings: phy: qcom-edp: Add missing clock for X Elite
+>        phy: qcom: edp: Make the number of clocks flexible
+>        arm64: dts: qcom: Add missing TCSR ref clock to the DP PHYs
+> 
+>   .../devicetree/bindings/phy/qcom,edp-phy.yaml      | 28 +++++++++++++++++++++-
+>   arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 12 ++++++----
+>   drivers/phy/qualcomm/phy-qcom-edp.c                | 16 ++++++-------
+>   3 files changed, 43 insertions(+), 13 deletions(-)
+> ---
+> base-commit: 65dd046ef55861190ecde44c6d9fcde54b9fb77d
+> change-id: 20250730-phy-qcom-edp-add-missing-refclk-5ab82828f8e7
+> 
+> Best regards,
 
-But you could apply similar changes you performed for xchg & cmpxchg: use
-.AQ and .RL for other atomic RMW operations as well, no?  AFAICS, that is
-what arm64 actually does in arch/arm64/include/asm/atomic_{ll_sc,lse}.h .
+Hi,
 
-  Andrea
+I'm observing what looks like a related clock failure on sc8280xp when 
+booting without a monitor connected to a DP-to-HDMI bridge on mdss0_dp2.
+
+Do you think sc8280xp might require a similar fix, or could this be a 
+different issue?
 
 
-> This is also the common implementation on other architectures who use
-> aq/rl instructions like ARM. And you certainly already knew it~
+[    0.390390] ------------[ cut here ]------------
+[    0.390398] disp0_cc_mdss_dptx2_link_clk_src: rcg didn't update its 
+configuration.
+[    0.390419] WARNING: CPU: 0 PID: 63 at 
+drivers/clk/qcom/clk-rcg2.c:136 update_config+0xa4/0xb0
+[    0.390439] Modules linked in:
+[    0.390448] CPU: 0 UID: 0 PID: 63 Comm: kworker/u32:1 Not tainted 
+6.16.3+ #45 PREEMPT(lazy)
+[    0.390455] Hardware name: Qualcomm QRD, BIOS 
+6.0.250905.BOOT.MXF.1.1.c1-00167-MAKENA-1 09/ 5/2025
+[    0.390460] Workqueue: events_unbound deferred_probe_work_func
+[    0.390476] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS 
+BTYPE=--)
+[    0.390482] pc : update_config+0xa4/0xb0
+[    0.390492] lr : update_config+0xa4/0xb0
+[    0.390500] sp : ffff80008351b9e0
+[    0.390504] x29: ffff80008351b9e0 x28: 0000000000000000 x27: 
+ffff0000850ec3c0
+[    0.390515] x26: ffff800081205320 x25: 0000000000000002 x24: 
+0000000000000000
+[    0.390523] x23: ffff8000812052a0 x22: ffff000080467800 x21: 
+ffff800081207ef0
+[    0.390531] x20: ffff8000822ad6f0 x19: 0000000000000000 x18: 
+ffffffffffc06b68
+[    0.390539] x17: 616c707369642e30 x16: 3030313065613a6d x15: 
+ffff800081474230
+[    0.390547] x14: ffffffffff806b67 x13: 2e6e6f6974617275 x12: 
+6769666e6f632073
+[    0.390556] x11: 0000000000000058 x10: 0000000000000018 x9 : 
+ffff8000814742b8
+[    0.390565] x8 : 0000000000afffa8 x7 : 0000000000000179 x6 : 
+ffff800081f742b8
+[    0.390574] x5 : ffff800081f742b8 x4 : 0000000000000178 x3 : 
+00000000fffdffff
+[    0.390582] x2 : ffff8000814741f8 x1 : ffff00008091cec0 x0 : 
+0000000100000000
+[    0.390591] Call trace:
+[    0.390595]  update_config+0xa4/0xb0 (P)
+[    0.390606]  clk_rcg2_set_parent+0x58/0x68
+[    0.390617]  clk_core_set_parent_nolock+0xc4/0x1e0
+[    0.390630]  clk_set_parent+0x40/0x144
+[    0.390638]  of_clk_set_defaults+0x12c/0x520
+[    0.390645]  platform_probe+0x38/0xdc
+[    0.390652]  really_probe+0xc0/0x390
+[    0.390657]  __driver_probe_device+0x7c/0x150
+[    0.390663]  driver_probe_device+0x40/0x120
+[    0.390667]  __device_attach_driver+0xbc/0x168
+[    0.390673]  bus_for_each_drv+0x74/0xc0
+[    0.390684]  __device_attach+0x9c/0x1ac
+[    0.390688]  device_initial_probe+0x14/0x20
+[    0.390694]  bus_probe_device+0x9c/0xa0
+[    0.390703]  deferred_probe_work_func+0xa8/0xf8
+[    0.390713]  process_one_work+0x150/0x2b0
+[    0.390725]  worker_thread+0x2d0/0x3ec
+[    0.390731]  kthread+0x118/0x1e0
+[    0.390738]  ret_from_fork+0x10/0x20
+[    0.390751] ---[ end trace 0000000000000000 ]---
+[    0.390760] clk: failed to reparent disp0_cc_mdss_dptx2_link_clk_src 
+to aec2a00.phy::link_clk: -16
+[    0.401093] ------------[ cut here ]------------
+[    0.401096] disp0_cc_mdss_dptx2_pixel0_clk_src: rcg didn't update its 
+configuration.
+[    0.401112] WARNING: CPU: 0 PID: 63 at 
+drivers/clk/qcom/clk-rcg2.c:136 update_config+0xa4/0xb0
+[    0.401126] Modules linked in:
+[    0.401132] CPU: 0 UID: 0 PID: 63 Comm: kworker/u32:1 Tainted: G 
+   W           6.16.3+ #45 PREEMPT(lazy)
+[    0.401141] Tainted: [W]=WARN
+[    0.401144] Hardware name: Qualcomm QRD, BIOS 
+6.0.250905.BOOT.MXF.1.1.c1-00167-MAKENA-1 09/ 5/2025
+[    0.401147] Workqueue: events_unbound deferred_probe_work_func
+[    0.401159] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS 
+BTYPE=--)
+[    0.401164] pc : update_config+0xa4/0xb0
+[    0.401174] lr : update_config+0xa4/0xb0
+[    0.401182] sp : ffff80008351b9e0
+[    0.401185] x29: ffff80008351b9e0 x28: 00000000fffffff0 x27: 
+ffff0000850ec3c0
+[    0.401194] x26: ffff800081205320 x25: 0000000000000002 x24: 
+0000000000000000
+[    0.401203] x23: ffff8000812052a0 x22: ffff000080467800 x21: 
+ffff800081207ea0
+[    0.401211] x20: ffff8000822ad640 x19: 0000000000000000 x18: 
+ffffffffffc07528
+[    0.401219] x17: 32636561206f7420 x16: 0001020ef3c08cb3 x15: 
+ffff800081474230
+[    0.401227] x14: ffffffffff807527 x13: 2e6e6f6974617275 x12: 
+6769666e6f632073
+[    0.401235] x11: 0000000000000058 x10: 0000000000000018 x9 : 
+ffff8000814742b8
+[    0.401243] x8 : 0000000000afffa8 x7 : 00000000000001a4 x6 : 
+ffff800081f742b8
+[    0.401252] x5 : ffff800081f742b8 x4 : 00000000000001a3 x3 : 
+00000000fffdffff
+[    0.401260] x2 : ffff8000814741f8 x1 : ffff00008091cec0 x0 : 
+0000000100000000
+[    0.401268] Call trace:
+[    0.401271]  update_config+0xa4/0xb0 (P)
+[    0.401281]  clk_rcg2_set_parent+0x58/0x68
+[    0.401291]  clk_core_set_parent_nolock+0xc4/0x1e0
+[    0.401299]  clk_set_parent+0x40/0x144
+[    0.401308]  of_clk_set_defaults+0x12c/0x520
+[    0.401314]  platform_probe+0x38/0xdc
+[    0.401321]  really_probe+0xc0/0x390
+[    0.401325]  __driver_probe_device+0x7c/0x150
+[    0.401330]  driver_probe_device+0x40/0x120
+[    0.401335]  __device_attach_driver+0xbc/0x168
+[    0.401340]  bus_for_each_drv+0x74/0xc0
+[    0.401349]  __device_attach+0x9c/0x1ac
+[    0.401353]  device_initial_probe+0x14/0x20
+[    0.401358]  bus_probe_device+0x9c/0xa0
+[    0.401367]  deferred_probe_work_func+0xa8/0xf8
+[    0.401377]  process_one_work+0x150/0x2b0
+[    0.401384]  worker_thread+0x2d0/0x3ec
+[    0.401390]  kthread+0x118/0x1e0
+[    0.401395]  ret_from_fork+0x10/0x20
+[    0.401405] ---[ end trace 0000000000000000 ]---
+[    0.401412] clk: failed to reparent 
+disp0_cc_mdss_dptx2_pixel0_clk_src to aec2a00.phy::vco_div_clk: -16
+
+-- 
+Best regards,
+Xilin Wu <sophon@radxa.com>
 
