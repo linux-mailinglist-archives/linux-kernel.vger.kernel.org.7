@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CD6B8B8C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F05AB8B8CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F80C1CC3A1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E39C16B0F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFC3328983;
-	Fri, 19 Sep 2025 22:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CDE3294F8;
+	Fri, 19 Sep 2025 22:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="doX8oIKK"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ERmfosvB"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8A832858B
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D80832859F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321275; cv=none; b=NIKWTJkGr/gW5CSy8A1dMkYtL86Fb0hnKxJHSUu9BagDR8hVxBkLGDCPnf0Sa8cOPJ1p9ChFu/8k4TKyMSnt1BjA3Dl0FYP9QgYGdTAkuhjpm7J/CJTlTXt7tadGB/JcLqbz5aN6Aa+4/roQnKkeLDRZYOgFjQSzpG4Ppkvi0lY=
+	t=1758321277; cv=none; b=LU7czYAo5jzAzPzH0MA5/ulQd0JmTId83ybclOSVWWn6mAp/Jt3xDDir48UgqzWuCPPqXF04TaU9WDO19LpqL+6+wa4UkfhW9p81vHW2zY6osxy15JzbKid1QPInyu5fpAgDRwsl3IwIcV2Ka/PZcjl9ugu1OWB/k5xPu5iPYe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321275; c=relaxed/simple;
-	bh=BYRT6ZOJgxVoRTyU9dJltefO+Nu0RiMFOROWzouBG/o=;
+	s=arc-20240116; t=1758321277; c=relaxed/simple;
+	bh=1fL7wRWEPZHd8pnmUHNV19lmd4QIuene6PbtmX/XRSM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k9B7K5eYFBs6j9C03oE5WPOOWlFdFrqOlX4RXXNVLDxhf8N6oD8YPwMMfaScmwZlYFu9/K5rvY12BqlS5fTj1M/IHrAgWvsZF61uywfO/Xqf/wC8O7817H9VtE3bj2GkxHyVdU1Qelz42oJqPgOmBJjt3kwrVl1bUzY26mDiGd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=doX8oIKK; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=IJbhSbPYlQJwmf+udkmQPA/ZqzKCTucOkJsGS7hgCq6lGiWyGfS0Oz04nH4w2BMlCGSm7KeqLE3zZ1Ce5ge94Y587ve+6w7A6n/wHie76dSPcQmCY2iMDpfFGeQF92aGHCWmTCg1+npqxMXvKqcTt1Z0ZAFJjC048M7Vty/+KTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ERmfosvB; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so3804233a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:33 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b52435ee30cso1722112a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321273; x=1758926073; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321275; x=1758926075; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=WRthGNaMlgYVSEMFE28oT2jZ0xOGZ+MRICHgk9Q9l8Q=;
-        b=doX8oIKKl/lvpG52WAwnlezr+N5Q9DBWUP+hlRPDhOXUl/HKq10EnichzpscHYqQyo
-         06EYdQx6p8SeAwUoA3oW3BgzJsFCFPdI6WiCeDv1q00EeZz6OIoxUyNwGdreiB2uVoDS
-         ivd1p4I6pj8x1F/1KZvB5CT5re4aRkyr2w1zj5iE//8YrQMOd8M4fqSlSGzGZcN13U+a
-         B5k/S8v33kfk6I0jGZSsoOB1CWz5SIkh/WA/eq1lDJPMwHfuZvC+JmEBXcLu+R30ABUu
-         zFp8NSxRQQdtQZtjrrhQcXKfKuWVoGiqiJIRgJdoN1TsPUDxBZ9E43NPQZutoaYeenhl
-         70gw==
+        bh=JQSH/c/8VdNhmUGrSGxQbnKeu17eb9RfSKjkJ+x4hXo=;
+        b=ERmfosvB4+YICvzg8ydLp4lV6iuwkzrTOrJ+9klHoW1bPTuepGEVpzdxXqIYKMrEX0
+         r4pXiCcTLYjuEQux16EaAcYTEJdrWcMbsSB0VvEfVlhmUsWdFuOQKIEJAL+8iJMAwns3
+         sYSubhV0V1jm8/IldSNTygm26XD7KFENyB+v2QwoCV2M58tK6wKsLf/a46WNh+ujw6a0
+         9kP8D1Sn+InQRMxlWeEXVs4/6xFDRe9mvnAVGvccTCBpOLiZAe/jUClgPxty7E8Ogs14
+         IguGc1Rw5cdeFeGiEjQRNKPdaLQCZ7lGgLWXUB4lJrIWWOl8XfOXXe+px1SJ8ryToIZv
+         jACA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321273; x=1758926073;
+        d=1e100.net; s=20230601; t=1758321275; x=1758926075;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WRthGNaMlgYVSEMFE28oT2jZ0xOGZ+MRICHgk9Q9l8Q=;
-        b=lJiKr89hko1j7rd01278qQZZQqQnPXbRJmwOMVWzC5UhhZBg3uAwfVtEd0xyscKumi
-         2F6SurV5QNh2+n7AcIWf++fyKUY2Nda+yENcAYRsiQHqkD9WeDT+meC5M3g9uDnQjwRj
-         q0kUhrBes+TUtXYE5/3ukIB/ddZFCbQl+171ACACsEhe1Er+IEX7CxQglq94QkqzUDhA
-         7imSpTF+5qog69xO9M+jP+kPhzr+SetpR/5jtHJWXbhQGClxKMceaCnXWZ+sNgBSLtoq
-         L8OocVEo/iGVCKG6cdS3yaNwwql6AjEMMpAAUmvXF06iZLGe5Jbyyc1cxGZdwhlTqDVV
-         o3cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqKnw6AEnFEV+M/cIelSl646tWwYPiMcKxfDxRkcZRxDZj8YcEi1/EH6lPfVnVJVAnh60iQPBH9lmFqL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJiRNG+RAocIhbessE2zwrXzX+P+KoK/avahmY+Xmjveh1KHFk
-	tk9jGIEN2GnFQZy50DOhgpZsgBbyuGa10B0qDu/ur8ZJmWO1ZIK/VlGalYvAT0Z/hrsIaMeAife
-	UmQq1hg==
-X-Google-Smtp-Source: AGHT+IE7WzB+APSm9EHWokWDmwal9l0HANadXjRbGIgyuws7oyp+YYlkQWafkY7rMhgPfMi2ql9eNVL/ya0=
-X-Received: from pjbee4.prod.google.com ([2002:a17:90a:fc44:b0:32f:3fab:c9e7])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d8f:b0:32e:d600:4fe9
- with SMTP id 98e67ed59e1d1-33097fd4f7dmr6238048a91.4.1758321273512; Fri, 19
- Sep 2025 15:34:33 -0700 (PDT)
+        bh=JQSH/c/8VdNhmUGrSGxQbnKeu17eb9RfSKjkJ+x4hXo=;
+        b=i0y2Hb4Lp1m0/7RHjdS0zvOEjRrC0otGyBkkd3/HftAgL4SLcj64AH58mWh5dBrtqM
+         HICzSNhJM8IZfx19EjiiuYft8z3sxWG91xTi3wY+lLeFj2T7CLKc1ErhSc15S/pjGQoi
+         9ZZKmc4pvKIuPuJfqqSotqGWW4RRsUEmg9Tdghsnohm0KlJTTY0S6gUX/m89DRjmd+mm
+         clhVDI+yfq/acozWr6mFKR/l8oa9Ogzf7evtLg4Tdo5WzCZ77UyjggZ9OJ8GL2SaERhd
+         Ep08cZ4KxPHxKZJjnfaB0bn+rKz03ONtq2z4Dzf+R30Br2gjeIURPJPnBhoZdYXDAa14
+         JP8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXm+FiOXSlScn0YpQFPKKaoQ/8SFewCECBj3Yzno+eR1VuI30DmneCydlwH/A2f/GMkRgJZh6v5UiyRyIA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1l0J+/Oeopu1GkzOzZQkMj/FGGGSVZjIoZPDWWuEe69G+cuks
+	UaoLBWZs6hydVK4nn3uJRenhgElp8r7gw1g9osF8i0VhU+pWkD0J/ykooKg7f/xi3JeO75l+2Py
+	19TtNkA==
+X-Google-Smtp-Source: AGHT+IGoYT2HZpEdAlhZx5r/ucYzX6YQNn5sfl4TsQNztPyoD3+rQERQ2+y8rcMk9gZnGPsyJg3CNYiaXsU=
+X-Received: from pjbpd9.prod.google.com ([2002:a17:90b:1dc9:b0:31f:b2f:aeed])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:a127:b0:262:d265:a3c
+ with SMTP id adf61e73a8af0-29270bb8175mr7218066637.32.1758321275014; Fri, 19
+ Sep 2025 15:34:35 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:57 -0700
+Date: Fri, 19 Sep 2025 15:32:58 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-51-seanjc@google.com>
-Subject: [PATCH v16 50/51] KVM: selftests: Verify MSRs are (not) in
- save/restore list when (un)supported
+Message-ID: <20250919223258.1604852-52-seanjc@google.com>
+Subject: [PATCH v16 51/51] KVM: VMX: Make CR4.CET a guest owned bit
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -88,57 +87,67 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add a check in the MSRs test to verify that KVM's reported support for
-MSRs with feature bits is consistent between KVM's MSR save/restore lists
-and KVM's supported CPUID.
+From: Mathias Krause <minipli@grsecurity.net>
 
-To deal with Intel's wonderful decision to bundle IBT and SHSTK under CET,
-track the "second" feature to avoid false failures when running on a CPU
-with only one of IBT or SHSTK.
+Make CR4.CET a guest-owned bit under VMX by extending
+KVM_POSSIBLE_CR4_GUEST_BITS accordingly.
 
+There's no need to intercept changes to CR4.CET, as it's neither
+included in KVM's MMU role bits, nor does KVM specifically care about
+the actual value of a (nested) guest's CR4.CET value, beside for
+enforcing architectural constraints, i.e. make sure that CR0.WP=1 if
+CR4.CET=1.
+
+Intercepting writes to CR4.CET is particularly bad for grsecurity
+kernels with KERNEXEC or, even worse, KERNSEAL enabled. These features
+heavily make use of read-only kernel objects and use a cpu-local CR0.WP
+toggle to override it, when needed. Under a CET-enabled kernel, this
+also requires toggling CR4.CET, hence the motivation to make it
+guest-owned.
+
+Using the old test from [1] gives the following runtime numbers (perf
+stat -r 5 ssdd 10 50000):
+
+* grsec guest on linux-6.16-rc5 + cet patches:
+  2.4647 +- 0.0706 seconds time elapsed  ( +-  2.86% )
+
+* grsec guest on linux-6.16-rc5 + cet patches + CR4.CET guest-owned:
+  1.5648 +- 0.0240 seconds time elapsed  ( +-  1.53% )
+
+Not only does not intercepting CR4.CET make the test run ~35% faster,
+it's also more stable with less fluctuation due to fewer VMEXITs.
+
+Therefore, make CR4.CET a guest-owned bit where possible.
+
+This change is VMX-specific, as SVM has no such fine-grained control
+register intercept control.
+
+If KVM's assumptions regarding MMU role handling wrt. a guest's CR4.CET
+value ever change, the BUILD_BUG_ON()s related to KVM_MMU_CR4_ROLE_BITS
+and KVM_POSSIBLE_CR4_GUEST_BITS will catch that early.
+
+Link: https://lore.kernel.org/kvm/20230322013731.102955-1-minipli@grsecurity.net/ [1]
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Signed-off-by: Mathias Krause <minipli@grsecurity.net>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- tools/testing/selftests/kvm/x86/msrs_test.c | 22 ++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ arch/x86/kvm/kvm_cache_regs.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/x86/msrs_test.c b/tools/testing/selftests/kvm/x86/msrs_test.c
-index 7c6d846e42dd..91dc66bfdac2 100644
---- a/tools/testing/selftests/kvm/x86/msrs_test.c
-+++ b/tools/testing/selftests/kvm/x86/msrs_test.c
-@@ -437,12 +437,32 @@ static void test_msrs(void)
- 	}
+diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
+index 36a8786db291..8ddb01191d6f 100644
+--- a/arch/x86/kvm/kvm_cache_regs.h
++++ b/arch/x86/kvm/kvm_cache_regs.h
+@@ -7,7 +7,8 @@
+ #define KVM_POSSIBLE_CR0_GUEST_BITS	(X86_CR0_TS | X86_CR0_WP)
+ #define KVM_POSSIBLE_CR4_GUEST_BITS				  \
+ 	(X86_CR4_PVI | X86_CR4_DE | X86_CR4_PCE | X86_CR4_OSFXSR  \
+-	 | X86_CR4_OSXMMEXCPT | X86_CR4_PGE | X86_CR4_TSD | X86_CR4_FSGSBASE)
++	 | X86_CR4_OSXMMEXCPT | X86_CR4_PGE | X86_CR4_TSD | X86_CR4_FSGSBASE \
++	 | X86_CR4_CET)
  
- 	for (idx = 0; idx < ARRAY_SIZE(__msrs); idx++) {
--		if (msrs[idx].is_kvm_defined) {
-+		struct kvm_msr *msr = &msrs[idx];
-+
-+		if (msr->is_kvm_defined) {
- 			for (i = 0; i < NR_VCPUS; i++)
- 				host_test_kvm_reg(vcpus[i]);
- 			continue;
- 		}
- 
-+		/*
-+		 * Verify KVM_GET_SUPPORTED_CPUID and KVM_GET_MSR_INDEX_LIST
-+		 * are consistent with respect to MSRs whose existence is
-+		 * enumerated via CPUID.  Note, using LM as a dummy feature
-+		 * is a-ok here as well, as all MSRs that abuse LM should be
-+		 * unconditionally reported in the save/restore list (and
-+		 * selftests are 64-bit only).  Note #2, skip the check for
-+		 * FS/GS.base MSRs, as they aren't reported in the save/restore
-+		 * list since their state is managed via SREGS.
-+		 */
-+		TEST_ASSERT(msr->index == MSR_FS_BASE || msr->index == MSR_GS_BASE ||
-+			    kvm_msr_is_in_save_restore_list(msr->index) ==
-+			    (kvm_cpu_has(msr->feature) || kvm_cpu_has(msr->feature2)),
-+			    "%s %s save/restore list, but %s according to CPUID", msr->name,
-+			    kvm_msr_is_in_save_restore_list(msr->index) ? "is" : "isn't",
-+			    (kvm_cpu_has(msr->feature) || kvm_cpu_has(msr->feature2)) ?
-+			    "supported" : "unsupported");
-+
- 		sync_global_to_guest(vm, idx);
- 
- 		vcpus_run(vcpus, NR_VCPUS);
+ #define X86_CR0_PDPTR_BITS    (X86_CR0_CD | X86_CR0_NW | X86_CR0_PG)
+ #define X86_CR4_TLBFLUSH_BITS (X86_CR4_PGE | X86_CR4_PCIDE | X86_CR4_PAE | X86_CR4_SMEP)
 -- 
 2.51.0.470.ga7dc726c21-goog
 
