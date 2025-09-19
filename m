@@ -1,53 +1,80 @@
-Return-Path: <linux-kernel+bounces-824408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E428B891D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:42:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABCCB891FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11EE1CC0FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5313BFFA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E2F303A31;
-	Fri, 19 Sep 2025 10:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF803081AC;
+	Fri, 19 Sep 2025 10:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="PAxiWOHl"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WVAhBzKQ"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB7A19D082
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B6E2FE062
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 10:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758278571; cv=none; b=nMIlvZYLAz4he8f8DJvx18MlQRLP8S2xMnzNegid3B5i6+/fwHva4tKQA5vVwN8i16p9g2yuVHohlklsBWIPatpIXDdwhe7pupMtIkcdVU8tHNsq4c53minFcUNrZvjAbzW8zCw5WcHfqBjm5NbxHaHhgXmdxfdwBC8VcuwV4L0=
+	t=1758278583; cv=none; b=rRTnTNCMNck3/sgJqy3/uqR9jYnEVAytL6EqW9H8WFdPXrXFxp2KATwnyI3YrKeb2AVUMYUkA3aC3Etn26LqbDbXMmFGrOEylfdeOwwvc7c1X3xVJ/dynTG3/Z5GQKTE001Ge3DCaNuOWDe81wfpsVPOlYJG+kYzvaKaqI6fNFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758278571; c=relaxed/simple;
-	bh=WWTQEs6QfhGkwEJF07j3r0BD/BdqaNUNh5OfubqUJSg=;
+	s=arc-20240116; t=1758278583; c=relaxed/simple;
+	bh=+JzZ1lcKi/XwHvN0bT8VLHcok4tzYHYA7niCaXgmp6g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GITSm+j6uUS2eoikL77bwsFO7VErDU5XN9iLse+htQLHxbMgds9WIq9692hww8p2pnJtsFCYG//8AyD/6wRHujJ3ZiPeooD4RDPBg/hzkzXLxQxU6AU4vDSbZ0PSFGUYq14hLSuzX/HhW5texFllQHf5loeMmvoOJZZDa7yqmBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=PAxiWOHl; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=f3gOPAwGgGhAbnRGGA18QXMsBVGPkgYJQJvoSsF9M24=; b=PAxiWOHlWteIQUR2H3W7VLqN7o
-	fgi088OnL7a5ZY1vAtaEnlT+T93hZbQKcL4kB+oi1wjApfxQ2mD8SDsdYkoXEgHzL8e7cOToE7gI5
-	YBUAn3pE5UWP17mWgTa8VFHeZuUrl9k1hbgV2SulZhIWKX0VREJujJehR6lx/K1n2EXvm4qKNULmG
-	CuBH8ayyJsp1zMqkYS0aJc6MfOVbk0rW0WTIOM3QbvHt5K54l68Cy6aZy0MeS/fYKHF4v+58uvxQo
-	eVHZ8y/zstjmiXVXW7dfDbDBp0du0eIcknKz2oPwlSkJ1Rn/L7TerPwkpZOQF0s1YsLF8HG6DbU6p
-	HuaaLGeQ==;
-Received: from [84.66.36.92] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uzYZE-00E3Jx-33; Fri, 19 Sep 2025 12:42:16 +0200
-Message-ID: <2063040f-f434-4569-bd7c-61f24ee1ef50@igalia.com>
-Date: Fri, 19 Sep 2025 11:42:14 +0100
+	 In-Reply-To:Content-Type; b=Vw7LbokuFvED2hQouhrihIN6NByy70XDE6iIRox/rZv/4rO4X6j2l9SSwgVtzXemBPdvctgeNlqU/OlUa57j6eZ8br4Ane0lN2aURtVZ10pPDqgIVcOI5fQDuHAqcS5viynM14iChDQuzvkPVekoxFXJ3YdukkZUxJhuNxpTZQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WVAhBzKQ; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62fa0653cd2so4062282a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 03:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758278579; x=1758883379; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihYBz/zfcgpG/TQdBCL4wkwIrU8k32PxFeX5ZO16w/k=;
+        b=WVAhBzKQGBD9sR2gD/NgCI/ZNb97yS6XuwbwyEaPQzhtbmAxFJwvQLYOLQ0+DT9C6x
+         jYK2EWpIC+fXVL11nTGw9qiLu81qbc5u+9sL3bK3OV9SfLkofXdGGwDUpDLwg9NFXSQx
+         6sxxtWezQN3+8GtoB4T+tVNdg89XwPISOAc+4HaSUS+74XHtZiuSfXF+2vyUP1NX1FlT
+         VSGL5uRlykCta/CsVgJAf/IKjVMs8gclbAvPk6DEgdkYzHpqLzY60nMFDuYlU8eMVHVr
+         ptaW/Msfk+k2XgM0SAtEGnABI62D7pQ8XNIOWqssoWHBoQ1QCR5p6ZkTuusEg95LtmP7
+         /y7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758278579; x=1758883379;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ihYBz/zfcgpG/TQdBCL4wkwIrU8k32PxFeX5ZO16w/k=;
+        b=A8bLXN6l/pbElPwQQuojH1fEamxN/FL4pQEjLN2t7ruYRrudLz2rkV6eZQzLmxt+uc
+         btQoDepRsbfAaHS0Te8H91CoyitZ52Q8Uc0mrmx/BXviJFkanbZztFK9qQaKhWbXZTP1
+         fVrsHDWwkDay7CZ+dGY77I+PUi1RsQa+t6mYexXyjWZJMYQzjz6i/9IQUorNjEVKFYut
+         5WWKaFWySTQv4C27dxXwlWmq/vFMBStVD+U+wd/GhjziCILv1LSYzKsxJgkXlbGUBt1D
+         z82YGENWzs8XXB3ROGnjpQC/30bELR7t+BFfuexZWbq2PmJFteWaTaJxGBoEOK3d6G3N
+         WOVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+L2Lq6w/MLevU7BpZ20DxKHwnai0r05xXXE260+lpfh5mix2OD4zN41rYiSWuV8q7sonKed72dh4Z+eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGscVmx4TWkMNhdmImJyqpFXjIsuCISF2MB7Dl7fsp2svM4Oa8
+	SGqmZ2S5IU+Dr0r3IsYxtZ5bDnPW2Kdt5YXdJ8G46tMmtd9iv/80W5ux1ylz9pT/Mas=
+X-Gm-Gg: ASbGncu/U49t8vaKdIURF5EQMZlh4Y0M+0xzpYg6Zq4iwfZZZ9F7iLXpeQUHPH8Z3lg
+	j6vlGyxC9b7xLEpNgbTACm2rp9xpe/CInZ++vRJMoHJx8VzSlfXTrpnQgmegOctTZbN9G91YJmx
+	k9uvfFa6KaLal5N7s/hgCvKIxG3IOp5ZJUfxUb0Ky+6D1lHF4ZL42XsZ9J3NxSaA/+T2Addjuyf
+	ldgricILmgk2LrD0M+OuvOEc8ciXiBovzzgX0oQHaM6FiwuB1WdECKaAdF4Jl9DKZ/eDJmB6akp
+	F6H0vsdQIocEyzTcgl91iuji0HUKyXrSJZWXizMHIl1OosYEyWha2nC9Ulg2Ye8dmWGDTQpey0F
+	Dv1CMTVPnbwAtq3oYh02ByvMF+9ZTDLLVmYHSVrmCra9xIW4=
+X-Google-Smtp-Source: AGHT+IGMSebx4yMVoxYvKBsvfpQu5sA5tumjbV9DOc4mgo8cPctnw+Z/Yl6cbdb2H35TaWYPT0GnrQ==
+X-Received: by 2002:a17:907:6eab:b0:b21:b4f6:d676 with SMTP id a640c23a62f3a-b24eedb9ee5mr320177966b.25.1758278578896;
+        Fri, 19 Sep 2025 03:42:58 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.216.86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc5f44fcesm401731266b.20.2025.09.19.03.42.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Sep 2025 03:42:58 -0700 (PDT)
+Message-ID: <6e2d5351-dbd2-4e28-8bdb-b961fade5ebc@suse.com>
+Date: Fri, 19 Sep 2025 13:42:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,263 +82,253 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 0/3] drm/ttm: allow direct reclaim to be skipped
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
- =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250918-ttm_pool_no_direct_reclaim-v2-0-135294e1f8a2@igalia.com>
- <6f92ff06-04c3-440b-becb-50a7693ecc39@amd.com>
- <67c83b24-01b6-4633-8645-52dc746c32e2@igalia.com>
- <96c117bc-389f-42d9-952e-894768aad780@amd.com>
- <76861e33-8d07-4b97-9f91-4c5651732e91@igalia.com>
- <cfb34506-30d5-4b73-8bac-cf3c1a018901@amd.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <cfb34506-30d5-4b73-8bac-cf3c1a018901@amd.com>
+Subject: Re: [PATCH v6 15/15] x86/mce: Save and use APEI corrected threshold
+ limit
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
+ Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-acpi@vger.kernel.org
+References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
+ <20250908-wip-mca-updates-v6-15-eef5d6c74b9c@amd.com>
+ <64314c7a-5212-4bf0-8181-8bbada0e81b5@suse.com>
+ <20250915173332.GA869676@yaz-khff2.amd.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <20250915173332.GA869676@yaz-khff2.amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
-On 19/09/2025 11:17, Christian König wrote:
-> On 19.09.25 10:46, Tvrtko Ursulin wrote:
+
+On 9/15/25 20:33, Yazen Ghannam wrote:
+> On Thu, Sep 11, 2025 at 08:01:17PM +0300, Nikolay Borisov wrote:
 >>
->> On 19/09/2025 09:01, Christian König wrote:
->>> On 19.09.25 09:43, Tvrtko Ursulin wrote:
->>>> On 19/09/2025 07:46, Christian König wrote:
->>>>> On 18.09.25 22:09, Thadeu Lima de Souza Cascardo wrote:
->>>>>> On certain workloads, like on ChromeOS when opening multiple tabs and
->>>>>> windows, and switching desktops, memory pressure can build up and latency
->>>>>> is observed as high order allocations result in memory reclaim. This was
->>>>>> observed when running on an amdgpu.
->>>>>>
->>>>>> This is caused by TTM pool allocations and turning off direct reclaim when
->>>>>> doing those higher order allocations leads to lower memory pressure.
->>>>>>
->>>>>> Since turning direct reclaim off might also lead to lower throughput,
->>>>>> make it tunable, both as a module parameter that can be changed in sysfs
->>>>>> and as a flag when allocating a GEM object.
->>>>>>
->>>>>> A latency option will avoid direct reclaim for higher order allocations.
->>>>>>
->>>>>> The throughput option could be later used to more agressively compact pages
->>>>>> or reclaim, by not using __GFP_NORETRY.
->>>>>
->>>>> Well I can only repeat it, at least for amdgpu that is a clear NAK from my side to this.
->>>>>
->>>>> The behavior to allocate huge pages is a must have for the driver.
->>>>
->>>> Disclaimer that I wouldn't go system-wide but per device - so somewhere in sysfs rather than a modparam. That kind of a toggle would not sound problematic to me since it leaves the policy outside the kernel and allows people to tune to their liking.
+>>
+>> On 9/8/25 18:40, Yazen Ghannam wrote:
+>>> The MCA threshold limit generally is not something that needs to change
+>>> during runtime. It is common for a system administrator to decide on a
+>>> policy for their managed systems.
 >>>
->>> Yeah I've also wrote before when that is somehow beneficial for nouveau (for example) then I don't have any problem with making the policy device dependent.
+>>> If MCA thresholding is OS-managed, then the threshold limit must be set
+>>> at every boot. However, many systems allow the user to set a value in
+>>> their BIOS. And this is reported through an APEI HEST entry even if
+>>> thresholding is not in FW-First mode.
 >>>
->>> But for amdgpu we have so many so bad experiences with this approach that I absolutely can't accept that.
+>>> Use this value, if available, to set the OS-managed threshold limit.
+>>> Users can still override it through sysfs if desired for testing or
+>>> debug.
 >>>
->>>> One side question thought - does AMD benefit from larger than 2MiB contiguous blocks? IIUC the maximum PTE is 2MiB so maybe not? In which case it may make sense to add some TTM API letting drivers tell the pool allocator what is the maximum order to bother with. Larger than that may have diminishing benefit for the disproportionate pressure on the memory allocator and reclaim.
+>>> APEI is parsed after MCE is initialized. So reset the thresholding
+>>> blocks later to pick up the threshold limit.
 >>>
->>> Using 1GiB allocations would allow for the page tables to skip another layer on AMD GPUs, but the most benefit is between 4kiB and 2MiB since that can be handled more efficiently by the L1. Having 2MiB allocations then also has an additional benefit for L2.
+>>> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+>>> ---
 >>>
->>> Apart from performance for AMD GPUs there are also some HW features which only work with huge pages, e.g. on some laptops you can get for example flickering on the display if the scanout buffer is back by to many small pages.
+>>> Notes:
+>>>       Link:
+>>>       https://lore.kernel.org/r/20250825-wip-mca-updates-v5-20-865768a2eef8@amd.com
+>>>       v5->v6:
+>>>       * No change.
+>>>       v4->v5:
+>>>       * No change.
+>>>       v3->v4:
+>>>       * New in v4.
 >>>
->>> NVidia used to work on 1GiB allocations which as far as I know was the kickoff for the whole ongoing switch to using folios instead of pages. And from reading public available documentation I have the impression that NVidia GPUs works more or less the same as AMD GPUs regarding the TLB.
->>
->> 1GiB is beyond the TTM pool allocator scope, right?
-> 
-> Yes, on x86 64bit the pool allocator can allocate at maximum 2MiB by default IIRC.
-
-I think 10 is the max order so 4MiB. So it wouldn't be much relief to 
-the allocator but better than nothing(tm)?
-
->>  From what you wrote it sounds like my idea would actually be okay. A very gentle approach (minimal change in behaviour) to only disable direct reclaim above the threshold set by the driver.
-> 
-> Well the problem is that the threshold set by amdgpu would be 2MiB and by default there isn't anything above it on x86. So that would be a no-op. On ARM64 that idea could potentially help maybe.
-
-Some architectures appear to default to more than 10, and some offer 
-Kconfig to change the default.
-
-I think this means in the patch I proposed I am missing a 
-min(MAX_PAGE_ORDER, max_beneficial_order) when setting the pool property.
-
-> I could look into the HW documentation again what we would need as minimum for functional correctness, but there are quite a number of use cases and lowering from 2MiB to something like 256KiB or 512KiB potentially won't really help and still cause a number of performance issues in the L2.
-
-It would be very good if you could check for requirements regarding 
-functional correctness. Could that also differ per generation/part, and 
-if so, maybe it should be made configurable in the ttm_pool API as well 
-as an order below it is better to fail instead of moving to a lower order?
-
-Regards,
-
-Tvrtko
-
->> Along the lines of:
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->> index 428265046815..06b243f05edd 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
->> @@ -1824,7 +1824,7 @@ static int amdgpu_ttm_pools_init(struct amdgpu_device *adev)
->>       for (i = 0; i < adev->gmc.num_mem_partitions; i++) {
->>           ttm_pool_init(&adev->mman.ttm_pools[i], adev->dev,
->>                     adev->gmc.mem_partitions[i].numa.node,
->> -                  false, false);
->> +                  false, false, get_order(2 * SZ_1M));
->>       }
->>       return 0;
->>   }
->> @@ -1865,7 +1865,8 @@ int amdgpu_ttm_init(struct amdgpu_device *adev)
->>                      adev_to_drm(adev)->anon_inode->i_mapping,
->>                      adev_to_drm(adev)->vma_offset_manager,
->>                      adev->need_swiotlb,
->> -                   dma_addressing_limited(adev->dev));
->> +                   dma_addressing_limited(adev->dev),
->> +                   get_order(2 * SZ_1M));
->>       if (r) {
->>           dev_err(adev->dev,
->>               "failed initializing buffer object driver(%d).\n", r);
->> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
->> index baf27c70a419..5d54e8373230 100644
->> --- a/drivers/gpu/drm/ttm/ttm_pool.c
->> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
->> @@ -726,8 +726,12 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, struct ttm_tt *tt,
->>
->>       page_caching = tt->caching;
->>       allow_pools = true;
->> -    for (order = ttm_pool_alloc_find_order(MAX_PAGE_ORDER, alloc);
->> -         alloc->remaining_pages;
->> +
->> +    order = ttm_pool_alloc_find_order(MAX_PAGE_ORDER, alloc);
->> +    if (order > pool->max_beneficial_order)
->> +        gfp_flags &= ~__GFP_DIRECT_RECLAIM;
->> +
->> +    for (; alloc->remaining_pages;
->>            order = ttm_pool_alloc_find_order(order, alloc)) {
->>           struct ttm_pool_type *pt;
->>
->> @@ -745,6 +749,8 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, struct ttm_tt *tt,
->>           if (!p) {
->>               page_caching = ttm_cached;
->>               allow_pools = false;
->> +            if (order <= pool->max_beneficial_order)
->> +                gfp_flags |= __GFP_DIRECT_RECLAIM;
->>               p = ttm_pool_alloc_page(pool, gfp_flags, order);
->>           }
->>           /* If that fails, lower the order if possible and retry. */
->> @@ -1064,7 +1070,8 @@ long ttm_pool_backup(struct ttm_pool *pool, struct ttm_tt *tt,
->>    * Initialize the pool and its pool types.
->>    */
->>   void ttm_pool_init(struct ttm_pool *pool, struct device *dev,
->> -           int nid, bool use_dma_alloc, bool use_dma32)
->> +           int nid, bool use_dma_alloc, bool use_dma32,
->> +           unsigned int max_beneficial_order)
->>   {
->>       unsigned int i, j;
->>
->> @@ -1074,6 +1081,7 @@ void ttm_pool_init(struct ttm_pool *pool, struct device *dev,
->>       pool->nid = nid;
->>       pool->use_dma_alloc = use_dma_alloc;
->>       pool->use_dma32 = use_dma32;
->> +    pool->max_beneficial_order = max_beneficial_order;
->>
->>       for (i = 0; i < TTM_NUM_CACHING_TYPES; ++i) {
->>           for (j = 0; j < NR_PAGE_ORDERS; ++j) {
->>
->>
->> That should have the page allocator working less hard and lower the latency with large buffers.
->>
->> Then a more aggressive change on top could be:
->>
->> diff --git a/drivers/gpu/drm/ttm/ttm_pool.c b/drivers/gpu/drm/ttm/ttm_pool.c
->> index 5d54e8373230..152164f79927 100644
->> --- a/drivers/gpu/drm/ttm/ttm_pool.c
->> +++ b/drivers/gpu/drm/ttm/ttm_pool.c
->> @@ -726,12 +726,8 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, struct ttm_tt *tt,
->>
->>       page_caching = tt->caching;
->>       allow_pools = true;
->> -
->> -    order = ttm_pool_alloc_find_order(MAX_PAGE_ORDER, alloc);
->> -    if (order > pool->max_beneficial_order)
->> -        gfp_flags &= ~__GFP_DIRECT_RECLAIM;
->> -
->> -    for (; alloc->remaining_pages;
->> +    for (order = ttm_pool_alloc_find_order(pool->max_beneficial_order, alloc);
->> +         alloc->remaining_pages;
->>            order = ttm_pool_alloc_find_order(order, alloc)) {
->>           struct ttm_pool_type *pt;
->>
->> @@ -749,8 +745,6 @@ static int __ttm_pool_alloc(struct ttm_pool *pool, struct ttm_tt *tt,
->>           if (!p) {
->>               page_caching = ttm_cached;
->>               allow_pools = false;
->> -            if (order <= pool->max_beneficial_order)
->> -                gfp_flags |= __GFP_DIRECT_RECLAIM;
->>               p = ttm_pool_alloc_page(pool, gfp_flags, order);
->>           }
->>           /* If that fails, lower the order if possible and retry. */
->>
->> Ie. don't even bother trying to allocate orders above what the driver says is useful. Could be made a drivers choice as well.
->>
->> And all could be combined with some sort of a sysfs control, as Cascardo was suggesting, to disable direct reclaim completely if someone wants that.
->>
->> Regards,
->>
->> Tvrtko
->>
->>> Another alternative would be that we add a WARN_ONCE() when we have to fallback to lower order pages, but that wouldn't help the end user either. It just makes it more obvious that you need more memory for a specific use case without triggering the OOM killer.
+>>>    arch/x86/include/asm/mce.h          |  6 ++++++
+>>>    arch/x86/kernel/acpi/apei.c         |  2 ++
+>>>    arch/x86/kernel/cpu/mce/amd.c       | 18 ++++++++++++++++--
+>>>    arch/x86/kernel/cpu/mce/internal.h  |  2 ++
+>>>    arch/x86/kernel/cpu/mce/threshold.c | 13 +++++++++++++
+>>>    5 files changed, 39 insertions(+), 2 deletions(-)
 >>>
->>> Regards,
->>> Christian.
->>>
->>>>
->>>> Regards,
->>>>
->>>> Tvrtko
->>>>
->>>>> The alternative I can offer is to disable the fallback which in your case would trigger the OOM killer.
->>>>>
->>>>> Regards,
->>>>> Christian.
->>>>>
->>>>>>
->>>>>> Other drivers can later opt to use this mechanism too.
->>>>>>
->>>>>> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
->>>>>> ---
->>>>>> Changes in v2:
->>>>>> - Make disabling direct reclaim an option.
->>>>>> - Link to v1: https://lore.kernel.org/r/20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com
->>>>>>
->>>>>> ---
->>>>>> Thadeu Lima de Souza Cascardo (3):
->>>>>>          ttm: pool: allow requests to prefer latency over throughput
->>>>>>          ttm: pool: add a module parameter to set latency preference
->>>>>>          drm/amdgpu: allow allocation preferences when creating GEM object
->>>>>>
->>>>>>     drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c    |  3 ++-
->>>>>>     drivers/gpu/drm/amd/amdgpu/amdgpu_object.c |  3 ++-
->>>>>>     drivers/gpu/drm/ttm/ttm_pool.c             | 23 +++++++++++++++++------
->>>>>>     drivers/gpu/drm/ttm/ttm_tt.c               |  2 +-
->>>>>>     include/drm/ttm/ttm_bo.h                   |  5 +++++
->>>>>>     include/drm/ttm/ttm_pool.h                 |  2 +-
->>>>>>     include/drm/ttm/ttm_tt.h                   |  2 +-
->>>>>>     include/uapi/drm/amdgpu_drm.h              |  9 +++++++++
->>>>>>     8 files changed, 38 insertions(+), 11 deletions(-)
->>>>>> ---
->>>>>> base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
->>>>>> change-id: 20250909-ttm_pool_no_direct_reclaim-ee0807a2d3fe
->>>>>>
->>>>>> Best regards,
->>>>>
->>>>
->>>
+>>> diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+>>> index 7d6588195d56..1cfbfff0be3f 100644
+>>> --- a/arch/x86/include/asm/mce.h
+>>> +++ b/arch/x86/include/asm/mce.h
+>>> @@ -308,6 +308,12 @@ DECLARE_PER_CPU(struct mce, injectm);
+>>>    /* Disable CMCI/polling for MCA bank claimed by firmware */
+>>>    extern void mce_disable_bank(int bank);
+>>> +#ifdef CONFIG_X86_MCE_THRESHOLD
+>>> +void mce_save_apei_thr_limit(u32 thr_limit);
+>>> +#else
+>>> +static inline void mce_save_apei_thr_limit(u32 thr_limit) { }
+>>> +#endif /* CONFIG_X86_MCE_THRESHOLD */
+>>> +
+>>>    /*
+>>>     * Exception handler
+>>>     */
+>>> diff --git a/arch/x86/kernel/acpi/apei.c b/arch/x86/kernel/acpi/apei.c
+>>> index 0916f00a992e..e21419e686eb 100644
+>>> --- a/arch/x86/kernel/acpi/apei.c
+>>> +++ b/arch/x86/kernel/acpi/apei.c
+>>> @@ -19,6 +19,8 @@ int arch_apei_enable_cmcff(struct acpi_hest_header *hest_hdr, void *data)
+>>>    	if (!cmc->enabled)
+>>>    		return 0;
+>>> +	mce_save_apei_thr_limit(cmc->notify.error_threshold_value);
+>>> +
+>>>    	/*
+>>>    	 * We expect HEST to provide a list of MC banks that report errors
+>>>    	 * in firmware first mode. Otherwise, return non-zero value to
+>>> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+>>> index b895559e80ad..9b746080351f 100644
+>>> --- a/arch/x86/kernel/cpu/mce/amd.c
+>>> +++ b/arch/x86/kernel/cpu/mce/amd.c
+>>> @@ -489,6 +489,18 @@ static void threshold_restart_bank(unsigned int bank, bool intr_en)
+>>>    	}
+>>>    }
+>>> +/* Try to use the threshold limit reported through APEI. */
+>>> +static u16 get_thr_limit(void)
+>>> +{
+>>> +	u32 thr_limit = mce_get_apei_thr_limit();
+>>> +
+>>> +	/* Fallback to old default if APEI limit is not available. */
+>>> +	if (!thr_limit)
+>>> +		return THRESHOLD_MAX;
+>>> +
+>>> +	return min(thr_limit, THRESHOLD_MAX);
+>>> +}
+>>> +
+>>>    static void mce_threshold_block_init(struct threshold_block *b, int offset)
+>>>    {
+>>>    	struct thresh_restart tr = {
+>>> @@ -497,7 +509,7 @@ static void mce_threshold_block_init(struct threshold_block *b, int offset)
+>>>    		.lvt_off		= offset,
+>>>    	};
+>>> -	b->threshold_limit		= THRESHOLD_MAX;
+>>> +	b->threshold_limit		= get_thr_limit();
+>>>    	threshold_restart_block(&tr);
+>>>    };
+>>> @@ -1071,7 +1083,7 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
+>>>    	b->address		= address;
+>>>    	b->interrupt_enable	= 0;
+>>>    	b->interrupt_capable	= lvt_interrupt_supported(bank, high);
+>>> -	b->threshold_limit	= THRESHOLD_MAX;
+>>> +	b->threshold_limit	= get_thr_limit();
+>>>    	if (b->interrupt_capable) {
+>>>    		default_attrs[2] = &interrupt_enable.attr;
+>>> @@ -1082,6 +1094,8 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
+>>>    	list_add(&b->miscj, &tb->miscj);
+>>> +	mce_threshold_block_init(b, (high & MASK_LVTOFF_HI) >> 20);
+>>
+>> Why is this necessary? Shouldn't this patch consist of mainly
+>> s/THRESHOLD_MAX/get_thr_limit();
+>>
+>>
+>> In allocate_threshold_block have already properly set threshold_limit. So
+>> this change really ensures threshold_restart_block is being called for the
+>> given block being initialized. Ignoring the changed threshold limit logic,
+>> why is this extra call necessary now and wasn't before?
 >>
 > 
+> It is necessary to apply the threshold limit to the hardware register.
+> The MCA thresholding registers are accessed in two passes: first during
+> per-CPU init, and second when the MCE subsystem devices are created.
+> 
+> The hardware registers are updated in the first pass, and they are left
+> as-is in the second pass assuming no configuration has changed. That's
+> why there isn't a "reset" in the second pass.
+> 
+> The APEI tables are parsed between the first and second passes. So now
+> we need to update the registers during the second pass to apply the
+> value found from HEST.
+
+So APEI is initialized as part of the subsys_initcall which is processed 
+via:
+
+start_kernel
+rest_init
+kernel_init
+kernel_init_freeable
+do_basic_setup
+do_initcalls
+
+And the first mce_threshold_block_init() happens from :
+
+start_kernel
+arch_cpu_finalize_init <---- way before rest_init()
+identify_boot_cpu
+identify_cpu
+mcheck_cpu_init
+mcheck_cpu_init_vendor
+mce_amd_feature_init
+prepare_threshold_block
+mce_threshold_block_init
+
+
+Finally the per-cpu hotplug callback is installed via:
+
+mcheck_init_device <- initiated from a device_initcall, happens after 
+APEI subsys init.
+mce_cpu_online  - called on every cpu from the HP machinery
+mce_threshold_create_device
+threshold_create_bank
+allocate_threshold_blocks
+mce_threshold_block_init - newly added call in alloc block, used to 
+update the register with the new limit
+
+
+Given that mce_cpu_online is already called on every online cpu at the 
+time of installation of the callback, and every subsequent cpu that will 
+come online I can't help but wonder why do we have to do the mce 
+initialization from start_kernel, can't we move the mcheck_cpu_init call 
+into mce_cpu_online, or have the latter subsume the former?
+
+Sorry if I'm being too nitpicky, I just want to have proper 
+understanding of the subsystem and the various (implicit) requirements 
+it has.
+
+
+At the very least I believe this commit message should at least allude 
+to the fact that mce threshold devices have a strict requirement to be 
+created after the APEI subsys has been created.
+
+
+> 
+> Thanks,
+> Yazen
 
 
