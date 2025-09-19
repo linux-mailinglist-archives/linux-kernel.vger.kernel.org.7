@@ -1,176 +1,173 @@
-Return-Path: <linux-kernel+bounces-823893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3BBB87AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A4DB87AC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:03:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F175A583109
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76311C86CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E607B25A338;
-	Fri, 19 Sep 2025 02:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67372475C8;
+	Fri, 19 Sep 2025 02:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="gXi+2/Ap"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVTHnMdd"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCC025A2B5;
-	Fri, 19 Sep 2025 02:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F20719E7F7
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758247264; cv=none; b=KBr/yAeGCJu8YgozXr0yl+C0sgiQXQpjGUb9lIKxs1tg/JiEdJHSwNx2nYUxwgL+/8r8IZ/sAmwqK0kq97BgtEo1I/m6rjFS6Vdb5SpT3SpPPVGmThICKwv20pakkkD0l4yz4hdbD3Q5TUpVwFt8ZlkPvWw//jpnKi8MIOzafgY=
+	t=1758247313; cv=none; b=i9+6DHWnYD2DqExuYY1O9YavSAjzbBWyZABPODxZzZp/yDoW09A229FMLc+/I4pjYUIKDGfya9DrFuGE5L+5UiYHDTnM9RRCtnJt/9ypAzVrwv0WR0n1iFIwB4WlykAtYvV/lOfPoMA7LKRNxN4BQy/4pfLIeCLkL6cw6oHPmF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758247264; c=relaxed/simple;
-	bh=k0P5TLKIQcNvPpE/yRue2NqzcDOYWE1LQ0jR8gyJSr0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nz8MCpvGJiKjB+iJJZ5SfSUcZ229gLu+9C5KJiSgT56TKnkBFrnWVw6S0TTyzLEeFLfx7Plv+j9TQYAFdlXRUDYcDwQwwxud5YcpJj+8BkcMTYhrOIV3squsSJXlWIGsFEGARiqmC0Ul88m+4zlaaRfXbCxreMg2SsvZ/Oe6HJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=gXi+2/Ap; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cSbMG4lQ2z9sy4;
-	Fri, 19 Sep 2025 04:00:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1758247258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u+pMwDP1HnUqPZvsXpTH0VTEoRpEk896w42KFmX45ms=;
-	b=gXi+2/ApWAL6NrqyDSeQUG3uNM9IqM+0fJKERWEiseZ8fmSJcYfojWilXGv+0ZQ3ffWpnW
-	Mltr0xS2+4PNEFuyp/RShMB+37nvIhUJiQaR5Yea8DbBkupn5FZEzRJjBgrF1dSC2OH2wU
-	RClxRbnclRCl6KSpNADP5sQDXJ6cgwzetHh3XXCJapD3KK3XT9yZeHbZw/OGMSYQVgguzW
-	WEe6blS6wunR+04qT2fAbglbLfSIXY9uoA8OR0YkTi8fymBvAci2OTWhvRS6s327foHPEi
-	qRnOGqASClaJy6vtYI2UTtqMPBGKJWNcKAMx5e6Y092LabMLuHJpFYVDZ965OA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-From: Aleksa Sarai <cyphar@cyphar.com>
-Date: Fri, 19 Sep 2025 11:59:51 +1000
-Subject: [PATCH v4 10/10] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
+	s=arc-20240116; t=1758247313; c=relaxed/simple;
+	bh=GFt8pFuik9xBCtcF6v21dOZpA6lIwmUZgdZDpPfX3Ag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ufq+uia7zCKQaDFxTaMjGCO+56m0PJSk6CaZf9ne6818VtAbf3cD0BXEGw7JK87fNlVC6E9OXAOSNwtp6rFos/XczTIoxpGf3W8A47YbIwISXCb3UiGNbSgD+R5MEUHA7FOAIBIcsHaRecXcTiT8XolmeskKEh6v88dCy00yi94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVTHnMdd; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45df7dc1b98so9396045e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 19:01:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758247310; x=1758852110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l5WUqAepWLoNLD7FRaeKdFUWeAJ0W7lZ+MsRWC9QyZ0=;
+        b=NVTHnMddvk9fHECdZ/gx23JK+0qTWni77btsPMqs22zXWpMkbvwu46x6aVgSA9Wo+L
+         aMTsXy6Rgsoyiig34Q3pfybCk1/GitHnqVZKOXOSO3/q5zwNqF4gmn/IciczNqPzIX0w
+         Bkx6FTGVZJuAQtNaTju8K42cNJXVDvA0YhFJpS4MHTMD7WURfvC+Rc8crq665Uf86yVM
+         0l1majrcIkuegjwH5JC7zogSyp5VdtyujYG98dLnVj6egleIz4JUiv8Ob0120oCLDRBW
+         0EbxBNUC7k50hJHso68BpLY/n4OpAdmAFzOYQp64yfzWd5EPK44HdEvH+jmCY8WCt1XS
+         61Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758247310; x=1758852110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l5WUqAepWLoNLD7FRaeKdFUWeAJ0W7lZ+MsRWC9QyZ0=;
+        b=QNX1L4EN9cGcr9h4ncMukENTB4Id/NE3H3sb6xKFYIvMgI/PAZ8R/128xhWlru/FL1
+         6ElFd4UB/ZYIOm/j3L9Hz1Lc2VSLHoFQrN49bQYFfztadvoTVIpFycTQPKc9Qxtrk5uL
+         tGnMr6wfnoS2Jh+mokNxrvRpuu/r9E/ruC0JS2bwSfsplA8ZhewZ23giAiZ2ChGsuD7z
+         v8Vt9HBjuR0FQvYWag7fY7VLs55FqmSuzIHrJ3LrDTQAO7vWEZ2UlCyf3o4aaugn5Uz/
+         12sfdOwl3ZM4tI2P/ufGrf1j3VfxjGmiZPUzCxotS4TiT35quBgX5c9VGjojEoQGcw/3
+         2y3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVr3o/ZNlg1U0vpyql7vVyYtz1L0ngYpub7uRGMWdeLOpzxXrRZ9p8egWZ6HkzV0SuHrSSt12yhhKpVx7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw0dEMC62V1tF3+PplEF65l+hXVCaLqT2nLDOd5f/lALisd84c
+	Z/POC56yHojJqWaYhZ8hMkYwQsdmk3ksTVzIPgVEaYAx1UC/WoKx0C/KHG77Q0h1HHtgS59mqa7
+	YwlBAe2Z+wN0Qf+tVmzOuWciNEN9wowM=
+X-Gm-Gg: ASbGnctlliLUi2oH4VXgIN2S4jcdy9nyzU5q4GlXRaKnOdhrgV3+nB9qJqpK/rLqqF0
+	cLILWh9VRXgLySFDE6EGLQnerlAVFYSRLUTwBiszasmep/QKe+XwIOogNhEHN3ERC2XMtOkFW3E
+	SQpecUgiFBjm2nWzcov0uQxWoYWg2SiSTYwqRXTt6guNVzeTUoCT08B38bNzfGhWaX1odMkvc4V
+	W2fP+AKaO68Tx8khOwrIS3Kc7tzgzzJcAt+bQmPEiISSJg=
+X-Google-Smtp-Source: AGHT+IGqrAFmcKNFldXwl+7lGTYe5vLdPKGJ3FDX6GFFmDnR/ksftzRaTmDcFLsw0OzFBwVfJXvS93pGqqn07g8Sud0=
+X-Received: by 2002:a05:600c:3b26:b0:43c:ec4c:25b4 with SMTP id
+ 5b1f17b1804b1-467e7f7d558mr10524025e9.10.1758247309372; Thu, 18 Sep 2025
+ 19:01:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
-In-Reply-To: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Askar Safin <safinaskar@zohomail.com>, 
- "G. Branden Robinson" <g.branden.robinson@gmail.com>, 
- linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>, 
- Aleksa Sarai <cyphar@cyphar.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2987; i=cyphar@cyphar.com;
- h=from:subject:message-id; bh=k0P5TLKIQcNvPpE/yRue2NqzcDOYWE1LQ0jR8gyJSr0=;
- b=owGbwMvMwCWmMf3Xpe0vXfIZT6slMWSc2SluknfoWMLrf3KtF/cqrlZzjWS+cyZFieVu9Yzcd
- S4Lftoad0xkYRDjYrAUU2TZ5ucZumn+4ivJn1aywcxhZQIZIi3SwMDAwMDCwJebmFdqpGOkZ6pt
- qGdoqGOkY8TAxSkAU50kwMiwT/b7pUCRTyKLj/KvaeT9Yfj4156O5gex/7IOLj89pc7vMyPD1NR
- djlzbpH67bdq6xIDHoVn0xhaRnd/+xH75ef3jLH9FRgA=
-X-Developer-Key: i=cyphar@cyphar.com; a=openpgp;
- fpr=C9C370B246B09F6DBCFC744C34401015D1D2D386
-X-Rspamd-Queue-Id: 4cSbMG4lQ2z9sy4
+References: <20250909163223.864120-1-chen.dylane@linux.dev>
+ <CAEf4BzZ2Fg+AmFA-K3YODE27br+e0-rLJwn0M5XEwfEHqpPKgQ@mail.gmail.com>
+ <CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com> <457b805f-ea5c-460e-b93f-b7b63f3358af@linux.dev>
+In-Reply-To: <457b805f-ea5c-460e-b93f-b7b63f3358af@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 18 Sep 2025 19:01:37 -0700
+X-Gm-Features: AS18NWAUCzCGY0hlax5izykpElRA9BP19wAxU45go4krfvf0sGMlA8XbTCJNj8w
+Message-ID: <CAADnVQLwV=fUkgLF3uTmevA97WX2FH4vG-7=97Px0H_WJOJieQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 1/2] bpf: Add lookup_and_delete_elem for BPF_MAP_STACK_TRACE
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This was not particularly well documented in mount(8) nor mount(2), and
-since this is a fairly notable aspect of the new mount API, we should
-probably add some words about it.
+On Thu, Sep 18, 2025 at 6:35=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> wr=
+ote:
+>
+> =E5=9C=A8 2025/9/18 09:35, Alexei Starovoitov =E5=86=99=E9=81=93:
+> > On Wed, Sep 17, 2025 at 3:16=E2=80=AFPM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> >>
+> >>
+> >> P.S. It seems like a good idea to switch STACKMAP to open addressing
+> >> instead of the current kind-of-bucket-chain-but-not-really
+> >> implementation. It's fixed size and pre-allocated already, so open
+> >> addressing seems like a great approach here, IMO.
+> >
+> > That makes sense. It won't have backward compat issues.
+> > Just more reliable stack_id.
+> >
+> > Fixed value_size is another footgun there.
+> > Especially for collecting user stack traces.
+> > We can switch the whole stackmap to bpf_mem_alloc()
+> > or wait for kmalloc_nolock().
+> > But it's probably a diminishing return.
+> >
+> > bpf_get_stack() also isn't great with a copy into
+> > perf_callchain_entry, then 2nd copy into on stack/percpu buf/ringbuf,
+> > and 3rd copy of correct size into ringbuf (optional).
+> >
+> > Also, I just realized we have another nasty race there.
+> > In the past bpf progs were run in preempt disabled context,
+> > but we forgot to adjust bpf_get_stack[id]() helpers when everything
+> > switched to migrate disable.
+> >
+> > The return value from get_perf_callchain() may be reused
+> > if another task preempts and requests the stack.
+> > We have partially incorrect comment in __bpf_get_stack() too:
+> >          if (may_fault)
+> >                  rcu_read_lock(); /* need RCU for perf's callchain belo=
+w */
+> >
+> > rcu can be preemptable. so rcu_read_lock() makes
+> > trace =3D get_perf_callchain(...)
+> > accessible, but that per-cpu trace buffer can be overwritten.
+> > It's not an issue for CONFIG_PREEMPT_NONE=3Dy, but that doesn't
+> > give much comfort.
+>
+> Hi Alexei,
+>
+> Can we fix it like this?
+>
+> -       if (may_fault)
+> -               rcu_read_lock(); /* need RCU for perf's callchain below *=
+/
+> +       preempt_diable();
+>
+>          if (trace_in)
+>                  trace =3D trace_in;
+> @@ -455,8 +454,7 @@ static long __bpf_get_stack(struct pt_regs *regs,
+> struct task_struct *task,
+>                                             crosstask, false);
+>
+>          if (unlikely(!trace) || trace->nr < skip) {
+> -               if (may_fault)
+> -                       rcu_read_unlock();
+> +               preempt_enable();
+>                  goto err_fault;
+>          }
+>
+> @@ -475,9 +473,7 @@ static long __bpf_get_stack(struct pt_regs *regs,
+> struct task_struct *task,
+>                  memcpy(buf, ips, copy_len);
+>          }
+>
+> -       /* trace/ips should not be dereferenced after this point */
+> -       if (may_fault)
+> -               rcu_read_unlock();
+> +       preempt_enable();
 
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
----
- man/man2/fsconfig.2      | 12 ++++++++++++
- man/man2/mount_setattr.2 | 40 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+)
-
-diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-index 5a18e08c700ac93aa22c341b4134944ee3c38d0b..d827a7b96e08284fb025f94c3348a4acc4571b7d 100644
---- a/man/man2/fsconfig.2
-+++ b/man/man2/fsconfig.2
-@@ -579,6 +579,18 @@ .SS Generic filesystem parameters
- Linux Security Modules (LSMs)
- are also generic with respect to the underlying filesystem.
- See the documentation for the LSM you wish to configure for more details.
-+.SS Mount attributes and filesystem parameters
-+Some filesystem parameters
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+have a sibling mount attribute
-+with superficially similar user-facing behaviour.
-+.P
-+For a description of the distinction between
-+mount attributes and filesystem parameters,
-+see the "Mount attributes and filesystem parameters" subsection of
-+.BR mount_setattr (2).
- .SH CAVEATS
- .SS Filesystem parameter types
- As a result of
-diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-index b27db5b96665cfb0c387bf5b60776d45e0139956..f7d0b96fddf97698e36cab020f1d695783143025 100644
---- a/man/man2/mount_setattr.2
-+++ b/man/man2/mount_setattr.2
-@@ -790,6 +790,46 @@ .SS ID-mapped mounts
- .BR chown (2)
- system call changes the ownership globally and permanently.
- .\"
-+.SS Mount attributes and filesystem parameters
-+Some mount attributes
-+(traditionally associated with
-+.BR mount (8)-style
-+options)
-+have a sibling mount attribute
-+with superficially similar user-facing behaviour.
-+For example, the
-+.I -o ro
-+option to
-+.BR mount (8)
-+can refer to the
-+"read-only" filesystem parameter,
-+or the "read-only" mount attribute.
-+Both of these result in mount objects becoming read-only,
-+but they do have different behaviour.
-+.P
-+The distinction between these two kinds of option is that
-+mount object attributes are applied per-mount-object
-+(allowing different mount objects
-+derived from a given filesystem instance
-+to have different attributes),
-+while filesystem instance parameters
-+("superblock flags" in kernel-developer parlance)
-+apply to all mount objects
-+derived from the same filesystem instance.
-+.P
-+When using
-+.BR mount (2),
-+the line between these two types of mount options was blurred.
-+However, with
-+.BR mount_setattr ()
-+and
-+.BR fsconfig (2),
-+the distinction is made much clearer.
-+Mount attributes are configured with
-+.BR mount_setattr (),
-+while filesystem parameters can be configured using
-+.BR fsconfig (2).
-+.\"
- .SS Extensibility
- In order to allow for future extensibility,
- .BR mount_setattr ()
-
--- 
-2.51.0
-
+That should do it. Don't see an issue at first glance.
 
