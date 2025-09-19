@@ -1,126 +1,86 @@
-Return-Path: <linux-kernel+bounces-824885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474DCB8A5EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B71B8A5F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C68A13BF2CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436EE3A37E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8A931CA7E;
-	Fri, 19 Sep 2025 15:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gOBt1FA3"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6730831D38B;
+	Fri, 19 Sep 2025 15:45:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1AC31CA64
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8387C31D39F
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296592; cv=none; b=hsIqON4fLKKLK+gOkk/9dwRUPHw5E9QjZQpFditV3yxwNF+2qrdJ84VvOl8giVOUT7n65ngoV80PAw9H1dfSjerkpM8gIuxyH31ieermqliy+vCJxJpQLRmvG9NPhyv15ILl9MxlwenLEbPcwo1PGir5vvdKLij1IOLv/6zJprs=
+	t=1758296707; cv=none; b=aUBtTnwbwKsN/eJ+LW3ySjIcHgR/0CLXp6Y6ExtiDs4x4UCUfMxA+aY9APkXkHqXPJ3TAMzd+WODOXIOVhULSysLe7i5VCuVBnFsCI7meWdmzAIp6QReLZMaiTQ7+9IKOsRsPjScfm5OBO131i5OywNnBF/yt5Gtb8YIYd1VXXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296592; c=relaxed/simple;
-	bh=GUWbbIoYuPxC0PVASkNOJOvzh3Uy4fRQSYTvrzvfFGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eP1PwwOAgesSwlojwpAQOl7rpEaPIKxNGKX+WPIeL6/foETps+ujy7UDPXuBGzP7ezm7kz9Oqd7eElTgB76ozj76+6MGRzWAnBYz4cg2Igb+NIe2Qn1R8CZ29pl0Z0g/ZfQqMVDoIHZuloFmN8o0aNSGgSAwM3DmO+B5TbzQQPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gOBt1FA3; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-467f6fd4e82so3982995e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758296588; x=1758901388; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LkQpaDIpCuNqvddytBmuD6MDMQYm1NodhkCLcp7FXu0=;
-        b=gOBt1FA3izxafufsChenpq9lm53BFHuBTsrYe0D7JJArrOYWcEYmrUEtUalZ4m0CAm
-         lI2QBkV8Sa1/ma9lujhy2ub2z3c15IUdZ7W91nY+waxQk8kRysoujgJq7+fX6t5jgLvh
-         IMw38jUxJTLqeBCGYJA3FOkrVT7AnrXLjUrPaSEQGFi24hYu9xAVd9H/lg0kgY04xyYg
-         EemYDyyc5xxci+trp6fNj/wbKFZea50sOOn3LCTsDwjcKxgP/Scga01RM7bu5TPWn/xi
-         6FWl2bkrUensrRhVrJ6rMptO5TjSJJ92PlbMLLjPwobUHyi9YtC+G7pRLV2GPu11QqBg
-         PuPg==
+	s=arc-20240116; t=1758296707; c=relaxed/simple;
+	bh=NfNUB5wiwzo7TttIpxrFuu9jOmm5eTWgAUDagcdi0yk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hBcOQ1RCNf5mJVBA+NCGpUwlL3UnfuYG6pueC0u3b2MFUnCxQfR26I4xvyBIsxm9U2jm+cy+fXiFAF5BuineH7IUlIKjRzNwMn6psWUlnJJs/qFieP0IYASpp+KwhRmHXrp3UAcAD3QuQ1jpbQW0G3rb1E/6F4ufETdbMzpf6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-423feb240a7so41428085ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:45:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758296588; x=1758901388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1758296703; x=1758901503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LkQpaDIpCuNqvddytBmuD6MDMQYm1NodhkCLcp7FXu0=;
-        b=YcDI7ToRAxFoDak1+lqfGNCOFZfrkH5YNQht9D9pWmPWTLnxnOYeCenoi5QvckmmQg
-         z8guwCi3ZePGg4zSwJvKax55J0rZ4avztaxgwZenW1sPejbOASsBHieF7YDZ5xQUk5TQ
-         +wcTcB87o0P7r0RlchMcWszAUZUDXToVNeK3OinF6Q7GcVjZGJiybfih+q2vd+zhzLY5
-         gXrGT1/mkw59JfMEA0b3+J3TxbPJogmiHfnu8SSC+Mf8eCRJ2gIHiHJ8LHr3/+ttRgMg
-         QqDVIYm3LiUf1BTybxDS8zne0fjLG1xgxj8Ii5uMswskIeOngmxffoOQ2B6MqGNVIOxb
-         /0SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdz4bco9mmiYMQN6L8+D/KZUESsggdGV/DKPQ0/ZhyZXzQuHJUwuTlYWY9vGgxr3PWyt/DcypR3Pxgw/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOKNw0fTqwetIKZ2v6Ft7IWDtYg/TjW1ozbnhE7iGnIHbYh3iZ
-	6JgvFTVtVvJFCEfYsGIM/KKULOC2rxWS8FCa6Soxu72SPMGsUTEq2I6lbtQnGpaoy4Y=
-X-Gm-Gg: ASbGncvTJxtSLk80BZ8/sZ8z11wPyBwFG2uLYdU/OT/raO7JCAhDpRPyCOA0CqB6Q+S
-	t+hoksuz5hvLID9LaP+6V+xp2708g7oBB8CQQMLt8VdqqebVNdwoWIAtjwjWJAkhEMDaje/uo/w
-	yQg/t+emTVj/51IJadeHkbiw31MusIhe+IfjSjTFo5tS0io+YZZwyCXYLuJVyNkUKgSo85QsSNC
-	X7VVf5Zhqcc/3lcNdzLAOtYjHvpUpIBL1GVqS4+8sR9o6clCMYxDZCmcuVTzTNfE5fJJ3RTyjPR
-	oFjz+YdfHttvNgYNKus6dssTk2m6ja7b7m1LL9DdEqrnmum7KJKT4xDpqOzuZFrcLAhnyrgaAgq
-	VQFR++sMM4GyU/4kMcqaApWZRLWQQKFDpSMH0008hZrb6CuSEXeen+nU+XKvkAeoRfgk73mV21Q
-	9Klg==
-X-Google-Smtp-Source: AGHT+IFYvRcAmwC+mp+0+RFbvRArwGTpkTn3ZN8Wn5X+7lOF3PNWJMwXqY3LiyaPYA6nN2cvLS4FUw==
-X-Received: by 2002:a05:600c:8b86:b0:467:f71c:148 with SMTP id 5b1f17b1804b1-467f71c039emr31089465e9.33.1758296588420;
-        Fri, 19 Sep 2025 08:43:08 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:8ffd:205a:6719:49c1? ([2a05:6e02:1041:c10:8ffd:205a:6719:49c1])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3ee15bfab67sm4605373f8f.43.2025.09.19.08.43.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 08:43:07 -0700 (PDT)
-Message-ID: <f9554814-e5b7-421d-bef8-92131b1cc840@linaro.org>
-Date: Fri, 19 Sep 2025 17:43:07 +0200
+        bh=awTc0bWJf4ZbKE4Iy/o8spupJhRX8radgXRDzlpOacY=;
+        b=kupHxDwr3lu0ZrDjplmULbagEKjuk7Vfu06Tr31/hiqCn5KA9a0sLZN+spuxatC7rC
+         yqOMSVia6pEpGblqvvBJ9BmXOpDPPjYIRdlbhzl04s07qRILynBAv79AyI0tTMZP10bt
+         /MPK0/KYVYJlxac4h3IF4fYdoQYP1X0iqpL9ZEgI8FmcyL7NhYuOqrefKyi2CoAXj5Ky
+         zqocuswYHQqzKUsFsDm8kb1D079pGfE/jWEDnpoNH5ji4ibC/lZlUwErpKm6oJJqKdwF
+         PQaJ5QbSpTX174e6nkAr6xcgdChgdzsbCARvnrnFmhwbYXn2BkM9HFDlupgnk4o52Q0+
+         d4wA==
+X-Gm-Message-State: AOJu0YzzN+0BcT5/LDRLvAgajrtTRkJGdRoHcMWk6+0IGdIi0ehnsxZF
+	GAR7blBe88nuZodrXAfJ+wX3T6BZnWqyzYzi3LPao/lf0cRsHd0av4fw1T6vXG8H3EpUMjMqK30
+	ep66iHuwgidATboBWx5mbAuVX/0iOLfxYPkcXJEPK7lJaP1QoBwJYCOp2CtA=
+X-Google-Smtp-Source: AGHT+IHGLmquzN1Chb6PjjpaG+SCI0jdPaZ4x70O4KMFXv+9klQXCRomDItYcXOZ+zHfhkV4HroHZ7gMALFJf/kMVJFUwHebLpT9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] thermal: renesas: Add support for RZ/G3S
-To: Claudiu <claudiu.beznea@tuxon.dev>, rafael@kernel.org,
- rui.zhang@intel.com, lukasz.luba@arm.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, p.zabel@pengutronix.de
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, niklas.soderlund@ragnatech.se,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250810122125.792966-1-claudiu.beznea.uj@bp.renesas.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250810122125.792966-1-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12e7:b0:411:7b83:c9f2 with SMTP id
+ e9e14a558f8ab-4248196892dmr56234395ab.17.1758296703606; Fri, 19 Sep 2025
+ 08:45:03 -0700 (PDT)
+Date: Fri, 19 Sep 2025 08:45:03 -0700
+In-Reply-To: <825ad453-7347-4af7-8a14-3aaf678c83a6n@googlegroups.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cd7a7f.050a0220.13cd81.0003.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dtDelete
+From: syzbot <syzbot+4f9c823a6f63d87491ba@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, pedrodemargomes@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/08/2025 14:21, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Hi,
-> 
-> This series adds thermal support for the Renesas RZ/G3S SoC.
-> 
-> Series is organized as follows:
-> - patches 1-2/4:	add thermal support for RZ/G3S
-> - patches 3-4/5:	add device tree support
-> 
-> Merge strategy, if any:
-> - patches 1-2/4 can go through the thermal tree
-> - patches 3-4/4 can go through the Renesas tree
+Hello,
 
-Applied patch 1,2
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks
+Reported-by: syzbot+4f9c823a6f63d87491ba@syzkaller.appspotmail.com
+Tested-by: syzbot+4f9c823a6f63d87491ba@syzkaller.appspotmail.com
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Tested on:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+commit:         097a6c33 Merge tag 'trace-rv-v6.17-rc5' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157a39cd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=839dff357af8f40d
+dashboard link: https://syzkaller.appspot.com/bug?extid=4f9c823a6f63d87491ba
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=103410e2580000
+
+Note: testing is done by a robot and is best-effort only.
 
