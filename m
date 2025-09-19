@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-824635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BFDB89BB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:50:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14697B89BBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1435D1BC48B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB38A587F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6247F224245;
-	Fri, 19 Sep 2025 13:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B5230DD08;
+	Fri, 19 Sep 2025 13:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hk6gjYvX"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eH80sZrB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA4A19D082
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCDC19D082;
+	Fri, 19 Sep 2025 13:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758289844; cv=none; b=AG0kV6Q2WQdp+gZUmMYz2bGhgtb4Rbxcp7AmqYBdsJL3V499awkAOpofdhDRyl7QYa4uAr4ToU74zNLcaEoDbgpWznAoJFYJKAKTf8Ray0Dds2bVMDs/Moz+2Y/N7O6SP5Yioa1ae0nCumVCMRElIQm01z4elmEc5HAdF5CmtgU=
+	t=1758289851; cv=none; b=jH6Ce3D+dNsiMeqJhrQeM10N9bgko50oa3FvKjpGARnhfC1hHOZIJs5Na8KhPTvydyC9tw68GA4FuBr4ZuLoyXjZuIgxmZTyKXvel5QZ3vzPTTZ9TXa0ufnpKVxAOiS+kvWZlUNielagn37uKi6Nffe5due+fVo0E2p5p4lBlMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758289844; c=relaxed/simple;
-	bh=cbKyqN3cJYV+6QE9lPcrnABzmSouMgLnE96FigxVKfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iI00Os0WSshLLm9yLpqcxdVY2zFDy+Q2etzV0p2zkGmrZxhmr7upARl8rRWPtyHjJCsWQ7ppgr0x//K7Wi/JGHWEIOYV7wuNrwBK6y8j2OQ0SdTn3/ck5mlHfcZcNZZf81QHJDp0fmraG7O1/RUS3hHZKQxtUFFAVpcfUSfb2Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hk6gjYvX; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45cb5e5e71eso13957395e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 06:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758289841; x=1758894641; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xai4BMJpzMOlsgKtlGy9Mhd++HQsN5X/QwvFrspNawk=;
-        b=Hk6gjYvXcq0IVgR361nxVrNyWKA1BT0/Tc+nNYHk7osptdrRM6XWO5wicKbAZy3W5a
-         owTiMIyEKtCBy/etxZCHEEL5jaNkXahx4rTD7hGV35/3MiTfZmVBggFv3UXivDbRvDqx
-         qRkR9mrJ91h2Njj3w+pbbqmC1DOZU8fVH621Ce+rygl82GCYxMsGejODcwTU8/DjiJTu
-         gwjVjT0gcRcuuv/ZPCJKxukGbQWP3T8DezVyomJL+jSlwT5QX9pBwf2198yvuG6LKy4N
-         bWnXcQp0JCnJNAiZjKXAsPyckZhHnOutXskUfHBLV51CHFnU/K7Q14/AYZ8xno6maIIw
-         o99Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758289841; x=1758894641;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xai4BMJpzMOlsgKtlGy9Mhd++HQsN5X/QwvFrspNawk=;
-        b=A0GxTIiKQWoXLrFuofDzDQzceSKwft7T4SiVZwOKMF9BMGJ8psg9y6WQHCpN4SERHn
-         Z0PtExaudg7xf4rWI+Z8eSQielaOYkCkwvdUlwrtLBdfjZiH5qb/bYjPGYsx2LMcClbp
-         RrBr0PZMYSflQUafyFSdq8pS6i4WzP+cFZvJrthySllslTfWDzkeR/jze9oRP/xkm29x
-         QRU29W8rGVnJaQObIVOmB7EYhNicGQwN01KOrQxfWKWvws87L3YA4S/5QnKcjqXtj1Hc
-         BCiGlOOys5f5fdD0xwLExLX3dBdjsxIchJTTCYzg1Tz+NtYfne7Gf7itSVkFGCh58IVh
-         SLrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRB7OB3kKsdJKjn47Akr5rAukg84vkngw8m19ClLjdCJ3zKjf432r3SRnFlteycKl+gJi9fTJ89TVlvgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJSR+cDYYtixoFq+8jYIcJPQ8rTm62RJC+Tuf7Qr8N6oz/mEMM
-	c9dNwldy+GLEpcIyfXkDatvoAonpSKsulcCe0UwYeLhwm5A++j7egXdq77mmjKrowQ==
-X-Gm-Gg: ASbGncsoB4o8UKjbuLsDlgNWeWzTP6DA7fslzJMyumGotHQrZ3Y6C8dnFIs9pb9hU1m
-	lzHE6j1Mzu4ufaFwah+tic+EJSGAoahOaTf3GfrgRyCjDsbqBYbTwDkIWttMBgSPmBoWmQpRdXc
-	b3Zj5W/vJ/zimd7BV/vdpRBmOyum3+kzdL0M3dxkyqqwh5FJ0EBDfbJit2r/OzJvqzJq2ZSwKXX
-	fZHr1Hkv3AHI/tVhM9KYaBBdSC26sQ1WEuD/yAbJKwfCT8LFVxcWPvpwcGDFuCrhLoAow17qdFD
-	Ef3PmIzn6LY+MsiqsZ3OrQ0uE24Z2rXSw+U47lwDKcG0k7cjdBGjAC/wdVZOWl90bmINdW9vwYG
-	rF9wWl4nkuXBzPinp0Y6uiyEiaobyWQGLZMvi20N8z82GbKdDnMQQzNpW
-X-Google-Smtp-Source: AGHT+IHLBRjeIOmwepzIuF01y2vjTOTw4vfDjlIpjs9wyQ9PtZAniRUcK9H5VClvTF7h/XK8zSVaQw==
-X-Received: by 2002:a05:600c:4ec9:b0:45c:17a:4c98 with SMTP id 5b1f17b1804b1-467f00c33bcmr25435665e9.19.1758289841283;
-        Fri, 19 Sep 2025 06:50:41 -0700 (PDT)
-Received: from google.com (32.134.38.34.bc.googleusercontent.com. [34.38.134.32])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f5a2850csm85352675e9.19.2025.09.19.06.50.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 06:50:40 -0700 (PDT)
-Date: Fri, 19 Sep 2025 13:50:37 +0000
-From: Adrian =?utf-8?Q?Barna=C5=9B?= <abarnas@google.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Dylan Hatch <dylanbhatch@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 0/2] arm64: modules: Reject loading of malformed modules
-Message-ID: <aM1frYteFpv1zVr7@google.com>
-References: <20250919122321.946462-1-abarnas@google.com>
- <CAMj1kXGe=HR7EvMs8D=7Uvr4Vhr7fXp56YQ9A10xdF1V1M71zw@mail.gmail.com>
+	s=arc-20240116; t=1758289851; c=relaxed/simple;
+	bh=APmglxlImg7snXtyYfD3PizdC1XK6EF0ZOmNsmlxANQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Cjhl5TA5oFQZynvHozPf69ZGDetArcvXtcEp1irb1nd8BhVoXVDfLbawrokcgpvq9AifVQMuVJhLYIf/t5v0UOAfAbbhGL0E94/asaymG4UmM5wKrmF7xnsuxJeXHWhUHhjFkoe+RxrCpSUnEGI6k5t6J980d45WdCciTtn8QNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eH80sZrB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67989C4CEF0;
+	Fri, 19 Sep 2025 13:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758289850;
+	bh=APmglxlImg7snXtyYfD3PizdC1XK6EF0ZOmNsmlxANQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eH80sZrBS6D+4aFhuTUhI0i1I7AhdoFBSKPyHE5AFAfP1hpGT72Cij/zSH+oniD3z
+	 M3TLP6EanWsClMU910HeFkFUGyh4ooc7M9ssmFJ9Dqws9LqbYiqK9LeIYOaIXkNoHv
+	 FxxSPsJfEoGrBbo4AZuR5yRYLyxZpdUEos0ziFmiTqaFskgr9rXv2LkGifZFZyMu9c
+	 SJfs2cm1rJdSTnTY75PTKFpEzN4icCwPt669FgP66FXhMKVQcWkvWeOOZ15mZSPLnr
+	 nTS5R35cPdW/vkcBv8U1PXr1oJJi1v+FehK2QWCO6PjKdDjAlie6q5xeoSaReJGB4f
+	 4XRW66eQ82fXw==
+Date: Fri, 19 Sep 2025 14:50:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mingwei Zhang <mizhang@google.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: linux-next: manual merge of the kvm-x86 tree with the tip tree
+Message-ID: <aM1ftiUjafju0D6I@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8U0O9AGhR1myxKVD"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMj1kXGe=HR7EvMs8D=7Uvr4Vhr7fXp56YQ9A10xdF1V1M71zw@mail.gmail.com>
 
-On Fri, Sep 19, 2025 at 03:17:29PM +0200, Ard Biesheuvel wrote:
->Hello Adrian,
->
->On Fri, 19 Sept 2025 at 14:23, Adrian Barnaś <abarnas@google.com> wrote:
->>
->> Hi,
->>
->> Here are a couple of patches to reject the loading of malformed modules
->> on arm64 when the SCS patching is only partially applied or we detect
->> an alternative callback function used in the module text.
->>
->> The SCS issue is largely theoretical. The code currently performs
->> a "dry-run" (which we remove), and leave module code as-is if failed.
->> However the latter issue was reported to crash the kernel at [1].
->>
->
->Why are you fixing this largely theoretical issue along with the
->callback alternatives patching? The referenced thread only talks about
->the latter, right?
 
-Hello Ard,
+--8U0O9AGhR1myxKVD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You are right that the reference thread is only about the alternative
-callback issue in modules. We found the potential SCS issue while fixing 
-this. Proposed resolutions are symmetrical. That's why it is in a single
-patch set.
+Hi all,
 
-If you find it incorrect I can split it into two separate patches.
+Today's linux-next merge of the kvm-x86 tree got a conflict in:
 
-Thanks,
-Adrian
+  arch/x86/include/asm/msr-index.h
+
+between commit:
+
+  0c5caea762de3 ("perf/x86: Add PERF_CAP_PEBS_TIMING_INFO flag")
+
+=66rom the tip tree and commit:
+
+  cdfed9370b96a ("KVM: x86/pmu: Move PMU_CAP_{FW_WRITES,LBR_FMT} into msr-i=
+ndex.h header")
+
+=66rom the kvm-x86 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/x86/include/asm/msr-index.h
+index 718a55d82fe45,717baeba6db3c..0000000000000
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@@ -315,14 -315,15 +315,16 @@@
+  #define PERF_CAP_PT_IDX			16
+ =20
+  #define MSR_PEBS_LD_LAT_THRESHOLD	0x000003f6
+ -
++ #define PERF_CAP_LBR_FMT		0x3f
+  #define PERF_CAP_PEBS_TRAP		BIT_ULL(6)
+  #define PERF_CAP_ARCH_REG		BIT_ULL(7)
+  #define PERF_CAP_PEBS_FORMAT		0xf00
++ #define PERF_CAP_FW_WRITES		BIT_ULL(13)
+  #define PERF_CAP_PEBS_BASELINE		BIT_ULL(14)
+ +#define PERF_CAP_PEBS_TIMING_INFO	BIT_ULL(17)
+  #define PERF_CAP_PEBS_MASK		(PERF_CAP_PEBS_TRAP | PERF_CAP_ARCH_REG | \
+ -					 PERF_CAP_PEBS_FORMAT | PERF_CAP_PEBS_BASELINE)
+ +					 PERF_CAP_PEBS_FORMAT | PERF_CAP_PEBS_BASELINE | \
+ +					 PERF_CAP_PEBS_TIMING_INFO)
+ =20
+  #define MSR_IA32_RTIT_CTL		0x00000570
+  #define RTIT_CTL_TRACEEN		BIT(0)
+
+--8U0O9AGhR1myxKVD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjNX7YACgkQJNaLcl1U
+h9C2XAf+NFkZWgNowhB0zUL99Xtyrm+g6R3oSAhUh4zqQ/iSjznPlQcM4yEZKUzx
+SWi4byobeu3KdKknL7fhnKM2W0Uu2dlQJZlf3+iyKJv2PVLIUi+3HzqUyYmqeqHa
+t8oKQN5ywJ4OxVD2IqPX24jyJO5uQFgZru19z/bEvB34IDr8pKDI85pVEDa2b4ml
+JQUalIqrkjD8rIg8hGipi6rlnY1WzLW5s6zgNlIAqzye85nCH1oj30RU/CI9U+Mq
+fLAeQCavcN0QnlLoNLXJorZ2JBI68IH1b1ul3XHX+uMGBwkUViL49t2Z5Miarmt2
+ywfhL/6K5HY84Hq/iIlWNI6C1zOfIA==
+=Cd3F
+-----END PGP SIGNATURE-----
+
+--8U0O9AGhR1myxKVD--
 
