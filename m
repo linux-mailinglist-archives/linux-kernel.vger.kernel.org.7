@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-824230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DC7B8873D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECF1B88740
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F424E1934
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:40:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28FAC625676
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779E303C8A;
-	Fri, 19 Sep 2025 08:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287F33064B7;
+	Fri, 19 Sep 2025 08:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RO8C8x6O"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cMVE4BEQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F102ECD31
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A5D24EA81;
+	Fri, 19 Sep 2025 08:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758271245; cv=none; b=l8quxzP9rgny2GYH9vNjErDwZfsqrCOMZbaHPIFKS6FnjySLaFJYA7s9Vm7vFDd+zmim24qVMih02Ui1HP4ek78VEL9yQ1RDWkATuPjHupCUxjDu7GAIBVXam6wcVxhuALqqMMbRASvFfF1aWf9tSOcEXxdJgA8YsgC15+AF0TI=
+	t=1758271287; cv=none; b=m4+5o+v9+ZyhVmqXAqx9pzLYY6g2S/KbU/vnVMiJlB1J12nKg6mJBgAG16qkCin/ph6xQUK0BG2U1M5SG9/Vt6n/M8PvmPWgkhG7UrhMbkN4Pk8dw62LUESgWEv0OjOtU68h9FKL2c+tfxAUiMEHhcuODgp+M4Lx6Bhh4SDWz/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758271245; c=relaxed/simple;
-	bh=gOYz3v1eddbzcvjAoeR9HIWwqh5JC+Thv7UoJi6Li0A=;
+	s=arc-20240116; t=1758271287; c=relaxed/simple;
+	bh=Vut4j2QwB+ycC5MyIVa/yNlcRE5SgARDhd2XYVQQ3Lk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QIKIalhe8hIx0ob/B0q79MVw1hGgqNiOlojFGSMXQCRKEyVe7zfl2swnZ3MjkYP+XBQN6ol5dwwU0C1HpIk1ruD0CjjmNpn6J6cAJ4xZkN1DPhS01mHrURsGvGR1ppa2ARlcc8jy6X6ZKmgLDeenltH8Hv21dsg/vptgHSZUb6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RO8C8x6O; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso612868f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:40:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758271242; x=1758876042; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=NIAnBB06MyVX2wfnshlvf6atnYBrAR2jdzzUU6RYVAU=;
-        b=RO8C8x6OMtOnBx6CIqZrKOI4C+VIscg7yyr5YI7I8yiSDY7ygRUXryx/LZlZHF5XEI
-         C2fw/onf1nKOUBdA5OSdN22vOXuTHgyyhMsNdoXZx4TkZWPteyolM9a1ZECpmCENdurb
-         n5QO5KFcK987jidC4MuSsNMmuCPips16n9Sa+1/zHoLoDI7ehE+KwHAI5RbF5bA+lawZ
-         CyE3zpj4snUfEOGoE6W0AQfdw2X6oibxocPl8+tIbSkFgNsMS2uTdszFp4G3HYZSZtTB
-         PY14drlCKiDNs0tYOoLGx23AiDnlSraIhqoc6uC3LF+neyY0euBcbUpa+5gesAhZ0o8E
-         zyXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758271242; x=1758876042;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIAnBB06MyVX2wfnshlvf6atnYBrAR2jdzzUU6RYVAU=;
-        b=cGesoLQSHeE45xqrG6843EVw9sEf7RNYO+pGUvUemSz/HD3KVQ0I+LiO5y8poqrNVN
-         0IewvMUlndAnu70H6PhHQu0ouebXniKNpylNaoOJaeoTJKoOO/C7XreMHdHkShSQah0U
-         4CUa5PqklUqVyUtQnP26iiUQEfvGPtovY0/469h7gk+Tvep1ukGM35I7SaRZ0ValT1hR
-         ZMaL6fBJcYK8BSX8VeJKFZjdNZ4XJN7T/AtoqzwG+GfufOflG9912f4hk1YMrIhpXTBL
-         vAaFoADfyLE42PLPyni5BbhQgN2bbfTAvEUDLx9PFgujB7CSvlTT5aSu/uy8LpBScEkX
-         ifhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv+qvcbanT+zaWtAUDS4uwczKAdmnYloeYXU07f8KBfywiw9AjLegwwQf5eHBC5cFHi67YdDuXO+hv7Fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUTDHM5NMj6XnhiSECIshPcy/J+OLg/Sfz/vC/DDAbuqjZmZTc
-	NReldRGdCMJ6/999snbil5E2XtCzQ6QU/ChE3fzq8RS4B2SE8CnbGhgn
-X-Gm-Gg: ASbGncvkmmk3kIS/JiNgs47xQJJaDPcaXfSlG0fm2TYtn6AEPOdeaMUqgkqrmN2F+yk
-	iLw0CIgZsShlO8Y+Oj+2fAf8RdarZKXHqAc1lr8EiDZ2zkxnkddeWJTn9PqV0LOPFhNBbbZsiS3
-	Qrs7zfPpC1C6gEU8S1DW7oDsgXhSVIzFhPE8HWvz87ocKfE440XtOfuUHYU+kJM3G4RYH/ZioeI
-	pG/0K/to81+QhKweY3AQpy7HykAf7v2lD4iCvdtEOLkfBqX0A3DwNvlymlY9pLCVej7QEViZugn
-	1mhdNT9Z7oYmxx4irtAehYqEE0ynzbV+FCGtnZ4Cmidf8MO3LyLUX8N5P+c3tqTBJkHm1dPLM4K
-	lYHO3KtBinc6BIn/l4dQ=
-X-Google-Smtp-Source: AGHT+IEJEthob1/t3JTrPT5id9i8Ikn1uiw7mDfiwIHDS3ixRODVEHMflBCi71CdF90G3RL5ZGoFUg==
-X-Received: by 2002:a05:6000:26c6:b0:3ec:d7eb:7d30 with SMTP id ffacd0b85a97d-3ee861f839bmr1589644f8f.49.1758271241312;
-        Fri, 19 Sep 2025 01:40:41 -0700 (PDT)
-Received: from fedora ([94.73.32.0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f320e2000sm80102345e9.1.2025.09.19.01.40.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 01:40:40 -0700 (PDT)
-Date: Fri, 19 Sep 2025 10:40:38 +0200
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jikos@kernel.org, bentiss@kernel.org, dmitry.torokhov@gmail.com
-Cc: =?utf-8?B?5p2O6bmP?= <lipeng43@xiaomi.com>,
-	Fei1 Jiang =?utf-8?B?6JKL6aOe?= <jiangfei1@xiaomi.com>,
-	=?utf-8?B?5a6L5a+G5a+G?= <songmimi@xiaomi.com>
-Subject: Re: The zero power level of the HID device in kernel 6.12 is not
- reported from the kernel to the upper layer.
-Message-ID: <aM0XBudxlXuzALbg@fedora>
-References: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RNReAk/89JW7pNJvNDdEH7mMAfWxJztdBqIXbu9qFJ1jiEFzvS9FtMnjH4htNgRCeyW6wtWfOWrczu9GTNvqUMVNka6YMsMo7U8ET63y7rSC+eja3mRYTJajqLdZxNDNrQyVze3iFUAmQkNPRMmxH/jg1Ss3sEH8NCZQ3w9dyiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cMVE4BEQ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758271285; x=1789807285;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Vut4j2QwB+ycC5MyIVa/yNlcRE5SgARDhd2XYVQQ3Lk=;
+  b=cMVE4BEQPSe9UJMySzog+uAd0LVi30FATKmDSEh6UWsyuZFekgTkbAFq
+   IVZsVGBAMhshs18/EOXSk+JrzqHMb4pBgvrEVjoV95le2emc3AwToVTYJ
+   fT92SEHCFkpPMCaaHxE3RZar+e9/C5hy/+SrOtjXp6JatjyHLHp/aAx/M
+   CONxqz2jMOkFMoYKJUoXjc9bqlQiD3oRG6jXFVsjMa/pOOqtTd7eMSLYh
+   CKG29889F/85dCZDwrWUVsUXrkjgYypYpuxvB/c7IO9BQsIVBR/reezuO
+   XO5qOR36qb3vJ8HOrcRxZjix3C4I+U8IRz+6rFyOQ+iStV0OUWGq2B1tD
+   g==;
+X-CSE-ConnectionGUID: PAkeFQlSTqOJkxj+0Ev3Qw==
+X-CSE-MsgGUID: IMy5Uo/mTnS6cz4zWKch8A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="60502958"
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="60502958"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 01:41:24 -0700
+X-CSE-ConnectionGUID: VO7GjojLSRmxRZHvpJd+ww==
+X-CSE-MsgGUID: 55kTMOPQSHuiPf5/2JYl9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,277,1751266800"; 
+   d="scan'208";a="175334544"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa009.jf.intel.com with ESMTP; 19 Sep 2025 01:41:23 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id B32EA95; Fri, 19 Sep 2025 10:41:21 +0200 (CEST)
+Date: Fri, 19 Sep 2025 10:41:21 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: =?utf-8?B?5p2O5L2z5oCh?= <lijiayi@kylinos.cn>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] thunderbolt: Re-add DP resources on resume
+Message-ID: <20250919084121.GP2912318@black.igk.intel.com>
+References: <20250917082456.1790252-1-lijiayi@kylinos.cn>
+ <0540df54-efd6-4b79-90f9-ec305e1f5f7e@kylinos.cn>
+ <20250917125017.GI2912318@black.igk.intel.com>
+ <f0a04f70-5539-42bd-ac15-07054878acfb@kylinos.cn>
+ <20250918162059.GL2912318@black.igk.intel.com>
+ <20250918164330.GN2912318@black.igk.intel.com>
+ <a3dd4fc5-4312-4c06-a6d7-645ae0f7b68b@kylinos.cn>
+ <20250919073052.GO2912318@black.igk.intel.com>
+ <0f9a0d5a-d51c-45f4-8f1c-050e7c609baa@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,77 +83,47 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
+In-Reply-To: <0f9a0d5a-d51c-45f4-8f1c-050e7c609baa@kylinos.cn>
 
-Hi 卢国宏,
-
-Thanks for reporting this issue.
-
-In the furure, when reporting bugs, it is prefered to send them to the
-mailing list (linux-input@vger.kernel.org and linux-kernel@vger.kernel.org)
-to discuss them in public.
-
-Let me forward your email to the mailing list and also CC Dmitry, the
-author of that code, who might help us understand the problem.
-
-On Tue, Sep 16, 2025 at 12:29:32PM +0000, 卢国宏 wrote:
-> Hi, jose!
->
-> We encountered a problem where the zero battery level of the HID device
-> in kernel 6.12 was not reported from the kernel to the upper layer.
-> I checked the HID protocol and it doesn't say that there is no need to
-> report the zero power of the HID device. For details, see page 381 of
-> the HID protocol, 31.4 Battery Measures. "Absolute State Of Charge DV
-> The predicted remaining battery capacity expressed as a percentage of
-> design capacity. (Units are %. The value may be greater than 100%.)".
-> However, in the file hid-input.c in kernel 6.12, the following code：
+On Fri, Sep 19, 2025 at 04:00:48PM +0800, 李佳怡 wrote:
+> > The lspci dump indicates this is ASMedia host controller. I did not even
+> > know that they have such thing. I thought they only have device (which
+> > should be working in Linux). The host side may require some additional
+> > enablement.
 > 
-> static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
->                                     int value)
-> {
->         int capacity;
+> Apologies, Please find the latest results.
 > 
->         if (!dev->battery)
->                 return;
+> # tbdump -vv -r 0 -N 1  -a 10 ADP_CS_5
+> 0x0005 0x0000d809 0b00000000 00000000 11011000 00001001 .... ADP_CS_5
+>   [00:06]        0x9 Max Input HopID
+>   [11:17]       0x1b Max Output HopID
+>   [22:28]        0x0 Link Credits Allocated
+>   [29:29]        0x0 HEC Error Enable (HEE)
+>   [30:30]        0x0 Flow Control Error Enable (FCEE)
+>   [31:31]        0x0 Disable Hot Plug Events (DHP)
 > 
->         if (hidinput_update_battery_charge_status(dev, usage, value)) {
->                 power_supply_changed(dev->battery);
->                 return;
->         }
-> 
->         if (value == 0 || value < dev->battery_min || value > dev->battery_max)
->                 return;
-> 
->         capacity = hidinput_scale_battery_capacity(dev, value);
-> 
->          ......
-> 
-> }
-> 
-> The parameter value is the power level. When the value is 0, the above code
-> returns without reporting.
-> Is this a problem?
-> We're currently experiencing this issue on Android 16. The upper layer of
-> Android needs to receive a zero battery level before it can take appropriate
-> action.
-> Could you please help me evaluate whether we should remove the behavior of
-> returning to zero battery?
->
-> Thanks!
-> #/******本邮件及其附件含有小米公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！ This e-mail and its attachments contain confidential information from XIAOMI, which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction, or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender by phone or email immediately and delete it!******/#
+> # tbdump -vv -r 0 -N 1  -a 11 ADP_CS_5
+> 0x0005 0x0000d809 0b00000000 00000000 11011000 00001001 .... ADP_CS_5
+>   [00:06]        0x9 Max Input HopID
+>   [11:17]       0x1b Max Output HopID
+>   [22:28]        0x0 Link Credits Allocated
+>   [29:29]        0x0 HEC Error Enable (HEE)
+>   [30:30]        0x0 Flow Control Error Enable (FCEE)
+>   [31:31]        0x0 Disable Hot Plug Events (DHP)
 
-It indeed looks like it could be problematic.
+Thanks! DHP bits are not set as expected.
 
-Values are allowed ot be grater than 100, however, I didn't find
-any references to negative values. Since it is a percentage, it
-make sense to limit it to 0%, i.e., not allowing negative values.
+> Regarding the ASMedia host controller: if hotplug events for the DP IN
+> adapter are not being generated, is it feasible to manually add the DP IN
+> resource as I initially thought, or is that approach incorrect for this
+> scenario?
 
-I think that removing the "value == 0" check, or replacing it with
-"value < 0" should fix the issue.
-
-By the way, the "Fully Discharged" value (0x00850047), section 31.3.1,
-is not handled by the kernel. Do you know if Android handles that
-instead or in addition to a 0% battery?
-
-Jose
+Well the host router exits sleep (runtime resume) and once it is being
+enumerated again by the driver it is expected to send the plug events to
+the DP IN adapters according to the spec. I prefer not to add things like
+these if there is a standard way. Are you associated with ASMedia or you
+just have a machine that has this controller? If you are then is there
+possibility to talk to the hardware folks and ask if this is known issue or
+perhaps it has some older firmware? I definitely like to get this working
+but we should first figure out if this is some sort of known issue perhaps?
 
