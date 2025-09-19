@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-824533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE815B897F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:41:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E65CB897FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DE81C289C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3790416FDCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916B21FBEB9;
-	Fri, 19 Sep 2025 12:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97AF2264DC;
+	Fri, 19 Sep 2025 12:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="NSYViHEW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kDbBi8RO"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="gYaoqNUW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oBRMyPX6"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC024218596
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D48221FDA
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285651; cv=none; b=dYskwqH7TAiURCLN3mOJqfI6AHfDJZCAgeTNefKtaBTuKYLZCfJtYxSO589cZSXsvzeAf/1XjXR+ZXakblfiP4kxE0mbF/bhCkRBREIy0FL2ddcASfF7f/7OmE0NI7i60i03vDhTzm+JP+V276JcGXZMVU+81AgIkLj3UzdpHCU=
+	t=1758285654; cv=none; b=ktMW8///HggXG63AcSEq9vIWWfKdV2Do7xRGF/lafGwsuiZ+0qJ+nZdw1hkgkJXOnyf0KmPEbvpxWRVP3aNI4iCtt0oW/f78RGJNMRJF2/259PzxU9VL2Odb5SAin6efa192QLT4busbNvRwpc61EhFN3L7MYOYQgtMbYnvfhsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285651; c=relaxed/simple;
-	bh=z4mJNmjmw5N0EDvGoxq7YE6LN2fEWNHPu/+UWlYFCxo=;
+	s=arc-20240116; t=1758285654; c=relaxed/simple;
+	bh=XChvTvuq/7NeECGDeUSWMtBEaCBZNCfi/y1ZkjW4cx4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FBFYwD2LojHtBoger+1P9YadE0Xq8ga4ESJB6oh+7vSuJxLR8JpdowMGEBEDumZ+SYho4uLQuTkEcjYYg8ABAbPV5FxmSK8oIkkRwoMO0hWbySnaNxAdDK+fB4rnDjebAIe4FOWAEgMUdY+aGp3ugoO9M3TthiO3Zbe4vKUicXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=NSYViHEW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kDbBi8RO; arc=none smtp.client-ip=103.168.172.155
+	 MIME-Version; b=lOWsBCW4eSrEw2SLk4JO/CecGwNHSrcRYtORVhZYkxKOoJORoybUz2fsUctk9n4CAWG6hz1FCi9X2lf5SkDv+gykIXrebAb2vdbmLFzpfsssnoCZFuAJQQvxnAW558dGor3+e5SnpAKmgJH8LLkCbQjRQxuzxeLHkCxhioEgxSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=gYaoqNUW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oBRMyPX6; arc=none smtp.client-ip=103.168.172.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1FC241400185;
-	Fri, 19 Sep 2025 08:40:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 19 Sep 2025 08:40:49 -0400
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 63487EC02D6;
+	Fri, 19 Sep 2025 08:40:51 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Fri, 19 Sep 2025 08:40:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1758285649; x=
-	1758372049; bh=zbXQCXRSraPiiKdXSvs7n/9rDBYdGNJLDwAjIbxUIRs=; b=N
-	SYViHEWild38F6WS9INcKPuheF7zhmeVta5B2MH+Fd+EwozMYQm6PWZHXG35G1+m
-	+S52ybxYtD45Hnu1i+BTPyUnqas5Tvf7M8JEkvVL1Ff3SUz2qn/Bahb0dqCpZbE1
-	sYKDzJlJ2zUUfQCeTpTVOJaY+irQeFVMpbqyVwEfH/MB4BBvzNH+UKmgjIIPDPSH
-	6lbtRdOJi7B5Q/O44aamoO+/3A4lS4FqtnXMvaR+6lxDdSRC3dKkPtvFlw/7BRYX
-	fSskhHDFupDuGZ+0kkKb+wUnhdonyzT6ktH+dT4juPa17rPxn2z697+ihAg0Y+Bb
-	ZY0e39ykKlHoGZD3n20DA==
+	:reply-to:subject:subject:to:to; s=fm3; t=1758285651; x=
+	1758372051; bh=TC0qa4dJ8ZfxpD8eOHAvcq6Kh4/gpC+GYroIRc1A+zs=; b=g
+	YaoqNUWaKHhvv3Ed4xHBXRktxSLULfs/iAAuYrd7j55EZwLmi18d89+j4kySwA12
+	5SyZ2uYXjdwz3FmJ82Kk4p3w2wCOYWDmriHFwCmlw88SQYiMNg73I3OUH5FsYGKo
+	4qxeC+AqeN71HV3IX9QR7a0wyomCVQhvXau8Gu5fldftzhhA6CetYZelZH8BPMGq
+	EBIYmWRo7FDIkuy8YcbteuqPik/hKtWxRdlsqyYUQ5fNRkfn6uW2wB8K4RWowICL
+	9WJTQUpVnMwtHUz71tcKCab4m/huYVrtpsMV8gX9HISY15uJj+C+rfv0sCire3yv
+	oiZy9DUWJOjm7E8AwETOQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1758285649; x=1758372049; bh=z
-	bXQCXRSraPiiKdXSvs7n/9rDBYdGNJLDwAjIbxUIRs=; b=kDbBi8ROkAz0sn539
-	NhdcLTG+VbQ9pN9Z9Bgf6YgHXcLN8AqtezTZDXrz3R3e94vrfzmJmJm24utk/EDI
-	q51KGt659t2FKcxTy3TVoO8od7xmBQH8IQqiUcdDkbKG8JwYjKClS8ycT7KSxdnu
-	zMLmhcx7nh5BmlXMOl+yrlDzQOTSRwF7B3UynnkjsaNaDgEjemoyV/+RnpuEq1/z
-	P/KErjnLjw1vRNWofg77Afc9LD233PoaUogKpHWLEu+XCxfYN590e7aJyPbOVRfR
-	bT03TDgVRy02KICnyaFMsyZZrSVw0c5iS57ULiQUBhyucEAoJhR/T26aPoy12f+9
-	VzsvA==
-X-ME-Sender: <xms:UE_NaOIynym39jH7ipn8OgrnkfAMPu0hrcl38pK-fLeMRQQ1X3r6ag>
-    <xme:UE_NaHpSuWdNwdYEvmuGjQY6_hMNEmYVqJbQ83ShFQOdCdLvJlPX8asL74lLCUond
-    x7q7YBuGlaeXVodXo0>
-X-ME-Received: <xmr:UE_NaMWSH6G6mWwDcyHYJZI17YaQ79DFb6ZRU-aPVhhtSFEvDZht6xlZSBI08w>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1758285651; x=1758372051; bh=T
+	C0qa4dJ8ZfxpD8eOHAvcq6Kh4/gpC+GYroIRc1A+zs=; b=oBRMyPX6XhIiUnMzG
+	jhA/GKeWruN58gwnj9eQuLD1ahHUAjCToZnr7lsMkryuiYuOpTuc9m1Fq+WwJa66
+	W2cj6gXLpeu7xZofG855foOYmB0A6U8K8JfoAycT77K2kRM6Go1BJtF3nF7BwbNb
+	VKGPFVhKqORsZS2Q9HVK6JTfeH8ahXLvp5vR3WDi7YDdAKruMYWLUC4M/8EWt/2m
+	/c8bJZkh2BeKd3FwPtK+ox3Vd2Qg6rDhK23e3j29qceVo3pvPArS9yEljfsqnW7F
+	Hmx/b5TA/PrQPyLNmizITnISEmUhEcTrCaodCVpfFnx8oiUscKm8DZ2/ORunpIFc
+	kTCKQ==
+X-ME-Sender: <xms:Uk_NaLx12g527lLRr8ab-q6rf-lKXdZuTxxXWpfNE8yPF5UW2YMfKA>
+    <xme:Uk_NaEyl_Oy6W_x6mvM0J1N73IRP2w7r3qUeXqsQaqGjZiytZj_B76Vz_IqMQHLuv
+    Gxk60CB3zfLDyDMLSg>
+X-ME-Received: <xmr:Uk_NaC-CylDn64zzxcQxRKKQdlEkIt3fdkL46R-qcdfIhZoKbryy27MuFoJ86A>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegledvfecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
     ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
@@ -80,14 +80,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdegledvfecutefuodetgg
     esohhrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgiipdhr
     tghpthhtoheprhhpphhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsuhhrvghnsg
     esghhoohhglhgvrdgtohhm
-X-ME-Proxy: <xmx:UE_NaK0uqiiVdtiGAGQ0IVnUYxR-YLHrzt-EWVsWnlN3pM1riBHZdA>
-    <xmx:UU_NaF3pCeFGH43GhX_HKjpLGkGnOmRuA9_YLLIoEEubMdi_qOdPSw>
-    <xmx:UU_NaBkKPcsu-XEdPZ-27U9G1b_shcsWLWfEoCQmHOinO1lSSYEVRA>
-    <xmx:UU_NaONZNr-E-fIDhOA1sTQIzxJiyLC0IF9bWBsTMhbcY0b9ayuU9w>
-    <xmx:UU_NaB-en_t2e6nqwVGnn6SZ1vYVZXSK0aBtHqateyX9wMWvwQbFF3L9>
+X-ME-Proxy: <xmx:Uk_NaM9aQynDmY3IwdeGcxb53N8zxhLiirYpR6A7lyklttLAT8VDOw>
+    <xmx:Uk_NaNc_QOusRX8iTHqFu5nOg3grSXPV-BxstZC-g7kNgPMDWlHE7Q>
+    <xmx:Uk_NaAt4iXraghTT5OqP1wQbj7wIJJN16LGeS8VbH_FQwu4cwCuUAg>
+    <xmx:Uk_NaO2VoEST3kgdDy3gJLyoDqyy8mThO4_NNydG4kpeJreF4L8-OA>
+    <xmx:U0_NaA4E8_qKm_qZyNl8qUs8iUVmPJ9bPMLHUl2T310RpggJiqjCgrIZ>
 Feedback-ID: ie3994620:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Sep 2025 08:40:48 -0400 (EDT)
+ 19 Sep 2025 08:40:50 -0400 (EDT)
 From: Kiryl Shutsemau <kirill@shutemov.name>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	David Hildenbrand <david@redhat.com>,
@@ -107,9 +107,9 @@ Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Kiryl Shutsemau <kas@kernel.org>
-Subject: [PATCHv2 3/5] mm/rmap: mlock large folios in try_to_unmap_one()
-Date: Fri, 19 Sep 2025 13:40:34 +0100
-Message-ID: <20250919124036.455709-4-kirill@shutemov.name>
+Subject: [PATCHv2 4/5] mm/fault: Try to map the entire file folio in finish_fault()
+Date: Fri, 19 Sep 2025 13:40:35 +0100
+Message-ID: <20250919124036.455709-5-kirill@shutemov.name>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250919124036.455709-1-kirill@shutemov.name>
 References: <20250919124036.455709-1-kirill@shutemov.name>
@@ -123,59 +123,47 @@ Content-Transfer-Encoding: 8bit
 
 From: Kiryl Shutsemau <kas@kernel.org>
 
-Currently, try_to_unmap_once() only tries to mlock small folios.
+The finish_fault() function uses per-page fault for file folios. This
+only occurs for file folios smaller than PMD_SIZE.
 
-Use logic similar to folio_referenced_one() to mlock large folios:
-only do this for fully mapped folios and under page table lock that
-protects all page table entries.
+The comment suggests that this approach prevents RSS inflation.
+However, it only prevents RSS accounting. The folio is still mapped to
+the process, and the fact that it is mapped by a single PTE does not
+affect memory pressure. Additionally, the kernel's ability to map
+large folios as PMD if they are large enough does not support this
+argument.
+
+When possible, map large folios in one shot. This reduces the number of
+minor page faults and allows for TLB coalescing.
+
+Mapping large folios at once will allow the rmap code to mlock it on
+add, as it will recognize that it is fully mapped and mlocking is safe.
 
 Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
 ---
- mm/rmap.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ mm/memory.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 3d0235f332de..482e6504fa88 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1870,6 +1870,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 	unsigned long nr_pages = 1, end_addr;
- 	unsigned long pfn;
- 	unsigned long hsz = 0;
-+	int ptes = 0;
+diff --git a/mm/memory.c b/mm/memory.c
+index 0ba4f6b71847..812a7d9f6531 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5386,13 +5386,8 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
  
- 	/*
- 	 * When racing against e.g. zap_pte_range() on another cpu,
-@@ -1910,10 +1911,26 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
- 		 */
- 		if (!(flags & TTU_IGNORE_MLOCK) &&
- 		    (vma->vm_flags & VM_LOCKED)) {
-+			ptes++;
-+			ret = false;
-+
-+			/* Only mlock fully mapped pages */
-+			if (pvmw.pte && ptes != pvmw.nr_pages)
-+				continue;
-+
-+			/*
-+			 * All PTEs must be protected by page table lock in
-+			 * order to mlock the page.
-+			 *
-+			 * If page table boundary has been cross, current ptl
-+			 * only protect part of ptes.
-+			 */
-+			if (pvmw.flags & PVMW_PGTABLE_CROSSSED)
-+				goto walk_done;
-+
- 			/* Restore the mlock which got missed */
--			if (!folio_test_large(folio))
--				mlock_vma_folio(folio, vma);
--			goto walk_abort;
-+			mlock_vma_folio(folio, vma);
-+			goto walk_done;
- 		}
+ 	nr_pages = folio_nr_pages(folio);
  
- 		if (!pvmw.pte) {
+-	/*
+-	 * Using per-page fault to maintain the uffd semantics, and same
+-	 * approach also applies to non shmem/tmpfs faults to avoid
+-	 * inflating the RSS of the process.
+-	 */
+-	if (!vma_is_shmem(vma) || unlikely(userfaultfd_armed(vma)) ||
+-	    unlikely(needs_fallback)) {
++	/* Using per-page fault to maintain the uffd semantics */
++	if (unlikely(userfaultfd_armed(vma)) || unlikely(needs_fallback)) {
+ 		nr_pages = 1;
+ 	} else if (nr_pages > 1) {
+ 		pgoff_t idx = folio_page_idx(folio, page);
 -- 
 2.50.1
 
