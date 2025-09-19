@@ -1,132 +1,135 @@
-Return-Path: <linux-kernel+bounces-823805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56A7B87785
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:28:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3205BB8778E
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E0A1BC3E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4FD56491F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 00:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB23235045;
-	Fri, 19 Sep 2025 00:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A799235045;
+	Fri, 19 Sep 2025 00:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="BD5hhems"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEkiIOLL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB262227EA8;
-	Fri, 19 Sep 2025 00:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDF44A3E;
+	Fri, 19 Sep 2025 00:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758241680; cv=none; b=OR0oayK2ezY5C8Q6fZAQ4CH6iYAaigQJqci4DKK6IglqdzysvapKbbPtMLqgEYubhKMjKJYdeNmCs9xfjDRMnKB8+2vAodP5qtevGI5B94sivSdkdRsHYZkRGuOIphM8w+F3+sQyEFFgSiSBunv6M9flErh7rtsU3el79h0vINU=
+	t=1758241760; cv=none; b=iZLxnWPs65YQ91hFqtewTtNg6/Y6kbNxLDjAopt75SAKdUPHKEc6qTcWvakiacw6SIFtdXIe2CyF3nnzh22c7cxJWqGs+JOJLXy/pvgwDS+Q3eMC4gDbYxLCV9Oqc8m5v/a2l9YH0K1GyqMJ/j0St5WYDS+J3xJVWTlQpzqGAt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758241680; c=relaxed/simple;
-	bh=WW+/egz9vF68C4v2j/ZgH4I4aDqVJ7b2Dy0xwN5debo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fJFT1OlqyUoaVJuplZc78dchyyTDTZVdQQpbVHOXfI5k0YSn+XXce2W68wKH/YgLaL3Iu3vIQWHrSM2anBJan0FZmjSBsWb6iXUJkjePhjHdJ0hSlCc9On6+sg8z9Nm4ua8xdQBr9SkzTIx5cHtebYIGwf5ScZlI6GYpIPcgbqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=BD5hhems; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 58J0RXK202829389, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1758241653; bh=WW+/egz9vF68C4v2j/ZgH4I4aDqVJ7b2Dy0xwN5debo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=BD5hhemsna9cjKhD5bKSPbi4yDcJe0y3RiA7r2Y3poKQhwGTCfwc70yv0+l4hGZxL
-	 p3IyNJGiNPvFuUKAmD5s3oPI6UvxauIM/if0CPPhYabZHnZsY5WcI8G7ZxqnW+yPDB
-	 cDAox54mDTYuorRJaoFyQ0BJh85YIOqZvU6U1qGY5WCtpGmtwk5K6Mrvao711HSc+e
-	 +0A/3tnyY9x1qSyqWsCWgUtTCHml3XFmK+FeFXQd8its0s3KzIXSmTfDp/TujuCLKI
-	 s87e+3w6+Dj9Dvwv6fbQ1JYl8hS3aswGEHPzsaV51A/HAPAGSquDj/e5MrzLL4Evdh
-	 BMcO1I8DxiZJA==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 58J0RXK202829389
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 19 Sep 2025 08:27:33 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Fri, 19 Sep 2025 08:27:33 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Fri, 19 Sep 2025 08:27:33 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>,
-        Bernie Huang <phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in rtw89_core_tx_kick_off_and_wait()
-Thread-Topic: [PATCH rtw v4 1/4] wifi: rtw89: fix use-after-free in
- rtw89_core_tx_kick_off_and_wait()
-Thread-Index: AQHcJ7j9ihvmCigyUEi4g4qppzNcU7SYSUhg//+OAICAAJEK0IAABBcAgAE8YFA=
-Date: Fri, 19 Sep 2025 00:27:33 +0000
-Message-ID: <e4153922734d4c8f8b394b3542b9cf58@realtek.com>
-References: <20250917095302.2908617-1-pchelkin@ispras.ru>
- <20250917095302.2908617-2-pchelkin@ispras.ru>
- <391e7cc762a549b7826e72090b61ebb2@realtek.com>
- <5d1be8c759c243f9a331c672cc301bbc@realtek.com>
- <8aa1fe0b49dd49408dc26ad48ba9a605@realtek.com>
- <20250918160829-9fbf03ca95d5c4a93143afef-pchelkin@ispras>
-In-Reply-To: <20250918160829-9fbf03ca95d5c4a93143afef-pchelkin@ispras>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1758241760; c=relaxed/simple;
+	bh=rUZMRwKfJQIUT6+1NgJgtotbl/gzBIiQfywFOchXLW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtulF7wlSGlhyvi5jaklap+tZ4oJSEGRB8LhmdSzLt5hYEU9rY7gZUnD8NBOv3Uf/lik6FuSkWPWljGCY39dz6juMV3DZQZg/QeAqmX/tOA+0s3J3aORfmeVqipZC/AhHNbxkmseji08Cjt6glPPKkodYJ76JMGjPMavLDZY2Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEkiIOLL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4A8C4CEE7;
+	Fri, 19 Sep 2025 00:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758241759;
+	bh=rUZMRwKfJQIUT6+1NgJgtotbl/gzBIiQfywFOchXLW4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DEkiIOLLA0RQTZ5hhIdQMlCD0lO3IRsf1YXx19L5OXy88YzR45VJuNTP2tGgzolCc
+	 QYqi2t+FfZ7c3+TjX9Rr3jI3HR79dVBG8bm+7T2QOoT1ClZgO5H8otYNlcKpoInwYn
+	 1F6Earh5v8Bc5WSG5s7sRIucxcn7Fyz2nwTEyJVpYKIDUMx+H5fdosoFxgnM6Zo/sY
+	 TCd+fvW9ciWxHtDPS27/oyVvrqp1htABi5SXwpakrbb+ycNB/StUoAKutBDVd4aZlQ
+	 nxSlKNglFxHatTPZPFgiHc0btJA0BfqAaoWyfuwIiv0Zb+moR+4pcU/q0xjO4Yl0JV
+	 fmO67ZYPai80g==
+Message-ID: <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
+Date: Fri, 19 Sep 2025 09:29:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
+ igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
+ s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
+ <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
+ <20250903073827.3015662-2-pritam.sutar@samsung.com>
+ <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
+ <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-RmVkb3IgUGNoZWxraW4gPHBjaGVsa2luQGlzcHJhcy5ydT4gd3JvdGU6DQo+IE9uIFRodSwgMTgu
-IFNlcCAwNToyMywgUGluZy1LZSBTaGloIHdyb3RlOg0KPiA+IFpvbmctWmhlIFlhbmcgPGtldmlu
-X3lhbmdAcmVhbHRlay5jb20+IHdyb3RlOg0KPiA+ID4gUGluZy1LZSBTaGloIDxwa3NoaWhAcmVh
-bHRlay5jb20+IHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPiBGZWRvciBQY2hlbGtpbiA8cGNoZWxr
-aW5AaXNwcmFzLnJ1PiB3cm90ZToNCj4gPiA+ID4NCj4gPiA+ID4gWy4uLl0NCj4gPiA+ID4NCj4g
-PiA+ID4gPiBAQCAtNjE4MSw2ICs2MTg3LDI3IEBAIHJ0dzg5X2Fzc29jX2xpbmtfcmN1X2RlcmVm
-ZXJlbmNlKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldiwNCj4gPiA+ID4gdTggbWFjaWQpDQo+ID4g
-PiA+ID4gICAgICAgICBsaXN0X2ZpcnN0X2VudHJ5X29yX251bGwoJnAtPmRsaW5rX3Bvb2wsDQo+
-ID4gPiA+ID4gdHlwZW9mKCpwLT5saW5rc19pbnN0KSwgZGxpbmtfc2NoZCk7IFwNCj4gPiA+ID4g
-PiAgfSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgcnR3ODlfdHhf
-d2FpdF9yZWxlYXNlKHN0cnVjdCBydHc4OV90eF93YWl0X2luZm8NCj4gPiA+ID4gPiArKndhaXQp
-IHsNCj4gPiA+ID4gPiArICAgICAgIGRldl9rZnJlZV9za2JfYW55KHdhaXQtPnNrYik7DQo+ID4g
-PiA+ID4gKyAgICAgICBrZnJlZV9yY3Uod2FpdCwgcmN1X2hlYWQpOw0KPiA+ID4gPiA+ICt9DQo+
-ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgcnR3ODlfdHhfd2FpdF9s
-aXN0X2NsZWFyKHN0cnVjdCBydHc4OV9kZXYgKnJ0d2RldikNCj4gPiA+ID4gPiArew0KPiA+ID4g
-PiA+ICsgICAgICAgc3RydWN0IHJ0dzg5X3R4X3dhaXRfaW5mbyAqd2FpdCwgKnRtcDsNCj4gPiA+
-ID4gPiArDQo+ID4gPiA+ID4gKyAgICAgICBsb2NrZGVwX2Fzc2VydF93aXBoeShydHdkZXYtPmh3
-LT53aXBoeSk7DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsgICAgICAgbGlzdF9mb3JfZWFjaF9l
-bnRyeV9zYWZlKHdhaXQsIHRtcCwgJnJ0d2Rldi0+dHhfd2FpdHMsIGxpc3QpIHsNCj4gPiA+ID4g
-PiArICAgICAgICAgICAgICAgaWYgKCF3YWl0X2Zvcl9jb21wbGV0aW9uX3RpbWVvdXQoJndhaXQt
-PmNvbXBsZXRpb24sDQo+ID4gPiA+ID4gKw0KPiA+ID4gPiBSVFc4OV9UWF9XQUlUX0RFRkFVTFRf
-VElNRU9VVCkpDQo+ID4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQo+
-ID4gPiA+DQo+ID4gPiA+DQo+ID4gPiA+IFdoeSBzaG91bGQgd2Ugd2FpdCAxMG1zPyBKdXN0IHRy
-eV93YWl0X2Zvcl9jb21wbGV0aW9uKCk/DQo+ID4gPiA+DQo+ID4gPiA+IFNpbmNlIFRYIGNvbXBs
-ZXRpb24gbWlnaHQgYmUgbWlzc2luZyAocnR3ODlfY29yZV9zdG9wKCksIGZvciBleGFtcGxlKSwg
-c2hvdWxkbid0IHdlDQo+ID4gPiA+IHVuY29uZGl0aW9uYWxseSBmcmVlIGFsbCBpbiB3YWl0IGxp
-c3QgZm9yIHRoYXQgY2FzZT8NCj4gPiA+ID4NCj4gPiA+DQo+ID4gPiBJbiBoY2kgcmVzZXQgKHdo
-ZW4gd2UgcmVsZWFzZSBwZW5kaW5nIHNrYiksIHRoZSBjb25kaXRpb24gd2lsbCBiZWNvbWUgdHJ1
-ZS4NCj4gPiA+IFNvLCBhbGwgbGVmdCB3aWxsIGJlIGZyZWVkIGF0IHRoYXQgdGltZS4gQmVmb3Jl
-IHRoYXQsIHRoZXJlIGlzIG5vIGxvZ2ljIHRvIGVuc3VyZSBubw0KPiA+ID4gbW9yZSBjb21wbGV0
-aW5nIHNpZGUsIHNvIGl0IGNhbm5vdCBiZSB1bmNvbmRpdGlvbmFsbHkgZnJlZWQgdW5sZXNzIHdl
-IGRvbid0DQo+ID4gPiB3YW50IHRvIGRvdWJsZSBjaGVjayBpZiB0aG9zZSwgd2hpY2ggdGltZWQg
-b3V0LCBhcmUgZG9uZSBhdCBzb21lIG1vbWVudC4NCj4gPiA+DQo+ID4gPiAoZS5nLiBjb3JlIHN0
-b3Agd2lsbCBkbyBoY2kgcmVzZXQpDQo+ID4NCj4gPiBUaGFua3MgZm9yIHRoZSBleHBsYW5hdGlv
-bi4NCj4gPg0KPiA+IEp1c3QgY29uc2lkZXIgdHJ5X3dhaXRfZm9yX2NvbXBsZXRpb24oKSB0aGVu
-Lg0KPiANCj4gT0suICBjb21wbGV0aW9uX2RvbmUoKSBsb29rcyBhcHByb3ByaWF0ZSBoZXJlIGFz
-IHdlbGwuDQo+IA0KPiA+DQo+ID4gQnkgdGhlIHdheSwgaWYgd2FudCBhIGRlbGF5IGZvciB0aW1l
-b3V0IGNhc2UsIHVzZSBkZWxheWVkIHdvcmsgZm9yIHR4X3dhaXRfd29yaw0KPiA+IGluc3RlYWQu
-DQo+IA0KPiBUaGF0IG1ha2VzIHNlbnNlLCB0aGFua3MuICBTbyB0aGUgbmV4dCB0aW1lIEknbGwg
-Z28gd2l0aCBkZWxheWVkDQo+IHR4X3dhaXRfd29yayBwZXJmb3JtaW5nIGNvbXBsZXRpb25fZG9u
-ZSgpOiB3b3JrIGRlbGF5IDUwMCBtcywgbG9va3MNCj4gbmVpdGhlciB0b28gc21hbGwgbm9yIHRv
-byBiaWcgZm9yIGZyZWVpbmcgcG90ZW50aWFsbHkgdGltZWQgb3V0IGl0ZW1zLg0KDQpCb3RoIGxv
-b2sgcmVhc29uYWJsZSB0byBtZS4gDQoNCg==
+On 18/09/2025 20:55, Pritam Manohar Sutar wrote:
+> 
+> Yes, we have already discussed this and convergence was to use the 
+> conventions which are mentioned in the Data-book. So, I updated the 
+> supply names accordingly. 
+> 
+> Please see the below communications for the same. 
+> 
+> https://lore.kernel.org/linux-phy/83dc9435-5850-425d-b345-52e84ef9262c@kernel.org/
+> https://lore.kernel.org/linux-phy/6e1c67d2-9bfa-442a-9d53-8c5970a2a9ef@kernel.org/
+Ah, ok, although next time I might ask the same, since commit msg does
+not explain that.
+
+I still cannot find constraints for the rest of properties, though.
+Best regards,
+Krzysztof
 
