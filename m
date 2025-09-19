@@ -1,118 +1,130 @@
-Return-Path: <linux-kernel+bounces-824872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55444B8A57B
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:39:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0DAB8A599
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4141CC4D17
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CF557E3327
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A478731A816;
-	Fri, 19 Sep 2025 15:36:50 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2331B820;
+	Fri, 19 Sep 2025 15:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcPwZbUA"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B858E2F83BA;
-	Fri, 19 Sep 2025 15:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3DB3176E5
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758296210; cv=none; b=CKwXI33ZPiPdqPxOBXQXX+eaWi9WNiaJ/a2aVL8E5IrPSKBJUW7GiPWAss3Aia2r78zYy10NnrjRjQX979u5c4KvGhbX05lFSH7UPbbnxXNk5J7zOOwRw8gUiWMYBDkwyaxtdFINyWwcX78nec0/BvGVgRqulaK3+5tWdDw0qYU=
+	t=1758296352; cv=none; b=IId9/jIu7CX+ahr9JR9sNGGT9MkfEq03P1Gh4wLxL3kuHMRhtI3gp35WaHJ8mpH2SA77YaTLzJs4GDh76xrAdrMTXgzUo9uvIg3oBfu+/cYnMV2uQQ4rEZtrLmknNRjFsXb3AA+fm/WHuyNvLKnHY9IGyV+TCzGBMiqxFJuInTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758296210; c=relaxed/simple;
-	bh=8Su+R0xuYEFi7xFi6vvhkFNxAOiU4JxeiBYHcFcYnGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EqeCQljROlfSU/ohOynoZvsuGe/JjjiBRe0VnYGyamq3cvxhZvwKXh7533K3uMSms1HTuNpvrwtdxpdxSLKYAnTrVzg4udKGMXBjEw7v5SIj9J2D9xoRZ3796xFy5xN47h1XVofMCcnBUNqw+9zOBJYzQvIp2BLWO7i7ZALkLqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 0CAD1160262;
-	Fri, 19 Sep 2025 15:36:41 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id CCBF020025;
-	Fri, 19 Sep 2025 15:36:38 +0000 (UTC)
-Date: Fri, 19 Sep 2025 11:37:49 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Nam Cao <namcao@linutronix.de>, Tomas
- Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
- <williams@redhat.com>, John Kacur <jkacur@redhat.com>,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 16/20] sched: Export hidden tracepoints to modules
-Message-ID: <20250919113749.7ee1f249@gandalf.local.home>
-In-Reply-To: <20250919140954.104920-17-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
-	<20250919140954.104920-17-gmonaco@redhat.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758296352; c=relaxed/simple;
+	bh=K0k+4kNcMJsdNdrqorQ4S7Pg5Q5SSIopCK9d++okImQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jgiuMb6XLUlSVUuJFq0YYlamj82clSpqO4VSb5xOF9PHWcr1qCZrcyPMF60cPx+XOHfG3d1oSjm2icb5XWNYUduwDvMRbW3IeUtzUTKLUp1Y875LNlBMZaDYDWEyCie7KpIWVfHwQxxthjT8pR8PJ+M7bTVRZr1C3cXxnlHYYiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcPwZbUA; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-560888dc903so2567948e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758296348; x=1758901148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uctKhO+/UeiiSpqt6MjSlg1WxmH8h+yZMn/dalnwyT8=;
+        b=RcPwZbUA1+8xlMSkpVoYoLeXBt44D10Ob/IWJdXthnBnDsTEFwNB9decoIl14+2+oL
+         s+qwYmtTJYzjLjMKiaAr6GduPKVBmlf/Xh3Tosvdldgfb8KTXIkyjRwTYjhOGKSmPGuO
+         kyZsJiOILUHgp2zHoRnXU0LVpyeGuQ2NTJ6kpndg+Fh5DSphO8CCs/ZjpfEA4YbL0oZU
+         GlSODIVOKtjvVAmfyISK7NWB4aEkgCFJJqdOpWhY7syzdE51u1Fn9ssERcBbX3mF5mO4
+         pwVMAmt9MpKDU/E/9Xo4g1c0QgnT4hN0m+sxWpzlPX+mCjW/3arPa3baiFCFwtaN6esK
+         +tdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758296348; x=1758901148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uctKhO+/UeiiSpqt6MjSlg1WxmH8h+yZMn/dalnwyT8=;
+        b=DnBqf74q5TC6/e67z2u2Pr8rhFNxATDt+zotlmVDX8UiFjvA0Ck7sWQXQqdpFdaNOY
+         vfzZ94BYY4v39Oxejffjhruyuo74yyVbDW88VRAaVZkwuJRIfSdLpaoOhUyYGMlmvf0p
+         u3aw79XUSRWB1nGxlWsrVAVcv62Y6zGG3ZLiNlan08+ZGjJ/Deess9iKtE1HB/pCpcSD
+         cnWx4CLHl63lyVjzXogiBbab8ChiyMhiJrvUUql9hRtzz01QhsSiVqooHNzaWUm3oILk
+         Y0EDTW2lphk8VG9CysJAgly5Kn29VF4kzItR4MfAx9nqZJGbpLWTZpLpJkAWplZ9s4Rn
+         gHhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUO1xqw3YbFjfFOFhxEdiOY1PmWtG/AuzooYN00DXUnvvcXWk1K87z63fTPTJSw5ItyvIHKiM39XDA9sgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo8FDOC4QqYalTvOw64XKJq08OixzSBYjujr+CFd49oxFHqegq
+	QfhqwWbBOp4MIoNSsrpjsOdAODrN5X52Nex8frWFNAF43A+1Un1X12K7
+X-Gm-Gg: ASbGncsikokyzVbIJf8Rk77dFu4SxvZLget+oIiAO8IIaGgFeskUBBLoHWqXPUR2mbT
+	Dy6m2JXe9RWk6s9tqJO31xGYfoWXdf0uWRqqpl8ICdPtRilEidKRU4jpKXDYv9f7HeZSDecDBVS
+	F5KGdkO8Zn5NEMoH3h1OsA7h8pmLSykTwoHnznRH+RosjFyN/194+TgORXypD/cIttBeW/pR2KY
+	vg9mhGOuw/lLZ5k4uuQhrGTIrnOpfEwpkBtvFGQ8COgMI3JC473njQb4jI2IVLmHq1vwpwyAk4g
+	jnG5k9CgL9Z/jX43Ph3JC+38gvQUZT4uHbOaUFIC2JgMBpy+7ifImOFPvvP6JuH2XDU3LCzCsA0
+	fZRFpD9kJWZAF/A==
+X-Google-Smtp-Source: AGHT+IGJfZhXf/HH8Pyz+cqkoqEOZKpxJz2zqRcH4yC3gZ73i2LnNl7A6Sca09TBNTUOc4JHpYxYMA==
+X-Received: by 2002:a05:6512:6508:b0:55f:6c5d:759d with SMTP id 2adb3069b0e04-579e45216bbmr1104441e87.49.1758296347969;
+        Fri, 19 Sep 2025 08:39:07 -0700 (PDT)
+Received: from xeon.. ([188.163.112.70])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f44771sm1485769e87.20.2025.09.19.08.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 08:39:07 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] DRM: panel: add support for Sharp LQ079L1SX01 panel
+Date: Fri, 19 Sep 2025 18:38:37 +0300
+Message-ID: <20250919153839.236241-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 9g4jmygwyi15ubfrj9tt9ef466enohpf
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: CCBF020025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18Ny81I3+Lr9/vOXvloqaeDNiGKg0B2T4c=
-X-HE-Tag: 1758296198-285191
-X-HE-Meta: U2FsdGVkX1/QbP5EPoowLIXs7Vb/qZvGYf0529WxessEWV/kBogdbDISTzKebqeQjD0bXGANcP1VsJyHSh7izo7fu6za049kFncVL2Oip7aso/9bpNa158zXDfD76FmQ44PyePxr3WjQtRKaBCgWXEQYGj+W3k5iPSGEK069+Ll3SeyQKmK0Tpsc8ELQYS9BVbU266cTA1PhTlgk7ajuZtVpUTjYy2EgqEEy+NrBqevt3TZyTKummTc0wFoeTrACKnszj1pjO8yA7XwS5dumm9jEVsJU5eUFTfQFbCiPGaJrcL/EHpNqQROz7kCR7BwJuHB9jmJzIL5jRyy1CDOysR53gOlCN9uvBLSWzsJCsmWhfgTuhWSrBA==
+Content-Transfer-Encoding: 8bit
 
-On Fri, 19 Sep 2025 16:09:50 +0200
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+Sharp LQ079L1SX01 panel is a LCD panel working in dual video mode found in
+Xiaomi Mi Pad (A0101).
 
-> The tracepoints sched_entry, sched_exit and sched_set_need_resched
-> are not exported to tracefs as trace events, this allows only kernel
-> code to access them. Helper modules like [1] can be used to still have
-> the tracepoints available to ftrace for debugging purposes, but they do
-> rely on the tracepoints being exported.
-> 
-> Export the 3 not exported tracepoints.
-> Note that sched_set_state is already exported as the macro is called
-> from modules.
-> 
-> [1] - https://github.com/qais-yousef/sched_tp.git
-> 
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+---
+Changes in v2:
+- adjusted schema with ">" and dsi0 > dsi
+- fixed copyright from Nvidia to Xiaomi since sconfiguration equence is
+  based on the downstream Xiaomi code.
+- adjusted commit name of second commit
 
-Note, for all the scheduler changes, we need an acked-by from the scheduler
-maintainers.
+Changes in v3:
+- tested with drm-misc-next
+- switched to mipi_dsi_dual* macros
+---
 
-After you have acks and are satisfied with the code (hopefully someone else
-can review them), you can send me a pull request to be added into linux-next.
-I'll still run them through my own tests.
+Svyatoslav Ryhel (2):
+  dt-bindings: display: panel: document Sharp LQ079L1SX01 panel
+  gpu/drm: panel: Add Sharp LQ079L1SX01 panel support
 
-Which BTW, there should be a bunch of tests in:
+ .../display/panel/sharp,lq079l1sx01.yaml      |  99 ++++++++
+ drivers/gpu/drm/panel/Kconfig                 |  15 ++
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-sharp-lq079l1sx01.c   | 225 ++++++++++++++++++
+ 4 files changed, 340 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/sharp,lq079l1sx01.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-sharp-lq079l1sx01.c
 
-  tools/testing/selftests/verification/
-
-(which doesn't yet exist).
-
--- Steve
-
-
-> ---
->  kernel/sched/core.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index ccba6fc3c3fe..334ff5b214d7 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -117,6 +117,9 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_cfs_tp);
->  EXPORT_TRACEPOINT_SYMBOL_GPL(sched_util_est_se_tp);
->  EXPORT_TRACEPOINT_SYMBOL_GPL(sched_update_nr_running_tp);
->  EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
-> +EXPORT_TRACEPOINT_SYMBOL_GPL(sched_entry_tp);
-> +EXPORT_TRACEPOINT_SYMBOL_GPL(sched_exit_tp);
-> +EXPORT_TRACEPOINT_SYMBOL_GPL(sched_set_need_resched_tp);
->  
->  DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
->  
+-- 
+2.48.1
 
 
