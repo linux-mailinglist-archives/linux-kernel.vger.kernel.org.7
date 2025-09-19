@@ -1,118 +1,108 @@
-Return-Path: <linux-kernel+bounces-824446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541ACB893EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:21:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CDBB893F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A9B1C25D82
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A43C91C25DEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73ADC30AD11;
-	Fri, 19 Sep 2025 11:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9FF30CB54;
+	Fri, 19 Sep 2025 11:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V7a53qq+"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNI5CHnQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C8A3090DB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DA919D082;
+	Fri, 19 Sep 2025 11:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758280888; cv=none; b=Tu3VhxVKiRGpBD+yL5LmLbgTyiNnO0p+CM0r3C/NBbzJ8oYFpcbG6tDyS9Gvyhjzvi26giny7iNYvY8FZV3xioBd0OZtpxrqH4WiCHQ5RKGH7P+FUj7zFrv5eDf4CX6/KY7V6sw3eNSI3x1Dw5zrtyWiIOXUJHuvGIucTYnbqu0=
+	t=1758280945; cv=none; b=eXDtVqR52X+bRSZuojVOZgOota9co5+rKYP+O0V+mCHRyxGmNDYKZlnLXZ5vCALN6AX2IpVcsyvwZc2U0/z780AXJuROwZW5vXnlqxPjYhH7CNhW8GgZr2M0cgTzHJKD54MrLeTukVAUkb5EkgesN/1a/+1aSVdK0rPssXP+NVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758280888; c=relaxed/simple;
-	bh=A4xG/hhI5H20xjSK3ATLZhg7mH6LCnkDNDxdK8t8kEk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cfLFxaRUGvBWYX8NiMH/t/i/ZiHRretZVUJTWqZgd0s27DAJFxBRhrY1U9vcz3M8AGGd6sgNunDIWKRJ4XlNNRWw+Dj2dlc/estCPvk5F+7gAm2SPdIYvRtaZQoA0fhtenG2EwXpKc3DkANSj5puHrkIuym9RwnFbs/bTPF1/HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V7a53qq+; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758280881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1RTqmv+1E+QFMuOy+5mQ8UkGVboO7NXJZS9ix522hHQ=;
-	b=V7a53qq+yTQMa5IzHR4f9+NvU9KCOuXDiGJR8s5Wd5SK8nAmqVT0JdlJZX2oLWyeycOORD
-	ZHDl9GwKZN8UVSjF1Bhg8VQ4WWgfspa9jbNH2ath3vpEalhG5TPcj9HCsigRwk7vdV1gWy
-	ZtsXEAC/N1ipmDsl3Nc/1MMv8pHl6yg=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] rust: net::phy inline if expressions to improve read_status
-Date: Fri, 19 Sep 2025 13:20:08 +0200
-Message-ID: <20250919112007.940061-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758280945; c=relaxed/simple;
+	bh=gwOu1hDDZ7oz3v/TSybV3mchNVWYM9CtHM03CNGZoRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j3chMBIuvTytbjn7M8T3ctAnYa2K6Wx7MBs7aAWA3wh8Tt5XlZxctDeThlpuCVAhGsJgIxJqiWZfITjs7BgW2Ogf+zi3qlIu0Ra0mAeDiWOG83vmGrQrYq7etAQbbM4CbDehTXg8XO2FiADJ0kiZrUNjarDBjiaPCW/URWNPsII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNI5CHnQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68D0BC4CEF0;
+	Fri, 19 Sep 2025 11:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758280944;
+	bh=gwOu1hDDZ7oz3v/TSybV3mchNVWYM9CtHM03CNGZoRI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cNI5CHnQd/V/7aV4p5vXBufMebCefC4z/PrtC7lXboKQnueRtTRYdTHJeZt943YkQ
+	 3cgvvN6OiG6YnECzwsnneSm26PBzvTm2GRYPfTAWC2rIIC2MXBWCl3NfyoevNMru5m
+	 uywF578Zcq2sGS1j2cZdQYn06iFddTzBAZb65NcakwOvlU7/Dqg1BBSspoUNprs3Ka
+	 5TKmxvz8rJQ+ZAQMWgy+1EauNM4mC3H2+iR95T5CdfbiY90TMWwiG1soQF9Om0cXrY
+	 LKsCQefhAFYD3cyndrSeW8YRJVQZvxR5Lh4gktNA5d/DEGj+SApJmXwlRsTmkUe6Fv
+	 3/oL8wrBRWEDQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Dhruva Gole <d-gole@ti.com>
+Subject:
+ [PATCH v2] cpuidle: Fail cpuidle device registration if there is one already
+Date: Fri, 19 Sep 2025 13:22:20 +0200
+Message-ID: <12749587.O9o76ZdvQC@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-Inline the if expressions for dev.set_speed() and dev.set_duplex() to
-improve read_status(). This ensures dev.set_speed() is called only once
-and allows us to remove the local variable 'duplex'.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Refuse to register a cpuidle device if the given CPU has a cpuidle
+device already and print a message regarding it.
+
+Without this, an attempt to register a new cpuidle device without
+unregistering the existing one leads to the removal of the existing
+cpuidle device without removing its sysfs interface.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/net/phy/ax88796b_rust.rs | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/phy/ax88796b_rust.rs b/drivers/net/phy/ax88796b_rust.rs
-index bc73ebccc2aa..2dfd37936689 100644
---- a/drivers/net/phy/ax88796b_rust.rs
-+++ b/drivers/net/phy/ax88796b_rust.rs
-@@ -56,18 +56,17 @@ fn read_status(dev: &mut phy::Device) -> Result<u16> {
-         // linkmode so use MII_BMCR as default values.
-         let ret = dev.read(C22::BMCR)?;
+v1 -> v2:
+   * Add the new check before the driver module reference counting (Dhruva).
+
+---
+ drivers/cpuidle/cpuidle.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/cpuidle/cpuidle.c
++++ b/drivers/cpuidle/cpuidle.c
+@@ -635,8 +635,14 @@ static void __cpuidle_device_init(struct
+ static int __cpuidle_register_device(struct cpuidle_device *dev)
+ {
+ 	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
++	unsigned int cpu = dev->cpu;
+ 	int i, ret;
  
--        if ret & BMCR_SPEED100 != 0 {
--            dev.set_speed(uapi::SPEED_100);
-+        dev.set_speed(if ret & BMCR_SPEED100 != 0 {
-+            uapi::SPEED_100
-         } else {
--            dev.set_speed(uapi::SPEED_10);
--        }
-+            uapi::SPEED_10
-+        });
++	if (per_cpu(cpuidle_devices, cpu)) {
++		pr_info("CPU%d: cpuidle device already registered\n", cpu);
++		return -EEXIST;
++	}
++
+ 	if (!try_module_get(drv->owner))
+ 		return -EINVAL;
  
--        let duplex = if ret & BMCR_FULLDPLX != 0 {
-+        dev.set_duplex(if ret & BMCR_FULLDPLX != 0 {
-             phy::DuplexMode::Full
-         } else {
-             phy::DuplexMode::Half
--        };
--        dev.set_duplex(duplex);
-+        });
+@@ -648,7 +654,7 @@ static int __cpuidle_register_device(str
+ 			dev->states_usage[i].disable |= CPUIDLE_STATE_DISABLED_BY_USER;
+ 	}
  
-         dev.genphy_read_lpa()?;
+-	per_cpu(cpuidle_devices, dev->cpu) = dev;
++	per_cpu(cpuidle_devices, cpu) = dev;
+ 	list_add(&dev->device_list, &cpuidle_detected_devices);
  
--- 
-2.51.0
+ 	ret = cpuidle_coupled_register_device(dev);
+
+
 
 
