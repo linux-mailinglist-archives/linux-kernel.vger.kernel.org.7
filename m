@@ -1,78 +1,102 @@
-Return-Path: <linux-kernel+bounces-825019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE365B8AB90
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E721B8AB8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74CBF4E0172
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BFB51CC518B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 17:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B39F32277D;
-	Fri, 19 Sep 2025 17:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkbvOxUw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575911917D0;
+	Fri, 19 Sep 2025 17:15:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C674322761;
-	Fri, 19 Sep 2025 17:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD759322764;
+	Fri, 19 Sep 2025 17:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758302129; cv=none; b=fXsgqhd8qZdf+4aqPaN4kMA8yfrDsU1Rg00aAfJl6NDS+LFi64ImujJhvw8/QrPegL4ujK6RHKj0n6G4ej4ry7caFqmtnh+MTKc3kdo5GWGH9gxRtZ1pl6W05i/fSaJZC/0OPKEl3MvE8e0Puw7TuJT/zPrN38G+ZNa22ohL/ls=
+	t=1758302122; cv=none; b=tERAMcxeC7VxQydPGI83FkyyGTEIMQwCMKAfH6EKB03JpisddII2LlXzQdCcLzAPuR+9tbafGZAYb24o6V9apHIRUCnI8Dyr6lfHuVcHqEouzrGOsknnA6jo8AcAhJiT+XPu3pMQUlQ+D6uCZ2PbFaBhveUzUVJKLdsHyeFnzm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758302129; c=relaxed/simple;
-	bh=qlpo7NNcYN6CRhJBeWOyMKsYADlLPk52U7XA6pwEZrc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HNaS9LMg8gnEXw+D7YFds19yQTZtRnhmm1+yzY9yidHOGOAxsIH1PJ3TNjlsRP2kiUkeY1qKaF78vFvn/nMh3rk2JzpayJzJTxasL6NB9FyqxioMVS2XeVvJ5vLVWvYkGb/rVuaAf7Y1jVQLNegd5MuyVkSLDJOJmwXrChC+CIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkbvOxUw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7AEFC4CEF0;
-	Fri, 19 Sep 2025 17:15:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758302128;
-	bh=qlpo7NNcYN6CRhJBeWOyMKsYADlLPk52U7XA6pwEZrc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=XkbvOxUwT8SGTKjoEwa5H/2mRJL/qrspW2tdWu1ulpgZ7vJJ3zIQepO8OYoMnO0G4
-	 YzZKUTHK6LQPhr3LQYCWOJ5IdakVib8mL1cph4w2vJg9Kfm/soA2bR5OzsFSmhqsJk
-	 jw58aHQ6kgpozou6jZJqrtxuL5t62I1S7OJxOoVuqaQgwz0FtkWvqmcvvdrsfARoYX
-	 4Ih3LZFEkl7/qn9mZnjVn4naehorsYAZxKukSs4v/XT+1sbOq9urRK7EMXyf97yC0L
-	 MmODNDi0vosEn75Dj8oa0BeKMmUr27lTcsjxtq0s1GlUNNTUPbW/DTEjRLdBTBkHAE
-	 uf+8r5XYjPz3w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7190239D0C20;
-	Fri, 19 Sep 2025 17:15:29 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto Fixes for 6.17
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aMzXm4zy8LARVMbk@gondor.apana.org.au>
-References: <aMzXm4zy8LARVMbk@gondor.apana.org.au>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aMzXm4zy8LARVMbk@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.17-p3
-X-PR-Tracked-Commit-Id: 1b34cbbf4f011a121ef7b2d7d6e6920a036d5285
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: dcf7d9e0aee523e588aa3d5ce7394043cd2dea9e
-Message-Id: <175830212809.3636420.8856055781957639331.pr-tracker-bot@kernel.org>
-Date: Fri, 19 Sep 2025 17:15:28 +0000
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+	s=arc-20240116; t=1758302122; c=relaxed/simple;
+	bh=6NJzYLwvu8nASPIPcrDCvyx2hqM3LYin66/94sR2rHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N7WQ/AJ609UB2iFc4RBIoyhKI8v0OkRRvafYFOrNDz4AHpqQD045S02SI+xCtaMrPwoUkr8M6NKf8UhwXdTI3RXvyu4wbgdl28157btlhatDo+PCIbYvScOKaJOWDI4XKCtyvnlUUDf9fcXopDm0TAgx5xoZiRe6XiuTJVpfKRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 4FD3A1DFDC7;
+	Fri, 19 Sep 2025 17:15:13 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 5AAB319;
+	Fri, 19 Sep 2025 17:15:11 +0000 (UTC)
+Date: Fri, 19 Sep 2025 13:16:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kernel test robot <lkp@intel.com>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ oe-kbuild-all@lists.linux.dev, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Add an option to show symbols in _text+offset
+ for function profiler
+Message-ID: <20250919131621.093295c8@gandalf.local.home>
+In-Reply-To: <202509200000.EJ4InVti-lkp@intel.com>
+References: <175826135058.101165.7219957344129610147.stgit@devnote2>
+	<202509200000.EJ4InVti-lkp@intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: meshqnsref5gf9mr6a5b3ehr6ya7yoe8
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 5AAB319
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+PMwtFbp3f3WJHRIweYHLKnPG8l8MxpuE=
+X-HE-Tag: 1758302111-777223
+X-HE-Meta: U2FsdGVkX1+IMK7HCcPXzbQ7tsmWuxy9LUmDGU8+Agzv++ChVn4H+bFVQs4YnUHH1WXtXt5zD3aW0l1QfxhL1ATUgm7018n86XJKLbaboSjf6ko5yqpDQgVdmQP7ZYZINyqW40wQm2yqTrRFYp8OzWeIBnDJOn07iK4tNrwII7lwaZ8ReoXj7iSot/nu6zZBvOuyijuerFde4elPo8t3fDl4dzWCLTu42DOwjuzEQaPqaxLLiZgRwvNgMW8H1bIvfa0aSnNy1gVWAy69+apuau0mzVEmZ5jsqBlBJt8OpynpreSmy6lU73qjOKXWXWnI/zpIahtzTGMz/Qjy7W3yrrTMmtSsuAQWhyPasRgT0THHrfptxL6TPdjc7G/0mIiBU35aK/sHpkbwMk8nxnuU9Wq9DzaYKD19ITk/mDy3wX1qjZkNyx31ZwC+H0XLlj+zNOIvXRMTRwwoDfWeVj6K5r/OyVZxCfJD
 
-The pull request you sent on Fri, 19 Sep 2025 12:10:03 +0800:
+On Sat, 20 Sep 2025 01:09:52 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.17-p3
+> Hi Masami,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on trace/for-next]
+> [also build test ERROR on linus/master v6.17-rc6 next-20250918]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Add-an-option-to-show-symbols-in-_text-offset-for-function-profiler/20250919-135733
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+> patch link:    https://lore.kernel.org/r/175826135058.101165.7219957344129610147.stgit%40devnote2
+> patch subject: [PATCH] tracing: Add an option to show symbols in _text+offset for function profiler
+> config: x86_64-buildonly-randconfig-002-20250919 (https://download.01.org/0day-ci/archive/20250920/202509200000.EJ4InVti-lkp@intel.com/config)
+> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200000.EJ4InVti-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509200000.EJ4InVti-lkp@intel.com/
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+>    In file included from kernel/trace/trace_sched_switch.c:15:
+> >> kernel/trace/trace.h:1422:37: warning: left shift count >= width of type [-Wshift-count-overflow]  
+>     1422 | #define C(a, b) TRACE_ITER_##a = (1 << TRACE_ITER_##a##_BIT)
+>          |                                     ^~
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/dcf7d9e0aee523e588aa3d5ce7394043cd2dea9e
+Ouch! We need to make the option enum64 now!
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+-- Steve
 
