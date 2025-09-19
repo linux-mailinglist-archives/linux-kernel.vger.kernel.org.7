@@ -1,197 +1,188 @@
-Return-Path: <linux-kernel+bounces-825237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88973B8B610
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:41:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF209B8B629
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A8C7B4965
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:39:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F3117AAF17
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EDB2D3745;
-	Fri, 19 Sep 2025 21:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D562D3A77;
+	Fri, 19 Sep 2025 21:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DMAyucuC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jE1hgLPN"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0822D193F;
-	Fri, 19 Sep 2025 21:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758318050; cv=fail; b=UFqktuiysJPiRWrWDolKkqaVX+jppdSahlwz/YOpUkoRGDb/vF+bmZ53xkhYKi7FULCtDzv8ZrGWga0KDeH1Uj35jJZAebYjAnaIGw4+QU+R8UKN1qQVUBIryyqfgK4zJmmZKLD91SeG3fq8ZvwWQ/wzYWzUAhczNv7ghpFeWB4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758318050; c=relaxed/simple;
-	bh=HpvkBFMpaecGMYNzIH16qsCaPLxp9rvD714lhf8wI3Y=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JPK6+nNLde6nKCc+a0hy+QNKduPlOKlAq3uEmBnIfoPZJ9nwxnH8r87XxNzvaI4l8WCcTnJqOI1L0xYhEpgC7odZJx/3jOBsJ6oQPRwyng1Z5L1We1Q5NHnM8NVGpXVUqTE07alijM6MtgDhMrEe77QYW6zppexahyhPU30PmH8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DMAyucuC; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758318048; x=1789854048;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=HpvkBFMpaecGMYNzIH16qsCaPLxp9rvD714lhf8wI3Y=;
-  b=DMAyucuCpOD4FkHljGEO/IlliBUZjVXjmqRagGyaZ5ODYxZzMDFcnHLT
-   MwmlH5McRNEUT5D55/3M+n/eims0R2wDWU0uWNmkr3w7oJsSdlxTeoXOg
-   UkSn62Df6Hq3PmmaigrHdWw7Rtvkfpk+lFFNBSSQUOoPJfB/ncrgf6/pE
-   KH2WrUaA04m1XN77j5llXuU0E2od3y4+FP6IYI7ogGnPNPyL3i84Be0CZ
-   utRoJGItDnxDabhbNhj/wic0y8Xrljo/suiODFrRHeUYY38Fmc/NEtQ0e
-   Wl/yNDnDLtaXJYlgHi861gRenofx2Siw/wDbTvlwBS55atQFOW25rn7Sy
-   g==;
-X-CSE-ConnectionGUID: Yi7L++n+Rlu+OqjswndPqg==
-X-CSE-MsgGUID: +Rk9lHgaR+6RJ5LM4z0ApQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="72039714"
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="72039714"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 14:40:48 -0700
-X-CSE-ConnectionGUID: m5kDq3aOQKuBtsFezjZgMw==
-X-CSE-MsgGUID: rR3MTwsgQu2UA7yF/iUwuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="175181658"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 14:40:48 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 19 Sep 2025 14:40:47 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 19 Sep 2025 14:40:47 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.0) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 19 Sep 2025 14:40:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UUAiSNT+6/6sh8cF5WojC4kGOW9pVOd/hXXfLUbG8MUl4cxeacmphZU7KR3w3HveJh5TAmjSw1pmJwfhIMDEkWgyADLYXsAvdbRFRGPr+Mt7CHOx45Z331lz6hlcu5kecEpcxZVilt0dJWpo9pQlS725M4NDVKR1dIOY0UzKYYhr1fK8xTVhsnG+utTWoIVRHsH1SZEj9VGbBphrEfoSt+1yFzPpeq5riUXiQy9+R7KsfrjsINvoWeRQZ1HFCM9XmlW1qYdCSgbHhp1nT+ILEb4rHs499kRpShrpYeqhQckyfdZFpX2mVcwBgMXzMK2Ni8k/HpirMASQeTzLnlOVlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x9i1HH2uBXYQnZUgvhv6Fu+0yr/a0EmsenPp15TC0fY=;
- b=r3zkqmOdz8UVH3I44//hRBmIoQ7M5FyjXffmAP021UVx6j1LsJ4R9AnLdR38rvYmKun5TidOi8HxXFFUWcAsJ+hMMJnfvedMp9NmcMNCh5O/XO/RRRFU1wrB4AhrW9sUnqdPFvHhhPPUoUOst1jriaL9szi2CbjesPGcQqAmm9DUXQvUfpleGANq0+YHjabkURI1GVqKibhO2l5vOd71KJ55zY6lNrKKrngjLxw5kHvk7EvITLjoBkNftiZG70XXze8rYP0YphU93eKPSStNB8ouuApAwAMFZN4CZW32qSam1H9DkPUobtwO3tkKWozS/GJu6Ebr6LjC7NR9JmQuMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9131.namprd11.prod.outlook.com (2603:10b6:208:55c::11)
- by IA1PR11MB6468.namprd11.prod.outlook.com (2603:10b6:208:3a4::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 21:40:44 +0000
-Received: from IA4PR11MB9131.namprd11.prod.outlook.com
- ([fe80::7187:92a3:991:56e2]) by IA4PR11MB9131.namprd11.prod.outlook.com
- ([fe80::7187:92a3:991:56e2%5]) with mapi id 15.20.9115.020; Fri, 19 Sep 2025
- 21:40:43 +0000
-Date: Fri, 19 Sep 2025 16:42:41 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>, <linux-cxl@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<gost.dev@samsung.com>
-CC: <a.manzanares@samsung.com>, <vishak.g@samsung.com>,
-	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>, Neeraj Kumar
-	<s.neeraj@samsung.com>
-Subject: Re: [PATCH V3 03/20] nvdimm/label: Modify nd_label_base() signature
-Message-ID: <68cdce51eb03a_1a2a17294ee@iweiny-mobl.notmuch>
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134134epcas5p3f64af9556015ed9dfb881f852ea854c4@epcas5p3.samsung.com>
- <20250917134116.1623730-4-s.neeraj@samsung.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250917134116.1623730-4-s.neeraj@samsung.com>
-X-ClientProxiedBy: MW4P222CA0021.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:303:114::26) To IA4PR11MB9131.namprd11.prod.outlook.com
- (2603:10b6:208:55c::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9809F29E110
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758318185; cv=none; b=V68Qxy5xit6wz640FD75TLJ/xhvOr38MgpyU2kgDZiLXI3M6TN4dWQ192Qx6dCHIsuW/an6aiJNvvD/2OZw0br6zpzoo+oVUDmimdXAHzqYIVI2FAiTSkxx1I1r3I1vifSLxGY77jsblA91xJw1lx92y25sqIV5FhWG3s+lubAE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758318185; c=relaxed/simple;
+	bh=fo9zhk8d1XcI2uMyFbsR9nIEeWYZfmZgSjeGc0DVHHQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ra8aKAOd2fWE5momYreysx3sYBK8yY8CeP6l2wT294162NcRWAEtG9FETA5uP4NqYKM67sgcCs9dZaeF/zfzIx4+l6zDOrJf8lrBy2FQ6LnXuiMmFYneVqlukDDJu+ltmuA11jSlqPUBDJDgLjJhvnojhXDd3i8yr51OfStxEq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jE1hgLPN; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2699ed6d43dso21524085ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758318182; x=1758922982; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y3AOsivK1Y+PB0qISVUU/vGa8EBoPowdOlaSDsePieg=;
+        b=jE1hgLPNFElPYKeCoL7SX6As5ADIau3dOfhBJn3DZxlR87Qfad7MidhPaJrTxpC9sK
+         2IzgR1wSK18BcNRtPryX4YCHvtdqN4aN8K8P6I8DGfugDDTKGG5Ax+uLzn5K1YbHl3N7
+         ufGUN6B9O8yN9iax8uHrwKMhw38hHQzSuEBMoIxsfsmRoamjEDKjr76TTIjrmwffEpUT
+         go4ptglMeXqTg5CYs1T47zlj/yEhpVQFyoC+vRmt9GWR4ozA5R8Dz4/bHFRh33tPuDEi
+         4TdaDaa38lCzYti4KXY4/idU2c5uu6M0l+f4zX/ErE+5pzA4OOOHOrXHN/+3zmIjeufV
+         qxBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758318182; x=1758922982;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y3AOsivK1Y+PB0qISVUU/vGa8EBoPowdOlaSDsePieg=;
+        b=CGjGgdcm4ZuF/qJtrRQWsVqEea5/fnR9coClDJa98ySIt0nZbZMmkBIgSQJ+glCz/T
+         7b11yxrh4hZfrBS8nq3+1xfv+w6oUboem/iiZa1AS2/SiPG/NZoEB90yMV9qNaSu26He
+         J3ccJbvbmRDaw3XEGwG3gdhDcTfJgO8+80zgeYuHLeU0BKCotYsOx+yIP+F7lSh0+B+g
+         3iUlYikEUMBY42Fmgpj75BBtGlEP58cAnUuRkEXUnTKlmNN7l4TL90EbUuS4Zun2ba7K
+         3tzFd4I19VTIkyCdgS7XVg9wrOx5HsFc6nM0N6P2FJ36w46OqEHCSSKimqvdj3mjRY7q
+         8O3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVdWk+7CG5jaOmKQwYRHm7agK+tP1IYSCwbUGZ14ERVxIg2ZjxqZen7nSOfW/s8pELEXWLnrpDn/XfA8NM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt4tM39aIVqIxufbq7aM9USEPA9ZpQBE3g6FvvUSjPgIZZ5ZTl
+	8oJ13Zb1Gj5ezn0V/BkfncM2CA9iu8iu6vcN56gLXS6UftjNEVtNH4vSy6IbNXaZh+jXjSlOfxY
+	sjwbo9A==
+X-Google-Smtp-Source: AGHT+IG+taE21KAkZ/36UWw+w7S59/hNxFhflX8TBiMBtmUFtRPif/HlX+dV2UiJTiz7tKgEOMbcutGV9Vo=
+X-Received: from pjur6.prod.google.com ([2002:a17:90a:d406:b0:32e:749d:fcc6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:40c5:b0:262:663c:8d25
+ with SMTP id d9443c01a7336-269ba5596e8mr69557105ad.57.1758318181957; Fri, 19
+ Sep 2025 14:43:01 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 19 Sep 2025 14:42:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9131:EE_|IA1PR11MB6468:EE_
-X-MS-Office365-Filtering-Correlation-Id: b82f5bcc-1ce9-4a41-1153-08ddf7c52fb0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?SADcQbKnH/kysgNr65xmMsxCw9iPSJRq7KM4pTZiCqPcP5Zb3EMQZqgKnJVg?=
- =?us-ascii?Q?aShkSi/bQkBKW/DDIJN6oww4onxOTjo7wApGOygGNpXBZ7jHTOUGnD0o9Tqs?=
- =?us-ascii?Q?n1awNjdJ5Tk+/tDePAQyF6JpOi8MzhfIg+SZQZb2JHyl+7quoJ8W0FWbNW4V?=
- =?us-ascii?Q?EbqtfJBSYdZtsRkTvBzf1ZuMmRTTG9AwK4KA8dgrkspfQt9ZMODu/8DddRwm?=
- =?us-ascii?Q?SJh08q5Ep2BHV1cuKoROF7d2XfNh7rs5E6hWKNUCgsWHmOScDuxnU9pTmTIz?=
- =?us-ascii?Q?ifPOThXQhB2aVbCMo0ig/DpaysljVpLHmeVb3k292LSq2Qf9m8Jjxpu0KMiY?=
- =?us-ascii?Q?5AypGX5pXQRZ7PexjJbfJ6RQnXgAmQwyi9d2YEmDna0/+1BEDCarGKZABPPL?=
- =?us-ascii?Q?FdeM89UpMPgL0ofuzeN5wZKkhIWFDeoUMyhP9JjkVUskUHrFOmb/ODTQheuY?=
- =?us-ascii?Q?Sz+OFHGbr1/Qrph8d7HIvfivA+z0vzU0f8VEVyAHN+Dwu8WdyPFkt7FxTxL9?=
- =?us-ascii?Q?Mq+LE3p/dbEYtKpPO/6T9ZzTQTj4oeJcZ41jYzT092TF8zmoobdZz6JiUFRv?=
- =?us-ascii?Q?arUebgKGDd3aW64dipKFQtYiWwwIlVWIaFU/8CW2Skj6MJzMWkiXUuTicZ7o?=
- =?us-ascii?Q?iEPiq65aZSMhUa/TfFcf/YtwvA9yIWyy5ixyUmLeRbMsUcShA3M1t0OO/Dk4?=
- =?us-ascii?Q?rx21V5B9i1QFaaTNFlJypu/jpboFenJSaXVI5Sqi/xuMFnMnwTcJDJZ+tn6F?=
- =?us-ascii?Q?atoJ5gorzt0NQvahKcGUBJJFlyAQZtME5nR2nkla5ayRVYRd6KkeQzILCCj/?=
- =?us-ascii?Q?HgLyGacslcIG1mIrEz4FwBmzQoME0mQkaB5nDcrXH2Z34pGSYhKX6w/S+zg8?=
- =?us-ascii?Q?tyO97aYDO8UFXSrGiCBjCxQ1RIUQq83jK90frlI4OsnX+GkA7ONwyDfTVm1q?=
- =?us-ascii?Q?1X8GW35kW9KXb+TDl+wS9Da7DixQj4HSSW59tLvaGNI1Nog8yQx3olXVKGlf?=
- =?us-ascii?Q?XJSq1oUGjmDulvnOthBKPhTlYi1NEFWDTa9Czi8Xjiqn9JfvARmJYEDuGsak?=
- =?us-ascii?Q?ONG1CvuCJKIfxq+IKE2Jnc23SDL7ijeJAp+99vTHhBAQYO3hU5CyNUOFyg/k?=
- =?us-ascii?Q?YXzQ7E5eGkVOM+7ZmBi/TrWVcamWQkgYT7OVQQDJg1G0Kj13G+G8bHlBICzy?=
- =?us-ascii?Q?AKn792z7YdiUHOPfE3r79OhLv5WyxXysz6Uh4G2ZUUv5dXSf9v34r4v+ijnY?=
- =?us-ascii?Q?ADSFxBGvTBxzRo0xswUH/TxOvG6YzRhtFnrckLISKiNzGudZ59K6fe1qCca0?=
- =?us-ascii?Q?NPg5Odskfj0bs4mteqsvH61FxFw6FQ0jtvGZZLqhSjuwFrkIalf5WWkW1wHo?=
- =?us-ascii?Q?8DtJ2xEiJuOKOiU7lQ0+697higEPp8YMEtAOfZUdaHqSbWfczw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA4PR11MB9131.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tkKJc294dBmg1/WNck1x1c5bx2NvmXMOWOBYmSt7ZrJT7CR8Je7KcudnuqhN?=
- =?us-ascii?Q?83odlIhl07ZCIbOLgQYWW0LVAOTnB3i1jssWDq5itAWPp/mlFLz72lpIeHJE?=
- =?us-ascii?Q?5tVIz+559k0XcSv+Sa0MANco6X+y44EWPWtDk++EPWe0sqhP7coYej1X8W43?=
- =?us-ascii?Q?+6COqjixqJ1H2FjRJRjA+aFQtWyv5EBPYdJ3agtQshcmXyBpO7UDwqmaJCro?=
- =?us-ascii?Q?2FSrtLV+1TQRBi6rM0hGz5QjqGaB4BGN0dJAsAXQZf7S/gnmU2HUf0sYn872?=
- =?us-ascii?Q?7SN8NV3Xo7qPzk4Z1kHGSl3d5tFETTCkG32QxPxStVyABcUziFcx/4ENPAYR?=
- =?us-ascii?Q?Q2zTfFhEzacKNg2NxpnZ/6Evx8qvQORqRtu9ka9MlA4ptDCuH5t3zNZcd16f?=
- =?us-ascii?Q?FHzrapshSagIoGdWSyq6nwi9fKXdrQSlFI+e8PwP8qyOYugLsCV975eyVCyR?=
- =?us-ascii?Q?+hy5dLyFV3A1m1bl3KP8/+XD16/Oiykl2Hyua40KDI4YKf7om4U3JVLjhCW7?=
- =?us-ascii?Q?5CzQ9QlYriVJQ/DRIlYP3UV33eD1FIDYXsyiCKX0vSzBckElMBfpos0g5lHZ?=
- =?us-ascii?Q?484UeTWMXBlj46u4Uuv1vsIVR9+D0yvmzxkL7B7l//aW/KxfyjklCINL19DF?=
- =?us-ascii?Q?Cp0BhiBViGFAxQQZpFKW7+DgthDeD0I0l7LwYJ1K7Wd8zNb3ZmxMxjuD1lqH?=
- =?us-ascii?Q?gbhXba34EuTMqGmz3tsYXLL4gzwQ0SqKKFntfIwkd4IqLzAIU6TaSxxcG00J?=
- =?us-ascii?Q?Cl0FXnlL/K0s1ye8eJxMQw3Sn4fvJka3z1DFdLbUpbwvvsf2f0ESsYXV6BBU?=
- =?us-ascii?Q?Z7CNPoCVHN/J/4Tbo3oGYA4+tQxX+EHXYsWGaS59zlQJZY8atJP9+HY4BbV5?=
- =?us-ascii?Q?GFkbtjmod7/k3KtVrCF9a1NtHRWdTBAAMcX/P74bQBDsuo9u9HWr0IZ61Zbj?=
- =?us-ascii?Q?922Xi6n4Zyy6atN31A9vqwZLUEEi/6Ol/uImBdrRpQuOM9hThht5+K7zyuOc?=
- =?us-ascii?Q?Q6FqT7MPbBuHgAFOVMXuf8KnsyS7M0QCoS/QQUKf7TOoIiBYsAsmDL0y4uKF?=
- =?us-ascii?Q?F7KWmEfIm3HrDn8jVw52ZQRggnEeZiBbeqKO/my+7ch5N9J2tEqo4Nmtorq+?=
- =?us-ascii?Q?3ow5As8w2ALmkvnXzq8cTsBAsY+3u0ImsUtJDKw1vPQKN108h80Nqu92+JOG?=
- =?us-ascii?Q?K3V4Q+sOnZdCcwpiL/8uzHtGZdmU9ydoPqw9D6g0YvtZqW1KNSTxe+f2Fthq?=
- =?us-ascii?Q?NGIjYxWCXCvL3LJFJlNdIEH/zo7mZ59DA3s6Qm8/DS8JcCWV02DPuqoyGODH?=
- =?us-ascii?Q?bBuQK7CPUEwUZBQfNV4U3TnDBArAY7SsTvsBrNaQEPwarEMq9dvt83G/VvCe?=
- =?us-ascii?Q?Ka54tdzoYjv7CFrBAkpWkuTIwP9Y7Mwr2BPJt0wKNlgjuHSM2Y2EFNcIa8ee?=
- =?us-ascii?Q?hTnx5IT7glIgSWx6kmYX63kbcxjf67J+zeGa2vl4vdTn6yvUP8Zw6D7TAHZI?=
- =?us-ascii?Q?pYXgopztRcRiUHhGUGsjfq+tiAJw8ZP0TzJJqjCylnD5e7zPFusyQnxXccwK?=
- =?us-ascii?Q?pxgcaDjq3ggoxAEWFD25+RfjeDkmgxhtwoAER/h+?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b82f5bcc-1ce9-4a41-1153-08ddf7c52fb0
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9131.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 21:40:43.9227
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I+9aOqenPJHgTMkjsIc3M/CvMhpRo1H5YzFR/O5cDOrgwkRg9FHmq6JS4ev5YUZhKd/9fGrUje6d/CQmXkdW4Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6468
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250919214259.1584273-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that skips WRMSR
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Neeraj Kumar wrote:
-> nd_label_base() was being used after typecasting with 'unsigned long'. Thus
-> modified nd_label_base() to return 'unsigned long' instead of 'struct
-> nd_namespace_label *'
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+Rename kvm_user_return_msr_update_cache() to __kvm_set_user_return_msr()
+and use the helper kvm_set_user_return_msr() to make it obvious that the
+double-underscores version is doing a subset of the work of the "full"
+setter.
 
-Acked-by: Ira Weiny <ira.weiny@intel.com>
+While the function does indeed update a cache, the nomenclature becomes
+slightly misleading when adding a getter[1], as the current value isn't
+_just_ the cached value, it's also the value that's currently loaded in
+hardware.
+
+Opportunistically rename "index" to "slot" in the prototypes.  The user-
+return APIs deliberately use "slot" to try and make it more obvious that
+they take the slot within the array, not the index of the MSR.
+
+No functional change intended.
+
+Cc: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Link: https://lore.kernel.org/all/aM2EvzLLmBi5-iQ5@google.com [1]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/include/asm/kvm_host.h |  4 ++--
+ arch/x86/kvm/vmx/tdx.c          |  4 ++--
+ arch/x86/kvm/x86.c              | 21 ++++++++++-----------
+ 3 files changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 17772513b9cc..b633d5c33f57 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -2374,8 +2374,8 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+ 
+ int kvm_add_user_return_msr(u32 msr);
+ int kvm_find_user_return_msr(u32 msr);
+-int kvm_set_user_return_msr(unsigned index, u64 val, u64 mask);
+-void kvm_user_return_msr_update_cache(unsigned int index, u64 val);
++int kvm_set_user_return_msr(unsigned int slot, u64 val, u64 mask);
++void __kvm_set_user_return_msr(unsigned int slot, u64 val);
+ 
+ static inline bool kvm_is_supported_user_return_msr(u32 msr)
+ {
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index ff41d3d00380..b3cb39ae937d 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -809,8 +809,8 @@ static void tdx_user_return_msr_update_cache(void)
+ 	int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(tdx_uret_msrs); i++)
+-		kvm_user_return_msr_update_cache(tdx_uret_msrs[i].slot,
+-						 tdx_uret_msrs[i].defval);
++		__kvm_set_user_return_msr(tdx_uret_msrs[i].slot,
++					  tdx_uret_msrs[i].defval);
+ }
+ 
+ static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e07936efacd4..d975d0c60107 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -648,6 +648,15 @@ static void kvm_user_return_register_notifier(struct kvm_user_return_msrs *msrs)
+ 	}
+ }
+ 
++void __kvm_set_user_return_msr(unsigned int slot, u64 value)
++{
++	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
++
++	msrs->values[slot].curr = value;
++	kvm_user_return_register_notifier(msrs);
++}
++EXPORT_SYMBOL_GPL(__kvm_set_user_return_msr);
++
+ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
+ {
+ 	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+@@ -660,21 +669,11 @@ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
+ 	if (err)
+ 		return 1;
+ 
+-	msrs->values[slot].curr = value;
+-	kvm_user_return_register_notifier(msrs);
++	__kvm_set_user_return_msr(slot, value);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(kvm_set_user_return_msr);
+ 
+-void kvm_user_return_msr_update_cache(unsigned int slot, u64 value)
+-{
+-	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+-
+-	msrs->values[slot].curr = value;
+-	kvm_user_return_register_notifier(msrs);
+-}
+-EXPORT_SYMBOL_GPL(kvm_user_return_msr_update_cache);
+-
+ static void drop_user_return_notifiers(void)
+ {
+ 	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+
+base-commit: c8fbf7ceb2ae3f64b0c377c8c21f6df577a13eb4
+-- 
+2.51.0.470.ga7dc726c21-goog
+
 
