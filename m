@@ -1,182 +1,109 @@
-Return-Path: <linux-kernel+bounces-825215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C366B8B4CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:11:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAAEB8B4D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA580A820B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:11:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5AA17594B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CDA29BDAD;
-	Fri, 19 Sep 2025 21:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B682C21D8;
+	Fri, 19 Sep 2025 21:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcK/X7nf"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApVwj5H8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7A28DB54
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E239B2C0F7D
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758316285; cv=none; b=lfwwolt4XDLCX3wOlRa3jrnjernj7pOYf/8BFtm670QxI9pzQfxlY1XfZD1tRu9fLjoiCFOWdBXUNDzuZ9k5cTzHmCaeojDVtidYW10a0BsNt7GPbYwPG56saj0DQa+BbisfImznLsloElX1LzBLFlCaM4Wij6lr3V3SkADCunc=
+	t=1758316398; cv=none; b=AJ7wb6SFRB5GC2ssFxnNe7TOIzeFxX9/QbX+3D9LArqtco6mJiMQ7jCNzaVK3wt0oHTK3ODFFtpDclf64JSqyP7aFslW7WzYJSjFua2tBzNJYy9o2P5UvMqUPf6323HvKZebTndoDTmLY5Jaea5XV+r6gnJS6UnFoeYMwXoOLnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758316285; c=relaxed/simple;
-	bh=G5ZTT0/2dA6G2tttpKgcyUVjFhq8OBnLoSkHTTYjaCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KD+hDzaNfI1EBOAR/cDEeJW5rKzM+5ijhvs9XM24DMG7qRKQ1GuTmR1n2f9rQaChkCTez+Ze8z+9rp7MFi8+Ccv7oQ27jbEZwiJ4wJq+Qb1iAr8pNgLfK8Bqlk553C+F2Zv3dMBJChIbLy5XUhqSvzGV0k35tkvucVQrHMSTfls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bcK/X7nf; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77dedf198d4so2408033b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758316283; x=1758921083; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zFD2PiGcX7JoCeN4pUYUathAXqzYxKQBC02xv/EkTPU=;
-        b=bcK/X7nfY8Xd4ZED9wwZgphkp8AxTLwPqYqkTiDciDH8g6T2EMRCzwHaxmv2/ySE+U
-         tck9XxMyPZu5WmtwFWeVIppt2j5bDmma0cfwSitExWQTbo6QXa0CNN6Y1BS4nb8a53Tu
-         ZlXyLSSAI3mqDOqs7B3HbgZAc0gqC9Cr1v+TlQKlX58Sim7iLMSNsVBye8aqS96BuDRQ
-         ZZmGP7SMViHZ1vXCfK/cwNj2Jc8WNMBnLi96aG28ikbeN/DOJhLRqW7dm4CByxmDS8jK
-         vSbnd37clSNy/MyI1n1C3Gu057gizkT58S3KnqahHKH+rskIlANIF+gz0nqRdapNo8Zx
-         qSAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758316283; x=1758921083;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zFD2PiGcX7JoCeN4pUYUathAXqzYxKQBC02xv/EkTPU=;
-        b=XzuuCZsJeF7Nq2qGc24Oj0n3rf6L2Otk/z/F6WBlaDkRmOR7p/LCCLcqD7Cmq7DGwk
-         EuJMD02lyLA7kRsHUXx4fz3Ax/vMvxI8twE3STlgnPAvl71cF1gfxA0xmLlH1x4xDQWF
-         dCErRFinhulSZnTmJEg9r5WK1v13K/M29Yj3/MdSOcAFRX25TqaEDhlRmTn2HNMhKTtf
-         SOVJllL9uWvR/w6REyOJguzQGDnkmjxyy2a5je53pwrVJjM6C0s8NlzagfbkNX68TW8X
-         KjDdVO7STASxHf5BiSbALVqg7ctgTYHrk/Vwr0lqj703+MULtk5zROeb5va6SEumfAC2
-         u0LA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqCDGcEluL97Mvm4+cNysO382nuEe6ukaCUUGPCvHoD/pJsfGHwq4wql4ojPVRbwF+YxcA9UEI5VVWbGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKbw7DAf0WFcCBTjzRwclxoK8g8TlaZT/JJ96sJm+hnUPKjpdy
-	HqjQiu3zYpc4Iu5M2A/PV8JyjhxffPCVhmiqIGs69D4eGB9zXlHwRLMG
-X-Gm-Gg: ASbGncsxwdBilwT1fUQ0QUb//7GdWEWz/BMiYbrKkOdI6nbdGyp6nZpZFcNW2H65OSk
-	Zmv1qAVlCBSqtpy3VsmsFmHD8kEagEVi1yl9TvMc5ou0eB7/oEvz8tAfMTb/Y2oQ6mujojmrFvw
-	NALGg/sfslXZx2Y7QizGWrP5v95vLRsE28LzP4C4l1xR+m7hJ22ii6QBqAo62HOnSj8V5mDGLND
-	eHlyMfE0+Hfe2+BGtRCzlc7O8/XQ6YIweloza8dHg5tEnqSXrZXEAwVv69fTcZaH73jWVe5SckN
-	xGob7ampBadbxuAhNAJ9wvqoTJb1jeshuThrk20Vvm0nH+azFaT71PJPFXcYPvMNuDZEDixnQj3
-	js2XCkF23DPLlui2mcaC9C5di/Gq3Hr0=
-X-Google-Smtp-Source: AGHT+IFuIiW4juUqRqMj5seaAf5fiJdyitd63hqZHOD9nE/8E7rUafQl57TENToxffffGCpntb7bcw==
-X-Received: by 2002:a05:6a00:17a6:b0:776:20e7:d6f6 with SMTP id d2e1a72fcca58-77e4eac2ac7mr5701354b3a.22.1758316282737;
-        Fri, 19 Sep 2025 14:11:22 -0700 (PDT)
-Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77cfec3f379sm6089705b3a.74.2025.09.19.14.11.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 14:11:22 -0700 (PDT)
-Date: Fri, 19 Sep 2025 18:12:05 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, michael.hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	corbet@lwn.net
-Subject: Re: [PATCH v2 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
- and ADAQ4224
-Message-ID: <aM3HJY0GWJmP8-do@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1758214628.git.marcelo.schmitt@analog.com>
- <2d6bca62056e1254f91b45f70f4ba4614e659c1c.1758214628.git.marcelo.schmitt@analog.com>
- <20250919-unsure-mounted-0fc49ce72216@spud>
+	s=arc-20240116; t=1758316398; c=relaxed/simple;
+	bh=1LBZm3tViyEk9WGaszF/av9kAKvUmA0Io1A5lN/1dZo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VsT/pgGgbUKlCOZvDwfcsBVbIMNeHh2qJJsh70/cQprgloK2PDgIJQXw+zWmV+cO1c1K5/B7YgXXH1T/v4W9+V0zdMPxPQhU+1u6FIaiwZ89dk+/KU5VGp87eONZAPzBcVfIw3NdeBHpU2tEKfzB/SWCca5oQsiTyBfPz/8y2cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApVwj5H8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 975E9C4AF09
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:13:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758316395;
+	bh=1LBZm3tViyEk9WGaszF/av9kAKvUmA0Io1A5lN/1dZo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ApVwj5H8ttH2IulpCgrBg6J61DErEa+Utr7mDJJehyEkTO+S8miKnVRp17Lo+xckL
+	 hEkkaqTkFAKSBge45o5M+xX0eOeWDyg3uZXmqojN7xYK5F7K/JoPZdjmlyuYkr4Au8
+	 TtzhVLuUD46704cLAeUeVnqdX2P4iI/PSmbS0OVETVAX5mnfXb9LIZ/7CKAj5xXcFw
+	 uG+QD7iiCFq3VmKNbw90UzV0Wp+dfTwuJvcyHmkJvbEb4OJ3c33NqGSbpHwC5Hheih
+	 8GJj171ro/y3UEXKt/fmAhzYiQ5smEYZTgVPermnChpPKpYGcyekDEI3SUpD0+hYEg
+	 7mnlcSxIZ5x4w==
+Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-62189987b54so1384329eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:13:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWpW30gZJ/Ocz8wiXyi6g8bUBVRdQnptcbf4K1ERdkNXxgiGLJxb6es4Y+MBxQH9oRGwy+0nNPTde4B0IA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyirk4GV1cFdUgYzBQvt1ENK3+TFMs8Dp+G0NmAf78HCjkQgPHR
+	EXpT0BPFOKATEKj0EG2coTXIpEJNvg0qCxGGqCbONdOCqdY9xULfKdL3uIEEQATnCyx7hwhPWcw
+	Qgfbi54JMjw4xzNbSEM/a76gYorvVIk8=
+X-Google-Smtp-Source: AGHT+IGrZ2HA8FzwQTb4wfxWm0JgX+FFPpSWCNkTt8xhrFxqOZm12RFgGMRNz7CcJstpbEB9LUbsULzu0tyPgfQMhGQ=
+X-Received: by 2002:a05:6808:7003:b0:439:aeb9:88fb with SMTP id
+ 5614622812f47-43d6c18d966mr2642320b6e.17.1758316394912; Fri, 19 Sep 2025
+ 14:13:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919-unsure-mounted-0fc49ce72216@spud>
+References: <20250908085738.31602-1-zhangzihuan@kylinos.cn>
+In-Reply-To: <20250908085738.31602-1-zhangzihuan@kylinos.cn>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 19 Sep 2025 23:13:03 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hgku5V-3GNVH2w8GT2JzkHOU2NZkfHdrRDT-Hb80tuuQ@mail.gmail.com>
+X-Gm-Features: AS18NWDehhhPB2xlBMFibfeDQnR-pUHpEQp9MKkCkOVUsCVFU0wJxcZWkJDLnb4
+Message-ID: <CAJZ5v0hgku5V-3GNVH2w8GT2JzkHOU2NZkfHdrRDT-Hb80tuuQ@mail.gmail.com>
+Subject: Re: [PATCH v1] cpufreq: Add defensive checks during driver registration
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: "Rafael J . wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/19, Conor Dooley wrote:
-> On Thu, Sep 18, 2025 at 02:39:29PM -0300, Marcelo Schmitt wrote:
-> > ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have a
-> > PGA (programmable gain amplifier) that scales the input signal prior to it
-> > reaching the ADC inputs. The PGA is controlled through a couple of pins (A0
-> > and A1) that set one of four possible signal gain configurations.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> > Change log v1 -> v2
-> > - Use pattern to specify devices that require gain related properties.
-> > - Disallow gain related properties for devices that don't come with embedded PGA.
-> > - Documented VDDH and VDD_FDA supplies for ADAQ4216 and ADAQ4224.
-> > - Updated PGA gain constants.
-> > 
-> >  .../bindings/iio/adc/adi,ad4030.yaml          | 65 +++++++++++++++++--
-> >  1 file changed, 60 insertions(+), 5 deletions(-)
-> > 
-...
-> >  
-> > +  pga-gpios:
-> > +    description:
-> > +      A0 and A1 pins for gain selection. For devices that have PGA configuration
-> > +      input pins, pga-gpios should be defined if adi,gain-milli is absent.
-> > +    minItems: 2
-> > +    maxItems: 2
-> > +
-> > +  adi,pga-value:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> 
-> How come this is "value" rather than "gain"?
+On Mon, Sep 8, 2025 at 10:57=E2=80=AFAM Zihuan Zhang <zhangzihuan@kylinos.c=
+n> wrote:
+>
+> Currently, cpufreq allows drivers to implement both has_target() and
+> has_target_index(), which can lead to ambiguous or incorrect behavior.
+>
+> This patch adds defensive checks in the driver registration path to
+> prevent invalid implementations. For example, a driver is no longer
+> allowed to implement both has_target() and has_target_index() at the
+> same time. These checks help catch driver mistakes early and improve
+> overall robustness, without affecting existing valid drivers.
+>
+> Signed-off-by: Zihuan Zhang <zhangzihuan@kylinos.cn>
+> ---
+>  drivers/cpufreq/cpufreq.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index a615c98d80ca..cead6d4fa1ad 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -2922,6 +2922,7 @@ int cpufreq_register_driver(struct cpufreq_driver *=
+driver_data)
+>                 return -EPROBE_DEFER;
+>
+>         if (!driver_data || !driver_data->verify || !driver_data->init ||
+> +            (driver_data->target_index && driver_data->target) ||
+>              (!!driver_data->setpolicy =3D=3D (driver_data->target_index =
+|| driver_data->target)) ||
+>              (!driver_data->get_intermediate !=3D !driver_data->target_in=
+termediate) ||
+>              (!driver_data->online !=3D !driver_data->offline) ||
+> --
 
-Because, for this one, I drew inspiration from ad7191 bindings [1] in the hopes
-of avoiding creating new properties or using discontinued/deprecated
-nomenclature [2].
-
-The thing is, we now have ADC chips coming with PGA circuitry in front of ADC
-inputs. Those PGAs are usually set/configured through hardware connections
-(e.g. dedicated GPIOs or pin-strapped) and have been described in dt-bindings.
-Though, since these added PGAs don't follow a pattern with respect to the
-provided gain, different properties began to appear. ad7380 and ad4000 use
-adi,gain-milli to describe PGA gain [3, 4], ad7191 uses adi,pga-value and,
-more recently, adaq7768-1 has been proposed with adi,aaf-gain-bp [5].
-adaq7768-1 is arguably a slightly different case since the signal gain stems
-from an anti-aliasing filter, but it nevertheless results in signal attenuation
-much like some PGAs.
-
-I personally like the -milli (or even -permille) nomenclature because 4 digits
-have been more than enough to describe the gains (at least so far). Though, I
-acknowledge the base points suffix (-bp) which is documented in
-property-units.yaml [6]. The only thing I don't like much about -bp for
-describing PGA gain is that PGA gains are often described in terms of unitless
-scale factors, while bp implies the value to be described as a percent.
-
-Anyways, whatever property name is chosen, it will probably be better settle to
-something rather than arguing about property names each time a new ADC comes
-with an integrated PGA.
-
-
-[1] Documentation/devicetree/bindings/iio/adc/adi,ad7191.yaml
-[2] https://lore.kernel.org/linux-iio/510f6efb-ada3-4848-ac8e-16fa5d1b5284@kernel.org/
-[3] Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-[4] Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-[5] https://lore.kernel.org/linux-iio/46842d4cf2c1149bd64188f94c60ce5e4f3b2beb.1757001160.git.Jonathan.Santos@analog.com/
-[6] https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/property-units.yaml
-
-> 
-> > +    description: |
-> > +      Should be present if PGA control inputs are pin-strapped. The values
-> > +      specify the gain per mille. For example, 333 means the input signal is
-> > +      scaled by a 0.333 factor (i.e. attenuated to one third of it's original
-> > +      magnitude). Possible values:
-> > +      Gain 333 (A1=0, A0=0)
-> > +      Gain 555 (A1=0, A0=1)
-> > +      Gain 2222 (A1=1, A0=0)
-> > +      Gain 6666 (A1=1, A0=1)
-> > +      If defined, pga-gpios must be absent.
-> > +    enum: [333, 555, 2222, 6666]
-> > +
-
-Thanks,
-Marcelo
+Applied as 6.18 material with edits in the subject and changelog, thanks!
 
