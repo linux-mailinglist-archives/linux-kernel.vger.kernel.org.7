@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-825160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D6BB8B24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D20DB8B25C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5743A1BC4867
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:55:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34C405A6688
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF6732276A;
-	Fri, 19 Sep 2025 19:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63463101A6;
+	Fri, 19 Sep 2025 19:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnLCW/Zj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qwsDmjJq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7yvfUDxo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5190F2BEFE5;
-	Fri, 19 Sep 2025 19:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F950189;
+	Fri, 19 Sep 2025 19:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758311692; cv=none; b=jG3GqHaodfND1Zo6alUFFXwpTt/0iaxN33Oj3Fy5gwtpqpTq36s+PQXUfD5nr0ehvthJ1rbAVz4b8smRby0Ctpnzrnxk+G0JTC1k5vmJH0IpVNS3aE18Zybaeesis98HdvponCSis54c7JMnuRTsvQ0Z5J/eQkqhwsOaTBT0iww=
+	t=1758311745; cv=none; b=KyahAbznxKLnwbT4nuU/i6Vd0xGqMUs0+aG2syN+mfxlLhcaBDR9sIWfohrqw4o4zxZUMY+UIRZFcGu/J8BN7o5CS6ATJ29jdIxJo0/CBfuEPtPmip5dezu4xtVGiSrFtfxGAE8cnCQ17+akTcsO2vbjzSA6fLofUZHCTxL9Y5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758311692; c=relaxed/simple;
-	bh=/u9N2N5fkn6zovj4uW2ex3jJMI8hcVQzf0p9IAFiSNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CiHn/bwa4Ybcs1E6brYRHpBz0WU13meemU9PwJx8Ub5+E1DvdawDAGwfqdxCHpcIsGsnd+mbQ6k7pjexRUHbcEH7i3PREOCLkfhLH2pl9F6TLb+gKbnMMvYH//HpWkFiT+IqnBYGkafTK1/AXrWgyPk3edhVKbkYAKPSTQXMEp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnLCW/Zj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ABA1C4CEF0;
-	Fri, 19 Sep 2025 19:54:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758311690;
-	bh=/u9N2N5fkn6zovj4uW2ex3jJMI8hcVQzf0p9IAFiSNY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bnLCW/ZjKV/mJzg120Hg9/9vzwnNvU1uYA4tCeIIcekwdjGBltOO5J6XEp0LbNyu/
-	 HTkp5eLEwPT9f98mAovq4LMPooRc6IAL1f6nMoX7BDtSERQZ0ujVQZu8m7XqCkpNH6
-	 jyPr1dX3X7YRSaqomFexfSZ9LClBohexvrkOkgFBkYmr9sOhV2LFnwQ5Ue0Gtw7bax
-	 SA6X1BFKEVZcicgvJGjVhVkZHcSaSWq6GSfoRfK/faXTomHCj2Aj7mQw2XKP/AAgO6
-	 1oWCZ+RCZmvw8nh2mFFjlhy2+lzancIjHuBYrjC6qDgxy63x9yJbD602sSuqIJJpKj
-	 jOFv12/Otf5RA==
-Date: Fri, 19 Sep 2025 16:54:46 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf evsel: Ensure the fallback message is always
- written to
-Message-ID: <aM21BtgwBRBWrEEs@x1>
-References: <20250918172416.1247940-1-irogers@google.com>
+	s=arc-20240116; t=1758311745; c=relaxed/simple;
+	bh=4QByUP6xaTZF3iAphfZDqGgSRee9RWGjtopVvDIu74g=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hvEG8We3Uwq8pTjZ5zHvsg+hr0Yxmu3yHXTgf+Ce9JRKmDKycklr8tnglVEK5Je2Rq0L4k1/Ixygq1ZSIdHPJ4xBM3ZjfyGOan5wzuI+aEje67KQVspN8cUQAjr9BMGbiJubbg/5vvNljtzaP+qjZ/+ZizhG4HZYkQJRXWF7MJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qwsDmjJq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7yvfUDxo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 19 Sep 2025 19:55:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758311741;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TAtcQIJI/HoNJ6uRpiF874pXefIxXUFzrtLGzPJy7iY=;
+	b=qwsDmjJqRxFBBgAq0T68BmFcVBHAWhs4ze7QW5w3xNrmAqFe+6lqId9j2Lae96BSHba7ba
+	s876Uc3m8qVmDpVvAHrOBGMpQ4+vh5u6+BbMvDRj6nz9+i5OrinT5373SOMrPwjbW4wzhN
+	AnMp2Sn6BKTNTSSpadLFOjNom0BFr4OIyZ9lvWUZKSM5XzOdL5TaFAh7oPvOIRGc5T8pw3
+	ykGnwb6pBgc86kgi4hkw5HrVtkjNI+s9KltP4rgQGEkmz22FvIQQoUB7KRr75gQ+GWwTO/
+	Y0LxXDSa7zqSyRLf8kzvLsZOhsAf1Xdy/syTVZQ19hP/j/fYS+3pdqMI1Kvt3A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758311741;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TAtcQIJI/HoNJ6uRpiF874pXefIxXUFzrtLGzPJy7iY=;
+	b=7yvfUDxo4D/J7ET8iXfZmPVf9qsu0lhK/BOB0scAXtjrigy/YaD0/1c0Eo3mK/QZPaeQg7
+	beG3m7ghlplPeXCQ==
+From: "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/umip: Fix decoding of register forms of 0F 01
+ (SGDT and SIDT aliases)
+Cc: Sean Christopherson <seanjc@google.com>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250808172358.1938974-3-seanjc@google.com>
+References: <20250808172358.1938974-3-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918172416.1247940-1-irogers@google.com>
+Message-ID: <175831173709.709179.11826475048283663530.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 10:24:15AM -0700, Ian Rogers wrote:
-> The fallback message is unconditionally printed in places like
-> record__open. If no fallback is attempted this can lead to printing
-> uninitialized data, crashes, etc.
-> 
-> Fixes: c0a54341c0e8 ("perf evsel: Introduce event fallback method")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+The following commit has been merged into the x86/cpu branch of tip:
 
-Thanks, applied to perf-tools-next,
+Commit-ID:     27b1fd62012dfe9d3eb8ecde344d7aa673695ecf
+Gitweb:        https://git.kernel.org/tip/27b1fd62012dfe9d3eb8ecde344d7aa6736=
+95ecf
+Author:        Sean Christopherson <seanjc@google.com>
+AuthorDate:    Fri, 08 Aug 2025 10:23:57 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 19 Sep 2025 21:34:48 +02:00
 
-- Arnaldo
+x86/umip: Fix decoding of register forms of 0F 01 (SGDT and SIDT aliases)
 
-> ---
->  tools/perf/util/evsel.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 477cddf08c5c..814ef6f6b32a 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -3565,7 +3565,7 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
->  
->  		/* If event has exclude user then don't exclude kernel. */
->  		if (evsel->core.attr.exclude_user)
-> -			return false;
-> +			goto no_fallback;
->  
->  		/* Is there already the separator in the name. */
->  		if (strchr(name, '/') ||
-> @@ -3573,7 +3573,7 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
->  			sep = "";
->  
->  		if (asprintf(&new_name, "%s%su", name, sep) < 0)
-> -			return false;
-> +			goto no_fallback;
->  
->  		free(evsel->name);
->  		evsel->name = new_name;
-> @@ -3596,17 +3596,19 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
->  			sep = "";
->  
->  		if (asprintf(&new_name, "%s%sH", name, sep) < 0)
-> -			return false;
-> +			goto no_fallback;
->  
->  		free(evsel->name);
->  		evsel->name = new_name;
->  		/* Apple M1 requires exclude_guest */
-> -		scnprintf(msg, msgsize, "trying to fall back to excluding guest samples");
-> +		scnprintf(msg, msgsize, "Trying to fall back to excluding guest samples");
->  		evsel->core.attr.exclude_guest = 1;
->  
->  		return true;
->  	}
-> -
-> +no_fallback:
-> +	scnprintf(msg, msgsize, "No fallback found for '%s' for error %d",
-> +		  evsel__name(evsel), err);
->  	return false;
->  }
->  
-> -- 
-> 2.51.0.470.ga7dc726c21-goog
+Filter out the register forms of 0F 01 when determining whether or not to
+emulate in response to a potential UMIP violation #GP, as SGDT and SIDT only
+accept memory operands.  The register variants of 0F 01 are used to encode
+instructions for things like VMX and SGX, i.e. not checking the Mod field
+would cause the kernel to incorrectly emulate on #GP, e.g. due to a CPL
+violation on VMLAUNCH.
+
+Fixes: 1e5db223696a ("x86/umip: Add emulation code for UMIP instructions")
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/kernel/umip.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
+index 406ac01..d432f38 100644
+--- a/arch/x86/kernel/umip.c
++++ b/arch/x86/kernel/umip.c
+@@ -163,8 +163,19 @@ static int identify_insn(struct insn *insn)
+ 	if (insn->opcode.bytes[1] =3D=3D 0x1) {
+ 		switch (X86_MODRM_REG(insn->modrm.value)) {
+ 		case 0:
++			/* The reg form of 0F 01 /0 encodes VMX instructions. */
++			if (X86_MODRM_MOD(insn->modrm.value) =3D=3D 3)
++				return -EINVAL;
++
+ 			return UMIP_INST_SGDT;
+ 		case 1:
++			/*
++			 * The reg form of 0F 01 /1 encodes MONITOR/MWAIT,
++			 * STAC/CLAC, and ENCLS.
++			 */
++			if (X86_MODRM_MOD(insn->modrm.value) =3D=3D 3)
++				return -EINVAL;
++
+ 			return UMIP_INST_SIDT;
+ 		case 4:
+ 			return UMIP_INST_SMSW;
 
