@@ -1,104 +1,169 @@
-Return-Path: <linux-kernel+bounces-824229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D90B88731
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DC7B8873D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 10:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A2D1885A07
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:40:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F424E1934
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041FE3064B6;
-	Fri, 19 Sep 2025 08:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779E303C8A;
+	Fri, 19 Sep 2025 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gBokNVPS"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RO8C8x6O"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3562D9491;
-	Fri, 19 Sep 2025 08:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F102ECD31
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 08:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758271191; cv=none; b=J306ojS9lc+hpiisFNltYiV2ynKV9aK/H4zElTEdnNe4Ju7a3TdKBPfycsdf2T61dL8Cl+xN5iOUdvHHGa2WTOamzXSV7BPZkyuO3j7A32zZrL3E154hfUs+lzQRGW9TzQGD2UPTzzaNT4biuxWhXlZcmA/omoYkd0mYBgApSRI=
+	t=1758271245; cv=none; b=l8quxzP9rgny2GYH9vNjErDwZfsqrCOMZbaHPIFKS6FnjySLaFJYA7s9Vm7vFDd+zmim24qVMih02Ui1HP4ek78VEL9yQ1RDWkATuPjHupCUxjDu7GAIBVXam6wcVxhuALqqMMbRASvFfF1aWf9tSOcEXxdJgA8YsgC15+AF0TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758271191; c=relaxed/simple;
-	bh=ZdTbnKMvIuPRkDMyZvm2bgbqgaz0f52N9nJkmQJUnB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M9Xawx8Xw5sF8MZWmT1+zFbyspDFFb24lzjycXL9RFCgCKZLrlYq5ag/07KQIxVLiDMo+e449shg2j9bmrl/zppuxeC2KuhjU/amlRSpgCI6fq6SAmX/Ykl/2iyL9+oYrAGHrqOPL6eQCB481j5BraDZscV6QtA5Bm8oBsc06IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gBokNVPS; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 539964E40D5A;
-	Fri, 19 Sep 2025 08:39:46 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 123E6606A8;
-	Fri, 19 Sep 2025 08:39:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ED5AD102F1C98;
-	Fri, 19 Sep 2025 10:39:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758271185; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZdTbnKMvIuPRkDMyZvm2bgbqgaz0f52N9nJkmQJUnB0=;
-	b=gBokNVPS56PuxeZ5y4w0f5hGWEL9+16O22kukgvQb33n1vcXKgql1Gbx295bGer2OySAxj
-	ZBBb/XB0d0fLYeS50w1gj1hJT+Qp8RRgLsWAE0P3QaXrCUI+q1vJsUNP1sPycM+ieXp43F
-	/ctxBV4eU/S8v7jRK0xHiFV+oDIBjg2FCWGHdpBjel+FwqZcE9I+tRITe9g0qeM+UniBeD
-	VjWj1j80c+WIhAZmk5clBYhGdn7hEfd407N04lUatThDmY1Bn6TvQ0BHLr2L4qVpPiQiCH
-	LiBr9JMT+0VbJ4GPwjHKXm6+EuFDsBcwMSmaV9axpynXzM2I117WAxTeeu3Ciw==
-Date: Fri, 19 Sep 2025 10:39:28 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Richard Cochran <richardcochran@gmail.com>, Yaroslav Kolomiiets
- <yrk@meta.com>, James Clark <jjc@jclark.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 0/3] broadcom: report the supported flags for
- ancillary features
-Message-ID: <20250919103928.3ab57aa2@kmaincent-XPS-13-7390>
-In-Reply-To: <20250918-jk-fix-bcm-phy-supported-flags-v1-0-747b60407c9c@intel.com>
-References: <20250918-jk-fix-bcm-phy-supported-flags-v1-0-747b60407c9c@intel.com>
-Organization: bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758271245; c=relaxed/simple;
+	bh=gOYz3v1eddbzcvjAoeR9HIWwqh5JC+Thv7UoJi6Li0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QIKIalhe8hIx0ob/B0q79MVw1hGgqNiOlojFGSMXQCRKEyVe7zfl2swnZ3MjkYP+XBQN6ol5dwwU0C1HpIk1ruD0CjjmNpn6J6cAJ4xZkN1DPhS01mHrURsGvGR1ppa2ARlcc8jy6X6ZKmgLDeenltH8Hv21dsg/vptgHSZUb6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RO8C8x6O; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso612868f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758271242; x=1758876042; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NIAnBB06MyVX2wfnshlvf6atnYBrAR2jdzzUU6RYVAU=;
+        b=RO8C8x6OMtOnBx6CIqZrKOI4C+VIscg7yyr5YI7I8yiSDY7ygRUXryx/LZlZHF5XEI
+         C2fw/onf1nKOUBdA5OSdN22vOXuTHgyyhMsNdoXZx4TkZWPteyolM9a1ZECpmCENdurb
+         n5QO5KFcK987jidC4MuSsNMmuCPips16n9Sa+1/zHoLoDI7ehE+KwHAI5RbF5bA+lawZ
+         CyE3zpj4snUfEOGoE6W0AQfdw2X6oibxocPl8+tIbSkFgNsMS2uTdszFp4G3HYZSZtTB
+         PY14drlCKiDNs0tYOoLGx23AiDnlSraIhqoc6uC3LF+neyY0euBcbUpa+5gesAhZ0o8E
+         zyXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758271242; x=1758876042;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NIAnBB06MyVX2wfnshlvf6atnYBrAR2jdzzUU6RYVAU=;
+        b=cGesoLQSHeE45xqrG6843EVw9sEf7RNYO+pGUvUemSz/HD3KVQ0I+LiO5y8poqrNVN
+         0IewvMUlndAnu70H6PhHQu0ouebXniKNpylNaoOJaeoTJKoOO/C7XreMHdHkShSQah0U
+         4CUa5PqklUqVyUtQnP26iiUQEfvGPtovY0/469h7gk+Tvep1ukGM35I7SaRZ0ValT1hR
+         ZMaL6fBJcYK8BSX8VeJKFZjdNZ4XJN7T/AtoqzwG+GfufOflG9912f4hk1YMrIhpXTBL
+         vAaFoADfyLE42PLPyni5BbhQgN2bbfTAvEUDLx9PFgujB7CSvlTT5aSu/uy8LpBScEkX
+         ifhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVv+qvcbanT+zaWtAUDS4uwczKAdmnYloeYXU07f8KBfywiw9AjLegwwQf5eHBC5cFHi67YdDuXO+hv7Fk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUTDHM5NMj6XnhiSECIshPcy/J+OLg/Sfz/vC/DDAbuqjZmZTc
+	NReldRGdCMJ6/999snbil5E2XtCzQ6QU/ChE3fzq8RS4B2SE8CnbGhgn
+X-Gm-Gg: ASbGncvkmmk3kIS/JiNgs47xQJJaDPcaXfSlG0fm2TYtn6AEPOdeaMUqgkqrmN2F+yk
+	iLw0CIgZsShlO8Y+Oj+2fAf8RdarZKXHqAc1lr8EiDZ2zkxnkddeWJTn9PqV0LOPFhNBbbZsiS3
+	Qrs7zfPpC1C6gEU8S1DW7oDsgXhSVIzFhPE8HWvz87ocKfE440XtOfuUHYU+kJM3G4RYH/ZioeI
+	pG/0K/to81+QhKweY3AQpy7HykAf7v2lD4iCvdtEOLkfBqX0A3DwNvlymlY9pLCVej7QEViZugn
+	1mhdNT9Z7oYmxx4irtAehYqEE0ynzbV+FCGtnZ4Cmidf8MO3LyLUX8N5P+c3tqTBJkHm1dPLM4K
+	lYHO3KtBinc6BIn/l4dQ=
+X-Google-Smtp-Source: AGHT+IEJEthob1/t3JTrPT5id9i8Ikn1uiw7mDfiwIHDS3ixRODVEHMflBCi71CdF90G3RL5ZGoFUg==
+X-Received: by 2002:a05:6000:26c6:b0:3ec:d7eb:7d30 with SMTP id ffacd0b85a97d-3ee861f839bmr1589644f8f.49.1758271241312;
+        Fri, 19 Sep 2025 01:40:41 -0700 (PDT)
+Received: from fedora ([94.73.32.0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f320e2000sm80102345e9.1.2025.09.19.01.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 01:40:40 -0700 (PDT)
+Date: Fri, 19 Sep 2025 10:40:38 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: =?utf-8?B?5Y2i5Zu95a6P?= <luguohong@xiaomi.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jikos@kernel.org, bentiss@kernel.org, dmitry.torokhov@gmail.com
+Cc: =?utf-8?B?5p2O6bmP?= <lipeng43@xiaomi.com>,
+	Fei1 Jiang =?utf-8?B?6JKL6aOe?= <jiangfei1@xiaomi.com>,
+	=?utf-8?B?5a6L5a+G5a+G?= <songmimi@xiaomi.com>
+Subject: Re: The zero power level of the HID device in kernel 6.12 is not
+ reported from the kernel to the upper layer.
+Message-ID: <aM0XBudxlXuzALbg@fedora>
+References: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d2cada7efe8d4436b6e638fa1e0aaefb@xiaomi.com>
 
-On Thu, 18 Sep 2025 17:33:15 -0700
-Jacob Keller <jacob.e.keller@intel.com> wrote:
+Hi 卢国宏,
 
-> James Clark reported off list that the broadcom PHY PTP driver was
-> incorrectly handling PTP_EXTTS_REQUEST and PTP_PEROUT_REQUEST ioctls since
-> the conversion to the .supported_*_flags fields. This series fixes the
-> driver to correctly report its flags through the .supported_perout_flags
-> and .supported_extts_flags fields. It also contains an update to comment
-> the behavior of the PTP_STRICT_FLAGS being always enabled for
-> PTP_EXTTS_REQUEST2.
->=20
-> I plan to follow up this series with some improvements to the PTP
-> documentation better explaining each flag and the expectation of the driv=
-er
-> APIs.
->=20
-> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+Thanks for reporting this issue.
 
-Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+In the furure, when reporting bugs, it is prefered to send them to the
+mailing list (linux-input@vger.kernel.org and linux-kernel@vger.kernel.org)
+to discuss them in public.
 
-Thank you!
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Let me forward your email to the mailing list and also CC Dmitry, the
+author of that code, who might help us understand the problem.
+
+On Tue, Sep 16, 2025 at 12:29:32PM +0000, 卢国宏 wrote:
+> Hi, jose!
+>
+> We encountered a problem where the zero battery level of the HID device
+> in kernel 6.12 was not reported from the kernel to the upper layer.
+> I checked the HID protocol and it doesn't say that there is no need to
+> report the zero power of the HID device. For details, see page 381 of
+> the HID protocol, 31.4 Battery Measures. "Absolute State Of Charge DV
+> The predicted remaining battery capacity expressed as a percentage of
+> design capacity. (Units are %. The value may be greater than 100%.)".
+> However, in the file hid-input.c in kernel 6.12, the following code：
+> 
+> static void hidinput_update_battery(struct hid_device *dev, unsigned int usage,
+>                                     int value)
+> {
+>         int capacity;
+> 
+>         if (!dev->battery)
+>                 return;
+> 
+>         if (hidinput_update_battery_charge_status(dev, usage, value)) {
+>                 power_supply_changed(dev->battery);
+>                 return;
+>         }
+> 
+>         if (value == 0 || value < dev->battery_min || value > dev->battery_max)
+>                 return;
+> 
+>         capacity = hidinput_scale_battery_capacity(dev, value);
+> 
+>          ......
+> 
+> }
+> 
+> The parameter value is the power level. When the value is 0, the above code
+> returns without reporting.
+> Is this a problem?
+> We're currently experiencing this issue on Android 16. The upper layer of
+> Android needs to receive a zero battery level before it can take appropriate
+> action.
+> Could you please help me evaluate whether we should remove the behavior of
+> returning to zero battery?
+>
+> Thanks!
+> #/******本邮件及其附件含有小米公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！ This e-mail and its attachments contain confidential information from XIAOMI, which is intended only for the person or entity whose address is listed above. Any use of the information contained herein in any way (including, but not limited to, total or partial disclosure, reproduction, or dissemination) by persons other than the intended recipient(s) is prohibited. If you receive this e-mail in error, please notify the sender by phone or email immediately and delete it!******/#
+
+It indeed looks like it could be problematic.
+
+Values are allowed ot be grater than 100, however, I didn't find
+any references to negative values. Since it is a percentage, it
+make sense to limit it to 0%, i.e., not allowing negative values.
+
+I think that removing the "value == 0" check, or replacing it with
+"value < 0" should fix the issue.
+
+By the way, the "Fully Discharged" value (0x00850047), section 31.3.1,
+is not handled by the kernel. Do you know if Android handles that
+instead or in addition to a 0% battery?
+
+Jose
 
