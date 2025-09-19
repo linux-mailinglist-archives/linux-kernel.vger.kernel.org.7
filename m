@@ -1,152 +1,91 @@
-Return-Path: <linux-kernel+bounces-823864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD00EB87991
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:29:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60525B87994
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919387C8165
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 109137A6CBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A8A23D28F;
-	Fri, 19 Sep 2025 01:28:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2790238C36;
+	Fri, 19 Sep 2025 01:29:25 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19070189;
-	Fri, 19 Sep 2025 01:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C367722069A
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 01:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758245339; cv=none; b=LxjBMO3e/4WO0kwnp+pzGPz9eBJbsMCwlIe2kZAYC5c2FDGr1HocnOSADLESOcn8tE3ATeutyW+oc2n7x88tWTCEKhjzIGRAteFV4/lHm6UYa/bAKwg4O2Bmh01CQsDkOre3B7rl6iezvgxThjalBGq0GhtqHAPJ5eqcoPU4N+g=
+	t=1758245365; cv=none; b=R4uL4K4tdXiLPBeugbAhq77PBUWX6JPBfb6wu/SYDqgAdWdkE3I0T/a+GdndxQhLgyTd3SiWlNc26UhePAbbeO2Yb+9v0rBoEt7lUk66V3zc21qwj90OnSgY4qqfQcA9nPXRA8/yu1BEJqjUK9Nlv8QRQCZdYwXfUdy3bITWMrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758245339; c=relaxed/simple;
-	bh=beRbRfRtwY3JAiodbdYptrbjM59UwQ3ombgy/IWrSUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jSt2jx4op6Jf3lFTMF/GxoQgqK85KNNNx0+MTBY/fC6Ph2tyEetN479U3tgFQzxwnloUxrHODKZSaoE/zLtAxWuPNk9gXVtvSpswflfTaSNlw1UlfgkOMQJW0Yq38qYzSFlGtL+Irp2GH8B6P4wXem6pfjAyO0BD8GFy3/DOCyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cSZfJ3zC0zYQtf0;
-	Fri, 19 Sep 2025 09:28:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 359881A1B78;
-	Fri, 19 Sep 2025 09:28:55 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgBnK2PUscxo6lxAAA--.17696S3;
-	Fri, 19 Sep 2025 09:28:53 +0800 (CST)
-Message-ID: <cbce67bc-74c6-0c99-fdba-48cd8aa27dda@huaweicloud.com>
-Date: Fri, 19 Sep 2025 09:28:52 +0800
+	s=arc-20240116; t=1758245365; c=relaxed/simple;
+	bh=A09M7zGJ5poDd1VXV/aQuZzqoopz8Cvjgvey8UKJhAk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Zuotol3CAgmHCCwtywHAYTGM1qIcWfdhm6guBMtJNAdWebAo4wbUUiSWfGjqnCz1k2YkmYx0/JelLIM8qSPXO5+hBsQ3mFSCCFkRo3xsvecre02LXaUDhNIneoVrwSa38u3YynTnrBoPslJpt7kDPmRMXgoTN44Yb62Pl6QwJ+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4240a41d2caso19349485ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 18 Sep 2025 18:29:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758245363; x=1758850163;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zoSzpzm+OAkYWS2IRLuWR34e51fxY8fGfADcgfdZygk=;
+        b=ERB205gkzszAi9xAzP2jTA9DtinMrj3xylIFpUukVEQcWM5jonMZKW5jOQXdnJKQYS
+         Y3Dqu0LoRFXf9A7IVnRnnZ8iRtiVh0vQNdIpZBs32iNBG2gJcc0qXDz1BLChnn3806OZ
+         CtdYIQ0VBLaaM7Cc1SEeDysyIOS6dTM/0vr0FIbRRpLudyc9UMe9P4/zmB+EKRnS2EzK
+         uowcg4BeQYRNb2KhfCb83UVmmhn2XZr6SOZOm5F6PULkJA6AvuKmaHe1L90dsXQiWwVf
+         tJwOGTys6z51QCQ9bfXazkoGGBfhO7KPlmNAw3GtFLPQe12ePJ1Jcq61vbmVQy7bxCuA
+         p9Lg==
+X-Gm-Message-State: AOJu0Yy4ugjSgJP/TRdl/mOvFNk3vLtLs4ux603iywPXAtVHerCN4euu
+	bO35YNr5hTORWqHgaebinWqC7CPN4imhwf3bDG5uyom/TeLdvqOLCY1umYnoYO0CQYU6c7k9A3Y
+	z7eMezr25KnM9j8ZBrl2I3D5wsTP+tZN2SUcZS9TRAdm8009Qwg8eZ8SmK1Y=
+X-Google-Smtp-Source: AGHT+IGQxHliYcG+W+QP14hPNGkQMMhTNAbPJVhr9oOLXIChmVG0R0mcNKa955HTv2f7qDfvWq9CGkfD5WXLUD7UWPDDuzuJjOUE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v4 6/9] md/raid1,raid10: Fix missing retries Failfast
- write bios on no-bbl rdevs
-To: Kenta Akagi <k@mgml.me>, linan666@huaweicloud.com, song@kernel.org,
- yukuai3@huawei.com, mtkaczyk@kernel.org, shli@fb.com, jgq516@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <010601995da37ff4-b47cc6d9-a75b-4ef0-bced-e5a9a55c3f77-000000@ap-northeast-1.amazonses.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <010601995da37ff4-b47cc6d9-a75b-4ef0-bced-e5a9a55c3f77-000000@ap-northeast-1.amazonses.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBnK2PUscxo6lxAAA--.17696S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF1Uuw1rur43JrWUCr45ZFb_yoW5Xr4Up3
-	4kJFyrJrWUXr10q3W8tw1jqFyrt3y7Ga1DXr1UXF1UJ390yr12qF48XryYgF1jqrs7Gr17
-	Xr4UWrZrZFyUJwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUAxhLUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6e02:1746:b0:424:6fe:43c1 with SMTP id
+ e9e14a558f8ab-42481968974mr26152925ab.19.1758245362953; Thu, 18 Sep 2025
+ 18:29:22 -0700 (PDT)
+Date: Thu, 18 Sep 2025 18:29:22 -0700
+In-Reply-To: <68cb3c24.050a0220.50883.0028.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ccb1f2.a00a0220.37dadf.0010.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+From: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-在 2025/9/19 0:23, Kenta Akagi 写道:
-> 
-> 
-> On 2025/09/18 15:58, Li Nan wrote:
->>
->>
->> 在 2025/9/17 21:33, Kenta Akagi 写道:
->>>
->>>
->>> On 2025/09/17 19:06, Li Nan wrote:
->>>>
->>>>
->>>> 在 2025/9/15 11:42, Kenta Akagi 写道:
->>>>> In the current implementation, write failures are not retried on rdevs
->>>>> with badblocks disabled. This is because narrow_write_error, which issues
->>>>> retry bios, immediately returns when badblocks are disabled. As a result,
->>>>> a single write failure on such an rdev will immediately mark it as Faulty.
->>>>>
->>>>
->>>> IMO, there's no need to add extra logic for scenarios where badblocks
->>>> is not enabled. Do you have real-world scenarios where badblocks is
->>>> disabled?
->>>
->>> No, badblocks are enabled in my environment.
->>> I'm fine if it's not added, but I still think it's worth adding WARN_ON like:
->>>
->>> @@ -2553,13 +2554,17 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
->>>     fail = true;
->>> + WARN_ON( (bio->bi_opf & MD_FAILFAST) && (rdev->badblocks.shift < 0) );
->>>     if (!narrow_write_error(r1_bio, m))
->>>
->>> What do you think?
->>>
->>
->> How about this?
->>
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -2522,10 +2522,11 @@ static bool narrow_write_error(struct r1bio *r1_bio, int i)
->>          bool ok = true;
->>
->>          if (rdev->badblocks.shift < 0)
->> -               return false;
->> +               block_sectors = bdev_logical_block_size(rdev->bdev) >> 9;
->> +       else
->> +               block_sectors = roundup(1 << rdev->badblocks.shift,
->> +                                       bdev_logical_block_size(rdev->bdev) >> 9);
->>
->> -       block_sectors = roundup(1 << rdev->badblocks.shift,
->> -                               bdev_logical_block_size(rdev->bdev) >> 9);
->>          sector = r1_bio->sector;
->>          sectors = ((sector + block_sectors)
->>                     & ~(sector_t)(block_sectors - 1))
->>
->> rdev_set_badblocks() checks shift, too. rdev is marked to Faulty if setting
->> badblocks fails.
-> 
-> Sounds good. If badblocks are disabled, rdev_set_badblocks() returns false, so there
-> should be no problem.
-> 
-> Can this be included in the cleanup?
-> https://lore.kernel.org/linux-raid/20250917093508.456790-3-linan666@huaweicloud.com/T/#u
-> 
-> or should I resend this patch as proposed?
+Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+Author: lizhi.xu@windriver.com
 
-Yes, please resend. I will rewrite my patch.
+#syz test
 
--- 
-Thanks,
-Nan
-
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 731622d0738d..ca7a6746f8ef 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -356,8 +356,8 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 				buf->len = 0;
+ 			}
+ 
++			wake_writer |= pipe_full(head, tail, pipe->max_usage);
+ 			if (!buf->len) {
+-				wake_writer |= pipe_full(head, tail, pipe->max_usage);
+ 				tail = pipe_update_tail(pipe, buf, tail);
+ 			}
+ 			total_len -= chars;
 
