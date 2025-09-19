@@ -1,114 +1,314 @@
-Return-Path: <linux-kernel+bounces-824454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE1CB89464
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C5DB89491
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 947311C88263
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96407C7A86
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0547E30DD0E;
-	Fri, 19 Sep 2025 11:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3112FC00E;
+	Fri, 19 Sep 2025 11:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="baPpSguH"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="Ji/BJbBI"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A062264D5
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758281353; cv=none; b=a55pE5bk3Yu/AZ3C/6TYFfDo034fIqVuIzwijmYQ/LpQPLsiGuaUcxf2Z1RauX39ogb3xoJaAIpZmTmwALC86yMYub/neLp12grMPkybN5d5T1hBoimmuW8EB5U6GOIdJNYSF/rmBdIzJEesCBGx0cl9f+rTdNKo3Y92O/Ng2Kc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758281353; c=relaxed/simple;
-	bh=hoyRD8cY6+eAWp0Ym0oqTHL+yd0Dp6KCPwO2D3eCKJ0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Er1ysE7YdDdCFC8QufMrlpRk05L13TcDQicCWqkv1kVQVHFZ/Xo7D2njNAC2cASh7pyaHmL5dJrB38VRWewTkElIYrGY6TgTBxmijDPTjEipWUwSsQ36znnnqk6y+hb/20ZvretHM1Yl0Wnc8DbzhUeiTssd1Ok77HtfX24Zp0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=baPpSguH; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d5fb5e34cso20583417b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1758281351; x=1758886151; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=G7lPhtBvPOvEeVY2Tw1J4kWk3fxAvD+cbqglxKZ4L5k=;
-        b=baPpSguH8CfCw51lUwZAi/EBle9vHTKVGZghlCMQ1aSKCDkTGXSnMyt62sqhIOYLVS
-         D2aspQ7wqNL2Y26urF7lCY1dj5WPs4rn5BcMWF7RO2/qTm/0iFeUz3eRBDDTA4et8BSO
-         cLeLBSh5Nyiss4zTJB1iOP4xJLl39Rv4eTrSEKeYRBY/0oCiTLxwKeWxqqWoLgRM3Pes
-         VUOMydwke5rpcTX/SXmG+SP8E/8FEbq1QEeZM6XS5HwiAnY0ofy99NXCADBZkI3JSQ+/
-         o9vFxrAX/w6cfdbLcbBZSx0ZUj6AHIeWDL/4lOQhtxgiP/XCo0A050JmuoOgHeb8mPc4
-         7TLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758281351; x=1758886151;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G7lPhtBvPOvEeVY2Tw1J4kWk3fxAvD+cbqglxKZ4L5k=;
-        b=bHQo2MgrrQFh09OT5CIHGNtzIBDozwf1N1zhl0BeS7rTGHvLrDHJoNwqNcpyiTE7mJ
-         Qh5HneuXl8mXQI1IF6L89UiWjHJ0yKDyrBA4AJq5BeXx+HwKt4j6mRqURk5rzhP+fjBQ
-         RQhG1RYSa490bIvMMyjvmVjYn0ywd1/wr3UNIXbSAv4uBfDm99rZkfNta3hs7gM0wzIw
-         2O7O2dSEa+W1GApO8jX2zhBDybTYIM3xTPUL7mQjm7aoYiV0c5CuXvpzjuZgTZoSl8DP
-         dA8SJMYq4Bf6DwiwzTWEaOaxZvARi428VAROUVoSnUIiFejB6EktP5bCqzEnUrvs9JRn
-         mZcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCCSrgr3YpJq3a+gx07AD72/j57F6WA63SkZm7dOW9JU8bMoLxhkMHixw4e0ZE3mF4GnUpHTYja44fxJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy333YcQZ11KQBmqfc5BkPSjpZ2MPj3WbjKV7q2EaCrSDMlTyOo
-	tlBhbcGwTAhXy8Wqg2nu4tujCwssbsEFqVbyW76hvR7hqB0vgVDNhqI7fPipDQiWsSI=
-X-Gm-Gg: ASbGncsYXZQyMn6D6bdiGb+4OT3F5WKTpejH9QN4K85pyCF4bYMbCkEZamQ6DWuRw5J
-	/31Gm0UEyzE11wdaGt+DguM/hg8AaMf2TdU8+HfP9g74kIU/sRyDrdAg8rQHa/FaPyoUxD/zW6c
-	EF7cg1SOkR4WPt0qvcKa59DUUq/Ud7FEvqlQno6LMOyzcfJay58cnnnLG6vAnrxn+fidTZNzcbA
-	UMCTlouYTnURLxJdQQwH2Fk9aHS70uYJj/X0h0uYAIKL5IcsvirpmS3Fbam48yaaw6J0OB0GDlc
-	fUsKgn4GYXWa0yoIHEZe7+h1HrO+gzxHFlHtjuhoDgR3/fMYhqMBZPBII+kNm6ZNSVZSuwWy6dI
-	mVI6hL/r70IkHiA==
-X-Google-Smtp-Source: AGHT+IG343kCVS+/qgurkYvvVqrq3Jkl6cJnzpfAyvWHus5fb7J8doUVLBe/IYPk5awTCYhicojNVg==
-X-Received: by 2002:a05:690c:9506:b0:733:aa00:3860 with SMTP id 00721157ae682-739708ca5b2mr47901377b3.23.1758281350992;
-        Fri, 19 Sep 2025 04:29:10 -0700 (PDT)
-Received: from cloudflare.com ([2a09:bac6:d677:2432::39b:31])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-739716bdc47sm13585717b3.12.2025.09.19.04.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 04:29:10 -0700 (PDT)
-From: Jakub Sitnicki <jakub@cloudflare.com>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
- <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
- KaFai Lau <martin.lau@linux.dev>,  Eduard Zingerman <eddyz87@gmail.com>,
-  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
-  John Fastabend <john.fastabend@gmail.com>,  KP Singh
- <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
- <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Mykola Lysenko
- <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>,  bpf@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next 2/5] selftests/bpf: sockmap_redir: Fix OOB
- handling
-In-Reply-To: <01f6c3f5-be73-4505-8a34-212dee30b5fc@rbox.co> (Michal Luczaj's
-	message of "Fri, 5 Sep 2025 13:19:46 +0200")
-References: <20250905-redir-test-pass-drop-v1-0-9d9e43ff40df@rbox.co>
-	<20250905-redir-test-pass-drop-v1-2-9d9e43ff40df@rbox.co>
-	<01f6c3f5-be73-4505-8a34-212dee30b5fc@rbox.co>
-Date: Fri, 19 Sep 2025 13:29:08 +0200
-Message-ID: <87348iu1dn.fsf@cloudflare.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271EE30C100
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 11:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758281631; cv=fail; b=ZwKSHlhh2VNAZkO09pg9mZT1lEnt390LBl0qojcyKjaZBwJeP8aJyH5hbZCZUtSLmNprCzvGSc+ErBDg1i2U1KyrBpefjqUBpoJzk9TjOlOAL4kdM4kMxGUThnu5azBNTHAATdQtUNQm8GIUWqpTu6Ja+2OGTnLQpNAqFStNC0Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758281631; c=relaxed/simple;
+	bh=75T08u8qjKkajcoNCXvCRvLQOrKx+TqhjvAhOjicwTg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NeQGWPbn3lo9Q81h8HpePn11lAozcDLyi5sozL5qC++8mf/jAYPxwz93EUt9CBPcKKMsRSt1gMgZ7Yh+GIrbinlkZQPlHgLKInfbnRVX3TEZsyvrpUxrRv1uPRqvcEzwvXqzpQ9a5pZj0nBQnOnS/iO+Zg0ma+diOC7Q3vAlhnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=Ji/BJbBI; arc=fail smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58J6FuUF2080084;
+	Fri, 19 Sep 2025 04:33:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=bd0LCvQ78gHNrp1Kat68g6fiUZy0wFvY8BWZVXR9DBc=; b=Ji/BJbBIs1nj
+	4Jl8D11jlXtof1TSjyXIiXzlof8Y7jR+5pllHh4Ykjf+MjOHGYu+8imJxaDTSeoX
+	ozCIkhoweaZQl0Ab7TWz7mN3DR8d8uusSNaYSjEb7uohCLYz6giOhwuUKjtIxZgj
+	xnV5SeOupY/ctz+qtomu96VG8GsH7DDqeqqGq15lQ3IVfe0i4w/Hd3VnWeZtWxoR
+	Z+fHuC33jFINmKLA3OyJRwGeY4hCTRNeKNTy4WAcxwyOFtOC6kb91x51l62rQBCf
+	OBVbiIpHEoYpcIOr7nGwBD0gOSBgU9os+x6p6NJxtQP6eqFWbl3tG8aKPwpmg7j0
+	FFm7Ox0sZw==
+Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010008.outbound.protection.outlook.com [52.101.56.8])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4991rnhh43-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 04:33:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mIUA6ee5bEBNfPSvzIgoKWmfQgHA3j9POIH+MsCSnlJQIAQ2TQ1KbXjShI3Wa0dm1GD437fe/0r5izVWZBzTgCfV/vifq4wUTJgWO2gYzun8knOA4tp0V30ZAVRSkrt177Cyt5fSQabk68pC8WCKD2yX6UyuFcNNtl4a066Dg/CNlaXzHekySOxDb4espBACt4gVvP4YIOUB9zbAPegZvHTjy73X1gWgaCI681zls3frHDa5m5jgtb1kFxz1zi63TiABeGVSwSTBdkrmv43T0vx7GF2HdJJCummRJogRneTY+lWqIjWy/APIuE7f1R4zwGyINfkzUD06+9wGDic5UQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bd0LCvQ78gHNrp1Kat68g6fiUZy0wFvY8BWZVXR9DBc=;
+ b=dBnQ+dU1D8isW3wB8i0tXpobN0TEoMS38tr3xKsyoharN79k6mtv9v3bfNKpO2ADU6Ahu9RnzhSX0w8dq9jx3sGr6HVvaDxqZK1k8gD2u7QIQUGBNEM9EqjtPJY8/uuhHfcuqMAbGLUWwbyP/bABawZmHqsT8/bQQDIiDboTEDMutHGI+lLCDXFF36/+DMl4mCsFX1W2JxufDMos5UVEwg35KtnGpOZdPdUKxTmIKTNBLW++MKHnfDlIxzkow24nMgZwVyM6XbOGqAjzpianE2qj/HVyBZ5n8uPnMxU9N39aR0LhT1acA7xBp1sDytXd7APJ/pSMMvd7vxAicAN+Qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
+ by DS0PR15MB6144.namprd15.prod.outlook.com (2603:10b6:8:117::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Fri, 19 Sep
+ 2025 11:33:17 +0000
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e]) by LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e%4]) with mapi id 15.20.9137.012; Fri, 19 Sep 2025
+ 11:33:16 +0000
+Message-ID: <21e6367f-7082-4b9e-8562-3d498abb629f@meta.com>
+Date: Fri, 19 Sep 2025 07:33:06 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 05/15] mm/migrate_device: handle partially mapped folios
+ during collection
+To: Balbir Singh <balbirs@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        dri-devel@lists.freedesktop.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+        Matthew Brost <matthew.brost@intel.com>,
+        Francois Dugast <francois.dugast@intel.com>
+References: <20250918164213.2866702-1-clm@meta.com>
+ <5e4af716-e4ed-4c03-9ba9-6242977258d8@nvidia.com>
+From: Chris Mason <clm@meta.com>
+Content-Language: en-US
+In-Reply-To: <5e4af716-e4ed-4c03-9ba9-6242977258d8@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9PR03CA0271.namprd03.prod.outlook.com
+ (2603:10b6:408:f5::6) To LV3PR15MB6455.namprd15.prod.outlook.com
+ (2603:10b6:408:1ad::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|DS0PR15MB6144:EE_
+X-MS-Office365-Filtering-Correlation-Id: 269f1ae8-2c5d-4ad6-58e3-08ddf770539c
+X-FB-Source: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b25iaVdKdHUxUHBvU04rSHd6Z2xHN0FkSTFSSnlCL1h3TkNJMmFUdWs3emRk?=
+ =?utf-8?B?aFgxaVY4cnQ3d0xLdDJuMlNVTm9OcTY1Ykp4L3pjcmxaTTNsQWZkWW9WUWlT?=
+ =?utf-8?B?dWM5b2wyR2VKV1RlaWsrQ3VDRHdZNFhuUkxmWmRvVG9GV3R4d0tGaHBNOGVU?=
+ =?utf-8?B?OEdteGhDZ09neCsxZDYrVVZrNUZyaFNZZUcvWUoyYjNIUWNoTjNyM1NmUk54?=
+ =?utf-8?B?Y1R2bXZISmJVWTRsd0dham50cGhmNkdORTBtQ2pZajBZcmY0OFZwSGVHTnhY?=
+ =?utf-8?B?cWtNYnVob1RyK0I1Y0QramNsVHFFa3FuSmlQWW9ZZnRGTU1DL1RNTlpsMWl1?=
+ =?utf-8?B?ZEkzOHZpS21hdjcweDhpcDMvNVovMHBoVFpnREh5bTRsQVJvckpvbEhjaVh3?=
+ =?utf-8?B?WTZKeDQ1Q29zL3JndWw2VVpOcllYNkVBc0RoTEdQZHR2UStMY1Q0aXVwS1BN?=
+ =?utf-8?B?T3FnNEpnVm5KbzB2UXl5cktJU001TFB6NEtwUjNKZnNkeUpzWkpMbkxtQWc3?=
+ =?utf-8?B?NENsdDJVVlo0UDVsOC8yVWRMMU1ZcXgyTmYydzNiYWJQU2lKTW1CUHBXMkVF?=
+ =?utf-8?B?R21tU3JOWWR5UlhpWEpsUEg2U0hhVW1sc1IrZU9SVkpzd1oydHY4bHVxNHRJ?=
+ =?utf-8?B?YTUwaEJrNmhUYVFYN0svdWhidGZKeFovRlBYZVV2OTBvYUtRTWpEUWNsUVk3?=
+ =?utf-8?B?L1RiV2ZxUk1BR2MvS1hMQnpsREFkRTgzOUFGOVhqK2NuYTFpYkErdHNJblBq?=
+ =?utf-8?B?dkZtdDZ3NnE0UStoSEhrMitDVkNJREtMMW5uNXVaMHo4WlRyTFhGU2VhNFYv?=
+ =?utf-8?B?ZVhxOFVacXdJRmJ4TXA1UFFHSDlKc0kzMHE0blRDdVljUDJMMWwzVzdRek5S?=
+ =?utf-8?B?UHNJcUpUYnNaWGQ4dG01UVpFZ2pnWEtSUmFwYVlrNW9EdmlhUHAvZ0VTY3Zp?=
+ =?utf-8?B?WUk4RUdiTUxSaFE0KzMyM0RrZS9VUVVnejdDU204ZHhvUDVTVmVxNUJ0RzEz?=
+ =?utf-8?B?ZUV5bG5MMWVIbkd6UVN5bXlSSXVBNUhLemRTZDV6Lzlubjh3MzcvRDBjcTFC?=
+ =?utf-8?B?M0dTbHlqVDZUSEtBc09hRGlrWno3MTRVQ1BhTEE2Y1ptbVZXQ0hUS3pTZldE?=
+ =?utf-8?B?V2p1aVYwQlY0UXFydWhWTVliL0pHUzRaQjRQWDhiUW9ISmVrQVFjbElzSW82?=
+ =?utf-8?B?UFoydGlIMmlQNzYxdFQvTVcxMDZERXlTTjVIVmdJN1dkRFo1L1lQa1lpRzhQ?=
+ =?utf-8?B?SG90ZTBlVXZENTJsaXJWRmNwTXZ4MGUyd3dTd3YvZHFFV2xNRHJHVEVBaTZW?=
+ =?utf-8?B?MG5zTHJWTnR6UXVVaDNkbVg2cnlqbGRvZzF2Umo5dVQ2Q2o2dzVweVhnR2Ft?=
+ =?utf-8?B?WWp1eUhEaGxyY0ZFS0NHRUhQV25mbjBGcGlFRFBoNmU0WFhFdGdLSE1ZSFdV?=
+ =?utf-8?B?d1gyT2ZCNWd3SVAvOWxQeW1JWTFTaCswZGJLeHdmSC9pSDFTNjRqa1RTNUl1?=
+ =?utf-8?B?NDVYb29maFFDSHZRZGJNYWl4VDdIYkxVVGx3S1lBU2ZYanBaZy8vTmxDWktE?=
+ =?utf-8?B?QnlVSkYrRkpnQ3UrUDk1R2VKSkVBanlVcFQrTk84Mk1URUtUSDNvSjdTcHZR?=
+ =?utf-8?B?cEtPK3oycm8rSGtYbHdEVWxhS3VqYVg5MmltM3NEMENKbko1RTN6LzR4dDM5?=
+ =?utf-8?B?bCtBcmc1dnE3VXhvS3A4RGZ4bGxLQXBuUytxdldIOWluTHNQZ3V0M2ZGakw5?=
+ =?utf-8?B?UjVkV3ZVTURmRVRyQy9jUktGZDEwVFhHRllpc2NDNEU4anBSK09xdmNGS2RP?=
+ =?utf-8?B?YlpYRzBlU1RsQ0lJYk9WcGlhRFl2K2JXVm5FQVB2dW1vekx1UDdSOFZTWlh1?=
+ =?utf-8?B?aXJ5MmNTcnQ1SU5mTTdpK3IrK0JVUjlWZEtiUXpLM2JRVFVFSUpVenJQWlFJ?=
+ =?utf-8?Q?OM1JZR2Z0Dw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MGxGSnhlekJBMkg3NGdpV21RZFNoNTN3Y1dGSWVSbENvRFVhV2I0VGl4Ykhr?=
+ =?utf-8?B?K0Q1Q1N3OTRieXZ1QzRkTVVvV1RDVlFJdUtuaVVCY0xzODBrT2VsSHJCQ2gv?=
+ =?utf-8?B?QkxJQXJQS3lNaDRtTjRUeHpuNEZ3OWl4SDZvMytONDhnWEFHT242bHF2Zlpn?=
+ =?utf-8?B?eE1UbzN4RWN1UDU3NHlxQnVveVdJT0RtZ29UY3FCVGg4SUkxK28wczArTDRp?=
+ =?utf-8?B?S0l6RlB4R0d5TzIvckdmcjNvcFFmQjN5WVhOeHpucUxJSFpBQVN6TEZDWFN6?=
+ =?utf-8?B?SW0zckJGUEc3UlJja0lkUGhZMnpQbzdPL3ZQT0RxZWpXakI3c2k0U2E1L25x?=
+ =?utf-8?B?OE5kOEMrUUQ5ZldCOU5RSlh6NWRSZnRSc0hMMjcwZXpVMDFtS2MybUpnRnJO?=
+ =?utf-8?B?K2JzNXR1L3REZ2hOWk0rdkZGRTJzbUxPc1FodVhaWCt5bnpjQ1pmVkhwQlBy?=
+ =?utf-8?B?YnpHUjVoaW1BcmlESjFXTzFIRlZvV2RQRmpkT1ErVFpRZUQxMzlUNGk4VjVy?=
+ =?utf-8?B?Ni9FY0lGRzF4Q0tNMWVsdXl4YUN0eExXMk9vR0FhNHZoQkRyTDlCTnZkUlRs?=
+ =?utf-8?B?OHI4a1JLN0ZGaEQ3TjBtbzFJTHBIaHFVeWlsM0prM2NLTm83WE5UcWFrTnlo?=
+ =?utf-8?B?MVh5d3B4L2VWOS9rS0NobTBiUitpbHJtckx5Vkx3T2hiY3R1T1huY1dub0Fr?=
+ =?utf-8?B?bTNxRVlUUEY5T0dLaWM1aTcySkY2Q1ByamExN1BYSVRLcVQ5T0dOUnFaNkFN?=
+ =?utf-8?B?MktFT2UrMnlwcmF5UFZ6RVoxVDcyZU9lbGtVRnNCVlV5cERNZGdTc1lWbG5a?=
+ =?utf-8?B?ck85NzdmK1h4dnVkbGhjN01VaCttVVVIczlKeGhxWUFqZW1qUDRUcWdkcGV5?=
+ =?utf-8?B?UHY3T3pScS9nakc4akZTWGFTT0ZWMHhMWGt4T0lsTjhpN0tmR3d4SkhGT1ZE?=
+ =?utf-8?B?UzVKYUZFci8xcWVhM3g5THVNaElCSmNvV25vc3gwNVVVWDVoS1R1dUhWdUhF?=
+ =?utf-8?B?eWlQMUl1bkxrdzNNYXl3eUNhRVB0anNLcnZJZUc4ZG5WaTF4czFxZmMzd3N6?=
+ =?utf-8?B?T1VlOWQ2bm5uQllkNTBDemVjMzNwcHFma2FwZ01BTWNiaFFKWGtpVjB6eUcy?=
+ =?utf-8?B?bUZkSFFoUVZocXRsTHZaOUpaNVpyS0Y0aFJpUThheXg2U1dOcm41RlFSdENL?=
+ =?utf-8?B?VUZQRlJEaFdhMllBdWpuanllaUUzeVEzdDVNSkpJWXJqc1c2Z1Mrem8vbWhs?=
+ =?utf-8?B?eE5vNmJiTFVOR3FkeGovSS9zdGhEOHRpMkZ2K3gwS2EyWWxSUGVsdjZXRUtr?=
+ =?utf-8?B?Zk5DNzhaRUxCVHY0MXMvWUhqNEdyYi9mODNEblBXNHBRc25leU1KMjEybStD?=
+ =?utf-8?B?WlQ5SkhmUGdsdUczL2c3RnAxdWZycDhNRFFzcXFwQUw0Q2I0b3JRSzlKUHAy?=
+ =?utf-8?B?Y0NhRHhuQklRZCszZjluQlB0Zm1PYjF5eDBLOVk4bEdQVWJtdklxVndYVnNY?=
+ =?utf-8?B?Z0wvalgvekpIejZZVEN0Qk5KMThycWgyd2V1MkQ0S0tBRlBJN09EclJuREQx?=
+ =?utf-8?B?R21kRWQvWVY0QjFaRmN1NGw1ZjZzVGFrY1I3SkUzTUgvVWJhTlBnUGVhTHp0?=
+ =?utf-8?B?Z3ljdFF6M3Jpd3h6bXNGQkJMaXRSQjN6K0srK1BWMjZDSkFyK3JQK0RQL083?=
+ =?utf-8?B?a1RsZGpuQjJqbXZqZHpkMGdFdi9ZNSt1SVVMRDY5ZHpTcHFnT096M1BQcG52?=
+ =?utf-8?B?MHFoQk5DZWJGc3pPYkIwbGVzSG9LcXZ0VjVxOE9wc1gvN2tpOGRYa3FWbUVi?=
+ =?utf-8?B?TGt4WGdTVWZxWTN4bC9lVDVHVUgxbnU4L2xLR0cyalhCYUx1T0VxRDFjUC9T?=
+ =?utf-8?B?NDFydzVkQ21wUnBkMDkvMUkvVG5yUmhxcDhxZVFaYUtUK3lPQjArVHV4N3Q0?=
+ =?utf-8?B?Nk9qVVpzU29FdElLQks1bWd6aGEyN3hsQk5ZU3ZSTExMMXdvc28vZ01KaTNw?=
+ =?utf-8?B?d2FjYWZRbUtnOW9OUHduTHk1Q2JTeHVqMkx2TUhGN3pmQXBqSlVMUmxXaGJP?=
+ =?utf-8?B?dHB6cEplYWtnOVE1ZXhwdTlhckN4NU9Xd1M1SXVkRU5NSW9hS2NNaXpaSFY1?=
+ =?utf-8?Q?ccuY=3D?=
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 269f1ae8-2c5d-4ad6-58e3-08ddf770539c
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 11:33:16.9175
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Pju9Ud1UY9f/Zao4Um97YaxGwJO3sQoJT3ItyngQ8DXv0dkWwXICIqI/5JSu0Ngy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR15MB6144
+X-Authority-Analysis: v=2.4 cv=aqmyCTZV c=1 sm=1 tr=0 ts=68cd3f7e cx=c_pps
+ a=UZZKR2DsB1PZv1vhPkDPDA==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Ikd4Dj_1AAAA:8
+ a=ZRQU4wQQffI-jn68eZMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDEwNyBTYWx0ZWRfXxcACTtAAsVKl
+ V62UOBa/iWYHui2PCOHpsjfgo2+8ipCyMX/aulxaIqucjieUqWm53WOb9k0KX5agj+jae4ZePKX
+ IXDJUaeFZLFdjjt5UdMzXZBi9EVceLR/5Z9LyvaZ+Sfdbdghw82T2M+B3kh8h55NUyYTRNzMuXK
+ i1QwkGy9yDbs3QUmMMVjizYt2emU5lzX6YVl/5SaCMcpm3gjtdoaetcvG425oYdn6FTOvUm1EPt
+ MInZu1sG6AKqg1S1vy/c+3EIbdtZsSsfg7quz/Nb22ygSGoyRlBWvoi+nwJTJbx42zLC7IZGK6E
+ UblWRKsE4+m+y3blkQwKlwBPfHNcmPt7xU9UqhxRjhN1UGOOTI/JP5e/YC7lQI=
+X-Proofpoint-GUID: uerNRN3zmzjLMCfh8HqpYs6LNJ0PGnLX
+X-Proofpoint-ORIG-GUID: uerNRN3zmzjLMCfh8HqpYs6LNJ0PGnLX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_01,2025-09-19_01,2025-03-28_01
 
-On Fri, Sep 05, 2025 at 01:19 PM +02, Michal Luczaj wrote:
-> On 9/5/25 13:11, Michal Luczaj wrote:
->> In some test cases, OOB packets might have been left unread. Flush them out
->> and introduce additional checks.
->> 
->> Signed-off-by: Michal Luczaj <mhal@rbox.co>
->
-> Sorry, this should also have:
->
-> Fixes: f0709263a07e ("selftests/bpf: Add selftest for sockmap/hashmap
-> redirection")
+On 9/19/25 4:36 AM, Balbir Singh wrote:
+> On 9/19/25 02:42, Chris Mason wrote:
+>> On Mon,  8 Sep 2025 10:04:38 +1000 Balbir Singh <balbirs@nvidia.com> wrote:
+>>
+>>> Extend migrate_vma_collect_pmd() to handle partially mapped large
+>>> folios that require splitting before migration can proceed.
+>>>
+>>> During PTE walk in the collection phase, if a large folio is only
+>>> partially mapped in the migration range, it must be split to ensure
+>>> the folio is correctly migrated.
+>>>
+>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>>> ---
+>>>  mm/migrate_device.c | 94 +++++++++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 94 insertions(+)
+>>>
+>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+>>> index abd9f6850db6..f45ef182287d 100644
+>>> --- a/mm/migrate_device.c
+>>> +++ b/mm/migrate_device.c
+>>> @@ -54,6 +54,53 @@ static int migrate_vma_collect_hole(unsigned long start,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +/**
+>>> + * migrate_vma_split_folio() - Helper function to split a THP folio
+>>> + * @folio: the folio to split
+>>> + * @fault_page: struct page associated with the fault if any
+>>> + *
+>>> + * Returns 0 on success
+>>> + */
+>>> +static int migrate_vma_split_folio(struct folio *folio,
+>>> +				   struct page *fault_page)
+>>> +{
+>>> +	int ret;
+>>> +	struct folio *fault_folio = fault_page ? page_folio(fault_page) : NULL;
+>>> +	struct folio *new_fault_folio = NULL;
+>>> +
+>>> +	if (folio != fault_folio) {
+>>> +		folio_get(folio);
+>>> +		folio_lock(folio);
+>>> +	}
+>>
+>> Can fault_folio ever be non-null and different from folio? Apologies for
+>> not knowing the lock ordering rules but this jumps out.
+>>
+> 
+> Yes, migration can occur in fault context or be driver driven
+> 
+>>> +
+>>> +	ret = split_folio(folio);
+>>> +	if (ret) {
+>>> +		if (folio != fault_folio) {
+>>> +			folio_unlock(folio);
+>>> +			folio_put(folio);
+>>> +		}
+>>> +		return ret;
+>>> +	}
+>>> +
+>>> +	new_fault_folio = fault_page ? page_folio(fault_page) : NULL;
+>>> +
+>>> +	/*
+>>> +	 * Ensure the lock is held on the correct
+>>> +	 * folio after the split
+>>> +	 */
+>>> +	if (!new_fault_folio) {
+>>> +		folio_unlock(folio);
+>>> +		folio_put(folio);
+>>> +	} else if (folio != new_fault_folio) {
+>>> +		folio_get(new_fault_folio);
+>>> +		folio_lock(new_fault_folio);
+>>> +		folio_unlock(folio);
+>>> +		folio_put(folio);
+>>> +	}
+>>
+>> Same question here, do we need trylocks?
+>>
+> 
+> Since we had the folio lock before, the assumption is that we can
+> still grab the lock after split and it's OK to wait, since this
+> is not a hot-path.
 
-I'm not sure if we're backporting selftest changes to stable.
+I think the lock ordering rules either let us take two folios without
+trylock or they don't...holding the lock in the past shouldn't change
+things?  The same holds true above, two locks + no ordering, one or both
+of these locking sites should deadlock.
+
+But obviously I'm a tourist here, and I need to refresh the review
+queue, so I'll move on ;)  Thanks for taking a look at it.
+
+-chris
+
 
