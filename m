@@ -1,106 +1,200 @@
-Return-Path: <linux-kernel+bounces-824569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D818AB898F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:59:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA434B898FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 15:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B30D31C82435
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EBE55A439D
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 13:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8B42376F2;
-	Fri, 19 Sep 2025 12:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2CCEEDE;
+	Fri, 19 Sep 2025 13:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="aa+Yr6yl"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WsdrUrtI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vaKHYxr5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WsdrUrtI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vaKHYxr5"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F046C221739
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19824238C3B
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 13:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758286735; cv=none; b=ka9bnPQYCIsOow1C2KLNKb8lmLuyGDO6mMnYBfPRtRB/cuiddBO98VhszyPipx/uYEjhChQG/euN2BSIBQRu/w53ZPfioNkCnlK14hw3Rhm+aywRHb1UDJ62Iz/Qa+/tUGMfYx3WN7hxjW/Mwu2mmbsEU0+zdURU1bJuuerivJk=
+	t=1758286806; cv=none; b=dr0cv/r6qRNf12S+JOGR5t8LkG9JXaH/tkM6o6CkavheylqnzMDA3zKl+QnbSuwNe8NBXoNtftseE/x7VHlthU/7SGHe734LfJ8SgzGDURvv7fRp/OxuafFZuiy4HnBb+d6TwHGUeh2vnDBgWxjGup8ctIrBqpNrspoXh9InO0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758286735; c=relaxed/simple;
-	bh=UqZPKjOghmkUG63/f5MtcyvviVRnMG+ZaWlI+fBKYkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NR6NUh1xiUAA1hHOmIiZhbcEvqtACiFpIRIshKXterg2FnfblzWei4rPBcBd+RkdGDE20kFJIVPerddTRTgtSIAQ8KnqZZlOAkzTlQwadHIl1JBIHNlNJ8e8kXX0Kjci0sfjvdU5CbLQUO+DB2FZaPAEYZOqSVDdOBmITec+wEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=aa+Yr6yl; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 4D5A32654B;
-	Fri, 19 Sep 2025 14:58:50 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id le6wcmcofI2V; Fri, 19 Sep 2025 14:58:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1758286729; bh=UqZPKjOghmkUG63/f5MtcyvviVRnMG+ZaWlI+fBKYkA=;
-	h=From:To:Cc:Subject:Date;
-	b=aa+Yr6ylX17nEX8EK4RlKgRuRDHqli3dwz7Wb9fty120Qgx5Kw70GkohSQdiZtN8F
-	 fIQ3Srd4TrY0U9stCxzNgFR4zi0l/kyHyWw8oEqv8RFnW2i8zNdi28bXJfrksYrP8N
-	 x+LtTsUSeU1MUP6gMKtuVhv5J319bGrHEUaO8/GESTVvNluOha6XxJkLMiLmyipREu
-	 dkjqxfvdBdZz26k07HxdwIo69oBP1Cy2FB98doth98eevXvy8TPJ0z2YzE6D3ai8tw
-	 OwfFAKArsHPPuPGl5BH+j4AxmhwaYg56DEQe9ksHzalwqYOU6fh7ySmmwsFAiHAy6k
-	 MyGGJ1Y+V4mEg==
-From: Yao Zi <ziyao@disroot.org>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Huth <thuth@redhat.com>,
-	Yao Zi <ziyao@disroot.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xi Ruoyao <xry111@xry111.site>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: Fix bitflag conflict for TIF_FIXADE
-Date: Fri, 19 Sep 2025 12:58:29 +0000
-Message-ID: <20250919125829.37951-1-ziyao@disroot.org>
+	s=arc-20240116; t=1758286806; c=relaxed/simple;
+	bh=o14wFhxXepo5o+mqZ3aUgF/dYby9/jrJO6CfF2IpjPo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BRFws0C42XYjuXzSEDIeOoN0SmhWJOccZ0DI7gxbroN6V4g+2t+n7mQ0AlMavoHyrgvw61e1to6gVzvwUEJJ6UqI8ERBxqyxiH808OSDiUSRO5ss67HaPK71iMrKeNSJUssshrUWJJLOCxdTL7/aKEJHJM+Kdm8Gpy8GCNcFqdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WsdrUrtI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vaKHYxr5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WsdrUrtI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vaKHYxr5; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 48CD21F7D8;
+	Fri, 19 Sep 2025 13:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758286802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y2LrxQGrj/DRzcR+81yCK2sfCYQD1ShVTHdJPOHNt2M=;
+	b=WsdrUrtIXGLPPXiklonoK0G9uAbyUovr6DVy9JZNPJTx0Lpdwjb0BrP6YQxpR+Ync7Z7lm
+	FfV3kFLneZvTsRxWRD8Ya8vo+LqviZHO3mT3GbtfpeR6/zwETQ51CSkOiLd8MBOz3zU9bP
+	WWvW7/2D6dgxUt5EyXwAugUhA/Fuxsk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758286802;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y2LrxQGrj/DRzcR+81yCK2sfCYQD1ShVTHdJPOHNt2M=;
+	b=vaKHYxr5OJtYDo+jM/Rfo2iw4PMpwoTlSp9ALBhtfxwyxuVYayQHQ6B+7xkbTs/6+7mLQN
+	fqSr/6+sa1qYJ8DA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WsdrUrtI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vaKHYxr5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1758286802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y2LrxQGrj/DRzcR+81yCK2sfCYQD1ShVTHdJPOHNt2M=;
+	b=WsdrUrtIXGLPPXiklonoK0G9uAbyUovr6DVy9JZNPJTx0Lpdwjb0BrP6YQxpR+Ync7Z7lm
+	FfV3kFLneZvTsRxWRD8Ya8vo+LqviZHO3mT3GbtfpeR6/zwETQ51CSkOiLd8MBOz3zU9bP
+	WWvW7/2D6dgxUt5EyXwAugUhA/Fuxsk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1758286802;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y2LrxQGrj/DRzcR+81yCK2sfCYQD1ShVTHdJPOHNt2M=;
+	b=vaKHYxr5OJtYDo+jM/Rfo2iw4PMpwoTlSp9ALBhtfxwyxuVYayQHQ6B+7xkbTs/6+7mLQN
+	fqSr/6+sa1qYJ8DA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D900513A78;
+	Fri, 19 Sep 2025 13:00:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oFSpM9FTzWgwCwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 19 Sep 2025 13:00:01 +0000
+Date: Fri, 19 Sep 2025 15:00:01 +0200
+Message-ID: <87plbm8uni.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Patrick Lai <plai@qti.qualcomm.com>,
+	Annemarie Porter <annemari@quicinc.com>,
+	srinivas.kandagatla@oss.qualcomm.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	kernel@oss.qualcomm.com,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+Subject: Re: [PATCH v3 0/3] Add raw OPUS codec support for compress offload
+In-Reply-To: <20250917-opus_codec_rfc_v1-v3-0-7737ad40132e@linaro.org>
+References: <20250917-opus_codec_rfc_v1-v3-0-7737ad40132e@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,perex.cz,suse.com,gmail.com,qti.qualcomm.com,quicinc.com,oss.qualcomm.com,vger.kernel.org,linaro.org,linux.dev];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 48CD21F7D8
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-After LoongArch was converted to use the generic TIF bits in commit
-f9629891d407 ("loongarch: Use generic TIF bits"), its TIF_FIXADE flag
-takes the same bit with TIF_RESTORE_SIGMASK in thread_info.flags.
+On Wed, 17 Sep 2025 09:32:49 +0200,
+Alexey Klimov wrote:
+> 
+> This series adds support in kernel to recognise raw (or plain) OPUS
+> codec playback for compress offloading. At this point this series
+> doesn't deal with OPUS packets packed in any kind of containers (OGG or
+> others) and focuses on adding missing bits for pure OPUS packets.
+> 
+> The second patch adds its usage in Qualcomm Audio DSP code. To correctly
+> recognise raw OPUS packets by qdsp6, each packets needs to be prepended
+> with 4-bytes field that contains length of a raw OPUS packet.
+> It is expected to be useful for usecases when OPUS packets are streamed
+> over network and they are not encapsulated in a container. Userspace
+> application that will use the compress API has to manually add such
+> 4-bytes long field to each OPUS packet.
+> 
+> This is tested on sm8750-mtp. It is expected that next hardware revisions
+> will also support raw OPUS codec offloading.
+> 
+> Dependencies are:
+> -- hardware with DSP that supports decoding OPUS packets (>= Qualcomm sm8750);
+> -- adsp fastrpc;
+> -- explicitly setting format in sm8750 soundcard driver
+> https://lore.kernel.org/linux-sound/20250911154340.2798304-1-alexey.klimov@linaro.org/
+> -- running adsprpcd tool with support for Audio PD and DSP libraries
+> loading support (or its alternative);
+> -- tinycompress fcplay tool that will prepare raw opus packets and
+> do the required addition of length field;
+> -- mfc module in topology compress-playback path, that module is
+> expected to parse channel mapping and do the required things to
+> map streams/channels to physically-present output channels on backend.
+> 
+> The userspace tinycompress tool with support for raw OPUS compress
+> playback is located here:
+> https://github.com/laklimov/tinycompress_opus
+> branch: opus_v3_workinprogress
+> 
+> The userspace tool is not expected that it is ready and still needs
+> some work, for instance recognition that it runs on Qualcomm hardware.
+> More like working PoC.
+> 
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 
-Such conflict causes TIF_FIXADE being considered cleared when
-TIF_RESTORE_SIGMASK is cleared during deliver of a signal. And since
-TIF_FIXADE determines whether unaligned access emulation works for a
-task, userspace making use of unaligned access will receive unexpected
-SIGBUS (and likely terminate) after receiving its first signal.
+Applied now to for-next branch for 6.18.
+For further improvements, please submit on top of that.
 
-This conflict looks like a simple typo, let's just switch to a free bit.
 
-Fixes: f9629891d407 ("loongarch: Use generic TIF bits")
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
+thanks,
 
-Note the problematic commit is contained in next-20250918, but not
-master.
-
- arch/loongarch/include/asm/thread_info.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/include/asm/thread_info.h b/arch/loongarch/include/asm/thread_info.h
-index def7cb14467e..4d7117fcdc78 100644
---- a/arch/loongarch/include/asm/thread_info.h
-+++ b/arch/loongarch/include/asm/thread_info.h
-@@ -77,7 +77,7 @@ register unsigned long current_stack_pointer __asm__("$sp");
- #define TIF_NOHZ		16	/* in adaptive nohz mode */
- #define TIF_USEDFPU		17	/* FPU was used by this task this quantum (SMP) */
- #define TIF_USEDSIMD		18	/* SIMD has been used this quantum */
--#define TIF_FIXADE		10	/* Fix address errors in software */
-+#define TIF_FIXADE		19	/* Fix address errors in software */
- #define TIF_LOGADE		20	/* Log address errors to syslog */
- #define TIF_32BIT_REGS		21	/* 32-bit general purpose registers */
- #define TIF_32BIT_ADDR		22	/* 32-bit address space */
--- 
-2.50.1
-
+Takashi
 
