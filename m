@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-824105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE53B88235
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:18:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C47CB88242
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F065217DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F1037AF8D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 07:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5896429BDB6;
-	Fri, 19 Sep 2025 07:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DFE2BEC5A;
+	Fri, 19 Sep 2025 07:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvjzJifU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Pq7cfChK"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBA61862A;
-	Fri, 19 Sep 2025 07:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE8A275112;
+	Fri, 19 Sep 2025 07:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758266321; cv=none; b=Z+tOdWYkXD23Xr4RH3IHGBA2TUS/iGpqnN6D7l8IxxqDWFAvCFbLU/FbHpJ9DsEw47KYKUZ3NaM/747bw/0Yzapfu/6h+6PSPnn/mBI8MHiHAN3AECyds1if84F1m9KG6SEnwXprVF24mINpZOfgp81JEMOjOvKgqOkVymRMxc8=
+	t=1758266410; cv=none; b=bco63NPPDZKxwaDEHumzy0gKUa/0wEJb/nwVGzxZtRNWLPu0SnWXa/DoJ/aLCywzmfQQVdjtWXtKuZRmqsw8aHHsDPJ3XDdZ8a5z/1uBRMsTBVpJAxha82dpfHeLGy9mBRfwe2F/rmnIUYXtOS//ACpZla+64ep420/iT9B0bZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758266321; c=relaxed/simple;
-	bh=5tSIdJQP1tIdIsNeNk84JqAQX+HeQ6XQr+kbFkQIixM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5hrMeV4PokUJ9WnjAUfZlN3zub0l/eVQqejk7akahwI5jO73d7HRkpLpXKE3RjxFYyht4XipJohppho2AT2PNUoNzWqo5Ru0SqbURH1zeLF+Q0QcbQ71YZKofQVc6qpkr0lUfzLxavdu3lCwKFqtGDO6rhP6IKAaCkIsjF4pZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvjzJifU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74E51C4CEF0;
-	Fri, 19 Sep 2025 07:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758266321;
-	bh=5tSIdJQP1tIdIsNeNk84JqAQX+HeQ6XQr+kbFkQIixM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SvjzJifUjhpsXlzjcIDJ8ccaxl9apNLSSwyzS+ME+E9fZdtmTbYdwCjKqP8zlQRzV
-	 ukXRsLK+wEfHxVw2IXXHtGgbrKlfiwfDsncuDK2d2IELOSFHBECuMvGg85ZPK3kX7o
-	 FpM5wkqNhdVFSFqNrCMHWOSmItQkxZvZCmNghzGr4yJMpkk/kYwl38Iug++0EUj92d
-	 lv5Sv2VvwIqTeZaaKvAZQkIHVTPVW3VBARkuKn3tlgtd3ZKInnk+jfJ1SMdWeW+Gwy
-	 5ds9wmY8lCbVHAhCqmw23sbhNHl/WuFQMJgrScPk+E4VfV/gEpDpgREuAsWrnMDOVG
-	 vD+ZcQhooPZzw==
-Date: Fri, 19 Sep 2025 09:18:36 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] of/irq: Add msi-parent check to of_msi_xlate()
-Message-ID: <aM0DzMe8qW4eKQBX@lpieralisi>
-References: <20250916091858.257868-1-lpieralisi@kernel.org>
- <20250918135555.GA1540012-robh@kernel.org>
- <aMwjcIS/rvxkSZdr@lpieralisi>
- <CAL_Jsq+XKT+HkE0W0BLKbQ76RtgBrKToLAVaWOy80mLkD=x0+A@mail.gmail.com>
+	s=arc-20240116; t=1758266410; c=relaxed/simple;
+	bh=b6Tw3mttVPfCDgGtYbSaC/pZphbcciOixdTxHxNmyqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VLOkc2LI6BEJlfPLX5pRCdot94c+0qbu4gtjrHHOG+ndclBovUIj3EEDDvZ64U3uL2NIFA6EtBmNEvrPrjwLsoqn2AQ+w1IstopcksX6K1aL+nYGZ8OX9gORf/bzDA+1UOJvMQSM+0eLnf3Ole8uOIs3jHNQRiyc94wbP6hxnzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Pq7cfChK; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=MU
+	L1gPQPoyj/ZgGBhJEEFe6Bn2eA41tvMvWxnkv0EIU=; b=Pq7cfChK2PIDayrf7p
+	7HknrJMWIl/u8kfWKGp7MbqaZ5hvgvPNfxVlTxWL4iUAbf81CzIqHai7jD9xA+cD
+	t3kJh3WDhc9npGQ8ezsM7nfhQ3IhgfOy091/icAxIyxEEYzrxGdLPbQ5H52DGUIE
+	PHyAN65PS3gY2+xOlqr3tAXd8=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgAnJDXmA81oI1x_Dg--.54587S2;
+	Fri, 19 Sep 2025 15:19:04 +0800 (CST)
+From: Feng Yang <yangfeng59949@163.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mhiramat@kernel.org
+Subject: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64 architecture 
+Date: Fri, 19 Sep 2025 15:19:02 +0800
+Message-Id: <20250919071902.554223-1-yangfeng59949@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+XKT+HkE0W0BLKbQ76RtgBrKToLAVaWOy80mLkD=x0+A@mail.gmail.com>
+X-CM-TRANSID:PSgvCgAnJDXmA81oI1x_Dg--.54587S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7try8XFy8WFWUWry8JF18Krg_yoW8ZF4Dpa
+	sxZa4akF4rZw43tFW7Ar45XF1Svrs7ZryUCF1rGr13CF4DX3y8JF1xKFW2vFn8urZYg343
+	Z3W7tFy7K397Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtcTLUUUUU=
+X-CM-SenderInfo: p1dqww5hqjkmqzuzqiywtou0bp/1tbipRHJeGjHvNu7WQABsu
 
-On Thu, Sep 18, 2025 at 02:44:23PM -0500, Rob Herring wrote:
-> On Thu, Sep 18, 2025 at 10:21 AM Lorenzo Pieralisi
-> <lpieralisi@kernel.org> wrote:
-> >
-> > On Thu, Sep 18, 2025 at 08:55:55AM -0500, Rob Herring wrote:
-> > > On Tue, Sep 16, 2025 at 11:18:58AM +0200, Lorenzo Pieralisi wrote:
-> > > > In some legacy platforms the MSI controller for a PCI host
-> > > > bridge is identified by an msi-parent property whose phandle
-> > > > points at an MSI controller node with no #msi-cells property,
-> > > > that implicitly means #msi-cells == 0.
-> > > >
-> > > > For such platforms, mapping a device ID and retrieving the
-> > > > MSI controller node becomes simply a matter of checking
-> > > > whether in the device hierarchy there is an msi-parent property
-> > > > pointing at an MSI controller node with such characteristics.
-> > > >
-> > > > Add a helper function to of_msi_xlate() to check the msi-parent
-> > > > property in addition to msi-map and retrieve the MSI controller
-> > > > node (with a 1:1 ID deviceID-IN<->deviceID-OUT mapping) to
-> > > > provide support for deviceID mapping and MSI controller node
-> > > > retrieval for such platforms.
-> > >
-> > > Your line wrapping is a bit short.
-> > >
-> > > I had a look at who is parsing "msi-parent" themselves as that's
-> > > typically a recipe for doing it incorrectly ('interrupt-map' anyone).
-> > > Can we make iproc_pcie_msi_enable() use this? It's quite ugly reaching
-> > > into the GICv3 node...
-> >
-> > I am not sure I get what you mean here. Possibly iproc_pcie_msi_enable()
-> > can reuse this patch's code if I extend it and make it a global function,
-> > yes and somehow use that function to carry out the check for an
-> > msi-parent property with no #msi-cells property or an #msi-cells == 0.
-> 
-> I meant using of_msi_xlate() (or even of_msi_get_domain()).
+When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
+I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
 
-https://lore.kernel.org/all/20240818161816.GA173148-robh@kernel.org/
+For example:
+diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+index 9e1ca8e34913..844fa88cdc4c 100644
+--- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
++++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+@@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
+ __u64 kretprobe_test7_result = 0;
+ __u64 kretprobe_test8_result = 0;
+ 
++typedef __u64 stack_trace_t[2];
++
++struct {
++       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
++       __uint(max_entries, 1024);
++       __type(key, __u32);
++       __type(value, stack_trace_t);
++} stacks SEC(".maps");
++
+ static void kprobe_multi_check(void *ctx, bool is_return)
+ {
+        if (bpf_get_current_pid_tgid() >> 32 != pid)
+@@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
+ SEC("kprobe.multi")
+ int test_kprobe_manual(struct pt_regs *ctx)
+ {
++       int id = bpf_get_stackid(ctx, &stacks, 0);
+        kprobe_multi_check(ctx, false);
++       bpf_printk("stackid: %d\n", id);
+        return 0;
+ }
 
-Isn't of_msi_get_domain() leaking a reference when it finds an IRQ domain and
-return ?
+./test_progs -t kprobe_multi_test/attach_api_pattern
+#155/4   kprobe_multi_test/attach_api_pattern:OK
+#155     kprobe_multi_test:OK
+#156     kprobe_multi_testmod_test:OK
+Summary: 2/1 PASSED, 0 SKIPPED, 0 FAILED
 
-Possibly I can generalize it and use it in this patch too.
+cat /sys/kernel/debug/tracing/trace
+test_progs-68315   [004] ...1. 13377.097527: bpf_trace_printk: stackid: -14
+......
 
-Thanks,
-Lorenzo
+Test Version:
+6ff4a0fa3e1 ("bpf, arm64: Call bpf_jit_binary_pack_finalize() in bpf_jit_free()")
+Linux localhost.localdomain 6.17.0-rc5+ #2 SMP PREEMPT_DYNAMIC Fri Sep 19 10:29:07 CST 2025 aarch64 aarch64 aarch64 GNU/Linux
+clang version 17.0.6 ( 17.0.6-30.p03.ky11)
+gcc (GCC) 12.3.1 (kylin 12.3.1-62.p02.ky11)
+GNU Make 4.4.1
 
-> > Don't get what GICv3 node has to do with that though, sorry.
-> 
-> Just trace what the code there does after it gets the MSI parent. I
-> didn't study it too closely, but why is a iProc PCIe parsing GICv3 MSI
-> stuff itself? There's either some missing feature in the
-> irqchip/domain APIs or it's being dumb.
-> 
-> Rob
 
