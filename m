@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-823939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB27FB87C5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E371CB87C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73A15565D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACA50464C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3230274B50;
-	Fri, 19 Sep 2025 02:57:25 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7037925C804;
+	Fri, 19 Sep 2025 02:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CTa9HBGn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66D8271464;
-	Fri, 19 Sep 2025 02:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD2035942;
+	Fri, 19 Sep 2025 02:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758250645; cv=none; b=DMJynEs1U8oSVaXwZBCXhxD0vvJKMN1WBTcqflybBgmaz38PsXgzerq4KSQceVx5DSLj9DcpoSj2Hm+pIxIzpwgU0kCo0UFr1BrNa73CWaIOZVo9gMEfRnf2jBHlKW4C5nQaDhWwKU3MBJdvwRDh9CEGfoPCBb7IK3vh3vSm+5Q=
+	t=1758250420; cv=none; b=mJJOg8GL4uUNVNh/h6QrQGeSQ82Ku7CgCQz6KclZmR4Wq1f1T9KKFSu3f/VYb+Nn7Jurn43c0LFHTFkucCO5UIPBqFLMfnbraK5hQOB6D1BmMKEUxggq9jktKIQoXFs65DxriovUOkw7qaO8oLtOVibhFaQknxINS7A0S1/0dIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758250645; c=relaxed/simple;
-	bh=dIXm72jYVUSRnA1JaqY2TM09z0JcIh39eokbKve6ZVM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AGV+OIzq9KWjsEQ+TfzseqIUrjlykZPpYwE2wY7VWXyi7mcKLqwFPTWahT1TFiY3gH1dH7UE/7YdIXnwVWf41VZgnCr/VQjBVL1nCC9PeyiVAc0GUtJ61cOtHqqJbKxC3kXSO1p2om3T5JeusVWbjAI41LP556o65wfpV9HVaN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 19 Sep
- 2025 10:57:13 +0800
-Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Fri, 19 Sep 2025 10:57:13 +0800
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: ryan_chen <ryan_chen@aspeedtech.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Alan
- Stern" <stern@rowland.harvard.edu>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/4] usb: uhci: Add Aspeed AST2700 support
-Date: Fri, 19 Sep 2025 10:57:12 +0800
-Message-ID: <20250919025712.719246-5-ryan_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250919025712.719246-1-ryan_chen@aspeedtech.com>
-References: <20250919025712.719246-1-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1758250420; c=relaxed/simple;
+	bh=j82TMQoQw7EKWFSP4Sw60PGiritoIjvbYGE4+qDeWww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SUTqAeUg4gNVxARfxWnx3DhlycSC+DyVptKiZP5LGH8v7T4ib7jf0pPZsu2b8JCpap1FUo6rFR/LFDGlCUqtUzqbS/Pn5aOf74Lghc48bOCBiqi8dawx6ODFNoC+jlI5aVDGJn7HIJw6v8RJ6AkmU+LG80eHlHNv04uB6gTMbrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CTa9HBGn; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758250419; x=1789786419;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j82TMQoQw7EKWFSP4Sw60PGiritoIjvbYGE4+qDeWww=;
+  b=CTa9HBGnkBc5Hfe4CY55jJD+jERKLEfXtzvGipr2/STUwmiflAcELmGX
+   qyZLUnODjCW0KuA4O85LNCIVdOifDRwbkqBBjZ/EEGpHor7VSHcb5iLx4
+   h0lLNnvs2WY77d+YPIYhMAfqymkU1tsLQhjc5i9zTQNGxWd3lFIznW7oC
+   /pzb6CL1L0MqbcGQw5/726o8Ag3sq1xLzzgF0ZxEXq3bBhp4y+YZtB3HV
+   +Sk9VwS4mkSZTDyZ0aJgYIsHVoxKoz+qa0TA3PBeoUoN/799sjIC/ERSS
+   MAY0E7KfUcLAT9rckwO2VDBDiGDnv1rj+p+Y+5jcPcIRCX1cFsRindkvZ
+   A==;
+X-CSE-ConnectionGUID: GZz2Ek1nSn+kUmscPoe6Gg==
+X-CSE-MsgGUID: UZGboaPnTEiZ6tNUAQIC5A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11557"; a="64414305"
+X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
+   d="scan'208";a="64414305"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 19:53:38 -0700
+X-CSE-ConnectionGUID: XyYy/EE/TimXwY7VKuwmQw==
+X-CSE-MsgGUID: 4nZwnVAAS7aBonngmyHF9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,276,1751266800"; 
+   d="scan'208";a="175328006"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2025 19:53:38 -0700
+Date: Thu, 18 Sep 2025 19:59:28 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: x86@kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Chris Oo <cho@microsoft.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-hyperv@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ricardo Neri <ricardo.neri@intel.com>,
+	Yunhong Jiang <yunhong.jiang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5 00/10] x86/hyperv/hv_vtl: Use a wakeup mailbox to boot
+ secondary CPUs
+Message-ID: <20250919025928.GA9212@ranerica-svr.sc.intel.com>
+References: <20250627-rneri-wakeup-mailbox-v5-0-df547b1d196e@linux.intel.com>
+ <20250820231135.GA24797@ranerica-svr.sc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250820231135.GA24797@ranerica-svr.sc.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-Unlike earlier Aspeed SoCs (AST2400/2500/2600) which are limited to
-32-bit DMA addressing, the UHCI controller in AST2700 supports 64-bit
-DMA. Update the platform UHCI driver to select the appropriate DMA
-mask based on the device tree compatible string.
+On Wed, Aug 20, 2025 at 04:11:35PM -0700, Ricardo Neri wrote:
+> On Fri, Jun 27, 2025 at 08:35:06PM -0700, Ricardo Neri wrote:
+> > Hi,
+> > 
+> > Here is a new version of this series. Thanks to Rafael for his feedback!
+> > I incorporated his feedback in this updated version. Please see the
+> > changelog for details.
+> > 
+> > If the DeviceTree bindings look good, then the patches should be ready for
+> > review by the x86, ACPI, and Hyper-V maintainers.
+> > 
+> > I did not change the cover letter but I included it here for completeness.
+> > 
+> > Thanks in advance for your feedback!
+> 
+> Hello,
+> 
+> I would like to know what else is needed to move this patchset forward.
+> Rafael and Rob have reviewed the DeviceTree bindings. Rafael has reviewed
+> the relocation of the code that makes use of the mailbox.
+> 
+> Would it be possible for the Hyper-V maintainers to take a look (Michael
+> Kelley has reviewed the patches already)? Perhaps this could increase the
+> confidence of the x86 maintainers.
 
-Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
----
- drivers/usb/host/uhci-platform.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+Many thanks Dexuan for reviewing this series. Now that the relevant
+subsystem maintainers have reviewed their portions of the series, perhaps
+the x86 maintainers could take a look?
 
-diff --git a/drivers/usb/host/uhci-platform.c b/drivers/usb/host/uhci-platform.c
-index f255358d6242..5b4be9a5764a 100644
---- a/drivers/usb/host/uhci-platform.c
-+++ b/drivers/usb/host/uhci-platform.c
-@@ -71,6 +71,7 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
- 	struct usb_hcd *hcd;
- 	struct uhci_hcd	*uhci;
- 	struct resource *res;
-+	u64 *dma_mask_ptr;
- 	int ret;
- 
- 	if (usb_disabled())
-@@ -81,7 +82,8 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
- 	 * Since shared usb code relies on it, set it here for now.
- 	 * Once we have dma capability bindings this can go away.
- 	 */
--	ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+	dma_mask_ptr = (u64 *)of_device_get_match_data(&pdev->dev);
-+	ret = dma_coerce_mask_and_coherent(&pdev->dev, *dma_mask_ptr);
- 	if (ret)
- 		return ret;
- 
-@@ -114,7 +116,8 @@ static int uhci_hcd_platform_probe(struct platform_device *pdev)
- 		}
- 		if (of_device_is_compatible(np, "aspeed,ast2400-uhci") ||
- 		    of_device_is_compatible(np, "aspeed,ast2500-uhci") ||
--		    of_device_is_compatible(np, "aspeed,ast2600-uhci")) {
-+		    of_device_is_compatible(np, "aspeed,ast2600-uhci") ||
-+		    of_device_is_compatible(np, "aspeed,ast2700-uhci")) {
- 			uhci->is_aspeed = 1;
- 			dev_info(&pdev->dev,
- 				 "Enabled Aspeed implementation workarounds\n");
-@@ -189,9 +192,13 @@ static void uhci_hcd_platform_shutdown(struct platform_device *op)
- 	uhci_hc_died(hcd_to_uhci(hcd));
- }
- 
-+static const u64 dma_mask_32 =	DMA_BIT_MASK(32);
-+static const u64 dma_mask_64 =	DMA_BIT_MASK(64);
-+
- static const struct of_device_id platform_uhci_ids[] = {
--	{ .compatible = "generic-uhci", },
--	{ .compatible = "platform-uhci", },
-+	{ .compatible = "generic-uhci", .data = &dma_mask_32},
-+	{ .compatible = "platform-uhci", .data = &dma_mask_32},
-+	{ .compatible = "aspeed,ast2700-uhci", .data = &dma_mask_64},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, platform_uhci_ids);
--- 
-2.34.1
+Thanks in advance!
 
+BR,
+Ricardo
 
