@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-825125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DBFB8B0CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D33EDB8B0D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 21:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16681565106
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:09:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12DB1565106
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 19:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43A1283FD7;
-	Fri, 19 Sep 2025 19:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FED4286894;
+	Fri, 19 Sep 2025 19:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hXCxHh8N"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D10E27FB0E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 19:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qW1XfREq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E531286421;
+	Fri, 19 Sep 2025 19:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758308959; cv=none; b=qg0Mu/6rYJxHJtDZIDZnjST2jxRsTJ/EG/g16j8xV6NWqi7glQoLwQ+FrJeZD5XrNQNNinlJcQzVZLsA3w4G5slJUMS5RQQ0x2wCM9MzJy/QtAwvYHb2xAWw+Txb1JBKeWk6zXXjPsrR0i6gs51SIaqfO0lzCRO2XXo1Z/hzYt8=
+	t=1758308963; cv=none; b=J48/c9CQrXZQ/YS5EjgCY/Hh48QlwMejWSGYlljJ1U9RwzsRqg3/8jJQsldTmDFeTXvJJ9Ar1I7tJB0k/1sRuTSLCVPMmAaIjJ3syWe879TGZVbGBkTG9CjC9YL8OQTk68mTdFdgOPs1ou7ArW40bVwlOFsV4IQrLYu5LCM7W1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758308959; c=relaxed/simple;
-	bh=I6jtwFO4rLlCn3Qr98wO3TZ4R5zgDcuCAtGJjeBz4KM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mZmiPn+K+N+wA86itTToMlGxQxY73osvtrSLMQnhRdxksXuPn8ja6hKCdgB1vT6+lWFZeZXCwJbShBb776qsF5hLqUNdVdOpHarz5R+cxVJOV80usXbFDiLbt4nYn9M7hVciIRDT+kD+6zWfrZw9iPZf7cFc6QwYHkPpNAYt9q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hXCxHh8N; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b79773a389so25473431cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:09:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758308956; x=1758913756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vXbAvw5kkLVhGfc5Ze9Jc+p6148kul0m6ybt6DGydeg=;
-        b=hXCxHh8NCbn0JujoChJPSy9bcSl39TyHyq01HV0SDhHBu7LAbEyO0uK6HQv37Vf4u5
-         gTFIwC+mQPrRHmp9aFFvHoI2xnkjDkrOlh+LS1DAbqAhwFnGSO8j/OaFD3zb7NaAJ4Jg
-         oYKmkGEadimwVh8bZt0Hqf4HvM2CxGJbe7rXnMEsDRoZayvKrnZHOo6V9KkE14wPApax
-         DbJJ6/NFnHYqqhUsosZFrRAV6srW7rDQA7aixuoYnjHso4RQ2PVLmNaACIBB2E6yP+1Y
-         ySyUcDJh7P2qyrcSOCVoGuTqIzikYH3/f6f1NRFlfJldjzNGOc1P+MjaMdea+WytqbNj
-         otZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758308956; x=1758913756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vXbAvw5kkLVhGfc5Ze9Jc+p6148kul0m6ybt6DGydeg=;
-        b=PmLLQeqqutiEgfluwsSIKuAjztFF85Alta0QkFoSPOZt/Jq776fCCeZ50JYPc5/DVB
-         q1cV+tjTPJdGbaDf4I7Ozlf8bmLlqwt3FevIbF5O9HtVcmPiwg8SVwbyjPaZjrp582bQ
-         vjB+R9xlRGmrOsPBhST1qG+Vo3906yUE0PCYxDn8YfGYUtf51hcBIF9kPiRPee5ch0Cn
-         3G3jqm7+YkSOkvP7eFIc/0iXTn8JH9THeylzkCb/oZkFjbRis89wi0tPQt63uVivz5CV
-         WN0subYkuQhvBeIsQrNimtLIkwqeD95fP2Vlf6/Xcc58dUcNnxDPMggZZZqX1Qkp3wdZ
-         wr8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWR7vmyMqCNNSV2iDTS8Gk2Ni7fOlqNhyDv3MizZ4ZHR0kh5q0X1ewlm37jVdBfFAccVECPjrkZmt+ifS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy54h1FNhxI42mIlyHZna4EdIOxL0iCggal/qPep38zy5t12eI8
-	63xITh3P+BxqrWHI51EOh/gc4DmezIt5xdHRD/I76aCY1OT7SUlkRek5JoEM2VKa9ZaM+fZcbi4
-	F2ZBOHfa43rdHLF0DofpPNyQ1WKPte51Kjmx2a0on
-X-Gm-Gg: ASbGncs0jMkxORDdCBvjaLrAqQr3TLwnviCTn+agJppao0BC/szg6nuOY3D+OJ31fi2
-	eUKxDJbXkDd7VEF35kFFyyOQ4Hx15Zgy3zCFxcm6/jWufhVgbSKetIq9OUitqbko8bHlRyI/buM
-	AV2L2TUhmIHaVJja4cK+gXUc18HegClRAWv6E4cZdMcvkNu/REqsuYyAmg5cQC2O+OZU2Iyw+o0
-	qGL+A==
-X-Google-Smtp-Source: AGHT+IHK4rrWt8hd+ehEHrqlcbzDHbyFpcHelDgbKsL1PGeJzPjV9eDyf0iQYAEDXEKf6jxfMvTMc1pEz6lgz1mBp/E=
-X-Received: by 2002:ac8:7d01:0:b0:4b7:a62d:ef6f with SMTP id
- d75a77b69052e-4c072e26929mr51253261cf.64.1758308956080; Fri, 19 Sep 2025
- 12:09:16 -0700 (PDT)
+	s=arc-20240116; t=1758308963; c=relaxed/simple;
+	bh=hqBsSlm0f69a0Az1IYLkFKNLUIXCFEOmQU+t2l9tWQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jgIkWVpBduIygfAwxoB2s3DEtHveNkS0I9oXCzxKhIx5+guJdnQTmwOIUk6Ki5myA78McJkaVZmDkNgHC3tAAfJa/+AkkP7MkiDdEFuZ6liGqfta2+eM5zoQH7USauRpMDQ6/WxPCDPNziYQ7RB9vKBgyL3hGLYp9g1JMUytEnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qW1XfREq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9C65220154E7;
+	Fri, 19 Sep 2025 12:09:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9C65220154E7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1758308956;
+	bh=vnotgj9GX9sgnIc7xDNYmuYaTExpOZ07oF+jN36uj+U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qW1XfREqUSc3FYCvowVow3cg1LT6tmyimlxEzoW2DlFBG+2bCzJgw7UxNYPtWv0ws
+	 99h+5FUbs01WZNBZTr4CP7hB/RGTF2BGXN2Y4mv4hvK2K+HrvQQ1hfHC+YnRZkkhyQ
+	 zROS6BxI0N7L+vsLqaVNBBjrUeZIV/ELJfBAP7T4=
+Message-ID: <f6ced912-3778-239c-33d0-ac7bbf362dd1@linux.microsoft.com>
+Date: Fri, 19 Sep 2025 12:09:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919180601.76152-1-hariconscious@gmail.com>
-In-Reply-To: <20250919180601.76152-1-hariconscious@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 19 Sep 2025 12:09:04 -0700
-X-Gm-Features: AS18NWDU8qkSN-NhK9yhAi1bjWHatilGj8aec2jq6okG1y-abKQuoQiJV7Jupu0
-Message-ID: <CANn89i+ara1CeKOfuQgZ+oF3FMv3gF2BLP_7OSEEqytz-j9a-Q@mail.gmail.com>
-Subject: Re: [PATCH net] net/core : fix KMSAN: uninit value in tipc_rcv
-To: hariconscious@gmail.com
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	netdev@vger.kernel.org, shuah@kernel.org, stable@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v1 4/6] x86/hyperv: Add trampoline asm code to transition
+ from hypervisor
+Content-Language: en-US
+To: Borislav Petkov <bp@alien8.de>, Michael Kelley <mhklinux@outlook.com>
+Cc: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "arnd@arndb.de" <arnd@arndb.de>
+References: <20250910001009.2651481-1-mrathor@linux.microsoft.com>
+ <20250910001009.2651481-5-mrathor@linux.microsoft.com>
+ <SN6PR02MB41570D14679ED23C930878CCD415A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <79f5d0ac-0b3e-70fc-2cbe-8a2352642746@linux.microsoft.com>
+ <SN6PR02MB4157CAE4FA74E482A96471B1D416A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <20250919090625.GBaM0dEegelsB724bZ@fat_crate.local>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <20250919090625.GBaM0dEegelsB724bZ@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 11:06=E2=80=AFAM <hariconscious@gmail.com> wrote:
->
-> From: HariKrishna Sagala <hariconscious@gmail.com>
->
-> Syzbot reported an uninit-value bug on at kmalloc_reserve for
-> commit 320475fbd590 ("Merge tag 'mtd/fixes-for-6.17-rc6' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux")'
->
-> Syzbot KMSAN reported use of uninitialized memory originating from functi=
-ons
-> "kmalloc_reserve()", where memory allocated via "kmem_cache_alloc_node()"=
- or
-> "kmalloc_node_track_caller()" was not explicitly initialized.
-> This can lead to undefined behavior when the allocated buffer
-> is later accessed.
->
-> Fix this by requesting the initialized memory using the gfp flag
-> appended with the option "__GFP_ZERO".
->
-> Reported-by: syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D9a4fbb77c9d4aacd3388
-> Fixes: 915d975b2ffa ("net: deal with integer overflows in
-> kmalloc_reserve()")
-> Tested-by: syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com
-> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
-> ---
->  net/core/skbuff.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index ee0274417948..2308ebf99bbd 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -573,6 +573,7 @@ static void *kmalloc_reserve(unsigned int *size, gfp_=
-t flags, int node,
->         void *obj;
->
->         obj_size =3D SKB_HEAD_ALIGN(*size);
-> +       flags |=3D __GFP_ZERO;
+On 9/19/25 02:06, Borislav Petkov wrote:
+> On Thu, Sep 18, 2025 at 11:52:35PM +0000, Michael Kelley wrote:
+>> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Tuesday, September 16, 2025 2:31 PM
+>>>
+>>> On 9/15/25 10:55, Michael Kelley wrote:
+>>>> From: Mukesh Rathor <mrathor@linux.microsoft.com> Sent: Tuesday, September 9, 2025 5:10 PM
+>>>>>
+>>>>> Introduce a small asm stub to transition from the hypervisor to linux
+>>>>
+>>>> I'd argue for capitalizing "Linux" here and in other places in commit
+>>>> text and code comments throughout this patch set.
+>>>
+>>> I'd argue against it. A quick grep indicates it is a common practice,
+>>> and in the code world goes easy on the eyes :).
+> 
+> But not in commit messages.
+> 
+> Commit messages should be maximally readable and things should start in
+> capital letters if that is their common spelling.
+> 
+> When it comes to "Linux", yeah, that's so widespread so you have both. If I'm
+> referring to what Linux does as a policy or in general or so on, I'd spell it
+> capitalized but I don't think we've enforced that too strictly...
+> 
+>> I'll offer a final comment on this topic, and then let it be. There's
+>> a history of Greg K-H, Marc Zyngier, Boris Petkov, Sean Christopherson,
+>> and other maintainers giving comments to use the capitalized form
+>> of "Linux", "MSR", "RAM", etc. See:
+> 
+> MSR, RAM and other abbreviations are capitalized and that's the only correct
+> way to spell them.
+> 
+>>>>> upon devirtualization.
+> 
+> What is "devirtualization"?
 
-Certainly not.
+Hypervisor is disabled, and it transfer control to the root/dom0
+partition, so essentially hypervisor is gone when control comes back
+to root/dom0 Linux.
 
-Some of us care about performance.
+>>> since control comes back to linux at the callback here, i fail to
+>>> understand what is vague about it. when hyp completes devirt,
+>>> devirt is complete.
+> 
+> This "speak" is what gets on my nerves. You're writing here as if everyone is
+> in your head and everyone knows what "hyp" and "devirt" is.
 
-Moreover, the bug will be still there for non linear skbs.
+that's just follow up conversation, commit comment says "hypervisor" and
+"devirtualization".
 
-So please fix tipc.
+> Commit mesages are not code and they should be maximally readable and
+> accessible to the widest audience, not only to the three people who develop
+> the feature.
+>
+> If this patch were aimed at the things I maintain, it'll need a serious commit
+> message scrubbing and sanitizing first.
+> 
+> HTH.
+> 
+
 
