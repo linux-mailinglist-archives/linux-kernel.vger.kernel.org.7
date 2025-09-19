@@ -1,117 +1,142 @@
-Return-Path: <linux-kernel+bounces-824735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14FDB8A0A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC6C2B8A0AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B746716AB6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:41:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFE61BC17FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8932E313E1A;
-	Fri, 19 Sep 2025 14:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D1A227EA8;
+	Fri, 19 Sep 2025 14:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bo+ti9sV"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="G2DwRoqW"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2736230F7E3
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3657A24DCEB;
+	Fri, 19 Sep 2025 14:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292869; cv=none; b=CXLKUF8XnJ+igQ6kV0sPX3GlrGyny48IWqu8VYRE/pr74zwZv4kHumlGSA3VlzuOHe40XxYhgSQozpDyM0djz5LZ0UUwIhqwtfvypz5mxucJY3i73KR3/tlxLR0ko2COsgwVwKG8dBeanrsbNN3roIRVdInoomt8SCKDjv0xQDU=
+	t=1758292925; cv=none; b=cnPd3olKk+NjI7BmpkMCxKeK5qqwQNyAkCFs4N2uiRESG+ZlSZgdCOwkd06QHMfPW4LXYgls2ytw8mq9/8LXtWftK44WwqMB377ZcyG8CmIce0xvwNkz1DgYTwz0Z7EPrVt/Kkd+uRbHQkeyhakfOHH7+I8ttZVLJhRxjpk7jJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292869; c=relaxed/simple;
-	bh=vg+VLVnVm1/uOlgwx6+NHyakWpf7CT1+wvh0cm/sJhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+FJEKNGwah2TFT0fRiHpBDX+eBuRm8EFgIGO0mA0+kVHYDv2Ji84OQ2xVwDxSTRhTqMdJKMoRRKPq0kWIhyWXHDphAnpYdsPCPz0jSCHMwHW3akc37OU3NQmLjqdJtU2Ne5ixStPzjATrRTNZQKcAqRB+C1ASnnWit19UU7+6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bo+ti9sV; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=vg+V
-	LVnVm1/uOlgwx6+NHyakWpf7CT1+wvh0cm/sJhQ=; b=bo+ti9sVXAtjzg/a3wLp
-	2r4Qt1xEKhK2iVNYSy4O3V0EUAy0vmeoCRdZzhtaKnwTtFhLkCC6vmRwiW5vMGhP
-	InB8LHgIUa7+6VMcEnw3sbShIlu7kl2r3vi3rrCRSGfXxpZEBRPEk84lkPsexw2C
-	ZX1tIk6rdvdecNxzl+pft/m0AmJNedTAxM+6uTt4+GJNsXc/lw+dAa3Aw5vm17gZ
-	cP2KiPyWNXdW0jvGH3S+O6EKewW6SYcbOfpMdDDq8FxzXLdJxB+F0Guu3QUOCJGr
-	PAakYORziKajsMb9UGcrI5GK4nBZMDmrDQq+NcTlUyN4O/sKU7qEGxxbCN6/qDl6
-	iw==
-Received: (qmail 3951065 invoked from network); 19 Sep 2025 16:41:05 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Sep 2025 16:41:05 +0200
-X-UD-Smtp-Session: l3s3148p1@zjuldSg/IyVtKPID
-Date: Fri, 19 Sep 2025 16:41:05 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 8/8] ARM: dts: r9a06g032: Add support for GPIO
- interrupts
-Message-ID: <aM1rgY9CCF54c_Pg@shikoro>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
- <20250918104009.94754-9-herve.codina@bootlin.com>
- <aM0llhn054OI9rA8@ninjato>
- <20250919155910.4d106256@bootlin.com>
+	s=arc-20240116; t=1758292925; c=relaxed/simple;
+	bh=BUXNR1hckyrk8jBBQv+MEaTsb/Yxf7QPZcopTVXtsc0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nBm4p9YnDLAWcKZkp7EUQCIdjhsW5fHTh6G/T+GEZW2aX3so+qdYemGvO0cPd+UYZLL664PNPrOC0TXbdtAsv0C3N507uVGHuPw0ivifKB0dzrWVo7R4lL5fdyYD9CmJ6y+aOPk1xxAIaVDtCA0zX5p3JVyz/ACK9/VCRIMlgXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=G2DwRoqW; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1758292924; x=1789828924;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BUXNR1hckyrk8jBBQv+MEaTsb/Yxf7QPZcopTVXtsc0=;
+  b=G2DwRoqWAFwBoeiHRW1PnVtBdkifBZ1fDCZYhjljRvAG10hTiyDtoaMm
+   nVcvcUxm89ol5y5wO8MIGUwm4xR32rrdIIU/AC3D53XJ+o+uDcEHowrUJ
+   /2Cezw4LW9el7AD1n6rods7WJpDafF+ZMP3id8XYE1XkhV/14uYSfydb3
+   y9/j1K/spGAfBpKUewoyEqGBvZMFuQoTfJB2KmPagCMtMJm+uzFfIH5Kp
+   Qe48WopOgTVvDZLpDD+/TSUKtDyaAHChh7QWG/ebYkrQaGPYLIlXdluUz
+   H0oLzljSE8xSBBoOLPKZuIMBRU1xXomaMTMysJvHwkP/c0OpCOch6VFAK
+   w==;
+X-CSE-ConnectionGUID: rCtXrXuCRuWl+rA3xsHEKA==
+X-CSE-MsgGUID: EJ/u+s4TQLuYDQ4Fe3Jepw==
+X-IronPort-AV: E=Sophos;i="6.18,278,1751266800"; 
+   d="scan'208";a="52617186"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Sep 2025 07:42:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Fri, 19 Sep 2025 07:41:32 -0700
+Received: from [10.159.245.205] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Fri, 19 Sep 2025 07:41:27 -0700
+Message-ID: <cc027fae-8d34-41ca-bd35-569c415fc657@microchip.com>
+Date: Fri, 19 Sep 2025 16:41:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cI7BpyPbBSmbEbfX"
-Content-Disposition: inline
-In-Reply-To: <20250919155910.4d106256@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>
+CC: Jason Gunthorpe <jgg@nvidia.com>, <ksummit@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-mips@vger.kernel.org>,
+	<linux-mm@kvack.org>, <imx@lists.linux.dev>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, Richard Weinberger <richard@nod.at>, Lucas
+ Stach <l.stach@pengutronix.de>, Linus Walleij <linus.walleij@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Ankur Arora
+	<ankur.a.arora@oracle.com>, David Hildenbrand <david@redhat.com>, Mike
+ Rapoport <rppt@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, Ira
+ Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Alexander Sverdlin
+	<alexander.sverdlin@gmail.com>, "Chester A. Unal"
+	<chester.a.unal@arinc9.com>, Sergio Paracuellos
+	<sergio.paracuellos@gmail.com>, Andreas Larsson <andreas@gaisler.com>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+ <20250917125951.GA1390993@nvidia.com>
+ <02b0f383-1c43-4eeb-a76f-830c2970b833@app.fastmail.com>
+ <CAMuHMdVecUeLZ2LPpa457C0a=uduvDhQ4KZJx-++dEFJraRi3w@mail.gmail.com>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Content-Language: en-US, fr
+Organization: microchip
+In-Reply-To: <CAMuHMdVecUeLZ2LPpa457C0a=uduvDhQ4KZJx-++dEFJraRi3w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Geert,
 
---cI7BpyPbBSmbEbfX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 19/09/2025 at 09:17, Geert Uytterhoeven wrote:
+> Hi Arnd,
+> 
+> On Thu, 18 Sept 2025 at 15:13, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Wed, Sep 17, 2025, at 14:59, Jason Gunthorpe wrote:
+>>> On Tue, Sep 09, 2025 at 11:23:37PM +0200, Arnd Bergmann wrote:
+>>>
+>>>> I'm still collecting information about which of the remaining highmem
+>>>> users plan to keep updating their kernels and for what reason.
+>>>
+>>> On this topic of removing some parts of highmem, can we say goodbye to
+>>> kmap_high_get()? Only ARM uses it and only for
+>>> !cache_is_vipt_nonaliasing() systems.
+>>
+>> Good idea. I think we are almost there, just need to verify that
+>> there is actually no impact for existing users. I already knew
+>> that there is very little highmem usage on ARMv6 and earlier, but
+>> I tried to recheck all platforms that might be affected:
+> 
+>> * Microchip SAM9x7 is the newest ARMv5 chip, clearly does
+>>    get kernel updates, and the only one I can think of with
+>>    DDR3 support, but seems to be limited to 256MB total memory.
+> 
+> Are they limited to DDR3?
 
+For sam9x75:
+- DDR2
+- DDR3  (DLL Off/On mode)
+- DDR3L (DLL Off/On mode)
 
-> 'interrupt-map' is a required property. If the board doesn't use any interrupt
-> GPIO, its dts has no reason to set the interrupt-map.
+For (older) sam9x60:
+- LPDDR1
+- DDR2
+- SDRAM & Mobile SDRAM
+> IIRC, someone (you? ;-) told me at ELCE that Microchip keeps on spinning
+> new variants of old SoCs, to accommodate the changing DDR landscape
+> and market.  So perhaps they also accept larger RAM sizes?
+No, in fact we address 256 M Bytes max on sam9x60 and sam9x75 as well.
 
-Why is 'interrupt-map' then a required property? Can we drop it from the
-requirements?
-
-
---cI7BpyPbBSmbEbfX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjNa4AACgkQFA3kzBSg
-KbbH5A/+KFV1JaIWgdLWXWHARzjzFnlQtriKenzhqLJBCz4lQU+Mzb5VeB7p7ys7
-kTu2fYEhPy5TZYH7BTBmQlt/DT9oD9IuvAyzCA7jBDRcI0gBLwNIAUzd6MkIVjTU
-88qzoij2nyjRQgDe9qwTx12eu2MnD8s86qp18lTjLsSoMoGdcg9R10rsK0wC3s5J
-NEzPQa/WjFReCXS4yPrNk9OWHBXOZs+IW4dLPP9dF9EIkJRUvr0Z72nco7T9f0Rv
-4RuGrZdbc0PbseDiYFxFeG8ajxwZEu9CS69jpoO4zmmQOD75VaCV+tR9O+3fDQJW
-ZETEIw4uOwpUlF+oWpq4X6tAeUyRBy4KX4OBnfbbkpdiQnfIfvzQf1U9D+Pi9j39
-lfR36k7PxBCsMJ0wmVfJcIDhtKNKBUnBWe8UHyDXW79lLU9+eLPn7+FYQEUZnSt2
-2oaCRgfXKAwKCK7AWMnKoUTvkxDWEPCMwCFLUoKhrF0xBOUWue7UFwzCUMpgXowm
-6pyV8V7886NqBnCpEojZ2rwVBwx2C/HhdFgYc6dSJwmDazB+AUor4Ix290W6NzF3
-PWn2ynIEtiVNSGp2g7R0X7uexRMNr1jUp1IQoMYT81+F3WNxZ+ypGnny/dBnGEac
-gKbLs/0lWgA11ijNXck092CTdQw1iRBCMEIILOvYzLEjxI8dryE=
-=lIeI
------END PGP SIGNATURE-----
-
---cI7BpyPbBSmbEbfX--
+Regards,
+   Nicolas
 
