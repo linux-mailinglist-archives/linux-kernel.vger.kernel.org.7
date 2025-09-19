@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-825272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21991B8B79F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:33:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DB7B8B7A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90AF1CC0B01
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:33:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35BDF1CC10B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E362D63E4;
-	Fri, 19 Sep 2025 22:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE2B2D836D;
+	Fri, 19 Sep 2025 22:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XoErpupl"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="df4Pb4fN"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F14E25F784
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFE92D595E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 22:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758321186; cv=none; b=maFQBEKFnTx1BfvMBOcRHEzEWlrcvy811RjnWXZisS3xWVjCeBxB8/eOrv+9LQSyN6gAKuNpawdHTT36kzscB24Fw+OjkVNeyrbdoB/Llnl0IUHhZMoc9MeNfZvlRKYYQFAWzb8sXio4CBMOg7kOfunT7ucibBFksq0Tg/MZk1g=
+	t=1758321188; cv=none; b=HoSQUlP3PMs2YG1RIqeg4l9owwhbWQTvLbBACMo9eXsaIkDRx/jjhRyn/oCasMhN33px2gMDng5/PQcMVCN/PBDN5mwCyn12rNZvO6AswcKtO06f+YUIRFF7TZDNGITSBWt4Ik1oFDSkOG/3YQWq6A6WcJUc+y0j+L83jN2GMQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758321186; c=relaxed/simple;
-	bh=XlnjwGb/Uv8iDC4X4PssXMxOuSIkF9nMxyWo059j3B4=;
+	s=arc-20240116; t=1758321188; c=relaxed/simple;
+	bh=MGoqbJuB9sCOizQgDYnMaXG/P8e3uUL1d4ZDtIlGQ04=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pSOvO4vZXWVBu+ZWz+HrE0se2baUMoR6kf4wEfgTCMFms/U0Wns6YZPgUc3lXSXgAAddej3E/9HwL1J8fzg0UOJyfVqLkCVKB1ac7SDb4RABp7UqwN/rsWRZt2Yc5cgR1+U22xC+9GbpE05fiwyK+BaEJA2RV77ndx351PRbIcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XoErpupl; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=QEmuN/vz0h04h8uI7BbefL9cgqxEdtoIdbL9BWEAfFpabb3sWOAEJzZ+sDaxdfmgTkcJHnn8Gue/aslrjMj/XcZGU604diUCO9Dy9a4JwvCe9UsRuPFOiVkCApxx0oLDsDBJEpnLbyr5YGCaHXqdKAIhL5VfiQ9bUL/qRIsbZNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=df4Pb4fN; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b55153c5ef2so1334385a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:33:05 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77dff701fb8so1506476b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 15:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758321184; x=1758925984; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1758321186; x=1758925986; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=cBtq0KlbJNaCLdLypdNbSmqpzS3YAzcVYonMlUie8jk=;
-        b=XoErpuplShWczCMlTSNb5Jrg0rcnSzKhLV7Wabm4OuYGe35G0wkeHGLHTJuP4biesd
-         QRqx7vwcsBBL4gd0FJaFsGIOY+rW5+VwZ6SBtRzYDl8gTddBZzVLp278ORFCXlc6m4I9
-         Yyssg+ehJ3lCmKB/RZVUI+s3A6EOWEo/IBQaAGqhanGj38GIjm+gNFNTu/nKCdmP7s45
-         sysK/a9005tzTx9CtkhcZfAkFYsLda0s6b15d2NRAXP7vPSxCy7BKW7SCm14w3q/tz1o
-         IZQo/+K6QmoultAn3le5SAojOlttjGhJw9gP4g1WUGqQOHWUQaDim88uOlaoBChWBwOB
-         PtPg==
+        bh=wqYcd9euZlCyN9BS3XgrU5fRkOaykxhfX02wnyNgUOs=;
+        b=df4Pb4fN1+5xBwOnUfndrG3L3hSpJctLcp8n5wAXXz6bhRz1verdI56BsjXua+I3DN
+         XS/r5MPmSQ/odHbfKz8QWEl1PsmWYjIZpCvauFWayWLWBKMnCt5NLrGldxIzQqFbswxY
+         TuwXlXl+cWM7ZmKnQ+HI35xrn8WojK2KTAEmtJPeHWKym0ZDFjIoHnn3wn5nhY7+MEQ7
+         af3mLAnaIB7a0ZXbZ9yLUc9H8GOOcGhtql8z2dnFRC0gw1US5TsYlcoqB/ZVGcbfxBge
+         bK3RYjgnmWyV8g7YrY6LNBhZhkG+FbO4u0PO2M63gsLcRZGf8rWNkWPPh8ryxC0Ge8NG
+         blow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758321184; x=1758925984;
+        d=1e100.net; s=20230601; t=1758321186; x=1758925986;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=cBtq0KlbJNaCLdLypdNbSmqpzS3YAzcVYonMlUie8jk=;
-        b=UfHRjZ/Vx61LkwTt+nGcMP5i0+ZCeXblyTGi8Q7Npei1PbMnUu1VlRRi3KvhCP1MbL
-         Aixyo8GUtLnBfblMv2M2m2Jyc2KC30gdeh+z756vZuX4AbOtK1NU7LS6qyZJ46R0cf6A
-         TYucGhu5g0jM9CPxPemLwdkJNft/RZcTYFwb/l3Qgj4KLKZ5g4UQ7BTyhmVqCyuEsvQk
-         oymiIF+M7RSoQ7Iiy2SiInb/TDjoYEm6r/qMjeYuPLp7lF2gYlYKdQ3pd5nUVwZ4EgCV
-         V3Sui6Fb1yzOqfK6dcZ/nLlTtI/izVJ6bNxmv1c42alxstoI7oCKj0csc7GadA6xksND
-         BKIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfHvC6wLww2h0IvJALUHTSmfxoQBlPJQ3nrPc3EYukhKct1xGbFjlaAM8H4WVUL5uG8gkeqPbiHKuUhLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+bH6DvRQv3uj/oMj17BSvxi/Z28qNKtpbtg29lc8iP1sMFV45
-	9MapgoUmWs6DywECfBLFHhRRsLswO5XxDG31nNvdxzi+yqI0WSLJzXMgb/K5ggVwajWMIx1A4vM
-	tb5NPZg==
-X-Google-Smtp-Source: AGHT+IFc0Q3XMUJzbgN7Ff9HbAiLY51qcwkDIquE2sFhMr2ysXppYnkJ+NuTwBMNRjK9zuprNbkFBID862w=
-X-Received: from pjbqx3.prod.google.com ([2002:a17:90b:3e43:b0:32b:61c4:e48b])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7d9b:b0:252:9bf:ad80
- with SMTP id adf61e73a8af0-29274fb76b1mr7728324637.54.1758321184578; Fri, 19
- Sep 2025 15:33:04 -0700 (PDT)
+        bh=wqYcd9euZlCyN9BS3XgrU5fRkOaykxhfX02wnyNgUOs=;
+        b=aWIOykviabYUBxJHCgk4kfSLO90W/msf8isDQXdQt9yiJaeMqcg2Lk3Sb9hApDgDsQ
+         WJM4JqKkXidpM1ZShbuwPeEFrK7aKrC6wq+vjeF40zIPDg4d2A4SnmnC6ZYUjL9hS5Sb
+         KBWEnKSOpVXEMpeIAq9smx70m3YxukLnX4pqE11RHs2x5HUJ7+s3KTXEoAst1jDJzsPS
+         kwJ9K2PnbdGd6Q+Sh0Wi5TVLwqLCkg14gPkx6VXgpsjaXgQU+vh2bDpzrImnseUvSdNg
+         1mIX4R0RtP26cgSySpDuQKp1SJYVpTFhTfVsv1WER2wY9NW7d9dVkuo8r7vHlO5qk1/k
+         RUAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT0/mPXFWnbr42NH1mgkMhqJT8zlyMXlOzMn0VSW4PoNgFa93lmQxwMxQIIriEZ/qZl7EO+SkKcoXqCJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxFVQ9C+IJmFfkkpJGcQa8dOS0oWTD6UmpHT7oRf6bJcB8ceDV
+	JOW/BUSHN3LsFRpqlJDwG1hFoJFV6L/grFY5fjeEViAp3eNizBPX59O+J2E3OWY+/vwITeCBEmG
+	mcz5F8g==
+X-Google-Smtp-Source: AGHT+IHa7+GTGOB/OfVBevbILqcp7CNMwVxukhCmqhE5euiMqraGlNNrlrM+jwtI07qDvfdB/ch8vTN5P0k=
+X-Received: from pfmm21.prod.google.com ([2002:a05:6a00:2495:b0:77f:1cc1:89eb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1706:b0:774:615b:c8ad
+ with SMTP id d2e1a72fcca58-77e4d127eb2mr6222337b3a.9.1758321186510; Fri, 19
+ Sep 2025 15:33:06 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 15:32:08 -0700
+Date: Fri, 19 Sep 2025 15:32:09 -0700
 In-Reply-To: <20250919223258.1604852-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250919223258.1604852-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919223258.1604852-2-seanjc@google.com>
-Subject: [PATCH v16 01/51] KVM: SEV: Rename kvm_ghcb_get_sw_exit_code() to kvm_get_cached_sw_exit_code()
+Message-ID: <20250919223258.1604852-3-seanjc@google.com>
+Subject: [PATCH v16 02/51] KVM: SEV: Read save fields from GHCB exactly once
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -87,60 +87,105 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Rename kvm_ghcb_get_sw_exit_code() to kvm_get_cached_sw_exit_code() to make
-it clear that KVM is getting the cached value, not reading directly from
-the guest-controlled GHCB.  More importantly, vacating
-kvm_ghcb_get_sw_exit_code() will allow adding a KVM-specific macro-built
-kvm_ghcb_get_##field() helper to read values from the GHCB.
+Wrap all reads of GHCB save fields with READ_ONCE() via a KVM-specific
+GHCB get() utility to help guard against TOCTOU bugs.  Using READ_ONCE()
+doesn't completely prevent such bugs, e.g. doesn't prevent KVM from
+redoing get() after checking the initial value, but at least addresses
+all potential TOCTOU issues in the current KVM code base.
 
-No functional change intended.
+To prevent unintentional use of the generic helpers, take only @svm for
+the kvm_ghcb_get_xxx() helpers and retrieve the ghcb instead of explicitly
+passing it in.
 
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Opportunistically reduce the indentation of the macro-defined helpers and
+clean up the alignment.
+
+Fixes: 4e15a0ddc3ff ("KVM: SEV: snapshot the GHCB before accessing it")
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/svm/sev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/svm/sev.c | 22 +++++++++++-----------
+ arch/x86/kvm/svm/svm.h | 25 +++++++++++++++----------
+ 2 files changed, 26 insertions(+), 21 deletions(-)
 
 diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index cce48fff2e6c..f046a587ecaf 100644
+index f046a587ecaf..8d057dbd8a71 100644
 --- a/arch/x86/kvm/svm/sev.c
 +++ b/arch/x86/kvm/svm/sev.c
-@@ -3264,7 +3264,7 @@ void sev_free_vcpu(struct kvm_vcpu *vcpu)
- 		kvfree(svm->sev_es.ghcb_sa);
- }
+@@ -3343,26 +3343,26 @@ static void sev_es_sync_from_ghcb(struct vcpu_svm *svm)
+ 	BUILD_BUG_ON(sizeof(svm->sev_es.valid_bitmap) != sizeof(ghcb->save.valid_bitmap));
+ 	memcpy(&svm->sev_es.valid_bitmap, &ghcb->save.valid_bitmap, sizeof(ghcb->save.valid_bitmap));
  
--static u64 kvm_ghcb_get_sw_exit_code(struct vmcb_control_area *control)
-+static u64 kvm_get_cached_sw_exit_code(struct vmcb_control_area *control)
- {
- 	return (((u64)control->exit_code_hi) << 32) | control->exit_code;
- }
-@@ -3290,7 +3290,7 @@ static void dump_ghcb(struct vcpu_svm *svm)
- 	 */
- 	pr_err("GHCB (GPA=%016llx) snapshot:\n", svm->vmcb->control.ghcb_gpa);
- 	pr_err("%-20s%016llx is_valid: %u\n", "sw_exit_code",
--	       kvm_ghcb_get_sw_exit_code(control), kvm_ghcb_sw_exit_code_is_valid(svm));
-+	       kvm_get_cached_sw_exit_code(control), kvm_ghcb_sw_exit_code_is_valid(svm));
- 	pr_err("%-20s%016llx is_valid: %u\n", "sw_exit_info_1",
- 	       control->exit_info_1, kvm_ghcb_sw_exit_info_1_is_valid(svm));
- 	pr_err("%-20s%016llx is_valid: %u\n", "sw_exit_info_2",
-@@ -3379,7 +3379,7 @@ static int sev_es_validate_vmgexit(struct vcpu_svm *svm)
- 	 * Retrieve the exit code now even though it may not be marked valid
- 	 * as it could help with debugging.
- 	 */
--	exit_code = kvm_ghcb_get_sw_exit_code(control);
-+	exit_code = kvm_get_cached_sw_exit_code(control);
+-	vcpu->arch.regs[VCPU_REGS_RAX] = kvm_ghcb_get_rax_if_valid(svm, ghcb);
+-	vcpu->arch.regs[VCPU_REGS_RBX] = kvm_ghcb_get_rbx_if_valid(svm, ghcb);
+-	vcpu->arch.regs[VCPU_REGS_RCX] = kvm_ghcb_get_rcx_if_valid(svm, ghcb);
+-	vcpu->arch.regs[VCPU_REGS_RDX] = kvm_ghcb_get_rdx_if_valid(svm, ghcb);
+-	vcpu->arch.regs[VCPU_REGS_RSI] = kvm_ghcb_get_rsi_if_valid(svm, ghcb);
++	vcpu->arch.regs[VCPU_REGS_RAX] = kvm_ghcb_get_rax_if_valid(svm);
++	vcpu->arch.regs[VCPU_REGS_RBX] = kvm_ghcb_get_rbx_if_valid(svm);
++	vcpu->arch.regs[VCPU_REGS_RCX] = kvm_ghcb_get_rcx_if_valid(svm);
++	vcpu->arch.regs[VCPU_REGS_RDX] = kvm_ghcb_get_rdx_if_valid(svm);
++	vcpu->arch.regs[VCPU_REGS_RSI] = kvm_ghcb_get_rsi_if_valid(svm);
  
- 	/* Only GHCB Usage code 0 is supported */
- 	if (svm->sev_es.ghcb->ghcb_usage) {
-@@ -4384,7 +4384,7 @@ int sev_handle_vmgexit(struct kvm_vcpu *vcpu)
+-	svm->vmcb->save.cpl = kvm_ghcb_get_cpl_if_valid(svm, ghcb);
++	svm->vmcb->save.cpl = kvm_ghcb_get_cpl_if_valid(svm);
  
- 	svm_vmgexit_success(svm, 0);
+ 	if (kvm_ghcb_xcr0_is_valid(svm)) {
+-		vcpu->arch.xcr0 = ghcb_get_xcr0(ghcb);
++		vcpu->arch.xcr0 = kvm_ghcb_get_xcr0(svm);
+ 		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+ 	}
  
--	exit_code = kvm_ghcb_get_sw_exit_code(control);
-+	exit_code = kvm_get_cached_sw_exit_code(control);
- 	switch (exit_code) {
- 	case SVM_VMGEXIT_MMIO_READ:
- 		ret = setup_vmgexit_scratch(svm, true, control->exit_info_2);
+ 	/* Copy the GHCB exit information into the VMCB fields */
+-	exit_code = ghcb_get_sw_exit_code(ghcb);
++	exit_code = kvm_ghcb_get_sw_exit_code(svm);
+ 	control->exit_code = lower_32_bits(exit_code);
+ 	control->exit_code_hi = upper_32_bits(exit_code);
+-	control->exit_info_1 = ghcb_get_sw_exit_info_1(ghcb);
+-	control->exit_info_2 = ghcb_get_sw_exit_info_2(ghcb);
+-	svm->sev_es.sw_scratch = kvm_ghcb_get_sw_scratch_if_valid(svm, ghcb);
++	control->exit_info_1 = kvm_ghcb_get_sw_exit_info_1(svm);
++	control->exit_info_2 = kvm_ghcb_get_sw_exit_info_2(svm);
++	svm->sev_es.sw_scratch = kvm_ghcb_get_sw_scratch_if_valid(svm);
+ 
+ 	/* Clear the valid entries fields */
+ 	memset(ghcb->save.valid_bitmap, 0, sizeof(ghcb->save.valid_bitmap));
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 5d39c0b17988..5365984e82e5 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -913,16 +913,21 @@ void __svm_sev_es_vcpu_run(struct vcpu_svm *svm, bool spec_ctrl_intercepted,
+ void __svm_vcpu_run(struct vcpu_svm *svm, bool spec_ctrl_intercepted);
+ 
+ #define DEFINE_KVM_GHCB_ACCESSORS(field)						\
+-	static __always_inline bool kvm_ghcb_##field##_is_valid(const struct vcpu_svm *svm) \
+-	{									\
+-		return test_bit(GHCB_BITMAP_IDX(field),				\
+-				(unsigned long *)&svm->sev_es.valid_bitmap);	\
+-	}									\
+-										\
+-	static __always_inline u64 kvm_ghcb_get_##field##_if_valid(struct vcpu_svm *svm, struct ghcb *ghcb) \
+-	{									\
+-		return kvm_ghcb_##field##_is_valid(svm) ? ghcb->save.field : 0;	\
+-	}									\
++static __always_inline u64 kvm_ghcb_get_##field(struct vcpu_svm *svm)			\
++{											\
++	return READ_ONCE(svm->sev_es.ghcb->save.field);					\
++}											\
++											\
++static __always_inline bool kvm_ghcb_##field##_is_valid(const struct vcpu_svm *svm)	\
++{											\
++	return test_bit(GHCB_BITMAP_IDX(field),						\
++			(unsigned long *)&svm->sev_es.valid_bitmap);			\
++}											\
++											\
++static __always_inline u64 kvm_ghcb_get_##field##_if_valid(struct vcpu_svm *svm)	\
++{											\
++	return kvm_ghcb_##field##_is_valid(svm) ? kvm_ghcb_get_##field(svm) : 0;	\
++}
+ 
+ DEFINE_KVM_GHCB_ACCESSORS(cpl)
+ DEFINE_KVM_GHCB_ACCESSORS(rax)
 -- 
 2.51.0.470.ga7dc726c21-goog
 
