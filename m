@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-823906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA26B87B35
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:18:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E9EB87B71
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561C42A6BA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA117C0A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2F0239E6F;
-	Fri, 19 Sep 2025 02:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE2A274B35;
+	Fri, 19 Sep 2025 02:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uQ1+JcVA"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="hKmFhFJG"
+Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB53273F9
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5692737EB
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758248282; cv=none; b=n8vYBkdbpomXEHKwbjLeXy1xTCvEbzesKirQBXtLpfTwEaecFFM5isO5yeXN0Dp1BjI4n7pQZbhn5B+gspz7ZC7RqV/uSSrRJRrewpuOpZj/3mQRi5lk1UFZpXtTYgOCvfRE52JHoek8pA4VwUQosFNJmoy7oRGbD2sUF1fmnPk=
+	t=1758248356; cv=none; b=XOWmoNBzE0mAKSjRFImQgqLBQ/l3a5niOl3xHWoTETTG8XELkFcPqR8BT8/n9ezBzxQTubPiY8z/0T1EbhRGMJPOCUmEsiSM2ayUhBEtG2u/BrO5CUzt7Rx2dPRUwEFXw3n43k5xrO48eS7p7Q/ywVjinEskL+7TXopPxlbbbuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758248282; c=relaxed/simple;
-	bh=8/9X/yl89henGnUcBx4/BE+c1JkAukEdDa3OSuQkd2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cXZkmZ+jHscIdWWc186mlNnjlT8I/grJYrLh3iMnnom5pTDxALPLOUar2LF9Ec7LjnPjjPgVXgiAEaH9DabzguWL0yEqDs7/tMO3Nbg0EPGraRiQfssN8PvFfj4pf8YV/g0ZWVPP3l/hqRYxtuNzWPa3HGwXqXPj7xLjXg3wgXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uQ1+JcVA; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ef942138-7318-4ac9-bf53-ec646c426c82@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758248268;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QND3Wr17IEapmHXCoB1iRboFSwrJThe5CdhfJG8oOGY=;
-	b=uQ1+JcVATbyCSETKErS/bSDdzEsha2vI15YCaBeT0csK7FNUNjxgmWj4uE6UHKeH9h/yNm
-	s2nUCzqf1Q6IraYoeUCfsvcXpBZBj8YmZutdZI6r8HMMCdv0iozIkf3tvPsWYZE1y695FM
-	HuCsFRYxCPNLQYoej/R6gG1wpYiWZq0=
-Date: Fri, 19 Sep 2025 10:17:41 +0800
+	s=arc-20240116; t=1758248356; c=relaxed/simple;
+	bh=sFRzPeEUbfwXjETO8DhUwHf2ewNSCrg5fO2NPPdHa8o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qhhSq4qwgiJkvZ9iSw5cnABaNiKczf0k9MPpC4UYgqAXS+Jt1KpxG7hlHYUy2AAKmmQnt3XfPcXlkZT+BXEjaRk13Vz+SbVrjSZgck67J3u/wPHA0UqDeC9CwvizJ8NMfpGfbx0jeHA17pawcBMmRKiOpSrFbuKXINKGI3DrV28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=hKmFhFJG; arc=none smtp.client-ip=202.108.3.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758248350;
+	bh=Y803CjAYkloWrgedTw2DDjDhJYKKMtqAYtox1HE3UrY=;
+	h=From:Subject:Date:Message-ID;
+	b=hKmFhFJGSauBJZrcWOCTBqa/QC2ONZqZmxGGAwhAjCeMxVai3c/nHO/Smr1YZ2mda
+	 rDQa0NT8f+8LWzxGpeXiIj1uzijhuVchmQT9E6GIznAH6yhswTC6XgkXU/W2q+qBW8
+	 HDR8UHvtD4ewns7jexT2d0B2o6e/yd4jw6HdU9FI=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68CCBD93000043EF; Fri, 19 Sep 2025 10:19:01 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2983136292027
+X-SMAIL-UIID: 4CEB83AB8242444B9C7B570082D513D3-20250919-101901-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+3815dce0acab6c55984e@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [netfs?] INFO: task hung in vfs_utimes (3)
+Date: Fri, 19 Sep 2025 10:18:50 +0800
+Message-ID: <20250919021852.7157-1-hdanton@sina.com>
+In-Reply-To: <68cca807.050a0220.28a605.0013.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 2/2] bpftool: Fix UAF in get_delegate_value
-To: Quentin Monnet <qmo@kernel.org>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250918120908.1255263-1-chen.dylane@linux.dev>
- <20250918120908.1255263-2-chen.dylane@linux.dev>
- <226947cd-a28d-4c09-81cb-0fa0a21c7075@kernel.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <226947cd-a28d-4c09-81cb-0fa0a21c7075@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2025/9/19 04:07, Quentin Monnet 写道:
-> 2025-09-18 20:09 UTC+0800 ~ Tao Chen <chen.dylane@linux.dev>
->> The return value ret pointer is pointing opts_copy, but opts_copy
->> gets freed in get_delegate_value before return, fix this by free
->> the mntent->mnt_opts strdup memory after show delegate value.
->>
->> Fixes: 2d812311c2b2 ("bpftool: Add bpf_token show")
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   tools/bpf/bpftool/token.c | 90 +++++++++++++++------------------------
->>   1 file changed, 35 insertions(+), 55 deletions(-)
->>
->> diff --git a/tools/bpf/bpftool/token.c b/tools/bpf/bpftool/token.c
->> index 82b829e44c8..20c4c78a8a8 100644
->> --- a/tools/bpf/bpftool/token.c
->> +++ b/tools/bpf/bpftool/token.c
+> Date: Thu, 18 Sep 2025 17:47:03 -0700	[thread overview]
+> syzbot has bisected this issue to:
 > 
+> commit aaec5a95d59615523db03dd53c2052f0a87beea7
+> Author: Oleg Nesterov <oleg@redhat.com>
+> Date:   Thu Jan 2 14:07:15 2025 +0000
 > 
->> @@ -69,38 +73,29 @@ static void print_items_per_line(const char *input, int items_per_line)
->>   		printf("%-20s", str);
->>   		cnt++;
->>   	}
->> -
->> -	free(strs);
->>   }
->>   
->>   #define ITEMS_PER_LINE 4
->>   static void show_token_info_plain(struct mntent *mntent)
->>   {
->> -	char *value;
->> +	char *opts, *value;
+>     pipe_read: don't wake up the writer if the pipe is still full
 > 
-> 
-> Thank you! I just have style nits: can you move the declaration of
-> "opts" and "value" inside of the for loop, please? They're not used
-> outside of it.
->
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=175fa534580000
+> start commit:   46a51f4f5eda Merge tag 'for-v6.17-rc' of git://git.kernel...
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=14dfa534580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10dfa534580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3815dce0acab6c55984e
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17692f62580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1361f47c580000
 
-No problem, will change it in v4, thanks.
+Test Oleg's fix.
 
-> 
->>   
->>   	printf("token_info  %s", mntent->mnt_dir);
->>   
->> -	printf("\n\tallowed_cmds:");
->> -	value = get_delegate_value(mntent->mnt_opts, "delegate_cmds");
->> -	print_items_per_line(value, ITEMS_PER_LINE);
->> -
->> -	printf("\n\tallowed_maps:");
->> -	value = get_delegate_value(mntent->mnt_opts, "delegate_maps");
->> -	print_items_per_line(value, ITEMS_PER_LINE);
->> -
->> -	printf("\n\tallowed_progs:");
->> -	value = get_delegate_value(mntent->mnt_opts, "delegate_progs");
->> -	print_items_per_line(value, ITEMS_PER_LINE);
->> +	for (size_t i = 0; i < ARRAY_SIZE(sets); i++) {
-> 
-> 
-> And could you please move the declaration of variable "i" to the top of
-> the function, for consistency with the rest of the code?>
+#syz test upstream  master
 
-also will change it in v4, thanks.
-
-> Same comments for the JSON function.
-> 
-> Thanks,
-> Quentin
--- 
-Best Regards
-Tao Chen
+--- x/net/9p/trans_fd.c
++++ y/net/9p/trans_fd.c
+@@ -666,7 +666,6 @@ static void p9_poll_mux(struct p9_conn *
+ 
+ static int p9_fd_request(struct p9_client *client, struct p9_req_t *req)
+ {
+-	__poll_t n;
+ 	int err;
+ 	struct p9_trans_fd *ts = client->trans;
+ 	struct p9_conn *m = &ts->conn;
+@@ -686,14 +685,7 @@ static int p9_fd_request(struct p9_clien
+ 	list_add_tail(&req->req_list, &m->unsent_req_list);
+ 	spin_unlock(&m->req_lock);
+ 
+-	if (test_and_clear_bit(Wpending, &m->wsched))
+-		n = EPOLLOUT;
+-	else
+-		n = p9_fd_poll(m->client, NULL, NULL);
+-
+-	if (n & EPOLLOUT && !test_and_set_bit(Wworksched, &m->wsched))
+-		schedule_work(&m->wq);
+-
++	p9_poll_mux(m);
+ 	return 0;
+ }
+ 
+--
 
