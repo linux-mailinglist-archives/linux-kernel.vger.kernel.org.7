@@ -1,576 +1,249 @@
-Return-Path: <linux-kernel+bounces-824057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684F3B8807F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:48:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DF1B88088
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 08:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F175676A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:48:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E09E37BD7CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33DC2C0F7B;
-	Fri, 19 Sep 2025 06:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007BF2BEC3A;
+	Fri, 19 Sep 2025 06:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mJkggemw"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011012.outbound.protection.outlook.com [52.101.57.12])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sEu2b2GN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7698925A326;
-	Fri, 19 Sep 2025 06:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758264466; cv=fail; b=mUy0wPva+sE1ZzMhD8TXwd5Aca2611g1RhjBqgWDNLwsG83GcyG9sfjNboZpVF7bgyp5gSVwmELTmreYdDlUdDt27xrMFRszXyH+w8/X8/0y2Iw4qAmQa34YcasRShdyj/Puq1JsoDra6nlYSNfy55F6hBvbRnnMz6Y77aIV72w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758264466; c=relaxed/simple;
-	bh=8eYj8LLDDzB83YtLsF+XsVL0k9KkA7Bc87gF3pfyjwY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VDq4u+D0yCaBFg/6y/rCh23LGl0qi2Cgio1bEm1DFASQtLdwtnry/floCCpt7ii0/HubJj+4c9/yJVBrgMWE6Ck5kw2/1q81Z9CbeWMfEi3FoVJS8sIyD3rNB7lmM3S0EcrbdlgnwkxqGf5W2zKy9Aiv/afFtzAbvTOdWUwUhgo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mJkggemw; arc=fail smtp.client-ip=52.101.57.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mjfSP+aQNwjfPtAjR8o6eQ9XAcS2QD7yiELQ2FwdTIEwp4DGyx3RdNd8QRArWmcO2dIyrDY5olY/hqj4QGeFT8Z9o5KeeXNqBvhLCqFdr99+DAicI0OMcAjAEXNH8oeCLmeeZBt5X8umngq+g7xNgi7jmD+gErlPDZ1p5zLtfy28/hTE6BMSyFkmDR/1zsmCJT3ZN9XBu6OhwgagreWz+muO3cmE4TvhYO6jsyvh9EfNDdZBbm/DbBRQ6McT1uLhJ+ZF9UkZ64hkmjJ/3OcqkHuZmlpHyGuo0+NQKi+mB1q97NpkOSvJj6KKtmYYz4d4Z/OXNZ4Ez7Ocfa1/+bG9Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aNp9lMieMP9ZKlnjqKYaajewulwcZAQ2KZrlI3M0+z8=;
- b=OHFNIP5JeqMMjXgbNhNmTqxWlES54kJv3XWQqb9ePowe0jHoiUYX8cuaCJ3g77yWwFkgH+DiTMRP9NELWyLq5lwnHIsXVgpZC63cqrgbTsbavzegbTh4s3umZm+nQ32+lW2WhRfih4oicb+5P8l9CnuRdf9/YwODnAiKYGC2M+mZB3caPNcdmggNc8sXuHupfws+LMbAbpLCXgubycfwQg48P+WT+RW/RkrSCBVKh5gsqmGWp5a3NFMtKjmR1BgqO96NqXMkqypj7uNlRzBo8bbByCZ5QzrnMFbA7zGJPSEHwgcBQdbcOn0IXD+gwopQC7bYrebm5pqr9JxnH/Er1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aNp9lMieMP9ZKlnjqKYaajewulwcZAQ2KZrlI3M0+z8=;
- b=mJkggemwzkBzTzpxWOkTDX1lEgO70uod+CMsfxRyyuvuzeAitFBHxDKntzKNgpy78dmWJJgLojO6GSjaNyK+hDbDoOfR3bgoLUsarZxC9A9NGISlzz7oGDdj7c0vLghoIWcsxcCAVvolme3ANLoOtNWFN+QqjeGUXvyX7f1iqzmlZqEp4knrFFQdx2FL6y48R1kxvQJKz4ebMhAjGv1we4PIZqn0foENYB5X7rotSk1TzDyHNFHWAIkv/lRz5CbXssq+7l3+Z3N6P7qKIzB5GaAD4cfnp46JTZvFl662sgoNIgDQlEpm8ATy4le2y0Wz9TMD5LjV1IdJ8oxjv0Eh3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- SJ2PR12MB8691.namprd12.prod.outlook.com (2603:10b6:a03:541::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Fri, 19 Sep
- 2025 06:47:40 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
- 06:47:40 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
- Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
- Charan Pedumuru <charan.pedumuru@gmail.com>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-staging@lists.linux.dev
-Subject: Re: [PATCH v2 09/23] gpu: host1x: convert MIPI to use operations
-Date: Fri, 19 Sep 2025 15:47:37 +0900
-Message-ID: <4792993.1IzOArtZ34@senjougahara>
-In-Reply-To: <20250906135345.241229-10-clamor95@gmail.com>
-References:
- <20250906135345.241229-1-clamor95@gmail.com>
- <20250906135345.241229-10-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCPR01CA0133.jpnprd01.prod.outlook.com
- (2603:1096:400:26d::14) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DDB25A33A;
+	Fri, 19 Sep 2025 06:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758264506; cv=none; b=b0/Vexrg53pC2Fcosa35qzYgUohDitlee2WNaWMpIfIqNYwC5ila47oKT4XbcLMSFxuvseTClkxZ2zivb3LIduzGdda626NYEFBRDhs35LQNV/DJbhC2KPNV2Szz/RKcNlG9nH4akSmgaxV0Ds9bKxd3g8JYYcAiz7eJlr7fzbs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758264506; c=relaxed/simple;
+	bh=p/lJeks8maYs2wRwqTBLGhIVXRz9P4BEtOTbrt/UBhI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kwBF6UZFKHrW190DqP3+AK9OgKuypI3qcB7iusw+yGT6hC2cAjIv01CK1U5B7hkUWPYgy707K6UdmeC9aEKqSfTzetMR5rcT/76nZFkwdEXFIlHxk4AloZn/2q0VMJUjQ4w+0CoPXE9T8dDwAcrfQ3t+SyglWsTtgsQe91WP0h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sEu2b2GN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58J1pcIj011459;
+	Fri, 19 Sep 2025 06:48:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ZX79AQL6Vwm9BH3DfNk7vDVB87Dqmx7tyyrSRLc//
+	+I=; b=sEu2b2GN8a1IZRGy2/wIsfbRALoIt/j3w4weCYUV0RMdZfZal9xOE8mEv
+	ReOlZVuwUoskqCMDWELRR33VFshzwn9sqrKAxLHUn6R1JfP9Ydor+SdrYPhk8Yvv
+	NQL0tTVB7/4gRet9GQssPT5ALD6C0c/mS0elYzn2lZTqdCn8gep/ADzC8DCqgGvm
+	YdhrwyrArrL5laZXhKOsTkWvlH/wWMR6ZGtGsbXXdqnaZtB2QcaMrJX5m2wTXca0
+	Q6P41Ukc119oGsqCuy+LquGcICUWfJJ04tvUhIGYG4ldMryB2mNSp2tVhMkoMdcd
+	jhnUqybCdBJibp9+ixMe1XOlOjKMQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4jey8n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 06:48:14 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58J6ZHOg027447;
+	Fri, 19 Sep 2025 06:48:14 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4jey8j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 06:48:14 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58J4mduD029472;
+	Fri, 19 Sep 2025 06:48:13 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 495kb1atnj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 06:48:12 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58J6mBMU12190142
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 19 Sep 2025 06:48:11 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AC4220043;
+	Fri, 19 Sep 2025 06:48:11 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 779EE20040;
+	Fri, 19 Sep 2025 06:48:07 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.51])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 19 Sep 2025 06:48:07 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        john.g.garry@oracle.com, tytso@mit.edu, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [PATCH v7 00/11] Add more tests for multi fs block atomic writes
+Date: Fri, 19 Sep 2025 12:17:53 +0530
+Message-ID: <cover.1758264169.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|SJ2PR12MB8691:EE_
-X-MS-Office365-Filtering-Correlation-Id: eee20b47-18c9-4cef-6af4-08ddf7486d8e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|10070799003|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2RndXpGUkpSSDZZTnA2RnZKN3VUM282aEF3RWxneU1oQUlxdUZYdlhyWkp1?=
- =?utf-8?B?THQ4dEpJQkJOY3hEN0tCM3ROa3pSOUp2L2VkMlhBbDd5ci9CanlBVGlMUTJF?=
- =?utf-8?B?UkhRUVY3UEs3RW54d3Y4bWNVS3NiM0dIeGJETEdRTVp5WlB6Ly9USFN1MHVm?=
- =?utf-8?B?c1dyZlI1WkRVMkU2OUVsd1lscUt2aE4wVTFqaUl1TmN2NERoRVdLR253ZkY5?=
- =?utf-8?B?VmkxdzN3di9QbVlDcjVlaW5CeExBMWZHRk03SURMM0VGUy85cTVQMFNLSDN2?=
- =?utf-8?B?c3BrWUR0ejBYQk5pZmZJR083MElka1htcGFsTkhvVjdRK3FncEhLZWxkb0dz?=
- =?utf-8?B?aWsvU3hob3hFWXZUdUEzOVNzT1NVeUZjSEU4VHQyczhBeWdPU0dsNXBWanhx?=
- =?utf-8?B?dEtXYWJmem9ZZFQvUUtrVUtPcDZIS3FIek1iWEI1b24zZG5UL1hDUWN5c21X?=
- =?utf-8?B?OENsOVRvS2ZuN2M3NEE1N3A5UWlxVXVlbVg0R1hMK0s5R2g2WGdQTmNDR1F0?=
- =?utf-8?B?ZGFnc2ZQM01uK3FnS1p4Skx1VGh0bENPTGYrUnQxVnZQRmprWUM0a1dYWmR0?=
- =?utf-8?B?bzRFdHpsNXhOMEt3dzZMZjl5aUZQR0xRRnNyN2kzOE1pT2dRcjZZTjR0dmM1?=
- =?utf-8?B?Y04zSWdxajlDSC93VFVjK241VW5HaW9tYjR1VGFYTTdLK0k1WHNaaEJNdzNQ?=
- =?utf-8?B?ZjcxbnRaMTd1ckZ6QTNsR1dnUWE0eGhqdjdMV29YTFA0L3haTTFmbWhPMGJp?=
- =?utf-8?B?NVVmR1VjTXJyZDY0cDg2YzBJNS9tcmt3cVVIQ2FJdS9mZFR1UTNMY1BMeHBG?=
- =?utf-8?B?aURIL1VVTkxIL1Jkd2lJMXF5b3ZmSEpyYWJmbCtGZXhzUy9WVzNwUDNES0U3?=
- =?utf-8?B?d1ZxdTI3dCtwMVN3dEdTbUkxVFcwUzQ4SWtkVE5zSEEraGZVVmNWeDJ5Si9m?=
- =?utf-8?B?NnBES0RuSFp6cWMwUG5LMEhTQXhwTE9JbW94MitqT3NDSktuQnoxcFpsRmIr?=
- =?utf-8?B?bjM5UnJtM3had3FUd3paL3B4UkE2Y1h3SlZjV09LVUt6QkJrMmZrTW5ZSXZs?=
- =?utf-8?B?MTlqUXplSkpyRGlXL25ubUdLMTlZRThLYmczakF4cmtpejQyZlJYQVJCbGtr?=
- =?utf-8?B?Y3RyTEN5YVA4dEdSMkMwYS9mUlV0RGlxVnJrTDhidXMvbmYyNTVPcm8wb1Yy?=
- =?utf-8?B?RFErWWR6QlVERWhsaE01UzhKV1FlT1dzNTlUNHg3L2ZVTFNwWGpWYitsR0hs?=
- =?utf-8?B?OVlxMGRsTStrWkQzakNKQnRMcmpwZnV5YWZhSVZEYzhYeXMvSmdWU2REUE5h?=
- =?utf-8?B?aThuaUxrQXBKb3dxMFNpL2FWa25OcnFpTVlkKzM2RmE5OGwrZ25PZVlWZ3RD?=
- =?utf-8?B?VHg3T1AwOHR1S0JyV2FqSm1MVmd6WnkxZXFYdHJXTWxEU2RNK1FhUlAwdGh0?=
- =?utf-8?B?RDdMdFEwQ05menkyYWQ0TENSc3U3T3Z5Y01KbzUvb1BRYU9vT2RmMlhOSHAy?=
- =?utf-8?B?LzJza0dBMllmZFRsQm9EYjliOUNEVzFDYWdibFNjL2VwV1BYbkxuTDBDN2VC?=
- =?utf-8?B?cnJlMVpYMXVUQllVRXluQXpVYVh6YWV1Z0ozb29HTnNNdlVILzFqY2hwdXRD?=
- =?utf-8?B?dFhmK0NvZ3BHd3NnSVVsZ3o3V3JZUks2VTNQTk1PbHhyYzRqSVlmUmIwRmw3?=
- =?utf-8?B?SGU3eVNEdk0xcnNKdlB6TXo0azlwZVJPUGZ3RXhwNXVJOENGNmJlSzJKYmor?=
- =?utf-8?B?RGVjNUtpcmdja0pDME95b1BDU3MzTEVWRWhHcUo0bUZ3bE9iMEJYRUxIQXdq?=
- =?utf-8?B?VldUdTVPOHZsOTlFcGYzOUpaazBNYTlxYXlzMTNXQlBTamg5RFltM1RrY1FB?=
- =?utf-8?B?Y1dLZE9kVjBKY2dQZ2t5emxISitXL1d2R1FLK0o0VnpWTnJzdzhmYlFlS245?=
- =?utf-8?B?ZW5KUmxLQmsxcWxSdC9odjNhb1JpcjYreWNCT2huQ01PME9VZHFTbTFsZHBz?=
- =?utf-8?B?VjA4bDA3YjRBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(10070799003)(376014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YW56RHBlU0tuOGIwOXRwckZOYjBSYm5BTEVnLzEzajlSOFppS3lZZlBucVJS?=
- =?utf-8?B?d1ZyYzVxS2RPLzRDd1hDMzVlVmc0cUVVcDlQSGRUcC9KTUlGQVEzTFJqbDYx?=
- =?utf-8?B?YlNkNkZLejRyWUFoTnd4RmxaNFFTTzAxZSsvRlNLYlpJdzlyZW5BYWFsejlE?=
- =?utf-8?B?amNYdzBJK2Z5ZHhjQUhSbjJJQ2ZJUFc4T1VzT3g1cHUvWXJwNzdKcVNzTjd6?=
- =?utf-8?B?bkpxMUllWFJ3L2tVUlhIbmtvT2NGcUxJYVVYSVU2aHlnNWJOY0d5b0N2SnNZ?=
- =?utf-8?B?cU1SWUZTbGhJT1grWGpTRkFreS9wbXE2UE0zajFnd3pkSUtOdWlQQWlNVUVr?=
- =?utf-8?B?Nzl4cnk0cTdEa3ppek52bTlpYzNaYkRRRzEzRWxUQWhkRGZjOVZmcHlzb0U2?=
- =?utf-8?B?REdzZjN6OXExQWIvYmdSb3ZqSGowdXE4SVN5cWxiL05UbnZOcWN0MCtFUzJr?=
- =?utf-8?B?V1JWNzBoRGVMU0NLRUErQ1FvYWxnZ2RjSkhZVjFqRUxTZDJNdE5EWjYzeWtO?=
- =?utf-8?B?M3V2cEFYRXJxVnBwZFNDNXlsaUU0anBIby85dHRpd3lGV29LdUwzb2NtNXhQ?=
- =?utf-8?B?TEgyQzc0UCs2MUFEMDN2d1ZyLzhCRWtCR3hiSFN4MUI0N2daRDdKbEtMM2dh?=
- =?utf-8?B?SVI3SDNHekpoWFRKeE1RTXF5UFN2QXQ1Z2dMK0lwNnBkV0lvQkhaV212aWJt?=
- =?utf-8?B?TzREbmU4akh6QzhIdDZTMjVsVnZhUzlqM0N0dnpkam9BUVprZmdlMVIvSm42?=
- =?utf-8?B?eUtpMnhSaDlIbDB6Vjk3ZUt2cGZ2OUFXdkcyNktmU1BIU2dodEREK2xORFo1?=
- =?utf-8?B?NjNZcnhMSTFTWThHZEdPUzdPUEluQXIwY0lBUkRHYUpENS9KMWhPRzZPWnpi?=
- =?utf-8?B?WCtjMi9sZG5YRzZyZVJhZEEvUXpIcVdvSjFWM2NkOXMyMEhpMXV4OStvNU8y?=
- =?utf-8?B?TEpmdVhYcnNHekVFWlFQVlk0MEhqR0MwdldYWmc5OFhCb1dPNzU1L0dLMTF6?=
- =?utf-8?B?dXpvYmpJNTNwRjFpazIybGxNeFBDd3FuMGlvZGUwMzU1QmR0TmMrKzJuSllH?=
- =?utf-8?B?aDJncU12V0VXV2dzc2ZsdDJrWGNERGh5Ty9DNXkySk1lMWFzanE1ZzQ1b2tW?=
- =?utf-8?B?TVVkNjNocFZpSmd0ZzV2SGt0L1Vhd2l5RnZ5aW9XUW5FZWdiV1M5R3N4alpz?=
- =?utf-8?B?bkRnVmtWcVcwZkFldlQxV2xHdmtYckJRYTFrZG9IZ09VcU1lRi9kZytuQThV?=
- =?utf-8?B?SVZYK2VHUU8za3JxekZlWEZqRk12aUwxODhTOW5KaGwwTTJTUDVYMXc5TzlU?=
- =?utf-8?B?Q1NESDB1MXJaUWpUUTg4aVMrWWozSDFNOTQ3T2FKOXBoTk81eThsckNqTUo1?=
- =?utf-8?B?bFlBSUFPM1dCYXZZRXM5NEY2OU00c3FBajFPcG1QWWRWTmJBY3FjcDdOK09Q?=
- =?utf-8?B?OVlHOG1mUElYRzBFKzFNMXg4QzRVT09EU2F6WU1JSGRPRko0WEwrYVl0aXZB?=
- =?utf-8?B?dlppMkF2MjM2eHI5QStCVEJFQVpid0w5MnE3TVVGdll6MzBVdFllMk41d0xa?=
- =?utf-8?B?MjRhRktnSVpRME82YjFOK2xWRnorUW1SYThRQkQ4N0lBQW1jYlhzZXVuNmx5?=
- =?utf-8?B?NFhMYi9MZ2pBNEM1R2FFVk5CK2JxbHNzdHpOUWNycjFtT3diRmIyeWFpd1Zh?=
- =?utf-8?B?Q0JxaGRaTUZTdm4zQU1HbWx1UTIyS2pHZ2xrbFJZdkdmcFY2dWlBMERWMjFL?=
- =?utf-8?B?TkFiTHppVnRWVFMzZWlxVTRaNGFRUXpDNXpkZC9TRGtjTHNhNzhDRDdCbE9x?=
- =?utf-8?B?L1dvelUzdThXTXFqQWQveHhRSUF6b2hWZnoxRHR2b09jaGZZUVUwZmh5MXcv?=
- =?utf-8?B?ZnIxSzRrMWZxZ0p2NllCV21yZG0yQ2g5aWU4OUt0WHhTUUc4aDRsdUtJS3o0?=
- =?utf-8?B?d1YvcW9hMHdMdUZYNFdEVi9UY0dBVkM0VC9wdm9jVHQ2bGxlT2dCOHRSOG53?=
- =?utf-8?B?T1AzdnJxU0JYMWh5U1EyV09qTSthTTFiWVBqK2NMMXhCM21aS2NBckZPVFlL?=
- =?utf-8?B?RUN4c2E5eFZmRW8wMWxkQkpvQzNRdit2RXBlSUUxK0ZIQmFuYW8rYndYNVVm?=
- =?utf-8?B?amYrQktxUERNcEd1SC9ad0dTOFJwUFpIZ1k4TzBacEtrSkZQVDRmM0NPNENK?=
- =?utf-8?B?S202NWZqWFlYWE11Zm9xSXJ4SlVBbXBFVzVOeHNqYXFyM3l2eDlBeUJiYlk1?=
- =?utf-8?B?MkpWRXNuQ0hXQkU1Z1RtVEhFZ1FnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eee20b47-18c9-4cef-6af4-08ddf7486d8e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2025 06:47:40.5819
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hpYAR6GnwYE25akL7IR3OBvjJLOZ9mhgCqKjd8D9veltmlP4pXdK0yqFFki0Y9MrEgT6jWsFd+hXodM/oA9VKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8691
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Qf5mvtbv c=1 sm=1 tr=0 ts=68ccfcae cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=yPCof4ZbAAAA:8
+ a=RhRxWBKHx9l-Qd8VlncA:9
+X-Proofpoint-ORIG-GUID: kfx3m9WDgkzZzsBmRhSH3TOGEpwbSmo_
+X-Proofpoint-GUID: SwVC9rzFHYAD5Xhimknwegv1nU0byj2S
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX7Sj/XePoDbAp
+ thtlhCmp7UZGaS8SsuxahpzJhG+YTDtHFszqEHChS/6V1pJu5wrc7XDOf59zGICP27RreS39rDI
+ q/Otx8vna/aY5UIlauS93wh/SpI1s1vhAWle4bJ5luDpCxH102jcJ/qk4s9erTkXTpiAIBCV/Li
+ 13w1me8De99dF2S88VoGh5CWNgzHIRvEGZy23K9QHGb6XSqaq80KTZQWDDXZ/+yNZdypvWsqoFx
+ 5qGg1vMQvpQU+GlhsN4sWCnKiH6NVQEKMkgUoWSkEX2u2uK9Obahl49DhIWdEZhVSVFt+Oxgqk6
+ kA9EOaWhSWVs74mLRX1Jux1lug9BF8WqDZbakvj5HZ5V4c/qzSa1TPLFEv8fmWQvzddWnlz0UWq
+ Ighfc5Dy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-18_03,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 clxscore=1015 phishscore=0 suspectscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
 
-On Saturday, September 6, 2025 10:53=E2=80=AFPM Svyatoslav Ryhel wrote:
-> This commit converts the existing MIPI code to use operations, which is a
-> necessary step for the Tegra20/Tegra30 SoCs. Additionally, it creates a
-> dedicated header file, tegra-mipi-cal.h, to contain the MIPI calibration
-> functions, improving code organization and readability.
+Changes in v7:
+- Picked up reviews from John! (Thanks)
+- [9/11] Change "integrity test.." -> "torn write test.." for better
+  clarity
 
-I'd write out "operation function pointers", at least the first time. Just =
-"operations" isn't clear to me.
+Changes in v6:[5]
+- Picked up reviews from Darrick, Zorro and John! (Thanks)
+- Added _require_fio_atomic_writes helper in patch 3 as a wrapper arounc
+  __require_fio_version
+- minor spelling and refactors
 
-Please write the commit message in imperative mood (like you've done in oth=
-er patches).
+[5] https://lore.kernel.org/fstests/cover.1757610403.git.ojaswin@linux.ibm.com/
 
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  drivers/gpu/drm/tegra/dsi.c             |   1 +
->  drivers/gpu/host1x/mipi.c               |  40 +++------
->  drivers/staging/media/tegra-video/csi.c |   1 +
->  include/linux/host1x.h                  |  10 ---
->  include/linux/tegra-mipi-cal.h          | 111 ++++++++++++++++++++++++
->  5 files changed, 126 insertions(+), 37 deletions(-)
->  create mode 100644 include/linux/tegra-mipi-cal.h
->=20
-> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-> index 64f12a85a9dd..278bf2c85524 100644
-> --- a/drivers/gpu/drm/tegra/dsi.c
-> +++ b/drivers/gpu/drm/tegra/dsi.c
-> @@ -14,6 +14,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/reset.h>
-> +#include <linux/tegra-mipi-cal.h>
-> =20
->  #include <video/mipi_display.h>
-> =20
-> diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-> index e51b43dd15a3..2fa339a428f3 100644
-> --- a/drivers/gpu/host1x/mipi.c
-> +++ b/drivers/gpu/host1x/mipi.c
-> @@ -27,6 +27,7 @@
->  #include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
-> +#include <linux/tegra-mipi-cal.h>
-> =20
->  #include "dev.h"
-> =20
-> @@ -116,23 +117,6 @@ struct tegra_mipi_soc {
->  	u8 hsclkpuos;
->  };
-> =20
-> -struct tegra_mipi {
-> -	const struct tegra_mipi_soc *soc;
-> -	struct device *dev;
-> -	void __iomem *regs;
-> -	struct mutex lock;
-> -	struct clk *clk;
-> -
-> -	unsigned long usage_count;
-> -};
-> -
-> -struct tegra_mipi_device {
-> -	struct platform_device *pdev;
-> -	struct tegra_mipi *mipi;
-> -	struct device *device;
-> -	unsigned long pads;
-> -};
-> -
->  static inline u32 tegra_mipi_readl(struct tegra_mipi *mipi,
->  				   unsigned long offset)
->  {
-> @@ -261,7 +245,7 @@ void tegra_mipi_free(struct tegra_mipi_device *device=
-)
->  }
->  EXPORT_SYMBOL(tegra_mipi_free);
-> =20
-> -int tegra_mipi_enable(struct tegra_mipi_device *dev)
-> +static int tegra114_mipi_enable(struct tegra_mipi_device *dev)
->  {
->  	int err =3D 0;
-> =20
-> @@ -273,11 +257,9 @@ int tegra_mipi_enable(struct tegra_mipi_device *dev)
->  	mutex_unlock(&dev->mipi->lock);
-> =20
->  	return err;
-> -
->  }
-> -EXPORT_SYMBOL(tegra_mipi_enable);
-> =20
-> -int tegra_mipi_disable(struct tegra_mipi_device *dev)
-> +static int tegra114_mipi_disable(struct tegra_mipi_device *dev)
->  {
->  	int err =3D 0;
-> =20
-> @@ -289,11 +271,9 @@ int tegra_mipi_disable(struct tegra_mipi_device *dev=
-)
->  	mutex_unlock(&dev->mipi->lock);
-> =20
->  	return err;
-> -
->  }
-> -EXPORT_SYMBOL(tegra_mipi_disable);
-> =20
-> -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device)
-> +static int tegra114_mipi_finish_calibration(struct tegra_mipi_device *de=
-vice)
->  {
->  	struct tegra_mipi *mipi =3D device->mipi;
->  	void __iomem *status_reg =3D mipi->regs + (MIPI_CAL_STATUS << 2);
-> @@ -309,9 +289,8 @@ int tegra_mipi_finish_calibration(struct tegra_mipi_d=
-evice *device)
-> =20
->  	return err;
->  }
-> -EXPORT_SYMBOL(tegra_mipi_finish_calibration);
-> =20
-> -int tegra_mipi_start_calibration(struct tegra_mipi_device *device)
-> +static int tegra114_mipi_start_calibration(struct tegra_mipi_device *dev=
-ice)
->  {
->  	const struct tegra_mipi_soc *soc =3D device->mipi->soc;
->  	unsigned int i;
-> @@ -384,7 +363,13 @@ int tegra_mipi_start_calibration(struct tegra_mipi_d=
-evice *device)
-> =20
->  	return 0;
->  }
-> -EXPORT_SYMBOL(tegra_mipi_start_calibration);
-> +
-> +static const struct tegra_mipi_ops tegra114_mipi_ops =3D {
-> +	.tegra_mipi_enable =3D tegra114_mipi_enable,
-> +	.tegra_mipi_disable =3D tegra114_mipi_disable,
-> +	.tegra_mipi_start_calibration =3D tegra114_mipi_start_calibration,
-> +	.tegra_mipi_finish_calibration =3D tegra114_mipi_finish_calibration,
-> +};
-> =20
->  static const struct tegra_mipi_pad tegra114_mipi_pads[] =3D {
->  	{ .data =3D MIPI_CAL_CONFIG_CSIA },
-> @@ -512,6 +497,7 @@ static int tegra_mipi_probe(struct platform_device *p=
-dev)
-> =20
->  	mipi->soc =3D match->data;
->  	mipi->dev =3D &pdev->dev;
-> +	mipi->ops =3D &tegra114_mipi_ops;
-> =20
->  	mipi->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
->  	if (IS_ERR(mipi->regs))
-> diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/me=
-dia/tegra-video/csi.c
-> index 74c92db1032f..9e3bd6109781 100644
-> --- a/drivers/staging/media/tegra-video/csi.c
-> +++ b/drivers/staging/media/tegra-video/csi.c
-> @@ -12,6 +12,7 @@
->  #include <linux/of_graph.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/tegra-mipi-cal.h>
-> =20
->  #include <media/v4l2-fwnode.h>
-> =20
-> diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-> index 9fa9c30a34e6..b1c6514859d3 100644
-> --- a/include/linux/host1x.h
-> +++ b/include/linux/host1x.h
-> @@ -453,16 +453,6 @@ void host1x_client_unregister(struct host1x_client *=
-client);
->  int host1x_client_suspend(struct host1x_client *client);
->  int host1x_client_resume(struct host1x_client *client);
-> =20
-> -struct tegra_mipi_device;
-> -
-> -struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> -					     struct device_node *np);
-> -void tegra_mipi_free(struct tegra_mipi_device *device);
-> -int tegra_mipi_enable(struct tegra_mipi_device *device);
-> -int tegra_mipi_disable(struct tegra_mipi_device *device);
-> -int tegra_mipi_start_calibration(struct tegra_mipi_device *device);
-> -int tegra_mipi_finish_calibration(struct tegra_mipi_device *device);
-> -
->  /* host1x memory contexts */
-> =20
->  struct host1x_memory_context {
-> diff --git a/include/linux/tegra-mipi-cal.h b/include/linux/tegra-mipi-ca=
-l.h
-> new file mode 100644
-> index 000000000000..2bfdbfd3cb77
-> --- /dev/null
-> +++ b/include/linux/tegra-mipi-cal.h
-> @@ -0,0 +1,111 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef __TEGRA_MIPI_CAL_H_
-> +#define __TEGRA_MIPI_CAL_H_
-> +
-> +struct tegra_mipi {
-> +	const struct tegra_mipi_soc *soc;
-> +	const struct tegra_mipi_ops *ops;
-> +	struct device *dev;
-> +	void __iomem *regs;
-> +	struct mutex lock;
-> +	struct clk *clk;
-> +
-> +	unsigned long usage_count;
-> +};
-> +
-> +struct tegra_mipi_device {
-> +	struct platform_device *pdev;
-> +	struct tegra_mipi *mipi;
-> +	struct device *device;
-> +	unsigned long pads;
-> +};
+Changes in v5: (Thanks to John & Darrick for reviews)
+- commor/rc: Add a _require_fio_version helper
+- fsx: Switch atomic writes off if direct IO (-Z) not passed
+- fio tests: better commit messages to explain what we are testing
+- ext4/06{1..2}: Refactor code, also test only a few combinations of bs
+  clustersize rather than every single
 
-We should avoid putting implementation details / chip-specific things in th=
-e public header. Here's a sketch of what I'm thinking about:
+Changes in v4: (Thanks to Darrick, John and Zorro for the reviews) [4]
 
---- tegra-mipi-cal.h:
+- g/1226,1227: Modify fio threads to not issue overlapping atomic writes
+- g/1228: Use xfs_io -c "shutdown" instead of _scratch_shutdown to avoid
+          bash overhead
+- g/1229: Remove FSX_AVOID handling for bigalloc from common/rc. It is
+          part of the specific test now
+- ext4/063: add more clearer extent diagram
+- ext4/064: Drop the test for now as im taking sometime to understand
+            the behavior better.
+- Removed test numbers from commit message
+- For tests with significant changes I've removed the RVBs
 
-struct tegra_mipi_device;
+[4] https://lore.kernel.org/fstests/0eb2703b-a862-4a40-b271-6b8bb27b4ad4@oracle.com/T/#mef34a8c13cbee466bfc162db637d6e1cf0a8b06d
 
-struct tegra_mipi_ops {
-	// ...
-};
+Changes in v3 [3]:
 
-int tegra_mipi_add_provider(struct device_node *np, struct tegra_mipi_ops *=
-ops);
+- (2/13) use dumpe2fs to figure out if FS is bigalloc
+- (9/13) generic/1230: Detect device speeds for more accurate testing. ALso
+  speeds up the test
+- fio tests - switch to write followed by verify approach to avoid false
+  failures due to fio verify reads splitting and racing with atomic
+  writes. Discussion thread:
 
-int tegra_mipi_enable(...);
-// ...
+  https://lore.kernel.org/fstests/0430bd73-e6c2-4ce9-af24-67b1e1fa9b5b@oracle.com/
 
---- host1x/mipi.c:
+  [3] https://lore.kernel.org/fstests/cover.1752329098.git.ojaswin@linux.ibm.com/
 
-// move tegra114-mipi specific stuff to a new file, e.g. host1x/tegra114-mi=
-pi.c
+Changes in v2 [1]:
 
-struct tegra_mipi_device {
-	struct tegra_mipi_ops *ops;
-	struct platform_device *pdev;
-};
+- (1/13) new patch with _min and _max helpers
+- (2/13) remove setup_fs_options and add fsx specific helper
+- (4/13) skip atomic write instead of falling back to normal write (fsx)
+- (4/13) make atomic write default on instead of default off (fsx)
+- (5,6/13) refactor and cleanup fio tests
+- (7/13) refactored common code
+- (8/13) dont ignore mmap writes for fsx with atomic writes
+- (9/13) use od instead of xxd. handle cleanup of bg threads in _cleanup()
+- (10-13/13) minor refactors
+- change all tests use _fail for better consistency
+- use higher tests numbers for easier merging
 
-/* only need to support one provider */
-static struct {
-	struct device_node *np;
-	struct tegra_mipi_ops *ops;
-} provider;
+ [1] https://lore.kernel.org/fstests/cover.1750924903.git.ojaswin@linux.ibm.com/
 
-int tegra_mipi_add_provider(struct device_node *np, struct tegra_mipi_ops *=
-ops)
-{
-	if (provider.np)
-		return -EBUSY;
+* Original cover [2] *
 
-	provider.np =3D np;
-	provider.ops =3D ops;
+These are the tests we were using to verify that filesystems are not
+tearing multi fs block atomic writes. Infact some of the tests like
+generic/772 (now: g/1230) actually helped us catch and fix issues in
+ext4's early implementations of multi fs block atomic writes and hence
+we feel these tests are useful to have in xfstests.
 
-	return 0;
-}
+We have tested these with scsi debug as well as a real nvme device
+supporting multi fs block atomic writes.
 
-struct tegra_mipi_device *tegra_mipi_request(struct *device, struct device_=
-node *np)
-{
-	struct device_node *phandle_np =3D /* ... */;
-	struct platform_device *pdev;
-	struct tegra_mipi_device *mipidev;
+Thoughts and suggestions are welcome!
 
-	if (provider.np !=3D phandle_np)
-		return -ENODEV;
-
-	pdev =3D /* ... */;
-
-	mipidev =3D kzalloc(...);
-	mipidev->ops =3D provider.ops;
-	mipidev->pdev =3D pdev;
-	mipidev->cells =3D phandle_cells;
-
-	return mipidev;
-}
-
-int tegra_mipi_enable(struct tegra_mipi_device *device)
-{
-	return device->ops->enable(platform_get_drvdata(device->pdev), device->cel=
-ls);
-}
-
-> +
-> +/**
-> + * Operations for Tegra MIPI calibration device
-> + */
-> +struct tegra_mipi_ops {
-> +	/**
-> +	 * @tegra_mipi_enable:
-> +	 *
-> +	 * Enable MIPI calibration device
-> +	 */
-> +	int (*tegra_mipi_enable)(struct tegra_mipi_device *device);
-
-The tegra_mipi_ prefix should be dropped for the field names.
-
-> +
-> +	/**
-> +	 * @tegra_mipi_disable:
-> +	 *
-> +	 * Disable MIPI calibration device
-> +	 */
-> +	int (*tegra_mipi_disable)(struct tegra_mipi_device *device);
-> +
-> +	/**
-> +	 * @tegra_mipi_start_calibration:
-> +	 *
-> +	 * Start MIPI calibration
-> +	 */
-> +	int (*tegra_mipi_start_calibration)(struct tegra_mipi_device *device);
-> +
-> +	/**
-> +	 * @tegra_mipi_finish_calibration:
-> +	 *
-> +	 * Finish MIPI calibration
-> +	 */
-> +	int (*tegra_mipi_finish_calibration)(struct tegra_mipi_device *device);
-> +};
-> +
-> +struct tegra_mipi_device *tegra_mipi_request(struct device *device,
-> +					     struct device_node *np);
-> +
-> +void tegra_mipi_free(struct tegra_mipi_device *device);
-> +
-> +static inline int tegra_mipi_enable(struct tegra_mipi_device *device)
-> +{
-> +	/* Tegra114+ has a dedicated MIPI calibration block */
-> +	if (device->mipi) {
-> +		if (!device->mipi->ops->tegra_mipi_enable)
-> +			return 0;
-> +
-> +		return device->mipi->ops->tegra_mipi_enable(device);
-> +	}
-> +
-> +	return -ENOSYS;
-> +}
-> +
-> +static inline int tegra_mipi_disable(struct tegra_mipi_device *device)
-> +{
-> +	if (device->mipi) {
-> +		if (!device->mipi->ops->tegra_mipi_disable)
-> +			return 0;
-> +
-> +		return device->mipi->ops->tegra_mipi_disable(device);
-> +	}
-> +
-> +	return -ENOSYS;
-> +}
-> +
-> +static inline int tegra_mipi_start_calibration(struct tegra_mipi_device =
-*device)
-> +{
-> +	if (device->mipi) {
-> +		if (!device->mipi->ops->tegra_mipi_start_calibration)
-> +			return 0;
-> +
-> +		return device->mipi->ops->tegra_mipi_start_calibration(device);
-> +	}
-> +
-> +	return -ENOSYS;
-> +}
-> +
-> +static inline int tegra_mipi_finish_calibration(struct tegra_mipi_device=
- *device)
-> +{
-> +	if (device->mipi) {
-> +		if (!device->mipi->ops->tegra_mipi_finish_calibration)
-> +			return 0;
-> +
-> +		return device->mipi->ops->tegra_mipi_finish_calibration(device);
-> +	}
-> +
-> +	return -ENOSYS;
-> +}
-> +
-> +#endif /* __TEGRA_MIPI_CAL_H_ */
->=20
+[2] rfc: https://lore.kernel.org/fstests/cover.1749629233.git.ojaswin@linux.ibm.com/
 
 
+Ojaswin Mujoo (10):
+  common/rc: Add _min() and _max() helpers
+  common/rc: Add fio atomic write helpers
+  common/rc: Add a helper to run fsx on a given file
+  ltp/fsx.c: Add atomic writes support to fsx
+  generic: Add atomic write test using fio crc check verifier
+  generic: Add atomic write test using fio verify on file mixed mappings
+  generic: Add atomic write multi-fsblock O_[D]SYNC tests
+  generic: Stress fsx with atomic writes enabled
+  generic: Add sudden shutdown tests for multi block atomic writes
+  ext4: Atomic write test for extent split across leaf nodes
 
+Ritesh Harjani (IBM) (2):
+  ext4: Test atomic write and ioend codepaths with bigalloc
+  ext4: Test atomic writes allocation and write codepaths with bigalloc
+
+ common/rc              |  88 +++++++++-
+ ltp/fsx.c              | 115 ++++++++++++-
+ tests/ext4/061         | 155 +++++++++++++++++
+ tests/ext4/061.out     |   2 +
+ tests/ext4/062         | 203 +++++++++++++++++++++++
+ tests/ext4/062.out     |   2 +
+ tests/ext4/063         | 129 +++++++++++++++
+ tests/ext4/063.out     |   2 +
+ tests/generic/1226     | 108 ++++++++++++
+ tests/generic/1226.out |   2 +
+ tests/generic/1227     | 132 +++++++++++++++
+ tests/generic/1227.out |   2 +
+ tests/generic/1228     | 138 ++++++++++++++++
+ tests/generic/1228.out |   2 +
+ tests/generic/1229     |  68 ++++++++
+ tests/generic/1229.out |   2 +
+ tests/generic/1230     | 368 +++++++++++++++++++++++++++++++++++++++++
+ tests/generic/1230.out |   2 +
+ 18 files changed, 1512 insertions(+), 8 deletions(-)
+ create mode 100755 tests/ext4/061
+ create mode 100644 tests/ext4/061.out
+ create mode 100755 tests/ext4/062
+ create mode 100644 tests/ext4/062.out
+ create mode 100755 tests/ext4/063
+ create mode 100644 tests/ext4/063.out
+ create mode 100755 tests/generic/1226
+ create mode 100644 tests/generic/1226.out
+ create mode 100755 tests/generic/1227
+ create mode 100644 tests/generic/1227.out
+ create mode 100755 tests/generic/1228
+ create mode 100644 tests/generic/1228.out
+ create mode 100755 tests/generic/1229
+ create mode 100644 tests/generic/1229.out
+ create mode 100755 tests/generic/1230
+ create mode 100644 tests/generic/1230.out
+
+-- 
+2.49.0
 
 
