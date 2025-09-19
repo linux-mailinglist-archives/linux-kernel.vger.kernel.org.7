@@ -1,123 +1,119 @@
-Return-Path: <linux-kernel+bounces-824528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF86B897E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:40:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 764D1B897E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913A75A3864
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:40:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B44F27BB6F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 12:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D591F4C99;
-	Fri, 19 Sep 2025 12:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F9020C461;
+	Fri, 19 Sep 2025 12:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AuqWETXe"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vp3gn7bA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71B01B4223;
-	Fri, 19 Sep 2025 12:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC85E1FF61E
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758285620; cv=none; b=MAoK5w4ZuLP1237Lubv+tcLt0lf0piF2XZYRDBWc/KEknwleI+4IHZuX8946sKsh/DbxetLX5iiXoVdICv4klDxaqPXNJ5GR1DmHqex49ZYCXRK1ir+ho5aDkpbJEBEyp/7aJ0sFEpYAqAItIhSbXI1Y5WuAOwtxmI6M7jo73Zk=
+	t=1758285625; cv=none; b=ubyuyt4vxQTS7FbyZtBhN2tQRH2bNfFRwyjdNDm9+CFOwvlo+B6GUPBkSrR0S2gLrO2Md0WAqf7bem4DWLTcN7GLUkE4zpK4VbRMp3wosy/4che+fhJy8LevapCfhfUDQ+Ix9QIqBAttSLRUeXZe6AF1K57tzqsnUjZHB7HwUA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758285620; c=relaxed/simple;
-	bh=DSsKSdHuufHzAGTSQtvAWgVv0FxqTvtqiK5WHmKVQ4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tQ/EoZq4o2PP0iBGJjhMNHRvRROsRXNLsmLFvrMpx8SA+jLfZb+7er2mchyYzyfG0cplSY41RoefnFWR3wbN0qp0OPAFVqL2NWEYH7qZPv/ZkPYm23qcJ0oy2h2RzO2HtsLhWiKLi4kTMSqShb7k2BXrikWBQDopAo9i1c70bFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AuqWETXe; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9246B1A0F14;
-	Fri, 19 Sep 2025 12:40:10 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 65297606A8;
-	Fri, 19 Sep 2025 12:40:10 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AD3FD102F1C98;
-	Fri, 19 Sep 2025 14:39:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1758285609; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=I/Pe5qOhDxLMMUTgQVYyG2nRgbxXtQ8qXCPs6Wd2cUo=;
-	b=AuqWETXeUarHezFGbq2vVyHeR0fm0mGPzoxJSNsnyuyJDb3A8hskSO4A0xBJx2dVO7K8nw
-	sX35hXyxsYCS9i6fhoWx6uYufk+f+vQ9xtWDpHubiV/E9nH3TaSopqcXTjhYLHDJHzG718
-	RzP6I4gME8qDEo1wk/bjvYJg684Q85D3QkD+fwNOZL8WeA0muaFXcVAExot8bfoFBO92DH
-	IiPdODvDzT1jWoFeZ6hKJrGTFNeQG3JJnqIdDKYpQoM1q7PUkhDKAd1T4kBUBMcxbJy/z4
-	V8HwDoA5LUKQPTRhO6N89xKJfTCJiz49vkFlNu9p48y9IIhCdkXk8OZWC1c63g==
-Date: Fri, 19 Sep 2025 14:39:51 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Hoan Tran
- <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
- Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
- Eberhard <pascal.eberhard@se.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 6/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
- GPIO Interrupt Multiplexer
-Message-ID: <20250919143951.15a1b4e6@bootlin.com>
-In-Reply-To: <aM0ju74JJbjliQAl@ninjato>
-References: <20250918104009.94754-1-herve.codina@bootlin.com>
-	<20250918104009.94754-7-herve.codina@bootlin.com>
-	<aM0ju74JJbjliQAl@ninjato>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1758285625; c=relaxed/simple;
+	bh=IkhiQvxSVJBNEXYwVrCccUG3TFRY4PESJjnaQR6FiqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LAE/WhxrSrKfOrP2BFM0HUvL5SoJNUWhjxAZTvCYWwl7gMakTnlZNbb6OcO9bwHv63DMrEReKcD94YO4zzfOxKpQF4cnHVFA5jb+nlcaEzfOGDcPc+F2KpflLaZYLGJX7KDFo3MVinBmPvTXL4nPRf08lX1Earw+wzL1lYElI4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vp3gn7bA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80117C4CEF0
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 12:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758285624;
+	bh=IkhiQvxSVJBNEXYwVrCccUG3TFRY4PESJjnaQR6FiqY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Vp3gn7bAQCSFP2rTtO+Egh2VmMfniuDrPcFxR0zdw5I2kIMjAUXHmvMEjS3VaHT3R
+	 RqFy8DlqsE2OMKIIalednDbl4IU/jAOc8gWHKHsEU9GScuRDdaO1du4nzcqr77WN67
+	 W01FPkbfe/NFk6GlFAtCtB9Df0KkbVjZchfkS6+615JJyHxJb2GfWwF+kPMyF27/6w
+	 NyYUnln7r63Z05ado5w/AO5TxA0pKJW+xB2XoIaJqJWdggw8cD5Uip0H+xyGWaU+it
+	 IUX4sfX9+WamWCuaaxX7uB0bODccJtEa3oaOiKiF2wgCWf6hJLPCL9FnR1uvcwFDlo
+	 Sz2NIgE+Ci+3Q==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-75871cd9228so1778679a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 05:40:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyinl1nSTboKJEj/6G0+flJdNCQZrDkkaN6o2JAIkPC5EgbY2Dr+wTSIH8Qg942HL9W0xeN4ytpkfo2vM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj9arZz34cyHgTy3lMjYOO2xTcol1HceQ9eYOR7ftDhokiRLnE
+	oIYOU6zMtoJjqHTO0fkgqzn//qYfjJXnbFXzKOH8/Z7PUhYYUBYw92QcJiulhMxHx3v10imW343
+	fzo6KeVA/14/WYpV565PEVInNiE2WpvU=
+X-Google-Smtp-Source: AGHT+IGN6yKheRKFWPzTBebZECqkVSf5jQ9sRYeDfhkyJi3xILFaY9CJLuH+Txi2bawvjGDTvzV+EzhA/dpIsY+2+nk=
+X-Received: by 2002:a05:6808:bc8:b0:438:257d:6663 with SMTP id
+ 5614622812f47-43d6c2bd39amr1474905b6e.48.1758285623777; Fri, 19 Sep 2025
+ 05:40:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <12749587.O9o76ZdvQC@rafael.j.wysocki> <20250919113922.7tozmbts6cs3y5va@lcpd911>
+In-Reply-To: <20250919113922.7tozmbts6cs3y5va@lcpd911>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 19 Sep 2025 14:40:11 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0himPgJrg7s0G7HbgFTtawEMRCJBXiuvaZnT1z9MB_mqw@mail.gmail.com>
+X-Gm-Features: AS18NWD3a-WCHk-dCiI2bNf5gF2oTgLdUlcM3Mm6h19fD9EBjsdnibTPASziZu8
+Message-ID: <CAJZ5v0himPgJrg7s0G7HbgFTtawEMRCJBXiuvaZnT1z9MB_mqw@mail.gmail.com>
+Subject: Re: [PATCH v2] cpuidle: Fail cpuidle device registration if there is
+ one already
+To: Dhruva Gole <d-gole@ti.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+On Fri, Sep 19, 2025 at 1:39=E2=80=AFPM Dhruva Gole <d-gole@ti.com> wrote:
+>
+> Hi Rafael,
+>
+> On Sep 19, 2025 at 13:22:20 +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Refuse to register a cpuidle device if the given CPU has a cpuidle
+> > device already and print a message regarding it.
+> >
+> > Without this, an attempt to register a new cpuidle device without
+> > unregistering the existing one leads to the removal of the existing
+> > cpuidle device without removing its sysfs interface.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > v1 -> v2:
+> >    * Add the new check before the driver module reference counting (Dhr=
+uva).
+>
+> Thanks for addressing!
+>
+> >
+> > ---
+> >  drivers/cpuidle/cpuidle.c |    8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > --- a/drivers/cpuidle/cpuidle.c
+> > +++ b/drivers/cpuidle/cpuidle.c
+> > @@ -635,8 +635,14 @@ static void __cpuidle_device_init(struct
+> >  static int __cpuidle_register_device(struct cpuidle_device *dev)
+> >  {
+> >       struct cpuidle_driver *drv =3D cpuidle_get_cpu_driver(dev);
+> > +     unsigned int cpu =3D dev->cpu;
+> >       int i, ret;
+> >
+> > +     if (per_cpu(cpuidle_devices, cpu)) {
+> > +             pr_info("CPU%d: cpuidle device already registered\n", cpu=
+);
+>
+> Sorry for not pointing this earlier,
+> perhaps pr_err makes more sense?
 
-On Fri, 19 Sep 2025 11:34:51 +0200
-Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
-
-> > +  interrupt-map:
-> > +    description:
-> > +      Specifies the mapping from external GPIO interrupt lines to the output
-> > +      interrupts. The array items have to be ordered with the first item
-> > +      related to the output line 0 (IRQ 103), the next one to the output line 1
-> > +      (IRQ 104) and so on up to the output line 8 (IRQ 110).  
-> 
-> maxItems 8?
-
-Yes indeed and probably both
-  minItems: 1
-  maxItems: 8
-
-> 
-> > +        /*
-> > +         * The child interrupt number is computed using the following formula:
-> > +         *    gpio_bank * 32 + gpio_number
-> > +         *
-> > +         * with:
-> > +         *    - gpio_bank: The GPIO bank number
-> > +         *          - 0 for GPIO0A,
-> > +         *          - 1 for GPIO1A,
-> > +         *          - 2 for GPIO2A
-> > +         *    - gpio_number: Number of the gpio in the bank (0..31)
-> > +         */  
-> 
-> I wonder if this comment wouldn't be better in the interrupt-map
-> description above?
-> 
-
-I will move in the description.
-
-Best regards,
-Hervé
+No, this need not mean a functional issue.
 
