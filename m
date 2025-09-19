@@ -1,99 +1,172 @@
-Return-Path: <linux-kernel+bounces-824724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C141B89FEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:35:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508B8B89FE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F9E166454
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5165C1882475
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C44315760;
-	Fri, 19 Sep 2025 14:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B551313E0B;
+	Fri, 19 Sep 2025 14:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ive1AxkN"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EB7wUMsS"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B27430F541
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ED7313D67
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758292279; cv=none; b=fHJmwm3i4ruJJt9yicaCxK5w+wGS8gHmsU+xpuT6h/4QX3HceZdNPqU6h1CYVPdeze59BjKCMcnab11UuXmqY7PD+Re2onmk2MQid5//1hIRr0Ar41+6vZIbcwRPSVgCaXvbNol1GVWoF9nahUYNFk1Hoxn0PloVod4+r+zCnHM=
+	t=1758292415; cv=none; b=M7fjsd56fioo1aTbdjMvFcE74YvNM3hN3VBsm2AILYnFmDAEkTTc5F0ABACoN2oM72GKM8t/4PMgmka7/aHeoblqjQU4pcdDE+zvO1rTSAyzxv14+JaAwAXtqh8iMhSW7xMjFZzfYEqjzK6T+gwDFHpixEWxifpohsi6j4rsva4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758292279; c=relaxed/simple;
-	bh=BSz5ZqZ0glHCz/O9VXnR0T9lJTXY6DFyO6jwFayHnX4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=PlQB/JbTXa2jM3h5st1lXFqEpinsm4bGrIJkegeeH1frucVSaV0JzEv/Dcvz3TI/QEKWXcQ1OuHy47lnlxb7Epm1kZQlbk0Jkq1X31gQC4bgl4f0DKKKIY2ASA4VtXs9kmOKxbNX2NdNUbwTtRDrvamfvCCnm0uIemPDHxSXfZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ive1AxkN; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32edda89a37so2199075a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:31:18 -0700 (PDT)
+	s=arc-20240116; t=1758292415; c=relaxed/simple;
+	bh=qgYCemReTB8Py51vMht0sTo5gg4ywV1RMgsGRqQygTM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qgeG3KDf896Ie0t3yt/EC+VUFgBfeKWoXR3zI8O1gyIyWtdUFsyqQFOpZbSY+dfCd3znzdn4WBlRmzgOeJHAMBZSTWd9y4sHbrPmhsK+4DCnoJyUm+VUq54LJ6O+wRd3tC2lfU6IGV/AgNO4j5Ce6o7ZBINEmyiNweGnKLNHUn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EB7wUMsS; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-329b760080fso1757627a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:33:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758292277; x=1758897077; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TRKUeIPuLfgTD3Ji8hPzrm3593uacvCQqcFOb79bZss=;
-        b=Ive1AxkNqzI0zESMVBaMXYeF244MOU+Qet+nVlVxYmQ/NMcFI/i6+f34nWxoJ38Swh
-         3jH+ddid7uZC3ZbUrulEllhlHypHcEjR4pA4iRgtdg1a2zeB9xmjWr78FAjbwhQ+ukxG
-         BpjK3YIYXrgeIhORDQmwhzM+NFEwXPlvS/YOm/Rv1+JBVfvjSBJV2lQk9Ma6BxNpMmOO
-         U/JOJHE2odzRQjmi67WMIjqR9P1p0SVm0aqCgGMMYj2WnN+EpZRPqkBrWz1l6wLSYn76
-         pvO6KgzDsy40qGoI/3nRYeZRhXwptjichbyMHT2vSoc0Ax/4m3SoeMq81R9N9KUm+K7i
-         fI+g==
+        d=gmail.com; s=20230601; t=1758292413; x=1758897213; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nv0VRvH+2z+eOsBA/kWhf8wYjWcXeptQmY40IaARc+8=;
+        b=EB7wUMsSrwI+58nU4xc+TdF6mVl/IIdox3s1F4ZVTIevyy7vFI5JF96fGpxUojpZjK
+         dUmi7dIdAELWdzoPbjrzGpIBwlMba+muZqKWDMvd8cKvKGYGQCvk1OzOWmO1YX2tzD4g
+         xe+0SrxHUUsChHYDZwlfok1lNz8EM2r0pAj1sGcwVJT8FV+JAzdbc/65WdhpRWsu2ba0
+         DG0zZHobF2SDgbQQu41gW6st2luBHVxItNvjefNa8ICQooPIa6GTIS49+GFDO3b9mpJC
+         iYzi0PKed3K8xRczbkQweNjVnJNPuVYaJP6Y/LXa6tpMo012rJ/USjhRISPvNmKJGqXm
+         4TPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758292277; x=1758897077;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TRKUeIPuLfgTD3Ji8hPzrm3593uacvCQqcFOb79bZss=;
-        b=tkkXJxoZNmfAjeewu05t0ds6B6+MH8X6SlQtFu/o0bhU7eHmGjumvnpffjWBEbv84B
-         s0xPdqZs8pzahKuxzHqtbz6oJwdTMZDEe7fyQny3ick1VFh5KgLEQO65av1Hua37Gx40
-         XZoySnCddkLQf8wNl1I4/5ACRJ8ZMl199KtUcJon2BzMmd4fspUgTvqIptcgUqHDrPpM
-         8kYwdE0Fe/eTc47rhNUCqSutARud9wLxNWBqBPbfOcicVGRNRPtVmG/YxTxJMn+aDoZS
-         r6BBZEFLfVfoBrfvtJuEA9ccNOoQPMuewu75QEr8rQGeGiT9/MvwuLgD4prHpk4P0ROL
-         s8cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ+x3zn1yQQkKl8ukyN25vtuaz2thjQosz6X5FADUcs2cPpWzokm9n3ZnALeI3roo93jnbYf2nZMrgkxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsURgnlI0SjQdJqo6YjmYCwZ/05rT91/CDYWMy+HEWyk1T/XIk
-	ZeWBNHH329mCZXvildlqmyLtM/J+pZaKC9KbBreg2teVILMEb8r5bDurxLFyWxm0+pijEE0g6Xz
-	I/Ck+xg==
-X-Google-Smtp-Source: AGHT+IFGhuQ8bD+WT2kJZruj5Cd3iaM/mscEBLG6W6rRQqv7ludOgUnm0Cofpfm9CKlpm+M1BY5Xq3lt1Lw=
-X-Received: from pjqq8.prod.google.com ([2002:a17:90b:5848:b0:327:4fa6:eaa1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2688:b0:32b:bac7:5a41
- with SMTP id 98e67ed59e1d1-330983a13c6mr4788215a91.37.1758292277567; Fri, 19
- Sep 2025 07:31:17 -0700 (PDT)
-Date: Fri, 19 Sep 2025 07:31:16 -0700
-In-Reply-To: <20250808172358.1938974-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1758292413; x=1758897213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nv0VRvH+2z+eOsBA/kWhf8wYjWcXeptQmY40IaARc+8=;
+        b=pEXum5msVk1c2s4MDfJB9teTS8V7TQgKOV0G9o7TB0zmazbvjFYSaiKxYwtPEQiB5m
+         CmnUHrN/m0q33EULQsD6EXkDMkz7xPyb/B13vquW9IcBiEYLCRP5n0/DJ3ktdFrxSBj5
+         2AbdWDAlLf6puyMmMBjDg/M8Qwg5CLsugtxBcSnXEn1rC5lUqpoKxLX8o+FJbzo8czas
+         3sw3Vh/LR7HBBOfvW9Aj/C2/OD44KCKtRamnjrge5lvlB91U6vDE8Ie+uy4+fXL46B5i
+         ViVAv4SSEkDAXuQ3FkKwoaPzb0IzLntw0IQ6cvKDoII8p89v6pCSUsRmfhlNfIDtGhSx
+         OIZw==
+X-Gm-Message-State: AOJu0Yzb8UjtZcgc5ZJuZ7OZaBpTTZWrfOOIWmVn7nIGEYGQwIWBuCin
+	eFdl4yhwuhsI5ZoCRd4lAcSNZCmkBfCMv9ekXcW/gMnss6JUFCpWIdJvPuF5UZXxHyc/XVzBhWX
+	FXUMUowMTwHlam0vlkuFDWosr5+aRy+G5Qw==
+X-Gm-Gg: ASbGnctik1Y74uhg7XHcTcjW82w9g3wL2FSAv7jAYH+RFeXOozxdXTSs4R7ljtsFL/C
+	URsUXGJUPizKm8nv1qxqyO/FLoSqJQLGpqZOt1leh9SGNzNFwS2rqzuI/ugU4hZYRKTy+uZmYD8
+	s1yppmb6bjFjmx1/cqFE4hQFW+1WhFc/W38/jYKzrZt6ZDhaabAIHIwwby5c7PHFTtgjdOIQKoC
+	ilrjB4=
+X-Google-Smtp-Source: AGHT+IFmZHTSN2yZAg/Ty+Re3o4YJGVBq+ASNKj76DqB4hM4bLVZNcdMHBtG93fOj9zpBsN040GJk8Bru5Q2E/8KtU0=
+X-Received: by 2002:a17:90a:c10f:b0:32b:d183:facf with SMTP id
+ 98e67ed59e1d1-3309837a720mr4023276a91.28.1758292413429; Fri, 19 Sep 2025
+ 07:33:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250808172358.1938974-1-seanjc@google.com>
-Message-ID: <aM1pNN_ById_l6xR@google.com>
-Subject: Re: [PATCH 0/3] x86/umip: Fix UMIP insn decoder false positives
-From: Sean Christopherson <seanjc@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Dan Snyder <dansnyder@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <CAEjxPJ72UfNaPC0QXW61ENzCYLRUuYQCXeVxir4UFj4eP4PROg@mail.gmail.com>
+ <20250919135803.556437-1-zhanghongru@xiaomi.com>
+In-Reply-To: <20250919135803.556437-1-zhanghongru@xiaomi.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 19 Sep 2025 10:33:21 -0400
+X-Gm-Features: AS18NWDjBmTl5whX_qOxidYSoN77QlptYsKPBo3zQkrciubZc41wi2czoHiX_iw
+Message-ID: <CAEjxPJ5JFqSMGSg5KEYd40JhLkgUo6g0uykDkXdKW3q5F1JtjQ@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
+To: Hongru Zhang <zhanghongru06@gmail.com>
+Cc: linux-kernel@vger.kernel.org, omosnace@redhat.com, paul@paul-moore.com, 
+	selinux@vger.kernel.org, zhanghongru@xiaomi.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 08, 2025, Sean Christopherson wrote:
-> Fix two false positives scenarios where the UMIP #GP logic will incorrectly
-> trigger emulation, e.g. due to a partially decoded instruction, or on
-> instructions like VMLAUNCH that usurp the register form of '0f 01'.
-> 
-> Tested with the hack-a-test patch at the end, but I haven't done any testing
-> using a real userspace (neither positive nor negative testing).
-> 
-> Sean Christopherson (3):
->   x86/umip: Check that the instruction opcode is at least two bytes
->   x86/umip: Fix decoding of register forms of 0F 01 (SGDT and SIDT
->     aliases)
+On Fri, Sep 19, 2025 at 9:58=E2=80=AFAM Hongru Zhang <zhanghongru06@gmail.c=
+om> wrote:
+>
+> > > Baseline: 512 nodes, 512 buckets, original avc_hash
+> > > A: 512 nodes, 512 buckets
+> > > B: 8192 nodes, 8192 buckets
+> > > C: 8192 nodes, 8192 buckets, original avc_hash
+> > > D: 8192 nodes, 4096 buckets ("large number" of nodes in limited bucke=
+ts)
+> > >
+> > > 1. /sys/fs/selinux/avc/hash_stats
+> > >         a. assess the effectiveness of the optimized algorithm based =
+on A, B
+> > >                 and Baseline. Expect bucket utilization rate: A ~=3D =
+B > Baseline.
+> > > 2. total latency of hash operation and table lookup
+> > >         a. A vs Baseline: expect A is no obvious latency increasing
+> > >         b. B vs A: expect B is close to A
+> > >         c. C vs B: expect B is no worse than C
+> > >         c. D vs C: see if we can save some memory with no obvious lat=
+ency increasing
+> >
+> > Thank you, looking forward to the results. Fun fact: the current
+> > avc_hash() function logic hasn't been changed since SELinux was first
+> > merged into Linux 2.6.0-test3.
+>
+> Yes, I also noticed that. I tried MurmurHash3 and another algorithm (refe=
+red to as Muladd below),
+> it seems performance of Muladd > MurmurHash3 > current algorithm. How
+> about using Muladd?
+>
+> Implementation of Muladd:
+> static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
+> {
+>         return (ssid * 0x9E3779B9 + tsid * 0x85EBCA77 + tclass * 0xC2B2AE=
+35) & (avc_cache_slots - 1);
+> }
 
-Ping on these two, looks like they slipped through the cracks.  FWIW, I wouldn't
-consider these urgent enough to squeeze into 6.17, but it'd be nice to get them
-into 6.18.
+Can you cite the source of this hash function? Is it public domain or
+otherwise GPLv2-compatible?
+
+>
+> Note: all test results are based on patch "selinux: Make avc cache slot s=
+ize configurable during boot"
+>
+> Here are the results:
+> 1. Bucket utilization rate and length of longest chain
+> +--------------------------+-----------------------------------------+
+> |                          | Bucket utilization rate / longest chain |
+> |                          +------------+---------------+------------+
+> |                          |  original  |  MurmurHash3  |   Muladd   |
+> +--------------------------+------------+---------------+------------+
+> |  512 nodes,  512 buckets | 52.5%/7.5  |   60.2%/5.7 * | 58.2%/6.2 *|
+> +--------------------------+------------+---------------+------------+
+> | 1024 nodes,  512 buckets | 68.9%/12.1 |   80.2%/9.7   | 82.4%/8.9  |
+> +--------------------------+------------+---------------+------------+
+> | 2048 nodes,  512 buckets | 83.7%/19.4 |   93.4%/16.3  | 94.8%/15.2 |
+> +--------------------------+------------+---------------+------------+
+> | 8192 nodes, 8192 buckets | 49.5%/11.4 |   60.3%/7.4   | 61.9%/6.6  |
+> +--------------------------+------------+---------------+------------+
+>
+> 2. avc_search_node latency (total latency of hash operation and table loo=
+kup)
+> +--------------------------+-----------------------------------------+
+> |                          |   latency of function avc_search_node   |
+> |                          +------------+---------------+------------+
+> |                          |  original  |  MurmurHash3  |   Muladd   |
+> +--------------------------+------------+---------------+------------+
+> |  512 nodes,  512 buckets |    87ns    |      84ns *   |    79ns *  |
+> +--------------------------+------------+---------------+------------+
+> | 1024 nodes,  512 buckets |    97ns    |      96ns     |    91ns    |
+> +--------------------------+------------+---------------+------------+
+> | 2048 nodes,  512 buckets |   118ns    |     113ns     |   110ns    |
+> +--------------------------+------------+---------------+------------+
+> | 8192 nodes, 8192 buckets |   106ns    |      99ns     |    94ns    |
+> +--------------------------+------------+---------------+------------+
+>
+> The values in the starred cells could be because MurmurHash3 has greater
+> overhead than Muladd.
+>
+> Details:
+> url: https://gist.github.com/zhr250/198717da076a808b5cc78762f27be77e
 
