@@ -1,126 +1,74 @@
-Return-Path: <linux-kernel+bounces-823875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A770EB87A02
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:40:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B3EB87A08
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1585802BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A1584E2771
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B72034BA29;
-	Fri, 19 Sep 2025 01:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A61A24469E;
+	Fri, 19 Sep 2025 01:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZB8F5UGs"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpQMoHhm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225E424167B;
-	Fri, 19 Sep 2025 01:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEC1139D;
+	Fri, 19 Sep 2025 01:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758246034; cv=none; b=abe3qpOyv6LtZKMuMpgRnGemfhgJ39/01vsUl2ogmdz4PY/sE6Ls2iWSmcg6DO/Y8k2KveNT6tzX8VmPFeuBBtIEVRd4d/NIY2u/GZIbE1Po8Qw9Yr/6GHi2nNAC+CVXbl/r6/bpEFBwTP4DfypcZDXwOAhY6a6Hkln8+tPKxWU=
+	t=1758246058; cv=none; b=dSMnEV/SyTM+Zlq5u6mbUwLPPOCCUcKUosE4xlsP1S23ShM19VKfbWbyNg+Y9q/7hyXXYI6kf2YTdpovkgKFHtTPNi5CDqxRer3zwcUJtb2kutvG03AAuepbeewU8uteititIvYjdLE/BlKnv7wKAD5kUwqnWLk3PegMKiReRL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758246034; c=relaxed/simple;
-	bh=1PtLLluYShGHAQg/h1z17ZQOqMZIPeNVJzQVlBvj5X4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skroTJvvPYejFz0rlK5tOMiF6nCvL/Am32eONsGmEbIlKyXXazZGUUZ4Q3MMtUAkirO1LR7CQPJ+6n+61kusUNxkng0MxRAbv7SAdXti/rzf2CI7Vm2DRmcTskQQIxCK4UB1T7kog2NImTuJy/UUJY4dojuxTL1pNHbe3iWa4Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZB8F5UGs; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758246029; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=tPEMXjlZOHU86z4opAhFqFfDO6eWBc+PbnVHOGJhATU=;
-	b=ZB8F5UGsSR8/a0T6k/vya/HUFs+tp8bR3kVpoCvOZNjknedCyflNorF4JphIRU0cZNjpR3aUkGjjogbKxiuFtTOoOVqenpF8Hvc4h9y6LJzcoefcUIAcNOPYCz7fmJYppuBHBP3uZOnmTc5xU6fOn0I9lChxt4MxZjWL33YdF3w=
-Received: from 30.246.178.33(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoHq.Hr_1758246026 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 19 Sep 2025 09:40:27 +0800
-Message-ID: <ad68796a-8bb6-4f4a-9d30-80e7ffa4ded4@linux.alibaba.com>
-Date: Fri, 19 Sep 2025 09:40:26 +0800
+	s=arc-20240116; t=1758246058; c=relaxed/simple;
+	bh=zPbgxi7Uh2u+IDqPDqnm42rsQFRLGFodybHJ11ddTzU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=IJh3c437jtZL5dvYk9y1Xphj+RN5jMZH9IVF6P53LO//A3v3HrlThF3bTWwLFYAl+6Z28LXrMzZ5nBdZrRm9jvy87c9tOxBSbLeaJLAhl0U8JWXuCDt5MX4zza3HMG+2x7Qpy0t/RgkVgywVY9u9YvrTfb/JvrnmWxgXfc/T7lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpQMoHhm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B717FC4CEE7;
+	Fri, 19 Sep 2025 01:40:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758246057;
+	bh=zPbgxi7Uh2u+IDqPDqnm42rsQFRLGFodybHJ11ddTzU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=tpQMoHhm47Bs5bDLnjwYUKoQdkRK6kFewwAFoABQx6dGjucIipLdDoTG4QOsQ1WN8
+	 8nambApnBgJ3JlJcfCCPxjjldlmCihFYtrJxmwm4CIHtewRAE3Roq9GtyDVnacIdnD
+	 DKY4SL9xmCPM+gjejNtOWFSxBVlnhE1dfmr3qDSb3T5YmGe5Db/g+kbuv/vebqpltQ
+	 sd86jUKXvZGL+hlgSwasSUqalKzP0ubsMNteO6cWvpHwDoUv6BiQi+Y/kmtOl+LXC+
+	 0DkbpptdV37BY+EasHh/dmeVZ2wDIuLR67LxGREu0wHtn+eKsu/D6pBZYaGAK50oW9
+	 IXVuEPf9WFEpA==
+Date: Thu, 18 Sep 2025 19:40:55 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+cc: atish.patra@linux.dev, anup@brainfault.org, will@kernel.org, 
+    mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+    aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org, 
+    linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: riscv: skip empty batches in counter start
+In-Reply-To: <20250804025110.11088-1-cuiyunhui@bytedance.com>
+Message-ID: <57999508-fa1d-f6a1-4f40-188a61f54307@kernel.org>
+References: <20250804025110.11088-1-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/2] add PCI hotplug and PCIe link tracepoint
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- mattc@purestorage.com, Jonathan.Cameron@huawei.com, bhelgaas@google.com,
- tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org, tianruidong@linux.alibaba.com
-References: <20250918230629.GA1928363@bhelgaas>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250918230629.GA1928363@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 4 Aug 2025, Yunhui Cui wrote:
 
-
-在 2025/9/19 07:06, Bjorn Helgaas 写道:
-> On Wed, Jul 23, 2025 at 11:31:06AM +0800, Shuai Xue wrote:
->> changes since v8:
->> - rewrite commit log from Bjorn
->> - move pci_hp_event to a common place (include/trace/events/pci.h) per Ilpo
->> - rename hotplug event strings per Bjorn and Lukas
->> - add PCIe link tracepoint per Bjorn, Lukas, and Ilpo
->>
->> Hotplug events are critical indicators for analyzing hardware health, and
->> surprise link downs can significantly impact system performance and reliability.
->> In addition, PCIe link speed degradation directly impacts system performance and
->> often indicates hardware issues such as faulty devices, physical layer problems,
->> or configuration errors.
->>
->> This patch set add PCI hotplug and PCIe link tracepoint to help analyze PCI
->> hotplug events and PCIe link speed degradation.
->>
->> Shuai Xue (2):
->>    PCI: trace: Add a generic RAS tracepoint for hotplug event
->>    PCI: trace: Add a RAS tracepoint to monitor link speed changes
->>
->>   drivers/pci/hotplug/pciehp_ctrl.c |  33 +++++++--
->>   drivers/pci/hotplug/pciehp_hpc.c  |   5 +-
->>   drivers/pci/pci.c                 |   2 +-
->>   drivers/pci/pci.h                 |  12 ++-
->>   drivers/pci/pcie/bwctrl.c         |   4 +-
->>   drivers/pci/probe.c               |  10 ++-
->>   include/linux/pci.h               |   1 +
->>   include/trace/events/pci.h        | 119 ++++++++++++++++++++++++++++++
->>   include/uapi/linux/pci.h          |   7 ++
->>   9 files changed, 177 insertions(+), 16 deletions(-)
->>   create mode 100644 include/trace/events/pci.h
+> Avoid unnecessary SBI calls when starting non-overflowed counters
+> in pmu_sbi_start_ovf_ctrs_sbi() by checking ctr_start_mask.
 > 
-> Hi Shuai,
-> 
-> I lost track of what happened with this series.  It seemed like we
-> were pretty close but there were some trivial issues, and I don't
-> think we ever merged it.  Did I miss something, or are you waiting on
-> me?
-> 
-> Bjorn
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
 
-Hi Bjorn,
+Thanks, queued for v6.18.
 
-Thank you for following up on this series. I apologize for the lack of
-updates.
 
-You're right that we were close to merging - I've been tied up with
-other urgent work and haven't had a chance to address the remaining
-minor issues.
-
-I'll prepare and send out a new version this week with all the requested
-changes.
-
-Thanks for your patience.
-
-Best regards,
-Shuai
+- Paul
 
