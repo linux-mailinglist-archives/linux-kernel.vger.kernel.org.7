@@ -1,215 +1,222 @@
-Return-Path: <linux-kernel+bounces-823921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8AB0B87BCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:42:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0E7B87BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3EE3AD77C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B19566C61
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 02:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7A3246BB6;
-	Fri, 19 Sep 2025 02:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1858C25A354;
+	Fri, 19 Sep 2025 02:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MKGEJivH"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="nmZKtH2N"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9662264AD
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 02:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758249722; cv=none; b=hXKXcT8Fi3a95f4jnIPMPnDgp8qlieArGxERmX0xzBSjiQHES91mnS3x9fNtnRBnP0g+JkY5+GVwLb5mURbgpXLbrdrO7UDAgWLtOPp+gtVT33ndzyNKPIRkIKbUJGdAT/Jft49RFNHr/i/NB8FNvUAMcA8asB1HD0YkgMdxhDw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758249722; c=relaxed/simple;
-	bh=J5hxMnYbCOSaY19mDdzY05EZhi/RbVb37H/vBA2VIF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JiGfaOsz6dpjz/ZlbCx3K7QGOl83b6qjTGiqv9/Xg4cnGztoUYYpAMhzecws5MsGaKnzw7sTU18XhWJnW2orpqRDuAnMTDhDdNF+tE2cuQirkd0QkQZYq8YAdGA4odEe0tynQSSrY/LQHpmL4CjPwfl/OPcLC7uJnpvcZccC7UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MKGEJivH; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <eabd866a-aed3-4e28-a139-13b7c1d4e715@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758249718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LOUYmorl2vXwXIh7NZzsymKhAVYTrNuSDHQ/iAUV2PM=;
-	b=MKGEJivHc42R/NfCjKmZBd9XndL1e1w2iM+yb8YZwTHrId6TWcSYGjiKSX7sRiZAHwNOb9
-	qieUWzLl8HTtNL7lz++Hv9jmKKrj+ksJOqEEptglJbcoV1CkSnmO/1ZBNiyXMakjXcG+gC
-	BEE1Xne7+KnPXT/NAt8Zeu8zjX08zjA=
-Date: Fri, 19 Sep 2025 10:41:47 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB17B2512DE;
+	Fri, 19 Sep 2025 02:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.164
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758249949; cv=pass; b=Owksg8t/Gy72NkIrq97dj6dYL8TXZ69ok5osP6fpncw37I7VOB+U8iAWG4XMwvyIKRsRezLaXIhAOw3o6yOAR0fKzZFvBP2puKdCwfa2k1eIaoMqUUfWZQIk1kv2uRSbBYVMNTC22jn1/ssMP8x7T9EqrkX8KwvZkVz75ZU26C8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758249949; c=relaxed/simple;
+	bh=s/t2Wxrg+mbF7K5Pyum3QBpF+g+FSOPlAlQsbnljWzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R+aqBYmLQLGtPwqk96jy7GnTU1ToPGEnAmQh+u/CLn7CI4QwF2K/iNPdukQ7LXbF0CTYvAReeL6ZBC2VgsGQKqV8EPFgr766GpNaFHZvL0J6mIuusFGCUBIx+Chdw8tHLRDTp8MUUMca035Uoyq7rTAbDw2xDbP9x5fzVJCgTsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de; spf=none smtp.mailfrom=chronox.de; dkim=pass (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b=nmZKtH2N; arc=pass smtp.client-ip=81.169.146.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=chronox.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=chronox.de
+ARC-Seal: i=1; a=rsa-sha256; t=1758249755; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=FO+JDYqEfQhY5yJDCBt4iFDPV8ofMfSy3Q88N/xQQYWhtQR6g4iG95pYHZ151lwKoS
+    8p2irwBmW8azrqf1r00IvQ51PdCw35E8pLW47vxESR/zVbF3i1eiCvzkRjMMi9S+MMjH
+    TyYeE5KmD52vJkg1U2AUz10Qdd7PQppYmmjbLLnqfUcRaa99Nmr5Rzu5jYL9WMsIQjER
+    zAhSohRqe6iQJx7+kuGXmJE6G7NXIHdf2SmGxCrvnjKvZQ0wTHsYZBcOgsaekz2PCPtL
+    q+7gvAGrUo6yZhsEzcw9VShWSyBrW73L7TyQIz0jXvSuXRv9q4b4td35L/uHFORUflY5
+    ja1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758249755;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=DwpWtLn/k646AVPru0zB96UTBYAxfzxxROtH+P666Hg=;
+    b=fWEKhP6Yov3Ho35zZCw0Modmgk6/aHWG9mMxbXxQIYVDCS8VLJjGv/6nkf35fXh5lI
+    panCBrfzsEG/fKbiPvqSYI+rWcrhZFJLDf7TsOHwUJbW8lomoLRi0Kp5Od+53chCSlaV
+    l65A+6WbXiPRylYq27dVL2pk3Da8JaC7HQSueCzB1K8IvfQCbnlyEhcxYe21rJxOZUj5
+    hNteejoM9A79ayW739on0DfNyVDJ6vw6HV+eczektRVrAsRkwJ+qW08gDXJ7OMfsVT+F
+    Z1CuRPh6TG+3NEt9jhoJJCra3+hd8VbaW+pufyOLWJriP1me1yaq3phJwgmZi7hSnE8z
+    NlgQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758249755;
+    s=strato-dkim-0002; d=chronox.de;
+    h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Cc:Date:
+    From:Subject:Sender;
+    bh=DwpWtLn/k646AVPru0zB96UTBYAxfzxxROtH+P666Hg=;
+    b=nmZKtH2NOSNDD7UnjwsbVrIRaJFI7RrXJ7VlDwEB6FPluxhkjmn2bF5aeVEkGQ3dvY
+    r1gkaEJRSWKhpg0IwvxYYWW8qsowCiAnMwHq8asehCtPgHn1+XO7SnAQCuaVJzJnMpeR
+    3eBQ98q4CctFSXxRDdV7LnSWobJau7hGvDRPCsHfSbjyJcHoCDbTHh/IdqgCA/UlPsi+
+    DxUsc9HYw1579IHjK/aTKYsrH6SusWZ9QjasnOgwWnwpfN3jdv0aG6xmgczJ28MSoxeu
+    vMLiSdwpHNBqLRUs6DrJJ8dIbu+VNhTFS4BtY2+feiU7dbKCTkRl+Z0BWRyOdbkFpD++
+    fspQ==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9zm0FKX05o/ir7Vyg9+o="
+Received: from graviton.chronox.de
+    by smtp.strato.de (RZmta 52.1.2 DYNA|AUTH)
+    with ESMTPSA id f01e6318J2gWHl9
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Fri, 19 Sep 2025 04:42:32 +0200 (CEST)
+From: Stephan =?UTF-8?B?TcO8bGxlcg==?= <smueller@chronox.de>
+To: Eric Biggers <ebiggers@kernel.org>, David Howells <dhowells@redhat.com>
+Cc: dhowells@redhat.com, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>,
+ linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA-512,
+ SHAKE128, SHAKE256
+Date: Fri, 19 Sep 2025 04:42:29 +0200
+Message-ID: <2952535.lGaqSPkdTl@graviton.chronox.de>
+In-Reply-To: <3605112.1758233248@warthog.procyon.org.uk>
+References: <3605112.1758233248@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on guard
- PTEs
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
- baohua@kernel.org, ioworker0@gmail.com, kirill@shutemov.name,
- hughd@google.com, mpenttil@redhat.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, akpm@linux-foundation.org, lorenzo.stoakes@oracle.com
-References: <20250918050431.36855-1-lance.yang@linux.dev>
- <20250918050431.36855-3-lance.yang@linux.dev>
- <a696c734-9f88-4d6f-a852-013071a2dd2a@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <a696c734-9f88-4d6f-a852-013071a2dd2a@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Autocrypt: addr=smueller@chronox.de;
+ keydata=
+ mFIEZZK4/xMIKoZIzj0DAQcCAwTDaDnchhDYEXH6dbfhyHMkiZ0HPYDF5xwHuMB8Z24SuXYdMfh
+ pnovdsgwpi6LNAvnI/lGPrvDc/Mv0GQvHDxN0tCVTdGVwaGFuIE3DvGxsZXIgPHNtdWVsbGVyQG
+ Nocm9ub3guZGU+iJYEExMIAD4CGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQQ0LE46O
+ epfGZCb44quXQ2j/QkjUwUCZZK6YwIZAQAKCRCuXQ2j/QkjU/bVAP9CVqPG0Pu6L0GxryzpRkvj
+ uifi4IzEoACd5oUIGmUX7AD8DxesdicM2ugqAxHgEZKl9xhi36Eq7usa/A6c6kFmyHK0HVN0ZXB
+ oYW4gTcO8bGxlciA8c21AZXBlcm0uZGU+iJMEExMIADsWIQQ0LE46OepfGZCb44quXQ2j/QkjUw
+ UCZZK6QgIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgAAKCRCuXQ2j/QkjU8HNAQDdTmzs+
+ Cls6FMoFrzoWdYtOGCW5im7x1G5M/L0L3VOvgEA6m9edpqCc0irbdNXVjoZwTXkSsLOxs2t7aDX
+ 2vFX54m0KVN0ZXBoYW4gTcO8bGxlciA8c211ZWxsZXJAbGVhbmNyeXB0by5vcmc+iJMEExMIADs
+ WIQQ0LE46OepfGZCb44quXQ2j/QkjUwUCZb+zewIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBw
+ IXgAAKCRCuXQ2j/QkjU1pIAQDemuxTaZdMGsJp/7ghbB7gHwV5Rh5d1wghKypI0z/iYgEAxdR7t
+ 6KrazO07Ia9urxEAQWqi0nf6yKluD0+gmOCmsW4UgRlkrj/EwgqhkjOPQMBBwIDBBo6QjEMU/1V
+ DD+tVj9qJ39qtZe5SZKFetDzXtyqRpwL+u8IbdIjv0Pvz/StziFMeomh8chRB7V/Hjz19jajK3C
+ IeAQYEwgAIBYhBDQsTjo56l8ZkJvjiq5dDaP9CSNTBQJlkrj/AhsgAAoJEK5dDaP9CSNTLQwA/1
+ WxGz4NvAj/icSJu144cMWOhyeIvHfgAkG9sg9HZXGdAPsGzKo4SezAYCwqgFKnyUIAjKYl1EW79
+ pSCOFS36heQvbhWBGWSuP8SCCqGSM49AwEHAgMEiEhJatNBgxidg8XJFTy8Ir7EsTCeoVY2vJAN
+ rysZeAAmSaUWFD4pvXE5RYQFeCYTWTG419H7ocNGUz5u1dgKhAMBCAeIeAQYEwgAIBYhBDQsTjo
+ 56l8ZkJvjiq5dDaP9CSNTBQJlkrj/AhsMAAoJEK5dDaP9CSNTGCAA/A2i1CxhQJmYh2MwfeM5Hy
+ Wk6EeWruSA1OgSWmaJaoGaAP4mARD2CviJgz8s3Gw07ZTk8SYHOTnv70hUbaziZ3/tjA==
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
+Am Freitag, 19. September 2025, 00:07:28 Mitteleurop=C3=A4ische Sommerzeit =
+schrieb=20
+David Howells:
 
+Hi David,
 
-On 2025/9/19 02:47, David Hildenbrand wrote:
-> On 18.09.25 07:04, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
->>
->> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
->> lightweight guard regions.
->>
->> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail when
->> encountering such a range.
->>
->> MADV_COLLAPSE fails deep inside the collapse logic when trying to swap-in
->> the special marker in __collapse_huge_page_swapin().
->>
->> hpage_collapse_scan_pmd()
->>   `- collapse_huge_page()
->>       `- __collapse_huge_page_swapin() -> fails!
->>
->> khugepaged's behavior is slightly different due to its max_ptes_swap 
->> limit
->> (default 64). It won't fail as deep, but it will still needlessly scan up
->> to 64 swap entries before bailing out.
->>
->> IMHO, we can and should detect this much earlier.
->>
->> This patch adds a check directly inside the PTE scan loop. If a guard
->> marker is found, the scan is aborted immediately with 
->> SCAN_PTE_NON_PRESENT,
->> avoiding wasted work.
->>
->> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   mm/khugepaged.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 9ed1af2b5c38..70ebfc7c1f3e 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct 
->> mm_struct *mm,
->>                       result = SCAN_PTE_UFFD_WP;
->>                       goto out_unmap;
->>                   }
->> +                /*
->> +                 * Guard PTE markers are installed by
->> +                 * MADV_GUARD_INSTALL. Any collapse path must
->> +                 * not touch them, so abort the scan immediately
->> +                 * if one is found.
->> +                 */
->> +                if (is_guard_pte_marker(pteval)) {
->> +                    result = SCAN_PTE_NON_PRESENT;
->> +                    goto out_unmap;
->> +                }
-> 
-> Thinking about it, this is interesting.
-> 
-> Essentially we track any non-swap swap entries towards 
-> khugepaged_max_ptes_swap, which is rather weird.
-> 
-> I think we might also run into migration entries here and hwpoison entries?
-> 
-> So what about just generalizing this:
-> 
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index af5f5c80fe4ed..28f1f4bf0e0a8 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1293,7 +1293,24 @@ static int hpage_collapse_scan_pmd(struct 
-> mm_struct *mm,
->          for (_address = address, _pte = pte; _pte < pte + HPAGE_PMD_NR;
->               _pte++, _address += PAGE_SIZE) {
->                  pte_t pteval = ptep_get(_pte);
-> -               if (is_swap_pte(pteval)) {
+as you mentioned that this patch as a basis for ML-DSA then may I outline t=
+he=20
+following: the ML-DSA code requires a multi-staged squeeze operation. For=20
+example:
+
+squeeze(state, 10 bytes);
+squeeze(state, 10 bytes);
+
+must be identical to
+
+squeeze(state, 20 bytes);
+
+With this in mind, may I highlight that potentially the following code does=
+=20
+not support this notion:
+
+> +/**
+> + * sha3_final() - Finish computing a SHA3 message digest of any type
+> + * @ctx: the context to finalize; must have been initialized
+> + * @out: (output) the resulting message digest
+> + *
+> + * Finish the computation of a SHA3 message digest of any type and perfo=
+rm
+> the + * "Keccak sponge squeezing" phase.  The digest is written to @out
+> buffer and + * the size of the digest is returned.  Before returning, the
+> context @ctx is + * cleared so that the caller does not need to do it.
+> + */
+> +int sha3_final(struct sha3_ctx *ctx, u8 *out)
+> +{
+> +	struct sha3_state *state =3D &ctx->state;
+> +	unsigned int digest_size =3D ctx->digest_size;
+> +	unsigned int bsize =3D ctx->block_size;
+> +	u8 end_marker =3D 0x80;
 > +
-> +               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> +                       ++none_or_zero;
-> +                       if (!userfaultfd_armed(vma) &&
-> +                           (!cc->is_khugepaged ||
-> +                            none_or_zero <= khugepaged_max_ptes_none)) {
-> +                               continue;
-> +                       } else {
-> +                               result = SCAN_EXCEED_NONE_PTE;
-> +                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> +                               goto out_unmap;
-> +                       }
-> +               } else if (!pte_present(pteval)) {
-> +                       if (non_swap_entry(pte_to_swp_entry(pteval))) {
-> +                               result = SCAN_PTE_NON_PRESENT;
-> +                               goto out_unmap;
-> +                       }
+> +	sha3_absorb_xorle(ctx, &ctx->padding, 1);
+> +	ctx->partial =3D bsize - 1;
+> +	sha3_absorb_xorle(ctx, &end_marker, 1);
+> +	sha3_keccakf(ctx->state.st);
+
+This logic above should only be invoked for the first squeeze operation.
+
+May I suggest you consider the code at:
+
+https://github.com/smuellerDD/leancrypto/blob/master/hash/src/sha3_c.c#L625
+
 > +
->                          ++unmapped;
->                          if (!cc->is_khugepaged ||
->                              unmapped <= khugepaged_max_ptes_swap) {
-> @@ -1313,18 +1330,7 @@ static int hpage_collapse_scan_pmd(struct 
-> mm_struct *mm,
->                                  goto out_unmap;
->                          }
->                  }
-> -               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> -                       ++none_or_zero;
-> -                       if (!userfaultfd_armed(vma) &&
-> -                           (!cc->is_khugepaged ||
-> -                            none_or_zero <= khugepaged_max_ptes_none)) {
-> -                               continue;
-> -                       } else {
-> -                               result = SCAN_EXCEED_NONE_PTE;
-> -                               count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> -                               goto out_unmap;
-> -                       }
-> -               }
+> +#ifdef __LITTLE_ENDIAN
+> +	for (;;) {
+> +		unsigned int part =3D umin(digest_size, bsize);
 > +
->                  if (pte_uffd_wp(pteval)) {
->                          /*
->                           * Don't collapse the page if any of the small
-> 
-> 
-> With that, the function flow looks more similar to 
-> __collapse_huge_page_isolate(),
-> except that we handle swap entries in there now.
+> +		memcpy(out, state->st, part);
+> +		digest_size -=3D part;
+> +		if (!digest_size)
+> +			goto done;
+> +		out +=3D part;
+> +		sha3_keccakf(ctx->state.st);
+> +	}
 
-Ah, indeed. I like this crazy idea ;p
+This loop needs to honor a starting offset in case the previous call only=20
+requested a subset of the rate.
 
-> 
-> 
-> And with that in place, couldn't we factor out a huge chunk of both 
-> scanning
-> functions into some helper (passing whether swap entries are allowed or 
-> not?).
+May I suggest to consider the code at:
 
-Yes. Factoring out the common scanning logic into a new helper is a
-good suggestion. It would clean things up ;)
+https://github.com/smuellerDD/leancrypto/blob/master/hash/src/sha3_c.c#L643
 
-> 
-> Yes, I know, refactoring khugepaged, crazy idea.
 
-I'll look into that. But let's do this separately :)
+> +#else
+> +	__le64 *digest =3D (__le64 *)out, *s;
+> +
+> +	while (digest_size >=3D bsize) {
+> +		for (int i =3D 0; i < bsize / 8; i++)
+> +			put_unaligned_le64(state->st[i], digest++);
+> +		digest_size -=3D bsize;
+> +		if (!digest_size)
+> +			goto done;
+> +		sha3_keccakf(ctx->state.st);
+> +	}
+> +
+> +	s =3D state->st;
+> +	for (; digest_size >=3D 8; digest_size -=3D 8)
+> +		put_unaligned_le64(*s++, digest++);
+> +
+> +	u8 *sc =3D (u8 *)s;
+> +	u8 *dc =3D (u8 *)digest;
+> +
+> +	for (; digest_size >=3D 1; digest_size -=3D 1)
+> +		*dc++ =3D *sc++;
+> +#endif
+> +done:
+> +	digest_size =3D ctx->digest_size;
+> +	memzero_explicit(ctx, sizeof(*ctx));
 
-Cheers,
-Lance
+=46or a multi-stage squeeze, it is perhaps not helpful to zeroize the conte=
+xt=20
+here.
+
+Ciao
+Stephan
 
 
 
