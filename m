@@ -1,104 +1,89 @@
-Return-Path: <linux-kernel+bounces-824291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1D9B8896F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:36:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 453E0B88975
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 11:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AF33B6E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:35:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D729C7C23BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 09:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1822F5A17;
-	Fri, 19 Sep 2025 09:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="GfGmo4Vq"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BDF2ECEAB
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 09:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758274537; cv=pass; b=shOWzHFZXYElWOHSg+zWk8A4GjZTPse75VpucqPgOLRjS7L7sTnNkpce5ckuprgoNur88YADiga5C2rsEBSu6nxbAGspMAYoAznyunpe01gYVLo7aHXRBwgAKSRrSTCQePJaEST43OrJ76xzmByb/cf0DXhKyzUIePUppQ6ZEPs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758274537; c=relaxed/simple;
-	bh=4m+AxGVJUfIpRSL/uquYuv5dLWJVM25j7KnoFxT8J6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yaf5PlOD7Qq6uCL0IMjjG6tsYuxBWyQQ30HV4+TUJdImJ2Tqc4T2iW389Nq2/udq87+cZ3wRW2ECMmeAkmx9NXLbDu09e/pxBiyZhgl73GGl6+zLdRCNggLT4fOxvTJlSAUgRe96knf7F6cmEvpvS0AblT0rdfzWR4SVDdX9xRM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=GfGmo4Vq; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758274530; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ia/weqB67JSOOFDADLRgnZnK1FSgsllrjF7nnMivBIzpsKy4d/24ygj7PjZkuX3hLKveVj9spU13OIgC6sYgHIrYa3x07YqoF8mXEH8Qpb07REJTaQ+EXYOAKMfqSzB7oqFDr7Aa7dr57x1Wlqw9I3O1M2Ldi0P9RBDs3dzhj50=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758274530; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Q4AgxNNAIA3/Y/jnWgb7B4t21i6FI8oSC22E+XxRvPA=; 
-	b=aZEpgt7OJ92jBCcTdVl+9pF09w/UFhZUmiUnhzBFVx0f1+C00bGBHTa5W4w45DjZbUL/bsIx4xAealShlTCKoA10dHPR3fp2rgbHX1rZhVnblwuEGl1tJ1sJxij+EffGtnw7HxxNTXG7sSspluj88TAzyqDR9u4mooyFme9m4wM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758274530;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=Q4AgxNNAIA3/Y/jnWgb7B4t21i6FI8oSC22E+XxRvPA=;
-	b=GfGmo4VqF9j3Te3raCUUXsUy7ppKdoQm/P+I4RWLjPumoDI1atAwH8F5zvAfixqH
-	tpJXAVKiBEQUwlWEeq/Akcl+wTv5qWqRiEA1weaBHJ3JgXXK9ndf70lYX7pLz2UxUP8
-	TVRGxlfr3HIAX6N8mqEc9UudqUKR0nAFU0XokrMA=
-Received: by mx.zohomail.com with SMTPS id 1758274529027121.54735845958476;
-	Fri, 19 Sep 2025 02:35:29 -0700 (PDT)
-Date: Fri, 19 Sep 2025 10:35:25 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panfrost: Bump the minor version number
-Message-ID: <76ob3x7aeflkz3q2sm44zz7wk55sarrprxixixzq32xi2qkjm3@gmctkhzl5w3c>
-References: <20250919080700.3949393-1-steven.price@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9381D2F60D5;
+	Fri, 19 Sep 2025 09:36:24 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97C12D8DC2;
+	Fri, 19 Sep 2025 09:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758274584; cv=none; b=LNVb2e78AjCla9ZKXid8iCux5J5z1QfMSseiTZfzcKy1wVhgIGZoC+vQHVpj2A4Wymb68dq60vvfOv4cvig5DrciYbwbMXIfHY9HREDtjZaUV0BwlHSzXCirqIKAI5D+XcQ1CFJp+82owUHClcE+5Vhb2c48QhPjNiBA3cT9CE4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758274584; c=relaxed/simple;
+	bh=PZBBxMZlPqezLBk05aZQCI7Xk4rFk0R/tmRiuAqXVdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WPCq7BzPIanf6q47apd68wYQ/DH8yqPkPfTd9SdvlpKFBqGKpe+eDyM6Abu3++OMtd3BPpvBk1popKxm/FskNNuQiN4x4wf5nS0fLjvIvv1BnTsNUpdNMtuNN5VfQBIN4fIT3psrnd08PiMZxNVUW+7BGQ0tBxQxuXCHpDSASrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8Bxnr8RJM1omy0MAA--.25017S3;
+	Fri, 19 Sep 2025 17:36:17 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJDxbMEPJM1oMmufAA--.61162S2;
+	Fri, 19 Sep 2025 17:36:16 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-efi@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/3] Only link libstub to final vmlinux
+Date: Fri, 19 Sep 2025 17:36:12 +0800
+Message-ID: <20250919093615.30235-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919080700.3949393-1-steven.price@arm.com>
+X-CM-TRANSID:qMiowJDxbMEPJM1oMmufAA--.61162S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
+	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
 
-Reviewed-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+The initial aim is to fix the objtool warning on LoongArch,
+then do the similar thing for arm64 and riscv.
 
-On 19.09.2025 09:07, Steven Price wrote:
-> Commit a017f7b86051 ("drm/panfrost: Expose JM context IOCTLs to UM")
-> added new ioctls to the driver and was meant to bump the version number.
-> However it actually only added a comment and didn't change the exposed
-> version number. Bump the number to be consistent with the comment.
->
-> Fixes: a017f7b86051 ("drm/panfrost: Expose JM context IOCTLs to UM")
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 3af4b4753ca4..22350ce8a08f 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -853,7 +853,7 @@ static const struct drm_driver panfrost_drm_driver = {
->  	.name			= "panfrost",
->  	.desc			= "panfrost DRM",
->  	.major			= 1,
-> -	.minor			= 4,
-> +	.minor			= 5,
->
->  	.gem_create_object	= panfrost_gem_create_object,
->  	.gem_prime_import_sg_table = panfrost_gem_prime_import_sg_table,
-> --
-> 2.39.5
+Tiezhu Yang (3):
+  LoongArch: Only link libstub to final vmlinux
+  arm64: Only link libstub to final vmlinux
+  riscv: Only link libstub to final vmlinux
 
-Adrian Larumbe
+ Makefile                | 1 +
+ arch/arm64/Makefile     | 5 ++++-
+ arch/loongarch/Makefile | 5 ++++-
+ arch/riscv/Makefile     | 5 ++++-
+ scripts/link-vmlinux.sh | 5 ++---
+ 5 files changed, 15 insertions(+), 6 deletions(-)
+
+-- 
+2.42.0
+
 
