@@ -1,189 +1,203 @@
-Return-Path: <linux-kernel+bounces-824765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6BB8A1AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:55:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0174FB8A145
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A87C272C
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:54:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8AE04E248C
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6D23161A7;
-	Fri, 19 Sep 2025 14:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBC6314D0F;
+	Fri, 19 Sep 2025 14:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="atNMxuBZ"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OqEFGsEe"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88761313264;
-	Fri, 19 Sep 2025 14:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758293584; cv=pass; b=cTTC43lkMh0LC08iVAHEwFBmDg0n+E+PqW/c2aYiAPblw6el4SInx4qFHBwl/JzBc6Xc6Pyhw6Cm7cHWuSL15ATFMqMsGMK/YxdCoTX+MlnaMo4X1pVl9uelrOkXEaeXGVIW+MHYwmRuiXfTTd8PNEp4DAkWsHuY55Slm7v2s/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758293584; c=relaxed/simple;
-	bh=NPU6R/xcCQOM1ggUhPE7hD61oLKixNf8wkoXcLLLXeY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qbn593kK0IxECxpPn3kJ+7vE7Mil6ktk5HCQocBDIt/+Ln5StVegBBguWj1i2zZKAEZ2yr3PvQmO49g2IB6S163dqaY2u81ElvTQUNZP2lK8S1V/kONLC0gYw1kuwn0oaIoY83Tt48pQs8SGaNvozl/fAXDe9L6BhHP6HN6DWDc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net; spf=none smtp.mailfrom=gerhold.net; dkim=pass (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b=atNMxuBZ; arc=pass smtp.client-ip=85.215.255.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gerhold.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=gerhold.net
-ARC-Seal: i=1; a=rsa-sha256; t=1758293394; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=acv5eugD5Gq4KPFEfWtA3/fTqwmKOIsFvg1B+hJkTnk0vgRmqFNqjkOkuMbir2or3Z
-    8bjOZ2qOPQ6QwrAFXi2JuKNQBwiNSPN/PyrZIOl/p6cUj62XtbjSu3XaGFy/GQoqQd54
-    ohqvLSaMitlWMEC4KKrWYAM7jX3qqaa67oyaPRJPmZRHIwNfDxqKCYi+zdcS0LNcxYB1
-    q+lM7S4wa9aieaSE1ua8XZbBXnK7RMmMogAdDyMh2pk8zIBvatStL4rSTcEanO9CFTOE
-    ZwZlBc+zHVVDdfeGrOaY3XEtEVJglU9e7PdpP7KlQPhulUGXdNbbICqdP49GBAnAT+1+
-    61ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1758293394;
-    s=strato-dkim-0002; d=strato.com;
-    h=Cc:To:Message-Id:Subject:Date:From:Cc:Date:From:Subject:Sender;
-    bh=61bwaMcPRWuSXCmHhvg6GAB4rPUgzrAWmuHTQsPRxU0=;
-    b=cHcEmvNS+eK0791m83j75JlC7Y4usGSsN9VQZjXSGnPdocITcJ3de8dvAKKyU3YiQH
-    6nGMKfm4O9aoaKhZOVW/zsgMVEDA20lAwXiX52EXB7l5KRDYiBe4CeGsFXu3Qp8v0Mz9
-    k13AzTKfJX8aiFiSSXmgTG8EHz/NwGSGphe/EoObCbo73nqTMRUzcrdNPd7x3cARdr5u
-    LR3d596JN2KOv6zxj7CacF2UlVSdeKOVce1WJkgE4mAQNZC6FXsW4/E/9nQl7hNvHA2q
-    88H/P4znlE3iW+z1OkYQJGe9C0mz3DR0TKFMMuZvs3NRd4pZBqBf/Ro77QLsPGiCWqzJ
-    etIA==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1758293394;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=Cc:To:Message-Id:Subject:Date:From:Cc:Date:From:Subject:Sender;
-    bh=61bwaMcPRWuSXCmHhvg6GAB4rPUgzrAWmuHTQsPRxU0=;
-    b=atNMxuBZcv/q+MRebWRNd+obdkHIWmFDCKBqPm45j0nhkkg/Qbfm47kRKtlus6ZmXG
-    lwgen8AJxHYjZkotjqHik9VyIfnL/eODWZDDfR1sCjxENcQ3xNi3Gzwebwqt9N8Ij346
-    k+x9buYOdOs20+SJRt4CBwIUugS8sBR4e6a5QHX3pieUyCJ4fwosL9NjdFkfDWRxz4qE
-    7QMgWXq3k7V0SKDf2fD9kAdf8uvtrkrFs/VbWmuuMXSFvBNvC5DJz9XlrKzeffE8UBLO
-    cyDsY77m/vrediVTYn/896NNOFKfiLx9G04eMRNzTujuvrvsYm2vtlvXFeFO+tX/fE4B
-    5DVw==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXSOYQGpRtZhZnncGoRCMFriGKY/zxVJ2QgPDtEteoYvgoAn2AACU="
-Received: from [127.0.0.2]
-    by smtp.strato.de (RZmta 52.1.2 AUTH)
-    with ESMTPSA id R027cc18JEnsOGm
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 19 Sep 2025 16:49:54 +0200 (CEST)
-From: Stephan Gerhold <stephan@gerhold.net>
-Date: Fri, 19 Sep 2025 16:49:32 +0200
-Subject: [PATCH] arm64: dts: qcom: msm8916-longcheer-l8910: Add touchscreen
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1C2257AEC
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758293458; cv=none; b=pJYftEcQ/nLayiqZfNfYTG1eDSEWaY4ieSHwU5DV7wdZ4IlCc1hRkI9wQtH/nsBs/sdoT9i7ZgFz1mzCvln1lMapTX805niPgZRnybtpp5Wb+lca+3gTARHVi6C1NnX92ONIURZlOrgm4Z6kfRx/aY/IhDTL6bt6186LNAouKhc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758293458; c=relaxed/simple;
+	bh=eHLNUygB/VZPzQfrdpRf+rYxokJiHSA09acDWZOmNYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ktMZ0SFU9+V+meq9Git8ZqOWf5wnLiMQISJCnBllM6XXl8E7PkigRbPxMynunXuAu6xvUbN+tEnxoerUWyaV/QRNlI1YcXOLN0bCJAVHBcOOp6OJm749098f81PlvkbKzuR4teEJbG4KySOFUiOKth1uYQ3GaKrBvmacmOxauz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OqEFGsEe; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-45f29e5e89bso25273755e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 07:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1758293452; x=1758898252; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkKXFt050iBpd1q1kwfDPcpxL0hJR2YAHnRn43yZJzU=;
+        b=OqEFGsEelFg5WnDC8mXDsGkiiwLv5+3ofPL9YH+UnRqSGJCLkFGnuwFT9Py6sSJKIj
+         cBIXLrdn3hF0T2H04cY1FFnGMS2lXT1+amtza4/boR8fXGYbByofP2PMxI1TcXzEuPdd
+         Jn8Poh73OOAJVTpbqNoLLLxRKDYWMkSHmB4XuT0RmyvX1rkYbivqwwQ0jMfOKovC2H+Z
+         d2n7FyGxVV7YJsG65LRHYr6rBy2hWKpaYNZFY71p85/cMV9yoqt+7ZxAiACkBNvTG5tw
+         biFHLsUVDNpvEDi5scY/uCeyu8PS0DtfAHNNaI/iVGjG6ncx12I5AH9HGp3AHLWDKqiM
+         5X1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758293452; x=1758898252;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gkKXFt050iBpd1q1kwfDPcpxL0hJR2YAHnRn43yZJzU=;
+        b=uu71yqFLlm1Cde7FBYTBwGcQINvMFwE5+MR8T2JhL+WpAaxxr3Oz0uWKHHQ9Qa8m/q
+         Z6BI9kHw3dGhIPKkGBVeclZT12p9gpoN0BfSQsk3hCmuu/m2tGBfsAv9G+SRUcxCYAox
+         95PeDSGPH4Yum58jSDQQcS7GqXv7InyGdYfE+d24UukuP+I3MBqX1XHX4/skAm0rEtgY
+         Mag1p3ryo9DeZrpDvOF0Vig1JykK8sBkmHIPOvRaN3iBnyVzmUTOyKXPC6s7Jhq3IaYI
+         zuST1AVDFAnmCBPEsILy8Dgxl7jUqR/gjLSPdjwNLjx8OBJgtp1pkMtgbJb5jZ0Ay02a
+         o6oA==
+X-Gm-Message-State: AOJu0YyAoO+Yp2fIGSkiy7BgtYXupFITc8qx19E6cag2PACYMwOosxrJ
+	yDufFVMgcuwTLIA1NpOumYE1rgc/6l3hNWodTQiyPRkhMxirFIGb2aJv0eTtRgVVMbSf2Nrpz3K
+	fRGLZ4F731A==
+X-Gm-Gg: ASbGncs50u4aMMpdNHfNnufvkTFC+0vDYOS1xC8NLsl5AfeEVJJ/ohjWpd452ZJg7mw
+	FbnjR9ffjkY/a4Yj3AG+z5QXO3QzXRCBsKbT2IbZ/GsVTHyeGpinyqi6TlsgrcOkiiyWbVxuvMa
+	U1ztbEMNn936Y2LsIVdOzDokWKpGrfRQqwpwQYNehes1Mo0O9oduidUmVT5T7ec+qyYZUt3UlDs
+	x3f4n46RjkZ8txdsoejAbUqJ2XuqJmnIxJrkrGymAGEIKO98zOopMp33bt2jKCchmBEmOXGtIHr
+	5GqqE5W+X81wCUgsJ5ffUQf3NGFUpzgy+HsSFol2Ep0i2kbCYIEfa2k2c4wlTF2C2Wj5/kJyLdr
+	NpoAQ/kjS6O0aUeU/xdy1bEjSxHpdq6uaSq6wR/0CKBceUw==
+X-Google-Smtp-Source: AGHT+IE0AyRQFy027O0we9IFGaJ57T0mN5jW/Xm8OltK/XV8i7+HDlJxVmBQqOlUogJN4zAsYSHkmg==
+X-Received: by 2002:a05:600c:3593:b0:459:e398:ed89 with SMTP id 5b1f17b1804b1-467e6b64adbmr33591565e9.1.1758293452249;
+        Fri, 19 Sep 2025 07:50:52 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f325c3c29sm86220025e9.3.2025.09.19.07.50.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 07:50:51 -0700 (PDT)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>
+Subject: [PATCH v2 0/3] rcu: replace system_wq and add WQ_PERCPU or WQ_UNBOUND to alloc_workqueue users
+Date: Fri, 19 Sep 2025 16:50:36 +0200
+Message-ID: <20250919145040.290214-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250919-msm8916-l8910-touchscreen-v1-1-c46e56ec0a3b@gerhold.net>
-X-B4-Tracking: v=1; b=H4sIAHttzWgC/x2MywqEMAwAf0Vy3kAqvuqvLHvQNmpAqzSrCOK/W
- 7wMzGHmAuUorNBmF0Q+RGUNScwnAzd1YWQUnxxyykuyxuKiS2NNhXMi4X/d3aQuMgesuSipMH1
- F3kPqt8iDnO/7+7vvB1E9UUBrAAAA
-X-Change-ID: 20250919-msm8916-l8910-touchscreen-7e45041b60dd
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonathan Albrieux <jonathan.albrieux@gmail.com>, 
- Stephan Gerhold <stephan@gerhold.net>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Jonathan Albrieux <jonathan.albrieux@gmail.com>
+Hi!
 
-The BQ Aquaris X5 (Longcheer L8910) has a Himax HX852x-ES touchscreen,
-which can now be described with the bindings recently added to linux-next.
-Add it to the device tree to allow using the touchscreen.
+Below is a summary of a discussion about the Workqueue API and cpu isolation
+considerations. Details and more information are available here:
 
-Signed-off-by: Jonathan Albrieux <jonathan.albrieux@gmail.com>
-Co-developed-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
- .../boot/dts/qcom/msm8916-longcheer-l8910.dts      | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+        "workqueue: Always use wq_select_unbound_cpu() for WORK_CPU_UNBOUND."
+        https://lore.kernel.org/all/20250221112003.1dSuoGyc@linutronix.de/
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
-index 887764dc55b21a5892510f822004b054eb65fa0a..93d5ea279cff1eaf929d2bf0673e02819225d88a 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8916-longcheer-l8910.dts
-@@ -79,6 +79,19 @@ led-0 {
- 		};
- 	};
- 
-+	reg_ts_vcca: regulator-vcca-ts {
-+		compatible = "regulator-fixed";
-+		regulator-name = "regulator-vcca-ts";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 78 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&ts_vcca_default>;
-+		pinctrl-names = "default";
-+	};
-+
- 	usb_id: usb-id {
- 		compatible = "linux,extcon-usb-gpio";
- 		id-gpios = <&tlmm 110 GPIO_ACTIVE_HIGH>;
-@@ -176,6 +189,25 @@ imu@68 {
- 	};
- };
- 
-+&blsp_i2c5 {
-+	status = "okay";
-+
-+	touchscreen@48 {
-+		compatible = "himax,hx8527e", "himax,hx852es";
-+		reg = <0x48>;
-+
-+		interrupts-extended = <&tlmm 13 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&tlmm 12 GPIO_ACTIVE_LOW>;
-+		vcca-supply = <&reg_ts_vcca>;
-+		vccd-supply = <&pm8916_l6>;
-+
-+		pinctrl-0 = <&ts_int_reset_default>;
-+		pinctrl-names = "default";
-+
-+		linux,keycodes = <KEY_BACK KEY_HOMEPAGE KEY_APPSELECT>;
-+	};
-+};
-+
- &blsp_uart2 {
- 	status = "okay";
- 	pinctrl-0 = <&blsp_uart2_console_default>;
-@@ -338,6 +370,20 @@ spk_ext_pa_default: spk-ext-pa-default-state {
- 		bias-disable;
- 	};
- 
-+	ts_int_reset_default: ts-int-reset-default-state {
-+		pins = "gpio12", "gpio13";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	ts_vcca_default: ts-vcca-default-state {
-+		pins = "gpio78";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	usb_id_default: usb-id-default-state {
- 		pins = "gpio110";
- 		function = "gpio";
+=== Current situation: problems ===
+
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+
+This leads to different scenarios if a work item is scheduled on an isolated
+CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistentcy cannot be addressed without refactoring the API.
+
+=== Plan and future plans ===
+
+This patchset is the first stone on a refactoring needed in order to
+address the points aforementioned; it will have a positive impact also
+on the cpu isolation, in the long term, moving away percpu workqueue in
+favor to an unbound model.
+
+These are the main steps:
+1)  API refactoring (that this patch is introducing)
+    -   Make more clear and uniform the system wq names, both per-cpu and
+        unbound. This to avoid any possible confusion on what should be
+        used.
+
+    -   Introduction of WQ_PERCPU: this flag is the complement of WQ_UNBOUND,
+        introduced in this patchset and used on all the callers that are not
+        currently using WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a future release cycle.
+
+        Most users don't need to be per-cpu, because they don't have
+        locality requirements, because of that, a next future step will be
+        make "unbound" the default behavior.
+
+2)  Check who really needs to be per-cpu
+    -   Remove the WQ_PERCPU flag when is not strictly required.
+
+3)  Add a new API (prefer local cpu)
+    -   There are users that don't require a local execution, like mentioned
+        above; despite that, local execution yeld to performance gain.
+
+        This new API will prefer the local execution, without requiring it.
+
+=== Introduced Changes by this series ===
+
+1) [P 1] Replace use of system_wq
+
+        system_wq is a per-CPU workqueue, but his name is not clear.
+
+        Because of that, system_wq has been renamed in system_percpu_wq.
+
+2) [P 2-3] add WQ_PERCPU / WQ_UNBOUND to alloc_workqueue() users
+
+        Every alloc_workqueue() caller should use one among WQ_PERCPU or
+        WQ_UNBOUND.
+
+        WQ_UNBOUND will be removed in a next release cycle.
+
+
+Thanks!
 
 ---
-base-commit: 8f7f8b1b3f4c613dd886f53f768f82816b41eaa3
-change-id: 20250919-msm8916-l8910-touchscreen-7e45041b60dd
+Changes in v2:
+- removed WQ_PERCPU from sync_wq
 
-Best regards,
+- added patch 3/3: explicitly use WQ_UNBOUND if WQ_PERCPU is not needed
+
+
+Marco Crivellari (3):
+  rcu: replace use of system_wq with system_percpu_wq
+  rcu: WQ_PERCPU added to alloc_workqueue users
+  rcu: WQ_UNBOUND added to sync_wq workqueue
+
+ kernel/rcu/tasks.h | 4 ++--
+ kernel/rcu/tree.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
-Stephan Gerhold <stephan@gerhold.net>
+2.51.0
 
 
