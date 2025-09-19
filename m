@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-825250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F190DB8B6C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D61A5B8B6CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC591CC2699
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2DDD1BC5828
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 22:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA502D47ED;
-	Fri, 19 Sep 2025 21:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3483D2D660D;
+	Fri, 19 Sep 2025 21:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yt+1fqLV"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CORnEqVX"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC641917ED
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D929610957
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 21:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758319178; cv=none; b=jwV9Q74EPTrDE48Hpw2GvhCkGgfIIrWcEgGyGvzX21kcyPB9CWZhbVmKrRw7tTEq5z/W95+7C7RDFCb2exLRDJhl0EQqG7zeOSiJgIK7CTL/mk2oaBUE0kjD6DDUGEjW6hylYomlNTdn6OLNFagziNUjGOOcBg2e7TFGuIR091Q=
+	t=1758319180; cv=none; b=rrWBe483mxfHeEzIqrwwXYtjo0uegUUTpgJFEasH76mr2OStD12ddsGbi5PYi2AkpDZ7X1R6w8a/H356PmnU1hW28UFvZwP0+71YbVlQjAFxSqb/PP3kmNoCdwQmz44x9l+8+NhUtc+qNsXzW51TbzSLe/JEGYiE64U7oSSLEEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758319178; c=relaxed/simple;
-	bh=hdHEcj+4G3mposoaDzjUkQ2FaAvL0jUydJXuAbQVk4Q=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HNHjExGe9HxN6GzphOWIH0rmDSHG6/up7o6GUx9k9At5nd/4gBfN4mgcDEuUR1VTnWVaUN6rpjXpWGvOLge6UV+fog9SePc9U6H2KGjbTX02BKJgoahUjxzTU59wNawgS3Fk1F13S97jjFE2lkWmw7qYLmNwxsiTugsnwWvwDXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yt+1fqLV; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1758319180; c=relaxed/simple;
+	bh=TqI0m8cUaosO9YvbAzshCBHwQ31eU9/jNocSpeBH9U4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LwQe3Gf9oOabuNMIutWAqacOkZDVLsrE+WDFIYVTO0EvV0zItyEogqYUIHqVaA/+toFMllc5HiF7A6azfqj5/9DEplPYiWi4g+hHMWNHSBvqhrSRq0wySPbrdj2dvoHLKi54ehO4CvWlJ4x/oHb/JvZjiXgR0nhvE8gLkVGp25k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CORnEqVX; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-76e2eb787f2so2706893b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:59:36 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b552f91033cso506722a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:59:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758319176; x=1758923976; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FLrHMziNYHud1FXXl+dtzIQae0Vcklfo1b9pYdhz2/U=;
-        b=Yt+1fqLVuU3364zLTy8REXwF6WY6KJId4CR7m7KNCDFttT12XmokDlAAa+7XubW637
-         yIfgRc3HHUNJTiIU7n30WHkm4DcqJP6goAx00g80rTkxx3NqI4T0SE+Tr3NC76zWlFOI
-         wYpLGCxoDKpQp7zMv3whPduLyS6Dj7wBhJRQdsyRE0m8EAEDfSKh+h1xIvdx3MLC41TK
-         lZpKn8MbfXMqIBb2sEBFOP5QUZJ0YBaIR8Tq435bCaGgLU4J+wb0kJbr7drLOnPeaRtA
-         6du3zETBQLZF9o/Bc1X3isft2F1KDdh+mfJnLso34niBtgjJm+/f201zG2+dRfiFNDy/
-         2ihA==
+        d=google.com; s=20230601; t=1758319178; x=1758923978; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=z4vvZVviAKykztVzh+1RERrWNNzj6PiZBM3YIdtRxzo=;
+        b=CORnEqVXy/CBfO9EvtPZujCzaza/3sXxgAThywMPIxptlX1nGM3/5iMhH7M6jix8eq
+         PgORSV1S+8JAr0OUbPReSInmMEQBd48UPwX7WV9On6vF0LXYN3GjW71dILRzjMRV0egw
+         nG7fQ4CqTqyuwySPGyKnqnSoq9k6pR5FDYI2mmv2v18Wslwg1z3CSYsr7Z3i3boCD4zu
+         EgCSReL17N794uaFT+o7tzblWok55ZBzQTV27mLw0UZBiCcE6o9AHk/vcM1ly0Z0qMQx
+         wRoj1kp4BPDHlSagiDu72eb0gGEzV6O9+PT2M4YpvjyiqaQOIj2yNbJVlmOxCSBhQrWI
+         TEWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758319176; x=1758923976;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FLrHMziNYHud1FXXl+dtzIQae0Vcklfo1b9pYdhz2/U=;
-        b=MfQm6HcPH/sZbvcHftZ4XI1Nht2wr2j75Dz/ESPZ6pWNU9gGp6tZNc5irEkhRg3NTn
-         KadRI2NXrU3XT7E/hBIGBq+IUNx75xP8gi2JiJJwkqRFlEWUEVDweNGcwI31im+AnZSC
-         IBJwfG3bYjBDqwU8W5nwcrOc0WtkUFghPVWRtKwzbswAB6YYSlaq3hgfcT6PyHDYNN7D
-         fFZ6qB4cuL2sf88RnGutskd+T85b9xdzCcm+4TdCXjYTRyvDwPdyJy8WPDLMHPeQ3iSv
-         TYft7GGhxyNE+N13iHLVGaozwmbvNRFOjsW7r6bi0DCro9K84lAr+i4JYZX/e0v+user
-         l5Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYdEhdJDeL1o9IT6SUca9aVHa6OKs5YF+/w2F/gUw69fdndkbEiWu8dGCk6gka0KFY3MoJ6vS2aIIz0CA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8z6P08ZHkStIub7w6PUPtkY8DoObuLKRptdbJrF+rNbgQ0bxJ
-	O4C25eFy25QVtPZHrzEtZO2/qPHMmyBIdB+iGuvyKae/qdMczlgM6lyO99/xzqYoi6gONmrUzfo
-	CObgzQw==
-X-Google-Smtp-Source: AGHT+IFKqJBbRMgHHL1TgxE5s+YonDT0guhnmE0Mw0KVOHt5n8O1EJ2Z0F7P2arsEHNwHOTl59hd7z2XlwA=
-X-Received: from pji15.prod.google.com ([2002:a17:90b:3fcf:b0:32d:df7e:66c2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3c90:b0:263:767c:28df
- with SMTP id adf61e73a8af0-2925c369f8dmr6927947637.11.1758319176515; Fri, 19
- Sep 2025 14:59:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758319178; x=1758923978;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z4vvZVviAKykztVzh+1RERrWNNzj6PiZBM3YIdtRxzo=;
+        b=BEa7WvErDP5kO1IY2NbAMgnjSCkPzROkmaeo4jwz91UUlK3Twd5YZIpfiA5elJ++aB
+         lgVgW3K0FsG/7QPulyti+eqmaNaaEQGJ4p51i4S7RigGsQzZhNfbldlsAgFq4Ll+j4m8
+         vpd9T4GDe5YJAWFoH3Re+sSeBPkeBm8yDejrilRC9M+QGOeFhvJU5p+F7XEVsbgroQ+O
+         IPPq7JkcSuAcUNaJXa4vfb1oG+B6cswSdkQE02WUSWZeCNaAN7YV+o2z4t+k3uuGM/t7
+         IgwYZZqvPvMaLmLBTEeG0RB1EucpZ04QTG9Y6kW+uDTcdY6yWViCG+SNk8mY81DsJRXg
+         02Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrk0Mx8lvR+03ONS48zXMhuQ19oqKtkCAE7iClktbWwb6i9nGgSLgnHdB8qyH6pOAvYZuuE/YQgz7fnIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj2LFs3ZI6o1ARh96tpLYGbZEE1N7+A1t5G4EbXi4CryqfXTQs
+	9Erm79SxJYPO6Gq1IOmg2aRoDlLoDo3BBOHTZS4Fa6mS87A3PDZrWCZoV2EoSuj+CYpZJsce/fH
+	KBSW/lQ==
+X-Google-Smtp-Source: AGHT+IHA4KH8oOcK/PIZhKxCn6eWhYsPqQGFXHEna4LG8tEcBbH3eiAyVFCZTr7RiTvr1YV2pXKjJCl0ut0=
+X-Received: from pji16.prod.google.com ([2002:a17:90b:3fd0:b0:32d:7097:81f1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2ecf:b0:267:776b:a31a
+ with SMTP id d9443c01a7336-269ba517048mr59720995ad.29.1758319178239; Fri, 19
+ Sep 2025 14:59:38 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 19 Sep 2025 14:59:27 -0700
+Date: Fri, 19 Sep 2025 14:59:28 -0700
+In-Reply-To: <20250919215934.1590410-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250919215934.1590410-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250919215934.1590410-1-seanjc@google.com>
-Subject: [PATCH v4 0/7] KVM: SVM: Enable AVIC for Zen4+ (if x2AVIC)
+Message-ID: <20250919215934.1590410-2-seanjc@google.com>
+Subject: [PATCH v4 1/7] KVM: SVM: Make svm_x86_ops globally visible, clean up
+ on-HyperV usage
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Vitaly Kuznetsov <vkuznets@redhat.com>
@@ -80,52 +85,152 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Naveen N Rao <naveen@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Enable AVIC by default for Zen4+, so long as x2AVIC is supported (which should
-be the case if AVIC is supported).
+Make svm_x86_ops globally visible in anticipation of modifying the struct
+in avic.c, and clean up the KVM-on-HyperV usage, as declaring _and using_
+a local variable in a header that's only defined in one specific .c-file
+is all kinds of ugly.
 
-v4:
- - Collect tags. [Naveen]
- - Add missing "(AMD)" for Naveen's attribution. [Naveen]
- - Make svm_x86_ops globally visible, to match TDX, instead of passing in
-   the struct as parameter to avic_hardware_setup(). [Naveen]
- - s/avic_want_avic_enabled/avic_want_enabled. [Naveen]
- - Print "AVIC enabled" in avic_harware_setup() so that it's close to the
-   "x2AVIC enabled" message. [Naveen]
+Opportunistically make svm_hv_enable_l2_tlb_flush() local to
+svm_onhyperv.c, as the only reason it was visible was due to the
+aforementioned shenanigans in svm_onhyperv.h.
 
-v3: https://lore.kernel.org/all/owztdzclln5pmgsuxgzt54vneiejtngdkujaebr7r35zx3f4lj@xvvhwvumkkha
- - Don't advise the user to enable force_avic. [Naveen]
- - Gather AVIC related module params in avic.c (by moving code/helpers to
-   avic.c).
- - Print "AVIC enabled" even when it's forced.
- - Enable by default iff x2AVIC is supported.
- - Use "auto" to select KVM's automatic/default behavior.
+Alternatively, svm_x86_ops could be explicitly passed to
+svm_hv_hardware_setup() as a parameter.  While that approach is slightly
+safer, e.g. avoids "hidden" updates, for better or worse, the Intel side
+of KVM has already chosen to expose vt_x86_ops (and vt_init_ops).  Given
+that svm_x86_ops is only truly consumed by kvm_ops_update, the odds of a
+"hidden" update causing problems are extremely low.  So, absent a strong
+reason to rework the VMX/TDX code, make svm_x86_ops visible, as having all
+updates use exactly "svm_x86_ops." is advantageous in its own right.
 
-v2: https://lore.kernel.org/all/cover.1756993734.git.naveen@kernel.org
+No functional change intended.
 
-v1: http://lkml.kernel.org/r/20250626145122.2228258-1-naveen@kernel.org
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/svm/svm.c          |  2 +-
+ arch/x86/kvm/svm/svm.h          |  2 ++
+ arch/x86/kvm/svm/svm_onhyperv.c | 28 +++++++++++++++++++++++++++-
+ arch/x86/kvm/svm/svm_onhyperv.h | 31 +------------------------------
+ 4 files changed, 31 insertions(+), 32 deletions(-)
 
-Naveen N Rao (AMD) (1):
-  KVM: SVM: Enable AVIC by default for Zen4+ if x2AVIC is support
-
-Sean Christopherson (6):
-  KVM: SVM: Make svm_x86_ops globally visible, clean up on-HyperV usage
-  KVM: SVM: Move x2AVIC MSR interception helper to avic.c
-  KVM: SVM: Update "APICv in x2APIC without x2AVIC" in avic.c, not svm.c
-  KVM: SVM: Always print "AVIC enabled" separately, even when force
-    enabled
-  KVM: SVM: Don't advise the user to do force_avic=y (when x2AVIC is
-    detected)
-  KVM: SVM: Move global "avic" variable to avic.c
-
- arch/x86/kvm/svm/avic.c         | 151 ++++++++++++++++++++++++++------
- arch/x86/kvm/svm/svm.c          |  64 +-------------
- arch/x86/kvm/svm/svm.h          |   6 +-
- arch/x86/kvm/svm/svm_onhyperv.c |  28 +++++-
- arch/x86/kvm/svm/svm_onhyperv.h |  31 +------
- 5 files changed, 158 insertions(+), 122 deletions(-)
-
-
-base-commit: c8fbf7ceb2ae3f64b0c377c8c21f6df577a13eb4
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 67f4eed01526..8117d79036bb 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -5032,7 +5032,7 @@ static void *svm_alloc_apic_backing_page(struct kvm_vcpu *vcpu)
+ 	return page_address(page);
+ }
+ 
+-static struct kvm_x86_ops svm_x86_ops __initdata = {
++struct kvm_x86_ops svm_x86_ops __initdata = {
+ 	.name = KBUILD_MODNAME,
+ 
+ 	.check_processor_compatibility = svm_check_processor_compat,
+diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+index 5d39c0b17988..1652a868c578 100644
+--- a/arch/x86/kvm/svm/svm.h
++++ b/arch/x86/kvm/svm/svm.h
+@@ -52,6 +52,8 @@ extern bool x2avic_enabled;
+ extern bool vnmi;
+ extern int lbrv;
+ 
++extern struct kvm_x86_ops svm_x86_ops __initdata;
++
+ /*
+  * Clean bits in VMCB.
+  * VMCB_ALL_CLEAN_MASK might also need to
+diff --git a/arch/x86/kvm/svm/svm_onhyperv.c b/arch/x86/kvm/svm/svm_onhyperv.c
+index 3971b3ea5d04..a8e78c0e5956 100644
+--- a/arch/x86/kvm/svm/svm_onhyperv.c
++++ b/arch/x86/kvm/svm/svm_onhyperv.c
+@@ -15,7 +15,7 @@
+ #include "kvm_onhyperv.h"
+ #include "svm_onhyperv.h"
+ 
+-int svm_hv_enable_l2_tlb_flush(struct kvm_vcpu *vcpu)
++static int svm_hv_enable_l2_tlb_flush(struct kvm_vcpu *vcpu)
+ {
+ 	struct hv_vmcb_enlightenments *hve;
+ 	hpa_t partition_assist_page = hv_get_partition_assist_page(vcpu);
+@@ -35,3 +35,29 @@ int svm_hv_enable_l2_tlb_flush(struct kvm_vcpu *vcpu)
+ 	return 0;
+ }
+ 
++__init void svm_hv_hardware_setup(void)
++{
++	if (npt_enabled &&
++	    ms_hyperv.nested_features & HV_X64_NESTED_ENLIGHTENED_TLB) {
++		pr_info(KBUILD_MODNAME ": Hyper-V enlightened NPT TLB flush enabled\n");
++		svm_x86_ops.flush_remote_tlbs = hv_flush_remote_tlbs;
++		svm_x86_ops.flush_remote_tlbs_range = hv_flush_remote_tlbs_range;
++	}
++
++	if (ms_hyperv.nested_features & HV_X64_NESTED_DIRECT_FLUSH) {
++		int cpu;
++
++		pr_info(KBUILD_MODNAME ": Hyper-V Direct TLB Flush enabled\n");
++		for_each_online_cpu(cpu) {
++			struct hv_vp_assist_page *vp_ap =
++				hv_get_vp_assist_page(cpu);
++
++			if (!vp_ap)
++				continue;
++
++			vp_ap->nested_control.features.directhypercall = 1;
++		}
++		svm_x86_ops.enable_l2_tlb_flush =
++				svm_hv_enable_l2_tlb_flush;
++	}
++}
+diff --git a/arch/x86/kvm/svm/svm_onhyperv.h b/arch/x86/kvm/svm/svm_onhyperv.h
+index f85bc617ffe4..08f14e6f195c 100644
+--- a/arch/x86/kvm/svm/svm_onhyperv.h
++++ b/arch/x86/kvm/svm/svm_onhyperv.h
+@@ -13,9 +13,7 @@
+ #include "kvm_onhyperv.h"
+ #include "svm/hyperv.h"
+ 
+-static struct kvm_x86_ops svm_x86_ops;
+-
+-int svm_hv_enable_l2_tlb_flush(struct kvm_vcpu *vcpu);
++__init void svm_hv_hardware_setup(void);
+ 
+ static inline bool svm_hv_is_enlightened_tlb_enabled(struct kvm_vcpu *vcpu)
+ {
+@@ -40,33 +38,6 @@ static inline void svm_hv_init_vmcb(struct vmcb *vmcb)
+ 		hve->hv_enlightenments_control.msr_bitmap = 1;
+ }
+ 
+-static inline __init void svm_hv_hardware_setup(void)
+-{
+-	if (npt_enabled &&
+-	    ms_hyperv.nested_features & HV_X64_NESTED_ENLIGHTENED_TLB) {
+-		pr_info(KBUILD_MODNAME ": Hyper-V enlightened NPT TLB flush enabled\n");
+-		svm_x86_ops.flush_remote_tlbs = hv_flush_remote_tlbs;
+-		svm_x86_ops.flush_remote_tlbs_range = hv_flush_remote_tlbs_range;
+-	}
+-
+-	if (ms_hyperv.nested_features & HV_X64_NESTED_DIRECT_FLUSH) {
+-		int cpu;
+-
+-		pr_info(KBUILD_MODNAME ": Hyper-V Direct TLB Flush enabled\n");
+-		for_each_online_cpu(cpu) {
+-			struct hv_vp_assist_page *vp_ap =
+-				hv_get_vp_assist_page(cpu);
+-
+-			if (!vp_ap)
+-				continue;
+-
+-			vp_ap->nested_control.features.directhypercall = 1;
+-		}
+-		svm_x86_ops.enable_l2_tlb_flush =
+-				svm_hv_enable_l2_tlb_flush;
+-	}
+-}
+-
+ static inline void svm_hv_vmcb_dirty_nested_enlightenments(
+ 		struct kvm_vcpu *vcpu)
+ {
 -- 
 2.51.0.470.ga7dc726c21-goog
 
