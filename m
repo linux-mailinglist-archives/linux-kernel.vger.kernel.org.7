@@ -1,91 +1,168 @@
-Return-Path: <linux-kernel+bounces-825357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD82EB8BA6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E128B8BA76
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6356A80C40
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:57:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A321E16B380
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 23:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EB42D5936;
-	Fri, 19 Sep 2025 23:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5D52D6E47;
+	Fri, 19 Sep 2025 23:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzqYTfKp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S26V8AcV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA9517A2EA;
-	Fri, 19 Sep 2025 23:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B192D5C6A;
+	Fri, 19 Sep 2025 23:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758326269; cv=none; b=eIpkxLIot9Gz5H0c4YYhe/wqADNCrBJWQT9PvS9Vv1cVDl3J9+gae1gEcgiwQgV9OBHfVAXu4JS9KcQZM2TtQ6tui7FESJPZb43a4nr/PkHDg2U6ogjrmBxC3Bc7YfB7Npwpf7p4HNNysWufT00k2ukc/bp3CQiLdh87+kbmBcc=
+	t=1758326367; cv=none; b=XZWdKy3WSKZsSqha1weIeNiiMcLPZPqg1AxPCy+88zb9ljABGfoy/QcuTg37NGQUiRQS94QBxAGTRogDJhbi6NPC9Cc8iEhlGwQnotI08GGVkWW85WbNFXCo5dx/DqFtn6W8ikuBcd2i+NCJjiRcKCkWb+IzOWDfm9qEpaT3IK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758326269; c=relaxed/simple;
-	bh=G/0NaZRHkE0QjTqR59c6aAdqxCqI7WLim83gK5JQ7uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EmzVjVjcxy0oVS+mvb1/T5kludUpVlBs0/5yD9wyDsV3ivxIksi40NSwP+52kMy4qEwWNm9mOmVOEqgo0PgmVJPGiOZauDgUoPelGEFbcn3Q5sivGHROzOen13+hP+NIN5mpw/oFQxoE83lTHV4/bddpjqpiYvavmeNZByejAW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzqYTfKp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA8BAC4CEF0;
-	Fri, 19 Sep 2025 23:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758326267;
-	bh=G/0NaZRHkE0QjTqR59c6aAdqxCqI7WLim83gK5JQ7uA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hzqYTfKpisba3UBm5gNBe42yqPhNNphsptxr8Hviej0yAhdr2cEkyhTQiwpysvhYN
-	 awEj/B+QTYGcY24kWuzh+vxrplCC0AY06V8rlM5zxg+GUtzI/sDAlGtl6CvJgqKjNU
-	 yJbQqsRC92HAfk0X4A6Xn0KM5c4PgC5K7hnehocqF/se86CC+BQ9nqttjZW6SDvhTo
-	 gdygwPNWAv79l430xJejhGDzOIbJJMhI5Qiqj6/SauXxq4RNPHS0FAKI+X3TiQYNt8
-	 TUFxlCVrr7IzrS6R2BSMR7hr7/5jJwd+Qx9j+ZKkX4BpUkRN8SwVDCFFwbAPkKYmVk
-	 uKcpZhPNUkYsg==
-Date: Fri, 19 Sep 2025 16:57:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, "Sebastian Andrzej Siewior"
- <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, Steven
- Rostedt <rostedt@goodmis.org>, <netdev@vger.kernel.org>, "Tariq Toukan"
- <tariqt@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <linux-rt-devel@lists.linux.dev>
-Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
- wrong CPU
-Message-ID: <20250919165746.5004bb8c@kernel.org>
-In-Reply-To: <20250918084823.372000-1-dtatulea@nvidia.com>
-References: <20250918084823.372000-1-dtatulea@nvidia.com>
+	s=arc-20240116; t=1758326367; c=relaxed/simple;
+	bh=hmyDCoOJEg/UaY26Qcrc0Q92cnmhyVHgQ5u6VdI4acI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sd4D8xX5T91O/tGFVyJOLxZV4oD7bpxwoIm8YN1dNr9VU9ux2gNpRAqDLzYvByg1aozfXqvHBhZTZ47z2DXz39Zl23EEvTaRVVRMzdE3u/UWo5cE9W61rG0hqOEivhFpA+cJ8l4MP3CP38mB+tnq02mcng9tzq70Z8XowoAHqEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S26V8AcV; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758326365; x=1789862365;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hmyDCoOJEg/UaY26Qcrc0Q92cnmhyVHgQ5u6VdI4acI=;
+  b=S26V8AcV4qdqv3z0mZDXFv9JpDJ+T5OloF5FN5TMT80HdyL5jhTBo2nl
+   eD0YkMCdGK2TYLkaII9ebpe+Ndd0Jug3gDLzcPv+oMV63NMWf64TT3R8m
+   tgs90/4qN8ZMNf1UgHLZYMss3/hTyGkleckbnA5jwtaj9hlk0YItuZloL
+   7YYyh6m2jyln+dZglYD1klALm981KF2auENuI5u+fY6HA5c1XDJWD4YE8
+   SZJc9f8DqnvynAYHBGa9kgQ5yreL73IZ3HJLtThl9RBYfhJUCm9ed0yUu
+   XV1yPL3u27n6qrqiEkgLc6//cwMFSeboKFhp+cBpDCe3UPMTYNXOWvrRc
+   w==;
+X-CSE-ConnectionGUID: ofqtGPANRKy5vazEsF+mPQ==
+X-CSE-MsgGUID: xP3VA3ruT9as5BX56dABkA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="60792920"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="60792920"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:59:25 -0700
+X-CSE-ConnectionGUID: /qPgjT/XS4i4gF8C2ZDiIg==
+X-CSE-MsgGUID: uz6x6rvKRvSdKLWpFy6bzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="175203511"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.108.58]) ([10.125.108.58])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 16:59:23 -0700
+Message-ID: <3bfaf4e6-739f-4998-8343-770ef3ab3791@intel.com>
+Date: Fri, 19 Sep 2025 16:59:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 05/20] nvdimm/namespace_label: Add namespace label
+ changes as per CXL LSA v2.1
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134138epcas5p2b02390404681df79c26f7a1a0f0262b8@epcas5p2.samsung.com>
+ <20250917134116.1623730-6-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-6-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 18 Sep 2025 11:48:21 +0300 Dragos Tatulea wrote:
-> Direct page releases to cache must be done on the same CPU as where NAPI
-> is running.
 
-You talk about NAPI..
 
->  /* Only allow direct recycling in special circumstances, into the
->   * alloc side cache.  E.g. during RX-NAPI processing for XDP_DROP use-case.
->   *
-> @@ -768,6 +795,18 @@ static bool page_pool_recycle_in_cache(netmem_ref netmem,
->  		return false;
->  	}
+On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+> CXL 3.2 Spec mentions CXL LSA 2.1 Namespace Labels at section 9.13.2.5
+> Modified __pmem_label_update function using setter functions to update
+> namespace label as per CXL LSA 2.1
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/label.c |  3 +++
+>  drivers/nvdimm/nd.h    | 23 +++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 3235562d0e1c..182f8c9a01bf 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -924,6 +924,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
 >  
-> +#ifdef CONFIG_DEBUG_PAGE_POOL_CACHE_RELEASE
-> +	if (unlikely(!page_pool_napi_local(pool))) {
-> +		u32 pp_cpuid = READ_ONCE(pool->cpuid);
+>  	nd_label = to_label(ndd, slot);
+>  	memset(nd_label, 0, sizeof_namespace_label(ndd));
+> +	nsl_set_type(ndd, nd_label);
+>  	nsl_set_uuid(ndd, nd_label, nspm->uuid);
+>  	nsl_set_name(ndd, nd_label, nspm->alt_name);
+>  	nsl_set_flags(ndd, nd_label, flags);
+> @@ -935,7 +936,9 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	nsl_set_lbasize(ndd, nd_label, nspm->lbasize);
+>  	nsl_set_dpa(ndd, nd_label, res->start);
+>  	nsl_set_slot(ndd, nd_label, slot);
+> +	nsl_set_alignment(ndd, nd_label, 0);
+>  	nsl_set_type_guid(ndd, nd_label, &nd_set->type_guid);
+> +	nsl_set_region_uuid(ndd, nd_label, NULL);
+>  	nsl_set_claim_class(ndd, nd_label, ndns->claim_class);
+>  	nsl_calculate_checksum(ndd, nd_label);
+>  	nd_dbg_dpa(nd_region, ndd, res, "\n");
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 158809c2be9e..e362611d82cc 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -295,6 +295,29 @@ static inline const u8 *nsl_uuid_raw(struct nvdimm_drvdata *ndd,
+>  	return nd_label->efi.uuid;
+>  }
+>  
+> +static inline void nsl_set_type(struct nvdimm_drvdata *ndd,
+> +				struct nd_namespace_label *ns_label)
+> +{
+> +	if (ndd->cxl && ns_label)
+> +		uuid_parse(CXL_NAMESPACE_UUID, (uuid_t *) ns_label->cxl.type);
 
-but then you print pp->cpuid?
+Personally would prefer something like:
 
-The patch seems half-baked. If the NAPI local recycling is incorrect
-the pp will leak a reference and live forever. Which hopefully people
-would notice. Are you adding this check just to double confirm that
-any leaks you're chasing are in the driver, and not in the core?
+if (!(ndd->cxl && ns_label))
+	return;
+uuid_parse(....);
+
+Also, no space needed after casting.
+
+> +}
+> +
+> +static inline void nsl_set_alignment(struct nvdimm_drvdata *ndd,
+> +				     struct nd_namespace_label *ns_label,
+> +				     u32 align)
+> +{
+> +	if (ndd->cxl)
+> +		ns_label->cxl.align = __cpu_to_le32(align);
+
+same comment as above
+> +}
+> +
+> +static inline void nsl_set_region_uuid(struct nvdimm_drvdata *ndd,
+> +				       struct nd_namespace_label *ns_label,
+> +				       const uuid_t *uuid)
+> +{
+> +	if (ndd->cxl && uuid)
+> +		export_uuid(ns_label->cxl.region_uuid, uuid);
+
+same comment as above
+
+> +}
+> +
+>  bool nsl_validate_type_guid(struct nvdimm_drvdata *ndd,
+>  			    struct nd_namespace_label *nd_label, guid_t *guid);
+>  enum nvdimm_claim_class nsl_get_claim_class(struct nvdimm_drvdata *ndd,
+
 
