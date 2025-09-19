@@ -1,74 +1,92 @@
-Return-Path: <linux-kernel+bounces-823876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B3EB87A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4CEB87A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 03:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A1584E2771
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:41:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72E31C23C8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 01:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A61A24469E;
-	Fri, 19 Sep 2025 01:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD00246BB6;
+	Fri, 19 Sep 2025 01:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpQMoHhm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AEv7G7gc"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEC1139D;
-	Fri, 19 Sep 2025 01:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F797139D;
+	Fri, 19 Sep 2025 01:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758246058; cv=none; b=dSMnEV/SyTM+Zlq5u6mbUwLPPOCCUcKUosE4xlsP1S23ShM19VKfbWbyNg+Y9q/7hyXXYI6kf2YTdpovkgKFHtTPNi5CDqxRer3zwcUJtb2kutvG03AAuepbeewU8uteititIvYjdLE/BlKnv7wKAD5kUwqnWLk3PegMKiReRL8=
+	t=1758246119; cv=none; b=gqQjBSrgnGf3ukLaSEVqWCCqa173YfQgfgYWADRO2jEowmnbSODdRgU5ZUlsPjXU+80VY2e44FhvlkLMslJxpP772aIazQ0iSMZzO26enKmt9KxZCJaDc2e373kxuWD1mp2Sln9R8a47VIxzPT/EbSu/t6PlcgMhPxFhOZsKR6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758246058; c=relaxed/simple;
-	bh=zPbgxi7Uh2u+IDqPDqnm42rsQFRLGFodybHJ11ddTzU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=IJh3c437jtZL5dvYk9y1Xphj+RN5jMZH9IVF6P53LO//A3v3HrlThF3bTWwLFYAl+6Z28LXrMzZ5nBdZrRm9jvy87c9tOxBSbLeaJLAhl0U8JWXuCDt5MX4zza3HMG+2x7Qpy0t/RgkVgywVY9u9YvrTfb/JvrnmWxgXfc/T7lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpQMoHhm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B717FC4CEE7;
-	Fri, 19 Sep 2025 01:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758246057;
-	bh=zPbgxi7Uh2u+IDqPDqnm42rsQFRLGFodybHJ11ddTzU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=tpQMoHhm47Bs5bDLnjwYUKoQdkRK6kFewwAFoABQx6dGjucIipLdDoTG4QOsQ1WN8
-	 8nambApnBgJ3JlJcfCCPxjjldlmCihFYtrJxmwm4CIHtewRAE3Roq9GtyDVnacIdnD
-	 DKY4SL9xmCPM+gjejNtOWFSxBVlnhE1dfmr3qDSb3T5YmGe5Db/g+kbuv/vebqpltQ
-	 sd86jUKXvZGL+hlgSwasSUqalKzP0ubsMNteO6cWvpHwDoUv6BiQi+Y/kmtOl+LXC+
-	 0DkbpptdV37BY+EasHh/dmeVZ2wDIuLR67LxGREu0wHtn+eKsu/D6pBZYaGAK50oW9
-	 IXVuEPf9WFEpA==
-Date: Thu, 18 Sep 2025 19:40:55 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-cc: atish.patra@linux.dev, anup@brainfault.org, will@kernel.org, 
-    mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-    aou@eecs.berkeley.edu, alex@ghiti.fr, linux-riscv@lists.infradead.org, 
-    linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf: riscv: skip empty batches in counter start
-In-Reply-To: <20250804025110.11088-1-cuiyunhui@bytedance.com>
-Message-ID: <57999508-fa1d-f6a1-4f40-188a61f54307@kernel.org>
-References: <20250804025110.11088-1-cuiyunhui@bytedance.com>
+	s=arc-20240116; t=1758246119; c=relaxed/simple;
+	bh=BRO0WEM0aeIlcUUykf2EgkcvC6ENyIezC0+IrWRnH/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u/Yu2EnwoA4fAx5MMK+oRqDfDkUNKX3LkR3zTAkksJWkUklEf1npX1veN1m0Q2Zke/Kl211+sbw38D12t65aZehEyZGksAmcDMTFLdD8a4SRGRtFzQoCGfiQKw19THtYOMH9X55vGOUBt/239TVmJZsVV39BOuoj68xysvl9IGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AEv7G7gc; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1758246114; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=5F2mu+HPJmOD+g9xW2Kjsqxc2iUpO4ZGC562yuztetI=;
+	b=AEv7G7gc5GEeu0cyehtPwGkAMzAUWuQhWjWp0lYSz1H/mkIIrBVUhADsOR30TqmQPV3PCaeE9fIh6Pe1WRtElgL1AMZ6SFShwFK6SNUF9J0JxwpUW7LXHQ1H7Ik84cKmuKbIkAUuds79Di7TFPTR48n3iMQtjpsn0k1nMOzZkt4=
+Received: from 30.246.178.33(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoHzP3E_1758246112 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 19 Sep 2025 09:41:53 +0800
+Message-ID: <47b52f6f-d27d-49bc-a999-382441aa310e@linux.alibaba.com>
+Date: Fri, 19 Sep 2025 09:41:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] PCI/AER: Report fatal errors of RCiEP and EP if
+ link recoverd
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, mahesh@linux.ibm.com, mani@kernel.org,
+ Jonathan.Cameron@huawei.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ oohall@gmail.com, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+References: <20250918203315.GA1920702@bhelgaas>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250918203315.GA1920702@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 4 Aug 2025, Yunhui Cui wrote:
 
-> Avoid unnecessary SBI calls when starting non-overflowed counters
-> in pmu_sbi_start_ovf_ctrs_sbi() by checking ctr_start_mask.
+
+在 2025/9/19 04:33, Bjorn Helgaas 写道:
+> On Wed, Sep 17, 2025 at 02:33:52PM +0800, Shuai Xue wrote:
+>> The AER driver has historically avoided reading the configuration space of
+>> an endpoint or RCiEP that reported a fatal error, considering the link to
+>> that device unreliable. Consequently, when a fatal error occurs, the AER
+>> and DPC drivers do not report specific error types, resulting in logs like:
+>>
+>> 	pcieport 0015:00:00.0: EDR: EDR event received
+>> 	pcieport 0015:00:00.0: EDR: Reported EDR dev: 0015:00:00.0
+>> 	pcieport 0015:00:00.0: DPC: containment event, status:0x200d, ERR_FATAL received from 0015:01:00.0
+>> 	pcieport 0015:00:00.0: AER: broadcast error_detected message
+>> 	pcieport 0015:00:00.0: AER: broadcast mmio_enabled message
+>> 	pcieport 0015:00:00.0: AER: broadcast resume message
+>> 	pcieport 0015:00:00.0: pciehp: Slot(21): Link Down/Up ignored
+>> 	pcieport 0015:00:00.0: AER: device recovery successful
+>> 	pcieport 0015:00:00.0: EDR: DPC port successfully recovered
+>> 	pcieport 0015:00:00.0: EDR: Status for 0015:00:00.0: 0x80
 > 
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> When you update this series, can you indent these messages with two
+> spaces instead of a tab?  That will preserve a little space and also
+> preserve the formatting when "git log" adds its own indentation.
 
-Thanks, queued for v6.18.
 
+Sure, will align with space.
 
-- Paul
+Thanks.
+Shuai
 
