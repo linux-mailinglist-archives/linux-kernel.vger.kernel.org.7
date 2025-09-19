@@ -1,137 +1,102 @@
-Return-Path: <linux-kernel+bounces-824680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-824657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8C71B89D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:15:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A78B89CFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 16:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9A2A0342D
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E041BC819F
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 14:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234CC3148DA;
-	Fri, 19 Sep 2025 14:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MI0RFjI6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89305313263;
+	Fri, 19 Sep 2025 14:10:05 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266AC3195F8
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 14:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD2230EF92;
+	Fri, 19 Sep 2025 14:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758291125; cv=none; b=sg3r0GjF9rvlUl4GvA6792uwXQ9RS6Ic0kmHe+H+W2Y9GKTbdeso6HmBpAasAr5AXTkPG/G17ENjtOt/GsaHFHOkBmR2ORcR75Cq3qfIBwa60Z2rTX+KGOx7NwzDJlt2NGzVZI/gfB5hyssH1D1RPYnDOyj5yRVGzDEQBQeOJf8=
+	t=1758291005; cv=none; b=ffhEBaf9eLsmpgEhE1S1ZxSwIRaQUkNTDTTYTBwGdeJ/y2sVs96jBFXx0rCDHHf08PCs54lgLC130XlT1Y/at8gX6j+TuLbIHb7a78mYq5L6UI00MFIf9P5ADczP8APRFhWkSz7FB6GeS2DFbAk+bH1y84OhpJW00nPeE6cQlRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758291125; c=relaxed/simple;
-	bh=UnlmkwHq9wdqXd/ylMaJgsY/prPvQTVCELQgh3Wx0oU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BMcVJs0ZTDv9yl76sE/M+PteRYevXif6rqnLsyv3Wue5UwglhpRsfNOWeLMsT0H42b8TqYoks30sEL6mbmqoJ27VpakPgM22UnDCzYZGopk39/YGJROsRsOQgaLjJNXcZLTE9oEh1qBzsrM00Z8Ne7gUJC8uH+989q0MJf3yV/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MI0RFjI6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758291122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mjIy4+nvM4KC0gKC5lRHqvF5pGSQy5/g+nkLInNuoVw=;
-	b=MI0RFjI62ZZrYnWB1ZTlrwTVPE//ZE7tt+XrvRxD5qNvt5Kp6S9Z/oR7su4ymSL6ZRA+Qx
-	aIghvHtTT3/xM8Qaba/hC1FFgRk7P7qt/yf4hbi8ZpytdICGz+PjEIoaSorN+pRtYRlRGS
-	iZ2C3b86XBTwaPO/Sqsnz/5GANoVCeo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-pFu-6ofQN9CFERQd07GrfA-1; Fri,
- 19 Sep 2025 10:11:58 -0400
-X-MC-Unique: pFu-6ofQN9CFERQd07GrfA-1
-X-Mimecast-MFC-AGG-ID: pFu-6ofQN9CFERQd07GrfA_1758291118
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E2A12195605A;
-	Fri, 19 Sep 2025 14:11:57 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb (unknown [10.45.224.13])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C4B2A1956045;
-	Fri, 19 Sep 2025 14:11:53 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1758291005; c=relaxed/simple;
+	bh=ReXxgNSop9xp4sktiauzyMbm5P/J2r9sOybuwsKp49o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCtSwOY0ChgnYsDSaSVQii7yByZRhJjARjSE3X2aZ+UoSihzRWJCEEvGJFtfjMGXOlK5OUCDhT9TdIPH3QToOJU2oAYUjTSAKeitUNAmxIspgyFiHRtCMs0osZkn6/yt1H3UFXwKiuKJoPFTgjyi3Bzy747nZcITqd9CpSKUzaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 990AB68AA6; Fri, 19 Sep 2025 16:09:54 +0200 (CEST)
+Date: Fri, 19 Sep 2025 16:09:54 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Marco Elver <elver@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Bill Wendling <morbo@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ian Rogers <irogers@google.com>, Jann Horn <jannh@google.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Nam Cao <namcao@linutronix.de>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Juri Lelli <jlelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Subject: [PATCH v2 19/20] verification/rvgen: Add support for per-obj monitors
-Date: Fri, 19 Sep 2025 16:09:53 +0200
-Message-ID: <20250919140954.104920-20-gmonaco@redhat.com>
-In-Reply-To: <20250919140954.104920-1-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>, Thomas Graf <tgraf@suug.ch>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, kasan-dev@googlegroups.com,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+	linux-sparse@vger.kernel.org, llvm@lists.linux.dev,
+	rcu@vger.kernel.org
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and
+ Locking-Analysis
+Message-ID: <20250919140954.GA24160@lst.de>
+References: <20250918140451.1289454-1-elver@google.com> <20250918141511.GA30263@lst.de> <20250918174555.GA3366400@ax162> <20250919140803.GA23745@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919140803.GA23745@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The special per-object monitor type was just introduced in RV, this
-requires the user to define some functions and type specific to the
-object.
+On Fri, Sep 19, 2025 at 04:08:03PM +0200, Christoph Hellwig wrote:
+> I started to play around with that.  For the nvme code adding the
+> annotations was very simply, and I also started adding trivial
+> __guarded_by which instantly found issues.
+> 
+> For XFS it was a lot more work and I still see tons of compiler
+> warnings, which I'm not entirely sure how to address.  Right now I
+> see three major classes:
 
-Adapt rvgen to add stub definitions for the monitor_target type, the
-da_get_id() function and other modifications required to create
-per-object monitors.
+And in case anyone cares, here are my patches for that:
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
----
- tools/verification/rvgen/rvgen/dot2k.py     | 6 ++++++
- tools/verification/rvgen/rvgen/generator.py | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+https://git.infradead.org/?p=users/hch/misc.git;a=shortlog;h=refs/heads/cap-analysis
 
-diff --git a/tools/verification/rvgen/rvgen/dot2k.py b/tools/verification/rvgen/rvgen/dot2k.py
-index 627efaec3a59..fe05bdc09861 100644
---- a/tools/verification/rvgen/rvgen/dot2k.py
-+++ b/tools/verification/rvgen/rvgen/dot2k.py
-@@ -27,6 +27,8 @@ class dot2k(Monitor, Dot2c):
-     def fill_monitor_type(self) -> str:
-         buff = [ self.monitor_type.upper() ]
-         buff += self._fill_timer_type()
-+        if self.monitor_type == "per_obj":
-+            buff.append("typedef /* XXX: define the target type */ *monitor_target;")
-         return "\n".join(buff)
- 
-     def fill_tracepoint_handlers_skel(self) -> str:
-@@ -45,6 +47,10 @@ class dot2k(Monitor, Dot2c):
-             if self.monitor_type == "per_task":
-                 buff.append("\tstruct task_struct *p = /* XXX: how do I get p? */;");
-                 buff.append("\tda_%s(p, %s%s);" % (handle, event, self.enum_suffix));
-+            elif self.monitor_type == "per_obj":
-+                buff.append("\tint id = /* XXX: how do I get the id? */;");
-+                buff.append("\tmonitor_target t = /* XXX: how do I get t? */;");
-+                buff.append("\tda_%s(id, t, %s%s);" % (handle, event, self.enum_suffix));
-             else:
-                 buff.append("\tda_%s(%s%s);" % (handle, event, self.enum_suffix));
-             buff.append("}")
-diff --git a/tools/verification/rvgen/rvgen/generator.py b/tools/verification/rvgen/rvgen/generator.py
-index b80af3fd6701..5eac12e110dc 100644
---- a/tools/verification/rvgen/rvgen/generator.py
-+++ b/tools/verification/rvgen/rvgen/generator.py
-@@ -243,7 +243,7 @@ obj-$(CONFIG_RV_MON_%s) += monitors/%s/%s.o
- 
- 
- class Monitor(RVGenerator):
--    monitor_types = { "global" : 1, "per_cpu" : 2, "per_task" : 3 }
-+    monitor_types = { "global" : 1, "per_cpu" : 2, "per_task" : 3, "per_obj" : 4 }
- 
-     def __init__(self, extra_params={}):
-         super().__init__(extra_params)
--- 
-2.51.0
-
+git://git.infradead.org/users/hch/misc.git cap-analysis
 
