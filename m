@@ -1,39 +1,51 @@
-Return-Path: <linux-kernel+bounces-823981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-823982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEE64B87DA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:11:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E712B87DAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 06:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4F3173C8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:11:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B8B07B2C09
+	for <lists+linux-kernel@lfdr.de>; Fri, 19 Sep 2025 04:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBEB26738B;
-	Fri, 19 Sep 2025 04:11:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9185525FA0E
-	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF16926AA91;
+	Fri, 19 Sep 2025 04:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YWJX1e45"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A85723741
+	for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 04:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758255111; cv=none; b=jjSTIpbx2A61QN5NBxGyE4ZHF7beE82km6eEf8543Mv+k+I3omZ4oYr8nFSJRpHVG3c1nzYARzfH0rf1mdRbIKOJA0JUX2liVT52AnaqQGhn3ndy/OeSjxYQW9cMgwy7wo1uacXOVu0aRqGve1974j4PNeEMN6Dz61dqPAQ5O3Y=
+	t=1758255674; cv=none; b=pPl04YXLpyDSxOveZfgMzd+QKBPqlVnFbhhsI5Oe/tMMSZHODGXw6GMH/VsRMtXVXDWpIzLJwx+Ysu3S8e7mMsn0B8IBerPbU2+RwLgrjeviY/jSMYRXz/fB///dwsC6NQPq3x13woICLI7s1C35fIk+XYKg1mWnyJ1O2dyopJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758255111; c=relaxed/simple;
-	bh=CmDuLxpMDxf5AchlYUIvjaFeP+19N3HTntvzKsfXsMU=;
+	s=arc-20240116; t=1758255674; c=relaxed/simple;
+	bh=VwEKxfxIhVMNyB5nDVAQn1hDFOeZF0akVouNyCBqHxk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tv/HK4DwUct7GvWZuqxoTL1H+xHyhChcYRCzUdleq09I/7fNDfu+T/eui3NLfOs5rkKtfk42i2k1vTLoPMDZ1RCuvhQ/okqM0CmJSE3GisqTLVw2QCpKkelzff9xolCakFx67sCngTnT6v+Tt9K3mRdbs6sZZ6nw7++EJKdDU6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9E5AF1758;
-	Thu, 18 Sep 2025 21:11:40 -0700 (PDT)
-Received: from [10.164.18.52] (MacBook-Pro.blr.arm.com [10.164.18.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D1413F673;
-	Thu, 18 Sep 2025 21:11:38 -0700 (PDT)
-Message-ID: <6a6f03df-8dc4-44aa-ad25-40f51ad98266@arm.com>
-Date: Fri, 19 Sep 2025 09:41:35 +0530
+	 In-Reply-To:Content-Type; b=Py2hNgY89x072unyxI2Qc5WCPbBIaqlhQMbfb7Bv8kZRSC/iTISEzPhpO4IsKUkHe1uYmftassomAmnsfpreQcxgV/Sx+jUl+T1MuRyAVKTfXtTPYVqKsz3Kvh73x0EFVWZQtQS/aFgKzqKJLDs2b6M6Jt7QlUGLZr3PlxUZeNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YWJX1e45; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=FB08AkPogpZ1CN2MlqSj5xJDBZIBAXihl92UEHxatuk=; b=YWJX1e45aZk9c0QoynCO28tYH5
+	76Yz7I0s8OL3PfQN8LzEOWKTWI/PTt/zNzfzd2LNvXT7j815SVBCEsp/Tcf2a1K8Ymg6wECq/x+Cg
+	Af7HcuRGfNw1V1RtM3JNfOglPDuadUxMCPr73NadCEnEhTYZ4oOmMXJ3yIk7FhOPqnoMEJ3RSuurC
+	CiLnNN09YwN8jRoMeRtfupRw9DVzI2mWX15sP5x1WQWtHdPkXj38A+KNTxFly8tSq0ZoROBdMrrzT
+	kLg/zDRcRKAomJlF7egMKhMILytUZ8dxI4UKj1wTeJSOWssa7MDNrm0daF3U3HS37wwCGlz8bRut3
+	mUyZh/cA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uzScK-00000001nWD-1vvj;
+	Fri, 19 Sep 2025 04:21:04 +0000
+Message-ID: <4e76b94d-9c32-4ec1-b2ec-fc989f1a23ad@infradead.org>
+Date: Thu, 18 Sep 2025 21:20:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,160 +53,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v2 2/2] mm/khugepaged: abort collapse scan on guard
- PTEs
-To: David Hildenbrand <david@redhat.com>, Lance Yang <lance.yang@linux.dev>,
- akpm@linux-foundation.org, lorenzo.stoakes@oracle.com
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, kirill@shutemov.name, hughd@google.com,
- mpenttil@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250918050431.36855-1-lance.yang@linux.dev>
- <20250918050431.36855-3-lance.yang@linux.dev>
- <a696c734-9f88-4d6f-a852-013071a2dd2a@redhat.com>
+Subject: Re: [PATCH 1/1] fixup: alloc_tag: mark inaccurate allocation counters
+ in /proc/allocinfo output
+To: Andrew Morton <akpm@linux-foundation.org>,
+ Usama Arif <usamaarif642@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, kent.overstreet@linux.dev,
+ vbabka@suse.cz, hannes@cmpxchg.org, rientjes@google.com,
+ roman.gushchin@linux.dev, harry.yoo@oracle.com, shakeel.butt@linux.dev,
+ 00107082@163.com, pyyjason@gmail.com, pasha.tatashin@soleen.com,
+ souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250916160110.266190-1-surenb@google.com>
+ <4c4e97c1-7f93-4c09-a235-ab169a998ef0@gmail.com>
+ <20250916175639.2368772636d5e543faa5b13b@linux-foundation.org>
 Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <a696c734-9f88-4d6f-a852-013071a2dd2a@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250916175639.2368772636d5e543faa5b13b@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Andrew,
 
-On 19/09/25 12:17 am, David Hildenbrand wrote:
-> On 18.09.25 07:04, Lance Yang wrote:
->> From: Lance Yang <lance.yang@linux.dev>
+On 9/16/25 5:56 PM, Andrew Morton wrote:
+> On Tue, 16 Sep 2025 21:50:51 +0100 Usama Arif <usamaarif642@gmail.com> wrote:
+> 
 >>
->> Guard PTE markers are installed via MADV_GUARD_INSTALL to create
->> lightweight guard regions.
 >>
->> Currently, any collapse path (khugepaged or MADV_COLLAPSE) will fail 
->> when
->> encountering such a range.
+>> On 16/09/2025 17:01, Suren Baghdasaryan wrote:
+>>> Document new "accurate:no" marker.
+>>>
+>>> Fixes: 39d117e04d15 ("alloc_tag: mark inaccurate allocation counters in /proc/allocinfo output")
+>>> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>>> ---
+>>> Based on mm-new
+>>>
+>>>  Documentation/filesystems/proc.rst | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+>>> index 1776a06571c2..17668f82ff1c 100644
+>>> --- a/Documentation/filesystems/proc.rst
+>>> +++ b/Documentation/filesystems/proc.rst
+>>> @@ -1014,6 +1014,14 @@ If file version is 2.0 or higher then each line may contain additional
+>>>  For example if the counters are not accurate, the line will be appended with
+>>>  "accurate:no" pair.
+>>>  
+>>> +Supported markers in v2:
+>>> +accurate:no
+>>> +              Absolute values of the counters in this line are not
 >>
->> MADV_COLLAPSE fails deep inside the collapse logic when trying to 
->> swap-in
->> the special marker in __collapse_huge_page_swapin().
+>> s/values/value/ maybe? :)
+> 
+> That's OK as-is.
+> 
+>> +              accurate because of the failure to allocate storage required
 >>
->> hpage_collapse_scan_pmd()
->>   `- collapse_huge_page()
->>       `- __collapse_huge_page_swapin() -> fails!
->>
->> khugepaged's behavior is slightly different due to its max_ptes_swap 
->> limit
->> (default 64). It won't fail as deep, but it will still needlessly 
->> scan up
->> to 64 swap entries before bailing out.
->>
->> IMHO, we can and should detect this much earlier.
->>
->> This patch adds a check directly inside the PTE scan loop. If a guard
->> marker is found, the scan is aborted immediately with 
->> SCAN_PTE_NON_PRESENT,
->> avoiding wasted work.
->>
->> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Signed-off-by: Lance Yang <lance.yang@linux.dev>
->> ---
->>   mm/khugepaged.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
->>
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 9ed1af2b5c38..70ebfc7c1f3e 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -1306,6 +1306,16 @@ static int hpage_collapse_scan_pmd(struct 
->> mm_struct *mm,
->>                       result = SCAN_PTE_UFFD_WP;
->>                       goto out_unmap;
->>                   }
->> +                /*
->> +                 * Guard PTE markers are installed by
->> +                 * MADV_GUARD_INSTALL. Any collapse path must
->> +                 * not touch them, so abort the scan immediately
->> +                 * if one is found.
->> +                 */
->> +                if (is_guard_pte_marker(pteval)) {
->> +                    result = SCAN_PTE_NON_PRESENT;
->> +                    goto out_unmap;
->> +                }
->
-> Thinking about it, this is interesting.
->
-> Essentially we track any non-swap swap entries towards 
-> khugepaged_max_ptes_swap, which is rather weird.
->
-> I think we might also run into migration entries here and hwpoison 
-> entries?
->
-> So what about just generalizing this:
->
-> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> index af5f5c80fe4ed..28f1f4bf0e0a8 100644
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -1293,7 +1293,24 @@ static int hpage_collapse_scan_pmd(struct 
-> mm_struct *mm,
->         for (_address = address, _pte = pte; _pte < pte + HPAGE_PMD_NR;
->              _pte++, _address += PAGE_SIZE) {
->                 pte_t pteval = ptep_get(_pte);
-> -               if (is_swap_pte(pteval)) {
-> +
-> +               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> +                       ++none_or_zero;
-> +                       if (!userfaultfd_armed(vma) &&
-> +                           (!cc->is_khugepaged ||
-> +                            none_or_zero <= khugepaged_max_ptes_none)) {
-> +                               continue;
-> +                       } else {
-> +                               result = SCAN_EXCEED_NONE_PTE;
-> + count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> +                               goto out_unmap;
-> +                       }
-> +               } else if (!pte_present(pteval)) {
-> +                       if (non_swap_entry(pte_to_swp_entry(pteval))) {
-> +                               result = SCAN_PTE_NON_PRESENT;
-> +                               goto out_unmap;
-> +                       }
-> +
->                         ++unmapped;
->                         if (!cc->is_khugepaged ||
->                             unmapped <= khugepaged_max_ptes_swap) {
-> @@ -1313,18 +1330,7 @@ static int hpage_collapse_scan_pmd(struct 
-> mm_struct *mm,
->                                 goto out_unmap;
->                         }
->                 }
-> -               if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-> -                       ++none_or_zero;
-> -                       if (!userfaultfd_armed(vma) &&
-> -                           (!cc->is_khugepaged ||
-> -                            none_or_zero <= khugepaged_max_ptes_none)) {
-> -                               continue;
-> -                       } else {
-> -                               result = SCAN_EXCEED_NONE_PTE;
-> - count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-> -                               goto out_unmap;
-> -                       }
-> -               }
-> +
->                 if (pte_uffd_wp(pteval)) {
->                         /*
->                          * Don't collapse the page if any of the small
->
->
-> With that, the function flow looks more similar to 
-> __collapse_huge_page_isolate(),
-> except that we handle swap entries in there now.
+>> s/storage required/memory/
+> 
+> Sure.
+> 
+> 
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Subject: alloc_tag-mark-inaccurate-allocation-counters-in-proc-allocinfo-output-fix-fix
+> Date: Tue Sep 16 05:53:33 PM PDT 2025
+> 
+> simplification per Usama, reflow text
+> 
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: David Wang <00107082@163.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> Cc: Sourav Panda <souravpanda@google.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Usama Arif <usamaarif642@gmail.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  Documentation/filesystems/proc.rst |   10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> --- a/Documentation/filesystems/proc.rst~alloc_tag-mark-inaccurate-allocation-counters-in-proc-allocinfo-output-fix-fix
+> +++ a/Documentation/filesystems/proc.rst
+> @@ -1016,11 +1016,11 @@ For example if the counters are not accu
+>  
+>  Supported markers in v2:
+>  accurate:no
 
-This looks good!
+Please insert a blank line here to prevent a docs warning:
 
+linux-next-20250918/Documentation/filesystems/proc.rst:998: ERROR: Unexpected indentation. [docutils]
 
->
->
-> And with that in place, couldn't we factor out a huge chunk of both 
-> scanning
-> functions into some helper (passing whether swap entries are allowed 
-> or not?).
->
-> Yes, I know, refactoring khugepaged, crazy idea.
->
+Thanks.
+
+> -              Absolute values of the counters in this line are not
+> -              accurate because of the failure to allocate storage required
+> -              to track some of the allocations made at this location.
+> -              Deltas in these counters are accurate, therefore counters
+> -              can be used to track allocation size and count changes.
+> +              Absolute values of the counters in this line are not accurate
+> +              because of the failure to allocate memory to track some of the
+> +              allocations made at this location.  Deltas in these counters are
+> +              accurate, therefore counters can be used to track allocation size
+> +              and count changes.
+>  
+>  Example output.
+>  
+> _
+
+-- 
+~Randy
+
 
