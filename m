@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-825456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F3EB8BD6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:25:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF5BB8BD80
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 832DE7B52BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8D47E71AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD23A1F4617;
-	Sat, 20 Sep 2025 02:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fNhuD3PK"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902551F7569;
+	Sat, 20 Sep 2025 02:36:59 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21D12AE99;
-	Sat, 20 Sep 2025 02:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA71F1A9F84;
+	Sat, 20 Sep 2025 02:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758335113; cv=none; b=JYIqmKpPtRvfgfcPeuHPxoBVTTeTXuB1TKiGg0+B4cI+5EGmHNBdRHUA3B0NJe6YP8SkOquObRNdhYevEgkNv2NKx9VztnG4niG7f7Dolwn0u/MgNS8AeKq1y5hPI4ffFgJXGt9VkagNXkzd4u5+YYpfcknyob5R41O0kcDoqFc=
+	t=1758335819; cv=none; b=VdHDCGpXcLejeTM9D6dMgb589JeX2CJ3iP9KeR2iXcEqiH2MW7Q/eLpKDxN3IlkA+dW8huO+d3xX6DMlJOg6CXXEIGWsGxYBHzfPlGYiwLP1Is62OcODN1sLA8hfHhp3oBdDVwjeud2DS5CD+H3doSSDMHGX1J8yZ4veWHzOmdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758335113; c=relaxed/simple;
-	bh=QnShLZkg8/UnFhLj41Nrn/cdTJ5bTk/edIzV1tGTY98=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BKEBxEbEby+uXFPclYF/YRhELu7W2WOccDlxKhmMN5eqmPAM97FmYDcPu5LwBh9eyKAoX3upTsKh/zNUCXqFpEAY7ICKoiVYdYJOZMukMrLXCEagvpjCD1X/rUP6TA8X0qBu0Y6edRc8iEQ60rjyH4FhgvAYB0fwDj2Gaqh6+Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fNhuD3PK; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58K25eJq029482;
-	Sat, 20 Sep 2025 02:25:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=CsJsIHjWIG9kg+Z72lMm4FPPciDowTkHulx54Bh9bag=; b=
-	fNhuD3PK3xgchkyrxrFXZsN+t/fWHciOPmYAk/StXaRalhOCtrXcnrziWI1elLbj
-	0lora/X878u+VsEBF6amdGRDkuAeN+H6hej8IcuhUCTjlxATdxVJE4rvRNCJqxSO
-	F1HagvmUpK4xMUgZESA+LRuqNbXwaP03t4UJrR0D69FoyqVXZTb8LY/lEe5FhBZm
-	KxmeSjrClzlM7z8RPupN/mhRugBx5xrdPb0LJmtMj/YjQxuwuMBsl9Hu/PndzaTB
-	TSdJut356AjlPxS8fK8k+S04dyyHnnZFC7jt85MRIccrBlaJSN2s54m/3o4BY+KK
-	Q/iRXdVS2bHFlqAELVcD2A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 499k6ar0bd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 20 Sep 2025 02:25:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58K1YIui020373;
-	Sat, 20 Sep 2025 02:25:00 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 499jq50p2r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 20 Sep 2025 02:25:00 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58K2Lxgd016735;
-	Sat, 20 Sep 2025 02:25:00 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 499jq50p2b-2;
-	Sat, 20 Sep 2025 02:25:00 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: alim.akhtar@samsung.com, krzk@kernel.org, peter.griffin@linaro.org,
-        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: ufs: exynos: correct sync pattern mask timing comment
-Date: Fri, 19 Sep 2025 22:24:52 -0400
-Message-ID: <175833431689.3341211.14106616916060311904.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
-References: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
+	s=arc-20240116; t=1758335819; c=relaxed/simple;
+	bh=h0mrKr44BcKhfgTv2Y9PCdAzOCi938Y0M8UD6peXyBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4ppZDpieB8yGxnJV09sSVqDFIbFGCpO/crrgdl9PYQeUAXOHonmrGk2LTi8nFE+J3AwJok782pZHFKDpJ+76UTrVuo4002vWo01+v+8IJwy/ITVZh8z0J9Y3CarKg/uSWQ43MroLTKDcUWoTvsuy8qaqEYpp5+dXCzSmMNZdQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uznT2-000000006vy-29eO;
+	Sat, 20 Sep 2025 02:36:52 +0000
+Date: Sat, 20 Sep 2025 03:36:49 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: bryan@bryanhinton.com
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	angelogioacchino.delregno@collabora.com, conor+dt@kernel.org,
+	krzk+dt@kernel.org, matthias.bgg@gmail.com, robh@kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: mediatek: mt7981b: OpenWrt One: set
+ console UART to 115200
+Message-ID: <aM4TQc32cNYY-wLA@pidgin.makrotopia.org>
+References: <20250920000619.2643457-1-bryan@bryanhinton.com>
+ <20250920000619.2643457-3-bryan@bryanhinton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-20_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
- mlxlogscore=986 suspectscore=0 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2508110000 definitions=main-2509200020
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxNyBTYWx0ZWRfX89q8ZKWBEisI
- VzWqpWA7RCtrEioss/Ly1xhzBTysjmOPDMw5snOGaaefQUWQAvbSKJuv+aZzrgw9EIznd6tfUf4
- iN0FPFCLMVEQTQia5E+UZJwcbxhQNBQMeKfayFz716a3oUTCbsDrF0OKpSnqGBqo7POwsdc9R/e
- W8DQRa3GxKV+m6fO4pUoDGac/Oio5yrEISBznVZW4WNQtFoJDq/PNyXT/6jjTdumk5XI9UARAJZ
- ZeXGuY+uWKLwXoRq9v6NQTJzW6ywm/vdO79mvkANPUTRVzrcbTZMQjD/QrqNfF6vyrQrxkz55sL
- ZMlpLlKpUhOJM9YJ3oqACi2EL6GacrGENHxkMiyp14MrNfayincIab4ioYzOQ6W8yxV1ZuH5A5O
- eSA+2mBtCgaNKa4sKqHXg2ZTkXmWZg==
-X-Proofpoint-GUID: rnn4JSyZ3HsHYDEiN_d_XY6-hUB2SsOv
-X-Authority-Analysis: v=2.4 cv=E47Npbdl c=1 sm=1 tr=0 ts=68ce107e b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=erYYR6txwRpVtOmW1J8A:9
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:13614
-X-Proofpoint-ORIG-GUID: rnn4JSyZ3HsHYDEiN_d_XY6-hUB2SsOv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920000619.2643457-3-bryan@bryanhinton.com>
 
-On Sun, 07 Sep 2025 13:27:49 -0700, Alok Tiwari wrote:
-
-> Fix the comment for SYNC_LEN_G2 in exynos_ufs_config_sync_pattern_mask().
-> The actual value is 40us, not 44us, matching the configured mask timing.
-> This change improves code clarity and avoids potential confusion for
-> readers and maintainers.
+On Fri, Sep 19, 2025 at 07:06:12PM -0500, bryan@bryanhinton.com wrote:
+> Use the new uart0 label for the console and make the speed explicit by
+> adding current-speed = <115200>. This keeps the DTS OS-agnostic: no
+> bootargs or distribution-specific properties are added.
 > 
-> No functional changes.
+> Verification: Boot-tested with mainline Image+DTB via U-Boot on OpenWrt
+> One (MT7981B). Serial console active at 115200 baud, and DTB decompile
+> confirms serial0 alias and stdout-path set correctly.
 > 
-> [...]
+> Signed-off-by: Bryan Hinton <bryan@bryanhinton.com>
 
-Applied to 6.18/scsi-queue, thanks!
+Reviewed-by: Daniel Golle <daniel@makrotopia.org>
 
-[1/1] scsi: ufs: exynos: correct sync pattern mask timing comment
-      https://git.kernel.org/mkp/scsi/c/0bd0e43776b6
+See comment below
+> ---
+>  .../arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
+> index 4f6cbb491287..1d2c3a21019c 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
+> @@ -8,8 +8,21 @@ / {
+>  	compatible = "openwrt,one", "mediatek,mt7981b";
+>  	model = "OpenWrt One";
+>  
+> +	aliases {
+> +		serial0 = &uart0;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+>  	memory@40000000 {
+>  		reg = <0 0x40000000 0 0x40000000>;
+>  		device_type = "memory";
+>  	};
+>  };
+> +
+> +&uart0 {
+> +	status = "okay";
+> +	current-speed = <115200>; /* 0x1c200 */
 
--- 
-Martin K. Petersen
+The comment with the hex value should be removed. There is no need for it.
+
+> +};
+> -- 
+> 2.51.0
+> 
+> 
 
