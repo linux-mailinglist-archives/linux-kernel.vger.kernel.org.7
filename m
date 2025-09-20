@@ -1,325 +1,242 @@
-Return-Path: <linux-kernel+bounces-825522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087C8B8C073
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF65B8C06A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D931890FD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117AF1891344
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B52235355;
-	Sat, 20 Sep 2025 06:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LKJSZBvO"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1AA23183A;
+	Sat, 20 Sep 2025 06:06:25 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5692629D;
-	Sat, 20 Sep 2025 06:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB01D2629D
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758348419; cv=none; b=FeZ9oLJ7AKsEyuA0DfyUXcd5Qr44QbZHIr0L43j1nk6bbMrDe0hq0iTt+yPQLbj+vqylzsLFGa5TZYg0DqajLEjWk/96Nq/AdXaugCS4eHmYDsTEZktFkW9Ui/BqJVD8LJGLmQgkTVm+dHcIqJHi7SHGtBxuB2nyRuvZrKGguUY=
+	t=1758348385; cv=none; b=vBAADDtzAmjhUwcspRusEuo9pDgbCHSgujtRcAfEjRH88hsva53hWdoAFU6m5/FFkCAIFTG3GFxuW4KBQH/D3EJDYJwC7bbTHvEvW75V8riIwyqd1X+K1+czFgn8es2pf2Q4aIc1v580A4gSp2LXnFJohfJclCptIKfSM+KwGqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758348419; c=relaxed/simple;
-	bh=2EPWXQTPLFrlpNDyEaIgSoxFAtt/g+MssXYZMtA09Cc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QMMRXrJPNDBjT3OKd4AHqIgUXS4nH9q+bxydthoLZL05+G0LdF76CbR/8uzy9UpjLRVzjQizuncjcukQlVgLis7kCD6kSvy/8ER8dSwlnVAeUukYkZBG7Ghu/Rk63MjYyUZdAY/2Avby1MHTU/jsMZPKNvXm5bXF5UkLSpTMkcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LKJSZBvO; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1758348407; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=gEUGDmoExGXLvcHEzs0QOstMZP03ryhuORMmCkFNfto=;
-	b=LKJSZBvOFyuCtKTzTqy8SludRDzj6V+ld/+XlXXcovQrG99s+muPMVoY6Y92bg3nW2//ibbxUDK6yjHNKy1YMxIK/mQPg/qsZAob6xA20SjxzEsBSTTcMfFPF3Qf0shxBiZiD2aDHHwh7vA3Ug66UT4+zRNncNhK1yp/fHMzmkw=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WoMFQsU_1758348081 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 20 Sep 2025 14:01:22 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: rostedt@goodmis.org,
-	lukas@wunner.de,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	helgaas@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	mattc@purestorage.com,
-	Jonathan.Cameron@huawei.com
-Cc: bhelgaas@google.com,
-	tony.luck@intel.com,
-	bp@alien8.de,
-	xueshuai@linux.alibaba.com,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	oleg@redhat.com,
-	naveen@kernel.org,
-	davem@davemloft.net,
-	anil.s.keshavamurthy@intel.com,
-	mark.rutland@arm.com,
-	peterz@infradead.org,
-	tianruidong@linux.alibaba.com
-Subject: [PATCH v10 2/3] PCI: trace: Add a RAS tracepoint to monitor link speed changes
-Date: Sat, 20 Sep 2025 14:01:16 +0800
-Message-Id: <20250920060117.866-3-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250920060117.866-1-xueshuai@linux.alibaba.com>
-References: <20250920060117.866-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1758348385; c=relaxed/simple;
+	bh=dvpY4iYvVInI6rhb9vjPZ54DeY4zI2D7TSN0wsRYLlc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YNRIUgBKqvMeOmhL+bWawK/SuSzPa1fh1bWDRMVwG+WoOSZQaYh50KFRwEHclOwR+FfFdZFOubK4coFD+MRIuGW9dpsfP1oPV1IMucXebGXPnZnyqbv29QiWe7f2FGyv9nE7q94OREFjcllR5yMaW38hi95K3bYQcfjP10asyVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201622.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202509201405058224;
+        Sat, 20 Sep 2025 14:05:05 +0800
+Received: from localhost.localdomain (10.94.4.193) by
+ jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Sat, 20 Sep 2025 14:04:56 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
+Date: Sat, 20 Sep 2025 02:04:55 -0400
+Message-ID: <20250920060455.24002-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.18.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201616.home.langchao.com (10.100.2.16) To
+ jtjnmail201622.home.langchao.com (10.100.2.22)
+tUid: 20259201405064a5f25bdb439cce417eb537a216a8821
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-PCIe link speed degradation directly impacts system performance and
-often indicates hardware issues such as faulty devices, physical layer
-problems, or configuration errors.
+From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 
-To this end, add a RAS tracepoint to monitor link speed changes,
-enabling proactive health checks and diagnostic analysis.
+Add support for reading to the erofs volume label from the
+FS_IOC_GETFSLABEL ioctls.
 
-The following output is generated when a device is hotplugged:
-
-$ echo 1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
-$ cat /sys/kernel/debug/tracing/trace_pipe
-   irq/51-pciehp-88      [001] .....   381.545386: pcie_link_event: 0000:00:02.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 GT/s PCIe, width:1, flit_mode:0, status:DLLLA
-
-Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Suggested-by: Matthew W Carlis <mattc@purestorage.com>
-Suggested-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 ---
- drivers/pci/hotplug/pciehp_hpc.c |  3 +-
- drivers/pci/pci.c                |  2 +-
- drivers/pci/pci.h                | 22 +++++++++++--
- drivers/pci/pcie/bwctrl.c        |  4 +--
- drivers/pci/probe.c              |  9 +++--
- include/linux/pci.h              |  1 +
- include/trace/events/pci.h       | 56 ++++++++++++++++++++++++++++++++
- 7 files changed, 87 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index bcc51b26d03d..ad5f28f6a8b1 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -320,7 +320,8 @@ int pciehp_check_link_status(struct controller *ctrl)
- 	}
+v1: https://lore.kernel.org/linux-erofs/63904ade56634923ba734dcdab3c45d0@inspur.com/T/#t
+v2: https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@inspur.com/T/#u
+
+Changes since v2:
+- remove unnecessary code
+
+ fs/erofs/Makefile   |  2 +-
+ fs/erofs/data.c     |  4 ++++
+ fs/erofs/dir.c      |  4 ++++
+ fs/erofs/inode.c    |  5 +----
+ fs/erofs/internal.h |  7 +++++++
+ fs/erofs/ioctl.c    | 41 +++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/super.c    |  8 ++++++++
+ 7 files changed, 66 insertions(+), 5 deletions(-)
+ create mode 100644 fs/erofs/ioctl.c
+
+diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+index 549abc424763..5be6cc4acc1c 100644
+--- a/fs/erofs/Makefile
++++ b/fs/erofs/Makefile
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  
- 	pcie_capability_read_word(pdev, PCI_EXP_LNKSTA2, &linksta2);
--	__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status, linksta2);
-+	__pcie_update_link_speed(ctrl->pcie->port->subordinate, PCIE_HOTPLUG,
-+				 lnk_status, linksta2);
- 
- 	if (!found) {
- 		ctrl_info(ctrl, "Slot(%s): No device found\n",
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index b0f4d98036cd..96755ffd3841 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -4749,7 +4749,7 @@ int pcie_retrain_link(struct pci_dev *pdev, bool use_lt)
- 	 * Link Speed.
- 	 */
- 	if (pdev->subordinate)
--		pcie_update_link_speed(pdev->subordinate);
-+		pcie_update_link_speed(pdev->subordinate, PCIE_LINK_RETRAIN);
- 
- 	return rc;
- }
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index b8d364545e7d..422406a0695c 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -3,6 +3,7 @@
- #define DRIVERS_PCI_H
- 
- #include <linux/pci.h>
-+#include <trace/events/pci.h>
- 
- struct pcie_tlp_log;
- 
-@@ -455,16 +456,31 @@ static inline int pcie_dev_speed_mbps(enum pci_bus_speed speed)
- }
- 
- u8 pcie_get_supported_speeds(struct pci_dev *dev);
--const char *pci_speed_string(enum pci_bus_speed speed);
- void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
- void pcie_report_downtraining(struct pci_dev *dev);
- 
--static inline void __pcie_update_link_speed(struct pci_bus *bus, u16 linksta, u16 linksta2)
-+enum pcie_link_change_reason {
-+	PCIE_LINK_RETRAIN,
-+	PCIE_ADD_BUS,
-+	PCIE_BWCTRL_ENABLE,
-+	PCIE_BWCTRL_IRQ,
-+	PCIE_HOTPLUG
-+};
+ obj-$(CONFIG_EROFS_FS) += erofs.o
+-erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o
++erofs-objs := super.o inode.o data.o namei.o dir.o sysfs.o ioctl.o
+ erofs-$(CONFIG_EROFS_FS_XATTR) += xattr.o
+ erofs-$(CONFIG_EROFS_FS_ZIP) += decompressor.o zmap.o zdata.o zutil.o
+ erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 3b1ba571c728..8ca29962a3dd 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
+ const struct file_operations erofs_file_fops = {
+ 	.llseek		= erofs_file_llseek,
+ 	.read_iter	= erofs_file_read_iter,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ 	.mmap_prepare	= erofs_file_mmap_prepare,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= filemap_splice_read,
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index debf469ad6bd..32b4f5aa60c9 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+ 	.iterate_shared	= erofs_readdir,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ };
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 9a2f59721522..a7ec17eec4b2 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -213,10 +213,7 @@ static int erofs_fill_inode(struct inode *inode)
+ 	switch (inode->i_mode & S_IFMT) {
+ 	case S_IFREG:
+ 		inode->i_op = &erofs_generic_iops;
+-		if (erofs_inode_is_data_compressed(vi->datalayout))
+-			inode->i_fop = &generic_ro_fops;
+-		else
+-			inode->i_fop = &erofs_file_fops;
++		inode->i_fop = &erofs_file_fops;
+ 		break;
+ 	case S_IFDIR:
+ 		inode->i_op = &erofs_dir_iops;
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4ccc5f0ee8df..311346a017a7 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -166,6 +166,9 @@ struct erofs_sb_info {
+ 	struct erofs_domain *domain;
+ 	char *fsid;
+ 	char *domain_id;
 +
-+static inline void __pcie_update_link_speed(struct pci_bus *bus,
-+					    enum pcie_link_change_reason reason,
-+					    u16 linksta, u16 linksta2)
- {
- 	bus->cur_bus_speed = pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
- 	bus->flit_mode = (linksta2 & PCI_EXP_LNKSTA2_FLIT) ? 1 : 0;
-+
-+	trace_pcie_link_event(bus,
-+			     reason,
-+			     FIELD_GET(PCI_EXP_LNKSTA_NLW, linksta),
-+			     linksta & PCI_EXP_LNKSTA_LINK_STATUS_MASK);
- }
--void pcie_update_link_speed(struct pci_bus *bus);
-+
-+void pcie_update_link_speed(struct pci_bus *bus, enum pcie_link_change_reason reason);
- 
- /* Single Root I/O Virtualization */
- struct pci_sriov {
-diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-index 36f939f23d34..32f1b30ecb84 100644
---- a/drivers/pci/pcie/bwctrl.c
-+++ b/drivers/pci/pcie/bwctrl.c
-@@ -199,7 +199,7 @@ static void pcie_bwnotif_enable(struct pcie_device *srv)
- 	 * Update after enabling notifications & clearing status bits ensures
- 	 * link speed is up to date.
- 	 */
--	pcie_update_link_speed(port->subordinate);
-+	pcie_update_link_speed(port->subordinate, PCIE_BWCTRL_ENABLE);
- }
- 
- static void pcie_bwnotif_disable(struct pci_dev *port)
-@@ -234,7 +234,7 @@ static irqreturn_t pcie_bwnotif_irq(int irq, void *context)
- 	 * speed (inside pcie_update_link_speed()) after LBMS has been
- 	 * cleared to avoid missing link speed changes.
- 	 */
--	pcie_update_link_speed(port->subordinate);
-+	pcie_update_link_speed(port->subordinate, PCIE_BWCTRL_IRQ);
- 
- 	return IRQ_HANDLED;
- }
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index f41128f91ca7..c4cae2664156 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -21,6 +21,7 @@
- #include <linux/irqdomain.h>
- #include <linux/pm_runtime.h>
- #include <linux/bitfield.h>
-+#include <trace/events/pci.h>
- #include "pci.h"
- 
- #define CARDBUS_LATENCY_TIMER	176	/* secondary latency timer */
-@@ -788,14 +789,16 @@ const char *pci_speed_string(enum pci_bus_speed speed)
- }
- EXPORT_SYMBOL_GPL(pci_speed_string);
- 
--void pcie_update_link_speed(struct pci_bus *bus)
-+void pcie_update_link_speed(struct pci_bus *bus,
-+			    enum pcie_link_change_reason reason)
- {
- 	struct pci_dev *bridge = bus->self;
- 	u16 linksta, linksta2;
- 
- 	pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
- 	pcie_capability_read_word(bridge, PCI_EXP_LNKSTA2, &linksta2);
--	__pcie_update_link_speed(bus, linksta, linksta2);
-+
-+	__pcie_update_link_speed(bus, reason, linksta, linksta2);
- }
- EXPORT_SYMBOL_GPL(pcie_update_link_speed);
- 
-@@ -882,7 +885,7 @@ static void pci_set_bus_speed(struct pci_bus *bus)
- 		pcie_capability_read_dword(bridge, PCI_EXP_LNKCAP, &linkcap);
- 		bus->max_bus_speed = pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SLS];
- 
--		pcie_update_link_speed(bus);
-+		pcie_update_link_speed(bus, PCIE_ADD_BUS);
- 	}
- }
- 
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 59876de13860..edd8a61ec44e 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -305,6 +305,7 @@ enum pci_bus_speed {
- 	PCI_SPEED_UNKNOWN		= 0xff,
++	/* volume name */
++	char *volume_name;
  };
  
-+const char *pci_speed_string(enum pci_bus_speed speed);
- enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
- enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
+ #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
+@@ -535,6 +538,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+ static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+ #endif
  
-diff --git a/include/trace/events/pci.h b/include/trace/events/pci.h
-index 208609492c06..78e651b95cb3 100644
---- a/include/trace/events/pci.h
-+++ b/include/trace/events/pci.h
-@@ -57,6 +57,62 @@ TRACE_EVENT(pci_hp_event,
- 	)
- );
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg);
++
+ #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
  
-+#define PCI_EXP_LNKSTA_LINK_STATUS_MASK (PCI_EXP_LNKSTA_LBMS | \
-+					 PCI_EXP_LNKSTA_LABS | \
-+					 PCI_EXP_LNKSTA_LT | \
-+					 PCI_EXP_LNKSTA_DLLLA)
+ #endif	/* __EROFS_INTERNAL_H */
+diff --git a/fs/erofs/ioctl.c b/fs/erofs/ioctl.c
+new file mode 100644
+index 000000000000..fbcbf820c4d7
+--- /dev/null
++++ b/fs/erofs/ioctl.c
+@@ -0,0 +1,41 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++#include <linux/fs.h>
++#include <linux/compat.h>
++#include <linux/file.h>
 +
-+#define LNKSTA_FLAGS					\
-+	{ PCI_EXP_LNKSTA_LT,	"LT"},			\
-+	{ PCI_EXP_LNKSTA_DLLLA,	"DLLLA"},		\
-+	{ PCI_EXP_LNKSTA_LBMS,	"LBMS"},		\
-+	{ PCI_EXP_LNKSTA_LABS,	"LABS"}
++#include "internal.h"
 +
-+TRACE_EVENT(pcie_link_event,
++static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
++{
++	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	int ret;
 +
-+	TP_PROTO(struct pci_bus *bus,
-+		  unsigned int reason,
-+		  unsigned int width,
-+		  unsigned int status
-+		),
++	if (!sbi->volume_name)
++		ret = clear_user(arg, 1);
++	else
++		ret = copy_to_user(arg, sbi->volume_name,
++				   strlen(sbi->volume_name));
 +
-+	TP_ARGS(bus, reason, width, status),
++	return ret ? -EFAULT : 0;
++}
 +
-+	TP_STRUCT__entry(
-+		__string(	port_name,	pci_name(bus->self))
-+		__field(	unsigned int,	type		)
-+		__field(	unsigned int,	reason		)
-+		__field(	unsigned int,	cur_bus_speed	)
-+		__field(	unsigned int,	max_bus_speed	)
-+		__field(	unsigned int,	width		)
-+		__field(	unsigned int,	flit_mode	)
-+		__field(	unsigned int,	link_status	)
-+	),
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	void __user *argp = (void __user *)arg;
 +
-+	TP_fast_assign(
-+		__assign_str(port_name);
-+		__entry->type			= pci_pcie_type(bus->self);
-+		__entry->reason			= reason;
-+		__entry->cur_bus_speed		= bus->cur_bus_speed;
-+		__entry->max_bus_speed		= bus->max_bus_speed;
-+		__entry->width			= width;
-+		__entry->flit_mode		= bus->flit_mode;
-+		__entry->link_status		= status;
-+	),
++	switch (cmd) {
++	case FS_IOC_GETFSLABEL:
++		return erofs_ioctl_get_volume_label(inode, argp);
++	default:
++		return -ENOTTY;
++	}
++}
 +
-+	TP_printk("%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_speed:%s, width:%u, flit_mode:%u, status:%s\n",
-+		__get_str(port_name),
-+		__entry->type,
-+		__entry->reason,
-+		pci_speed_string(__entry->cur_bus_speed),
-+		pci_speed_string(__entry->max_bus_speed),
-+		__entry->width,
-+		__entry->flit_mode,
-+		__print_flags((unsigned long)__entry->link_status, "|",
-+				LNKSTA_FLAGS)
-+	)
-+);
-+
- #endif /* _TRACE_HW_EVENT_PCI_H */
++#ifdef CONFIG_COMPAT
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg)
++{
++	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 1b529ace4db0..f1535ebe03ec 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -343,6 +343,13 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
  
- /* This part must be outside protection */
++	if (dsb->volume_name[0]) {
++		sbi->volume_name = kstrndup(dsb->volume_name,
++					    sizeof(dsb->volume_name), GFP_KERNEL);
++		if (!sbi->volume_name)
++			return -ENOMEM;
++	}
++
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+ 	if (ret < 0)
+@@ -822,6 +829,7 @@ static void erofs_sb_free(struct erofs_sb_info *sbi)
+ 	kfree(sbi->domain_id);
+ 	if (sbi->dif0.file)
+ 		fput(sbi->dif0.file);
++	kfree(sbi->volume_name);
+ 	kfree(sbi);
+ }
+ 
 -- 
-2.39.3
+2.31.1
 
 
