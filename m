@@ -1,177 +1,118 @@
-Return-Path: <linux-kernel+bounces-825850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C353EB8CF1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B23B8CF22
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5707E0132
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6E17C80EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6C522FE10;
-	Sat, 20 Sep 2025 19:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58622238C07;
+	Sat, 20 Sep 2025 19:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pmWN3CMw"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIHssG4g"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F675155A30;
-	Sat, 20 Sep 2025 19:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E812376F2
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 19:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758394915; cv=none; b=ln9QJT/6TpvSOGI4duy054yLHU/oUd7ml2BObRCip9i5RHcP/OeGdLAAEAWJNMA+Q51GQ4E5d5PgnLy0HkpJdupNU11dyY2PrILdNf7a0V9woKOWnQ3TG3LtLrjpEOFx5pL4ekbExti5oG2FmU763s8EyNfgRaSMqFgfyhyACxI=
+	t=1758395867; cv=none; b=kX1/mdSYBCMxWapYg56L94ZM3o1Mp76RniqEOUrTA+GBDWuKTI8E+8pPSlk5Iz9iGfH9lSQ6CiPoXNZGFdtTpRscO4RHjoEZTpbe5XIxQp6MuAXGfzNLtcA3PsNzB6BAVyTXeXJZXMXwQEwJTV6uLaP0Rj/cvv3x+v7WZ77i1Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758394915; c=relaxed/simple;
-	bh=Oi9uFHOC+EyFwNjYQ2z2reLYKzdC5PW8spF29329K9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aVkPcuJUg5A4QESPJzIQmb1s2EqHvjfPXzrUrRrUgqRfQ8Rof2I5He2c2vcKA/+YlgewrcLedPqtWCaw+3v8ZSd+XMJ6xxJlrpsvs+y/gBBD6zCFwvT33htq2xyrFCacGpzGHIPLofwzYv/wTtLHXZSXrbgg3eS7Gcj/sZ/kIv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pmWN3CMw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=qRmfWcEq5xdIro+zPdjnGoFjaSaIDh/SGmjBoh3LDdw=; b=pmWN3CMwPj6bPkoop1JDSfpxdj
-	iCigGptilDQ76x1lWHSeKYDySYusmGO1blKLugrUnV+IqU8EeEhYygmNpgqhtord45JWW/grqNm4f
-	ca00iAH52/mjKGQ1qXKtKU0zrzlm8kLCanD4jJ98FI+SMZCEvkgcpn1BWzNb1nDrsLsPBXWJSzV0N
-	i+qYOLfXx6MmutY5drg8ZN0YFN0AXq/FSf1PYeFg9wMiWpKb25iB2juknj9eeo4yRJiebEbD1B7UX
-	X5zKsx/YkvuG6MYNM0TqHixOdjV4I0zkeRkgBEnxPFlJNYZ3frthZa2p3pjxLEJYdmRekM/w0Kj3Y
-	98YF5Mdg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v02qB-00000005mNq-26KP;
-	Sat, 20 Sep 2025 19:01:47 +0000
-Message-ID: <72f5bbdf-2054-42a9-a9bd-aec3ebefc71e@infradead.org>
-Date: Sat, 20 Sep 2025 12:01:46 -0700
+	s=arc-20240116; t=1758395867; c=relaxed/simple;
+	bh=VXhQ/46RyA4dTSCM/jKNIFCldKvMR/nbIDhjM+NTVTU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iAOzYnXoZ8sKFq5MuKzAtKerd5KyWOGUFsCcz83Cq5kM3Ujujiso+/zhg0mCuGSljqkPsVn+P75DYML8Ju8JULRl1Lh3dkcf9TVmAeWAPafIWGgLokt4a/N2nsR3aT4wAoN9Kpy6srG76SqJ61KLULxxZnAoFtsnNK4J4phedYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIHssG4g; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-330631e534eso2744967a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758395866; x=1759000666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qv+t2rS9vLu7zOpVhzxfMKjww6cCPuDXCk54kDg9LLY=;
+        b=XIHssG4gDqW5QuwXOkHJ+7rIs6QZRvtOfDKm01FyYdb2L9ikh7EGSXw9R0UzHit+fA
+         7pJTxhRVF4yDJYWbm+HCjvGpoIq2hQNYOIR0qZNicXN1+xNwtdcwvQ6Ibdq+xhHV3Od9
+         9s8zApzqzAimASNW43RIEL2BuTQSIxwxypupp3hzBr7HNqWzOZI5Kb+PLzlMHuFI94iz
+         4WgHAonD7MuEwmd0ZeFwN3NP8paKyrgSFp9nb6sv8pdAuKDfEwLP+shyPaAYKY0dh8A9
+         HMajREvdyIlzZllCq3jHALMobvse5k7wC48DtsmTVvacrYlyqP7KvgdW+MUm7wqUhb2+
+         1DzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758395866; x=1759000666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qv+t2rS9vLu7zOpVhzxfMKjww6cCPuDXCk54kDg9LLY=;
+        b=UF/+5okENdpvV1a9xb0shdMq0Yz1MFYkNsLUywBH1RjSQ4OHmbJrz9V6jgSOAkNfeN
+         0QF762hFt/aKm+y+NzrkG93GOcJGJfjIWOMQvd+r1IEoSd8bqNQkx0L6QgpsPPacyMsu
+         3+f8R18rjyZFAry5oXjFtsQPApOFv/QRwwqSVy1ik4CvNyjzYicqqD4INSs4NMgwXaZO
+         4eRW82xaj14TiT4U9xVMPxhRFDz7mc9JWadzpL/X2hmiXGR+vAi5Db70BLo3lPWIL3hp
+         1eA25l8KhUpISmBQ8Di8P+zXIxbejnBlCiS6/hXzJVOhKK/YCw9VBDSL1LCzgXphs5Vm
+         2MnA==
+X-Forwarded-Encrypted: i=1; AJvYcCW61Ja9Tea6tCAWtT0UZEybWQA2VBqf2RW3hrvfQ3/MvUANFxIn/WqnvzUnM1ftBhXdXsYxM+LKyJ6wHeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKS/VefbrwoHBy8QiSkDA5mP9/5tX/L9PKfKAi8yREhNPxUHM/
+	UufI0QqwxBbL5H6+23NvCr5y15lS4AzrhcZWGEDqv77BSGH4w/JYI8GU
+X-Gm-Gg: ASbGncunla+GdHiM2eKZKWPl2j8Mks8kaf6rMqe0QkehOA/2do+8724bkkhhfCFcyp+
+	I3yH9sx2Dj2tCDngMpHCDiId02Onvfs+5wE6yZAz43swU5QbyewZD41Cy4MgQ8HSvhC3/d/r0yL
+	tK1tJrs+0tZt224y7Ny1vjx/dHZMTlsWtPVPPlYXjRRvFjjnKrJ6xFBoBNZqp2rh9htvXPAHmX4
+	A1UC6SCvdoU+EyVh3dDEUjquF3PhD9/Pmr2W734ZwWmqqRiec7GPN1DESN5zuN9z4jfdLY0ydLS
+	UrFlVfDotYpoaE74lzDWhXAt5YevfVwdAPn6Nx4fzqNyTsp3L1KDkLxDSlanG2ThY3sQTk7Qqjy
+	+lmf97gJaq8OXvUrIAqhwEcvZCw2qfAOCZFp3zkORSotCRp28A/TAOfHPVnd/xpKDuvawcKQLE7
+	p3N6WHp/0F7e82qzwW/6tTB/qXjDRI
+X-Google-Smtp-Source: AGHT+IEJ7Iamw1ZU0fymOaS1+7kZXHHtOoQORKIvbN+CH9xL1qQlDIAkegTMeAx3Vok154cEG62wTQ==
+X-Received: by 2002:a17:90b:4d85:b0:32e:a535:4872 with SMTP id 98e67ed59e1d1-33097fd43c5mr8692434a91.2.1758395865587;
+        Sat, 20 Sep 2025 12:17:45 -0700 (PDT)
+Received: from yash-Bravo-15-B5DD.local ([14.99.167.142])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33060617ccasm8637158a91.3.2025.09.20.12.17.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 12:17:45 -0700 (PDT)
+From: Yash Suthar <yashsuthar983@gmail.com>
+To: corbet@lwn.net
+Cc: workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yash Suthar <yashsuthar983@gmail.com>
+Subject: [PATCH v2] Documentation/process: submitting-patches: fix typo in "were do"
+Date: Sun, 21 Sep 2025 00:38:56 +0530
+Message-ID: <20250920190856.7394-1-yashsuthar983@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: Add explicit title heading to API docs
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Crypto <linux-crypto@vger.kernel.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>, Jonathan Corbet <corbet@lwn.net>
-References: <20250920001650.10474-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250920001650.10474-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Fixes a typo in submitting-patches.rst:
+"were do" -> "where do"
 
+Signed-off-by: Yash Suthar <yashsuthar983@gmail.com>
+---
+v2: Resending patch as v1 received no reply. No code changes.
 
-On 9/19/25 5:16 PM, Bagas Sanjaya wrote:
-> Documentation for crypto programming interfaces lack explicit title.
-> As such, all its sections become entries in the toctree index.
-> 
-> Add the title heading to tidy up toctree.
+ Documentation/process/submitting-patches.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, much neater. Thanks.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
->  Documentation/crypto/api-aead.rst     | 3 +++
->  Documentation/crypto/api-akcipher.rst | 3 +++
->  Documentation/crypto/api-digest.rst   | 3 +++
->  Documentation/crypto/api-kpp.rst      | 3 +++
->  Documentation/crypto/api-rng.rst      | 3 +++
->  Documentation/crypto/api-sig.rst      | 3 +++
->  Documentation/crypto/api-skcipher.rst | 3 +++
->  7 files changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/crypto/api-aead.rst b/Documentation/crypto/api-aead.rst
-> index d15256f1ae3696..78d073319f96a3 100644
-> --- a/Documentation/crypto/api-aead.rst
-> +++ b/Documentation/crypto/api-aead.rst
-> @@ -1,3 +1,6 @@
-> +Authenticated Encryption With Associated Data (AEAD)
-> +====================================================
-> +
->  Authenticated Encryption With Associated Data (AEAD) Algorithm Definitions
->  --------------------------------------------------------------------------
->  
-> diff --git a/Documentation/crypto/api-akcipher.rst b/Documentation/crypto/api-akcipher.rst
-> index ca1ecdd4a7d378..a31f5aef76678f 100644
-> --- a/Documentation/crypto/api-akcipher.rst
-> +++ b/Documentation/crypto/api-akcipher.rst
-> @@ -1,3 +1,6 @@
-> +Asymmetric Cipher
-> +=================
-> +
->  Asymmetric Cipher Algorithm Definitions
->  ---------------------------------------
->  
-> diff --git a/Documentation/crypto/api-digest.rst b/Documentation/crypto/api-digest.rst
-> index 7a1e670d6ce1a4..02a2bcc26a6470 100644
-> --- a/Documentation/crypto/api-digest.rst
-> +++ b/Documentation/crypto/api-digest.rst
-> @@ -1,3 +1,6 @@
-> +Message Digest
-> +==============
-> +
->  Message Digest Algorithm Definitions
->  ------------------------------------
->  
-> diff --git a/Documentation/crypto/api-kpp.rst b/Documentation/crypto/api-kpp.rst
-> index 7d86ab906bdf79..5794e2d10c9562 100644
-> --- a/Documentation/crypto/api-kpp.rst
-> +++ b/Documentation/crypto/api-kpp.rst
-> @@ -1,3 +1,6 @@
-> +Key-agreement Protocol Primitives (KPP)
-> +=======================================
-> +
->  Key-agreement Protocol Primitives (KPP) Cipher Algorithm Definitions
->  --------------------------------------------------------------------
->  
-> diff --git a/Documentation/crypto/api-rng.rst b/Documentation/crypto/api-rng.rst
-> index 10ba7436cee48e..23a94c0b272eef 100644
-> --- a/Documentation/crypto/api-rng.rst
-> +++ b/Documentation/crypto/api-rng.rst
-> @@ -1,3 +1,6 @@
-> +Random Number Generator (RNG)
-> +=============================
-> +
->  Random Number Algorithm Definitions
->  -----------------------------------
->  
-> diff --git a/Documentation/crypto/api-sig.rst b/Documentation/crypto/api-sig.rst
-> index aaec18e26d545f..4d8aba8aee8e04 100644
-> --- a/Documentation/crypto/api-sig.rst
-> +++ b/Documentation/crypto/api-sig.rst
-> @@ -1,3 +1,6 @@
-> +Asymmetric Signature
-> +====================
-> +
->  Asymmetric Signature Algorithm Definitions
->  ------------------------------------------
->  
-> diff --git a/Documentation/crypto/api-skcipher.rst b/Documentation/crypto/api-skcipher.rst
-> index 04d6cc5357c810..4b7c8160790a3c 100644
-> --- a/Documentation/crypto/api-skcipher.rst
-> +++ b/Documentation/crypto/api-skcipher.rst
-> @@ -1,3 +1,6 @@
-> +Symmetric Key Cipher
-> +====================
-> +
->  Block Cipher Algorithm Definitions
->  ----------------------------------
->  
-> 
-> base-commit: 381e8ee368234a51b3a4f231f6f24ff0b09d9f9e
-
+diff --git a/Documentation/process/submitting-patches.rst b/Documentation/process/submitting-patches.rst
+index cede4e7b29af..fcc08eb93897 100644
+--- a/Documentation/process/submitting-patches.rst
++++ b/Documentation/process/submitting-patches.rst
+@@ -343,7 +343,7 @@ https://en.wikipedia.org/wiki/Posting_style#Interleaved_style
+ As is frequently quoted on the mailing list::
+ 
+   A: http://en.wikipedia.org/wiki/Top_post
+-  Q: Were do I find info about this thing called top-posting?
++  Q: Where do I find info about this thing called top-posting?
+   A: Because it messes up the order in which people normally read text.
+   Q: Why is top-posting such a bad thing?
+   A: Top-posting.
 -- 
-~Randy
+2.43.0
+
 
