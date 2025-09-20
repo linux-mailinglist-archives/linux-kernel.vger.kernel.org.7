@@ -1,184 +1,456 @@
-Return-Path: <linux-kernel+bounces-825658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C7AB8C712
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:48:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 201FEB8C71E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564A04E0F3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71A71BC4F31
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA12FC009;
-	Sat, 20 Sep 2025 11:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340A52FD1CB;
+	Sat, 20 Sep 2025 11:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaVGOGOR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgYrmYl9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84CE18BBB9;
-	Sat, 20 Sep 2025 11:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452B129E113;
+	Sat, 20 Sep 2025 11:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758368900; cv=none; b=WsXCgvTfGn5vTPknBA/FX8ZQLajbIBwRR+blviU0/ppWcCSyE/a/57pFfObbSbqqG2eZ7wEYIuJ6XtsU6RCoSLSjFMwzu3hvjmqWpFkZv/3+VXeZ9RbISOt/PDPJ7aNBP0cR55huUXj6WZVjS48WulQqNI+WVYFCKRXx6WqEKvo=
+	t=1758369114; cv=none; b=Kl7KIEEtwoGBBKbZ6OOfhgKCXQaIxgR0VGtyWp6qON7iC0joz/Ql5oATISsmkkIBbjKQq6M2amM/9QruHUVMwOdGhHQkeU7DSDgu5UOMge/4mZcZbVjcV+jMmoIybF6TytQ3KoBzVQ/kFDTqVhua3G/vE+7GMIq7tTUYJi1sZWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758368900; c=relaxed/simple;
-	bh=S4lEmGoMz/EYlXIdqoTKwelfO4ALXROy7V1e0MeAQH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9UyqQ7MCoxZ4xaIPVHnmjZQBoIwKWaiiTXyig+TfnwPsWhjyUF/XS6jj/8iNJoNTsReAoRH+rr9xdo3Xc+rY5i/1mG309ILeOZ4npWpNbb6JNDHuKh77VHa6euJnIhiTIhkpMdAP71Isf40vY7RKrp1PHBFzEDHUZU/L34eaZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaVGOGOR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E848FC4CEEB;
-	Sat, 20 Sep 2025 11:48:14 +0000 (UTC)
+	s=arc-20240116; t=1758369114; c=relaxed/simple;
+	bh=hUee2pS6Df9fsDCtpOZFTHszvbdqBMvpIkIaknF0zP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tuFtK9RTDCZclaHGmjLbFTfSmZ3eALINLjr9vLKh9Gu/YAH8Feys90S/1CnPaAurXEC4/0vM1oak7OcZPm3GYvmokWtdiIU9IuA/XnYqHmJcW/X05bimHMhFWC38BoMMYZBhcQSXaS3PWHu8681zOig9H5JBRa8dwAUxNEI+tok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgYrmYl9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC2ACC4CEF7;
+	Sat, 20 Sep 2025 11:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758368899;
-	bh=S4lEmGoMz/EYlXIdqoTKwelfO4ALXROy7V1e0MeAQH0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iaVGOGORuQwMrNSIa4PH+D4hqQ1EzqYfhpFDlKS6GxoHvE2G07cydmcNxbH7JiSaF
-	 VB//OvZ/NIyqtXTiQdgNIaJR1yOOt0GN5wvED71XbHWGfJQ8MXAbSmRKzOP0oGzxUo
-	 eI0dRZofOuo2tWVbhmOha+R9iPLZBhlAq6PxjOe1O36YWhAikhcfQDESIsNAQ7q3jU
-	 7Gd+ryQWi2LOvjIBn6+lHG+z8ITQPLWMenRTdeRpW6AWLUHFqDx4XBMKA2WVWqmMZP
-	 P+Fxg09E+3mx9SdSTdOU9opMn20sKOks4qBu7Z2VV23wsoQOCrm3HqCHZtnhcHSmN+
-	 St34XJ6vkjrEw==
-Message-ID: <5bae4ebe-dd42-4e84-9ee6-c9f6a88f7db5@kernel.org>
-Date: Sat, 20 Sep 2025 13:48:12 +0200
+	s=k20201202; t=1758369113;
+	bh=hUee2pS6Df9fsDCtpOZFTHszvbdqBMvpIkIaknF0zP0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OgYrmYl9tcNtI+afWjkFtnK5yVV1BZoh+jed5TV4vKLFecFmABX8u4tL72cQx5cbr
+	 LwfakGIAyS2r7akz2v9brZ/NpHJSZXZrVqmigrEbPcRMAl/E5YEw0LeF1iCTx1k6lg
+	 Yo2eSSAlH1KdrDSwV5GmkqYuK6wUFiboSg78c+aw/japlEyP6U0WPakxPFk5Bbjcv7
+	 Ob4K3o2CpCGo5lP92zNDJwXZbJ+P0SEanJNUvgInrkuIAkClmiRg10ycCsnlScu9UA
+	 qoZmFN1sBMN5qQyPGnqMuD9TRSfbjDfabRepq/I/4lpsHYaw7wWhJZp47M9RMx+23C
+	 VS3P4aDnZqLoA==
+Date: Sat, 20 Sep 2025 12:51:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Marius Cristea <marius.cristea@microchip.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, "Andy Shevchenko" <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] iio: temperature: add support for EMC1812
+Message-ID: <20250920125144.41f70a1f@jic23-huawei>
+In-Reply-To: <20250917-iio-emc1812-v1-2-0b1f74cea7ab@microchip.com>
+References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
+	<20250917-iio-emc1812-v1-2-0b1f74cea7ab@microchip.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/22] usb: dwc3: glue: Allow more fine grained control
- over mode switches
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
- Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
- Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
-References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
- <20250906-atcphy-6-17-v2-3-52c348623ef6@kernel.org>
- <20250919214013.gtbaknjrgd375hm6@synopsys.com>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20250919214013.gtbaknjrgd375hm6@synopsys.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, 17 Sep 2025 15:21:58 +0300
+Marius Cristea <marius.cristea@microchip.com> wrote:
 
-On 19.09.25 23:40, Thinh Nguyen wrote:
-> On Sat, Sep 06, 2025, Sven Peter wrote:
->> We need fine grained control over mode switched on the DWC3 controller
->> present on Apple Silicon. Export core, host and gadget init and exit,
->> ptrcap and susphy control functions. Also introduce an additional
->> parameter to probe_data that allows to skip the final initialization
->> step that would bring up host or gadget mode.
->>
->> Signed-off-by: Sven Peter <sven@kernel.org>
->> ---
->>   drivers/usb/dwc3/core.c   | 16 +++++++++++-----
->>   drivers/usb/dwc3/gadget.c |  2 ++
->>   drivers/usb/dwc3/glue.h   | 14 ++++++++++++++
->>   drivers/usb/dwc3/host.c   |  2 ++
->>   4 files changed, 29 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
->> index 8002c23a5a02acb8f3e87b2662a53998a4cf4f5c..18056fac44c8732278a650ac2be8b493892c92dd 100644
->> --- a/drivers/usb/dwc3/core.c
->> +++ b/drivers/usb/dwc3/core.c
->> @@ -132,6 +132,7 @@ void dwc3_enable_susphy(struct dwc3 *dwc, bool enable)
->>   		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(i), reg);
->>   	}
->>   }
->> +EXPORT_SYMBOL_GPL(dwc3_enable_susphy);
->>   
->>   void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
->>   {
->> @@ -157,6 +158,7 @@ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
->>   
->>   	dwc->current_dr_role = mode;
->>   }
->> +EXPORT_SYMBOL_GPL(dwc3_set_prtcap);
-> 
-> I'm hesitant to export this as is. This function may change the susphy
-> bits and expect them to be restored later. It's not meant to be a
-> standalone use. At least, we should document how it should be used along
-> with the other newly added interfaces.
+> This is the iio driver for Microchip EMC1812/13/14/15/33
+> Multichannel Low-Voltage Remote Diode Sensor Family.
+>=20
+> Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
+
+A few minor comments inline,
+
+Thanks,
+
+Jonathan
+
+> diff --git a/drivers/iio/temperature/emc1812.c b/drivers/iio/temperature/=
+emc1812.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b1f567b222026a7138e9c29d7=
+39d0240f4dc726f
+> --- /dev/null
+> +++ b/drivers/iio/temperature/emc1812.c
+> @@ -0,0 +1,792 @@
 
 
-Sure, I can otherwise also open-code the susphy change inside 
-dwc3_apple_phy_set_mode anyway if you prefer to keep this private to the 
-dwc3 core. I should restore it there to the original value anyway I 
-guess after phy_set_mode.
+> +
+> +static int emc1812_write_raw(struct iio_dev *indio_dev,
+> +			     struct iio_chan_spec const *chan, int val,
+> +			     int val2, long mask)
+> +{
+> +	struct emc1812_priv *priv =3D iio_priv(indio_dev);
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	guard(mutex)(&priv->lock);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		for (i =3D 0; i < ARRAY_SIZE(emc1812_freq); i++)
+> +			if (val =3D=3D emc1812_freq[i][0] && val2 =3D=3D emc1812_freq[i][1])
+> +				break;
+> +
+> +		if (i =3D=3D ARRAY_SIZE(emc1812_freq))
+> +			return -EINVAL;
+> +
+> +		ret =3D regmap_write(priv->regmap, EMC1812_CONV_ADDR, i);
+> +		if (ret)
+> +			return ret;
+> +
+> +		priv->freq_idx =3D i;
+> +		break;
+> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> +		for (i =3D 0; i < ARRAY_SIZE(emc1812_3db_values_map_tbl[priv->freq_idx=
+]); i++)
+> +			if (val =3D=3D emc1812_3db_values_map_tbl[priv->freq_idx][i][0] &&
+> +			    val2 =3D=3D emc1812_3db_values_map_tbl[priv->freq_idx][i][1])
+> +				break;
+> +
+> +		if (i =3D=3D ARRAY_SIZE(emc1812_3db_values_map_tbl[priv->freq_idx]))
+> +			return -EINVAL;
+> +
+> +		/*
+> +		 * In emc1812_3db_values_map_tbl the second index maps:
+> +		 * 0 for filter off
+> +		 * 1 for filter at level 1
+> +		 * 2 for filter at level 2
+> +		 */
+> +		if (i =3D=3D 2)
+> +			i =3D 3;
+> +
+> +		ret =3D regmap_write(priv->regmap, EMC1812_FILTER_SEL_ADDR, i);
+> +		if (ret)
+> +			return ret;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+Prefer early returns above so that a reader can quickly see where a particu=
+lar
+code path goes without needing to scroll down here to see there is nothing =
+else
+to do.
+
+> +}
+
+> +static int emc1812_init(struct emc1812_priv *priv)
+> +{
+> +	unsigned int i;
+> +	int ret;
+> +	u8 val;
+> +
+> +	/*
+> +	 * Depending on the chip, lock channel beta 1 and/or 2 to Diode Mode
+> +	 * when APDD is enabled.
+> +	 */
+> +	if (priv->chip->lock_beta1 && priv->apdd_en)
+> +		priv->beta_values[0] =3D 0x0F;
+> +	if (priv->chip->lock_beta2 && priv->apdd_en)
+> +		priv->beta_values[1] =3D 0x0F;
+> +
+> +	/*
+> +	 * Set default values in registers. APDD, RECD12 and RECD34 are active
+> +	 * on 0.
+> +	 * Set the device to be in Run (Active) state and converting on all
+> +	 * channels.
+> +	 * The temperature measurement range is -64=C2=B0C to +191.875=C2=B0C.
+> +	 */
+> +	val =3D FIELD_PREP(EMC1812_CFG_MSKAL, 1) |
+> +	      FIELD_PREP(EMC1812_CFG_RS, 0) |
+> +	      FIELD_PREP(EMC1812_CFG_ATTHM, 1) |
+> +	      FIELD_PREP(EMC1812_CFG_RECD12, !priv->recd12_en) |
+> +	      FIELD_PREP(EMC1812_CFG_RECD34, !priv->recd34_en) |
+> +	      FIELD_PREP(EMC1812_CFG_RANGE, 1) |
+> +	      FIELD_PREP(EMC1812_CFG_DA_ENA, 0) |
+> +	      FIELD_PREP(EMC1812_CFG_APDD, !priv->apdd_en);
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_CFG_ADDR, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Default is 4 conversions/seconds */
+/second
+
+Odd that is the value 6.  Maybe this needs a define?
+> +	ret =3D regmap_write(priv->regmap, EMC1812_CONV_ADDR, 6);
+> +	if (ret)
+> +		return ret;
+> +	priv->freq_idx =3D 6;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_THRM_HYS_ADDR, 0x0A);
+
+These values are all rather non obvious.  So add a comment or where possible
+defines to explain the values being set.
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_CONSEC_ALERT_ADDR, 0x70);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_FILTER_SEL_ADDR, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_HOTTEST_CFG_ADDR, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Set beta1 and beta2 compensation parameters */
+> +	for (i =3D 0; i < ARRAY_SIZE(priv->beta_values); i++) {
+> +		ret =3D regmap_write(priv->regmap, EMC1812_BETA_CFG_ADDR(i),
+> +				   priv->beta_values[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	/* Set ideality factor for all external channels */
+> +	ret =3D regmap_write(priv->regmap, EMC1812_EXT1_IDEALITY_FACTOR_ADDR,
+
+Perhaps a look up table for the registers and a loop?
 
 
+> +			   priv->ideality_value[0]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_EXT2_IDEALITY_FACTOR_ADDR,
+> +			   priv->ideality_value[1]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_EXT3_IDEALITY_FACTOR_ADDR,
+> +			   priv->ideality_value[2]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_write(priv->regmap, EMC1812_EXT4_IDEALITY_FACTOR_ADDR,
+> +			   priv->ideality_value[3]);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+return regmap_write()
 
->>   
->>   static void __dwc3_set_mode(struct work_struct *work)
+> +}
+> +
+> +static int emc1812_parse_fw_config(struct emc1812_priv *priv, struct dev=
+ice *dev,
+> +				   int device_nr_channels)
+> +{
+> +	unsigned int reg_nr, iio_idx, tmp;
+> +	int ret;
+> +
+> +	priv->apdd_en =3D device_property_read_bool(dev, "microchip,enable-anti=
+-parallel");
+> +	priv->recd12_en =3D device_property_read_bool(dev, "microchip,parasitic=
+-res-on-channel1-2");
+> +	priv->recd34_en =3D device_property_read_bool(dev, "microchip,parasitic=
+-res-on-channel3-4");
+> +
+> +	memset32(priv->beta_values, 16, ARRAY_SIZE(priv->beta_values));
 
-[...]
+I would just set the two separately. This optimisation would make sense if =
+there were a lot
+more entries, but not worth making things harder to read when it is only tw=
+o values,
+particularly when the type isn't a specific size int.
 
->>   int dwc3_gadget_suspend(struct dwc3 *dwc)
->>   {
->> diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
->> index 2efd00e763be4fc51911f32d43054059e61fb43a..633268c76fe4c7fdc312c9705dfa7cf7ccf3544c 100644
->> --- a/drivers/usb/dwc3/glue.h
->> +++ b/drivers/usb/dwc3/glue.h
->> @@ -15,16 +15,30 @@
->>    * @res: resource for the DWC3 core mmio region
->>    * @ignore_clocks_and_resets: clocks and resets defined for the device should
->>    *		be ignored by the DWC3 core, as they are managed by the glue
->> + * @skip_core_init_mode: skip the finial initialization of the target mode, as
-> 
-> finial -> final?
+> +	device_property_read_u32(dev, "microchip,beta1", &priv->beta_values[0]);
+> +	device_property_read_u32(dev, "microchip,beta2", &priv->beta_values[1]);
+> +	if (priv->beta_values[0] > 16 || priv->beta_values[1] > 16)
+> +		return dev_err_probe(dev, -EINVAL, "Invalid beta value\n");
+> +
+> +	priv->num_channels =3D device_get_child_node_count(dev) + 1;
+> +
+> +	if (priv->num_channels > priv->chip->phys_channels)
+> +		return dev_err_probe(dev, -E2BIG, "More channels than the chip support=
+s\n");
+> +
+> +	priv->iio_chan[0] =3D EMC1812_CHAN(0, 0, EMC1812_CH_ADDR(0));
+> +
 
-Whoops, yes, I thought I ran a spell checker over this because I usually 
-add a lot of typos but must've forgotten :-)
+I would remove this blank line to keep the association between the channel =
+and it's label
+tighter. That avoids the need for an explanatory comment on what this first=
+ channel is.
 
+I'll note this code is very similar to what I commented on earlier in Victo=
+rs driver so
+take a look at that and see if I failed to notice anything here I picked up=
+ on in that review.
 
-> 
->> + *		it must be managed by the glue
->>    */
+> +	priv->labels[0] =3D "internal_diode";
+> +	iio_idx =3D 1;
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		ret =3D fwnode_property_read_u32(child, "reg", &reg_nr);
+> +		if (ret || reg_nr >=3D priv->chip->phys_channels)
+> +			return dev_err_probe(dev, -EINVAL,
+> +				     "The index of the channels does not match the chip\n");
+> +
+> +		ret =3D fwnode_property_read_u32(child, "microchip,ideality-factor", &=
+tmp);
+> +		if (ret =3D=3D 0) {
+> +			if (tmp < 8  || tmp > 63)
+> +				return dev_err_probe(dev, ret, "Invalid ideality value\n");
+> +			priv->ideality_value[reg_nr - 1] =3D tmp;
+> +		} else {
+> +			priv->ideality_value[reg_nr - 1] =3D 18;
+> +		}
+> +
+> +		fwnode_property_read_string(child, "label", &priv->labels[reg_nr]);
+> +
+> +		priv->iio_chan[iio_idx++] =3D EMC1812_CHAN(reg_nr, reg_nr, EMC1812_CH_=
+ADDR(reg_nr));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int emc1812_chip_identify(struct emc1812_priv *priv, struct i2c_c=
+lient *client)
+> +{
+> +	int ret, tmp;
+> +
+> +	ret =3D regmap_read(priv->regmap, EMC1812_PRODUCT_ID_ADDR, &tmp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch (tmp) {
+> +	case EMC1812_PID:
+> +		priv->chip =3D &emc1812_chip_config;
+> +		break;
 
-[...]
+When there is nothing else to do, I'm a big fan of early returns that
+immediately let the reader know we are done.
 
->>   
->> +int dwc3_core_init(struct dwc3 *dwc);
->> +void dwc3_core_exit(struct dwc3 *dwc);
->> +
->> +int dwc3_host_init(struct dwc3 *dwc);
->> +void dwc3_host_exit(struct dwc3 *dwc);
->> +int dwc3_gadget_init(struct dwc3 *dwc);
->> +void dwc3_gadget_exit(struct dwc3 *dwc);
->> +
->> +void dwc3_enable_susphy(struct dwc3 *dwc, bool enable);
->> +void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy);
->> +
-> 
-> We should document these interfaces. The dwc3_core_probe() does all of
-> the above in the proper order. It's not obvious why these are needed and
-> how they should be used.
+> +	case EMC1813_PID:
+> +		priv->chip =3D &emc1813_chip_config;
+> +		break;
+> +	case EMC1814_PID:
+> +		priv->chip =3D &emc1814_chip_config;
+> +		break;
+> +	case EMC1815_PID:
+> +		priv->chip =3D &emc1815_chip_config;
+> +		break;
+> +	case EMC1833_PID:
+> +		priv->chip =3D &emc1833_chip_config;
+> +		break;
+> +	default:
+> +		/*
+> +		 * If failed to identify the hardware based on internal registers,
+> +		 * try using fallback compatible in device tree to deal with some
+> +		 * newer part number.
+> +		 */
+> +		priv->chip =3D i2c_get_match_data(client);
+> +		if (!priv->chip)
+> +			return -EINVAL;
+> +		break;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int emc1812_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev =3D &client->dev;
+> +	struct emc1812_priv *priv;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*priv));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	priv =3D iio_priv(indio_dev);
+> +	priv->regmap =3D devm_regmap_init_i2c(client, &emc1812_regmap_config);
+> +	if (IS_ERR(priv->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
+> +				     "Cannot initialize register map\n");
+> +
+> +	ret =3D devm_mutex_init(dev, &priv->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D emc1812_chip_identify(priv, client);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Chip identification fails\n");
+> +
+> +	dev_info(dev, "Device name: %s\n", priv->chip->name);
 
-Very good point, I'll add documentation for all of these!
+Too noisy. dev_dbg() at most, probably just drop it entirely as these are e=
+asy
+to query if the driver probes successfully.=20
 
+> +
+> +	ret =3D emc1812_parse_fw_config(priv, dev, priv->chip->phys_channels);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D emc1812_init(priv);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Cannot initialize device\n");
+> +
+> +	indio_dev->name =3D priv->chip->name;
+> +	indio_dev->info =3D &emc1812_info;
+> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
+> +	indio_dev->channels =3D &priv->iio_chan[0];
 
-Thanks for the review,
+Given it's a pointer to an array to me using priv->iio_chan seems more
+logical.
 
+> +	indio_dev->num_channels =3D priv->num_channels;
+> +
+> +	ret =3D devm_iio_device_register(dev, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Cannot register IIO device\n");
+> +
+> +	return 0;
+> +}
 
-Sven
+> +static const struct of_device_id emc1812_of_match[] =3D {
+> +	{
+> +		.compatible =3D "microchip,emc1812",
+> +		.data =3D &emc1812_chip_config
+> +	},
+> +	{
+> +		.compatible =3D "microchip,emc1813",
+> +		.data =3D &emc1813_chip_config
+> +	},
+> +	{
+> +		.compatible =3D "microchip,emc1814",
+> +		.data =3D &emc1814_chip_config
+> +	},
+> +	{
+> +		.compatible =3D "microchip,emc1815",
+> +		.data =3D &emc1815_chip_config
+> +	},
+> +	{
+> +		.compatible =3D "microchip,emc1833",
+> +		.data =3D &emc1833_chip_config
+
+Trailing commas needed for these.  Reduces churn if we want
+to set other fields in future.
+
+> +	},
+> +	{ }
+> +};
 
 
 
