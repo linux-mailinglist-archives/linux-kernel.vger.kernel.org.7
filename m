@@ -1,97 +1,121 @@
-Return-Path: <linux-kernel+bounces-825576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42096B8C427
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F72BB8C430
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06018461AF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:54:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4562623ED9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEDB27CB21;
-	Sat, 20 Sep 2025 08:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VHq7EOIs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBE727C154;
+	Sat, 20 Sep 2025 08:57:01 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711D41E9B1C
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE636221FC6;
+	Sat, 20 Sep 2025 08:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758358480; cv=none; b=Paxypp25mqBOxJxIljM10cBjtRr9/X+/wnZYe/SydvoKV+tLqlP2ojD9z5mn+lG0TOoNLc3zIea1v/Cpx6sM7sZWRd2BlZZiv1jJ/0RvrcjnT5hDvGONDz4V2vejeFeAT+UBIpnZjZC1m5VeJrnIpg17B1T8ZWCeZ650is7agU0=
+	t=1758358620; cv=none; b=ZUIVX+pKNgKpyIGHWTN3UQfSk/hdJ9pF0KaZCacgDq4MS4GenHXpZ1+zNz0GFlIba83xZrWA3NNVpIukmzIdK6SXLFEMpTYTPCyoWi2Mg4b0gg9H4SlAVLnLm+nE0lIQf4eNJmAc7E1YoLaLKdQZG+IIkZbOYZMt5agq3EuO874=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758358480; c=relaxed/simple;
-	bh=4UjIHIMHVJP1B4x5ZHWcDInkdoATf6MI1a6CRrW0cB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxGO5q4zqMDBXhpt0MvfKL7nesbI+aSD97sXLN9ewGLsokbYzoUoFOJoN6VBXuuJmQymg7Q3Ib6P80MSpnXmNbmnCFaRDiASoZBcT2FNJHOwaKsdsppVNDruj4VLVjRjdl6TbzJJWgaVFNAJnIq23G1xMKpUzfDqYhkVt8CUSeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VHq7EOIs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758358477;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+hHE4sdSr/iIbdI83gq3looRFTCEYUJKvUfL6ikBG0M=;
-	b=VHq7EOIsnW6TmeRr6YAYr4HtMxjLPXptL+MJbsvQeYqBigBkytF28gkbOGnUtR8kItW5G6
-	N8/tHNjsuzeXe39PiETAZNbvCZsOtE02cQ0QeGyWVE7KtrThpuFojlKzp2OHvACXxzK/5X
-	LMhY5f9gCfAQCCh4hph3jcMpzdwAGV4=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-518-xYtaVor1N26wk0DSFmji0w-1; Sat,
- 20 Sep 2025 04:54:33 -0400
-X-MC-Unique: xYtaVor1N26wk0DSFmji0w-1
-X-Mimecast-MFC-AGG-ID: xYtaVor1N26wk0DSFmji0w_1758358472
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C3E719560AE;
-	Sat, 20 Sep 2025 08:54:32 +0000 (UTC)
-Received: from fedora (unknown [10.72.120.3])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 736F818004A3;
-	Sat, 20 Sep 2025 08:54:27 +0000 (UTC)
-Date: Sat, 20 Sep 2025 16:54:22 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/17] ublk: add helpers to check ublk_device flags
-Message-ID: <aM5rvjGN68iwIixV@fedora>
-References: <20250918014953.297897-1-csander@purestorage.com>
- <20250918014953.297897-5-csander@purestorage.com>
+	s=arc-20240116; t=1758358620; c=relaxed/simple;
+	bh=ZrCnW8J2sJBMWqEmPffenmgJiU20qJrMUSM/2Tm9sRw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=sMlOcDywr9x/6h40BFOv8hh9caRZ+nz3vvamnpxQR+svYPgRp0NTA55WCXLWbE1dpqfQhlSLyCHxIfIj5P4VcywaCv/ZJ4/bgS56BGPubQdqXmMWqmG3OMV/I1Y80JyZSH3rqaobANVQlQptNVH5hZEakKzyNONVyCLdp92CVUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.103] (213.87.157.150) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sat, 20 Sep
+ 2025 11:56:29 +0300
+Message-ID: <4be800b2-1c2b-4803-9cac-f3d0928a5975@omp.ru>
+Date: Sat, 20 Sep 2025 11:56:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918014953.297897-5-csander@purestorage.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] serial: 8250_mtk: correct max baud rate in the
+ set_termios() method
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <bd8764c5-c43c-4bca-996d-65367805ad5a@omp.ru>
+Content-Language: en-US
+Organization: Open Mobile Platform
+In-Reply-To: <bd8764c5-c43c-4bca-996d-65367805ad5a@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/20/2025 08:43:34
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 196453 [Sep 19 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 67 0.3.67
+ f6b3a124585516de4e61e2bf9df040d8947a2fd5
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {Tracking_spam_in_reply_from_match_msgid}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.157.150 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.157.150
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/20/2025 08:45:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/20/2025 6:43:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, Sep 17, 2025 at 07:49:40PM -0600, Caleb Sander Mateos wrote:
-> Introduce ublk_device analogues of the ublk_queue flag helpers:
-> - ublk_support_zero_copy() -> ublk_dev_support_user_copy()
-> - ublk_support_auto_buf_reg() -> ublk_dev_support_auto_buf_reg()
-> - ublk_support_user_copy() -> ublk_dev_support_user_copy()
-> - ublk_need_map_io() -> ublk_dev_need_map_io()
-> - ublk_need_req_ref() -> ublk_dev_need_req_ref()
-> - ublk_need_get_data() -> ublk_dev_need_get_data()
+On 9/5/25 11:07 PM, Sergey Shtylyov wrote:
+
+> As is obvious from the code calculating the divisor in the set_termios()
+> method, the Mediatek UART driver uses 256-time oversampling for the high
+> baud rates, so passing port->uartclk to uart_get_baud_rate() for the max
+> acceptable baud rate makes no sense, we should divide by 256 first (this
+
+   Well, I thought again and 256 seems to be an overkill, I should probably
+have reverted to division by 16 instead...
+
+> should also prevent overflow when some arbitrary baud rate is passed via
+> termios->c_ospeed)...
 > 
-> These will be used in subsequent changes to avoid accessing the
-> ublk_queue just for the flags, and instead use the ublk_device.
+> Found by Linux Verification Center (linuxtesting.org) with the Svace static
+> analysis tool.
 > 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> Fixes: 81bb549fdf14 ("serial: 8250_mtk: support big baud rate.")
+> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+[...]
 
-Thanks,
-Ming
+MBR, Sergey
 
 
