@@ -1,123 +1,92 @@
-Return-Path: <linux-kernel+bounces-825724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF12B8CAAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0922CB8CAB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:49:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4241BC21C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:48:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C255C561ADC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A75226D04;
-	Sat, 20 Sep 2025 14:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="JrpO2igs"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7EB2EAB6A;
+	Sat, 20 Sep 2025 14:49:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9341B663
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8DF1DED63
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758379668; cv=none; b=MGMXxmr8NVl0sCek9waPjQkXYVfKHgoY9/eI0cEaOe7YMp4sczaDtydaWOiPFwIEJ1ahV4x9RFSvy8qY68MV6oJ76ISq/MehXGKQApd464G+MrhwI0Piyvxp0K7jBSxl4kve6HjjHhpm0ccV0RHqYxoqJgrSPUAx8N3cS7rDLFs=
+	t=1758379745; cv=none; b=aWwj2GArWKcqyzsrSod+SO7thh7dRc30Mg+nEb69jlFgPXiYa78yO5GPl5hL4yAR6jKyLAp3z3kfHtrxNUTBa8EqZpYYn/fansC0dQs0d+AMFXWNoVSpwGcODB9sO8SQvHWSDhiZfYMFv37RhhQmMnf26S+/RqJ7735EDoR5wjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758379668; c=relaxed/simple;
-	bh=789DFs4LQtmBntaur0VPctHDw1awAzUu8jfoedb8OpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5D4B45RRAtfFhPH+lbTLHPTNfcbCUA8wCGNN2OtyCcUXvUJLodipZMLuhU7A/A5yRgw9rhg8U6Ry6T0ybCYynSYb17rnyXHrok6PPJ99k7I1hZ/12cO9DGSURY4BfvCqk5GlBRLGP462lfw/60/w+RCp/tb77nYO8qBHsA45uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=JrpO2igs; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns1.iitb.ac.in (ldns1.iitb.ac.in [10.200.12.1])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 8E9D01080221
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:17:39 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 8E9D01080221
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1758379659; bh=789DFs4LQtmBntaur0VPctHDw1awAzUu8jfoedb8OpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JrpO2igsc7Y9T+uQg3mG7dnzHTOB5ipGql9wQppg6TWtNQvwj+lJhRG1e/ZRFUTAc
-	 kQknJ9dqRNDXjI1VM8neeof97UoG7BYOTplpqwnqmVQcL3r+EkucYQlXFtcvtcB2Cv
-	 LEVY4UfCNwbnsHcQQWvoXrX5JaY5ip/DNqlrCZlg=
-Received: (qmail 8143 invoked by uid 510); 20 Sep 2025 20:17:39 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns1 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.101.4/26439} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 5.520536 secs; 20 Sep 2025 20:17:39 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns1.iitb.ac.in) (10.200.1.25)
-  by ldns1.iitb.ac.in with SMTP; 20 Sep 2025 20:17:33 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns1.iitb.ac.in (Postfix) with ESMTP id 66BDA36003F;
-	Sat, 20 Sep 2025 20:17:33 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 3C61E1E814BD;
-	Sat, 20 Sep 2025 20:17:33 +0530 (IST)
-Date: Sat, 20 Sep 2025 20:17:28 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org, skhan@linuxfoundation.org,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com
-Subject: Re: [PATCH v2 1/6] dt-bindings: rtc: Add ST m41t93
-Message-ID: <20250920144728.GA69280@bhairav-test.ee.iitb.ac.in>
-References: <cover.1757510157.git.akhilesh@ee.iitb.ac.in>
- <3aed714163abc86a18a62f039b285643d9504e64.1757510157.git.akhilesh@ee.iitb.ac.in>
- <20250911-resolute-translucent-koala-1707dd@kuoka>
- <20250915141951.GA3239298@bhairav-test.ee.iitb.ac.in>
- <85a46710-64ee-4a21-b95c-d4c18c2f634f@kernel.org>
+	s=arc-20240116; t=1758379745; c=relaxed/simple;
+	bh=py5/X+AXsn/PIbThVFg9G5uJ79Hgd8prIN39YDpJVR8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cR+SsIdPjhHM7m881vIASIFBaiHCDc1p0+TitY1PuH8X0QR8djuEorPNBKPoRCkitnQ1BhKoCg6Fqdgr9M9KwqQptDP8HZGkM1b20DIVNVnBWv6KAn62f0EjdJL3LLGk+E3ESzLg3DDeFnNh96Ouk9RNyCTQpcCNRnMnTpqsYa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4241c41110eso67781175ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:49:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758379743; x=1758984543;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Op4wMv0a4zsQn3ohVvJ3vaJLGLY9/uII5+oXVI6nU5U=;
+        b=O7fuB4hHcbJ0uuF6qK/erhezs8vZBKFA3cauXSQ8TAK4Vevrje3xQ/V1vSN/VwmJfS
+         2iC0MnVO0T0P+Owm0J8kXy96vARylkfZyhzkZco03R6rhGFZeizcDLgZBTOSWtyMfHD/
+         p4sDuXwLrJ6XerBo6PsU1snx0R1X5R84gFUsRPEYECgF/hVcr7EFrPqDd0I3Ew7JiQVF
+         kf7gjqo8OOiOs5mbSBHOrSDT0B0zmkKti/0L5OznjloaV78LizKZ0ENz4evEQwaOA5NH
+         50rlMnBY6qu+VR3roQJfeDHkcOA/5kwdXEvV6q4Om65dX9Z2PNpYzPcarzoMpqxxH6Kl
+         CIBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFs5hYAwy6j9a5hsbwVurSAbMzdf5xCNJRbkXnQK36DVCW5iIpw5mocFmYRxdO+i3tkuTeagPH6m3OqFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn0nnTP/gF7HprLPcjzMpnT9JN0v+CzZ+BsYh2Hd89Cxwp1BQF
+	nD6fjFJTTRrGYgccIjvoq1fwAiFWx+bOdJ87qGxx8yBhyDt1i30p8DWJufyl6xTCH+Dz77kYSmp
+	Ypvk8UJXsEcnYuoPT7qF+ieBvRADyLTSkLVzmpwnrYjA+qPLB8/c68orAPIA=
+X-Google-Smtp-Source: AGHT+IFgyLiqZ5vxf2NRc7awgzRJ3gTfgIa75hCA5poxEMAjtksUWSNyk0MLOqXZSFnvr6kPEZ3wkaUmrC4eQ0WKQDX9j/xfuQnV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <85a46710-64ee-4a21-b95c-d4c18c2f634f@kernel.org>
+X-Received: by 2002:a05:6e02:1707:b0:424:2357:d57 with SMTP id
+ e9e14a558f8ab-4248198438fmr122069485ab.25.1758379742868; Sat, 20 Sep 2025
+ 07:49:02 -0700 (PDT)
+Date: Sat, 20 Sep 2025 07:49:02 -0700
+In-Reply-To: <688aa543.a00a0220.26d0e1.0030.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cebede.a00a0220.37dadf.002d.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] INFO: task hung in hidp_session_remove
+From: syzbot <syzbot+234fdcc5f6633833a35c@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, bentiss@kernel.org, chenl311@chinatelecom.cn, 
+	frederic@kernel.org, jikos@kernel.org, jkosina@suse.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 17, 2025 at 09:52:24AM +0900, Krzysztof Kozlowski wrote:
-> On 15/09/2025 16:19, Akhilesh Patil wrote:
-> >>> +$id: http://devicetree.org/schemas/rtc/st,m41t93.yaml#
-> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >>> +
-> >>> +title: ST M41T93 RTC and compatible
-> >>> +
-> >>> +maintainers:
-> >>> +  - linux-rtc@vger.kernel.org
-> >>
-> >> Not much improved. This should be a person responsible/caring about this
-> >> hardware support in the kernel. Why would we want to take the binding if
-> >> no one cares about it?
-> > 
-> > Okay. As per get_maintainer.pl, linux driver corresponding to this binding does not have a dedicated
-> > maintainer, hence it shows rtc subsystem maintainer (Alexandre Belloni).
-> 
-> And what did I express at v1?
-> 
-> > Looking forward for your suggestion here.
-> > What do you suggest to keep maintainer as Rob Herring or/and me ? as I see in
-> > such cases Rob is the maintainer.
-> 
-> No, I really doubt Rob cares about this particular hardware. Neither do
-> I, nor Conor.
+syzbot suspects this issue was fixed by commit:
 
-okay.
-I have this rtc hardware with me and I am willing to own and maintain
-this support in the kernel.
-Hence I will add myself as a maintainer for this binding and share v3.
+commit 4051ead99888f101be92c7ce90d2de09aac6fd1c
+Author: Li Chen <chenl311@chinatelecom.cn>
+Date:   Fri Jun 20 12:02:31 2025 +0000
 
-Regards,
-Akhilesh
+    HID: rate-limit hid_warn to prevent log flooding
 
-> 
-> 
-> Best regards,
-> Krzysztof
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1128a712580000
+start commit:   afd8c2c9e2e2 Merge branch 'ipv6-f6i-fib6_siblings-and-rt-f..
+git tree:       net
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4bcc0a11b3192be
+dashboard link: https://syzkaller.appspot.com/bug?extid=234fdcc5f6633833a35c
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f458a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1796c782580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: HID: rate-limit hid_warn to prevent log flooding
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
