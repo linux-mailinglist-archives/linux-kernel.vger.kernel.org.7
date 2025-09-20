@@ -1,153 +1,165 @@
-Return-Path: <linux-kernel+bounces-825482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5928FB8BE61
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:24:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E156B8BE6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F921BC835F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539991C04ECB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1378E22836C;
-	Sat, 20 Sep 2025 03:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE96C221F2F;
+	Sat, 20 Sep 2025 03:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k5t3ABKb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cSkPCHnj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED8022A7E6
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E04220D4FC
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758338526; cv=none; b=tPd+jnC3NKyW7niwDkFjt2ViDZSSCYBpi6eOr7dm957K9Wm7Cm/GkHkyYWiBA8qtA9Wp00qmCElQxzzOKRlbAJRYT/TW/37I3j1/K5qGjlBuU5N3e1675caeGcGIUubsQ4NasVihPlvnADPvCQABZnAZEqIrjHtoZz5v04jy1Zk=
+	t=1758340310; cv=none; b=Rv2/sE73E+sO3dqXR6kxp0gDRcnT4jJZxaQws7zmmMN3h1HElTow3dc7F/xp0LBYJpR/TUbFOgoaQgavlNnJlVyOk9m4yuXslu1N64S49x92Mtnn5Z3Oidd8CsyCwTNt0a1jBfVkbANvYijKpup4UpFKfYmw3lwI1HXVPQ3hPx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758338526; c=relaxed/simple;
-	bh=0xFRrxPf1HgCf/uIpvSwdyWaSlw0SJxq9j5r8OfcLSM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TOJIu+TgST9rBNHwINMo1y2+5bjB1aWJMydUjYcn21OmsUdNLDn4h8qAydoOXjBuLluIOAe9MhwHx3bezlYIoKmqQ1O1oAS+xe//FwMS5UpoCnOMMRzeZYIaGhkl1gOPFXJhrxOPJP26CNn3igLGEZYqG8D5ZVC5aw1SEHBO6WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k5t3ABKb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58K3KNob006719
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:22:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=vuZU5U4R9Rryr7IdAfkxs753zdgqirIJxPG
-	858BKWwE=; b=k5t3ABKb2GvmSXeB4L3qyWcAYWv5GOpbrwGW+IExQE1comiVw9E
-	ufPeF4cJJ7qL+T4YI2BBhXvKmXrX68hUmV/WZaehLJ/YiOIbqZFcBF1oCjbIPwM6
-	lzLPk5OTNYfyltG8g4gxAzEYzii1sIrdstgY/9nnyxxS/68jD72JN1L14PwkJbVJ
-	2XJXH8KI3+c2owvmLYP57zqvFY6+E7wIyWy2UuL+XNko0BgJ56aA/LkK/+p7IYqC
-	RUI5Hwitgf1h12SB6TXEy5uASbJL8QU/VX6Aovv9yoip7N8ftZzg3JCKkMNcorWn
-	42GzpCK37ZzvaYhVs+BIb6eysOaEto+PC1w==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499k988391-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:22:03 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2445805d386so29839305ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:22:03 -0700 (PDT)
+	s=arc-20240116; t=1758340310; c=relaxed/simple;
+	bh=4nyax13VUWR5a5t0mPW0ffDF7ObllscDnqllciX7WU0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=s8VPYZuKmICaUep3O2Ql4A/PkgkTjCCUWZERRe61nCMf+G7+CCZYU1Xs+Gdw3Xlg6mIxE504TZrHWAr0tpWlpcSv4UofG5jE6GmMZuzSU5EJALC3x9AlUc1fFBOCxbojUweS/TZpNGZio+paq/UMUG52lrojZV7NPYJnjyzIcl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cSkPCHnj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so2814497a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:51:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758340308; x=1758945108; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HpEOj5LSM2D4OpUTxa8SKWTebNuWvFU+5fQLpVHxJlM=;
+        b=cSkPCHnjl24X4A4YLQJG4lU8WmWhITSpFUiWyWGqVPmR5352NiMa/3r32lN5fyLMcy
+         rijwqkTFuFmhTB555IeY5QJMwc90rY0b1GC6ZP9Di692OUqYXqIlR8ryz3CPnJ/bEnv0
+         HMiXwIQqPCdxLaJ8lLxCSOr3lR7H7MdDGOcKQLD25JlRfO4p9puHyVg1Ncy51QLl4cAF
+         CXwx5RgHADOMlSuZjRyjVnJk2EjKLWp8TDbrtNwBV/n1xTjqzaT+NQtfI34Kfse0LklO
+         mGgFZeo527G520gzPYak5MM1UZ0qc6v86Vs5PL1qEIlBcp4rfMpXsO+8srLFCzw1Alk4
+         wCHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758338522; x=1758943322;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vuZU5U4R9Rryr7IdAfkxs753zdgqirIJxPG858BKWwE=;
-        b=KQnZ9CwU/0gnZDA5GmSGoizqFDSmColcn6kK2D43uRbywetmUti6mxqJoAf/bBlOy6
-         rm3XVElQ/zLmPRBSBqs2ZQFAH7WFuzU/w6se77+5gxtJeFlJtAZV101c8FOV0+l7fVkf
-         rInIlX1XsC33EZo+JL7Iutc4zKmSa8Qj/tNIvbx+CFk9u3WUN6i0louBCXHjMTW5YjSI
-         V9onAGvDVOgaefvie0dRcKUMYLV52k3PMZuE8AUOXved4pzuiU/iTI06rjXvf25RAeDp
-         5qNXAytMe7qb9oDoUYrVspvrMXRcnXZDS6nJEbRBY8PtJapfLVRojkEXh5cmGpPDO69u
-         sSAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWh/7cht+l0zO3ug0FCY+cRNr595lXaSRWIqJbIFjIAH4hfjBwS0PjTXpbc0EsN0UryEVfwxWnqLGxLFEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWNoK87nE7LeKrlZlU9wn+GJPjSgU6FHUchmnHfyB/o/GM1MCM
-	6ty95lgVFm/RIDiH8dc4Bgn+JcP0v1MGiH9rTczhi2oeEaMiUpizg6jrK7EorCXG8lB4Vw2EUNm
-	m7ANKXNxyuZmMD0hlRz7OP1xvSadcIuj4kZY5CfU8avvdJGPgXvc237SR3zO7ne4b9sg=
-X-Gm-Gg: ASbGncssrr6Ahsbftb7HGlUgCqZAMOafiLBiY4Fppfua43/tFGExwBnH0Eng6vkb2uo
-	6w+hASVhAt3+lK/zzsElhrEerJODygn2aiZfK/cba66YM4hp/KZDNqqW/nSneG0jOT/Um1HTXd2
-	9rgOmpkrXl7DrVkDSx01lIQMzkeRNZJTblTPNR2V2BpMVIOhkIpWaRucUxd7ZnDdVa6muogoy3O
-	qK8KrwPPFDBXlurfqV5UP9gabjjLLRIDTb3E1aKsd/zRdjlOB0XGKJWbagEiqBq0AP5cnDLfxJp
-	78s7yhfBu6C62aIKycS/88NntwAc+vcmZfkigJ3sd/Iu8flV6wf2zF1i4JTYhp88kMjmBkcm85f
-	VcCs5rXOi550lFxjS
-X-Received: by 2002:a17:90a:ec83:b0:32e:9da9:3e60 with SMTP id 98e67ed59e1d1-3309838e41emr6060608a91.36.1758338522087;
-        Fri, 19 Sep 2025 20:22:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnfgc9WbLWRAMVvDv9SHJUx3qQPyX7uwJoFjB6p+plahvgBOQhzvbXnu4sxjxYoajBAIfINg==
-X-Received: by 2002:a17:90a:ec83:b0:32e:9da9:3e60 with SMTP id 98e67ed59e1d1-3309838e41emr6060577a91.36.1758338521632;
-        Fri, 19 Sep 2025 20:22:01 -0700 (PDT)
-Received: from hu-wcheng-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3306082eff4sm6660409a91.25.2025.09.19.20.22.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 20:22:01 -0700 (PDT)
-From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-To: kishon@kernel.org, vkoul@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Ronak Raheja <ronak.raheja@oss.qualcomm.com>,
-        Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Subject: [PATCH] phy: qcom: m31-eusb2: Update init sequence to set PHY_ENABLE
-Date: Fri, 19 Sep 2025 20:21:58 -0700
-Message-Id: <20250920032158.242725-1-wesley.cheng@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1758340308; x=1758945108;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HpEOj5LSM2D4OpUTxa8SKWTebNuWvFU+5fQLpVHxJlM=;
+        b=uHknVZcgwIAw609IVSDr4NHg1zPFXyszzsIeTt8704j4JJESGsr+cSzQf4ga0uk0He
+         R+SSQGy4Cnk6B4VqAwCxbY4pxIqaGTqFCN5xqMxfCsr4zR1CIOYV15j5/z3dncKtHrxx
+         FYkJO3I3v2NGSi8CZLJJhBhM3uNw6g8fdXXqiuOpHg8rDd7gEXnhMIyvjA5PcEcr1bpJ
+         HYPun7OlQOFTcJ/KJX+0jvnRCLbujKYaUfPJGKr1cRO6ZE+Io4RLJ1Qcjan8kXHQOkWI
+         pBA8DqlgXWBvn/CYS2xW/3ofvolsZl2ApJf2CGB2Qj+GySEPZTUtIPqDnu2cOoaZZfcR
+         e6XA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA0OPEZJ1lCNK9rd9GmR/PanNOmhVPLhnihd5gOSkXhAkxt3u7+9tJoN+vda0iER0Jd3IKHxtHtqAh3ZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqTbE08S4V+n0KHdE5YDA31kLZNY8+DMhrbp7/R71Hl8nFkSVh
+	qqrVkXln46Y3j/Q4JQ+2vqAki6Phela7wWGdF1KXssZ7eDBAJwYbRiVe1Xop9FLPdNxVJZmN0OI
+	u3fE7GA==
+X-Google-Smtp-Source: AGHT+IGDEsmJS0RWHAZl4i+dA/zrRM6jZJwlfPLgPe6OetInXPKDxFrf8pBdb+Fr9jhrRctW5rKl2lRcuTw=
+X-Received: from pjbta12.prod.google.com ([2002:a17:90b:4ecc:b0:329:ccdd:e725])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3146:b0:330:604a:1009
+ with SMTP id 98e67ed59e1d1-3309834c31fmr7114857a91.23.1758340307754; Fri, 19
+ Sep 2025 20:51:47 -0700 (PDT)
+Date: Sat, 20 Sep 2025 03:50:43 +0000
+In-Reply-To: <caa08e5b15bc35b9f3c24f679c62ded1e8e58925.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: TvaBUEEw7L7UeB4qwLgazdXmabhQDIvx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxOCBTYWx0ZWRfXxvp6tfr11gMx
- v6nb1++EvRUvAa+g9srNBTwekqWVcJgvz4OgY6+1ytLWH9HiGbABpL0wfFXd7H8vuX2TVYufOhx
- XJWscGMahsxrCRW0szbGW0TPmV9z9lmiC0Cxuq/MLw0ey+5QmBDnBuyW/HPpY2thvOH55iWLCmW
- rnr3C9luNXsBYvSyPY9XYIOKuw+43N8iXorc25JUaDQ+FYmmv7IhqeaCnV0xu0k1K/Pa5MRr3Lm
- 9bNfNHXUzIqi+J4xtw1N+C3AluAd7RMjN+vZ0OJD9H0i+5ANRohSq0NEysE+s61mWo3MCKdjE+m
- WXulr5u01xXvh9Ft5Ek4vUgI6kX8lScW8ScTv3nWkdgtX2oSCJVLIgfElYxDvFe0kCze95CQrBO
- 8DpM73Ec
-X-Proofpoint-ORIG-GUID: TvaBUEEw7L7UeB4qwLgazdXmabhQDIvx
-X-Authority-Analysis: v=2.4 cv=Dp1W+H/+ c=1 sm=1 tr=0 ts=68ce1ddb cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=y6qI-x7cYgrOQfqpg38A:9
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-20_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0 impostorscore=0
- phishscore=0 spamscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200018
+Mime-Version: 1.0
+References: <caa08e5b15bc35b9f3c24f679c62ded1e8e58925.camel@gmail.com>
+X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
+Message-ID: <20250920035146.2149127-1-kuniyu@google.com>
+Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: brian.scott.sampson@gmail.com
+Cc: christian@heusel.eu, davem@davemloft.net, difrost.kernel@gmail.com, 
+	dnaim@cachyos.org, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	kuni1840@gmail.com, kuniyu@google.com, linux-kernel@vger.kernel.org, 
+	mario.limonciello@amd.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
+From: brian.scott.sampson@gmail.com
+Date: Wed, 17 Sep 2025 15:25:07 -0500
+> > Thanks for testing the painful scenario.
+> > 
+> > Could you apply this on top of the previous diff and give it
+> > another shot ?
+> > 
+> > I think the application hit a race similar to one in 43fb2b30eea7.
+> Just tested again with latest mainline, but no change. Once suspended,
+> keyboard becomes inactive and no longer accepts any input, so no way to
+> switch to tty to view dmesg. The only way to move forward after
+> suspending is holding down power to hard shutdown, then power back on.
+> I tried enabling persistence in the systemd journal, then checking
+> journalctl -k -b -1, but nothing is recorded from dmesg after the
+> suspend.
 
-Certain platforms may not have the PHY_ENABLE bit set on power on reset.
-Update the current sequence to explicitly write to enable the PHY_ENABLE
-bit.  This ensures that regardless of the platform, the PHY is properly
-enabled.
+Thank you for your patience.
 
-Signed-off-by: Ronak Raheja <ronak.raheja@oss.qualcomm.com>
-Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
----
- drivers/phy/qualcomm/phy-qcom-m31-eusb2.c | 2 ++
- 1 file changed, 2 insertions(+)
+I assumed SO_PASSCRED was the problem, but I missed
+SO_PASSCRED was also inherited durint accept().
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
-index bf32572566c4..fbf5e999ca7a 100644
---- a/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-m31-eusb2.c
-@@ -25,6 +25,7 @@
- #define POR				BIT(1)
+Could you apply this on top of the previous changes ?
+
+Also, could you tell what desktop manager and distro
+you are using ?  If this attempt fails, I'll try to
+reproduce with the same version on my desktop.
+
+---8<---
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 211084602e01..b61d4fdb7fc4 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -541,7 +541,8 @@ struct sock {
+ 				sk_scm_rights : 1,
+ 				sk_scm_embryo_cred: 1,
+ 				sk_scm_parent_cred: 1,
+-				sk_scm_unused : 2;
++				sk_scm_parent_sec: 1,
++				sk_scm_unused : 1;
+ 		};
+ 	};
+ 	u8			sk_clockid;
+diff --git a/net/core/scm.c b/net/core/scm.c
+index e603bf5400e0..359d56d454b4 100644
+--- a/net/core/scm.c
++++ b/net/core/scm.c
+@@ -435,7 +435,8 @@ static void scm_passec(struct sock *sk, struct msghdr *msg, struct scm_cookie *s
+ 	struct lsm_context ctx;
+ 	int err;
  
- #define USB_PHY_HS_PHY_CTRL_COMMON0	(0x54)
-+#define PHY_ENABLE			BIT(0)
- #define SIDDQ_SEL			BIT(1)
- #define SIDDQ				BIT(2)
- #define FSEL				GENMASK(6, 4)
-@@ -81,6 +82,7 @@ struct m31_eusb2_priv_data {
- static const struct m31_phy_tbl_entry m31_eusb2_setup_tbl[] = {
- 	M31_EUSB_PHY_INIT_CFG(USB_PHY_CFG0, UTMI_PHY_CMN_CTRL_OVERRIDE_EN, 1),
- 	M31_EUSB_PHY_INIT_CFG(USB_PHY_UTMI_CTRL5, POR, 1),
-+	M31_EUSB_PHY_INIT_CFG(USB_PHY_HS_PHY_CTRL_COMMON0, PHY_ENABLE, 1),
- 	M31_EUSB_PHY_INIT_CFG(USB_PHY_CFG1, PLL_EN, 1),
- 	M31_EUSB_PHY_INIT_CFG(USB_PHY_FSEL_SEL, FSEL_SEL, 1),
- };
+-	if (sk->sk_scm_security) {
++	if (sk->sk_scm_security || sk->sk_scm_parent_sec) {
++		WARN_ON_ONCE(!sk->sk_scm_security);
+ 		err = security_secid_to_secctx(scm->secid, &ctx);
+ 
+ 		if (err >= 0) {
+@@ -449,7 +450,7 @@ static void scm_passec(struct sock *sk, struct msghdr *msg, struct scm_cookie *s
+ 
+ static bool scm_has_secdata(struct sock *sk)
+ {
+-	return sk->sk_scm_security;
++	return sk->sk_scm_security || sk->sk_scm_parent_sec;
+ }
+ #else
+ static void scm_passec(struct sock *sk, struct msghdr *msg, struct scm_cookie *scm)
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index b6ff7ad0443a..a35082269990 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -1899,6 +1899,7 @@ static int unix_accept(struct socket *sock, struct socket *newsock,
+ 	unix_update_edges(unix_sk(tsk));
+ 	newsock->state = SS_CONNECTED;
+ 	tsk->sk_scm_parent_cred = sk->sk_scm_credentials;
++	tsk->sk_scm_parent_sec = sk->sk_scm_security;
+ 	sock_graft(tsk, newsock);
+ 	unix_state_unlock(tsk);
+ 	return 0;
+---8<---
 
