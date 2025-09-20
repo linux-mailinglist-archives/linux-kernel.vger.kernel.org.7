@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-825499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4962B8BF81
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:06:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CAEB8BF8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECDD8560A87
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C561567FC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4F9226CF6;
-	Sat, 20 Sep 2025 05:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8csHsX3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD664A21;
-	Sat, 20 Sep 2025 05:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B162222C0;
+	Sat, 20 Sep 2025 05:11:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A01D13AD1C
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758344806; cv=none; b=CzJ5O4rvz23a2RT+g4eK4jEOj3wUr/WR03LskyR78mQgFoSa0rySfPqVza9vRiCdplSD2k6t8RMtBqVcAPocUcYGCB9oLOMxC4gc69ZBZUVGgXtvgP3KIohrsoCGVH4SRcwu0p0/WVLPmdoyDRJsTEhMfll7s0rFTkDRewbV6tY=
+	t=1758345063; cv=none; b=JcX/d2ILhkqLEHYAPI869UJbLtyUtKUQnmByvBoNxivMvOxWBEhBDR8jXtGJwhK918JwoUlNDHezA2qSf2dNzu0RQshKZFQrTSXlg1wcEMMsKV2ik3oocRtXbkHvlBuGVFnKF4DVDZs024Rk5o3gJNkvcCJqNeqhIKgk/PAWZYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758344806; c=relaxed/simple;
-	bh=0UDfmZ7DaFZLTqzi59DgWOG0qhddX+UAkuVNJQTlmKQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=WrMpLawEVfa11E40d3danWwU7+BQ/yrqdnOpnCrq9kS7FNAa59vW3KKxiVoP4U0jmkJRYFw+oDto+S/YF16ExcHSNzyJWz2DH/Y2BS9Ilz34zq1X1MZ70OTpfLLkSRKbrK6ph+DUzC/w8GVJWQbwhvOQb8m6Q2maUmVc6G+T2qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8csHsX3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D92C4CEEB;
-	Sat, 20 Sep 2025 05:06:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758344805;
-	bh=0UDfmZ7DaFZLTqzi59DgWOG0qhddX+UAkuVNJQTlmKQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=r8csHsX35fQg5mQ46THNN6En77PyJ8zJJ+Evlg4sO9JjPNoGFZGFxhnil5hO7rjiP
-	 jXDcBh4nQaWIvR2PInQuH6NpNK+rDtnhSXpsVFi2TUAe3AVkB/VTzk6Kq7gV1T41a4
-	 YLBJEsw7zEzJuimXE/j6gfHtU8amKJB97pHHvOi3Owl1naqchh/VIcT5rnkGSIKxhi
-	 fEZyY6YV7FCW0wgZV2mAJ61ygSE0xjDIflPdwKzxcs3XWmDugYd9y7GgpGO206i4TY
-	 nzR7LtRzvACwJPmy8/KS4nfboL0bUunZYiLJts9WEPvdKPmL8iDoOE39bgIJ5+UP6k
-	 fb3/Be+H5wTHg==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758345063; c=relaxed/simple;
+	bh=cWOc6vLpQ2APLMR4i2pRRUIZRmy1NcaFr3QbisZo+MM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ngT+G8qIZ8ytYiAU0IQSCvjlL4kv8wFslxNgsfWtgO8IptPuPoloPCFpcmZKRPGr4P7iS8I4hdbketPYVlbH5uxk5k4YoQ+bAFPgFpb8ebyXK1e0YpHgiQ8dQR3Shs/TsKKN4KxpSDk5WqlBmxpxuiVns4d67VV5ljNq9STjJuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 767B41688;
+	Fri, 19 Sep 2025 22:10:52 -0700 (PDT)
+Received: from localhost.localdomain (unknown [10.163.75.121])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AB8F93F673;
+	Fri, 19 Sep 2025 22:10:56 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org
+Cc: anshuman.khandual@arm.com,
+	wangkefeng.wang@huawei.com,
+	ryan.roberts@arm.com,
+	baohua@kernel.org,
+	pjaroszynski@nvidia.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v2] arm64/mm: Elide TLB flush in certain pte protection transitions
+Date: Sat, 20 Sep 2025 10:40:43 +0530
+Message-Id: <20250920051043.16421-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com> <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com> <aMG6JVMcMxVuX7De@tardis-2.local> <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Rafael J. Wysocki <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-To: Boqun Feng <boqun.feng@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>
-Date: Fri, 19 Sep 2025 22:06:44 -0700
-Message-ID: <175834480479.4354.6269916774389395049@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
 
-Quoting Daniel Almeida (2025-09-10 11:47:30)
-> Hi Boqun,
->=20
-> > On 10 Sep 2025, at 14:49, Boqun Feng <boqun.feng@gmail.com> wrote:
-> >=20
-> > On Wed, Sep 10, 2025 at 02:28:27PM -0300, Daniel Almeida wrote:
-> >> From: Alice Ryhl <aliceryhl@google.com>
-> >>=20
-> >> These traits are required for drivers to embed the Clk type in their o=
-wn
-> >> data structures because driver data structures are usually required to
-> >> be Send. See e.g. [1] for the kind of workaround that drivers currently
-> >> need due to lacking this annotation.
-> >>=20
-> >> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc=
-9da95@collabora.com/ [1]
-> >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> >> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> >> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> >> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> >=20
-> > This tag list looks a bit weird to me. Why is there a SoB from you
-> > before Alice's SoB? At least for the usage I'm familiar with, outside
-> > the case of Co-developed-bys, multiple SoBs is used for recording how
-> > the patches are routed. For example, if I have a patch that has my SoB
-> > and I send it to you, you queue in your tree and then send out to other
-> > maintainers for merging, in general you would put your SoB after mine in
-> > that case. But I don't think that's case here? Alice's patch has only
-> > her SoB:
-> >=20
-> > https://lore.kernel.org/rust-for-linux/20250904-clk-send-sync-v1-1-48d0=
-23320eb8@google.com/
-> >=20
-> > What's the intention of the SoB tag here?
-> >=20
-> > Otherwise the patch looks good to me. If we get the tag list resolved,
-> > feel free to add:
-> >=20
-> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> >=20
-> > Regards,
-> > Boqun
-> >=20
->=20
-> You have to include your SOB when submitting patches from others.
->=20
-> This is something I tend to forget often, so I made sure it was there. The
-> order may be indeed off though.
+Currently arm64 does an unconditional TLB flush in mprotect(). This is not
+required for some cases, for example, when changing from PROT_NONE to
+PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
+growing into the non-main heaps), and unsetting uffd-wp in a range.
 
-Yes the order is wrong. The first SoB should be the commit author.
+Therefore, implement pte_needs_flush() for arm64, which is already
+implemented by some other arches as well.
+
+Running a userspace program changing permissions back and forth between
+PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
+for the none->rw transition, I get a reduction from 3.2 microseconds to
+2.85 microseconds, giving a 12.3% improvement.
+
+Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+mm-selftests pass.
+
+v1->v2:
+ - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
+   pteval_t, return !!diff (Ryan)
+
+ arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+index 18a5dc0c9a54..40df783ba09a 100644
+--- a/arch/arm64/include/asm/tlbflush.h
++++ b/arch/arm64/include/asm/tlbflush.h
+@@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
+ {
+ 	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
+ }
++
++static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newval)
++{
++	ptdesc_t diff = oldval ^ newval;
++
++	/* invalid to valid transition requires no flush */
++	if (!(oldval & PTE_VALID))
++		return false;
++
++	/* Transition in the SW bits requires no flush */
++	diff &= ~PTE_SWBITS_MASK;
++
++	return !!diff;
++}
++
++static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
++{
++	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
++}
++#define pte_needs_flush pte_needs_flush
++
++static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
++{
++	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
++}
++#define huge_pmd_needs_flush huge_pmd_needs_flush
++
+ #endif
+ 
+ #endif
+-- 
+2.30.2
+
 
