@@ -1,82 +1,102 @@
-Return-Path: <linux-kernel+bounces-825579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 789B9B8C436
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:08:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C88BB8C43C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B0C1B27807
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D007F628459
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D82F2882A9;
-	Sat, 20 Sep 2025 09:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AF8296BCC;
+	Sat, 20 Sep 2025 09:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="JYIzycs6"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Om1UD5I6"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C83221FC6;
-	Sat, 20 Sep 2025 09:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F60D221FC6;
+	Sat, 20 Sep 2025 09:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758359276; cv=none; b=VfuwWiwiynBmOYIosAFbuAdq7NgvVJ7rPIyYwAESeOKNV649RQGRqfT1zUNe6C6BNwuXznKPZu0Q2nTcqSbkK74tIDMUFDcLgxR4jprKpEMhbgmVkyepggh54s5K7RP6vuKTxh0Sf+UL8XA3K9HPTHLs6NIObyYjNR14qo04MaY=
+	t=1758359327; cv=none; b=f9AxZJRlBMW+Kx35BPUSHHgKZ0kdm/qvtE3FGb58SDj6xq73wjUlBEZtkEQ7kpSR82aH2JUXEgxUxf473fP8YWoroOq3ZWkhL1xnQlv1NDJgIU7RWfHIT9Hk9lYMhdOhNF7p9p+HRdb+5WDI1nyuKHF6q1uPDMzZRnYtYizbmF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758359276; c=relaxed/simple;
-	bh=QoYmRi5QX/RJxFQK9UOVXg7sMqSEWO265RJWbQoNkzI=;
+	s=arc-20240116; t=1758359327; c=relaxed/simple;
+	bh=7AgmdpzSbvpoPfhFtsyGjsBMS0m2QapvG7NWSOjL1NE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QzwnRBkCKV0IPxQVAkjTQ9BHG9AWeAD45fMWUjYKUuRhp4P+mgU8HQGL6EzLSXIcM5feF8gKHethwni0Kv11J64aUq+fHTI5R8AFHEieFMkW72sgaQ7SvflBxIcqz8K/A12hsTnBYvj1lJ8S0e4IAkdS43/3B5r6YZu/0Z9b2u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=JYIzycs6; arc=none smtp.client-ip=159.69.126.157
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDg8Ih9TpFcz85o51WXFvFONaojpF+l2Yp4/gmn6rdkUoEumvdC4ZhGUuHUmtDlpYlVXTHVixfp/+FaD0X0d3evfmhqVj22serZp5Sx3EP+ViGuyGdpRRl2CV7q38JBh1v1Y4vF6PP3M+HwJi2PAQx4HqlEki0kBngh46f3ptos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Om1UD5I6; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1758359265;
-	bh=QoYmRi5QX/RJxFQK9UOVXg7sMqSEWO265RJWbQoNkzI=;
+	s=mail; t=1758359322;
+	bh=7AgmdpzSbvpoPfhFtsyGjsBMS0m2QapvG7NWSOjL1NE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JYIzycs6vqNd2bDxwVjSJmnvDmr4qfpxKOSWC14nCAIEHGDui1DNmxM3YoQaqD+zF
-	 EVKR+SsZ9w9Ekm6xJ1T0T3jrlRJkxl4GVIPLLK2QKrR1f+3Pj2gK9klcNvfozMJTPX
-	 csR2n3wp+SHTi+izLtuoPItoZ27SV5wiPatoDH44=
-Date: Sat, 20 Sep 2025 11:07:43 +0200
+	b=Om1UD5I6sqy+ggkvuslzI8wAAQY6oqwalnu5jQUtP5sKaW6Uc3rsuO2X6XejW/a0y
+	 HzxD5VMzM1IA9TCrACVY78KDwXWRUeq9DikOOYvlcFWQWPVQfdufi4QvhsKvKZGtaJ
+	 MFJQUqC8UslATs9k9e5W/VstrU8DA3Hv5iG5taoo=
+Date: Sat, 20 Sep 2025 11:08:36 +0200
 From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Zhouyi Zhou <zhouzhouyi@gmail.com>
-Cc: w@1wt.eu, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lance@osuosl.org
-Subject: Re: [PATCH v2] tools/nolibc: make time_t robust if
- __kernel_old_time_t is missing in host headers
-Message-ID: <b20a1126-9d59-4d8b-a85c-71ec532c2f8f@t-8ch.de>
-References: <20250919014643.2776037-1-zhouzhouyi@gmail.com>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
+	linux-kselftest@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-kernel@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>
+Subject: Re: [PATCH v2 06/11] tools/nolibc: add option to disable runtime
+Message-ID: <a6f669b5-6a4e-4735-8c9d-9debdd65cbc9@t-8ch.de>
+References: <20250919153420.727385-1-benjamin@sipsolutions.net>
+ <20250919153420.727385-7-benjamin@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250919014643.2776037-1-zhouzhouyi@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250919153420.727385-7-benjamin@sipsolutions.net>
 
-On 2025-09-19 01:46:43+0000, Zhouyi Zhou wrote:
-> Commit d5094bcb5bfd ("tools/nolibc: define time_t in terms of
-> __kernel_old_time_t") made nolibc use the kernel's time type so that
-> `time_t` matches `timespec::tv_sec` on all ABIs (notably x32).
+On 2025-09-19 17:34:15+0200, Benjamin Berg wrote:
+> From: Benjamin Berg <benjamin.berg@intel.com>
 > 
-> But since __kernel_old_time_t
-> is fairly new, notably from 2020 in commit 94c467ddb273 ("y2038: add
-> __kernel_old_timespec and __kernel_old_time_t"), nolibc builds that
-> rely on host headers may fail.
+> In principle, it is possible to use nolibc for only some object files in
+> a program. In that case, the startup code in _start and _start_c is not
+> going to be used. Add the NOLIBC_NO_RUNTIME compile time option to
+> disable it entirely and also remove anything that depends on it.
 > 
-> Switch to __kernel_time_t, which is the same as
-> __kernel_old_time_t and has existed for longer.    
+> Doing this avoids warnings from modpost for UML as the _start_c code
+> references the main function from the .init.text section while it is not
+> inside .init itself.
 > 
-> Tested in PPC VM of Open Source Lab of Oregon State University
-> (./tools/testing/selftests/rcutorture/bin/mkinitrd.sh)
-> 
-> Fixes: d5094bcb5bfd ("tools/nolibc: define time_t in terms of __kernel_old_time_t")
-> Signed-off-by: Zhouyi Zhou <zhouzhouyi@gmail.com>                     
+> Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
 
-Thanks! Although it is fairly late in the developmment cycle I have
-applied it to nolibc-next for 6.18.
+Acked-by: Thomas Weißschuh <linux@weissschuh.net>
+
+> 
+> ---
+> v2:
+> - Renamed from NOLIBC_NO_STARTCODE to NOLIBC_NO_RUNTIME
+> - Put the #ifdef around relevant comments
+> ---
+>  tools/include/nolibc/arch-arm.h       | 2 ++
+>  tools/include/nolibc/arch-arm64.h     | 2 ++
+>  tools/include/nolibc/arch-loongarch.h | 2 ++
+>  tools/include/nolibc/arch-m68k.h      | 2 ++
+>  tools/include/nolibc/arch-mips.h      | 2 ++
+>  tools/include/nolibc/arch-powerpc.h   | 2 ++
+>  tools/include/nolibc/arch-riscv.h     | 2 ++
+>  tools/include/nolibc/arch-s390.h      | 2 ++
+>  tools/include/nolibc/arch-sh.h        | 2 ++
+>  tools/include/nolibc/arch-sparc.h     | 2 ++
+>  tools/include/nolibc/arch-x86.h       | 4 ++++
+>  tools/include/nolibc/crt.h            | 3 +++
+>  tools/include/nolibc/stackprotector.h | 2 ++
+>  tools/include/nolibc/stdlib.h         | 2 ++
+>  tools/include/nolibc/sys.h            | 3 ++-
+>  tools/include/nolibc/sys/auxv.h       | 3 +++
+>  16 files changed, 36 insertions(+), 1 deletion(-)
 
 (...)
 
