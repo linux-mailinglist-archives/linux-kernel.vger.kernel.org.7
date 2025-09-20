@@ -1,135 +1,159 @@
-Return-Path: <linux-kernel+bounces-825688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81EC0B8C85F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:41:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76817B8C86E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC64F623387
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:41:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E41C567994
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6544B2F4A0A;
-	Sat, 20 Sep 2025 12:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F205E1DF252;
+	Sat, 20 Sep 2025 12:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJHjc/R0"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UBkC6o/x"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1785D2F363F
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06F34D8CE
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758372107; cv=none; b=Rzd371jtG7xjeZM8CkJ98XEjuIhVq2Pe0hrpkmJQK3QlCtjvKD33WUM9MHPOsOxrKFK44B22VLHq2FkuHCrex+tBYwXwBtHhFcgpTqveHxv6YwBZcArlOxHbVDZuTHAYlWdtIJTr+V1wZRyJ9gVL+EOfUiwgHUbJYBk+yshNYIQ=
+	t=1758372331; cv=none; b=eQjlEgZE+B/Xnb7q20MAlPnkcrt2J7Ct1ZyJergVBHClI8yGLUAI7O71VZYCn7E3GZhoe3j4iSeUtNlwbNmncPkE2DythsOva34C0XEGifl2F+wMFGNhd0mi1mJX5EHlhIerO0ycXulhAVYlveCnn6wRxVuBIm7Hedfpowbcwvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758372107; c=relaxed/simple;
-	bh=U4W7SEmzfMZiBXjbVAuBoutJMUwsTyAz2g2xFTrVkUM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BDDnP1rJMeeNYFFrsEUWzqJts9G7s0uQ9tZpA53BtqVIW8IQV/vVtI6t5oxkhKShWcewtIV2yuCAqTtfM56P9go52b5rq7PryQ0IpMmTMZsiyrB+mZ/tQnE6+9QLBJwaCCcqEL2FirHPQPntuHR6GT6/ukPEU1tMTdOBDfEaVP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJHjc/R0; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so464201f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:41:45 -0700 (PDT)
+	s=arc-20240116; t=1758372331; c=relaxed/simple;
+	bh=B2pdUGVo1hxX37az6KU5TDG01liBl6FvTa355/7VdK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rFgEiJTQkVqnHYbR9bd6OJEF6agLE4xVRBpzYKYIW6q3SIoxea6PjxArv3yqxXRCQ1dE7waVBmysWAHsqT6OZweXu8E8jZiJreBJ+7+25DyNhwkI1XaCJtqKKIg8tFTUmi3RI1uKshalByrmgJ2UZrRgFMMWuUg5ncJPXrVDnHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UBkC6o/x; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-244580523a0so33629705ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758372104; x=1758976904; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=15ctJlWd5TiNnXgBO40s7vu6haL/vdED1g3JIoksqkA=;
-        b=NJHjc/R0mNM6TL1I36561OKZvhG6AtyMfFPuAE1tcWxAppPJRAUYK0cfHATr8ySb61
-         a3BgYNVK7yBkP39XRvBgQF+bYeFrjAjLKzTkQcI6Em8vWMKAgEXZQMl5PrdAW9qJuzJS
-         YlfPENpQGt+OnkcO8g6ws67QtibyevPp1CuXJPlmTDH8pRfYQwVd/FM6umkbGQk5UD7s
-         2SHzgS6b3ydXM1KBP/a0X/hCs/41fw1mG2rpkbr1Vt8zXqXUgv9mwdVj9RSRfEu8RzmK
-         cUSP5vAgChiBUqvPmBe1aSuds4zPkCH3QPbBhpdnFXfautiLx5YuRPFP9/LPUNa1UE25
-         BKHQ==
+        d=google.com; s=20230601; t=1758372329; x=1758977129; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P2Xt5dxImFQDNB+zIOSzEq8xo9rsZmb+jmetH2dJjzs=;
+        b=UBkC6o/xEMnutMrAvFhSCg3+/b6YUIt/IIkPi91Mmf1EIvbALnnziFHl6XT5dCqGoE
+         TYPO4w1IlqTbNzNMbFJY0x102FE/zza2OmJxDWZO1w7/4wjpDO2YTtgA0F9ZdWKRi3js
+         ek81yuj96OBUi8jYkJ4am8Uwqa48PbVWopzu+1dtQVRWQ/r/tQoMoSRQWz3CaRDDxg/w
+         75f6+kHr0G9puDEv6susKk4BqCdbwZ0pqz9Q6y+Rjdp581BxYQNFLdFEbjSY+9T35MHo
+         l8u6wlNQ6aRwmt9kHXjXwyn77wAYbyP9U5G+guw9UXIA5s15y4rNOOWGrgGSnUohpTtd
+         CZIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758372104; x=1758976904;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=15ctJlWd5TiNnXgBO40s7vu6haL/vdED1g3JIoksqkA=;
-        b=gqFAO5F9m6cm6fu8cWK5whTISJgzRkqn6TK3yKUSnrK3ugPOP+iBS6LHY44pG53coN
-         0D32F8JXoPfmoT2bWNsRDOefBOFDNWQ8LA6cyrwWYEAt7TvNaJKCUT59g3hTdNO6/p/b
-         CPAWuAJBNrD17kxEZ3GCKCHOfSz1HqYaaSeSHF6BCjMFRd1FDtoAGK5GKo7JF367mnG2
-         BgI3JtDyn7pbXjJV0E4K+/oQlYMKsTr2M8At+dixQcdUa3+No1L3V8GUxbfL1+LfIZi8
-         zqS05RmzrvOow5z35tmVYP24YLz42I17ADJUNpQXWp0UUiFwjHAIVUkwafE9wux6jdOk
-         Th3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUKDS4NsZGg5YTLYg4x3Rc1v9ifEZQDw2pk/1FW7n/e9jx6PADIp4GBgq8VsfAFR57ErJDdvnaQs68drI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxku9K9l/BBhXTjALFVNJLBpR0xtT179N4+56pZif7EnzcfXOaO
-	7DvAps3qspG/20gvTruwkDTpEDhRd5cKxAPWLTNpBmx1Oevafmr5LYQa
-X-Gm-Gg: ASbGncvuhbC1wYd1FFF/fVY6D58MI0KW45Ey8hosYsCVO0jzEiPV/qd6uD26h3uc7ua
-	S2WM6R31aOp9MnpYXIQ7NjRLG83979v5IPNwP3mF8OV+Lea2JAkxM4aY90Sd42kzHYLNOxrP7oz
-	LZG0EmnSai+z2e75pGYJLowcVuvEaKZGNqiP2ehp/imHdl0tqr4zRUM9LpgfjafzFYpx15q33jX
-	Xq3eLX+0X4BTOyrsnk1VyZT5Cw4VMN4MUrxCvX0Esn1/yDm4CG6+8H0wg1eGqMaTXxu3g3Fn8Iv
-	1Ad4m6oOxHSCdibuQ6q7raasffRU+FBS1HtCwT5lY0LSMsQS4qHBB6n9DOne1xZy2GYsUxN1Twd
-	i0S7m+573XCOf02gGTcHTA9UQm0B9f7SdudTLMrtAoJFl2NR93nd9Pxf//r3sJBg64I5aeHXQ8F
-	NKf1I=
-X-Google-Smtp-Source: AGHT+IEWFUq3RVye1lwnKV9/BW4Qg2WZ91sgKbGmwNaa5auZ6g4qL3atHwoQRVeYQ1Kh21j2Fa3FNw==
-X-Received: by 2002:a5d:5887:0:b0:3d7:eb95:b1e1 with SMTP id ffacd0b85a97d-3ee83cabba5mr4475853f8f.32.1758372104261;
-        Sat, 20 Sep 2025 05:41:44 -0700 (PDT)
-Received: from Radijator.localdomain (93-140-182-131.adsl.net.t-com.hr. [93.140.182.131])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac271sm122747095e9.3.2025.09.20.05.41.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 05:41:43 -0700 (PDT)
-From: "=?utf-8?q?Duje_Mihanovi=C4=87?=" <dujemihanovic32@gmail.com>
-X-Google-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
- Tony Luck <tony.luck@intel.com>, 
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
- =?utf-8?q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
-Cc: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-In-Reply-To: <20250913-pxa1908-dts-v1-0-8120cdc969b8@dujemihanovic.xyz>
-References: <20250913-pxa1908-dts-v1-0-8120cdc969b8@dujemihanovic.xyz>
-Subject: Re: [PATCH RESEND 0/9] samsung,coreprimevelte DTS additions
-Message-Id: <175837210249.5177.1897822800832448116.b4-ty@dujemihanovic.xyz>
-Date: Sat, 20 Sep 2025 14:41:42 +0200
+        d=1e100.net; s=20230601; t=1758372329; x=1758977129;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P2Xt5dxImFQDNB+zIOSzEq8xo9rsZmb+jmetH2dJjzs=;
+        b=rHNsKxRLeiBrxQGQzUSyRGVb948DtRLB2f6G0CJ/dnO89Cd7sz1fEQC7T3LvmAPiZb
+         Ox7KKM161fbq49wYsp7m1odhyKUfBED31f3alnZggo3dVGXWPFk/UeUFfXAw8Sh9+lth
+         iskC9QVBuaaiU1h7MFG4Ovk3nH5Gplb8m/QXCoCRzEIgb3s5/uoW2WHkNTWADxoA16Bt
+         5EgZgm6RJrsCJYBzB/059KqtzLT6CmI182dKcZCfMb+idwnPzaxV1D2FB+UNd0kuyebB
+         6CAbOILv8va7OWSEeItJPkWeKel9MJUCAC4G063K9KQ7bD7eeXch6MIf+x6UXYs11dlL
+         ZsKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUpoBR6LBb7N/ZumDudIwIrCxCqYt3dNPitLtdyPZSS7K51/9gBNoKCrd3Gbg8ssxoTsvXeh2ck4zN17E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfEy+y9u8zQoz/9/6VJg8DzBhk/rn/O+p61l/w+UZ9jIWSFTdT
+	DvLjZZgFPPuQQB+Dc4lTL7GUZa4j5oEO1DDQATDDx58zsx1/yhJIVBLUvPnaRDtBDJAXnNCV3+C
+	nxr7X+UOy4j/LpKhDTy3eTE0fA6XHbM1V4XR7WTY8
+X-Gm-Gg: ASbGnctiayw+LTnX3jbNFiGMXPjZmOumNirWxIpnRJw5GgHMOpM8hhc1+f4nDUxqWtn
+	shRVqJwCBISANgPsYPrD7+ptDqROPJqmtVR4lG04b7aFd+UlBR0K9E/R2232KDZ2J+KZFVEY//E
+	z3yZ2y40XZu5d5LmWDGPMXRldJiY9Mp7csW96+JDsDOuyrK1AVhXuWo/W8sjHEez84RvqJc0XwO
+	VGMrCgKtUGUPz2x2zA8UksPEG4d4CmZ4bG/E1gUTgIOkNE7
+X-Google-Smtp-Source: AGHT+IGp/N/ayplQqKKBxnGs6WOfyKUH/iITNGJNC3m56lH0ddprjnIe5eKw57ece8B9TDbj2UEYyt+VdKNzNYtu5ro=
+X-Received: by 2002:a17:902:ccc9:b0:267:b2fc:8a2 with SMTP id
+ d9443c01a7336-269ba46f141mr83309515ad.23.1758372328847; Sat, 20 Sep 2025
+ 05:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+References: <20250918140451.1289454-1-elver@google.com> <20250918141511.GA30263@lst.de>
+ <20250918174555.GA3366400@ax162> <20250919140803.GA23745@lst.de> <CANpmjNO2b_3Q56kFLN3fAwxj0=pQo0K4CjwMJ9_gHj4c3bVVsg@mail.gmail.com>
+In-Reply-To: <CANpmjNO2b_3Q56kFLN3fAwxj0=pQo0K4CjwMJ9_gHj4c3bVVsg@mail.gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Sat, 20 Sep 2025 14:44:52 +0200
+X-Gm-Features: AS18NWBli1y9TeOySCtz0PRORw8H0Rr8apw4LW7wblD60qoNXqS9BvtJEM0Stlo
+Message-ID: <CANpmjNNkRQmt1Ea-EsSOVcA94kPqH_WntdT-NGnTjRocT25tFA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Compiler-Based Capability- and Locking-Analysis
+To: Christoph Hellwig <hch@lst.de>
+Cc: Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@kernel.org>, Will Deacon <will@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ian Rogers <irogers@google.com>, 
+	Jann Horn <jannh@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Josh Triplett <josh@joshtriplett.org>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Thomas Graf <tgraf@suug.ch>, Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, 
+	kasan-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, linux-sparse@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, 20 Sept 2025 at 12:23, Marco Elver <elver@google.com> wrote:
+>
+> On Fri, 19 Sept 2025 at 16:08, Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > On Thu, Sep 18, 2025 at 10:45:55AM -0700, Nathan Chancellor wrote:
+> > > On Thu, Sep 18, 2025 at 04:15:11PM +0200, Christoph Hellwig wrote:
+> > > > On Thu, Sep 18, 2025 at 03:59:11PM +0200, Marco Elver wrote:
+> > > > > A Clang version that supports `-Wthread-safety-pointer` and the new
+> > > > > alias-analysis of capability pointers is required (from this version
+> > > > > onwards):
+> > > > >
+> > > > >   https://github.com/llvm/llvm-project/commit/b4c98fcbe1504841203e610c351a3227f36c92a4 [3]
+> > > >
+> > > > There's no chance to make say x86 pre-built binaries for that available?
+> > >
+> > > I can use my existing kernel.org LLVM [1] build infrastructure to
+> > > generate prebuilt x86 binaries. Just give me a bit to build and upload
+> > > them. You may not be the only developer or maintainer who may want to
+> > > play with this.
+> >
+> > That did work, thanks.
+> >
+> > I started to play around with that.  For the nvme code adding the
+> > annotations was very simply, and I also started adding trivial
+> > __guarded_by which instantly found issues.
+> >
+> > For XFS it was a lot more work and I still see tons of compiler
+> > warnings, which I'm not entirely sure how to address.  Right now I
+> > see three major classes:
+> >
+> > 1) locks held over loop iterations like:
+> >
+> > fs/xfs/xfs_extent_busy.c:573:26: warning: expecting spinlock 'xfs_group_hold(busyp->group)..xg_busy_extents->eb_lock' to be held at start of each loop [-Wthread-safety-analysis]
+> >   573 |                 struct xfs_group        *xg = xfs_group_hold(busyp->group);
+> >       |                                               ^
+> > fs/xfs/xfs_extent_busy.c:577:3: note: spinlock acquired here
+> >   577 |                 spin_lock(&eb->eb_lock);
+> >       |                 ^
+> >
+> > This is perfectly find code and needs some annotations, but I can't find
+> > any good example.
+>
+> This is an interesting one, and might be a bug in the alias analysis I
+> recently implemented in Clang. I'll try to figure out a fix.
 
-On Sat, 13 Sep 2025 23:21:02 +0200, Duje Mihanović wrote:
-> This series adds some hardware support for the PXA1908 SoC and
-> samsung,coreprimevelte board which has accumulated before the initial
-> support series was merged.
-> 
-> 
+This fixes the problem: https://github.com/llvm/llvm-project/pull/159921
 
-Applied, thanks!
+I guess I have to update the base Clang commit hash for v4 again. :-)
 
-[1/9] arm64: dts: marvell: samsung,coreprimevelte: Add backlight
-      commit: da8cd97da58ac1bada6384eb7327de2502e76b03
-[2/9] arm64: dts: marvell: samsung,coreprimevelte: Correct CD GPIO
-      commit: 37780045c78d0134373c612ed5a6cf18a1c77ee2
-[3/9] arm64: dts: marvell: samsung,coreprimevelte: Enable eMMC
-      commit: 4a9e21b88c9a6bf3afa68d9a3eef8c72c53a69f6
-[4/9] arm64: dts: marvell: pxa1908: Add PWMs
-      commit: b7061793892ed1e947d65a53510dc217411bbea0
-[5/9] arm64: dts: marvell: samsung,coreprimevelte: Add vibrator
-      commit: 1c01dc7da1ca9ddb55cf35a7b8baa362ca393787
-[6/9] arm64: dts: marvell: pxa1908: Move ramoops to SoC dtsi
-      commit: bce8c4671a45d9fc8d0f4539ed758a1aef9e1aa8
-[7/9] arm64: dts: marvell: samsung,coreprimevelte: Drop some reserved memory
-      commit: ef2ec06ed37e8d6134b2df28ce123e7a3096076d
-[8/9] arm64: dts: marvell: samsung,coreprimevelte: Fill in memory node
-      commit: 01bd34653bfc17679e04a7d554e9b7f917e1b3cc
-[9/9] arm64: dts: marvell: samsung,coreprimevelte: Add USB connector
-      commit: efab3844c6f18327886c5c2e0e40acccaf976a89
-
-Best regards,
--- 
-Duje Mihanović <duje@dujemihanovic.xyz>
-
+And thanks for testing!
 
