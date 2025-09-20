@@ -1,76 +1,110 @@
-Return-Path: <linux-kernel+bounces-825637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1538B8C655
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:59:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DF7B8C65B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C0845824C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:59:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFB291B25152
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFC12F9C29;
-	Sat, 20 Sep 2025 10:59:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045DD2FB601;
+	Sat, 20 Sep 2025 11:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHz7Y/AX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5F92F6587
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8CC25DD1E;
+	Sat, 20 Sep 2025 11:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758365945; cv=none; b=B1K67R0KzmMAeCsCe47wPC5kSTa6A4iGnLKYzexm34VitSsh703YoaoH0+iL6cfyNWvQpAWgxs2DWBVrTFv18IV5+HQWi+d8mkkUy63lvUEtRyhutt0qoOL4TvAPbOyKLZBe+LwyJyz3KXDyNuaBNirfp1fYAMGXbIQd0nNZVgs=
+	t=1758366022; cv=none; b=o7w3fZLzhZHWgd4L9B4T76FW9h5Q0CtftowBzdXZ2fTXaQ8Ysa5oZ7LO3NaAs7AhGi3xXA3B5sw7zxtcaI3znZmcxhaPs5YrmtXxMkCox7ASRZodmtf+y6ggo8n7xA+CJAVQI3uJldLyCXbfnuWVBDQN1ELkADN5hlkO0xBwf2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758365945; c=relaxed/simple;
-	bh=W0FgbrCZ9xthNBkTA+c2JwzqADL7c7AtyAUCT/V/Y1c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EtEJ7NLWvcKrYPf4mQPMKUjRK3a8BOc9zfCqYQPSsxy18RCzPNUwwY7qalvB34DOj7PJD+9+wbWgt1eR4NzMzjH1uy0gxmP5d+Y9On+tcsT0LWhRbw/V70Nq2G7qHBOdPncoCazHZvzTEMlXXLzCMSfWELMcmcYkovw33PZ/ntw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88c3a3f745bso749720039f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:59:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758365943; x=1758970743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W0FgbrCZ9xthNBkTA+c2JwzqADL7c7AtyAUCT/V/Y1c=;
-        b=sXQzX4u4btY2STLpbgeTttYLH+kPbDokVNXp3ebUTBe68GQb0nDv0kjMGr4QABq1cZ
-         FZgZiEfuOYitMA2abjA25hkfipgvTJXdYFH1SjOAzmkmF2zrjZBNbEnmBYvn3njFjOoU
-         YXfQ4kfmYEc9+yDv2anOItKlwQCswkhqlje0peqY/2k+G60X/iduuPgMhz5vxWsh2/S/
-         Blhwo7G0be6cOsnSv7nV+71b5i4Dmg3d/w1iG5GAt/grjwTTkjOBZ5W8CmSpyUapk0g7
-         lmFsjm4R4j7FB3SyJ/KO8OZYDiTJjFIomrFIbHFu0ZekuPrFAmqB1F15ZjdshOLtQdQk
-         46Mg==
-X-Gm-Message-State: AOJu0Yzso/wWU+SVHOwgMbq83r7ifDj2Vl3fl7nxx1KhsLa0FSHD3KZh
-	sxnjQy/YKPb4UDStMnlDZvQAQXMJCdiSWEKoJY89MgC9bn5zYhKPmlCWJTiTO2bbsfEH9XXSG+h
-	HdkB4qXUKMag33IvGhX/43GvHQ+Hrv/Ns4FmKDhwX/MGtp1SteXTbpHY8HUU=
-X-Google-Smtp-Source: AGHT+IEan31j/RWLhWr3WBnGRiYO81RUnsInmfAWRDFYtPatVtuzH1te8mHj91k0XOK/X9YloY1OYVJF1YY1SHoV6buh+sK64dpr
+	s=arc-20240116; t=1758366022; c=relaxed/simple;
+	bh=Ly2LPCvsrrspBvDaxxZmI2slrHIwUSmHQUo56fNRVA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jFWTAMl8S26rofEFRv/QB5QN5CgopxxQpFpwMhidy21Vodco2eXErEb1bxx/IKVkugGrqVLD/+EAvqWs7wTlomAn/DuZAyk1RrPqNKf9CKrMaRpK+89wk6MPcaeo6YC29pQ/UnxUynXZ7rYVtbkhYGYXoJSP62Rdxmxe4el8VYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHz7Y/AX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8116DC4CEEB;
+	Sat, 20 Sep 2025 11:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758366022;
+	bh=Ly2LPCvsrrspBvDaxxZmI2slrHIwUSmHQUo56fNRVA0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tHz7Y/AXouD7tW65vnh7G8MV41sr5yMRJuGFIbwC04q06rld75yAt/MIAgD7B59cA
+	 OdiEXgCYsEaxxQ8Kszxm2KbWFAzz+8rY2b4zy1sd33QUijv4S5GnuOfC2fkCeG9TeT
+	 zNDHosIWV1y60P6roMrQu3xKbpmccnkYzK7S6KczEwxjmghoxfpJSAGUVNF9kkpvOJ
+	 qeFDAqr4NfI7J4LpbuuK8GOOJwJWsAXYT9pn/8pGx1W/lupvHcsLztRHkqUQzsaAmP
+	 1VcjtyN0AzO1eZOGhzbCap7fKjjslJQBfDEh+bATBpCCf3HQL+BEOSliVHeWxOBQ58
+	 vIJc5rl0ViAyw==
+Date: Sat, 20 Sep 2025 12:00:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich 
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= 
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7124: add debugfs to disable single cycle
+ mode
+Message-ID: <20250920120014.2c4b6701@jic23-huawei>
+In-Reply-To: <d20225be2339e7b08f65edf18f9fa71ae5840f0c.camel@gmail.com>
+References: <20250917-iio-adc-ad7124-add-debugfs-to-disable-single_cycle-v1-1-c83ab725faca@baylibre.com>
+	<d20225be2339e7b08f65edf18f9fa71ae5840f0c.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4714:b0:424:863e:e08d with SMTP id
- e9e14a558f8ab-424863eea2dmr60484075ab.22.1758365943504; Sat, 20 Sep 2025
- 03:59:03 -0700 (PDT)
-Date: Sat, 20 Sep 2025 03:59:03 -0700
-In-Reply-To: <68af7ed3.a00a0220.2929dc.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ce88f7.050a0220.13cd81.0016.GAE@google.com>
-Subject: Forwarded: syz test
-From: syzbot <syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, 18 Sep 2025 11:34:48 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-***
+> On Wed, 2025-09-17 at 18:03 -0500, David Lechner wrote:
+> > Add a boolean debugfs attribute to allow disabling the SINGLE_CYCLE
+> > bit in the FILTER registers.
+> >=20
+> > This causes data to be read on every conversion instead of doing the
+> > usual 3 or 4 conversions per sample (depending on the filter). This is
+> > only needed for very specific use cases, such as validating the
+> > performance of the ADC. So we just expose this feature through debugfs
+> > for the rare cases where it is needed by people who really know what
+> > they are doing.
+> >=20
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> > In a recent discussion with an engineer who has used these chips a lot,
+> > we confirmed that we made the right choice in [1] about always enabling
+> > the SINGLE_CYCLE bit. That is what is needed in normal operation and is
+> > the expected behavior.
+> >=20
+> > But there are some occasions where we might want to turn it off for
+> > hardware debugging (e.g. to peer into what the filter on the ADC is
+> > doing). Hence, this patch to add a debugfs entry to allow it.
+> >=20
+> > FYI, there will be some trivial fuzz between this patch and the "iio:
+> > adc: ad7124: change setup reg allocation strategy" patch, but I expect
+> > changes to be requested on that one, so will likely work itself out
+> > by the time it actually gets picked up.
+> >=20
+> > [1]:
+> > https://lore.kernel.org/linux-iio/20250910-iio-adc-ad7124-fix-samp-freq=
+-for-multi-channel-v4-1-8ca624c6114c@baylibre.com/
+> > --- =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+>=20
+Applied to the testing branch of iio.git.  Unless the merge window is delay=
+ed,
+this will be material for next cycle now.
 
-Subject: syz test
-Author: kriish.sharma2006@gmail.com
+Thanks,
 
-#syz test
+Jonathan
 
