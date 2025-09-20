@@ -1,146 +1,150 @@
-Return-Path: <linux-kernel+bounces-825917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233E9B8D1B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:44:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CD9B8D1B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AAA1B24F14
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8D9178DD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D628428312D;
-	Sat, 20 Sep 2025 21:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48E4285069;
+	Sat, 20 Sep 2025 22:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGCB6x6m"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="J9Fmyf5x"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C152427B325
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 21:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BAC19309E
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 22:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758404652; cv=none; b=gzBg0uSIdD8gAAE/iugex0jeH/sWwJ3GK5leQMeU1H+JGHUd8swQdy9l5s8NtqHAsjaHmbG9uRjXQhCGV3977Io2CKRnDmKfnmlywVLH4vxFmM7EnaavGIMM9YOhnl84jju5qIYr1QY+TSkIN01Xid1lIwBofITTs5BHVUvXx+M=
+	t=1758406222; cv=none; b=F+WpXoEriE0oqq09PH28lPDebowGuh6pEWuy0vPVZEf3ICVXpndXyKf6CO15iosSdfbXl5YZgUOfoSzTglSZUnx6LGDwz8/l9aGOSapsORL7BjR7P+UWrwzDwdejUKMIFE28fPAFOpjnYKAC0IwihS8cZ68jwyiFOc7t6TzwuIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758404652; c=relaxed/simple;
-	bh=DVCcp2q5VKcd7KC9g3EJSBxxRQgEDpwWkfmRLnIh1Xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCFRKmHSGQkBcsogHv430SsjTgLHjLxQh5/aVFgUfKiOPR7Roq+jd+k0ywAG/IQxZ1a16kTjd1gQaIWQyBhc0s/ee/Ga+rj6eUhw5qXm26aKyVY4m2LdRKoxOKz+ftZV96hGlSG5G4jiyyXCguVTS9/E4TWKqJYHx58ljcyWD/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGCB6x6m; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-26685d63201so30490065ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:44:10 -0700 (PDT)
+	s=arc-20240116; t=1758406222; c=relaxed/simple;
+	bh=LY3ujSSp4ssjDboMxWkSkt2y4GVfW7/lwkeP03NUrWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MO83aCAnTGmMdx2qoejLPGj5jyM8bDLbd97lfnhuODgYiwq7+JHEIq6DH4ek9SR7WfoBcmc88kROQKwVfXIT9MnGVcvn5hG+yE/UizbDT3w+iGY2HNFR79WTlpCdWCXYRIGXWJiPZ1XnGnlVG//qG/KB7npbCH11XDGRKSnMjWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=J9Fmyf5x; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b07ba1c3df4so602560866b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758404650; x=1759009450; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/XaK3Ga5I4OskdvUpK/KRvj93+5lScsBFICoRwq2vUw=;
-        b=JGCB6x6mP5ozvGnpZuiO6YO8WAsnhGdkS9KRxIH7POkfsJWk5CaOfkPNjZBn3O0XEx
-         pKPPFuqlsQgeKTF1hdV7pMDq7KQCjytDu4LvIz/6/ULoBqtmvaPDJO4RonWCR83c0Q+7
-         vIhdj8tAT8DEmV3ewr4TV16zU0s8glyt9e3NxNkSR8kA+tk+LCY280X+XpuSvT6gmvbt
-         qK0SO84rHCxd0DB7KyykFpXgdZil341JV7mnp9GtFu1QtGgdDkV4Uh03bqJprT66H7rn
-         1Jhp+EZPomENlrqzed0ABy6MSgX/szhR4Ajw7uKKMZsxWG6K2+1TE/cneO98Xg6w+TBu
-         Pwjw==
+        d=cloudflare.com; s=google09082023; t=1758406218; x=1759011018; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iuOT5FcGvpbq5izggBkx/dpQo/nFSfgwh6uOm9NZ/Mg=;
+        b=J9Fmyf5x/ulE9vYgwv1IIxaVcIkxMVop9CMmBnr1Jx7oIIuATLlHkl2pcT7kKG4vvs
+         QLgp6nPQ6lwNq6+10TRfOtH+XbtAsBx0u/SGBOhsSQbikb76igPq9a7hwtzRcKq6fU4E
+         dVluuoy8Hu3B1lheW8c+u4YQ41MH1xClR7acm73IfpUVlSIsjIa8zkQUpVsp9eqmnAwQ
+         5OSs1thBMXbZ1ZB+qwrBDT2hOHPDMjebajfQJ8RrcMgsOI/HMCclDJZX21ksecK/0x4d
+         wDYD7FYqbTSAYbbLK6+EX64JXeS0SiFYJsZHAmfiGr5vJzpLOSrmRvPlKZtojQxNMr9v
+         3Eiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758404650; x=1759009450;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/XaK3Ga5I4OskdvUpK/KRvj93+5lScsBFICoRwq2vUw=;
-        b=l5g0fJxPzaC+IJDSpqkJPIFOLwYU8WvsFy1saQoePvRIC8f9S84utpNHg7sTWy0sWC
-         MJxHWDqxo43Yrk6HJfFWlq/D/qNcIHYYarzmC5eFhlRQlAND4hMWgClcQqoZPsfVy45r
-         1Oxf7ZrQeB6EvXTpcILIF9H7+IdzXYBPm67ioyW4JNPJCrWv/nmkWyORFqpZbL0BQTA9
-         qnbYk6n5bHUR6ptqZRPPrpHSJqvyb2Bf29bEkpXIl09KA4v87rfN4sWsuP0lvHw9oP0V
-         PRJ1zVRsKmx2X20ZATKUhtqEhAh/vt4i4euGbTRbi3cuc5G70OAmYXwqkgyTZ3d0+2k2
-         s6yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUVN+nSrvFIE/CM7FHCo3Z2eOY2r7S+2NqrLWWR9QB6169nFxIBRvtDxCWNEL093LzscuyE7p1+NFDVnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6qBe1dXioWn9wO5ITfgrTDMKzr0wdge/PL+sUbPMlGYBTlLtZ
-	wgPcy0VyZuTGyitUI6DklbCb024+nBuqhYQTiRNvzIpg3BO8Knk0rlip
-X-Gm-Gg: ASbGncvc2Pu7OlbRnMyacoCfGSfoKznj9aUSbpV3FfFYiGLsf5+WrwfUMmcxx+i1UG4
-	nYKy8Oy+4hJQ6JLZpk+CX1NhNn6HUrqOcS2/5hcqDvOsrMLrsumnwlx3tpNu1m/YuTr0KINT+hB
-	aryfsAwLXdmYEM3+8yyk+MewSe8SdIKUof7Wbg9zxRDHYw1UTAmHzGF/gKtd//UApxTX30grfKI
-	ifG1i4YgUrmEI3HDAf0LSbSHbHmytyPgW15Iwtp8zpTf/j5jyYd5LfnXM7cJ5PWYuo5GaOY9QuU
-	QGQ9aHiZcdXe3eY6+GAvdjuUSq+ednUyyha47a6chNYFNGqvfirhIWTc9pqRyUfIiHqDMWRokP1
-	7dhdqDNapy9bhBZTIll7zioHtlM4VqDo=
-X-Google-Smtp-Source: AGHT+IGstBVeN4BQ2EHAw6pn8u8U0MiwUr1OFBQKcuOmxzx9i3nxQXrFoOaA2+s/lnUkyZn6bVvZmQ==
-X-Received: by 2002:a17:903:2284:b0:269:9adf:839 with SMTP id d9443c01a7336-269ba427cb8mr100761545ad.19.1758404649948;
-        Sat, 20 Sep 2025 14:44:09 -0700 (PDT)
-Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-330606509e9sm9225974a91.9.2025.09.20.14.44.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 14:44:08 -0700 (PDT)
-Date: Sat, 20 Sep 2025 18:44:52 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Kim Seer Paller <kimseer.paller@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
-	Ceclan Dumitru <dumitru.ceclan@analog.com>,
-	Jonathan Santos <Jonathan.Santos@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Subject: Re: [PATCH v11 1/3] dt-bindings: iio: adc: add max14001
-Message-ID: <aM8gVOVEujP6Yzxx@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1757971454.git.marilene.agarcia@gmail.com>
- <30f33a64da0339eccc1474406afb2b1d02a0cd6b.1757971454.git.marilene.agarcia@gmail.com>
- <8e88b601-1329-4cdb-bbd7-feb998c552e8@baylibre.com>
- <20250916-alto-vaseline-f8dafbab03e9@spud>
+        d=1e100.net; s=20230601; t=1758406218; x=1759011018;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iuOT5FcGvpbq5izggBkx/dpQo/nFSfgwh6uOm9NZ/Mg=;
+        b=hLeyM+qn6HO5hZZEczYbXPoml8FI91qHAzWmZ93OuxmgtrHzRo4j/aAP2TboRYj8W9
+         oTl+MjiVbQdFM/em89Fe1zFa+WjXVX3/cickS5UOyMkR7zw8eDSGdEwlUc6gISHyWCw9
+         PTQtl3MYFSWgVLbvPhG1tvndsu2c1kq+N8yfWTCCoS7X1uQYJ/phZhcZjluzKv2pf83k
+         eCGK1ImS6vbXDDlnFqTgHwY/blRedWaOfanl/CwOdKn141LPZhR0ind2PYc6WAHeK7dX
+         Buh6SRyg7n548KWf4OTnW1jr5rdKKsmFLEyX2umqXoiVUGw2shK2/HA08RzSSBZsfLre
+         E90Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Vy9RATYqzDqjI2zsDIKEGjnWrPcgYzUcm/h+dpNq39bhNNOaWxogawwAmtKutzAUxn7fctzfi8ZTx7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtAPoLVhT8RrIzn3u/im8zO3o73cuVUogDUkgX0hjtQteKs90b
+	wvWp61iLOKal1umlpzG6koQZUg428ELm1MO/9U3oktDAvx4YhUCgshnt7CB6fuwtnFLyu1gXadn
+	dW/yBUKozs8klafBXTVfbNOqN1aa8vmuifeF9QC9VxQ==
+X-Gm-Gg: ASbGncuGOF3fFdmf9eL6tKAaZ0+WGNABmGuwU7jxA/wvCsMSMVsqNt547hIYdjnlQ8D
+	LKdJbJePuMyIs3n7VffuuzF8bdT3JS3ee1EAY5gV2ZuWaJjKiSO/v8AUclkgpeQP7TZ4q3Xg3il
+	YDrBlIdcg82MwIPuS7NnHEsBmrwsBltetmx0MbaQ3sewYcO4cqSfZrwqaIQ6Nq2Qxba5PT3mHhT
+	SNg86oqqjQG5sxn7FGsXWhA7+DaMC+qTg==
+X-Google-Smtp-Source: AGHT+IHXhsI4hda42JjoNr9cAmqiaihGUywDLTqyq7u++xty2ZCVqSKEj2SD6SYsm2KE2zwUrp/7NPMAXkOp7AygEpw=
+X-Received: by 2002:a17:907:724c:b0:b07:c94c:ba16 with SMTP id
+ a640c23a62f3a-b24edd54a3fmr923990666b.4.1758406218497; Sat, 20 Sep 2025
+ 15:10:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916-alto-vaseline-f8dafbab03e9@spud>
+References: <CAGis_TWyhciem6bPzR98ysj1+gOVPHRGqSUNiiyvS1RnEidExw@mail.gmail.com>
+ <20250919143611.GA22933@redhat.com> <CAGis_TUp9_V-kBn9CF55f08NVR+Bx3iyP=O=+PH0QAf73eGY2Q@mail.gmail.com>
+ <20250919161353.GB22933@redhat.com>
+In-Reply-To: <20250919161353.GB22933@redhat.com>
+From: Matt Fleming <mfleming@cloudflare.com>
+Date: Sat, 20 Sep 2025 23:10:07 +0100
+X-Gm-Features: AS18NWAL6GI6XKBuoa9CCanGknXIpYlquJCzZBZvwnlkfbM1vxd0nIWcEfnFL2Y
+Message-ID: <CAGis_TWHJva-gktrsvO9=m5mEFf4zzcN=rNEt+5+moqz=C7AEQ@mail.gmail.com>
+Subject: Re: Debugging lost task in wait_task_inactive() when delivering
+ signal (6.12)
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, John Stultz <jstultz@google.com>, 
+	kernel-team <kernel-team@cloudflare.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Chris Arges <carges@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
 
-...
-> 
-> > > +  interrupts:
-> > > +    minItems: 1
-> > > +    items:
-> > > +      - description: |
-> > > +          Asserts high when ADC readings exceed the upper threshold and low
-> > > +          when below the lower threshold. Must be connected to the COUT pin.
-> > > +      - description: |
-> > > +          Alert output that asserts low during a number of different error
-> > > +          conditions. The interrupt source must be attached to FAULT pin.
-> 
-> These descriptions read wrong to me. They __are__ the COUT and FAULT
-> pins, given what David responded to above, not something that can be
-> connected to these pins (if they were, they would be represented as
-> -gpios rather than interrupts most likely). Unless you mean that these
-> pins can have some other use and are only available on the COUT/FAULT
-> pins when some register value is set - but even in that case saying
-> "must be" doesn't fit since the interrupt property could be used to
-> configure the device accordingly.
+On Fri, 19 Sept 2025 at 17:15, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> OK, thanks. Nothing "interesting" at first glance.
 
-COUT and FAULT are just two pins on the ADC chip that can be used to generate
-interrupts. Would a description like the one below sound better?
+Chris (Cc'd) and I managed to get a reproducer and I think I know
+what's happening now.
 
-  interrupts:
-    minItems: 1
-    items:
-      - description: |
-          cout: Comparator output signal that asserts high when ADC readings
-          exceed the upper threshold and low when readings fall below the lower
-          threshold.
-      - description: |
-          fault: When fault reporting is enabled, the FAULT pin is asserted low
-          whenever one of the monitored fault conditions occurs.
+When a task A gets the SIGKILL from whichever thread is handling the
+coredump (let's say task B) it might hit the delayed dequeue path in
+schedule() and call set_delayed(), e.g.
 
-Best regards,
-Marcelo
+        dequeue_entity+1263
+        dequeue_entities+216
+        dequeue_task_fair+224
+        __schedule+468
+        schedule+39
+        do_exit+221
+        do_group_exit+48
+        get_signal+2078
+        arch_do_signal_or_restart+46
+        irqentry_exit_to_user_mode+132
+        asm_sysvec_apic_timer_interrupt+26
+
+At this point task A has ->on_rq=1, ->se.sched_delayed=1 and ->se.on_rq=1.
+
+Now when task B calls into wait_task_inactive(), it sees
+->se.sched_delayed=1 and calls dequeue_task().
+
+At this point task A has ->on_rq=1, ->se.sched_delayed=0 and ->se.on_rq=0
+
+Unfortunately, task B still thinks that task A is scheduled because
+task_on_rq_queued(A) is true, but it's not runnable and will never run
+because it's no longer in the fair rbtree and the only task that will
+enqueue it again is task B once it leaves wait_task_inactive() and
+hits coredump_finish().
+
+> > do_exit+0xdd is here in coredump_task_wait():
+> >
+> >                 for (;;) {
+> >                         set_current_state(TASK_IDLE|TASK_FREEZABLE);
+> >                         if (!self.task) /* see coredump_finish() */
+> >                                 break;
+> >                         schedule();
+> >                 }
+> >
+> > i.e. the task calls schedule() and never comes back.
+>
+> Are you sure it never comes back and doesn't loop?
+
+Yeah, positive:
+
+$ sudo perf stat -e cycles -t 1546531 -- sleep 30
+
+ Performance counter stats for thread id '1546531':
+
+     <not counted>      cycles
+
+      30.001671072 seconds time elapsed
 
