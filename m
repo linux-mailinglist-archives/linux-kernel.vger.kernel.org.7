@@ -1,176 +1,354 @@
-Return-Path: <linux-kernel+bounces-825844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3B2B8CEE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:34:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECF7B8CEF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D317E3CEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C91E1B21E14
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4107C276059;
-	Sat, 20 Sep 2025 18:34:34 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821C0313287;
+	Sat, 20 Sep 2025 18:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYXuCmjz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F6F2F0C63
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 18:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F60D1AF0AF;
+	Sat, 20 Sep 2025 18:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758393273; cv=none; b=Fo3WRhZ5AzgjD9N4znCXjVF37pRafjIvrMBWVhNq4DsiHvBuPLf8gnsJzOpMJ4wx3Ku5eJ7MIDGKazr5iyM/HZcDOjo84mc6xYW/XOsYpSH+zojdLOBM1y/IxJ0mUNn8phzmRqO7Xi8hD6MSf2Figsc9r93GNzTOjHpjJyXPlO8=
+	t=1758393461; cv=none; b=AKz3feoPxFaZRXMgpWlh41rsMCLOtgFxdzhqJZ4Jh/X7RmaKGGboEbi8Umxs9hacSQIZqvxwiSoy8VNMcJPQ+GUVsifJIsn9F8AdNShoDtWOrx/HFv812fF1C5nSC9XP06lYjaO96eFCIT1QcPYK05JcVPx0wK5mlsPUuGZnviE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758393273; c=relaxed/simple;
-	bh=+MC0BbaujLTNCI+9g6A211Gc6CWoxc37DpZNoLnuvTM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OW8+pfnHd630z32wgwAH/XGC+EcW7J3yYB72tBcdv/HU6ynP2ZXNH2BWWbsu8zqp+TcyqLOMyKkiJZgAi+XxxckHKQ2nzawS+KIJmbTJd7HU50P5mplqx5Og3v9bNOHKRFnkqLLPP1aexDGqrlox4LWaSzFwUcKKpHE+erPy18Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-4240730201bso43622775ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:34:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758393271; x=1758998071;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HT2WO9yLqEIDzyZD4l1i5kDCmIQ1Iacxdz1mEKeBnRw=;
-        b=hGK3dkjRZxBgdqWRTtBtUX0cGCp5z6QuK4cQ6DRalAs0/QBtfbaqM7FauPG69TdoEj
-         RxEPqV0ZEONZW/D9R3IV1B8uN39ym/WqjrMPtT6LwWQpkLn+W9jMpxZuFopzAHUXwt/B
-         /oHc4VIif6nkcnB4dWb9t7sSKVzvby4Z4vYOe88zv9qBo+lRhv0JE1l39r3u8tbfE6Ne
-         wIpFftvODq22mkwcpy+at6Ys9Fq2i+vWf7HOOIjgN3hH3O69AnI20/qxd+5grAnRW0Ob
-         3rG9w59pa8OPgUGkM90eNR3araMz4qKDa2VFX1kNieOMhuD7E3BVUP0RRRRkeAExQYPG
-         bD8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9iPD27QKQoqo2He/mFSphZrPQG4o13d3n6p0a/yx7RTKHGYlXcoj6oECQKauc3ZYhscaeLkShnT7WdDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZKU9XLIXkQ2VkQkhBT/hATQTppYjqihiMmu0SE8FahwFvcI1o
-	4Pm86bgW3viJF6qn5yuUDPwuoZCWOWzqPdwt57InnpjCLqI/TPTft8aocPaaRVRJ42MwiaPdDjT
-	PODqeQclDHd1RLgjJg3CxE72XVmUEkkI6BEdSIXDDy4ZE1+nASw/mMKmHeVA=
-X-Google-Smtp-Source: AGHT+IGq9dmvKlA7D4VU0wfO8SRukJrjCcYUebFfx+hqTK2RgM3lGPEk3H8AoaKb7uq60OXYbx2UnBB+XoPraLbJ1NaKdPeOnQAd
+	s=arc-20240116; t=1758393461; c=relaxed/simple;
+	bh=iCSylAv93zCUppqLF9OkTeWwtoRe8xc76Vs6biiXuuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkU5n9nQOIO1dAZRym6AR9KfkkiwByfMwIxeD+PIWCenS4kxqtCFb7QCy+FcUZuHHaFEVPeWmVZrJNbBh6SHMAbPUXfWFljrE6X5acd4q47/fzBRx8SjyNwFrE3dIGUqKWjdYZpvCZXog6gL1lRAY+T9skvDKkcTwZWPLjIfwN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYXuCmjz; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758393460; x=1789929460;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iCSylAv93zCUppqLF9OkTeWwtoRe8xc76Vs6biiXuuA=;
+  b=IYXuCmjzQYTZtUhDmWGUu5nvfJUQy71yeMOVLdXIbPBO3bK/aKd4zPuT
+   XweefddPAmh1EvfnYdQofTd8JiwLoHW/1FXWYpKSUGhVjKnyK6m0tf2bO
+   ETL9EkfV+ZwiXIs6i6JuVlNF6Vk32dDfOL6saEqBmXkIx7uwVOeUhiKx0
+   tD+ekC8d50r9+YLW0yYNWoo52S4DO2TDJo/PX70UN5Tt9253bkGxyeYWv
+   2czQXc6J9b+6FOxxX93wJsx9F9fyDig4SXcwVzO0AFfStEj1cJcEgBSEc
+   ysdubVEtBBs6T4URTuaMIS+ITtjnHT6DMkwi8zkY2LzzFOemLlTGWtjeo
+   A==;
+X-CSE-ConnectionGUID: qVQwxTpZSsO6q+peAFAhTw==
+X-CSE-MsgGUID: +e4CqfA6RbKawyaXf8mEXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="71338532"
+X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
+   d="scan'208";a="71338532"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 11:37:39 -0700
+X-CSE-ConnectionGUID: 7uzSBtwqRPi0r9v6cgcLbQ==
+X-CSE-MsgGUID: 6rHf7XkzRWCj7l/x+VrB4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
+   d="scan'208";a="180140357"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 20 Sep 2025 11:37:36 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v02Sj-0005fX-0l;
+	Sat, 20 Sep 2025 18:37:33 +0000
+Date: Sun, 21 Sep 2025 02:36:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric =?iso-8859-1?Q?Gon=E7alves?= <ghatto404@gmail.com>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] Input: add support for the STM FTS2BA61Y
+ touchscreen
+Message-ID: <202509210247.oVPW8pop-lkp@intel.com>
+References: <20250920014450.37787-3-ghatto404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13e4:b0:424:8d44:a267 with SMTP id
- e9e14a558f8ab-4248d44a36cmr33889415ab.29.1758393271311; Sat, 20 Sep 2025
- 11:34:31 -0700 (PDT)
-Date: Sat, 20 Sep 2025 11:34:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cef3b7.050a0220.13cd81.001e.GAE@google.com>
-Subject: [syzbot] [bluetooth?] BUG: unable to handle kernel paging request in l2cap_conn_del
-From: syzbot <syzbot+d1bfe010cdd19081abd8@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920014450.37787-3-ghatto404@gmail.com>
 
-Hello,
+Hi Eric,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build errors:
 
-HEAD commit:    8736259279a3 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c58534580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9ed0a6d7c80843e9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d1bfe010cdd19081abd8
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
+[auto build test ERROR on dtor-input/next]
+[also build test ERROR on dtor-input/for-linus robh/for-next linus/master v6.17-rc6 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Gon-alves/dt-bindings-input-Add-ST-Microelectronics-FTS2BA61Y-touchscreen/20250920-094849
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
+patch link:    https://lore.kernel.org/r/20250920014450.37787-3-ghatto404%40gmail.com
+patch subject: [PATCH v1 2/2] Input: add support for the STM FTS2BA61Y touchscreen
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250921/202509210247.oVPW8pop-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509210247.oVPW8pop-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/025c082a7762/disk-87362592.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/606f903fe4d2/vmlinux-87362592.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/23ea2634f398/Image-87362592.gz.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509210247.oVPW8pop-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d1bfe010cdd19081abd8@syzkaller.appspotmail.com
+All errors (new ones prefixed by >>):
 
-Unable to handle kerne
-Unable to handle kernel paging request at virtual address fbd5200000000020
-KASAN: maybe wild-memory-access in range [0xdead000000000100-0xdead000000000107]
-Mem abort info:
-  ESR = 0x0000000096000004
-  EC = 0x25: DABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x04: level 0 translation fault
-Data abort info:
-  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[fbd5200000000020] address between user and kernel address ranges
-Internal error: Oops: 0000000096000004 [#1]  SMP
-Modules linked in:
-CPU: 1 UID: 0 PID: 7191 Comm: syz.4.84 Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : l2cap_conn_del+0x260/0x5f0 net/bluetooth/l2cap_core.c:1783
-lr : l2cap_conn_del+0x354/0x5f0 net/bluetooth/l2cap_core.c:1783
-sp : ffff80009d6674b0
-x29: ffff80009d6674d0 x28: 0000000000000001 x27: ffff80008dcedca0
-x26: ffff0000d5e18000 x25: dead000000000100 x24: 000000007ffffffe
-x23: 0000000000000001 x22: ffff0000c88c1ac0 x21: dead000000000100
-x20: dfff800000000000 x19: ffff0000c88c1800 x18: 00000000ffffffff
-x17: ffff800093524000 x16: ffff80008b0156e8 x15: 0000000000000001
-x14: 1fffe0001abc3001 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001abc3002 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : 1bd5a00000000020 x7 : ffff80008312a368 x6 : 0000000000000000
-x5 : 0000000000000020 x4 : ffff80009d666fb0 x3 : ffff80008a29deb8
-x2 : 0000000000000001 x1 : 0000000000000002 x0 : 0000000000000001
-Call trace:
- l2cap_conn_del+0x260/0x5f0 net/bluetooth/l2cap_core.c:1783 (P)
- l2cap_disconn_cfm+0x90/0xe0 net/bluetooth/l2cap_core.c:7325
- hci_disconn_cfm include/net/bluetooth/hci_core.h:2097 [inline]
- hci_conn_hash_flush+0x108/0x218 net/bluetooth/hci_conn.c:2599
- hci_dev_close_sync+0x89c/0x1154 net/bluetooth/hci_sync.c:5294
- hci_dev_do_close net/bluetooth/hci_core.c:501 [inline]
- hci_unregister_dev+0x204/0x4c0 net/bluetooth/hci_core.c:2715
- vhci_release+0x12c/0x17c drivers/bluetooth/hci_vhci.c:690
- __fput+0x340/0x75c fs/file_table.c:468
- ____fput+0x20/0x58 fs/file_table.c:496
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0x524/0x1a14 kernel/exit.c:961
- do_group_exit+0x194/0x22c kernel/exit.c:1102
- get_signal+0x11dc/0x12f8 kernel/signal.c:3034
- arch_do_signal_or_restart+0x274/0x4434 arch/arm64/kernel/signal.c:1619
- exit_to_user_mode_loop+0x7c/0x168 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
- el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:745
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:763
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-Code: 54000e80 52800037 321f77f8 d343ff28 (38746908) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	54000e80 	b.eq	0x1d0  // b.none
-   4:	52800037 	mov	w23, #0x1                   	// #1
-   8:	321f77f8 	mov	w24, #0x7ffffffe            	// #2147483646
-   c:	d343ff28 	lsr	x8, x25, #3
-* 10:	38746908 	ldrb	w8, [x8, x20] <-- trapping instruction
+   drivers/input/touchscreen/fts2ba61y.c: In function 'fts2ba61y_wait_for_ready':
+>> drivers/input/touchscreen/fts2ba61y.c:250:25: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+     250 |                 stype = FIELD_GET(FTS2BA61Y_MASK_STYPE, buffer[0]);
+         |                         ^~~~~~~~~
+   drivers/input/touchscreen/fts2ba61y.c: In function 'fts2ba61y_irq_handler':
+>> drivers/input/touchscreen/fts2ba61y.c:442:9: error: implicit declaration of function 'usleep'; did you mean 'fsleep'? [-Wimplicit-function-declaration]
+     442 |         usleep(1);
+         |         ^~~~~~
+         |         fsleep
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+vim +/FIELD_GET +250 drivers/input/touchscreen/fts2ba61y.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+   239	
+   240	static int fts2ba61y_wait_for_ready(struct fts2ba61y_data *ts)
+   241	{
+   242		u8 buffer[FTS2BA61Y_EVENT_BUFF_SIZE];
+   243		u8 cmd = FTS2BA61Y_CMD_READ_EVENT;
+   244		u8 status_id, stype;
+   245		int ret;
+   246	
+   247		for (int retries = 5; retries > 0; retries--) {
+   248			ret = fts2ba61y_read(ts, &cmd, 1, buffer, FTS2BA61Y_EVENT_BUFF_SIZE);
+   249	
+ > 250			stype = FIELD_GET(FTS2BA61Y_MASK_STYPE, buffer[0]);
+   251			status_id = buffer[1];
+   252	
+   253			if (stype == FTS2BA61Y_EVENT_STATUSTYPE_INFO &&
+   254			    status_id == FTS2BA61Y_INFO_READY_STATUS) {
+   255				ret = 0;
+   256				break;
+   257			} else
+   258				ret = -ENODEV;
+   259	
+   260			msleep(20);
+   261		}
+   262	
+   263		return ret;
+   264	}
+   265	
+   266	static int fts2ba61y_reset(struct fts2ba61y_data *ts)
+   267	{
+   268		u8 cmd = FTS2BA61Y_CMD_REG_W;
+   269		/* the following sequence is undocumented */
+   270		u8 reset[FTS2BA61Y_RESET_CMD_SIZE] = { 0x20, 0x00,
+   271						       0x00, 0x24, 0x81 };
+   272		int ret;
+   273	
+   274		disable_irq(ts->spi->irq);
+   275	
+   276		ret = fts2ba61y_write(ts, &cmd, 1, &reset[0], FTS2BA61Y_RESET_CMD_SIZE);
+   277		if (ret)
+   278			return ret;
+   279		msleep(30);
+   280	
+   281		ret = fts2ba61y_wait_for_ready(ts);
+   282		if (ret)
+   283			return ret;
+   284	
+   285		enable_irq(ts->spi->irq);
+   286	
+   287		return 0;
+   288	}
+   289	
+   290	static int fts2ba61y_set_channels(struct fts2ba61y_data *ts)
+   291	{
+   292		int ret;
+   293		u8 cmd = FTS2BA61Y_CMD_READ_PANEL_INFO;
+   294		u8 data[FTS2BA61Y_PANEL_INFO_SIZE];
+   295	
+   296		ret = fts2ba61y_read(ts, &cmd, 1, data, FTS2BA61Y_PANEL_INFO_SIZE);
+   297		if (ret)
+   298			return ret;
+   299	
+   300		ts->max_x = get_unaligned_be16(data);
+   301		ts->max_y = get_unaligned_be16(data + 2);
+   302	
+   303		/* if no tx channels defined, at least keep one */
+   304		ts->tx_count = max_t(u8, data[8], 1);
+   305	
+   306		return 0;
+   307	}
+   308	
+   309	static int fts2ba61y_set_touch_func(struct fts2ba61y_data *ts)
+   310	{
+   311		u8 cmd = FTS2BA61Y_CMD_TOUCHTYPE;
+   312		u16 touchtype = cpu_to_le16(FTS2BA61Y_TOUCHTYPE_DEFAULT);
+   313	
+   314		return fts2ba61y_write(ts, &cmd, 1, (u8 *)&touchtype, 2);
+   315	}
+   316	
+   317	static int fts2ba61y_hw_init(struct fts2ba61y_data *ts)
+   318	{
+   319		int ret;
+   320	
+   321		ret = regulator_bulk_enable(ARRAY_SIZE(ts->regulators),
+   322									ts->regulators);
+   323		if (ret)
+   324			return ret;
+   325	
+   326		msleep(140);
+   327	
+   328		ret = fts2ba61y_reset(ts);
+   329		if (ret)
+   330			return ret;
+   331	
+   332		ret = fts2ba61y_set_channels(ts);
+   333		if (ret)
+   334			return ret;
+   335	
+   336		return fts2ba61y_set_touch_func(ts);
+   337	}
+   338	
+   339	static int fts2ba61y_get_event(struct fts2ba61y_data *ts, u8 *data, int *n_events)
+   340	{
+   341		int ret;
+   342		u8 cmd = FTS2BA61Y_CMD_READ_EVENT;
+   343	
+   344		ret = fts2ba61y_read(ts, &cmd, 1, data, FTS2BA61Y_EVENT_BUFF_SIZE);
+   345		if (ret < 0)
+   346			return ret;
+   347	
+   348		if (!data[0]) {
+   349			*n_events = 0;
+   350			return 0;
+   351		}
+   352	
+   353		*n_events = FIELD_GET(FTS2BA61Y_MASK_LEFT_EVENTS, data[7]);
+   354		if (unlikely(*n_events >= FTS2BA61Y_EVENT_COUNT)) {
+   355			cmd = FTS2BA61Y_CMD_CLEAR_EVENTS;
+   356			fts2ba61y_write(ts, &cmd, 1, NULL, 0);
+   357			*n_events = 0;
+   358			return -EINVAL;
+   359		}
+   360	
+   361		if (*n_events > 0) {
+   362			ret = fts2ba61y_read(ts, &cmd, 1,
+   363					     &data[1 * FTS2BA61Y_EVENT_BUFF_SIZE],
+   364					     FTS2BA61Y_EVENT_BUFF_SIZE * (*n_events));
+   365			if (ret)
+   366				return ret;
+   367		}
+   368	
+   369		return 0;
+   370	}
+   371	
+   372	static void fts2ba61y_report_coordinates(struct fts2ba61y_data *ts,
+   373						 u8 *event, u8 tid)
+   374	{
+   375		u8 major = event[4];
+   376		u8 minor = event[5];
+   377		u8 z = FIELD_GET(FTS2BA61Y_MASK_Z, event[6]);
+   378	
+   379		u16 x = (event[1] << 4) |
+   380			FIELD_GET(FTS2BA61Y_MASK_X_3_0, event[3]);
+   381		u16 y = (event[2] << 4) |
+   382			FIELD_GET(FTS2BA61Y_MASK_Y_3_0, event[3]);
+   383		u16 ttype = (FIELD_GET(FTS2BA61Y_MASK_TTYPE_3_2, event[6]) << 2) |
+   384			    (FIELD_GET(FTS2BA61Y_MASK_TTYPE_1_0, event[7]) << 0);
+   385	
+   386		if (ttype != FTS2BA61Y_TOUCHTYPE_NORMAL &&
+   387		    ttype != FTS2BA61Y_TOUCHTYPE_PALM &&
+   388		    ttype != FTS2BA61Y_TOUCHTYPE_WET &&
+   389		    ttype != FTS2BA61Y_TOUCHTYPE_GLOVE)
+   390			return;
+   391	
+   392		input_mt_slot(ts->input_dev, tid);
+   393		input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, true);
+   394		input_report_abs(ts->input_dev, ABS_MT_POSITION_X, x);
+   395		input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, y);
+   396		input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, major);
+   397		input_report_abs(ts->input_dev, ABS_MT_TOUCH_MINOR, minor);
+   398		input_report_abs(ts->input_dev, ABS_MT_PRESSURE, z);
+   399	
+   400		input_mt_sync_frame(ts->input_dev);
+   401		input_sync(ts->input_dev);
+   402	}
+   403	
+   404	static void fts2ba61y_report_release(struct fts2ba61y_data *ts, u8 tid)
+   405	{
+   406		input_mt_slot(ts->input_dev, tid);
+   407		input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, false);
+   408	
+   409		input_mt_sync_frame(ts->input_dev);
+   410		input_sync(ts->input_dev);
+   411	}
+   412	
+   413	static void fts2ba61y_handle_coordinates(struct fts2ba61y_data *ts, u8 *event)
+   414	{
+   415		u8 t_id = FIELD_GET(FTS2BA61Y_MASK_TID, event[0]);
+   416		u8 action = FIELD_GET(FTS2BA61Y_MASK_TCHSTA, event[0]);
+   417	
+   418		if (t_id > ts->tx_count)
+   419			return;
+   420	
+   421		switch (action) {
+   422		case FTS2BA61Y_COORDINATE_ACTION_PRESS:
+   423		case FTS2BA61Y_COORDINATE_ACTION_MOVE:
+   424			fts2ba61y_report_coordinates(ts, event, t_id);
+   425			break;
+   426	
+   427		case FTS2BA61Y_COORDINATE_ACTION_RELEASE:
+   428			fts2ba61y_report_release(ts, t_id);
+   429			break;
+   430		}
+   431	}
+   432	
+   433	static irqreturn_t fts2ba61y_irq_handler(int irq, void *handle)
+   434	{
+   435		struct fts2ba61y_data *ts = handle;
+   436		u8 buffer[FTS2BA61Y_EVENT_COUNT * FTS2BA61Y_EVENT_BUFF_SIZE];
+   437		u8 *event;
+   438		u8 event_id;
+   439		int n_events = 0;
+   440		int ret;
+   441	
+ > 442		usleep(1);
+   443	
+   444		ret = fts2ba61y_get_event(ts, buffer, &n_events);
+   445		if (ret < 0) {
+   446			dev_dbg(&ts->spi->dev, "failed to get event: %d", ret);
+   447			return IRQ_HANDLED;
+   448		}
+   449	
+   450		for (int i = 0; i <= n_events; i++) {
+   451			event = &buffer[i * FTS2BA61Y_EVENT_BUFF_SIZE];
+   452			event_id = FIELD_GET(FTS2BA61Y_MASK_EVENT_ID, event[0]);
+   453	
+   454			if (event_id == FTS2BA61Y_COORDINATE_EVENT)
+   455				fts2ba61y_handle_coordinates(ts, event);
+   456		}
+   457	
+   458		return IRQ_HANDLED;
+   459	}
+   460	
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
