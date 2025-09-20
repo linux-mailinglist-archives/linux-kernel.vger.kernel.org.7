@@ -1,170 +1,291 @@
-Return-Path: <linux-kernel+bounces-825767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB62B8CC7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25672B8CC8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43AC3BF05A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D17121B23003
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D77828DB3;
-	Sat, 20 Sep 2025 16:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2852626FDA8;
+	Sat, 20 Sep 2025 16:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZS3g0djW"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="E7EkJnA7"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D14223707
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C90A2248B8
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 16:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758384044; cv=none; b=l5HT6miQtZW1WjRESJ/AcODdGuKYa9VbzUO0Wm6NC/ywdolF/K/x196eWRet6R291Tb6+SuDAst/VeXuAId7VyZroyssUS57GFyoh3SXfithPygZwilOPPmVVLBLG3UBclNb7CosA5okkkPxwsknTldI+VNOadtumO9IqGdNFP4=
+	t=1758384972; cv=none; b=TLZySABOGzkWN1fCM2CRuZ7X/V1BAqJsJQCVvoFROWxyr5+kQ8sQ/RiqcoU75t6nO+0LAJaQ53+MKbBLr9GXyV0EmeupLc4xog19TUKErmGej7cp8DeOpafo+u+atoI+wRAOKI26WuXaYnk6SQtR3i/6Gasdarxu9spWG8VVc5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758384044; c=relaxed/simple;
-	bh=0FXSiX8LV1vGBvynLmEYz4qPHdBcTqMHOixN5CzoCzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQ3FT0V8MmtTLQZEmT+ZNpcrVnmhQdKdtrH99C7ft3FnYhX3zOcN+6Dt4+8D5n+WJujKkcg/AOj2PZY021LjT9b6r21E58PomhuWw+oG6T4Ke/6HSh4/OE1mdfiVCEvUi6+wxtX2iAAqbUHW1wGKBp59KFUukyNgNQiTDmqR5RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZS3g0djW; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fbd0a9031so2835541a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758384039; x=1758988839; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6bGBwhqJX9F0xOuCnvuuNe/MoHdsR7Bf1qZLNoNX5Qk=;
-        b=ZS3g0djW0jR7JfMIJpNFpMiCo2l9HKrn2Zi8SbeP2K1Ltvv6LAm8VQ5EGwXsgJVaT5
-         K84LjxLJb9obJ90J1gpQtpK2BY58Tqlz4JA5F4xcKGFSakm9mp+m95WHYRmG0WJSdQMX
-         N6/xVrC46qLXWRoyqCRTxOp/SZuacMW1QKQDG6x7Zp6/cHETwhz9Q6kgRFT+xVwBn1CJ
-         k2Q/vlWINIFkbSBoibgqMkHwSv3KN0cHm6yLggeb0xpwpv8Hebed8zJd8FKtQNkB1JrX
-         XZyC5KTIFEFlRcydTic6AagLqi4KiefJwzg1ircy8uYD+G4rgs9KGGZLr5vFTwM85Opm
-         FfOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758384039; x=1758988839;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6bGBwhqJX9F0xOuCnvuuNe/MoHdsR7Bf1qZLNoNX5Qk=;
-        b=Ese5ca1m57tISBknWd0tvifXm1FIDVxtrrZ0mXqfnuu8GqwYQdI0QyLTj0q2yNG28f
-         evA0kXMjZjVD7GbFkkgnHIAHX6wFUvDEs8IraKYR1mJcAW9Omt9BReAxseVRD8O6I20x
-         X3TM2GEzXCiFwNLYkmxmTfnDNHHv2ECRBk8DPPMPHfiuk81O1VvwGNAYZ1tU0Lw1Aq+v
-         hfmsJCQJOuQFRudHUnG0rTLHHmcCo1b2IhJ+Tgv1kqxw4E6lhanqPHzBn81Br6gAyrJ1
-         7jBDVJP3U6Gc8njDzTjTaboQcNi+PYU7rE94sdtTW8ZxzllJ7UGNwGjt/CIOjcQlCwxp
-         idpA==
-X-Gm-Message-State: AOJu0Yy586trgY4cDcOh6/L1EpCZm7Wwqx2UUgCiq5IntPDhbJz4SXWn
-	BgRD/7uyl8y6XDn6QOYnc7I+t/oSGcko44H2zDPy8tKHU6Id6nanDWHYnWIiBXxXfzJX9l5gSz4
-	jCHA5nnwJQuBUwpmu0N7BBSm+xUcxKjx1yWROkCtZmEax5EziYU+uT/g=
-X-Gm-Gg: ASbGncu1rRJ9X0tiHYUmjB2qWHpe67Om9wiK+NxN4Vdwvl8we7jvSRtTzPFMKxNETy0
-	db7xQg1jhJ62V6nxIYwskG0umBpUsP1MkqTfqah7T1n7m0pVUzRMs0Wl5xi2gkzdI3hVQaBzg6Y
-	jx6rvmWdTiuOY1dUasPjpVp6OI8cLWe7+oLjtIQP7lcuCeC8amwe4aSEcsfWmwb9ii+3Hs1T/bd
-	auLPPAzjVpPJw1SQK2cs9bn2J8NWgEYL/Gw
-X-Google-Smtp-Source: AGHT+IGhUL+kILCgvIy42z2qBJz3nD98fFtf16ENDJwDcWGqNqZPLpWOf/WplU4dCmobMVHp3dmQfvBSGbyb8aaZ16k=
-X-Received: by 2002:a05:6402:208a:b0:62f:31f6:6aac with SMTP id
- 4fb4d7f45d1cf-62fc0a7b1e0mr6728772a12.23.1758384038519; Sat, 20 Sep 2025
- 09:00:38 -0700 (PDT)
+	s=arc-20240116; t=1758384972; c=relaxed/simple;
+	bh=pBg+H+WuysaGpmU8+ZRldk6GUvTzh9HXURRnT1SFq3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=px9U9qMWTpy3XnHMP4IuciRHBej8qfdl4V2Co/wzpTNBfsaLuE73j2OFAwuBaEY61h2N6B0xfsaFJ2jybiRplimtzTEnxtN7zMTw2+GPjU0/T04idycBeZpGtnoTFBmMo52BjE93p71skG+zqnMSWfLPjuL+bSLprSs6hai9ceg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=E7EkJnA7; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1758384967;
+ bh=Yo3TRWqd/f2gI3b91RC3TrXuz17cR69Z0ilP2DQxqXM=;
+ b=E7EkJnA7VZhT/kckGawBzeQomoY2XsMf5zex5O3f9UigVEew7DslMdNbfXYPmLEbufUTZkES7
+ r9vT3RqOVEFzXkoca1/GaIpkk+JUPvR4VM6NLHv5nqRazDZ3hAL7AMCtAeOCcfzYLq0lp4KX9SI
+ QXC2PhX+L8SxSIMafsYyP+HW64NZoWopfYY6uKiZ5XKOeZWM0yU4kbdLRUNGsWRxllPqZaidC9t
+ t7ZLcwZPsm5Dk1wGs++9a50OyjGuym0FIH5FeVyoW4hE2d+jQ0tSafgqQxH+WYABmoBSC3D7jTs
+ 7pb7n7xXNMwRkWv7SaPgn1iYMjSeI4x4nrkH8qMIiHHg==
+X-Forward-Email-ID: 68ced33e9c5715b3f5ddfb7c
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.2.14
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <ea0914d9-bd12-4bdc-b465-3ae82571118a@kwiboo.se>
+Date: Sat, 20 Sep 2025 18:15:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKfTPtBp85jaM8sdOXqB1Fq7XcfgGP-T2A=fd4Qbhe48CUNUGA@mail.gmail.com>
-In-Reply-To: <CAKfTPtBp85jaM8sdOXqB1Fq7XcfgGP-T2A=fd4Qbhe48CUNUGA@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Sat, 20 Sep 2025 18:00:26 +0200
-X-Gm-Features: AS18NWCZwxYmt0CLn-uDv8qhYWdHHmD_8uweCDgoyxFrcUPIiuRHE3oZNODkeAQ
-Message-ID: <CAKfTPtBKB41LyyfSDm7RK=gbDt3JjY_k8SJAALxQzxGACEp+ig@mail.gmail.com>
-Subject: Re: Call for Speakers: Join us at the Scheduler and Real-Time
- Microconference at LPC2025!
-To: linux-kernel <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Clark Williams <williams@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	John Stultz <jstultz@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Phil Auld <pauld@redhat.com>, dhaval@gianis.ca, Aaron Lu <ziqianlu@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/12] media: rkvdec: Add H264 support for the VDPU381
+ variant
+To: Diederik de Haas <didi.debian@cknow.org>,
+ Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ kernel@collabora.com, linux-kernel@vger.kernel.org
+References: <20250808200340.156393-1-detlev.casanova@collabora.com>
+ <20250808200340.156393-10-detlev.casanova@collabora.com>
+ <DCXPTZRNNTDY.1773L2181HWF@cknow.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <DCXPTZRNNTDY.1773L2181HWF@cknow.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi everyone,
+Hi Diederik,
 
-Just a friendly reminder that the Call for Proposals for the Scheduler
-and Real-Time Microconference at Linux Plumbers 2025 closes on Sept
-30th, 2025.
+On 9/20/2025 5:00 PM, Diederik de Haas wrote:
+> Hi Detlev,
+> 
+> Thanks a LOT for this patch set!
+> As already reported the results were quite impressive :-D
+> 
+> To figure out how to make VDPU346 for rk3568 work, I had a close look at
+> the TRM and compared that to rk3588's TRM and compared it to your code.
+> I think I may have found a few potential issue, but I may also not
+> understand things correctly.
+> 
+> On Fri Aug 8, 2025 at 10:03 PM CEST, Detlev Casanova wrote:
+>> This decoder variant is found in Rockchip RK3588 SoC family.
+>>
+>> Like for rkvdec on rk3399, it supports the NV12, NV15, NV16 and NV20
+>> output formats and level up to 5.1.
+>>
+>> The maximum width and height have been significantly increased
+>> supporting up to 65520 pixels for both.
+>>
+>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>> ---
+>>  .../media/platform/rockchip/rkvdec/Makefile   |   1 +
+>>  .../rockchip/rkvdec/rkvdec-h264-common.h      |   2 +
+>>  .../platform/rockchip/rkvdec/rkvdec-h264.c    |  36 --
+>>  .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     | 469 ++++++++++++++++++
+>>  .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     | 427 ++++++++++++++++
+>>  .../media/platform/rockchip/rkvdec/rkvdec.c   | 164 +++++-
+>>  .../media/platform/rockchip/rkvdec/rkvdec.h   |   6 +
+>>  7 files changed, 1067 insertions(+), 38 deletions(-)
+>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-h264.c
+>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
+>>
+>> ...
+>>
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h b/drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
+>> new file mode 100644
+>> index 0000000000000..11b545e9ee7ea
+>> --- /dev/null
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
+>> @@ -0,0 +1,427 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Rockchip VDPU381 Video Decoder driver registers description
+>> + *
+>> + * Copyright (C) 2024 Collabora, Ltd.
+>> + *  Detlev Casanova <detlev.casanova@collabora.com>
+>> + */
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#ifndef _RKVDEC_REGS_H_
+>> +#define _RKVDEC_REGS_H_
+>> +
+>> +#define OFFSET_COMMON_REGS		(8 * sizeof(u32))
+>> +#define OFFSET_CODEC_PARAMS_REGS	(64 * sizeof(u32))
+>> +#define OFFSET_COMMON_ADDR_REGS		(128 * sizeof(u32))
+>> +#define OFFSET_CODEC_ADDR_REGS		(160 * sizeof(u32))
+>> +#define OFFSET_POC_HIGHBIT_REGS		(200 * sizeof(u32))
+>> +
+>> +#define VDPU381_MODE_HEVC	0
+>> +#define VDPU381_MODE_H264	1
+>> +#define VDPU381_MODE_VP9	2
+>> +#define VDPU381_MODE_AVS2	3
+>> +
+>> +#define MAX_SLICE_NUMBER	0x3fff
+>> +
+>> +#define RKVDEC_1080P_PIXELS		(1920 * 1080)
+>> +#define RKVDEC_4K_PIXELS		(4096 * 2304)
+>> +#define RKVDEC_8K_PIXELS		(7680 * 4320)
+> 
+> In the RK3588 TRM Part 1 paragraph 5.4.3 I can find the values for 4K
+> and 8K, but the 1080P resolution seems to be 1920x1088 (not 1080).
+> 
+>> +#define RKVDEC_TIMEOUT_1080p		(0xefffff)
+>> +#define RKVDEC_TIMEOUT_4K		(0x2cfffff)
+>> +#define RKVDEC_TIMEOUT_8K		(0x4ffffff)
+>> +#define RKVDEC_TIMEOUT_MAX		(0xffffffff)
+>> +
+>> +#define VDPU381_REG_DEC_E		0x028
+>> +#define VDPU381_DEC_E_BIT		1
+>> +
+>> +#define VDPU381_REG_IMPORTANT_EN	0x02c
+>> +#define VDPU381_DEC_IRQ_DISABLE	BIT(4)
+>> +
+>> +#define VDPU381_REG_STA_INT		0x380
+>> +#define VDPU381_STA_INT_DEC_RDY_STA	BIT(2)
+>> +#define VDPU381_STA_INT_ERROR		BIT(4)
+>> +#define VDPU381_STA_INT_TIMEOUT		BIT(5)
+>> +#define VDPU381_STA_INT_SOFTRESET_RDY	BIT(9)
+>> +
+>> +/* base: OFFSET_COMMON_REGS */
+>>
+>> ...
+>>
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> index 0ccf1ba81958a..1b55fe4ff2baf 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> @@ -28,6 +28,7 @@
+>>  
+>>  #include "rkvdec.h"
+>>  #include "rkvdec-regs.h"
+>> +#include "rkvdec-vdpu381-regs.h"
+>>  #include "rkvdec-rcb.h"
+>>  
+>>  static bool rkvdec_image_fmt_match(enum rkvdec_image_fmt fmt1,
+>> @@ -84,11 +85,50 @@ static bool rkvdec_is_valid_fmt(struct rkvdec_ctx *ctx, u32 fourcc,
+>>  	return false;
+>>  }
+>>  
+>> +#define VDPU38X_STRIDE_ALIGN	16
+>> +
+>> +/**
+>> + * The default v4l2_fill_pixfmt_mp() function doesn't allow for specific alignment values.
+>> + * As the VDPU381 and VDPU383 need lines to be aligned on 16, use our own implementation here.
+>> + */
+>> +static int vdpu38x_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pix_mp, u32 pixelformat,
+>> +				  u32 width, u32 height)
+>> +{
+>> +	const struct v4l2_format_info *info = v4l2_format_info(pix_mp->pixelformat);
+>> +	struct v4l2_plane_pix_format *plane = &pix_mp->plane_fmt[0];
+>> +
+>> +	if (!info)
+>> +		return -EINVAL;
+>> +
+>> +	pix_mp->num_planes = 1;
+>> +
+>> +	memset(plane, 0, sizeof(*plane));
+>> +
+>> +	plane->bytesperline = pix_mp->width * info->bpp[0] / info->bpp_div[0];
+>> +	plane->bytesperline = ALIGN(plane->bytesperline, VDPU38X_STRIDE_ALIGN);
+>> +
+>> +	for (int i = 0; i < info->comp_planes; i++) {
+>> +		unsigned int vdiv = i ? info->vdiv : 1;
+>> +		unsigned int hdiv = i ? info->hdiv : 1;
+>> +		unsigned int stride = DIV_ROUND_UP(pix_mp->width, hdiv)
+>> +				    * info->bpp[i] / info->bpp_div[i];
+>> +		unsigned int height = DIV_ROUND_UP(pix_mp->height, vdiv);
+>> +
+>> +		plane->sizeimage += ALIGN(stride, VDPU38X_STRIDE_ALIGN) * height;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static void rkvdec_fill_decoded_pixfmt(struct rkvdec_ctx *ctx,
+>>  				       struct v4l2_pix_format_mplane *pix_mp)
+>>  {
+>> -	v4l2_fill_pixfmt_mp(pix_mp, pix_mp->pixelformat,
+>> -			    pix_mp->width, pix_mp->height);
+>> +	struct rkvdec_config *cfg = ctx->dev->config;
+>> +
+>> +	cfg->fill_pixfmt_mp(pix_mp, pix_mp->pixelformat, pix_mp->width, pix_mp->height);
+>> +
+>> +	ctx->colmv_offset = pix_mp->plane_fmt[0].sizeimage;
+>> +
+>>  	pix_mp->plane_fmt[0].sizeimage += 128 *
+>>  		DIV_ROUND_UP(pix_mp->width, 16) *
+>>  		DIV_ROUND_UP(pix_mp->height, 16);
+>> @@ -287,6 +327,25 @@ static const struct rkvdec_coded_fmt_desc rkvdec_coded_fmts[] = {
+>>  	}
+>>  };
+>>  
+>> +static const struct rkvdec_coded_fmt_desc vdpu381_coded_fmts[] = {
+>> +	{
+>> +		.fourcc = V4L2_PIX_FMT_H264_SLICE,
+>> +		.frmsize = {
+>> +			.min_width = 64,
+>> +			.max_width =  65520,
+>> +			.step_width = 64,
+>> +			.min_height = 16,
+>> +			.max_height =  65520,
+>> +			.step_height = 16,
+>> +		},
+> 
+> Also in the RK3588 TRM Part 1 paragraph 5.4.3, I see "Supported image size" :
+> 16x16 to 65520x65520; step size 16 pixels
+> 
+> I interpret that that .min_width and .step_width should both be 16.
+> (.min_height and .step_height are correct at 16; if I read the TRM right)
 
-We're looking forward to receiving your proposals!
+The frmsize used internally for rkvdec is only meant to restrict/align
+the frame buffer use while decoding, It does not reflect sizes the HW
+can decode.
 
-Best regards,
-The Scheduler and Real-Time Microconference Team
-- Dhaval Giani <dhaval.giani@gmail.com>
-- Juri Lelli <juri.lelli@redhat.com>
-- Phil Auld <pauld@redhat.com>
-- Steven Rostedt <rostedt@goodmis.org>
-- Vincent Guittot <vincent.guittot@linaro.org>
+frmsize should typically be min 64x64 with step_height 16 and step_width
+64 to ensure stride is 16 byte aligned for both 8-bit and 10-bit video.
 
-On Mon, 18 Aug 2025 at 20:31, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> Hello everyone,
->
-> We're pleased to announce that the Call for Topics for the upcoming
-> Scheduler and Real-Time Microconference at Linux Plumbers 2025, is
-> open!
->
->     https://lpc.events/event/19/sessions/218/
->
-> This event is designed to gather kernel developers and engineers to
-> share knowledge on scheduler and/or real time issues in Linux and
-> connect with peers. This year, we are joining the tightly linked
-> Real-Time and scheduler topics in one same microconference.
->
-> We're particularly interested in talks that:
->
->     - Spark Discussion: The goal is to discuss open problems,
-> preferably with patch sets already on the mailing list.
->
->     - Are Concise: Presentations are meant to be limited to 2 or 3
-> slides intended to seed a discussion and debate.
->
-> Some possible topics for discussions:
->
->     - Improve responsiveness of fair tasks
->     - Improve PREEMPT_RT
->     - Improve Locking and priority inversion
->     - Impact of new topology, including hybrid or heterogeneous system
->     - Improvements on SCHED_DEADLINE and DL server
->     - Tooling for debugging low latency analysis
->
-> It is also perfectly fine if you have a new topic that is not on the
-> list above. People are encouraged to submit any topic related to
-> real-time and/or scheduling.
->
-> Ready to submit? Please fill out the submission form by
->
->     Sept 30th 2025
->
-> at this link:
->
->     https://lpc.events/event/19/abstracts/
->
-> and select
->
->     "Scheduler and Real-Time MC" as the track.
->
-> We can't wait to see your proposal and build a fantastic lineup together.
->
-> If you have any questions, don't hesitate to reach out.
->
-> Best regards,
->
-> The Scheduler and Real-Time Microconference Team
-> - Dhaval Giani <dhaval.giani@gmail.com>
-> - Juri Lelli <juri.lelli@redhat.com>
-> - Phil Auld <pauld@redhat.com>
-> - Steven Rostedt <rostedt@goodmis.org>
-> - Vincent Guittot <vincent.guittot@linaro.org>
+Only max_width and max_height is used from here to signal userspace what
+max res is supported, together with min/max res and step of 1.
+
+Regards,
+Jonas
+
+> 
+>> +		.ctrls = &rkvdec_h264_ctrls,
+>> +		.ops = &rkvdec_vdpu381_h264_fmt_ops,
+>> +		.num_decoded_fmts = ARRAY_SIZE(rkvdec_h264_decoded_fmts),
+>> +		.decoded_fmts = rkvdec_h264_decoded_fmts,
+>> +		.subsystem_flags = VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
+>> +	},
+>> +};
+>> +
+>>  static const struct rkvdec_coded_fmt_desc *
+>>  rkvdec_find_coded_fmt_desc(struct rkvdec_ctx *ctx, u32 fourcc)
+>>  {
+>> @@ -1125,6 +1184,35 @@ static irqreturn_t rk3399_irq_handler(struct rkvdec_ctx *ctx)
+> 
+> Cheers,
+>   Diederik
+
 
