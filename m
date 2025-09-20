@@ -1,82 +1,125 @@
-Return-Path: <linux-kernel+bounces-825927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D33B8D232
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:12:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13321B8D239
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5139189F318
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4C4189F957
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FEB283FE8;
-	Sat, 20 Sep 2025 23:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56F1267B94;
+	Sat, 20 Sep 2025 23:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZz9J+Mj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p477SXld"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09340188CB1;
-	Sat, 20 Sep 2025 23:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489BE1C3F0C
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 23:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758409940; cv=none; b=pmWvYlWV16ILWBLs+YdMKaIoqTk1bxpMm+ls4tzb8KUvEErKhwtohIbaEsJhxiFGMVNhsS46Rp6vHTGMku5FvZtUZlx5evgd5WZ/dxjzXDQeWuQVOC7KqEvh2GPFJIfK8xVyzCRcUGX0n+xU6faF4a4lvU4Itds2mEKqoGfXq6E=
+	t=1758410277; cv=none; b=Ckvs6t0PoL9KRBfOW4PFyxo+7bjijiKlHxdrAWPnCSaxnO5wiHnzRBSRgdKgHw+ebHkFG6892O5oZ9/iTi1JsUxRo5/4q7iyYw6p8fEYmU1skmHb+MM98kGwmh47o6Ovv8FIQgUJCWNQG/y6sU3mlzAprxer6wThzIK4FemGy78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758409940; c=relaxed/simple;
-	bh=eFnc9b1aoladqShWY6Ma0VhkLo6XXery986wD968NAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnryzqDKScGcnmaZ5kJG0+HvrSACVIIvQaJ/qQuGHR8dMghSTcuN5RnUiVYsC9WWiVl+jsygDIYt/CT1AvcGe6mtDjQ6sv4PEkEvwLKWER8rJkVm7kYR2k9XjusP5qQSqvIkswjSbB903sx931ePj/kIPAzJjYOczenzD7QHUHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZz9J+Mj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BBAC4CEEB;
-	Sat, 20 Sep 2025 23:12:19 +0000 (UTC)
+	s=arc-20240116; t=1758410277; c=relaxed/simple;
+	bh=G/KVEA6ViEWnKvN1kHms/3KktEfZIelB3DdtbCJIg34=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dzB1FBVkvB3lM+XCmiXnAdF4zQ5iS3YGAaM+OFHaCp6+/lwRmKbxZ5r+8qd6ZbQEq56dhkIjHVxbgT5wREl98C+2PU8/YxOks5GSczM+d1cppj6MqUIoxfiW98cuntjcD9cGOvj5QJX42bF/BS8Khu8FU0rsoXFP7lKYgAdD6ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p477SXld; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3A78C4CEEB;
+	Sat, 20 Sep 2025 23:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758409939;
-	bh=eFnc9b1aoladqShWY6Ma0VhkLo6XXery986wD968NAU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TZz9J+MjJDl0UvG7r5/l1XW/V0b12bQdNcvgPUBCpjiNXi38BeAg0wndvCctQIusZ
-	 JRQNgo2s5r3IVYGkTN0RsvAJm/TD7b7uube7HjIMwc+NCKicO06glpZcC1NPanxG/q
-	 fTfL7XRimHxs94vMlvKtTVXxPn6Kil2Fb+Zx7fo34YFG/w/IYPENoZ0y/Glfa1QTJE
-	 59Q5M/eL+Z2RYvpnDCGvRqQxkeXGIBXgo5Z/RcW2mJzSqhc+PfGVxILXmX2/gzTecF
-	 wkCeO6iYhiRUoTNmtEn8s/PN9SCFXxJbIry6gMNW5z96hefum1S62gYwUYSawWCmPE
-	 nmnjkfsCDzkiA==
-Date: Sat, 20 Sep 2025 16:12:18 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Han Gao <rabenda.cn@gmail.com>
-Cc: devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] riscv: dts: thead: add ziccrse for th1520
-Message-ID: <aM800uhWPZ3x28mm@thelio>
-References: <cover.1758228055.git.rabenda.cn@gmail.com>
- <71ac2ff73a63bd8674c4bc91fd287390d5339609.1758228055.git.rabenda.cn@gmail.com>
+	s=k20201202; t=1758410276;
+	bh=G/KVEA6ViEWnKvN1kHms/3KktEfZIelB3DdtbCJIg34=;
+	h=From:Date:Subject:To:Cc:From;
+	b=p477SXldWwo2M0sODjdZxFK6EMik9VbIfWdFl263uvQtZcyjIVfi9+SxvDmRzHw+E
+	 2+qtD97oCZjP3CVp9vOCwToOJTHdcWzMzdHthiycDDEDjiVTh0Ha214NXh8IAKVtDN
+	 WICQXr/XZxIPqLTGYMiQY96I584WwhjclK/zLgoxfY691p2XtHTN2zWZ/abxjNKqKY
+	 HnIbwNaXGeXzX3GFJ0bOOGUmOgBcy7ndY3ScDoAjoahWjd8QzbjPXFpPyD8g2Qia8G
+	 mrxCWlzHtQzy6wVWC19ksPRJoCAyZ6UgdNMP604+OrMLgKWTG2hR1jdfe+rZVhVsp6
+	 fYwsUWfiAxVeg==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Sat, 20 Sep 2025 16:17:50 -0700
+Subject: [PATCH] mei: late_bind: Fix
+ -Wincompatible-function-pointer-types-strict
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <71ac2ff73a63bd8674c4bc91fd287390d5339609.1758228055.git.rabenda.cn@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250920-drm-xe-fix-wifpts-v1-1-c89b5357c7ba@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAB02z2gC/x2MywqAIBAAf0X23IKvoPqV6FC51h4q0agg/Pek4
+ zDMvJAoMiXoxAuRLk587AVUJWBex30hZFcYtNS1bLVEFzd8CD0/eLMPZ8K68U5NZI1xFkoXIhX
+ 7P/sh5w9pLI6lYwAAAA==
+X-Change-ID: 20250920-drm-xe-fix-wifpts-58fd1be433d4
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+ Alexander Usyskin <alexander.usyskin@intel.com>, 
+ Anshuman Gupta <anshuman.gupta@intel.com>, 
+ Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2235; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=G/KVEA6ViEWnKvN1kHms/3KktEfZIelB3DdtbCJIg34=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBnnzZQm7b9X9GQT44VEbi8DbaWy7E5bhuanT5bycma45
+ ArvUVndUcrCIMbFICumyFL9WPW4oeGcs4w3Tk2CmcPKBDKEgYtTACaS94fhr/xyvfoNTNo366oV
+ Hz/h6PrefvTA/40rxTfvES75aho7w5nhf9Ksk96rEr5ElZ0PU1w/MfDNiTjbU+Llf/89s7u3SFz
+ EhR8A
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Fri, Sep 19, 2025 at 04:44:48AM +0800, Han Gao wrote:
-> Existing rv64 hardware conforms to the rva20 profile.
-> 
-> Ziccrse is an additional extension required by the rva20 profile, so
-> th1520 has this extension.
-> 
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+When building with -Wincompatible-function-pointer-types-strict, a
+warning designed to catch kernel control flow integrity (kCFI) issues at
+build time, there is an instance in the new mei late binding code
+originating from the type parameter of mei_lb_push_payload():
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>      
+  drivers/misc/mei/mei_lb.c:211:18: error: incompatible function pointer types initializing 'int (*)(struct device *, u32, u32, const void *, size_t)' (aka 'int (*)(struct device *, unsigned int, unsigned int, const void *, unsigned long)') with an expression of type 'int (struct device *, enum intel_lb_type, u32, const void *, size_t)' (aka 'int (struct device *, enum intel_lb_type, unsigned int, const void *, unsigned long)') [-Werror,-Wincompatible-function-pointer-types-strict]
+    211 |         .push_payload = mei_lb_push_payload,
+        |                         ^~~~~~~~~~~~~~~~~~~
 
-Thanks,
-Drew
+While 'unsigned int' and 'enum intel_lb_type' are ABI compatible, hence
+no regular warning from -Wincompatible-function-pointer-types, the
+mismatch will trigger a kCFI violation when mei_lb_push_payload() is
+called indirectly.
+
+Update the type parameter of mei_lb_push_payload() to be 'u32' to match
+the prototype in 'struct intel_lb_component_ops', clearing up the
+warning and kCFI violation.
+
+Fixes: 741eeabb7c78 ("mei: late_bind: add late binding component driver")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/misc/mei/mei_lb.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/misc/mei/mei_lb.c b/drivers/misc/mei/mei_lb.c
+index 77686b108d3c..78717ee8ac9a 100644
+--- a/drivers/misc/mei/mei_lb.c
++++ b/drivers/misc/mei/mei_lb.c
+@@ -134,8 +134,7 @@ static bool mei_lb_check_response(const struct device *dev, ssize_t bytes,
+ 	return true;
+ }
+ 
+-static int mei_lb_push_payload(struct device *dev,
+-			       enum intel_lb_type type, u32 flags,
++static int mei_lb_push_payload(struct device *dev, u32 type, u32 flags,
+ 			       const void *payload, size_t payload_size)
+ {
+ 	struct mei_cl_device *cldev;
+
+---
+base-commit: d9b2623319fa20c2206754284291817488329648
+change-id: 20250920-drm-xe-fix-wifpts-58fd1be433d4
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
+
 
