@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-825560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88634B8C3BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:11:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCA9B8C3C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59C61BC6F01
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B1B1BC7195
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDA42798EC;
-	Sat, 20 Sep 2025 08:11:44 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407532797B8;
+	Sat, 20 Sep 2025 08:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fz2O/AsZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DAC25DD0B
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96492227EA4;
+	Sat, 20 Sep 2025 08:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758355904; cv=none; b=eAF4CSFa0s0qU6AvtCv3n6EKfwmnuWhFBvnME50WcY1lI232afXV+71X0mUOa4UgIn5/8xTuxFYjxuYRaoOk6a6EorERM2VHMChLwfOUmoyFLqkQPZmwDao9pRiTqapqhJ84IX72t0BNqOWt+oUwaPLvcEtPWiN7AR//Xpu6Lvs=
+	t=1758356056; cv=none; b=f/lwzJsJCm/i0Eg6jFSUdeE2zwF9lUMxsMi7gPiH6O83/9cbS+gK04pYWE7bVRtwp1k6zMLQgfOqxVkwpLz+KIOKzW1XjfajybdvIh4W3YoFhrBhioLPISuSTCyLlto+U2AKAx2SG14Y8i38g4QsClUF/PmghBbBKShrFAIDHec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758355904; c=relaxed/simple;
-	bh=zFNpe3SBlBIE1r0hFwEJI1XqG7yghnlnXS12yjn8hao=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uoNebIQxtpat2vgrljcf6pznfXHlSG2pEjId79dPlssshHkvibKu4Byb9dScCOP894/EIocnULiTqwSCQASb42/lK/seaDvb8rFqe1Bv0rtuYfUX2oSLTn+J+jnPSb3KzsNp9X4nX6OPAp+peb4NjbyMMdZkKCzTsNtk3SjwoUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-424877bb4caso34398345ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 01:11:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758355902; x=1758960702;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g4sWT4Ge+xTgmMZWU5fco27yU6P/Z/1Oh5oD+RScSLE=;
-        b=YYOfXep9wpuaeK6MHhoFJC04njNVF+8yJAwBOuhAiucC3Q09l+son60X6ru6coqet4
-         xlZYXmkIFpD0gyyX0Gnw5P1cyTx1RVQNBB3UtKqot48zISEBC84IFUdHIDCDX73KKyw5
-         cbQE9MPaxSShMuxSUlzZsG04iCdl2/6L9VrLJ05ReuKdnYZKJzZudDuII/iCs4Lq3Cfg
-         ez+fmLrG1rekXFV92imkK3eSJFxTEq+YdAwt0cGjm9YQ4WnRW3pqLXfxuKMp7Yi6xz7t
-         6Z7LaAUoAqzvyzTHhW9x4xGS+4aYVbpDL3DaT+WPAya0EGI9FboEQqRape1ta28Z4DOR
-         G1sA==
-X-Gm-Message-State: AOJu0YwKe++VCG/FkdGs9aacfVZVeMF5JLtwDYBLia730NKm+sOHKe4Z
-	LhuSLUakNSCyZctFC2sqjh/eulXCrqN8kA0ZROkwT3jLmPM2U+tSFL+jQ/WDF/7XhFKIJlX0KcD
-	QX0k10kIASsN1UDvbiWqiNuAIyt/sP6ZizGusl57XH1+RHGCVOZ++wwfZQiY=
-X-Google-Smtp-Source: AGHT+IF+fLIOaSnl1Q0d4sv6sPgubs6P8Qh9Cmj6XBSYrAcWXTo5wLrAbTTlAcMEaxb8vfh37ehzRgE6winbuv03fapBF5pe2zgc
+	s=arc-20240116; t=1758356056; c=relaxed/simple;
+	bh=H9jVzceHhz7BCuWrEcBBzKxp5SLS2ZXomJMfy40j+D0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hv5WEGgEPj9ENpj3SbSYkyJ4RVpkunKXg7hEOrOFdGvULkiciathLgk7OVB/I4c1l3cNMI7LEGSNOLVeRsC00rQqhZxcYT/h33wpGozjQ21B7Is7e0m7ybdzC9niMJLhgPIJOyzqKhNhUeAin/7Qba1CvsI/FyA7JHLLI6XxezY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fz2O/AsZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919AFC4CEEB;
+	Sat, 20 Sep 2025 08:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758356054;
+	bh=H9jVzceHhz7BCuWrEcBBzKxp5SLS2ZXomJMfy40j+D0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fz2O/AsZ6wRO0snZvJPxpyl7bfliCTrVg+OSrWu+uBqQiLuFyLiaz6+DVE0UGnXSa
+	 BbXA5jDLYtLPPrDIC2XYv5fuNmtGIhp3aaUMFfVUtsIYlPkb2YbfOZYf+8RwgU0xBn
+	 YLl0XbUeu7LrsxiXN7u6WSb91IRLsJlXIE35t5RJCZVYdoIfBLyBBFj3r5nse6wN44
+	 qtvupiZLaTIGx7DZsdOdovNSrq0QNMI9yU8cpnqDPECwlYk3r2zotVBMoe24gM/w/M
+	 DO8Iqyke3vY/ajeEbkO7pUS+adOagfbLQwf/mWkQR1PSqF1ja3GVylGopCGmUJFEvN
+	 WJuatdlh9pRFQ==
+Date: Sat, 20 Sep 2025 13:44:02 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
+	qiang.yu@oss.qualcomm.com, mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com, 
+	shradha.t@samsung.com, quic_schintav@quicinc.com, inochiama@gmail.com, 
+	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com, 
+	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v2 05/10] PCI: keystone: Add ks_pcie_free_msi_irq()
+ helper for cleanup
+Message-ID: <ouj2ksyccliaolyq7icceltcmnvadvtckonrck3bawrufuhct6@bda2xxpp66dg>
+References: <20250912122356.3326888-1-s-vadapalli@ti.com>
+ <20250912122356.3326888-6-s-vadapalli@ti.com>
+ <rbyukvvhzoch4p54usbrjpjlhd6qknhp2er6gfxhcj5lxpgrqh@5wnwiijn2g5f>
+ <cbcb0183-1fbd-4815-948b-3c380491c8db@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b05:b0:424:8013:c7dd with SMTP id
- e9e14a558f8ab-4248190b458mr83491055ab.1.1758355901817; Sat, 20 Sep 2025
- 01:11:41 -0700 (PDT)
-Date: Sat, 20 Sep 2025 01:11:41 -0700
-In-Reply-To: <68cdf1ae.a00a0220.37dadf.0021.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ce61bd.050a0220.13cd81.0014.GAE@google.com>
-Subject: Forwarded: [PATCH] nsfs: validate file handle type in nsfs_fh_to_dentry()
-From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cbcb0183-1fbd-4815-948b-3c380491c8db@ti.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Sat, Sep 20, 2025 at 01:34:15PM +0530, Siddharth Vadapalli wrote:
+> On Sat, Sep 20, 2025 at 12:02:34AM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Sep 12, 2025 at 05:46:16PM +0530, Siddharth Vadapalli wrote:
+> > > Introduce the helper function ks_pcie_free_msi_irq() which will undo the
+> > > configuration performed by the ks_pcie_config_msi_irq() function. This will
+> > > be required for implementing a future helper function to undo the
+> > > configuration performed by the ks_pcie_host_init() function.
+> > > 
+> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> > > ---
+> > > 
+> > > v1: https://lore.kernel.org/r/20250903124505.365913-6-s-vadapalli@ti.com/
+> > > No changes since v1.
+> > > 
+> > >  drivers/pci/controller/dwc/pci-keystone.c | 25 +++++++++++++++++++++++
+> > >  1 file changed, 25 insertions(+)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> > > index d03e95bf7d54..81c3686688c0 100644
+> > > --- a/drivers/pci/controller/dwc/pci-keystone.c
+> > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> > > @@ -666,6 +666,31 @@ static void ks_pcie_intx_irq_handler(struct irq_desc *desc)
+> > >  	chained_irq_exit(chip, desc);
+> > >  }
+> > >  
+> > > +static void ks_pcie_free_msi_irq(struct keystone_pcie *ks_pcie)
+> > > +{
+> > > +	struct device_node *np = ks_pcie->np;
+> > > +	struct device_node *intc_np;
+> > > +	int irq_count, irq, i;
+> > > +
+> > > +	if (!IS_ENABLED(CONFIG_PCI_MSI))
+> > 
+> > Isn't the CONFIG_PCI_KEYSTONE_HOST always depend on PCI_MSI?
+> 
+> The reason I added the check is that it exists in 'ks_pcie_config_msi_irq()'.
+> But I realize now that it should be removed from
+> 'ks_pcie_config_msi_irq()' as well. Since I had written the above
+> function with the objective of undoing the changes done by
+> 'ks_pcie_config_msi_irq()', the 'config check' was retained since the
+> changes should be undone only if they were executed by
+> 'ks_pcie_config_msi_irq()'. I will drop the check in the v3 series and
+> will also post a separate patch to drop if from 'ks_pcie_config_msi_irq()'
+> if that is acceptable. Please let me know.
+> 
 
-***
+Sounds good to me.
 
-Subject: [PATCH] nsfs: validate file handle type in nsfs_fh_to_dentry()
-Author: kartikey406@gmail.com
+- Mani
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-
-Add early validation of file handle type in nsfs_fh_to_dentry() to
-prevent processing of handles with incorrect types. This fixes a
-warning triggered when open_by_handle_at() is called with non-nsfs
-handle types on nsfs files.
-
-The issue occurs when a user provides a file handle with a type
-like FILEID_INO32_GEN_PARENT (0xf1) instead of FILEID_NSFS when
-calling open_by_handle_at() on an nsfs file. The generic export
-code routes this to nsfs_fh_to_dentry(), which then processes
-the incorrectly formatted handle data, leading to validation
-warnings.
-
-Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/nsfs.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 32cb8c835a2b..050e7db80297 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -461,6 +461,8 @@ static int nsfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
- 					int fh_len, int fh_type)
- {
-+	if (fh_type != FILEID_NSFS)
-+		return ERR_PTR(-EINVAL);
- 	struct path path __free(path_put) = {};
- 	struct nsfs_file_handle *fid = (struct nsfs_file_handle *)fh;
- 	struct user_namespace *owning_ns = NULL;
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
