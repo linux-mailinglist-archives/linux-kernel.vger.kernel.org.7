@@ -1,286 +1,401 @@
-Return-Path: <linux-kernel+bounces-825766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3DDB8CC76
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DEC4B8CC70
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B6B189ADB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71FB3B0579
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664C82FF65D;
-	Sat, 20 Sep 2025 16:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4421E5213;
+	Sat, 20 Sep 2025 16:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0je4bzvO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D9sZwD55"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="sy+v2ain"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18022FC86F;
-	Sat, 20 Sep 2025 16:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E12C2F745F
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 16:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758384007; cv=none; b=dkGGAYwyA9rjzvYfD+cf9cZ9SJYJV+eDxf/KfIcRPOHy3iq2Dre5tK+UPxxQp1rZ04309FnEG1DqQqAIYqh2XqiWFP28vej2Qwm5H+QTCwZ0q+m1KTvziG+U+7PjOY4HW3DLi4iXONFuv9M8q5ZocwPTT+qpvM44HI4+oQBTXds=
+	t=1758384005; cv=none; b=isjGO5E+wtLoLEC+PchN+CddZsKrGSJzWWUjfbFGbLDhCHobcgU22ML5m21vROYtTUksT6XyGfO+a7BWprWBuayLyFExM3tUBI7E/whMC2PZFyPsHYrAeuSsJwMCosUGnUf92c1ONcTdnAw7sCjKOpoJFuuohARgguzvEekqtNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758384007; c=relaxed/simple;
-	bh=3pqbnFllDk+g5SeR+N4Far2AKpTpxRWxBdukdzHikXo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=crzjsHZGkp8vXf2JHG+o0fq0EhNEzDElrYosSSlhLezk6dKetywzeAeyujHiO0+mKQDmxTUhWFX+aBZ5yQ0nAgIpwawkjmC5m49S8EVetHxLNbIJvmBSrfRpsbBgaUpYH8fqPIxgcwtYHsM8XrdgV78QCMwWA/9vSpH/AosSEOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0je4bzvO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D9sZwD55; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 20 Sep 2025 15:59:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758384003;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZM+WGFWvYHIMIx1+lRhduX/r+yMYc43cILStsoHUH98=;
-	b=0je4bzvOaPt/M9IwAeGL6ZnzBBFHRwbqpl1+s3owkRhx+P84C6hFSrcmu3n2faArvFsVMg
-	bQaVjyltmQyqjsU13Mob51oK0uAImNq6eK4x1HAv4Z5fY0Ill8qz6PShRTBQgybvA0X6Mc
-	EgMYZhEUb8l6V8stnzqQlZTYfdyKC4/qc9RoQLbnmxBgWYtcJIVKB619stmpwBlbw7UX42
-	rrYQBtzSR2XbdUmGKxdKAwOH5Ft43hui9AN2Q6/wxaB9yETduTyQ3vDKrCwjqgvJApJUZG
-	o95nL9G/wVd7S5qkRVxgqO/XxVlhVtjmLmfq0a5IrT76oEb8oJhEAGMe/iX0Dg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758384003;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZM+WGFWvYHIMIx1+lRhduX/r+yMYc43cILStsoHUH98=;
-	b=D9sZwD55fs1hzqVGNNT2Mn//soGppyieqJ4+lOlGWyMcueJQiNNS6bProSdSDb+KR3GoKb
-	n4bMyk8JHreWtNDw==
-From: "tip-bot2 for Pranav Tyagi" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: locking/futex] futex: Don't leak robust_list pointer on exec race
-Cc: Jann Horn <jann@thejh.net>, Pranav Tyagi <pranav.tyagi03@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250915182154.9468-1-pranav.tyagi03@gmail.com>
-References: <20250915182154.9468-1-pranav.tyagi03@gmail.com>
+	s=arc-20240116; t=1758384005; c=relaxed/simple;
+	bh=jXP/oScWBYO1Vre2koa+7iI9MhZ+QpEupRNca54lv/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JJgd8dV0oZg3B//BPCMniz/Fps1wHn7oFdmcgtGdf7QPKfPv2DOPABsjU8sm1ofI6g5JAjAPB2uA4+imUhYg1YmZKSxVkEazX8WdAc/buRp63G2D5+fOsh7XyVzheTjaCbDxxSzxQur5X3zF8KNv4s9tkba2W3M0ckdw8xvG90I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=sy+v2ain; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-42480cb4127so24848845ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:00:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758384001; x=1758988801; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C6PlODS/te36zEm/c54Mnhcz+Tcquz9ec/vMr/RjPtI=;
+        b=sy+v2ain9xsOK5cwjWC5Dee/ovlH77hMOJvy/CCjcjCFpo+ZKMIIIK+x+fs65pIgRz
+         p2aMwdbkxeIsLIoVuULXBR0R+ZMoG5cfML+R/Snb/ccFfbgLib5drblf6W6iwfaVwgb+
+         w3O5L9WxAuE7UAyrEYlcUuAdwE+9mjjdZ5WQmLbJfqvzyfylmZMSMmax8vE+qqSLYGpb
+         Ea7X9yg6eqMj4efhiIE0YRpLrBePOdwwVDmpNrBImARZTWq5sShjC5X6HdzMGd9kuPmI
+         xNb/3VDpD6uiryqchLlnsVrb08sCwLQN6WlZmGFQEsCPJNKURK2YBW04Wb9VPiKb53Bj
+         YZ3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758384001; x=1758988801;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C6PlODS/te36zEm/c54Mnhcz+Tcquz9ec/vMr/RjPtI=;
+        b=wksayrFXa1aqc6Gcrf9WVatN798l7aJjZCSJs7qQz1ht+NASC6Oi4SOv/m6FN003tb
+         acS+8994sxBCK3N+7LhQOmAYxSlK3ARqMVSSQH9vLyvHsqeEcVcAtN6bV2MmujJiT4IM
+         btGORUYXj9VDih8ZEBNT7YW+8Ne5DS+OrmMlGsRxp0PD8v7WBtJpC9XlIdGD/usM95Fs
+         h6HW+o2HGiM8Lepa/QP3RXiJIvQ4K7ThaUPeotwFOhYFP8a08AVdQw7ETzdAaDZq3N55
+         jhYaoo0cAPJk2m2UV+aaHx8B82mdrF6CsafPbmiHLw106SmYepvKdxEmTXmpBQBVB4I4
+         MUJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhuIo8DbYOEzhgy19Zo4KuadJu827bvciQTaS4KXJUV7Tb19N2fpeNvcSR1mG7gTzXJOPz5u4/gEgWVcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyCPPnQ+xT0UiS+tpBjbZIIhLswbHGbUGVW660QPtyqG76Nnep
+	HqUoMhWJKmsgaBYJFyxnZVMQEOQ5j4WHzW5cVNcj5HdhZjhH+cmY7Qe5nx3QSlvYidE=
+X-Gm-Gg: ASbGncuofD180c2i+tCDfMK/ai2aTNXJCEf1FhFtn34j6AXquBPX9/mauRVQvN8lGEo
+	pRjBC8j9nnr4Dhcq5+KO/LXAdnxYH7379FcwkIS83sum7ijHIJUv+5LNHHxVFWVjNRL1tsgFGQi
+	iDi7HsP2LS9YWmYQDXhngHtskXfacXvZmnbj7ikxWsT4JsA2y6NW66fewYDes2TIdQH121NDDFH
+	dqyoDffOKEY5OJnk1q2uAyZ8ydUgD8ze1t4CI8eH7mNrIWzoRdsNIqIb8OpvuslKSzhCMchYBJ2
+	fKcwsEs6Cc4X5RsBEtnbDgcx6zvQ4gCnt7y+NZebpQMexEVCV7zsb4rn1e37edBArF0wJ1qS1Dj
+	Gi2NXJRrCpiNzHwbgXriK0gIKGN7KRkZEZxnEl4Css8U1TVYafNG70KV6B4Pofg==
+X-Google-Smtp-Source: AGHT+IEYudR+gY4osM7EXsgeTUGXkWk8dyLDUfBMwlEzSHDNS9I9DR2PejT5vWtn2160i7yeUhZThw==
+X-Received: by 2002:a05:6e02:481c:b0:424:85b0:e1cb with SMTP id e9e14a558f8ab-42485b0e39amr80339845ab.31.1758384001381;
+        Sat, 20 Sep 2025 09:00:01 -0700 (PDT)
+Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d5399014dsm3493825173.59.2025.09.20.08.59.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Sep 2025 09:00:00 -0700 (PDT)
+Message-ID: <3c9aaa62-f685-47f7-a21c-00f51550f185@riscstar.com>
+Date: Sat, 20 Sep 2025 10:59:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175838399647.709179.13370572845425919919.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+To: Vivian Wang <wangruikang@iscas.ac.cn>, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250919155914.935608-1-elder@riscstar.com>
+ <20250919155914.935608-3-elder@riscstar.com>
+ <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the locking/futex branch of tip:
+On 9/19/25 10:52 PM, Vivian Wang wrote:
+> Hi Alex,
+> 
+> On 9/19/25 23:59, Alex Elder wrote:
+>> [...]
+>>
+>> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+>> index 82fa5eb3b8684..4f6c446c6bc16 100644
+>> --- a/drivers/spi/Kconfig
+>> +++ b/drivers/spi/Kconfig
+>> @@ -1071,6 +1071,14 @@ config SPI_SG2044_NOR
+>>   	  also supporting 3Byte address devices and 4Byte address
+>>   	  devices.
+>>   
+>> +config SPI_SPACEMIT_K1
+>> +	tristate "K1 SPI Controller"
+>> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+>> +	depends on OF
+>> +	default ARCH_SPACEMIT
+>> +	help
+>> +	  Enable support for the SpacemiT K1 SPI controller.
+>> +
+> 
+> We could still add:
+> 
+> 	imply MMP_PDMA if ARCH_SPACEMIT
 
-Commit-ID:     6b54082c3ed4dc9821cdf0edb17302355cc5bb45
-Gitweb:        https://git.kernel.org/tip/6b54082c3ed4dc9821cdf0edb17302355cc=
-5bb45
-Author:        Pranav Tyagi <pranav.tyagi03@gmail.com>
-AuthorDate:    Mon, 15 Sep 2025 23:51:54 +05:30
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 20 Sep 2025 17:54:01 +02:00
+I have never used "imply", I guess it's new (as of 2016)...
 
-futex: Don't leak robust_list pointer on exec race
+This sounds like a good suggestion.  This would mean MMP_PDMA
+would by default take the same value as SPI_SPACEMIT_K1 (if
+the former's dependencies were met), while allowing it to be
+deselected for the configuration.
+  > To add a "recommended" dependency. This way, enabling SPI_SPACEMIT_K1
+> automatically enables MMP_PDMA, but if the user is willing to fiddle
+> around, they can explicitly disable it. What do you think?
 
-sys_get_robust_list() and compat_get_robust_list() use ptrace_may_access()
-to check if the calling task is allowed to access another task's
-robust_list pointer. This check is racy against a concurrent exec() in the
-target process.
+I like it.
 
-During exec(), a task may transition from a non-privileged binary to a
-privileged one (e.g., setuid binary) and its credentials/memory mappings
-may change. If get_robust_list() performs ptrace_may_access() before
-this transition, it may erroneously allow access to sensitive information
-after the target becomes privileged.
+>>   config SPI_SPRD
+>>   	tristate "Spreadtrum SPI controller"
+>>   	depends on ARCH_SPRD || COMPILE_TEST
+>>
+>> [...]
+>>
+>> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
+>> new file mode 100644
+>> index 0000000000000..8d564fe6c4303
+>> --- /dev/null
+>> +++ b/drivers/spi/spi-spacemit-k1.c
+>> @@ -0,0 +1,968 @@
+>>
+>> [...]
+>>
+>> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +	struct k1_spi_io *rx = &drv_data->rx;
+>> +	u32 bytes = drv_data->bytes;
+>> +	u32 val;
+>> +
+>> +	val = readl(drv_data->base + SSP_DATAR);
+>> +	rx->resid -= bytes;
+>> +
+>> +	if (!rx->buf)
+>> +		return;	/* Null reader: discard the data */
+>> +
+>> +	if (bytes == 1)
+>> +		*(u8 *)rx->buf = val;
+>> +	else if (bytes == 1)
+> 
+> Typo? else if (bytes == 2)
 
-A racy access allows an attacker to exploit a window during which
-ptrace_may_access() passes before a target process transitions to a
-privileged state via exec().
+Wow.  Yes that is an error that I'll correct.
 
-For example, consider a non-privileged task T that is about to execute a
-setuid-root binary. An attacker task A calls get_robust_list(T) while T
-is still unprivileged. Since ptrace_may_access() checks permissions
-based on current credentials, it succeeds. However, if T begins exec
-immediately afterwards, it becomes privileged and may change its memory
-mappings. Because get_robust_list() proceeds to access T->robust_list
-without synchronizing with exec() it may read user-space pointers from a
-now-privileged process.
+>> +		*(u16 *)rx->buf = val;
+>> +	else
+>> +		*(u32 *)rx->buf = val;
+> 
+> Maybe
+> 
+> 	else if (bytes == 4)
+> 		*(u32 *)rx->buf = val;
+> 	else
+> 		WARN_ON_ONCE(1);
 
-This violates the intended post-exec access restrictions and could
-expose sensitive memory addresses or be used as a primitive in a larger
-exploit chain. Consequently, the race can lead to unauthorized
-disclosure of information across privilege boundaries and poses a
-potential security risk.
+The value of bytes will be 1, 2, or 4, which we can tell
+by inspection.  At one time I had a switch statement with
+a default, but I decided to leave out the default, which
+won't happen.
 
-Take a read lock on signal->exec_update_lock prior to invoking
-ptrace_may_access() and accessing the robust_list/compat_robust_list.
-This ensures that the target task's exec state remains stable during the
-check, allowing for consistent and synchronized validation of
-credentials.
+> Just to make the pattern consistent? Same for k1_spi_write_word.
 
-Suggested-by: Jann Horn <jann@thejh.net>
-Signed-off-by: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/linux-fsdevel/1477863998-3298-5-git-send-email-=
-jann@thejh.net/
-Link: https://github.com/KSPP/linux/issues/119
----
- kernel/futex/syscalls.c | 106 ++++++++++++++++++++-------------------
- 1 file changed, 56 insertions(+), 50 deletions(-)
+Consistent with what?
 
-diff --git a/kernel/futex/syscalls.c b/kernel/futex/syscalls.c
-index 4b6da91..880c9bf 100644
---- a/kernel/futex/syscalls.c
-+++ b/kernel/futex/syscalls.c
-@@ -39,6 +39,56 @@ SYSCALL_DEFINE2(set_robust_list, struct robust_list_head _=
-_user *, head,
- 	return 0;
- }
-=20
-+static inline void __user *futex_task_robust_list(struct task_struct *p, boo=
-l compat)
-+{
-+#ifdef CONFIG_COMPAT
-+	if (compat)
-+		return p->compat_robust_list;
-+#endif
-+	return p->robust_list;
-+}
-+
-+static void __user *futex_get_robust_list_common(int pid, bool compat)
-+{
-+	struct task_struct *p =3D current;
-+	void __user *head;
-+	int ret;
-+
-+	scoped_guard(rcu) {
-+		if (pid) {
-+			p =3D find_task_by_vpid(pid);
-+			if (!p)
-+				return (void __user *)ERR_PTR(-ESRCH);
-+		}
-+		get_task_struct(p);
-+	}
-+
-+	/*
-+	 * Hold exec_update_lock to serialize with concurrent exec()
-+	 * so ptrace_may_access() is checked against stable credentials
-+	 */
-+	ret =3D down_read_killable(&p->signal->exec_update_lock);
-+	if (ret)
-+		goto err_put;
-+
-+	ret =3D -EPERM;
-+	if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
-+		goto err_unlock;
-+
-+	head =3D futex_task_robust_list(p, compat);
-+
-+	up_read(&p->signal->exec_update_lock);
-+	put_task_struct(p);
-+
-+	return head;
-+
-+err_unlock:
-+	up_read(&p->signal->exec_update_lock);
-+err_put:
-+	put_task_struct(p);
-+	return (void __user *)ERR_PTR(ret);
-+}
-+
- /**
-  * sys_get_robust_list() - Get the robust-futex list head of a task
-  * @pid:	pid of the process [zero for current task]
-@@ -49,36 +99,14 @@ SYSCALL_DEFINE3(get_robust_list, int, pid,
- 		struct robust_list_head __user * __user *, head_ptr,
- 		size_t __user *, len_ptr)
- {
--	struct robust_list_head __user *head;
--	unsigned long ret;
--	struct task_struct *p;
--
--	rcu_read_lock();
--
--	ret =3D -ESRCH;
--	if (!pid)
--		p =3D current;
--	else {
--		p =3D find_task_by_vpid(pid);
--		if (!p)
--			goto err_unlock;
--	}
--
--	ret =3D -EPERM;
--	if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
--		goto err_unlock;
-+	struct robust_list_head __user *head =3D futex_get_robust_list_common(pid, =
-false);
-=20
--	head =3D p->robust_list;
--	rcu_read_unlock();
-+	if (IS_ERR(head))
-+		return PTR_ERR(head);
-=20
- 	if (put_user(sizeof(*head), len_ptr))
- 		return -EFAULT;
- 	return put_user(head, head_ptr);
--
--err_unlock:
--	rcu_read_unlock();
--
--	return ret;
- }
-=20
- long do_futex(u32 __user *uaddr, int op, u32 val, ktime_t *timeout,
-@@ -455,36 +483,14 @@ COMPAT_SYSCALL_DEFINE3(get_robust_list, int, pid,
- 			compat_uptr_t __user *, head_ptr,
- 			compat_size_t __user *, len_ptr)
- {
--	struct compat_robust_list_head __user *head;
--	unsigned long ret;
--	struct task_struct *p;
--
--	rcu_read_lock();
--
--	ret =3D -ESRCH;
--	if (!pid)
--		p =3D current;
--	else {
--		p =3D find_task_by_vpid(pid);
--		if (!p)
--			goto err_unlock;
--	}
--
--	ret =3D -EPERM;
--	if (!ptrace_may_access(p, PTRACE_MODE_READ_REALCREDS))
--		goto err_unlock;
-+	struct compat_robust_list_head __user *head =3D futex_get_robust_list_commo=
-n(pid, true);
-=20
--	head =3D p->compat_robust_list;
--	rcu_read_unlock();
-+	if (IS_ERR(head))
-+		return PTR_ERR(head);
-=20
- 	if (put_user(sizeof(*head), len_ptr))
- 		return -EFAULT;
- 	return put_user(ptr_to_compat(head), head_ptr);
--
--err_unlock:
--	rcu_read_unlock();
--
--	return ret;
- }
- #endif /* CONFIG_COMPAT */
-=20
+>> +	rx->buf += bytes;
+>> +}
+>>
+>> [...]
+>>
+>> +static int k1_spi_dma_setup(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +	struct device *dev = drv_data->dev;
+>> +	int rx_ret;
+>> +	int tx_ret;
+>> +
+>> +	/* We must get both DMA channels, or neither of them */
+>> +	rx_ret = k1_spi_dma_setup_io(drv_data, true);
+>> +	if (rx_ret == -EPROBE_DEFER)
+>> +		return -EPROBE_DEFER;
+>> +
+>> +	tx_ret = k1_spi_dma_setup_io(drv_data, false);
+>> +
+>> +	/* If neither is specified, we don't use DMA */
+>> +	if (rx_ret == -ENODEV && tx_ret == -ENODEV)
+>> +		return 0;
+>> +
+>> +	if (rx_ret || tx_ret)
+>> +		goto err_cleanup;
+> 
+> This seems a bit convoluted. I'm wondering if all this explicit handling
+> really is necessary - if we get an error at probe time, can we just
+> return that error and let devres handle the rest? With the special case
+> that if we get both -ENODEV then disable DMA.
+
+I agree it seems it should be less complex.
+
+I'm trying to ensure that both channels are set up, or
+that neither channel is set up, or that we try again if
+we get -EPROBE_DEFER.  And if there's something wrong
+with the configuration (only one of TX and RX is set up
+successfully), an error occurs.
+
+RX		TX		Result
+--		--		------
+0		0		0	(DMA)
+-ENODEV		-ENODEV		0	(PIO)
+-EPROBE_DEFER	(anything)	-EPROBE_DEFER (try again)
+(anything)	-EPROBE_DEFER	-EPROBE_DEFER (try again)
+0		-ENODEV		-ENODEV	(error, abort probe)
+-ENODEV		0		-ENODEV	(error, abort probe)
+error		(anything)	error	(error, abort probe)
+(anything)	error		error	(error, abort probe)
+
+Finally, if the buffer allocation fails:
+0		0		0	(PIO; clean up TX and RX)
+
+Let me think about this.  I'll see if I can find a simpler way
+to achieve the above result, relying on devres to clean things
+up.  I'd have to change k1_spi_dma_cleanup(), but you might be
+right that it could be done more simply.
+
+> k1_spi_dma_cleanup_io seems to handle unmapping and termination of DMA,
+> which we... don't need, right?
+> 
+>> +
+>> +	drv_data->dummy = devm_kzalloc(dev, SZ_2K, GFP_KERNEL);
+>> +	if (drv_data->dummy)
+>> +		return 0;		/* Success! */
+>> +
+>> +	dev_warn(dev, "error allocating DMA dummy buffer; DMA disabled\n");
+> 
+> Just return -ENOMEM. If we can't even allocate 2K of buffer, we're
+> doomed anyway.
+
+You're generally right, but I don't want my code to assume that.
+
+>> +err_cleanup:
+>> +	if (tx_ret) {
+>> +		if (tx_ret != -EPROBE_DEFER)
+>> +			dev_err(dev, "error requesting DMA TX DMA channel\n");
+>> +	} else {
+>> +		k1_spi_dma_cleanup_io(drv_data, false);
+>> +	}
+>> +
+>> +	if (rx_ret)
+>> +		dev_err(dev, "error requesting DMA RX DMA channel\n");
+>> +	else
+>> +		k1_spi_dma_cleanup_io(drv_data, true);
+>> +
+>> +	if (tx_ret == -EPROBE_DEFER)
+>> +		return -EPROBE_DEFER;
+>> +
+>> +	/* Return success if we don't get the dummy buffer; PIO will be used */
+>> +
+>> +	return rx_ret ? : tx_ret ? : 0;
+>> +}
+>>
+>> [...]
+>>
+>> +static int devm_k1_spi_dma_setup(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +	struct k1_spi_driver_data **ptr;
+>> +	int ret;
+>> +
+>> +	if (!IS_ENABLED(CONFIG_MMP_PDMA)) {
+>> +		dev_warn(drv_data->dev, "DMA not available; using PIO\n");
+>> +		return 0;
+>> +	}
+>> +
+> 
+> Shouldn't be necessary if we do the "imply" thing in Kconfig.
+
+The messages I provide are based on an assumption that using
+DMA is desirable and it will normally be used by this driver.
+So if it won't be used, I'd like to provide that information.
+
+On the other hand, I don't issue a warning if neither of
+the channels is configured in the DTB.
+
+I'm not going to commit either way on keeping/removing this.
+If someone else weighs in I'm open to changing it.
+
+>> [...]
+>>
+>> +static void k1_spi_host_init(struct k1_spi_driver_data *drv_data)
+>> +{
+>>
+>> [...]
+>>
+>> +
+>> +	ret = of_property_read_u32(np, "spi-max-frequency", &max_speed_hz);
+>> +	if (!ret) {
+>> +		host->max_speed_hz = clamp(max_speed_hz, K1_SPI_MIN_SPEED_HZ,
+>> +					   K1_SPI_MAX_SPEED_HZ);
+>> +		if (host->max_speed_hz != max_speed_hz)
+>> +			dev_warn(dev, "spi-max-frequency %u out of range, using %u\n",
+>> +				max_speed_hz, host->max_speed_hz);
+>> +	} else {
+>> +		if (ret != -EINVAL)
+>> +			dev_warn(dev, "bad spi-max-frequency, using %u\n",
+>> +				 K1_SPI_DEFAULT_MAX_SPEED_HZ);
+>> +		host->max_speed_hz = K1_SPI_DEFAULT_MAX_SPEED_HZ;
+>> +	}
+> 
+> I think it makes sense to have spi-max-frequency default to
+> K1_SPI_DEFAULT_MAX_SPEED_HZ, but if the value is out of range just print
+> a message and return an error, to get whoever wrote the bad value to fix it.
+
+These errors just shouldn't happen.  But the way I handle this,
+it allows the SPI controller to still be used, even if the
+administrator can't really update the DTB.
+
+> This range seems to be fixed by hardware, so, it should also be
+> specified in the bindings.
+
+I define the hardware limits here, and enforce
+them, in case the bindings specify an out-of-range
+value.  Again, this is an error that just shouldn't
+occur in practice, but the code is defensive.
+
+Most of your comments really made me think about how
+errors are handled.  I appreciate it.
+
+					-Alex
+
+> 
+>> +}
+>> +
+>>
+>> [...]
+>>
+>> +
+>> +static int k1_spi_probe(struct platform_device *pdev)
+>> +{
+>> +	struct k1_spi_driver_data *drv_data;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct reset_control *reset;
+>> +	struct spi_controller *host;
+>> +	struct resource *iores;
+>> +	struct clk *clk_bus;
+>> +	int ret;
+>> +
+>> +	host = devm_spi_alloc_host(dev, sizeof(*drv_data));
+>> +	if (!host)
+>> +		return -ENOMEM;
+>> +	drv_data = spi_controller_get_devdata(host);
+>> +	drv_data->controller = host;
+>> +	platform_set_drvdata(pdev, drv_data);
+>> +	drv_data->dev = dev;
+>> +	init_completion(&drv_data->completion);
+>> +
+>> +	drv_data->base = devm_platform_get_and_ioremap_resource(pdev, 0,
+>> +								&iores);
+> 
+> Maybe
+> 
+>      devm_platform_ioremap_resource(pdev, 0);
+> 
+>> [...]
+>>
+>> +
+>> +MODULE_DESCRIPTION("SpacemiT K1 SPI controller driver");
+>> +MODULE_LICENSE("GPL");
+> 
+> Maybe MODULE_AUTHOR()?
+> 
+> Vivian "dramforever" Wang
+> 
+
 
