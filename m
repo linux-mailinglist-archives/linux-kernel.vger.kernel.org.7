@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-825549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50D6B8C197
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:43:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C402B8C19D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 171BB7A276D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:42:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6E93AF3E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD6A272E6E;
-	Sat, 20 Sep 2025 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E34F279DAE;
+	Sat, 20 Sep 2025 07:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9UA6nkz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4Crv/zo"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6C5188A0C;
-	Sat, 20 Sep 2025 07:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF944261B9F
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758354214; cv=none; b=QTBZiWihHp9K8nkiY0aqJ2d6oqpSR7wRv+mNOrcPsBLLX22Beh/rhksKjqU+fas/msNv+WBUycGBYKdGvMHUTQgxWk9kUgQKQCqEpZj1fjlaKM56gS8pouPhQyaCN4gZ8S/I19OrtXeTkXdI2Xh1efQ0na41RFqtBpymE/pf5RI=
+	t=1758354327; cv=none; b=RX/UtX6QEKskTDbBhZreNrjFLuxJO8U2qSbqTPHOujrZqP8HSh7AIuNWDCFIUC6FFf39sTjXwaOp6TW4CLtTZIfOmXEKcYO/Nx2j5pvLG9Po0v4chqCzn7S+5geAEncBUKwqAvHa1bSHkz8URWPbNFxbAlCxIWFhGc9/ulU1/7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758354214; c=relaxed/simple;
-	bh=kEwh/ekCl/otnpe61Q+7M++Qui9Q62NvcImp583uS/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIQWsGYgHRQ0jTQ9x03pi1DFAFYa5F00eMHAulePLw0dgp8VGyfRIdFPNWfAiU824y2sgQVgbH+TNFpCWqSrpHe+IWAiqYU9iDhxrvJjIaRM6TLEInBRRqBa5gs5OOSbwvuygsXSNh8x00O93ePbgMnaGWd8xrlicyTFasYg2oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9UA6nkz; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758354213; x=1789890213;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kEwh/ekCl/otnpe61Q+7M++Qui9Q62NvcImp583uS/s=;
-  b=f9UA6nkzE5xE0ibrfRk/qti7srvCUO8aQPu3q3SvhkLMuhtWWNiTs0dK
-   /hy1lhaneU9DtdYqBwNCfPNFtYo4IgHyFs3OWnSUEls+HXVAmmLQVLZ+T
-   aeOJewzhms9ACi0jm/DxZp059nxqKhggC0XOjL9kBO4j9m+/Z3EBKlvkS
-   6CIM7UE0126PGmP7ZLFUgEMn/6Tazl8en7egNZ+rphv+SvWtxdkfOIZyX
-   VZoiFt81cyHF0vBm4rz2A3N/Ikg+pcQqn9Z3/ZV7CdCjQAdJpWB63ZJEP
-   WmdeIdwhJq4w976FcJRomwaGrRjuDpQt9UUPSaOXl7OMH4q4Og0Er+c+v
-   w==;
-X-CSE-ConnectionGUID: aR5VbE9ESP6JQ2/tWG7kfA==
-X-CSE-MsgGUID: oCfVBuW6R+ehxiw5WF3scw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="71798360"
-X-IronPort-AV: E=Sophos;i="6.18,280,1751266800"; 
-   d="scan'208";a="71798360"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 00:43:33 -0700
-X-CSE-ConnectionGUID: XhG2d+HRTmeSVCMqd9nXog==
-X-CSE-MsgGUID: YTridhCOTma5012IF8a9Lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,280,1751266800"; 
-   d="scan'208";a="206968748"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 20 Sep 2025 00:43:27 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzsFh-00058h-0d;
-	Sat, 20 Sep 2025 07:43:25 +0000
-Date: Sat, 20 Sep 2025 15:43:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>, hannes@cmpxchg.org,
-	hughd@google.com, mhocko@suse.com, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev, david@redhat.com,
-	lorenzo.stoakes@oracle.com, ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, lance.yang@linux.dev, akpm@linux-foundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH 4/4] mm: thp: reparent the split queue during memcg
- offline
-Message-ID: <202509201556.QAvYX4v3-lkp@intel.com>
-References: <bbe3bf8bfce081fdf0815481b2a0c83b89b095b8.1758253018.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1758354327; c=relaxed/simple;
+	bh=Lv9wHEJ/fxWrhstESXT8f2LQA4CfTBm7lTCR263JdrY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIB5ppX7B4yrcG0Fc7lby4Xi1qVhOMDGc8mwbds5boOd6KkD9bA/ICOWdqqtHCGc/mw9abq/6M6ASvJqnwqA9q3UG4Ud5rJOQSQi/AZUkfcElH9jXECAFmYDW1mza1npxA7L8t621WzgvfkJl6/RcRH7lVjHRFEUBsaexWW0gns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4Crv/zo; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0428b537e5so377084766b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:45:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758354324; x=1758959124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TIdlMRLTml2jFvq4pcXTja/ONkufrm1A8R2kOgYdzPA=;
+        b=l4Crv/zo3tmBd7YBdfT+kMA0FN3zsm2EfXZ1RdRqVjoOlfV4u6/AW/aaiQT9RUsUNm
+         s5+oNIjU+aEhVonrVYy329dgoD5S8q6MneKbqNFociHony2PVn4NqkV3qJL/oIPfUisr
+         eJC1PmYmkhrZd5UpHMSuHb6+BI9ygGXme+Ny4NE8hYLOGJglY49VHR5FooY6EIdp+e9K
+         R7AQByFLIlZi6nhuH5RwAmHKlAexQi8nWbGjm7xB3v7JHL/2/A4azwii0pn4oTi7Sn1a
+         VWNT4ErWr49Xpx9wO6uz+lIq+u9KA606gtHPymYGy1ZtC+gIwxx/fw1SiL3vjLTog6gf
+         gmGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758354324; x=1758959124;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TIdlMRLTml2jFvq4pcXTja/ONkufrm1A8R2kOgYdzPA=;
+        b=CD6BGIqB0CQoczXx3159iqb8OWFRi8GdOwea/VaFXuISO2CvT51pHvq2a8j9rq1L2D
+         N+UbvRZo+50tFTi33Bn3lL4Ha7x7V6ZQHDPmz5THyJNmlCNJ7fKSYZCFMjMn8kd2LCaw
+         h6DqrKYIpLEcomja7tIfu/w4izG9J1e8K38xshBZWJRWz02KcBfCcmh4cu400GFz8XjD
+         UuZa5hioxzELjCcYXT5NqLuYWAHi2g9ru65RZvLXfcKl35WM93pHQdyKOWpTD6gwAPjD
+         79Ly8Jsk1vsy4b+/aJ95HoVOyXziMMHqmjnAQnGtmXQcka8tSEQvLPUuEXDf9bM0bSIJ
+         ZjTA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8wocXV0zWcRgPIk+IvRarsUrEoi4880CDhtRxqDYctFx753nl9LgS1M9uEeOjJ128h05jZzrmX0h0pAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKj8i2cBc4UqMmUL5HPNrOGlVRn+1RpMVJiIuOm/G8dSlHRMlu
+	zidn5k1pNktCxzcBNx9ct8yeLAgAE/cWpH7AOJ3cyVpQx9NxjLIEPsA+
+X-Gm-Gg: ASbGncsHbt10mPGby/w1ySiay05HY44oBDJ8L6+YiDDRQreGBkLnG2F6b/uPf3cuij+
+	jNeC7Igxn5NdNt9va2N5W1JP9z51CK5+R/cOsnfcn+7DQ7v6+MWj1ItKIOcUHuO9sU2oGQV/5bt
+	H9Iqf0j8JMgo6Qpi3ATIC9laFu+6Ammh+lU2ul1ZHM5izGnMtu7EdjmqdftKntRHnIUMzwt8mUX
+	kOI4133u0cjX7FhhSZ8E57bJbBkLlosicLmq+N9jRfx3iC00yGKSgIE9jLueLdPLADD/WTK97VT
+	xaj84uGSP9FiwTNaIZdWlMwEHbIrSiT+f+4SnsjQ+JX4lU9hiYS+4QfMujZk6GYDcvTIi6BxXRQ
+	+KyWM1jnHG0433bsmKwrVusNDVXMNZxey
+X-Google-Smtp-Source: AGHT+IG+vDlmU5rgv0NU5tvQk47IQX8wVba4nh/X26jsh02xW8qYA4gtZEIhAzLEBfWC/+5q6/qChQ==
+X-Received: by 2002:a17:907:3e84:b0:b04:ba4:8610 with SMTP id a640c23a62f3a-b24f602b9ecmr674072666b.62.1758354324005;
+        Sat, 20 Sep 2025 00:45:24 -0700 (PDT)
+Received: from krava (37-188-197-68.red.o2.cz. [37.188.197.68])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc5f4386esm606840966b.15.2025.09.20.00.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 00:45:23 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sat, 20 Sep 2025 09:45:15 +0200
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@kernel.org>,
+	Menglong Dong <menglong8.dong@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, kees@kernel.org,
+	samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+	ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-ID: <aM5bizfTTTAH5Xoa@krava>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+ <175828305637.117978.4183947592750468265.stgit@devnote2>
+ <20250919112746.09fa02c7@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,67 +98,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bbe3bf8bfce081fdf0815481b2a0c83b89b095b8.1758253018.git.zhengqi.arch@bytedance.com>
+In-Reply-To: <20250919112746.09fa02c7@gandalf.local.home>
 
-Hi Qi,
+On Fri, Sep 19, 2025 at 11:27:46AM -0400, Steven Rostedt wrote:
+> On Fri, 19 Sep 2025 20:57:36 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > function_graph_enter_regs() prevents itself from recursion by
+> > ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+> > which is called at the exit, does not prevent such recursion.
+> > Therefore, while it can prevent recursive calls from
+> > fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+> > to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+> > This can lead an unexpected recursion bug reported by Menglong.
+> > 
+> >  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+> >   -> kprobe_multi_link_exit_handler -> is_endbr.  
+> 
+> So basically its if the handler for the return part calls something that it
+> is tracing, it can trigger the recursion?
+> 
+> > 
+> > To fix this issue, acquire ftrace_test_recursion_trylock() in the
+> > __ftrace_return_to_handler() after unwind the shadow stack to mark
+> > this section must prevent recursive call of fgraph inside user-defined
+> > fgraph_ops::retfunc().
+> > 
+> > This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+> > fprobe on function-graph tracer"), because before that fgraph was
+> > only used from the function graph tracer. Fprobe allowed user to run
+> > any callbacks from fgraph after that commit.
+> 
+> I would actually say it's because before this commit, the return handler
+> callers never called anything that the entry handlers didn't already call.
+> If there was recursion, the entry handler would catch it (and the entry
+> tells fgraph if the exit handler should be called).
+> 
+> The difference here is with fprobes, you can have the exit handler calling
+> functions that the entry handler does not, which exposes more cases where
+> recursion could happen.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20250918]
-[also build test ERROR on v6.17-rc6]
-[cannot apply to akpm-mm/mm-everything rppt-memblock/for-next rppt-memblock/fixes linus/master v6.17-rc6 v6.17-rc5 v6.17-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Qi-Zheng/mm-thp-replace-folio_memcg-with-folio_memcg_charged/20250919-115219
-base:   next-20250918
-patch link:    https://lore.kernel.org/r/bbe3bf8bfce081fdf0815481b2a0c83b89b095b8.1758253018.git.zhengqi.arch%40bytedance.com
-patch subject: [PATCH 4/4] mm: thp: reparent the split queue during memcg offline
-config: x86_64-randconfig-004-20250920 (https://download.01.org/0day-ci/archive/20250920/202509201556.QAvYX4v3-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509201556.QAvYX4v3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509201556.QAvYX4v3-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> mm/memcontrol.c:3890:2: error: call to undeclared function 'reparent_deferred_split_queue'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    3890 |         reparent_deferred_split_queue(memcg);
-         |         ^
-   1 error generated.
+so IIUC we have return kprobe multi probe on is_endbr and now we do:
+	
+	is_endbr()
+	{ -> function_graph_enter_regs installs return probe
+	  ...
+	} -> __ftrace_return_to_handler
+	       fprobe_return
+	         kprobe_multi_link_exit_handler
+	           is_endbr
+		   { -> function_graph_enter_regs installs return probe
+		     ...
+		   } -> __ftrace_return_to_handler
+		          fprobe_return
+		            kprobe_multi_link_exit_handler
+			      is_endbr
+			      { -> function_graph_enter_regs installs return probe
+			        ...
+			      } -> __ftrace_return_to_handler
+			           ... recursion
 
 
-vim +/reparent_deferred_split_queue +3890 mm/memcontrol.c
+with the fix:
 
-  3877	
-  3878	static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
-  3879	{
-  3880		struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-  3881	
-  3882		memcg1_css_offline(memcg);
-  3883	
-  3884		page_counter_set_min(&memcg->memory, 0);
-  3885		page_counter_set_low(&memcg->memory, 0);
-  3886	
-  3887		zswap_memcg_offline_cleanup(memcg);
-  3888	
-  3889		memcg_offline_kmem(memcg);
-> 3890		reparent_deferred_split_queue(memcg);
-  3891		reparent_shrinker_deferred(memcg);
-  3892		wb_memcg_offline(memcg);
-  3893		lru_gen_offline_memcg(memcg);
-  3894	
-  3895		drain_all_stock(memcg);
-  3896	
-  3897		mem_cgroup_id_put(memcg);
-  3898	}
-  3899	
+	is_endbr()
+	{ -> function_graph_enter_regs installs return probe
+	  ...
+	} -> __ftrace_return_to_handler
+	       fprobe_return
+	         kprobe_multi_link_exit_handler
+	           ...
+	           is_endbr
+		   { ->  function_graph_enter_regs
+		           ftrace_test_recursion_trylock fails and we do NOT install return probe
+                     ...
+		   }
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+there's is_endbr call also in kprobe_multi_link_handler, but it won't
+trigger recursion, because function_graph_enter_regs already uses
+ftrace_test_recursion_trylock 
+
+
+if above is correct then the fix looks good to me
+
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+thanks,
+jirka
+
+
+> 
+> > 
+> > Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+> > Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+> > Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  kernel/trace/fgraph.c |   12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> > index 1e3b32b1e82c..08dde420635b 100644
+> > --- a/kernel/trace/fgraph.c
+> > +++ b/kernel/trace/fgraph.c
+> > @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	unsigned long bitmap;
+> >  	unsigned long ret;
+> >  	int offset;
+> > +	int bit;
+> >  	int i;
+> >  
+> >  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> > @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	if (fregs)
+> >  		ftrace_regs_set_instruction_pointer(fregs, ret);
+> >  
+> > +	bit = ftrace_test_recursion_trylock(trace.func, ret);
+> > +	/*
+> > +	 * This must be succeeded because the entry handler returns before
+> > +	 * modifying the return address if it is nested. Anyway, we need to
+> > +	 * avoid calling user callbacks if it is nested.
+> > +	 */
+> > +	if (WARN_ON_ONCE(bit < 0))
+> 
+> I'm not so sure we need the warn on here. We should probably hook it to the
+> recursion detection infrastructure that the function tracer has.
+> 
+> The reason I would say not to have the warn on, is because we don't have a
+> warn on for recursion happening at the entry handler. Because this now is
+> exposed by fprobe allowing different routines to be called at exit than
+> what is used in entry, it can easily be triggered.
+> 
+> -- Steve
+> 
+> 
+> 
+> > +		goto out;
+> > +
+> >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> >  	trace.retval = ftrace_regs_get_return_value(fregs);
+> >  #endif
+> > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  		}
+> >  	}
+> >  
+> > +	ftrace_test_recursion_unlock(bit);
+> > +out:
+> >  	/*
+> >  	 * The ftrace_graph_return() may still access the current
+> >  	 * ret_stack structure, we need to make sure the update of
+> 
 
