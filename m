@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-825639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A882B8C670
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAB43B8C676
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8729E7AD6E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A65D2582160
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EB634BA2A;
-	Sat, 20 Sep 2025 11:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39B32F9DBD;
+	Sat, 20 Sep 2025 11:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e28VyjiN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DwJmtALL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBF429B781
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8022E0B5F;
+	Sat, 20 Sep 2025 11:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758366231; cv=none; b=Kekn7mfyN58qw0x+uja9kFLBfXgVs3l0AO3DNg5KGnbPqqjaJ6KKSj6yBU1JnUgKxD2WwnTEAvLGQn0DxWnvPuyKpVrpmgNzlgPwdkVIvfICOAQKqmFfOBek4C6+/rexESVvdjFI151Oqwx27EgGcQhcvsZR54nl3/oD4PUZtRw=
+	t=1758366252; cv=none; b=gP7xjCir+eEO4HNkJ8EyMdFJ8VkjVFoTW7Zz+CiiJgWVDt7JiS+g+Fdkc9+loCsYUUtz18DNI/9EVwA7XjW9iVmNjU7Zn6Ff58+sP9391yFiHluJoiQvJXt9xfTFdd/ODAiWTgASz6z4JotEI4duzVSCuqG2Xq30E5DtLfVnYF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758366231; c=relaxed/simple;
-	bh=oajWz/Pk5//uqUY2wQW5300sN6tGzd7WzqJWxKlkJmM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fllFYf9MO8LTRFCjd6fjwIFPEeVlwYthEnhogL0JaBW4pTkdJcYQhviK47xYeTrRoUIurHTVkBlUOaqB7sU+6pVfBpKIBtPBcAuisKQzqBJ+cfJPM/trg1BOE5NmEmQ8x/g+uzyLj0pCXaaIeRPLsinnqXzx4qsmvVrw/GajvUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e28VyjiN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931ACC4CEFB
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:03:50 +0000 (UTC)
+	s=arc-20240116; t=1758366252; c=relaxed/simple;
+	bh=TZONtrJ4BRxNqktjJxW+LYMjRCcM7hr9N9x31AF/6f8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mnfw07tFp8JjiZ4DX/qui6RiaAn/hpl6d1lTsn9QXpI5RpTxJWG+YyOL+t6aNxfTUN2OBCg+V55Sb5fnxSxY3vlStFr6S1R2eO+zlYVlNBrJnm2ECv3o1zksDaqzusV29y5ZMDUQ6O4oW0vKRGg8Z6feGYzbgXYUkdnnX7AEOk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DwJmtALL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCF90C4CEEB;
+	Sat, 20 Sep 2025 11:04:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758366230;
-	bh=oajWz/Pk5//uqUY2wQW5300sN6tGzd7WzqJWxKlkJmM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=e28VyjiNSIAS0l/4H0ncXv5azpGYAcRh7Joy3yn/A0H9VPuLYXL4F0jV7Xr4FSAfJ
-	 hLAMhuJIp0DNYryTyjOwGVAkHxyciBL5C3jpWSKeYN4HLHHjcJcs0MMGHJus6LlxxP
-	 ZrQr/UmIdQgySWMTJ0zuZ2gMqMxwStCCiGeGDmRpABz1KhgcGHX4JrFrTDPfMghUIG
-	 Fo/GBM4szakiUPRboDt0TwhFjwUV5whPpb56igvIH3Q+cRC5rSyHfc6saZp5qdU60E
-	 Gr6GYbqFzPGgczvCgIKcZua6PucMNx6p4CO1OJf85WBHFLcD7n+mmnTcupFLGlDMRx
-	 SJErwThrh6zvw==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-62189987b47so1771183eaf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 04:03:50 -0700 (PDT)
-X-Gm-Message-State: AOJu0Ywt16DmQdinzlzpAELtVF7uBK1RRNj65nIvBRP944M9Wj+ms2gh
-	7v2AcTvSIHq7XPbgAZMHRIm/oVcGhJde0ZH4RuIousKmePUUMRNWwdkr+Z5iIHDgr+YoqjxwtZx
-	s2hDP0kTmCl9aVgYrYUqJO//ln0Sy1FM=
-X-Google-Smtp-Source: AGHT+IFo5wLTIp9z4ZtxJcN2+S7aBhlvWJYB1uLZuzmKp6vzgq+f7gKV3PHe2XmRoIhwfYQkopZtFPS5z+RoDTQIyQM=
-X-Received: by 2002:a05:6808:4fd0:b0:438:4356:b533 with SMTP id
- 5614622812f47-43d6c252629mr2757924b6e.29.1758366229809; Sat, 20 Sep 2025
- 04:03:49 -0700 (PDT)
+	s=k20201202; t=1758366251;
+	bh=TZONtrJ4BRxNqktjJxW+LYMjRCcM7hr9N9x31AF/6f8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DwJmtALLRwuJrcG3BTOdkIxef4PPjoX9rdg4psECZqafpz6uCmsUzRSshlIpQyTeq
+	 2r+U+cS9FsR7bANpJZAIm8pEi8M0d3q0tzMfJMZl8ljs39zpcUZRfsZVy7EuFclwLC
+	 Ewq5NL6DTIHgndCZmGAja5nm3tOZGTNrHZ9QFoIW/PVpj9KDonJQW9XbzOBaZVyq1H
+	 rSgjV2DBeZ6dKK1YnYAjOCb8kEQmaB0snoMkFdxUPSZ7DC0i2TaixBmVHb3BIppfiQ
+	 +jrKd7HK6ptdbZF+qEruqas8A+dZCm2znkHPTK6B+mmbqB1cecB3o1BEdr/nLfchmN
+	 JkrSPIUYnshYA==
+Date: Sat, 20 Sep 2025 12:04:04 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich 
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= 
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] iio: adc: ad7124: drop nr field
+Message-ID: <20250920120404.6af20b23@jic23-huawei>
+In-Reply-To: <f2eb2424e4b3fc787d1f20b17852e97b1a708cc8.camel@gmail.com>
+References: <20250917-iio-adc-ad7124-drop-nr-field-v1-0-5ef5cdc387c6@baylibre.com>
+	<f2eb2424e4b3fc787d1f20b17852e97b1a708cc8.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <85e3df99-7ba5-4654-9148-5fff25ea0e5a@arm.com>
-In-Reply-To: <85e3df99-7ba5-4654-9148-5fff25ea0e5a@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 20 Sep 2025 13:03:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hWTtQWVJ1VkC9AH4jtCLWFhak0adaiE0Yq=ZwVo+fscA@mail.gmail.com>
-X-Gm-Features: AS18NWBP1spJEghYNvK9qzPaRQ8BzYpKBwjGyM3qU2Xj-HbouQM7YfpOWK6PtAM
-Message-ID: <CAJZ5v0hWTtQWVJ1VkC9AH4jtCLWFhak0adaiE0Yq=ZwVo+fscA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: Initialize cpufreq-based invariance before subsys
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	"zhenglifeng (A)" <zhenglifeng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 12:15=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> commit 2a6c72738706 ("cpufreq: Initialize cpufreq-based
-> frequency-invariance later") postponed the frequency invariance
-> initialization to avoid disabling it in the error case.
-> This isn't locking safe, instead move the initialization up before
-> the subsys interface is registered (which will rebuild the
-> sched_domains) and add the corresponding disable on the error path.
->
-> Observed lockdep without this patch:
-> [    0.989686] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [    0.989688] WARNING: possible circular locking dependency detected
-> [    0.989690] 6.17.0-rc4-cix-build+ #31 Tainted: G S
-> [    0.989691] ------------------------------------------------------
-> [    0.989692] swapper/0/1 is trying to acquire lock:
-> [    0.989693] ffff800082ada7f8 (sched_energy_mutex){+.+.}-{4:4}, at: reb=
-uild_sched_domains_energy+0x30/0x58
-> [    0.989705]
->                but task is already holding lock:
-> [    0.989706] ffff000088c89bc8 (&policy->rwsem){+.+.}-{4:4}, at: cpufreq=
-_online+0x7f8/0xbe0
-> [    0.989713]
->                which lock already depends on the new lock.
->
-> Fixes: 2a6c72738706 ("cpufreq: Initialize cpufreq-based frequency-invaria=
-nce later")
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  drivers/cpufreq/cpufreq.c | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index fc7eace8b65b..58e3839a2140 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -2953,6 +2953,15 @@ int cpufreq_register_driver(struct cpufreq_driver =
-*driver_data)
->                         goto err_null_driver;
->         }
->
-> +       /*
-> +        * Mark support for the scheduler's frequency invariance engine f=
-or
-> +        * drivers that implement target(), target_index() or fast_switch=
-().
-> +        */
-> +       if (!cpufreq_driver->setpolicy) {
-> +               static_branch_enable_cpuslocked(&cpufreq_freq_invariance)=
-;
-> +               pr_debug("cpufreq: supports frequency invariance\n");
-> +       }
-> +
->         ret =3D subsys_interface_register(&cpufreq_interface);
->         if (ret)
->                 goto err_boost_unreg;
-> @@ -2974,21 +2983,14 @@ int cpufreq_register_driver(struct cpufreq_driver=
- *driver_data)
->         hp_online =3D ret;
->         ret =3D 0;
->
-> -       /*
-> -        * Mark support for the scheduler's frequency invariance engine f=
-or
-> -        * drivers that implement target(), target_index() or fast_switch=
-().
-> -        */
-> -       if (!cpufreq_driver->setpolicy) {
-> -               static_branch_enable_cpuslocked(&cpufreq_freq_invariance)=
-;
-> -               pr_debug("supports frequency invariance");
-> -       }
-> -
->         pr_debug("driver %s up and running\n", driver_data->name);
->         goto out;
->
->  err_if_unreg:
->         subsys_interface_unregister(&cpufreq_interface);
->  err_boost_unreg:
-> +       if (!cpufreq_driver->setpolicy)
-> +               static_branch_disable_cpuslocked(&cpufreq_freq_invariance=
-);
->         remove_boost_sysfs_file();
->  err_null_driver:
->         write_lock_irqsave(&cpufreq_driver_lock, flags);
-> --
+On Thu, 18 Sep 2025 11:25:27 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Applied as 6.17-rc material, thanks!
+> On Wed, 2025-09-17 at 15:39 -0500, David Lechner wrote:
+> > The motivation behind this series was to remove the `nr` field in struct
+> > ad7124_channel since it is duplicating the same value as struct
+> > iio_chan_spec.address (and duplicated again by .scan_index).
+> >=20
+> > When it came to actually doing that though, I found that it was easier
+> > to first clean things up by removing the ad7124_enable_channel()
+> > function - which is a nice cleanup by itself. So ended up with 2 patches
+> > that end with the same result without ever mentioning the duplication.
+> >=20
+> > ---
+> > David Lechner (2):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7124: inline ad7124_enable_c=
+hannel()
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iio: adc: ad7124: remove unused `nr` fie=
+ld
+> >=20
+> > =C2=A0drivers/iio/adc/ad7124.c | 19 ++++++-------------
+> > =C2=A01 file changed, 6 insertions(+), 13 deletions(-)
+> > ---
+> > base-commit: 561285d048053fec8a3d6d1e3ddc60df11c393a0
+> > change-id: 20250917-iio-adc-ad7124-drop-nr-field-518102218a61
+> >=20
+> > Best regards, =20
+>=20
+> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+
+Applied to iio.git/testing
+
+Thanks
+
+J
 
