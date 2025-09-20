@@ -1,149 +1,92 @@
-Return-Path: <linux-kernel+bounces-825365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612F5B8BADC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F011B8BAE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B90A1C0447C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:14:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C78E586AF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BBE1DA23;
-	Sat, 20 Sep 2025 00:13:37 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB0778F3E;
+	Sat, 20 Sep 2025 00:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3hzw6hs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5843E63CB
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424E2AD31;
+	Sat, 20 Sep 2025 00:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758327217; cv=none; b=GIdKs73t72vPudaAQBJ4hO/108J6Rei9bX6ZlsJptirW/3VeGjSJv0z/ywbyjLTHKsMMj4LLW8dCGVpW6poPjib2aL7hyAepWmdoLtiBzbw9gSnkREo2iWAVrS5CWdxlHOt5mrNXoReXSENVUFp18xpDX0x1/03TNVI/DLMfaoQ=
+	t=1758327280; cv=none; b=EMQvUnT70qSC4bTbvcw9syA70N2HOwjo8rIxBqAo+wNOP/YRpID12snS7zeoSYkkRdTXUcosty9KHGnHCN3sUy9RBobIznuW6kAOhJa0DPPTtqwNR3AdPJcOQhX0A2jF4yCzXPBZnOfaypJkzNE+GAvJldOnjqSSIoLnHobn668=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758327217; c=relaxed/simple;
-	bh=9oer6FIxhSftD1QvS4tyhBH63lOL8najkhKV35ZC9Ag=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Fulc3DxWjgIEftcfrgP3iPkW2wFMZQZAbFIX5JHdxsTtTIv8ZVige3WQgn4o+I/ThARwo6KQr2Wm7L7tB1sRRFD6PYGCkWIs3zwTmvsuFYNDQhSo5aMuH1as6URB1eRCkPQx5tt5yNrGJeZ+XnsGaqWrTSbtfqc3qfZI7lhzgZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-4190d8f16c3so27312565ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 17:13:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758327214; x=1758932014;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0KSXfD8WagrlJub7GjFFRPCZmKQD/bTAa2q7egn9kCU=;
-        b=POrPtef8fx6pJkLxlFjCuwgZsSG6+av8+WNSt7jU37rE9+oBfMUArWRx5nODWBXF96
-         Av9FVQofUxC9knDBk84b03wUvZFyvnqsYVgquNuzy+X/PlNKXS4jqyo9t/mPTP0D1A/5
-         W6ZHagbj10ft0ssouHek0BQ2uzqDz/m6hih/48l0ni2/t2EdM0tUTi+BgwBC4ir8X6QA
-         n7vGjeVGmUASpA+4YtIT/dqDwx0fmw+ggUYt5QAWQXDRq1hygrnc8X5wZ6u4VLrc92KL
-         /AYf/3Cpl0J+4QW8d245qVJj4vvUrEE56dcKao3CRpEVlGIHjyPCHsIytiMwIz5TTG8n
-         nzzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsI2Eln96aX3AEOt5ktLXkNwWHRIj13OontlA7T0kEs19xQXZ6jpjdBWya7T6kKy/cgfl121Qe/zR9W+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwN0+ZsCCXsPiIBoYwx/x5nDwpNrfBgG9b2sb5ojlIMmeadZMy
-	1UI4mHiYemRJM6yGIbQtt3K+cqAxlqLlLQx31yFmcGGkc5UCaC5QxFk4Z9NRXBB71/DXrtj50ZH
-	RM2wMCZdY94pKHU+3jmcqONeq5jOK8XvyUPMKpIBglKZFXcICMy9rFz7976k=
-X-Google-Smtp-Source: AGHT+IEONtvsqEyT9Cy/dVpWDrwJVGJAQsAH+BirtcW0EGh8mtcHkqDGk5tj5hD9ivfUGYWOKYcwm3AYaVL/wJPdVXWCWTyCEkqY
+	s=arc-20240116; t=1758327280; c=relaxed/simple;
+	bh=O0bDy6Ix2CSa2N0Q4JTxtP6HuLT6aOmOzysAyCGa/JQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=uBkdrQkhYDYx6sf9jQToGhx/utbu77DidDWgtp5Er1DyDKp1c/dFdjXcp+VMDOHT6LbJ6F7XNw0aQOzCggwANm7pKXSieOmMN4OIGMDZs5my1tsE+DPDosTnmFAX4/Va6xB4f9OLcdcKEaKZytK3OlV2XqL/GhOBDBacQR3sCGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3hzw6hs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F96FC4CEF0;
+	Sat, 20 Sep 2025 00:14:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758327280;
+	bh=O0bDy6Ix2CSa2N0Q4JTxtP6HuLT6aOmOzysAyCGa/JQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=L3hzw6hsVszuDiJHPBCY82Amym8WdjwMr0g4coY501cIx1Z/cbkmYyw7MErPFCgVY
+	 9zOiRwZwy5zm841JL2MsK2jzXeQ3zuoERdnS/L8wMExSvv1T0o7mYbdFrsEWlA4SkK
+	 3svAd1LFwZ7z30kKWvM0DWesAGVpKsw7bZJco19Lm5M47zZgjVJZtlKLQMBsZ7yYaA
+	 FJfwNW5bTkOWmd9ZQMsw1BtXtJxClMXZcosYuHHq5MUc0nBPwOIMN0/MJI58CzbCdH
+	 z1MYamA/HTdmcm+e+/bELj1O9aqgYTVQyFTPfnXkV3EothiEolqhY+/B6Fha//O50S
+	 IdN4mLe8ZgdZQ==
+Date: Fri, 19 Sep 2025 18:14:34 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+cc: Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+    Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+    linux-riscv@lists.infradead.org, Catalin Marinas <catalin.marinas@arm.com>, 
+    Will Deacon <will@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+    Alexandre Ghiti <alex@ghiti.fr>, Peter Xu <peterx@redhat.com>, 
+    Oscar Salvador <osalvador@suse.de>, 
+    Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: Re: [PATCH v2] asm-generic: Remove pud_user() from pgtable-nopmd.h
+In-Reply-To: <c2c9fc69871a7caaa205e237ff73557f19f5e176.1755509286.git.christophe.leroy@csgroup.eu>
+Message-ID: <d9f45fdb-4ecd-23b0-6c98-846be24976aa@kernel.org>
+References: <c2c9fc69871a7caaa205e237ff73557f19f5e176.1755509286.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3782:b0:412:c994:db15 with SMTP id
- e9e14a558f8ab-42481947474mr87183285ab.14.1758327214465; Fri, 19 Sep 2025
- 17:13:34 -0700 (PDT)
-Date: Fri, 19 Sep 2025 17:13:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cdf1ae.a00a0220.37dadf.0021.GAE@google.com>
-Subject: [syzbot] [nfs?] WARNING in nsfs_fh_to_dentry
-From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, chuck.lever@oracle.com, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
+On Mon, 18 Aug 2025, Christophe Leroy wrote:
 
-syzbot found the following issue on:
+> Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
+> issues") added pud_user() in include/asm-generic/pgtable-nopmd.h
+> 
+> But pud_user() only exists on ARM64 and RISCV and is not expected
+> by any part of MM.
+> 
+> Add the missing definition in arch/riscv/include/asm/pgtable-32.h
+> and remove it from asm-generic/pgtable-nopmd.h
+> 
+> A stub pud_user() is also required for ARM64 after
+> commit ed928a3402d8 ("arm64/mm: fix page table check compile
+> error for CONFIG_PGTABLE_LEVELS=2")
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Reviewed-by: Peter Xu <peterx@redhat.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 
-HEAD commit:    846bd2225ec3 Add linux-next specific files for 20250919
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=144b8d04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-dashboard link: https://syzkaller.appspot.com/bug?extid=9eefe09bedd093f156c2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1724be42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fc2712580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c53d48022f8a/disk-846bd222.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/483534e784c8/vmlinux-846bd222.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/721b36eec9b3/bzImage-846bd222.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: fs/nsfs.c:493 at nsfs_fh_to_dentry+0xcc5/0xdc0 fs/nsfs.c:493, CPU#1: syz.0.17/6050
-Modules linked in:
-CPU: 1 UID: 0 PID: 6050 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:nsfs_fh_to_dentry+0xcc5/0xdc0 fs/nsfs.c:493
-Code: 7c 24 60 e9 10 f8 ff ff e8 48 01 79 ff 90 0f 0b 90 e9 09 f6 ff ff e8 3a 01 79 ff 90 0f 0b 90 e9 81 f6 ff ff e8 2c 01 79 ff 90 <0f> 0b 90 e9 d0 f6 ff ff e8 1e 01 79 ff 45 31 ff e9 d9 f7 ff ff e8
-RSP: 0018:ffffc90002f97a20 EFLAGS: 00010293
-RAX: ffffffff824717f4 RBX: 00000000effffffd RCX: ffff888031990000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000effffffd
-RBP: ffffc90002f97b10 R08: ffffffff8fe4db77 R09: 1ffffffff1fc9b6e
-R10: dffffc0000000000 R11: fffffbfff1fc9b6f R12: 1ffff920005f2f4c
-R13: ffff888028d74894 R14: dffffc0000000000 R15: 0000000000000000
-FS:  0000555569cd2500(0000) GS:ffff8881258a2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b32363fff CR3: 0000000028a1e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- exportfs_decode_fh_raw+0x178/0x6e0 fs/exportfs/expfs.c:456
- do_handle_to_path+0xa4/0x1a0 fs/fhandle.c:276
- handle_to_path fs/fhandle.c:400 [inline]
- do_handle_open+0x6b4/0x8f0 fs/fhandle.c:415
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1a5d78ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffff390c9e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000130
-RAX: ffffffffffffffda RBX: 00007f1a5d9d5fa0 RCX: 00007f1a5d78ec29
-RDX: 0000000000400040 RSI: 0000200000000000 RDI: 0000000000000003
-RBP: 00007f1a5d811e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f1a5d9d5fa0 R14: 00007f1a5d9d5fa0 R15: 0000000000000003
- </TASK>
+Acked-by: Paul Walmsley <pjw@kernel.org> # riscv
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+- Paul
 
