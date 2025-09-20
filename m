@@ -1,142 +1,183 @@
-Return-Path: <linux-kernel+bounces-825525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF14FB8C08E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:21:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C831B8C0A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99EF46215A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC48587D7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFECE223DD6;
-	Sat, 20 Sep 2025 06:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC37423536C;
+	Sat, 20 Sep 2025 06:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hag0sJYP"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bv3OTZMM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84631F3FEC
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1366C1E1E0B;
+	Sat, 20 Sep 2025 06:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758349297; cv=none; b=rgQ/s6BxJMqZOjk2d+uh58VqLlvl81BMWlniyN9pHQqKhDiFdTI2kR4T48sc7mZk8ptfj/ItCc6QvYRyxJh3jjujnFKR/gbnbFkNXFtF2CqOLLpr5tvb0vMTPSExo1ODWGcktaZA/MS9PGEccgiO1vJ2vv07KJ8EA9FKCvfy1G8=
+	t=1758349748; cv=none; b=O6CmMI98E3YzUtbeI+d/NczFzgEOrahz6WGkwmsn5ncq8mdjf+2rKVS5VSmL0KqJOV497PqMqXgC6zBRmo+XxKc8dZvCu7RcxtCkrnlRBFZRAjy9ulbb83qYrfmkdIIDb/W11dkEugRvDKDYtbnzngWUsVV4WWlagP44SpPj+M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758349297; c=relaxed/simple;
-	bh=2CS7puWReal692Afu/64ZmVU6Duki90EiB37CO+lLJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YrYMGckfWJQdx4RzoH/hR44xuPG4mPyhzEYCyXc2nzdT9NSaeTdc8SAN7lDVMjMdHv1yn69pexcg2766dWP4CcenuqwDSj3q19TXLiWFTbCQ0W8vMdQAxYaLB9TggXwZ9ly5qqifnWLZG9TdX+fVtVhth/I70yhv44kW7cIhKtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hag0sJYP; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77ddfe29cccso1685226b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:21:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758349295; x=1758954095; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cIvPS4JbRoaIqIYD1oAUKVTexrUyLyhHhsTO9zcUnAI=;
-        b=Hag0sJYPpfTuN2OmpH5nNjDTCQd46YHuCl+s3IQ6MgvbO3ZgDVCWhCJlPUUsdDuq23
-         AcOfiXofZwbx50gySiZIf6NYOyk7+xTImP0lvq2NRK3CVkjoYaiAoMBNS3rFnuUa9IIF
-         aO7EpsefpZG3XXVGYkn7RrXFHWYeD5OI7r+0w2eodlE5GK1xGiKQ6eETNimcfrNr6F2/
-         IXrx/EWNzCOzIeLxoCOfsXCDzmOUwawTlWZNxp7zSIvrQlN6Wc5aaIOL6vnE0o3Y3X5v
-         36kHsPVCenVqY+Oddxuix/lsYdrxyQ9ANOXF2GGPmmKj7Z+nXH30kyOuiw0D2sLlm53j
-         Hk4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758349295; x=1758954095;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cIvPS4JbRoaIqIYD1oAUKVTexrUyLyhHhsTO9zcUnAI=;
-        b=veGyl5X3n/WIEh6tdEL4c2FvYDf4MthKTcgqwEplbuHKeSvZ0F685q96QARvVcR2wG
-         F8VYLGdQ0+URe2dDTH4uYOnnK5Fdku1iCAHEuRnijk3Gtp8VJv4gOYe98s0P1hHGbp5C
-         tS8j3BOCktJ7MvP8ZmGmGI8/wzUwt21QVz945OgINdbXQoZLD0U7NBOExlb/rkrUz1Ot
-         UoklmeaDwe7rdCZtNDVXdf0W4XPr7LEPlKviTulkTrw5QHOXaG79cFpQzVCAIPtqqpzb
-         HEEDuRpbxNsYYMPDAQyIEvWF0AC+YZ1CrD411Q3DntxwvYPKySlbBYHF5yNtJoy8ML/S
-         yT1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3OOZWci6q/snj+PmD7iFeTda7oa9FQfOSuZT99bXx7FV8zG/K/laoJ30XvXVr1VLl4zniqD6fSf13CEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBnsXqX0AJ0E4YppZpIV+JHbyPhs8syYYZ7XiZej7u2dHAVehP
-	c3pFdBJG7ELmZ3WNAwaRu3y8qeQDI5oXUWn1kePouiS6/qu1KodTMKdR
-X-Gm-Gg: ASbGncsWCVc7eEXUGCChOqm03VOpTWR8B+3YACHrRFruM0MDj5uBOuQ5dhb8eojGQ0q
-	ApPFuiMA6QtJOZu7X7vDurJaC44gW7dyg9lQ1ZAzNncTIUJc8ACW/aiMOE3i/aiSaFeHFXYDU29
-	qWPviu8rO/W8up3vcuR9T5mT3AUtG0rvgQmpwuqfCoFJTWpkSRy3he1NXLmcj3kLNrJcQb6t3ih
-	cgPIVtiH/gTcdBXZrSWGBfaNYHr+cQPS3LAf5iCFWt3fD2/B7nOsgifEBqcbA1ttxxNW73Q3x+5
-	av6A3xXjY7CVIfnZjK+b5WPPt6nEMlHIqKugD/ZZEk/bzN6TDGDWCOV4sZQtDX1zzhvCZInHC47
-	dGt2MbKmP8dcPo98OaiukuC9jRn6vPTNSNYQB7mbjQwV3XZAYKRJfcnqVmPo=
-X-Google-Smtp-Source: AGHT+IHGElTkmUUaEf0dyfyafF631v013uwqxUws1ECPfB3/tiTo1tIEbGI9id9D93IB5vks4u+lfw==
-X-Received: by 2002:aa7:88cc:0:b0:77c:64d8:3afd with SMTP id d2e1a72fcca58-77e4ecbcb3fmr6469774b3a.28.1758349295059;
-        Fri, 19 Sep 2025 23:21:35 -0700 (PDT)
-Received: from [192.168.1.7] ([223.181.113.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77e20bf07c4sm4550315b3a.70.2025.09.19.23.21.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Sep 2025 23:21:34 -0700 (PDT)
-Message-ID: <7cddfccc-864d-4fa8-812f-8c273fe1a626@gmail.com>
-Date: Sat, 20 Sep 2025 11:51:27 +0530
+	s=arc-20240116; t=1758349748; c=relaxed/simple;
+	bh=lsXrFVLVVP9m7FF0K5jKakOvUcFLx4HMxLX5PqFqHl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/ZN+D2AtfN2mAqlp4QjGmBQh99Qf+TDYbK2psPyA8bkEiPaVrpNI7xM3kDG4uI3d2cVVdkdMzX8qSNm7GDx+7nXthPcllYYtdk9na508jT4hIATseDqTOgjDq19zPZ4gzGgP/NpzVMaCvzciv7cGIW3EHRlDOlaNs/xJG+YRHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bv3OTZMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8071DC4CEEB;
+	Sat, 20 Sep 2025 06:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758349747;
+	bh=lsXrFVLVVP9m7FF0K5jKakOvUcFLx4HMxLX5PqFqHl8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bv3OTZMMtf23WfTRwCojxCISILg6q3AsIaxhzSxVqz0ZbI8KEsjM0fWGmrgMBv1lJ
+	 vqeD/OoS1EZXRpLRoEbtbfh53ase85/5rpaQ4uXvR6IAC8dke/eX3xxde3VodbmFqQ
+	 YqgWzmEulSZZ+qrfljy0zqsXLc+jSlkd1hoqpypU/0vDV+gMb+CZwxL4vPOkwOhpwm
+	 k2DWf9bBC9H6ZKRDZY5qt61NRBXrcqevMeBkmbmqScfAOtMPMRT52mGcp//WTaJm6W
+	 ltCMALC9cru0HztqsISFXjepJYUrmKHm6iCsz66BfW5inV+WLlj+CwukxAUtqJiEsz
+	 U3weTvQ7X4pRg==
+Date: Sat, 20 Sep 2025 11:58:58 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/6] PCI: dwc: Don't poll L2 if QUIRK_NOL2POLL_IN_PM
+ is existing in suspend
+Message-ID: <p4hqjnhpih2uy5hzf7llrd3ah7ov6sijkuqjecpvv5j2iqrsji@kxj5xwb7a5p4>
+References: <20250902080151.3748965-1-hongxing.zhu@nxp.com>
+ <20250902080151.3748965-3-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm: dts: ti: omap: Drop unnecessary or unused
- properties
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>,
- Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org
-References: <20250908-ti-sdhci-omap-v2-0-72927890482f@gmail.com>
- <20250908-ti-sdhci-omap-v2-1-72927890482f@gmail.com>
- <20250909-uptight-fluorescent-markhor-4639db@kuoka>
- <501a4e0a-2d6e-4a57-9006-91413bd2ebb4@gmail.com>
- <20250914222348.GA2080538-robh@kernel.org>
-Content-Language: en-US
-From: Charan Pedumuru <charan.pedumuru@gmail.com>
-In-Reply-To: <20250914222348.GA2080538-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250902080151.3748965-3-hongxing.zhu@nxp.com>
 
-
-
-On 15-09-2025 03:53, Rob Herring wrote:
-> On Sun, Sep 14, 2025 at 12:19:15AM +0530, Charan Pedumuru wrote:
->>
->>
->> On 09-09-2025 12:50, Krzysztof Kozlowski wrote:
->>> On Mon, Sep 08, 2025 at 04:17:12PM +0000, Charan Pedumuru wrote:
->>>> Remove unnecessary properties like ti,needs-special-reset,
->>>> ti,needs-special-hs-handling and cap-mmc-dual-data-rate from the DTS
->>>> files as there is no user of them.
->>>
->>> No user? That's not true:
->>>
->>> git grep ti,needs-special-reset
->>
->> Should I remove ti,needs-special-reset property for the compatibles 
->> "ti,am335-sdhci" and "ti,am437-sdhci" instead of removing for all mmc 
->> nodes? ti,needs-special-hs-handling and cap-mmc-dual-data-rate were 
->> defined for board specific, so these two properties should be defined 
->> in the YAML file to resolve dtb_check errors or can I remove those 
->> properties for those boards too?
+On Tue, Sep 02, 2025 at 04:01:47PM +0800, Richard Zhu wrote:
+> Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management State Flow
+> Diagram. Both L0 and L2/L3 Ready can be transferred to LDn directly.
 > 
-> If those 2 compatibles don't use the omap_hsmmc driver then, yes I think 
-> you can remove the properties from those nodes. Otherwise, shrug. Ask 
-> the TI folks if you can't figure it out.
-
-Those compatibles use sdhci-omap driver not omap_hsmmc driver, then I will remove those properties for the nodes with those compatibles. For the properties which are board specific, I won't remove them.
-
+> It's harmless to let dw_pcie_suspend_noirq() proceed suspend after the
+> PME_Turn_Off is sent out, whatever the LTSSM state is in L2 or L3 after
+> a recommended 10ms max wait refer to PCIe r6.0, sec 5.3.3.2.1 PME
+> Synchronization.
 > 
-> Rob
+> The LTSSM states are inaccessible on i.MX6QP and i.MX7D after the
+> PME_Turn_Off is sent out.
+> 
+
+This statement is not accurate. A single register read cannot cause hang AFAIK.
+I'm guessing that the link down (LDn) happens after initiating PME_Turn_Off and
+the access to CSR register (LTSSM) causes hang.
+
+Is my understanding correct?
+
+> To support this case, don't poll L2 state and apply a simple delay of
+> PCIE_PME_TO_L2_TIMEOUT_US(10ms) if the QUIRK_NOL2POLL_IN_PM flag is set
+> in suspend.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+
+We need Fixes tag also and you do need to set the flag in relevant glue driver
+in this patch itself so that it can cleanly be backported.
+
+- Mani
+
+> ---
+>  .../pci/controller/dwc/pcie-designware-host.c | 34 +++++++++++++------
+>  drivers/pci/controller/dwc/pcie-designware.h  |  4 +++
+>  2 files changed, 28 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 9d46d1f0334b..57a1ba08c427 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -1016,15 +1016,29 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  			return ret;
+>  	}
+>  
+> -	ret = read_poll_timeout(dw_pcie_get_ltssm, val,
+> -				val == DW_PCIE_LTSSM_L2_IDLE ||
+> -				val <= DW_PCIE_LTSSM_DETECT_WAIT,
+> -				PCIE_PME_TO_L2_TIMEOUT_US/10,
+> -				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> -	if (ret) {
+> -		/* Only log message when LTSSM isn't in DETECT or POLL */
+> -		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> -		return ret;
+> +	if (dwc_quirk(pci, QUIRK_NOL2POLL_IN_PM)) {
+> +		/*
+> +		 * Add the QUIRK_NOL2_POLL_IN_PM case to avoid the read hang,
+> +		 * when LTSSM is not powered in L2/L3/LDn properly.
+> +		 *
+> +		 * Refer to PCIe r6.0, sec 5.2, fig 5-1 Link Power Management
+> +		 * State Flow Diagram. Both L0 and L2/L3 Ready can be
+> +		 * transferred to LDn directly. On the LTSSM states poll broken
+> +		 * platforms, add a max 10ms delay refer to PCIe r6.0,
+> +		 * sec 5.3.3.2.1 PME Synchronization.
+> +		 */
+> +		mdelay(PCIE_PME_TO_L2_TIMEOUT_US/1000);
+> +	} else {
+> +		ret = read_poll_timeout(dw_pcie_get_ltssm, val,
+> +					val == DW_PCIE_LTSSM_L2_IDLE ||
+> +					val <= DW_PCIE_LTSSM_DETECT_WAIT,
+> +					PCIE_PME_TO_L2_TIMEOUT_US/10,
+> +					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> +		if (ret) {
+> +			/* Only log message when LTSSM isn't in DETECT or POLL */
+> +			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	/*
+> @@ -1040,7 +1054,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  
+>  	pci->suspended = true;
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_suspend_noirq);
+>  
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 00f52d472dcd..4e5bf6cb6ce8 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -295,6 +295,9 @@
+>  /* Default eDMA LLP memory size */
+>  #define DMA_LLP_MEM_SIZE		PAGE_SIZE
+>  
+> +#define QUIRK_NOL2POLL_IN_PM		BIT(0)
+> +#define dwc_quirk(pci, val)		(pci->quirk_flag & val)
+> +
+>  struct dw_pcie;
+>  struct dw_pcie_rp;
+>  struct dw_pcie_ep;
+> @@ -504,6 +507,7 @@ struct dw_pcie {
+>  	const struct dw_pcie_ops *ops;
+>  	u32			version;
+>  	u32			type;
+> +	u32			quirk_flag;
+>  	unsigned long		caps;
+>  	int			num_lanes;
+>  	int			max_link_speed;
+> -- 
+> 2.37.1
+> 
 
 -- 
-Best Regards,
-Charan.
-
+மணிவண்ணன் சதாசிவம்
 
