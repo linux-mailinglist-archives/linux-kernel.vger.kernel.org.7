@@ -1,301 +1,230 @@
-Return-Path: <linux-kernel+bounces-825907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8940BB8D146
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:44:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1EF0B8D14F
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4598E1B2796B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:45:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEEBC7A6C20
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1132D3EDE;
-	Sat, 20 Sep 2025 20:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB972D6410;
+	Sat, 20 Sep 2025 20:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="gxLroDBm"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kxGuF4/f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DFD2D7D41;
-	Sat, 20 Sep 2025 20:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758400803; cv=pass; b=qEUkmCsLc7P4ElCCrwcSvLIsIzhP+iUNdpCJyd9mjrui+IMr29NwRvtCLXLfgfSullHkqbjy4/tY8t5hBDgLew1DC/UqOP+l8c1T+qlvkDo50RMgTQhc3aXfjaq/GY+KgzJv4mBl5YnmxYe+QbV/lI6pMhb7HFj5n1vl1TRKv44=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758400803; c=relaxed/simple;
-	bh=uWI4/qj6thpZ0Tc19jhX4B24Cqj4vytw6faAdyXa6JI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F1921C163;
+	Sat, 20 Sep 2025 20:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758401376; cv=none; b=VQDEXPFwoavzK9Wq+amwPYfLMw5GPjxy29Ycwsu2pZNfSuCzXLcDabMgxPeyWGpKz8b36+Wj01TruaZUlNhyDIBS8MP7jwY1O91AF/SUL3nJ0quVTDKL9moLtYroIHkk2Dcgefj7AgsXUsO0v/C/jyel8ZDeVK07S+ePmUDBmi4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758401376; c=relaxed/simple;
+	bh=5PofiIjgAx4VGnfdZ4zQnv30kMD9cHFOibQ2RBJQAwo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKxiJbeG6Yf7VzIU+sNNNw1AKuJOPH5riMlkuDisfH9AhrrG/44MFDaW8UkM24JApcW2rmq00tb2URDe1XXXh4pb3yCAUGOXFxmTsTVE1/AWaxBY8YeqXbODr2OUic3WTFGObbUi4n1X8U/rpB3TF5wowlyJF0vrNI0EG6SJZws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=gxLroDBm; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758400792; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=B2DhV/vuRbct8iVI7PfPT7kIvwrPnUtI9ADKXQmxsXeiqkoN9F6hbWdeZp7L8tJ9gMxqB8JbK/f8a8d4CSeB5vYdifaWx3tpRaaDmmZZVc1WoSkyfD+Aiky0GNIyyjDJMLIAWOhgmkVIfRF+OMk34diGEQHu3ylYlECa1Pz9axw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758400792; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=i3CZ8I6hMfZuqlYG/R7kbbW2PmgdFbuMEuk5EuX4U84=; 
-	b=i1t1yVng4DEvL3QkBqhkZfOc9rokg5DBdduqJgUhwvxQ1sZeVn6kDMgqRngRKhiimKO1AiC9RDjBb9jkzZ6ft3QhIj4y1TTM2QjmRnuLi4iGb/gPn42Pm2S2S8JbfgRU72FaOzKVHZgIdNbsz8gCJB6fyUUswSU5rC4nrEd+eN0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758400792;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=i3CZ8I6hMfZuqlYG/R7kbbW2PmgdFbuMEuk5EuX4U84=;
-	b=gxLroDBmdYYuzJnigHmahDbH+flW97oQv1ZEih0+klSpSHuzK20m+EoxJo2izzau
-	SV8Vy72qx/x0FyMXxjkteMHRkMXpKHUcq54JAeTOtYCzNlumXF5UL2WYoaD7Uj4yGlt
-	XF2YrY6I3HmOPURBDBK7qkosUY/23k67BjDf6ZDA=
-Received: by mx.zohomail.com with SMTPS id 1758400790928789.1689767088144;
-	Sat, 20 Sep 2025 13:39:50 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 52ACA1805CD; Sat, 20 Sep 2025 22:39:43 +0200 (CEST)
-Date: Sat, 20 Sep 2025 22:39:43 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: touchscreen: convert eeti bindings
- to json schema
-Message-ID: <iqfvpacnymzckd3vi7mxgzbljomwkww3mpuupn5mhy3rtlwebv@2vf346kfqpno>
-References: <20250919075823.2557865-1-dario.binacchi@amarulasolutions.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kp2BnDLw+CGIbkGeukVN//nAn+6aQejc3rMRCkDKfFmt4PT52/Sos7MnGuUC5UzsxwwDDrwQ5lW5yk5te+6GA8wwPCr5W1Lzh5bt8KK//gd4jdoWcPnOiclQsLw4m6LEbd0sjcpGi/B8+sE5eC2+1p24aVpx7TC5a8eIz7NizWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kxGuF4/f; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758401374; x=1789937374;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5PofiIjgAx4VGnfdZ4zQnv30kMD9cHFOibQ2RBJQAwo=;
+  b=kxGuF4/fCsKbldf/f5BB+tcYDR0/baEHrf+dcTLy20IceBxr63Rqa9ll
+   JfMDS7t4h8/RHDN8NbP13kr6tbWwSvXXqyH5kuCjNCErpZE9W/gSlkv0G
+   +tft2phokDhxn6whCm7w0BU+mYZEe+0BWsoA6NwfZpf92KcDKRC0q+hoT
+   l4dfqI8d39j53ibblpwKQqz5CE7RrVRxKjl0xwlMLam4cQMds09lGu119
+   yM5dMAnm2jQNdsOZL++HqrEB7CnItM+ZTuWGjelYiPhorid1JJH/NF54t
+   5lYR/ihaanPKYLJpQhZ99RU1vD4GFfV+qJrolHjUx/yV5IAN5NYlXQ2d0
+   A==;
+X-CSE-ConnectionGUID: tDrbZqw6R2moNdZIGD2uiA==
+X-CSE-MsgGUID: 6QTJ1xgXTz64bJ0bY3cqTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="71395420"
+X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
+   d="scan'208";a="71395420"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 13:49:34 -0700
+X-CSE-ConnectionGUID: qsWGhSxhQPyWu+N0WNqlGg==
+X-CSE-MsgGUID: PBO4BdgHSSur2mHpWFrq7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
+   d="scan'208";a="175388023"
+Received: from lkp-server01.sh.intel.com (HELO 7f63209e7e66) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 20 Sep 2025 13:49:31 -0700
+Received: from kbuild by 7f63209e7e66 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v04WN-00006t-1t;
+	Sat, 20 Sep 2025 20:49:27 +0000
+Date: Sun, 21 Sep 2025 04:49:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+	David Collins <david.collins@oss.qualcomm.com>
+Subject: Re: [PATCH 1/3] spmi: spmi-pmic-arb: add support for PMIC arbiter v8
+Message-ID: <202509210436.v24lwANK-lkp@intel.com>
+References: <20250920-glymur-spmi-v8-gpio-driver-v1-1-23df93b7818a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2hqg7mcrxxpxuwym"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250919075823.2557865-1-dario.binacchi@amarulasolutions.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/258.384.42
-X-ZohoMailClient: External
+In-Reply-To: <20250920-glymur-spmi-v8-gpio-driver-v1-1-23df93b7818a@oss.qualcomm.com>
+
+Hi Kamal,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on c3067c2c38316c3ef013636c93daa285ee6aaa2e]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Wadhwa/spmi-spmi-pmic-arb-add-support-for-PMIC-arbiter-v8/20250920-040410
+base:   c3067c2c38316c3ef013636c93daa285ee6aaa2e
+patch link:    https://lore.kernel.org/r/20250920-glymur-spmi-v8-gpio-driver-v1-1-23df93b7818a%40oss.qualcomm.com
+patch subject: [PATCH 1/3] spmi: spmi-pmic-arb: add support for PMIC arbiter v8
+config: nios2-randconfig-001-20250921 (https://download.01.org/0day-ci/archive/20250921/202509210436.v24lwANK-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509210436.v24lwANK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509210436.v24lwANK-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/spmi/spmi-pmic-arb.c: In function 'qpnpint_spmi_write':
+>> drivers/spmi/spmi-pmic-arb.c:129:30: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
+    #define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+                                 ^~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:620:11: note: in expansion of macro 'hwirq_to_sid'
+     u8 sid = hwirq_to_sid(d->hwirq);
+              ^~~~~~~~~~~~
+   In file included from include/linux/bitops.h:6,
+                    from include/linux/bitmap.h:8,
+                    from drivers/spmi/spmi-pmic-arb.c:5:
+   include/linux/bits.h:49:20: warning: right shift count >= width of type [-Wshift-count-overflow]
+           type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+                       ^~
+   include/linux/bits.h:51:24: note: in expansion of macro 'GENMASK_TYPE'
+    #define GENMASK(h, l)  GENMASK_TYPE(unsigned long, h, l)
+                           ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:129:40: note: in expansion of macro 'GENMASK'
+    #define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+                                           ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:620:11: note: in expansion of macro 'hwirq_to_sid'
+     u8 sid = hwirq_to_sid(d->hwirq);
+              ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c: In function 'qpnpint_spmi_read':
+   include/linux/bits.h:49:20: warning: right shift count >= width of type [-Wshift-count-overflow]
+           type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+                       ^~
+   include/linux/bits.h:51:24: note: in expansion of macro 'GENMASK_TYPE'
+    #define GENMASK(h, l)  GENMASK_TYPE(unsigned long, h, l)
+                           ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:129:40: note: in expansion of macro 'GENMASK'
+    #define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+                                           ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:632:11: note: in expansion of macro 'hwirq_to_sid'
+     u8 sid = hwirq_to_sid(d->hwirq);
+              ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c: In function 'qpnpint_spmi_masked_write':
+   include/linux/bits.h:49:20: warning: right shift count >= width of type [-Wshift-count-overflow]
+           type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+                       ^~
+   include/linux/bits.h:51:24: note: in expansion of macro 'GENMASK_TYPE'
+    #define GENMASK(h, l)  GENMASK_TYPE(unsigned long, h, l)
+                           ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:129:40: note: in expansion of macro 'GENMASK'
+    #define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+                                           ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:646:11: note: in expansion of macro 'hwirq_to_sid'
+     u8 sid = hwirq_to_sid(d->hwirq);
+              ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c: In function 'periph_interrupt':
+>> drivers/spmi/spmi-pmic-arb.c:124:3: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+     (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+      ^~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:685:12: note: in expansion of macro 'spec_to_hwirq'
+               spec_to_hwirq(sid, per, id, apid));
+               ^~~~~~~~~~~~~
+   In file included from include/linux/bitops.h:6,
+                    from include/linux/bitmap.h:8,
+                    from drivers/spmi/spmi-pmic-arb.c:5:
+   include/linux/bits.h:49:20: warning: right shift count >= width of type [-Wshift-count-overflow]
+           type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+                       ^~
+   include/linux/bits.h:51:24: note: in expansion of macro 'GENMASK_TYPE'
+    #define GENMASK(h, l)  GENMASK_TYPE(unsigned long, h, l)
+                           ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:124:14: note: in expansion of macro 'GENMASK'
+     (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+                 ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:685:12: note: in expansion of macro 'spec_to_hwirq'
+               spec_to_hwirq(sid, per, id, apid));
+               ^~~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c: In function 'qpnpint_irq_domain_activate':
+   include/linux/bits.h:49:20: warning: right shift count >= width of type [-Wshift-count-overflow]
+           type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+                       ^~
+   include/linux/bits.h:51:24: note: in expansion of macro 'GENMASK_TYPE'
+    #define GENMASK(h, l)  GENMASK_TYPE(unsigned long, h, l)
+                           ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:129:40: note: in expansion of macro 'GENMASK'
+    #define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+                                           ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:887:12: note: in expansion of macro 'hwirq_to_sid'
+     u16 sid = hwirq_to_sid(d->hwirq);
+               ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c: In function 'qpnpint_irq_domain_translate':
+   include/linux/bits.h:49:20: warning: right shift count >= width of type [-Wshift-count-overflow]
+           type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
+                       ^~
+   include/linux/bits.h:51:24: note: in expansion of macro 'GENMASK_TYPE'
+    #define GENMASK(h, l)  GENMASK_TYPE(unsigned long, h, l)
+                           ^~~~~~~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:124:14: note: in expansion of macro 'GENMASK'
+     (FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+                 ^~~~~~~
+   drivers/spmi/spmi-pmic-arb.c:952:15: note: in expansion of macro 'spec_to_hwirq'
+     *out_hwirq = spec_to_hwirq(intspec[0], intspec[1], intspec[2], apid);
+                  ^~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
---2hqg7mcrxxpxuwym
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 1/3] dt-bindings: touchscreen: convert eeti bindings
- to json schema
-MIME-Version: 1.0
+vim +/FIELD_GET +129 drivers/spmi/spmi-pmic-arb.c
 
-Hi,
+   118	
+   119	/*
+   120	 * hwirq value crosses 32 bits only for platforms with more than 16 PMICs,
+   121	 * none of which happen to support booting Linux in 32-bit mode.
+   122	 */
+   123	#define spec_to_hwirq(slave_id, periph_id, irq_id, apid) \
+ > 124		(FIELD_PREP(GENMASK(32, 28), (slave_id))  | \
+   125		FIELD_PREP(GENMASK(27, 20), (periph_id)) | \
+   126		FIELD_PREP(GENMASK(18, 16), (irq_id))    | \
+   127		FIELD_PREP(GENMASK(12, 0),  (apid)))
+   128	
+ > 129	#define hwirq_to_sid(hwirq)  FIELD_GET(GENMASK(32, 28), (hwirq))
+   130	#define hwirq_to_per(hwirq)  FIELD_GET(GENMASK(27, 20), (hwirq))
+   131	#define hwirq_to_irq(hwirq)  FIELD_GET(GENMASK(18, 16), (hwirq))
+   132	#define hwirq_to_apid(hwirq) FIELD_GET(GENMASK(12, 0), (hwirq))
+   133	
 
-On Fri, Sep 19, 2025 at 09:58:09AM +0200, Dario Binacchi wrote:
-> Convert EETI touchscreen controller device tree binding to json-schema.
->=20
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> ---
->=20
-> Changes in v5:
-> - Move bindings into eeti,exc3000.yaml
-> - Remove eeti.yaml
->=20
-> Changes in v2:
-> - Added in v2
->=20
->  .../input/touchscreen/eeti,exc3000.yaml       | 41 ++++++++++++++++---
->  .../bindings/input/touchscreen/eeti.txt       | 30 --------------
->  2 files changed, 36 insertions(+), 35 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/e=
-eti.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/eeti,exc=
-3000.yaml b/Documentation/devicetree/bindings/input/touchscreen/eeti,exc300=
-0.yaml
-> index 1c7ae05a8c15..13b865d3ee58 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/eeti,exc3000.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/eeti,exc3000.ya=
-ml
-> @@ -9,15 +9,13 @@ title: EETI EXC3000 series touchscreen controller
->  maintainers:
->    - Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> =20
-> -allOf:
-> -  - $ref: touchscreen.yaml#
-> -
->  properties:
->    compatible:
->      oneOf:
->        - const: eeti,exc3000
->        - const: eeti,exc80h60
->        - const: eeti,exc80h84
-> +      - const: eeti,exc3000-i2c
-
-I think this should be
-
-- const: eeti,exc3000-i2c
-  deprecated: true
-
-The compatible is obviously not something that should be used
-anymore.
-
->        - items:
->            - enum:
->                - eeti,exc81w32
-> @@ -30,18 +28,34 @@ properties:
->      maxItems: 1
->    vdd-supply:
->      description: Power supply regulator for the chip
-> +  attn-gpios:
-> +    maxItems: 1
-> +    description: Phandle to a GPIO to check whether interrupt is still
-> +                 latched. This is necessary for platforms that lack
-> +                 support for level-triggered IRQs.
-
-  deprecated: true
-
-(see below)
-
->    touchscreen-size-x: true
->    touchscreen-size-y: true
->    touchscreen-inverted-x: true
->    touchscreen-inverted-y: true
->    touchscreen-swapped-x-y: true
-> =20
-> +allOf:
-> +  - $ref: touchscreen.yaml#
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              const: eeti,exc3000-i2c
-> +    then:
-> +      required:
-> +        - touchscreen-size-x
-> +        - touchscreen-size-y
-
-And I think it makes sense to add this to disallow using this ugly
-hack with the normal compatibles:
-
-else:
-  attn-gpios: false
-
-Looking at the only user (pxa300-raumfeld-controller), it supplies
-the same GPIO as IRQ and as GPIO, so it is actually a software
-limitation. Instead of implementing the software level based IRQ
-handling in the gpio driver, it was hacked into the EETI driver.
-
-Looks like this legacy platform is pretty much dead, otherwise I
-would have suggested to simply switch it to the new binding/driver.
-
-Greetings,
-
--- Sebastian
-
->  required:
->    - compatible
->    - reg
->    - interrupts
-> -  - touchscreen-size-x
-> -  - touchscreen-size-y
-> =20
->  additionalProperties: false
-> =20
-> @@ -51,6 +65,7 @@ examples:
->      i2c {
->          #address-cells =3D <1>;
->          #size-cells =3D <0>;
-> +
->          touchscreen@2a {
->                  compatible =3D "eeti,exc3000";
->                  reg =3D <0x2a>;
-> @@ -62,3 +77,19 @@ examples:
->                  touchscreen-swapped-x-y;
->          };
->      };
-> +
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include "dt-bindings/interrupt-controller/irq.h"
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        touchscreen@2a {
-> +            compatible =3D "eeti,exc3000-i2c";
-> +            reg =3D <0x2a>;
-> +            interrupt-parent =3D <&gpio>;
-> +            interrupts =3D <123 IRQ_TYPE_EDGE_RISING>;
-> +            attn-gpios =3D <&gpio 123 GPIO_ACTIVE_HIGH>;
-> +        };
-> +    };
-
-I would also drop the example, nobody should use this :)
-
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/eeti.txt=
- b/Documentation/devicetree/bindings/input/touchscreen/eeti.txt
-> deleted file mode 100644
-> index 32b3712c916e..000000000000
-> --- a/Documentation/devicetree/bindings/input/touchscreen/eeti.txt
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -Bindings for EETI touchscreen controller
-> -
-> -Required properties:
-> -- compatible:	should be "eeti,exc3000-i2c"
-> -- reg:		I2C address of the chip. Should be set to <0xa>
-> -- interrupts:	interrupt to which the chip is connected
-> -
-> -Optional properties:
-> -- attn-gpios:	A handle to a GPIO to check whether interrupt is still
-> -		latched. This is necessary for platforms that lack
-> -		support for level-triggered IRQs.
-> -
-> -The following optional properties described in touchscreen.txt are
-> -also supported:
-> -
-> -- touchscreen-inverted-x
-> -- touchscreen-inverted-y
-> -- touchscreen-swapped-x-y
-> -
-> -Example:
-> -
-> -i2c-master {
-> -	touchscreen@a {
-> -		compatible =3D "eeti,exc3000-i2c";
-> -		reg =3D <0xa>;
-> -		interrupt-parent =3D <&gpio>;
-> -		interrupts =3D <123 IRQ_TYPE_EDGE_RISING>;
-> -		attn-gpios =3D <&gpio 123 GPIO_ACTIVE_HIGH>;
-> -	};
-> -};
-> --=20
-> 2.43.0
->=20
-> base-commit: 8b789f2b7602a818e7c7488c74414fae21392b63
-> branch: drop-touchscreen.txt
->=20
-
---2hqg7mcrxxpxuwym
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjPEQsACgkQ2O7X88g7
-+powtw/+MsgxaegIJFTpRlr69ZjoUlOE5KEOAnbPdA6CIJKOvScUU/qSVxX2njiH
-FsBi4e4kndKsrc5jvHmtTtNcif9xMKPq8Ik/p6PbxqCh474EB+uYIBejfxkpK2rF
-HVn5P5gFtS4b2uRxVOGddkAe/1KZexqcpYatlEpISeyGCh4FhcHG6vzb5Np2zniX
-Wrc3TK2h3K3BVrzWEFO/+XYOcjlv6XoMZ6HTbOhgwmYn6n3u1n8t550OmskPaxXd
-pki8zkLZFNCeOkFoBCWPYFLt6AkoQIAlW1Lt4VIrrMfx9JLskcjft1jALTqSKS6+
-TqFqdmCeA9gY/KH2BxNiCixIdjcJRET3B9lzHYMUa3BvLjQMAaa9bjSeH0NDfOzO
-3vXg+uNqW0C8kUSW5Mq2y5Ag1/1Gfc5GMqaS8Zbo8/wvT/e2YrWlYQFWIJyrui0e
-/RzFei2C1Eyf10EFXF2v+3y/oatFvSB+VXESU3UNUoD0UPo76mPxDEfyd2zEIHsI
-AViP7O7An698cg3vKNoeKB+O7F0DNuMDz4LdD86k3RSxb+2g5ZguF5GTeFygotiA
-8iytG/WO+kP/ZeP2UvCligtZyZVPC4xB6JscedldxjFr0WxYfwo4RPa4I/0Tag9j
-SxosTR/+N8mT5139PFF58AdHmDoGZeuTVU/KZNV1DAI/Ym+iGxI=
-=9UZq
------END PGP SIGNATURE-----
-
---2hqg7mcrxxpxuwym--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
