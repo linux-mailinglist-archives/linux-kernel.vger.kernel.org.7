@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-825919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1743B8D1BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:18:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3FDB8D1C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A844717FAE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:18:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23E027A3930
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5643B2857E6;
-	Sat, 20 Sep 2025 22:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DE6285419;
+	Sat, 20 Sep 2025 22:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsKS8oV0"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2f5208K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAADA27B325
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 22:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB225FA0E;
+	Sat, 20 Sep 2025 22:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758406672; cv=none; b=Ukrf+NW+KtN+G5SsLrBNJcVnxQKMIAJWpFjDB6UztjpGZsEnW4CEkLh8qX3UHhxAp+6c9pOOou685IRA72kQulUgVIAVyhvGuKYF9guF0jaRar6g21FmtKbgPafyK1zQBzA2bM0mrRXbjLeHuwNyhHA4fv3Q6gspQsVNJUsm9hg=
+	t=1758406744; cv=none; b=jRDhGLMTVyqeRksYoug1fG83OqV35k0HMEXKzuVMewptMhFuNwR7jy+LvBySUKbvkbVe3l2fVSW4/pGymRERD0lQ8MCUUnmexCXjapoJ1FUT5QB2LGXW1WJZvxKewaf/brpnef8YwnTATsoM7nWDxe7DHIFIKtcNmAVZba/nw8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758406672; c=relaxed/simple;
-	bh=96dxx70d/BFqImcMeVoXOM+8YDlRuIcpQzt1VmBfil0=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZQirGpnRXGAUBZwEpD5+1eE5o41iiUlcqY9CAL6YClE5CFvvOthtdgYVORyQE4mABwL47Asq9ZRyPuW4aU9rEopKW0zunzbJaSaCy88ne7uFU9M0Ge+XJvZ3zXKgxNgXdes7b2jW11h26PjVgvFTSnWePpkX77/uvDyjIx3ePg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsKS8oV0; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b29e8a3e453so38037166b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758406669; x=1759011469; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+HgtdynmY0igjvNZnpu91IhlMXMmcHk6gD8131LsDf8=;
-        b=TsKS8oV0Ec0JLnc+mKCN31OZwyskRpLNrWsMigl1/dOchWeXQssOd/lTV4qyybo6s1
-         JsqpSWMGeSJcsO+VYB9ZWS7kuT7UpSLnyCJEwMDbp8gjgvmq8Xq/9EM0ZtS7pbpT/4Sp
-         AFSmjvITqXq803uTKWjAMela4Vpt8rWFBSLfEMmIG+7Cm4lx5QW7g6j5Rxb+Vi+bKbqJ
-         bnPWZpRnR6OjzM6SkJ1VnYTpVwstiNe+G7vR2cii07FYmvv7IPN+FAl138+pLVXb1u6T
-         OyKkY5uGxnElZy6Ht6eBZOCYr5m8bIHai4bXZq1WcdlFkT81xM8nWAIXwOR3SMua7NHo
-         zZYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758406669; x=1759011469;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+HgtdynmY0igjvNZnpu91IhlMXMmcHk6gD8131LsDf8=;
-        b=o4ZFS+WRt5zxAT06VEdsvbLqEpHe6CnCzLJ6ZBMPjFyQq3YLGx8xw7/wo94fFUqi67
-         eHsnOpaqqWU0WkXBZ010cypODejPRzXdl21nsYcRQEb7l0B8QIVGRbdgAvfuYDmYOhO0
-         1aAfVe7tC4IAb6VJGo9LPnxmE31vv0ORcpgtNaDGUDnkWuGKt4J2hmeuPchXTUn7r1Dc
-         pn53rZTqQCzldeDU/L5HZNsrnQxfRWL8SVrqI7BrxzrtNWrgV2et3x/3ZYCQOG7BrfkI
-         rD53AguwGF5foi+h9huufFAH1IwyjigspwA8kTkvvAPemd1iIRQOQ1tIjFhxX7/xXQHg
-         wyiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWubKkmAKXdUuf0KUxPpdU/Qy+eMk0EWOJSiqnPlRO3FhmwwIjHwgRYll2WykhE7UWe7HWkx0un/HWMwkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjEfGFP6NYif98LL9xk95tA15qXXkFMcAkfKrXCjTnt70k1qyA
-	EOEl0mmHuubwD/T04H627SPZv3Wf2Q/MxJv656jK3LIQvuJrmgCEn8/b
-X-Gm-Gg: ASbGncufHBKEd7KdNliTuv4RFtW9O/5K16HM/B9Q+d5gTOpy68+hjUHiav1L2lfo3UB
-	5gXThBu0pd3VyJvn5TdUhfsYZHd3nEbRSd7L/8esP7c779hgoHOTQXwpc16sGBu1ETCvKLYZ+ZR
-	2gjvvgEaMOfqFlddpXNE6KJImUUIIFtlC/sb2H2d6dLzDya3dkb7//eOyv+fKlzXIqhVDs92pBq
-	XsqtQNhISUJagS1SyI+NPNVojFTrq79oyAL9ultqhOWtof23/iIsm8YRy3QZjRt99fDsttFvARL
-	jksy0zc+ENzJ3kaYKU7YycBA/fRR/O6nEyopGh2y6PhIlMwUFAoQzxn9MEyTllIxIYSPAsF74qx
-	sNZGsI/pVXoVhLIkle+PF+kTDrz6OWkXWAuq0p3STfck=
-X-Google-Smtp-Source: AGHT+IHuYXbv1MwgeFhgGHEnoMk2vC63tOuKqEj+eah5xHgaTZ82uYXktvX8jVWZFLF7LGFrAO/urA==
-X-Received: by 2002:a17:907:7245:b0:afe:7027:56f9 with SMTP id a640c23a62f3a-b24ef58d811mr815980866b.17.1758406668905;
-        Sat, 20 Sep 2025 15:17:48 -0700 (PDT)
-Received: from krava (37-188-197-68.red.o2.cz. [37.188.197.68])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2864cd8376sm218759666b.80.2025.09.20.15.17.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 15:17:48 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sun, 21 Sep 2025 00:17:42 +0200
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Will Deacon <will@kernel.org>
-Cc: Feng Yang <yangfeng59949@163.com>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64
- architecture
-Message-ID: <aM8oBvEJoR56w2Dk@krava>
-References: <20250919071902.554223-1-yangfeng59949@163.com>
- <CAADnVQKrnYCaUCd+BNvZQmR0-6CSu2GBa=TCCCjPLSNfb_Ddvg@mail.gmail.com>
+	s=arc-20240116; t=1758406744; c=relaxed/simple;
+	bh=PYEiTDY2LygoEjRa/YiGz+dOFnGCROKWezbUQTxc5PM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YycpECHjv9UdxIb3duJQoTjUW6k7Rv4KZduNgfBq9p2xCjHdgITRgmqjlD6y8hXXEwSjq0wTlBPuR5DDB6WuTPjSknRjfzrVyQx0AiymiVrJ4OIeS+DYV93/iEHupGo5nzhqSZU/O3ahD2OBMhHaLp1gl5Wo4rnpadiDB7T6goo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2f5208K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12846C4CEEB;
+	Sat, 20 Sep 2025 22:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758406743;
+	bh=PYEiTDY2LygoEjRa/YiGz+dOFnGCROKWezbUQTxc5PM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O2f5208K/ZH542Kfy41JJak/vQG40hn37Cd3qB99tgCWHiwmvND4sMlGYCtBcEwSS
+	 IADU1HA4dM7TtVZNwvZS0LzGNn/AogPuGojYL+1rtVYO9fNoXzpaHvAnT3S+gqjEF7
+	 8BWJMO97jGB/b/sjuwck5dS2a9L5Ax3tu0Lj4THMLHQji5oBH6olIEnO/L9iKjEyTw
+	 ZAMvBjcwFbl1psBQDwuVEzLo0ztcpbGSBG6tFXPnFiAVX5m2I8BwylVgG0GmTHiTG7
+	 G93x/dugBzSJRbcYbC5TbgNiMn82HZQ8TVGVyBM5CHRNGpaMPC/NcE/Y5In5FPy5jf
+	 yguz0YQNNv+fg==
+Date: Sat, 20 Sep 2025 23:18:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: jdelvare@suse.com, linux@roeck-us.net, lgirdwood@gmail.com,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alistair Francis <alistair@alistair23.me>
+Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
+ subdevices
+Message-ID: <473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
+References: <20250920114311.291450-1-andreas@kemnade.info>
+ <20250920114311.291450-2-andreas@kemnade.info>
+ <79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
+ <20250920233307.0c425863@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ajcYnS13mjOHFFvE"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQKrnYCaUCd+BNvZQmR0-6CSu2GBa=TCCCjPLSNfb_Ddvg@mail.gmail.com>
+In-Reply-To: <20250920233307.0c425863@kemnade.info>
+X-Cookie: BARBARA STANWYCK makes me nervous!!
 
-On Fri, Sep 19, 2025 at 07:56:20PM -0700, Alexei Starovoitov wrote:
-> On Fri, Sep 19, 2025 at 12:19 AM Feng Yang <yangfeng59949@163.com> wrote:
-> >
-> > When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
-> > I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
-> >
-> > For example:
-> > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > index 9e1ca8e34913..844fa88cdc4c 100644
-> > --- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > @@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
-> >  __u64 kretprobe_test7_result = 0;
-> >  __u64 kretprobe_test8_result = 0;
-> >
-> > +typedef __u64 stack_trace_t[2];
-> > +
-> > +struct {
-> > +       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
-> > +       __uint(max_entries, 1024);
-> > +       __type(key, __u32);
-> > +       __type(value, stack_trace_t);
-> > +} stacks SEC(".maps");
-> > +
-> >  static void kprobe_multi_check(void *ctx, bool is_return)
-> >  {
-> >         if (bpf_get_current_pid_tgid() >> 32 != pid)
-> > @@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
-> >  SEC("kprobe.multi")
-> >  int test_kprobe_manual(struct pt_regs *ctx)
-> >  {
-> > +       int id = bpf_get_stackid(ctx, &stacks, 0);
-> 
-> ftrace_partial_regs() supposed to work on x86 and arm64,
-> but since multi-kprobe is the only user...
-> I suspect the arm64 implementation wasn't really tested.
-> Or maybe there is some other issue.
-> 
-> Masami, Jiri,
-> thoughts?
 
-hi,
-I did quick test for kprobe multi and I can reproduce the issue
-on arm64 with ci:
-  https://github.com/kernel-patches/bpf/pull/9809
+--ajcYnS13mjOHFFvE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-but can't really tell what's missing on arm side.. cc-ing Will
+On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
 
-thanks,
-jirka
+> Just for learning, yes, it is an abuse of the _optional for non-optional
+> things, so a dirty hack which should not go in, therefore RFC. But what
+> happens more than having the hwmon device endlessly deferred at worst?
+
+There's also the fact that this API is so frequently abused for bad and
+broken reasons that I regularly audit users and try to fix them, I'd
+rather not see any new users that don't have a really strong reason to
+use it.
+
+> The wanted regulator is the one defined in sy7636a-regulator.c. So it
+> is all an issue internal to the sy7636a.
+
+> Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
+> I see several other solutions:
+> a) call device_is_bound() on every other children of dev->parent, if not
+> bound defer.
+> b) do not care about the regulator api at all, just check whether
+>    the corresponding bit is set before reading temperature, return
+>    -ENODATA if not, some mutex is probably needed.
+> c) do not care about the regulator api at all, just set the
+>    corresponding bit (together with some mutex locking and counting).
+
+I assume this is using the regulator API because someone might use an
+external regulator in a system design for some reason (better quality,
+power efficiency or a shared reference between multiple devices I
+guess?), or because the supply might also be used by external devices?
+
+> d) copy the of_node pointer from the parent, add a regulator phandle prop=
+erty
+>    to the node pointing to the regulator in the node itself.
+>    That sounds like your idea but is against the current dt binding for
+>    this device and afaik it is uncommon to have mfd-internal things wired
+>    up this way
+>=20
+> e) something clean, simple I miss
+
+The idea is that the relationship between the devices should be
+registered before the devices, that's how the regulator knows to defer.
+We used to have an API for doing this for board files which might fit
+here, but it got removed since nobody wants board files any more.  If
+you're allocating the devices dynamically that's annoying to implement
+though...
+
+--ajcYnS13mjOHFFvE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjPKFIACgkQJNaLcl1U
+h9BGQwf+OvNNj/wSlGObv8QCJrJ3kxiM1MiiJ08UTjK+cfC7BpPHljGpWPAzrYGW
+SEMvcGn+Sfxkcdd7E6JJGiWTfjcFTT5uR18pUCn0IVyWLkymHZeY5MaKxH8Sl4Su
+jAnGrpOsi+HP+6JIMUnDhjUOWzDlbuSSQJiuj8OzCK4oFagNo9eu0DLa3b2qKFA+
+NxSSLo1GbLgYwtPKB5uo2D5Cf0/XiiI6aTc8F+iHIqSB+KhZluk4ATKh6AxYceOj
+C1fTKBujeSXOE3/3B4RIA/2JCl/8oLbB4z666C/Cgeyd2VzRcrdVWbzsoa9nslRq
+Hyls0rO9mJjmfxBPUWehHuWw7+wlGQ==
+=Vg24
+-----END PGP SIGNATURE-----
+
+--ajcYnS13mjOHFFvE--
 
