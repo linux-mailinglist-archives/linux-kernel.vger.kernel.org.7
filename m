@@ -1,820 +1,286 @@
-Return-Path: <linux-kernel+bounces-825911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7521B8D176
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:14:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9DFB8D184
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557CF46639E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:14:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 881514E1576
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1458027EC73;
-	Sat, 20 Sep 2025 21:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6A971EFF8D;
+	Sat, 20 Sep 2025 21:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqXsHAmc"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gS5GF416";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5hlu2eBl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA346241CB7
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 21:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142AF279DAF;
+	Sat, 20 Sep 2025 21:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758402840; cv=none; b=VEPaBnF9mwZr4jDVJXZppTmBgjknhrMiNboXAedIxtqe1gCHYN+0FjBGSTa3P0Hg4ZCx8kx6MFxqgbsJS+jab+pq7hlpwf88MYyyEPUu9zXtY07cmpfAo0H4daSO2P6uoorPaXkMu9gJwEx753h4NdDU7Y3x24e7/Yj2whcYakA=
+	t=1758403233; cv=none; b=mQKyV8rXqGdkusT1cG8fjA6oKtKjqEIPZe6u0NfIfHcxnSKFyJhKO/gvYCfN+Q3JiFFX7Hj+izzXyeKlDDwJCiUwwRh26WT3JB0lV6df4fmUKebmcuR825zBpNXrrdzA4VJ04Yaaugx2aTl9XMd9orVN74jgMCwmCy7wJhhy+Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758402840; c=relaxed/simple;
-	bh=BCfEc+3W+AnrZEAUs/phMAP60h7i3cRa31FdYN0DuS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZINLDl54Nwfa/PczzgxaMkiGS33onBfZmMeNCj/B18MiWY/aQ4Pxb64UMnaaRV0YdXhvnZEefuG/FgMbRo7MFbFeJLxHKrCU8AxLzioquADhPbyIwp8s+0K03lqhzYzEYifxvwjt43+k7nWOW4mmiwCfrYJb5HhdMISQN4rtu5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqXsHAmc; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24457f581aeso32438055ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758402838; x=1759007638; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8jS11fsnLHQaGfNdL7QEyMBFS8C1da71u+yNug8o624=;
-        b=XqXsHAmcu1yeRPWeE4BHEQNoLP8NwQgRBaAgh7bym0zbI3J5nPsbRUCIP3ypKF9syA
-         e+yuMTGuEQLVGoxLSJZzlbjFa9f3YBJlWv+cpAw66hNuBs1w1by3A7AKeAICZVzVkIuZ
-         8lcwXycVVwrQ9UvXfO8vgFkujBDZn70neLLMT1P8fomhapxSCi475pkwWCI8dWEplwFV
-         +qn/1UHD9Z2nnxlcnNuyhBPW4bKCi7TYQGc9QLog7zpdG3h4vLGOnMfhf8/8ngCu/59h
-         oAH8T8vTaLQypX0J4Rk+3uaNdEyGcvnkLXXYqNkzLC8sXtZlLvzexTUasW0YUNkPli4S
-         gTVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758402838; x=1759007638;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8jS11fsnLHQaGfNdL7QEyMBFS8C1da71u+yNug8o624=;
-        b=lPllf4yMHBVt7+n67uTkPZNxKMfIBg9DedqXEoDxDYEJJwCKlOQJOmlZ/pJC1q6JfF
-         CDeNEOaYqg9xDO2Z2oYTaNcZVY6IS7Gib+nJVpQGQrjbLUmYG17ZmZ8P7adxK4fXcgxR
-         16+96RMaO6s2B8pQHeScTf9fBWpIu9U09pCaJJVsqf+Hffb4xnPOBy5rQpMdW5ewsR8Q
-         D2DDwTWe3AVRzvBXvMKMszpnaQ5W81Xx19W2SSZyRUynk4kmd1vLBTZ+7nL6/HyR/Aa0
-         XW+s2XeX6YFuQh7eDa+sh3fiLfxjIMnaHjtlKDZ4Oscqd9/WdC1HJpGV5Yq/UmJO0xO1
-         bspw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwK8JMQZfUkOEeoQfwq5/7bVzUAE4hdK1UVJl3/qESfeuZb8N6LoTlIssX6IzuwvX0RygR1BpQDC5IsDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr2JnkrKu6NGA9Aoe8m01Q0Q9xLZBBJ4rovCUMW/IGm4wQZYW6
-	HF8j2MZHxxrtbKH9/+LIV8J3YcPF8hxHzW27hO8CG4Z/lICVIbMQUjzs
-X-Gm-Gg: ASbGnct/EW6TUg8F6ilObDPq1JgNDcScyqmLqj9kzAPbLXTdZgOxiHr5H5A5X0Re8h6
-	f8MizNlSxYZqYBu79tUfsqivEGLlz06LwuqCPEX3nKsesmGqwNjxSOjwkFtcCv3FXvqm4lJIzF0
-	UpatvINkCfkZuP/5/vEAtYWemTUiZgY52Ui6ikbWFwv46Qh9VUp7UHtVU9El6xKcJ8bM7O4aAxf
-	rlkxr8tHNuuYuu3/GSXz6pqUJeYPudtMqvlS+fXfLHTkJTt9nGHMNvrAzVmYvO29D5Is0/pO9CW
-	1aknJ8HGaWsv+IjyRrwiJxsEmwyoWcNtsdRMnhiV9QaX1nm/E6sjPp1486fYJGQtvuu+L2aKF90
-	2WrPNVBvRQO6xUi2lkM+khgDaVfY406MbQA==
-X-Google-Smtp-Source: AGHT+IEM5PHjOCmWds2Mh1imaGsx69JD126UC5xQFHsqmhgAdiBe4T4bWNVwYVP5jl4immznYfIUKg==
-X-Received: by 2002:a17:903:298b:b0:264:b647:5ff9 with SMTP id d9443c01a7336-269ba43522emr94163355ad.9.1758402837625;
-        Sat, 20 Sep 2025 14:13:57 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fdae:ef9f:3050:cdfb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980179917sm89814185ad.52.2025.09.20.14.13.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 14:13:56 -0700 (PDT)
-Date: Sat, 20 Sep 2025 14:13:54 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Eric =?utf-8?Q?Gon=C3=A7alves?= <ghatto404@gmail.com>
-Cc: Henrik Rydberg <rydberg@bitmath.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] Input: add support for the STM FTS2BA61Y
- touchscreen
-Message-ID: <cxnqffq3vj22nk4nukhqb2m3gqeomajdusrhaaq77v2rkfxnup@g4mahnify2ke>
-References: <20250920014450.37787-1-ghatto404@gmail.com>
- <20250920014450.37787-3-ghatto404@gmail.com>
+	s=arc-20240116; t=1758403233; c=relaxed/simple;
+	bh=ZwZ18KFBzUZRHxbiRVz4unvYpDgokHGk1bhNOrbb3cw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uuJg1e4vnGkkl1XnfG/ZgecVYL1Y3JGcXXNw5fkvULNr5SghGKCtl0pIPhvNmi1qExTJivkNseSn5xWXJ0D+2HjvnKns7ezmzp0wf6t2m2zdNyiPW8FaY+Sknndw+Cl+5/B+9rGv5GV6rgxnR8QUppUr9NMyIM53/5baJ74Okuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gS5GF416; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5hlu2eBl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758403227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o1GmvU8ma9x4F+83OCNr26kXzjtn2rKd3NDHRyJRbEQ=;
+	b=gS5GF41697IWVILXXTfnRaLCFZ3dnNwAAmdy5hDVVCxHUKnAPbebrW0MR4aPcZp2gpCidk
+	7r8psGgeaIQvsmsgPMLsjhftnlCj980WmewEuBcPr5YFCiH9OxrHI7w39X6sG1spkUTDOw
+	Bnob7rUtf1NqyD5hqVJdlPOykYD/QcoM4247N9dPW7FOtJRjbIdc2JMv7fmPvCAcBFOH/T
+	J4+ryolehwCT4BUMCEd0C50bCjqKYliOgJ8vZqZYXAZxUWNvf/tV8wUp4ALP0YBOJoVvKv
+	fMFXHZsXdTtIsiFuGiPLZmTAXGd5HrWfMPjwX7/Oh8kbi9EtAj47bDhA02rTvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758403227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o1GmvU8ma9x4F+83OCNr26kXzjtn2rKd3NDHRyJRbEQ=;
+	b=5hlu2eBl9ZXLefv8T82ofhCCllJaA2tjgj/l6uTzemIJC6DuQO7hCV54ikJGB78OIIi0R1
+	MnWNyH+d8mgT5hDg==
+To: Lukas Wunner <lukas@wunner.de>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Crystal Wood <crwood@redhat.com>, Ingo Molnar
+ <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+ <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+ <vschneid@redhat.com>, linux-kernel@vger.kernel.org, Attila Fazekas
+ <afazekas@redhat.com>, linux-pci@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, Bjorn Helgaas <helgaas@kernel.org>, Mahesh
+ J Salgaonkar <mahesh@linux.ibm.com>, Oliver OHalloran <oohall@gmail.com>
+Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
+ handler
+In-Reply-To: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
+References: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
+Date: Sat, 20 Sep 2025 23:20:26 +0200
+Message-ID: <87348g95yd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250920014450.37787-3-ghatto404@gmail.com>
+Content-Type: text/plain
 
-Hi Eric,
+On Mon, Sep 08 2025 at 18:08, Lukas Wunner wrote:
+> Crystal reports the PCIe Advanced Error Reporting driver getting stuck
+> in an infinite loop on PREEMPT_RT:  Both the primary IRQ handler
 
-On Sat, Sep 20, 2025 at 01:44:50AM +0000, Eric Gonçalves wrote:
-> The ST-Microelectronics FTS2BA61Y touchscreen is a capacitive multi-touch
-> controller connected through SPI at 0x0, the touchscreen is typically
-> used in mobile devices (like the Galaxy S22 series)
-> 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+Can you please write out interrupt. This IRQ acronym is just not helpful
+at all.
 
-Thank you for the patch. A few comments below.
+> aer_irq() as well as the secondary handler aer_isr() are forced into
+> threads with identical priority.
+>
+> Crystal writes that on the ARM system in question, the primary IRQ
+> handler has to clear an error in the Root Error Status register...
+>
+>    "before the next error happens, or else the hardware will set the
+>     Multiple ERR_COR Received bit.  If that bit is set, then aer_isr()
+>     can't rely on the Error Source Identification register, so it scans
+>     through all devices looking for errors -- and for some reason, on
+>     this system, accessing the AER registers (or any Config Space above
+>     0x400, even though there are capabilities located there) generates
+>     an Unsupported Request Error (but returns valid data).  Since this
+>     happens more than once, without aer_irq() preempting, it causes
+>     another multi error and we get stuck in a loop."
+>
+> The issue does not show on non-PREEMPT_RT since the primary IRQ handler
+> runs in hardirq context and thus clears the Root Error Status register
+> before waking the secondary IRQ handler's thread.
 
-> ---
->  drivers/input/touchscreen/Kconfig     |  11 +
->  drivers/input/touchscreen/Makefile    |   1 +
->  drivers/input/touchscreen/fts2ba61y.c | 588 ++++++++++++++++++++++++++
->  3 files changed, 600 insertions(+)
->  create mode 100644 drivers/input/touchscreen/fts2ba61y.c
-> 
-> diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-> index 196905162945..1e199191f527 100644
-> --- a/drivers/input/touchscreen/Kconfig
-> +++ b/drivers/input/touchscreen/Kconfig
-> @@ -370,6 +370,17 @@ config TOUCHSCREEN_EXC3000
->  	  To compile this driver as a module, choose M here: the
->  	  module will be called exc3000.
->  
-> +config TOUCHSCREEN_FTS2BA61Y
-> +	tristate "ST-Microelectronics FTS2BA61Y touchscreen"
-> +	depends on SPI
-> +	help
-> +	  Say Y here if you have the ST-Microelectronics FTS2BA61Y touchscreen
-> +
-> +	  If unsure, say N.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called fts2ba61y.
-> +
->  config TOUCHSCREEN_FUJITSU
->  	tristate "Fujitsu serial touchscreen"
->  	select SERIO
-> diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-> index 97a025c6a377..408a9fd5bd35 100644
-> --- a/drivers/input/touchscreen/Makefile
-> +++ b/drivers/input/touchscreen/Makefile
-> @@ -43,6 +43,7 @@ obj-$(CONFIG_TOUCHSCREEN_ELO)		+= elo.o
->  obj-$(CONFIG_TOUCHSCREEN_EGALAX)	+= egalax_ts.o
->  obj-$(CONFIG_TOUCHSCREEN_EGALAX_SERIAL)	+= egalax_ts_serial.o
->  obj-$(CONFIG_TOUCHSCREEN_EXC3000)	+= exc3000.o
-> +obj-$(CONFIG_TOUCHSCREEN_FTS2BA61Y)	+= fts2ba61y.o
->  obj-$(CONFIG_TOUCHSCREEN_FUJITSU)	+= fujitsu_ts.o
->  obj-$(CONFIG_TOUCHSCREEN_GOODIX)	+= goodix_ts.o
->  obj-$(CONFIG_TOUCHSCREEN_GOODIX_BERLIN_CORE)	+= goodix_berlin_core.o
-> diff --git a/drivers/input/touchscreen/fts2ba61y.c b/drivers/input/touchscreen/fts2ba61y.c
-> new file mode 100644
-> index 000000000000..b3b3abca5404
-> --- /dev/null
-> +++ b/drivers/input/touchscreen/fts2ba61y.c
-> @@ -0,0 +1,588 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Based loosely on s6sy761.c
-> +
-> +#include <linux/delay.h>
-> +#include <linux/input.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/input/mt.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/input/touchscreen.h>
-> +#include <linux/unaligned.h>
-> +#include <linux/regulator/consumer.h>
-> +
-> +/* commands */
-> +#define FTS2BA61Y_CMD_SENSE_ON			0x10
-> +#define FTS2BA61Y_CMD_SENSE_OFF			0x11
-> +#define FTS2BA61Y_CMD_READ_PANEL_INFO		0x23
-> +#define FTS2BA61Y_CMD_READ_FW_VER		0x24
-> +#define FTS2BA61Y_CMD_TOUCHTYPE			0x30 /* R/W for get/set */
-> +#define FTS2BA61Y_CMD_CLEAR_EVENTS		0x62
-> +#define FTS2BA61Y_CMD_READ_EVENT		0x87
-> +#define FTS2BA61Y_CMD_CUSTOM_W			0xC0
-> +#define FTS2BA61Y_CMD_CUSTOM_R			0xD1
-> +#define FTS2BA61Y_CMD_REG_W			0xFA
-> +#define FTS2BA61Y_CMD_REG_R			0xFB
-> +
-> +/* touch type masks */
-> +#define FTS2BA61Y_MASK_TOUCH			BIT(0)
-> +#define FTS2BA61Y_MASK_HOVER			BIT(1)
-> +#define FTS2BA61Y_MASK_COVER			BIT(2)
-> +#define FTS2BA61Y_MASK_GLOVE			BIT(3)
-> +#define FTS2BA61Y_MASK_STYLUS			BIT(4)
-> +#define FTS2BA61Y_MASK_PALM			BIT(5)
-> +#define FTS2BA61Y_MASK_WET			BIT(6)
-> +#define FTS2BA61Y_TOUCHTYPE_DEFAULT		(FTS2BA61Y_MASK_TOUCH | \
-> +						 FTS2BA61Y_MASK_PALM | \
-> +						 FTS2BA61Y_MASK_WET)
-> +
-> +/* event status masks */
-> +#define FTS2BA61Y_MASK_STYPE			GENMASK(5, 2)
-> +#define FTS2BA61Y_MASK_EVENT_ID			GENMASK(1, 0)
-> +
-> +/* event coordinate masks */
-> +#define FTS2BA61Y_MASK_TCHSTA			GENMASK(7, 6)
-> +#define FTS2BA61Y_MASK_TID			GENMASK(5, 2)
-> +#define FTS2BA61Y_MASK_X_3_0			GENMASK(7, 4)
-> +#define FTS2BA61Y_MASK_Y_3_0			GENMASK(3, 0)
-> +#define FTS2BA61Y_MASK_Z			GENMASK(5, 0)
-> +#define FTS2BA61Y_MASK_TTYPE_3_2		GENMASK(7, 6)
-> +#define FTS2BA61Y_MASK_TTYPE_1_0		GENMASK(1, 0)
-> +#define FTS2BA61Y_MASK_LEFT_EVENTS		GENMASK(4, 0)
-> +
-> +/* event error status */
-> +#define FTS2BA61Y_EVENT_STATUSTYPE_INFO		0x2
-> +
-> +/* information report */
-> +#define FTS2BA61Y_INFO_READY_STATUS		0x0
-> +
-> +/* event status */
-> +#define FTS2BA61Y_COORDINATE_EVENT		0x0
-> +
-> +/* touch types */
-> +#define FTS2BA61Y_TOUCHTYPE_NORMAL		0x0
-> +#define FTS2BA61Y_TOUCHTYPE_HOVER		0x1
-> +#define FTS2BA61Y_TOUCHTYPE_FLIPCOVER		0x2
-> +#define FTS2BA61Y_TOUCHTYPE_GLOVE		0x3
-> +#define FTS2BA61Y_TOUCHTYPE_STYLUS		0x4
-> +#define FTS2BA61Y_TOUCHTYPE_PALM		0x5
-> +#define FTS2BA61Y_TOUCHTYPE_WET			0x6
-> +#define FTS2BA61Y_TOUCHTYPE_PROXIMITY		0x7
-> +#define FTS2BA61Y_TOUCHTYPE_JIG			0x8
-> +
-> +#define FTS2BA61Y_COORDINATE_ACTION_NONE	0x0
-> +#define FTS2BA61Y_COORDINATE_ACTION_PRESS	0x1
-> +#define FTS2BA61Y_COORDINATE_ACTION_MOVE	0x2
-> +#define FTS2BA61Y_COORDINATE_ACTION_RELEASE	0x3
-> +
-> +#define FTS2BA61Y_DEV_NAME			"fts2ba61y"
-> +#define FTS2BA61Y_EVENT_BUFF_SIZE		16
-> +#define FTS2BA61Y_PANEL_INFO_SIZE		11
-> +#define FTS2BA61Y_RESET_CMD_SIZE		5
-> +#define FTS2BA61Y_EVENT_COUNT			31
-> +#define MAX_TRANSFER_SIZE			256
-> +
-> +enum fts2ba61y_regulators {
-> +	FTS2BA61Y_REGULATOR_VDD,
-> +	FTS2BA61Y_REGULATOR_AVDD,
-> +};
-> +
-> +struct fts2ba61y_data {
-> +	struct spi_device *spi;
-> +	struct regulator_bulk_data regulators[2];
-> +	struct input_dev *input_dev;
-> +	struct mutex mutex;
-> +	struct touchscreen_properties prop;
-> +
-> +	u8 tx_count;
-> +
-> +	unsigned int max_x;
-> +	unsigned int max_y;
-> +};
-> +
-> +static int fts2ba61y_write(struct fts2ba61y_data *ts,
-> +			   u8 *reg, int cmd_len, u8 *data, int data_len)
-> +{
-> +	struct spi_message msg;
-> +	struct spi_transfer xfers;
-> +	char *tx_buf;
-> +	int len;
-> +	int ret;
+That sentence does not make sense at all because on RT this is not any
+different. The primary handler clears the status register before waking
+the secondary handler, no?
 
-Please use "error" for variables that only contain error codes or 0.
+What's different on non-RT is that the primary handler can interrupt the
+threaded secondary handler, which is required to make progress.
 
-> +
-> +	tx_buf = kzalloc(cmd_len + data_len + 1, GFP_KERNEL);
-> +	if (!tx_buf) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
+> Simulate the same behavior on PREEMPT_RT by assigning a lower default
+> priority to forced secondary IRQ handlers.
 
-Instead of allocating and freeing memory on each transfer consider
-allocating tx and rx scratch buffers in fts2ba61y_data structure (either
-as ____cacheline_aligned or as separate allocations).
+I'm not really fond of this new minus one interface naming. It's a
+horrible misnomer as it suggests that it sets the FIFO priority to -1,
+which doesn't make any sense at all and is confusing at best.
 
-If you absolutely need a per transfer allocations then use
+Can you please pick a name, which makes it obvious what this is about
+and as this is really a special case for forced secondary interrupt
+handlers, it should just reflect that in the name.
 
-	u8 *tx_buf __free(kfree) = kzalloc(...);
+I obviously understand that the proposed change squashs the whole class
+of similar (not yet detected) issues, but that made me look at that
+particular instance nevertheless.
 
-> +
-> +	memset(&xfers, 0, sizeof(xfers));
-> +	spi_message_init(&msg);
-> +
-> +	memcpy(&tx_buf[0], reg, cmd_len);
-> +	if (data_len && data)
-> +		memcpy(&tx_buf[cmd_len], data, data_len);
-> +
-> +	len = cmd_len + data_len;
-> +
-> +	/* custom write cmd */
-> +	if (reg[0] != FTS2BA61Y_CMD_REG_W &&
-> +	    reg[0] != FTS2BA61Y_CMD_REG_R) {
-> +		memmove(tx_buf + 1, tx_buf, len);
-> +		tx_buf[0] = FTS2BA61Y_CMD_CUSTOM_W;
-> +		len++;
-> +	}
-> +
-> +	xfers.len = len;
-> +	xfers.tx_buf = tx_buf;
-> +
-> +	spi_message_add_tail(&xfers, &msg);
-> +
-> +	mutex_lock(&ts->mutex);
+All aer_irq() does is reading two PCI config words, writing one and then
+sticking 64bytes into a KFIFO. All of that is hard interrupt safe. So
+arguably this AER problem can be nicely solved by the below one-liner,
+no?
 
-Why is this mutex needed? spi_sync() does the bus lock already, what
-else needs protection. Even with shared scratch buffers I believe the
-driver at any one point would only have one read or write operation in
-progress...
+And because that made me curious I looked at the first 40 instances of
+interrupt requests which have a primary and a secondary handler.
 
-> +	ret = spi_sync(ts->spi, &msg);
-> +	if (ret)
-> +		dev_err(&ts->spi->dev, "spi transfer error, %d", ret);
-> +	mutex_unlock(&ts->mutex);
-> +
-> +out:
-> +	kfree(tx_buf);
-> +	return ret;
-> +}
-> +
-> +static int fts2ba61y_spi_raw_read(struct fts2ba61y_data *ts,
-> +				  u8 *tx_buf, u8 *rx_buf, int len)
-> +{
-> +	struct spi_message msg;
-> +	struct spi_transfer xfer;
-> +	int ret;
-> +
-> +	memset(&xfer, 0, sizeof(xfer));
-> +	spi_message_init(&msg);
-> +
-> +	xfer.len = len;
-> +	xfer.tx_buf = tx_buf;
-> +	xfer.rx_buf = rx_buf;
-> +	spi_message_add_tail(&xfer, &msg);
-> +
-> +	mutex_lock(&ts->mutex);
-> +	ret = spi_sync(ts->spi, &msg);
-> +	if (ret)
-> +		dev_err(&ts->spi->dev, "spi transfer error, %d", ret);
-> +	mutex_unlock(&ts->mutex);
-> +
-> +	return ret;
-> +}
-> +
-> +/*
-> + * higher-level wrapper that prepares the buffers for a read.
-> + */
-> +static int fts2ba61y_read(struct fts2ba61y_data *ts,
-> +			  u8 reg[], int tx_len, u8 buf[], int rx_len)
+   21 of them can simply set IRQF_NO_THREAD
 
-As far as I can see fts2ba61y_read() is always used with a single byte
-command. Why not make it "u8 cmd" or "u8 reg" and drop tx_len.
+    3 of them are just silly. I really could not resist to create the
+      diff and append it below for entertainment.
 
-Same goes for fts2ba61y_write(). Also the read buffer might make sense
-as void * instead of u8 *, so that you do not have to cast.
+Which means going through all the 231 instances is definitely a
+worthwhile exercise.
 
-> +{
-> +	char *tx_buf, *rx_buf;
-> +	int ret, mem_len;
-> +	u16 reg_val;
-> +
-> +	if (tx_len > 3)
-> +		mem_len = rx_len + 1 + tx_len;
-> +	else
-> +		mem_len = rx_len + 4;
+The rest:
 
-A commend why we need this "+ 4" would be useful. 
+   1) is not immediately obvious as I did not follow (indirect)
+      call chains to figure out what's really behind them
 
-> +
-> +	tx_buf = kzalloc(mem_len, GFP_KERNEL);
-> +	rx_buf = kzalloc(mem_len, GFP_KERNEL);
-> +	if (!tx_buf || !rx_buf) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	switch (reg[0]) {
-> +	case FTS2BA61Y_CMD_READ_EVENT:
-> +	case FTS2BA61Y_CMD_REG_W:
-> +	case FTS2BA61Y_CMD_REG_R:
-> +		memcpy(tx_buf, reg, tx_len);
-> +		break;
-> +
-> +	default:
-> +		tx_buf[0] = FTS2BA61Y_CMD_CUSTOM_R;
-> +
-> +		if (tx_len == 1)
-> +			reg_val = 0;
-> +		else if (tx_len == 2)
-> +			reg_val = reg[0];
-> +		else if (tx_len == 3)
-> +			reg_val = reg[0] | (reg[1] << 8);
-> +		else {
+   2) sets IRQF_ONESHOT, which means the interrupt line is masked before
+      the primary handler runs and stays masked until the secondary
+      handler returns.
 
-If one branch has braces all of them have to have braces.
+#1 needs eyeballs
 
-> +			ret = -EINVAL;
-> +			goto out;
-> +		}
-> +
-> +		tx_len = 3;
-> +		put_unaligned_be16(reg_val, &tx_buf[1]);
-> +
-> +		ret = fts2ba61y_write(ts, reg, 1, NULL, 0);
-> +		if (ret < 0)
-> +			goto out;
-> +		break;
-> +	}
-> +
-> +	ret = fts2ba61y_spi_raw_read(ts, tx_buf, rx_buf, rx_len + 1 + tx_len);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	memcpy(buf, &rx_buf[1 + tx_len], rx_len);
-> +
-> +out:
-> +	kfree(tx_buf);
-> +	kfree(rx_buf);
-> +	return ret;
-> +}
-> +
-> +static int fts2ba61y_wait_for_ready(struct fts2ba61y_data *ts)
-> +{
-> +	u8 buffer[FTS2BA61Y_EVENT_BUFF_SIZE];
-> +	u8 cmd = FTS2BA61Y_CMD_READ_EVENT;
-> +	u8 status_id, stype;
-> +	int ret;
-> +
-> +	for (int retries = 5; retries > 0; retries--) {
-> +		ret = fts2ba61y_read(ts, &cmd, 1, buffer, FTS2BA61Y_EVENT_BUFF_SIZE);
-> +
-> +		stype = FIELD_GET(FTS2BA61Y_MASK_STYPE, buffer[0]);
-> +		status_id = buffer[1];
-> +
-> +		if (stype == FTS2BA61Y_EVENT_STATUSTYPE_INFO &&
-> +		    status_id == FTS2BA61Y_INFO_READY_STATUS) {
-> +			ret = 0;
-> +			break;
-> +		} else
-> +			ret = -ENODEV;
+#2 should actually not use the secondary thread mechanism at all when
+   forced threaded. This really should do:
 
-"else" needs braces as well.
+   hardirq()
+        wake(primary_thread);
 
-> +
-> +		msleep(20);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int fts2ba61y_reset(struct fts2ba61y_data *ts)
-> +{
-> +	u8 cmd = FTS2BA61Y_CMD_REG_W;
-> +	/* the following sequence is undocumented */
-> +	u8 reset[FTS2BA61Y_RESET_CMD_SIZE] = { 0x20, 0x00,
-> +					       0x00, 0x24, 0x81 };
-> +	int ret;
-> +
-> +	disable_irq(ts->spi->irq);
-> +
-> +	ret = fts2ba61y_write(ts, &cmd, 1, &reset[0], FTS2BA61Y_RESET_CMD_SIZE);
-> +	if (ret)
-> +		return ret;
+   primary_thread()
+        if (primary_handler() == IRQ_WAKE_THREAD) {
+              if (secondary_handler && ONESHOT)
+                 secondary_handler();
+              else
+                 wake(secondary_thread);
 
-You end up with interrupts disabled on error which may be unexpected.
-Better use
+   That spares a boat load of wakeups and scheduling on RT and reduces
+   the actual problem space significantly. This might need a new
+   IRQF_xxx flag to avoid overloading ONESHOT, but that's an
+   implementation detail.
 
-	guard(disable_irq)(&ts->spi->irq);
+Hmm?
 
-> +	msleep(30);
-> +
-> +	ret = fts2ba61y_wait_for_ready(ts);
-> +	if (ret)
-> +		return ret;
-> +
-> +	enable_irq(ts->spi->irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static int fts2ba61y_set_channels(struct fts2ba61y_data *ts)
-> +{
-> +	int ret;
-> +	u8 cmd = FTS2BA61Y_CMD_READ_PANEL_INFO;
-> +	u8 data[FTS2BA61Y_PANEL_INFO_SIZE];
-> +
-> +	ret = fts2ba61y_read(ts, &cmd, 1, data, FTS2BA61Y_PANEL_INFO_SIZE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ts->max_x = get_unaligned_be16(data);
-> +	ts->max_y = get_unaligned_be16(data + 2);
-> +
-> +	/* if no tx channels defined, at least keep one */
-> +	ts->tx_count = max_t(u8, data[8], 1);
-> +
-> +	return 0;
-> +}
-> +
-> +static int fts2ba61y_set_touch_func(struct fts2ba61y_data *ts)
-> +{
-> +	u8 cmd = FTS2BA61Y_CMD_TOUCHTYPE;
-> +	u16 touchtype = cpu_to_le16(FTS2BA61Y_TOUCHTYPE_DEFAULT);
-> +
-> +	return fts2ba61y_write(ts, &cmd, 1, (u8 *)&touchtype, 2);
-> +}
-> +
-> +static int fts2ba61y_hw_init(struct fts2ba61y_data *ts)
-> +{
-> +	int ret;
-> +
-> +	ret = regulator_bulk_enable(ARRAY_SIZE(ts->regulators),
-> +								ts->regulators);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msleep(140);
-> +
-> +	ret = fts2ba61y_reset(ts);
-> +	if (ret)
-> +		return ret;
+Thanks,
 
-You need to disable regulators on error.
+        tglx
+---
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -1671,7 +1671,7 @@ static int aer_probe(struct pcie_device
+ 	set_service_data(dev, rpc);
+ 
+ 	status = devm_request_threaded_irq(device, dev->irq, aer_irq, aer_isr,
+-					   IRQF_SHARED, "aerdrv", dev);
++					   IRQF_NO_THREAD | IRQF_SHARED, "aerdrv", dev);
+ 	if (status) {
+ 		pci_err(port, "request AER IRQ %d failed\n", dev->irq);
+ 		return status;
 
-> +
-> +	ret = fts2ba61y_set_channels(ts);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return fts2ba61y_set_touch_func(ts);
+<ENTERTAINMENT>
 
-In functions with multiple points of failure do not end with "return
-function_call();". Use standard
+--- a/drivers/bluetooth/btintel_pcie.c
++++ b/drivers/bluetooth/btintel_pcie.c
+@@ -1482,11 +1482,6 @@ static void btintel_pcie_msix_rx_handle(
+ 	}
+ }
+ 
+-static irqreturn_t btintel_pcie_msix_isr(int irq, void *data)
+-{
+-	return IRQ_WAKE_THREAD;
+-}
+-
+ static inline bool btintel_pcie_is_rxq_empty(struct btintel_pcie_data *data)
+ {
+ 	return data->ia.cr_hia[BTINTEL_PCIE_RXQ_NUM] == data->ia.cr_tia[BTINTEL_PCIE_RXQ_NUM];
+@@ -1585,13 +1580,9 @@ static int btintel_pcie_setup_irq(struct
+ 		msix_entry = &data->msix_entries[i];
+ 		msix_entry->vector = pci_irq_vector(data->pdev, i);
+ 
+-		err = devm_request_threaded_irq(&data->pdev->dev,
+-						msix_entry->vector,
+-						btintel_pcie_msix_isr,
+-						btintel_pcie_irq_msix_handler,
+-						IRQF_SHARED,
+-						KBUILD_MODNAME,
+-						msix_entry);
++		err = devm_request_threaded_irq(&data->pdev->dev, msix_entry->vector,
++						NULL, btintel_pcie_irq_msix_handler,
++						IRQF_SHARED, KBUILD_MODNAME, msix_entry);
+ 		if (err) {
+ 			pci_free_irq_vectors(data->pdev);
+ 			data->alloc_vecs = 0;
+--- a/drivers/bus/fsl-mc/dprc-driver.c
++++ b/drivers/bus/fsl-mc/dprc-driver.c
+@@ -381,17 +381,6 @@ int dprc_scan_container(struct fsl_mc_de
+ EXPORT_SYMBOL_GPL(dprc_scan_container);
+ 
+ /**
+- * dprc_irq0_handler - Regular ISR for DPRC interrupt 0
+- *
+- * @irq_num: IRQ number of the interrupt being handled
+- * @arg: Pointer to device structure
+- */
+-static irqreturn_t dprc_irq0_handler(int irq_num, void *arg)
+-{
+-	return IRQ_WAKE_THREAD;
+-}
+-
+-/**
+  * dprc_irq0_handler_thread - Handler thread function for DPRC interrupt 0
+  *
+  * @irq_num: IRQ number of the interrupt being handled
+@@ -525,10 +514,8 @@ static int register_dprc_irq_handler(str
+ 	 * NOTE: devm_request_threaded_irq() invokes the device-specific
+ 	 * function that programs the MSI physically in the device
+ 	 */
+-	error = devm_request_threaded_irq(&mc_dev->dev,
+-					  irq->virq,
+-					  dprc_irq0_handler,
+-					  dprc_irq0_handler_thread,
++	error = devm_request_threaded_irq(&mc_dev->dev, irq->virq,
++					  NULL, dprc_irq0_handler_thread,
+ 					  IRQF_NO_SUSPEND | IRQF_ONESHOT,
+ 					  dev_name(&mc_dev->dev),
+ 					  &mc_dev->dev);
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -1356,11 +1356,6 @@ void malidp_se_irq_hw_init(struct malidp
+ 			     hwdev->hw->map.se_irq_map.irq_mask);
+ }
+ 
+-static irqreturn_t malidp_se_irq_thread_handler(int irq, void *arg)
+-{
+-	return IRQ_HANDLED;
+-}
+-
+ int malidp_se_irq_init(struct drm_device *drm, int irq)
+ {
+ 	struct malidp_drm *malidp = drm_to_malidp(drm);
+@@ -1371,8 +1366,7 @@ int malidp_se_irq_init(struct drm_device
+ 	malidp_hw_disable_irq(hwdev, MALIDP_SE_BLOCK, 0xffffffff);
+ 	malidp_hw_clear_irq(hwdev, MALIDP_SE_BLOCK, 0xffffffff);
+ 
+-	ret = devm_request_threaded_irq(drm->dev, irq, malidp_se_irq,
+-					malidp_se_irq_thread_handler,
++	ret = devm_request_threaded_irq(drm->dev, irq, malidp_se_irq, NULL,
+ 					IRQF_SHARED, "malidp-se", drm);
+ 	if (ret < 0) {
+ 		DRM_ERROR("failed to install SE IRQ handler\n");
 
-	error = operation(...);
-	if (error)
-		return error;
 
-	return 0;
 
-> +}
-> +
-> +static int fts2ba61y_get_event(struct fts2ba61y_data *ts, u8 *data, int *n_events)
-> +{
-> +	int ret;
-> +	u8 cmd = FTS2BA61Y_CMD_READ_EVENT;
-> +
-> +	ret = fts2ba61y_read(ts, &cmd, 1, data, FTS2BA61Y_EVENT_BUFF_SIZE);
-> +	if (ret < 0)
 
-fts2ba61y_read() does not return positive success values, so:
-
-	if (error)
-		return error;
-
-> +		return ret;
-> +
-> +	if (!data[0]) {
-> +		*n_events = 0;
-> +		return 0;
-> +	}
-> +
-> +	*n_events = FIELD_GET(FTS2BA61Y_MASK_LEFT_EVENTS, data[7]);
-> +	if (unlikely(*n_events >= FTS2BA61Y_EVENT_COUNT)) {
-> +		cmd = FTS2BA61Y_CMD_CLEAR_EVENTS;
-> +		fts2ba61y_write(ts, &cmd, 1, NULL, 0);
-> +		*n_events = 0;
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (*n_events > 0) {
-> +		ret = fts2ba61y_read(ts, &cmd, 1,
-> +				     &data[1 * FTS2BA61Y_EVENT_BUFF_SIZE],
-> +				     FTS2BA61Y_EVENT_BUFF_SIZE * (*n_events));
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void fts2ba61y_report_coordinates(struct fts2ba61y_data *ts,
-> +					 u8 *event, u8 tid)
-> +{
-> +	u8 major = event[4];
-> +	u8 minor = event[5];
-> +	u8 z = FIELD_GET(FTS2BA61Y_MASK_Z, event[6]);
-> +
-> +	u16 x = (event[1] << 4) |
-> +		FIELD_GET(FTS2BA61Y_MASK_X_3_0, event[3]);
-> +	u16 y = (event[2] << 4) |
-> +		FIELD_GET(FTS2BA61Y_MASK_Y_3_0, event[3]);
-> +	u16 ttype = (FIELD_GET(FTS2BA61Y_MASK_TTYPE_3_2, event[6]) << 2) |
-> +		    (FIELD_GET(FTS2BA61Y_MASK_TTYPE_1_0, event[7]) << 0);
-> +
-> +	if (ttype != FTS2BA61Y_TOUCHTYPE_NORMAL &&
-> +	    ttype != FTS2BA61Y_TOUCHTYPE_PALM &&
-> +	    ttype != FTS2BA61Y_TOUCHTYPE_WET &&
-> +	    ttype != FTS2BA61Y_TOUCHTYPE_GLOVE)
-> +		return;
-> +
-> +	input_mt_slot(ts->input_dev, tid);
-> +	input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, true);
-> +	input_report_abs(ts->input_dev, ABS_MT_POSITION_X, x);
-> +	input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, y);
-> +	input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, major);
-> +	input_report_abs(ts->input_dev, ABS_MT_TOUCH_MINOR, minor);
-> +	input_report_abs(ts->input_dev, ABS_MT_PRESSURE, z);
-> +
-> +	input_mt_sync_frame(ts->input_dev);
-> +	input_sync(ts->input_dev);
-> +}
-> +
-> +static void fts2ba61y_report_release(struct fts2ba61y_data *ts, u8 tid)
-> +{
-> +	input_mt_slot(ts->input_dev, tid);
-> +	input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, false);
-> +
-> +	input_mt_sync_frame(ts->input_dev);
-> +	input_sync(ts->input_dev);
-> +}
-> +
-> +static void fts2ba61y_handle_coordinates(struct fts2ba61y_data *ts, u8 *event)
-> +{
-> +	u8 t_id = FIELD_GET(FTS2BA61Y_MASK_TID, event[0]);
-> +	u8 action = FIELD_GET(FTS2BA61Y_MASK_TCHSTA, event[0]);
-> +
-> +	if (t_id > ts->tx_count)
-> +		return;
-> +
-> +	switch (action) {
-> +	case FTS2BA61Y_COORDINATE_ACTION_PRESS:
-> +	case FTS2BA61Y_COORDINATE_ACTION_MOVE:
-> +		fts2ba61y_report_coordinates(ts, event, t_id);
-> +		break;
-> +
-> +	case FTS2BA61Y_COORDINATE_ACTION_RELEASE:
-> +		fts2ba61y_report_release(ts, t_id);
-> +		break;
-> +	}
-> +}
-> +
-> +static irqreturn_t fts2ba61y_irq_handler(int irq, void *handle)
-> +{
-> +	struct fts2ba61y_data *ts = handle;
-> +	u8 buffer[FTS2BA61Y_EVENT_COUNT * FTS2BA61Y_EVENT_BUFF_SIZE];
-> +	u8 *event;
-> +	u8 event_id;
-> +	int n_events = 0;
-> +	int ret;
-> +
-> +	usleep(1);
-
-Why?
-
-> +
-> +	ret = fts2ba61y_get_event(ts, buffer, &n_events);
-> +	if (ret < 0) {
-> +		dev_dbg(&ts->spi->dev, "failed to get event: %d", ret);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	for (int i = 0; i <= n_events; i++) {
-> +		event = &buffer[i * FTS2BA61Y_EVENT_BUFF_SIZE];
-> +		event_id = FIELD_GET(FTS2BA61Y_MASK_EVENT_ID, event[0]);
-> +
-> +		if (event_id == FTS2BA61Y_COORDINATE_EVENT)
-> +			fts2ba61y_handle_coordinates(ts, event);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int fts2ba61y_input_open(struct input_dev *dev)
-> +{
-> +	struct fts2ba61y_data *ts = input_get_drvdata(dev);
-> +	u8 cmd = FTS2BA61Y_CMD_SENSE_ON;
-> +
-> +	return fts2ba61y_write(ts, &cmd, 1, NULL, 0);
-> +}
-> +
-> +static void fts2ba61y_input_close(struct input_dev *dev)
-> +{
-> +	struct fts2ba61y_data *ts = input_get_drvdata(dev);
-> +	int ret;
-> +	u8 cmd = FTS2BA61Y_CMD_SENSE_OFF;
-> +
-> +	ret = fts2ba61y_write(ts, &cmd, 1, NULL, 0);
-> +	if (ret)
-> +		dev_err(&ts->spi->dev, "failed to turn off sensing\n");
-> +}
-> +
-> +static void fts2ba61y_power_off(void *data)
-> +{
-> +	struct fts2ba61y_data *ts = data;
-> +
-> +	disable_irq(ts->spi->irq);
-
-This may get called before interrupt is requested. Why does it need to
-be here?
-
-> +	regulator_bulk_disable(ARRAY_SIZE(ts->regulators),
-> +						   ts->regulators);
-> +}
-> +
-> +static int fts2ba61y_probe(struct spi_device *spi) {
-> +	struct fts2ba61y_data *ts;
-> +	struct input_dev *input_dev;
-> +	int error;
-> +
-> +	ts = devm_kzalloc(&spi->dev, sizeof(*ts), GFP_KERNEL);
-> +	if (!ts)
-> +		return -ENOMEM;
-> +
-> +	ts->spi = spi;
-> +	mutex_init(&ts->mutex);
-> +
-> +	spi->mode = SPI_MODE_0;
-> +	spi->bits_per_word = 8;
-> +
-> +	error = spi_setup(spi);
-> +	if (error)
-> +		return error;
-> +
-> +	ts->regulators[FTS2BA61Y_REGULATOR_VDD].supply = "vdd";
-> +	ts->regulators[FTS2BA61Y_REGULATOR_AVDD].supply = "avdd";
-> +	error = devm_regulator_bulk_get(&spi->dev,
-> +									ARRAY_SIZE(ts->regulators),
-> +									ts->regulators);
-> +	if (error)
-> +		return error;
-> +
-> +	error = fts2ba61y_hw_init(ts);
-> +	if (error)
-> +		return error;
-> +
-> +	error = devm_add_action_or_reset(&ts->spi->dev, fts2ba61y_power_off, ts);
-> +	if (error)
-> +		return error;
-> +
-> +	input_dev = devm_input_allocate_device(&spi->dev);
-> +	if (!input_dev)
-> +		return -ENOMEM;
-> +
-> +	ts->input_dev = input_dev;
-> +
-> +	input_dev->name = FTS2BA61Y_DEV_NAME;
-> +	input_dev->id.bustype = BUS_SPI;
-> +	input_dev->open = fts2ba61y_input_open;
-> +	input_dev->close = fts2ba61y_input_close;
-> +
-> +	input_set_abs_params(input_dev, ABS_MT_POSITION_X, 0, ts->max_x, 0, 0);
-> +	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, 0, ts->max_y, 0, 0);
-> +	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, 255, 0, 0);
-> +	input_set_abs_params(input_dev, ABS_MT_TOUCH_MINOR, 0, 255, 0, 0);
-> +	input_set_abs_params(input_dev, ABS_MT_PRESSURE, 0, 255, 0, 0);
-> +
-> +	touchscreen_parse_properties(input_dev, true, &ts->prop);
-> +
-> +	spi_set_drvdata(spi, ts);
-> +	input_set_drvdata(input_dev, ts);
-> +
-> +	error = input_mt_init_slots(input_dev, ts->tx_count, INPUT_MT_DIRECT);
-> +	if (error)
-> +		return error;
-> +
-> +	error = input_register_device(input_dev);
-> +	if (error)
-> +		return error;
-> +
-> +	error = devm_request_threaded_irq(&spi->dev, spi->irq, NULL,
-> +					  fts2ba61y_irq_handler,
-> +					  IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-
-Do not encode interrupt polarity, let device tree specify it according
-to system design. So just IRQF_ONESHOT.
-
-> +					  "fts2ba61y_irq", ts);
-> +	return error;
-> +}
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id spi_touchscreen_dt_ids[] = {
-> +	{ .compatible = "st,fts2ba61y" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, spi_touchscreen_dt_ids);
-> +#endif
-> +
-> +static const struct spi_device_id fts2ba61y_spi_ids[] = {
-> +	{ "fts2ba61y" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(spi, fts2ba61y_spi_ids);
-> +
-> +static struct spi_driver spi_touchscreen_driver = {
-> +	.driver = {
-> +		.name = FTS2BA61Y_DEV_NAME,
-> +		.of_match_table = of_match_ptr(spi_touchscreen_dt_ids),
-> +	},
-> +	.probe = fts2ba61y_probe,
-> +	.id_table = fts2ba61y_spi_ids,
-> +};
-> +
-> +module_spi_driver(spi_touchscreen_driver);
-> +
-> +MODULE_AUTHOR("Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>");
-> +MODULE_DESCRIPTION("ST-Microelectronics FTS2BA61Y Touch Screen");
-> +MODULE_LICENSE("GPL");
-
-Thanks.
-
--- 
-Dmitry
 
