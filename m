@@ -1,54 +1,56 @@
-Return-Path: <linux-kernel+bounces-825684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F66B8C83E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:30:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D228EB8C841
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C96BD3B45AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:30:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5BA3B91DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1843A208CA;
-	Sat, 20 Sep 2025 12:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB671A0BF3;
+	Sat, 20 Sep 2025 12:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnqKPjuw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdhGKz7i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F47C1E502;
-	Sat, 20 Sep 2025 12:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381B918DB1F;
+	Sat, 20 Sep 2025 12:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758371434; cv=none; b=FVZ3mIjDSQrAZAuOJ4ov/hSySKdcWS5/Z7EVxl3yo8iiWhSqyWFSFG+ersz/C8Y7umC8hSpETyJNtiw83uTtNP2f5nwpSD9PpJNBK+V49pPf2a3zUf0Yhq6PHZXusOlpojVrTgNLqPPU9yRKDmRGwEkqenFftq7RgQQEZscRa2E=
+	t=1758371436; cv=none; b=lHnEpVjthv/4S4PVdTQIshvf1r0Ed+q35Gn57hLTgji+l53v8mYMgLaiaDbm1qiNwohtxoEg+U3Qz9XrrK8frYEHhCOIFT47cMXEJFw0O7J8Fp3qXBpnuHsBlR066S2YtimDTMpkYoseaEtTjdhYpKO1uurk9BT8oE7PSCFLspk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758371434; c=relaxed/simple;
-	bh=+ABFe90/6L3G3RwAWo57j6ADE9lXeFOY1J0mVIJdsog=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hkUCsanrvbrBsSPdWFduqQIr1zNIu0a1nppOXstASK4bICjQ6v2tT76TpSDwe7+UISUSba6SeQwf9tnpvuIeD3BQoid6FXgBtwBhfENt43NXY6RWbyPnIKc+9wF+QXgACgn6LDStHenVv8oKj8fX4rAEIPjSYp9Z8/P8BhNrE+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnqKPjuw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2752EC4CEEB;
-	Sat, 20 Sep 2025 12:30:31 +0000 (UTC)
+	s=arc-20240116; t=1758371436; c=relaxed/simple;
+	bh=azjtBgg9o8jYuuDI1h5t3q803QLZoJl/KPkMwExin3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cRkeMeCh5ZcoTbI87CI3yHzsqRMXAeuCg+rE0dTUqNJ3I2OgZmZhpISK1SCT9zvWypJNMfYjMkrSiuPfeosb53ZFgpz+6krx9CEsp6vOaiOHqTgWNas+3p4GgZMTGNwk82HFcHLthSyo4C+Suuv2A0Qy7shxy8RIxgPpXeTLxeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdhGKz7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BCFDC4CEF7;
+	Sat, 20 Sep 2025 12:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758371433;
-	bh=+ABFe90/6L3G3RwAWo57j6ADE9lXeFOY1J0mVIJdsog=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fnqKPjuwWPTWO/5/xvtw6GA3iR/3+e48t2cVXcsiVuGjoBLf1x2d7qxVLquQ851p/
-	 mB1nGZdkMocGgGbFedR75ni2oawfAproeT66hAy7KfFTmtDjfkLV//U7hL/H5l6jIV
-	 yWLVArkD52Hbh2G5zb/YyhWBUsjybmvFqX2vRHfEQLbIYfF06L+g11h5LlHuqmX/5S
-	 78QCl+qfgTKv/5I/P5rfIcc8Zqa+TJlRJmTpqPY3mPLNyfR4BBoXvfPaUO8vqgC2qF
-	 Hlyp1yid4DOC9Kp3tuVsE+9jZJCS5E5BDbXkN3LgdlCyKwa8GKnCoifEYHqMCcGZTl
-	 5pJP+kLsinF1g==
+	s=k20201202; t=1758371435;
+	bh=azjtBgg9o8jYuuDI1h5t3q803QLZoJl/KPkMwExin3Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WdhGKz7iOT5/i+kSqRcvVLN0ApfKvwUHjabdMZZkluxpQS4s8a5ZO5IfGeeWreasd
+	 XBBCb6SM3dB/AJGmxHS4IqWdcO7RqRHwnAJnq9zoiuL9qlsMmFIaA8QOJgYx+3v3KD
+	 bNu6qek6IRu5gikpFrHfZSA1WlU5Lnqa2AtqBgrRZRqvhivoPc183l++Q32VkAqGif
+	 0tiVu8KV+8f+DuvrTBQASDuWqmcFmGf5SUj6xBPou5Ev+COuKRQxaC8us+3dtxEcDc
+	 vC37tUxMrNomi4UT/dK5Ya2SF3REei3TlNDUS1VoCYBHlmjR2BKGSuhhy445I8kRrK
+	 khr2nSvs2EmMg==
 From: Sven Peter <sven@kernel.org>
 To: soc@lists.linux.dev
 Cc: asahi@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sven Peter <sven@kernel.org>
-Subject: [GIT PULL 1/2] Apple SoC driver changes for v6.18
-Date: Sat, 20 Sep 2025 14:30:27 +0200
-Message-Id: <20250920123028.49973-1-sven@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL 2/2] Apple SoC DTS changes for v6.18
+Date: Sat, 20 Sep 2025 14:30:28 +0200
+Message-Id: <20250920123028.49973-2-sven@kernel.org>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250920123028.49973-1-sven@kernel.org>
+References: <20250920123028.49973-1-sven@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,106 +59,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+The following changes since commit 4379305ffbc2eebe3de673fc965145d441c89b8f:
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+  arm64: dts: apple: t600x: Add SMC node (2025-08-10 20:21:57 +0200)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux.git tags/apple-soc-drivers-6.18
+  https://git.kernel.org/pub/scm/linux/kernel/git/sven/linux.git tags/apple-soc-dt-6.18-part2
 
-for you to fetch changes up to 442816f97a4f84cb321d3359177a3b9b0ce48a60:
+for you to fetch changes up to 70fa521f4d55127c85d7c2defe8c20be75e29efd:
 
-  pmdomain: apple: Add "apple,t8103-pmgr-pwrstate" (2025-09-18 21:30:56 +0200)
-
-----------------------------------------------------------------
-Apple SoC driver updates for 6.18
-
-Krzysztof Kozlowski asked us to move away from generic compatibles:
-- Adjust all dt-bindings to use apple,t8103-XXXX instead of apple,XXXX
-  as fallback and add a comment that the old generic list should no
-  longer be extended.
-- Add new fallback compatibles to pinctrl, pmdomain, spi, and mca
-  drivers. These changes have been Acked by their subsystem maintainers
-  to be merged through our tree together with the dt-bindings.
-
-Support for pre-M1 Apple Silicon:
-- SART and mailbox gain support for Apple's A11, which are both
-  required for NVMe.
-- NVMe also gains support for Apple's A11 and the nvme maintainers
-  prefer that we merge this through the soc tree together with
-  the mailbox and SART changes.
-- SPMI compatibles for A11 and T2 have been added, also going through
-  the soc tree due to conflicts with the generic compatible removal and
-  because no driver change is required.
-
-Signed-off-by: Sven Peter <sven@kernel.org>
+  arm64: dts: apple: t8015: Add SPMI node (2025-09-18 21:13:45 +0200)
 
 ----------------------------------------------------------------
-Janne Grunau (23):
-      dt-bindings: arm: apple: apple,pmgr: Add t6020-pmgr compatible
-      dt-bindings: power: apple,pmgr-pwrstate: Add t6020 compatible
-      dt-bindings: cpufreq: apple,cluster-cpufreq: Add t6020 compatible
-      dt-bindings: interrupt-controller: apple,aic2: Add apple,t6020-aic compatible
-      dt-bindings: iommu: dart: Add apple,t6020-dart compatible
-      dt-bindings: pinctrl: apple,pinctrl: Add apple,t6020-pinctrl compatible
-      dt-bindings: mailbox: apple,mailbox: Add t6020 compatible
-      dt-bindings: gpu: apple,agx: Add agx-{g14s,g14c,g14d} compatibles
-      dt-bindings: iommu: apple,sart: Add apple,t6020-sart compatible
-      dt-bindings: nvme: apple: Add apple,t6020-nvme-ans2 compatible
-      dt-bindings: net: bcm4377-bluetooth: Add BCM4388 compatible
-      dt-bindings: net: bcm4329-fmac: Add BCM4388 PCI compatible
-      dt-bindings: mfd: apple,smc: Add t6020-smc compatible
-      dt-bindings: spmi: apple,spmi: Add t6020-spmi compatible
-      dt-bindings: watchdog: apple,wdt: Add t6020-wdt compatible
-      dt-bindings: clock: apple,nco: Add t6020-nco compatible
-      dt-bindings: dma: apple,admac: Add t6020-admac compatible
-      ASoC: dt-bindings: apple,mca: Add t6020-mca compatible
-      spi: dt-bindings: apple,spi: Add t6020-spi compatible
-      pinctrl: apple: Add "apple,t8103-pinctrl" as compatible
-      ASoC: apple: mca: Add "apple,t8103-mca" compatible
-      spi: apple: Add "apple,t8103-spi" compatible
-      pmdomain: apple: Add "apple,t8103-pmgr-pwrstate"
+Apple SoC DTS updates for 6.18, part 2
 
-Nick Chan (8):
-      dt-bindings: mailbox: apple,mailbox: Add ASC mailboxes on Apple A11 and T2
-      soc: apple: mailbox: Add Apple A11 and T2 mailbox support
-      dt-bindings: iommu: apple,sart: Add Apple A11
-      soc: apple: sart: Make allow flags SART version dependent
-      soc: apple: sart: Add SARTv0 support
-      dt-bindings: nvme: apple,nvme-ans: Add Apple A11
-      nvme: apple: Add Apple A11 support
-      dt-bindings: spmi: Add Apple A11 and T2 compatible
+- New device trees for all M2 Pro, Max and Ultra models are added.
+  This is responsible for most of the changed lines since we already
+  need 2000+ lines just to describe all the power domains inside
+  t602x-pmgr.dtsi for these SoCs.
+- Missing WiFi properties for t600x are added.
+- Bluetooth nodes are added for all t600x machines.
+- The PCIe ethernet iommu-map was fixed for the Apple M1 iMac
+  to account for a disabled PCIe port.
+- SPMI, NVMe, SART and mailbox nodes for Apple's T2 and A11.
 
-Sven Peter (1):
-      soc: apple: Drop default ARCH_APPLE in Kconfig
+----------------------------------------------------------------
+Hector Martin (5):
+      arm64: dts: apple: t600x: Add missing WiFi properties
+      arm64: dts: apple: t600x: Add bluetooth device nodes
+      arm64: dts: apple: Add initial t6020/t6021/t6022 DTs
+      arm64: dts: apple: Add J414 and J416 Macbook Pro device trees
+      arm64: dts: apple: Add J180d (Mac Pro, M2 Ultra, 2023) device tree
 
- .../devicetree/bindings/arm/apple/apple,pmgr.yaml  |  33 ++--
- .../devicetree/bindings/clock/apple,nco.yaml       |  17 +-
- .../bindings/cpufreq/apple,cluster-cpufreq.yaml    |   3 +
- .../devicetree/bindings/dma/apple,admac.yaml       |  17 +-
- .../devicetree/bindings/gpu/apple,agx.yaml         |   6 +
- .../bindings/interrupt-controller/apple,aic2.yaml  |   1 +
- .../devicetree/bindings/iommu/apple,dart.yaml      |  14 +-
- .../devicetree/bindings/iommu/apple,sart.yaml      |   5 +-
- .../devicetree/bindings/mailbox/apple,mailbox.yaml |   8 +
- .../devicetree/bindings/mfd/apple,smc.yaml         |  17 +-
- .../net/bluetooth/brcm,bcm4377-bluetooth.yaml      |   1 +
- .../bindings/net/wireless/brcm,bcm4329-fmac.yaml   |   1 +
- .../devicetree/bindings/nvme/apple,nvme-ans.yaml   |  30 ++--
- .../devicetree/bindings/pinctrl/apple,pinctrl.yaml |  27 +--
- .../bindings/power/apple,pmgr-pwrstate.yaml        |  27 +--
- .../devicetree/bindings/sound/apple,mca.yaml       |  17 +-
- .../devicetree/bindings/spi/apple,spi.yaml         |  16 +-
- .../devicetree/bindings/spmi/apple,spmi.yaml       |  20 ++-
- .../devicetree/bindings/watchdog/apple,wdt.yaml    |  27 +--
- drivers/nvme/host/apple.c                          | 197 ++++++++++++++-------
- drivers/pinctrl/pinctrl-apple-gpio.c               |   1 +
- drivers/pmdomain/apple/pmgr-pwrstate.c             |   1 +
- drivers/soc/apple/Kconfig                          |   3 -
- drivers/soc/apple/mailbox.c                        |  19 ++
- drivers/soc/apple/sart.c                           |  60 ++++++-
- drivers/spi/spi-apple.c                            |   1 +
- sound/soc/apple/mca.c                              |   1 +
- 27 files changed, 404 insertions(+), 166 deletions(-)
+Janne Grunau (6):
+      arm64: dts: apple: t8103-j457: Fix PCIe ethernet iommu-map
+      dt-bindings: arm: apple: Add t8112 j415 compatible
+      arm64: dts: apple: Add devicetreee for t8112-j415
+      dt-bindings: arm: apple: Add t6020x compatibles
+      arm64: dts: apple: Add ethernet0 alias for J375 template
+      arm64: dts: apple: Add J474s, J475c and J475d device trees
+
+Nick Chan (4):
+      arm64: dts: apple: t8015: Fix PCIE power domains dependencies
+      arm64: dts: apple: t8015: Add NVMe nodes
+      arm64: dts: apple: t8012: Add SPMI node
+      arm64: dts: apple: t8015: Add SPMI node
+
+ Documentation/devicetree/bindings/arm/apple.yaml |   41 +-
+ arch/arm64/boot/dts/apple/Makefile               |    9 +
+ arch/arm64/boot/dts/apple/t6000-j314s.dts        |    8 +
+ arch/arm64/boot/dts/apple/t6000-j316s.dts        |    8 +
+ arch/arm64/boot/dts/apple/t6001-j314c.dts        |    8 +
+ arch/arm64/boot/dts/apple/t6001-j316c.dts        |    8 +
+ arch/arm64/boot/dts/apple/t6001-j375c.dts        |    8 +
+ arch/arm64/boot/dts/apple/t6002-j375d.dts        |    8 +
+ arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi   |   10 +
+ arch/arm64/boot/dts/apple/t600x-j375.dtsi        |   11 +
+ arch/arm64/boot/dts/apple/t6020-j414s.dts        |   26 +
+ arch/arm64/boot/dts/apple/t6020-j416s.dts        |   26 +
+ arch/arm64/boot/dts/apple/t6020-j474s.dts        |   47 +
+ arch/arm64/boot/dts/apple/t6020.dtsi             |   22 +
+ arch/arm64/boot/dts/apple/t6021-j414c.dts        |   26 +
+ arch/arm64/boot/dts/apple/t6021-j416c.dts        |   26 +
+ arch/arm64/boot/dts/apple/t6021-j475c.dts        |   37 +
+ arch/arm64/boot/dts/apple/t6021.dtsi             |   69 +
+ arch/arm64/boot/dts/apple/t6022-j180d.dts        |  121 ++
+ arch/arm64/boot/dts/apple/t6022-j475d.dts        |   42 +
+ arch/arm64/boot/dts/apple/t6022-jxxxd.dtsi       |   38 +
+ arch/arm64/boot/dts/apple/t6022.dtsi             |  349 ++++
+ arch/arm64/boot/dts/apple/t602x-common.dtsi      |  465 +++++
+ arch/arm64/boot/dts/apple/t602x-die0.dtsi        |  575 ++++++
+ arch/arm64/boot/dts/apple/t602x-dieX.dtsi        |  128 ++
+ arch/arm64/boot/dts/apple/t602x-gpio-pins.dtsi   |   81 +
+ arch/arm64/boot/dts/apple/t602x-j414-j416.dtsi   |   45 +
+ arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi   |   38 +
+ arch/arm64/boot/dts/apple/t602x-nvme.dtsi        |   42 +
+ arch/arm64/boot/dts/apple/t602x-pmgr.dtsi        | 2265 ++++++++++++++++++++++
+ arch/arm64/boot/dts/apple/t8012.dtsi             |    8 +
+ arch/arm64/boot/dts/apple/t8015-pmgr.dtsi        |    1 +
+ arch/arm64/boot/dts/apple/t8015.dtsi             |   42 +
+ arch/arm64/boot/dts/apple/t8103-j457.dts         |   12 +-
+ arch/arm64/boot/dts/apple/t8112-j415.dts         |   80 +
+ 35 files changed, 4727 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/apple/t6020-j414s.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6020-j416s.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6020-j474s.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6020.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t6021-j414c.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6021-j416c.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6021-j475c.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6021.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t6022-j180d.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6022-j475d.dts
+ create mode 100644 arch/arm64/boot/dts/apple/t6022-jxxxd.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t6022.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-die0.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-dieX.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-gpio-pins.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-j414-j416.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-j474-j475.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-nvme.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t602x-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t8112-j415.dts
 
