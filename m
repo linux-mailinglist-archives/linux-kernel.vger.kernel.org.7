@@ -1,185 +1,125 @@
-Return-Path: <linux-kernel+bounces-825714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4C31B8C939
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:40:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10604B8C993
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 720785622A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:40:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8D7B4FD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954612C21EF;
-	Sat, 20 Sep 2025 13:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j9miTtBs"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24AC1FDA
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68852F549C;
+	Sat, 20 Sep 2025 13:42:48 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F941B87C0;
+	Sat, 20 Sep 2025 13:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758375600; cv=none; b=lm9N6Dk+ar4jHtPHIN5yKMajFElwDIBOKE7g7aqzo4//dg1SxIaHhgsYXSZnKMP2iiT1jT3+3b/XW3k6kNdglrKqvsIotQu5uLVHTuvrGUJXn4/sVHDmxJFIzK2CEnbDKFH3hWT1lAr92ESGKOBcEX3V5kkThn+hir64UMof+xg=
+	t=1758375768; cv=none; b=FlDDAG3VKs2x87pS05134tvTXvxfwcwJu2ZCv0DUaZRlo8aGyoK0db44DQdYFkySK7+b9r0NlIBI4l+7fLSeNEHePAxrj38YUdYWooLt1ZxrS7l5jdcpMtQni86I8HPiOFvdwWAHqUI7WCi2jmikJ28iQeKdCh3f1x6KS2Ufe0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758375600; c=relaxed/simple;
-	bh=vhatMoi86OKMpWxvskXKZC7VlxiSVzvWwTKeUzAGgvs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AujE/4aDBAaFRcQGJ6C+PHxEEjUspE1TngiCb5JKTXtxRDVKnqHHrXo+3LPXz5P+UUm/wT3AahAofQXpooz1T52K+6GlwRNhIHJ9L/ydIwLYW1QFRVmNTfXUGV5FetqZir96F4ISQYMQSl4+M23RWlArJ8Zt1EieWbtbtFabjDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j9miTtBs; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758375586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=It9UI/TMJBEgD2UXuop7eAdekHSY37VHQP9TQSTg0JA=;
-	b=j9miTtBslxi6VnfkiOGr0qI0lWZzuCm9iHKVGjip+auTlPS1jiAWU6TGRHP/hfVKR63Dm9
-	0Fj9573seTXfhwvuFizKdb8XBf+dObJTF1z1eV/9Tslh4H5R428ZXLhS3n5506YoM9LnPS
-	y3cyGRtRs4qvB39JZjJO3W5jn2LtMts=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Steven Rostedt <rostedt@kernel.org>,
- Menglong Dong <menglong8.dong@gmail.com>, jolsa@kernel.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, kees@kernel.org,
- samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
- mhiramat@kernel.org, ast@kernel.org, andrii@kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject:
- Re: [PATCH] tracing: fgraph: Protect return handler from recursion loop
-Date: Sat, 20 Sep 2025 21:39:25 +0800
-Message-ID: <5974303.DvuYhMxLoT@7950hx>
-In-Reply-To: <175828305637.117978.4183947592750468265.stgit@devnote2>
-References:
- <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <175828305637.117978.4183947592750468265.stgit@devnote2>
+	s=arc-20240116; t=1758375768; c=relaxed/simple;
+	bh=bxGLZ1KtmnTKgV48yxkrqLP1/cvNjp0TCVABJhWKa/0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NJXcyu28l7gyJlG7ju6FoxBYM9dqogRsRpNxcD31NU3Z8Q2G2Dc4cTl4Nlb3V2VZgwLbwcdMpgDS/e9GOt0jCY7uncT5MbcXl9+KvgczB5CnuppT63Ye2O/FAjuGFwbtsd3ZDV5w6ivVZzY2CFdhvjfePQdVf45p43k7FqlAU94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [218.12.20.76])
+	by mtasvr (Coremail) with SMTP id _____wBnt7Axr85oZmxVAg--.716S3;
+	Sat, 20 Sep 2025 21:42:11 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [218.12.20.76])
+	by mail-app1 (Coremail) with SMTP id yy_KCgBHmdQrr85o_AlBAg--.18751S2;
+	Sat, 20 Sep 2025 21:42:08 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	christophe.jaillet@wanadoo.fr,
+	mingo@kernel.org,
+	tglx@linutronix.de,
+	linux@treblig.org,
+	fourier.thomas@gmail.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH] scsi: mvsas: Fix use-after-free bugs in mvs_work_queue
+Date: Sat, 20 Sep 2025 21:42:01 +0800
+Message-Id: <20250920134201.18428-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:yy_KCgBHmdQrr85o_AlBAg--.18751S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcPAWjNsfsG7QAZsX
+X-CM-DELIVERINFO: =?B?33xENgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR17JWIj2S50sroAcAzxKp+F41Z092AV/gunfW8rDv1UV0ym2ldWluBcKk0DO6PF64/Voy
+	8atT3b2U5oNC2n/zoSwhR/VnrddamsHADA/v/9FKmhbX+QqPOU3b+sWb/6rE0A==
+X-Coremail-Antispam: 1Uk129KBj93XoW7Zw48ur1rGrW8ZryxAw4UKFX_yoW8WFyfpF
+	WfG34UG3y7JF1UKwnFgFW0gF1Yga1kA34qkw4Ig3y7GFyrJry3Jr1fGayF9a4DArWkAw1a
+	vrsIv3s7uF4UK3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
+	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
+	WUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
+	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
+	vjxU7xwIDUUUU
 
-On 2025/9/19 19:57, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> function_graph_enter_regs() prevents itself from recursion by
-> ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
-> which is called at the exit, does not prevent such recursion.
-> Therefore, while it can prevent recursive calls from
-> fgraph_ops::entryfunc(), it is not able to prevent recursive calls
-> to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
-> This can lead an unexpected recursion bug reported by Menglong.
-> 
->  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
->   -> kprobe_multi_link_exit_handler -> is_endbr.
-> 
-> To fix this issue, acquire ftrace_test_recursion_trylock() in the
-> __ftrace_return_to_handler() after unwind the shadow stack to mark
-> this section must prevent recursive call of fgraph inside user-defined
-> fgraph_ops::retfunc().
-> 
-> This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
-> fprobe on function-graph tracer"), because before that fgraph was
-> only used from the function graph tracer. Fprobe allowed user to run
-> any callbacks from fgraph after that commit.
-> 
-> Reported-by: Menglong Dong <menglong8.dong@gmail.com>
-> Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
-> Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  kernel/trace/fgraph.c |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> index 1e3b32b1e82c..08dde420635b 100644
-> --- a/kernel/trace/fgraph.c
-> +++ b/kernel/trace/fgraph.c
-> @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
->  	unsigned long bitmap;
->  	unsigned long ret;
->  	int offset;
-> +	int bit;
->  	int i;
->  
->  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
-> @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
->  	if (fregs)
->  		ftrace_regs_set_instruction_pointer(fregs, ret);
->  
-> +	bit = ftrace_test_recursion_trylock(trace.func, ret);
-> +	/*
-> +	 * This must be succeeded because the entry handler returns before
-> +	 * modifying the return address if it is nested. Anyway, we need to
-> +	 * avoid calling user callbacks if it is nested.
-> +	 */
-> +	if (WARN_ON_ONCE(bit < 0))
-> +		goto out;
+During the detaching of Marvell's SAS/SATA controller, the origin
+code calls cancel_delayed_work() in mvs_free() to cancel the delayed
+work item mwq->work_q. However, if mwq->work_q is already running,
+the cancel_delayed_work() may fail to cancel it. This can lead to
+use-after-free scenarios where mvs_free() frees the mvs_info while
+mvs_work_queue() is still executing and attempts to access the
+already-freed mvs_info.
 
-Hi, the logic seems right, but the warning is triggered when
-I try to run the bpf bench testing:
+A typical race condition is illustrated below:
 
-$ ./benchs/run_bench_trigger.sh kretprobe-multi-all
-[   20.619642] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
-[  139.509036] ------------[ cut here ]------------
-[  139.509180] WARNING: CPU: 2 PID: 522 at kernel/trace/fgraph.c:839 ftrace_return_to_handler+0x2b9/0x2d0
-[  139.509411] Modules linked in: virtio_net
-[  139.509514] CPU: 2 UID: 0 PID: 522 Comm: bench Not tainted 6.17.0-rc5-g1fe6d652bfa0 #106 NONE 
-[  139.509720] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.17.0-1-1 04/01/2014
-[  139.509948] RIP: 0010:ftrace_return_to_handler+0x2b9/0x2d0
-[  139.510086] Code: e8 0c 08 0e 00 0f 0b 49 c7 c1 00 73 20 81 e9 d1 fe ff ff 40 f6 c6 10 75 11 49 c7 c3 ef ff ff ff ba 10 00 00 00 e9 57 fe ff ff <0f> 0b e9 a5 fe ff ff e8 1b 72 0d 01 66 66 2e 0f 1f 84 00 00 00 00
-[  139.510536] RSP: 0018:ffffc9000012cef8 EFLAGS: 00010002
-[  139.510664] RAX: ffff88810f709800 RBX: ffffc900007c3678 RCX: 0000000000000003
-[  139.510835] RDX: 0000000000000008 RSI: 0000000000000018 RDI: 0000000000000000
-[  139.511007] RBP: 0000000000000000 R08: 0000000000000034 R09: ffffffff82550319
-[  139.511184] R10: ffffc9000012cf50 R11: fffffffffffffff7 R12: 0000000000000000
-[  139.511357] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[  139.511532] FS:  00007fe58276fb00(0000) GS:ffff8884ab3b8000(0000) knlGS:0000000000000000
-[  139.511724] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  139.511865] CR2: 0000562a28314b67 CR3: 00000001143f9000 CR4: 0000000000750ef0
-[  139.512038] PKRU: 55555554
-[  139.512106] Call Trace:
-[  139.512177]  <IRQ>
-[  139.512232]  ? irq_exit_rcu+0x4/0xb0
-[  139.512322]  return_to_handler+0x1e/0x50
-[  139.512422]  ? idle_cpu+0x9/0x50
-[  139.512506]  ? sysvec_apic_timer_interrupt+0x69/0x80
-[  139.512638]  ? idle_cpu+0x9/0x50
-[  139.512731]  ? irq_exit_rcu+0x3a/0xb0
-[  139.512833]  ? ftrace_stub_direct_tramp+0x10/0x10
-[  139.512961]  ? sysvec_apic_timer_interrupt+0x69/0x80
-[  139.513101]  </IRQ>
-[  139.513168]  <TASK>
+CPU 0 (remove)            | CPU 1 (delayed work callback)
+mvs_pci_remove()          |
+  mvs_free()              | mvs_work_queue()
+    cancel_delayed_work() |
+      kfree(mvi)          |
+                          |   mvi-> // UAF
 
-> +
->  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
->  	trace.retval = ftrace_regs_get_return_value(fregs);
->  #endif
-> @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
->  		}
->  	}
->  
-> +	ftrace_test_recursion_unlock(bit);
-> +out:
->  	/*
->  	 * The ftrace_graph_return() may still access the current
->  	 * ret_stack structure, we need to make sure the update of
-> 
-> 
-> 
+Replace cancel_delayed_work() with cancel_delayed_work_sync() to
+ensure that the delayed work item is properly canceled and any
+executing delayed work item completes before the mvs_info is
+deallocated.
 
+This bug was found by static analysis.
 
+Fixes: 20b09c2992fe ("[SCSI] mvsas: add support for 94xx; layout change; bug fixes")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+ drivers/scsi/mvsas/mv_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+index 2c72da6b8cf0..7f1ad305eee6 100644
+--- a/drivers/scsi/mvsas/mv_init.c
++++ b/drivers/scsi/mvsas/mv_init.c
+@@ -124,7 +124,7 @@ static void mvs_free(struct mvs_info *mvi)
+ 	if (mvi->shost)
+ 		scsi_host_put(mvi->shost);
+ 	list_for_each_entry(mwq, &mvi->wq_list, entry)
+-		cancel_delayed_work(&mwq->work_q);
++		cancel_delayed_work_sync(&mwq->work_q);
+ 	kfree(mvi->rsvd_tags);
+ 	kfree(mvi);
+ }
+-- 
+2.34.1
 
 
