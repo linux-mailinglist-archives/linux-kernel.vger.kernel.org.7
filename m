@@ -1,298 +1,141 @@
-Return-Path: <linux-kernel+bounces-825728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA361B8CAD6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:00:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86048B8CADF
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C3C621AE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9218621CFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383A42FE053;
-	Sat, 20 Sep 2025 15:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746E22F60B2;
+	Sat, 20 Sep 2025 15:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="zCtmgdrm"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="aVizHqSz"
+Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35032309B3
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B77829E113
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758380440; cv=none; b=YeulhhNRavwPSysK6Pz8bfUKD7F5N7ED1XRBwiNNWzleKznmlJQ4WfKUgs3K+VxNoQccO2HVSabIv9M78tPJEICpDABVp3Sor7pkn3UTuedxh1mGXXq4pXiy/bO+TWzBEOVG4AuZOVhewP9fjSjZg929vMW32QBQxaCB2BMiKoY=
+	t=1758380466; cv=none; b=RwyFLiZNc/c7vy+LBhQMlTm9VTGER2zLaxImk+KOqmy0lFT0PCK9WxOT8exDwUR0N5NIj4MA7HAyPmn6e0D721xXWZ0Yq9bsTMzz6v10dQXtv8pHRLkGVI1ZSAND9gQuMha9dndMem3Om2LOj1pTGB7rFa6N6qn5x40V4QIi6pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758380440; c=relaxed/simple;
-	bh=YCHgOlPcbJKOH7zU/k20TSLxOTTK/PdftazqwXXuQ7c=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GfoqIxbPqPC8XCNDIHW4tLdoAx4iuSDKAllyRR2EaBbvf6BuKHONTy9XZBHEwgdpqR+cVVIKL1RukH636Zwzi1No/Fp4a2tcYPmHTlPctcBNQqERJ6ms2i4qvefHcg7flXu1weWfOmjE2Kto3tzZLljyXGnUm2Ebepk6/Op1T74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=zCtmgdrm; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1758380466; c=relaxed/simple;
+	bh=VVnZVrjIfoL5fI97WzsCCEDJrZ+vbxnfi0I1HLSYLH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=s5LHaQYXY5NeAnhlGoJTKUyROQFxUghPB1JGehuKgDPw/Km1eT+7EN0UqBI1B7QYPyBJf0k3LzkeddWk6kPXh+ZAfGQ4RAfZ6bD5mx57T/cHWHOkuAYlTDcemjiMHM1rVs/P5Uqk1kERnbK0C1J+rdafqlV3MHvOK+8PduMGr7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=aVizHqSz; arc=none smtp.client-ip=103.21.126.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
+Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
+	by smtp1.iitb.ac.in (Postfix) with SMTP id AB2E9104CBA0
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:30:59 +0530 (IST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in AB2E9104CBA0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
+	t=1758380459; bh=VVnZVrjIfoL5fI97WzsCCEDJrZ+vbxnfi0I1HLSYLH4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aVizHqSzSoM8isjtdWFdYH1H4tt3wBNohZTtnisgJRJlt/6jm0OszS4ormLRu2bZe
+	 QaEN/xzD16GNhcNaVjr4RAoxSf2aTno/NqYS3zoGWZEW+ZKtcZmW7rVJVErhdbjmbv
+	 qiDAYx0ByGvjqhsQMKQtmQ3QoiZ3v0qi83/Kw6Ms=
+Received: (qmail 19121 invoked by uid 510); 20 Sep 2025 20:30:59 +0530
+X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
+ spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
+ Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 4.605369 secs; 20 Sep 2025 20:30:59 +0530
+X-Spam-Level: 
+X-Spam-Pyzor: Reported 0 times.
+X-Envelope-From: akhilesh@ee.iitb.ac.in
+X-Qmail-Scanner-Mime-Attachments: |
+X-Qmail-Scanner-Zip-Files: |
+Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
+  by ldns2.iitb.ac.in with SMTP; 20 Sep 2025 20:30:54 +0530
+Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	by ldns2.iitb.ac.in (Postfix) with ESMTP id 5ABA63414E7;
+	Sat, 20 Sep 2025 20:30:54 +0530 (IST)
+Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
+	(Authenticated sender: akhilesh)
+	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id A479F1E814BD;
+	Sat, 20 Sep 2025 20:30:53 +0530 (IST)
+Date: Sat, 20 Sep 2025 20:30:48 +0530
+From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+To: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org
+Cc: skhan@linuxfoundation.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akhileshpatilvnit@gmail.com
+Subject: [PATCH v3 0/6] rtc: m41t93: add new features alarm, clock out,
+ watchdog
+Message-ID: <cover.1758379856.git.akhilesh@ee.iitb.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1758380426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ijOJzmdzRDKd9dcL3XghcGraqozcSVhpfrfjEqKGU1w=;
-	b=zCtmgdrmEsYTM0cuSGcVI8mxDkJGlqh6Eh2X0sslv5WLy3al2Hb4vbc8LGnpC4Ej4QJnfh
-	Z+lNaoIYxcqQ/9JxPcYszt+Vz22qeimwbPGlIWZ9KfvRGuxSh9h4qvH/3eM3dHNUOa6ubZ
-	DSzlm5c+ZkclAcyfrIhU1QKUXPReeGyjKvBugGR/ZXYXt4YP1uSljgXgtcPtL4sJP5iWsq
-	pYCwGwegCV8rCD/kFVivcGHw7zRhVx2hjFpWg3uWC45T9jVl0beRYiahFU4jQSYfOAO8Lw
-	O0ztuybJecCAz12ByrbxNjeqE93PDMKHuv1YazmpBQHxBy8uN5Ha3n11KjAM0Q==
-Content-Type: multipart/signed;
- boundary=b9fa74363659b670e23c1dce98bffde2f9949cfa8c820d422a3b42c86d81;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Sat, 20 Sep 2025 17:00:07 +0200
-Message-Id: <DCXPTZRNNTDY.1773L2181HWF@cknow.org>
-Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Heiko Stuebner"
- <heiko@sntech.de>, <linux-media@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <kernel@collabora.com>
-Subject: Re: [PATCH v2 09/12] media: rkvdec: Add H264 support for the
- VDPU381 variant
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Detlev Casanova" <detlev.casanova@collabora.com>,
- <linux-kernel@vger.kernel.org>
-References: <20250808200340.156393-1-detlev.casanova@collabora.com>
- <20250808200340.156393-10-detlev.casanova@collabora.com>
-In-Reply-To: <20250808200340.156393-10-detlev.casanova@collabora.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---b9fa74363659b670e23c1dce98bffde2f9949cfa8c820d422a3b42c86d81
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+This patch series adds following to m41t93 rtc driver.
 
-Hi Detlev,
+Functionalities: 
+- Alarm support (support to configure alarm 1)
+- Square wave output support
+- Watchdog support
 
-Thanks a LOT for this patch set!
-As already reported the results were quite impressive :-D
+Code improvements:
+this series migrates existing driver to use standard regmap interface
+for spi instead of direct spi calls and uses regmap for new features.
 
-To figure out how to make VDPU346 for rk3568 work, I had a close look at
-the TRM and compared that to rk3588's TRM and compared it to your code.
-I think I may have found a few potential issue, but I may also not
-understand things correctly.
+Device tree support:
+Adds device tree support to the driver along with binding documentation.
 
-On Fri Aug 8, 2025 at 10:03 PM CEST, Detlev Casanova wrote:
-> This decoder variant is found in Rockchip RK3588 SoC family.
->
-> Like for rkvdec on rk3399, it supports the NV12, NV15, NV16 and NV20
-> output formats and level up to 5.1.
->
-> The maximum width and height have been significantly increased
-> supporting up to 65520 pixels for both.
->
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  .../media/platform/rockchip/rkvdec/Makefile   |   1 +
->  .../rockchip/rkvdec/rkvdec-h264-common.h      |   2 +
->  .../platform/rockchip/rkvdec/rkvdec-h264.c    |  36 --
->  .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     | 469 ++++++++++++++++++
->  .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     | 427 ++++++++++++++++
->  .../media/platform/rockchip/rkvdec/rkvdec.c   | 164 +++++-
->  .../media/platform/rockchip/rkvdec/rkvdec.h   |   6 +
->  7 files changed, 1067 insertions(+), 38 deletions(-)
->  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381=
--h264.c
->  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381=
--regs.h
->
-> ...
->
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h=
- b/drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
-> new file mode 100644
-> index 0000000000000..11b545e9ee7ea
-> --- /dev/null
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu381-regs.h
-> @@ -0,0 +1,427 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Rockchip VDPU381 Video Decoder driver registers description
-> + *
-> + * Copyright (C) 2024 Collabora, Ltd.
-> + *  Detlev Casanova <detlev.casanova@collabora.com>
-> + */
-> +
-> +#include <linux/types.h>
-> +
-> +#ifndef _RKVDEC_REGS_H_
-> +#define _RKVDEC_REGS_H_
-> +
-> +#define OFFSET_COMMON_REGS		(8 * sizeof(u32))
-> +#define OFFSET_CODEC_PARAMS_REGS	(64 * sizeof(u32))
-> +#define OFFSET_COMMON_ADDR_REGS		(128 * sizeof(u32))
-> +#define OFFSET_CODEC_ADDR_REGS		(160 * sizeof(u32))
-> +#define OFFSET_POC_HIGHBIT_REGS		(200 * sizeof(u32))
-> +
-> +#define VDPU381_MODE_HEVC	0
-> +#define VDPU381_MODE_H264	1
-> +#define VDPU381_MODE_VP9	2
-> +#define VDPU381_MODE_AVS2	3
-> +
-> +#define MAX_SLICE_NUMBER	0x3fff
-> +
-> +#define RKVDEC_1080P_PIXELS		(1920 * 1080)
-> +#define RKVDEC_4K_PIXELS		(4096 * 2304)
-> +#define RKVDEC_8K_PIXELS		(7680 * 4320)
+Testing:
+This patch series is validated on TI am62x board with m41t93 rtc chip
+connected to spi0 bus.
+regmap migration is additionally tested by observing spi transfers
+with the help of logic analyzer. Short summary of test flow is added in
+commit message of respective features.
 
-In the RK3588 TRM Part 1 paragraph 5.4.3 I can find the values for 4K
-and 8K, but the 1080P resolution seems to be 1920x1088 (not 1080).
+Datasheet:
+https://www.st.com/resource/en/datasheet/m41t93.pdf
 
-> +#define RKVDEC_TIMEOUT_1080p		(0xefffff)
-> +#define RKVDEC_TIMEOUT_4K		(0x2cfffff)
-> +#define RKVDEC_TIMEOUT_8K		(0x4ffffff)
-> +#define RKVDEC_TIMEOUT_MAX		(0xffffffff)
-> +
-> +#define VDPU381_REG_DEC_E		0x028
-> +#define VDPU381_DEC_E_BIT		1
-> +
-> +#define VDPU381_REG_IMPORTANT_EN	0x02c
-> +#define VDPU381_DEC_IRQ_DISABLE	BIT(4)
-> +
-> +#define VDPU381_REG_STA_INT		0x380
-> +#define VDPU381_STA_INT_DEC_RDY_STA	BIT(2)
-> +#define VDPU381_STA_INT_ERROR		BIT(4)
-> +#define VDPU381_STA_INT_TIMEOUT		BIT(5)
-> +#define VDPU381_STA_INT_SOFTRESET_RDY	BIT(9)
-> +
-> +/* base: OFFSET_COMMON_REGS */
->
-> ...
->
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/me=
-dia/platform/rockchip/rkvdec/rkvdec.c
-> index 0ccf1ba81958a..1b55fe4ff2baf 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -28,6 +28,7 @@
-> =20
->  #include "rkvdec.h"
->  #include "rkvdec-regs.h"
-> +#include "rkvdec-vdpu381-regs.h"
->  #include "rkvdec-rcb.h"
-> =20
->  static bool rkvdec_image_fmt_match(enum rkvdec_image_fmt fmt1,
-> @@ -84,11 +85,50 @@ static bool rkvdec_is_valid_fmt(struct rkvdec_ctx *ct=
-x, u32 fourcc,
->  	return false;
->  }
-> =20
-> +#define VDPU38X_STRIDE_ALIGN	16
-> +
-> +/**
-> + * The default v4l2_fill_pixfmt_mp() function doesn't allow for specific=
- alignment values.
-> + * As the VDPU381 and VDPU383 need lines to be aligned on 16, use our ow=
-n implementation here.
-> + */
-> +static int vdpu38x_fill_pixfmt_mp(struct v4l2_pix_format_mplane *pix_mp,=
- u32 pixelformat,
-> +				  u32 width, u32 height)
-> +{
-> +	const struct v4l2_format_info *info =3D v4l2_format_info(pix_mp->pixelf=
-ormat);
-> +	struct v4l2_plane_pix_format *plane =3D &pix_mp->plane_fmt[0];
-> +
-> +	if (!info)
-> +		return -EINVAL;
-> +
-> +	pix_mp->num_planes =3D 1;
-> +
-> +	memset(plane, 0, sizeof(*plane));
-> +
-> +	plane->bytesperline =3D pix_mp->width * info->bpp[0] / info->bpp_div[0]=
-;
-> +	plane->bytesperline =3D ALIGN(plane->bytesperline, VDPU38X_STRIDE_ALIGN=
-);
-> +
-> +	for (int i =3D 0; i < info->comp_planes; i++) {
-> +		unsigned int vdiv =3D i ? info->vdiv : 1;
-> +		unsigned int hdiv =3D i ? info->hdiv : 1;
-> +		unsigned int stride =3D DIV_ROUND_UP(pix_mp->width, hdiv)
-> +				    * info->bpp[i] / info->bpp_div[i];
-> +		unsigned int height =3D DIV_ROUND_UP(pix_mp->height, vdiv);
-> +
-> +		plane->sizeimage +=3D ALIGN(stride, VDPU38X_STRIDE_ALIGN) * height;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static void rkvdec_fill_decoded_pixfmt(struct rkvdec_ctx *ctx,
->  				       struct v4l2_pix_format_mplane *pix_mp)
->  {
-> -	v4l2_fill_pixfmt_mp(pix_mp, pix_mp->pixelformat,
-> -			    pix_mp->width, pix_mp->height);
-> +	struct rkvdec_config *cfg =3D ctx->dev->config;
-> +
-> +	cfg->fill_pixfmt_mp(pix_mp, pix_mp->pixelformat, pix_mp->width, pix_mp-=
->height);
-> +
-> +	ctx->colmv_offset =3D pix_mp->plane_fmt[0].sizeimage;
-> +
->  	pix_mp->plane_fmt[0].sizeimage +=3D 128 *
->  		DIV_ROUND_UP(pix_mp->width, 16) *
->  		DIV_ROUND_UP(pix_mp->height, 16);
-> @@ -287,6 +327,25 @@ static const struct rkvdec_coded_fmt_desc rkvdec_cod=
-ed_fmts[] =3D {
->  	}
->  };
-> =20
-> +static const struct rkvdec_coded_fmt_desc vdpu381_coded_fmts[] =3D {
-> +	{
-> +		.fourcc =3D V4L2_PIX_FMT_H264_SLICE,
-> +		.frmsize =3D {
-> +			.min_width =3D 64,
-> +			.max_width =3D  65520,
-> +			.step_width =3D 64,
-> +			.min_height =3D 16,
-> +			.max_height =3D  65520,
-> +			.step_height =3D 16,
-> +		},
+patch 4 to 6 depend on patch 3 (regmap patch)
 
-Also in the RK3588 TRM Part 1 paragraph 5.4.3, I see "Supported image size"=
- :
-16x16 to 65520x65520; step size 16 pixels
+Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+---
+Changes in v3:
+- Address comments on bindings from Krzysztof and add myself
+as a maintainer.
+- Re-validation/testing on top of v6.17-rc6
+- Link to v2: https://lore.kernel.org/lkml/cover.1757510157.git.akhilesh@ee.iitb.ac.in/
 
-I interpret that that .min_width and .step_width should both be 16.
-(.min_height and .step_height are correct at 16; if I read the TRM right)
+Changes in v2:
+- Address DTS and bindings coding style feedback from Krzysztof
+- Verify bindings using $ make dt_binding_check 
+- Update example in binding documentation after testing.
+- Analyze and Fix build warnings as suggested by kernel test robot.
+- Drop patch 5 from series (device detect logic change).
+  This will be taken separately. Focus on functionalities in this series.
+- Update commit messages with short test steps for each feature.
+- Link to v1: https://lore.kernel.org/lkml/cover.1756908788.git.akhilesh@ee.iitb.ac.in/
+---
 
-> +		.ctrls =3D &rkvdec_h264_ctrls,
-> +		.ops =3D &rkvdec_vdpu381_h264_fmt_ops,
-> +		.num_decoded_fmts =3D ARRAY_SIZE(rkvdec_h264_decoded_fmts),
-> +		.decoded_fmts =3D rkvdec_h264_decoded_fmts,
-> +		.subsystem_flags =3D VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
-> +	},
-> +};
-> +
->  static const struct rkvdec_coded_fmt_desc *
->  rkvdec_find_coded_fmt_desc(struct rkvdec_ctx *ctx, u32 fourcc)
->  {
-> @@ -1125,6 +1184,35 @@ static irqreturn_t rk3399_irq_handler(struct rkvde=
-c_ctx *ctx)
+Akhilesh Patil (6):
+  dt-bindings: rtc: Add ST m41t93
+  rtc: m41t93: add device tree support
+  rtc: m41t93: migrate to regmap api for register access
+  rtc: m41t93: Add alarm support
+  rtc: m41t93: Add square wave clock provider support
+  rtc: m41t93: Add watchdog support
 
-Cheers,
-  Diederik
+ .../devicetree/bindings/rtc/st,m41t93.yaml    |  50 ++
+ drivers/rtc/rtc-m41t93.c                      | 488 ++++++++++++++++--
+ 2 files changed, 486 insertions(+), 52 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/st,m41t93.yaml
 
---b9fa74363659b670e23c1dce98bffde2f9949cfa8c820d422a3b42c86d81
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaM7BggAKCRDXblvOeH7b
-bpgmAQCFDGMgDVQ1jCwy/pQMoyeJggzfPDXfxF075j1Mf44bpQD6A3aEPqu/IG3M
-dq8uGQQ/2TiBUsOPasKNSUPOOQwsdAc=
-=Wwg0
------END PGP SIGNATURE-----
-
---b9fa74363659b670e23c1dce98bffde2f9949cfa8c820d422a3b42c86d81--
 
