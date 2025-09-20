@@ -1,202 +1,124 @@
-Return-Path: <linux-kernel+bounces-825626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A31B8C5C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:42:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCF7B8C5C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD5D7C32E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B451BC6C19
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03C42F659C;
-	Sat, 20 Sep 2025 10:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B202F83C2;
+	Sat, 20 Sep 2025 10:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O83uxJ3m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvwsPLUG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A862189;
-	Sat, 20 Sep 2025 10:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F2425DD1E
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758364943; cv=none; b=NKQS7CPF/gOc0mq/F1bi0RyWC3X9EsMTevmofZto0QgGxrze1scooUTEhMIN6AZcKBdh4Sosf50a7PIkqVu42oZWbjBV8Q24LdVhf0GweksyGfTZssZML5Su+gFCGf2EmZPfY4NI6QoTZtEbgmT+jPfHWjIO8F4LqJ9QkcNKOz4=
+	t=1758365029; cv=none; b=hWfPTeQLGtNdECth28+MUKYUyNvIT1Ir+miZnV16Twf5CXtVF9ksRV4LEIFWPBNEhqrCdgJ3v7h2HX2b6w9j8hNs6DCuPoKvcPRH3D1Q0YQiupE8SwN6unxeJ1Xybt5N+EKpwfbhEApuIeHFIECrloCaVvxh02zF8fnx+IbFZ00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758364943; c=relaxed/simple;
-	bh=9kwVqoLydbm2Rbeubw/EvPFJmKcEfrJda/IiMPaoeEU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VB8lx/hbbRLSQHVfBNw8Z9tKydcmHTS8qmdegmyJ7Q4+N3z1pFWBbvS9zzZkwfNantg0nmvil3etGo+JcOGPDPPq8IKs1pVyAQj7MgU58K34yv6zGxn8D7S8oq8W9vTfiJDxt4fd9AgSr9WVvbewCp7aLeV8ptFdYny0qjXGq94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O83uxJ3m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6ADA4C4CEEB;
-	Sat, 20 Sep 2025 10:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758364942;
-	bh=9kwVqoLydbm2Rbeubw/EvPFJmKcEfrJda/IiMPaoeEU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=O83uxJ3mk3gybuY33XyTcokG0zq83t1iApEr3h2IJvkiY7uOByucy4zzlJZbOeKGm
-	 SoTmG7WRl2NLBAUx1XuMQTNWJ6ER/14T70mp2NdHxMkUa9CJTva9MNuwN0hefq25gk
-	 zjSwXnjoWRQmUU4/O8Bd4epIB6xdbWmWQcRGRqkcDmC0g13avlzQuCVe+erhgUw7nq
-	 mWPzv73cVXnITs0h2IGJohXdmlcOy1BVULuEiFR3vMeBt+BT+td49w2d3WfvBRSr7u
-	 IKysXP9BJthGnRlB91Ly/LoEDCmSQzEUxF10SBpWLUUWQk/WcI28PbfKZGV5IoZ7DM
-	 1CgRl/5HTyXQQ==
-From: SeongJae Park <sj@kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Xinyu Zheng <zhengxinyu6@huawei.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	zouyipeng@huawei.com
-Subject: Re: [BUG REPORT] mm/damon: softlockup when kdamond walk page with cpu hotplug
-Date: Sat, 20 Sep 2025 03:42:20 -0700
-Message-Id: <20250920104220.1399-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <296c2b3f-6748-158f-b85d-2952165c0588@google.com>
-References: 
+	s=arc-20240116; t=1758365029; c=relaxed/simple;
+	bh=GGcqmDnzpkqL527dvwmPXxPejn0tRqSqA9TUjS43tF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nskA3uEHcnh1OBobFiqmIDeK60nq1kx2btKsYc94zQlHex3ojFVVmaQS8MdvUJSWjo+28uFgXtqstJx+coX38EJ1y4LoxF8Iuin1uj9L2AaeQRFUWAZ+E3XHXvcbgtq3xflXpebmi1XdbN/6mmQH4TrNfqYOL7DpVBq7f0K/7LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvwsPLUG; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758365027; x=1789901027;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GGcqmDnzpkqL527dvwmPXxPejn0tRqSqA9TUjS43tF4=;
+  b=RvwsPLUGGkpas4Af9x/r5HlwLWaJtYoTajlTw+LgxyDkU95+s9wvQl8Y
+   rO/UBIS8JevIbajVuSE0s0RgQhRBoeO4vU3HsaX4yTda8VWak+ZIuzDWd
+   keSgo7CLHFTZhJSL5lmUBQ9MPLY3h1iNpBh6odlHeGP6uon0M508jzzVn
+   HS9l6dJ2KHdxpJO2vDR3RWPk0DWwF1m5LWwxS1zWQLSwhRTrYKbb4Bs0D
+   dBI0nsr9ZbJ0x/mXMsualDaXTjH0PAachautfB1zyf0ImHu6LFujjc7I5
+   zMFHYbB7HMImaqVmGL+aU07wUuEP92n+OqcjFL3F/+FL3zwEmmACp/0FH
+   w==;
+X-CSE-ConnectionGUID: CI5//+7xTMmju9CSpSnSjw==
+X-CSE-MsgGUID: HIJZP8ooSDaCVsY4kWPp4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="64334369"
+X-IronPort-AV: E=Sophos;i="6.18,280,1751266800"; 
+   d="scan'208";a="64334369"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 03:43:47 -0700
+X-CSE-ConnectionGUID: ka3svwETTDyUeiqFLjtQ7A==
+X-CSE-MsgGUID: KLR2Z4G+SdK4f8cCYhbYAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,280,1751266800"; 
+   d="scan'208";a="180446374"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 20 Sep 2025 03:43:44 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzv49-0005EB-1x;
+	Sat, 20 Sep 2025 10:43:41 +0000
+Date: Sat, 20 Sep 2025 18:42:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mostafa Saleh <smostafa@google.com>, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, jgg@ziepe.ca, praan@google.com,
+	Mostafa Saleh <smostafa@google.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH v3 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
+Message-ID: <202509201819.f369wBHc-lkp@intel.com>
+References: <20250919133316.2741279-5-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919133316.2741279-5-smostafa@google.com>
 
-On Fri, 19 Sep 2025 20:56:56 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+Hi Mostafa,
 
-> On Thu, 18 Sep 2025, SeongJae Park wrote:
-> 
-> > Hello,
-> > 
-> > On Thu, 18 Sep 2025 03:00:29 +0000 Xinyu Zheng <zhengxinyu6@huawei.com> wrote:
-> > 
-> > > A softlockup issue was found with stress test:
-[...]
-> This had me worried for a while: thought we might be needing to change
-> lots of other places, and scatter cond_resched()s here and there.
-> 
-> But no: no need for cond_resched()'s, this is all just a confusion about
-> where pmd migration entries are handled: a pmd migration entry is accepted
-> by pmd_trans_huge_lock(), but is not accepted by pmd_trans_huge().
-> 
-> See fs/proc/task_mmu.c for mm_walk examples of trying pmd_trans_huge_lock(),
-> then pte_offset_map_lock() if it failed, or ACTION_AGAIN if that failed too.
-> 
-> When I ACTION_AGAINed damon_mkold_pmd_entry() and damon_young_pmd_entry()
-> in 6.5, I didn't realize that the pmd migration entries were reaching the
-> pte_offset_map_lock(), with corrupt results (or did pmd_bad() filter them
-> out? I didn't think so, but it'll take me too long now to work out whether
-> a pmd migration entry counts as pmd_bad or not); but knew that the new
-> pte_offset_map_lock() filtered them out safely if there was a race.
-> 
-> But they've been reaching it without any race, so yes the ACTION_AGAIN
-> would send the mm_walk back again and again for as long as the pmd
-> migration entry remained there: not good, and Xinyu finds a lockup
-> when hotplugging CPU without preemption.
+kernel test robot noticed the following build errors:
 
-Thank you for your detailed and kind explanation, Hugh!
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on linus/master v6.17-rc6 next-20250919]
+[cannot apply to joro-iommu/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
-> My suggested patch below (please take it over SJ, and do with it what
-> you will), converting damon_mkold_pmd_entry() and damon_young_pmd_entry()
-> to use pmd_trans_huge_lock() as I'd been expecting, so handling the
-> pmd migration entry up in that block.  (Side note: patch against 6.17-rc,
-> but I see mm.git adds also a damos_va_stat_pmd_entry(), which would
-> better be converted to the same pmd_trans_huge_lock() pattern -
-> though I notice you're not setting ACTION_AGAIN in that one.)
-> 
-> But I have to admit, there's very little gained by using ACTION_AGAIN
-> in these functions: it helps not to miss the range when racing against
-> THP collapse or split, but you're already content to miss the extent
-> if it has a pmd migration entry, and there can still be an instant when
-> the range which used to have a page table does not yet show the THP.
-> 
-> So if you prefer a smaller fix (but a larger source file!), just
-> dropping the walk->action = ACTION_AGAIN lines should be good enough.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mostafa-Saleh/iommu-io-pgtable-arm-Simplify-error-prints-for-selftests/20250919-213912
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250919133316.2741279-5-smostafa%40google.com
+patch subject: [PATCH v3 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
+config: i386-randconfig-013-20250920 (https://download.01.org/0day-ci/archive/20250920/202509201819.f369wBHc-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509201819.f369wBHc-lkp@intel.com/reproduce)
 
-I agree all your points.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509201819.f369wBHc-lkp@intel.com/
 
-I'd prefer the smaller source file following your suggested change below (using
-pmd_trans_huge_lock()) in long term.  But, for a short term, I'd prefer the
-smaller fix (dropping walk->action = ACTION_AGAIN) since it should also be
-merged into stable@, up to 6.5.y.
+All error/warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-So, I'd like to suggest as following.  Let's drop the
-'walk->action = ACTION_AGAIN' like the below attached one, for now.  After it
-is confirmed to fix the issue and merged into relevant trees including stable
-trees, let's revisit the code to cleanup following pmd_trans_huge_lock()
-pattern.
+>> WARNING: modpost: drivers/iommu/io-pgtable-arm-selftests: section mismatch in reference: arm_lpae_run_tests+0x100 (section: .text) -> arm_lpae_dump_ops (section: .init.text)
+>> ERROR: modpost: "alloc_io_pgtable_ops" [drivers/iommu/io-pgtable-arm-selftests.ko] undefined!
+>> ERROR: modpost: "free_io_pgtable_ops" [drivers/iommu/io-pgtable-arm-selftests.ko] undefined!
 
-Please let me know if I'm missing something, or you have other opinions.
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for IOMMU_IO_PGTABLE_LPAE
+   Depends on [n]: IOMMU_SUPPORT [=y] && (ARM || ARM64 || COMPILE_TEST [=n]) && !GENERIC_ATOMIC64 [=n]
+   Selected by [m]:
+   - IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST [=m] && IOMMU_SUPPORT [=y] && KUNIT [=m]
 
-Xinyu, could you please test if the below attached patch fixes your issue and
-let us know the result?
-
-If Xinyu confirms the validity of the fix and no one objects to the above plan,
-I will post the fix as a formal one with a better commit message.
-
-
-Thanks,
-SJ
-
-[...]
-
-==== >8 ====
-From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj@kernel.org>
-Date: Sat, 20 Sep 2025 03:35:34 -0700
-Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
-
-For a quick fix of a softlockup issue:
-https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
-From 743cafda8982624229541741dbfe5ff252328ac0 Mon Sep 17 00:00:00 2001
-From: SeongJae Park <sj@kernel.org>
-Date: Sat, 20 Sep 2025 03:35:34 -0700
-Subject: [PATCH] mm/damon/vaddr: do not try page table walk again
-
-For a quick fix of a softlockup issue:
-https://lore.kernel.org/20250918030029.2652607-1-zhengxinyu6@huawei.com
-
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/vaddr.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
-index 8c048f9b129e..7e834467b2d8 100644
---- a/mm/damon/vaddr.c
-+++ b/mm/damon/vaddr.c
-@@ -328,10 +328,8 @@ static int damon_mkold_pmd_entry(pmd_t *pmd, unsigned long addr,
- 	}
- 
- 	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
--	if (!pte) {
--		walk->action = ACTION_AGAIN;
-+	if (!pte)
- 		return 0;
--	}
- 	if (!pte_present(ptep_get(pte)))
- 		goto out;
- 	damon_ptep_mkold(pte, walk->vma, addr);
-@@ -481,10 +479,8 @@ static int damon_young_pmd_entry(pmd_t *pmd, unsigned long addr,
- #endif	/* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- 	pte = pte_offset_map_lock(walk->mm, pmd, addr, &ptl);
--	if (!pte) {
--		walk->action = ACTION_AGAIN;
-+	if (!pte)
- 		return 0;
--	}
- 	ptent = ptep_get(pte);
- 	if (!pte_present(ptent))
- 		goto out;
 -- 
-2.39.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
