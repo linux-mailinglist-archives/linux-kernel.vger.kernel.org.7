@@ -1,173 +1,236 @@
-Return-Path: <linux-kernel+bounces-825754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A71B8CBE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3FDEB8CC09
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 796D37C2443
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED23463D86
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63879223DF1;
-	Sat, 20 Sep 2025 15:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D07E257852;
+	Sat, 20 Sep 2025 15:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G9DyUWlo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mNNFmMDK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="czmdbAT7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F630179A3;
-	Sat, 20 Sep 2025 15:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686CF1EBFE0
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758383006; cv=none; b=A8WuKRMeBj9TY6duriiJ4dORk7PXj8KIv3SZv+/He3mcSGLNOtKQPF35iaPW7xqH5LGVgZy5Cm/ffbnr2zYTg9zCyZ+hIRAbZcMQfbGbJ1/QrRygktLEghdPTIhXz25Q+kEJmRGfyNl/9eCAt/shl4s+d5do+5YOGQsl8ODMUZk=
+	t=1758383134; cv=none; b=SqS2vedaI7+xu508r+XKXwf3rt+qUXRY4m3W/aywO6QYgs7EjFJBxZmYMj1pzAfh+obvs5L9dzrdL8BD4Lmbz/VDmRYszniA9t1N9xlglHnKGDinhE+NjNcP64xu7aoahPskdnSvTkMVb/VLnslHrkBoEXcGBWuFyIoEkNc9vGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758383006; c=relaxed/simple;
-	bh=0ITRtFycySrYfbRBh9/xsWD0si9WtkgxWMZly1D8Dcg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RAqoUwihyBqn16iYehXNmAtMfaArPY+MAeOJ6mbBw/mC4fij1ZDonOs/ISZxFqBI1ftK5+RG0Pxg12isEJkrie4yhTicL5rtMa/paJOt7ZSSkaFw3wB9U+YmsML0/vWh4TlojFzL1lc3L//srzSAix7DvBi8Ti/Dt+KOTD8U9g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G9DyUWlo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mNNFmMDK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 20 Sep 2025 15:43:20 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758383003;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OTypYzAun1C7l0M0FZ5xVbNEB43yE3bn12oGAYCbkuU=;
-	b=G9DyUWloUMLIaccQ6CwZxY+QXLXv34Go2XnfzmJUNB9uu8RLypqrj3AjkrgR18tNLIFtoC
-	Dnr/ug0jnR29WxatHigPqOadEfVffayiIa6rHANMjXFajqzJoBvuDyG2p4w1HUMt8skf1G
-	WyPk79d2+0QGIwkxvxYrECc8V2vXKSqf2gJ/fMKUN3wBeqo3AyWEFUROko/eWIppOvzqzG
-	pFY94yidBMEBKsEKEjJGAF6wbRra7Ngasm6sVWS/GI9Dn5jTh22lREAUTL2TDp97fAOL6E
-	f8PEdcIPezB0L5wmOcKUcsTZtBHXmeq5wIFDklpkX/bD12AENfMxAb+OTdWkrg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758383003;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OTypYzAun1C7l0M0FZ5xVbNEB43yE3bn12oGAYCbkuU=;
-	b=mNNFmMDK+xERR5xoyNP70t+yIWfgbbxtUnMIeq3pDWd5fca4hiPbTKuipnIQjTfNOoMp9o
-	nYe14/K5Va0brjBQ==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/urgent] futex: Prevent use-after-free during requeue-PI
-Cc: syzbot+034246a838a10d181e78@syzkaller.appspotmail.com,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250910104243.TUMt9HM0@linutronix.de>
-References: <20250910104243.TUMt9HM0@linutronix.de>
+	s=arc-20240116; t=1758383134; c=relaxed/simple;
+	bh=Nl6xjEQfSXy+EzHx39jXmBvZzxp/pB/P0JE01Sc6v58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FXi6duSTBlmCGQg2RAYmaFwAJHXbQUhtkfgOgEX5tAX8p+GSQ+lA8jPTfdGgK9cAiuHIWfp4qEzKFI2jA8Q0RA62WjToODej7KOnzKJuU5pZAQcGJnrWW5vgnAbQ2lKGRsqCIj7b4njjqPGNKqGwu5HJZOfKqSsbGk9Rn3B3OBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=czmdbAT7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58KDumQp020292
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:45:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qj9Mkgauf53Q3rI1Zh3EAmXOJsaMhRLtKBTPf4B3uw0=; b=czmdbAT7wkJWx1eU
+	aiEERe3/8lHnX/l0Vsob2ixeaJmfQCSm9B47xAVQ7x/YLgQHldhH60GEpTHedAbr
+	i8nxreJ3VUWd+LKaHo9Roku++kATERJ1ZuEtavsmDBhwr2aLKXKrTWwet2JgaN8l
+	puXW6nj9sfR2Ypn+OnnnfhKoG3RGI+Sm3m3Ppl5WXz+XHOVUbN5dxI+OjCFziqA8
+	F1QzLKHl9z+KiOynotCqZg6Nz+YDXHfJws7/l7Eqt4h6g+w/KZT9mTXdqVgf/87d
+	6AKO2W8pDjBNI3kiZUq/pUF5dblQL2IJQPoDv0iAGuNwHqvO4xFYpDRFFG/0hK5m
+	UhfL6w==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499nekrscw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:45:32 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b5f290579aso63406651cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:45:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758383131; x=1758987931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qj9Mkgauf53Q3rI1Zh3EAmXOJsaMhRLtKBTPf4B3uw0=;
+        b=dOI3MiEqs+EOVRRqmMl/dc3dySgcruFbRw6AnXthJiFKFCZYBezYn1XeAxmU6z/BG9
+         yfL92gPSReKUGK03lW6MCVyQcv4Z60xgnZtyvu7ZCJWaWOkoEZ2M7b9gekRMxx8tv9Q/
+         IXvMwkE1Nto8Fv3fIuMnFVv1dkxBgwVZK03D/6Zxsa0PEUSBMp4IAV4JwQRg3BGtLNkb
+         kmkdjBVJ7mYh6UPStvH5oJGtefD6cultwFGpjT5Z0ECZ1IjqaAKf4ebCTq/ffsiqJ460
+         Wv73uo/VLiPMd3JkEOMx7BkcCAY2GhkobZ4+1Wq5E+PflRYk6B+C/ERI1jhZtkne232F
+         ccqg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Si/RtDK07a72i9uD+gJj//Ef+ZPoiRxcl8B56lK4IxuZ87DOjMDaE8Nk/elfDP1QEP88tDPYGhTLcUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykrctof3rMSHu0QoexVylMx0pwsjSV2guWjnYZGXpatKGFYcDE
+	0zkEve3wkHBAU0+zTdV2LsNzOshEiIdkq/0flnm/Fm9TscxYtNCGf2IPRV/AOHU3PlvAya+A6n6
+	Ab0rNDt2BDgKfbYF+wlq1Ta6rueJHeVFhb772823RJT1764gCpI6eE2FC5VqnmjKPAMU=
+X-Gm-Gg: ASbGncvwOdBrYA91CWCCRUcKtGNAnoxfGXiLO2qCPzx/RKcqjEygMpP3gqaSWOzlAMX
+	PsNtXc7Vsw8N4Rw1HaU3VZ82YRe9l01HLPg1+W9Kl5gk2W6v5Pa4gtrgwLmB0IRRz5tw0AksnKb
+	VYL+YbB8H3Rg9ZwgRCleioOI0Z1uXPVqZac7cD962IGjH1bdbtlYN2GiBdVqeeZQa+wyzlI+ddt
+	c4GtQHTOEI4BFX+afqUPYEBOT/rbTEjaPRylLNE7Sod2kNQKFtfNx/TxLO3Hhjqf3Quf93rNiNJ
+	VeM1OO+hUI0iR7Adrsi52rNHSmt7bSLS5BKPAiwx/9iMowjk2nRed66RnxkcW57WYtpUZQTzXhd
+	f+WXE1jvylNDaAKYZr2w2BhjhmD1oNBKN1dRJTwY/bLf2Shlv1ZTd
+X-Received: by 2002:a05:622a:5a8a:b0:4b7:9ae7:4cd4 with SMTP id d75a77b69052e-4c06fc182ffmr82291671cf.17.1758383131036;
+        Sat, 20 Sep 2025 08:45:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxccfhluWWA1PKa9JbM8SB2Mm4trU8h1+nmugmq0WGg+KKieQrxWNJgbkXESoz1nPjhIc5sQ==
+X-Received: by 2002:a05:622a:5a8a:b0:4b7:9ae7:4cd4 with SMTP id d75a77b69052e-4c06fc182ffmr82291381cf.17.1758383130432;
+        Sat, 20 Sep 2025 08:45:30 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-57946afcc2csm1630691e87.38.2025.09.20.08.45.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 08:45:29 -0700 (PDT)
+Date: Sat, 20 Sep 2025 18:45:27 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Eric =?utf-8?Q?Gon=C3=A7alves?= <ghatto404@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] arm64: dts: qcom: r0q: add gpio keys
+Message-ID: <qiiuezocvxvj5bhrr77v6o2amaaaepdx54pqoewvhtnxce5ccz@g7bhkrb6a4pd>
+References: <20250920014637.38175-1-ghatto404@gmail.com>
+ <20250920014637.38175-2-ghatto404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175838300091.709179.9644244636542469203.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250920014637.38175-2-ghatto404@gmail.com>
+X-Proofpoint-ORIG-GUID: erZbniaxDgD5Tlk3rIHPQ4ZqMbg2zq29
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDA0MSBTYWx0ZWRfXyiyWZf2hMHci
+ jts3O3kYLh0X0/6sqRIzkc/z12efxuFjxtWD/l08GxHbsAi+GI56siVJWS51HDX1YYUeJxV6Afg
+ gInY109Umq+HFqHO9GwN6D2dC3Vg/dcQKoL3PkFbeTl9Vj3X+rFw+hPavPBH4xx4OuT3GqfzswO
+ UCxNfKDvk4DcSKXWnstZeWxn8HHribhQ47JBuVDP3zhu6XLvRnNYCoNGAMTmqA6+osH2Rd8yO/B
+ cOfNf4ZfJun97OQTFy84Ou/Ho2GOp/oy9uws2N/6GHZ56/xwRlY1FyLsQhbsQ+RvO4fm/toc1p+
+ K5wgfwNmtDOYIfzSh3dWPo/PacZnY6d4CKGP2YDhNPOUqPmoTuRgwS47o7CEUfD6d7Vglz060bA
+ aNKzBP5q
+X-Authority-Analysis: v=2.4 cv=b+Oy4sGx c=1 sm=1 tr=0 ts=68cecc1c cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=0Ibn0V_brF-Ol4aD8WAA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: erZbniaxDgD5Tlk3rIHPQ4ZqMbg2zq29
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-20_06,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ malwarescore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200041
 
-The following commit has been merged into the locking/urgent branch of tip:
+On Sat, Sep 20, 2025 at 01:46:33AM +0000, Eric Gonçalves wrote:
+> Add GPIO keys support to Samsung Galaxy S22 (r0q).
+> 
+> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+> ---
+>  .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 53 +++++++++++++++----
+>  1 file changed, 44 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> index 880d74ae6032..70e953824996 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> @@ -2,11 +2,12 @@
+>  
+>  /dts-v1/;
+>  
+> +#include <dt-bindings/input/linux-event-codes.h>
+>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> -
+>  #include "sm8450.dtsi"
+>  #include "pm8350.dtsi"
+>  #include "pm8350c.dtsi"
+> +#include "pmk8350.dtsi"
+>  
+>  / {
+>  	model = "Samsung Galaxy S22 5G";
+> @@ -28,13 +29,19 @@ framebuffer: framebuffer@b8000000 {
+>  		};
+>  	};
+>  
+> -	vph_pwr: regulator-vph-pwr {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "vph_pwr";
+> -		regulator-min-microvolt = <3700000>;
+> -		regulator-max-microvolt = <3700000>;
+> -		regulator-always-on;
+> -		regulator-boot-on;
 
-Commit-ID:     b549113738e8c751b613118032a724b772aa83f2
-Gitweb:        https://git.kernel.org/tip/b549113738e8c751b613118032a724b772a=
-a83f2
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Wed, 10 Sep 2025 12:42:43 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 20 Sep 2025 17:40:42 +02:00
+Please don't mix up refactorings and new features. Split this patch into
+several.
 
-futex: Prevent use-after-free during requeue-PI
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +		autorepeat;
+> +
+> +		pinctrl-0 = <&vol_up_n>;
+> +		pinctrl-names = "default";
+> +
+> +		key-vol-up {
+> +			label = "Volume Up";
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			gpios = <&pm8350_gpios 6 GPIO_ACTIVE_LOW>;
+> +			debounce-interval = <15>;
+> +		};
+>  	};
+>  
+>  	reserved-memory {
+> @@ -47,6 +54,15 @@ splash-region@b8000000 {
+>  			no-map;
+>  		};
+>  	};
+> +
+> +	vph_pwr: regulator-vph-pwr {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vph_pwr";
+> +		regulator-min-microvolt = <3700000>;
+> +		regulator-max-microvolt = <3700000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +	};
+>  };
+>  
+>  &apps_rsc {
+> @@ -119,8 +135,27 @@ vreg_l1c_1p8: ldo1 {
+>  	};
+>  };
+>  
+> +&pm8350_gpios {
+> +	vol_up_n: vol-up-n-state {
+> +		pins = "gpio6";
+> +		function = "normal";
+> +		power-source = <1>;
+> +		input-enable;
+> +	};
+> +};
+> +
+> +&pon_pwrkey {
+> +	status = "okay";
+> +};
+> +
+> +&pon_resin {
+> +	linux,code = <KEY_VOLUMEDOWN>;
+> +
+> +	status = "okay";
+> +};
+> +
+>  &tlmm {
+> -	gpio-reserved-ranges = <36 4>; /* SPI (not linked to anything) */
+> +	gpio-reserved-ranges = <36 4>; /* SPI (Unused) */
+>  };
+>  
+>  &usb_1 {
+> -- 
+> 2.51.0
+> 
 
-syzbot managed to trigger the following race:
-
-   T1                               T2
-
- futex_wait_requeue_pi()
-   futex_do_wait()
-     schedule()
-                               futex_requeue()
-                                 futex_proxy_trylock_atomic()
-                                   futex_requeue_pi_prepare()
-                                   requeue_pi_wake_futex()
-                                     futex_requeue_pi_complete()
-                                      /* preempt */
-
-         * timeout/ signal wakes T1 *
-
-   futex_requeue_pi_wakeup_sync() // Q_REQUEUE_PI_LOCKED
-   futex_hash_put()
-  // back to userland, on stack futex_q is garbage
-
-                                      /* back */
-                                     wake_up_state(q->task, TASK_NORMAL);
-
-In this scenario futex_wait_requeue_pi() is able to leave without using
-futex_q::lock_ptr for synchronization.
-
-This can be prevented by reading futex_q::task before updating the
-futex_q::requeue_state. A reference on the task_struct is not needed
-because requeue_pi_wake_futex() is invoked with a spinlock_t held which
-implies a RCU read section.
-
-Even if T1 terminates immediately after, the task_struct will remain valid
-during T2's wake_up_state().  A READ_ONCE on futex_q::task before
-futex_requeue_pi_complete() is enough because it ensures that the variable
-is read before the state is updated.
-
-Read futex_q::task before updating the requeue state, use it for the
-following wakeup.
-
-Fixes: 07d91ef510fb1 ("futex: Prevent requeue_pi() lock nesting issue on RT")
-Reported-by: syzbot+034246a838a10d181e78@syzkaller.appspotmail.com
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Closes: https://lore.kernel.org/all/68b75989.050a0220.3db4df.01dd.GAE@google.=
-com/
----
- kernel/futex/requeue.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/futex/requeue.c b/kernel/futex/requeue.c
-index c716a66..d818b4d 100644
---- a/kernel/futex/requeue.c
-+++ b/kernel/futex/requeue.c
-@@ -230,8 +230,9 @@ static inline
- void requeue_pi_wake_futex(struct futex_q *q, union futex_key *key,
- 			   struct futex_hash_bucket *hb)
- {
--	q->key =3D *key;
-+	struct task_struct *task;
-=20
-+	q->key =3D *key;
- 	__futex_unqueue(q);
-=20
- 	WARN_ON(!q->rt_waiter);
-@@ -243,10 +244,11 @@ void requeue_pi_wake_futex(struct futex_q *q, union fut=
-ex_key *key,
- 	futex_hash_get(hb);
- 	q->drop_hb_ref =3D true;
- 	q->lock_ptr =3D &hb->lock;
-+	task =3D READ_ONCE(q->task);
-=20
- 	/* Signal locked state to the waiter */
- 	futex_requeue_pi_complete(q, 1);
--	wake_up_state(q->task, TASK_NORMAL);
-+	wake_up_state(task, TASK_NORMAL);
- }
-=20
- /**
+-- 
+With best wishes
+Dmitry
 
