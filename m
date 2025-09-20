@@ -1,201 +1,195 @@
-Return-Path: <linux-kernel+bounces-825448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16A9B8BD27
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:55:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A18B8BD34
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71273B1928
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AF71B21D4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363231D63FB;
-	Sat, 20 Sep 2025 01:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F391F4E4F;
+	Sat, 20 Sep 2025 02:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bWOaojby"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhXrxvAH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2255F7082D
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 01:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFDB1E9B1C;
+	Sat, 20 Sep 2025 02:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758333335; cv=none; b=gFaczk8LW356W7HEc2LOrzrDNRQeURAHGzVURcC+cpKd8+aeuB680et1fp1mfPjWhO6mpGtclh6zV4TFoqhBm8mywj8jJ2WcuyE1ss/l5c+sSEAgaRSm5413g04Qk12zsVvGzOvUj84xSW4HtLDt5kpWQiSwF3bVs2VMPTkdjaU=
+	t=1758334200; cv=none; b=EBkFDe2VMRrO/Y0S1hBcnRv/h38uE82l0nU2hDJFM3L02IIJ0Y452IWQ7SXdh15Uz1MxIpBsfLxBKj7d23GjGZZFtX7FbWTet/3FrIAIeEZczcE77U+F2wcdV5ukoi99AYMSEye5MRQWaGpKm7ROwOjGosToCJ0Z46+grepDGMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758333335; c=relaxed/simple;
-	bh=3Wpmd2pdKwpAIQ8Fo6W0c3bK8qq11E3CF5Ra/QSvfWg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bFkIIbk8RxUIjE3vZvIud08kXYncFBeTVMndYXZ+PMpC95YGQZoY7ID1wfyUu0NBGUjx50qdMFpzg+Ps/876lI5daBXXY5Bev/dAu3MmpJDoWjedVvCXtNcgNkAbUAe0AV+pD62F6x24mkIz2NseUAQsifYiH13YuPkzKE8cVpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bWOaojby; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-26a0a694ea8so12598915ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 18:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758333333; x=1758938133; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fjulk5rkVmPsHCmF0s197yqYrmBn9b23fz8QlbmEMHI=;
-        b=bWOaojbyAIwHnzGDs1wSzj9F+xN5d2xY8UZLBuFHBMp+VeWsAxiCjueR9sjS7YsARO
-         +jIqZO2cz2/qSnzzI6f3waw02rKWPjnhXsh3sODgBWgM+NYONBn5PkzRbDbRt2dJD/ST
-         HDxDtS0qGDmw5c07cjBVTTn+wqVkQQRtRoNkemI4pAiZjJdh14sW7lqvuKXbjNjMGSZQ
-         XoqFOD67+Zk5H5scTRMcMrTXhjU1eF0/p6FdATgpF8z5uREByQxDmRnwpIkQl7odTcND
-         YINFu4EjsJEwFtIArFsAECAA+y5ncpnPFAr2pfWhye4DgUKNcuqvcW0HMd/9LqyJ/qBM
-         BcEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758333333; x=1758938133;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fjulk5rkVmPsHCmF0s197yqYrmBn9b23fz8QlbmEMHI=;
-        b=SkgvOqu62CZgs4Mb87MNcqyYWOvgXKDHxTs9dCxH5FPpbo8S0jdLGSRLWlpjkE4brZ
-         IgyULwU2nmFk8xakEYdQHhSCp4P1TxWdJKtK/qU19LX0D7KLPjJ6ajmRLSZCNyM5ae1J
-         KbltHt1FdO512bE6JT92zwWnqZVccN2MsqRfkNP2H8hDv0hQZvxdMicXMChaXG6JZ6Tq
-         4VntdeQNYkpAfWcaH3i7qVolwYNAOyGoqQ0FHkGl2ilI71fGclwV8Mr+2D3zwDw11Afc
-         EgCald8oaqNHGmgGGE/+LeX6j6Hd4P03RDM/1rq39ttrzvmcAKaGQMs4Vbk5V+AW0Yvv
-         3DaA==
-X-Gm-Message-State: AOJu0YyyS2TjMgInNbXJ8ksz2WD7rkbOzMlCaw5yqMUUvmS6YWd2HlUd
-	nQtvNocwJ4Fr28cpSzIJN3buKzvGB/LTNitr3EtfjOb1ATULNri7tzBj
-X-Gm-Gg: ASbGncurS4DlkUqNJYy/A8/dx1Kvmaarqc9M6n9NnBvZ+JgU6mprqK0tRNrnEMfk8pi
-	kqJ0MBTQaZPWbzeOvhWkI8u8t4JXZ9YQo5NC/DsqE5nK80afXGjeh3GCWU2Obg/1z2oxm9bx0F2
-	xtTzAOsAbwFprjkzDNbb3yd3O/3Fr7CGUYOeDfvwfxaDYq8D1Qrfioqv2svc+R4n5j46ikfSW9O
-	ei1/IuoHOxNDJU2WL5VZVcpdh5ABcxdnfFvDCxyixNiqDcaa7IMqXSr2VC7D5gQiBBGEdKDEwUq
-	ZXJ4JXBDrY47ME+71gaGvk+A/iTrHmXfCeOX0Cr3Jqw/mQDqOcp0svEvcEIGdHAEBBU3Xuz9cS0
-	hRVTFLdginRyS3HQN7TeeairMA77Czq+alByTyf8bbKL9dWMTwA==
-X-Google-Smtp-Source: AGHT+IEqKGJPoW86tnt6KcghAvRYsQaWkRv8qKjw6X1da8Q99Cv4KwISiNa+ACkgZO5GF1seBRX8tQ==
-X-Received: by 2002:a17:903:2284:b0:269:9adf:839 with SMTP id d9443c01a7336-269ba427cb8mr69731025ad.19.1758333333376;
-        Fri, 19 Sep 2025 18:55:33 -0700 (PDT)
-Received: from jpkobryn-fedora-PF5CFKNC.lan ([73.222.117.172])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33047220cfesm4596925a91.2.2025.09.19.18.55.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 18:55:32 -0700 (PDT)
-From: JP Kobryn <inwardvessel@gmail.com>
-To: shakeel.butt@linux.dev,
-	mkoutny@suse.com,
-	yosryahmed@google.com,
-	hannes@cmpxchg.org,
-	tj@kernel.org,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [RFC PATCH] memcg: introduce kfuncs for fetching memcg stats
-Date: Fri, 19 Sep 2025 18:55:26 -0700
-Message-ID: <20250920015526.246554-1-inwardvessel@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758334200; c=relaxed/simple;
+	bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KztCuLrenTaZvE/gsyczPWLVZc0m+5NXaYfp2amQhF1NX6TAJE6D2Er+Mqj73s/nX3Np3BGogjN3o5neYEbWvJ6+eMBTJlnawxAL3BvmEQQt9Q3N4bYW3hiwYoaaFaFoEoXsoUNuqN6qbOVEWJQnELQESSGFQ2CaaOf196MJ7Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhXrxvAH; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758334199; x=1789870199;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
+  b=DhXrxvAHph5SBG8JRzlWzoyT62ku2VvJrgqUUy1GZ3Wure33huupGfB3
+   iRg+IXX7Gf51SiK0FKUT4SHmPmK509Z0/QL4dTu9ZOFuWGa6cqU9VT6Xh
+   ywONKLXUu1bA6htKQ/m701S3qg+ZRLQMSGwqVllXR2Rg/1PYBEXtkvuuI
+   VA7uNxNgKESJICaPhWlFLs3wEWooVlRIFe1U4uMMCK0kfBj78x68RCYfe
+   v3eY7BxhogoE865FVBeRNtUHwoMj6Aos6llP69ZooEX6L60yIlp2yATmG
+   P7gS22S+EFccYblZa+vMb96Is/W9Xr1TMeeQYN8Bwwg4g0M1x9cCwqfs0
+   Q==;
+X-CSE-ConnectionGUID: HYKFpfa4QueTDjGXskAv1A==
+X-CSE-MsgGUID: amtTjqL7Spmtu3AKATjrSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="64501703"
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="64501703"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 19:09:58 -0700
+X-CSE-ConnectionGUID: tKmWcZo7REuUUBFq1zMauw==
+X-CSE-MsgGUID: m2q2elODTl6a8KnPC+GAdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="176795181"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2025 19:09:55 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uzn2u-0004xn-2m;
+	Sat, 20 Sep 2025 02:09:52 +0000
+Date: Sat, 20 Sep 2025 10:09:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>, alexandre.belloni@bootlin.com,
+	thierry.reding@gmail.com, jonathanh@nvidia.com,
+	andriy.shevchenko@linux.intel.com, linux-rtc@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Kartik Rajput <kkartik@nvidia.com>
+Subject: Re: [PATCH] rtc: tegra: Add ACPI support
+Message-ID: <202509200953.uZOl24Is-lkp@intel.com>
+References: <20250919111232.605405-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919111232.605405-1-kkartik@nvidia.com>
 
-The kernel has to perform a significant amount of the work when a user mode
-program reads the memory.stat file of a cgroup. Aside from flushing stats,
-there is overhead in the string formatting that is done for each stat. Some
-perf data is shown below from a program that reads memory.stat 1M times:
+Hi Kartik,
 
-26.75%  a.out [kernel.kallsyms] [k] vsnprintf
-19.88%  a.out [kernel.kallsyms] [k] format_decode
-12.11%  a.out [kernel.kallsyms] [k] number
-11.72%  a.out [kernel.kallsyms] [k] string
- 8.46%  a.out [kernel.kallsyms] [k] strlen
- 4.22%  a.out [kernel.kallsyms] [k] seq_buf_printf
- 2.79%  a.out [kernel.kallsyms] [k] memory_stat_format
- 1.49%  a.out [kernel.kallsyms] [k] put_dec_trunc8
- 1.45%  a.out [kernel.kallsyms] [k] widen_string
- 1.01%  a.out [kernel.kallsyms] [k] memcpy_orig
+kernel test robot noticed the following build errors:
 
-As an alternative to reading memory.stat, introduce new kfuncs to allow
-fetching specific memcg stats from within bpf iter/cgroup-based programs.
-Reading stats in this manner avoids the overhead of the string formatting
-shown above.
+[auto build test ERROR on tegra/for-next]
+[also build test ERROR on abelloni/rtc-next linus/master v6.17-rc6 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
----
- mm/memcontrol.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Kartik-Rajput/rtc-tegra-Add-ACPI-support/20250919-191553
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250919111232.605405-1-kkartik%40nvidia.com
+patch subject: [PATCH] rtc: tegra: Add ACPI support
+config: arm-randconfig-001-20250920 (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/reproduce)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 8dd7fbed5a94..aa22dc6f47ee 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -870,6 +870,73 @@ unsigned long memcg_events_local(struct mem_cgroup *memcg, int event)
- }
- #endif
- 
-+static inline struct mem_cgroup *mem_cgroup_from_cgroup(struct cgroup *cgrp)
-+{
-+	return cgrp ? mem_cgroup_from_css(cgrp->subsys[memory_cgrp_id]) : NULL;
-+}
-+
-+__bpf_kfunc static void cgroup_flush_memcg_stats(struct cgroup *cgrp)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_cgroup(cgrp);
-+
-+	if (!memcg)
-+		return;
-+
-+	mem_cgroup_flush_stats(memcg);
-+}
-+
-+__bpf_kfunc static unsigned long node_stat_fetch(struct cgroup *cgrp,
-+		enum node_stat_item item)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_cgroup(cgrp);
-+
-+	if (!memcg)
-+		return 0;
-+
-+	return memcg_page_state_output(memcg, item);
-+}
-+
-+__bpf_kfunc static unsigned long memcg_stat_fetch(struct cgroup *cgrp,
-+		enum memcg_stat_item item)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_cgroup(cgrp);
-+
-+	if (!memcg)
-+		return 0;
-+
-+	return memcg_page_state_output(memcg, item);
-+}
-+
-+__bpf_kfunc static unsigned long vm_event_fetch(struct cgroup *cgrp,
-+		enum vm_event_item item)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_cgroup(cgrp);
-+
-+	if (!memcg)
-+		return 0;
-+
-+	return memcg_events(memcg, item);
-+}
-+
-+BTF_KFUNCS_START(bpf_memcontrol_kfunc_ids)
-+BTF_ID_FLAGS(func, cgroup_flush_memcg_stats)
-+BTF_ID_FLAGS(func, node_stat_fetch)
-+BTF_ID_FLAGS(func, memcg_stat_fetch)
-+BTF_ID_FLAGS(func, vm_event_fetch)
-+BTF_KFUNCS_END(bpf_memcontrol_kfunc_ids)
-+
-+static const struct btf_kfunc_id_set bpf_memcontrol_kfunc_set = {
-+	.owner          = THIS_MODULE,
-+	.set            = &bpf_memcontrol_kfunc_ids,
-+};
-+
-+static int __init bpf_memcontrol_kfunc_init(void)
-+{
-+	return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING,
-+					 &bpf_memcontrol_kfunc_set);
-+}
-+late_initcall(bpf_memcontrol_kfunc_init);
-+
- struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p)
- {
- 	/*
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509200953.uZOl24Is-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/rtc/rtc-tegra.c: In function 'tegra_rtc_probe':
+>> drivers/rtc/rtc-tegra.c:310:13: error: implicit declaration of function 'is_of_node'; did you mean 'dev_of_node'? [-Werror=implicit-function-declaration]
+     310 |         if (is_of_node(dev_fwnode(&pdev->dev))) {
+         |             ^~~~~~~~~~
+         |             dev_of_node
+   cc1: some warnings being treated as errors
+
+
+vim +310 drivers/rtc/rtc-tegra.c
+
+   283	
+   284	static int tegra_rtc_probe(struct platform_device *pdev)
+   285	{
+   286		struct tegra_rtc_info *info;
+   287		int ret;
+   288	
+   289		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+   290		if (!info)
+   291			return -ENOMEM;
+   292	
+   293		info->base = devm_platform_ioremap_resource(pdev, 0);
+   294		if (IS_ERR(info->base))
+   295			return PTR_ERR(info->base);
+   296	
+   297		ret = platform_get_irq(pdev, 0);
+   298		if (ret <= 0)
+   299			return ret;
+   300	
+   301		info->irq = ret;
+   302	
+   303		info->rtc = devm_rtc_allocate_device(&pdev->dev);
+   304		if (IS_ERR(info->rtc))
+   305			return PTR_ERR(info->rtc);
+   306	
+   307		info->rtc->ops = &tegra_rtc_ops;
+   308		info->rtc->range_max = U32_MAX;
+   309	
+ > 310		if (is_of_node(dev_fwnode(&pdev->dev))) {
+   311			info->clk = devm_clk_get(&pdev->dev, NULL);
+   312			if (IS_ERR(info->clk))
+   313				return PTR_ERR(info->clk);
+   314	
+   315			ret = clk_prepare_enable(info->clk);
+   316			if (ret < 0)
+   317				return ret;
+   318		}
+   319	
+   320		/* set context info */
+   321		info->pdev = pdev;
+   322		spin_lock_init(&info->lock);
+   323	
+   324		platform_set_drvdata(pdev, info);
+   325	
+   326		/* clear out the hardware */
+   327		writel(0, info->base + TEGRA_RTC_REG_SECONDS_ALARM0);
+   328		writel(0xffffffff, info->base + TEGRA_RTC_REG_INTR_STATUS);
+   329		writel(0, info->base + TEGRA_RTC_REG_INTR_MASK);
+   330	
+   331		device_init_wakeup(&pdev->dev, true);
+   332	
+   333		ret = devm_request_irq(&pdev->dev, info->irq, tegra_rtc_irq_handler,
+   334				       IRQF_TRIGGER_HIGH, dev_name(&pdev->dev),
+   335				       &pdev->dev);
+   336		if (ret) {
+   337			dev_err(&pdev->dev, "failed to request interrupt: %d\n", ret);
+   338			goto disable_clk;
+   339		}
+   340	
+   341		ret = devm_rtc_register_device(info->rtc);
+   342		if (ret)
+   343			goto disable_clk;
+   344	
+   345		dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
+   346	
+   347		return 0;
+   348	
+   349	disable_clk:
+   350		if (is_of_node(dev_fwnode(&pdev->dev)))
+   351			clk_disable_unprepare(info->clk);
+   352		return ret;
+   353	}
+   354	
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
