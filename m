@@ -1,166 +1,133 @@
-Return-Path: <linux-kernel+bounces-825701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98C5B8C8D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:20:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFA3B8C8E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0A956801F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:20:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AAA0580D06
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98217188CB1;
-	Sat, 20 Sep 2025 13:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45482201017;
+	Sat, 20 Sep 2025 13:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wq5e436H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="k0NH52mT"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E353C189906
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89B0188CB1;
+	Sat, 20 Sep 2025 13:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758374447; cv=none; b=AE/QQmVdesQ6IDWXth5mLDmJ6F/0OM3qkCrW42TmCtfmGOGIzmWHcG7+K+SkqqjKxXbAroU1iRS7qLunVIbsufSHxEfLymsVqIj3xiMZVO2glsY7Ptb4tW/fTlyi2QrvvKXDwSH7j257lx0tsrRfhttJ4OopnhZyNNN9cMFGEDU=
+	t=1758374725; cv=none; b=guiErapX4C2/2fcNie6idKp9E91Yl94iRtVXNeryBBgo6drhBS944D27w1NZtvhUnbtIlc3HlAofcl5bPkOhhjQ/PeNj1uL9dOakrCphHtDOqW9Vq+mv5jRylz55aeVD4O+/nsnWxqjytNZ1FUT71ACzy5EoDZkUnBIhHdAhvCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758374447; c=relaxed/simple;
-	bh=TVKtdkDW5Bx9jo1qL5cjANuXuZINMtgj+qFgRNRgkrA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EwiRPW3mv7JOX8uqc1HHE+uDTO3MElUdOl7nZjBKOlVuMcWjWV2ItKqFiWalKmjh4TaE82OTzYV28Z0RV1a8SM0zPHlpoXlgJLlKfSH7V9Bm2lo3YHSvX7Xfuhn24vQTkCIBgkGX4hQwHB+kEdf1T3NdJSuNsrGqJGxB4Zllv54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wq5e436H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D1F9C4CEF7
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:20:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758374446;
-	bh=TVKtdkDW5Bx9jo1qL5cjANuXuZINMtgj+qFgRNRgkrA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Wq5e436H04RL6eIWDHxcufFHAJuaWfqpAzlKmc3eqM6yC/AlbnYkfdrkCmBYZeLI6
-	 /QjLa0xTf88xp/wzEbevNrpcpiCOeMAfu7f8c+y5Ak3Azd3R26r445RTyu95eygZoE
-	 R7ODanSAjN0ywnYFE6F/DctWH0HPHCKht8suixoxdf31bCLdVrvnvV9ON5EC5GMEed
-	 RZWC4hP4muHVN2sJzQeG7wbs0Nho8nucBHdpC/nA4xOQI9Cpjrc8zDkttV237h2LpV
-	 8i/ZzvvnKpce06XtzkhJVDM13FkNCKmFhZTRVT+5HRspuJdbaFXzaxAOU2Gu4k1P0k
-	 RdZ0IyGaiL3jg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-578ecc56235so2331351e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:20:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1cWbkCY4tl89fcKlGbc1Jx8q1FGhtR0q8lwoHJZW8uq4J2O8HGjfar/9R5OTB6vpU8cUXcdw8ZPEQA5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/40OGKyi5YV0WT1q7PjgdEqwMp7Otmpwdk7esj8q8RLMiXEyz
-	69/iuhjTXTr9z9xa2YY9yVMRt4pecKguV5P2nodS5iLR/uqxkSovBuuBbR7ua5SJYTUZcXx236u
-	e2LslQsoOOFMFeF55OPUNgdvyQGEkb9U=
-X-Google-Smtp-Source: AGHT+IG1LfUXkrYBNfv5ScoJ3gEzekTWk3ybLBFirhAG7Q4onP+VqcdCQaeYnlnFTAzL/cIlQNiaBfKJ1gXwB5SZmOk=
-X-Received: by 2002:a05:6512:6189:b0:571:369a:68bd with SMTP id
- 2adb3069b0e04-579e0cb7047mr2382978e87.3.1758374444801; Sat, 20 Sep 2025
- 06:20:44 -0700 (PDT)
+	s=arc-20240116; t=1758374725; c=relaxed/simple;
+	bh=dBrhZ658+q7SnJqsPpJg+tswJRFTHmQ78cNgPBroFd4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qgeVJklCiqGVSzTS8twLx/UVFEtaWhPyEJWdKe+vb4o1Lwp/8SiFFUNN4VjRClxBMDWvBR4S7fQ2XDSG7o9uI722Hp1cM4baOFeiLhb2ZO1mhW4Efy56NGAM37fIzXl6xZgx0uYmZLNCfy23x3yzl+tEhx0ZaKGXFmftid5psbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=k0NH52mT; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=e2U0S+R40JA/8Y/UUs6naRgYG7DrA2GyrAQ3SGnFjZ4=; t=1758374722;
+	x=1758979522; b=k0NH52mTUMTMIupoVjCT3GqXZpfkWbQozThKOrJTg54zTgAhkrV0hizGUvB4h
+	pqe9g5ahCnKN3L2jlSVVBDohP0pWrs3a5kDGt84MLRG7QkBkexJdM9G6/l6tZgPkjIYloiVAI2RLs
+	iMtN1zPVobBec84CCuzNg598Swri9IdKbx8esCLCI4rDiwdrUeL98ZKJ9lUvxD1o0U6V9ilfvG1J2
+	RW7BnCLuZc7HxCE0yLokhLxfjtz6CglAPPVptKRd2ughkfmzF57s3pXWZ04Xyt1o5+BQEKgy9VGOG
+	tvis7DTydNQ5dTNQ/4FQEJHpxtkl/V8uBxLC3+HiPJHn6i0tTQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uzxa9-00000002Tuo-1mKc; Sat, 20 Sep 2025 15:24:53 +0200
+Received: from dynamic-077-011-103-224.77.11.pool.telefonica.de ([77.11.103.224] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uzxa9-00000000uE8-0N7C; Sat, 20 Sep 2025 15:24:53 +0200
+Message-ID: <9a122c6cf3e2e0e61a62b0512eb97804acebeee9.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
+ library
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>, 
+ Andy Lutomirski	 <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino	 <vincenzo.frascino@arm.com>, Arnd Bergmann
+ <arnd@arndb.de>, "David S. Miller"	 <davem@davemloft.net>, Andreas Larsson
+ <andreas@gaisler.com>, Nick Alcock	 <nick.alcock@oracle.com>, John Stultz
+ <jstultz@google.com>, Stephen Boyd	 <sboyd@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, Catalin Marinas	 <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Theodore Ts'o	 <tytso@mit.edu>, "Jason A. Donenfeld"
+ <Jason@zx2c4.com>, Russell King	 <linux@armlinux.org.uk>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy	
+ <christophe.leroy@csgroup.eu>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui	 <kernel@xen0n.name>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev	 <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,  Sven Schnelle
+ <svens@linux.ibm.com>, Nagarathnam Muthusamy
+ <nagarathnam.muthusamy@oracle.com>, Shannon Nelson	 <sln@onemain.com>
+Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, Arnd Bergmann
+	 <arnd@kernel.org>
+Date: Sat, 20 Sep 2025 15:24:51 +0200
+In-Reply-To: <20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
+References: 
+	<20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918063539.2640512-7-ardb+git@google.com> <20250919193221.GB2249@quark>
- <202509192219.E69A1FDA5@keescook>
-In-Reply-To: <202509192219.E69A1FDA5@keescook>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 20 Sep 2025 15:20:33 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFtnDj-kDMPKfbj2hJ9FqVt17EstNSHbzfcmAAYZneS6g@mail.gmail.com>
-X-Gm-Features: AS18NWAFCY8dWxTtxlBneqEoZTFZeASnTt4i57qY4hP6cK5XTVyGvIZt8tkXyfU
-Message-ID: <CAMj1kXFtnDj-kDMPKfbj2hJ9FqVt17EstNSHbzfcmAAYZneS6g@mail.gmail.com>
-Subject: Re: [PATCH 0/5] arm64: Move kernel mode FPSIMD buffer to the stack
-To: Kees Cook <kees@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb+git@google.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au, 
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Sat, 20 Sept 2025 at 08:42, Kees Cook <kees@kernel.org> wrote:
->
-> On Fri, Sep 19, 2025 at 02:32:21PM -0500, Eric Biggers wrote:
-> > On Thu, Sep 18, 2025 at 08:35:40AM +0200, Ard Biesheuvel wrote:
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
-> > > context switch out of struct thread_struct, and onto the stack, so that
-> > > the memory cost is not imposed needlessly on all tasks in the system.
-> > >
-> > > Patches #1 - #3 contains some prepwork so that patch #4 can tighten the
-> > > rules around permitted usage patterns of kernel_neon_begin() and
-> > > kernel_neon_end(). This permits #5 to provide a stack buffer to
-> > > kernel_neon_begin() transparently, in a manner that ensures that it will
-> > > remain available until after the associated call to kernel_neon_end()
-> > > returns.
-> > >
-> > > Cc: Marc Zyngier <maz@kernel.org>
-> > > Cc: Will Deacon <will@kernel.org>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > > Cc: Mark Brown <broonie@kernel.org>
-> > >
-> > > Ard Biesheuvel (5):
-> > >   crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
-> > >   crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
-> > >   crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
-> > >   arm64/fpsimd: Require kernel NEON begin/end calls from the same scope
-> > >   arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
-> > >
-> > >  arch/arm64/crypto/aes-ce-ccm-glue.c |  5 +--
-> > >  arch/arm64/crypto/sm4-ce-ccm-glue.c | 10 ++----
-> > >  arch/arm64/crypto/sm4-ce-gcm-glue.c | 10 ++----
-> > >  arch/arm64/include/asm/neon.h       |  7 ++--
-> > >  arch/arm64/include/asm/processor.h  |  2 +-
-> > >  arch/arm64/kernel/fpsimd.c          | 34 +++++++++++++-------
-> > >  6 files changed, 34 insertions(+), 34 deletions(-)
-> >
-> > This looks like the right decision: saving 528 bytes per task is
-> > significant.  528 bytes is a lot to allocate on the stack too, but
-> > functions that use the NEON registers are either leaf functions or very
-> > close to being leaf functions, so it should be okay.
-> >
-> > The implementation is a bit unusual, though:
-> >
-> >    #define kernel_neon_begin()        do { __kernel_neon_begin(&(struct user_fpsimd_state){})
-> >    #define kernel_neon_end()  __kernel_neon_end(); } while (0)
-> >
-> > It works, but normally macros don't start or end code blocks behind the
-> > scenes like this.  Perhaps it should be more like s390's
-> > kernel_fpu_begin(), where the caller provides the buffer that the
-> > registers are stored in?
->
-> We've done stuff like this in the past, but I did wonder if we could use
-> any of the cleanup.h style logic to do this instead of the split
-> do/while? I think this would work, totally untested:
->
-> DEFINE_LOCK_GUARD_0(neon,
->                     __kernel_neon_begin(&(struct user_fpsimd_state){}),
->                     __kernel_neon_end())
-> ...
-> scoped_guard(neon) {
->         do neon things
-> }
->
-> It would require a fair bit of refactoring to replace the existing
-> begin/end code, though...
->
+Hi Thomas,
 
-Yeah, but I think it's worth it. And let's call it simd and reuse that
-on other architectures as well.
+On Wed, 2025-09-17 at 16:00 +0200, Thomas Wei=C3=9Fschuh wrote:
+> The generic vDSO provides a lot common functionality shared between
+> different architectures. SPARC is the last architecture not using it,
+> preventing some necessary code cleanup.
+>=20
+> Make use of the generic infrastructure.
+>=20
+> Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+> https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org/
+>=20
+> Tested on a Niagara T4 and QEMU.
+>=20
+> This has a semantic conflict with my series "vdso: Reject absolute
+> relocations during build". The last patch of this series expects all user=
+s
+> of the generic vDSO library to use the vdsocheck tool.
+> This is not the case (yet) for SPARC64. I do have the patches for the
+> integration, the specifics will depend on which series is applied first.
+>=20
+> Based on tip/timers/vdso.
 
-The problem with the above, though, is that the temporary stack
-variable goes out of scope when the constructor function returns. So
-probably better to do something like
+Could you share a version of the series based on top of 6.17.0-rcN for
+testing purposes? I would like to test the series on a Sun Netra 240
+which is based on the UltraSPARC IIIi.
 
-DEFINE_LOCK_GUARD_1(simd,
-                    struct user_fpsimd_state,
-                    __kernel_neon_begin(_T->lock),
-                    __kernel_neon_end(_T->lock));
+Adrian
 
-#define scoped_simd() scoped_guard(simd, &(struct user_fpsimd_state){})
-
-leaving the possibility for callers to use scoped_guard() directly and
-pass their own user_fpsimd_state pointer.
-
-We'd need to add some debug checks in __kernel_neon_end() to ensure
-that the provided pointer matches the one that was passed to
-__kernel_neon_begin().
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
