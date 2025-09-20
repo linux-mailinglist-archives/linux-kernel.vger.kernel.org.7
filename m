@@ -1,101 +1,106 @@
-Return-Path: <linux-kernel+bounces-825615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28627B8C52E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2680B8C531
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F681BC5CB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:05:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 627D856334C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856502F60AD;
-	Sat, 20 Sep 2025 10:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9CA2F60A3;
+	Sat, 20 Sep 2025 10:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="VAoCn2Hj"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pig9Ow5s"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068EB1FE471;
-	Sat, 20 Sep 2025 10:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758362680; cv=pass; b=dMKs5ogf1ZjjxbK2prLIZSXaXpn0fpd/UOxv7fTOA8aQMmgNtcjEklOPxT/3vXYjdipMzhWm0UwYmEzYtPyVm+pNZMt69DRGaZzYxKkzAdjuKayaBYqur8bMtmY0pVKKkMIdln5Ajuzbl35V3mT8JThFwCcfhXAo9KgOm65G5QU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758362680; c=relaxed/simple;
-	bh=DVuDMeUkFM91/7S1N28fNZvOt8tT9a8bTnz4V9jbnDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nSkHByLgZY7Vd1E/evaKX3XZkZhphNmtdIfMq/jgKjlsHi5rWzWUMaw5O/uhJUqiir7VmfvrDvF4FhCNixIVGysArpn5ltlOqivMzVNZNdiYmrR0WZsKtueccQOeSfeij6uekpbFVJKLGA4pEjMo3Xtf4OqvucvizAHtoNGMyeY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=VAoCn2Hj; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1758362660; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BnQcmQ30p3f85UJedjH+2FrynM2toDEDldM69pnD+aBd5GVFTAx+GPzn80iwMY5N9aIsGFM7pX4hv8g5Lf65D4r4uDl4GJXoq6F7kPXvORcnb90sYgfI9whLf7hLpmYGritb22qyM8CEWwk8MMBSzDT7QfRyisgjqGklOe5DoWA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758362660; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=scMBsq9OJ2+85ITVv5uYxeQFUskD5/jOHmUAM+DzTIY=; 
-	b=TeSdEkz7pkA1pD9Ax8HX06pcIZYRDrvxbxgsmceQEB3Er+tPl3oG/73BxL4OO2FLJAiauTbnap5qPbFDUNsg7ykXONS5bBsX0/vBcmxh4xOT6uggYDOKnIoMNdzVdGsq7REASbtr7qKV2HWoj26PbqKSpI7tLXZtWfHVIWfixMk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758362660;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=scMBsq9OJ2+85ITVv5uYxeQFUskD5/jOHmUAM+DzTIY=;
-	b=VAoCn2Hj26fQA6XPzzZuYaE7yBqJj4sMTFtp8v6VBOaNuHEJa+I3i32QbRsFzFtP
-	q3gLyQvX4iyU2ZSYYOL2qGau6uxzMEGo/En73+nck1Eq4AIh6ohCh8VJSno3uIShZBL
-	lMxB8wfYPQg57R0w9syWfwxYE9VJKGsxcJM+BpBU=
-Received: by mx.zohomail.com with SMTPS id 1758362658925615.9865317087117;
-	Sat, 20 Sep 2025 03:04:18 -0700 (PDT)
-Message-ID: <64cc0632-37dd-4070-9158-3dab69e1ad27@yukuai.org.cn>
-Date: Sat, 20 Sep 2025 18:04:14 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9189F19995E
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758362849; cv=none; b=DbS1PK1SEDx9USKdv4etmbMZrnCdZRZxDFo07+EkRyVV502SLcywBOGbhXcN6TkOSN3xDxuOHfBEOd4wXyzx9Kg5vvFkCQSGRspfCcDpLkota2Gl/+AwUjfCJ/Kw0s/JtYkh7eDi4VeimpsPUaJpMM4brId0Dy119UXAU6+pyV8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758362849; c=relaxed/simple;
+	bh=MKjIh5L0lgCsmyp/QdgGqJ1Fyf1zkeMIjeQIFMOmoCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnZYuplI2w8Jk38qQHrWmqhUaNPsnXCEMyhM4w/SYlKzDFZ+mdge9qr12lhRQXrwiAvFGl0Enp9cVSjys1UFaf2EvInQb6Lq87KsNaJQ7Mc1c4KkkYBXxAI6gcsBNNK49YM4hojCjhBfvILDjp7Ew4wEXws9B9d/1R6XMe5crCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pig9Ow5s; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1D79F40E019F;
+	Sat, 20 Sep 2025 10:07:25 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uiLeUKyJTZz7; Sat, 20 Sep 2025 10:07:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1758362841; bh=d7aBv0w8oce07dNFwKVMTVTPTJZ61ysWVuVAm5Hd4Bw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pig9Ow5sxIGCihKX6dyfc+uxE42HYL/zvyiHlJw2TJlKkCrp2V5eECpgWQ6D+3uTf
+	 jZglAvzL80varCEJjXmBWSHYn3riaoHOMwRiPN0nhfOJhnfeGMaAwDKOdRDAE23vrW
+	 04cK3A/whxRJBHApzHCx/vme1jA3KUTtoWdo1g9zkOsO/YlBK7rvbG0ei43PJFkHXH
+	 obGShGUyeP8OMx35HNN1G99LZIUb+KFsTAHj20Vn0GuV3dviRfgSKVkDobcUcSdpKA
+	 BuZ3OrFGpLFHXDALf8T9RabUWPLTQQmVNOsm1434ddczoJYRA3ijyQElHe0reor7+C
+	 GbgqIOB0gWlgAaheZjhE+An0p75wN3QdWSPkOrfD5EOSvRJJsk3micIhJI64tL2FJD
+	 hBnRE11Vrv3hfjCQaayO7szqrZu1WEbRXhrlOroU33Ks5S+xWdpezc2/z2vgXXABFI
+	 GXFFiIqlZFm6gFz5+phhbknik9dSSqK1Lm4a9/gi3c1AYVAmyAWl5Q92uhlPT8nZPq
+	 07qfZVULhGdpaMKa2oOX4J0YHmcBbMGdnIYYDn6DUkO1IiDeaXrjnl9sw3dsOdecqE
+	 fjsK9pAWVVJz5euqIPCeQ3njIL5P8BNVbF0d4rhHTMeWo5HtIhSp4dhazQ+7JKgLVt
+	 C9wPO2KwtWdxXMW6VSYumyLY=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2D01740E00DE;
+	Sat, 20 Sep 2025 10:07:13 +0000 (UTC)
+Date: Sat, 20 Sep 2025 12:07:12 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Dan Snyder <dansnyder@google.com>
+Subject: Re: [PATCH 1/3] x86/umip: Check that the instruction opcode is at
+ least two bytes
+Message-ID: <20250920100712.GBaM580B8WQipOrD2f@fat_crate.local>
+References: <20250808172358.1938974-1-seanjc@google.com>
+ <20250808172358.1938974-2-seanjc@google.com>
+ <20250919181635.GFaM2eA8GFtZ48sfb0@fat_crate.local>
+ <aM3KKo84920sZ4Nc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] md/md-llbitmap: Remove unneeded semicolon
-To: Chen Ni <nichen@iscas.ac.cn>, song@kernel.org, yukuai3@huawei.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250910091912.25624-1-nichen@iscas.ac.cn>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <20250910091912.25624-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aM3KKo84920sZ4Nc@google.com>
 
-在 2025/9/10 17:19, Chen Ni 写道:
+On Fri, Sep 19, 2025 at 02:24:58PM -0700, Sean Christopherson wrote:
+> The "weirdness" I am referring to is purely speculative; what I was trying to say
+> is that I deliberate went with a "bad" check on nbytes, i.e. it really should be
+> "insn->opcode.nbytes == 2".  But I didn't want to risk breaking some bizarre
+> userspace that happened to be relying on a quirk of the kernel's decoder (I
+> haven't dug into the decoder, so I genuinely have/had no idea what all could
+> happen).
 
-> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
->
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->   drivers/md/md-llbitmap.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/md/md-llbitmap.c b/drivers/md/md-llbitmap.c
-> index 3337d5c7e7e5..0f15428b2403 100644
-> --- a/drivers/md/md-llbitmap.c
-> +++ b/drivers/md/md-llbitmap.c
-> @@ -378,7 +378,7 @@ static void llbitmap_infect_dirty_bits(struct llbitmap *llbitmap,
->   		case BitClean:
->   			pctl->state[pos] = BitDirty;
->   			break;
-> -		};
-> +		}
->   	}
->   }
->   
+Yeah, after yesterday, my todo list has one more item - to dig into the
+decoder and see what's going on there.
 
-Applied to md-6.18
+For example, in this particular case, the decoder should report an error when
+it cannot decode the insn instead of emulating a totally different insn...
 
-Thanks
-Kuai
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
