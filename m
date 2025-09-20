@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-825876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7706BB8D01E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:59:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB84AB8D006
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6529B7E3C6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:59:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DECC7AA287
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AC326D4ED;
-	Sat, 20 Sep 2025 19:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250D0265609;
+	Sat, 20 Sep 2025 19:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGwwqtVP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXdl/hKs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE8226C39B;
-	Sat, 20 Sep 2025 19:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B20923D7E4;
+	Sat, 20 Sep 2025 19:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758398307; cv=none; b=BNAq9pC8B7iIyz/TflZSjgvsfRB+JLnT+0Cko4GDTeC1UDeyppfPjBPwHoeQsmoSyIiZZfwPXoyy06f/jGqfwvWtoT0EEy42YEwAZriOPNWsGeX1ygPVmJgsqKdA9cJd6s7HrbxyPy2ZUJv8bH7mkB4kdsRLQQzUGajOOy+q1CA=
+	t=1758398292; cv=none; b=KvqfluMZunATd1K1ySr5a0TqWZl3gFuoGupdGLOzW3Mr7vZOTa3imVkar6EiPBDDsVnMh40s6G43aZBQm2C4SN3fFsTLmyoeSx/8Dbg7w1CuhEJAECiOx0M93AuB2ebePbpHkG0VoJqrMX8XqJv+kq3kbiPJ24uO/ofsXn+DVAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758398307; c=relaxed/simple;
-	bh=orK/rxMSHEqI9JzhhkIKyObIXyhNnpoojzfzCXkiSJc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nyLoBTjRXMXiBV7qi1DPNuHea7eEgRs7vp+HhUPG0WrS+SQebMaMnWqLvcvYkJxX/saVcFWgm02YJOGOWZ05uIX1JCfUl/pFgFbbJdt/H/yZKH2Y01SmoRgpXjMUETEYw/HfQVzTTP1KDHcjwmpCYfgfhab+TpzeKOPKR71ip9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGwwqtVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA457C4CEEB;
-	Sat, 20 Sep 2025 19:58:24 +0000 (UTC)
+	s=arc-20240116; t=1758398292; c=relaxed/simple;
+	bh=CLvA819j+is4IEZ2FUAJfUZM9LMPtSS6cK9O3wuhO88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3juqWqf36Boxsma2y23OZ2fZlJPc/8EvqoW99q6SMBXDTTMDjlsa6kM97iWupw6r4olZBX589LJ/KiB680FF5mP3sX8osAwyyoHQYTs9BVR9NUVprzdgaqfu6+TIeRWq2OQqOPp6/kcqOU6p+a2uVtl/Zd36Li1g3DB4ynf2P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXdl/hKs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81ECEC4CEEB;
+	Sat, 20 Sep 2025 19:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758398307;
-	bh=orK/rxMSHEqI9JzhhkIKyObIXyhNnpoojzfzCXkiSJc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IGwwqtVPIQi2VQkNfYuTHsXktRxPjwCCszOKuTTGYejxWYA448m6clFU6KYa2twqE
-	 3LfWQhb/R2bVrlVyhy+3JnzhKYLmL4lqC1k8YD5sutx4ZLWX3P+QmYii2lol/dbtkQ
-	 1DrBY4W8cTE9ggL9T8WG3TLsp6YV/wz/zk0uhz54Yn1J8rX9ExPoSthg5tIAdvlnGo
-	 IyOXK6O4uoPcCRJbw+xOwN9JEWp6BeVIP6oyxklMN67WR7S0is2H9Zmd6V/o+L6p7Q
-	 iJRpTiVRLKw3J6No4WAI0hrk8cXYK1mUia/bLjx1/PHeBWoIektrnd1QHxqOWy6uWZ
-	 q0Hwm3D0oPFjA==
+	s=k20201202; t=1758398292;
+	bh=CLvA819j+is4IEZ2FUAJfUZM9LMPtSS6cK9O3wuhO88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iXdl/hKs2ZhNtKOsnPvpQzrtS5Oyfm2yb/VUyA6vEw1vPaRybw13APP6Y4Ld4uLP+
+	 pUdbQPtFI3NIAdu7SYKKx46HyG7XCK7atXvtGTFQnrmGYWF0KCD/9NpADHPA7gmYpk
+	 m5viqmI4IKOPMevBG8Ka5ZVbBU2foYMBBXcVf9WuF3Sw2p9AXzbPUUu5pIDdfrVK2F
+	 AHIABj2qdl++tPcIpZqqbI6AOVdxprbWu4l8EBX38HsVp1X7fyk11pTcWMVp3a9Lya
+	 YX0nMATWbLDTxORhx8GTIIyOLLAeEJJmUpU9vw4ApitoYPp1W1dX5OUhSniETLubGE
+	 2GrPPWDmO78mQ==
+Date: Sat, 20 Sep 2025 20:58:07 +0100
 From: Mark Brown <broonie@kernel.org>
-Date: Sat, 20 Sep 2025 20:52:00 +0100
-Subject: [PATCH 2/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in
- set_id_regs
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: jdelvare@suse.com, linux@roeck-us.net, lgirdwood@gmail.com,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alistair Francis <alistair@alistair23.me>
+Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
+ subdevices
+Message-ID: <79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
+References: <20250920114311.291450-1-andreas@kemnade.info>
+ <20250920114311.291450-2-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250920-kvm-arm64-id-aa64isar3-el1-v1-2-1764c1c1c96d@kernel.org>
-References: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
-In-Reply-To: <20250920-kvm-arm64-id-aa64isar3-el1-v1-0-1764c1c1c96d@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-56183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1930; i=broonie@kernel.org;
- h=from:subject:message-id; bh=orK/rxMSHEqI9JzhhkIKyObIXyhNnpoojzfzCXkiSJc=;
- b=owGbwMvMwMWocq27KDak/QLjabUkhozz7FF1gnFzGo5dqztrUXrEL71JrXbSCzuBXlZ5hwXZ2
- Ru2z2bsZDRmYWDkYpAVU2RZ+yxjVXq4xNb5j+a/ghnEygQyhYGLUwAm0pPGwdA4s3zroZU6R9IU
- Xk/4Y2Zmdzp5w8esjpUnI473VIS0iHNcvfrKTla6Unx+wXLBs0rvvkt/Uq+Sy9bmN5oSvTol2EY
- vUCyRg2fW55nF7p/0nM+onP8lqGGo8Z3RWWF+UX85T6zXrTNnnZZrPTBKPrvB++XZENect8kKtg
- 2Vm/3NF+YYsVgnmM9rC9dgExZQO/XO/939TlPulV+1DA89WVJm1m/orat5TD2mPGH+3biJny6Ja
- Kr+Urf/dKP/1Sr1nw/+lbq8jfmx36zZzmjajxfxoqai9yrqm49wTGevK3Ln/7GQXeEE24zF1fvE
- 81y2ykfGnUv3flont3u92209rW39f/8y7P26pbVgbcIuAA==
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kzDHECRkk7792VgO"
+Content-Disposition: inline
+In-Reply-To: <20250920114311.291450-2-andreas@kemnade.info>
+X-Cookie: BARBARA STANWYCK makes me nervous!!
 
-We have a couple of writable bitfields in ID_AA64ISAR3_EL1 but the
-set_id_regs selftest does not cover this register at all, add coverage.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/arm64/set_id_regs.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+--kzDHECRkk7792VgO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/testing/selftests/kvm/arm64/set_id_regs.c b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-index bfb70926272d..c7c38b1a1f10 100644
---- a/tools/testing/selftests/kvm/arm64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-@@ -125,6 +125,13 @@ static const struct reg_ftr_bits ftr_id_aa64isar2_el1[] = {
- 	REG_FTR_END,
- };
- 
-+static const struct reg_ftr_bits ftr_id_aa64isar3_el1[] = {
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, FPRCVT, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, LSFE, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, FAMINMAX, 0),
-+	REG_FTR_END,
-+};
-+
- static const struct reg_ftr_bits ftr_id_aa64pfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, CSV3, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR0_EL1, CSV2, 0),
-@@ -221,6 +228,7 @@ static struct test_feature_reg test_regs[] = {
- 	TEST_REG(SYS_ID_AA64ISAR0_EL1, ftr_id_aa64isar0_el1),
- 	TEST_REG(SYS_ID_AA64ISAR1_EL1, ftr_id_aa64isar1_el1),
- 	TEST_REG(SYS_ID_AA64ISAR2_EL1, ftr_id_aa64isar2_el1),
-+	TEST_REG(SYS_ID_AA64ISAR3_EL1, ftr_id_aa64isar3_el1),
- 	TEST_REG(SYS_ID_AA64PFR0_EL1, ftr_id_aa64pfr0_el1),
- 	TEST_REG(SYS_ID_AA64PFR1_EL1, ftr_id_aa64pfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR0_EL1, ftr_id_aa64mmfr0_el1),
-@@ -239,6 +247,7 @@ static void guest_code(void)
- 	GUEST_REG_SYNC(SYS_ID_AA64ISAR0_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64ISAR1_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64ISAR2_EL1);
-+	GUEST_REG_SYNC(SYS_ID_AA64ISAR3_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64PFR0_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR0_EL1);
- 	GUEST_REG_SYNC(SYS_ID_AA64MMFR1_EL1);
+On Sat, Sep 20, 2025 at 01:43:10PM +0200, Andreas Kemnade wrote:
+> If regulator subdevice is not ready early enough, devm_regulator_get will
+> get a dummy regulator device, not the real one needed from the regulator
+> subdevice, so defer probe in such case.
+> devm_regulator_get_optional returns an error in that case.
+>=20
+> That fixes things, but looks odd, therefore RFC.
 
--- 
-2.47.2
+No, this is buggy and broken.  You should only use _optional for
+supplies that are optional, the clue is in the name.  You need to fix
+whatever is causing the device to be instantiated to ensure that the
+regulators for the device are described before it tries to instnatiate
+the device.  Normally this is all part of a unified firmware
+description.
 
+--kzDHECRkk7792VgO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjPB04ACgkQJNaLcl1U
+h9C6bAf/WAIH3KuIxtj5OGgN29IhsUiwDbCnzWB61Bu/bgXSmc+LmlxBct4JjBhf
+XlU0kOzdXLWQOt2Ey9yWwu2u5V8FfAjZNwoCZjHYMJBRpJ5n5tHw2YnCYX2mcVZk
+u58bCHUqEYXZTIoCjW+Pg3AUeikeuhvQ+2nNr4UfBUcysNAlQX8McznYTbURS492
+hoUUfCr1DRVmm/fYq7s/2oZSMkcKYATiQlT19flslNN0xNnBKwXQ7kOkAtQgANS8
+2W76WcCsv9Mv0SoM607hhxmg9pKy4Mv1wXZlFl/tk6B+LuAJWMUWH+nq7604KScp
+eXfusclLqBsMzGgEGcZGpb2wWGiAUw==
+=nXYy
+-----END PGP SIGNATURE-----
+
+--kzDHECRkk7792VgO--
 
