@@ -1,216 +1,146 @@
-Return-Path: <linux-kernel+bounces-825916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A58B8D1AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233E9B8D1B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14A83AE2E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:40:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AAA1B24F14
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 21:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DB728467B;
-	Sat, 20 Sep 2025 21:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D628428312D;
+	Sat, 20 Sep 2025 21:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXc0SzVa"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGCB6x6m"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49352749C7
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 21:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C152427B325
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 21:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758404432; cv=none; b=lpBw5rdg5Znoe9E4HXwbEI4Y03Kys7dvsbjH0qISg5NCSURZxjv4HQz0hdUDPGA0yma7PN2jYgdY/ZlTUuat04KXFVsQIIk2L+/jDPheETPWi7rOM+lJa6iN3rDWq6/vTW3EOH96gezguCJ0HWnClFRqKr706050w2ZuY9pC1+I=
+	t=1758404652; cv=none; b=gzBg0uSIdD8gAAE/iugex0jeH/sWwJ3GK5leQMeU1H+JGHUd8swQdy9l5s8NtqHAsjaHmbG9uRjXQhCGV3977Io2CKRnDmKfnmlywVLH4vxFmM7EnaavGIMM9YOhnl84jju5qIYr1QY+TSkIN01Xid1lIwBofITTs5BHVUvXx+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758404432; c=relaxed/simple;
-	bh=U2OjA+Zq2J8LRJ/hoZ7h3G89sSRQbA0nAM7rQZd3aCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pXGgkQ0TpDui1+NdWGLTg1e6yfyGrKokPFPpBo+8/B46gRLNPTwJRsPOd3QsBo/qv77+8ev3EVyYuWOyWjXB6b0DSDhDC0KzGIXtEgW9PBGtSF6S98JfixKUg2Qs8cnsp/qSJayq13KgVi23rGBA6ukzhpLC8IcDotdhmGYF6bE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXc0SzVa; arc=none smtp.client-ip=209.85.222.44
+	s=arc-20240116; t=1758404652; c=relaxed/simple;
+	bh=DVCcp2q5VKcd7KC9g3EJSBxxRQgEDpwWkfmRLnIh1Xk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pCFRKmHSGQkBcsogHv430SsjTgLHjLxQh5/aVFgUfKiOPR7Roq+jd+k0ywAG/IQxZ1a16kTjd1gQaIWQyBhc0s/ee/Ga+rj6eUhw5qXm26aKyVY4m2LdRKoxOKz+ftZV96hGlSG5G4jiyyXCguVTS9/E4TWKqJYHx58ljcyWD/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGCB6x6m; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8e3eaa30c71so2440300241.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:40:30 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-26685d63201so30490065ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:44:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758404430; x=1759009230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8q2wF8NyUMzUdcB4wo27NEUbPU4EJ5KlqSNJI4hsQkI=;
-        b=LXc0SzVavPaonhZC9X5xOXD/tbLlZ1QW/9M3XQX6tXuReIcLpYbnA0NAyE0HlD6lhN
-         Sjk6oUcbTQUfSca5QYFkY/dFBj6uclinbCek3rb00LblpADTMoEX+/Sp8ZeDM+mJCB0j
-         GjauiBYPtsRSyTbJQ6yrec+MfaSRHqyra0h800n7ThsVzXVAecIPg0ejm61z92QbRcf/
-         BsS+nEqv7xgNiWixu9rdTHqE9x1GyxRws2qwFqcv1u1WYUxJaJpxgybuBv2A7/CYxYEG
-         9vN6uoNDa3yCUS+qGc1SGGdMqtcnAt3uLqZKKi7r8dCO94HTqXFUWUr8oNo0xuO2lvbL
-         V+4w==
+        d=gmail.com; s=20230601; t=1758404650; x=1759009450; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/XaK3Ga5I4OskdvUpK/KRvj93+5lScsBFICoRwq2vUw=;
+        b=JGCB6x6mP5ozvGnpZuiO6YO8WAsnhGdkS9KRxIH7POkfsJWk5CaOfkPNjZBn3O0XEx
+         pKPPFuqlsQgeKTF1hdV7pMDq7KQCjytDu4LvIz/6/ULoBqtmvaPDJO4RonWCR83c0Q+7
+         vIhdj8tAT8DEmV3ewr4TV16zU0s8glyt9e3NxNkSR8kA+tk+LCY280X+XpuSvT6gmvbt
+         qK0SO84rHCxd0DB7KyykFpXgdZil341JV7mnp9GtFu1QtGgdDkV4Uh03bqJprT66H7rn
+         1Jhp+EZPomENlrqzed0ABy6MSgX/szhR4Ajw7uKKMZsxWG6K2+1TE/cneO98Xg6w+TBu
+         Pwjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758404430; x=1759009230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8q2wF8NyUMzUdcB4wo27NEUbPU4EJ5KlqSNJI4hsQkI=;
-        b=sV2AEpukw3lDQNI6WkDY42SVnXgOKr/PELaV8Y33mWiyrzOV5SBCoLjm9JQmLDuP0p
-         2VhfzDJ8xp+4RTbpHnHGW9YYTxZADz9q/JlFwyZlgBuXq1jHEeX0Egm72+HBSScQCqd9
-         PYTtKZv7KsCZJzTU8DSrXlGmyb4xbB38K1hOebI6yxEKhf3LYgle3srNEAkXAXS7sb/z
-         SkHc6tK1qdeVbQJQBzQxcG8QzkM6NmQfzf1gFyjNot+fUqjeUnytUTExdJhYyuQIDfFO
-         oPz0HQkD6tDQ6KmNVuGBUwIBt8+giXUljYi8I21lcY8UKq15mifpdlhAyA7sf39tmQRT
-         caBA==
-X-Gm-Message-State: AOJu0YwxOQC6FtCRC+aR0t6WmOpzPfn7fhywnf5BGfTuCVUwER8isDHF
-	LahbU6WjODXNEvKpoz1qz22O9kBws/lfV2g1sSkRNkJfD94W7v4iK9azxEnHLjFtUd51ydGoYLk
-	98r0JU1CpsIGU/u/TJQNF2xgUMKVJq+sU7c3u
-X-Gm-Gg: ASbGncuz0jmVBcpcdrSGkpfY1oBnC4Kpt0CG6mkR2Cs36EO3xME/3zxdrhOMEM0kTkr
-	TG0djrAqvVl0gM7tBEBHnD71JATqkBD0ERZEiWMKfUMk/qY3elCTvHiVNQSt7lW/56+7bKfMm2/
-	0xFRpR3A5w6VtxWZCmsbT95e1U0LB/PqL6KFjPqL7BEvA8h/KP8uEkjazrkCyAKhMkKIImmPilb
-	Mh4PZZkluZQ/HRZX9PSBBCIDe0KZqMARcbR5ZE=
-X-Google-Smtp-Source: AGHT+IHqnAFDkW9PsCMR9JtuaTJ8E+X1B8qYgA1fXLCBophwWpFMTYWf4IrHqUGDtieqxBjWDIPn4UeSEn1c9B0z+lQ=
-X-Received: by 2002:a05:6102:c0b:b0:4fa:25a2:5804 with SMTP id
- ada2fe7eead31-588dada35dfmr2845718137.10.1758404429683; Sat, 20 Sep 2025
- 14:40:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758404650; x=1759009450;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/XaK3Ga5I4OskdvUpK/KRvj93+5lScsBFICoRwq2vUw=;
+        b=l5g0fJxPzaC+IJDSpqkJPIFOLwYU8WvsFy1saQoePvRIC8f9S84utpNHg7sTWy0sWC
+         MJxHWDqxo43Yrk6HJfFWlq/D/qNcIHYYarzmC5eFhlRQlAND4hMWgClcQqoZPsfVy45r
+         1Oxf7ZrQeB6EvXTpcILIF9H7+IdzXYBPm67ioyW4JNPJCrWv/nmkWyORFqpZbL0BQTA9
+         qnbYk6n5bHUR6ptqZRPPrpHSJqvyb2Bf29bEkpXIl09KA4v87rfN4sWsuP0lvHw9oP0V
+         PRJ1zVRsKmx2X20ZATKUhtqEhAh/vt4i4euGbTRbi3cuc5G70OAmYXwqkgyTZ3d0+2k2
+         s6yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUVN+nSrvFIE/CM7FHCo3Z2eOY2r7S+2NqrLWWR9QB6169nFxIBRvtDxCWNEL093LzscuyE7p1+NFDVnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6qBe1dXioWn9wO5ITfgrTDMKzr0wdge/PL+sUbPMlGYBTlLtZ
+	wgPcy0VyZuTGyitUI6DklbCb024+nBuqhYQTiRNvzIpg3BO8Knk0rlip
+X-Gm-Gg: ASbGncvc2Pu7OlbRnMyacoCfGSfoKznj9aUSbpV3FfFYiGLsf5+WrwfUMmcxx+i1UG4
+	nYKy8Oy+4hJQ6JLZpk+CX1NhNn6HUrqOcS2/5hcqDvOsrMLrsumnwlx3tpNu1m/YuTr0KINT+hB
+	aryfsAwLXdmYEM3+8yyk+MewSe8SdIKUof7Wbg9zxRDHYw1UTAmHzGF/gKtd//UApxTX30grfKI
+	ifG1i4YgUrmEI3HDAf0LSbSHbHmytyPgW15Iwtp8zpTf/j5jyYd5LfnXM7cJ5PWYuo5GaOY9QuU
+	QGQ9aHiZcdXe3eY6+GAvdjuUSq+ednUyyha47a6chNYFNGqvfirhIWTc9pqRyUfIiHqDMWRokP1
+	7dhdqDNapy9bhBZTIll7zioHtlM4VqDo=
+X-Google-Smtp-Source: AGHT+IGstBVeN4BQ2EHAw6pn8u8U0MiwUr1OFBQKcuOmxzx9i3nxQXrFoOaA2+s/lnUkyZn6bVvZmQ==
+X-Received: by 2002:a17:903:2284:b0:269:9adf:839 with SMTP id d9443c01a7336-269ba427cb8mr100761545ad.19.1758404649948;
+        Sat, 20 Sep 2025 14:44:09 -0700 (PDT)
+Received: from localhost ([2804:30c:b65:6a00:ceaa:2ed0:e81e:8f51])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-330606509e9sm9225974a91.9.2025.09.20.14.44.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 14:44:08 -0700 (PDT)
+Date: Sat, 20 Sep 2025 18:44:52 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Marilene Andrade Garcia <marilene.agarcia@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Kim Seer Paller <kimseer.paller@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <Marcelo.Schmitt@analog.com>,
+	Ceclan Dumitru <dumitru.ceclan@analog.com>,
+	Jonathan Santos <Jonathan.Santos@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>
+Subject: Re: [PATCH v11 1/3] dt-bindings: iio: adc: add max14001
+Message-ID: <aM8gVOVEujP6Yzxx@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1757971454.git.marilene.agarcia@gmail.com>
+ <30f33a64da0339eccc1474406afb2b1d02a0cd6b.1757971454.git.marilene.agarcia@gmail.com>
+ <8e88b601-1329-4cdb-bbd7-feb998c552e8@baylibre.com>
+ <20250916-alto-vaseline-f8dafbab03e9@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918222607.186488-1-xiyou.wangcong@gmail.com> <20250919212650.GA275426@fedora>
-In-Reply-To: <20250919212650.GA275426@fedora>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Sat, 20 Sep 2025 14:40:18 -0700
-X-Gm-Features: AS18NWCv9lp8HiEvE89FhMeXwqiYRCfEXvgC7JXXJLUd4dVtbVWEBLn_j1OZgfI
-Message-ID: <CAM_iQpXnHr7WC6VN3WB-+=CZGF5pyfo9y9D4MCc_Wwgp29hBrw@mail.gmail.com>
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com, 
-	Cong Wang <cwang@multikernel.io>, Andrew Morton <akpm@linux-foundation.org>, 
-	Baoquan He <bhe@redhat.com>, Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, 
-	Changyuan Lyu <changyuanl@google.com>, kexec@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-alto-vaseline-f8dafbab03e9@spud>
 
-On Fri, Sep 19, 2025 at 2:27=E2=80=AFPM Stefan Hajnoczi <stefanha@redhat.co=
-m> wrote:
->
-> On Thu, Sep 18, 2025 at 03:25:59PM -0700, Cong Wang wrote:
-> > This patch series introduces multikernel architecture support, enabling
-> > multiple independent kernel instances to coexist and communicate on a
-> > single physical machine. Each kernel instance can run on dedicated CPU
-> > cores while sharing the underlying hardware resources.
-> >
-> > The multikernel architecture provides several key benefits:
-> > - Improved fault isolation between different workloads
-> > - Enhanced security through kernel-level separation
->
-> What level of isolation does this patch series provide? What stops
-> kernel A from accessing kernel B's memory pages, sending interrupts to
-> its CPUs, etc?
+...
+> 
+> > > +  interrupts:
+> > > +    minItems: 1
+> > > +    items:
+> > > +      - description: |
+> > > +          Asserts high when ADC readings exceed the upper threshold and low
+> > > +          when below the lower threshold. Must be connected to the COUT pin.
+> > > +      - description: |
+> > > +          Alert output that asserts low during a number of different error
+> > > +          conditions. The interrupt source must be attached to FAULT pin.
+> 
+> These descriptions read wrong to me. They __are__ the COUT and FAULT
+> pins, given what David responded to above, not something that can be
+> connected to these pins (if they were, they would be represented as
+> -gpios rather than interrupts most likely). Unless you mean that these
+> pins can have some other use and are only available on the COUT/FAULT
+> pins when some register value is set - but even in that case saying
+> "must be" doesn't fit since the interrupt property could be used to
+> configure the device accordingly.
 
-It is kernel-enforced isolation, therefore, the trust model here is still
-based on kernel. Hence, a malicious kernel would be able to disrupt,
-as you described. With memory encryption and IPI filtering, I think
-that is solvable.
+COUT and FAULT are just two pins on the ADC chip that can be used to generate
+interrupts. Would a description like the one below sound better?
 
->
-> > - Better resource utilization than traditional VM (KVM, Xen etc.)
-> > - Potential zero-down kernel update with KHO (Kernel Hand Over)
-> >
-> > Architecture Overview:
-> > The implementation leverages kexec infrastructure to load and manage
-> > multiple kernel images, with each kernel instance assigned to specific
-> > CPU cores. Inter-kernel communication is facilitated through a dedicate=
-d
-> > IPI framework that allows kernels to coordinate and share information
-> > when necessary.
-> >
-> > Key Components:
-> > 1. Enhanced kexec subsystem with dynamic kimage tracking
-> > 2. Generic IPI communication framework for inter-kernel messaging
-> > 3. Architecture-specific CPU bootstrap mechanisms (only x86 so far)
-> > 4. Proc interface for monitoring loaded kernel instances
-> >
-> > Patch Summary:
-> >
-> > Patch 1/7: Introduces basic multikernel support via kexec, allowing
-> >            multiple kernel images to be loaded simultaneously.
-> >
-> > Patch 2/7: Adds x86-specific SMP INIT trampoline for bootstrapping
-> >            CPUs with different kernel instances.
-> >
-> > Patch 3/7: Introduces dedicated MULTIKERNEL_VECTOR for x86 inter-kernel
-> >            communication.
-> >
-> > Patch 4/7: Implements generic multikernel IPI communication framework
-> >            for cross-kernel messaging and coordination.
-> >
-> > Patch 5/7: Adds arch_cpu_physical_id() function to obtain physical CPU
-> >            identifiers for proper CPU management.
-> >
-> > Patch 6/7: Replaces static kimage globals with dynamic linked list
-> >            infrastructure to support multiple kernel images.
-> >
-> > Patch 7/7: Adds /proc/multikernel interface for monitoring and debuggin=
-g
-> >            loaded kernel instances.
-> >
-> > The implementation maintains full backward compatibility with existing
-> > kexec functionality while adding the new multikernel capabilities.
-> >
-> > IMPORTANT NOTES:
-> >
-> > 1) This is a Request for Comments (RFC) submission. While the core
-> >    architecture is functional, there are numerous implementation detail=
-s
-> >    that need improvement. The primary goal is to gather feedback on the
-> >    high-level design and overall approach rather than focus on specific
-> >    coding details at this stage.
-> >
-> > 2) This patch series represents only the foundational framework for
-> >    multikernel support. It establishes the basic infrastructure and
-> >    communication mechanisms. We welcome the community to build upon
-> >    this foundation and develop their own solutions based on this
-> >    framework.
-> >
-> > 3) Testing has been limited to the author's development machine using
-> >    hard-coded boot parameters and specific hardware configurations.
-> >    Community testing across different hardware platforms, configuration=
-s,
-> >    and use cases would be greatly appreciated to identify potential
-> >    issues and improve robustness. Obviously, don't use this code beyond
-> >    testing.
-> >
-> > This work enables new use cases such as running real-time kernels
-> > alongside general-purpose kernels, isolating security-critical
-> > applications, and providing dedicated kernel instances for specific
-> > workloads etc..
->
-> This reminds me of Jailhouse, a partitioning hypervisor for Linux.
-> Jailhouse uses virtualization and other techniques to isolate CPUs,
-> allowing real-time workloads to run alongside Linux:
-> https://github.com/siemens/jailhouse
->
-> It would be interesting to hear your thoughts about where you want to go
-> with this series and how it compares with a partitioning hypervisor like
-> Jailhouse.
+  interrupts:
+    minItems: 1
+    items:
+      - description: |
+          cout: Comparator output signal that asserts high when ADC readings
+          exceed the upper threshold and low when readings fall below the lower
+          threshold.
+      - description: |
+          fault: When fault reporting is enabled, the FAULT pin is asserted low
+          whenever one of the monitored fault conditions occurs.
 
-Good question. A few people pointed me to Jailhouse before. If I understand
-correctly, it is still based on hardware virtualization like IOMMU and VMX.
-The goal of multikernel is to completely avoid hw virtualization
-and without a hypervisor. Of course, this also depends on how we define
-hypervisor here: If it is a user-space one like Qemu, this is exactly what
-multikernel tries to avoid; or if it is just a broadly "supervisor",
-it still exists
-in the kernel (unlike Qemu).
-
-This is why I tend to use "host kernel" and "spawned kernel" to distinguish
-them, instead of using "hypervisor" and "guest", which easily confuse
-people with  virtualization.
-
-Speaking of virtualization, there are some other technologies like
-DirectVisor or De-virt. In my humble opinion, they are going the wrong
-way as apparently virt + de-virt =3D no virt. Why even bother virt? ;-p
-
-I hope this answers your questions,
-
-Regards,
-Cong
+Best regards,
+Marcelo
 
