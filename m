@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-825524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DA3B8C081
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:15:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BEFB8C094
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D6F58663B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:15:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EA41B25DE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA41823CEF9;
-	Sat, 20 Sep 2025 06:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A6A235355;
+	Sat, 20 Sep 2025 06:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyBcnN11"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tuUEa5IA"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1812D2F872;
-	Sat, 20 Sep 2025 06:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F2D225402;
+	Sat, 20 Sep 2025 06:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758348942; cv=none; b=rQ6/wx7iGejXNSjG46O+xba2HR0xAr7NYzymFoZqrzDnakKuv5UGqNZPlYumS6QvByID6GqIn2DTeHYYkQOg5Vgc42ov63hDQF4l0qsJ/2xH0V23XTR0FL14lq44p+yp641bLI0vMQgDmJsErEIdg8OZRWn79P1cdN/uTIsmyYg=
+	t=1758349320; cv=none; b=hnx0Js/I+a6XJ30/0cotznMZ6yxBHKpt0yirB6ODFtKrfYeMZN1nHtO0eiVN82bYjzNbHJUCp34DcBjG1wPS451vjvwadujyeztIxOcx/Mae2M143bkl2ByDDUaZ0ybaBsQqI8dWrsUM3qQiOrclxSrjd/2Z3rQmEAXTTGCn0wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758348942; c=relaxed/simple;
-	bh=ztsE8IAVQOOAW1FSbXZvhh4tzVJWmEepEQOu4J5iAbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkbeFqIZFPcQ24rBORaSGeW4h8oHljmJrL3f/fjonURFnuEOQGiLiX8iuFewAw+y4GJGFmjPH+Rf8pQJKBcacEGuXdcRKfLCxGKwq0DXcka4Z1beEHd/xvMwAy4YWHHhz4/KmaMYnQextyEvDuI/XvyMJXCUT8xNB7AtDcDyR68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyBcnN11; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB01C4CEEB;
-	Sat, 20 Sep 2025 06:15:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758348941;
-	bh=ztsE8IAVQOOAW1FSbXZvhh4tzVJWmEepEQOu4J5iAbs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyBcnN114pbec9dW9rWOF2xu2MiqweDbYS1MkVGnjmDUmY6XfGweniU3o1s7MDNh7
-	 5o2cUgdl0lugdCw8SXtiVEuGdk9/O+I4zj4jYG36aWX+nqAkBYX2mFmhV0lqvcoG9X
-	 lXgKc6tLwmMkLE/ItmEHTff/bef+dPDcih2Uk/W3nn3S10OrBZQsnDpfoHRe0q+ZdI
-	 RIWzcb5rS0RBaIkQuAoct2TTRAKQrvzg3Y9TFDCP/OwGyHUL9r/Fi/ELTo9JmBDc/5
-	 UCOkds7ukw0aEA+crddDNAvPhuthcGCPntzEucC29UIieXzY3X/T8ufNEcGvN0tmTT
-	 RjW50vvCv5iUw==
-Date: Fri, 19 Sep 2025 23:15:36 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	WANG Rui <wangrui@loongson.cn>, rust-for-linux@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v1 1/2] LoongArch: Make LTO case independent in Makefile
-Message-ID: <20250920061536.GA1460394@ax162>
-References: <20250909092707.3127-1-yangtiezhu@loongson.cn>
- <20250909092707.3127-2-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1758349320; c=relaxed/simple;
+	bh=9RcGvOkOXT/d8Hxm2c0v67xGchk2M+hVVdjqG6EcoD4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ArsE637vHduTawxfX7OfWLQokYQ8m6hUaMUW0HVoj+m813KBBzlB9Gr/Vl3kEAgVjFT1I1jMIkFlEaF2fdISbduU2ILH5yhA1uscqiPspbrfAXFbnGf0c5UYz8EIt81c9kuWS/PnfE5+5TiCqVHqstwjB23NaSPr+ZqGViKTTkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tuUEa5IA; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58K6LHfa859875;
+	Sat, 20 Sep 2025 01:21:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758349278;
+	bh=3kbgb0IN9bjPFXfBctaJeLpVfYUyl6fZMxymQW5eud0=;
+	h=From:To:CC:Subject:Date;
+	b=tuUEa5IAjC0RzYPmNHcSFcSxfdp3vODt0NnoIO30i/JP+HL/ir8b+408SAeRRVKaH
+	 vn8+0mItiko8qvucvpeQenZ+lsNZlf5e2iYwYdEwVm0QMai00mh79SekwMUwhk2XaQ
+	 l/6Y1n47DE2wp1+3Ov5IlDOm9yqKmG0P9IGCGDxM=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58K6LHBW3448206
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sat, 20 Sep 2025 01:21:17 -0500
+Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 20
+ Sep 2025 01:21:17 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Sat, 20 Sep 2025 01:21:17 -0500
+Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58K6L98x3734016;
+	Sat, 20 Sep 2025 01:21:10 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <broonie@kernel.org>
+CC: <tiwai@suse.de>, <andriy.shevchenko@linux.intel.com>,
+        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
+        <shenghao-ding@ti.com>, <baojun.xu@ti.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <lgirdwood@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, <k-yi@ti.com>,
+        <henry.lo@ti.com>, <robinchen@ti.com>, <jesse-ji@ti.com>,
+        <will-wang@ti.com>, <jim.shil@goertek.com>, <toastcheng@google.com>,
+        <chinkaiting@google.com>
+Subject: [PATCH v1] ASoC: tas2781: Correct the wrong description and register address on tas2781
+Date: Sat, 20 Sep 2025 14:20:44 +0800
+Message-ID: <20250920062044.1904-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909092707.3127-2-yangtiezhu@loongson.cn>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Tiezhu,
+Correct the wrong description for TAS257X. Combined TAS5825 with TAS2563,
+as they use the same register address and number.
+Correct the register address and number for TAS5827.
 
-On Tue, Sep 09, 2025 at 05:27:06PM +0800, Tiezhu Yang wrote:
-> LTO is not only used for Clang, it maybe used for Rust, make LTO case out
-> of CONFIG_CC_HAS_ANNOTATE_TABLEJUMP in Makefile.
-> 
-> This is preparation for later patch, no function changes.
-> 
-> Suggested-by: WANG Rui <wangrui@loongson.cn>
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  arch/loongarch/Makefile | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> index a3a9759414f4..9d80af7f75c8 100644
-> --- a/arch/loongarch/Makefile
-> +++ b/arch/loongarch/Makefile
-> @@ -102,16 +102,16 @@ KBUILD_CFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)
->  
->  ifdef CONFIG_OBJTOOL
->  ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
-> +KBUILD_CFLAGS			+= -mannotate-tablejump
-> +else
-> +KBUILD_CFLAGS			+= -fno-jump-tables # keep compatibility with older compilers
-> +endif
-> +ifdef CONFIG_LTO_CLANG
->  # The annotate-tablejump option can not be passed to LLVM backend when LTO is enabled.
->  # Ensure it is aware of linker with LTO, '--loongarch-annotate-tablejump' also needs to
->  # be passed via '-mllvm' to ld.lld.
-> -KBUILD_CFLAGS			+= -mannotate-tablejump
-> -ifdef CONFIG_LTO_CLANG
->  KBUILD_LDFLAGS			+= -mllvm --loongarch-annotate-tablejump
->  endif
-> -else
-> -KBUILD_CFLAGS			+= -fno-jump-tables # keep compatibility with older compilers
-> -endif
->  endif
->  
->  KBUILD_RUSTFLAGS		+= --target=loongarch64-unknown-none-softfloat -Ccode-model=small
-> -- 
-> 2.42.0
-> 
+Fixes: 7095d688de38 ("ASoC: tas2781: Add tas2118, tas2x20, tas5825 support")
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ .../devicetree/bindings/sound/ti,tas2781.yaml | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-This change is now in -next as commit b15212824a01 ("LoongArch: Make LTO
-case independent in Makefile"), where it breaks the build for clang-18,
-as '--loongarch-annotate-tablejump' is unimplemented there but there is
-no version check before using it.
+diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+index 011211112be4..bd00afa47d62 100644
+--- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
++++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
+@@ -11,11 +11,13 @@ maintainers:
+   - Shenghao Ding <shenghao-ding@ti.com>
+ 
+ description: |
+-  The TAS2118/TAS2X20/TAS257x is mono, digital input Class-D audio
++  The TAS2118/TAS2X20 is mono, digital input Class-D audio
+   amplifier optimized for efficiently driving high peak power into
+   small loudspeakers.
+-  Integrated speaker voltage and current sense provides for
+-  real time monitoring of loudspeaker behavior.
++  The TAS257x is mono, digital input Class-D audio amplifier optimized
++  for efficiently driving high peak power into small loudspeakers.
++  Integrated speaker voltage and current sense provides for real time
++  monitoring of loudspeaker behavior.
+   The TAS2563/TAS2781 is a mono, digital input Class-D audio
+   amplifier optimized for efficiently driving high peak power into
+   small loudspeakers. An integrated on-chip DSP supports Texas
+@@ -25,9 +27,7 @@ description: |
+   The TAS5825/TAS5827 is a stereo, digital input Class-D audio
+   amplifier optimized for efficiently driving high peak power into
+   small loudspeakers. An integrated on-chip DSP supports Texas
+-  Instruments Smart Amp speaker protection algorithm. The
+-  integrated speaker voltage and current sense provides for real time
+-  monitoring of loudspeaker behavior.
++  Instruments Smart Amp speaker protection algorithm.
+ 
+   Specifications about the audio amplifier can be found at:
+     https://www.ti.com/lit/gpn/tas2120
+@@ -131,6 +131,7 @@ allOf:
+           contains:
+             enum:
+               - ti,tas2563
++              - ti,tas5825
+     then:
+       properties:
+         reg:
+@@ -181,15 +182,14 @@ allOf:
+         compatible:
+           contains:
+             enum:
+-              - ti,tas5825
+               - ti,tas5827
+     then:
+       properties:
+         reg:
+-          maxItems: 4
++          maxItems: 6
+           items:
+-            minimum: 0x4c
+-            maximum: 0x4f
++            minimum: 0x60
++            maximum: 0x65
+ 
+ additionalProperties: false
+ 
+-- 
+2.43.0
 
-  $ make -skj"$(nproc)" ARCH=loongarch LLVM=1 mrproper defconfig
-
-  $ scripts/config -d LTO_NONE -e LTO_CLANG_THIN
-
-  $ make -skj"$(nproc)" ARCH=loongarch LLVM=1 olddefconfig vmlinuz.efi
-  ld.lld: error: -mllvm: ld.lld: Unknown command line argument '--loongarch-annotate-tablejump'.
-  ...
-
-  $ scripts/config -s CC_HAS_ANNOTATE_TABLEJUMP
-  undef
-
-Cheers,
-Nathan
 
