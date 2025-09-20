@@ -1,230 +1,199 @@
-Return-Path: <linux-kernel+bounces-825887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498C3B8D0C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B6FB8D0CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41A0461FD7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4F51B25802
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B502C11C3;
-	Sat, 20 Sep 2025 20:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0362D5933;
+	Sat, 20 Sep 2025 20:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjRtdm5Q"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="o61Gmnya"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DC62C11EB
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19752D46AC
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758399755; cv=none; b=RcEz2KnU4OhZWJQ5+gABiHbeqAw321Z0LmAylK5iv1az1o7TutgogHqpZDZbxGRgCvT2LSRSTX1veAoSGn1fyMOe8lNWxX+KoTp2OKR+9OjSElam0ZvwDuhLb73oxAUpiZJtzpec/lpxvgRVcqd6ZpTSbYPyDoAqhvhpqaerfWg=
+	t=1758400735; cv=none; b=ivXCggiho3JI4fxcgILwFTWchsDWLzJWbrl66UmCpH/40laAngeNMCvviBdVJq5u4iZRGeav4iJNdR7byoKwbdU5KUlBAf0vSJuXFtUFeW3mj0lCUG63cMVKMb2TTLhAb+P3k7x2tz5uxkkir261rN0CR5PzyoqoCKFI/EgetYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758399755; c=relaxed/simple;
-	bh=Am3FqAor/UTkbjr2Ye8bRp/s+L2cvBen6QV6UQ5vJDE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=p0LWZiLxfJVJKY8/R+EAxnmGQjBvw9GQBjwFslQNy0IKhIifTvJ6sozuNp3lR71a7mSILpS9mhGw9hdgst6hGfZjwCLRmfQVs63ZsKA53KLeH3QynPJGgxw2GKrEbtOG6AJuwRkn/9OhrVS5JpUMkHQ2CNdoRjbL1qkymnksDMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjRtdm5Q; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-329b760080fso2537660a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:22:34 -0700 (PDT)
+	s=arc-20240116; t=1758400735; c=relaxed/simple;
+	bh=2Sx9zLC5MnnSHjXWv4RQRnUE5L1eBh4YFr1Q8/QsiLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M3YeX854U7EPV20l4jn3ivh8yjF+6ODWaSWEsP+ynmHhlj/PHHttDXtluszg1YVu1/oIB4FdBdsgaZECKjNwxzYPn5nAGYpqcQ+42KvrQ0kJS9p/AizEHBHdzbKtmD4Zw36zbclQrEIfgHrAUa4Hs5VNvArwnxHb/tiCEoaJlpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=o61Gmnya; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-4247d991161so13734995ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:38:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758399754; x=1759004554; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oEDh+Wvs/2MhWrMqDGofeZax2aipiW7qS5Up+Qu8dgY=;
-        b=CjRtdm5QANpR1A7Vu1tlBf24Iv7p5TWXvsy1q8IFnBj1Q/klm0xEVuiK58/6dYrR3y
-         /DsBGbxlEKH9JDE4LnAcPqEnugfH/HWGM0O64whTMiB2cTWN1yimUE2pf4tL0DmWp2FN
-         BN8d4pH+zapGrmJMiT+lVv9SMzDIQ2ZM3tfZjTLuGOWjGIWkE+1vLwNJ3HDnubR3+LxG
-         PPoePo5H0t5m/jeqaWnpfzIr6CDk+iyqWHJeB5Fpwqfvl/+lmRykl8iuBMjU54rLV7IA
-         8LLZo53VHIQSboJeI6/ED65n0ZIxkRbjt8rE9+EoQ98yxUSqGy98J+8JyPJfOo0UlcTi
-         cwdQ==
+        d=ventanamicro.com; s=google; t=1758400733; x=1759005533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QhhBAyqrQkktxGVEvf+eNDaA1KtGAPXA3DGbaEzOigo=;
+        b=o61GmnyazyiUHgeI8rP/7N9HHWL8GJBtmanOKnLkms2fKtg0p8PxY9YSj18Yb+GSsV
+         x01QXE90xMQn8i5mIUHvbFaqZs0roPh8O7RJuT0o0k5yuhHYUbj4ldK650/MKX3cHtvD
+         /ExLwC9/imjkl66zD743yjvauBwCbeolN7Xa9URr6I6hk77NnRqaF3dx/asPAGCe0oq7
+         7uMtYGNpKby4D3PT/0slHAh6B7bUqGrT06guX4EV0VWkE1wVW+PX4r64DaVRmfNT2GCH
+         UxtTCvH94/Uu2EXyu4iZ6VHuWYGVmvIOtC60MJPjoWkwONsQ8mhw2HW+0Hq+2l10sS2V
+         v9zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758399754; x=1759004554;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oEDh+Wvs/2MhWrMqDGofeZax2aipiW7qS5Up+Qu8dgY=;
-        b=ZGSFy9EfHNgjUBg611ZiCs+PWl/pE4zwBkuPLVFzA1iXOwFaz6RF70Kdf1iEyXKXsU
-         k0CTrVLQw/0F/B8yE7ebXC690CDE6IlsSoblvfFWwgn81MgMUm7/2SWszeJ6O8RqN8+N
-         RjhMIz0ojaNgC2L7FB7m8kx2bHLHTbuAtPpPYVvQ4+NimtmsmbfgfWhR9GBJQzCMQwcZ
-         fDhkEzCjI+1Qkmc/2nDTLq07eZJzN938pxQF2xVftzCzSl6VMzL3aIT98v58fcmwZxrO
-         538SXiFAH0kkK9KRD4CWa6K76sqKlwnmoNkmadLke2fdpGCJCq7kiQeOIf+MXv1R/kxE
-         xN1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVFxuSsUY/KuRfEFHg3+oIr1VeIK6ofw9/IN74at/r365fu3J1lC1CbXhgk52y16GoxXiMR085iqnknnVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8cXwnEoyTXb6YZlfz94mGPRw50a+Z+xr4GIbtOUQG+qazXca/
-	FKfovySIKSCu/oMu5PHNYyVU6ieCQQD7jcZAWXaHlwWdptviYP6JyVwy
-X-Gm-Gg: ASbGnctt7YZmZhm9Ds7hOdPqkoCSc3usC612/ixKYHZN54N0B+sJD14X+hrwLxDo0Ic
-	Tu1HEkPlZ5rl3csRTgQVpzCxZzbj0z6gsDCXwsJ6nGyHDdiV7+K7itZHzbg4xx+zxZKHuYb8/lx
-	JKQQt0BcEnYgYBGMUcT75jfOyp0CXgaYKML1MG3NDrtSa4R3Zqc3MbK9aQVuFxWaGoMoMqI0zsP
-	b9sYggr1lDv7q8JnquQbgePfjrMWRnOY3ItBzjusMbnIz81bLjNd+VLObG4n8/9B3OJmJOoNIqu
-	eeryUnKHB+T1lGAKaA/gkXx9riM8aIKF8042bTRj4i/MOLLg6yLQe1CBKgv6UgQS0uoJYNGu7i5
-	cg8aRvkt+pCoj2mJn8U5cyaL4091ba2WBybhe53HQ8YE=
-X-Google-Smtp-Source: AGHT+IG3D81KvO3jDKAMB7j9mZS/RFnD2xJducLybPfAPsNEHFakSNlx4mse/NO+LH4HnBqVFQfMJg==
-X-Received: by 2002:a17:90b:2c8f:b0:32e:96b1:fb70 with SMTP id 98e67ed59e1d1-33098004a50mr9769248a91.12.1758399753726;
-        Sat, 20 Sep 2025 13:22:33 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([191.193.70.152])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3309c81f50bsm5417043a91.23.2025.09.20.13.22.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Sep 2025 13:22:33 -0700 (PDT)
-Date: Sat, 20 Sep 2025 17:22:28 -0300
-From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] arm64: dts: qcom: r0q: add gpio keys
-User-Agent: Thunderbird for Android
-In-Reply-To: <r6e23h4nkddktkle5rohdiiqkw667rq26j7u2yodao6p3scixp@y3roqbly4oje>
-References: <20250920014637.38175-1-ghatto404@gmail.com> <20250920014637.38175-2-ghatto404@gmail.com> <qiiuezocvxvj5bhrr77v6o2amaaaepdx54pqoewvhtnxce5ccz@g7bhkrb6a4pd> <5436E420-E459-4E47-9752-EF80F550FA6F@gmail.com> <r6e23h4nkddktkle5rohdiiqkw667rq26j7u2yodao6p3scixp@y3roqbly4oje>
-Message-ID: <B58EE981-3702-4FA3-B150-A3C862643870@gmail.com>
+        d=1e100.net; s=20230601; t=1758400733; x=1759005533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QhhBAyqrQkktxGVEvf+eNDaA1KtGAPXA3DGbaEzOigo=;
+        b=OQhQSm+ACOa3IY/2KFRxJEKvUq/OutjJ8+T7SSAWeDYltxKUgjktrfCIMo3HeKQP1o
+         qeLz3hHRHaDI94LMhCYBfqc70Ay0e5TmeBm/vXsPWQQSSr431NDm0GZfLDTraCk2LYlT
+         +1BxoEXvdBINDbyYpR0p0NlrF+uMjxXrZS4uJyXks5xXrxWV0ZKfHErVba14FYbQlNPP
+         +WfA3ykiqzbLCittkKDCnzSJd9K0JvQD07KBoCk9MbhcNfYnBBrux8bDr2TYTUyls6ey
+         /jaKoMpThQ5dIKwvq7/JLx669pT7zDZBzyC0h2RZADbrfoEXyLTB82Kb1gM76xyyBzs/
+         fd6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIwVqBWGZMG1k+wwbMAOIVeNZ4WoFCmYCL6XMy8G+1JMWuKDgMIt+Fe0UPUmasNcD3ghbP5dAlfFKqBZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQmXnl+Elv3fW0qVElOZxRyocSzyNKK1BsKkhY814kb1azFph2
+	A6TZJ4GuCv68+Jocplk6mxYbFSLknA6sNXS+5z62mT9SD9gYDpl1IB9Cn72DjBol2cA=
+X-Gm-Gg: ASbGncu+tjSKx9u1Nk2bdi8HnSddT2qbcqkX68VTtdx5LAfkWGJxbb+N0VEbKzqr9ig
+	bX1/JAaM7Ozve80DnabLM6xpvyVFvl/u44XmczZYRTKC/nMQ5nPlbb8cTs2tIJjll0rU8f5pTks
+	8PkQyYc39qWWh1ms3oRhAbSe/SZ9kvFD/na5OqcJHXYnlEHfmfECAFuinEIrwuFRuUWLEBcqDWA
+	lI23oDIvkkPd7SVUQYlXZXjL5+uNK8g0RSvpTit8QuYrYPiCZCMbNltMr65CZGFKisUfGd7H0mQ
+	boNHilpmINjSxvh6GHzIjgUTerJudSzqKdr6U0WoEG6nYoXWvjWrcIX/TH1r027fhn3yzQw25mW
+	CqnxVk78XdgwhJXQfJv1wzlqF
+X-Google-Smtp-Source: AGHT+IGwK4PrAd7CyoBUGRZ3PUQqWIF5Zj/5N9zpz7O49heeJaggKCpHt+afTDzWqXDEvIoleQehPQ==
+X-Received: by 2002:a05:6e02:12e9:b0:424:bec:4a01 with SMTP id e9e14a558f8ab-424819743bbmr104189845ab.16.1758400733061;
+        Sat, 20 Sep 2025 13:38:53 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4244afa9fbfsm39814525ab.26.2025.09.20.13.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 13:38:52 -0700 (PDT)
+From: Andrew Jones <ajones@ventanamicro.com>
+To: iommu@lists.linux.dev,
+	kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: jgg@nvidia.com,
+	zong.li@sifive.com,
+	tjeznach@rivosinc.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	anup@brainfault.org,
+	atish.patra@linux.dev,
+	tglx@linutronix.de,
+	alex.williamson@redhat.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	alex@ghiti.fr
+Subject: [RFC PATCH v2 00/18] iommu/riscv: Add irqbypass support
+Date: Sat, 20 Sep 2025 15:38:50 -0500
+Message-ID: <20250920203851.2205115-20-ajones@ventanamicro.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+
+Changelog
+---------
+This is v2 of the RFC for adding interrupt remapping support to the
+RISC-V IOMMU driver along with support for KVM in order to apply it
+to irqbypass. v1 of the series was discussed here[1] where a couple
+large design flaws were pointed out. Those, along with a v1 TODO of
+referencing counting MSI PTEs in order to track when they may be
+unmapped, have been addressed in v2. Additionally, v2 is based on
+msi-lib, which didn't exist at the time of the v1 posting, and on
+the recent KVM irqbypass rework.
+
+Description
+-----------
+Platforms with MSI support (IMSICs) and implementations of the RISC-V
+IOMMU with an MSI table can control device MSI delivery, including
+directly delivering MSIs of devices assigned to guests to VCPUs. This
+series enables that control and enables IOMMU_DMA in order to use
+paging IOMMU domains by default. When the IOMMU doesn't support an MSI
+table (it's an optional IOMMU capability) then paging domains are still
+used, but the system does not have isolated MSIs. For direct delivery
+to VCPUs an MSI table is required and thanks to KVM+VFIO it's possible
+to determine when and how to map guest IMSIC addresses to host guest
+interrupt files. The RISC-V IOMMU and AIA also support MRIFs (memory-
+resident interrupt files), but support for those will be posted as a
+follow-on to this series. Also, additional work will be done in order
+to take advantage of the RISC-V IOMMU's second stage of paging. At
+this time, the series just uses the first stage which allows testing
+with unmodified KVM userspace and VFIO.
+
+The patches are organized as follows:
+  1-4:  Create an irq domain and some function stubs for an initial
+        interrupt remapping support skeleton
+  5-9:  Add MSI table management to enable host interrupt remapping
+        and enable IOMMU_DMA
+ 10-13: Add IOMMU driver support for directly delivering MSIs to VCPUs
+ 14-17: Add KVM support for directly delivering MSIs to VCPUs
+
+The last patch is a workaround for a KVM bug not introduced by this series
+which is needed to enable testing of the series -- I still need to debug
+and fix that properly.
+
+There series is also available here[2].
+
+Based on commit 39879e3a4106.
+
+[1] https://lore.kernel.org/all/20241114161845.502027-17-ajones@ventanamicro.com/
+[2] https://github.com/jones-drew/linux/commits/riscv/iommu-irqbypass-rfc-v2/
 
 
+Andrew Jones (13):
+  genirq/msi: Provide DOMAIN_BUS_MSI_REMAP
+  iommu/riscv: Move struct riscv_iommu_domain and info to iommu.h
+  iommu/riscv: Add IRQ domain for interrupt remapping
+  iommu/riscv: Prepare to use MSI table
+  iommu/riscv: Implement MSI table management functions
+  iommu/riscv: Export phys_to_ppn and ppn_to_phys
+  iommu/riscv: Use MSI table to enable IMSIC access
+  RISC-V: Define irqbypass vcpu_info
+  iommu/riscv: Maintain each irq msitbl index with chip data
+  iommu/riscv: Add guest file irqbypass support
+  RISC-V: KVM: Add guest file irqbypass support
+  RISC-V: defconfig: Add VFIO modules
+  DO NOT UPSTREAM: RISC-V: KVM: Workaround kvm_riscv_gstage_ioremap()
+    bug
 
-On September 20, 2025 5:15:41 PM GMT-03:00, Dmitry Baryshkov <dmitry=2Ebar=
-yshkov@oss=2Equalcomm=2Ecom> wrote:
->On Sat, Sep 20, 2025 at 03:02:42PM -0300, Eric Gon=C3=A7alves wrote:
->>=20
->>=20
->> On September 20, 2025 12:45:27 PM GMT-03:00, Dmitry Baryshkov <dmitry=
-=2Ebaryshkov@oss=2Equalcomm=2Ecom> wrote:
->> >On Sat, Sep 20, 2025 at 01:46:33AM +0000, Eric Gon=C3=A7alves wrote:
->> >> Add GPIO keys support to Samsung Galaxy S22 (r0q)=2E
->> >>=20
->> >> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
->> >> ---
->> >>  =2E=2E=2E/boot/dts/qcom/sm8450-samsung-r0q=2Edts      | 53 ++++++++=
-+++++++----
->> >>  1 file changed, 44 insertions(+), 9 deletions(-)
->> >>=20
->> >> diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts b/arc=
-h/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
->> >> index 880d74ae6032=2E=2E70e953824996 100644
->> >> --- a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
->> >> +++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
->> >> @@ -2,11 +2,12 @@
->> >> =20
->> >>  /dts-v1/;
->> >> =20
->> >> +#include <dt-bindings/input/linux-event-codes=2Eh>
->> >>  #include <dt-bindings/regulator/qcom,rpmh-regulator=2Eh>
->> >> -
->> >>  #include "sm8450=2Edtsi"
->> >>  #include "pm8350=2Edtsi"
->> >>  #include "pm8350c=2Edtsi"
->> >> +#include "pmk8350=2Edtsi"
->> >> =20
->> >>  / {
->> >>  	model =3D "Samsung Galaxy S22 5G";
->> >> @@ -28,13 +29,19 @@ framebuffer: framebuffer@b8000000 {
->> >>  		};
->> >>  	};
->> >> =20
->> >> -	vph_pwr: regulator-vph-pwr {
->> >> -		compatible =3D "regulator-fixed";
->> >> -		regulator-name =3D "vph_pwr";
->> >> -		regulator-min-microvolt =3D <3700000>;
->> >> -		regulator-max-microvolt =3D <3700000>;
->> >> -		regulator-always-on;
->> >> -		regulator-boot-on;
->> >
->> >Please don't mix up refactorings and new features=2E Split this patch =
-into
->> >several=2E
->> The patch only added gpio-keys node and pon_resin,
->> pon_pwrkey=2E Do you mean I have to split each button
->> into separate patches?
->
->No=2E The patch also moves regulator-vph-pwr and changes the comment in
->the TLMM node=2E
->
-I thought they would be too small to be
-patches on their own=2E Is it okay if I split
-them into 2: arm64: dts: qcom: r0q: small refactor
-and arm64: dts: qcom: r0q: add gpio keys?
->> >
->> >> +	gpio-keys {
->> >> +		compatible =3D "gpio-keys";
->> >> +		autorepeat;
->> >> +
->> >> +		pinctrl-0 =3D <&vol_up_n>;
->> >> +		pinctrl-names =3D "default";
->> >> +
->> >> +		key-vol-up {
->> >> +			label =3D "Volume Up";
->> >> +			linux,code =3D <KEY_VOLUMEUP>;
->> >> +			gpios =3D <&pm8350_gpios 6 GPIO_ACTIVE_LOW>;
->> >> +			debounce-interval =3D <15>;
->> >> +		};
->> >>  	};
->> >> =20
->> >>  	reserved-memory {
->> >> @@ -47,6 +54,15 @@ splash-region@b8000000 {
->> >>  			no-map;
->> >>  		};
->> >>  	};
->> >> +
->> >> +	vph_pwr: regulator-vph-pwr {
->> >> +		compatible =3D "regulator-fixed";
->> >> +		regulator-name =3D "vph_pwr";
->> >> +		regulator-min-microvolt =3D <3700000>;
->> >> +		regulator-max-microvolt =3D <3700000>;
->> >> +		regulator-always-on;
->> >> +		regulator-boot-on;
->> >> +	};
->> >>  };
->> >> =20
->> >>  &apps_rsc {
->> >> @@ -119,8 +135,27 @@ vreg_l1c_1p8: ldo1 {
->> >>  	};
->> >>  };
->> >> =20
->> >> +&pm8350_gpios {
->> >> +	vol_up_n: vol-up-n-state {
->> >> +		pins =3D "gpio6";
->> >> +		function =3D "normal";
->> >> +		power-source =3D <1>;
->> >> +		input-enable;
->> >> +	};
->> >> +};
->> >> +
->> >> +&pon_pwrkey {
->> >> +	status =3D "okay";
->> >> +};
->> >> +
->> >> +&pon_resin {
->> >> +	linux,code =3D <KEY_VOLUMEDOWN>;
->> >> +
->> >> +	status =3D "okay";
->> >> +};
->> >> +
->> >>  &tlmm {
->> >> -	gpio-reserved-ranges =3D <36 4>; /* SPI (not linked to anything) *=
-/
->> >> +	gpio-reserved-ranges =3D <36 4>; /* SPI (Unused) */
->> >>  };
->> >> =20
->> >>  &usb_1 {
->> >> --=20
->> >> 2=2E51=2E0
->> >>=20
->> >
->> Resend because I forgot to CC the mailing lists
->
+Tomasz Jeznach (4):
+  iommu/dma: enable IOMMU_DMA for RISC-V
+  iommu/riscv: report iommu capabilities
+  RISC-V: KVM: Enable KVM_VFIO interfaces on RISC-V arch
+  vfio: enable IOMMU_TYPE1 for RISC-V
+
+Zong Li (1):
+  iommu/riscv: Use data structure instead of individual values
+
+ arch/riscv/configs/defconfig     |   2 +
+ arch/riscv/include/asm/irq.h     |   9 +
+ arch/riscv/kvm/Kconfig           |   3 +
+ arch/riscv/kvm/aia_imsic.c       | 143 ++++++-
+ arch/riscv/kvm/mmu.c             |   2 +-
+ arch/riscv/kvm/vm.c              |  31 ++
+ drivers/iommu/Kconfig            |   2 +-
+ drivers/iommu/riscv/Makefile     |   2 +-
+ drivers/iommu/riscv/iommu-bits.h |  11 +
+ drivers/iommu/riscv/iommu-ir.c   | 698 +++++++++++++++++++++++++++++++
+ drivers/iommu/riscv/iommu.c      | 158 +++----
+ drivers/iommu/riscv/iommu.h      |  75 ++++
+ drivers/irqchip/irq-msi-lib.c    |   8 +-
+ drivers/vfio/Kconfig             |   2 +-
+ include/linux/irqdomain_defs.h   |   1 +
+ 15 files changed, 1063 insertions(+), 84 deletions(-)
+ create mode 100644 drivers/iommu/riscv/iommu-ir.c
+
+-- 
+2.49.0
+
 
