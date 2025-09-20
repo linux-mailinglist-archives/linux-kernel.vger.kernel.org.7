@@ -1,202 +1,96 @@
-Return-Path: <linux-kernel+bounces-825371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CD9B8BB28
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:39:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2208BB8BB2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB40E1BC7681
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:39:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1345A532A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793591F2BAD;
-	Sat, 20 Sep 2025 00:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E597207A18;
+	Sat, 20 Sep 2025 00:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PpnwS86w"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011068.outbound.protection.outlook.com [52.101.62.68])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Kn0hvkLs"
+Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2748053A7
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758328762; cv=fail; b=LOwsSeBZD+ii462V7n+csqf7naq751MRVIKrL7lD2xA+AnJvgs6kCqXv+Jj59POpPunhwZOox/au/HuFbZJSs35qW3Za72DHKOLvVhkSK3pNINQMXrUECcDD+WYMxG0745duu0i+W5ze4rBkvF2SujKn6gQ7icfQX58N4Omd0xg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758328762; c=relaxed/simple;
-	bh=G6aXHBdqQGmENcE7xTFYq/oHzVpLr2cJe8HoOawH/Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TakSaAGj2vc1xXY/aJ9osnQCGfK1N4wRlq+p13HR3OMLR0jVZ5ber1Ko0yDxus8R4lm9MtaHXJpecenL4I5ulAanU46iAr1VcPmd2G5x+6hoOVNJm7wNDXUlBY0stApMaXGwmZ2NFUodch0ffS/iGA5d42+xbfN2uow6J5norW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PpnwS86w; arc=fail smtp.client-ip=52.101.62.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VyfHUmjgxJmU7L0zDD5kAS0BoyqqcrRSz9K+/2gwcSbZpofbP7A1dCWQ7zc0KQc4QUXpAPQxdc+MrxeyEVCL/38Eb1KW3VtF9tDZE68t/7ga41cosa5ue6qjU84yZyJ+c2TGzaEjM1nAOdU1+dH0UAkjJxt/sBm41hQYdF64Rzl/XLJQMsEppXI5Go05L6gjPZqErExMOltsMq8DaZR48CXcCdqmC0zGi6Cm2N2JpZndVQwInpYuabPXwgJo7STh8RaY4+NDZ8ogdYAsZ2HBQZylTg4rj048JxmtR3uLyvjs3/iamTPNsaDd69hO62TDJaDCvIFVTc7DQYjFnyf6HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xzzsOZ516hhsrRHzOlsgP3ZOSCUM3IXe3FiQcYh5QJo=;
- b=DQ8oDh7MdMBqic2BWDFXxa8dqNMlmK9uJvAVH6egNdr3A6u0QI0LyYQCsrv+7JDRsooufYuQqEswBYv5Z1HbVvgkvUQsmFHuQykmyfxN58CCVfUUFOyJDWE9qLzBmODhCTEGTYT9++w3qvbA6Cpx6ZtWwgTt0YmGEzCB9oL3fbax9lJbUIwvt+Jgl+TMDNYG1AQI8X+Y+KO6DPZ2ThCZZPuOWaQon+9SKhsye6h5P0A34woj+RlL+WTtoxqBXCZ1l3beNQMZcOPcv+T6PYo/CS0w5gpXRO6NwT9MRHjeeWL052BQA37OgT5hfzGXtd9RBPjicWnHJn82LvIZJz8vkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xzzsOZ516hhsrRHzOlsgP3ZOSCUM3IXe3FiQcYh5QJo=;
- b=PpnwS86wxsjec6IMZsKpwqI9xIc2DbRgKM42CpPO7z3QvMPO/kzMELpajcB4P2bMMdZnG3OnC/vugPXM8Yj1mCrl4NZSpTL2oWVMAxWVxfsy4cbx7O91rXmUeSr1tnhm2ug4j+XaISOVsw8hkvAOJnBqmrk8j5hENncDYBRKJOiWX7qsofak6fB5w6qXwRfpMh0eoiWkz9sT1E2JeG879lLoE0Ut+4MgQQVNeCjLHx/VlBAnk+11mrwnRsu5fY1uWPRHbPrXWEYYj8mVZr8Z+GXGqogBRDzphzHQlw/bC/o09OwOfDMClVdSCnwYQ/QI3R2QkWebNrjmdCPy2olatw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SA3PR12MB8762.namprd12.prod.outlook.com (2603:10b6:806:31f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.17; Sat, 20 Sep
- 2025 00:39:17 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9137.012; Sat, 20 Sep 2025
- 00:39:17 +0000
-Date: Fri, 19 Sep 2025 20:39:16 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v3 5/5] rust: Add KUNIT tests for bitfield
-Message-ID: <20250920003916.GA2009525@joelbox2>
-References: <20250909212039.227221-1-joelagnelf@nvidia.com>
- <20250909212039.227221-6-joelagnelf@nvidia.com>
- <aMDq2ln1ivFol_Db@yury>
- <bbd6c5f8-8ad2-4dac-a3a4-b08de52f187b@nvidia.com>
- <aMIqGBoNaJ7rUrYQ@yury>
- <20250916095918.GA1647262@joelbox2>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250916095918.GA1647262@joelbox2>
-X-ClientProxiedBy: BN0PR04CA0118.namprd04.prod.outlook.com
- (2603:10b6:408:ec::33) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225A9142E83
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758329009; cv=none; b=ZJruAyEPRU+jKd3DH8eWbyrd9+6uK4LBDLFAugz3Hl+KriQx8nc7PyESQFeq//o8tq21CXpGIVBjLhCtr5fl2nlb+iA8Mqc+ltd5gh+tHfq/oOvvJg749bwxx+x932BkV1dAAHJ2+nnnBi3NtDSRoobhu6mTmRY82Pd/WcJpU/w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758329009; c=relaxed/simple;
+	bh=f7o1/6fyI/Dgz29iamkumHyaL6Nr4mTXYAa2T5l1bEk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XJMgW8NlQFk9gZ60b0DiCnVzZY3hVdZWluC7OiYfFhAWgcY+gmWeDybMmTgxIsy2tCS5PUm4oKAbOCzqk8S+ru3ckx80RSsXSPyFqS4fRQyBJcJ0VyEPNdohRFx5/PHSmyNWn2olnn0ts1LR79ZXVJtdOaF5hA4jBVILt1tUTmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Kn0hvkLs; arc=none smtp.client-ip=61.135.153.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758329000;
+	bh=eNH1ER8sQFY9wrfvTE6Za+mVUUdpcPmPX87FiDNsXrY=;
+	h=From:Subject:Date:Message-ID;
+	b=Kn0hvkLss46Nt0pgHGZE0D4+WSdbPQTK1e9MvdoRkRIlvJqCcFfP437jYzUsMZ6a8
+	 SWYqhXIgDv+zmVQwsYOqhzczFUYvJX9YlU/2bqFECoKV9Dm5rWGb5owyRfweTRvQpq
+	 7Hzq7BPOmD728YtvGM5Ixrg/lhHtMB/pKAUHrCT0=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68CDF8A10000357C; Sat, 20 Sep 2025 08:43:15 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3220556292143
+X-SMAIL-UIID: 28BFA9AC4C0640E28D7EBC84552AB059-20250920-084315-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] [usb?] WARNING in __alloc_skb (4)
+Date: Sat, 20 Sep 2025 08:43:00 +0800
+Message-ID: <20250920004306.7233-1-hdanton@sina.com>
+In-Reply-To: <68af7ed3.a00a0220.2929dc.0004.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA3PR12MB8762:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4086d3f3-43b1-40e1-c6d7-08ddf7de2198
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Awd3SjVI231JDv0FrSfyyjbtTV/MyrLWns/gl41XzLf3XC+bmQ4RWC7xejFH?=
- =?us-ascii?Q?EPc0v0tbkx74VZnzFvra7/LfBHIfBlMnhbbBEyfWZ6/2x1r4Y9KZj7LOKWu8?=
- =?us-ascii?Q?fFYadqmLa02F+Y71z0rM9qDmsez5h25eQMpE3REez4EiOQgnFFMDLZELyOMC?=
- =?us-ascii?Q?luULOkSwsWAR9qL077AB1tyMa6VoV1gW9aEkuRaVWegFtc2pQA0LV3zkbhA7?=
- =?us-ascii?Q?R4BT1OeXNhUYFsze7pECROMhJsM4JKYUHqYfN6nyXoAVEcxlGKykp1ZNZVY9?=
- =?us-ascii?Q?VgaNhaL//iRz6XAx40s5V5BzG9jQhzTrZXSUpS/ao+nTHwN7LjsILYXua5vI?=
- =?us-ascii?Q?AOT3ttECRvP+KfhzPUI8xvVc0+yHNVZBqDA0kIBq2Bb3vzdw+/zCab79wfjP?=
- =?us-ascii?Q?SiF4xVo0mOOfCWaDNKJ6ng/0jxoYn31pmFIUZWhem4v1oxw1TwcCKlbW9l2O?=
- =?us-ascii?Q?igc0OMvEENcfveJFYxphC0tY5LOhpv5xMzAsiszTcowvv42eVsOTCzP9O9DS?=
- =?us-ascii?Q?rUiZLKKu4iKuGET66vdxMlOKM97olZWMRCdJ5MPWAhV364zLGf4PC8AdrH8m?=
- =?us-ascii?Q?bqS4igLIM7iw1etLvT8m798M5dOr82w4V2IoK6TNV2F+aQxNPbVNHcsgfVyl?=
- =?us-ascii?Q?DYqDeytirJrczDM/2Hd3g59d1UEI9Z/Q/Dt5yPM/uf2ORPMuvF1+kVsjBmFZ?=
- =?us-ascii?Q?3Eib4ORZluM/0SkVZxLlIkPgQr0yfap1d7Qedw8zVfEVoDkVTrusHUz0eXMs?=
- =?us-ascii?Q?Z9n8ylId+viyx3Mh4SsR1+Wu2/o9CyCURdj37n0tcv1tCItVipK1zUc3BxLR?=
- =?us-ascii?Q?MVq5Dn4AsqWiwFdtoATvO9F6qMaoJEylEgpUi/U7fxA3trOmyhTA1vdTJVDj?=
- =?us-ascii?Q?voNstfawgmmcr6fH0iWKfOEufYSMTxfTdzKjrEGq8huETtWvDpSfUKNwtEht?=
- =?us-ascii?Q?oP7cAczUurtzrbh4qX9bRaMUI/lIioPIsxERDixp+38vdgsgZDr9ffYGNJCK?=
- =?us-ascii?Q?c3JJz4I6JJF/jhrSHJDtPzoRZSR67NkWL6UQ98JDj6pXh5FvdPoJYsZKNUYu?=
- =?us-ascii?Q?NqEEdUx4wyBWWLn+6Gf+yvZi5knAr4kvhD88Yvu4PWF7eVASUbvaMWgqd2bN?=
- =?us-ascii?Q?UvA+cRvjmQjIP68aAtmo5C1W8bf7TsyKOfUd65toT/nTiOIEtRKKVoMHFQL0?=
- =?us-ascii?Q?02o1nzm7wNZf1JfHuoe+AHyVL6wozWmVVf7C00e/xSHlETHgheRIbcBrixyZ?=
- =?us-ascii?Q?93MJkAgDC8L0tpwt8XJcSI7uc1KvijbgCAiLlCGCMSb/tqF3wyJtaasUQ/ju?=
- =?us-ascii?Q?CBB5RYPK/kHQdi/IbKPNhNAdhARETymF+xSSmFGFhqxJsW3wUxKHQ/n9iKJw?=
- =?us-ascii?Q?pN+ipGgjm4nQ3BJ3eMIf0YEERG7slGYg/f8YCv3dGGhq/qcchg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1EOLW7zr2V1GrdDnhClwS8uU4vJKXJK5nhdFxHP8qFmAXxtkhpZxxNp+wCZN?=
- =?us-ascii?Q?SeJmsqcMhJ6rFCQWTd3rr95PAlCWxAvTWOjbf1dWPICUvLNT7wHlloP2pnV7?=
- =?us-ascii?Q?XdPAPhc0TiLlc4YHhbqPXbDdalX9KSnhvY79wH6eA/YHoUfYmPJl4jox5dci?=
- =?us-ascii?Q?xw64TEugtWYMC/egdvQP8sNHP39LKo64LRQ61qSyZiNc9SfkHQ5uVj1fgOM7?=
- =?us-ascii?Q?IdzEhZCRmxjyhBQdF8TXpCDewZwGpObhFHtnvtS2ueDxf33Cx45rCyCYFtD8?=
- =?us-ascii?Q?XWZwG9tP7WuCh9kZV+eA++RShztaufJEMsPCS9WBjkDBce8zIBrXwQRaTRh6?=
- =?us-ascii?Q?0nNc4jOjPDIAUbXy2Hr/6uZAj1EEPbT3qcSn6FFCTrgauhCUbb0iQLPtldQ+?=
- =?us-ascii?Q?dzI1DCRAwFOzh/DemHy8R20P2pDPPbOwzSBdDkVA1OJArPIrCQGJutnS4rUa?=
- =?us-ascii?Q?/Prfnnz+D+1jIQ1n9e4MYpOuVoW3tmz1cyvmTthaLEEoF+a9POysC7WDBKbl?=
- =?us-ascii?Q?dbPX4k7uwfAUB+GpOAon4getRHmpPGDUKmaLp6mPpoNZ1Tix3WcX0MQt8EH+?=
- =?us-ascii?Q?5z+dpuIIO5fnnAHwRkYBvLMdpKkgwXUVRNOaPh8n1lPmw+/HusCG2jPWZ7zZ?=
- =?us-ascii?Q?obNozeisO0W1dsH0OtHV2kwXnOPwG+eJkfkwUR3h7XB+kDXoEXuk3KjFjUmd?=
- =?us-ascii?Q?s8CmJd8pehgL41RgcJGwOqAHd+5uS6yMCxpAqIQV1dI0vAAThAoMtHxsqQoq?=
- =?us-ascii?Q?ypbtoRXVhFHon+3RRbtlZVM/BTyTuTFWa1LRYBUWsVUJUQ9nvWcvWNXItC/f?=
- =?us-ascii?Q?RVNT77cNDbLBcuCJ21gpk9REaAwEKvCddx+v78Iu/aslrRZ0EmLrRs6L2qoW?=
- =?us-ascii?Q?fhKkncGj1+QXpo2DtoiuRm+ll0UUP9by/vQb+Se0/ns6l1LF1j8FHLPyDbDV?=
- =?us-ascii?Q?uCK2lPlH8MBaE683ZBZs8X6mL4QISUpcwliJGBySKW+tMNT6McZI0CSZVdfX?=
- =?us-ascii?Q?VkbCVsvz1BH3Bqopng51IsR+dppP7iGxPwx9NahXVQIf7OALl4QJ6UQnxSzC?=
- =?us-ascii?Q?beaQsGMf5RN5BM0My8Y4l0HvH1W/B71yELX2EV6bwbBNF373KhTBebkolklX?=
- =?us-ascii?Q?5k+nKcxMywQCe+d2X/SpScj3B+6jKG2OtxwvvWX+GrtkETmQJNcZuUoV8W6p?=
- =?us-ascii?Q?qn5xHzwuWZd/vKfJh1vAfwoBeqTbeENoV4ANNR+dq+tNATPZeraM2IhsbN/g?=
- =?us-ascii?Q?kIXyEdLl9MXbpPl9pMgsv+DrlMvU1KdfR68mx3SpAUURVRXStdg7K/5Rgyrb?=
- =?us-ascii?Q?E+yQTcd7+Qcal+ryWJMvbIp3yTWPGQ5JGTUn8pky6BcyGZbEDJU8L3w7vw/5?=
- =?us-ascii?Q?4gwcd2O6S2aJQPd/Hp7IbRRJnIO3wkiWVaota2Vpd7fzZG94cCXYl4aoBH/w?=
- =?us-ascii?Q?HsgUx+VKo0YKMjIf/6pMqFM7DXUInCXGCzS9oruBorwlQHWo61JJq4TrgzOs?=
- =?us-ascii?Q?nSLLuMNeQDapdZXeVOaHfPvqWHv2BNLkuTrR1ZTMqm/q3KH1huMr91frdO67?=
- =?us-ascii?Q?4/NXI775eBeLroPcsqwicQ8FHJfK5S6N9x9w0uG1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4086d3f3-43b1-40e1-c6d7-08ddf7de2198
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2025 00:39:17.6312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QgeUP7TXoDpXQJMOuSprVACoCySrhU87xHPBepyMd5D4Xp1oyf60Qevwr2FDpqn8CwvJlBpqa0vlpsdOBK6CbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8762
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 05:59:18AM -0400, Joel Fernandes wrote:
-[...]
-> > > In C also this is valid. If you passed a higher value than what the
-> > > bitfield can hold, the compiler will still just use the bits that it
-> > > needs and ignore the rest.
-> > 
-> > In C we've got FIELD_{PREP,GET,MODIFY}, implementing the checks.
-> > So those who want to stay on safe side have a choice.
+> Date: Wed, 27 Aug 2025 14:55:31 -0700	[thread overview]
+> Hello,
 > 
-> Ah ok. We can add these checks then for the accessors, I will do so in v4.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11fecc42580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a2250fd91b28106c37b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c94858580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108ea7bc580000
 
-The C checks use BUILD_BUG_ON, in rust-for-linux we have build_assert but it
-is fragile and depends on the value being a constant. Since the setter API
-accepts a run-time value and not a constant, we cannot use this.
+#syz test linux-next master
 
-Or, we can fail at runtime, but that requires changing the set_* to try_set_*
-and returning a Result instead of Self. Alternatively, we can have a debug
-option that panics if the setter API is misued.
-
-Thoughts?
-
-Or for the moment, we can keep it simple and filter out / ignore extra bits
-of the larger value passed (which is what nova-core's register macro bitfield
-implementation currently does anyway).
-
-thanks,
-
- - Joel
-
+--- x/net/core/skbuff.c
++++ y/net/core/skbuff.c
+@@ -657,7 +657,7 @@ struct sk_buff *__alloc_skb(unsigned int
+ 	    likely(node == NUMA_NO_NODE || node == numa_mem_id()))
+ 		skb = napi_skb_cache_get();
+ 	else
+-		skb = kmem_cache_alloc_node(cache, gfp_mask & ~GFP_DMA, node);
++		skb = kmem_cache_alloc_node(cache, gfp_mask & ~(GFP_DMA | __GFP_HIGHMEM), node);
+ 	if (unlikely(!skb))
+ 		return NULL;
+ 	prefetchw(skb);
+--
 
