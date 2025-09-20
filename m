@@ -1,148 +1,155 @@
-Return-Path: <linux-kernel+bounces-825686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCC6B8C850
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AFAB8C859
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4C3C621E49
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF04172E3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3932F5301;
-	Sat, 20 Sep 2025 12:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5432F3C21;
+	Sat, 20 Sep 2025 12:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VJuF/4PD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vZtgJ8hv"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2DC2C327A
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935651DA3D
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758371815; cv=none; b=HDbP6WTCarJMxdWd2vmIJSp9I77tdP3tfXoTTDbRpy0dO2eKTqWhmiwcWxCmxP/qY6xezl9y21FxXoBPggLcod6kIjCu4boU/SxAm+8ydowuQ0zNhJiAn9BDWSveMzgDtC8mfkQt9NYivSEg/jdWIx0zoezgWf+hZEmhvemBLKI=
+	t=1758371949; cv=none; b=StKKXRAKxz5mit+VTzXAloTTLPeaJOid77nlARh2oaSG5DWLIi9G6GKmG+tvF42t4nLNsIIWgexyEA9pQxBvfVSKfq+rbEqXFMdAmQPQZWJ+NpPa9L0K5gXiu8DWiV2qfDw0S6NvRlI+QaIq+MD19Ex3d3NKK5WrLXerf+P4vc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758371815; c=relaxed/simple;
-	bh=NlAyY6gwj3GgebzwwaWrY6Q6kn6D5Bsn1jK4HrmHOC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F5fSgdwi381ntu9JeLKbqMaqmKjo5j3LG3CBoKYn6sFVK+8HZ0N1792jGUBgaoHbXRxfLd7lXzBGsIY+oLQx2DC4bX8UbzOk9NbkpqMAHwgnyeiFxLn1yOOgUtXifngowWnIwmEZrchydgcEF6JUxvgTfEELoyyCgIRDkaOZHKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VJuF/4PD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58K3FYAW019489
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:36:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=kQEsxxv9s/GhWRr7hiHaTvJE9W1ROnl+URj
-	6ByZUdys=; b=VJuF/4PD18F/7WIjaN88QgYYik45597UonMuLRqhx29D+ZdW5Xv
-	9u2rMCS0bi/iJYIrBQftBA+DGrMYviAN/PgsASh6O041JQ7OlWDo00Z3QjjSjHqy
-	dAL6xl4C6SHiMWDFdqeazvSEUkB/G8QqQ3CrCeKmxKA32Wn4MN9RWBLI3KjjyTmY
-	jlrMHgkhiStxPwpguJbQ9oX65mi7noXHNt/6vskAbwMaSpAEnVAQ1NDw5OtUqfPK
-	+njqbmzuEIS1caUVDDLhI0r+SjwxO5nv8oLPpTHHJ0mFJWr5hmR1fSf1T4u1Epc/
-	s6OP1tvt/ksly1O6O7tgeAkqUKeU+nm76qg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyegxe3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:36:51 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-77dff701fb8so1771607b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:36:51 -0700 (PDT)
+	s=arc-20240116; t=1758371949; c=relaxed/simple;
+	bh=OW0k8XHKzs0YOClfaUoGemzLpvEeKaPrwZecN04dhCI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=e/UotD5Qn/vakRPxZelyQwPJmdueRcOVHzH6y3r86iT3gqA6hJf6CdIu+2Y1KL2+BVPtQXeRdF9bLWjZ2DjNFvXCQZoWQwNtSfKRkq2p4UtQc2CLjMwRYid3dE1/Y6Cc5aEWqWoYrsgGJz2Pju3L6TLR6GkNHmbNzGW1FPDzPis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vZtgJ8hv; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-4103fb72537so25982215ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1758371947; x=1758976747; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bidAfQtOZtQGsoz4PFVd7iuyWT5Lp9jrMKoC1aMEMZQ=;
+        b=vZtgJ8hvhqlt45ljhArvvPSiC/usrc4U9x+uNHMYKBSlYjoBZkJnJ3mqRJGFLr+Knv
+         7qWdFS46M0TrUZ+QsetIC5HaoRjuZkM59dBNUc66w7US1bSts0nEIY6N7UiUf4BSg1jQ
+         5sntb+jcHNCT0FerVQF4zkXbIXEz17mk21jEMfhqQfcY9bI/2hXN3FWXwRI8Pg1ADIha
+         HnJJuZ5JjWJnREbtnS3mktTNQQtL0lumR4ulcfPPefjhSvpBuDY4zSoV32/FjheoJ1iY
+         kHfpuGnqFB7pLbmrzg8OyoC29jj2ihUg5lUltxeLnD3mMDoNEsZHAXrnX//InuGnQu3F
+         Sqlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758371810; x=1758976610;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kQEsxxv9s/GhWRr7hiHaTvJE9W1ROnl+URj6ByZUdys=;
-        b=ogVuU4jYjv/1YCjzDISi3php2vvgzpu8Rs3Vc6x+jntawPlQ08GEP7O7ypzeFjv8QL
-         JufAvwuRRuE9axuzOCl6++DQgFTbyT/Ntv3gS+nhhiUgKCW2R/hJVknNLZh1cNjvzpNx
-         K1ZODRONt52ZFO/pdiU8wB3HtLJegXaRb9FHvFQ7ur/qXZTggYIvZClTnSs0tM5oF/iH
-         CEEkZYfm+kB5nT/x7HCvhJRjCA/vzv+W0g9toxnW/P/O3fvT8IGf400x3aH37zRX01tj
-         yD3L6njJbryyrCknMXZGPMByGbacFpGTEC1kq++oGnO/qTakIHdOuwpszoi5DOfnd5Rx
-         O07w==
-X-Forwarded-Encrypted: i=1; AJvYcCWy/7C7XdHWEsR29V0u9E7+knAeQZG491WoGI/HosCN1ozUaibTeH3EZ7CIt0suYqLBIuRwR81aiHSQjZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMo18O7uKIRIpZ9BVShGfIeqwsD9dpLfWnN41E7J5fqwxcS3cS
-	U0+KVI5B8gjqj89geTQTmASWLk5USU2MaQ7LrJI6DEcqVT/XbTe/CIkbM87vsXgJfY2v59IH9ss
-	Wdsg1hf3StZ3/uJdWeY7ayHPsqzG2edhEEiAkuPLTM4pZYSL/Ffx8PjLJMmsHo8l/8Ws=
-X-Gm-Gg: ASbGncvgzXqS0giBIRhMqdBBQZEn+sFoViYolHkeWPBHyo5+H5kb+Zlr5p+XgRRivDj
-	u2HL0NUEvADrVWthK4/WNiihI6zxgAUGvbhqV49ZuSlTmndTP1uMczOWAzrd4DqjTgTKibdGjhL
-	OFxPoI14YRGdgfHhBXZdUmRWP0X3ZWW+VFULVA4BF2gXWd2hxtxyeN+Z1fOaB85QC1IChlknoUH
-	DsFyRRj1c29lGK63Ck+SfwOoFX+4651eDbCPAo6C8y9oVXXTW9N0YcKx8CqxOWjN7G0IsNlzWQT
-	9cpGtLd6UcqeU5sbhhWBUhGHCDS9l+XoOrXN06X4tZpBPl9EkOUtiNwCG+bFaTYsUmIR0aqoVd6
-	fpUqahrrMjbjwB5FCnenCds7yGdyJlPyodSkO9TVuYyqKKo2OhtJtLMIXtxlC
-X-Received: by 2002:a05:6a00:1889:b0:77e:325b:f614 with SMTP id d2e1a72fcca58-77e4d21fd65mr8295127b3a.12.1758371810349;
-        Sat, 20 Sep 2025 05:36:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgWzB5nkqqfDCZX9CuCLhkrbY8TKa9vwIXS5YrzuVH3x6awEHxf0i/Xsr/JFw/xJ+CoTCA+A==
-X-Received: by 2002:a05:6a00:1889:b0:77e:325b:f614 with SMTP id d2e1a72fcca58-77e4d21fd65mr8295094b3a.12.1758371809932;
-        Sat, 20 Sep 2025 05:36:49 -0700 (PDT)
-Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f1550f70asm2911274b3a.13.2025.09.20.05.36.46
+        d=1e100.net; s=20230601; t=1758371947; x=1758976747;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bidAfQtOZtQGsoz4PFVd7iuyWT5Lp9jrMKoC1aMEMZQ=;
+        b=f8hL0ujDO66DebGzm9kjJJbEpWeSIIeSGAGHk+TwOYfgfAn3xIItCfoZqc85gU/M6m
+         KGBA9JveRsIjYdmPm48E19Is0dPNovHkGl6delbtHKOB56zFskTKr+tAV7ePwoD3C7by
+         oasbyDBjPhif2mbyRUk4UmZYU+7PpKoS1FEPlQ+M9eTizbzLIWrpXA3tNQcuiKQ7+M2G
+         fItusi/LKV+suG5KywbbxjeV3Z6i27Mb/5JJheelSYbAd8YDCbFr5T/3O0+yGjz0f/A6
+         vrEIKCFPMRZeDTROphS/5QUMUE+62MD/lEqc5ZB4e32e1pbNckjWAOfZgl7d3Dp3bv3k
+         HJuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKo0FOuXQjK8ISQSYPncj/289Q59/jefYOO+P1fZkQyf6IrUJDJ0b0mvGk8CD3THNJshxFicJmV4Dii4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylgAfR2EzDCocDvIynghlmIHsAASw4GKZrDuu7+n8mIvK0dIie
+	XKiyddaMjub5jRFNOS3+974wuFUJZkrPK7vzU586/wsXD3xG+8XuusVX4F7o5A7Mo8A=
+X-Gm-Gg: ASbGncvXwJ4nxVm1XnHtBdhU2ZFV8Fsic2ickyjAa9ZkA1Z13LTbFR7koagbN7C7rfQ
+	H9nTQz4BRTIur+YI4T/D6z4M+aQZOSQLoccf0NVQxAUj+PkOka8kbrzBkZ2ivQvH6oDzNGmBPhD
+	IychLjkKH+o5ChKJMQ+C0BPvyLhkwHFyBjqd/cOO/7eT8lspJm4W4Vku4Rgw2IRoYgdKOwLQ4Jt
+	+lrq6GgGr1KgYsP5NUZxR5YqcFh6NW7Qh/A76tnSM6PK/r9GT+qAxUloxO4VspAM8qdPDbCgyMu
+	GIwLrM74KydPNm5LEg9+OfBw09vo9PeRZ2kn+DhwVMA/3+OT0qnuFEzzFZHkd/DFaBMWzQgbKe9
+	h7TiTrYt5U/ot9/Q=
+X-Google-Smtp-Source: AGHT+IE/+QZvkh9DD/VJGNui9T9jMzfZLSYXQF3kQevUwzqzqn3Ub0plUjMrGl4uSfVSnH7oenyL/w==
+X-Received: by 2002:a05:6e02:b26:b0:424:30f:8e7f with SMTP id e9e14a558f8ab-4248199c513mr99405665ab.17.1758371946653;
+        Sat, 20 Sep 2025 05:39:06 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42482668b67sm22689055ab.21.2025.09.20.05.39.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 05:36:49 -0700 (PDT)
-From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-To: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
-        daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: thermal: qcom-tsens: Document the Glymur temperature Sensor
-Date: Sat, 20 Sep 2025 18:06:31 +0530
-Message-Id: <20250920123631.281153-1-pankaj.patil@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 20 Sep 2025 05:39:05 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Ming Lei <ming.lei@redhat.com>, 
+ Caleb Sander Mateos <csander@purestorage.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250918014953.297897-1-csander@purestorage.com>
+References: <20250918014953.297897-1-csander@purestorage.com>
+Subject: Re: [PATCH 00/17] ublk: avoid accessing ublk_queue to handle
+ ublksrv_io_cmd
+Message-Id: <175837194548.917590.3460504068129272434.b4-ty@kernel.dk>
+Date: Sat, 20 Sep 2025 06:39:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: EWlEDsTxf9aUHrGrgIqXfSrB5Kn5rYjM
-X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68ce9fe3 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=8GdNKlHnjaA04NifdkAA:9
- a=OpyuDcXvxspvyRM73sMx:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX5eq+mpaNXYUb
- my7s1E58Nl/xwxiFfOlE2XcAn90c2luoznAQTMwJ1q1G5tUnVD2mMvhSvh4MhPyOGJjGEt73nv3
- Oc00oZezimt1/tXGoa7JbrjGlYVMgUlSMYQAbSKXlFi0PAa44o+BLBfwfSktfKCqbC9WAr2s49a
- bsVe4YwHlpxt1uKvgNStd4Irz10W6+RSVJIupRufHo+tjHI9cLd3D/mR8DbZkLl8PUU/0+HsBHs
- p1ALrt5cVtu3M5B/y/d0ubg4U57UZ9TnH7ELo9NsSM3tm3NyjSOPEMLpuWNO7wvkyJudc2s/oYo
- 2K3qDWqtCJPFWAUEiLDJgR6NpxN077w+/2oni7fApFRXzus5t+sCO1m8bflY9v7MYn/upgJKBuI
- 660Rw7yA
-X-Proofpoint-ORIG-GUID: EWlEDsTxf9aUHrGrgIqXfSrB5Kn5rYjM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-20_04,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-From: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
 
-Document the Temperature Sensor (TSENS) on Glymur Platform.
+On Wed, 17 Sep 2025 19:49:36 -0600, Caleb Sander Mateos wrote:
+> For ublk servers with many ublk queues, accessing the ublk_queue in
+> ublk_ch_uring_cmd_local() and the functions it calls is a frequent cache miss.
+> The ublk_queue is only accessed for its q_depth and flags, which are also
+> available on ublk_device. And ublk_device is already accessed for nr_hw_queues,
+> so it will already be cached. Unfortunately, the UBLK_IO_NEED_GET_DATA path
+> still needs to access the ublk_queue for io_cmd_buf, so it's not possible to
+> avoid accessing the ublk_queue there. (Allocating a single io_cmd_buf for all of
+> a ublk_device's I/Os could be done in the future.) At least we can optimize
+> UBLK_IO_FETCH_REQ, UBLK_IO_COMMIT_AND_FETCH_REQ, UBLK_IO_REGISTER_IO_BUF, and
+> UBLK_IO_UNREGISTER_IO_BUF.
+> Using only the ublk_device and not the ublk_queue in ublk_dispatch_req() is also
+> possible, but left for a future change.
+> 
+> [...]
 
-Signed-off-by: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
-Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
----
-Changes in v2:
-Fixed to sort entry in alphabetical order.
+Applied, thanks!
 
- Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
- 1 file changed, 1 insertion(+)
+[01/17] ublk: remove ubq check in ublk_check_and_get_req()
+        commit: 163f80dabf4f0c4d9e6c39e0dba474814dac78f8
+[02/17] ublk: don't pass q_id to ublk_queue_cmd_buf_size()
+        commit: b7e255b0340b5319fca4fe076119d0f929a24305
+[03/17] ublk: don't pass ublk_queue to __ublk_fail_req()
+        commit: 0265595002b989db8e0c32dc33624fa61a974b20
+[04/17] ublk: add helpers to check ublk_device flags
+        commit: d74a383ec70de33ae6577af889556747d6693269
+[05/17] ublk: don't dereference ublk_queue in ublk_ch_uring_cmd_local()
+        commit: 5125535f90564117506d926d0de92c4c2622b720
+[06/17] ublk: don't dereference ublk_queue in ublk_check_and_get_req()
+        commit: b40dcdf8235d536072b9f61eb6d291f0f3720768
+[07/17] ublk: pass ublk_device to ublk_register_io_buf()
+        commit: 8a81926e45670c6d9b6e73e0482485d5c9a627e6
+[08/17] ublk: don't access ublk_queue in ublk_register_io_buf()
+        commit: 692cf47e1af39f86f28069db5ca6b00a7d2daddc
+[09/17] ublk: don't access ublk_queue in ublk_daemon_register_io_buf()
+        commit: ce88e3ef33d35c740d26342be5d8f65972fd5597
+[10/17] ublk: pass q_id and tag to __ublk_check_and_get_req()
+        commit: 25c028aa791503fe0876c20bfd67b2676e6e24d0
+[11/17] ublk: don't access ublk_queue in ublk_check_fetch_buf()
+        commit: a689efd5fde7b39cfbcf43267bccf0e56295cc16
+[12/17] ublk: don't access ublk_queue in ublk_config_io_buf()
+        commit: 23c014448e97d4b59c54816f545ab963bf8dd644
+[13/17] ublk: don't pass ublk_queue to ublk_fetch()
+        commit: 3576e60a33c7f6be024b80f8c87312032fd27892
+[14/17] ublk: don't access ublk_queue in ublk_check_commit_and_fetch()
+        commit: be7962d7e3d9dd9ff5b6bcd3faccb3b0f76a9734
+[15/17] ublk: don't access ublk_queue in ublk_need_complete_req()
+        commit: 122f6387e845dfbfcf1ed795734a1ec779e987f0
+[16/17] ublk: pass ublk_io to __ublk_complete_rq()
+        commit: 97a02be6303646e19e9092042928b0e13543305c
+[17/17] ublk: don't access ublk_queue in ublk_unmap_io()
+        commit: 755a18469ca4eca3b5bb4f52704b7708a9106db9
 
-diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-index f65dc829574c..78e2f6573b96 100644
---- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-+++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-@@ -49,6 +49,7 @@ properties:
-       - description: v2 of TSENS
-         items:
-           - enum:
-+              - qcom,glymur-tsens
-               - qcom,milos-tsens
-               - qcom,msm8953-tsens
-               - qcom,msm8996-tsens
+Best regards,
 -- 
-2.34.1
+Jens Axboe
+
+
 
 
