@@ -1,164 +1,136 @@
-Return-Path: <linux-kernel+bounces-825536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3902FB8C0E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:38:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44462B8C0EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0110B1C063D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:38:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E95560E4C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1244B2D5C6A;
-	Sat, 20 Sep 2025 06:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF6C2D5C67;
+	Sat, 20 Sep 2025 06:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WK+XP40l";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LM3qWjZc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WK+XP40l";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LM3qWjZc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eiOL+rYt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198B221F39
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5172028467B;
+	Sat, 20 Sep 2025 06:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758350280; cv=none; b=LDEPoosZiX0MFLB0mT4MbAMIrF0TP16uHgeapKQRDCmjeVnXkgXDpEGy/IQ2BEB+J5os//AVAVsaYN3FGELYiDHbpFSwBZ2d/3IZ7wLD/NOvjobV45aBWvEwX1DJ69N+UAw98eEPTCWo7wrUiHP5XRxGBVBQCaRHbsKFjddkP6I=
+	t=1758350555; cv=none; b=eN2z1+SAGU4i7TefmSG3A0PkpkNQs3qrVUgMwGPcueJgxx2RgBTq/NceZhv1rNQxM2dfQAg3fS9ASLrF+fAW7qzaRKq1yP4MHMRPioSIYCvYh9LOMqnemwn63QPceyFQ/ZyYWcbTV0Nzdop2oX3ZO/9UW1Oq5iDAu4HXL+WYTMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758350280; c=relaxed/simple;
-	bh=VHOmo69n8KM79KB62I0gjPBk041aV+ckk7iDXW979AI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c8AVSA6xTliRsak4xKhwEQpi9jCMQyi6P/SGahds7m5dJpeW42vYxZNelD6P2yetYS5O6OhRKvRfAwyPmQGI3OfIVZAXfumsKNX1ufYS6ldCzGboY6Ihgtt8JjyXvvMjNAr8O7SOguaOgHx3ereNipEg71SMovQscnE+w9e38yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WK+XP40l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LM3qWjZc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WK+XP40l; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LM3qWjZc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 989861F7B8;
-	Sat, 20 Sep 2025 06:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758350276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6qHPxRcM8hvaooqJhNiXQR+BuEOMUHilV83neFMPBkk=;
-	b=WK+XP40lSGd23Tmu37/pqNoX+yS5icJUdh//mePmA7LIGQDTFVBecY9/spp5kJqxIaMAAo
-	A8hotdn+cWxRO+iNJfo3bYGbE2N+7mBn0O2ag9d6Hz6dmhgpTnkpFIkOTqtyG8D6vpHE1B
-	5ILDcHne6pLJC5PMjQD8zQvq33OvlCc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758350276;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6qHPxRcM8hvaooqJhNiXQR+BuEOMUHilV83neFMPBkk=;
-	b=LM3qWjZcrb62Kt6mAlO1WMTpdpg1gAjrG0Q8lKMvi2zihsmbjfpsWxFnvLQU7C6TpE4ywQ
-	iRbyuTMFb/NYQmDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WK+XP40l;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=LM3qWjZc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758350276; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6qHPxRcM8hvaooqJhNiXQR+BuEOMUHilV83neFMPBkk=;
-	b=WK+XP40lSGd23Tmu37/pqNoX+yS5icJUdh//mePmA7LIGQDTFVBecY9/spp5kJqxIaMAAo
-	A8hotdn+cWxRO+iNJfo3bYGbE2N+7mBn0O2ag9d6Hz6dmhgpTnkpFIkOTqtyG8D6vpHE1B
-	5ILDcHne6pLJC5PMjQD8zQvq33OvlCc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758350276;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6qHPxRcM8hvaooqJhNiXQR+BuEOMUHilV83neFMPBkk=;
-	b=LM3qWjZcrb62Kt6mAlO1WMTpdpg1gAjrG0Q8lKMvi2zihsmbjfpsWxFnvLQU7C6TpE4ywQ
-	iRbyuTMFb/NYQmDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 55283137D2;
-	Sat, 20 Sep 2025 06:37:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qPZxE8RLzmgVMQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sat, 20 Sep 2025 06:37:56 +0000
-Date: Sat, 20 Sep 2025 08:37:55 +0200
-Message-ID: <87y0q97hoc.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux PCI <linux-pci@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Takashi Iwai <tiwai@suse.de>,
-	Zhang Qilong <zhangqilong3@huawei.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v1 0/3] PM: runtime: Auto-cleanup macros for pm_runtime_resume_and_get()
-In-Reply-To: <5049058.31r3eYUQgx@rafael.j.wysocki>
-References: <5049058.31r3eYUQgx@rafael.j.wysocki>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1758350555; c=relaxed/simple;
+	bh=5e3PO9sm0kwZZFFmVI0IYn8SvQHCwKEdjnXvKF3BC1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jrmspa82sxoTdZ+mAeC0oisn5sBdQqjFgznRCtaxRHFFZ44od0facHpSsR6jj+RtU0SoOtP9lu7bpsV/RyejmqzLGW5tJpPU7lx+ZGj+UBUtsZVTqcCPM2Ot4PyJmKaQbX5zZE4WEvu0BN0T0APjuV6a5C8jksvoNuKb/ZM8nB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eiOL+rYt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0AAC4CEEB;
+	Sat, 20 Sep 2025 06:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758350554;
+	bh=5e3PO9sm0kwZZFFmVI0IYn8SvQHCwKEdjnXvKF3BC1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eiOL+rYtzseHizgBdLkpV2WcDHnv5fPjcfRCjLBfHzSWkBN2a3KsMopc9Fd3QCDyS
+	 hyC2JVsFh17sKWtgyDvpZilU1KS5EoWJWJjBh/m0H3YNZcNN+7JTqO8doM3uZY1sGF
+	 jtvXkUyHtqjGr6GycW2lX6PRYTtfh+UlTo0sAxQeTdhwXbUJZOY/DeScAgZjvg73Fp
+	 6GUx0bpmnmzhEFVOWVZY5BOsXxnjhBYIVbucc46xNnKMimf3wovh53geDfnK4Le472
+	 tWR0FsvSzrcktUaOuDdqBrho02HmoWK5pvp8Fzn4zntrrZJ/GV7y68PKj6X+LWkZCf
+	 yZz/w3g0W0egg==
+Date: Fri, 19 Sep 2025 23:42:34 -0700
+From: Kees Cook <kees@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 0/5] arm64: Move kernel mode FPSIMD buffer to the stack
+Message-ID: <202509192219.E69A1FDA5@keescook>
+References: <20250918063539.2640512-7-ardb+git@google.com>
+ <20250919193221.GB2249@quark>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 989861F7B8
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919193221.GB2249@quark>
 
-On Fri, 19 Sep 2025 18:34:40 +0200,
-Rafael J. Wysocki wrote:
+On Fri, Sep 19, 2025 at 02:32:21PM -0500, Eric Biggers wrote:
+> On Thu, Sep 18, 2025 at 08:35:40AM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> > 
+> > Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
+> > context switch out of struct thread_struct, and onto the stack, so that
+> > the memory cost is not imposed needlessly on all tasks in the system.
+> > 
+> > Patches #1 - #3 contains some prepwork so that patch #4 can tighten the
+> > rules around permitted usage patterns of kernel_neon_begin() and
+> > kernel_neon_end(). This permits #5 to provide a stack buffer to
+> > kernel_neon_begin() transparently, in a manner that ensures that it will
+> > remain available until after the associated call to kernel_neon_end()
+> > returns.
+> > 
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Mark Brown <broonie@kernel.org>
+> > 
+> > Ard Biesheuvel (5):
+> >   crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
+> >   crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
+> >   crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
+> >   arm64/fpsimd: Require kernel NEON begin/end calls from the same scope
+> >   arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
+> > 
+> >  arch/arm64/crypto/aes-ce-ccm-glue.c |  5 +--
+> >  arch/arm64/crypto/sm4-ce-ccm-glue.c | 10 ++----
+> >  arch/arm64/crypto/sm4-ce-gcm-glue.c | 10 ++----
+> >  arch/arm64/include/asm/neon.h       |  7 ++--
+> >  arch/arm64/include/asm/processor.h  |  2 +-
+> >  arch/arm64/kernel/fpsimd.c          | 34 +++++++++++++-------
+> >  6 files changed, 34 insertions(+), 34 deletions(-)
 > 
-> Hi All,
+> This looks like the right decision: saving 528 bytes per task is
+> significant.  528 bytes is a lot to allocate on the stack too, but
+> functions that use the NEON registers are either leaf functions or very
+> close to being leaf functions, so it should be okay.
 > 
-> This series adds two auto-cleanup macros for runtime PM usage counter
-> incrementations carried out by pm_runtime_resume_and_get() ([1/3]),
-> converts the only user of the previously introduced DEFINE_FREE()
-> macro for pm_runtime_put() to using one of the new macros ([2/3]),
-> and drops the DEFINE_FREE() mentioned above ([3/3]).
+> The implementation is a bit unusual, though:
 > 
-> The new macros should be somewhat more straightforward to use than
-> the existing _FREE and they enforce error handling.
+>    #define kernel_neon_begin()	do { __kernel_neon_begin(&(struct user_fpsimd_state){})
+>    #define kernel_neon_end()	__kernel_neon_end(); } while (0)
+> 
+> It works, but normally macros don't start or end code blocks behind the
+> scenes like this.  Perhaps it should be more like s390's
+> kernel_fpu_begin(), where the caller provides the buffer that the
+> registers are stored in?  
 
-For the series:
+We've done stuff like this in the past, but I did wonder if we could use
+any of the cleanup.h style logic to do this instead of the split
+do/while? I think this would work, totally untested:
 
-Reviewed-by: Takashi Iwai <tiwai@suse.de>
+DEFINE_LOCK_GUARD_0(neon,
+		    __kernel_neon_begin(&(struct user_fpsimd_state){}),
+		    __kernel_neon_end())
+...
+scoped_guard(neon) {
+	do neon things
+}
 
+It would require a fair bit of refactoring to replace the existing
+begin/end code, though...
 
-Thanks!
-
-Takashi
+-- 
+Kees Cook
 
