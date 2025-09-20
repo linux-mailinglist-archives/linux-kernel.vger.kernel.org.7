@@ -1,94 +1,89 @@
-Return-Path: <linux-kernel+bounces-825632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7493B8C62F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB01B8C652
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BE61BC0E25
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:57:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F3C7C6E91
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725532F9DAB;
-	Sat, 20 Sep 2025 10:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECDE2F9C29;
+	Sat, 20 Sep 2025 10:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nxl6vrc4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7frzAc5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C555B34BA2A;
-	Sat, 20 Sep 2025 10:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9999E34BA2A;
+	Sat, 20 Sep 2025 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758365818; cv=none; b=IuIQp+bUALM8g1A667Bo1uKP/zzUaxCM/ubBM9iv5nZh0zK68var/o3RFIYqPo8MV60KPDUADqMZDZGs7D/jXgbd5bwyQsCBHmLl0/6DGyhBiG8S3NNt6QdCEavpfXeQYAUgjwdHqYlO8TPCzj49zH5+oIFpzJm6O0YrQsOUgdQ=
+	t=1758365903; cv=none; b=QuKdp8A+v0z3Lh7ADslJwDWOs8jHKbUeF38f0+6b6YkBbiZFkOCdTbCw4BCJ+xWHMpN1mXxRZABrXpZW9+o1iJrsmhvgbrfaZ3two+YIL7Ie599Vy0B/69gwiSTeyyyz0hJX6Yy4lnb7HC6fzH5b3yCTWp6gOu/nEKRbmommS14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758365818; c=relaxed/simple;
-	bh=B/jdvogs/YBdZchcd4g5GXCV2jXYI1AZopvQxzMokk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WZFNdzfA6Bwtg1dYqnLQRu65cn5TvGBS+7oYrLjS1ekmNOuhV1+vcFmpA4kXRbgpj7q9UQloXLGlhLBF+g/JiDYdBVrAEwMSSuHUdbwRuQTXFMhshzDp+u/RZuMYxckNsnWtws0s4tjx42xZbESGBAo7sxklkokxzsu1tiJKkho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nxl6vrc4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DB3C4CEEB;
-	Sat, 20 Sep 2025 10:56:55 +0000 (UTC)
+	s=arc-20240116; t=1758365903; c=relaxed/simple;
+	bh=uE03hdjrQBgWVV3gdYRVlDj5DHUKodItPcgLn5ZptcA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AnB/1M2PytZ5tPYU2h8K6J22r9EdvnLUlQSs3UazXBcOJLSTXSaBJjSPp7wflpB5EYVQbDt+3u7gMY6gELt/5tIVQexnmp/Uc3Scp0smJf2MdL7ChkbfXGhYwyix7EkJ8fnuhk8qGm41EXxTXTE9e1FNEpmFn4zCdgW45vNTDP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J7frzAc5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F02FC4CEEB;
+	Sat, 20 Sep 2025 10:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758365818;
-	bh=B/jdvogs/YBdZchcd4g5GXCV2jXYI1AZopvQxzMokk4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Nxl6vrc4mTZtj2BTkgQFgBBw/525F/c3nyuca+ZwFiIHknVzwlfVYFshpMt8sNObb
-	 sPccnYG0Vn6Sf4UFIRg23xmdHXZgciBZ9p7kun7r+JngWSOTKePXS1HlKPtYjx/cJ/
-	 14YBtEkjaClcHOemF05uaRk7IaLAnkzve3Wmq2D5mUqJOs2lCuTBspWOuAOAUT7eOs
-	 +e12oG0tzwubzUzWtAuGBFKnGtICR0n2xDzwcj2iRlG7QdCHgHceFzyulf+QADDGXe
-	 uDw2CYwVuYiQpvyUROl73xQklteESNc7D4p9QISXNbIquPeF5TnmLX/pSLofrZcDjF
-	 iqAFH1Id/exaw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux PCI <linux-pci@vger.kernel.org>,
- Alex Williamson <alex.williamson@redhat.com>,
- Bjorn Helgaas <helgaas@kernel.org>, Zhang Qilong <zhangqilong3@huawei.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 3/3] PM: runtime: Drop DEFINE_FREE() for pm_runtime_put
-Date: Sat, 20 Sep 2025 12:56:41 +0200
-Message-ID: <22849216.EfDdHjke4D@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <6204724.lOV4Wx5bFT@rafael.j.wysocki>
-References: <6204724.lOV4Wx5bFT@rafael.j.wysocki>
+	s=k20201202; t=1758365903;
+	bh=uE03hdjrQBgWVV3gdYRVlDj5DHUKodItPcgLn5ZptcA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=J7frzAc5ANy+M7q1TdLrWDtVxg28PAKTOEZCDBQplUz02Agf4oFs7AfkC/c7yAhyy
+	 aTGy4LkBQgD8CitzqiYi7fll2wuz2LOyDF7LzDnskumZ2golGsh/PY3hhL1SE1/tMf
+	 Skmk7c5VpAk1IKQ4zo8bBoV8BEnJmfKsuSwBjNZ4OV1MK2mpRJynwtuH+2wYgAIXC6
+	 gr9dg2WPXyZtpB53C/rzDbOtNCZoXJe/DrQoC91lhqB7zaVstXYwBXfprAZhzsqeMd
+	 2qVZAAja5VHCet+FdMreCcA+8ZlyezERC8Z1M9rYg7X8h7+n3VxGh7K9iXkINcrNgV
+	 cPYMY2BzAOpLQ==
+Date: Sat, 20 Sep 2025 11:58:14 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: cy_huang@richtek.com, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andy Hsu <andy_ya_hsu@wiwynn.com>
+Subject: Re: [PATCH] iio: adc: rtq6056: Correct the sign bit index
+Message-ID: <20250920115814.2cc3beae@jic23-huawei>
+In-Reply-To: <c18d6200-3f42-4a84-bc15-627d1a4174f1@baylibre.com>
+References: <7e43ad09f814d63b570ab6b2b9fe3fe17775d22d.1758164614.git.cy_huang@richtek.com>
+	<c18d6200-3f42-4a84-bc15-627d1a4174f1@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 18 Sep 2025 07:45:03 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-The DEFINE_FREE() for pm_runtime_put has been superseded by recently
-introduced runtime PM auto-cleanup macros and its only user has been
-converted to using one of the new macros, so drop it.
+> On 9/17/25 10:10 PM, cy_huang@richtek.com wrote:
+> > From: ChiYuan Huang <cy_huang@richtek.com>
+> > 
+> > The vshunt/current reported register is a signed 16bit integer. The
+> > sign bit index should be '15', not '16'.
+> > 
+> > Fixes: 4396f45d211b ("iio: adc: Add rtq6056 support")
+> > Reported-by: Andy Hsu <andy_ya_hsu@wiwynn.com>
+> > Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+> > ---  
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
+> 
+Hi.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+I'm not planning to do another fixes pull before the merge
+window, so I've queued this up for early next cycle and marked
+it for stable so it will get backported.
 
-v1 -> v2: No changes.
+Thanks
 
----
- include/linux/pm_runtime.h |    2 --
- 1 file changed, 2 deletions(-)
-
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -582,8 +582,6 @@ static inline int pm_runtime_put(struct
- 	return __pm_runtime_idle(dev, RPM_GET_PUT | RPM_ASYNC);
- }
- 
--DEFINE_FREE(pm_runtime_put, struct device *, if (_T) pm_runtime_put(_T))
--
- /**
-  * __pm_runtime_put_autosuspend - Drop device usage counter and queue autosuspend if 0.
-  * @dev: Target device.
-
-
-
+Jonathan
 
