@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-825577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F72BB8C430
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:57:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A674FB8C433
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4562623ED9
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:57:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A76D67B3790
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBE727C154;
-	Sat, 20 Sep 2025 08:57:01 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020442877FE;
+	Sat, 20 Sep 2025 09:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddRoUQXO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE636221FC6;
-	Sat, 20 Sep 2025 08:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D53B221FC6;
+	Sat, 20 Sep 2025 09:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758358620; cv=none; b=ZUIVX+pKNgKpyIGHWTN3UQfSk/hdJ9pF0KaZCacgDq4MS4GenHXpZ1+zNz0GFlIba83xZrWA3NNVpIukmzIdK6SXLFEMpTYTPCyoWi2Mg4b0gg9H4SlAVLnLm+nE0lIQf4eNJmAc7E1YoLaLKdQZG+IIkZbOYZMt5agq3EuO874=
+	t=1758359216; cv=none; b=jnL5r8/gf0TbpKWCgk5VPNbt89PWLD/y7uvZinleLWTLaGMVbyEkK/upmSn18mlqMKoAZ0wlHPVNuJlZQ/CVYFMKo8tmZS3FQ8CeLeNGyH9pv0mRP39HRHrjeI/jR20VMKvLshRCiwl35xlfD6Dergn7unLYG/XL6yCXDNmBRIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758358620; c=relaxed/simple;
-	bh=ZrCnW8J2sJBMWqEmPffenmgJiU20qJrMUSM/2Tm9sRw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=sMlOcDywr9x/6h40BFOv8hh9caRZ+nz3vvamnpxQR+svYPgRp0NTA55WCXLWbE1dpqfQhlSLyCHxIfIj5P4VcywaCv/ZJ4/bgS56BGPubQdqXmMWqmG3OMV/I1Y80JyZSH3rqaobANVQlQptNVH5hZEakKzyNONVyCLdp92CVUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.103] (213.87.157.150) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sat, 20 Sep
- 2025 11:56:29 +0300
-Message-ID: <4be800b2-1c2b-4803-9cac-f3d0928a5975@omp.ru>
-Date: Sat, 20 Sep 2025 11:56:29 +0300
+	s=arc-20240116; t=1758359216; c=relaxed/simple;
+	bh=adOKBhDT5s5o8PdZzlj1YMH0SYwmlznoPvinIas8Cec=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=IIsY5mLv421IRCgbj78wjc9wwaxaJ0aciXE9FPGuGN1PYrpSDBUy6S4wv7CJRdltkZ5PhRG7lztyumClfJINa2fiw/Om3cq8h45VpkOACfnsVtO4P9aGt4TaY5S27Ry2J0/AWvNPI1beOYb6y+5WwMNeryeS/GACoJAAe27ypzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddRoUQXO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05FA8C4CEEB;
+	Sat, 20 Sep 2025 09:06:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758359215;
+	bh=adOKBhDT5s5o8PdZzlj1YMH0SYwmlznoPvinIas8Cec=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ddRoUQXO3K7bdiMadtZUpOFC5/g4pkE5xPR3f1We76HOVkt2fBWsaaYeJ0m3KuVNx
+	 HDTSS07QfBGWb3iwys+2zR8KBVGnXMz1Rq4AQrqRMN0unkVlMmSAp05hHsV7WhwVPf
+	 oPpPHhxquMKj9ekM0nu6j2ThY+T9SNZol2IcDrWn5Jfysvsf8fNhXSZV6+eBTusNsf
+	 PGInrDs0bftgG43yp9W6UXSnwGkZk0l4kxUzLcAUqJ4PpN0+D0qglpCaUtWBC3ACJi
+	 mvzlSca2lVuXjx2cmisLaX5HIv81ZCimYTsD4EopPDaMSbq+OMkTYn2TVSWRZsuBcQ
+	 /6G17KEclnI8g==
+Date: Sat, 20 Sep 2025 18:06:51 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, oe-kbuild-all@lists.linux.dev,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] tracing: Add an option to show symbols in _text+offset
+ for function profiler
+Message-Id: <20250920180651.fc561283df65b51a0c570793@kernel.org>
+In-Reply-To: <202509200025.UH0WU2Qw-lkp@intel.com>
+References: <175826135058.101165.7219957344129610147.stgit@devnote2>
+	<202509200025.UH0WU2Qw-lkp@intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: 8250_mtk: correct max baud rate in the
- set_termios() method
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <bd8764c5-c43c-4bca-996d-65367805ad5a@omp.ru>
-Content-Language: en-US
-Organization: Open Mobile Platform
-In-Reply-To: <bd8764c5-c43c-4bca-996d-65367805ad5a@omp.ru>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/20/2025 08:43:34
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 196453 [Sep 19 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 67 0.3.67
- f6b3a124585516de4e61e2bf9df040d8947a2fd5
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {Tracking_spam_in_reply_from_match_msgid}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.157.150 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.157.150
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/20/2025 08:45:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/20/2025 6:43:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 9/5/25 11:07 PM, Sergey Shtylyov wrote:
+On Sat, 20 Sep 2025 01:09:42 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-> As is obvious from the code calculating the divisor in the set_termios()
-> method, the Mediatek UART driver uses 256-time oversampling for the high
-> baud rates, so passing port->uartclk to uart_get_baud_rate() for the max
-> acceptable baud rate makes no sense, we should divide by 256 first (this
-
-   Well, I thought again and 256 seems to be an overkill, I should probably
-have reverted to division by 16 instead...
-
-> should also prevent overflow when some arbitrary baud rate is passed via
-> termios->c_ospeed)...
+> Hi Masami,
 > 
-> Found by Linux Verification Center (linuxtesting.org) with the Svace static
-> analysis tool.
+> kernel test robot noticed the following build errors:
 > 
-> Fixes: 81bb549fdf14 ("serial: 8250_mtk: support big baud rate.")
-> Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+> [auto build test ERROR on trace/for-next]
+> [also build test ERROR on linus/master v6.17-rc6 next-20250918]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Masami-Hiramatsu-Google/tracing-Add-an-option-to-show-symbols-in-_text-offset-for-function-profiler/20250919-135733
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+> patch link:    https://lore.kernel.org/r/175826135058.101165.7219957344129610147.stgit%40devnote2
+> patch subject: [PATCH] tracing: Add an option to show symbols in _text+offset for function profiler
+> config: arc-randconfig-001-20250919 (https://download.01.org/0day-ci/archive/20250920/202509200025.UH0WU2Qw-lkp@intel.com/config)
+> compiler: arc-linux-gcc (GCC) 15.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200025.UH0WU2Qw-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509200025.UH0WU2Qw-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    kernel/trace/trace.c: In function 'create_trace_options_dir':
+> >> kernel/trace/trace.c:526:16: error: 'TRACE_ITER_PROF_TEXT_OFFSET' undeclared (first use in this function); did you mean 'TRACE_ITER_CONTEXT_INFO'?
+>      526 |                TRACE_ITER_PROF_TEXT_OFFSET)
+>          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-[...]
+Aah, it should be defined always. OK, let me fix that in the next version.
 
-MBR, Sergey
+Thanks!
 
+
+>    kernel/trace/trace.c:9316:34: note: in expansion of macro 'TOP_LEVEL_TRACE_FLAGS'
+>     9316 |                     !((1 << i) & TOP_LEVEL_TRACE_FLAGS))
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~
+>    kernel/trace/trace.c:526:16: note: each undeclared identifier is reported only once for each function it appears in
+>      526 |                TRACE_ITER_PROF_TEXT_OFFSET)
+>          |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    kernel/trace/trace.c:9316:34: note: in expansion of macro 'TOP_LEVEL_TRACE_FLAGS'
+>     9316 |                     !((1 << i) & TOP_LEVEL_TRACE_FLAGS))
+>          |                                  ^~~~~~~~~~~~~~~~~~~~~
+> 
+> 
+> vim +526 kernel/trace/trace.c
+> 
+>    512	
+>    513	/* trace_flags holds trace_options default values */
+>    514	#define TRACE_DEFAULT_FLAGS						\
+>    515		(FUNCTION_DEFAULT_FLAGS |					\
+>    516		 TRACE_ITER_PRINT_PARENT | TRACE_ITER_PRINTK |			\
+>    517		 TRACE_ITER_ANNOTATE | TRACE_ITER_CONTEXT_INFO |		\
+>    518		 TRACE_ITER_RECORD_CMD | TRACE_ITER_OVERWRITE |			\
+>    519		 TRACE_ITER_IRQ_INFO | TRACE_ITER_MARKERS |			\
+>    520		 TRACE_ITER_HASH_PTR | TRACE_ITER_TRACE_PRINTK |		\
+>    521		 TRACE_ITER_COPY_MARKER)
+>    522	
+>    523	/* trace_options that are only supported by global_trace */
+>    524	#define TOP_LEVEL_TRACE_FLAGS (TRACE_ITER_PRINTK |			\
+>    525		       TRACE_ITER_PRINTK_MSGONLY | TRACE_ITER_RECORD_CMD |	\
+>  > 526		       TRACE_ITER_PROF_TEXT_OFFSET)
+>    527	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
