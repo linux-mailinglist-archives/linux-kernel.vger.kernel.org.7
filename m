@@ -1,401 +1,170 @@
-Return-Path: <linux-kernel+bounces-825765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DEC4B8CC70
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:00:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB62B8CC7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71FB3B0579
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:00:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D43AC3BF05A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4421E5213;
-	Sat, 20 Sep 2025 16:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D77828DB3;
+	Sat, 20 Sep 2025 16:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="sy+v2ain"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZS3g0djW"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E12C2F745F
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 16:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D14223707
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 16:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758384005; cv=none; b=isjGO5E+wtLoLEC+PchN+CddZsKrGSJzWWUjfbFGbLDhCHobcgU22ML5m21vROYtTUksT6XyGfO+a7BWprWBuayLyFExM3tUBI7E/whMC2PZFyPsHYrAeuSsJwMCosUGnUf92c1ONcTdnAw7sCjKOpoJFuuohARgguzvEekqtNA=
+	t=1758384044; cv=none; b=l5HT6miQtZW1WjRESJ/AcODdGuKYa9VbzUO0Wm6NC/ywdolF/K/x196eWRet6R291Tb6+SuDAst/VeXuAId7VyZroyssUS57GFyoh3SXfithPygZwilOPPmVVLBLG3UBclNb7CosA5okkkPxwsknTldI+VNOadtumO9IqGdNFP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758384005; c=relaxed/simple;
-	bh=jXP/oScWBYO1Vre2koa+7iI9MhZ+QpEupRNca54lv/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JJgd8dV0oZg3B//BPCMniz/Fps1wHn7oFdmcgtGdf7QPKfPv2DOPABsjU8sm1ofI6g5JAjAPB2uA4+imUhYg1YmZKSxVkEazX8WdAc/buRp63G2D5+fOsh7XyVzheTjaCbDxxSzxQur5X3zF8KNv4s9tkba2W3M0ckdw8xvG90I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=sy+v2ain; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-42480cb4127so24848845ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:00:02 -0700 (PDT)
+	s=arc-20240116; t=1758384044; c=relaxed/simple;
+	bh=0FXSiX8LV1vGBvynLmEYz4qPHdBcTqMHOixN5CzoCzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FQ3FT0V8MmtTLQZEmT+ZNpcrVnmhQdKdtrH99C7ft3FnYhX3zOcN+6Dt4+8D5n+WJujKkcg/AOj2PZY021LjT9b6r21E58PomhuWw+oG6T4Ke/6HSh4/OE1mdfiVCEvUi6+wxtX2iAAqbUHW1wGKBp59KFUukyNgNQiTDmqR5RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZS3g0djW; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-62fbd0a9031so2835541a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758384001; x=1758988801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C6PlODS/te36zEm/c54Mnhcz+Tcquz9ec/vMr/RjPtI=;
-        b=sy+v2ain9xsOK5cwjWC5Dee/ovlH77hMOJvy/CCjcjCFpo+ZKMIIIK+x+fs65pIgRz
-         p2aMwdbkxeIsLIoVuULXBR0R+ZMoG5cfML+R/Snb/ccFfbgLib5drblf6W6iwfaVwgb+
-         w3O5L9WxAuE7UAyrEYlcUuAdwE+9mjjdZ5WQmLbJfqvzyfylmZMSMmax8vE+qqSLYGpb
-         Ea7X9yg6eqMj4efhiIE0YRpLrBePOdwwVDmpNrBImARZTWq5sShjC5X6HdzMGd9kuPmI
-         xNb/3VDpD6uiryqchLlnsVrb08sCwLQN6WlZmGFQEsCPJNKURK2YBW04Wb9VPiKb53Bj
-         YZ3g==
+        d=linaro.org; s=google; t=1758384039; x=1758988839; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6bGBwhqJX9F0xOuCnvuuNe/MoHdsR7Bf1qZLNoNX5Qk=;
+        b=ZS3g0djW0jR7JfMIJpNFpMiCo2l9HKrn2Zi8SbeP2K1Ltvv6LAm8VQ5EGwXsgJVaT5
+         K84LjxLJb9obJ90J1gpQtpK2BY58Tqlz4JA5F4xcKGFSakm9mp+m95WHYRmG0WJSdQMX
+         N6/xVrC46qLXWRoyqCRTxOp/SZuacMW1QKQDG6x7Zp6/cHETwhz9Q6kgRFT+xVwBn1CJ
+         k2Q/vlWINIFkbSBoibgqMkHwSv3KN0cHm6yLggeb0xpwpv8Hebed8zJd8FKtQNkB1JrX
+         XZyC5KTIFEFlRcydTic6AagLqi4KiefJwzg1ircy8uYD+G4rgs9KGGZLr5vFTwM85Opm
+         FfOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758384001; x=1758988801;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C6PlODS/te36zEm/c54Mnhcz+Tcquz9ec/vMr/RjPtI=;
-        b=wksayrFXa1aqc6Gcrf9WVatN798l7aJjZCSJs7qQz1ht+NASC6Oi4SOv/m6FN003tb
-         acS+8994sxBCK3N+7LhQOmAYxSlK3ARqMVSSQH9vLyvHsqeEcVcAtN6bV2MmujJiT4IM
-         btGORUYXj9VDih8ZEBNT7YW+8Ne5DS+OrmMlGsRxp0PD8v7WBtJpC9XlIdGD/usM95Fs
-         h6HW+o2HGiM8Lepa/QP3RXiJIvQ4K7ThaUPeotwFOhYFP8a08AVdQw7ETzdAaDZq3N55
-         jhYaoo0cAPJk2m2UV+aaHx8B82mdrF6CsafPbmiHLw106SmYepvKdxEmTXmpBQBVB4I4
-         MUJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhuIo8DbYOEzhgy19Zo4KuadJu827bvciQTaS4KXJUV7Tb19N2fpeNvcSR1mG7gTzXJOPz5u4/gEgWVcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyCPPnQ+xT0UiS+tpBjbZIIhLswbHGbUGVW660QPtyqG76Nnep
-	HqUoMhWJKmsgaBYJFyxnZVMQEOQ5j4WHzW5cVNcj5HdhZjhH+cmY7Qe5nx3QSlvYidE=
-X-Gm-Gg: ASbGncuofD180c2i+tCDfMK/ai2aTNXJCEf1FhFtn34j6AXquBPX9/mauRVQvN8lGEo
-	pRjBC8j9nnr4Dhcq5+KO/LXAdnxYH7379FcwkIS83sum7ijHIJUv+5LNHHxVFWVjNRL1tsgFGQi
-	iDi7HsP2LS9YWmYQDXhngHtskXfacXvZmnbj7ikxWsT4JsA2y6NW66fewYDes2TIdQH121NDDFH
-	dqyoDffOKEY5OJnk1q2uAyZ8ydUgD8ze1t4CI8eH7mNrIWzoRdsNIqIb8OpvuslKSzhCMchYBJ2
-	fKcwsEs6Cc4X5RsBEtnbDgcx6zvQ4gCnt7y+NZebpQMexEVCV7zsb4rn1e37edBArF0wJ1qS1Dj
-	Gi2NXJRrCpiNzHwbgXriK0gIKGN7KRkZEZxnEl4Css8U1TVYafNG70KV6B4Pofg==
-X-Google-Smtp-Source: AGHT+IEYudR+gY4osM7EXsgeTUGXkWk8dyLDUfBMwlEzSHDNS9I9DR2PejT5vWtn2160i7yeUhZThw==
-X-Received: by 2002:a05:6e02:481c:b0:424:85b0:e1cb with SMTP id e9e14a558f8ab-42485b0e39amr80339845ab.31.1758384001381;
-        Sat, 20 Sep 2025 09:00:01 -0700 (PDT)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-53d5399014dsm3493825173.59.2025.09.20.08.59.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Sep 2025 09:00:00 -0700 (PDT)
-Message-ID: <3c9aaa62-f685-47f7-a21c-00f51550f185@riscstar.com>
-Date: Sat, 20 Sep 2025 10:59:58 -0500
+        d=1e100.net; s=20230601; t=1758384039; x=1758988839;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6bGBwhqJX9F0xOuCnvuuNe/MoHdsR7Bf1qZLNoNX5Qk=;
+        b=Ese5ca1m57tISBknWd0tvifXm1FIDVxtrrZ0mXqfnuu8GqwYQdI0QyLTj0q2yNG28f
+         evA0kXMjZjVD7GbFkkgnHIAHX6wFUvDEs8IraKYR1mJcAW9Omt9BReAxseVRD8O6I20x
+         X3TM2GEzXCiFwNLYkmxmTfnDNHHv2ECRBk8DPPMPHfiuk81O1VvwGNAYZ1tU0Lw1Aq+v
+         hfmsJCQJOuQFRudHUnG0rTLHHmcCo1b2IhJ+Tgv1kqxw4E6lhanqPHzBn81Br6gAyrJ1
+         7jBDVJP3U6Gc8njDzTjTaboQcNi+PYU7rE94sdtTW8ZxzllJ7UGNwGjt/CIOjcQlCwxp
+         idpA==
+X-Gm-Message-State: AOJu0Yy586trgY4cDcOh6/L1EpCZm7Wwqx2UUgCiq5IntPDhbJz4SXWn
+	BgRD/7uyl8y6XDn6QOYnc7I+t/oSGcko44H2zDPy8tKHU6Id6nanDWHYnWIiBXxXfzJX9l5gSz4
+	jCHA5nnwJQuBUwpmu0N7BBSm+xUcxKjx1yWROkCtZmEax5EziYU+uT/g=
+X-Gm-Gg: ASbGncu1rRJ9X0tiHYUmjB2qWHpe67Om9wiK+NxN4Vdwvl8we7jvSRtTzPFMKxNETy0
+	db7xQg1jhJ62V6nxIYwskG0umBpUsP1MkqTfqah7T1n7m0pVUzRMs0Wl5xi2gkzdI3hVQaBzg6Y
+	jx6rvmWdTiuOY1dUasPjpVp6OI8cLWe7+oLjtIQP7lcuCeC8amwe4aSEcsfWmwb9ii+3Hs1T/bd
+	auLPPAzjVpPJw1SQK2cs9bn2J8NWgEYL/Gw
+X-Google-Smtp-Source: AGHT+IGhUL+kILCgvIy42z2qBJz3nD98fFtf16ENDJwDcWGqNqZPLpWOf/WplU4dCmobMVHp3dmQfvBSGbyb8aaZ16k=
+X-Received: by 2002:a05:6402:208a:b0:62f:31f6:6aac with SMTP id
+ 4fb4d7f45d1cf-62fc0a7b1e0mr6728772a12.23.1758384038519; Sat, 20 Sep 2025
+ 09:00:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
- controller driver
-To: Vivian Wang <wangruikang@iscas.ac.cn>, broonie@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250919155914.935608-1-elder@riscstar.com>
- <20250919155914.935608-3-elder@riscstar.com>
- <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAKfTPtBp85jaM8sdOXqB1Fq7XcfgGP-T2A=fd4Qbhe48CUNUGA@mail.gmail.com>
+In-Reply-To: <CAKfTPtBp85jaM8sdOXqB1Fq7XcfgGP-T2A=fd4Qbhe48CUNUGA@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Sat, 20 Sep 2025 18:00:26 +0200
+X-Gm-Features: AS18NWCZwxYmt0CLn-uDv8qhYWdHHmD_8uweCDgoyxFrcUPIiuRHE3oZNODkeAQ
+Message-ID: <CAKfTPtBKB41LyyfSDm7RK=gbDt3JjY_k8SJAALxQzxGACEp+ig@mail.gmail.com>
+Subject: Re: Call for Speakers: Join us at the Scheduler and Real-Time
+ Microconference at LPC2025!
+To: linux-kernel <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Clark Williams <williams@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	John Stultz <jstultz@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Phil Auld <pauld@redhat.com>, dhaval@gianis.ca, Aaron Lu <ziqianlu@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/19/25 10:52 PM, Vivian Wang wrote:
-> Hi Alex,
-> 
-> On 9/19/25 23:59, Alex Elder wrote:
->> [...]
->>
->> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
->> index 82fa5eb3b8684..4f6c446c6bc16 100644
->> --- a/drivers/spi/Kconfig
->> +++ b/drivers/spi/Kconfig
->> @@ -1071,6 +1071,14 @@ config SPI_SG2044_NOR
->>   	  also supporting 3Byte address devices and 4Byte address
->>   	  devices.
->>   
->> +config SPI_SPACEMIT_K1
->> +	tristate "K1 SPI Controller"
->> +	depends on ARCH_SPACEMIT || COMPILE_TEST
->> +	depends on OF
->> +	default ARCH_SPACEMIT
->> +	help
->> +	  Enable support for the SpacemiT K1 SPI controller.
->> +
-> 
-> We could still add:
-> 
-> 	imply MMP_PDMA if ARCH_SPACEMIT
+Hi everyone,
 
-I have never used "imply", I guess it's new (as of 2016)...
+Just a friendly reminder that the Call for Proposals for the Scheduler
+and Real-Time Microconference at Linux Plumbers 2025 closes on Sept
+30th, 2025.
 
-This sounds like a good suggestion.  This would mean MMP_PDMA
-would by default take the same value as SPI_SPACEMIT_K1 (if
-the former's dependencies were met), while allowing it to be
-deselected for the configuration.
-  > To add a "recommended" dependency. This way, enabling SPI_SPACEMIT_K1
-> automatically enables MMP_PDMA, but if the user is willing to fiddle
-> around, they can explicitly disable it. What do you think?
+We're looking forward to receiving your proposals!
 
-I like it.
+Best regards,
+The Scheduler and Real-Time Microconference Team
+- Dhaval Giani <dhaval.giani@gmail.com>
+- Juri Lelli <juri.lelli@redhat.com>
+- Phil Auld <pauld@redhat.com>
+- Steven Rostedt <rostedt@goodmis.org>
+- Vincent Guittot <vincent.guittot@linaro.org>
 
->>   config SPI_SPRD
->>   	tristate "Spreadtrum SPI controller"
->>   	depends on ARCH_SPRD || COMPILE_TEST
->>
->> [...]
->>
->> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
->> new file mode 100644
->> index 0000000000000..8d564fe6c4303
->> --- /dev/null
->> +++ b/drivers/spi/spi-spacemit-k1.c
->> @@ -0,0 +1,968 @@
->>
->> [...]
->>
->> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
->> +{
->> +	struct k1_spi_io *rx = &drv_data->rx;
->> +	u32 bytes = drv_data->bytes;
->> +	u32 val;
->> +
->> +	val = readl(drv_data->base + SSP_DATAR);
->> +	rx->resid -= bytes;
->> +
->> +	if (!rx->buf)
->> +		return;	/* Null reader: discard the data */
->> +
->> +	if (bytes == 1)
->> +		*(u8 *)rx->buf = val;
->> +	else if (bytes == 1)
-> 
-> Typo? else if (bytes == 2)
-
-Wow.  Yes that is an error that I'll correct.
-
->> +		*(u16 *)rx->buf = val;
->> +	else
->> +		*(u32 *)rx->buf = val;
-> 
-> Maybe
-> 
-> 	else if (bytes == 4)
-> 		*(u32 *)rx->buf = val;
-> 	else
-> 		WARN_ON_ONCE(1);
-
-The value of bytes will be 1, 2, or 4, which we can tell
-by inspection.  At one time I had a switch statement with
-a default, but I decided to leave out the default, which
-won't happen.
-
-> Just to make the pattern consistent? Same for k1_spi_write_word.
-
-Consistent with what?
-
->> +	rx->buf += bytes;
->> +}
->>
->> [...]
->>
->> +static int k1_spi_dma_setup(struct k1_spi_driver_data *drv_data)
->> +{
->> +	struct device *dev = drv_data->dev;
->> +	int rx_ret;
->> +	int tx_ret;
->> +
->> +	/* We must get both DMA channels, or neither of them */
->> +	rx_ret = k1_spi_dma_setup_io(drv_data, true);
->> +	if (rx_ret == -EPROBE_DEFER)
->> +		return -EPROBE_DEFER;
->> +
->> +	tx_ret = k1_spi_dma_setup_io(drv_data, false);
->> +
->> +	/* If neither is specified, we don't use DMA */
->> +	if (rx_ret == -ENODEV && tx_ret == -ENODEV)
->> +		return 0;
->> +
->> +	if (rx_ret || tx_ret)
->> +		goto err_cleanup;
-> 
-> This seems a bit convoluted. I'm wondering if all this explicit handling
-> really is necessary - if we get an error at probe time, can we just
-> return that error and let devres handle the rest? With the special case
-> that if we get both -ENODEV then disable DMA.
-
-I agree it seems it should be less complex.
-
-I'm trying to ensure that both channels are set up, or
-that neither channel is set up, or that we try again if
-we get -EPROBE_DEFER.  And if there's something wrong
-with the configuration (only one of TX and RX is set up
-successfully), an error occurs.
-
-RX		TX		Result
---		--		------
-0		0		0	(DMA)
--ENODEV		-ENODEV		0	(PIO)
--EPROBE_DEFER	(anything)	-EPROBE_DEFER (try again)
-(anything)	-EPROBE_DEFER	-EPROBE_DEFER (try again)
-0		-ENODEV		-ENODEV	(error, abort probe)
--ENODEV		0		-ENODEV	(error, abort probe)
-error		(anything)	error	(error, abort probe)
-(anything)	error		error	(error, abort probe)
-
-Finally, if the buffer allocation fails:
-0		0		0	(PIO; clean up TX and RX)
-
-Let me think about this.  I'll see if I can find a simpler way
-to achieve the above result, relying on devres to clean things
-up.  I'd have to change k1_spi_dma_cleanup(), but you might be
-right that it could be done more simply.
-
-> k1_spi_dma_cleanup_io seems to handle unmapping and termination of DMA,
-> which we... don't need, right?
-> 
->> +
->> +	drv_data->dummy = devm_kzalloc(dev, SZ_2K, GFP_KERNEL);
->> +	if (drv_data->dummy)
->> +		return 0;		/* Success! */
->> +
->> +	dev_warn(dev, "error allocating DMA dummy buffer; DMA disabled\n");
-> 
-> Just return -ENOMEM. If we can't even allocate 2K of buffer, we're
-> doomed anyway.
-
-You're generally right, but I don't want my code to assume that.
-
->> +err_cleanup:
->> +	if (tx_ret) {
->> +		if (tx_ret != -EPROBE_DEFER)
->> +			dev_err(dev, "error requesting DMA TX DMA channel\n");
->> +	} else {
->> +		k1_spi_dma_cleanup_io(drv_data, false);
->> +	}
->> +
->> +	if (rx_ret)
->> +		dev_err(dev, "error requesting DMA RX DMA channel\n");
->> +	else
->> +		k1_spi_dma_cleanup_io(drv_data, true);
->> +
->> +	if (tx_ret == -EPROBE_DEFER)
->> +		return -EPROBE_DEFER;
->> +
->> +	/* Return success if we don't get the dummy buffer; PIO will be used */
->> +
->> +	return rx_ret ? : tx_ret ? : 0;
->> +}
->>
->> [...]
->>
->> +static int devm_k1_spi_dma_setup(struct k1_spi_driver_data *drv_data)
->> +{
->> +	struct k1_spi_driver_data **ptr;
->> +	int ret;
->> +
->> +	if (!IS_ENABLED(CONFIG_MMP_PDMA)) {
->> +		dev_warn(drv_data->dev, "DMA not available; using PIO\n");
->> +		return 0;
->> +	}
->> +
-> 
-> Shouldn't be necessary if we do the "imply" thing in Kconfig.
-
-The messages I provide are based on an assumption that using
-DMA is desirable and it will normally be used by this driver.
-So if it won't be used, I'd like to provide that information.
-
-On the other hand, I don't issue a warning if neither of
-the channels is configured in the DTB.
-
-I'm not going to commit either way on keeping/removing this.
-If someone else weighs in I'm open to changing it.
-
->> [...]
->>
->> +static void k1_spi_host_init(struct k1_spi_driver_data *drv_data)
->> +{
->>
->> [...]
->>
->> +
->> +	ret = of_property_read_u32(np, "spi-max-frequency", &max_speed_hz);
->> +	if (!ret) {
->> +		host->max_speed_hz = clamp(max_speed_hz, K1_SPI_MIN_SPEED_HZ,
->> +					   K1_SPI_MAX_SPEED_HZ);
->> +		if (host->max_speed_hz != max_speed_hz)
->> +			dev_warn(dev, "spi-max-frequency %u out of range, using %u\n",
->> +				max_speed_hz, host->max_speed_hz);
->> +	} else {
->> +		if (ret != -EINVAL)
->> +			dev_warn(dev, "bad spi-max-frequency, using %u\n",
->> +				 K1_SPI_DEFAULT_MAX_SPEED_HZ);
->> +		host->max_speed_hz = K1_SPI_DEFAULT_MAX_SPEED_HZ;
->> +	}
-> 
-> I think it makes sense to have spi-max-frequency default to
-> K1_SPI_DEFAULT_MAX_SPEED_HZ, but if the value is out of range just print
-> a message and return an error, to get whoever wrote the bad value to fix it.
-
-These errors just shouldn't happen.  But the way I handle this,
-it allows the SPI controller to still be used, even if the
-administrator can't really update the DTB.
-
-> This range seems to be fixed by hardware, so, it should also be
-> specified in the bindings.
-
-I define the hardware limits here, and enforce
-them, in case the bindings specify an out-of-range
-value.  Again, this is an error that just shouldn't
-occur in practice, but the code is defensive.
-
-Most of your comments really made me think about how
-errors are handled.  I appreciate it.
-
-					-Alex
-
-> 
->> +}
->> +
->>
->> [...]
->>
->> +
->> +static int k1_spi_probe(struct platform_device *pdev)
->> +{
->> +	struct k1_spi_driver_data *drv_data;
->> +	struct device *dev = &pdev->dev;
->> +	struct reset_control *reset;
->> +	struct spi_controller *host;
->> +	struct resource *iores;
->> +	struct clk *clk_bus;
->> +	int ret;
->> +
->> +	host = devm_spi_alloc_host(dev, sizeof(*drv_data));
->> +	if (!host)
->> +		return -ENOMEM;
->> +	drv_data = spi_controller_get_devdata(host);
->> +	drv_data->controller = host;
->> +	platform_set_drvdata(pdev, drv_data);
->> +	drv_data->dev = dev;
->> +	init_completion(&drv_data->completion);
->> +
->> +	drv_data->base = devm_platform_get_and_ioremap_resource(pdev, 0,
->> +								&iores);
-> 
-> Maybe
-> 
->      devm_platform_ioremap_resource(pdev, 0);
-> 
->> [...]
->>
->> +
->> +MODULE_DESCRIPTION("SpacemiT K1 SPI controller driver");
->> +MODULE_LICENSE("GPL");
-> 
-> Maybe MODULE_AUTHOR()?
-> 
-> Vivian "dramforever" Wang
-> 
-
+On Mon, 18 Aug 2025 at 20:31, Vincent Guittot
+<vincent.guittot@linaro.org> wrote:
+>
+> Hello everyone,
+>
+> We're pleased to announce that the Call for Topics for the upcoming
+> Scheduler and Real-Time Microconference at Linux Plumbers 2025, is
+> open!
+>
+>     https://lpc.events/event/19/sessions/218/
+>
+> This event is designed to gather kernel developers and engineers to
+> share knowledge on scheduler and/or real time issues in Linux and
+> connect with peers. This year, we are joining the tightly linked
+> Real-Time and scheduler topics in one same microconference.
+>
+> We're particularly interested in talks that:
+>
+>     - Spark Discussion: The goal is to discuss open problems,
+> preferably with patch sets already on the mailing list.
+>
+>     - Are Concise: Presentations are meant to be limited to 2 or 3
+> slides intended to seed a discussion and debate.
+>
+> Some possible topics for discussions:
+>
+>     - Improve responsiveness of fair tasks
+>     - Improve PREEMPT_RT
+>     - Improve Locking and priority inversion
+>     - Impact of new topology, including hybrid or heterogeneous system
+>     - Improvements on SCHED_DEADLINE and DL server
+>     - Tooling for debugging low latency analysis
+>
+> It is also perfectly fine if you have a new topic that is not on the
+> list above. People are encouraged to submit any topic related to
+> real-time and/or scheduling.
+>
+> Ready to submit? Please fill out the submission form by
+>
+>     Sept 30th 2025
+>
+> at this link:
+>
+>     https://lpc.events/event/19/abstracts/
+>
+> and select
+>
+>     "Scheduler and Real-Time MC" as the track.
+>
+> We can't wait to see your proposal and build a fantastic lineup together.
+>
+> If you have any questions, don't hesitate to reach out.
+>
+> Best regards,
+>
+> The Scheduler and Real-Time Microconference Team
+> - Dhaval Giani <dhaval.giani@gmail.com>
+> - Juri Lelli <juri.lelli@redhat.com>
+> - Phil Auld <pauld@redhat.com>
+> - Steven Rostedt <rostedt@goodmis.org>
+> - Vincent Guittot <vincent.guittot@linaro.org>
 
