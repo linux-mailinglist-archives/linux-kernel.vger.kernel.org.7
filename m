@@ -1,211 +1,142 @@
-Return-Path: <linux-kernel+bounces-825878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C83FAB8D02E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:03:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A44ECB8D073
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D42147AC1FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:01:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941E91B254A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB5926B75B;
-	Sat, 20 Sep 2025 20:02:56 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4091326B97D;
+	Sat, 20 Sep 2025 20:09:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9C638F80;
-	Sat, 20 Sep 2025 20:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4AD231A55
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758398576; cv=none; b=NlAT+hsKDfFmtxdWti9PLpH0SQAqyNO6u7xlqnU8ZtnQspOTptOIBNub/whiMF8xGA4r+9MqXlifI7RusF4VkpFzhyCZ7PZpVpLpvoq7+gQOj9lfxCAD8UGs2ChJkaazGbNf81OSYSrQzujUEAX6WyEGpLi16sdOqWmHlJhMJ3w=
+	t=1758398945; cv=none; b=WtQKV84NHKQxotDVo575LcgEAdtr7uLF72NWyM6pau8MhHNF8jZJPfweI/T12ySjU/7/E8AVtxT0oHyp3njDYevtacBElK8A7uA6VHKUNb9/ceXKksvxMBGnh2KsTg5bz8EhpDxBNQltsgc2ZvZlULaFSFA0tv11JeMwyirNcOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758398576; c=relaxed/simple;
-	bh=x3JB1v3KZ1cGdhM58EiWjajQtoAvx9upe9pLRZvbJUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ngpnHA6GL3ojtRaILqko0JFBM6n1gfQEhCpzqwMZrjL8cPned1ux58T608WAQwtig85tklZtW4PHLrXVK5j4lsiBCH7lqGnDpN7bDS80lXZ/3z9q7jNOMAwg027xPg1j7GPXBUg4pBNr6WcDKMCjqI9AfyM94bhwUDs2ogg79Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a02:8084:255c:180:4427:c5ba:9c20:84d3] (unknown [IPv6:2a02:8084:255c:180:4427:c5ba:9c20:84d3])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id CD02C414D3;
-	Sat, 20 Sep 2025 20:02:50 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a02:8084:255c:180:4427:c5ba:9c20:84d3) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255c:180:4427:c5ba:9c20:84d3]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <6c6ae616-d6ed-443a-a492-96081763883e@arnaud-lcm.com>
-Date: Sat, 20 Sep 2025 21:02:49 +0100
+	s=arc-20240116; t=1758398945; c=relaxed/simple;
+	bh=4pXvrm+PF2ghRpyriygu1W4ypkOD4HhsPq576Ao2mK8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Iil4lEoPEVFqZ6VmUq58LYbkfX0KdbwQEv2Qx5KL4tGkUV0cQ7/bZail7lelH4L2kRr3tVHyG0thpnXjFoJHZAr6ilY1QKMKz2R13DObd6wIA8j9dKjvnmdNQU5epZUjpD2wG3/W+mxjDPx3dDqrJoLTB9Sc0YESk+2fr5iOpE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8870219dce3so333934939f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:09:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758398943; x=1759003743;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDYZ+gjPSArHw1YZRYW3nR+t1dIqfbHWWgKScrDbMvU=;
+        b=BV6u8i2hy2O0/+ddR5GYeKtE+B3lDTOt88yMf0/Nn9oKTTNUyZZXRqmBe9XzL7bRrq
+         +J3FvxferA6OC3/1Coy+H2O0sWdE2eWrCIh/MObrqbZNeUoYTwqcP/1rpPYBAsJBi5nc
+         +sPgAq8HzNtkxjlZ/tD7q28VfenxWgnEF/W0+5v9QaCELJBDsr0ZXtkbne9GM9ZJCfhg
+         FT2K+nMd56jJN2nocs/GPEDKRtHcLTjrLKEyXakmcbqgoT6bSLn6U4v5ASw+mkBfDZHz
+         AnPyUXnwSvWOnpL9lHSs9IL16OeXSJM0L8XjHS3zIvjdYr5ZxTYrFrzQ0HYSD7pmKCuh
+         VV/w==
+X-Forwarded-Encrypted: i=1; AJvYcCV77CzVO6pAwv/Env+an7G4qJaPsMy7zfHiAt7kvDTYrkA57OfQk91I/+gikV8/jW4MgLi0lZs2d+6NqIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb4tlljQS41VnB9BYS5r5Kd4anqdKy8zVYwehFnEHK7OdZCjpt
+	T8n/L1M5k+/76u/jkQmxVby+h5J6foE/5UePTijOaMh13JhsIBojkFLO9DnSFmho/Q2IfOFNk8K
+	bOihhEaKmyMcKBaoukzj6P6behsEPdAKbt+2HeqmjuBothtuISKrmiUH/qZE=
+X-Google-Smtp-Source: AGHT+IEiz0LUpKQSB2gpIEvpFhuQ3nFQUP3fxevc/0o8aYkEpfUZleEZzhAygl/spzx/cGj+0lpCEWaOt5bR5uJmz7N78spPBpdc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v9 1/3] bpf: refactor max_depth computation in
- bpf_get_stack()
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: alexei.starovoitov@gmail.com, yonghong.song@linux.dev, song@kernel.org,
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250912233409.74900-1-contact@arnaud-lcm.com>
- <CAEf4BzZ-ovqXqLJ5oJ95n9prFnXsLOkO1UvdycUcON77=Akv-w@mail.gmail.com>
-Content-Language: en-US
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-In-Reply-To: 
- <CAEf4BzZ-ovqXqLJ5oJ95n9prFnXsLOkO1UvdycUcON77=Akv-w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175839857193.28688.2015574734372317159@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+X-Received: by 2002:a05:6e02:258a:b0:424:3b83:4f5f with SMTP id
+ e9e14a558f8ab-4248190bbd3mr106740565ab.8.1758398943353; Sat, 20 Sep 2025
+ 13:09:03 -0700 (PDT)
+Date: Sat, 20 Sep 2025 13:09:03 -0700
+In-Reply-To: <CAL4kbRPcgyZtXEGuiAR+dpiqfsawnwyKovtKy_vWEgowF+HDMQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cf09df.050a0220.13cd81.0022.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [usb?] WARNING in __alloc_skb (4)
+From: syzbot <syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com>
+To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in __alloc_skb
+
+------------[ cut here ]------------
+kmalloc_reserve: request size 4294965248 exceeds KMALLOC_MAX_SIZE (4194304)
+WARNING: net/core/skbuff.c:598 at kmalloc_reserve+0x2df/0x2f0 net/core/skbuff.c:596, CPU#1: dhcpcd/5527
+Modules linked in:
+CPU: 1 UID: 0 PID: 5527 Comm: dhcpcd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:kmalloc_reserve+0x2df/0x2f0 net/core/skbuff.c:596
+Code: ff e8 b5 75 54 f8 c6 05 18 35 63 06 01 90 b9 00 00 40 00 48 c7 c7 60 2e b4 8c 48 c7 c6 d4 5d c3 8d 4c 89 ea e8 22 e7 17 f8 90 <0f> 0b 90 90 45 31 e4 e9 37 ff ff ff 0f 1f 44 00 00 90 90 90 90 90
+RSP: 0018:ffffc90000a089b0 EFLAGS: 00010246
+RAX: 40535143de383200 RBX: dffffc0000000001 RCX: ffff88802f97bc80
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000002
+RBP: ffffc90000a089fc R08: ffff8880b8724293 R09: 1ffff110170e4852
+R10: dffffc0000000000 R11: ffffed10170e4853 R12: 00000000fffff6c0
+R13: 00000000fffff800 R14: 0000000000020820 R15: 1ffff9200014113f
+FS:  00007fc29b83c740(0000) GS:ffff8881258a2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffc1fdb0168 CR3: 0000000033cd0000 CR4: 00000000003526f0
+Call Trace:
+ <IRQ>
+ __alloc_skb+0x142/0x2d0 net/core/skbuff.c:677
+ __netdev_alloc_skb+0x108/0x970 net/core/skbuff.c:741
+ rx_submit+0x100/0xab0 drivers/net/usb/usbnet.c:-1
+ rx_alloc_submit+0xa6/0x140 drivers/net/usb/usbnet.c:1538
+ usbnet_bh+0x9a5/0xd70 drivers/net/usb/usbnet.c:1607
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+ bh_worker+0x2b1/0x600 kernel/workqueue.c:3607
+ tasklet_action+0xc/0x70 kernel/softirq.c:952
+ handle_softirqs+0x286/0x870 kernel/softirq.c:622
+ do_softirq+0xec/0x180 kernel/softirq.c:523
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:450
+ __dev_open+0x694/0x880 net/core/dev.c:1690
+ __dev_change_flags+0x1ea/0x6d0 net/core/dev.c:9630
+ netif_change_flags+0x88/0x1a0 net/core/dev.c:9693
+ dev_change_flags+0x130/0x260 net/core/dev_api.c:68
+ devinet_ioctl+0xbb4/0x1b50 net/ipv4/devinet.c:1199
+ inet_ioctl+0x3c0/0x4c0 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0xdc/0x300 net/socket.c:1241
+ sock_ioctl+0x576/0x790 net/socket.c:1362
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc29b93c378
+Code: 00 00 48 8d 44 24 08 48 89 54 24 e0 48 89 44 24 c0 48 8d 44 24 d0 48 89 44 24 c8 b8 10 00 00 00 c7 44 24 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 07 89 d0 c3 0f 1f 40 00 48 8b 15 49 3a 0d
+RSP: 002b:00007ffd8c8eaa48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000016 RCX: 00007fc29b93c378
+RDX: 00007ffd8c8fac40 RSI: 0000000000008914 RDI: 0000000000000016
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd8c90ade0
+R13: 00007fc29b83c6c8 R14: 0000000000000028 R15: 0000000000008914
+ </TASK>
 
 
-On 19/09/2025 23:50, Andrii Nakryiko wrote:
-> On Fri, Sep 12, 2025 at 4:34 PM Arnaud Lecomte <contact@arnaud-lcm.com> wrote:
->> A new helper function stack_map_calculate_max_depth() that
->> computes the max depth for a stackmap.
->>
->> Acked-by: Yonghong Song <yonghong.song@linux.dev>
->> Acked-by: Song Liu <song@kernel.org>
->> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->> ---
->> Changes in v2:
->>   - Removed the checking 'map_size % map_elem_size' from
->>     stack_map_calculate_max_depth
->>   - Changed stack_map_calculate_max_depth params name to be more generic
->>
->> Changes in v3:
->>   - Changed map size param to size in max depth helper
->>
->> Changes in v4:
->>   - Fixed indentation in max depth helper for args
->>
->> Changes in v5:
->>   - Bound back trace_nr to num_elem in __bpf_get_stack
->>   - Make a copy of sysctl_perf_event_max_stack
->>     in stack_map_calculate_max_depth
->>
->> Changes in v6:
->>   - Restrained max_depth computation only when required
->>   - Additional cleanup from Song in __bpf_get_stack
->>
->> Changes in v7:
->>   - Removed additional cleanup from v6
->>
->> Changes in v9:
->>   - Fixed incorrect removal of num_elem in get stack
->>
->> Link to v8: https://lore.kernel.org/all/20250905134625.26531-1-contact@arnaud-lcm.com/
->> ---
->> ---
->>   kernel/bpf/stackmap.c | 39 +++++++++++++++++++++++++++------------
->>   1 file changed, 27 insertions(+), 12 deletions(-)
->>
->> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->> index 3615c06b7dfa..a794e04f5ae9 100644
->> --- a/kernel/bpf/stackmap.c
->> +++ b/kernel/bpf/stackmap.c
->> @@ -42,6 +42,28 @@ static inline int stack_map_data_size(struct bpf_map *map)
->>                  sizeof(struct bpf_stack_build_id) : sizeof(u64);
->>   }
->>
->> +/**
->> + * stack_map_calculate_max_depth - Calculate maximum allowed stack trace depth
->> + * @size:  Size of the buffer/map value in bytes
->> + * @elem_size:  Size of each stack trace element
->> + * @flags:  BPF stack trace flags (BPF_F_USER_STACK, BPF_F_USER_BUILD_ID, ...)
->> + *
->> + * Return: Maximum number of stack trace entries that can be safely stored
->> + */
->> +static u32 stack_map_calculate_max_depth(u32 size, u32 elem_size, u64 flags)
->> +{
->> +       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->> +       u32 max_depth;
->> +       u32 curr_sysctl_max_stack = READ_ONCE(sysctl_perf_event_max_stack);
->> +
->> +       max_depth = size / elem_size;
->> +       max_depth += skip;
->> +       if (max_depth > curr_sysctl_max_stack)
->> +               return curr_sysctl_max_stack;
->> +
->> +       return max_depth;
->> +}
->> +
->>   static int prealloc_elems_and_freelist(struct bpf_stack_map *smap)
->>   {
->>          u64 elem_size = sizeof(struct stack_map_bucket) +
->> @@ -300,20 +322,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>   BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->>             u64, flags)
->>   {
->> -       u32 max_depth = map->value_size / stack_map_data_size(map);
->> -       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->> +       u32 elem_size = stack_map_data_size(map);
->>          bool user = flags & BPF_F_USER_STACK;
->>          struct perf_callchain_entry *trace;
->>          bool kernel = !user;
->> +       u32 max_depth;
->>
->>          if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
->>                                 BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
->>                  return -EINVAL;
->>
->> -       max_depth += skip;
->> -       if (max_depth > sysctl_perf_event_max_stack)
->> -               max_depth = sysctl_perf_event_max_stack;
->> -
->> +       max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
->>          trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
->>                                     false, false);
->>
->> @@ -406,7 +425,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->>                              struct perf_callchain_entry *trace_in,
->>                              void *buf, u32 size, u64 flags, bool may_fault)
->>   {
->> -       u32 trace_nr, copy_len, elem_size, num_elem, max_depth;
->> +       u32 trace_nr, copy_len, elem_size, max_depth;
->>          bool user_build_id = flags & BPF_F_USER_BUILD_ID;
->>          bool crosstask = task && task != current;
->>          u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->> @@ -438,10 +457,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->>                  goto clear;
->>          }
->>
->> -       num_elem = size / elem_size;
->> -       max_depth = num_elem + skip;
->> -       if (sysctl_perf_event_max_stack < max_depth)
->> -               max_depth = sysctl_perf_event_max_stack;
->> +       max_depth = stack_map_calculate_max_depth(size, elem_size, flags);
->>
->>          if (may_fault)
->>                  rcu_read_lock(); /* need RCU for perf's callchain below */
->> @@ -461,7 +477,6 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->>          }
->>
->>          trace_nr = trace->nr - skip;
->> -       trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
-> Is this also part of refactoring? If yes, it deserves a mention on why
-> it's ok to just drop this.
->
-> pw-bot: cr
->
-Yes it is also part of the refactoring as stack_map_calculate_max_depth 
-now already curtains the trace->nr to the max possible number of 
-elements, there is no need to do the clamping twice. This is valid 
-assuming that get_perf_callchain and get_callchain_entry_for_task 
-correctly set this limit.
->
->>          copy_len = trace_nr * elem_size;
->>
->>          ips = trace->ip + skip;
->> --
->> 2.43.0
->>
-Thanks,
-Arnaud
+Tested on:
+
+commit:         846bd222 Add linux-next specific files for 20250919
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16561534580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a2250fd91b28106c37b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=144b60e2580000
+
 
