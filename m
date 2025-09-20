@@ -1,165 +1,305 @@
-Return-Path: <linux-kernel+bounces-825483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E156B8BE6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:52:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ADCAB8BE77
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539991C04ECB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 383DD5A030A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE96C221F2F;
-	Sat, 20 Sep 2025 03:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cSkPCHnj"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC46221F13;
+	Sat, 20 Sep 2025 03:53:15 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E04220D4FC
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD38934BA28;
+	Sat, 20 Sep 2025 03:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758340310; cv=none; b=Rv2/sE73E+sO3dqXR6kxp0gDRcnT4jJZxaQws7zmmMN3h1HElTow3dc7F/xp0LBYJpR/TUbFOgoaQgavlNnJlVyOk9m4yuXslu1N64S49x92Mtnn5Z3Oidd8CsyCwTNt0a1jBfVkbANvYijKpup4UpFKfYmw3lwI1HXVPQ3hPx4=
+	t=1758340395; cv=none; b=MeoclgomcAh66N7FlAPL+fM2DyAFqJti1hvpPjYCU5c532PL+ZJsormn2euIH6MtWO6ZbFV+dOYpXFwd794cC9xx2ZzM6XtpLYDsoMe0bDnpwkDz5vVIRg791zhHTgNOtIq7a9lIc6tlbBj7r+yOiCYdOpMpKNFYIUN1xgMJ8jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758340310; c=relaxed/simple;
-	bh=4nyax13VUWR5a5t0mPW0ffDF7ObllscDnqllciX7WU0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=s8VPYZuKmICaUep3O2Ql4A/PkgkTjCCUWZERRe61nCMf+G7+CCZYU1Xs+Gdw3Xlg6mIxE504TZrHWAr0tpWlpcSv4UofG5jE6GmMZuzSU5EJALC3x9AlUc1fFBOCxbojUweS/TZpNGZio+paq/UMUG52lrojZV7NPYJnjyzIcl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cSkPCHnj; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so2814497a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:51:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758340308; x=1758945108; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HpEOj5LSM2D4OpUTxa8SKWTebNuWvFU+5fQLpVHxJlM=;
-        b=cSkPCHnjl24X4A4YLQJG4lU8WmWhITSpFUiWyWGqVPmR5352NiMa/3r32lN5fyLMcy
-         rijwqkTFuFmhTB555IeY5QJMwc90rY0b1GC6ZP9Di692OUqYXqIlR8ryz3CPnJ/bEnv0
-         HMiXwIQqPCdxLaJ8lLxCSOr3lR7H7MdDGOcKQLD25JlRfO4p9puHyVg1Ncy51QLl4cAF
-         CXwx5RgHADOMlSuZjRyjVnJk2EjKLWp8TDbrtNwBV/n1xTjqzaT+NQtfI34Kfse0LklO
-         mGgFZeo527G520gzPYak5MM1UZ0qc6v86Vs5PL1qEIlBcp4rfMpXsO+8srLFCzw1Alk4
-         wCHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758340308; x=1758945108;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HpEOj5LSM2D4OpUTxa8SKWTebNuWvFU+5fQLpVHxJlM=;
-        b=uHknVZcgwIAw609IVSDr4NHg1zPFXyszzsIeTt8704j4JJESGsr+cSzQf4ga0uk0He
-         R+SSQGy4Cnk6B4VqAwCxbY4pxIqaGTqFCN5xqMxfCsr4zR1CIOYV15j5/z3dncKtHrxx
-         FYkJO3I3v2NGSi8CZLJJhBhM3uNw6g8fdXXqiuOpHg8rDd7gEXnhMIyvjA5PcEcr1bpJ
-         HYPun7OlQOFTcJ/KJX+0jvnRCLbujKYaUfPJGKr1cRO6ZE+Io4RLJ1Qcjan8kXHQOkWI
-         pBA8DqlgXWBvn/CYS2xW/3ofvolsZl2ApJf2CGB2Qj+GySEPZTUtIPqDnu2cOoaZZfcR
-         e6XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA0OPEZJ1lCNK9rd9GmR/PanNOmhVPLhnihd5gOSkXhAkxt3u7+9tJoN+vda0iER0Jd3IKHxtHtqAh3ZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqTbE08S4V+n0KHdE5YDA31kLZNY8+DMhrbp7/R71Hl8nFkSVh
-	qqrVkXln46Y3j/Q4JQ+2vqAki6Phela7wWGdF1KXssZ7eDBAJwYbRiVe1Xop9FLPdNxVJZmN0OI
-	u3fE7GA==
-X-Google-Smtp-Source: AGHT+IGDEsmJS0RWHAZl4i+dA/zrRM6jZJwlfPLgPe6OetInXPKDxFrf8pBdb+Fr9jhrRctW5rKl2lRcuTw=
-X-Received: from pjbta12.prod.google.com ([2002:a17:90b:4ecc:b0:329:ccdd:e725])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3146:b0:330:604a:1009
- with SMTP id 98e67ed59e1d1-3309834c31fmr7114857a91.23.1758340307754; Fri, 19
- Sep 2025 20:51:47 -0700 (PDT)
-Date: Sat, 20 Sep 2025 03:50:43 +0000
-In-Reply-To: <caa08e5b15bc35b9f3c24f679c62ded1e8e58925.camel@gmail.com>
+	s=arc-20240116; t=1758340395; c=relaxed/simple;
+	bh=Gr/V9zBrcmfXE1HIoAgXxx7HeT1pp+J4AlPClBXV9Vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HkmrNifLVm5aL4BHHFo4oVamL14EHu/ExacoeTKfXD5cECi5KgfARS5ouGZK/qzfrODiMew72g+3oT6sUwJ5J3k8cdkNjO1P4Vbz15NrEAvXZT06s9piha3UupfKrOy3qGbSHsIXk8SPsfsu4eOjMXlEvAWbF7N4noAwtL3tDcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.102] (unknown [114.241.87.235])
+	by APP-05 (Coremail) with SMTP id zQCowAAnjRYRJc5o_pjgAw--.30976S2;
+	Sat, 20 Sep 2025 11:52:49 +0800 (CST)
+Message-ID: <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
+Date: Sat, 20 Sep 2025 11:52:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <caa08e5b15bc35b9f3c24f679c62ded1e8e58925.camel@gmail.com>
-X-Mailer: git-send-email 2.51.0.470.ga7dc726c21-goog
-Message-ID: <20250920035146.2149127-1-kuniyu@google.com>
-Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: brian.scott.sampson@gmail.com
-Cc: christian@heusel.eu, davem@davemloft.net, difrost.kernel@gmail.com, 
-	dnaim@cachyos.org, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
-	kuni1840@gmail.com, kuniyu@google.com, linux-kernel@vger.kernel.org, 
-	mario.limonciello@amd.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+To: Alex Elder <elder@riscstar.com>, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250919155914.935608-1-elder@riscstar.com>
+ <20250919155914.935608-3-elder@riscstar.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <20250919155914.935608-3-elder@riscstar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:zQCowAAnjRYRJc5o_pjgAw--.30976S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JF13Kw1DuF18JFyfXF48Xrb_yoW7ZF1kpF
+	Z8GFZxCrWktF4fGr42ya17ua4ruw1rWFW0gw4UJ343Zryq93y7AF1rKryxZa129FWkA3WI
+	ya18Wa109as8Wr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvGb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
+	vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjxUvaZXDUUUU
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-From: brian.scott.sampson@gmail.com
-Date: Wed, 17 Sep 2025 15:25:07 -0500
-> > Thanks for testing the painful scenario.
-> > 
-> > Could you apply this on top of the previous diff and give it
-> > another shot ?
-> > 
-> > I think the application hit a race similar to one in 43fb2b30eea7.
-> Just tested again with latest mainline, but no change. Once suspended,
-> keyboard becomes inactive and no longer accepts any input, so no way to
-> switch to tty to view dmesg. The only way to move forward after
-> suspending is holding down power to hard shutdown, then power back on.
-> I tried enabling persistence in the systemd journal, then checking
-> journalctl -k -b -1, but nothing is recorded from dmesg after the
-> suspend.
+Hi Alex,
 
-Thank you for your patience.
+On 9/19/25 23:59, Alex Elder wrote:
+> [...]
+>
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 82fa5eb3b8684..4f6c446c6bc16 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -1071,6 +1071,14 @@ config SPI_SG2044_NOR
+>  	  also supporting 3Byte address devices and 4Byte address
+>  	  devices.
+>  
+> +config SPI_SPACEMIT_K1
+> +	tristate "K1 SPI Controller"
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> +	depends on OF
+> +	default ARCH_SPACEMIT
+> +	help
+> +	  Enable support for the SpacemiT K1 SPI controller.
+> +
 
-I assumed SO_PASSCRED was the problem, but I missed
-SO_PASSCRED was also inherited durint accept().
+We could still add:
 
-Could you apply this on top of the previous changes ?
+	imply MMP_PDMA if ARCH_SPACEMIT
 
-Also, could you tell what desktop manager and distro
-you are using ?  If this attempt fails, I'll try to
-reproduce with the same version on my desktop.
+To add a "recommended" dependency. This way, enabling SPI_SPACEMIT_K1
+automatically enables MMP_PDMA, but if the user is willing to fiddle
+around, they can explicitly disable it. What do you think?
 
----8<---
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 211084602e01..b61d4fdb7fc4 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -541,7 +541,8 @@ struct sock {
- 				sk_scm_rights : 1,
- 				sk_scm_embryo_cred: 1,
- 				sk_scm_parent_cred: 1,
--				sk_scm_unused : 2;
-+				sk_scm_parent_sec: 1,
-+				sk_scm_unused : 1;
- 		};
- 	};
- 	u8			sk_clockid;
-diff --git a/net/core/scm.c b/net/core/scm.c
-index e603bf5400e0..359d56d454b4 100644
---- a/net/core/scm.c
-+++ b/net/core/scm.c
-@@ -435,7 +435,8 @@ static void scm_passec(struct sock *sk, struct msghdr *msg, struct scm_cookie *s
- 	struct lsm_context ctx;
- 	int err;
- 
--	if (sk->sk_scm_security) {
-+	if (sk->sk_scm_security || sk->sk_scm_parent_sec) {
-+		WARN_ON_ONCE(!sk->sk_scm_security);
- 		err = security_secid_to_secctx(scm->secid, &ctx);
- 
- 		if (err >= 0) {
-@@ -449,7 +450,7 @@ static void scm_passec(struct sock *sk, struct msghdr *msg, struct scm_cookie *s
- 
- static bool scm_has_secdata(struct sock *sk)
- {
--	return sk->sk_scm_security;
-+	return sk->sk_scm_security || sk->sk_scm_parent_sec;
- }
- #else
- static void scm_passec(struct sock *sk, struct msghdr *msg, struct scm_cookie *scm)
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index b6ff7ad0443a..a35082269990 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -1899,6 +1899,7 @@ static int unix_accept(struct socket *sock, struct socket *newsock,
- 	unix_update_edges(unix_sk(tsk));
- 	newsock->state = SS_CONNECTED;
- 	tsk->sk_scm_parent_cred = sk->sk_scm_credentials;
-+	tsk->sk_scm_parent_sec = sk->sk_scm_security;
- 	sock_graft(tsk, newsock);
- 	unix_state_unlock(tsk);
- 	return 0;
----8<---
+>  config SPI_SPRD
+>  	tristate "Spreadtrum SPI controller"
+>  	depends on ARCH_SPRD || COMPILE_TEST
+>
+> [...]
+>
+> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
+> new file mode 100644
+> index 0000000000000..8d564fe6c4303
+> --- /dev/null
+> +++ b/drivers/spi/spi-spacemit-k1.c
+> @@ -0,0 +1,968 @@
+>
+> [...]
+>
+> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
+> +{
+> +	struct k1_spi_io *rx = &drv_data->rx;
+> +	u32 bytes = drv_data->bytes;
+> +	u32 val;
+> +
+> +	val = readl(drv_data->base + SSP_DATAR);
+> +	rx->resid -= bytes;
+> +
+> +	if (!rx->buf)
+> +		return;	/* Null reader: discard the data */
+> +
+> +	if (bytes == 1)
+> +		*(u8 *)rx->buf = val;
+> +	else if (bytes == 1)
+
+Typo? else if (bytes == 2)
+
+> +		*(u16 *)rx->buf = val;
+> +	else
+> +		*(u32 *)rx->buf = val;
+
+Maybe
+
+	else if (bytes == 4)
+		*(u32 *)rx->buf = val;
+	else
+		WARN_ON_ONCE(1);
+
+Just to make the pattern consistent? Same for k1_spi_write_word.
+
+> +
+> +	rx->buf += bytes;
+> +}
+>
+> [...]
+>
+> +static int k1_spi_dma_setup(struct k1_spi_driver_data *drv_data)
+> +{
+> +	struct device *dev = drv_data->dev;
+> +	int rx_ret;
+> +	int tx_ret;
+> +
+> +	/* We must get both DMA channels, or neither of them */
+> +	rx_ret = k1_spi_dma_setup_io(drv_data, true);
+> +	if (rx_ret == -EPROBE_DEFER)
+> +		return -EPROBE_DEFER;
+> +
+> +	tx_ret = k1_spi_dma_setup_io(drv_data, false);
+> +
+> +	/* If neither is specified, we don't use DMA */
+> +	if (rx_ret == -ENODEV && tx_ret == -ENODEV)
+> +		return 0;
+> +
+> +	if (rx_ret || tx_ret)
+> +		goto err_cleanup;
+
+This seems a bit convoluted. I'm wondering if all this explicit handling
+really is necessary - if we get an error at probe time, can we just
+return that error and let devres handle the rest? With the special case
+that if we get both -ENODEV then disable DMA.
+
+k1_spi_dma_cleanup_io seems to handle unmapping and termination of DMA,
+which we... don't need, right?
+
+> +
+> +	drv_data->dummy = devm_kzalloc(dev, SZ_2K, GFP_KERNEL);
+> +	if (drv_data->dummy)
+> +		return 0;		/* Success! */
+> +
+> +	dev_warn(dev, "error allocating DMA dummy buffer; DMA disabled\n");
+
+Just return -ENOMEM. If we can't even allocate 2K of buffer, we're
+doomed anyway.
+
+> +err_cleanup:
+> +	if (tx_ret) {
+> +		if (tx_ret != -EPROBE_DEFER)
+> +			dev_err(dev, "error requesting DMA TX DMA channel\n");
+> +	} else {
+> +		k1_spi_dma_cleanup_io(drv_data, false);
+> +	}
+> +
+> +	if (rx_ret)
+> +		dev_err(dev, "error requesting DMA RX DMA channel\n");
+> +	else
+> +		k1_spi_dma_cleanup_io(drv_data, true);
+> +
+> +	if (tx_ret == -EPROBE_DEFER)
+> +		return -EPROBE_DEFER;
+> +
+> +	/* Return success if we don't get the dummy buffer; PIO will be used */
+> +
+> +	return rx_ret ? : tx_ret ? : 0;
+> +}
+>
+> [...]
+>
+> +static int devm_k1_spi_dma_setup(struct k1_spi_driver_data *drv_data)
+> +{
+> +	struct k1_spi_driver_data **ptr;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(CONFIG_MMP_PDMA)) {
+> +		dev_warn(drv_data->dev, "DMA not available; using PIO\n");
+> +		return 0;
+> +	}
+> +
+
+Shouldn't be necessary if we do the "imply" thing in Kconfig.
+
+> [...]
+>
+> +static void k1_spi_host_init(struct k1_spi_driver_data *drv_data)
+> +{
+>
+> [...]
+>
+> +
+> +	ret = of_property_read_u32(np, "spi-max-frequency", &max_speed_hz);
+> +	if (!ret) {
+> +		host->max_speed_hz = clamp(max_speed_hz, K1_SPI_MIN_SPEED_HZ,
+> +					   K1_SPI_MAX_SPEED_HZ);
+> +		if (host->max_speed_hz != max_speed_hz)
+> +			dev_warn(dev, "spi-max-frequency %u out of range, using %u\n",
+> +				max_speed_hz, host->max_speed_hz);
+> +	} else {
+> +		if (ret != -EINVAL)
+> +			dev_warn(dev, "bad spi-max-frequency, using %u\n",
+> +				 K1_SPI_DEFAULT_MAX_SPEED_HZ);
+> +		host->max_speed_hz = K1_SPI_DEFAULT_MAX_SPEED_HZ;
+> +	}
+
+I think it makes sense to have spi-max-frequency default to
+K1_SPI_DEFAULT_MAX_SPEED_HZ, but if the value is out of range just print
+a message and return an error, to get whoever wrote the bad value to fix it.
+
+This range seems to be fixed by hardware, so, it should also be
+specified in the bindings.
+
+> +}
+> +
+>
+> [...]
+>
+> +
+> +static int k1_spi_probe(struct platform_device *pdev)
+> +{
+> +	struct k1_spi_driver_data *drv_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct reset_control *reset;
+> +	struct spi_controller *host;
+> +	struct resource *iores;
+> +	struct clk *clk_bus;
+> +	int ret;
+> +
+> +	host = devm_spi_alloc_host(dev, sizeof(*drv_data));
+> +	if (!host)
+> +		return -ENOMEM;
+> +	drv_data = spi_controller_get_devdata(host);
+> +	drv_data->controller = host;
+> +	platform_set_drvdata(pdev, drv_data);
+> +	drv_data->dev = dev;
+> +	init_completion(&drv_data->completion);
+> +
+> +	drv_data->base = devm_platform_get_and_ioremap_resource(pdev, 0,
+> +								&iores);
+
+Maybe
+
+    devm_platform_ioremap_resource(pdev, 0);
+
+> [...]
+>
+> +
+> +MODULE_DESCRIPTION("SpacemiT K1 SPI controller driver");
+> +MODULE_LICENSE("GPL");
+
+Maybe MODULE_AUTHOR()?
+
+Vivian "dramforever" Wang
+
 
