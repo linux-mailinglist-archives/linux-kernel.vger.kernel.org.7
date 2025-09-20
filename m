@@ -1,241 +1,184 @@
-Return-Path: <linux-kernel+bounces-825657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3127B8C70C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:44:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C7AB8C712
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBB0D172719
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:44:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 564A04E0F3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513F92FD7BE;
-	Sat, 20 Sep 2025 11:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA12FC009;
+	Sat, 20 Sep 2025 11:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EfnrGlek"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iaVGOGOR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3D02FD7A0
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84CE18BBB9;
+	Sat, 20 Sep 2025 11:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758368637; cv=none; b=I9jaRUtpmQTYUwa24VJharyq6rezJDZ2iJaDEsXbVLoVKvJdp96RR63MwhjkIrB5ExyKAMgkv/AFVV89s/9PQCx+YJsOrH6N1jS6NRueKsmbSlRUFCVqRs/E+frM3/hNPcV7W29nIVWPGCtRoccJbtsvm1gJ5BhR8AaOGL84gZo=
+	t=1758368900; cv=none; b=WsXCgvTfGn5vTPknBA/FX8ZQLajbIBwRR+blviU0/ppWcCSyE/a/57pFfObbSbqqG2eZ7wEYIuJ6XtsU6RCoSLSjFMwzu3hvjmqWpFkZv/3+VXeZ9RbISOt/PDPJ7aNBP0cR55huUXj6WZVjS48WulQqNI+WVYFCKRXx6WqEKvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758368637; c=relaxed/simple;
-	bh=0rWlX1kT1KOjqeIexDj79uvTQkFPDw5D5N2istPloBk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N1A75ftAW8s3JqsUQ1CPzmeSdGOUg0AOlnpzoqH68LxHwxkIn2rbxcf2x+EfEVn0hEJS+zXWoLTErQAVqcx/QwTcK8uLu/HRW4xQ3nYvNvJOMIaCS0/b6OysquTYnt4ZCGxIYvWsBag99pa23VUtmLnewhtPSrAMyxDNlNfHnGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EfnrGlek; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ee15505cdeso1696277f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 04:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758368634; x=1758973434; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5qPv4ldTq9iLR5m/Ew1ytbLOJ+vLoqEg9E8nbrL4xZQ=;
-        b=EfnrGlekKLcn+aHOjn9cTbqviETQsTDMUQEL09zQ9E/BkovC6WCMRt4OAhM2shBqic
-         Cilew4ZIz3omeDwWPIWcGiX9+INfRSlmdFnnYWlJGz/+dtUXuKAujyuOQQbH14Ez3IkS
-         jbrYtFyCHMXxOlx4cmGe9+EhDrnveGxmMV0WCYv5v8m8eHAEEeu6gwMlysdExRmfh4tM
-         jcRxbEPwCa62VdviKseUnD7ZJ4y4CGgtrTtq310msb3YR55UU7ncNmqGYVb6IX1UAfxq
-         s/zDTUTdLOU8zklH2Y9gopxjtt7KvdW/yJU+r88o043/yhoCku9WQ/Vwt5PelZ4FXDLA
-         wmfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758368634; x=1758973434;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5qPv4ldTq9iLR5m/Ew1ytbLOJ+vLoqEg9E8nbrL4xZQ=;
-        b=fkWcnKJhRyXgMJ7Mn34COlgHHbPDFuL5uzO9pJ9sh1Pru1Tc9TsvWPYmfDkcwc3JzF
-         T+M1tWB1ECywNeA7eMIjjPxc3+zFZMPiqzMyBfq/CQml+j3Ph3GFMMlmmCXbv1uoImsr
-         iOfIYVwxCWHiCalxTmgZb/oTjO0k0NTulHN+himWDxgYnI0gRHdIhg7aeanw81YXjw1B
-         Fq0jaDTXmDLbTPBltsMGdQCz1Y83knnkbnuN4Hl+KNgLKnuoWSndddJm5X8M7M6JC8fg
-         rY7BktR6SQOXy5dKePsF77eKvEBD5wq872VWo6jaM60EazWT8B+6nZ0OnPaC002pby7v
-         blaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVY9AWYblbASkBqK/mTTf0LhBlXMeYAZLWWmS/QwL8t7R10Q8XZPZeUnEjGEQZZ2nBn3BPLF3rFjqBfpys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKatYqztFIM1mXr8XlVWEf13ZpwcZBifDFbq6Q7bIH0MsPMwLE
-	fAIPIfoy1lF54oZpB2fb4XZfEOr7KBAC1CHqCSI5Lz+dvlftpgKlrQ/K
-X-Gm-Gg: ASbGncuMXfAv406n3OSOqCYrIaTZuSRbJneLW4gI133keR2zCguakqBYR9gTjqamMmM
-	zfSk0wbQw6echksVCNKuNzQcujXan1R71OY+fBHDnix4orHyLbdx6iHJKp0CTGWp/SQ6erECX3d
-	RBBZ6Y+xt114nX1jGIyeQF/bQo/anxRaDtDqrQ/X+DoV4RFPx8UyLKtmNrEvqyPbwkgt+XK3OW0
-	UEXvQtYnSOwgwhEG21p/T06p9ASzkkmCSWQ0Jn78cn2ery1C6VRtxOp+LWYF+AY3lUUxIB2TOYz
-	6w7/jVU0KVKbzIUCiOkRgV9vi42HQEHBcwss1LJ+5Ecf9MNe+3xqoK61DoKReIRHz13wmPihy0J
-	n3kRz0QtqF3pcyy6xv6FVd4aeEi3AMIQvz5G6JSkJQJpsWpXeqppuoN0q5YCQFx7dEIkhomo=
-X-Google-Smtp-Source: AGHT+IGeKLyKQNfti4n7pQMmmIvBvMIuHbECb0sWa4jGH1bzRgL7YqTQVCn/1cA7YHkHgqvs03ymNA==
-X-Received: by 2002:a05:6000:40ca:b0:3f0:f7dd:4b76 with SMTP id ffacd0b85a97d-3f0f7ec90c5mr4643851f8f.15.1758368633761;
-        Sat, 20 Sep 2025 04:43:53 -0700 (PDT)
-Received: from Ansuel-XPS24 (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3f305f837c5sm3392172f8f.47.2025.09.20.04.43.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 04:43:53 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	upstream@airoha.com
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH] PCI: mediatek: add support for Airoha AN7583 SoC
-Date: Sat, 20 Sep 2025 13:43:23 +0200
-Message-ID: <20250920114341.17818-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758368900; c=relaxed/simple;
+	bh=S4lEmGoMz/EYlXIdqoTKwelfO4ALXROy7V1e0MeAQH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q9UyqQ7MCoxZ4xaIPVHnmjZQBoIwKWaiiTXyig+TfnwPsWhjyUF/XS6jj/8iNJoNTsReAoRH+rr9xdo3Xc+rY5i/1mG309ILeOZ4npWpNbb6JNDHuKh77VHa6euJnIhiTIhkpMdAP71Isf40vY7RKrp1PHBFzEDHUZU/L34eaZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iaVGOGOR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E848FC4CEEB;
+	Sat, 20 Sep 2025 11:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758368899;
+	bh=S4lEmGoMz/EYlXIdqoTKwelfO4ALXROy7V1e0MeAQH0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iaVGOGORuQwMrNSIa4PH+D4hqQ1EzqYfhpFDlKS6GxoHvE2G07cydmcNxbH7JiSaF
+	 VB//OvZ/NIyqtXTiQdgNIaJR1yOOt0GN5wvED71XbHWGfJQ8MXAbSmRKzOP0oGzxUo
+	 eI0dRZofOuo2tWVbhmOha+R9iPLZBhlAq6PxjOe1O36YWhAikhcfQDESIsNAQ7q3jU
+	 7Gd+ryQWi2LOvjIBn6+lHG+z8ITQPLWMenRTdeRpW6AWLUHFqDx4XBMKA2WVWqmMZP
+	 P+Fxg09E+3mx9SdSTdOU9opMn20sKOks4qBu7Z2VV23wsoQOCrm3HqCHZtnhcHSmN+
+	 St34XJ6vkjrEw==
+Message-ID: <5bae4ebe-dd42-4e84-9ee6-c9f6a88f7db5@kernel.org>
+Date: Sat, 20 Sep 2025 13:48:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/22] usb: dwc3: glue: Allow more fine grained control
+ over mode switches
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+ Ran Wang <ran.wang_1@nxp.com>, Peter Chen <peter.chen@nxp.com>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
+References: <20250906-atcphy-6-17-v2-0-52c348623ef6@kernel.org>
+ <20250906-atcphy-6-17-v2-3-52c348623ef6@kernel.org>
+ <20250919214013.gtbaknjrgd375hm6@synopsys.com>
+Content-Language: en-US
+From: Sven Peter <sven@kernel.org>
+In-Reply-To: <20250919214013.gtbaknjrgd375hm6@synopsys.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support for the second PCIe line present on Airoha AN7583 SoC.
+Hi,
 
-This is based on the Mediatek Gen1/2 PCIe driver and similar to Gen3
-also require workaround for the reset signals.
+On 19.09.25 23:40, Thinh Nguyen wrote:
+> On Sat, Sep 06, 2025, Sven Peter wrote:
+>> We need fine grained control over mode switched on the DWC3 controller
+>> present on Apple Silicon. Export core, host and gadget init and exit,
+>> ptrcap and susphy control functions. Also introduce an additional
+>> parameter to probe_data that allows to skip the final initialization
+>> step that would bring up host or gadget mode.
+>>
+>> Signed-off-by: Sven Peter <sven@kernel.org>
+>> ---
+>>   drivers/usb/dwc3/core.c   | 16 +++++++++++-----
+>>   drivers/usb/dwc3/gadget.c |  2 ++
+>>   drivers/usb/dwc3/glue.h   | 14 ++++++++++++++
+>>   drivers/usb/dwc3/host.c   |  2 ++
+>>   4 files changed, 29 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+>> index 8002c23a5a02acb8f3e87b2662a53998a4cf4f5c..18056fac44c8732278a650ac2be8b493892c92dd 100644
+>> --- a/drivers/usb/dwc3/core.c
+>> +++ b/drivers/usb/dwc3/core.c
+>> @@ -132,6 +132,7 @@ void dwc3_enable_susphy(struct dwc3 *dwc, bool enable)
+>>   		dwc3_writel(dwc->regs, DWC3_GUSB2PHYCFG(i), reg);
+>>   	}
+>>   }
+>> +EXPORT_SYMBOL_GPL(dwc3_enable_susphy);
+>>   
+>>   void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
+>>   {
+>> @@ -157,6 +158,7 @@ void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy)
+>>   
+>>   	dwc->current_dr_role = mode;
+>>   }
+>> +EXPORT_SYMBOL_GPL(dwc3_set_prtcap);
+> 
+> I'm hesitant to export this as is. This function may change the susphy
+> bits and expect them to be restored later. It's not meant to be a
+> standalone use. At least, we should document how it should be used along
+> with the other newly added interfaces.
 
-Introduce a new bool to skip having to reset signals and also introduce
-some additional logic to configure the PBUS registers required for
-Airoha SoC.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/pci/controller/pcie-mediatek.c | 84 +++++++++++++++++++-------
- 1 file changed, 62 insertions(+), 22 deletions(-)
+Sure, I can otherwise also open-code the susphy change inside 
+dwc3_apple_phy_set_mode anyway if you prefer to keep this private to the 
+dwc3 core. I should restore it there to the original value anyway I 
+guess after phy_set_mode.
 
-diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-index 24cc30a2ab6c..ad7d47c18f0f 100644
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -156,6 +156,7 @@ struct mtk_pcie_soc {
- 	bool need_fix_class_id;
- 	bool need_fix_device_id;
- 	bool no_msi;
-+	bool skip_pcie_rstb;
- 	unsigned int device_id;
- 	struct pci_ops *ops;
- 	int (*startup)(struct mtk_pcie_port *port);
-@@ -679,28 +680,30 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 		regmap_update_bits(pcie->cfg, PCIE_SYS_CFG_V2, val, val);
- 	}
- 
--	/* Assert all reset signals */
--	writel(0, port->base + PCIE_RST_CTRL);
--
--	/*
--	 * Enable PCIe link down reset, if link status changed from link up to
--	 * link down, this will reset MAC control registers and configuration
--	 * space.
--	 */
--	writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
--
--	/*
--	 * Described in PCIe CEM specification sections 2.2 (PERST# Signal) and
--	 * 2.2.1 (Initial Power-Up (G3 to S0)). The deassertion of PERST# should
--	 * be delayed 100ms (TPVPERL) for the power and clock to become stable.
--	 */
--	msleep(100);
--
--	/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
--	val = readl(port->base + PCIE_RST_CTRL);
--	val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
--	       PCIE_MAC_SRSTB | PCIE_CRSTB;
--	writel(val, port->base + PCIE_RST_CTRL);
-+	if (!soc->skip_pcie_rstb) {
-+		/* Assert all reset signals */
-+		writel(0, port->base + PCIE_RST_CTRL);
-+
-+		/*
-+		 * Enable PCIe link down reset, if link status changed from link up to
-+		 * link down, this will reset MAC control registers and configuration
-+		 * space.
-+		 */
-+		writel(PCIE_LINKDOWN_RST_EN, port->base + PCIE_RST_CTRL);
-+
-+		/*
-+		 * Described in PCIe CEM specification sections 2.2 (PERST# Signal) and
-+		 * 2.2.1 (Initial Power-Up (G3 to S0)). The deassertion of PERST# should
-+		 * be delayed 100ms (TPVPERL) for the power and clock to become stable.
-+		 */
-+		msleep(100);
-+
-+		/* De-assert PHY, PE, PIPE, MAC and configuration reset	*/
-+		val = readl(port->base + PCIE_RST_CTRL);
-+		val |= PCIE_PHY_RSTB | PCIE_PERSTB | PCIE_PIPE_SRSTB |
-+		       PCIE_MAC_SRSTB | PCIE_CRSTB;
-+		writel(val, port->base + PCIE_RST_CTRL);
-+	}
- 
- 	/* Set up vendor ID and class code */
- 	if (soc->need_fix_class_id) {
-@@ -1105,6 +1108,33 @@ static int mtk_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		goto put_resources;
- 
-+	if (device_is_compatible(dev, "airoha,an7583-pcie")) {
-+		struct resource_entry *entry;
-+		struct regmap *pbus_regmap;
-+		resource_size_t addr;
-+		u32 args[2], size;
-+
-+		/*
-+		 * Configure PBus base address and base address mask to allow the
-+		 * hw to detect if a given address is accessible on PCIe controller.
-+		 */
-+		pbus_regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+								   "mediatek,pbus-csr",
-+								   ARRAY_SIZE(args),
-+								   args);
-+		if (IS_ERR(pbus_regmap))
-+			return PTR_ERR(pbus_regmap);
-+
-+		entry = resource_list_first_type(&host->windows, IORESOURCE_MEM);
-+		if (!entry)
-+			return -ENODEV;
-+
-+		addr = entry->res->start - entry->offset;
-+		regmap_write(pbus_regmap, args[0], lower_32_bits(addr));
-+		size = lower_32_bits(resource_size(entry->res));
-+		regmap_write(pbus_regmap, args[1], GENMASK(31, __fls(size)));
-+	}
-+
- 	return 0;
- 
- put_resources:
-@@ -1205,6 +1235,15 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
- 	.setup_irq = mtk_pcie_setup_irq,
- };
- 
-+static const struct mtk_pcie_soc mtk_pcie_soc_an7583 = {
-+	.skip_pcie_rstb = true,
-+	.need_fix_class_id = true,
-+	.need_fix_device_id = false,
-+	.ops = &mtk_pcie_ops_v2,
-+	.startup = mtk_pcie_startup_port_v2,
-+	.setup_irq = mtk_pcie_setup_irq,
-+};
-+
- static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
- 	.need_fix_class_id = true,
- 	.need_fix_device_id = true,
-@@ -1215,6 +1254,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
- };
- 
- static const struct of_device_id mtk_pcie_ids[] = {
-+	{ .compatible = "airoha,an7583-pcie", .data = &mtk_pcie_soc_an7583 },
- 	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
--- 
-2.51.0
+
+
+>>   
+>>   static void __dwc3_set_mode(struct work_struct *work)
+
+[...]
+
+>>   int dwc3_gadget_suspend(struct dwc3 *dwc)
+>>   {
+>> diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
+>> index 2efd00e763be4fc51911f32d43054059e61fb43a..633268c76fe4c7fdc312c9705dfa7cf7ccf3544c 100644
+>> --- a/drivers/usb/dwc3/glue.h
+>> +++ b/drivers/usb/dwc3/glue.h
+>> @@ -15,16 +15,30 @@
+>>    * @res: resource for the DWC3 core mmio region
+>>    * @ignore_clocks_and_resets: clocks and resets defined for the device should
+>>    *		be ignored by the DWC3 core, as they are managed by the glue
+>> + * @skip_core_init_mode: skip the finial initialization of the target mode, as
+> 
+> finial -> final?
+
+Whoops, yes, I thought I ran a spell checker over this because I usually 
+add a lot of typos but must've forgotten :-)
+
+
+> 
+>> + *		it must be managed by the glue
+>>    */
+
+[...]
+
+>>   
+>> +int dwc3_core_init(struct dwc3 *dwc);
+>> +void dwc3_core_exit(struct dwc3 *dwc);
+>> +
+>> +int dwc3_host_init(struct dwc3 *dwc);
+>> +void dwc3_host_exit(struct dwc3 *dwc);
+>> +int dwc3_gadget_init(struct dwc3 *dwc);
+>> +void dwc3_gadget_exit(struct dwc3 *dwc);
+>> +
+>> +void dwc3_enable_susphy(struct dwc3 *dwc, bool enable);
+>> +void dwc3_set_prtcap(struct dwc3 *dwc, u32 mode, bool ignore_susphy);
+>> +
+> 
+> We should document these interfaces. The dwc3_core_probe() does all of
+> the above in the proper order. It's not obvious why these are needed and
+> how they should be used.
+
+Very good point, I'll add documentation for all of these!
+
+
+Thanks for the review,
+
+
+Sven
+
 
 
