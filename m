@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-825715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10604B8C993
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:42:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D10CB8C99C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA8D7B4FD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C071B25F32
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68852F549C;
-	Sat, 20 Sep 2025 13:42:48 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F941B87C0;
-	Sat, 20 Sep 2025 13:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04FC2F7466;
+	Sat, 20 Sep 2025 13:43:21 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FB325DD1E;
+	Sat, 20 Sep 2025 13:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758375768; cv=none; b=FlDDAG3VKs2x87pS05134tvTXvxfwcwJu2ZCv0DUaZRlo8aGyoK0db44DQdYFkySK7+b9r0NlIBI4l+7fLSeNEHePAxrj38YUdYWooLt1ZxrS7l5jdcpMtQni86I8HPiOFvdwWAHqUI7WCi2jmikJ28iQeKdCh3f1x6KS2Ufe0Y=
+	t=1758375801; cv=none; b=RVKC/ImObPLSf2kI43JfMnzaK4KlScn4TXjgjrXvHFj26HLDpCnGqSIeJyXyrnYwjKQR6Kc8wapcOyRhHMN/8bvUl3kKC5HQXT4iwtFe1Un8EpiM9Kv7M1PLeDKTt1d0OS8NzRziwfEzzAFaI7Lh07czn0gGRa6JIDHSUncezeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758375768; c=relaxed/simple;
-	bh=bxGLZ1KtmnTKgV48yxkrqLP1/cvNjp0TCVABJhWKa/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NJXcyu28l7gyJlG7ju6FoxBYM9dqogRsRpNxcD31NU3Z8Q2G2Dc4cTl4Nlb3V2VZgwLbwcdMpgDS/e9GOt0jCY7uncT5MbcXl9+KvgczB5CnuppT63Ye2O/FAjuGFwbtsd3ZDV5w6ivVZzY2CFdhvjfePQdVf45p43k7FqlAU94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.20.76])
-	by mtasvr (Coremail) with SMTP id _____wBnt7Axr85oZmxVAg--.716S3;
-	Sat, 20 Sep 2025 21:42:11 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.20.76])
-	by mail-app1 (Coremail) with SMTP id yy_KCgBHmdQrr85o_AlBAg--.18751S2;
-	Sat, 20 Sep 2025 21:42:08 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	christophe.jaillet@wanadoo.fr,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	linux@treblig.org,
-	fourier.thomas@gmail.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH] scsi: mvsas: Fix use-after-free bugs in mvs_work_queue
-Date: Sat, 20 Sep 2025 21:42:01 +0800
-Message-Id: <20250920134201.18428-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758375801; c=relaxed/simple;
+	bh=zbQJHCGgM5Kr8QW7UWc85ZebxI239jbRy3/bx4Z++aI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=s27/OGtYkXc9IwVCKhzeMeo0lRD5GIwPbHb1qshuiyQSm/90VnNKDPH+srkkTfNvRNxwm5ITDlYiYnrhyxstI0tcd30on6R8WqFWIEwcyrlnqLop+zUfdwr1HRErrU/hnUR4xf0xDpzpXQ5QyMA8ZrRjlk6QR2MhBwgYLCmK/ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [202.112.113.212])
+	by APP-03 (Coremail) with SMTP id rQCowADHEXxer85o_qPvAw--.9226S2;
+	Sat, 20 Sep 2025 21:43:06 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: sakari.ailus@linux.intel.com,
+	bingbu.cao@intel.com,
+	lixu.zhang@intel.com,
+	stanislaw.gruszka@linux.intel.com,
+	mchehab@kernel.org,
+	wentong.wu@intel.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] media: pci: intel: ivsc: fix error handling in scan_one_device()
+Date: Sat, 20 Sep 2025 21:42:52 +0800
+Message-Id: <20250920134252.8612-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:rQCowADHEXxer85o_qPvAw--.9226S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFW5CF48Ar15Wry5Kw1fCrg_yoW8GFWfpr
+	W2gFWvkFW5Xr12gryDu3WUuFy5GwnIva9xGFy7Ka1xWan5Zry7tryjqa42kFWjvF92yFyj
+	yr13GrW3Ar4kJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUPj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14
+	v_Xr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AK
+	xVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrx
+	kI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v2
+	6r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8Jw
+	CI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUnFApUUUU
+	U
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:yy_KCgBHmdQrr85o_AlBAg--.18751S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcPAWjNsfsG7QAZsX
-X-CM-DELIVERINFO: =?B?33xENgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR17JWIj2S50sroAcAzxKp+F41Z092AV/gunfW8rDv1UV0ym2ldWluBcKk0DO6PF64/Voy
-	8atT3b2U5oNC2n/zoSwhR/VnrddamsHADA/v/9FKmhbX+QqPOU3b+sWb/6rE0A==
-X-Coremail-Antispam: 1Uk129KBj93XoW7Zw48ur1rGrW8ZryxAw4UKFX_yoW8WFyfpF
-	WfG34UG3y7JF1UKwnFgFW0gF1Yga1kA34qkw4Ig3y7GFyrJry3Jr1fGayF9a4DArWkAw1a
-	vrsIv3s7uF4UK3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
-	vjxU7xwIDUUUU
 
-During the detaching of Marvell's SAS/SATA controller, the origin
-code calls cancel_delayed_work() in mvs_free() to cancel the delayed
-work item mwq->work_q. However, if mwq->work_q is already running,
-the cancel_delayed_work() may fail to cancel it. This can lead to
-use-after-free scenarios where mvs_free() frees the mvs_info while
-mvs_work_queue() is still executing and attempts to access the
-already-freed mvs_info.
+The mei_ace driver contains a device reference count leak in
+mei_ace_setup_dev_link() where device_find_child_by_name() increases
+the reference count of the found device but this reference is not
+properly decreased in the success path. Add put_device() in
+mei_ace_setup_dev_link() and delete put_device() in mei_ace_remove(),
+which ensures that the reference count of the device is correctly
+managed regardless of whether the probe is successful or fails.
 
-A typical race condition is illustrated below:
+Found by code review.
 
-CPU 0 (remove)            | CPU 1 (delayed work callback)
-mvs_pci_remove()          |
-  mvs_free()              | mvs_work_queue()
-    cancel_delayed_work() |
-      kfree(mvi)          |
-                          |   mvi-> // UAF
-
-Replace cancel_delayed_work() with cancel_delayed_work_sync() to
-ensure that the delayed work item is properly canceled and any
-executing delayed work item completes before the mvs_info is
-deallocated.
-
-This bug was found by static analysis.
-
-Fixes: 20b09c2992fe ("[SCSI] mvsas: add support for 94xx; layout change; bug fixes")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+Cc: stable@vger.kernel.org
+Fixes: 78876f71b3e9 ("media: pci: intel: ivsc: Add ACE submodule")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/scsi/mvsas/mv_init.c | 2 +-
+ drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
-index 2c72da6b8cf0..7f1ad305eee6 100644
---- a/drivers/scsi/mvsas/mv_init.c
-+++ b/drivers/scsi/mvsas/mv_init.c
-@@ -124,7 +124,7 @@ static void mvs_free(struct mvs_info *mvi)
- 	if (mvi->shost)
- 		scsi_host_put(mvi->shost);
- 	list_for_each_entry(mwq, &mvi->wq_list, entry)
--		cancel_delayed_work(&mwq->work_q);
-+		cancel_delayed_work_sync(&mwq->work_q);
- 	kfree(mvi->rsvd_tags);
- 	kfree(mvi);
- }
+diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
+index 98310b8511b1..261b30788118 100644
+--- a/drivers/media/pci/intel/ivsc/mei_ace.c
++++ b/drivers/media/pci/intel/ivsc/mei_ace.c
+@@ -421,6 +421,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
+ 	}
+ 
+ 	ace->csi_dev = csi_dev;
++	put_device(csi_dev);
+ 
+ 	return 0;
+ 
+@@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
+ 	cancel_work_sync(&ace->work);
+ 
+ 	device_link_del(ace->csi_link);
+-	put_device(ace->csi_dev);
+ 
+ 	pm_runtime_disable(&cldev->dev);
+ 	pm_runtime_set_suspended(&cldev->dev);
 -- 
-2.34.1
+2.17.1
 
 
