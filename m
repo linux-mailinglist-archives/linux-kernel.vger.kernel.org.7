@@ -1,96 +1,113 @@
-Return-Path: <linux-kernel+bounces-825416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB10B8BC3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 198FDB8BC93
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6BA1C227EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AB31C23006
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A1B2DF3E8;
-	Sat, 20 Sep 2025 01:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D35D2E7BDA;
+	Sat, 20 Sep 2025 01:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ffis2AsM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lS6eI/FI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B84D2DE6EE;
-	Sat, 20 Sep 2025 01:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7025E286A9;
+	Sat, 20 Sep 2025 01:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758330010; cv=none; b=fuk8tUvmWlmaB57rhsj2tZfXZ9cVbNQisdS1lEOL06jaY8Yjblb/nDjzeMzr2gQk4ZqnVhqC1O6GTfzl9GMbbb7rfp5plcayQdzeemdhFgdC3W0kQ/frLR/ettQmKr19oRQSU+w//wddkRsjvgNh2Va6jlE2UTWGfRPbk4WeE7Q=
+	t=1758330033; cv=none; b=gw4gw4SzuxJE/jBjXEWFpxKJF3LoE5mztAVs9KadBPtrFJndQmvgckNZD8SQZtvOT0JQoRtzD85omtAVGio6jjx05JhXnTXOlhBjpz0m3BxhemWdsvAjb4OZDOXScjiyf/ghQE8h90RP7U23118m6OuX3mQ6luSJrtpO9YLyaUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758330010; c=relaxed/simple;
-	bh=2qJLkz2bUY0cv4oFIA2AmdjP7Jd2VRRlmZ/MXWgPdU0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pP/NHYbx2SxoHI+/xASj3D/nF8eZTXTNKgpuV3ieBIhAYy2WW5jALO1vjW1yzvekouUjQ+rv/zdJqRagGPq7CYC9uH4NFmyNznXyY9JYVnxI3IH1FZqAhbWgchGttkmkkeeWFtf62KtBHNsbdZ0ws1tiKP6qxs1aUCijOli7IFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ffis2AsM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEC9C4CEF5;
-	Sat, 20 Sep 2025 01:00:09 +0000 (UTC)
+	s=arc-20240116; t=1758330033; c=relaxed/simple;
+	bh=152V8ABtwHHLogh3lVMMKtEoSOaUdwb1Bwq6vDnjQJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPbhUw5nwAhfEYY5GqQ2Qi/qCvLJ2pjebhR7GfvQvRnbAv4j4LSvyu2dS/crZBg4JRbJ5GUg1zfe7/TxegUDfm2uV/2iN0SeS5H3mI//LrZCwcXZe5paG007onGzh5nx/ihEnJVxYlpYeIwepPs35dOWEiEd3Z/DgD0Qdmhwa6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lS6eI/FI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D15EC4CEF0;
+	Sat, 20 Sep 2025 01:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758330010;
-	bh=2qJLkz2bUY0cv4oFIA2AmdjP7Jd2VRRlmZ/MXWgPdU0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Ffis2AsMJ/r63H0kQB8/LiQwIo3vLOqX8EFCvoSMm/TSDW8uZgqPpsgjHTBZqP6Zq
-	 eX3znfg6Kcc9ac4R73//86DEA+sUsk+5Hc1LLYsfr8H3CMUmz6kVNlaUUAjJPPGOyt
-	 i9IevfeTcXckbzVDDKc9Xh57NBZGCX08U7XNBsGEbYZpwl5diKckRo3VuiILAHnzt/
-	 yq6m03cnGWeNLc5Bb051EnaZlCuvMMrocQGOGo2o4+6ddmjP7WEw7GNl5r49dpji3c
-	 m8szbYDpgXz/oTR1PcgDct8o/qFVp7MQ1RmeTANn3+ZD2/SBb/EtM22cymsdLx7th2
-	 Vzu1fknhmJjjw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F5439D0C20;
-	Sat, 20 Sep 2025 01:00:10 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1758330033;
+	bh=152V8ABtwHHLogh3lVMMKtEoSOaUdwb1Bwq6vDnjQJM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lS6eI/FIk2sbh3fa9diFQxOFDsvm9zjkX1rboM2k4iklkn8jqM1ufFoTpfMwb/UMu
+	 As+5nT/P03SrogGhQzn2lvIzK5vIaHQFohCwvSOvZ7gQ9s4gN/LhDirii8ObOvs4Wi
+	 YikGN7E0LpoUJNJejAOl3+9fXwgL8fl9mb78atRsgx5e1/ia1BjrGJWb16KyGa/PC6
+	 OALgNH2lF6Pl8yVgBb5fEapjBeJiFFphhvDPmBUJnZIOBw7VME/D4/mADaXq5if58j
+	 dFux0TbdzjMcXFzKoB7vqlIDun6otOl5a6egA6L47tAdzQp4MH7OKaxJXeNuTO7m4C
+	 cO7FeEtwP1g0Q==
+Date: Fri, 19 Sep 2025 18:00:30 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>, 
+	Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>, 
+	Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v16 06/10] unwind deferred: Use bitmask to determine
+ which callbacks to call
+Message-ID: <vxdnyz3e6c5whsd4let47ms75a7kcjykzud6x7d6pwkfd4yd2z@odddgxwsst4d>
+References: <20250729182304.965835871@kernel.org>
+ <20250729182405.822789300@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/2] net: netpoll: remove dead code and speed up
- rtnl-locked region
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175833000925.3754580.12058481985804816840.git-patchwork-notify@kernel.org>
-Date: Sat, 20 Sep 2025 01:00:09 +0000
-References: <20250918-netpoll_jv-v1-0-67d50eeb2c26@debian.org>
-In-Reply-To: <20250918-netpoll_jv-v1-0-67d50eeb2c26@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, efault@gmx.de, jv@jvosburgh.net,
- kernel-team@meta.com, calvin@wbinvd.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250729182405.822789300@kernel.org>
 
-Hello:
+On Tue, Jul 29, 2025 at 02:23:10PM -0400, Steven Rostedt wrote:
+> @@ -212,32 +225,59 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+>  
+>  	*cookie = get_cookie(info);
+>  
+> -	/* callback already pending? */
+> -	pending = READ_ONCE(info->pending);
+> -	if (pending)
+> -		return 1;
+> +	old = READ_ONCE(info->unwind_mask);
+>  
+> -	/* Claim the work unless an NMI just now swooped in to do so. */
+> -	if (!try_cmpxchg(&info->pending, &pending, 1))
+> +	/* Is this already queued or executed */
+> +	if (old & bit)
+>  		return 1;
+>  
+> +	/*
+> +	 * This work's bit hasn't been set yet. Now set it with the PENDING
+> +	 * bit and fetch the current value of unwind_mask. If ether the
+> +	 * work's bit or PENDING was already set, then this is already queued
+> +	 * to have a callback.
+> +	 */
+> +	bits = UNWIND_PENDING | bit;
+> +	old = atomic_long_fetch_or(bits, (atomic_long_t *)&info->unwind_mask);
+> +	if (old & bits) {
+> +		/*
+> +		 * If the work's bit was set, whatever set it had better
+> +		 * have also set pending and queued a callback.
+> +		 */
+> +		WARN_ON_ONCE(!(old & UNWIND_PENDING));
+> +		return old & bit;
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Per the function comment, the function returns 0, 1, or negative.  So
+this should be 
 
-On Thu, 18 Sep 2025 05:25:56 -0700 you wrote:
-> This patchset introduces two minor modernizations to the netpoll
-> infrastructure:
-> 
-> The first patch removes the unused netpoll pointer from the netpoll_info
-> structure. This member is redundant and its presence does not benefit
-> multi-instance setups, as reported by Jay Vosburgh. Eliminating it cleans up
-> the structure and removes unnecessary code.
-> 
-> [...]
+		return !!(old & bit)
 
-Here is the summary with links:
-  - [net-next,1/2] net: netpoll: remove unused netpoll pointer from netpoll_info
-    https://git.kernel.org/netdev/net-next/c/b34df17d588d
-  - [net-next,2/2] net: netpoll: use synchronize_net() instead of synchronize_rcu()
-    https://git.kernel.org/netdev/net-next/c/614accf54553
+right?
 
-You are awesome, thank you!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Josh
 
