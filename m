@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-825624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A28EB8C5B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:36:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8091FB8C5AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:36:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4EE1BC4BA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF471BC47DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0BF2FAC00;
-	Sat, 20 Sep 2025 10:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897432F659C;
+	Sat, 20 Sep 2025 10:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LenH2K7a"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A8HztFD7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60DC1EDA0F;
-	Sat, 20 Sep 2025 10:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758364586; cv=pass; b=nhYnhdNAjlBioRPQLVo4FGotghRLUYd4zRENEACGIiDfpK1hCFgYTUMmXkk31oyFqml5FvA3nfeqHsVCv30ivFOtvyMOmf3ArA5R3hpPiefjllh47RRTd8eDdpVmIwr/uOiAvTngCZJO2QhnH8qMMzUGlhwYm+jssKtwB8KkUCw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758364586; c=relaxed/simple;
-	bh=XhVjlxD10B7EfXybmuBwRKrwLtgoQoCtuuWPtFVvw3c=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=l2jNXuIN3CXe14PL6wygjYrIg6bF+V/t+NRiOhdyrt6aL78eknu18E67J5DF3ML8jYauY+JB7wwBDLOoM/18BfHKo5v3fIhjSRhkgFjOwPzpgx7BAcDtpqJoV5NKSb07yDbp2h1A/TtSECrM/5MOIz3mYHKiKj/00dUDXW9XsL8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LenH2K7a; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758364569; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aQsbP1cGohIJwTQYJy8PZCuozlEMdvuu/obm9kFKGWICjT39SmHcAhSoB2Aq04Kn+CdV9JwxO+Uiwz2c6TrI2dtnFBM1TL1EyQUR0f/zFFyZHRerVZ9q/eoqtpAgwmGRyp/RFQRE77ZKLZqaW9l/phDHAV9TDmRsH1CMnfYDWi8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758364569; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XhVjlxD10B7EfXybmuBwRKrwLtgoQoCtuuWPtFVvw3c=; 
-	b=T/AvK9Tqz8rrcwV3pCaHsndxW1AGNNp/9zAxmSMAvKmbT0H5+eArm6xiRaL2dC7axcekB61BXnDMk+3SqfybE5CpEJHMEzRtTFkvXQvYzObVy8JbDsQX6SGK4jtbkwFH2t/P/vg10eCr7S1PomMJY0hVkbSKteY+4JbehJBtWuY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758364569;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=XhVjlxD10B7EfXybmuBwRKrwLtgoQoCtuuWPtFVvw3c=;
-	b=LenH2K7a7hlAKnOI3BW3s1DJHfCCca0pezFv3H4XXXc1BUzXQAdiyQDJzdRegrLr
-	gnxJusno3oyFsC37qsSlmlmUSTKSCJMKkXU01Q3xe8rTJF41M+17QnIwQ+eaJxpX1UN
-	LKDNa1XCrYbUX2b58kXQqk46j+bDJIDXNdSICrys=
-Received: by mx.zohomail.com with SMTPS id 175836456731956.09508853652039;
-	Sat, 20 Sep 2025 03:36:07 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1BD1EDA0F;
+	Sat, 20 Sep 2025 10:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758364576; cv=none; b=hS7ROx/RhVgJj3VTWDyR8ZN1jRbphiYshwCqgNnZN7TiCHzaOO1aC7/wXWFJsThlTG1x6RiflszVAwIKYq+ouKZkq4EBbM2pAu0Z4EIY0aixkOOaPuXazTMMjdRk+bzb1hXUVf8IXQUMA+IX1AITr4PsVnq/y+oEdIQ+qYIjlBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758364576; c=relaxed/simple;
+	bh=B9MbXqYa6HGC9wBLtN6HQbq+MYDUhVblKq9WsO5oNRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UBbOuswhu7zWDy0hsyBf9Pax1cTBM5pEfYkkSV5Eb1sQd9jHIGAx1AMl/jC/ajpXOjplnPVg9cdzeBu/k9ejp9UbFRhua4UFbl9O9Qvu48zQYoEvBSDFxDguL8+jKxtESbr/8XecS+bDAcU1SxP4mRz2AFZ8ldEzxF+45KGMAmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A8HztFD7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB2DEC4CEEB;
+	Sat, 20 Sep 2025 10:36:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758364576;
+	bh=B9MbXqYa6HGC9wBLtN6HQbq+MYDUhVblKq9WsO5oNRQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A8HztFD7km48qKM5eRIpw++ODjFiSJaph4Iiy6PpxRhz4WyJgEfDk53tCuxkCee4N
+	 JFoNa8sL7FjivXtf0HKuo7u07kvP1TpDN4+RFXdGJ7LEVpLO0LtJxobVWZbGUHg4oq
+	 v8T5a1GqlH/YPo5kCu4/wIYg/vMqiKwdwUVwykjvO3WanE8c2/puxSczkBg4/BHff8
+	 wmPe8E7nmVO8a+OCC8IFjPrwy4EOLepcq345OTZD5d8FMULGrm/MBeM20BwRh+49sd
+	 iZkcsQ5weKnX+WCzrOl/uSv+A7oaB6V/NpEw056yFhpNPWH/KBDdwrbyjjXURlKqY6
+	 VHn0YOM9ogWWg==
+Date: Sat, 20 Sep 2025 11:36:05 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ michael.hennerich@analog.com, nuno.sa@analog.com, eblanc@baylibre.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ corbet@lwn.net, marcelo.schmitt1@gmail.com
+Subject: Re: [PATCH v2 1/8] iio: adc: ad4030: Fix _scale value for
+ common-mode channels
+Message-ID: <20250920113605.3d309a6a@jic23-huawei>
+In-Reply-To: <280f7145-8800-4f50-b316-3a604150a980@baylibre.com>
+References: <cover.1758214628.git.marcelo.schmitt@analog.com>
+	<b05f763506fdecf0d21a53dde82355418d6fb915.1758214628.git.marcelo.schmitt@analog.com>
+	<280f7145-8800-4f50-b316-3a604150a980@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 2/2] rust: clk: use the type-state pattern
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250910-clk-type-state-v2-2-1b97c11bb631@collabora.com>
-Date: Sat, 20 Sep 2025 12:35:52 +0200
-Cc: linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <93C70872-E3E5-4CF2-9CB2-56353C26FDA0@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
- <20250910-clk-type-state-v2-2-1b97c11bb631@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi everyone, gentle ping for reviewing this patch :)
+On Thu, 18 Sep 2025 14:32:23 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-> On 10 Sep 2025, at 19:28, Daniel Almeida =
-<daniel.almeida@collabora.com> wrote:
->=20
-> The current Clk abstraction can still be improved on the following =
-issues:
->=20
-> a) It only keeps track of a count to clk_get(), which means that users =
-have
-> to manually call disable() and unprepare(), or a variation of those, =
-like
-> disable_unprepare().
->=20
-> b) It allows repeated calls to prepare() or enable(), but it keeps no =
-track
-> of how often these were called, i.e., it's currently legal to write =
-the
-> following:
->=20
-> clk.prepare();
-> clk.prepare();
-> clk.enable();
-> clk.enable();
->=20
-> And nothing gets undone on drop().
+> On 9/18/25 12:37 PM, Marcelo Schmitt wrote:
+> > Previously, the driver always used the amount of precision bits of
+> > differential input channels to provide the scale to mV. Though,
+> > differential and common-mode voltage channels have different amount of
+> > precision bits and the correct number of precision bits must be considered
+> > to get to a proper mV scale factor for each one. Use channel specific
+> > number of precision bits to provide the correct scale value for each
+> > channel.
+> > 
+> > Fixes: de67f28abe58 ("iio: adc: ad4030: check scan_type for error")
+> > Fixes: 949abd1ca5a4 ("iio: adc: ad4030: add averaging support")
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---  
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> 
 
-^ this really sucks so we should probably take in this change.
+I'll queue this one up now, but not push the branch out yet as it will
+make a mess of linux-next (due to ordering of trees).
 
-=E2=80=94 Daniel=
+Jonathan
 
