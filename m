@@ -1,179 +1,76 @@
-Return-Path: <linux-kernel+bounces-825847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5F6B8CF00
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:43:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B00B8CF0C
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 668517A407C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:42:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43133AB399
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054DC313545;
-	Sat, 20 Sep 2025 18:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="iC6oMZYR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC86313529;
+	Sat, 20 Sep 2025 18:55:23 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1C923AB9C;
-	Sat, 20 Sep 2025 18:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758393822; cv=pass; b=oXi3TDThrjO03ORoP1ePn/ICm7nUlySEXi6wI0WLbDCHv3CmDd1+55od62V3Bnjd5EcIxflr3QnWgQH88aADP/20dqMj9TYOTN+LBf/E2oBoMAWvQSfrs7Fw/ycpWoE5UCVAxHSjqAJiSNhk5fLs55h827cyPYT6987k0zrA2lM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758393822; c=relaxed/simple;
-	bh=R5HRn2PgReoUKMx1eBc0jNxUugrZtBDmynmUJ5SSmPw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=L1A+YFg2WqDNEwXRONETQI9Si59ec9OWe2btxMQ9Z8iz1EWDxJ5g7uLx/tj7bOOya6un3K+cu3ZZGGZOuypG0kscPvrrgTfcTG9hn7/MYkrA/+lTn6OPbGUkGgUlQtn+/JoeDol0NuUgn8I//FsozGEuehDDKlDRbZ2AR/Ys6L8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=iC6oMZYR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1758393802; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cEgYZDLzfRP3m0D9gSl5NMlItx9GewrgEUTZAiHK3nGSyIXs4DaNdHMHzfnKYiIACio1d4WeTBfmRlAWFVRdcfpggn2YdGsPmz1NJY9Vw0PQFLfGOw5lQ3b+8OhhzOtMu5tMEgfrYAlC33/OyhuUlYY6DN4FhcDLXQxEgY5hKlU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1758393802; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=R5HRn2PgReoUKMx1eBc0jNxUugrZtBDmynmUJ5SSmPw=; 
-	b=DqxVBuq2QpZPyjeW57aAHrzuN/LZRdAqTtRxX2/7pWM9Jt872YpvI4tdTyUKnVMpmZOQcq8mM7oROAo/QcwJro9USQgCZH/3+ISIsouhddS8kGOTlnXkDxBtBZxoCuszdUsNqQlNR6aQ5DbWbF8FZEwThWEFNdCa6hR8Kxou4xs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758393802;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=R5HRn2PgReoUKMx1eBc0jNxUugrZtBDmynmUJ5SSmPw=;
-	b=iC6oMZYRwJzyxocUOTGpkz0W+HXvdWA/p+MCy8s4jLrgF/+jujT7eZb5sndiChgw
-	xzLdjOImTgm74cJIoy6Mip+/rXXKSL1nSEi+dWRHMfO+Ub3UwpbxXxtuMT4omCRgK3R
-	VdatzvX+GUurkMZ4u6vXlFq6VXMKjGTBv+beyh9U=
-Received: by mx.zohomail.com with SMTPS id 1758393800802877.2320752719693;
-	Sat, 20 Sep 2025 11:43:20 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446B827A107
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 18:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758394522; cv=none; b=OcIfxPkv0XSu0bVHebPcG2V89yPtAQN9f/iRqX5FmuyvIJmZ/AiYL98JiAm0yAJ5m+/2ckrI3n9H7S6yasN2xShMQBaQJZp0bMCJ7PyCsu0mFF+wNIJwNkKxGrjHDcWvsSWwG8E0x+LEEbgYGRQ1YAWfSXs2XHKjkWevrpPkNzI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758394522; c=relaxed/simple;
+	bh=E8Tsr/GBk7066yBSCO7MG9SQ4k+Qwh7W2IueHP/IpuU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Uks2UUv5qLX6pG8AeSQ1mHRY/l+hSM1aqF64boOOKX/Z07g4m5EFMOcIH3D91emqDl7jfLsRzSXvKbMNEg7sphB+Ud+fd3Wns6x1ZY1RRCv/eKdqaBJTCnEBrP/APwmuiA/XuwKIgga7vWb5ZhUjcJevo9v1nxDW9HEdMUN+aRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-889b8d8b6b7so390689639f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:55:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758394520; x=1758999320;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8Tsr/GBk7066yBSCO7MG9SQ4k+Qwh7W2IueHP/IpuU=;
+        b=C50m9wbODu77acfsnHGs6hnhDRetXLSvj3FgLWiKAShCsWUMj6oilkI8qywIiqGEUQ
+         /l1FkL9vbJloNvAqGWMGJOxOkw53uCLyfTw1CRvwBmQdRFQ5fRlRCWWB4D9UgiLOp1h5
+         yaNcZuOfPQn+cAaw0ybMxhQIZNQNoX4V7RCfVbHt45FTtXhzn3XSND87tdXqs1kGQ9zV
+         Xq5gycRqjzWDeCn2TXl0EcAQrqjgLtuA2batomvMf6LfDOal+yA0kzHdwOZ7hknNxt2k
+         e47HrtlwUENNZ08ujzOXLCmYJlpdW5OGiyhh/Q/3v4OE0SCCoOFdY7YtEKloMdyqKp8k
+         M0cQ==
+X-Gm-Message-State: AOJu0Yz5v1wPT1etfBBZXvzyRGS/ShyM8wZddb1xJO+i0vT2CYdiPMWD
+	FI++OyF3mbvltpGXuQAL5yiT0AGAjDTY4PKWNTPhxOk+ctap6wsW1g41uvchrNSNI3oLmuxsJm/
+	hudLC5HEHwpz1KHX/zm3uHaxtaJX2jfYe8v+xc4y+djzJPjzk1A/ug6eogjY=
+X-Google-Smtp-Source: AGHT+IHlF1l2YjaQBst/pR54xbdq39T2S4jcuw9OnzLeFHgmDzMnrxaXnwTYjxgwfzXu3k3JkbdyMvT8noTxFuJMetoztEaysdjg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLgib2a7UK0cYqy1cM6h_OZDMWf+JX+KpXXCJNTZchyfP5A@mail.gmail.com>
-Date: Sat, 20 Sep 2025 20:43:05 +0200
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0EAFA337-2E62-489E-9C22-61A6E1813C8A@collabora.com>
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
- <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com>
- <aMG6JVMcMxVuX7De@tardis-2.local>
- <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com>
- <175834480479.4354.6269916774389395049@lazor>
- <CAH5fLgib2a7UK0cYqy1cM6h_OZDMWf+JX+KpXXCJNTZchyfP5A@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3826.700.81)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1448:b0:425:51dc:5b6c with SMTP id
+ e9e14a558f8ab-42551dc5c61mr33092625ab.13.1758394520431; Sat, 20 Sep 2025
+ 11:55:20 -0700 (PDT)
+Date: Sat, 20 Sep 2025 11:55:20 -0700
+In-Reply-To: <68af7ed3.a00a0220.2929dc.0004.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cef898.050a0220.13cd81.001f.GAE@google.com>
+Subject: Forwarded: re-test
+From: syzbot <syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
+***
 
-> On 20 Sep 2025, at 19:12, Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> On Sat, Sep 20, 2025 at 7:06=E2=80=AFAM Stephen Boyd =
-<sboyd@kernel.org> wrote:
->>=20
->> Quoting Daniel Almeida (2025-09-10 11:47:30)
->>> Hi Boqun,
->>>=20
->>>> On 10 Sep 2025, at 14:49, Boqun Feng <boqun.feng@gmail.com> wrote:
->>>>=20
->>>> On Wed, Sep 10, 2025 at 02:28:27PM -0300, Daniel Almeida wrote:
->>>>> From: Alice Ryhl <aliceryhl@google.com>
->>>>>=20
->>>>> These traits are required for drivers to embed the Clk type in =
-their own
->>>>> data structures because driver data structures are usually =
-required to
->>>>> be Send. See e.g. [1] for the kind of workaround that drivers =
-currently
->>>>> need due to lacking this annotation.
->>>>>=20
->>>>> Link: =
-https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3dc9da95@coll=
-abora.com/ [1]
->>>>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->>>>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->>>>> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
->>>>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>>> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
->>>>=20
->>>> This tag list looks a bit weird to me. Why is there a SoB from you
->>>> before Alice's SoB? At least for the usage I'm familiar with, =
-outside
->>>> the case of Co-developed-bys, multiple SoBs is used for recording =
-how
->>>> the patches are routed. For example, if I have a patch that has my =
-SoB
->>>> and I send it to you, you queue in your tree and then send out to =
-other
->>>> maintainers for merging, in general you would put your SoB after =
-mine in
->>>> that case. But I don't think that's case here? Alice's patch has =
-only
->>>> her SoB:
->>>>=20
->>>> =
-https://lore.kernel.org/rust-for-linux/20250904-clk-send-sync-v1-1-48d0233=
-20eb8@google.com/
->>>>=20
->>>> What's the intention of the SoB tag here?
->>>>=20
->>>> Otherwise the patch looks good to me. If we get the tag list =
-resolved,
->>>> feel free to add:
->>>>=20
->>>> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->>>>=20
->>>> Regards,
->>>> Boqun
->>>>=20
->>>=20
->>> You have to include your SOB when submitting patches from others.
->>>=20
->>> This is something I tend to forget often, so I made sure it was =
-there. The
->>> order may be indeed off though.
->>=20
->> Yes the order is wrong. The first SoB should be the commit author.
->=20
-> One optoin is to just land the original patch:
-> =
-https://lore.kernel.org/all/20250904-clk-send-sync-v1-1-48d023320eb8@googl=
-e.com/
->=20
-> Alice
+Subject: re-test
+Author: kriish.sharma2006@gmail.com
 
-I guess this makes even more sense. I was hoping to land these two =
-together,
-but clearly this will not be possible for the time being as the second =
-patch
-has no r-b tags.
-
-=E2=80=94 Daniel=
+#syz test
 
