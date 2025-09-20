@@ -1,284 +1,178 @@
-Return-Path: <linux-kernel+bounces-825932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F58DB8D272
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3372B8D289
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19F017A2BB1
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 333BA7E1D10
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D2B286D56;
-	Sat, 20 Sep 2025 23:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602C528C5BE;
+	Sat, 20 Sep 2025 23:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AV4xIGi8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/8kqP34"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D701CAA92;
-	Sat, 20 Sep 2025 23:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFD61CAA92;
+	Sat, 20 Sep 2025 23:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758412122; cv=none; b=vFQnIAQ/CLWHLy4xN84ulef0W9/qriFbCipsqRdQns26qAaFJmlzRwI8oNOq2o2w/16QhU3Kgp7n+dIMHuFjjY9z4p+Pa0vczjeJQxoljbNP8tozfc+aDf1Buqz+svy/BQMSOya/w59gnc+hEidorThEn7zaYEgLVRzreQLyD4o=
+	t=1758412322; cv=none; b=ESVNSm4hkMKOpE6eSmAiwAFPkGJyja0zlknIF9m2ptSFfM3vnzw8xqZwGGutdJDCIcWaWWu6rrsc1/di7Gkc9mAyoiC9VIfugnO+bqDUESx5O+hnzi8OO1J9h0KefcAVTlRSEgQIbMjcF2wfCONFYnTooaUqCo5bYnOA95f+t00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758412122; c=relaxed/simple;
-	bh=QIxkoqGx1iUDk/Kd3gvhLnK7lvE5vZWy6iG9qboqNBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EBbUJNjJnEd0DC52ppwJB3i44bbB6KyxwAbhj/E7S6MWCHlOX9/nxBZ7GibIwmNVh65tg37/362AZqLZyGwNvE9hK9IMAWkfADVv1J3uWcx82I8B8GF6Gc9LtBxmdwsMs7t485QlZnC0iiSHUsGFa4o76o9YGhDL9V36OByaSvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AV4xIGi8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7333C4CEEB;
-	Sat, 20 Sep 2025 23:48:39 +0000 (UTC)
+	s=arc-20240116; t=1758412322; c=relaxed/simple;
+	bh=ZoD/cqLIPrBYReuhPFTFJ9c8GRJBw2et4Fjogl70Y9Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AITcD4Fw483Ppa6zbe5eR/VuceHaMkPWqyDZPoAOHC1lljQIq+v+Ig9fDJOS2AjdET1EGyUR+DSQXl8khfgAaOLDwyWaRrludkEZ7zlwZkI5bXjEdvjJ1PMsgXCVJ1W4safj67PklGw2SoVztqKTQ7er4xMXGoIfIUkWBXBIlLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/8kqP34; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A65C0C4CEEB;
+	Sat, 20 Sep 2025 23:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758412121;
-	bh=QIxkoqGx1iUDk/Kd3gvhLnK7lvE5vZWy6iG9qboqNBs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AV4xIGi8APouzirRimK7yffgO7siT/0UcuPPSj4PVrnZZDid+0mxGhctenFvGnu72
-	 j0LVloGhnaE5cuxrm6jgfsJ37iJkdxNOyPqCdjy3rRdTyigsNfT3Ly4YpeZwaXTsCe
-	 r0umDP3Zit7m8A8izCHed2+917rc7aV9AtMbwmQXR6FapM9mBEU5uYp+S/PsL9tq/Z
-	 iCDNOhqU1mjByfdxg7PozjHbWN+elCTRt5bzyMyGFaXtIx4Brn3m5V4xrC+K/N2BHH
-	 9MG2CO9FPTI/PB6HB6KjLG7g6JXDCEDQSlGWxOabG94uswsDnaAf4cwu7IQwKwytKo
-	 eseEURPsECPvw==
-Date: Sat, 20 Sep 2025 16:48:36 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>, Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Binbin Zhou <zhoubinbin@loongson.cn>,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: Re: [PATCH V2] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN
- enabled
-Message-ID: <20250920234836.GA3857420@ax162>
-References: <20250910091033.725716-1-chenhuacai@loongson.cn>
+	s=k20201202; t=1758412322;
+	bh=ZoD/cqLIPrBYReuhPFTFJ9c8GRJBw2et4Fjogl70Y9Q=;
+	h=From:Subject:Date:To:Cc:From;
+	b=k/8kqP34ENiiawVlQ0KtmjuAF7YmdLyLGAC2ikbUtZqJPd7tSUxLly9x5Kf+RmkJa
+	 FN9SZuQb1EeZSs0USjeFN1nqOQTxT/3Bxb+crl03I+ZACup5rszLilCaOsdgUYZYsU
+	 J1PmMTIFlwBe29D+41e1sK+dObJNqc/So4dt1GFLW/og+d5mYp3FKV0JcSicQrP9lb
+	 X/D0D0U8aCv8qJOhfB48bGCVMUB+qOmbvnfpMTZ0yHFDZClxwKHN6bcDyH2fv+PUq8
+	 btypFV3Nt3ZeMbByoAAts0X/uMLnHxHDqafzpB+o0STV3b7Uv6mZarycFSPKoGW25u
+	 2Z8uBLrQc+4dA==
+From: Drew Fustini <fustini@kernel.org>
+Subject: [PATCH v3 0/3] RISC-V: Detect Ssqosid extension and handle srmcfg
+ CSR
+Date: Sat, 20 Sep 2025 16:51:41 -0700
+Message-Id: <20250920-ssqosid-v6-17-rc5-v3-0-5093162922d8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910091033.725716-1-chenhuacai@loongson.cn>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA0+z2gC/x3MSQqAMAxA0atI1gZixfEq4qK2UbNxaKAIxbtbX
+ L7F/wmUg7DCWCQIHEXlPDLqsgC322NjFJ8NhkxDAw2oep8qHmOLVYfBNbg6R0vb246sgdxdgVd
+ 5/uc0v+8HVZiqz2MAAAA=
+X-Change-ID: 20250909-ssqosid-v6-17-rc5-fcc0b68a70a2
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: =?utf-8?q?Kornel_Dul=C4=99ba?= <mindal@semihalf.com>, 
+ Adrien Ricciardi <aricciardi@baylibre.com>, 
+ James Morse <james.morse@arm.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
+ Atish Patra <atish.patra@linux.dev>, 
+ Vasudevan Srinivasan <vasu@rivosinc.com>, guo.wenjia23@zte.com.cn, 
+ liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Drew Fustini <fustini@kernel.org>
+X-Mailer: b4 0.14.2
 
-Hi Huacai,
+This series adds support for the RISC-V Quality-of-Service Identifiers
+(Ssqosid) extension [1] which adds the srmcfg register. This CSR 
+configures a hart with two identifiers: a Resource Control ID (RCID)
+and a Monitoring Counter ID (MCID). These identifiers accompany each
+request issued by the hart to shared resource controllers.
 
-On Wed, Sep 10, 2025 at 05:10:33PM +0800, Huacai Chen wrote:
-> ARCH_STRICT_ALIGN is used for hardware without UAL, now it only control
-> the -mstrict-align flag. However, ACPI structures are packed by default
-> so will cause unaligned accesses.
-> 
-> To avoid this, define ACPI_MISALIGNMENT_NOT_SUPPORTED in asm/acenv.h to
-> align ACPI structures if ARCH_STRICT_ALIGN enabled.
-> 
-> Cc: stable@vger.kernel.org
-> Reported-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> Suggested-by: Xi Ruoyao <xry111@xry111.site>
-> Suggested-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
-> V2: Modify asm/acenv.h instead of Makefile.
-> 
->  arch/loongarch/include/asm/acenv.h | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/loongarch/include/asm/acenv.h b/arch/loongarch/include/asm/acenv.h
-> index 52f298f7293b..483c955f2ae5 100644
-> --- a/arch/loongarch/include/asm/acenv.h
-> +++ b/arch/loongarch/include/asm/acenv.h
-> @@ -10,9 +10,8 @@
->  #ifndef _ASM_LOONGARCH_ACENV_H
->  #define _ASM_LOONGARCH_ACENV_H
->  
-> -/*
-> - * This header is required by ACPI core, but we have nothing to fill in
-> - * right now. Will be updated later when needed.
-> - */
-> +#ifdef CONFIG_ARCH_STRICT_ALIGN
-> +#define ACPI_MISALIGNMENT_NOT_SUPPORTED
-> +#endif /* CONFIG_ARCH_STRICT_ALIGN */
->  
->  #endif /* _ASM_LOONGARCH_ACENV_H */
+Background on RISC-V QoS:
 
-I am seeing several ACPI errors in my QEMU testing after this change in
-Linus's tree as commit a9d13433fe17 ("LoongArch: Align ACPI structures
-if ARCH_STRICT_ALIGN enabled").
+The Ssqosid extension is used by the RISC-V Capacity and Bandwidth
+Controller QoS Register Interface (CBQRI) specification [2]. QoS in
+this context is concerned with shared resources on an SoC such as cache
+capacity and memory bandwidth. Intel and AMD already have QoS features
+on x86 and ARM has MPAM. There is an existing user interface in Linux:
+the resctrl virtual filesystem [3].
 
-  $ make -skj"$(nproc)" ARCH=loongarch CROSS_COMPILE=loongarch64-linux- clean defconfig vmlinuz.efi
-  kernel/sched/fair.o: warning: objtool: sched_update_scaling() falls through to next function init_entity_runnable_average()
-  mm/mempolicy.o: warning: objtool: alloc_pages_bulk_mempolicy_noprof+0x380: stack state mismatch: reg1[30]=-1+0 reg2[30]=-2-80
-  lib/crypto/mpi/mpih-div.o: warning: objtool: mpihelp_divrem+0x2d0: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
-  In file included from include/acpi/acpi.h:24,
-                   from drivers/acpi/acpica/tbprint.c:10:
-  drivers/acpi/acpica/tbprint.c: In function 'acpi_tb_print_table_header':
-  include/acpi/actypes.h:530:43: warning: 'strncmp' argument 1 declared attribute 'nonstring' is smaller than the specified bound 8 [-Wstringop-overread]
-    530 | #define ACPI_VALIDATE_RSDP_SIG(a)       (!strncmp (ACPI_CAST_PTR (char, (a)), ACPI_SIG_RSDP, (sizeof(a) < 8) ? ACPI_NAMESEG_SIZE : 8))
-        |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  drivers/acpi/acpica/tbprint.c:105:20: note: in expansion of macro 'ACPI_VALIDATE_RSDP_SIG'
-    105 |         } else if (ACPI_VALIDATE_RSDP_SIG(ACPI_CAST_PTR(struct acpi_table_rsdp,
-        |                    ^~~~~~~~~~~~~~~~~~~~~~
-  In file included from include/acpi/acpi.h:26:
-  include/acpi/actbl.h:69:14: note: argument 'signature' declared here
-     69 |         char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;       /* ASCII table signature */
-        |              ^~~~~~~~~
+The srmcfg CSR provides a mechanism by which a software workload (e.g.
+a process or a set of processes) can be associated with an RCID and an
+MCID. CBQRI defines operations to configure resource usage limits, in
+the form of capacity or bandwidth. CBQRI also defines operations to
+configure counters to track the resource utilization.
 
-  $ curl -LSso /tmp/loongarch-QEMU_EFI.fd https://github.com/loongson/Firmware/raw/main/LoongArchVirtMachine/QEMU_EFI.fd
+Goal for this series:
 
-  $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20241120-044434/loongarch-rootfs.cpio.zst | zstd -d >/tmp/rootfs.cpio
+These two patches are taken from the implementation of resctrl support
+for RISC-V CBQRI. Please refer to the proof-of-concept RFC [4] for
+details on the resctrl implementation. More recently, I have rebased
+the CBQRI support on mainline [5]. Big thanks to James Morse for the
+tireless work to extract resctrl from arch/x86 and make it available
+to all archs.
 
-  $ sha256sum /tmp/loongarch-QEMU_EFI.fd /tmp/rootfs.cpio
-  b375639ebcf7a873d2cab67f0c9c1c6c208fc3f1bcba4083172fa20c4fb7e1ab /tmp/loongarch-QEMU_EFI.fd
-  1c17c9a4ea823931446fca5f5323b8e9384ba88b48d679e394ec5d4f6e258793 /tmp/rootfs.cpio
+I think it makes sense to first focus on the detection of Ssqosid and
+handling of srmcfg when switching tasks. It has been tested against a
+QEMU branch that implements Ssqosid and CBQRI [6]. A test driver [7]
+was used to set srmcfg for the current process. This allows switch_to
+to be tested without resctrl.
 
-  $ qemu-system-loongarch64 --version | head -1
-  QEMU emulator version 10.1.0 (qemu-10.1.0-8.fc44)
+Changes in v3:
+ - Fix parameter in __switch_to_srmcfg() when CONFIG_RISCV_ISA_SSQOSID
+   is not set to avoid error in clang. This does trigger checkpatch
+   warning about "Argument '__next' is not used in function-like macro"
+   but it seems that '__switch_to_srmcfg(__next)' is needed to avoid
+   the error that LKP reported. '__switch_to_srmcfg()' will trigger a
+   build error in clang.
+   https://lore.kernel.org/oe-kbuild-all/202509162355.wByessnb-lkp@intel.com/
+ - Improve description of ssqosid in extensions.xml
+ - Link to v2: https://lore.kernel.org/linux-riscv/20250915-ssqosid-v6-17-rc5-v2-0-2d4b0254dfd6@kernel.org/
 
-  # Filtered by "ACPI" and "Linux version"
-  $ qemu-system-loongarch64 \
-      -display none \
-      -nodefaults \
-      -M virt \
-      -cpu la464 \
-      -bios /tmp/loongarch-QEMU_EFI.fd \
-      -no-reboot \
-      -append console=ttyS0,115200 \
-      -kernel arch/loongarch/boot/vmlinuz.efi \
-      -initrd /tmp/rootfs.cpio \
-      -m 2G \
-      -smp 2 \
-      -serial mon:stdio
-  [    0.000000] Linux version 6.17.0-rc6+ (nathan@aadp) (loongarch64-linux-gcc (GCC) 15.2.0, GNU ld (GNU Binutils) 2.45) #1 SMP PREEMPT_DYNAMIC Sat Sep 20 16:24:42 MST 2025
-  [    0.000000] efi: SMBIOS=0xf3c0000 SMBIOS 3.0=0xdd50000 MEMATTR=0xe832118 ACPI=0xe12f000 ACPI 2.0=0xe12f014 INITRD=0xe125f18 MEMRESERVE=0xe125f98 MEMMAP=0xe122018 
-  [    0.000000] ACPI: Early table checksum verification disabled
-  [    0.000000] ACPI: RSDP 0x000000000E12F014 000024 (v02 BOCHS )
-  [    0.000000] ACPI: XSDT 0x000000000E12E0E8 000054 (v01 BOCHS  BXPC     00000001      01000013)
-  [    0.000000] ACPI: FACP 0x000000000E12B000 00010C (v05 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: DSDT 0x000000000E12C000 00125D (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: FACS 0x000000000C770000 000040
-  [    0.000000] ACPI: APIC 0x000000000E12A000 00007B (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: PPTT 0x000000000E129000 000074 (v02 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: SRAT 0x000000000E128000 0000A0 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: SPCR 0x000000000E127000 000050 (v02 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: MCFG 0x000000000E126000 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: SPCR: console: uart,mmio,0x1fe001e0,115200
-  [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x0fffffff]
-  [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x80000000-0xefffffff]
-  [    0.014877] ACPI: Core revision 20250404
-  [    0.854788] ACPI: Added _OSI(Module Device)
-  [    0.854920] ACPI: Added _OSI(Processor Device)
-  [    0.854935] ACPI: Added _OSI(Processor Aggregator Device)
-  [    0.885597] ACPI: 1 ACPI AML tables successfully acquired and loaded
-  [    0.906695] ACPI: Interpreter enabled
-  [    0.910327] ACPI: PM: (supports S0 S5)
-  [    0.910495] ACPI: Using LPIC for interrupt routing
-  [    0.911650] ACPI: MCFG table detected, 1 entries
-  [    0.925560] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    0.928083] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.930036] ACPI Error: Aborting method \_SB.CPUS.C000._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.930585] ACPI Error: Method execution failed \_SB.CPUS.C000._STA due to previous error (AE_AML_ALIGNMENT) (20250404/uteval-68)
-  [    0.931693] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    0.931878] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.932035] ACPI Error: Aborting method \_SB.CPUS.C001._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.932171] ACPI Error: Method execution failed \_SB.CPUS.C001._STA due to previous error (AE_AML_ALIGNMENT) (20250404/uteval-68)
-  [    0.969018] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    0.969139] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.969238] ACPI Error: Aborting method \_SB.CPUS.C000._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.971203] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    0.971307] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.971399] ACPI Error: Aborting method \_SB.CPUS.C001._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.992513] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    0.992762] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.993027] ACPI Error: Aborting method \_SB.CPUS.C000._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.993511] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    0.993593] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.993664] ACPI Error: Aborting method \_SB.CPUS.C001._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    0.994569] ACPI: PCI: Interrupt link L000 configured for IRQ 80
-  [    0.994887] ACPI: PCI: Interrupt link L001 configured for IRQ 81
-  [    0.995038] ACPI: PCI: Interrupt link L002 configured for IRQ 82
-  [    0.995167] ACPI: PCI: Interrupt link L003 configured for IRQ 83
-  [    0.998540] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-7f])
-  [    1.009539] ACPI: Remapped I/O 0x0000000018004000 to [io  0x0000-0xbfff window]
-  [    1.039462] ACPI: bus type USB registered
-  [    1.125150] pnp: PnP ACPI init
-  [    1.135025] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    1.135162] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    1.135433] ACPI Error: Aborting method \_SB.CPUS.C000._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    1.135539] ACPI Error: Method execution failed \_SB.CPUS.C000._STA due to previous error (AE_AML_ALIGNMENT) (20250404/uteval-68)
-  [    1.136219] ACPI Error: AE_AML_ALIGNMENT, Returned by Handler for [SystemMemory] (20250404/evregion-301)
-  [    1.136328] ACPI Error: Aborting method \_SB.CPUS.CSTA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    1.136426] ACPI Error: Aborting method \_SB.CPUS.C001._STA due to previous error (AE_AML_ALIGNMENT) (20250404/psparse-529)
-  [    1.136516] ACPI Error: Method execution failed \_SB.CPUS.C001._STA due to previous error (AE_AML_ALIGNMENT) (20250404/uteval-68)
-  [    1.144655] pnp: PnP ACPI: found 5 devices
-  [    1.316259] ACPI: bus type thunderbolt registered
-  [    1.441002] ACPI: button: Power Button [PWRB]
-  [    1.719602] ACPI: bus type drm_connector registered
-  [    8.642000] ACPI: PM: Preparing to enter system sleep state S5
+Changes in v2:
+ - Restore the per-cpu fix from RFC v2 that was missed in v1:
+   change DEFINE_PER_CPU to DECLARE_PER_CPU in qos.h and move
+   DEFINE_PER_CPU to qos.c
+ - Introduce a patch that adds Ssqosid to riscv/extensions.yaml
+ - Link to v1: https://lore.kernel.org/r/20250910-ssqosid-v6-17-rc5-v1-0-72cb8f144615@kernel.org
 
-At the parent change, this is all I see for ACPI messages.
+Changes in v1:
+ - Rename all instances of the sqoscfg CSR to srmcfg to match the
+   ratified Ssqosid spec
+ - Link RFC v2: https://lore.kernel.org/linux-riscv/20230430-riscv-cbqri-rfc-v2-v2-0-8e3725c4a473@baylibre.com/
 
-  [    0.000000] efi: SMBIOS=0xf3c0000 SMBIOS 3.0=0xdd50000 MEMATTR=0xe832118 ACPI=0xe12f000 ACPI 2.0=0xe12f014 INITRD=0xe125f18 MEMRESERVE=0xe125f98 MEMMAP=0xe122018
-  [    0.000000] ACPI: Early table checksum verification disabled
-  [    0.000000] ACPI: RSDP 0x000000000E12F014 000024 (v02 BOCHS )
-  [    0.000000] ACPI: XSDT 0x000000000E12E0E8 000054 (v01 BOCHS  BXPC     00000001      01000013)
-  [    0.000000] ACPI: FACP 0x000000000E12B000 00010C (v05 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: DSDT 0x000000000E12C000 00125D (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: FACS 0x000000000C770000 000040
-  [    0.000000] ACPI: APIC 0x000000000E12A000 00007B (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: PPTT 0x000000000E129000 000074 (v02 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: SRAT 0x000000000E128000 0000A0 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: SPCR 0x000000000E127000 000050 (v02 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: MCFG 0x000000000E126000 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
-  [    0.000000] ACPI: SPCR: console: uart,mmio,0x1fe001e0,115200
-  [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x00000000-0x0fffffff]
-  [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x80000000-0xefffffff]
-  [    0.014597] ACPI: Core revision 20250404
-  [    0.915706] ACPI: Added _OSI(Module Device)
-  [    0.915755] ACPI: Added _OSI(Processor Device)
-  [    0.915764] ACPI: Added _OSI(Processor Aggregator Device)
-  [    0.945135] ACPI: 1 ACPI AML tables successfully acquired and loaded
-  [    0.960197] ACPI: Interpreter enabled
-  [    0.961985] ACPI: PM: (supports S0 S5)
-  [    0.962069] ACPI: Using LPIC for interrupt routing
-  [    0.962718] ACPI: MCFG table detected, 1 entries
-  [    1.013706] ACPI: PCI: Interrupt link L000 configured for IRQ 80
-  [    1.013966] ACPI: PCI: Interrupt link L001 configured for IRQ 81
-  [    1.014076] ACPI: PCI: Interrupt link L002 configured for IRQ 82
-  [    1.014176] ACPI: PCI: Interrupt link L003 configured for IRQ 83
-  [    1.014977] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-7f])
-  [    1.022475] ACPI: Remapped I/O 0x0000000018004000 to [io  0x0000-0xbfff window]
-  [    1.058781] ACPI: bus type USB registered
-  [    1.125533] pnp: PnP ACPI init
-  [    1.140430] pnp: PnP ACPI: found 5 devices
-  [    1.270053] ACPI: bus type thunderbolt registered
-  [    1.382724] ACPI: button: Power Button [PWRB]
-  [    1.673533] ACPI: bus type drm_connector registered
-  [    8.715507] ACPI: PM: Preparing to enter system sleep state S5
+Changes in RFC v2:
+ - change DEFINE_PER_CPU to DECLARE_PER_CPU for cpu_sqoscfg in qos.h to
+   prevent linking error about multiple definition. Move DEFINE_PER_CPU
+   for cpu_sqoscfg into qos.c
+ - renamed qos prefix in function names to sqoscfg to be less generic
+ - handle sqoscfg the same way has_vector and has_fpu are handled in the
+   vector patch series
+ - Link to RFC v1: https://lore.kernel.org/linux-riscv/20230410043646.3138446-1-dfustini@baylibre.com/
 
-Is this expected?
+[1] https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
+[2] https://github.com/riscv-non-isa/riscv-cbqri/releases/tag/v1.0
+[3] https://docs.kernel.org/filesystems/resctrl.html
+[4] https://lore.kernel.org/linux-riscv/20230419111111.477118-1-dfustini@baylibre.com/
+[5] https://github.com/tt-fustini/linux/tree/b4/cbqri-v6-17-rc5
+[6] https://github.com/tt-fustini/qemu/tree/riscv-cbqri-rqsc-pptt
+[7] https://github.com/tt-fustini/linux/tree/ssqosid-v6-17-rc5-debug
 
-Cheers,
-Nathan
+Signed-off-by: Drew Fustini <fustini@kernel.org>
+---
+Drew Fustini (3):
+      dt-bindings: riscv: Add Ssqosid extension description
+      RISC-V: Detect the Ssqosid extension
+      RISC-V: Add support for srmcfg CSR from Ssqosid ext
 
-# bad: [3b08f56fbbb9ef75c7454487f8d3db80a84deef7] Merge tag 'x86-urgent-2025-09-20' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-# good: [f83ec76bf285bea5727f478a68b894f5543ca76e] Linux 6.17-rc6
-git bisect start '3b08f56fbbb9ef75c7454487f8d3db80a84deef7' 'v6.17-rc6'
-# good: [cbf658dd09419f1ef9de11b9604e950bdd5c170b] Merge tag 'net-6.17-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-git bisect good cbf658dd09419f1ef9de11b9604e950bdd5c170b
-# good: [e8442d5b7bc6338d553040f5b1f7bd43f5ab30e0] Merge tag 'sound-6.17-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
-git bisect good e8442d5b7bc6338d553040f5b1f7bd43f5ab30e0
-# bad: [ffa7119cd1294dc1814e582dc07ffeb953ae7b26] Merge tag 'mmc-v6.17-rc2-2' of git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc
-git bisect bad ffa7119cd1294dc1814e582dc07ffeb953ae7b26
-# bad: [8dc5245673cf7f33743e5c0d2a4207c0b8df3067] LoongArch: KVM: Avoid copy_*_user() with lock hold in kvm_pch_pic_regs_access()
-git bisect bad 8dc5245673cf7f33743e5c0d2a4207c0b8df3067
-# bad: [d6d69f0edde63b553345d4efaceb7daed89fe04c] LoongArch: Replace sprintf() with sysfs_emit()
-git bisect bad d6d69f0edde63b553345d4efaceb7daed89fe04c
-# good: [74f8295c6fb8436bec9995baf6ba463151b6fb68] LoongArch: Handle jump tables options for RUST
-git bisect good 74f8295c6fb8436bec9995baf6ba463151b6fb68
-# bad: [a9d13433fe17be0e867e51e71a1acd2731fbef8d] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
-git bisect bad a9d13433fe17be0e867e51e71a1acd2731fbef8d
-# good: [f5003098e2f337d8e8a87dc636250e3fa978d9ad] LoongArch: Update help info of ARCH_STRICT_ALIGN
-git bisect good f5003098e2f337d8e8a87dc636250e3fa978d9ad
-# first bad commit: [a9d13433fe17be0e867e51e71a1acd2731fbef8d] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
+ .../devicetree/bindings/riscv/extensions.yaml      |  6 ++++
+ MAINTAINERS                                        |  7 ++++
+ arch/riscv/Kconfig                                 | 17 +++++++++
+ arch/riscv/include/asm/csr.h                       |  8 +++++
+ arch/riscv/include/asm/hwcap.h                     |  1 +
+ arch/riscv/include/asm/processor.h                 |  3 ++
+ arch/riscv/include/asm/qos.h                       | 41 ++++++++++++++++++++++
+ arch/riscv/include/asm/switch_to.h                 |  3 ++
+ arch/riscv/kernel/Makefile                         |  2 ++
+ arch/riscv/kernel/cpufeature.c                     |  1 +
+ arch/riscv/kernel/qos/Makefile                     |  2 ++
+ arch/riscv/kernel/qos/qos.c                        |  5 +++
+ 12 files changed, 96 insertions(+)
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250909-ssqosid-v6-17-rc5-fcc0b68a70a2
+
+Best regards,
+-- 
+Drew Fustini <fustini@kernel.org>
+
 
