@@ -1,67 +1,125 @@
-Return-Path: <linux-kernel+bounces-825502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3919B8BFA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:15:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DC8B8BFA7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 898535871CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:15:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5E474E1133
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D060123183C;
-	Sat, 20 Sep 2025 05:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F22B1F4E4F;
+	Sat, 20 Sep 2025 05:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOZLyia6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j24FtfcM"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D583FBF6;
-	Sat, 20 Sep 2025 05:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F651FBF6
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758345347; cv=none; b=jQwgadiQlW+VW1tZ5BM7oRCDbKPuzs8dP3E0uL/Ry94C3Dhv/EYHWeMKz9hQyJTWRvYTySGv7sv/qL3KpCDfi+9qFhUrR/HcSu2MNCMGqFNUd7yku3lIFhOw99MeKeCfl1250isYMKhDva8NEZ6ZdEJktjhYjfqWmvSoLqUrisQ=
+	t=1758345478; cv=none; b=BJGbXUQr2RmnoquMsvN8+FB+dExJ/cQ3ForHR0AiOr/r1uYbglaq+ApTgKd1xHtvbZC5SwI6X3iCRV7OiKlj/soVrR1ZadfePQXLPl0O3A7FvvP5zYOhDnmhaA225LDHqG8fW3z74L7TG/6vaZ1lzKihUmloo1iRjZwSjcvaDVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758345347; c=relaxed/simple;
-	bh=ssCoRZQzb68Vy+g2U300lCveFies27nOwHolkwpa4lc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=IPXSpzKSLWmTe48a4bHNYJSzN2LMoCcSxx8FG6grYFidE/AM6w3Z1r1uYPYs869HkfOx7IknL4OVeumpCQbow+cnjgpCGWMVkeqv5OrhVQa0LeZICXIPoVhtaS8lyXmGdxYzshDacl5eKNlAHjSaSSt12KQvnKfWJhpGc+eSAsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOZLyia6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD50FC4CEEB;
-	Sat, 20 Sep 2025 05:15:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758345346;
-	bh=ssCoRZQzb68Vy+g2U300lCveFies27nOwHolkwpa4lc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BOZLyia6v/gMb9tex5qm9tgpjkCBnEvXyYkaJnpzgXxmqPiwyZ2DNRs6IoDYyPZMx
-	 jkWBf+cSr/0FPoa+rkE0ljDKngHHHT6wrNPN55OiVqB4HhORcnneUvLYdX+a1cQG3J
-	 MfaoivOsoEzXslO31cDYGgjTJKxWIuqz3J/UJ/5dO/lkqZx9o2jewrT2Nc1BUkH0Ig
-	 fJHb/hj5FAHHXPYJsVTA6tOVQoqeR92MBehwBIdkKCSUA7AOp2v8Ue6fKeY3WzjIj4
-	 UrUEzb2DYUzwItKHeNmo076SidmgvXn5m2jZ9Q0G5972zTL7pGxxbn3iZtvQDQrm0g
-	 wo3qofExPKgeA==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758345478; c=relaxed/simple;
+	bh=vI491iiWp7bT17ACgeQD/IjbbdxlYAlMp5kRHIn3774=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7cVLCOFOJ3sNjtkFe89UrGVhbtugx2ppUUzEv6toAf7o/Hz1Tgi0GvT2DOy66Od8z4xGt2Sv3MZ8E1nX2+Xf5QTOmxrAI5xeTW32UpM1BBSGKcARgtC5pYFSFNB15PPiN2Mmv+4fJ10PQ4MEhpqfpwHqaccU1CFgItLPeDzLT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j24FtfcM; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 19 Sep 2025 22:17:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758345474;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PntaZnDYX/QEEVIWmBGVBGCPkGUIte8JIXB6ZVeo8rE=;
+	b=j24FtfcMKfLk1zGaPV+iRbntXu9JfU3X59WP5fTeivp0kAwohHy32yNT/wbHlQsH5+TUtb
+	Kuo9QOj25sVXoZWZ7Ih4rDWMxu59CHcUKRze5iVl5/scgMv3eIKu4xF44s479kyolJLRhf
+	BKcFaivHCCQYqzk70bD7M8YqPXGlIoA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: JP Kobryn <inwardvessel@gmail.com>
+Cc: mkoutny@suse.com, yosryahmed@google.com, hannes@cmpxchg.org, 
+	tj@kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, kernel-team@meta.com, linux-mm@kvack.org, bpf@vger.kernel.org
+Subject: Re: [RFC PATCH] memcg: introduce kfuncs for fetching memcg stats
+Message-ID: <ky2yjg6qrqf6hqych7v3usphpcgpcemsmfrb5ephc7bdzxo57b@6cxnzxap3bsc>
+References: <20250920015526.246554-1-inwardvessel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250903-clk-eyeq7-v1-8-3f5024b5d6e2@bootlin.com>
-References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com> <20250903-clk-eyeq7-v1-8-3f5024b5d6e2@bootlin.com>
-Subject: Re: [PATCH 08/19] clk: divider: check divider validity for CLK_DIVIDER_EVEN_INTEGERS
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Sari Khoury <sari.khoury@mobileye.com>, =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
-To: =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Conor Dooley <conor+dt@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-Date: Fri, 19 Sep 2025 22:15:45 -0700
-Message-ID: <175834534592.4354.10788427255141071676@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920015526.246554-1-inwardvessel@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Quoting Beno=C3=AEt Monin (2025-09-03 05:47:15)
-> Ensure that the divider is even when the flag CLK_DIVIDER_EVEN_INTEGERS
-> is set, similar to the power of two check for CLK_DIVIDER_POWER_OF_TWO.
->=20
++linux-mm, bpf
 
-Is this a fix?
+Hi JP,
+
+On Fri, Sep 19, 2025 at 06:55:26PM -0700, JP Kobryn wrote:
+> The kernel has to perform a significant amount of the work when a user mode
+> program reads the memory.stat file of a cgroup. Aside from flushing stats,
+> there is overhead in the string formatting that is done for each stat. Some
+> perf data is shown below from a program that reads memory.stat 1M times:
+> 
+> 26.75%  a.out [kernel.kallsyms] [k] vsnprintf
+> 19.88%  a.out [kernel.kallsyms] [k] format_decode
+> 12.11%  a.out [kernel.kallsyms] [k] number
+> 11.72%  a.out [kernel.kallsyms] [k] string
+>  8.46%  a.out [kernel.kallsyms] [k] strlen
+>  4.22%  a.out [kernel.kallsyms] [k] seq_buf_printf
+>  2.79%  a.out [kernel.kallsyms] [k] memory_stat_format
+>  1.49%  a.out [kernel.kallsyms] [k] put_dec_trunc8
+>  1.45%  a.out [kernel.kallsyms] [k] widen_string
+>  1.01%  a.out [kernel.kallsyms] [k] memcpy_orig
+> 
+> As an alternative to reading memory.stat, introduce new kfuncs to allow
+> fetching specific memcg stats from within bpf iter/cgroup-based programs.
+> Reading stats in this manner avoids the overhead of the string formatting
+> shown above.
+> 
+> Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
+
+Thanks for this but I feel like you are drastically under-selling the
+potential of this work. This will not just reduce the cost of reading
+stats but will also provide a lot of flexibility.
+
+Large infra owners which use cgroup, spent a lot of compute on reading
+stats (I know about Google & Meta) and even small optimizations becomes
+significant at the fleet level.
+
+Your perf profile is focusing only on kernel but I can see similar
+operation in the userspace (i.e. from string to binary format) would be
+happening in the real world workloads. I imagine with bpf we can
+directly pass binary data to userspace or we can do custom serialization
+(like protobuf or thrift) in the bpf program directly.
+
+Beside string formatting, I think you should have seen open()/close() as
+well in your perf profile. In your microbenchmark, did you read
+memory.stat 1M times with the same fd and use lseek(0) between the reads
+or did you open(), read() & close(). If you had done later one, then
+open/close would be visible in the perf data as well. I know Google
+implemented fd caching in their userspacecontainer library to reduce
+their open/close cost. I imagine with this approach, we can avoid this
+cost as well.
+
+In terms of flexibility, I can see userspace can get the stats which it
+needs rather than getting all the stats. In addition, userspace can
+avoid flushing stats based on the fact that system is flushing the stats
+every 2 seconds.
+
+In your next version, please also include the sample bpf which uses
+these kfuncs and also include the performance comparison between this
+approach and the traditional reading memory.stat approach.
+
+thanks,
+Shakeel
 
