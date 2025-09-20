@@ -1,287 +1,161 @@
-Return-Path: <linux-kernel+bounces-825471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897E5B8BDE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8EBB8BDED
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743177E783F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:14:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CB6A05B73
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9974218EBA;
-	Sat, 20 Sep 2025 03:14:15 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50724223DE9;
+	Sat, 20 Sep 2025 03:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D3YmAHs1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A203286A9;
-	Sat, 20 Sep 2025 03:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19761F4621
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758338055; cv=none; b=UF3/Q/9j5yJV6y5VLcw/6FOm0mlkXPMstpWQKz1DuY7idA8G9PG5zftgj5hexY9h+KysdM4ziYzuiG2KhoK/XWgVRh6P4vZ+lHJ15GcFusSQG6HC6KcMP7JMUEygivK8Bi5R5le75wyehsa9lCGO4UArv5yu6IdU0POuxsjHpm4=
+	t=1758338477; cv=none; b=nzGygIRt163UEYQ1Mtg/vNrlIghEYubDC1ndDVCK1qN5dg1VE3DWibL9mXYe9rhy8o5wGCjBl1qmOhAdnCcd2XpIwptlHQ8D4ANlY2+gMfThhsaABEWJ6rV0vZOpp4HIV36o/Gh4a5clxaX9vMpGgGgf3bL741t3UUU2CUgtNvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758338055; c=relaxed/simple;
-	bh=42Q1yqeXj9JxOAIn0H5mMd4LavLanRycmbxv9/wrDmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QnMwj1JJa+mVXeaJslwwt6Lb+GY6/sZcmX61eU/9oR4mdfzMHBRyLPaRyZ9yCnVbLRhB1queaVuANM27Ws4mw9kzWVFdwsfDbe1SQrvura+3fiYnM91i5EtOlVIgE6/Ct6Ru6AZRptAmGSFFDcAGz+6qCoR9VCPXgG9zk7JLLt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4cTDws673wz14MPh;
-	Sat, 20 Sep 2025 11:13:49 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 804DC1402C1;
-	Sat, 20 Sep 2025 11:14:07 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 20 Sep 2025 11:14:05 +0800
-Message-ID: <0ca2c567-b311-4f0b-bb29-2b860b75f85e@huawei.com>
-Date: Sat, 20 Sep 2025 11:14:04 +0800
+	s=arc-20240116; t=1758338477; c=relaxed/simple;
+	bh=PqUjMQNf8YZ2okXi7HcjlR0ay9cNBzPa0lh9m/FAw9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iqYbKXtLpi2xJU2p0c6WcFADFILX5ks9PovgzIWoitZaYP/IoRp+W1ednPSZcPhsEIESAnbsR/kRC7LHjnKfm39872hmqpJQPRv3H2DtiBBLzT32sKh9P3TD5lMZDsT/RnZBHleeAKkOo3TYvpg2IQvQnwhMKWVIIS2PZ7fJJYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D3YmAHs1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58K3FYWc011324
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:21:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=mN8wYVl6ESU9lxZvT+z+knTGjWTBarbi95s
+	9t96uFCY=; b=D3YmAHs1L6zuwjw06urITN4y7EtDHdeq56luBVMG7I27Lr5atif
+	GfJ3PrmQJH4Ag9rXbyWWQMvdgTAjLTeNJBnvG0KACRgZDiw9ranfQnZSXXXjhqaJ
+	3YBn7FIVA2kkzTJGsHvLwXDLWmeMfYfEREJh2a++BH56KdStgU0rSbjRmK9/rrgc
+	t1RYZaqPsjg+W313FWDVs4pzCON6CuxQhTDwximWmb7d6peYOsIqva9+aRGk4swA
+	rGPQkCXBvrXgPrfKYucxbTPJYpMqFtkrozrEYxuSlo9L8D9B72W0Y2VEibD8ciEl
+	OiQ4Oglhg7jTf6g/xGvjMIu6jmOmO18zjVA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 497fxy4f8x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:21:14 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-24457f59889so31245235ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 20:21:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758338474; x=1758943274;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mN8wYVl6ESU9lxZvT+z+knTGjWTBarbi95s9t96uFCY=;
+        b=k+K3ONqWkqYf5Pl1O2LE8xTR9wgV+8sHYmE1NIdGG1T+nRA2IXMRl3hpcV4XVtKqBu
+         bh30kzfuSGi2bFTmIexPKpEj2wmxL5HOl4Yo7+fBxhaasdIxiolRl3cFNWpUSIzTM46d
+         M95EdTjRBvQ2LXN7PC7h6QPtzlplIsY5EXbLdsTgYucAOxfPMlhbBDY9k+qEFC9/8gtp
+         pqh4fENyPYc+5aKUw+fRkLK2/TZ7y695dzQKT1oI3/D90JWE2Q08O/jIu5Od24EuKZtk
+         OSmF384uiOnbJ43QaR7+Wt/ptdcpu+A/NgOF9BflwB2a3Am035JYZ7JK/9WX+vmsZKKE
+         J+Tw==
+X-Gm-Message-State: AOJu0Ywc7inarF080qDhyfgtDJBAmAnNjaslAfWA/aVXtVH73EvupSQz
+	B9SgMrD7s8kQfMORRNoN3WU86FpkPZJdhnst0ECCQzlZJZxiBHRWakFKy495Hp4A2Yprts1Haag
+	eVKDva5LTZ6MESEI21dpvs3MXQoeW/AYFJJfJs6kaVM1QzLKx269gh3vldr3+MAX9OOA=
+X-Gm-Gg: ASbGncuI48xbG0pgvZbCG0cd3U6NyTum/SKWrCWoRrz4uZJMdoN4uKMq64gGoyNYffq
+	qJfDjSVsZiTR02gNcaCxik0R3LylkSX26QyDBc6PKf7L53IA3y20KqyhlZDxjSEzYtGKLf8gjjE
+	bivYFIu5+JzDJJUduirNXyukX9q8ZBvhCwkI3Y5qyLJKOpnYnegEYTZvctwclYO/NyfBdez3zCj
+	dRqyUYda4Cav5BpiCcCl1b8cUnNiG+Ae0kLinYmTfRrI/r9+JISUyJPahG0IVo9MjCCbsh0oeOw
+	pj8g88DtQ6br9cFmAXTvw/ggN+pWTxuaz+WYECvPfO+1O3wguLWUbIcmvJE7LX13racb6PfXa6W
+	G9JlqqDqnpZ/Tu3UR
+X-Received: by 2002:a17:902:f645:b0:269:a4c5:f442 with SMTP id d9443c01a7336-269ba527e9emr74545425ad.47.1758338473684;
+        Fri, 19 Sep 2025 20:21:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGeReC8gmZ5NxVSWhUvUGV0oy+A6Sr9TpiqHXGqgd1xFA4p7XvnSQnBO/UwfTe45cPbjeV1ew==
+X-Received: by 2002:a17:902:f645:b0:269:a4c5:f442 with SMTP id d9443c01a7336-269ba527e9emr74545085ad.47.1758338473178;
+        Fri, 19 Sep 2025 20:21:13 -0700 (PDT)
+Received: from hu-wcheng-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ff448058sm6178807a12.54.2025.09.19.20.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 20:21:12 -0700 (PDT)
+From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+To: krzk+dt@kernel.org, conor+dt@kernel.org, kishon@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Subject: [PATCH 0/9] Introduce Glymur USB support
+Date: Fri, 19 Sep 2025 20:20:59 -0700
+Message-Id: <20250920032108.242643-1-wesley.cheng@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [smc?] general protection fault in __smc_diag_dump (4)
-To: syzbot <syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com>,
-	<alibuda@linux.alibaba.com>, <davem@davemloft.net>,
-	<dust.li@linux.alibaba.com>, <edumazet@google.com>,
-	<guwen@linux.alibaba.com>, <horms@kernel.org>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-s390@vger.kernel.org>, <mjambigi@linux.ibm.com>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <sidraya@linux.ibm.com>,
-	<syzkaller-bugs@googlegroups.com>, <tonylu@linux.alibaba.com>,
-	<wenjia@linux.ibm.com>, zhangchangzhong <zhangchangzhong@huawei.com>,
-	yuehaibing <yuehaibing@huawei.com>
-References: <68caf6c7.050a0220.2ff435.0597.GAE@google.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <68caf6c7.050a0220.2ff435.0597.GAE@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfX+1zZyZhSE0mt
+ gbczaLsbl3VG5ZEXjUW4ZkKRHS0SYwtr3vrKRF7Cy796xQxez7354OZRl6ZhM1HNgNPVNJulDfu
+ YDDwZw5i45b/KHv5ySPJdJwakfkL94ar83SWU6/FzAuiyzNTnWrJJupwO92rddqEK1BHYrlp11m
+ X4qVUAQe+KgCnJbcj28dI6dR0Jg62wZlIYoqWxj7HyKblEbsMOINyrGUiQjo67MfNi0rdChOw5z
+ w/EYN7DUmfh7p5MD9w5JlhZX6RPnyXIZkmlRRMbBns/3BN1EYXm2qMxL+zqfrfKv1PX6CU/Ei6N
+ irNTREGnJwek90Ba2W0Ed9K7eDA3pBd61/gJZK9BQ3UszmyBZoiBrjZ5zzY35Z+XxAcNPss9Y4O
+ sA+QqGFz
+X-Proofpoint-ORIG-GUID: CtuOCgQ-JvK8UYB8PNAqkFXvNT4Bogsj
+X-Authority-Analysis: v=2.4 cv=KJZaDEFo c=1 sm=1 tr=0 ts=68ce1daa cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=yJojWOMRYYMA:10 a=KpXeH89YwCTRUSzem1gA:9 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: CtuOCgQ-JvK8UYB8PNAqkFXvNT4Bogsj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-20_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 malwarescore=0 clxscore=1011 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160202
 
-This issue is similar to:
-https://lore.kernel.org/netdev/20250331081003.1503211-1-wangliang74@huawei.com/
+This series enables the PHY level changes that are required to support
+the type C based controllers and the multiport controller.  The typeC
+ports utilize a usb43dp based QMP PHY for the SSUSB path, while using
+the M31 eUSB2 PHY for the HSUSB path.  For the multiport controller,
+it will utilize two QMP UNI PHYs for the SSUSB path, and two M31 eUSB2
+PHYs for the HSUSB path.
 
-The process like this:
-(CPU1)                           | (CPU2)
----------------------------------|-------------------------------
-inet_create()                    |
-   sk = sk_alloc()                |
-                                  |
-   inet_init_csk_locks()          |
-     modify smc->clcsock          |
-                                  |
-   sk->sk_prot->init              |
-     smc_inet_init_sock()         |
-       smc_sk_init()              |
-         smc_hash_sk()            |
-           head = &smc_hash->ht;  |
-           sk_add_node(sk, head); |
-                                  | smc_diag_dump_proto
-                                  |   head = &smc_hash->ht;
-                                  |     sk_for_each(sk, head)
-                                  |       __smc_diag_dump()
-                                  |         visit smc->clcsock
+Elson Roy Serrao (1):
+  phy: qualcomm: Update the QMP clamp register for V6
 
+Wesley Cheng (8):
+  dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy: Add Glymur compatible
+  dt-bindings: phy: qcom,qmp-usb: Add Glymur USB UNI PHY compatible
+  dt-bindings: phy: qcom-m31-eusb2: Add Glymur compatible
+  dt-bindings: usb: qcom,snps-dwc3: Add Glymur compatible
+  phy: qualcomm: qmp-combo: Update QMP PHY with Glymur settings
+  phy: qualcomm: qmp-usb: Add support for Glymur USB UNI PHY
+  phy: qualcomm: m31-eusb2: Make clkref an optional resource
+  phy: qualcomm: m31-eusb2: Make USB repeater optional
 
-The 'smc->clcsock' is modified in inet_init_csk_locks():
-__sock_create(family=2, type=1, protocol=256)
-     inet_create
-         sk = sk_alloc(...); // smc->clcsock = 0
-         inet_init_csk_locks(sk);
-             icsk = inet_csk(sk);
-spin_lock_init(&icsk->icsk_accept_queue.rskq_lock); // smc->clcsock = 
-0xdead4ead00000000
+ .../bindings/phy/qcom,m31-eusb2-phy.yaml      |  11 +-
+ .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml   |   7 +-
+ .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    |  45 +-
+ .../bindings/usb/qcom,snps-dwc3.yaml          |  26 +
+ drivers/phy/qualcomm/phy-qcom-m31-eusb2.c     |   4 +-
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c     | 347 +++++++++-
+ .../phy/qualcomm/phy-qcom-qmp-pcs-aon-v6.h    |  12 +
+ .../phy/qualcomm/phy-qcom-qmp-pcs-aon-v8.h    |  17 +
+ .../phy/qualcomm/phy-qcom-qmp-pcs-misc-v5.h   |  12 +
+ .../qualcomm/phy-qcom-qmp-qserdes-lalb-v8.h   | 639 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c       | 163 +++++
+ .../phy/qualcomm/phy-qcom-qmp-usb43-pcs-v8.h  |  33 +
+ .../phy-qcom-qmp-usb43-qserdes-com-v8.h       | 224 ++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h           |   4 +
+ 14 files changed, 1513 insertions(+), 31 deletions(-)
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-aon-v6.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-aon-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-misc-v5.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-qserdes-lalb-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-usb43-pcs-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-usb43-qserdes-com-v8.h
 
-The relevant structure is 'struct smc_sock' and 'struct 
-inet_connection_sock':
-struct smc_sock {
-     union {
-         struct sock      sk;
-         struct inet_sock icsk_inet;
-     };
-     struct socket        *clcsock;
-     ...
-};
-struct inet_connection_sock {
-     struct inet_sock          icsk_inet;
-     struct request_sock_queue icsk_accept_queue;
-     ...
-};
-
-Commit 60ada4fe644e ("smc: Fix various oops due to inet_sock type 
-confusion.")
-add inet_sock as the first member of smc_sock. Maybe add 
-inet_connection_sock
-instead of inet_sock is more appropriate.
-
-#syz test
-
- From 782467e7f55f2f1487744252060ffbaa992ee47a Mon Sep 17 00:00:00 2001
-From: Wang Liang <wangliang74@huawei.com>
-Date: Sat, 20 Sep 2025 11:29:52 +0800
-Subject: [PATCH net] net/smc: fix general protection fault in 
-__smc_diag_dump
-
-Use inet_connection_sock instead of inet_sock in struct smc_sock.
-
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
-  net/smc/smc.h | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/smc/smc.h b/net/smc/smc.h
-index 2c9084963739..1b20f0c927d3 100644
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -285,7 +285,7 @@ struct smc_connection {
-  struct smc_sock {                              /* smc sock container */
-         union {
-                 struct sock             sk;
--               struct inet_sock        icsk_inet;
-+               struct inet_connection_sock     inet_conn;
-         };
-         struct socket           *clcsock;       /* internal tcp socket */
-         void                    (*clcsk_state_change)(struct sock *sk);
---
-2.34.1
-
-
-
-
-在 2025/9/18 1:58, syzbot 写道:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    5aca7966d2a7 Merge tag 'perf-tools-fixes-for-v6.17-2025-09..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=147e2e42580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f775be4458668f7d220e
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17aec534580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=115a9f62580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f191b2524020/disk-5aca7966.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5aa02ba0cba2/vmlinux-5aca7966.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b9b04ddba61b/bzImage-5aca7966.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f775be4458668f7d220e@syzkaller.appspotmail.com
->
-> Oops: general protection fault, probably for non-canonical address 0xfbd5a5d5a0000003: 0000 [#1] SMP KASAN NOPTI
-> KASAN: maybe wild-memory-access in range [0xdead4ead00000018-0xdead4ead0000001f]
-> CPU: 1 UID: 0 PID: 6949 Comm: syz.0.335 Not tainted syzkaller #0 PREEMPT(full)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-> RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-> RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c:89
-> Code: 4c 8b b3 40 06 00 00 4d 85 f6 0f 84 f6 02 00 00 e8 6b 4f 78 f6 49 8d 7e 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 f6 1e 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-> RSP: 0018:ffffc90003f2f1a8 EFLAGS: 00010a06
-> RAX: dffffc0000000000 RBX: ffff88802a33bd40 RCX: ffffffff897ee8a4
-> RDX: 1bd5a9d5a0000003 RSI: ffffffff8b434dd5 RDI: dead4ead00000018
-> RBP: ffff888032418000 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000080000001 R11: 0000000000000000 R12: ffff8880754915f0
-> R13: ffff88805d823780 R14: dead4ead00000000 R15: ffff88802a33c380
-> FS:  00007fec5f7dd6c0(0000) GS:ffff8881247b2000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fec5f7dcf98 CR3: 000000007d646000 CR4: 00000000003526f0
-> Call Trace:
->   <TASK>
->   smc_diag_dump_proto+0x26d/0x420 net/smc/smc_diag.c:217
->   smc_diag_dump+0x27/0x90 net/smc/smc_diag.c:234
->   netlink_dump+0x539/0xd30 net/netlink/af_netlink.c:2327
->   __netlink_dump_start+0x6d6/0x990 net/netlink/af_netlink.c:2442
->   netlink_dump_start include/linux/netlink.h:341 [inline]
->   smc_diag_handler_dump+0x1f9/0x240 net/smc/smc_diag.c:251
->   __sock_diag_cmd net/core/sock_diag.c:249 [inline]
->   sock_diag_rcv_msg+0x438/0x790 net/core/sock_diag.c:285
->   netlink_rcv_skb+0x158/0x420 net/netlink/af_netlink.c:2552
->   netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->   netlink_unicast+0x5a7/0x870 net/netlink/af_netlink.c:1346
->   netlink_sendmsg+0x8d1/0xdd0 net/netlink/af_netlink.c:1896
->   sock_sendmsg_nosec net/socket.c:714 [inline]
->   __sock_sendmsg net/socket.c:729 [inline]
->   ____sys_sendmsg+0xa95/0xc70 net/socket.c:2614
->   ___sys_sendmsg+0x134/0x1d0 net/socket.c:2668
->   __sys_sendmsg+0x16d/0x220 net/socket.c:2700
->   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->   do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fec6018eba9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fec5f7dd038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007fec603d6090 RCX: 00007fec6018eba9
-> RDX: 0000000000000000 RSI: 0000200000000140 RDI: 0000000000000003
-> RBP: 00007fec60211e19 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007fec603d6128 R14: 00007fec603d6090 R15: 00007ffcb0713c08
->   </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:smc_diag_msg_common_fill net/smc/smc_diag.c:44 [inline]
-> RIP: 0010:__smc_diag_dump.constprop.0+0x3ca/0x2550 net/smc/smc_diag.c:89
-> Code: 4c 8b b3 40 06 00 00 4d 85 f6 0f 84 f6 02 00 00 e8 6b 4f 78 f6 49 8d 7e 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 f6 1e 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
-> RSP: 0018:ffffc90003f2f1a8 EFLAGS: 00010a06
-> RAX: dffffc0000000000 RBX: ffff88802a33bd40 RCX: ffffffff897ee8a4
-> RDX: 1bd5a9d5a0000003 RSI: ffffffff8b434dd5 RDI: dead4ead00000018
-> RBP: ffff888032418000 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000080000001 R11: 0000000000000000 R12: ffff8880754915f0
-> R13: ffff88805d823780 R14: dead4ead00000000 R15: ffff88802a33c380
-> FS:  00007fec5f7dd6c0(0000) GS:ffff8881247b2000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fec5f7dcf98 CR3: 000000007d646000 CR4: 00000000003526f0
-> ----------------
-> Code disassembly (best guess):
->     0:	4c 8b b3 40 06 00 00 	mov    0x640(%rbx),%r14
->     7:	4d 85 f6             	test   %r14,%r14
->     a:	0f 84 f6 02 00 00    	je     0x306
->    10:	e8 6b 4f 78 f6       	call   0xf6784f80
->    15:	49 8d 7e 18          	lea    0x18(%r14),%rdi
->    19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
->    20:	fc ff df
->    23:	48 89 fa             	mov    %rdi,%rdx
->    26:	48 c1 ea 03          	shr    $0x3,%rdx
-> * 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
->    2e:	0f 85 f6 1e 00 00    	jne    0x1f2a
->    34:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
->    3b:	fc ff df
->    3e:	4d                   	rex.WRB
->    3f:	8b                   	.byte 0x8b
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
->
 
