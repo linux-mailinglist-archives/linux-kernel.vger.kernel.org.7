@@ -1,245 +1,489 @@
-Return-Path: <linux-kernel+bounces-825822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1AE3B8CE1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:42:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EB1B8CE44
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32CB1BC0C47
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:42:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDD93BFC17
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4AB30F950;
-	Sat, 20 Sep 2025 17:42:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C7830EF97;
+	Sat, 20 Sep 2025 17:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZmdfDDjF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EN5oLZnI"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5761C1FF7B3;
-	Sat, 20 Sep 2025 17:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758390136; cv=fail; b=q6hHDMR8DLiFLXD4sVD4mYU80eMihMltZFg+R5oq16n7WfnfUBlGIeYrOB/ayf8hmQYTbByq1zB62zRPx20isjc19i4UOGK9QfnajAb+jp1vg6TppBjlh3rubI0wwV3hqwe+3GO3SR4wuazLNG2t4CSfSUG+dEs6SVAdcSY7h0c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758390136; c=relaxed/simple;
-	bh=rO6Ro58b96rUQO60urQG5ZZhqopMkGQ76GLOzH9ktWs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=STvzazd9NIPQFt6STjwLVyPWBfjRkt5NgA7OIiUw/Z5vGFxc9QakQXzVBQ/Z13rIXcBmlP8Xkb5sf+0jxzGRwDcw2eATTAdZmJ1PaUMofBKChPTTRXJjCf/SlcKn8dCJ3HaNJsX9709I1xhmVg4RkWbcdcbiseU1EZcJ41iYNLM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZmdfDDjF; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758390134; x=1789926134;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=rO6Ro58b96rUQO60urQG5ZZhqopMkGQ76GLOzH9ktWs=;
-  b=ZmdfDDjFJu4a0uZOk2aVNdu4g82VHETegkVp2EWrP+g4gmiUbZPW7ZhX
-   KF0wSW076OOVkSTTEV9fXmr5cdnvTL6hDtZyI0arsG1R7b6ZdR4+9qiLp
-   czobBOR9Gt+CyNZFGWbdSgpYwkJR3XvrfoC55ibETmt6M5Ybsa0OcG0Hc
-   VT8GfU7O5AmnOWyqbqIbT6UxHVMI6nUWe4PKjqOYzRkd0bUvX9BrXR3bR
-   PAu+6TXVdvwm+RtFObg4VkzeN+VzKmhNXF0DKI+StWhwLWc801JMs1vKw
-   DTnYdPNlMQFeYH3/6JVBvSCc+SkPHTsVh8Asg7HWXp/itJG2JJcVZE+Rt
-   w==;
-X-CSE-ConnectionGUID: nHiZXvSmRRCCnwteSH55IA==
-X-CSE-MsgGUID: t0n+P94PTV+M+MmhRGa4SQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="63341988"
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="63341988"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 10:42:14 -0700
-X-CSE-ConnectionGUID: 7We9weB5RlWUGarIIw8g1w==
-X-CSE-MsgGUID: PhoogmvaQo286dcNtyPtmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="175672068"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 10:42:13 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sat, 20 Sep 2025 10:42:12 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Sat, 20 Sep 2025 10:42:12 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.26)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sat, 20 Sep 2025 10:42:12 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WyjypzWvNdwHNvpE08BS0GklszLm+wx5hhBUeyeC+1iFI8R8Lbfb7AuCvg8eic5xc8BH12nus6cCIP1+FYihsOL9yqsWSEeTBnTcEEFxAOzB0Za4LoEBhJPwQM7nxTu0T/TMyFIxmCtIZrCstc+yOg6Sl+HMukm7I5ZlcO2/aHBZedDFsmDlKccC9xyb+EWzRilGFny7qB4aSFD6Gk1sWsD4zCpTB6Ho+RqrOQ6MzP2bug51Nj72ucA2n8yt9khIk2fik5iidgKLLkE0Vt2jtGOT/neJoh4vGA24T80LJbfr3eYA+jdtieo/u/nRxmki6Cmr8bQHLp2J4S9BawNSDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eqCLlkZ9TsadPs7SoQUuRwSxi6joSTHUjaaup0f5bZo=;
- b=ObpxDC9QTu+4f9U6RIBtgODwqekSxqdT+sRN2yEGiNwmxXykPcMyzdmMeD//ejcudtMGa/t6pOtegTiEXGbUeOrkgW6zwVfdcryZvVPT0KmWNLcPBKUoDJCzYCO64vpgKU63ptVCi1cHI5ZE4gyX+HAyjZA+s3KggCzXWGZodSyK7kptrnzh4KHxM1GkUsQ0yCpiGBkPvx6YBGvHIRZHMBwENQuNGP4HnMABlv4NwuywKbBGmjAl1WLU8J3wHPfFxmTecTkl/X22Unw66YqArXpZyrczIdcbGob72txROhQ27y1vdmnmWDF068dDC7PGIeIeo1lT09WTVYU1Itjn4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA4PR11MB9131.namprd11.prod.outlook.com (2603:10b6:208:55c::11)
- by DM4PR11MB7400.namprd11.prod.outlook.com (2603:10b6:8:100::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.18; Sat, 20 Sep
- 2025 17:42:09 +0000
-Received: from IA4PR11MB9131.namprd11.prod.outlook.com
- ([fe80::7187:92a3:991:56e2]) by IA4PR11MB9131.namprd11.prod.outlook.com
- ([fe80::7187:92a3:991:56e2%5]) with mapi id 15.20.9115.020; Sat, 20 Sep 2025
- 17:42:09 +0000
-Date: Sat, 20 Sep 2025 12:44:07 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Dave Jiang <dave.jiang@intel.com>, Neeraj Kumar <s.neeraj@samsung.com>,
-	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>
-CC: <a.manzanares@samsung.com>, <vishak.g@samsung.com>,
-	<neeraj.kernel@gmail.com>, <cpgs@samsung.com>
-Subject: Re: [PATCH V3 04/20] nvdimm/label: Update mutex_lock() with
- guard(mutex)()
-Message-ID: <68cee7e7a00f5_1c391729430@iweiny-mobl.notmuch>
-References: <20250917134116.1623730-1-s.neeraj@samsung.com>
- <CGME20250917134136epcas5p118f18ce5139d489d90ac608e3887c1fc@epcas5p1.samsung.com>
- <20250917134116.1623730-5-s.neeraj@samsung.com>
- <b66e4c0b-a82f-4c18-8e8b-ba37b6551964@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b66e4c0b-a82f-4c18-8e8b-ba37b6551964@intel.com>
-X-ClientProxiedBy: MW4PR04CA0199.namprd04.prod.outlook.com
- (2603:10b6:303:86::24) To IA4PR11MB9131.namprd11.prod.outlook.com
- (2603:10b6:208:55c::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4013E179A3
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758390540; cv=none; b=gX/p82Hi3C0gm4SLRr5Xst9qFhh9i0dAwGklAf6MzgVbvA/wZRTbzEnUo/2gbbVj85MXVK+2gfWdJ4U3Mp/rpJjgQcyxHLDh8Qfj5Ai3wzX+pqWPs6ukhED2z3JAdp78q08xtdreHUQH3ry/COBVf/kscw7NUHDerkCyNJEA8uo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758390540; c=relaxed/simple;
+	bh=1z1R7hN67t3gOlhyZDO1UzvlhT5RsclpyiOYy5mfVuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pl/J6tAKAlM6rwItlswq6req5wrTFRKcS9DXYVakRul8bXZyy/FCbOcP2M2MULYQkdkJQmKcEuilReFqDAV6ij9U9wsAzQdvBL0NWx7LovGbphdWq0jDoUZ0hUepS+TjYK0Jm9duNKUoPCtrOngPbYAvW/p0OgGgtRxCrq1YiVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EN5oLZnI; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-78f30dac856so38538586d6.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:48:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758390537; x=1758995337; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mB+L5RoiJqkFAUMZ0nEbA/WRT11ED1AtdPYWwkU5NU=;
+        b=EN5oLZnIsMhMUIiiyPB1prV2can85ms7te1GW4GWhNLxvwdjoiBASQol0EsI3cW0RL
+         mmzMupuzbG7LfyZL/57KrHnYLoXjFXyyDWGMzc+JG0gnFHu7yYqCOC4pbVxbAfaqMwPk
+         ZR7vaQq1JX4EcQ1uAAbCuMPmJrXzccO0ncx1qhx6uF5IEZ+cLqdY+0OQPXfAed9/ki1J
+         qh87gaZvcuIpJDRzxj/gFHMKgscZSmM935mAIey4GJDdh4lwMpJtWadsQOKpNpVhVTHN
+         AGQlj1pMaDhBg8PBtb4dxIsNvWAOtgc0kaRmI5gED4y8rZR7br2m62xuzXz181PHEsm1
+         5Bgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758390537; x=1758995337;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4mB+L5RoiJqkFAUMZ0nEbA/WRT11ED1AtdPYWwkU5NU=;
+        b=ZcX+hzv/ZInKAJhkbO2bmp06GRa1MU4iAi3vHnGBW7oXAplMNaIKD8FBVB90fw7bXZ
+         GxSRoc69naEhtCKyq3BsvIiVw+z2x5e20f8bX73UqVw8NinTlQN3CFWidQEfPJ+C0VDK
+         qwDpHtyx4qVEzFn0EjQv5899zmaBo0PKF+SZhYdiIqF6D5n9pWHZve+GhNHPwdIgEx0M
+         mJTErT06WaLTGqJ8nbdhlkuvYkp9BR1vwr2VfI/V6uuBetfUG8IVCKtxNBVSf57+Mfkn
+         3AfTCyHafsTO+WSgRJURkEMT71Ft9EEom5uXvARMuH8xviryG7le2qLA0KZWjeZm0i2U
+         oIyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgsn6GQJBHx+kYv6GDqoXkOudCpld0zVtwA0sc1oveV3NN33O9lWqYrmv6n2VX453oyGFygtAnqlhajU4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN+nyZuKz8448AnRF27KLJOkr7eoDEl3bQZphXEvahTokH/su0
+	qJGTeANXIifDZspVjafVYHh8y8H5FC3g3WXzEKuPSarrceC/aqpcT2tpA8XN4/p24hjv/1SPeH+
+	HQyXDr4pT4Hyz2liBcTrqTqpf+wEnblo=
+X-Gm-Gg: ASbGncuTDhinP9VJaJvHDMSZiK4OhtjlfT741CzZzH6W9KemBkrdoHskEeZeOM7sQ/L
+	mCU9+wV64MYYBTdnL2eDB4VICucy7uGUn93Q6giGZyvrQ8qIShNycjNUDvMWjDuxDs/3iWA8b0B
+	MRf12ADjg5XeVuLAPpJtY5zkCkmNUoggMoPlzILyPRb99MALjxYPq3eXqZ8EeAxl3EqwJBfX1Z/
+	YmIsDe+I2UvPPq/VYCA1Z6JgP0dYeOd8gq2GepV94Fylby1v4DiYFqEmkzZymOjhEP3pNfO2/H6
+	XQk3hAI7no6zkwyrDqR06hBzna5Q+BsV7FPD6j0DSV3OKfr1a8C+OY6XsJ6BXPHMUS2ir/mxs0j
+	6oumh7pjuXcZl250we1pf
+X-Google-Smtp-Source: AGHT+IHQxvQlxBT93mqk/OysEvPUymZ/EZisF7l5XLNe16+3emEUh9jA1ZY1HfPVqRPZaZAQ1+0VOrZflfnOmn2YXus=
+X-Received: by 2002:a05:6214:e42:b0:786:5ae7:7846 with SMTP id
+ 6a1803df08f44-799197ee535mr89935676d6.32.1758390537052; Sat, 20 Sep 2025
+ 10:48:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA4PR11MB9131:EE_|DM4PR11MB7400:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2bb1b9e-02d0-4a9b-8ea0-08ddf86d05fd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?o36j7TTjKnA58fUmwahs6d6dEJh15yF2wqGBzrIJjVab+lr60r+H6wAiWJpn?=
- =?us-ascii?Q?NlcSW+1ZDbfHfJtXNp970mYirGy/SEIZkYQ95ns6ApdvgTD8KzarcuTDgAge?=
- =?us-ascii?Q?xUK4Foz9sc5Qe9rsIV6cSkIY91JKiFMMUqt9MY8+jGtf5nSbz7mNMgOkdXwl?=
- =?us-ascii?Q?q7+FRF4YjQ9XKjroTJkwfcqNtQ7n8mS7DUE1imFh0f1qMKGCKRJfi9QCHfnQ?=
- =?us-ascii?Q?cVYm56Ia1FgfC81ZzEI3nmdUnfTqlAmpuxXxMfqMbAv9Ljp5Z2KWL7ZIiul4?=
- =?us-ascii?Q?VD4z1fdbj+CkX57jW8iqo1kWup1H/TJnxfvPBf/NIRv2yYtF/xwnnZP7qyYw?=
- =?us-ascii?Q?hz6gwZWuVzlFJhLA4E+W7OweDSlXOFMYa8fp7b04HzCCS0Lti0WRMMjMiLmb?=
- =?us-ascii?Q?BTgqMnyvEUzO7brttu7wtJqF/bCg76h17htgIdm7MjMiPNrOw7awze0BwUKT?=
- =?us-ascii?Q?Moba5N7UT9qtBYaFaS1/oYepqjUoWF+iSyqKFAsO92R3B8q1fvPiYOwz6X1b?=
- =?us-ascii?Q?guC1xb6BnuTFmDVwlBCiBvGKwKfWxkrwY4F9EVUTMvarQCWiCdG05BrmwwqZ?=
- =?us-ascii?Q?HjWQG6T7AjsKtRIsHw2F2be7yulWVPt+2m9T5hi4EER4usJtxqfHObmfwutk?=
- =?us-ascii?Q?AGOHOAk/nnDaiRrXIjRQG2Co27Ib0tZZbHJZAX24t+TYEQbhpAI+3i8OKbgu?=
- =?us-ascii?Q?Wb6VLtN3YkS3v+K1y8qkC0Rt4ApIJfJRoV/fFSPxEjaQebeUzuBjWnayDKEQ?=
- =?us-ascii?Q?nz0oXCHLYtxV0PPE9cM3YX12WET0GOu6XpqaUfKds9dzgvFDO1moGKLkWjS2?=
- =?us-ascii?Q?J7dwDOA72i3PVAFs06SzDPdyuygkIBzV6qUoEV1oW6FZcZxTusDh9V3EeDPP?=
- =?us-ascii?Q?r1QSQq+wl0FTawEyv8p9NvObvbmPQepmmuu71AcQ53l18kzTGznSKMUi3Ycw?=
- =?us-ascii?Q?lWxM8Sfqa/3gjMHMBpwCyIt+ynHuSfwBOcCj8hUlN6ZfJz+oTj7aAe2xxOJ5?=
- =?us-ascii?Q?BHoVv1B+hBk+dQ2d6cAYmooKG6ckOt6M1S0Mk/IlyZyeyyLuhppQ25U2mpTu?=
- =?us-ascii?Q?DeunWeUNe4Gn6zVm3eaPdKP/YOLbbwCq6pp8ecPdMHiXr473Efv/SLPQp2WY?=
- =?us-ascii?Q?FfxanNxsJ0nO1u0HrcAk7B7K1udHyBIk4azEueS5BFalqmSaOzI/8VG8pi+e?=
- =?us-ascii?Q?gIHfBZ/tSlQ6TVeL1t3z4UYfT+JNvsvnl5875y4BeLvEOD90CN67EDPsngXr?=
- =?us-ascii?Q?KjIy/QcgVQxjPHs+EkDDPl8iGVbVdRc93U+D24KkZK7fDQ7qWosZZH97B6vr?=
- =?us-ascii?Q?l5sEEANYpb8z8yTN4ZxmWJ3PblJwUDGSfrbuBKMF4DJW+kF7ZprfALT6wmc7?=
- =?us-ascii?Q?Z08aE6AYAHUyP2anhXOdYfOqQeBSASlMiCS4rBNfVPzZIKJIf6hrpAdhiBc0?=
- =?us-ascii?Q?WhRAFxnQ+Sc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA4PR11MB9131.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NZig7NDNUAjYLkcL//tM//RW4dd00DuUKy5d/0Y6/fFt3WNgd4TSqQxvSODF?=
- =?us-ascii?Q?5FOLLg+fjpAC/kWlCfwzXiouPo/Yx+E9/XOuMq4coIf8Cwk2e5l1dnNyhfen?=
- =?us-ascii?Q?OVXZY8ZkuYPWMcUe9ZTkLETxLmUL52XwDKDcPwqedz9uRnbtf7/DR81nLric?=
- =?us-ascii?Q?TICiM4TRLZd8CoLM65W9MhQyD+9nTpWX1NbZhlGhM52ZHH17lkIf3uwGmEeT?=
- =?us-ascii?Q?dDnAkzQ22mpm08uv4yMGfplItUSSn+5Nw01iAQiOQpq6Ahyy0zs3zuog84h/?=
- =?us-ascii?Q?flZrXRsaeG2Cry0CX4mN+CHRXb6fFFu8scPIlaMu+oN+RDAnU6QNVRdvlngC?=
- =?us-ascii?Q?dCAc4RLiM5PVCllPPG7QGQ0WCDmryPZSMd6jfPB5bV3WZtsQ3KxliOiDHPQL?=
- =?us-ascii?Q?Ow0aZnKlKkA83l5OyupOFr3Bh7Sm6vk8yhkHXNduaBbKGccXRkM+MewYd1Pn?=
- =?us-ascii?Q?WULQ8KczZ8hnVAZwVtj0oik9THywQd/V+KCtFVr1IuPoToQ3NyiohifofN7Q?=
- =?us-ascii?Q?hU9m3hU1FEughNCg0KTxA/YqvTHalz3oYssbi6t6crAwKKubtKXIln/plVe9?=
- =?us-ascii?Q?CnQbsxtvviEE5SzxBVFyV3Cm3F6Vw1ZjHIlGiexXrrvUvI/nSSVFHU0Xh+xB?=
- =?us-ascii?Q?1Cj+LrD5EnRzAgDF1o9ySDdFZc4gXgHsqxYXGrP0kb5iVezcKlfLHTUCfaHy?=
- =?us-ascii?Q?tRoDax07KFAEkGX9icXubFA3utn6m/uWPVo64IQhHAgSIgR4s4mv79NGdv6A?=
- =?us-ascii?Q?SXBTTAaXpSUtIfO+eGfTcbfwyNsQZ5uLck0uT+I7XdO3KcfZEppGm5TvyUH3?=
- =?us-ascii?Q?kCC59zSM7Ye9IBDo7j9D9Jq4IOzG1zri5eIoBZwO4C8SsV/cZ4se7ldoY8ie?=
- =?us-ascii?Q?VTxKeX5bUiN3okRJZmgUwiJou19WjB8ml5Abi6f520yAvPhrYU6V3D3ZLn5+?=
- =?us-ascii?Q?2jBAYkVUJEh0VeIfMNCT5u2lABeTMFe4/yKs3pCh7ZwGQgV5eQP5Fwbw6kSh?=
- =?us-ascii?Q?jiu2rFwLm6fUrILCu0LkZWzW5n9uelntJxjGvCfLUXnCleFqbrO6s4UuO9ak?=
- =?us-ascii?Q?WO2UGBDUy4CNo9qDeNlO+3JrGeGRuPeXfu5zn7a8NTyCpg54VjTWzsDpVsSj?=
- =?us-ascii?Q?mYhXtnaTSsMAvzwI3Xm2VyeRtBcJAC3PGboA1zFZODHur5vF7XtP/m1GEJka?=
- =?us-ascii?Q?eHXu51m6/vQcMAVD5GtqDLAdVb4h5lyOAlDEez6vnU9Z8UMDkl6svBHLRXn8?=
- =?us-ascii?Q?8EcDeO5XqOvrJrTBCx0c89Ji1a8dbR6FzITSNub2rvAL1SIw57/hMt2k9orc?=
- =?us-ascii?Q?DQfvxaa1VwcHPzHYyM4vza5jfyjDefMGH4QycqUDQHQ/lFNn/Otd83pmbosA?=
- =?us-ascii?Q?9YPCkP2l1m6W1ArrMknaC+6tCemQX97ziOtdyCkrpvL9Ct0XaC91wbLH0aPL?=
- =?us-ascii?Q?mHotfmqrHQdVuo10tpKCL2OvQx1srvu13ZwycX2sBwd/4uJyfUnresolr0/u?=
- =?us-ascii?Q?RReZnrEj5vubbH03AZtqtlJ4DgPSMGC8VmbBGTzmFvTn/Re7Q9p0JCIEDGc5?=
- =?us-ascii?Q?G5UM4tPstCe+SOhblpWSDE9h+3UaJ1Gr6iA6t5Hb?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2bb1b9e-02d0-4a9b-8ea0-08ddf86d05fd
-X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9131.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2025 17:42:09.4136
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: E8doMcRb/y5JEpI12Yf1foLUchnXLQccWz/HPrnDBoZFBdk0o/WnKPtYy+Wa9+Yuz02NDLYZhKaUvFFob5a6pA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7400
-X-OriginatorOrg: intel.com
+References: <20250831123602.14037-1-pali@kernel.org> <20250831123602.14037-9-pali@kernel.org>
+ <CAH2r5muVP5NuZFfsCWDYhCKATDyeaD2cpXgC3=zNh+3T_zO1Mg@mail.gmail.com> <20250920174217.h5neq5yllnbvgn5a@pali>
+In-Reply-To: <20250920174217.h5neq5yllnbvgn5a@pali>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 20 Sep 2025 12:48:45 -0500
+X-Gm-Features: AS18NWA1wzRopF4eqqXHR3JGgY3lVKWGxlkKI6Jb3slVxC7VVCsgMUh1RiJvKGA
+Message-ID: <CAH2r5msWy9K04gMAQhfxsV-_TVhkTWL--oOGy_aQ78HCuibR0g@mail.gmail.com>
+Subject: Re: [PATCH 08/35] cifs: Improve SMB2+ stat() to work also for paths
+ in DELETE_PENDING state
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	ronnie sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dave Jiang wrote:
+Also would be helpful to reorder these in order by importance. Prioritize:
+1) those fixes that are useful for current mounts (e.g. smb3.1.1 or
+smb3) and matter for servers that are still commonly used (obviously
+SMB1 fixes are low priority, unless small and obvious fixes)
+2) those that fix bugs that can be shown with simple test script
+3) those that improve "best effort" Linux semantics
+4) those that are large and hard to review are prioritized lower
 
-[snip]
+On Sat, Sep 20, 2025 at 12:42=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> =
+wrote:
+>
+> Commits in this patch series needs to be applied in the order.
+> So this patch does not apply without the previous dependent. It would
+> not apply alone.
+>
+> I sent this patch series about month ago, so maybe the patch series
+> needs to be rebased, I can look at it in next days.
+>
+> On Saturday 20 September 2025 12:26:40 Steve French wrote:
+> > This patch doesn't apply to current mainline - can you update it?
+> >
+> > On Sun, Aug 31, 2025 at 7:36=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.or=
+g> wrote:
+> > >
+> > > Paths in DELETE_PENDING state cannot be opened at all. So standard wa=
+y of
+> > > querying path attributes for this case is not possible.
+> > >
+> > > There is an alternative way how to query limited information about fi=
+le
+> > > over SMB2+ dialects without opening file itself. It is by opening the
+> > > parent directory, querying specific child with filled search filter a=
+nd
+> > > asking for attributes for that child.
+> > >
+> > > Implement this fallback when standard case in smb2_query_path_info fa=
+ils
+> > > with STATUS_DELETE_PENDING error and stat was asked for path which is=
+ not
+> > > top level one (because top level does not have parent directory at al=
+l).
+> > >
+> > > Depends on "cifs: Change translation of STATUS_DELETE_PENDING to -EBU=
+SY".
+> > >
+> > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> > > ---
+> > >  fs/smb/client/cifsglob.h  |   1 +
+> > >  fs/smb/client/smb2glob.h  |   1 +
+> > >  fs/smb/client/smb2inode.c | 177 ++++++++++++++++++++++++++++++++++++=
++-
+> > >  3 files changed, 176 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> > > index e6830ab3a546..0ecf4988664e 100644
+> > > --- a/fs/smb/client/cifsglob.h
+> > > +++ b/fs/smb/client/cifsglob.h
+> > > @@ -2337,6 +2337,7 @@ struct smb2_compound_vars {
+> > >         struct smb_rqst rqst[MAX_COMPOUND];
+> > >         struct kvec open_iov[SMB2_CREATE_IOV_SIZE];
+> > >         struct kvec qi_iov;
+> > > +       struct kvec qd_iov[SMB2_QUERY_DIRECTORY_IOV_SIZE];
+> > >         struct kvec io_iov[SMB2_IOCTL_IOV_SIZE];
+> > >         struct kvec si_iov[SMB2_SET_INFO_IOV_SIZE];
+> > >         struct kvec close_iov;
+> > > diff --git a/fs/smb/client/smb2glob.h b/fs/smb/client/smb2glob.h
+> > > index 224495322a05..1cb219605e75 100644
+> > > --- a/fs/smb/client/smb2glob.h
+> > > +++ b/fs/smb/client/smb2glob.h
+> > > @@ -39,6 +39,7 @@ enum smb2_compound_ops {
+> > >         SMB2_OP_GET_REPARSE,
+> > >         SMB2_OP_QUERY_WSL_EA,
+> > >         SMB2_OP_OPEN_QUERY,
+> > > +       SMB2_OP_QUERY_DIRECTORY,
+> > >  };
+> > >
+> > >  /* Used when constructing chained read requests. */
+> > > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> > > index 2a0316c514e4..460e75614ef1 100644
+> > > --- a/fs/smb/client/smb2inode.c
+> > > +++ b/fs/smb/client/smb2inode.c
+> > > @@ -176,6 +176,9 @@ static int smb2_compound_op(const unsigned int xi=
+d, struct cifs_tcon *tcon,
+> > >                             struct kvec *out_iov, int *out_buftype, s=
+truct dentry *dentry)
+> > >  {
+> > >
+> > > +       bool has_cifs_mount_server_inum =3D cifs_sb->mnt_cifs_flags &=
+ CIFS_MOUNT_SERVER_INUM;
+> > > +       struct smb2_query_directory_req *qd_rqst =3D NULL;
+> > > +       struct smb2_query_directory_rsp *qd_rsp =3D NULL;
+> > >         struct smb2_create_rsp *create_rsp =3D NULL;
+> > >         struct smb2_query_info_rsp *qi_rsp =3D NULL;
+> > >         struct smb2_compound_vars *vars =3D NULL;
+> > > @@ -344,6 +347,41 @@ static int smb2_compound_op(const unsigned int x=
+id, struct cifs_tcon *tcon,
+> > >                         trace_smb3_posix_query_info_compound_enter(xi=
+d, tcon->tid,
+> > >                                                                    se=
+s->Suid, full_path);
+> > >                         break;
+> > > +               case SMB2_OP_QUERY_DIRECTORY:
+> > > +                       rqst[num_rqst].rq_iov =3D &vars->qd_iov[0];
+> > > +                       rqst[num_rqst].rq_nvec =3D SMB2_QUERY_DIRECTO=
+RY_IOV_SIZE;
+> > > +
+> > > +                       rc =3D SMB2_query_directory_init(xid,
+> > > +                                                      tcon,
+> > > +                                                      server,
+> > > +                                                      &rqst[num_rqst=
+],
+> > > +                                                      cfile ?
+> > > +                                                       cfile->fid.pe=
+rsistent_fid : COMPOUND_FID,
+> > > +                                                      cfile ?
+> > > +                                                       cfile->fid.vo=
+latile_fid : COMPOUND_FID,
+> > > +                                                      0,
+> > > +                                                      has_cifs_mount=
+_server_inum ?
+> > > +                                                       SMB_FIND_FILE=
+_ID_FULL_DIR_INFO :
+> > > +                                                       SMB_FIND_FILE=
+_FULL_DIRECTORY_INFO);
+> > > +                       if (!rc) {
+> > > +                               /*
+> > > +                                * Change the default search wildcard=
+ pattern '*'
+> > > +                                * to the requested file name stored =
+in in_iov[i]
+> > > +                                * and request for only one single en=
+try.
+> > > +                                */
+> > > +                               qd_rqst =3D rqst[num_rqst].rq_iov[0].=
+iov_base;
+> > > +                               qd_rqst->Flags |=3D SMB2_RETURN_SINGL=
+E_ENTRY;
+> > > +                               qd_rqst->FileNameLength =3D cpu_to_le=
+16(in_iov[i].iov_len);
+> > > +                               rqst[num_rqst].rq_iov[1] =3D in_iov[i=
+];
+> > > +                       }
+> > > +                       if (!rc && (!cfile || num_rqst > 1)) {
+> > > +                               smb2_set_next_command(tcon, &rqst[num=
+_rqst]);
+> > > +                               smb2_set_related(&rqst[num_rqst]);
+> > > +                       } else if (rc) {
+> > > +                               goto finished;
+> > > +                       }
+> > > +                       num_rqst++;
+> > > +                       break;
+> > >                 case SMB2_OP_DELETE:
+> > >                         trace_smb3_delete_enter(xid, tcon->tid, ses->=
+Suid, full_path);
+> > >                         break;
+> > > @@ -730,6 +768,64 @@ static int smb2_compound_op(const unsigned int x=
+id, struct cifs_tcon *tcon,
+> > >                                 trace_smb3_posix_query_info_compound_=
+done(xid, tcon->tid,
+> > >                                                                      =
+     ses->Suid);
+> > >                         break;
+> > > +               case SMB2_OP_QUERY_DIRECTORY:
+> > > +                       if (rc =3D=3D 0) {
+> > > +                               qd_rsp =3D (struct smb2_query_directo=
+ry_rsp *)
+> > > +                                       rsp_iov[i + 1].iov_base;
+> > > +                               rc =3D smb2_validate_iov(le16_to_cpu(=
+qd_rsp->OutputBufferOffset),
+> > > +                                                      le32_to_cpu(qd=
+_rsp->OutputBufferLength),
+> > > +                                                      &rsp_iov[i + 1=
+],
+> > > +                                                      has_cifs_mount=
+_server_inum ?
+> > > +                                                       sizeof(SEARCH=
+_ID_FULL_DIR_INFO) :
+> > > +                                                       sizeof(FILE_F=
+ULL_DIRECTORY_INFO));
+> > > +                       }
+> > > +                       if (rc =3D=3D 0) {
+> > > +                               /*
+> > > +                                * Both SEARCH_ID_FULL_DIR_INFO and F=
+ILE_FULL_DIRECTORY_INFO
+> > > +                                * have same member offsets except th=
+e UniqueId and FileName.
+> > > +                                */
+> > > +                               SEARCH_ID_FULL_DIR_INFO *si =3D
+> > > +                                       (SEARCH_ID_FULL_DIR_INFO *)qd=
+_rsp->Buffer;
+> > > +
+> > > +                               idata =3D in_iov[i + 1].iov_base;
+> > > +                               idata->fi.CreationTime =3D si->Creati=
+onTime;
+> > > +                               idata->fi.LastAccessTime =3D si->Last=
+AccessTime;
+> > > +                               idata->fi.LastWriteTime =3D si->LastW=
+riteTime;
+> > > +                               idata->fi.ChangeTime =3D si->ChangeTi=
+me;
+> > > +                               idata->fi.Attributes =3D si->ExtFileA=
+ttributes;
+> > > +                               idata->fi.AllocationSize =3D si->Allo=
+cationSize;
+> > > +                               idata->fi.EndOfFile =3D si->EndOfFile=
+;
+> > > +                               idata->fi.EASize =3D si->EaSize;
+> > > +                               idata->fi.Directory =3D
+> > > +                                       !!(le32_to_cpu(si->ExtFileAtt=
+ributes) & ATTR_DIRECTORY);
+> > > +                               /*
+> > > +                                * UniqueId is present only in struct=
+ SEARCH_ID_FULL_DIR_INFO.
+> > > +                                * It is not present in struct FILE_F=
+ULL_DIRECTORY_INFO.
+> > > +                                * struct SEARCH_ID_FULL_DIR_INFO was=
+ requested only when
+> > > +                                * CIFS_MOUNT_SERVER_INUM is set.
+> > > +                                */
+> > > +                               if (has_cifs_mount_server_inum)
+> > > +                                       idata->fi.IndexNumber =3D si-=
+>UniqueId;
+> > > +                               /*
+> > > +                                * Do not change idata->fi.NumberOfLi=
+nks to correctly
+> > > +                                * trigger the CIFS_FATTR_UNKNOWN_NLI=
+NK flag.
+> > > +                                */
+> > > +                               /*
+> > > +                                * Do not change idata->fi.DeletePend=
+ing as we do not know if
+> > > +                                * the entry is in the delete pending=
+ state. SMB2 QUERY_DIRECTORY
+> > > +                                * at any level does not provide this=
+ information.
+> > > +                                */
+> > > +                       }
+> > > +                       SMB2_query_directory_free(&rqst[num_rqst++]);
+> > > +                       if (rc)
+> > > +                               trace_smb3_query_dir_err(xid,
+> > > +                                       cfile ? cfile->fid.persistent=
+_fid : COMPOUND_FID,
+> > > +                                       tcon->tid, ses->Suid, 0, 0, r=
+c);
+> > > +                       else
+> > > +                               trace_smb3_query_dir_done(xid,
+> > > +                                       cfile ? cfile->fid.persistent=
+_fid : COMPOUND_FID,
+> > > +                                       tcon->tid, ses->Suid, 0, 0);
+> > > +                       break;
+> > >                 case SMB2_OP_DELETE:
+> > >                         if (rc)
+> > >                                 trace_smb3_delete_err(xid, tcon->tid,=
+ ses->Suid, rc);
+> > > @@ -1090,9 +1186,9 @@ int smb2_query_path_info(const unsigned int xid=
+,
+> > >                 break;
+> > >         case -EREMOTE:
+> > >                 break;
+> > > -       default:
+> > > -               if (hdr->Status !=3D STATUS_OBJECT_NAME_INVALID)
+> > > -                       break;
+> > > +       }
+> > > +
+> > > +       if (hdr->Status =3D=3D STATUS_OBJECT_NAME_INVALID) {
+> > >                 rc2 =3D cifs_inval_name_dfs_link_error(xid, tcon, cif=
+s_sb,
+> > >                                                      full_path, &isli=
+nk);
+> > >                 if (rc2) {
+> > > @@ -1101,6 +1197,81 @@ int smb2_query_path_info(const unsigned int xi=
+d,
+> > >                 }
+> > >                 if (islink)
+> > >                         rc =3D -EREMOTE;
+> > > +       } else if (hdr->Status =3D=3D STATUS_DELETE_PENDING && full_p=
+ath[0]) {
+> > > +               /*
+> > > +                * If SMB2 OPEN/CREATE fails with STATUS_DELETE_PENDI=
+NG error,
+> > > +                * it means that the path is in delete pending state =
+and it is
+> > > +                * not possible to open it until some other client cl=
+ears delete
+> > > +                * pending state or all other clients close all opene=
+d handles
+> > > +                * to that path.
+> > > +                *
+> > > +                * There is an alternative way how to query limited i=
+nformation
+> > > +                * about path which is in delete pending state still =
+suitable
+> > > +                * for the stat() syscall. It is by opening the paren=
+t directory,
+> > > +                * querying specific child with filled search filer a=
+nd asking
+> > > +                * for attributes for that child.
+> > > +                */
+> > > +
+> > > +               char *parent_path;
+> > > +               const char *basename;
+> > > +               __le16 *basename_utf16;
+> > > +               int basename_utf16_len;
+> > > +               struct cifsFileInfo *parent_cfile;
+> > > +
+> > > +               basename =3D strrchr(full_path, CIFS_DIR_SEP(cifs_sb)=
+);
+> > > +               if (basename) {
+> > > +                       parent_path =3D kstrndup(full_path, basename =
+- full_path, GFP_KERNEL);
+> > > +                       basename++;
+> > > +               } else {
+> > > +                       parent_path =3D kstrdup("", GFP_KERNEL);
+> > > +                       basename =3D full_path;
+> > > +               }
+> > > +
+> > > +               if (!parent_path) {
+> > > +                       rc =3D -ENOMEM;
+> > > +                       goto out;
+> > > +               }
+> > > +
+> > > +               basename_utf16 =3D cifs_convert_path_to_utf16(basenam=
+e, cifs_sb);
+> > > +               if (!basename_utf16) {
+> > > +                       kfree(parent_path);
+> > > +                       rc =3D -ENOMEM;
+> > > +                       goto out;
+> > > +               }
+> > > +
+> > > +               basename_utf16_len =3D 2 * UniStrnlen((wchar_t *)base=
+name_utf16, PATH_MAX);
+> > > +
+> > > +retry_query_directory:
+> > > +               num_cmds =3D 1;
+> > > +               cmds[0] =3D SMB2_OP_QUERY_DIRECTORY;
+> > > +               in_iov[0].iov_base =3D basename_utf16;
+> > > +               in_iov[0].iov_len =3D basename_utf16_len;
+> > > +               in_iov[1].iov_base =3D data;
+> > > +               in_iov[1].iov_len =3D sizeof(*data);
+> > > +               oparms =3D CIFS_OPARMS(cifs_sb, tcon, parent_path, FI=
+LE_READ_DATA,
+> > > +                                    FILE_OPEN, CREATE_NOT_FILE, ACL_=
+NO_MODE);
+> > > +               cifs_get_readable_path(tcon, parent_path, &parent_cfi=
+le);
+> > > +               free_rsp_iov(out_iov, out_buftype, ARRAY_SIZE(out_iov=
+));
+> > > +               rc =3D smb2_compound_op(xid, tcon, cifs_sb, parent_pa=
+th,
+> > > +                                     &oparms, in_iov, cmds, num_cmds=
+,
+> > > +                                     parent_cfile, out_iov, out_buft=
+ype, NULL);
+> > > +               if (rc =3D=3D -EOPNOTSUPP && (cifs_sb->mnt_cifs_flags=
+ & CIFS_MOUNT_SERVER_INUM)) {
+> > > +                       /*
+> > > +                        * If querying of server inode numbers is not=
+ supported
+> > > +                        * but is enabled, then disable it and try ag=
+ain.
+> > > +                        */
+> > > +                       cifs_autodisable_serverino(cifs_sb);
+> > > +                       goto retry_query_directory;
+> > > +               }
+> > > +
+> > > +               kfree(parent_path);
+> > > +               kfree(basename_utf16);
+> > > +
+> > > +               hdr =3D out_iov[0].iov_base;
+> > > +               if (!hdr || out_buftype[0] =3D=3D CIFS_NO_BUFFER)
+> > > +                       goto out;
+> > > +
+> > > +               data->fi.DeletePending =3D 1; /* This is code path fo=
+r STATUS_DELETE_PENDING. */
+> > >         }
+> > >
+> > >  out:
+> > > --
+> > > 2.20.1
+> > >
+> > >
+> >
+> >
+> > --
+> > Thanks,
+> >
+> > Steve
 
-> > @@ -998,9 +998,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
-> >  		label_ent = kzalloc(sizeof(*label_ent), GFP_KERNEL);
-> >  		if (!label_ent)
-> >  			return -ENOMEM;
-> > -		mutex_lock(&nd_mapping->lock);
-> > +		guard(mutex)(&nd_mapping->lock);
-> >  		list_add_tail(&label_ent->list, &nd_mapping->labels);
-> > -		mutex_unlock(&nd_mapping->lock);
-> 
-> I would not mix and match old and new locking flow in a function. If you are going to convert, then do the whole function. I think earlier in this function you may need a scoped_guard() call.
-> 
-
-FWIW I would limit the changes to __pmem_label_update() because that is
-the function which benefits from these changes.
-
-> >  	}
-> >  
-> >  	if (ndd->ns_current == -1 || ndd->ns_next == -1)
-> > @@ -1039,7 +1038,7 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
-> >  	if (!preamble_next(ndd, &nsindex, &free, &nslot))
-> >  		return 0;
-> >  
-> > -	mutex_lock(&nd_mapping->lock);
-> > +	guard(mutex)(&nd_mapping->lock);
-> 
-> So this change now includes nd_label_write_index() in the lock context as well compare to the old code. So either you should use a scoped_guard() or create a helper function and move the block of code being locked to the helper function with guard() to avoid changing the original code flow.
-> 
-
-Sure you could do this but again I don't think these updates are worth
-this amount of work right now.
-
-Ira
-
-> DJ
-> 
-> >  	list_for_each_entry_safe(label_ent, e, &nd_mapping->labels, list) {
-> >  		struct nd_namespace_label *nd_label = label_ent->label;
-> >  
-> > @@ -1061,7 +1060,6 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
-> >  		nd_mapping_free_labels(nd_mapping);
-> >  		dev_dbg(ndd->dev, "no more active labels\n");
-> >  	}
-> > -	mutex_unlock(&nd_mapping->lock);
-> >  
-> >  	return nd_label_write_index(ndd, ndd->ns_next,
-> >  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
-> 
-> 
 
 
+--=20
+Thanks,
+
+Steve
 
