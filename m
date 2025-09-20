@@ -1,135 +1,196 @@
-Return-Path: <linux-kernel+bounces-825610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 888CCB8C502
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:47:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5DCB8C50E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EBC5626E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:47:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DEED7B549D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A4A2EB87F;
-	Sat, 20 Sep 2025 09:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4892BE643;
+	Sat, 20 Sep 2025 09:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cW8U3vR3"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="XVqn+LOo"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB5E2D6611
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758361582; cv=none; b=SUiL4X7LBhnZJ4DY2MeknyYhY98rIvfFhNiST85SrS2pcCD9nRFWdKLXtIC8UcRTHfpBUwS/Sydrm5YqyD6r0M2omfby/Rvce9/Qyo0vxYEsW7GbzVrgusmk/hnhYbDpaWKUGgZaV7gBOX0Gda4gnJYSxlEfsyIg7WU12k7Cg00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758361582; c=relaxed/simple;
-	bh=06WkZlQp1hApWMQfU4a2TnIBkA0+msj+U8y5ce57UNQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GoXK7K2fvMNPo1HupsVpVuRVi4IQXmABdQlyGFAcitZHlGigWM/h7x+xYyEFpc6BuZWb4yj8V6+sf0BVF8cwLVxo5+Eia/EQEZMTH/0jMMxQNHTJneSON4r4K56AeT+6KIm6c0nnBuf2EU1Ke8enzFRY70xNWVigIjF7VamRtgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cW8U3vR3; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso2986862f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:46:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758361579; x=1758966379; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rq2teog4gIQygb1gH3aobDn756RO8w24JG5dF9G4uFY=;
-        b=cW8U3vR3Koxb8F0qzhUQ4obiW7JDTCq7A9hSCY0nVG13vq1mMQLSOUMPEnQaTxh1XQ
-         9XNqxeLzPB4ugBzMhQF+NtK0gwUYTQSR2cKV9VaM5YGzsEec4mQXKJyRJCKu3S14Gtlm
-         N8/vmV5E0OnRF6nOGA+l6G8EG98KXKldKeCbLMd2jBh2LjEF9EeGaKYQ51knSsAVm/zr
-         YXcDJ3xyT/i9HJvDyczQkx0Dimewz/m0nS8Lxoqv833s8clUXYCsmbJns2+TKpevBVy/
-         +IpOg1rTVGcYyEoHBQh2/6g+7tS3qVtzl3Jp/uCmLK8Ut7C+fO2t/V0SkbWTEM9ueKi9
-         fkWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758361579; x=1758966379;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rq2teog4gIQygb1gH3aobDn756RO8w24JG5dF9G4uFY=;
-        b=WEQkA2dKs/WF7E6dXPA1DTAJ9xmmy9t0lLVmHBJ5PMqZ9+SHTcCyXCT7ofSv+u0E5N
-         Pl+T1jMX2D6ut+gLdxKWseRmKH3Fsq5q1ISAslz3hKlIRm4jBQGBvr+HfhukdXJN4kxp
-         2Fj+F1aprObavoCu/2cW50HvH1LcV9b4pULjXduiaG2mbIitL7OC8/R5qFQD63NqV9/2
-         NKkrchvDdL74zfXMzgnIRzJn+rdkp7KCZ8nImWB1idldQafGTRFlgiHb4uvKXIOLmfoc
-         A/5y/fk90jSorVRlmKcEGaUqA2rYCTBEN9a31lIXTRAFYe8I/QZxFLrGjM3ilvNEYSqj
-         UecA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5ev9TZpv4d9BWu27ehTzKznH5I1CirFzQCOYG3BcYMMb57pBCmgLUf5WQ4ovf2xCx9Z/y3PbzhHbuW4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEtAHwpjIskp9+dldNV66esvjWmpmfm8vQgXiHdGH7VAMcteJF
-	qcXBsSLWqxJf86qtWOXB7RxqGy++ISI/ZTGyO6poT8ef58dBK/5efSL7
-X-Gm-Gg: ASbGncvc7Nf10HfR21srNwvPWoQ6c0voeFey1fRYh+uTzQYza/P2WUzghmfvmN52tXx
-	bbPIdRAP0L3fGketrFYEYcqTIYPbjr4/sNejXwFw5ieDqGgUlTtggxqQCA3ZgPePKpGNMlRkDVA
-	S+9BX7s3ESHpfVkc/njRuBNgQshA3yZGwrw7L6+xgokNaFIqYq5ZgHgsf7mJheUP8i6sv7m5ulG
-	g7AOOTBTakr1/iI0i47zTjHkODjccPtMlXW7MQfzeQc24SFYbYfEhLHKC4O4k2VUsvX879iqUP/
-	U5ieGL2AqcYZla/VJwQ73IqWeAJL0zCgqN34Qle3RD1YqQ9AxgFF/bmdK+kR8+yNSGv8S463IWZ
-	T5ls7ZMBqoSWkeU/U7rw78ao8cP9C0woCIXkA9hNsrQTpIDqFByxKV3kLdV951l18
-X-Google-Smtp-Source: AGHT+IFl+MC1nDaVLJuiZMNJ7+rEO5Az3pzwP23zFiHFFh+Nl5JFajqsTQQ43BuBBoBZUolOBfA1hg==
-X-Received: by 2002:a05:6000:1862:b0:3ea:bccc:2a2c with SMTP id ffacd0b85a97d-3ee7c552978mr4924011f8f.11.1758361578687;
-        Sat, 20 Sep 2025 02:46:18 -0700 (PDT)
-Received: from ipedrosa-thinkpadx1carbongen12.rmtes.csb ([5.225.139.156])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613eb27f25sm163883615e9.23.2025.09.20.02.46.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 02:46:18 -0700 (PDT)
-From: Iker Pedrosa <ikerpedrosam@gmail.com>
-Date: Sat, 20 Sep 2025 11:45:45 +0200
-Subject: [PATCH v2 5/5] drm/solomon: Enforce one assignment per line
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077701C700C;
+	Sat, 20 Sep 2025 09:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758362060; cv=pass; b=poFrLeItptevLb0mVKKXh1+2d1EC8YUtPvjPP2Ldorau7UZSouutGnGZy0vmDkPPe8oYqairMO019LleB/x/9sAY3jT78XZkHciXKHm27eOo8Wf2ApS1MU9GHZ7dXQO6Vtk9f+jOH5QK9Z/wUxkKcA6lln7KG9jqQF4qQ/tp7us=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758362060; c=relaxed/simple;
+	bh=zVox/WXFR5JOOCLeL2a/J1BlFB6BgvlHgpY3ZZNyptI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJJJnRqxvVMv1Pzps2ISKv3Tiw23OM+3EbjZBxmJLE5fBz7RVjh2FSaCFWBLK7QXgSu6fW+fAR+OmQgwEhtPCPNF0uJZNQ+MU9mN/8QPyNMshWCR259/5gI2DO2mLwUHVjH1nEIJ5/8ciySTIZEWckZFZiKcJTHeDe8RWqcAhPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=XVqn+LOo; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1758361918; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jJXcSyISrslfI26hBoCsSEzh++WfQXnzkKqvI7lnWwwTQCPFlPq8hoBL03RrmfRY0LShkrGwyDhCsj3wXmT1TCFNq4U0/Qf9aNsNr8qEPCfRe9RVCUolk1Z/yVtaxhVzpvxKyz/C9arrLKxX6AltWqyeZtUy1nMkDbdjkW53tZk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758361918; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=t4p8/YJOx2NEhHJ8IcJih7ZOSEtWMbTmNK5ISMXjmDo=; 
+	b=YsuK1nfQjMH1PE1c7Z5htZW8Ajsq3OqxEFFBN5wDjSM9K8Z1oPYmOnZMrDrYBN1G8Z8pndikTixQS6yuD86pK82KngZpEQts70wEFNo1WwplCxMrLGfNVP+tVSybpQ00gIgqUTIuAxmk9uWZqNIiYT3iKdfhoYYiB03OM8xqoNE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758361918;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=t4p8/YJOx2NEhHJ8IcJih7ZOSEtWMbTmNK5ISMXjmDo=;
+	b=XVqn+LOoiCszudQuTJs6vZtEvKAVrRRpTPSNFeZ6oGXCrqeVxtGZvt2MzqgqCwB7
+	UPGFfUtfSEPuL7mfpf58tQCbdoO5JgLaMNzWHjYxyaDMdA+p/MLZA6v6BLPpjbF/Mex
+	W6BK6KLmGugllUsTBCtYNNSeraYfbRZ2EaPLXw4g=
+Received: by mx.zohomail.com with SMTPS id 1758361914670477.56702687582913;
+	Sat, 20 Sep 2025 02:51:54 -0700 (PDT)
+Message-ID: <0813d9d7-a0be-419b-a067-66854d35373a@yukuai.org.cn>
+Date: Sat, 20 Sep 2025 17:51:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250920-improve-ssd130x-v2-5-77721e87ae08@gmail.com>
-References: <20250920-improve-ssd130x-v2-0-77721e87ae08@gmail.com>
-In-Reply-To: <20250920-improve-ssd130x-v2-0-77721e87ae08@gmail.com>
-To: Javier Martinez Canillas <javierm@redhat.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Iker Pedrosa <ikerpedrosam@gmail.com>
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/9] md/raid1,raid10: Don't set MD_BROKEN on failfast
+ bio failure
+To: Kenta Akagi <k@fwd.mgml.me>, Yu Kuai <hailan@yukuai.org.cn>,
+ yukuai1@huaweicloud.com, song@kernel.org, mtkaczyk@kernel.org, shli@fb.com,
+ jgq516@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com
+References: <010601995d6b88a4-423a9b3c-3790-4d65-86a4-20a9ddea0686-000000@ap-northeast-1.amazonses.com>
+ <6ce45082-2913-4ca2-b382-5beff6a799c6@yukuai.org.cn>
+ <e88ac955-9733-4e57-830b-d326557d189a@fwd.mgml.me>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <e88ac955-9733-4e57-830b-d326557d189a@fwd.mgml.me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-The code contains several instances of chained assignments. The Linux
-kernel coding style generally favors clarity and simplicity over terse
-syntax. Refactor the code to use a separate line for each assignment.
+Hi,
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
----
- drivers/gpu/drm/solomon/ssd130x.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+在 2025/9/20 14:30, Kenta Akagi 写道:
+> Hi,
+>
+> I have changed my email address because our primary MX server
+> suddenly started rejecting non-DKIM mail.
+>
+> On 2025/09/19 10:36, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2025/9/18 23:22, Kenta Akagi 写道:
+>>>>> @@ -470,7 +470,7 @@ static void raid1_end_write_request(struct bio *bio)
+>>>>>                 (bio->bi_opf & MD_FAILFAST) &&
+>>>>>                 /* We never try FailFast to WriteMostly devices */
+>>>>>                 !test_bit(WriteMostly, &rdev->flags)) {
+>>>>> -            md_error(r1_bio->mddev, rdev);
+>>>>> +            md_bio_failure_error(r1_bio->mddev, rdev, bio);
+>>>>>             }
+>>>> Can following check of faulty replaced with return value?
+>>> In the case where raid1_end_write_request is called for a non-failfast IO,
+>>> and the rdev has already been marked Faulty by another bio, it must not retry too.
+>>> I think it would be simpler not to use a return value here.
+>> You can just add Faulty check inside md_bio_failure_error() as well, and both
+>> failfast and writemostly check.
+> Sorry, I'm not sure I understand this part.
+> In raid1_end_write_request, this code path is also used for a regular bio,
+> not only for FailFast.
+>
+> You mean to change md_bio_failure_error as follows:
+> * If the rdev is Faulty, immediately return true.
+> * If the given bio is Failfast and the rdev is not the lastdev, call md_error.
+> * If the given bio is not Failfast, do nothing and return false.
 
-diff --git a/drivers/gpu/drm/solomon/ssd130x.c b/drivers/gpu/drm/solomon/ssd130x.c
-index 50528a94cd3bcfa46517c6ffccf3f458e17cf816..f3dd6982b293c74024f7d70a6ef1ebfb5889b0a1 100644
---- a/drivers/gpu/drm/solomon/ssd130x.c
-+++ b/drivers/gpu/drm/solomon/ssd130x.c
-@@ -1867,10 +1867,14 @@ static int ssd130x_init_modeset(struct ssd130x_device *ssd130x)
- 
- 	mode->type = DRM_MODE_TYPE_DRIVER;
- 	mode->clock = 1;
--	mode->hdisplay = mode->htotal = ssd130x->width;
--	mode->hsync_start = mode->hsync_end = ssd130x->width;
--	mode->vdisplay = mode->vtotal = ssd130x->height;
--	mode->vsync_start = mode->vsync_end = ssd130x->height;
-+	mode->hdisplay = ssd130x->width;
-+	mode->htotal = ssd130x->width;
-+	mode->hsync_start = ssd130x->width;
-+	mode->hsync_end = ssd130x->width;
-+	mode->vdisplay = ssd130x->height;
-+	mode->vtotal = ssd130x->height;
-+	mode->vsync_start = ssd130x->height;
-+	mode->vsync_end = ssd130x->height;
- 	mode->width_mm = 27;
- 	mode->height_mm = 27;
- 
+Yes, doesn't that apply to all the callers?
 
--- 
-2.51.0
+>
+> And then apply this?
+> This is complicated. Wouldn't it be better to keep the Faulty check as it is?
+>
+> @@ -466,18 +466,12 @@ static void raid1_end_write_request(struct bio *bio)
+>                          set_bit(MD_RECOVERY_NEEDED, &
+>                                  conf->mddev->recovery);
+>
+> -               if (test_bit(FailFast, &rdev->flags) &&
+> -                   (bio->bi_opf & MD_FAILFAST) &&
+> -                   /* We never try FailFast to WriteMostly devices */
+> -                   !test_bit(WriteMostly, &rdev->flags)) {
+> -                       md_error(r1_bio->mddev, rdev);
+> -               }
+> -
+>                  /*
+>                   * When the device is faulty, it is not necessary to
+>                   * handle write error.
+>                   */
+> -               if (!test_bit(Faulty, &rdev->flags))
+> +               if (!test_bit(Faulty, &rdev->flags) ||
+> +                   !md_bio_failure_error(r1_bio->mddev, rdev, bio))
+>                          set_bit(R1BIO_WriteError, &r1_bio->state);
+>                  else {
+>                          /* Finished with this branch */
 
+Faulty is set with lock held, so check Faulty with lock held as well can
+prevent rdev to be Faulty concurrently, and this check can be added to all
+callers, I think.
+
+>
+> Or do you mean a fix like this?
+>
+> @@ -466,23 +466,24 @@ static void raid1_end_write_request(struct bio *bio)
+>                          set_bit(MD_RECOVERY_NEEDED, &
+>                                  conf->mddev->recovery);
+>
+> -               if (test_bit(FailFast, &rdev->flags) &&
+> -                   (bio->bi_opf & MD_FAILFAST) &&
+> -                   /* We never try FailFast to WriteMostly devices */
+> -                   !test_bit(WriteMostly, &rdev->flags)) {
+> -                       md_error(r1_bio->mddev, rdev);
+> -               }
+> -
+>                  /*
+>                   * When the device is faulty, it is not necessary to
+>                   * handle write error.
+>                   */
+> -               if (!test_bit(Faulty, &rdev->flags))
+> -                       set_bit(R1BIO_WriteError, &r1_bio->state);
+> -               else {
+> +               if (test_bit(Faulty, &rdev->flags) ||
+> +                   (
+> +                   test_bit(FailFast, &rdev->flags) &&
+> +                   (bio->bi_opf & MD_FAILFAST) &&
+> +                   /* We never try FailFast to WriteMostly devices */
+> +                   !test_bit(WriteMostly, &rdev->flags) &&
+> +                   md_bio_failure_error(r1_bio->mddev, rdev, bio)
+> +                   )
+> +               ) {
+>                          /* Finished with this branch */
+>                          r1_bio->bios[mirror] = NULL;
+>                          to_put = bio;
+> +               } else {
+> +                       set_bit(R1BIO_WriteError, &r1_bio->state);
+>                  }
+>          } else {
+>                  /*
+
+No, this just make code even more unreadable.
+
+Thanks,
+Kuai
+
+> Thanks,
+> Akagi
+>
+>> Thanks,
+>> Kuai
+>>
+>>
+>>
 
