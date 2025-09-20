@@ -1,112 +1,87 @@
-Return-Path: <linux-kernel+bounces-825660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F23B8C723
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3D4B8C730
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF26F7AFE91
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA03F1BC5005
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27A02FDC36;
-	Sat, 20 Sep 2025 11:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tR8GvtQY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423372FE076;
+	Sat, 20 Sep 2025 11:56:53 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F48A27816E;
-	Sat, 20 Sep 2025 11:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120AE27816E;
+	Sat, 20 Sep 2025 11:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758369371; cv=none; b=A8jnbh5DBFcbd9c2ZByS2tgKlz+yBbE8lc+jMLQtd+OLZTm5UE+OjerTmhxEi3/m6Ny+516c9pIrLRpDCVGc1Lp0Tp//eKb1yfitFNehxata1OykR72rPi4Uhu1CwS2Ytw8LEmRILbKm5U9qzqjLp0rv/i33It3lKuQuJbsxcUQ=
+	t=1758369412; cv=none; b=eoJfRUC3PGpghjZ3yTI2IN0gzXV2fx+KecuV4oGd/bitHQCgqcRftio6/8zgyXLpV9OfX8ld9nHOqrktMkcfL930Pn6xWR/GB7pfzvc5/Q39UspylmRFA/bxsTm6VaSoMET28QKoJ40Y9I6Iy5LMTeK1dEZUV9SepgCCoyd8kq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758369371; c=relaxed/simple;
-	bh=ZXLh31mP5xc2BT8qYKn3o6B80+tmZbxITaHjZZwPsCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DyjC6kw/tC9rMAICX134au6WbZ/gE+RRPlJWohSLywkVaDdjGgk8X7pKU+Vun7yxKy188EIbocenq9WRQJlpwYVfohEFpQ5NwqbRiWmNQ2rS6SHOZ4T+1w8UTxNFayQ3s2YdIkRGlHEM/SSYPyRa6WnTPoHVLGl8qWQh8mDMsUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tR8GvtQY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8ADCC4CEEB;
-	Sat, 20 Sep 2025 11:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758369370;
-	bh=ZXLh31mP5xc2BT8qYKn3o6B80+tmZbxITaHjZZwPsCI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tR8GvtQY7FWsWhPgzAyt4RxpQD6MAcS69RiJoo2xthh281uC+e4SSLs6cLEeFaLCp
-	 EayWdSGjIPfOYSBq1nhclvDCSDxHkLYFsdWAlZq0j7DDgH3Qe7hfliXSBtru71vCd0
-	 WTC4nwq5G3d8rn0BSJiBBbxyxiPr+HFHz/dwGevYBZxOYTlhtmp+C4ZebNgXMjZZPw
-	 6JwWA5Hq0had6BJRaNb4CIpzc4GLK2+IOyKEQZ6R2PQ0J0tJDAMQC6muidxWWRBgS/
-	 ClUnf8ronfsgfwyxtRWnCVpsF7ir9X+GjHjkO9Bge+dGvPVRW3VGNOTG9Lbjqpv0gP
-	 jWiD3CUouZo9w==
-Date: Sat, 20 Sep 2025 12:56:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH 2/4] iio: add processed write API
-Message-ID: <20250920125600.182971d9@jic23-huawei>
-In-Reply-To: <2893324.mvXUDI8C0e@fw-rgant>
-References: <20250916-ltm8054-driver-v1-0-fd4e781d33b9@bootlin.com>
-	<20250916-ltm8054-driver-v1-2-fd4e781d33b9@bootlin.com>
-	<decdb75c-b61e-4e0f-bddd-cfc8986f3b6f@baylibre.com>
-	<2893324.mvXUDI8C0e@fw-rgant>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758369412; c=relaxed/simple;
+	bh=xuA6wLtX6WyGJtg/jWjYKtfit/bV+u0gTEPV3zrUv1k=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DWOV2sWoCJ50JNx6AsZ2er1IWnSPaL1JYOSseh28R03akgA8cAf7jdsf9FN3xkK/25ZTKXmUA3nmKD0QTWxZXiTeMxIwdO75SnaNGS8FZyDee1Hh7bbJcJkiS6Ko4o6y2yRSy8h2RNK7tpPOvQOoLGPxvzIKCscHaVswgvklYao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uzwCr-000000000Wa-2VFC;
+	Sat, 20 Sep 2025 11:56:45 +0000
+Date: Sat, 20 Sep 2025 12:56:42 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 1/4] arm64: dts: mediatek: mt7622: add 'soc-uuid' cell to
+ efuse
+Message-ID: <40004650c99c09ff540d8e2028a1393f4a70a6b4.1758369130.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, 17 Sep 2025 17:46:00 +0200
-Romain Gantois <romain.gantois@bootlin.com> wrote:
+The efuse of the MediaTek MT7622 contains an 8-byte unique identifier.
+Add a 'soc-uuid' cell covering those 8 bytes to the nvmem defininition
+of the efuse to allow easy access from userspace, eg. to generate a
+persistent random MAC address on boards like the BananaPi R64 which
+doesn't have any factory-assigned addresses.
 
-> Hello David,
-> 
-> On Tuesday, 16 September 2025 21:23:04 CEST David Lechner wrote:
-> > On 9/16/25 5:24 AM, Romain Gantois wrote:  
-> > > Add a function to allow IIO consumers to write a processed value to a  
-> ...
-> > > +		case IIO_VAL_FRACTIONAL:
-> > > +			tmp_num = (s64)processed * (s64)scale_val2;
-> > > +			tmp_den = scale_val;
-> > > +			break;
-> > > +		case IIO_VAL_FRACTIONAL_LOG2:
-> > > +			tmp_num = (s64)processed << scale_val2;
-> > > +			tmp_den = scale_val;
-> > > +			break;
-> > > +		default:
-> > > +			return -EINVAL;
-> > > +		}
-> > > +
-> > > +		tmp_den *= scale;
-> > > +
-> > > +		*raw = div64_s64(tmp_num, tmp_den);
-> > > +	}  
-> > 
-> > It can be quite tricky to get all of these combinations right. I would
-> > prefer if added some unit tests like we did in [1].
-> > 
-> > [1]:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=tes
-> > ting&id=c732e60ee10ed0611a59513cbf9c8d35fbe7cf65  
-> 
-> Agreed, that would be nice, I'll look into it.
-> 
-> Thanks,
-> 
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+---
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Overall code looks fine to me but unit tests would indeed be great.
-Thanks,
-
-Jonathan
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+index 917fa39a74f8..158bd9a305d7 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+@@ -278,6 +278,10 @@ efuse: efuse@10206000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+ 
++		soc-uuid@140 {
++			reg = <0x140 0x8>;
++		};
++
+ 		thermal_calibration: calib@198 {
+ 			reg = <0x198 0xc>;
+ 		};
+-- 
+2.51.0
 
