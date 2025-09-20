@@ -1,147 +1,127 @@
-Return-Path: <linux-kernel+bounces-825763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B63EB8CC54
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:54:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC98B8CC63
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1267C3EBF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83BEC189A7DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03912D0C68;
-	Sat, 20 Sep 2025 15:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843C835942;
+	Sat, 20 Sep 2025 15:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E2+N4XCv"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sezginduran.net header.i=@sezginduran.net header.b="iOOUzFT0"
+Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [178.154.239.214])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAAE41FBE83
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8436D220698;
+	Sat, 20 Sep 2025 15:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758383690; cv=none; b=X+9IMGV3kavKfIa4kiZSu8TKwGlzlhZ823fFcSJZOVH9XFVvCpHVTQOSDJV1W/3IdkHrSiqaC7NYCDRwumm+AQrfpVZbGv6CwBX8l09zgC0/ViLWP+ivKcWi8CzoWUIpCar6Ad4iiP7o4fwCYFMXpl1tHDJB9hJVVLNTQbI3x6g=
+	t=1758383783; cv=none; b=Jlcw9kM0Lhk0rTMz0YiYMxpcXdGAfGoae5nUCe3uLBSKkbLPK8wDZA84txVY628SUacEr1VKu0IqMXTAq1xk6hDv+gyVrhnVLkNRdXGGYJuPs0cDPnl7gDZNCih5KTcrHy7iuyTxj4grIwD7mOqgRGA6zT5d0KcWCaaglmUTttI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758383690; c=relaxed/simple;
-	bh=hfAsZRGtQxjHaSqZBdycaABnPajls0rryhOYAO/rtVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V8IZXe4mpJrsvxTWUORY6SELt/zO5mhjYJ6LW1oe/pGbpARyLFbYi8Nfr5LIl16l7FY0hykLP9uVOLg8iwcxyT2JMVAgrJsUzWwD9tY+7KDumhPqpP8be2QXx8/4rdDh4Z5cF+/qqIwxV6yCXcKf5LP5+fYCCvnYcPXdA4dlU1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E2+N4XCv; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3f0134ccc0cso1672897f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758383686; x=1758988486; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OmL4fKaZHfu9Rove6sJqAWTVy87f5w83yGb6oPzqQsA=;
-        b=E2+N4XCvwiNd5ASDO6TlAyD5DmG/mn3l+j6aGgKQDWMVqUJD8wOydA6eHIR2aWr2Gf
-         kc1shBe7jfkeOGLdqmt5kcBuEKm4FtrjWAl/MMy3UVCfajq7PKXqPymEcDqAYfWy2mYP
-         cGqYIJ9J6+oXKmMemI9KzUi+wrBU6XyQiH6QS6OiUhcQjEsydAa8wVdGg+R+0I9UMZvA
-         x52smszhOkg5lEixmVVIfcXar8kqlQgMaKF7Z2PGkMFPpXk6pQQM4sypHfa8wFGbyFj9
-         +o/dEM9nS//A64Li5/wAjEcv8DxgJfENmbayqw0Mf6T1jmyQ/tR2v9qsDlbU4BcVR5Zd
-         dy0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758383686; x=1758988486;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OmL4fKaZHfu9Rove6sJqAWTVy87f5w83yGb6oPzqQsA=;
-        b=HYr0WUQ21w3LJXS1HPVsxgb7oZedNTlAG728CfhbqPAjoWNvTTV7ZjTxxUS3joWels
-         dsts+F/DvI8TbMJLbEcs3htMTddTBsnlLNNhNeJe8GylDYEVzwG/WZ2oIAjl67frptFe
-         87IrPQui0Mjltty3VcHELvg+SLNuyC+NtiNxHFI1ZgsTYfy2zckcbEAh0cOO4QPz8QNo
-         ZPhWmltWcE8DV1PS41LQKxci2rnmiyKBtxTbS4bId5GkizpH3eDxPdWScwH+x2kw2IDj
-         TWuPs7qBfYuooS83coHEy+RV4TKXvNhfgW9jUs8dL3KyMKG7gLfMi83/b96wlEEK32ZW
-         kODQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGxAhHU/2Fyy81P4W0tQFqpMWjyDkDsOo7T2wxpWy/IWvT7vNO59ph2h109m3/n/5BwqYZHY+mMfVRRZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqrzOhTIHLzNxEGzJVgSkIeMZ2MxGsrMfTmC0gLqc6Njx40YhW
-	9OggaNfFOyqfo9lyr2sTM4aHqyZCGpoAG8BvYPRGtPsQPoQfXfmtO2syT2tosMg1Vcn1nNIoM4X
-	XBFyQYKruI44Hj9oD9EqQwoDqklcDdgk=
-X-Gm-Gg: ASbGncto4tOCDrpEMnLItOxEXYydXUTM2z0AhLaYO1bV+DJ+8nX1RBLFcYyAli9Nckx
-	BRus5670U86rnxrDqCdXAvh21OkCwbNjpZ8B8TrPMiPXG1ok3NLyVNyvbrHrnsD518OozxMu0P7
-	uRk1O7EIqdkk5CDzH7fbQn6LFDd1ts2NvVAvWW0ZYU5uK+TnlCg8bzUK/6vv7rSSvrjiHmY8yjY
-	33M/XSX29KQgQ1h6+3hGXwHEeUHvsNdgwZN
-X-Google-Smtp-Source: AGHT+IGfSRPp5unU0ikqgKe6L71mc7gqY7OrcTaOXCxInbx+GrRtbs1vqbP9ZDrhOUBg5/YKgmUImu9rrpRpu5dArLE=
-X-Received: by 2002:a05:6000:1789:b0:3ee:154e:4f9 with SMTP id
- ffacd0b85a97d-3ee7d0c8af1mr7055134f8f.20.1758383685795; Sat, 20 Sep 2025
- 08:54:45 -0700 (PDT)
+	s=arc-20240116; t=1758383783; c=relaxed/simple;
+	bh=hQHDmwnGbYQZbf9/nPLWKaETgRt4+EZd0tTre0SC4NA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y/EnLOdTLgyDgEWPtGLL+Sp3hZJtmxPfBdrVenasFm9Q+7oD2ZdEttVA1QvxrRkpRSgjeFwiPjFHM7cnF/NLz52gmKgRX3N7YA+VferZchnGpYrnaj4HsrUncGjcDnA1ubd7yDRPhGiCoOcsE07YjdtjHS3WLM4ppLuhrzILH6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sezginduran.net; spf=pass smtp.mailfrom=sezginduran.net; dkim=pass (1024-bit key) header.d=sezginduran.net header.i=@sezginduran.net header.b=iOOUzFT0; arc=none smtp.client-ip=178.154.239.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sezginduran.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sezginduran.net
+Received: from mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:5b9b:0:640:5d70:0])
+	by forward103d.mail.yandex.net (Yandex) with ESMTPS id ECDD5C0051;
+	Sat, 20 Sep 2025 18:56:09 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 5uWWxMdMsKo0-C9EVhexi;
+	Sat, 20 Sep 2025 18:56:09 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sezginduran.net;
+	s=mail; t=1758383769;
+	bh=2Cm8GwjzPTQSGnGP/jtp41W0WE0pfRZxKAWpYfamrA8=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=iOOUzFT0Cj6wnaZ2vyLATF/lg/uDMgx3iDzFfwnOSOAh3RU8S9MQYTrYC5cQdK9VL
+	 6X2GyU0kxD9QqTuwIfwRNpFqGWRYHPdofdQqSgXKfdbVq5LB0t+xh7AjroESed8xeF
+	 Di7j588LnSiFOHv5B74D8ColloZrohZle6+hPquA=
+Authentication-Results: mail-nwsmtp-smtp-production-main-88.iva.yp-c.yandex.net; dkim=pass header.i=@sezginduran.net
+From: Ahmet Sezgin Duran <ahmet@sezginduran.net>
+To: sudipm.mukherjee@gmail.com,
+	teddy.wang@siliconmotion.com,
+	gregkh@linuxfoundation.org
+Cc: linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ahmet Sezgin Duran <ahmet@sezginduran.net>
+Subject: [PATCH] staging: sm750fb: rename camel case identifiers
+Date: Sat, 20 Sep 2025 18:55:52 +0300
+Message-ID: <20250920155552.261976-1-ahmet@sezginduran.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905201606.66198-1-shakeel.butt@linux.dev>
- <5qi2llyzf7gklncflo6gxoozljbm4h3tpnuv4u4ej4ztysvi6f@x44v7nz2wdzd>
- <CAADnVQK_wvu-KBgF6dNq=F5qNk-ons-w3UenJNaew6h9qTBpGw@mail.gmail.com> <eba3aiglp2hmj65sd4vsmav26o45orrlog2ifexd44yovygcdg@43wfk6dbgqda>
-In-Reply-To: <eba3aiglp2hmj65sd4vsmav26o45orrlog2ifexd44yovygcdg@43wfk6dbgqda>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sat, 20 Sep 2025 08:54:34 -0700
-X-Gm-Features: AS18NWC4-3QCvE4i9hUGZd-7Pyusy_D5tB_ZRka07Www2wvdZZcy7N-fgfJJ47M
-Message-ID: <CAADnVQJF-JodmrfqJzwfpaK1wjmo6-4_R-cdUfu9ZFN52zxEsA@mail.gmail.com>
-Subject: Re: [PATCH] memcg: skip cgroup_file_notify if spinning is not allowed
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Peilin Ye <yepeilin@google.com>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Meta kernel team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 9:31=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> On Fri, Sep 19, 2025 at 07:47:57PM -0700, Alexei Starovoitov wrote:
-> > On Thu, Sep 18, 2025 at 7:49=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
-x.dev> wrote:
-> > >
-> [...]
-> > > +
-> > > +static DEFINE_PER_CPU(struct defer_memcg_events, postpone_events) =
-=3D {
-> > > +       .memcg_llist =3D LLIST_HEAD_INIT(memcg_llist),
-> > > +       .work =3D IRQ_WORK_INIT(process_deferred_events),
-> > > +};
-> >
-> > Why all these per cpu stuff ? I don't understand what it helps with.
-> > To have max_events per-cpu?
-> > Just one global llist and irq_work will do just fine.
-> > and global max_events too.
->
-> Right, global llist and irq_work will work but max_events has to be
-> per-memcg. In addition we will need llist_node per-memcg and I think we
-> will need to do a similar cmpxchg trick I did in css_rstat_updated() to
-> eliminate the potential race of llist_node of a given memcg i.e.
-> multiple CPUs trying to add llist_node of a memcg to the global llist.
+Rename two identifiers from camel case to snake case, in order to follow
+kernel coding style.
 
-ohh. that cmpxchg is quite unusual. Never seen anything like that.
-I'm not convinced it's correct either.
-I would replace that with traditional:
-if (!atomic_xchg(&c->enqueued, 1))
-   if (llist_add(&c->llnode, &global_llist))
-     irq_work_queue(&global_irq_work);
+Changes:
 
-and use traditional dequeue:
+- Local variable `deCtrl` to `de_ctrl`
+- Function `deGetTransparency` to `de_get_transparency`
 
-nodes =3D llist_del_all(&global_llist);
-for_each(nodes) {
-  memcg_memory_event(c, MEMCG_MAX);
-  atomic_set(&c->enqueued, 0);
-}
+Signed-off-by: Ahmet Sezgin Duran <ahmet@sezginduran.net>
+---
+ drivers/staging/sm750fb/sm750_accel.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-since llist_del_first_init() is slower.
+diff --git a/drivers/staging/sm750fb/sm750_accel.c b/drivers/staging/sm750fb/sm750_accel.c
+index b07c1aa68621..046b9282b24a 100644
+--- a/drivers/staging/sm750fb/sm750_accel.c
++++ b/drivers/staging/sm750fb/sm750_accel.c
+@@ -89,7 +89,7 @@ int sm750_hw_fillrect(struct lynx_accel *accel,
+ 		      u32 x, u32 y, u32 width, u32 height,
+ 		      u32 color, u32 rop)
+ {
+-	u32 deCtrl;
++	u32 de_ctrl;
+ 
+ 	if (accel->de_wait() != 0) {
+ 		/*
+@@ -121,11 +121,11 @@ int sm750_hw_fillrect(struct lynx_accel *accel,
+ 		  ((width << DE_DIMENSION_X_SHIFT) & DE_DIMENSION_X_MASK) |
+ 		  (height & DE_DIMENSION_Y_ET_MASK)); /* dpr8 */
+ 
+-	deCtrl = DE_CONTROL_STATUS | DE_CONTROL_LAST_PIXEL |
++	de_ctrl = DE_CONTROL_STATUS | DE_CONTROL_LAST_PIXEL |
+ 		DE_CONTROL_COMMAND_RECTANGLE_FILL | DE_CONTROL_ROP_SELECT |
+ 		(rop & DE_CONTROL_ROP_MASK); /* dpr0xc */
+ 
+-	write_dpr(accel, DE_CONTROL, deCtrl);
++	write_dpr(accel, DE_CONTROL, de_ctrl);
+ 	return 0;
+ }
+ 
+@@ -284,7 +284,7 @@ int sm750_hw_copyarea(struct lynx_accel *accel,
+ 	return 0;
+ }
+ 
+-static unsigned int deGetTransparency(struct lynx_accel *accel)
++static unsigned int de_get_transparency(struct lynx_accel *accel)
+ {
+ 	unsigned int de_ctrl;
+ 
+@@ -391,7 +391,7 @@ int sm750_hw_imageblit(struct lynx_accel *accel, const char *pSrcbuf,
+ 		DE_CONTROL_ROP_SELECT | DE_CONTROL_COMMAND_HOST_WRITE |
+ 		DE_CONTROL_HOST | DE_CONTROL_STATUS;
+ 
+-	write_dpr(accel, DE_CONTROL, de_ctrl | deGetTransparency(accel));
++	write_dpr(accel, DE_CONTROL, de_ctrl | de_get_transparency(accel));
+ 
+ 	/* Write MONO data (line by line) to 2D Engine data port */
+ 	for (i = 0; i < height; i++) {
+-- 
+2.51.0
 
-max_events still looks unnecessary to me.
-
-> This can work but I am still debating if this additional complexity is
-> worth it as compared to the original patch where we skip
-> cgroup_file_notify() for !allow_spinning condition.
-
-I would skip it too. deferral doesn't seem necessary.
 
