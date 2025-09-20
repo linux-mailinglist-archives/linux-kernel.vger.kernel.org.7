@@ -1,122 +1,146 @@
-Return-Path: <linux-kernel+bounces-825818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBE7B8CE01
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:37:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AF0B8CE07
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D51E7C6BB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5D3173910
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE543101DB;
-	Sat, 20 Sep 2025 17:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9977130F7F5;
+	Sat, 20 Sep 2025 17:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSN+mFiG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3dI/wao"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FDC21ABC9;
-	Sat, 20 Sep 2025 17:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A81086331
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758389815; cv=none; b=QfTpqDsyZ4kHiHTFxke2ybxLoZDJcD4ficY+Vr+uyR7clYLA3k9wUsoRuVYV7ggeWFia5TzJOel74k0B2PiPaDfrk+Tf1jayVSBEsXXnZ/wLjPImzNtvsNuQ7jSYwMl2Nl04LSG/swLpOq3uYkUj+tbNVplrynIB83ORh2UPaJU=
+	t=1758389858; cv=none; b=slVc8E2aUkyD6jCSee2NJGz1IG6fuvp2CWDPkPReHvhGJsqG/H9OyGhLSExbqdfWLaiyJPyZva7c1RgLsNwcJoK4yRS8Dn0h/OFytHxMLP3ZJw43T3EKNKz98jUrjDd+2UW9P0xxXxY4dF/inGC6A1sbEK0NMN56VKSc6USMY/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758389815; c=relaxed/simple;
-	bh=bBKmMy4eylNzgrCT2jsvWF8aardX3t0sWZo4Y8ORPXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qi8RTXRgGJjcvCqBp6ZkjfTYqsMZULcaVc9/gYn47jpLA2cNefs4LnfY6ryCOXRGe/FAozLYFytrPeGkLe3HZoFJiRC48Mqc6hQoseloYvbyBG6WMC0pjY7G5bwC5vCg4BlR52PGd5Gcp1oAN0mr6/h7b7R5kiVBPVel6/x8qxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSN+mFiG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048C7C4CEEB;
-	Sat, 20 Sep 2025 17:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758389815;
-	bh=bBKmMy4eylNzgrCT2jsvWF8aardX3t0sWZo4Y8ORPXA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sSN+mFiGswwUlZWrglJA/+kCBTrxIDzhE17f0spBJ1cYq9Z339/L+kmMbno708jO9
-	 Cd2KSDvYIEUEcjxftQMnk7dLpokp4wjOpVoFYw0hPI7kFSzbhaxS8j2YmXmCk6und9
-	 7QZ/qR8Ynuw0a7CSARQVgvyfo1+AcBhMnQISPjk5d+J1SSaMROZxYTC1MLjKETICjK
-	 0eoUXBb8CUM9VeMMFU2mH2gMn6JO1qmVlhHVP47l2cx5bPuWifVIVA4kwwCGuhK3ag
-	 gcoz8sdoDcDMMh2dAiZD0MhdY//IX4WIcOmcEZRHVlFja3JQgu4s6zp2HoRAgPoC+V
-	 +XgMR5xsoLU0Q==
-Message-ID: <182ceffb-b038-4c4f-9c3b-383351a043d5@kernel.org>
-Date: Sat, 20 Sep 2025 19:36:49 +0200
+	s=arc-20240116; t=1758389858; c=relaxed/simple;
+	bh=f+nAcxABZAbrauxy1frHe6eUcCNFVf565g9JEMRH99U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j8sAI+A7J+IMGxmH8KdHkv4oCKcQUiX/u/KNtwz7QR4dVNoZdZH6H7wdYmWDJYWQ4MdOPJL9kuacvMyqyRXNuL7pR1SRh4yDcHjj3Jj/aYWnQ6ae4qLHzJZX2V8MY0fuwpN5NXb4osnE0Q+co6WI13EtpbDOER3gKkPtUDYPGQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3dI/wao; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-78393b4490cso27325966d6.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758389855; x=1758994655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jbsx7rUmB91XIm5gWKsYjh9edIm3/1qRqxHrPjtMuIs=;
+        b=E3dI/waovTG7snS3wHhf2mgQIjU8NydKx89hKxAnDEXnxCrF9OiJnTWxd62yQ9Cce+
+         kCSJzxDJ7kfd3Xfqd50060SKX7J7/m3m33CnV/k+w8Xum8RFTlbyHfhJO79wDIbEqXrN
+         apcl+MRWSjj/arE6GVp7J7pSJmyGqvVybx8Cg3wDZ26lym2op5cuLqp9m61cS97DXZvc
+         3qMcktKoAkSC2oETu+a5nrv57D5ZqplzjJaUUHRtTHCn+GghNmTQ/AXJuDr1IkGr8A2C
+         aPD6koR/PC1HSCOhpvuLwfEBdOwFGQEno4eTNmXPSjLTw1oknRkBaFJtgwzq1jzoQc+f
+         gysg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758389855; x=1758994655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jbsx7rUmB91XIm5gWKsYjh9edIm3/1qRqxHrPjtMuIs=;
+        b=OjcTtvBhSpE9pYbuWpREn0GbF9P60Xk+YwEOeW6Z4b+aYcolO/mVI6r4bfUBT2P5NW
+         zb8dB5nyq/qvifpC9+yQ/Mgv4XUZBF8qPgCxsTpL1O2vIwtO88GaPVZ1t2okF+8h3Ni5
+         51KMU5WJhfUINvBpOmLXyIwMLQ7abBpFD03aA5llbPIVlhJijo5/cmsUHQCklDQ8aPp6
+         WBieAt3pAdZssLjYL0RFCFIYCJ15Xj7wBevTXWA5iEcX4wxjJ0mUyYys/saerzEecpCa
+         AsEPYQORb75xyDJcyQIZZApArOsYU1Jaq4jh3C430oradJPOKiMp5iNKdnX7C5l7f6zY
+         JeoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXR/jAAFaFaEwSDLNMHrJxLKUi6Sc4Kluc+L59qACkipIKpCg7VxAcf9VBDRuBdQJoysndy3vZ+gOM/DhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlIAhzksUWjN9Uf778VvFKQ3tLT3eDyhSx/phximvoghA0SyeB
+	xxIGY51z+qg6tdk8YY33mvZV6UvI0LY53fpg5P1s4zWEWQ9HvBbPNv5zmVeY82CAB0Twu5/wH7O
+	ooc037cXsXX6CAF0ooKR490dzTc4druI=
+X-Gm-Gg: ASbGncsN1ToLokmV9bgX/hbeIux7OI1YZdgiUOclQeGM0gF15+edF8ObCj8IeDUCrn6
+	xzwt8Ff+Efwohf6E4spdwYnTair9jR0jWASfJPc6piWeiAX1KNKOHenenSyyezz/xFZho1gM4Oh
+	/nNr/eb47zS73rRydY4LQMAIuZQVmKea3TQlZ/+Q3xCBMb2NLMc2e9mWpr1u6AgiJcr8m4CCXCA
+	g2B4YPfN17juQEQ6ZwUXN40pmzoapjR0h5tMsX9baAbpe6zp4ptN6abcVzSJ/p/324FYbyIkbO9
+	+u9lMxzcwkjmq7cvuccPAqrM5IEC56f90VofDkPb4+tEpP7J4kqSF2FZous9OKDFDXo8aLU5tmv
+	Prp8/88CoBXAFrAs6LBD5
+X-Google-Smtp-Source: AGHT+IEGG/+DybMY0xWLcKMJ4e4xoQe1Ku4mr7qRXc/75fg96Yh4+/j5dqHLlbHCvMPSUlGVuSawtjaX2U4cHWHYVcI=
+X-Received: by 2002:a05:6214:252e:b0:7b6:5b28:6324 with SMTP id
+ 6a1803df08f44-7b65b286515mr17533506d6.48.1758389855275; Sat, 20 Sep 2025
+ 10:37:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] page_pool: add debug for release to cache from
- wrong CPU
-To: Dragos Tatulea <dtatulea@nvidia.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, Tariq Toukan <tariqt@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-References: <20250918084823.372000-1-dtatulea@nvidia.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20250918084823.372000-1-dtatulea@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250831123602.14037-1-pali@kernel.org> <20250831123602.14037-29-pali@kernel.org>
+ <CAH2r5muoF-OKg9e=T8moEifwJ+RwmGX28nXqgECM891TufqY_Q@mail.gmail.com>
+In-Reply-To: <CAH2r5muoF-OKg9e=T8moEifwJ+RwmGX28nXqgECM891TufqY_Q@mail.gmail.com>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 20 Sep 2025 12:37:23 -0500
+X-Gm-Features: AS18NWAJekJFB_NLhgKjRocfWNcpOd3jLrYXMXU90vSTnV4EYdBzw7k6k57ufJc
+Message-ID: <CAH2r5msw5+TxRRO7Ap9eaQX2W4AbZ4bqRHs=0Kv9O1mjV6TvBw@mail.gmail.com>
+Subject: Re: [PATCH 28/35] cifs: Fix smb2_unlink() to fail on directory
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	ronnie sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+And of the remaining patches only 2 apply (patch 33 and patch 35) on
+current mainline
+
+On Sat, Sep 20, 2025 at 12:34=E2=80=AFPM Steve French <smfrench@gmail.com> =
+wrote:
+>
+> This did not merge to current mainline
+>
+> On Sun, Aug 31, 2025 at 7:37=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org>=
+ wrote:
+> >
+> > unlink() should fail on the directory with ENOTDIR error code.
+> > Flag CREATE_NOT_DIR handles that.
+> >
+> > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> > ---
+> >  fs/smb/client/smb2inode.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> > index c8b0e9b2438f..c69293fcf26c 100644
+> > --- a/fs/smb/client/smb2inode.c
+> > +++ b/fs/smb/client/smb2inode.c
+> > @@ -1348,7 +1348,7 @@ smb2_unlink(const unsigned int xid, struct cifs_t=
+con *tcon, const char *name,
+> >
+> >         oparms =3D CIFS_OPARMS(cifs_sb, tcon, name,
+> >                              DELETE, FILE_OPEN,
+> > -                            CREATE_DELETE_ON_CLOSE | OPEN_REPARSE_POIN=
+T,
+> > +                            CREATE_DELETE_ON_CLOSE | CREATE_NOT_DIR | =
+OPEN_REPARSE_POINT,
+> >                              ACL_NO_MODE);
+> >         int rc =3D smb2_compound_op(xid, tcon, cifs_sb, name, &oparms,
+> >                                   NULL, &(int){SMB2_OP_DELETE}, 1,
+> > --
+> > 2.20.1
+> >
+> >
+>
+>
+> --
+> Thanks,
+>
+> Steve
 
 
 
-On 18/09/2025 10.48, Dragos Tatulea wrote:
-> Direct page releases to cache must be done on the same CPU as where NAPI
-> is running. Not doing so results in races that are quite difficult to
-> debug.
-> 
-> This change adds a debug configuration which issues a warning when
-> such buggy behaviour is encountered.
-> 
-> Signed-off-by: Dragos Tatulea<dtatulea@nvidia.com>
-> Reviewed-by: Tariq Toukan<tariqt@nvidia.com>
-> ---
->   net/Kconfig.debug    | 10 +++++++
->   net/core/page_pool.c | 66 ++++++++++++++++++++++++++------------------
->   2 files changed, 49 insertions(+), 27 deletions(-)
-> 
-[...]
+--=20
+Thanks,
 
-> @@ -768,6 +795,18 @@ static bool page_pool_recycle_in_cache(netmem_ref netmem,
->   		return false;
->   	}
->   
-> +#ifdef CONFIG_DEBUG_PAGE_POOL_CACHE_RELEASE
-> +	if (unlikely(!page_pool_napi_local(pool))) {
-> +		u32 pp_cpuid = READ_ONCE(pool->cpuid);
-> +		u32 cpuid = smp_processor_id();
-> +
-> +		WARN_RATELIMIT(1, "page_pool %d: direct page release from wrong CPU %d, expected CPU %d",
-> +			       pool->user.id, cpuid, pp_cpuid);
-> +
-> +		return false;
-> +	}
-> +#endif
-
-The page_pool_recycle_in_cache() is an extreme fast-path for page_pool.
-I know this is a debugging patch, but I would like to know the overhead
-this adds (when enabled, compared to not enabled).
-
-We (Mina) recently added a benchmark module for page_pool
-under tools/testing/selftests/net/bench/page_pool/ that you can use.
-
-Adding a WARN in fast-path code need extra careful review (maybe is it
-okay here), this is because it adds an asm instruction (on Intel CPUs
-ud2) what influence instruction cache prefetching.  Looks like this only
-gets inlined two places (page_pool_put_unrefed_netmem and
-page_pool_put_page_bulk), and it might be okay... I think it is.
-See how I worked around this in commit 34cc0b338a61 ("xdp: Xdp_frame add
-member frame_sz and handle in convert_to_xdp_frame").
-
---Jesper
+Steve
 
