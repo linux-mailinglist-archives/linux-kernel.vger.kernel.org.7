@@ -1,131 +1,301 @@
-Return-Path: <linux-kernel+bounces-825906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07D8B8D13A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8940BB8D146
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D4C1B27434
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:44:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4598E1B2796B
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618BF2E9EAA;
-	Sat, 20 Sep 2025 20:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1132D3EDE;
+	Sat, 20 Sep 2025 20:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="FlEtobw5"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="gxLroDBm"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B412E7F30
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758400758; cv=none; b=jpYVnmgHk8X1ED5zGOskhv6gL6snNLRHxzApg7pYLt6VY7D5neVvXgx2agCka+IF9fXCbJ3lGhN+ZY1bEjQ37gVQi888okjdnKrrPGz0Q0eusI8t5mfTnklYdHE/7BGt5LPa+yPNEhVE8KcNj6AcQdgdxcCaOL7S6cMQ3G9XoGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758400758; c=relaxed/simple;
-	bh=KZiCU1nVn9reB0m8aW3lnYMrYjnZ2w93aVpVoIvDif0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O1p08QJAWFAQtjlOIhJ0kQ3RbEXBLN8hRMCmRP2pgD5sJuZA5guZF5gNq8ykfhQOx4gR9iazx6P9o12+2zU0oQQB/qRvpNcnTWhp9JEsGpggeRuNemzi2vHI1IZxfKn1X4NknIGuDI9+ZRSRps1PxhXhhGroPjtp0l4J2HByMWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=FlEtobw5; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-4256f0fac67so5298565ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1758400756; x=1759005556; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EDiaVjHF4kERpiNA+aqN0eX91N+wRKnw/AH6MzFfvy4=;
-        b=FlEtobw5uZqVPmSoDwj3A90vj0pHNxTboIFWswXP+IyLOs5+UUzeo09UayL1Y8tbU1
-         Hd6BAgA9FxT92rMgG5p3h7oUMEYqKpEtaA34d/jl9jgcsAXepRTvlzJrqyxEvkMSvUyB
-         VMeR/1LDPpcwhBvqJLcRG+sxshh/BbPlJFNJx+C73b3kVXAMKwYYjZPceEj6xsQLHJtS
-         h4NU3YGZVQpQAQsX6lzqbJS1Itokl0Hbwkih6eCXqOYtycqgQm5KCk23TeTYAZnC4fGy
-         70uTg+VHuywcapCWoVdPUPa69RS4L8sIYlX5+484w0tlARilxwMu+qju8WfChcM+0tQu
-         CZgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758400756; x=1759005556;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EDiaVjHF4kERpiNA+aqN0eX91N+wRKnw/AH6MzFfvy4=;
-        b=YwoeVYNnF8PRFvCM7ppZoz9yqKMD+cG/4VJahT/7H3HgxQ8NqcViz8eb3Pxj9SHdoy
-         2/ENoknRLPYaTim41a2aaMZRMxXSMFiFYQrvS8z4M9g4SKdWgvInq15vfrjnN5cIy7Ub
-         UhOD+IsAlQ07sB4cVf4g7bM1Bmmf5o2cmKWQGwdlQbPeg3mSWakyh+8kMCyRw+dcKIDB
-         nnfKMIpuEDZkuH4oZMgHf3RTD1yfBwlCc2IAYRRoranyjNIKpYuyVBRvKSj77V9ygc2V
-         U2GsgFGJOhCl6bJklCsPuKaDi8T8zK60SIdlO2uhDlJPtjeEhhXVnytKDdxfXWoGu9pZ
-         5k+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUimHNtfVO5ulyIroRg1+5WAjr5SUOsrpaGK6eFx07CYU8OPTDKc3K/HGdjL++PMsMpRVCYCtLtVrBLh9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznpeWXt6Fo6MYFVLGEc96QYnQLP7S9EOu4xtyZZ1mU+O3+1Z18
-	8n6KeJ7xfELlfkbJVB2HNpna85DhMXOLQ+5SJMeaFoubouyGospM66RJY3KYlgYUb8o=
-X-Gm-Gg: ASbGncuUf+E2s6uXTi8wFTVjkJG9A0iHoz1Iawhuaf6kxHidIJttxMoqQc9kyabXQY8
-	/jHiZ/UiU69WE8aL7m+/s+QeNYVHDm8LEb08nAqM/ZzPiAPr2gezmKTNe2n30EM4K4mmy2wVu0N
-	fj3L5gibfGNg8SyfTAaynWRiA+ojZ2UclkF5ppt9JG9vfI60ew+BHRWw4wpa/uNxabNf/se/Xt6
-	I9zbFgMn/gci20tqGYCS3uzly/UnPXu8tsmFro2MyB6TykzlOL0/ejDYUNQVrL5kMhGMmKmN2cA
-	TbXMbfYhP1S+SrRt3QL5Pc/tJnDGRHIzl3vtjPcnu3oKSeG0T5YDVGbX7p5UA/aapMk1HW7PWx2
-	9bxwxuuGs1Lb7O7kO7Y45HjGg
-X-Google-Smtp-Source: AGHT+IG8Raz8xeq0QgKszu3pyBicegyYf16hU26G0T5WrFouzicPpKiOvFexp2tE8Gc55HnrfGmbkg==
-X-Received: by 2002:a05:6e02:1947:b0:424:80f2:299 with SMTP id e9e14a558f8ab-424819955bbmr133419975ab.27.1758400756210;
-        Sat, 20 Sep 2025 13:39:16 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-424804ec921sm30642665ab.43.2025.09.20.13.39.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 13:39:15 -0700 (PDT)
-From: Andrew Jones <ajones@ventanamicro.com>
-To: iommu@lists.linux.dev,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: jgg@nvidia.com,
-	zong.li@sifive.com,
-	tjeznach@rivosinc.com,
-	joro@8bytes.org,
-	will@kernel.org,
-	robin.murphy@arm.com,
-	anup@brainfault.org,
-	atish.patra@linux.dev,
-	tglx@linutronix.de,
-	alex.williamson@redhat.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	alex@ghiti.fr
-Subject: [RFC PATCH v2 18/18] DO NOT UPSTREAM: RISC-V: KVM: Workaround kvm_riscv_gstage_ioremap() bug
-Date: Sat, 20 Sep 2025 15:39:08 -0500
-Message-ID: <20250920203851.2205115-38-ajones@ventanamicro.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250920203851.2205115-20-ajones@ventanamicro.com>
-References: <20250920203851.2205115-20-ajones@ventanamicro.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DFD2D7D41;
+	Sat, 20 Sep 2025 20:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758400803; cv=pass; b=qEUkmCsLc7P4ElCCrwcSvLIsIzhP+iUNdpCJyd9mjrui+IMr29NwRvtCLXLfgfSullHkqbjy4/tY8t5hBDgLew1DC/UqOP+l8c1T+qlvkDo50RMgTQhc3aXfjaq/GY+KgzJv4mBl5YnmxYe+QbV/lI6pMhb7HFj5n1vl1TRKv44=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758400803; c=relaxed/simple;
+	bh=uWI4/qj6thpZ0Tc19jhX4B24Cqj4vytw6faAdyXa6JI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKxiJbeG6Yf7VzIU+sNNNw1AKuJOPH5riMlkuDisfH9AhrrG/44MFDaW8UkM24JApcW2rmq00tb2URDe1XXXh4pb3yCAUGOXFxmTsTVE1/AWaxBY8YeqXbODr2OUic3WTFGObbUi4n1X8U/rpB3TF5wowlyJF0vrNI0EG6SJZws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=gxLroDBm; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1758400792; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=B2DhV/vuRbct8iVI7PfPT7kIvwrPnUtI9ADKXQmxsXeiqkoN9F6hbWdeZp7L8tJ9gMxqB8JbK/f8a8d4CSeB5vYdifaWx3tpRaaDmmZZVc1WoSkyfD+Aiky0GNIyyjDJMLIAWOhgmkVIfRF+OMk34diGEQHu3ylYlECa1Pz9axw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758400792; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=i3CZ8I6hMfZuqlYG/R7kbbW2PmgdFbuMEuk5EuX4U84=; 
+	b=i1t1yVng4DEvL3QkBqhkZfOc9rokg5DBdduqJgUhwvxQ1sZeVn6kDMgqRngRKhiimKO1AiC9RDjBb9jkzZ6ft3QhIj4y1TTM2QjmRnuLi4iGb/gPn42Pm2S2S8JbfgRU72FaOzKVHZgIdNbsz8gCJB6fyUUswSU5rC4nrEd+eN0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758400792;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=i3CZ8I6hMfZuqlYG/R7kbbW2PmgdFbuMEuk5EuX4U84=;
+	b=gxLroDBmdYYuzJnigHmahDbH+flW97oQv1ZEih0+klSpSHuzK20m+EoxJo2izzau
+	SV8Vy72qx/x0FyMXxjkteMHRkMXpKHUcq54JAeTOtYCzNlumXF5UL2WYoaD7Uj4yGlt
+	XF2YrY6I3HmOPURBDBK7qkosUY/23k67BjDf6ZDA=
+Received: by mx.zohomail.com with SMTPS id 1758400790928789.1689767088144;
+	Sat, 20 Sep 2025 13:39:50 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 52ACA1805CD; Sat, 20 Sep 2025 22:39:43 +0200 (CEST)
+Date: Sat, 20 Sep 2025 22:39:43 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v5 1/3] dt-bindings: touchscreen: convert eeti bindings
+ to json schema
+Message-ID: <iqfvpacnymzckd3vi7mxgzbljomwkww3mpuupn5mhy3rtlwebv@2vf346kfqpno>
+References: <20250919075823.2557865-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2hqg7mcrxxpxuwym"
+Content-Disposition: inline
+In-Reply-To: <20250919075823.2557865-1-dario.binacchi@amarulasolutions.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/258.384.42
+X-ZohoMailClient: External
 
-Workaround a bug that breaks guest booting with device assignment that
-was introduced with commit 9bca8be646e0 ("RISC-V: KVM: Fix pte settings
-within kvm_riscv_gstage_ioremap()")
----
- arch/riscv/kvm/mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-index 525fb5a330c0..994f18b92143 100644
---- a/arch/riscv/kvm/mmu.c
-+++ b/arch/riscv/kvm/mmu.c
-@@ -56,7 +56,7 @@ int kvm_riscv_mmu_ioremap(struct kvm *kvm, gpa_t gpa, phys_addr_t hpa,
- 
- 	end = (gpa + size + PAGE_SIZE - 1) & PAGE_MASK;
- 	pfn = __phys_to_pfn(hpa);
--	prot = pgprot_noncached(PAGE_WRITE);
-+	prot = pgprot_noncached(__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_READ | _PAGE_WRITE));
- 
- 	for (addr = gpa; addr < end; addr += PAGE_SIZE) {
- 		map.addr = addr;
--- 
-2.49.0
+--2hqg7mcrxxpxuwym
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 1/3] dt-bindings: touchscreen: convert eeti bindings
+ to json schema
+MIME-Version: 1.0
 
+Hi,
+
+On Fri, Sep 19, 2025 at 09:58:09AM +0200, Dario Binacchi wrote:
+> Convert EETI touchscreen controller device tree binding to json-schema.
+>=20
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> ---
+>=20
+> Changes in v5:
+> - Move bindings into eeti,exc3000.yaml
+> - Remove eeti.yaml
+>=20
+> Changes in v2:
+> - Added in v2
+>=20
+>  .../input/touchscreen/eeti,exc3000.yaml       | 41 ++++++++++++++++---
+>  .../bindings/input/touchscreen/eeti.txt       | 30 --------------
+>  2 files changed, 36 insertions(+), 35 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/e=
+eti.txt
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/eeti,exc=
+3000.yaml b/Documentation/devicetree/bindings/input/touchscreen/eeti,exc300=
+0.yaml
+> index 1c7ae05a8c15..13b865d3ee58 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/eeti,exc3000.ya=
+ml
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/eeti,exc3000.ya=
+ml
+> @@ -9,15 +9,13 @@ title: EETI EXC3000 series touchscreen controller
+>  maintainers:
+>    - Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> =20
+> -allOf:
+> -  - $ref: touchscreen.yaml#
+> -
+>  properties:
+>    compatible:
+>      oneOf:
+>        - const: eeti,exc3000
+>        - const: eeti,exc80h60
+>        - const: eeti,exc80h84
+> +      - const: eeti,exc3000-i2c
+
+I think this should be
+
+- const: eeti,exc3000-i2c
+  deprecated: true
+
+The compatible is obviously not something that should be used
+anymore.
+
+>        - items:
+>            - enum:
+>                - eeti,exc81w32
+> @@ -30,18 +28,34 @@ properties:
+>      maxItems: 1
+>    vdd-supply:
+>      description: Power supply regulator for the chip
+> +  attn-gpios:
+> +    maxItems: 1
+> +    description: Phandle to a GPIO to check whether interrupt is still
+> +                 latched. This is necessary for platforms that lack
+> +                 support for level-triggered IRQs.
+
+  deprecated: true
+
+(see below)
+
+>    touchscreen-size-x: true
+>    touchscreen-size-y: true
+>    touchscreen-inverted-x: true
+>    touchscreen-inverted-y: true
+>    touchscreen-swapped-x-y: true
+> =20
+> +allOf:
+> +  - $ref: touchscreen.yaml#
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              const: eeti,exc3000-i2c
+> +    then:
+> +      required:
+> +        - touchscreen-size-x
+> +        - touchscreen-size-y
+
+And I think it makes sense to add this to disallow using this ugly
+hack with the normal compatibles:
+
+else:
+  attn-gpios: false
+
+Looking at the only user (pxa300-raumfeld-controller), it supplies
+the same GPIO as IRQ and as GPIO, so it is actually a software
+limitation. Instead of implementing the software level based IRQ
+handling in the gpio driver, it was hacked into the EETI driver.
+
+Looks like this legacy platform is pretty much dead, otherwise I
+would have suggested to simply switch it to the new binding/driver.
+
+Greetings,
+
+-- Sebastian
+
+>  required:
+>    - compatible
+>    - reg
+>    - interrupts
+> -  - touchscreen-size-x
+> -  - touchscreen-size-y
+> =20
+>  additionalProperties: false
+> =20
+> @@ -51,6 +65,7 @@ examples:
+>      i2c {
+>          #address-cells =3D <1>;
+>          #size-cells =3D <0>;
+> +
+>          touchscreen@2a {
+>                  compatible =3D "eeti,exc3000";
+>                  reg =3D <0x2a>;
+> @@ -62,3 +77,19 @@ examples:
+>                  touchscreen-swapped-x-y;
+>          };
+>      };
+> +
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include "dt-bindings/interrupt-controller/irq.h"
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        touchscreen@2a {
+> +            compatible =3D "eeti,exc3000-i2c";
+> +            reg =3D <0x2a>;
+> +            interrupt-parent =3D <&gpio>;
+> +            interrupts =3D <123 IRQ_TYPE_EDGE_RISING>;
+> +            attn-gpios =3D <&gpio 123 GPIO_ACTIVE_HIGH>;
+> +        };
+> +    };
+
+I would also drop the example, nobody should use this :)
+
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/eeti.txt=
+ b/Documentation/devicetree/bindings/input/touchscreen/eeti.txt
+> deleted file mode 100644
+> index 32b3712c916e..000000000000
+> --- a/Documentation/devicetree/bindings/input/touchscreen/eeti.txt
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -Bindings for EETI touchscreen controller
+> -
+> -Required properties:
+> -- compatible:	should be "eeti,exc3000-i2c"
+> -- reg:		I2C address of the chip. Should be set to <0xa>
+> -- interrupts:	interrupt to which the chip is connected
+> -
+> -Optional properties:
+> -- attn-gpios:	A handle to a GPIO to check whether interrupt is still
+> -		latched. This is necessary for platforms that lack
+> -		support for level-triggered IRQs.
+> -
+> -The following optional properties described in touchscreen.txt are
+> -also supported:
+> -
+> -- touchscreen-inverted-x
+> -- touchscreen-inverted-y
+> -- touchscreen-swapped-x-y
+> -
+> -Example:
+> -
+> -i2c-master {
+> -	touchscreen@a {
+> -		compatible =3D "eeti,exc3000-i2c";
+> -		reg =3D <0xa>;
+> -		interrupt-parent =3D <&gpio>;
+> -		interrupts =3D <123 IRQ_TYPE_EDGE_RISING>;
+> -		attn-gpios =3D <&gpio 123 GPIO_ACTIVE_HIGH>;
+> -	};
+> -};
+> --=20
+> 2.43.0
+>=20
+> base-commit: 8b789f2b7602a818e7c7488c74414fae21392b63
+> branch: drop-touchscreen.txt
+>=20
+
+--2hqg7mcrxxpxuwym
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjPEQsACgkQ2O7X88g7
++powtw/+MsgxaegIJFTpRlr69ZjoUlOE5KEOAnbPdA6CIJKOvScUU/qSVxX2njiH
+FsBi4e4kndKsrc5jvHmtTtNcif9xMKPq8Ik/p6PbxqCh474EB+uYIBejfxkpK2rF
+HVn5P5gFtS4b2uRxVOGddkAe/1KZexqcpYatlEpISeyGCh4FhcHG6vzb5Np2zniX
+Wrc3TK2h3K3BVrzWEFO/+XYOcjlv6XoMZ6HTbOhgwmYn6n3u1n8t550OmskPaxXd
+pki8zkLZFNCeOkFoBCWPYFLt6AkoQIAlW1Lt4VIrrMfx9JLskcjft1jALTqSKS6+
+TqFqdmCeA9gY/KH2BxNiCixIdjcJRET3B9lzHYMUa3BvLjQMAaa9bjSeH0NDfOzO
+3vXg+uNqW0C8kUSW5Mq2y5Ag1/1Gfc5GMqaS8Zbo8/wvT/e2YrWlYQFWIJyrui0e
+/RzFei2C1Eyf10EFXF2v+3y/oatFvSB+VXESU3UNUoD0UPo76mPxDEfyd2zEIHsI
+AViP7O7An698cg3vKNoeKB+O7F0DNuMDz4LdD86k3RSxb+2g5ZguF5GTeFygotiA
+8iytG/WO+kP/ZeP2UvCligtZyZVPC4xB6JscedldxjFr0WxYfwo4RPa4I/0Tag9j
+SxosTR/+N8mT5139PFF58AdHmDoGZeuTVU/KZNV1DAI/Ym+iGxI=
+=9UZq
+-----END PGP SIGNATURE-----
+
+--2hqg7mcrxxpxuwym--
 
