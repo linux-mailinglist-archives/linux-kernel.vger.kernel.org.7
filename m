@@ -1,135 +1,198 @@
-Return-Path: <linux-kernel+bounces-825920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E3FDB8D1C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:19:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB31FB8D1D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23E027A3930
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:17:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 752777A3AA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DE6285419;
-	Sat, 20 Sep 2025 22:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A99288522;
+	Sat, 20 Sep 2025 22:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2f5208K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyrSitGX"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB225FA0E;
-	Sat, 20 Sep 2025 22:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385E8235BE2
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 22:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758406744; cv=none; b=jRDhGLMTVyqeRksYoug1fG83OqV35k0HMEXKzuVMewptMhFuNwR7jy+LvBySUKbvkbVe3l2fVSW4/pGymRERD0lQ8MCUUnmexCXjapoJ1FUT5QB2LGXW1WJZvxKewaf/brpnef8YwnTATsoM7nWDxe7DHIFIKtcNmAVZba/nw8o=
+	t=1758407324; cv=none; b=XNyILmgEP99Y52kGKZbaq4tvSJO0RiNe75C9kL5ErZqzRABxfGRWX/cI2tuk9zUkijwpqInV3kUi8uffQQ5n5seaoVsXJ0zBMgPgTRTlGj2PPCsq5jSg0xH1Pd7Aa31sVutS2PwxsUMBzTxZyh5BCuK0LF6v9fWhTYFkgVTc1PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758406744; c=relaxed/simple;
-	bh=PYEiTDY2LygoEjRa/YiGz+dOFnGCROKWezbUQTxc5PM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YycpECHjv9UdxIb3duJQoTjUW6k7Rv4KZduNgfBq9p2xCjHdgITRgmqjlD6y8hXXEwSjq0wTlBPuR5DDB6WuTPjSknRjfzrVyQx0AiymiVrJ4OIeS+DYV93/iEHupGo5nzhqSZU/O3ahD2OBMhHaLp1gl5Wo4rnpadiDB7T6goo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2f5208K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12846C4CEEB;
-	Sat, 20 Sep 2025 22:19:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758406743;
-	bh=PYEiTDY2LygoEjRa/YiGz+dOFnGCROKWezbUQTxc5PM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O2f5208K/ZH542Kfy41JJak/vQG40hn37Cd3qB99tgCWHiwmvND4sMlGYCtBcEwSS
-	 IADU1HA4dM7TtVZNwvZS0LzGNn/AogPuGojYL+1rtVYO9fNoXzpaHvAnT3S+gqjEF7
-	 8BWJMO97jGB/b/sjuwck5dS2a9L5Ax3tu0Lj4THMLHQji5oBH6olIEnO/L9iKjEyTw
-	 ZAMvBjcwFbl1psBQDwuVEzLo0ztcpbGSBG6tFXPnFiAVX5m2I8BwylVgG0GmTHiTG7
-	 G93x/dugBzSJRbcYbC5TbgNiMn82HZQ8TVGVyBM5CHRNGpaMPC/NcE/Y5In5FPy5jf
-	 yguz0YQNNv+fg==
-Date: Sat, 20 Sep 2025 23:18:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: jdelvare@suse.com, linux@roeck-us.net, lgirdwood@gmail.com,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alistair Francis <alistair@alistair23.me>
-Subject: Re: [PATCH RFC 1/2] hwmon: (sy7636a) fix races during probe of mfd
- subdevices
-Message-ID: <473e217a-c6b3-4ebc-895d-85beab50267c@sirena.org.uk>
-References: <20250920114311.291450-1-andreas@kemnade.info>
- <20250920114311.291450-2-andreas@kemnade.info>
- <79aa98fe-b9b6-4210-a556-d33863f0129a@sirena.org.uk>
- <20250920233307.0c425863@kemnade.info>
+	s=arc-20240116; t=1758407324; c=relaxed/simple;
+	bh=9gu6hJVAnIfRTHtgnZ0zrWIon8dUaef830KhxqL6EZs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BGSOekyD2LbgicSvS6BZAPKYTgLL27hCAOPZRsliMAgXQoHLU0gfr+/J0IwDKtnqKypwk8oerUF82cxLsMf/CQfYtw35lacIZld87U8zWZx5WsZGaO6tdNHPMJydDot3TxMBCAjWILKBP9zDVtWSEuxSdsqXLLK+kmBCaIcDfTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyrSitGX; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74be52f5447so1446733a34.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:28:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758407322; x=1759012122; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nA0qvsHjha/KfwIagmo7Q/qF5pnKgf1p52tDDCS5guk=;
+        b=QyrSitGXTosZASyCS9VIljhApcWUNZYI5RDkYr9+mAnoVat8SW3s67eWFjpkSlkPag
+         0Akfp8Ie30mHRYlW0K3n3nFl0vu9khxnqcSJaAAcPCRO2x27gkwM4Kbpr9m/phrC7JfL
+         aEEmXt2U1ew6ajnnMrAQAhOunNL5jaQ/NnMeGvKGr8AKYtX1ZZGAmrz/hLwMzKvh3jk2
+         Smv4Bi1FbnjRNHa8tk0AFnus4O7SIN+dQMbIY4U025B3nJ2NpeiOOwZyJxh4InSRVnZ0
+         5uQ7PDg8QE0M+2Y4S09fvywHkFD+ZfgIe0mkVY3CyPlsW4YGiAtmyiolhQFGm2gSvQh+
+         V33Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758407322; x=1759012122;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nA0qvsHjha/KfwIagmo7Q/qF5pnKgf1p52tDDCS5guk=;
+        b=ffX7WF72cb91WXFQ1uoNRG1iZ+eRX4/ALTTLNYYtkiQ6reJDbLaDv5VPYHk5ARU1u5
+         W9OMsaLwBUqiXvTBX4anxxYDNyLYon+dIqmpBHwiDB3QvLT9tj+GbwEyPgcXYmR4HwiD
+         P/I3DQ5maExM+AhkdGPguHW3mo8DqCHTRK+NZ4YmDnDU01YLOqbpnmnZdQX5elWEQB3t
+         +Ix/BQqRFPGCYqIzbwcaTQzv3N0WpNjuq9FFwhYeRTutnPz2z5F2nOXLNWIX5wEG5GWm
+         FDdutdQCrNMCOfhLM51Z9vGlLqYMO7eKwJKdd42VEv2BfxqPGVOllaqz70n59hKer84N
+         L7yA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ9HDqU6iyQcAzEyK362s039RiKRTMVGWl67Es9GEHOmVNU4FuC1FawXZMe7PUIT7qGGAEXVSmRtzzLq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRQwiSjxc3zdTQqrCLhumN7P/E1KEGOBwOMauILW8zF/wGFKtw
+	1qhmLf5aMNrhkWnyB54C9oPZ3MU+5JD0xtltoeilovf82KzwDFCWw9u0
+X-Gm-Gg: ASbGncsEv4TJg9rgTViCgCngzTdCVCGg0s37A+VrwDIkjh9FyrQREeYefJEUOk/pDQj
+	daYrjcYbpEuZiqLnph4mosuyecoNu5fAMuOn4k5DXg7n9AinME2368BhXsybjfIEd/8j7qgG4Ot
+	Sqy1+p3GdZPOjIsrDKQNbigYam+FoSP0SQEMAJelkWK1T4evB8peR2gJALsK5pERVVq3xIxK36l
+	opJ8JvCr5zsmO7i4Z37X40xhOMRcCNYtgHkuSyR24Vkexv2/QvGJhtz9psh34RJZDGdvQEM5tpw
+	fNSZ28zgeQ3jbtF1XaQGlP+YsktI64N0S/8JDOT3AivtOj6dsVfnkMjym7MVaHOTo4L+7Ox2gxd
+	dpB8ziU5069P8kEVPH3aNJZ/bPJ4iHjF8k9kJ8906NUyZ2X5nxYqcYqnCmbSDVUJxDoNmYoO/JR
+	Y5NXdU1ZaVGz5yvWthv75c6kTtz7SV/PcPwIg=
+X-Google-Smtp-Source: AGHT+IEQ4dNngj00vQnCTq2dGbkr6X6Uyiu6Awm/G2AhyR9r9uQMYSQ+ael8GKCRVsJEaC3eNEb/cQ==
+X-Received: by 2002:a05:6830:398a:b0:74a:ed47:a2fd with SMTP id 46e09a7af769-76f70bfd509mr4198600a34.9.1758407322247;
+        Sat, 20 Sep 2025 15:28:42 -0700 (PDT)
+Received: from [10.0.11.20] (57-132-132-155.dyn.grandenetworks.net. [57.132.132.155])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7692c72528esm4150535a34.42.2025.09.20.15.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 15:28:41 -0700 (PDT)
+Message-ID: <6980dba4ac0be1d6bbed8cb595d38114d89a14f5.camel@gmail.com>
+Subject: Re: [REGRESSION] af_unix: Introduce SO_PASSRIGHTS - break OpenGL
+From: brian.scott.sampson@gmail.com
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: christian@heusel.eu, davem@davemloft.net, difrost.kernel@gmail.com, 
+	dnaim@cachyos.org, edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	kuni1840@gmail.com, linux-kernel@vger.kernel.org,
+ mario.limonciello@amd.com, 	netdev@vger.kernel.org, pabeni@redhat.com,
+ regressions@lists.linux.dev
+Date: Sat, 20 Sep 2025 17:28:40 -0500
+In-Reply-To: <20250920035146.2149127-1-kuniyu@google.com>
+References: <caa08e5b15bc35b9f3c24f679c62ded1e8e58925.camel@gmail.com>
+		 <20250920035146.2149127-1-kuniyu@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 (flatpak git) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ajcYnS13mjOHFFvE"
-Content-Disposition: inline
-In-Reply-To: <20250920233307.0c425863@kemnade.info>
-X-Cookie: BARBARA STANWYCK makes me nervous!!
 
-
---ajcYnS13mjOHFFvE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Sep 20, 2025 at 11:33:07PM +0200, Andreas Kemnade wrote:
-
-> Just for learning, yes, it is an abuse of the _optional for non-optional
-> things, so a dirty hack which should not go in, therefore RFC. But what
-> happens more than having the hwmon device endlessly deferred at worst?
-
-There's also the fact that this API is so frequently abused for bad and
-broken reasons that I regularly audit users and try to fix them, I'd
-rather not see any new users that don't have a really strong reason to
-use it.
-
-> The wanted regulator is the one defined in sy7636a-regulator.c. So it
-> is all an issue internal to the sy7636a.
-
-> Both subdevices are instantiated via drivers/simple-mfd-i2c.c.
-> I see several other solutions:
-> a) call device_is_bound() on every other children of dev->parent, if not
-> bound defer.
-> b) do not care about the regulator api at all, just check whether
->    the corresponding bit is set before reading temperature, return
->    -ENODATA if not, some mutex is probably needed.
-> c) do not care about the regulator api at all, just set the
->    corresponding bit (together with some mutex locking and counting).
-
-I assume this is using the regulator API because someone might use an
-external regulator in a system design for some reason (better quality,
-power efficiency or a shared reference between multiple devices I
-guess?), or because the supply might also be used by external devices?
-
-> d) copy the of_node pointer from the parent, add a regulator phandle prop=
-erty
->    to the node pointing to the regulator in the node itself.
->    That sounds like your idea but is against the current dt binding for
->    this device and afaik it is uncommon to have mfd-internal things wired
->    up this way
+> Thank you for your patience.
 >=20
-> e) something clean, simple I miss
+> I assumed SO_PASSCRED was the problem, but I missed
+> SO_PASSCRED was also inherited durint accept().
+>=20
+> Could you apply this on top of the previous changes ?
+>=20
+> Also, could you tell what desktop manager and distro
+> you are using ?=C2=A0 If this attempt fails, I'll try to
+> reproduce with the same version on my desktop.
 
-The idea is that the relationship between the devices should be
-registered before the devices, that's how the regulator knows to defer.
-We used to have an API for doing this for board files which might fit
-here, but it got removed since nobody wants board files any more.  If
-you're allocating the devices dynamically that's annoying to implement
-though...
+No worries! I just applied this patch as well(on top of the other two
+in the order you originally provided), and still seeing the black
+screen upon resume. I am seeing a stack trace now when I check
+systemd's journal, which wasn't there before(not sure if its related).
+I do have the System.map as well for this build, but not sure why
+everything seemed to end up so cryptic. I'll paste it below as well as
+my desktop:=C2=A0
 
---ajcYnS13mjOHFFvE
-Content-Type: application/pgp-signature; name="signature.asc"
+Desktop Environment:=C2=A0Gnome 48.5=C2=A0
+Window Manager: Mutter (Wayland)=C2=A0
+Distribution: CachyOS
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjPKFIACgkQJNaLcl1U
-h9BGQwf+OvNNj/wSlGObv8QCJrJ3kxiM1MiiJ08UTjK+cfC7BpPHljGpWPAzrYGW
-SEMvcGn+Sfxkcdd7E6JJGiWTfjcFTT5uR18pUCn0IVyWLkymHZeY5MaKxH8Sl4Su
-jAnGrpOsi+HP+6JIMUnDhjUOWzDlbuSSQJiuj8OzCK4oFagNo9eu0DLa3b2qKFA+
-NxSSLo1GbLgYwtPKB5uo2D5Cf0/XiiI6aTc8F+iHIqSB+KhZluk4ATKh6AxYceOj
-C1fTKBujeSXOE3/3B4RIA/2JCl/8oLbB4z666C/Cgeyd2VzRcrdVWbzsoa9nslRq
-Hyls0rO9mJjmfxBPUWehHuWw7+wlGQ==
-=Vg24
------END PGP SIGNATURE-----
+Trace:
 
---ajcYnS13mjOHFFvE--
+=E2=9D=AF sudo journalctl -k -b -1 | grep "cut here" -A52 | awk -F 'kernel:=
+ '
+'{print $2}'
+------------[ cut here ]------------
+WARNING: CPU: 3 PID: 545 at net/core/sock.c:1548
+sk_setsockopt+0x1709/0x1b50
+Modules linked in: dm_mod crypto_user loop nfnetlink lz4 zram
+842_decompress lz4hc_compress 842_compress lz4_compress amdgpu amdxcp
+i2c_algo_bit drm_ttm_helper ttm drm_exec gpu_sched drm_suballoc_helper
+video rtsx_pci_sdmmc mmc_core drm_panel_backlight_quirks nvme drm_buddy
+nvme_core drm_display_helper serio_raw rtsx_pci nvme_keyring cec
+nvme_auth wmi
+CPU: 3 UID: 0 PID: 545 Comm: systemd-journal Not tainted 6.17.0-rc6-
+local-00268-g3b08f56fbbb9-dirty #1 PREEMPT(full)=20
+c74d467c5c838be6e0491dc375b7e67fc07dfcf3
+Hardware name: Alienware Alienware m18 R1 AMD/0HR91K, BIOS 1.19.0
+07/01/2025
+RIP: 0010:sk_setsockopt+0x1709/0x1b50
+Code: 00 e9 30 eb ff ff ba a1 ff ff ff e9 64 eb ff ff 0f b6 43 12 3c 0a
+0f 85 d0 f3 ff ff 8b 83 b8 00 00 00 85 c0 0f 84 c2 f3 ff ff <0f> 0b e9
+bb f3 ff ff 48 8d 7c 24 38 b9 08 00 00 00 4c 89 de 4c 89
+RSP: 0018:ffffccbfc3e8bbf8 EFLAGS: 00010202
+RAX: 0000000000000010 RBX: ffff8a3598268cc0 RCX: ffff8a35805db400
+RDX: 0000000000000001 RSI: 0000000000000001 RDI: ffffffffadc442f3
+RBP: ffffccbfc3e8bc98 R08: ffff8a35c4ed8000 R09: 0000000000000004
+R10: 0000000000000010 R11: 00007ffeb08dc62c R12: 0000000000000000
+R13: 0000000000000001 R14: 0000000000000001 R15: ffffccbfc3e8bd30
+FS:  00007f47de2c7880(0000) GS:ffff8a3d0dc30000(0000)
+knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f47de0bb910 CR3: 000000011431b000 CR4: 0000000000f50ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? __x64_sys_fcntl+0x80/0x110
+ unix_setsockopt+0x42/0xd0
+ ? security_socket_setsockopt+0x52/0x160
+ do_sock_setsockopt+0xb2/0x190
+ ? __seccomp_filter+0x41/0x4e0
+ __sys_setsockopt+0x7b/0xc0
+ __x64_sys_setsockopt+0x1f/0x30
+ do_syscall_64+0x81/0x970
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? do_syscall_64+0x81/0x970
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? do_sock_getsockopt+0x1cc/0x210
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? __sys_getsockopt+0x77/0xc0
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? do_syscall_64+0x81/0x970
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? do_syscall_64+0x81/0x970
+ ? srso_alias_return_thunk+0x5/0xfbef5
+ ? exc_page_fault+0x7e/0x1a0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f47ddb42b4e
+Code: 48 83 ec 10 48 63 c9 48 63 ff 45 89 c9 6a 2c e8 48 39 f6 ff 48 83
+c4 18 c3 0f 1f 00 f3 0f 1e fa 49 89 ca b8 36 00 00 00 0f 05 <48> 3d 00
+f0 ff ff 77 0a c3 66 0f 1f 84 00 00 00 00 00 48 8b 15 81
+RSP: 002b:00007ffeb08dc618 EFLAGS: 00000202 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 000055798b740c40 RCX: 00007f47ddb42b4e
+RDX: 0000000000000010 RSI: 0000000000000001 RDI: 0000000000000005
+RBP: 00007ffeb08dc630 R08: 0000000000000004 R09: 0000000000000000
+R10: 00007ffeb08dc62c R11: 0000000000000202 R12: 0000000000000005
+R13: 00007ffeb08dc6d0 R14: 0000000000000006 R15: 0000000000000000
+ </TASK>
+---[ end trace 0000000000000000 ]---
+
+
+
+
 
