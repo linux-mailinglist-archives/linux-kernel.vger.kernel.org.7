@@ -1,243 +1,128 @@
-Return-Path: <linux-kernel+bounces-825465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2C2B8BDAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3DEB8BDB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3D67C8645
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:49:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11AE11C028EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627F01F4297;
-	Sat, 20 Sep 2025 02:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847BC1FC104;
+	Sat, 20 Sep 2025 02:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="SmF9B3eD"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012049.outbound.protection.outlook.com [40.107.75.49])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="EtIQTZXP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BemXBZ2n"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1925946B5
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758336570; cv=fail; b=p/4GFSJIsvDP9ZvxOvECQ+LAlQlcsTVhbxxWokwN26kGiFwcbUDrw+CCHk4bVQSioZ/gjcWj4HVp2PcjiIA222Ww5NQ5Spd6Zd+6pRGj/TvinjxLxP1XJMC4WwdPCCg/o4+gSjrMXowyrmw2COP0GfZI1+Jy/tnbAC3mtUf/RLc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758336570; c=relaxed/simple;
-	bh=DyFWCiOwyqs71MAMlBaB1uadxbhPyZQfggIxeUPHYv8=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dUAyLxSJdQiv+nbuGlfnhzrkg/AR5BwxR3p4LpCN2PufiNztb7jDFmwaxJD1QoR9n0bUQSeXeTiMVmeRaiLSIcxYtqEm+wFAVM//H/ETmBvcJWQCSgo7QNV1TPlXVbGM8zjvjBaBDScTxvHPzILZ62ZryEsR6y7DNFufOp9HftE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=SmF9B3eD; arc=fail smtp.client-ip=40.107.75.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KKBNgQuD3gU6DgDsYr84F0vpJ3cAR9nXU3lXd3YOwIvzPAR9xN243wUUZfo8EPo/cc3mSkP70VcMT/tRfMfzOgxRtIHbX8Y8vN7d0S0uwBwOsr9yzVmbUJX4YFF9yAvPmk5p40HIGq+t0J56wYgANeAqAx9sAWHbCCDxdyDTYAqeinHZxTLYHqflBHgt9654JMLfDJFZCHqcl70VRmXgrNoUZA1LXRfLH5gdG1ruxkk8xqey/xVs2hCpiiCg6EvT9lgJvmg4zuRzExcAoWPbixrOGlN1lHAod4qwyPp1E40b/+utwoDwB+bHklNKJwtjnn5C/jH2Q14yhj28sW04Uw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B7MhZtiElejpcaEAUpqGFT8IprbrYhixPfH6+qD3ZT8=;
- b=fNLDCixRLBYHxN2WuJm4FSl20hl9LLVyj7mx0q2cjD95QcdByTMptPRTiPe0YJJyMYhlUTfqjZuFWK7sPxCmwAsQtjO0r2TNKeiWzgc4bGaLVXsQYa4IVKCYx8SjaRXpu2frmmJxA0PuRFwWaRvL0Ros7DXTPjX25Uvwei4pSVe5XE9WYQC8XsZaJvVROLg5COcQcrC70qTA/l6ci6pEisvnMsAu7AEg8N+4B3zUEahsmNA3yl65GulB0Wy6c3i4Lp7wTA77JtFngK7EuRMyEAE1s/XnW5gVbQ8N7IbIrp1P9xQ9V/kigSGVe0tvMOxU6v3MsnanzH1WaF5JbODZng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B7MhZtiElejpcaEAUpqGFT8IprbrYhixPfH6+qD3ZT8=;
- b=SmF9B3eD5QpvtbenufK3XR9pmMWFfCHmdgy5eVfz6kccOFwxf2M0UcKjzllbi3aJw37TxWUi6wtGQKPJemdvvk+4qvKmsPQHHGEafR052UvthfEr9QUNERsfGCMVu+1iQi0M8GQGEaeX77Yxfv+bUb6qIIX9DiLgVwT/6vtr0Xhjq0PEupHwQEYGrSFrFHZFFAF+moTLhWzM8IZUJPRt/d1Xiil97/YhRg2uEXLnG9/QtLmYgrF1sUqrwzrWh059ZDwbBG1tBfP95LLkRu90E9uo+vYORumQ43MWJDNKT6392zvvKH5VmrAKeb/dk6B3Id3Io1wqXUiEj5gwlaVGRw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by SE1PPFF06F8354E.apcprd06.prod.outlook.com (2603:1096:108:1::42e) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Sat, 20 Sep
- 2025 02:49:24 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%4]) with mapi id 15.20.9137.015; Sat, 20 Sep 2025
- 02:49:24 +0000
-Message-ID: <c2c7fbdb-f71c-46aa-a47d-8bd4bec688d4@vivo.com>
-Date: Sat, 20 Sep 2025 10:49:20 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] f2fs: Enhance the subsequent logic of
- valid_thresh_ratio to prevent unnecessary background GC
-To: Chao Yu <chao@kernel.org>, Jaegeuk Kim <jaegeuk@kernel.org>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250909134418.502922-1-liaoyuanhong@vivo.com>
- <20250909134418.502922-3-liaoyuanhong@vivo.com>
- <b42b161d-cd5d-45dc-8e84-c2b28eb632e5@kernel.org>
- <a508b9b8-3c81-4a2c-a525-baac822563b3@vivo.com>
- <22d9f9d1-1db0-4bad-a782-212ab3da630e@kernel.org>
- <3cd3bfb5-857f-4b61-a1c1-55805bed4609@vivo.com>
- <b7b20efb-8cdc-4cf0-a057-d4d41ae66aba@kernel.org>
-Content-Language: en-US
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-In-Reply-To: <b7b20efb-8cdc-4cf0-a057-d4d41ae66aba@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR01CA0132.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::36) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F71D10F1
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758336715; cv=none; b=Xvpup5CfY26irQ+yC5NkpowNz+qhfcVj4dqPwG/wtR2BoLLGli+BN+R0Yk8KI3dwDNwhDAgtqZdWusTz44waE3uDx00in+SZFB1lOGAfYAk34eeUACd1bdrV9W9k1G7KWutGp/lOFz8MoJ5kTcQft0Ojcjsl5iVQPnEYGbEhj7s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758336715; c=relaxed/simple;
+	bh=QlywqAczzD15iAgOol44jVJLu6Pq4GywopCkF2EOngY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRKvQerImWQaR9pv0EeXmIbRCQ5utJorlfmWgs0sPoi1HR3ogBJBBqRULkURcax8PjMvJOt3FiMMR7F46nU/Dmziy50qDThx4YAXCo7XX/OEbLYhvD/YpBUNLDXVVAPOlBBZi3Ojjs5Q5nlXYlBwdB73vz2bg/gL+2B65+vufgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=EtIQTZXP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BemXBZ2n; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 0D3EDEC00D6;
+	Fri, 19 Sep 2025 22:51:52 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Fri, 19 Sep 2025 22:51:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1758336712; x=1758423112; bh=xf9/YYuF53
+	HW6Ufjrarn7wTcw0/FDn9NhhmiveWm2rk=; b=EtIQTZXPG8TRY7jhGPe7Ky0Ern
+	kZ3cgKKCfg+6Oj4/pC85jRB3Q877KY8U7Wwn/pX9t6UDPbWlZ4kK0fI3oq1dv1tZ
+	6e9wkiBlarKGjwpO6BpaOYyRTPQwlahOPirMCnZQxb3U8y0y1Idk6yDTPVJZh+F0
+	fwdOzccC07rQ+yt8SvdJjl80JNmqGV+R4daSCajnIBpPVdNdppZIqjAyw+4TtG0k
+	zyJbXTwFWHudqYLhyibJpdU3g+oSNRftzQI6ge2JMIB+URDEtz5DggoProqF0Vs+
+	bLgapVHeKNz4PdPAe/ZPdZEpfd2TMWsKkEJiL0Gi3V3DHeAKk9Gqra8ThQsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758336712; x=1758423112; bh=xf9/YYuF53HW6Ufjrarn7wTcw0/FDn9Nhhm
+	iveWm2rk=; b=BemXBZ2njUpZtnLxAtOFKYj26KFNpEnsIHgcmdgjOJja7ogoNdI
+	3GRLpM/jJNw7p68zA8OQUu2CxcVk5houdBDKQMMboVxC4FzL3HokO8wnJ+uIfvsa
+	I03KLFRR3S7Wa+t9255Dn0PVjbS5q4UBwdg8wE9/wdAMqw+nwkTVn7gxxRhhKAAD
+	3mhbNmYeP9gm9EQGohfablnS8shavp6iiW+jeC/sEgg+VsDwYqFiQ5pKYuFmaCtu
+	fe12YbxvcufUWSJUl73HoPuzW5MATduarp1DFQnmtJtNNwyHfPuzm6t7xrAgsqZ2
+	znbiEc1GTdxCQ/Kf0oja9Ay5e3f6Td5+Sjg==
+X-ME-Sender: <xms:xxbOaPCCUe1j4Dsrdb7C7mi3W9Ido8yIbykZ2WVk_nk9Qq-qiOcA-w>
+    <xme:xxbOaOfdXga96UbBIy-oM0eKn3PFvBCvosq96Iu9ZJP7RoFI9PT8oiSPsMMLDw1im
+    8VC_XiJTbZZHwsw1WE>
+X-ME-Received: <xmr:xxbOaMjwTXJCWEbtDxn5FM7PtavYP8vgb97STK6TL8pt2T0QEAIvVFsnEPV8VEgY0dQhHie1WclDFfe9RU-qQmS-mru6uBVMBzhZ6HP3Tg76gQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehtdelgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
+    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
+    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
+    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
+    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
+    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
+    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:xxbOaOrnd_UMEebUUGSkoJ20x64K_K5O8zYH9njVDUcKNyR2mf9oOQ>
+    <xmx:xxbOaEHy86eqyCFKjfLrx9rqGEDPre2_5Msh5-c7EKGitrN0Z84VkA>
+    <xmx:xxbOaAmU7pTbGZ1S3_Ny3jFEePhKF9mS66JxTRX9SMLQlfHldgEQwg>
+    <xmx:xxbOaHmhq_GoZp8j18986JusG3yjb3nHGFRPaIaMNC0pILcc47o_Qw>
+    <xmx:yBbOaKGRRI98OX17ccjtWtel5aLaepG88z_gwHP50v1D5IQba15ml2Yg>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 19 Sep 2025 22:51:50 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: core: fix overlooked update of subsystem ABI version
+Date: Sat, 20 Sep 2025 11:51:48 +0900
+Message-ID: <20250920025148.163402-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SE1PPFF06F8354E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62e88c36-0c5d-49b5-6e74-08ddf7f04e99
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YkVISERuSmpMdDdoZElVUzJCUEtZak03UGRrTCs0YUNaY1BQZTVPNmduRytG?=
- =?utf-8?B?RU1yd0tsOGM0aDZtTk5BdVNXb01za3BzZENRaXQxd0tpNXA2elFLcTFJMjl5?=
- =?utf-8?B?TFpyVTVrbzRCWWRGT3FMZW1pc0JFcWJDVHV4eHRVbGJZcnM1WmRaQUMyamR3?=
- =?utf-8?B?eFNNK2RBMEJUdXVDZXhMdm9Sd25ZY1k3ekN0cW50eEdyMFUvRm1aTkZtTnVt?=
- =?utf-8?B?YVE5VWFkcWt2YjczOVkvOVVmRGNrSmQ5a09KQWhSajZQbDJuYkZhY0tJQmlQ?=
- =?utf-8?B?blVRWDU2Sk1xV2VuMWJlYytlc3dOVzhUWHp0M0I5Y0pwRkk5UkV6SE95YkI2?=
- =?utf-8?B?MHl1bDVSeHY5M1lMekl4RUhMYnlwYldYQ29heExCd2d2NEQ0cFZMVUVTaFox?=
- =?utf-8?B?NWdZUVZYNytLMUxRMXhrTzdmZS96LzE0Y0J6Qnp6eXZXUkk2cFNIdE05TzJ4?=
- =?utf-8?B?U1ZYOEQ4SVozcWg2OFYwNFVJWDQrTjh6Qy9md3VIWDRpSXFYOWRPTjFHN05p?=
- =?utf-8?B?SmVHemZZaDJFOTJIMWw4UjJOSUwySWNseHlTc2FYc1I1aXVDMU53cjUyZW91?=
- =?utf-8?B?TlprMk5qNzNDR1l1Q2lESjkxemRFT1NseE1YZ2pQbWY5MzRKc0Q1VTNUK3dh?=
- =?utf-8?B?cGF4YUJPbGd2RmpTM29CcnVXYXhBa1VLSEhNRXN2Mnh3b2krRFpXQzQrU0RB?=
- =?utf-8?B?Uk4rVFp0UWNVN24wN1ZuMU1pd0cwSFBBdDcvbmN0ODVzZmxDbEp1NVp6bm81?=
- =?utf-8?B?azFsT2JqSVFvT1g2VFVYUVNFOUFsZDJwWE1KUUdUdlZFSzNidUVRNmNSZFhD?=
- =?utf-8?B?U1Z4MzFZQ2hmc0F2WDREQUEwOVpCRmVXYjdBVEVIMjV0UTRDODgva1RTWm03?=
- =?utf-8?B?c0o2TzNwN01ES3JSYm5QM0pmemRlSXpjaWZPczJmRmtWQ2FlWWtBOS9mdEVm?=
- =?utf-8?B?QThmQjZIY2E5T2JlS2hJdEZMTDVqekdQejBaUVZUYlh3bm5oOEk1RHNmb0Nm?=
- =?utf-8?B?WUxTbTFJYzhiSnFUejM1Q0NTcU1GUlBwS1ozaEJuSTlCUldQUlVZL2dtcTRZ?=
- =?utf-8?B?SlVaUzhjWGJnTnovMlhmQTVTUVM5bWh5QUJNZHd2R01XSUptcWtVRFZVUzNt?=
- =?utf-8?B?RDUxTGFLYnh6Y3dNOFI2TlNDODdsSVJRUXR6anE0MTgyZFdVaTB4cXNhWWIv?=
- =?utf-8?B?SGFVMlArNGdIQTA4SzNjelN6TSsxbS9oMW8xMmNJSjA3OUZtNFBScVFwV2pa?=
- =?utf-8?B?VDBjNVZ3c3g5V2s3MzhWWkVHbzZrTGVROVhXUnJ2dS9pdzFWemNuSGdCZEhJ?=
- =?utf-8?B?cVpSUmljVXhKc0hWSFczN3ZyY2VZc1U2bko5WFo2K0NIcEc2QWFSMUl0eURX?=
- =?utf-8?B?QzFITllpK3psVk5Idk5IT3gwWERoVVJIeFJ0dFN6M3NIODlJS0tRaW9VOXVm?=
- =?utf-8?B?Yjhob1NOWHZ5Z3p5eXVzZVR2UlI5a29mOGx1TnpkOWd5ZER5T1FBY3o5dkl5?=
- =?utf-8?B?V1NETEovZE9rZXpHNUpqdkh6SjlZSTQ5dzV0cHd3bWcrUG5TcmRjcXZ3TklJ?=
- =?utf-8?B?Wi9JeTJNTU83Y0FLSnY1OEdmQWpON3Y4WWNhdUVsdFRuR2JLSnlEaUVjWk1k?=
- =?utf-8?B?RGxNVkhWWE1BQitxK1U4Tm1McEhoWlY0RlBLQld5cVRXLytMSmVOb0o4cVVR?=
- =?utf-8?B?dW9aM2FFNFh4UjFVaFVXMXVSeFVXNWIrUVpNeUF2bkh1L0pLRE9KaXNKbHZq?=
- =?utf-8?B?cnI2dUlJTnBBQjdIdVFCSmxIdTZRQ3g2MmJycnVtMkcrQWg4RHUyWkdlWjcw?=
- =?utf-8?B?WHRPU1JlOEkyc2Zmd211VFgySzIwVlNkaG9odHE5QzRaRUZmTCtVVjRUUDBx?=
- =?utf-8?B?TkorRThuOGxwWEpqKzZkYlo3TStEY2ZsVGMrWXhpalpuZXRWYW1FV3p5SzdE?=
- =?utf-8?Q?1Hq3UEj3Ikg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?U3V5Tk54aTlrdmhhak5iU2RnQXFXZEp1N3NxTzRQQnNuVkZFcnR0RS9LSTVu?=
- =?utf-8?B?bGU0b3BjQVpROVg1czhhZGcySGViUGdDSUFhSjg1c0xzUEVNY0IvbWgzcmxr?=
- =?utf-8?B?UnNORDhRMHFLVUZWbnNoVUdaVktHeXQxT0JsVElsSTBjZ25EYnp4anZKdC9a?=
- =?utf-8?B?YnVYR3o1bW5aY3BXRjljNEFZNjNXUTZYUENlQ2Rsc01VMVRPSEZ3RWlGRXB0?=
- =?utf-8?B?WmxySU05cytmQko3eG5BTGVrcmJIV2dmR0MrS09nbXZ2ZTF4cmhtK055Yk5t?=
- =?utf-8?B?VXg4Qk5iZFQxZ0ZVRHVPTTB4Mmo5eDdZMHRsU2kwK1J0ajFKeTB1c3NaSE9Q?=
- =?utf-8?B?amdIV0lpdFVlc2xjdlR4NW5DNTFBelBhWWhlRDR5Z094RXUwWmErMmhHem1F?=
- =?utf-8?B?c1ZDWDFKNUx0am95ajB1czB3b2dFQzhLaFRwYzl6MFNaZkpxNGpLWGFTeXJS?=
- =?utf-8?B?UDlGRnhFNGhaallnYTd1cG5iaGZQcVQ5dHZxWEJxeXdaZC9HWm02RncwU0dx?=
- =?utf-8?B?NkJ1YU1lNHVzT0VzL1V6TlFGMUNqY2V5bEh1YkRtVmkwRUkrdys5cTBVbS85?=
- =?utf-8?B?WEpJTk82R0d5SFl6TzlVNTJDYkgyM3ZJcmVVM1Y2K281ZUNEblZma1o0RVU0?=
- =?utf-8?B?cGd6eXRFODRlWktSdzFMSWxMRmM1dUs4YWdwZ1d1OC9kVGFPUnVCTjM0VVZL?=
- =?utf-8?B?c255VVN2b25YZVRseG5LdlFCd3krZUl6dEc0dHhjVUFkelN4OHhWeVBNMlJo?=
- =?utf-8?B?d0JmYnJXUkpBeFRyZWJOUHRSNlRpa3NkMk9HRkpCR2NrcG91TmxlYkE4NjFh?=
- =?utf-8?B?dFFLM0NONVdjaDhMR2poZHJqdmxiaWVsRTZxTU9pdGtTYW1rOW82SXdha0c5?=
- =?utf-8?B?bVpuNGp4UHk3M2RMcFBhZnhDQ28xa1pqcUNjQ3BFZmhiaEdQZ0crMnFjbDg0?=
- =?utf-8?B?OUNiclJ5azJVYW1LMEtUN3ZhWlkvL0o3RVFBWTlxbHY3MUZvY1lFSVlraDBH?=
- =?utf-8?B?SmtncUtSNW9UZnpKckVTMHVkYnkrUHVpY1NLUjZOeTQwck5MdzZOR0I1VHVJ?=
- =?utf-8?B?VnQzdk94SE1Ub3lhM1I4eEoyaU9CQ1RoV3JmN0lGZURUK0puWTA4bUY1Q010?=
- =?utf-8?B?K3gvMkRsN0xUTFV0NUV5QnhDTGNSU2FiYnEwMVNxK1hHSlh1NVdzM29pdUdr?=
- =?utf-8?B?c0hlMDN0bWJqOGtuS3R2c3J3b0ZFMVY1WTMxV0paSHBFMVJ6S290dlJ1SXk0?=
- =?utf-8?B?WnN5b0JLSDZaaU11OUJONkROeXpXNVhVVVF3emU2diswZVp0R1hTRW5LTlN6?=
- =?utf-8?B?NHhZRlpFcCtoc0JmS3ZOZ2VkQ2g0TUEyZEpwd0ZCMWdZMnI5Vk5jM01jVW9u?=
- =?utf-8?B?Sk9neW0yWTl5a1FPa3FXaUU0VkhZNFhtUFluQ2pQY0JTMU53MFFXdGpCTWI4?=
- =?utf-8?B?NVk3ak14NTRGeDA0N256TFJ5ZkFhUkNIZXppVGlBTSsvb0Z4NUlCRHBiT0cz?=
- =?utf-8?B?QzRPTVlpTUVSYVptaW1lUjlRczZIOGZpTXhVeEFsblJRZE5ycDVDaUVjam9U?=
- =?utf-8?B?cjhtbVl2a0R4TmdJZHhKMWRNU0J2RzMyYWc5QzdhdFBTaHJwSkQrcWpwZmZ4?=
- =?utf-8?B?TFFoRi9BRTQwQlMveC9rWnFNQVM2YlM3eE5FMFU1bkJpbFF3a1h3WG9ORHFk?=
- =?utf-8?B?WWRvcjZLVXlpdlhENXkyam9DSmNwd2s2YVhhYU5PQWhYeEJaN0RGNDZ4eU5G?=
- =?utf-8?B?bE5SNlREajdYNFNnTThyeWNOcDcwU2hnSkxMaDdLQkxrdmM2OTk0NElQZWJt?=
- =?utf-8?B?KzlrSzVBeDFaU2FaQ2xZM0VwKzFGOVpqT0Y5b0EyS0d0ZGV3a0ExamtPdUsy?=
- =?utf-8?B?NVRBQnNTOHRpRjM2czNrcFVJbGprUkt1enkzRXp3V1ozU281ci9yM3ZBVkVT?=
- =?utf-8?B?cngxUXVEMHZjSC92d21CL0NTY0kxVkFIZnVmdFlPTm9FR3lPdUdVbVRFaVBN?=
- =?utf-8?B?Z2FjbTRWeXFQWFpJdnFQaFdGSHViWWMxa2xxODVYOWZicC9NSnpxYTlIN3lY?=
- =?utf-8?B?WTZXeGVxeC81YmVBYVA4OTNHSmxMMUE1WnBOQVd1VzRrS3dCSGZqSktmU2xt?=
- =?utf-8?Q?j1uH6VTeRVrh2eP+DNOF5gye3?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62e88c36-0c5d-49b5-6e74-08ddf7f04e99
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2025 02:49:24.3770
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +tB+x9z7ylkb9wOPFMEn6dxENvX8KA7HJs2MdrabyTN58jK8LAIS293vzypq15aceTS4aELE2Jq7J8u4/M1/NA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE1PPFF06F8354E
+Content-Transfer-Encoding: 8bit
 
+In kernel v6.5, several functions were added to the cdev layer. This
+required updating the default version of subsystem ABI up to 6, but
+this requirement was overlooked.
 
-On 9/18/2025 10:16 AM, Chao Yu wrote:
-> On 9/17/25 16:13, Liao Yuanhong wrote:
->> On 9/17/2025 3:57 PM, Chao Yu wrote:
->>> On 9/17/25 15:08, Liao Yuanhong wrote:
->>>> On 9/15/2025 4:36 PM, Chao Yu wrote:
->>>>> On 9/9/25 21:44, Liao Yuanhong wrote:
->>>>>> When the proportion of dirty segments within a section exceeds the
->>>>>> valid_thresh_ratio, the gc_cost of that section is set to UINT_MAX,
->>>>>> indicating that these sections should not be released. However, if all
->>>>>> section costs within the scanning range of get_victim() are UINT_MAX,
->>>>>> background GC will still occur. Add a condition to prevent this situation.
->>>>> For this case, f2fs_get_victim() will return 0, and f2fs_gc() will use unchanged
->>>>> segno for GC?
->>>>>
->>>>> Thanks,
->>>> You're right, segno won't update in this scenario, and this patch feature is redundant.
->>> Oh, I meant, if f2fs_get_victim() fails to select a valid victim due to the reason you
->>> described, f2fs_get_victim() will return 0, and f2fs_gc() will migrate segment #NULL_SEGNO?
->>> Or am I missing something?
->>>
->>> Thanks,
->> Yes. In this scenario, since it won't enter the|p.min_cost > cost|condition,|p.min_segno|will retain its initial value|||NULL_SEGNO|. This is consistent with what you described.
-> Do you have a script to reproduce this bug?
->
-> Thanks,
+This commit updates the version accordingly.
 
-I didn't explain it clearly. What I mean is that this patch is 
-redundant, the original code is fine.
+Fixes: 6add87e9764d ("firewire: cdev: add new version of ABI to notify time stamp at request/response subaction of transaction#")
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-cdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
+index 78b10c6ef7fe..2e93189d7142 100644
+--- a/drivers/firewire/core-cdev.c
++++ b/drivers/firewire/core-cdev.c
+@@ -41,7 +41,7 @@
+ /*
+  * ABI version history is documented in linux/firewire-cdev.h.
+  */
+-#define FW_CDEV_KERNEL_VERSION			5
++#define FW_CDEV_KERNEL_VERSION			6
+ #define FW_CDEV_VERSION_EVENT_REQUEST2		4
+ #define FW_CDEV_VERSION_ALLOCATE_REGION_END	4
+ #define FW_CDEV_VERSION_AUTO_FLUSH_ISO_OVERFLOW	5
 
-Thanks,
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+-- 
+2.48.1
 
-Liao
-
->>
->> Thanks,
->>
->> Liao
->>
->>>> Thanks,
->>>>
->>>> Liao
->>>>
->>>>>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
->>>>>> ---
->>>>>>     fs/f2fs/gc.c | 5 +++++
->>>>>>     1 file changed, 5 insertions(+)
->>>>>>
->>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>> index 4a8c08f970e3..ffc3188416f4 100644
->>>>>> --- a/fs/f2fs/gc.c
->>>>>> +++ b/fs/f2fs/gc.c
->>>>>> @@ -936,6 +936,11 @@ int f2fs_get_victim(struct f2fs_sb_info *sbi, unsigned int *result,
->>>>>>             }
->>>>>>         }
->>>>>>     +    if (f2fs_sb_has_blkzoned(sbi) && p.min_cost == UINT_MAX) {
->>>>>> +        ret = -ENODATA;
->>>>>> +        goto out;
->>>>>> +    }
->>>>>> +
->>>>>>         /* get victim for GC_AT/AT_SSR */
->>>>>>         if (is_atgc) {
->>>>>>             lookup_victim_by_age(sbi, &p);
 
