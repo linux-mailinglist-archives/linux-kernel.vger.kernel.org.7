@@ -1,155 +1,85 @@
-Return-Path: <linux-kernel+bounces-825566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812B5B8C3E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:28:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB2FB8C3E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B9B37C3F6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:27:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948157C4217
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52930278761;
-	Sat, 20 Sep 2025 08:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF527816E;
+	Sat, 20 Sep 2025 08:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIkeUZwy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khguxPeY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF0134BA47;
-	Sat, 20 Sep 2025 08:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2807D277023
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758356865; cv=none; b=Qs0AJhYq9QhPKEnK1GhbUNp0cHEUF5NeoHD52lBDWTOSIpmqQ2DuzCeKhCneshF1yxTj1zer/fsYDHuXBRtDnGaHiLADZJ+Nxm5+kddgkTh2ZaYxlYbpY0HH/sD0kK85N+4k6KoY7e6N0Y/qrVtSCs2/7mItWhQTC7bQzvPaGww=
+	t=1758356926; cv=none; b=jP8xXIY+Bz2+/7rQYE/jlnDgT2m81/3URRntHa3BWk7qoTnB154rNWEw3O4ngo0A0j/vB+wqureGrgU5zmqbv3377d4QrM0/dAvet0kuapPIKbTVfR8YXkxuz7/2qQj4QHAndFyBVQVsZv39aJ0I8Mk+It7li4+MI8swn+R1Klw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758356865; c=relaxed/simple;
-	bh=xjORWEb9AB9K4GuQONrEhOQ9HcO3RWCcAWlzmCE1C4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upwZIFjK69SuOpxiEZ0cd9deuWH/tHphgPA7ytmXNk2kXhJFeXAM/wIQRlr5aAbpLcoRkMSz4IFOf3qExOOWPn52Y+i9YdYdN9MN/3eTmD7g/XRhdlLwNxdUHw4G2ogzucPD77qdDSOfrYcksnetxPeo8re3+5cv4YM41GrCp8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIkeUZwy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C218C4CEF9;
-	Sat, 20 Sep 2025 08:27:37 +0000 (UTC)
+	s=arc-20240116; t=1758356926; c=relaxed/simple;
+	bh=aQ8h0DN7B0Out5OlTQuSkYgFptmJpMspiAfFmqvgCuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tOA40r+a+vUuqnHlLB+hrPZyPlguVSKyW2QTRsP+OOgIRDuwv8qMvvBoEVXUf7dUV0dTJ5yQEuHR8xwhLJygSDgHCzugvdgcMptF9JhfH+NITKHMYcetgWl9MBGt+JUCkn3TiVzeqxBz7lzKskghfTlOjlrXXw57L4KuvTMZw78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khguxPeY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D620C4CEEB;
+	Sat, 20 Sep 2025 08:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758356865;
-	bh=xjORWEb9AB9K4GuQONrEhOQ9HcO3RWCcAWlzmCE1C4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIkeUZwyORBFSxxN8Pc4oIVfJ8oaglOfKFEVHkSUgIk2mE9cW6ISS1nMYB7l/mTzx
-	 NsE1jNdLrdFXId15b7wHf0WS6LJPTouXO/Ymr6zWcUUPcjUsCkZ9DIfRv1vzEZ+6Js
-	 rh2Me3hOQAbwlh65urfgT/sHEGeCgyaGprQw+PffJzoD3QaHpCyGBFZ0N7/Bse1hbj
-	 klqnPSRNhw6lwvlK06+WmDWwCf5OQnKTOGcSL7j3fZ5NHTd9LBdBCGu/xlvjFGPPns
-	 oouiGgye8+Zyz9jM+b43AVsVXIID/XvVLwq9yZRH76rTRCvcaug3JrPZHJ7zUYw9bC
-	 aeJcv9AXR2xuQ==
-Date: Sat, 20 Sep 2025 13:57:34 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
-	qiang.yu@oss.qualcomm.com, mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com, 
-	shradha.t@samsung.com, quic_schintav@quicinc.com, inochiama@gmail.com, 
-	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com, 
-	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v2 09/10] PCI: keystone: Exit ks_pcie_probe() for the
- default switch-case of "mode"
-Message-ID: <jgw5f33ptz6dutffxaid4kxnllsdyanqy5obsotn3bmhxibxdt@2zzlh7mbfoi2>
-References: <20250912122356.3326888-1-s-vadapalli@ti.com>
- <20250912122356.3326888-10-s-vadapalli@ti.com>
- <lo2zv3nxek57s3h4hwv2ujzophdx2ubfuam4gqmo5h77t2g4jo@447qpc7a4ub3>
- <3f3b2f06-64a3-4e6d-9fa9-c3412b1ca710@ti.com>
+	s=k20201202; t=1758356925;
+	bh=aQ8h0DN7B0Out5OlTQuSkYgFptmJpMspiAfFmqvgCuc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=khguxPeYzIlUYcw+K1BzTnWgaUuDQM0fZjGjhCEwMnHMZwRoV2nt+/F3l7s/Jruq9
+	 c3r1HIhrb/rCrGQetz1xCpczB9T1ji3O1sTqJ9veplvbQqVh9C7KL+hLmae1I4713S
+	 ml4F3xJ7CijZ8TsyMNzA7E3U2v0lo40/MGYIP1yBztCJ1vrrUih2hdRbm85OfuKOik
+	 PEGBH7RmMU6X+NB5wRs0cBXE/ViKlRfxwBaCnQkjFdSF67C3an9UjiV55gD2qZj3us
+	 VDGhaiQ3hvmWzseqv93QGpB0oJsxw6mVNbUapqRm4cOgMTUCMelGOLuvHJUIDAPley
+	 8gGVDHQQ3f2/w==
+Date: Sat, 20 Sep 2025 10:28:40 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [GIT PULL] x86 fix
+Message-ID: <aM5luGlAgWDxXL-7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f3b2f06-64a3-4e6d-9fa9-c3412b1ca710@ti.com>
 
-On Sat, Sep 20, 2025 at 01:39:22PM +0530, Siddharth Vadapalli wrote:
-> On Sat, Sep 20, 2025 at 12:06:46AM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Sep 12, 2025 at 05:46:20PM +0530, Siddharth Vadapalli wrote:
-> > > In ks_pcie_probe(), the switch-case for the "mode" is used to configure
-> > > the PCIe Controller for either Root-Complex or Endpoint mode of operation.
-> > > Prior to the switch-case statement for "mode" an invalid mode will result
-> > > in probe failure only if "dw_pcie_ver_is_ge(pci, 480A)" is true, which
-> > > is the case for the AM654 platform. On the other hand, when that is not
-> > > the case, "ks_pcie_set_mode()" will be invoked, which does not validate
-> > > the mode. As a result, it is possible for the switch-case statement for
-> > > "mode" to receive an invalid mode. Currently, an error message is displayed
-> > > in the "default" case where "mode" is neither "DW_PCIE_RC_TYPE" nor
-> > > "DW_PCIE_EP_TYPE", but the probe succeeds. However, since the configuration
-> > > required for Root-Complex and Endpoint mode have not been performed, the
-> > > Controller is not operational.
-> > > 
-> > > Fix this by exiting "ks_pcie_probe()" with the return value of "-EINVAL"
-> > > in addition to displaying the existing error message.
-> > > 
-> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > 
-> > Fixes tag? And probably CC stable since the controller seems to be not
-> > operations without this fix.
-> 
-> While I had mentioned the rationale for not including the 'Fixes tag' in
-> the v1 patch below the tearline, I forgot to add it in this patch. I will
-> quote the same below:
-> 
->     NOTE: A "Fixes" tag is ommitted on purpose since the fix is not crucial:
->     1. It doesn't fix a crash or any fatal error
->     2. It doesn't enable controller functionality by fixing the issue
-> 
+Linus,
 
-Fixes tag should be added irrespective of the cruciality of the bug.
+Please pull the latest x86/urgent Git tree from:
 
->     Therefore, the patch may not be worth backporting.
-> 
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2025-09-20
 
-Agree with this though.
+   # HEAD: 7f830e126dc357fc086905ce9730140fd4528d66 x86/sev: Guard sev_evict_cache() with CONFIG_AMD_MEM_ENCRYPT
 
-> Prior to this patch, the probe succeeded and the controller was
-> unusable. Post this patch, the probe will fail and the controller is
-> still unusable. Behavior is identical from a usability perspective but
-> the user is aware of the issue since the probe fails.
-> 
+Fix a SEV-SNP regression when CONFIG_KVM_AMD_SEV is disabled.
 
-Ok. I think the description could reworded to make it more clear. The actual
-issue is that the default case lacks setting the errno, leading to probe
-success. But the addition of ks_pcie_set_mode() and others seem to cause little
-bit confusion.
+ Thanks,
 
-- Mani
+	Ingo
 
-> > 
-> > - Mani
-> > 
-> > > ---
-> > > 
-> > > v1: https://lore.kernel.org/r/20250903124505.365913-11-s-vadapalli@ti.com/
-> > > No changes since v1.
-> > > 
-> > >  drivers/pci/controller/dwc/pci-keystone.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> > > index 2da9feaaf9ee..e85942b4f6be 100644
-> > > --- a/drivers/pci/controller/dwc/pci-keystone.c
-> > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> > > @@ -1414,6 +1414,8 @@ static int ks_pcie_probe(struct platform_device *pdev)
-> > >  		break;
-> > >  	default:
-> > >  		dev_err(dev, "INVALID device type %d\n", mode);
-> > > +		ret = -EINVAL;
-> > > +		goto err_get_sync;
-> > >  	}
-> > >  
-> > >  	ks_pcie_enable_error_irq(ks_pcie);
-> 
-> Regards,
-> Siddharth.
+------------------>
+Tom Lendacky (1):
+      x86/sev: Guard sev_evict_cache() with CONFIG_AMD_MEM_ENCRYPT
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+ arch/x86/include/asm/sev.h | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
+
 
