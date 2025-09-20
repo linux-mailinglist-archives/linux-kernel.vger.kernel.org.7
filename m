@@ -1,82 +1,99 @@
-Return-Path: <linux-kernel+bounces-825930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C6FB8D24B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:40:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E581AB8D24E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77830626DBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C74191898D92
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B28728751B;
-	Sat, 20 Sep 2025 23:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0EA26D4DA;
+	Sat, 20 Sep 2025 23:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaukMz9X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+knQZNU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603DA286D56;
-	Sat, 20 Sep 2025 23:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D695636B;
+	Sat, 20 Sep 2025 23:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758411600; cv=none; b=t6dN9iN+09bHmWTjPXfiEwCsXknXesuDNuYlWUe8ghcXQHFL66C/1mWqgCfBaePza8gF6PVaj0RM9yIEM2i3qJoiJEZJpHxnDP38snACHL/1AQy7cm+HNbv3I85IMkLr2FJ8BXG8oQ4Y8U6Z+Ae5FBZvf0qkVFhT3nOevIPQTY8=
+	t=1758411927; cv=none; b=ky1Ive+Zb7UkGMtg8V4bYbjyXlTPk2wJOekIxX26YO2fIVawgjBHregkxFDJ9PmTfvkJ1GLp1jsTul6Z9qRaIWflM6nvhL7gw9vPIHe9C1n41drd0tS4DaQUxOZMbJ168EXxeelP0Nfy6HfJbh1JVEM0oWTnjxLdCjWB0seHRAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758411600; c=relaxed/simple;
-	bh=lfvyd0eukorymeOecy6sHOks87edoKZdQD+c2emmFSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rlakniJ7OKvKNGHUWGuZxOaM/pjOW9wWhAadUnoMQRDuOk+PMK3F0qw9q6Zz2a7DZ/T9yQn8lFmCSa+ay5OAb4GRKzHml4s2ZFZTC4aoPiqnWXkxgC5lSwFxAUJ1qgUV2s62kKZB8mW2XaPNF7fYP7RhjqLbqmG0Cx5QtyNStJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaukMz9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EB60C4CEEB;
-	Sat, 20 Sep 2025 23:39:59 +0000 (UTC)
+	s=arc-20240116; t=1758411927; c=relaxed/simple;
+	bh=nPQYeWOqG0yaQ2jHVrf6PnxG9t5HqHsq6zQRyD1fYbo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dHfRQNfWgiDpcZnClX0c63QDGl8JnNnVkF4X7N1B73tGKnVchnTMGyShZLC5kE1qjAWb7q1znnq7Fk/Pt+qLmlsxFIy/HxsRnQKlBYw5tZ2MsyAdW+pYcDGtw8PUe61y89bRWwvFE0UGnOUzl2CFfj2SZLYLzTJImtYqA2OrCR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+knQZNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 564EEC4CEEB;
+	Sat, 20 Sep 2025 23:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758411599;
-	bh=lfvyd0eukorymeOecy6sHOks87edoKZdQD+c2emmFSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SaukMz9Xoi0diaJjnjmHRiVBc537RfPRUW1pOODJmnUlIWzwGyFP6vFppIwF64T6y
-	 a6zADKvBaY7vgMAJij3nZsG/usijLhtUmfBkXrvD3vqd/cQb9Fc6SINpMiS/nL8BXv
-	 y7/Jdvevo4K7x9xJdlkZk7afWGfG09vyzxtuLPOz/zAQKLjb0Mdp9GyN0t606pLVxL
-	 jw+wgWXeyMg3E1cbl2FPGlt2WtgticSI1O2EthcydwnGJSlt0ZxcZ8I6Xa91cRwbWy
-	 +TbfbVOXiSBghYckrvx5De/EI5iL6hcNe6yPfMbTDjZCUa+CBT9IPUxpJ1e0RIldxv
-	 u44ifDIGb8usg==
-Date: Sat, 20 Sep 2025 16:39:53 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Han Gao <rabenda.cn@gmail.com>
-Cc: devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: add zfh for th1520
-Message-ID: <aM87ScdxI-D2O6sP@gen8>
-References: <cover.1758228055.git.rabenda.cn@gmail.com>
- <38abc793c2fcb9dd26c89bab10dd4450d91ced4c.1758228055.git.rabenda.cn@gmail.com>
+	s=k20201202; t=1758411927;
+	bh=nPQYeWOqG0yaQ2jHVrf6PnxG9t5HqHsq6zQRyD1fYbo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=F+knQZNUyzxHa+n0GHFT8CBZk7th+H/BuDrBA4mfi6lss81kPFrL34oLSrwwXEJvk
+	 mXtrGzgYGtegbkDtl/EzARZ4Vgagv3QvDB/CNPeiRDw5XoQUCII3/5QETgOD1C/buc
+	 N8dLtck412Sr1O7ATgJsPlJ0YqQaCfAyuen3wEChdmisZ2IBbB9Ok9ef3y2jrx/7Bo
+	 +tunUqMWslIfgIROxxGBooyNadQkXua3wn4TUpxMieFlnZy9mwxL46PGOfaJ+QL5Wf
+	 PXA6TMreggMqY0Rs/n9rKJXLYDA0MF3PSGKTDaDyMfY0nhC9NIeChRd2oMoaEyuqXX
+	 y6goJxO2590Ug==
+From: Kees Cook <kees@kernel.org>
+To: linux-hardening@vger.kernel.org,
+	Christopher Fore <csfore@posteo.net>
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gcc-plugins: Remove TODO_verify_il for GCC >= 16
+Date: Sat, 20 Sep 2025 16:45:23 -0700
+Message-Id: <20250920234519.work.915-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38abc793c2fcb9dd26c89bab10dd4450d91ced4c.1758228055.git.rabenda.cn@gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1243; i=kees@kernel.org; h=from:subject:message-id; bh=nPQYeWOqG0yaQ2jHVrf6PnxG9t5HqHsq6zQRyD1fYbo=; b=owGbwMvMwCVmps19z/KJym7G02pJDBnnbSaV39QrFzdalZ0aZfu54OyXRVfSJp13MayNqss73 WC6vWZqRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwES+ljMy7Baye7w4psNQ4Xe+ 8E/Xu9ef+5/ZrnLk/NZqt8/5J69MKWD4pzrx+vm1Fayf/90Ja/kQnZmXFBT3fsE7ufeB3QyuS7o vMgIA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 04:44:49AM +0800, Han Gao wrote:
-> th1520 support Zfh ISA extension.
-> It supports the same RISC-V extensions as SG2042.
-> 
-> commit cb074bed1186 ("riscv: dts: sophgo: add zfh for sg2042")
-> 
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+GCC now runs TODO_verify_il automatically[1], so it is no longer exposed to
+plugins. Only use the flag on GCC < 16.
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>     
+Suggested-by: Christopher Fore <csfore@posteo.net>
+Link: https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=9739ae9384dd7cd3bb1c7683d6b80b7a9116eaf8
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+How about like this, so it'll still work on GCC <16?
+Cc: <linux-hardening@vger.kernel.org>
+---
+ scripts/gcc-plugins/gcc-common.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Thanks,
-Drew
+diff --git a/scripts/gcc-plugins/gcc-common.h b/scripts/gcc-plugins/gcc-common.h
+index 6cb6d1051815..8f1b3500f8e2 100644
+--- a/scripts/gcc-plugins/gcc-common.h
++++ b/scripts/gcc-plugins/gcc-common.h
+@@ -173,10 +173,17 @@ static inline opt_pass *get_pass_for_id(int id)
+ 	return g->get_passes()->get_pass_for_id(id);
+ }
+ 
++#if BUILDING_GCC_VERSION < 16000
+ #define TODO_verify_ssa TODO_verify_il
+ #define TODO_verify_flow TODO_verify_il
+ #define TODO_verify_stmts TODO_verify_il
+ #define TODO_verify_rtl_sharing TODO_verify_il
++#else
++#define TODO_verify_ssa 0
++#define TODO_verify_flow 0
++#define TODO_verify_stmts 0
++#define TODO_verify_rtl_sharing 0
++#endif
+ 
+ #define INSN_DELETED_P(insn) (insn)->deleted()
+ 
+-- 
+2.34.1
+
 
