@@ -1,80 +1,147 @@
-Return-Path: <linux-kernel+bounces-825682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F99B8C825
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:25:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E294B8C834
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF7D179262
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8193AA78A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C4C3016F3;
-	Sat, 20 Sep 2025 12:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D4301716;
+	Sat, 20 Sep 2025 12:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="PHbvd1YC"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhlAz6rp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA63923FC4C;
-	Sat, 20 Sep 2025 12:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA7F239E65;
+	Sat, 20 Sep 2025 12:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758371123; cv=none; b=HSx7GPf0eqw3xKEL1MLXib20S2XGmfcF3ZRzqNZz2EJBdPh8OxQOz7CEvn2cNeeu6ZqXOECYqnBFPGJ6DJjRgVYPL52tbnH2TqIu7k8aE00uLky/KiCH/2O/NEQs8m5HDX//XKb6zQ3KTw7vXGdGivz3rt8wMUhsTHq2M2MV62M=
+	t=1758371290; cv=none; b=Oa18kwtzrZWOB3+jIYwAJco5QAe/BODDJDG9/w9h8tXtCP4nwRz1h/COQPVilKH6lqhnELESf8QNfusfP7Pp4atpzWExAQeyeZdgA78fIKdIcAhaGVoZOjOyNpA0MNwosHCsn1v8k9/WO935rUjpiBv4GhJrbHR9N0KAexhm6nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758371123; c=relaxed/simple;
-	bh=O0LzlfWlPKjac7rDzW1wwLaYZ0d+D13hoP7xznHzlAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W/2sAieieAl2YlcHQ826zqkbM9v/4sAmVmYl8TTZXcxM6xQUTm+E96vuYw8m3GHcyejKvuESeedovJEVb27TmAfhblmo+DAxyfV3Q+CFGec5EWcmQkvlHbeXJWWbgirPitZ6mkpp4ya7Dgbk29Cdxc/sXEDpw545WGc3Cca1wuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=PHbvd1YC; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:MIME-Version:References:Message-ID:Subject:Cc:To:
-	From:Date:cc:to:subject:message-id:date:from:reply-to;
-	bh=1myR8utxz5y2QrmTAMsmbMQb8k6SiWfZd1R0kHbUaz8=; b=PHbvd1YC/SFRm5EPm9fhNueBnY
-	J4XiUdRXcpiekickix/UjqPKwTPBKMiIqTbZERQ5ob8UXGe0EEeakC7/6qaCAzkSncok7WGQW8MVn
-	qxKR/wU1e2ZHpVSHvYiCSg8PX8ENCD3C594naSBpNbW1XjU969zOnRdDl6uhsGuABfDmDDqRC169K
-	bwTnFtI/Lte77HcdP9ML3R6YQrAdmQIjrXVUT6XSDCwUs59Ix/N+N2s+2hcBIqtCr8DsB1mNAkgJ5
-	oX/ySoQp3q6mo2+JbBZ4Q548+0xiZkFCaAWgKGm7VAW3OvHzRKFZ/S+1svfT6eWdk1VxWIMSgp/Ye
-	Xf1c9miQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uzweQ-00705v-2x;
-	Sat, 20 Sep 2025 20:25:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 20 Sep 2025 20:25:14 +0800
-Date: Sat, 20 Sep 2025 20:25:14 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: anubis - simplify return statement in
- anubis_mod_init
-Message-ID: <aM6dKn2_qZc9LeMG@gondor.apana.org.au>
-References: <20250914142554.1917199-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1758371290; c=relaxed/simple;
+	bh=0b5NmMOnbDP9MtwNwBgV04ka112u6zlExhIdniRtJx0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oj2ZYTxhNuPIklFHydMFAMbfUj1AN6gNyAXolNnW8H/irDj75xsGDt4u+9AMn+hiKR0Nq7/SBM+QR3LCDDybqS1SWmTUro5dtTUVzFB4D2mHFKu1dE+/fAUMcd+KHt/k3h0K0jqKohtQosEs+7zwPlvOMWuDccJV1jZIfkazh6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZhlAz6rp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D3423C4CEEB;
+	Sat, 20 Sep 2025 12:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758371289;
+	bh=0b5NmMOnbDP9MtwNwBgV04ka112u6zlExhIdniRtJx0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZhlAz6rpD1MD6GHBG0V2Ul2mY7P/nTLPmN+KMhL2AtPR8Y8Tv83UIDeiyi2ONehHi
+	 1V8M7oXM5sdP9ClTvRAOGmPRmVcxcwfL65rQkVUoO9KWlMdQ9LNBZ10T7ha8xGCCiv
+	 EZ3CJx/yFfg+sqvBRmOiKNKoxeN2jKTp933x0puX5i6O3Ilxu272TFBkG7QL/oUuMI
+	 bcr8I4IV4TF40M/wo7WCtgvMT75ZIZrFm99l1EyhTdE+NTdK0IhQv6Qmof2D3uVDRi
+	 4MrlfIs5iuVWr3VdMSh1voLMdZ4FrvdNn0a77tZygmfo1hi63/PKd6yo359Qob6+Fc
+	 WremT60SA6JDA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA137CAC5A8;
+	Sat, 20 Sep 2025 12:28:09 +0000 (UTC)
+From: Sven Peter <sven@kernel.org>
+Date: Sat, 20 Sep 2025 12:28:03 +0000
+Subject: [PATCH] usb: typec: tipd: Fix error handling in
+ cd321x_read_data_status
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914142554.1917199-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250920-tipd-fix-v1-1-49886d4f081d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANKdzmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyMD3ZLMghTdtMwKXYNkU4M0yzRLy0TTRCWg8oKiVKAw2Kjo2NpaAHd
+ 1ZmJaAAAA
+X-Change-ID: 20250920-tipd-fix-0c50f9f99a5a
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dan Carpenter <dan.carpenter@linaro.org>, Sven Peter <sven@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2170; i=sven@kernel.org;
+ h=from:subject:message-id;
+ bh=0b5NmMOnbDP9MtwNwBgV04ka112u6zlExhIdniRtJx0=;
+ b=owGbwMvMwCHmIlirolUq95LxtFoSQ8a5udctpXkWrnv+976tQobui80y03UL3mz2e5jNy3GsZ
+ j7/wafMHaUsDGIcDLJiiizb99ubPnn4RnDppkvvYeawMoEMYeDiFICJhL9n+J8vmfzsVXKd8sSH
+ PmdlI59ci/y1asWhlR8maLhtLQ++9+IZw0/GbzeLePfPtHoz44mmnf98OxmmlTtcT+16GnBwi6k
+ i8xI2AA==
+X-Developer-Key: i=sven@kernel.org; a=openpgp;
+ fpr=A1E3E34A2B3C820DBC4955E5993B08092F131F93
+X-Endpoint-Received: by B4 Relay for sven@kernel.org/default with
+ auth_id=407
 
-On Sun, Sep 14, 2025 at 04:25:55PM +0200, Thorsten Blum wrote:
-> Return the result of calling crypto_register_alg() directly and remove
-> the local return variable.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  crypto/anubis.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+Right now cd321x_read_data_status always returns true even if it
+encounters any errors: tps6598x_read_data_status returns a boolean but
+we treated it as an errno and then we have a bunch of dev_errs in case
+tps6598x_block_read fails but just continue along and return true.
+Fix that to correctly report errors to the callee.
 
-Patch applied.  Thanks.
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-usb/aMvWJo3IkClmFoAA@stanley.mountain/
+Signed-off-by: Sven Peter <sven@kernel.org>
+---
+ drivers/usb/typec/tipd/core.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
+index 2b1049c9a6f3c4300f4a25a97fe502c47e82a134..d0c86347251c5cc19a9b377550c00c27966f8329 100644
+--- a/drivers/usb/typec/tipd/core.c
++++ b/drivers/usb/typec/tipd/core.c
+@@ -577,30 +577,36 @@ static bool cd321x_read_data_status(struct tps6598x *tps)
+ 	int ret;
+ 
+ 	ret = tps6598x_read_data_status(tps);
+-	if (ret < 0)
++	if (!ret)
+ 		return false;
+ 
+ 	if (tps->data_status & TPS_DATA_STATUS_DP_CONNECTION) {
+ 		ret = tps6598x_block_read(tps, TPS_REG_DP_SID_STATUS,
+ 				&cd321x->dp_sid_status, sizeof(cd321x->dp_sid_status));
+-		if (ret)
++		if (ret) {
+ 			dev_err(tps->dev, "Failed to read DP SID Status: %d\n",
+ 				ret);
++			return false;
++		}
+ 	}
+ 
+ 	if (tps->data_status & TPS_DATA_STATUS_TBT_CONNECTION) {
+ 		ret = tps6598x_block_read(tps, TPS_REG_INTEL_VID_STATUS,
+ 				&cd321x->intel_vid_status, sizeof(cd321x->intel_vid_status));
+-		if (ret)
++		if (ret) {
+ 			dev_err(tps->dev, "Failed to read Intel VID Status: %d\n", ret);
++			return false;
++		}
+ 	}
+ 
+ 	if (tps->data_status & CD321X_DATA_STATUS_USB4_CONNECTION) {
+ 		ret = tps6598x_block_read(tps, TPS_REG_USB4_STATUS,
+ 				&cd321x->usb4_status, sizeof(cd321x->usb4_status));
+-		if (ret)
++		if (ret) {
+ 			dev_err(tps->dev,
+ 				"Failed to read USB4 Status: %d\n", ret);
++			return false;
++		}
+ 	}
+ 
+ 	return true;
+
+---
+base-commit: a4e143636d5def935dd461539b67b61287a8dfef
+change-id: 20250920-tipd-fix-0c50f9f99a5a
+
+Best regards,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Sven Peter <sven@kernel.org>
+
+
 
