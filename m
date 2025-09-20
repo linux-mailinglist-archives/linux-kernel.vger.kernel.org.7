@@ -1,120 +1,336 @@
-Return-Path: <linux-kernel+bounces-825742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5897B8CB4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F53B8CB55
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C595A1BC262A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E13874610D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5132690D1;
-	Sat, 20 Sep 2025 15:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756042FB975;
+	Sat, 20 Sep 2025 15:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lyidlSsg"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z63LQ3N7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2331B1531C8
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9579B46B5;
+	Sat, 20 Sep 2025 15:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758381717; cv=none; b=frjcAH/zBAaJ/n1TTeSqAGzCjra7nlXY5f7pzdG5pvT8k9SivZLn+JG6+cP6N7igAJOiuMjDBeju/AHmPWYBFaPd/BKuRBfAVsmjiErFRGTbNOGMiALzW3hbNb6d6SJvFtsNozltVihA5TxhzCnS1lupSWl3wMby2/byL97aCvk=
+	t=1758381737; cv=none; b=tBBzJfeW6nE3Kk2/yBBF2oi0kBcWvKQnFk+R6sosjdjpGFaZfYvv9TEK8ScJY7S0LZoQ4W7WMMkxL54hcj5nXmYFHQ/MMMxsU9u6W1ZIRNit7zJ/hwEDchdo5s6GmHckcFY8ck9yu3x+tyWmBnCy4iupPJjSsxsx9eytR/D2duU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758381717; c=relaxed/simple;
-	bh=h0efYwyS1D9GFBtrlwzfjgxaYyPsK2aqGzprSfxOlnU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZGNj+eYrj8Rp2Mk9JNPI5MKzend2yqbHtXVhoJdIISy78y/DmmgPhcfQy0yrOdEsy5kp96UG5jHa91ih7TduSE+WriNnzxtE2X4GAZMNBxHGjx7n7AN1bCOK/2JBHcXnQSZo6L0Io7e72ctUtRLsGz6nMx+N0NjEKjH5Ws4Y1eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lyidlSsg; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2681645b7b6so93575ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:21:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758381715; x=1758986515; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PzSfuN4ySsQ+PKnoyw+8j2RW5W6RFIOOb6AK4pRniuk=;
-        b=lyidlSsgCfzbjhoTCDIlX5zJ8espl6AqDv2pSpvVdBMtlNYmzFagScHxsOk4yYnTQt
-         1nfSdwuklYBDT8WhEj5rK/1wt5rDVImgScW9xFR1eiDGDO8VlKt8GJXFlU89lDQkJXo1
-         HkBWnts4UF2NR6gLziZzqmRbVum1e1pJBdVsGjvrLYBYPe07VqMVGGAoJTppWazAIggb
-         CwJD7rpv7m/7y1pG5rx97c8pUOwMr3ryyTtv/TTY47JxepZjEV5vysnHFnWx2zhHwXLQ
-         C6x3e4Jwbhh7AYjoq7ymUacmlZNeYdZJXdfnQEW/AbkAkd3sllhdQrWfCUxcoPfbfRDL
-         RDvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758381715; x=1758986515;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PzSfuN4ySsQ+PKnoyw+8j2RW5W6RFIOOb6AK4pRniuk=;
-        b=YkRApGpuztW44p2GpaOwLnRXfJ1BYzgNmLHV+FgLes5thZ+42+QYhelNLckGhQ9eKy
-         2LOTP3h92shLO6L87pSYxs2W0wCdHV++BkC5P4u6seQ6BzZAvrs+wy8hERNXTiE0Agpl
-         HKfSBG8G05z0RNQ5SYtLNUPJIlATVdNxIwXzFr8xma4I+A3u6a/IX1A0y3VUIQPqXlwh
-         2T+hk6DTVQ4uWGn2gmIl+HRUAGswQVSPePokyYED6ql+5fPKSDgxMqGI8PWP6U10PG3B
-         G96EFp3H7YpMyJ/0/c9PGIbAU8W/cGzOpMndiVCNk1jq9zoYYdggwUFMVeyb7/iww4GN
-         mIVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdJG72drLKwN8nFwSeGI0r7+Tu76Dj0Hl+oxztgcXObG3hEoWuj08s1UaYHW8aWZlK7FGuAtHvmz+s0qQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2yvSbqAE174m3pRcQL8K/ny10897vo76QSyxiE7i2+RoZ/40d
-	yclpe5yMtob4IAHD79SPRHzlemUGRVBlOCQIfKcEP8E7Yc1i67kP2+xIIxiYlU3tH35w8d2R+Qw
-	iLuQwXhH3ktZfm0K9pYcBTdSW03xmrAeKDXDXQJRf
-X-Gm-Gg: ASbGnctKRGLjEoi4tlLp6WR9dzEW8DQSq97PRkX3t0BpcLdDjpVwIh9OGX8ZIMc9kc1
-	ZlXZHIHWXWiAfYpAg7xBO8SZs2xcfbFyqxLdjSUr6zzqqUJvDNKph3Aw3VzyAFaotjghSAmQlnN
-	uzoflR0pIvBOZy7CZQIZqeuFYEDUZiAG+XI6O22SFn2NYdeJh8JGOIMTXVfBTAgKQz0C0J8d40x
-	ZYNS2EHtJpthOH9t98=
-X-Google-Smtp-Source: AGHT+IEr1FIc/Nik60TRugyW5gXEwBcRlDr2YkbHBuRoSn1HZFneVz18uNgmFQQbl+4SXTtxbEw3W8ZkU5use8iFF0Y=
-X-Received: by 2002:a17:902:d48c:b0:26d:a02f:b046 with SMTP id
- d9443c01a7336-26da02fb6bdmr4759615ad.11.1758381715073; Sat, 20 Sep 2025
- 08:21:55 -0700 (PDT)
+	s=arc-20240116; t=1758381737; c=relaxed/simple;
+	bh=y/05L68HFhCOdUFay00Is5k7QAARtGz8H6f7Wjc5d0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bY4jUnOqpIRCAnBtFYEA7tCS3g8gaGQpqbJnolQW3ahNIgSxqxxOlzcg0GCK+7IwKytykIlFDoPa7e6tLCwkTMu7JtoUdTVY5b4bxI0D142DBc8lNm6tI4elsaAwfT0PzaRVSSz26VNvz7y4fjBYDgtgbrYNcFM1F31dqcVR48w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z63LQ3N7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A8FC4CEEB;
+	Sat, 20 Sep 2025 15:22:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758381737;
+	bh=y/05L68HFhCOdUFay00Is5k7QAARtGz8H6f7Wjc5d0A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Z63LQ3N7sarjtILGsqWAAL8g6tlVDm5UozVdPE5jJfFeho9gw0hAGI/MkcUwDieVk
+	 PNEG1rcp+rE3mXHKIWl4V9LoOrn2mRY1iNo/gtJ/Q5ousbPOWMrUH2JNWdM0mHRUCj
+	 Qa48O9qcHOhZT9QiZmvFefDvvjXXy6lxyQfswgHbxaH+GO97JomAXSbOLhcfub/P68
+	 QyEFNW58RYxutkccekHcCu4i90aXCL2dR3ebKQGNCivYJA15gKZCBOVFdob0QCAjnC
+	 G8OsDIhkoVSLuh+mL8gSlp1gbux+a9CWJmv2GN9SooZuiNcVDHVecqv6GtkAFvNW/p
+	 P3kdJORcIBYiQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1uzzPi-00000004iMX-3SC8;
+	Sat, 20 Sep 2025 17:22:14 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Jonathan Corbet" <corbet@lwn.net>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	Kees Cook <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: remove cdomain.py
+Date: Sat, 20 Sep 2025 17:22:09 +0200
+Message-ID: <3b86d236c64af17924e4cfedbbfb8bc60059802f.1758381727.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250914182900.1960567-1-irogers@google.com> <aM3BCr9DbBxnL5rV@x1>
-In-Reply-To: <aM3BCr9DbBxnL5rV@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Sat, 20 Sep 2025 08:21:43 -0700
-X-Gm-Features: AS18NWDtI_oOLHkLFF04XHuxlAZBdaoDT_OrbL1bV8YQ9TRtspsJbnXhNRPxs4k
-Message-ID: <CAP-5=fXOMLLFmn_06nBGjzbeD4=TLGPExP+K8x_pNRqKO-z-KQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] Test fixes and debug logging
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Chun-Tse Shao <ctshao@google.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Yang Li <yang.lee@linux.alibaba.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Fri, Sep 19, 2025 at 1:46=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Sun, Sep 14, 2025 at 11:28:56AM -0700, Ian Rogers wrote:
-> > Testing in a hypervisor guest showed some issues that these patches
-> > try to address, or improve the debug situation upon.
-> >
-> > Ian Rogers (4):
-> >   perf test: Be tolerant of missing json metric none value
-> >   perf parse-events: Add debug logging to perf_event
-> >   perf test: Don't fail if user rdpmc returns 0 when disabled
-> >   perf stat-shadow: Display metric-only for 0 counters
->
-> Thanks, applied to perf-tools-next,
+This is not used anymore, as it was a logic we had to support
+pre Sphinx 3.x, as shown at:
 
-Thanks Arnaldo,
+    afde706afde2 ("Make the docs build "work" with Sphinx 3.x")
 
-there was some follow up in:
-https://lore.kernel.org/lkml/20250914182140.1958530-1-irogers@google.com/
-I think I've also noticed that logging introducing newlines that
-impacts the tests column counts. I'll take a further look as we tried
-to harden against that with an output file option.
+Remove it.
 
-Thanks,
-Ian
+Fixes: b26717852db7 ("docs: conf.py: drop backward support for old Sphinx versions")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ Documentation/sphinx/cdomain.py | 247 --------------------------------
+ 1 file changed, 247 deletions(-)
+ delete mode 100644 Documentation/sphinx/cdomain.py
+
+diff --git a/Documentation/sphinx/cdomain.py b/Documentation/sphinx/cdomain.py
+deleted file mode 100644
+index 3dc285dc70f5..000000000000
+--- a/Documentation/sphinx/cdomain.py
++++ /dev/null
+@@ -1,247 +0,0 @@
+-# -*- coding: utf-8; mode: python -*-
+-# SPDX-License-Identifier: GPL-2.0
+-# pylint: disable=W0141,C0113,C0103,C0325
+-"""
+-    cdomain
+-    ~~~~~~~
+-
+-    Replacement for the sphinx c-domain.
+-
+-    :copyright:  Copyright (C) 2016  Markus Heiser
+-    :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
+-
+-    List of customizations:
+-
+-    * Moved the *duplicate C object description* warnings for function
+-      declarations in the nitpicky mode. See Sphinx documentation for
+-      the config values for ``nitpick`` and ``nitpick_ignore``.
+-
+-    * Add option 'name' to the "c:function:" directive.  With option 'name' the
+-      ref-name of a function can be modified. E.g.::
+-
+-          .. c:function:: int ioctl( int fd, int request )
+-             :name: VIDIOC_LOG_STATUS
+-
+-      The func-name (e.g. ioctl) remains in the output but the ref-name changed
+-      from 'ioctl' to 'VIDIOC_LOG_STATUS'. The function is referenced by::
+-
+-          * :c:func:`VIDIOC_LOG_STATUS` or
+-          * :any:`VIDIOC_LOG_STATUS` (``:any:`` needs sphinx 1.3)
+-
+-     * Handle signatures of function-like macros well. Don't try to deduce
+-       arguments types of function-like macros.
+-
+-"""
+-
+-from docutils import nodes
+-from docutils.parsers.rst import directives
+-
+-import sphinx
+-from sphinx import addnodes
+-from sphinx.domains.c import c_funcptr_sig_re, c_sig_re
+-from sphinx.domains.c import CObject as Base_CObject
+-from sphinx.domains.c import CDomain as Base_CDomain
+-from itertools import chain
+-import re
+-
+-__version__  = '1.1'
+-
+-# Namespace to be prepended to the full name
+-namespace = None
+-
+-#
+-# Handle trivial newer c domain tags that are part of Sphinx 3.1 c domain tags
+-# - Store the namespace if ".. c:namespace::" tag is found
+-#
+-RE_namespace = re.compile(r'^\s*..\s*c:namespace::\s*(\S+)\s*$')
+-
+-def markup_namespace(match):
+-    global namespace
+-
+-    namespace = match.group(1)
+-
+-    return ""
+-
+-#
+-# Handle c:macro for function-style declaration
+-#
+-RE_macro = re.compile(r'^\s*..\s*c:macro::\s*(\S+)\s+(\S.*)\s*$')
+-def markup_macro(match):
+-    return ".. c:function:: " + match.group(1) + ' ' + match.group(2)
+-
+-#
+-# Handle newer c domain tags that are evaluated as .. c:type: for
+-# backward-compatibility with Sphinx < 3.0
+-#
+-RE_ctype = re.compile(r'^\s*..\s*c:(struct|union|enum|enumerator|alias)::\s*(.*)$')
+-
+-def markup_ctype(match):
+-    return ".. c:type:: " + match.group(2)
+-
+-#
+-# Handle newer c domain tags that are evaluated as :c:type: for
+-# backward-compatibility with Sphinx < 3.0
+-#
+-RE_ctype_refs = re.compile(r':c:(var|struct|union|enum|enumerator)::`([^\`]+)`')
+-def markup_ctype_refs(match):
+-    return ":c:type:`" + match.group(2) + '`'
+-
+-#
+-# Simply convert :c:expr: and :c:texpr: into a literal block.
+-#
+-RE_expr = re.compile(r':c:(expr|texpr):`([^\`]+)`')
+-def markup_c_expr(match):
+-    return '\\ ``' + match.group(2) + '``\\ '
+-
+-#
+-# Parse Sphinx 3.x C markups, replacing them by backward-compatible ones
+-#
+-def c_markups(app, docname, source):
+-    result = ""
+-    markup_func = {
+-        RE_namespace: markup_namespace,
+-        RE_expr: markup_c_expr,
+-        RE_macro: markup_macro,
+-        RE_ctype: markup_ctype,
+-        RE_ctype_refs: markup_ctype_refs,
+-    }
+-
+-    lines = iter(source[0].splitlines(True))
+-    for n in lines:
+-        match_iterators = [regex.finditer(n) for regex in markup_func]
+-        matches = sorted(chain(*match_iterators), key=lambda m: m.start())
+-        for m in matches:
+-            n = n[:m.start()] + markup_func[m.re](m) + n[m.end():]
+-
+-        result = result + n
+-
+-    source[0] = result
+-
+-#
+-# Now implements support for the cdomain namespacing logic
+-#
+-
+-def setup(app):
+-
+-    # Handle easy Sphinx 3.1+ simple new tags: :c:expr and .. c:namespace::
+-    app.connect('source-read', c_markups)
+-    app.add_domain(CDomain, override=True)
+-
+-    return dict(
+-        version = __version__,
+-        parallel_read_safe = True,
+-        parallel_write_safe = True
+-    )
+-
+-class CObject(Base_CObject):
+-
+-    """
+-    Description of a C language object.
+-    """
+-    option_spec = {
+-        "name" : directives.unchanged
+-    }
+-
+-    def handle_func_like_macro(self, sig, signode):
+-        """Handles signatures of function-like macros.
+-
+-        If the objtype is 'function' and the signature ``sig`` is a
+-        function-like macro, the name of the macro is returned. Otherwise
+-        ``False`` is returned.  """
+-
+-        global namespace
+-
+-        if not self.objtype == 'function':
+-            return False
+-
+-        m = c_funcptr_sig_re.match(sig)
+-        if m is None:
+-            m = c_sig_re.match(sig)
+-            if m is None:
+-                raise ValueError('no match')
+-
+-        rettype, fullname, arglist, _const = m.groups()
+-        arglist = arglist.strip()
+-        if rettype or not arglist:
+-            return False
+-
+-        arglist = arglist.replace('`', '').replace('\\ ', '') # remove markup
+-        arglist = [a.strip() for a in arglist.split(",")]
+-
+-        # has the first argument a type?
+-        if len(arglist[0].split(" ")) > 1:
+-            return False
+-
+-        # This is a function-like macro, its arguments are typeless!
+-        signode  += addnodes.desc_name(fullname, fullname)
+-        paramlist = addnodes.desc_parameterlist()
+-        signode  += paramlist
+-
+-        for argname in arglist:
+-            param = addnodes.desc_parameter('', '', noemph=True)
+-            # separate by non-breaking space in the output
+-            param += nodes.emphasis(argname, argname)
+-            paramlist += param
+-
+-        if namespace:
+-            fullname = namespace + "." + fullname
+-
+-        return fullname
+-
+-    def handle_signature(self, sig, signode):
+-        """Transform a C signature into RST nodes."""
+-
+-        global namespace
+-
+-        fullname = self.handle_func_like_macro(sig, signode)
+-        if not fullname:
+-            fullname = super(CObject, self).handle_signature(sig, signode)
+-
+-        if "name" in self.options:
+-            if self.objtype == 'function':
+-                fullname = self.options["name"]
+-            else:
+-                # FIXME: handle :name: value of other declaration types?
+-                pass
+-        else:
+-            if namespace:
+-                fullname = namespace + "." + fullname
+-
+-        return fullname
+-
+-    def add_target_and_index(self, name, sig, signode):
+-        # for C API items we add a prefix since names are usually not qualified
+-        # by a module name and so easily clash with e.g. section titles
+-        targetname = 'c.' + name
+-        if targetname not in self.state.document.ids:
+-            signode['names'].append(targetname)
+-            signode['ids'].append(targetname)
+-            signode['first'] = (not self.names)
+-            self.state.document.note_explicit_target(signode)
+-            inv = self.env.domaindata['c']['objects']
+-            if (name in inv and self.env.config.nitpicky):
+-                if self.objtype == 'function':
+-                    if ('c:func', name) not in self.env.config.nitpick_ignore:
+-                        self.state_machine.reporter.warning(
+-                            'duplicate C object description of %s, ' % name +
+-                            'other instance in ' + self.env.doc2path(inv[name][0]),
+-                            line=self.lineno)
+-            inv[name] = (self.env.docname, self.objtype)
+-
+-        indextext = self.get_index_text(name)
+-        if indextext:
+-            self.indexnode['entries'].append(
+-                    ('single', indextext, targetname, '', None))
+-
+-class CDomain(Base_CDomain):
+-
+-    """C language domain."""
+-    name = 'c'
+-    label = 'C'
+-    directives = {
+-        'function': CObject,
+-        'member':   CObject,
+-        'macro':    CObject,
+-        'type':     CObject,
+-        'var':      CObject,
+-    }
+-- 
+2.51.0
+
 
