@@ -1,166 +1,130 @@
-Return-Path: <linux-kernel+bounces-825807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FEA1B8CDB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D9E8B8CDAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D825A4E0ECC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:12:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC2A7B6241
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415E6306B06;
-	Sat, 20 Sep 2025 17:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACBB305979;
+	Sat, 20 Sep 2025 17:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3IVZQezj"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YRs16w05"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B0C30648E
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F61228CB8;
+	Sat, 20 Sep 2025 17:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758388356; cv=none; b=IPmTvWnDRV+2a9VU6kayWgPqPLMi8bzA7JayV1oVUY9BSNgYmpVQW5rcRMdp+35/TuG6O+Lt1OSxjp7Z66h3VffLRO0pP+5JmbiUmlbstWNMLhbKyS72c+DHKTxSXhQSq1dGxJVz0NU1cKmlEumb9srxfEdUA0dEOtbAKKbN6lI=
+	t=1758388351; cv=none; b=SZLb8rW17VpKYPddOy7LhoWxv/NYV3nhHwk+5ikxBZ9dnTvhvqv7wba9Jt7v514OIAx05Wd7DSXK8Q95X6eMv30dM73U3XZuGgxpP++3WBfRGJwIm8VfhHpFoBECUEitRlDeixDkZo/DteFAfWK1goMgtzApgc8tIfmRkTiPCV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758388356; c=relaxed/simple;
-	bh=Gj1Ep/MJST8CACxWAubynz7i+zMqcF8h49oVjFnLgOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MIKNpL3sBEv7c48HrNnmfE3sw0ADtIrK1+MgkOVy0HpSzR/vaX0X6kujju0ZaUKU0WjWP3UXZZtQN7lGFHt+qdOkhQLNMjX7BrdA6+vOIOku+AQL8A3Lml0erd+fOFoijCnWCQIEYt+rbGGBGHsmURRBs6BW7wt0MBYnzlgn/sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3IVZQezj; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso1519370f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758388353; x=1758993153; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gj1Ep/MJST8CACxWAubynz7i+zMqcF8h49oVjFnLgOM=;
-        b=3IVZQezjkGRGY6jnZJUt2i+7WB3R0jDFvJ7S3CpqjSTX0Go0KM4dgBQaC5qeaLM7SZ
-         MZBOmRWse7OxHunxwEPMleKziE8OpjqcsTBIFIxckSMSeiGfl8VsnlNDRedpN4cWYrcM
-         63JobxUMPd9Ef2Fl/w8VvBA+lm3xJVXO9cueYXQLd9IEFQ6K/HM6axlSV5PG3+/7zabB
-         lHRSh2NHXozM1z4/MIpktKncf6rHZ8cHoZT2+HSXtMLajrVoOvztL1PBd51XkXNQs6EP
-         46qB+neSN+QgJ07PjdIAEdajmKfXNbjW4FNJT5ulbl+YMeoogNGxYcy/T1WSFKEGZsq1
-         tLxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758388353; x=1758993153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gj1Ep/MJST8CACxWAubynz7i+zMqcF8h49oVjFnLgOM=;
-        b=TPvUy33WlJbUFov+uXFWdrU0yoPK2sFXaIC7UvU6AgVb6XqUMqMwBrPHx74/lOwX/7
-         Jw0ewThLrkkjI7RdcCCJRGb19Xkdex9lRJR4W0W5SctnuftZkevescEAMpdIEHE3L0KC
-         HsrUtl0VLzJAIeNpbOAWuDv5rg8T+KOipl5L3mnxUufqAlbSKgJNLdOgNvsaDs/NKUEK
-         6eBA6TjiTbmTRFp8MUA1Bv3AoQTOsDmxK1czeREutWwwMLLr/O8F70e7kzdizXDGe5d6
-         FhGkgckl6kYaMl2zjssVVTbnrmRrs90uqh5Wi89xw/3gJsjzJ3ocDc7BpkVF1OAI0BtK
-         kBPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeAcgo505VsNSb1B/7jUwoNJA4M7pguxjdFctDAmCyqISyvqwehADidO9sfa9N5/05sCRbVIZzqJosGM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6xY0lLI3541Om8OoOW5w3GerAKHdLnP0v7w5JRnNYuHw6+lMZ
-	qWt49YXWpSFutjr/C0zZyhGe+c4rUsk2EDHQwBTE5hV7dymf2gmIUSIk8EvAS/JnJBFlNpNTXwk
-	mKUddlTCJIm3RVFvS8LzIP+4DGRADMs8SE2VgogKW
-X-Gm-Gg: ASbGncv7lDqYP3dPSyBadOL5Moty+xGfWv6kY6bThaoKqa/1TcjdVx6lwXMXruCAmuz
-	5FFs5rynSY/aRu/W5OFKgcO5osDBnD8/xg3Y+ApHWnPHDmIy6nzjx7JNImRKZt+UNFD+1lZFsge
-	njkKbkxPC/a/W6jImbBujfozazOK5rtD+ge1hw9Nn0ISn6PZx/IsLyVpjTY8q8VmGO7b4jQ3ODx
-	9SgblI=
-X-Google-Smtp-Source: AGHT+IF+4bGibPipIgcJxYKVfn8BssHq8357Z0KdCsFz2M+fcQoYEotuvWkwJadILn9AOtmYWB0Q/o9Ht+aVSBuXwCM=
-X-Received: by 2002:a05:6000:2c03:b0:3ee:2ae2:3f35 with SMTP id
- ffacd0b85a97d-3ee7bad118cmr5460258f8f.6.1758388352843; Sat, 20 Sep 2025
- 10:12:32 -0700 (PDT)
+	s=arc-20240116; t=1758388351; c=relaxed/simple;
+	bh=q79LSJRIN+4CMGDHGwwOtCi+446YUY7DGBcf9uK/a+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWLJRI+P3NJ7IfIHipyl9gR97ZGSU4TgOld3M8LZnPeIz9UAvdoI0F0gMmVFS55is2/EM69ibKBEtxQrA405ueOu98GRKWKWNUrina4ewtV0KFP7q40Yqbx3zsmz4HN/cPQ6mcq2kaUy+Xce1+UyFbheUH8WDSys6o9DMB/ci3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YRs16w05; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758388350; x=1789924350;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=q79LSJRIN+4CMGDHGwwOtCi+446YUY7DGBcf9uK/a+8=;
+  b=YRs16w05LEWGg1ab6Gp6Tr8zYriZsk50wWXiC+bD+HJaP9yi4pbGdzp+
+   CP1TFXHWX8VUrukvlweYdoFyF3b9Lt2ZpTK0KRS0BjY2EjR3+YF0h9j3j
+   vahtJBhN/DaoYY958Hqc0lac3Hx1cBwJHOxxu3Up+1Dlksn6DliYxEoOg
+   cB+q+M2us3uPRM0WdyzC9xJP4w+9JMcHJLUj14wi4Xv8hsY3D7FSakagw
+   +GYlel1oEVkzKzy3YUAj4WQCR4s4bcPDy05tDzHBsF3EbIzedJAcTLJHg
+   9YNgd/7sDaSCuO9Ug9G87fRVFwFVKhArkIfssXiS52f2wv7sythJv6iCn
+   A==;
+X-CSE-ConnectionGUID: G3XQyPbyTcOe7+2k0RzzYQ==
+X-CSE-MsgGUID: ECIFiZiOSfKeDvlqtsqvgg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="78316339"
+X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
+   d="scan'208";a="78316339"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 10:12:29 -0700
+X-CSE-ConnectionGUID: pt82aHB0SAS5SO5GndB+ZQ==
+X-CSE-MsgGUID: BsB7TnlMQ+qllss3tERJeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
+   d="scan'208";a="180354343"
+Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 20 Sep 2025 10:12:25 -0700
+Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v018J-0005Zb-0J;
+	Sat, 20 Sep 2025 17:12:23 +0000
+Date: Sun, 21 Sep 2025 01:12:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
+	conor+dt@kernel.org, kishon@kernel.org, vkoul@kernel.org,
+	gregkh@linuxfoundation.org, robh@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Subject: Re: [PATCH 6/9] phy: qualcomm: qmp-combo: Update QMP PHY with Glymur
+ settings
+Message-ID: <202509210051.o1oMhgXv-lkp@intel.com>
+References: <20250920032108.242643-7-wesley.cheng@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-clk-type-state-v2-0-1b97c11bb631@collabora.com>
- <20250910-clk-type-state-v2-1-1b97c11bb631@collabora.com> <aMG6JVMcMxVuX7De@tardis-2.local>
- <3D936C1B-FBA9-4964-859C-84BB665BBE3B@collabora.com> <175834480479.4354.6269916774389395049@lazor>
-In-Reply-To: <175834480479.4354.6269916774389395049@lazor>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sat, 20 Sep 2025 19:12:17 +0200
-X-Gm-Features: AS18NWDvOSD7Ew9WoF-qENluBOtHGPEWpUP8mLuio2luAr2ur7aLvfUzGRJxJH0
-Message-ID: <CAH5fLgib2a7UK0cYqy1cM6h_OZDMWf+JX+KpXXCJNTZchyfP5A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: clk: implement Send and Sync
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-clk@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920032108.242643-7-wesley.cheng@oss.qualcomm.com>
 
-On Sat, Sep 20, 2025 at 7:06=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Daniel Almeida (2025-09-10 11:47:30)
-> > Hi Boqun,
-> >
-> > > On 10 Sep 2025, at 14:49, Boqun Feng <boqun.feng@gmail.com> wrote:
-> > >
-> > > On Wed, Sep 10, 2025 at 02:28:27PM -0300, Daniel Almeida wrote:
-> > >> From: Alice Ryhl <aliceryhl@google.com>
-> > >>
-> > >> These traits are required for drivers to embed the Clk type in their=
- own
-> > >> data structures because driver data structures are usually required =
-to
-> > >> be Send. See e.g. [1] for the kind of workaround that drivers curren=
-tly
-> > >> need due to lacking this annotation.
-> > >>
-> > >> Link: https://lore.kernel.org/rust-for-linux/20250812-tyr-v2-1-9e0f3=
-dc9da95@collabora.com/ [1]
-> > >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
-> > >> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > >> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
-> > >> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > >> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> > >
-> > > This tag list looks a bit weird to me. Why is there a SoB from you
-> > > before Alice's SoB? At least for the usage I'm familiar with, outside
-> > > the case of Co-developed-bys, multiple SoBs is used for recording how
-> > > the patches are routed. For example, if I have a patch that has my So=
-B
-> > > and I send it to you, you queue in your tree and then send out to oth=
-er
-> > > maintainers for merging, in general you would put your SoB after mine=
- in
-> > > that case. But I don't think that's case here? Alice's patch has only
-> > > her SoB:
-> > >
-> > > https://lore.kernel.org/rust-for-linux/20250904-clk-send-sync-v1-1-48=
-d023320eb8@google.com/
-> > >
-> > > What's the intention of the SoB tag here?
-> > >
-> > > Otherwise the patch looks good to me. If we get the tag list resolved=
-,
-> > > feel free to add:
-> > >
-> > > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> > >
-> > > Regards,
-> > > Boqun
-> > >
-> >
-> > You have to include your SOB when submitting patches from others.
-> >
-> > This is something I tend to forget often, so I made sure it was there. =
-The
-> > order may be indeed off though.
->
-> Yes the order is wrong. The first SoB should be the commit author.
+Hi Wesley,
 
-One optoin is to just land the original patch:
-https://lore.kernel.org/all/20250904-clk-send-sync-v1-1-48d023320eb8@google=
-.com/
+kernel test robot noticed the following build warnings:
 
-Alice
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.17-rc6 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wesley-Cheng/dt-bindings-phy-qcom-sc8280xp-qmp-usb43dp-phy-Add-Glymur-compatible/20250920-112504
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250920032108.242643-7-wesley.cheng%40oss.qualcomm.com
+patch subject: [PATCH 6/9] phy: qualcomm: qmp-combo: Update QMP PHY with Glymur settings
+config: x86_64-buildonly-randconfig-002-20250920 (https://download.01.org/0day-ci/archive/20250921/202509210051.o1oMhgXv-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509210051.o1oMhgXv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509210051.o1oMhgXv-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/phy/qualcomm/phy-qcom-qmp-combo.c:1745:38: warning: unused variable 'glymur_usb43dp_pcs_misc_tbl' [-Wunused-const-variable]
+    1745 | static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_misc_tbl[] = {
+         |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +/glymur_usb43dp_pcs_misc_tbl +1745 drivers/phy/qualcomm/phy-qcom-qmp-combo.c
+
+  1744	
+> 1745	static const struct qmp_phy_init_tbl glymur_usb43dp_pcs_misc_tbl[] = {
+  1746		QMP_PHY_INIT_CFG(QPHY_V4_PCS_MISC_PCS_MISC_CONFIG1, 0x01),
+  1747	};
+  1748	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
