@@ -1,214 +1,104 @@
-Return-Path: <linux-kernel+bounces-825572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D0EB8C40C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 291EEB8C415
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EEEC1B254B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:40:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADD61B279C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB943287250;
-	Sat, 20 Sep 2025 08:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA3428727A;
+	Sat, 20 Sep 2025 08:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sC4lnp28"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DS7HG/wX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244FE1C700C;
-	Sat, 20 Sep 2025 08:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968AD78C9C;
+	Sat, 20 Sep 2025 08:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758357629; cv=none; b=ABuffMasCuXUu8xDCw30NfY2CLzAl/sLWW9/XFIwJzuUJ2vODh3rQGWgmYrpGaWa0B6RHKlFOQminmWKOO3RswlzLmHqTYni5Jl2W4DtfpjCyuLI+UlTmjf3P/+pk1QOaCcajFqhSewO1+587r+49LnRcKxqx84hnLcA6v+yR8E=
+	t=1758357777; cv=none; b=bMgerXAeKL2uAyiciaQAJPg1uHtqhyWZIJ6jlUcUDUAoNMNIden4gaWhEz6pXbBtMZLADvk4Rx3F8kS1d8auaSqcugPg/bYtxgrQC4qI36N9x2UpJTI+RiY6dxx/9W94EyN0eO6EcGhR0yo4+op4CMGsW76ewyWPgmNRGK8pYE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758357629; c=relaxed/simple;
-	bh=eJi10fn6F6g8qqc3lQTGmqgSP5NY4WAQLCK9VSbmhPY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l9PhFXgjyBYxMeVDW4WykEbmK/fbYW9aDt4QQkz49LK6dAsdkbqWOBm/azIOeQk8B95wwrUNSb4kvmm5JauMs9O9jWGBJV2Y6UGVuvSO1+UC5tu4bF8QYEpxL2YomRFz101dbU0VMhDAMU6kSQnO8pQBIVl7aYF6xfzacXZAkgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sC4lnp28; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58K8e40F874896;
-	Sat, 20 Sep 2025 03:40:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758357604;
-	bh=f0+J3AcoY0da2JrGA4akS+0gRCutCuTWRlIKPg380lk=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=sC4lnp28H4xbJoKmOxJSBRH+DwpwWi5tLv5cdxzPUEWjkdU8m/zhoo4a5Dlex7Ec7
-	 czA+qMaBsbddtRtcK44ZhVV1//vvHCLaI8Gm61Cs0rDQPBV/hY7+43UP7FeuqUOWBE
-	 CX375x+sDJ878GA+3u4j1/lfYT62fw8mCqyLdnzU=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58K8e4Dn2945600
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sat, 20 Sep 2025 03:40:04 -0500
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 20
- Sep 2025 03:40:04 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sat, 20 Sep 2025 03:40:04 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58K8e3rn3874273;
-	Sat, 20 Sep 2025 03:40:03 -0500
-Date: Sat, 20 Sep 2025 14:10:02 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
-        <kwilczynski@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <jingoohan1@gmail.com>, <christian.bruel@foss.st.com>,
-        <qiang.yu@oss.qualcomm.com>, <mayank.rana@oss.qualcomm.com>,
-        <thippeswamy.havalige@amd.com>, <shradha.t@samsung.com>,
-        <quic_schintav@quicinc.com>, <inochiama@gmail.com>,
-        <cassel@kernel.org>, <kishon@kernel.org>,
-        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
-        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v2 10/10] PCI: keystone: Add support to build as a
- loadable module
-Message-ID: <c1ae0f3e-32ec-45cb-96fb-ef45979c9e1b@ti.com>
-References: <20250912122356.3326888-1-s-vadapalli@ti.com>
- <20250912122356.3326888-11-s-vadapalli@ti.com>
- <6nj2fkhxixpkneh7pdvyveu6ogpm5phbpvaw6cog3bshm5spfh@kb64rycphtft>
- <8582c87e-5f0d-4712-b93f-c7524f051fd7@ti.com>
- <5cmkdeo6he3w5a3sqk5ptwwnv6oad5tl3xoll4knved2mo4y3h@enwotijbifvb>
+	s=arc-20240116; t=1758357777; c=relaxed/simple;
+	bh=t29V9AgX/NKmPHjTgaedf7R9252R6wr9WoYCntM+Lvc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dma0B7PlgiVI/t+JGigMFK5zKPcYPfCEPaPoMKhACSCd66m1SUHCgiWHQ95DqCG95EMSuvq1FOIkRrycDwhD4wzdiDFxy5kOchL97+JKHEbZ1Qq9BY5uzfZQ5Daj7nTCeImTSDERbyvsGhW5B91dTRnSlKQ+Yr2ReWt6RmUo/mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DS7HG/wX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=xBF9CyZWiKiOxeJFSHS98uiQ2p7XF52s9xV5fyUWZwo=; b=DS7HG/wX/9KVMrGrwe6t6++FzJ
+	0QiMmw8de9ipH73yC4hEbVnJr4ZR7td34n+Q4bKcn8jz3p3tMqWM4V3x+8Ya/OwgE8R3tOsB+9w3p
+	GHugrGfuwjl8sXMc7/xhG+RJmPZozx3BAWkAhKjuajrYZxw1woc72pq/zLxj4N8qXiQwyfaG12RuM
+	XVcGbWSrqjUvSqI1FK/W0Ovmvf78oZM++wKmujE2S6CfDLcK0LEs8txdEsYOtxN2JjQ90lMq3kG/u
+	aiYrxkX0+5bNtMnhYZZTz1okHYgbMuvo+vARbE0KMJ62fJo8xgt5+zx3BUp1V13dtC54zF9nsykLV
+	mTasN8SA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48600)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uztBC-000000008CR-2fDj;
+	Sat, 20 Sep 2025 09:42:50 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uztBA-000000002zo-0Qam;
+	Sat, 20 Sep 2025 09:42:48 +0100
+Date: Sat, 20 Sep 2025 09:42:47 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: David Yang <mmyangfl@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Simon Horman <horms@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v10 2/5] net: phy: introduce
+ PHY_INTERFACE_MODE_REVSGMII
+Message-ID: <aM5pB-c-AR_E4U8k@shell.armlinux.org.uk>
+References: <20250919094234.1491638-1-mmyangfl@gmail.com>
+ <20250919094234.1491638-3-mmyangfl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5cmkdeo6he3w5a3sqk5ptwwnv6oad5tl3xoll4knved2mo4y3h@enwotijbifvb>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20250919094234.1491638-3-mmyangfl@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sat, Sep 20, 2025 at 02:01:03PM +0530, Manivannan Sadhasivam wrote:
-> On Sat, Sep 20, 2025 at 01:41:35PM +0530, Siddharth Vadapalli wrote:
-> > On Sat, Sep 20, 2025 at 12:10:59AM +0530, Manivannan Sadhasivam wrote:
-> > > On Fri, Sep 12, 2025 at 05:46:21PM +0530, Siddharth Vadapalli wrote:
-> > > > The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
-> > > > Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
-> > > > that the 'pci-keystone.c' driver depends upon have been exported for use,
-> > > > enable support to build the driver as a loadable module.
-> > > > 
-> > > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > > > ---
-> > > > 
-> > > > v1: https://lore.kernel.org/r/20250903124505.365913-12-s-vadapalli@ti.com/
-> > > > Changes since v1:
-> > > > - Based on the feedback from Manivannan Sadhasivam <mani@kernel.org> at:
-> > > >   https://lore.kernel.org/r/2gzqupa7i7qhiscwm4uin2jmdb6qowp55mzk7w4o3f73ob64e7@taf5vjd7lhc5/
-> > > >   builtin_platform_driver() is being retained in the driver due to which
-> > > >   the change made in the v1 patch of replacing builtin_platform_driver()
-> > > >   with module_platform_driver() has been discarded in this patch.
-> > > > 
-> > > >  drivers/pci/controller/dwc/Kconfig        |  6 +++---
-> > > >  drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++++++++++++
-> > > >  2 files changed, 25 insertions(+), 3 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> > > > index 34abc859c107..46012d6a607e 100644
-> > > > --- a/drivers/pci/controller/dwc/Kconfig
-> > > > +++ b/drivers/pci/controller/dwc/Kconfig
-> > > > @@ -482,10 +482,10 @@ config PCI_DRA7XX_EP
-> > > >  	  This uses the DesignWare core.
-> > > >  
-> > > >  config PCI_KEYSTONE
-> > > > -	bool
-> > > > +	tristate
-> > > >  
-> > > >  config PCI_KEYSTONE_HOST
-> > > > -	bool "TI Keystone PCIe controller (host mode)"
-> > > > +	tristate "TI Keystone PCIe controller (host mode)"
-> > > >  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-> > > >  	depends on PCI_MSI
-> > > >  	select PCIE_DW_HOST
-> > > > @@ -497,7 +497,7 @@ config PCI_KEYSTONE_HOST
-> > > >  	  DesignWare core functions to implement the driver.
-> > > >  
-> > > >  config PCI_KEYSTONE_EP
-> > > > -	bool "TI Keystone PCIe controller (endpoint mode)"
-> > > > +	tristate "TI Keystone PCIe controller (endpoint mode)"
-> > > >  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-> > > >  	depends on PCI_ENDPOINT
-> > > >  	select PCIE_DW_EP
-> > > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> > > > index e85942b4f6be..661e31b60a48 100644
-> > > > --- a/drivers/pci/controller/dwc/pci-keystone.c
-> > > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> > > > @@ -17,6 +17,7 @@
-> > > >  #include <linux/irqchip/chained_irq.h>
-> > > >  #include <linux/irqdomain.h>
-> > > >  #include <linux/mfd/syscon.h>
-> > > > +#include <linux/module.h>
-> > > >  #include <linux/msi.h>
-> > > >  #include <linux/of.h>
-> > > >  #include <linux/of_irq.h>
-> > > > @@ -132,6 +133,7 @@ struct keystone_pcie {
-> > > >  	struct			device_node *msi_intc_np;
-> > > >  	struct irq_domain	*intx_irq_domain;
-> > > >  	struct device_node	*np;
-> > > > +	struct gpio_desc	*reset_gpio;
-> > > >  
-> > > >  	/* Application register space */
-> > > >  	void __iomem		*va_app_base;	/* DT 1st resource */
-> > > > @@ -1211,6 +1213,7 @@ static const struct of_device_id ks_pcie_of_match[] = {
-> > > >  	},
-> > > >  	{ },
-> > > >  };
-> > > > +MODULE_DEVICE_TABLE(of, ks_pcie_of_match);
-> > > >  
-> > > >  static int ks_pcie_probe(struct platform_device *pdev)
-> > > >  {
-> > > > @@ -1329,6 +1332,7 @@ static int ks_pcie_probe(struct platform_device *pdev)
-> > > >  			dev_err(dev, "Failed to get reset GPIO\n");
-> > > >  		goto err_link;
-> > > >  	}
-> > > > +	ks_pcie->reset_gpio = gpiod;
-> > > >  
-> > > >  	/* Obtain references to the PHYs */
-> > > >  	for (i = 0; i < num_lanes; i++)
-> > > > @@ -1440,9 +1444,23 @@ static void ks_pcie_remove(struct platform_device *pdev)
-> > > >  {
-> > > >  	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
-> > > >  	struct device_link **link = ks_pcie->link;
-> > > > +	struct dw_pcie *pci = ks_pcie->pci;
-> > > >  	int num_lanes = ks_pcie->num_lanes;
-> > > > +	const struct ks_pcie_of_data *data;
-> > > >  	struct device *dev = &pdev->dev;
-> > > > +	enum dw_pcie_device_mode mode;
-> > > > +
-> > > > +	ks_pcie_disable_error_irq(ks_pcie);
-> > > > +	data = of_device_get_match_data(dev);
-> > > > +	mode = data->mode;
-> > > > +	if (mode == DW_PCIE_RC_TYPE) {
-> > > > +		dw_pcie_host_deinit(&pci->pp);
-> > > > +	} else {
-> > > > +		pci_epc_deinit_notify(pci->ep.epc);
-> > > > +		dw_pcie_ep_deinit(&pci->ep);
-> > > > +	}
-> > > >  
-> > > > +	gpiod_set_value_cansleep(ks_pcie->reset_gpio, 0);
-> > > 
-> > > Can ks_pcie_remove() be called for a builtin_platform_driver?
-> > 
-> > It cannot be executed but I have added it for the sake of completeness - in
-> > the same manner that the initial implementation didn't simply make the
-> > 'ks_pcie_remove()' function a no-op and the code exists as if it could
-> > be executed or if it were to be executed at some point in the future.
-> > 
+On Fri, Sep 19, 2025 at 05:42:27PM +0800, David Yang wrote:
+> The "reverse SGMII" protocol name is a personal invention, derived from
+> "reverse MII" and "reverse RMII", this means: "behave like an SGMII
+> PHY".
 > 
-> It is a dead code, that's it. Drop it in this patch or separately before and add
-> it back later when irq subsystem fixes the irq disposal issues.
+> Signed-off-by: David Yang <mmyangfl@gmail.com>
 
-I will discard the changes made to 'ks_pcie_remove()' in the v3 patch.
+Thanks. This is also going to be needed for stmmac, which can operate in
+SGMII mode acting as if it were a PHY to allow a SGMII MAC-to-MAC
+connection to be established.
 
-Regards,
-Siddharth.
+As noted by the kernel build bot, there are several other locations that
+need to be updated whenever a new phy interface is added.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
