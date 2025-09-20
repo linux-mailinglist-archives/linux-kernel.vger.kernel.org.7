@@ -1,354 +1,277 @@
-Return-Path: <linux-kernel+bounces-825845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECF7B8CEF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:37:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43B1B8CEF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C91E1B21E14
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E4753A92EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821C0313287;
-	Sat, 20 Sep 2025 18:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7B931329B;
+	Sat, 20 Sep 2025 18:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYXuCmjz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOVJJPho"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F60D1AF0AF;
-	Sat, 20 Sep 2025 18:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83B82ED85D
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 18:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758393461; cv=none; b=AKz3feoPxFaZRXMgpWlh41rsMCLOtgFxdzhqJZ4Jh/X7RmaKGGboEbi8Umxs9hacSQIZqvxwiSoy8VNMcJPQ+GUVsifJIsn9F8AdNShoDtWOrx/HFv812fF1C5nSC9XP06lYjaO96eFCIT1QcPYK05JcVPx0wK5mlsPUuGZnviE=
+	t=1758393761; cv=none; b=a4uCDVMHWDxgq5aQ00oJn0yKT9pkyb96aiEFGb8gfu7YoHmfuvJjpW+MmJBZkgUj3FZKXHFB0gqJ6zRgawVP/1qPpyiJ8pmWkDiphG3Vooc841OaJQSwHtwboCMz+w5CbkQxU1gM2PHWGhJjVovj6zVAjhuzxxUrLFacNLNBJs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758393461; c=relaxed/simple;
-	bh=iCSylAv93zCUppqLF9OkTeWwtoRe8xc76Vs6biiXuuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkU5n9nQOIO1dAZRym6AR9KfkkiwByfMwIxeD+PIWCenS4kxqtCFb7QCy+FcUZuHHaFEVPeWmVZrJNbBh6SHMAbPUXfWFljrE6X5acd4q47/fzBRx8SjyNwFrE3dIGUqKWjdYZpvCZXog6gL1lRAY+T9skvDKkcTwZWPLjIfwN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYXuCmjz; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758393460; x=1789929460;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iCSylAv93zCUppqLF9OkTeWwtoRe8xc76Vs6biiXuuA=;
-  b=IYXuCmjzQYTZtUhDmWGUu5nvfJUQy71yeMOVLdXIbPBO3bK/aKd4zPuT
-   XweefddPAmh1EvfnYdQofTd8JiwLoHW/1FXWYpKSUGhVjKnyK6m0tf2bO
-   ETL9EkfV+ZwiXIs6i6JuVlNF6Vk32dDfOL6saEqBmXkIx7uwVOeUhiKx0
-   tD+ekC8d50r9+YLW0yYNWoo52S4DO2TDJo/PX70UN5Tt9253bkGxyeYWv
-   2czQXc6J9b+6FOxxX93wJsx9F9fyDig4SXcwVzO0AFfStEj1cJcEgBSEc
-   ysdubVEtBBs6T4URTuaMIS+ITtjnHT6DMkwi8zkY2LzzFOemLlTGWtjeo
-   A==;
-X-CSE-ConnectionGUID: qVQwxTpZSsO6q+peAFAhTw==
-X-CSE-MsgGUID: +e4CqfA6RbKawyaXf8mEXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="71338532"
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="71338532"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 11:37:39 -0700
-X-CSE-ConnectionGUID: 7uzSBtwqRPi0r9v6cgcLbQ==
-X-CSE-MsgGUID: 6rHf7XkzRWCj7l/x+VrB4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="180140357"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 20 Sep 2025 11:37:36 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v02Sj-0005fX-0l;
-	Sat, 20 Sep 2025 18:37:33 +0000
-Date: Sun, 21 Sep 2025 02:36:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eric =?iso-8859-1?Q?Gon=E7alves?= <ghatto404@gmail.com>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] Input: add support for the STM FTS2BA61Y
- touchscreen
-Message-ID: <202509210247.oVPW8pop-lkp@intel.com>
-References: <20250920014450.37787-3-ghatto404@gmail.com>
+	s=arc-20240116; t=1758393761; c=relaxed/simple;
+	bh=b4iQcdrS7bm3TOzXBHQmSBJ0/wI6ZrKBIZ5i97t6ofk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z9hH9BmcNejklNy1ZZMLKU/rw5bIFQnHsUAyTrOEr2ir4aR4SmsRdF54Zg/H0laXBv7LV3dpKbLL812YmCs2X5xqYrDK5Go9cPOlSd6JaG2SmS/ig2BsnGRYLgrdu439oNTKjudkLzrUC9nLej7cWCjbJdRyEtPn5AutoaDRYlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hOVJJPho; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b0787fdb137so475687566b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758393758; x=1758998558; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9NxDiyVE+IXDojhyIwx6QVVRuh9HJm0jkyes3N1YF5g=;
+        b=hOVJJPhoXtHEqBlOzohdnEewrGKMxEaA0ElMLZEKRrDKE0DY5yQkuRFN86zUZ2L1vX
+         /KS1xB3zgn1a8g9lowk1Sf66kFakKcJoSevEfgvw2JbQ6cmggW3/85bPU5R0RUZsOql3
+         4LfxDgnqpYr00KJZHAxCAZJ4Rap2BdM+kUkEWF5G9bKizRuJ7v0tcnYMACo5UhccT6uF
+         USCUqsHsq1tWMHa5FzD7mZUJQxHjPNnphRNuIsrxDU6f5s1bAZxfLar3TIBL2fr/hOjw
+         94PEXO0KojBJO+ZbqGa7Xiwme+B5sXI71pUslrv7opCkBNigGZxiB5Qj9E/J93QIwSDV
+         t6yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758393758; x=1758998558;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9NxDiyVE+IXDojhyIwx6QVVRuh9HJm0jkyes3N1YF5g=;
+        b=XrjyHhz7ZJn82vh8/fOMcUN9rh2APLU87KLRyAOR+qvLBJA5H2YwOuBBb8DEunU493
+         6CtIIz08wI+K03AlRhR9USZCottp1gI7Ub0TlWnPGxlZ8dyJrkmRfZXT9zY2riVm++OI
+         YUWFVn0BNp4GFBWajthf7kfuLb9yOUaHgP5NlBZ3RBGHhUxD1luE7YS+H03mZTHXBFa0
+         t2iW7dqEhhB1NQQjRy5ZkKDomSMJRc+KAsN/7MnWRmaV2DnHSSpTtKADtHzet9PuMHE4
+         kyHun4Rp9K8XLopEa1gTr/93hGDs6VtPbjR8Oxi7zQWvQotEwvUnvGsaLHq0tjF7BmOB
+         78aA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIdUvi82/LRWDetxuW7FQxnHlccYZ95hgU22HxRsuffggcOmQVLaw1lcnrwzqf5BL5kSKD0VtAcut83mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlIocmOUJmxLwMGEut7TthOM9MWcMH7XakQQ8+v2K9RqhIYYVK
+	jEOIfdXeJ9aXBq6p7Tk8j62VHHaoESgEZQOWCGh/0Kk0dHIpCVL3ILzC
+X-Gm-Gg: ASbGncsjkyk2+2D1b0bCphN3R3cgl+sBmHJgq7VpCUNwXWpIVEWUMjkzRxH7Cw2q2Mc
+	IUt9YybV+sFUNspS6ttHkNoYKlaFzmC1mb4mJr4f6wo0BK6tbQ94U2cw/hiSs3K2VppV66UfQ80
+	SdT49Reh9866jis1YmaQZH0lzEI6IXwMcXWRhAvqs3+mIvZRE606Rkeex8NvqcEuI1CdO5RNfHz
+	53Xgssw0K0bruigkAOAehQUhsJknjhx6r9hY1mBaSUDmj1BGsOvcZ9tSm2nwXoqerWT33J5v14u
+	OENQrZ6S/cnpG82CuL70hbmPD7xLbJpbFsWU+zOcY8BAHeDNNzED4urZiHkxr+FcrMSrCJHnoVl
+	925OMx3UK9+EJhYJoJEs4
+X-Google-Smtp-Source: AGHT+IEDshzckFycO+xGiBprkDL29YK8gjf/GJZWTM+8ZZ+6pf0FVfnBi6fgSJbnhEqUg3RN7Tmd1w==
+X-Received: by 2002:a05:6402:208a:b0:61d:3bca:f2fc with SMTP id 4fb4d7f45d1cf-62fc0a6d1d4mr6191583a12.31.1758393757754;
+        Sat, 20 Sep 2025 11:42:37 -0700 (PDT)
+Received: from [127.0.1.1] ([46.53.240.27])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-62fa5f28511sm5539942a12.40.2025.09.20.11.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 11:42:37 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Sat, 20 Sep 2025 21:42:30 +0300
+Subject: [PATCH v5] power: supply: max77705_charger: implement aicl feature
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250920014450.37787-3-ghatto404@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250920-max77705_77976_charger_improvement-v5-1-aab0aef82cc4@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJX1zmgC/5XOy07EIBQG4FeZsBaHa6GufA9jGqCHlqQ3oeKYS
+ d9d6kJH3dTlfy5f/itKEAMk9HC6ogg5pDBPJci7E3K9mTrAoS0ZMcIk0Zzg0VyUUkQ2StWqasp
+ R7CA2YVzinGGEacXAvaDKemNkhQpkTQJso5lcv1NWnNNq4suwguun8xf4mqxrlvmtaC0MIUN83
+ 7+XCD5cPis+PZfch7TOZbU3znSf/qtcpphgKNvWct8Kzh670YTh3s0j2vnMvsma1IdIVkijW+a
+ tEYrK+jfJb0hKD5G8kFwywitdecP+kOKW1IdIUUhKwZV77YX+QW7b9gFhWkGUCwIAAA==
+To: Chanwoo Choi <cw00.choi@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758393754; l=5616;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=b4iQcdrS7bm3TOzXBHQmSBJ0/wI6ZrKBIZ5i97t6ofk=;
+ b=FIXsJuOL1CplmG6WJS4MaQinVdV1vH9A+L2lK01rvFi7eqtjgdRpS8iri/mtISyg+srvm8Dpx
+ xCyfi3qzOjtCkkhsRBwC/cGPY3diO+rQ6cF1XIk7PUzstno5gT1Yodn
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi Eric,
+Adaptive input current allows charger to reduce it's current
+consumption, when source is not able to provide enough power.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+This series consists of:
+- max77705: interrupt handling fix
+- max77705: make input current limit and charge current limit properties
+  writable
+- max77705: add adaptive input current limit feature
+- max77705: switch to regfields
+- max77705: refactoring
+- max77976: change property for current charge limit value
+---
+Changes in v5:
+- rebase on latest linux-next, dropping already applied patches
+- optimize code to drop is_aicl_irq_disabled variable
+- Link to v4: https://lore.kernel.org/r/20250918-max77705_77976_charger_improvement-v4-0-11ec9188f489@gmail.com
 
-[auto build test ERROR on dtor-input/next]
-[also build test ERROR on dtor-input/for-linus robh/for-next linus/master v6.17-rc6 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Changes in v4:
+- fix commit message
+- use IRQF_TRIGGER_NONE, because non physical irqs
+- minor rename refactoring
+- rebase on latest linux-next
+- patch reorder: put fixes patch first
+- aicl feature cleanup
+- Link to v3: https://lore.kernel.org/r/20250911-max77705_77976_charger_improvement-v3-0-35203686fa29@gmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Gon-alves/dt-bindings-input-Add-ST-Microelectronics-FTS2BA61Y-touchscreen/20250920-094849
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/20250920014450.37787-3-ghatto404%40gmail.com
-patch subject: [PATCH v1 2/2] Input: add support for the STM FTS2BA61Y touchscreen
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250921/202509210247.oVPW8pop-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509210247.oVPW8pop-lkp@intel.com/reproduce)
+Changes in v3:
+- move interrupt request before interrupt handler work initialization
+- Link to v2: https://lore.kernel.org/r/20250909-max77705_77976_charger_improvement-v2-0-a8d2fba47159@gmail.com
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509210247.oVPW8pop-lkp@intel.com/
+Changes in v2:
+- fix charger register protection unlock
+- Link to v1: https://lore.kernel.org/r/20250830-max77705_77976_charger_improvement-v1-0-e976db3fd432@gmail.com
+---
+Changes in v5:
+- add _MS suffix to AICL_WORK_DELAY
+- optimize code to drop is_aicl_irq_disabled variable
 
-All errors (new ones prefixed by >>):
+Changes in v4:
+- fix intendation
+- use IRQF_TRIGGER_NONE, because this is not physical irq
+- use dev_err_probe instead of pr_err
+- remove excessive chgin irq request
+- remove pr_infos
+---
+ drivers/power/supply/max77705_charger.c | 55 +++++++++++++++++++++++++++++++++
+ include/linux/power/max77705_charger.h  |  4 +++
+ 2 files changed, 59 insertions(+)
 
-   drivers/input/touchscreen/fts2ba61y.c: In function 'fts2ba61y_wait_for_ready':
->> drivers/input/touchscreen/fts2ba61y.c:250:25: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-     250 |                 stype = FIELD_GET(FTS2BA61Y_MASK_STYPE, buffer[0]);
-         |                         ^~~~~~~~~
-   drivers/input/touchscreen/fts2ba61y.c: In function 'fts2ba61y_irq_handler':
->> drivers/input/touchscreen/fts2ba61y.c:442:9: error: implicit declaration of function 'usleep'; did you mean 'fsleep'? [-Wimplicit-function-declaration]
-     442 |         usleep(1);
-         |         ^~~~~~
-         |         fsleep
+diff --git a/drivers/power/supply/max77705_charger.c b/drivers/power/supply/max77705_charger.c
+index b1a227bf72e2..ff1663b414f5 100644
+--- a/drivers/power/supply/max77705_charger.c
++++ b/drivers/power/supply/max77705_charger.c
+@@ -40,6 +40,18 @@ static enum power_supply_property max77705_charger_props[] = {
+ 	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
+ };
+ 
++static irqreturn_t max77705_aicl_irq(int irq, void *irq_drv_data)
++{
++	struct max77705_charger_data *chg = irq_drv_data;
++
++	disable_irq(chg->aicl_irq);
++
++	queue_delayed_work(chg->wqueue, &chg->aicl_work,
++		     msecs_to_jiffies(AICL_WORK_DELAY_MS));
++
++	return IRQ_HANDLED;
++}
++
+ static irqreturn_t max77705_chgin_irq(int irq, void *irq_drv_data)
+ {
+ 	struct max77705_charger_data *chg = irq_drv_data;
+@@ -445,6 +457,33 @@ static const struct power_supply_desc max77705_charger_psy_desc = {
+ 	.set_property = max77705_set_property,
+ };
+ 
++static void max77705_aicl_isr_work(struct work_struct *work)
++{
++	unsigned int regval, irq_status;
++	int err;
++	struct max77705_charger_data *chg =
++		container_of(work, struct max77705_charger_data, aicl_work.work);
++
++	regmap_read(chg->regmap, MAX77705_CHG_REG_INT_OK, &irq_status);
++
++	if (!(irq_status & BIT(MAX77705_AICL_I))) {
++		err = regmap_field_read(chg->rfield[MAX77705_CHG_CHGIN_LIM], &regval);
++		if (err < 0)
++			return;
++
++		regval--;
++
++		err = regmap_field_write(chg->rfield[MAX77705_CHG_CHGIN_LIM], regval);
++		if (err < 0)
++			return;
++
++		queue_delayed_work(chg->wqueue, &chg->aicl_work,
++		     msecs_to_jiffies(AICL_WORK_DELAY_MS));
++	} else {
++		enable_irq(chg->aicl_irq);
++	}
++}
++
+ static void max77705_chgin_isr_work(struct work_struct *work)
+ {
+ 	struct max77705_charger_data *chg =
+@@ -617,6 +656,12 @@ static int max77705_charger_probe(struct i2c_client *i2c)
+ 		goto destroy_wq;
+ 	}
+ 
++	ret = devm_delayed_work_autocancel(dev, &chg->aicl_work, max77705_aicl_isr_work);
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to initialize interrupt work\n");
++		goto destroy_wq;
++	}
++
+ 	ret = max77705_charger_initialize(chg);
+ 	if (ret) {
+ 		dev_err_probe(dev, ret, "failed to initialize charger IC\n");
+@@ -632,6 +677,16 @@ static int max77705_charger_probe(struct i2c_client *i2c)
+ 		goto destroy_wq;
+ 	}
+ 
++	chg->aicl_irq = regmap_irq_get_virq(irq_data, MAX77705_AICL_I);
++	ret = devm_request_threaded_irq(dev, chg->aicl_irq,
++					NULL, max77705_aicl_irq,
++					IRQF_TRIGGER_NONE,
++					"aicl-irq", chg);
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to Request aicl IRQ\n");
++		goto destroy_wq;
++	}
++
+ 	ret = max77705_charger_enable(chg);
+ 	if (ret) {
+ 		dev_err_probe(dev, ret, "failed to enable charge\n");
+diff --git a/include/linux/power/max77705_charger.h b/include/linux/power/max77705_charger.h
+index 6653abfdf747..031c1dc2485d 100644
+--- a/include/linux/power/max77705_charger.h
++++ b/include/linux/power/max77705_charger.h
+@@ -123,6 +123,8 @@
+ #define MAX77705_DISABLE_SKIP		1
+ #define MAX77705_AUTO_SKIP		0
+ 
++#define AICL_WORK_DELAY_MS		100
++
+ /* uA */
+ #define MAX77705_CURRENT_CHGIN_STEP	25000
+ #define MAX77705_CURRENT_CHG_STEP	50000
+@@ -185,7 +187,9 @@ struct max77705_charger_data {
+ 	struct power_supply_battery_info *bat_info;
+ 	struct workqueue_struct *wqueue;
+ 	struct work_struct	chgin_work;
++	struct delayed_work	aicl_work;
+ 	struct power_supply	*psy_chg;
++	int			aicl_irq;
+ };
+ 
+ #endif /* __MAX77705_CHARGER_H */
 
+---
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+change-id: 20250830-max77705_77976_charger_improvement-e3f417bfaa56
 
-vim +/FIELD_GET +250 drivers/input/touchscreen/fts2ba61y.c
-
-   239	
-   240	static int fts2ba61y_wait_for_ready(struct fts2ba61y_data *ts)
-   241	{
-   242		u8 buffer[FTS2BA61Y_EVENT_BUFF_SIZE];
-   243		u8 cmd = FTS2BA61Y_CMD_READ_EVENT;
-   244		u8 status_id, stype;
-   245		int ret;
-   246	
-   247		for (int retries = 5; retries > 0; retries--) {
-   248			ret = fts2ba61y_read(ts, &cmd, 1, buffer, FTS2BA61Y_EVENT_BUFF_SIZE);
-   249	
- > 250			stype = FIELD_GET(FTS2BA61Y_MASK_STYPE, buffer[0]);
-   251			status_id = buffer[1];
-   252	
-   253			if (stype == FTS2BA61Y_EVENT_STATUSTYPE_INFO &&
-   254			    status_id == FTS2BA61Y_INFO_READY_STATUS) {
-   255				ret = 0;
-   256				break;
-   257			} else
-   258				ret = -ENODEV;
-   259	
-   260			msleep(20);
-   261		}
-   262	
-   263		return ret;
-   264	}
-   265	
-   266	static int fts2ba61y_reset(struct fts2ba61y_data *ts)
-   267	{
-   268		u8 cmd = FTS2BA61Y_CMD_REG_W;
-   269		/* the following sequence is undocumented */
-   270		u8 reset[FTS2BA61Y_RESET_CMD_SIZE] = { 0x20, 0x00,
-   271						       0x00, 0x24, 0x81 };
-   272		int ret;
-   273	
-   274		disable_irq(ts->spi->irq);
-   275	
-   276		ret = fts2ba61y_write(ts, &cmd, 1, &reset[0], FTS2BA61Y_RESET_CMD_SIZE);
-   277		if (ret)
-   278			return ret;
-   279		msleep(30);
-   280	
-   281		ret = fts2ba61y_wait_for_ready(ts);
-   282		if (ret)
-   283			return ret;
-   284	
-   285		enable_irq(ts->spi->irq);
-   286	
-   287		return 0;
-   288	}
-   289	
-   290	static int fts2ba61y_set_channels(struct fts2ba61y_data *ts)
-   291	{
-   292		int ret;
-   293		u8 cmd = FTS2BA61Y_CMD_READ_PANEL_INFO;
-   294		u8 data[FTS2BA61Y_PANEL_INFO_SIZE];
-   295	
-   296		ret = fts2ba61y_read(ts, &cmd, 1, data, FTS2BA61Y_PANEL_INFO_SIZE);
-   297		if (ret)
-   298			return ret;
-   299	
-   300		ts->max_x = get_unaligned_be16(data);
-   301		ts->max_y = get_unaligned_be16(data + 2);
-   302	
-   303		/* if no tx channels defined, at least keep one */
-   304		ts->tx_count = max_t(u8, data[8], 1);
-   305	
-   306		return 0;
-   307	}
-   308	
-   309	static int fts2ba61y_set_touch_func(struct fts2ba61y_data *ts)
-   310	{
-   311		u8 cmd = FTS2BA61Y_CMD_TOUCHTYPE;
-   312		u16 touchtype = cpu_to_le16(FTS2BA61Y_TOUCHTYPE_DEFAULT);
-   313	
-   314		return fts2ba61y_write(ts, &cmd, 1, (u8 *)&touchtype, 2);
-   315	}
-   316	
-   317	static int fts2ba61y_hw_init(struct fts2ba61y_data *ts)
-   318	{
-   319		int ret;
-   320	
-   321		ret = regulator_bulk_enable(ARRAY_SIZE(ts->regulators),
-   322									ts->regulators);
-   323		if (ret)
-   324			return ret;
-   325	
-   326		msleep(140);
-   327	
-   328		ret = fts2ba61y_reset(ts);
-   329		if (ret)
-   330			return ret;
-   331	
-   332		ret = fts2ba61y_set_channels(ts);
-   333		if (ret)
-   334			return ret;
-   335	
-   336		return fts2ba61y_set_touch_func(ts);
-   337	}
-   338	
-   339	static int fts2ba61y_get_event(struct fts2ba61y_data *ts, u8 *data, int *n_events)
-   340	{
-   341		int ret;
-   342		u8 cmd = FTS2BA61Y_CMD_READ_EVENT;
-   343	
-   344		ret = fts2ba61y_read(ts, &cmd, 1, data, FTS2BA61Y_EVENT_BUFF_SIZE);
-   345		if (ret < 0)
-   346			return ret;
-   347	
-   348		if (!data[0]) {
-   349			*n_events = 0;
-   350			return 0;
-   351		}
-   352	
-   353		*n_events = FIELD_GET(FTS2BA61Y_MASK_LEFT_EVENTS, data[7]);
-   354		if (unlikely(*n_events >= FTS2BA61Y_EVENT_COUNT)) {
-   355			cmd = FTS2BA61Y_CMD_CLEAR_EVENTS;
-   356			fts2ba61y_write(ts, &cmd, 1, NULL, 0);
-   357			*n_events = 0;
-   358			return -EINVAL;
-   359		}
-   360	
-   361		if (*n_events > 0) {
-   362			ret = fts2ba61y_read(ts, &cmd, 1,
-   363					     &data[1 * FTS2BA61Y_EVENT_BUFF_SIZE],
-   364					     FTS2BA61Y_EVENT_BUFF_SIZE * (*n_events));
-   365			if (ret)
-   366				return ret;
-   367		}
-   368	
-   369		return 0;
-   370	}
-   371	
-   372	static void fts2ba61y_report_coordinates(struct fts2ba61y_data *ts,
-   373						 u8 *event, u8 tid)
-   374	{
-   375		u8 major = event[4];
-   376		u8 minor = event[5];
-   377		u8 z = FIELD_GET(FTS2BA61Y_MASK_Z, event[6]);
-   378	
-   379		u16 x = (event[1] << 4) |
-   380			FIELD_GET(FTS2BA61Y_MASK_X_3_0, event[3]);
-   381		u16 y = (event[2] << 4) |
-   382			FIELD_GET(FTS2BA61Y_MASK_Y_3_0, event[3]);
-   383		u16 ttype = (FIELD_GET(FTS2BA61Y_MASK_TTYPE_3_2, event[6]) << 2) |
-   384			    (FIELD_GET(FTS2BA61Y_MASK_TTYPE_1_0, event[7]) << 0);
-   385	
-   386		if (ttype != FTS2BA61Y_TOUCHTYPE_NORMAL &&
-   387		    ttype != FTS2BA61Y_TOUCHTYPE_PALM &&
-   388		    ttype != FTS2BA61Y_TOUCHTYPE_WET &&
-   389		    ttype != FTS2BA61Y_TOUCHTYPE_GLOVE)
-   390			return;
-   391	
-   392		input_mt_slot(ts->input_dev, tid);
-   393		input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, true);
-   394		input_report_abs(ts->input_dev, ABS_MT_POSITION_X, x);
-   395		input_report_abs(ts->input_dev, ABS_MT_POSITION_Y, y);
-   396		input_report_abs(ts->input_dev, ABS_MT_TOUCH_MAJOR, major);
-   397		input_report_abs(ts->input_dev, ABS_MT_TOUCH_MINOR, minor);
-   398		input_report_abs(ts->input_dev, ABS_MT_PRESSURE, z);
-   399	
-   400		input_mt_sync_frame(ts->input_dev);
-   401		input_sync(ts->input_dev);
-   402	}
-   403	
-   404	static void fts2ba61y_report_release(struct fts2ba61y_data *ts, u8 tid)
-   405	{
-   406		input_mt_slot(ts->input_dev, tid);
-   407		input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, false);
-   408	
-   409		input_mt_sync_frame(ts->input_dev);
-   410		input_sync(ts->input_dev);
-   411	}
-   412	
-   413	static void fts2ba61y_handle_coordinates(struct fts2ba61y_data *ts, u8 *event)
-   414	{
-   415		u8 t_id = FIELD_GET(FTS2BA61Y_MASK_TID, event[0]);
-   416		u8 action = FIELD_GET(FTS2BA61Y_MASK_TCHSTA, event[0]);
-   417	
-   418		if (t_id > ts->tx_count)
-   419			return;
-   420	
-   421		switch (action) {
-   422		case FTS2BA61Y_COORDINATE_ACTION_PRESS:
-   423		case FTS2BA61Y_COORDINATE_ACTION_MOVE:
-   424			fts2ba61y_report_coordinates(ts, event, t_id);
-   425			break;
-   426	
-   427		case FTS2BA61Y_COORDINATE_ACTION_RELEASE:
-   428			fts2ba61y_report_release(ts, t_id);
-   429			break;
-   430		}
-   431	}
-   432	
-   433	static irqreturn_t fts2ba61y_irq_handler(int irq, void *handle)
-   434	{
-   435		struct fts2ba61y_data *ts = handle;
-   436		u8 buffer[FTS2BA61Y_EVENT_COUNT * FTS2BA61Y_EVENT_BUFF_SIZE];
-   437		u8 *event;
-   438		u8 event_id;
-   439		int n_events = 0;
-   440		int ret;
-   441	
- > 442		usleep(1);
-   443	
-   444		ret = fts2ba61y_get_event(ts, buffer, &n_events);
-   445		if (ret < 0) {
-   446			dev_dbg(&ts->spi->dev, "failed to get event: %d", ret);
-   447			return IRQ_HANDLED;
-   448		}
-   449	
-   450		for (int i = 0; i <= n_events; i++) {
-   451			event = &buffer[i * FTS2BA61Y_EVENT_BUFF_SIZE];
-   452			event_id = FIELD_GET(FTS2BA61Y_MASK_EVENT_ID, event[0]);
-   453	
-   454			if (event_id == FTS2BA61Y_COORDINATE_EVENT)
-   455				fts2ba61y_handle_coordinates(ts, event);
-   456		}
-   457	
-   458		return IRQ_HANDLED;
-   459	}
-   460	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Dzmitry Sankouski <dsankouski@gmail.com>
+
 
