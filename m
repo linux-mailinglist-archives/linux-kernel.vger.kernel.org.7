@@ -1,97 +1,112 @@
-Return-Path: <linux-kernel+bounces-825433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A71AB8BCAC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAACB8BCB5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 03:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37493B64B56
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A6F23A5BB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 01:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064C3154BE2;
-	Sat, 20 Sep 2025 01:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E051F0E34;
+	Sat, 20 Sep 2025 01:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="FswL6E+2"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="wnPugRXc"
+Received: from smtp153-162.sina.com.cn (smtp153-162.sina.com.cn [61.135.153.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935D2D7BF;
-	Sat, 20 Sep 2025 01:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15661E89C
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 01:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758331079; cv=none; b=Ob2P/6ZCun2LEFuUQU5f7m2yVKKzNyvssIIo2zEIQK9Y5mCMXhy5o0zRdSTdfI08F6sBKX2LZEXRlTWFAvpvFxWnNfPfbsmJUYleHkUJTp0bQdtq7YtgDUEIlH+QEvfzqhSRCtSo2+HS01cIJyuhMJ9Q+ucfdk7LRWsZwd2JRn8=
+	t=1758331808; cv=none; b=mDjoZKMYcwB0HrqUVG3AjhI9GAjvSa1CRmjVrePHYSo8l+COBncMtz67LtuZ8Z3GGJtmIctqRvuvVM2ul7PqftbLYTyne4Sr27iyJlDx/nwLV3BWJMJN221XK3fTN5GpEORwM90BSyKPjexHFIwaoO0iR7DdMXIqOLioN8UcrKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758331079; c=relaxed/simple;
-	bh=gNX0UEtxWFH/4imQdf3DNEHIZpIH4uDGmmcyj1MgVyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjdUycS4dmANC6S5qkijXRd1daQ1DpVE3zTM3expHQmYVr2YCQDkQ+2NfV7pOvB/od301lyPxL94M06NpQFbUYXj/OHTH0MXT8NpmPw4hgkfQEc/CbduXEA3OXLg0hOMnjBUwF+0ngGcG64FaHMsp/5CarbGACcuI2kDU/D1Kj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=FswL6E+2; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=3MlPQsyunBW34maCGd1e3dUneaaMq7GjyuvLhuEqxw0=; b=FswL6E+2c5CYBUnoqDD5o2bxMt
-	07gQL8LdvpfSZLQUkNObHngRg1pDHnAyrzlBsX8GbF1Px7Ckdvovp3NuKaBTiV6qDvqVrY/rfkNNO
-	YmMhHCPoDL2opPOpTMAxePeCWsY0DA2d2FAPYIyTOJ6sRMPlDpY5s4y33XcpTakZ7fibVZ27tVTe5
-	KIeB8OtlTI4/ZwEQ87IV1tkADie7aUNtUvvXIfn1HNxKVBNV/A8PykTAsrdX6nKem88E8tL0/WSDe
-	li6+Ncm5Qldhy5ft1GnxFQkhXFPdX+qp+oNjrxjJggv7/FLha/tplqbiFxfKZN3XbaBWtFaWp19oF
-	6VqShP6Q==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uzlye-006vYv-0M;
-	Sat, 20 Sep 2025 09:17:21 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 20 Sep 2025 09:17:20 +0800
-Date: Sat, 20 Sep 2025 09:17:20 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the crypto tree
-Message-ID: <aM4AoOSxD4SFo_Op@gondor.apana.org.au>
-References: <aM1bJqhtojdLhp3c@sirena.org.uk>
- <20250919204355.GHaM3AiwTM25LiOKAb@fat_crate.local>
+	s=arc-20240116; t=1758331808; c=relaxed/simple;
+	bh=4oUJ8fRFafzx6n0VbAgR32rVfDk9eWcgIP62WggzIvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p7uEJ0Caba86Q3Eva4hAtos4r/6tEl4fgWRJtzKH3iJ773ynAGcD0C4brhM6oelcCkZhfrBQVQwKq/bzyiAyFyq9bRh3N9+7EtIbf9rnwj8xDErj/q7kMIPDK1Kc8fGuTSGFWt3//C63AIF4M2Ib8oTLLwR5hZTX5afc+rEyask=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=wnPugRXc; arc=none smtp.client-ip=61.135.153.162
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758331800;
+	bh=fUJNDiMq/A590ogHAMfnSIouICh5WTLGefNsmeO014Y=;
+	h=From:Subject:Date:Message-ID;
+	b=wnPugRXcL7EiWCpMtS7JOrwwAQpFVMaRVau4MzWbYR1HDHH/GrNvnHar9DTjwJ9r4
+	 vhXcroB8K+XytfmO470KWzs5k7UloTsQy1AD2a9QVNW4WDVxHtbFEeRZFHgATecH1Y
+	 tt7RVupZ505mFiRDYt+EcaKs3kxDvtSoGGRLTrWM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68CE036D00007AC2; Sat, 20 Sep 2025 09:29:19 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8097736816550
+X-SMAIL-UIID: F782A7B096BA4B95B0DAEB1B212773C2-20250920-092919-1
+From: Hillf Danton <hdanton@sina.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.de>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v3 2/3] softirq: Provide a handshake for canceling tasklets via polling
+Date: Sat, 20 Sep 2025 09:29:07 +0800
+Message-ID: <20250920012910.7265-1-hdanton@sina.com>
+In-Reply-To: <20250918154937.RQqkeYxI@linutronix.de>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919204355.GHaM3AiwTM25LiOKAb@fat_crate.local>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 10:43:55PM +0200, Borislav Petkov wrote:
+On Thu, 18 Sep 2025 17:49:37 +0200 Sebastian Andrzej Siewior wrote:
+>On 2025-09-18 21:47:52 [+0800], Hillf Danton wrote:
+>> On Mon, 15 Sep 2025 09:39:33 +0200 Sebastian Andrzej Siewior wrote:
+>> >On 2025-09-05 18:15:01 [+0800], Hillf Danton wrote:
+>> >> 	CPU0			CPU1
+>> >> 	----			----
+>> >> 	lock A
+>> >> 				tasklet C callback
+>> >> 				lock A
+>> >> 	cancel tasklet B
+>> >> 	DEADLOCK-01
+>> >> 
+>> >> After this work could DEADLOCK-01 be triggered, given no chance for DEADLOCK-02 ?
+>> >> 
+>> >> 	CPU2			CPU3
+>> >> 	----			----
+>> >> 	lock A
+>> >> 				timer C callback
+>> >> 				lock A
+>> >> 	timer_delete_sync(timer B)
+>> >> 	DEADLOCK-02
+>> >
+>> > You are not supposed to acquire the lock, that is also acquired in the
+>> > callback, while canceling the timer/ tasklet.
+>> > Tell me please, how is this relevant?
+>> > 
+>> > If lock A is acquired on CPU0/ 2 then tasklet/ timer on CPU1/ 3 can't
+>> > make progress. Now CPU0/ 2 waits for the callback to complete. This
+>> > deadlocks as of today regardless of PREEMPT_RT and this change.
+>> > 
+>> In case of !RT, the chance for DEADLOCK-02 is zero because deadlock is
+>> detected based on per-timer instead of per-cpu.
 >
-> Pff, in hindsight those should probably all go through the crypto tree so that
-> there's no unnecessary conflicts.
-> 
-> Herbert, lemme know if I should undo them here and you take all three:
-> 
-> 648dbccc03a0 crypto: ccp - Add AMD Seamless Firmware Servicing (SFS) driver
-> e09701dcdd9c crypto: ccp - Add new HV-Fixed page allocation/free API
-> e4c00c4ce2aa x86/sev: Add new dump_rmp parameter to snp_leak_pages() API
+> But your "lock A" is global, isn't it?
+>
+IIUC whether lockA is global can be safely ignored here. DEADLOCK-02 can not
+be detected with !RT because by define the callback of timerB has nothing to
+do with timerC in addition to the current per-timer detecting mechanism.
 
-I think either way we will end up with conflicts.  If I merge
-them then we will get conflicts in x86/sev.  If you merge them
-then we get the conflicts in drivers/crypto.
-
-As the conflicts seem to be straightforward, how about we just
-keep things as it is and mention it to Linus when the merge window
-opens?
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+This work however adds per-cpu detecting mechanism that fails to tell the
+difference between timerB and timerC, thus false positive result comes. For
+example the callback of timerB does not acquire lockA.
 
