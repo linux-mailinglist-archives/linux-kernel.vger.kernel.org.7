@@ -1,150 +1,167 @@
-Return-Path: <linux-kernel+bounces-825570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4BFB8C3FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:36:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB38DB8C3D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8556F1C021F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2ACB7C39AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B772F2836A0;
-	Sat, 20 Sep 2025 08:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B073279DB4;
+	Sat, 20 Sep 2025 08:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="KIX9+q9k"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KzCDD84P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1235B2820DB
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0235277023
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:24:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758357394; cv=none; b=qVLFZOnPnWWD1Wa9HbLcyZ60x/XPmIp2S+iZrfVtZSSlHdr7LSpnbSKkrqjrzT0o1XPXey5f/URjhk/bEfPyXb3zbi8a6LspcRfQArV3gn03vWWBV9IO5beoIiIOzaktcJMYcDteLNaCb7SQAzaaa7pT8GhSMSIMAhuhKo38E+U=
+	t=1758356645; cv=none; b=UFpJmnnaGmuWEyjUAoUePq7Zk+aDUMDi4EoGXEBCqhthnl1FUDBs62Zyh2uhQNjlheiXUIwCh/odQXaN92whkheBCbF+x0n47IhTe4+VL/WFgP4BAr1wdIsnvkTmKz3qBH/mh5lI+5bN36RSPidceeUfW+EmfpaDzefSuXn4Kz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758357394; c=relaxed/simple;
-	bh=QJQGLbxn9lFCmMtOVMZa34rVYSu5IRYrBvI46GE1S7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=ka4CNchOED41fV1g3PorsLMrcobvIKA6xEpeTnhFQyEoN6Z8KR5rqWfx0wbpkdY4HRdJdGW7UnwLjp6wIYZQxyigz0wSci4vjjm6WSgqSO8hHe6fsvmcp4h1nGuB3jHG4BvbQ/NMmHsZBd6/wuiep2ajS2ZVX1rUfnFZZjELvh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=KIX9+q9k; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: Cc: From:
- References: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1758357391;
- bh=nhhXvyJU4Q/ep+pG2LVNeGtKFMmPOfCIGjE2903J/IY=;
- b=KIX9+q9krMXHdfedhQg37ioqSyXm2HvaKmHozGxjCB8pnvJXJdMAqwmHvyD7ALfiEmqt1h2j0
- +pRnDxh7Br8YNVVUZHlg1Jy1hTEwYfFN5F8ubFqFhM5vpTIkkrKYZ3/nRgLPy2mb8SFnOmjoONz
- y9Cl89sntnYdqk05VL4bpG1KoVUcqWUXvPgKb2X929FOZIKAVbRmAlQRzcoSggl9qrachs58cKb
- VKOLOerhcgs48oGHSd1hr4ERsKYl9s98T1/LGWhIDDDVfye5ILV2JsMXjE6Q85GqgiLGg3Mtyre
- flelavFiY7Og+bnLziYKhP4sPmE1mN6zBT3PR41AFvBA==
-X-Forward-Email-ID: 68ce627a528963d4864a57f8
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.2.14
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <07560892-6672-45a0-aa3d-79e47d145ff4@kwiboo.se>
-Date: Sat, 20 Sep 2025 10:14:45 +0200
+	s=arc-20240116; t=1758356645; c=relaxed/simple;
+	bh=YnYHhp0UWx6XtM/X67tIf+lKn9tz3bkw4GNRmkXRbv8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=If5HpYB9LNqfJzoY1sjS6Io5eVH/xhK2Ymr84i1UIEFV8f2RuwjtJ66IlZicIOBL0u4a1+syBH8a8rY+yX2OesFTOGG+XnrIVMxa9dFMhnAWivwb1hqMRJh7zSFyIwwqfnaC1kCCXwaxYByHy8k1pUDats/uwQfhm29+CADI0Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KzCDD84P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58D19C4CEFD
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758356645;
+	bh=YnYHhp0UWx6XtM/X67tIf+lKn9tz3bkw4GNRmkXRbv8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KzCDD84PSE0a+6xvX8MuJ9W5b4IwFfji0hSiIrcuqyFjHch8oDjbmtRkf606RoSVP
+	 3nKsM5hig0jTNTV+2EY6MBPqNQiDgfLEgRYtO3CRj+aXxwI2M1mMgBDHWr1zPEDl2H
+	 9+KDVba66jdYpONszXv81CtoMwiIztx3LsN2YNVVU1lBNQDMRFFoSEmBdA8/ZSUYTS
+	 feGqJZm+uVzcXW6wGj+HFuDEPN6ti5hAPA9JNLR9F8VER+slltFqNWBM6eoo5ECgFy
+	 zREbF37zmbtf2h7Nheh0olIYfxhvtTOnQNVGVKquQx44oD25EDmSq0P3jDnkdsGB+K
+	 ORBmnxF8drCpA==
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb7322da8so531627966b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 01:24:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXa5V8cjv22VcRVwRMJPNtNA8iU7xfRnik0g3y+VDIT/LyW5TLzHKY6glDj+oJEoYPaQaLkAaWZbTsuteg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpOgXkMErneMM8HR4Vf+eDDA39WTVxTWILIoAeIjy+8XR9FUdq
+	qtok8Cib/8afBG0+xI3S/n4RKoQSo56oR78p3s0WaA0DSWGSld4inrUxaiEwk5OQ0jRNw/zw/O5
+	XV7bui8S86N+YBBzQPgMYTsIvbIdWm4M=
+X-Google-Smtp-Source: AGHT+IE1V69IB770zqWYjhjaCj6tn8iJPPv0SBnhYKLAU9Ntgj5lSyQh1CuISoGxQ9p9ufFMB1R9rGUANEUSEmP/28o=
+X-Received: by 2002:a17:906:c155:b0:b24:3412:7cfe with SMTP id
+ a640c23a62f3a-b24f5b59e7dmr574572866b.63.1758356643803; Sat, 20 Sep 2025
+ 01:24:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: rockchip: correct uart mux for Radxa ZERO
- 3
-To: Ed Wildgoose <lists@wildgooses.com>
-References: <20250917114932.25994-1-lists@wildgooses.com>
- <20250917114932.25994-2-lists@wildgooses.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250917114932.25994-2-lists@wildgooses.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250909092707.3127-1-yangtiezhu@loongson.cn> <20250909092707.3127-2-yangtiezhu@loongson.cn>
+ <20250920061536.GA1460394@ax162>
+In-Reply-To: <20250920061536.GA1460394@ax162>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 20 Sep 2025 16:23:52 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5=w82CDx=1=PZjf4FVW_dGWe_e__QazwDTwE3kKXtPLQ@mail.gmail.com>
+X-Gm-Features: AS18NWDYHVIbI5779aN0UyncebCxN_ZOrrIzZhLpspFq65G-qD9jtCDFkKgouS4
+Message-ID: <CAAhV-H5=w82CDx=1=PZjf4FVW_dGWe_e__QazwDTwE3kKXtPLQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] LoongArch: Make LTO case independent in Makefile
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Miguel Ojeda <ojeda@kernel.org>, 
+	WANG Rui <wangrui@loongson.cn>, rust-for-linux@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ed,
-
-On 9/17/2025 1:49 PM, Ed Wildgoose wrote:
-> The rk3566 has multiplexed pins and the uarts can be moved to a choice
-> of 2 pin groups. The default rk356x-base.dtsi appears to default to mux0
-> for all uarts, however, specific hardware might choose to implement
-> alternatives
-> 
-> The Radxa zero 3 shows that is uses M1 for uarts:
-> - uart4
-> - uart5
-> - uart9
-> 
-> These aren't normally enabled, but we should at least correct the
-> default pinctrl definitions. Without these changes there will be
-> conflicts with mmc0/mmc1, leading to the SD or eMMC going missing.
-
-Please rephrase the commit subject and message, currently it seem to
-imply that there is something broken that needs fixing, however this
-mainly make it easier to apply an overlay that does not include
-description of any changed behavior for pins on the 40-pin header.
-
-Current expected behavior of the hw, using pins on 40-pin header as gpio
-pins should already be correctly described in this board device tree.
-
-My original intent when submitting board device trees, such as this one, 
-is that a device tree overlay will fully describe any required changes.
-Also I do not expect that using an overlay intended for an old vendor
-kernel device tree will work as-is on mainline kernel device tree.
-
-> 
-> Signed-off-by: Ed Wildgoose <lists@wildgooses.com>
-> ---
->  .../boot/dts/rockchip/rk3566-radxa-zero-3.dtsi    | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-> index 1ee5d96a4..41b3c4403 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-> @@ -492,6 +492,21 @@ &uart2 {
->  	status = "okay";
->  };
->  
-> +&uart4{
-
-nit: missing space
-
-> +    pinctrl-names = "default";
-> +    pinctrl-0 = <&uart4m1_xfer>;
-
-nit: seem to use space instead of tab, same for rest.
-
-Regards,
-Jonas
-
-> +};
-> +
-> +&uart5 {
-> +    pinctrl-names = "default";
-> +    pinctrl-0 = <&uart5m1_xfer>;
-> +};
-> +
-> +&uart9 {
-> +    pinctrl-names = "default";
-> +    pinctrl-0 = <&uart9m1_xfer>;
-> +};
-> +
->  &usb_host0_xhci {
->  	status = "okay";
->  };
-
+On Sat, Sep 20, 2025 at 2:15=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
+g> wrote:
+>
+> Hi Tiezhu,
+>
+> On Tue, Sep 09, 2025 at 05:27:06PM +0800, Tiezhu Yang wrote:
+> > LTO is not only used for Clang, it maybe used for Rust, make LTO case o=
+ut
+> > of CONFIG_CC_HAS_ANNOTATE_TABLEJUMP in Makefile.
+> >
+> > This is preparation for later patch, no function changes.
+> >
+> > Suggested-by: WANG Rui <wangrui@loongson.cn>
+> > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> > ---
+> >  arch/loongarch/Makefile | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+> > index a3a9759414f4..9d80af7f75c8 100644
+> > --- a/arch/loongarch/Makefile
+> > +++ b/arch/loongarch/Makefile
+> > @@ -102,16 +102,16 @@ KBUILD_CFLAGS                   +=3D $(call cc-op=
+tion,-mthin-add-sub) $(call cc-option,-Wa$(comma)
+> >
+> >  ifdef CONFIG_OBJTOOL
+> >  ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
+> > +KBUILD_CFLAGS                        +=3D -mannotate-tablejump
+> > +else
+> > +KBUILD_CFLAGS                        +=3D -fno-jump-tables # keep comp=
+atibility with older compilers
+> > +endif
+> > +ifdef CONFIG_LTO_CLANG
+> >  # The annotate-tablejump option can not be passed to LLVM backend when=
+ LTO is enabled.
+> >  # Ensure it is aware of linker with LTO, '--loongarch-annotate-tableju=
+mp' also needs to
+> >  # be passed via '-mllvm' to ld.lld.
+> > -KBUILD_CFLAGS                        +=3D -mannotate-tablejump
+> > -ifdef CONFIG_LTO_CLANG
+> >  KBUILD_LDFLAGS                       +=3D -mllvm --loongarch-annotate-=
+tablejump
+> >  endif
+> > -else
+> > -KBUILD_CFLAGS                        +=3D -fno-jump-tables # keep comp=
+atibility with older compilers
+> > -endif
+> >  endif
+> >
+> >  KBUILD_RUSTFLAGS             +=3D --target=3Dloongarch64-unknown-none-=
+softfloat -Ccode-model=3Dsmall
+> > --
+> > 2.42.0
+> >
+>
+> This change is now in -next as commit b15212824a01 ("LoongArch: Make LTO
+> case independent in Makefile"), where it breaks the build for clang-18,
+> as '--loongarch-annotate-tablejump' is unimplemented there but there is
+> no version check before using it.
+>
+>   $ make -skj"$(nproc)" ARCH=3Dloongarch LLVM=3D1 mrproper defconfig
+>
+>   $ scripts/config -d LTO_NONE -e LTO_CLANG_THIN
+>
+>   $ make -skj"$(nproc)" ARCH=3Dloongarch LLVM=3D1 olddefconfig vmlinuz.ef=
+i
+>   ld.lld: error: -mllvm: ld.lld: Unknown command line argument '--loongar=
+ch-annotate-tablejump'.
+>   ...
+>
+>   $ scripts/config -s CC_HAS_ANNOTATE_TABLEJUMP
+>   undef
+Hmm, maybe we need this?
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index ae419e32f22e..fcfa793f9bb0 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -115,7 +115,7 @@ ifdef CONFIG_LTO_CLANG
+ # The annotate-tablejump option can not be passed to LLVM backend
+when LTO is enabled.
+ # Ensure it is aware of linker with LTO,
+'--loongarch-annotate-tablejump' also needs to
+ # be passed via '-mllvm' to ld.lld.
+-KBUILD_LDFLAGS                 +=3D -mllvm
+--loongarch-annotate-tablejump
++KBUILD_LDFLAGS                 +=3D $(call ld-option,-mllvm
+--loongarch-annotate-tablejump)
+ endif
+ endif
+>
+> Cheers,
+> Nathan
 
