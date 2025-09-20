@@ -1,100 +1,101 @@
-Return-Path: <linux-kernel+bounces-825614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B387B8C525
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:02:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28627B8C52E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ADC97AB95F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F681BC5CB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9589629A31C;
-	Sat, 20 Sep 2025 10:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856502F60AD;
+	Sat, 20 Sep 2025 10:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bbEK8xJp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="VAoCn2Hj"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2402561B6;
-	Sat, 20 Sep 2025 10:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758362541; cv=none; b=VFIFFVmia5aLushfoXQ5xwtCojju1qWQuDa04+JcVS2NdfcQN6ZzFlc1JmlZv87cAIeG9OPUwSxalNt2K+t/5S8q4eAS4iahGbczPzDsVL7pQT+tVKaNoubcWFlaQsfpdErxTEkq+QrO1zH6OC1iQqOmus0xpdL99Dnk4g6IHWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758362541; c=relaxed/simple;
-	bh=pjWQn1/LW9OFDqO1KE6stnw1H6OgwFiK0+4cubwXWGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BsMsFXOPfLv4PDB7GfpFc32kVHbk2gaaZTiMcP2LXp0bwNEwRBU/98Qg/3zCLh+LTtjYRHbwOzwVhbzKUjpVWae6q5Ktb284IW153J8FqQohydxNY461tTJw/ilhPDjnuH5j1nTlnN+d6muESekUfwaXlnC9K+3YXx5OZ8ey6F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bbEK8xJp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 01F0A40E016A;
-	Sat, 20 Sep 2025 10:02:14 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id lRoSpv873p_n; Sat, 20 Sep 2025 10:02:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1758362530; bh=YR/0SfpcFco9aMO/lrccoZg2WaByBkepDkeRZMp93As=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bbEK8xJpAE1U8qSplRYwY+Kd69QfBKkLFiVkL3sVvbKfNHJ/w5KKmRRh93+K4jv2G
-	 zdNb4OWH7uaDmaqMtE8V8H3HxZCfx73UJw+v8cXWsYOTh6Sp7gOXUCKu98ji0dtjAa
-	 VcijrnkxkuWY77j91FzMM7AaxfzKWfUPbQqU0nKXCbgKWTonT4XMxoLLVEnAUuWtTf
-	 qXqO44oozXqy3Sw8vM+Hyw640p0IvFaJKZhmzA/n4bVtAXqGwfiwBTndCb2NvJK6RI
-	 FMg7ZkWUAUU+KiTBSmdGugRlYRqYFti9mvIBqTS5wUzfHYp3Xxqftgfmlrgz4oMJnR
-	 QwYPPypJumA/1JyW7LxauEccezyH1+gFU47K54vc+mI3dRIbBPZHeTd/PsHTJcMh0R
-	 VXiQI0vY4S3BbdAcy5Ulaj2IQZNstlgF6a2SRFmzgdE7TeStQDblx/jmrzXIATg8tN
-	 /3GVRAiVUBSQAZTiIwO5VuD0l8p5gwmXPbpHfaiHBlXMzo4h4dq68PfIoIRp5mvCnF
-	 4EdkJZY3NMamICgu0SKcRvMqtXEyO/IOXVhpv7FzoC2Yu1u0PcEeHGAsmKtVleoXST
-	 iZcBVzgcbUoPQvjGenRsVeMaBWJXENBjzd+DrdjdIUnp+4YWoAH6bUfPaqo7tp6pME
-	 ahHiAdt2XXs+yUbkSLrQ4aVE=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id C73FA40E015D;
-	Sat, 20 Sep 2025 10:02:00 +0000 (UTC)
-Date: Sat, 20 Sep 2025 12:01:53 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the crypto tree
-Message-ID: <20250920100153.GAaM57kWMAzmo__hDl@fat_crate.local>
-References: <aM1bJqhtojdLhp3c@sirena.org.uk>
- <20250919204355.GHaM3AiwTM25LiOKAb@fat_crate.local>
- <aM4AoOSxD4SFo_Op@gondor.apana.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068EB1FE471;
+	Sat, 20 Sep 2025 10:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758362680; cv=pass; b=dMKs5ogf1ZjjxbK2prLIZSXaXpn0fpd/UOxv7fTOA8aQMmgNtcjEklOPxT/3vXYjdipMzhWm0UwYmEzYtPyVm+pNZMt69DRGaZzYxKkzAdjuKayaBYqur8bMtmY0pVKKkMIdln5Ajuzbl35V3mT8JThFwCcfhXAo9KgOm65G5QU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758362680; c=relaxed/simple;
+	bh=DVuDMeUkFM91/7S1N28fNZvOt8tT9a8bTnz4V9jbnDo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSkHByLgZY7Vd1E/evaKX3XZkZhphNmtdIfMq/jgKjlsHi5rWzWUMaw5O/uhJUqiir7VmfvrDvF4FhCNixIVGysArpn5ltlOqivMzVNZNdiYmrR0WZsKtueccQOeSfeij6uekpbFVJKLGA4pEjMo3Xtf4OqvucvizAHtoNGMyeY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=VAoCn2Hj; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1758362660; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BnQcmQ30p3f85UJedjH+2FrynM2toDEDldM69pnD+aBd5GVFTAx+GPzn80iwMY5N9aIsGFM7pX4hv8g5Lf65D4r4uDl4GJXoq6F7kPXvORcnb90sYgfI9whLf7hLpmYGritb22qyM8CEWwk8MMBSzDT7QfRyisgjqGklOe5DoWA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1758362660; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=scMBsq9OJ2+85ITVv5uYxeQFUskD5/jOHmUAM+DzTIY=; 
+	b=TeSdEkz7pkA1pD9Ax8HX06pcIZYRDrvxbxgsmceQEB3Er+tPl3oG/73BxL4OO2FLJAiauTbnap5qPbFDUNsg7ykXONS5bBsX0/vBcmxh4xOT6uggYDOKnIoMNdzVdGsq7REASbtr7qKV2HWoj26PbqKSpI7tLXZtWfHVIWfixMk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1758362660;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=scMBsq9OJ2+85ITVv5uYxeQFUskD5/jOHmUAM+DzTIY=;
+	b=VAoCn2Hj26fQA6XPzzZuYaE7yBqJj4sMTFtp8v6VBOaNuHEJa+I3i32QbRsFzFtP
+	q3gLyQvX4iyU2ZSYYOL2qGau6uxzMEGo/En73+nck1Eq4AIh6ohCh8VJSno3uIShZBL
+	lMxB8wfYPQg57R0w9syWfwxYE9VJKGsxcJM+BpBU=
+Received: by mx.zohomail.com with SMTPS id 1758362658925615.9865317087117;
+	Sat, 20 Sep 2025 03:04:18 -0700 (PDT)
+Message-ID: <64cc0632-37dd-4070-9158-3dab69e1ad27@yukuai.org.cn>
+Date: Sat, 20 Sep 2025 18:04:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aM4AoOSxD4SFo_Op@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] md/md-llbitmap: Remove unneeded semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, song@kernel.org, yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250910091912.25624-1-nichen@iscas.ac.cn>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <20250910091912.25624-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sat, Sep 20, 2025 at 09:17:20AM +0800, Herbert Xu wrote:
-> As the conflicts seem to be straightforward, how about we just
-> keep things as it is and mention it to Linus when the merge window
-> opens?
+在 2025/9/10 17:19, Chen Ni 写道:
 
-Ok, sure, sounds good.
+> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
+>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>   drivers/md/md-llbitmap.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/md/md-llbitmap.c b/drivers/md/md-llbitmap.c
+> index 3337d5c7e7e5..0f15428b2403 100644
+> --- a/drivers/md/md-llbitmap.c
+> +++ b/drivers/md/md-llbitmap.c
+> @@ -378,7 +378,7 @@ static void llbitmap_infect_dirty_bits(struct llbitmap *llbitmap,
+>   		case BitClean:
+>   			pctl->state[pos] = BitDirty;
+>   			break;
+> -		};
+> +		}
+>   	}
+>   }
+>   
 
-Thx.
+Applied to md-6.18
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks
+Kuai
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
