@@ -1,194 +1,120 @@
-Return-Path: <linux-kernel+bounces-825568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B9AB8C3EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:31:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D37DB8C3F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F60058551C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:31:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F28D585B2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC7927056B;
-	Sat, 20 Sep 2025 08:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVMXRi7a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B907279DAE;
+	Sat, 20 Sep 2025 08:36:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8237A55;
-	Sat, 20 Sep 2025 08:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB6626E16E
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758357074; cv=none; b=i22gCSpmIwGEOeoJ6ptnf6I2yf+JgYNh++gj0iQmRXc/KxacS1Kb4aCIq8Ah1fPSFVxxEXZO3cRDdGWyurFofAbxWWywwwx/moA7IBUWEfkMHIn5qL3CHISl2gwrBbmWF8LcGtXQk5vCEpVNv+/5FCBvoocVPkcC7AnHRigZWVQ=
+	t=1758357368; cv=none; b=ZR09Ra5yX93y3XMBYbIUHbjgnL7dg/HooZW9q9CUKzv3UUyCLUvSlsvBE7cDm8OhpMhAx8yjDhwHHAMm08trpDcISDStx02b1zrSsiBN3LBnzPYduzjVPQCOVUHrH3/rvW+BnN2/3XkmCNw9k+zT58ZGwcZBZtI2q21qYSjWEv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758357074; c=relaxed/simple;
-	bh=iFDEz/KYezwMp/g+SvLqizpBoo1YifpObtw2ZOqaiMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvwasZ+1VNSq/7AbUTD6kk0eW7UnM8+LkpHuije0XBPJSOBMqJtIf5cmoOYhUTsfjbYfXj31D9r4jArkHi/D5qAjdRmIHssrLiKjw5yyLnNBl94kZUcEFM0nBhKUASpOszuswS098tBIgIQ/e5nZ0HN7GzjrjM7jxHws8I/ZODI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fVMXRi7a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CB10C4CEEB;
-	Sat, 20 Sep 2025 08:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758357074;
-	bh=iFDEz/KYezwMp/g+SvLqizpBoo1YifpObtw2ZOqaiMU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fVMXRi7a/LXkn5JmAaFdEnk7GZHH0VE2cmF/oRCCRCcgTjj34nviMSWVsc1UnzVzz
-	 +JvtVLgpFcAtMkA2HPZ5Q2Ru8JEsWdGbbHLqykPX5dNIqKxT8OTx9Pju8T5epWP8Qh
-	 fzuPGkpFdMO1FtczrdqI3O84SyM9wktJf6dMxhLaek3O9DyOxbBf743SMsTTz5b+2H
-	 p0dk9yPV5B58VZg20ptdt/9UngYSNSAOmjrQvN4D822S6H/zIAn4f4HCTpE29CVEg1
-	 Ifap3+Osb+Vx+arqxcSUZBzPILJVoIi8u7AnAs76QZW8x/FeH2iHtXrm4SyCkPrLtL
-	 9PPx6VtDAa2Ug==
-Date: Sat, 20 Sep 2025 14:01:03 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
-	qiang.yu@oss.qualcomm.com, mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com, 
-	shradha.t@samsung.com, quic_schintav@quicinc.com, inochiama@gmail.com, 
-	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com, 
-	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v2 10/10] PCI: keystone: Add support to build as a
- loadable module
-Message-ID: <5cmkdeo6he3w5a3sqk5ptwwnv6oad5tl3xoll4knved2mo4y3h@enwotijbifvb>
-References: <20250912122356.3326888-1-s-vadapalli@ti.com>
- <20250912122356.3326888-11-s-vadapalli@ti.com>
- <6nj2fkhxixpkneh7pdvyveu6ogpm5phbpvaw6cog3bshm5spfh@kb64rycphtft>
- <8582c87e-5f0d-4712-b93f-c7524f051fd7@ti.com>
+	s=arc-20240116; t=1758357368; c=relaxed/simple;
+	bh=WtO4BQ4XzaiKH9+tSbiy/KNwIU/ONqEUDyyTJC80NMU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Bx2M7tGsM/a6WjH/v8Jg+Kcx3n/DAQiCDVy2B7U1x/XmVDp0Cd3RRmMzYe65dNo8HLJoOZkEo/LInOZdHlQrW4Qo6MfmzDQDhhezzBApjVTsADk8miPCraQ2fM4HlGu/ziUX9TT3O5Dzfdagxtfz6blPqVEY3lnkqXqvzx4TQfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42404e7bc94so73113105ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 01:36:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758357366; x=1758962166;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fa7S1j3nxvIIuHyHZje/UMThnEpT6+k/joXB5GB8W5Y=;
+        b=dEItdljRn4Vz7Ib5f8ushPrdnDFb/ngjPd6ry0fQ8OSVShvSnFuPdet9N/+YlV+4CU
+         GecfTVkY7ULHKcKT0uzYLzquATtYjCtiRHSbW/D53VKsMRtdFF5qg8LYrIb+U7zKACjH
+         ZU5X9CKuglnmTlZQh1YYpPZQprrzQ/dU0rNwce+wjsDOTZPHkjBbsebuiXRwLBp+jpMg
+         BDAZBapLrYfnJ/rWaG+NVEKHeS2jCz5p7k6XBz90PwsDGQxQK9qG6uSUAs67k8opUcA+
+         +IN3g7juHWWgoF10IXYGzXGnkgnXuI1gdZTFUB3RhkSwmB/Pz/RfgdvP+tGMVW9qsVnI
+         BmEg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5TJyv171LgAwl7ds1/WtqJFPINAPiP+TTVqpqA824vDxd9ig+CnCemt88bf6MzmZYeS0/iCZQ4jAPcRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwM0MAYjsp0h8bYQlKSHKiLYy4MFRCedqSRCNYARMg7cyDMB1CB
+	M7HNi2nqgXONfL7GY6zot/JoGzxSDhEQxANE9/IA4dhNLeFv5HUOxQzJkOTaC/KmjrQt8mKBg5m
+	32l6a/q6vVbF2b4kb5NjTuYuiWOT8TAZ3AmOSHPNI0CUsE0IK/wjZCvh9UUc=
+X-Google-Smtp-Source: AGHT+IFxr2211ej0Wcq9mt5AXnHFZV24VB7uSkblL/31YT9b7+1Z27yoKk42BfAR/77Qr9FWQgwenXdi7/QWATf2Q2f50Kz8ospy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8582c87e-5f0d-4712-b93f-c7524f051fd7@ti.com>
+X-Received: by 2002:a05:6e02:348b:b0:424:8b85:d2f6 with SMTP id
+ e9e14a558f8ab-4248b85e3bamr33738945ab.31.1758357365738; Sat, 20 Sep 2025
+ 01:36:05 -0700 (PDT)
+Date: Sat, 20 Sep 2025 01:36:05 -0700
+In-Reply-To: <20250920081133.778997-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ce6775.050a0220.139b6.0011.GAE@google.com>
+Subject: Re: [syzbot] [nfs?] WARNING in nsfs_fh_to_dentry
+From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 20, 2025 at 01:41:35PM +0530, Siddharth Vadapalli wrote:
-> On Sat, Sep 20, 2025 at 12:10:59AM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Sep 12, 2025 at 05:46:21PM +0530, Siddharth Vadapalli wrote:
-> > > The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
-> > > Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
-> > > that the 'pci-keystone.c' driver depends upon have been exported for use,
-> > > enable support to build the driver as a loadable module.
-> > > 
-> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > > ---
-> > > 
-> > > v1: https://lore.kernel.org/r/20250903124505.365913-12-s-vadapalli@ti.com/
-> > > Changes since v1:
-> > > - Based on the feedback from Manivannan Sadhasivam <mani@kernel.org> at:
-> > >   https://lore.kernel.org/r/2gzqupa7i7qhiscwm4uin2jmdb6qowp55mzk7w4o3f73ob64e7@taf5vjd7lhc5/
-> > >   builtin_platform_driver() is being retained in the driver due to which
-> > >   the change made in the v1 patch of replacing builtin_platform_driver()
-> > >   with module_platform_driver() has been discarded in this patch.
-> > > 
-> > >  drivers/pci/controller/dwc/Kconfig        |  6 +++---
-> > >  drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++++++++++++
-> > >  2 files changed, 25 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> > > index 34abc859c107..46012d6a607e 100644
-> > > --- a/drivers/pci/controller/dwc/Kconfig
-> > > +++ b/drivers/pci/controller/dwc/Kconfig
-> > > @@ -482,10 +482,10 @@ config PCI_DRA7XX_EP
-> > >  	  This uses the DesignWare core.
-> > >  
-> > >  config PCI_KEYSTONE
-> > > -	bool
-> > > +	tristate
-> > >  
-> > >  config PCI_KEYSTONE_HOST
-> > > -	bool "TI Keystone PCIe controller (host mode)"
-> > > +	tristate "TI Keystone PCIe controller (host mode)"
-> > >  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-> > >  	depends on PCI_MSI
-> > >  	select PCIE_DW_HOST
-> > > @@ -497,7 +497,7 @@ config PCI_KEYSTONE_HOST
-> > >  	  DesignWare core functions to implement the driver.
-> > >  
-> > >  config PCI_KEYSTONE_EP
-> > > -	bool "TI Keystone PCIe controller (endpoint mode)"
-> > > +	tristate "TI Keystone PCIe controller (endpoint mode)"
-> > >  	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
-> > >  	depends on PCI_ENDPOINT
-> > >  	select PCIE_DW_EP
-> > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> > > index e85942b4f6be..661e31b60a48 100644
-> > > --- a/drivers/pci/controller/dwc/pci-keystone.c
-> > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> > > @@ -17,6 +17,7 @@
-> > >  #include <linux/irqchip/chained_irq.h>
-> > >  #include <linux/irqdomain.h>
-> > >  #include <linux/mfd/syscon.h>
-> > > +#include <linux/module.h>
-> > >  #include <linux/msi.h>
-> > >  #include <linux/of.h>
-> > >  #include <linux/of_irq.h>
-> > > @@ -132,6 +133,7 @@ struct keystone_pcie {
-> > >  	struct			device_node *msi_intc_np;
-> > >  	struct irq_domain	*intx_irq_domain;
-> > >  	struct device_node	*np;
-> > > +	struct gpio_desc	*reset_gpio;
-> > >  
-> > >  	/* Application register space */
-> > >  	void __iomem		*va_app_base;	/* DT 1st resource */
-> > > @@ -1211,6 +1213,7 @@ static const struct of_device_id ks_pcie_of_match[] = {
-> > >  	},
-> > >  	{ },
-> > >  };
-> > > +MODULE_DEVICE_TABLE(of, ks_pcie_of_match);
-> > >  
-> > >  static int ks_pcie_probe(struct platform_device *pdev)
-> > >  {
-> > > @@ -1329,6 +1332,7 @@ static int ks_pcie_probe(struct platform_device *pdev)
-> > >  			dev_err(dev, "Failed to get reset GPIO\n");
-> > >  		goto err_link;
-> > >  	}
-> > > +	ks_pcie->reset_gpio = gpiod;
-> > >  
-> > >  	/* Obtain references to the PHYs */
-> > >  	for (i = 0; i < num_lanes; i++)
-> > > @@ -1440,9 +1444,23 @@ static void ks_pcie_remove(struct platform_device *pdev)
-> > >  {
-> > >  	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
-> > >  	struct device_link **link = ks_pcie->link;
-> > > +	struct dw_pcie *pci = ks_pcie->pci;
-> > >  	int num_lanes = ks_pcie->num_lanes;
-> > > +	const struct ks_pcie_of_data *data;
-> > >  	struct device *dev = &pdev->dev;
-> > > +	enum dw_pcie_device_mode mode;
-> > > +
-> > > +	ks_pcie_disable_error_irq(ks_pcie);
-> > > +	data = of_device_get_match_data(dev);
-> > > +	mode = data->mode;
-> > > +	if (mode == DW_PCIE_RC_TYPE) {
-> > > +		dw_pcie_host_deinit(&pci->pp);
-> > > +	} else {
-> > > +		pci_epc_deinit_notify(pci->ep.epc);
-> > > +		dw_pcie_ep_deinit(&pci->ep);
-> > > +	}
-> > >  
-> > > +	gpiod_set_value_cansleep(ks_pcie->reset_gpio, 0);
-> > 
-> > Can ks_pcie_remove() be called for a builtin_platform_driver?
-> 
-> It cannot be executed but I have added it for the sake of completeness - in
-> the same manner that the initial implementation didn't simply make the
-> 'ks_pcie_remove()' function a no-op and the code exists as if it could
-> be executed or if it were to be executed at some point in the future.
-> 
+Hello,
 
-It is a dead code, that's it. Drop it in this patch or separately before and add
-it back later when irq subsystem fixes the irq disposal issues.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in nsfs_fh_to_dentry
 
-- Mani
+------------[ cut here ]------------
+WARNING: fs/nsfs.c:495 at nsfs_fh_to_dentry+0xc56/0xd60 fs/nsfs.c:495, CPU#0: syz.0.17/6508
+Modules linked in:
+CPU: 0 UID: 0 PID: 6508 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:nsfs_fh_to_dentry+0xc56/0xd60 fs/nsfs.c:495
+Code: 5c 24 60 e9 28 f8 ff ff e8 b7 01 79 ff 90 0f 0b 90 e9 1d f6 ff ff e8 a9 01 79 ff 90 0f 0b 90 e9 96 f6 ff ff e8 9b 01 79 ff 90 <0f> 0b 90 e9 ea f6 ff ff e8 8d 01 79 ff 31 db 4c 8d 74 24 70 e9 ed
+RSP: 0018:ffffc90003b3fa20 EFLAGS: 00010293
+RAX: ffffffff82471785 RBX: 00000000effffffd RCX: ffff88807de45ac0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000effffffd
+RBP: ffffc90003b3fb10 R08: ffffffff8fe4db77 R09: 1ffffffff1fc9b6e
+R10: dffffc0000000000 R11: fffffbfff1fc9b6f R12: 1ffff92000767f4c
+R13: ffff88802e1605d4 R14: ffffc90003b3fa90 R15: 0000000000000000
+FS:  00007fccf554a6c0(0000) GS:ffff8881257a2000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2cd63fff CR3: 00000000334e0000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ exportfs_decode_fh_raw+0x178/0x6e0 fs/exportfs/expfs.c:456
+ do_handle_to_path+0xa4/0x1a0 fs/fhandle.c:276
+ handle_to_path fs/fhandle.c:400 [inline]
+ do_handle_open+0x6b4/0x8f0 fs/fhandle.c:415
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fccf478ec29
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fccf554a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000130
+RAX: ffffffffffffffda RBX: 00007fccf49d5fa0 RCX: 00007fccf478ec29
+RDX: 0000000000400040 RSI: 0000200000000000 RDI: 0000000000000003
+RBP: 00007fccf4811e41 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fccf49d6038 R14: 00007fccf49d5fa0 R15: 00007ffd8bdc2758
+ </TASK>
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+Tested on:
+
+commit:         846bd222 Add linux-next specific files for 20250919
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f8dc7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
+dashboard link: https://syzkaller.appspot.com/bug?extid=9eefe09bedd093f156c2
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=147e4d04580000
+
 
