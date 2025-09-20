@@ -1,134 +1,86 @@
-Return-Path: <linux-kernel+bounces-825925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90D03B8D21B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:53:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 975D5B8D22C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2D81B24800
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6653C178BC0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9988C24469B;
-	Sat, 20 Sep 2025 22:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F772853EA;
+	Sat, 20 Sep 2025 23:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="lKBvlV+A"
-Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSGJRckd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C721CBEAA;
-	Sat, 20 Sep 2025 22:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4461325FA0E;
+	Sat, 20 Sep 2025 23:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758408792; cv=none; b=puznnBMAy/4AVkdGBvbbXRF9RIcQEMOMWmAg6h+GnrzFiU1GEf87ikYiZUWkoCW6kwTcei3DVQXetPxDaN4faioXGKz4DsoMGmxdsf/FO1yaE0eWIdOKxu7N39TwgdpUEKn9+a3GU5B+bMLdKgdg1Hbxr5zWL+zPZR/ch1HakFQ=
+	t=1758409924; cv=none; b=iK0EesNTC462IOisbULr5k4IpPFZHp9zEOc9KvC//jMX58N+KFXwCNiwid/88ibv8YmWXYU6qJiDgnQAqWV/4SMhXDfU386+osmpTDJQEAvVJ2AGwR5OdeCleCvDgFM/JoDCR/eqjHi6YNOK7Wlbm3QnM1LxZnGttSftyTdvpwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758408792; c=relaxed/simple;
-	bh=NLG83zG4Iqi1Xyv2M3uzidymYz/T7neW8GLLEwTPTyw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ST5Hd9PwxjbfYhK5CB+u32ybM50JjSlG7xm3gf1f2wXfaxFN73jGt+IGr8i0Wq0Azm8Q0of2SwS9aGl07+tJ9zTRTC1JHc+iju31w39WTCOvg6HAfzFwj9FHXzuWeICjKPnxEE1Tz1bqNv2YKF7mUnrZUJkTQjMu/oCk+wxqgks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=lKBvlV+A; arc=none smtp.client-ip=35.83.148.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758408790; x=1789944790;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DbXAa8qTsxyq1mEKjnb+++zhRcJBDvgJFncuYVQDFFE=;
-  b=lKBvlV+A0exj4eJ3TXKi6Ast3J3l9xMm6UfX+kC1p3bN0tzZtY8iDUTu
-   bmIhXs6jcXdDEqj9BjsMbGyuUyjOSEy7jpZMHjr1vieKXeGdWHOim761m
-   XVoJJDgk9QSkZ6uVR/2TmgmQnPPbNyo7GKc3xoYd1WDdNfCcNW4uGWXHm
-   UaJmERE2J2IJLewgq8+4RNtE1LOh0RcQ2MrIy5SF+qmjSZtGmBSIJrvJv
-   ICcIUqZ0KysWDdGcEyPL/OtrkX7XhZpRrsh+owURnOD49vUfHwE4rVHdy
-   pBU9i8/0Eg1DJkUnfwuz/2oCZZXLK9jvH5eCN9FZQys9gVAGXkc7wtyYh
-   g==;
-X-CSE-ConnectionGUID: zMA0ONwqTy6JSTQNaePjXQ==
-X-CSE-MsgGUID: 3Ci37821TSaw+QF3eJWciQ==
-X-IronPort-AV: E=Sophos;i="6.18,282,1751241600"; 
-   d="scan'208";a="3249959"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 22:53:10 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:4911]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.168:2525] with esmtp (Farcaster)
- id 920169d4-e150-49a4-9281-68b82a9564ae; Sat, 20 Sep 2025 22:53:09 +0000 (UTC)
-X-Farcaster-Flow-ID: 920169d4-e150-49a4-9281-68b82a9564ae
-Received: from EX19D032UWA003.ant.amazon.com (10.13.139.37) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Sat, 20 Sep 2025 22:53:09 +0000
-Received: from dev-dsk-ravib-2a-f2262d1b.us-west-2.amazon.com (10.169.187.85)
- by EX19D032UWA003.ant.amazon.com (10.13.139.37) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Sat, 20 Sep 2025 22:53:09 +0000
-From: Ravi Kumar Bandi <ravib@amazon.com>
-To: <mani@kernel.org>, <thippeswamy.havalige@amd.com>
-CC: <lpieralisi@kernel.org>, <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>, <kwilczynski@kernel.org>, <robh@kernel.org>,
-	<ravib@amazon.com>, <michal.simek@amd.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Date: Sat, 20 Sep 2025 22:52:32 +0000
-Message-ID: <20250920225232.18757-1-ravib@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <C47CF283-C0C4-4ACF-BE07-3E87153D6EC6@amazon.com>
-References: <C47CF283-C0C4-4ACF-BE07-3E87153D6EC6@amazon.com>
+	s=arc-20240116; t=1758409924; c=relaxed/simple;
+	bh=Xz0ZO8Amtu9KkICAzIlfDkm862T/8+/a/0h4CNym7TY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oP5Uojq+EKSLAtErcXF1I0xPJFq/umCeVPTLWpYry/+XTqbNAf+e9+UzY+tBscp9Hj8FOGgiwwBzfqZmIX5fp+Qs49DJlJwa9Znbmw2oR0TJwKiE09NK6COepzK6LJBWexMgnlODqDI+Ft4tHIVV8WN2+CmGkZmmrZvVhgaKE8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSGJRckd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77AD1C4CEEB;
+	Sat, 20 Sep 2025 23:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758409923;
+	bh=Xz0ZO8Amtu9KkICAzIlfDkm862T/8+/a/0h4CNym7TY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VSGJRckdldKLlEis/93BetnOjwyxMW19G3O1dui2TpdtDhX1ZokF/vQNqxPkr1EBS
+	 EUjmr/u+5ggVDPbHclssDZkifMJiasT84Urxw8tZ9MmKluiPyWNT3Vg6LNpf/+8l1T
+	 1WimfKmfFmM27WWQ0W3Gq/FZ7VGS5OpPiJI1CXKn6ubETezfAaF8PWOxPEEPDe0ugs
+	 sMWPsBjd38bpoB3kP5kAY/U+las7leL4YLwrZkg11qSgG6CU9H/MEmfSpU6XVzPsXi
+	 vlrbVJSdY4LgmIKhueVlPD3TWN/peseWpkCEsXFnhpMZyWaYMSqO/sacIjqY8TQivT
+	 EgDxHkFieqD2A==
+Date: Sat, 20 Sep 2025 16:12:01 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Han Gao <rabenda.cn@gmail.com>
+Cc: devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] riscv: dts: thead: add xtheadvector to the th1520
+ devicetree
+Message-ID: <aM80wXloinEr6srH@thelio>
+References: <cover.1758228055.git.rabenda.cn@gmail.com>
+ <1ff3fb07b24fb375fcf9d3067aa50583f47c35fe.1758228055.git.rabenda.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWA003.ant.amazon.com (10.13.139.31) To
- EX19D032UWA003.ant.amazon.com (10.13.139.37)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ff3fb07b24fb375fcf9d3067aa50583f47c35fe.1758228055.git.rabenda.cn@gmail.com>
 
-The pcie-xilinx-dma-pl driver does not enable INTx interrupts
-after initializing the port, preventing INTx interrupts from
-PCIe endpoints from flowing through the Xilinx XDMA root port
-bridge. This issue affects kernel 6.6.0 and later versions.
+On Fri, Sep 19, 2025 at 04:44:47AM +0800, Han Gao wrote:
+> The th1520 support xtheadvector [1] so it can be included in the
+> devicetree. Also include vlenb for the cpu. And set vlenb=16 [2].
+> 
+> This can be tested by passing the "mitigations=off" kernel parameter.
+> 
+> Link: https://lore.kernel.org/linux-riscv/20241113-xtheadvector-v11-4-236c22791ef9@rivosinc.com/ [1]
+> Link: https://lore.kernel.org/linux-riscv/aCO44SAoS2kIP61r@ghost/ [2]
+> 
+> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
 
-This patch allows INTx interrupts generated by PCIe endpoints
-to flow through the root port. Tested the fix on a board with
-two endpoints generating INTx interrupts. Interrupts are
-properly detected and serviced. The /proc/interrupts output
-shows:
+Reviewed-by: Drew Fustini <fustini@kernel.org>      
 
-[...]
-32:        320          0  pl_dma:RC-Event  16 Level     400000000.axi-pcie, azdrv
-52:        470          0  pl_dma:RC-Event  16 Level     500000000.axi-pcie, azdrv
-[...]
-
-Changes since v1::
-- Fixed commit message per reviewer's comments
-
-Fixes: 8d786149d78c ("PCI: xilinx-xdma: Add Xilinx XDMA Root Port driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ravi Kumar Bandi <ravib@amazon.com>
----
- drivers/pci/controller/pcie-xilinx-dma-pl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/pci/controller/pcie-xilinx-dma-pl.c b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-index b037c8f315e4..cc539292d10a 100644
---- a/drivers/pci/controller/pcie-xilinx-dma-pl.c
-+++ b/drivers/pci/controller/pcie-xilinx-dma-pl.c
-@@ -659,6 +659,12 @@ static int xilinx_pl_dma_pcie_setup_irq(struct pl_dma_pcie *port)
- 		return err;
- 	}
- 
-+	/* Enable interrupts */
-+	pcie_write(port, XILINX_PCIE_DMA_IMR_ALL_MASK,
-+		   XILINX_PCIE_DMA_REG_IMR);
-+	pcie_write(port, XILINX_PCIE_DMA_IDRN_MASK,
-+		   XILINX_PCIE_DMA_REG_IDRN_MASK);
-+
- 	return 0;
- }
- 
--- 
-2.47.3
-
+Thanks,
+Drew
 
