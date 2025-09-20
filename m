@@ -1,92 +1,62 @@
-Return-Path: <linux-kernel+bounces-825466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A3DEB8BDB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:52:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1B0AB8BDB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11AE11C028EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:52:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70622A0627D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847BC1FC104;
-	Sat, 20 Sep 2025 02:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4C7207A18;
+	Sat, 20 Sep 2025 02:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="EtIQTZXP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BemXBZ2n"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="kIZIEsVv"
+Received: from r3-18.sinamail.sina.com.cn (r3-18.sinamail.sina.com.cn [202.108.3.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F71D10F1
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B6810F1
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758336715; cv=none; b=Xvpup5CfY26irQ+yC5NkpowNz+qhfcVj4dqPwG/wtR2BoLLGli+BN+R0Yk8KI3dwDNwhDAgtqZdWusTz44waE3uDx00in+SZFB1lOGAfYAk34eeUACd1bdrV9W9k1G7KWutGp/lOFz8MoJ5kTcQft0Ojcjsl5iVQPnEYGbEhj7s=
+	t=1758336978; cv=none; b=HKYkK7cCu4KUsc4o3akkDKRjwD7UnC1qDko03p0xDwGsOYOcI3+op5gIPfuyr69BqL6/oCJRENqpHbedeL6S5nypWnO+KdrU5JfaFW7aiHXDQD4Bc42rQIM98eM7T3Xw9nEW3559Uv/F3JSkk3ajM+ZnUhpxMZeQnbmb5SJ85mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758336715; c=relaxed/simple;
-	bh=QlywqAczzD15iAgOol44jVJLu6Pq4GywopCkF2EOngY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRKvQerImWQaR9pv0EeXmIbRCQ5utJorlfmWgs0sPoi1HR3ogBJBBqRULkURcax8PjMvJOt3FiMMR7F46nU/Dmziy50qDThx4YAXCo7XX/OEbLYhvD/YpBUNLDXVVAPOlBBZi3Ojjs5Q5nlXYlBwdB73vz2bg/gL+2B65+vufgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=EtIQTZXP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BemXBZ2n; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-12.internal (phl-compute-12.internal [10.202.2.52])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0D3EDEC00D6;
-	Fri, 19 Sep 2025 22:51:52 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Fri, 19 Sep 2025 22:51:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1758336712; x=1758423112; bh=xf9/YYuF53
-	HW6Ufjrarn7wTcw0/FDn9NhhmiveWm2rk=; b=EtIQTZXPG8TRY7jhGPe7Ky0Ern
-	kZ3cgKKCfg+6Oj4/pC85jRB3Q877KY8U7Wwn/pX9t6UDPbWlZ4kK0fI3oq1dv1tZ
-	6e9wkiBlarKGjwpO6BpaOYyRTPQwlahOPirMCnZQxb3U8y0y1Idk6yDTPVJZh+F0
-	fwdOzccC07rQ+yt8SvdJjl80JNmqGV+R4daSCajnIBpPVdNdppZIqjAyw+4TtG0k
-	zyJbXTwFWHudqYLhyibJpdU3g+oSNRftzQI6ge2JMIB+URDEtz5DggoProqF0Vs+
-	bLgapVHeKNz4PdPAe/ZPdZEpfd2TMWsKkEJiL0Gi3V3DHeAKk9Gqra8ThQsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1758336712; x=1758423112; bh=xf9/YYuF53HW6Ufjrarn7wTcw0/FDn9Nhhm
-	iveWm2rk=; b=BemXBZ2njUpZtnLxAtOFKYj26KFNpEnsIHgcmdgjOJja7ogoNdI
-	3GRLpM/jJNw7p68zA8OQUu2CxcVk5houdBDKQMMboVxC4FzL3HokO8wnJ+uIfvsa
-	I03KLFRR3S7Wa+t9255Dn0PVjbS5q4UBwdg8wE9/wdAMqw+nwkTVn7gxxRhhKAAD
-	3mhbNmYeP9gm9EQGohfablnS8shavp6iiW+jeC/sEgg+VsDwYqFiQ5pKYuFmaCtu
-	fe12YbxvcufUWSJUl73HoPuzW5MATduarp1DFQnmtJtNNwyHfPuzm6t7xrAgsqZ2
-	znbiEc1GTdxCQ/Kf0oja9Ay5e3f6Td5+Sjg==
-X-ME-Sender: <xms:xxbOaPCCUe1j4Dsrdb7C7mi3W9Ido8yIbykZ2WVk_nk9Qq-qiOcA-w>
-    <xme:xxbOaOfdXga96UbBIy-oM0eKn3PFvBCvosq96Iu9ZJP7RoFI9PT8oiSPsMMLDw1im
-    8VC_XiJTbZZHwsw1WE>
-X-ME-Received: <xmr:xxbOaMjwTXJCWEbtDxn5FM7PtavYP8vgb97STK6TL8pt2T0QEAIvVFsnEPV8VEgY0dQhHie1WclDFfe9RU-qQmS-mru6uBVMBzhZ6HP3Tg76gQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehtdelgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
-    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
-    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
-    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xxbOaOrnd_UMEebUUGSkoJ20x64K_K5O8zYH9njVDUcKNyR2mf9oOQ>
-    <xmx:xxbOaEHy86eqyCFKjfLrx9rqGEDPre2_5Msh5-c7EKGitrN0Z84VkA>
-    <xmx:xxbOaAmU7pTbGZ1S3_Ny3jFEePhKF9mS66JxTRX9SMLQlfHldgEQwg>
-    <xmx:xxbOaHmhq_GoZp8j18986JusG3yjb3nHGFRPaIaMNC0pILcc47o_Qw>
-    <xmx:yBbOaKGRRI98OX17ccjtWtel5aLaepG88z_gwHP50v1D5IQba15ml2Yg>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 19 Sep 2025 22:51:50 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] firewire: core: fix overlooked update of subsystem ABI version
-Date: Sat, 20 Sep 2025 11:51:48 +0900
-Message-ID: <20250920025148.163402-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1758336978; c=relaxed/simple;
+	bh=7NK7iEd451B/LJGLhYg27QxKUrY13QcZzWrpFuD1MPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RVCMmKqqAzUide+P8cBt5ylcoFUcYHtiIaDzTw/WfYfOAT3sfgoil0gozUBuFXhpZhqDGWu+xdDyXVXAl89dHAaG3L74q2evgOSvo5FpLgJtHopVdAksOTAHsH09+NrALFGreRP5sdHs8CLrEocvyC1v7AoJZ6Q97TWKqwn9vF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=kIZIEsVv; arc=none smtp.client-ip=202.108.3.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1758336973;
+	bh=sLq9wdq9US8kGL9XX9xchRU7kncVV956CqsskTxYAhc=;
+	h=From:Subject:Date:Message-ID;
+	b=kIZIEsVvE6ADW3dqaL+0I34fMumqj5v96E5Ypi726a0Go3zZosQbYxM8qg/948x2Q
+	 hYLDuacEAP29qu5zJGb50bT0E7H0eqc8w00xmV6KeI9wn/uxmomM93BJMfUANYeeKY
+	 y9kbiTWXSaLJcVkWFkmJxQU7VTtUZWXp/Q6k9T1k=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68CE17C0000069FC; Sat, 20 Sep 2025 10:56:03 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 4071354456619
+X-SMAIL-UIID: 46266A8BC4D841EC905DCB69E96A96CD-20250920-105603-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] [usb?] WARNING in __alloc_skb (4)
+Date: Sat, 20 Sep 2025 10:55:49 +0800
+Message-ID: <20250920025550.7294-1-hdanton@sina.com>
+In-Reply-To: <68af7ed3.a00a0220.2929dc.0004.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,34 +65,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In kernel v6.5, several functions were added to the cdev layer. This
-required updating the default version of subsystem ABI up to 6, but
-this requirement was overlooked.
+> Date: Wed, 27 Aug 2025 14:55:31 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    7fa4d8dc380f Add linux-next specific files for 20250821
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11fecc42580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ae76068823a236b3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a2250fd91b28106c37b
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c94858580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=108ea7bc580000
 
-This commit updates the version accordingly.
+#syz test linux-next master
 
-Fixes: 6add87e9764d ("firewire: cdev: add new version of ABI to notify time stamp at request/response subaction of transaction#")
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core-cdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
-index 78b10c6ef7fe..2e93189d7142 100644
---- a/drivers/firewire/core-cdev.c
-+++ b/drivers/firewire/core-cdev.c
-@@ -41,7 +41,7 @@
- /*
-  * ABI version history is documented in linux/firewire-cdev.h.
-  */
--#define FW_CDEV_KERNEL_VERSION			5
-+#define FW_CDEV_KERNEL_VERSION			6
- #define FW_CDEV_VERSION_EVENT_REQUEST2		4
- #define FW_CDEV_VERSION_ALLOCATE_REGION_END	4
- #define FW_CDEV_VERSION_AUTO_FLUSH_ISO_OVERFLOW	5
-
-base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
--- 
-2.48.1
-
+--- x/net/core/skbuff.c
++++ y/net/core/skbuff.c
+@@ -594,6 +594,10 @@ static void *kmalloc_reserve(unsigned in
+ 	 */
+ 	*size = (unsigned int)obj_size;
+ 
++	if (obj_size > (PAGE_SIZE << MAX_PAGE_ORDER)) {
++		obj = NULL;
++		goto out;
++	}
+ 	/*
+ 	 * Try a regular allocation, when that fails and we're not entitled
+ 	 * to the reserves, fail.
+@@ -657,7 +661,7 @@ struct sk_buff *__alloc_skb(unsigned int
+ 	    likely(node == NUMA_NO_NODE || node == numa_mem_id()))
+ 		skb = napi_skb_cache_get();
+ 	else
+-		skb = kmem_cache_alloc_node(cache, gfp_mask & ~GFP_DMA, node);
++		skb = kmem_cache_alloc_node(cache, gfp_mask & ~(GFP_DMA | __GFP_HIGHMEM), node);
+ 	if (unlikely(!skb))
+ 		return NULL;
+ 	prefetchw(skb);
+--
 
