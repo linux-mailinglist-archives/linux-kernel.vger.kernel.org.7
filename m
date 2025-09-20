@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-825503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DC8B8BFA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:18:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D8CB8BFB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5E474E1133
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:18:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB431587A06
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 05:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F22B1F4E4F;
-	Sat, 20 Sep 2025 05:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640172288F7;
+	Sat, 20 Sep 2025 05:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j24FtfcM"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwV/KZHk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F651FBF6
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF74FFBF6;
+	Sat, 20 Sep 2025 05:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758345478; cv=none; b=BJGbXUQr2RmnoquMsvN8+FB+dExJ/cQ3ForHR0AiOr/r1uYbglaq+ApTgKd1xHtvbZC5SwI6X3iCRV7OiKlj/soVrR1ZadfePQXLPl0O3A7FvvP5zYOhDnmhaA225LDHqG8fW3z74L7TG/6vaZ1lzKihUmloo1iRjZwSjcvaDVc=
+	t=1758345877; cv=none; b=R4uxwTapqE4jvHQcbh+JYZfhsasZaIuLxwUYxgiRtK6M9XIMggZvSiJ7PSMiMT8vTK2P3KTvcN94AuTStHcZi4KRxy9Kjb1K6ilQunVtYOwoZ0YStpaJVqGybT6d8WZ8xQwYbPHqlq/Puju5R1UjrOjx86H5aMdmlSboJ2NNoag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758345478; c=relaxed/simple;
-	bh=vI491iiWp7bT17ACgeQD/IjbbdxlYAlMp5kRHIn3774=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q7cVLCOFOJ3sNjtkFe89UrGVhbtugx2ppUUzEv6toAf7o/Hz1Tgi0GvT2DOy66Od8z4xGt2Sv3MZ8E1nX2+Xf5QTOmxrAI5xeTW32UpM1BBSGKcARgtC5pYFSFNB15PPiN2Mmv+4fJ10PQ4MEhpqfpwHqaccU1CFgItLPeDzLT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j24FtfcM; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 19 Sep 2025 22:17:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758345474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PntaZnDYX/QEEVIWmBGVBGCPkGUIte8JIXB6ZVeo8rE=;
-	b=j24FtfcMKfLk1zGaPV+iRbntXu9JfU3X59WP5fTeivp0kAwohHy32yNT/wbHlQsH5+TUtb
-	Kuo9QOj25sVXoZWZ7Ih4rDWMxu59CHcUKRze5iVl5/scgMv3eIKu4xF44s479kyolJLRhf
-	BKcFaivHCCQYqzk70bD7M8YqPXGlIoA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: JP Kobryn <inwardvessel@gmail.com>
-Cc: mkoutny@suse.com, yosryahmed@google.com, hannes@cmpxchg.org, 
-	tj@kernel.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, kernel-team@meta.com, linux-mm@kvack.org, bpf@vger.kernel.org
-Subject: Re: [RFC PATCH] memcg: introduce kfuncs for fetching memcg stats
-Message-ID: <ky2yjg6qrqf6hqych7v3usphpcgpcemsmfrb5ephc7bdzxo57b@6cxnzxap3bsc>
-References: <20250920015526.246554-1-inwardvessel@gmail.com>
+	s=arc-20240116; t=1758345877; c=relaxed/simple;
+	bh=ArbrsnGKoxvN0kutLPi6f5zCqz6SQWd3RVzb+lWRIlA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=iijuMFX71+8pasX/DemCpkazuxjlitW2H9+10ZPoz9DCm/tuIYPRw+hfLQkaRpwhZc7MDv4eSKwzsJ7cJBkiDbScs7/DVc1O2aeyDOPlEw85rmSSfdiK5Mv05e+v122D/kfQkij7WhPmp3rKVm+J2qbqPDf3zfbgrBitaiTVRgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwV/KZHk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19BDFC4CEEB;
+	Sat, 20 Sep 2025 05:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758345877;
+	bh=ArbrsnGKoxvN0kutLPi6f5zCqz6SQWd3RVzb+lWRIlA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=CwV/KZHkSldV4EkhZFZ1DqKMzwoMYxh6ywQPyKPMnb4RDeu8eS9MTRYMN9rdc0frt
+	 kGAQUAn9Qf4PpMsHCyKvnUql8Q5CZ7lG/jsUpFTGyWqVihgoo0PahG2ntcoeKQwIdX
+	 wAj5+TBAknXu1ONNro/qZM2R+fmfA9prfgXsIq1hmRKFxXtCnd7EawHp+REgRrWE61
+	 6FPemb9QC4YgchUjpSQZSp06EDUstVZ7AUmEm5tn1FUVFOhAaM/co7YWQGLNTG2qit
+	 I95JTNpOnVE7Hy4TlJpHdUXWYUDoK7y5yjTiD1XQJGiyzadcaV1a68hyHyvMNu/7K0
+	 v3NxkS6hnM72A==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250920015526.246554-1-inwardvessel@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250903-clk-eyeq7-v1-9-3f5024b5d6e2@bootlin.com>
+References: <20250903-clk-eyeq7-v1-0-3f5024b5d6e2@bootlin.com> <20250903-clk-eyeq7-v1-9-3f5024b5d6e2@bootlin.com>
+Subject: Re: [PATCH 09/19] clk: divider: check validity of flags when a table is provided
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Sari Khoury <sari.khoury@mobileye.com>, =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>
+To: =?utf-8?q?Beno=C3=AEt?= Monin <benoit.monin@bootlin.com>, Conor Dooley <conor+dt@kernel.org>, Gregory CLEMENT <gregory.clement@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+Date: Fri, 19 Sep 2025 22:24:36 -0700
+Message-ID: <175834587624.4354.6026619740146574818@lazor>
+User-Agent: alot/0.11
 
-+linux-mm, bpf
+Quoting Beno=C3=AEt Monin (2025-09-03 05:47:16)
+> If any of the flag CLK_DIVIDER_ONE_BASED, CLK_DIVIDER_POWER_OF_TWO,
+> CLK_DIVIDER_MAX_AT_ZERO or CLK_DIVIDER_EVEN_INTEGERS is set, the divider
+> table will be ignored in _get_div and _get_val. This can lead to subtle
+> bug when a clock is registered with some flags and an optional table,
+> with the clock rate and register value being computed with the wrong
+> type of conversion.
+>=20
+> Prevent this by refusing to register a divider with both the flag and
+> the table set.
+>=20
+> Signed-off-by: Beno=C3=AEt Monin <benoit.monin@bootlin.com>
+> ---
+>  drivers/clk/clk-divider.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index 8e8f87024e76625f348f1d66c15a7a938fa0c4db..b4861d519bac2121dd015d094=
+c94a5fee2480148 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -561,6 +561,13 @@ struct clk_hw *__clk_hw_register_divider(struct devi=
+ce *dev,
+>                         return ERR_PTR(-EINVAL);
+>                 }
+>         }
 
-Hi JP,
+Nitpick: Prefer a newline here.
 
-On Fri, Sep 19, 2025 at 06:55:26PM -0700, JP Kobryn wrote:
-> The kernel has to perform a significant amount of the work when a user mode
-> program reads the memory.stat file of a cgroup. Aside from flushing stats,
-> there is overhead in the string formatting that is done for each stat. Some
-> perf data is shown below from a program that reads memory.stat 1M times:
-> 
-> 26.75%  a.out [kernel.kallsyms] [k] vsnprintf
-> 19.88%  a.out [kernel.kallsyms] [k] format_decode
-> 12.11%  a.out [kernel.kallsyms] [k] number
-> 11.72%  a.out [kernel.kallsyms] [k] string
->  8.46%  a.out [kernel.kallsyms] [k] strlen
->  4.22%  a.out [kernel.kallsyms] [k] seq_buf_printf
->  2.79%  a.out [kernel.kallsyms] [k] memory_stat_format
->  1.49%  a.out [kernel.kallsyms] [k] put_dec_trunc8
->  1.45%  a.out [kernel.kallsyms] [k] widen_string
->  1.01%  a.out [kernel.kallsyms] [k] memcpy_orig
-> 
-> As an alternative to reading memory.stat, introduce new kfuncs to allow
-> fetching specific memcg stats from within bpf iter/cgroup-based programs.
-> Reading stats in this manner avoids the overhead of the string formatting
-> shown above.
-> 
-> Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
+> +       if (table && (clk_divider_flags & (CLK_DIVIDER_ONE_BASED |
+> +                                          CLK_DIVIDER_POWER_OF_TWO |
+> +                                          CLK_DIVIDER_MAX_AT_ZERO |
+> +                                          CLK_DIVIDER_EVEN_INTEGERS))) {
+> +               pr_warn("divider table and flags incompatible\n");
 
-Thanks for this but I feel like you are drastically under-selling the
-potential of this work. This will not just reduce the cost of reading
-stats but will also provide a lot of flexibility.
+This pr_warn() (and the one above this one) are not very helpful because
+we don't know which clk is the problem. We also don't know if this is
+going to cause boot failures for devices out there that have this flag
+set and a table. Were all drivers audited?
 
-Large infra owners which use cgroup, spent a lot of compute on reading
-stats (I know about Google & Meta) and even small optimizations becomes
-significant at the fleet level.
+I wonder if we can check this condition at compile time with some sort
+of test on the clk_divider_flags expression to see if it is a compile
+time constant along with the table pointer being a compile time constant
+as well that isn't NULL?
 
-Your perf profile is focusing only on kernel but I can see similar
-operation in the userspace (i.e. from string to binary format) would be
-happening in the real world workloads. I imagine with bpf we can
-directly pass binary data to userspace or we can do custom serialization
-(like protobuf or thrift) in the bpf program directly.
-
-Beside string formatting, I think you should have seen open()/close() as
-well in your perf profile. In your microbenchmark, did you read
-memory.stat 1M times with the same fd and use lseek(0) between the reads
-or did you open(), read() & close(). If you had done later one, then
-open/close would be visible in the perf data as well. I know Google
-implemented fd caching in their userspacecontainer library to reduce
-their open/close cost. I imagine with this approach, we can avoid this
-cost as well.
-
-In terms of flexibility, I can see userspace can get the stats which it
-needs rather than getting all the stats. In addition, userspace can
-avoid flushing stats based on the fact that system is flushing the stats
-every 2 seconds.
-
-In your next version, please also include the sample bpf which uses
-these kfuncs and also include the performance comparison between this
-approach and the traditional reading memory.stat approach.
-
-thanks,
-Shakeel
+> +               return ERR_PTR(-EINVAL);
+> +       }
 
