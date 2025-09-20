@@ -1,124 +1,150 @@
-Return-Path: <linux-kernel+bounces-825562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCA9B8C3C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:14:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4BFB8C3FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17B1B1BC7195
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8556F1C021F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407532797B8;
-	Sat, 20 Sep 2025 08:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B772F2836A0;
+	Sat, 20 Sep 2025 08:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fz2O/AsZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="KIX9+q9k"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96492227EA4;
-	Sat, 20 Sep 2025 08:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1235B2820DB
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758356056; cv=none; b=f/lwzJsJCm/i0Eg6jFSUdeE2zwF9lUMxsMi7gPiH6O83/9cbS+gK04pYWE7bVRtwp1k6zMLQgfOqxVkwpLz+KIOKzW1XjfajybdvIh4W3YoFhrBhioLPISuSTCyLlto+U2AKAx2SG14Y8i38g4QsClUF/PmghBbBKShrFAIDHec=
+	t=1758357394; cv=none; b=qVLFZOnPnWWD1Wa9HbLcyZ60x/XPmIp2S+iZrfVtZSSlHdr7LSpnbSKkrqjrzT0o1XPXey5f/URjhk/bEfPyXb3zbi8a6LspcRfQArV3gn03vWWBV9IO5beoIiIOzaktcJMYcDteLNaCb7SQAzaaa7pT8GhSMSIMAhuhKo38E+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758356056; c=relaxed/simple;
-	bh=H9jVzceHhz7BCuWrEcBBzKxp5SLS2ZXomJMfy40j+D0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hv5WEGgEPj9ENpj3SbSYkyJ4RVpkunKXg7hEOrOFdGvULkiciathLgk7OVB/I4c1l3cNMI7LEGSNOLVeRsC00rQqhZxcYT/h33wpGozjQ21B7Is7e0m7ybdzC9niMJLhgPIJOyzqKhNhUeAin/7Qba1CvsI/FyA7JHLLI6XxezY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fz2O/AsZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 919AFC4CEEB;
-	Sat, 20 Sep 2025 08:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758356054;
-	bh=H9jVzceHhz7BCuWrEcBBzKxp5SLS2ZXomJMfy40j+D0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fz2O/AsZ6wRO0snZvJPxpyl7bfliCTrVg+OSrWu+uBqQiLuFyLiaz6+DVE0UGnXSa
-	 BbXA5jDLYtLPPrDIC2XYv5fuNmtGIhp3aaUMFfVUtsIYlPkb2YbfOZYf+8RwgU0xBn
-	 YLl0XbUeu7LrsxiXN7u6WSb91IRLsJlXIE35t5RJCZVYdoIfBLyBBFj3r5nse6wN44
-	 qtvupiZLaTIGx7DZsdOdovNSrq0QNMI9yU8cpnqDPECwlYk3r2zotVBMoe24gM/w/M
-	 DO8Iqyke3vY/ajeEbkO7pUS+adOagfbLQwf/mWkQR1PSqF1ja3GVylGopCGmUJFEvN
-	 WJuatdlh9pRFQ==
-Date: Sat, 20 Sep 2025 13:44:02 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, jingoohan1@gmail.com, christian.bruel@foss.st.com, 
-	qiang.yu@oss.qualcomm.com, mayank.rana@oss.qualcomm.com, thippeswamy.havalige@amd.com, 
-	shradha.t@samsung.com, quic_schintav@quicinc.com, inochiama@gmail.com, 
-	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com, 
-	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH v2 05/10] PCI: keystone: Add ks_pcie_free_msi_irq()
- helper for cleanup
-Message-ID: <ouj2ksyccliaolyq7icceltcmnvadvtckonrck3bawrufuhct6@bda2xxpp66dg>
-References: <20250912122356.3326888-1-s-vadapalli@ti.com>
- <20250912122356.3326888-6-s-vadapalli@ti.com>
- <rbyukvvhzoch4p54usbrjpjlhd6qknhp2er6gfxhcj5lxpgrqh@5wnwiijn2g5f>
- <cbcb0183-1fbd-4815-948b-3c380491c8db@ti.com>
+	s=arc-20240116; t=1758357394; c=relaxed/simple;
+	bh=QJQGLbxn9lFCmMtOVMZa34rVYSu5IRYrBvI46GE1S7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=ka4CNchOED41fV1g3PorsLMrcobvIKA6xEpeTnhFQyEoN6Z8KR5rqWfx0wbpkdY4HRdJdGW7UnwLjp6wIYZQxyigz0wSci4vjjm6WSgqSO8hHe6fsvmcp4h1nGuB3jHG4BvbQ/NMmHsZBd6/wuiep2ajS2ZVX1rUfnFZZjELvh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=KIX9+q9k; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: Cc: From:
+ References: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1758357391;
+ bh=nhhXvyJU4Q/ep+pG2LVNeGtKFMmPOfCIGjE2903J/IY=;
+ b=KIX9+q9krMXHdfedhQg37ioqSyXm2HvaKmHozGxjCB8pnvJXJdMAqwmHvyD7ALfiEmqt1h2j0
+ +pRnDxh7Br8YNVVUZHlg1Jy1hTEwYfFN5F8ubFqFhM5vpTIkkrKYZ3/nRgLPy2mb8SFnOmjoONz
+ y9Cl89sntnYdqk05VL4bpG1KoVUcqWUXvPgKb2X929FOZIKAVbRmAlQRzcoSggl9qrachs58cKb
+ VKOLOerhcgs48oGHSd1hr4ERsKYl9s98T1/LGWhIDDDVfye5ILV2JsMXjE6Q85GqgiLGg3Mtyre
+ flelavFiY7Og+bnLziYKhP4sPmE1mN6zBT3PR41AFvBA==
+X-Forward-Email-ID: 68ce627a528963d4864a57f8
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 1.2.14
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <07560892-6672-45a0-aa3d-79e47d145ff4@kwiboo.se>
+Date: Sat, 20 Sep 2025 10:14:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cbcb0183-1fbd-4815-948b-3c380491c8db@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: rockchip: correct uart mux for Radxa ZERO
+ 3
+To: Ed Wildgoose <lists@wildgooses.com>
+References: <20250917114932.25994-1-lists@wildgooses.com>
+ <20250917114932.25994-2-lists@wildgooses.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <20250917114932.25994-2-lists@wildgooses.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 20, 2025 at 01:34:15PM +0530, Siddharth Vadapalli wrote:
-> On Sat, Sep 20, 2025 at 12:02:34AM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Sep 12, 2025 at 05:46:16PM +0530, Siddharth Vadapalli wrote:
-> > > Introduce the helper function ks_pcie_free_msi_irq() which will undo the
-> > > configuration performed by the ks_pcie_config_msi_irq() function. This will
-> > > be required for implementing a future helper function to undo the
-> > > configuration performed by the ks_pcie_host_init() function.
-> > > 
-> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > > ---
-> > > 
-> > > v1: https://lore.kernel.org/r/20250903124505.365913-6-s-vadapalli@ti.com/
-> > > No changes since v1.
-> > > 
-> > >  drivers/pci/controller/dwc/pci-keystone.c | 25 +++++++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > > 
-> > > diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-> > > index d03e95bf7d54..81c3686688c0 100644
-> > > --- a/drivers/pci/controller/dwc/pci-keystone.c
-> > > +++ b/drivers/pci/controller/dwc/pci-keystone.c
-> > > @@ -666,6 +666,31 @@ static void ks_pcie_intx_irq_handler(struct irq_desc *desc)
-> > >  	chained_irq_exit(chip, desc);
-> > >  }
-> > >  
-> > > +static void ks_pcie_free_msi_irq(struct keystone_pcie *ks_pcie)
-> > > +{
-> > > +	struct device_node *np = ks_pcie->np;
-> > > +	struct device_node *intc_np;
-> > > +	int irq_count, irq, i;
-> > > +
-> > > +	if (!IS_ENABLED(CONFIG_PCI_MSI))
-> > 
-> > Isn't the CONFIG_PCI_KEYSTONE_HOST always depend on PCI_MSI?
+Hi Ed,
+
+On 9/17/2025 1:49 PM, Ed Wildgoose wrote:
+> The rk3566 has multiplexed pins and the uarts can be moved to a choice
+> of 2 pin groups. The default rk356x-base.dtsi appears to default to mux0
+> for all uarts, however, specific hardware might choose to implement
+> alternatives
 > 
-> The reason I added the check is that it exists in 'ks_pcie_config_msi_irq()'.
-> But I realize now that it should be removed from
-> 'ks_pcie_config_msi_irq()' as well. Since I had written the above
-> function with the objective of undoing the changes done by
-> 'ks_pcie_config_msi_irq()', the 'config check' was retained since the
-> changes should be undone only if they were executed by
-> 'ks_pcie_config_msi_irq()'. I will drop the check in the v3 series and
-> will also post a separate patch to drop if from 'ks_pcie_config_msi_irq()'
-> if that is acceptable. Please let me know.
+> The Radxa zero 3 shows that is uses M1 for uarts:
+> - uart4
+> - uart5
+> - uart9
 > 
+> These aren't normally enabled, but we should at least correct the
+> default pinctrl definitions. Without these changes there will be
+> conflicts with mmc0/mmc1, leading to the SD or eMMC going missing.
 
-Sounds good to me.
+Please rephrase the commit subject and message, currently it seem to
+imply that there is something broken that needs fixing, however this
+mainly make it easier to apply an overlay that does not include
+description of any changed behavior for pins on the 40-pin header.
 
-- Mani
+Current expected behavior of the hw, using pins on 40-pin header as gpio
+pins should already be correctly described in this board device tree.
 
--- 
-மணிவண்ணன் சதாசிவம்
+My original intent when submitting board device trees, such as this one, 
+is that a device tree overlay will fully describe any required changes.
+Also I do not expect that using an overlay intended for an old vendor
+kernel device tree will work as-is on mainline kernel device tree.
+
+> 
+> Signed-off-by: Ed Wildgoose <lists@wildgooses.com>
+> ---
+>  .../boot/dts/rockchip/rk3566-radxa-zero-3.dtsi    | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
+> index 1ee5d96a4..41b3c4403 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
+> @@ -492,6 +492,21 @@ &uart2 {
+>  	status = "okay";
+>  };
+>  
+> +&uart4{
+
+nit: missing space
+
+> +    pinctrl-names = "default";
+> +    pinctrl-0 = <&uart4m1_xfer>;
+
+nit: seem to use space instead of tab, same for rest.
+
+Regards,
+Jonas
+
+> +};
+> +
+> +&uart5 {
+> +    pinctrl-names = "default";
+> +    pinctrl-0 = <&uart5m1_xfer>;
+> +};
+> +
+> +&uart9 {
+> +    pinctrl-names = "default";
+> +    pinctrl-0 = <&uart9m1_xfer>;
+> +};
+> +
+>  &usb_host0_xhci {
+>  	status = "okay";
+>  };
+
 
