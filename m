@@ -1,137 +1,190 @@
-Return-Path: <linux-kernel+bounces-825551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB8FAB8C362
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:52:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1E5B8C37A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2B21889996
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12203B6BE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A00279917;
-	Sat, 20 Sep 2025 07:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9362A26E146;
+	Sat, 20 Sep 2025 07:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEvQZ4/Z"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JynfH7aj"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C5A26C3B6
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D142523A58B
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758354592; cv=none; b=I1HqAAdtUOvLgsTH2s6pnB6EUupC1UvpkZsYF8fsuaYChqrU2u1P2v1j6fEv1n8vU+pJfLpZlKlt2TXG/SsiWDpRlGwL7Z2y7fTxo/SrITirLlXcsRKKQYUXyWg/MeN6zigNHTQdC7vjgO5/Trve2kTyWQgnOAy3xEW76nzrXZ4=
+	t=1758354638; cv=none; b=Wf0/tnVHSeJMbZcVCvlel2OZwdZn0Hcl+PHAg7m1zlN5IDJ1cNWvjKQfT9XpA0RIYXDpBHN4r+kfGr6vlvpnxprMFJm55zXDIJ0kNNaqiKAUBTQRBTRViAgJhkJ6GEz5oBCfA69HCi5udUq00czDju2oqTiFkR44nEVUwiKmaK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758354592; c=relaxed/simple;
-	bh=Av7lrNl4YgFBqMyVpgO2SYk1KzNjNc1S5U5FzQ/6NHE=;
+	s=arc-20240116; t=1758354638; c=relaxed/simple;
+	bh=qmpkTUzydRQujIKnBGKdiN+Ji++u8QEmHCc0F/vPKUI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QKnjn4hhWMN0TJIXw1TLlq5503mGoCHNLtiAZiMY6c33/fOaNgnFim5SlgrddpvZrt7j97M9hVal8XPrOTJfZ21xS8THgHWvcq/7Zgu90F3bDutqBBuoFO4WsPT1xJqvE64v4VS3rNuuYYGosPhQwwYKHQnkXxL9afBewr9tktI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEvQZ4/Z; arc=none smtp.client-ip=209.85.218.52
+	 To:Cc:Content-Type; b=NBf3zQFJUU0/p4edLIvblGy0oVGR26/Too8C8b/X0X8cKgYHdiRunWaGjy8CFMD48CyUo4UDOVkdy8oulyoZqoQKie63gPLMkg6SiyelszHrOIGQPIZq6RYqC75iMJ7HJ3fLZA9e9o7+KJduJKHJKrmJfc/3rvYe+yoW/oQjKho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JynfH7aj; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a16441so416709366b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:49:50 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b07d4d24d09so468471066b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:50:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758354589; x=1758959389; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758354634; x=1758959434; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Av7lrNl4YgFBqMyVpgO2SYk1KzNjNc1S5U5FzQ/6NHE=;
-        b=PEvQZ4/ZcE6+Ab5AQnCgZEQ6IdeB2gSJJGaDwO3/2G/33SSL9+vN+z+QtnuhRGxFYO
-         WLGRtjK+RO2UkAxvBrK6vCEbrHafDMnsIDB73wMzkuIxJ3VBd05tEvkQ/qzfySB+F5/d
-         DP9eKn/i+NilrYS65H90uYc1znYz9BIPSSF9ViVwG5rtHOh88hO8JN0FfK/PWqK9skbd
-         UZ6CfvkQ57rqwhyhnItHiYeOpKgsz+Mf73l0ixJH/Tc7CmHoZ8ihGXZM24IlCu4svS+p
-         ogN/QjAfR+IVQmlDsZKUMok2hEIwPpXlbtlqAXtX2xG35D+bZG0uggUpfrkm+7MjVIG0
-         jS9w==
+        bh=knrhMCywQQbRVUMOa6NYTtOeTCJV68hMiq9CpjYL5Ig=;
+        b=JynfH7ajbCH3+wXOVxcC3gwazdpDg/wQdqWKCeUJk+rlfosl/0CyhdpTl+H1yky5xX
+         tDwre3Yu5j5VH9PWWR/oprAXnkY92tibTgwXO/GGLz9ocN2CwdEsJOPgnD5cJvHtcDfF
+         f8RajvN3QIVlKPYMj7W8mlgpmZqNPb7q8l6qamk3uCdLmgD1pGNY7FhWHrFTscrbVg5l
+         9PbMioQse0BZfUAueLhA4XCQHFJbfgYcIGbIck9CTZrbh3P0n94LGKFLFFqDmIT+toA2
+         GL7J/UljRDAuUcbOD5C/BIePlg3xRdURqOxRagDCVxQNe8+LfymS+gCNJveDbUQpjiia
+         Nhww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758354589; x=1758959389;
+        d=1e100.net; s=20230601; t=1758354634; x=1758959434;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Av7lrNl4YgFBqMyVpgO2SYk1KzNjNc1S5U5FzQ/6NHE=;
-        b=bOtHuvHObN5DNmLlwZ9c7W3sgOdYTMVWvpvuIUZrOkRJheSw2MMJjBoGyMzEvtpr/D
-         5BxuL4vvZW/lBgGCj2k92yE4Yu/cd+unhJ4DaSivSOBpVt1sx0fCVTKqq6hAMfewU3M5
-         A9bD5MyT+mJxoWZs6PLhYuSqvnpo2QBlEoh+frhF5ayeZB6VrFNejd3C5v5uG/57WCjv
-         5Rm0Ul5sC0q0+J3MLMW4+0MJkkq2rrKg0pe+uqFDvQ6vVkzBZ4axbcF4Zzo3XMMSZXbo
-         F4or1zFcrxAGnzOW8pLOdSmxFLHsiBsMIrc+JehudK33k7cHOjSyqo994ikGJU/KnkKG
-         MQlg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0DE0Y+m7rLB0rK5Ubr+8Me1zpqf5zvNJQm6BHU7XgflHh2p+qkofTRGHWE2imY+KuU9cGOtXn1IQxVPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiBwF7jlPf3yJLcNwYuvnjG5/hcl24X+AUDsE6N3qk484/OYsf
-	7Ip/7LVHKcn3o8evZkjb/1LOA5nveRmOHPqXGgL5zfPfVToaJ7mIEDTOVL2BOSgUr6GnF6HsGpo
-	CTUhByetgDP6RLxCmX5vr/a8m1KZLOlA=
-X-Gm-Gg: ASbGncsgtLy0O2aYHjHNpdO1D4AXpt5aEIx5IKt8wLmijfMI8WqVYlDF+kTcmjfQGpY
-	fhSopNcwBSJg2kZ5GEDNoJ09R/Mk9ap0/5aEImDIErhnvfwuwPzmgFjoVHAQMprcBmDCIpADFHO
-	yd7pgwBtqY+KY5lxARoh81T48mNjGbJxGz2Wkhijfb5XsOFonu3MuB1T1JN2rntePdiC4UePWE7
-	kV42zU=
-X-Google-Smtp-Source: AGHT+IHpyjk16PmMGjgpmJ32eHdu+viAzqxrIIM8/PHA08Nc0k6yqdFGL83GkBb2++1I+Uzinp3kHqIP4ACJxvIffzU=
-X-Received: by 2002:a17:906:9f8c:b0:b0c:1701:bf77 with SMTP id
- a640c23a62f3a-b24eedb990bmr668692766b.18.1758354588717; Sat, 20 Sep 2025
- 00:49:48 -0700 (PDT)
+        bh=knrhMCywQQbRVUMOa6NYTtOeTCJV68hMiq9CpjYL5Ig=;
+        b=WV+5vWzgQvbeUYSpYrq6iX7J5j2rgW09+sRQ7vnqenSvgeGrl++WiXjpXk0bOR3bcv
+         3tgOIKtuVZLt4+5ibMjcx6O/sg4KD8AeMCwKRNbTwD7yR+koEb/nKe6C/K7x5GOsbOEz
+         2yd4t9GKU9qELGKhWkXGPPiIZltxFG5/xekxTGLytX3qa1A2qgVaNyJJ691nYgfVaH/q
+         pXjtT58wi0vs5aeaUF2NabKcPi5VhJ9WbV/JCkJIl0Dwv9Phx9xRuEV31Xx0MHx9dI4C
+         9UyIIn1IpeFBlCeEaX3OAH0UjEyBX8JLtoWnMh/rp0Sp8Ad7XKfrHGOvxWDJ3OQSHVeT
+         3kZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFsDGF420eziPCnalNH1Lj8Vx1iN6w9duGbnC89Jf2HT3+RUl2CSIagq+IQLHZkpkRL2o2/WpREoaAgi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi2zZLahlELqJJyoLLUFGyJcCVUKHx0aEw9vajP9xlz74KMj1a
+	pl1yO9S745sen/8I92nD4DUyotUwmILqU72AwtgYdFC5fF+H3kQHXQZG/QyCxmfgCl+5junmTZE
+	7BGaqv/dFTdP86/41lZNbzwEcZ99EBAI=
+X-Gm-Gg: ASbGncsyEm6Ah3uc0r8m4jaE6D3ZUeJXxjm7XTBbh2aD/MMo0RqdP/VVRRt40LZRPoS
+	nK6sXzxZxM74e1rs79+ZJvHYkJufEWuy6xwFaY1lw42qob6c2vsGnrGsKNBXnk3Zghn2h8gLmOc
+	VGIyu3u9s6NZDUyoTlGC6i1nV+V+Py0Ut/o85Gm2+X2NtgEUAvq6OYv2cr9BoSAHCWPNSM60Iba
+	2qqgKU=
+X-Google-Smtp-Source: AGHT+IHmG1fxyCSJTQF/lVZDDieCsvChFigTVcILMjcYaPs1hBu7xmp9rm6MWNpYRtLeq9vcyYIobarHjZM0ACSqzJ0=
+X-Received: by 2002:a17:907:3cc9:b0:b07:c715:31 with SMTP id
+ a640c23a62f3a-b24f5f3097cmr625719566b.65.1758354634061; Sat, 20 Sep 2025
+ 00:50:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917073010.88607-1-zhaoshuo@cqsoftware.com.cn> <f27e3d04-ced6-459c-993f-b5495257fa3f@linux.dev>
-In-Reply-To: <f27e3d04-ced6-459c-993f-b5495257fa3f@linux.dev>
+References: <CAJy-AmnK2fFJeoRzUXp7tME6HVYeGJreuXLSecnQLAr=SNzE5w@mail.gmail.com>
+ <20250918160701503LAL5d3yUvPccri9n1foeC@zte.com.cn>
+In-Reply-To: <20250918160701503LAL5d3yUvPccri9n1foeC@zte.com.cn>
 From: Alex Shi <seakeel@gmail.com>
-Date: Sat, 20 Sep 2025 15:49:12 +0800
-X-Gm-Features: AS18NWBB-4cecjuKls_frs--SGWiPru1Rvwx9dDopEec980Nt4tli3aTJo0pdqo
-Message-ID: <CAJy-AmnJyGvoOJ3JX=wnon-uo7_ViX3bWiF8m-qMuPQfZJNdvg@mail.gmail.com>
-Subject: Re: [PATCH] docs/zh_CN: Add security lsm-development Chinese translation
-To: Yanteng Si <si.yanteng@linux.dev>
-Cc: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>, alexs@kernel.org, corbet@lwn.net, 
-	dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 20 Sep 2025 15:49:57 +0800
+X-Gm-Features: AS18NWCndUXQ50dMCXwNE8epdcyfCdXUNYuQDgeFiwJDWXpwFBoSoRcCzVwXjDY
+Message-ID: <CAJy-Am=wsBOC9QH4A_-784KZF3L8D6-s1Yttp62viwAoQ8G4rA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] Docs/zh_CN: Translate filesystems docs to
+ Simplified Chinese
+To: shao.mingyin@zte.com.cn
+Cc: alexs@kernel.org, si.yanteng@linux.dev, dzm91@hust.edu.cn, corbet@lwn.net, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yang.yang29@zte.com.cn, xu.xin16@zte.com.cn, yang.tao172@zte.com.cn, 
+	wang.longjie1@zte.com.cn
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-QXBwbGllZCwgVGhhbmtzDQoNCllhbnRlbmcgU2kgPHNpLnlhbnRlbmdAbGludXguZGV2PiDkuo4y
-MDI15bm0OeaciDE35pel5ZGo5LiJIDE2OjM05YaZ6YGT77yaDQo+DQo+DQo+IOWcqCA5LzE3LzI1
-IDM6MzAgUE0sIFNodW8gWmhhbyDlhpnpgZM6DQo+ID4gVHJhbnNsYXRlIC4uLi9zZWN1cml0eS9s
-c20tZGV2ZWxvcG1lbnQucnN0IGludG8gQ2hpbmVzZS4NCj4gPg0KPiA+IFVwZGF0ZSB0aGUgdHJh
-bnNsYXRpb24gdGhyb3VnaCBjb21taXQgNmQyZWQ2NTMxODViDQo+ID4gKCJsc206IG1vdmUgaG9v
-ayBjb21tZW50cyBkb2NzIHRvIHNlY3VyaXR5L3NlY3VyaXR5LmMiKS4NCj4gPg0KPiA+IFNpZ25l
-ZC1vZmYtYnk6IFNodW8gWmhhbyA8emhhb3NodW9AY3Fzb2Z0d2FyZS5jb20uY24+DQo+DQo+IFJl
-dmlld2VkLWJ5OiBZYW50ZW5nIFNpIDxzaXlhbnRlbmdAY3Fzb2Z0d2FyZS5jb20uY24+DQo+DQo+
-DQo+IFRoYW5rcywNCj4NCj4gWWFudGVuZw0KPg0KPiA+IC0tLQ0KPiA+ICAgLi4uL3RyYW5zbGF0
-aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QgICAgIHwgIDIgKy0NCj4gPiAgIC4uLi96aF9D
-Ti9zZWN1cml0eS9sc20tZGV2ZWxvcG1lbnQucnN0ICAgICAgICB8IDE5ICsrKysrKysrKysrKysr
-KysrKysNCj4gPiAgIDIgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
-bigtKQ0KPiA+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25z
-L3poX0NOL3NlY3VyaXR5L2xzbS1kZXZlbG9wbWVudC5yc3QNCj4gPg0KPiA+IGRpZmYgLS1naXQg
-YS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QgYi9E
-b2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QNCj4gPiBp
-bmRleCA3OGQ5ZDRiMzZkY2EuLjA1ZDI0ZTNhY2MxMSAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVu
-dGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QNCj4gPiArKysgYi9E
-b2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QNCj4gPiBA
-QCAtMTgsNiArMTgsNyBAQA0KPiA+ICAgICAgY3JlZGVudGlhbHMNCj4gPiAgICAgIHNucC10ZHgt
-dGhyZWF0LW1vZGVsDQo+ID4gICAgICBsc20NCj4gPiArICAgbHNtLWRldmVsb3BtZW50DQo+ID4g
-ICAgICBzYWsNCj4gPiAgICAgIHNlbGYtcHJvdGVjdGlvbg0KPiA+ICAgICAgc2lwaGFzaA0KPiA+
-IEBAIC0yOCw3ICsyOSw2IEBADQo+ID4gICBUT0RPTElTVDoNCj4gPiAgICogSU1BLXRlbXBsYXRl
-cw0KPiA+ICAgKiBrZXlzL2luZGV4DQo+ID4gLSogbHNtLWRldmVsb3BtZW50DQo+ID4gICAqIFND
-VFANCj4gPiAgICogc2VjcmV0cy9pbmRleA0KPiA+ICAgKiBpcGUNCj4gPiBkaWZmIC0tZ2l0IGEv
-RG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vc2VjdXJpdHkvbHNtLWRldmVsb3BtZW50
-LnJzdCBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3NlY3VyaXR5L2xzbS1kZXZl
-bG9wbWVudC5yc3QNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAw
-MDAwMC4uN2VkMzcxOWE5ZDA3DQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL0RvY3VtZW50
-YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3NlY3VyaXR5L2xzbS1kZXZlbG9wbWVudC5yc3QNCj4g
-PiBAQCAtMCwwICsxLDE5IEBADQo+ID4gKy4uIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwt
-Mi4wDQo+ID4gKy4uIGluY2x1ZGU6OiAuLi9kaXNjbGFpbWVyLXpoX0NOLnJzdA0KPiA+ICsNCj4g
-PiArOk9yaWdpbmFsOiBEb2N1bWVudGF0aW9uL3NlY3VyaXR5L2xzbS1kZXZlbG9wbWVudC5yc3QN
-Cj4gPiArDQo+ID4gKzrnv7vor5E6DQo+ID4gKyDotbXnoZUgU2h1byBaaGFvIDx6aGFvc2h1b0Bj
-cXNvZnR3YXJlLmNvbS5jbj4NCj4gPiArDQo+ID4gKz09PT09PT09PT09PT09PT09DQo+ID4gK0xp
-bnV45a6J5YWo5qih5Z2X5byA5Y+RDQo+ID4gKz09PT09PT09PT09PT09PT09DQo+ID4gKw0KPiA+
-ICvln7rkuo5odHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMDcxMDI2MDczNzIxLjYxOGI0Nzc4
-QGxhcHRvcGQ1MDUuZmVucnVzLm9yZ++8jA0KPiA+ICvlvZPkuIDnp43mlrDnmoRMU03nmoTmhI/l
-m77vvIjlroPor5Xlm77pmLLojIPku4DkuYjvvIzku6Xlj4rlnKjlk6rkupvmg4XlhrXkuIvkurrk
-u6zkvJrmnJ/mnJvkvb/nlKjlroPvvInlnKgNCj4gPiArYGBEb2N1bWVudGF0aW9uL2FkbWluLWd1
-aWRlL0xTTS9gYCDkuK3pgILlvZPorrDlvZXkuIvmnaXlkI7vvIzlsLHkvJrooqvmjqXlj5fov5vl
-haXlhoXmoLjjgIINCj4gPiAr6L+Z5L2/5b6XTFNN55qE5Luj56CB5Y+v5Lul5b6I6L275p2+55qE
-5LiO5YW255uu5qCH6L+b6KGM5a+55q+U77yM5LuO6ICM6K6p5pyA57uI55So5oi35ZKM5Y+R6KGM
-54mI5Y+v5Lul5pu0DQo+ID4gK+aYjuaZuuWcsOWGs+WumumCo+S6m0xTTemAguWQiOS7luS7rOea
-hOmcgOaxguOAgg0KPiA+ICsNCj4gPiAr5pyJ5YWz5Y+v55So55qEIExTTSDpkqnlrZDmjqXlj6Pn
-moTor6bnu4bmlofmoaPvvIzor7flj4LpmIUgYGBzZWN1cml0eS9zZWN1cml0eS5jYGAg5Y+K55u4
-5YWz57uT5p6E44CCDQo=
+All applied, Thanks!
+
+<shao.mingyin@zte.com.cn> =E4=BA=8E2025=E5=B9=B49=E6=9C=8818=E6=97=A5=E5=91=
+=A8=E5=9B=9B 16:07=E5=86=99=E9=81=93=EF=BC=9A
+>
+> >> >Applied! Thanks!
+> >> >Alex
+> >> >
+> >> Hi Alex
+> >>
+> >> Thank you for your review!
+> >>
+> >> Previously, Yanteng gave a review suggestion.
+> >>
+> >> https://lore.kernel.org/all/e0233785-b3da-4bd5-a37f-cf4704c49744@linux=
+.dev/
+> >>
+> >> Additionally, I also noticed that the header of this
+> >> patch lacks a fixed format.
+> >>
+> >> https://lore.kernel.org/all/20250826190719682yrVrd5e1DHRXx0-XjI19Y@zte=
+.com.cn/
+> >>
+> >> I am preparing to send a new version to fix the above issue.
+> >
+> >Good. I have picked v4 on
+> >https://git.kernel.org/pub/scm/linux/kernel/git/alexs/linux.git/log/?h=
+=3Ddocs-next,
+> >could you do me a favor to send a fix base the branch?
+> >
+> >Thanks
+> I have sent 3 fix patch.
+>
+> 1.
+> https://lore.kernel.org/all/20250918151349743KS4zJHQOoG-yPHSeAY3dv@zte.co=
+m.cn/
+> 2.
+> https://lore.kernel.org/all/20250918143643417OPRH_RjCXkCa3aCtQEX3Y@zte.co=
+m.cn/
+> 3.
+> https://lore.kernel.org/all/202509181556503857h2V0skOmjONfEzUrZ-ok@zte.co=
+m.cn/
+>
+> Thanks.
+>
+> Mingyin
+> >
+> >>
+> >> Thanks,
+> >>
+> >> Mingyin
+> >> ><shao.mingyin@zte.com.cn> =E4=BA=8E2025=E5=B9=B48=E6=9C=8826=E6=97=A5=
+=E5=91=A8=E4=BA=8C 19:12=E5=86=99=E9=81=93=EF=BC=9A
+> >> >>
+> >> >> From: Shao Mingyin <shao.mingyin@zte.com.cn>
+> >> >>
+> >> >> translate the filesystems docs into Simplified Chinese.
+> >> >> v3->v4
+> >> >> resolve patch damage issues.
+> >> >>
+> >> >> Shao Mingyin (5):
+> >> >> Docs/zh_CN: Translate ubifs.rst to Simplified Chinese
+> >> >> Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chines=
+e
+> >> >> Docs/zh_CN: Translate gfs2.rst to Simplified Chinese
+> >> >> Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chinese
+> >> >> Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chinese
+> >> >>
+> >> >> Wang Longjie (2):
+> >> >> Docs/zh_CN: Translate dnotify.rst to Simplified Chinese
+> >> >> Docs/zh_CN: Translate inotify.rst to Simplified Chinese
+> >> >>
+> >> >>  .../zh_CN/filesystems/dnotify.rst             |  67 ++++
+> >> >>  .../zh_CN/filesystems/gfs2-glocks.rst         | 199 ++++++++++
+> >> >>  .../zh_CN/filesystems/gfs2-uevents.rst        |  97 +++++
+> >> >>  .../translations/zh_CN/filesystems/gfs2.rst   |  57 +++
+> >> >>  .../translations/zh_CN/filesystems/index.rst  |  17 +-
+> >> >>  .../zh_CN/filesystems/inotify.rst             |  80 ++++
+> >> >>  .../filesystems/ubifs-authentication.rst      | 354 ++++++++++++++=
+++++
+> >> >>  .../translations/zh_CN/filesystems/ubifs.rst  | 114 ++++++
+> >> >>  8 files changed, 984 insertions(+), 1 deletion(-)
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/dn=
+otify.rst
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/gf=
+s2-glocks.rst
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/gf=
+s2-uevents.rst
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/gf=
+s2.rst
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/in=
+otify.rst
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/ub=
+ifs-authentication.rst
+> >> >>  create mode 100644 Documentation/translations/zh_CN/filesystems/ub=
+ifs..rst
 
