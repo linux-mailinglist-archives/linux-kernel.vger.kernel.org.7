@@ -1,195 +1,125 @@
-Return-Path: <linux-kernel+bounces-825449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A18B8BD34
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:10:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C7F4B8BD47
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6AF71B21D4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5075456751E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F391F4E4F;
-	Sat, 20 Sep 2025 02:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7CB18DB0D;
+	Sat, 20 Sep 2025 02:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhXrxvAH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f6bj0rs9"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFDB1E9B1C;
-	Sat, 20 Sep 2025 02:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FD22581
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758334200; cv=none; b=EBkFDe2VMRrO/Y0S1hBcnRv/h38uE82l0nU2hDJFM3L02IIJ0Y452IWQ7SXdh15Uz1MxIpBsfLxBKj7d23GjGZZFtX7FbWTet/3FrIAIeEZczcE77U+F2wcdV5ukoi99AYMSEye5MRQWaGpKm7ROwOjGosToCJ0Z46+grepDGMQ=
+	t=1758334771; cv=none; b=MTGbITN1sYSURe9nQOUaQ6i7qYrVe7WC68IHheeQQstrwbHbdQkMMZyFiZQB70/vKtgu3w66UrdE1lDqlOXBW6er8lqSc6FobwJLVMfQCb3trcUwjHJugFQJUNjuF12mNEevMIiOVlJodY7nC8eOSPEmjaWgISQ9p6B3q/6mVbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758334200; c=relaxed/simple;
-	bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KztCuLrenTaZvE/gsyczPWLVZc0m+5NXaYfp2amQhF1NX6TAJE6D2Er+Mqj73s/nX3Np3BGogjN3o5neYEbWvJ6+eMBTJlnawxAL3BvmEQQt9Q3N4bYW3hiwYoaaFaFoEoXsoUNuqN6qbOVEWJQnELQESSGFQ2CaaOf196MJ7Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhXrxvAH; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758334199; x=1789870199;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P/Y/oW6/FFUxH7RVYDjud0Hfluc4bls5rAWpnqFcl4M=;
-  b=DhXrxvAHph5SBG8JRzlWzoyT62ku2VvJrgqUUy1GZ3Wure33huupGfB3
-   iRg+IXX7Gf51SiK0FKUT4SHmPmK509Z0/QL4dTu9ZOFuWGa6cqU9VT6Xh
-   ywONKLXUu1bA6htKQ/m701S3qg+ZRLQMSGwqVllXR2Rg/1PYBEXtkvuuI
-   VA7uNxNgKESJICaPhWlFLs3wEWooVlRIFe1U4uMMCK0kfBj78x68RCYfe
-   v3eY7BxhogoE865FVBeRNtUHwoMj6Aos6llP69ZooEX6L60yIlp2yATmG
-   P7gS22S+EFccYblZa+vMb96Is/W9Xr1TMeeQYN8Bwwg4g0M1x9cCwqfs0
-   Q==;
-X-CSE-ConnectionGUID: HYKFpfa4QueTDjGXskAv1A==
-X-CSE-MsgGUID: amtTjqL7Spmtu3AKATjrSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="64501703"
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="64501703"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 19:09:58 -0700
-X-CSE-ConnectionGUID: tKmWcZo7REuUUBFq1zMauw==
-X-CSE-MsgGUID: m2q2elODTl6a8KnPC+GAdw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
-   d="scan'208";a="176795181"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 19 Sep 2025 19:09:55 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzn2u-0004xn-2m;
-	Sat, 20 Sep 2025 02:09:52 +0000
-Date: Sat, 20 Sep 2025 10:09:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kartik Rajput <kkartik@nvidia.com>, alexandre.belloni@bootlin.com,
-	thierry.reding@gmail.com, jonathanh@nvidia.com,
-	andriy.shevchenko@linux.intel.com, linux-rtc@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Kartik Rajput <kkartik@nvidia.com>
-Subject: Re: [PATCH] rtc: tegra: Add ACPI support
-Message-ID: <202509200953.uZOl24Is-lkp@intel.com>
-References: <20250919111232.605405-1-kkartik@nvidia.com>
+	s=arc-20240116; t=1758334771; c=relaxed/simple;
+	bh=8gjjFALb5OqFsAHx2e8iBUY63EelPSdQloxqbDdhikI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BAcAHXMwgqRsITIQMjm5uUbt1kxtXQqQ2h17en0iB/5ZK9BVIaTW46mf0YsI7MFwqi/V2uyVilDtOhyabigSdCNUYCBqIDDqOsAXSw2e8Nyt4XDKwnDWqO6k3jXiC8tFqPB0hLkWD77CEdFh3iIPVc+BeIMHSDYBbAhr6DQMA5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=f6bj0rs9; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 4AAF8C01508B;
+	Fri, 19 Sep 2025 19:10:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 4AAF8C01508B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1758334240;
+	bh=8gjjFALb5OqFsAHx2e8iBUY63EelPSdQloxqbDdhikI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f6bj0rs9EeNNXBE46HEXEc8x9YsYXSby7xRVQ45O5Jo/4x+QSFqPzWUoA/nKL17Gi
+	 H6rRrzjI/ktzVR/UCSR//F4pYNbrg9avVGQGmxa2B+Uuw9RfjOXIg8NhX/iBMOtp7C
+	 A8MFgofXHSVafKUoShU2xXEEasm+5TB/Xd3V9DAw=
+Received: from bcacpedev-irv-3.lvn.broadcom.net (bcacpedev-irv-3.lvn.broadcom.net [10.173.232.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 016BF18000847;
+	Fri, 19 Sep 2025 19:10:39 -0700 (PDT)
+From: William Zhang <william.zhang@broadcom.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: song@kernel.org,
+	linus.walleij@linaro.org,
+	florian.fainelli@broadcom.com,
+	ardb@kernel.org,
+	anand.gore@broadcom.com,
+	Broadcom Kernel List <bcm-kernel-feedback-list@broadcom.com>,
+	kursad.oney@broadcom.com,
+	William Zhang <william.zhang@broadcom.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Russell King <linux@armlinux.org.uk>
+Subject: [PATCH] ARM: module: fix unwind section relocation out of range error
+Date: Fri, 19 Sep 2025 19:09:57 -0700
+Message-ID: <20250920021024.847323-1-william.zhang@broadcom.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919111232.605405-1-kkartik@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Kartik,
+In an armv7 system that uses non-3G/1G split and with more than 512MB
+physical memory, driver load may fail with following error:
+   section 29 reloc 0 sym '': relocation 42 out of range (0xc2ab9be8 ->
+0x7fad5998)
 
-kernel test robot noticed the following build errors:
+This happens when relocation R_ARM_PREL31 from the unwind section
+.ARM.extab and .ARM.exidx are allocated from the VMALLOC space while
+.text section is from MODULES_VADDR space. It exceeds the +/-1GB
+relocation requirement of R_ARM_PREL31 hence triggers the error.
 
-[auto build test ERROR on tegra/for-next]
-[also build test ERROR on abelloni/rtc-next linus/master v6.17-rc6 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The fix is to mark .ARM.extab and .ARM.exidx sections as executable so
+they can be allocated within .text section and always meet range
+requirement.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kartik-Rajput/rtc-tegra-Add-ACPI-support/20250919-191553
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250919111232.605405-1-kkartik%40nvidia.com
-patch subject: [PATCH] rtc: tegra: Add ACPI support
-config: arm-randconfig-001-20250920 (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509200953.uZOl24Is-lkp@intel.com/reproduce)
+Co-developed-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: William Zhang <william.zhang@broadcom.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509200953.uZOl24Is-lkp@intel.com/
+---
 
-All errors (new ones prefixed by >>):
+ arch/arm/kernel/module-plts.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-   drivers/rtc/rtc-tegra.c: In function 'tegra_rtc_probe':
->> drivers/rtc/rtc-tegra.c:310:13: error: implicit declaration of function 'is_of_node'; did you mean 'dev_of_node'? [-Werror=implicit-function-declaration]
-     310 |         if (is_of_node(dev_fwnode(&pdev->dev))) {
-         |             ^~~~~~~~~~
-         |             dev_of_node
-   cc1: some warnings being treated as errors
-
-
-vim +310 drivers/rtc/rtc-tegra.c
-
-   283	
-   284	static int tegra_rtc_probe(struct platform_device *pdev)
-   285	{
-   286		struct tegra_rtc_info *info;
-   287		int ret;
-   288	
-   289		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
-   290		if (!info)
-   291			return -ENOMEM;
-   292	
-   293		info->base = devm_platform_ioremap_resource(pdev, 0);
-   294		if (IS_ERR(info->base))
-   295			return PTR_ERR(info->base);
-   296	
-   297		ret = platform_get_irq(pdev, 0);
-   298		if (ret <= 0)
-   299			return ret;
-   300	
-   301		info->irq = ret;
-   302	
-   303		info->rtc = devm_rtc_allocate_device(&pdev->dev);
-   304		if (IS_ERR(info->rtc))
-   305			return PTR_ERR(info->rtc);
-   306	
-   307		info->rtc->ops = &tegra_rtc_ops;
-   308		info->rtc->range_max = U32_MAX;
-   309	
- > 310		if (is_of_node(dev_fwnode(&pdev->dev))) {
-   311			info->clk = devm_clk_get(&pdev->dev, NULL);
-   312			if (IS_ERR(info->clk))
-   313				return PTR_ERR(info->clk);
-   314	
-   315			ret = clk_prepare_enable(info->clk);
-   316			if (ret < 0)
-   317				return ret;
-   318		}
-   319	
-   320		/* set context info */
-   321		info->pdev = pdev;
-   322		spin_lock_init(&info->lock);
-   323	
-   324		platform_set_drvdata(pdev, info);
-   325	
-   326		/* clear out the hardware */
-   327		writel(0, info->base + TEGRA_RTC_REG_SECONDS_ALARM0);
-   328		writel(0xffffffff, info->base + TEGRA_RTC_REG_INTR_STATUS);
-   329		writel(0, info->base + TEGRA_RTC_REG_INTR_MASK);
-   330	
-   331		device_init_wakeup(&pdev->dev, true);
-   332	
-   333		ret = devm_request_irq(&pdev->dev, info->irq, tegra_rtc_irq_handler,
-   334				       IRQF_TRIGGER_HIGH, dev_name(&pdev->dev),
-   335				       &pdev->dev);
-   336		if (ret) {
-   337			dev_err(&pdev->dev, "failed to request interrupt: %d\n", ret);
-   338			goto disable_clk;
-   339		}
-   340	
-   341		ret = devm_rtc_register_device(info->rtc);
-   342		if (ret)
-   343			goto disable_clk;
-   344	
-   345		dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
-   346	
-   347		return 0;
-   348	
-   349	disable_clk:
-   350		if (is_of_node(dev_fwnode(&pdev->dev)))
-   351			clk_disable_unprepare(info->clk);
-   352		return ret;
-   353	}
-   354	
-
+diff --git a/arch/arm/kernel/module-plts.c b/arch/arm/kernel/module-plts.c
+index 354ce16d83cb..5f5bf5e63bd6 100644
+--- a/arch/arm/kernel/module-plts.c
++++ b/arch/arm/kernel/module-plts.c
+@@ -225,6 +225,18 @@ int module_frob_arch_sections(Elf_Ehdr *ehdr, Elf_Shdr *sechdrs,
+ 			mod->arch.init.plt = s;
+ 		else if (s->sh_type == SHT_SYMTAB)
+ 			syms = (Elf32_Sym *)s->sh_addr;
++#if defined(CONFIG_ARM_UNWIND) && !defined(CONFIG_VMSPLIT_3G)
++		else if (s->sh_type == ELF_SECTION_UNWIND ||
++			 (strncmp(".ARM.extab", secstrings + s->sh_name, 10) == 0)) {
++			/*
++			 * To avoid the possible relocation out of range issue for
++			 * R_ARM_PREL31, mark unwind section .ARM.extab and .ARM.exidx as
++			 * executable so they will be allocated within .text section to meet
++			 * +/-1GB range requirement of the R_ARM_PREL31 relocation
++			 */
++			s->sh_flags |= SHF_EXECINSTR;
++		}
++#endif
+ 	}
+ 
+ 	if (!mod->arch.core.plt || !mod->arch.init.plt) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.7
+
 
