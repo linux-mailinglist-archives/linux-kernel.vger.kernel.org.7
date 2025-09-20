@@ -1,219 +1,188 @@
-Return-Path: <linux-kernel+bounces-825520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35CE5B8C064
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3A5B8C078
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 08:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA649179013
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD44174032
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 06:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B32F231C91;
-	Sat, 20 Sep 2025 06:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A34231845;
+	Sat, 20 Sep 2025 06:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz10Wg7F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IR3NkpNt"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43C22629D
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B460F230996
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758348292; cv=none; b=Tl/+k+bokSx9KK2XEzWdtLpVG+J6i9A90tucZJWdUK9gLzA46tRGKDGCd1VaPYwJ7wc++7rqGcG8BqAsL4GkbAAPNGkP0rmARISLIhivKx6+tX0HUD18vbYcxtQkUa8KcFs5vrDA620iTVRzFyFElM3bSGg83JiYJmdVEqY1XOc=
+	t=1758348633; cv=none; b=aLfEGjYwlaNGXwO8+HHn8uq7i86x/CZiL6H7p+0ZOTBxC2hkUiawqEoefPHOdfX4PpI93SZT59Nblq/7lh1Lv7w6RLlHon5LlAXXSs3qj/Ub/s+78F5AiL7RNEds08MZrwV3Sdb7IKIyDp0+7Zxiez6l46fB1FDFNYqfhimGfa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758348292; c=relaxed/simple;
-	bh=bUSo76FiAKZcTtDrgA2WJVYVNUq/3jJzR2LwBGYiPys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pfqs0bs56ZjPrSnPJgNcrjapLIWDacyNPpxSmDJHnCm9kBy/90e/OsZ9voS8AYPENRnnXCAKqrc1M+B2f6+BGmp7llsdH/bP5Rsv4g7GH4n02sNC2Dl0KZRXa0cqR6vjydbXUUBxCy9rFDooioqJ1LlEywH8e0f6TiLNW8GR2sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oz10Wg7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6170FC4CEEB
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 06:04:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758348292;
-	bh=bUSo76FiAKZcTtDrgA2WJVYVNUq/3jJzR2LwBGYiPys=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Oz10Wg7FtGz/hvzwsPZdBk/RGuhiTnVY8+eCRi9THCO1RApBOaPNjAERmTh8AdADs
-	 ulMlS2k8VJ8bHdVwCyuzvrSBiEB8HiYi5Yl1Vm9eU0PGUZ4XgAxjDS3RqHp2A0Ivvg
-	 H7dBqhakIvko2L9ex8qJ6XzxImudYadzccTkQ6yeutYS5i2uCAJcj/VEHapVBf8V3Y
-	 WTkWDCH3RXTLdPa/oEwFBVeaDsfztS319Kuhh7uqXsHN2t+Q4VX954U3lfgW18+D96
-	 ZoJRmP04ac/hsz/Ed43pyZ3lvzRviPj8vBl2dNeru2BZJtJXnd+tf6si51PceRRdTH
-	 frCPA22/i/Dxw==
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso2853955f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:04:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVA2Y4FgN2ZdK4UkZxbfa4TdIYs74+sMsMZx1LXH7hrd69oNWs/v+zN35ZBNO3Bva4Eoy/N3VHyzeto1Uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1h4xcnGBgnWf2HT6YhqAQVE9NHY56xtbFUX6KlwYOIpwb1mP
-	FNYTTsBXlcfx4pbwDCSS4me+X7x6bimUZhTy+2jqOchufBlnUA0eKZcbwIUY9PExWtjdZVH6Yln
-	wW951HzaP7cFbA9Tt6U302457ekJ7Bks=
-X-Google-Smtp-Source: AGHT+IHVBstz0hyh2FjBGMmeldYqXqfklk1YzzcXGWCTr4A8BwrONyFaN+09clPKxJqBQbjEB4/rMmOa8D3VMOosbR4=
-X-Received: by 2002:a05:6000:3109:b0:3ec:4fe:880 with SMTP id
- ffacd0b85a97d-3ee7c552822mr4209207f8f.1.1758348290125; Fri, 19 Sep 2025
- 23:04:50 -0700 (PDT)
+	s=arc-20240116; t=1758348633; c=relaxed/simple;
+	bh=bo2Ndb5QdjF0C5RExvUQJNNOB01lRnxcWM4euD7xwfM=;
+	h=From:To:Cc:Subject:Date:References:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=reVAuQpqUMn0tfO6excD/cXwdLB656hJxEXVPoxSdFd6LVBjIjIC99n+JCVN/0K/+VIHD1XZDw+f1wlR75RPCc7axkWAXFEkjwVJ49AqTcvcHBfOsDKp0scT8QIaDiHTHuvwVu0mIBZfMiin4CfamzW8kAMKez/DZhwX0YqC+WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IR3NkpNt; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-32e715cbad3so2905931a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 23:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758348631; x=1758953431; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:user-agent:references:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hou6AJPM8wejR725iDsnasOHuRSCpfZoVQThJpW/xQI=;
+        b=IR3NkpNtQB/0tFFNV7IqLAhjTEeFp4qIW9P/R3awtnebNRXrYR8+hPv0S6wByiRld9
+         GwgokRdQbDlHGKnmqmPLeEHe5hKx6lX9axiuiBooVxUUOjg28jwZPkFK4tD6TagCBNgs
+         AwbTRsLGauWgz1X+vcRDEfTtpkYaOav8t6cBv/biEqdFb2cpub0JRPe46AwtREeRpBU3
+         RlZAMBHiBgYfFzmg/xDjdaZHvEAqwr4ds3cIBM0nk5HrAkUssSdgkE1WOVbcODKRlr2G
+         JIbWWjBttrMcyJDGdldhqy8wi7IHArKIPHXvZ1NNEr0UT+TCRNjT0AMmq1+BfpUEJ2/j
+         /SLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758348631; x=1758953431;
+        h=mime-version:message-id:in-reply-to:user-agent:references:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hou6AJPM8wejR725iDsnasOHuRSCpfZoVQThJpW/xQI=;
+        b=HjmuaQelu1KpwRbiek97dw4sIE0w1BHYFq0SJPameDu716Sv9cCLYHTEOhf98E6mPv
+         8NeFPIcVLvFvaLqeIu5jZCNuUIBeK5oHgb4zzzH9+hlcrcqc3Dn/yylQSILANR3SpTBH
+         cBFFcI1uN6Ae87RHJoiUHbXKvh5LFzZ7aGaAT+ALRz8Gtek/pEzUrh6JC5tK5KPQz5+W
+         e+zbIz+xy4+Pqx/6ivLM3XJiAEYCUcdBc9ZM2BDwXqWzeBjNUvSxOFoPV9F1Mlo/OXJa
+         oZWyobHvrMw44pn+2hMOoXI4iH2K7lV4YM/8vTbTHsi0mf3ckuTC0h8ttTiPRVSeYlhs
+         E0pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwl2/PF8P9Ful2/gHHVDrlUvnF+oG6bLxt/TdlYlj3BU1QAOlYggJasr503Y9mul37UCbfYQLmovPWvEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzq+S+ydOppSxy4dSbUKIqsEKG+7+By9V0ACI3vsi618PwoyPp
+	9OqCssclt1Hzq7kL08A4ThbretviFKdr2J6waFcIz/y5NMcr8Sc/xWVtb5nBfmBcds8=
+X-Gm-Gg: ASbGncutzNr2fJjuG+iYjpAZANbWCzt2EszwKKFqB3aYnHeKFEzo/srZdAUeSyd8QDm
+	yf06EXDUzf+NkSkA55EhTCXJprlije2z7DLhlKKHykF8tnkTNDKvihxMhwjVDAOeGrzk+1mKisn
+	fTSV/QGFBOm0tkWXf2PfX5i0GqTYUrqmpCHJiIcoKJ8Hldb5e9qlHWXmMDV5mdZgfci8sJwb6zl
+	eQ1rKSA1Z3rKqunBKXC/JZ1+YPJ7RScWyTd7mCNvvnWrM+wMiPAyogSID2pDUF9/cr5ME7sPrMY
+	fA2d/6sGZ+WpvdXVhkpVbfmiHc35YYHog7AyaCmAuKqIljj5d2NBMnThR5Z1j5FfxD7hGOyUZ6n
+	X2gq4tGkJfSjg
+X-Google-Smtp-Source: AGHT+IH2YsbIL9bmM2wkE8sVKgdbADyeo6xeBPeiRV0b4d2jfA5VE26z/kBsRCKoBlEJw3bJUDuezg==
+X-Received: by 2002:a17:90b:52d0:b0:32e:d011:ea1c with SMTP id 98e67ed59e1d1-33097ffd1b2mr8090816a91.15.1758348630860;
+        Fri, 19 Sep 2025 23:10:30 -0700 (PDT)
+Received: from 1337 ([136.159.213.204])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b5531d90d1asm1179569a12.18.2025.09.19.23.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Sep 2025 23:10:30 -0700 (PDT)
+From: Abhinav Saxena <xandfury@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jeff Xu <jeffxu@google.com>, jeffxu@chromium.org,
+ skhan@linuxfoundation.org, keescook@chromium.org,
+ akpm@linux-foundation.org, dmitry.torokhov@gmail.com,
+ dverkamp@chromium.org, hughd@google.com, jorgelo@chromium.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, jannh@google.com, linux-hardening@vger.kernel.org,
+ linux-security-module@vger.kernel.org, kernel test robot <lkp@intel.com>,
+ =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BC?=
+ =?utf-8?Q?nther?= Noack <gnoack@google.com>, Fan
+ Wu <wufan@kernel.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v7 6/6] mm/memfd: security hook for memfd_create
+Date: Fri, 19 Sep 2025 23:54:06 -0600
+References: <20221209160453.3246150-1-jeffxu@google.com>
+ <20221209160453.3246150-7-jeffxu@google.com>
+ <CAHC9VhRBMTQvnBdSwMbkOsk9eemYfvCmj9TRgxtMeuex4KLCPA@mail.gmail.com>
+ <CALmYWFvrasXnshO01YGWRyC7qKk4o0G88yAgkgjO1YBumF5zeA@mail.gmail.com>
+ <CAHC9VhQKsjiGv3Af0iqg_TLNzCvdTaLnhw+BRTF9OEtJg1hX7g@mail.gmail.com>
+User-agent: mu4e 1.10.8; emacs 30.2
+In-reply-to: <CAHC9VhQKsjiGv3Af0iqg_TLNzCvdTaLnhw+BRTF9OEtJg1hX7g@mail.gmail.com>
+Message-ID: <87o6r5ac2z.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902042432.78960-1-luxu.kernel@bytedance.com>
- <aLciY2putG8g2P9F@andrea> <aMoyntAydNMtcl+3@gmail.com> <aMw3504EwlnDOJI0@gmail.com>
- <CAPYmKFt=5=t_nxY4FadG0_vSgAu1tXyO15OCvo5x6QorqM+BAw@mail.gmail.com>
-In-Reply-To: <CAPYmKFt=5=t_nxY4FadG0_vSgAu1tXyO15OCvo5x6QorqM+BAw@mail.gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 20 Sep 2025 14:04:38 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTRpnaL=K=qGLntG77X61n=Bc011Rq+6045D_HF_raeYYA@mail.gmail.com>
-X-Gm-Features: AS18NWBczq_ysm8InHadaqF1t8jSqDooIQYfRrTjuTn5kR1Hlb7xDVelX9zqbVA
-Message-ID: <CAJF2gTRpnaL=K=qGLntG77X61n=Bc011Rq+6045D_HF_raeYYA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2 0/4] riscv: Add Zalasr ISA extension support
-To: Xu Lu <luxu.kernel@bytedance.com>
-Cc: Andrea Parri <parri.andrea@gmail.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, ajones@ventanamicro.com, 
-	brs@rivosinc.com, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, apw@canonical.com, joe@perches.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="=-=-="
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 11:18=E2=80=AFAM Xu Lu <luxu.kernel@bytedance.com> =
-wrote:
->
-> Hi Guo Ren,
->
-> Thanks for your advice.
->
-> On Fri, Sep 19, 2025 at 12:48=E2=80=AFAM Guo Ren <guoren@kernel.org> wrot=
-e:
-> >
-> > On Wed, Sep 17, 2025 at 12:01:34AM -0400, Guo Ren wrote:
-> > > On Tue, Sep 02, 2025 at 06:59:15PM +0200, Andrea Parri wrote:
-> > > > > Xu Lu (4):
-> > > > >   riscv: add ISA extension parsing for Zalasr
-> > > > >   dt-bindings: riscv: Add Zalasr ISA extension description
-> > > > >   riscv: Instroduce Zalasr instructions
-> > > > >   riscv: Use Zalasr for smp_load_acquire/smp_store_release
-> > > >
-> > > > Informally put, our (Linux) memory consistency model specifies that=
- any
-> > > > sequence
-> > > >
-> > > >   spin_unlock(s);
-> > > >   spin_lock(t);
-> > > >
-> > > > behaves "as it provides at least FENCE.TSO ordering between operati=
-ons
-> > > > which precede the UNLOCK+LOCK sequence and operations which follow =
-the
-> > > > sequence".  Unless I missing something, the patch set in question b=
-reaks
-> > > > such ordering property (on RISC-V): for example, a "release" annota=
-tion,
-> > > > .RL (as in spin_unlock() -> smp_store_release(), after patch #4) pa=
-ired
-> > > > with an "acquire" fence, FENCE R,RW (as could be found in spin_lock=
-() ->
-> > > > atomic_try_cmpxchg_acquire()) do not provide the specified property=
-.
-> > > >
-> > > > I _think some solutions to the issue above include:
-> > > >
-> > > >  a) make sure an .RL annotation is always paired with an .AQ annota=
-tion
-> > > >     and viceversa an .AQ annotation is paired with an .RL annotatio=
-n
-> > > >     (this approach matches the current arm64 approach/implementatio=
-n);
-> > > >
-> > > >  b) on the opposite direction, always pair FENCE R,RW (or occasiona=
-lly
-> > > >     FENCE R,R) with FENCE RW,W (this matches the current approach/t=
-he
-> > > >     current implementation within riscv);
-> > > >
-> > > >  c) mix the previous two solutions (resp., annotations and fences),=
- but
-> > > >     make sure to "upgrade" any releases to provide (insert) a FENCE=
-.TSO.
-> > > I prefer option c) at first, it has fewer modification and influence.
-> > Another reason is that store-release-to-load-acquire would give out a
-> > FENCE rw, rw according to RVWMO PPO 7th rule instead of FENCE.TSO, whic=
-h
-> > is stricter than the Linux requirement you've mentioned.
->
-> The existing implementation of spin_unlock, when followed by
-> spin_lock, is equal to 'FENCE rw, rw' for operations before
-Yes, it's also stricter than option c), the same as ".RL->.AQ" sequence.
+Paul Moore <paul@paul-moore.com> writes:
 
-You give out another reason for option c).
+> On Tue, Dec 13, 2022 at 10:00 AM Jeff Xu <jeffxu@google.com> wrote:
+>> On Fri, Dec 9, 2022 at 10:29 AM Paul Moore <paul@paul-moore.com> wrote:
+>> > On Fri, Dec 9, 2022 at 11:05 AM <jeffxu@chromium.org> wrote:
+>> > >
+>> > > From: Jeff Xu <jeffxu@google.com>
+>> > >
+>> > > The new security_memfd_create allows lsm to check flags of
+>> > > memfd_create.
+>> > >
+>> > > The security by default system (such as chromeos) can use this
+>> > > to implement system wide lsm to allow only non-executable memfd
+>> > > being created.
+>> > >
+>> > > Signed-off-by: Jeff Xu <jeffxu@google.com>
+>> > > Reported-by: kernel test robot <lkp@intel.com>
+>> > > =E2=80=94
+>> > >  include/linux/lsm_hook_defs.h | 1 +
+>> > >  include/linux/lsm_hooks.h     | 4 ++++
+>> > >  include/linux/security.h      | 6 ++++++
+>> > >  mm/memfd.c                    | 5 +++++
+>> > >  security/security.c           | 5 +++++
+>> > >  5 files changed, 21 insertions(+)
+>> >
+>> > We typically require at least one in-tree LSM implementation to
+>> > accompany a new LSM hook.  Beyond simply providing proof that the hook
+>> > has value, it helps provide a functional example both for reviewers as
+>> > well as future LSM implementations.  Also, while the BPF LSM is
+>> > definitely =E2=80=9Cin-tree=E2=80=9D, its nature is such that the actu=
+al
+>> > implementation lives out-of-tree; something like SELinux, AppArmor,
+>> > Smack, etc. are much more desirable from an in-tree example
+>> > perspective.
+>>
+>> Thanks for the comments.
+>> Would that be OK if I add a new LSM in the kernel  to block executable
+>> memfd creation ?
+>
+> If you would be proposing the LSM only to meet the requirement of
+> providing an in-tree LSM example, no that would definitely *not* be
+> okay.
+>
+> Proposing a new LSM involves documenting a meaningful security model,
+> implementing it, developing tests, going through a (likely multi-step)
+> review process, and finally accepting the long term maintenance
+> responsibilities of this new LSM.  If you are proposing a new LSM
+> because you feel the current LSMs do not provide a security model
+> which meets your needs, then yes, proposing a new LSM might be a good
+> idea.  However, if you are proposing a new LSM because you don=E2=80=99t =
+want
+> to learn how to add a new hook to an existing LSM, then I suspect you
+> are misguided/misinformed with the amount of work involved in
+> submitting a new LSM.
+>
+>> Alternatively,  it might be possible to add this into SELinux or
+>> landlock, it will be a larger change.
+>
+> It will be a much smaller change than submitting a new LSM, and it
+> would have infinitely more value to the community than a throw-away
+> LSM where the only use-case is getting your code merged upstream.
 
-> spin_unlock
->  and after spin_lock:
->
-> spin_unlock:
->     fence rw, w
->     sd
-> spin_lock:
->     amocas
->     fence r, rw
->
-> The store-release semantics in spin_unlock, is used to ensure that
-> when the other cores can watch the store, they must also watch the
-> operations before the store, which is a more common case than calling
-> spin_unlock immediately followed by spin_lock on the same core. And
-> the existing implementation 'fence rw, w' 'fence r, rw' is stricter
-> than '.aq' '.rl'. That is why we want to modify it.
->
-> I have reimplemented the code and it now looks like the attached text
-> file. I will send the patch out later.
->
-> Best Regards.
->
-> Xu Lu
->
-> >
-> > >
-> > > asm volatile(ALTERNATIVE("fence rw, w;\t\nsb %0, 0(%1)\t\n",  \
-> > > -                       SB_RL(%0, %1) "\t\nnop\t\n",          \
-> > > +                       SB_RL(%0, %1) "\t\n fence.tso;\t\n",  \
-> > >                         0, RISCV_ISA_EXT_ZALASR, 1)           \
-> > >                         : : "r" (v), "r" (p) : "memory");     \
-> > >
-> > > I didn't object option a), and I think it could be done in the future=
-.
-> > > Acquire Zalasr extension step by step.
-> > >
-> > > >
-> > > > (a) would align RISC-V and ARM64 (which is a good thing IMO), thoug=
-h it
-> > > > is probably the most invasive approach among the three approaches a=
-bove
-> > > > (requiring certain changes to arch/riscv/include/asm/{cmpxchg,atomi=
-c}.h,
-> > > > which are already relatively messy due to the various ZABHA plus ZA=
-CAS
-> > > > switches).  Overall, I'm not too exited at the idea of reviewing an=
-y of
-> > > > those changes, but if the community opts for it, I'll almost defini=
-tely
-> > > > take a closer look with due calm.  ;-)
-> > > >
-> > > >   Andrea
-> > > >
-> > > > _______________________________________________
-> > > > linux-riscv mailing list
-> > > > linux-riscv@lists.infradead.org
-> > > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> > > >
-> > >
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> > >
+Hi Paul/everyone!
 
+I am not sure what is the latest here. But it seems both landlock[1] and
+IPE[2] have a use case for memfd_create(2) LSM hook.
 
+I would be happy to work on the use case for such a hook for landlock.
 
---=20
-Best Regards
- Guo Ren
+CC=E2=80=99ing maintainers for both LSMs.
+
+-Abhinav
+
+[1] - <https://lore.kernel.org/all/20250719-memfd-exec-v1-0-0ef7feba5821@gm=
+ail.com/>
+[2] - <https://lore.kernel.org/linux-security-module/20250129203932.22165-1=
+-wufan@kernel.org/>
+
+--=-=-=--
 
