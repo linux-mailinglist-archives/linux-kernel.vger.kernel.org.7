@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-825722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C05B8CA95
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:43:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4703FB8CA9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 16:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A26262141F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12CB0568095
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643FA2F9993;
-	Sat, 20 Sep 2025 14:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945A01A2C0B;
+	Sat, 20 Sep 2025 14:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3SQ+H65M"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cgbfwepd"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A6281A9FAB
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6105F1E89C
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 14:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758379390; cv=none; b=mK91VwvPeCsxmpv2r4MyVxQ+IU4/uJCI9DVaKegxWcqCYIzZhtamuRSRKLKY3iMEDZISdKu/zQivdFtwSyqI/GqwGzEQk8GSyFY8guV8XD0Clm4ZY3tv4I48RL7eJ21s9YArD9jM+CntUzcnGkpvYNR8/ycHgxSOo1b9u2o7yu0=
+	t=1758379552; cv=none; b=rB05SykrSrtOWNMcTq0cE2u4bZ3d11pFKbJkUEhZk5OGuN/ddaFextYG8jPXXy06FyL2Nppv8C5IN+Wbc7RJyibm8756rrHglWXC+e58ZWcz+Miqa47d3+nB7IfN9BKy/LfynHbGKfLAyr1TZSWRB6oBmJpWKC8I0aGF0lofnCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758379390; c=relaxed/simple;
-	bh=reGQ0DWfCnnIVp/Nxw5dBkwic445/96e5CXDstaYNKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMX93KQRUzNwLGT8hvESRw+JMaAQWS9wlKo9cTelvU7Xd0b/G59G9AzZBK49HfC5FzlurraYpaSKoWuuH4V76Yx2vMOSdYb9Q4WMW/D/TMUCd2iEF34R0U+Onwcc53jTEENElf6kxzmHqta2auC9Tjw040kc+PT0ZKfr4gzOiyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3SQ+H65M; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-746d7c469a8so2597479a34.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:43:08 -0700 (PDT)
+	s=arc-20240116; t=1758379552; c=relaxed/simple;
+	bh=prBMWFMAjr7chjhq3P8rvyzynNtcsazQYroaTwzNLjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HamZvEkWycI91OPskK4WRCVyXQHa4o7EfIaPvauq2ddCiIDBGGPf4QYwYGSXPITwPPA1bF4O5Ig0Lt3jvpAFU9PGbxztmRHFFbpCnvE/k8KDSEZXBjZdPjrcBIUk+xCPiADPZmE/rFs8s3odJmaY5AZG/eQCHoxQmtte+k5mH9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cgbfwepd; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-62fce8b75a3so2444392a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758379387; x=1758984187; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/zr1FxzQeV23WAfXkGwnch/VhAJlzRpqociU7pEguSA=;
-        b=3SQ+H65Mq7lmz1B5VG20x9Lq90j5XOP0m6A9igV9aIJktsX2S+XYfV8k40KiAfLXLI
-         F4ynoVa80m9k1y+BFmkiBJDY++D1LOfVFsYh3SiDi2s09tmRoBKfgBoMC6JfNkaGNF6g
-         zONNJcYhNQyRJjAz2SwfU+05xp9sLB3vkt6VNsYhrWP2jrdiotxv0kgfqXtz9iDTggUd
-         wQgl5Hu1BHqzbKCvtsyEVkAY+zxaavsHVzrSRCKKOcw19LIHHJP5kqTH6EECU+ylMHAI
-         5CNuh8Bi6BvwUP/cTwXTw5mtEd+v1sRXJxAbC12HV2/RjkkMVFh7Ef8GhLYhSjwLFk8A
-         YDLg==
+        d=gmail.com; s=20230601; t=1758379549; x=1758984349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=prBMWFMAjr7chjhq3P8rvyzynNtcsazQYroaTwzNLjk=;
+        b=CgbfwepdIvIdG+kIvTHvZ3bhrU15DZeNDymrei7KGLcOTrunR1M1LSsArcR74N5qmN
+         GSBJdQxqjxaPXKQiH8iO7CMrm9Yrp0jZAP99ptp7a9aG+3P/j0kcK9RCv5ebLmr6kjvL
+         DkKjABbATudAZo8FNzhqOqvzTfezcUzooJ+2eAo/BhpYWw/OHgy/lqBEM6Ec77s0vlmY
+         hOF+FU1Bb/ZJdUlyUgv5rijGV5dHoS2RU/UP7bkeve1BhaRyntJ6ttuYsAQp89mNSUSg
+         Uyu2Q3s5ltbzR6Rf4EH1XitBCnRb2t3chjsOt8LxshlC6gHSy0RTn5/vgdjZ2+y8miZQ
+         8Hgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758379387; x=1758984187;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zr1FxzQeV23WAfXkGwnch/VhAJlzRpqociU7pEguSA=;
-        b=awY0JLtUpahsQMaIB+nG6PcS2mQrO0clOzUnoWDa16levLFzp4AA5HaDIOxtMxtgs5
-         o5RUep880q/Mr7oUsDjEH5AMw5iEcO4q6+IO4PDLhJQME2bpDDnLYyE2/3QnNPCf6+Yq
-         Gn4x/F9YEAgFx2EwHgfM59Yi4KPf/mIHkdHYo/5/cA+01gfnvFbOw8bHTeCHbGj/Svcv
-         GO8d5HUr0iBRV2uAj4FMuAKs83ZmKRluZLrK8eAAnYqH69agPsyz4t+NOpnPzrfTZmWJ
-         ABg1vsQK9M8bfnzEQP57eQl6/3pp0BKUqU8gHISZOBlb2iXiiop8g88xL2xQdCMNUSBi
-         ieKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjYvZ+UpFruyAGHDcmov0sOPE9CBTNu6OBXkkIcfETao1MHuv5cGSZHe9kMN8hjwB93YPXu1PfPGxFd4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0trCaVS+QbzttQJHhMsmpLOp3SRJGdl3USMHRtzaVu2w/kGtx
-	vQbk/rJNgJGlBfGrxFAOQf4hxy6mGQdCo6gAk2FdgAxH87lxA+kz27r5VL5ATzODcus=
-X-Gm-Gg: ASbGncsEZq27OYy4v3TkP8Z9krIZIpxcu0whBULESELKDwrSOitDHvQhurxbAvCgZI+
-	A9+FtVpmHjb+GEEXG1TsH+SLDvZLPhnwFeEzrLJwEwDIoh9maSTBLOUhNBOJl9EyU5gkaveef40
-	AxJjnoOlq+ZZ9YrOFelahw+I20foEc8YJ1TGGn38LCWkbCrNSTGlHt/3pHHWrGuUJT6uCFo6N+9
-	M3YPCtMLl1BylIKo0rv/37bnYemjSOA3vhiadL5hIgDT1W8Y6V4fl8u0d0qdUFJeOVzQiuliRKp
-	in3FnV48EqOFvWxJELih6ZEB+PAKrPPrGecstbVkgBAFNNOAA0nQD40A9U+QKrxHSfdw8AOUpjV
-	7lGDlru+7LBdPc+gS6PBaj64S3M0x50sh6J/UjImbhfes8daiyyZhXuMlQ9/rQdwsnS4wnNZ6Lh
-	Q=
-X-Google-Smtp-Source: AGHT+IFRMjIdQHCqLYdQqsM4bOgBkQvcyRd2wt9TOxoiyYemPs4kzShqexKQOBSerVYHshLpIqXW1Q==
-X-Received: by 2002:a05:6830:6606:b0:750:69c2:365f with SMTP id 46e09a7af769-76f6e58bc30mr4230967a34.4.1758379387269;
-        Sat, 20 Sep 2025 07:43:07 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:14ea:b68a:f92c:93c4? ([2600:8803:e7e4:1d00:14ea:b68a:f92c:93c4])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-625dbca6014sm2701941eaf.25.2025.09.20.07.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Sep 2025 07:43:05 -0700 (PDT)
-Message-ID: <7021b57f-bad0-425d-a7a1-3a613a408a42@baylibre.com>
-Date: Sat, 20 Sep 2025 09:43:04 -0500
+        d=1e100.net; s=20230601; t=1758379549; x=1758984349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=prBMWFMAjr7chjhq3P8rvyzynNtcsazQYroaTwzNLjk=;
+        b=d9Fq4Bh59kUtsnEJHjywTr0PsAGpVKeATyv0C6RxMKpcOoA74aCcnFMvIcCv00lJiP
+         jFT5N9CTg98v7VbhgsZ88D3X1NENNud503ZqSfH+2axfJ7i0tL3b8iNOXQ9lPkesJncw
+         5dZlTAdQ71b9+v4NWPalD3Ltr8brXMM60lgbKWjMWlZIz1NFzWnQJuvW6yvGeMrX10ap
+         KIiPZxHhaC+sagTbpH6k5jhKwskEdNGChQ67DjPX6xO/DJ43fdh0Z34Fii7EQlQAtxfK
+         Pdja01wdVTEm/+ZlecoP6OVoCPb4xgO5BjfpZWOJuA+bRLTGXzwABzBP+6CT7wihkqHy
+         Dr0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDQ6CMJeHQKMIBkCo++P+UMcIM4y39hP38n4qT0Es6JIOzFT46mMnL0uVt5ZRWzdeNGzjX/p5xUhlrxVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyijEDGDrXbNVF3C1/i4yr2jdz0dShPRpur4F4hUz9AYFTB7u8O
+	UTNM/NYh5/4uTopQ3MVWBohtXhy/HAUJBTJsQCsENrSUvFMhUFkbV4GWN79Iqfm/GY8L8OtAu+2
+	C7oR5T3RSR0ylYMGCpB9OvQs3KZzPAs0=
+X-Gm-Gg: ASbGncsmQyi2jcDUfdE65FYdCmSiSnMckDJFk6OcPK3hTUEFfv4XLnm+7Agqw26yvai
+	wa/2xrm7hkFX3+9WvoCwxDyusjYZfv/AsQD+0tkUh67TzW1XOP5eb9jwhM6vKd1710q2nj3UBGr
+	BUmvgnZU2kE3M/hIEQtzlbhPmEIEDBxI80gzzTdkQDg+u6s6yx7DUVYPXIdy3+LZEB0fDDrRGgO
+	RoeuvKR4Moyv3V+yujB0DedNh+uYbG3sMi03A==
+X-Google-Smtp-Source: AGHT+IHprf6sIuf8mcq+DmIUBFqEQvSlyTeJhORDOjRBm1D3ME0hm3yswxncK13S9OfrbZrNkgv0Ra//B/ErT5QPBuA=
+X-Received: by 2002:a05:6402:3488:b0:62f:464a:58d8 with SMTP id
+ 4fb4d7f45d1cf-62fc090a920mr5609831a12.3.1758379548473; Sat, 20 Sep 2025
+ 07:45:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] iio: adc: ad4030: Add SPI offload support
-To: Jonathan Cameron <jic23@kernel.org>,
- Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, michael.hennerich@analog.com,
- nuno.sa@analog.com, eblanc@baylibre.com, andy@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
- marcelo.schmitt1@gmail.com, Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Axel Haslam <ahaslam@baylibre.com>
-References: <cover.1758214628.git.marcelo.schmitt@analog.com>
- <da55c0ed6fe895dc84e79c8b64e5923a4851e58f.1758214628.git.marcelo.schmitt@analog.com>
- <20250920104251.3f7dcbb2@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250920104251.3f7dcbb2@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1752824628.git.namcao@linutronix.de> <43d64ad765e2c47e958f01246320359b11379466.1752824628.git.namcao@linutronix.de>
+ <aflo53gea7i6cyy22avn7mqxb3xboakgjwnmj4bqmjp6oafejj@owgv35lly7zq>
+ <87zfat19i7.fsf@yellow.woof> <CAGudoHFLrkk_FBgFJ_ppr60ARSoJT7JLji4soLdKbrKBOxTR1Q@mail.gmail.com>
+ <20250920154212.70138da8@pumpkin>
+In-Reply-To: <20250920154212.70138da8@pumpkin>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 20 Sep 2025 16:45:36 +0200
+X-Gm-Features: AS18NWB9O-d4JEBCOZIFX72GOz0-xwuKTumjYGdgLUXXtHzgyf5FekADp6hUP4M
+Message-ID: <CAGudoHG9hTwSoordwbMDci5CmnCKMhD330Z0BKfNJ+xUHYC9uA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] eventpoll: Fix epoll_wait() report false negative
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Nam Cao <namcao@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Shuah Khan <shuah@kernel.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Soheil Hassas Yeganeh <soheil@google.com>, 
+	Khazhismel Kumykov <khazhy@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Eric Dumazet <edumazet@google.com>, Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/20/25 4:42 AM, Jonathan Cameron wrote:
-> On Thu, 18 Sep 2025 14:39:10 -0300
-> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
-> 
+On Sat, Sep 20, 2025 at 4:42=E2=80=AFPM David Laight
+<david.laight.linux@gmail.com> wrote:
+>
+> On Wed, 17 Sep 2025 18:05:45 +0200
+> Mateusz Guzik <mjguzik@gmail.com> wrote:
+> > I can agree the current state concerning ep_events_available() is
+> > avoidably error prone and something(tm) should be done. fwiw the
+> > refcount thing is almost free on amd64, I have no idea how this pans
+> > out on arm64.
+>
+> Atomic operations are anything but free....
+> They are likely to be a similar cost to an uncontested spinlock entry.
+>
 
-...
-
-> 
-> Just one thing I noticed today.  If nothing else comes up I can fix that
-> up whilst applying.  However, this will benefit from review from others
-> + the IIO tree is effectively closed for this cycle so we have lots of time
-> to tidy up any remaining stuff.
-> 
-FYI, I have some comments on this patch I am working on but will be some
-time next week before I send it since I would also like to actually test
-this since I have the hardware.
-
+In this context it was supposed to be s/refcount/seqcount/ and on
+amd64 that's loading the same var twice + a branch for the read thing.
+Not *free* but not in the same galaxy comped to acquiring a spinlock
+(even assuming it is uncontested).
 
