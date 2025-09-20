@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-825899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17BAB8D111
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8628EB8D11F
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42F53AFD5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:42:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580ED464B25
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EEE2E2840;
-	Sat, 20 Sep 2025 20:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00432E543E;
+	Sat, 20 Sep 2025 20:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="hyVqy17M"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="a3oLrFoa"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5022DF3DA
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6F32E11AE
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758400749; cv=none; b=HIadB6vuETcbO2D5ojE4oeUd4ZaYnwDopgs1Kb0iOdTNCnliA/oOi+wo5VcjXi9FnzL5Jg+mKIrnlsv1ibMHRUyEzbLIbzMamGc9lYlHIf6IbjTzNBXL4x0o+8u39ok2yAvWi2Wp2WulA5ynJZYlA5TddEZlUijBcBCEu9ouP/U=
+	t=1758400751; cv=none; b=d3Z9eExoJLi1YRyqf0Wym4d2JC1UbngydyW23RdvCyB5DghL06+XltmFNdI9k6P9VslKrsGyAOoYIu0ZG7bvtaH7Ol0ytCU0ae1JgQRuAJsP5ghLfw7r/WvmnAlHetfVYPEQ+E4wxvIGVgN7o9glci/ElWc7gb7Ti9kMXbg4yvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758400749; c=relaxed/simple;
-	bh=L4Ep+IlxKlKfQcYtfM7Ox88ty3BpmqbADwu0iQdcKxY=;
+	s=arc-20240116; t=1758400751; c=relaxed/simple;
+	bh=ASU49Pf0Kl4bub9yLW0Cs6Vci2cgvd1+yolRR1XpqNI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N/3ONb0W56ypoqstafQBWrx6mJKSZfnHQPhyR+nzDVd9XdGC+SVtJzBnwUMXykc36cuQC5r1EcObOuNK7GNchthX19ee6se+LqBiHP/riwS0RRavVvpBo1/Sn+prMFfqE5vkOGQ735r5ZhU91/1DAAWRrsTsZvQOMTGfBOscfCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=hyVqy17M; arc=none smtp.client-ip=209.85.166.177
+	 MIME-Version; b=eruAf4N4lMrgiMlFmCNUVF9SkvOFr2Y3GGLqglaFKwGgEqjZa4v3KyXxx17G5Fwp7H7NQobU6O5P18ZwnreuO8xs7+jLErg2kcQjhdTFBmKpGpP4aG9TLPEOmnHNI5rSg42gWPq1wzyB6QN75B6FilGdFFerGwG+t2sHEdMmJ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=a3oLrFoa; arc=none smtp.client-ip=209.85.166.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-4256f0444caso1691115ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:39:07 -0700 (PDT)
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-887764c2834so229015439f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:39:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1758400747; x=1759005547; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1758400748; x=1759005548; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qLOgLIfPePBzUWNKI9OUk1ZH4Tzzj3tfMuaJlKPwZCo=;
-        b=hyVqy17MBgMMZ8I/dHzoK9xAOziNo0FckFXDRTvkuaehre9j8ybyUll9eNL+TvF7Kw
-         kT0wZhzNyaHzMfxYBZFZ3I9xFUJlDx7mU6K0QKC0E945bW37WLOEnXD5EjADpKhEf4gR
-         ERiKQTwWUVgrrYiXQwmBDJa4e7nJzeS9FsN8f8OvrK36ceTFELI4DefOPgIcrqovKVSp
-         ywusVJyaHgUWYIO6tujfHNql5w9vDtkFsVmK4kIKzB781rmLT2TB0qL0CSmzZ5cBXBx8
-         szkTZmEehjD+IeGPOtehiCr+DA6ZB6fGD+NnT4+Y5NCkmzyTy7jVfYfjf+CbAzAVBKs5
-         Tq/A==
+        bh=hI0KkCC908juzA+gLK6iwf+tDIKeFweMVpvJKlXZSdQ=;
+        b=a3oLrFoaPeIURJ6nj+Jr2ouocv05odp0zJYkwK4yyw0NXYdhyW8VDQbTkFNYtzUv36
+         UnvqbF1/TxQY5RaPFWgl7INL9RT+lhD6qvdziEnielYBkaffT1KoCjNRacluRwFYg6sa
+         qyAR/hwXiyZjwxKcglK26lFGHOb3EQzP5e4pzsKvooCYt+3sBExNY0OO0QFCq0ILzJ5t
+         aX7qf4TpGFutxxZy9NyOIHHMqv9B8LrBKx6ouJBXCcvzvQa9eluau/yqG8O4vrxWPLj8
+         EhWpYDe9uq6tI67SaEQVz28cqq+iwyL5xWCwUYevsE4F5TkRd2SEn+45LndPdWe3ZsCl
+         RGHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758400747; x=1759005547;
+        d=1e100.net; s=20230601; t=1758400748; x=1759005548;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qLOgLIfPePBzUWNKI9OUk1ZH4Tzzj3tfMuaJlKPwZCo=;
-        b=ovZtrfHtNQ+S209rBnRMbsv6JKJ+4xVcmPCd1oZczp4XYS6lUe1HiCahscaVQcV90p
-         YFTij6zGVhTb3nfVE7mTym2Z9cnk309WW8mvOxYmHfb+HpD/ET1v7yF+bdbIkVZusUM/
-         tqz96zXC00NOyZWOD7NoTy33x1k3pD/fmjdGCFQexOlK2LOX6EmWfqxaAKmhANxkNGf7
-         nP1ribpAlKU35Fs0XGLfz6aKTRQZSrT9rm7/Z8/VxtiTDPn5SrkYvLi17e3x34vARqNy
-         Edg3upDfa0srl0jmYc/mQUJ48XFUE+kbGkOAJEN+atWYuCVDX2l51BzQ70V4ob662Srr
-         mLgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUg6hiTPeUnX8q3lSjDmDaH/BgFkWtASADh3iJJ/tlaph9OkWhpaCTwBjQWdLi9+4Te/nhngEdWYMh56xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW5CmkZnS/VttUAXnTrobOsDF7ukYO1xOVt8LyFa7Af0rs7UiE
-	cKU8gsC3on92UM0MhbnGe6zn92BeR/GAnOmERciXx6Ft7FhKMqUdFRra9x+AJ6cqTE0=
-X-Gm-Gg: ASbGncvpiLGjl2+dYQ/mNnVLUoFd6x7PeGP48uvF3WIf4TF98AOxA2eYg9clJ6Xw2o/
-	0LKOqKxGjp0y00s9GK7L8vwFwRbP1ObBLfKcSNfSRp7ybLhbjjbtKW191YvtbITvXKELTRup9Nv
-	gVCJWeDaXDpgCTyKc0qeMQ4kgZr1PgaK9F3iXrxCdXd7ISgylJhLnSrycPGNd3SWQ+/WQQeSDYJ
-	wZgvG1kudmSb2jLKuOeVsJJkRoG+Xx+ngWSv4wPA9o1gKyJg8g5+KZcIE3SPgS0iZ0hiNeYD2FG
-	ZGeDIPjsjqO9TJ6JTXKG9tdngoR57pDx4WslaAPTEHAQXmTv3mL0atSP5rY7Dc0lgArOrjtwKBz
-	a9fqu5FAySqV6NSXtXOWlD5s6
-X-Google-Smtp-Source: AGHT+IEWlWgkYSGO8sbLjeEJVsqweL0Gl+KFRCXKq/6gJAMJHxAY6N4lyWxDMwaZbg9QR7K4TJrpzg==
-X-Received: by 2002:a05:6e02:1a64:b0:423:5293:5739 with SMTP id e9e14a558f8ab-424819748bamr113626355ab.19.1758400746834;
-        Sat, 20 Sep 2025 13:39:06 -0700 (PDT)
+        bh=hI0KkCC908juzA+gLK6iwf+tDIKeFweMVpvJKlXZSdQ=;
+        b=EYnGlK62XzBgl/EGbQ+AFit8bn9lVlw5RS98VmFoLTneXMJ0MsipuoHGHso+j7lOzs
+         M05Vc4Xf5mgfFwuhxgyQsNCPJnEPm0VrAFGzty5lXXLJ6KJYKNBv1vq0F1R4x0I+JkRD
+         arAEmvCR/5Lt9YHPcDHvH3fxm6Pw3Rcvr80f2QEGwlBQGGpi+LaBHxU/isQ8r01NpMkL
+         bLCtvQJq/bctX08VtRDxIFKRHdQ5wXEKivukMSgfzqcm2VHo6/IPGHmhdc1eUlsHTBpm
+         D+rUQsPHvEuo5MYIaBuaKMiqJlwTDX+0A4t6Pn0crMhLaT+0q/RJyRPED+G4nI58jhWm
+         h43g==
+X-Forwarded-Encrypted: i=1; AJvYcCXE30QUBj+fDK1syiG0YZM/eRSU5CqTWg3FezYJHBu/SZ7j72t5qsIYKELodjBZyx6HnP53nARBUojpdGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHsQP0pwcVbkIFuTivyGDTbnDH/48fCmSn4MzY3LEm1SjPNK0y
+	P/TiYVbxC9BcGxoVsFoiCGF6JN4kDfYkVFYATdSESZp6l8x6eQB3UyuknSb3G5pPGd8=
+X-Gm-Gg: ASbGnctRsLx3Ljj//bIhZawJxQLr6GBwqeyM/1BvkPOyxSRNbRF3aE2FXLcstXAO7yk
+	F4JxFWVPLLLoMLncrrYyGJCzqPCPMyu/YBcUyfIT/E9xc8M9aeBrg1IYY/jKY64FFVKr0U++eAX
+	ckvoa081J4Xhv0cVhYI/vGUK4pyHfUgG1YTHR0JXjrF0hMa3Cx4GfQvWI/GvO/oWMi3stZ3NWxT
+	C7+o7ghbR7K83o0rVqwjo1EaPJIuq934NqFJccCGv/65sIuvitl2NnOWwXPCi0RP8y8yFIIMcth
+	zJdkV2sTCfVG87Cdo28A5u/F2LgAMfXYMB8SjuFFm4AAlCy/45n6bSxujwwpdXvYNhoc3DFlAd/
+	f9Ggqkx2lGfnCnJmBL2EefZQz
+X-Google-Smtp-Source: AGHT+IFJgtbAqkbkjXlxObLQUPDKlz44e0dr9Vutprt6NCQKthpg1P2JZGIWX+/KF2ezfdpqgFeHqw==
+X-Received: by 2002:a05:6602:4897:b0:8a6:d20a:ee1 with SMTP id ca18e2360f4ac-8ade0ed8ff3mr1019606639f.18.1758400748282;
+        Sat, 20 Sep 2025 13:39:08 -0700 (PDT)
 Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4244a4938b4sm38308745ab.11.2025.09.20.13.39.06
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8a46da3e981sm283735739f.9.2025.09.20.13.39.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 13:39:06 -0700 (PDT)
+        Sat, 20 Sep 2025 13:39:07 -0700 (PDT)
 From: Andrew Jones <ajones@ventanamicro.com>
 To: iommu@lists.linux.dev,
 	kvm-riscv@lists.infradead.org,
@@ -91,9 +91,9 @@ Cc: jgg@nvidia.com,
 	paul.walmsley@sifive.com,
 	palmer@dabbelt.com,
 	alex@ghiti.fr
-Subject: [RFC PATCH v2 11/18] iommu/riscv: Maintain each irq msitbl index with chip data
-Date: Sat, 20 Sep 2025 15:39:01 -0500
-Message-ID: <20250920203851.2205115-31-ajones@ventanamicro.com>
+Subject: [RFC PATCH v2 12/18] iommu/riscv: Add guest file irqbypass support
+Date: Sat, 20 Sep 2025 15:39:02 -0500
+Message-ID: <20250920203851.2205115-32-ajones@ventanamicro.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250920203851.2205115-20-ajones@ventanamicro.com>
 References: <20250920203851.2205115-20-ajones@ventanamicro.com>
@@ -105,181 +105,253 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Track each IRQ's MSI table index in the IRQ's chip data of the IR
-irqdomain along with a generation number. This will be necessary
-when support for irq-set-vcpu-affinity is added as the msitbl
-configuration will change to match the guest. When a configuration
-changes then it may no longer be possible to compute the index from
-the target address, hence the need to stash it. Also, if an allocated
-IRQ is not mapped with irq-set-vcpu-affinity after a configuration
-change (which will unmap everything), then we need to avoid
-attempting to unmap it at free-irqs time.
+Implement irq_set_vcpu_affinity() in the RISCV IOMMU driver.
+irq_set_vcpu_affinity() is the channel from a hypervisor to the
+IOMMU needed to ensure that assigned devices which direct MSIs to
+guest IMSIC addresses will have those MSI writes redirected to
+their corresponding guest interrupt files.
 
 Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
 ---
- drivers/iommu/riscv/iommu-ir.c | 75 +++++++++++++++++++++++++++++-----
- drivers/iommu/riscv/iommu.h    |  1 +
- 2 files changed, 65 insertions(+), 11 deletions(-)
+ drivers/iommu/riscv/iommu-ir.c | 165 ++++++++++++++++++++++++++++++++-
+ drivers/iommu/riscv/iommu.c    |   5 +-
+ drivers/iommu/riscv/iommu.h    |   4 +
+ 3 files changed, 171 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/iommu/riscv/iommu-ir.c b/drivers/iommu/riscv/iommu-ir.c
-index b97768cac4be..059671f18267 100644
+index 059671f18267..48f424ce1a8d 100644
 --- a/drivers/iommu/riscv/iommu-ir.c
 +++ b/drivers/iommu/riscv/iommu-ir.c
-@@ -164,11 +164,42 @@ static void riscv_iommu_ir_msitbl_inval(struct riscv_iommu_domain *domain,
+@@ -10,6 +10,8 @@
+ #include <linux/msi.h>
+ #include <linux/sizes.h>
+ 
++#include <asm/irq.h>
++
+ #include "../iommu-pages.h"
+ #include "iommu.h"
+ 
+@@ -164,6 +166,48 @@ static void riscv_iommu_ir_msitbl_inval(struct riscv_iommu_domain *domain,
  	rcu_read_unlock();
  }
  
--static void riscv_iommu_ir_msitbl_map(struct riscv_iommu_domain *domain, size_t idx,
--				      phys_addr_t addr)
-+struct riscv_iommu_ir_chip_data {
-+	size_t idx;
-+	u32 config;
-+};
-+
-+static size_t riscv_iommu_ir_irq_msitbl_idx(struct irq_data *data)
++static void riscv_iommu_ir_msitbl_clear(struct riscv_iommu_domain *domain)
 +{
-+	struct riscv_iommu_ir_chip_data *chip_data = irq_data_get_irq_chip_data(data);
-+
-+	return chip_data->idx;
++	for (size_t i = 0; i < riscv_iommu_ir_nr_msiptes(domain); i++) {
++		riscv_iommu_ir_clear_pte(&domain->msi_root[i]);
++		refcount_set(&domain->msi_pte_counts[i], 0);
++	}
 +}
 +
-+static u32 riscv_iommu_ir_irq_msitbl_config(struct irq_data *data)
++static void riscv_iommu_ir_msiptp_update(struct riscv_iommu_domain *domain)
 +{
-+	struct riscv_iommu_ir_chip_data *chip_data = irq_data_get_irq_chip_data(data);
++	struct riscv_iommu_bond *bond;
++	struct riscv_iommu_device *iommu, *prev;
++	struct riscv_iommu_dc new_dc = {
++		.ta = FIELD_PREP(RISCV_IOMMU_PC_TA_PSCID, domain->pscid) |
++		      RISCV_IOMMU_PC_TA_V,
++		.fsc = FIELD_PREP(RISCV_IOMMU_PC_FSC_MODE, domain->pgd_mode) |
++		       FIELD_PREP(RISCV_IOMMU_PC_FSC_PPN, virt_to_pfn(domain->pgd_root)),
++		.msiptp = virt_to_pfn(domain->msi_root) |
++			  FIELD_PREP(RISCV_IOMMU_DC_MSIPTP_MODE,
++				     RISCV_IOMMU_DC_MSIPTP_MODE_FLAT),
++		.msi_addr_mask = domain->msi_addr_mask,
++		.msi_addr_pattern = domain->msi_addr_pattern,
++	};
 +
-+	return chip_data->config;
++	/* Like riscv_iommu_ir_msitbl_inval(), synchronize with riscv_iommu_bond_link() */
++	smp_mb();
++
++	rcu_read_lock();
++
++	prev = NULL;
++	list_for_each_entry_rcu(bond, &domain->bonds, list) {
++		iommu = dev_to_iommu(bond->dev);
++		if (iommu == prev)
++			continue;
++
++		riscv_iommu_iodir_update(iommu, bond->dev, &new_dc);
++		prev = iommu;
++	}
++
++	rcu_read_unlock();
 +}
 +
-+static void riscv_iommu_ir_irq_set_msitbl_info(struct irq_data *data,
-+					       size_t idx, u32 config)
-+{
-+	struct riscv_iommu_ir_chip_data *chip_data = irq_data_get_irq_chip_data(data);
-+
-+	chip_data->idx = idx;
-+	chip_data->config = config;
-+}
-+
-+static void riscv_iommu_ir_msitbl_map(struct riscv_iommu_domain *domain,
-+				      struct irq_data *data,
-+				      size_t idx, phys_addr_t addr)
- {
- 	struct riscv_iommu_msipte *pte;
- 
-+	riscv_iommu_ir_irq_set_msitbl_info(data, idx, domain->msitbl_config);
-+
- 	if (!domain->msi_root)
- 		return;
- 
-@@ -186,9 +217,17 @@ static void riscv_iommu_ir_msitbl_map(struct riscv_iommu_domain *domain, size_t
- 	}
- }
- 
--static void riscv_iommu_ir_msitbl_unmap(struct riscv_iommu_domain *domain, size_t idx)
-+static void riscv_iommu_ir_msitbl_unmap(struct riscv_iommu_domain *domain,
-+					struct irq_data *data, size_t idx)
- {
- 	struct riscv_iommu_msipte *pte;
-+	u32 config;
-+
-+	config = riscv_iommu_ir_irq_msitbl_config(data);
-+	riscv_iommu_ir_irq_set_msitbl_info(data, -1, -1);
-+
-+	if (WARN_ON_ONCE(config != domain->msitbl_config))
-+		return;
- 
- 	if (!domain->msi_root)
- 		return;
-@@ -219,11 +258,11 @@ static int riscv_iommu_ir_irq_set_affinity(struct irq_data *data,
- {
- 	struct riscv_iommu_info *info = data->domain->host_data;
- 	struct riscv_iommu_domain *domain = info->domain;
--	phys_addr_t old_addr, new_addr;
- 	size_t old_idx, new_idx;
-+	phys_addr_t new_addr;
- 	int ret;
- 
--	old_idx = riscv_iommu_ir_get_msipte_idx_from_target(domain, data, &old_addr);
-+	old_idx = riscv_iommu_ir_irq_msitbl_idx(data);
- 
- 	ret = irq_chip_set_affinity_parent(data, dest, force);
- 	if (ret < 0)
-@@ -234,8 +273,8 @@ static int riscv_iommu_ir_irq_set_affinity(struct irq_data *data,
- 	if (new_idx == old_idx)
- 		return ret;
- 
--	riscv_iommu_ir_msitbl_unmap(domain, old_idx);
--	riscv_iommu_ir_msitbl_map(domain, new_idx, new_addr);
-+	riscv_iommu_ir_msitbl_unmap(domain, data, old_idx);
-+	riscv_iommu_ir_msitbl_map(domain, data, new_idx, new_addr);
- 
+ struct riscv_iommu_ir_chip_data {
+ 	size_t idx;
+ 	u32 config;
+@@ -279,12 +323,127 @@ static int riscv_iommu_ir_irq_set_affinity(struct irq_data *data,
  	return ret;
  }
-@@ -254,11 +293,16 @@ static int riscv_iommu_ir_irq_domain_alloc_irqs(struct irq_domain *irqdomain,
- {
- 	struct riscv_iommu_info *info = irqdomain->host_data;
- 	struct riscv_iommu_domain *domain = info->domain;
-+	struct riscv_iommu_ir_chip_data *chip_data;
- 	struct irq_data *data;
- 	phys_addr_t addr;
- 	size_t idx;
- 	int i, ret;
  
-+	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL_ACCOUNT);
-+	if (!chip_data)
-+		return -ENOMEM;
++static bool riscv_iommu_ir_vcpu_check_config(struct riscv_iommu_domain *domain,
++					     struct riscv_iommu_ir_vcpu_info *vcpu_info)
++{
++	return domain->msi_addr_mask == vcpu_info->msi_addr_mask &&
++	       domain->msi_addr_pattern == vcpu_info->msi_addr_pattern &&
++	       domain->group_index_bits == vcpu_info->group_index_bits &&
++	       domain->group_index_shift == vcpu_info->group_index_shift;
++}
 +
- 	ret = irq_domain_alloc_irqs_parent(irqdomain, irq_base, nr_irqs, arg);
- 	if (ret)
- 		return ret;
-@@ -266,8 +310,9 @@ static int riscv_iommu_ir_irq_domain_alloc_irqs(struct irq_domain *irqdomain,
- 	for (i = 0; i < nr_irqs; i++) {
- 		data = irq_domain_get_irq_data(irqdomain, irq_base + i);
- 		data->chip = &riscv_iommu_ir_irq_chip;
-+		data->chip_data = chip_data;
- 		idx = riscv_iommu_ir_get_msipte_idx_from_target(domain, data, &addr);
--		riscv_iommu_ir_msitbl_map(domain, idx, addr);
-+		riscv_iommu_ir_msitbl_map(domain, data, idx, addr);
- 	}
- 
- 	return 0;
-@@ -280,14 +325,22 @@ static void riscv_iommu_ir_irq_domain_free_irqs(struct irq_domain *irqdomain,
- 	struct riscv_iommu_info *info = irqdomain->host_data;
- 	struct riscv_iommu_domain *domain = info->domain;
- 	struct irq_data *data;
--	phys_addr_t addr;
-+	u32 config;
- 	size_t idx;
- 	int i;
- 
- 	for (i = 0; i < nr_irqs; i++) {
- 		data = irq_domain_get_irq_data(irqdomain, irq_base + i);
--		idx = riscv_iommu_ir_get_msipte_idx_from_target(domain, data, &addr);
--		riscv_iommu_ir_msitbl_unmap(domain, idx);
-+		config = riscv_iommu_ir_irq_msitbl_config(data);
++static int riscv_iommu_ir_vcpu_new_config(struct riscv_iommu_domain *domain,
++					  struct irq_data *data,
++					  struct riscv_iommu_ir_vcpu_info *vcpu_info)
++{
++	struct riscv_iommu_msipte *pte;
++	size_t idx;
++	int ret;
++
++	if (domain->pgd_mode)
++		riscv_iommu_ir_unmap_imsics(domain);
++
++	riscv_iommu_ir_msitbl_clear(domain);
++
++	domain->msi_addr_mask = vcpu_info->msi_addr_mask;
++	domain->msi_addr_pattern = vcpu_info->msi_addr_pattern;
++	domain->group_index_bits = vcpu_info->group_index_bits;
++	domain->group_index_shift = vcpu_info->group_index_shift;
++	domain->imsic_stride = SZ_4K;
++	domain->msitbl_config += 1;
++
++	if (domain->pgd_mode) {
 +		/*
-+		 * Only irqs with matching config versions need to be unmapped here
-+		 * since config changes will unmap everything.
++		 * As in riscv_iommu_ir_irq_domain_create(), we do all stage1
++		 * mappings up front since the MSI table will manage the
++		 * translations.
++		 *
++		 * XXX: Since irq-set-vcpu-affinity is called in atomic context
++		 * we need GFP_ATOMIC. If the number of 4K dma pte allocations
++		 * is considered too many for GFP_ATOMIC, then we can wrap
++		 * riscv_iommu_pte_alloc()'s iommu_alloc_pages_node_sz() call
++		 * in a mempool and try to ensure the pool has enough elements
++		 * in riscv_iommu_ir_irq_domain_enable_msis().
 +		 */
-+		if (config == domain->msitbl_config) {
-+			idx = riscv_iommu_ir_irq_msitbl_idx(data);
-+			riscv_iommu_ir_msitbl_unmap(domain, data, idx);
-+		}
-+		kfree(data->chip_data);
- 	}
++		ret = riscv_iommu_ir_map_imsics(domain, GFP_ATOMIC);
++		if (ret)
++			return ret;
++	}
++
++	idx = riscv_iommu_ir_compute_msipte_idx(domain, vcpu_info->gpa);
++	pte = &domain->msi_root[idx];
++	riscv_iommu_ir_irq_set_msitbl_info(data, idx, domain->msitbl_config);
++	riscv_iommu_ir_set_pte(pte, vcpu_info->hpa);
++	riscv_iommu_ir_msitbl_inval(domain, NULL);
++	refcount_set(&domain->msi_pte_counts[idx], 1);
++
++	riscv_iommu_ir_msiptp_update(domain);
++
++	return 0;
++}
++
++static int riscv_iommu_ir_irq_set_vcpu_affinity(struct irq_data *data, void *arg)
++{
++	struct riscv_iommu_info *info = data->domain->host_data;
++	struct riscv_iommu_domain *domain = info->domain;
++	struct riscv_iommu_ir_vcpu_info *vcpu_info = arg;
++	struct riscv_iommu_msipte pteval;
++	struct riscv_iommu_msipte *pte;
++	bool inc = false, dec = false;
++	size_t old_idx, new_idx;
++	u32 old_config;
++
++	if (!domain->msi_root)
++		return -EOPNOTSUPP;
++
++	old_idx = riscv_iommu_ir_irq_msitbl_idx(data);
++	old_config = riscv_iommu_ir_irq_msitbl_config(data);
++
++	if (!vcpu_info) {
++		riscv_iommu_ir_msitbl_unmap(domain, data, old_idx);
++		return 0;
++	}
++
++	guard(raw_spinlock)(&domain->msi_lock);
++
++	if (!riscv_iommu_ir_vcpu_check_config(domain, vcpu_info))
++		return riscv_iommu_ir_vcpu_new_config(domain, data, vcpu_info);
++
++	new_idx = riscv_iommu_ir_compute_msipte_idx(domain, vcpu_info->gpa);
++	riscv_iommu_ir_irq_set_msitbl_info(data, new_idx, domain->msitbl_config);
++
++	pte = &domain->msi_root[new_idx];
++	riscv_iommu_ir_set_pte(&pteval, vcpu_info->hpa);
++
++	if (pteval.pte != pte->pte) {
++		*pte = pteval;
++		riscv_iommu_ir_msitbl_inval(domain, pte);
++	}
++
++	if (old_config != domain->msitbl_config)
++		inc = true;
++	else if (new_idx != old_idx)
++		inc = dec = true;
++
++	if (dec && refcount_dec_and_test(&domain->msi_pte_counts[old_idx])) {
++		pte = &domain->msi_root[old_idx];
++		riscv_iommu_ir_clear_pte(pte);
++		riscv_iommu_ir_msitbl_inval(domain, pte);
++	}
++
++	if (inc && !refcount_inc_not_zero(&domain->msi_pte_counts[new_idx]))
++		refcount_set(&domain->msi_pte_counts[new_idx], 1);
++
++	return 0;
++}
++
+ static struct irq_chip riscv_iommu_ir_irq_chip = {
+ 	.name			= "IOMMU-IR",
+ 	.irq_ack		= irq_chip_ack_parent,
+ 	.irq_mask		= irq_chip_mask_parent,
+ 	.irq_unmask		= irq_chip_unmask_parent,
+ 	.irq_set_affinity	= riscv_iommu_ir_irq_set_affinity,
++	.irq_set_vcpu_affinity	= riscv_iommu_ir_irq_set_vcpu_affinity,
+ };
  
- 	irq_domain_free_irqs_parent(irqdomain, irq_base, nr_irqs);
+ static int riscv_iommu_ir_irq_domain_alloc_irqs(struct irq_domain *irqdomain,
+@@ -334,7 +493,11 @@ static void riscv_iommu_ir_irq_domain_free_irqs(struct irq_domain *irqdomain,
+ 		config = riscv_iommu_ir_irq_msitbl_config(data);
+ 		/*
+ 		 * Only irqs with matching config versions need to be unmapped here
+-		 * since config changes will unmap everything.
++		 * since config changes will unmap everything and irq-set-vcpu-affinity
++		 * irq deletions unmap at deletion time. An example of stale indices that
++		 * don't need to be unmapped are those of irqs allocated by VFIO that a
++		 * guest driver never used. The config change made for the guest will have
++		 * already unmapped those, though, so there's no need to unmap them here.
+ 		 */
+ 		if (config == domain->msitbl_config) {
+ 			idx = riscv_iommu_ir_irq_msitbl_idx(data);
+diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+index 440c3eb6f15a..02f38aa0b231 100644
+--- a/drivers/iommu/riscv/iommu.c
++++ b/drivers/iommu/riscv/iommu.c
+@@ -957,8 +957,9 @@ static void riscv_iommu_iotlb_inval(struct riscv_iommu_domain *domain,
+  * device is not quiesced might be disruptive, potentially causing
+  * interim translation faults.
+  */
+-static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+-				     struct device *dev, struct riscv_iommu_dc *new_dc)
++void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
++			      struct device *dev,
++			      struct riscv_iommu_dc *new_dc)
+ {
+ 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
+ 	struct riscv_iommu_dc *dc;
 diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.h
-index aeb5642f003c..130f82e8392a 100644
+index 130f82e8392a..5ab2b4d6ee88 100644
 --- a/drivers/iommu/riscv/iommu.h
 +++ b/drivers/iommu/riscv/iommu.h
-@@ -36,6 +36,7 @@ struct riscv_iommu_domain {
- 	struct riscv_iommu_msipte *msi_root;
- 	refcount_t *msi_pte_counts;
- 	raw_spinlock_t msi_lock;
-+	u32 msitbl_config;
- 	u64 msi_addr_mask;
- 	u64 msi_addr_pattern;
- 	u32 group_index_bits;
+@@ -124,6 +124,10 @@ int riscv_iommu_init(struct riscv_iommu_device *iommu);
+ void riscv_iommu_remove(struct riscv_iommu_device *iommu);
+ void riscv_iommu_disable(struct riscv_iommu_device *iommu);
+ 
++void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
++			      struct device *dev,
++			      struct riscv_iommu_dc *new_dc);
++
+ void riscv_iommu_cmd_send(struct riscv_iommu_device *iommu,
+ 			  struct riscv_iommu_command *cmd);
+ void riscv_iommu_cmd_sync(struct riscv_iommu_device *iommu, unsigned int timeout_us);
 -- 
 2.49.0
 
