@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-825461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342E8B8BD95
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F068AB8BD92
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF77A07717
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B15566D19
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAF3217705;
-	Sat, 20 Sep 2025 02:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395F21FC104;
+	Sat, 20 Sep 2025 02:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKXjGXrZ"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDs4+W4W"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D358C1F4617
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169CA1D7E5C
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758336194; cv=none; b=UlwcTrox49sBMM7DjKntoUz8WfjKcxCpWrDbxw6tqhF13OdCRRQngLeQucOMMQaWRK+EKGgiGKptU4uwk88KXOt39UTjY+yNqzfiIJs7O7RSpSX6cJINseQvxkHxS6JhAw0iGUWT0JpsgNdrDKY9GGziyII/syypGkAifmhIA30=
+	t=1758336193; cv=none; b=i+hHmuz/zuIQBRxG2xsdXmo5LyKP8wuiW7C71kRaAoZER8x03xzVeXm4TpC8s1xiTEleZynyVFdFw/tQntCX5G+9u7wEhpA4ZkxwCe+boSEczHhQLypOT5V6l4bfnLJwHsISEKQjcBnij3WVk7DcYLdhkCrpJHL3C321aaEoI4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758336194; c=relaxed/simple;
-	bh=jIM2JpEEJdstDzM1FH/a5F+rpZgjGD7AmI+OdAZdLMk=;
+	s=arc-20240116; t=1758336193; c=relaxed/simple;
+	bh=DDKJTv2gUhx9NT8eq3N7/s/2EXymv1Z6SzQngx6JskI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=azGCfIuyso7/iUomkZTthoTikTzJS5A6U850G2MvMPnbghhVFLQYVbwz8MYSrzPJ86LvRKY0pLLh7qhkwommmU7MTwOw0LwCzuJny4E+DPQOwJnRePux9lWbAVcBU/k+xp4V9YlbW+df/+GqnmG+M6ftyIQ59QZZ9eBEx6CGMio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKXjGXrZ; arc=none smtp.client-ip=209.85.216.49
+	 MIME-Version; b=c+4okiRgZBpNQCQdrWd0AT7enUwp5rcjzwWszA4a1WXrOXl+003m87+ze3aJp98tTw19Bt7S8YrvaX0GrPytepdtlNtPDscAlbuscJlGbeD/o/3np+nKcYGwe4pBnPyTSitR4uBa9COfOomTh/iusm2S4IRJbsK6ZUhUC+ruIko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDs4+W4W; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-330b4739538so1004176a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 19:43:12 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso2399091a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 19 Sep 2025 19:43:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758336192; x=1758940992; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758336191; x=1758940991; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8Feoz4vUuJGBat4TpdOQ5A9d23fZeygOeO5p+rw2PJQ=;
-        b=AKXjGXrZRuoq1ID1F7lnjQaNYVnlXeFx9GnRfyXCrREQlmNrZl0Jm7uIMrubAyZ0in
-         UOBhAemih1IewWunyxjbDUYKEAVCiPngUo2AGikn2N9JraPRW8Bnlmw1/PH5NZP8orw7
-         kE9UqNm1QPNPkkGR5xafIBMHb7GvdItdLalbCeECbdnL8WrJx6Aw+JEMci12N7X5zfmy
-         04wY1tetYYKLjb05bCWMwBm2rQK8cyt9fW8+wYJ5gJzn+Y0CvriLsuZ3tjUv73hbUbnb
-         NZJu6O0lFwvXtpmvkKMBSkpRZKksZ+JKw/KhvoN/DcnIKaiKRvVQECddeB7W5jPV0ZjB
-         GMYg==
+        bh=poa66ZgSmeh+4H17NCB38PC7vFoDWQ1JOuDGdup6VRM=;
+        b=SDs4+W4WYWju8f9SjeM/aTUyTb14+mx8gG1jMeBNjZZKI7OgzMxwZ4VOxbslwWWXHp
+         jTrolsIJjiUrTIRsysMwb5b/s5+OSe8T4W06ZHawdzK1zgA6Z9FNHyYeXqY8T7aQiiNx
+         K74jjIqR+DU8r2s1owa4SkmtEGCq+Yt8IuLedOgzJ4BWkz3IIdI9UuXfDY482fu18C8x
+         hvsYvGWGNSVMey7Q/TKsOq7/FwWovnqUb2cm0rj0Bi1YQVRJHhwj4XyKRWL+0NGU9ZpO
+         NTWdEFP7mCVe0evjyfM95pcWA9uHshMYdwIZzam6zlU4x8qThICdSkL61j38H5SNPjZl
+         x9kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758336192; x=1758940992;
+        d=1e100.net; s=20230601; t=1758336191; x=1758940991;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8Feoz4vUuJGBat4TpdOQ5A9d23fZeygOeO5p+rw2PJQ=;
-        b=gUDXg5TmI50VYevH7aDqcorzqG0mBZxEQ9MJ1nuuD+y7LePMEXZEmvBThQB1DtVEWC
-         0YG0v39R4Ff2HlsEnsk0d3deynyc2ipA623eeP+eMYMc8MFm429cXeHCKKwn1jTAD/BI
-         xHfjPJbwrHoNOOf8sTvDrSEuZeEffG4DiVJxC3AnHToHWGSDwfJGepj4tQr4VO0YC7a6
-         ql8I8cs97rc9UHpT4CA8QTssS+R7eUbCsG3w0lE6TzEa8YGWNSRI/avrRT1U83g46DZd
-         3RWReAd7oncX638ahu7iWRiBkReGdXZciu6DPUHQxyBrhNIsMKPAl0KMOpxhxt0/eful
-         dsvA==
-X-Gm-Message-State: AOJu0Yx50JClbyGgB6Dtqyi9kxn1AhGBNIOkJddOV/hlCDIQk5WuyuKr
-	Kaw/0SjyTlo+IXB53ReMbfIyH70GvRX6RATWtq8vCFO/gRxYH0xr17l1
-X-Gm-Gg: ASbGncubGDcELNSokHswohnVW8+mE/vijUxlOjIiFPH+0URk6TyK190JCPj64Z+XUlT
-	qg0+z58jiNsNrLwQR9+6jQkv7Py0J1IivCa9BbKa41I9jKP+vSuiI/Gsy6aj/UE0lgnA8QTTGmi
-	Tg2ozqUD8gfLlueG/lAP+5CYGXItdR1lmqSPt2ftQ1VTzRBlSLU2DV61751w+JeNizMQf80NXrl
-	O/RNVHYFYW2bsT4nj3R4zjS1SCEE/HRjcF2xgJjgOubksJUTYWrI36iLpZaGbOzvpXRrwKmauuq
-	H9yVGmzvD9Epk7els83/UkFU9pX8WO6ycS2yVolOCRB1RkwCGLTbITEVylQZmNk6w1rXR//Bfkm
-	snahQVd51brSpKoakZlnbUw==
-X-Google-Smtp-Source: AGHT+IGhEdhueLpCKuRSYdbs3DuUE1XWKmgJvvfcg2dz20ERj8DuNHNfWNwVMolJGGjHNVPT7ugT6Q==
-X-Received: by 2002:a17:90b:3b49:b0:32e:73fd:81a3 with SMTP id 98e67ed59e1d1-3309838d921mr6808570a91.33.1758336191837;
+        bh=poa66ZgSmeh+4H17NCB38PC7vFoDWQ1JOuDGdup6VRM=;
+        b=MeTmXg1ZxCIM+YxJdAsy69wGvKJAayJ+4K7zVLh1OIluxqFtvLG386TAzP743rZH7b
+         qQw4kq3PKoOmyjcWWwIAUaUulNL4gMh9y3AfBeFJZB18fWLwYpJFhrGd8UcYptHLzmF/
+         IDG6eHsKWZGVGrPRAMv+rl/1fm3qbbwe57Bls/avJ7vJonK8ag+JCWpuDpSaZ/Kr9Fme
+         mE0n0KJyDz6Tz4tcbgTQ83aL/X3oOvXymr89aq+Iozhcl0/NwXltreOUvxA11F3vnjXS
+         YhdCjEyb7s9v0ngxtl4GUqMzotfCOk7gWICUg1iqUmD8w3bO8M1sGXE6wr9fFwS58Oyq
+         nxwg==
+X-Gm-Message-State: AOJu0Yw9ZIF72IBtZgZt42sjrzAG94w8iY1+RgD1iQy0oB86wh8vsVgq
+	PbHk+/c9O4cQHL8b0K+a5astaTxLY1rrT01zNbs1Hcq1/y2+sfUJ2f32
+X-Gm-Gg: ASbGnct4lK1q0K8rqrX4fLAJoL/QO4wAMg+24iHE6JY89Dlu2qmv5CfQTWpZ4pduJe4
+	FWHnMCGpT0RMpo5oacxaoaW1yB4p8T1r5SOdP87+fnmL5mKiwlTfLNPJibPNimcyitqppupGJIP
+	v8KiXiGiPX+iNV81ARrS8NBSwOCixIwJgkMrrccnJcwm8DNxdJ340o85Z+JedF/EaXlmRF9QGKO
+	kCejlB/bT9JUnvjFe19lRNAs+Wp0dj0Cf5IECtZMeuX2ldUO1im9V4bsDhCR/8g3zNba/1T55bU
+	2efkM3j+ZA7H/IF6HyOSX9eqe2hTaOmodeUinPRJCVeQMrSSLvJbK/u7gmk46LBe9lxofnr9XW2
+	WvugqPBmRh79/fyVfTm4MbDhVpcDwylbJ
+X-Google-Smtp-Source: AGHT+IF/BI612rR/YcMFm6BDriwszkiWQ3lawEOyMeF1XwV/NPEU1DpX9s0SVrJuvUX8PVyswbJ/Bg==
+X-Received: by 2002:a17:903:2f08:b0:25c:982e:2b1d with SMTP id d9443c01a7336-269ba567414mr68110295ad.59.1758336191220;
         Fri, 19 Sep 2025 19:43:11 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f0da42fdesm2297592b3a.66.2025.09.19.19.43.09
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3306085e6dcsm6813162a91.29.2025.09.19.19.43.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 19 Sep 2025 19:43:10 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 442854227236; Sat, 20 Sep 2025 09:43:08 +0700 (WIB)
+	id 4F7DE4227237; Sat, 20 Sep 2025 09:43:08 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>
@@ -82,9 +82,9 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	Markus Heiser <markus.heiser@darmarit.de>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	Silvio Fricke <silvio.fricke@gmail.com>
-Subject: [PATCH 1/2] Documentation: assoc_array: Indent function explanation text
-Date: Sat, 20 Sep 2025 09:42:27 +0700
-Message-ID: <20250920024227.19474-3-bagasdotme@gmail.com>
+Subject: [PATCH 2/2] Documentation: assoc_array: Format internal tree layout tables
+Date: Sat, 20 Sep 2025 09:42:28 +0700
+Message-ID: <20250920024227.19474-4-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250920024227.19474-2-bagasdotme@gmail.com>
 References: <20250920024227.19474-2-bagasdotme@gmail.com>
@@ -94,309 +94,107 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14452; i=bagasdotme@gmail.com; h=from:subject; bh=jIM2JpEEJdstDzM1FH/a5F+rpZgjGD7AmI+OdAZdLMk=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnnhDPPbVT/t4+tznCmWOfj9ReOFxp8XLK7/Qnb/n2r1 2hZ+3z62FHKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJvP7I8N/D7lzDYsup8olG H7Y0qF4OqPY7ZMF4RUY339bqvPq9lF6G/+7XYj/NjmpZEfr321w+D+nF7/mfrjhvGpG/VUV4Xdw EVgYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3500; i=bagasdotme@gmail.com; h=from:subject; bh=DDKJTv2gUhx9NT8eq3N7/s/2EXymv1Z6SzQngx6JskI=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnnhDMlljVIJDDknZ++KvkKW0jw5wk1r6pWNqbKq78za liW9y+3o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABOpamFkuPV1jtOuBbu331Hp zz11JVxT9/acACnuzPCcD9fWtjxdXsTIsK6dO/lXcXjF/pclnlfV57hWCzxcrbji9poJT66kic4 34AQA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Paragraphs of function explanation are currently not indented following
-their appropriate numbered list item, which causes only the first
-paragraph and function prototype code blocks to be indented in the
-numbered list in htmldocs output.
-
-Indent the explanation.
+Format tables in "Basic internal tree layout" as reST tables.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/core-api/assoc_array.rst | 167 +++++++++++++------------
- 1 file changed, 84 insertions(+), 83 deletions(-)
+ Documentation/core-api/assoc_array.rst | 33 ++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
 diff --git a/Documentation/core-api/assoc_array.rst b/Documentation/core-api/assoc_array.rst
-index 792bbf9939e133..61c7ba1e7b877f 100644
+index 61c7ba1e7b877f..19d89f92bf8da8 100644
 --- a/Documentation/core-api/assoc_array.rst
 +++ b/Documentation/core-api/assoc_array.rst
-@@ -92,18 +92,18 @@ There are two functions for dealing with the script:
- 
-     void assoc_array_apply_edit(struct assoc_array_edit *edit);
- 
--This will perform the edit functions, interpolating various write barriers
--to permit accesses under the RCU read lock to continue.  The edit script
--will then be passed to ``call_rcu()`` to free it and any dead stuff it points
--to.
-+   This will perform the edit functions, interpolating various write barriers
-+   to permit accesses under the RCU read lock to continue.  The edit script
-+   will then be passed to ``call_rcu()`` to free it and any dead stuff it
-+   points to.
- 
- 2. Cancel an edit script::
- 
-     void assoc_array_cancel_edit(struct assoc_array_edit *edit);
- 
--This frees the edit script and all preallocated memory immediately. If
--this was for insertion, the new object is _not_ released by this function,
--but must rather be released by the caller.
-+   This frees the edit script and all preallocated memory immediately. If
-+   this was for insertion, the new object is *not* released by this function,
-+   but must rather be released by the caller.
- 
- These functions are guaranteed not to fail.
- 
-@@ -123,43 +123,43 @@ This points to a number of methods, all of which need to be provided:
- 
-     unsigned long (*get_key_chunk)(const void *index_key, int level);
- 
--This should return a chunk of caller-supplied index key starting at the
--*bit* position given by the level argument.  The level argument will be a
--multiple of ``ASSOC_ARRAY_KEY_CHUNK_SIZE`` and the function should return
--``ASSOC_ARRAY_KEY_CHUNK_SIZE bits``.  No error is possible.
-+   This should return a chunk of caller-supplied index key starting at the
-+   *bit* position given by the level argument.  The level argument will be a
-+   multiple of ``ASSOC_ARRAY_KEY_CHUNK_SIZE`` and the function should return
-+   ``ASSOC_ARRAY_KEY_CHUNK_SIZE bits``.  No error is possible.
- 
- 
- 2. Get a chunk of an object's index key::
- 
-     unsigned long (*get_object_key_chunk)(const void *object, int level);
- 
--As the previous function, but gets its data from an object in the array
--rather than from a caller-supplied index key.
-+   As the previous function, but gets its data from an object in the array
-+   rather than from a caller-supplied index key.
- 
- 
- 3. See if this is the object we're looking for::
- 
-     bool (*compare_object)(const void *object, const void *index_key);
- 
--Compare the object against an index key and return ``true`` if it matches and
--``false`` if it doesn't.
-+   Compare the object against an index key and return ``true`` if it matches
-+   and ``false`` if it doesn't.
- 
- 
- 4. Diff the index keys of two objects::
- 
-     int (*diff_objects)(const void *object, const void *index_key);
- 
--Return the bit position at which the index key of the specified object
--differs from the given index key or -1 if they are the same.
-+   Return the bit position at which the index key of the specified object
-+   differs from the given index key or -1 if they are the same.
- 
- 
- 5. Free an object::
- 
-     void (*free_object)(void *object);
- 
--Free the specified object.  Note that this may be called an RCU grace period
--after ``assoc_array_apply_edit()`` was called, so ``synchronize_rcu()`` may be
--necessary on module unloading.
-+   Free the specified object.  Note that this may be called an RCU grace period
-+   after ``assoc_array_apply_edit()`` was called, so ``synchronize_rcu()`` may
-+   be necessary on module unloading.
- 
- 
- Manipulation Functions
-@@ -171,7 +171,7 @@ There are a number of functions for manipulating an associative array:
- 
-     void assoc_array_init(struct assoc_array *array);
- 
--This initialises the base structure for an associative array.  It can't fail.
-+   This initialises the base structure for an associative array.  It can't fail.
- 
- 
- 2. Insert/replace an object in an associative array::
-@@ -182,21 +182,21 @@ This initialises the base structure for an associative array.  It can't fail.
-                        const void *index_key,
-                        void *object);
- 
--This inserts the given object into the array.  Note that the least
--significant bit of the pointer must be zero as it's used to type-mark
--pointers internally.
-+   This inserts the given object into the array.  Note that the least
-+   significant bit of the pointer must be zero as it's used to type-mark
-+   pointers internally.
- 
--If an object already exists for that key then it will be replaced with the
--new object and the old one will be freed automatically.
-+   If an object already exists for that key then it will be replaced with the
-+   new object and the old one will be freed automatically.
- 
--The ``index_key`` argument should hold index key information and is
--passed to the methods in the ops table when they are called.
-+   The ``index_key`` argument should hold index key information and is
-+   passed to the methods in the ops table when they are called.
- 
--This function makes no alteration to the array itself, but rather returns
--an edit script that must be applied.  ``-ENOMEM`` is returned in the case of
--an out-of-memory error.
-+   This function makes no alteration to the array itself, but rather returns
-+   an edit script that must be applied.  ``-ENOMEM`` is returned in the case of
-+   an out-of-memory error.
- 
--The caller should lock exclusively against other modifiers of the array.
-+   The caller should lock exclusively against other modifiers of the array.
- 
- 
- 3. Delete an object from an associative array::
-@@ -206,15 +206,15 @@ The caller should lock exclusively against other modifiers of the array.
-                        const struct assoc_array_ops *ops,
-                        const void *index_key);
- 
--This deletes an object that matches the specified data from the array.
-+   This deletes an object that matches the specified data from the array.
- 
--The ``index_key`` argument should hold index key information and is
--passed to the methods in the ops table when they are called.
-+   The ``index_key`` argument should hold index key information and is
-+   passed to the methods in the ops table when they are called.
- 
--This function makes no alteration to the array itself, but rather returns
--an edit script that must be applied.  ``-ENOMEM`` is returned in the case of
--an out-of-memory error.  ``NULL`` will be returned if the specified object is
--not found within the array.
-+   This function makes no alteration to the array itself, but rather returns
-+   an edit script that must be applied.  ``-ENOMEM`` is returned in the case of
-+   an out-of-memory error.  ``NULL`` will be returned if the specified object
-+   is not found within the array.
- 
- The caller should lock exclusively against other modifiers of the array.
- 
-@@ -225,14 +225,14 @@ The caller should lock exclusively against other modifiers of the array.
-     assoc_array_clear(struct assoc_array *array,
-                       const struct assoc_array_ops *ops);
- 
--This deletes all the objects from an associative array and leaves it
--completely empty.
-+   This deletes all the objects from an associative array and leaves it
-+   completely empty.
- 
--This function makes no alteration to the array itself, but rather returns
--an edit script that must be applied.  ``-ENOMEM`` is returned in the case of
--an out-of-memory error.
-+   This function makes no alteration to the array itself, but rather returns
-+   an edit script that must be applied.  ``-ENOMEM`` is returned in the case of
-+   an out-of-memory error.
- 
--The caller should lock exclusively against other modifiers of the array.
-+   The caller should lock exclusively against other modifiers of the array.
- 
- 
- 5. Destroy an associative array, deleting all objects::
-@@ -240,14 +240,14 @@ The caller should lock exclusively against other modifiers of the array.
-     void assoc_array_destroy(struct assoc_array *array,
-                              const struct assoc_array_ops *ops);
- 
--This destroys the contents of the associative array and leaves it
--completely empty.  It is not permitted for another thread to be traversing
--the array under the RCU read lock at the same time as this function is
--destroying it as no RCU deferral is performed on memory release -
--something that would require memory to be allocated.
-+   This destroys the contents of the associative array and leaves it
-+   completely empty.  It is not permitted for another thread to be traversing
-+   the array under the RCU read lock at the same time as this function is
-+   destroying it as no RCU deferral is performed on memory release -
-+   something that would require memory to be allocated.
- 
--The caller should lock exclusively against other modifiers and accessors
--of the array.
-+   The caller should lock exclusively against other modifiers and accessors
-+   of the array.
- 
- 
- 6. Garbage collect an associative array::
-@@ -257,24 +257,24 @@ of the array.
-                        bool (*iterator)(void *object, void *iterator_data),
-                        void *iterator_data);
- 
--This iterates over the objects in an associative array and passes each one to
--``iterator()``.  If ``iterator()`` returns ``true``, the object is kept.  If it
--returns ``false``, the object will be freed.  If the ``iterator()`` function
--returns ``true``, it must perform any appropriate refcount incrementing on the
--object before returning.
-+   This iterates over the objects in an associative array and passes each one
-+   to ``iterator()``.  If ``iterator()`` returns ``true``, the object is kept.
-+   If it returns ``false``, the object will be freed.  If the ``iterator()``
-+   function returns ``true``, it must perform any appropriate refcount
-+   incrementing on the object before returning.
- 
--The internal tree will be packed down if possible as part of the iteration
--to reduce the number of nodes in it.
-+   The internal tree will be packed down if possible as part of the iteration
-+   to reduce the number of nodes in it.
- 
--The ``iterator_data`` is passed directly to ``iterator()`` and is otherwise
--ignored by the function.
-+   The ``iterator_data`` is passed directly to ``iterator()`` and is otherwise
-+   ignored by the function.
- 
--The function will return ``0`` if successful and ``-ENOMEM`` if there wasn't
--enough memory.
-+   The function will return ``0`` if successful and ``-ENOMEM`` if there wasn't
-+   enough memory.
- 
--It is possible for other threads to iterate over or search the array under
--the RCU read lock while this function is in progress.  The caller should
--lock exclusively against other modifiers of the array.
-+   It is possible for other threads to iterate over or search the array under
-+   the RCU read lock while this function is in progress.  The caller should
-+   lock exclusively against other modifiers of the array.
- 
- 
- Access Functions
-@@ -289,19 +289,19 @@ There are two functions for accessing an associative array:
-                                             void *iterator_data),
-                             void *iterator_data);
- 
--This passes each object in the array to the iterator callback function.
--``iterator_data`` is private data for that function.
-+   This passes each object in the array to the iterator callback function.
-+   ``iterator_data`` is private data for that function.
- 
--This may be used on an array at the same time as the array is being
--modified, provided the RCU read lock is held.  Under such circumstances,
--it is possible for the iteration function to see some objects twice.  If
--this is a problem, then modification should be locked against.  The
--iteration algorithm should not, however, miss any objects.
-+   This may be used on an array at the same time as the array is being
-+   modified, provided the RCU read lock is held.  Under such circumstances,
-+   it is possible for the iteration function to see some objects twice.  If
-+   this is a problem, then modification should be locked against.  The
-+   iteration algorithm should not, however, miss any objects.
- 
--The function will return ``0`` if no objects were in the array or else it will
--return the result of the last iterator function called.  Iteration stops
--immediately if any call to the iteration function results in a non-zero
--return.
-+   The function will return ``0`` if no objects were in the array or else it
-+   will return the result of the last iterator function called.  Iteration
-+   stops immediately if any call to the iteration function results in a
-+   non-zero return.
- 
- 
- 2. Find an object in an associative array::
-@@ -310,14 +310,15 @@ return.
-                            const struct assoc_array_ops *ops,
-                            const void *index_key);
- 
--This walks through the array's internal tree directly to the object
--specified by the index key..
-+   This walks through the array's internal tree directly to the object
-+   specified by the index key.
- 
--This may be used on an array at the same time as the array is being
--modified, provided the RCU read lock is held.
-+   This may be used on an array at the same time as the array is being
-+   modified, provided the RCU read lock is held.
- 
--The function will return the object if found (and set ``*_type`` to the object
--type) or will return ``NULL`` if the object was not found.
-+   The function will return the object if found (and set ``*_type`` to the
-+   object
-+   type) or will return ``NULL`` if the object was not found.
+@@ -317,8 +317,7 @@ There are two functions for accessing an associative array:
+    modified, provided the RCU read lock is held.
+ 
+    The function will return the object if found (and set ``*_type`` to the
+-   object
+-   type) or will return ``NULL`` if the object was not found.
++   object type) or will return ``NULL`` if the object was not found.
  
  
  Index Key Form
+@@ -400,10 +399,11 @@ fixed levels.  For example::
+ 
+ In the above example, there are 7 nodes (A-G), each with 16 slots (0-f).
+ Assuming no other meta data nodes in the tree, the key space is divided
+-thusly::
++thusly:
+ 
++    ===========     ====
+     KEY PREFIX      NODE
+-    ==========      ====
++    ===========     ====
+     137*            D
+     138*            E
+     13[0-69-f]*     C
+@@ -411,10 +411,12 @@ thusly::
+     e6*             G
+     e[0-57-f]*      F
+     [02-df]*        A
++    ===========     ====
+ 
+ So, for instance, keys with the following example index keys will be found in
+-the appropriate nodes::
++the appropriate nodes:
+ 
++    =============== ======= ====
+     INDEX KEY       PREFIX  NODE
+     =============== ======= ====
+     13694892892489  13      C
+@@ -423,12 +425,13 @@ the appropriate nodes::
+     138bbb89003093  138     E
+     1394879524789   12      C
+     1458952489      1       B
+-    9431809de993ba  -       A
+-    b4542910809cd   -       A
++    9431809de993ba  \-      A
++    b4542910809cd   \-      A
+     e5284310def98   e       F
+     e68428974237    e6      G
+     e7fffcbd443     e       F
+-    f3842239082     -       A
++    f3842239082     \-      A
++    =============== ======= ====
+ 
+ To save memory, if a node can hold all the leaves in its portion of keyspace,
+ then the node will have all those leaves in it and will not have any metadata
+@@ -442,8 +445,9 @@ metadata pointer.  If the metadata pointer is there, any leaf whose key matches
+ the metadata key prefix must be in the subtree that the metadata pointer points
+ to.
+ 
+-In the above example list of index keys, node A will contain::
++In the above example list of index keys, node A will contain:
+ 
++    ====    =============== ==================
+     SLOT    CONTENT         INDEX KEY (PREFIX)
+     ====    =============== ==================
+     1       PTR TO NODE B   1*
+@@ -451,11 +455,16 @@ In the above example list of index keys, node A will contain::
+     any     LEAF            b4542910809cd
+     e       PTR TO NODE F   e*
+     any     LEAF            f3842239082
++    ====    =============== ==================
+ 
+-and node B::
++and node B:
+ 
+-    3	PTR TO NODE C	13*
+-    any	LEAF		1458952489
++    ====    =============== ==================
++    SLOT    CONTENT         INDEX KEY (PREFIX)
++    ====    =============== ==================
++    3       PTR TO NODE C   13*
++    any     LEAF            1458952489
++    ====    =============== ==================
+ 
+ 
+ Shortcuts
 -- 
 An old man doll... just what I always wanted! - Clara
 
