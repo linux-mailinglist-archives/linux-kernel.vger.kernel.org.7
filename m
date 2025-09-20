@@ -1,87 +1,143 @@
-Return-Path: <linux-kernel+bounces-825648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30E15B8C6CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:37:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1143FB8C6D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 13:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 736531747C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07CC1B26B75
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11E52FB093;
-	Sat, 20 Sep 2025 11:37:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CC62FCBF1;
+	Sat, 20 Sep 2025 11:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixax30hw"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E5A228CA9
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00322FC86F
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758368226; cv=none; b=imo/gc8gA3rKUAa4kuO12pjLC7XfzbAEZY4sWGK1FEIdTzOlzY5hY1VHBXTwAhUAPjlFJp3X8kG504LBWaBABUTyY0WJ5vP758s36n0NkzVaXpMcvuqsyHvSDszqSoQixYkuuW5AIomLCLHi7CXjIYUsJOvmy1C4WSwS59jfYVA=
+	t=1758368273; cv=none; b=By3P6JJz0Qoc9kBbUN3V7v71nad3WBw/klkDDhzrl6mO9KMehfeDfzfqhu52682w9G8aqxCInO2fX755AXBZ1xubIlhEkP/mVXd82DH1yZLItVJ+4Xjg65ofKtid48jKSksiH1eGI0pL+xNXejM2qKD0GVHhebqnkc4O2UWdxpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758368226; c=relaxed/simple;
-	bh=Pd0NqbfZcCcn0vRHH9IfyM1C/NwOuL+bCJFFU46m7QM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nw2Hiw7gfWFa1q4yerrEgrSY85BsfTushKBE9Jdj7lye1Dh+eZYomBNmLSaXDr0T89g2sjeoLmAIY6qAg01B7mWVjFx8Ma3+SESNeeif+0vnpx7J1W/UXQoL56SD8GQgrwSs8eRrplInd5xYcWuwwX5uazC+w3jDTHIABmjtc9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42407cbc8d1so38880785ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 04:37:04 -0700 (PDT)
+	s=arc-20240116; t=1758368273; c=relaxed/simple;
+	bh=b6Fm0BmwLJwqytqC+i2BXbe8puZ6Co7RKo/QnYUhzqM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PY50zUfYoEAGkCZNZIXGPfJiRuRTAWYswgdO3QDH+/y7gq0AY6moaTqvKRzFdA4E60+5OWJT08bkug/uvQ4ezwbJbVeWohpR7wBoQiWIpJ6mCATRektdD+6IKSRDIe9mok63JYI9f07Us0cEgHxWe4ydKVIOFxeZJauy2tuuVDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixax30hw; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b553c804615so83693a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 04:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758368271; x=1758973071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1gi3z+r8fw1Fdl3f/f69x8Y4JnwjByJnQ8m85yG6rUI=;
+        b=ixax30hwPiu+xxALvpR49IjXY5qvqbaNoD9kkBK4d1QqVJaAUhrC5pLOyilT+YHCpp
+         1Pc3iNKZCV1Q1533r8JIRUja9HoFUQySIXKDnDaHqWyxNckg6OgGZAhUq3fmgD09zUyC
+         BUHcCrLVOnvo1cJw1zjzVYWzez+JV0BGGd5+nEZBRWH9+2B6DhAz8UGo6Fr7AA2wDH0c
+         5JcWaaxmKnuiQMfE1Awyn7AzUgr8flT5xE2x9GkK3GDKOSXxwl48YbyzIjSVKfJLYFDS
+         sMhontiXA/jYKzgU8Q5dIE5tYKdIOB3Yt0NzKV0YVohjfvCgVsRoOnVprnNvBAeWMAzx
+         P1Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758368223; x=1758973023;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2SMwj9fK8KtVa+Y2F7A413JKF+r5qt5nP6k1I8ioRs0=;
-        b=fnLyNiMQqeBUxZLfE6EAz7T8DZ6cdtOPOnH+JPbRwOoi3S+kxAJxYypXTPyHe2JSe2
-         V9e2tAUXt5m3/B/qQajiY/8oPX5WykQMHW1oXhZyEVh8+AzRAhDgRp8ygIhukdjzWk1x
-         0AXNcEB+fOnY6IJQHmDaXwTsC7i2+Li9W+f7pwJLzpH87RA3LbPcJYkmVZHqUmF9yw8p
-         yz/W623KvGTJvuD73TjUOEm8NRdpBk5D1dZWzr9EYRbg09qPW40ky0eyGqe0+9IB8FS/
-         +nl8x9G+YbjbkkDMSnw+yY60BC+P9WPlsxCk1QA4Ls9kpCm5Ns+BdwffV36kG50ccmzv
-         Av4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX806fo4jlKhENFq/yTdpCMUok4Ou7ni+U/2LHrO1V+BbEjxDXusmA/DZls/0o1W5JoF4DdOkaLH88NxhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUJZvRAnxSl9mEiW6X0zQiCZ3Bh/cCWa2DwhOgfXtuTec8wjCh
-	85TIcip3CCEYgINL0nd8LkuwT6o9ZpCd1z5ulZVLM1FGOVahu5h0NLl+q+fBKeRlBiQ+Oe+U4fJ
-	iBBviUfL1543+HrXOZpxBM3kN9XOjDwZbqyQFbNBA0m0fMzUT9exQO8ZrWTs=
-X-Google-Smtp-Source: AGHT+IHIv5t+0TgtKw/7XV8de/yPfzdajtmam580He33q3tYdzmUrMCX3yeVyFB7Tq3EYZLc82akNwmtEppjbJJAfotuGzVQTqyH
+        d=1e100.net; s=20230601; t=1758368271; x=1758973071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1gi3z+r8fw1Fdl3f/f69x8Y4JnwjByJnQ8m85yG6rUI=;
+        b=phytj4vH7w3M7r7w39R0gHM5xv5IOkn1jVJ21hvTyjr+pZYkqV1/qOO1TXmEc/eaUK
+         AeqMAp/MVEdqG6a6ZSObHntjDPMNLC9w7txmOD/ILT+PmsxQxOWL/Hd7WGlbKKZz1bkP
+         ou1PkWm7EuhvhCFQ9Uu3HZ6HBgNgDkuhIyWO+bq9TWnrhOceoCZMLIwDwg4pNrFruKUq
+         vsdQgT3p3NsR3gWh0zbcNH6aL9Miz55N8OOa9obOwuP/b+JS/npg0QB6A9JEoSkbuSyM
+         0K5DvZ1e6rqMZL2iGMvwEx2NTDadPaqbW4rnimNFmMiN7rBq60cyRj8BwlzosdnxIoVK
+         dM7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVeLMhovwQy2QOUGzhKkyiAjkGbZ2E8Yh3bhiC34lWwbWYJsvci/D0fafw94KmeqKzdphQx8BWcuAkM/7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdX6XK7nqTO3q2ItGiLMm021Hu5Balhj5wHeVX8IWGCM7/dZ4r
+	TaagABjzVH22RrTgJbEkGvSTHGuWIjQXErx9vK57AbYyoexgVhsYxcZy
+X-Gm-Gg: ASbGnctDYDDPUVpFE27BB285xuiJaxVDKu1JUnsfW7Qwirzvf1KWb7neJTprkoDonJF
+	NNW6MPSGAsf2dmgeVrbaYD9uFbUSfgDzXO8yPIeooUdLAtiJDsgH9HXC89JZiTAXOWmmKbVBenn
+	/LHEJaThoNalJHSG7wiu9a+PRKq9nOEOWf8d0/HBmSXmYFX4+nREe1YFvc/G+P88JU6zkKA3X0K
+	hpRMG0dmiSlngt0lqaPivOSyyr4hHt3qCF3A59pvcuQ+19a0vuQi2QhUZk9arAQLXhhSlqXht3E
+	74/Z1rT7JhNJu5tdp3JP1FY9HZ9bQtKtsk+Mdmc7GN0eOzqMwyVInsk/21nKB7OdXd+hwB/8/Qm
+	wAjS6jVYjJYK5F96L+CEgbujNd22wFkiJmMG3un1kXVtbetpEtIAJ0gsdKDSPQiajig3GDcI3Fs
+	7pipc6nXt3cSVB5ODQ24tEB+CUng==
+X-Google-Smtp-Source: AGHT+IFwAhN6M6EFWaf1/XtyWON0Z7I+kZCi6dd4GayIfKZtJs/E8SMjeAc4Ms/se25F/OZV1Noo9g==
+X-Received: by 2002:a17:903:2b10:b0:24c:9309:5883 with SMTP id d9443c01a7336-269ba511be0mr84863685ad.28.1758368270822;
+        Sat, 20 Sep 2025 04:37:50 -0700 (PDT)
+Received: from crl-3.node2.local ([125.63.65.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980179981sm80857165ad.54.2025.09.20.04.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 04:37:50 -0700 (PDT)
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	willemb@google.com,
+	kerneljasonxing@gmail.com,
+	martin.lau@kernel.org,
+	mhal@rbox.co,
+	almasrymina@google.com,
+	ebiggers@google.com,
+	aleksander.lobakin@intel.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Kriish Sharma <kriish.sharma2006@gmail.com>,
+	syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com
+Subject: [PATCH] net: skb: guard kmalloc_reserve() against oversized allocations
+Date: Sat, 20 Sep 2025 11:37:23 +0000
+Message-Id: <20250920113723.380498-1-kriish.sharma2006@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188d:b0:423:84d0:7f7e with SMTP id
- e9e14a558f8ab-42481902721mr102080965ab.6.1758368223445; Sat, 20 Sep 2025
- 04:37:03 -0700 (PDT)
-Date: Sat, 20 Sep 2025 04:37:03 -0700
-In-Reply-To: <CAL4kbRMa8snwYuwi4zNjx9bNbrRg=MN+xkadQ=89Dc6URRCOog@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ce91df.050a0220.13cd81.0017.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [usb?] WARNING in __alloc_skb (4)
-From: syzbot <syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com>
-To: kriish.sharma2006@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Add an explicit size check in kmalloc_reserve() to reject requests
+larger than KMALLOC_MAX_SIZE before they reach the allocator.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+syzbot reported warnings triggered by attempts to allocate buffers
+with an object size exceeding KMALLOC_MAX_SIZE. While the existing
+code relies on kmalloc() failure and a comment states that truncation
+is "harmless", in practice this causes high-order allocation warnings
+and noisy kernel logs that interfere with testing.
 
+This patch introduces an early guard in kmalloc_reserve() that returns
+NULL if obj_size exceeds KMALLOC_MAX_SIZE. This ensures impossible
+requests fail fast and silently, avoiding allocator warnings while
+keeping the intended semantics unchanged.
+
+Fixes: 7fa4d8dc380f ("Add linux-next specific files for 20250821")
 Reported-by: syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com
-Tested-by: syzbot+5a2250fd91b28106c37b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=5a2250fd91b28106c37b
 
-Tested on:
+Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+---
+ net/core/skbuff.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-commit:         846bd222 Add linux-next specific files for 20250919
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=153a9858580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a2250fd91b28106c37b
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1132dc7c580000
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index ee0274417948..98efa95ea038 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -591,6 +591,8 @@ static void *kmalloc_reserve(unsigned int *size, gfp_t flags, int node,
+ 	/* The following cast might truncate high-order bits of obj_size, this
+ 	 * is harmless because kmalloc(obj_size >= 2^32) will fail anyway.
+ 	 */
++	if (unlikely(obj_size > KMALLOC_MAX_SIZE))
++		return NULL;
+ 	*size = (unsigned int)obj_size;
+ 
+ 	/*
+-- 
+2.34.1
 
-Note: testing is done by a robot and is best-effort only.
 
