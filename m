@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-825609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEE5B8C505
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:48:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888CCB8C502
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 11:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4949C7BCDB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54EBC5626E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060DE2EB847;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A4A2EB87F;
 	Sat, 20 Sep 2025 09:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLyMbSbD"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cW8U3vR3"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB6E2D29D1
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB5E2D6611
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 09:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758361581; cv=none; b=UwT5rpr5Su0RmoEQGn82kW6B89FcthEDuzUlmobqXExSXy/9pkIJWt1M7zdxpHg5/peMdASv6IfPyoXvLGVllQgfPwX1c1EuahkLp9+yfJuYAh5b3i3Fhux/Afax2QiCVOa0OHBXJHlAIwD8mCvih8LuSIkW5IVNod8VXNWKZRw=
+	t=1758361582; cv=none; b=SUiL4X7LBhnZJ4DY2MeknyYhY98rIvfFhNiST85SrS2pcCD9nRFWdKLXtIC8UcRTHfpBUwS/Sydrm5YqyD6r0M2omfby/Rvce9/Qyo0vxYEsW7GbzVrgusmk/hnhYbDpaWKUGgZaV7gBOX0Gda4gnJYSxlEfsyIg7WU12k7Cg00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758361581; c=relaxed/simple;
-	bh=+TZUUO1aqAKxm0AaROV+RBFrnjIM5ONcieqWCxfEcHk=;
+	s=arc-20240116; t=1758361582; c=relaxed/simple;
+	bh=06WkZlQp1hApWMQfU4a2TnIBkA0+msj+U8y5ce57UNQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y9OKukG3AyD8U9kw87mNPthsq9AMbuOFJVOttNrD5TMiRCn8d3RjQfxrNlPPDuXhIUuUlqTkISB0Poq6GoUTjWz5b1pTkxuJjK7Cvd05cVpcFmfnXFnqz7nXZTVYvBXyHxcTfSEPt+WX72GjEig0AynJxp2q0mSJLFeiGuAr87c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jLyMbSbD; arc=none smtp.client-ip=209.85.128.44
+	 In-Reply-To:To:Cc; b=GoXK7K2fvMNPo1HupsVpVuRVi4IQXmABdQlyGFAcitZHlGigWM/h7x+xYyEFpc6BuZWb4yj8V6+sf0BVF8cwLVxo5+Eia/EQEZMTH/0jMMxQNHTJneSON4r4K56AeT+6KIm6c0nnBuf2EU1Ke8enzFRY70xNWVigIjF7VamRtgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cW8U3vR3; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so26196155e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:46:19 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ed20bdfdffso2986862f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 02:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758361578; x=1758966378; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758361579; x=1758966379; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=U1k1X7wVhC2Ie0OtoDz9fs6zchWP2fAQ9NgE8oeXh0w=;
-        b=jLyMbSbDqyj+AxQ2XrSTIa8gDzQYqpHMlxarF/6d8a7j6WG54IVbo83G7RCeWCgLl/
-         ManB0M4MDfhNH6TWsy7fhRwgE1rMRmKf1JrwOArfm5W3XJdu8sxsRuswIT7bnkgTCGni
-         kkXDJvNr4y4NGEzEsKzfTT8mEE5VoQbTKaroLacCUDjgzIDs1poA67qyNRdR+RqEvUQI
-         h2L1KevKpe4q/6+idruaz+8OZwGHuBMLDA4jPYXfRSw7pf2/g1VjcH0cjLxvlGKpGXk1
-         v3jBwG/S0gywY+hG3G36q69lKfoC0gL2+vOOsRRJ7BtwpGmNER0v1UkKkj6jfhH37zuY
-         TDtA==
+        bh=rq2teog4gIQygb1gH3aobDn756RO8w24JG5dF9G4uFY=;
+        b=cW8U3vR3Koxb8F0qzhUQ4obiW7JDTCq7A9hSCY0nVG13vq1mMQLSOUMPEnQaTxh1XQ
+         9XNqxeLzPB4ugBzMhQF+NtK0gwUYTQSR2cKV9VaM5YGzsEec4mQXKJyRJCKu3S14Gtlm
+         N8/vmV5E0OnRF6nOGA+l6G8EG98KXKldKeCbLMd2jBh2LjEF9EeGaKYQ51knSsAVm/zr
+         YXcDJ3xyT/i9HJvDyczQkx0Dimewz/m0nS8Lxoqv833s8clUXYCsmbJns2+TKpevBVy/
+         +IpOg1rTVGcYyEoHBQh2/6g+7tS3qVtzl3Jp/uCmLK8Ut7C+fO2t/V0SkbWTEM9ueKi9
+         fkWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758361578; x=1758966378;
+        d=1e100.net; s=20230601; t=1758361579; x=1758966379;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U1k1X7wVhC2Ie0OtoDz9fs6zchWP2fAQ9NgE8oeXh0w=;
-        b=Ink63TCeWYxMLY/qLceLDD701XURqhDOb2lAa7XrUIhjHRvBPf5hISMzTXo5/UQ+hd
-         +L1Df+GLsnI+teaHlEBGU4+6F0lVAe497Mx3DVxcy8TP5fAS1G2fy3matkMMFnYZgI3t
-         r+a7ZaJwMHXON4Yk21M7QIUR8djkv1a12eo3EyHDT32BiC19kMORlX8OEaZ5PJa2vQq1
-         PJUODgiiEM8EC9thYbVBjrrVo5p4Uc7YMQfjhRFKo6llhDQil4hwhBoFn9oKI7YupesY
-         EPBVRkGRVwV0zecsR2NHbumMNO24NYkeJPMGhAStiDqwx4wXdufmpTVD9/sLl9J8JUa2
-         ax5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX+6OBpFSsKcQu/IOnixnNL3dhAL+1N+MLvdyP6ec2O6ppxVCNEd+9mhe9e1+OplxAWzzRmAhbxCTCYUZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf2KqVBTCFDsHzjuAGzG2HSmRyiBMa6peWGFZFs2tN5ZTHhvbn
-	DTVi7lol9JoLliZJCGZOitQz7baBMOIeuLuk3NbTGNMRAxskKFhJU3h+
-X-Gm-Gg: ASbGncugnZ00FEww+vDIs0Fm/8JQcyqj4Y8/CNFvXh8WklW4jSV2U3ikwAnM3NhZJ89
-	9AK4mQ2r2ua5ogJjQ3kFvB1uxRBnO7TBpDWNTHeHG5juLckodZsOfJqSVG9/fK9Dwj9XTBb87u0
-	2vP2Xns3AtCtYjgpVZK+nRpNUeIgw9cWvwLqFCvayT+bF4eRxhX7K6uOEeQoxm3fVAGMGK4FuwP
-	7ucurG7BiMMElpnCoT321s8VJP6+mezlHVRDme/4im9rMZeJP9xTQAgAZngZrqTmnYGtW4Ep1ZB
-	CW2yT4CoQL5wMTFFfe/Rd6ndUzO0mEHCAgPtYQ1jcxwdbitqUhPAjRwQeZmD4wDhSbXD4J2FaFt
-	SzfDoEemxow1UP6yuo5O8V1W4nW98d8JoixgZvX/UvXDARnwLoplaH5FfejSeHxsP
-X-Google-Smtp-Source: AGHT+IG+MahtWTblaZT5DEDOldTm+ldFui4wqvz2L1QckgRXFnWDqec2nqXs/VZsuZMCBAulm9eIVA==
-X-Received: by 2002:a05:600c:3055:b0:468:9798:1acc with SMTP id 5b1f17b1804b1-4689798217dmr34817835e9.2.1758361577700;
-        Sat, 20 Sep 2025 02:46:17 -0700 (PDT)
+        bh=rq2teog4gIQygb1gH3aobDn756RO8w24JG5dF9G4uFY=;
+        b=WEQkA2dKs/WF7E6dXPA1DTAJ9xmmy9t0lLVmHBJ5PMqZ9+SHTcCyXCT7ofSv+u0E5N
+         Pl+T1jMX2D6ut+gLdxKWseRmKH3Fsq5q1ISAslz3hKlIRm4jBQGBvr+HfhukdXJN4kxp
+         2Fj+F1aprObavoCu/2cW50HvH1LcV9b4pULjXduiaG2mbIitL7OC8/R5qFQD63NqV9/2
+         NKkrchvDdL74zfXMzgnIRzJn+rdkp7KCZ8nImWB1idldQafGTRFlgiHb4uvKXIOLmfoc
+         A/5y/fk90jSorVRlmKcEGaUqA2rYCTBEN9a31lIXTRAFYe8I/QZxFLrGjM3ilvNEYSqj
+         UecA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5ev9TZpv4d9BWu27ehTzKznH5I1CirFzQCOYG3BcYMMb57pBCmgLUf5WQ4ovf2xCx9Z/y3PbzhHbuW4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEtAHwpjIskp9+dldNV66esvjWmpmfm8vQgXiHdGH7VAMcteJF
+	qcXBsSLWqxJf86qtWOXB7RxqGy++ISI/ZTGyO6poT8ef58dBK/5efSL7
+X-Gm-Gg: ASbGncvc7Nf10HfR21srNwvPWoQ6c0voeFey1fRYh+uTzQYza/P2WUzghmfvmN52tXx
+	bbPIdRAP0L3fGketrFYEYcqTIYPbjr4/sNejXwFw5ieDqGgUlTtggxqQCA3ZgPePKpGNMlRkDVA
+	S+9BX7s3ESHpfVkc/njRuBNgQshA3yZGwrw7L6+xgokNaFIqYq5ZgHgsf7mJheUP8i6sv7m5ulG
+	g7AOOTBTakr1/iI0i47zTjHkODjccPtMlXW7MQfzeQc24SFYbYfEhLHKC4O4k2VUsvX879iqUP/
+	U5ieGL2AqcYZla/VJwQ73IqWeAJL0zCgqN34Qle3RD1YqQ9AxgFF/bmdK+kR8+yNSGv8S463IWZ
+	T5ls7ZMBqoSWkeU/U7rw78ao8cP9C0woCIXkA9hNsrQTpIDqFByxKV3kLdV951l18
+X-Google-Smtp-Source: AGHT+IFl+MC1nDaVLJuiZMNJ7+rEO5Az3pzwP23zFiHFFh+Nl5JFajqsTQQ43BuBBoBZUolOBfA1hg==
+X-Received: by 2002:a05:6000:1862:b0:3ea:bccc:2a2c with SMTP id ffacd0b85a97d-3ee7c552978mr4924011f8f.11.1758361578687;
+        Sat, 20 Sep 2025 02:46:18 -0700 (PDT)
 Received: from ipedrosa-thinkpadx1carbongen12.rmtes.csb ([5.225.139.156])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613eb27f25sm163883615e9.23.2025.09.20.02.46.16
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613eb27f25sm163883615e9.23.2025.09.20.02.46.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 02:46:17 -0700 (PDT)
+        Sat, 20 Sep 2025 02:46:18 -0700 (PDT)
 From: Iker Pedrosa <ikerpedrosam@gmail.com>
-Date: Sat, 20 Sep 2025 11:45:44 +0200
-Subject: [PATCH v2 4/5] drm/solomon: Simplify get_modes() using DRM helper
+Date: Sat, 20 Sep 2025 11:45:45 +0200
+Subject: [PATCH v2 5/5] drm/solomon: Enforce one assignment per line
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250920-improve-ssd130x-v2-4-77721e87ae08@gmail.com>
+Message-Id: <20250920-improve-ssd130x-v2-5-77721e87ae08@gmail.com>
 References: <20250920-improve-ssd130x-v2-0-77721e87ae08@gmail.com>
 In-Reply-To: <20250920-improve-ssd130x-v2-0-77721e87ae08@gmail.com>
 To: Javier Martinez Canillas <javierm@redhat.com>, 
@@ -94,46 +94,40 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Iker Pedrosa <ikerpedrosam@gmail.com>
 X-Mailer: b4 0.14.2
 
-The ssd130x_connector_get_modes function contains a manual implementation
-to manage modes.
-
-This pattern is common for simple displays, and the DRM core already
-provides the drm_connector_helper_get_modes_fixed() helper for this exact
-use case.
+The code contains several instances of chained assignments. The Linux
+kernel coding style generally favors clarity and simplicity over terse
+syntax. Refactor the code to use a separate line for each assignment.
 
 Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
 Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
 ---
- drivers/gpu/drm/solomon/ssd130x.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ drivers/gpu/drm/solomon/ssd130x.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/solomon/ssd130x.c b/drivers/gpu/drm/solomon/ssd130x.c
-index 6083fd9e9e5e4def670961dc46df7e4adef7462d..50528a94cd3bcfa46517c6ffccf3f458e17cf816 100644
+index 50528a94cd3bcfa46517c6ffccf3f458e17cf816..f3dd6982b293c74024f7d70a6ef1ebfb5889b0a1 100644
 --- a/drivers/gpu/drm/solomon/ssd130x.c
 +++ b/drivers/gpu/drm/solomon/ssd130x.c
-@@ -1732,20 +1732,8 @@ static const struct drm_encoder_funcs ssd130x_encoder_funcs = {
- static int ssd130x_connector_get_modes(struct drm_connector *connector)
- {
- 	struct ssd130x_device *ssd130x = drm_to_ssd130x(connector->dev);
--	struct drm_display_mode *mode;
--	struct device *dev = ssd130x->dev;
--
--	mode = drm_mode_duplicate(connector->dev, &ssd130x->mode);
--	if (!mode) {
--		dev_err(dev, "Failed to duplicated mode\n");
--		return 0;
--	}
--
--	drm_mode_probed_add(connector, mode);
--	drm_set_preferred_mode(connector, mode->hdisplay, mode->vdisplay);
+@@ -1867,10 +1867,14 @@ static int ssd130x_init_modeset(struct ssd130x_device *ssd130x)
  
--	/* There is only a single mode */
--	return 1;
-+	return drm_connector_helper_get_modes_fixed(connector, &ssd130x->mode);
- }
+ 	mode->type = DRM_MODE_TYPE_DRIVER;
+ 	mode->clock = 1;
+-	mode->hdisplay = mode->htotal = ssd130x->width;
+-	mode->hsync_start = mode->hsync_end = ssd130x->width;
+-	mode->vdisplay = mode->vtotal = ssd130x->height;
+-	mode->vsync_start = mode->vsync_end = ssd130x->height;
++	mode->hdisplay = ssd130x->width;
++	mode->htotal = ssd130x->width;
++	mode->hsync_start = ssd130x->width;
++	mode->hsync_end = ssd130x->width;
++	mode->vdisplay = ssd130x->height;
++	mode->vtotal = ssd130x->height;
++	mode->vsync_start = ssd130x->height;
++	mode->vsync_end = ssd130x->height;
+ 	mode->width_mm = 27;
+ 	mode->height_mm = 27;
  
- static const struct drm_connector_helper_funcs ssd130x_connector_helper_funcs = {
 
 -- 
 2.51.0
