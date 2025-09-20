@@ -1,155 +1,239 @@
-Return-Path: <linux-kernel+bounces-825673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0E4B8C795
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:05:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AA7B8C7A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:07:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23DC71BC5266
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:06:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0E53A9905
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E0F306493;
-	Sat, 20 Sep 2025 12:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4BA2FCC1B;
+	Sat, 20 Sep 2025 12:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAHxp2Po"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQNJ9Kvg"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19502FFDF2;
-	Sat, 20 Sep 2025 12:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C84A72634
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 12:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758369835; cv=none; b=L2V3Rgz/6GEmooSElGL6Yh3nBJ93G2e4exefvHBntzgHzccXNPY/5Ld1EBVlbS1CzSkVH6TepK0klTy124hwag6YzOJV93bsmAkfhncJRrpABKcS/XDYogC4Xe7yE+SjwW4GysJESIagt+7mKfR/cqh00VInoj685kQcYJwZ0vU=
+	t=1758370026; cv=none; b=MgpbojIIo3FjBYs2zpwFtCBLCHJVoBs1dB9fnwjobHVkQkHdEQqhn5h8arH5yVzwYWLu5g8tI15PeDcS+jD5H6WFH1kXC0QbTArWDwkSOuNyschIIPNZdFNZItE6J8TBaRg9fUw8sWrQT+whSJI4Q7VqMYuTJX4vhhPHPoQ8e6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758369835; c=relaxed/simple;
-	bh=kZm2vgE4Y4k2VcT45jEFX3XGAq8yGmdzrkQXzDzIa0Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BDB0SEjTmzxIPh+mk58JsSsRPGafImFVpyRPM3sM0n9XMapNTVU2WbyR1IjI2K48sfeaCUItkqUPW8IS17hvpFfYj/FpCbxmuZVsYapUOF5aGdjKEtbChYBatGeSyOSTl2e85WXsAADrGdS+3N1QezH5xSTEnIcrYZVBYkUP8oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAHxp2Po; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7223EC116C6;
-	Sat, 20 Sep 2025 12:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758369835;
-	bh=kZm2vgE4Y4k2VcT45jEFX3XGAq8yGmdzrkQXzDzIa0Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=dAHxp2PopZ7lXLtplyYAR3dd0V+ybqNn1O29A6AY9Jr7W9nXMT1VYFG6fCIWZqbA4
-	 hnGquwI1ocRahk8cNin2RcCVxhq48N22TIHymxtvP2rdKorjD8EaQeQQMVJu4xANj8
-	 gkeC/7LDfJ/BI2dDHxqJZ/ZexMDdqUYnEIrtKzYX6lq3ICrlMfqgQ/XrWlVArzv+AV
-	 cSVt1Xh6SmzxZ+dTaHCJVWWmKGT0rS1Js0XhwxwaY/wc1erxkWK8G52GJkYivFzkdz
-	 u7coC4pFgNbBwTP5oBzV9j5yXC/rheXEPBKH5lKLPxL3bMqKbX/AgoQvAxDEUaivj7
-	 1ELVbkQ5JYhxw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1B3CAC5AA;
-	Sat, 20 Sep 2025 12:03:55 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Sat, 20 Sep 2025 14:03:47 +0200
-Subject: [PATCH v2 8/8] media: i2c: dw9719: Fix power on/off sequence
+	s=arc-20240116; t=1758370026; c=relaxed/simple;
+	bh=wRfe16rjqxi2xuffa0AZufUXEu2URptMaXK4aGux90c=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=IvVVgL+3kYv22Mi8XPMhI56EkuWCXzib89z5DKUuYiYcO59Yhy3TVMwp5KQ0Fh+ooeL67ajXqsXbOc/mHI8S0fcyj0iVriRHwHoA0er8cT4aqcUGbSDp69OEaXlPoM/QaI3CieqPSuaMVgf0a0nogXH2sPS4YUU9Vl4lQleRnLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQNJ9Kvg; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5512bffbfaso2333064a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 05:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758370024; x=1758974824; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lMb8VWE+6URytkIT382Ezy+2ljI6Cia6SMvGCKjJfW4=;
+        b=SQNJ9KvgkCS7UTrUppMDU9mHcLiPrTVmuV/0CdIpaS2wj1oQpBqwooNztICSb81yqy
+         R9S++Brg/8Oewk87HxYZQffPvpKDT+8ko69zgKqkWSjAkEWFRSP9Fy8HA5+2NNxUBJqj
+         2VwXxTWCSm8N5Vz1F8oRq5rFO7AIM/dWEDrAGynd0eLqbTFJF7+8smp3Aike6CnR1/cN
+         q1todUKZwWwS4MTUbAraCktMW639yu7e99O3sWgt6uvL7DQimb8STaQrQ7B1AJc6pEmH
+         ESkrr9O4NIVtvamkniJ/p6r+6Ihk1PyC7gn9eyJQFUnbQxDzD4fmKMtdpf4nt9ZX7ZIM
+         5jlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758370024; x=1758974824;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lMb8VWE+6URytkIT382Ezy+2ljI6Cia6SMvGCKjJfW4=;
+        b=xRt3mJQ6hbKusn9rae7knfQPTBit8e1hE2g8k4BhlOVBvFOmcRkknXCreMUEDImgld
+         7FuEKq3au5NhMl4FjzBCVu2olWwIAhUIvbT0jcx/jyyMtKVavjNqwo4tGIF5g6Eos1OC
+         yqeMCgp0oiKK/HWYCsR4cbQ1igXGAT4WcBhYvVBGwfRPLU8RPoxtJdgl48M2hap/DZdL
+         ZMyzz4gAIOIjw6VGN5eS+vJmw/yB/0BKmYf5Ywj+0D5nfyW0E1zGT9evcFOdM0ObHd3f
+         ellbi61vRNozYUE8l5824yHY8yOXwHZ8LpPvg4x/STvfMwDWvZ5hIC9sGJP28sDDULHi
+         OevA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz/3TXcrfyCdekv/5BhhVqFWMTyDSBHwzlbm5BICmOG78ToVDWp6zwFRUwKNqAk6CkJLM5EOdCTduedVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMGru9MImKnc6BDZoPD5u9yG6/FUyFyIzljWN+C/Jnj6dUzk+g
+	oaaFSAE+TdvwaddyR3REKbVfjEkklrGY5pVku0mYBob5Qm5cAyrFL441
+X-Gm-Gg: ASbGncu+zWjRvVMjfAbKjdtctp84MGCsbLIwTmNARSBW8MZlMEqNyROUU8ZG0WgYDQ3
+	sNew30zJkACtomcdZruqQ0Gb9gckdoYqGal35C6NHgy8enYUMf4+dzny+E6Lh1pj/+3KcigyBlj
+	FOjAZIQ0exFqQR/9WbIFIE4Qn4WrIF3CtpxKL3o7caQVcVi2kFDRLBLWmgEZj8jdO7uOgfuZmlD
+	3phRAGrePpMuNGZDeRj0Rjh5BRigH6tTSvGiooF3rYDlpaRsXhnFmWnyJhD2q0DuJRHZcvdPzsR
+	AnT4ofpTdg+JRnEoaWe/LZkRYF3KpQ7sn2LI1sxNKXUp1cTj58Z5bOthaawhIgQOvaG6NPiw7VC
+	/+xfaz5nj14QDGdsAAO9TU6vZroTQJjY1/oB7ExquUMGSv8Y7
+X-Google-Smtp-Source: AGHT+IHvMLKv3j9HfmbwyBfZaaEcYq1hRS0Aah0Qh5jJRqgSuw36FXvoywwNIGGE9sU1vW9GdPrT9Q==
+X-Received: by 2002:a17:902:f541:b0:270:8ae3:a6f1 with SMTP id d9443c01a7336-2708ae3a911mr33570055ad.46.1758370024250;
+        Sat, 20 Sep 2025 05:07:04 -0700 (PDT)
+Received: from smtpclient.apple ([2403:d400:1000:7:c4a:831d:b386:ef7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698035d337sm80068635ad.139.2025.09.20.05.07.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 20 Sep 2025 05:07:03 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250920-dw9719-v2-8-028cdaa156e5@apitzsch.eu>
-References: <20250920-dw9719-v2-0-028cdaa156e5@apitzsch.eu>
-In-Reply-To: <20250920-dw9719-v2-0-028cdaa156e5@apitzsch.eu>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Val Packett <val@packett.cool>, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758369833; l=2638;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=lWInwMIPju+2fGg21WtvyMeSsmiEJjQGEVNl36kgA5M=;
- b=20LuL86xoHl8ObMDtgsUU553lDH+HxYDd+BmsOKQ1iZH3yVfc3GnWu0FBJmSQYoN4JbcKL0IP
- ++37YmoQgnNCwOD2sf4DXCRJrDQ/6RxFjJDh+rcb/Xw06riboZv5eSC
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with
+ GCC 11.1.0
+From: =?utf-8?B?6ZmI5Y2O5pit77yITHlpY2Fu77yJ?= <lyican53@gmail.com>
+In-Reply-To: <d6ccd709466d1460baf6e9b0bcec212007172622.camel@ibm.com>
+Date: Sat, 20 Sep 2025 20:06:48 +0800
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Xiubo Li <xiubli@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A246BD33-C009-4C12-94E7-E95CABB94D04@gmail.com>
+References: <1AD55673-B7F4-4DB7-AE80-1AC81709F65A@gmail.com>
+ <e6987f0268bd7bceddbd6ec53fa174d07cfa3114.camel@ibm.com>
+ <C8E92D42-0336-45DD-A415-EA8588DE731D@gmail.com>
+ <d6ccd709466d1460baf6e9b0bcec212007172622.camel@ibm.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+X-Mailer: Apple Mail (2.3826.700.81)
 
-From: Val Packett <val@packett.cool>
 
-The "jiggle" code was not actually expecting failure, which it should
-because that's what actually happens when the device wasn't already woken
-up by the regulator power-on (i.e. in the case of a shared regulator).
+> 2025=E5=B9=B49=E6=9C=8820=E6=97=A5 02:51=EF=BC=8CViacheslav Dubeyko =
+<Slava.Dubeyko@ibm.com> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Fri, 2025-09-19 at 10:34 +0800, =E9=99=88=E5=8D=8E=E6=98=AD=EF=BC=88L=
+yican=EF=BC=89 wrote:
+>>> 2025=E5=B9=B49=E6=9C=8819=E6=97=A5 02:07=EF=BC=8CViacheslav Dubeyko =
+<Slava.Dubeyko@ibm.com> =E5=86=99=E9=81=93=EF=BC=9A
+>>>=20
+>=20
+> <skipped>
+> I still have the same issue with the new patch. Your patch is trying =
+to modify
+> the line 262. However, we have comments on this line [1]:
+>=20
+> 260 /*
+> 261 * figure out number of bits we need to shift and
+> 262 * do it in one step instead of iteratively
+> 263 */
+> 264 if (!(x & 0x18000)) {
+> 265 int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
+> 266 x <<=3D bits;
+> 267 iexpon =3D 15 - bits;
+> 268 }
+>=20
+> Thanks,
+> Slava.
+>=20
+> [1]
+> =
+https://elixir.bootlin.com/linux/v6.17-rc6/source/net/ceph/crush/mapper.c#=
+L262
+Hi Slava,
 
-Also, do actually enter the internal suspend mode on shutdown, to save
-power in the case of a shared regulator.
+Thank you for your patience with this patch. I want to clarify the =
+confusion about the line numbering.
 
-Also, wait a bit longer (2x tOPR) on waking up, 1x is not enough at least
-on the DW9718S as found on the motorola-nora smartphone.
+The patch header "@@ -262,7 +262,7 @@" was automatically generated by =
+git format-patch - I did not manually specify line 262. This is how git =
+diff format works: it shows context lines starting from line 262, but =
+the actual code modification is on line 265 where the `__builtin_clz()` =
+call is located (exactly as you referenced in [1]).
 
-Signed-off-by: Val Packett <val@packett.cool>
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
+To be absolutely clear:
+- I am NOT trying to modify line 262 (which contains comments)
+- I AM modifying line 265: `int bits =3D __builtin_clz(x & 0x1FFFF) - =
+16;`
+- The "@@ -262,7 +262,7 @@" header is git's standard way of providing =
+context
+- Git automatically chooses how many context lines to show and where to =
+start them
+
+The patch content clearly shows the actual change:
+```diff
+- int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
++ int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
+```
+
+This line-by-line diff shows exactly what gets modified - line 265 in =
+the official kernel source.
+
+Here is the git-generated patch:
+
 ---
- drivers/media/i2c/dw9719.c | 26 +++++++++++++++++++-------
- 1 file changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/i2c/dw9719.c b/drivers/media/i2c/dw9719.c
-index a24594523030df7df7fb60afb5248472b4a8ea13..3627e78b8b6668933c4ecd92231465ce4105ff0c 100644
---- a/drivers/media/i2c/dw9719.c
-+++ b/drivers/media/i2c/dw9719.c
-@@ -95,12 +95,20 @@ struct dw9719_device {
- 
- static int dw9719_power_down(struct dw9719_device *dw9719)
- {
-+	u32 reg_pwr = dw9719->model == DW9718S ? DW9718S_PD : DW9719_CONTROL;
-+
-+	/*
-+	 * Worth engaging the internal SHUTDOWN mode especially due to the
-+	 * regulator being potentially shared with other devices.
-+	 */
-+	if (cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN, NULL))
-+		dev_err(dw9719->dev, "Error writing to power register\n");
- 	return regulator_disable(dw9719->regulator);
- }
- 
- static int dw9719_power_up(struct dw9719_device *dw9719, bool detect)
- {
--	u32 reg_pwr;
-+	u32 reg_pwr = dw9719->model == DW9718S ? DW9718S_PD : DW9719_CONTROL;
- 	u64 val;
- 	int ret;
- 	int err;
-@@ -109,13 +117,17 @@ static int dw9719_power_up(struct dw9719_device *dw9719, bool detect)
- 	if (ret)
- 		return ret;
- 
--	/* Jiggle SCL pin to wake up device */
--	reg_pwr = dw9719->model == DW9718S ? DW9718S_PD : DW9719_CONTROL;
--	cci_write(dw9719->regmap, reg_pwr, DW9719_SHUTDOWN, &ret);
--	fsleep(100);
-+	/*
-+	 * Need 100us to transition from SHUTDOWN to STANDBY.
-+	 * Jiggle the SCL pin to wake up the device (even when the regulator is
-+	 * shared) and wait double the time to be sure, as 100us is not enough
-+	 * at least on the DW9718S as found on the motorola-nora smartphone,
-+	 * then retry the write.
-+	 */
-+	cci_write(dw9719->regmap, reg_pwr, DW9719_STANDBY, NULL);
-+	/* the jiggle is expected to fail, don't even log that as error */
-+	fsleep(200);
- 	cci_write(dw9719->regmap, reg_pwr, DW9719_STANDBY, &ret);
--	/* Need 100us to transit from SHUTDOWN to STANDBY */
--	fsleep(100);
- 
- 	if (detect) {
- 		/* This model does not have an INFO register */
+=46rom ac3a55a6a18761d613971ef6f78fa39e6d7d2172 Mon Sep 17 00:00:00 2001
+From: Huazhao Chen <lyican53@gmail.com>
+Date: Sat, 20 Sep 2025 19:42:54 +0800
+Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() =
+with GCC
+ 11.1.0
 
--- 
-2.51.0
+When x & 0x1FFFF equals zero, __builtin_clz() is called with a zero
+argument, which results in undefined behavior. This can happen during
+ceph's consistent hashing calculations and may lead to incorrect
+placement group mappings.
 
+Fix by checking if the masked value is non-zero before calling
+__builtin_clz(). If the masked value is zero, use the expected result
+of 16 directly.
 
+Signed-off-by: Huazhao Chen <lyican53@gmail.com>
+---
+ net/ceph/crush/mapper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
+index 3a5bd1cd1..000f7a633 100644
+--- a/net/ceph/crush/mapper.c
++++ b/net/ceph/crush/mapper.c
+@@ -262,7 +262,7 @@ static __u64 crush_ln(unsigned int xin)
+  * do it in one step instead of iteratively
+  */
+  if (!(x & 0x18000)) {
+- int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
++ int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
+  x <<=3D bits;
+  iexpon =3D 15 - bits;
+  }
+--=20
+2.39.5 (Apple Git-154)
+
+---
+
+To demonstrate that this is git's automatic behavior and not my manual =
+choice, I can provide the same fix with different context formatting. =
+Here's an alternative patch with less context (generated using `git =
+format-patch -U1`):
+
+```diff
+@@ -264,3 +264,3 @@ static __u64 crush_ln(unsigned int xin)
+  if (!(x & 0x18000)) {
+- int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
++ int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
+  x <<=3D bits;
+```
+
+As you can see, this version shows "@@ -264,3 +264,3 @@" but still =
+modifies the exact same line - line 265 where `__builtin_clz()` is =
+called. The line numbers in the @@ header are just context indicators, =
+not the target of the modification.
+
+Both patches apply successfully to commit =
+f83ec76bf285bea5727f478a68b894f5543ca76e (Linux 6.17-rc6). I've tested =
+both locally with `git am`. The actual code change is identical in both =
+cases - we're fixing the undefined behavior in the `__builtin_clz()` =
+call on line 265.
+
+I hope this clarifies that the git-generated diff headers don't indicate =
+which line I'm trying to modify, but rather where git chooses to show =
+the context for the patch.
+
+Best regards,
+Huazhao Chen
+
+[1] =
+https://elixir.bootlin.com/linux/v6.17-rc6/source/net/ceph/crush/mapper.c#=
+L265=
 
