@@ -1,180 +1,197 @@
-Return-Path: <linux-kernel+bounces-825832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4109B8CE78
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D12B8CE7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F32E67A7E93
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701E71B24D3A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 18:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304802FFDF4;
-	Sat, 20 Sep 2025 18:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB6A30277A;
+	Sat, 20 Sep 2025 18:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYarsMCY"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="FoywK2Ce"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2573F2F39A5
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 18:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 785A32FF65F
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 18:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758391470; cv=none; b=kwP/OAvElNPSJ2YpRH2cJxqP2z2daVRflLfpF5Y3iaGTUONJJStVLVSENNHgDshftAXhwoU6LPvdcK+9pTyFhc+MukH06NRrzvVOwU6ZVxsCJUcHIf6qRlUctJcGHHWuSmdmf9lVfE/10Dgn2nHifqLWncieR94F4MkYrreVqFY=
+	t=1758391645; cv=none; b=P3fYh7Z9aRxHZnckzAIipgk+lVOJJNTOlipQM4s+S7dL9T4uRqeRZwTRLh0X/H17MgnfpV1ZkpmtH5T7Ejq1t4HwBIXt8FuAu8YdClmdPFQzuTk5ccDQTKoeO03T6mll8MeYUZOnV/3cB448IH4D8o83ws28hJznk9O13bAXUQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758391470; c=relaxed/simple;
-	bh=4tlnfib27kjuIoWZqfi44dVrHnKQF8NT22sSeHsQkVI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=QFSMvI42bCVg/MX6Es6GwDOH8AcJjhYo1KC3bzWDIEVHi9V0g+E4/vJxLR+XtbYneTKEA8o+mbTZuqAcptmedOHHMUMW2JZNGMN+qvPGhqM64DV57ptza8ChoHScaKNsL/ybZqW96AlHamRxOaIpU2NwUOsA1RuTVKcRhDM2FrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYarsMCY; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445824dc27so33358715ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 11:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758391468; x=1758996268; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xbFzY792ZouMJtV7uIcmYuiGAKGlq9XPmiStNipyVbE=;
-        b=lYarsMCYzSWsfDtNvbdZUperw9D48r/aitL9Bs+CxX2GZ7qdaZEwVWAUZ30Utv89VE
-         Q+ePHB1oUObsk7NV4Kx8JSOG8gZQixIn+6vOmZazah92unZCpDRMWRFdxxVtWBfcQNVT
-         u+nby5oj160uHQV+BdkRvdOyDZwo/qFxvsIPnDi65vVqXE13MvOT/et12+6HNqDvnEQW
-         0DBOyGuJDrrYgSdQue5NLoXgYhyfAbHSR2sKiW3T3HrQSvGBNb1ekLW8uTTj62GIM/SQ
-         RhOjxLLKZ49OdQ4O1Yv5QfqkpwhcM1VYg+kvhKEDCnpE2FGcdWtF7GNs0ZPRnkZHKzWz
-         ETsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758391468; x=1758996268;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xbFzY792ZouMJtV7uIcmYuiGAKGlq9XPmiStNipyVbE=;
-        b=sPrxT8Cq98vrKKZtMkvn/zncWOZpmx2tVSUfI7OXXOI6LzJnFTaG/pCN9HhT+aclW9
-         ZypY6vd8TSCAQ9Duy+NiTMSApXk5EQ2ZbgsEkvq1a9tIu10xkbEn4E5M+A+cfuL1jW4l
-         SaFh8Igq7HXKNhs5Ue+Jc9boE83DbNqRuP/iEWFMRuQgiLLz5WhBhGkhZfvovRy0GzQ0
-         B0C+nCmx8F32mV+WEguhlCCntyQXWx+K7fwY3Hizp4LR6brJkH3yV/lBLnJHwFViV8wc
-         OSYSh3s1qQP/SpPmTJB1j/kJftFA6Rtop9Ce3m/Fp+qTWS+h/5QmPEIbb3oc/zPpytkK
-         kLYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCJ/zSzpPjFC+G/VeYzjnU3nvmMa5bBvMgd1AHakOeEYDPm3415CaL6jHcLBuHi02C+BbezmX3HvHpZ9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzQJuIku9iij8krICR4XId5cggLj2F79dAegwz/QosuXSVXx/v
-	57fhBVUClLx7O+lnJUOr115cpszS/BT/aZJnNLKI7tyXV8GfubhrYoS/Rld7kx8S
-X-Gm-Gg: ASbGncscdeKYmzjZxyv/4Sb7Tvzx7PsX8Ydq3RneRacXFKcUWOt6y1xKD8eD25OjmhM
-	Do0yF6R6t2lFqhiOWxK6I2FzXfmxAbc9paXk0t+jpzbiTB7h40O2bbQHYdkzSC83K/u+GLr6Bnp
-	iW/VTdeLYetdXnR1zAKKUD2Y+BlGTecNKmIqQYedUx9vlot+//qYZ2fKzXORRY197Hq2+HRnXSr
-	CCX0Wovk3rXjDo2xuPSiX3mb51si61YJ7jEqawT8zumeCXgughVrzsTyXp/VzOAcl1/WKJF2eGR
-	SroJf9bmA+cunfCA1FVeB4aV4mWa87bSIllvjI9onneUCeU9OO46GnVKshFxlgL/jMdWLcj2PEd
-	JzoQwfoM8AS6AAl3r4ibBRZPafY3PPoIU
-X-Google-Smtp-Source: AGHT+IEpnNSFdb3DDYxlQp/zpH31nLfl753vHvXYDevnTOJD3gAIr4knj1uVbiblHrcXNrdV7FT1BA==
-X-Received: by 2002:a17:903:2d0:b0:24c:bc02:788b with SMTP id d9443c01a7336-269ba53c0ebmr101044065ad.44.1758391468341;
-        Sat, 20 Sep 2025 11:04:28 -0700 (PDT)
-Received: from ehlo.thunderbird.net ([191.193.70.152])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed278b065sm11818123a91.29.2025.09.20.11.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Sep 2025 11:04:27 -0700 (PDT)
-Date: Sat, 20 Sep 2025 15:04:24 -0300
-From: =?ISO-8859-1?Q?Eric_Gon=E7alves?= <ghatto404@gmail.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: r0q: enable max77705 PMIC
-User-Agent: Thunderbird for Android
-In-Reply-To: <uzofi67alw7kkzr5lom73ozghtytdquiigcwsucmut2mi3hvvk@26goz4knd7xk>
-References: <20250920014637.38175-1-ghatto404@gmail.com> <20250920014637.38175-4-ghatto404@gmail.com> <uzofi67alw7kkzr5lom73ozghtytdquiigcwsucmut2mi3hvvk@26goz4knd7xk>
-Message-ID: <7A9A8218-EE98-4548-A9F6-14DD278D47CD@gmail.com>
+	s=arc-20240116; t=1758391645; c=relaxed/simple;
+	bh=Npw9zbQPEC18zj59d72lkZciw7xRLD4UXrUrBirx/MA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ZkYuIC/SikeqjYLucy2dLFMw59E9xS/LaWLSoOAjgUToggJk/exL/DAWMbyFqKrOnkStTwbJW/MiGmVmgI6X6fhBkkXEWfrfewXPFxl/cdko+HxyjbUaXJ9XLk68fdFarEc6lsD/7IpZugiYLAaCSOxfwbAmElj7bbDPC/RH0sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=FoywK2Ce; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1758391630;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EDZl0ANj7v5q6OpbuwpuZi8KB2n6Sh+sPSSDtZHj8Es=;
+	b=FoywK2CetcfKqJWZoi8P9Omv+JEBR1tPPr8nt9qDZ1F6dKpfEZFqNoOZKYD2jHPV3aXgba
+	H7C1Lf4RizzKZDwOYARbBVDgXBNID3i/TeeeTRzm/LndVdtdHK/E4iEjYvml37SR41gFIh
+	ViD5f9lh4KGIlVVdU3cPgUCjn0fOvFgTIpnYd/8RYMYhsbOFBAikWsW3mc2oIFnntFRTbA
+	a0KOoyp6qfUWy+cNmomqzNzry2VdeU7IMR5TfbffHnu5FkFZ5KWIvZtCu2cs73+FoQdtPR
+	gNRwb+cQ4LG/mB7lG0+oGqArQlrmPCan/gtkdeNyttZ7sU2De0Xa45SS4/N31w==
+Content-Type: multipart/signed;
+ boundary=d095de69cd9d2d7c4717294b4ae0febc9cc3d86b9283f057e39e54933396;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Sat, 20 Sep 2025 20:06:36 +0200
+Message-Id: <DCXTSROW5FPM.1008CWKUXILAI@cknow.org>
+Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>, "Heiko Stuebner"
+ <heiko@sntech.de>, <linux-media@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, <kernel@collabora.com>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 09/12] media: rkvdec: Add H264 support for the
+ VDPU381 variant
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Jonas Karlman" <jonas@kwiboo.se>, "Detlev Casanova"
+ <detlev.casanova@collabora.com>
+References: <20250808200340.156393-1-detlev.casanova@collabora.com>
+ <20250808200340.156393-10-detlev.casanova@collabora.com>
+ <DCXPTZRNNTDY.1773L2181HWF@cknow.org>
+ <ea0914d9-bd12-4bdc-b465-3ae82571118a@kwiboo.se>
+In-Reply-To: <ea0914d9-bd12-4bdc-b465-3ae82571118a@kwiboo.se>
+X-Migadu-Flow: FLOW_OUT
+
+--d095de69cd9d2d7c4717294b4ae0febc9cc3d86b9283f057e39e54933396
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
+Hi Jonas,
 
+On Sat Sep 20, 2025 at 6:15 PM CEST, Jonas Karlman wrote:
+> On 9/20/2025 5:00 PM, Diederik de Haas wrote:
+>> Thanks a LOT for this patch set!
+>> As already reported the results were quite impressive :-D
+>>=20
+>> To figure out how to make VDPU346 for rk3568 work, I had a close look at
+>> the TRM and compared that to rk3588's TRM and compared it to your code.
+>> I think I may have found a few potential issue, but I may also not
+>> understand things correctly.
+>>=20
+>> On Fri Aug 8, 2025 at 10:03 PM CEST, Detlev Casanova wrote:
+>>> This decoder variant is found in Rockchip RK3588 SoC family.
+>>>
+>>> Like for rkvdec on rk3399, it supports the NV12, NV15, NV16 and NV20
+>>> output formats and level up to 5.1.
+>>>
+>>> The maximum width and height have been significantly increased
+>>> supporting up to 65520 pixels for both.
+>>>
+>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>>> ---
+>>>  .../media/platform/rockchip/rkvdec/Makefile   |   1 +
+>>>  .../rockchip/rkvdec/rkvdec-h264-common.h      |   2 +
+>>>  .../platform/rockchip/rkvdec/rkvdec-h264.c    |  36 --
+>>>  .../rockchip/rkvdec/rkvdec-vdpu381-h264.c     | 469 ++++++++++++++++++
+>>>  .../rockchip/rkvdec/rkvdec-vdpu381-regs.h     | 427 ++++++++++++++++
+>>>  .../media/platform/rockchip/rkvdec/rkvdec.c   | 164 +++++-
+>>>  .../media/platform/rockchip/rkvdec/rkvdec.h   |   6 +
+>>>  7 files changed, 1067 insertions(+), 38 deletions(-)
+>>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu3=
+81-h264.c
+>>>  create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvdec-vdpu3=
+81-regs.h
+>>>
+>>> ...
+>>>
+>>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/=
+media/platform/rockchip/rkvdec/rkvdec.c
+>>> index 0ccf1ba81958a..1b55fe4ff2baf 100644
+>>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>>>
+>>> ...
+>>>
+>>> @@ -287,6 +327,25 @@ static const struct rkvdec_coded_fmt_desc rkvdec_c=
+oded_fmts[] =3D {
+>>>  	}
+>>>  };
+>>> =20
+>>> +static const struct rkvdec_coded_fmt_desc vdpu381_coded_fmts[] =3D {
+>>> +	{
+>>> +		.fourcc =3D V4L2_PIX_FMT_H264_SLICE,
+>>> +		.frmsize =3D {
+>>> +			.min_width =3D 64,
+>>> +			.max_width =3D  65520,
+>>> +			.step_width =3D 64,
+>>> +			.min_height =3D 16,
+>>> +			.max_height =3D  65520,
+>>> +			.step_height =3D 16,
+>>> +		},
+>>=20
+>> Also in the RK3588 TRM Part 1 paragraph 5.4.3, I see "Supported image si=
+ze" :
+>> 16x16 to 65520x65520; step size 16 pixels
+>>=20
+>> I interpret that that .min_width and .step_width should both be 16.
+>> (.min_height and .step_height are correct at 16; if I read the TRM right=
+)
+>
+> The frmsize used internally for rkvdec is only meant to restrict/align
+> the frame buffer use while decoding, It does not reflect sizes the HW
+> can decode.
+>
+> frmsize should typically be min 64x64 with step_height 16 and step_width
+> 64 to ensure stride is 16 byte aligned for both 8-bit and 10-bit video.
+>
+> Only max_width and max_height is used from here to signal userspace what
+> max res is supported, together with min/max res and step of 1.
 
-On September 20, 2025 12:48:55 PM GMT-03:00, Dmitry Baryshkov <dmitry=2Eba=
-ryshkov@oss=2Equalcomm=2Ecom> wrote:
->On Sat, Sep 20, 2025 at 01:46:35AM +0000, Eric Gon=C3=A7alves wrote:
->> The Samsung Galaxy S22 uses max77705 as its charger, fuelgauge and hapt=
-ic
->> PMIC, enable the fuelgauge and charger for now=2E
+Interesting, thanks for the explanation :-)
+
+So if I understand correctly, only .min_height should be changed to '64'
+here? And it should also be 64+64+64+16 for HEVC (patch 11)?
+(and also for VP9 and AVS2?)
+
+> Regards,
+> Jonas
+
+Cheers,
+  Diederik
+
 >>=20
->> Signed-off-by: Eric Gon=C3=A7alves <ghatto404@gmail=2Ecom>
->> ---
->>  =2E=2E=2E/boot/dts/qcom/sm8450-samsung-r0q=2Edts      | 34 +++++++++++=
-++++++++
->>  1 file changed, 34 insertions(+)
->>=20
->> diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts b/arch/a=
-rm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
->> index 7bf56564dfc6=2E=2Ec1b0b21c0ec5 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
->> +++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q=2Edts
->> @@ -14,6 +14,16 @@ / {
->>  	compatible =3D "samsung,r0q", "qcom,sm8450";
->>  	chassis-type =3D "handset";
->> =20
->> +	battery: battery {
->> +		compatible =3D "simple-battery";
->> +
->> +		constant-charge-current-max-microamp =3D <2150000>;
->> +		charge-full-design-microamp-hours =3D <3700000>;
->> +		over-voltage-threshold-microvolt =3D <4500000>;
->> +		voltage-min-design-microvolt =3D <3400000>;
->> +		voltage-max-design-microvolt =3D <4350000>;
->> +	};
->> +
->>  	chosen {
->>  		#address-cells =3D <2>;
->>  		#size-cells =3D <2>;
->> @@ -186,6 +196,26 @@ vreg_l11c_3p0: ldo11 {
->>  	};
->>  };
->> =20
->> +&i2c5 {
->> +	status =3D "okay";
->
->Could you please also add 'clock-frequency' for this bus?
-Will do, thanks
->
->LGTM otherwise=2E
->
->> +
->> +	max77705_charger: charger@69 {
->> +	    compatible =3D "maxim,max77705-charger";
->> +	    reg =3D <0x69>;
->> +	    monitored-battery =3D <&battery>;
->> +	    interrupt-parent =3D <&tlmm>;
->> +	    interrupts =3D <5 IRQ_TYPE_LEVEL_LOW>;
->> +	};
->> +
->> +	fuel-gauge@36 {
->> +		reg =3D <0x36>;
->> +		compatible =3D "maxim,max77705-battery";
->> +		power-supplies =3D <&max77705_charger>;
->> +		interrupt-parent =3D <&tlmm>;
->> +		interrupts =3D <5 IRQ_TYPE_LEVEL_LOW>;
->> +	};
->> +};
->> +
->>  &pm8350_gpios {
->>  	vol_up_n: vol-up-n-state {
->>  		pins =3D "gpio6";
->> @@ -345,3 +375,7 @@ &usb_1_hsphy {
->> =20
->>  	status =3D "okay";
->>  };
->> +
->> +&qupv3_id_0 {
->> +	status =3D "okay";
->> +};
->> --=20
->> 2=2E51=2E0
->>=20
->
+>>> +		.ctrls =3D &rkvdec_h264_ctrls,
+>>> +		.ops =3D &rkvdec_vdpu381_h264_fmt_ops,
+>>> +		.num_decoded_fmts =3D ARRAY_SIZE(rkvdec_h264_decoded_fmts),
+>>> +		.decoded_fmts =3D rkvdec_h264_decoded_fmts,
+>>> +		.subsystem_flags =3D VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
+>>> +	},
+>>> +};
+>>> +
+>>>  static const struct rkvdec_coded_fmt_desc *
+>>>  rkvdec_find_coded_fmt_desc(struct rkvdec_ctx *ctx, u32 fourcc)
+>>>  {
+>>> @@ -1125,6 +1184,35 @@ static irqreturn_t rk3399_irq_handler(struct rkv=
+dec_ctx *ctx)
+
+--d095de69cd9d2d7c4717294b4ae0febc9cc3d86b9283f057e39e54933396
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaM7tLwAKCRDXblvOeH7b
+bmaPAP42aR+Mi7lYj8rv/CnJ3+XArfhpCOXq8Cechr4YPjJB5QD8Cuv/WjyPD0bq
++qJ3+PrgRJ7oywdCszE4tHtnZPvAPwE=
+=yrXy
+-----END PGP SIGNATURE-----
+
+--d095de69cd9d2d7c4717294b4ae0febc9cc3d86b9283f057e39e54933396--
 
