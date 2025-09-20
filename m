@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-825455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788A4B8BD5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:24:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F3EB8BD6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 04:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DD861C21157
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:24:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 832DE7B52BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6921579F;
-	Sat, 20 Sep 2025 02:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD23A1F4617;
+	Sat, 20 Sep 2025 02:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsFf0vI/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fNhuD3PK"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7858B20B7E1;
-	Sat, 20 Sep 2025 02:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21D12AE99;
+	Sat, 20 Sep 2025 02:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758335023; cv=none; b=bWPpiPfN0IAa+PwTsup6lL0Ockymn26p3R3dt8Y/RxxNYr9Yd5GBqVfp1dz6qq65VRL0yFilgpF7+klHZhzZTLeq14pYCUMPpTyYlpQBPPPw+fhKHqp9BMmXMMNNZCyOis5XvN4MBTZUKTql3ykTZzKPHlcZxJ09y1SzsnpNxAE=
+	t=1758335113; cv=none; b=JYIqmKpPtRvfgfcPeuHPxoBVTTeTXuB1TKiGg0+B4cI+5EGmHNBdRHUA3B0NJe6YP8SkOquObRNdhYevEgkNv2NKx9VztnG4niG7f7Dolwn0u/MgNS8AeKq1y5hPI4ffFgJXGt9VkagNXkzd4u5+YYpfcknyob5R41O0kcDoqFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758335023; c=relaxed/simple;
-	bh=fgsoUIP29w2rcYoFOf9ihmp8h1h3DCFxYScd1U/hZAg=;
+	s=arc-20240116; t=1758335113; c=relaxed/simple;
+	bh=QnShLZkg8/UnFhLj41Nrn/cdTJ5bTk/edIzV1tGTY98=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZFa32BDygKD9uAUFeurmQL0vRIrzBIc5hhWvUiuEDyzIFAK6D2sKzp3jqaCLi6H2mMj5VPTtI6aVRAe+mu1Lm1yvgRS5gH6uSonSRZUSfvVCwkBKFc1Wuq2pFRQKPhUeGLo9kF/EE4o9blSnGkzGOPHwvBoPrfS8zmDVmdQZnQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsFf0vI/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8E9C4CEFA;
-	Sat, 20 Sep 2025 02:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758335023;
-	bh=fgsoUIP29w2rcYoFOf9ihmp8h1h3DCFxYScd1U/hZAg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nsFf0vI/PgJ/KN30pYAJvZEgjzuzQh14FuJQ0sdSukAdR8RtJZlSEWNcnT52o5Coc
-	 iAjv0pH/iJX/3rODx8abnUnQumeK9BBsYZI8XQvIej8KSv98wKe/lk+pa5F/h3eIdP
-	 gVK/9FcClJtqMl+j5RVAHst4R+NTDexn/LvLlhM3wsYJKskQGyOH0LbrGz5CEnBw8/
-	 hiYueMHtAo/BuZJNL3FBSIo1mK1zKooW3rPV+UjMypGn/X7/eKHma2lt77c/jCwK2K
-	 LHXduKIatAHokUkYvSL78XgGOKuXTAf9n3NruR8+fI+EUEL9CJvYJDwCwxp1gKUKHi
-	 jo/LvYEO0rpGw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Gaurav Kohli <quic_gkohli@quicinc.com>,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Jie Zhang <quic_jiezh@quicinc.com>,
-	Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v5 0/5] Support for Adreno 623 GPU
-Date: Fri, 19 Sep 2025 21:23:38 -0500
-Message-ID: <175833500891.491899.13406233219294339363.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250903-a623-gpu-support-v5-0-5398585e2981@oss.qualcomm.com>
-References: <20250903-a623-gpu-support-v5-0-5398585e2981@oss.qualcomm.com>
+	 MIME-Version:Content-Type; b=BKEBxEbEby+uXFPclYF/YRhELu7W2WOccDlxKhmMN5eqmPAM97FmYDcPu5LwBh9eyKAoX3upTsKh/zNUCXqFpEAY7ICKoiVYdYJOZMukMrLXCEagvpjCD1X/rUP6TA8X0qBu0Y6edRc8iEQ60rjyH4FhgvAYB0fwDj2Gaqh6+Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fNhuD3PK; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58K25eJq029482;
+	Sat, 20 Sep 2025 02:25:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=CsJsIHjWIG9kg+Z72lMm4FPPciDowTkHulx54Bh9bag=; b=
+	fNhuD3PK3xgchkyrxrFXZsN+t/fWHciOPmYAk/StXaRalhOCtrXcnrziWI1elLbj
+	0lora/X878u+VsEBF6amdGRDkuAeN+H6hej8IcuhUCTjlxATdxVJE4rvRNCJqxSO
+	F1HagvmUpK4xMUgZESA+LRuqNbXwaP03t4UJrR0D69FoyqVXZTb8LY/lEe5FhBZm
+	KxmeSjrClzlM7z8RPupN/mhRugBx5xrdPb0LJmtMj/YjQxuwuMBsl9Hu/PndzaTB
+	TSdJut356AjlPxS8fK8k+S04dyyHnnZFC7jt85MRIccrBlaJSN2s54m/3o4BY+KK
+	Q/iRXdVS2bHFlqAELVcD2A==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 499k6ar0bd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 20 Sep 2025 02:25:02 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58K1YIui020373;
+	Sat, 20 Sep 2025 02:25:00 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 499jq50p2r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 20 Sep 2025 02:25:00 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58K2Lxgd016735;
+	Sat, 20 Sep 2025 02:25:00 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 499jq50p2b-2;
+	Sat, 20 Sep 2025 02:25:00 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: alim.akhtar@samsung.com, krzk@kernel.org, peter.griffin@linaro.org,
+        linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: ufs: exynos: correct sync pattern mask timing comment
+Date: Fri, 19 Sep 2025 22:24:52 -0400
+Message-ID: <175833431689.3341211.14106616916060311904.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
+References: <20250907202752.3613183-1-alok.a.tiwari@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,28 +81,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-20_01,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0
+ mlxlogscore=986 suspectscore=0 phishscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2508110000 definitions=main-2509200020
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxNyBTYWx0ZWRfX89q8ZKWBEisI
+ VzWqpWA7RCtrEioss/Ly1xhzBTysjmOPDMw5snOGaaefQUWQAvbSKJuv+aZzrgw9EIznd6tfUf4
+ iN0FPFCLMVEQTQia5E+UZJwcbxhQNBQMeKfayFz716a3oUTCbsDrF0OKpSnqGBqo7POwsdc9R/e
+ W8DQRa3GxKV+m6fO4pUoDGac/Oio5yrEISBznVZW4WNQtFoJDq/PNyXT/6jjTdumk5XI9UARAJZ
+ ZeXGuY+uWKLwXoRq9v6NQTJzW6ywm/vdO79mvkANPUTRVzrcbTZMQjD/QrqNfF6vyrQrxkz55sL
+ ZMlpLlKpUhOJM9YJ3oqACi2EL6GacrGENHxkMiyp14MrNfayincIab4ioYzOQ6W8yxV1ZuH5A5O
+ eSA+2mBtCgaNKa4sKqHXg2ZTkXmWZg==
+X-Proofpoint-GUID: rnn4JSyZ3HsHYDEiN_d_XY6-hUB2SsOv
+X-Authority-Analysis: v=2.4 cv=E47Npbdl c=1 sm=1 tr=0 ts=68ce107e b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=erYYR6txwRpVtOmW1J8A:9
+ a=QEXdDO2ut3YA:10 cc=ntf awl=host:13614
+X-Proofpoint-ORIG-GUID: rnn4JSyZ3HsHYDEiN_d_XY6-hUB2SsOv
 
+On Sun, 07 Sep 2025 13:27:49 -0700, Alok Tiwari wrote:
 
-On Wed, 03 Sep 2025 12:49:51 +0530, Akhil P Oommen wrote:
-> This series adds support for A623 GPU found in QCS8300 (internal codename - Monaco)
-> chipsets. This GPU IP is very similar to A621 GPU, except for the UBWC configuration
-> and the GMU firmware.
+> Fix the comment for SYNC_LEN_G2 in exynos_ufs_config_sync_pattern_mask().
+> The actual value is 40us, not 44us, matching the configured mask timing.
+> This change improves code clarity and avoids potential confusion for
+> readers and maintainers.
 > 
-> Since the last revision, there is a new board support (monaco-evk) in the mailing
-> list. But I am skipping support for it in this series due to the heavy code churn
-> happening in that file at the moment. For Bjorn's convenience, I will share a
-> separate DT patch for gpu support for that board later.
+> No functional changes.
 > 
 > [...]
 
-Applied, thanks!
+Applied to 6.18/scsi-queue, thanks!
 
-[3/5] arm64: dts: qcom: qcs8300: Add gpu and gmu nodes
-      commit: 0099675695aab4356f7d05c507edb60fe72a4973
-[5/5] arm64: dts: qcom: qcs8300-ride: Enable Adreno 623 GPU
-      commit: 9da690f1b649c9900dd97b9bcd78e4a5ec61f2ff
+[1/1] scsi: ufs: exynos: correct sync pattern mask timing comment
+      https://git.kernel.org/mkp/scsi/c/0bd0e43776b6
 
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Martin K. Petersen
 
