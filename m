@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-825736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD48B8CB21
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:05:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA27B8CB2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE241B241DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C4E6234BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 15:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5252FE053;
-	Sat, 20 Sep 2025 15:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB542FA0F0;
+	Sat, 20 Sep 2025 15:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EFrFFbYI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="f7btD9Bc"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A1618BBAE;
-	Sat, 20 Sep 2025 15:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF01C2F7AAF
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758380715; cv=none; b=Rz/2q3Lt2Tkthg9Umq/Zjs67HZm6pSeb9ZjNdg4dcPyaOfHW2r5CRKEH8e8l1XLnQkKv4kQ9XcqfIcScV2DeHkDPEU2I0cOKKFsxNGZyOZydrQ4AGFt9esv3K3uZGCH1YCFKxlxHT1UFjXqkjeMQNp2p1LExTYvU1uJ4pS/tuBo=
+	t=1758380744; cv=none; b=b5w3gunCodRdRj1Q/HJHmESiVI8X8VBrJW3qPzDO8z3Y9ICw8MQTe9yCznOrEOrqTIWSMywXnI73/owojGKZzO1jwSTbQ/eqaui0KL+7bVThB/wqpAA6bC/UTcNOoGraAnwgWCDdOekHnpvn/AmK8JPAQ3LcGoBDhhnQf8Cp1wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758380715; c=relaxed/simple;
-	bh=S/kIsn8Xdn5ahWxA0vX3rwBX17DpSAj9iWA6E0xz1pM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2uAr6ru2/1YhHLxb9VNH1wQAw9KDti48BhBh2UI0zq9yPQFMstHowVbVGStgdHL8la3NueifQV8Auh+YeMf/ivG29NuMaZFukIJciTpXieJWiYFShHwb6XEKm5V2NvkW6IzD1ebL3fOBE5d9vaOVyZ3w1Tll7/2Z9vpPHroHqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EFrFFbYI; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758380714; x=1789916714;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S/kIsn8Xdn5ahWxA0vX3rwBX17DpSAj9iWA6E0xz1pM=;
-  b=EFrFFbYI7TuoEfZC6afRN6prOH+Sg9d6E49SWHkMlycT/GnijFIgbTux
-   W7UOChw+8G7jshepRgpJ98ulUjPUMyb5UW4lF0wgT5b0N6oQmWzl+XKdp
-   5afSHCsPY2WYppuwk3+nzdZgHbPSUQyZuEiOwRmSFNpUq8v7Txc9Zi12a
-   nY3rct1+Edty8C3BldANLF67iQxyz4ofM015MXg8Hcz5cKiAdZSy6KK5w
-   qLrMlRp0oZZf3m6ByLzgOTHede4NACOqrMIO67KY5DmeLRcfcg9G+qWnK
-   E3ijdMsbF8cTlYaFCgqMvkZu3gvSw0mJ6Faf8Abpe7LIZysB7fL+G2Ufr
-   Q==;
-X-CSE-ConnectionGUID: tohuCIweR5mD4LC1W2W1sQ==
-X-CSE-MsgGUID: GrHQufwhTwmTC20xbnybDA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64507614"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64507614"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 08:05:13 -0700
-X-CSE-ConnectionGUID: QVLWmORtT9Kz1OzN9qG+2w==
-X-CSE-MsgGUID: 7bZrQKh9SpaIKU9RTiACeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="181344706"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 20 Sep 2025 08:05:09 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzz98-0005P9-1B;
-	Sat, 20 Sep 2025 15:05:06 +0000
-Date: Sat, 20 Sep 2025 23:04:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, mkl@pengutronix.de,
-	mani@kernel.org, thomas.kopp@microchip.com,
-	mailhol.vincent@wanadoo.fr, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
-	linux-can@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, mukesh.savaliya@oss.qualcomm.com,
-	anup.kulkarni@oss.qualcomm.com,
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
-	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Subject: Re: [PATCH v4 4/6] can: mcp251xfd: only configure PIN1 when rx_int
- is set
-Message-ID: <202509210053.BtsqeDKp-lkp@intel.com>
-References: <20250918064903.241372-5-viken.dadhaniya@oss.qualcomm.com>
+	s=arc-20240116; t=1758380744; c=relaxed/simple;
+	bh=aWayvqL3VDfszikMhDxl8W1TgKxHXMgXHh6mTuD+Pk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iRKHCAQWqviC7Dwou6IjXFOgYq/ctU/G6MxdZn70NVhioMaLxP0keS3ivR+JT5GF2fpo7Ev8dwrpfOV4aFJcRH883VXnsViWvZB3Vnz/a2xlaWlZM4Tu8DFbfOdHSMcnhLUOuYy3ioldIiwD9/CKHOd/j9hS3hPEbTwekCsXbkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=f7btD9Bc; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74381df387fso1599048a34.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 08:05:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1758380742; x=1758985542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ApPm9TrFpXMEdiMfo67L+FcuF5N4ixQDCyPBv1VUDxI=;
+        b=f7btD9Bc/p2IJpCz3JU4pDTlcwTXA7+lb+iE9Jxu+DjwQ0efBA+DFNsfR8R2261ePi
+         5K+cmGUsn4emmz7hNbr6PLGTSzeXkbNKe25Bi77VaYBhVd+DKcPoa3jjMCO6o05ayQye
+         iPEu83EYVxRr1gzVAxZxPmTF6WN3ieWQvuVYpQXH5HFYa89W6WUp8Ud/E3GeOTLUNInS
+         DAOLfPJbMqMXHsR6owyToe8TjWcOEPl2+SMWnzzEWuXqZoPtCU5RgKy39AmLDrcVroZR
+         QzXaaJfyZgJZNuJVXkXRCLMpsMZ/fuWhDYCvcECjhnBa0rig0Eh1zC9dh795vxHXr8q5
+         gnzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758380742; x=1758985542;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ApPm9TrFpXMEdiMfo67L+FcuF5N4ixQDCyPBv1VUDxI=;
+        b=b/gF94dH0Tw1ZLO0uOxxsqgwIVExmp0zCoS3VjC8kG5caO2mrrC9tlzoUVFHKiWJGg
+         1ypHnFeH85K5UXWJ5hjUzkKpAokcBcM1t3vUXjHHtySZyRBmcV7LzUpThUUGKUBB4E1n
+         u4G0P/+xKMhJvRvu9XvF4WtKn4zYBmTHVnowGi/TeUHPx31ArY7rFcsu81k0IXjdGzDU
+         6ktd3e9Y45Fa6gxo7vBvxNUfgK63Tl45JsWEADsU+FkmDyBeYCnZWXXlDPSNi776w3uQ
+         pHe/PF4wj92rA/L53BRq00uMz3YiRGEcLA4q1oPRvzq3qFC0qnsbJ7eP3LVzvacZbLys
+         cAaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb7elxxotyFi+Ud+vnjy8SH5ZNqO5h3F6CSoYoRCLpSEgkmdOh2HvyvyGZKJzOXwAht20K/rOiPO1irKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw0IEvq4hgo+CfLmSSvl8UHajdqpmiW7emQE53AoKbAcOOiSdW
+	qaGVyHdqcvvOGeFovHtn8GOK+LkoE0Vg0HF/lwtZOWJOLCHbOkdz0L82o6vaZYzApVkdVjgElnJ
+	ij43jy+8=
+X-Gm-Gg: ASbGncuE0vOGd9dljHZup5R6benwfI103hCJ892FNBONvmLlvxxC8th1omMmIfi2iCA
+	bYrCohwvjbhrqqMbRilaN1inuZp3EKSH7H9RwLpsbxWfnvotlahSVxJ+PCVGTULAvHqkVXQhSop
+	2CMBCQpl5AIZDdzQ2N3qAiKxe3lzVTT/OrHdus3OSsoR9R1Lr/IklB6ilGcsEnFWkUNXyU2bATI
+	aQ/eP6nHarKFrFD/j0unHKq5Nqof70GZoP4kLS05GXrPJHInJwUrSYyFydCElgs6q0aAEfXo4zh
+	cubgX2zR/Q/BKGihSFD1kN+FzRxIro3dArlqPTiOzRCjih60V5T2ygBZd2wb58sO4ZyZKrUNhYm
+	bjtYLcSQ+wLI6aCPK6X79vqcYAzu64jI7DWO6YSJjIyHQeHhCVTeqB133AXv2Wp8Ay5EtgiJJPH
+	4=
+X-Google-Smtp-Source: AGHT+IF5DOCsFnmXWBk4EFUMe3TaSuHUTrmx8iC4wB7mmSr96ueHoL1IQtk8a+YwSVn8HW8dh3oXUA==
+X-Received: by 2002:a05:6830:6687:b0:758:9be6:b5b9 with SMTP id 46e09a7af769-76f81bbd71emr3753044a34.32.1758380741945;
+        Sat, 20 Sep 2025 08:05:41 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:14ea:b68a:f92c:93c4? ([2600:8803:e7e4:1d00:14ea:b68a:f92c:93c4])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-625d5d22e21sm2630056eaf.0.2025.09.20.08.05.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Sep 2025 08:05:40 -0700 (PDT)
+Message-ID: <5420e895-fcd4-4632-81d3-389c6439afde@baylibre.com>
+Date: Sat, 20 Sep 2025 10:05:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250918064903.241372-5-viken.dadhaniya@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: temperature: add support for EMC1812
+To: Jonathan Cameron <jic23@kernel.org>,
+ Marius Cristea <marius.cristea@microchip.com>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250917-iio-emc1812-v1-0-0b1f74cea7ab@microchip.com>
+ <20250917-iio-emc1812-v1-2-0b1f74cea7ab@microchip.com>
+ <20250920125144.41f70a1f@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250920125144.41f70a1f@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Viken,
+On 9/20/25 6:51 AM, Jonathan Cameron wrote:
+> On Wed, 17 Sep 2025 15:21:58 +0300
+> Marius Cristea <marius.cristea@microchip.com> wrote:
+> 
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on mkl-can-next/testing]
-[also build test WARNING on linus/master v6.17-rc6 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = regmap_write(priv->regmap, EMC1812_CONSEC_ALERT_ADDR, 0x70);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = regmap_write(priv->regmap, EMC1812_FILTER_SEL_ADDR, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = regmap_write(priv->regmap, EMC1812_HOTTEST_CFG_ADDR, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Set beta1 and beta2 compensation parameters */
+>> +	for (i = 0; i < ARRAY_SIZE(priv->beta_values); i++) {
+>> +		ret = regmap_write(priv->regmap, EMC1812_BETA_CFG_ADDR(i),
+>> +				   priv->beta_values[i]);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>> +	/* Set ideality factor for all external channels */
+>> +	ret = regmap_write(priv->regmap, EMC1812_EXT1_IDEALITY_FACTOR_ADDR,
+> 
+> Perhaps a look up table for the registers and a loop?
+> 
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Viken-Dadhaniya/can-mcp251xfd-move-chip-sleep-mode-into-runtime-pm/20250918-145404
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git testing
-patch link:    https://lore.kernel.org/r/20250918064903.241372-5-viken.dadhaniya%40oss.qualcomm.com
-patch subject: [PATCH v4 4/6] can: mcp251xfd: only configure PIN1 when rx_int is set
-config: x86_64-randconfig-123-20250920 (https://download.01.org/0day-ci/archive/20250921/202509210053.BtsqeDKp-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509210053.BtsqeDKp-lkp@intel.com/reproduce)
+Also see regmap_multi_reg_write() and regmap_register_patch().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509210053.BtsqeDKp-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c:49:19: sparse: sparse: cast to restricted __be16
->> drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c:71:21: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned short [assigned] [usertype] reg @@     got restricted __be16 [usertype] @@
-   drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c:71:21: sparse:     expected unsigned short [assigned] [usertype] reg
-   drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c:71:21: sparse:     got restricted __be16 [usertype]
-
-vim +49 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c
-
-875347fe575636 drivers/net/can/spi/mcp25xxfd/mcp25xxfd-regmap.c Marc Kleine-Budde 2020-09-18  41  
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  42  static int
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  43  mcp251xfd_regmap_nocrc_gather_write(void *context,
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  44  				    const void *reg_p, size_t reg_len,
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  45  				    const void *val, size_t val_len)
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  46  {
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  47  	const u16 byte_exclude = MCP251XFD_REG_IOCON +
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  48  				 mcp251xfd_first_byte_set(MCP251XFD_REG_IOCON_GPIO_MASK);
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18 @49  	u16 reg = be16_to_cpu(*(u16 *)reg_p) & MCP251XFD_SPI_ADDRESS_MASK;
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  50  	int ret;
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  51  
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  52  	/* Never write to bits 16..23 of IOCON register to avoid clearing of LAT0/LAT1
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  53  	 *
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  54  	 * According to MCP2518FD Errata DS80000789E 5 writing IOCON register using one
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  55  	 * SPI write command clears LAT0/LAT1.
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  56  	 *
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  57  	 * Errata Fix/Work Around suggests to write registers with single byte
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  58  	 * write instructions. However, it seems that the byte at 0xe06(IOCON[23:16])
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  59  	 * is for read-only access and writing to it causes the clearing of LAT0/LAT1.
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  60  	 */
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  61  	if (reg <= byte_exclude && reg + val_len > byte_exclude) {
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  62  		size_t len = byte_exclude - reg;
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  63  
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  64  		/* Write up to 0xe05 */
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  65  		ret = _mcp251xfd_regmap_nocrc_gather_write(context, reg_p, reg_len, val, len);
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  66  		if (ret)
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  67  			return ret;
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  68  
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  69  		/* Write from 0xe07 on */
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  70  		reg += len + 1;
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18 @71  		reg = cpu_to_be16(MCP251XFD_SPI_INSTRUCTION_WRITE | reg);
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  72  		return _mcp251xfd_regmap_nocrc_gather_write(context, &reg, reg_len,
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  73  							    val + len + 1,
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  74  							    val_len - len - 1);
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  75  	}
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  76  
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  77  	return _mcp251xfd_regmap_nocrc_gather_write(context, reg_p, reg_len,
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  78  						  val, val_len);
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  79  }
-182c647943b5c0 drivers/net/can/spi/mcp251xfd/mcp251xfd-regmap.c Gregor Herburger  2025-09-18  80  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
