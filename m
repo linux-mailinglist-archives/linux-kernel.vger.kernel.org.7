@@ -1,323 +1,442 @@
-Return-Path: <linux-kernel+bounces-825808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7146AB8CDB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:13:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1D4B8CDBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 19:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CC547C3189
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AA8A7A60FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 17:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE21C3054F6;
-	Sat, 20 Sep 2025 17:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306033054F6;
+	Sat, 20 Sep 2025 17:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeWTi1BF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3BZJJPG"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BEE1E47CC
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5FC221F26
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758388411; cv=none; b=mYraII/lA0bAaLiXj1/pDteEes0VbxVK6hGEpxumnNOEd0a4YYnsuFuiIOuOSBlBT0mZD0x7V5GQOE8BASa1myE0F88O9aMGUwRgd4n/hIhfe/RRuDDrJ+vCTg6P0F5yNvhpTmZMKhA3RzLQ/P/NC/jLDWLieQ+aedAHOy3YPZc=
+	t=1758388459; cv=none; b=k+80GEUt0NR8FRssjc8yhn7nuDzI2S0VVh0SdplGnAN7ROigpkTk3nCJ7SXBvT/alKLgEsR/5e0SLxrcGtJbuTYxOmxZOdlkMfRtW8SU4+bXBP4wOdVmJmCN4c/MJHSJfgc6kSu6D7K7cv5mme/V1FKcDDOpKEPgeTwo/1PNKkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758388411; c=relaxed/simple;
-	bh=5KG+OxVz1Flw/L7SwCG/sFt5K/1TtnEjpf6fe8kLhYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xa0T9mrP5Dd5PqU2xMima/R5T4Ma8bVVCx9UqgF6J0KZ+pmWVQuO174QxeqCPxfbhiaC/k+fbz9BM1DMUreVBeMKNBWs6Mvf2ylgVYMVSdQ1ohkVbzb/JwUCcJF4LtDNfCVwBPMDm7AXJENhDuYtCUUY2IK5GTFS+NDGR0AAdkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeWTi1BF; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758388410; x=1789924410;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5KG+OxVz1Flw/L7SwCG/sFt5K/1TtnEjpf6fe8kLhYo=;
-  b=LeWTi1BFMvt0GVUfUNMiPpQ7FL3GdarvAQDTZ7TM9LweNDjTVLOqkcN3
-   Gvfc56HqKdj3c8vjwF09E9+lDk/4P0hsKH1EGrBCDThFYtw5FmDHepplo
-   A+svej3mNsSqdim6M7QW4poBrVYKICRl3wBb8JfX8rfKKwel70cFRAg80
-   OgGCnws60peMPBZI35M6LuNFurblcl59h5u/DkfQYCm6EI4xzw1mHoryu
-   8HwYdhFNK+yrTeY5HCLmnkcEa9D5PLEIb/PAfUvdJviaD/um2tp3qsoTo
-   MQa4bRo96tRtIhOigN5DpLyUppaNBa6beZAC7e/Iqbpl14Pteg1lN3+lS
-   g==;
-X-CSE-ConnectionGUID: gXdEHayBS8CPLythY3QFGQ==
-X-CSE-MsgGUID: JoW1lQ1GTT+0trHBoX/sKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="48288950"
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="48288950"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 10:13:29 -0700
-X-CSE-ConnectionGUID: aGJub6TJSfuXNhh7mgYHgw==
-X-CSE-MsgGUID: oZexoa1VTM62gdDAzDVxGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,281,1751266800"; 
-   d="scan'208";a="207054036"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 20 Sep 2025 10:13:25 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v019H-0005Zf-0c;
-	Sat, 20 Sep 2025 17:13:23 +0000
-Date: Sun, 21 Sep 2025 01:12:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Chris Mason <chris.mason@fusionio.com>,
-	Kiryl Shutsemau <kirill@shutemov.name>,
-	Brendan Jackman <jackmanb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 4/4] mm/page_alloc: Batch page freeing in
- free_frozen_page_commit
-Message-ID: <202509210003.8eaSRC0k-lkp@intel.com>
-References: <20250919195223.1560636-5-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1758388459; c=relaxed/simple;
+	bh=/jwLSd5VKKcyTzw1VRj/JQVGUf9SxgTPyNHQnt5EwcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eRUwfVmTroidBglxMkzo7PCltGZhtb34gL97D7kLTOsSnGmWCFUqxpyUl9uBxyuoG1tcG/uO9eKMSaLGhDSZIK+I/xOr6ocdJ5vR0xtOWWaTDJ3hTNGuU8OyI+92gtIfGQYv69fm4CZBSC+LfGI9XGBMw81hNop+5dIAMzo/N94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3BZJJPG; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-78de32583fbso15422676d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758388455; x=1758993255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GL7HgTnZoOBvYPNKx43B/15vqjMviRpE5ew90OYFEFY=;
+        b=R3BZJJPGyjPl7iAUTCezxNmSCRmwoGN9SPInLuvTFUd6RWFK8tNfq+4qEtBrDYQgOQ
+         k0r2P7k2b3QwrAv4Ze4jxu9kqVlhLaE4v5lh7/hqLe30nNkCNUt5Q3l/Y/m2mwZ91Kla
+         6UCwEk+TxRckQySSFNHFKSSffHDb2udSx6+hdYEztH/Ap4APL9SSZ1tD6SxQpsCez0TY
+         ORgssVcDRRCrssMgHmcZri1byYEhEC/hDK0numYxmOCGjuv42xFdMYw9UK2LhZwJW4/1
+         nn47v6OrDNqAp8wvw5V9x4IrWOdBBvzu0JOfJLW1TgYVUCgPxxdnHraVEuQBKR3ywJvO
+         2ojA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758388455; x=1758993255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GL7HgTnZoOBvYPNKx43B/15vqjMviRpE5ew90OYFEFY=;
+        b=i/Zx9JIEHo0UsPAcmcJ7yju+SO2wfjEJOCm59bS5xbKoW+CxYson6/VUTEBsru0TpP
+         CUY1KSYVa4nJHw3QVcFvnA4mPVe6DerDxdskddRBF/Lq3h/+Gbbn1xPbIXUN481V1mks
+         tNlXDhuZF1T4q0O8l0s81eMv/+docaCntppZRnY1RWC55GRP4C2/bAf+ieiXvjwkEFVe
+         9UlNAt7EljB7L0IwmdYebjMb5J6+Cat2Kx2MWrR+8A1X7gA74svP6OaahfwWWz1IIIRC
+         DajiNfXNbl8yMy6Wg+3k5vwweP5J5bcNpz2FbEURzZgrJ0Er1fKRJ07gt7dJaRmF7sTi
+         /y8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUv9J/C5IyoYmPN0P+3MMc43qgD+Lf+y21yDBuTu8nCOXaSKtmoaQDUPp0KvH9ss3iE9pDwTvlyhllqiGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCpCxTZx2yB4nKDMlisB46FntByt3RHLEBXXN1jYy6rJSLqYb9
+	CFi02Y6JcdyM5Du0qqwA5llgZoJ5lbWTh6OeEMSvO2bu8SmTerKtzlQdrIgulFS3R/8ilN4TBo8
+	uzRWMUd60nUPnSmYeeibGmkVhHRP5DGM=
+X-Gm-Gg: ASbGncsvcZhWESei9quOSgSqsWsg3l+SQmx579c6Ohs3vhZ0xSbzGUbBk8P8E+oq3hr
+	Qlwf6mpSMNbqWodd3gwzohNvBkIHHFi4/W51au+WAGDKluS8wqiOYeHdVTqdlEbEHEP/jC9b5Pk
+	nIu8iiQy9nQKoqhZFDCizOlEAJzsGRMlsKzymowdYJ9ZPt10aoy6+AbIWXx1gZ5dNl0YfqEEzZj
+	TiLDqwtOrz+d/0rB93Pj564EBqsCFcHHlZkXSH/Aypr/Mp9rN/Y10mnGTcy9NtJ7OZ8Hz+KbEgD
+	CI684fJl0irtvkGmeNgIqQlarvCsvlbm60VRt3RYm6gi3F6vxVeDOw0m1UxJCMWYTkNuIvdie5w
+	PdtYb0y/aNQORAPhYpGFG
+X-Google-Smtp-Source: AGHT+IGWDp2LC+F7PzetzGw9w34aHhZgXaWrpI1fd89LE5rl8GVZ4udLChxzMdNiKgt9qd47TsVYg7PhRRfuYniapUU=
+X-Received: by 2002:ad4:5cc5:0:b0:78d:63c4:9d5c with SMTP id
+ 6a1803df08f44-79911fe77fbmr87402576d6.5.1758388454877; Sat, 20 Sep 2025
+ 10:14:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919195223.1560636-5-joshua.hahnjy@gmail.com>
+References: <20250831123602.14037-1-pali@kernel.org> <20250831123602.14037-9-pali@kernel.org>
+In-Reply-To: <20250831123602.14037-9-pali@kernel.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 20 Sep 2025 12:14:00 -0500
+X-Gm-Features: AS18NWDisDSfuK7IEKjZK5rhCKiVjGiYDTGqpwBrdwNDdXG-5dyBaj6jjlWf08I
+Message-ID: <CAH2r5muRF1=H=acG2d0jVayW2fp0_V-5-0=Mx+8+VDRD-2oK4A@mail.gmail.com>
+Subject: Re: [PATCH 08/35] cifs: Improve SMB2+ stat() to work also for paths
+ in DELETE_PENDING state
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	ronnie sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joshua,
+This looks confusing, like it is wrong for Linux apps - when Linux
+queries a file that is deleted (but still open by some other process)
+it should get the equivalent of file not found or at least an error -
+you aren't supposed to allow path based calls on a file which has a
+pending delete or that would break Linux apps.
 
-kernel test robot noticed the following build warnings:
+On Sun, Aug 31, 2025 at 7:36=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> Paths in DELETE_PENDING state cannot be opened at all. So standard way of
+> querying path attributes for this case is not possible.
+>
+> There is an alternative way how to query limited information about file
+> over SMB2+ dialects without opening file itself. It is by opening the
+> parent directory, querying specific child with filled search filter and
+> asking for attributes for that child.
+>
+> Implement this fallback when standard case in smb2_query_path_info fails
+> with STATUS_DELETE_PENDING error and stat was asked for path which is not
+> top level one (because top level does not have parent directory at all).
+>
+> Depends on "cifs: Change translation of STATUS_DELETE_PENDING to -EBUSY".
+>
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> ---
+>  fs/smb/client/cifsglob.h  |   1 +
+>  fs/smb/client/smb2glob.h  |   1 +
+>  fs/smb/client/smb2inode.c | 177 +++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 176 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
+> index e6830ab3a546..0ecf4988664e 100644
+> --- a/fs/smb/client/cifsglob.h
+> +++ b/fs/smb/client/cifsglob.h
+> @@ -2337,6 +2337,7 @@ struct smb2_compound_vars {
+>         struct smb_rqst rqst[MAX_COMPOUND];
+>         struct kvec open_iov[SMB2_CREATE_IOV_SIZE];
+>         struct kvec qi_iov;
+> +       struct kvec qd_iov[SMB2_QUERY_DIRECTORY_IOV_SIZE];
+>         struct kvec io_iov[SMB2_IOCTL_IOV_SIZE];
+>         struct kvec si_iov[SMB2_SET_INFO_IOV_SIZE];
+>         struct kvec close_iov;
+> diff --git a/fs/smb/client/smb2glob.h b/fs/smb/client/smb2glob.h
+> index 224495322a05..1cb219605e75 100644
+> --- a/fs/smb/client/smb2glob.h
+> +++ b/fs/smb/client/smb2glob.h
+> @@ -39,6 +39,7 @@ enum smb2_compound_ops {
+>         SMB2_OP_GET_REPARSE,
+>         SMB2_OP_QUERY_WSL_EA,
+>         SMB2_OP_OPEN_QUERY,
+> +       SMB2_OP_QUERY_DIRECTORY,
+>  };
+>
+>  /* Used when constructing chained read requests. */
+> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> index 2a0316c514e4..460e75614ef1 100644
+> --- a/fs/smb/client/smb2inode.c
+> +++ b/fs/smb/client/smb2inode.c
+> @@ -176,6 +176,9 @@ static int smb2_compound_op(const unsigned int xid, s=
+truct cifs_tcon *tcon,
+>                             struct kvec *out_iov, int *out_buftype, struc=
+t dentry *dentry)
+>  {
+>
+> +       bool has_cifs_mount_server_inum =3D cifs_sb->mnt_cifs_flags & CIF=
+S_MOUNT_SERVER_INUM;
+> +       struct smb2_query_directory_req *qd_rqst =3D NULL;
+> +       struct smb2_query_directory_rsp *qd_rsp =3D NULL;
+>         struct smb2_create_rsp *create_rsp =3D NULL;
+>         struct smb2_query_info_rsp *qi_rsp =3D NULL;
+>         struct smb2_compound_vars *vars =3D NULL;
+> @@ -344,6 +347,41 @@ static int smb2_compound_op(const unsigned int xid, =
+struct cifs_tcon *tcon,
+>                         trace_smb3_posix_query_info_compound_enter(xid, t=
+con->tid,
+>                                                                    ses->S=
+uid, full_path);
+>                         break;
+> +               case SMB2_OP_QUERY_DIRECTORY:
+> +                       rqst[num_rqst].rq_iov =3D &vars->qd_iov[0];
+> +                       rqst[num_rqst].rq_nvec =3D SMB2_QUERY_DIRECTORY_I=
+OV_SIZE;
+> +
+> +                       rc =3D SMB2_query_directory_init(xid,
+> +                                                      tcon,
+> +                                                      server,
+> +                                                      &rqst[num_rqst],
+> +                                                      cfile ?
+> +                                                       cfile->fid.persis=
+tent_fid : COMPOUND_FID,
+> +                                                      cfile ?
+> +                                                       cfile->fid.volati=
+le_fid : COMPOUND_FID,
+> +                                                      0,
+> +                                                      has_cifs_mount_ser=
+ver_inum ?
+> +                                                       SMB_FIND_FILE_ID_=
+FULL_DIR_INFO :
+> +                                                       SMB_FIND_FILE_FUL=
+L_DIRECTORY_INFO);
+> +                       if (!rc) {
+> +                               /*
+> +                                * Change the default search wildcard pat=
+tern '*'
+> +                                * to the requested file name stored in i=
+n_iov[i]
+> +                                * and request for only one single entry.
+> +                                */
+> +                               qd_rqst =3D rqst[num_rqst].rq_iov[0].iov_=
+base;
+> +                               qd_rqst->Flags |=3D SMB2_RETURN_SINGLE_EN=
+TRY;
+> +                               qd_rqst->FileNameLength =3D cpu_to_le16(i=
+n_iov[i].iov_len);
+> +                               rqst[num_rqst].rq_iov[1] =3D in_iov[i];
+> +                       }
+> +                       if (!rc && (!cfile || num_rqst > 1)) {
+> +                               smb2_set_next_command(tcon, &rqst[num_rqs=
+t]);
+> +                               smb2_set_related(&rqst[num_rqst]);
+> +                       } else if (rc) {
+> +                               goto finished;
+> +                       }
+> +                       num_rqst++;
+> +                       break;
+>                 case SMB2_OP_DELETE:
+>                         trace_smb3_delete_enter(xid, tcon->tid, ses->Suid=
+, full_path);
+>                         break;
+> @@ -730,6 +768,64 @@ static int smb2_compound_op(const unsigned int xid, =
+struct cifs_tcon *tcon,
+>                                 trace_smb3_posix_query_info_compound_done=
+(xid, tcon->tid,
+>                                                                          =
+ ses->Suid);
+>                         break;
+> +               case SMB2_OP_QUERY_DIRECTORY:
+> +                       if (rc =3D=3D 0) {
+> +                               qd_rsp =3D (struct smb2_query_directory_r=
+sp *)
+> +                                       rsp_iov[i + 1].iov_base;
+> +                               rc =3D smb2_validate_iov(le16_to_cpu(qd_r=
+sp->OutputBufferOffset),
+> +                                                      le32_to_cpu(qd_rsp=
+->OutputBufferLength),
+> +                                                      &rsp_iov[i + 1],
+> +                                                      has_cifs_mount_ser=
+ver_inum ?
+> +                                                       sizeof(SEARCH_ID_=
+FULL_DIR_INFO) :
+> +                                                       sizeof(FILE_FULL_=
+DIRECTORY_INFO));
+> +                       }
+> +                       if (rc =3D=3D 0) {
+> +                               /*
+> +                                * Both SEARCH_ID_FULL_DIR_INFO and FILE_=
+FULL_DIRECTORY_INFO
+> +                                * have same member offsets except the Un=
+iqueId and FileName.
+> +                                */
+> +                               SEARCH_ID_FULL_DIR_INFO *si =3D
+> +                                       (SEARCH_ID_FULL_DIR_INFO *)qd_rsp=
+->Buffer;
+> +
+> +                               idata =3D in_iov[i + 1].iov_base;
+> +                               idata->fi.CreationTime =3D si->CreationTi=
+me;
+> +                               idata->fi.LastAccessTime =3D si->LastAcce=
+ssTime;
+> +                               idata->fi.LastWriteTime =3D si->LastWrite=
+Time;
+> +                               idata->fi.ChangeTime =3D si->ChangeTime;
+> +                               idata->fi.Attributes =3D si->ExtFileAttri=
+butes;
+> +                               idata->fi.AllocationSize =3D si->Allocati=
+onSize;
+> +                               idata->fi.EndOfFile =3D si->EndOfFile;
+> +                               idata->fi.EASize =3D si->EaSize;
+> +                               idata->fi.Directory =3D
+> +                                       !!(le32_to_cpu(si->ExtFileAttribu=
+tes) & ATTR_DIRECTORY);
+> +                               /*
+> +                                * UniqueId is present only in struct SEA=
+RCH_ID_FULL_DIR_INFO.
+> +                                * It is not present in struct FILE_FULL_=
+DIRECTORY_INFO.
+> +                                * struct SEARCH_ID_FULL_DIR_INFO was req=
+uested only when
+> +                                * CIFS_MOUNT_SERVER_INUM is set.
+> +                                */
+> +                               if (has_cifs_mount_server_inum)
+> +                                       idata->fi.IndexNumber =3D si->Uni=
+queId;
+> +                               /*
+> +                                * Do not change idata->fi.NumberOfLinks =
+to correctly
+> +                                * trigger the CIFS_FATTR_UNKNOWN_NLINK f=
+lag.
+> +                                */
+> +                               /*
+> +                                * Do not change idata->fi.DeletePending =
+as we do not know if
+> +                                * the entry is in the delete pending sta=
+te. SMB2 QUERY_DIRECTORY
+> +                                * at any level does not provide this inf=
+ormation.
+> +                                */
+> +                       }
+> +                       SMB2_query_directory_free(&rqst[num_rqst++]);
+> +                       if (rc)
+> +                               trace_smb3_query_dir_err(xid,
+> +                                       cfile ? cfile->fid.persistent_fid=
+ : COMPOUND_FID,
+> +                                       tcon->tid, ses->Suid, 0, 0, rc);
+> +                       else
+> +                               trace_smb3_query_dir_done(xid,
+> +                                       cfile ? cfile->fid.persistent_fid=
+ : COMPOUND_FID,
+> +                                       tcon->tid, ses->Suid, 0, 0);
+> +                       break;
+>                 case SMB2_OP_DELETE:
+>                         if (rc)
+>                                 trace_smb3_delete_err(xid, tcon->tid, ses=
+->Suid, rc);
+> @@ -1090,9 +1186,9 @@ int smb2_query_path_info(const unsigned int xid,
+>                 break;
+>         case -EREMOTE:
+>                 break;
+> -       default:
+> -               if (hdr->Status !=3D STATUS_OBJECT_NAME_INVALID)
+> -                       break;
+> +       }
+> +
+> +       if (hdr->Status =3D=3D STATUS_OBJECT_NAME_INVALID) {
+>                 rc2 =3D cifs_inval_name_dfs_link_error(xid, tcon, cifs_sb=
+,
+>                                                      full_path, &islink);
+>                 if (rc2) {
+> @@ -1101,6 +1197,81 @@ int smb2_query_path_info(const unsigned int xid,
+>                 }
+>                 if (islink)
+>                         rc =3D -EREMOTE;
+> +       } else if (hdr->Status =3D=3D STATUS_DELETE_PENDING && full_path[=
+0]) {
+> +               /*
+> +                * If SMB2 OPEN/CREATE fails with STATUS_DELETE_PENDING e=
+rror,
+> +                * it means that the path is in delete pending state and =
+it is
+> +                * not possible to open it until some other client clears=
+ delete
+> +                * pending state or all other clients close all opened ha=
+ndles
+> +                * to that path.
+> +                *
+> +                * There is an alternative way how to query limited infor=
+mation
+> +                * about path which is in delete pending state still suit=
+able
+> +                * for the stat() syscall. It is by opening the parent di=
+rectory,
+> +                * querying specific child with filled search filer and a=
+sking
+> +                * for attributes for that child.
+> +                */
+> +
+> +               char *parent_path;
+> +               const char *basename;
+> +               __le16 *basename_utf16;
+> +               int basename_utf16_len;
+> +               struct cifsFileInfo *parent_cfile;
+> +
+> +               basename =3D strrchr(full_path, CIFS_DIR_SEP(cifs_sb));
+> +               if (basename) {
+> +                       parent_path =3D kstrndup(full_path, basename - fu=
+ll_path, GFP_KERNEL);
+> +                       basename++;
+> +               } else {
+> +                       parent_path =3D kstrdup("", GFP_KERNEL);
+> +                       basename =3D full_path;
+> +               }
+> +
+> +               if (!parent_path) {
+> +                       rc =3D -ENOMEM;
+> +                       goto out;
+> +               }
+> +
+> +               basename_utf16 =3D cifs_convert_path_to_utf16(basename, c=
+ifs_sb);
+> +               if (!basename_utf16) {
+> +                       kfree(parent_path);
+> +                       rc =3D -ENOMEM;
+> +                       goto out;
+> +               }
+> +
+> +               basename_utf16_len =3D 2 * UniStrnlen((wchar_t *)basename=
+_utf16, PATH_MAX);
+> +
+> +retry_query_directory:
+> +               num_cmds =3D 1;
+> +               cmds[0] =3D SMB2_OP_QUERY_DIRECTORY;
+> +               in_iov[0].iov_base =3D basename_utf16;
+> +               in_iov[0].iov_len =3D basename_utf16_len;
+> +               in_iov[1].iov_base =3D data;
+> +               in_iov[1].iov_len =3D sizeof(*data);
+> +               oparms =3D CIFS_OPARMS(cifs_sb, tcon, parent_path, FILE_R=
+EAD_DATA,
+> +                                    FILE_OPEN, CREATE_NOT_FILE, ACL_NO_M=
+ODE);
+> +               cifs_get_readable_path(tcon, parent_path, &parent_cfile);
+> +               free_rsp_iov(out_iov, out_buftype, ARRAY_SIZE(out_iov));
+> +               rc =3D smb2_compound_op(xid, tcon, cifs_sb, parent_path,
+> +                                     &oparms, in_iov, cmds, num_cmds,
+> +                                     parent_cfile, out_iov, out_buftype,=
+ NULL);
+> +               if (rc =3D=3D -EOPNOTSUPP && (cifs_sb->mnt_cifs_flags & C=
+IFS_MOUNT_SERVER_INUM)) {
+> +                       /*
+> +                        * If querying of server inode numbers is not sup=
+ported
+> +                        * but is enabled, then disable it and try again.
+> +                        */
+> +                       cifs_autodisable_serverino(cifs_sb);
+> +                       goto retry_query_directory;
+> +               }
+> +
+> +               kfree(parent_path);
+> +               kfree(basename_utf16);
+> +
+> +               hdr =3D out_iov[0].iov_base;
+> +               if (!hdr || out_buftype[0] =3D=3D CIFS_NO_BUFFER)
+> +                       goto out;
+> +
+> +               data->fi.DeletePending =3D 1; /* This is code path for ST=
+ATUS_DELETE_PENDING. */
+>         }
+>
+>  out:
+> --
+> 2.20.1
+>
+>
 
-[auto build test WARNING on 097a6c336d0080725c626fda118ecfec448acd0f]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joshua-Hahn/mm-page_alloc-vmstat-Simplify-refresh_cpu_vm_stats-change-detection/20250920-035357
-base:   097a6c336d0080725c626fda118ecfec448acd0f
-patch link:    https://lore.kernel.org/r/20250919195223.1560636-5-joshua.hahnjy%40gmail.com
-patch subject: [PATCH 4/4] mm/page_alloc: Batch page freeing in free_frozen_page_commit
-config: powerpc-taishan_defconfig (https://download.01.org/0day-ci/archive/20250921/202509210003.8eaSRC0k-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509210003.8eaSRC0k-lkp@intel.com/reproduce)
+--=20
+Thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509210003.8eaSRC0k-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   mm/page_alloc.c:2891:23: error: use of undeclared identifier 'UP_flags'; did you mean 'fpi_flags'?
-    2891 |                         pcp_trylock_finish(UP_flags);
-         |                                            ^~~~~~~~
-         |                                            fpi_flags
-   mm/page_alloc.c:109:53: note: expanded from macro 'pcp_trylock_finish'
-     109 | #define pcp_trylock_finish(flags)       local_irq_restore(flags)
-         |                                                           ^
-   include/linux/irqflags.h:240:61: note: expanded from macro 'local_irq_restore'
-     240 | #define local_irq_restore(flags) do { raw_local_irq_restore(flags); } while (0)
-         |                                                             ^
-   include/linux/irqflags.h:177:28: note: expanded from macro 'raw_local_irq_restore'
-     177 |                 typecheck(unsigned long, flags);        \
-         |                                          ^
-   include/linux/typecheck.h:11:9: note: expanded from macro 'typecheck'
-      11 |         typeof(x) __dummy2; \
-         |                ^
-   mm/page_alloc.c:2833:29: note: 'fpi_flags' declared here
-    2833 |                 unsigned int order, fpi_t fpi_flags)
-         |                                           ^
->> mm/page_alloc.c:2891:4: warning: comparison of distinct pointer types ('unsigned long *' and 'typeof (fpi_flags) *' (aka 'int *')) [-Wcompare-distinct-pointer-types]
-    2891 |                         pcp_trylock_finish(UP_flags);
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   mm/page_alloc.c:109:35: note: expanded from macro 'pcp_trylock_finish'
-     109 | #define pcp_trylock_finish(flags)       local_irq_restore(flags)
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/irqflags.h:240:39: note: expanded from macro 'local_irq_restore'
-     240 | #define local_irq_restore(flags) do { raw_local_irq_restore(flags); } while (0)
-         |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/irqflags.h:177:3: note: expanded from macro 'raw_local_irq_restore'
-     177 |                 typecheck(unsigned long, flags);        \
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/typecheck.h:12:18: note: expanded from macro 'typecheck'
-      12 |         (void)(&__dummy == &__dummy2); \
-         |                ~~~~~~~~ ^  ~~~~~~~~~
-   mm/page_alloc.c:2891:23: error: use of undeclared identifier 'UP_flags'; did you mean 'fpi_flags'?
-    2891 |                         pcp_trylock_finish(UP_flags);
-         |                                            ^~~~~~~~
-         |                                            fpi_flags
-   mm/page_alloc.c:109:53: note: expanded from macro 'pcp_trylock_finish'
-     109 | #define pcp_trylock_finish(flags)       local_irq_restore(flags)
-         |                                                           ^
-   include/linux/irqflags.h:240:61: note: expanded from macro 'local_irq_restore'
-     240 | #define local_irq_restore(flags) do { raw_local_irq_restore(flags); } while (0)
-         |                                                             ^
-   include/linux/irqflags.h:179:26: note: expanded from macro 'raw_local_irq_restore'
-     179 |                 arch_local_irq_restore(flags);          \
-         |                                        ^
-   mm/page_alloc.c:2833:29: note: 'fpi_flags' declared here
-    2833 |                 unsigned int order, fpi_t fpi_flags)
-         |                                           ^
-   mm/page_alloc.c:2893:24: error: use of undeclared identifier 'UP_flags'; did you mean 'fpi_flags'?
-    2893 |                         pcp_trylock_prepare(UP_flags);
-         |                                             ^~~~~~~~
-         |                                             fpi_flags
-   mm/page_alloc.c:108:51: note: expanded from macro 'pcp_trylock_prepare'
-     108 | #define pcp_trylock_prepare(flags)      local_irq_save(flags)
-         |                                                        ^
-   include/linux/irqflags.h:239:55: note: expanded from macro 'local_irq_save'
-     239 | #define local_irq_save(flags)   do { raw_local_irq_save(flags); } while (0)
-         |                                                         ^
-   include/linux/irqflags.h:172:28: note: expanded from macro 'raw_local_irq_save'
-     172 |                 typecheck(unsigned long, flags);        \
-         |                                          ^
-   include/linux/typecheck.h:11:9: note: expanded from macro 'typecheck'
-      11 |         typeof(x) __dummy2; \
-         |                ^
-   mm/page_alloc.c:2833:29: note: 'fpi_flags' declared here
-    2833 |                 unsigned int order, fpi_t fpi_flags)
-         |                                           ^
-   mm/page_alloc.c:2893:4: warning: comparison of distinct pointer types ('unsigned long *' and 'typeof (fpi_flags) *' (aka 'int *')) [-Wcompare-distinct-pointer-types]
-    2893 |                         pcp_trylock_prepare(UP_flags);
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   mm/page_alloc.c:108:36: note: expanded from macro 'pcp_trylock_prepare'
-     108 | #define pcp_trylock_prepare(flags)      local_irq_save(flags)
-         |                                         ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/irqflags.h:239:36: note: expanded from macro 'local_irq_save'
-     239 | #define local_irq_save(flags)   do { raw_local_irq_save(flags); } while (0)
-         |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/irqflags.h:172:3: note: expanded from macro 'raw_local_irq_save'
-     172 |                 typecheck(unsigned long, flags);        \
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/typecheck.h:12:18: note: expanded from macro 'typecheck'
-      12 |         (void)(&__dummy == &__dummy2); \
-         |                ~~~~~~~~ ^  ~~~~~~~~~
-   mm/page_alloc.c:2893:24: error: use of undeclared identifier 'UP_flags'
-    2893 |                         pcp_trylock_prepare(UP_flags);
-         |                                             ^
-   mm/page_alloc.c:2896:24: error: use of undeclared identifier 'UP_flags'; did you mean 'fpi_flags'?
-    2896 |                                 pcp_trylock_finish(UP_flags);
-         |                                                    ^~~~~~~~
-         |                                                    fpi_flags
-   mm/page_alloc.c:109:53: note: expanded from macro 'pcp_trylock_finish'
-     109 | #define pcp_trylock_finish(flags)       local_irq_restore(flags)
-         |                                                           ^
-   include/linux/irqflags.h:240:61: note: expanded from macro 'local_irq_restore'
-     240 | #define local_irq_restore(flags) do { raw_local_irq_restore(flags); } while (0)
-         |                                                             ^
-   include/linux/irqflags.h:177:28: note: expanded from macro 'raw_local_irq_restore'
-     177 |                 typecheck(unsigned long, flags);        \
-         |                                          ^
-   include/linux/typecheck.h:11:9: note: expanded from macro 'typecheck'
-      11 |         typeof(x) __dummy2; \
-         |                ^
-   mm/page_alloc.c:2833:29: note: 'fpi_flags' declared here
-    2833 |                 unsigned int order, fpi_t fpi_flags)
-         |                                           ^
-   mm/page_alloc.c:2896:5: warning: comparison of distinct pointer types ('unsigned long *' and 'typeof (fpi_flags) *' (aka 'int *')) [-Wcompare-distinct-pointer-types]
-    2896 |                                 pcp_trylock_finish(UP_flags);
-         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   mm/page_alloc.c:109:35: note: expanded from macro 'pcp_trylock_finish'
-     109 | #define pcp_trylock_finish(flags)       local_irq_restore(flags)
-         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/irqflags.h:240:39: note: expanded from macro 'local_irq_restore'
-     240 | #define local_irq_restore(flags) do { raw_local_irq_restore(flags); } while (0)
-         |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/irqflags.h:177:3: note: expanded from macro 'raw_local_irq_restore'
-     177 |                 typecheck(unsigned long, flags);        \
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/typecheck.h:12:18: note: expanded from macro 'typecheck'
-      12 |         (void)(&__dummy == &__dummy2); \
-
-
-vim +2891 mm/page_alloc.c
-
-  2823	
-  2824	/*
-  2825	 * Tune pcp alloc factor and adjust count & free_count. Free pages to bring the
-  2826	 * pcp's watermarks below high.
-  2827	 *
-  2828	 * May return a freed pcp, if during page freeing the pcp spinlock cannot be
-  2829	 * reacquired. Return true if pcp is locked, false otherwise.
-  2830	 */
-  2831	static bool free_frozen_page_commit(struct zone *zone,
-  2832			struct per_cpu_pages *pcp, struct page *page, int migratetype,
-  2833			unsigned int order, fpi_t fpi_flags)
-  2834	{
-  2835		int high, batch;
-  2836		int to_free, to_free_batched;
-  2837		int pindex;
-  2838		bool free_high = false;
-  2839	
-  2840		/*
-  2841		 * On freeing, reduce the number of pages that are batch allocated.
-  2842		 * See nr_pcp_alloc() where alloc_factor is increased for subsequent
-  2843		 * allocations.
-  2844		 */
-  2845		pcp->alloc_factor >>= 1;
-  2846		__count_vm_events(PGFREE, 1 << order);
-  2847		pindex = order_to_pindex(migratetype, order);
-  2848		list_add(&page->pcp_list, &pcp->lists[pindex]);
-  2849		pcp->count += 1 << order;
-  2850	
-  2851		batch = READ_ONCE(pcp->batch);
-  2852		/*
-  2853		 * As high-order pages other than THP's stored on PCP can contribute
-  2854		 * to fragmentation, limit the number stored when PCP is heavily
-  2855		 * freeing without allocation. The remainder after bulk freeing
-  2856		 * stops will be drained from vmstat refresh context.
-  2857		 */
-  2858		if (order && order <= PAGE_ALLOC_COSTLY_ORDER) {
-  2859			free_high = (pcp->free_count >= (batch + pcp->high_min / 2) &&
-  2860				     (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) &&
-  2861				     (!(pcp->flags & PCPF_FREE_HIGH_BATCH) ||
-  2862				      pcp->count >= batch));
-  2863			pcp->flags |= PCPF_PREV_FREE_HIGH_ORDER;
-  2864		} else if (pcp->flags & PCPF_PREV_FREE_HIGH_ORDER) {
-  2865			pcp->flags &= ~PCPF_PREV_FREE_HIGH_ORDER;
-  2866		}
-  2867		if (pcp->free_count < (batch << CONFIG_PCP_BATCH_SCALE_MAX))
-  2868			pcp->free_count += (1 << order);
-  2869	
-  2870		if (unlikely(fpi_flags & FPI_TRYLOCK)) {
-  2871			/*
-  2872			 * Do not attempt to take a zone lock. Let pcp->count get
-  2873			 * over high mark temporarily.
-  2874			 */
-  2875			return true;
-  2876		}
-  2877		high = nr_pcp_high(pcp, zone, batch, free_high);
-  2878		to_free = nr_pcp_free(pcp, batch, high, free_high);
-  2879		while (to_free > 0 && pcp->count >= high) {
-  2880			to_free_batched = min(to_free, batch);
-  2881			free_pcppages_bulk(zone, to_free_batched, pcp, pindex);
-  2882			if (test_bit(ZONE_BELOW_HIGH, &zone->flags) &&
-  2883			    zone_watermark_ok(zone, 0, high_wmark_pages(zone),
-  2884					      ZONE_MOVABLE, 0))
-  2885				clear_bit(ZONE_BELOW_HIGH, &zone->flags);
-  2886	
-  2887			high = nr_pcp_high(pcp, zone, batch, free_high);
-  2888			to_free -= to_free_batched;
-  2889			if (pcp->count >= high) {
-  2890				pcp_spin_unlock(pcp);
-> 2891				pcp_trylock_finish(UP_flags);
-  2892	
-  2893				pcp_trylock_prepare(UP_flags);
-  2894				pcp = pcp_spin_trylock(zone->per_cpu_pageset);
-  2895				if (!pcp) {
-  2896					pcp_trylock_finish(UP_flags);
-  2897					return false;
-  2898				}
-  2899			}
-  2900		}
-  2901	
-  2902		return true;
-  2903	}
-  2904	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Steve
 
