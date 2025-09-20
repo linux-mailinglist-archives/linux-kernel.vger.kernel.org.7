@@ -1,124 +1,237 @@
-Return-Path: <linux-kernel+bounces-825627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCF7B8C5C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EFAEB8C60A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B451BC6C19
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A650188038E
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 10:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B202F83C2;
-	Sat, 20 Sep 2025 10:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258FE2FB61A;
+	Sat, 20 Sep 2025 10:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RvwsPLUG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SfJ7Pqhg"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F2425DD1E
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11FB60B8A
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 10:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758365029; cv=none; b=hWfPTeQLGtNdECth28+MUKYUyNvIT1Ir+miZnV16Twf5CXtVF9ksRV4LEIFWPBNEhqrCdgJ3v7h2HX2b6w9j8hNs6DCuPoKvcPRH3D1Q0YQiupE8SwN6unxeJ1Xybt5N+EKpwfbhEApuIeHFIECrloCaVvxh02zF8fnx+IbFZ00=
+	t=1758365378; cv=none; b=QyVLMATbfqhnE2SkjwOUx2KU2WW88ifxkmDSaPik+8jpRaPrdSFHiCwMFVV9jxoGpqZzV9qcWShzmFo40Lf4vzxVJRMR1XXeVaFn7YcOhzTZgXu2W7K8E7GAl3QGaYe0/O87PVenlbBr9t6uhWjtlOxrTN5qqIUXMXqDP7nlL5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758365029; c=relaxed/simple;
-	bh=GGcqmDnzpkqL527dvwmPXxPejn0tRqSqA9TUjS43tF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nskA3uEHcnh1OBobFiqmIDeK60nq1kx2btKsYc94zQlHex3ojFVVmaQS8MdvUJSWjo+28uFgXtqstJx+coX38EJ1y4LoxF8Iuin1uj9L2AaeQRFUWAZ+E3XHXvcbgtq3xflXpebmi1XdbN/6mmQH4TrNfqYOL7DpVBq7f0K/7LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RvwsPLUG; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758365027; x=1789901027;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GGcqmDnzpkqL527dvwmPXxPejn0tRqSqA9TUjS43tF4=;
-  b=RvwsPLUGGkpas4Af9x/r5HlwLWaJtYoTajlTw+LgxyDkU95+s9wvQl8Y
-   rO/UBIS8JevIbajVuSE0s0RgQhRBoeO4vU3HsaX4yTda8VWak+ZIuzDWd
-   keSgo7CLHFTZhJSL5lmUBQ9MPLY3h1iNpBh6odlHeGP6uon0M508jzzVn
-   HS9l6dJ2KHdxpJO2vDR3RWPk0DWwF1m5LWwxS1zWQLSwhRTrYKbb4Bs0D
-   dBI0nsr9ZbJ0x/mXMsualDaXTjH0PAachautfB1zyf0ImHu6LFujjc7I5
-   zMFHYbB7HMImaqVmGL+aU07wUuEP92n+OqcjFL3F/+FL3zwEmmACp/0FH
-   w==;
-X-CSE-ConnectionGUID: CI5//+7xTMmju9CSpSnSjw==
-X-CSE-MsgGUID: HIJZP8ooSDaCVsY4kWPp4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11558"; a="64334369"
-X-IronPort-AV: E=Sophos;i="6.18,280,1751266800"; 
-   d="scan'208";a="64334369"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 03:43:47 -0700
-X-CSE-ConnectionGUID: ka3svwETTDyUeiqFLjtQ7A==
-X-CSE-MsgGUID: KLR2Z4G+SdK4f8cCYhbYAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,280,1751266800"; 
-   d="scan'208";a="180446374"
-Received: from lkp-server01.sh.intel.com (HELO 84a20bd60769) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 20 Sep 2025 03:43:44 -0700
-Received: from kbuild by 84a20bd60769 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uzv49-0005EB-1x;
-	Sat, 20 Sep 2025 10:43:41 +0000
-Date: Sat, 20 Sep 2025 18:42:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mostafa Saleh <smostafa@google.com>, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com, will@kernel.org,
-	joro@8bytes.org, jgg@ziepe.ca, praan@google.com,
-	Mostafa Saleh <smostafa@google.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v3 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
-Message-ID: <202509201819.f369wBHc-lkp@intel.com>
-References: <20250919133316.2741279-5-smostafa@google.com>
+	s=arc-20240116; t=1758365378; c=relaxed/simple;
+	bh=LeD+Kp6HPaiggwjhXT1KWVi4MySo4T2YgcXx0PkGZ0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P3NGKBPFeYPnjwx4tMjRug9VLaSTSWP4cdyMzMdXr3QYHoC3S6ZmcvFVF8NURObZnCkQAQCMl3H7+sIKeEVw26roDvjsQ9drPP8XejPpl/9qBX1Zoqxf1qX7+MFj4S3BJ3My3Yh0hicce30Z3+hbo6kQuhQPqJaO7sGEktyjeAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SfJ7Pqhg; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-afcb7322da8so545009366b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 03:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758365374; x=1758970174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
+        b=SfJ7PqhgZVJ+4gZgkx39NxdBt6ecJ8Je+/R2RnpVcyJ1mh0Mg5wN9hEWtiz/U+ol/i
+         6xl6kfNmxTZ2qIqEGykSR04lEEtwKCSGR5NXGTF4yDAk4qLt7np57BxE0mDAe1yP2Lia
+         utCH1acPEzLmrbNThBQmQFSHWNp+UEKGp+Axle/NwGr/KuqgIVgMdG3wvWFv6Fp3LQKW
+         2lrIQLaK7siis5vnnC1xqBsKrjH+7t/SvzudRdjD/7xzfXa+RIJEY2r4VFm+UtAhAGji
+         rRF7cixkOlb6cdPMfZSuUjBhacCAXl24tEoML9fjvK2b3nj/y2Di8WDq6BZ6EmCgNDti
+         GjSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758365374; x=1758970174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QJc0EGzS/+BK6QuDuFmI2nY7ewfLLXuJxl0wU299He8=;
+        b=bBQ4HOdcx6aLHcEQ0oe4Nud24L3ogEmukEX9xuaDZoYQQo08MabqX5x45Nd5ekX4uG
+         UqsqLjIPcMieuooCgFQAes4tAlTsf1m0BpvtgN9hfRuY/Lz5hs/Fk7rZ4q4KnXVKNcQM
+         9lnxiROnOQuQJpQ4VO5MTHg56b9N1ZYgdXMJicjM/nMFPH+2/8oe6xYyzROVGVP0iC5t
+         kJF9u0aLcZoLADmwGfNyk5qOzex7smAMfy46XjNHlZXA/DEX2yXBGRM/quArJ3nLCWsa
+         tIeUZW4vh+XMU1LHUgCcmc5jbcGOaMKO+fqdv2lgTqUbZX29aCVQbF8WeIBI/YhWrAuB
+         NPSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJdtoYDXu428ihnmv5evnDojHX58/9BSlmOwQcQ15qzTu94mCwTgTxWSkAthJb8g/313iznp8Z8GpzwIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeJ9hSM4LkHHfvCHOaN3eb9ZtsVWUy9xf2Rca92Ro9oTdmeh3A
+	NFzFHFMw2HtSf8pl2cWhIDo9JAypphJaIqptPxKghFgjJDhP08+E/EKjR+o8zTVWJTZtJNNVfYi
+	7E8nRowz0OM5VzvozJX/FTgRhEfNjue0=
+X-Gm-Gg: ASbGncsMP+m7NqRFJHUza2V21NWRgRcyikt6RArYwIWfnQhCmcnmpX4L2pQF8STfnb+
+	IcWpXtvooa0rf5js/Hrb/FaGTR7Q1rycfNP+I1pCWBXumlY110wLXa2mym1yS0TGd1wbxQ47GTQ
+	UE3fqim7uz7cCAliFKlpQwtFMpzULAiHOXNvwvilfalL1MwyMQh1WJxK1pr25xzHfs2f7TWe4pp
+	htwCJk=
+X-Google-Smtp-Source: AGHT+IHHbhBTYGUaEQMbVjyA0lAj2luPxy2XsbzoJZ2rvsPEEjKDVfN8Ekg2zTb0h70UHa/ky/mxQ7DHX1RPk/WuHD8=
+X-Received: by 2002:a17:907:2d86:b0:afe:f418:2294 with SMTP id
+ a640c23a62f3a-b24f4cd1612mr662812666b.49.1758365373591; Sat, 20 Sep 2025
+ 03:49:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919133316.2741279-5-smostafa@google.com>
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+In-Reply-To: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 20 Sep 2025 13:48:57 +0300
+X-Gm-Features: AS18NWAsgghzm2kBTHVAUWgTvM4Rjv6fz5BEJyNeWi6WNSHflPsd2h04LFjYcyQ
+Message-ID: <CAHp75Vfx9kyP-rVtfvyyMK4VH+oiRVjP1fZOtbVH14iLh98Jxw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] media: Introduce video device state management
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org, 
+	Ricardo Ribalda <ribalda@chromium.org>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Hans de Goede <hansg@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick@shmanahar.org>, 
+	Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Matt Ranostay <matt@ranostay.sg>, Andy Walls <awalls@md.metrocast.net>, 
+	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
+	Dan Scally <djrscally@gmail.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+	Martin Tuma <martin.tuma@digiteqautomotive.com>, 
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>, Andrey Utkin <andrey_utkin@fastmail.com>, 
+	Ismael Luceno <ismael@iodev.co.uk>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+	Corentin Labbe <clabbe@baylibre.com>, Michael Tretter <m.tretter@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Keke Li <keke.li@amlogic.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ming Qian <ming.qian@nxp.com>, 
+	Zhou Peng <eagle.zhou@nxp.com>, Eddie James <eajames@linux.ibm.com>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Eugen Hristev <eugen.hristev@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Nas Chung <nas.chung@chipsnmedia.com>, Jackson Lee <jackson.lee@chipsnmedia.com>, 
+	Devarsh Thakkar <devarsht@ti.com>, Bin Liu <bin.liu@mediatek.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>, Houlong Wei <houlong.wei@mediatek.com>, 
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Tiffany Lin <tiffany.lin@mediatek.com>, 
+	Yunfei Dong <yunfei.dong@mediatek.com>, Joseph Liu <kwliu@nuvoton.com>, 
+	Marvin Lin <kflin@nuvoton.com>, Dmitry Osipenko <digetx@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>, Mirela Rabulea <mirela.rabulea@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Rui Miguel Silva <rmfrfs@gmail.com>, 
+	Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>, Jacob Chen <jacob-chen@iotwrt.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Dafna Hirschfeld <dafna@fastmail.com>, 
+	Detlev Casanova <detlev.casanova@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	=?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>, 
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
+	Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Maxime Ripard <mripard@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Yong Deng <yong.deng@magewell.com>, 
+	Paul Kocialkowski <paulk@sys-base.io>, Shreeya Patel <shreeya.patel@collabora.com>, 
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>, 
+	Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, Jai Luthra <jai.luthra@linux.dev>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Michal Simek <michal.simek@amd.com>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Eduardo Valentin <edubezval@gmail.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Michael Krufky <mkrufky@linuxtv.org>, Mike Isely <isely@pobox.com>, Andy Shevchenko <andy@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Steve Longerbeam <slongerbeam@gmail.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, 
+	Changhuang Liang <changhuang.liang@starfivetech.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>, 
+	Christian Gromm <christian.gromm@microchip.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Plamen Atanasov <tigerment@mail.bg>, Sean Young <sean@mess.org>, 
+	Ariel Otilibili <ariel.otilibili-anieli@eurecom.fr>, 
+	"Dr. David Alan Gilbert" <linux@treblig.org>, Jiasheng Jiang <jiashengjiangcool@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Daniel Scally <dan.scally+renesas@ideasonboard.com>, 
+	Matthew Majewski <mattwmajewski@gmail.com>, Yunseong Kim <ysk@kzalloc.com>, Chen Ni <nichen@iscas.ac.cn>, 
+	Fabio Luongo <f.langufo.l@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Yang Yingliang <yangyingliang@huawei.com>, Ludwig Disterhof <ludwig@disterhof.eu>, 
+	"Everest K.C." <everestkc@everestkc.com.np>, Stefan Wahren <wahrenst@gmx.net>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Michael Grzeschik <m.grzeschik@pengutronix.de>, Akash Kumar <quic_akakum@quicinc.com>, 
+	linux-input@vger.kernel.org, mjpeg-users@lists.sourceforge.net, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	kernel@collabora.com, linux-staging@lists.linux.dev, 
+	linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mostafa,
+On Fri, Sep 19, 2025 at 12:57=E2=80=AFPM Jai Luthra <jai.luthra@ideasonboar=
+d.com> wrote:
+>
+> Hi,
+>
+> This patch series introduces state management for video devices.
+>
+> Currently, V4L2 subdevices have a well-established state management
+> system [1] that allows the framework to store the subdevice state
+> at a central location.
+>
+> Video devices however lack this, leading to inconsistent state handling
+> across drivers and making it difficult to implement features like
+> hardware multiplexing in complex media pipelines [2].
+>
+> The series is composed of three parts:
+>
+> - Core Infrastructure (PATCH 1-4)
+>         Introduces the basic state structure, try state support,
+>         initialization callbacks, and driver helpers
+> - Framework Integration (PATCH 5-7)
+>         Integrates state passing through the ioctl wrappers and driver
+>         implementations
+> - Driver Examples (PATCH 8-10)
+>         Use the state to store formats in TI J721E CSI2RX and Rockchip
+>         RKISP1 drivers
+>
+> This should also provide a foundation for drivers to extend or subclass
+> the state structure with device-specific variables in future.
+>
+> I have tested capture and format negotiation with the converted drivers
+> on SK AM62A (j721e-csi2rx) and Debix Model A (rkisp1).
+>
+> [1]: https://lore.kernel.org/linux-media/20210610145606.3468235-1-tomi.va=
+lkeinen@ideasonboard.com/
+> [2]: https://lore.kernel.org/linux-media/20250724-multicontext-mainline-2=
+025-v2-0-c9b316773486@ideasonboard.com/
 
-kernel test robot noticed the following build errors:
+When you add a Cc list., do it after the '---' (three minus signs)
+line, otherwise that huge unneeded noise will become part of the
+commit message.
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on linus/master v6.17-rc6 next-20250919]
-[cannot apply to joro-iommu/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mostafa-Saleh/iommu-io-pgtable-arm-Simplify-error-prints-for-selftests/20250919-213912
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20250919133316.2741279-5-smostafa%40google.com
-patch subject: [PATCH v3 4/4] iommu/io-pgtable-arm-selftests: Use KUnit
-config: i386-randconfig-013-20250920 (https://download.01.org/0day-ci/archive/20250920/202509201819.f369wBHc-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250920/202509201819.f369wBHc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509201819.f369wBHc-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>, old ones prefixed by <<):
-
->> WARNING: modpost: drivers/iommu/io-pgtable-arm-selftests: section mismatch in reference: arm_lpae_run_tests+0x100 (section: .text) -> arm_lpae_dump_ops (section: .init.text)
->> ERROR: modpost: "alloc_io_pgtable_ops" [drivers/iommu/io-pgtable-arm-selftests.ko] undefined!
->> ERROR: modpost: "free_io_pgtable_ops" [drivers/iommu/io-pgtable-arm-selftests.ko] undefined!
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for IOMMU_IO_PGTABLE_LPAE
-   Depends on [n]: IOMMU_SUPPORT [=y] && (ARM || ARM64 || COMPILE_TEST [=n]) && !GENERIC_ATOMIC64 [=n]
-   Selected by [m]:
-   - IOMMU_IO_PGTABLE_LPAE_KUNIT_TEST [=m] && IOMMU_SUPPORT [=y] && KUNIT [=m]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+With Best Regards,
+Andy Shevchenko
 
