@@ -1,136 +1,251 @@
-Return-Path: <linux-kernel+bounces-825882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2000B8D09A
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:15:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF807B8D0A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5147F46050E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:15:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 070D17AD593
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 20:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82C027B32D;
-	Sat, 20 Sep 2025 20:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF164298CDC;
+	Sat, 20 Sep 2025 20:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/yRDD1A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G9gpCqJD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089212749C5;
-	Sat, 20 Sep 2025 20:15:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C845274671
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758399315; cv=none; b=UIHXCKdstJgnPjJRnAsUF6VIRMNdEgg8YlLcjsrloO6WkNCuBnDpg9Cda3WpZjJkAykJGx02tRR9QVr1DLaKYp3G5v9CqLcHThxwwb2F5bVNijw7myTSYr7B0uxiIoWewzoCAS+PnsGE8nBuQpEVYvMvg3Y/av8bIo+zD0QZmOA=
+	t=1758399352; cv=none; b=rukHrVSBLTGpCuLQeiMAMWtH+BtvUrt44CyQZsYX3YuybZ78uzip8QTZ68j8RaQMdSJI0BEFtwcWJA3gEiizNp1v9pApKtSsh/qYxifg5fqeCpaSR4TEtJ6TzzUAvJZDVgQgMkgK4BTQ8MeBjY2+xRZPwsi0h53GvZtjOWAmvpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758399315; c=relaxed/simple;
-	bh=p8GWNyTiPrRLq10UZXoXZeVU2CEg3/1/BhEweD1IdjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ELvpT5utfGgU40xM+18d2nbHK7EgvDOks8Z4zyUMHLZ+yHYbu6g9dKcAx2c1xiXiZ6gicMtwdmh2VENK9HcBEFCeNyS92zN4TdJ0vsanetgn15FNO1ABx2E6Yfw5pT8ZVHMTr3AJsgLZGi8U3r5AbPnfBIJ5r8WhwEMNKInEUvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/yRDD1A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05288C4CEEB;
-	Sat, 20 Sep 2025 20:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758399314;
-	bh=p8GWNyTiPrRLq10UZXoXZeVU2CEg3/1/BhEweD1IdjQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b/yRDD1AJFWz/kFXXr19J2/RjE9i4GaD6/nNrDm9kWDUwYvaV46gt3cBGRS3y1N/L
-	 la9nK3L0voguX8KDDswI1IZm4S8P8ZUXdFw22R70SEckKv/f4tjG6g2SJvCA574x/o
-	 7qQzRMnZhSRFISwwo1ngtfTlHgfrhXjye15N7rxssbHKzyrr9UzlniwV4Illf0KpFZ
-	 STby39zuqWkgT88MuB0GiY2BbG/6e6Pbw06W1WS/xQ0+WrOiU4Or9SDoV9CJia+2RF
-	 WOkhgVA/XSNUdxGc6wPkP0vFjeTwxbzfFTLAbLnMwqB/mTZwHInVJcrq2FlB6Zqbw0
-	 HTXORrtf5Yw/g==
-Message-ID: <fcd107c9-ff59-464f-aead-7b2bcc05dce9@kernel.org>
-Date: Sat, 20 Sep 2025 22:15:12 +0200
+	s=arc-20240116; t=1758399352; c=relaxed/simple;
+	bh=ehh7rR35mtVNzGpsoeQkGq1aRFmROUW8bfdfH07Yzj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9qto2fR2POnxMo4nQ72x4HoTOZov7OVP6mb3XPDqEeqiv4N7z1WE+5pqotcPexm0oLrxbBZ/2aFIGX6y5S0wCaV8DaPWgx55e8IL3Zm+YsL5KuX8WxYW13zXOdKdOAV8BSuyIPG5FJX73Vfg/cBTpY6sttCV/XZNH0mpss0PrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G9gpCqJD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58KGl6nP013370
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:15:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uxr1OwE6woCsy9ph6puI8An7SoT1y1/n+0nY/X+D0BY=; b=G9gpCqJDGLLtRNRA
+	+0vRaSXaPz1xSb72Hq1AnJTvGDThZZkQac6ebr0Qjhm1LnyVlL7CSGHVaweymJP2
+	fduQmxF8vwejGMONzgIz7dk/SNqWjWsPsU9QUbSXm76D0/Zkol3NP4or6Skb/7As
+	I/vVdZTO1+gJyZy6sGQL0TrMRda1wX67I+qQgbAmISt7URWEpf84RsiNec6795HO
+	4N3BSQK8SyVVnbvbQpJxUWAgvyIq1BaEVfYELJfZHWdpoV459Z6b1m1Oqop8Tz2b
+	m5p5yaairzIFct8JthBeKxF6sheMSW8AVWLnxmz+KsmYJRegV0zrBIB4J+MzoUk3
+	CWQ8rA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499kv0s9ht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:15:48 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4bf85835856so59064511cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 13:15:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758399347; x=1759004147;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uxr1OwE6woCsy9ph6puI8An7SoT1y1/n+0nY/X+D0BY=;
+        b=NpGLeh/LFI+2F2CwIy3wxes15VAjKr0Jc54FB7OIZ85ti1pSuZ6y1hg/wI4hicJVyI
+         RBa9bwwEbD0COupKSB6AeSSkuRmGGV0iJikGhhyYz8VgSAuGLmB6A2hvu1GymQiKkvYq
+         G6TMTyvKx/r693tYNxKai+DQvCZADObqIYf0so3c0YilFdTQjstvAav9GaGeFHPY3mLF
+         VHJjP79lmArsrw44yf/6w0VtLjIcplr3rHViZCDI1xTWKmfYLrIAazxm642WKbA2m6mb
+         rk+cb+WdoXq2GOa3aBqWgr/vTWjpnOc72NkJaRn1CZv4sbq2NDVatSvxQlfch37pc8p3
+         MGWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDls2pk7zLzMEMT/a7C77fitjCGZ0WrpL0mCGnhUiLscnIO0aYsTdvEheTH88UyUFRygJvLuMpiAM3TRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysyCHFiEdTue+9yTRMyRrWPw9u7DMim05VW+b2OxGBwctgD88Z
+	TJgAneT3cowunCeOAL9/3/VpYPoJ7BW1syrKWJmm4iy8mp/UEbC4o7YOioGR84SeLyVJyX+Qpul
+	9WpUnXCevRARmDOKw0BpCShq3l38XdTEo0QZh4G2K/y+dhW4ip/+LZ7z8RzRHTretLD4=
+X-Gm-Gg: ASbGncvinWWs5rA4b5ZbxnzjU8aamwQi3JnSW9WEAVd/TxeXkhpVB5FByAQDEiWG4TO
+	Bk7HePMiFWuCjcZX3P0mKRaO3Uq99B2bI1/voXBkXlolvjgWArX1MVe6T0+j+DCR8sR1tR5t/Fw
+	ozmNJpZI8M9VC9GX7Fgdzei22qXSfnhHPjdTV45f/0S5Q311jNjGKX1Q/4g21xNBvkevy+sob75
+	vbq5Nr21SQoHH+46PhM2tUbo9Wsccm1lE+nznn3Xb5TsBZw9BHg6bBKm6iBg832cqaA+YXlrdrm
+	GTKpR/11Wn8y7eaKmC+zMf8BQJPfrOMvPfL/wjJzsczwaBdG8ZwG9mMnA6VxY494QrYA56EG7q1
+	wCdumAuHuG0TAPmrLaiad+qXUbeVlYMuY0g/EgDmWv0vViAsvmD9Q
+X-Received: by 2002:a05:622a:1901:b0:4b7:9e60:e344 with SMTP id d75a77b69052e-4bdaed6db53mr137324141cf.31.1758399347219;
+        Sat, 20 Sep 2025 13:15:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFCIgnxQ52I0il7IQ1thYRIw+v/2tADbsAI+6zmr+gpePo3kxfC0SKEeBt0o4Y3XDSfKvLXqQ==
+X-Received: by 2002:a05:622a:1901:b0:4b7:9e60:e344 with SMTP id d75a77b69052e-4bdaed6db53mr137323871cf.31.1758399346678;
+        Sat, 20 Sep 2025 13:15:46 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3628559a89dsm17870521fa.66.2025.09.20.13.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 13:15:44 -0700 (PDT)
+Date: Sat, 20 Sep 2025 23:15:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Eric =?utf-8?Q?Gon=C3=A7alves?= <ghatto404@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] arm64: dts: qcom: r0q: add gpio keys
+Message-ID: <r6e23h4nkddktkle5rohdiiqkw667rq26j7u2yodao6p3scixp@y3roqbly4oje>
+References: <20250920014637.38175-1-ghatto404@gmail.com>
+ <20250920014637.38175-2-ghatto404@gmail.com>
+ <qiiuezocvxvj5bhrr77v6o2amaaaepdx54pqoewvhtnxce5ccz@g7bhkrb6a4pd>
+ <5436E420-E459-4E47-9752-EF80F550FA6F@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: dell-lis3lv02d: Add Latitude E6530
-To: Nickolay Goppen <setotau@mainlining.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250917-dell-lis3lv02d-latitude-e6530-v1-1-8a6dec4e51e9@mainlining.org>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20250917-dell-lis3lv02d-latitude-e6530-v1-1-8a6dec4e51e9@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5436E420-E459-4E47-9752-EF80F550FA6F@gmail.com>
+X-Proofpoint-GUID: WH9GrevPinwpF4ADPHcNzyKj_nALD3Jc
+X-Authority-Analysis: v=2.4 cv=RO2zH5i+ c=1 sm=1 tr=0 ts=68cf0b74 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=gpHoPsJBt9AuGvPBovIA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyNSBTYWx0ZWRfXzPKWv936Zz5Q
+ 1lQGsKWkypeyF0ElHXyuwpAaU/KnvE+kITGyPvTFJDtVVHbenjbi7ZxKsYPXpo/aToGjD5deeu2
+ itbIVKSTEDDqcoQH0fqCLo3H7c8K4xpoD6Mbsqk+nwotgyk8EbPwAORry70UkGGCJOQSBG72FLh
+ Y5v8uqo9PZ+I0sLCsN1ckf9ZbKudTlqvwHhiwvD8gbkQJhhUcIm0hrhNpA2cPNAXeOvHAOY95on
+ vjmHtp2RJxY4M0x13vHraJTXS4dqxOrquh1NLyUbKlNdZHb6I3aNyiEwsSa+pv1jhNP4zG+j7EI
+ Pm3msWfI6sWy9wn0mt4YdMiJ4l8xSCoZ8M8JJ+6w3jJtamYRlLC+gZhLKUFRa9bpCp/nyWt+1Hg
+ Rm80BXS3
+X-Proofpoint-ORIG-GUID: WH9GrevPinwpF4ADPHcNzyKj_nALD3Jc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-20_07,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 adultscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200025
 
-Hi,
-
-On 17-Sep-25 9:10 PM, Nickolay Goppen wrote:
-> Add 0x29 as the accelerometer address for the Dell Latitude E6530 to
-> lis3lv02d_devices[].
+On Sat, Sep 20, 2025 at 03:02:42PM -0300, Eric Gonçalves wrote:
 > 
-> The address was verified as below:
 > 
->     $ cd /sys/bus/pci/drivers/i801_smbus/0000:00:1f.3
->     $ ls -d i2c-*
->     i2c-20
->     $ sudo modprobe i2c-dev
->     $ sudo i2cdetect 20
->     WARNING! This program can confuse your I2C bus, cause data loss and worse!
->     I will probe file /dev/i2c-20.
->     I will probe address range 0x08-0x77.
->     Continue? [Y/n] Y
->          0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
->     00:                         08 -- -- -- -- -- -- --
->     10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
->     20: -- -- -- -- -- -- -- -- -- UU -- 2b -- -- -- --
->     30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
->     40: -- -- -- -- 44 -- -- -- -- -- -- -- -- -- -- --
->     50: UU -- 52 -- -- -- -- -- -- -- -- -- -- -- -- --
->     60: -- 61 -- -- -- -- -- -- -- -- -- -- -- -- -- --
->     70: -- -- -- -- -- -- -- --
->     $ cat /proc/cmdline
->     BOOT_IMAGE=/vmlinuz-linux-cachyos-bore root=UUID=<redacted> rw loglevel=3 quiet dell_lis3lv02d.probe_i2c_addr=1
->     $ sudo dmesg
->     [    0.000000] Linux version 6.16.6-2-cachyos-bore (linux-cachyos-bore@cachyos) (gcc (GCC) 15.2.1 20250813, GNU ld (GNU Binutils) 2.45.0) #1 SMP PREEMPT_DYNAMIC Thu, 11 Sep 2025 16:01:12 +0000
->     [â€¦]
->     [    0.000000] DMI: Dell Inc. Latitude E6530/07Y85M, BIOS A22 11/30/2018
->     [â€¦]
->     [    5.166442] i2c i2c-20: Probing for lis3lv02d on address 0x29
->     [    5.167854] i2c i2c-20: Detected lis3lv02d on address 0x29, please report this upstream to platform-driver-x86@vger.kernel.org so that a quirk can be added
-> 
-> Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+> On September 20, 2025 12:45:27 PM GMT-03:00, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >On Sat, Sep 20, 2025 at 01:46:33AM +0000, Eric Gonçalves wrote:
+> >> Add GPIO keys support to Samsung Galaxy S22 (r0q).
+> >> 
+> >> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+> >> ---
+> >>  .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 53 +++++++++++++++----
+> >>  1 file changed, 44 insertions(+), 9 deletions(-)
+> >> 
+> >> diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> >> index 880d74ae6032..70e953824996 100644
+> >> --- a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> >> +++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> >> @@ -2,11 +2,12 @@
+> >>  
+> >>  /dts-v1/;
+> >>  
+> >> +#include <dt-bindings/input/linux-event-codes.h>
+> >>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> >> -
+> >>  #include "sm8450.dtsi"
+> >>  #include "pm8350.dtsi"
+> >>  #include "pm8350c.dtsi"
+> >> +#include "pmk8350.dtsi"
+> >>  
+> >>  / {
+> >>  	model = "Samsung Galaxy S22 5G";
+> >> @@ -28,13 +29,19 @@ framebuffer: framebuffer@b8000000 {
+> >>  		};
+> >>  	};
+> >>  
+> >> -	vph_pwr: regulator-vph-pwr {
+> >> -		compatible = "regulator-fixed";
+> >> -		regulator-name = "vph_pwr";
+> >> -		regulator-min-microvolt = <3700000>;
+> >> -		regulator-max-microvolt = <3700000>;
+> >> -		regulator-always-on;
+> >> -		regulator-boot-on;
+> >
+> >Please don't mix up refactorings and new features. Split this patch into
+> >several.
+> The patch only added gpio-keys node and pon_resin,
+> pon_pwrkey. Do you mean I have to split each button
+> into separate patches?
 
-Thanks, patch looks good to me:
+No. The patch also moves regulator-vph-pwr and changes the comment in
+the TLMM node.
 
-Reviewed-by: Hans de Goede <hansg@kernel.org>
+> >
+> >> +	gpio-keys {
+> >> +		compatible = "gpio-keys";
+> >> +		autorepeat;
+> >> +
+> >> +		pinctrl-0 = <&vol_up_n>;
+> >> +		pinctrl-names = "default";
+> >> +
+> >> +		key-vol-up {
+> >> +			label = "Volume Up";
+> >> +			linux,code = <KEY_VOLUMEUP>;
+> >> +			gpios = <&pm8350_gpios 6 GPIO_ACTIVE_LOW>;
+> >> +			debounce-interval = <15>;
+> >> +		};
+> >>  	};
+> >>  
+> >>  	reserved-memory {
+> >> @@ -47,6 +54,15 @@ splash-region@b8000000 {
+> >>  			no-map;
+> >>  		};
+> >>  	};
+> >> +
+> >> +	vph_pwr: regulator-vph-pwr {
+> >> +		compatible = "regulator-fixed";
+> >> +		regulator-name = "vph_pwr";
+> >> +		regulator-min-microvolt = <3700000>;
+> >> +		regulator-max-microvolt = <3700000>;
+> >> +		regulator-always-on;
+> >> +		regulator-boot-on;
+> >> +	};
+> >>  };
+> >>  
+> >>  &apps_rsc {
+> >> @@ -119,8 +135,27 @@ vreg_l1c_1p8: ldo1 {
+> >>  	};
+> >>  };
+> >>  
+> >> +&pm8350_gpios {
+> >> +	vol_up_n: vol-up-n-state {
+> >> +		pins = "gpio6";
+> >> +		function = "normal";
+> >> +		power-source = <1>;
+> >> +		input-enable;
+> >> +	};
+> >> +};
+> >> +
+> >> +&pon_pwrkey {
+> >> +	status = "okay";
+> >> +};
+> >> +
+> >> +&pon_resin {
+> >> +	linux,code = <KEY_VOLUMEDOWN>;
+> >> +
+> >> +	status = "okay";
+> >> +};
+> >> +
+> >>  &tlmm {
+> >> -	gpio-reserved-ranges = <36 4>; /* SPI (not linked to anything) */
+> >> +	gpio-reserved-ranges = <36 4>; /* SPI (Unused) */
+> >>  };
+> >>  
+> >>  &usb_1 {
+> >> -- 
+> >> 2.51.0
+> >> 
+> >
+> Resend because I forgot to CC the mailing lists
 
-Regards,
-
-Hans
-
-
-> ---
-> Add 0x29 as the accelerometer address for the Dell Latitude E6530 to
-> lis3lv02d_devices[].
-> ---
->  drivers/platform/x86/dell/dell-lis3lv02d.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/platform/x86/dell/dell-lis3lv02d.c b/drivers/platform/x86/dell/dell-lis3lv02d.c
-> index 732de5f556f83b4f91fbf174986331c02c2a5c79..77905a9ddde9dd5d44a3193d053fb3d4e319ceb8 100644
-> --- a/drivers/platform/x86/dell/dell-lis3lv02d.c
-> +++ b/drivers/platform/x86/dell/dell-lis3lv02d.c
-> @@ -48,6 +48,7 @@ static const struct dmi_system_id lis3lv02d_devices[] __initconst = {
->  	DELL_LIS3LV02D_DMI_ENTRY("Latitude 5500",      0x29),
->  	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6330",     0x29),
->  	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6430",     0x29),
-> +	DELL_LIS3LV02D_DMI_ENTRY("Latitude E6530",     0x29),
->  	DELL_LIS3LV02D_DMI_ENTRY("Precision 3540",     0x29),
->  	DELL_LIS3LV02D_DMI_ENTRY("Precision 3551",     0x29),
->  	DELL_LIS3LV02D_DMI_ENTRY("Precision M6800",    0x29),
-> 
-> ---
-> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> change-id: 20250917-dell-lis3lv02d-latitude-e6530-7c389cca4893
-> 
-> Best regards,
-
+-- 
+With best wishes
+Dmitry
 
