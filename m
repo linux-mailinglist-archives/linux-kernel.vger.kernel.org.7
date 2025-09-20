@@ -1,130 +1,96 @@
-Return-Path: <linux-kernel+bounces-825543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABBB3B8C161
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E4CEB8C167
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51BA2A04528
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:24:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9D4AA8072A
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF1325784A;
-	Sat, 20 Sep 2025 07:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF5F24167F;
+	Sat, 20 Sep 2025 07:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBNgipvy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdMSWocC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAC6A48;
-	Sat, 20 Sep 2025 07:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6DE34BA52;
+	Sat, 20 Sep 2025 07:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758353086; cv=none; b=QmIHcBXBTXO0aGKcOkZsEON63QUqZJTiR7KncKwG67gEqFkP2FPAglZ3NRU62wQLC/iBus/jdIJPiOmdct1lZ/Vqgq9pT6NAH5pb2pTO43KgaRROWmm5o7ybRrJ1wPqaBRgsjfoRtXS/DfD46IlpXgQYEpjE1sMx1Do1TfIBTGY=
+	t=1758353678; cv=none; b=I0BEx0FXHwm43GfNyOCU1OjDg+rS42ScySc4COn+Xengg2sc0nTFg4/KFh6RS671w9CGXiP3QAE3NTmWYYL821YGxdHhgv2ccEvGZWrUuJbGcsPgWsXl+quTkzSNaiB82M6HrTgWeN3oJ9xquk+YEz+Y8lQpNzR26WrSEAgLY2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758353086; c=relaxed/simple;
-	bh=QLLnsyzVvNtkfbU6A/JU/lOC9TqyU4vZ881IaMHqu/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDhlmpPgLCpXAksmAonG34sE+52ZnYXWButiPrGzTVg5lWPBygKLsCudXcu/kPH0eFlpxxLKwNB0WjSubu2HT6k0GyAti9/yCVDcUBBhl2VYwPkt2UL74U+Rd8QDlYpr5bgQ8ey3Yde83x8p+zZr+RTkbauIkTj7/6CDLjpXi+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBNgipvy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D31C4CEEB;
-	Sat, 20 Sep 2025 07:24:44 +0000 (UTC)
+	s=arc-20240116; t=1758353678; c=relaxed/simple;
+	bh=JtIlPe6rz/IHPgJuGnOZzbz0njTxpzBV+gVWBopV4BE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5EwfAUaAxU4TVqDW+DpavRf8i8J/iCtDMte23jEOyYFHbtYDg09zh51gMwD9u8EL/1nNKT0j+fLMU8Ujw+s9dyuX3Hu6ePOGhu56hssRjCrLX6fAgUW43qvclRGMCYinusVu4IESHPWv9AT+e/2gYwyNwZDCb0g1irrWseOXF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdMSWocC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9DFC4CEEB;
+	Sat, 20 Sep 2025 07:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758353085;
-	bh=QLLnsyzVvNtkfbU6A/JU/lOC9TqyU4vZ881IaMHqu/g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vBNgipvysCybuweuBCiCGsH8jpfzZIKtnx6DFMH7tZkzo8sjgeSBpV8L3KWmY2MBR
-	 NPHjBCmIx6/xI4xSZbhILtq8TCadtK14TK8qxEp7ArK83TTqSnfwmPIr+DoDL06GO3
-	 +Hf4aqErD9WoXm+dcap9R9eVsXgk3NL9ZiDraBcO7uDVuy29px4XUy1dLtBEaxWQ2A
-	 3TJCxZlgDFs7YD4RgMpVlyK7QE7WrE9qtkhWB5UqQmgo2kd34Tdwz7lhQgRHnwsenk
-	 jtAGT+4lU4nwhKC05wErIdiFQIgLNOSGBbdCvh3Tt3tAgFlIA5wPqLVaRXo6l0m0fU
-	 q7wFg7rmog69g==
-Message-ID: <f9854748-78c1-4852-a610-e839e9c91df3@kernel.org>
-Date: Sat, 20 Sep 2025 16:24:42 +0900
+	s=k20201202; t=1758353678;
+	bh=JtIlPe6rz/IHPgJuGnOZzbz0njTxpzBV+gVWBopV4BE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qdMSWocCNpc+vEIBPvcu7BtVdSgtQX370EVlr9nt99csMhrwP4WWnXf8844GgLduA
+	 Dqfm5gfq5sZW1qqHDAOhoVIsHeaD4at3pL7+l5vcr9uUC/upchpKGDDWPd832zy9au
+	 /my/FJqOOKQGkgL4CNPLoQ+wclr9SMqeQtDxNTQBPQrc1RuatWlPsOLPBc/b+TWPi3
+	 f2Xmzc6WF9uJ3h6T5zwUcC1PFeqqy0bYf6uNMpAWWH6il3GFpWYiptkBoodftgHW5t
+	 i9Dsgbo99YixfGdiYcjqd4pGbFs6G1CRu3z3zANap9Cozjjx+h7QD3u39U5p+SqRof
+	 OXvXP4+Jl/OVg==
+Date: Sat, 20 Sep 2025 13:04:29 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: frank.li@nxp.com, jingoohan1@gmail.com, l.stach@pengutronix.de, 
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, bhelgaas@google.com, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] PCI: imx6: Add a method to handle CLKREQ# override
+Message-ID: <wbfsxrvwb4ky3irnwm5vohmwyek3c4uskxg3dnfzrfadyx4aay@5udf6eht3cdj>
+References: <20250917093751.1520050-1-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/20] can: netlink: refactor
- CAN_CTRLMODE_TDC_{AUTO,MANUAL} flag reset logic
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: =?UTF-8?Q?St=C3=A9phane_Grosjean?= <stephane.grosjean@hms-networks.com>,
- Robert Nawrath <mbro1689@gmail.com>, Minh Le <minh.le.aj@renesas.com>,
- Duy Nguyen <duy.nguyen.rh@renesas.com>, linux-can@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250910-canxl-netlink-prep-v2-0-f128d4083721@kernel.org>
- <20250910-canxl-netlink-prep-v2-7-f128d4083721@kernel.org>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol@kernel.org>
-Autocrypt: addr=mailhol@kernel.org; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
- fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
- F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
- 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
- YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
- dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
- zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250910-canxl-netlink-prep-v2-7-f128d4083721@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250917093751.1520050-1-hongxing.zhu@nxp.com>
 
-On 10/09/2025 at 15:03, Vincent Mailhol wrote:
-> CAN_CTRLMODE_TDC_AUTO and CAN_CTRLMODE_TDC_MANUAL are mutually
-> exclusive. This means that whenever the user switches from auto to
-> manual mode (or vice versa), the other flag which was set previously
-> needs to be cleared.
+On Wed, Sep 17, 2025 at 05:37:49PM +0800, Richard Zhu wrote:
+> The CLKREQ# is an open drain, active low signal that is driven low by
+> the card to request reference clock.
 > 
-> Currently, this is handled with a masking operation. It can be done in
-> a simpler manner by clearing any of the previous TDC flags before
-> copying netlink attributes. The code becomes easier to understand and
-> will make it easier to add the new upcoming CAN XL flags which will
-> have a similar reset logic as the current TDC flags.
+> But the CLKREQ# maybe reserved on some old device, compliant with CEM
+> r3.0 or before. Thus, this signal wouldn't be driven low by these old
+> devices.
 > 
-> Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
-> ---
->  drivers/net/can/dev/netlink.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+> Since the reference clock controlled by CLKREQ# may be required by i.MX
+> PCIe host too. To make sure this clock is ready even when the CLKREQ#
+> isn't driven low by the card(e.x old cards described above), force
+> CLKREQ# override active low for i.MX PCIe host during initialization.
 > 
-> diff --git a/drivers/net/can/dev/netlink.c b/drivers/net/can/dev/netlink.c
-> index 274eaab10796b601d565c32f6315727a578970bb..72a82d4e9d6494771320ea035ed6f6098c0e8ce6 100644
-> --- a/drivers/net/can/dev/netlink.c
-> +++ b/drivers/net/can/dev/netlink.c
-> @@ -254,6 +254,10 @@ static int can_changelink(struct net_device *dev, struct nlattr *tb[],
->  		if ((maskedflags & ctrlstatic) != ctrlstatic)
->  			return -EOPNOTSUPP;
->  
-> +		/* If a top dependency flag is provided, reset all its dependencies */
-> +		if (cm->mask & CAN_CTRLMODE_FD)
-> +			priv->ctrlmode &= !CAN_CTRLMODE_FD_TDC_MASK;
-                                          ^
+> The CLKREQ# override can be cleared safely when supports-clkreq is
+> present and PCIe link is up later. Because the CLKREQ# would be driven
+> low by the card in this case.
+> 
+> Main changes in v2:
+> - Update the commit message, and collect the reviewed-by tag.
+> 
+> [PATCH v2 1/2] PCI: dwc: Invoke post_init in dw_pcie_resume_noirq()
+> [PATCH v2 2/2] PCI: imx6: Add a method to handle CLKREQ# override
+> 
 
-This is a bug. The correct operation to unset the flag is:
+Patch 2 is not applying on top of 6.17-rc1. Please fix it and resend the series
+(along with the CEM 4.0 citation suggested by Bjorn).
 
-		priv->ctrlmode &= ~CAN_CTRLMODE_FD_TDC_MASK;
+- Mani
 
-(replace the ! operator by ~).
-
-@Marc, do you think you can send your next PR to net soonish?
-
-I would like to rebase this series and the "rework the CAN MTU logic" series on
-top of the MTU fix:
-
-https://lore.kernel.org/linux-can/20250918-can-fix-mtu-v1-0-0d1cada9393b@kernel.org/
-
-But to do so, I first need to wait for the MTU fix to appear on net-next and
-there is not so much time left before the end of the development windows.
-
-If the schedule is too short, let me know and I will adjust accordingly by
-dropping whatever patches are in conflict.
-
-
-Yours sincerely,
-Vincent Mailhol
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
