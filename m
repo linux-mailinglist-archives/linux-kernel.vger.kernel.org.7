@@ -1,255 +1,137 @@
-Return-Path: <linux-kernel+bounces-825550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C402B8C19D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:45:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8FAB8C362
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 09:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6E93AF3E2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2B21889996
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 07:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E34F279DAE;
-	Sat, 20 Sep 2025 07:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A00279917;
+	Sat, 20 Sep 2025 07:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4Crv/zo"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEvQZ4/Z"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF944261B9F
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C5A26C3B6
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 07:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758354327; cv=none; b=RX/UtX6QEKskTDbBhZreNrjFLuxJO8U2qSbqTPHOujrZqP8HSh7AIuNWDCFIUC6FFf39sTjXwaOp6TW4CLtTZIfOmXEKcYO/Nx2j5pvLG9Po0v4chqCzn7S+5geAEncBUKwqAvHa1bSHkz8URWPbNFxbAlCxIWFhGc9/ulU1/7Q=
+	t=1758354592; cv=none; b=I1HqAAdtUOvLgsTH2s6pnB6EUupC1UvpkZsYF8fsuaYChqrU2u1P2v1j6fEv1n8vU+pJfLpZlKlt2TXG/SsiWDpRlGwL7Z2y7fTxo/SrITirLlXcsRKKQYUXyWg/MeN6zigNHTQdC7vjgO5/Trve2kTyWQgnOAy3xEW76nzrXZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758354327; c=relaxed/simple;
-	bh=Lv9wHEJ/fxWrhstESXT8f2LQA4CfTBm7lTCR263JdrY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIB5ppX7B4yrcG0Fc7lby4Xi1qVhOMDGc8mwbds5boOd6KkD9bA/ICOWdqqtHCGc/mw9abq/6M6ASvJqnwqA9q3UG4Ud5rJOQSQi/AZUkfcElH9jXECAFmYDW1mza1npxA7L8t621WzgvfkJl6/RcRH7lVjHRFEUBsaexWW0gns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4Crv/zo; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1758354592; c=relaxed/simple;
+	bh=Av7lrNl4YgFBqMyVpgO2SYk1KzNjNc1S5U5FzQ/6NHE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QKnjn4hhWMN0TJIXw1TLlq5503mGoCHNLtiAZiMY6c33/fOaNgnFim5SlgrddpvZrt7j97M9hVal8XPrOTJfZ21xS8THgHWvcq/7Zgu90F3bDutqBBuoFO4WsPT1xJqvE64v4VS3rNuuYYGosPhQwwYKHQnkXxL9afBewr9tktI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEvQZ4/Z; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b0428b537e5so377084766b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:45:25 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-afcb7a16441so416709366b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758354324; x=1758959124; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIdlMRLTml2jFvq4pcXTja/ONkufrm1A8R2kOgYdzPA=;
-        b=l4Crv/zo3tmBd7YBdfT+kMA0FN3zsm2EfXZ1RdRqVjoOlfV4u6/AW/aaiQT9RUsUNm
-         s5+oNIjU+aEhVonrVYy329dgoD5S8q6MneKbqNFociHony2PVn4NqkV3qJL/oIPfUisr
-         eJC1PmYmkhrZd5UpHMSuHb6+BI9ygGXme+Ny4NE8hYLOGJglY49VHR5FooY6EIdp+e9K
-         R7AQByFLIlZi6nhuH5RwAmHKlAexQi8nWbGjm7xB3v7JHL/2/A4azwii0pn4oTi7Sn1a
-         VWNT4ErWr49Xpx9wO6uz+lIq+u9KA606gtHPymYGy1ZtC+gIwxx/fw1SiL3vjLTog6gf
-         gmGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758354324; x=1758959124;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758354589; x=1758959389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TIdlMRLTml2jFvq4pcXTja/ONkufrm1A8R2kOgYdzPA=;
-        b=CD6BGIqB0CQoczXx3159iqb8OWFRi8GdOwea/VaFXuISO2CvT51pHvq2a8j9rq1L2D
-         N+UbvRZo+50tFTi33Bn3lL4Ha7x7V6ZQHDPmz5THyJNmlCNJ7fKSYZCFMjMn8kd2LCaw
-         h6DqrKYIpLEcomja7tIfu/w4izG9J1e8K38xshBZWJRWz02KcBfCcmh4cu400GFz8XjD
-         UuZa5hioxzELjCcYXT5NqLuYWAHi2g9ru65RZvLXfcKl35WM93pHQdyKOWpTD6gwAPjD
-         79Ly8Jsk1vsy4b+/aJ95HoVOyXziMMHqmjnAQnGtmXQcka8tSEQvLPUuEXDf9bM0bSIJ
-         ZjTA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8wocXV0zWcRgPIk+IvRarsUrEoi4880CDhtRxqDYctFx753nl9LgS1M9uEeOjJ128h05jZzrmX0h0pAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKj8i2cBc4UqMmUL5HPNrOGlVRn+1RpMVJiIuOm/G8dSlHRMlu
-	zidn5k1pNktCxzcBNx9ct8yeLAgAE/cWpH7AOJ3cyVpQx9NxjLIEPsA+
-X-Gm-Gg: ASbGncsHbt10mPGby/w1ySiay05HY44oBDJ8L6+YiDDRQreGBkLnG2F6b/uPf3cuij+
-	jNeC7Igxn5NdNt9va2N5W1JP9z51CK5+R/cOsnfcn+7DQ7v6+MWj1ItKIOcUHuO9sU2oGQV/5bt
-	H9Iqf0j8JMgo6Qpi3ATIC9laFu+6Ammh+lU2ul1ZHM5izGnMtu7EdjmqdftKntRHnIUMzwt8mUX
-	kOI4133u0cjX7FhhSZ8E57bJbBkLlosicLmq+N9jRfx3iC00yGKSgIE9jLueLdPLADD/WTK97VT
-	xaj84uGSP9FiwTNaIZdWlMwEHbIrSiT+f+4SnsjQ+JX4lU9hiYS+4QfMujZk6GYDcvTIi6BxXRQ
-	+KyWM1jnHG0433bsmKwrVusNDVXMNZxey
-X-Google-Smtp-Source: AGHT+IG+vDlmU5rgv0NU5tvQk47IQX8wVba4nh/X26jsh02xW8qYA4gtZEIhAzLEBfWC/+5q6/qChQ==
-X-Received: by 2002:a17:907:3e84:b0:b04:ba4:8610 with SMTP id a640c23a62f3a-b24f602b9ecmr674072666b.62.1758354324005;
-        Sat, 20 Sep 2025 00:45:24 -0700 (PDT)
-Received: from krava (37-188-197-68.red.o2.cz. [37.188.197.68])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b1fc5f4386esm606840966b.15.2025.09.20.00.45.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 00:45:23 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 20 Sep 2025 09:45:15 +0200
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, kees@kernel.org,
-	samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
-	ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
- loop
-Message-ID: <aM5bizfTTTAH5Xoa@krava>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
- <175828305637.117978.4183947592750468265.stgit@devnote2>
- <20250919112746.09fa02c7@gandalf.local.home>
+        bh=Av7lrNl4YgFBqMyVpgO2SYk1KzNjNc1S5U5FzQ/6NHE=;
+        b=PEvQZ4/ZcE6+Ab5AQnCgZEQ6IdeB2gSJJGaDwO3/2G/33SSL9+vN+z+QtnuhRGxFYO
+         WLGRtjK+RO2UkAxvBrK6vCEbrHafDMnsIDB73wMzkuIxJ3VBd05tEvkQ/qzfySB+F5/d
+         DP9eKn/i+NilrYS65H90uYc1znYz9BIPSSF9ViVwG5rtHOh88hO8JN0FfK/PWqK9skbd
+         UZ6CfvkQ57rqwhyhnItHiYeOpKgsz+Mf73l0ixJH/Tc7CmHoZ8ihGXZM24IlCu4svS+p
+         ogN/QjAfR+IVQmlDsZKUMok2hEIwPpXlbtlqAXtX2xG35D+bZG0uggUpfrkm+7MjVIG0
+         jS9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758354589; x=1758959389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Av7lrNl4YgFBqMyVpgO2SYk1KzNjNc1S5U5FzQ/6NHE=;
+        b=bOtHuvHObN5DNmLlwZ9c7W3sgOdYTMVWvpvuIUZrOkRJheSw2MMJjBoGyMzEvtpr/D
+         5BxuL4vvZW/lBgGCj2k92yE4Yu/cd+unhJ4DaSivSOBpVt1sx0fCVTKqq6hAMfewU3M5
+         A9bD5MyT+mJxoWZs6PLhYuSqvnpo2QBlEoh+frhF5ayeZB6VrFNejd3C5v5uG/57WCjv
+         5Rm0Ul5sC0q0+J3MLMW4+0MJkkq2rrKg0pe+uqFDvQ6vVkzBZ4axbcF4Zzo3XMMSZXbo
+         F4or1zFcrxAGnzOW8pLOdSmxFLHsiBsMIrc+JehudK33k7cHOjSyqo994ikGJU/KnkKG
+         MQlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0DE0Y+m7rLB0rK5Ubr+8Me1zpqf5zvNJQm6BHU7XgflHh2p+qkofTRGHWE2imY+KuU9cGOtXn1IQxVPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiBwF7jlPf3yJLcNwYuvnjG5/hcl24X+AUDsE6N3qk484/OYsf
+	7Ip/7LVHKcn3o8evZkjb/1LOA5nveRmOHPqXGgL5zfPfVToaJ7mIEDTOVL2BOSgUr6GnF6HsGpo
+	CTUhByetgDP6RLxCmX5vr/a8m1KZLOlA=
+X-Gm-Gg: ASbGncsgtLy0O2aYHjHNpdO1D4AXpt5aEIx5IKt8wLmijfMI8WqVYlDF+kTcmjfQGpY
+	fhSopNcwBSJg2kZ5GEDNoJ09R/Mk9ap0/5aEImDIErhnvfwuwPzmgFjoVHAQMprcBmDCIpADFHO
+	yd7pgwBtqY+KY5lxARoh81T48mNjGbJxGz2Wkhijfb5XsOFonu3MuB1T1JN2rntePdiC4UePWE7
+	kV42zU=
+X-Google-Smtp-Source: AGHT+IHpyjk16PmMGjgpmJ32eHdu+viAzqxrIIM8/PHA08Nc0k6yqdFGL83GkBb2++1I+Uzinp3kHqIP4ACJxvIffzU=
+X-Received: by 2002:a17:906:9f8c:b0:b0c:1701:bf77 with SMTP id
+ a640c23a62f3a-b24eedb990bmr668692766b.18.1758354588717; Sat, 20 Sep 2025
+ 00:49:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919112746.09fa02c7@gandalf.local.home>
+References: <20250917073010.88607-1-zhaoshuo@cqsoftware.com.cn> <f27e3d04-ced6-459c-993f-b5495257fa3f@linux.dev>
+In-Reply-To: <f27e3d04-ced6-459c-993f-b5495257fa3f@linux.dev>
+From: Alex Shi <seakeel@gmail.com>
+Date: Sat, 20 Sep 2025 15:49:12 +0800
+X-Gm-Features: AS18NWBB-4cecjuKls_frs--SGWiPru1Rvwx9dDopEec980Nt4tli3aTJo0pdqo
+Message-ID: <CAJy-AmnJyGvoOJ3JX=wnon-uo7_ViX3bWiF8m-qMuPQfZJNdvg@mail.gmail.com>
+Subject: Re: [PATCH] docs/zh_CN: Add security lsm-development Chinese translation
+To: Yanteng Si <si.yanteng@linux.dev>
+Cc: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>, alexs@kernel.org, corbet@lwn.net, 
+	dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-On Fri, Sep 19, 2025 at 11:27:46AM -0400, Steven Rostedt wrote:
-> On Fri, 19 Sep 2025 20:57:36 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > function_graph_enter_regs() prevents itself from recursion by
-> > ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
-> > which is called at the exit, does not prevent such recursion.
-> > Therefore, while it can prevent recursive calls from
-> > fgraph_ops::entryfunc(), it is not able to prevent recursive calls
-> > to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
-> > This can lead an unexpected recursion bug reported by Menglong.
-> > 
-> >  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
-> >   -> kprobe_multi_link_exit_handler -> is_endbr.  
-> 
-> So basically its if the handler for the return part calls something that it
-> is tracing, it can trigger the recursion?
-> 
-> > 
-> > To fix this issue, acquire ftrace_test_recursion_trylock() in the
-> > __ftrace_return_to_handler() after unwind the shadow stack to mark
-> > this section must prevent recursive call of fgraph inside user-defined
-> > fgraph_ops::retfunc().
-> > 
-> > This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
-> > fprobe on function-graph tracer"), because before that fgraph was
-> > only used from the function graph tracer. Fprobe allowed user to run
-> > any callbacks from fgraph after that commit.
-> 
-> I would actually say it's because before this commit, the return handler
-> callers never called anything that the entry handlers didn't already call.
-> If there was recursion, the entry handler would catch it (and the entry
-> tells fgraph if the exit handler should be called).
-> 
-> The difference here is with fprobes, you can have the exit handler calling
-> functions that the entry handler does not, which exposes more cases where
-> recursion could happen.
-
-so IIUC we have return kprobe multi probe on is_endbr and now we do:
-	
-	is_endbr()
-	{ -> function_graph_enter_regs installs return probe
-	  ...
-	} -> __ftrace_return_to_handler
-	       fprobe_return
-	         kprobe_multi_link_exit_handler
-	           is_endbr
-		   { -> function_graph_enter_regs installs return probe
-		     ...
-		   } -> __ftrace_return_to_handler
-		          fprobe_return
-		            kprobe_multi_link_exit_handler
-			      is_endbr
-			      { -> function_graph_enter_regs installs return probe
-			        ...
-			      } -> __ftrace_return_to_handler
-			           ... recursion
-
-
-with the fix:
-
-	is_endbr()
-	{ -> function_graph_enter_regs installs return probe
-	  ...
-	} -> __ftrace_return_to_handler
-	       fprobe_return
-	         kprobe_multi_link_exit_handler
-	           ...
-	           is_endbr
-		   { ->  function_graph_enter_regs
-		           ftrace_test_recursion_trylock fails and we do NOT install return probe
-                     ...
-		   }
-
-
-there's is_endbr call also in kprobe_multi_link_handler, but it won't
-trigger recursion, because function_graph_enter_regs already uses
-ftrace_test_recursion_trylock 
-
-
-if above is correct then the fix looks good to me
-
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
-
-
-> 
-> > 
-> > Reported-by: Menglong Dong <menglong8.dong@gmail.com>
-> > Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
-> > Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > ---
-> >  kernel/trace/fgraph.c |   12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> > index 1e3b32b1e82c..08dde420635b 100644
-> > --- a/kernel/trace/fgraph.c
-> > +++ b/kernel/trace/fgraph.c
-> > @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
-> >  	unsigned long bitmap;
-> >  	unsigned long ret;
-> >  	int offset;
-> > +	int bit;
-> >  	int i;
-> >  
-> >  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
-> > @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
-> >  	if (fregs)
-> >  		ftrace_regs_set_instruction_pointer(fregs, ret);
-> >  
-> > +	bit = ftrace_test_recursion_trylock(trace.func, ret);
-> > +	/*
-> > +	 * This must be succeeded because the entry handler returns before
-> > +	 * modifying the return address if it is nested. Anyway, we need to
-> > +	 * avoid calling user callbacks if it is nested.
-> > +	 */
-> > +	if (WARN_ON_ONCE(bit < 0))
-> 
-> I'm not so sure we need the warn on here. We should probably hook it to the
-> recursion detection infrastructure that the function tracer has.
-> 
-> The reason I would say not to have the warn on, is because we don't have a
-> warn on for recursion happening at the entry handler. Because this now is
-> exposed by fprobe allowing different routines to be called at exit than
-> what is used in entry, it can easily be triggered.
-> 
-> -- Steve
-> 
-> 
-> 
-> > +		goto out;
-> > +
-> >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
-> >  	trace.retval = ftrace_regs_get_return_value(fregs);
-> >  #endif
-> > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
-> >  		}
-> >  	}
-> >  
-> > +	ftrace_test_recursion_unlock(bit);
-> > +out:
-> >  	/*
-> >  	 * The ftrace_graph_return() may still access the current
-> >  	 * ret_stack structure, we need to make sure the update of
-> 
+QXBwbGllZCwgVGhhbmtzDQoNCllhbnRlbmcgU2kgPHNpLnlhbnRlbmdAbGludXguZGV2PiDkuo4y
+MDI15bm0OeaciDE35pel5ZGo5LiJIDE2OjM05YaZ6YGT77yaDQo+DQo+DQo+IOWcqCA5LzE3LzI1
+IDM6MzAgUE0sIFNodW8gWmhhbyDlhpnpgZM6DQo+ID4gVHJhbnNsYXRlIC4uLi9zZWN1cml0eS9s
+c20tZGV2ZWxvcG1lbnQucnN0IGludG8gQ2hpbmVzZS4NCj4gPg0KPiA+IFVwZGF0ZSB0aGUgdHJh
+bnNsYXRpb24gdGhyb3VnaCBjb21taXQgNmQyZWQ2NTMxODViDQo+ID4gKCJsc206IG1vdmUgaG9v
+ayBjb21tZW50cyBkb2NzIHRvIHNlY3VyaXR5L3NlY3VyaXR5LmMiKS4NCj4gPg0KPiA+IFNpZ25l
+ZC1vZmYtYnk6IFNodW8gWmhhbyA8emhhb3NodW9AY3Fzb2Z0d2FyZS5jb20uY24+DQo+DQo+IFJl
+dmlld2VkLWJ5OiBZYW50ZW5nIFNpIDxzaXlhbnRlbmdAY3Fzb2Z0d2FyZS5jb20uY24+DQo+DQo+
+DQo+IFRoYW5rcywNCj4NCj4gWWFudGVuZw0KPg0KPiA+IC0tLQ0KPiA+ICAgLi4uL3RyYW5zbGF0
+aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QgICAgIHwgIDIgKy0NCj4gPiAgIC4uLi96aF9D
+Ti9zZWN1cml0eS9sc20tZGV2ZWxvcG1lbnQucnN0ICAgICAgICB8IDE5ICsrKysrKysrKysrKysr
+KysrKysNCj4gPiAgIDIgZmlsZXMgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
+bigtKQ0KPiA+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vdHJhbnNsYXRpb25z
+L3poX0NOL3NlY3VyaXR5L2xzbS1kZXZlbG9wbWVudC5yc3QNCj4gPg0KPiA+IGRpZmYgLS1naXQg
+YS9Eb2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QgYi9E
+b2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QNCj4gPiBp
+bmRleCA3OGQ5ZDRiMzZkY2EuLjA1ZDI0ZTNhY2MxMSAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVu
+dGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QNCj4gPiArKysgYi9E
+b2N1bWVudGF0aW9uL3RyYW5zbGF0aW9ucy96aF9DTi9zZWN1cml0eS9pbmRleC5yc3QNCj4gPiBA
+QCAtMTgsNiArMTgsNyBAQA0KPiA+ICAgICAgY3JlZGVudGlhbHMNCj4gPiAgICAgIHNucC10ZHgt
+dGhyZWF0LW1vZGVsDQo+ID4gICAgICBsc20NCj4gPiArICAgbHNtLWRldmVsb3BtZW50DQo+ID4g
+ICAgICBzYWsNCj4gPiAgICAgIHNlbGYtcHJvdGVjdGlvbg0KPiA+ICAgICAgc2lwaGFzaA0KPiA+
+IEBAIC0yOCw3ICsyOSw2IEBADQo+ID4gICBUT0RPTElTVDoNCj4gPiAgICogSU1BLXRlbXBsYXRl
+cw0KPiA+ICAgKiBrZXlzL2luZGV4DQo+ID4gLSogbHNtLWRldmVsb3BtZW50DQo+ID4gICAqIFND
+VFANCj4gPiAgICogc2VjcmV0cy9pbmRleA0KPiA+ICAgKiBpcGUNCj4gPiBkaWZmIC0tZ2l0IGEv
+RG9jdW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vc2VjdXJpdHkvbHNtLWRldmVsb3BtZW50
+LnJzdCBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3NlY3VyaXR5L2xzbS1kZXZl
+bG9wbWVudC5yc3QNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAw
+MDAwMC4uN2VkMzcxOWE5ZDA3DQo+ID4gLS0tIC9kZXYvbnVsbA0KPiA+ICsrKyBiL0RvY3VtZW50
+YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3NlY3VyaXR5L2xzbS1kZXZlbG9wbWVudC5yc3QNCj4g
+PiBAQCAtMCwwICsxLDE5IEBADQo+ID4gKy4uIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwt
+Mi4wDQo+ID4gKy4uIGluY2x1ZGU6OiAuLi9kaXNjbGFpbWVyLXpoX0NOLnJzdA0KPiA+ICsNCj4g
+PiArOk9yaWdpbmFsOiBEb2N1bWVudGF0aW9uL3NlY3VyaXR5L2xzbS1kZXZlbG9wbWVudC5yc3QN
+Cj4gPiArDQo+ID4gKzrnv7vor5E6DQo+ID4gKyDotbXnoZUgU2h1byBaaGFvIDx6aGFvc2h1b0Bj
+cXNvZnR3YXJlLmNvbS5jbj4NCj4gPiArDQo+ID4gKz09PT09PT09PT09PT09PT09DQo+ID4gK0xp
+bnV45a6J5YWo5qih5Z2X5byA5Y+RDQo+ID4gKz09PT09PT09PT09PT09PT09DQo+ID4gKw0KPiA+
+ICvln7rkuo5odHRwczovL2xvcmUua2VybmVsLm9yZy9yLzIwMDcxMDI2MDczNzIxLjYxOGI0Nzc4
+QGxhcHRvcGQ1MDUuZmVucnVzLm9yZ++8jA0KPiA+ICvlvZPkuIDnp43mlrDnmoRMU03nmoTmhI/l
+m77vvIjlroPor5Xlm77pmLLojIPku4DkuYjvvIzku6Xlj4rlnKjlk6rkupvmg4XlhrXkuIvkurrk
+u6zkvJrmnJ/mnJvkvb/nlKjlroPvvInlnKgNCj4gPiArYGBEb2N1bWVudGF0aW9uL2FkbWluLWd1
+aWRlL0xTTS9gYCDkuK3pgILlvZPorrDlvZXkuIvmnaXlkI7vvIzlsLHkvJrooqvmjqXlj5fov5vl
+haXlhoXmoLjjgIINCj4gPiAr6L+Z5L2/5b6XTFNN55qE5Luj56CB5Y+v5Lul5b6I6L275p2+55qE
+5LiO5YW255uu5qCH6L+b6KGM5a+55q+U77yM5LuO6ICM6K6p5pyA57uI55So5oi35ZKM5Y+R6KGM
+54mI5Y+v5Lul5pu0DQo+ID4gK+aYjuaZuuWcsOWGs+WumumCo+S6m0xTTemAguWQiOS7luS7rOea
+hOmcgOaxguOAgg0KPiA+ICsNCj4gPiAr5pyJ5YWz5Y+v55So55qEIExTTSDpkqnlrZDmjqXlj6Pn
+moTor6bnu4bmlofmoaPvvIzor7flj4LpmIUgYGBzZWN1cml0eS9zZWN1cml0eS5jYGAg5Y+K55u4
+5YWz57uT5p6E44CCDQo=
 
