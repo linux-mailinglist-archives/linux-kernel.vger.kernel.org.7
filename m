@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-825692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5744B8C88C
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:53:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C220B8C886
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 14:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79881461A0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:53:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 708607B1484
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 12:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A523C1FDA89;
-	Sat, 20 Sep 2025 12:53:36 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980361F9F7A;
+	Sat, 20 Sep 2025 12:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oE38RpO/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71A5241664;
-	Sat, 20 Sep 2025 12:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA3C1DED77;
+	Sat, 20 Sep 2025 12:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758372816; cv=none; b=ocp3vISJrFNjIOkf+/xmrbQS/1YeLCFOcp/RCGyC+TbpU4sFqTwazmUhx6mo+VrcoRfrEQ88Hhc7T6GBB6G/W3bFbnyYeZUyTHGLxIKK+Dq5rWlid3sLRtuTJq0wf5L7IeRcvY3aiWYYqS2hXe0lMnmBZkH/49KRIrb+0Q5B7C8=
+	t=1758372808; cv=none; b=k0qAKIfvJSZUJ+ppXxP+H432R3hpkWp42vaWELw0a7b0Jn6bsqeNWnfySLxSizTF8u32BdsovcoVA5NcrKkIQzIO4VCpTl2AQNfNJFjYsJ4xr+EjUHFLfuCpxy0EJcjMzBMXQ3e6vXFnRrnNjbaazfOQQgtVzCSW/8w52CPLej4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758372816; c=relaxed/simple;
-	bh=F3Y0jp+sMwL2t11HK+ju1qlPSDUMGQ0dShUlHwo49OM=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=HhUCcXvJI6x7c7UXIEDr9pFSw0QfpW2I81XHSgJ0ksKFTsuODHbkzSv69w6BuBPKZv/VevtmUfKE9ERXhipwAySNXli2C27EJzlx3DgLFB/LktlMZ99sc7Edk1sINBar+eK6JWkCEBlXgiPolpL/XJXr9kysRl1vWuWT8DsjJqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-03 (Coremail) with SMTP id rQCowAD3RH+5o85oKYTuAw--.32282S2;
-	Sat, 20 Sep 2025 20:53:17 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: davem@davemloft.net,
-	andreas@gaisler.com,
-	make24@iscas.ac.cn
-Cc: sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3] sparc: fix error handling in scan_one_device()
-Date: Sat, 20 Sep 2025 20:53:12 +0800
-Message-Id: <20250920125312.3588-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:rQCowAD3RH+5o85oKYTuAw--.32282S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WryrKw45JFyrCr15ZF1DWrg_yoW8Zryxp3
-	4kAF98JrWUuF1kCr47Xr1xZFyUCw1jy3WfWw15Cw1UKrn3WryrX3s29rZ5Kw15trZrCF40
-	gF9Iqa10ya1UWw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_Xr1l42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUn6wZDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1758372808; c=relaxed/simple;
+	bh=AjolLnj9vYvyau+Qw1nPzhy9BvsSmW3m/2cqU9XAPao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jH9JKF5acRWGiXYK6Sx6yWxw8Pj6hPxqtGbgC2vEXWCq5VmNjMcIWUnRzu2iTUxj1eYC5nlg5Zcq9QzCRCf9EIE7XwMZJG+eGoVZ63/hmvKDVrv+THg7UapVNBiTvsOLEvJcL5OIby9G0pgYT9Ta+1B2bJGP9VoNyW3phNcz6Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oE38RpO/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BFC5C4CEEB;
+	Sat, 20 Sep 2025 12:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758372806;
+	bh=AjolLnj9vYvyau+Qw1nPzhy9BvsSmW3m/2cqU9XAPao=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oE38RpO/I8pKgAHj5xiMF0FsfNYrHNNAMCuM78kngaJdDK2tz8S1en4V4gi4D366Y
+	 DWt1779SayRUOHWDZPYqpYUlYwPGpezh+EF3ZxMNCG5xGofMRC7YjqGYf1MhEQ/mF0
+	 JkqHtiPpAJZpcw7gkjHhb6zrrWCj9G0m9y7YvS+xuRpOagr0ZsCG1fhOCbO+zO/pJH
+	 0RTUYOFlqrhC9MfevL6DIn31oqbYVT6FF0wpxiDQrTfU/PyVO0O8MHrolO/fQrN4lt
+	 olCdR12EwPhWXQnmXqM3DLxKNjGYAg5oc8y5/+eD3f/QJs9O5sOlK6+rmG49gCru8v
+	 TCAtF7WMXp78g==
+Message-ID: <e6b39e68-d950-40fe-a807-37b5d9e9204e@kernel.org>
+Date: Sat, 20 Sep 2025 14:53:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/11] x86-android-tablets: convert to use GPIO
+ references
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Arnd Bergmann <arnd@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250810-x86-andoroid-tablet-v2-0-9c7a1b3c32b2@gmail.com>
+ <bc463249-a159-466d-8804-399805b8fa3f@kernel.org>
+ <ley47cmpwn5lhacf7ddfufeaqhe7rqemmkp2sjrhxitdv3l6cm@ktafyk6eeeft>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <ley47cmpwn5lhacf7ddfufeaqhe7rqemmkp2sjrhxitdv3l6cm@ktafyk6eeeft>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Once of_device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
-So fix this by calling put_device(), then the name can be freed in
-kobject_cleanup().
+Hi Dmitry,
 
-Calling path: of_device_register() -> of_device_add() -> device_add().
-As comment of device_add() says, 'if device_add() succeeds, you should
-call device_del() when you want to get rid of it. If device_add() has
-not succeeded, use only put_device() to drop the reference count'.
+On 19-Sep-25 11:21 PM, Dmitry Torokhov wrote:
+> Hi Hans,
+> 
+> On Fri, Sep 19, 2025 at 09:53:53PM +0200, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 11-Aug-25 4:22 AM, Dmitry Torokhov wrote:
+>>> This series came about because now software nodes can be used to
+>>> describe GPIOs (via PROPERTY_ENTRY_GPIO() macros) and I would like to
+>>> eventually get rid of gpio_keys_platform_data structure.
+>>>
+>>> So while I was doing the conversions from GPIO_LOOKUP() tables for
+>>> gpio_keys devices I decided to convert the rest of them as well. Maybe
+>>> some time in the future we can drop support for GPIO_LOOKUP() and rely
+>>> on device properties exclusively.
+>>>
+>>> This is completely untested.
+>>>
+>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+>>
+>> Thank you for this series. While reviewing this I've found
+>> a couple of issues. I've fixed these in my own tree and
+>> I'll send out a v3 with this fixed + some extra patches.
+>>
+>> The issues which I've found and fixed are:
+>>
+>> - lenovo_yoga_tab2_830_1050_init_codec() is missing a pinctrl_put()
+>>   in error-exit paths after the pinctrl_get_select() succeeds
+>>
+>> - Adding a swnode to the yt3 spi device changes the name of the SPI/codec
+>>   device and the sound/soc/intel/boards/bytcr_wm5102.c machine driver looks
+>>   up the code by name, update the machine driver to use the new name.
+>>
+>> - In the "convert Yoga Tab2 fast charger to GPIO references" references
+>>   the fwnode is added to the wrong device. The node should be added to
+>>   the "serial0-0" device but that gets instantiated by
+>>   drivers/platform/x86/lenovo/yoga-tab2-pro-1380-fastcharger.c
+>>   I've made yoga-tab2-pro-1380-fastcharger.c propagate the fwnode set on
+>>   the platform-device to the serdev it creates to fix this.
+>>
+>> - Fix the commit message of "platform/x86: x86-android-tablets: convert
+>>   gpio_keys devices to GPIO references" which contained a stray reference
+>>   to wm5102.
+> 
+> Thank you Hans for looking over the series and fixing up all the issues
+> that I introduced.
 
-Found by code review.
+You're welcome and thank you for the reviews on the new patches.
 
-Cc: stable@vger.kernel.org
-Fixes: cf44bbc26cf1 ("[SPARC]: Beginnings of generic of_device framework.")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v3:
-- also fixed the same problem in arch/sparc/kernel/of_device_32.c as suggestions.
-Changes in v2:
-- retained kfree() manually due to the lack of a release callback function.
----
- arch/sparc/kernel/of_device_32.c | 1 +
- arch/sparc/kernel/of_device_64.c | 1 +
- 2 files changed, 2 insertions(+)
+Regards,
 
-diff --git a/arch/sparc/kernel/of_device_32.c b/arch/sparc/kernel/of_device_32.c
-index 06012e68bdca..284a4cafa432 100644
---- a/arch/sparc/kernel/of_device_32.c
-+++ b/arch/sparc/kernel/of_device_32.c
-@@ -387,6 +387,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
- 
- 	if (of_device_register(op)) {
- 		printk("%pOF: Could not register of device.\n", dp);
-+		put_device(&op->dev);
- 		kfree(op);
- 		op = NULL;
- 	}
-diff --git a/arch/sparc/kernel/of_device_64.c b/arch/sparc/kernel/of_device_64.c
-index f98c2901f335..f53092b07b9e 100644
---- a/arch/sparc/kernel/of_device_64.c
-+++ b/arch/sparc/kernel/of_device_64.c
-@@ -677,6 +677,7 @@ static struct platform_device * __init scan_one_device(struct device_node *dp,
- 
- 	if (of_device_register(op)) {
- 		printk("%pOF: Could not register of device.\n", dp);
-+		put_device(&op->dev);
- 		kfree(op);
- 		op = NULL;
- 	}
--- 
-2.17.1
+Hans
+
 
 
