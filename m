@@ -1,150 +1,157 @@
-Return-Path: <linux-kernel+bounces-825918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CD9B8D1B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:10:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1743B8D1BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8D9178DD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:10:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A844717FAE5
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 22:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48E4285069;
-	Sat, 20 Sep 2025 22:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5643B2857E6;
+	Sat, 20 Sep 2025 22:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="J9Fmyf5x"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsKS8oV0"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BAC19309E
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 22:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAADA27B325
+	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 22:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758406222; cv=none; b=F+WpXoEriE0oqq09PH28lPDebowGuh6pEWuy0vPVZEf3ICVXpndXyKf6CO15iosSdfbXl5YZgUOfoSzTglSZUnx6LGDwz8/l9aGOSapsORL7BjR7P+UWrwzDwdejUKMIFE28fPAFOpjnYKAC0IwihS8cZ68jwyiFOc7t6TzwuIA=
+	t=1758406672; cv=none; b=Ukrf+NW+KtN+G5SsLrBNJcVnxQKMIAJWpFjDB6UztjpGZsEnW4CEkLh8qX3UHhxAp+6c9pOOou685IRA72kQulUgVIAVyhvGuKYF9guF0jaRar6g21FmtKbgPafyK1zQBzA2bM0mrRXbjLeHuwNyhHA4fv3Q6gspQsVNJUsm9hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758406222; c=relaxed/simple;
-	bh=LY3ujSSp4ssjDboMxWkSkt2y4GVfW7/lwkeP03NUrWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MO83aCAnTGmMdx2qoejLPGj5jyM8bDLbd97lfnhuODgYiwq7+JHEIq6DH4ek9SR7WfoBcmc88kROQKwVfXIT9MnGVcvn5hG+yE/UizbDT3w+iGY2HNFR79WTlpCdWCXYRIGXWJiPZ1XnGnlVG//qG/KB7npbCH11XDGRKSnMjWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=J9Fmyf5x; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b07ba1c3df4so602560866b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:10:19 -0700 (PDT)
+	s=arc-20240116; t=1758406672; c=relaxed/simple;
+	bh=96dxx70d/BFqImcMeVoXOM+8YDlRuIcpQzt1VmBfil0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZQirGpnRXGAUBZwEpD5+1eE5o41iiUlcqY9CAL6YClE5CFvvOthtdgYVORyQE4mABwL47Asq9ZRyPuW4aU9rEopKW0zunzbJaSaCy88ne7uFU9M0Ge+XJvZ3zXKgxNgXdes7b2jW11h26PjVgvFTSnWePpkX77/uvDyjIx3ePg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsKS8oV0; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b29e8a3e453so38037166b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 15:17:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1758406218; x=1759011018; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuOT5FcGvpbq5izggBkx/dpQo/nFSfgwh6uOm9NZ/Mg=;
-        b=J9Fmyf5x/ulE9vYgwv1IIxaVcIkxMVop9CMmBnr1Jx7oIIuATLlHkl2pcT7kKG4vvs
-         QLgp6nPQ6lwNq6+10TRfOtH+XbtAsBx0u/SGBOhsSQbikb76igPq9a7hwtzRcKq6fU4E
-         dVluuoy8Hu3B1lheW8c+u4YQ41MH1xClR7acm73IfpUVlSIsjIa8zkQUpVsp9eqmnAwQ
-         5OSs1thBMXbZ1ZB+qwrBDT2hOHPDMjebajfQJ8RrcMgsOI/HMCclDJZX21ksecK/0x4d
-         wDYD7FYqbTSAYbbLK6+EX64JXeS0SiFYJsZHAmfiGr5vJzpLOSrmRvPlKZtojQxNMr9v
-         3Eiw==
+        d=gmail.com; s=20230601; t=1758406669; x=1759011469; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+HgtdynmY0igjvNZnpu91IhlMXMmcHk6gD8131LsDf8=;
+        b=TsKS8oV0Ec0JLnc+mKCN31OZwyskRpLNrWsMigl1/dOchWeXQssOd/lTV4qyybo6s1
+         JsqpSWMGeSJcsO+VYB9ZWS7kuT7UpSLnyCJEwMDbp8gjgvmq8Xq/9EM0ZtS7pbpT/4Sp
+         AFSmjvITqXq803uTKWjAMela4Vpt8rWFBSLfEMmIG+7Cm4lx5QW7g6j5Rxb+Vi+bKbqJ
+         bnPWZpRnR6OjzM6SkJ1VnYTpVwstiNe+G7vR2cii07FYmvv7IPN+FAl138+pLVXb1u6T
+         OyKkY5uGxnElZy6Ht6eBZOCYr5m8bIHai4bXZq1WcdlFkT81xM8nWAIXwOR3SMua7NHo
+         zZYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758406218; x=1759011018;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iuOT5FcGvpbq5izggBkx/dpQo/nFSfgwh6uOm9NZ/Mg=;
-        b=hLeyM+qn6HO5hZZEczYbXPoml8FI91qHAzWmZ93OuxmgtrHzRo4j/aAP2TboRYj8W9
-         oTl+MjiVbQdFM/em89Fe1zFa+WjXVX3/cickS5UOyMkR7zw8eDSGdEwlUc6gISHyWCw9
-         PTQtl3MYFSWgVLbvPhG1tvndsu2c1kq+N8yfWTCCoS7X1uQYJ/phZhcZjluzKv2pf83k
-         eCGK1ImS6vbXDDlnFqTgHwY/blRedWaOfanl/CwOdKn141LPZhR0ind2PYc6WAHeK7dX
-         Buh6SRyg7n548KWf4OTnW1jr5rdKKsmFLEyX2umqXoiVUGw2shK2/HA08RzSSBZsfLre
-         E90Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Vy9RATYqzDqjI2zsDIKEGjnWrPcgYzUcm/h+dpNq39bhNNOaWxogawwAmtKutzAUxn7fctzfi8ZTx7U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtAPoLVhT8RrIzn3u/im8zO3o73cuVUogDUkgX0hjtQteKs90b
-	wvWp61iLOKal1umlpzG6koQZUg428ELm1MO/9U3oktDAvx4YhUCgshnt7CB6fuwtnFLyu1gXadn
-	dW/yBUKozs8klafBXTVfbNOqN1aa8vmuifeF9QC9VxQ==
-X-Gm-Gg: ASbGncuGOF3fFdmf9eL6tKAaZ0+WGNABmGuwU7jxA/wvCsMSMVsqNt547hIYdjnlQ8D
-	LKdJbJePuMyIs3n7VffuuzF8bdT3JS3ee1EAY5gV2ZuWaJjKiSO/v8AUclkgpeQP7TZ4q3Xg3il
-	YDrBlIdcg82MwIPuS7NnHEsBmrwsBltetmx0MbaQ3sewYcO4cqSfZrwqaIQ6Nq2Qxba5PT3mHhT
-	SNg86oqqjQG5sxn7FGsXWhA7+DaMC+qTg==
-X-Google-Smtp-Source: AGHT+IHXhsI4hda42JjoNr9cAmqiaihGUywDLTqyq7u++xty2ZCVqSKEj2SD6SYsm2KE2zwUrp/7NPMAXkOp7AygEpw=
-X-Received: by 2002:a17:907:724c:b0:b07:c94c:ba16 with SMTP id
- a640c23a62f3a-b24edd54a3fmr923990666b.4.1758406218497; Sat, 20 Sep 2025
- 15:10:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758406669; x=1759011469;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+HgtdynmY0igjvNZnpu91IhlMXMmcHk6gD8131LsDf8=;
+        b=o4ZFS+WRt5zxAT06VEdsvbLqEpHe6CnCzLJ6ZBMPjFyQq3YLGx8xw7/wo94fFUqi67
+         eHsnOpaqqWU0WkXBZ010cypODejPRzXdl21nsYcRQEb7l0B8QIVGRbdgAvfuYDmYOhO0
+         1aAfVe7tC4IAb6VJGo9LPnxmE31vv0ORcpgtNaDGUDnkWuGKt4J2hmeuPchXTUn7r1Dc
+         pn53rZTqQCzldeDU/L5HZNsrnQxfRWL8SVrqI7BrxzrtNWrgV2et3x/3ZYCQOG7BrfkI
+         rD53AguwGF5foi+h9huufFAH1IwyjigspwA8kTkvvAPemd1iIRQOQ1tIjFhxX7/xXQHg
+         wyiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWubKkmAKXdUuf0KUxPpdU/Qy+eMk0EWOJSiqnPlRO3FhmwwIjHwgRYll2WykhE7UWe7HWkx0un/HWMwkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjEfGFP6NYif98LL9xk95tA15qXXkFMcAkfKrXCjTnt70k1qyA
+	EOEl0mmHuubwD/T04H627SPZv3Wf2Q/MxJv656jK3LIQvuJrmgCEn8/b
+X-Gm-Gg: ASbGncufHBKEd7KdNliTuv4RFtW9O/5K16HM/B9Q+d5gTOpy68+hjUHiav1L2lfo3UB
+	5gXThBu0pd3VyJvn5TdUhfsYZHd3nEbRSd7L/8esP7c779hgoHOTQXwpc16sGBu1ETCvKLYZ+ZR
+	2gjvvgEaMOfqFlddpXNE6KJImUUIIFtlC/sb2H2d6dLzDya3dkb7//eOyv+fKlzXIqhVDs92pBq
+	XsqtQNhISUJagS1SyI+NPNVojFTrq79oyAL9ultqhOWtof23/iIsm8YRy3QZjRt99fDsttFvARL
+	jksy0zc+ENzJ3kaYKU7YycBA/fRR/O6nEyopGh2y6PhIlMwUFAoQzxn9MEyTllIxIYSPAsF74qx
+	sNZGsI/pVXoVhLIkle+PF+kTDrz6OWkXWAuq0p3STfck=
+X-Google-Smtp-Source: AGHT+IHuYXbv1MwgeFhgGHEnoMk2vC63tOuKqEj+eah5xHgaTZ82uYXktvX8jVWZFLF7LGFrAO/urA==
+X-Received: by 2002:a17:907:7245:b0:afe:7027:56f9 with SMTP id a640c23a62f3a-b24ef58d811mr815980866b.17.1758406668905;
+        Sat, 20 Sep 2025 15:17:48 -0700 (PDT)
+Received: from krava (37-188-197-68.red.o2.cz. [37.188.197.68])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b2864cd8376sm218759666b.80.2025.09.20.15.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 15:17:48 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sun, 21 Sep 2025 00:17:42 +0200
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Will Deacon <will@kernel.org>
+Cc: Feng Yang <yangfeng59949@163.com>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64
+ architecture
+Message-ID: <aM8oBvEJoR56w2Dk@krava>
+References: <20250919071902.554223-1-yangfeng59949@163.com>
+ <CAADnVQKrnYCaUCd+BNvZQmR0-6CSu2GBa=TCCCjPLSNfb_Ddvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGis_TWyhciem6bPzR98ysj1+gOVPHRGqSUNiiyvS1RnEidExw@mail.gmail.com>
- <20250919143611.GA22933@redhat.com> <CAGis_TUp9_V-kBn9CF55f08NVR+Bx3iyP=O=+PH0QAf73eGY2Q@mail.gmail.com>
- <20250919161353.GB22933@redhat.com>
-In-Reply-To: <20250919161353.GB22933@redhat.com>
-From: Matt Fleming <mfleming@cloudflare.com>
-Date: Sat, 20 Sep 2025 23:10:07 +0100
-X-Gm-Features: AS18NWAL6GI6XKBuoa9CCanGknXIpYlquJCzZBZvwnlkfbM1vxd0nIWcEfnFL2Y
-Message-ID: <CAGis_TWHJva-gktrsvO9=m5mEFf4zzcN=rNEt+5+moqz=C7AEQ@mail.gmail.com>
-Subject: Re: Debugging lost task in wait_task_inactive() when delivering
- signal (6.12)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, John Stultz <jstultz@google.com>, 
-	kernel-team <kernel-team@cloudflare.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Chris Arges <carges@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQKrnYCaUCd+BNvZQmR0-6CSu2GBa=TCCCjPLSNfb_Ddvg@mail.gmail.com>
 
-On Fri, 19 Sept 2025 at 17:15, Oleg Nesterov <oleg@redhat.com> wrote:
->
-> OK, thanks. Nothing "interesting" at first glance.
-
-Chris (Cc'd) and I managed to get a reproducer and I think I know
-what's happening now.
-
-When a task A gets the SIGKILL from whichever thread is handling the
-coredump (let's say task B) it might hit the delayed dequeue path in
-schedule() and call set_delayed(), e.g.
-
-        dequeue_entity+1263
-        dequeue_entities+216
-        dequeue_task_fair+224
-        __schedule+468
-        schedule+39
-        do_exit+221
-        do_group_exit+48
-        get_signal+2078
-        arch_do_signal_or_restart+46
-        irqentry_exit_to_user_mode+132
-        asm_sysvec_apic_timer_interrupt+26
-
-At this point task A has ->on_rq=1, ->se.sched_delayed=1 and ->se.on_rq=1.
-
-Now when task B calls into wait_task_inactive(), it sees
-->se.sched_delayed=1 and calls dequeue_task().
-
-At this point task A has ->on_rq=1, ->se.sched_delayed=0 and ->se.on_rq=0
-
-Unfortunately, task B still thinks that task A is scheduled because
-task_on_rq_queued(A) is true, but it's not runnable and will never run
-because it's no longer in the fair rbtree and the only task that will
-enqueue it again is task B once it leaves wait_task_inactive() and
-hits coredump_finish().
-
-> > do_exit+0xdd is here in coredump_task_wait():
+On Fri, Sep 19, 2025 at 07:56:20PM -0700, Alexei Starovoitov wrote:
+> On Fri, Sep 19, 2025 at 12:19 AM Feng Yang <yangfeng59949@163.com> wrote:
 > >
-> >                 for (;;) {
-> >                         set_current_state(TASK_IDLE|TASK_FREEZABLE);
-> >                         if (!self.task) /* see coredump_finish() */
-> >                                 break;
-> >                         schedule();
-> >                 }
+> > When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
+> > I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
 > >
-> > i.e. the task calls schedule() and never comes back.
->
-> Are you sure it never comes back and doesn't loop?
+> > For example:
+> > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > index 9e1ca8e34913..844fa88cdc4c 100644
+> > --- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
+> > @@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
+> >  __u64 kretprobe_test7_result = 0;
+> >  __u64 kretprobe_test8_result = 0;
+> >
+> > +typedef __u64 stack_trace_t[2];
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
+> > +       __uint(max_entries, 1024);
+> > +       __type(key, __u32);
+> > +       __type(value, stack_trace_t);
+> > +} stacks SEC(".maps");
+> > +
+> >  static void kprobe_multi_check(void *ctx, bool is_return)
+> >  {
+> >         if (bpf_get_current_pid_tgid() >> 32 != pid)
+> > @@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
+> >  SEC("kprobe.multi")
+> >  int test_kprobe_manual(struct pt_regs *ctx)
+> >  {
+> > +       int id = bpf_get_stackid(ctx, &stacks, 0);
+> 
+> ftrace_partial_regs() supposed to work on x86 and arm64,
+> but since multi-kprobe is the only user...
+> I suspect the arm64 implementation wasn't really tested.
+> Or maybe there is some other issue.
+> 
+> Masami, Jiri,
+> thoughts?
 
-Yeah, positive:
+hi,
+I did quick test for kprobe multi and I can reproduce the issue
+on arm64 with ci:
+  https://github.com/kernel-patches/bpf/pull/9809
 
-$ sudo perf stat -e cycles -t 1546531 -- sleep 30
+but can't really tell what's missing on arm side.. cc-ing Will
 
- Performance counter stats for thread id '1546531':
-
-     <not counted>      cycles
-
-      30.001671072 seconds time elapsed
+thanks,
+jirka
 
