@@ -1,86 +1,136 @@
-Return-Path: <linux-kernel+bounces-825377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3576B8BB4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:50:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC6EB8BB54
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 02:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F2918928B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:50:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9D03AA6C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 00:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D6E86331;
-	Sat, 20 Sep 2025 00:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAFF38F9C;
+	Sat, 20 Sep 2025 00:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f1j61Dzj"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lw/o40zC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AEB4A01
-	for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 00:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005452110E;
+	Sat, 20 Sep 2025 00:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758329400; cv=none; b=tlEWzpwh6Gv0Q2EvPLW8JPZdW6OZuQOoA2iCEY72dKyPQOhhBxzkyPzLewAvl7zfN/mZbiaLuFiJztthfHSNloVLpir4lEKd3AI69OE+AbOBoZ+iP65kz2XXRSqDDt0g46xWmoAqp8GCSPcXvsfSP6WtfaTZiYZ6yW5Yx5JJ36M=
+	t=1758329406; cv=none; b=gaQNp/idyv9fYTy9GS4MXsUnpXw9uoyAHsLBJE5HCS9y72DgagYVgU8WVbb9pO6XdZuj8+2u56icN8xEBn6Kys9t/lsctAYMZIyRhDxIqPFaMtGW/0PrlaTUgYzRPWIRQ8p0wJC72vr+fZh99Y6ihzwsLnhwJqKu7N3yhaSUYfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758329400; c=relaxed/simple;
-	bh=BEfv/CXraMXuo0VX8shgY1UFGOdECL5yYJTAksQW18g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qk6a6nLJGU6w45MFufLS3tYT6Y0lNYc/C440/LVEIpX81hv6Gp3Z9pXC3+TNX/ik6/yFDk92V2U0k1MvMI9MX5vXCXvQSKqvN55tZ+kb0/v4Ffc/CH+hgiRYYqI91LWyiNx4gGdLCusomSN00cp9IrDoZLAvO574FFDoOKGv1WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f1j61Dzj; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 19 Sep 2025 17:49:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758329394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hEihim8vKtht5JHRfmYVIiOJByu0+5c7d4P7gZnX9z0=;
-	b=f1j61DzjTjqsHJ1I+apAfiQAh+xjjjo7Ma1Z9O1gZoZy6hKt0YxvcGoBVQN8F0KjS1zUV+
-	uQ//pI48JWJLaHz+4gPPOBmvMpxPEndCwFmhquFD7xkXk8sOCXBJjicbDXBId/zu/wToGR
-	TpMnO96YyBFTp2XbJdr/fjdxnp8DwIk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com, 
-	baohua@kernel.org, lance.yang@linux.dev, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	Muchun Song <songmuchun@bytedance.com>
-Subject: Re: [PATCH 2/4] mm: thp: introduce folio_split_queue_lock and its
- variants
-Message-ID: <v7xskholk2cdoofuv247lbk3l643jovxqheuq7hu32wj2ncz64@irs7qwsbaiqz>
-References: <cover.1758253018.git.zhengqi.arch@bytedance.com>
- <eb072e71cc39a0ea915347f39f2af29d2e82897f.1758253018.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1758329406; c=relaxed/simple;
+	bh=9xut0kS2Ch4+Rz27BgojyjLrsvYJn7wc+hHLXHbWTvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJ8zkwP+wn4XkIgvXGzX8V3FqJdfcINwpvVNBPCmrwASIkGx9DESmy3/TSy09b3cb0b+m+ZEHmdlCOWsH+HVxKQM1IrbP5B80b0JBzUrZAAEyBaup1S3CBBB5JYgqMeYQUJLOa05TbJ2ePWxN27CBrYjIXKpwLUkf/Z2bfcAq0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lw/o40zC; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758329406; x=1789865406;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9xut0kS2Ch4+Rz27BgojyjLrsvYJn7wc+hHLXHbWTvM=;
+  b=Lw/o40zCYrN8+M6U8leCzNcHHNxmdJIr6nZfAzJAXqzBSHn1Yyhuxvr3
+   eBRaNJ5IIp7in5zOtJKfSsY5TlAijanf5UXvyQpvkj+40QXu0OVSentNp
+   dgRdKnkVlsN7bamL++V1g9HKw2guNd0+ZRnUXm1d8z07EDpsmj40A3qlR
+   d1lQ8FGnVsAy7J/eJoC3bj8D2bYE6bLwtFqzirGFON7VL343DDcvI4XqY
+   bgL+tKPfLUxJ3NrU8C8mBHII1KGWMsfJbxxYDj+pboFn4Cx6kbv6Ev/vj
+   naYI5r919Voiqve6IOUaAOSZxeVpM8qmQsLtxqL+2qxKVNSQyGHqSRFh6
+   A==;
+X-CSE-ConnectionGUID: mRX1KdddT5GGseq+7Fw0Wg==
+X-CSE-MsgGUID: JOqcGjaNS/WYU/n6fu0fkw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60736353"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60736353"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 17:50:05 -0700
+X-CSE-ConnectionGUID: HoVAZt0ERKSd1G+LQFWCZA==
+X-CSE-MsgGUID: upTihaMJRZKmJrl02HTzFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,279,1751266800"; 
+   d="scan'208";a="175098823"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.233.177]) ([10.124.233.177])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2025 17:50:03 -0700
+Message-ID: <dcb17b1b-a1a3-427c-8b5d-c2e791a3a46f@linux.intel.com>
+Date: Sat, 20 Sep 2025 08:50:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb072e71cc39a0ea915347f39f2af29d2e82897f.1758253018.git.zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/5] KVM: selftests: PMU fixes for GNR/SRF/CWF
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yi Lai <yi1.lai@intel.com>
+References: <20250919214648.1585683-1-seanjc@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250919214648.1585683-1-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 19, 2025 at 11:46:33AM +0800, Qi Zheng wrote:
-> From: Muchun Song <songmuchun@bytedance.com>
-> 
-> In future memcg removal, the binding between a folio and a memcg may
-> change, making the split lock within the memcg unstable when held.
-> 
-> A new approach is required to reparent the split queue to its parent. This
-> patch starts introducing a unified way to acquire the split lock for
-> future work.
-> 
-> It's a code-only refactoring with no functional changes.
-> 
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+On 9/20/2025 5:46 AM, Sean Christopherson wrote:
+> Fix KVM PMU selftests errors encountered on Granite Rapids (GNR),
+> Sierra Forest (SRF) and Clearwater Forest (CWF).
+>
+> The cover letter from v2 has gory details, as do the patches.
+>
+> v4:
+>  - Fix an unavailable_mask goof. [Dapeng]
+>  - Fix a bitmask goof (missing BIT_ULL()). [Dapeng]
+>
+> v3: 
+>  - https://lore.kernel.org/all/20250919004512.1359828-1-seanjc@google.com/
+>  - Make PMU errata available to all tests by default.
+>  - Redo testing of "unavailable PMU events" to drastically reduce the number
+>    of testcases.
+>
+> v2:
+>  - https://lore.kernel.org/all/20250718001905.196989-1-dapeng1.mi@linux.intel.com 
+>  - Add error fix for vmx_pmu_caps_test on GNR/SRF (patch 2/5).
+>  - Opportunistically fix a typo (patch 1/5).
+>
+> v1: https://lore.kernel.org/all/20250712172522.187414-1-dapeng1.mi@linux.intel.com
+>
+> Dapeng Mi (2):
+>   KVM: selftests: Add timing_info bit support in vmx_pmu_caps_test
+>   KVM: selftests: Validate more arch-events in pmu_counters_test
+>
+> Sean Christopherson (2):
+>   KVM: selftests: Track unavailable_mask for PMU events as 32-bit value
+>   KVM: selftests: Reduce number of "unavailable PMU events" combos
+>     tested
+>
+> dongsheng (1):
+>   KVM: selftests: Handle Intel Atom errata that leads to PMU event
+>     overcount
+>
+>  tools/testing/selftests/kvm/include/x86/pmu.h | 26 ++++++++
+>  .../selftests/kvm/include/x86/processor.h     |  7 ++-
+>  tools/testing/selftests/kvm/lib/x86/pmu.c     | 49 +++++++++++++++
+>  .../testing/selftests/kvm/lib/x86/processor.c |  4 ++
+>  .../selftests/kvm/x86/pmu_counters_test.c     | 63 +++++++++++++------
+>  .../selftests/kvm/x86/pmu_event_filter_test.c |  4 +-
+>  .../selftests/kvm/x86/vmx_pmu_caps_test.c     |  3 +-
+>  7 files changed, 135 insertions(+), 21 deletions(-)
+>
+>
+> base-commit: c8fbf7ceb2ae3f64b0c377c8c21f6df577a13eb4
+
+Test pmu_counters_test/pmu_event_filter_test/vmx_pmu_caps_test on
+SPR/GNR/SRF/CWF platforms, no issue is found. Thanks.
+
+Tested-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+
+
 
