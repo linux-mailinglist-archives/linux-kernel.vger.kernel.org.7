@@ -1,161 +1,218 @@
-Return-Path: <linux-kernel+bounces-826088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2C3B8D7D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:43:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3134B8D7E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A581D178555
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76703A6462
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA3B1E8836;
-	Sun, 21 Sep 2025 08:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AF1F78E6;
+	Sun, 21 Sep 2025 08:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DpocAxWm"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maHOz2rt"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E121E260D
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353F41A8F
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758444220; cv=none; b=ciTrVsQBD/r9KQAsOUeH5detv3UGj0fzQ6a8udQAFv0FHPsN65ZDLQ/Q/9bV+m28+obPPM4J6c4jmi7r/6cvpp2FKfHFVVcdZaM/rtCOdDmGCDZEutiQRnwEeYn+kiFWERW4YHNDD9Y+Mlbw6G695k8BRZiPktN1yHEZHKKiGx4=
+	t=1758444612; cv=none; b=uNq+GuMDmAaXIASWZ6Xyxf/PpiDP6ufh9C1t6CHEY565jidBoeMkQfHP9wab9BXKUTeAgomkd1GcVpQT3oT27m0XKcXsEfvrDoJz/ilRb5qm3eNAJLMV4QTkHUMfT3Am3YZ3fng+8059JRj7jHEYWST7wAg2lmiNQGUfV5X2tDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758444220; c=relaxed/simple;
-	bh=UjN52QhzqZyfjm57PydUQ+he7++5mFgxAuApM6NaDqQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qNa/N+cb8vV9P6p7tSOpAYcko590ouEAr6cfx6TKIqlH6qRYAnpukQC1Po/NbETnNAAvrO7NmWhA5p5xzgPs8NFjCHp2ozir/1grZ4aAA5IYTOLRb6nai/0VxIBciFpeNoUy48of24yuqM84TdCW2NRh9hDINHvQKjnPFDxYra4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DpocAxWm; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1758444612; c=relaxed/simple;
+	bh=qKobqPXjbzJkURaCIr1E0autBxv8G/ZskK4w1oeQtJs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XZOXLTzCawqBrMm7H2StJsLnFXVrFE34Xr1bKFjRKxUecRZ1kJkddUL9MGhO0Rw/CzPpmeRVozTmOmJhDZ/QPgIKP5veZ+iQKmQ+R942aDdA7LTmJhSSIFl4VIjF13fONgGV0TTT+UODmewyhiYgZnUNxDHej9Xzfk2kkouDjq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maHOz2rt; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77f1a79d7e5so1093465b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 01:43:39 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-72ce9790acdso33022857b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 01:50:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758444218; x=1759049018; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qhuxGkdlbYwQtUxo9AAy8/gz7UCzFi3umGZgoVwppwU=;
-        b=DpocAxWmxlXp4e3TwzawQD1HZjkJi5pS+uoCiOESqubnDUX+cA1jHNyQGrxhAeets5
-         OywjNWx+Q/B4VmrdOjWDfLObQ+VB0bkhggZjaFE8cu5O/qa7JRQyVLBj+PobBL3JPrGP
-         q6E0a/MSiJuruPyjw3WjvI3Wo5f31xR9wtbnuoHZC7OMIEe1Q32hKfZ8DGrCpxAKA5Lc
-         F6rRMb5oHPIj1WeUNwXceki7nLdxauRiZMTeZy1y2m2T9QGK5ryYM4VaB0ugL3ckPvM1
-         PyS1/XnF+Xymy+JAdOfcw+q9XmbbFoOVrL8Me2i1hqpQluVn4vWygU5bMlLrg0bot0yR
-         /d7w==
+        d=gmail.com; s=20230601; t=1758444609; x=1759049409; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zDEVEqOXG6+p3ZgaagcezUlQsqQHRzvGMKTwJSm1sOE=;
+        b=maHOz2rt4mV0tuucnljc8uFypy1rfczrE7wYhRyNLS4CxBLH+QyG+TJjfkL+bArLm2
+         RaWYoxMU41xNxjle2zCwkMOugN4TsQo4Yg9C+hFCiXew76Br20RVsC/WS+c2kxg41QvJ
+         C3IBDqJQo2R1+g+nYwqqRDpgSV9ieuiKiUTvbbC1MRw18PGRX1JbO2JpwTnxbiqYGAlk
+         OlzE+0fqOw/P8bP91iouMqNLtDiSyFGfARAxMndnHH3BsVwGaKS8ZKkacpGCfyXLMtpG
+         DWP0OdAuKjP2uzKxqvBX7UhWAeOjgLRqAJ2oMugujWaCMUGO2RppXSmq7Q/26Sx7kxyB
+         vzmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758444218; x=1759049018;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qhuxGkdlbYwQtUxo9AAy8/gz7UCzFi3umGZgoVwppwU=;
-        b=N0trpVcmIGs5boyFVWU0GGqjO+PP2lnkzXUzs2F0aXTCcuLanT4wTmNCvemM8SNaxF
-         O1U/QGX3JNjqD3qZMgUuQUm4AaCQVf3KRWKR9RW8n94mKo59hJ+aumeBfcGWdatxRLlY
-         qduLNKrQUc/3I/LD+DWtDrtuLv9M7otKClEdPEj35UNWiwIzX0z3eUYZudFQUyFkYLlA
-         hHRGEriYt4mVMbWqvhf5UsZBXpRAuzgZaVpEkyIqze7w/EABWL79AWvPps4B3wu2MFyt
-         8IFOza7rHwwios+/hg3xoBG4qUAji8FmUjdtEPB/f8LCT+MTPfx2ATEfGLhDgSBCBirr
-         xrSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcIuJDYorLoKAIJMGjmlrdSNnQ58YYVxqqKrODv9l4z6VEDTW0gjr2OEldgYyt8XgFdsnDyXzBIDkw8/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC42wEw/py/2GFi7FW/jCnzqxp5UahcTRXuj+2C28P/GSBkVDZ
-	9ix3MZ40t2j2xLBA5hN0SJESBgZGzL5NHz3IFJcWJ5Rh7ZKh5fbz6pBO
-X-Gm-Gg: ASbGncvkVdj//GGzxs0T+9VnoZrKSDvKsZ3hTLUzA/PPHSLREtXxY7XzPbHNX9bCECz
-	bwMCXW/O6jve8jrrJo5RqvviguS8CxQFDNLea1PXGHvIU8zk1OPJLNwAyawuucydeAZmHBHXinp
-	0Z3/pzLRR9007+6lQi3m5zqWDCp8Cf+oXlPtzerCUmE6nOceFS2QMzVbAqSK6K+MpXhiceOtA0H
-	tIVcEkDirff0Jfpe2otxXhSOHgRqCXNCuLgfiLQCNoamtdWMREni6xJda+bqJojYCJ0CNb9vYo7
-	ZKZLjEvXCCwwsBMWU3sUFPBrwaR2p7G4sxlj88n7ydYx437QM8LMym1BX81I3eWPC+6u+IqyOBQ
-	yK8IksND+KcIkFLdKpbBkSQ70X0YI5gKCkM5LhttOkg+OIA/s3SK7JrKe6ucFDMJGofog
-X-Google-Smtp-Source: AGHT+IFqCRKRtItqhHVLVKIhfbYwcAdS9aUI+YCtSIJZLyIniucuWcyztE1Fb64OCQV1kf2LRvwPVg==
-X-Received: by 2002:a05:6a20:2445:b0:254:84f8:b280 with SMTP id adf61e73a8af0-292748080d1mr12116002637.49.1758444218470;
-        Sun, 21 Sep 2025 01:43:38 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b552882b177sm5004313a12.11.2025.09.21.01.43.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Sep 2025 01:43:38 -0700 (PDT)
-Message-ID: <54d1f3b1-ba8c-458b-92d6-9d8880952e06@gmail.com>
-Date: Sun, 21 Sep 2025 17:43:38 +0900
+        d=1e100.net; s=20230601; t=1758444609; x=1759049409;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zDEVEqOXG6+p3ZgaagcezUlQsqQHRzvGMKTwJSm1sOE=;
+        b=u7+Ex8fQOj01kYHYbPz4GIzq/o/bJ6/CGfV9kSC/z7mHy3Mj6Vb8UhHXqpiOR6hjjE
+         lTEBS18dinlgDUVBi+E0z0rD4p8+YjeOZWCU9+PJGcz4mBoezJmroic42VeB2d7i2vCL
+         +GJJjcxGqSTlNlmQzlKJ/298vq6fBPn+SstrVuJtUtH04iSc+cPzhYiggDT4Y6jZBlgx
+         S9VCN4nmxbuHqjvMPt7IQ4CVGYkSoiJlV8+EtfNrdzABOV7PblTPVqBIm4QeMQLkExLp
+         NCGruA5V8h/bZLO2ALIB12eR0rXMb+W1/OzDKYvnuL07985vGnRJLZGmrbY2TvRRrytD
+         Vrsg==
+X-Gm-Message-State: AOJu0Ywr8pElIHwfEnqC/SmSLrp5qy3spa1NELdA9CV2cFONt93ywJPJ
+	uxhpJFCrZditHb4GID9BENPR8eMil6DFV+uGdqaY7pjpf27iT2CfCg9X86Y1ynaXZ3TspHGxraC
+	Qy6TEqH2h5u0xtrnZL0/uhWWjCyOkm0s=
+X-Gm-Gg: ASbGnctQ4VFd9EWdk/pqqvvYKS6jetNbw7/7ByFFYJWSLwhyxEo6WUKhAhDPzPEByHR
+	FNDIpQOKBvurUQAnqCvTt024QngmOMuGecJVl6SYUKJjHtLYB7UvenUAzVfAE7So6fbeafOHW03
+	ab5fUKlXbpZHt6KEa8ytgafTaJVw8V8XENki4hlU7swzOTPpNTvl5Fw6IWkEDPPuIDbULoDE2YL
+	t6USQ==
+X-Google-Smtp-Source: AGHT+IHlMDEd1tQ9O31JvReW0lUbnz6bNY4oRGu2JF4f/o/X8rhPYZs2HHg1UDyYjOMCAgAcTaRxf8XoPxsJhKzjVx4=
+X-Received: by 2002:a53:ec47:0:b0:62a:2327:9ff6 with SMTP id
+ 956f58d0204a3-634779def96mr6461768d50.10.1758444609206; Sun, 21 Sep 2025
+ 01:50:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: linux-next: Tree for Sep 19 (make htmldocs problem)
-To: rdunlap@infradead.org
-Cc: broonie@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>, Jonathan Corbet <corbet@lwn.net>
-References: <883df949-0281-4a39-8745-bcdcce3a5594@infradead.org>
-Content-Language: en-US
-In-Reply-To: <883df949-0281-4a39-8745-bcdcce3a5594@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Cen Zhang <zzzccc427@gmail.com>
+Date: Sun, 21 Sep 2025 16:49:57 +0800
+X-Gm-Features: AS18NWDBRTBAx4VM1Sxu1LjM0XlA01KSp3jHD7-E77JTmkNBTAmE4ZcXYVmAYtA
+Message-ID: <CAFRLqsVkqLHo9tNNEhFiJWEn506nVOM-Bnz_=b36A-kXgzb+mw@mail.gmail.com>
+Subject: [BUG] Bluetooth: Use-after-free in hci_acl_create_conn_sync due to
+ TOCTOU race condition
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org
+Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Randy,
+Hi maintainers,
 
-On Sat, 20 Sep 2025 17:17:56 -0700, Randy Dunlap wrote:
-> Hi,
-> 
-> On 9/19/25 8:05 AM, Mark Brown wrote:
-> 
-> With today's linux-next, when I do 'make O=DOC1 htmldocs', I get:
-> 
-> make[1]: Entering directory '/home/rdunlap/lnx/repo/linux-next/DOC1'
-> ../Documentation/Makefile:71: warning: overriding recipe for target 'pdfdocs'
-> ../Documentation/Makefile:62: warning: ignoring old recipe for target 'pdfdocs'
->   File "/usr/bin/sphinx-build", line 1
->     ELF
-> SyntaxError: source code cannot contain null bytes
-> make[1]: Leaving directory '/home/rdunlap/lnx/repo/linux-next/DOC1'
-> 
-> where the "ELF" line contains some binary bytes that are not shown
-> via copy/paste. Here they are in hex in case that might help:
-> 
-> 7f 45 4c 46 02 01 01 0a              .ELF....
-> 
+I've applied the full v6 series (1/3..3/3)
+(https://lore.kernel.org/linux-bluetooth/20250915161504.814410-2-luiz.dentz@gmail.com/T/#u)
+but discovered a use-after-free vulnerability may caused by another
+reason during testing.
 
-Hmm, my /usr/bin/sphinx-build (under Ubuntu 24.04) is a python script.
+After my analysis ,I think  the UAF is caused by a TOCTOU
+(Time-of-Check-Time-of-Use) race condition in
+hci_acl_create_conn_sync(). Two concurrent flows race on the same
+hci_conn object:
 
-Running "file /usr/bin/sphinx-build" says:
+1. Flow 1 (Task 74): hci_acl_create_conn_sync() validates the
+connection with hci_conn_valid() and proceeds to use it
+2. Flow 2 (Task 76): Connection failure handling path calls
+hci_conn_del() and frees the connection object
 
-    /usr/bin/sphinx-build: Python script, ASCII text executable
+The race window exists between the validity check and actual usage in
+hci_acl_create_conn_sync(), where the connection can be freed by the
+event handling side due to errors, leading to use-after-free when the
+original flow continues execution.
 
-Randy, how did you install the sphinx-build?  And which distro are you
-on?
+The detail KASAN report as follows:
 
-> 
-> I don't see what is causing this, so I am using the previous day's
-> linux-next for Documentation testing etc...
+==================================================================
+BUG: KASAN: slab-use-after-free in
+hci_acl_create_conn_sync+0x134a/0x16e0 net/bluetooth/hci_sync.c:6861
+Write of size 2 at addr ffff8881199b0038 by task kworker/u17:0/74
 
-Another question ...
+CPU: 2 UID: 0 PID: 74 Comm: kworker/u17:0 Not tainted
+6.17.0-rc5-ge5bbb70171d1-dirty #20 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: hci0 hci_cmd_sync_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xca/0x130 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x171/0x7f0 mm/kasan/report.c:482
+ kasan_report+0x139/0x170 mm/kasan/report.c:595
+ hci_acl_create_conn_sync+0x134a/0x16e0 net/bluetooth/hci_sync.c:6861
+ hci_cmd_sync_work+0x798/0xaf0 net/bluetooth/hci_sync.c:332
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
+ worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
+ kthread+0x3d4/0x800 kernel/kthread.c:463
+ ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
-Does going back to a past linux-next make sphinx-build work again?
+Allocated by task 60621:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x72/0x90 mm/kasan/common.c:405
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ __hci_conn_add+0x647/0x51d0 net/bluetooth/hci_conn.c:949
+ hci_conn_add_unset net/bluetooth/hci_conn.c:1061 [inline]
+ hci_connect_acl+0x650/0xe60 net/bluetooth/hci_conn.c:1672
+ hci_connect_sco+0x61/0x1c90 net/bluetooth/hci_conn.c:1734
+ sco_connect net/bluetooth/sco.c:339 [inline]
+ sco_sock_connect+0x638/0x1ed0 net/bluetooth/sco.c:658
+ __sys_connect_file net/socket.c:2086 [inline]
+ __sys_connect+0x277/0x350 net/socket.c:2105
+ __do_sys_connect net/socket.c:2111 [inline]
+ __se_sys_connect net/socket.c:2108 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2108
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-If that's the case ..., I'm not sure, but it might be related to
-Mauro's sphinx-build-wrapper, which is now in docs-next (not in docs-mw
-for v6.18 at the moment).
+Freed by task 76:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x41/0x50 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2428 [inline]
+ slab_free mm/slub.c:4701 [inline]
+ kfree+0x189/0x390 mm/slub.c:4900
+ bt_link_release+0x49/0x60 net/bluetooth/hci_sysfs.c:16
+ device_release+0x9c/0x1c0
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x16f/0x270 lib/kobject.c:737
+ hci_conn_del_sysfs+0x1e2/0x380 net/bluetooth/hci_sysfs.c:62
+ hci_conn_cleanup net/bluetooth/hci_conn.c:173 [inline]
+ hci_conn_del+0x1f91/0x37a0 net/bluetooth/hci_conn.c:1211
+ hci_conn_failed+0x662/0x820 net/bluetooth/hci_conn.c:1314
+ hci_conn_complete_evt+0xf2b/0x3330 net/bluetooth/hci_event.c:3215
+ hci_event_func net/bluetooth/hci_event.c:7569 [inline]
+ hci_event_packet+0x17cd/0x2da0 net/bluetooth/hci_event.c:7623
+ hci_rx_work+0x982/0x2210 net/bluetooth/hci_core.c:4071
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
+ worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
+ kthread+0x3d4/0x800 kernel/kthread.c:463
+ ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
 
-Randy, what happens if you revert the latter part of Mauro's series, namely,
+The buggy address belongs to the object at ffff8881199b0000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 56 bytes inside of
+ freed 4096-byte region [ffff8881199b0000, ffff8881199b1000)
 
-  819667bc3ccd ("tools/docs: sphinx-build-wrapper: add a wrapper for sphinx-build")
-  2e1760999e58 ("docs: parallel-wrapper.sh: remove script")
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1199b0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100043040 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 0200000000000040 ffff888100043040 0000000000000000 dead000000000001
+head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
+head: 0200000000000003 ffffea0004666c01 00000000ffffffff 00000000ffffffff
+head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
 
-  ... up to ...
+Memory state around the buggy address:
+ ffff8881199aff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8881199aff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8881199b0000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                        ^
+ ffff8881199b0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8881199b0100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-  42180ada39da ("tools/docs: sphinx-build-wrapper: add support to run inside venv")
 
-on top of next-20250919 ?
+Thanks for taking a look.
 
-Regards,
-Akira
-
-> 
-> Any ideas/suggestions appreciated.
-> 
-> -- 
-> ~Randy
->
-
+Best regards,
+CenZhang
 
