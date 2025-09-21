@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-826259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C382B8E037
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:54:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF5BB8E043
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29E92177AB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:54:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C4B17497F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DAC26FA46;
-	Sun, 21 Sep 2025 16:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D068273D6D;
+	Sun, 21 Sep 2025 16:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jfe4nYY0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjG5m9OK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91E1258CF7;
-	Sun, 21 Sep 2025 16:53:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FE258CF7;
+	Sun, 21 Sep 2025 16:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758473611; cv=none; b=CyekkeKqBVNuq0dDF0YG2vfX53HRXaEGhZvs/15BcL2Rs0xUGxMkVnBz9z8bSSZaGdZB0HRH0qxUkwutZM1yQoKjoyh3OXbBXdsWXHzvdsIfJdIxeAwPNG/wmeaXQRKER2XGhnhOAhikA3BpHF7HeK74ZrHg6QQhVlL2wXgzYYU=
+	t=1758473614; cv=none; b=sGdvsKPBN087dLkRTUhKi7EIXXRPMI62zdVYNZHhdKgQiYpcOhyznLTk8IWrJHAOgFCjFvvyoP5sBheVtWK+yGf7Udt/K3aNCvlH48TGttg4MStWLot/f6FvONa4HnmFEzYoWlGiNiSgv1JbmDKGpF7+shR5wQDxEyo68ccO7oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758473611; c=relaxed/simple;
-	bh=HoiCOQ20nTneneIaxwbn1XHFftteJQcuwFtemtIOqt0=;
+	s=arc-20240116; t=1758473614; c=relaxed/simple;
+	bh=PJ33OKXzP02F+Zwi+qtD66apY4JkrF1rf2QHlzvAMs0=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=V2y/WYzYaflwh7Ryi8+Kmr6X6i5ZILN1xPpadFVcXhPK4Y3ezFlBO9/KSN5ySZG/XL+1Rvbitz11gtVVmOS7Sli0ua87RKHTZK82roL4jW6ymuPllrWF7jCm1QOsRkFTa9tB6iV8Ykhc3fAU0qDpES9WjfbU7v2iSJLmCZ8G5a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jfe4nYY0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562E9C4CEE7;
-	Sun, 21 Sep 2025 16:53:29 +0000 (UTC)
+	 To:Date:Message-ID; b=KHWBJBc3q668Hv8lr7XfS3lD5vZImFIXmGNtembgtBPPrAOzP+IBjqAL1/3/F+orDdCTK0NAfcTc7uqvp61mdOjv56J9L7NnHpx9PlcWztOw4PY4Ovm5porK+TfMcIshoeS2wZ52aPlptEbLWKBUyIXwgiV11/8CxeOeAOAnzeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jjG5m9OK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 023A4C4CEE7;
+	Sun, 21 Sep 2025 16:53:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758473609;
-	bh=HoiCOQ20nTneneIaxwbn1XHFftteJQcuwFtemtIOqt0=;
+	s=k20201202; t=1758473614;
+	bh=PJ33OKXzP02F+Zwi+qtD66apY4JkrF1rf2QHlzvAMs0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Jfe4nYY0pNIG5vQ0EIKKopwcXzYM1EgFqjnMpcUDDYMoO1eveSIJ3ECoTl7MKIHrv
-	 WXDu4Lqe7bQav8VPJCUW13/IEV71pt/2LKHKhq0ly4ee5GJeXCGbiwebc1IMmrtaS9
-	 ZEPNeHiOgA1U6APoahn5Xq/33OVuH3NioD+R6i4ra03d+MtEbzxY34mli4rTxA1Man
-	 QZMQj0LAPwb5bYPaDhTJTv5F3bMk9KRA+RQ2XtVRShd4GQ3Qav48A2sqS1GhlxXrYE
-	 /ZW/WQPSVONNl4H7EJXKKMdso2OE0H7gQ+KvgZMog7TZ0s5oXlBUdD5giJJYMUz7EQ
-	 Aa548QbsqGY7A==
+	b=jjG5m9OKipv0wXYbguYj+nPCt05D3kplw6rzavR7mHmJPKZmWUU8yRMjs/ET/fFRN
+	 W74y0bo6ElE4RTJMyCaY9GDLmyT7KiJhmEORSWYkIHMk5w3nSISyNTlfBU89lhJhx3
+	 3kFFUEmnizdyAGeK7koZ8Ro68wTcb6hF0MorLzIcYHz/inNJ31FnL/JFxxSTDxMINT
+	 gP/gG98KMQMG7c0IofmKMHmymnNLUIRIak4q1KHu53wo9PzmmK1JrFFp1cAUwWesZS
+	 HM7mrzbKA6xn4mGtFDiFmxDtYmeyosxbf9SjKhR8DmnTbSeiHwMhGE+Gdis5Kcj5Gk
+	 2bXFZgg8GWLvA==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,24 +48,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250915151947.277983-6-laura.nao@collabora.com>
-References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-6-laura.nao@collabora.com>
-Subject: Re: [PATCH v6 05/27] clk: mediatek: clk-mux: Add ops for mux gates with HW voter and FENC
+In-Reply-To: <20250915151947.277983-7-laura.nao@collabora.com>
+References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-7-laura.nao@collabora.com>
+Subject: Re: [PATCH v6 06/27] clk: mediatek: clk-gate: Refactor mtk_clk_register_gate to use mtk_gate struct
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F . R . A . Prado <nfraprado@collabora.com>
+Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>
 To: Laura Nao <laura.nao@collabora.com>, angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, krzk+dt@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, richardcochran@gmail.com, robh@kernel.org
-Date: Sun, 21 Sep 2025 09:53:28 -0700
-Message-ID: <175847360800.4354.17347591921715136589@lazor>
+Date: Sun, 21 Sep 2025 09:53:32 -0700
+Message-ID: <175847361261.4354.11188825521023748179@lazor>
 User-Agent: alot/0.11
 
-Quoting Laura Nao (2025-09-15 08:19:25)
-> MT8196 use a HW voter for mux gate enable/disable control, along with a
-> FENC status bit to check the status. Voting is performed using
-> set/clr/upd registers, with a status bit used to verify the vote state.
-> Add new set of mux gate clock operations with support for voting via
-> set/clr/upd regs and FENC status logic.
+Quoting Laura Nao (2025-09-15 08:19:26)
+> MT8196 uses a HW voter for gate enable/disable control, with
+> set/clr/sta registers located in a separate regmap. Refactor
+> mtk_clk_register_gate() to take a struct mtk_gate, and add a pointer to
+> it in struct mtk_clk_gate. This allows reuse of the static gate data
+> (including HW voter register offsets) without adding extra function
+> arguments, and removes redundant duplication in the runtime data struct.
 >=20
-> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
 ora.com>
 > Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
