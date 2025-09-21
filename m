@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-826377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A87B8E5BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8EEB8E5CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 23:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C3D16664C
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B023AFE00
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD14728D839;
-	Sun, 21 Sep 2025 20:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mdLl6NtM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914EF213E89;
+	Sun, 21 Sep 2025 21:00:39 +0000 (UTC)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87208524D1;
-	Sun, 21 Sep 2025 20:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6261E2307
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 21:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758488229; cv=none; b=m3nnl8FWNJK+6STQxPOo8O7lU8HTvgIgwO1lJSap8xSEs5LbIvzt7vycH18HQ/Jkh7Czm/f3QXw1mIV3Nz7G4FlN6w11vYxtpkbfnDkZ4Vc2gSw2I0uXlQg8pECuGtxgCdQ/d208jHQ1d/FnbeZAkm4BFYdYrYslvO5WNxwzfHQ=
+	t=1758488439; cv=none; b=uqAc/uWu4HHhI205+OonYVFSDMkzsK66GwMxWGdhDM21j2FALPW3laazR/Z4nl2oaAOMVOoB76qEmvqfXD5YJiZoMmcm4ZTDLs7/Hd8Ncaw/mB+J0it5iuemvFGvOgo/eN1lKl0rASfJpYORb4T/76jXdnCuEndrT/Eb+8Nrjig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758488229; c=relaxed/simple;
-	bh=i09wc8NXq6PotjxqjMuSQHv+u6f7Q0gcxiSIZOBbbYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3p8xmfoFV31IaN68x2lqaGoFom7lxoJqB52rXsoizHMeb5t7UBbReo0DsKgS3OrXhEueOnsTDn6ACXqLPkmbf8IwSJ1+mbNHjz74fHSh1jnxCrXwJxpzuQkFZQwiVvbNV8dP7W6pBOEmk8syxCynzsKq7fZ3rDQ6ZUNnLJwtkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mdLl6NtM; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758488227; x=1790024227;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i09wc8NXq6PotjxqjMuSQHv+u6f7Q0gcxiSIZOBbbYo=;
-  b=mdLl6NtMa9yqDul7614Kc/dC+xSlWRqCCvk6O40GFQZ6Y8rNEISLxxhZ
-   W55rCzBiXttPSX9kN1qhxdK8ePJGyLopg4QmV44gxccWWiLiLLdG0pQrJ
-   Lr29kU7DWSSx+EcvZ9X8Q04x9w8SkXLkR0SGqkqLnlE6q5Wo/5kmNCI3Z
-   DxUmj0aVHPA2FXGG2TcY9KqhsqzZMWcjFTxp6LS/EDDd5EzEA8XuQbaY5
-   wyqWYaQxGEJ/ciaacGGZ7bleVfMfCDs9U/VI6SC6RvkXh9a/WFGzBbO0R
-   qpCzC+aUPfsDRliPRjQUdHsd5wao2/4PQyWw1ygTIezeXIUWqzOwAY2y7
-   g==;
-X-CSE-ConnectionGUID: jexQO47AT3S1trW6FFkUtA==
-X-CSE-MsgGUID: 6cMMGOOzSeuqMNHwLEvZ+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60643308"
-X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
-   d="scan'208";a="60643308"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 13:57:07 -0700
-X-CSE-ConnectionGUID: IW0SUcRoSWqvrIzykSVpHA==
-X-CSE-MsgGUID: U9+NSOYjT/m1JIabRKXizw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
-   d="scan'208";a="175914597"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 21 Sep 2025 13:57:03 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0R7E-000109-2l;
-	Sun, 21 Sep 2025 20:57:00 +0000
-Date: Mon, 22 Sep 2025 04:56:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: print: Fix issue with rust_build_error
-Message-ID: <202509220423.4d1foVAO-lkp@intel.com>
-References: <20250920161958.2079105-1-joelagnelf@nvidia.com>
+	s=arc-20240116; t=1758488439; c=relaxed/simple;
+	bh=NIWyqrdVpcJkJSnQhzEUFF48okr2+Tt2x8hkMQXXY0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uLZ5GiPgM4xADWlQplesRc469GzuihTqjzKwLVoNhMmnBjhS2uVI7jR46DSOi5VMNN/lyYQfOOjoVWDRWyS6igQrobEX/xZmyuXuk3p0p3a+CiKek2dbGOfLJLf1VBq4SDd21oIPN8GJD7AAl40OcflMkTQ8MeX7Eb18/koxPY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-36a6a397477so6484741fa.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:00:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758488435; x=1759093235;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tnq3whidfUbSyI01Dbd5Axx5f8c/cBp1VDXFGzOiqDk=;
+        b=bJL2AkWng74waipjHDtBLso+WA91rgajymyW45EcEdCnpQSr/whFqHurIBubqPRRca
+         nut9k0P70G/U5hHTcR6kZchoUtz8T3zeGIWWQstI7d1UMGscgNICVrYSWpftyGlgR2UZ
+         47B1i6pz5HZ76W1PBcrJ5QcjrCwUtw7F6hb72/6iD2yPsUocYbqS4t+MJsH9TUkP1v1h
+         f6XPpDM1t473Ol5M8QVzsnI+BYPz9fWTSB/sh/Ozx6v19y1p/AIdeZRDtmR6i7r4nIct
+         Ce2RzYKlDJgep5LVVbGS6osRq43OlfWi7FDBKJIde5C+nJ7dTa0dikW2PjLf7ogBdayc
+         WCYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV19Hihjn6uTETIeGUI57yYsvYAKisevj1Sf1obVz8MajPArz4SQN8VEKZKxrNEcNI0pcFi1wKX5vl6fFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYSUibyswe+12Jwy2OEmjVpyXSuFMq/NmnoQGO30+bVxchO4Qf
+	aksOYpE1zScrztDvtzAb74gfM25tbXjf+ahnW6aCjCqnYGO/C3f8GLtV
+X-Gm-Gg: ASbGncvmnIxuBGqGdW0mxh180iMnpUxBLBZvB3+Sdfiy30VadtQs9O7UYe2DZ8q+/Ql
+	nkgW5L/QwxONahfUML4oLt8rdwhRhMbr/cGnKWRQYN8BcEBPDtEPNXHug3b3HkWSJmQCv4T7tZ0
+	qAp+DHDTanFJt4wHv1zo0hZEVI9qyo8M6ZgoxCw/TEW/dSrFEI0WTZBaib4doDi/DtrqPS11/Zl
+	kTz9mnZTBrmAb4HLwoPXtTVikMCYgzKCQWkV7CC5vpXOgNW8EfrLvF61cvjisPC72+nhjiI349S
+	Tj+E7iKymcXMOoZ6k59tWfCPD52H+QKB2XZ60dPyIll3J4XQ+PNRjZYi1SlaqkY0Q+vwvfmus6i
+	H2yq4rl9MTYjf+uFdAD8jsEyDCKuNq2tPP0X5YwWE/XPrnPdEm99koA==
+X-Google-Smtp-Source: AGHT+IHWDEIpvh/jZmfjdQezodsjqFHMDizdjfQhTutLpe3+p3SxDzNZWpqwzgcTN8gpCNT+MkwAmA==
+X-Received: by 2002:a2e:bc20:0:b0:360:e364:bb4a with SMTP id 38308e7fff4ca-36415065678mr35023011fa.17.1758488435081;
+        Sun, 21 Sep 2025 14:00:35 -0700 (PDT)
+Received: from hackbase (95-24-75-193.broadband.corbina.ru. [95.24.75.193])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36417473a75sm18095051fa.30.2025.09.21.14.00.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 14:00:34 -0700 (PDT)
+From: Alexander Popov <alex.popov@linux.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	H Peter Anvin <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: notify@kernel.org
+Subject: [PATCH 1/1] x86/Kconfig: Fix PTDUMP and all options that use it on ARCH=i386
+Date: Sun, 21 Sep 2025 23:58:15 +0300
+Message-ID: <20250921205819.332773-1-alex.popov@linux.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250920161958.2079105-1-joelagnelf@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Joel,
+The commit f9aad622006bd64c ("mm: rename GENERIC_PTDUMP and PTDUMP_CORE")
+has broken PTDUMP and the Kconfig options that use it on ARCH=i386,
+including CONFIG_DEBUG_WX.
 
-kernel test robot noticed the following build errors:
+CONFIG_GENERIC_PTDUMP was renamed into CONFIG_ARCH_HAS_PTDUMP, but it was
+mistakenly moved from "config X86" to "config X86_64". That made PTDUMP
+unavailable for i386.
 
-[auto build test ERROR on rust/rust-next]
-[also build test ERROR on linus/master v6.17-rc6 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Let's move CONFIG_ARCH_HAS_PTDUMP back to "config X86" to fix that bug.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Joel-Fernandes/rust-print-Fix-issue-with-rust_build_error/20250921-002215
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/20250920161958.2079105-1-joelagnelf%40nvidia.com
-patch subject: [PATCH] rust: print: Fix issue with rust_build_error
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250922/202509220423.4d1foVAO-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509220423.4d1foVAO-lkp@intel.com/reproduce)
+Fixes: f9aad622006bd64c ("mm: rename GENERIC_PTDUMP and PTDUMP_CORE")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
+---
+ arch/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509220423.4d1foVAO-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> error[E0277]: the `?` operator can only be used in a closure that returns `Result` or `Option` (or another type that implements `FromResidual`)
-   --> rust/doctests_kernel_generated.rs:3446:70
-   |
-   3446 |     pr_info!("The frequency at index 0 is: {:?}n", table.freq(index)?);
-   |     -----------------------------------------------------------------^-
-   |     |                                                                |
-   |     |                                                                cannot use the `?` operator in a closure that returns `()`
-   |     this function should return `Result` or `Option` to accept `?`
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 52c8910ba2ef..05880301212e 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -26,7 +26,6 @@ config X86_64
+ 	depends on 64BIT
+ 	# Options that are inherently 64-bit kernel only:
+ 	select ARCH_HAS_GIGANTIC_PAGE
+-	select ARCH_HAS_PTDUMP
+ 	select ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
+ 	select ARCH_SUPPORTS_INT128 if CC_HAS_INT128
+ 	select ARCH_SUPPORTS_PER_VMA_LOCK
+@@ -99,6 +98,7 @@ config X86
+ 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+ 	select ARCH_HAS_PMEM_API		if X86_64
+ 	select ARCH_HAS_PREEMPT_LAZY
++	select ARCH_HAS_PTDUMP
+ 	select ARCH_HAS_PTE_SPECIAL
+ 	select ARCH_HAS_HW_PTE_YOUNG
+ 	select ARCH_HAS_NONLEAF_PMD_YOUNG	if PGTABLE_LEVELS > 2
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
 
