@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-826091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C6EB8D7EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ADAB8D7F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF293A574E
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A798189F0BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CD9248F47;
-	Sun, 21 Sep 2025 08:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA38252287;
+	Sun, 21 Sep 2025 08:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="pNEMZFQc"
-Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="m4jf2+4Q"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440D02AF1D;
-	Sun, 21 Sep 2025 08:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A82D22A808;
+	Sun, 21 Sep 2025 08:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758444770; cv=none; b=SyjhMAt5vOSOr8Uu7srYCRTcqxSuvFG4y4cYCeSnpX/q5p5i8MluDBJzlwtCb9HFirpfcho5eQUW/YT15eLlrtgtixbHTUSM7lg6BQPyPl63igkCVb+mBrYzJkXkPBsyZUp2G2xYEE+lwMYYQi9360s91RD/beuUbVIzGrzlDos=
+	t=1758444772; cv=none; b=JN7WBpkrAs/CUUHU8vfEXE41RDNR+qhMkVrJpcNjVgxZjksKw43lSHDvcF0FpMl7FqfDV1dUY19z6uRasySPyVRlmSJPBz0XfSEYyeL95l7hBzK1TwN3oPUOBmncme4hjhBL70M8DVv23ebpRLNO61NCanBiGUjE+w1ahQ95YBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758444770; c=relaxed/simple;
-	bh=DmFeZAuzjiDDiooLpLk2yv2O/58zSRwZXt1vw0u+/pg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ca0AoQmS+ODOFGzsMdM8/jBWdODJ760bZ3LMae3XH3YCjIUx5Mxty3wZAFk7UVzwJBw+qgIXpI8NCQBvquk4Dwi0rThjV2tx2i/SKhn2I7cd3Kc413zr5ZWuCkH4ac+EbVI1PJfXPvDszBkToQK6FQ5bNLK0vFOf1PJr/4DRlcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=pNEMZFQc; arc=none smtp.client-ip=15.184.224.54
+	s=arc-20240116; t=1758444772; c=relaxed/simple;
+	bh=76HDuGO/++wYQY6OBZ6UZ1PVv6SNT6/hCuPuH7hW1LM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=X3Y+2X3AXG6pv67WNtdCzaUONLMRfA9PDkqVgQe9EhYpJaoxRb4mMBmfPeVqPafCbIq4s1Byufq1uqE11s+rQFt+2DS2CQEcrjmkzzzoOFWNu2K/zMYd/JcAHbObWj5Ef9/Xmd/XtvhZz8uehB+LqEzCRFPdAborzxYdkU1H6+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=m4jf2+4Q; arc=none smtp.client-ip=54.92.39.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1758444747;
-	bh=XBIBLj73RGnSSKnxJ4ZehyTUKEtXkKIYYh2qsFiM7rU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To;
-	b=pNEMZFQcEAPq+wUO5yiDEPcgXX4q/ETGGXyl4xGxmKX8d6T3A16oloTlVS3R/8P5S
-	 +aRAjy/eZBxCEg0bWEuPVqLyC8A6svzi6ZZcGuJKFJ+geNP7rUI842jMkLwrZNgb1d
-	 lCNrqcV+BKFvQx2057b4gjZwGw8zkNTsIME7LHHA=
-X-QQ-mid: zesmtpip2t1758444741t6bb70130
-X-QQ-Originating-IP: fa4G0Z96TcIuLQMDYJVyH1WNdBxvsi2TGK6A1010glI=
+	s=mxsw2412; t=1758444751;
+	bh=2k5TB4fCGa99Tt+YiRV5hnuUcMUd7EkCwZPqTsiSIzg=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=m4jf2+4QEY8E0LE2gwCrmI0lPKyASbv71MiUq8Uquuba1hLYHBhrY6mI8SF/sU4lF
+	 pj1prIrW/ubokWpT1tqysukSEH208Nctq+Tn2gU1uN5zNMbtsS+e5JaMGE0i/RKsPh
+	 p8y94Wttv54he84uxxPY4NSnUNTqdbB8U8U2Jx/0=
+X-QQ-mid: zesmtpip2t1758444746t50d5cce6
+X-QQ-Originating-IP: YTbr4bF4fXXgOVGW6cQbxzmvzTq87tzsqIC72RSrILU=
 Received: from = ( [localhost])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 21 Sep 2025 16:52:19 +0800 (CST)
+	id ; Sun, 21 Sep 2025 16:52:25 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14739136981806942369
-EX-QQ-RecipientCnt: 17
+X-BIZMAIL-ID: 11772700704362527638
+EX-QQ-RecipientCnt: 16
 From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: [PATCH v4 0/2] ASoC: spacemit: add i2s support to K1 SoC
-Date: Sun, 21 Sep 2025 16:52:15 +0800
-Message-Id: <20250921-k1-i2s-v4-0-4f819f50e468@linux.spacemit.com>
+Date: Sun, 21 Sep 2025 16:52:16 +0800
+Subject: [PATCH v4 1/2] ASoC: dt-bindings: Add bindings for SpacemiT K1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,11 +57,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAL+8z2gC/3XNTQ7CIBCG4asY1mKYgdriynsYFy0OOlFbhdrUN
- L27qPFnoctvwvMyiEiBKYrFZBCBOo7c1GmY6US4XVlvSfImbYEKM1WAlnuQjFECZJWfZ1SWrhD
- p8SmQ5/4RWq2fO9D5knrt57jj2Dbh+visg/v11TWvbgdSSacBjK3QKgPLA9eXfhZPpaMjtzPXH
- MW91eGXx+LtMXllKa+M8kqh++v1x1uAt9fJZ7mHXOcavf3tx3G8ASf0So46AQAA
-X-Change-ID: 20250813-k1-i2s-115bf65eaac8
+Message-Id: <20250921-k1-i2s-v4-1-4f819f50e468@linux.spacemit.com>
+References: <20250921-k1-i2s-v4-0-4f819f50e468@linux.spacemit.com>
+In-Reply-To: <20250921-k1-i2s-v4-0-4f819f50e468@linux.spacemit.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
@@ -71,103 +69,140 @@ Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
  linux-kernel@vger.kernel.org, 
  Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Jinmei Wei <weijinmei@linux.spacemit.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758444738; l=2372;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758444738; l=2619;
  i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
- bh=DmFeZAuzjiDDiooLpLk2yv2O/58zSRwZXt1vw0u+/pg=;
- b=RaWOlpC5FWPJwn3c47TkAmC+iLUD31NCfLHyxz/qOMkN5rnFVMjNAZFAmO+/oPh65efNMEq9+
- +MzyQEXLjgWBk4MPN/I0whyQLjfzh/m/rKrrS2hOzHfxR3PrCA29Iqb
+ bh=76HDuGO/++wYQY6OBZ6UZ1PVv6SNT6/hCuPuH7hW1LM=;
+ b=QxEY1Pde0pS2iIBEaP61bZHv3W2NEtVTUquVa3ksdKOW3j7eXHewA82pyuP7xgj1vZmzOpUmO
+ bmyd/x0pM0rC3VDgV1/aVc5LPmHJVNNOwTloG99/krigYRJqYqaXp+q
 X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
  pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: NxBUFebUJrFWwqnmh9UVFdXwpSTHzBo4NnP9/yzoMkWB7xFjeIYIANy4
-	YM683d601mtJ42vionL5XjxIYs0fpmpMLzbzb6VBwmyQBXCUwE+hns2NfZ4zR9RE5uSZlLL
-	z+novtX+VvjV+lx9tSKvK8/uZmRrph/V17jeJNghFN/HO2Ap+rlX7mUZahDEQF6S6vKxQa8
-	barPat2lN4R1p/3aIkwKYeSeowXdXtl+3FbUdFA10LvfXkFstGZHkPMeYQWtH+R9qjN6cTa
-	kbr7IpNzOCHrKnbBq0rq7vvOXPNTRL6k68DiKplapjMggBN1MFM14bn3IxNAlzwPwdxyQEk
-	RKNuppUYQRJGx16y4mjkq5SGZrBoYGX4yxwHdbnpy7+28ycyezdMMUEOFj61iiK9fxPK5DF
-	5VCXXUyKgK51lriP/mLgPwpKt5oTkLCaXjOpdJ9oy+exXzj+PhXXdITGabK1Xb/bbPDI1w2
-	Bf3cklVWCaHHViVzwHeMgYGKHlvNDC60/SbmD1Uo8B+aXd+jI3iUPiG54hqncKIH5NDk33I
-	C7LASjLkdMTgAGjpsW0uyj5NmovHR7xbRkWr8B717aCQhLWiUUiyOSaZqnAINpZuLeVxh7H
-	S18KNUcFhR2QnZSjb1Ez36KcAEj768OmfvMTOFBnfW5KzghVLVWp5Q8RJ39uIpyhFZoWjjl
-	FjKAkoGubUq24WmUKcHV6nUnksMvNWECUBXShcSHIwOqok96k+CuJ3Xoq5f6sY0+7MC+5FO
-	RhH1gz1G1GhLQBdwQy7Rg2bx0h39NRvEev0DXqHuhQsAthvo1bWgiRBsZ62GqyZqXDHX4j0
-	o+nRTq3GYUno6JlrlSSm3Fr28dOOvfAi2ebLE/705uRsA9BB2UU3dZUOxR0SxJ3VDvr1gZ3
-	8u70qikLnz3N4utH39XPSn6i+gL4/3rG7voJpJPaO4mPC44zJowZmr60HAc2z2TuybgafMF
-	7BmmFwrY98Y0QPFOox+kH3GqYdbOb+pRlPRL5BQ7u3A/wQHjJy0lbY5y1VCOc0FfGf/QFTI
-	Ycb+L/qExsci9pb6CuGbcGJ5Pr8WUwwso3z8LKfFMNbEmU4srzj/3FzIU0YXPd+jyjLtJWf
-	OLIlvV7eWMKgS6hFliGxIWkH+vHHykc2+ZGbA/GLW+PgYz9DRQGIZc9/0W+P79Fx0TMP1y0
-	IpyjgTES0bzPGE8nzjrvB4MWRA==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-XMAILINFO: MJZjqT37aNo/U9bvTU1QUMlDKX1NTdf++3vI+bOq4cbdWbulmz/fBeU8
+	zgGf1Cgl29/uz7BJakcSXScfWRpu3K7Z19w1JwdrSAKbQtmd/bwQWHxwdjWvd72KUJlGnj9
+	CsDFkJ3yPgV2HrhRKDYekWiZ1PM3Pfxo5tAYtwiHaX+s5bTdO/TPUiHlY3QJj6r6I665Kbt
+	+Go15uyPhrcTpMD6Hczx6egbOOqODdSZD57JHotAbsyegeYQJaH5G80gTJmhS6T4RUaKvPS
+	j8p5D3JS+OTA+ApiDZH+7SuN2BlVNDhru9LrRq2Q5ZWcFWcx2mLpdR+dq4y7uVr//6n9KTF
+	zO4VWjKTP32tHpg0uRoxYwJ6a7j2beUZd5gRLLn24auxKtTOVvaSIU/MnD+mdG+9nlumLHR
+	5PIF19ZV1wdTHLX7rIrg3MZaSlxOvNsDTJfGpptZBrhsex/kAVcj5mHemY65spNE/3FC+oh
+	ETqcArJf5nAAsDwaZQvXWWR2q3aRpcra6Eps38rt/LATK6s1HtDBYWKeH+yFzSxLQ2JGrBF
+	YVFsWdhKDrPE2H5rolJ5t3Y3869CBQW9X+EmfYvckSlWli44ANlaKj/rU5CXp/6CzdRqncn
+	3wqvY6XesukptxCGiRcgLFkDkDoThL3J2RrHA6Raiksbg0gDIY1apc1L2FObZpk6qKnKZIK
+	mCtd5LNfprOir+DmGko4vhJmpTDJv8CmHMB9ITCE3GudgQCINnMJ9eH75zXN6BMwDt6vVaA
+	wLbYZJqMlWwpntfbAITE6HstFzRmc1rkNqzmi9HXs3oiPDf4HkjeR6PtyB3ob5keSkjmrTe
+	Mnw0e1SnVJeL/t8ZIn99j8EStlpftg8cXPXWfwrloNANZUgRD9P9r4BQY2+p4oCxdo/UHVF
+	75pbqYukZ8IUysWBzzWxZdDqGgbvogYa53BGjgUB456bAAt1LZ/u64TdTzujVcDs9qKbnVx
+	GgFLYNeKnzUHX6+rOOXX/jxqBzQ2BShQQqt9RyQy/dPrLfuUxFfH6uqUFs8TsFrAwgiE2bz
+	S7MTqyYSYm2kTw3Y0StPvtQcuNUDSgAjfwmoCfVLL2RRGh/16kUYkGek+RtMZC8MTftQPLj
+	pGwMry2QhCXW9J6j0G/6gJoUWHsHGZGuR1zxO6p5uLMGM6dFNsW75Y=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
 X-QQ-RECHKSPAM: 0
 
-On the K1 SoC, there is a full-duplex I2S controller.
+Add dt-binding for the i2s driver of SpacemiT's K1 SoC.
 
-The I2S is programmable, with the sample width configurable
-to 8, 16, 18, or 32 bits.
-
-A dedicated FIFO is provided for transmit (TXFIFO) and another
-for receive (RXFIFO). In non-packed mode, both FIFOs are 32
-entries deep and 32 bits wide, giving a total of 32 samples each.
-
-The register definitions can be found here[1]
-
-Link:
-https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#18.2-spi%2Fi2s [1]
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
-Changes in v4:
-- Patch 1/2:
-  - nothing
-- Patch 2/2:
-  - add some comments
-  - adjust supported PCM rates and formats.
-  - change macros from SSCR_DW_(8|16|18|32)BYTE to SSCR_DW_(8|16|18|32)BIT
-  - use constraints API in hw_params
-- Link to v3: https://lore.kernel.org/r/20250911-k1-i2s-v3-0-57f173732f9c@linux.spacemit.com
+ .../devicetree/bindings/sound/spacemit,k1-i2s.yaml | 87 ++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-Changes in v3:
-- Patch 1/2:
-  - simplify dma-names definition
-- Patch 2/2 
-  - remove empty spacemit_i2s_remove()
-  - move FSRT setup for DSP_A into switch-case in spacemit_i2s_set_fmt()
-- Link to v2: https://lore.kernel.org/r/20250828-k1-i2s-v2-0-09e7b40f002c@linux.spacemit.com
+diff --git a/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml b/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..55bd0b307d22b3611d0fefb1e925e56812848dd1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/spacemit,k1-i2s.yaml
+@@ -0,0 +1,87 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/spacemit,k1-i2s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: K1 I2S controller
++
++description:
++  The I2S bus (Inter-IC sound bus) is a serial link for digital
++  audio data transfer between devices in the system.
++
++maintainers:
++  - Troy Mitchell <troy.mitchell@linux.spacemit.com>
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    const: spacemit,k1-i2s
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: clock for I2S sysclk
++      - description: clock for I2S bclk
++      - description: clock for I2S bus
++      - description: clock for I2S controller
++
++  clock-names:
++    items:
++      - const: sysclk
++      - const: bclk
++      - const: bus
++      - const: func
++
++  dmas:
++    minItems: 1
++    maxItems: 2
++
++  dma-names:
++    minItems: 1
++    items:
++      - const: tx
++      - const: rx
++
++  resets:
++    maxItems: 1
++
++  port:
++    $ref: audio-graph-port.yaml#
++    unevaluatedProperties: false
++
++  "#sound-dai-cells":
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - dmas
++  - dma-names
++  - resets
++  - "#sound-dai-cells"
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/spacemit,k1-syscon.h>
++    i2s@d4026000 {
++      compatible = "spacemit,k1-i2s";
++      reg = <0xd4026000 0x30>;
++      clocks = <&syscon_mpmu CLK_I2S_SYSCLK>,
++               <&syscon_mpmu CLK_I2S_BCLK>,
++               <&syscon_apbc CLK_SSPA0_BUS>,
++               <&syscon_apbc CLK_SSPA0>;
++      clock-names = "sysclk", "bclk", "bus", "func";
++      dmas = <&pdma0 21>, <&pdma0 22>;
++      dma-names = "tx", "rx";
++      resets = <&syscon_apbc RESET_SSPA0>;
++      #sound-dai-cells = <0>;
++    };
 
-Changes in v2:
-- Patch 1/2:
-  - modify commit message
-  - remove unused third cell from pdma dmas property
-  - update SPDX license in spacemit,k1-i2s.yaml to (GPL-2.0-only OR BSD-2-Clause)
-- Patch 2/2:
-  - modify commit message
-  - reset_assert in dai_ops::remove
-  - select CMA and DMA_CMA in Kconfig
-  - use devm_reset_control_get_exclusive
-- Link to v1: https://lore.kernel.org/r/20250814-k1-i2s-v1-0-c31149b29041@linux.spacemit.com
-
----
-Troy Mitchell (2):
-      ASoC: dt-bindings: Add bindings for SpacemiT K1
-      ASoC: spacemit: add i2s support for K1 SoC
-
- .../devicetree/bindings/sound/spacemit,k1-i2s.yaml |  87 ++++
- sound/soc/Kconfig                                  |   1 +
- sound/soc/Makefile                                 |   1 +
- sound/soc/spacemit/Kconfig                         |  16 +
- sound/soc/spacemit/Makefile                        |   5 +
- sound/soc/spacemit/k1_i2s.c                        | 463 +++++++++++++++++++++
- 6 files changed, 573 insertions(+)
----
-base-commit: 4f010aced22532eea2ef0d9a2f5db7c64a196fec
-change-id: 20250813-k1-i2s-115bf65eaac8
-
-Best regards,
 -- 
-Troy Mitchell <troy.mitchell@linux.spacemit.com>
+2.51.0
 
 
