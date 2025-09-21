@@ -1,297 +1,193 @@
-Return-Path: <linux-kernel+bounces-825936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C9CB8D296
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:52:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F24B8D2A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5AE94E1073
-	for <lists+linux-kernel@lfdr.de>; Sat, 20 Sep 2025 23:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3978C480037
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2264C296BA2;
-	Sat, 20 Sep 2025 23:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56684C6E;
+	Sun, 21 Sep 2025 00:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unJaCpkp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzaRfxuC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ED928C01E;
-	Sat, 20 Sep 2025 23:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6C81853
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 00:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758412323; cv=none; b=KBT7blHrcjUan4f1rupcqQ1Lcqpqbl/4jtp8EA4WeZDMunqpTUuk+HRuIVgweahKuzZKW88Y6EtWqeFYbkHmtXQQu3Q9qWX1iD8xZUfSWe0w/KgVCY4AEAFb2QxudHOX57rEdA0NHhlAQyZy7FA7en269seeBLdPXEb1e8ApXcc=
+	t=1758413478; cv=none; b=nqum2o9dMDtq1/mFS97/5ya+3OwMQ2ylG2ogaGtm++CGBqbZO2uzSnaXgpWcjEVZQr2TnzOrDGWP6qXw3w4EvSB30OzIGU2l277CsOatSFTWvwxJYVFAeB2Plaggl5I8BoIqi9ajELhZh3KE+tNfy9xZJMY69QrbK46xIDwmzlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758412323; c=relaxed/simple;
-	bh=9yt15bhBxJ29FdOVoy7qXofN2+gy0lS93UKbdzFs5uI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FVDQeKUar3PcqDzQ/HzkRUnxKfSI3Xdvl09950HrZa2PaeyUI8FVqzZln5Uxq+YqyYBLut0Zf87MGTP8jv8htfO+RZ3QI83wCYDIpL3k6L+k5bgoMONPGrpeKQRSZiiGOlsh0vY/Dd6pp15YMf00Lqi8Ijzzi4VD5XwqAyj05e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unJaCpkp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27AFC4CEF9;
-	Sat, 20 Sep 2025 23:52:02 +0000 (UTC)
+	s=arc-20240116; t=1758413478; c=relaxed/simple;
+	bh=YCAV/eRRMv3+e9YBfBNCTfFLSqZziYMTKzfRyPJvnhY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sKCT9vKeOCP5GNtcdwUcsKPn1eukr8rUdpKesGnU4LtO+alWMCjm5/ClBto9NGRXyK2/CPjwnh0K3lT7Ji2pZPp3/dhcqorR+96NYhQuEWXXkaj+CuF098D0lLWJk2SXQr0Py4LZmnu00+TASPqAKRV7NO3666uBp6SRyd4N4t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzaRfxuC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65BF1C4CEFE
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 00:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758412323;
-	bh=9yt15bhBxJ29FdOVoy7qXofN2+gy0lS93UKbdzFs5uI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=unJaCpkpFT9vR05IUzZs2IUZLgirLNHQ24c2/bixH6XJXJfN/C/thKef7ccktyOj6
-	 FC2d/ku+xtOdB5Ss2xRCpZccEzBOkTTIaxOpkOB7q5V8rm+43/lqBJezV7Is/6uiAN
-	 kx1evP9KZM9pmSskBwfH+JZhMiJaete7Gi2WRhvxuYfiiVYXQQS8p9UIrjXCS5AD5k
-	 Dx86p4MmFkdEFNQgT5Ww0mJBi484GSwM8TNBxB1gKVtC2K6BjexkCyjrLFna+Zo+Er
-	 rin9uIYxa5t02qbVJ+30re2c2aR0Q+L+3/CU0xE/3DV0NfZZUYNeRbHfgOJQbffNuF
-	 GGFsEq6kdG50Q==
-From: Drew Fustini <fustini@kernel.org>
-Date: Sat, 20 Sep 2025 16:51:44 -0700
-Subject: [PATCH v3 3/3] RISC-V: Add support for srmcfg CSR from Ssqosid ext
+	s=k20201202; t=1758413475;
+	bh=YCAV/eRRMv3+e9YBfBNCTfFLSqZziYMTKzfRyPJvnhY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bzaRfxuChG9erP0M/5V5VjuwKA5lP7/v7SeUNMQryKO4sZJxatCHbZ4BV8LINpNo9
+	 RpiYALZ+BqTzQZT/JBwMEtRu78cQQlTrl1boGuHqQbCo01wI01W+5GtoHqwQZijgzA
+	 heonexHP0+y9UQXTuJ20FWVdyVi63tL/HZ5FiJNuvx+TGjHqcjqWTdFE2jBtMpG3lh
+	 POj6oqvaG9TQy9Ob5OlkBfmYR1UFIYRjwISHwEnzKuSKRaQPqijen49fEJNjUw07zV
+	 m/+4Lh3+1iwHj+2l1G+GceQG/435ty5yc69/hlpiZnYkb4OksCQLyB9hCq55LkkmkX
+	 ORR91RYRx3pPw==
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-ea856357c38so1484887276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:11:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX40IifN0MaNyf6SldAYDAnGQJ4WoXLdoWOzn1EkNWGmOy9xITZQHupmcXdU/avmPGYKT3Q8nJQB0sCggc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysMV+95CG3stiGIAAmnWwdZbhnQivah9eSbwH2d+U4cikicELt
+	jK3Zpyoi9BI7aGIr3sruN4vJDaQJVNTKIpsPJcqEXE0ooe66UhGBkiq3PgOUCV7ERwcTKa2QXPw
+	iNCOkoaJEGXC4x208r59vsmFTzJRKGbA9xblpDnR0jA==
+X-Google-Smtp-Source: AGHT+IHXtvuVXAiUDShss5VFJajPEEBCzBrR6o6+Cqq1R7MOJ8XoKi+vBUF/UQKficxFre52whFezjyJrfMuSBW7J64=
+X-Received: by 2002:a05:690e:1449:b0:62d:66fb:d4b8 with SMTP id
+ 956f58d0204a3-6347f5967b9mr6604050d50.28.1758413474690; Sat, 20 Sep 2025
+ 17:11:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250920-ssqosid-v6-17-rc5-v3-3-5093162922d8@kernel.org>
-References: <20250920-ssqosid-v6-17-rc5-v3-0-5093162922d8@kernel.org>
-In-Reply-To: <20250920-ssqosid-v6-17-rc5-v3-0-5093162922d8@kernel.org>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: =?utf-8?q?Kornel_Dul=C4=99ba?= <mindal@semihalf.com>, 
- Adrien Ricciardi <aricciardi@baylibre.com>, 
- James Morse <james.morse@arm.com>, Atish Kumar Patra <atishp@rivosinc.com>, 
- Atish Patra <atish.patra@linux.dev>, 
- Vasudevan Srinivasan <vasu@rivosinc.com>, guo.wenjia23@zte.com.cn, 
- liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Drew Fustini <fustini@kernel.org>
-X-Mailer: b4 0.14.2
+References: <20250916160100.31545-1-ryncsn@gmail.com> <20250916160100.31545-2-ryncsn@gmail.com>
+ <CAGsJ_4w2GqGj8HZMfwndsWu7qkORqsnaw9WwhmQS=pW4gR7nEA@mail.gmail.com>
+ <CAF8kJuNbUyDWcJ13ZLi-xsiYcbY30w7=cFs7wdxszkc7TC4K2Q@mail.gmail.com>
+ <CAGsJ_4wKWem-STYAnh_0EgSFKzzs1M1c7wz6K82wLt6T6JEw9A@mail.gmail.com>
+ <CACePvbU8cUs-wwPsXkZ24EWga5bXxxUGSCT18rKAWFYn5w9rpw@mail.gmail.com>
+ <CAGsJ_4yhDU_WVfEybDhGE-WF5+w-fak1-F8jqbAQ-Qw1+qWkaw@mail.gmail.com>
+ <CACePvbUabb+L6Z9Nb-41fLR-FMhj--cDWSbnXtCj3rpqXModiQ@mail.gmail.com>
+ <CAGsJ_4y8yTX48ESHKgLNCvM1M1_gY9uGnD4qiz8n+gD47Zd1Hg@mail.gmail.com>
+ <CANeU7QkZBWFO6SeVHtmm73oLu7r0zavePQEYmQfH8opKPH1QWw@mail.gmail.com>
+ <CANeU7QmcC=-CTmJ7i8R77SQ_WArBvjP3VrmpLOy-b7QhCfMRYA@mail.gmail.com>
+ <CAGsJ_4zmkibM_Ex7kGMsr2sni85H-cnxQvh0XwkWiALNQy+zAQ@mail.gmail.com>
+ <CACePvbXae0zymE_BHydXtA_pjZ2NqabVyqxu1xKxLjLKmeYH9g@mail.gmail.com> <CAGsJ_4zB4ygGCN4JTx+AW+XAUm8WtFVLVesStuDHc8S-HT0ihQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zB4ygGCN4JTx+AW+XAUm8WtFVLVesStuDHc8S-HT0ihQ@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Sat, 20 Sep 2025 17:11:03 -0700
+X-Gmail-Original-Message-ID: <CACePvbXjaUyzB_9RSSSgR6BNvz+L9anvn0vcNf_J0jD7-4Yy6Q@mail.gmail.com>
+X-Gm-Features: AS18NWAKXR1mWgOvJl586I0OOCDajvkVTayDD7oSIGKEBFrYYvnY9Dj1CZ4VGD8
+Message-ID: <CACePvbXjaUyzB_9RSSSgR6BNvz+L9anvn0vcNf_J0jD7-4Yy6Q@mail.gmail.com>
+Subject: Re: [PATCH v4 01/15] docs/mm: add document for swap table
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, 
+	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org, 
+	Kairui Song <kasong@tencent.com>, Barry Song <21cnbao@gmail.com>
+Content-Type: multipart/mixed; boundary="0000000000008740b7063f448a13"
 
-Add support for the srmcfg CSR defined in the Ssqosid ISA extension
-(Supervisor-mode Quality of Service ID). The CSR contains two fields:
+--0000000000008740b7063f448a13
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  - Resource Control ID (RCID) used determine resource allocation
-  - Monitoring Counter ID (MCID) used to track resource usage
+Hi Andrew,
 
-Requests from a hart to shared resources like cache will be tagged with
-these IDs. This allows the usage of shared resources to be associated
-with the task currently running on the hart.
+Can you please apply this incremental fix up commit on the document
+patch of the swap table series?
+Just folding it into the original patch is fine.
 
-A srmcfg field is added to thread_struct and has the same format as the
-srmcfg CSR. This allows the scheduler to set the hart's srmcfg CSR to
-contain the RCID and MCID for the task that is being scheduled in. The
-srmcfg CSR is only written to if the thread_struct.srmcfg is different
-than the current value of the CSR.
+Here is the change log:
+- Move the swap table document to the mm main section. [SeongJae Park]
+- Rewrite the swap table size sentence for easier to understand. [ Barry]
 
-A per-cpu variable cpu_srmcfg is used to mirror that state of the CSR.
-This is because access to L1D hot memory should be several times faster
-than a CSR read. Also, in the case of virtualization, accesses to this
-CSR are trapped in the hypervisor.
+Thanks
 
-Link: https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
-Co-developed-by: Kornel Dulęba <mindal@semihalf.com>
-Signed-off-by: Kornel Dulęba <mindal@semihalf.com>
-[fustini: rename csr to srmcfg, refactor switch_to, rebase on v6.17-rc5]
-Signed-off-by: Drew Fustini <fustini@kernel.org>
----
- MAINTAINERS                        |  7 +++++++
- arch/riscv/Kconfig                 | 17 ++++++++++++++++
- arch/riscv/include/asm/csr.h       |  8 ++++++++
- arch/riscv/include/asm/processor.h |  3 +++
- arch/riscv/include/asm/qos.h       | 41 ++++++++++++++++++++++++++++++++++++++
- arch/riscv/include/asm/switch_to.h |  3 +++
- arch/riscv/kernel/Makefile         |  2 ++
- arch/riscv/kernel/qos/Makefile     |  2 ++
- arch/riscv/kernel/qos/qos.c        |  5 +++++
- 9 files changed, 88 insertions(+)
+Chris
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cd7ff55b5d321752ac44c91d2d7e74de28e08960..93da9339d2fd6f5a6aed6041dab2282b27d86162 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21729,6 +21729,13 @@ F:	drivers/perf/riscv_pmu.c
- F:	drivers/perf/riscv_pmu_legacy.c
- F:	drivers/perf/riscv_pmu_sbi.c
- 
-+RISC-V QOS RESCTRL SUPPORT
-+M:	Drew Fustini <fustini@kernel.org>
-+L:	linux-riscv@lists.infradead.org
-+S:	Supported
-+F:	arch/riscv/include/asm/qos.h
-+F:	arch/riscv/kernel/qos/
-+
- RISC-V SPACEMIT SoC Support
- M:	Yixun Lan <dlan@gentoo.org>
- L:	linux-riscv@lists.infradead.org
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 51dcd8eaa24356d947ebe0f1c4a701a3cfc6b757..9b09a7aad29621d99f14d414751e67a43cbdad3a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -605,6 +605,23 @@ config RISCV_ISA_SVNAPOT
- 
- 	  If you don't know what to do here, say Y.
- 
-+config RISCV_ISA_SSQOSID
-+	bool "Ssqosid extension support for supervisor mode Quality of Service ID"
-+	default y
-+	help
-+	  Adds support for the Ssqosid ISA extension (Supervisor-mode
-+	  Quality of Service ID).
-+
-+	  Ssqosid defines the srmcfg CSR which allows the system to tag the
-+	  running process with an RCID (Resource Control ID) and MCID
-+	  (Monitoring Counter ID). The RCID is used to determine resource
-+	  allocation. The MCID is used to track resource usage in event
-+	  counters.
-+
-+	  For example, a cache controller may use the RCID to apply a
-+	  cache partitioning scheme and use the MCID to track how much
-+	  cache a process, or a group of processes, is using.
-+
- config RISCV_ISA_SVPBMT
- 	bool "Svpbmt extension support for supervisor mode page-based memory types"
- 	depends on 64BIT && MMU
-diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-index 6fed42e377059c7004ecd3c29eb36d5c0e36a656..ecc57492264c2a2616e1e147796157512da70e87 100644
---- a/arch/riscv/include/asm/csr.h
-+++ b/arch/riscv/include/asm/csr.h
-@@ -75,6 +75,13 @@
- #define SATP_ASID_MASK	_AC(0xFFFF, UL)
- #endif
- 
-+/* SRMCFG fields */
-+#define SRMCFG_RCID_MASK	_AC(0x00000FFF, UL)
-+#define SRMCFG_MCID_MASK	SRMCFG_RCID_MASK
-+#define SRMCFG_MCID_SHIFT	16
-+#define SRMCFG_MASK		((SRMCFG_MCID_MASK << SRMCFG_MCID_SHIFT) | \
-+				  SRMCFG_RCID_MASK)
-+
- /* Exception cause high bit - is an interrupt if set */
- #define CAUSE_IRQ_FLAG		(_AC(1, UL) << (__riscv_xlen - 1))
- 
-@@ -317,6 +324,7 @@
- #define CSR_STVAL		0x143
- #define CSR_SIP			0x144
- #define CSR_SATP		0x180
-+#define CSR_SRMCFG		0x181
- 
- #define CSR_STIMECMP		0x14D
- #define CSR_STIMECMPH		0x15D
-diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-index 24d3af4d3807e37396744ef26533ac4661abcb4f..cc9548b85d363ecbc3c416e52906107a73e6053d 100644
---- a/arch/riscv/include/asm/processor.h
-+++ b/arch/riscv/include/asm/processor.h
-@@ -122,6 +122,9 @@ struct thread_struct {
- 	/* A forced icache flush is not needed if migrating to the previous cpu. */
- 	unsigned int prev_cpu;
- #endif
-+#ifdef CONFIG_RISCV_ISA_SSQOSID
-+	u32 srmcfg;
-+#endif
- };
- 
- /* Whitelist the fstate from the task_struct for hardened usercopy */
-diff --git a/arch/riscv/include/asm/qos.h b/arch/riscv/include/asm/qos.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..84830d7c6dc4a1fce86d514ed5af97be32a26630
---- /dev/null
-+++ b/arch/riscv/include/asm/qos.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_RISCV_QOS_H
-+#define _ASM_RISCV_QOS_H
-+
-+#ifdef CONFIG_RISCV_ISA_SSQOSID
-+
-+#include <linux/sched.h>
-+#include <linux/jump_label.h>
-+
-+#include <asm/barrier.h>
-+#include <asm/csr.h>
-+#include <asm/hwcap.h>
-+
-+/* cached value of srmcfg csr for each cpu */
-+DECLARE_PER_CPU(u32, cpu_srmcfg);
-+
-+static inline void __switch_to_srmcfg(struct task_struct *next)
-+{
-+	u32 *cpu_srmcfg_ptr = this_cpu_ptr(&cpu_srmcfg);
-+	u32 thread_srmcfg;
-+
-+	thread_srmcfg = READ_ONCE(next->thread.srmcfg);
-+
-+	if (thread_srmcfg != *cpu_srmcfg_ptr) {
-+		*cpu_srmcfg_ptr = thread_srmcfg;
-+		csr_write(CSR_SRMCFG, thread_srmcfg);
-+	}
-+}
-+
-+static __always_inline bool has_srmcfg(void)
-+{
-+	return riscv_has_extension_unlikely(RISCV_ISA_EXT_SSQOSID);
-+}
-+
-+#else /* ! CONFIG_RISCV_ISA_SSQOSID  */
-+
-+static __always_inline bool has_srmcfg(void) { return false; }
-+#define __switch_to_srmcfg(__next) do { } while (0)
-+
-+#endif /* CONFIG_RISCV_ISA_SSQOSID */
-+#endif /* _ASM_RISCV_QOS_H */
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index 0e71eb82f920cac2f14bb626879bb219a2f247cc..a684a3795d3d7f5e027ec0a83c30afd1a18d7228 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -14,6 +14,7 @@
- #include <asm/processor.h>
- #include <asm/ptrace.h>
- #include <asm/csr.h>
-+#include <asm/qos.h>
- 
- #ifdef CONFIG_FPU
- extern void __fstate_save(struct task_struct *save_to);
-@@ -119,6 +120,8 @@ do {							\
- 		__switch_to_fpu(__prev, __next);	\
- 	if (has_vector() || has_xtheadvector())		\
- 		__switch_to_vector(__prev, __next);	\
-+	if (has_srmcfg())				\
-+		__switch_to_srmcfg(__next);	\
- 	if (switch_to_should_flush_icache(__next))	\
- 		local_flush_icache_all();		\
- 	__switch_to_envcfg(__next);			\
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index c7b542573407c813a4a45fe9bf78a676599c0503..0108a4e6338a7972b6805ef14048d4e5e8833d82 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -125,3 +125,5 @@ obj-$(CONFIG_ACPI)		+= acpi.o
- obj-$(CONFIG_ACPI_NUMA)	+= acpi_numa.o
- 
- obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) += bugs.o
-+
-+obj-$(CONFIG_RISCV_ISA_SSQOSID) += qos/
-diff --git a/arch/riscv/kernel/qos/Makefile b/arch/riscv/kernel/qos/Makefile
-new file mode 100644
-index 0000000000000000000000000000000000000000..9f996263a86d7e2e410890d2425e74b2277a57ad
---- /dev/null
-+++ b/arch/riscv/kernel/qos/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_RISCV_ISA_SSQOSID) += qos.o
-diff --git a/arch/riscv/kernel/qos/qos.c b/arch/riscv/kernel/qos/qos.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..7b06f7ae9056b8f2eb53a0eecf5a6512edc29fbe
---- /dev/null
-+++ b/arch/riscv/kernel/qos/qos.c
-@@ -0,0 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#include <asm/qos.h>
-+
-+/* cached value of sqoscfg csr for each cpu */
-+DEFINE_PER_CPU(u32, cpu_srmcfg);
+On Thu, Sep 18, 2025 at 2:35=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> > > I=E2=80=99m not entirely sure what you mean by =E2=80=9Cpage table pa=
+ge.=E2=80=9D
+> >
+> > The page that gets pointed by the page table, or the page that holds th=
+e PTE.
+> >
+> > > My understanding is that you=E2=80=99re saying:
+> > > The swap table contains an array of pointers, each the same size as a=
+ PTE,
+> > > so its total size typically matches a PTE page table=E2=80=94one page=
+ on modern
+> > > 64-bit systems.
+> >
+> > That sounds good. Thanks for the suggestion.
+> > I take your suggestion with some small modifications, mostly to
+> > clarify the total size is the total size of one cluster of swap
+> > tables. The total size of all swap tables in a swap file is much
+> > bigger.
+> >
+> > How about this:
+> >
+> > A swap table is an array of pointers. Each pointer is the same size as =
+a PTE.
+> > The size of a swap table for one swap cluster typically matches a PTE
+> > page table,
+> > which is one page on modern 64-bit systems.
+>
+> Acked.
+>
+> >
+> > Chris
+>
+> Thanks
+> Barry
 
--- 
-2.43.0
+--0000000000008740b7063f448a13
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-SQUASH-docs-fix-up-for-the-swap-table-document.patch"
+Content-Disposition: attachment; 
+	filename="0001-SQUASH-docs-fix-up-for-the-swap-table-document.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mfsxxs120>
+X-Attachment-Id: f_mfsxxs120
 
+RnJvbSBiMDNhOWI1M2RmY2IxNTU4ZmViMDExODhmNjU3MzQwYmMzNDE0YTIyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBDaHJpcyBMaSA8Y2hyaXNsQGtlcm5lbC5vcmc+CkRhdGU6IEZy
+aSwgMTkgU2VwIDIwMjUgMTg6MTI6MDQgLTA3MDAKU3ViamVjdDogW1BBVENIXSBTUVVBU0g6IGRv
+Y3M6IGZpeCB1cCBmb3IgdGhlIHN3YXAgdGFibGUgZG9jdW1lbnQKCk1ha2Ugc3dhcCB0YWJsZSBp
+bnRvIHRoZSBtYWluIHNlY3Rpb24uCgpBZGp1c3Qgd29yZGluZyBvbiB0aGUgc3dhcCB0YWJsZSBz
+aXplIHZzIFBURSBwYWdlIHRhYmxlIHNpemUuCgpTaWduZWQtb2ZmLWJ5OiBDaHJpcyBMaSA8Y2hy
+aXNsQGtlcm5lbC5vcmc+Ci0tLQogRG9jdW1lbnRhdGlvbi9tbS9pbmRleC5yc3QgICAgICB8IDIg
+Ky0KIERvY3VtZW50YXRpb24vbW0vc3dhcC10YWJsZS5yc3QgfCA5ICsrKy0tLS0tLQogMiBmaWxl
+cyBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEv
+RG9jdW1lbnRhdGlvbi9tbS9pbmRleC5yc3QgYi9Eb2N1bWVudGF0aW9uL21tL2luZGV4LnJzdApp
+bmRleCA4MjhhZDliMDE5YjMuLmJhNmE4ODcyODQ5YiAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlv
+bi9tbS9pbmRleC5yc3QKKysrIGIvRG9jdW1lbnRhdGlvbi9tbS9pbmRleC5yc3QKQEAgLTIwLDYg
+KzIwLDcgQEAgc2VlIHRoZSA6ZG9jOmBhZG1pbiBndWlkZSA8Li4vYWRtaW4tZ3VpZGUvbW0vaW5k
+ZXg+YC4KICAgIGhpZ2htZW0KICAgIHBhZ2VfcmVjbGFpbQogICAgc3dhcAorICAgc3dhcC10YWJs
+ZQogICAgcGFnZV9jYWNoZQogICAgc2htZnMKICAgIG9vbQpAQCAtNTcsNyArNTgsNiBAQCBkb2N1
+bWVudGF0aW9uLCBvciBkZWxldGVkIGlmIGl0IGhhcyBzZXJ2ZWQgaXRzIHB1cnBvc2UuCiAgICBw
+YWdlX3RhYmxlX2NoZWNrCiAgICByZW1hcF9maWxlX3BhZ2VzCiAgICBzcGxpdF9wYWdlX3RhYmxl
+X2xvY2sKLSAgIHN3YXAtdGFibGUKICAgIHRyYW5zaHVnZQogICAgdW5ldmljdGFibGUtbHJ1CiAg
+ICB2bWFsbG9jZWQta2VybmVsLXN0YWNrcwpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9tbS9z
+d2FwLXRhYmxlLnJzdCBiL0RvY3VtZW50YXRpb24vbW0vc3dhcC10YWJsZS5yc3QKaW5kZXggYWNh
+ZTZjZWI0ZjdiLi5kYTEwYmI3YTBkYzMgMTAwNjQ0Ci0tLSBhL0RvY3VtZW50YXRpb24vbW0vc3dh
+cC10YWJsZS5yc3QKKysrIGIvRG9jdW1lbnRhdGlvbi9tbS9zd2FwLXRhYmxlLnJzdApAQCAtNTAs
+MTIgKzUwLDkgQEAgU3dhcCBjYWNoZSBsb29rdXAgd2l0aGluIHRoZSBjbHVzdGVyIGNhbiBiZSBh
+IHZlcnkgc2ltcGxlIGFycmF5IGxvb2t1cC4KIAogV2UgZ2l2ZSBzdWNoIGEgcGVyLWNsdXN0ZXIg
+c3dhcCBjYWNoZSB2YWx1ZSBhcnJheSBhIG5hbWU6IHRoZSBzd2FwIHRhYmxlLgogCi1FYWNoIHN3
+YXAgY2x1c3RlciBjb250YWlucyA1MTIgZW50cmllcywgc28gYSBzd2FwIHRhYmxlIHN0b3JlcyBv
+bmUgY2x1c3Rlcgotd29ydGggb2Ygc3dhcCBjYWNoZSB2YWx1ZXMsIHdoaWNoIGlzIGV4YWN0bHkg
+b25lIHBhZ2UuIFRoaXMgaXMgbm90Ci1jb2luY2lkZW50YWwgYmVjYXVzZSB0aGUgY2x1c3RlciBz
+aXplIGlzIGRldGVybWluZWQgYnkgdGhlIGh1Z2UgcGFnZSBzaXplLgotVGhlIHN3YXAgdGFibGUg
+aXMgaG9sZGluZyBhbiBhcnJheSBvZiBwb2ludGVycy4gVGhlIHBvaW50ZXIgaGFzIHRoZSBzYW1l
+Ci1zaXplIGFzIHRoZSBQVEUuIFRoZSBzaXplIG9mIHRoZSBzd2FwIHRhYmxlIHNob3VsZCBtYXRj
+aCB0byB0aGUgc2Vjb25kCi1sYXN0IGxldmVsIG9mIHRoZSBwYWdlIHRhYmxlIHBhZ2UsIGV4YWN0
+bHkgb25lIHBhZ2UuCitBIHN3YXAgdGFibGUgaXMgYW4gYXJyYXkgb2YgcG9pbnRlcnMuIEVhY2gg
+cG9pbnRlciBpcyB0aGUgc2FtZSBzaXplIGFzIGEKK1BURS4gVGhlIHNpemUgb2YgYSBzd2FwIHRh
+YmxlIGZvciBvbmUgc3dhcCBjbHVzdGVyIHR5cGljYWxseSBtYXRjaGVzIGEgUFRFCitwYWdlIHRh
+YmxlLCB3aGljaCBpcyBvbmUgcGFnZSBvbiBtb2Rlcm4gNjQtYml0IHN5c3RlbXMuCiAKIFdpdGgg
+c3dhcCB0YWJsZSwgc3dhcCBjYWNoZSBsb29rdXAgY2FuIGFjaGlldmUgZ3JlYXQgbG9jYWxpdHks
+IHNpbXBsZXIsCiBhbmQgZmFzdGVyLgotLSAKMi41MS4wLjQ3MC5nYTdkYzcyNmMyMS1nb29nCgo=
+--0000000000008740b7063f448a13--
 
