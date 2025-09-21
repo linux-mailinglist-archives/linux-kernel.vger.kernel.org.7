@@ -1,120 +1,164 @@
-Return-Path: <linux-kernel+bounces-826190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D21FB8DCB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08867B8DCC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1071717D457
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:57:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE83117D697
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019592D7DCA;
-	Sun, 21 Sep 2025 13:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6E429E11A;
+	Sun, 21 Sep 2025 14:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nl+8CUK1"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLZ7+1rE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185AF2D1F4E
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF302AD1F
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758463041; cv=none; b=TGqFcYyaQ70/tXL5TUWiXqqlk4O2VRrZGJPnWWKyhe5gXwIhub5PnIi7mah2lQGfd7T4/zw0O91/Cof3FqpmT/5MplRzQQbLZ4RekXIokw5kwgfjT1pzVXqtPVLfyGfTHC/CwtaLr0RaBIAMJoTLIviKo3pggnXkkleAEkbZe4k=
+	t=1758463417; cv=none; b=JfW6NzRjtr2ect2APzokfrS/Y5gVgBHmUtG50QffQxPnySwmgsXqWBgEpG1nMRdEokOGitOHVEyGMtKB3dcdVhIO6bZEaTOYHC7+gum5IkdKUaFI0UnY4Eaum4bXr3tf+IJr5pu9FPN9viGb4WxQXfwr635s+aLPOfIo4uckaB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758463041; c=relaxed/simple;
-	bh=fHlIY9+uhSJm0tDafJHi34eihV/XQEMibtOTvhxc7No=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DnZKbts0VSKJI+GjCxSwzDC2r8i0hP6s9b1yGlmWTPjL4d/wOaklYso+Juv6BIXGwDsalxKz34tr/KqVHEpgIUq+WdiTowNBxvdCQnoFATc0pQVM6EMXWM7XRNAlfGlu/Z8b6nfL9aSjbI+lCOmxTNml2AGtTinNo0F4VYq4dng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nl+8CUK1; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5524c0ed94so1343610a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:57:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758463039; x=1759067839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JwKtMMVVH553vWqd1jOUT4NC0ABE2UrFAfCYIBs6Ut0=;
-        b=nl+8CUK1Q/W8QCa9kKIneYcG7oMgpKPCZUAg2/zEbrIhBE3WTB7O0UkYaw7GIlZLlu
-         LrMvIadvWfGQZ2aGQkAVNW7GpTSzHJZfkUXHfbhvDGW81ixdX8N0W6453Bra5tfAlcAb
-         yJKtmQ8StMtFwHaPKHp425x0IFFeljHtFq3hM/5siu2ZxTs3riDaOdw+UfIpGUfk1bIs
-         ffyet5vEY8TqEGywUNPwzRMDinFu/wSkSkw4XFyWbgNT2m2aU6nenmS9pJ9aMCcU5X7L
-         x4cnXNp/H3HKDGX7Cu+edqoYM9HTyeUQtf+yy3cDfBiTzphsuqhKvsHErbf3ZbepXTyf
-         OlMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758463039; x=1759067839;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JwKtMMVVH553vWqd1jOUT4NC0ABE2UrFAfCYIBs6Ut0=;
-        b=ZdPbB1Cm7/AotpWPq8/b7nGhWd/riCHJfIzZw6quVG2EhdJJ5X1p4Dr06bnamG5LYH
-         Ka87FhQJtqUNLGjdKZA7MFC7HOswSPls2ZzDNdIp1krqXa/KMMRvd6pSiqK+SGAghrho
-         a24nuPnMy+QXdqBkK4siJ92pchDEqZqCWgybmkx1pjuKUyCE0NpOZQHe+78V3qKqyspC
-         jGk1UWOKl5U96tebtzA4cwVmDk3dqQ04KGkHKbLQy6WT6fcZHPwTtSRWKHTsspn57ZUV
-         eCf4BfObk+xDBkLNUdKJlPFIh63CEb+NjJmBvuHKXlckiLX8d7yVIp37BfQaZoYyuuR0
-         1tZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtm17Ez++BS1k+AwXgpm1P5frHCmNHXA9m5RiwxrpRXMJMNu4rVOD7L4zkZ6VaSH1PE1ps+0G35dggpk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBIn6h+QU3BYCFK0hF7B/HBZ5tPkwCvV5CAtlqrF8QDfX7R53e
-	rA2jV6vVBjhCSvGe0GWI97VM6sN4u/PwQwZLR6DZVrVmOc1O/QuRjSyB
-X-Gm-Gg: ASbGncsWyrm+dEcXIxz76+ZHgXG2Uy2a4sw7aK201FeNu7dia9j/iEJY/rCysMcMYXh
-	mAD0CwsF67VCiIQGu8X1neC7KoGMAsl+dI/vB7lHOOQY8QQd+M0EoS+k56W9bf4ZD078CdbRcGX
-	XvK5uWYV0A8uI3MFnu6rQmT5dD3781YExKNTJqx+cwgXh2DTBa8CiTU4qgKPM9PvQWB7E462x8z
-	VfqS6INJgFX5mVYTJhxNbIe9lQXsCO3+w96iq5Fi60E7ghkutw94T0ioPM7KDr+FbEc9YkXSDYW
-	gf7y3MwFtv/iGzLemj8ta+N0bAANzl23K9o7Hut610N7K6pJV9i0ovY+ug653y3csubbpwoklfI
-	QwefbeFw+BWnMjLnczawH
-X-Google-Smtp-Source: AGHT+IGDsKBY3ozuTuBIgDdeQzOEwOHka23t+GrkUMG+515i/Pq9duddouEA6yTXxYZi6jjJjuHSBw==
-X-Received: by 2002:a17:903:4b04:b0:235:ed02:288b with SMTP id d9443c01a7336-269ba5167bemr111498925ad.30.1758463039263;
-        Sun, 21 Sep 2025 06:57:19 -0700 (PDT)
-Received: from archlinux ([191.193.70.152])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802df74asm106105725ad.94.2025.09.21.06.57.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 06:57:18 -0700 (PDT)
-From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: qcom: sm8250-samsung-common: correct reserved pins
-Date: Sun, 21 Sep 2025 13:56:23 +0000
-Message-ID: <20250921135623.273662-1-ghatto404@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758463417; c=relaxed/simple;
+	bh=Dii3XVV3GqFGsvIpQHJXuB3JBENZx3cw7QxToan9g2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NiQ25vbrFUBO9VC1OECJf4rHvetnX9eBNMlegkS1gZSLop0rUEfvnlK8jFEx0Aa++c0/oSERFy5ogYj6BcHtI/buFNB7vQdxptY4teC8LVFooRYQ6wF5qQwtCiRJE4uhNjp6Jcz7WkyEOXCgay5K7/oB/cCMGu5S6Fnd/9/TO0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLZ7+1rE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACAEC19422
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758463416;
+	bh=Dii3XVV3GqFGsvIpQHJXuB3JBENZx3cw7QxToan9g2A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GLZ7+1rE9YpZL9dDgv4EWsCmZtrfxY9jZ01tUHgxjrJzPBSEoeHMukNsYJTId3qzo
+	 2XSMzvOkX1C36xp8+iXOUYul+NiR/W55AxzHiko6LlnVr6uKQByrwO0hvK7UB86jjE
+	 57q2GDg+YZUNmknrJe9o+8IjrJUTRCr8GsiwTb/sCrUbCw42XBGOEuQiAsZPAzqcRR
+	 svOXjyWynn+8zl4s1zWql2bCFPTwHLWUFniv2SQ0j0Y7TYaUBNuJkIQUmD6pZCq3W/
+	 Gh6XjssCZOS8Qr6zItak+VNVkLJIelavMq/gQSNo11he3Kd4cxRRXozqZUegKf1Mfq
+	 /B6b8P0eN++rQ==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b256c8ca246so410158466b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 07:03:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWoTNM5xsFd3dLOcZABwBF3JM4DgJR8xSmTz1IcxYzmlvA7Hp6gx6wsMTiLuNQVezrgDylvw7xpbjitUNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF1ktL0iVzP5Qg7k1hWknTo+0+fNIjDqFSE/n7h9hfwMlZ3Xa3
+	bOAt6CTJEJ9EpOBn0x9vkm1Ex3IOvzj+rbg+lNkiBOpPCpkBBCRIaaIAxBR+rTUBBKYD21kpWjC
+	GPnpXO8W7y4JGRl7zPwhXjkh6orK0ORk=
+X-Google-Smtp-Source: AGHT+IEJY9pRCOQ9ba+DERLtt5IlKiSfTxj+DOQMubiAwVQ0XJ0uKpMlJPHMt7g8wlCII+jXBu1TfMjByYNPDasXSXs=
+X-Received: by 2002:a17:907:9449:b0:b04:806b:c612 with SMTP id
+ a640c23a62f3a-b24ee6ef5c6mr1122778866b.10.1758463415400; Sun, 21 Sep 2025
+ 07:03:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250903030100.196744-1-youling.tang@linux.dev>
+In-Reply-To: <20250903030100.196744-1-youling.tang@linux.dev>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 21 Sep 2025 22:03:19 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5LnRruyzdxR26Sopot4HoAwsGJ=kQKr4D=gRmW4t1R0Q@mail.gmail.com>
+X-Gm-Features: AS18NWDUaq5tytPXMFw7v4wdbczyDPhFJ5b_iiVJqz7-XJetSXZrcs_y8_quLOw
+Message-ID: <CAAhV-H5LnRruyzdxR26Sopot4HoAwsGJ=kQKr4D=gRmW4t1R0Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] Add kexec_file support for LoongArch
+To: Youling Tang <youling.tang@linux.dev>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>, Yao Zi <ziyao@disroot.org>, 
+	kexec@lists.infradead.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The S20 series has additional reserved pins for the fingerprint sensor,
-GPIO 20-23. Correct it by adding them into gpio-reserved-ranges.
+Applied with some modifications. You may need to test whether everything is=
+ OK.
+https://github.com/chenhuacai/linux/commits/loongarch-next
 
-Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
----
- arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Huacai
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-index 96662bf9e527..1680be67e733 100644
---- a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-@@ -159,7 +159,8 @@ &pon_resin {
- };
- 
- &tlmm {
--	gpio-reserved-ranges = <40 4>; /* I2C (Unused) */
-+	gpio-reserved-ranges = <20 4>, /* SPI (Fingerprint scanner) */
-+						   <40 4>; /* I2C (Unused) */
- };
- 
- &usb_1 {
--- 
-2.51.0
-
+On Wed, Sep 3, 2025 at 11:02=E2=80=AFAM Youling Tang <youling.tang@linux.de=
+v> wrote:
+>
+> From: Youling Tang <tangyouling@kylinos.cn>
+>
+> This patchset implement kexec_file_load() support on LoongArch.
+>
+> This patch series enables us to load the LoongArch vmlinuz.efi(pez) or
+> vmlinux.efi(pei) or vmlinux(elf) by specifying its file decriptor,
+> instead of user-filled buffer via kexec_load() syscall.
+>
+> To use kexec_file_load() system call, instead of kexec_load(), at kexec
+> command, '-s' options must be specified. kexec-tools needs to apply the
+> corresponding patches. These patches can be found in repository [1] and
+> will be submitted to the kexec-tools community later.
+>
+> The basic usage of kexec_file is:
+> 1) Load second kernel image:
+>  # kexec -s -l vmlinuz.efi --initrd=3Dinitrd.img --reuse-cmdline
+>
+> 2) Startup second kernel:
+>  # kexec -e
+>
+> For kdump:
+> 1) Load capture kernel image:
+>  # kexec -s -p vmlinuz.efi --initrd=3Dinitrd.img --reuse-cmdline
+>
+> 2) Do something to crash, like:
+>  # echo c > /proc/sysrq-trigger
+>
+> Link:
+> [1] https://github.com/tangyouling/kexec-tools/commits/main/
+>
+> Changelog:
+>  v4:
+>  * Add the character "kexec_file" to the command-line parameter.
+>  * Fixed the issue where kexec_file failed to load the KASLR kernel
+>    startup.
+>  * Modify the member name of the loongarch_image_header structure.
+>  * Modify the patch commit message.
+>
+>  v3:
+>  * The ELF format kernel loading should not use loongarch_image_header.
+>  * Separate patch2 into an infrastructure patch and an EFI support
+>    patch.
+>  * Adding that kexec_file cannot load non-relocation kernel comments.
+>  * Some minor modifications.
+>
+>  v2:
+>  * Merge some patches.
+>  * Add support for ELF format images.
+>  * Rename kexec_image.c to kexec_efi.c .
+>  * When KEXEC_FILE is enabled, RELOCATABLE is selected by default.
+>  * Some minor modifications.
+>
+> Youling Tang (7):
+>   LoongArch: Add struct loongarch_image_header for kernel image
+>   LoongArch: Add preparatory infrastructure for kexec_file
+>   LoongArch/kexec_file: Support loading EFI binary file
+>   LoongArch/kexec_file: Support loading ELF binary file
+>   LoongArch/kexec_file: Add crash dump support
+>   LoongArch: Automatically disable kaslr when the kernel loads from
+>     kexec_file
+>   LoongArch: Enable CONFIG_KEXEC_FILE
+>
+>  arch/loongarch/Kconfig                     |  10 +
+>  arch/loongarch/configs/loongson3_defconfig |   1 +
+>  arch/loongarch/include/asm/image.h         |  53 +++++
+>  arch/loongarch/include/asm/kexec.h         |  13 ++
+>  arch/loongarch/kernel/Makefile             |   1 +
+>  arch/loongarch/kernel/kexec_efi.c          | 114 ++++++++++
+>  arch/loongarch/kernel/kexec_elf.c          | 105 +++++++++
+>  arch/loongarch/kernel/machine_kexec.c      |  37 ++--
+>  arch/loongarch/kernel/machine_kexec_file.c | 244 +++++++++++++++++++++
+>  arch/loongarch/kernel/relocate.c           |   4 +
+>  10 files changed, 569 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/loongarch/include/asm/image.h
+>  create mode 100644 arch/loongarch/kernel/kexec_efi.c
+>  create mode 100644 arch/loongarch/kernel/kexec_elf.c
+>  create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+>
+> --
+> 2.43.0
+>
 
