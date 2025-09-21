@@ -1,93 +1,128 @@
-Return-Path: <linux-kernel+bounces-826175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF76BB8DBE1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:31:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527C6B8DC38
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 019057ADA84
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:29:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438EC189CB0F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295E924CEE8;
-	Sun, 21 Sep 2025 13:31:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683DF2D7DF1;
+	Sun, 21 Sep 2025 13:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhiS1r4B"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DEF2C08D1
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376022C08D1
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758461465; cv=none; b=hA9FqlNh4q4+9872UoDFh4VGNC5OzL3PNEIYfNX3pP00wniEWFh0KgyFXVVTH261NO/gW0L2mj7498NIDOBLTsi1E5/Jf9dDwsJlSKHdpodk0gVfhRxwqDQW1tWc2TVNuZxzIcKWeYbSpYhX530X2GCxx6+QGrYL5/wNk9UcgDc=
+	t=1758461675; cv=none; b=hMVN6oqqkwNSN7UB8z4DldCX8NtonUf0vZVwyPOaXEih9RdXTel0sgNXheCgs0SZVkHCoxTCn3z1P5axGMrPSjAmAig27iXB9ZTx6Fvi0Wep8yRqHFBshHcyx080GCtyq7D3c+/Pi3t6uKfm1xqD2a3qKHv6cVbPg+ZWLMMCRjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758461465; c=relaxed/simple;
-	bh=WtrS07d7+cKxJcvuS+5QoQ6PIOvYu0pVJLWpuP+Tf1I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JviT9ygwwvslijhnLXVnQFxoODQmTLvJVc7Vz8VMh+MzxM/XSyp4eMXrInJm1xP0jB2wHLSvhY3l9m2D0ZVziVSqd666ZiOrQUld1iCxslveVoqj7R3WXYiELFEwAeRbgyMyB50HA7rre0BuwqFD6RZPAtm6kCeLs+3/CS7JnJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4257462ab66so10729775ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:31:04 -0700 (PDT)
+	s=arc-20240116; t=1758461675; c=relaxed/simple;
+	bh=W+MdQviWUrHmllDXqPNcRT0Vif/KVaI54aJjs7g2kRw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LWoH/mFZFRJ37HTuP+q1dSrsPSh1L+2M2e26SCRQfRF5lljZPyFM09Zl/bWx8jpPqdvCnsir/1woI4uum7YrkGyH2loUEbIqZheALZmnOOUWVPOuEPONE+eTex7G3oBjguhkgWYnjqd5jdYaReYciCga/f9LkMZsWeT65uEiTZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhiS1r4B; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee1381b835so2224885f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758461671; x=1759066471; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mMhhKCmyO0tkOfkSwmubre93MqE7/JLPoa9fLatUrvU=;
+        b=RhiS1r4Bm5Ywpgny7F/7/ERcxFuVNZ1dLhJH7VxyiA2uQr8wjfbaiLOSVttpBRIWAe
+         cNShyG7WMtyzga/baJiM31+ibBixPqsRJmuuRD5ZTi6uQTyuNj2ahWxj69PwhNfeCemG
+         YBPYyq731QTmVexQrcZ/Er0KVuQafQ497ztt7+L5fX7920B/OYAAPPwBl3cz8WGu/Nch
+         9/8OSHPk9fMS3INDh0MtZ6gsuBJ/pX/twCKP8Ie30TEPnoomVrysc9yjbVs6pJwx0dg9
+         rIP7hmeY72SZv4Gtpybtt/TVLPJqI1yfqPqpX4XVHA0Yynz6Xc2JJHudVfPX+qjdALCy
+         D6Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758461463; x=1759066263;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NiQRdYcXrpiVf19CCztsidu+S4PHDmYt4POx785FwlY=;
-        b=TcgmGQ0T7FxZ9rfLGI25VkIiyqRqQZCxPLeR5CEORlanW7CDyEDXGqUMYn/8oMmniX
-         33lnvegykCtlollaoNStjQkFEcW80xLzrAiaXnutz58oTn0MP3eos+ij3TJK3Lxnbb1U
-         LqLnIjO2D5OZsQB6eQM/NyB/S6VvAYs3ysrOEcOV5aI4t1mBlhnMH6jnif5sN7GGt4Ky
-         Csd8oSWwW3K9xs7G0aB9kFneePai/uDqnipsdObCQuL/Jm+y0uFsNsE+tkdhUSp1oB3j
-         gZf/XkC3qd5Uf6u8RXZb1se1GuYhpx6bvkxuQXTS6zwdotIRFgT+VhvwddoTlPAZ6Ad2
-         y29g==
-X-Forwarded-Encrypted: i=1; AJvYcCV2aXXXXVtdRJtWODJk/kIjRy4Wu/gE48wh/glPzy/RMncjVN7Yufm1bKi+TF4kHrOhiGIu9DFPLEzDG3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaluuwQ41XVg8NLbKt1j7vW3yskpr6yLNFUQ2IpX0WWpE9Erkt
-	tBlpPRKplVfa1bQdeeaFvAlRGMDvIH1urDYwhmXehIlCBUHjLwtQ+CAYTmOH9XOqcI+BRz9nnyT
-	Rr70hs34tA4cXm1kq3/hgBnoePwdqEEi3Fss0Jov6n8VUm6qvi43oMttaHmU=
-X-Google-Smtp-Source: AGHT+IEGkrIO9udB5nrXdVzkfiVIL/hcTyXlJ1peYFPQ7nDbEh6eWcUemHnCxcKw1j2N5V2c1NDHpUBCeLMWjFFu7P87V5ZxCe3u
+        d=1e100.net; s=20230601; t=1758461671; x=1759066471;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mMhhKCmyO0tkOfkSwmubre93MqE7/JLPoa9fLatUrvU=;
+        b=NPkgcItAtqtrUxerJxx/I64xqCP0Mp4UD01w8BDUEnzcoW4kR69Y82TbmYZWuPg4WR
+         eq+H+bQs1nbXQ4tdDKJD4tCFZIAMqPSi55DJh97FDy/Og2qenc5CYcj4aLiknqzYyJV1
+         0ySRGKVuwSzGiHfvs3NHzshex7C9QVW7V+9fDct18354yhR8X7784BKVLAynXNTuNeXP
+         wHoWpA7tcCo7r4WB2k3f++BDTBho+1NrL+bxeIrP2o4RG/YgG0fyla0p1P1Q2ksK5eeD
+         PfaStN1s+UfdGO8QDurhCsJE3kEzw508Ojc6n6AXFwqCG9YMtQw+WhEn3HlpzupmrBgM
+         sUuQ==
+X-Gm-Message-State: AOJu0Yy5Ss+kTX25TyaiW/Q4us78NnFzx9zcBJ6gKjVsIJbWapgAjVQP
+	MTGwxeyWvHh0Ot44cLsYks9chekpCX7QJdX0RRq62+OThvTMFnFA8nA6
+X-Gm-Gg: ASbGncvuBt7atOmrP6kvDf5FsQdbAA5jgKhJACa/Rv6Bmf6PFeuCBXmGKHhbGc2pCWg
+	8VlMU5pWsw5nv+SVuKweFnOGzjRp8wqbseJtBsxs0RHGWkFWHbPk2KXf0dDFJb/XLT+BA2D6ogS
+	srMMjE4CE6hiKIKh414rzyrMhlJFPGCT6UOjCIXG6FozwVsxICtzPpXOOBaSlXjJNAZg9j4b0D+
+	UARstld9siv6ROAh/imxENqElzGbMlJodgB/3fnHUic8MHxTD2ExvFi90v6XFtji3wsxSC19Plo
+	ozPwkydpvUsKOt12cS+ZODWb9IIYjGkRrCNCeYQJB9npdeCG7sK+MBGD+zue0hzvkHAr46dmOzi
+	xXCdrA8qtyy61hDTfTgGf9qwSQlfTEJnwki0ovGaA
+X-Google-Smtp-Source: AGHT+IEFtDhZUV//YELTB2p7puOk0cSYYIKzsLeyMKlfyOvsxg4B2DgsmNTjAlhUmPXeaySh7uGg9g==
+X-Received: by 2002:a05:6000:2404:b0:3d5:d5ea:38d5 with SMTP id ffacd0b85a97d-3ee7e10616fmr8560965f8f.25.1758461671168;
+        Sun, 21 Sep 2025 06:34:31 -0700 (PDT)
+Received: from localhost.localdomain ([78.211.117.102])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fc00a92sm15910316f8f.63.2025.09.21.06.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 06:34:30 -0700 (PDT)
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: jic23@kernel.org,
+	dlechner@baylibre.com,
+	nuno.sa@analog.com,
+	andy@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux@roeck-us.net,
+	rodrigo.gobbi.7@gmail.com,
+	naresh.solanki@9elements.com,
+	michal.simek@amd.com,
+	grantpeltier93@gmail.com,
+	farouk.bouabid@cherry.de,
+	marcelo.schmitt1@gmail.com,
+	Antoni Pokusinski <apokusinski01@gmail.com>
+Subject: [PATCH 0/3] iio: mpl3115: add support for DRDY interrupt
+Date: Sun, 21 Sep 2025 15:33:25 +0200
+Message-Id: <20250921133327.123726-1-apokusinski01@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2f:b0:425:7539:bc39 with SMTP id
- e9e14a558f8ab-4257539bf4cmr17571985ab.10.1758461463162; Sun, 21 Sep 2025
- 06:31:03 -0700 (PDT)
-Date: Sun, 21 Sep 2025 06:31:03 -0700
-In-Reply-To: <68ce15c0.050a0220.13cd81.000e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cffe17.050a0220.13cd81.0036.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] INFO: task hung in __bread_gfp (7)
-From: syzbot <syzbot+4b12286339fe4c2700c1@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, hch@lst.de, jack@suse.com, 
-	jfs-discussion@lists.sourceforge.net, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ming.lei@redhat.com, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+Hello,
+This set of patches adds support for the DRDY interrupt in the MPL3115
+pressure sensor. The device has 2 interrupt lines, hence the new
+binding. I also added support for the sampling frequency which
+determines the time interval between subsequent measurements (in the
+continuous measurements mode) so it's obiously tied to the DRDY
+interrupt feature.
 
-commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
-Author: Ming Lei <ming.lei@redhat.com>
-Date:   Fri Oct 25 00:37:20 2024 +0000
+Kind regards,
+Antoni Pokusinski
 
-    block: model freeze & enter queue as lock for supporting lockdep
+Antoni Pokusinski (3):
+  dt-bindings: iio: pressure: add binding for mpl3115
+  iio: mpl3115: add support for DRDY interrupt
+  iio: mpl3115: add support for sampling frequency
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113248e2580000
-start commit:   097a6c336d00 Merge tag 'trace-rv-v6.17-rc5' of git://git.k..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=133248e2580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=153248e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=4b12286339fe4c2700c1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116310e2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1430b0e2580000
+ .../bindings/iio/pressure/fsl,mpl3115.yaml    |  63 +++++
+ .../devicetree/bindings/trivial-devices.yaml  |   2 -
+ drivers/iio/pressure/mpl3115.c                | 247 +++++++++++++++++-
+ 3 files changed, 305 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/pressure/fsl,mpl3115.yaml
 
-Reported-by: syzbot+4b12286339fe4c2700c1@syzkaller.appspotmail.com
-Fixes: f1be1788a32e ("block: model freeze & enter queue as lock for supporting lockdep")
+-- 
+2.25.1
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
