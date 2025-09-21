@@ -1,125 +1,184 @@
-Return-Path: <linux-kernel+bounces-826338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF273B8E38A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:53:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42631B8E3A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DC6189BE95
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:53:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E70103A9F7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB08266574;
-	Sun, 21 Sep 2025 18:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3477212566;
+	Sun, 21 Sep 2025 19:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="UpO4mQmo"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="GDdRC9lW"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14C41C84A0
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 18:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933602BB1D
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758480780; cv=none; b=PBgXM2S362kruXM8r4NMBNos4l/44us8Skrww+MVtP4ewe+djsnQw9TXf0v3gEgOa09ANDOPKGh78mXvwDWZxmBQgUfjcjIRI2jk0LN/EHO0q7uCtz420hnV3ZdCp8yIJIb4oWfunqdrWMkzM/DgCKetlccOkEF0cyROsjjzdik=
+	t=1758481522; cv=none; b=o12LLmFqSkOc1rahabw1VkwcGuCatez6sm2fH8gerNS+GAcMJRPFxpXCMOZScvxSuO+Bw73+hCP+K1N7VJciDIBajFYPKd3Z6MmVF+d3kLI+0NzL4hOPixIlauPysZNM5Gp/bYRlVapExXerdj//vsib6KQFd3fkCd6oLNr0RSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758480780; c=relaxed/simple;
-	bh=MC8psRJR3jjNg3dIH4LXX7tPa2/ymiVUB8mRNj6lCsQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Aoj1q3s6EeZ+9P79iDzPZ654ZvkvGc4t/vLnU1M629VLZjaI9J4A5QPDYy0IcxdQpqe6LJm5AC3+/eKzMLKVXzUseAXFvbp6MieNbvEArovZI4v2+aRtxSsO0nTdgEQecVRCNqr2JbOlvjU+cHqdw616Kr5EFeGVRsJvIDN58Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=UpO4mQmo; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so2087617f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 11:52:58 -0700 (PDT)
+	s=arc-20240116; t=1758481522; c=relaxed/simple;
+	bh=w8WpeZPhF8DveCAu9nZH5IdpjTp7dXBeqPT5tY/beCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EmldzoSjYo8C5byrKIukk/zmm1n0UXu0pVrvcQly+5M5c36raSjIcHLQcufWoz46ovKxv7lRNuLJ48ewRIdT7/ObXec2podaYRiyVEYKyIyoS/28aZd3Mg/8ib0otIqR1saE3Inc32ZGKF/o1lWburWW2Qlh/femxvXzVm0JKyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=GDdRC9lW; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-8c3414ad27dso39015039f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:05:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pinefeat.co.uk; s=google; t=1758480777; x=1759085577; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NkZms6IJlV9Kq6Bvugi++P5U8z/GfXKW3hq5MRRzeXM=;
-        b=UpO4mQmo1r7rHLs6Dpn+PYFmyxtbIC0Ay2aUsszBgnLXijoG0uVD0ji+e2YHVBnrDQ
-         Nm3WFyzkZNFE/LeuJNJCXFdmw+Tq7FqW59WUw3W6TtHBzXXjJs+1NxnxXqpGv2LBKIqz
-         ZrB7QAZWvhvB8GTyJD//Erv4YSqS+OOU+onQmPxjHB5i92HMLszW223Vo+ndrAeOPWo4
-         bWH6rxOJ2pnK113mdN9tn9janw2fyheQ0wyKXGfzPluzVAd5VxIMVpE8kCkpDc4WEFhP
-         CZX+JUZBWpM7p5JRpSTLN4g49GHiEi32USDymlFqYzLJ9HC0H7iwx/3XUZwAjTQU7Zgl
-         5NoQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758481519; x=1759086319; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t3yODI1opb0jOanIEDnISA0XED16oP9HRbOj2aYoSYs=;
+        b=GDdRC9lWUFU/0r1R6xNxj/Jg18JsAWosYt7yy5ahCmRQscTTJzn9tdnnFQbtB9+s2X
+         zcgEETJQoicqyyIKs32UgbvWU7sLvgDEr0aq7QYf6+egOPnxlkMx8ypFaakRsihqVHfC
+         jUaqCeq7Jh2nzBuriPpC0rTbvzikQzwXS/DLQI517LOOvUoedxPRBAAXyKzrDSsGSB1p
+         uKynEJPbRwpHbnytOVOExJFktXCswwnSi/9kTXEQSDzxGiVeWOGgquQd5UZYPtvrkIYX
+         Rj171LSCETrt189mM7G7DY54P1J1sh35rBmgjLkU9tkvCgsDqjBOo1mbZxxooliZi/52
+         dOjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758480777; x=1759085577;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NkZms6IJlV9Kq6Bvugi++P5U8z/GfXKW3hq5MRRzeXM=;
-        b=HNa989AiE8ZLVpSwcB4YYJZs9m6xk8putftiiRDNfol80xKNjWbp1ZV2rczb5gzY/5
-         3Fw28/b7+Aol+7pkzC8C0VXoGsER00vzHcL6XcrPA4QbUaw+ILmCHNEkeqNBKsx+Wt4v
-         ZyNO9OF2/fQKRyq8kDGSiAXGEMQMdZV/VqAnLoIslSrywzE0AEaZBODWKc95Zucvk6Ba
-         PH0xHYZpMAzz2OhezsFClsTo0u+/hbHSwueni1Zd88dQ4U30xDJtAO4RcOCTlBSTh8qi
-         e9YC818uDXq8T9Ka2itxxaugbLDbPb/sbB1iy6x0ZgdfivufyUAjO3wL0xfa6uej9ZR5
-         OJKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbtcSKKHQcXEVtB6isuOPPKcP/cVJcWmyRPHzILjCpKT+S7hlttvMSf3Iy/3V5l2dWKydrq4ILJUyWkGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyqa7PwevhhuPmy9DzXUAYokYtUPpxuBH9tAQCeXs6NCjBHiROp
-	0OjYeauQWkO4VslHRCcSk5WOkR/xsIRwIc3I+n/BqbmVKjDiSgJJ8DnMl6KRnhmyXFc=
-X-Gm-Gg: ASbGncukWDALuIF13UFR5AeqmZT0iW/AFHFNM/s+kU1u+PyFVyWu1O+Jnz8CGSsmf1w
-	53MNgyMRJzG6cNo3zB+6OCd5kQyGkcDBpDVuneJEuhcedE6OTKBRbCAcYUrd9s6PWlzgrdjZWp3
-	DPbICOgYVoTE2yohiXYwOLtiW3LrVsp5oMG8vXweEi/pjB8T9wN8MtuSgkddGMNpasRAw8ICEob
-	3vn1f1qQJS0sjsc5FVKZOdxHgfxdWFVDKswNU//hbL8R/pYRNqxZj+MFxJExujIzmCePQl4yaEh
-	D3CErdw2QED2fX+alQ4TVhyONU86EbfdUBAEVJ09ZfN5Px20uB23ob31EcUJnwwaZk0T1fDolvM
-	080rsXPlNel0VtdZQuZClEHdifHyymfwwjeSrHgQTw+fMQY+k2bfa
-X-Google-Smtp-Source: AGHT+IFLokWFX5QQyvB31/3nPAXcA98bLt8kBvJ4UrliwgAEi7mGk/gCusbB300xH5lmm6GEt+I+gA==
-X-Received: by 2002:a05:6000:603:b0:3e7:27b9:40f3 with SMTP id ffacd0b85a97d-3ee7db4c3cfmr8908411f8f.15.1758480776576;
-        Sun, 21 Sep 2025 11:52:56 -0700 (PDT)
-Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:3800:f880:3b2c:b75f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3fac7463f2fsm3468131f8f.39.2025.09.21.11.52.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 11:52:56 -0700 (PDT)
-From: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-To: krzk@kernel.org
-Cc: asmirnou@pinefeat.co.uk,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	hverkuil@xs4all.nl,
-	jacopo.mondi@ideasonboard.com,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	robh@kernel.org
-Subject: Re: [PATCH v4 0/2] Pinefeat cef168 lens control board driver
-Date: Sun, 21 Sep 2025 19:52:50 +0100
-Message-Id: <20250921185250.7619-1-asmirnou@pinefeat.co.uk>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <436efc30-5e54-43c4-9d68-88bc63d71231@kernel.org>
-References: <436efc30-5e54-43c4-9d68-88bc63d71231@kernel.org>
+        d=1e100.net; s=20230601; t=1758481519; x=1759086319;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t3yODI1opb0jOanIEDnISA0XED16oP9HRbOj2aYoSYs=;
+        b=H2Y/OeIgO0V2puXk57TvOeDI8yhqGgg2v9a3JBbjnONDZtouyXu8Sct55E5r4Sy3PH
+         zzSQXHNjguMpFjWvDJ3vsMvwF7FD1WfcNm4ejCrY63gLsFChECPH5txGYBEue6O0/SFK
+         6Hr8sypMio8uuLKfkzJGV8ha/R7dvbtj3Zs2ASvyV3slDH2vI9ukdR+0iBN9SKH6U2YX
+         xJyqr8OfYWY9Dj8404E1uR5plrsmqqPNFF65vumysDUI8CFAWHwSMRAfJInTkGrrEj/j
+         7NmoAzNdjJuW4FQE1OnOquvFg9BBWMFpuCzN3RvTkEHXNhkmJohNtKp1nvK2UMoXZY69
+         KheA==
+X-Forwarded-Encrypted: i=1; AJvYcCULU8JQt6Zndv6xfRyXJfKn0VaZcZdF8Wx+Z3Y7OeY9W3vs8agU50/By88Q1UfJQYUSSq0LzcF8qi5SuME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsUEdE/dkBQIJ2IJnhw0qa9acCM2A6P8WclZXwawdd+G4EUZxG
+	82nNfCa3GrR3396LpVKgn9dA5EF6rYsvYz7L2eKqxV17c41PauLyT+z/w7scXlAmlR8n21d51d7
+	oapPY
+X-Gm-Gg: ASbGnctj6l7yJa15Ypw0s2jBySFaeQvNdPh+WzaEDP4OJSY7ApwJamwYUHsd7CO4Vtn
+	zEc7nma1TrfRyhKjiJan8yzHlH4W9Cx+k0FIRsA/vOtNBKKbov00sW3pJYqLPKni3p5enyv05La
+	okbfxL6ZDmRuJJFd4HLjCHxa6U4he+YNUOaX5712q0G7ZQqPP8xveEWnqlcCax96sx66RcL7uXB
+	851NuZFLzXT21FrgrQIHMwAFtMpmxjiE7vXdcJiq8pKRBVlU1xSrCLxbaW5yTxKGB+lyYXRC++3
+	KxoB+rcPjXwmazN+P0GtL55q2nOSHU1vrpWfGc7Pwr0qXQAO7TYp6l6gja2nET8HRV0MVpg8RVo
+	DhHgvOuPImAIWVvAvCIYtQzyqzLyJaKETkOXA7caHG6+n3jKVEnZBqdl2gyzKVyta4kz1U1HAIa
+	nX5Dzj+A==
+X-Google-Smtp-Source: AGHT+IEFYJsSo8XIdBpCssdirvu4z8vm7oDZUP42OyCCbdIOLRYBgINTidn4zPRPHizJvfN5lbHIOQ==
+X-Received: by 2002:a92:ca09:0:b0:424:ed48:9acd with SMTP id e9e14a558f8ab-424ed489bb8mr86349525ab.27.1758481132441;
+        Sun, 21 Sep 2025 11:58:52 -0700 (PDT)
+Received: from [10.211.55.5] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-4244a36aa66sm49663255ab.8.2025.09.21.11.58.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Sep 2025 11:58:52 -0700 (PDT)
+Message-ID: <84c77e62-93f7-4a3e-8a86-7f653076bdcd@riscstar.com>
+Date: Sun, 21 Sep 2025 13:58:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+To: Vivian Wang <wangruikang@iscas.ac.cn>, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250919155914.935608-1-elder@riscstar.com>
+ <20250919155914.935608-3-elder@riscstar.com>
+ <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
+ <3c9aaa62-f685-47f7-a21c-00f51550f185@riscstar.com>
+ <411ade91-3fb5-40a3-baca-e6b03c5783ae@iscas.ac.cn>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <411ade91-3fb5-40a3-baca-e6b03c5783ae@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Sat, 30 Aug 2025 15:20:30 +0200, Krzysztof Kozlowski wrote:
-> > This patch series adds support for the Pinefeat adapter, which interfaces
-> > Canon EF and EF-S lenses to non-Canon camera bodies. The cef168 circuit
-> > control board provides an I2C interface for electronic focus and aperture
-> > control. The driver integrates with the V4L2 sub-device API.
-> > 
-> > For more information about the product, see:
-> > https://github.com/pinefeat/cef168
-> > 
-> > Changes in v4:
+On 9/21/25 1:51 PM, Vivian Wang wrote:
 > 
-> You already sent v4, so this makes a duplicate posting messing up with
-> tools.
+> On 9/20/25 23:59, Alex Elder wrote:
+>> On 9/19/25 10:52 PM, Vivian Wang wrote:
+>>>
+>>> [...]
+>>>
+>>> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
+>>> +{
+>>> +    struct k1_spi_io *rx = &drv_data->rx;
+>>> +    u32 bytes = drv_data->bytes;
+>>> +    u32 val;
+>>> +
+>>> +    val = readl(drv_data->base + SSP_DATAR);
+>>> +    rx->resid -= bytes;
+>>> +
+>>> +    if (!rx->buf)
+>>> +        return;    /* Null reader: discard the data */
+>>> +
+>>> +    if (bytes == 1)
+>>> +        *(u8 *)rx->buf = val;
+>>> +    else if (bytes == 1)
+>>>
+>>> Typo? else if (bytes == 2)
+>>
+>> Wow.  Yes that is an error that I'll correct.
+>>
+>>>> +        *(u16 *)rx->buf = val;
+>>>> +    else
+>>>> +        *(u32 *)rx->buf = val;
+>>>
+>>> Maybe
+>>>
+>>>      else if (bytes == 4)
+>>>          *(u32 *)rx->buf = val;
+>>>      else
+>>>          WARN_ON_ONCE(1);
+>>
+>> The value of bytes will be 1, 2, or 4, which we can tell
+>> by inspection.  At one time I had a switch statement with
+>> a default, but I decided to leave out the default, which
+>> won't happen.
+>>
+>>> Just to make the pattern consistent? Same for k1_spi_write_word.
+>>
+>> Consistent with what?
+>>
+> I was just thinking it would be clearer if the code states clearly:
 > 
-> https://lore.kernel.org/all/20250824-cuddly-cryptic-porpoise-b66b4a@kuoka/
+>      1 -> u8
+>      2 -> u16
+>      4 -> u32
+>      anything else -> shouldn't happen
 > 
-> Each posting is its own version. Resending - not marked here as resend -
-> would be sending the same patch.
+> As is, it wasn't obvious to me that we're just handling 4 as u32. Maybe
+> we're just capping it at u32, and 8 is also handled.
+> 
+> Well, maybe I'm just not familiar with SPI stuff, and word size above 4
+> doesn't make sense anyway.
 
-Gentle ping.
+Understood.  I only know it because I checked.  And I do want my
+code to me understandable, so I'll add a comment as you suggest
+below.
 
-This is still v4; the only difference was correcting the sender address.
-No functional changes since v4. I'm keeping this as v4 unless you prefer a
-rebase.
+Thank you.
+
+					-Alex
+
+> 
+> It could also be a comment
+> 
+>      else /* 4 */
+> 
+> Just a suggestion, no strong preference from me.
+> 
+> Vivian "dramforever" Wang
+> 
+
 
