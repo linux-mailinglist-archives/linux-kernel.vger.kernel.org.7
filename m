@@ -1,164 +1,89 @@
-Return-Path: <linux-kernel+bounces-826115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2868CB8D92A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:03:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EB8B8D930
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B164C17A70F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:03:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774CF17A878
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043B7257AF0;
-	Sun, 21 Sep 2025 10:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B219D2512F1;
+	Sun, 21 Sep 2025 10:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="z22nrgjH"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="T9HuMCuZ"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657ED19D8AC;
-	Sun, 21 Sep 2025 10:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 781B119D8AC
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 10:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758449004; cv=none; b=Wcb2m9JBg+dUxY+iD3/L0xeWHMPKnBgXDiNWAzjmLcJ2lx7DiUANif8TdKxqlJKf6c7xNC2t8jVPwxBuphbVFUrvBDydPUrACk7xZYxp6FcFtgiNb/+TfwxRQIYGKwMqrOHiSg0yiTDs/oMTGIQaz1Wln6hP1utb/EXtBjSeCnI=
+	t=1758449046; cv=none; b=U+EL1NXfV68Iw86zTR+G0H+gOGRZxfTZtndCttCjELlBAIDctmeAmL5L+piMXrVdbxFouHEPnQ6edXw75tZqgeOKpP/XslafQGnNrFGdtGumvOrCRmL5wSp+asoxe4Bwj8ESX5KJjqeXNHlLbbTwGzMiCK/3zkxNg54bTN/NosM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758449004; c=relaxed/simple;
-	bh=W11PXjoxakV6HQwskenQBv2X9EdC2ohv75ayu4lk+00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WOPHXCCVqpraOM4R0oXBYo0amT7t6LIksfxxrE66Vw2JUNB0dpInZAijUiBtaryuQCOACFeFp5fRajoBWN9xBSiLHJmS5XG3VkWmYZfQ2wD4h1q78tdhcVOT6i6k/eolITFdA5z1ttipAKt8Mumwol4SMw2SLqdXAXxYMU4EghU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=z22nrgjH; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	s=arc-20240116; t=1758449046; c=relaxed/simple;
+	bh=xZZa2Jz2WA7YryhDhvodNYvhGdEYAfnBL3pN4bsZvxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=P3FCvUfwBrvXCYoyLRp6dI7ShHO2fxJpmvPSAC2SgTyQBZd8jGzaYfZ/4Ngw0Ikfuvy7IOcTZ97kRBtp23BW/3laBlmpjxQ2yI1uEFP+EUMAjt2Z2I6VFtFsLAY4o9gYZsS78TEOsJXxROInYRfzU6z4zOaZhig5OINdFaz5RBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=T9HuMCuZ; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cV1yt4bznz9tKj;
-	Sun, 21 Sep 2025 12:03:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1758448998;
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cV1zh5wLGz9snn;
+	Sun, 21 Sep 2025 12:04:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1758449040;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKS99zi+LC9YqpEpCiXRgCG5mqAhOouOogZ5P+HrXuY=;
-	b=z22nrgjHAO7+Se+WOAK5uDyE+CFDhwD8TEUFLe/p2LwPMyWyfPGZkNnKB24Sfoh4cQMZls
-	mUwhmsaoUjrPKFm3X3kuJKgKbq4Dhr1C5jQg9Q6Jw0MFn0K70f5g5F1MunyGAu1NIdGo+G
-	eSuI6j5BcXatrRpmJkGhWMfz8or4Z4dl7p52QOrKNDpIyGbD5Xj5OIGXZwQdGA5gTE6ieY
-	MvcIwomHYYDhc92n99SykoDw//5V9SuuPk0zo4pwbArd1IAuII6qJp7iCIXbNyUu477mrz
-	rZkzJUn/RSgLuMcZGxraBzGWRsToGG6vFKpj6RUTC5b7WZHl2ZVU9ErvKc1QYQ==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yjptQbraHLFs6zmoKSZrQfLCVHInBho8ridTsBdHUR8=;
+	b=T9HuMCuZXKemULNrQpDRl/7wimwvak3ft3PVpHecVKBZEfb9ivQ5r3tkCLTU73+yAvSDL5
+	amZaQ09TnJobe9BI6wfqyb2TyD3PS9WyWp+ASVDdDU5CLkI4abSlHXGe5TTSs2qcrEAgVU
+	4ZVgrjULL2k4NRcdmiot4VBi3juBSgFc+ZjebLuTiiaIR2aju3gWNsKi10RQ1u4MWXEj6V
+	FfFuCAEi80jZyjDv1gNfCL9Rf9BPS1UZ3UhNSPknwLKVLT7HTDX5mvHNlgEExU5QDzqoMM
+	44sMbR9o9BwdDDhYfKQFHx3Iwavoi/8u/lnyWlyfO0v3OuFy9c3fP3WRWj8QXA==
 Authentication-Results: outgoing_mbo_mout;
 	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
-Date: Sun, 21 Sep 2025 20:03:08 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 08/10] man/man2/mount_setattr.2: mirror opening
- sentence from fsopen(2)
-Message-ID: <2025-09-21-sad-swampy-pillar-rigor-ESCPmx@cyphar.com>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
- <fqgxjzw5dxsd6ymm4tmvxmokq4uh2xo6lk5rqhjg4tjw5eblgg@wy5kbuhwmfnx>
+	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::1 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel@pankajraghav.com,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH 0/2] minor fixes to faddr2line
+Date: Sun, 21 Sep 2025 12:03:56 +0200
+Message-ID: <20250921100358.19986-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o2kb62jybuar3jog"
-Content-Disposition: inline
-In-Reply-To: <fqgxjzw5dxsd6ymm4tmvxmokq4uh2xo6lk5rqhjg4tjw5eblgg@wy5kbuhwmfnx>
-X-Rspamd-Queue-Id: 4cV1yt4bznz9tKj
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4cV1zh5wLGz9snn
+
+From: Pankaj Raghav <p.raghav@samsung.com>
+
+The first commit fixes the issue I am facing in NixOS.
+
+The second commit uses a tempfile instead of shell variable while trying
+to read the elf file.
+
+Pankaj Raghav (2):
+  scripts/faddr2line:use /usr/bin/env bash for portability
+  scripts/faddr2line:fix "Argument list too long" error
+
+ scripts/faddr2line | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
 
---o2kb62jybuar3jog
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 08/10] man/man2/mount_setattr.2: mirror opening
- sentence from fsopen(2)
-MIME-Version: 1.0
+base-commit: 846bd2225ec3cfa8be046655e02b9457ed41973e
+-- 
+2.50.1
 
-On 2025-09-21, Alejandro Colomar <alx@kernel.org> wrote:
-> Hi Aleksa,
->=20
-> On Fri, Sep 19, 2025 at 11:59:49AM +1000, Aleksa Sarai wrote:
-> > All of the other new mount API docs have this lead-in sentence in order
-> > to make this set of APIs feel a little bit more cohesive.  Despite being
-> > a bit of a latecomer, mount_setattr(2) is definitely part of this family
-> > of APIs and so deserves the same treatment.
-> >=20
-> > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
->=20
-> Thanks!  I've applied this patch.
-> <https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/c=
-ommit/?h=3Dcontrib&id=3D7022531182883ed1db5d4c926506cd373e0795ee>
-> (Use port :80/)
-
-Ah, you forgot to switch to "file-descriptor-based" like you suggested
-in patch 1. ;)
-
->=20
-> Cheers,
-> Alex
->=20
-> > ---
-> >  man/man2/mount_setattr.2 | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> > index 4b55f6d2e09d00d9bc4b3a085f310b1b459f34e8..b27db5b96665cfb0c387bf5=
-b60776d45e0139956 100644
-> > --- a/man/man2/mount_setattr.2
-> > +++ b/man/man2/mount_setattr.2
-> > @@ -19,7 +19,11 @@ .SH SYNOPSIS
-> >  .SH DESCRIPTION
-> >  The
-> >  .BR mount_setattr ()
-> > -system call changes the mount properties of a mount or an entire mount=
- tree.
-> > +system call is part of
-> > +the suite of file descriptor based mount facilities in Linux.
-> > +.P
-> > +.BR mount_setattr ()
-> > +changes the mount properties of a mount or an entire mount tree.
-> >  If
-> >  .I path
-> >  is relative,
-> >=20
-> > --=20
-> > 2.51.0
-> >=20
->=20
-> --=20
-> <https://www.alejandro-colomar.es>
-> Use port 80 (that is, <...:80/>).
-
-
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---o2kb62jybuar3jog
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaM/NXBsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/ueAEA5WMbchi5wFWRpYgW+wKZ
-wD0MKn8L1TOvClgTrz/URvUBAKyem47HvBSrq7YTF51iKA24CSRNtR/YBYrTGrWs
-Z78M
-=tRII
------END PGP SIGNATURE-----
-
---o2kb62jybuar3jog--
 
