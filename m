@@ -1,221 +1,119 @@
-Return-Path: <linux-kernel+bounces-826112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AA5B8D911
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE58B8D917
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24111441ACB
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85085441C75
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FCB2571DD;
-	Sun, 21 Sep 2025 09:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1F62571A5;
+	Sun, 21 Sep 2025 09:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eixpg1ja"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhq/q7Tu"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819348F5B;
-	Sun, 21 Sep 2025 09:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27284255F24
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 09:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758448749; cv=none; b=BciKjiPuqwYoQWf1yAWXfNHqm+Kl6iA0YAMnMwk5XND3khe1rzbl2bBdLoGevlrcGVyl8tnsxilB6bMUKrWz5fUZYFEBJQ2wzpotS8w/dx2SQhB0p8gXQJGJ7Uq9u2ZDs6aaVLShbxpAO+u8kptTLIrsE9CWo1TlMXZArsO3LWk=
+	t=1758448761; cv=none; b=Y2EQuOHwKGP4eCXF0UYDBaR3SMDOLvJnBr0Yy8x630GHgIajGu5KrXTAZleM0DFb5fIQbpKvwFYEi0+ReLmyu2DPyfGByGkqpWSr3vZPfQ22Tm8KxxPiiDfIo3gcLkKjfcQLHSZBS1LfRIVGJkUb73RVPXKLmpoB+gKaX8ySMjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758448749; c=relaxed/simple;
-	bh=j673Ewx1Tw/u4hXjAc9b72cevzvi7kHBuyomuzuVZE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRjok75ZijfP8oke+z1TjlLxFN8FpRKAyCwvtN8hFaopwBt5c19KnfG2WxUfS55CyzBohwPrjfE2dTjnVi/O7DuZAyubpkwEAI7Lkw2+mFaZ9Haq6tnZkPrSEMmOTpGw+QwP9v0Juo14asK37FQoAk+OEZU/Fm9XxXIJOXmdL2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eixpg1ja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D370C4CEE7;
-	Sun, 21 Sep 2025 09:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758448749;
-	bh=j673Ewx1Tw/u4hXjAc9b72cevzvi7kHBuyomuzuVZE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eixpg1jaxGOl9kNmlOOQ9A8iiBQcMDcRcrDl+tRZCH1YkM7AUgXiOced88XMEcYPX
-	 5Rd7epJLMEetoWZtwk6ciFR6UyVv4Iay2bHObZCkyCx2pFHjwzNagKJZcSai1sONB+
-	 DERtNiE0hK3mqd1arrB+VINCkR2UEiQ/6gzutnVYu5PbQ/RVUoEPRat6Jy5OC9P/9t
-	 NxQ6M7IPWn+Wjo3jBRZOlyrm0ilrnCX0oHRE5zyGdpOANZmDMfF88or+u7g0//b0VS
-	 mPvJqfGAHrt9vD5dvRCuTPCM4aYr1zv+qhL9DDDMa2kL2Q7AR30NCPZY687kGI3BQ8
-	 PLw/nF9rm85fw==
-Date: Sun, 21 Sep 2025 11:59:01 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 10/10] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
-Message-ID: <fkipds352mktqx42tsqfzrbr75zghs7wayb7udmlenxxq2i3yp@tho7msrqy5sc>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
+	s=arc-20240116; t=1758448761; c=relaxed/simple;
+	bh=wQ4XKRzPEjC8IN9Dos/AJv1tyfP3n9GhDuIrZCE5xS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ecj7ZiUb2DFccSvm9k9ESI0t4eXb5GELRq0dLBn+iW7kCyXR34htewSOv+lHYctDgstB+/XJvkYgap0aEV2fxfIhhglHulTC8P0ow+po7ez+/nLA3XbvRH+lwjHsUiRjBQVmnu1Svpo5NO5KNl7NK0HxRKtFYUrnjIEjj+HfCQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhq/q7Tu; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2698d47e6e7so7439275ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 02:59:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758448758; x=1759053558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWKmsQdl2jsGwScL3RcU3RgGD8V6ji7p/wbvV6vfnGU=;
+        b=mhq/q7Tuolhipn8mAQFQ/SjBEj3ebDz0SVo89ri0gPqIHyWjPlyLGw3H38qp17RPlI
+         Au5OuqFTXwho9lARQ87YbfVI05BJwf6xhUza0RfzlumBBJrlrBzq6xpqdY5VnMtPPcK0
+         IZApttdwP8SnHoX0lwLeHpx3h1ID0MzZ3tex5pUVfrrsCBBRSN/k8rQpHpCzawZap5Le
+         q6KOvh5gxrzR5nf5At+UgBIR74bTNu3TZtqUtm2o3XhBIjtfqUi3TPiSJHYW0lpaySiv
+         mFq1B24xpuZhViChx3+DYl/M9OWNAoZoiV1YDfV09sWk9Ayv7tBJVVlnQKwKX++rgwDf
+         KrZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758448758; x=1759053558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWKmsQdl2jsGwScL3RcU3RgGD8V6ji7p/wbvV6vfnGU=;
+        b=GaUzMx2gdiWJKX+vM/fLhArWiOcoqF0cHJFfnGEtjTUOanbUABRBnSfK+tWSD8MJRG
+         //05LHt+t3LYq42U7q8uNyf6/IcbE73cyQeneZYsKwTasI7KV1BoxTW1Ck6TePSMRv8p
+         myVM3sPyU3kLxfjlXi38Db1C5oJw7Jjmlwoq8TJfcqlozp7VSsv/LB0ElAuvOZqxqzgo
+         7VffiVHgNsTgJDBVuiM5n07DRj2yqJ+Ud8i10ruLqZ50HKb3ZDOtydlKIRQxfq6kxeWs
+         2jPy5La+jz9LEj6DcFZ4N34UBLosXSgVmXnbp8ZZ0WS7H7Isshyps2TGGXizudg5LaQ6
+         jh5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVaxVdcxxitEf/2aBds1obx4SHoDFlzg1YywWStquiiFa3FwzdVWuKNmSoCkkpfkYyk9a7u+0bzRFSQh1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrD9EA+ZoNSmC1nRv0+DJ41H4TNJ7WL8wI8lo7LYTtBL17pdYP
+	4e9UqNgV+ujZmaNEHNp7TwAgPr8Spdd6+XC4V13uW3bE4oNBGWldHvdCm4UIeqyvI80EzFwAZPX
+	VHKwUfkDL41TR9cyujvCaL82n3eAWpEQ=
+X-Gm-Gg: ASbGncsHUslXOu499nzIXZL+ZUTGe1bgbkwUg8mfLeONHk7jMnAgZk0/Wnr3wEaVSHD
+	AFCV+6fCykHsyDdbuiYi6q7+Irlr1cPSSz1ITMy+q4c7hw8Deec6QDv4U23zAupxW4CrBWk9xEa
+	QRgDsKGwNIEaloyigJ+79lV9kB/dh3ln6jwYypokhLZCTtkeb5pQJHHsNAPrjkybUVu7Nz6AWiJ
+	gaT6sPliLjgeXdg62WV3PrTlxm5QYvmamx7x48FgdnY8EPZJ9+iyQuPR9ANJ1A5fxI9JCWmAVmN
+	Ae9aNXTgYTrkdlVTbXmHAhwhi6EBeYq8FUbk
+X-Google-Smtp-Source: AGHT+IE/M5n7k5EV9oBMoTKSdZYNJ8k/u28SAzpBTSTXvI/1sciYsCvywr3oY6EDALdphOvsgrpqPOmhVakNTvvKCsI=
+X-Received: by 2002:a17:903:110c:b0:266:914a:2e7a with SMTP id
+ d9443c01a7336-269ba50450bmr70599375ad.6.1758448758376; Sun, 21 Sep 2025
+ 02:59:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6n4nptq63ueesw6g"
-Content-Disposition: inline
-In-Reply-To: <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
-
-
---6n4nptq63ueesw6g
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com> <2025092157-pauper-snap-aad1@gregkh>
+In-Reply-To: <2025092157-pauper-snap-aad1@gregkh>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 21 Sep 2025 11:59:05 +0200
+X-Gm-Features: AS18NWAX2coIcjtRAeKTjf4CFDI4YK6EYgm8hWO5NK1pOl2WGGAfjpcS8VVdy_0
+Message-ID: <CANiq72mk1-Ew11RB0kfep5BtB8M_5H6o_Rb2MwamrZd-FmzFWA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	dakr@kernel.org, acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>, 
+	Yury Norov <yury.norov@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 10/10] man/man2/{fsconfig,mount_setattr}.2: add note
- about attribute-parameter distinction
-Message-ID: <fkipds352mktqx42tsqfzrbr75zghs7wayb7udmlenxxq2i3yp@tho7msrqy5sc>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250919-new-mount-api-v4-10-1261201ab562@cyphar.com>
 
-Hi Aleksa,
+On Sun, Sep 21, 2025 at 11:36=E2=80=AFAM Greg KH <gregkh@linuxfoundation.or=
+g> wrote:
+>
+> And where does this allow us to define things like BIT(2) for values?
+> (ok, that's kind of not the point of this patch series, but it will come
+> up over time...)
 
-On Fri, Sep 19, 2025 at 11:59:51AM +1000, Aleksa Sarai wrote:
-> This was not particularly well documented in mount(8) nor mount(2), and
-> since this is a fairly notable aspect of the new mount API, we should
-> probably add some words about it.
->=20
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  man/man2/fsconfig.2      | 12 ++++++++++++
->  man/man2/mount_setattr.2 | 40 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
->=20
-> diff --git a/man/man2/fsconfig.2 b/man/man2/fsconfig.2
-> index 5a18e08c700ac93aa22c341b4134944ee3c38d0b..d827a7b96e08284fb025f94c3=
-348a4acc4571b7d 100644
-> --- a/man/man2/fsconfig.2
-> +++ b/man/man2/fsconfig.2
-> @@ -579,6 +579,18 @@ .SS Generic filesystem parameters
->  Linux Security Modules (LSMs)
->  are also generic with respect to the underlying filesystem.
->  See the documentation for the LSM you wish to configure for more details.
-> +.SS Mount attributes and filesystem parameters
-> +Some filesystem parameters
-> +(traditionally associated with
-> +.BR mount (8)-style
-> +options)
-> +have a sibling mount attribute
-> +with superficially similar user-facing behaviour.
-> +.P
-> +For a description of the distinction between
-> +mount attributes and filesystem parameters,
-> +see the "Mount attributes and filesystem parameters" subsection of
-> +.BR mount_setattr (2).
->  .SH CAVEATS
->  .SS Filesystem parameter types
->  As a result of
-> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
-> index b27db5b96665cfb0c387bf5b60776d45e0139956..f7d0b96fddf97698e36cab020=
-f1d695783143025 100644
-> --- a/man/man2/mount_setattr.2
-> +++ b/man/man2/mount_setattr.2
-> @@ -790,6 +790,46 @@ .SS ID-mapped mounts
->  .BR chown (2)
->  system call changes the ownership globally and permanently.
->  .\"
-> +.SS Mount attributes and filesystem parameters
-> +Some mount attributes
-> +(traditionally associated with
-> +.BR mount (8)-style
-> +options)
-> +have a sibling mount attribute
-> +with superficially similar user-facing behaviour.
-> +For example, the
-> +.I -o ro
+We have the `bits` module since 6.17:
 
-As said in another page, this should be
+    https://rust.docs.kernel.org/kernel/bits/index.html
 
-	.I \-o\~ro
+(Or do you mean something else?)
 
-> +option to
-> +.BR mount (8)
-> +can refer to the
-> +"read-only" filesystem parameter,
-> +or the "read-only" mount attribute.
-> +Both of these result in mount objects becoming read-only,
-> +but they do have different behaviour.
-> +.P
-> +The distinction between these two kinds of option is that
-> +mount object attributes are applied per-mount-object
-> +(allowing different mount objects
-> +derived from a given filesystem instance
-> +to have different attributes),
-> +while filesystem instance parameters
-> +("superblock flags" in kernel-developer parlance)
-> +apply to all mount objects
-> +derived from the same filesystem instance.
-> +.P
-> +When using
-> +.BR mount (2),
-> +the line between these two types of mount options was blurred.
-> +However, with
-> +.BR mount_setattr ()
-> +and
-> +.BR fsconfig (2),
-> +the distinction is made much clearer.
-> +Mount attributes are configured with
-> +.BR mount_setattr (),
-> +while filesystem parameters can be configured using
-> +.BR fsconfig (2).
-> +.\"
-
-LGTM.
-
-I've finished with the review of the patch set.  It's quite good.  :)
-
-
-Have a lovely day!
-Alex
-
->  .SS Extensibility
->  In order to allow for future extensibility,
->  .BR mount_setattr ()
->=20
-> --=20
-> 2.51.0
->=20
->=20
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---6n4nptq63ueesw6g
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjPzGUACgkQ64mZXMKQ
-wqmqag/9EaQI3xYLKVOiwwL5pTLeBXzWPO4P5fPie4HjKzckCkdCYD7mDZtKGUoH
-NdIrVgtlFTYvc5a9Ru0mFmi2FGI1lJYebJ0mz8SxowMvRjtkTPPjwkT36lIWCso2
-wEa538ps/2Wg7A58gOXS2Akl94RrE46H8lmV6qJ6gpB+zqB9hP7SAhmYHquwPzOc
-cap2v2hRl04mWYOC72dHFKuL4J/olo/Ky6Xe2klZ2AyJoVj+EwP/xix5HGWRrWpT
-dEI/7jrCMEq+dSHjllrzeNWr5azsrlQ7d6hyo67IVk5/vq8qq4vaXBsOAaBmqA30
-QujGSGP8OFndEz+E909dWrktpdwkciAn3b3fLROmyP0YmMUy5Z3RJHi7uBIPP+hb
-D3j93Rz88v11sfmgofD3/QNxlet5NRSLOmhvE39c6QI78aSL8Gtw2ZH4GqFUj+mm
-mUSzl9cbOHJT3XC9dsDvXk9Cw+27TlHH36cdBaeSEj3MvBEJF7tRYS/u6B5xZeI2
-zi9aDtzT39W29KOc5IMihZ/9yBty11spfshFYkDag78iwnsqRi4N05wlpA8RnkRm
-RcWPu6AJAadzkIYJ9fSbjXvxKWapGRKMvSB8zYzb8GpXMq01DL/Vl7446+EagTWv
-m4j2VYoBiHozl7hpB/v3mTT0TLmj9hXoa9FkPtO+iwf+P87bkuo=
-=mCvb
------END PGP SIGNATURE-----
-
---6n4nptq63ueesw6g--
+Cheers,
+Miguel
 
