@@ -1,70 +1,58 @@
-Return-Path: <linux-kernel+bounces-826158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C93B8DB40
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A871B8DB5C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7CD441117
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:45:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1AA117DA1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FCB2D0630;
-	Sun, 21 Sep 2025 12:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C272F2D1301;
+	Sun, 21 Sep 2025 12:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LQROPRi4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCbQCv/I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452DB26D4ED;
-	Sun, 21 Sep 2025 12:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199391E51D;
+	Sun, 21 Sep 2025 12:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758458730; cv=none; b=mcoODTMPf084mzH5wWm+zYvWAEphW5X/N2ftaErnDKQIu3nFizy5qENYhBeB+LrrIkKX4XmBZ2c9exEE1W+uvdaOZVAtxcAoCxTkXWx0uxZFylMFqgpCJwa5FZU08hoPQxbGsZOZaUI+w3WE4upsBmm/a7bRgr49RKaQ1Vtze2M=
+	t=1758459277; cv=none; b=PVFTZjKcl9HJ25JvUtgaKlBY1FyZ0TQ9Z8wU4vLOYPf3JXHbAjIfWUDS+rfApfO2XyMUEd6SDbrrc63mb7unQZt5w2um1q3DTLohlaRhrh4C5/Lqor3EIqG9aa67q+3Kx50Bx5o7SCoHdeOPSTVvkdRz4uVBQsRyRtzBqaSt6VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758458730; c=relaxed/simple;
-	bh=huQmlHKRTQZek7WYSnFFmutaGBi6vQEpnrzRtyNwm2k=;
+	s=arc-20240116; t=1758459277; c=relaxed/simple;
+	bh=jsUcLF3gj9QD/DeMLPoCgYNjJkokHF1gACOem3+AcJY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isdZGcnC1RjQkBDc/XX+EaRpqPwjrPhqh9p3gGuK396jScSrPdkg0Waw2zbMvryg1kObCecB79Vc+Bk8lIvmkgzFnMNN9+Lompx9oJg6zgukg+voxKD04jWcRztP1NX5VOCkkOkekbx9AJSPTwVY7eINbwsIy7WXHYk9gdycuYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LQROPRi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEBCC4CEE7;
-	Sun, 21 Sep 2025 12:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758458729;
-	bh=huQmlHKRTQZek7WYSnFFmutaGBi6vQEpnrzRtyNwm2k=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdNYojBwPYA7FVQtC1jMSP5rJw5rmR/yFIVlz8Tc9lwEDlsijbQlaGVTfVN7e9/8rtnAlSTHClVqKIN/SAPd3PbL3cZEZNhO9Pn2h6NZZ3TZ5/fEtYBKaHZgUsbS9Q8zHo3RbNLDCVDGJ0vK87a9mA/hL3f8e0YWWpwbKPuyPEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCbQCv/I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC6AC4CEE7;
+	Sun, 21 Sep 2025 12:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758459276;
+	bh=jsUcLF3gj9QD/DeMLPoCgYNjJkokHF1gACOem3+AcJY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LQROPRi4nwu0JZhMCC2VI5+xAcmCIDjJBJ9LJvAXrzv/HxMAVfBaJHO2Ztz42Sxn+
-	 uEkkLujhLgCFlgaKoGqYNrd/BY3okpCiPaP7eDQveqoFh25vUSgBdyzlfjytSsajO3
-	 qo5Jo6joHrY+0/vyGj18NiER0T9AGA8kaqrohCSg=
-Date: Sun, 21 Sep 2025 14:45:27 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Benno Lossin <lossin@kernel.org>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-Message-ID: <2025092125-urban-muppet-1c2f@gregkh>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-2-joelagnelf@nvidia.com>
- <2025092157-pauper-snap-aad1@gregkh>
- <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+	b=VCbQCv/IMTgEdAWfY2wBRtEqDBImw+HPC14iJ56JMHDX0vT66wZ8zk0jh/desx2YU
+	 Wx5ehRf3r8EdlPLq458A0x8FL0bqquQCZhUJiWV19/ru9dBBkYTDU5osQMubWRfT6B
+	 9l2Cgy+JfAu638gSzsqcuSiF00itOu1ZDCD6sutcp2LErgUJXIsFYcRlFlL1jpuJLK
+	 bePnI9DpZVitgRbPm2C2/92Of2a3XZ6hG0nC1mRCPv7AJI9onEtVa5QwFXPRsZFAlK
+	 s2Sot1vwrEkHVR3pxAQEqnolk4PKJfELOkYtYnVPCRV+sqVHFWTcRfTa54w7mmc5iU
+	 QyDSk/I+meGvQ==
+Date: Sun, 21 Sep 2025 15:54:32 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, ross.philipson@oracle.com
+Subject: Re: [PATCH v10 0/4] tpm: robust stack allocations
+Message-ID: <aM_1iLAsl1wpkl6n@kernel.org>
+References: <20250921020804.1088824-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,165 +61,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+In-Reply-To: <20250921020804.1088824-1-jarkko@kernel.org>
 
-On Sun, Sep 21, 2025 at 02:33:56PM +0200, Benno Lossin wrote:
-> On Sun Sep 21, 2025 at 11:36 AM CEST, Greg KH wrote:
-> > On Sat, Sep 20, 2025 at 02:22:27PM -0400, Joel Fernandes wrote:
-> >> The bitfield-specific into new macro. This will be used to define
-> >> structs with bitfields, similar to C language.
-> >> 
-> >> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-> >> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> >> ---
-> >>  drivers/gpu/nova-core/bitfield.rs    | 314 +++++++++++++++++++++++++++
-> >>  drivers/gpu/nova-core/nova_core.rs   |   3 +
-> >>  drivers/gpu/nova-core/regs/macros.rs | 259 +---------------------
-> >>  3 files changed, 327 insertions(+), 249 deletions(-)
-> >>  create mode 100644 drivers/gpu/nova-core/bitfield.rs
-> >> 
-> >> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/bitfield.rs
-> >> new file mode 100644
-> >> index 000000000000..ba6b7caa05d9
-> >> --- /dev/null
-> >> +++ b/drivers/gpu/nova-core/bitfield.rs
-> >> @@ -0,0 +1,314 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +//! Bitfield library for Rust structures
-> >> +//!
-> >> +//! Support for defining bitfields in Rust structures. Also used by the [`register!`] macro.
-> >> +//!
-> >> +//! # Syntax
-> >> +//!
-> >> +//! ```rust
-> >> +//! #[derive(Debug, Clone, Copy)]
-> >> +//! enum Mode {
-> >> +//!     Low = 0,
-> >> +//!     High = 1,
-> >> +//!     Auto = 2,
-> >> +//! }
-> >> +//!
-> >> +//! impl TryFrom<u8> for Mode {
-> >> +//!     type Error = u8;
-> >> +//!     fn try_from(value: u8) -> Result<Self, Self::Error> {
-> >> +//!         match value {
-> >> +//!             0 => Ok(Mode::Low),
-> >> +//!             1 => Ok(Mode::High),
-> >> +//!             2 => Ok(Mode::Auto),
-> >> +//!             _ => Err(value),
-> >> +//!         }
-> >> +//!     }
-> >> +//! }
-> >> +//!
-> >> +//! impl From<Mode> for u32 {
-> >> +//!     fn from(mode: Mode) -> u32 {
-> >> +//!         mode as u32
-> >> +//!     }
-> >> +//! }
-> >> +//!
-> >> +//! #[derive(Debug, Clone, Copy)]
-> >> +//! enum State {
-> >> +//!     Inactive = 0,
-> >> +//!     Active = 1,
-> >> +//! }
-> >> +//!
-> >> +//! impl From<bool> for State {
-> >> +//!     fn from(value: bool) -> Self {
-> >> +//!         if value { State::Active } else { State::Inactive }
-> >> +//!     }
-> >> +//! }
-> >> +//!
-> >> +//! impl From<State> for u32 {
-> >> +//!     fn from(state: State) -> u32 {
-> >> +//!         state as u32
-> >> +//!     }
-> >> +//! }
-> >> +//!
-> >> +//! bitfield! {
-> >> +//!     struct ControlReg {
-> >> +//!         3:0       mode        as u8 ?=> Mode;
-> >> +//!         7         state       as bool => State;
-> >> +//!     }
-> >> +//! }
-> >
-> > As discussed at the conference this week, I do object to this as it
-> > will allow the same mistakes to happen that we used to do in the kernel
-> > for a long time before the regmap() api happened, along with GENMASK().
+On Sun, Sep 21, 2025 at 05:08:00AM +0300, Jarkko Sakkinen wrote:
+> 1. These are previous changes to tpm_buf, which make stack allocations
+>    much more feasible than previously.
+> 2. Migrate low-hanging fruit to use stack allocations.
+
+I highly unlikely would put this to 6.18 PR. The first patch huge but at
+the same time it is still a "logical change". Splitting it would make it
+less understandable. It's also quite stable and the despite many
+changes, most of them are mechanical changes (some of them I've even
+done originally with an LLM called 'sed').
+
+IMHO reason to split should not be based no size but exactly on logical
+steps.
+
+After these few quick rounds I take some time and work on tpm1/tpm2-cmd
+to make them follow a builder pattern. This helps e.g., TrenchBoot to
+accomplish their goals more easily as builders translate easily to
+early boot situations. In addition, making memory management more
+stack oriented usually tends to help with such situations.
+
+So the next thing for this patch set is to make things work with parse,
+build and transmission decoupled from each other, and it will be as
+substantial change as the first patch but can be split into smaller
+patches as it does not change the global economy.
+
+An example with tpm2_pcr_read:
+
+1. tpm2_build_pcr_read(), which takes pre-initialized
+   tpm_buf() and same parameter as today.
+2. tpm_transmit()
+3. tpm2_parse_pcr_read(), which takes resulting tpm_buf
+   and parses it to a struct, let's say tpm2_pcr_read_result.
+
+And similar decoupling is done for TPM 1 commands as they also need
+to translate between environments.
+
+Obviously outer facing tpm-interface.c API can still respond to old
+API calls for the time being.
+
+Other stuff:
+
+1. tpm_buf_* from include/linux/tpm.j migrate to include/linux/tpm_buf.h
+2. builders: tpm1_build.c, tpm2_build.c
+3. parsers: tpm1_parse.c, tpm2_parse.c
+
+Most likely at least at first landing some redundancy is required for
+Trenchboto and physical transmission path. By doing what I have
+described we can set a limit to the amount redunancy :-)
+
 > 
-> Have you read the following macro arm of the implementation?
+> Jarkko Sakkinen (4):
+>   tpm: Make TPM buffer allocations more robust
+>   tpm, tpm1-cmd: Use stack for trivial cases
+>   tpm, tpm2-cmd: Use stack for trivial cases
+>   tpm_vpm_proxy: Use stack for TPM_CC_SET_LOCALITY
 > 
->     // Generates the accessor methods for a single field.
->     (
->         @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
->             { $process:expr } $to_type:ty => $res_type:ty $(, $comment:literal)?;
->     ) => {
->         ::kernel::macros::paste!(
->         const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
->         const [<$field:upper _MASK>]: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
->         const [<$field:upper _SHIFT>]: u32 = Self::[<$field:upper _MASK>].trailing_zeros();
->         );
->     
->         $(
->         #[doc="Returns the value of this field:"]
->         #[doc=$comment]
->         )?
->         #[inline(always)]
->         pub(crate) fn $field(self) -> $res_type {
->             ::kernel::macros::paste!(
->             const MASK: u32 = $name::[<$field:upper _MASK>];
->             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
->             );
->             let field = ((self.0 & MASK) >> SHIFT);
+>  drivers/char/tpm/tpm-buf.c                | 137 ++++++----
+>  drivers/char/tpm/tpm-dev-common.c         |   4 +-
+>  drivers/char/tpm/tpm-dev.h                |   2 +-
+>  drivers/char/tpm/tpm-interface.c          |   4 +-
+>  drivers/char/tpm/tpm-sysfs.c              |  20 +-
+>  drivers/char/tpm/tpm.h                    |   3 +-
+>  drivers/char/tpm/tpm1-cmd.c               | 151 +++++------
+>  drivers/char/tpm/tpm2-cmd.c               | 297 ++++++++++------------
+>  drivers/char/tpm/tpm2-sessions.c          | 121 +++++----
+>  drivers/char/tpm/tpm2-space.c             |  44 ++--
+>  drivers/char/tpm/tpm_tis_i2c.c            |   4 +-
+>  drivers/char/tpm/tpm_vtpm_proxy.c         |  34 +--
+>  include/linux/tpm.h                       |  28 +-
+>  security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+>  security/keys/trusted-keys/trusted_tpm2.c | 156 ++++++------
+>  15 files changed, 493 insertions(+), 546 deletions(-)
 > 
-> Here you can see that it's just a mask + shift operation internally to
-> access the field.
->     
->             $process(field)
->         }
->     
->         ::kernel::macros::paste!(
->         $(
->         #[doc="Sets the value of this field:"]
->         #[doc=$comment]
->         )?
->         #[inline(always)]
->         pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
->             const MASK: u32 = $name::[<$field:upper _MASK>];
->             const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
->             let value = (u32::from(value) << SHIFT) & MASK;
->             self.0 = (self.0 & !MASK) | value;
->     
->             self
->         }
->         );
->     };
+> -- 
+> 2.39.5
+> 
 
-Yes, that's great, but that is all done in "native cpu" endian, and
-might not actually represent what the hardware does at all, which is
-what I was trying to get at here, sorry for not being more specific.
-
-> Now I too would like to see how exactly this will be used to read data
-> from hardware. But at least in theory if the conversion from hardware
-> endianness to native endianness is done correctly, this will do the
-> right thing :)
-
-That's great, so we are close, but it's not quite correct.  How about
-something like:
-
-	0:7	reg_X	as __le32
-	8:15	reg_y	as __le32
-
-and the like.  There has to be a way to actually specify the
-representation here and for C, that is using the "__" types that express
-the endianness (i.e. __le32, __be32, and so on).  Then we have type
-checks that enforce accesses to those variables to always turn the data
-into "native" values when the cpu accesses them.
-
-Again, regmap handles this all just fine, why not just make bindings to
-that api here instead?
-
-thanks,
-
-greg k-h
+BR, Jarkko
 
