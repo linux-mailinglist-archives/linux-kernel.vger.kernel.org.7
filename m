@@ -1,516 +1,154 @@
-Return-Path: <linux-kernel+bounces-826093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04D7B8D7FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08542B8D808
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38C518A00B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:54:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58B24189BE0A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81904248F72;
-	Sun, 21 Sep 2025 08:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 232942475C7;
+	Sun, 21 Sep 2025 08:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m22KoIxE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LjhZX+ra"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702EE22A808;
-	Sun, 21 Sep 2025 08:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F32E23E335;
+	Sun, 21 Sep 2025 08:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758444792; cv=none; b=irKpm1+KvYKTjln8p1UmPvdkHRiIt4YVm6sMkX6mwLoo1KmzVV0U0Nq1PqXS362qwHRnHOSoVyISCW/o8XQuFkVlyDFD5OlAyBxCwylisliGp70mhd+UR8Jb2ieZ5OpBQmItB8vIsxs7yg+HwivUyNIaO5J+FHoY2lr8tGatkR4=
+	t=1758444902; cv=none; b=dmCOLuez3rG5uhkznQ7yJd0KEiWGDGKj+Q0eslGSniU2WWxODrNw2ZHlqLrEqYIOXyeclIDoSLXmjtEVhkIwCzZbH+2HrCTbsoEDMs3GAsuWLSM+xY/vArYFVP1A+Guapr6QvtB/v1ViB/YsoKqInNsK5vBHJHY9/XvRygcVxKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758444792; c=relaxed/simple;
-	bh=AnEfkCyt/WsKGtIaGS2ah8pTq0o4xpjSCaH8wdTV6Lk=;
+	s=arc-20240116; t=1758444902; c=relaxed/simple;
+	bh=lX4I080+ZJyUqGQDOkoCt2JceIv9FnwbMsyV4Qiw/7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m69MxFBXcsEjPeKQ+5YjSiU4Ve5h/ej/cQLGEhe9bHbMrXDpcCBEaTWXCMxu1bxppsek3eEDI7avDXlD1oahlS+jMCOUlkHhpmYI/GXjdUo6vXdPpJB4XCMKV6SGWDax7tj0f+DSGzRMjQJFPboCPH5/YoKC//vhrRzd4NglrWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m22KoIxE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DACC4CEF7;
-	Sun, 21 Sep 2025 08:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758444792;
-	bh=AnEfkCyt/WsKGtIaGS2ah8pTq0o4xpjSCaH8wdTV6Lk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m22KoIxE+ET8/YA3kMJ1QnFc1eBzHnZENo1z2Bv5puSNyt33U+kY8DzVEMVWpSEST
-	 zB/rcCzl0GfTuluJarN7qYLDmyMKtmO6UwSxb7qOpXHWsdlEx9jd/CN9JeMIN1CdhI
-	 +7hPY2t4JmGjZm6cTQZ4GFU+uumgW2Db5l0sGLyqdUX8tMUWOZnxzFFn7/2Xifingd
-	 q/GYQ9YapT4j8V3N/N3u6fJUnbUC5IDp7Y30jquVlBI04iRu4PZhZmfn0NCBdUKs/n
-	 2twEpFrkaR/HMvtDYU5qclc6NYER2OzeOCrVSBOyD92wzFm8oULRoa68g9G/ZotU5C
-	 mDIKk24iFyMZQ==
-Date: Sun, 21 Sep 2025 10:53:05 +0200
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
-Message-ID: <y77zyujsduf5furdf2biphuszil63kftb44cs74ed2d2hf2gdr@hci7mzt6yh7b>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIH9/LXB/VqLiA+fqMjjRNwUVj9gGBJseH2Vn+Cc7+XZ6jzSuAkWDjNaNLnAzBZChe24m/OnhAaqdvBV/drelNrmbhZehR5JT1XWwwf5LEDTm3g/JANLK+MJGzTywgi+uSii1LOVLv3JT2KfOhIiFEwwaChyENg5A4b3tGfUjfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LjhZX+ra; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758444900; x=1789980900;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lX4I080+ZJyUqGQDOkoCt2JceIv9FnwbMsyV4Qiw/7E=;
+  b=LjhZX+rasyLiVjKffBIWOaaX6tamyV1VU15tHIKP35PPmvV6YvB+iqac
+   TnRW0GF6GX7HBL+VjuLwI9ks/WXWFFKnXbCC7CAFEbfFaWY4d3ARkD0T8
+   C0fXhV9E/rm4yvPZcshDmxoMlNqwOQ66xJYoVcvD1MiyWCJ/JONjDSjPv
+   uMwKuLCHklK27ObANoHdDvj3PYy2poV8p8mkGaJz2/ieNCak8esRLvr11
+   ErwYgC9BJsrHhFnOVPO6frVNzfPw8i92dpj1nBNfdP8ovf+SKjXuXI1wV
+   WpmEoMEwQpMuoSHBJYhjGKG34BpNMM/Drm3f+wdneBs0UyoEwAuscrqTF
+   A==;
+X-CSE-ConnectionGUID: 5dfcHhWKS5GNIDrV0v2rrw==
+X-CSE-MsgGUID: i86rEMstSvqe1LvKsI0JqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64541491"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64541491"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 01:54:59 -0700
+X-CSE-ConnectionGUID: NJCzjAXtRrypPeDwvgXgyw==
+X-CSE-MsgGUID: jxZOsUj4RSSgga78K34U4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
+   d="scan'208";a="181364168"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 21 Sep 2025 01:54:56 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0FqB-0000c5-0Y;
+	Sun, 21 Sep 2025 08:54:51 +0000
+Date: Sun, 21 Sep 2025 16:53:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v10 1/4] tpm: Make TPM buffer allocations more robust
+Message-ID: <202509211636.ZaHdTpHP-lkp@intel.com>
+References: <20250921020804.1088824-2-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fnx5hi325cclw5cy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+In-Reply-To: <20250921020804.1088824-2-jarkko@kernel.org>
+
+Hi Jarkko,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on next-20250919]
+[cannot apply to char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.17-rc6 v6.17-rc5 v6.17-rc4 v6.17-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jarkko-Sakkinen/tpm-Make-TPM-buffer-allocations-more-robust/20250921-102024
+base:   next-20250919
+patch link:    https://lore.kernel.org/r/20250921020804.1088824-2-jarkko%40kernel.org
+patch subject: [PATCH v10 1/4] tpm: Make TPM buffer allocations more robust
+config: x86_64-buildonly-randconfig-001-20250921 (https://download.01.org/0day-ci/archive/20250921/202509211636.ZaHdTpHP-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509211636.ZaHdTpHP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509211636.ZaHdTpHP-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/char/tpm/tpm-buf.c:20:9: warning: format specifies type 'unsigned int' but the argument has type 'unsigned long' [-Wformat]
+      19 |                         WARN(1, "%s: size mismatch: %u != %u\n", __func__, buf_size,
+         |                                                           ~~
+         |                                                           %lu
+      20 |                              buf->capacity + sizeof(*buf));
+         |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/asm-generic/bug.h:141:29: note: expanded from macro 'WARN'
+     141 |                 __WARN_printf(TAINT_WARN, format);                      \
+         |                                           ^~~~~~
+   include/asm-generic/bug.h:112:17: note: expanded from macro '__WARN_printf'
+     112 |                 __warn_printk(arg);                                     \
+         |                               ^~~
+   1 warning generated.
 
 
---fnx5hi325cclw5cy
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
-	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
-Message-ID: <y77zyujsduf5furdf2biphuszil63kftb44cs74ed2d2hf2gdr@hci7mzt6yh7b>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
- <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
-MIME-Version: 1.0
-In-Reply-To: <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+vim +20 drivers/char/tpm/tpm-buf.c
 
-Hi Aleksa,
+     9	
+    10	static void __tpm_buf_size_invariant(struct tpm_buf *buf, u16 buf_size)
+    11	{
+    12		if (!buf->capacity) {
+    13			if (buf_size > TPM_BUF_MAX_SIZE) {
+    14				WARN(1, "%s: size overflow: %u\n", __func__, buf_size);
+    15				buf->flags |= TPM_BUF_ERROR;
+    16			}
+    17		} else {
+    18			if (buf_size != buf->capacity + sizeof(*buf)) {
+    19				WARN(1, "%s: size mismatch: %u != %u\n", __func__, buf_size,
+  > 20				     buf->capacity + sizeof(*buf));
+    21				buf->flags |= TPM_BUF_ERROR;
+    22			}
+    23		}
+    24	}
+    25	
 
-On Fri, Sep 19, 2025 at 11:59:44AM +1000, Aleksa Sarai wrote:
-> This is loosely based on the original documentation written by David
-> Howells and later maintained by Christian Brauner, but has been
-> rewritten to be more from a user perspective (as well as fixing a few
-> critical mistakes).
->=20
-> Co-authored-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-authored-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-> ---
->  man/man2/fspick.2 | 342 ++++++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 342 insertions(+)
->=20
-> diff --git a/man/man2/fspick.2 b/man/man2/fspick.2
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1f87293f44658adeb7ab7cffe=
-bcac3174888f040
-> --- /dev/null
-> +++ b/man/man2/fspick.2
-> @@ -0,0 +1,342 @@
-> +.\" Copyright, the authors of the Linux man-pages project
-> +.\"
-> +.\" SPDX-License-Identifier: Linux-man-pages-copyleft
-> +.\"
-> +.TH fspick 2 (date) "Linux man-pages (unreleased)"
-> +.SH NAME
-> +fspick \- select filesystem for reconfiguration
-> +.SH LIBRARY
-> +Standard C library
-> +.RI ( libc ,\~ \-lc )
-> +.SH SYNOPSIS
-> +.nf
-> +.BR "#include <fcntl.h>" "          /* Definition of " AT_* " constants =
-*/"
-> +.B #include <sys/mount.h>
-> +.P
-> +.BI "int fspick(int " dirfd ", const char *" path ", unsigned int " flag=
-s );
-> +.fi
-> +.SH DESCRIPTION
-> +The
-> +.BR fspick ()
-> +system call is part of
-> +the suite of file descriptor based mount facilities in Linux.
-> +.P
-> +.BR fspick()
-> +creates a new filesystem configuration context
-> +for the extant filesystem instance
-> +associated with the path described by
-> +.IR dirfd
-> +and
-> +.IR path ,
-> +places it into reconfiguration mode
-> +(similar to
-> +.BR mount (8)
-> +with the
-> +.I -o remount
-> +option).
-> +A new file descriptor
-> +associated with the filesystem configuration context
-> +is then returned.
-> +The calling process must have the
-> +.BR CAP_SYS_ADMIN
-
-This should use '.B. (Bold).  BR means alternating Bold and Roman, but
-this only has one token, so it can't alternate.
-
-If you run `make -R build-catman-troff`, this will trigger a diagnostic:
-
-	an.tmac: <page>:<line>: style: .BR expects at least 2 arguments, got 1
-
-> +capability in order to create a new filesystem configuration context.
-> +.P
-> +The resultant file descriptor can be used with
-> +.BR fsconfig (2)
-> +to specify the desired set of changes to
-> +filesystem parameters of the filesystem instance.
-> +Once the desired set of changes have been configured,
-> +the changes can be effectuated by calling
-> +.BR fsconfig (2)
-> +with the
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +command.
-> +Please note that\[em]in contrast to
-> +the behaviour of
-> +.B MS_REMOUNT
-> +with
-> +.BR mount (2)\[em] fspick ()
-
-Only have one important keyword per macro call.  In this case, I prefer
-em dashes to only be attached to one side, as if they were parentheses,
-so we don't need any tricks:
-
-	Please note that
-	\[em]in contrast to
-	...
-	.BR mount (2)\[em]
-	.BR fspick ()
-
-> +instantiates the filesystem configuration context
-> +with a copy of
-> +the extant filesystem's filesystem parameters,
-> +meaning that a subsequent
-> +.B \%FSCONFIG_CMD_RECONFIGURE
-> +operation
-> +will only update filesystem parameters
-> +explicitly modified with
-> +.BR fsconfig (2).
-> +.P
-> +As with "*at()" system calls,
-> +.BR fspick ()
-> +uses the
-> +.I dirfd
-> +argument in conjunction with the
-> +.I path
-> +argument to determine the path to operate on, as follows:
-> +.IP \[bu] 3
-> +If the pathname given in
-> +.I path
-> +is absolute, then
-> +.I dirfd
-> +is ignored.
-> +.IP \[bu]
-> +If the pathname given in
-> +.I path
-> +is relative and
-> +.I dirfd
-> +is the special value
-> +.BR \%AT_FDCWD ,
-> +then
-> +.I path
-> +is interpreted relative to
-> +the current working directory
-> +of the calling process (like
-> +.BR open (2)).
-> +.IP \[bu]
-> +If the pathname given in
-> +.I path
-> +is relative,
-> +then it is interpreted relative to
-> +the directory referred to by the file descriptor
-> +.I dirfd
-> +(rather than relative to
-> +the current working directory
-> +of the calling process,
-> +as is done by
-> +.BR open (2)
-> +for a relative pathname).
-> +In this case,
-> +.I dirfd
-> +must be a directory
-> +that was opened for reading
-> +.RB ( O_RDONLY )
-> +or using the
-> +.B O_PATH
-> +flag.
-> +.IP \[bu]
-> +If
-> +.I path
-> +is an empty string,
-> +and
-> +.I flags
-> +contains
-> +.BR \%FSPICK_EMPTY_PATH ,
-> +then the file descriptor
-> +.I dirfd
-> +is operated on directly.
-> +In this case,
-> +.I dirfd
-> +may refer to any type of file,
-> +not just a directory.
-> +.P
-> +See
-> +.BR openat (2)
-> +for an explanation of why the
-> +.I dirfd
-> +argument is useful.
-> +.P
-> +.I flags
-> +can be used to control aspects of how
-> +.I path
-> +is resolved and
-> +properties of the returned file descriptor.
-> +A value for
-> +.I flags
-> +is constructed by bitwise ORing
-> +zero or more of the following constants:
-> +.RS
-> +.TP
-> +.B FSPICK_CLOEXEC
-> +Set the close-on-exec
-> +.RB ( FD_CLOEXEC )
-> +flag on the new file descriptor.
-> +See the description of the
-> +.B O_CLOEXEC
-> +flag in
-> +.BR open (2)
-> +for reasons why this may be useful.
-> +.TP
-> +.B FSPICK_EMPTY_PATH
-> +If
-> +.I path
-> +is an empty string,
-> +operate on the file referred to by
-> +.I dirfd
-> +(which may have been obtained from
-> +.BR open (2),
-> +.BR fsmount (2),
-> +or
-> +.BR open_tree (2)).
-> +In this case,
-> +.I dirfd
-> +may refer to any type of file,
-> +not just a directory.
-> +If
-> +.I dirfd
-> +is
-> +.BR \%AT_FDCWD ,
-> +.BR fspick ()
-> +will operate on the current working directory
-> +of the calling process.
-> +.TP
-> +.B FSPICK_SYMLINK_NOFOLLOW
-> +Do not follow symbolic links
-> +in the terminal component of
-> +.IR path .
-> +If
-> +.I path
-> +references a symbolic link,
-> +the returned filesystem context will reference
-> +the filesystem that the symbolic link itself resides on.
-> +.TP
-> +.B FSPICK_NO_AUTOMOUNT
-> +Do not automount any automount points encountered
-> +while resolving
-> +.IR path .
-> +This allows you to reconfigure an automount point,
-> +rather than the location that would be mounted.
-> +This flag has no effect if
-> +the automount point has already been mounted over.
-
-I'll amend other similar issues if I find them, but in general, I'd put
-the 'if' in the next line, as it is more tied to that part of the
-sentence (think for example that if you reversed the sentence to say
-"if ..., then ...", you'd move the 'if' with what follows it.  You don't
-need to search for all of these and fix them; just keep it in mind for
-next time.  In general I like the break points you used.
-
-
-Have a lovely day!
-Alex
-
-> +.RE
-> +.P
-> +As with filesystem contexts created with
-> +.BR fsopen (2),
-> +the file descriptor returned by
-> +.BR fspick ()
-> +may be queried for message strings at any time by calling
-> +.BR read (2)
-> +on the file descriptor.
-> +(See the "Message retrieval interface" subsection in
-> +.BR fsopen (2)
-> +for more details on the message format.)
-> +.SH RETURN VALUE
-> +On success, a new file descriptor is returned.
-> +On error, \-1 is returned, and
-> +.I errno
-> +is set to indicate the error.
-> +.SH ERRORS
-> +.TP
-> +.B EACCES
-> +Search permission is denied
-> +for one of the directories
-> +in the path prefix of
-> +.IR path .
-> +(See also
-> +.BR path_resolution (7).)
-> +.TP
-> +.B EBADF
-> +.I path
-> +is relative but
-> +.I dirfd
-> +is neither
-> +.B \%AT_FDCWD
-> +nor a valid file descriptor.
-> +.TP
-> +.B EFAULT
-> +.I path
-> +is NULL
-> +or a pointer to a location
-> +outside the calling process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +Invalid flag specified in
-> +.IR flags .
-> +.TP
-> +.B ELOOP
-> +Too many symbolic links encountered when resolving
-> +.IR path .
-> +.TP
-> +.B EMFILE
-> +The calling process has too many open files to create more.
-> +.TP
-> +.B ENAMETOOLONG
-> +.I path
-> +is longer than
-> +.BR PATH_MAX .
-> +.TP
-> +.B ENFILE
-> +The system has too many open files to create more.
-> +.TP
-> +.B ENOENT
-> +A component of
-> +.I path
-> +does not exist,
-> +or is a dangling symbolic link.
-> +.TP
-> +.B ENOENT
-> +.I path
-> +is an empty string, but
-> +.B \%FSPICK_EMPTY_PATH
-> +is not specified in
-> +.IR flags .
-> +.TP
-> +.B ENOTDIR
-> +A component of the path prefix of
-> +.I path
-> +is not a directory;
-> +or
-> +.I path
-> +is relative and
-> +.I dirfd
-> +is a file descriptor referring to a file other than a directory.
-> +.TP
-> +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the operatio=
-n.
-> +.TP
-> +.B EPERM
-> +The calling process does not have the required
-> +.B \%CAP_SYS_ADMIN
-> +capability.
-> +.SH STANDARDS
-> +Linux.
-> +.SH HISTORY
-> +Linux 5.2.
-> +.\" commit cf3cba4a429be43e5527a3f78859b1bfd9ebc5fb
-> +.\" commit 400913252d09f9cfb8cce33daee43167921fc343
-> +glibc 2.36.
-> +.SH EXAMPLES
-> +The following example sets the read-only flag
-> +on the filesystem instance referenced by
-> +the mount object attached at
-> +.IR /tmp .
-> +.P
-> +.in +4n
-> +.EX
-> +int fsfd =3D fspick(AT_FDCWD, "/tmp", FSPICK_CLOEXEC);
-> +fsconfig(fsfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> +fsconfig(fsfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-> +.EE
-> +.in
-> +.P
-> +The above procedure is roughly equivalent to
-> +the following mount operation using
-> +.BR mount (2):
-> +.P
-> +.in +4n
-> +.EX
-> +mount(NULL, "/tmp", NULL, MS_REMOUNT | MS_RDONLY, NULL);
-> +.EE
-> +.in
-> +.P
-> +With the notable caveat that
-> +in this example,
-> +.BR mount (2)
-> +will clear all other filesystem parameters
-> +(such as
-> +.B MS_NOSUID
-> +or
-> +.BR MS_NOEXEC );
-> +.BR fsconfig (2)
-> +will only modify the
-> +.I ro
-> +parameter.
-> +.SH SEE ALSO
-> +.BR fsconfig (2),
-> +.BR fsmount (2),
-> +.BR fsopen (2),
-> +.BR mount (2),
-> +.BR mount_setattr (2),
-> +.BR move_mount (2),
-> +.BR open_tree (2),
-> +.BR mount_namespaces (7)
-> +
->=20
-> --=20
-> 2.51.0
->=20
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---fnx5hi325cclw5cy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjPvOoACgkQ64mZXMKQ
-wqm/aA/9Fy97Z3tt2tCQlnzt0dRd6KeCdAEN6/rC1ZrT2NtaBp7BoPrl/dyGwET9
-D+vGb5lfpP2ResKwRYz6USVcm/feJwGtRSvIC3QlyaIddInHu7YfdsLRulsO+SOw
-SwheqTHrRWOQPh1aiXpTYHDXbvPKegMn5bT34En1W3Ax3CBdTOnkZGdfvzg8dOyz
-xauBPiWdiVc/h7gJJCWInGvHynWCXMLgmF7/3SYEs/mZPrba1B0abfhko6GGajFW
-/ovY3UDvyi/olp8ksmCxz/FXEXryzA0JQMcAv9bCzwVHOCHApp9DV2LTsa5w0Oh1
-lpwnMieOB43fa8OaLjoCeigwH/m8H2kfr8u6KbXhTp0CnrC83fMDwUwkFYPW6AUI
-mzQ0CiPzAxIhv11AGg2dPmKx0H9k0QTYaDdqW2ySt8DnKJcPT3a/dOeu4o4PZM13
-ZuxIlsAxpXwy3FZDxYDyYIWkiQVCkX3VT5r+USiFv5XwdgX2FvwUkQ3Ilnp7e1No
-YLNBqkU8qm4wPRM5+nD4lJ1HNUJliZw1XwzXztCYsnhjfJn6iynbNstKzSCeG1L5
-wb6mnCcuyG7Ul00UKeLawHNWpnpbc3tZUquCtljMNXsgrh4DUvzwVX4q7kokpOoy
-L/iJ9+1iGYx5snoxODnjpm6TL0ZBfCNtLzUoLO2+ivWfpH7hB/Y=
-=Oy6O
------END PGP SIGNATURE-----
-
---fnx5hi325cclw5cy--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
