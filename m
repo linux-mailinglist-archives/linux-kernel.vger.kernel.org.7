@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-826143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA6DB8DA34
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:29:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB91B8DA39
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB7B189DEC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA96317D690
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00ED726A08F;
-	Sun, 21 Sep 2025 11:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E2E26C393;
+	Sun, 21 Sep 2025 11:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh8x790i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPTb3Y61"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D6A155A30;
-	Sun, 21 Sep 2025 11:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C20260592;
+	Sun, 21 Sep 2025 11:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758454139; cv=none; b=VYHh0UYzZNGh4QPR0TXDNmiYFi6/I1Lj31aBjdNOJaTNszy+5jXYH7KrhnHqtf0vlegVTwN4JwHUOQOP85P2bUcgYnOMZYxthrrbgnsEqXmJvMmfwyh5/osHIa5D7oMEVLV31wRiadgvii3y4bBDbKPVezk5F4rp24T1rScoBYY=
+	t=1758454152; cv=none; b=mOFgybrNu2ZrpSLAF9sl/sFWkYl1Rad0nNs64jVjbbN9XSxRiYEaN9XsAZhClUE3Vo0Th2G7bTd0csll+7eMxobAFpXcpbC4kh7kpXBabdx2pzgqi8aN7fZpy9PqWbImK7S3wyRfWoxjNiXko+uLWLOn4ynn4liUMOzrBVwqFnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758454139; c=relaxed/simple;
-	bh=cbYx3xO3GH7BFaxpMuXiS/p7n2UGOfMP0gztbwVmuGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhFmspUN3Ldge55Q6dwF52YMUNmuynyMTVaraoNNV/XtsmpafF4QcCOkiCjuyZw3P6pKh21nl/R3VFrk3ckOq0n167axVyAtRDPk+hLljWLLqk+dygCWm5MVziu+6vIdyRSDRM1I5+LoAWL3E77pjTlpuPwbhQziv51/zWMGFIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kh8x790i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1B9C4CEE7;
-	Sun, 21 Sep 2025 11:28:58 +0000 (UTC)
+	s=arc-20240116; t=1758454152; c=relaxed/simple;
+	bh=TnhBtV7gajUKTHQkLmlYsPEe/PTbeqlRt1FGOsovCI8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W/JXYMnulu/hQDxcEf4wwB9Sw7Yz8caZc7cjkrDXgpqGpeKo5GxBwLRkhRK52KigNSXtZYNxumyKDFjBPF5uWRN7gMADE1/9k47NfQJwfq4FMmbJVh6TSm9s/62OX+qb/LidEC/PKTCbgv0zf0UcB+3WUfBMdGcAerUWAE3qKqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPTb3Y61; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE4CC4CEE7;
+	Sun, 21 Sep 2025 11:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758454138;
-	bh=cbYx3xO3GH7BFaxpMuXiS/p7n2UGOfMP0gztbwVmuGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kh8x790iiubcpqW5VidKg+bW7AzxBtDJ/GV0EHyWJHhVU5UbzTFAYkH342BmXjxUD
-	 XBFu21li1ZQkqMCTiAuuKfuO/O9hgB7WfstWrlGLnryR1+v74cV8LukyXmPCowxDNo
-	 Ue5gkUDiv/Gs8ighh/yg06Hcu2q1s0qKca/MnRdxB23rxcH79/EM+5RSCTeoHxMDBr
-	 mtPFiziTE4xWhv/uKIqkA61IuuKApTm6j4H0QwwIUac6MfcxU64T1FnEs67yRt/0yl
-	 djpnvM/HsUI+8UZY27LkEu5QSZqL5Ie/xkKpNZM5HBQxB2CDD/BMzw6lPKcda3abNz
-	 OEUyIx33LCcKA==
-Date: Sun, 21 Sep 2025 14:28:54 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: YanLong Dai <dyl_wlc@163.com>
-Cc: kalesh-anakkur.purayil@broadcom.com, jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	selvin.xavier@broadcom.com, daiyanlong@kylinos.cn
-Subject: Re: [PATCH rdma-rc] RDMA/bnxt_re: Fix a potential memory leak in
- destroy_gsi_sqp
-Message-ID: <20250921112854.GI10800@unreal>
-References: <20250919054238.5374-1-dyl_wlc@163.com>
+	s=k20201202; t=1758454151;
+	bh=TnhBtV7gajUKTHQkLmlYsPEe/PTbeqlRt1FGOsovCI8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kPTb3Y619WykYKRmzfWQRATmeoIv20M6LRcwelGoNTBmnovLE3Gy3rjIO3Lk0XJtq
+	 lPkBppKxAEW5YR2p2/3uKK72t7hEGwXBjq8GuYh/tlU82z0a6BJVXgB1xJwVQpDopX
+	 HGPS2c4dquESbmF5NDz7AbCzHpT2wzFBoVenS32+B9+wF6dpxoYOSNsOOocCFdQqGP
+	 kjSpL5u8x+d1YYv0ANs0h1oV7KW2CFdYkj6vAVY9StDKfVaOHUSZR7bXkFabzMwqFg
+	 hwjMIoSO0xtwFyw5WZbxWY4po1fElGvzhhz1zc6V4lxOBNecGIoRov+tr21LUp81eh
+	 RfQssSV08yHJQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v0IFh-00000008A8W-0wm3;
+	Sun, 21 Sep 2025 11:29:09 +0000
+Date: Sun, 21 Sep 2025 12:29:08 +0100
+Message-ID: <87plbkxcvv.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: oliver.upton@linux.dev,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	qperret@google.com,
+	sebastianene@google.com,
+	keirf@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
+In-Reply-To: <20250919155056.2648137-1-vdonnefort@google.com>
+References: <20250919155056.2648137-1-vdonnefort@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919054238.5374-1-dyl_wlc@163.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, sebastianene@google.com, keirf@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Sep 19, 2025 at 01:42:38PM +0800, YanLong Dai wrote:
-> From: daiyanlong <daiyanlong@kylinos.cn>
+On Fri, 19 Sep 2025 16:50:56 +0100,
+Vincent Donnefort <vdonnefort@google.com> wrote:
 > 
-> The current error handling path in bnxt_re_destroy_gsi_sqp() could lead
-> to a resource leak. When bnxt_qplib_destroy_qp() fails, the function
-> jumps to the 'fail' label and returns immediately, skipping the call
-> to bnxt_qplib_free_qp_res().
+> There's currently no verification for host issued ranges in most of the
+> pKVM memory transitions. The subsequent end boundary might therefore be
+> subject to overflow and could evade the later checks.
 > 
-> Continue the resource teardown even if bnxt_qplib_destroy_qp() fails,
-> which aligns with the driver's general error handling strategy and
-> prevents the potential leak.
+> Close this loophole with an additional check_range_args() check on a per
+> public function basis.
 > 
-> Fixes: 8dae419f9ec73 ("RDMA/bnxt_re: Refactor queue pair creation code")
+> host_unshare_guest transition is already protected via
+> __check_host_shared_guest(), while assert_host_shared_guest() callers
+> are already ignoring host checks.
 > 
-> Signed-off-by: daiyanlong <daiyanlong@kylinos.cn>
-
-Documentation/process/submitting-patches.rst
-  396 Sign your work - the Developer's Certificate of Origin
-  397 ------------------------------------------------------
-  398
-  ...
-  440 using a known identity (sorry, no anonymous contributions.)
-
-Thanks
-
+> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> 
 > ---
->  drivers/infiniband/hw/bnxt_re/ib_verbs.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-> index 260dc67b8b87..15d3f5d5c0ee 100644
-> --- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-> +++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
-> @@ -931,10 +931,9 @@ static int bnxt_re_destroy_gsi_sqp(struct bnxt_re_qp *qp)
->  
->  	ibdev_dbg(&rdev->ibdev, "Destroy the shadow QP\n");
->  	rc = bnxt_qplib_destroy_qp(&rdev->qplib_res, &gsi_sqp->qplib_qp);
-> -	if (rc) {
-> +	if (rc)
->  		ibdev_err(&rdev->ibdev, "Destroy Shadow QP failed");
-> -		goto fail;
-> -	}
-> +
->  	bnxt_qplib_free_qp_res(&rdev->qplib_res, &gsi_sqp->qplib_qp);
->  
->  	/* remove from active qp list */
-> @@ -951,8 +950,6 @@ static int bnxt_re_destroy_gsi_sqp(struct bnxt_re_qp *qp)
->  	rdev->gsi_ctx.sqp_tbl = NULL;
->  
->  	return 0;
-> -fail:
-> -	return rc;
+>  v1 -> v2:
+>    - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
+>    - Rename to check_range_args().
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> index 8957734d6183..65fcd2148f59 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> @@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
+>  	return check_page_state_range(&vm->pgt, addr, size, &d);
 >  }
 >  
->  /* Queue Pairs */
-> -- 
-> 2.43.0
-> 
+> +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
+> +{
+> +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
+> +		return false;
+> +
+> +	return start < (start + *size);
+
+I will echo Oliver's concern on v1: you probably want to convert the
+boundary check to be inclusive of the end of the range. Otherwise, a
+range that ends at the top of the 64bit range will be represented as
+0, and fail the  check despite being perfectly valid.
+
+That's not a problem for PAs, as we will be stuck with at most 56bit
+PAs for quite a while, but VAs are a different story, and this sort of
+range check should be valid for VAs as well.
+
+Thanks,
+
+	M.
+
+-- 
+Jazz isn't dead. It just smells funny.
 
