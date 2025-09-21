@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-826428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0046EB8E816
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:04:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A982B8E81C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D930A7A2B6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBEC73BD484
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD487251793;
-	Sun, 21 Sep 2025 22:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2156025A642;
+	Sun, 21 Sep 2025 22:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eNXDyy+l"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y0AlwIgN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2954A8248C
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 22:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FA921ABAC
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 22:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758492248; cv=none; b=aOoh+fb33alRJD6hn2tSf0WPQdnE8OQj1oSYG1rHPEW/V/wBt7jLRGevBQAAFcFdAxTQPrE6L02NLCnyW/23KYKufNZ7ufsTSvPo9in9L/wfs0k5jBn1KpXP4ted1cTDnBVkZjTvO7kcA1Q3Mgz/+ldM/0G57iHEqbgkb4rlqaI=
+	t=1758492372; cv=none; b=NaXAQPuNMP+Ne3/f3NvU4Ygezme4AYc0mtzMoffFuVl67nq6Whi4/0yzYIdliaKuOS5owRaICYg0p3xjRJZWNzzNIHcQRan2pHbocsKMW+PHnX5EfQGDouvotJmVh0dqTYo1zM5Rh+NByivr//sxltYA1jc01fpWb0JlGH5snNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758492248; c=relaxed/simple;
-	bh=5BiSCFIEF2vb48yI7EFLT2+TbkJZ6qm76xDVpJWhEKg=;
+	s=arc-20240116; t=1758492372; c=relaxed/simple;
+	bh=dysQy1LgaNQGhPgJ62RPZfECyqwF1qMtyAsHEYtx7Pk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sc0MlMOd4G4i97Qx8t0uOLL+B7Y0ot7twis/EefZRYHUKrB3K1oJ0X05XJ8N4n4DpBMPfeSuNwJnzpKbfqczLRe+LzjXuJ/9CdB0qL6cK56gvsCGUBdXRh4gCfOtsfVI2PS+5BWI4vLPfJ0pv+SUDx5s3s1vIfIacdsVRFWPHic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eNXDyy+l; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZojqbRHJ0OcJhAO8XLmD0pxVV3j5SixF6mXGEEoQcESicuD2Enwcm7AbGB5MGffHWaI40PUAYmyKXpB/utZ0cHZPNDspJjPm8U1/S1bahcWUzOUTeK6l06PER327qQyKDd+OsYeXAH6wH7sgNjxer2SVTlLoT7syqTyuCMotl/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y0AlwIgN; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758492243;
+	s=mimecast20190719; t=1758492368;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ONP85/kE6LZeutwGgQYDvNA1HvoKzizVzvTOoz6SSI4=;
-	b=eNXDyy+lqypihsUt7FZcWreSZlcXL6KY5TGEwOPuQ2KA4Zz1dpDT4mrVnG1Gtj1+udQoC4
-	eu+x4EeL2NmqARKnZXsS0Z3/bx3KhOxmueUtejTWJAY9+bVVDLorgJImrZpC4SGhDc0cRY
-	k0cinnA+K8XDyxAhr11FjhnowTgle4E=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=7UosoLsALRUmkkDefiEvEbWd0s+j+h1QhwUQcDUkgws=;
+	b=Y0AlwIgN1zB1RAMT49HcNW+v1m2jPgUsCD9eld2aIGQtC35uEPpSPZGtsJZUA9lIngP+BN
+	Zz8bWsdoTiCgMm+uiP0N7kzOcnjTHOnzOef8kczpXbWkq2/LbfqcOj4xvLeffjnjhxSNsq
+	L8/Iy0ey5BZfekHxJz2gF9laULut/9Y=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-2ly91fwLPC6kWQzBkzeG2g-1; Sun, 21 Sep 2025 18:04:01 -0400
-X-MC-Unique: 2ly91fwLPC6kWQzBkzeG2g-1
-X-Mimecast-MFC-AGG-ID: 2ly91fwLPC6kWQzBkzeG2g_1758492240
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso29204445e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 15:04:01 -0700 (PDT)
+ us-mta-610-aRROeXo_M668geSqvp7WGw-1; Sun, 21 Sep 2025 18:06:07 -0400
+X-MC-Unique: aRROeXo_M668geSqvp7WGw-1
+X-Mimecast-MFC-AGG-ID: aRROeXo_M668geSqvp7WGw_1758492366
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f924ae2a89so496722f8f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 15:06:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758492240; x=1759097040;
+        d=1e100.net; s=20230601; t=1758492366; x=1759097166;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ONP85/kE6LZeutwGgQYDvNA1HvoKzizVzvTOoz6SSI4=;
-        b=aFiU0DimNsIjbhEnM5uUWymSog+E8dOpsQBm/8czBvIhTUts0xugKf0W0HnhiNm8K9
-         QPyJjTyyIIciYTYBjuFWGPPEoxJcvR0czMSHPpFrgXo9uwIe8dftQ14YS2QUtyRMRBuj
-         7Wa90SXUwULY7PUo+96ngQQKZ3uXQmrb+d7eXKbHamfHrgI27wDacEMOEmPE3Qy/wBsP
-         haebV4fDTpGZxxiXyEeUAvZkwTQJnM9c4iNf9h3MHFtZerDOj+Hu02EP5aW0mxueTRLS
-         8F2tOoQ1tr3+GW4noxs4wtnHZCQA3gpoOAvdL8ppn9PSOqqlpOx1rLeP0ytZX7tx7tc7
-         e5Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU9yzpQTvWTJYNbSpjUa/+StZpxjNlT1Ymb/N/SuB3AgX2uPNR7Fn1jiibrTvsbd5b88uQ9dv2qIkZ3Znw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx71WOtbE+3gGf0yTn0eElGWZKfLeKRlV4g39/16ZTbfXTWz9ep
-	Th/Ks7hRg9E1ObUebqG3n457DHzrfWSASBqulKJgmgXIgkMSJ8cTi70tCqbvrwMY7HChkYgitQe
-	5iQE9QAwc3F3h7vfEMX9O15alCbUZwUKR2z3MKx1DncgRNn6P/qNybuStSKnjJLQ4+nXirPMBxA
-	==
-X-Gm-Gg: ASbGncukSkfmTfbHVIpp2GOFqu/p9AlY1FSJvVEJmU9eo7Sb0BteWtaWOQW7F3bQhM0
-	UG8xtXmCcBlRGtEzlJBCEcZY94NJE5eTGRT2RIP3vIwHC2uMu9mKyAYfWGki69xW4V2XbfAzTXH
-	LSnr+71W+InXxjQRO8snoC4zcP+F031MnHn31H7wX79Xbtpj/nuiaCLLFV/XsXp7b1r8oxiR0ss
-	+iF4nsFFs1PHxkLZWmz/3yHLGTahx5KQ6J4+uBytAFE4UqBa7icwa3tLOHBDJe0OeVYOjRugToQ
-	LOLSn4cAWUr8ajAJwjjv2Opn3AwAHz7jgkw=
-X-Received: by 2002:a05:600c:8b4c:b0:46d:27b7:e7e5 with SMTP id 5b1f17b1804b1-46d27b7e8f5mr8273045e9.32.1758492239773;
-        Sun, 21 Sep 2025 15:03:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYVTAld6RKHKDr8EfbZQLYVgCLaOGrRc+Re/ppDckY0JxaBt8dh90AguZrfJ6QxRxscsj/DQ==
-X-Received: by 2002:a05:600c:8b4c:b0:46d:27b7:e7e5 with SMTP id 5b1f17b1804b1-46d27b7e8f5mr8272895e9.32.1758492239258;
-        Sun, 21 Sep 2025 15:03:59 -0700 (PDT)
+        bh=7UosoLsALRUmkkDefiEvEbWd0s+j+h1QhwUQcDUkgws=;
+        b=wwOGf/xEFYuFVumCl0Sft8G4Tkb0bm8kruuUjDPG9HEad1hWgxrzIKMmt0Sma+lsNp
+         nn0pt274tHAlkQhnTftlkXiSfYGhti56HviNcR6wQajO6Yk7Ck+j0gnbulkiVW4cOlkd
+         FvNFyNjxmUvBfQ3EIphV++JCzxiH+12tB8h4L6E1smx+c+yqxolaEPam9+F7xCxYIiAV
+         H43y1Xl47EHZfTO62nZqgdBJb5U/DgcREatRkHOdW47waA9jzZEGV2Zqn0CrYvRlYINY
+         YBnMj8Bz2Z5BxT0z2Kze0/YEftrIhIeBnJsO8/pETJ9dtSGnck2GhqwdjDC/EfCK77Zn
+         Heqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvbmjcdwXe9cPQ4SJyMpqP+8dBahTRkF57MSHuRjbhp3UmzDI3JeS3G2v56wszMccsydwyMi0sjmSQZwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKu7nDmmXQRH+vbp5A70AiGilPtRkG2GqMIjBjQ5bUIIU44V9v
+	7wEd2opJU6sG2PElGwCFr01NbZTV7Mzsx09usLUrLTyB94B2AgnENbCBrxpuAqhokeJqD4j1w7x
+	+zozGraHZ3qJrqe1HY+D/Pj09nv+vnTwD6shk1ydtHSjScJjk0a3vS5tjr8oDDWrTPw==
+X-Gm-Gg: ASbGnctXePyo1M3yP3VsWAgmC3HtTfEKtWn8TKCRn/GtzmZpvLni4Sw8Ed8sSgOkv7R
+	/CGI00bkGZDZvmKUIvyQmNbF4+pvTzYKZJExDIATNGMcbhDSU6RCXyiWKDJBWgpGPuuP+iHdhek
+	11hMg8GDvQ3HfHWTgVdD2yzFmzObk1m2jp9CvSj1oG8FmWHkAptdlpEzrceuYu/iI5zTCA0FuSP
+	aIXzRmDLXJuakpJXf2EQgXRdX8ge/PRFRq9OSG2oG+5rrFHGquzLH1s6Cc2kS4m0ggxx3iX8aT4
+	ePiULX+YooZFNa3nDL0fTnU9UxwVmnF2xNo=
+X-Received: by 2002:a05:6000:24c4:b0:3fe:34ec:2f90 with SMTP id ffacd0b85a97d-3fe34ec332fmr1041472f8f.54.1758492365546;
+        Sun, 21 Sep 2025 15:06:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExs9nzkwIBt0N4iLWdSlTs/SEaKWQvEzbjRPh94RaKFKeAL/KboleqyoBQ8N9kIxGQuk6Hug==
+X-Received: by 2002:a05:6000:24c4:b0:3fe:34ec:2f90 with SMTP id ffacd0b85a97d-3fe34ec332fmr1041460f8f.54.1758492365051;
+        Sun, 21 Sep 2025 15:06:05 -0700 (PDT)
 Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46da6900832sm1619815e9.0.2025.09.21.15.03.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7107sm18049789f8f.30.2025.09.21.15.06.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 15:03:58 -0700 (PDT)
-Date: Sun, 21 Sep 2025 18:03:56 -0400
+        Sun, 21 Sep 2025 15:06:04 -0700 (PDT)
+Date: Sun, 21 Sep 2025 18:06:01 -0400
 From: "Michael S. Tsirkin" <mst@redhat.com>
 To: Jason Wang <jasowang@redhat.com>
 Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
 	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
 	hch@infradead.org
 Subject: Re: [PATCH V6 6/9] virtio: introduce map ops in virtio core
-Message-ID: <20250921180208-mutt-send-email-mst@kernel.org>
+Message-ID: <20250921180553-mutt-send-email-mst@kernel.org>
 References: <20250821064641.5025-1-jasowang@redhat.com>
  <20250821064641.5025-7-jasowang@redhat.com>
 Precedence: bulk
@@ -101,6 +100,9 @@ In-Reply-To: <20250821064641.5025-7-jasowang@redhat.com>
 On Thu, Aug 21, 2025 at 02:46:38PM +0800, Jason Wang wrote:
 > This patch introduces map operations for virtio device. Virtio use to
 > use DMA API which is not necessarily the case since some devices
+
+used to use
+
 > doesn't do DMA. Instead of using tricks and abusing DMA API, let's
 > simply abstract the current mapping logic into a virtio specific
 > mapping operations. For the device or transport that doesn't do DMA,
@@ -274,11 +276,6 @@ On Thu, Aug 21, 2025 at 02:46:38PM +0800, Jason Wang wrote:
 > + * @map: metadata for performing mapping
 > + * @size: the size of the buffer
 > + * @map_handle: the pointer to the mapped address
-
-it's actually still a DMA address. So just keep it simple,
-everyone knows what is a dma address no one knows what
-is a "mapped address".
-
 > + * @gfp: allocation flag (GFP_XXX)
 > + *
 > + * return virtual address or NULL on error
@@ -303,10 +300,8 @@ is a "mapped address".
 > + * @map: metadata for performing mapping
 > + * @size: the size of the buffer
 > + * @map_handle: the mapped address that needs to be freed
-
-same
-
-
+> + *
+> + */
 > +void virtqueue_map_free_coherent(struct virtio_device *vdev,
 > +				 union virtio_map map, size_t size, void *vaddr,
 > +				 dma_addr_t map_handle)
@@ -329,9 +324,6 @@ same
 > + * @attrs: mapping attributes
 > + *
 > + * Returns mapped address. Caller should check that by virtqueue_mapping_error().
-
-same
-
 > + */
 > +dma_addr_t virtqueue_map_page_attrs(const struct virtqueue *_vq,
 > +				    struct page *page,
@@ -358,9 +350,6 @@ same
 > + * virtqueue_unmap_page_attrs - map a page to the device
 > + * @_vq: the virtqueue we are talking to
 > + * @map_handle: the mapped address
-
-same
-
 > + * @size: the buffer size
 > + * @dir: mapping direction
 > + * @attrs: unmapping attributes
@@ -391,10 +380,6 @@ same
 >   *
 > - * return DMA address. Caller should check that by virtqueue_mapping_error().
 > + * return mapped address. Caller should check that by virtqueue_mapping_error().
-
-
-same
-
 >   */
 >  dma_addr_t virtqueue_map_single_attrs(const struct virtqueue *_vq, void *ptr,
 >  				      size_t size,
