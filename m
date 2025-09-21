@@ -1,120 +1,83 @@
-Return-Path: <linux-kernel+bounces-826128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80A3B8D9A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:04:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B197DB8D9B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0AFD3AC833
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3EB07AE74B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A65525C80E;
-	Sun, 21 Sep 2025 11:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t56+27g4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6A423B60A;
-	Sun, 21 Sep 2025 11:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E69246766;
+	Sun, 21 Sep 2025 11:16:13 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14A51B81D3;
+	Sun, 21 Sep 2025 11:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758452649; cv=none; b=qTbD9dQg18JwrvDDn9ULqw2nMBHZutwg229N4XlCwU0iaw62L1js2L7xPGpBrwGmgCJ5bS0g5RcrUePWn/YLduZ5CBujDQl1Q/Y7w/rLMazjkIZ9GwhQB49LMTbEm2aAbv9OJ93fpvSL+OS1lcClJOya7GgmyGi7tjSF9f/OjFg=
+	t=1758453373; cv=none; b=OiljHHAKvme+DATfNlWnSndoyRpUOgIxw92ZJj+e9J/IOo9SjrBxlizmc5wDj9w1wpqUy3AgY3cn0ueLmVQlHjVwMKN3YjF01zCrBuZb3jhU2HOGA+/Kbu6Ijwzf9o4Q4qwhVAPdHIQM2I6bDlD+htVYdFIwJWTLDIJlmcgNk08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758452649; c=relaxed/simple;
-	bh=ulSPXBA1u1faRv4/f8arTi2w78WVoq/znuBQRkfs6Zo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hEFYnp7DUgJNPYmG/yPMjbCT2Q9cHPVZq1oWqzBqXPixhGijedXLoy+0rxwY0atQ+jLE9qEdk6PeWEbbx3C0er/Y8IwyayGUNAG3fpSsGqzwUPk1z53mmO4UfNKOR4MNosKPFrbPApsOWDSxg1RSKrhEmX2/OBlUbUq+sFWrmIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t56+27g4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A950C116D0;
-	Sun, 21 Sep 2025 11:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758452649;
-	bh=ulSPXBA1u1faRv4/f8arTi2w78WVoq/znuBQRkfs6Zo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=t56+27g4EaW8nnlv1PZ3Su58UPdFiDAuie2uyPMxsjoXMsAHjpTucLIK9bOBDIqh+
-	 hOPhXrFJXSbC0efVuWfAWR7eXSVgn67VtYEq4GaYEOdqqVSc8c1TlF9PpvtqJjpJMc
-	 49cqXUyZX9RNUC/qsFCCRLZZQJFyzxUPu2DV0EemhUDp8T9fjmCvMfoip0kyF63n1c
-	 iGGIXaXAE6vsAA7nrSz2sLhAN48GmTAXyvdWHH6u+VR/UOIK8DxcfxBKpAKeWmPSx8
-	 A+5+VOKGv0ND8GwvuonbgB6E2H4ASAWv/YpmuljOY06Kr/bP7jPZTlQWlUJmHpPF/I
-	 y9/Ti4RN2hUVQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C82ACAC5A8;
-	Sun, 21 Sep 2025 11:04:09 +0000 (UTC)
-From: Max Shevchenko via B4 Relay <devnull+wctrl.proton.me@kernel.org>
-Date: Sun, 21 Sep 2025 14:03:42 +0300
-Subject: [PATCH 3/3] arm64: dts: mediatek: mt6795: drop mediatek,dma-33bits
- property
+	s=arc-20240116; t=1758453373; c=relaxed/simple;
+	bh=2LfdbEHL4vk8Rkv+233QDSONET350HYC3trGdHp1rPQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J87dLvdB+KDbTh5jPeaV3hvPy/R+N8HVsC8SNS9e4nNJ8CIX4zS5e/hZnBoFv0k7KHU6qb2OSYij2gEIt9gOfxvbAO5lDycw6X/uM/Lbqf8iM8HfrCxTbyO/Onx3C3g3db3amARDXXncsB4QfPqe4lzMujxr5We6z8dut150z/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: /ZAO/P+CRLuatSHs3X1hnQ==
+X-CSE-MsgGUID: Ky5KTXJcTCSdPHSMYAaUQw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 21 Sep 2025 20:16:02 +0900
+Received: from localhost.localdomain (unknown [10.226.92.3])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2927140061AE;
+	Sun, 21 Sep 2025 20:15:59 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v4 0/2] RZ/G2L pincontrol improvements
+Date: Sun, 21 Sep 2025 12:15:51 +0100
+Message-ID: <20250921111557.103069-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250921-uart-apdma-v1-3-107543c7102c@proton.me>
-References: <20250921-uart-apdma-v1-0-107543c7102c@proton.me>
-In-Reply-To: <20250921-uart-apdma-v1-0-107543c7102c@proton.me>
-To: Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Long Cheng <long.cheng@mediatek.com>
-Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Max Shevchenko <wctrl@proton.me>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758452646; l=1089;
- i=wctrl@proton.me; s=20250603; h=from:subject:message-id;
- bh=efNh38U+hbw7SE9tyV1qJBxX+aihILQofpcGc0kC/ts=;
- b=P2Den4CzqXR4nni1RZlcgJUrU+BdnDEx6nZid1RneZyCMn5h8Mysh1cY8Rig6oOMQpbLsXBdS
- golrZUGOoSGA2ZCKjBqltNqDh1rkr621J5L7bYeinB8Sw0aZmqZIF3B
-X-Developer-Key: i=wctrl@proton.me; a=ed25519;
- pk=JXUx3mL/OrnRvbK57HXgugBjEBKq4QgDKJqp7BALm74=
-X-Endpoint-Received: by B4 Relay for wctrl@proton.me/20250603 with
- auth_id=421
-X-Original-From: Max Shevchenko <wctrl@proton.me>
-Reply-To: wctrl@proton.me
+Content-Transfer-Encoding: 8bit
 
-From: Max Shevchenko <wctrl@proton.me>
+The first patch fixes PMC restore during resume as it needs to use PWPR
+register to unlock it. The second patch drops redundant configurations
+during resume.
 
-Drop the mediatek,dma-33bits property and use compatible for the
-platform data instead.
+v3->v4:
+ * Prepared as series
+ * Added new patch for fixing PMC restore
+v2->v3:
+ * Dropped extra space before the == operator.
+ * Moved spinlock acquire before reading pfc value.
+ * Make sure it is configured for function in PMC register for
+   skipping GPIO switch.
+v1->v2:
+ * Updated commit header and description.
+ * Added check in rzg2l_pinctrl_set_pfc_mode() to avoid unnecessary
+   configuration
 
-Signed-off-by: Max Shevchenko <wctrl@proton.me>
----
- arch/arm64/boot/dts/mediatek/mt6795.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Biju Das (2):
+  pinctrl: renesas: rzg2l: Fix PMC restore
+  pinctrl: renesas: rzg2l: Drop the unnecessary pin configurations
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt6795.dtsi b/arch/arm64/boot/dts/mediatek/mt6795.dtsi
-index e5e269a660b11b0e94da1a1cf362ff0839f0dabf..5123316b21285cf589c0c616c0a12420f0b1ef19 100644
---- a/arch/arm64/boot/dts/mediatek/mt6795.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt6795.dtsi
-@@ -547,8 +547,7 @@ uart1: serial@11003000 {
- 		};
- 
- 		apdma: dma-controller@11000380 {
--			compatible = "mediatek,mt6795-uart-dma",
--				     "mediatek,mt6577-uart-dma";
-+			compatible = "mediatek,mt6795-uart-dma";
- 			reg = <0 0x11000380 0 0x60>,
- 			      <0 0x11000400 0 0x60>,
- 			      <0 0x11000480 0 0x60>,
-@@ -568,7 +567,6 @@ apdma: dma-controller@11000380 {
- 			dma-requests = <8>;
- 			clocks = <&pericfg CLK_PERI_AP_DMA>;
- 			clock-names = "apdma";
--			mediatek,dma-33bits;
- 			#dma-cells = <1>;
- 		};
- 
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 28 ++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
 -- 
-2.51.0
-
+2.43.0
 
 
