@@ -1,276 +1,190 @@
-Return-Path: <linux-kernel+bounces-825996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81DC0B8D48F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 06:04:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3BCB8D493
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 06:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3F7441586
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:04:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6D617B01C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6EB2F56;
-	Sun, 21 Sep 2025 04:04:31 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8FE29B8C2;
+	Sun, 21 Sep 2025 04:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTzrlsCR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427E21798F
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 04:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC4D1798F;
+	Sun, 21 Sep 2025 04:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758427471; cv=none; b=eyHzsEw0C1fR5md34XIEtNI269iSRyfvrn+XkVHnp3scFZr0z92IARpHuBwIHdxH1cCeZv7o+Bi85yA56p5GpEyneQ/845fPovsr/VLwODcn02t14nZlOTzG0+uMtv+E4//l9omtMZ7YC0qbNSbNPF/T976RMyhIeU9vYyB+3iY=
+	t=1758427526; cv=none; b=BJn7w6lk0nL7czQ7lt6dbqEpsU2jG8bK1qPc695h3iFYsNfdVdL4aiTlAIxR9LvCMlJkB2hKuA7DsVJgw4+oRjDQdjAarzW6e5gNj4bdGR64DgfVq30Jo/9mre9GCHYd9ensg3Wk0Tc3LY4QzzhoQ/UcqFgdd+vccLalA1nqBV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758427471; c=relaxed/simple;
-	bh=uYaPhNV1/+q9/3WTZa/AM3WFWfNB8GDVijY2bznYwP0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dqem1WJMrD68cX8aYH7BeRRBCNDdQ7KXOhNgVcGpeuXZB0YWnvRv525gSMpphC5rJtV87NTLKf9bPWHBTGxn+97beEwlPBEqvUAx8+6badnOfpQQumZJicV6rkRAqd+4+9yMDq4wK27OrW7TIRbU+IFPrtGGgGYArcoHm2JLRMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-42407a5686fso43240625ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 21:04:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758427468; x=1759032268;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ND+IRyVoBRx/ziTBiFkTALgcpMRoE1+blRu9ZWJN/k=;
-        b=XQyat6deCYoAXudjyBZfpI/1PW6F2/UvETUEj2RrgIMcYbEcf0xr8nmBmenJm86p3V
-         fxM5UYTr7xxhREV27+zYmRqc79lKtERbXLTPHzGmqQ54iW1ZRM8gFt+kXhKw+FoLEXlO
-         S5KsQwESli5ZgchxmVlK8nmS5w5rjL/icSpKroyKl2GaW/Jl7zOI7Rn/I9a0Aju5vtVl
-         mYW7nplEb/Hl/832wZQOMtz92yzbxKOL8E7qxjzjYWFWZ/ihIAP2JXI93fiV7z/6SWUU
-         kYo8QnmkC1ig72ZoDteElMipfR/RrL9f8DM2iK81wAhZUxTTtVZ0vuhC67g1WypIhNit
-         I/QA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJLaqK+CdfsGvQ3tigZo7bhCtPKqq1zicYcLQtr2RgY/87LDetW9xZluZP8SWWQJyAZjgWuDVEZZkdxNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysPw41HKnY6xihuVdTtnN5TEJqFjDgcqhoN3nZ6g4d9FwtD2f2
-	IOhls4OzxbhiAWSja4r+dFAlygpCZFOxS+FYqBP6+LvpqmSJ24WWGzVKGrzoouh7v5N9bwNrZzS
-	cj2YJKjTLic0y29BZ/C5FnBshIKdp6rxF+1jLnjTGPwCSbJvE00C8JgShKOw=
-X-Google-Smtp-Source: AGHT+IGufy4+nfq2omegs8kz88DcjlzFd1t+cm58oaN1JU+xnapDFfsm78+qyM3U+xr/3DxJlNNOIxGUpIFkKqd1FKqMPdPU6THW
+	s=arc-20240116; t=1758427526; c=relaxed/simple;
+	bh=p/DpiLcskujOfJ4phkL3TIVWHJKpea3P2LvnmymfsLk=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=tOieJkSMXFspAeiQnuDZ3kowoexUbmjznwOBkT3Ko3OQaYM5WDt55FmlkiADM/g7t8kIC0N6/qdVeGVQ7t1Y7sEQNkxd42c3N8pbAy86Q5n1mME54gkwV914rF/A0mp/hH0o9fTkvXRFv0Q2v3pynWHpYN6G2OEMupR3rnWNe1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTzrlsCR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A383DC4CEE7;
+	Sun, 21 Sep 2025 04:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758427525;
+	bh=p/DpiLcskujOfJ4phkL3TIVWHJKpea3P2LvnmymfsLk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pTzrlsCRJTCj7GPHUJAsdnA34PvI2QnLRIQlYrtcGRHVa4Bx3/kwTTRORCD8BBb1h
+	 tOJpWCNo69hOdtypTqzXsvD0dSSoJD+IizoejsyPScoIB7cUQSHfm6xlzMqCFd9Ebc
+	 tBmG5yKDqWoe1JpePWRxLgnFBZE5kGrTBxATeQwd6eIRJc7fOysSEDqorccCYSQp1+
+	 KDwI0f5RcXOS4fh4FamK77sGfLuQg+mcA4kglS+KFlt8VebnC6XnwIcYGeYAo2w4sG
+	 4C81jAdIn8dB1SXnj+R3HImkuUIbIEK5ibPUZa44JjtwzVSAZQKUf4YfngWV34lJFW
+	 lNcKkjx4cpqfw==
+Date: Sun, 21 Sep 2025 13:05:19 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
+ <rostedt@kernel.org>, Menglong Dong <menglong8.dong@gmail.com>,
+ jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+ ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-Id: <20250921130519.d1bf9ba2713bd9cb8a175983@kernel.org>
+In-Reply-To: <20250919112746.09fa02c7@gandalf.local.home>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+	<175828305637.117978.4183947592750468265.stgit@devnote2>
+	<20250919112746.09fa02c7@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:cd84:0:b0:424:89fd:73d6 with SMTP id
- e9e14a558f8ab-42489fd759cmr102691455ab.14.1758427468459; Sat, 20 Sep 2025
- 21:04:28 -0700 (PDT)
-Date: Sat, 20 Sep 2025 21:04:28 -0700
-In-Reply-To: <6888afe6.050a0220.f0410.0005.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
-Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in driver_remove_file
-From: syzbot <syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com>
-To: dakr@kernel.org, gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On Fri, 19 Sep 2025 11:27:46 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-HEAD commit:    3b08f56fbbb9 Merge tag 'x86-urgent-2025-09-20' of git://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ce5858580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f01d8629880e620
-dashboard link: https://syzkaller.appspot.com/bug?extid=a56aa983ce6a1bf12485
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15571534580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152f7e42580000
+> On Fri, 19 Sep 2025 20:57:36 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > function_graph_enter_regs() prevents itself from recursion by
+> > ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+> > which is called at the exit, does not prevent such recursion.
+> > Therefore, while it can prevent recursive calls from
+> > fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+> > to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+> > This can lead an unexpected recursion bug reported by Menglong.
+> > 
+> >  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+> >   -> kprobe_multi_link_exit_handler -> is_endbr.  
+> 
+> So basically its if the handler for the return part calls something that it
+> is tracing, it can trigger the recursion?
+> 
+> > 
+> > To fix this issue, acquire ftrace_test_recursion_trylock() in the
+> > __ftrace_return_to_handler() after unwind the shadow stack to mark
+> > this section must prevent recursive call of fgraph inside user-defined
+> > fgraph_ops::retfunc().
+> > 
+> > This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+> > fprobe on function-graph tracer"), because before that fgraph was
+> > only used from the function graph tracer. Fprobe allowed user to run
+> > any callbacks from fgraph after that commit.
+> 
+> I would actually say it's because before this commit, the return handler
+> callers never called anything that the entry handlers didn't already call.
+> If there was recursion, the entry handler would catch it (and the entry
+> tells fgraph if the exit handler should be called).
+> 
+> The difference here is with fprobes, you can have the exit handler calling
+> functions that the entry handler does not, which exposes more cases where
+> recursion could happen.
+> 
+> > 
+> > Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+> > Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+> > Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  kernel/trace/fgraph.c |   12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> > index 1e3b32b1e82c..08dde420635b 100644
+> > --- a/kernel/trace/fgraph.c
+> > +++ b/kernel/trace/fgraph.c
+> > @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	unsigned long bitmap;
+> >  	unsigned long ret;
+> >  	int offset;
+> > +	int bit;
+> >  	int i;
+> >  
+> >  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> > @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	if (fregs)
+> >  		ftrace_regs_set_instruction_pointer(fregs, ret);
+> >  
+> > +	bit = ftrace_test_recursion_trylock(trace.func, ret);
+> > +	/*
+> > +	 * This must be succeeded because the entry handler returns before
+> > +	 * modifying the return address if it is nested. Anyway, we need to
+> > +	 * avoid calling user callbacks if it is nested.
+> > +	 */
+> > +	if (WARN_ON_ONCE(bit < 0))
+> 
+> I'm not so sure we need the warn on here. We should probably hook it to the
+> recursion detection infrastructure that the function tracer has.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/50f34afb9e37/disk-3b08f56f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/421a8470ac48/vmlinux-3b08f56f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/218f92cd0c4d/bzImage-3b08f56f.xz
+The reason I added WARN_ON here is this should not happen. The recursion
+should be detected at the entry, not at exit. The __ftrace_return_to_handler()
+is installed only if the entry does NOT detect the recursion. In that case
+I think the exit should succeed recursion_trylock().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
+> 
+> The reason I would say not to have the warn on, is because we don't have a
+> warn on for recursion happening at the entry handler. Because this now is
+> exposed by fprobe allowing different routines to be called at exit than
+> what is used in entry, it can easily be triggered.
 
-comedi comedi1: c6xdigio: I/O port conflict (0x401,3)
-==================================================================
-BUG: KASAN: slab-use-after-free in sysfs_remove_file_ns+0x63/0x70 fs/sysfs/file.c:522
-Read of size 8 at addr ffff88807d7e6e30 by task syz.0.18/6035
+At the entry, if it detect recursion, it exits soon. But here we have to
+process stack unwind to get the return address. This recursion_trylock()
+is to mark this is in the critical section, not detect it.
 
-CPU: 1 UID: 0 PID: 6035 Comm: syz.0.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xcd/0x630 mm/kasan/report.c:482
- kasan_report+0xe0/0x110 mm/kasan/report.c:595
- sysfs_remove_file_ns+0x63/0x70 fs/sysfs/file.c:522
- sysfs_remove_file include/linux/sysfs.h:777 [inline]
- driver_remove_file drivers/base/driver.c:201 [inline]
- driver_remove_file+0x4a/0x60 drivers/base/driver.c:197
- remove_bind_files drivers/base/bus.c:605 [inline]
- bus_remove_driver+0x224/0x2c0 drivers/base/bus.c:743
- driver_unregister+0x76/0xb0 drivers/base/driver.c:277
- comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
- comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
- comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
- do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
- comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f623a78ec29
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe5ded2158 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f623a9d5fa0 RCX: 00007f623a78ec29
-RDX: 0000200000000080 RSI: 0000000040946400 RDI: 0000000000000004
-RBP: 00007f623a811e41 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f623a9d5fa0 R14: 00007f623a9d5fa0 R15: 0000000000000003
- </TASK>
+Thank you,
 
-Allocated by task 6034:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:405
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- bus_add_driver+0x92/0x690 drivers/base/bus.c:662
- driver_register+0x15c/0x4b0 drivers/base/driver.c:249
- c6xdigio_attach drivers/comedi/drivers/c6xdigio.c:253 [inline]
- c6xdigio_attach+0xa3/0x4b0 drivers/comedi/drivers/c6xdigio.c:238
- comedi_device_attach+0x3b0/0x900 drivers/comedi/drivers.c:1007
- do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
- comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6034:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x60/0x70 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2422 [inline]
- slab_free mm/slub.c:4695 [inline]
- kfree+0x2b4/0x4d0 mm/slub.c:4894
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x1e7/0x5a0 lib/kobject.c:737
- bus_remove_driver+0x16e/0x2c0 drivers/base/bus.c:749
- driver_unregister+0x76/0xb0 drivers/base/driver.c:277
- comedi_device_detach_locked+0x12f/0xa50 drivers/comedi/drivers.c:207
- comedi_device_detach+0x67/0xb0 drivers/comedi/drivers.c:215
- comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1011
- do_devconfig_ioctl+0x1b1/0x710 drivers/comedi/comedi_fops.c:872
- comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2178
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl fs/ioctl.c:584 [inline]
- __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88807d7e6e00
- which belongs to the cache kmalloc-256 of size 256
-The buggy address is located 48 bytes inside of
- freed 256-byte region [ffff88807d7e6e00, ffff88807d7e6f00)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7d7e6
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b841b40 dead000000000122 0000000000000000
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b841b40 dead000000000122 0000000000000000
-head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 00fff00000000001 ffffea0001f5f981 00000000ffffffff 00000000ffffffff
-head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000002
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5959, tgid 5959 (syz-executor), ts 73428545830, free_ts 73053846504
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1c0/0x230 mm/page_alloc.c:1851
- prep_new_page mm/page_alloc.c:1859 [inline]
- get_page_from_freelist+0x132b/0x38e0 mm/page_alloc.c:3858
- __alloc_frozen_pages_noprof+0x261/0x23f0 mm/page_alloc.c:5148
- alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2416
- alloc_slab_page mm/slub.c:2492 [inline]
- allocate_slab mm/slub.c:2660 [inline]
- new_slab+0x247/0x330 mm/slub.c:2714
- ___slab_alloc+0xcf2/0x1750 mm/slub.c:3901
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3992
- __slab_alloc_node mm/slub.c:4067 [inline]
- slab_alloc_node mm/slub.c:4228 [inline]
- __do_kmalloc_node mm/slub.c:4375 [inline]
- __kmalloc_noprof+0x2f2/0x510 mm/slub.c:4388
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kmalloc_array_noprof include/linux/slab.h:948 [inline]
- __list_lru_init+0xe8/0x4c0 mm/list_lru.c:588
- alloc_super+0x904/0xbd0 fs/super.c:391
- sget_fc+0x116/0xc20 fs/super.c:761
- vfs_get_super fs/super.c:1320 [inline]
- get_tree_nodev+0x28/0x190 fs/super.c:1344
- vfs_get_tree+0x8e/0x340 fs/super.c:1815
- do_new_mount fs/namespace.c:3808 [inline]
- path_mount+0x1513/0x2000 fs/namespace.c:4123
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount fs/namespace.c:4324 [inline]
- __x64_sys_mount+0x28d/0x310 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-page last free pid 6026 tgid 6026 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1395 [inline]
- __free_frozen_pages+0x7d5/0x10f0 mm/page_alloc.c:2895
- discard_slab mm/slub.c:2758 [inline]
- __put_partials+0x165/0x1c0 mm/slub.c:3223
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4d/0x120 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x195/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_noprof+0x1cb/0x3b0 mm/slub.c:4247
- vm_area_dup+0x27/0x8d0 mm/vma_init.c:122
- __split_vma+0x18e/0x1070 mm/vma.c:515
- vms_gather_munmap_vmas+0x1d2/0x1340 mm/vma.c:1359
- __mmap_prepare mm/vma.c:2359 [inline]
- __mmap_region+0x436/0x27b0 mm/vma.c:2651
- mmap_region+0x1ab/0x3f0 mm/vma.c:2739
- do_mmap+0xa3e/0x1210 mm/mmap.c:558
- vm_mmap_pgoff+0x29e/0x470 mm/util.c:580
- ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:604
- __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
- __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
- __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4e0 arch/x86/entry/syscall_64.c:94
-
-Memory state around the buggy address:
- ffff88807d7e6d00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88807d7e6d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88807d7e6e00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff88807d7e6e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88807d7e6f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+> 
+> -- Steve
+> 
+> 
+> 
+> > +		goto out;
+> > +
+> >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> >  	trace.retval = ftrace_regs_get_return_value(fregs);
+> >  #endif
+> > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  		}
+> >  	}
+> >  
+> > +	ftrace_test_recursion_unlock(bit);
+> > +out:
+> >  	/*
+> >  	 * The ftrace_graph_return() may still access the current
+> >  	 * ret_stack structure, we need to make sure the update of
+> 
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
