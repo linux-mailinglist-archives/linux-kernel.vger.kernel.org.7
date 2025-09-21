@@ -1,136 +1,86 @@
-Return-Path: <linux-kernel+bounces-826144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB91B8DA39
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:29:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BDCB8DA48
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA96317D690
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149A742013F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E2E26C393;
-	Sun, 21 Sep 2025 11:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E87B2C026F;
+	Sun, 21 Sep 2025 11:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPTb3Y61"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCvMJsBj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C20260592;
-	Sun, 21 Sep 2025 11:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D3B2AEE4;
+	Sun, 21 Sep 2025 11:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758454152; cv=none; b=mOFgybrNu2ZrpSLAF9sl/sFWkYl1Rad0nNs64jVjbbN9XSxRiYEaN9XsAZhClUE3Vo0Th2G7bTd0csll+7eMxobAFpXcpbC4kh7kpXBabdx2pzgqi8aN7fZpy9PqWbImK7S3wyRfWoxjNiXko+uLWLOn4ynn4liUMOzrBVwqFnc=
+	t=1758454332; cv=none; b=ad6gyNrspqRX/ydtBkPZzTlnTqa+dkF3YDZYwXs0zbafgsL4rKDcb5SipyuZuMQhC7qxTS3H3o9SuLCVB74OGGEZ5x1RFt4O8vcAFlpvKB6lMj8SU0TLawOov/G7/vSfqgDNWvc2FbEHFkgWUvyvfbayyjF0v3kfXw0oPDxh1oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758454152; c=relaxed/simple;
-	bh=TnhBtV7gajUKTHQkLmlYsPEe/PTbeqlRt1FGOsovCI8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W/JXYMnulu/hQDxcEf4wwB9Sw7Yz8caZc7cjkrDXgpqGpeKo5GxBwLRkhRK52KigNSXtZYNxumyKDFjBPF5uWRN7gMADE1/9k47NfQJwfq4FMmbJVh6TSm9s/62OX+qb/LidEC/PKTCbgv0zf0UcB+3WUfBMdGcAerUWAE3qKqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kPTb3Y61; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE4CC4CEE7;
-	Sun, 21 Sep 2025 11:29:11 +0000 (UTC)
+	s=arc-20240116; t=1758454332; c=relaxed/simple;
+	bh=AZwAKUxBvjWQ51sPafyEZYJPTdR2KWBN8qIUpAog/zY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jzzr9vvkcLx4KhsJQQpN8HLgZfEpg9KkqcpI0YAdhcky1Teoq4PONgZcraplVvieRt+PZHB37XEJxLx46pn6WdDiZpisaMf3SDipA2O3MFbLTJmwBLKU74p6dsLSavyaMW1YojjxGORv2cUK7b4GnJM6Rm51MjotFDjIJ6SU41U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCvMJsBj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEAE9C4CEE7;
+	Sun, 21 Sep 2025 11:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758454151;
-	bh=TnhBtV7gajUKTHQkLmlYsPEe/PTbeqlRt1FGOsovCI8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kPTb3Y619WykYKRmzfWQRATmeoIv20M6LRcwelGoNTBmnovLE3Gy3rjIO3Lk0XJtq
-	 lPkBppKxAEW5YR2p2/3uKK72t7hEGwXBjq8GuYh/tlU82z0a6BJVXgB1xJwVQpDopX
-	 HGPS2c4dquESbmF5NDz7AbCzHpT2wzFBoVenS32+B9+wF6dpxoYOSNsOOocCFdQqGP
-	 kjSpL5u8x+d1YYv0ANs0h1oV7KW2CFdYkj6vAVY9StDKfVaOHUSZR7bXkFabzMwqFg
-	 hwjMIoSO0xtwFyw5WZbxWY4po1fElGvzhhz1zc6V4lxOBNecGIoRov+tr21LUp81eh
-	 RfQssSV08yHJQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v0IFh-00000008A8W-0wm3;
-	Sun, 21 Sep 2025 11:29:09 +0000
-Date: Sun, 21 Sep 2025 12:29:08 +0100
-Message-ID: <87plbkxcvv.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: oliver.upton@linux.dev,
-	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	qperret@google.com,
-	sebastianene@google.com,
-	keirf@google.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
-In-Reply-To: <20250919155056.2648137-1-vdonnefort@google.com>
-References: <20250919155056.2648137-1-vdonnefort@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1758454332;
+	bh=AZwAKUxBvjWQ51sPafyEZYJPTdR2KWBN8qIUpAog/zY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HCvMJsBjxLG45ff9+yDlMvexSFNyll8QdmvAm256Jfq6/bNsXgzjjbTwBp656ZdC9
+	 A0jFVMTQQ/VDmJs8RBHExINZ3nM7dleFOnWGkKWYV+uPyUg/BdWsa/V5dbKRCvolQh
+	 0eK9LGuE26OoLcm9FcK9CwyiDg9sfkhdUbxuRWNwAuh1cafCInBcAwmcHh5gafacex
+	 k9IUn4EJaU0gGw95U2VHNd0VL1OrSlinFIIZA2NXQrtUO7a28evVfZcIakWT6JG9Es
+	 w3HLBuxXVjk9gRrdxzA59Ai16BFJDiSGn8FfKfQ1PV2e1wUtBmZ8N6xr65052AvLI4
+	 hzyIy/lPq5/hg==
+From: Leon Romanovsky <leon@kernel.org>
+To: jgg@ziepe.ca, Abhijit Gangurde <abhijit.gangurde@amd.com>
+Cc: allen.hubbe@amd.com, linux-rdma@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250919121301.1113759-1-abhijit.gangurde@amd.com>
+References: <20250919121301.1113759-1-abhijit.gangurde@amd.com>
+Subject: Re: [PATCH rdma-next 1/2] RDMA/ionic: Fix build failure on SPARC
+ due to xchg() operand size
+Message-Id: <175845432914.2104414.9474042461731111363.b4-ty@kernel.org>
+Date: Sun, 21 Sep 2025 07:32:09 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, sebastianene@google.com, keirf@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Fri, 19 Sep 2025 16:50:56 +0100,
-Vincent Donnefort <vdonnefort@google.com> wrote:
-> 
-> There's currently no verification for host issued ranges in most of the
-> pKVM memory transitions. The subsequent end boundary might therefore be
-> subject to overflow and could evade the later checks.
-> 
-> Close this loophole with an additional check_range_args() check on a per
-> public function basis.
-> 
-> host_unshare_guest transition is already protected via
-> __check_host_shared_guest(), while assert_host_shared_guest() callers
-> are already ignoring host checks.
-> 
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> 
-> ---
-> 
->  v1 -> v2:
->    - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
->    - Rename to check_range_args().
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> index 8957734d6183..65fcd2148f59 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> @@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
->  	return check_page_state_range(&vm->pgt, addr, size, &d);
->  }
->  
-> +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
-> +{
-> +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
-> +		return false;
-> +
-> +	return start < (start + *size);
 
-I will echo Oliver's concern on v1: you probably want to convert the
-boundary check to be inclusive of the end of the range. Otherwise, a
-range that ends at the top of the 64bit range will be represented as
-0, and fail the  check despite being perfectly valid.
+On Fri, 19 Sep 2025 17:43:00 +0530, Abhijit Gangurde wrote:
+> xchg() is used to safely handle the event queue arming.
+> However SPARC xchg operates only 4B of variable.
+> Change variable type from bool to int.
+> 
+> Unverified Error/Warning (likely false positive, kindly check if interested):
+> 
+>     ERROR: modpost: "__xchg_called_with_bad_pointer" [drivers/infiniband/hw/ionic/ionic_rdma.ko] undefined!
+> 
+> [...]
 
-That's not a problem for PAs, as we will be stuck with at most 56bit
-PAs for quite a while, but VAs are a different story, and this sort of
-range check should be valid for VAs as well.
+Applied, thanks!
 
-Thanks,
+[1/2] RDMA/ionic: Fix build failure on SPARC due to xchg() operand size
+      https://git.kernel.org/rdma/rdma/c/ed9836c040bac2
+[2/2] RDMA/ionic: Use ether_addr_copy instead of memcpy
+      https://git.kernel.org/rdma/rdma/c/260cce64aaa282
 
-	M.
-
+Best regards,
 -- 
-Jazz isn't dead. It just smells funny.
+Leon Romanovsky <leon@kernel.org>
+
 
