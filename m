@@ -1,144 +1,84 @@
-Return-Path: <linux-kernel+bounces-826159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A871B8DB5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:54:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FC2B8DB6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1AA117DA1F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E31F3B61FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C272F2D1301;
-	Sun, 21 Sep 2025 12:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249AC2D130A;
+	Sun, 21 Sep 2025 12:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCbQCv/I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvRe7MT/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199391E51D;
-	Sun, 21 Sep 2025 12:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC601E5219;
+	Sun, 21 Sep 2025 12:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758459277; cv=none; b=PVFTZjKcl9HJ25JvUtgaKlBY1FyZ0TQ9Z8wU4vLOYPf3JXHbAjIfWUDS+rfApfO2XyMUEd6SDbrrc63mb7unQZt5w2um1q3DTLohlaRhrh4C5/Lqor3EIqG9aa67q+3Kx50Bx5o7SCoHdeOPSTVvkdRz4uVBQsRyRtzBqaSt6VI=
+	t=1758459464; cv=none; b=tYwFvDUfjR7Q5eRlCfcnJ6V6lW7iutlNRHnXWTaTAar+7Uc5D5PenVJq2owvTBjZsfziHBPChURpYvppfi14W5P6iXQvSPvqKU5jd8leSe2akhnUJwdOgnktaLWWrs3PiYDGurNGllo3Int9NFMSV9FGbCPZ+CWqTVfPJjUgSwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758459277; c=relaxed/simple;
-	bh=jsUcLF3gj9QD/DeMLPoCgYNjJkokHF1gACOem3+AcJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdNYojBwPYA7FVQtC1jMSP5rJw5rmR/yFIVlz8Tc9lwEDlsijbQlaGVTfVN7e9/8rtnAlSTHClVqKIN/SAPd3PbL3cZEZNhO9Pn2h6NZZ3TZ5/fEtYBKaHZgUsbS9Q8zHo3RbNLDCVDGJ0vK87a9mA/hL3f8e0YWWpwbKPuyPEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCbQCv/I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC6AC4CEE7;
-	Sun, 21 Sep 2025 12:54:36 +0000 (UTC)
+	s=arc-20240116; t=1758459464; c=relaxed/simple;
+	bh=ss7BvAc2+W5+Xt0aCLOzSxmlCvkmo4zsiArA0aE+mWE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c1HKNObxRKOckBzL8hinjDuxXsG+nk1XxsFBNXEjtLl1krNe9OYJVBnVNVNEZQcN2wb5j8m9s6hHJQI8UVFcnrMpT9wn0BIFaxw2wdiF2tiyK0sz3Qp47T76wBEyFwRAC4BDVywOazrVl9+A3vtoYS5W0CKVDkCpKUO7CjE07wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvRe7MT/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E160C4CEE7;
+	Sun, 21 Sep 2025 12:57:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758459276;
-	bh=jsUcLF3gj9QD/DeMLPoCgYNjJkokHF1gACOem3+AcJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VCbQCv/IMTgEdAWfY2wBRtEqDBImw+HPC14iJ56JMHDX0vT66wZ8zk0jh/desx2YU
-	 Wx5ehRf3r8EdlPLq458A0x8FL0bqquQCZhUJiWV19/ru9dBBkYTDU5osQMubWRfT6B
-	 9l2Cgy+JfAu638gSzsqcuSiF00itOu1ZDCD6sutcp2LErgUJXIsFYcRlFlL1jpuJLK
-	 bePnI9DpZVitgRbPm2C2/92Of2a3XZ6hG0nC1mRCPv7AJI9onEtVa5QwFXPRsZFAlK
-	 s2Sot1vwrEkHVR3pxAQEqnolk4PKJfELOkYtYnVPCRV+sqVHFWTcRfTa54w7mmc5iU
-	 QyDSk/I+meGvQ==
-Date: Sun, 21 Sep 2025 15:54:32 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, ross.philipson@oracle.com
-Subject: Re: [PATCH v10 0/4] tpm: robust stack allocations
-Message-ID: <aM_1iLAsl1wpkl6n@kernel.org>
-References: <20250921020804.1088824-1-jarkko@kernel.org>
+	s=k20201202; t=1758459464;
+	bh=ss7BvAc2+W5+Xt0aCLOzSxmlCvkmo4zsiArA0aE+mWE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=KvRe7MT/+wbLsla3y08DFcgCZOmcnQ835+UfG4alPjMnuit2PdltZowKwqsJy7dLJ
+	 d0HG8adubv3S69BizUklB4oqOQt1d2j+/Pj/7kMU6by7qmfsh5yeAdkiF7ueGxhwfG
+	 /fWVuokkk7grgOiELRF0MW0+ZYfQjkKsEZPaqTwOjc9HJIjKHPxCFhpzypLXAMxT2/
+	 G6Q/Dtj94oR3jnG0z+IkijyyY4NEOs1P/Aet+SZuRTt9jty2V8og+e0+WaJrL4kPIW
+	 mU5Z4HHqKSWQ4OlJ6XIXyYYwj83kS6+ZJxW4UHyvhY7c6y20iWJcIewIIFAbQ7JswZ
+	 E2+ETntdTCneQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: selvin.xavier@broadcom.com, kalesh-anakkur.purayil@broadcom.com, 
+ jgg@ziepe.ca, linux-rdma@vger.kernel.org, 
+ Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: linux-kernel@vger.kernel.org
+In-Reply-To: <20250921081854.1059094-1-alok.a.tiwari@oracle.com>
+References: <20250921081854.1059094-1-alok.a.tiwari@oracle.com>
+Subject: Re: [PATCH net-next] RDMA/bnxt_re: Fix incorrect errno used in
+ function comments
+Message-Id: <175845946086.2105473.2551807344596160025.b4-ty@kernel.org>
+Date: Sun, 21 Sep 2025 08:57:40 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921020804.1088824-1-jarkko@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-On Sun, Sep 21, 2025 at 05:08:00AM +0300, Jarkko Sakkinen wrote:
-> 1. These are previous changes to tpm_buf, which make stack allocations
->    much more feasible than previously.
-> 2. Migrate low-hanging fruit to use stack allocations.
 
-I highly unlikely would put this to 6.18 PR. The first patch huge but at
-the same time it is still a "logical change". Splitting it would make it
-less understandable. It's also quite stable and the despite many
-changes, most of them are mechanical changes (some of them I've even
-done originally with an LLM called 'sed').
-
-IMHO reason to split should not be based no size but exactly on logical
-steps.
-
-After these few quick rounds I take some time and work on tpm1/tpm2-cmd
-to make them follow a builder pattern. This helps e.g., TrenchBoot to
-accomplish their goals more easily as builders translate easily to
-early boot situations. In addition, making memory management more
-stack oriented usually tends to help with such situations.
-
-So the next thing for this patch set is to make things work with parse,
-build and transmission decoupled from each other, and it will be as
-substantial change as the first patch but can be split into smaller
-patches as it does not change the global economy.
-
-An example with tpm2_pcr_read:
-
-1. tpm2_build_pcr_read(), which takes pre-initialized
-   tpm_buf() and same parameter as today.
-2. tpm_transmit()
-3. tpm2_parse_pcr_read(), which takes resulting tpm_buf
-   and parses it to a struct, let's say tpm2_pcr_read_result.
-
-And similar decoupling is done for TPM 1 commands as they also need
-to translate between environments.
-
-Obviously outer facing tpm-interface.c API can still respond to old
-API calls for the time being.
-
-Other stuff:
-
-1. tpm_buf_* from include/linux/tpm.j migrate to include/linux/tpm_buf.h
-2. builders: tpm1_build.c, tpm2_build.c
-3. parsers: tpm1_parse.c, tpm2_parse.c
-
-Most likely at least at first landing some redundancy is required for
-Trenchboto and physical transmission path. By doing what I have
-described we can set a limit to the amount redunancy :-)
-
+On Sun, 21 Sep 2025 01:18:48 -0700, Alok Tiwari wrote:
+> The function comments in qplib_rcfw.c mention -ETIMEOUT as a
+> possible return value. However, the correct errno is -ETIMEDOUT.
 > 
-> Jarkko Sakkinen (4):
->   tpm: Make TPM buffer allocations more robust
->   tpm, tpm1-cmd: Use stack for trivial cases
->   tpm, tpm2-cmd: Use stack for trivial cases
->   tpm_vpm_proxy: Use stack for TPM_CC_SET_LOCALITY
+> Update the comments to reflect the proper return value to avoid
+> confusion for developers and users referring to the code.
 > 
->  drivers/char/tpm/tpm-buf.c                | 137 ++++++----
->  drivers/char/tpm/tpm-dev-common.c         |   4 +-
->  drivers/char/tpm/tpm-dev.h                |   2 +-
->  drivers/char/tpm/tpm-interface.c          |   4 +-
->  drivers/char/tpm/tpm-sysfs.c              |  20 +-
->  drivers/char/tpm/tpm.h                    |   3 +-
->  drivers/char/tpm/tpm1-cmd.c               | 151 +++++------
->  drivers/char/tpm/tpm2-cmd.c               | 297 ++++++++++------------
->  drivers/char/tpm/tpm2-sessions.c          | 121 +++++----
->  drivers/char/tpm/tpm2-space.c             |  44 ++--
->  drivers/char/tpm/tpm_tis_i2c.c            |   4 +-
->  drivers/char/tpm/tpm_vtpm_proxy.c         |  34 +--
->  include/linux/tpm.h                       |  28 +-
->  security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
->  security/keys/trusted-keys/trusted_tpm2.c | 156 ++++++------
->  15 files changed, 493 insertions(+), 546 deletions(-)
 > 
-> -- 
-> 2.39.5
-> 
+> [...]
 
-BR, Jarkko
+Applied, thanks!
+
+[1/1] RDMA/bnxt_re: Fix incorrect errno used in function comments
+      https://git.kernel.org/rdma/rdma/c/9b9e32f75aa3d2
+
+Best regards,
+-- 
+Leon Romanovsky <leon@kernel.org>
+
 
