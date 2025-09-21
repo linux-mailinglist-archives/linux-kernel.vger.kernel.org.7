@@ -1,148 +1,75 @@
-Return-Path: <linux-kernel+bounces-826229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25C3B8DEA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF02B8DEE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D3303BCC25
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF50189D474
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5924E25A2A7;
-	Sun, 21 Sep 2025 16:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650712737F4;
+	Sun, 21 Sep 2025 16:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="guX3vtQ1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZO+l66m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89936254AF5;
-	Sun, 21 Sep 2025 16:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7883E211A09;
+	Sun, 21 Sep 2025 16:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758470866; cv=none; b=t3oOxysxIcit3Sixed4eNag6ZYoMEwPPHjEgTze4jNQ8a1C0x0yPH0jvrEWucLD3BANjr2iOfsSXQXiC5mcaxJfwLfWGMwGJKNA7PYwdIVqxEZImZz4t31ckC1jhrknXqeYcNYAZCLdPLi1OyQDKNKf0AkE8Ex+Ayau6zRMUyGE=
+	t=1758470915; cv=none; b=TUR4mQ25/crnJCRFRxYThsb+kw+DRuOscwQm6m34iaGdWZP05Ta/k0RpAfLrzw91Moe3PuEexV6GKJFB2FcmbRqpEkMgNqGCnq7kMcsdjLqYGDOqyKgCqWfe5Fg9X9ktsDQKGxzlxlC1IPNUQCOVaAbPSmGW+VtBPFyojqpftok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758470866; c=relaxed/simple;
-	bh=SOxfcuAg/wHY4zUhpi4EhLnADzgpkX8Jpg/fLpNoMp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDkl18GisnUZDoZbJJICAES8hqg7vHVWmgFhG5ve9Sn5tFBbeuQK2XaYkibORH2QqgIgvzTn+q9N0HidPeub9g029DpvgaFwdAyX+YDYwe6HyI54hM3B+SzLTyDBP3qyeGOELvY5KIRHUzrdhlC2NNxgtTY7Rh8NCeHuKUT5xUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=guX3vtQ1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 0D213169;
-	Sun, 21 Sep 2025 18:06:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758470773;
-	bh=SOxfcuAg/wHY4zUhpi4EhLnADzgpkX8Jpg/fLpNoMp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=guX3vtQ1J6g5ihr5dodogs1eocaF6XVcFMrHKbETIm77ZVJ4vxZmz0NpdkPI5dPm0
-	 cUxdWnS6ZUV3qibeB2k+tpUYHZeUi5ofnrlM/fyCEwrkR0POjH2DiqY2RGv9ifDbbr
-	 +u0TxG79fuLkHvu2k3X3vcw0vCj8/3tackr5WAmg=
-Date: Sun, 21 Sep 2025 19:07:04 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: "G.N. Zhou" <guoniu.zhou@nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Alice Yuan <alice.yuan@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 0/5] media: imx91: Add ISI support
-Message-ID: <20250921160704.GA29453@pendragon.ideasonboard.com>
-References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
- <AS8PR04MB90801C7CE8D06EDC8CAA6750FA11A@AS8PR04MB9080.eurprd04.prod.outlook.com>
- <aM2AurOTxTB4raSg@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1758470915; c=relaxed/simple;
+	bh=bjgVhndVUFUWDh9Kli3/1k8OQLzpscDz8f8evH9FF0I=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=SUBbS1jSwfyriM91Lz5Wzgg24GvQD0V5daITiu14nox10ibNV/2TRlr4ncBG/UEnAqH9XSEGMJR1AfNqV1+esyrqR7IIjAagFGmsC3EzYK5xmduuRQFU5kFePf/eNPl3MuW6jWDadsDAI4tumV0hdZzW8I5ICvDf+XlH023yrZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZO+l66m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEED8C4CEE7;
+	Sun, 21 Sep 2025 16:08:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758470915;
+	bh=bjgVhndVUFUWDh9Kli3/1k8OQLzpscDz8f8evH9FF0I=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=TZO+l66md5y3YCmXc+ANR/7ZQQnj+9xH3xUYAKm16jr1VgmO7nbmA17BrgK/cp/1I
+	 ErAp9eU0l0ULWifGJSR8G6K31HdIhbPHRzPZCzoYVkURF0xm+t9Lp0IEZSKtUhv5To
+	 NZu/9IYg7jMI23EOHyqP+9Yf1aKiJVOzv4il1R+7W1e64H8azKP5cKmPz00VBgcjHS
+	 PM9ECn8MePHnkI7w4wRHfNxe5xMJ2h3rKfz6GeQ9giQ6ATo5gVf/vbqE+0BUftKaap
+	 6gENrL80OHsZU6jBLMOv2yTsyFq8PwSbbvOqjz6w5EsEXkHMQfXyVbT4c+pXfINbKa
+	 C6DAc9QudVGqg==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aM2AurOTxTB4raSg@lizhi-Precision-Tower-5810>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250828-dt-apple-t6020-v1-25-507ba4c4b98e@jannau.net>
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-25-507ba4c4b98e@jannau.net>
+Subject: Re: [PATCH 25/37] clk: clk-apple-nco: Add "apple,t8103-nco" compatible
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org, Janne Grunau <j@jannau.net>
+To: Alyssa Rosenzweig <alyssa@rosenzweig.io>, Andi Shyti <andi.shyti@kernel.org>, Christoph Hellwig <hch@lst.de>, Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Jaroslav Kysela <perex@perex.cz>, Jassi Brar <jassisinghbrar@gmail.com>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, Johannes Berg <johannes@sipsolutions.net>, Keith Busch <kbusch@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Marc Zyngier <maz@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Mark Brown <broonie@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@cutebit.org>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <
+ mturquette@baylibre.com>, Neal Gompa <neal@gompa.dev>, Rafael J. Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Sagi Grimberg <sagi@grimberg.me>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sven Peter <sven@kernel.org>, Takashi Iwai <tiwai@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Thomas Zimmermann <tzimmermann@suse.de>, Ulf Hansson <ulf.hansson@linaro.org>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Vinod Koul <vkoul@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Will Deacon <will@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, van Spriel <arend@broadcom.com>
+Date: Sun, 21 Sep 2025 09:08:33 -0700
+Message-ID: <175847091343.4354.2623772725149192827@lazor>
+User-Agent: alot/0.11
 
-Hi Frank,
+Quoting Janne Grunau (2025-08-28 07:01:44)
+> After discussion with the devicetree maintainers we agreed to not extend
+> lists with the generic compatible "apple,nco" anymore [1]. Use
+> "apple,t8103-nco" as base compatible as it is the SoC the driver and
+> bindings were written for.
+>=20
+> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@k=
+ernel.org/
+>=20
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> ---
 
-On Fri, Sep 19, 2025 at 12:11:38PM -0400, Frank Li wrote:
-> On Fri, Sep 19, 2025 at 02:40:01AM +0000, G.N. Zhou wrote:
-> > Hi,
-> >
-> > Could you help to please review the patches which I have submitted
-> > some time back to linux media community and move forward driver part
-> > if possible.
-> > 
-> > Your feedback will be very appreciated. Thanks.
-> >
-> > Best Regards
-> > G.N Zhou
-> >
-> 
-> Laurent Pinchart:
-> 
-> 	Could you please consider pickup these patches? Consider these
-> related simple changes, is my Reviewed-by enough?
-
-I've completed a set of other reviews and will get to this patch series
-in the upcoming week.
-
-> > >
-> > > Add ISI support for i.MX91 chip.
-> > >
-> > > The bellow patch refine code, no functions changed.
-> > >    media: nxp: imx8-isi: Simplify code by using helper macro
-> > >    media: nxp: imx8-isi: Reorder the platform data
-> > >
-> > > The bindings and driver patch for i.MX91 ISI.
-> > >    media: dt-bindings: nxp,imx8-isi: Add i.MX91 ISI compatible string
-> > >    media: nxp: imx8-isi: Add ISI support for i.MX91
-> > >
-> > > Add parallel camera input for i.MX93 ISI.
-> > >    media: nxp: imx8-isi: Add parallel camera input support
-> > >
-> > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > ---
-> > > Changes in v2:
-> > > - Update commit log in patch 5 to better describe why introduce it.
-> > > - Include two header files in patch 2 since kernel test robot report build
-> > >   issue when arch is riscv and compiler is clang-22.
-> > >   #include <linux/bitfield.h>
-> > >   #include <linux/bits.h>
-> > > - Link to v1: https://lore.kernel.org/all/20250827-isi_imx93-v1-0-
-> > > 83e6b4b50c4d@nxp.com
-> > >
-> > > ---
-> > > Alice Yuan (2):
-> > >       media: dt-bindings: nxp,imx8-isi: Add i.MX91 ISI compatible string
-> > >       media: nxp: imx8-isi: Add parallel camera input support
-> > >
-> > > Guoniu Zhou (3):
-> > >       media: nxp: imx8-isi: Simplify code by using helper macro
-> > >       media: nxp: imx8-isi: Reorder the platform data
-> > >       media: nxp: imx8-isi: Add ISI support for i.MX91
-> > >
-> > >  .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 13 +++++-
-> > >  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 50 ++++++++++++++--------
-> > >  .../media/platform/nxp/imx8-isi/imx8-isi-core.h    |  1 +
-> > >  .../media/platform/nxp/imx8-isi/imx8-isi-gasket.c  | 18 ++++++--
-> > >  4 files changed, 59 insertions(+), 23 deletions(-)
-> > > ---
-> > > base-commit: 603957ae903e81fb80d3788297c0f58a68802dfc
-> > > change-id: 20250826-isi_imx93-4a59288b33e4
-
--- 
-Regards,
-
-Laurent Pinchart
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
