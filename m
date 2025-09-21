@@ -1,88 +1,120 @@
-Return-Path: <linux-kernel+bounces-826189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9460B8DCAE
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D21FB8DCB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FAD717BBFE
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:49:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1071717D457
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC8F2D1F4E;
-	Sun, 21 Sep 2025 13:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019592D7DCA;
+	Sun, 21 Sep 2025 13:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nE34BSOp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nl+8CUK1"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442191624E9;
-	Sun, 21 Sep 2025 13:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185AF2D1F4E
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758462574; cv=none; b=r/qIPtyq5klLQ+R/nbSP0TTygdNJxBoRNNVSx+qby/3A/s3lNwk+TI7oZIetOnVQjIByQBRtNLYl+/mVBoZD2jq6ZKeyUuDWa7UpsFvlZKdTj26YRAjgi0cNX0tn0/vbVZPu8KJgtVAPnwuBeESoYTXrr7JIcKa/OzWFxoh174o=
+	t=1758463041; cv=none; b=TGqFcYyaQ70/tXL5TUWiXqqlk4O2VRrZGJPnWWKyhe5gXwIhub5PnIi7mah2lQGfd7T4/zw0O91/Cof3FqpmT/5MplRzQQbLZ4RekXIokw5kwgfjT1pzVXqtPVLfyGfTHC/CwtaLr0RaBIAMJoTLIviKo3pggnXkkleAEkbZe4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758462574; c=relaxed/simple;
-	bh=e5+K3Urlg6adLZ4Pwf4KqE2HE0p++T1FsRQvdME9z/o=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=W0n7qMr7esUfBrVo5XLoTRXWAso99cD/c8wPSdObzwcgipb8857qGdIMj7sxfJOHVUCeeIZn/C1FyxUSFzZEq6py5mtYwgGf+ZwYdJVt+Xw64Qo4x0dAkxgOewx+IVElznHQ58hgBaSOTwvrHmX/3hlCwsEKIOWp9XPTeRpRCq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nE34BSOp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C34BC4CEE7;
-	Sun, 21 Sep 2025 13:49:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758462573;
-	bh=e5+K3Urlg6adLZ4Pwf4KqE2HE0p++T1FsRQvdME9z/o=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=nE34BSOpdK7Rh5C6ebcUs3ASozou0kkmg0iq59RQAyOX81p26aH7O/NUXtBWnkA8W
-	 Q5vCI67SX+EhmhruBDt3SeWUmEHeEFuBXPsW4iFwJHyA6Q91S1+sXzOva5+WNVg846
-	 mdYWYt8x0d13nr8M9t2QdntZjz9dRgYY6pM7kA053izi62U6pIFKrO2bPhuztYOKeK
-	 hRzBMdYgUk4yH1eFuIvpzW0SqMxYAisxie7B5h+ISbs9Tx0Mn5QtTJ1v3X+E1vaOgH
-	 NxluBCSb8pWvU/oiVLS0tj7TcsWayKkhRotz8v3wzqtDLYmUNx7NDBE3FnWThrs0bI
-	 4CdYwy5s5vc2A==
+	s=arc-20240116; t=1758463041; c=relaxed/simple;
+	bh=fHlIY9+uhSJm0tDafJHi34eihV/XQEMibtOTvhxc7No=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DnZKbts0VSKJI+GjCxSwzDC2r8i0hP6s9b1yGlmWTPjL4d/wOaklYso+Juv6BIXGwDsalxKz34tr/KqVHEpgIUq+WdiTowNBxvdCQnoFATc0pQVM6EMXWM7XRNAlfGlu/Z8b6nfL9aSjbI+lCOmxTNml2AGtTinNo0F4VYq4dng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nl+8CUK1; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5524c0ed94so1343610a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758463039; x=1759067839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JwKtMMVVH553vWqd1jOUT4NC0ABE2UrFAfCYIBs6Ut0=;
+        b=nl+8CUK1Q/W8QCa9kKIneYcG7oMgpKPCZUAg2/zEbrIhBE3WTB7O0UkYaw7GIlZLlu
+         LrMvIadvWfGQZ2aGQkAVNW7GpTSzHJZfkUXHfbhvDGW81ixdX8N0W6453Bra5tfAlcAb
+         yJKtmQ8StMtFwHaPKHp425x0IFFeljHtFq3hM/5siu2ZxTs3riDaOdw+UfIpGUfk1bIs
+         ffyet5vEY8TqEGywUNPwzRMDinFu/wSkSkw4XFyWbgNT2m2aU6nenmS9pJ9aMCcU5X7L
+         x4cnXNp/H3HKDGX7Cu+edqoYM9HTyeUQtf+yy3cDfBiTzphsuqhKvsHErbf3ZbepXTyf
+         OlMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758463039; x=1759067839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JwKtMMVVH553vWqd1jOUT4NC0ABE2UrFAfCYIBs6Ut0=;
+        b=ZdPbB1Cm7/AotpWPq8/b7nGhWd/riCHJfIzZw6quVG2EhdJJ5X1p4Dr06bnamG5LYH
+         Ka87FhQJtqUNLGjdKZA7MFC7HOswSPls2ZzDNdIp1krqXa/KMMRvd6pSiqK+SGAghrho
+         a24nuPnMy+QXdqBkK4siJ92pchDEqZqCWgybmkx1pjuKUyCE0NpOZQHe+78V3qKqyspC
+         jGk1UWOKl5U96tebtzA4cwVmDk3dqQ04KGkHKbLQy6WT6fcZHPwTtSRWKHTsspn57ZUV
+         eCf4BfObk+xDBkLNUdKJlPFIh63CEb+NjJmBvuHKXlckiLX8d7yVIp37BfQaZoYyuuR0
+         1tZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtm17Ez++BS1k+AwXgpm1P5frHCmNHXA9m5RiwxrpRXMJMNu4rVOD7L4zkZ6VaSH1PE1ps+0G35dggpk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBIn6h+QU3BYCFK0hF7B/HBZ5tPkwCvV5CAtlqrF8QDfX7R53e
+	rA2jV6vVBjhCSvGe0GWI97VM6sN4u/PwQwZLR6DZVrVmOc1O/QuRjSyB
+X-Gm-Gg: ASbGncsWyrm+dEcXIxz76+ZHgXG2Uy2a4sw7aK201FeNu7dia9j/iEJY/rCysMcMYXh
+	mAD0CwsF67VCiIQGu8X1neC7KoGMAsl+dI/vB7lHOOQY8QQd+M0EoS+k56W9bf4ZD078CdbRcGX
+	XvK5uWYV0A8uI3MFnu6rQmT5dD3781YExKNTJqx+cwgXh2DTBa8CiTU4qgKPM9PvQWB7E462x8z
+	VfqS6INJgFX5mVYTJhxNbIe9lQXsCO3+w96iq5Fi60E7ghkutw94T0ioPM7KDr+FbEc9YkXSDYW
+	gf7y3MwFtv/iGzLemj8ta+N0bAANzl23K9o7Hut610N7K6pJV9i0ovY+ug653y3csubbpwoklfI
+	QwefbeFw+BWnMjLnczawH
+X-Google-Smtp-Source: AGHT+IGDsKBY3ozuTuBIgDdeQzOEwOHka23t+GrkUMG+515i/Pq9duddouEA6yTXxYZi6jjJjuHSBw==
+X-Received: by 2002:a17:903:4b04:b0:235:ed02:288b with SMTP id d9443c01a7336-269ba5167bemr111498925ad.30.1758463039263;
+        Sun, 21 Sep 2025 06:57:19 -0700 (PDT)
+Received: from archlinux ([191.193.70.152])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802df74asm106105725ad.94.2025.09.21.06.57.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 06:57:18 -0700 (PDT)
+From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sm8250-samsung-common: correct reserved pins
+Date: Sun, 21 Sep 2025 13:56:23 +0000
+Message-ID: <20250921135623.273662-1-ghatto404@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 21 Sep 2025 15:49:26 +0200
-Message-Id: <DCYIYF3C745Z.2WYSNYOTK041R@kernel.org>
-Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <acourbot@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
- Norov" <yury.norov@gmail.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
-To: "Greg KH" <gregkh@linuxfoundation.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-2-joelagnelf@nvidia.com>
- <2025092157-pauper-snap-aad1@gregkh>
-In-Reply-To: <2025092157-pauper-snap-aad1@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Sun Sep 21, 2025 at 11:36 AM CEST, Greg KH wrote:
-> Your example code using this is nice, and it shows how to set up, and
-> query these bits, but that's not anything anyone actually does in the
-> kernel, what they want to do is read/write from hardware with this.
->
-> So, how does that work?  Where does this "drop down" to the native
-> bus/memory transactions and swizzle the bits properly to work correctly?
+The S20 series has additional reserved pins for the fingerprint sensor,
+GPIO 20-23. Correct it by adding them into gpio-reserved-ranges.
 
-Please see reply in [1], let's continue discussing it there. :)
+Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[1] https://lore.kernel.org/lkml/DCYIX8URVIWM.2ZK3GHH3J82XQ@kernel.org/
+diff --git a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
+index 96662bf9e527..1680be67e733 100644
+--- a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
+@@ -159,7 +159,8 @@ &pon_resin {
+ };
+ 
+ &tlmm {
+-	gpio-reserved-ranges = <40 4>; /* I2C (Unused) */
++	gpio-reserved-ranges = <20 4>, /* SPI (Fingerprint scanner) */
++						   <40 4>; /* I2C (Unused) */
+ };
+ 
+ &usb_1 {
+-- 
+2.51.0
+
 
