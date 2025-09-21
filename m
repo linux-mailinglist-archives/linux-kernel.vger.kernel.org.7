@@ -1,215 +1,155 @@
-Return-Path: <linux-kernel+bounces-826006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CB2B8D522
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:01:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979C7B8D534
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B42C27AEEE7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:59:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB46044047A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 05:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0922429E0F8;
-	Sun, 21 Sep 2025 05:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380FF2BCF41;
+	Sun, 21 Sep 2025 05:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WROfXvwM"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="TfSXBXHn"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE044248898
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 05:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1927B3E1;
+	Sun, 21 Sep 2025 05:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758430873; cv=none; b=OjXdg834nS0ERP6vAwqnfCyKkHqFooUQaDgDtq0EWLwg60222AK+7rodNRKRMb2TSgR09vrB+389/qSJlgP3DpeAvynqrH7RzJS4TJNzy5zcs5FReWV3Q8d6orQDLdOVaSdWxtI5FlAoUAkH1bLPovPR98oY1vY3+ieBjl9vDHk=
+	t=1758431441; cv=none; b=riGjHKyJrzvmwe1Qm6b3xDUaAZDHQSGLMDFu8qdOFS1kt1SBXsSR0RpeO22uHXU40hUiS1Ty23YrphlTRv7hO/Yq9ryEW17ljeefe/sBOswrHRUDRIAQGH3EkcsWDSy0iadxLk9mP3/i4jRdvSeAoVlorGLcbzfySV5BuAdIdS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758430873; c=relaxed/simple;
-	bh=TFopHDySdmwff+2h+lbg0QewUPQXDyFQxFVBz2g2PD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWbsRXgg5sRuwcAghw4ti0kGJlaMvhGNodKAJno7kU6b2KvGaxd604AxC+TxTzw5NSSXLJIndhyCzf368A4jVD/qzXsmHe1AYqLRoPITJC2IcOFDwkF+5Hi0JjnI8c6wbz5E5KKpgsCfhKIv+gAYNRRoKmMGp2d00I/oNnzQYHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WROfXvwM; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3323a06b5daso1494882fac.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 22:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758430871; x=1759035671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IjfAWdx3qllN2H0M+sW0dm7oGyFJwrK43aFNVvYCDkE=;
-        b=WROfXvwM/Hc3IHkJACyQqmaUujIazDLvuv3RCYj2hW9FPYhKumADdws1gT15iolC/M
-         kKUJikst65yitt08vOqbsAm3FiNJCyn3L1u2pVp77jhW2OoGH1Fpt4bjRy4AI6upBYYB
-         iL3pAjGe1DuDdgSeBf7W/0kFvfaJnZjhfCaC/BUNY9CwSkhfrMcEtm0edd+Hrh3OZyjk
-         p4wkTap73LGzP3+8sUUHNYKl06Y6az3wNYSND58sZsj4fZTAGag6hLAEwVDoaZeOdoz9
-         IUy24sGVOcJPvZQfdPsceqMYTZpOHFUVQH2RWkRDGea18oo/Ya5x3DHQiM6pYF+mQibP
-         LmXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758430871; x=1759035671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IjfAWdx3qllN2H0M+sW0dm7oGyFJwrK43aFNVvYCDkE=;
-        b=KCnV91ZVftjDKk7toG0XbOzGZr6CR9yvYzxkneXl4tvIOYgyDMv8ZeTp79orkDaSDJ
-         0gxjyt5n+ssjX6R29gLW2nVcvQuWviDeIEkLRqyw//0LgyO5Rum0azdBrhbLt8TMSRKk
-         toVKQz2y2ITFtCuNigOt338XVX3tZKC7CEoZY/4Bbsn3ip/PzSQsIUnf2H2vvUkfMAC9
-         ioSUbxehR2lDLs2cSoMxXxFBuPq50XQaHAQdzNCq6GO7ZBTiorYAfxuCNHNpeenXhQGr
-         7uMlRpbqxlhXMKyPEUW3S6xRFXj12DOLXZarvZ9JVJp5ct/zkqXWU42pnW9vCdq6fr+0
-         9EKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoJT2tEP2s8QWvgTqRBtR90IDG8p1VykJ/v58MNMB8pkg7fOtuqXyRvjQ3GM7XwJMgVMxFWGN07d7lKxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiWoNQcAt7MTyCy322dH7lWgVV5yCKX6Pf0CzZSgvvaqMMhSl2
-	LsBJfW2esr1oCYQmpG64v3EdIV99HgOwJNrEnfo5W5Mbgm/9dpqeBRaDy0+dBaJT70mRPTHy/84
-	dZUj3G7h6WE+5nkXhSeIchhUmUd3zXI0=
-X-Gm-Gg: ASbGncu/dScgSTaUay676USB1bdhoMmpGppHgaUfIQGKN7fVus9CzEM0a1FkO1Pc+98
-	LjtATZEkNiU0nkO4WzOXRoHANFvi5XyO1B+F53tQiK3wfLANcCPCleIt63EEAMi2n+0SAy+TZSS
-	PiRToaPZzpf/ydF//Y4BTT35BuFfIX9KGMlYETCkCbQz8oeN2r91MfDPlQbLk8x7g6ErXBOsZTC
-	6fzfvx3
-X-Google-Smtp-Source: AGHT+IFKpKCb+G5+tP41Jly7b1/38Uvws70S97XKQpr/S5rzy7zAFBiiLMjEcsLoKodvfvth4fS5Yj3OP9ZLUPhO44s=
-X-Received: by 2002:a05:6870:6e83:b0:31d:718f:a09d with SMTP id
- 586e51a60fabf-33bb5c80cf2mr4292754fac.25.1758430870653; Sat, 20 Sep 2025
- 22:01:10 -0700 (PDT)
+	s=arc-20240116; t=1758431441; c=relaxed/simple;
+	bh=w9oZ1uNQV8PhWrk7R2+HhaHhimhUFnbPVXpj77GRNI8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mGwcxW+TdciW/U8kLvuG1c7HsAJVYFcniIUaVufUyoayCpWhN/gBDMmfxEvtJHxdsWm0pQ5eM+4Cbq82JJakp7pIWqLDuq/bcPvrFiF9M4JDrXFAuwjcL0AwYyVunwXGbNxmL3l7c9yvXgeH2a/OGIfSXojPOo+YMN9dDLG+9Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=TfSXBXHn; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=NvoDm3rY6iriVEHdymAWHHxK+7OKvhuVhhBYM9dD7Fk=; t=1758431439;
+	x=1759036239; b=TfSXBXHnlva/4cZood1ATYlgO/P9Xe/U8IcZnesM0Oa3xsyaeUFw3pHprF8ze
+	9SiLK8l2uMm7E2N/El1HrO65XGu7L+BlpJWXdA0nY5wmjH6r/rpFRCp6FGnH2LvokMF4VaBNupViy
+	hVXkNXD51/zzm2g+UlgVcbs6XQeWJlL3msaDOzy8p7h0RGARVq8aE80MABwibXT9pl98WBPeh4RzU
+	ShwfPmpxKqG17oyiM0BH7EyjSJX5pI4gYj25ROHlOoKKPVYywSH0ilY1qdchRki+yoH26lDYmaZMy
+	MbNfFC0qPTPOwwOo9KEYiJkLMR6PMXp4YphQQNja+xkTm5/k0g==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1v0CGh-00000000RZV-2NJn; Sun, 21 Sep 2025 07:05:47 +0200
+Received: from dynamic-002-245-016-030.2.245.pool.telefonica.de ([2.245.16.30] helo=[192.168.178.50])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1v0CGh-00000002SmM-0yJw; Sun, 21 Sep 2025 07:05:47 +0200
+Message-ID: <9198795c08a6c3d448bbcbdfe620ada792af8dd3.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3 00/36] sparc64: vdso: Switch to the generic vDSO
+ library
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+  Vincenzo Frascino <vincenzo.frascino@arm.com>, Arnd Bergmann
+ <arnd@arndb.de>, "David S. Miller" <davem@davemloft.net>,  Andreas Larsson
+ <andreas@gaisler.com>, Nick Alcock <nick.alcock@oracle.com>, John Stultz
+ <jstultz@google.com>,  Stephen Boyd <sboyd@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld"
+ <Jason@zx2c4.com>,  Russell King <linux@armlinux.org.uk>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Michael Ellerman	 <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy	
+ <christophe.leroy@csgroup.eu>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui	 <kernel@xen0n.name>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>, Vasily
+ Gorbik <gor@linux.ibm.com>, Alexander Gordeev	 <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,  Sven Schnelle
+ <svens@linux.ibm.com>, Nagarathnam Muthusamy
+ <nagarathnam.muthusamy@oracle.com>, Shannon Nelson	 <sln@onemain.com>,
+ linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev, 
+	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, Arnd Bergmann	
+ <arnd@kernel.org>
+Date: Sun, 21 Sep 2025 07:05:44 +0200
+In-Reply-To: <48fd164e-959b-4263-b3c7-cef5771aa40a@linutronix.de>
+References: 
+	<20250917-vdso-sparc64-generic-2-v3-0-3679b1bc8ee8@linutronix.de>
+	 <9a122c6cf3e2e0e61a62b0512eb97804acebeee9.camel@physik.fu-berlin.de>
+	 <48fd164e-959b-4263-b3c7-cef5771aa40a@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917-mt8196-gpufreq-v3-0-c4ede4b4399e@collabora.com> <20250917-mt8196-gpufreq-v3-5-c4ede4b4399e@collabora.com>
-In-Reply-To: <20250917-mt8196-gpufreq-v3-5-c4ede4b4399e@collabora.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 21 Sep 2025 00:00:59 -0500
-X-Gm-Features: AS18NWDK9SEswNrgx0QIzUV1feO9ul79WZJVBOk2Mw-YsP45swDD7fxXXq-LHKs
-Message-ID: <CABb+yY0_TZC0Dd3Rue=6Am4=Urs8hdkaa6RE=42t58SYUsLV0w@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] mailbox: add MediaTek GPUEB IPI mailbox
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Chia-I Wu <olvaffe@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Wed, Sep 17, 2025 at 7:23=E2=80=AFAM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
-....
+Hi Thomas,
 
-> +#define MBOX_CTL_TX_STS                0x0000
-> +#define MBOX_CTL_IRQ_SET       0x0004
-> +#define MBOX_CTL_IRQ_CLR       0x0074
-> +#define MBOX_CTL_RX_STS                0x0078
-> +
-1) Please don't pollute the global namespace. Make these something
-like MBOX_MTK_GPUEB_xxx. Here and elsewhere.
-2) You don't write short values, so maybe just 0x04, 0x04 0x74 and 0x78.
+On Sat, 2025-09-20 at 16:37 +0200, Thomas Wei=C3=9Fschuh wrote:
+> Sep 20, 2025 15:25:11 John Paul Adrian Glaubitz <glaubitz@physik.fu-berli=
+n.de>:
+>=20
+> > On Wed, 2025-09-17 at 16:00 +0200, Thomas Wei=C3=9Fschuh wrote:
+> > > The generic vDSO provides a lot common functionality shared between
+> > > different architectures. SPARC is the last architecture not using it,
+> > > preventing some necessary code cleanup.
+> > >=20
+> > > Make use of the generic infrastructure.
+> > >=20
+> > > Follow-up to and replacement for Arnd's SPARC vDSO removal patches:
+> > > https://lore.kernel.org/lkml/20250707144726.4008707-1-arnd@kernel.org=
+/
+> > >=20
+> > > Tested on a Niagara T4 and QEMU.
+> > >=20
+> > > This has a semantic conflict with my series "vdso: Reject absolute
+> > > relocations during build". The last patch of this series expects all =
+users
+> > > of the generic vDSO library to use the vdsocheck tool.
+> > > This is not the case (yet) for SPARC64. I do have the patches for the
+> > > integration, the specifics will depend on which series is applied fir=
+st.
+> > >=20
+> > > Based on tip/timers/vdso.
+> >=20
+> > Could you share a version of the series based on top of 6.17.0-rcN for
+> > testing purposes? I would like to test the series on a Sun Netra 240
+> > which is based on the UltraSPARC IIIi.
+>=20
+> Here is the git branch based on rc4:
+> https://git.kernel.org/pub/scm/linux/kernel/git/thomas.weissschuh/linux.g=
+it/log/?h=3Db4/vdso-sparc64-generic-2
+>=20
+> Does that work for you?
 
+Thanks, I'll give it a try.
 
-> +#define MBOX_FULL              BIT(0) /* i.e. we've received data */
-> +#define MBOX_CLOGGED           BIT(1) /* i.e. the channel is shutdown */
-> +
-This is confusing. CLOGGED usually means malfunction, but it seems you
-want to call it STOPPED or UNINIT?
+> Thanks for testing!
 
+Of course, I want to make sure the kernel stays working on these machines a=
+nd
+you're introducing large changes.
 
-> +#define MBOX_MAX_RX_SIZE       32 /* in bytes */
-> +
-> +struct mtk_gpueb_mbox {
-> +       struct device *dev;
-> +       struct clk *clk;
-> +       void __iomem *mbox_mmio;
-> +       void __iomem *mbox_ctl;
-> +       struct mbox_controller mbox;
-> +       struct mtk_gpueb_mbox_chan *ch;
-> +       int irq;
-> +       const struct mtk_gpueb_mbox_variant *v;
-> +};
-Other structures have kernel-doc, so why not here too?
-...
+Adrian
 
-> +
-> +static int mtk_gpueb_mbox_send_data(struct mbox_chan *chan, void *data)
-> +{
-> +       struct mtk_gpueb_mbox_chan *ch =3D chan->con_priv;
-> +       int i;
-> +       u32 *values =3D data;
-> +
-maybe order in decreasing lengths ?
-
-
-> +
-> +       /*
-> +        * We don't want any fancy nonsense, just write the 32-bit values=
- in
-> +        * order. memcpy_toio/__iowrite32_copy don't work here, because f=
-ancy.
-> +        */
->
-Please make the comment technical. Currently it just expresses your
-distaste for fancy :)
-
-> +       for (i =3D 0; i < ch->c->tx_len; i +=3D 4)
-> +               writel(values[i / 4], ch->ebm->mbox_mmio + ch->c->tx_offs=
-et + i);
-> +
-
-...
-> +
-> +static struct mbox_chan *
-> +mtk_gpueb_mbox_of_xlate(struct mbox_controller *mbox,
-> +                       const struct of_phandle_args *sp)
-> +{
-> +       struct mtk_gpueb_mbox *ebm =3D dev_get_drvdata(mbox->dev);
-> +
-> +       if (!sp->args_count)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       if (sp->args[0] >=3D ebm->v->num_channels)
-> +               return ERR_PTR(-ECHRNG);
-> +
-> +       return &mbox->chans[sp->args[0]];
-> +}
->
-Just use the default of_mbox_index_xlate()
-
-....
-> +
-> +       for (i =3D 0; i < ebm->v->num_channels; i++) {
-
-You make this block a bit cleaner by using a temporary variable
-        echan =3D &ebm->ch[i];
-and using echan instead of ebm->ch[i] a dozen times below.
-
-> +               ebm->ch[i].c =3D &ebm->v->channels[i];
-> +               if (ebm->ch[i].c->rx_len > MBOX_MAX_RX_SIZE) {
-> +                       dev_err(ebm->dev, "Channel %s RX size (%d) too la=
-rge\n",
-> +                               ebm->ch[i].c->name, ebm->ch[i].c->rx_len)=
-;
-> +                       return -EINVAL;
-> +               }
-> +               ebm->ch[i].full_name =3D devm_kasprintf(ebm->dev, GFP_KER=
-NEL, "%s:%s",
-> +                                                     dev_name(ebm->dev),=
- ebm->ch[i].c->name);
-> +               if (!ebm->ch[i].full_name)
-> +                       return -ENOMEM;
-> +
-> +               ebm->ch[i].ebm =3D ebm;
-> +               ebm->ch[i].num =3D i;
-> +               spin_lock_init(&ebm->mbox.chans[i].lock);
-> +               ebm->mbox.chans[i].con_priv =3D &ebm->ch[i];
-> +               atomic_set(&ebm->ch[i].rx_status, MBOX_CLOGGED);
-> +       }
-> +
-
-
--j
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
