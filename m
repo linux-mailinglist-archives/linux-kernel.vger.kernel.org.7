@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-826166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA4EB8DB9D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0873B8DBB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8212A17E136
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:12:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7020189BE22
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645D02D5437;
-	Sun, 21 Sep 2025 13:12:37 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D90246348;
+	Sun, 21 Sep 2025 13:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwam33GQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52C9257858;
-	Sun, 21 Sep 2025 13:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6858C1863E;
+	Sun, 21 Sep 2025 13:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758460357; cv=none; b=Hlna1k4kXU5O4a3oZQp8/TGgtQoe+5dcD2Fyn2SR1YQveCwLejNKtdQkv/M73xTlQvL7fdROBb7GWP2q9RiphGhD8lABGKT3A6vHhyh6kn/aE6wOZWIGs7ZTfEiLOILdgmsYIIpkeZhe+zBJgHuipLF02tbUwZ27vzx+n7BXhUw=
+	t=1758461113; cv=none; b=lKL93g1I05k0Hpsv2ki3FrUqb09AmLJOAfgMqBV8JkXqzJVIJ4ZbzEGIIR8/FgDxEJIAgEEEjLd70F1FLX2iiVtrzhsD+uhjYz/HIuDcoMuwyE+0jTponmI6lyN+tlW+Zc6RbQ9cNCKzirhIR1yDMjcvl746d9fL0rMZRipOFLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758460357; c=relaxed/simple;
-	bh=A+t8Qo2X7e6ZL5vrxNtcYmymUXK2tAHjCMdMDGCZs+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9l4vxh/DoyeMwZMMDkY6rFTXOEeqLb+RgoIieUykBuyOsbzBYq37UWIfYOJElLjmuSTXYIvyGyy0jOUhlZAt+aAfKLi49Qh+JuGWrm+g8mXIUiwR2fEx2vdA6GjUm24L9AKvbIS89bUjbNyjv4YUOloV9xPugw9jRs3pC503NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id E02292C000B7;
-	Sun, 21 Sep 2025 15:12:25 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id B59C450BDD8; Sun, 21 Sep 2025 15:12:25 +0200 (CEST)
-Date: Sun, 21 Sep 2025 15:12:25 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Crystal Wood <crwood@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
-	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver OHalloran <oohall@gmail.com>
-Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
- handler
-Message-ID: <aM_5uXlknW286cfg@wunner.de>
-References: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
- <87348g95yd.ffs@tglx>
+	s=arc-20240116; t=1758461113; c=relaxed/simple;
+	bh=uiS7ak48qsq0YS43npk87Kkwxiw17oFaWGEvKa8C49I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=m22MZ4+40aQ/GSgjKEPrWRvky07wT7GmGwyMQfVNT+/nvestFyP/9uJjESmoTaZ7pQdAf11Ex87qnt8r/reN2ymFsZ6tfigmpEGtr4QXT95CpiC332/fsO7uJidRUq5dDBT6k/waYItDETEizkrGa6JcPeJQGj2XDHA+Erbb9KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwam33GQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D233C4CEF0;
+	Sun, 21 Sep 2025 13:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758461113;
+	bh=uiS7ak48qsq0YS43npk87Kkwxiw17oFaWGEvKa8C49I=;
+	h=From:Subject:Date:To:Cc:From;
+	b=pwam33GQelPGruexNN/xDzLWVbEYs5mu1JG9g+3eBO4bScGL2aR+f0a8TQwY369Od
+	 Gj3b7mbtFzYxoZpJ6B3W/o3+GqyRmv1zsAB7qhO8I5omFxQcQX+gxtb+UGfqhTPY5i
+	 O55IIHLeyM2s2sutRxNWXI86iGYQzwMVNFkBWukV0hbbOd09yqHVE/v+Ve+xEYNBNk
+	 sVCJia1FAnkf6ENQdb59eQv25xmwdwdRDmiOC0GSEZiJZAyddhT2DYrriYooneCHDJ
+	 iQcQvY9UKG2kUYdYyilYCPiiFrbzW6pH06XlLiGmYpaIHgXvTdLTI4GqsVa2VgttFi
+	 AyMfepIiCNLtQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH RFC 0/3] arm64/gcs: Allow reuse of user managed shadow
+ stacks
+Date: Sun, 21 Sep 2025 14:21:34 +0100
+Message-Id: <20250921-arm64-gcs-exit-token-v1-0-45cf64e648d5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87348g95yd.ffs@tglx>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN77z2gC/z2Nyw6CMBREf4XctTfpg6KwNfED3BoWtb1AgxZtq
+ 5IQ/t1GjcuZyZyzQKTgKEJTLBDo6aKbfA58U4AZtO8Jnc0ZBBOK1bxGHa5Vib2JSLNLmKaRPO6
+ EkUaoLdPaQr7eAnVu/mBPcDzsof2Wge6PrEi/5W9oisyXnGW+uUyeJMZB2+mFMWkzIle2ZFacO
+ yUraNf1DWCwg7K2AAAA
+X-Change-ID: 20250919-arm64-gcs-exit-token-82c3c2570aad
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+ Deepak Gupta <debug@rivosinc.com>, Wilco Dijkstra <wilco.dijkstra@arm.com>, 
+ Carlos O'Donell <codonell@redhat.com>, Florian Weimer <fweimer@redhat.com>, 
+ Szabolcs Nagy <nsz@port70.net>, Rich Felker <dalias@libc.org>, 
+ libc-alpha@sourceware.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-56183
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2599; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=uiS7ak48qsq0YS43npk87Kkwxiw17oFaWGEvKa8C49I=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoz/yy1rTEq5YgzFfX39saUQCKKDRNid2kj+KDp
+ u5hvo8ID0iJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaM/8sgAKCRAk1otyXVSH
+ 0JU3B/kBKCC6dI85Qt5+fS/3i94Pr0WXw6hMdCcDct7u7TTH9zfvEmjeg/+j45Y0FVnx2jHo5vr
+ q7iFyxpSdhcOY22Fm+sWge596m2zb7hLwNecPb6YqiZ3jmZSZ7hfsps8G0EP4B122P0+MhgiGQt
+ PJ1u7/HfkfQAdFLpgoDARjI2aHi4Eb63MZ9d30wog3Wx6bR8Uw0Nrz40lCM84d2dFuGLe+ua/Hp
+ 5eZTHaWJpVyyZ9FmhNT7ZRt8yYvbjXL1P/ilXAZjINqYjD6DusYDxcUux11PlXuCQ2eQK9+uw4j
+ my3MALA8PPCjkXiTswmuxxxtPhpWeHIShQdStuxaxAz4KAwE
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Sat, Sep 20, 2025 at 11:20:26PM +0200, Thomas Gleixner wrote:
-> I obviously understand that the proposed change squashs the whole class
-> of similar (not yet detected) issues, but that made me look at that
-> particular instance nevertheless.
-> 
-> All aer_irq() does is reading two PCI config words, writing one and then
-> sticking 64bytes into a KFIFO. All of that is hard interrupt safe. So
-> arguably this AER problem can be nicely solved by the below one-liner,
-> no?
+During the discussion of the clone3() support for shadow stacks concerns
+were raised from the glibc side that since it is not possible to reuse
+the allocated shadow stack[1]. This means that the benefit of being able
+to manage allocations is greatly reduced, for example it is not possible
+to integrate the shadow stacks into the glibc thread stack cache. The
+stack can be inspected but otherwise it would have to be unmapped and
+remapped before it could be used again, it's not clear that this is
+better than managing things in the kernel.
 
-The one-liner (which sets IRQF_NO_THREAD) was what Crystal originally
-proposed:
+In that discussion I suggested that we could enable reuse by writing a
+token to the shadow stack of exiting threads, mirroring how the
+userspace stack pivot instructions write a token to the outgoing stack.
+As mentioned by Florian[2] glibc already unwinds the stack and exits the
+thread from the start routine which would integrate nicely with this,
+the shadow stack pointer will be at the same place as it was when the
+thread started.
 
-https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
+This would not write a token if the thread doesn't exit cleanly, that
+seems viable to me - users should probably handle this by double
+checking that a token is present after waiting for the thread.
 
-I guess your point is that handling the few operations in aer_irq()
-in hard interrupt context is cheaper than waking a thread and
-deferring them to that thread?
+This is tagged as a RFC since I put it together fairly quickly to
+demonstrate the proposal and the suggestion hasn't had much response
+either way from the glibc developers.  At the very least we don't
+currently handle scheduling during exit(), or distinguish why the thread
+is exiting.  I've also not done anything about x86.
 
-Intuitively I would assume that most threaded interrupt handlers
-are architected in this way:  They only do minimal work in hard
-interrupt context and defer the actual work to the (secondary)
-thread.  E.g. pciehp_isr() + pciehp_ist() is likewise designed
-to follow this principle.
+[1] https://marc.info/?l=glibc-alpha&m=175821637429537&w=2
+[2] https://marc.info/?l=glibc-alpha&m=175733266913483&w=2
 
-Your research that at first glance, at least 21 of 40 instances of
-request_threaded_irq() could just use IRQF_NO_THREAD, seems to
-support the notion that the majority of interrupt handlers only
-do minimal work in hard interrupt context.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Mark Brown (3):
+      arm64/gcs: Support reuse of GCS for exited threads
+      kselftest/arm64: Validate PR_SHADOW_STACK_EXIT_TOKEN in basic-gcs
+      kselftest/arm64: Add PR_SHADOW_STACK_EXIT_TOKEN to gcs-locking
 
-But if that is the case, and if you believe that deferring that
-small amount of work to a thread is nonsensical, then why is the
-primary handler forced into a thread by default in the first place,
-requiring drivers to explicitly opt out by setting IRQF_NO_THREAD?
+ arch/arm64/include/asm/gcs.h                    |   3 +-
+ arch/arm64/mm/gcs.c                             |  25 ++++-
+ include/uapi/linux/prctl.h                      |   1 +
+ tools/testing/selftests/arm64/gcs/basic-gcs.c   | 121 ++++++++++++++++++++++++
+ tools/testing/selftests/arm64/gcs/gcs-locking.c |  23 +++++
+ tools/testing/selftests/arm64/gcs/gcs-util.h    |   3 +-
+ 6 files changed, 173 insertions(+), 3 deletions(-)
+---
+base-commit: 0b67d4b724b4afed2690c21bef418b8a803c5be2
+change-id: 20250919-arm64-gcs-exit-token-82c3c2570aad
+prerequisite-change-id: 20231019-clone3-shadow-stack-15d40d2bf536
 
-Shouldn't it rather be the other way round, i.e. by default the
-primary handler is *not* forced into a thread, but only if the
-driver explicitly opts in?  (In cases where the primary handler
-does a sufficient amount of work that is justified to be deferred
-to a thread.)
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
-Thanks,
-
-Lukas
 
