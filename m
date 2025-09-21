@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-826124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBBDB8D983
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:00:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A596B8D9A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1558189B138
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFAC517786D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3521B258CEF;
-	Sun, 21 Sep 2025 11:00:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881C0A55;
-	Sun, 21 Sep 2025 11:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3B725B687;
+	Sun, 21 Sep 2025 11:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBxtlNSj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F2C155A30;
+	Sun, 21 Sep 2025 11:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758452417; cv=none; b=hk2+kAcieOYO3/mHV3IRLCgl74H+RR0MepGoAI6zGV1Njy8nH5p7mJDI70dmmtjc4SK3RF1d2+O5Xu0i6YBj/BwQJu0Bc+I+xei2eGJVqpYjJJAmCNq7d0lmcC3ZFsslBOLGZZHck9VMBGlxURgec3SAtVUAoNJeHAGCcX24Mbk=
+	t=1758452649; cv=none; b=AkHrBqFH/mZS6E6RjvVKORoqj14EihjoaqepILlSlzmdnt4jeUPFukINV0SGhdImIWPmSKVUX5MjYQR2lPxdTgljBt7l3DCBYHNC4QU8pVEn+wgJa0/LB6LmK6pwVoSXjCG4Yn4YrLOAxVuHGj4a2U7QFJaapX/LFH4i9N0bFZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758452417; c=relaxed/simple;
-	bh=ENNgxieVUg9rvRDt1ofxT4y+ucu5JSS3gwSSepg5kMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hSnMyrf3RFm9B/DmOI+622KLXo2jH2Wk2RQwPpxtXfKZh0cCJi3PcxjmuD9xzU2UA2EFh/gNNsuAx/wzmJAR90fSDkYy4Z16W0Fbi/H2dw9/8AMMUTO1FzVNik4lPfdhRNgtDg5DjSW7+hA04R63t9CAGbeJFW6yKgZtR5Wr6eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 602E81516;
-	Sun, 21 Sep 2025 04:00:06 -0700 (PDT)
-Received: from [10.57.94.196] (unknown [10.57.94.196])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85AE63F673;
-	Sun, 21 Sep 2025 04:00:13 -0700 (PDT)
-Message-ID: <d38b03ae-3958-42ae-867c-e08e7a4b3847@arm.com>
-Date: Sun, 21 Sep 2025 12:00:11 +0100
+	s=arc-20240116; t=1758452649; c=relaxed/simple;
+	bh=zfFGum9b0/BleKUZeCTKfLnLOBtKdYp2e9/Jc3IpdTQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PEAkdUGFEuJ5ZSIfTbolt5eDiBS8gQLIOwYE1OPNbsXjnZpO6YtQVhpVsHlgN1NbJ+DD+PlPGUu4tZrzRjpUDKwX85g6/bkwg47GFHI9d/1tpp/E4LmfC4yFds4y4rffTwpyO8LreeDH4e1h1qLrUjzPSY3Ohl5zkinBCMDg3OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBxtlNSj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0582CC4CEE7;
+	Sun, 21 Sep 2025 11:04:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758452649;
+	bh=zfFGum9b0/BleKUZeCTKfLnLOBtKdYp2e9/Jc3IpdTQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=cBxtlNSj9/iDkZtPyO7LpMwcoOHRtvNZukkGVFWUw8U6mbcpDlZdkfbTZN4i/dLjJ
+	 YTyfYBx3JVvVcEE++n0oQUF++0ud6sWCGcLcyNRNHwirmjZh9+r0MME6UbUcurJkb/
+	 E7TxEkisbqgyQqO9ihC4I+4Cqm9gUwyDCVy3rhi6ECkKkADqk6yBElPXS0WWfUlD+5
+	 xJ2TsON32V9qPpWMkZSUSCd2KY8qXKAkFktcp4lENj5MIqu2uHtG42MW1pHYX2tSvR
+	 s9xvvRKM2GHP6to/lXX676O54bmyhRivhTcQhfo/OqiDb13yN+N4xg8lFl8StwjTY6
+	 wVS00FwxsB7oA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5498CAC59A;
+	Sun, 21 Sep 2025 11:04:08 +0000 (UTC)
+From: Max Shevchenko via B4 Relay <devnull+wctrl.proton.me@kernel.org>
+Subject: [PATCH 0/3] Rewrite MediaTek UART APDMA driver to support more
+ than 33 bits
+Date: Sun, 21 Sep 2025 14:03:39 +0300
+Message-Id: <20250921-uart-apdma-v1-0-107543c7102c@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/topology: Implement topology_is_core_online() to
- address SMT regression
-To: Thomas Gleixner <tglx@linutronix.de>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
- <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
- <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com>
- <87o6rowrsp.ffs@tglx>
- <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
- <87ldmqwgjc.ffs@tglx>
- <CAJZ5v0gW+A-eyckySFrHc7=Qr9URdRX6NqvPgkq4gZEvs_uBWg@mail.gmail.com>
- <87cy7k5gl3.ffs@tglx>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <87cy7k5gl3.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIvbz2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDSyND3dLEohLdxIKU3ERdy8RUc7NUE6M0I0NjJaCGgqLUtMwKsGHRsbW
+ 1ABs0505cAAAA
+X-Change-ID: 20250921-uart-apdma-9ae76e42f213
+To: Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Long Cheng <long.cheng@mediatek.com>
+Cc: dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Max Shevchenko <wctrl@proton.me>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758452646; l=1014;
+ i=wctrl@proton.me; s=20250603; h=from:subject:message-id;
+ bh=zfFGum9b0/BleKUZeCTKfLnLOBtKdYp2e9/Jc3IpdTQ=;
+ b=Quibm1DVcGl0mSoso1wZuKD1LG4vQ1WaKLN47ZGF1Ghf4HYVz2LEe84dbtvy0i9yXo49BuSCK
+ r48rMZ4pJgKAXvMo/b1LwQAGKfFUn70yV3rHmeoxZI6PX4WuBaNbKmU
+X-Developer-Key: i=wctrl@proton.me; a=ed25519;
+ pk=JXUx3mL/OrnRvbK57HXgugBjEBKq4QgDKJqp7BALm74=
+X-Endpoint-Received: by B4 Relay for wctrl@proton.me/20250603 with
+ auth_id=421
+X-Original-From: Max Shevchenko <wctrl@proton.me>
+Reply-To: wctrl@proton.me
 
-On 9/21/25 09:56, Thomas Gleixner wrote:
-> Christian reported that commit a430c11f4015 ("intel_idle: Rescan "dead" SMT
-> siblings during initialization") broke the use case in which both 'nosmt'
-> and 'maxcpus' are on the kernel command line because it onlines primary
-> threads, which were offline due to the maxcpus limit.
-> 
-> The initially proposed fix to skip primary threads in the loop is
-> inconsistent. While it prevents the primary thread to be onlined, it then
-> onlines the corresponding hyperthread(s), which does not really make sense.
-> 
-> The CPU iterator in cpuhp_smt_enable() contains a check which excludes all
-> threads of a core, when the primary thread is offline. The default
-> implementation is a NOOP and therefore not effective on x86.
-> 
-> Implement topology_is_core_online() on x86 to address this issue. This
-> makes the behaviour consistent between x86 and PowerPC.
-> 
-> Fixes: a430c11f4015 ("intel_idle: Rescan "dead" SMT siblings during initialization")
-> Fixes: f694481b1d31 ("ACPI: processor: Rescan "dead" SMT siblings during initialization")
-> Reported-by: Christian Loehle <christian.loehle@arm.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+This patch series aims to support more than 33 bits for the MediaTek
+APDMA driver, since newer SoCs like MT6795, MT6779 or MT6985 have higher
+values for the DMA bitmask.
 
-Tested-by: Christian Loehle <christian.loehle@arm.com>
+The reference SoCs for bitmask values were taken from the downstream
+kernel (6.6) for the MT6991 SoC. 
+
+Signed-off-by: Max Shevchenko <wctrl@proton.me>
+---
+Max Shevchenko (3):
+      dt-bindings: dma: mediatek,uart-dma: drop mediatek,dma-33bits property
+      dmaengine: mediatek: mtk-uart-apdma: support more than 33 bits for DMA bitmask
+      arm64: dts: mediatek: mt6795: drop mediatek,dma-33bits property
+
+ .../devicetree/bindings/dma/mediatek,uart-dma.yaml | 11 ++---
+ arch/arm64/boot/dts/mediatek/mt6795.dtsi           |  4 +-
+ drivers/dma/mediatek/mtk-uart-apdma.c              | 47 ++++++++++++++++------
+ 3 files changed, 39 insertions(+), 23 deletions(-)
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20250921-uart-apdma-9ae76e42f213
+
+Best regards,
+-- 
+Max Shevchenko <wctrl@proton.me>
+
+
 
