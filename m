@@ -1,296 +1,244 @@
-Return-Path: <linux-kernel+bounces-825939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6771B8D2B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:31:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311BFB8D2B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508471775F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C61FA3B05E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A90439ACF;
-	Sun, 21 Sep 2025 00:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3BF2030A;
+	Sun, 21 Sep 2025 00:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cy2r37Ap"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rYCmiVGl"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011033.outbound.protection.outlook.com [52.101.52.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB09208D0
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 00:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758414663; cv=none; b=cx7eoruJJAVmt1KF4kepUXtyogImfasD2YbR8PCp3+YrWp2Afm7z83oKWxvYzhLrsp3dXfwIAtwJJWrKjGKoYoxys2A5E91cQuKwdJskzpM/JOyDuC+/Xyn6TWxlX0NAfnE6sJuMQ4GT5FAGwhZnusZJiGGcQWGahMiXE4zcRiA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758414663; c=relaxed/simple;
-	bh=t4qjfS0JajmUmGRVlQ1ZwdnkeMbZKYR+so4Sw5Xf0H0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lcUD/RrEqEvHa+F7IDw0WDy4oP1s2L0lRVBmbaEZulRL40B/eku3qG6HX3ArknPaMJ4AVYw8WKngEtP9/pJxNbdcFFu32XJ9g+8L7Hbjjgo7EZXfKaliRDRMCT75K0tJ7j0QuxWbaRpSvMdu/EMWEx5U+volHzG3v//Ynj21VEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cy2r37Ap; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77f2077d1c8so421821b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758414661; x=1759019461; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+58Sx+Vf9qDRURRTyjx8USlv7zRGtIJ/9Bqpeei8a8=;
-        b=Cy2r37ApM7eLCz7QosDowXvK0nCeed7M464rDbZDe77uotciHAzpvw7Qm6+P9ycv3f
-         VJGeuehtO7xRSoAaggDa2EO0Qvk2vhRbv/XPZ+GwdBe2I2MLiZjQsnKW2GWQifEkDqrx
-         hBhU1A+8sl8AjBxll/rX616tRXw7RHGSKRjZHx3I2NPR5m1tFzR2LGM2vV3vmuAKlCYC
-         He0SnJw19TkvAwFH0JJl/wJe43AHAUpR0JBm/3lkxsoExKuby4grel0Eh1JOLOQ6Ky/u
-         mFwlxW2B1nVVgBYLhbatKEURzVLIarB6jnRkLFYTD43YZQs3gXkVSEsGWaGpR25pGjIa
-         vWXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758414661; x=1759019461;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M+58Sx+Vf9qDRURRTyjx8USlv7zRGtIJ/9Bqpeei8a8=;
-        b=cWrRSwh1kJMjPoM1iTYgKuMkSTeh2+idF2G+fBma4tk0plQhURca1p2G57grGucznf
-         ehVNWu/hMIoiWQKg/iSTSQEQwG3FHEtMzgunb6Xo2riU/OqiqIMmVNW07mjDL7W/Nw9d
-         I79yLxl+JGcY/cPCQ0B7ByDnS60khQEydHL/hwneWVAKXuxMR+W+DT1lsT8/mi+/4ETk
-         v7JQC18Xj42BhgSNx1y0nulWouSQbGvF92LAvBcQ/PHO/oLeKMn+GHhBXzoG+An7ZyzT
-         QcNpr6Lj+rVVN4yVUMHLruUpkRF3owDj6bRMTwXpWKiQT3iaLB8jGA+Mxk1Zt+FT1DlN
-         73JA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT0VSXh38+kIN56RK1+sqHaAJPgT2YiHT/RV0y3QfIhiD36mL/bdjCtq/laOdEOes3RBXp5tylY7m89gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy91eALpcYGkbRnZnXE2YHMpHEEJo9y6wAyJrjI30QpI0GB0C+P
-	qhoIKn6OQmXAYSbnboAR+9fEd3rWeVLt1Uf/r888e2yepoSn1TF/jzOREi4XKw==
-X-Gm-Gg: ASbGncvLpPFlrf3YMkGz96UFu86g952mPF/XWluQmTkkmueyOdaTs5yXkSkZC1vxX22
-	bS0HKM1WwapbevhCOerOXPYVyY95wXpNBfPw8iAaMxtrnODI9qJuQ0sR4BHKW//c8GiGn1GKYk1
-	2U8zuSRpYmNQDtLhNv3a7oiSYU5MRWZrP87dO1zyzGymDqqYA+zCWzXzlwqEpzYwwxkf2wjKwb2
-	lGO7tomRcQH7UoEk6mlV0dEAYm+iydIFMziaG6IxdiRgBxFGzjOxaoUYFLtAvEoqTiVEa0SG0mK
-	pzxirfVIRDTHqmM6d6sokOl3sOBR5OgEyKpOcJocezgPrm4P6i1Jg7lIEuGsqLBP6PETQk7oB2H
-	gyAczRMHTndp3h4dkfmMj5ZI=
-X-Google-Smtp-Source: AGHT+IGq41WgnCrAeSw+woHi2U/JmzNR1alDHEIckZeunCloMf+3pg6EWv7zdT1YYGOKZuR2gl7c+g==
-X-Received: by 2002:a05:6a20:728c:b0:249:467e:ba70 with SMTP id adf61e73a8af0-29218ad80a1mr11400793637.24.1758414661024;
-        Sat, 20 Sep 2025 17:31:01 -0700 (PDT)
-Received: from fedora ([172.59.162.206])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f23d92ef0sm1631575b3a.102.2025.09.20.17.30.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 17:31:00 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v2] media: i2c: wm8775: parameterize wm8775_platform_data based on config
-Date: Sat, 20 Sep 2025 17:30:46 -0700
-Message-ID: <20250921003046.946811-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B629F9E8;
+	Sun, 21 Sep 2025 00:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758415524; cv=fail; b=Qo8ZM1Q03ymtunNltvtTOcDK9BDz6vCT/pqzhII87tVVqlHK69go8Mgasd3oAvscMUzm65C5m73tKUky0WJXQiha35Kr12kBKhTID1aBcrvRNf7CTba/bZnxjZTP6Et68+4zS/7s1v+m2uRrKia7yXfqPx34o3+lqVpEXdo48I0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758415524; c=relaxed/simple;
+	bh=A0GLNPkgjqC2ertUZN0kN9RRIInUGD+/J/OwyP+xJJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Dn5unDwZPhqSwQHaC80kIFEQX3kTCOdeQUHbQlE6U3CQcwOzcTJQcopiwe7sqGX7s6yuBAuAPeYovSF4uFl9pbEyPPeUeWPaI/dX7UwGLminFLU9bEwJT3OLxUbnrJSvt6NMn+K9yfCbFfv437jTRbmZgA7mResIdIY2s81/FPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rYCmiVGl; arc=fail smtp.client-ip=52.101.52.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NcYW4NMRqGwhDthzmA1j4GE6QD67b33erONsatyIZ0vnfOsdI0tAA74NUt46LqZD6tLUhTEliUWBX/MLRcHN+ZJiJFiRj5PGkwlLf1CaQCtdwIAGs5OkEpqCGKuyXthBBVCXmA1iN75mpK0Q4VzBs5zDe1afXFyMXV+/oADIS/zgAOk0q49Aer9RsF+sbvRHP6Qr45JICxTUQ8p0gFM84hCxeGass2qAG/T/0dHum0qm0ZIjAqgpJYtlhI3VAnbkKNuxSmdWitde0EQZco61d17uGpY0OysONzpeXW5Vi271XKAsfejFrQ9Ok1tMZSPKtzq7vlOmVRGMCPspS8Ky5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nk9cCzxyE3mNYL0JI4tP1MINf0deRD8ySnu0NHQ4U0s=;
+ b=lpBSVQIHgLAduGYshzrvjEYCfWZ7Jnf08aEqKFNAtMcDXZb3lRY/yjDiThqebfYlcBF09xLWhZlMPjRYkw21b16pX8gjsCH8EseG6YWUjvFHDwbYspxirQMI/QzoSwXB6mKeA6pY3WD2SMKFvlMbGLjs5QqOsDcs0SNSa4kZ4VXAdQpTM0lHDqbDzoQ7g/xmCbeRhDB+hYDCi+um/TGwGB0pXnVysK9czLuvsIv3YDs5/EiWENRVi3rtNYs1Jfuq7hm1oG7fu0si9Gn949Kk4HVJNPUkTTs2mxzt8kdEYQJ0KMdLvsXkSrOmGiK60F8ejBL4tjgrSUmDREUNKAQKsQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nk9cCzxyE3mNYL0JI4tP1MINf0deRD8ySnu0NHQ4U0s=;
+ b=rYCmiVGl21HhQYGSiQqrGPt1AaZkTG+MVeOak0Z8o/wXC3iIaqWKrmxXwENt6Q2L+3HO9JjNeDT560f1+1FY4Pz1A7f0cQ6pl0bScClgKE90hdgallBHyugm0bVJTk6VKAEGtETRh5tR1ggD1cocuy7HI1VeJdUtn8vJf41XCJ0lo3Pyo7gUEVMvUekjFdc+2reIfyfcRad1cahKOq9OSvmilJW+pdHZVaavVCAFlvY3oZj0LOvUMHy6AbbTPzUJm/RraHHtTdlcNfFW9fkj2YqOF+PiJh2xZZIlBnHtzDCzjzW0a0tDU6dgOO7JkiJ4/wTACZA/E4KZId/kDLq6XQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by DS4PR12MB9585.namprd12.prod.outlook.com (2603:10b6:8:27e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Sun, 21 Sep
+ 2025 00:45:19 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9137.018; Sun, 21 Sep 2025
+ 00:45:18 +0000
+Date: Sat, 20 Sep 2025 20:45:17 -0400
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Benno Lossin <lossin@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, acourbot@nvidia.com,
+	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] rust: print: Fix issue with rust_build_error
+Message-ID: <20250921004517.GA2101443@joelbox2>
+References: <20250920161958.2079105-1-joelagnelf@nvidia.com>
+ <DCXWEV3YO443.2EUZL32P96Z0D@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DCXWEV3YO443.2EUZL32P96Z0D@kernel.org>
+X-ClientProxiedBy: BN9PR03CA0113.namprd03.prod.outlook.com
+ (2603:10b6:408:fd::28) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS4PR12MB9585:EE_
+X-MS-Office365-Filtering-Correlation-Id: 299cb321-7597-4b95-e43f-08ddf8a8234a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4Qi5CxciovMdJn1mrkowFa7/aM4BzfO0O2TzUOlm73XHv4SEm73hwrr2nQ+4?=
+ =?us-ascii?Q?dlAqloIy51HJO6eoxtU+Q8L0uobPEzV3HXc7KfVXhl75zQv+7u2D3wG7xpVX?=
+ =?us-ascii?Q?RmeJXrpp2lmopjuFVhplZNUaN/c6esjmRj4sRkQ2/NEL7BhiYrZ/+aCmixN9?=
+ =?us-ascii?Q?RhdKauZv4llIDlyBMpKmAjjcjZbn+ugrQP7Uf8NLXPalL4SLNcSuGIjzrtJa?=
+ =?us-ascii?Q?HbVvCeZoPFTUmb7dzsA5q2DQaFA11yAUyRt0td40UfCrSUZE7mSsrne20rT3?=
+ =?us-ascii?Q?l45KO/F/HIlsl8vTVpdmn7fUNkrJFtoXQFRFGPo1TQy7FSJkavybefacaSjx?=
+ =?us-ascii?Q?olwYdtr2Uu+V1vgrmdx13fhDhh8fIGaU5KGNLk95qh9KMGYjjIL5Iaa4Wo3S?=
+ =?us-ascii?Q?ySy9Pt8ZgUMF7r8VSFkEjY2VtcJ7C2XSkS6WGPpak8nYY7OSSdUTNYHxuC/6?=
+ =?us-ascii?Q?3fv6e8YmG+HjpXToCeOIHA6wmT7rCVdNgCRbe+8FvX4NblkHniHcnqS/FaOi?=
+ =?us-ascii?Q?J8AmfjRpKcZ3Ndf/isQDSlfv1ahafHdtHuHJciD0FceIUvFrSrzOdUGVf+6U?=
+ =?us-ascii?Q?jEUZnEu84msF9Uue33S9UISWk5skflwukIJFtP66nzgm+6qfQGSsSX7Q6IcB?=
+ =?us-ascii?Q?6zXQQe7wRv75CDi5cbKkvz+H6us54HE0Bg4AXc9kuy0gHpvt5oC1uduaUOQo?=
+ =?us-ascii?Q?u2vpR2JgaLw5xJtXfX9yltT+jTxZQBf/2fs16zxR3bX3sNaNaJwJdPlLK6HJ?=
+ =?us-ascii?Q?8Ii1Io6joS7z7NQLZy43vlbKXaOJ65JuDQ+iM6SPuvD9eXLfQBPKwNR5wCch?=
+ =?us-ascii?Q?DxRxU8hb7JLQCZTUwKuCafjV44ojCfKoR5uI8A2RnyNeRRfx5rKSKo3M7E0v?=
+ =?us-ascii?Q?F8yYoOKx8OpuEZTFtjWxxyYSr2VipgQP5E0BltdQzmqpsV1BtBO2XRRwS0gT?=
+ =?us-ascii?Q?VlhUwLPiCPyuUyfzDTyEGMMk3Xr/k2xPb1PugVaE1NTm7WdaFCNdcVLJsdcV?=
+ =?us-ascii?Q?y5PzZ87GFgyayJeA7dNj9G4rITtOMEwGYNiva/YgJwxFGkBg51FsJcM81Llj?=
+ =?us-ascii?Q?FIcWZbloRcTJsBqrq04kYlIVonkSqEIXvrJWM4renf9WawRKK8An3h9PLN84?=
+ =?us-ascii?Q?wTvu5OFGy3Ddb70oZK5+Cow8x8IWTYP93onBJ6J3VvhyQBPFKDdI75WMFL5H?=
+ =?us-ascii?Q?J3Ji6gEvwWBd9LhgivHxAex8qQpWIYZJqIzFskk/XBdD0+E0seuVdeHGCciJ?=
+ =?us-ascii?Q?L1h+Fjz76XzI0MdotbEEGDdSndwqrEYgtW+zZPGGP0EhWN3GMknNxgQs1y46?=
+ =?us-ascii?Q?+tbaoEpsPvY2xnNb1NaecS5vKRFVJLaReDcxswBDt2yRvH2Q31xhjrlMAruD?=
+ =?us-ascii?Q?Hr7UHkJDa0zt6eUr9Df5fYufD/XEcW4ovB7/fXF0zGZbjwl5riyS+6QYI0eP?=
+ =?us-ascii?Q?v9942q3tQug=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xCxvHCCzK7uRMI0wV0gxSg574MnvXdn3Ca3nWQavadbSwvHplYKwhmqwWR4U?=
+ =?us-ascii?Q?R8bWslo30bsYdFFiQU9qtQ0ClT9u5souhTKaUVSYe7kCypeDnn953lhMDjlW?=
+ =?us-ascii?Q?xIHOUHHlPWmjmxkdWqNLTWHFor+/cMoMoicreFi0yFEuoOl4ImQWOiH9S3Mv?=
+ =?us-ascii?Q?kd+nCJi2xX/xadBFHYTMcu6hUOjQH06XcPTEu88jfzeng8w2iqBaG3Iib2lP?=
+ =?us-ascii?Q?KKve4cxs9DD8hHqM6LgYX/GEXgRoUTulLljnGpyGYGwRUp5vX9k8Sn4CzS0N?=
+ =?us-ascii?Q?DJsbbuFnFvVWdj4t3S4tGSHQ6zR24HzAYJKsGxEc0zfEDySxMwzG6YsMfKJg?=
+ =?us-ascii?Q?RqAVOmaUHeqq+Sayu8OoiPlfUTusdvWlYgLXyEk3m1W7romcUVdGHefsAPfw?=
+ =?us-ascii?Q?C1sPg0nEleNELNhfB3O0vSZ1oaFJPdKzNMvqf2ewcic7BmVAgdPR9mDCuN7t?=
+ =?us-ascii?Q?Bmy2WrvYgTrmeVMe7Q10JEpo/BFihW7uec2rq55fy0SFgLHGp6HzWMHA8WCm?=
+ =?us-ascii?Q?fw3gLcamDhB5r7KemWQscM6Ta3UVwGpD0hN5q/+7JEwa57at4fpPNHbqux6+?=
+ =?us-ascii?Q?RcTAlX7FDOq4ZCtUXXAPkaQneKSIX35089GHB55O/EZRC9UTjQPVJY32OCo2?=
+ =?us-ascii?Q?P0xBJcJ1WuNm3Fh0ahbCcLU7s/dv76SmVqOLskLXm24z4PiwQOLhU7KUb7X4?=
+ =?us-ascii?Q?Yly3olHMZHqD/2aA3eKuwbR8T9lqnGCO9ci35Sq+0kHq60KVGmSwWqmhUcFk?=
+ =?us-ascii?Q?yQorQv9akjG8AJKhI09Z52mlWPVnyebAsRPKNrg6orVJhL+bkpwcvryy31mm?=
+ =?us-ascii?Q?Bk7GPfp7E4dPsVWfalfQWnIAq+AIqlrujUtC/c7czKRf10XcIRhoGdewQkyg?=
+ =?us-ascii?Q?niY4dd51zfVOfhOkG+EHKhj/yaYZcBIMIVRHZvBV5x3fUJg9+KVsWRvX86X5?=
+ =?us-ascii?Q?+cbOV6U0b3UjENwr80mS59/LmXAmphWjne/9bCLPuX2LT9KYwA1i4C3JzaVM?=
+ =?us-ascii?Q?CIAGhcSDu7y9kPKKEbhRX8X3mniRxPDWwr1OSt/LxxrFJApOSEs1+LxExkiK?=
+ =?us-ascii?Q?v+96Ysx0KQOvgogE6NhuWQOfbGuPEqlHFalxjlFmH4dSx94GvpyLECssI+WC?=
+ =?us-ascii?Q?9Wo3FErTLgX1h8ho/lwMLIigtwM4WI7CaWfTKlPwzewK80bM2Uh7vMQLsoJU?=
+ =?us-ascii?Q?HQW/42AiF6uF73aOKUWA0PpMPWLGXJAhBmD7A7TRDjpETLAYCVUrWwHaTX99?=
+ =?us-ascii?Q?9+29QTBwsBXEE+HQhe95oMSKM6MaKnGzK6rMOhP+HFPet8CPYVpmKkezji13?=
+ =?us-ascii?Q?M+EgYOeTdHIfRHTnjv9dqv0y6SobnfObliKADmaT/aMfF/KmE+jwpXY6mwXp?=
+ =?us-ascii?Q?8Cl9YDROjAYa66iZSaEJPO6McMZpzgwIN9Vi6BZx1c+Uobnz7kYd6Lbr0O41?=
+ =?us-ascii?Q?ey04ZyWV4pgi+4Hvp3KpZIQI6EqLT17p1EaJ8Fpz3iXh43UwO4+x8BteiIYZ?=
+ =?us-ascii?Q?H9cgI+tDcqRQNGW/nDZo23AyqFoldyl+xb7oJOBsgTNYEO/QEvw8mDc3Y0e4?=
+ =?us-ascii?Q?Nb8L73+diuMrxC+8cAim0QOH2cY6SgtxS5GG86zb?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 299cb321-7597-4b95-e43f-08ddf8a8234a
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2025 00:45:18.8330
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QmA4hHe/koSyH72ZRr0E1JrU0rkpOPXc9kK5Vh5vLMmko127rJ61e7rmVdpLC11LRuOFXSRPoyFuGXJSyF9WEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR12MB9585
 
-Parameterized wm8775_platform_data struct, removing the single boolean
-for determining device type. wm8775_standard_cfg struct will be used
-for standard devices and wm8775_nova_s_cfg for nova_s devices. 
+On Sat, Sep 20, 2025 at 10:09:30PM +0200, Benno Lossin wrote:
+> On Sat Sep 20, 2025 at 6:19 PM CEST, Joel Fernandes wrote:
+> > When printing just before calling io.write32(), modpost fails due to
+> > build_assert's missing rust_build_error symbol. The issue is that, the
+> > printk arguments are passed as reference in bindings code, thus Rust
+> > cannot trust its value and fails to optimize away the build_assert.
+> >
+> > The issue can be reproduced with the following simple snippet:
+> >   let offset = 0;
+> >   pr_err!("{}", offset);
+> >   io.write32(base, offset);
+> 
+> I took a long time to understand this and I think I got it now, but
+> maybe I'm still wrong: passing `offset` to `printk` via a reference
+> results in the compiler thinking that the value of `offset` might be
+> changed (even though its a shared reference I assume). For this reason
+> the `build_assert!` used by `io.write32` cannot be optimized away.
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
-Changes in v2:
-- rebased from mchehab linux media onto media committers tree
-- resolve patch and build errors
- drivers/media/i2c/wm8775.c          | 109 ++++++++++++++++------------
- drivers/media/pci/cx88/cx88-video.c |   4 +-
- include/media/i2c/wm8775.h          |  25 +++++--
- 3 files changed, 83 insertions(+), 55 deletions(-)
+Yes, that's correct and that's my understanding. I in fact also dumped the IR
+and see that the compiler is trying to reload the pointer to the offset. I
+feel this is a compiler bug, and for immutable variables, the compiler should
+not be reloading them even if they are passed to external code? Because if
+external code is modifying immutable variables, that is buggy anyway.
 
-diff --git a/drivers/media/i2c/wm8775.c b/drivers/media/i2c/wm8775.c
-index 56778d3bc..6218fc3fe 100644
---- a/drivers/media/i2c/wm8775.c
-+++ b/drivers/media/i2c/wm8775.c
-@@ -50,6 +50,43 @@ struct wm8775_state {
- 	u8 input;		/* Last selected input (0-0xf) */
- };
- 
-+struct wm8775_platform_data wm8775_standard_cfg = {
-+	.reset = 0x000, /* RESET */
-+	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-+	.interface_ctrl =
-+		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-+	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-+	.powerdown = 0x000, /* Powered up */
-+	.adc_l = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-+	.adc_r = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-+	.alc_ctrl_1 =
-+		0x1bf, /* ALC Stereo, ALC target level -1dB FS max gain +8dB */
-+	.alc_ctrl_2 = 0x185, /* Enable gain control, ALC hold time 42.6 ms */
-+	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-+	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-+	.limiter_ctrl = 0x07a, /* Window 4ms, lower PGA gain limit -1dB */
-+	.adc_mixer = 0x102, /* LRBOTH = 1, use input 2. */
-+	.should_set_audio = false,
-+};
-+
-+struct wm8775_platform_data wm8775_nova_s_cfg = {
-+	.reset = 0x000, /* RESET */
-+	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-+	.interface_ctrl =
-+		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-+	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-+	.powerdown = 0x000, /* Powered up */
-+	.adc_l = WM8775_REG_UNUSED,
-+	.adc_r = WM8775_REG_UNUSED,
-+	.alc_ctrl_1 = 0x1bb, /* Stereo, target level -5dB FS, max gain +8dB */
-+	.alc_ctrl_2 = WM8775_REG_UNUSED,
-+	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-+	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-+	.limiter_ctrl = 0x0fb, /* Transient window 4ms, ALC min gain -5dB  */
-+	.adc_mixer = WM8775_REG_UNUSED,
-+	.should_set_audio = true, /* set volume/mute/mux */
-+};
-+
- static inline struct wm8775_state *to_state(struct v4l2_subdev *sd)
- {
- 	return container_of(sd, struct wm8775_state, sd);
-@@ -195,12 +232,8 @@ static int wm8775_probe(struct i2c_client *client)
- 	struct wm8775_state *state;
- 	struct v4l2_subdev *sd;
- 	int err;
--	bool is_nova_s = false;
--
--	if (client->dev.platform_data) {
--		struct wm8775_platform_data *data = client->dev.platform_data;
--		is_nova_s = data->is_nova_s;
--	}
-+	struct wm8775_platform_data *data = client->dev.platform_data ?:
-+						    &wm8775_standard_cfg;
- 
- 	/* Check if the adapter supports the needed features */
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-@@ -233,49 +266,29 @@ static int wm8775_probe(struct i2c_client *client)
- 	}
- 
- 	/* Initialize wm8775 */
-+	wm8775_write(sd, R23, data->reset);
-+	wm8775_write(sd, R7, data->zero_cross_timeout);
-+	wm8775_write(sd, R11, data->interface_ctrl);
-+	wm8775_write(sd, R12, data->master_mode);
-+	wm8775_write(sd, R13, data->powerdown);
-+	if (data->adc_l != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R14, data->adc_l);
-+	if (data->adc_r != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R15, data->adc_r);
-+	wm8775_write(sd, R16, data->alc_ctrl_1);
-+	if (data->alc_ctrl_2 != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R17, data->alc_ctrl_2);
-+	else
-+		wm8775_write(sd, R17,
-+			     (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
-+	wm8775_write(sd, R18, data->alc_ctrl_3);
-+	wm8775_write(sd, R19, data->noise_gate);
-+	wm8775_write(sd, R20, data->limiter_ctrl);
-+	if (data->adc_mixer != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R21, data->adc_mixer);
-+	if (data->should_set_audio)
-+		wm8775_set_audio(sd, 1);
- 
--	/* RESET */
--	wm8775_write(sd, R23, 0x000);
--	/* Disable zero cross detect timeout */
--	wm8775_write(sd, R7, 0x000);
--	/* HPF enable, left justified, 24-bit (Philips) mode */
--	wm8775_write(sd, R11, 0x021);
--	/* Master mode, clock ratio 256fs */
--	wm8775_write(sd, R12, 0x102);
--	/* Powered up */
--	wm8775_write(sd, R13, 0x000);
--
--	if (!is_nova_s) {
--		/* ADC gain +2.5dB, enable zero cross */
--		wm8775_write(sd, R14, 0x1d4);
--		/* ADC gain +2.5dB, enable zero cross */
--		wm8775_write(sd, R15, 0x1d4);
--		/* ALC Stereo, ALC target level -1dB FS max gain +8dB */
--		wm8775_write(sd, R16, 0x1bf);
--		/* Enable gain control, use zero cross detection,
--		   ALC hold time 42.6 ms */
--		wm8775_write(sd, R17, 0x185);
--	} else {
--		/* ALC stereo, ALC target level -5dB FS, ALC max gain +8dB */
--		wm8775_write(sd, R16, 0x1bb);
--		/* Set ALC mode and hold time */
--		wm8775_write(sd, R17, (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
--	}
--	/* ALC gain ramp up delay 34 s, ALC gain ramp down delay 33 ms */
--	wm8775_write(sd, R18, 0x0a2);
--	/* Enable noise gate, threshold -72dBfs */
--	wm8775_write(sd, R19, 0x005);
--	if (!is_nova_s) {
--		/* Transient window 4ms, lower PGA gain limit -1dB */
--		wm8775_write(sd, R20, 0x07a);
--		/* LRBOTH = 1, use input 2. */
--		wm8775_write(sd, R21, 0x102);
--	} else {
--		/* Transient window 4ms, ALC min gain -5dB  */
--		wm8775_write(sd, R20, 0x0fb);
--
--		wm8775_set_audio(sd, 1);      /* set volume/mute/mux */
--	}
- 	return 0;
- }
- 
-diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
-index 0c8732768..a3729fd73 100644
---- a/drivers/media/pci/cx88/cx88-video.c
-+++ b/drivers/media/pci/cx88/cx88-video.c
-@@ -1353,9 +1353,9 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
- 		struct v4l2_subdev *sd;
- 
- 		if (core->boardnr == CX88_BOARD_HAUPPAUGE_NOVASPLUS_S1)
--			core->wm8775_data.is_nova_s = true;
-+			core->wm8775_data = wm8775_nova_s_cfg;
- 		else
--			core->wm8775_data.is_nova_s = false;
-+			core->wm8775_data = wm8775_standard_cfg;
- 
- 		sd = v4l2_i2c_new_subdev_board(&core->v4l2_dev, &core->i2c_adap,
- 					       &wm8775_info, NULL);
-diff --git a/include/media/i2c/wm8775.h b/include/media/i2c/wm8775.h
-index a02695ee3..99678d165 100644
---- a/include/media/i2c/wm8775.h
-+++ b/include/media/i2c/wm8775.h
-@@ -20,13 +20,28 @@
- #define WM8775_AIN3 4
- #define WM8775_AIN4 8
- 
-+#define WM8775_REG_UNUSED ((u16)-1)
- 
- struct wm8775_platform_data {
--	/*
--	 * FIXME: Instead, we should parameterize the params
--	 * that need different settings between ivtv, pvrusb2, and Nova-S
--	 */
--	bool is_nova_s;
-+	u16 reset; /* RESET (R23) */
-+	u16 zero_cross_timeout; /* Zero cross detect timeout (R7) */
-+	u16 interface_ctrl; /* Interface control (R11) */
-+	u16 master_mode; /* Master mode (R12) */
-+	u16 powerdown; /* Power down (R13) */
-+
-+	u16 adc_l; /* ADC left (R14) */
-+	u16 adc_r; /* ADC right (R15) */
-+	u16 alc_ctrl_1; /* ALC control 1 (R16)*/
-+	u16 alc_ctrl_2; /* ALC control 2 (R17) */
-+	u16 alc_ctrl_3; /* ALC control 3 (R18) */
-+	u16 noise_gate; /* Noise gate (R19) */
-+	u16 limiter_ctrl; /* Limiter control (R20) */
-+	u16 adc_mixer; /* ADC mixer control (R21) */
-+
-+	bool should_set_audio;
- };
- 
-+extern struct wm8775_platform_data wm8775_nova_s_cfg;
-+extern struct wm8775_platform_data wm8775_standard_cfg;
-+
- #endif
--- 
-2.51.0
+> > Fix it by just using a closure to call printk. Rust captures the
+> > arguments into the closure's arguments thus breaking the dependency.
+> > This can be fixed by simply creating a variable alias for each variable
+> > however the closure is a simple and concise fix.
+> 
+> I don't think this is the fix we want to have.
 
+Yeah its ugly, though a small workaround. IMO ideally the fix should be in
+the compiler. I want to send a proposal for this in fact. I looked at the MIR
+and I believe with my limited understanding, that the MIR should be issuing a
+copy before making a pointer of the immutable variable if pointers to
+immutable variables are being passed to external functions.
+
+If I were to send a proposal to the Rust language to start a discussion
+leading to a potential RFC stage, would you mind guiding me on doing so?
+
+> In fact it already
+> doesn't compile all of the existing code:
+
+Oh gosh, I should have run doctests. I just did a normal build. Let me see
+if I can fix this closure issue.
+
+> 
+>     error[E0277]: the `?` operator can only be used in a closure that returns `Result` or `Option` (or another type that implements `FromResidual`)
+>         --> rust/doctests_kernel_generated.rs:3446:70
+>          |
+>     3446 |     pr_info!("The frequency at index 0 is: {:?}\n", table.freq(index)?);
+>          |     -----------------------------------------------------------------^-
+>          |     |                                                                |
+>          |     |                                                                cannot use the `?` operator in a closure that returns `()`
+>          |     this function should return `Result` or `Option` to accept `?`
+> 
+> (originating from `rust/kernel/cpufreq.rs:217`)
+> 
+> Can't we just mark the pointer properly as read-only?
+
+I found no way yet to do that. If there is something you'd like me to try,
+let me know. But even if the pointer is a C const pointer, LLVM seems to
+always want to reload it.
+
+Thanks!
+
+ - Joel
+
+
+> 
+> ---
+> Cheers,
+> Benno
+> 
+> > Another approach with using const-generics for the io.write32 API was
+> > investigated, but it cannot work with code that dynamically calculates
+> > the write offset.
+> >
+> > Disassembly of users of pr_err!() with/without patch shows identical
+> > code generation, thus the fix has no difference in the final binary.
+> >
+> > Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
