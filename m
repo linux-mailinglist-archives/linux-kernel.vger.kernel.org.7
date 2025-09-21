@@ -1,123 +1,78 @@
-Return-Path: <linux-kernel+bounces-825968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F56BB8D3B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C77B8D3BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:50:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2957B4AB3
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:41:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2CD3AFB86
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F8254791;
-	Sun, 21 Sep 2025 02:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07729199252;
+	Sun, 21 Sep 2025 02:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhjV7ttH"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUEOe0jL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BFC548EE
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 02:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AE72F29
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 02:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758422598; cv=none; b=corCTiAwDzUQ62y6OlmHJnjLnVoANkVp+XjZ/SbIq/N7/77VWIhhFuWf/s3c464SSbVhYhHjaZe62do28xYQTqM3hMLIm4lvhSCNlDgMK2hMWx7q9YHApeYayPJOI9WwicKrJWHm1b+xD1v1D57oJe3FpME6NCOx/dYybzdQBy8=
+	t=1758423030; cv=none; b=Xd6QWTkL+ilFB0FbSI43YfIIvEI6X2Ke3EdEpPimjb2gbM02Ng7N8u6IRF2IJpNpjgunk2q1KQGcvSa7PshV40DV9bFeiBTCLzTJGBhtcsxNw0mx8/JnH1GhiuBc9eNXcUTga9DhiqyVNf+ieT8wlbhWLDFZbsxf0QusW60ByKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758422598; c=relaxed/simple;
-	bh=IOLNp7bbvWfurHuoNIdJ0OXo/N5Q2rG8Kwy2TSpxEww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aiLbQt3FZ9A+6G3LygsMXS2cyu2yU0UuovLEJkTzflMopqqSGH8VJQciL8HSQ80X6LvtHOn4yc7WhpG3cC+SjRVmKIe0kQbveBLwaKGnDw/FdO5iWVRH2HKCQnUw4uyGPfiMWiawdSmqnFNiWSvruz+yF6+VpiBb6PjvIsoDWWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhjV7ttH; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b07e081d852so661780966b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 19:43:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758422595; x=1759027395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NuEJ7Kuw6nXBxfCflCZImXovS/FAgf8BObIoPTsH704=;
-        b=fhjV7ttHOrlrbrtH01IvFX7CntG4DvBxipSKCbmNFeb1/wcuzEdqikiTbDNnHRKrQr
-         nkEaMVH6M1jJ7nga/pW82uwiN7qAy0GJBMMM12DIPMmNjFXTlbGaB1gDy9ahuI68viWu
-         nr5MAtJG516HckWQMgtqdOT2iJ7bwsU26y1HG41lMrtdJ44J0snLpW/2ehfPfiimpGAf
-         hxnmP7OSoD57TWz9oaiMcV+vNTfZgPHM3PXaer3u2Oh8k/qGgzephwKWiCZ0lrdipz9R
-         qgcJ306bkLKYp7nUyNTKBEj8FXvK4EE1Z+WGxpWC3pPjRi0vmo9pPAPbN9pY8un4J6/8
-         kFCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758422595; x=1759027395;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NuEJ7Kuw6nXBxfCflCZImXovS/FAgf8BObIoPTsH704=;
-        b=UZR5GMRsOD787TuwPAvFqAx16Y1az1zW1jW8ATSr26Pl4RMLH3Kno5MjhvegNYGTiu
-         4tedxyngiBfcnroAZ63sTCxbdjonqejmIDzbsBcpKQk3haaGKuDaKVJo213DfdH6r6LY
-         V0crAzDaxUCGVSy/NlfzZcoGDnUR7K8Tl6Tq27oPz0n88gq8W56vNrlXHbHO2rgr2r+p
-         7y1qjlKh3goDbnoh5ytsAjni/OHYxOMCuGzjlOpwyAsNfQ9P5QG/2H1jk8/bVhWxrUxG
-         rOAG/3qoD9NXl7GXhLQsNqkkDLbHwWQGzztdnN44cBD33P9hiv+MVrDWu0CtqRY1UtR2
-         Z4Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDmQ6tHk4qRd03ncvxjCa5/0jhh7tykaiJ1Uu4TF2i4Iyvz5nm2eV82DmeVxjGDoO5yrUxlSX6dZ+hhxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcnnc3qQr88jWBAho+HGc0/bQrwgLkz9zsZ3pqPhWP818+V5Ad
-	kIHAcgcFp7SMioGT2g1y4yVWbDj3DUA8vGBnwboAVpsQZzq2jErUxdU+
-X-Gm-Gg: ASbGncsFF+dr256U2pOK6XBqGNp3242UvwShs3gFoPBl6uOUQW3bqsZIWGF2LAMrP+B
-	2VsYDjXvuqZ5eYD51JkFswcIP1rE/b+7StGGzSlL8u19MbMWzCnXr/rbp2+5fe5DRKO04SbcT6B
-	awfhcObAZYnNgMFQQ9TuKUJNuirEaBat+Q61MGM+qPgWteTx3UeuVBPmFdhgM+6A3ZD5qSeajfW
-	dYC7rmtJUdhSRiKQp998ZkgumzpRLL1JUFQYEl6xMKmTEUMRnYrAOmX/CgroDjnZuTwecgX5CBX
-	Sp9LHRCSbYqwSfbRTa5xv53HqQgDJYKUCiZW9vl1kbzlF1m7FbgrfeWTzsBvT7gRT9hSRpc63kF
-	1Ujj65mCcDZpyPpgGtHU=
-X-Google-Smtp-Source: AGHT+IEnp3bNDrsmT04jwsuiPJbBPOdlnvUNGeBA+GfxOGwI+dq26By1MGxiqYL9UlRIJoqPtfeHuA==
-X-Received: by 2002:a17:907:96a4:b0:b04:830f:822d with SMTP id a640c23a62f3a-b24f568a6cdmr856877566b.63.1758422595233;
-        Sat, 20 Sep 2025 19:43:15 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b28be3fa38bsm224619366b.46.2025.09.20.19.43.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Sep 2025 19:43:14 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: cyphar@cyphar.com
-Cc: alx@kernel.org,
-	brauner@kernel.org,
-	dhowells@redhat.com,
-	g.branden.robinson@gmail.com,
-	jack@suse.cz,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	mtk.manpages@gmail.com,
-	safinaskar@zohomail.com,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 00/10] man2: document "new" mount API
-Date: Sun, 21 Sep 2025 05:43:10 +0300
-Message-ID: <20250921024310.80511-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
-References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+	s=arc-20240116; t=1758423030; c=relaxed/simple;
+	bh=5xdtYrMfwfRwogunWck//ocyEkoakFistnfKGeOzpYc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IIa47A+k2h0lD9h0b3oxyGpoNlN6rVwNQ8p2zZRWuDIuFyo9374m0FgmFM3JEKJG+fRDKxg9fKHiOsSnI/4Cb+N2kOFhBLNxsF6U1SfaqOTwVIC2Q1NLYvtIgIMSkEU309xrOPyM0UhHJZyV5qdKcUQxcWpHoi4fStRlD1T0Yx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUEOe0jL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E907CC4CEEB;
+	Sun, 21 Sep 2025 02:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758423029;
+	bh=5xdtYrMfwfRwogunWck//ocyEkoakFistnfKGeOzpYc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZUEOe0jL74qXyfhCsIeO9GCymDay9zTQr42DHb1+j96H2OZWfVhb1hRODdM3+iu3x
+	 nwYgSbmtODjlIHw/M1PCQrXPOkAVl8uyjjM+dCF/jAHEFArjAZXvEwjCB6sR8bgjjO
+	 vVhzj3exY8XIru6z2C6X/T+zX2fQpZV9G09jWCO3JPkjcnzPn21kMdw9G8pzUCfpZl
+	 mEm+QbXr5mh27r2W7XiWfHGLUWSsp1ewvkbhJf523iHfuaIRP/6AATTfN3jSHijx4E
+	 MEMVsCO5WcEeZugw5aC6pa9CsJKHni4CW+0YHvKq1KmX6sWqvk2Vygd2tMFNbXWITR
+	 5b1NOMiTtDOHw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE04439D0C20;
+	Sun, 21 Sep 2025 02:50:29 +0000 (UTC)
+Subject: Re: [GIT PULL] firewire fixes for v6.17-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250921012255.GA49526@workstation.local>
+References: <20250921012255.GA49526@workstation.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250921012255.GA49526@workstation.local>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-fixes-6.17-rc7
+X-PR-Tracked-Commit-Id: 853a57ba263adfecf4430b936d6862bc475b4bb5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0f46486981e7c3109aab71623eab3ce26dcadbdf
+Message-Id: <175842302833.4042380.8204477887232775572.pr-tracker-bot@kernel.org>
+Date: Sun, 21 Sep 2025 02:50:28 +0000
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Aleksa, thank you! Don't give up. We all need these manpages.
+The pull request you sent on Sun, 21 Sep 2025 10:22:55 +0900:
 
-I see you didn't address some my previous notes.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-fixes-6.17-rc7
 
-* move_mount(2) still says "Mount objects cannot be attached beneath the filesystem root".
-I suggest saying "root directory" or "root" or "root directory of the process" or just "/"
-instead. But you may keep this phrase as is, of course.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0f46486981e7c3109aab71623eab3ce26dcadbdf
 
-* Docs for FSPICK_NO_AUTOMOUNT in fspick(2) are still wrong. They say that FSPICK_NO_AUTOMOUNT
-affects all components of path. Similar thing applies to mount_setattr(2) and move_mount(2)
-
-* open_tree(2) still says:
-> If flags does not contain OPEN_TREE_CLONE, open_tree() returns a file descriptor
-> that is exactly equivalent to one produced by openat(2) when called with the same dirfd and path.
-
-This is not true if automounts are involved. I suggest adding "modulo automounts". But you may
-keep everything, of course.
+Thank you!
 
 -- 
-Askar Safin
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
