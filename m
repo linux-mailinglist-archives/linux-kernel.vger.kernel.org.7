@@ -1,183 +1,129 @@
-Return-Path: <linux-kernel+bounces-826307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085E2B8E275
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:44:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F663B8E27E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31B9189C775
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:44:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4BC1893E16
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1335A273D7B;
-	Sun, 21 Sep 2025 17:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366B0248F72;
+	Sun, 21 Sep 2025 17:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JwQsDnGV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="gyvhGWpx"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9772F1A2387
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 17:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B1CDF72;
+	Sun, 21 Sep 2025 17:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758476651; cv=none; b=cfpfVjybSVus0UAnGFgOLcKq16tzkBWIA1ZDIRUsMlB7kY0tyEzvCmKN11ImGPmj4RtBMz8zx/PQdwxbDR6d7vW15PvdkWWkoNYUBVEvfEhAtPffbMr1Rij/Uuj99yU9Xwm5SY3zgNA0ChtXTRDnWfeGY4JfqfGFQpT6bXYPaQA=
+	t=1758476726; cv=none; b=XVCJZVZJPSg8SowKPO6C0gsrk+W8Bxz84A4N2sfjH6zVnOyuHJlITtZM6w31O2L3J6eCZXUcjYJMSJXcfEBW4HZvSg2q18PnbStzMxXA71ucik8wL3Dyo1zpJecKc5erCOdbJGmP2nXuEVzomuBv8omxPBk+YAxUZPWP2d/96UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758476651; c=relaxed/simple;
-	bh=LvT8oGd5u6CH/ESo2P4mkZoxFwFx3wJMIuQOb+wu7tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PIOM3PsAiQqPb8imOd6VpQp1WMwVpqXDgnRjmggsIKm8k0mMker/fiahRxtDh9TJI6aiKIPnxFuO4d2z4fuH7fyEO5gZ5XfvxOKLz1icpJQJQ6rT1BairEXeTYO01a4+trVDZXqMwanp1Cmr9Q0cfmhfWY9MibDnKl/6X4HDY6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JwQsDnGV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758476648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ja6bk3OZIOMP0JkRTfcKTdTZycfJVtYVqkigNFQTRI=;
-	b=JwQsDnGVZ/dsVZzaMYDwag6Xk2JGaTh4w8SMnhhmjTHhUa3FdydNtmW42yRGszcIvy+sdt
-	pSw3VRMUQ1cCY1Tjw1R905RHRZMMmO2CQoyiFYU/IZI5MuKQKqOe8cnoZEv11bVDMqH1U4
-	Gv0iGAwkGkEQF+J5j+X5dTwRONwvWN0=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-528-7dQDQvHnPKutPo0o4JhoLQ-1; Sun, 21 Sep 2025 13:44:07 -0400
-X-MC-Unique: 7dQDQvHnPKutPo0o4JhoLQ-1
-X-Mimecast-MFC-AGG-ID: 7dQDQvHnPKutPo0o4JhoLQ_1758476646
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45dd56f0000so39069055e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 10:44:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758476645; x=1759081445;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ja6bk3OZIOMP0JkRTfcKTdTZycfJVtYVqkigNFQTRI=;
-        b=Eb+JfZjukf15T46pKAZd6aIeevZ10vCm3p00TD0IB2YQVX9L8wnFk7/ZLW9EDZ2rg0
-         cFB+Z1QY0U8LJdlQcmVfjpHHzlgEzCEjogbKNaQ6g13N5JgTT3fSIROKCQBhGed3sRlk
-         KAOikmyMXU6FF0GmEzJJk00nIH0wrmckQ5GsFtDT9eVw7IWAcmVKvVHjl+kapbN4z+c5
-         b4D9wC7yuPkZaAYgaIYASo20qHrcVjJX4Gh/NcsDkT82iA05Z09eCP+kJZ0HJocBjR1P
-         Peyav0GzOyH8aV0xyOSOYgQZNdRUxSJpY4TT9Z8RiK+TuMEDApuLNtUWC+FlCATdKLME
-         RcEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNL3XwSSWn95KPxxdZXNv9/Th3B/ZDy8kZzqsP62eeVNlsJXReZgEyOw00leuMB+rZw2YRsRa1oDO8pPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd9I/x6Hh6TrQ17SI/GGcmLMwR2CYOCuTR9iCw0lzjvkUsYlGa
-	Yf0ycD2FbVfq4VLwdkc/tTHmv5eY8kR8u1dUqj4PLA1428hQCHv71yfNj0K/C3ZbpDOs0qN9uPB
-	iiq04FHLOiDttj4PK4vbyswf3LikDnybeqdk0H37HWREdMk+n2C0/Z7/8LfXoy7oaBjsdKhA5wg
-	==
-X-Gm-Gg: ASbGncu0zqRZSuI3hh4XMpUaNaxn80aG0iJ4xsb0aE068DfniPQ/uRXZ9HptenbY6Oz
-	JRe5MSP43aAjtkNXWN7x0Cci6vHO/XiT9td9yB285sw/mLeM6jLUb/bOYnHwBEemFfh2XgSF/SY
-	ZjNHsurWti1DbpZfWBulyj5w+mvvslCjAxP2jh9dc1dVTts2TDu/IAQ9RgtFj+VsuUrqHFUSDbX
-	7hfRl7/pDZA6hz63tXSGUEIrXkBvVXuivIYFwsWJjQCs4zi0w70Uyr4CI/bByaLFh9Nc/l83iPZ
-	/Cx0a3qS4BRZcGhzWGLUPRm6kVw0ZmQL5Q8=
-X-Received: by 2002:a05:600c:8a16:10b0:468:1a3f:c4c7 with SMTP id 5b1f17b1804b1-4681a3fc4e6mr79590195e9.24.1758476645656;
-        Sun, 21 Sep 2025 10:44:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFH0xEwAxiicRk6Wh8us79HfrItFjr2zQbpgO1lL0QPCnZY66TW8UA4iOeJ32MywWIrxn1K+A==
-X-Received: by 2002:a05:600c:8a16:10b0:468:1a3f:c4c7 with SMTP id 5b1f17b1804b1-4681a3fc4e6mr79590085e9.24.1758476645311;
-        Sun, 21 Sep 2025 10:44:05 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-467fc818e00sm128532715e9.0.2025.09.21.10.44.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 10:44:04 -0700 (PDT)
-Date: Sun, 21 Sep 2025 13:44:02 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6 14/19] virtio_ring: determine descriptor flags at one
- time
-Message-ID: <20250921134323-mutt-send-email-mst@kernel.org>
-References: <20250919073154.49278-1-jasowang@redhat.com>
- <20250919073154.49278-15-jasowang@redhat.com>
+	s=arc-20240116; t=1758476726; c=relaxed/simple;
+	bh=k75h3vyn+toM45sEOSU6f34YilzE5L6BQlA1fqCp7xY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X54rc5puJDA05RoslQFp7AWhftcxrjZAAY+naizSOgzJ9bJn4o+ovHM0TN68uq7chRAktHKD6zjA2BIjuiRheXIPIu7c25+K8gtLV1OjLY6VacMczKlVXQk/5pwxtWl496Ly9mqHCeEPdyKqg8WLiBAiT2YZgZ1RlyqIq6LMhzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=gyvhGWpx; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LHCdpB005257;
+	Sun, 21 Sep 2025 10:45:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=aonWGXZwnqaYZaf+BiWo7j+Tw
+	TEIN8skrepV3igixHQ=; b=gyvhGWpxt959FXJSxKfrxxeS0Z0t+Jb4WZvmuqBnZ
+	Zk4kl4gdeyN99H0r9RiI8+5yrVIvrHduwoCCD75QAlqttgYhik0Jx2e5swoOGY2Y
+	8u4xoSRIUdoQgxv5YriNYW4T2Bwq1dg+vUM0I4OSjZTx8tm0IJsdffuHD7Vs3xj5
+	55ChVBcWrKC+/dnKokR4rUGgPpRbxoK3ee4jFG4qPZ+9AtD2YrG8PYrIAOpC+Jyv
+	ddqDs79vUcqy3Vx6RTxE91d6rlGmrkm0TWWBOlCG9zpzmGewXglDnt2m2KhG5D9v
+	9ONasHoQkXdVdrP43eLd4jPlljgWWj5ooEV6e2yTOvzEA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 499ushspwt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 21 Sep 2025 10:45:02 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Sun, 21 Sep 2025 10:45:01 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Sun, 21 Sep 2025 10:45:01 -0700
+Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with SMTP id 2D2A23F7054;
+	Sun, 21 Sep 2025 10:44:56 -0700 (PDT)
+Date: Sun, 21 Sep 2025 23:14:55 +0530
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kuba@kernel.org>, <davem@davemloft.net>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <sbhatta@marvell.com>, <naveenm@marvell.com>,
+        <edumazet@google.com>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+        <bbhushan2@marvell.com>
+Subject: Re: Query regarding Phy loopback support
+Message-ID: <aNA5l3JEl5JMHfZM@test-OptiPlex-Tower-Plus-7010>
+References: <aMlHoBWqe8YOwnv8@test-OptiPlex-Tower-Plus-7010>
+ <3b76cc60-f0c5-478b-b26c-e951a71d3d0b@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919073154.49278-15-jasowang@redhat.com>
+In-Reply-To: <3b76cc60-f0c5-478b-b26c-e951a71d3d0b@lunn.ch>
+X-Proofpoint-GUID: Fb52pkH_ZKHVdVK0Y7YK0n4kew_kvhEH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDExNCBTYWx0ZWRfX2Eqsu/uK1nE5 bhgwDNlhF/rfQs7ciGnj4Cpp21JTClZp/s76FcJ1mQyjbh7SAJe/6sA67dbkBXRRZzrRs2i+q9i XtC14nXt71AAZ1Zxfa7v3HagQsASSjBlD5RFL8Lkh6sWlLbjyiySiRaOYDxUFOla+U+n6bBf6Jt
+ 2gImYntzv4ZUDA7pU9FOHHiLPcJBdcAlr1lo9MGBvxup3gTDs0RVUPVb5kXbsAFhGURG8MRAZIi iKLJS+lCL42mlDhp7zSzqaeLxfs8QCZfEwjTsDEZhE9XR4n6ZXmdc01lhVeI9g/0I46QV5y0m3v XyP0eKtEsYKNEcc1Ni4IaZV40aTWvjyIWafms2DV8aaiajh6SbzMhwUkbz73NKlfjwcyxvIVehg WYgC8ysa
+X-Authority-Analysis: v=2.4 cv=auayCTZV c=1 sm=1 tr=0 ts=68d0399e cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=hxte4uG_x_hChuEVWo0A:9 a=CjuIK1q_8ugA:10 a=quENcT-jsP8hFS3YNsuE:22
+X-Proofpoint-ORIG-GUID: Fb52pkH_ZKHVdVK0Y7YK0n4kew_kvhEH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-21_04,2025-09-19_01,2025-03-28_01
 
-On Fri, Sep 19, 2025 at 03:31:49PM +0800, Jason Wang wrote:
-> Let's determine the last descriptor by counting the number of sg. This
-> would be consistent with packed virtqueue implementation and ease the
-> future in-order implementation.
+On 2025-09-16 at 22:13:20, Andrew Lunn (andrew@lunn.ch) wrote:
+> On Tue, Sep 16, 2025 at 04:48:56PM +0530, Hariprasad Kelam wrote:
+> > We're looking for a standard way to configure PHY loopback on a network 
+> > interface using common Linux tools like ethtool, ip, or devlink.
+> > 
+> > Currently, ethtool -k eth0 loopback on enables a generic loopback, but it 
+> > doesn't specify if it's an internal, external, or PHY loopback. 
+> > Need suggestions to implement this feature in a standard way.
 > 
-> Acked-by: Eugenio Pérez <eperezma@redhat.com>
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 1045c553ee65..0949675a3d12 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -574,7 +574,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  	struct vring_desc_extra *extra;
->  	struct scatterlist *sg;
->  	struct vring_desc *desc;
-> -	unsigned int i, n, avail, descs_used, prev, err_idx;
-> +	unsigned int i, n, avail, descs_used, err_idx, c = 0;
->  	int head;
->  	bool indirect;
->  
-> @@ -631,6 +631,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  	}
->  
->  	for (n = 0; n < out_sgs; n++) {
-> +		sg = sgs[n];
->  		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
->  			dma_addr_t addr;
->  			u32 len;
+> What actually do you mean by PHY loopback?
 
-How does this make any sense?
+The Octeon silicon series supports both MAC (RPM) and PHY (GSERM) loopback 
+modes for testing.
 
-> @@ -638,12 +639,12 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  			if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr, &len, premapped))
->  				goto unmap_release;
->  
-> -			prev = i;
->  			/* Note that we trust indirect descriptor
->  			 * table since it use stream DMA mapping.
->  			 */
->  			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
-> -						     VRING_DESC_F_NEXT,
-> +						     ++c == total_sg ?
-> +						     0 : VRING_DESC_F_NEXT,
->  						     premapped);
->  		}
->  	}
-> @@ -655,21 +656,15 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  			if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &addr, &len, premapped))
->  				goto unmap_release;
->  
-> -			prev = i;
->  			/* Note that we trust indirect descriptor
->  			 * table since it use stream DMA mapping.
->  			 */
-> -			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
-> -						     VRING_DESC_F_NEXT |
-> -						     VRING_DESC_F_WRITE,
-> -						     premapped);
-> +			i = virtqueue_add_desc_split(vq, desc, extra,
-> +				i, addr, len,
-> +				(++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
-> +				VRING_DESC_F_WRITE, premapped);
->  		}
->  	}
-> -	/* Last one doesn't continue. */
-> -	desc[prev].flags &= cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_NEXT);
-> -	if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
-> -		vq->split.desc_extra[prev & (vq->split.vring.num - 1)].flags &=
-> -			~VRING_DESC_F_NEXT;
->  
->  	if (indirect) {
->  		/* Now that the indirect table is filled in, map it. */
-> -- 
-> 2.31.1
+We are seeking a solution to support the following loopback types:
+
+MAC Level
+
+Far-end loopback: Ingress data is routed back to egress data (MAC-to-MAC).
+
+Near-end external loopback: Egress traffic is routed back to ingress traffic at the PCS layer.
+
+PHY Level
+
+Near-end digital loopback
+
+Near-end analog loopback
+
+Far-end digital loopback
+
+Far-end analog loopback
+
+We need suggestions on how to enable and manage these specific modes.
+
+Thanks,
+Hariprasad k
+
+
+
 
 
