@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-826459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CCCB8E943
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:52:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE740B8E949
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D512E188A631
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724473BEC49
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50592C11FC;
-	Sun, 21 Sep 2025 22:52:20 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A022C11DD;
+	Sun, 21 Sep 2025 22:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="E3Un81n/"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521231D5174;
-	Sun, 21 Sep 2025 22:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2D2580CF;
+	Sun, 21 Sep 2025 22:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758495140; cv=none; b=JUdtsyDyfXbTfNB4y5b1YsDNhZbQGrPcJbKmZHynnULF3ADx4hJfMVnV22Mb4Lb5445YFHpGrTO/CAVRjfaF6g8IycvB6xM14ITKiN/nJhpyoAQu5MfjsHqc8HU7nudRFZo4P6QdWrBPuCZ99DJpGc4so2sns4/ZgZaKNHYnyeQ=
+	t=1758495349; cv=none; b=Y9SB/jQ+E0m/cT17FH5MrpiLbhy1qs5ONPNaNU8AlMGBMU958F4DJeD6jUKSN9xqay0qSz3KyYBMGw9hHQ8rUp5Qz8cy88nMADYmSdtFhbEdUTyPRXufRkX4XL/aC/iV/DsNXcBV6y14GMlDc7bb90ZdeF5ZmKvDFOeYjIJ7uV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758495140; c=relaxed/simple;
-	bh=l6iB8zEC32wE/0xRKZAEOKfkRmHgBdDZEOE8AUayh/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a69G/B+j5BEJAkplJZu1jd385q0NNXHZURByOzI8/xKHABlsK2Tly2g5ylI/zQgfAn4XwJAFqrM5WoxF7mNl0LTYXmH4m0Y0tkNjrSdOL30XXWBBfV1p/vocGI/D/Wr5boOw9Nsv/rR8oFHjwTvnTBji2d/+GzarEyxcr1bzyDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id A1129140436;
-	Sun, 21 Sep 2025 22:52:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 47E512002B;
-	Sun, 21 Sep 2025 22:52:04 +0000 (UTC)
-Date: Sun, 21 Sep 2025 18:52:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
- <rostedt@kernel.org>, Menglong Dong <menglong8.dong@gmail.com>,
- jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
- ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
- loop
-Message-ID: <20250921185203.561676ad@batman.local.home>
-In-Reply-To: <20250921130519.d1bf9ba2713bd9cb8a175983@kernel.org>
-References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
-	<175828305637.117978.4183947592750468265.stgit@devnote2>
-	<20250919112746.09fa02c7@gandalf.local.home>
-	<20250921130519.d1bf9ba2713bd9cb8a175983@kernel.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758495349; c=relaxed/simple;
+	bh=URIwaATUK+NdLnPeTmJDkZQV8VmgwLiZzwQtjRLdXck=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=B3KWev9fWJhxjyxQyU8tcGWVR67i4Hpsa5+WOmJRQjNA8+KAZqd3hGMBksYX1ScJiA1P24jWlXTTbHhOWlBKVlnaypFD9ZSlAz5opDDRKn5NgpHQCKuSmvv5lWpHWmLdEXiSstRfk8Kc4KJlIMu117odFM52c6KB7LOTXJ0D9Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=E3Un81n/; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6D58F40B16
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758495347; bh=5zyaBbyPh7EAwE+GJ+JBL35RaUvfL2VQKPWUoi7fTG8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=E3Un81n/xEDKYy2uBwz3En1h09LckqOYXnfMk8JVtPZ/Hz9csC9i2K3Pbf+N129FP
+	 9eoTmK1/K0nINGt8LqE+I3nflW4PWN7YFMZPD9Jm+CXNKORSeWHWPaj0aUfQ3TaUr4
+	 BhYYwiobQ8Duy7JUx2JPQV+HAaJ4Pl1AKDkWSem162f/QC/rfP6wnQXfZjmpaYMmjw
+	 79k2Tyiia0OopG0ZHZMTV+0csxXDCE1k13k1L8MP90wmXLJ/YfUWCdy4ZOMbBRLkBg
+	 f71aLHo8Yt5rgP19vy2vQBToxezz62rnb/XS86qOuc+OUpCMgbo7+SgG4sGNIrRfjq
+	 KiU6hCu9WM7GA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::824])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6D58F40B16;
+	Sun, 21 Sep 2025 22:55:47 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] A couple of patches for sphinx-build-wrapper
+In-Reply-To: <cover.1758361087.git.mchehab+huawei@kernel.org>
+References: <cover.1758361087.git.mchehab+huawei@kernel.org>
+Date: Sun, 21 Sep 2025 16:55:46 -0600
+Message-ID: <87plbj8lfx.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ymjgf5r4ph4miwi3whi5e3di6tdf3psp
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 47E512002B
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18P5y9ZRtFgbQJyiNAHzWvyyES5VKcbakI=
-X-HE-Tag: 1758495124-875404
-X-HE-Meta: U2FsdGVkX1+FbqB4YdQR/TVeMe3gUqMQgNczUCEbyU4RO+OheBoWHICpYVR8RknLRiSrRM1TlcgSHtu1NbdyBvpJ8KfZGGEkzIaC4ySNsM70lTDqTibAYq2HF4tO7YDYjNmofIXm7fBuDsX1hgTjzo4avFePDe84OJ9ig/K/rG3+Ta+dvZ/T4mcXpU6oCM0Bm+n/ap+5kq1qELckN/HmYimKjF9ndkvDS4U2bF/YOGcw1tpXYNz/BwG28M6seXMtkrsHFT0VVTSqVKIUbwfdw3dXliOTII4YnFhveGRuqV4J5XL9Z+2jr1gypyDNqjKYjwniGyw+0lLlRjFrHcHVq3QRjCpDDCuk
+Content-Type: text/plain
 
-On Sun, 21 Sep 2025 13:05:19 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
->  
-> > The reason I would say not to have the warn on, is because we don't have a
-> > warn on for recursion happening at the entry handler. Because this now is
-> > exposed by fprobe allowing different routines to be called at exit than
-> > what is used in entry, it can easily be triggered.  
-> 
-> At the entry, if it detect recursion, it exits soon. But here we have to
-> process stack unwind to get the return address. This recursion_trylock()
-> is to mark this is in the critical section, not detect it.
+> Hi Jon,
+>
+> This small series is against docs/build-script branch.
+>
+> The first patch addresses the lack of a check after running
+> sphinx-build to see if it returned some error code.
+>
+> The second patch is a partial revert: we wneded including
+> sphinx-build-wrapper twice due to a badly-solved rebase from
+> my side.
+>
+> The third patch is a bonus cleanup: it get rids with
+> load_config.py, replacing it by a single line at conf.py,
+> simplifying even further docs Makefile and docs build system.
+>
+> Mauro Carvalho Chehab (3):
+>   tools/docs: sphinx-build-wrapper: handle sphinx-build errors
+>   scripts: remove sphinx-build-wrapper from scripts/
+>   docs: conf.py: get rid of load_config.py
 
-Ah, because the first instance of the exit callback sets the recursion
-bit. This will cause recursed entry calls to detect the recursion bit
-and return without setting the exit handler to be called.
+OK, I've put these onto the build-script branch.
 
-That is, by setting the recursion bit in the exit handler, it will cause
-a recursion in entry to fail before the exit is called again.
+Thanks,
 
-I'd like to update the comment:
-
-+	bit = ftrace_test_recursion_trylock(trace.func, ret);
-+	/*
-+	 * This must be succeeded because the entry handler returns before
-+	 * modifying the return address if it is nested. Anyway, we need to
-+	 * avoid calling user callbacks if it is nested.
-+	 */
-+	if (WARN_ON_ONCE(bit < 0))
-+		goto out;
-+
-
-to:
-
-	/*
-	 * Setting the recursion bit here will cause the graph entry to
-	 * detect recursion before the exit handle will. If the ext
-	 * handler detects recursion, something went wrong.
-	 */
-	if (WARN_ON_ONCE(bit < 0))
-
--- Steve
+jon
 
