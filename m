@@ -1,92 +1,138 @@
-Return-Path: <linux-kernel+bounces-826059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74586B8D6ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C63CB8D6F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F25E3B1087
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:39:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031B717B030
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537B62BE7A0;
-	Sun, 21 Sep 2025 07:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A322D1920;
+	Sun, 21 Sep 2025 07:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jg+I5mIS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BVeEIDXL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rcs92Mkc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C4A17BD6
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 07:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07528282EE;
+	Sun, 21 Sep 2025 07:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758440392; cv=none; b=tLqAzlOLRCdvsS2MeAeSMPX6PRmFRgDNx4jWyc5EeWglKfDiNbqad9tqCuPx22BhO26825OuO2KsLk3n4BInK7GLhwVpBQv78vJHEBIZsZZgkqGalyRgTQxdyo3vNtO0HaKbEpuQ3vM6vuMs0V5fhowq0Utvle8bY2EpTlPNaXI=
+	t=1758440998; cv=none; b=uorVhM77lAxT10X/mQ46WfOkuetbw/xlK/jgekv6BgJzsT+TWNM2mDBxYH6wEMaG5NVyq4T+CE/FkCSVyI+ogLr5zLIBwt15ZzCiI/20/JczUbMLFUCxEk3xr0sgP13qIasZcRVIBk1Jz3is7GXosd+In+wUO+0Mbjm4hviTJLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758440392; c=relaxed/simple;
-	bh=YeDyQS3+mMpnmNaLa0DMpyp/Ge24svjN6e7TseL5PlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QzCRr0oTue27MtYL1aGMRlQBsESuBdPh9QUGZNudccrymKu7tQUzqY0MilHycaG2euOE5lmP6isbXVyrHI6H0QWmr/JMp+HnUYleWIBKp9jaV7Qv4l1WkvPjW9E3+ONA4U1bKQtpt+KRP8u9/FyxzIMy/jRnGCHqXmQFpnMVZUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jg+I5mIS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF0CC4CEE7;
-	Sun, 21 Sep 2025 07:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758440391;
-	bh=YeDyQS3+mMpnmNaLa0DMpyp/Ge24svjN6e7TseL5PlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jg+I5mISszxOM6vxuJLUP7StToWz2ZhNXOYlCHpWWucv2FOMahAAyW9olJkCHsamN
-	 rptxT2zcVb5KRr7njgD83lT1mW0XXICmlWbWIlDs9w8Kq3KCrno3ezVryu+wXrD5Ut
-	 cMyPy+D+JD+TZIebBf999+FwAyKy2KNsit1+aaVs4qnz7B7dbCUeTmHf1yM3nEiyp7
-	 IOOSC4jJ8ECjGy9cGQ/b3k32jrQ3Lyxc1WOE1/LaesVDBbA2qf6h5NOzHxkL1C0aVD
-	 Eu7l0e46W6X6qyeLMYzsCNbNmUMng0duQKijN+C1f9MyeLyCyMSXb9nAoGUrF0bUIa
-	 ZvTVD+X7Gz3qw==
-Date: Sun, 21 Sep 2025 10:39:45 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: Remove PMD alignment constraint in execmem_vmalloc()
-Message-ID: <aM-rwfvR32xmbCXj@kernel.org>
-References: <20250918093453.75676-1-dev.jain@arm.com>
- <aMvf_R4ttLibbnQ1@kernel.org>
- <d4019be7-e24c-4715-a42a-4f1fc39a9bd4@arm.com>
+	s=arc-20240116; t=1758440998; c=relaxed/simple;
+	bh=/zd8kGUu1YDCWPtn6EHp7zCJRb9SI26DdhLUr53dZYY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MwtPq9xBigQq5h096WHFhYHvgHBgM3e7g+BDv5LL8x7FGRkVvFiMYXrcp9CXwHKL45MWejZWWECICMrJAPYRCmNTg0KF1KOPX1qOcCykzDCFeOyzqfBnEMwmkvnLqvYksOUdjwP6KLkIY7gOoCKQVrzUCfMhg7TeMEZsur47PuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BVeEIDXL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rcs92Mkc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758440995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IOOpWtwZTep5n3DEzNoxo1SKgFoVil2Adig32iJIbFQ=;
+	b=BVeEIDXLzmyfzuEOaY6SEmesmRZFXti9LpkUlOSzI2JHJEgTT2URmEikyWbHa09sJf5S5H
+	67Vs4nU+qbk9qvYf1/I1C+8w7Rfx2xjIA2uQzo+WJQMOoVtx38S8galPYGVhBPAdDq0ay0
+	7n2bZobgMciUWfrE8OIdxXHejtUQuJYzaS7tq8qm0uhnl+f70f/rPHw2Pr1rn8QjgpGzJf
+	yj7+c9QMkEo+HCb+glpJxPGxjE/cpkOBgkXsUy4H1cKTnkSQ2HlkLYY2OpYqvNdrqONTy/
+	RlqZV/PujKfNpDsiVBZgQbEDYt/GRvJXNDXkG9N3fr4DHY0Ju0ZNgDgomLUHxQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758440995;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IOOpWtwZTep5n3DEzNoxo1SKgFoVil2Adig32iJIbFQ=;
+	b=rcs92MkcRFmTsC1RjNvdSlKZVrVPWJD92z6VmPJy52bcQEuFpWWZpSkLxUEweyREEcRx+T
+	WwICrJ4NGb0C45Aw==
+To: Wake Liu <wakel@google.com>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ John Stultz <jstultz@google.com>, Shuah Khan <shuah@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, wakel@google.com
+Subject: Re: [PATCH v2] selftests/timers: Consolidate and fix 32-bit
+ overflow in timespec_sub
+In-Reply-To: <20250915191944.9779-1-wakel@google.com>
+References: <fbb55063-ab03-40a9-80f4-4315d12239ba@t-8ch.de>
+ <20250915191944.9779-1-wakel@google.com>
+Date: Sun, 21 Sep 2025 09:49:54 +0200
+Message-ID: <87qzw06y8t.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4019be7-e24c-4715-a42a-4f1fc39a9bd4@arm.com>
+Content-Type: text/plain
 
-Hi Ryan,
+On Tue, Sep 16 2025 at 03:19, Wake Liu wrote:
+> The timespec_sub function, as implemented in several timer
 
-On Thu, Sep 18, 2025 at 02:06:25PM +0100, Ryan Roberts wrote:
-> On 18/09/2025 11:33, Mike Rapoport wrote:
-> > On Thu, Sep 18, 2025 at 03:04:53PM +0530, Dev Jain wrote:
-> >> When using vmalloc with VM_ALLOW_HUGE_VMAP flag, it will set the alignment
-> >> to PMD_SIZE internally, if it deems huge mappings to be eligible.
-> >> Therefore, setting the alignment in execmem_vmalloc is redundant. Apart
-> >> from this, it also reduces the probability of allocation in case vmalloc
-> >> fails to allocate hugepages - in the fallback case, vmalloc tries to use
-> >> the original alignment and allocate basepages, which unfortunately will
-> >> again be PMD_SIZE passed over from execmem_vmalloc, thus constraining
-> >> the search for a free space in vmalloc region.
-> >>
-> >> Therefore, remove this constraint.
-> >>
-> >> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> > 
-> > Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> 
-> Hijacking this thread to ask Mike a related question, which I noticed during
-> code review...
+timespec_sub()
 
-Replied on the related thread :)
-https://lore.kernel.org/all/aM-rDD-TRqmtr6Nb@kernel.org/
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#function-references-in-changelogs
 
--- 
-Sincerely yours,
-Mike.
+> selftests, is prone to integer overflow on 32-bit systems.
+>
+> The calculation `NSEC_PER_SEC * b.tv_sec` is performed using
+> 32-bit arithmetic, and the result overflows before being
+> stored in the 64-bit `ret` variable. This leads to incorrect
+> time delta calculations and test failures.
+>
+> As suggested by tglx, this patch fixes the issue by:
+
+s/this patch fixes/fix/
+
+
+
+> 1. Creating a new `static inline` helper function,
+>    `timespec_to_ns`, which safely converts a `timespec` to
+>    nanoseconds by casting `tv_sec` to `long long` before
+>    multiplying with `NSEC_PER_SEC`.
+>
+> 2. Placing the new helper and a rewritten `timespec_sub` into
+>    a common header: tools/testing/selftests/timers/helpers.h.
+>
+> 3. Removing the duplicated, buggy implementations from all
+>    timer selftests and replacing them with an #include of the
+>    new header.
+>
+> This consolidates the code and ensures the calculation is
+> correctly performed using 64-bit arithmetic across all tests.
+
+This lacks a Signed-off-by.
+
+> Changes in v2:
+>   - Per tglx's feedback, instead of changing NSEC_PER_SEC globally,
+>     this version consolidates the buggy timespec_sub() implementations
+>     into a new 32-bit safe inline function in a shared header.
+>   - Amended the commit message to be more descriptive.
+
+change logs go behind the '---' separator as they are not part of the
+commit message. It's documented how to format a change log properly.
+
+> -#define UNREASONABLE_LAT (NSEC_PER_SEC * 5) /* hopefully we resume in 5 secs */
+> +#define UNREASONABLE_LAT (NSEC_PER_SEC * 5LL) /* hopefully we resume in 5 secs */
+
+How is this change and the pile of similar ones related to $subject and
+why are they required in the first place?
+  
+> index 000000000000..652f20247091
+> --- /dev/null
+> +++ b/tools/testing/selftests/timers/helpers.h
+> @@ -0,0 +1,31 @@
+
+Lacks a SPDX identifier.
+
+scripts/checkpatch.pl exists for a reason.
+
+Thanks,
+
+        tglx
 
