@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-826276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719E1B8E10A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:59:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1CF8B8E11B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32DEC17F7AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:59:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A747E17F62E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1B82D6E76;
-	Sun, 21 Sep 2025 16:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25282D8DB7;
+	Sun, 21 Sep 2025 16:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VN0mQN0Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mj0rfkbg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB40A25E448;
-	Sun, 21 Sep 2025 16:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C3E274B5A;
+	Sun, 21 Sep 2025 16:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758473691; cv=none; b=mba1CLtXNwMXxVC6yo41jkBPmnxq0UQO+I/puV0nu3iRQ2AadPgq8rl3kJ5nUrnj4Zxe4cNmL+qbO70vCkq30RbyjqwIiUOpimJ2S/pHLzUGNgpHzSSuSCT7nm3KApTi7s0bc7hhEAWlHukfJAiLO2xpyXI//pL8H6GndO1huxI=
+	t=1758473696; cv=none; b=QVVVj0peDT45jiXyqGYNSjF6r75abpR4hMzKH6QMQgRmWiloZCXMV0j3NNi+W21opVuzU7GYhZY7SNO5zS8guzximrP0ZEENJHwjAYir7ifYO9ETetZ+3DEjxE9z513GhyY0BNrd6jZW+UYSr7xJV1HA5dFyc4C3Gr4fFc6/kkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758473691; c=relaxed/simple;
-	bh=iOHJwh1s0NuamW/p2z4BcgkGlddB15OwH2HIIS5GZeY=;
+	s=arc-20240116; t=1758473696; c=relaxed/simple;
+	bh=0g9njdnLEl5mydRLxaH3jvOFTeBYgSNJqOzh79cP6TY=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=SeY3C25D6tmRsRo1wTNEOPmJ+yO0V3LA5Fei7NT3xmbiD4wqzm0IpRXlWmVWSgWxEroQ3OBWbXQJV/rnfJUYyM+Olv4u0aid27z6sali9PYyLkZ8v8ojjRfHZ3hR2BCCxsJdWNyb3pQ/z8N4kPuNib3p0Z20kB/uSl4MzR7OhXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VN0mQN0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3E4C4CEE7;
-	Sun, 21 Sep 2025 16:54:51 +0000 (UTC)
+	 To:Date:Message-ID; b=ORwHxSPY1wuf0Yn/Q23qzX8qsxvlRcDtSqKL7tcO7C2e9RzBPuzTmyoHUZch582FEqNrPBwlBdf4f9M1pRrk7kB0Wtesd23PmgLLkfaFjJzAr4GWFNxjuHdh4k47rQwjAneQUjy5VW2rLuDVx9WElzgTujFWesU4/ZwTSmHr0i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mj0rfkbg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BB9C4CEE7;
+	Sun, 21 Sep 2025 16:54:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758473691;
-	bh=iOHJwh1s0NuamW/p2z4BcgkGlddB15OwH2HIIS5GZeY=;
+	s=k20201202; t=1758473695;
+	bh=0g9njdnLEl5mydRLxaH3jvOFTeBYgSNJqOzh79cP6TY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=VN0mQN0ZX/QKnwQqCXdFSTjON+UfALxUPNmvvDkgHgn1eH2HzXhwNV3jvTdp8ct1o
-	 VWYcfA1nvZy7+MDQ9POlp/Br2ldLcNYYCPPWLIFuyyFiwlRGfhoWcp96ngzq3qqlPE
-	 u2cV3kfjuGmg0LwvJBfmHqXd/ie5QhfGWFE1GX7a7M8U+OVsjh/mt1MNQIqja7AgDH
-	 H3+yj0Ld8ntTsg11oCLYgzcf3s1fu3VTxsVDjIT7C0sOG2+3YDAXZZDeViFlmtgmWI
-	 dwcpYfDt9y3mPnGSxqExInZtG3Cj1Gr80S9hxAQbnLCnBuZvuY1LKtFNmmkqvtOh2U
-	 v3GpPX4SCfXjQ==
+	b=Mj0rfkbgZrPNLDegjH7Ma9euYqpgtpGYTjp+Sk2PpeWEcgCBTk6YjBOeAMxrY8mo+
+	 oA/WB0M+2j61a2sxJVJYW+ygsixSY525TQbVSvT84HnmlrnECEYNHH4WBxxKwxR1PU
+	 SoAuqD6AVddqZhMOO1flfo4wFbAsXIflLUf304Zr65T/hYRCW0eE7i+YViKIXRQLip
+	 B6CqwusNYpeijrp7/hSyuLedPvkG1bdi/bP6tJPV5qbRtqkmZlHqaclUMsGCV+/hoM
+	 /C0JR3vP2bvUkYFAyykcxw1hjj42tkGyHZ07gc3uuUjDSHgLOnSJ3blrEtadw8e1nE
+	 8TuzZOAFn/9jQ==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,24 +48,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250915151947.277983-23-laura.nao@collabora.com>
-References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-23-laura.nao@collabora.com>
-Subject: Re: [PATCH v6 22/27] clk: mediatek: Add MT8196 disp1 clock support
+In-Reply-To: <20250915151947.277983-24-laura.nao@collabora.com>
+References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-24-laura.nao@collabora.com>
+Subject: Re: [PATCH v6 23/27] clk: mediatek: Add MT8196 disp-ao clock support
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>
+Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F . R . A . Prado <nfraprado@collabora.com>
 To: Laura Nao <laura.nao@collabora.com>, angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, krzk+dt@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, richardcochran@gmail.com, robh@kernel.org
-Date: Sun, 21 Sep 2025 09:54:50 -0700
-Message-ID: <175847369007.4354.11383510254378857738@lazor>
+Date: Sun, 21 Sep 2025 09:54:54 -0700
+Message-ID: <175847369425.4354.9985195366751682469@lazor>
 User-Agent: alot/0.11
 
-Quoting Laura Nao (2025-09-15 08:19:42)
-> Add support for the MT8196 disp1 clock controller, which provides clock
-> gate control for the display system. It is integrated with the mtk-mmsys
-> driver, which registers the disp1 clock driver via
+Quoting Laura Nao (2025-09-15 08:19:43)
+> Add support for the MT8196 disp-ao clock controller, which provides
+> clock gate control for the display system. It is integrated with the
+> mtk-mmsys driver, which registers the disp-ao clock driver via
 > platform_device_register_data().
 >=20
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org> # CLK_OPS_PARENT_ENABLE re=
-moval
+> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
 ora.com>
 > Signed-off-by: Laura Nao <laura.nao@collabora.com>
