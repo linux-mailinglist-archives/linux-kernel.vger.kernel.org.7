@@ -1,276 +1,159 @@
-Return-Path: <linux-kernel+bounces-826108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567EEB8D8D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A89CB8D8E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40AAE7A57F7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CD92A0161
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E9024336D;
-	Sun, 21 Sep 2025 09:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D264D255248;
+	Sun, 21 Sep 2025 09:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9dkzqTt"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyIJOoMQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC202367B0
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 09:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E9D1A9FB7;
+	Sun, 21 Sep 2025 09:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758448105; cv=none; b=fDnV0UImnGfbo6MXf2zPm1s9wwrSa7Lc0VHUSK+upg9MZd7c/gm3RIcimu182fooCJ0GDvOvl0Y6Cy6OMVHFJcAEcf+qlCvo23qYVDsMW/QIuepnC+ww3M+79qviT3SSz8TTHIRFq+gqG8pWyognDmjV9arToSYf7j6SEE5oaeI=
+	t=1758448245; cv=none; b=Ty/ChZ4e88Im/6kqscmHsLzPJFbSnfAvAl/21C4KO15RW3Bmtq5uVOH6C8UCn3QCy/Epuv76oRxG0sVyG5474j0t2noV74V8Pp2K9bsI9pn5OjNtvG3e808sOVdc3eAeAzPNALfCnygMulDkGFHoxtCy/Cr5ir+olWhRwk3HN/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758448105; c=relaxed/simple;
-	bh=3Xp5rimRDl92A6tE3YHw3ySK0v8J6JaN8mnKUs28wYQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OLPmouhyk7vD7udaf8wdgLYwcxweS0Fl0Rd1ntLCQRVFbALGqsDKIykzAwq5dC8XtNrOxytf9jtXSC4w6sfP3QTWJapIRcN9DMDfbkL+Ot3hpH/I32WeZ0ORGyRRL4xYPSsVVDsvaSa5lYdQaidksHpYxPp+MzfVvbPmBFi7YNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9dkzqTt; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-365df96398bso7433541fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 02:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758448101; x=1759052901; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wodcIgNbF/CozomEA0c/cSEsbbQcOGd021hVupozsU8=;
-        b=Z9dkzqTtldxvuKb7ceU+23Fu52kxGDgBs0fwzgyOVwhe6mIuIbZHMa9dLhwPzf5Hgx
-         cBLHm++Tfc5Pv3dJdjL3GSeYxpYYYv8C2YepwwEaGiG63LRJOacUU9oKc9kvTt5+mKV0
-         mXdBFgsQxJsNGtDIZb50NXPV8J5jE4ERYG3EQ2rauqcI9p2lSomm47gIfb+euaM05yV6
-         tObh56KqspyME5ES+co3/lO0I3yhT5KKf6DPSXGZ0lfg+vDl1SMtwaM5EulCKQ0ZkVtn
-         BK1BAdPA/9JM6I7R1FFVhH2e/keaQpNLIXROGAwnj9kSvuMoABNVSL8Dd0fZ8nn7AFOr
-         2gdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758448101; x=1759052901;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wodcIgNbF/CozomEA0c/cSEsbbQcOGd021hVupozsU8=;
-        b=GPwIYG+BZzSpEJkiH6SYEUbkz7lJILCyTmwhLhmCDor/ZLrTJWqOjaeVDkhLqqG1R0
-         aJnOZ4GRETFwhBflhie4Vw63hu/0rDcjcybXOE9tfsnoLyv5AvVg4CHKTE4UGqadjFlC
-         /QWe9bMuuLRBL2p5FR2OannAI61JUYAL19E4nEph47HNofqrJpVn5vcq6tkaxlHD/WxK
-         vzAdJ2EMxdpHQlsXnO0pA0VIkOtQBiRWBOKDg/RBQFxSwizKxNwC2bgbF3/0anZVhHjy
-         Fir/AIFdlGyCP+9xozoua/nom9+oxt63Ck0Yj4d5G6H/NhE79BJFzyT0FM9Gc5xpyW9X
-         9/Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3M2Cd3lOHQHDmteQjueNg7CZuQWotFCQPEoMHVoBwd0GA8ffxxVTjcm2n3XrCNP8TzospZNlN04uSkyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0WPUZABA1ChouIdJgdcQA1h9InBwO/gmcBUJiJ+9Gz+xtc7bM
-	/pOBtpgop1qkJv/6zDm1SvHAm58FVr/LahpjCe0VeJhCICSg6+7bOr00Ab2jubuabIBOOuBBjGp
-	9rLYXX1TJeFPZW6+W6NHD9kltOrU8hqM=
-X-Gm-Gg: ASbGnctsBYHQlQknNw+uGgKVbJEJSarivUZNE1UXDpM8OEb5qKFJagv4Poj2hi06XWO
-	7xyxTb3FvrA8nSkXPpwal5V1OMtYfYnAyl9/LGNUMYb4FTbhyFlOSA/wWGzgW3XtxW8CSeO3gVU
-	v3rvUOYPW3Tu15c2d0/7o2XJnH/qzBPckpUHh1TF/3J7Jj+UbLwET2NS+J1Np1Zqt++wFlH95MT
-	JMY99A=
-X-Google-Smtp-Source: AGHT+IELiTF7nvBwPVcb8OTPJcd3g9xZRIjW6RnFXdey7MHIswMqgMH5SRSzkS8y6AyvbIgl9a6JpgL9HSWds5p3otc=
-X-Received: by 2002:a05:651c:23d3:10b0:336:e22d:804a with SMTP id
- 38308e7fff4ca-3640b9568cdmr24486581fa.17.1758448101079; Sun, 21 Sep 2025
- 02:48:21 -0700 (PDT)
+	s=arc-20240116; t=1758448245; c=relaxed/simple;
+	bh=N59Z70gVCilCtu6Yr57fTD5r27fdmM7S2RGj49tl7tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9Orj3puoK/KxzWnx10zvBBL2r9IGDkt05c46iwuv0Iv/WyKcPVHP27z3Q1/0ArL5OY6qUisEf3LKMpecTxwBMfI/Afi7KdcQs4jkLbZymQjAWY3cLJ3EpwVtKhIURrwswoLzn1l1QWO1jdWqVrdaVS6qw1xD0g4TJTHWqH5jOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyIJOoMQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECE2C4CEE7;
+	Sun, 21 Sep 2025 09:50:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758448245;
+	bh=N59Z70gVCilCtu6Yr57fTD5r27fdmM7S2RGj49tl7tI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iyIJOoMQnaXN7Hgvo7ZJqgosnyoaK/kvEN+YUGj+H/Psp5mf14Oj7f+JEXOe5mRsq
+	 qRQ3Lhzsh/no4MACz5Id72HIf+JYHqKZG+34yoReukwwEx8Y2TLh4JadG4lXWzLTCK
+	 yaUopyigSm2VbmG5cFVHIIe0PyUmeCQ10kyOaSp/5jSxdyke1jl0qI6U36ZZz0rPku
+	 XL//Vh6OgXSJd9fhyGVIiS/xfWF7Dg2NuNKIcUQZLNJwlsiylVhnXPyJjfG+3RIpT3
+	 a7OUhxmMFK8XUje5IMCnB9P1oiWGSpING3JKB2KVfHDce9av29PnCLWp5KV+vOReEH
+	 3f0pAGNg3/U3w==
+Date: Sun, 21 Sep 2025 11:50:37 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 08/10] man/man2/mount_setattr.2: mirror opening
+ sentence from fsopen(2)
+Message-ID: <fqgxjzw5dxsd6ymm4tmvxmokq4uh2xo6lk5rqhjg4tjw5eblgg@wy5kbuhwmfnx>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918190729.387117-1-akshayaj.lkd@gmail.com> <fe32537d44cbb187e1518740f33e3a6716dd363a.camel@gmail.com>
-In-Reply-To: <fe32537d44cbb187e1518740f33e3a6716dd363a.camel@gmail.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Sun, 21 Sep 2025 15:18:09 +0530
-X-Gm-Features: AS18NWCOXe6o_Ql7bTL6ftgKTumSZmhwaEsTy3nG_6BKoiFchqeKG778ztLixEM
-Message-ID: <CAE3SzaReUnhWyzA8RtdizKeRU2zMsGbvQaVT-ug6v+=Pqq8WzA@mail.gmail.com>
-Subject: Re: [PATCH] iio: accel: bma400: Refactor generic interrupt configuration
-To: =?UTF-8?B?TnVubyBTw6E=?= <noname.nuno@gmail.com>
-Cc: dan@dlrobertson.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="l6cl5aj2kuqvmfn3"
+Content-Disposition: inline
+In-Reply-To: <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
+
+
+--l6cl5aj2kuqvmfn3
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 08/10] man/man2/mount_setattr.2: mirror opening
+ sentence from fsopen(2)
+Message-ID: <fqgxjzw5dxsd6ymm4tmvxmokq4uh2xo6lk5rqhjg4tjw5eblgg@wy5kbuhwmfnx>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
 
-Hi Nuno,
-Thank you so much for your review. Please find follow-ups inline.
+Hi Aleksa,
 
-On Fri, Sep 19, 2025 at 5:34=E2=80=AFPM Nuno S=C3=A1 <noname.nuno@gmail.com=
-> wrote:
->
-> Hi,
->
-> Thanks for your patch.
->
-> On Fri, 2025-09-19 at 00:37 +0530, Akshay Jindal wrote:
-> > Refactor the generic interrupt configuration logic to improve readabili=
-ty
-> > and reduce repetitive code. Replace hard-coded register values with mac=
-ros
-> > and enums, making it clearer what configuration is written to hardware.
-> >
-> > Introduce a const struct to map event direction to the corresponding
-> > generic interrupt. This removes the need for switch statements in multi=
-ple
-> > callbacks, including activity event setup, read_event_value, and
-> > write_event_value, while still performing the selection at runtime.
-> >
-> > This change has no functional impact but simplifies the code and makes =
-it
-> > easier to maintain and extend in future updates.
-> >
-> > Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
-> > ---
->
-> You may be trying to refactor too much in one single patch. I would maybe=
- think
-> about splitting this into 2/3 logical changes.
->
-> >  drivers/iio/accel/bma400.h      |  71 +++++++++++++++---
-> >  drivers/iio/accel/bma400_core.c | 128 ++++++++++++++++----------------
-> >  2 files changed, 125 insertions(+), 74 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/bma400.h b/drivers/iio/accel/bma400.h
-> > index 932358b45f17..ab7d1d139b66 100644
-> > --- a/drivers/iio/accel/bma400.h
-> > +++ b/drivers/iio/accel/bma400.h
-> > @@ -68,7 +68,19 @@
-> >  #define BMA400_CMD_REG              0x7e
-> >
-> >  /* Interrupt registers */
-> > -#define BMA400_INT_CONFIG0_REG           0x1f
-> > +#define BMA400_INT_CONFIG0_REG                       0x1f
-> > +#define BMA400_INT_CONFIG0_ORTN_CHG_MASK     BIT(1)
-> > +#define BMA400_INT_CONFIG0_GEN1_MASK         BIT(2)
-> > +#define BMA400_INT_CONFIG0_GEN2_MASK         BIT(3)
-> > +#define BMA400_INT_CONFIG0_FIFO_FULL_MASK    BIT(5)
-> > +#define BMA400_INT_CONFIG0_FIFO_WTRMRK_MASK  BIT(6)
-> > +#define BMA400_INT_CONFIG0_DRDY_MASK         BIT(7)
-> > +
-> > +enum generic_intr {
-> > +     GEN1_INTR,
-> > +     GEN2_INTR
-> > +};
-> > +
-> >  #define BMA400_INT_CONFIG1_REG           0x20
-> >  #define BMA400_INT1_MAP_REG      0x21
-> >  #define BMA400_INT_IO_CTRL_REG           0x24
-> > @@ -96,15 +108,53 @@
-> >  #define BMA400_ACC_ODR_MIN_HZ       12
-> >
-> >  /* Generic interrupts register */
-> > -#define BMA400_GEN1INT_CONFIG0      0x3f
-> > -#define BMA400_GEN2INT_CONFIG0      0x4A
-> > -#define BMA400_GEN_CONFIG1_OFF      0x01
-> > -#define BMA400_GEN_CONFIG2_OFF      0x02
-> > -#define BMA400_GEN_CONFIG3_OFF      0x03
-> > -#define BMA400_GEN_CONFIG31_OFF     0x04
-> > -#define BMA400_INT_GEN1_MSK         BIT(2)
-> > -#define BMA400_INT_GEN2_MSK         BIT(3)
-> > -#define BMA400_GEN_HYST_MSK         GENMASK(1, 0)
-> > +#define BMA400_GENINT_CONFIG_REG_BASE        0x3f
-> > +#define BMA400_NUM_GENINT_CONFIG_REGS        11
-> > +#define BMA400_GENINT_CONFIG_REG(gen_intr, config_idx)       \
-> > +     (BMA400_GENINT_CONFIG_REG_BASE +                \
-> > +     (gen_intr) * BMA400_NUM_GENINT_CONFIG_REGS +    \
-> > +     (config_idx))
->
-> Not sure the above macro helps that much. More on this below...
-In my last patch regarding ltr390, I was given feedback towards
-reducing the number of macro definitions. This may look little cryptic,
-but it enables me to access GEN1(11) + GEN2 (11) registers with only
-2 definitions. I see it as a reasonable tradeoff between readability and
-code volume.
+On Fri, Sep 19, 2025 at 11:59:49AM +1000, Aleksa Sarai wrote:
+> All of the other new mount API docs have this lead-in sentence in order
+> to make this set of APIs feel a little bit more cohesive.  Despite being
+> a bit of a latecomer, mount_setattr(2) is definitely part of this family
+> of APIs and so deserves the same treatment.
+>=20
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
-> >  static bool bma400_is_writable_reg(struct device *dev, unsigned int re=
-g)
-> >  {
-> >       switch (reg) {
-> > @@ -1114,10 +1137,10 @@ static int bma400_read_event_config(struct iio_=
-dev
-> > *indio_dev,
-> >       case IIO_ACCEL:
-> >               switch (dir) {
-> >               case IIO_EV_DIR_RISING:
-> > -                     return FIELD_GET(BMA400_INT_GEN1_MSK,
-> > +                     return FIELD_GET(BMA400_INT_CONFIG0_GEN1_MASK,
-> >                                        data->generic_event_en);
->
-> Like the above is above renaming defines in a more logical name. Not goin=
-g to
-> opinate whether this name is better or not but you could put that (and ot=
-her
-> similar changes) in one patch.
+Thanks!  I've applied this patch.
+<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
+mit/?h=3Dcontrib&id=3D7022531182883ed1db5d4c926506cd373e0795ee>
+(Use port :80/)
 
-Initially, I thought of doing this, but if you look at the diff in bma400.h=
-,
-only GEN1_MASK and GEN2_MASK have been renamed and re-placed closer
-to their register definition macro. Rest all of them are either new
-introductions
-or have gone for good. Hence I felt it might be an overkill to create
-a new patch
-just for 2 reg bit renaming. At the same time, I feel new
-introductions should be
-clubbed with their usage. Ofcourse, all of them are not being used, but eve=
-n if
-the code is using 1 bit of a reg, then all of its fields should be defined.
-Due to the above logic, I kept it in a single patch. Although happy to chan=
-ge if
-you still feel otherwise.
 
->
-> >               case IIO_EV_DIR_FALLING:
-> > -                     return FIELD_GET(BMA400_INT_GEN2_MSK,
-> > +                     return FIELD_GET(BMA400_INT_CONFIG0_GEN2_MASK,
-> >                                        data->generic_event_en);
-> >               case IIO_EV_DIR_SINGLETAP:
-> >                       return FIELD_GET(BMA400_S_TAP_MSK,
-> > @@ -1159,59 +1182,50 @@ static int bma400_activity_event_en(struct bma4=
-00_data
-> > *data,
-> >                                   enum iio_event_direction dir,
-> >                                   int state)
-> >  {
-> > -     int ret, reg, msk, value;
-> > -     int field_value =3D 0;
-> > -
-> > -     switch (dir) {
-> > -     case IIO_EV_DIR_RISING:
-> > -             reg =3D BMA400_GEN1INT_CONFIG0;
-> > -             msk =3D BMA400_INT_GEN1_MSK;
-> > -             value =3D 2;
-> > -             set_mask_bits(&field_value, BMA400_INT_GEN1_MSK,
-> > -                           FIELD_PREP(BMA400_INT_GEN1_MSK, state));
-> > -             break;
-> > -     case IIO_EV_DIR_FALLING:
-> > -             reg =3D BMA400_GEN2INT_CONFIG0;
-> > -             msk =3D BMA400_INT_GEN2_MSK;
-> > -             value =3D 0;
-> > -             set_mask_bits(&field_value, BMA400_INT_GEN2_MSK,
-> > -                           FIELD_PREP(BMA400_INT_GEN2_MSK, state));
-> > -             break;
-> > -     default:
-> > -             return -EINVAL;
-> > -     }
-> > +     int ret, regval;
-> > +     u8 genintr =3D bma400_genintrs[dir].genintr;
-> > +     u8 detect_criterion =3D bma400_genintrs[dir].detect_mode;
-> > +     unsigned int intrmask =3D bma400_genintrs[dir].intrmask;
-> >
->
-> Hmm, you should still have the switch case. Again, not sure the const str=
-uct
-> adds that much but I'm also fine with it. But I would do:
->
-> switch (dir) {
-> case IIO_EV_DIR_RISING:
-> case IIO_EV_DIR_FALLING:
->         genintr =3D bma400_genintrs[dir].genintr;
->         detect_criterion =3D bma400_genintrs[dir].detect_mode;
->         intrmask =3D bma400_genintrs[dir].intrmask;
-> default:
->         return -EINVAL;
->
-Thank you for detailing it out. Yes this gives the best of both worlds.
-Uses the centralized lookup struct as well as makes sure dir is sanitized.
-Will wrap it up in a function and apply in the v2.
+Cheers,
+Alex
 
-Thanks,
-Akshay.
+> ---
+>  man/man2/mount_setattr.2 | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+> index 4b55f6d2e09d00d9bc4b3a085f310b1b459f34e8..b27db5b96665cfb0c387bf5b6=
+0776d45e0139956 100644
+> --- a/man/man2/mount_setattr.2
+> +++ b/man/man2/mount_setattr.2
+> @@ -19,7 +19,11 @@ .SH SYNOPSIS
+>  .SH DESCRIPTION
+>  The
+>  .BR mount_setattr ()
+> -system call changes the mount properties of a mount or an entire mount t=
+ree.
+> +system call is part of
+> +the suite of file descriptor based mount facilities in Linux.
+> +.P
+> +.BR mount_setattr ()
+> +changes the mount properties of a mount or an entire mount tree.
+>  If
+>  .I path
+>  is relative,
+>=20
+> --=20
+> 2.51.0
+>=20
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--l6cl5aj2kuqvmfn3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjPym0ACgkQ64mZXMKQ
+wqlqQA//YViaFY14YGkPZkvGfXH09U/qqIi0e46N5YgGFG0hZiU2s+7rqapL2SpA
+qHTN0cEYkE8aZS4Km0BYJbF1PIDphUjAyyxE73wvvq4P8vADndIHxBDeRF3H4fOr
+Jv5FMQtE9uBfjA8J5CpRupQ8n1+cq6cx3+Z6h9ggAvSgCjE2DgOn5IUhQnM1Dem4
+sNihwz9JcUkCKbWnDNBh2cGR9yRGxF19jO2MjJrfrgkqe4ggLO27q92PEGqqtiMk
+8jU9/ld3RdpJtx8zYx3nd0hpQmQXdsYmvSRExHikj2Z7Vi4AgvRAAH2Rb2daeBp1
+jI6uhKRzoCF3yrczKAx1wnKAd2DznwFcyV+CBUM8EYR4EvVBKoROygW/4PuHQBX/
+/IUQotQpYe/Mqd0RoCDEJMhibzqTk/Q7tdWZ4FC7Jw4VJiZ91G4ozRIvOWuGSjVW
+eRv5Qo9pVeWZIcYSFa2gZ087t5rzBtBpDnafJ+jSjrXTHGAFQFACM0KTpVutSRP6
+2U7M7n/EzMDcZlBEo6b98FNjJi97QgM3v3yFAp0yis+gnuVu6aGX+q9dre4kV19C
+IN95x1Bz0kzLYndy7vrthfMrBd2IfkQZKoyPi+TWlfKvY4BJeoNon6ALgUlWwZOX
+RCs0jtOLwIfwnJWGVgQwdIpazfOsp5Jd8zF/2nmD+o3F4CDMbxk=
+=qxgm
+-----END PGP SIGNATURE-----
+
+--l6cl5aj2kuqvmfn3--
 
