@@ -1,96 +1,296 @@
-Return-Path: <linux-kernel+bounces-825938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8434B8D2AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6771B8D2B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AA748068C
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 508471775F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858AE78F4B;
-	Sun, 21 Sep 2025 00:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A90439ACF;
+	Sun, 21 Sep 2025 00:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hnNfO0SU"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cy2r37Ap"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E722F4A;
-	Sun, 21 Sep 2025 00:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB09208D0
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 00:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758413880; cv=none; b=BM1LNmJcgK49s6s4E3KokLJQKkkm+MINrZS6rSIuYBU4JgpMOcRe2f16gyWfUKJ1oJOe7q5jagftrKXzZN7NCjaxhsXXKAwpei6Drxolvv4M+aHxOWXqZ1Yc0HjDESK8Hepbp2TENWwhWCXdCFXGmGr/kyhGPTrYy/oYhQNO1wM=
+	t=1758414663; cv=none; b=cx7eoruJJAVmt1KF4kepUXtyogImfasD2YbR8PCp3+YrWp2Afm7z83oKWxvYzhLrsp3dXfwIAtwJJWrKjGKoYoxys2A5E91cQuKwdJskzpM/JOyDuC+/Xyn6TWxlX0NAfnE6sJuMQ4GT5FAGwhZnusZJiGGcQWGahMiXE4zcRiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758413880; c=relaxed/simple;
-	bh=LJu7bWI7bi776pLKP2h3f6v2o/uN8gKM7T4wCk9yYd0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SaXkkOZ6ymYW5e5C4iQLIbpwjkhybP1PieaaZq2xKtuC2EjLDeQzYYG0zCiqPW5YKJIDvgKTLxOfUaLrCstW1losTyUAT1Jb0niMy961P5Z1P7XWKG//VuIHpUl/H3nWNZ9KFl+0zi8ekmw8KQ88CBm3fNzkIg9me03GDiqv/YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hnNfO0SU; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=SoG7Bheeo1ZuenR2+gEAL/c/uKVjDyCX5DenDPBYO+k=; b=hnNfO0SUdAZth2+TmeIU2DaDvH
-	bX9C8l0jv5e61N/tsNeVYL6T7LVBqCOiZcnGX7Gzj4X8k5K+YRyfBtXjh9gFHpOX39seIn9lTSfPi
-	DcbRIB3ZdatkufI1AD7QHtoMVsjYeiCrG1woEDAcaBgeQCCYO+rVhjx/PV142VMR3pM70kVDrOojP
-	MlbghUQIlPVnYIP0DIAVSFJ7XohbKKGxJcjWkbqbuPK4Hwa2DwVQQENLFSRj+SakBenb3vYA6OXz1
-	IacRjxncJl3DsseyjHDHqJm8SA6faoxDtlhttDYmfMuDr+0CIAMeI8/IuEMNzjGDxm4R5M9AWxp+x
-	ZpTskQkA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v07m8-000000067PF-2Us6;
-	Sun, 21 Sep 2025 00:17:56 +0000
-Message-ID: <883df949-0281-4a39-8745-bcdcce3a5594@infradead.org>
-Date: Sat, 20 Sep 2025 17:17:56 -0700
+	s=arc-20240116; t=1758414663; c=relaxed/simple;
+	bh=t4qjfS0JajmUmGRVlQ1ZwdnkeMbZKYR+so4Sw5Xf0H0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lcUD/RrEqEvHa+F7IDw0WDy4oP1s2L0lRVBmbaEZulRL40B/eku3qG6HX3ArknPaMJ4AVYw8WKngEtP9/pJxNbdcFFu32XJ9g+8L7Hbjjgo7EZXfKaliRDRMCT75K0tJ7j0QuxWbaRpSvMdu/EMWEx5U+volHzG3v//Ynj21VEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cy2r37Ap; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77f2077d1c8so421821b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:31:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758414661; x=1759019461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M+58Sx+Vf9qDRURRTyjx8USlv7zRGtIJ/9Bqpeei8a8=;
+        b=Cy2r37ApM7eLCz7QosDowXvK0nCeed7M464rDbZDe77uotciHAzpvw7Qm6+P9ycv3f
+         VJGeuehtO7xRSoAaggDa2EO0Qvk2vhRbv/XPZ+GwdBe2I2MLiZjQsnKW2GWQifEkDqrx
+         hBhU1A+8sl8AjBxll/rX616tRXw7RHGSKRjZHx3I2NPR5m1tFzR2LGM2vV3vmuAKlCYC
+         He0SnJw19TkvAwFH0JJl/wJe43AHAUpR0JBm/3lkxsoExKuby4grel0Eh1JOLOQ6Ky/u
+         mFwlxW2B1nVVgBYLhbatKEURzVLIarB6jnRkLFYTD43YZQs3gXkVSEsGWaGpR25pGjIa
+         vWXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758414661; x=1759019461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M+58Sx+Vf9qDRURRTyjx8USlv7zRGtIJ/9Bqpeei8a8=;
+        b=cWrRSwh1kJMjPoM1iTYgKuMkSTeh2+idF2G+fBma4tk0plQhURca1p2G57grGucznf
+         ehVNWu/hMIoiWQKg/iSTSQEQwG3FHEtMzgunb6Xo2riU/OqiqIMmVNW07mjDL7W/Nw9d
+         I79yLxl+JGcY/cPCQ0B7ByDnS60khQEydHL/hwneWVAKXuxMR+W+DT1lsT8/mi+/4ETk
+         v7JQC18Xj42BhgSNx1y0nulWouSQbGvF92LAvBcQ/PHO/oLeKMn+GHhBXzoG+An7ZyzT
+         QcNpr6Lj+rVVN4yVUMHLruUpkRF3owDj6bRMTwXpWKiQT3iaLB8jGA+Mxk1Zt+FT1DlN
+         73JA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT0VSXh38+kIN56RK1+sqHaAJPgT2YiHT/RV0y3QfIhiD36mL/bdjCtq/laOdEOes3RBXp5tylY7m89gk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy91eALpcYGkbRnZnXE2YHMpHEEJo9y6wAyJrjI30QpI0GB0C+P
+	qhoIKn6OQmXAYSbnboAR+9fEd3rWeVLt1Uf/r888e2yepoSn1TF/jzOREi4XKw==
+X-Gm-Gg: ASbGncvLpPFlrf3YMkGz96UFu86g952mPF/XWluQmTkkmueyOdaTs5yXkSkZC1vxX22
+	bS0HKM1WwapbevhCOerOXPYVyY95wXpNBfPw8iAaMxtrnODI9qJuQ0sR4BHKW//c8GiGn1GKYk1
+	2U8zuSRpYmNQDtLhNv3a7oiSYU5MRWZrP87dO1zyzGymDqqYA+zCWzXzlwqEpzYwwxkf2wjKwb2
+	lGO7tomRcQH7UoEk6mlV0dEAYm+iydIFMziaG6IxdiRgBxFGzjOxaoUYFLtAvEoqTiVEa0SG0mK
+	pzxirfVIRDTHqmM6d6sokOl3sOBR5OgEyKpOcJocezgPrm4P6i1Jg7lIEuGsqLBP6PETQk7oB2H
+	gyAczRMHTndp3h4dkfmMj5ZI=
+X-Google-Smtp-Source: AGHT+IGq41WgnCrAeSw+woHi2U/JmzNR1alDHEIckZeunCloMf+3pg6EWv7zdT1YYGOKZuR2gl7c+g==
+X-Received: by 2002:a05:6a20:728c:b0:249:467e:ba70 with SMTP id adf61e73a8af0-29218ad80a1mr11400793637.24.1758414661024;
+        Sat, 20 Sep 2025 17:31:01 -0700 (PDT)
+Received: from fedora ([172.59.162.206])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f23d92ef0sm1631575b3a.102.2025.09.20.17.30.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 20 Sep 2025 17:31:00 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v2] media: i2c: wm8775: parameterize wm8775_platform_data based on config
+Date: Sat, 20 Sep 2025 17:30:46 -0700
+Message-ID: <20250921003046.946811-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Sep 19 (make htmldocs problem)
-To: Mark Brown <broonie@kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-References: <aM1xVa_SX3_QFU_q@sirena.org.uk>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aM1xVa_SX3_QFU_q@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Parameterized wm8775_platform_data struct, removing the single boolean
+for determining device type. wm8775_standard_cfg struct will be used
+for standard devices and wm8775_nova_s_cfg for nova_s devices. 
 
-On 9/19/25 8:05 AM, Mark Brown wrote:
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+Changes in v2:
+- rebased from mchehab linux media onto media committers tree
+- resolve patch and build errors
+ drivers/media/i2c/wm8775.c          | 109 ++++++++++++++++------------
+ drivers/media/pci/cx88/cx88-video.c |   4 +-
+ include/media/i2c/wm8775.h          |  25 +++++--
+ 3 files changed, 83 insertions(+), 55 deletions(-)
 
-With today's linux-next, when I do 'make O=DOC1 htmldocs', I get:
-
-make[1]: Entering directory '/home/rdunlap/lnx/repo/linux-next/DOC1'
-../Documentation/Makefile:71: warning: overriding recipe for target 'pdfdocs'
-../Documentation/Makefile:62: warning: ignoring old recipe for target 'pdfdocs'
-  File "/usr/bin/sphinx-build", line 1
-    ELF
-SyntaxError: source code cannot contain null bytes
-make[1]: Leaving directory '/home/rdunlap/lnx/repo/linux-next/DOC1'
-
-where the "ELF" line contains some binary bytes that are not shown
-via copy/paste. Here they are in hex in case that might help:
-
-7f 45 4c 46 02 01 01 0a              .ELF....
-
-
-I don't see what is causing this, so I am using the previous day's
-linux-next for Documentation testing etc...
-
-Any ideas/suggestions appreciated.
-
+diff --git a/drivers/media/i2c/wm8775.c b/drivers/media/i2c/wm8775.c
+index 56778d3bc..6218fc3fe 100644
+--- a/drivers/media/i2c/wm8775.c
++++ b/drivers/media/i2c/wm8775.c
+@@ -50,6 +50,43 @@ struct wm8775_state {
+ 	u8 input;		/* Last selected input (0-0xf) */
+ };
+ 
++struct wm8775_platform_data wm8775_standard_cfg = {
++	.reset = 0x000, /* RESET */
++	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
++	.interface_ctrl =
++		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
++	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
++	.powerdown = 0x000, /* Powered up */
++	.adc_l = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
++	.adc_r = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
++	.alc_ctrl_1 =
++		0x1bf, /* ALC Stereo, ALC target level -1dB FS max gain +8dB */
++	.alc_ctrl_2 = 0x185, /* Enable gain control, ALC hold time 42.6 ms */
++	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
++	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
++	.limiter_ctrl = 0x07a, /* Window 4ms, lower PGA gain limit -1dB */
++	.adc_mixer = 0x102, /* LRBOTH = 1, use input 2. */
++	.should_set_audio = false,
++};
++
++struct wm8775_platform_data wm8775_nova_s_cfg = {
++	.reset = 0x000, /* RESET */
++	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
++	.interface_ctrl =
++		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
++	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
++	.powerdown = 0x000, /* Powered up */
++	.adc_l = WM8775_REG_UNUSED,
++	.adc_r = WM8775_REG_UNUSED,
++	.alc_ctrl_1 = 0x1bb, /* Stereo, target level -5dB FS, max gain +8dB */
++	.alc_ctrl_2 = WM8775_REG_UNUSED,
++	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
++	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
++	.limiter_ctrl = 0x0fb, /* Transient window 4ms, ALC min gain -5dB  */
++	.adc_mixer = WM8775_REG_UNUSED,
++	.should_set_audio = true, /* set volume/mute/mux */
++};
++
+ static inline struct wm8775_state *to_state(struct v4l2_subdev *sd)
+ {
+ 	return container_of(sd, struct wm8775_state, sd);
+@@ -195,12 +232,8 @@ static int wm8775_probe(struct i2c_client *client)
+ 	struct wm8775_state *state;
+ 	struct v4l2_subdev *sd;
+ 	int err;
+-	bool is_nova_s = false;
+-
+-	if (client->dev.platform_data) {
+-		struct wm8775_platform_data *data = client->dev.platform_data;
+-		is_nova_s = data->is_nova_s;
+-	}
++	struct wm8775_platform_data *data = client->dev.platform_data ?:
++						    &wm8775_standard_cfg;
+ 
+ 	/* Check if the adapter supports the needed features */
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
+@@ -233,49 +266,29 @@ static int wm8775_probe(struct i2c_client *client)
+ 	}
+ 
+ 	/* Initialize wm8775 */
++	wm8775_write(sd, R23, data->reset);
++	wm8775_write(sd, R7, data->zero_cross_timeout);
++	wm8775_write(sd, R11, data->interface_ctrl);
++	wm8775_write(sd, R12, data->master_mode);
++	wm8775_write(sd, R13, data->powerdown);
++	if (data->adc_l != WM8775_REG_UNUSED)
++		wm8775_write(sd, R14, data->adc_l);
++	if (data->adc_r != WM8775_REG_UNUSED)
++		wm8775_write(sd, R15, data->adc_r);
++	wm8775_write(sd, R16, data->alc_ctrl_1);
++	if (data->alc_ctrl_2 != WM8775_REG_UNUSED)
++		wm8775_write(sd, R17, data->alc_ctrl_2);
++	else
++		wm8775_write(sd, R17,
++			     (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
++	wm8775_write(sd, R18, data->alc_ctrl_3);
++	wm8775_write(sd, R19, data->noise_gate);
++	wm8775_write(sd, R20, data->limiter_ctrl);
++	if (data->adc_mixer != WM8775_REG_UNUSED)
++		wm8775_write(sd, R21, data->adc_mixer);
++	if (data->should_set_audio)
++		wm8775_set_audio(sd, 1);
+ 
+-	/* RESET */
+-	wm8775_write(sd, R23, 0x000);
+-	/* Disable zero cross detect timeout */
+-	wm8775_write(sd, R7, 0x000);
+-	/* HPF enable, left justified, 24-bit (Philips) mode */
+-	wm8775_write(sd, R11, 0x021);
+-	/* Master mode, clock ratio 256fs */
+-	wm8775_write(sd, R12, 0x102);
+-	/* Powered up */
+-	wm8775_write(sd, R13, 0x000);
+-
+-	if (!is_nova_s) {
+-		/* ADC gain +2.5dB, enable zero cross */
+-		wm8775_write(sd, R14, 0x1d4);
+-		/* ADC gain +2.5dB, enable zero cross */
+-		wm8775_write(sd, R15, 0x1d4);
+-		/* ALC Stereo, ALC target level -1dB FS max gain +8dB */
+-		wm8775_write(sd, R16, 0x1bf);
+-		/* Enable gain control, use zero cross detection,
+-		   ALC hold time 42.6 ms */
+-		wm8775_write(sd, R17, 0x185);
+-	} else {
+-		/* ALC stereo, ALC target level -5dB FS, ALC max gain +8dB */
+-		wm8775_write(sd, R16, 0x1bb);
+-		/* Set ALC mode and hold time */
+-		wm8775_write(sd, R17, (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
+-	}
+-	/* ALC gain ramp up delay 34 s, ALC gain ramp down delay 33 ms */
+-	wm8775_write(sd, R18, 0x0a2);
+-	/* Enable noise gate, threshold -72dBfs */
+-	wm8775_write(sd, R19, 0x005);
+-	if (!is_nova_s) {
+-		/* Transient window 4ms, lower PGA gain limit -1dB */
+-		wm8775_write(sd, R20, 0x07a);
+-		/* LRBOTH = 1, use input 2. */
+-		wm8775_write(sd, R21, 0x102);
+-	} else {
+-		/* Transient window 4ms, ALC min gain -5dB  */
+-		wm8775_write(sd, R20, 0x0fb);
+-
+-		wm8775_set_audio(sd, 1);      /* set volume/mute/mux */
+-	}
+ 	return 0;
+ }
+ 
+diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
+index 0c8732768..a3729fd73 100644
+--- a/drivers/media/pci/cx88/cx88-video.c
++++ b/drivers/media/pci/cx88/cx88-video.c
+@@ -1353,9 +1353,9 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
+ 		struct v4l2_subdev *sd;
+ 
+ 		if (core->boardnr == CX88_BOARD_HAUPPAUGE_NOVASPLUS_S1)
+-			core->wm8775_data.is_nova_s = true;
++			core->wm8775_data = wm8775_nova_s_cfg;
+ 		else
+-			core->wm8775_data.is_nova_s = false;
++			core->wm8775_data = wm8775_standard_cfg;
+ 
+ 		sd = v4l2_i2c_new_subdev_board(&core->v4l2_dev, &core->i2c_adap,
+ 					       &wm8775_info, NULL);
+diff --git a/include/media/i2c/wm8775.h b/include/media/i2c/wm8775.h
+index a02695ee3..99678d165 100644
+--- a/include/media/i2c/wm8775.h
++++ b/include/media/i2c/wm8775.h
+@@ -20,13 +20,28 @@
+ #define WM8775_AIN3 4
+ #define WM8775_AIN4 8
+ 
++#define WM8775_REG_UNUSED ((u16)-1)
+ 
+ struct wm8775_platform_data {
+-	/*
+-	 * FIXME: Instead, we should parameterize the params
+-	 * that need different settings between ivtv, pvrusb2, and Nova-S
+-	 */
+-	bool is_nova_s;
++	u16 reset; /* RESET (R23) */
++	u16 zero_cross_timeout; /* Zero cross detect timeout (R7) */
++	u16 interface_ctrl; /* Interface control (R11) */
++	u16 master_mode; /* Master mode (R12) */
++	u16 powerdown; /* Power down (R13) */
++
++	u16 adc_l; /* ADC left (R14) */
++	u16 adc_r; /* ADC right (R15) */
++	u16 alc_ctrl_1; /* ALC control 1 (R16)*/
++	u16 alc_ctrl_2; /* ALC control 2 (R17) */
++	u16 alc_ctrl_3; /* ALC control 3 (R18) */
++	u16 noise_gate; /* Noise gate (R19) */
++	u16 limiter_ctrl; /* Limiter control (R20) */
++	u16 adc_mixer; /* ADC mixer control (R21) */
++
++	bool should_set_audio;
+ };
+ 
++extern struct wm8775_platform_data wm8775_nova_s_cfg;
++extern struct wm8775_platform_data wm8775_standard_cfg;
++
+ #endif
 -- 
-~Randy
+2.51.0
 
 
