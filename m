@@ -1,183 +1,120 @@
-Return-Path: <linux-kernel+bounces-826334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36215B8E366
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01656B8E372
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E09C717E0FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:40:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA75817D89D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE35F213E9F;
-	Sun, 21 Sep 2025 18:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D9624C077;
+	Sun, 21 Sep 2025 18:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hI5Nmh/B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qaU7NRve"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB4026F287
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 18:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A6D8F54;
+	Sun, 21 Sep 2025 18:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758480008; cv=none; b=P0bKuFPI3dtGqd4iTrH2UoX7kvVA5zjDib5Dxi9NDKLyrBLUzOCAfwFlGIBz3wJHq+B1r0KFtlNCGfeBsguIZIOsBoWwwpio/icLPNlz25ETgg8GUctAzjnzg20xPImktd3zX+W+7o0SUhqMRp8vUNy5zIyz9qNt1Kk2vgwarvI=
+	t=1758480189; cv=none; b=qM0FdvRDAnKyIAZVmcx8IfgDHp+onWcgYahKApzfZr0J5FjLgsaC5bqYkPly5swXNwSPGRCI6oIw5qiw6pjQe0uLs51aChq1JcK0XJEnxdVsIxbbMz4jvX36Rmh7n/6zxNA9wWO4b15/vC2cveV0k/wX9i/vvEe7lX5OkvswJXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758480008; c=relaxed/simple;
-	bh=N2URmMcqqSL9E+49wAyf/0otiSSQtKZ5dw8twXpZWps=;
+	s=arc-20240116; t=1758480189; c=relaxed/simple;
+	bh=kz8+rJ3OwRE88qi+eE8kRDASDAeDA8L3yK0pRJpy4Rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2uXCqKJqQtGxw8QrGApTkrqWDnAtm+npFMFXz2GBJUSFa6Ju2xObdhzVQsYMq9gzeyyYleJ2Qy7914Ap3moLm2wLDk6XBzVnisBCwiHdZH2Tn0qQBft0iD1EvYEL0nt2Try17lXCWCZJ9X19YxLWSXS/yK9pC3J7jQe8Y/hR1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hI5Nmh/B; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758480004;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RJXH+iEnGEt26c26vQRT9hIQ+xfb73XIUiLB79dbIag=;
-	b=hI5Nmh/BYok5oiaARdlijDhluvohHsxinZwvTMft3zf2i/k+piTvyDozg/zDPhUKJIVrNO
-	yOOQ0i1FTR8yF/fycJO8u5B31ymJ5r5e/8csQzuzwsHJhgtGzp/Dyx7iQTruK0v+WL3LzZ
-	QoGsJLtGjI1EJUYkAA8j3ZQdoTGEeKA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-216-09DN1mo3PVugZqJJpA2ukw-1; Sun, 21 Sep 2025 14:39:57 -0400
-X-MC-Unique: 09DN1mo3PVugZqJJpA2ukw-1
-X-Mimecast-MFC-AGG-ID: 09DN1mo3PVugZqJJpA2ukw_1758479996
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45f28552927so28716835e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 11:39:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758479996; x=1759084796;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJXH+iEnGEt26c26vQRT9hIQ+xfb73XIUiLB79dbIag=;
-        b=gIhgKY0p4M0mIUliQIDMUMK1zhlkqtVTyuNSlIA2QNEIIA6Ulb9io1UkrybBonFkRH
-         hIjTuZTbm60n2OlsXqaHPUZwVzo4+f13LhTbdNKa0gDsB7ugOtvVB917W6ePf5cO7R2X
-         y2D4E4s+ryxY/YfLkmD/H+nKohtYYf2szEkw940dI6TPqY/oIOjMcaq3kaUwVZkpwW/u
-         r90moMonU29WD2EGj3a3ZqyF7U9fmu171oK+puczi4MGlxvttH260CZ6uN3KQFhjUQQ7
-         iOcTm+BhmMZZTVEd+BfpSCbbEdDT3FVBoS016Iz8I+E+3vVkdimfOkNwhx1yA5d63PKY
-         dt4A==
-X-Forwarded-Encrypted: i=1; AJvYcCU9qSwiHtIqLWlB35YK4LrDy07384ZuE/RiA4Py4lmatuZHtjUeRrmzE+R6ePqgfuKLFttPfV25vn+VD9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGev1ZOerfIlP4hIt0/a4xXYaYn/0HWIZCu7z5161mF1i7695p
-	fKoOHapsJnKO1jiL/MBK+bp/Nbl604g3i9QwwC1Z+XHUTjnc/JbA7GSXfETh6nUfFTPDPN5LkNn
-	MoFEhXsiFtHOGgXP1GAPUwe3nus0qyE2iCvEFLiPPWhslnr/k6UgMLWOc28xeaN3Kbg==
-X-Gm-Gg: ASbGncu9qQ0kJh75Tb9AevKJfU+hDjJ4oUXUAeWLqEJdqAofrNQYLckQ/1VRA3RZMR2
-	Ue68mpOeDSIxV1Y+DCIyw4ltlOqkX0GOkVCfVcCWIl3ZV/Y9uL+/m0pkWsB3fG2jtzWbT3p8wF1
-	a2vLC12uIpoI32xFEhpTcDTUWlB4PPzGgJQ5bwT4Y84AyPcQT23LGpO9jmu7DFS7hckrWAEwOtt
-	asbfNwdCh0PxbeUWExWJsFOskKFXDCPcgm0wmTusNf6hWpembqzhbvVnE23oIjAvVJp470vQ4Df
-	s77dgVVxnzJBxf3Ye2is1pU8L3YIdZAl5Fs=
-X-Received: by 2002:a05:600c:4f42:b0:468:7a5a:725 with SMTP id 5b1f17b1804b1-4687a5a0801mr95488175e9.1.1758479995821;
-        Sun, 21 Sep 2025 11:39:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF1CBCIW++Ueg7vKc5VsvYUAu+SHw7b8hKtcbIM6zE006kbvlAaeQ1o+vByx1lH4SuXnMbMJQ==
-X-Received: by 2002:a05:600c:4f42:b0:468:7a5a:725 with SMTP id 5b1f17b1804b1-4687a5a0801mr95488085e9.1.1758479995417;
-        Sun, 21 Sep 2025 11:39:55 -0700 (PDT)
-Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f32640f49sm117008595e9.9.2025.09.21.11.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 11:39:54 -0700 (PDT)
-Date: Sun, 21 Sep 2025 14:39:52 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6 14/19] virtio_ring: determine descriptor flags at one
- time
-Message-ID: <20250921143758-mutt-send-email-mst@kernel.org>
-References: <20250919073154.49278-1-jasowang@redhat.com>
- <20250919073154.49278-15-jasowang@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGa9R5+fpGnHNO+vc3tneVc6DPfupaLG8RY35KA8+VRjt2cHiWXa1tHSTKyHOnsf8CKOER48T9131xd/tItrbPD/jMX6L/7fE+G3BHWdbY4UeFdOsuPqaPwfxmyv5kk/7/smMT4kHJ3dGDXshsAUMYJtK2/V6BpXAxZtWWb4A0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qaU7NRve; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=mwIooN8k13SoYRJ7KEz/xkVOkWcWn7ux3nhsoOLZo9o=; b=qaU7NRvejjiEjJmEY8pUOQ/AVk
+	ykrJ2rANOXWvNjd99dglSOASAKFgiqjyCTtDXZ2ndhSRx4lw/fVdOg8hVzMpm/cmDc9sF/FAgS5Bj
+	BZr5Ez/LQaJlUYbNzwomFxLCoktJNMv6j+hcP3xYeTcxTUBx9GERViiz3m5x1jjgCC9s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v0P1T-00962g-3H; Sun, 21 Sep 2025 20:42:55 +0200
+Date: Sun, 21 Sep 2025 20:42:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Hariprasad Kelam <hkelam@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, sgoutham@marvell.com, gakula@marvell.com,
+	sbhatta@marvell.com, naveenm@marvell.com, edumazet@google.com,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, bbhushan2@marvell.com
+Subject: Re: Query regarding Phy loopback support
+Message-ID: <defa4c07-0f8f-43cc-ba8d-0450998a8598@lunn.ch>
+References: <aMlHoBWqe8YOwnv8@test-OptiPlex-Tower-Plus-7010>
+ <3b76cc60-f0c5-478b-b26c-e951a71d3d0b@lunn.ch>
+ <aNA5l3JEl5JMHfZM@test-OptiPlex-Tower-Plus-7010>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919073154.49278-15-jasowang@redhat.com>
+In-Reply-To: <aNA5l3JEl5JMHfZM@test-OptiPlex-Tower-Plus-7010>
 
-On Fri, Sep 19, 2025 at 03:31:49PM +0800, Jason Wang wrote:
-> Let's determine the last descriptor by counting the number of sg. This
-> would be consistent with packed virtqueue implementation and ease the
-> future in-order implementation.
+On Sun, Sep 21, 2025 at 11:14:55PM +0530, Hariprasad Kelam wrote:
+> On 2025-09-16 at 22:13:20, Andrew Lunn (andrew@lunn.ch) wrote:
+> > On Tue, Sep 16, 2025 at 04:48:56PM +0530, Hariprasad Kelam wrote:
+> > > We're looking for a standard way to configure PHY loopback on a network 
+> > > interface using common Linux tools like ethtool, ip, or devlink.
+> > > 
+> > > Currently, ethtool -k eth0 loopback on enables a generic loopback, but it 
+> > > doesn't specify if it's an internal, external, or PHY loopback. 
+> > > Need suggestions to implement this feature in a standard way.
+> > 
+> > What actually do you mean by PHY loopback?
 > 
-> Acked-by: Eugenio Pérez <eperezma@redhat.com>
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 21 ++++++++-------------
->  1 file changed, 8 insertions(+), 13 deletions(-)
+> The Octeon silicon series supports both MAC (RPM) and PHY (GSERM) loopback 
+> modes for testing.
 > 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 1045c553ee65..0949675a3d12 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -574,7 +574,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  	struct vring_desc_extra *extra;
->  	struct scatterlist *sg;
->  	struct vring_desc *desc;
-> -	unsigned int i, n, avail, descs_used, prev, err_idx;
-> +	unsigned int i, n, avail, descs_used, err_idx, c = 0;
->  	int head;
->  	bool indirect;
->  
-> @@ -631,6 +631,7 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  	}
->  
->  	for (n = 0; n < out_sgs; n++) {
-> +		sg = sgs[n];
->  		for (sg = sgs[n]; sg; sg = sg_next(sg)) {
->  			dma_addr_t addr;
->  			u32 len;
-> @@ -638,12 +639,12 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  			if (vring_map_one_sg(vq, sg, DMA_TO_DEVICE, &addr, &len, premapped))
->  				goto unmap_release;
->  
-> -			prev = i;
->  			/* Note that we trust indirect descriptor
->  			 * table since it use stream DMA mapping.
->  			 */
->  			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
-> -						     VRING_DESC_F_NEXT,
-> +						     ++c == total_sg ?
-> +						     0 : VRING_DESC_F_NEXT,
+> We are seeking a solution to support the following loopback types:
+> 
+> MAC Level
+> 
+> Far-end loopback: Ingress data is routed back to egress data (MAC-to-MAC).
+> 
+> Near-end external loopback: Egress traffic is routed back to ingress traffic at the PCS layer.
+> 
+> PHY Level
+> 
+> Near-end digital loopback
+> 
+> Near-end analog loopback
+> 
+> Far-end digital loopback
+> 
+> Far-end analog loopback
+> 
+> We need suggestions on how to enable and manage these specific modes.
 
-I would indent this line a bit more to the right - it is a continuation,
-after all.
+Whatever you put in place, it needs to be generic to support other
+modes. So you need some sort of enum which can be extended. When
+describing the different modes, please try to reference 802.3, so it
+is clear what each actually means. And if it is a vendor mode, please
+describe it well, so other vendors know what it is, and can match
+their vendor names to it.
 
->  						     premapped);
->  		}
->  	}
-> @@ -655,21 +656,15 @@ static inline int virtqueue_add_split(struct vring_virtqueue *vq,
->  			if (vring_map_one_sg(vq, sg, DMA_FROM_DEVICE, &addr, &len, premapped))
->  				goto unmap_release;
->  
-> -			prev = i;
->  			/* Note that we trust indirect descriptor
->  			 * table since it use stream DMA mapping.
->  			 */
-> -			i = virtqueue_add_desc_split(vq, desc, extra, i, addr, len,
-> -						     VRING_DESC_F_NEXT |
-> -						     VRING_DESC_F_WRITE,
-> -						     premapped);
-> +			i = virtqueue_add_desc_split(vq, desc, extra,
-> +				i, addr, len,
-> +				(++c == total_sg ? 0 : VRING_DESC_F_NEXT) |
-> +				VRING_DESC_F_WRITE, premapped);
->  		}
->  	}
-> -	/* Last one doesn't continue. */
-> -	desc[prev].flags &= cpu_to_virtio16(vq->vq.vdev, ~VRING_DESC_F_NEXT);
-> -	if (!indirect && vring_need_unmap_buffer(vq, &extra[prev]))
-> -		vq->split.desc_extra[prev & (vq->split.vring.num - 1)].flags &=
-> -			~VRING_DESC_F_NEXT;
->  
->  	if (indirect) {
->  		/* Now that the indirect table is filled in, map it. */
-> -- 
-> 2.31.1
+Frames received on the Media loopback vs host transmitted frames
+should be another property.
+
+Are you wanting to use this with ethtool --test? That operation is
+still using IOCTL. So you will want to add netlink support, both in
+ethtool(1) and net/ethtool/netlink.c, so you can add the extra
+optional parameters to indicate where loopback should be
+performed. And them plumb this through the MAC ethtool to phylink and
+phylib, and maybe the PCS layer, if you have a linux PCS involved.
+
+	Andrew
 
 
