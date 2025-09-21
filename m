@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-826326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BEAB8E32E
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:30:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22B4B8E336
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9490D7A8ED7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBAA17E084
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCBE274B3B;
-	Sun, 21 Sep 2025 18:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722181E8324;
+	Sun, 21 Sep 2025 18:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XSYi9caj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XRHbxTH5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE4A275B15
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 18:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA75A137C52
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 18:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758479400; cv=none; b=fDfGMA30/bgH1RoJc9g0/fpsV2YX5AG++8leimgznKfyCpI4EXN2+FmuLAUdpzbpOG8ihcU4XY7daoLv+ekKW3zWjMsNwtp/LpXU8h7s5NYCYzjb0oaL69mvdxSnksfNV+XwFIOTPZLvkeu5Jd6zW7eTtD2dutn2UAaIJP/Rf3g=
+	t=1758479439; cv=none; b=O4AeRRADCvGkGiK3oa24hfUuloGeinzlH/4QNXE7gk/uanf1Jw9NNECCNOxhtjzs/l3WE2riVHhE57AJI9dhB5fmayMgQLoVFGd3ds8LpwuWNnioeadZR3CHdC+AaVNiopBhprE3FUWZ0k4lyj/Y2j1k3ooYvjJrv8sb/KnmPLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758479400; c=relaxed/simple;
-	bh=pMyxOGeb5oVjj4fEP0W1iI+2iew8pDxqBbAOsvbwy1w=;
+	s=arc-20240116; t=1758479439; c=relaxed/simple;
+	bh=PMDUKQQmZGqLpivLY4JWsbJn9ktkVyhHNKqEF0O+HkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYWzjQrz2aBqs55pbZy2cSOfRA/EnF3kOLSwpBWz77wxk2ffQ+3wu0i2ONfOr/fXrKP9Ead7duinWINTCGVnoe6+GTzd9CCfRVovjyCdFJGJmNNtFUGYP6Ijn7x6Z70pSn5lA3kjSc0zGFTggRBeUq7RP5Lwh9wIpX2R/KqNxcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XSYi9caj; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=g5eu/pTBUAutU8nYouiIJy58/SZyIm6/cOyCsirNyzzDcssQscwS87LtKnJsx8ms9hkM3j+mBfIPH3mWVA3xC06IaHZPeMpHVerBG5Romm8faD9Ox98hFkp7mvyHs2fyji6EKul+7ctDd+eIaTXqYspcheWXF5rQfQ8V5qGMhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XRHbxTH5; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758479396;
+	s=mimecast20190719; t=1758479436;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Xi3Q36Umb1ocjAnnL+rb74WQIv9fN4aAewp/7ADKp5s=;
-	b=XSYi9cajJ+otuUsHNtOZ8M2svfPwVT9CMJ/1TpTESOrarnzsEqJOwp3qHUK7tlZHWgUn8c
-	499y4fFCvEPNWGPyVh+m38sd4Us1kZR7gRvnNsv/gV8A5lFLxhnGyMAJGRsgLlP3RyJjky
-	nSEikPm6heja9YaIx6cSi6zoWajTPjs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RtLN1C8BH/iw2KBS7duzlUD7pYh8eLvynIT5XvElx4c=;
+	b=XRHbxTH5oqOzRz22py7XXf2jJxfvnpK/uuihhAMGksoE832ByLlPyd5lxbSc3Vf/jgv8xR
+	ZxbVjOv30rFNuFeuafWb2RFqDHL1Urlo0jOPXZ1DSB0lLxRYEZpGjNyi0zPUHV3g9y6dyg
+	UHhzMWppa6bTPQDCTiiK9N9YyKt0iA8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-540-wShiSCCzMhODe4muSVhQgQ-1; Sun, 21 Sep 2025 14:29:48 -0400
-X-MC-Unique: wShiSCCzMhODe4muSVhQgQ-1
-X-Mimecast-MFC-AGG-ID: wShiSCCzMhODe4muSVhQgQ_1758479388
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f42b54d159so910073f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 11:29:48 -0700 (PDT)
+ us-mta-245-P2FDwadsMuOJ1OcXxw7j0A-1; Sun, 21 Sep 2025 14:30:33 -0400
+X-MC-Unique: P2FDwadsMuOJ1OcXxw7j0A-1
+X-Mimecast-MFC-AGG-ID: P2FDwadsMuOJ1OcXxw7j0A_1758479432
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ece14b9231so1722630f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 11:30:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758479387; x=1759084187;
+        d=1e100.net; s=20230601; t=1758479432; x=1759084232;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xi3Q36Umb1ocjAnnL+rb74WQIv9fN4aAewp/7ADKp5s=;
-        b=Q+7ITZUZQP6FWxcAIJnPiKFGSe+Wvy8CMzx8ZpmGg1hB64oDDTxWHukaPNIWYJZifs
-         /4q6RLVFoMZ/o5nP8Ca3HsxWq1VfLtrJijoka4Q5Z0ubJj5rhFM6exDAwaz3lWEmVuCc
-         tGQ8rK6BeJ+dM2Va2j7K7pRY/5EF2vSTt2emZwGzcJlJCZ9Vr9taOgR7NbI5UI6Mk3av
-         SQr9q27U8PBVZZ7mSQgPTY4etbKzwAbnds3c4EQutIXfND1K34B1QTh9qwIOmWMVs4BP
-         wF7w88TSStpXs3cZwlUiWi6FdMhHE/qIcBHfbleNUnZ/JLJg3n9LOqyoxMY6vm9I5F3g
-         zIEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUO30FP9Y9p5Bqn8JeDE3YwiPM/xhIfLcBsr/vL643JAM9EHC4IXVWkQexpVvZrkC/ljM8v8gl9tEiwRbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwonOQcxGgfbZQrC3S7t59OGreaElWL4gl95mP621idB+mMXDNR
-	agXJ0YwJdrcwDMNHHxouO0DIlj0EyfGIkBGCql10W9e6GZiZmEALT8k+5I8yzaXb2CDh9rAHReN
-	5yoUSVIt9qdGDhxtI/Ncr3JGPLLBvcVA/dCsTpC2Lrbrhd/3YK3cKIiU4V1VKiJTUczOTNirP4A
-	==
-X-Gm-Gg: ASbGncukKiiCpVjbI/uN2qo68Yzks6xi8NGj57LH/2K+76vDOWMIpp8LA/uS2sAGwqE
-	tZKPuGm2F8aPuEkRXCpX9k5ODn4zvxygQ57XzGtkOkRFgWGSrVoZ+cNXrYInp95ksHdVfVEx3qF
-	Pyzeu0v0o1P6XKa7CRne8Sl1CM+ZhOF1dvDUGByUAq4w9l3eMhF4hHEeNJ4K0AYhaeQY1oqpF7k
-	8ZdnMbqImEJzT6SRfU1WniZrCkhZ4r7eVCNsv7Cx5w2ojshWtJ/MabBs9HWeSUKdnwrlVFwNhu/
-	DyDvUpl8foYmmOlAVZl61+hoKRdHAhvbyR8=
-X-Received: by 2002:a05:6000:1885:b0:3de:78c8:120e with SMTP id ffacd0b85a97d-3ee7c5542dcmr7437647f8f.6.1758479387338;
-        Sun, 21 Sep 2025 11:29:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEu+sBvIt0LD21VK9jjeR773Ft05O6meMKTSw+bHki1OLH+aCrewOi3MGKyVBlQ1Z0xCPojyQ==
-X-Received: by 2002:a05:6000:1885:b0:3de:78c8:120e with SMTP id ffacd0b85a97d-3ee7c5542dcmr7437632f8f.6.1758479386938;
-        Sun, 21 Sep 2025 11:29:46 -0700 (PDT)
+        bh=RtLN1C8BH/iw2KBS7duzlUD7pYh8eLvynIT5XvElx4c=;
+        b=VaMctkJL3STNsvQq8PMKWHDQ4yTxasQ1NnGupvVa7s1bF657j/sC2ntN8AG9DvIAbW
+         QtZ6ik2FYkKMMEc3zRFeUNzSVVKVHiWPhniKfdz8y1xcdLyG91P0M1RpbEvxYtGOK7mE
+         oAVrumoQuIisE4rx7NbaX5FYWFPz6n2+DVfHCBBOfQ4s0aRZYGa0t16LHuk3XY/xGauY
+         KN7YylXoK0Ew2s8NjiAT+FyRdpjrTdqtokhO8eKt6bcWO0F4FJqs70xLcLB/voWY2KOs
+         a+v0KR5olJtkoqR8TxGvHXtp0/ZWYQGiHXiXP5FlmWvq+SzaOL5JojNFwCqjKo0c+iqf
+         3wjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSrsoj0vhvE1Ern4y6dQOx17Mto8V3/6r0Bma5P+j6q6jKXxXBzpk4jRPIoEcvz9w1mKnHVzq/myTpK+Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ/tvLjaquP9IkoFifJDh/6Y3Hqui1jAB+V3ywJXUuIiu1bbAF
+	O9o6KR54rug89zv4XHgjVI/ep8RgonwpIsB0wctJF/kbZayKl4scwCgsxwHY+NkHwzzHVJkqlOj
+	1PvO0+YmF/M+MP/HwqGzzSNMCku2CM15KBosBoQ/lyBW6ZvTnjEBaAmX1DVVGiOeiTQ==
+X-Gm-Gg: ASbGncsyNYGVE46qljL8s3bGB23DBlTw0I7A1vQklRNFnkIYnjkQrsKg0OaxdXkPmNH
+	rWArRN7r4r5WnNJaXBE/FwOxYica53eFazqd8KgbNujEQeurMb81coAtObLO9lQnDQJk0fXXiyp
+	Ra7aadpM/F+m/pQjPuZLeeV/OMEk6CqbLT4xjbQkitauiTS7+k0VXSQWzqJxKjz89ASMtqkOKI0
+	9UFLoHR5xSs49F7vDECANCDNfBFA2/gMYL5IHNgOz6ShKFkX3nCee3F7v1mWyoFRzd8ms/zK0id
+	oyYI8fg0BlVOM9lavuVURFjJbLVva+JZjy8=
+X-Received: by 2002:a05:6000:4210:b0:3e7:6197:9947 with SMTP id ffacd0b85a97d-3ee868a74bamr9345044f8f.53.1758479431890;
+        Sun, 21 Sep 2025 11:30:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3f4teE4HzWpOGKP+JaITqWsn77PVM6zJ/ttnb3obDGEXcGZ4GaGHy94uIwfy2e7Adqzj5HQ==
+X-Received: by 2002:a05:6000:4210:b0:3e7:6197:9947 with SMTP id ffacd0b85a97d-3ee868a74bamr9345017f8f.53.1758479431238;
+        Sun, 21 Sep 2025 11:30:31 -0700 (PDT)
 Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f95c5cdaaesm4751670f8f.4.2025.09.21.11.29.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f325c3c29sm128771735e9.3.2025.09.21.11.30.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 11:29:46 -0700 (PDT)
-Date: Sun, 21 Sep 2025 14:29:44 -0400
+        Sun, 21 Sep 2025 11:30:30 -0700 (PDT)
+Date: Sun, 21 Sep 2025 14:30:28 -0400
 From: "Michael S. Tsirkin" <mst@redhat.com>
 To: Jason Wang <jasowang@redhat.com>
 Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
 	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH V6 17/19] virtio_ring: factor out split indirect
  detaching logic
-Message-ID: <20250921142505-mutt-send-email-mst@kernel.org>
+Message-ID: <20250921143014-mutt-send-email-mst@kernel.org>
 References: <20250919073154.49278-1-jasowang@redhat.com>
  <20250919073154.49278-18-jasowang@redhat.com>
 Precedence: bulk
@@ -103,19 +102,16 @@ In-Reply-To: <20250919073154.49278-18-jasowang@redhat.com>
 On Fri, Sep 19, 2025 at 03:31:52PM +0800, Jason Wang wrote:
 > Factor out the split indirect descriptor detaching logic in order to
 > make it be reused by the in order support.
-> 
+
+and I think you mean "allow it to be reused"
+
 > Acked-by: Eugenio Pérez <eperezma@redhat.com>
 > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 > Signed-off-by: Jason Wang <jasowang@redhat.com>
 > ---
 >  drivers/virtio/virtio_ring.c | 63 ++++++++++++++++++++----------------
 >  1 file changed, 35 insertions(+), 28 deletions(-)
-
-
-it is just a refactoring but the code can be prettified a bit. see
-below. you can make it a separate patch if you prefer but i think
-it is ok to do here.
-
+> 
 > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
 > index f376f717c8e4..5aa0cd785362 100644
 > --- a/drivers/virtio/virtio_ring.c
@@ -130,30 +126,16 @@ it is ok to do here.
 > +	struct vring_desc_extra *extra = vq->split.desc_extra;
 > +	struct vring_desc *indir_desc =
 > +	       vq->split.desc_state[head].indir_desc;
-
-We no longer need to split this.
-It was like this because it was indented.
-By itself  it fits under 80 chars even without and
-that is no longer a hard limit.
-
 > +	unsigned int j;
 > +	u32 len, num;
 > +
 > +	/* Free the indirect table, if any, now that it's unmapped. */
 > +	if (!indir_desc)
 > +		return;
-
-
-en empty line won't hurt here.
-
 > +	len = vq->split.desc_extra[head].len;
 > +
 > +	BUG_ON(!(vq->split.desc_extra[head].flags &
 > +			VRING_DESC_F_INDIRECT));
-
-same thing here. no need to wrap anymore.
-
-
 > +	BUG_ON(len == 0 || len % sizeof(struct vring_desc));
 > +
 > +	num = len / sizeof(struct vring_desc);
@@ -164,9 +146,6 @@ same thing here. no need to wrap anymore.
 > +		for (j = 0; j < num; j++)
 > +			vring_unmap_one_split(vq, &extra[j]);
 > +	}
-
-use of {} questionable. we can keep it if you prefer though.
-
 > +
 > +	kfree(indir_desc);
 > +	vq->split.desc_state[head].indir_desc = NULL;
