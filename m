@@ -1,318 +1,118 @@
-Return-Path: <linux-kernel+bounces-826197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC17B8DCEC
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:48:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B254EB8DCF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9593A658D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:48:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F0A53BBC01
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB7E7263B;
-	Sun, 21 Sep 2025 14:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC971624E9;
+	Sun, 21 Sep 2025 14:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b="GOGsnqAG"
-Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gei8tqbQ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C028F54
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149334BA28
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758466126; cv=none; b=hkiHaN+1DYlIZIR0wXQPsNtwucE+1lrXpWutBmEckt7rARctVGlHoERrQIbNiQ1GSVTos9qqaj1zFFgiSykhbwlS8b5qWBKp7Wn++DmH1iyALkPMxldCcdDF05hccHhOhAqeRTWozPvRLsj0fVLUaP9ukFa75Axjv5v4c8LYLQQ=
+	t=1758466506; cv=none; b=rlrN/vSc9ouKbrD0HSJGCxdoyADz+cW+8gckr9wBULq6j9sDxNR21N9FyJ/v42mgWE/4xfRA987PagwoJPhN/V7g7/6Oh/4yFm5J2+zWeNUu5bN42xvm1g49nE0Lqj92bXE6tCFbKBh6uiXsjETXGSq0niCR52zZCkzWNphM3u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758466126; c=relaxed/simple;
-	bh=t5GM36bLnT2Tb+7cz1gIRjOEPpmXcgyffFG+EGwy6i4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpuKArZAnxGobTqHtGOBtYGrsNKlwhYbW0g33Ph14B4YAl+5EmkJr0Dat+/Vfm1yPeWinXSrO33f30pDoMb6//iToZOLun8D7D9jM3try83NV9HgcnRLYSEFHr3iwoo8oGWjshCMq+px9qpsdAK9NQGalXO21kXQfgHwi3nFip8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me; spf=pass smtp.mailfrom=fwd.mgml.me; dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b=GOGsnqAG; arc=none smtp.client-ip=133.167.8.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fwd.mgml.me
-Received: from NEET (p3802011-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [180.53.179.11])
-	(authenticated bits=0)
-	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58LEmaLA019086
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 21 Sep 2025 23:48:36 +0900 (JST)
-	(envelope-from k@fwd.mgml.me)
-DKIM-Signature: a=rsa-sha256; bh=eVxpXDxPuZq2d3D5n7/Gd/w3ZZ4WUNur6IL0OAw8UEA=;
-        c=relaxed/relaxed; d=fwd.mgml.me;
-        h=Message-ID:Date:Subject:To:From;
-        s=rs20250919; t=1758466116; v=1;
-        b=GOGsnqAGuMkMURSfkaklC78xq0V6wV88dDv4b0rSWOAyXuC50jj4KAyT6N3UPK5t
-         OPWPaPZzWQClNAAJyfdVm/i5LpDZZ5AqEDu3KUsFd9VWePNPdsAGGLPHIXCmaBXo
-         CCkhULWtVLFKOYg+zeLzvgIrPoo2smHiyCaPIT1U2CQGjHy8JUbjWV+Ka8k4rcnm
-         17m2pftxz8T+fbp/zKoW0s6u8tMkz43vpRgu/UdWJa5Wdqr8tXk87znrwheaQq6l
-         3oEXEbVWc9H4NXalEdngF6u+OXrj8jc1MVz0ggcKRkvjJEk+J0vQvGxnE6a45Wg7
-         HEstqbBL7WpmYDdMTpOmrw==
-Message-ID: <b64fc92d-cb30-4b9e-b9c2-5652d50458dd@fwd.mgml.me>
-Date: Sun, 21 Sep 2025 23:48:35 +0900
+	s=arc-20240116; t=1758466506; c=relaxed/simple;
+	bh=glaso6ateZF7I8GRgupqxyPX/ZQ2qFynyUuNaxxrxsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kh8PuQXEjmqQXgzSQQ4oisHEHtdf9RUV997T1rFv3C79qdAIueCtFhgw4IjxWSzkXK/9YbzlwNU62dYMlcJveMOFioGT+0NMPe8VH0ju6MESo+nYSVC2AqG2jVfrpJVMjb5ifpGZFbBIzyPLlgKMjZIHdKoKAjQFf8zxvYCkMe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gei8tqbQ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77f2077d1c8so627307b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 07:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758466504; x=1759071304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pJFv3ChPUzhn9GkGU13hJh9Fbrlocc4W2rtrc3dBgJk=;
+        b=gei8tqbQbo0oygxGqFL1q/A4k+OXeHlhnlYGVCqJ/Ic17l6eYjbfyL9ScJzJ6+E7OI
+         i/eKI5epiY91LaiyKD6H4L7HDZK/9sjDsrp9nWWNIUFnWjnfJGHyjGepr2YW0GWJ8RTV
+         FWqXmMmJXKs7Dt86nnQ+g8QJykNJEg4ZuA5tT2Bl85MTGe+1mX94d8/wAcn/E2Pjr6AA
+         lOwAbLQp05rMb6Dk5uWBWM7ss0uwEEKJFGwTpdz9i6FOv0jF4/KabFk2LkjjLFX+3Gzf
+         SWjFsICifcgZXagVIKDS0nVeDs9KyyZdO4ktah2bih28Rp89nvAZLSmQXUxP26/4XCkL
+         QoHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758466504; x=1759071304;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pJFv3ChPUzhn9GkGU13hJh9Fbrlocc4W2rtrc3dBgJk=;
+        b=J1eTumQX/aR4igE+Zr1nHAA7Z4hQ6jrwnxfp2La0/0Qhu2VymMiLa/p60Wv0Db/wnp
+         D1v3PKR28lDETEBmt6qEKUL4TNe7JPNpaydYf8Ar2utzaGDA+LnIpOy45nPdDGaXfvPY
+         AVBLn4/XjRreRVqI9z7vxEH8NOV6DfsAbDBApfM2OJtsjk8WrmlDl/pyfpw+0Y7yisa+
+         vE7levTe1pDDH6/iCEWLH+JlpI9HEeTzlJfTgc7uEVG9g/AM5HqTQYCftuDVvsTJcaSt
+         RaTuaivOny4SHn1otmMTA4+cfE6YbptjeSj6iMEVsv/nPutWmGqeJdflNDluC7bL1sQP
+         B1iw==
+X-Forwarded-Encrypted: i=1; AJvYcCV4I/xHlRamBXSXNimx9UQSgeHkcrey6ioh5vqviaPv5wKqFqczS9hKmUQ44vYjBsZlwlu5iPYGXk6SuMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9xeQhHjVqOzEeh14jsdITJZZFKBFJOtzZjzmzXFtq07xCV1DZ
+	kRiRmDWAHESbwFa9SShwzdePfjW/YVhWjOFhTCsayewPrAlqvJZK5ikQ
+X-Gm-Gg: ASbGncuVc8/I6G7Mc+UkKCOgrYBGci3magxiGLEEtgSSAq1iRfwrvJfDEVIirkKRSi6
+	1Lmsrcl1lJWkOrPHz1/u5/YAimYi9rVjpX0ZCDk2uUNaIq4QG0bX+bhP9ye7V9TwdJ5bbDUct2B
+	HX/woDAOeM9NFvfo2jbPreaQuevW+jSuu9Gsvrqw29cif0jEGxskIWJt9tzFkYt5CWJUmqio7uP
+	KfPudAUzjK52cG8KTIOzfkslUI0PcHyExq0EkwnuX0SUEOcB4DPbU5L7Tz5s6iM+jK3wXglMFUI
+	ZG6BqqyTfcBYBKoWiuPhSQPt1qEDB/tTapCyHJ5GPLrRKi02cmwMDaX0R6PyA1kSMd6/NmqYFzO
+	p6Vuco9+eWqAMABz+YeHzcWcujQ/EAeRvQjfVd4IeLRk=
+X-Google-Smtp-Source: AGHT+IGlGOrrC1qELYieezel6ZZpPzpPTwUZ/Hjhxs33BYHvkYGq6FWqHUkdWrQ5M/94vUUoWCRMpA==
+X-Received: by 2002:a05:6a20:3945:b0:262:af30:e3c with SMTP id adf61e73a8af0-2921cafa18amr14329391637.28.1758466504480;
+        Sun, 21 Sep 2025 07:55:04 -0700 (PDT)
+Received: from asahi.bialairport.com ([103.241.193.55])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfbb7aad7sm10415321b3a.12.2025.09.21.07.55.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 07:55:03 -0700 (PDT)
+From: Shreyas Muppana <shreyasmuppana@gmail.com>
+To: alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shreyas Muppana <shreyasmuppana@gmail.com>
+Subject: [PATCH] drm/amdgpu: remove leading space before square bracket
+Date: Sun, 21 Sep 2025 20:24:01 +0530
+Message-ID: <20250921145401.22654-1-shreyasmuppana@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] md/raid1,raid10: Set the LastDev flag when the
- configuration changes
-To: Xiao Ni <xni@redhat.com>
-Cc: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
-        Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
-        Guoqing Jiang <jgq516@gmail.com>, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kenta Akagi <k@fwd.mgml.me>
-References: <20250915034210.8533-1-k@mgml.me>
- <20250915034210.8533-2-k@mgml.me>
- <CALTww2_XBBBP3NHRjxrxsJ3eqjJ_bB8SmCeHFocun1hQiUedkA@mail.gmail.com>
-Content-Language: en-US
-From: Kenta Akagi <k@fwd.mgml.me>
-In-Reply-To: <CALTww2_XBBBP3NHRjxrxsJ3eqjJ_bB8SmCeHFocun1hQiUedkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
-Thank you for review.
+remove a space before an open square bracket,
+fixes a linter error
 
-On 2025/09/21 16:54, Xiao Ni wrote:
-> Hi Kenta
-> 
-> On Mon, Sep 15, 2025 at 11:44 AM Kenta Akagi <k@mgml.me> wrote:
->>
->> Currently, the LastDev flag is set on an rdev that failed a failfast
->> metadata write and called md_error, but did not become Faulty. It is
->> cleared when the metadata write retry succeeds. This has problems for
->> the following reasons:
->>
->> * Despite its name, the flag is only set during a metadata write window.
->> * Unlike when LastDev and Failfast was introduced, md_error on the last
->>   rdev of a RAID1/10 array now sets MD_BROKEN. Thus when LastDev is set,
->>   the array is already unwritable.
->>
->> A following commit will prevent failfast bios from breaking the array,
->> which requires knowing from outside the personality whether an rdev is
->> the last one. For that purpose, LastDev should be set on rdevs that must
->> not be lost.
->>
->> This commit ensures that LastDev is set on the indispensable rdev in a
->> degraded RAID1/10 array.
->>
->> Signed-off-by: Kenta Akagi <k@mgml.me>
->> ---
->>  drivers/md/md.c     |  4 +---
->>  drivers/md/md.h     |  6 +++---
->>  drivers/md/raid1.c  | 34 +++++++++++++++++++++++++++++++++-
->>  drivers/md/raid10.c | 34 +++++++++++++++++++++++++++++++++-
->>  4 files changed, 70 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index 4e033c26fdd4..268410b66b83 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -1007,10 +1007,8 @@ static void super_written(struct bio *bio)
->>                 if (!test_bit(Faulty, &rdev->flags)
->>                     && (bio->bi_opf & MD_FAILFAST)) {
->>                         set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->> -                       set_bit(LastDev, &rdev->flags);
->>                 }
->> -       } else
->> -               clear_bit(LastDev, &rdev->flags);
->> +       }
->>
->>         bio_put(bio);
->>
->> diff --git a/drivers/md/md.h b/drivers/md/md.h
->> index 51af29a03079..ec598f9a8381 100644
->> --- a/drivers/md/md.h
->> +++ b/drivers/md/md.h
->> @@ -281,9 +281,9 @@ enum flag_bits {
->>                                  * It is expects that no bad block log
->>                                  * is present.
->>                                  */
->> -       LastDev,                /* Seems to be the last working dev as
->> -                                * it didn't fail, so don't use FailFast
->> -                                * any more for metadata
->> +       LastDev,                /* This is the last working rdev.
->> +                                * so don't use FailFast any more for
->> +                                * metadata.
->>                                  */
->>         CollisionCheck,         /*
->>                                  * check if there is collision between raid1
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index bf44878ec640..32ad6b102ff7 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -1733,6 +1733,33 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
->>         seq_printf(seq, "]");
->>  }
->>
->> +/**
->> + * update_lastdev - Set or clear LastDev flag for all rdevs in array
->> + * @conf: pointer to r1conf
->> + *
->> + * Sets LastDev if the device is In_sync and cannot be lost for the array.
->> + * Otherwise, clear it.
->> + *
->> + * Caller must hold ->device_lock.
->> + */
->> +static void update_lastdev(struct r1conf *conf)
->> +{
->> +       int i;
->> +       int alive_disks = conf->raid_disks - conf->mddev->degraded;
->> +
->> +       for (i = 0; i < conf->raid_disks; i++) {
->> +               struct md_rdev *rdev = conf->mirrors[i].rdev;
->> +
->> +               if (rdev) {
->> +                       if (test_bit(In_sync, &rdev->flags) &&
->> +                           alive_disks == 1)
->> +                               set_bit(LastDev, &rdev->flags);
->> +                       else
->> +                               clear_bit(LastDev, &rdev->flags);
->> +               }
->> +       }
->> +}
->> +
->>  /**
->>   * raid1_error() - RAID1 error handler.
->>   * @mddev: affected md device.
->> @@ -1767,8 +1794,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
->>                 }
->>         }
->>         set_bit(Blocked, &rdev->flags);
->> -       if (test_and_clear_bit(In_sync, &rdev->flags))
->> +       if (test_and_clear_bit(In_sync, &rdev->flags)) {
->>                 mddev->degraded++;
->> +               update_lastdev(conf);
->> +       }
->>         set_bit(Faulty, &rdev->flags);
->>         spin_unlock_irqrestore(&conf->device_lock, flags);
->>         /*
->> @@ -1864,6 +1893,7 @@ static int raid1_spare_active(struct mddev *mddev)
->>                 }
->>         }
->>         mddev->degraded -= count;
->> +       update_lastdev(conf);
-> 
-> update_lastdev is called in raid1_spare_active, raid1_run and
-> raid1_reshape. Could you explain the reason why it needs to call this
-> function? Is it the reason you want to clear LastDev flag? If so, is
-> it a right place to do it? As your commit message says, it will be
-> cleared after retry metadata successfully. In raid1, is it the right
-> place that fixes read/write successfully?
+Signed-off-by: Shreyas Muppana <shreyasmuppana@gmail.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_aca.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The intention was to set LastDev only when the rdev is the last device in the array.
-
-As suggested in review, I will check whether it is the last device when
-md_error is called, instead of using a flag.
-As a result, update_lastdev() will be removed, and the purpose and behavior
-of LastDev will remain unchanged in v5.
-
-Thanks,
-Akagi
-
-> 
-> Best Regards
-> Xiao
-> 
->>         spin_unlock_irqrestore(&conf->device_lock, flags);
->>
->>         print_conf(conf);
->> @@ -3290,6 +3320,7 @@ static int raid1_run(struct mddev *mddev)
->>         rcu_assign_pointer(conf->thread, NULL);
->>         mddev->private = conf;
->>         set_bit(MD_FAILFAST_SUPPORTED, &mddev->flags);
->> +       update_lastdev(conf);
->>
->>         md_set_array_sectors(mddev, raid1_size(mddev, 0, 0));
->>
->> @@ -3427,6 +3458,7 @@ static int raid1_reshape(struct mddev *mddev)
->>
->>         spin_lock_irqsave(&conf->device_lock, flags);
->>         mddev->degraded += (raid_disks - conf->raid_disks);
->> +       update_lastdev(conf);
->>         spin_unlock_irqrestore(&conf->device_lock, flags);
->>         conf->raid_disks = mddev->raid_disks = raid_disks;
->>         mddev->delta_disks = 0;
->> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->> index b60c30bfb6c7..dc4edd4689f8 100644
->> --- a/drivers/md/raid10.c
->> +++ b/drivers/md/raid10.c
->> @@ -1983,6 +1983,33 @@ static int enough(struct r10conf *conf, int ignore)
->>                 _enough(conf, 1, ignore);
->>  }
->>
->> +/**
->> + * update_lastdev - Set or clear LastDev flag for all rdevs in array
->> + * @conf: pointer to r10conf
->> + *
->> + * Sets LastDev if the device is In_sync and cannot be lost for the array.
->> + * Otherwise, clear it.
->> + *
->> + * Caller must hold ->reconfig_mutex or ->device_lock.
->> + */
->> +static void update_lastdev(struct r10conf *conf)
->> +{
->> +       int i;
->> +       int raid_disks = max(conf->geo.raid_disks, conf->prev.raid_disks);
->> +
->> +       for (i = 0; i < raid_disks; i++) {
->> +               struct md_rdev *rdev = conf->mirrors[i].rdev;
->> +
->> +               if (rdev) {
->> +                       if (test_bit(In_sync, &rdev->flags) &&
->> +                           !enough(conf, i))
->> +                               set_bit(LastDev, &rdev->flags);
->> +                       else
->> +                               clear_bit(LastDev, &rdev->flags);
->> +               }
->> +       }
->> +}
->> +
->>  /**
->>   * raid10_error() - RAID10 error handler.
->>   * @mddev: affected md device.
->> @@ -2013,8 +2040,10 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
->>                         return;
->>                 }
->>         }
->> -       if (test_and_clear_bit(In_sync, &rdev->flags))
->> +       if (test_and_clear_bit(In_sync, &rdev->flags)) {
->>                 mddev->degraded++;
->> +               update_lastdev(conf);
->> +       }
->>
->>         set_bit(MD_RECOVERY_INTR, &mddev->recovery);
->>         set_bit(Blocked, &rdev->flags);
->> @@ -2102,6 +2131,7 @@ static int raid10_spare_active(struct mddev *mddev)
->>         }
->>         spin_lock_irqsave(&conf->device_lock, flags);
->>         mddev->degraded -= count;
->> +       update_lastdev(conf);
->>         spin_unlock_irqrestore(&conf->device_lock, flags);
->>
->>         print_conf(conf);
->> @@ -4159,6 +4189,7 @@ static int raid10_run(struct mddev *mddev)
->>         md_set_array_sectors(mddev, size);
->>         mddev->resync_max_sectors = size;
->>         set_bit(MD_FAILFAST_SUPPORTED, &mddev->flags);
->> +       update_lastdev(conf);
->>
->>         if (md_integrity_register(mddev))
->>                 goto out_free_conf;
->> @@ -4567,6 +4598,7 @@ static int raid10_start_reshape(struct mddev *mddev)
->>          */
->>         spin_lock_irq(&conf->device_lock);
->>         mddev->degraded = calc_degraded(conf);
->> +       update_lastdev(conf);
->>         spin_unlock_irq(&conf->device_lock);
->>         mddev->raid_disks = conf->geo.raid_disks;
->>         mddev->reshape_position = conf->reshape_progress;
->> --
->> 2.50.1
->>
->>
-> 
-> 
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_aca.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_aca.c
+index cbc40cad5..8f3a31952 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_aca.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_aca.c
+@@ -26,7 +26,7 @@
+ #include "amdgpu_aca.h"
+ #include "amdgpu_ras.h"
+ 
+-#define ACA_BANK_HWID(type, hwid, mcatype) [ACA_HWIP_TYPE_##type] = {hwid, mcatype}
++#define ACA_BANK_HWID(type, hwid, mcatype)[ACA_HWIP_TYPE_##type] = {hwid, mcatype}
+ 
+ typedef int bank_handler_t(struct aca_handle *handle, struct aca_bank *bank, enum aca_smu_type type, void *data);
+ 
+-- 
+2.51.0
 
 
