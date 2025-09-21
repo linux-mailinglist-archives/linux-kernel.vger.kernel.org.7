@@ -1,87 +1,159 @@
-Return-Path: <linux-kernel+bounces-825993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59016B8D476
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 05:44:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E27C8B8D489
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 06:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB71A4449FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 03:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DB6189E54C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB36F2820D5;
-	Sun, 21 Sep 2025 03:44:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8A51798F;
+	Sun, 21 Sep 2025 04:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YI1PsFbU"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2149327F4D4
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 03:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515122F56
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 04:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758426247; cv=none; b=I0ba3veDM9gL9T7TLsaoje8+khNxioBItx0TsNPvxTuEHU+U9qSDud95M9y3Reuu4t5Sj5rFctpHb4qCPGOH6HhhnHdG6+6DoT+SS0P+lNgZUV/KQJuiKs60Dw2wkp/+IwKZHyrhcgnFmeylIAj4mZkRX9q3Iw1l6O/S/OFd32k=
+	t=1758427370; cv=none; b=GjX6wNyDMiYyYCBl7GUum8/pyDQXHcv6taxhrMpNJM7ke2VyXr3NqBenA26DHpLSnRVzQBuKMuovU75MeubxcGUsc6EwqdePfS6VoVfyjmEHayQT3PIKDeVM1xCbnnsErdRPij0wu7IzKWxb5KAsdvjowMK1iLbvBYtG8UQ+KY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758426247; c=relaxed/simple;
-	bh=9Vyy6nzZefHF8h6kYfMkiN13MLdI0fokQqb3A0KLQT8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cyLL2BenhdR3vTP6bVC0MVXfxU1/TEKkDTj8trC8S4g9HD//Cu3gmRH4MSaYfKgQ9cz5q5WEGegWJ+gAlL/FSV+E95yJGdJlLmqt/Bd9tWhVwB69KEOY+4zxtSwU+99l0AUOUeEppHCbXuad0GsYjiArwfhpNWmD77/n3QTmftI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-88ad82b713cso373102139f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:44:05 -0700 (PDT)
+	s=arc-20240116; t=1758427370; c=relaxed/simple;
+	bh=kCwSIctQbPgcIO81zHTIVaPbfoK5UccVGTjW1aF7hWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j8kZyouesnp9yvSE9h4eQn3L+Z+qNZSOmNaUaTuh3m322Aj7YklfcL5/Ntn3kTHmxHxn+hC+ViIH5CAnZi8MKyfFbKeBzzY4V6UffXfdGDzL8qGe076xts4NrX7zjSClBXJ4VUcmZiTXYesO7meZFkE7OKl1Kd4rMnXvi/KXmY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YI1PsFbU; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-30ccec59b4bso2491175fac.3
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 21:02:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758427368; x=1759032168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bA18vrXqBDWyLf0pzyXROoXutYNoxoKmYfGadP77a2Y=;
+        b=YI1PsFbUDjwqgnaDa0+gVO50zh2+Qg3W4v4vN54PnqTXicvS3O27sGYNZWp1htZehJ
+         tbHE1rrds9lkEuxrarxySkOuoQPpm3jwxZNZiKYBc/Q+dJH0L/xP/UsDlPMhicdFKjPt
+         FAd6/Wh1psWteO/iFPs7Mj0d4P8M7Mnrll3RtWGCGhWI7euVzAQktZJCs/oTCG9Mxusv
+         NBZ9msckVVr6x557KZeZ6LcAbb3vHw5vCk8dG2rVY+GxGVwQ789WwkbjbmZ1qkV5MX3x
+         8PSARxMvQ+EG5TnRodKwcvGnMJUnfVXWkdiKv8OlduyXFCdqM4k1IH4OCAqeXxGlBgs2
+         Cxng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758426245; x=1759031045;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AdjgHlcbaWhWVIx5piaEC27S+dMD/Hjc0fOFih9t3Gc=;
-        b=CWe+UhjDSAn+d5jhBrdqg6YvfltyV/OZl+2QNkzD5fBW0kDjt6AMG4hKCuYjN8wvAn
-         JaT08NHZhLwET7ELCyCMk3o5ypdBNhJ12GiBc4PewbFmcNr1Kle8Stft39eeTql1/Pey
-         vA64ilUf8sIXICLRN09rnDACRubGEM2pG7ie9qgPYW3LV+xRuDYsCG881Y/rAwiEKXv5
-         2sTi0oFq6Q60aysboQbnxjU6/VnRL6oPyNrfRlVeHniqToUzTP3EmBUFBR0tE+44xTJv
-         2iG+tT3Ie4jNkxn+m9rVGVeyRg7wLTTE2mz0fDfgYHYQT90kECIbicEbeI1RrmDkB2D2
-         4arg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbE2zn5JF17fmHMzxof5GdoYtLDowzHLpNrFmQVY2CxLPgNvuWmRu0t9wpSnlgrWfT4Ktd5T/tBaqQbwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyFFcr5AHnf2ZinXU9IS+j1NJM/1IBnmiAZw9QqRVtwUrdmdFR
-	dBUFphsMBrkTNg4MI2nq/3QPLl4nN8z/uJanIL6vZo7aHB6n1vwPxbiDHcim0QsxzWDFNERs8rg
-	sbL0VbHxhtP9GHAyES2bpxgkFWfDGYh0q00wIQqrI+wI4MwxQMk53EA3E5nM=
-X-Google-Smtp-Source: AGHT+IHFhT9ux74NVmmSHs0E1OXa90ayjxf4uFnXIyvS/j3oomieCbVSs+xUPwqp9DnUBLxek0rWmB7CW0Xlo/6nbyWPFRsZXf3e
+        d=1e100.net; s=20230601; t=1758427368; x=1759032168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bA18vrXqBDWyLf0pzyXROoXutYNoxoKmYfGadP77a2Y=;
+        b=xOgFFLROh8DB1rZ7kIh9DVtP+K723r8lmoqmGnNeNbnwVMreoUa/nI1G9XGpLyjzjE
+         pBcay+3Qf3Wevd/6wBRIxXtUAOXtDMTUH3k+BxYVU1BEYi0ZohzKKibEFhFq9WDUc+5I
+         Ny2KlFGkQ2Bqay10JlathxKAYySYkKWohLa5BffiRCqRcrx6jDfrvqSbhfKDciPoqNZ3
+         CqVg+WVXqwoodZmXJLC3f5kkpSKb58qxTwZeaQcUQXRwoeP2B4xGFg87masRcn2lF9Z5
+         FU5+fpQLKdwD+dAyd2QEyF4dbwjeU92V4doOARmUORSaiW6ugX1+Gw4S71NWp447WRZ1
+         lzsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8v/HLpEY1ak3EvpI5vZhRMqvYHODaFThw3YPJOKZEx4OYml0DPuJlDpliacz/v0VNUDOO8g2+wODmHiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQeod2PWqNUm7Ry8wXjefnMaPUOl9Yy3JYdOUX+ITLiDRsK3ff
+	tFfj+chaQdqFQrZVZO7D3YkkXMjQ1leXVLtg2gc9WNNAPnSr9frvfqBHoFEPZCFu70rzWnG5b1e
+	leEK78uZcWPPXasNftZPby3Vw011WltI=
+X-Gm-Gg: ASbGncvHaQGzNJaJ/TizjfujRbKyqJn7t8JBuYbopfIkMIj5LPNjQTUDwD5zQHmxuUv
+	nVSxMNFs2sOL36wn/GocDdAJaFgIP7fYo7AukSw3rLfarfeQaP0cveuEvWOCduExYdC6/w0CP2p
+	DfathWQeOiPJsMqlo/VD5z7jTPhA5GA8tbwfL8X/amwNU2ShA1geSehw/QkAKkjWqthIUyIMRO/
+	31TmmjC
+X-Google-Smtp-Source: AGHT+IFZLr/xsThdfBtqHXf4ZSYYWdYKPhHyHU+8bF5NmoloZBLoe+bOTD86dgsH7ivu1U7543S8yu2mTI8ezy8bXJU=
+X-Received: by 2002:a05:6870:e98c:b0:315:8a2a:3f59 with SMTP id
+ 586e51a60fabf-33bb46243bbmr4362489fac.21.1758427368277; Sat, 20 Sep 2025
+ 21:02:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e9:b0:41b:3987:b3d4 with SMTP id
- e9e14a558f8ab-424819743e9mr113994275ab.21.1758426245239; Sat, 20 Sep 2025
- 20:44:05 -0700 (PDT)
-Date: Sat, 20 Sep 2025 20:44:05 -0700
-In-Reply-To: <20250921031859.833667-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cf7485.a00a0220.37dadf.0037.GAE@google.com>
-Subject: Re: [syzbot] [nfs?] WARNING in nsfs_fh_to_dentry
-From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250822021217.1598-1-jjian.zhou@mediatek.com>
+ <CAGXv+5F-L2+4PGixx7OG2+vp2yXc_2885yMzqWtkQDwhxVAPxw@mail.gmail.com>
+ <CABb+yY3N2=01yKJon25_6_vmihj09H=T9pLwzdGPrqY5h=hRFQ@mail.gmail.com> <5789241.GXAFRqVoOG@workhorse>
+In-Reply-To: <5789241.GXAFRqVoOG@workhorse>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sat, 20 Sep 2025 23:02:37 -0500
+X-Gm-Features: AS18NWDJ-i7DOGCOG3Z1nAPhjBByGeEhge0EG9gSltw9wqhDLGlBL0w1VItqTxU
+Message-ID: <CABb+yY2Ay+KqviJvOQC8X8kfzJN6-fQT04A+TCJAkLnWx+XwZg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-mediatek@lists.infradead.org, 
+	Jjian Zhou <jjian.zhou@mediatek.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Sep 19, 2025 at 2:02=E2=80=AFPM Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> On Friday, 19 September 2025 18:32:12 Central European Summer Time Jassi =
+Brar wrote:
+> > On Fri, Sep 19, 2025 at 3:31=E2=80=AFAM Chen-Yu Tsai <wenst@chromium.or=
+g> wrote:
+> > >
+> > > On Fri, Sep 19, 2025 at 7:50=E2=80=AFAM Jassi Brar <jassisinghbrar@gm=
+ail.com> wrote:
+> > > >
+> > > > On Thu, Aug 21, 2025 at 9:12=E2=80=AFPM Jjian Zhou <jjian.zhou@medi=
+atek.com> wrote:
+> > > >
+> > > > .....
+> > > >
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/of.h>
+> > > > > +#include <linux/platform_device.h>
+> > > > > +#include <linux/slab.h>
+> > > > > +
+> > > > > +struct mtk_vcp_mbox_priv {
+> > > > Maybe 'mtk_vcp_mbox' is a more appropriate name ?
+> > > >
+> > > > > +       void __iomem *base;
+> > > > > +       struct device *dev;
+> > > > > +       struct mbox_controller mbox;
+> > > > > +       const struct mtk_vcp_mbox_cfg *cfg;
+> > > > > +       struct mtk_ipi_info ipi_recv;
+> > > >
+> > > > Maybe also have "struct mbox_chan chan[1]; " so that you don't have=
+ to
+> > > > allocate one during the probe.
+> > >
+> > > > Also if you have  "struct mbox_controller mbox;" as the first membe=
+r,
+> > > > you could simply typecast that to get this structure.
+> > > > Something like "struct mpfs_mbox" in mailbox-mpfs.c
+> > >
+> > > I read somewhere that this way of subclassing is not recommended.
+> > > Instead the base class should explicitly not be the first member.
+> > > And then container_of() should be used.
+> > >
+> > > I don't remember where I read this though. But I think the explicit
+> > > container_of() is easier for understanding the intent.
+> > >
+> > And how does container_of() work ? :)
+> > typcasting the first member to its parent is the simplest form of conta=
+iner_of.
+> >
+> > -j
+> >
+> >
+>
+> Which is why it's completely equivalent and since code is supposed
+> to communicate meaning to humans, container_of should be used.
+>
+Nobody is suggesting typecasting cfg, dev or anything else.
+Typecasting between mailbox controllers is fine and arguably easier on
+the eyes than using a container_of.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-Tested-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         846bd222 Add linux-next specific files for 20250919
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d650e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-dashboard link: https://syzkaller.appspot.com/bug?extid=9eefe09bedd093f156c2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15c650e2580000
-
-Note: testing is done by a robot and is best-effort only.
+-j
 
