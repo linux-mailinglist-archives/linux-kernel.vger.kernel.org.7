@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-826122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09E7B8D96D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:31:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7988B8D976
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800FB189F080
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:31:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 563584E0ED4
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B2B25394A;
-	Sun, 21 Sep 2025 10:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B048258CE5;
+	Sun, 21 Sep 2025 10:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="NkL1W8Ri"
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uXr0itZS"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595CA4315A
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 10:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49814248891
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 10:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758450691; cv=none; b=UE7zJM242PfTTZbdFCHepNH59wVW0xkjHnr+7KLylxcmx/gPj0dA+yJkUFRkWeuo8JRiD0LyB8M9ASkisXye3BPGv+O/3cGXM0hQpP46x5j6nzDWyQHkY1WqECjKsusicHk+zZbrN2SFFt0Q3vBkMZofdMCZ9ELbEfg656668YI=
+	t=1758451603; cv=none; b=VbcEhxQcKfuEKFqDAFDEHEQpA73gaVkRVrBjIZqg9ouwdfS3ZVdLbwXStG0kodGFyDcs9ZOO0dfCPED5yRpUcQeA173a3Z1gZyG0VfUwe8CARMa9SpKJXlvzBZf0U98hYX2A1PXvIbt6Lp8rZeyagP5kSphTpFOwZV6MWoPbQnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758450691; c=relaxed/simple;
-	bh=UhzBOIAcRT3DtWbXX7SG+/Cq59SACa4Yp8xsjuPyop0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oeD09ZZ1/QqCqor+U7JY/ystHXDexq2Tam7aLLXqeCpOr1GuPnnWFjS/1U0o2HLDRiDM9ScRSK6ijVHIzKQZirpFCg1H+9gtwcfF4exgAIcVO1VN2yWiKHvHfJO7qv+9FHvo2jbkz2StwGzN8uGOOQsODb2G6uUldVyBJJ61f+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=NkL1W8Ri; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id B72D9240103
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:31:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
-	t=1758450681; bh=ZscFgxaOdMe9Fpbe+Rp7hnlp06VZswaAdymqLttHLhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:Content-Transfer-Encoding:From;
-	b=NkL1W8RiTiZl08x88D4b9irNhv9y1E0474eP+AsNO8+V/IoNX33D55e5l8pu+HKJf
-	 ISOb4JItPSgl4TgQe0n/n8QLDTjauR6IPDn1yRzAt0gmM62BrVoTbJsg/1NEz2hHpN
-	 HGlUl9uwvMcJZrXrlINEGvg99o3Muno0VbwdbNUCQhaf+KIbNRxPOHBGa91wjsz+Sz
-	 Fwzu533dfsIZ/O1PyEZbIbtQg0NRU2XLJKKXSCuRdW1prpkf16pp3tKq0Gw0WYqhQu
-	 DJ0nJ91KTF9uj29qDY8sXd8eX/DjpH4F7sfVyYWgbqlzqkGBeiuxCGP0JkbotL3fAL
-	 x9AxKA3oy3Fow==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cV2bC1lTqz6tm8;
-	Sun, 21 Sep 2025 12:31:19 +0200 (CEST)
-Date: Sun, 21 Sep 2025 10:31:21 +0000
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
-To: Simon Glass <sjg@chromium.org>
-Cc: linux-arm-kernel@lists.infradead.org, Tom Rini <trini@konsulko.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	J =?utf-8?Q?=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] scripts/make_fit: Speed up operation
-Message-ID: <aM_T9mtmEdAGNpLi@probook>
-References: <20250919224639.1122848-1-sjg@chromium.org>
- <20250919224639.1122848-2-sjg@chromium.org>
+	s=arc-20240116; t=1758451603; c=relaxed/simple;
+	bh=ejJ3R06kUm72MB2imXL8f46b/ReyDQSXYyYGUPqSntI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mko9Ng1hJZSzNpEt1zMzaKSFJGiP0l9fk13GM4SHCuU2DghQRDPr8OOan+VNb/FSxbVT7GEZqi6aqGsgC9cgbRcRrMqw/rpuKRxMlbLzBvOTQ8eXGFGxknqSfmNriqqo1UR9laPJ0D6YJeAMryCENCyQlzLA28bkxuU4tM26i5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uXr0itZS; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ef166e625aso1610253f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 03:46:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758451600; x=1759056400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fut8Mzrft7AcgsVh5x5LQBkL7Q9ZuGUoyrZTtc74kos=;
+        b=uXr0itZS0ezyg4QsvvPh7UpRFexCxkRw1Ehq0InBgj3hHDx60GQNkGI7KwdLUPmmZn
+         TgNpL1F1uVL5VqT1UdKTKQ1I5X5kNtXPE3jwGttIoCVPPzlKeDGeAW8zy0l3hvXIEzrZ
+         wPCPV8Qbp27BKF0Gi35bojMEyqa1um+kbNO2tGfi+/ZAzJTNkzRaHz5F0LpPWl0NPv90
+         CdVDUXbneQ4o8v9P5H6/Oiv0OG/e+39BrJkFjxFDkGG6eZwiRBWkhgzq8M+sBGmlHG+H
+         AKdOW8QmDeQXiwCCnX1yy/mhv0NNFDLIy5CMEwOrUCYUJIjsS7xFFszpVo1oYDDtOYMT
+         TF6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758451600; x=1759056400;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fut8Mzrft7AcgsVh5x5LQBkL7Q9ZuGUoyrZTtc74kos=;
+        b=eZ+CxuE9a9ecg7Z0u37tvwX5J/rMicErMg9sC7rEGdNur4M4xI+N/yHRYUzoA7riQj
+         8xz/pDF/PRxgEx34JvXQIOyP/MFlVPdV6JjKx6K6cXf2HJkHW6kjaCuKg/EgC1AAONNd
+         FNfSMYxUKkdwSof5AsW6P+e327PaRQyhdohE6sab8VRzCH67tOFGex6WDmHpbKJZUqzi
+         pdqf8c/ZMKWXizudNrMvwYTzs8xELJR8Nq4UGuSwO0CUMqhxdq/Z+xO9rYb+G8QfWCta
+         STqeyF96l+N8bNVcvhTkH83+ASLUJI21ztjxmPTdVE2hnuyWvjeDX40NSHn4Prmj6t9h
+         dMJg==
+X-Gm-Message-State: AOJu0YwY9PyrupgGAC18wDjXIoDQ0bkKBOFCaVyz/UWHGWuJlc2Q3TNH
+	zlVibXLko6q8Myb+9KlpknXRo7rAk/1xIhcsoR+59h6UDbOs76Lzn3c3/2JFJsJDT9m4qREHqiV
+	oImCE1HOGi+yfsRPe7Tz9KazYszGpf7tSrlSIMZ4U9t0widV64MVR5C5T
+X-Gm-Gg: ASbGncujBnNtm0LFGF2wAuy6qdWyg+M/cvPDFwnTDJ6E/BvRztfXzNcpM3HlKej2Nv2
+	KqD2Rk11RCFj+KVomzTw7JWLTQaa/v1Z3NjCR0TWi6flBsfiyJI0IATgF+PG3hkIRNNAP/OFHvx
+	ODEzcBuK9pIGVBWOqPgNAWh2lw6+lmcCodA7Ad7GSCT5OabdhJ0WxQ4wlo4PMj+o8gBEnhmzOgh
+	uYEAAyv
+X-Google-Smtp-Source: AGHT+IG+ilMcacJzrGfy67Gt5SnyIG3oRn1w901jpk/xQoevubQ1rvd7vOk9clCmbKV5svvHYfPvxAprCcCgIdzn9Uc=
+X-Received: by 2002:a05:6000:1846:b0:3d4:a64:6754 with SMTP id
+ ffacd0b85a97d-3ee888278f8mr7584321f8f.62.1758451599361; Sun, 21 Sep 2025
+ 03:46:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919224639.1122848-2-sjg@chromium.org>
+References: <20250920161958.2079105-1-joelagnelf@nvidia.com>
+In-Reply-To: <20250920161958.2079105-1-joelagnelf@nvidia.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Sun, 21 Sep 2025 12:46:26 +0200
+X-Gm-Features: AS18NWAQxPNKNG6co6Lg1atbGPV5cDqDMJUHPiD_9mntO-WWhUhMuYW01BNVl8g
+Message-ID: <CAH5fLggXGMHM1bhmaUb94gDu_LiUbMGugARpOZoUNSTU3phm=g@mail.gmail.com>
+Subject: Re: [PATCH] rust: print: Fix issue with rust_build_error
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, acourbot@nvidia.com, 
+	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 04:46:25PM -0600, Simon Glass wrote:
-> The kernel is likely at least 16MB so we may as well use that as a step
-> size when reallocating space for the FIT in memory. Pack the FIT at the
-> end, so there is no wasted space.
-> 
-> This reduces the time to pack by an order of magnitude, or so.
-> 
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-> 
-> ---
-> 
-> (no changes since v1)
-> 
->  scripts/make_fit.py | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/scripts/make_fit.py b/scripts/make_fit.py
-> index b4caa127d2c3..904f45088978 100755
-> --- a/scripts/make_fit.py
-> +++ b/scripts/make_fit.py
-> @@ -100,7 +100,7 @@ def setup_fit(fsw, name):
->          fsw (libfdt.FdtSw): Object to use for writing
->          name (str): Name of kernel image
->      """
-> -    fsw.INC_SIZE = 65536
-> +    fsw.INC_SIZE = 16 << 20
->      fsw.finish_reservemap()
->      fsw.begin_node('')
->      fsw.property_string('description', f'{name} with devicetree set')
-> @@ -330,10 +330,12 @@ def build_fit(args):
->  
->          entries.append([model, compat, files_seq])
-> 
+On Sat, Sep 20, 2025 at 6:20=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.c=
+om> wrote:
+>
+> When printing just before calling io.write32(), modpost fails due to
+> build_assert's missing rust_build_error symbol. The issue is that, the
+> printk arguments are passed as reference in bindings code, thus Rust
+> cannot trust its value and fails to optimize away the build_assert.
+>
+> The issue can be reproduced with the following simple snippet:
+>   let offset =3D 0;
+>   pr_err!("{}", offset);
+>   io.write32(base, offset);
+>
+> Fix it by just using a closure to call printk. Rust captures the
+> arguments into the closure's arguments thus breaking the dependency.
+> This can be fixed by simply creating a variable alias for each variable
+> however the closure is a simple and concise fix.
+>
+> Another approach with using const-generics for the io.write32 API was
+> investigated, but it cannot work with code that dynamically calculates
+> the write offset.
+>
+> Disassembly of users of pr_err!() with/without patch shows identical
+> code generation, thus the fix has no difference in the final binary.
+>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-> -    finish_fit(fsw, entries)
-> +    finish_fit(fsw, entries, bool(args.ramdisk))
+The actual bug is that write32 uses build_error!. Trying to change the
+printing macros is just a band-aid. Someone already mentioned that it
+breaks the ? operator. I think this change is a bad idea. We should
+fix the actual problem, rather than making random changes to other
+parts of the kernel to work around build_error!'s inherent fragility.
 
-It seems like this line should rather go into the previous patch.
-
->  
->      # Include the kernel itself in the returned file count
-> -    return fsw.as_fdt().as_bytearray(), seq + 1, size
-> +    fdt = fsw.as_fdt()
-> +    fdt.pack()
-> +    return fdt.as_bytearray(), seq + 1, size
-
-The rest looks good to me. Easy optimization, big win :)
-
-
-Best regards,
-J. Neuschäfer
+Alice
 
