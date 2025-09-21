@@ -1,96 +1,84 @@
-Return-Path: <linux-kernel+bounces-826316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242CCB8E2BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B8DB8E2D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDC0177CA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D1817B6E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DAD274B2F;
-	Sun, 21 Sep 2025 17:58:54 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EDB275844;
+	Sun, 21 Sep 2025 17:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+KTHxHf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3FC2566DF;
-	Sun, 21 Sep 2025 17:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4485271443;
+	Sun, 21 Sep 2025 17:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758477533; cv=none; b=bEJh6RdGD/OcSmEhMsubin6WwiqEQhw6ZeGD5Tfn3ykXiotDtAeRaePa5+NQjT553EhhGpHb21UtuGLlXKG0zil/DW4JwrCH901SQmrTC99GabFFVsMl+eh/gFhpfLbnbFypX/QM+1XAw8GXCogvW6fV2gfKelghGl85f7mXCC0=
+	t=1758477592; cv=none; b=SFai9mVQXMhjtiQQXCoWp9n6Z5eKc/UuUefxLLLaMvv/06M3lvaVh3cHeUngM2ELIQDy2A2rylBkTAi+yaeW4ot3tTtjZHoiIHKnSmPqMvN4F4wUHZo7E54rMJZVlh0FYSvrNjX16Q6t5surkVG8SPX3z1FKduQqIKJV+JICIo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758477533; c=relaxed/simple;
-	bh=vbO9pZpd1mosZXsJ+ToALwJNXEC1lzmacW36CP3HY4w=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=vC6HPdUZu2qnAGVueKn/ILiDEVLTMETayUbRDr1DQJab+QKsMjN3sWm/HZ87Fq7Ixe37DMn7tRBBXkeDBUSDPoGsAKGtFkgEUJVbZ/BMwtWoOErFvHSM0fUO5uHrEEAjhGU9mnI4PLBL7SgRGst2RlF2ElWvOkTaQBjx64csFYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1v0OKa-000000004Nn-0Rcb;
-	Sun, 21 Sep 2025 17:58:36 +0000
-Date: Sun, 21 Sep 2025 18:58:29 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Sam Shih <sam.shih@mediatek.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH RESEND] clk: mediatek: mt7988-infracfg: SPI0 clocks are not
- critical
-Message-ID: <49fb368b4da6f5ed11812dceb45f174ceca8f10a.1758477397.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1758477592; c=relaxed/simple;
+	bh=ukRxplsQpCB+Qv3RlPxu32B9rZQpb3Mn+2vSepY0/b8=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=iF34khWkQ1w8mmsX432LD2+XKE/bse+ONDuDH81LApHkDLpThXWL5638ePuuqbIMc/VrRoSS2qxQCXhFbo4jj0hcSrGRVsA0k1s2+E6eX8c0lxcAOEfaOmoG6KnlsxXmEFdyXplPsGHApyIu7lhJeXJHps61AP7iuLwizcGFfQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+KTHxHf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5BEC4CEE7;
+	Sun, 21 Sep 2025 17:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758477592;
+	bh=ukRxplsQpCB+Qv3RlPxu32B9rZQpb3Mn+2vSepY0/b8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=k+KTHxHfPfr8EXksvM/wLT81aulWBskeXWMKERc4UGZvOZzJRmDZbZDpJzK9qQ2C1
+	 5llmaz99fVHZMizwf15WID2RvnVRxkImeLU4yrxUhTumAflYH1JU2YCD02XtReCeDG
+	 9vLKEhdwtv2n/rWrxWUJGCutDDwVp1ZP5A3w3gVKYfq7GQjaQ20IHC10idUJSUKMPl
+	 7UGl88n0QkkrLtrQaD2Xc11kaCeij88Nn0yymv1Lw5xCYXymeLW0twgej9+rc6mwOP
+	 uzb2z1y1OE+pJ/pfKDA65ZCXteQLXiCSvgd9hMzTVMtyQvsRwq37hYy3H15GP1H+Bq
+	 fmVDLX8XSxdjA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7dd9bca2-6c09-4067-b3f8-9bdc10dea39f@altera.com>
+References: <20250513234837.2859-1-matthew.gerlach@altera.com> <175133195554.4372.1414444579635929023@lazor> <7dd9bca2-6c09-4067-b3f8-9bdc10dea39f@altera.com>
+Subject: Re: [PATCH v5] clk: socfpga: agilex: add support for the Intel Agilex5
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>, Teh Wen Ping <wen.ping.teh@intel.com>
+To: Matthew Gerlach <matthew.gerlach@altera.com>, dinguyen@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, netdev@vger.kernel.org, richardcochran@gmail.com
+Date: Sun, 21 Sep 2025 10:59:51 -0700
+Message-ID: <175847759120.4354.5284082297601743277@lazor>
+User-Agent: alot/0.11
 
-SPI0 clocks have wrongly been marked as critical while, probably due
-to the SPI driver not requesting them. This can (and should) be addressed
-in device tree instead.
-Remove CLK_IS_CRITICAL flag from clocks related to SPI0.
+Quoting Matthew Gerlach (2025-07-02 09:04:17)
+> On 6/30/25 6:05 PM, Stephen Boyd wrote:
+> > Quoting Matthew Gerlach (2025-05-13 16:48:37)
+> > > @@ -334,6 +336,375 @@ static const struct stratix10_gate_clock agilex=
+_gate_clks[] =3D {
+> > >           10, 0, 0, 0, 0, 0, 4},
+> > >  };
+> > > =20
+> > > +static const struct clk_parent_data agilex5_pll_mux[] =3D {
+> > > +       { .name =3D "osc1", },
+> > > +       { .name =3D "cb-intosc-hs-div2-clk", },
+> > > +       { .name =3D "f2s-free-clk", },
+> >
+> > Please don't use clk_parent_data with only .name set with dot
+> > initializers. This is actually { .index =3D 0, .name =3D "..." } which =
+means
+> > the core is looking at the DT node for the first index of the 'clocks'
+> If the core should be looking for the first index of the 'clocks'=20
+> property, is it better to explicitly to state ".index =3D 0" or just have=
+=20
+> the name?
 
-Fixes: 4b4719437d85 ("clk: mediatek: add drivers for MT7988 SoC")
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-Patch originally sent 2024-10-31 but never received any feedback.
-
- drivers/clk/mediatek/clk-mt7988-infracfg.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt7988-infracfg.c b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-index ef8267319d91..c40e18c27f12 100644
---- a/drivers/clk/mediatek/clk-mt7988-infracfg.c
-+++ b/drivers/clk/mediatek/clk-mt7988-infracfg.c
-@@ -196,12 +196,10 @@ static const struct mtk_gate infra_clks[] = {
- 	GATE_INFRA2(CLK_INFRA_SPINFI, "infra_f_fspinfi", "spinfi_sel", 10),
- 	GATE_INFRA2_FLAGS(CLK_INFRA_66M_NFI_HCK, "infra_hf_66m_nfi_hck", "sysaxi_sel", 11,
- 			  CLK_IS_CRITICAL),
--	GATE_INFRA2_FLAGS(CLK_INFRA_104M_SPI0, "infra_hf_104m_spi0", "infra_mux_spi0_sel", 12,
--			  CLK_IS_CRITICAL),
-+	GATE_INFRA2(CLK_INFRA_104M_SPI0, "infra_hf_104m_spi0", "infra_mux_spi0_sel", 12),
- 	GATE_INFRA2(CLK_INFRA_104M_SPI1, "infra_hf_104m_spi1", "infra_mux_spi1_sel", 13),
- 	GATE_INFRA2(CLK_INFRA_104M_SPI2_BCK, "infra_hf_104m_spi2_bck", "infra_mux_spi2_sel", 14),
--	GATE_INFRA2_FLAGS(CLK_INFRA_66M_SPI0_HCK, "infra_hf_66m_spi0_hck", "sysaxi_sel", 15,
--			  CLK_IS_CRITICAL),
-+	GATE_INFRA2(CLK_INFRA_66M_SPI0_HCK, "infra_hf_66m_spi0_hck", "sysaxi_sel", 15),
- 	GATE_INFRA2(CLK_INFRA_66M_SPI1_HCK, "infra_hf_66m_spi1_hck", "sysaxi_sel", 16),
- 	GATE_INFRA2(CLK_INFRA_66M_SPI2_HCK, "infra_hf_66m_spi2_hck", "sysaxi_sel", 17),
- 	GATE_INFRA2(CLK_INFRA_66M_FLASHIF_AXI, "infra_hf_66m_flashif_axi", "sysaxi_sel", 18),
--- 
-2.51.0
-
+Be explicit with '.index =3D 0' and don't have a '.name' member.
 
