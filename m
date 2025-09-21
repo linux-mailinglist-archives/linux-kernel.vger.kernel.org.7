@@ -1,88 +1,122 @@
-Return-Path: <linux-kernel+bounces-826291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B6FB8E19A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C872FB8E1A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AB13BEF26
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:20:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816863BF959
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B432262FE7;
-	Sun, 21 Sep 2025 17:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FB3262FE7;
+	Sun, 21 Sep 2025 17:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lyjmj1GL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="DfqJ2TpK"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA7C45948;
-	Sun, 21 Sep 2025 17:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0002BB1D;
+	Sun, 21 Sep 2025 17:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758475207; cv=none; b=HFsJYoE+iyld6DRi79lp5PVCtDH2N1oqItOwauqY51T08xQUxEbXWLDUetnESyX4kJki9ACgsHJgnRmpbiIaWgMxHb2rzqm6SA473sfsf20VxOP+4KSEeud4v3UX/i3nGbpy8tKqOlOpbqmiJsfwgwGr6J9DnQ+lHBlYa5pAx4M=
+	t=1758475426; cv=none; b=DH9cxAGOF7CvWo6RmhIamRlCNX1IbCqIf50dQDsVs+yP2EBG1FZVQ8bq57JdYadLr0VIqGZywkGZPuTyfRuSvknyMwRPD0/71aLLVTQZmmkqVs7RwbRc7NR6yk22SrFwiungS+I7QXsEgZQDhaoTWNYCCTOX2W7S5yYvjvanWWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758475207; c=relaxed/simple;
-	bh=nZFmlP/P0juGPtOeZk5oTehlfMx9ii7tpf1fA/FVz1s=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=j1woMN1gmyItlQzlMvsLvlCF2FTzV+JxkMNROVTQDpO19g7YckgM0+EsR7f75IKb0idxZJqg4w6r28Kqx7qarXsF64woHPuu3cierN/LFntA2VVES5ZMMb8D5kCZ0PMGrx3eTdyEC7fbKw6fZcu/F6XSV3+RBtEdg+YnuEp7d+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lyjmj1GL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DFAC4CEE7;
-	Sun, 21 Sep 2025 17:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758475206;
-	bh=nZFmlP/P0juGPtOeZk5oTehlfMx9ii7tpf1fA/FVz1s=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=Lyjmj1GLsZgcmTM/xErQpkAWiJsfqG74gTDr58NQ3iRoeTaRrrJm3x1fqe5xyzp4s
-	 7uCBE1j4SHEYaWLo2nnhMFvuDKfEFWr/vGAL/wOeFA63LqBy6rO/HDNc0Y8vrTXuK9
-	 eGcHTReOSVkA0DqwkFeEm8am/HXXAyY6OvdBcV/7xSPBeAux9q2fN/EndSWhICrp5N
-	 Oa8xXMiWFxYE0tXINsU8Fsi4brW/QEcc/fA33rkfD9D9PIe1GW3yyjQsh0epUySM5x
-	 yhPWSL8OwAUEgVHdK+q59NgKowEoFIyWNwYo6M0Mr36LdUD74DAgvQVpf/oFdSqPBg
-	 Cva0Y3s7JvAlg==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758475426; c=relaxed/simple;
+	bh=IA56cvmKnVDHEFdFCk4xwrzSDfGBl+oM9lZtfZHxhA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T40xzNbjDiemIwngWHab+ZKmmHqQSnHPKzofnc31CuNahMQptLZvnK1wfPglTdgrrfuwCPfoEB40B3tNfhfVdixnMmidgqD2Y5UJiuu0KgKeGg+aSkwFLVP2Wv4VPpHWnjNmzfk4xB/fgv/GMJKIRP4KuBIweIxxMhG2BprAVhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=DfqJ2TpK; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1758475421; bh=lZEJjfmDCtONRBvjrWY369UYPWUKbQc1p+sE1/zjMKo=;
+	h=From:Message-ID:From;
+	b=DfqJ2TpK5SnUGMKt4nR9j+v5isCw9m35pmAQjU8IwXI8Evs90bMGVtsmuuA0VdnAm
+	 bJgn8svrF66M7H4ORGbWjLS/msOjMQr5GnPMWU88x6v6v+DUQT0/Y7Z2PFwdKn6VLR
+	 k1+/f16uMTUDw/ow8vC769mzqtjTxxMgQPxG6FvE=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id 63D50C072E;
+	Sun, 21 Sep 2025 19:23:41 +0200 (CEST)
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 58LHNfJv028498;
+	Sun, 21 Sep 2025 19:23:41 +0200
+Date: Sun, 21 Sep 2025 19:23:41 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Benjamin Berg <benjamin@sipsolutions.net>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        linux-um@lists.infradead.org, linux-kselftest@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] tools/nolibc/stdio: remove perror if
+ NOLIBC_IGNORE_ERRNO is set
+Message-ID: <20250921172341.GA28493@1wt.eu>
+References: <20250919153420.727385-1-benjamin@sipsolutions.net>
+ <20250919153420.727385-4-benjamin@sipsolutions.net>
+ <20250921075511.GA16684@1wt.eu>
+ <c10503a9-5c63-44a8-9ea7-a7bf6c4ed3fb@t-8ch.de>
+ <54d0bf1d1010530941b595129312a56cfdea7c7b.camel@sipsolutions.net>
+ <20250921171323.GC28238@1wt.eu>
+ <25a968dab7cc7e473ff85400a3a824b272121c79.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250814035317.4112336-2-wenst@chromium.org>
-References: <20250814035317.4112336-1-wenst@chromium.org> <20250814035317.4112336-2-wenst@chromium.org>
-Subject: Re: [PATCH v2 2/2] clk: Use hashtable for global clk lookups
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Chen-Yu Tsai <wenst@chromium.org>
-Date: Sun, 21 Sep 2025 10:20:04 -0700
-Message-ID: <175847520494.4354.5422042536281886650@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <25a968dab7cc7e473ff85400a3a824b272121c79.camel@sipsolutions.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Quoting Chen-Yu Tsai (2025-08-13 20:53:16)
-> A clk lookup using clk_core_lookup() is currently somewhat expensive
-> since it has to walk the whole clk tree to find a match. This is
-> extremely bad in the clk_core_init() function where it is used to look
-> for clk name conflicts, which is always the worst case of walking the
-> whole tree. Moreover, the number of clks checked increases as more
-> clks are registered, causing each subsequent clk registration becoming
-> slower.
->=20
-> Add a hashtable for doing clk lookups to replace the tree walk method.
-> On arm64 this increases kernel memory usage by 4 KB for the hashtable,
-> and 16 bytes (2 pointers) for |struct hlist_node| in each clk. On a
-> platform with around 800 clks, this reduces the time spent in
-> clk_core_lookup() significantly:
->=20
->           |      PID 0      |     kworker     |
->           | before |  after | before |  after |
->     -------------------------------------------
+On Sun, Sep 21, 2025 at 07:16:50PM +0200, Benjamin Berg wrote:
+> Hi,
+> 
+> On Sun, 2025-09-21 at 19:13 +0200, Willy Tarreau wrote:
+> > On Sun, Sep 21, 2025 at 07:05:24PM +0200, Benjamin Berg wrote:
+> > > This also ties to the question of the other mail. I prefer "errno" not
+> > > to be available if it is not actually safe to use. UML does use threads
+> > > in some places (and may use it extensively in the future). The current
+> > > "errno" implementation is not threadsafe and I see neither an obvious
+> > > way nor a need to change that. By setting NOLIBC_IGNORE_ERRNO any
+> > > unsafe code will not compile and can be changed to use the sys_*
+> > > functions to avoid errno.
+> > 
+> > That's the point I disagree with because here we're not using errno
+> > more than printf() or dirent(). Why fix dirent() to build without errno
+> > and break perror() ? Why not also break printf() then ? All of this must
+> > be consistent. We're unbreaking some arbitrary functions and breaking
+> > other arbitrary ones, that's not logical.
+> > 
+> > I'm totally fine with saying that errno shouldn't be defined when building
+> > without errno, but all functions must continue to be defined. perror() is
+> > used to print an error message, it's a valid use case just as printf() and
+> > should remain.
+> > 
+> > If we disable perror for this, then we must also disable usage of printf
+> > for consistency (and I don't want this either).
+> 
+> Right, fair enough. It is true that it does not really hurt to keep
+> perror defined. I doubt there is much code out there, but I also don't
+> really have a a strong argument against keeping perror. After all, it
+> will "just" result in a bad error messages rather than undefined
+> behaviour.
 
-Applied to clk-next
+It shouldn't be a "bad" error message, just a limited one, which is the
+main purpose of ignoring errno (i.e. where we're running we don't care
+about error details since the user only needs to know that it failed, or
+may even not know about it at all). perror *does* display the caller's
+error message. I'm personally fine with seeing:
 
-Can you send a followup that adds a unit test for clk_core_lookup()? We
-don't want __clk_lookup() to continue being used, so maybe we can add a
-test only exported function like clk_hw_lookup() that uses
-clk_core_lookup() underneath while grabbing the prepare lock. It can
-make sure a registered clk_hw is found and a non-registered name isn't
-found and assert that the not yet registered name isn't found.
+    "open(): unknown error"
+
+for:
+
+    if (open(path, O_RDONLY) < 0)
+         perror("open()");
+
+when building without errno.
+
+Willy
 
