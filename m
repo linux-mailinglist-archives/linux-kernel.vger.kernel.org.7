@@ -1,87 +1,318 @@
-Return-Path: <linux-kernel+bounces-826196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA59B8DCE9
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC17B8DCEC
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2502189AF2B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9593A658D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6BF1B4F0A;
-	Sun, 21 Sep 2025 14:45:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB7E7263B;
+	Sun, 21 Sep 2025 14:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b="GOGsnqAG"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ED11BBBE5
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C028F54
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758465905; cv=none; b=lZYx5GZjy7LwhnbVqGv7HD8Pu5Ij6nlmzv7/wOIhfUBNUFhHZ91WutszvzxcuoYvwk3ZlfZRYgMJo+chDy0Z+OOZot1i0HNcALiI2khWnUkiswhrmVXK/ZjdbrCQLvahsdIceOi3/kMjA4Xomry5OmEtGCACDF2XqbJRR5vFbas=
+	t=1758466126; cv=none; b=hkiHaN+1DYlIZIR0wXQPsNtwucE+1lrXpWutBmEckt7rARctVGlHoERrQIbNiQ1GSVTos9qqaj1zFFgiSykhbwlS8b5qWBKp7Wn++DmH1iyALkPMxldCcdDF05hccHhOhAqeRTWozPvRLsj0fVLUaP9ukFa75Axjv5v4c8LYLQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758465905; c=relaxed/simple;
-	bh=aSmRQ8sPYYor6mzesV06teDlJXnzaKvTu5gwjXrmPgY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=f7cQae9ABuLUj87Ix7Y9Dtfb71FNxTlNRip11GW5f2NVOps67hS5rtg2xyCvShwphXUK1VWSeQlaKN4ZEvSCT/QXKnty9qJgT8aX//NsALvWhxyFiMOrJvzkAbeloZeUt2oJRp1z+LnGmTDeeEKHiLo7ILS/z/Md5HWfYBWzDp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4247e23f070so29141605ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 07:45:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758465903; x=1759070703;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5i6VwjOh7K3UAEP8WBko4uaZQTphFDWWdkoNTJu2soA=;
-        b=kDfr3+2MWG1twTmK0nRaqFPht/xZWo5hZZ5RNM9vn0DGnbyGhR9EsdcsJlbsrj+GKA
-         AmhCe8+uHmIg4QaV0OIIH33dLicnFs6wcjwjauPr1tCMZqyhUQx+UAe3r/4dyoy456Wb
-         JC9FB40qe/ubLZcjsoVwYCVunQHhk5SfGRpkbFxcv+dfA9Xgun2p4ARe/rvhqQA3fTDd
-         2G7QVAHcVyi4LnVkwxX4W4RGHChy6SuNZBY0NJ6lHTQVFmXcQpeeTl0s+hHSf2Pf2p2L
-         E9QTbTrvw1Ij6BbspxF/z5v4yGbANPFIm4BfgOB/CYMCWrFfKYha5JK5Fk/gVxGaEYGU
-         qytg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTV3oP+x4EGyWqBFOf8gr4E8AIkpdUNB9jhHww49YAbYiTSjeP7Lz9vWetQOia6H63nBMQViymAt2rLZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0ADaSRA2b2Y5DfJMaQ+a9DtjUes9UKVmNnRa0KuOyK00/xaHj
-	+wONJivf0qMBAA/2XS+87RYfa2Ebd1gn7xQ82rBi1OoO0xvxqAbuWgLoIXgg4N6Jrv2P91Qt9li
-	Gh7hOJwC1Hi5vjAYVRXQ1qZR5f6KuC80IixUe9jlXgIeXwMSsxd6nqbM7SUk=
-X-Google-Smtp-Source: AGHT+IEZJfW5lcFPGj4sKR+Q2pwBBlGrNnL+WrPz1i839MUf8KDPLUIgHeiY9/V2GzqzJwO/5nvdnsDHkIrEMK4/FUXKxoXlX6Lx
+	s=arc-20240116; t=1758466126; c=relaxed/simple;
+	bh=t5GM36bLnT2Tb+7cz1gIRjOEPpmXcgyffFG+EGwy6i4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZpuKArZAnxGobTqHtGOBtYGrsNKlwhYbW0g33Ph14B4YAl+5EmkJr0Dat+/Vfm1yPeWinXSrO33f30pDoMb6//iToZOLun8D7D9jM3try83NV9HgcnRLYSEFHr3iwoo8oGWjshCMq+px9qpsdAK9NQGalXO21kXQfgHwi3nFip8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me; spf=pass smtp.mailfrom=fwd.mgml.me; dkim=pass (2048-bit key) header.d=fwd.mgml.me header.i=@fwd.mgml.me header.b=GOGsnqAG; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fwd.mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fwd.mgml.me
+Received: from NEET (p3802011-ipxg00h01tokaisakaetozai.aichi.ocn.ne.jp [180.53.179.11])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58LEmaLA019086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 21 Sep 2025 23:48:36 +0900 (JST)
+	(envelope-from k@fwd.mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=eVxpXDxPuZq2d3D5n7/Gd/w3ZZ4WUNur6IL0OAw8UEA=;
+        c=relaxed/relaxed; d=fwd.mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250919; t=1758466116; v=1;
+        b=GOGsnqAGuMkMURSfkaklC78xq0V6wV88dDv4b0rSWOAyXuC50jj4KAyT6N3UPK5t
+         OPWPaPZzWQClNAAJyfdVm/i5LpDZZ5AqEDu3KUsFd9VWePNPdsAGGLPHIXCmaBXo
+         CCkhULWtVLFKOYg+zeLzvgIrPoo2smHiyCaPIT1U2CQGjHy8JUbjWV+Ka8k4rcnm
+         17m2pftxz8T+fbp/zKoW0s6u8tMkz43vpRgu/UdWJa5Wdqr8tXk87znrwheaQq6l
+         3oEXEbVWc9H4NXalEdngF6u+OXrj8jc1MVz0ggcKRkvjJEk+J0vQvGxnE6a45Wg7
+         HEstqbBL7WpmYDdMTpOmrw==
+Message-ID: <b64fc92d-cb30-4b9e-b9c2-5652d50458dd@fwd.mgml.me>
+Date: Sun, 21 Sep 2025 23:48:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8d:b0:3f2:a7ef:bd88 with SMTP id
- e9e14a558f8ab-42481911aadmr139022175ab.5.1758465902902; Sun, 21 Sep 2025
- 07:45:02 -0700 (PDT)
-Date: Sun, 21 Sep 2025 07:45:02 -0700
-In-Reply-To: <aNAKh-iE17qLD5es@shredder>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68d00f6e.a00a0220.37dadf.003e.GAE@google.com>
-Subject: Re: [syzbot] [net?] general protection fault in find_match (6)
-From: syzbot <syzbot+6596516dd2b635ba2350@syzkaller.appspotmail.com>
-To: idosch@idosch.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/9] md/raid1,raid10: Set the LastDev flag when the
+ configuration changes
+To: Xiao Ni <xni@redhat.com>
+Cc: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+        Mariusz Tkaczyk <mtkaczyk@kernel.org>, Shaohua Li <shli@fb.com>,
+        Guoqing Jiang <jgq516@gmail.com>, linux-raid@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kenta Akagi <k@fwd.mgml.me>
+References: <20250915034210.8533-1-k@mgml.me>
+ <20250915034210.8533-2-k@mgml.me>
+ <CALTww2_XBBBP3NHRjxrxsJ3eqjJ_bB8SmCeHFocun1hQiUedkA@mail.gmail.com>
+Content-Language: en-US
+From: Kenta Akagi <k@fwd.mgml.me>
+In-Reply-To: <CALTww2_XBBBP3NHRjxrxsJ3eqjJ_bB8SmCeHFocun1hQiUedkA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi,
+Thank you for review.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 2025/09/21 16:54, Xiao Ni wrote:
+> Hi Kenta
+> 
+> On Mon, Sep 15, 2025 at 11:44 AM Kenta Akagi <k@mgml.me> wrote:
+>>
+>> Currently, the LastDev flag is set on an rdev that failed a failfast
+>> metadata write and called md_error, but did not become Faulty. It is
+>> cleared when the metadata write retry succeeds. This has problems for
+>> the following reasons:
+>>
+>> * Despite its name, the flag is only set during a metadata write window.
+>> * Unlike when LastDev and Failfast was introduced, md_error on the last
+>>   rdev of a RAID1/10 array now sets MD_BROKEN. Thus when LastDev is set,
+>>   the array is already unwritable.
+>>
+>> A following commit will prevent failfast bios from breaking the array,
+>> which requires knowing from outside the personality whether an rdev is
+>> the last one. For that purpose, LastDev should be set on rdevs that must
+>> not be lost.
+>>
+>> This commit ensures that LastDev is set on the indispensable rdev in a
+>> degraded RAID1/10 array.
+>>
+>> Signed-off-by: Kenta Akagi <k@mgml.me>
+>> ---
+>>  drivers/md/md.c     |  4 +---
+>>  drivers/md/md.h     |  6 +++---
+>>  drivers/md/raid1.c  | 34 +++++++++++++++++++++++++++++++++-
+>>  drivers/md/raid10.c | 34 +++++++++++++++++++++++++++++++++-
+>>  4 files changed, 70 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index 4e033c26fdd4..268410b66b83 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -1007,10 +1007,8 @@ static void super_written(struct bio *bio)
+>>                 if (!test_bit(Faulty, &rdev->flags)
+>>                     && (bio->bi_opf & MD_FAILFAST)) {
+>>                         set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+>> -                       set_bit(LastDev, &rdev->flags);
+>>                 }
+>> -       } else
+>> -               clear_bit(LastDev, &rdev->flags);
+>> +       }
+>>
+>>         bio_put(bio);
+>>
+>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>> index 51af29a03079..ec598f9a8381 100644
+>> --- a/drivers/md/md.h
+>> +++ b/drivers/md/md.h
+>> @@ -281,9 +281,9 @@ enum flag_bits {
+>>                                  * It is expects that no bad block log
+>>                                  * is present.
+>>                                  */
+>> -       LastDev,                /* Seems to be the last working dev as
+>> -                                * it didn't fail, so don't use FailFast
+>> -                                * any more for metadata
+>> +       LastDev,                /* This is the last working rdev.
+>> +                                * so don't use FailFast any more for
+>> +                                * metadata.
+>>                                  */
+>>         CollisionCheck,         /*
+>>                                  * check if there is collision between raid1
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index bf44878ec640..32ad6b102ff7 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -1733,6 +1733,33 @@ static void raid1_status(struct seq_file *seq, struct mddev *mddev)
+>>         seq_printf(seq, "]");
+>>  }
+>>
+>> +/**
+>> + * update_lastdev - Set or clear LastDev flag for all rdevs in array
+>> + * @conf: pointer to r1conf
+>> + *
+>> + * Sets LastDev if the device is In_sync and cannot be lost for the array.
+>> + * Otherwise, clear it.
+>> + *
+>> + * Caller must hold ->device_lock.
+>> + */
+>> +static void update_lastdev(struct r1conf *conf)
+>> +{
+>> +       int i;
+>> +       int alive_disks = conf->raid_disks - conf->mddev->degraded;
+>> +
+>> +       for (i = 0; i < conf->raid_disks; i++) {
+>> +               struct md_rdev *rdev = conf->mirrors[i].rdev;
+>> +
+>> +               if (rdev) {
+>> +                       if (test_bit(In_sync, &rdev->flags) &&
+>> +                           alive_disks == 1)
+>> +                               set_bit(LastDev, &rdev->flags);
+>> +                       else
+>> +                               clear_bit(LastDev, &rdev->flags);
+>> +               }
+>> +       }
+>> +}
+>> +
+>>  /**
+>>   * raid1_error() - RAID1 error handler.
+>>   * @mddev: affected md device.
+>> @@ -1767,8 +1794,10 @@ static void raid1_error(struct mddev *mddev, struct md_rdev *rdev)
+>>                 }
+>>         }
+>>         set_bit(Blocked, &rdev->flags);
+>> -       if (test_and_clear_bit(In_sync, &rdev->flags))
+>> +       if (test_and_clear_bit(In_sync, &rdev->flags)) {
+>>                 mddev->degraded++;
+>> +               update_lastdev(conf);
+>> +       }
+>>         set_bit(Faulty, &rdev->flags);
+>>         spin_unlock_irqrestore(&conf->device_lock, flags);
+>>         /*
+>> @@ -1864,6 +1893,7 @@ static int raid1_spare_active(struct mddev *mddev)
+>>                 }
+>>         }
+>>         mddev->degraded -= count;
+>> +       update_lastdev(conf);
+> 
+> update_lastdev is called in raid1_spare_active, raid1_run and
+> raid1_reshape. Could you explain the reason why it needs to call this
+> function? Is it the reason you want to clear LastDev flag? If so, is
+> it a right place to do it? As your commit message says, it will be
+> cleared after retry metadata successfully. In raid1, is it the right
+> place that fixes read/write successfully?
 
-Reported-by: syzbot+6596516dd2b635ba2350@syzkaller.appspotmail.com
-Tested-by: syzbot+6596516dd2b635ba2350@syzkaller.appspotmail.com
+The intention was to set LastDev only when the rdev is the last device in the array.
 
-Tested on:
+As suggested in review, I will check whether it is the last device when
+md_error is called, instead of using a flag.
+As a result, update_lastdev() will be removed, and the purpose and behavior
+of LastDev will remain unchanged in v5.
 
-commit:         f975f08c Merge tag 'for-6.17-rc6-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=109648e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
-dashboard link: https://syzkaller.appspot.com/bug?extid=6596516dd2b635ba2350
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14a008e2580000
+Thanks,
+Akagi
 
-Note: testing is done by a robot and is best-effort only.
+> 
+> Best Regards
+> Xiao
+> 
+>>         spin_unlock_irqrestore(&conf->device_lock, flags);
+>>
+>>         print_conf(conf);
+>> @@ -3290,6 +3320,7 @@ static int raid1_run(struct mddev *mddev)
+>>         rcu_assign_pointer(conf->thread, NULL);
+>>         mddev->private = conf;
+>>         set_bit(MD_FAILFAST_SUPPORTED, &mddev->flags);
+>> +       update_lastdev(conf);
+>>
+>>         md_set_array_sectors(mddev, raid1_size(mddev, 0, 0));
+>>
+>> @@ -3427,6 +3458,7 @@ static int raid1_reshape(struct mddev *mddev)
+>>
+>>         spin_lock_irqsave(&conf->device_lock, flags);
+>>         mddev->degraded += (raid_disks - conf->raid_disks);
+>> +       update_lastdev(conf);
+>>         spin_unlock_irqrestore(&conf->device_lock, flags);
+>>         conf->raid_disks = mddev->raid_disks = raid_disks;
+>>         mddev->delta_disks = 0;
+>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>> index b60c30bfb6c7..dc4edd4689f8 100644
+>> --- a/drivers/md/raid10.c
+>> +++ b/drivers/md/raid10.c
+>> @@ -1983,6 +1983,33 @@ static int enough(struct r10conf *conf, int ignore)
+>>                 _enough(conf, 1, ignore);
+>>  }
+>>
+>> +/**
+>> + * update_lastdev - Set or clear LastDev flag for all rdevs in array
+>> + * @conf: pointer to r10conf
+>> + *
+>> + * Sets LastDev if the device is In_sync and cannot be lost for the array.
+>> + * Otherwise, clear it.
+>> + *
+>> + * Caller must hold ->reconfig_mutex or ->device_lock.
+>> + */
+>> +static void update_lastdev(struct r10conf *conf)
+>> +{
+>> +       int i;
+>> +       int raid_disks = max(conf->geo.raid_disks, conf->prev.raid_disks);
+>> +
+>> +       for (i = 0; i < raid_disks; i++) {
+>> +               struct md_rdev *rdev = conf->mirrors[i].rdev;
+>> +
+>> +               if (rdev) {
+>> +                       if (test_bit(In_sync, &rdev->flags) &&
+>> +                           !enough(conf, i))
+>> +                               set_bit(LastDev, &rdev->flags);
+>> +                       else
+>> +                               clear_bit(LastDev, &rdev->flags);
+>> +               }
+>> +       }
+>> +}
+>> +
+>>  /**
+>>   * raid10_error() - RAID10 error handler.
+>>   * @mddev: affected md device.
+>> @@ -2013,8 +2040,10 @@ static void raid10_error(struct mddev *mddev, struct md_rdev *rdev)
+>>                         return;
+>>                 }
+>>         }
+>> -       if (test_and_clear_bit(In_sync, &rdev->flags))
+>> +       if (test_and_clear_bit(In_sync, &rdev->flags)) {
+>>                 mddev->degraded++;
+>> +               update_lastdev(conf);
+>> +       }
+>>
+>>         set_bit(MD_RECOVERY_INTR, &mddev->recovery);
+>>         set_bit(Blocked, &rdev->flags);
+>> @@ -2102,6 +2131,7 @@ static int raid10_spare_active(struct mddev *mddev)
+>>         }
+>>         spin_lock_irqsave(&conf->device_lock, flags);
+>>         mddev->degraded -= count;
+>> +       update_lastdev(conf);
+>>         spin_unlock_irqrestore(&conf->device_lock, flags);
+>>
+>>         print_conf(conf);
+>> @@ -4159,6 +4189,7 @@ static int raid10_run(struct mddev *mddev)
+>>         md_set_array_sectors(mddev, size);
+>>         mddev->resync_max_sectors = size;
+>>         set_bit(MD_FAILFAST_SUPPORTED, &mddev->flags);
+>> +       update_lastdev(conf);
+>>
+>>         if (md_integrity_register(mddev))
+>>                 goto out_free_conf;
+>> @@ -4567,6 +4598,7 @@ static int raid10_start_reshape(struct mddev *mddev)
+>>          */
+>>         spin_lock_irq(&conf->device_lock);
+>>         mddev->degraded = calc_degraded(conf);
+>> +       update_lastdev(conf);
+>>         spin_unlock_irq(&conf->device_lock);
+>>         mddev->raid_disks = conf->geo.raid_disks;
+>>         mddev->reshape_position = conf->reshape_progress;
+>> --
+>> 2.50.1
+>>
+>>
+> 
+> 
+
 
