@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel+bounces-826432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD7DB8E831
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:11:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0857B8E853
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D124A189C113
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E593BE3CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8FC2BE02C;
-	Sun, 21 Sep 2025 22:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34802C11EB;
+	Sun, 21 Sep 2025 22:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="il58Bdov"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="a+siZ4Yo"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2712F5A5;
-	Sun, 21 Sep 2025 22:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEC312F5A5;
+	Sun, 21 Sep 2025 22:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758492687; cv=none; b=o/WSz4VdmHjbVI2lxbGVdUt3SrKebRECRzTbNfzQJ4jwm/lO9r8R3vXDXYDmJhcPdOEi0KEemDwazgjklzPpDkDwlVCakgIj2f6Bi1za4lEDH7++0LEheijzoJtTgmJp9HYVnB4uKcQ5lFmojCL68EYz4+u3QUg8zePuDv7xtoQ=
+	t=1758492773; cv=none; b=QkQNijNqXNfr9DcNrUb8r3kbgndkSBjFFp9jm4YlN1QSVQMXtomgFFlX6MMJSdCZxvGkJs0B50D7nSuHNJNT4s/+xzS86OorgpmOOhmtsp3RWvq9Yo0BsjlRnwKFyISve3CPE/FbqIcCTZOebaGsDrxNo4McxPwneUmMimGX4Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758492687; c=relaxed/simple;
-	bh=LAVT7fd94Dqyvggjb7HfswE4SogprjltEzomfWvmFqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYTK6Y/eEzrGPCdKfxEDMGM/eZncH4OmsLvzX0PeHWO1phy9QY1gyEUJlHZkZOoDM9vu5G5SI/wbADqY+LEAXWzGebZaUQiwemw1/+Af++SExeWnx8pi1G9X+YnEIJpRiZTu6GFE+oxY2bpljKj2jeET99Wa4IQLT3DJVm2bPiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=il58Bdov; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 3A82910C4;
-	Mon, 22 Sep 2025 00:09:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758492599;
-	bh=LAVT7fd94Dqyvggjb7HfswE4SogprjltEzomfWvmFqE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=il58BdovW9wqLdI9J5VQ3MUe7NyCvg6VqG6B1dgcjzlpcqMPLbk0USxPOKK2NGoaS
-	 605omlvMMFhiZ3tKn1QVSCg0F8FC2O9QSC2BEoGt6+oJJMlf09652v9iEgKlcNzEgx
-	 p3rXbh4WpjG9b5cIjcS6we/Md6PcdL9gxoFbHcIY=
-Date: Mon, 22 Sep 2025 01:10:50 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guoniu Zhou <guoniu.zhou@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Alice Yuan <alice.yuan@nxp.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 1/5] media: dt-bindings: nxp,imx8-isi: Add i.MX91 ISI
- compatible string
-Message-ID: <20250921221050.GA10540@pendragon.ideasonboard.com>
-References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
- <20250905-isi_imx93-v2-1-37db5f768c57@nxp.com>
+	s=arc-20240116; t=1758492773; c=relaxed/simple;
+	bh=CaMFqxK4P+edoKm7IoaR9E43eWXX4ELaNvNg+hxBplg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eFqsbDzCSRiwBNqXLLSgRB0LfKl6QlSnkAA4avv98huYNuaANZ0m/ogaF6SeqVcQHC9YzSvainB++ET4qqr8ZtvRm7cYIVQaejs8yGbzhb41vv9lC9fENMnLHAfC2B3LhutrkvaB/5/P1I6d32uzUqISgCR1o0dBkK/3eLIwGTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=a+siZ4Yo; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=CaMFqxK4P+edoKm7IoaR9E43eWXX4ELaNvNg+hxBplg=; b=a+siZ4Yoga+wMKE2p+IAPnLMXy
+	w3uyqhmJbaa7IH0Aw7rm13Ms+ran2tqxzowavsRJwrhGJDdqhGM2onaxSt7/YPGDIsIn5QSyfz2aB
+	pTPB3OeZKAjAVZ/iutAUT6LYQylpToTcrtBdbAdwD2Sv10+wZe3vPNMsEbEeGjfHfjZ7yaLM+PvbI
+	TQvDRMfYJ7DjlXfDHW07Jhdjrm1Y4BnIe9FJ/T9RWLmXEB2tR2jexFaUKY2zpIM4OehdH41quGIq+
+	sirIOIRiqW2YtSXAaIDoQuFB8iIg3ky0mKg4ZpCzmQrra+/B3mdmbyDwPrwqEs+aWMA0QYRMM9+b2
+	Idy/K+gQ==;
+Date: Mon, 22 Sep 2025 00:12:44 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: lee@kernel.org, krzk+dt@kernel.org, tony@atomide.com, robh@kernel.org,
+ conor+dt@kernel.org, ukleinek@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-omap@vger.kernel.org
+Subject: Re: [PATCH v8 1/3] dt-bindings: mfd: twl: Add missing sub-nodes for
+ TWL4030 & TWL603x
+Message-ID: <20250922001244.298cb24a@kemnade.info>
+In-Reply-To: <20250914192516.164629-2-jihed.chaibi.dev@gmail.com>
+References: <20250914192516.164629-1-jihed.chaibi.dev@gmail.com>
+ <20250914192516.164629-2-jihed.chaibi.dev@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250905-isi_imx93-v2-1-37db5f768c57@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 05, 2025 at 02:55:58PM +0800, Guoniu Zhou wrote:
-> From: Alice Yuan <alice.yuan@nxp.com>
-> 
-> The ISI module on i.MX91 is reused from i.MX93 and implements one channel
-> and one camera input which only can be connected to parallel camera input.
-> So needn't to select camera source like i.MX93 in gasket ops.
-> 
-> Signed-off-by: Alice Yuan <alice.yuan@nxp.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+On Sun, 14 Sep 2025 21:25:14 +0200
+Jihed Chaibi <jihed.chaibi.dev@gmail.com> wrote:
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
-> index f43b91984f0152fbbcf80db3b3bbad7e8ad6c11e..001a0d9b71e096db3f543adaad40b84af378d707 100644
-> --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
-> +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
-> @@ -22,6 +22,7 @@ properties:
->        - fsl,imx8mn-isi
->        - fsl,imx8mp-isi
->        - fsl,imx8ulp-isi
-> +      - fsl,imx91-isi
->        - fsl,imx93-isi
->  
->    reg:
-> @@ -66,7 +67,6 @@ required:
->    - interrupts
->    - clocks
->    - clock-names
-> -  - fsl,blk-ctrl
->    - ports
->  
->  allOf:
-> @@ -77,6 +77,7 @@ allOf:
->              enum:
->                - fsl,imx8mn-isi
->                - fsl,imx8ulp-isi
-> +              - fsl,imx91-isi
->                - fsl,imx93-isi
->      then:
->        properties:
-> @@ -109,6 +110,16 @@ allOf:
->              - port@0
->              - port@1
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          not:
-> +            contains:
-> +              const: fsl,imx91-isi
-> +    then:
-> +      required:
-> +        - fsl,blk-ctrl
-> +
->  additionalProperties: false
->  
->  examples:
-
--- 
-Regards,
-
-Laurent Pinchart
+> Update the main TI TWL-family binding to be self-contained and to fix
+> pre-existing validation errors.
+>=20
+> To ensure future patches are bisectable, child nodes whose bindings
+> are in other patches (audio, keypad, usb, etc.) are now defined using
+> a flexible 'additionalProperties: true' pattern. This removes hard
+> dependencies between the MFD and subsystem bindings.
+>=20
+> The complete dtbs_check for this binding is clean except for two
+> warnings originating from pre-existing bugs in the OMAP DTS files,
+> for which fixes have already been submitted separately [1][2].
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+>=20
+Reviewed-by: Andreas Kemnade <andreas@kemnade.info>
 
