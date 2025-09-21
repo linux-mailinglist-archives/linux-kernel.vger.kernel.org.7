@@ -1,87 +1,151 @@
-Return-Path: <linux-kernel+bounces-826056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D59B8D6CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:36:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF050B8D6D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE0A3AEBA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:36:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD0023B541B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684B52D249F;
-	Sun, 21 Sep 2025 07:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669822D1F69;
+	Sun, 21 Sep 2025 07:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="11h5KL1V";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OV2ckYfy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ARVmY+Vz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1F71E8836;
-	Sun, 21 Sep 2025 07:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD243FB31;
+	Sun, 21 Sep 2025 07:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758440196; cv=none; b=LHpSe3jBbmUVcj7iwUT3FJXabcDCqew0Zf/q4+QhZ2837vhwRFkq+u1dvVcMmkVJ6GFQWBpqUkDzYSgDDMWUAbYLHYaVIOeHja4SH0euGuFR41Hp14aSZ1jnkjK3CqRijhCZzmlQfMURzgWIeshl7l/MWF7cvWqX9hc/zP/t0CQ=
+	t=1758440211; cv=none; b=W52wGFJmE0mpoHGO/FAs09bHtvzZTHJ0tQvhFNt3RRkn0F5YmBteyNoDh/jBTwVGPjO5Fa3jZl1X3qumPj6K6KNpcts5nJS3PEK5ccpK+f5HxNneVohVcvEDR8uDVlJkxGaf+17hcjRc1DPiyK5pVu1o1NXgWDWf3N9nKJbSnRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758440196; c=relaxed/simple;
-	bh=stUeXoAm8LByM1FcZc/Iwv0KfZLq93DcZ37LmHah1ik=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lqsPzQWRcftr3Ajbqnkm+PzaIWaem3NEDMPKFcfCDpRwtAWZQEMdQqPUb1eAKNmVG6u06xkoVz/dS9Bt3JVflLFU78qgTUlXQCZehAfFX1vzKZv7TrlOvnZ0Mr7PCmfz8tz2fr3Zou6gyfOOdPPdB3fMw6Hn00f5IXWcKhlU7AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=11h5KL1V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OV2ckYfy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1758440193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=stUeXoAm8LByM1FcZc/Iwv0KfZLq93DcZ37LmHah1ik=;
-	b=11h5KL1VvvZCiNL+6UqKR003d8EztndR3UxVq7jhIFTBmMGyNgXqt+ncBikCjO9rwHhfn/
-	1XJhKVB6m9zg0o8bKtQD1DZc/AAUPk8/LpNgQ+QuHtOrof26cTqTtvw2QivVaYPuYrQEi3
-	uwVT/tI1R0RloSwhHpZu1AulhU6RjbmhljW7TYauw0ovxWlrDtzaodCPig5qTPKx18DDE4
-	F51RmbCA9M51YWGCcEDteqBLcTDRMfSR0oTdugBOuT8yn4gR589bvSSmxMCxrXRpViWtqM
-	y/lKWzwEYWpiK6+kcRVUnBs12lW6wX0RwJBFEfWgGrPCznRyYO2asmE9sEArqQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1758440193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=stUeXoAm8LByM1FcZc/Iwv0KfZLq93DcZ37LmHah1ik=;
-	b=OV2ckYfyUMAC25bw76vxQd10mARue71nh6BSKx5peSR/2rb6DeZbvwhHOE7PZ45RVdcexl
-	jY/m19CBOhnzMuBQ==
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc: Amir Goldstein <amir73il@gmail.com>, Josef Bacik <josef@toxicpanda.com>,
- Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, Zbigniew
- =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering
- <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa
- Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
- Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>,
- Jakub Kicinski
- <kuba@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic
- Weisbecker <frederic@kernel.org>, cgroups@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Christian Brauner
- <brauner@kernel.org>
-Subject: Re: [PATCH 06/14] time: port to ns_ref_*() helpers
-In-Reply-To: <20250918-work-namespace-ns_ref-v1-6-1b0a98ee041e@kernel.org>
-References: <20250918-work-namespace-ns_ref-v1-0-1b0a98ee041e@kernel.org>
- <20250918-work-namespace-ns_ref-v1-6-1b0a98ee041e@kernel.org>
-Date: Sun, 21 Sep 2025 09:36:32 +0200
-Message-ID: <87wm5s6yv3.ffs@tglx>
+	s=arc-20240116; t=1758440211; c=relaxed/simple;
+	bh=u+7GWK94K2d12xoNceoyNQMPQ+Avsc5hXDrIp3bhOiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vul3RdD83XcoJWZn6df4Q/NGyEicGLH+J85HWd++qRQkysDlOV0dPXub7HmJgZv6+D3i5mCJ0ulj2fdpQBRkTc/frTUK0thShcc7OYWSzQefVOGilq1fgrLp9WZUvVN5FrJGObVz+boflvNLO1dB81uhr63Vazs1PgVRWRPVOoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ARVmY+Vz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE8C8C4CEE7;
+	Sun, 21 Sep 2025 07:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758440211;
+	bh=u+7GWK94K2d12xoNceoyNQMPQ+Avsc5hXDrIp3bhOiw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ARVmY+VzcXR/pwJD4cJSRgX+IajyrlajMfIWP/OlGMJvNOua8lbiv+guGXgycID6i
+	 4ONFjQRLNiTR6Jr3gN/jljj8TWjlKiMfcsW7UPrZ0Xq7k7AhRStXbFpgfr2wJT4vI8
+	 /I6zUmRm7+RhZM9XtLRt5Esv6URS2lD51qwKNifB4yUl3OwFQZUZiYUwjHYAqtevdR
+	 JnMoUojwQxcrSZjkuXMidH8izfveUAtlaFtMrMW53mTwPKPD/lasRlrt/TvPE/9UWk
+	 /r01Y3y6nxVidYXq/ZsQ+m3klo8QUcyujlIiSheFX2GDlAjZ3GLwEsv01HPfVbyTRO
+	 j2wz/sYZAtZ1w==
+Date: Sun, 21 Sep 2025 10:36:44 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: Will Deacon <will@kernel.org>, catalin.marinas@arm.com,
+	ryan.roberts@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [v2 PATCH] arm64: kprobes: call set_memory_rox() for kprobe page
+Message-ID: <aM-rDD-TRqmtr6Nb@kernel.org>
+References: <20250918162349.4031286-1-yang@os.amperecomputing.com>
+ <aMxAwDr11M2VG5XV@willie-the-truck>
+ <8df9d007-f363-4488-96e9-fbf017d9c8e2@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8df9d007-f363-4488-96e9-fbf017d9c8e2@os.amperecomputing.com>
 
-On Thu, Sep 18 2025 at 12:11, Christian Brauner wrote:
-> Stop accessing ns.count directly.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Thu, Sep 18, 2025 at 10:33:26AM -0700, Yang Shi wrote:
+> 
+> 
+> On 9/18/25 10:26 AM, Will Deacon wrote:
+> > On Thu, Sep 18, 2025 at 09:23:49AM -0700, Yang Shi wrote:
+> > > The kprobe page is allocated by execmem allocator with ROX permission.
+> > > It needs to call set_memory_rox() to set proper permission for the
+> > > direct map too. It was missed.
+> > > 
+> > > Fixes: 10d5e97c1bf8 ("arm64: use PAGE_KERNEL_ROX directly in alloc_insn_page")
+> > > Cc: <stable@vger.kernel.org>
+> > > Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+> > > Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> > > ---
+> > > v2: Separated the patch from BBML2 series since it is an orthogonal bug
+> > >      fix per Ryan.
+> > >      Fixed the variable name nit per Catalin.
+> > >      Collected R-bs from Catalin.
+> > > 
+> > >   arch/arm64/kernel/probes/kprobes.c | 12 ++++++++++++
+> > >   1 file changed, 12 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+> > > index 0c5d408afd95..8ab6104a4883 100644
+> > > --- a/arch/arm64/kernel/probes/kprobes.c
+> > > +++ b/arch/arm64/kernel/probes/kprobes.c
+> > > @@ -10,6 +10,7 @@
+> > >   #define pr_fmt(fmt) "kprobes: " fmt
+> > > +#include <linux/execmem.h>
+> > >   #include <linux/extable.h>
+> > >   #include <linux/kasan.h>
+> > >   #include <linux/kernel.h>
+> > > @@ -41,6 +42,17 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+> > >   static void __kprobes
+> > >   post_kprobe_handler(struct kprobe *, struct kprobe_ctlblk *, struct pt_regs *);
+> > > +void *alloc_insn_page(void)
+> > > +{
+> > > +	void *addr;
+> > > +
+> > > +	addr = execmem_alloc(EXECMEM_KPROBES, PAGE_SIZE);
+> > > +	if (!addr)
+> > > +		return NULL;
+> > > +	set_memory_rox((unsigned long)addr, 1);
+> > > +	return addr;
+> > > +}
+> > Why isn't execmem taking care of this? It looks to me like the
+> > execmem_cache_alloc() path calls set_memory_rox() but the
+> > execmem_vmalloc() path doesn't?
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+execmem_alloc() -> execmem_vmalloc() consolidated __vmalloc_node_range()
+for executable allocations. Those also didn't update the linear map alias.
+
+It could be added to execmem_vmalloc(), but as of now we don't have a way
+for generic code to tell which set_memory method to call based on pgprot,
+so making execmem_vmalloc() to deal with direct map alias is quite
+involved.
+
+It would be easier to just remove the direct map alias. It works on x86 so
+I don't see what can possibly go wrong :)
+ 
+> execmem_cache_alloc() is just called if execmem ROX cache is enabled, but it
+> currently just supported by x86. Included Mike to this thread who is the
+> author of execmem ROX cache.
+> 
+> > 
+> > It feels a bit bizarre to me that we have to provide our own wrapper
+> > (which is identical to what s390 does). Also, how does alloc_insn_page()
+> > handle the direct map alias on x86?
+
+s390 had its version of alloc_insn_page() long before execmem so there I
+just replaced module_alloc() with exemem_alloc().
+
+arm64 version of alloc_insn_page() didn't update the direct map before
+execmem, so I overlooked this issue when I was converting arm64 to execmem.
+ 
+> x86 handles it via execmem ROX cache.
+> 
+> Thanks,
+> Yang
+> 
+> > 
+> > Will
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
