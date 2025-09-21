@@ -1,478 +1,114 @@
-Return-Path: <linux-kernel+bounces-825977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3CCB8D404
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 05:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE00CB8D40B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 05:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A63EB442549
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 03:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56CB189A2ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 03:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567CF2367DA;
-	Sun, 21 Sep 2025 03:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lw5kXzXj"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48626239E65;
+	Sun, 21 Sep 2025 03:19:11 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2DB652
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 03:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD461C84DC
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 03:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758424580; cv=none; b=RhnT4M06xomdTxx4ylqsSMS4ZHU2yHoDN7GxmxzgvYlJ2CbHJQshf2iHIhzvpP4BReqTXGN0T+K1a8D/WULPcwx85yRR4jqh/cCRkuKTZaUPxn2r9OwuZPL0O3UHz71CyNg6UGWURnZQxvx5lHVRiLS0vg2uAmBKSFJH0KzCPfY=
+	t=1758424750; cv=none; b=PHnhZElh7DSbtJ2wpEddQR+raW2T1dQT2k8p5+DcCzwOEvhSnubq3BhZEK2LzYwTgEPb0TFT8XVbbhflM5+9xKdPHiBwKw3vCaJVCZrsv4MrNSJdwvf7FcOQRQX9yx9TqFdfzb++h/U4G+3Nqc4M5p6gp1lPK7R0bgHHq4q17Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758424580; c=relaxed/simple;
-	bh=M8m1y6hcK38+N0fApn09ZRDb7HrQEYpk84P06jYwGy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KoNS1UDihoR56z/AhKRLu5bJgjf39nev5g90MSW6R9OlKXO31wvtad1ixOt32zvCsv9XTVwhcFPl6SdQLaj0SEBKkU47SYS65RpZzhWewpSEjkN+kXWVovy3qu+Ju08g3X8g6m1EeGv4q6NOwGsjHwUR6nxUmwjebHr1/imik4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lw5kXzXj; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 21 Sep 2025 11:15:57 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1758424566;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R537tprBZ1xn1R8NGg+wDfjRCqd0XP7UoN6FXrMrzaU=;
-	b=lw5kXzXjN8/iOkZRdakz6MlJnj1zoxg0kF/NeVLi5Hy0ZWdIwzrx4sl36sJ3ee8iA0FmR0
-	aWaFh1yEwQcMYxEPuZGluDB7ID5csQl7ZP9K6txHx/YCpDettJTqc9il7xjk/Kn2RRJYRS
-	HhHTPsljxxl1/wXdZfyQRYS9l4/SGkg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: Alex Elder <elder@riscstar.com>, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	p.zabel@pengutronix.de, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.dev>
-Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
- controller driver
-Message-ID: <aM9t7fO_DyIG92Rx@troy-wujie14pro-arch>
-References: <20250919155914.935608-1-elder@riscstar.com>
- <20250919155914.935608-3-elder@riscstar.com>
+	s=arc-20240116; t=1758424750; c=relaxed/simple;
+	bh=gNN+aMOzEFbSUKRsK21R8dPuZqG4pliuplC0oJtvMs0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZERoy0wplIMvwd0Nz+S4EpoWlZBvFFdQ4XIshHvVQ/PhyLA2k5/prnDrBwPfmlny6rURWt4vaN/GW8qjPpGotAj48limkHopWzXoWYY3eEMwSvW25T7LmmDf31YLgCpcyMfRluP3T+C3rEsxoPCCGdOOgXg46HJrgbc/EF54K+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4240926dcd1so46565975ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:19:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758424748; x=1759029548;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajb2v52eqLx5lxNtMtfhRpvrbjYWdz6Tn3XecePJ9bc=;
+        b=qweLbrvY0+52tiehmDuIWCPauJ4cMoHzpm32qudd2rHVyIMjoEGkv+DopeE7zSJ9FU
+         nxYL1zsrMK3Fsl9rfpyaQldjTuaIRoIZ+AmMP/NL/htKRX+wm1zGrpENV+fU7pq0WMw+
+         rG0UkdcNh8W+9lzNki7xnTezOtLKkRu3quuvuSQ9jrjoSpxbOHdk7vr/VyPYAyeMOpvp
+         vgVjXLxhRiLV/mDwcVZN1sLo4CvyWIN8NkHldy/U42Lm2U6NWN3dcgOA2agAX5VxQkqX
+         G83qYLfLJsgvwAHDYQ/3QblaiHtcYdbpY62mihsr0RfNGKnpeNZbe42BFYJIimmhWNiq
+         prvQ==
+X-Gm-Message-State: AOJu0Yy6wOWQ5+mtCakV67RaSF2lm2us6muof1LcRLl9bCaLFNk+uvdK
+	dHpi9EcCtTUUMcrCdVGe/dCEDYzYjKmX99h4u56wS2wAQ+3hD22zJbuX52JXn+5IYCCkSh/5PaQ
+	vLPUK6KIHjbeTr4W2uqgThtl5Y43lTlW+SSnBVATd3gNIzw9vIGYe4EfsHaY=
+X-Google-Smtp-Source: AGHT+IE7NJvdg2CsYO42AtH7hOOaA9MBfwKejmUeBQKSWyWtg53RXKvbgYh+YJtvHwOjgf47L9N1u+QYFGeOgI6R6h7wf2TspWmI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919155914.935608-3-elder@riscstar.com>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:b4a:b0:40b:db4:839b with SMTP id
+ e9e14a558f8ab-4248190391bmr122081815ab.5.1758424748341; Sat, 20 Sep 2025
+ 20:19:08 -0700 (PDT)
+Date: Sat, 20 Sep 2025 20:19:08 -0700
+In-Reply-To: <68cdf1ae.a00a0220.37dadf.0021.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cf6eac.a00a0220.37dadf.0035.GAE@google.com>
+Subject: Forwarded: [PATCH] nsfs: reject file handles with invalid inode number
+From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 19, 2025 at 10:59:12AM -0500, Alex Elder wrote:
-> This patch introduces the driver for the SPI controller found in the
-> SpacemiT K1 SoC.  Currently the driver supports master mode only.
-> The SPI hardware implements RX and TX FIFOs, 32 entries each, and
-> supports both PIO and DMA mode transfers.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
-> v2: - The SPI_SPACEMIT_K1 config option is added in sorted order
->     - The spi-spacemit-k1.o make target is now added in sorted order
->     - Read/modify/writes of registers no longer use an additional
->       "virt" variable to hold the address accessed
->     - The k1_spi_driver_data->ioaddr field has been renamed base
->     - The DMA address for the base address is maintained, rather than
->       saving the DMA address of the data register
->     - CONFIG_MMP_PDMA is checked at runtime, and if it is not enabled,
->       DMA will not be used
->     - The spi-max-frequency property value is now bounds checked
->     - A local variable is now initialized to 0 in k1_spi_write_word()
->     - The driver name is now "k1-spi"
-> 
->  drivers/spi/Kconfig           |   8 +
->  drivers/spi/Makefile          |   1 +
->  drivers/spi/spi-spacemit-k1.c | 968 ++++++++++++++++++++++++++++++++++
->  3 files changed, 977 insertions(+)
->  create mode 100644 drivers/spi/spi-spacemit-k1.c
-> 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 82fa5eb3b8684..4f6c446c6bc16 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -1071,6 +1071,14 @@ config SPI_SG2044_NOR
->  	  also supporting 3Byte address devices and 4Byte address
->  	  devices.
->  
-> +config SPI_SPACEMIT_K1
-> +	tristate "K1 SPI Controller"
-> +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> +	depends on OF
-> +	default ARCH_SPACEMIT
-> +	help
-> +	  Enable support for the SpacemiT K1 SPI controller.
-> +
->  config SPI_SPRD
->  	tristate "Spreadtrum SPI controller"
->  	depends on ARCH_SPRD || COMPILE_TEST
-> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-> index eefaeca097456..637d750ead996 100644
-> --- a/drivers/spi/Makefile
-> +++ b/drivers/spi/Makefile
-> @@ -140,6 +140,7 @@ obj-$(CONFIG_SPI_SIFIVE)		+= spi-sifive.o
->  obj-$(CONFIG_SPI_SLAVE_MT27XX)          += spi-slave-mt27xx.o
->  obj-$(CONFIG_SPI_SN_F_OSPI)		+= spi-sn-f-ospi.o
->  obj-$(CONFIG_SPI_SG2044_NOR)	+= spi-sg2044-nor.o
-> +obj-$(CONFIG_SPI_SPACEMIT_K1)		+= spi-spacemit-k1.o
->  obj-$(CONFIG_SPI_SPRD)			+= spi-sprd.o
->  obj-$(CONFIG_SPI_SPRD_ADI)		+= spi-sprd-adi.o
->  obj-$(CONFIG_SPI_STM32) 		+= spi-stm32.o
-> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
-> new file mode 100644
-> index 0000000000000..8d564fe6c4303
-> --- /dev/null
-> +++ b/drivers/spi/spi-spacemit-k1.c
-> @@ -0,0 +1,968 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Support for SpacemiT K1 SPI controller
-> + *
-> + * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
-> + * Copyright (c) 2023, spacemit Corporation.
-SpacemiT?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> + */
-> +
-[...]
-> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
-> +{
-> +	struct k1_spi_io *rx = &drv_data->rx;
-> +	u32 bytes = drv_data->bytes;
-> +	u32 val;
-> +
-> +	val = readl(drv_data->base + SSP_DATAR);
-> +	rx->resid -= bytes;
-> +
-> +	if (!rx->buf)
-> +		return;	/* Null reader: discard the data */
-> +
-> +	if (bytes == 1)
-> +		*(u8 *)rx->buf = val;
-> +	else if (bytes == 1)
-typo?
+***
 
-> +		*(u16 *)rx->buf = val;
-> +	else
-> +		*(u32 *)rx->buf = val;
-> +
-> +	rx->buf += bytes;
-> +}
-> +
-[...]
-> +static bool k1_spi_write(struct k1_spi_driver_data *drv_data)
-> +{
-> +	struct k1_spi_io *tx = &drv_data->tx;
-> +	unsigned int count;
-> +	u32 val;
-> +
-> +	if (!tx->resid)
-> +		return true;	/* Nothing more to send */
-> +
-> +	/* See how many slots in the TX FIFO are available */
-> +	val = readl(drv_data->base + SSP_STATUS);
-> +	count = FIELD_GET(SSP_STATUS_TFL, val);
-> +
-> +	/* A zero count means the FIFO is either full or empty */
-> +	if (!count) {
-> +		if (val & SSP_STATUS_TNF)
-> +			count = K1_SPI_FIFO_SIZE;
-> +		else
-> +			return false;	/* No room in the FIFO */
-please early return:
+Subject: [PATCH] nsfs: reject file handles with invalid inode number
+Author: kartikey406@gmail.com
 
-if (!(val & SSP_STATUS_TNF))
-  return false;
-count = K1_SPI_FIFO_SIZE;
-> +	}
-> +
-> +	/*
-> +	 * Limit how much we try to send at a time, to reduce the
-> +	 * chance the other side can overrun our RX FIFO.
-> +	 */
-> +	count = min3(count, K1_SPI_THRESH, tx->resid);
-> +	while (count--)
-> +		k1_spi_write_word(drv_data);
-> +
-> +	return !tx->resid;
-> +}
-> +
-[...]
-> +
-> +static int k1_spi_transfer_one_message(struct spi_controller *host,
-> +					   struct spi_message *message)
-> +{
-> +	struct k1_spi_driver_data *drv_data = spi_controller_get_devdata(host);
-> +	struct completion *completion = &drv_data->completion;
-> +	struct spi_transfer *transfer;
-> +	u32 val;
-> +
-> +	drv_data->message = message;
-> +
-> +	/* Message status starts out successful; set to -EIO on error */
-> +	message->status = 0;
-> +
-> +	/* Hold frame low to avoid losing transferred data */
-> +	val = readl(drv_data->base + SSP_TOP_CTRL);
-> +	val |= TOP_HOLD_FRAME_LOW;
-> +	writel(val, drv_data->base + SSP_TOP_CTRL);
-> +
-> +	list_for_each_entry(transfer, &message->transfers, transfer_list) {
-> +		reinit_completion(completion);
-> +
-> +		/* Issue the next transfer */
-> +		if (!k1_spi_transfer_start(drv_data, transfer)) {
-> +			message->status = -EIO;
-> +			break;
-we don't need return a error code?
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
 
-> +		}
-> +
-> +		k1_spi_transfer_wait(drv_data);
-> +
-> +		k1_spi_transfer_end(drv_data, transfer);
-> +
-> +		/* If an error has occurred, we're done */
-> +		if (message->status)
-> +			break;
-ditto.
+Reject nsfs file handles that claim to have inode number 0, as no
+legitimate namespace can have inode 0. This prevents a warning in
+nsfs_fh_to_dentry() when open_by_handle_at() is called with malformed
+file handles.
 
-[...]
-> +}
-> +
-> +static void k1_spi_dma_cleanup(struct device *dev, void *res)
-> +{
-> +	struct k1_spi_driver_data *drv_data = res;
-> +
-> +	if (k1_spi_dma_enabled(drv_data)) {
-if (!k1_spi_dma_enabled(drv_data))
-  return;
+The issue occurs when userspace provides a file handle with valid
+namespace type and ID but claims the namespace has inode number 0.
+The namespace lookup succeeds but triggers VFS_WARN_ON_ONCE() when
+comparing the real inode number against the impossible claim of 0.
 
-                  - Troy
+Since inode 0 is reserved in all filesystems and no namespace can
+legitimately have inode 0, we can safely reject such handles early
+to prevent reaching the consistency check that triggers the warning.
 
-> +		k1_spi_dma_cleanup_io(drv_data, false);
-> +		k1_spi_dma_cleanup_io(drv_data, true);
-> +	}
-> +}
-> +
-> +
-> +static const struct of_device_id k1_spi_dt_ids[] = {
-> +	{ .compatible = "spacemit,k1-spi", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, k1_spi_dt_ids);
-> +
-> +static void k1_spi_host_init(struct k1_spi_driver_data *drv_data)
-> +{
-> +	struct device_node *np = dev_of_node(drv_data->dev);
-> +	struct spi_controller *host = drv_data->controller;
-> +	struct device *dev = drv_data->dev;
-> +	u32 max_speed_hz;
-> +	int ret;
-> +
-> +	host->dev.of_node = np;
-> +	host->dev.parent = drv_data->dev;
-> +	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
-> +	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
-> +	host->num_chipselect = 1;
-> +
-> +	if (k1_spi_dma_enabled(drv_data))
-> +		host->dma_alignment = K1_SPI_DMA_ALIGNMENT;
-> +	host->cleanup = k1_spi_cleanup;
-> +	host->setup = k1_spi_setup;
-> +	host->transfer_one_message = k1_spi_transfer_one_message;
-> +
-> +	ret = of_property_read_u32(np, "spi-max-frequency", &max_speed_hz);
-> +	if (!ret) {
-> +		host->max_speed_hz = clamp(max_speed_hz, K1_SPI_MIN_SPEED_HZ,
-> +					   K1_SPI_MAX_SPEED_HZ);
-> +		if (host->max_speed_hz != max_speed_hz)
-> +			dev_warn(dev, "spi-max-frequency %u out of range, using %u\n",
-> +				max_speed_hz, host->max_speed_hz);
-> +	} else {
-> +		if (ret != -EINVAL)
-> +			dev_warn(dev, "bad spi-max-frequency, using %u\n",
-> +				 K1_SPI_DEFAULT_MAX_SPEED_HZ);
-> +		host->max_speed_hz = K1_SPI_DEFAULT_MAX_SPEED_HZ;
-> +	}
-> +}
-> +
-> +/* Set our registers to a known initial state */
-> +static void
-> +k1_spi_register_reset(struct k1_spi_driver_data *drv_data, bool initial)
-> +{
-> +	u32 val = 0;
-> +
-> +	writel(0, drv_data->base + SSP_TOP_CTRL);
-> +
-> +	if (initial) {
-> +		/*
-> +		 * The TX and RX FIFO thresholds are the same no matter
-> +		 * what the speed or bits per word, so we can just set
-> +		 * them once.  The thresholds are one more than the values
-> +		 * in the register.
-> +		 */
-> +		val = FIELD_PREP(FIFO_RFT_MASK, K1_SPI_THRESH - 1);
-> +		val |= FIELD_PREP(FIFO_TFT_MASK, K1_SPI_THRESH - 1);
-> +	}
-> +	writel(val, drv_data->base + SSP_FIFO_CTRL);
-> +
-> +	writel(0, drv_data->base + SSP_INT_EN);
-> +	writel(0, drv_data->base + SSP_TIMEOUT);
-> +
-> +	/* Clear any pending interrupt conditions */
-> +	val = readl(drv_data->base + SSP_STATUS);
-> +	writel(val, drv_data->base + SSP_STATUS);
-> +}
-> +
-> +static irqreturn_t k1_spi_ssp_isr(int irq, void *dev_id)
-> +{
-> +	struct k1_spi_driver_data *drv_data = dev_id;
-> +	bool rx_done;
-> +	bool tx_done;
-> +	u32 val;
-> +
-> +	/* Get status and clear pending interrupts */
-> +	val = readl(drv_data->base + SSP_STATUS);
-> +	writel(val, drv_data->base + SSP_STATUS);
-> +
-> +	if (!drv_data->message)
-> +		return IRQ_NONE;
-> +
-> +	/* Check for a TX underrun or RX underrun first */
-> +	if (val & (SSP_STATUS_TUR | SSP_STATUS_ROR)) {
-> +		/* Disable all interrupts on error */
-> +		writel(0, drv_data->base + SSP_INT_EN);
-> +
-> +		drv_data->message->status = -EIO;
-> +		complete(&drv_data->completion);
-> +
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	/* Drain the RX FIFO first, then transmit what we can */
-> +	rx_done = k1_spi_read(drv_data);
-> +	tx_done = k1_spi_write(drv_data);
-> +
-> +	/* Disable interrupts if we're done transferring either direction */
-> +	if (rx_done || tx_done) {
-> +		/* If both are done, disable all interrupts */
-> +		if (rx_done && tx_done) {
-> +			val = 0;
-> +		} else {
-> +			val = readl(drv_data->base + SSP_INT_EN);
-> +			if (rx_done)
-> +				val &= ~(SSP_INT_EN_TINTE | SSP_INT_EN_RIE);
-> +			if (tx_done)
-> +				val &= ~SSP_INT_EN_TIE;
-> +		}
-> +		writel(val, drv_data->base + SSP_INT_EN);
-> +	}
-> +
-> +	if (rx_done && tx_done)
-> +		complete(&drv_data->completion);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int k1_spi_probe(struct platform_device *pdev)
-> +{
-> +	struct k1_spi_driver_data *drv_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct reset_control *reset;
-> +	struct spi_controller *host;
-> +	struct resource *iores;
-> +	struct clk *clk_bus;
-> +	int ret;
-> +
-> +	host = devm_spi_alloc_host(dev, sizeof(*drv_data));
-> +	if (!host)
-> +		return -ENOMEM;
-> +	drv_data = spi_controller_get_devdata(host);
-> +	drv_data->controller = host;
-> +	platform_set_drvdata(pdev, drv_data);
-> +	drv_data->dev = dev;
-> +	init_completion(&drv_data->completion);
-> +
-> +	drv_data->base = devm_platform_get_and_ioremap_resource(pdev, 0,
-> +								&iores);
-> +	if (IS_ERR(drv_data->base))
-> +		return dev_err_probe(dev, PTR_ERR(drv_data->base),
-> +				     "error mapping memory\n");
-> +	drv_data->base_addr = iores->start;
-> +
-> +	ret = devm_k1_spi_dma_setup(drv_data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "error setting up DMA\n");
-> +
-> +	k1_spi_host_init(drv_data);
-> +
-> +	clk_bus = devm_clk_get_enabled(dev, "bus");
-> +	if (IS_ERR(clk_bus))
-> +		return dev_err_probe(dev, PTR_ERR(clk_bus),
-> +				     "error getting/enabling bus clock\n");
-> +	drv_data->bus_rate = clk_get_rate(clk_bus);
-> +
-> +	drv_data->clk = devm_clk_get_enabled(dev, "core");
-> +	if (IS_ERR(drv_data->clk))
-> +		return dev_err_probe(dev, PTR_ERR(drv_data->clk),
-> +				     "error getting/enabling core clock\n");
-> +
-> +	reset = devm_reset_control_get_exclusive_deasserted(dev, NULL);
-> +	if (IS_ERR(reset))
-> +		return dev_err_probe(dev, PTR_ERR(reset),
-> +				     "error getting/deasserting reset\n");
-> +
-> +	k1_spi_register_reset(drv_data, true);
-> +
-> +	drv_data->irq = platform_get_irq(pdev, 0);
-> +	if (drv_data->irq < 0)
-> +		return dev_err_probe(dev, drv_data->irq, "error getting IRQ\n");
-> +
-> +	ret = devm_request_irq(dev, drv_data->irq, k1_spi_ssp_isr,
-> +			       IRQF_SHARED, dev_name(dev), drv_data);
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "error requesting IRQ\n");
-> +
-> +	ret = devm_spi_register_controller(dev, host);
-> +	if (ret)
-> +		dev_err(dev, "error registering controller\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static void k1_spi_remove(struct platform_device *pdev)
-> +{
-> +	struct k1_spi_driver_data *drv_data = platform_get_drvdata(pdev);
-> +
-> +	k1_spi_register_reset(drv_data, false);
-> +}
-> +
-> +static struct platform_driver k1_spi_driver = {
-> +	.driver = {
-> +		.name		= "k1-spi",
-> +		.of_match_table	= k1_spi_dt_ids,
-> +	},
-> +	.probe			= k1_spi_probe,
-> +	.remove			= k1_spi_remove,
-> +};
-> +
-> +module_platform_driver(k1_spi_driver);
-> +
-> +MODULE_DESCRIPTION("SpacemiT K1 SPI controller driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.48.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/nsfs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 32cb8c835a2b..42672cec293c 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -469,7 +469,8 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
+ 
+ 	if (fh_len < NSFS_FID_SIZE_U32_VER0)
+ 		return NULL;
+-
++	if (fid->ns_inum == 0)
++		return NULL;
+ 	/* Check that any trailing bytes are zero. */
+ 	if ((fh_len > NSFS_FID_SIZE_U32_LATEST) &&
+ 	    memchr_inv((void *)fid + NSFS_FID_SIZE_U32_LATEST, 0,
+-- 
+2.43.0
+
 
