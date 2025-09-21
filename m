@@ -1,167 +1,124 @@
-Return-Path: <linux-kernel+bounces-826121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AF3B8D96A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A09E7B8D96D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40020189EC78
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800FB189F080
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694BF2594B9;
-	Sun, 21 Sep 2025 10:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B2B25394A;
+	Sun, 21 Sep 2025 10:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="suPlKyrD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GeQRDIo/"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="NkL1W8Ri"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEC424A066;
-	Sun, 21 Sep 2025 10:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595CA4315A
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 10:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758450150; cv=none; b=jht46VBY4r6rwJpxnaWGCEjGw7P/YhXLmP+6hg66p6vTTYwqlPfY+eJPD4cXTB3OyWZgdcxuWMUsy8yFIpGqbKPgIv9ECv4UND2vRj+100VGFL1qvn8MC763u6TApXZUUpYN9K29876zM5b9VfYJWOd3ofn4w/4NMg23e6mzPAw=
+	t=1758450691; cv=none; b=UE7zJM242PfTTZbdFCHepNH59wVW0xkjHnr+7KLylxcmx/gPj0dA+yJkUFRkWeuo8JRiD0LyB8M9ASkisXye3BPGv+O/3cGXM0hQpP46x5j6nzDWyQHkY1WqECjKsusicHk+zZbrN2SFFt0Q3vBkMZofdMCZ9ELbEfg656668YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758450150; c=relaxed/simple;
-	bh=EuaMo6D/BJKLE6f/Qu2pbLWx6rfoIYSR/NXFNH+/L3U=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=iXigrRaS+OmOAx4XRexOSOGeoV3HJ923aeR5q43WRG+tlXjHO06b41ZinYjIP92FV1ZLFMl27FMPL4F/nnYuTlW7BeDJUFGab3ioxu/bEl7AHtoCTwgL9MLVmENGDx1PVVEIgSM+PM6sfPGCNW7hMvNyvGjDFFfbWY270DZuj50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=suPlKyrD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GeQRDIo/; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 562C314000FC;
-	Sun, 21 Sep 2025 06:22:27 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 21 Sep 2025 06:22:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1758450147; x=1758536547; bh=z4dTzHicOmu0ud13rOeQ61ccyjqJXmSHMtb
-	dd650m2s=; b=suPlKyrDIIb3+IwNlbntYUFM9a0CpPFkrFNA265367EGvWcyL6g
-	Ai3GxZx0x+4ArraDgo85aSSM6UQ4zzFGVA5VIEciOlSm3NNSWX25P5Y03QWE28I3
-	CLe6f2VtSTdh4JJKb+G/1iqdVfzX0vAmv0rw3WzjY6AV5y90Gk3IeMMfARA36sOH
-	HpJc25LV040BNWMua/br1P4ozNIqmfIxCFvLkngByr/O5d1WPsGJ3KRF4kkGQuB9
-	S9eEzNsKbEG3NxPAg9XaP00LN2cp8jxFXUVLY3emc7MIrrwwoRA8u81v7iQcDmwB
-	y1i85q2UsOjLlxCKTdi3KzV5btBgy0j8lkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758450147; x=
-	1758536547; bh=z4dTzHicOmu0ud13rOeQ61ccyjqJXmSHMtbdd650m2s=; b=G
-	eQRDIo/bVDytypOm19Nj87vmudllOQ9j3VlOHWvohikkIUe1MVoAnRfTnb6vhZG5
-	p/cfn+Y69hQFq+LVxWZ+cDO0PRm78tF1WIHNftcRqY4jWKzNPYz/PYCASiN4T7dQ
-	Ff0byzGrYNOTxv9a00wLEgh7Gxodwbti8lnoGpLU6lf/v6i1l7z0vb1Vww21tC7U
-	K5yuRQ00OCVFDsDfZsOmzfTDSHTacSs4GGwG3NyiQgJvWadUrnUBAu+OrOJ+aYl6
-	6m6TGOIv9j/d9/dL6Ak7LlYiyTg58SG9j90U7kwqG7mGOfPxJlTcpdXt+6/6EDcN
-	eM/eiPVRXLdSFxgbW1jzg==
-X-ME-Sender: <xms:4tHPaNn-6gqhyy2fn228rdPkVbYp_Ug6kGDDGg2DHA_UQqBKha9eUw>
-    <xme:4tHPaOnAXRg9ewbcwMnOihWBSq0CcdpuYvlOUopk6I_0inPF1phzlafTbq6JWqCIc
-    p6hDERGz-ekLA>
-X-ME-Received: <xmr:4tHPaBvIC1wTbzMyk6Z6_pupiyb2-fdrDwS3wmltW5QQior3XvDjrxQFy5SPe20vXimLdad3qAUTV9KiHeJdEVBVTaKfgGCxDkhwN4vsSbQB>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehgeejvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpegtgfgghffvvefujghffffkrhesthhqredttddtjeenucfhrhhomheppfgvihhluehr
-    ohifnhcuoehnvghilhgssehofihnmhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    ffveejleejheeujeegheelleeuveduheejkeegveeuffetvefhfeevtdeuuefgjeenucff
-    ohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnvghilhgssehofihnmhgr
-    ihhlrdhnvghtpdhnsggprhgtphhtthhopedujedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthho
-    pehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdgtihhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegs
-    phhfsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhgrtghksehsuhhsvg
-    drtgii
-X-ME-Proxy: <xmx:4tHPaIJcxLI3mylMD65vcVWusoP2ANC-YLZj18LljgYs_YDW3iCO8g>
-    <xmx:4tHPaGgZA-AHazPVIA52TncFHJ17tXzJ_qghKTM5oUTHW75gg4Kr9g>
-    <xmx:4tHPaEv6cEE7Fyvgf5R_3YeXxs9nKDVZb4dA2WqlhHve4Jshif9Q_w>
-    <xmx:4tHPaIiKeeX1mmr-u8fMPJqBpiX9lJy-gb8Y3tvRhBYBzbFC7qYN4A>
-    <xmx:49HPaJOA2ecx8oezZruDJjk7UiOe6Ag1tYRGEkvQOih3emkbW4M3hGxH>
-Feedback-ID: iab3e480c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 21 Sep 2025 06:22:22 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1758450691; c=relaxed/simple;
+	bh=UhzBOIAcRT3DtWbXX7SG+/Cq59SACa4Yp8xsjuPyop0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oeD09ZZ1/QqCqor+U7JY/ystHXDexq2Tam7aLLXqeCpOr1GuPnnWFjS/1U0o2HLDRiDM9ScRSK6ijVHIzKQZirpFCg1H+9gtwcfF4exgAIcVO1VN2yWiKHvHfJO7qv+9FHvo2jbkz2StwGzN8uGOOQsODb2G6uUldVyBJJ61f+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=NkL1W8Ri; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id B72D9240103
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:31:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
+	t=1758450681; bh=ZscFgxaOdMe9Fpbe+Rp7hnlp06VZswaAdymqLttHLhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=NkL1W8RiTiZl08x88D4b9irNhv9y1E0474eP+AsNO8+V/IoNX33D55e5l8pu+HKJf
+	 ISOb4JItPSgl4TgQe0n/n8QLDTjauR6IPDn1yRzAt0gmM62BrVoTbJsg/1NEz2hHpN
+	 HGlUl9uwvMcJZrXrlINEGvg99o3Muno0VbwdbNUCQhaf+KIbNRxPOHBGa91wjsz+Sz
+	 Fwzu533dfsIZ/O1PyEZbIbtQg0NRU2XLJKKXSCuRdW1prpkf16pp3tKq0Gw0WYqhQu
+	 DJ0nJ91KTF9uj29qDY8sXd8eX/DjpH4F7sfVyYWgbqlzqkGBeiuxCGP0JkbotL3fAL
+	 x9AxKA3oy3Fow==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cV2bC1lTqz6tm8;
+	Sun, 21 Sep 2025 12:31:19 +0200 (CEST)
+Date: Sun, 21 Sep 2025 10:31:21 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Simon Glass <sjg@chromium.org>
+Cc: linux-arm-kernel@lists.infradead.org, Tom Rini <trini@konsulko.com>,
+	Ahmad Fatoum <a.fatoum@pengutronix.de>,
+	J =?utf-8?Q?=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] scripts/make_fit: Speed up operation
+Message-ID: <aM_T9mtmEdAGNpLi@probook>
+References: <20250919224639.1122848-1-sjg@chromium.org>
+ <20250919224639.1122848-2-sjg@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "kernel test robot" <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- "Amir Goldstein" <amir73il@gmail.com>, linux-doc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, bpf@vger.kernel.org,
- netdev@vger.kernel.org, "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jeff Layton" <jlayton@kernel.org>,
- "Jan Kara" <jack@suse.cz>, oliver.sang@intel.com
-Subject:
- Re: [PATCH v3 5/6] VFS: rename kern_path_locked() and related functions.
-In-reply-to: <202509211121.ebd9f4b0-lkp@intel.com>
-References: <20250915021504.2632889-6-neilb@ownmail.net>,
- <202509211121.ebd9f4b0-lkp@intel.com>
-Date: Sun, 21 Sep 2025 20:22:13 +1000
-Message-id: <175845013376.1696783.14389036029721020068@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250919224639.1122848-2-sjg@chromium.org>
 
-On Sun, 21 Sep 2025, kernel test robot wrote:
->=20
-> Hello,
->=20
-> kernel test robot noticed "BUG:unable_to_handle_page_fault_for_address" on:
->=20
-> commit: 747e356babd8bdd569320c29916470345afd3cf7 ("[PATCH v3 5/6] VFS: rena=
-me kern_path_locked() and related functions.")
-> url: https://github.com/intel-lab-lkp/linux/commits/NeilBrown/VFS-ovl-add-l=
-ookup_one_positive_killable/20250915-101929
-> base: https://git.kernel.org/cgit/linux/kernel/git/vfs/vfs.git vfs.all
-> patch link: https://lore.kernel.org/all/20250915021504.2632889-6-neilb@ownm=
-ail.net/
-> patch subject: [PATCH v3 5/6] VFS: rename kern_path_locked() and related fu=
-nctions.
+On Fri, Sep 19, 2025 at 04:46:25PM -0600, Simon Glass wrote:
+> The kernel is likely at least 16MB so we may as well use that as a step
+> size when reallocating space for the FIT in memory. Pack the FIT at the
+> end, so there is no wasted space.
+> 
+> This reduces the time to pack by an order of magnitude, or so.
+> 
+> Signed-off-by: Simon Glass <sjg@chromium.org>
+> 
+> ---
+> 
+> (no changes since v1)
+> 
+>  scripts/make_fit.py | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/make_fit.py b/scripts/make_fit.py
+> index b4caa127d2c3..904f45088978 100755
+> --- a/scripts/make_fit.py
+> +++ b/scripts/make_fit.py
+> @@ -100,7 +100,7 @@ def setup_fit(fsw, name):
+>          fsw (libfdt.FdtSw): Object to use for writing
+>          name (str): Name of kernel image
+>      """
+> -    fsw.INC_SIZE = 65536
+> +    fsw.INC_SIZE = 16 << 20
+>      fsw.finish_reservemap()
+>      fsw.begin_node('')
+>      fsw.property_string('description', f'{name} with devicetree set')
+> @@ -330,10 +330,12 @@ def build_fit(args):
+>  
+>          entries.append([model, compat, files_seq])
+> 
 
-This incremental fix should be sufficient.
+> -    finish_fit(fsw, entries)
+> +    finish_fit(fsw, entries, bool(args.ramdisk))
 
-Thanks,
-NeilBrown
+It seems like this line should rather go into the previous patch.
+
+>  
+>      # Include the kernel itself in the returned file count
+> -    return fsw.as_fdt().as_bytearray(), seq + 1, size
+> +    fdt = fsw.as_fdt()
+> +    fdt.pack()
+> +    return fdt.as_bytearray(), seq + 1, size
+
+The rest looks good to me. Easy optimization, big win :)
 
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 5ceb971632fe..92973a7a8091 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2772,7 +2772,7 @@ static struct dentry *__start_removing_path(int dfd, st=
-ruct filename *name,
- 	if (unlikely(type !=3D LAST_NORM))
- 		return ERR_PTR(-EINVAL);
- 	/* don't fail immediately if it's r/o, at least try to report other errors =
-*/
--	error =3D mnt_want_write(path->mnt);
-+	error =3D mnt_want_write(parent_path.mnt);
- 	inode_lock_nested(parent_path.dentry->d_inode, I_MUTEX_PARENT);
- 	d =3D lookup_one_qstr_excl(&last, parent_path.dentry, 0);
- 	if (IS_ERR(d))
-@@ -2789,7 +2789,7 @@ static struct dentry *__start_removing_path(int dfd, st=
-ruct filename *name,
- unlock:
- 	inode_unlock(parent_path.dentry->d_inode);
- 	if (!error)
--		mnt_drop_write(path->mnt);
-+		mnt_drop_write(parent_path.mnt);
- 	return d;
- }
-=20
+Best regards,
+J. Neuschäfer
 
