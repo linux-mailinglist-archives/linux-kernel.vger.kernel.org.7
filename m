@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-826280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B87CB8E124
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A94B8E13F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CB3B3BFFF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1888F16540A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958222DC32A;
-	Sun, 21 Sep 2025 16:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537C27701E;
+	Sun, 21 Sep 2025 16:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upxuLHQd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HSj9EssM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81F4258CF7;
-	Sun, 21 Sep 2025 16:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F27262FD4;
+	Sun, 21 Sep 2025 16:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758473711; cv=none; b=f1Rsq57i8IGHiDTdq6YIMXmntklEcp4P3HfVM1GtenLe/5NyVnsOzlCn6qYID2q1PIXAOF9efKrBPkxlfoWAAIAZEoT4bOg5Cjb+7fiBFbMNQGkwHdjcEDc5eZyrS5lNxjWLGsHlGPQ2YkmpUNDWRlA/799FR8ROLHebMwLgA5w=
+	t=1758473716; cv=none; b=lB9EEjjpbqVW4c45yD30yV/dzjLqUlzjJ0CVKhOgqTW7Y/zbItkQoBijzQfBJftogoj3t8CAiOdVLR3XKQA7W65BGR7DsQzjO//mKIwvallh2cPA5IgET4OYF8pAmY+lSJ/XDKbjEkk1Zo1Lny6Q3DuEfxB+2O5zhp9iSWG81Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758473711; c=relaxed/simple;
-	bh=RhEmqjeU+NFYOyr5HyHp4DAurnHJrTWvo0NLRrLiAm8=;
+	s=arc-20240116; t=1758473716; c=relaxed/simple;
+	bh=gladXUT5F0XURCw6JuQBdgxcedelWcH2hcrlQcX0DOc=;
 	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=u50zRNWAEVEOeG7j4SjbgXebGG1TxBORO0DmBUg/I9PvmLyoP3OgKYQDcbLpQfGfrXbUz/B6visuOiw6x+rhLlopYKeEbrmQ8+mJL8/tCpMAJIU76OQjjRJa+qGswsvftPPnoIsq9By84wyUgUQVdEkFCmOuiUCXWu8YCaBbs24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upxuLHQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64081C4CEE7;
-	Sun, 21 Sep 2025 16:55:10 +0000 (UTC)
+	 To:Date:Message-ID; b=rptKXUy9NtL5pwAjRmQo2UsW5CWk50UGDNEzcY9JmKe6jw4Q0f4ROoeYh8J7atCSdSQqdXA0tUNGc2o5p7MWgPg0veOWhIBAvt0QsCWOw1gsKDdYqSEmpR89A6bqhymfM6qDWUjAWNdi3oRwO1M39fiUUjA7asRqsh3yk+xKCHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HSj9EssM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C83C4CEE7;
+	Sun, 21 Sep 2025 16:55:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758473710;
-	bh=RhEmqjeU+NFYOyr5HyHp4DAurnHJrTWvo0NLRrLiAm8=;
+	s=k20201202; t=1758473715;
+	bh=gladXUT5F0XURCw6JuQBdgxcedelWcH2hcrlQcX0DOc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=upxuLHQdf+8AkBm8lnvTyDs+oIG9n2JAkPKQQ2YiUnkzomDTx7qaXo+84br1bWqB9
-	 rrb1pPoFHO7gWKSE4j6aKTGq/zQGtVKhDLtR/e/oTGA89uTk40i/oUjoJCKKugyMbO
-	 tVdjpJlNB5wWgo9ZejhkK5A03kuVWTfUGuZrA0CiH73yByNe294XDTOQLxeRDDwLjf
-	 yRjCAXqDxDfnFMRXUqKHWMn/b4Tc+9DB6FNZNSZfyjRR3Cjq1a8DOW6hvVy2gPkkHd
-	 IVIOT6PaPQihGYkGFdk3xokR8ZKo/3VILV88MDyPvMk4RAsHF1TyR5FqgXaJuliw8P
-	 li5aXiYPLIVDg==
+	b=HSj9EssM6Pxf5rY/zKangvdCD4/dxy/LP46OVg7ucuK6LIHBr8Y2vYVWHg73C1SUe
+	 pU7hbDILv5qHCZ4Y1g11RSmHLmj5jvY1DfDVfYrZaISfLbJfwYsdNIeg4fk70MkkJV
+	 cGb+R63jQ3qsMUbLwG/byY/bHYuBtElrsMSXapEVzWFNagumVf5cHumZQGPEyiNX8G
+	 gUYrUoqW/1OM+wSP+g86QQz6QbskDGjB6t7hpKQ3A9NiJ7dJ7ylW6kl2tErBkqe0L2
+	 46I5Q6u1oRHwUFMc3BT5B2LrxtP8bG1uN4ywU/ctkwnI7iqZY2SQvUviJ/Bx5F5Rrx
+	 jE8ZtStQV2Q4Q==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,19 +48,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250915151947.277983-27-laura.nao@collabora.com>
-References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-27-laura.nao@collabora.com>
-Subject: Re: [PATCH v6 26/27] clk: mediatek: Add MT8196 vdecsys clock support
+In-Reply-To: <20250915151947.277983-28-laura.nao@collabora.com>
+References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-28-laura.nao@collabora.com>
+Subject: Re: [PATCH v6 27/27] clk: mediatek: Add MT8196 vencsys clock support
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F . R . A . Prado <nfraprado@collabora.com>
 To: Laura Nao <laura.nao@collabora.com>, angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, krzk+dt@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, richardcochran@gmail.com, robh@kernel.org
-Date: Sun, 21 Sep 2025 09:55:09 -0700
-Message-ID: <175847370918.4354.1172258827335473725@lazor>
+Date: Sun, 21 Sep 2025 09:55:14 -0700
+Message-ID: <175847371427.4354.3269379078117550500@lazor>
 User-Agent: alot/0.11
 
-Quoting Laura Nao (2025-09-15 08:19:46)
-> Add support for the MT8196 vdecsys clock controller, which provides
-> clock gate control for the video decoder.
+Quoting Laura Nao (2025-09-15 08:19:47)
+> Add support for the MT8196 vencsys clock controller, which provides
+> clock gate control for the video encoder.
 >=20
 > Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
