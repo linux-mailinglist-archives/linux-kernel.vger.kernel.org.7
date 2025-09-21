@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-826165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A04B8DB97
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:11:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA4EB8DB9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:12:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028F21899941
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8212A17E136
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9382D5416;
-	Sun, 21 Sep 2025 13:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="ixZor4Fh"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645D02D5437;
+	Sun, 21 Sep 2025 13:12:37 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A05386342;
-	Sun, 21 Sep 2025 13:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52C9257858;
+	Sun, 21 Sep 2025 13:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758460256; cv=none; b=cftTgWf7KcbCgNmHi7Hzubcc5qOl47OYNIDD6qEi+4byxYPQZ/TjmXB1Bb/gfrvf8foG4I/TXBnt7LbyXC+KTQgVGWkxMlrez24ut6y2AaJ+/9A/JBIQWQMUd+wIA/EixCqvWNDg8Zh5vlQGU1Q5aK23W2ZHdDtUlSk6cASPfe4=
+	t=1758460357; cv=none; b=Hlna1k4kXU5O4a3oZQp8/TGgtQoe+5dcD2Fyn2SR1YQveCwLejNKtdQkv/M73xTlQvL7fdROBb7GWP2q9RiphGhD8lABGKT3A6vHhyh6kn/aE6wOZWIGs7ZTfEiLOILdgmsYIIpkeZhe+zBJgHuipLF02tbUwZ27vzx+n7BXhUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758460256; c=relaxed/simple;
-	bh=DYZxgRurBduAgF9lRk9kGZIRbd3bIwXZL3ok4oNlfF4=;
+	s=arc-20240116; t=1758460357; c=relaxed/simple;
+	bh=A+t8Qo2X7e6ZL5vrxNtcYmymUXK2tAHjCMdMDGCZs+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ctqb4IGEOus/WmxlczJ1YRtzuqJ32/rCAdDPYPqfxROOkMgkdp6P8hlCQjF0mn+HGiQx+rxXGxYZEHcj8IOYKhJd4KIuCp9w6UtWciijHcAzaKcCim6T5bPvCLFESVD2V1w7OSDzONk8lCW3J+JtoED5P37wAsvSVCwajE4vmhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=ixZor4Fh; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1758460250; bh=DYZxgRurBduAgF9lRk9kGZIRbd3bIwXZL3ok4oNlfF4=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=ixZor4FhlbeesOOfPKrhXATito9HFzwpNtFWiEgo1XUfaBVokaylzJe5YPMb4uhXH
-	 HONi/KiM4yrlFjhr0mjt51RQevFLRE0GxuSEWTrTJxEbWcJbu0TJ6+sefRsGJwwHr9
-	 o55PbPJJPaIeD2ytgAibzOcv95SFR0qfYl6AIl2w=
-Date: Sun, 21 Sep 2025 15:10:49 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: guptarud@gmail.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] arm64: dts: rk3399-pinephone-pro: Add
- accelerometer sensor support
-Message-ID: <5b6ijumsm6bgqymsfc25frqzjlpiryq7iupuk2pokcb6d4bz56@yqrz6j3oj5ga>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	guptarud@gmail.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com>
- <20250921-ppp_light_accel_mag_vol-down-v2-2-e6bcc6ca74ae@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F9l4vxh/DoyeMwZMMDkY6rFTXOEeqLb+RgoIieUykBuyOsbzBYq37UWIfYOJElLjmuSTXYIvyGyy0jOUhlZAt+aAfKLi49Qh+JuGWrm+g8mXIUiwR2fEx2vdA6GjUm24L9AKvbIS89bUjbNyjv4YUOloV9xPugw9jRs3pC503NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id E02292C000B7;
+	Sun, 21 Sep 2025 15:12:25 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id B59C450BDD8; Sun, 21 Sep 2025 15:12:25 +0200 (CEST)
+Date: Sun, 21 Sep 2025 15:12:25 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Crystal Wood <crwood@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
+	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver OHalloran <oohall@gmail.com>
+Subject: Re: [PATCH] genirq/manage: Reduce priority of forced secondary IRQ
+ handler
+Message-ID: <aM_5uXlknW286cfg@wunner.de>
+References: <83f58870043e2ae64f19b3a2169b5c3cf3f95130.1757346718.git.lukas@wunner.de>
+ <87348g95yd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,188 +68,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250921-ppp_light_accel_mag_vol-down-v2-2-e6bcc6ca74ae@gmail.com>
+In-Reply-To: <87348g95yd.ffs@tglx>
 
-Hi,
-
-On Sun, Sep 21, 2025 at 01:04:20AM -0700, Rudraksha Gupta via B4 Relay wrote:
-> From: Ondrej Jirman <megi@xff.cz>
+On Sat, Sep 20, 2025 at 11:20:26PM +0200, Thomas Gleixner wrote:
+> I obviously understand that the proposed change squashs the whole class
+> of similar (not yet detected) issues, but that made me look at that
+> particular instance nevertheless.
 > 
-> Pinephone Pro uses mpu6500.
-> 
-> Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> index 65ee0b805034a4357a766d4f1f9efa2d4a843d77..21ff12ac5f6e52041f485c9f2702f5a15ee831f9 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> @@ -544,7 +544,13 @@ mpu6500@68 {
->  		reg = <0x68>;
->  		interrupt-parent = <&gpio1>;
->  		interrupts = <RK_PC6 IRQ_TYPE_LEVEL_LOW>;
-> +		vdd-supply = <&vcc_1v8>;
->  		vddio-supply = <&vcc_1v8>;
-> +
-> +		mount-matrix =
-> +			"1", "0", "0",
-> +			"0", "-1", "0",
-> +			"0", "0", "1";
+> All aer_irq() does is reading two PCI config words, writing one and then
+> sticking 64bytes into a KFIFO. All of that is hard interrupt safe. So
+> arguably this AER problem can be nicely solved by the below one-liner,
+> no?
 
-I'm not sure where you got this patch, but it's not from me (I know for sure
-I never did any mount-matrix testing/DT patches) and should not have my
-Signed-of-by.
+The one-liner (which sets IRQF_NO_THREAD) was what Crystal originally
+proposed:
 
-I have this in my tree https://codeberg.org/megi/linux/commit/d7cd2eab931e32fa94408a96d73b4e6c0616107a
+https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
 
-Which is:
+I guess your point is that handling the few operations in aer_irq()
+in hard interrupt context is cheaper than waking a thread and
+deferring them to that thread?
 
-  Signed-of-by: Leonardo G. Trombetta <lgtrombetta@gmx.com>
+Intuitively I would assume that most threaded interrupt handlers
+are architected in this way:  They only do minimal work in hard
+interrupt context and defer the actual work to the (secondary)
+thread.  E.g. pciehp_isr() + pciehp_ist() is likewise designed
+to follow this principle.
 
-And has different values on top of that and much more explanation. :)
+Your research that at first glance, at least 21 of 40 instances of
+request_threaded_irq() could just use IRQF_NO_THREAD, seems to
+support the notion that the majority of interrupt handlers only
+do minimal work in hard interrupt context.
 
-		mount-matrix =
-			"0", "1", "0",
-			"-1", "0", "0",
-			"0", "0", "1";
+But if that is the case, and if you believe that deferring that
+small amount of work to a thread is nonsensical, then why is the
+primary handler forced into a thread by default in the first place,
+requiring drivers to explicitly opt out by setting IRQF_NO_THREAD?
 
-So I guess you'd need to provide a bit more information about how you
-tested/verified these values, or where you've got them from.
+Shouldn't it rather be the other way round, i.e. by default the
+primary handler is *not* forced into a thread, but only if the
+driver explicitly opts in?  (In cases where the primary handler
+does a sufficient amount of work that is justified to be deferred
+to a thread.)
 
-See: https://github.com/torvalds/linux/blob/master/Documentation/devicetree/bindings/iio/mount-matrix.txt#L93
+Thanks,
 
-Looking at where the magnetometer is mounted, it's mounted on the bottom side of
-the PCB (U29 chip):
-
-  https://xff.cz/dl/tmp/a0a36024d1ce9b15.png
-  https://xff.cz/dl/tmp/8f9dce63f3a7f3f4.png
-
-Which means it would face from the PCB in the direction of the display and up
-towards the user who is looking at the display, due to the way PCB is mounted.
-
-From the datasheet: https://xff.cz/dl/tmp/6b163fbe4335e58e.png the relationship
-of the chip orientation to measured XYZ values.
-
-Putting it together https://xff.cz/dl/tmp/a17eec1488ea7705.png
-
-
-- Z increases downwards away from user looking at the phone display
-- Y increases to the left
-- X increases to the bottom of the display (towards USB-C connector)
-
-
-DT bindings state:
-
-- Magnetometers (compasses) have their world frame of reference relative to the
-  geomagnetic field. The system orientation vis-a-vis the world is defined with
-  respect to the local earth geomagnetic reference frame where (y) is in the
-  ground plane and positive towards magnetic North, (x) is in the ground plane,
-  perpendicular to the North axis and positive towards the East and (z) is
-  perpendicular to the ground plane and positive upwards.
-
-     ^^^ North: y > 0
-
-     (---------)
-     !         !
-     !         !
-     !         !
-     !         !  >
-     !         !  > North: x > 0
-     ! 1  2  3 !  >
-     ! 4  5  6 !
-     ! 7  8  9 !
-     ! *  0  # !
-     (---------)
-
-Mount matrix in your patch just flips Y axis and leaves the rest as is, so that
-doesn't seem to match what bindings ask for at all.
-
-Just based on the PCB component placement and datasheets we should have:
-(small letters = DT bindings, big letters output from magnetometer)
-
-  x = -Y
-  y = -X
-  z = -Z
-
-So that gives:
-
-		mount-matrix =
-			"0", "-1", "0",
-			"-1", "0", "0",
-			"0", "0", "-1";
-
-I did a quick test (rotating the phone on the table with display
-facing up):
-
-- Y is highest when right edge of the phone faces north:
-
-  in_magn_x_raw: -3074
-  in_magn_y_raw: -690
-  in_magn_z_raw: -1622
-
-  and lowest when pointing south
-
-  in_magn_x_raw: -3569
-  in_magn_y_raw: -2052
-  in_magn_z_raw: -1824
- 
-  (X is roughly the same)
-
-  so that matches x = Y
-
-
-- X is highest when top edge of the phone faces north:
-
-  in_magn_x_raw: -3990
-  in_magn_y_raw: -1287
-  in_magn_z_raw: -1677
-
-  and lowest when facing south
-
-  in_magn_x_raw: -2553
-  in_magn_y_raw: -1314
-  in_magn_z_raw: -1624
-
-  (Y is roughly the same)
-
-  y = X
-
-- Z is lower when display faces up
-
-  in_magn_x_raw: -4083
-  in_magn_y_raw: -1179
-  in_magn_z_raw: -2436
-
-  and higher with display facing down
-
-  in_magn_x_raw: -3999
-  in_magn_y_raw: -1584
-  in_magn_z_raw: 393
-
-  z = -Z
-
-So based on that mount-matrix should be:
-
-		mount-matrix =
-			"0", "1", "0",
-			"1", "0", "0",
-			"0", "0", "-1";
-
-Go figure. :-D
-
-Best regards,
-	o.
-
-
->  	};
->  };
->  
-> 
-> -- 
-> 2.51.0
-> 
-> 
+Lukas
 
