@@ -1,132 +1,103 @@
-Return-Path: <linux-kernel+bounces-826050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58436B8D68D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:31:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81FCB8D696
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCD50163675
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD43442AB1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9A52D0628;
-	Sun, 21 Sep 2025 07:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A572BE7A0;
+	Sun, 21 Sep 2025 07:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BIBbm+BK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMZ/8AB1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2F218BBAE;
-	Sun, 21 Sep 2025 07:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84801BF58;
+	Sun, 21 Sep 2025 07:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758439887; cv=none; b=Hd1i2ufE3xZUK89ZnjXp4z8ydaAwCWXJ0oaxRTiA0tsbhmS0WEDb3Bd5ppEdwK5jw6PF/4w6p8HeHs0WDOm5EdDvg+sZuV9e+H1I8f3rVqDTwjWQVtq6YoyL8/RA3dDOWukNmc8eLMuy6jWxYsbDz0+P4DvqwhwbHoQyn0yloFo=
+	t=1758439989; cv=none; b=WLXYVIVjVPh5QSke1FDqae+Pa6yJ53nqvELSlVNDBicJtyASEI9YWAqkqv/y6eMbEvJ2my6GEMDUF3RJOdpDjZqJHG0MSj+VLjpKItl2YKGZtCbDhF3yyXXHb7aOUoTXTstcB95STwVDZ0hJ6+5z89tCu/mjOiv9r56P4PwRmYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758439887; c=relaxed/simple;
-	bh=Zx2s38jOkZMSCTI4ObaRdGYcXjsynTIZirrNLaJlpYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qIJMUQa77+8VAEtolC+0OeKRox4qPZI7QQ6xbrPO13iPaWHNEm+QswI370Z3ht/F8YsRJ7/vkL4opqIGbP1EHFZTxfsQdtTnb2jCrzrKHExxOMbA1YrmiF5R2EaMT2rEgRpM+AXjZ6uDGGEqHrg9cwNYhHW6GweHzsUtFtYGbxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BIBbm+BK; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758439886; x=1789975886;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zx2s38jOkZMSCTI4ObaRdGYcXjsynTIZirrNLaJlpYI=;
-  b=BIBbm+BKDYCDibTBqNS52ETGSEw4dLR8+3S+GS+xjQefKdB2YEtbA98u
-   E48FXnWeEjC0B5tvMkYi8mFG7ltK84zzJ2I3R1Z0qrDOndH+ak7pEDomH
-   bqkvwX1wfGB2gIuHdggdfBhRgotGVMlMDRiB+qEb1FPwRaI0fhfiTVHC7
-   FBdTKnfxJCG9BzcHboKUYb5q8yasnjGgvv4Bb63MI4hRvZzPL+F36g9uH
-   XTD8XF9vUOjB6t8SZtLBTqs0L0Z7L58HpVEQ0kbpFA0MXH2j5fDczWZSX
-   4ha4O4Qi6mp5M9CQMpMhyaI/yuFPom7/H9Ug83M8cJ2pimOHRSFFLs4t3
-   A==;
-X-CSE-ConnectionGUID: T/8vmloFTSm5/ZfnCRRpDw==
-X-CSE-MsgGUID: aj9/JyfIQh+0XnpcIr0q8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="60622166"
-X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
-   d="scan'208";a="60622166"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 00:31:25 -0700
-X-CSE-ConnectionGUID: lWtdmAeGSQO/zSzivUP1iQ==
-X-CSE-MsgGUID: yEXdxvB4RzWxZ2t5A3StgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
-   d="scan'208";a="175814344"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 21 Sep 2025 00:31:21 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0EXM-0000YT-1T;
-	Sun, 21 Sep 2025 07:31:11 +0000
-Date: Sun, 21 Sep 2025 15:31:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: Re: [PATCH v3 04/12] soc: qcom: mdtloader: Add context aware
- qcom_mdt_pas_load() helper
-Message-ID: <202509211544.9DSw3dBc-lkp@intel.com>
-References: <20250921-kvm_rproc_pas-v3-4-458f09647920@oss.qualcomm.com>
+	s=arc-20240116; t=1758439989; c=relaxed/simple;
+	bh=rgvlCGWJgxQtna0rGORmWRGCmS8XGEFNOobwOFZsJ34=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ptaZgGmPzksh0CsFUqmupa4kv8p6VzVpL02nOYVVKhwq/97bKC/Om+BvvleqcDc8Ev/yTnC5Fh8PM48TmC617/ROHCl89i57+VJclYWijdQgIRvBEuDVcDxbkujsYMpxgwCkSbrONMBD91i55CCDEbG/b87U/GGAR1rGdGaHyD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMZ/8AB1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A21C4CEE7;
+	Sun, 21 Sep 2025 07:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758439988;
+	bh=rgvlCGWJgxQtna0rGORmWRGCmS8XGEFNOobwOFZsJ34=;
+	h=From:Subject:Date:To:Cc:From;
+	b=cMZ/8AB1m56IINYIibfXHxrHAOuMfZbBoHgIeRfMicqWbB5nH8f3moTsYjiSCBy4E
+	 Zz+cONf8qHUrLzi8J0Us872HGcs6dIcLHl+6qLj/y4ZSDWGpN5lC2ktskevo3XsUX4
+	 oJDATeadxeY/vy/98uxyqt1HdfPk39gw/zsHC3TYM8GMVqaI5609QTgBgbvvcyj42w
+	 javl94BEU7JHG/5IDTfvDgy/mE/h9Nd8Z5xqZ7bkvbxtA1nt2KJEOta7f/IOW5xkaB
+	 4lJeNfWIDAEFO0vghpeEXNzpkxqF87mmtd/yI1QNKmR8nzFVFo8heczQdaUOTL8Sm5
+	 wQuVPt9pfEeWg==
+From: Vincent Mailhol <mailhol@kernel.org>
+Subject: [PATCH iproute2-next 0/3] iplink_can: fix checkpatch.pl warnings
+Date: Sun, 21 Sep 2025 16:32:29 +0900
+Message-Id: <20250921-iplink_can-checkpatch-fixes-v1-0-1ddab98560cd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921-kvm_rproc_pas-v3-4-458f09647920@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA2qz2gC/y2NUQqDMBAFryL73aUaLLRepUhZ11UXa5ImsQji3
+ Rvafg7zmLdDlKASoSl2CPLWqM5mqE4F8ER2FNQ+M5jSXMqbqVD9U+38YLLIk/DsKfGEg24SsWK
+ 6lnXX1wPVkAs+yFfkwB3UB7cmMWhlS9D+dJDXmj/Tf9NRFGS3LJqawgUd1Z4XUgvtcXwAQ0+WB
+ asAAAA=
+X-Change-ID: 20250921-iplink_can-checkpatch-fixes-1ca804bd4fa4
+To: netdev@vger.kernel.org, Stephen Hemminger <stephen@networkplumber.org>, 
+ David Ahern <dsahern@gmail.com>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Oliver Hartkopp <socketcan@hartkopp.net>, linux-kernel@vger.kernel.org, 
+ linux-can@vger.kernel.org, Vincent Mailhol <mailhol@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=959; i=mailhol@kernel.org;
+ h=from:subject:message-id; bh=rgvlCGWJgxQtna0rGORmWRGCmS8XGEFNOobwOFZsJ34=;
+ b=owGbwMvMwCV2McXO4Xp97WbG02pJDBnnV2mKHfD4tVru1eQKxyfhE9oXi6xbozrvqJPvMqX5r
+ ztKN37Z1lHKwiDGxSArpsiyrJyTW6Gj0Dvs0F9LmDmsTCBDGLg4BWAiun8Z/vvde/JdP3hZws5H
+ M5WNrrAd+RXy5PeD6XOFZs9/8+LYVn8hhv+JZm+idzGbx77ljBLfUvnoU8UC5pVVEnuf8l5d9jl
+ y7WZOAA==
+X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
+ fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 
-Hi Mukesh,
+This is a clean up series which goes through all the checkpatch
+warnings on ip/iplink_can.c and fixes them one by one. By the end on
+this series, there is only one warning left:
 
-kernel test robot noticed the following build warnings:
+  WARNING: Prefer __printf(2, 0) over __attribute__((format(printf, 2, 0)))
+  #320: FILE: ip/iplink_can.c:320:
+  +static void __attribute__((format(printf, 2, 0)))
 
-[auto build test WARNING on 846bd2225ec3cfa8be046655e02b9457ed41973e]
+Because iproute2 does not declare the __printf() macro, that last one
+can not be fixed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-Add-iommus-property/20250921-041055
-base:   846bd2225ec3cfa8be046655e02b9457ed41973e
-patch link:    https://lore.kernel.org/r/20250921-kvm_rproc_pas-v3-4-458f09647920%40oss.qualcomm.com
-patch subject: [PATCH v3 04/12] soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
-config: x86_64-buildonly-randconfig-006-20250921 (https://download.01.org/0day-ci/archive/20250921/202509211544.9DSw3dBc-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509211544.9DSw3dBc-lkp@intel.com/reproduce)
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509211544.9DSw3dBc-lkp@intel.com/
+---
+Vincent Mailhol (3):
+      iplink_can: fix coding style for pointer format
+      iplink_can: fix SPDX-License-Identifier tag format
+      iplink_can: factorise the calls to usage()
 
-All warnings (new ones prefixed by >>):
+ ip/iplink_can.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+---
+base-commit: afceddf61037440628a5612f15a6eaefd28d9fd3
+change-id: 20250921-iplink_can-checkpatch-fixes-1ca804bd4fa4
 
-   In file included from drivers/media/platform/qcom/iris/iris_firmware.c:10:
->> include/linux/soc/qcom/mdt_loader.h:59:5: warning: no previous prototype for 'qcom_mdt_pas_load' [-Wmissing-prototypes]
-      59 | int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
-         |     ^~~~~~~~~~~~~~~~~
-
-
-vim +/qcom_mdt_pas_load +59 include/linux/soc/qcom/mdt_loader.h
-
-    58	
-  > 59	int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
-    60			      const char *firmware, void *mem_region, phys_addr_t *reloc_base)
-    61	{
-    62		return -ENODEV;
-    63	}
-    64	
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Vincent Mailhol <mailhol@kernel.org>
+
 
