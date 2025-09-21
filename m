@@ -1,327 +1,537 @@
-Return-Path: <linux-kernel+bounces-826339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A38B8E399
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:02:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DECDB8E3B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD50179002
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA341691C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818E82147E6;
-	Sun, 21 Sep 2025 19:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2BA242D86;
+	Sun, 21 Sep 2025 19:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F3jeGt7v"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="0DrFFI/y"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066C7EEDE
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C5E282E1
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758481327; cv=none; b=SS62hAji+N5PhAlNVTQ1VOvZAMwgectjjyoNP9ZHr8AtusHIF1Xe4yMRJdv82HY8fgSAr1uM34xuVBBpxTfXBaZoB8k6yJHaDf2twj2YcA1S2EoAnjwruzhXYAEYxDGg4Atwr4WMvY7t4p7JS3mw3mLc62+ji9yaxRTN/wawbvM=
+	t=1758481891; cv=none; b=XNUzo/1YBJ5wFgvyxeHhiBkhmyHcKEZo1q3tfyfvzTwTJprZfoGRLXSbP7+Nt0Z0DGxRFkAH+Ni4WRSiYspoly/faBswSxdZR/iiD/ItmQyeeL9kXuZRHYbA8HH/u1HtYv3L+ZCqqQyvfEW8KkoBm+Wv4voZ9W0s3qyetffBUoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758481327; c=relaxed/simple;
-	bh=MGtwA1ORP1SZWS3yFHFC1So7GPy8+TI3Y+7Wnm9Gi94=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vAe3ChToNUoGjOEUge9e+dw0KZW349o3sXtK+1OlCP3dZOVMBWmbRFop9ZuCkBCONrddRpUpJiPAM7LQSHI7SX7URcze2/nEFMJQn2v8G7Zm8sP1siGRvElF0t7wLLMATlNxZfZPEbuLWuT7kvQ+ptIMH3JrmDTcDmRq/12nPgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F3jeGt7v; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b4c29d2ea05so3464833a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:02:05 -0700 (PDT)
+	s=arc-20240116; t=1758481891; c=relaxed/simple;
+	bh=srYtm3oBIvUj97TCmmHwjRWYDpoeZlRczyaWQJBFgdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gA+iCtdZgaRe+AyRivALWLigtNlQSmDM33jpVH6CYzDA0AOeBAffCR6GoBVZylYkpMl7dH/jB/JqWvelwZJutpOdaBve364bsKkjBdiOzdXSr3+esLqJXBDWMN+XnV8CpLdYzBDPImiR2VgnSiJHhuhNXzVX23k9MQ89hu7lDFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=0DrFFI/y; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-88432e60eebso83429739f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:11:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758481325; x=1759086125; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=trXhhaVo1V956DTPgVzHkWvjZXBUgzeYR4SoTGMR0QE=;
-        b=F3jeGt7vGf3VEutZfkQ65VNbD9YVuwbF4jRerqwXees+aXKKqzBqBnW+xSBN3oLInu
-         5aHqb4WblEaHqBBxz/xQzp1YlL7Es4ujpVu1RXyLvj1vjgZi6RM02OGTycGlBpJ0N13m
-         mweb8QEdaebAHKS3THK53Q3NCrLoW0iBGg2ODQf7d7CZiDVpIaJFYj+DXOfnF2Q0ZrXB
-         z9Wn0ve2fsXYQlfGwlo/ii3A/j3YrdWcHAzDhbcHU6uTpB9l9mkYvw5C0mz1EKDSUeGZ
-         sNfdgKzXB39heBDr/UpQBVE6VXZPVyrJDgU1ISULqEKA82LrSvSp7PT15igExXBE+IfT
-         ijvg==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758481887; x=1759086687; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GMuX0JbtGkVS69zIsmL/4yyhk/kkfK+G5uLsvMrvjAc=;
+        b=0DrFFI/yVgPu8zg9A96I9D2wbRjG4taQv5iURQSuwpWDoYVCm7KHSys7bfL7gk7sES
+         IiwWoEFJp2sa+ConHzeZpaDhDfBFSj6NGIkPK9PbUWL0DhGHKt5CxLlTsh6SKqAtJMt0
+         Lyi82QWgYT78aIRNkwfeeJVBw/XFsZbtjkcNGflJyqAsOgH0N5qwi9HE4rsotR6HIOuK
+         JaTUzzZ1fZREKbARMUsy2gUY6JEvQvr/Z6fXxeHloZxppsRpC4LvY/JFmIY+YHuDhSbv
+         7uOEHjIVgFLP4mACRNNHGAuhYQOrn3Rr4N4elC2lCd0Q6rhhmF/hXATv33J3JYkGuVCv
+         BP3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758481325; x=1759086125;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=trXhhaVo1V956DTPgVzHkWvjZXBUgzeYR4SoTGMR0QE=;
-        b=qn4IhurmP9Wo9yOUx8sTt6g+L5qsZR+V/w7TqF/PFbJB7l0daCeTzTxuJAlzDCpdDl
-         bbnZWVOZo4Uy+8vaUbyXB4rxGT/qlLwR9M5YvaoL/oktEnONmqubP/4l4x2IL9/GrFFI
-         o1OmPXUgGIzg0+vqasEJMYsI9m6GP9mCBc51ac+CivoP732TajV6MtHZVez9Li5SwoFa
-         w34FpNgWISfOAGJk0hKwzUrsAJXtvkq4Cr/+IYo6+XvJa4mdwjwVjJolO+hiz9TkJZg+
-         jH91KO/xQxDro4wlPsUo+IbAUGKTzOyq1at46uBPNFTqBjx5x4VclcHAACgB/+LG/IR6
-         Y+rQ==
-X-Gm-Message-State: AOJu0Yw7NPf2gZ35Y798bnZG+RMrDKGCyXIkb7wiPOnOWSo9AO0a4o51
-	ibjz6wkaQcAYNLzadzyJcnMdi0/aQ8mpck4kzSHboCEi3ONaRekPdoys
-X-Gm-Gg: ASbGncvhvsW4bO8BHSyFDBz2i/tB293DCdXE6JYRGG2wqd6t7l28T23qug3zfS17VGH
-	QQOB2BwosO9/fnI8I2ufatQDV88+P7fIQi/e6W40EFJ8jQiP8W97gA1gNiq1v1+CbHZHfuEyZys
-	fEuMml5s0x3L7eAhywYvMfZT12rxsp0sMEYdTOdvHwes6qv5hQlGuNRW02VB9Ntd0rZgo94bVGb
-	cB6vtOc4fsfq52uT1mo/A9AUFLNEEyijfmGWweGVMPC7E/OpzURuye8qUkhlrBM+0P1QQ+WMBqt
-	ILm7HSJj6uuQRNtdM9MT7MxmTCLqbVctT3oLzcaMaX+AOG9PstQrmGO8mb3Z63rCkbHVk2B+JqT
-	T+O4JR5UZD4VEMtH3GuCOYbaXEfYBa1iLmw==
-X-Google-Smtp-Source: AGHT+IGjix9Q3SsImAjWNlj3eDVMBvG9InLq50vg9siHUGNZyuZAe8aBBpMUA8CYYa0XVd+x30ifeQ==
-X-Received: by 2002:a17:902:ecc3:b0:26c:4280:4860 with SMTP id d9443c01a7336-26c42804be8mr114393475ad.8.1758481325075;
-        Sun, 21 Sep 2025 12:02:05 -0700 (PDT)
-Received: from fedora ([172.59.162.206])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2699ae52db1sm99784565ad.43.2025.09.21.12.02.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 12:02:04 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	mchehab@kernel.org,
-	hverkuil+cisco@kernel.org,
-	hansg@kernel.org,
-	ribalda@chromium.org,
-	laurent.pinchart@ideasonboard.com,
-	cascardo@igalia.com,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v4] media: i2c: wm8775: parameterize wm8775_platform_data based on config
-Date: Sun, 21 Sep 2025 12:01:55 -0700
-Message-ID: <20250921190155.1013277-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1758481887; x=1759086687;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GMuX0JbtGkVS69zIsmL/4yyhk/kkfK+G5uLsvMrvjAc=;
+        b=NeO1tiElc+Ca6q1L/ff7UG1I9rrtBLmFw6AoLhfgCJOra3c3dQpUQLPtJfzcgPvHDk
+         D5SpxntMgMcoA1s5LoW1ng9l0ITbjl0hOUYHNFGP/KZX88jFnxTQkJ8aq+uFhA3OeGcd
+         VDwPZAv+g46fhxs8WNG3K+lDSZTBm1cdoPHzgftZtMl+x2+ob9ZIJ3XSKQq94MJ4Y7LW
+         n6fu7p1iENvSvMs5sJWiAWd3o5GUKsEZiFaYBQ7k7b/HieLSTVjejHXn2dCcQM1PGxRX
+         bG2RjdXOSHBg5kup35gBpB1WtdswyE8OVGVZ/cBD2P6BtotF0Amiy4Hb08E5+rYUWFUp
+         vXuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrLg6YDH2DX9V5B7pDzdr3lnSe2W25ZvKstykqSb/d/nbUjG/Xc/PUfs3bJaGY1LYZhvBWLtCaUA4+v/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo/6umoVAFXlKrxeAXZrGdpQhrc+79pYknrXmb4G/Zf43uukgV
+	6entZEvKpfhIp9QmyvAtras7Xfn/DTyyE/a/EXBgdW4Nyzk7C4DHhr4RF4TOGtcP8Xg=
+X-Gm-Gg: ASbGnctOY7L4594/yP9kg6pMhCP14kguYxuUXaWjdhzZpKeIJ/PnGCuvcEV9btz4E86
+	R7NGUVwwESCkYbg75rodLH07GYiwmhBoQDLLgNWSfG6vxSeUHkmXgNdn8JSJDiNLA9D1IL/Ucuq
+	/mMOui8uMbOZJbscuBSAoRMofszMn1IG+kvVMGZCeyo2idwge5TrWuX3WvJnwxLAhk5lDehUjdA
+	yQpHWamFcwW6JAx4JktVGRgGegm4ZfejrkGmlcdtrbAVsJvFxOGzHSNPIewn8/UIxsd5hKxrAGz
+	c0ViIvMhEtE0ZZSJ2VisqIYQYXMFeVVrvzYUuFgBu9mEtXWkz0mTrLW4/SFrcGPbKvScDTT9ngz
+	TpLyM7EOeXKqJbtCdYFyF2M5krgo3f0JxAarX3k+vRiyiNl89KOKMzLeTOZolgnKPbuPRyyw=
+X-Google-Smtp-Source: AGHT+IErLvmxbESoatXMb3XqN+8yw94Jw5Exiri+q1GvICGK0rTfRDmu/C2sh2YMSDRU5YG3uU2tzA==
+X-Received: by 2002:a05:6e02:190a:b0:425:7526:7f56 with SMTP id e9e14a558f8ab-425752680c5mr30193615ab.5.1758481887085;
+        Sun, 21 Sep 2025 12:11:27 -0700 (PDT)
+Received: from [10.211.55.5] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-55ec34ec281sm107152173.0.2025.09.21.12.11.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Sep 2025 12:11:26 -0700 (PDT)
+Message-ID: <ab64c617-f0a0-4dd8-95c9-cf85486d5612@riscstar.com>
+Date: Sun, 21 Sep 2025 14:11:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+To: Troy Mitchell <troy.mitchell@linux.dev>, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250919155914.935608-1-elder@riscstar.com>
+ <20250919155914.935608-3-elder@riscstar.com>
+ <aM9t7fO_DyIG92Rx@troy-wujie14pro-arch>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aM9t7fO_DyIG92Rx@troy-wujie14pro-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Parameterized wm8775_platform_data struct, removing the single boolean
-for determining device type. wm8775_standard_cfg struct will be used
-for standard devices and wm8775_nova_s_cfg for nova_s devices. 
+On 9/20/25 10:15 PM, Troy Mitchell wrote:
+> On Fri, Sep 19, 2025 at 10:59:12AM -0500, Alex Elder wrote:
+>> This patch introduces the driver for the SPI controller found in the
+>> SpacemiT K1 SoC.  Currently the driver supports master mode only.
+>> The SPI hardware implements RX and TX FIFOs, 32 entries each, and
+>> supports both PIO and DMA mode transfers.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>> v2: - The SPI_SPACEMIT_K1 config option is added in sorted order
+>>      - The spi-spacemit-k1.o make target is now added in sorted order
+>>      - Read/modify/writes of registers no longer use an additional
+>>        "virt" variable to hold the address accessed
+>>      - The k1_spi_driver_data->ioaddr field has been renamed base
+>>      - The DMA address for the base address is maintained, rather than
+>>        saving the DMA address of the data register
+>>      - CONFIG_MMP_PDMA is checked at runtime, and if it is not enabled,
+>>        DMA will not be used
+>>      - The spi-max-frequency property value is now bounds checked
+>>      - A local variable is now initialized to 0 in k1_spi_write_word()
+>>      - The driver name is now "k1-spi"
+>>
+>>   drivers/spi/Kconfig           |   8 +
+>>   drivers/spi/Makefile          |   1 +
+>>   drivers/spi/spi-spacemit-k1.c | 968 ++++++++++++++++++++++++++++++++++
+>>   3 files changed, 977 insertions(+)
+>>   create mode 100644 drivers/spi/spi-spacemit-k1.c
+>>
+>> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+>> index 82fa5eb3b8684..4f6c446c6bc16 100644
+>> --- a/drivers/spi/Kconfig
+>> +++ b/drivers/spi/Kconfig
+>> @@ -1071,6 +1071,14 @@ config SPI_SG2044_NOR
+>>   	  also supporting 3Byte address devices and 4Byte address
+>>   	  devices.
+>>   
+>> +config SPI_SPACEMIT_K1
+>> +	tristate "K1 SPI Controller"
+>> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+>> +	depends on OF
+>> +	default ARCH_SPACEMIT
+>> +	help
+>> +	  Enable support for the SpacemiT K1 SPI controller.
+>> +
+>>   config SPI_SPRD
+>>   	tristate "Spreadtrum SPI controller"
+>>   	depends on ARCH_SPRD || COMPILE_TEST
+>> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+>> index eefaeca097456..637d750ead996 100644
+>> --- a/drivers/spi/Makefile
+>> +++ b/drivers/spi/Makefile
+>> @@ -140,6 +140,7 @@ obj-$(CONFIG_SPI_SIFIVE)		+= spi-sifive.o
+>>   obj-$(CONFIG_SPI_SLAVE_MT27XX)          += spi-slave-mt27xx.o
+>>   obj-$(CONFIG_SPI_SN_F_OSPI)		+= spi-sn-f-ospi.o
+>>   obj-$(CONFIG_SPI_SG2044_NOR)	+= spi-sg2044-nor.o
+>> +obj-$(CONFIG_SPI_SPACEMIT_K1)		+= spi-spacemit-k1.o
+>>   obj-$(CONFIG_SPI_SPRD)			+= spi-sprd.o
+>>   obj-$(CONFIG_SPI_SPRD_ADI)		+= spi-sprd-adi.o
+>>   obj-$(CONFIG_SPI_STM32) 		+= spi-stm32.o
+>> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
+>> new file mode 100644
+>> index 0000000000000..8d564fe6c4303
+>> --- /dev/null
+>> +++ b/drivers/spi/spi-spacemit-k1.c
+>> @@ -0,0 +1,968 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Support for SpacemiT K1 SPI controller
+>> + *
+>> + * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
+>> + * Copyright (c) 2023, spacemit Corporation.
+> SpacemiT?
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
-Changes in v2:
-- rebased from mchehab linux media onto media committers tree
-- resolve patch and build errors
-Changes in v3:
-- cc updated maintainers list
-Changes in v4:
-- exported config symbols
-- cx88_core wm8775_data field converted to pointer
- drivers/media/i2c/wm8775.c          | 111 ++++++++++++++++------------
- drivers/media/pci/cx88/cx88-video.c |   6 +-
- drivers/media/pci/cx88/cx88.h       |   2 +-
- include/media/i2c/wm8775.h          |  25 +++++--
- 4 files changed, 87 insertions(+), 57 deletions(-)
+Already addressed this suggestion, which Yixun also made.
+  
+https://lore.kernel.org/lkml/034cecd3-c168-4c8d-9ad5-10cc1853894b@riscstar.com/
 
-diff --git a/drivers/media/i2c/wm8775.c b/drivers/media/i2c/wm8775.c
-index 56778d3bc..a6c605303 100644
---- a/drivers/media/i2c/wm8775.c
-+++ b/drivers/media/i2c/wm8775.c
-@@ -50,6 +50,45 @@ struct wm8775_state {
- 	u8 input;		/* Last selected input (0-0xf) */
- };
- 
-+struct wm8775_platform_data wm8775_standard_cfg = {
-+	.reset = 0x000, /* RESET */
-+	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-+	.interface_ctrl =
-+		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-+	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-+	.powerdown = 0x000, /* Powered up */
-+	.adc_l = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-+	.adc_r = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-+	.alc_ctrl_1 =
-+		0x1bf, /* ALC Stereo, ALC target level -1dB FS max gain +8dB */
-+	.alc_ctrl_2 = 0x185, /* Enable gain control, ALC hold time 42.6 ms */
-+	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-+	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-+	.limiter_ctrl = 0x07a, /* Window 4ms, lower PGA gain limit -1dB */
-+	.adc_mixer = 0x102, /* LRBOTH = 1, use input 2. */
-+	.should_set_audio = false,
-+};
-+EXPORT_SYMBOL_GPL(wm8775_standard_cfg);
-+
-+struct wm8775_platform_data wm8775_nova_s_cfg = {
-+	.reset = 0x000, /* RESET */
-+	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-+	.interface_ctrl =
-+		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-+	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-+	.powerdown = 0x000, /* Powered up */
-+	.adc_l = WM8775_REG_UNUSED,
-+	.adc_r = WM8775_REG_UNUSED,
-+	.alc_ctrl_1 = 0x1bb, /* Stereo, target level -5dB FS, max gain +8dB */
-+	.alc_ctrl_2 = WM8775_REG_UNUSED,
-+	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-+	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-+	.limiter_ctrl = 0x0fb, /* Transient window 4ms, ALC min gain -5dB  */
-+	.adc_mixer = WM8775_REG_UNUSED,
-+	.should_set_audio = true, /* set volume/mute/mux */
-+};
-+EXPORT_SYMBOL_GPL(wm8775_nova_s_cfg);
-+
- static inline struct wm8775_state *to_state(struct v4l2_subdev *sd)
- {
- 	return container_of(sd, struct wm8775_state, sd);
-@@ -195,12 +234,8 @@ static int wm8775_probe(struct i2c_client *client)
- 	struct wm8775_state *state;
- 	struct v4l2_subdev *sd;
- 	int err;
--	bool is_nova_s = false;
--
--	if (client->dev.platform_data) {
--		struct wm8775_platform_data *data = client->dev.platform_data;
--		is_nova_s = data->is_nova_s;
--	}
-+	struct wm8775_platform_data *data = client->dev.platform_data ?:
-+						    &wm8775_standard_cfg;
- 
- 	/* Check if the adapter supports the needed features */
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-@@ -233,49 +268,29 @@ static int wm8775_probe(struct i2c_client *client)
- 	}
- 
- 	/* Initialize wm8775 */
-+	wm8775_write(sd, R23, data->reset);
-+	wm8775_write(sd, R7, data->zero_cross_timeout);
-+	wm8775_write(sd, R11, data->interface_ctrl);
-+	wm8775_write(sd, R12, data->master_mode);
-+	wm8775_write(sd, R13, data->powerdown);
-+	if (data->adc_l != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R14, data->adc_l);
-+	if (data->adc_r != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R15, data->adc_r);
-+	wm8775_write(sd, R16, data->alc_ctrl_1);
-+	if (data->alc_ctrl_2 != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R17, data->alc_ctrl_2);
-+	else
-+		wm8775_write(sd, R17,
-+			     (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
-+	wm8775_write(sd, R18, data->alc_ctrl_3);
-+	wm8775_write(sd, R19, data->noise_gate);
-+	wm8775_write(sd, R20, data->limiter_ctrl);
-+	if (data->adc_mixer != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R21, data->adc_mixer);
-+	if (data->should_set_audio)
-+		wm8775_set_audio(sd, 1);
- 
--	/* RESET */
--	wm8775_write(sd, R23, 0x000);
--	/* Disable zero cross detect timeout */
--	wm8775_write(sd, R7, 0x000);
--	/* HPF enable, left justified, 24-bit (Philips) mode */
--	wm8775_write(sd, R11, 0x021);
--	/* Master mode, clock ratio 256fs */
--	wm8775_write(sd, R12, 0x102);
--	/* Powered up */
--	wm8775_write(sd, R13, 0x000);
--
--	if (!is_nova_s) {
--		/* ADC gain +2.5dB, enable zero cross */
--		wm8775_write(sd, R14, 0x1d4);
--		/* ADC gain +2.5dB, enable zero cross */
--		wm8775_write(sd, R15, 0x1d4);
--		/* ALC Stereo, ALC target level -1dB FS max gain +8dB */
--		wm8775_write(sd, R16, 0x1bf);
--		/* Enable gain control, use zero cross detection,
--		   ALC hold time 42.6 ms */
--		wm8775_write(sd, R17, 0x185);
--	} else {
--		/* ALC stereo, ALC target level -5dB FS, ALC max gain +8dB */
--		wm8775_write(sd, R16, 0x1bb);
--		/* Set ALC mode and hold time */
--		wm8775_write(sd, R17, (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
--	}
--	/* ALC gain ramp up delay 34 s, ALC gain ramp down delay 33 ms */
--	wm8775_write(sd, R18, 0x0a2);
--	/* Enable noise gate, threshold -72dBfs */
--	wm8775_write(sd, R19, 0x005);
--	if (!is_nova_s) {
--		/* Transient window 4ms, lower PGA gain limit -1dB */
--		wm8775_write(sd, R20, 0x07a);
--		/* LRBOTH = 1, use input 2. */
--		wm8775_write(sd, R21, 0x102);
--	} else {
--		/* Transient window 4ms, ALC min gain -5dB  */
--		wm8775_write(sd, R20, 0x0fb);
--
--		wm8775_set_audio(sd, 1);      /* set volume/mute/mux */
--	}
- 	return 0;
- }
- 
-diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
-index 0c8732768..2054daeba 100644
---- a/drivers/media/pci/cx88/cx88-video.c
-+++ b/drivers/media/pci/cx88/cx88-video.c
-@@ -1348,14 +1348,14 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
- 		struct i2c_board_info wm8775_info = {
- 			.type = "wm8775",
- 			.addr = 0x36 >> 1,
--			.platform_data = &core->wm8775_data,
-+			.platform_data = core->wm8775_data,
- 		};
- 		struct v4l2_subdev *sd;
- 
- 		if (core->boardnr == CX88_BOARD_HAUPPAUGE_NOVASPLUS_S1)
--			core->wm8775_data.is_nova_s = true;
-+			core->wm8775_data = &wm8775_nova_s_cfg;
- 		else
--			core->wm8775_data.is_nova_s = false;
-+			core->wm8775_data = &wm8775_standard_cfg;
- 
- 		sd = v4l2_i2c_new_subdev_board(&core->v4l2_dev, &core->i2c_adap,
- 					       &wm8775_info, NULL);
-diff --git a/drivers/media/pci/cx88/cx88.h b/drivers/media/pci/cx88/cx88.h
-index 2ff3226a5..c8f85d2f4 100644
---- a/drivers/media/pci/cx88/cx88.h
-+++ b/drivers/media/pci/cx88/cx88.h
-@@ -391,7 +391,7 @@ struct cx88_core {
- 
- 	/* I2C remote data */
- 	struct IR_i2c_init_data    init_data;
--	struct wm8775_platform_data wm8775_data;
-+	struct wm8775_platform_data *wm8775_data;
- 
- 	struct mutex               lock;
- 	/* various v4l controls */
-diff --git a/include/media/i2c/wm8775.h b/include/media/i2c/wm8775.h
-index a02695ee3..99678d165 100644
---- a/include/media/i2c/wm8775.h
-+++ b/include/media/i2c/wm8775.h
-@@ -20,13 +20,28 @@
- #define WM8775_AIN3 4
- #define WM8775_AIN4 8
- 
-+#define WM8775_REG_UNUSED ((u16)-1)
- 
- struct wm8775_platform_data {
--	/*
--	 * FIXME: Instead, we should parameterize the params
--	 * that need different settings between ivtv, pvrusb2, and Nova-S
--	 */
--	bool is_nova_s;
-+	u16 reset; /* RESET (R23) */
-+	u16 zero_cross_timeout; /* Zero cross detect timeout (R7) */
-+	u16 interface_ctrl; /* Interface control (R11) */
-+	u16 master_mode; /* Master mode (R12) */
-+	u16 powerdown; /* Power down (R13) */
-+
-+	u16 adc_l; /* ADC left (R14) */
-+	u16 adc_r; /* ADC right (R15) */
-+	u16 alc_ctrl_1; /* ALC control 1 (R16)*/
-+	u16 alc_ctrl_2; /* ALC control 2 (R17) */
-+	u16 alc_ctrl_3; /* ALC control 3 (R18) */
-+	u16 noise_gate; /* Noise gate (R19) */
-+	u16 limiter_ctrl; /* Limiter control (R20) */
-+	u16 adc_mixer; /* ADC mixer control (R21) */
-+
-+	bool should_set_audio;
- };
- 
-+extern struct wm8775_platform_data wm8775_nova_s_cfg;
-+extern struct wm8775_platform_data wm8775_standard_cfg;
-+
- #endif
--- 
-2.51.0
+
+> 
+>> + */
+>> +
+> [...]
+>> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +	struct k1_spi_io *rx = &drv_data->rx;
+>> +	u32 bytes = drv_data->bytes;
+>> +	u32 val;
+>> +
+>> +	val = readl(drv_data->base + SSP_DATAR);
+>> +	rx->resid -= bytes;
+>> +
+>> +	if (!rx->buf)
+>> +		return;	/* Null reader: discard the data */
+>> +
+>> +	if (bytes == 1)
+>> +		*(u8 *)rx->buf = val;
+>> +	else if (bytes == 1)
+> typo?
+
+Yes, Vivian noticed this too.  It's a bug, and it will be
+fixed in the next version.
+  
+https://lore.kernel.org/lkml/a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn/
+
+> 
+>> +		*(u16 *)rx->buf = val;
+>> +	else
+>> +		*(u32 *)rx->buf = val;
+>> +
+>> +	rx->buf += bytes;
+>> +}
+>> +
+> [...]
+>> +static bool k1_spi_write(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +	struct k1_spi_io *tx = &drv_data->tx;
+>> +	unsigned int count;
+>> +	u32 val;
+>> +
+>> +	if (!tx->resid)
+>> +		return true;	/* Nothing more to send */
+>> +
+>> +	/* See how many slots in the TX FIFO are available */
+>> +	val = readl(drv_data->base + SSP_STATUS);
+>> +	count = FIELD_GET(SSP_STATUS_TFL, val);
+>> +
+>> +	/* A zero count means the FIFO is either full or empty */
+>> +	if (!count) {
+>> +		if (val & SSP_STATUS_TNF)
+>> +			count = K1_SPI_FIFO_SIZE;
+>> +		else
+>> +			return false;	/* No room in the FIFO */
+> please early return:
+
+OK.
+
+> 
+> if (!(val & SSP_STATUS_TNF))
+>    return false;
+> count = K1_SPI_FIFO_SIZE;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Limit how much we try to send at a time, to reduce the
+>> +	 * chance the other side can overrun our RX FIFO.
+>> +	 */
+>> +	count = min3(count, K1_SPI_THRESH, tx->resid);
+>> +	while (count--)
+>> +		k1_spi_write_word(drv_data);
+>> +
+>> +	return !tx->resid;
+>> +}
+>> +
+> [...]
+>> +
+>> +static int k1_spi_transfer_one_message(struct spi_controller *host,
+>> +					   struct spi_message *message)
+>> +{
+>> +	struct k1_spi_driver_data *drv_data = spi_controller_get_devdata(host);
+>> +	struct completion *completion = &drv_data->completion;
+>> +	struct spi_transfer *transfer;
+>> +	u32 val;
+>> +
+>> +	drv_data->message = message;
+>> +
+>> +	/* Message status starts out successful; set to -EIO on error */
+>> +	message->status = 0;
+>> +
+>> +	/* Hold frame low to avoid losing transferred data */
+>> +	val = readl(drv_data->base + SSP_TOP_CTRL);
+>> +	val |= TOP_HOLD_FRAME_LOW;
+>> +	writel(val, drv_data->base + SSP_TOP_CTRL);
+>> +
+>> +	list_for_each_entry(transfer, &message->transfers, transfer_list) {
+>> +		reinit_completion(completion);
+>> +
+>> +		/* Issue the next transfer */
+>> +		if (!k1_spi_transfer_start(drv_data, transfer)) {
+>> +			message->status = -EIO;
+>> +			break;
+> we don't need return a error code?
+
+You're right.  This always returns 0.  I think I'll
+just return message->status.
+
+Thank you for catching this.  I'll fix it in the next version.
+
+					-Alex
+
+
+> 
+>> +		}
+>> +
+>> +		k1_spi_transfer_wait(drv_data);
+>> +
+>> +		k1_spi_transfer_end(drv_data, transfer);
+>> +
+>> +		/* If an error has occurred, we're done */
+>> +		if (message->status)
+>> +			break;
+> ditto.
+> 
+> [...]
+>> +}
+>> +
+>> +static void k1_spi_dma_cleanup(struct device *dev, void *res)
+>> +{
+>> +	struct k1_spi_driver_data *drv_data = res;
+>> +
+>> +	if (k1_spi_dma_enabled(drv_data)) {
+> if (!k1_spi_dma_enabled(drv_data))
+>    return;
+> 
+>                    - Troy
+> 
+>> +		k1_spi_dma_cleanup_io(drv_data, false);
+>> +		k1_spi_dma_cleanup_io(drv_data, true);
+>> +	}
+>> +}
+>> +
+>> +
+>> +static const struct of_device_id k1_spi_dt_ids[] = {
+>> +	{ .compatible = "spacemit,k1-spi", },
+>> +	{}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, k1_spi_dt_ids);
+>> +
+>> +static void k1_spi_host_init(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +	struct device_node *np = dev_of_node(drv_data->dev);
+>> +	struct spi_controller *host = drv_data->controller;
+>> +	struct device *dev = drv_data->dev;
+>> +	u32 max_speed_hz;
+>> +	int ret;
+>> +
+>> +	host->dev.of_node = np;
+>> +	host->dev.parent = drv_data->dev;
+>> +	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
+>> +	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
+>> +	host->num_chipselect = 1;
+>> +
+>> +	if (k1_spi_dma_enabled(drv_data))
+>> +		host->dma_alignment = K1_SPI_DMA_ALIGNMENT;
+>> +	host->cleanup = k1_spi_cleanup;
+>> +	host->setup = k1_spi_setup;
+>> +	host->transfer_one_message = k1_spi_transfer_one_message;
+>> +
+>> +	ret = of_property_read_u32(np, "spi-max-frequency", &max_speed_hz);
+>> +	if (!ret) {
+>> +		host->max_speed_hz = clamp(max_speed_hz, K1_SPI_MIN_SPEED_HZ,
+>> +					   K1_SPI_MAX_SPEED_HZ);
+>> +		if (host->max_speed_hz != max_speed_hz)
+>> +			dev_warn(dev, "spi-max-frequency %u out of range, using %u\n",
+>> +				max_speed_hz, host->max_speed_hz);
+>> +	} else {
+>> +		if (ret != -EINVAL)
+>> +			dev_warn(dev, "bad spi-max-frequency, using %u\n",
+>> +				 K1_SPI_DEFAULT_MAX_SPEED_HZ);
+>> +		host->max_speed_hz = K1_SPI_DEFAULT_MAX_SPEED_HZ;
+>> +	}
+>> +}
+>> +
+>> +/* Set our registers to a known initial state */
+>> +static void
+>> +k1_spi_register_reset(struct k1_spi_driver_data *drv_data, bool initial)
+>> +{
+>> +	u32 val = 0;
+>> +
+>> +	writel(0, drv_data->base + SSP_TOP_CTRL);
+>> +
+>> +	if (initial) {
+>> +		/*
+>> +		 * The TX and RX FIFO thresholds are the same no matter
+>> +		 * what the speed or bits per word, so we can just set
+>> +		 * them once.  The thresholds are one more than the values
+>> +		 * in the register.
+>> +		 */
+>> +		val = FIELD_PREP(FIFO_RFT_MASK, K1_SPI_THRESH - 1);
+>> +		val |= FIELD_PREP(FIFO_TFT_MASK, K1_SPI_THRESH - 1);
+>> +	}
+>> +	writel(val, drv_data->base + SSP_FIFO_CTRL);
+>> +
+>> +	writel(0, drv_data->base + SSP_INT_EN);
+>> +	writel(0, drv_data->base + SSP_TIMEOUT);
+>> +
+>> +	/* Clear any pending interrupt conditions */
+>> +	val = readl(drv_data->base + SSP_STATUS);
+>> +	writel(val, drv_data->base + SSP_STATUS);
+>> +}
+>> +
+>> +static irqreturn_t k1_spi_ssp_isr(int irq, void *dev_id)
+>> +{
+>> +	struct k1_spi_driver_data *drv_data = dev_id;
+>> +	bool rx_done;
+>> +	bool tx_done;
+>> +	u32 val;
+>> +
+>> +	/* Get status and clear pending interrupts */
+>> +	val = readl(drv_data->base + SSP_STATUS);
+>> +	writel(val, drv_data->base + SSP_STATUS);
+>> +
+>> +	if (!drv_data->message)
+>> +		return IRQ_NONE;
+>> +
+>> +	/* Check for a TX underrun or RX underrun first */
+>> +	if (val & (SSP_STATUS_TUR | SSP_STATUS_ROR)) {
+>> +		/* Disable all interrupts on error */
+>> +		writel(0, drv_data->base + SSP_INT_EN);
+>> +
+>> +		drv_data->message->status = -EIO;
+>> +		complete(&drv_data->completion);
+>> +
+>> +		return IRQ_HANDLED;
+>> +	}
+>> +
+>> +	/* Drain the RX FIFO first, then transmit what we can */
+>> +	rx_done = k1_spi_read(drv_data);
+>> +	tx_done = k1_spi_write(drv_data);
+>> +
+>> +	/* Disable interrupts if we're done transferring either direction */
+>> +	if (rx_done || tx_done) {
+>> +		/* If both are done, disable all interrupts */
+>> +		if (rx_done && tx_done) {
+>> +			val = 0;
+>> +		} else {
+>> +			val = readl(drv_data->base + SSP_INT_EN);
+>> +			if (rx_done)
+>> +				val &= ~(SSP_INT_EN_TINTE | SSP_INT_EN_RIE);
+>> +			if (tx_done)
+>> +				val &= ~SSP_INT_EN_TIE;
+>> +		}
+>> +		writel(val, drv_data->base + SSP_INT_EN);
+>> +	}
+>> +
+>> +	if (rx_done && tx_done)
+>> +		complete(&drv_data->completion);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int k1_spi_probe(struct platform_device *pdev)
+>> +{
+>> +	struct k1_spi_driver_data *drv_data;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct reset_control *reset;
+>> +	struct spi_controller *host;
+>> +	struct resource *iores;
+>> +	struct clk *clk_bus;
+>> +	int ret;
+>> +
+>> +	host = devm_spi_alloc_host(dev, sizeof(*drv_data));
+>> +	if (!host)
+>> +		return -ENOMEM;
+>> +	drv_data = spi_controller_get_devdata(host);
+>> +	drv_data->controller = host;
+>> +	platform_set_drvdata(pdev, drv_data);
+>> +	drv_data->dev = dev;
+>> +	init_completion(&drv_data->completion);
+>> +
+>> +	drv_data->base = devm_platform_get_and_ioremap_resource(pdev, 0,
+>> +								&iores);
+>> +	if (IS_ERR(drv_data->base))
+>> +		return dev_err_probe(dev, PTR_ERR(drv_data->base),
+>> +				     "error mapping memory\n");
+>> +	drv_data->base_addr = iores->start;
+>> +
+>> +	ret = devm_k1_spi_dma_setup(drv_data);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "error setting up DMA\n");
+>> +
+>> +	k1_spi_host_init(drv_data);
+>> +
+>> +	clk_bus = devm_clk_get_enabled(dev, "bus");
+>> +	if (IS_ERR(clk_bus))
+>> +		return dev_err_probe(dev, PTR_ERR(clk_bus),
+>> +				     "error getting/enabling bus clock\n");
+>> +	drv_data->bus_rate = clk_get_rate(clk_bus);
+>> +
+>> +	drv_data->clk = devm_clk_get_enabled(dev, "core");
+>> +	if (IS_ERR(drv_data->clk))
+>> +		return dev_err_probe(dev, PTR_ERR(drv_data->clk),
+>> +				     "error getting/enabling core clock\n");
+>> +
+>> +	reset = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+>> +	if (IS_ERR(reset))
+>> +		return dev_err_probe(dev, PTR_ERR(reset),
+>> +				     "error getting/deasserting reset\n");
+>> +
+>> +	k1_spi_register_reset(drv_data, true);
+>> +
+>> +	drv_data->irq = platform_get_irq(pdev, 0);
+>> +	if (drv_data->irq < 0)
+>> +		return dev_err_probe(dev, drv_data->irq, "error getting IRQ\n");
+>> +
+>> +	ret = devm_request_irq(dev, drv_data->irq, k1_spi_ssp_isr,
+>> +			       IRQF_SHARED, dev_name(dev), drv_data);
+>> +	if (ret < 0)
+>> +		return dev_err_probe(dev, ret, "error requesting IRQ\n");
+>> +
+>> +	ret = devm_spi_register_controller(dev, host);
+>> +	if (ret)
+>> +		dev_err(dev, "error registering controller\n");
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void k1_spi_remove(struct platform_device *pdev)
+>> +{
+>> +	struct k1_spi_driver_data *drv_data = platform_get_drvdata(pdev);
+>> +
+>> +	k1_spi_register_reset(drv_data, false);
+>> +}
+>> +
+>> +static struct platform_driver k1_spi_driver = {
+>> +	.driver = {
+>> +		.name		= "k1-spi",
+>> +		.of_match_table	= k1_spi_dt_ids,
+>> +	},
+>> +	.probe			= k1_spi_probe,
+>> +	.remove			= k1_spi_remove,
+>> +};
+>> +
+>> +module_platform_driver(k1_spi_driver);
+>> +
+>> +MODULE_DESCRIPTION("SpacemiT K1 SPI controller driver");
+>> +MODULE_LICENSE("GPL");
+>> -- 
+>> 2.48.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
 
