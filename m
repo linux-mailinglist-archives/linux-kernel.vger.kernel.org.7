@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-826441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D9CB8E89F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:21:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D64B8E8A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F728189CDDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:21:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07851164B66
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F97B2D0602;
-	Sun, 21 Sep 2025 22:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DDA25A642;
+	Sun, 21 Sep 2025 22:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="urhkteUg"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="PYp+qLmQ"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011F6245005;
-	Sun, 21 Sep 2025 22:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411FE25785F
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 22:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758493263; cv=none; b=nnxR7Wglz1U2ILvrFSMgANv60c50Kx6N2Y4LsJ4ts0X9+NJZiw9IwH03F7ghpP3soUqeB/QxZw5ssZTZJ74mdR2g9ZA/XU2byRCgA4+rwn8drT+3sSgx9oUcsT5ZGdFhYW4akH/ugpSrkuSNGoV1UgQfGRpfQBsHy3y/A0w2Cuo=
+	t=1758493289; cv=none; b=ucdq01GuIs3fCa3k99VotdFaM6/m0F+iGf7sgOjiQEecbc8gAznUVNkSXZB8mC2StV8vOJGNn0HDVa+/lwoNbrGDTK0jK3WN2ZAUSicaj795vhdgxI0NHYFsyLwwqMKJK6BdqxEKtyamExD5TbWbgG6diJR9UYxt+rM5qBcqLAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758493263; c=relaxed/simple;
-	bh=+eOD1GcoHBO726C3msHiBvYXNdElq3AA2TEiC9gvtBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWd0TQStdlEP8Hy4rzk6RNgR8ZEdXGTxTN2ugHvcSGPGMWDvas+SFLZiysvh/qry33JbAV0KrEJV4t8Np8FO0alIJKV71iGuDEiG5ZgkfRTKSasL31pR1w+WnxGyh8Bu4d2EGuaP39qXK0MLKP7QrzCVirRef/jb3U0pdJud570=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=urhkteUg; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 551D710C4;
-	Mon, 22 Sep 2025 00:19:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758493178;
-	bh=+eOD1GcoHBO726C3msHiBvYXNdElq3AA2TEiC9gvtBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=urhkteUgoEr0pBFx5ZznC9R2+mPCnkVmCYz5NI8vXmF1bE1E22cMMjRdVmF1KKKRD
-	 UTiO7k4R30B2fyZLEg2IeT4PCGYPuyY41r3RrPWsSGbYimiIWaV0/+bCl0BdU1zgQv
-	 Pb+jYlPU7F6tTtayG/H3hMsVuUvw2m/gLF5P8x9w=
-Date: Mon, 22 Sep 2025 01:20:29 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Guoniu Zhou <guoniu.zhou@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] media: nxp: imx8-isi: Reorder the platform data
-Message-ID: <20250921222029.GD10540@pendragon.ideasonboard.com>
-References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
- <20250905-isi_imx93-v2-4-37db5f768c57@nxp.com>
+	s=arc-20240116; t=1758493289; c=relaxed/simple;
+	bh=6oei0aWXFhVRzFAC+ZsItJg6xnA+dZu9f+eLcagd27c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TxUsQ5ORQJ06rKJI79Xqx21dKfdRTR/LNbGnoyRLUY5/BAOncMunJ3zJqcQLCGR4CazinKSkU3mgR/zmMDszzeMVjYN9QwiLtdymsIxq/ykQLxRtlPaCQgTQK7KLKP+l6ky4SexRQMP/zDivgOIICx0Zeg7hwfdZULapwOAP8Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=PYp+qLmQ; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b3d3f6360cso37567951cf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 15:21:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1758493287; x=1759098087; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PHLyAWNRRvZ698aiszn9fxUOIJUP3t6BL2WpPwYPRag=;
+        b=PYp+qLmQxDpcmaKJAmXMNT4GUpKlnhY6sJMKA98L5JO9raId4BOtZqe4WvAc8WA1zg
+         tPLT7hLlrHPZWi7qcn9VILdX7yuKmgioYSnnb6UVNzkerEruUta/TsokQD6GY3314ZLk
+         PpFK6/80wRa8dfWftRO3ku1Ayr/N3gSR1QeuLFUNLW0QEChYKfSRh4UDtSAy10HGjtFx
+         8U15lT76FdDnIJqfvDxXx+5aBa/a2jzoc8JBxh6ggMbtcG3XqkYEGyRbJPYeEXA9ae9d
+         mW9rrKbYxoZ2k9LtHic6v7oeBw3FTSwXE8PjL8G/hukziGsKDx+P5tU46dvcVEIuNl1J
+         bDHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758493287; x=1759098087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PHLyAWNRRvZ698aiszn9fxUOIJUP3t6BL2WpPwYPRag=;
+        b=jg9DKLsBegWPMLbPbdnCOKtGgncLT/nfKK8omNOZrTL8JBOCF9qbQHoZJQa6Vx/4ct
+         fvWdOEPPOwxkMVVw/ZmVBgN0xqve3tCn1QRT/hnk61evR6O0EWdXwR3RxTQFUJqafOvP
+         Vo9JxYvoSW18fQC97dSx7Wacyz8Y2DdVJCjl4tdcud0M/+FB1d9E6EEYwKBuPPwiFJi3
+         yM0ClAfdoV1tf9widTLkPIS25an5L2Y+D1hRKPEwoLzsmGSawx8q+Af8MDShNJ5NQmZo
+         l8tE+2tya2HrDScrm7VFpvC45ID9H6cMr2CQxFqitOvy5/flqLl2RHf7Iv0QumiQsIJ3
+         prIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsU0FzJ2VZGwdupsWJLekYFmELkm4QIzO+9cIy6FJBDjw8l3B0IWD7x+dkjBUW2gle1hj6KXqk93dmnbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbsGMKy7j1aWOTrwMj6Bdw27IYeYmpbgK4yKRkQ32eDjsdCgSl
+	VovUV6s2tD1yixJLxpnvIP2Cs9Q7mYxgkreFVD5slAlIRQHc4YliBX4MQ+ZAQV2i0/JYbFpJUpq
+	MeZVd+ljttIyn0g14vYlgsBdufjzwKmsXSzjPzODC0w==
+X-Gm-Gg: ASbGncvVYnfBeF1CaIxBKSqcZkrh7iBwIGuCtTXSIU3G9Ll2WpFWAg4a3xyLoMtcvqt
+	fMhLdwabp9o678ojhk3n0jgh57vnmoFnFj5Ex+77vUvN8K+Uz8VjTKvw6mbbqhBi2+zq0uPYiFQ
+	3ANZuwvjuNDcK1fjkSs1+fd4Vs5eZ+l+N9z3WkurE/aHpFAHznfshQ5eXiEZtYP+g9Yn5yFKDq8
+	7KYbKc=
+X-Google-Smtp-Source: AGHT+IF9Bd/LCK7h6/iC83qqAy9wLiFHaZDvz7ruwA4mtaZ7EwXHPx8srwbwmVkArl3yVoSLBLTkv5dGYhCDZ5ZrJps=
+X-Received: by 2002:a05:622a:4c06:b0:4ca:10bd:bae5 with SMTP id
+ d75a77b69052e-4ca10bdc5dfmr21648151cf.81.1758493287147; Sun, 21 Sep 2025
+ 15:21:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250905-isi_imx93-v2-4-37db5f768c57@nxp.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-8-pasha.tatashin@soleen.com> <20250814132233.GB802098@nvidia.com>
+ <aJ756q-wWJV37fMm@kernel.org> <20250818135509.GK802098@nvidia.com>
+In-Reply-To: <20250818135509.GK802098@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Sun, 21 Sep 2025 18:20:50 -0400
+X-Gm-Features: AS18NWCcd-5oq0uHFf03h4LWbprCKHRBHh45SwiCRQil-ZYQKwKcHW5Zv6e3HKA
+Message-ID: <CA+CK2bDc+-R=EuGM2pU=Phq8Ui-8xsDm0ppH6yjNR0U_o4TMHg@mail.gmail.com>
+Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
+ physical memory ranges
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Mike Rapoport <rppt@kernel.org>, pratyush@kernel.org, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Guoniu,
+On Mon, Aug 18, 2025 at 9:55=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
+>
+> On Fri, Aug 15, 2025 at 12:12:10PM +0300, Mike Rapoport wrote:
+> > > Which is perhaps another comment, if this __get_free_pages() is going
+> > > to be a common pattern (and I guess it will be) then the API should b=
+e
+> > > streamlined alot more:
+> > >
+> > >  void *kho_alloc_preserved_memory(gfp, size);
+> > >  void kho_free_preserved_memory(void *);
+> >
+> > This looks backwards to me. KHO should not deal with memory allocation,
+> > it's responsibility to preserve/restore memory objects it supports.
+>
+> Then maybe those are luo_ helpers
+>
+> But having users open code __get_free_pages() and convert to/from
+> struct page, phys, etc is not a great idea.
 
-Thank you for the patch.
+I added:
 
-On Fri, Sep 05, 2025 at 02:56:01PM +0800, Guoniu Zhou wrote:
-> Sort platform data in the order of compatible strings in of_match table
-> to make it more convenient to read.
-> 
-> No functions changed.
-> 
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+void *luo_contig_alloc_preserve(size_t size);
+void luo_contig_free_unpreserve(void *mem, size_t size);
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Allocate contiguous, zeroed, and preserved memory.
 
-> ---
->  .../media/platform/nxp/imx8-isi/imx8-isi-core.c    | 44 +++++++++++-----------
->  1 file changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> index adc8d9960bf0df87d4e475661a3439beaf5ce9f6..0155c75983f02f33f7f0669e73188222ebb5e816 100644
-> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> @@ -314,6 +314,28 @@ static const struct mxc_isi_plat_data mxc_imx8mp_data = {
->  	.has_36bit_dma		= true,
->  };
->  
-> +static const struct mxc_isi_plat_data mxc_imx8qm_data = {
-> +	.model			= MXC_ISI_IMX8QM,
-> +	.num_ports		= 5,
-> +	.num_channels		= 8,
-> +	.reg_offset		= 0x10000,
-> +	.ier_reg		= &mxc_imx8_isi_ier_qm,
-> +	.set_thd		= &mxc_imx8_isi_thd_v1,
-> +	.buf_active_reverse	= true,
-> +	.has_36bit_dma		= false,
-> +};
-> +
-> +static const struct mxc_isi_plat_data mxc_imx8qxp_data = {
-> +	.model			= MXC_ISI_IMX8QXP,
-> +	.num_ports		= 5,
-> +	.num_channels		= 6,
-> +	.reg_offset		= 0x10000,
-> +	.ier_reg		= &mxc_imx8_isi_ier_v2,
-> +	.set_thd		= &mxc_imx8_isi_thd_v1,
-> +	.buf_active_reverse	= true,
-> +	.has_36bit_dma		= false,
-> +};
-> +
->  static const struct mxc_isi_plat_data mxc_imx8ulp_data = {
->  	.model			= MXC_ISI_IMX8ULP,
->  	.num_ports		= 1,
-> @@ -337,28 +359,6 @@ static const struct mxc_isi_plat_data mxc_imx93_data = {
->  	.has_36bit_dma		= false,
->  };
->  
-> -static const struct mxc_isi_plat_data mxc_imx8qm_data = {
-> -	.model			= MXC_ISI_IMX8QM,
-> -	.num_ports		= 5,
-> -	.num_channels		= 8,
-> -	.reg_offset		= 0x10000,
-> -	.ier_reg		= &mxc_imx8_isi_ier_qm,
-> -	.set_thd		= &mxc_imx8_isi_thd_v1,
-> -	.buf_active_reverse	= true,
-> -	.has_36bit_dma		= false,
-> -};
-> -
-> -static const struct mxc_isi_plat_data mxc_imx8qxp_data = {
-> -	.model			= MXC_ISI_IMX8QXP,
-> -	.num_ports		= 5,
-> -	.num_channels		= 6,
-> -	.reg_offset		= 0x10000,
-> -	.ier_reg		= &mxc_imx8_isi_ier_v2,
-> -	.set_thd		= &mxc_imx8_isi_thd_v1,
-> -	.buf_active_reverse	= true,
-> -	.has_36bit_dma		= false,
-> -};
-> -
->  /* -----------------------------------------------------------------------------
->   * Power management
->   */
-
--- 
-Regards,
-
-Laurent Pinchart
+Pasha
 
