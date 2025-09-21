@@ -1,110 +1,157 @@
-Return-Path: <linux-kernel+bounces-826284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4553DB8E154
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:08:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3624B8E15A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:09:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1DD178666
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A613B2ACE
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F45B2522B4;
-	Sun, 21 Sep 2025 17:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E98F257453;
+	Sun, 21 Sep 2025 17:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idLMGeGM"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="HJBhxBT+"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43CC1B87E8
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 17:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700991B87E8;
+	Sun, 21 Sep 2025 17:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758474529; cv=none; b=FJ/l61rELlIZTpnsRFiCvE0j/enD/Vvgp3KLHCa1TArDYnVYozHmbjkkgInCkIo/rw3nC7obwXo3LnvhgsXmPCheBh4f/9LIxzT5AeXLCkbcNu8+qKdZbvOCzi6xoJ+/hqeJtHQLhTeJcouUB1l1OkSD49+iX/AcimyShrOtPrk=
+	t=1758474549; cv=none; b=tuAlqQwTeHBWYdQmEz0Q5K84nCBcvBiZaEiCTEtIwYkgB75l+vx+EUFD9EIZg4qIoRtXCUUeazWvuPyT+MHc0wymjOvCy2Q66TfjLg2Pob3th6XhTUgpM08P4Tt4ftUbonD4eSP+t/J/qZrB3ZeHskgQPfCR64yhypfmrEvIVnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758474529; c=relaxed/simple;
-	bh=ESfysI5irpo6VI6OY3A7TqZpje6xY/bTUCQuouqbaKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OT++hHJMcIDE+DfCXAqpr8tcXkAzGyjiV9QdmHPSZw337FWLY1/ub0AoKMOEbmhzBi2g6DnNo98TLavOIky/DY7fzG94ze5HSD9lTR+jkAjsdskiBE2eJdaEwsFcXytS4B/2SoZAH9oyaZ1mmYB85grUJ5xp8OZcMSzxjws++Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idLMGeGM; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-77db1bcf4d3so2410302b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 10:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758474526; x=1759079326; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AosUgctyk0Qt1mPt3eaELkb0eU1eJkHfAr6DxGd6drg=;
-        b=idLMGeGMFWaFiWIy4D4ZwFH5YK5bWmYXpb6GVzOSe9+l79+s3pU6wICDp+Qfka9KZ9
-         uljIyca2I+9Ksnl37QXpxk7NDCyCQ59HmDWQrYq1QgkPITHCW9A2GK58h0mpimiWvoMH
-         BJWqr+CpIyka4QvDW85hpGaYYssOfvEosM6nFLFCJikOBvRMxry1H6AuhOo7ltc0mj9o
-         6UI2gCqCXVWrP6Jqb14LvNVX0oyuzMrmULsMFGWrqaDpuwZXoG7qJGMZJHh4kTufHOPe
-         o/Pdz8UPjoQC4mLbH534zXc+4REJjq58A5qbn4MBpFIMito4tgUOdvaa7Yc3Miq5pIAy
-         rqaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758474526; x=1759079326;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AosUgctyk0Qt1mPt3eaELkb0eU1eJkHfAr6DxGd6drg=;
-        b=U3RTVbUvhqvDpVfuEPtd6vHmImmiFo9Ko7IGZHPk3RNfiTPA74f03QLQGbtWybp1eX
-         qbfFswkCqJRHvf/OmImAMpgi4DCoKvMz9V84Q9ptuBYs1z2YNaXkdjOShwg90zVDBVo5
-         /7LYnGG2K7Y57eLefEody0yuwdJO76bTxCkAvTUOTVhdatGlK8mIhFSySRMgGksZAQoZ
-         TFcPYEYjto6IjRUbdTbiUKdbI05NNhC3WqUpRfMweVlDm21bQ22l9Kn/GdnQ44nWNKL8
-         pdDdOVxFU1rdgopenf76bqcXdlTqUdATIFA79yzQb7SSDA6b0Xnj2RXSA1zp09hCh/pN
-         VcsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYpzM7DJPVuwTBpQXLHe47TQJjMTJhAUQIf2N5YVnUwH1tw1/ItNnU/XjE3raIQVD2ROLRBAFvn3OIMO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwartlAjcVsmnuS8gV7Mpuitkr6r7QhMlXHYu3ApD7nUleXX0UG
-	1hUUZqd1bt+arL/gqN7M60e4sSRA+luj3mddYZEyPsifj0IKlDpFMKliyAe/NLPe
-X-Gm-Gg: ASbGncut9HB/q1xbVlXgZ8S8VXE4d0keQKoNu2nbO9Pe6Dxh8PPqJuZwrMl5r+Ehods
-	m8YHqVeyxA+gwuZAahZZurU6062vLZh7Q3kJ7kVAErcKSDWvynbkisrDVq/8OSw4ntihgVJw5FN
-	UBDWJciKcXwJuAVtnmd2F/wr6gv7ru5JwO7Mxzd5/hkbnnRMsmFK1U5R7ImHTRVqaLJhhdThAU5
-	6SN+GWb+vmHVMHaWEdcgo7tQXzYl6hOqHRLTuIK3Atbnz7S7jxMUQ4dfFek6hXYI+h1B0D42/Oj
-	FB1HC3UwHJNTj+BKJ6smu6hQtlP6HR/ChOYjov/Aoxcxhr8XGM9o8dTVYsJjMzTV5gpCS3b7Ca4
-	qp0O1i79HTrIGHwaPe4gJcKLP
-X-Google-Smtp-Source: AGHT+IEQ034Dvlapqua1Ol0l76xVGanSAHuXZKyAmv1ht8l8P4mc9lf/Zvupo6s8uK1lRZkuCiFDlQ==
-X-Received: by 2002:a05:6a00:4502:b0:77e:f03b:d49a with SMTP id d2e1a72fcca58-77ef03bd586mr10241915b3a.19.1758474525898;
-        Sun, 21 Sep 2025 10:08:45 -0700 (PDT)
-Received: from archlinux ([36.255.84.59])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77d7b79bd7fsm9701096b3a.77.2025.09.21.10.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 10:08:45 -0700 (PDT)
-From: Madhur Kumar <madhurkumar004@gmail.com>
-To: shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Madhur Kumar <madhurkumar004@gmail.com>
-Subject: [PATCH] selftests/cachestat: Add file tmpshmcstat to .gitignore
-Date: Sun, 21 Sep 2025 22:38:31 +0530
-Message-ID: <20250921170831.71609-1-madhurkumar004@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758474549; c=relaxed/simple;
+	bh=FME+tEtqslZ027V3OHDQSzk/PKBqaB0CoA6wSgJsij4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9m8zkXM7N1Z2Rx7btD3Y8IYmc9dYp40xRkwaPqhbHbdhjPfYqRZvJg3S8Oei3DBOBi5Cxf3nnByOPAlLetuX6SbY3gs8CR8s/n0MJFUFX3K+QvepbD4Pi3CfdbcIwsrXakifm8tjFzqIN0Y276elxL9vB/Wr8w8/Lf/mL5pQBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=HJBhxBT+; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1758474542; bh=InYdCqa1ZArFVs0L1uXXsNHExwtLRBKBRS0bupvSfvU=;
+	h=From:Message-ID:From;
+	b=HJBhxBT+5TaX/gUydnZ0Jew3fCSABw1LI/Hlmiz2sqygPV4fSBd//ko4Jjm7XOffx
+	 Jpc2MqoPalPWp6oPKYYNNLTnD67WIUBVAkCcLfevq6WMMeusCgXyu6OA6/iHIQpBHa
+	 ufh4XSkZHUN4An9tM0Uco5y95pRtpEpgkYSiWGtU=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id D9602C072E;
+	Sun, 21 Sep 2025 19:09:02 +0200 (CEST)
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 58LH91e4028419;
+	Sun, 21 Sep 2025 19:09:01 +0200
+Date: Sun, 21 Sep 2025 19:09:01 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Benjamin Berg <benjamin@sipsolutions.net>, linux-um@lists.infradead.org,
+        linux-kselftest@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>
+Subject: Re: [PATCH v2 03/11] tools/nolibc/stdio: remove perror if
+ NOLIBC_IGNORE_ERRNO is set
+Message-ID: <20250921170901.GB28238@1wt.eu>
+References: <20250919153420.727385-1-benjamin@sipsolutions.net>
+ <20250919153420.727385-4-benjamin@sipsolutions.net>
+ <20250921075511.GA16684@1wt.eu>
+ <c10503a9-5c63-44a8-9ea7-a7bf6c4ed3fb@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <c10503a9-5c63-44a8-9ea7-a7bf6c4ed3fb@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The tmpshmcstat file is generated with kselftest run but was not
-ignored, leading to it appearing as untracked in git status.
-Add it to .gitignore to silence the warning.
+On Sun, Sep 21, 2025 at 06:37:30PM +0200, Thomas Weiﬂschuh wrote:
+> On 2025-09-21 09:55:11+0200, Willy Tarreau wrote:
+> > Hi Benjamin,
+> > 
+> > On Fri, Sep 19, 2025 at 05:34:12PM +0200, Benjamin Berg wrote:
+> > > From: Benjamin Berg <benjamin.berg@intel.com>
+> > > 
+> > > There is no errno variable when NOLIBC_IGNORE_ERRNO is defined. As such,
+> > > the perror function does not make any sense then and cannot compile.
+> > > 
+> > > Fixes: acab7bcdb1bc ("tools/nolibc/stdio: add perror() to report the errno value")
+> > > Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
+> > > Acked-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > > ---
+> > >  tools/include/nolibc/stdio.h | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
+> > > index 7630234408c5..c512159b8374 100644
+> > > --- a/tools/include/nolibc/stdio.h
+> > > +++ b/tools/include/nolibc/stdio.h
+> > > @@ -597,11 +597,13 @@ int sscanf(const char *str, const char *format, ...)
+> > >  	return ret;
+> > >  }
+> > >  
+> > > +#ifndef NOLIBC_IGNORE_ERRNO
+> > >  static __attribute__((unused))
+> > >  void perror(const char *msg)
+> > >  {
+> > >  	fprintf(stderr, "%s%serrno=%d\n", (msg && *msg) ? msg : "", (msg && *msg) ? ": " : "", errno);
+> > >  }
+> > > +#endif
+> > 
+> > Please instead place the ifndef inside the function so that code calling
+> > perror() continues to build. The original goal of that macro was to
+> > further shrink programs at the expense of losing error details. But we
+> > should be able to continue to build working programs with that macro
+> > defined. There's nothing hard set in stone regarding this but here it's
+> > easy to preserve a working behavior by having something like this for
+> > example:
+> > 
+> >   static __attribute__((unused))
+> >   void perror(const char *msg)
+> >   {
+> >  +#ifdef NOLIBC_IGNORE_ERRNO
+> >  + 	fprintf(stderr, "%s\n", (msg && *msg) ? msg : "unknown error");
+> >  +#else
+> >   	fprintf(stderr, "%s%serrno=%d\n", (msg && *msg) ? msg : "", (msg && *msg) ? ": " : "", errno);
+> >  +#endif
+> >   }
+> 
+> For the plain `errno` variable and printf(%m) we don't have such
+> fallbacks. With NOLIBC_IGNORE_ERRNO the compilation either fails or the
+> results are undefined. Personally I prefer not defining perror() here.
 
-Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
----
- tools/testing/selftests/cachestat/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+For me it's still a problem because that breaks the original purpose and
+current behavior. You cannot anymore compare the size of with/without errno
+for example, like here:
 
-diff --git a/tools/testing/selftests/cachestat/.gitignore b/tools/testing/selftests/cachestat/.gitignore
-index d6c30b43a4bb..abbb13b6e96b 100644
---- a/tools/testing/selftests/cachestat/.gitignore
-+++ b/tools/testing/selftests/cachestat/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
- test_cachestat
-+tmpshmcstat
--- 
-2.51.0
+   text    data     bss     dec     hex filename
+  20659      24   39424   60107    eacb init
+  19836      24   39424   59284    e794 init-noerrno
 
+Perror doesn't just display the error name/number, it also prints a message
+about that error that doesn't need errno.
+
+For "%m", that's fair enough, I didn't notice that one. We could imagine
+improving it by just emitting "?" or any such thing. But right now it will
+indeed proceed like you describe (that's already the case, it's not changed
+by this patch).
+
+I don't want to block that patch but I'm annoyed that it unfairly blocks a
+legitimate error function that normally provides sufficient context in error
+paths so that errno can be ignored, such as here:
+
+   if (open(path, O_RDONLY) < 0) {
+        perror("open()");
+        return -1;
+   }
+
+What's even more problematic is that Benjamin precisely fixed two other
+breakage cases in the same series for the same reason that they were
+blocking the build without errno, so it would be more consistent that
+this one isn't newly broken.
+
+Willy
 
