@@ -1,162 +1,172 @@
-Return-Path: <linux-kernel+bounces-826132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA58B8D9CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:19:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BAFB8DA23
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD4C3BAE31
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:19:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D39D17BF3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A3C24503B;
-	Sun, 21 Sep 2025 11:19:06 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5599217C77;
-	Sun, 21 Sep 2025 11:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD38926B97D;
+	Sun, 21 Sep 2025 11:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="vdj922gU"
+Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9607F25D533;
+	Sun, 21 Sep 2025 11:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758453545; cv=none; b=NKqlQM1GJM1lmAzj81PIeIz4iX+LNRqSBlWC6llzbIE2UnZw0ZTWr8xY3Bskn69eqglh3Dz9VZxjri03sLmh2Cl1h/v3Q4rxjyDB/bqwir3m8fR86QjjYniORDF5jVkCbOOUnMkEiLbgiS27NXfviYcMX2d4PbscY4dgnrwiPoE=
+	t=1758454039; cv=none; b=eQf30Y4MmIn0ArVYZ4LaWq/zF8z1M33p00KvC0rV1RU4mPn/gBzmF5IupQNfy//Eybq/OEC2mLapavi2ggyse2VSFPWvyiJGyYYpKWClKNzslMDlLRja2EDejNQZGYV21Er0aLvaUDSB6vcz1AbT1mQrYF/nZh+S/JX9mQTVVjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758453545; c=relaxed/simple;
-	bh=+k1EK6R8XHlzTNlhK3lcLoKxPRU0a92elkKWdtsW4sk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aY+a4XCf6fWUDWGqu0tSAkj7GETCFY91ux6cDnC57lwvLwFIJHPy0VlCltPuBCiy5IvTQo4cYBMhqNO7DK0+ZKiFx8Lz01Eh2toikWND3Tq8U1LzY2lpxHqC1E3DWuKx6sXzRXirrDBB2B1uvTXHKbuoQaOjStost83MdsKMvxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 0WVm7JRbTvaMOEkEriQlHA==
-X-CSE-MsgGUID: z37TRNCaQTiGA39SFDxpqg==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Sep 2025 20:19:00 +0900
-Received: from localhost.localdomain (unknown [10.226.92.3])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id E53C6400091E;
-	Sun, 21 Sep 2025 20:18:57 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] memory: renesas-rpc-if: Add suspend/resume support
-Date: Sun, 21 Sep 2025 12:18:52 +0100
-Message-ID: <20250921111855.103566-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758454039; c=relaxed/simple;
+	bh=uj7IBPcVgr5j3kXfBUzjwNgz92gThuVhXKzbjYk8hmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k0GVzF7exwHbNr0aaEZQYOyg+zZfVj6gUm9MGrsULJiejv2saspuyg4cIMAMAvKn4exHcfRk9rh3FyX1f7zgJH2Ics8MegAW/p560S8jfiuZ8iFupHi9cBYvEB2YQmgpFFVAisp4QoBVCCRy9zXnVElrKbbynzk02FbmtBh7IOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=vdj922gU; arc=none smtp.client-ip=195.181.215.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
+	t=1758453604; bh=uj7IBPcVgr5j3kXfBUzjwNgz92gThuVhXKzbjYk8hmA=;
+	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
+	b=vdj922gU4Bwxp0+IEbQJ62HSf7JICixDFHtqgq7RMoDfAroKG5WAHcjE2dXxGcP6t
+	 Vty3YA30lc1iIbjr1Q4qoLbo4uZpc7uyJQQ9RObMoQzpgzkIUl2DztucV0Fi2SjBM6
+	 MELH9wXs6Y5GWO7GgJRMfxLpzSJrJiXfynhUf4t8=
+Date: Sun, 21 Sep 2025 13:20:03 +0200
+From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
+To: guptarud@gmail.com
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] arm64: dts: rk3399-pinephone-pro: Fix voltage
+ threshold for volume down key
+Message-ID: <addgrqhxanzrjdhb7y7y2qrqu4odpoclbwlswuua4yqinrzh2l@wcdtuquzuqvr>
+Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
+	guptarud@gmail.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
+References: <20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com>
+ <20250921-ppp_light_accel_mag_vol-down-v2-5-e6bcc6ca74ae@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921-ppp_light_accel_mag_vol-down-v2-5-e6bcc6ca74ae@gmail.com>
 
-On RZ/G3E using PSCI, s2ram powers down the SoC. Add suspend/resume
-callbacks to control spi/spix2 clocks.
+Hi,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/memory/renesas-rpc-if.c | 56 ++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 8 deletions(-)
+On Sun, Sep 21, 2025 at 01:04:23AM -0700, Rudraksha Gupta via B4 Relay wrote:
+> From: Ondrej Jirman <megi@xff.cz>
+> 
+> U-Boot and Linux use different algorithms for determining voltage ranges
+> for comparison. Pick value that will work with both.
+> 
+> Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> index 0a4121b05d36c5a7e05eddbd3514a11ae4f7d3eb..4e6df664d780ed4798015db6b2fe79bf7c4e4c00 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> @@ -46,7 +46,7 @@ button-up {
+>  		button-down {
+>  			label = "Volume Down";
+>  			linux,code = <KEY_VOLUMEDOWN>;
+> -			press-threshold-microvolt = <600000>;
+> +			press-threshold-microvolt = <400000>;
 
-diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
-index 4a417b693080..e1fba157982f 100644
---- a/drivers/memory/renesas-rpc-if.c
-+++ b/drivers/memory/renesas-rpc-if.c
-@@ -67,6 +67,8 @@ struct rpcif_priv {
- 	void __iomem *dirmap;
- 	struct regmap *regmap;
- 	struct reset_control *rstc;
-+	struct clk *spi_clk;
-+	struct clk *spix2_clk;
- 	struct platform_device *vdev;
- 	size_t size;
- 	const struct rpcif_info *info;
-@@ -1025,16 +1027,14 @@ static int rpcif_probe(struct platform_device *pdev)
- 	 * disable it in remove().
- 	 */
- 	if (rpc->info->type == XSPI_RZ_G3E) {
--		struct clk *spi_clk;
--
--		spi_clk = devm_clk_get_enabled(dev, "spix2");
--		if (IS_ERR(spi_clk))
--			return dev_err_probe(dev, PTR_ERR(spi_clk),
-+		rpc->spix2_clk = devm_clk_get_enabled(dev, "spix2");
-+		if (IS_ERR(rpc->spix2_clk))
-+			return dev_err_probe(dev, PTR_ERR(rpc->spix2_clk),
- 					     "cannot get enabled spix2 clk\n");
- 
--		spi_clk = devm_clk_get_enabled(dev, "spi");
--		if (IS_ERR(spi_clk))
--			return dev_err_probe(dev, PTR_ERR(spi_clk),
-+		rpc->spi_clk = devm_clk_get_enabled(dev, "spi");
-+		if (IS_ERR(rpc->spi_clk))
-+			return dev_err_probe(dev, PTR_ERR(rpc->spi_clk),
- 					     "cannot get enabled spi clk\n");
- 	}
- 
-@@ -1063,6 +1063,43 @@ static void rpcif_remove(struct platform_device *pdev)
- 	platform_device_unregister(rpc->vdev);
- }
- 
-+static int rpcif_suspend(struct device *dev)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+
-+	if (rpc->info->type == XSPI_RZ_G3E) {
-+		clk_disable_unprepare(rpc->spi_clk);
-+		clk_disable_unprepare(rpc->spix2_clk);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rpcif_resume(struct device *dev)
-+{
-+	struct rpcif_priv *rpc = dev_get_drvdata(dev);
-+
-+	if (rpc->info->type == XSPI_RZ_G3E) {
-+		int ret = clk_prepare_enable(rpc->spix2_clk);
-+
-+		if (ret) {
-+			dev_err(dev, "failed to enable spi x2 clock: %pe\n",
-+				ERR_PTR(ret));
-+			return ret;
-+		}
-+
-+		ret = clk_prepare_enable(rpc->spi_clk);
-+		if (ret) {
-+			clk_disable_unprepare(rpc->spix2_clk);
-+			dev_err(dev, "failed to enable spi x2 clock: %pe\n",
-+				ERR_PTR(ret));
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static const struct rpcif_impl rpcif_impl = {
- 	.hw_init = rpcif_hw_init_impl,
- 	.prepare = rpcif_prepare_impl,
-@@ -1125,12 +1162,15 @@ static const struct of_device_id rpcif_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rpcif_of_match);
- 
-+static DEFINE_SIMPLE_DEV_PM_OPS(rpcif_pm_ops, rpcif_suspend, rpcif_resume);
-+
- static struct platform_driver rpcif_driver = {
- 	.probe	= rpcif_probe,
- 	.remove = rpcif_remove,
- 	.driver = {
- 		.name =	"rpc-if",
- 		.of_match_table = rpcif_of_match,
-+		.pm = pm_sleep_ptr(&rpcif_pm_ops),
- 	},
- };
- module_platform_driver(rpcif_driver);
--- 
-2.43.0
+This is fixes the issue accidentally...
 
+According to the schematic the actual threshold is 1.8V*(2/12) = 0.3V :)
+
+  https://xff.cz/dl/tmp/f1410ee03fac4c5b.png
+
+Linux adc-keys driver uses the "closest to the threshold voltage key wins"
+algorithm.
+
+  https://elixir.bootlin.com/linux/v6.16.8/source/drivers/input/keyboard/adc-keys.c#L32
+
+U-Boot uses the same algorithm implemented differently:
+
+  https://elixir.bootlin.com/u-boot/v2025.10-rc4/source/drivers/button/button-adc.c#L97
+
+So my description in the commit message is wrong.
+
+For the current volume up/down key voltage DT "thresholds" the actual threshold
+used by the driver to determine which key will be detected will be:
+
+  (100 + (600 - 100)/2) = 350 mV
+
+So unless you press the key very lightly, a lot of the time adc voltage will be
+below 350 mV for the Volume Down key and will be misdetected as Volume Up key
+press.
+
+Here a few volume down key presses on my PPP:
+
+[   32.567143] volkey val 1791
+[   32.671337] volkey val 1791
+[   32.775266] volkey val 1791
+[   32.879208] volkey val 1791
+[   32.983109] volkey val 1791
+[   33.086836] volkey val 1791
+[   33.191116] volkey val 300
+[   33.295158] volkey val 298 <-----
+[   33.399351] volkey val 1791
+[   33.503339] volkey val 1792
+[   33.607128] volkey val 1792
+[   33.711296] volkey val 1791
+[   33.815307] volkey val 1791
+[   33.919333] volkey val 1791
+[   34.023392] volkey val 311
+[   34.127329] volkey val 305
+[   34.231124] volkey val 1791
+[   34.335390] volkey val 1791
+[   34.439303] volkey val 1791
+[   34.543256] volkey val 1791
+
+On my other Pinephone Pro it goes down even to 293 mV when the button is pressed harder.
+
+It doesn't help that the Volume Up button threshold in DT is set incorrectly, too.
+It should be 2mV and not 100mV.
+
+So the correct fix here is to change both button thresholds to:
+
+  Volume Down
+
+    press-threshold-microvolt = <300000>;
+
+  Volume Up
+
+    press-threshold-microvolt = <2000>;
+
+To match the schematic. Then the threshold/decision voltage will become ~150mV,
+which works fine according to my tests.
+
+Best regards,
+	o.
+
+
+>  		};
+>  	};
+>  
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
