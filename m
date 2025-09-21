@@ -1,218 +1,173 @@
-Return-Path: <linux-kernel+bounces-826089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3134B8D7E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:50:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2C6EB8D7EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76703A6462
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF293A574E
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48AF1F78E6;
-	Sun, 21 Sep 2025 08:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CD9248F47;
+	Sun, 21 Sep 2025 08:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maHOz2rt"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="pNEMZFQc"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353F41A8F
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440D02AF1D;
+	Sun, 21 Sep 2025 08:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758444612; cv=none; b=uNq+GuMDmAaXIASWZ6Xyxf/PpiDP6ufh9C1t6CHEY565jidBoeMkQfHP9wab9BXKUTeAgomkd1GcVpQT3oT27m0XKcXsEfvrDoJz/ilRb5qm3eNAJLMV4QTkHUMfT3Am3YZ3fng+8059JRj7jHEYWST7wAg2lmiNQGUfV5X2tDY=
+	t=1758444770; cv=none; b=SyjhMAt5vOSOr8Uu7srYCRTcqxSuvFG4y4cYCeSnpX/q5p5i8MluDBJzlwtCb9HFirpfcho5eQUW/YT15eLlrtgtixbHTUSM7lg6BQPyPl63igkCVb+mBrYzJkXkPBsyZUp2G2xYEE+lwMYYQi9360s91RD/beuUbVIzGrzlDos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758444612; c=relaxed/simple;
-	bh=qKobqPXjbzJkURaCIr1E0autBxv8G/ZskK4w1oeQtJs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=XZOXLTzCawqBrMm7H2StJsLnFXVrFE34Xr1bKFjRKxUecRZ1kJkddUL9MGhO0Rw/CzPpmeRVozTmOmJhDZ/QPgIKP5veZ+iQKmQ+R942aDdA7LTmJhSSIFl4VIjF13fONgGV0TTT+UODmewyhiYgZnUNxDHej9Xzfk2kkouDjq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maHOz2rt; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-72ce9790acdso33022857b3.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 01:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758444609; x=1759049409; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zDEVEqOXG6+p3ZgaagcezUlQsqQHRzvGMKTwJSm1sOE=;
-        b=maHOz2rt4mV0tuucnljc8uFypy1rfczrE7wYhRyNLS4CxBLH+QyG+TJjfkL+bArLm2
-         RaWYoxMU41xNxjle2zCwkMOugN4TsQo4Yg9C+hFCiXew76Br20RVsC/WS+c2kxg41QvJ
-         C3IBDqJQo2R1+g+nYwqqRDpgSV9ieuiKiUTvbbC1MRw18PGRX1JbO2JpwTnxbiqYGAlk
-         OlzE+0fqOw/P8bP91iouMqNLtDiSyFGfARAxMndnHH3BsVwGaKS8ZKkacpGCfyXLMtpG
-         DWP0OdAuKjP2uzKxqvBX7UhWAeOjgLRqAJ2oMugujWaCMUGO2RppXSmq7Q/26Sx7kxyB
-         vzmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758444609; x=1759049409;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zDEVEqOXG6+p3ZgaagcezUlQsqQHRzvGMKTwJSm1sOE=;
-        b=u7+Ex8fQOj01kYHYbPz4GIzq/o/bJ6/CGfV9kSC/z7mHy3Mj6Vb8UhHXqpiOR6hjjE
-         lTEBS18dinlgDUVBi+E0z0rD4p8+YjeOZWCU9+PJGcz4mBoezJmroic42VeB2d7i2vCL
-         +GJJjcxGqSTlNlmQzlKJ/298vq6fBPn+SstrVuJtUtH04iSc+cPzhYiggDT4Y6jZBlgx
-         S9VCN4nmxbuHqjvMPt7IQ4CVGYkSoiJlV8+EtfNrdzABOV7PblTPVqBIm4QeMQLkExLp
-         NCGruA5V8h/bZLO2ALIB12eR0rXMb+W1/OzDKYvnuL07985vGnRJLZGmrbY2TvRRrytD
-         Vrsg==
-X-Gm-Message-State: AOJu0Ywr8pElIHwfEnqC/SmSLrp5qy3spa1NELdA9CV2cFONt93ywJPJ
-	uxhpJFCrZditHb4GID9BENPR8eMil6DFV+uGdqaY7pjpf27iT2CfCg9X86Y1ynaXZ3TspHGxraC
-	Qy6TEqH2h5u0xtrnZL0/uhWWjCyOkm0s=
-X-Gm-Gg: ASbGnctQ4VFd9EWdk/pqqvvYKS6jetNbw7/7ByFFYJWSLwhyxEo6WUKhAhDPzPEByHR
-	FNDIpQOKBvurUQAnqCvTt024QngmOMuGecJVl6SYUKJjHtLYB7UvenUAzVfAE7So6fbeafOHW03
-	ab5fUKlXbpZHt6KEa8ytgafTaJVw8V8XENki4hlU7swzOTPpNTvl5Fw6IWkEDPPuIDbULoDE2YL
-	t6USQ==
-X-Google-Smtp-Source: AGHT+IHlMDEd1tQ9O31JvReW0lUbnz6bNY4oRGu2JF4f/o/X8rhPYZs2HHg1UDyYjOMCAgAcTaRxf8XoPxsJhKzjVx4=
-X-Received: by 2002:a53:ec47:0:b0:62a:2327:9ff6 with SMTP id
- 956f58d0204a3-634779def96mr6461768d50.10.1758444609206; Sun, 21 Sep 2025
- 01:50:09 -0700 (PDT)
+	s=arc-20240116; t=1758444770; c=relaxed/simple;
+	bh=DmFeZAuzjiDDiooLpLk2yv2O/58zSRwZXt1vw0u+/pg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ca0AoQmS+ODOFGzsMdM8/jBWdODJ760bZ3LMae3XH3YCjIUx5Mxty3wZAFk7UVzwJBw+qgIXpI8NCQBvquk4Dwi0rThjV2tx2i/SKhn2I7cd3Kc413zr5ZWuCkH4ac+EbVI1PJfXPvDszBkToQK6FQ5bNLK0vFOf1PJr/4DRlcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=pNEMZFQc; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1758444747;
+	bh=XBIBLj73RGnSSKnxJ4ZehyTUKEtXkKIYYh2qsFiM7rU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:To;
+	b=pNEMZFQcEAPq+wUO5yiDEPcgXX4q/ETGGXyl4xGxmKX8d6T3A16oloTlVS3R/8P5S
+	 +aRAjy/eZBxCEg0bWEuPVqLyC8A6svzi6ZZcGuJKFJ+geNP7rUI842jMkLwrZNgb1d
+	 lCNrqcV+BKFvQx2057b4gjZwGw8zkNTsIME7LHHA=
+X-QQ-mid: zesmtpip2t1758444741t6bb70130
+X-QQ-Originating-IP: fa4G0Z96TcIuLQMDYJVyH1WNdBxvsi2TGK6A1010glI=
+Received: from = ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 21 Sep 2025 16:52:19 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 14739136981806942369
+EX-QQ-RecipientCnt: 17
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: [PATCH v4 0/2] ASoC: spacemit: add i2s support to K1 SoC
+Date: Sun, 21 Sep 2025 16:52:15 +0800
+Message-Id: <20250921-k1-i2s-v4-0-4f819f50e468@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Cen Zhang <zzzccc427@gmail.com>
-Date: Sun, 21 Sep 2025 16:49:57 +0800
-X-Gm-Features: AS18NWDBRTBAx4VM1Sxu1LjM0XlA01KSp3jHD7-E77JTmkNBTAmE4ZcXYVmAYtA
-Message-ID: <CAFRLqsVkqLHo9tNNEhFiJWEn506nVOM-Bnz_=b36A-kXgzb+mw@mail.gmail.com>
-Subject: [BUG] Bluetooth: Use-after-free in hci_acl_create_conn_sync due to
- TOCTOU race condition
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL+8z2gC/3XNTQ7CIBCG4asY1mKYgdriynsYFy0OOlFbhdrUN
+ L27qPFnoctvwvMyiEiBKYrFZBCBOo7c1GmY6US4XVlvSfImbYEKM1WAlnuQjFECZJWfZ1SWrhD
+ p8SmQ5/4RWq2fO9D5knrt57jj2Dbh+visg/v11TWvbgdSSacBjK3QKgPLA9eXfhZPpaMjtzPXH
+ MW91eGXx+LtMXllKa+M8kqh++v1x1uAt9fJZ7mHXOcavf3tx3G8ASf0So46AQAA
+X-Change-ID: 20250813-k1-i2s-115bf65eaac8
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Jinmei Wei <weijinmei@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1758444738; l=2372;
+ i=troy.mitchell@linux.spacemit.com; s=20250712; h=from:subject:message-id;
+ bh=DmFeZAuzjiDDiooLpLk2yv2O/58zSRwZXt1vw0u+/pg=;
+ b=RaWOlpC5FWPJwn3c47TkAmC+iLUD31NCfLHyxz/qOMkN5rnFVMjNAZFAmO+/oPh65efNMEq9+
+ +MzyQEXLjgWBk4MPN/I0whyQLjfzh/m/rKrrS2hOzHfxR3PrCA29Iqb
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=zhRP1xE0bftrurqSWI+SzcSdJGIZ0BTTY9Id0ESzqlI=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NxBUFebUJrFWwqnmh9UVFdXwpSTHzBo4NnP9/yzoMkWB7xFjeIYIANy4
+	YM683d601mtJ42vionL5XjxIYs0fpmpMLzbzb6VBwmyQBXCUwE+hns2NfZ4zR9RE5uSZlLL
+	z+novtX+VvjV+lx9tSKvK8/uZmRrph/V17jeJNghFN/HO2Ap+rlX7mUZahDEQF6S6vKxQa8
+	barPat2lN4R1p/3aIkwKYeSeowXdXtl+3FbUdFA10LvfXkFstGZHkPMeYQWtH+R9qjN6cTa
+	kbr7IpNzOCHrKnbBq0rq7vvOXPNTRL6k68DiKplapjMggBN1MFM14bn3IxNAlzwPwdxyQEk
+	RKNuppUYQRJGx16y4mjkq5SGZrBoYGX4yxwHdbnpy7+28ycyezdMMUEOFj61iiK9fxPK5DF
+	5VCXXUyKgK51lriP/mLgPwpKt5oTkLCaXjOpdJ9oy+exXzj+PhXXdITGabK1Xb/bbPDI1w2
+	Bf3cklVWCaHHViVzwHeMgYGKHlvNDC60/SbmD1Uo8B+aXd+jI3iUPiG54hqncKIH5NDk33I
+	C7LASjLkdMTgAGjpsW0uyj5NmovHR7xbRkWr8B717aCQhLWiUUiyOSaZqnAINpZuLeVxh7H
+	S18KNUcFhR2QnZSjb1Ez36KcAEj768OmfvMTOFBnfW5KzghVLVWp5Q8RJ39uIpyhFZoWjjl
+	FjKAkoGubUq24WmUKcHV6nUnksMvNWECUBXShcSHIwOqok96k+CuJ3Xoq5f6sY0+7MC+5FO
+	RhH1gz1G1GhLQBdwQy7Rg2bx0h39NRvEev0DXqHuhQsAthvo1bWgiRBsZ62GqyZqXDHX4j0
+	o+nRTq3GYUno6JlrlSSm3Fr28dOOvfAi2ebLE/705uRsA9BB2UU3dZUOxR0SxJ3VDvr1gZ3
+	8u70qikLnz3N4utH39XPSn6i+gL4/3rG7voJpJPaO4mPC44zJowZmr60HAc2z2TuybgafMF
+	7BmmFwrY98Y0QPFOox+kH3GqYdbOb+pRlPRL5BQ7u3A/wQHjJy0lbY5y1VCOc0FfGf/QFTI
+	Ycb+L/qExsci9pb6CuGbcGJ5Pr8WUwwso3z8LKfFMNbEmU4srzj/3FzIU0YXPd+jyjLtJWf
+	OLIlvV7eWMKgS6hFliGxIWkH+vHHykc2+ZGbA/GLW+PgYz9DRQGIZc9/0W+P79Fx0TMP1y0
+	IpyjgTES0bzPGE8nzjrvB4MWRA==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-Hi maintainers,
+On the K1 SoC, there is a full-duplex I2S controller.
 
-I've applied the full v6 series (1/3..3/3)
-(https://lore.kernel.org/linux-bluetooth/20250915161504.814410-2-luiz.dentz@gmail.com/T/#u)
-but discovered a use-after-free vulnerability may caused by another
-reason during testing.
+The I2S is programmable, with the sample width configurable
+to 8, 16, 18, or 32 bits.
 
-After my analysis ,I think  the UAF is caused by a TOCTOU
-(Time-of-Check-Time-of-Use) race condition in
-hci_acl_create_conn_sync(). Two concurrent flows race on the same
-hci_conn object:
+A dedicated FIFO is provided for transmit (TXFIFO) and another
+for receive (RXFIFO). In non-packed mode, both FIFOs are 32
+entries deep and 32 bits wide, giving a total of 32 samples each.
 
-1. Flow 1 (Task 74): hci_acl_create_conn_sync() validates the
-connection with hci_conn_valid() and proceeds to use it
-2. Flow 2 (Task 76): Connection failure handling path calls
-hci_conn_del() and frees the connection object
+The register definitions can be found here[1]
 
-The race window exists between the validity check and actual usage in
-hci_acl_create_conn_sync(), where the connection can be freed by the
-event handling side due to errors, leading to use-after-free when the
-original flow continues execution.
+Link:
+https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#18.2-spi%2Fi2s [1]
 
-The detail KASAN report as follows:
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+Changes in v4:
+- Patch 1/2:
+  - nothing
+- Patch 2/2:
+  - add some comments
+  - adjust supported PCM rates and formats.
+  - change macros from SSCR_DW_(8|16|18|32)BYTE to SSCR_DW_(8|16|18|32)BIT
+  - use constraints API in hw_params
+- Link to v3: https://lore.kernel.org/r/20250911-k1-i2s-v3-0-57f173732f9c@linux.spacemit.com
 
-==================================================================
-BUG: KASAN: slab-use-after-free in
-hci_acl_create_conn_sync+0x134a/0x16e0 net/bluetooth/hci_sync.c:6861
-Write of size 2 at addr ffff8881199b0038 by task kworker/u17:0/74
+Changes in v3:
+- Patch 1/2:
+  - simplify dma-names definition
+- Patch 2/2 
+  - remove empty spacemit_i2s_remove()
+  - move FSRT setup for DSP_A into switch-case in spacemit_i2s_set_fmt()
+- Link to v2: https://lore.kernel.org/r/20250828-k1-i2s-v2-0-09e7b40f002c@linux.spacemit.com
 
-CPU: 2 UID: 0 PID: 74 Comm: kworker/u17:0 Not tainted
-6.17.0-rc5-ge5bbb70171d1-dirty #20 PREEMPT(voluntary)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xca/0x130 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x171/0x7f0 mm/kasan/report.c:482
- kasan_report+0x139/0x170 mm/kasan/report.c:595
- hci_acl_create_conn_sync+0x134a/0x16e0 net/bluetooth/hci_sync.c:6861
- hci_cmd_sync_work+0x798/0xaf0 net/bluetooth/hci_sync.c:332
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
- worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
- kthread+0x3d4/0x800 kernel/kthread.c:463
- ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Changes in v2:
+- Patch 1/2:
+  - modify commit message
+  - remove unused third cell from pdma dmas property
+  - update SPDX license in spacemit,k1-i2s.yaml to (GPL-2.0-only OR BSD-2-Clause)
+- Patch 2/2:
+  - modify commit message
+  - reset_assert in dai_ops::remove
+  - select CMA and DMA_CMA in Kconfig
+  - use devm_reset_control_get_exclusive
+- Link to v1: https://lore.kernel.org/r/20250814-k1-i2s-v1-0-c31149b29041@linux.spacemit.com
 
-Allocated by task 60621:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x72/0x90 mm/kasan/common.c:405
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- __hci_conn_add+0x647/0x51d0 net/bluetooth/hci_conn.c:949
- hci_conn_add_unset net/bluetooth/hci_conn.c:1061 [inline]
- hci_connect_acl+0x650/0xe60 net/bluetooth/hci_conn.c:1672
- hci_connect_sco+0x61/0x1c90 net/bluetooth/hci_conn.c:1734
- sco_connect net/bluetooth/sco.c:339 [inline]
- sco_sock_connect+0x638/0x1ed0 net/bluetooth/sco.c:658
- __sys_connect_file net/socket.c:2086 [inline]
- __sys_connect+0x277/0x350 net/socket.c:2105
- __do_sys_connect net/socket.c:2111 [inline]
- __se_sys_connect net/socket.c:2108 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2108
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+---
+Troy Mitchell (2):
+      ASoC: dt-bindings: Add bindings for SpacemiT K1
+      ASoC: spacemit: add i2s support for K1 SoC
 
-Freed by task 76:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x41/0x50 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2428 [inline]
- slab_free mm/slub.c:4701 [inline]
- kfree+0x189/0x390 mm/slub.c:4900
- bt_link_release+0x49/0x60 net/bluetooth/hci_sysfs.c:16
- device_release+0x9c/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x16f/0x270 lib/kobject.c:737
- hci_conn_del_sysfs+0x1e2/0x380 net/bluetooth/hci_sysfs.c:62
- hci_conn_cleanup net/bluetooth/hci_conn.c:173 [inline]
- hci_conn_del+0x1f91/0x37a0 net/bluetooth/hci_conn.c:1211
- hci_conn_failed+0x662/0x820 net/bluetooth/hci_conn.c:1314
- hci_conn_complete_evt+0xf2b/0x3330 net/bluetooth/hci_event.c:3215
- hci_event_func net/bluetooth/hci_event.c:7569 [inline]
- hci_event_packet+0x17cd/0x2da0 net/bluetooth/hci_event.c:7623
- hci_rx_work+0x982/0x2210 net/bluetooth/hci_core.c:4071
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
- worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
- kthread+0x3d4/0x800 kernel/kthread.c:463
- ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-
-The buggy address belongs to the object at ffff8881199b0000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 56 bytes inside of
- freed 4096-byte region [ffff8881199b0000, ffff8881199b1000)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1199b0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-anon flags: 0x200000000000040(head|node=0|zone=2)
-page_type: f5(slab)
-raw: 0200000000000040 ffff888100043040 0000000000000000 dead000000000001
-raw: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 0200000000000040 ffff888100043040 0000000000000000 dead000000000001
-head: 0000000000000000 0000000000040004 00000000f5000000 0000000000000000
-head: 0200000000000003 ffffea0004666c01 00000000ffffffff 00000000ffffffff
-head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881199aff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff8881199aff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8881199b0000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                        ^
- ffff8881199b0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8881199b0100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Thanks for taking a look.
+ .../devicetree/bindings/sound/spacemit,k1-i2s.yaml |  87 ++++
+ sound/soc/Kconfig                                  |   1 +
+ sound/soc/Makefile                                 |   1 +
+ sound/soc/spacemit/Kconfig                         |  16 +
+ sound/soc/spacemit/Makefile                        |   5 +
+ sound/soc/spacemit/k1_i2s.c                        | 463 +++++++++++++++++++++
+ 6 files changed, 573 insertions(+)
+---
+base-commit: 4f010aced22532eea2ef0d9a2f5db7c64a196fec
+change-id: 20250813-k1-i2s-115bf65eaac8
 
 Best regards,
-CenZhang
+-- 
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
+
 
