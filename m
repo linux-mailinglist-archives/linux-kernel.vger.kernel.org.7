@@ -1,154 +1,161 @@
-Return-Path: <linux-kernel+bounces-826071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9994B8D741
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:05:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0038EB8D747
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEA63A9C00
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A9E3A8EF1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AD9245006;
-	Sun, 21 Sep 2025 08:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07C01DB122;
+	Sun, 21 Sep 2025 08:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JP5+TcYP"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SyG74xaK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wvUogs5p"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD8B239E8A
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF7DF50F;
+	Sun, 21 Sep 2025 08:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758441896; cv=none; b=t+XhR+upOAavKOMTyfJHI+XWeNrSKnMhhaOJlkR38GFK492Uc130giYlZ+DsfVGWsnlzITUY1ITtD3Bgqo4oQ1rFsE/GMOOdmNvWznFbH+A/DNb83zRlkIZlr4p/7ruULJGDtIh50dLH0pyIAc0PJTCv5flmaBsgkQ/L1cRbrqc=
+	t=1758441980; cv=none; b=s+xdLYkUw5TsT/OqGt/+eDlUe7Rb4S5HwRUXM2XpOOzAgfFpaUs0QEvy+tMkXze3iHFsjgr+0pL7Ao7ZywhC+uQjLZdMNSH9XZs/y4xMtE/XVIatSCa+w80BASCD/XUNUo2gLk1yrK938VCxxE/2D4tdycPxJIhDOjNl/RAB0lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758441896; c=relaxed/simple;
-	bh=WSnEXLeKHrRXxvgOkBIhVPDjW8GLL9YPyvl91reKnRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JRLJpFSn4Mv+2R/aRMynOa+uPyenhNda8OdSDdUXcO8NFwhYRI0CWK47gEAlZ+E93SLPjKOM0b05mAqU0qs/zZfCKm0/5JtyFy8J+aihJv7ipcbEsXmetzyh6t52TSjiyt6GkDpH9NSuCTowXukJMMnhg5sxbvt3sXdL0GjOCfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JP5+TcYP; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58L5GnP4028518
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:04:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=XEAbnHbHFmi3/gfqNWQjGriA
-	bFrVzrvYQPzuEkN3rt4=; b=JP5+TcYPY6LzluEkFZbKFYhH25r6O2ijmcUFHJqu
-	M1XaHtBxXz/f4rf/R3LFiZgy8BYi/ZIwcUORGkEUiJ4JT1nN4H+L/Zfu/g1b5m2Z
-	owh6KojNfdA3aHiWVHQH3aNwvVaeExap3LbiqkjN0smy2Q7HGgqYprr8dQeDsHIR
-	LH1EEa9+S6q/zZXp2/8+RX9jab6DXM7BEMmg1QaqEIIAPCZR3HQ+Q2sKMQvcA331
-	Um0RTMTZtjIg5Kc1izKZYpzPhOkuqyYv5KNAWfh58tPc2ARyEyNenpTyYVj3mGdw
-	jHewL9n+uFcCVyIGW5To6sVv9UkZ8jY2KY/9TLEFhp7n0w==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyej4bt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:04:53 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b60d5eca3aso84727481cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 01:04:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758441892; x=1759046692;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XEAbnHbHFmi3/gfqNWQjGriAbFrVzrvYQPzuEkN3rt4=;
-        b=efWFnJs09YdX3ojhEptBo4gld7R3zydhGS3qw90OFABYj0SH4YNmaBmX7lAoWBbSgp
-         f33cZlclSjSc0wkGqWplb48bYtGp4OR10tUP4qD9qBhDipH84aY1739evPNhew1LQxLN
-         37kd5sgS1YKWQhKIKM6rqKA0Gr3NqLuM0NeiWacoql+OvJdIcR3s87+0YmbzG1WcuS8l
-         qTW+rmavPpNsipgCh7YYBcxh6iT2Tnwlw3pdSUg1164RpU6Q0uytPjnvZmmbyPtMXBKm
-         nf9ahDf6FOaqzRGU4FdChWbUr6MptljY/XkOgjpGgh65STvoIL8NT9IReFDH5FVB+4aq
-         D9sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcbtSUeTCooqlHO0nvqcOyjaoqqS2IV1WBy4tuzdnQ9ThFOD2fVXLIvGzqUPMmQtYGjY49kEg69H9r4aA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbWGuGaPaMqgHsb+ZyTZSBtp+M6YVfyughUcXDCsqU4dYEnN1W
-	f2A8baLp+nL5q6UuhkhtKdQKP40/QlKBwW+MLdNEv7jCCjjchWkYwjmQ8a0XCbNVHKH0REALWcS
-	sMkbOsIVVc+wYNE+yZc2KLNsjAkmh59iw4PCBWcnR+aH0BJ5tV4+m6W/ApGJJchZl+lg=
-X-Gm-Gg: ASbGncv4F9zEQBR6eiAchfzB52rSV0/lf7s12Do7+mMwqQvkpG5h+3D0uilUoOcCuIR
-	/Esycjz/ms/jXPYtk2vG2N7SWP7kQebYIuQsPa/vqeilWtvMlbaMIGnqCH3p/mekf7FQpxMN1NO
-	5Y8QUdlaK9TPFPDVMhbSVIvLvkuJwaVQRZGfmlgdVwhUXw1T6fYT4yxFxLT5ev9ixrIS5eZpyQG
-	YZ5W55d1RdpN3IZ8vAg++/ChonE7ZDi5ExvDaxNBE7GYaajoXho8MENbyKFrtPtelx5u7v0pNpK
-	hrrEifF9UT3QApz4TVlGUZMVoarJTyOInKxt24Sz7MntJ/7DfV1Yhzddzu/6+5xSACVZHmmEIKo
-	UxW06bM0Q3440JNmKv9g7AzSiN+4zLs1imgWFi1b/xnjs5pTnfGwm
-X-Received: by 2002:a05:622a:4119:b0:4b3:4c51:6436 with SMTP id d75a77b69052e-4c06f07dacfmr109908801cf.35.1758441891704;
-        Sun, 21 Sep 2025 01:04:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZ2B20lb1PcP9AA7tQ7PqdyejHFWWWwxoSKhwLsPdsUWH2uJIeWVjvdVYTP8xVh+qWatH8wg==
-X-Received: by 2002:a05:622a:4119:b0:4b3:4c51:6436 with SMTP id d75a77b69052e-4c06f07dacfmr109908621cf.35.1758441891250;
-        Sun, 21 Sep 2025 01:04:51 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a904b961sm21573731fa.40.2025.09.21.01.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 01:04:49 -0700 (PDT)
-Date: Sun, 21 Sep 2025 11:04:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Antony Kurniawan Soemardi <linux@smankusors.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Heidelberg <david@ixit.cz>, Max Shevchenko <wctrl@proton.me>,
-        Rudraksha Gupta <guptarud@gmail.com>, Shinjo Park <peremen@gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: qcom: msm8960: rename msmgpio node
- to tlmm
-Message-ID: <le3zymkfrocgkzb3pldezhndricja7xpg3pj4xcpmt6ngnvuam@he3a44gnvuoj>
-References: <20250921-msm8960-sdcard-dtbindings-v1-1-5a2455a30a06@smankusors.com>
+	s=arc-20240116; t=1758441980; c=relaxed/simple;
+	bh=YNXO5wsfg46AgY6IvDzyZBiJiGKQm1HTV2DSzXRcSBs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=uO//zf7Omq7DXYRKl+ZsFYs34tO5ckIBwNMO21SoKgfw2idwFYr9N/N6AMnMZwMEHaduwlJfNg08/4mmFKbTQYLofH0TzGaFIB/pqrY7q0F9xY0J66g7sFNOyvqi3iJZu8a4wjlMoWZMDUIvxzVQ7docNYhn/E81/udHo02vPZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SyG74xaK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wvUogs5p; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 21 Sep 2025 08:06:11 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758441976;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P4pultIsHG+iGzVxn1N2xaxNRWujRasgdlTN5QSfgfA=;
+	b=SyG74xaKGzP5JKUcQAYc4mGK88gUh+4DlEUXIXSeZ/4T2mL8xMPDZjGLUkO2MekMOE6khX
+	J+OtojLI32wuL2QDWJOkfcXOk932f/YslvSGseBvPXgYqtYN71Kagli329SXfOGNMlAdzT
+	Q08DKgGt0ZbJD2w0xAyRpWnX1IsX5IQMKJ/dLQd6BpWSya3aUrl0UrnXiMeoladsqfkCAv
+	1rBegIIBFqeOCiCNoP1sap5gzZA6ZDOE/XDGkBJIKJk8ujoew4bNV4mSciJ2Vx7t5/V487
+	1sNRvAT2fBS+GwdVmCc7SqwX8NRMWLiVvu1aV1pOxcwLIF3+jfcCEnIn8r0bNg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758441976;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P4pultIsHG+iGzVxn1N2xaxNRWujRasgdlTN5QSfgfA=;
+	b=wvUogs5p5hMv2tAD7BZsWzpyUmoDrKJhRGHPBJQN7nuCVvRlvhzp6RhH+G8BCnhXyA9eWK
+	8k44H4na9UfhJzBw==
+From: "tip-bot2 for Haofeng Li" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] time: Fix spelling mistakes in comments
+Cc: Haofeng Li <lihaofeng@kylinos.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <tencent_943DD74006B627A4CC01A3DE6AD98A769207@qq.com>
+References: <tencent_943DD74006B627A4CC01A3DE6AD98A769207@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921-msm8960-sdcard-dtbindings-v1-1-5a2455a30a06@smankusors.com>
-X-Proofpoint-GUID: rPwmjiHH8WyBoxvknwuSFKJ2UY5SIIzy
-X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68cfb1a5 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=wxLWbCv9AAAA:8 a=pGLkceISAAAA:8
- a=EUspDBNiAAAA:8 a=mZIXpXDClypwcOwN9UcA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=QJY96suAAestDpCc5Gi9:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX6kx6Nenlaf4K
- 9UeF188ug6CqcwdCQDDkxTGyzo0hZ/fpFa+fbYm/+l1LFelhFcXJ8g2Ge6JQUyreiLX2tnnEBsU
- Ein7T/5qo1PyI1r8oBOtSD3npS6fGYIFncs9SrNeRxUfs8wl9XbTohIJgMmXbhajaFKUm9P/End
- cN0VupJ5hryVk66Qrb2jlrKVxBNrYpM8Hb0Mi2RPZADkU9K/pmPHRdc1+NwG560bQfeGL0IGoug
- EbtLwyg2d6bcKnEcuSftbUx2VeC2T5qJw7Gbem6+ff+hJkIINWHDRG/5YCfjo2qemxnzwodRIgg
- WktZW6Tz71HY93DgvxxRchVBgWmDyq9QIO7uoiOZmh7v5aWSWHE9FDUtEvFLOPiPcpSHysxJIwP
- Tb0UiSnx
-X-Proofpoint-ORIG-GUID: rPwmjiHH8WyBoxvknwuSFKJ2UY5SIIzy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-21_02,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
+Message-ID: <175844197200.709179.14745138242148511323.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 21, 2025 at 03:25:59AM +0000, Antony Kurniawan Soemardi wrote:
-> Rename the GPIO controller node from "msmgpio" to "tlmm" to match the
-> convention used by other Qualcomm SoCs.
-> 
-> Suggested-by: Shinjo Park <peremen@gmail.com>
-> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
-> ---
-> This patch was originally part of msm8960 cleanup series [1], but as
-> Bjorn pointed out, dt-bindings live in a different subsystem and should
-> be submitted independently.
-> 
-> [1] https://lore.kernel.org/all/20250915-msm8960-reorder-v1-5-84cadcd7c6e3@smankusors.com/
-> ---
->  Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+The following commit has been merged into the timers/core branch of tip:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Commit-ID:     391253b25f078d2fe5657a1dedd360396d186407
+Gitweb:        https://git.kernel.org/tip/391253b25f078d2fe5657a1dedd360396d1=
+86407
+Author:        Haofeng Li <lihaofeng@kylinos.cn>
+AuthorDate:    Wed, 10 Sep 2025 17:37:03 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sun, 21 Sep 2025 10:02:02 +02:00
 
+time: Fix spelling mistakes in comments
 
--- 
-With best wishes
-Dmitry
+Correct several typos found in comments across various files in the
+kernel/time directory.
+
+No functional changes are introduced by these corrections.
+
+Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/time/alarmtimer.c   | 2 +-
+ kernel/time/clocksource.c  | 2 +-
+ kernel/time/hrtimer.c      | 2 +-
+ kernel/time/posix-timers.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index 577f0e6..069d93b 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -35,7 +35,7 @@
+=20
+ /**
+  * struct alarm_base - Alarm timer bases
+- * @lock:		Lock for syncrhonized access to the base
++ * @lock:		Lock for synchronized access to the base
+  * @timerqueue:		Timerqueue head managing the list of events
+  * @get_ktime:		Function to read the time correlating to the base
+  * @get_timespec:	Function to read the namespace time correlating to the base
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 3edb01d..a1890a0 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -144,7 +144,7 @@ static u64 suspend_start;
+  * Default for maximum permissible skew when cs->uncertainty_margin is
+  * not specified, and the lower bound even when cs->uncertainty_margin
+  * is specified.  This is also the default that is used when registering
+- * clocks with unspecifed cs->uncertainty_margin, so this macro is used
++ * clocks with unspecified cs->uncertainty_margin, so this macro is used
+  * even in CONFIG_CLOCKSOURCE_WATCHDOG=3Dn kernels.
+  */
+ #define WATCHDOG_MAX_SKEW (MAX_SKEW_USEC * NSEC_PER_USEC)
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index f383df2..7e7b2b4 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -201,7 +201,7 @@ static bool hrtimer_suitable_target(struct hrtimer *timer=
+, struct hrtimer_clock_
+ 	/*
+ 	 * The offline local CPU can't be the default target if the
+ 	 * next remote target event is after this timer. Keep the
+-	 * elected new base. An IPI will we issued to reprogram
++	 * elected new base. An IPI will be issued to reprogram
+ 	 * it as a last resort.
+ 	 */
+ 	if (!hrtimer_base_is_online(this_cpu_base))
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 2741f37..aa31201 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -534,7 +534,7 @@ static int do_timer_create(clockid_t which_clock, struct =
+sigevent *event,
+ 		goto out;
+ 	}
+ 	/*
+-	 * After succesful copy out, the timer ID is visible to user space
++	 * After successful copy out, the timer ID is visible to user space
+ 	 * now but not yet valid because new_timer::signal low order bit is 1.
+ 	 *
+ 	 * Complete the initialization with the clock specific create
 
