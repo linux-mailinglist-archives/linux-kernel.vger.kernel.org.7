@@ -1,108 +1,134 @@
-Return-Path: <linux-kernel+bounces-826075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A15DB8D75D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0E9B8D763
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269BA17DD96
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25834170620
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174D623B60A;
-	Sun, 21 Sep 2025 08:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E572459DC;
+	Sun, 21 Sep 2025 08:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="uOjdlXkb"
-Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GsrVTsOx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Vt982O9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9684B41A8F;
-	Sun, 21 Sep 2025 08:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35FD184;
+	Sun, 21 Sep 2025 08:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758442792; cv=none; b=Rmi5cRVyLhRa3DfkpsIR/obrV9R4BtLY9azL+kUf+7ImnNglGqIQUdQ7DFxqZ0Iahl2dSPSs+3lnzXEzk0OgJLdc7kMsquzHqemyAsCbTNHhjh2LPl9yWkHAS1/QCEE+inwZP6Z97YCwqH9hu259RC99SaJuktCz0kzDwJI259I=
+	t=1758443285; cv=none; b=HCuCjXVJJe8UQaz0OoIM8SoK3GUKp0zoDSv8viUibYQNldGk8TofBOqLFzwwM8LfF8f1LPnuuZP0u7/EqJoMm4Yu5KOCF4QN7hagorAZWTx/jy/eT+6RMIbcc3+qHAeS3Ozz1PYj3OSIqoSOZt/byUtrFZEkf2u8JUBzlEqfxW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758442792; c=relaxed/simple;
-	bh=eaOczpgidCzBKUgHgRwKsTdsk2t/MjXYDxOj8DZ/pxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yo4tdbqfKGZtdKeayEYSmI9I0w7g9c/OVjiuusw4wDH2VBw9vxMobPm2WnYFgw2/PuM+KsGnMTKhGOTJ/WY01x3ycfA6btDq07sQaeDr0cq8KfdPRWgTeoblpYPZOJUrS245+j9fVSLPApelxiVWo58uiva7ASZh5RZvtdF619M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=uOjdlXkb; arc=none smtp.client-ip=51.159.59.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
-	t=1758442787; bh=jLJuxKB/PPgDic7rB4z6F9PG20pfktyXJQHHD419PVM=;
-	h=From:Message-ID:From;
-	b=uOjdlXkb4h5eCFeMT4fMig8ZEDmQ2dOZSazY6P5NlAnTrN9FOxideYmLGTYRW2zkX
-	 HqUSp8kuIjzAEOcJqcfvS0xm3JcgKN5wFqrs/b6SrgnPUCoSUHC8rUVubzXQ5nbelX
-	 Pmb8vlnIAWWRtT6gPbWLJgGYcFX/Xm/0jkFzeTD0=
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by mta1.formilux.org (Postfix) with ESMTP id 71BEDC072E;
-	Sun, 21 Sep 2025 10:19:47 +0200 (CEST)
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 58L8Jlt9016845;
-	Sun, 21 Sep 2025 10:19:47 +0200
-Date: Sun, 21 Sep 2025 10:19:47 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benjamin Berg <benjamin@sipsolutions.net>, linux-um@lists.infradead.org,
-        linux-kselftest@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org, Benjamin Berg <benjamin.berg@intel.com>
-Subject: Re: [PATCH v2 10/11] tools/nolibc: add ptrace support
-Message-ID: <20250921081947.GC16684@1wt.eu>
-References: <20250919153420.727385-1-benjamin@sipsolutions.net>
- <20250919153420.727385-11-benjamin@sipsolutions.net>
- <eced0e2b-8fb3-490f-bcbe-40a72e430db7@t-8ch.de>
+	s=arc-20240116; t=1758443285; c=relaxed/simple;
+	bh=a2ozcfRvL1LNCpQJLw3UNVFJr5AW/8/JVOwIRszxAWM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iP6CgFJfebvPqX9Ji3+3ITazOkTkrW3cws2hV9Bh1QDWv0gtFlgClr8rlmpm6IZj2fgAQljDsqoG5XmvJ4iN1H6HfZgX2SbcvaVeZDJk/kygjgW3K850ltGEQVr05QvqgQmGoNKig18bls0FrmOBp/qJFmBUTAfG5+V7fcxACqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GsrVTsOx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Vt982O9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758443281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Zd+C1azbDEt3Vz0ImeQyxblM1ChpI5F+d3T0ZRmmlY=;
+	b=GsrVTsOxqKIg/ZCp3pN45SNUYSErdZ0EAY747oORQ2U7LzGsfw5uvTIi0jiCI7NAOCKL54
+	RIHBqJYdv/bvoSRKFhNnscwonRjNHokJ440D0GhWFbsXdfeVYyK3AjOTawROhsM6kvBUg4
+	yiE23i0txfBEim2aXazFWBtqn8xN/8T1WHebLcy6PTEkJXCJP+hnvjIRXxxMrN22m8njnW
+	tDHtlxv+8dnp6KSQM7B9zfcImg8UTofoG8iOsTZaNLs2EXzt6jBIzbVm9XGZ7t49Slrkva
+	+b/Glj7TJjRCv0UYdORckiCkNNQgLhI565BSK+RaDeaeZIjXy4/rmln5swsMng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758443281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9Zd+C1azbDEt3Vz0ImeQyxblM1ChpI5F+d3T0ZRmmlY=;
+	b=1Vt982O9XL6grD/TgQTBMrDh1K0kOl0pnLICT4p5yqtFxB1xxU9uQ9uER0HWNGToyNWAFl
+	zUz66DO3CeeZpfBw==
+To: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Lucas Zampieri <lzampier@redhat.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>,
+ stable@vger.kernel.org, linux-riscv@lists.infradead.org, Jia Wang
+ <wangjia@ultrarisc.com>
+Subject: Re: [PATCH] irqchip/sifive-plic: avoid interrupt ID 0 handling
+ during suspend/resume
+In-Reply-To: <20250915162847.103445-1-lzampier@redhat.com>
+References: <20250915162847.103445-1-lzampier@redhat.com>
+Date: Sun, 21 Sep 2025 10:27:59 +0200
+Message-ID: <87ikhc5hww.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <eced0e2b-8fb3-490f-bcbe-40a72e430db7@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 
-On Sat, Sep 20, 2025 at 11:27:19AM +0200, Thomas Weißschuh wrote:
-> > +/*
-> > + * long ptrace(int op, pid_t pid, void *addr, void *data);
-> > + *
-> > + * However, addr may also be an integer in some cases.
-> 
-> This comment is a bit confusing. It reads like it can be an integer as
-> in 'int' datatype. But the kernel expects an integer compatible with
-> 'void *', so 'unsigned long'. I think we can drop the comment.
+On Mon, Sep 15 2025 at 17:28, Lucas Zampieri wrote:
 
-Or if the point is to insist that void* is not strictly required, a
-comment might as well say "types for addr and data are ignored and
-will be cast to void*". But given that the man page indicates two
-void*, I think that callers are expected to cast ints to void* in
-any case, and if so maybe indeed not saying anything about it would
-be better.
+> To: linux-kernel@vger.kernel.org
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Samuel Holland <samuel.holland@sifive.com>
+> Cc: stable@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: Thomas Gleixner <tglx@linutronix.de>
 
-> > + */
-> > +static __attribute__((unused))
-> > +long sys_vptrace(int op, pid_t pid, va_list args)
-> > +{
-> > +	return my_syscall4(__NR_ptrace, op, pid,
-> > +			   va_arg(args, void *), va_arg(args, void *));
-> > +}
-> > +
-> > +static __attribute__((unused))
-> > +ssize_t sys_ptrace(int op, pid_t pid, ...)
-> 
-> ptrace(2) does not document addr and data to be optional.
-> While it does acknowledge the fact that it is variadic on glibc,
-> users are still recommended to always supply all arguments.
-> I'd prefer to keep it simple and avoid the va_list.
+How is this Cc list relevant in explaining the changes here?
 
-The man indeed says they are *ignored*, not optional. I agree then that
-it would be better not doing simpler than the standard and have to roll
-back later. Let's just pass unused arguments to the system.
+> According to the PLIC specification[1], global interrupt sources are
+> assigned small unsigned integer identifiers beginning at the value 1.
+> An interrupt ID of 0 is reserved to mean "no interrupt".
+>
+> The current plic_irq_resume() and plic_irq_suspend() functions incorrectly
+> starts the loop from index 0, which could access the reserved interrupt ID
+> 0 register space.
+> This fix changes the loop to start from index 1, skipping the reserved
+> interrupt ID 0 as per the PLIC specification.
+
+s/This fix changes/Change/
+
+And please separate this from the explanation above.
+
+https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-submission-notes
+
+> This prevents potential undefined behavior when accessing the reserved
+> register space during suspend/resume cycles.
+>
+> Fixes: e80f0b6a2cf3 ("irqchip/irq-sifive-plic: Add syscore callbacks for hibernation")
+> Co-developed-by: Jia Wang <wangjia@ultrarisc.com>
+> Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
+> Signed-off-by: Lucas Zampieri <lzampier@redhat.com>
+>
+> [1] https://github.com/riscv/riscv-plic-spec/releases/tag/1.0.0
+
+Link: .....
+
+This [1] stuff is just annoying.
+
+> ---
+>  drivers/irqchip/irq-sifive-plic.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
+> index bf69a4802b71..1c2b4d2575ac 100644
+> --- a/drivers/irqchip/irq-sifive-plic.c
+> +++ b/drivers/irqchip/irq-sifive-plic.c
+> @@ -252,7 +252,7 @@ static int plic_irq_suspend(void)
+>  
+>  	priv = per_cpu_ptr(&plic_handlers, smp_processor_id())->priv;
+>  
+> -	for (i = 0; i < priv->nr_irqs; i++) {
+> +	for (i = 1; i < priv->nr_irqs; i++) {
+
+This lacks a comment explaining this non-obvious 'i = 1'.
 
 Thanks,
-Willy
+
+        tglx
 
