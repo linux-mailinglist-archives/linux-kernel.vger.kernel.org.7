@@ -1,88 +1,122 @@
-Return-Path: <linux-kernel+bounces-826019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4EFB8D56F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:03:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E0BB8D578
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 798D52A0F93
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 06:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18D83B810F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 06:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20D22652A6;
-	Sun, 21 Sep 2025 06:03:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E3F2877CA;
+	Sun, 21 Sep 2025 06:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GWIUgSmJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CD1182B7
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D27FEEA8;
+	Sun, 21 Sep 2025 06:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758434585; cv=none; b=YBZr0AsIWnk1BX/kCtQ3cUTvrtYVs+sGrg82lT0WOB1+oHmWZFNB3sePZFtMM9slmtQ/9UwyqGgTlRdVc0BYrFC2MPi65Mw1v/2R/HPSyjX98DHx1TDG727mc/Ns+LjLptYwqjjg5KsfwIPwuGASDzpXVXJ44qVzi7h7NZBLDpU=
+	t=1758434757; cv=none; b=AVSFUZkRQDd59txxZlwdbOanU6AhE0u0rTqv1MlWgizXU/AJ0Ib6O39VSOk6QjJ/mwtLm9Yh8AY/2Fd1No4vGJeNZlRqznvQVMKHMsgNxJMvBt40qdtzANDWI7r+lzp3Z7Rbx0Rz3oM0EUOa2M9q5Oaif84ge7pErdw95VEXAq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758434585; c=relaxed/simple;
-	bh=psSr2bM3JnMxufeL/g3AsGHtXT6h1LwOif5UPWk/5xk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=L3GRMmlvbKLf6ONASqGc6PNsIOC8Kjj7kf1nKQsjBXMzeUsK9SjoFVZj0WbvO4HYbXGnI1Pn6TNqFVsQF8660erl9ZPQoxYTylCZul+hGNJIrcprlr6Z9AzUCOh2S6sfNbgO3WN4qIdgOXAZSSFixbFX0Ihidp2Rp0N5ZX8lwFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-424828985d9so22419765ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 23:03:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758434583; x=1759039383;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6dDx9Z14ty0hRGDOpEn56adgVcnRxlC2O4IbjHD4vg=;
-        b=KkqAJQXoG8bgNls/zeHYB5X603z2knjbfISHIm1/00OwZn4Y6De4SG512U58DjbE2J
-         CTsxgikM+z6X5vp3b7+3SHYYTA9My+vy7hBzGWdI78jF4OZtlhZvHn/hCoEbQQM1DESN
-         qC2r594PqjhI5r0214O//2N5BynrqQlCleUWNH7Is9rUqGoFz3rahjalTRYyoM6dzK+c
-         ov1jYzZpyy4BlBnUXZiDrH1z0TG5qtQTsJ4K0zuGVCN56+Sg8pb7LIwCdwoYFPTbosT0
-         dVTuAhiVOFQmGXdGLmEtOlrP0Wfhcy9N5gkqYtuWh3xBfxv5DFOfc0TXEvn/vP6wJfln
-         qHZg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6B2f4AhocUuVZhQxSkj775Bx1DJ+po54IGXCxpO5MNm5beBxuEkHh6W+ETEw2Dd9Qbz1I5mNQAVSNBkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbn0vyq+/MXfLGK2cVE8ruJZ+2jjV9pT8ewLa0HRkt/4b9ly4F
-	4zhIaPw2j8GF0QngPrIAD668L4UBjvOCd2BuNIB8dRpdVXYi154rUtlvAOSlDKwvcUdpmGe454y
-	KXTSNPy1BxcUcS5sYsgY1CWtRe500yOAc7i3ueBPjxXtcYfWX/uMHx+XlZkc=
-X-Google-Smtp-Source: AGHT+IGWwS22f/HXMtlGtGzvUELXrtInlWeTZjRaQZNAq+YXsKmdVFMT1RRz8383+U1FP/Tbm08Nr8w9q7SdqTwnbPn/T1hJPuBp
+	s=arc-20240116; t=1758434757; c=relaxed/simple;
+	bh=8ctr9bJIScthH2cD/1XQ1vcsW7U4Lt1MN5qWna68e2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHEeGmdnbmr3C/s1Fm5fITYQj/zEbuJi1INZsooJa6zNKp6Ke5jngbV7UX8vBrprLjHSc/lg8gjsJGAQS19ynjrt+RmnhUTGGITO1gLy8iEN6bsb19e6Muz29h9ldWD75Z+WNqTPkIBQPc/8OQ00ozeOrnqZLUOyWtXib4hT3QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GWIUgSmJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758434755; x=1789970755;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8ctr9bJIScthH2cD/1XQ1vcsW7U4Lt1MN5qWna68e2c=;
+  b=GWIUgSmJkDdV7Jj9BY+7xYY1nrdNPgBPcGNG3kj+CapcpjW6jLaDMf3A
+   cQdE11V2AJMb+CisiYMIyBmhv/ceic7v1CgzVbqxS/ql4NyQGB8BbulSF
+   XKiHg3LANyPQ9XlZ1DQKKvmh6rF3NNl60QIoBmVc55uWvGofWS37yy2Uq
+   gPNJQ1OY4Wm0+cLirfoZztJDvZ3i3Xnq5eYbwyn9uxD/IZi5F2xb6ZRg5
+   ISQ/kQltGLA7lNuRJUicZwjK59FH0gJ6SwIj7lpVgEniZDEd1RArDLHv0
+   vV0r5j1ZC6Y/aWOyYCntl61PlsEe0OzOUmxId6GVWnRzx9Mdgf2vkxj4s
+   g==;
+X-CSE-ConnectionGUID: 6vzy5fbQQyG2aJDCRcfxUQ==
+X-CSE-MsgGUID: ERH2kYZ3SHOKpxujiZTJNg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="59769787"
+X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
+   d="scan'208";a="59769787"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Sep 2025 23:05:54 -0700
+X-CSE-ConnectionGUID: Bx5ZTH74RSeyEBDMZHWvWw==
+X-CSE-MsgGUID: rnp+F5cfT3GT6/klwfGJDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
+   d="scan'208";a="199916867"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 20 Sep 2025 23:05:51 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0DCn-0000Ur-0u;
+	Sun, 21 Sep 2025 06:05:49 +0000
+Date: Sun, 21 Sep 2025 14:05:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	upstream@airoha.com
+Cc: oe-kbuild-all@lists.linux.dev, Christian Marangi <ansuelsmth@gmail.com>
+Subject: Re: [PATCH] PCI: mediatek: add support for Airoha AN7583 SoC
+Message-ID: <202509211315.51HZNnRI-lkp@intel.com>
+References: <20250920114341.17818-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24c:0:b0:424:7e36:f873 with SMTP id
- e9e14a558f8ab-42481999b76mr109605535ab.26.1758434583227; Sat, 20 Sep 2025
- 23:03:03 -0700 (PDT)
-Date: Sat, 20 Sep 2025 23:03:03 -0700
-In-Reply-To: <20250921052315.836564-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cf9517.050a0220.13cd81.002b.GAE@google.com>
-Subject: Re: [syzbot] [nfs?] WARNING in nsfs_fh_to_dentry
-From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
-To: david.hunter.linux@gmail.com, kartikey406@gmail.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920114341.17818-1-ansuelsmth@gmail.com>
 
-Hello,
+Hi Christian,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+kernel test robot noticed the following build warnings:
 
-Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-Tested-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.17-rc6 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tested on:
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/PCI-mediatek-add-support-for-Airoha-AN7583-SoC/20250920-194637
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250920114341.17818-1-ansuelsmth%40gmail.com
+patch subject: [PATCH] PCI: mediatek: add support for Airoha AN7583 SoC
+config: openrisc-allyesconfig (https://download.01.org/0day-ci/archive/20250921/202509211315.51HZNnRI-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509211315.51HZNnRI-lkp@intel.com/reproduce)
 
-commit:         846bd222 Add linux-next specific files for 20250919
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=127fa712580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=135377594f35b576
-dashboard link: https://syzkaller.appspot.com/bug?extid=9eefe09bedd093f156c2
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ff1534580000
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509211315.51HZNnRI-lkp@intel.com/
 
-Note: testing is done by a robot and is best-effort only.
+All warnings (new ones prefixed by >>):
+
+>> Warning: drivers/pci/controller/pcie-mediatek.c:163 struct member 'skip_pcie_rstb' not described in 'mtk_pcie_soc'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
