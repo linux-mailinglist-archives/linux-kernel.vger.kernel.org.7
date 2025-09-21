@@ -1,96 +1,133 @@
-Return-Path: <linux-kernel+bounces-826136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF76B8D9ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:23:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4371B8D9FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B32B189DC7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:24:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1D1C7A8F24
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BED32641F9;
-	Sun, 21 Sep 2025 11:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cToEv8ou"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5748D25A35E;
-	Sun, 21 Sep 2025 11:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9544825B2F4;
+	Sun, 21 Sep 2025 11:25:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F73C34BA36;
+	Sun, 21 Sep 2025 11:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758453786; cv=none; b=LYK0fD24SzDS2ZFe0kPXgGlHMWoFfApi7x/hwH6oteEsrhhjHwSEtMAKuFmNilIjN34i1PVKAxfYax53Rt3re7tabzGN6VCfpsD+l/vhyRoPc9evzyM2PZBzE2mN9RjHbS/XIe56PK5QMToMcnITGi9d3Y2PGOJZfimZ5evhxJg=
+	t=1758453929; cv=none; b=XgP4smUo2Mqzo3F+lM78hc3V8F9+euFfYFC+HYFBsdVu9bu6qjKRjYAfsmwdZdHZqvCEbzckfrqDQUYoojOjjzGi1vrxt+k3WuMnzT53AtKE79t9ouL5q8j+NCVjBvp8uS5Yz+FdNlYL/w4+MAP9g4itkMUldM7l/pWKnUGQ4gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758453786; c=relaxed/simple;
-	bh=xZADwwqDSNPHGEJ8PpQUJjxdyZCNqEbjTS3lQUkoZ3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oj6hFcJJbvppHS1gWKZrL+nAWpyqEs8UVSw40dkRecBHvnVgCpOKfsrd3qm2iRmBMNt+igCvDzBqvZL87GGDgbkseZ5Hig9MxWup4n0uWJGqOQOjjNvcPaSVe9pmVFIDyTijkQTJV5geuFHqieDnsfbWFgbvYJZlGuMm3izBdp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cToEv8ou; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7C9C4CEE7;
-	Sun, 21 Sep 2025 11:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758453786;
-	bh=xZADwwqDSNPHGEJ8PpQUJjxdyZCNqEbjTS3lQUkoZ3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cToEv8our3HW0yuRBchrTdZdREF/tWpBE7R+6dHrhUADoAZI1fXzLYdoSgjVO7stu
-	 7xm+uhl0xTjXziRtB/xWwNj9yuYOR/70of4Om/taeyoa+qqBgzytEJozgfme8kXoej
-	 BjyYO/HdtiK0uTJtSvO4L7xEYGXmfOklOymr2+ow=
-Date: Sun, 21 Sep 2025 13:23:02 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	dakr@kernel.org, acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
-	Yury Norov <yury.norov@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-Message-ID: <2025092148-huntsman-existing-5052@gregkh>
-References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
- <20250920182232.2095101-2-joelagnelf@nvidia.com>
- <2025092157-pauper-snap-aad1@gregkh>
- <CANiq72mk1-Ew11RB0kfep5BtB8M_5H6o_Rb2MwamrZd-FmzFWA@mail.gmail.com>
+	s=arc-20240116; t=1758453929; c=relaxed/simple;
+	bh=YlrmXyjeO7GcRsXhqWeRYbpRf9DLv5IX+7MRr6Xm76s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cd+8/eHPHlgvTtORZ5xf2O6QkQDVqt4EFHy5dyZP+BgZpZotXjPFYmFQYTlp/pk3y9FIajCNeYc/7vDPoRqKH87R3GknWM13t1QzAU8RjDGBmapyWyWym6Ak18SPGiV7VqjdhUmiF9o3B+PAUe6/Peqc0xHoCt2H5qxn396eIYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 311F21516;
+	Sun, 21 Sep 2025 04:25:18 -0700 (PDT)
+Received: from [10.163.39.139] (unknown [10.163.39.139])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5DF23F673;
+	Sun, 21 Sep 2025 04:25:17 -0700 (PDT)
+Message-ID: <49731a4e-d00f-4f84-aaac-87405d6eadbf@arm.com>
+Date: Sun, 21 Sep 2025 16:55:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm/memory-failure: Support disabling soft offline for
+ HugeTLB pages
+To: David Hildenbrand <david@redhat.com>, Kyle Meyer <kyle.meyer@hpe.com>
+Cc: akpm@linux-foundation.org, corbet@lwn.net, linmiaohe@huawei.com,
+ shuah@kernel.org, tony.luck@intel.com, jane.chu@oracle.com,
+ jiaqiyan@google.com, Liam.Howlett@oracle.com, bp@alien8.de,
+ hannes@cmpxchg.org, jack@suse.cz, joel.granados@kernel.org,
+ laoar.shao@gmail.com, lorenzo.stoakes@oracle.com, mclapinski@google.com,
+ mhocko@suse.com, nao.horiguchi@gmail.com, osalvador@suse.de,
+ rafael.j.wysocki@intel.com, rppt@kernel.org, russ.anderson@hpe.com,
+ shawn.fan@intel.com, surenb@google.com, vbabka@suse.cz,
+ linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org
+References: <aMiu_Uku6Y5ZbuhM@hpe.com>
+ <a99eb11f-a7ac-48a3-a671-c5f0f6b5b491@arm.com>
+ <8c3188da-7078-4099-973a-1d0d74db2720@redhat.com> <aMsDJ3EU1zVJ00cX@hpe.com>
+ <cd71fac2-bb9d-4e84-a074-2b695654e655@redhat.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <cd71fac2-bb9d-4e84-a074-2b695654e655@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72mk1-Ew11RB0kfep5BtB8M_5H6o_Rb2MwamrZd-FmzFWA@mail.gmail.com>
 
-On Sun, Sep 21, 2025 at 11:59:05AM +0200, Miguel Ojeda wrote:
-> On Sun, Sep 21, 2025 at 11:36 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > And where does this allow us to define things like BIT(2) for values?
-> > (ok, that's kind of not the point of this patch series, but it will come
-> > up over time...)
-> 
-> We have the `bits` module since 6.17:
-> 
->     https://rust.docs.kernel.org/kernel/bits/index.html
-> 
-> (Or do you mean something else?)
 
-No, that's exactly what I was thinking of, sorry, I missed that :)
 
-greg k-h
+On 18/09/25 12:35 AM, David Hildenbrand wrote:
+> On 17.09.25 20:51, Kyle Meyer wrote:
+>> On Wed, Sep 17, 2025 at 09:02:55AM +0200, David Hildenbrand wrote:
+>>>
+>>>>> +
+>>>>> +    0 - Enable soft offline
+>>>>> +    1 - Disable soft offline for HugeTLB pages
+>>>>> +
+>>>>> +Supported values::
+>>>>> +
+>>>>> +    0 - Soft offline is disabled
+>>>>> +    1 - Soft offline is enabled
+>>>>> +    3 - Soft offline is enabled (disabled for HugeTLB pages)
+>>>>
+>>>> This looks very adhoc even though existing behavior is preserved.
+>>>>
+>>>> - Are HugeTLB pages the only page types to be considered ?
+>>>> - How the remaining bits here are going to be used later ?
+>>>>
+>>>
+>>> What I proposed (that could be better documented here) is that all other
+>>> bits except the first one will be a disable mask when bit 0 is set.
+>>>
+>>> 2 - ... but yet disabled for hugetlb
+>>> 4 - ... but yet disabled for $WHATEVER
+>>> 8 - ... but yet disabled for $WHATEVERELSE
+>>>
+>>>> Also without a bit-wise usage roadmap, is not changing a procfs
+>>>> interface (ABI) bit problematic ?
+>>>
+>>> For now we failed setting it to values that are neither 0 or 1, IIUC
+>>> set_enable_soft_offline() correctly?
+>>
+>> Yes, -EINVAL will be returned.
+>>
+>>> So there should not be any problem, or which scenario do you have in mind?
+>>
+>> Here's an alternative approach.
+>>
+>> Do not modify the existing sysctl parameter:
+>>
+>> /proc/sys/vm/enable_soft_offline
+>>
+>> 0 - Soft offline is disabled
+>> 1 - Soft offline is enabled
+>>
+>> Instead, introduce a new sysctl parameter:
+>>
+>> /proc/sys/vm/enable_soft_offline_hugetlb
+>>
+>> 0 - Soft offline is disabled for HugeTLB pages
+>> 1 - Soft offline is enabled for HugeTLB pages
+>>
+>> and note in documentation that this setting only takes effect if
+>> enable_soft_offline is enabled.
+>>
+>> Anshuman (and David), would you prefer this?
+> 
+> Hmm, at least I don't particularly like that. For each new exception we would create a new file, and the file has weird semantics such that it has no meaning when enable_soft_offline=0.
+
+Agree with David here. Adding a new procfs file for a particular page
+type's soft offline disable scenario does not really make sense. This
+will extend the ABI unnecessarily without adding much benefit.
 
