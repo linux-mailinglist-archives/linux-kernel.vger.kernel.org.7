@@ -1,115 +1,178 @@
-Return-Path: <linux-kernel+bounces-826206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A009FB8DD40
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:15:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F087B8DD50
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 17:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 502263ACC7F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C156017989B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1931E17B43F;
-	Sun, 21 Sep 2025 15:15:29 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C921DE2AD;
+	Sun, 21 Sep 2025 15:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/qP71uH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4BD6FC3;
-	Sun, 21 Sep 2025 15:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AEF846F;
+	Sun, 21 Sep 2025 15:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758467728; cv=none; b=VI+5MtRwTDWWtSxt3l1mlyDlMqmGC1zoV5QGJpLH7VOoBrB0ClL9sFGJj0nJJ2Y+mUE8gskb7qkaqT76SLgIUgiTAD/w4oMU150wDMIJoSXsOiSh8cVC2TWs1zf+4wPRSFvuYcnFPvc6+b6nBhyIgvvdWr5xTyb7ZcIHeUyVi14=
+	t=1758467848; cv=none; b=PSIjQ+y+ZzGGtmTAMIGVaoCmKRBUsnhQ0e2dF2B9a+pa53mswBhlU9Jdz2oy92LiCs8TNNrbrYk2SyrmbeNXM1rBcAiZb0+2lmZkBAMn0KNOaC7+xY/7LBgqnfPwDWdOsvhfv+FrsdSd73NpUUL176OCPfDe80ajNzdldGo2KbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758467728; c=relaxed/simple;
-	bh=jdkC5I1ywmOk+XVUobrz8tW9x5D6SlXX/o0ckoJqeYY=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=M8V/hAv4g/SemWqskBy5ccfh+6cBRfABOzLZt8utAqPH1pEELBap7ezdNsCi9c7fBzfepXVHI5e3D0+yVqZ5yMHpYpk+YL9Bz0XxngLGg72Lx2NsdRP59AgMDPydsuW83iXLHJHlv52bqKWK1d1gHrxf8kgY/aeb8Wodm0t15W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cV8v10dxDz5PM35;
-	Sun, 21 Sep 2025 23:15:25 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl1.zte.com.cn with SMTP id 58LFFFLK072474;
-	Sun, 21 Sep 2025 23:15:15 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sun, 21 Sep 2025 23:15:18 +0800 (CST)
-Date: Sun, 21 Sep 2025 23:15:18 +0800 (CST)
-X-Zmail-TransId: 2afa68d01686f1c-20a97
-X-Mailer: Zmail v1.0
-Message-ID: <202509212315188885yTwMVyN-Xn_6tuRc3Zi7@zte.com.cn>
-In-Reply-To: <20250921230726978agBBWNsPLi2hCp9Sxed1Y@zte.com.cn>
-References: 20250921230726978agBBWNsPLi2hCp9Sxed1Y@zte.com.cn
+	s=arc-20240116; t=1758467848; c=relaxed/simple;
+	bh=wB6t+PXCW9xWp0M7SlgE39OvB5IKHEMkH6szH1iq7o8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUNMZuo9Daw+iGncvqzwjWsGmYFc7UpafZl5lu54T5/WxUY5jWj+3ObhNnZx4/9ZljmlcDcoOzC+24Qlph+NnTcIgem3+TbCi11nCQ3EyyeAw4NrwDZ9tVYSr/CYPPdu6tX6uamUX6SSOX+URPpKU3yi4vP467f/KOlHNNO6IXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/qP71uH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BA3C4CEE7;
+	Sun, 21 Sep 2025 15:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758467848;
+	bh=wB6t+PXCW9xWp0M7SlgE39OvB5IKHEMkH6szH1iq7o8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i/qP71uH939/px8WS9ORSXfpsmn6bSVJSbLh8vMm3hYpGip1hxDmk14qjfpymPFeV
+	 gtXzDCZwDXo1kElLvYuU07on20lScurvRvB7bNq4k8RhMxmaxAVpiUWe1t9djd+bkG
+	 LqW9CcE3TSMQMjThx+OAwYMpMAhAA9Q4HjWhFDPqHc/GShQFerZ7lyszwao5d2VP01
+	 yw1/QKjTZ8V5vNUwUg8ezLxxZ+vcOGpi1lCL5F5Dh5LbQq7BVZMUhwF4ORkf73/LOB
+	 TPVNaCVDt3r275sm4Vl12OoM1rKEBh3SKiEWd2xeqZ9x1bdUadV5+5mWBWLpe3ms/x
+	 aajlUckXAyiCg==
+Date: Sun, 21 Sep 2025 17:17:20 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
+Message-ID: <5mty7i4v7ygpbedhjevg2fvdlm26rmxeatar7a2u675ulacfyh@ljjjc4za4nl6>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+ <y77zyujsduf5furdf2biphuszil63kftb44cs74ed2d2hf2gdr@hci7mzt6yh7b>
+ <2025-09-21-petite-busy-mucus-rite-01PHer@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <xu.xin16@zte.com.cn>, <akpm@linux-foundation.org>
-Cc: <shakeel.butt@linux.dev>, <hannes@cmpxchg.org>, <mhocko@kernel.org>,
-        <roman.gushchin@linux.dev>, <david@redhat.com>,
-        <chengming.zhou@linux.dev>, <muchun.song@linux.dev>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <cgroups@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjMgNi82XSBEb2N1bWVudGF0aW9uOiBhZGQgS1NNIHN0YXRpc3RpYyBjb3VudGVyc8KgZGVzY3JpcHRpb24=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 58LFFFLK072474
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Sun, 21 Sep 2025 23:15:25 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68D0168D.000/4cV8v10dxDz5PM35
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uoobs7joup3kfhd6"
+Content-Disposition: inline
+In-Reply-To: <2025-09-21-petite-busy-mucus-rite-01PHer@cyphar.com>
 
-From: xu xin <xu.xin16@zte.com.cn>
-This add KSM-related statistic counters description in cgroup-v2.rst,
-including "ksm_rmap_items", "ksm_zero_pages", "ksm_merging_pages" and
-"ksm_profit".
 
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
- Documentation/admin-guide/cgroup-v2.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+--uoobs7joup3kfhd6
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 03/10] man/man2/fspick.2: document "new" mount API
+Message-ID: <5mty7i4v7ygpbedhjevg2fvdlm26rmxeatar7a2u675ulacfyh@ljjjc4za4nl6>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-3-1261201ab562@cyphar.com>
+ <y77zyujsduf5furdf2biphuszil63kftb44cs74ed2d2hf2gdr@hci7mzt6yh7b>
+ <2025-09-21-petite-busy-mucus-rite-01PHer@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-09-21-petite-busy-mucus-rite-01PHer@cyphar.com>
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index a1e3d431974c..c8c4faa4e3fd 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1776,6 +1776,23 @@ The following nested keys are defined.
- 		up if hugetlb usage is accounted for in memory.current (i.e.
- 		cgroup is mounted with the memory_hugetlb_accounting option).
+Hi Aleksa,
 
-+	  ksm_rmap_items
-+		Number of ksm_rmap_item structures in use. The structure
-+		ksm_rmap_item stores the reverse mapping information for virtual
-+		addresses.  KSM will generate a ksm_rmap_item for each
-+		ksm-scanned page of the process.
-+
-+	  ksm_zero_pages
-+		Number of empty pages are merged with kernel zero pages by KSM,
-+		which is only useful when /sys/kernel/mm/ksm/use_zero_pages.
-+
-+	  ksm_merging_pages
-+		Number of pages of this process are involved in KSM merging
-+		(not including ksm_zero_pages).
-+
-+	  ksm_profit
-+		Amount of profitable memory that KSM brings (Saved bytes).
-+
-   memory.numa_stat
- 	A read-only nested-keyed file which exists on non-root cgroups.
+On Mon, Sep 22, 2025 at 12:55:13AM +1000, Aleksa Sarai wrote:
+> > This should use '.B. (Bold).  BR means alternating Bold and Roman, but
+> > this only has one token, so it can't alternate.
+> >=20
+> > If you run `make -R build-catman-troff`, this will trigger a diagnostic:
+> >=20
+> > 	an.tmac: <page>:<line>: style: .BR expects at least 2 arguments, got 1
+>=20
+> Grr, I thought I fixed all of these. I must've changed it in a rework
+> and forgot to fix it.
 
--- 
-2.25.1
+No problem; mistakes happen.  :)
+
+> > > +Please note that\[em]in contrast to
+> > > +the behaviour of
+> > > +.B MS_REMOUNT
+> > > +with
+> > > +.BR mount (2)\[em] fspick ()
+> >=20
+> > Only have one important keyword per macro call.  In this case, I prefer
+> > em dashes to only be attached to one side, as if they were parentheses,
+> > so we don't need any tricks:
+> >=20
+> > 	Please note that
+> > 	\[em]in contrast to
+> > 	...
+> > 	.BR mount (2)\[em]
+> > 	.BR fspick ()
+>=20
+> Based on my testing, doing it that way adds whitespace to one side of
+> the em dash
+
+You're correct; this adds whitespace on one side of the em dash.
+
+> and typographically em dashes should not have whitespace on
+> either side AFAIK.
+
+This rule differs for different style guides, and different languages.
+In Spanish, the most common style is having spaces as if the dashes
+were parentheses; very much in a logical style, like quotes not having
+extraneous punctuation inside them.
+
+I very much prefer the Spanish conventions, and dislike the more common
+used conventions for English.  I don't know if Branden can illustrate us
+with some history about em dashes.
+
+> If there is a way to get the layout right without
+> breaking the "one macro per line" rule, I'd love to know! :D
+
+There's a way.  I'll show it just for your curiosity.  :D
+
+
+	.BR mount (2)\[em]\c
+	.BR fspick ()
+
+(I hope it works, because I haven't tested it.  Accidental typos might
+ break my untested examples.)  :)
+
+
+Cheers,
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--uoobs7joup3kfhd6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjQFwAACgkQ64mZXMKQ
+wqkV5w/9GcRWolkmcFLp9q+F29lEA747+yi0l2yW0atOOQNVEFNbVX5o1+S7jZDH
+RS2pTsM9YAhA4i4RgxMBMYOtNcDB+mdqX2kjMNkORoMqxC1ePROibQz2MQCuJlJp
+Ok8OA3M/5NrctrshMfuMRf0weY+BJWIMfryhMz5zYByXQW6Gi6RMubBCs1Awc8It
+PYpueQJpIk18PZ1Jpxf4RR2FUidcNNJ/QR6ETW63COgBYoByZuAnm7guSHWdi1wQ
+r0f9rAXwO2ll3FcgRo0f3YJIARx/Xk4Kto03B8YZ903llyNlhsFcBqqQsKnIKmxl
+dDuj92J04t3dNhST4H5X4cuFwsHJjDND43OVfwAWi4lmE0p7uMXWVfxMhYFqFg8J
+4J/l0v7HcJ//aZ1qR1MCskp8++YUUE7RlGxsvwTlVKSxtSJ7NLS5X2fCUCCo92aJ
+6NfilDOr54bqz59ks06SX0sAoiXIuPZ5SN2Wpa7WYD1B4N4HWkEmQssiMCa0hJi9
+fYkCs613XPasoqJLYewClhekxmeTVk6/d1rWb5kNcoPUmw8SynE6Ui9qQaNyqCgX
+/kU6XyAtMqvILhHQ7Df9+KxILEHxOa6GLLG+Pyc+hDHbfIhM/JUTkOxPohNGw+ut
+AoRyXT70bkFOaa2T8dxOR+AEarlP6ec7Tla9kG9CSZSDPLyvMNk=
+=WeB5
+-----END PGP SIGNATURE-----
+
+--uoobs7joup3kfhd6--
 
