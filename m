@@ -1,167 +1,93 @@
-Return-Path: <linux-kernel+bounces-826174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0748CB8DBDB
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:30:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF76BB8DBE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 643237AC064
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:29:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 019057ADA84
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EB12D73B3;
-	Sun, 21 Sep 2025 13:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TA4srYKt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295E924CEE8;
+	Sun, 21 Sep 2025 13:31:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1E44A1A;
-	Sun, 21 Sep 2025 13:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DEF2C08D1
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758461443; cv=none; b=BOtqtFVVmyW59OZNWDB2AfWxdEN2MN0qhomf4N/e/JuTPfCeTkllrjzUaz2YlmvDYYBK5rDm7kDQJGA0Mv/F71M1SY2Pv7vz5qoYmLp0QOZfzKDexfQctgYCFN7rnjb+QzqBMR9NDxyd/2PY0VugT3wGG07Kt7TUA/UpW8xLOHg=
+	t=1758461465; cv=none; b=hA9FqlNh4q4+9872UoDFh4VGNC5OzL3PNEIYfNX3pP00wniEWFh0KgyFXVVTH261NO/gW0L2mj7498NIDOBLTsi1E5/Jf9dDwsJlSKHdpodk0gVfhRxwqDQW1tWc2TVNuZxzIcKWeYbSpYhX530X2GCxx6+QGrYL5/wNk9UcgDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758461443; c=relaxed/simple;
-	bh=Q5ISgQTInyGMIIkbNRX//rQ9mgpfag4Oxjgh8PZ56WA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lPcc3CyFTUenJS3yFaQGuAbCYF96LTAhPMCETLMbKAGz7997xgikhJgI3bO8XB+/dqOgsAPkm3yHH3SzuVo0UAgKb1VAfXDbmHFM6IaXXOFYkEfTcF6h6jS5NxgfsyXAvIx9kwamngF4YGkq96VXzYkQxsPoJMdEuS10dgXYjWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TA4srYKt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B27F1C4CEE7;
-	Sun, 21 Sep 2025 13:30:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758461443;
-	bh=Q5ISgQTInyGMIIkbNRX//rQ9mgpfag4Oxjgh8PZ56WA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TA4srYKtvIC+a6CIgbscsuIbC5mhGny/BH/tghF+oXcPmxysgVLwoLJtVlQiTTbi7
-	 fsVtBN+vy2wypH6i5KhSlXnjgYJaVgYylkppkz0zdwzxVnGLDub4IzS8Alp3EyiJ/b
-	 bzHwb8tc+t6BcpQ1OqxhAeG8YqRPnOyqU2wAOxLyPyatG/J/+phciiEPLJl/096Rl5
-	 7xrsgFXzvxU6h9sNJ8rreDtTOgNrtfjLACXAdVgph8YAXncfkr1bJlG8XZiH6q5EeP
-	 mJFfsE67SvyFL8ec39WWVZaPX8EBRW8u5q8r7858LZh5MICOA6Hmrgmm3gi/ixh4O2
-	 AQIeiFR+ZE5Eg==
-Date: Sun, 21 Sep 2025 22:30:37 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Feng Yang <yangfeng59949@163.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, KP Singh
- <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, bpf
- <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>
-Subject: Re: [BUG] Failed to obtain stack trace via bpf_get_stackid on ARM64
- architecture
-Message-Id: <20250921223037.f8df26b59d60b8b3f7cf2d53@kernel.org>
-In-Reply-To: <CAADnVQKrnYCaUCd+BNvZQmR0-6CSu2GBa=TCCCjPLSNfb_Ddvg@mail.gmail.com>
-References: <20250919071902.554223-1-yangfeng59949@163.com>
-	<CAADnVQKrnYCaUCd+BNvZQmR0-6CSu2GBa=TCCCjPLSNfb_Ddvg@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758461465; c=relaxed/simple;
+	bh=WtrS07d7+cKxJcvuS+5QoQ6PIOvYu0pVJLWpuP+Tf1I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JviT9ygwwvslijhnLXVnQFxoODQmTLvJVc7Vz8VMh+MzxM/XSyp4eMXrInJm1xP0jB2wHLSvhY3l9m2D0ZVziVSqd666ZiOrQUld1iCxslveVoqj7R3WXYiELFEwAeRbgyMyB50HA7rre0BuwqFD6RZPAtm6kCeLs+3/CS7JnJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4257462ab66so10729775ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:31:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758461463; x=1759066263;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NiQRdYcXrpiVf19CCztsidu+S4PHDmYt4POx785FwlY=;
+        b=TcgmGQ0T7FxZ9rfLGI25VkIiyqRqQZCxPLeR5CEORlanW7CDyEDXGqUMYn/8oMmniX
+         33lnvegykCtlollaoNStjQkFEcW80xLzrAiaXnutz58oTn0MP3eos+ij3TJK3Lxnbb1U
+         LqLnIjO2D5OZsQB6eQM/NyB/S6VvAYs3ysrOEcOV5aI4t1mBlhnMH6jnif5sN7GGt4Ky
+         Csd8oSWwW3K9xs7G0aB9kFneePai/uDqnipsdObCQuL/Jm+y0uFsNsE+tkdhUSp1oB3j
+         gZf/XkC3qd5Uf6u8RXZb1se1GuYhpx6bvkxuQXTS6zwdotIRFgT+VhvwddoTlPAZ6Ad2
+         y29g==
+X-Forwarded-Encrypted: i=1; AJvYcCV2aXXXXVtdRJtWODJk/kIjRy4Wu/gE48wh/glPzy/RMncjVN7Yufm1bKi+TF4kHrOhiGIu9DFPLEzDG3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaluuwQ41XVg8NLbKt1j7vW3yskpr6yLNFUQ2IpX0WWpE9Erkt
+	tBlpPRKplVfa1bQdeeaFvAlRGMDvIH1urDYwhmXehIlCBUHjLwtQ+CAYTmOH9XOqcI+BRz9nnyT
+	Rr70hs34tA4cXm1kq3/hgBnoePwdqEEi3Fss0Jov6n8VUm6qvi43oMttaHmU=
+X-Google-Smtp-Source: AGHT+IEGkrIO9udB5nrXdVzkfiVIL/hcTyXlJ1peYFPQ7nDbEh6eWcUemHnCxcKw1j2N5V2c1NDHpUBCeLMWjFFu7P87V5ZxCe3u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a2f:b0:425:7539:bc39 with SMTP id
+ e9e14a558f8ab-4257539bf4cmr17571985ab.10.1758461463162; Sun, 21 Sep 2025
+ 06:31:03 -0700 (PDT)
+Date: Sun, 21 Sep 2025 06:31:03 -0700
+In-Reply-To: <68ce15c0.050a0220.13cd81.000e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68cffe17.050a0220.13cd81.0036.GAE@google.com>
+Subject: Re: [syzbot] [jfs?] INFO: task hung in __bread_gfp (7)
+From: syzbot <syzbot+4b12286339fe4c2700c1@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, hch@lst.de, jack@suse.com, 
+	jfs-discussion@lists.sourceforge.net, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ming.lei@redhat.com, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 19 Sep 2025 19:56:20 -0700
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+syzbot has bisected this issue to:
 
-> On Fri, Sep 19, 2025 at 12:19 AM Feng Yang <yangfeng59949@163.com> wrote:
-> >
-> > When I use bpf_program__attach_kprobe_multi_opts to hook a BPF program that contains the bpf_get_stackid function on the arm64 architecture,
-> > I find that the stack trace cannot be obtained. The trace->nr in __bpf_get_stackid is 0, and the function returns -EFAULT.
-> >
-> > For example:
-> > diff --git a/tools/testing/selftests/bpf/progs/kprobe_multi.c b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > index 9e1ca8e34913..844fa88cdc4c 100644
-> > --- a/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > +++ b/tools/testing/selftests/bpf/progs/kprobe_multi.c
-> > @@ -36,6 +36,15 @@ __u64 kretprobe_test6_result = 0;
-> >  __u64 kretprobe_test7_result = 0;
-> >  __u64 kretprobe_test8_result = 0;
-> >
-> > +typedef __u64 stack_trace_t[2];
-> > +
-> > +struct {
-> > +       __uint(type, BPF_MAP_TYPE_STACK_TRACE);
-> > +       __uint(max_entries, 1024);
-> > +       __type(key, __u32);
-> > +       __type(value, stack_trace_t);
-> > +} stacks SEC(".maps");
-> > +
-> >  static void kprobe_multi_check(void *ctx, bool is_return)
-> >  {
-> >         if (bpf_get_current_pid_tgid() >> 32 != pid)
-> > @@ -100,7 +109,9 @@ int test_kretprobe(struct pt_regs *ctx)
-> >  SEC("kprobe.multi")
-> >  int test_kprobe_manual(struct pt_regs *ctx)
-> >  {
-> > +       int id = bpf_get_stackid(ctx, &stacks, 0);
-> 
-> ftrace_partial_regs() supposed to work on x86 and arm64,
-> but since multi-kprobe is the only user...
+commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
+Author: Ming Lei <ming.lei@redhat.com>
+Date:   Fri Oct 25 00:37:20 2024 +0000
 
-It should be able to unwind stack. It saves sp, pc, lr, fp.
+    block: model freeze & enter queue as lock for supporting lockdep
 
-	regs->sp = afregs->sp;
-	regs->pc = afregs->pc;
-	regs->regs[29] = afregs->fp;
-	regs->regs[30] = afregs->lr;
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113248e2580000
+start commit:   097a6c336d00 Merge tag 'trace-rv-v6.17-rc5' of git://git.k..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=133248e2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=153248e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b12286339fe4c2700c1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116310e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1430b0e2580000
 
-> I suspect the arm64 implementation wasn't really tested.
-> Or maybe there is some other issue.
+Reported-by: syzbot+4b12286339fe4c2700c1@syzkaller.appspotmail.com
+Fixes: f1be1788a32e ("block: model freeze & enter queue as lock for supporting lockdep")
 
-It depends on how bpf_get_stackid() works. Some registers for that
-function may not be saved.
-
-If it returns -EFAULT, the get_perf_callchain() returns NULL.
-
-struct perf_callchain_entry *
-get_perf_callchain(struct pt_regs *regs, u32 init_nr, bool kernel, bool user,
-		   u32 max_stack, bool crosstask, bool add_mark)
-{
-...
-	entry = get_callchain_entry(&rctx);
-	if (!entry)
-		return NULL;
-
-
-Thus the `get_callchain_entry(&rctx)` returns NULL. But if so,
-this does not related to the ftrace_partial_regs(), because
-get_callchain_entry() returns the per-cpu callchain woarking
-buffer for the context, not decoding stack.
-
-struct perf_callchain_entry *get_callchain_entry(int *rctx)
-{
-	int cpu;
-	struct callchain_cpus_entries *entries;
-
-	*rctx = get_recursion_context(this_cpu_ptr(callchain_recursion));
-	if (*rctx == -1)
-		return NULL;
-
-	entries = rcu_dereference(callchain_cpus_entries);
-	if (!entries) {
-		put_recursion_context(this_cpu_ptr(callchain_recursion), *rctx);
-		return NULL;
-	}
-
-	cpu = smp_processor_id();
-
-	return (((void *)entries->cpu_entries[cpu]) +
-		(*rctx * perf_callchain_entry__sizeof()));
-}
-
-What context does BPF expect, and how does it detect?
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
