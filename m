@@ -1,108 +1,154 @@
-Return-Path: <linux-kernel+bounces-826070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4F3B8D735
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:05:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9994B8D741
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6ACBD4E11B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DEA63A9C00
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 08:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571B01E5B78;
-	Sun, 21 Sep 2025 08:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AD9245006;
+	Sun, 21 Sep 2025 08:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ratRWKWW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JP5+TcYP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B715245005;
-	Sun, 21 Sep 2025 08:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD8B239E8A
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758441861; cv=none; b=uhP35XmoY/jQv0QcPDJa+Dbd474zcWZ+2z6kvfrwYoqM3YMbtKjettlTxx2XRNNzeJTn7Zy3iR30Rl+S1QCaU5q3MppwszZZJGyykr2DdUCHNJPF4QCM2yWUtrH1XSK3TYSTk+pTM/VVl2Fe52Ap2oC3U7GSQWVekp/YDFgUwBc=
+	t=1758441896; cv=none; b=t+XhR+upOAavKOMTyfJHI+XWeNrSKnMhhaOJlkR38GFK492Uc130giYlZ+DsfVGWsnlzITUY1ITtD3Bgqo4oQ1rFsE/GMOOdmNvWznFbH+A/DNb83zRlkIZlr4p/7ruULJGDtIh50dLH0pyIAc0PJTCv5flmaBsgkQ/L1cRbrqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758441861; c=relaxed/simple;
-	bh=uBKLNDOkooe/3vuqO/OZ3y3mvA6lc9G0GfI+taewNvA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Et2BolhhnEREh4XR0snjDvLORlHDtl603q6BpXn8g8lwDdQaXTc+AcRLVPQe9g5b944FvYblED5Drz6wCEMtH3ABxM57l2UrrFDtfR+2GzTvTgtb50WslpTI0vV7c5t4xraV8Ct7X+H7vRgDiAnzDJkzCxY8MFQLOIH2gSPEPSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ratRWKWW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9EB08C2BC86;
-	Sun, 21 Sep 2025 08:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758441860;
-	bh=uBKLNDOkooe/3vuqO/OZ3y3mvA6lc9G0GfI+taewNvA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ratRWKWWb+DWNVvN9W0Lqg3txh4a5owIcUV0gHR2MBiqDFh1ytbg71XEnh8QZznwh
-	 V8yIiHsUmcwAhbhmFJ/4iQk+9WtW1S0K1AvEBdI9SLk1FzTcxl5dQ6c7HdYC4FDIjw
-	 zSH6SRj/gCHTesOSRGHxhJfthRpxUnGjs8an8k3oB4v5uNlwnlGsQ4lXq+sZcsKcWs
-	 lbaBq9MVpqAV7zKAziPia58szmqY/63qx/5T2eivYJLeGkR6SVI+/O9ILgHl5mN8W3
-	 OGoeU8FYqFHOWlB0xg9+HFV7StDP35i5pgmd92lU5JfaGPactzTj5SspvQinckbn2S
-	 Paf/XcSgnmvfA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F72CAC5A7;
-	Sun, 21 Sep 2025 08:04:20 +0000 (UTC)
-From: Rudraksha Gupta via B4 Relay <devnull+guptarud.gmail.com@kernel.org>
-Date: Sun, 21 Sep 2025 01:04:23 -0700
-Subject: [PATCH v2 5/5] arm64: dts: rk3399-pinephone-pro: Fix voltage
- threshold for volume down key
+	s=arc-20240116; t=1758441896; c=relaxed/simple;
+	bh=WSnEXLeKHrRXxvgOkBIhVPDjW8GLL9YPyvl91reKnRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRLJpFSn4Mv+2R/aRMynOa+uPyenhNda8OdSDdUXcO8NFwhYRI0CWK47gEAlZ+E93SLPjKOM0b05mAqU0qs/zZfCKm0/5JtyFy8J+aihJv7ipcbEsXmetzyh6t52TSjiyt6GkDpH9NSuCTowXukJMMnhg5sxbvt3sXdL0GjOCfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JP5+TcYP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58L5GnP4028518
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:04:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=XEAbnHbHFmi3/gfqNWQjGriA
+	bFrVzrvYQPzuEkN3rt4=; b=JP5+TcYPY6LzluEkFZbKFYhH25r6O2ijmcUFHJqu
+	M1XaHtBxXz/f4rf/R3LFiZgy8BYi/ZIwcUORGkEUiJ4JT1nN4H+L/Zfu/g1b5m2Z
+	owh6KojNfdA3aHiWVHQH3aNwvVaeExap3LbiqkjN0smy2Q7HGgqYprr8dQeDsHIR
+	LH1EEa9+S6q/zZXp2/8+RX9jab6DXM7BEMmg1QaqEIIAPCZR3HQ+Q2sKMQvcA331
+	Um0RTMTZtjIg5Kc1izKZYpzPhOkuqyYv5KNAWfh58tPc2ARyEyNenpTyYVj3mGdw
+	jHewL9n+uFcCVyIGW5To6sVv9UkZ8jY2KY/9TLEFhp7n0w==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyej4bt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 08:04:53 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b60d5eca3aso84727481cf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 01:04:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758441892; x=1759046692;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XEAbnHbHFmi3/gfqNWQjGriAbFrVzrvYQPzuEkN3rt4=;
+        b=efWFnJs09YdX3ojhEptBo4gld7R3zydhGS3qw90OFABYj0SH4YNmaBmX7lAoWBbSgp
+         f33cZlclSjSc0wkGqWplb48bYtGp4OR10tUP4qD9qBhDipH84aY1739evPNhew1LQxLN
+         37kd5sgS1YKWQhKIKM6rqKA0Gr3NqLuM0NeiWacoql+OvJdIcR3s87+0YmbzG1WcuS8l
+         qTW+rmavPpNsipgCh7YYBcxh6iT2Tnwlw3pdSUg1164RpU6Q0uytPjnvZmmbyPtMXBKm
+         nf9ahDf6FOaqzRGU4FdChWbUr6MptljY/XkOgjpGgh65STvoIL8NT9IReFDH5FVB+4aq
+         D9sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcbtSUeTCooqlHO0nvqcOyjaoqqS2IV1WBy4tuzdnQ9ThFOD2fVXLIvGzqUPMmQtYGjY49kEg69H9r4aA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbWGuGaPaMqgHsb+ZyTZSBtp+M6YVfyughUcXDCsqU4dYEnN1W
+	f2A8baLp+nL5q6UuhkhtKdQKP40/QlKBwW+MLdNEv7jCCjjchWkYwjmQ8a0XCbNVHKH0REALWcS
+	sMkbOsIVVc+wYNE+yZc2KLNsjAkmh59iw4PCBWcnR+aH0BJ5tV4+m6W/ApGJJchZl+lg=
+X-Gm-Gg: ASbGncv4F9zEQBR6eiAchfzB52rSV0/lf7s12Do7+mMwqQvkpG5h+3D0uilUoOcCuIR
+	/Esycjz/ms/jXPYtk2vG2N7SWP7kQebYIuQsPa/vqeilWtvMlbaMIGnqCH3p/mekf7FQpxMN1NO
+	5Y8QUdlaK9TPFPDVMhbSVIvLvkuJwaVQRZGfmlgdVwhUXw1T6fYT4yxFxLT5ev9ixrIS5eZpyQG
+	YZ5W55d1RdpN3IZ8vAg++/ChonE7ZDi5ExvDaxNBE7GYaajoXho8MENbyKFrtPtelx5u7v0pNpK
+	hrrEifF9UT3QApz4TVlGUZMVoarJTyOInKxt24Sz7MntJ/7DfV1Yhzddzu/6+5xSACVZHmmEIKo
+	UxW06bM0Q3440JNmKv9g7AzSiN+4zLs1imgWFi1b/xnjs5pTnfGwm
+X-Received: by 2002:a05:622a:4119:b0:4b3:4c51:6436 with SMTP id d75a77b69052e-4c06f07dacfmr109908801cf.35.1758441891704;
+        Sun, 21 Sep 2025 01:04:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZ2B20lb1PcP9AA7tQ7PqdyejHFWWWwxoSKhwLsPdsUWH2uJIeWVjvdVYTP8xVh+qWatH8wg==
+X-Received: by 2002:a05:622a:4119:b0:4b3:4c51:6436 with SMTP id d75a77b69052e-4c06f07dacfmr109908621cf.35.1758441891250;
+        Sun, 21 Sep 2025 01:04:51 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-361a904b961sm21573731fa.40.2025.09.21.01.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 01:04:49 -0700 (PDT)
+Date: Sun, 21 Sep 2025 11:04:46 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Antony Kurniawan Soemardi <linux@smankusors.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Heidelberg <david@ixit.cz>, Max Shevchenko <wctrl@proton.me>,
+        Rudraksha Gupta <guptarud@gmail.com>, Shinjo Park <peremen@gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: qcom: msm8960: rename msmgpio node
+ to tlmm
+Message-ID: <le3zymkfrocgkzb3pldezhndricja7xpg3pj4xcpmt6ngnvuam@he3a44gnvuoj>
+References: <20250921-msm8960-sdcard-dtbindings-v1-1-5a2455a30a06@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250921-ppp_light_accel_mag_vol-down-v2-5-e6bcc6ca74ae@gmail.com>
-References: <20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com>
-In-Reply-To: <20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Rudraksha Gupta <guptarud@gmail.com>, Ondrej Jirman <megi@xff.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758441859; l=918;
- i=guptarud@gmail.com; s=20240916; h=from:subject:message-id;
- bh=b2Y2d/HCInz27ts/XaKTXbc5Q1Z/myeoiVLoN5Pgsog=;
- b=zJ/SzjGEcWe22uQJE+V9sjp5PXkhwQeIOk1uEMMei9LIVJsw8MEP2dCoehW2P0vj0nHOUnqp9
- Tqa0iwC1miiDnAsbiHldOuFHjezVTSNzLslQEBZVOFBc+3/M0EhLJAG
-X-Developer-Key: i=guptarud@gmail.com; a=ed25519;
- pk=ETrudRugWAtOpr0OhRiheQ1lXM4Kk4KGFnBySlKDi2I=
-X-Endpoint-Received: by B4 Relay for guptarud@gmail.com/20240916 with
- auth_id=211
-X-Original-From: Rudraksha Gupta <guptarud@gmail.com>
-Reply-To: guptarud@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921-msm8960-sdcard-dtbindings-v1-1-5a2455a30a06@smankusors.com>
+X-Proofpoint-GUID: rPwmjiHH8WyBoxvknwuSFKJ2UY5SIIzy
+X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68cfb1a5 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=wxLWbCv9AAAA:8 a=pGLkceISAAAA:8
+ a=EUspDBNiAAAA:8 a=mZIXpXDClypwcOwN9UcA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=QJY96suAAestDpCc5Gi9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfX6kx6Nenlaf4K
+ 9UeF188ug6CqcwdCQDDkxTGyzo0hZ/fpFa+fbYm/+l1LFelhFcXJ8g2Ge6JQUyreiLX2tnnEBsU
+ Ein7T/5qo1PyI1r8oBOtSD3npS6fGYIFncs9SrNeRxUfs8wl9XbTohIJgMmXbhajaFKUm9P/End
+ cN0VupJ5hryVk66Qrb2jlrKVxBNrYpM8Hb0Mi2RPZADkU9K/pmPHRdc1+NwG560bQfeGL0IGoug
+ EbtLwyg2d6bcKnEcuSftbUx2VeC2T5qJw7Gbem6+ff+hJkIINWHDRG/5YCfjo2qemxnzwodRIgg
+ WktZW6Tz71HY93DgvxxRchVBgWmDyq9QIO7uoiOZmh7v5aWSWHE9FDUtEvFLOPiPcpSHysxJIwP
+ Tb0UiSnx
+X-Proofpoint-ORIG-GUID: rPwmjiHH8WyBoxvknwuSFKJ2UY5SIIzy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-21_02,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
 
-From: Ondrej Jirman <megi@xff.cz>
+On Sun, Sep 21, 2025 at 03:25:59AM +0000, Antony Kurniawan Soemardi wrote:
+> Rename the GPIO controller node from "msmgpio" to "tlmm" to match the
+> convention used by other Qualcomm SoCs.
+> 
+> Suggested-by: Shinjo Park <peremen@gmail.com>
+> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
+> ---
+> This patch was originally part of msm8960 cleanup series [1], but as
+> Bjorn pointed out, dt-bindings live in a different subsystem and should
+> be submitted independently.
+> 
+> [1] https://lore.kernel.org/all/20250915-msm8960-reorder-v1-5-84cadcd7c6e3@smankusors.com/
+> ---
+>  Documentation/devicetree/bindings/pinctrl/qcom,msm8960-pinctrl.yaml | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-U-Boot and Linux use different algorithms for determining voltage ranges
-for comparison. Pick value that will work with both.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Signed-off-by: Ondrej Jirman <megi@xff.cz>
-Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
----
- arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-index 0a4121b05d36c5a7e05eddbd3514a11ae4f7d3eb..4e6df664d780ed4798015db6b2fe79bf7c4e4c00 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-@@ -46,7 +46,7 @@ button-up {
- 		button-down {
- 			label = "Volume Down";
- 			linux,code = <KEY_VOLUMEDOWN>;
--			press-threshold-microvolt = <600000>;
-+			press-threshold-microvolt = <400000>;
- 		};
- 	};
- 
 
 -- 
-2.51.0
-
-
+With best wishes
+Dmitry
 
