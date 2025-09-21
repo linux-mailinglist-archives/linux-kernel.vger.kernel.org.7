@@ -1,303 +1,138 @@
-Return-Path: <linux-kernel+bounces-825949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B808BB8D2F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:57:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B176CB8D2F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 03:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768A9189ADC0
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 00:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6349317FD63
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 01:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD97261D;
-	Sun, 21 Sep 2025 00:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAFE2E40B;
+	Sun, 21 Sep 2025 01:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CYmqX3WL"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="F/Q/9sZP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YbrekMi4"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B68525771
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 00:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE46E4C6D
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 01:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758416230; cv=none; b=YmEkZk24lMMCnMwF/4dlwt3Zzrj+Useat5Y2LnmHTgyybjkB+9HnqrI3VpR+AgdamUufzdGgjykyIqSGceo0EkUUC2UdOG1zEu22MZ8+3DIZ3UnzlPtA/eiYOhzhJsdXC5u4je1ms6tHui/ns/bZOhmslEOmxFhGp9dqfu+tk8s=
+	t=1758416507; cv=none; b=dWZBWqBISe+P4uys0XSmD0kSctKRvePXcC3U+FQ/i8aSKQGD3x8pWaWz0vNtgeKMEExp1YkmC1IQba0k3yf1ODp3FQXxjD6MjJk/+IKdLLtCIOgr7yqGj5XT36F5Gq4GO2Wmz+n1JV8HcwU3xBFk7tg2B5bsrtk90arg5EWMoHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758416230; c=relaxed/simple;
-	bh=o3OrUKxK7HcHUCr3FmFBiFhLFlsL5Ami0Z0razBf2iU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SkVAsflfCxo5rEefhLTzvACO9CArkK/NLPQ2MlS7yc4dHYJdrY3zICYzFy/Jj/gOn46HzMekp2jQ41Wm6xZqB0DESNrL2SWYLfNqUvCcn5WEB2DJyA6DC2T1+Vf01mOZrhykWRRsLzRDmZuv7s3fYc3khsQ+49FDi7ulVjs+6nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CYmqX3WL; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-329e1c8e079so3033832a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 17:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758416228; x=1759021028; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oVT4J5OS8x6TS28feBmHNMsJJq1gQBMwGWqkfUiPnb0=;
-        b=CYmqX3WLva496zK9x2x3rEeDJKMBkCpcYTuoGAap7xfJAIB/FVzGpgvUYIsBuXM1z3
-         a8R68LeoSJsaVBJ1ds5oQT0WLwSJdSW/CMpmdqJgcz3rg2BLItprfh7C922MSZtkFrnC
-         5SinARAQiKpS3RQK+gNn7VBgM+c0DxX8iW91/tGLG+MqktfxZBBnlz6qOABpeMOIuyGF
-         +MBVAo8+dGb1r299GmeMwbkOF9Ak29hDI1FmoRwgBZo4ZCezZrr+7LR0casuvibwbLSp
-         9yf9bV4aOdsdc79zGKX5AByMWK/CHE+rk17HvGVErOZiBbtWv8DrM2zVpJNaolUqvCCT
-         DoSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758416228; x=1759021028;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oVT4J5OS8x6TS28feBmHNMsJJq1gQBMwGWqkfUiPnb0=;
-        b=MdLC/IyEOz0+IxDgrw5iDvLtVXWKz4a/S/Z1cXT0SREy+4gZzLXsOPjLzr7oA9b6ta
-         1wFHhRSYEetqRNxrNGc8SdWt3gLn3+80IXGv4swLIZVOe8AMHApuEvnY5Vak+j6O4EuF
-         TYkRvEVzOLuHfrZsUHudbcL5wpLefUBQxZ9FB1nocov+d14uHWEkq45u06UoI9sIodN3
-         Q/j/LBF1Cg18F1bdCcBX36pF/deToyW3jPeZ/2EVZOYRbxZjMxluCLQHE4kXPr5kYV3K
-         Dk2oZyWDplWyxQ72rDIhsf2ICRJNraND8lR5xxFHf6FCmvsvVdxNnfNUA6SYGdxP6isQ
-         bDdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtqdhAEpoTJGJk7sKcLVRk8TtxlrTEby5fNfNvKVLI7d7u4LfBkub0AUOcc7Heh2W1fIdvuPjA1s/C50s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxZKhESQd0PA+OL6ImD3lsVcIEYr5HMEZwwoi9lfloNL98eLVg
-	A+oZuxbGHGRjCAtT5DlpkB22nI/iNyDt2v6ODY+D11gsxnGndP0bcIWY
-X-Gm-Gg: ASbGncv31/P/wscWksRE92WNxE+zLmPfHXeawz3oDm/D7ugQ5wr/3Koc7e524BQoGbo
-	EBx/ZsEPl6XKJQrP2+cl3uGM81E4OQTBdD6omcF9wEu4cP6kSsApqoJI1NH5qb3robK6E4hMqUN
-	5KDa0Zdp4yL4wqQeLzYk6RbRXmZ/LkMnFfEA274xr3ByENuRg3I2izMGp3zl5DnwK0VdXfe/DWF
-	xUc9Z2iSC28MjznS5d2sKZ3+OlIuNbFjHHelkiGa91qW4FiBEmQaFKqfKDyycoBSoTx74FdzE/Z
-	tv54l46ov++K460GMCDqSmJUJqVSajdvWgOuLAxDTHu9Y5vQdsCodKwGDI0b7n+QYjVKo9BOasx
-	UzCls/tbcH4N1OtVToi+lFZxUuQTDjtyoSw==
-X-Google-Smtp-Source: AGHT+IErFBXkyclIXuETJ0n418k5wfOgqD1TNuVNmHW7S//MyRJkGXsw9LZY9BPJLbkOxLN7dWjRBQ==
-X-Received: by 2002:a17:90b:4b05:b0:32e:aaac:907 with SMTP id 98e67ed59e1d1-33097fdd68cmr8637024a91.5.1758416227818;
-        Sat, 20 Sep 2025 17:57:07 -0700 (PDT)
-Received: from fedora ([172.59.162.206])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cff22b7e7sm8595821b3a.103.2025.09.20.17.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Sep 2025 17:57:06 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: mchehab@kernel.org
-Cc: laurent.pinchart@ideasonboard.com,
-	hansg@kernel.org,
-	hverkuil+cisco@kernel.org,
-	cascardo@igalia.com,
-	ribalda@chromium.org,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v3] media: i2c: wm8775: parameterize wm8775_platform_data based on config
-Date: Sat, 20 Sep 2025 17:56:35 -0700
-Message-ID: <20250921005635.949377-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758416507; c=relaxed/simple;
+	bh=pCYW9JYGaak6dIleu1eaYVNK4LQQaAVWczez3LB3s4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fyrvWWY5jdJ6D06ZpRRUrlDNrcgzAkWUd0d1IEbXsBWKu4JlFIPhY9A7x75v6OceA2oGae5lrzKrqLFQZh5xBENRR26IApXXWb2EyM6BVgNGbBOujPEjkOaU7Ranvgbni5PjYGaWuUw6Iu/SVYt9OG0ReAor5hjKEvbcZDq0geU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=F/Q/9sZP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YbrekMi4; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfout.stl.internal (Postfix) with ESMTP id 81DD11D000FE;
+	Sat, 20 Sep 2025 21:01:43 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Sat, 20 Sep 2025 21:01:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1758416503; x=
+	1758502903; bh=SOIXOBQzMncLwKGIgkvZizVY3nxteb/lnOoo5Kw5DhY=; b=F
+	/Q/9sZP2Pfq4YUOUQGwyv0aKsDFhJYzDQOd175J6bSQtLhtiGMnQxhDNUiEKJu+L
+	BOS3QGVQgOX2xHHu2jDIVhG1T3bFyUbohqwZytdwjZe6q1fVsqtK/bIs1v9N1Lye
+	1ewtru7T2D6Z0UyZj7XsrYFDLfCUwBnfKcYXLvh2pDzVTWhB7tk0e1AtU9lcCRBt
+	8j6IePVJsuKrgWhlUlvygsi9hKjBxRtChhfVqLkJWiIARK38mTSJq5NyLlHVCNzD
+	+i5Q4Ri5Q4H9tJegMK2Jj47t8eszQw3W3qRhsyTvLE2sLAndkFUGqZ5JjVDm7ytw
+	aalVvTsj5tlZDFlxHsGRw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1758416503; x=1758502903; bh=SOIXOBQzMncLwKGIgkvZizVY3nxteb/lnOo
+	o5Kw5DhY=; b=YbrekMi4BiRTUaSC/9/kHWsHKAqq23tYStRq3ctgBDKucr3vetx
+	nS71eRqVgOyMHLmRWGAM/qPICEHHgpHBfhQNPxgLQxeZgF3V0npGrgeGQcbdPt46
+	IOFeBcR/ODbURc9IXU/61l8LhzDCsdv8rAhxA+vid0O0plgcMcQgdyWCgyp5SH1r
+	ftBbkBsxKfvd8HA7dduUdZzeeiKRCD71Ed08RIb+vPzYOiitDMKRcU6EKwPcJLE1
+	M1CJPIGdpJLIE9eeyB83iAUNNe6mSab7JqqX1T52XcpKNmvT8o7MkPgXMG9eT3BD
+	mIXxs2CS9SDh5tbuXW13xNai12MdSMdqVxA==
+X-ME-Sender: <xms:d07PaOWV_JO1Ex_kggBcMEie3ObpPFsHWXnkWN-uX6nJaxNV5uhwLQ>
+    <xme:d07PaDgOGqCmooMGZPc4bCuLTsspOYGibOOQ2fhhm1eNzNRheQjimnlSWhB8RY0wM
+    5y6p0-bo_kpWPAJJeQ>
+X-ME-Received: <xmr:d07PaEVJFt1QlVUOFxIvaHOJgLCOllOoHSR5AMImeQPmbIZVMRcFWjA--KnzS2mSBwoJpJCNU5A-IQ_6GEToc4dilIG7FZCVIkAJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehfeehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttd
+    dtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
+    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgke
+    dvieeuffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfu
+    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
+    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:d07PaCPjgWXh_8rUn-JNNQIthlLodC7H3Yt58pWaYvyEQQDP38WglA>
+    <xmx:d07PaIYfdVp4Jj5CRXpgRbIXww6nDhd5PI7lHxfCh4FDcnkzJXMsUQ>
+    <xmx:d07PaGrYNjae_ofL3L-aiUs5xkB1_YFgMPI0IAQCP7iqwqWjxvTqpA>
+    <xmx:d07PaMbkS7I3JFEB2OOXfHX4omifmJ804rBfroD3OdMHVW9LknPoHg>
+    <xmx:d07PaP6d28LvXdeeeOaALdwstjpC79y6lj2fzVhG2H6ouDGq5qkOGUYW>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 20 Sep 2025 21:01:42 -0400 (EDT)
+Date: Sun, 21 Sep 2025 10:01:39 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firewire: core: fix overlooked update of subsystem ABI
+ version
+Message-ID: <20250921010139.GA48628@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+References: <20250920025148.163402-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920025148.163402-1-o-takashi@sakamocchi.jp>
 
-Parameterized wm8775_platform_data struct, removing the single boolean
-for determining device type. wm8775_standard_cfg struct will be used
-for standard devices and wm8775_nova_s_cfg for nova_s devices. 
+On Sat, Sep 20, 2025 at 11:51:48AM +0900, Takashi Sakamoto wrote:
+> In kernel v6.5, several functions were added to the cdev layer. This
+> required updating the default version of subsystem ABI up to 6, but
+> this requirement was overlooked.
+> 
+> This commit updates the version accordingly.
+> 
+> Fixes: 6add87e9764d ("firewire: cdev: add new version of ABI to notify time stamp at request/response subaction of transaction#")
+> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+> ---
+>  drivers/firewire/core-cdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firewire/core-cdev.c b/drivers/firewire/core-cdev.c
+> index 78b10c6ef7fe..2e93189d7142 100644
+> --- a/drivers/firewire/core-cdev.c
+> +++ b/drivers/firewire/core-cdev.c
+> @@ -41,7 +41,7 @@
+>  /*
+>   * ABI version history is documented in linux/firewire-cdev.h.
+>   */
+> -#define FW_CDEV_KERNEL_VERSION			5
+> +#define FW_CDEV_KERNEL_VERSION			6
+>  #define FW_CDEV_VERSION_EVENT_REQUEST2		4
+>  #define FW_CDEV_VERSION_ALLOCATE_REGION_END	4
+>  #define FW_CDEV_VERSION_AUTO_FLUSH_ISO_OVERFLOW	5
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
-Changes in v2:
-- rebased from mchehab linux media onto media committers tree
-- resolve patch and build errors
-Changes in v3:
-- cc updated maintainers list
- drivers/media/i2c/wm8775.c          | 109 ++++++++++++++++------------
- drivers/media/pci/cx88/cx88-video.c |   4 +-
- include/media/i2c/wm8775.h          |  25 +++++--
- 3 files changed, 83 insertions(+), 55 deletions(-)
+Applied to for-linus branch.
 
-diff --git a/drivers/media/i2c/wm8775.c b/drivers/media/i2c/wm8775.c
-index 56778d3bc..6218fc3fe 100644
---- a/drivers/media/i2c/wm8775.c
-+++ b/drivers/media/i2c/wm8775.c
-@@ -50,6 +50,43 @@ struct wm8775_state {
- 	u8 input;		/* Last selected input (0-0xf) */
- };
- 
-+struct wm8775_platform_data wm8775_standard_cfg = {
-+	.reset = 0x000, /* RESET */
-+	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-+	.interface_ctrl =
-+		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-+	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-+	.powerdown = 0x000, /* Powered up */
-+	.adc_l = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-+	.adc_r = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-+	.alc_ctrl_1 =
-+		0x1bf, /* ALC Stereo, ALC target level -1dB FS max gain +8dB */
-+	.alc_ctrl_2 = 0x185, /* Enable gain control, ALC hold time 42.6 ms */
-+	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-+	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-+	.limiter_ctrl = 0x07a, /* Window 4ms, lower PGA gain limit -1dB */
-+	.adc_mixer = 0x102, /* LRBOTH = 1, use input 2. */
-+	.should_set_audio = false,
-+};
-+
-+struct wm8775_platform_data wm8775_nova_s_cfg = {
-+	.reset = 0x000, /* RESET */
-+	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-+	.interface_ctrl =
-+		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-+	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-+	.powerdown = 0x000, /* Powered up */
-+	.adc_l = WM8775_REG_UNUSED,
-+	.adc_r = WM8775_REG_UNUSED,
-+	.alc_ctrl_1 = 0x1bb, /* Stereo, target level -5dB FS, max gain +8dB */
-+	.alc_ctrl_2 = WM8775_REG_UNUSED,
-+	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-+	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-+	.limiter_ctrl = 0x0fb, /* Transient window 4ms, ALC min gain -5dB  */
-+	.adc_mixer = WM8775_REG_UNUSED,
-+	.should_set_audio = true, /* set volume/mute/mux */
-+};
-+
- static inline struct wm8775_state *to_state(struct v4l2_subdev *sd)
- {
- 	return container_of(sd, struct wm8775_state, sd);
-@@ -195,12 +232,8 @@ static int wm8775_probe(struct i2c_client *client)
- 	struct wm8775_state *state;
- 	struct v4l2_subdev *sd;
- 	int err;
--	bool is_nova_s = false;
--
--	if (client->dev.platform_data) {
--		struct wm8775_platform_data *data = client->dev.platform_data;
--		is_nova_s = data->is_nova_s;
--	}
-+	struct wm8775_platform_data *data = client->dev.platform_data ?:
-+						    &wm8775_standard_cfg;
- 
- 	/* Check if the adapter supports the needed features */
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-@@ -233,49 +266,29 @@ static int wm8775_probe(struct i2c_client *client)
- 	}
- 
- 	/* Initialize wm8775 */
-+	wm8775_write(sd, R23, data->reset);
-+	wm8775_write(sd, R7, data->zero_cross_timeout);
-+	wm8775_write(sd, R11, data->interface_ctrl);
-+	wm8775_write(sd, R12, data->master_mode);
-+	wm8775_write(sd, R13, data->powerdown);
-+	if (data->adc_l != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R14, data->adc_l);
-+	if (data->adc_r != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R15, data->adc_r);
-+	wm8775_write(sd, R16, data->alc_ctrl_1);
-+	if (data->alc_ctrl_2 != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R17, data->alc_ctrl_2);
-+	else
-+		wm8775_write(sd, R17,
-+			     (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
-+	wm8775_write(sd, R18, data->alc_ctrl_3);
-+	wm8775_write(sd, R19, data->noise_gate);
-+	wm8775_write(sd, R20, data->limiter_ctrl);
-+	if (data->adc_mixer != WM8775_REG_UNUSED)
-+		wm8775_write(sd, R21, data->adc_mixer);
-+	if (data->should_set_audio)
-+		wm8775_set_audio(sd, 1);
- 
--	/* RESET */
--	wm8775_write(sd, R23, 0x000);
--	/* Disable zero cross detect timeout */
--	wm8775_write(sd, R7, 0x000);
--	/* HPF enable, left justified, 24-bit (Philips) mode */
--	wm8775_write(sd, R11, 0x021);
--	/* Master mode, clock ratio 256fs */
--	wm8775_write(sd, R12, 0x102);
--	/* Powered up */
--	wm8775_write(sd, R13, 0x000);
--
--	if (!is_nova_s) {
--		/* ADC gain +2.5dB, enable zero cross */
--		wm8775_write(sd, R14, 0x1d4);
--		/* ADC gain +2.5dB, enable zero cross */
--		wm8775_write(sd, R15, 0x1d4);
--		/* ALC Stereo, ALC target level -1dB FS max gain +8dB */
--		wm8775_write(sd, R16, 0x1bf);
--		/* Enable gain control, use zero cross detection,
--		   ALC hold time 42.6 ms */
--		wm8775_write(sd, R17, 0x185);
--	} else {
--		/* ALC stereo, ALC target level -5dB FS, ALC max gain +8dB */
--		wm8775_write(sd, R16, 0x1bb);
--		/* Set ALC mode and hold time */
--		wm8775_write(sd, R17, (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
--	}
--	/* ALC gain ramp up delay 34 s, ALC gain ramp down delay 33 ms */
--	wm8775_write(sd, R18, 0x0a2);
--	/* Enable noise gate, threshold -72dBfs */
--	wm8775_write(sd, R19, 0x005);
--	if (!is_nova_s) {
--		/* Transient window 4ms, lower PGA gain limit -1dB */
--		wm8775_write(sd, R20, 0x07a);
--		/* LRBOTH = 1, use input 2. */
--		wm8775_write(sd, R21, 0x102);
--	} else {
--		/* Transient window 4ms, ALC min gain -5dB  */
--		wm8775_write(sd, R20, 0x0fb);
--
--		wm8775_set_audio(sd, 1);      /* set volume/mute/mux */
--	}
- 	return 0;
- }
- 
-diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
-index 0c8732768..a3729fd73 100644
---- a/drivers/media/pci/cx88/cx88-video.c
-+++ b/drivers/media/pci/cx88/cx88-video.c
-@@ -1353,9 +1353,9 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
- 		struct v4l2_subdev *sd;
- 
- 		if (core->boardnr == CX88_BOARD_HAUPPAUGE_NOVASPLUS_S1)
--			core->wm8775_data.is_nova_s = true;
-+			core->wm8775_data = wm8775_nova_s_cfg;
- 		else
--			core->wm8775_data.is_nova_s = false;
-+			core->wm8775_data = wm8775_standard_cfg;
- 
- 		sd = v4l2_i2c_new_subdev_board(&core->v4l2_dev, &core->i2c_adap,
- 					       &wm8775_info, NULL);
-diff --git a/include/media/i2c/wm8775.h b/include/media/i2c/wm8775.h
-index a02695ee3..99678d165 100644
---- a/include/media/i2c/wm8775.h
-+++ b/include/media/i2c/wm8775.h
-@@ -20,13 +20,28 @@
- #define WM8775_AIN3 4
- #define WM8775_AIN4 8
- 
-+#define WM8775_REG_UNUSED ((u16)-1)
- 
- struct wm8775_platform_data {
--	/*
--	 * FIXME: Instead, we should parameterize the params
--	 * that need different settings between ivtv, pvrusb2, and Nova-S
--	 */
--	bool is_nova_s;
-+	u16 reset; /* RESET (R23) */
-+	u16 zero_cross_timeout; /* Zero cross detect timeout (R7) */
-+	u16 interface_ctrl; /* Interface control (R11) */
-+	u16 master_mode; /* Master mode (R12) */
-+	u16 powerdown; /* Power down (R13) */
-+
-+	u16 adc_l; /* ADC left (R14) */
-+	u16 adc_r; /* ADC right (R15) */
-+	u16 alc_ctrl_1; /* ALC control 1 (R16)*/
-+	u16 alc_ctrl_2; /* ALC control 2 (R17) */
-+	u16 alc_ctrl_3; /* ALC control 3 (R18) */
-+	u16 noise_gate; /* Noise gate (R19) */
-+	u16 limiter_ctrl; /* Limiter control (R20) */
-+	u16 adc_mixer; /* ADC mixer control (R21) */
-+
-+	bool should_set_audio;
- };
- 
-+extern struct wm8775_platform_data wm8775_nova_s_cfg;
-+extern struct wm8775_platform_data wm8775_standard_cfg;
-+
- #endif
--- 
-2.51.0
 
+Regards
+
+Takashi Sakamoto
 
