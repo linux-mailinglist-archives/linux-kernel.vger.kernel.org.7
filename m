@@ -1,68 +1,122 @@
-Return-Path: <linux-kernel+bounces-826357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7FEB8E4C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:08:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4283B8E4D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFB47AF0AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6AC3BE621
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77C628505D;
-	Sun, 21 Sep 2025 20:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17455286410;
+	Sun, 21 Sep 2025 20:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QxioDiRi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="llzXZKZw"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D48725783F;
-	Sun, 21 Sep 2025 20:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E341127056F;
+	Sun, 21 Sep 2025 20:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758485289; cv=none; b=Sf8iz2tXXtwOoV4qeR4pqCLtiet4wTZd/geZ4UVoQLCdcSH/Vn30GlyCP4hljMieyPE42APeEaLGe5AhhKh1LOQZjVKZ8hBfsjJmebGx2uPCJJ8sF6XqYXdd52r1A87xlHdbv2ElSVkrA+2HSxgqyIlxYcXDmF3wZTyy+Nfa/MM=
+	t=1758485400; cv=none; b=KA8uPtPZjY/M0Cavwh7vqKLpYNIBlSmvhXuv+5zoGKunIeNUJuS3J2a+zlnQcsYUHHqcKaeDQq9IKVptCR+8Pf2puFROfoqvKJju0zj2905TBNjPfDy1hYm1Qxjr+zw7+FiqBiLGED5TNJduKcWw9cLURusDGIWJAcLYIUfsou0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758485289; c=relaxed/simple;
-	bh=JhK7EYIcFoZDxlEsEl//u9AwwpAD2Ir5SVc2aQvCAxE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=AQ/zHua2V/nMCgZrsFZP5dGKmbY3UchNLLIbXtkPUMX6/vwdQU+ehIi1dJSCyhvwC1mF6zC6IUZS0yvsrYt6RKZYtpJP1SXcc7W1tttXnJDqLx9fXSfu+S3cPZ6AOnkKZXKB+8S9vPC3xsjaNKitMwa19FGtYPpynTXj3pQRnts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QxioDiRi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BFB3C4CEE7;
-	Sun, 21 Sep 2025 20:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758485288;
-	bh=JhK7EYIcFoZDxlEsEl//u9AwwpAD2Ir5SVc2aQvCAxE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QxioDiRihJpqXM64fWo+FGJq8dV0fkMzt6QxQvB+j0ky3ntrdunW1droBiNEcHllB
-	 fpuisUIgea9BsH/Y4gTHb94VjH2DQ0YaOkjDxDlaBfpPJkWnAbqT17N8oOchJmhKsT
-	 Slv3kzv3C2cikmJ7Am+tQ78nqAK7YISos79wJjZpIoOeI5cHc3o/YmkZgPvKbmrvgR
-	 1ZJk2DHR3ZTZ0ZaFiL2FEiF9IODEsTSs1YDeXmIu6ej0UdmKQKasW8DphCxFCaPZ3y
-	 Sr9vaxqbLMwFyTg5En/466EGThtjwHEE6/DvGlkcSrW4VI1PxVpVBhTgcXFEwt9yw/
-	 vN2xDxREgy+xA==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758485400; c=relaxed/simple;
+	bh=6CDJ7AhyuSIJd8lWUHCNYysECZVpuIAVFfCe0lXLHuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oYGz8xBTNRWVbcY5Dx4oGO6jHlpxeyu3YDo+vrmZmZ4nxpm0yaMy738FBbvF9FTpQYSqLX2Gopt9ZLNyBhSIYGZ9l1yOJizq6QBKwP0wFhd1n39MnRTTQT/+ep5EGIpl4OhqMHvQ97GVrUgtFHCbROiTbGnQoz/zkEWOe/E8yy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=llzXZKZw; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LFcexo022357;
+	Sun, 21 Sep 2025 20:09:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=k6CFKAF+82TrCz0nzR8+Lbuhmdt47
+	tf2NSkt3ox7hbE=; b=llzXZKZwxSzLzFxRLeleQEWZ92ctAIMqGKjO4DtQNF3PV
+	1GhIb7rC1FPuGXxEed1kt8hDph7AcsdXbdg0aw9AXSDySPDAsJeGZ8EL29Rf0PbQ
+	IiFxxLKTR+WelebKpVA2YIQZk8rkqj++ehO8xRQ+dB9NF971LidSPANe6AbOGnLJ
+	IpSbJ+MS/QJNKebPCy6pygEBgoW8asqBgbKhtlGwI3R2iqoMZJD/EyMVVSTRFDn9
+	c1w7R6QhAmBtzwdEuESUBWzevKOZ9wTVLTctdh+ESEMahG8SlNR038O6zsZv2I5s
+	yYoB20zdR6GXiEWz4MeXlTvYmFYJgSUQQkCZGJJqA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 499jpdh8xm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 21 Sep 2025 20:09:53 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58LK6TU0002048;
+	Sun, 21 Sep 2025 20:09:52 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 499jq63x52-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 21 Sep 2025 20:09:52 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58LK9p6C037039;
+	Sun, 21 Sep 2025 20:09:51 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 499jq63x4s-1;
+	Sun, 21 Sep 2025 20:09:51 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: selvin.xavier@broadcom.com, kalesh-anakkur.purayil@broadcom.com,
+        jgg@ziepe.ca, leon@kernel.org, linux-rdma@vger.kernel.org
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH rdma-next] RDMA/bnxt_re: improve clarity in ALLOC_PAGE handler
+Date: Sun, 21 Sep 2025 13:09:46 -0700
+Message-ID: <20250921200948.1568850-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250906131655.239340-2-clamor95@gmail.com>
-References: <20250906131655.239340-1-clamor95@gmail.com> <20250906131655.239340-2-clamor95@gmail.com>
-Subject: Re: [PATCH v2 1/4] clk: tegra20: reparent dsi clock to pll_d_out0
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org
-To: Charan Pedumuru <charan.pedumuru@gmail.com>, Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, Dmitry Osipenko <digetx@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Mikko Perttunen <mperttunen@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Rob Herring <robh@kernel.org>, Simona Vetter <simona@ffwll.ch>, Svyatoslav Ryhel <clamor95@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Thierry Reding <treding@nvidia.com>
-Date: Sun, 21 Sep 2025 13:08:06 -0700
-Message-ID: <175848528652.4354.10389254038978524687@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-21_04,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
+ spamscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509210206
+X-Proofpoint-GUID: RO5dcByEwHvj4P8UmW7HkcCgOpe5rugb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAxMiBTYWx0ZWRfX5xB3uCRysueN
+ lHanTAe7+ZIoPi/R4Vj1mLEmO9q4R8IyP4VR/n9b2LxIExp/FhY8TqDNh3ePGqcSgdn13bH6Y3v
+ Wj1S6koNvjm7a4r+s2uWtOLRhXB7lAWIEc9DjwBOHy1SIBuSJNmK2GSwFDY9S8R1XzT+jj2PWll
+ VE1DJwvXEeOo3pvFz5gSdE0BsZ6zC4wPu5/PpBcto7R28/WzQqXWG4dWToDR4PCagxtjLdl+xqS
+ Jy/hd0Y+q3LPXH5+DHpx2Ye9xkD3Ufe7nuVRP4PGX82vxIWE/qGVMUTAWvi78UCc1dppEm7UIsY
+ TYfttZvHF4lB/qnATho8A/jn118eBAYc92GRmaotxyPH5+B43iO2oLUdfrdA3ItAZDocBX3dPI4
+ brsNPXpf
+X-Authority-Analysis: v=2.4 cv=aJPwqa9m c=1 sm=1 tr=0 ts=68d05b91 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=yJojWOMRYYMA:10 a=yPCof4ZbAAAA:8 a=z5HJRSdbJYA6UED7pmwA:9
+X-Proofpoint-ORIG-GUID: RO5dcByEwHvj4P8UmW7HkcCgOpe5rugb
 
-Quoting Svyatoslav Ryhel (2025-09-06 06:16:52)
-> Reparent DSI clock to PLLD_OUT0 instead of directly descend from PLLD.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
+Update uverbs_copy_to call to use sizeof(dpi) instead of sizeof(length)
+when copying the device page index (DPI) back to user space. Both dpi
+and length are declared as u32, so this change has no functional impact
+but makes the code clearer.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/infiniband/hw/bnxt_re/ib_verbs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/ib_verbs.c b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+index 6bb4f6ac8476..09cd2622e363 100644
+--- a/drivers/infiniband/hw/bnxt_re/ib_verbs.c
++++ b/drivers/infiniband/hw/bnxt_re/ib_verbs.c
+@@ -4746,7 +4746,7 @@ static int UVERBS_HANDLER(BNXT_RE_METHOD_ALLOC_PAGE)(struct uverbs_attr_bundle *
+ 		return err;
+ 
+ 	err = uverbs_copy_to(attrs, BNXT_RE_ALLOC_PAGE_DPI,
+-			     &dpi, sizeof(length));
++			     &dpi, sizeof(dpi));
+ 	if (err)
+ 		return err;
+ 
+-- 
+2.50.1
+
 
