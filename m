@@ -1,79 +1,143 @@
-Return-Path: <linux-kernel+bounces-826236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F7AB8DF28
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BACDAB8DF40
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80EEE189C816
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 910F9189B728
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9E027877F;
-	Sun, 21 Sep 2025 16:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79DA218AC4;
+	Sun, 21 Sep 2025 16:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k9VA4+Ov"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="J/Gsn4i9"
+Received: from mout-y-111.mailbox.org (mout-y-111.mailbox.org [91.198.250.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48053275B15;
-	Sun, 21 Sep 2025 16:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1EF1F91F6;
+	Sun, 21 Sep 2025 16:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758470923; cv=none; b=XPZUOraAUtJWu+rAcss5RuL8XTCy3wV9Q8EO9bZtfDcZl7Xb+eG9XwyNJaHNlh5D+jvlmvTQWtYWu5NpiuPH0wOS7xyEtWwrwk0w6KlnFVuracks1Ac/qy5kGLzNxCVwv6XYRNY9TrOrEwVhyXDwHO5lR05ygSz2H4To6W6WXik=
+	t=1758471121; cv=none; b=BggxXyXW1qMHYigwqkmJ8GwtuLSVyhHWLBDK4s4dRU4b+c0+V9gRcGHh0j6q1NCac64vV+cRPX/lQtLP1OB6o6e4INFLgC2MmRf7HE3XE+xGPC0nVIH5gZRhoRDrRCCahfR+UW9m0P5+pLCRb59wzenbLTObsyuwZW20+xCTuqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758470923; c=relaxed/simple;
-	bh=WAbk4PWWXEXWUyECLBWj+jZRHQjNujjT1F6/7IR7Wkc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=Bw914eV9xNhY0DbIO7dYgnjKMbsASZAsHUNYOahoQlICDghZNAFOPK1SI7NQZtA5qFhtgX0MY3rqlYAFjoPNl6De8l+N1gsBpeMVRc3siWjKtD6Inlm9PDF5M1ih4vaZQrhOLQCY23U8+3eHN/zwKqTUE3oXvCkFzsQQ9j0tGy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k9VA4+Ov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F8CDC4CEE7;
-	Sun, 21 Sep 2025 16:08:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758470922;
-	bh=WAbk4PWWXEXWUyECLBWj+jZRHQjNujjT1F6/7IR7Wkc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=k9VA4+OvtF9WMxvlQ8gfo6xoYVgPhME93HuDeyjVf3VJQKg5L51KazbJGvnQm02j3
-	 GEWkqrPtWUqFxr15WM4BpVIZ9dGHMDnsux1aleg52r5KyYv+LHxTGl3b169Cwpso2A
-	 yUbcEIYwho2ZjYgeMp0c05LtDAyQHhYgWuVOQykRCV8P/ZAO0A2xrsHUFcZ1ZYVztd
-	 hVuGVTIdguTJgiGej5woK5cjYGCQTRMU+ddYcO0s3teIMgUWENJJnMWoMVmgI+Xo//
-	 WXIz1Ll5H7P+4YaCUMRhwXoBllRaGg+2qQdNCRdAyyrY7rJGZ0a5/DxMDhjkybdc75
-	 H1Hi9m6Bn3eAQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1758471121; c=relaxed/simple;
+	bh=IVrEBq93I57sHkKBpKzLJwIv8WpcngwvrIe6Ij19Yw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pvnxHsoBNb/yEo4NU0HKlB07A4EntUZH9hjiVxPRVyHIbBGTNbk3X7mibcjcGzW0/dfcSVYCOYd/78/yTQz2ajeNT2Ag3Cd7jTwHjCiXPvEXHoAuW5W2bg8wnY2wV31HrZpRF7zL0kHG5osV4UD/iyWI+Qfpu7IYOHPNKPZLHig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=J/Gsn4i9; arc=none smtp.client-ip=91.198.250.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-111.mailbox.org (Postfix) with ESMTPS id 4cVB8360TKz9y0k;
+	Sun, 21 Sep 2025 18:11:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
+	t=1758471107;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=e32bgj/ZkouP/y1c9EuzQEy6snPVu+L7GnJFnUo6h6M=;
+	b=J/Gsn4i9EMikkA05Zg9B9/f/8G8vBgiNgKQikWmuqA06PXvbVMEA/CBFm3jJbbB9sr0mSU
+	g4MXgskV/WHiD0zKWJYKuCfHXOLPidPBRyie5JCRn1SH4Mh2DWnoWU7Olvvw27l0aC9n0E
+	WGN9D2anilpplvVbGb2wOibrpoQ3raLSiNE0ZCDVw2ie4FaHM06VnmljEvv3rV9mztHp0C
+	x5X5pvvwliE8QiKKP6BaQPZ28IpPf4mIxWpMYIlB6WXa2eXrq4lJaal0Q/W/V621rmOWBL
+	R7KcqyenGuwg+J6iu3Y4hXn/i5XIUGBMiPT7TX/qZKBhbZX1NhkkfmkXDZQU2g==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of dev@kael-k.io designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=dev@kael-k.io
+From: Kael D'Alcamo <dev@kael-k.io>
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: rng: hisi-rng: convert to DT schema
+Date: Sun, 21 Sep 2025 18:11:34 +0200
+Message-ID: <20250921161139.99047-1-dev@kael-k.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250828-dt-apple-t6020-v1-26-507ba4c4b98e@jannau.net>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net> <20250828-dt-apple-t6020-v1-26-507ba4c4b98e@jannau.net>
-Subject: Re: [PATCH 26/37] dt-bindings: clock: apple,nco: Add t6020-nco compatible
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org, Janne Grunau <j@jannau.net>
-To: Alyssa Rosenzweig <alyssa@rosenzweig.io>, Andi Shyti <andi.shyti@kernel.org>, Christoph Hellwig <hch@lst.de>, Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Jaroslav Kysela <perex@perex.cz>, Jassi Brar <jassisinghbrar@gmail.com>, Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, Johannes Berg <johannes@sipsolutions.net>, Keith Busch <kbusch@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Marc Zyngier <maz@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Mark Brown <broonie@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, Martin =?utf-8?q?Povi=C5=A1er?= <povik+lin@cutebit.org>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <
- mturquette@baylibre.com>, Neal Gompa <neal@gompa.dev>, Rafael J. Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Sagi Grimberg <sagi@grimberg.me>, Sasha Finkelstein <fnkl.kernel@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sven Peter <sven@kernel.org>, Takashi Iwai <tiwai@suse.com>, Thomas Gleixner <tglx@linutronix.de>, Thomas Zimmermann <tzimmermann@suse.de>, Ulf Hansson <ulf.hansson@linaro.org>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Vinod Koul <vkoul@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Will Deacon <will@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, van Spriel <arend@broadcom.com>
-Date: Sun, 21 Sep 2025 09:08:41 -0700
-Message-ID: <175847092150.4354.4054733553683969208@lazor>
-User-Agent: alot/0.11
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4cVB8360TKz9y0k
 
-Quoting Janne Grunau (2025-08-28 07:01:45)
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatible "apple,nco" anymore [1]. Use
-> "apple,t8103-nco" as base compatible as it is the SoC the driver and
-> bindings were written for.
->=20
-> The block found on Apple's M2 Pro/Max/Ultra SoCs is compatible with
-> "apple,t8103-nco" so add its per-SoC compatible with the former as
-> fallback used by the existing driver.
->=20
-> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@k=
-ernel.org/
->=20
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
+Convert the Devicetree binding documentation for hisilicon,hip04-rng
+and hisilicon,hip05-rng from plain text to YAML.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
+---
+ .../devicetree/bindings/rng/hisi-rng.txt      | 12 -------
+ .../devicetree/bindings/rng/hisi-rng.yaml     | 32 +++++++++++++++++++
+ 2 files changed, 32 insertions(+), 12 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/rng/hisi-rng.txt
+ create mode 100644 Documentation/devicetree/bindings/rng/hisi-rng.yaml
+
+diff --git a/Documentation/devicetree/bindings/rng/hisi-rng.txt b/Documentation/devicetree/bindings/rng/hisi-rng.txt
+deleted file mode 100644
+index d04d55a6c2f5..000000000000
+--- a/Documentation/devicetree/bindings/rng/hisi-rng.txt
++++ /dev/null
+@@ -1,12 +0,0 @@
+-Hisilicon Random Number Generator
+-
+-Required properties:
+-- compatible : Should be "hisilicon,hip04-rng" or "hisilicon,hip05-rng"
+-- reg : Offset and length of the register set of this block
+-
+-Example:
+-
+-rng@d1010000 {
+-	compatible = "hisilicon,hip05-rng";
+-	reg = <0xd1010000 0x100>;
+-};
+diff --git a/Documentation/devicetree/bindings/rng/hisi-rng.yaml b/Documentation/devicetree/bindings/rng/hisi-rng.yaml
+new file mode 100644
+index 000000000000..5406b2596f42
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rng/hisi-rng.yaml
+@@ -0,0 +1,32 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rng/hisi-rng.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Hisilicon Random Number Generator
++
++maintainers:
++  - Kefeng Wang <wangkefeng.wang@huawei>
++
++properties:
++  compatible:
++    enum:
++      - hisilicon,hip04-rng
++      - hisilicon,hip05-rng
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    rng@d1010000 {
++      compatible = "hisilicon,hip05-rng";
++      reg = <0xd1010000 0x100>;
++    };
+-- 
+2.51.0
+
 
