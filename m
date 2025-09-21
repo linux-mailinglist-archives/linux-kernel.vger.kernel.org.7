@@ -1,114 +1,173 @@
-Return-Path: <linux-kernel+bounces-825978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE00CB8D40B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 05:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E629B8D41D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 05:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56CB189A2ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 03:19:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55EDA18A13B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 03:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48626239E65;
-	Sun, 21 Sep 2025 03:19:11 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B023F439;
+	Sun, 21 Sep 2025 03:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="onVOmkFD"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD461C84DC
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 03:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACC11A9FAB;
+	Sun, 21 Sep 2025 03:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758424750; cv=none; b=PHnhZElh7DSbtJ2wpEddQR+raW2T1dQT2k8p5+DcCzwOEvhSnubq3BhZEK2LzYwTgEPb0TFT8XVbbhflM5+9xKdPHiBwKw3vCaJVCZrsv4MrNSJdwvf7FcOQRQX9yx9TqFdfzb++h/U4G+3Nqc4M5p6gp1lPK7R0bgHHq4q17Wc=
+	t=1758424802; cv=none; b=foSZqALsgfD7eNcCYKZOowKE9ny++M9TzcgHic/XN4ONzb53/EfDqKngampL4kXeegbwrvxANyyCl9Fpchkv+hWJEcmgaTZxndf3fAY8K2aMvB5ICmV4fDgaI4eenFRn3e7S0LjgcLL94Ld1yyKbUFPfeN/RTUUjoCULFyjihdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758424750; c=relaxed/simple;
-	bh=gNN+aMOzEFbSUKRsK21R8dPuZqG4pliuplC0oJtvMs0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZERoy0wplIMvwd0Nz+S4EpoWlZBvFFdQ4XIshHvVQ/PhyLA2k5/prnDrBwPfmlny6rURWt4vaN/GW8qjPpGotAj48limkHopWzXoWYY3eEMwSvW25T7LmmDf31YLgCpcyMfRluP3T+C3rEsxoPCCGdOOgXg46HJrgbc/EF54K+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4240926dcd1so46565975ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 20:19:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758424748; x=1759029548;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ajb2v52eqLx5lxNtMtfhRpvrbjYWdz6Tn3XecePJ9bc=;
-        b=qweLbrvY0+52tiehmDuIWCPauJ4cMoHzpm32qudd2rHVyIMjoEGkv+DopeE7zSJ9FU
-         nxYL1zsrMK3Fsl9rfpyaQldjTuaIRoIZ+AmMP/NL/htKRX+wm1zGrpENV+fU7pq0WMw+
-         rG0UkdcNh8W+9lzNki7xnTezOtLKkRu3quuvuSQ9jrjoSpxbOHdk7vr/VyPYAyeMOpvp
-         vgVjXLxhRiLV/mDwcVZN1sLo4CvyWIN8NkHldy/U42Lm2U6NWN3dcgOA2agAX5VxQkqX
-         G83qYLfLJsgvwAHDYQ/3QblaiHtcYdbpY62mihsr0RfNGKnpeNZbe42BFYJIimmhWNiq
-         prvQ==
-X-Gm-Message-State: AOJu0Yy6wOWQ5+mtCakV67RaSF2lm2us6muof1LcRLl9bCaLFNk+uvdK
-	dHpi9EcCtTUUMcrCdVGe/dCEDYzYjKmX99h4u56wS2wAQ+3hD22zJbuX52JXn+5IYCCkSh/5PaQ
-	vLPUK6KIHjbeTr4W2uqgThtl5Y43lTlW+SSnBVATd3gNIzw9vIGYe4EfsHaY=
-X-Google-Smtp-Source: AGHT+IE7NJvdg2CsYO42AtH7hOOaA9MBfwKejmUeBQKSWyWtg53RXKvbgYh+YJtvHwOjgf47L9N1u+QYFGeOgI6R6h7wf2TspWmI
+	s=arc-20240116; t=1758424802; c=relaxed/simple;
+	bh=yKg/EdmaT2g3V8Kg9AIXOKGf+P7IzfKKOVhAO+PFpcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pZdrTa5O0pYPb3A30PlAb8tycOXCjiyQrVFgwAgVHafHbAzGdoXKy2m65m/30Hq0DybsAmQgqNrLUepB145Naw4ZU28iILWEivNB+cdw56g+4VwYXcIQi0mOP8VQHyvuWe4/3QUOIubgO4UpqgqbnI8PF0yz2wb0NwzwNAlqLd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=onVOmkFD; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=84C0iinDhnhA7DjXWAEPmRL6bo1hZ2IX/hlUcd5dYis=; b=onVOmkFDQDjodACWYgF0c7r1Lq
+	huG/zss0ca/ANDfif8RgGrCHnFMFr7NVynqLWEp6L1uAjzRw5+q2xRTVkJObxBG9VQEs/mLtw9mi4
+	xi5sB+jte7fm03R6QGlbguiHZcG2kJPU0to+dk9y1TIqbwhePzAfSWa7cXWzA8CJn268yfaTTiSGe
+	nEbY6YMukZp7d5RICtZz5e/lQdQZumUn4s+3GdUKjWSuROn/0qj10+xnW039+Is4rtMMl9P9E5UNe
+	dOUgsWp2R88YaqeqZxtx93GtVVbOZS39TboNj3dLnCDmHzhfSYWw27tMacv2dfSAprpPZ+em7YiA/
+	iroBeFxw==;
+Received: from [58.29.143.236] (helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1v0Abw-00Ecfe-TK; Sun, 21 Sep 2025 05:19:38 +0200
+From: Changwoo Min <changwoo@igalia.com>
+To: lukasz.luba@arm.com,
+	rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org
+Cc: christian.loehle@arm.com,
+	tj@kernel.org,
+	kernel-dev@igalia.com,
+	linux-pm@vger.kernel.org,
+	sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Changwoo Min <changwoo@igalia.com>
+Subject: [PATCH RESEND v4 00/10] PM: EM: Add netlink support for the energy model
+Date: Sun, 21 Sep 2025 12:19:18 +0900
+Message-ID: <20250921031928.205869-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4a:b0:40b:db4:839b with SMTP id
- e9e14a558f8ab-4248190391bmr122081815ab.5.1758424748341; Sat, 20 Sep 2025
- 20:19:08 -0700 (PDT)
-Date: Sat, 20 Sep 2025 20:19:08 -0700
-In-Reply-To: <68cdf1ae.a00a0220.37dadf.0021.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68cf6eac.a00a0220.37dadf.0035.GAE@google.com>
-Subject: Forwarded: [PATCH] nsfs: reject file handles with invalid inode number
-From: syzbot <syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Rebased the code to current HEAD of the linus tree.
 
-***
+There is a need to access the energy model from the userspace. One such
+example is the sched_ext schedulers [1]. The userspace part of the
+sched_ext schedules could feed the (post-processed) energy-model
+information to the BPF part of the scheduler.
 
-Subject: [PATCH] nsfs: reject file handles with invalid inode number
-Author: kartikey406@gmail.com
+Currently, debugfs is the only way to read the energy model from userspace;
+however, it lacks proper notification mechanisms when a performance domain
+and its associated energy model change.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+This patch set introduces a generic netlink for the energy model, as
+discussed in [2]. It allows a userspace program to read the performance
+domain and its energy model. It notifies the userspace program when a
+performance domain is created or deleted or its energy model is updated
+through a multicast interface.
 
-Reject nsfs file handles that claim to have inode number 0, as no
-legitimate namespace can have inode 0. This prevents a warning in
-nsfs_fh_to_dentry() when open_by_handle_at() is called with malformed
-file handles.
+Specifically, it supports two commands:
+  - EM_CMD_GET_PDS: Get the list of information for all performance
+    domains.
+  - EM_CMD_GET_PD_TABLE: Get the energy model table of a performance
+    domain.
 
-The issue occurs when userspace provides a file handle with valid
-namespace type and ID but claims the namespace has inode number 0.
-The namespace lookup succeeds but triggers VFS_WARN_ON_ONCE() when
-comparing the real inode number against the impossible claim of 0.
+Also, it supports three notification events:
+  - EM_CMD_PD_CREATED: When a performance domain is created.
+  - EM_CMD_PD_DELETED: When a performance domain is deleted.
+  - EM_CMD_PD_UPDATED: When the energy model table of a performance domain
+    is updated.
 
-Since inode 0 is reserved in all filesystems and no namespace can
-legitimately have inode 0, we can safely reject such handles early
-to prevent reaching the consistency check that triggers the warning.
+This can be tested using the tool, tools/net/ynl/pyynl/cli.py, for example,
+with the following commands:
 
-Reported-by: syzbot+9eefe09bedd093f156c2@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/nsfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+  $> tools/net/ynl/pyynl/cli.py \
+     --spec Documentation/netlink/specs/em.yaml \
+     --do get-pds
+  $> tools/net/ynl/pyynl/cli.py \
+     --spec Documentation/netlink/specs/em.yaml \
+     --do get-pd-table --json '{"pd-id": 0}'
+  $> tools/net/ynl/pyynl/cli.py \
+     --spec Documentation/netlink/specs/em.yaml \
+     --subscribe event  --sleep 10
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 32cb8c835a2b..42672cec293c 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -469,7 +469,8 @@ static struct dentry *nsfs_fh_to_dentry(struct super_block *sb, struct fid *fh,
- 
- 	if (fh_len < NSFS_FID_SIZE_U32_VER0)
- 		return NULL;
--
-+	if (fid->ns_inum == 0)
-+		return NULL;
- 	/* Check that any trailing bytes are zero. */
- 	if ((fh_len > NSFS_FID_SIZE_U32_LATEST) &&
- 	    memchr_inv((void *)fid + NSFS_FID_SIZE_U32_LATEST, 0,
+[1] https://lwn.net/Articles/922405/
+[2] https://lore.kernel.org/lkml/a82423bc-8c38-4d57-93da-c4f20011cc92@arm.com/
+[3] https://lore.kernel.org/lkml/202506140306.tuIoz8rN-lkp@intel.com/#t
+
+ChangeLog v3 -> v4:
+  - Move patches [3-5] to the first.
+  - Remove the ending period (".") from all of the patch subjects.
+  - Rebase the code to v6.17-rc4.
+
+ChangeLog v2 -> v3:
+  - Properly initialize a return variable in
+    em_notify_pd_created/updated() at an error path (09/10), reported by
+    the kernel test robot [3].
+  - Remove redundant initialization of a return variable in
+    em_notify_pd_deleted() at an error path (08/10).
+
+ChangeLog v1 -> v2:
+  - Use YNL to generate boilerplate code. Overhaul the naming conventions
+    (command, event, notification, attribute) to follow the typical
+    conventions of other YNL-based netlink implementations.
+  - Calculate the exact message size instead of using NLMSG_GOODSIZE
+    when allocating a message (genlmsg_new). This avoids the reallocation
+    of a message.
+  - Remove an unnecessary function, em_netlink_exit(), and initialize the
+    netlink (em_netlink_init) at em_netlink.c without touching energy_model.c.
+
+Changwoo Min (10):
+  PM: EM: Assign a unique ID when creating a performance domain
+  PM: EM: Expose the ID of a performance domain via debugfs
+  PM: EM: Add an iterator and accessor for the performance domain
+  PM: EM: Add em.yaml and autogen files
+  PM: EM: Add a skeleton code for netlink notification
+  PM: EM: Implement em_nl_get_pds_doit()
+  PM: EM: Implement em_nl_get_pd_table_doit()
+  PM: EM: Implement em_notify_pd_deleted()
+  PM: EM: Implement em_notify_pd_created/updated()
+  PM: EM: Notify an event when the performance domain changes
+
+ Documentation/netlink/specs/em.yaml | 113 ++++++++++
+ MAINTAINERS                         |   3 +
+ include/linux/energy_model.h        |  19 ++
+ include/uapi/linux/energy_model.h   |  62 ++++++
+ kernel/power/Makefile               |   5 +-
+ kernel/power/em_netlink.c           | 311 ++++++++++++++++++++++++++++
+ kernel/power/em_netlink.h           |  34 +++
+ kernel/power/em_netlink_autogen.c   |  48 +++++
+ kernel/power/em_netlink_autogen.h   |  23 ++
+ kernel/power/energy_model.c         |  86 +++++++-
+ 10 files changed, 702 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/netlink/specs/em.yaml
+ create mode 100644 include/uapi/linux/energy_model.h
+ create mode 100644 kernel/power/em_netlink.c
+ create mode 100644 kernel/power/em_netlink.h
+ create mode 100644 kernel/power/em_netlink_autogen.c
+ create mode 100644 kernel/power/em_netlink_autogen.h
+
 -- 
-2.43.0
+2.51.0
 
 
