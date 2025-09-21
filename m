@@ -1,81 +1,139 @@
-Return-Path: <linux-kernel+bounces-826446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58AACB8E8D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:27:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56B3DB8E8DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02006179FED
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E56B3BA33D
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640732C11DD;
-	Sun, 21 Sep 2025 22:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72112C21E4;
+	Sun, 21 Sep 2025 22:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+w72L2k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qoQmMfy9"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DE42F37;
-	Sun, 21 Sep 2025 22:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C0D2F37;
+	Sun, 21 Sep 2025 22:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758493657; cv=none; b=jkW5b+vbPLEx7lKfrmBpZK1CWJhrCgACX+I1BSJzcyRgciPkYxyQGSst8BuZHbe2+SELXekuSPiQmITmr5MhsRRA4iwSPAJmVVQ6f8PWs3nq/OSUSe4dg8T9BT4cm4GBNjaHNkgO0gGAGQt0KaR+bqmoHpZpSpLaPtds/ANUD8c=
+	t=1758493697; cv=none; b=o+POKlgbieRsm5PZWr/dTM9MDICpmAAEw3wF6dGyKrpDJrzkF10o80kiS706Rfhv+aTgiiV3VwmYGY8bHEGlnu9RRh5XXQzV/JJw1mf0PKzP0FzWoxE63+ouTU65d/ipsDoTXYn2+ly2Dl2+9hhH3U9Nlw19RwH+e/AUYo7s2y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758493657; c=relaxed/simple;
-	bh=XsPgplYi8+wjn2NIA2VSHLyCnxyguHWdNakfzR5RU/o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=t+0LkMv0lPQ5d5w/Kv2sCTpj112D0CzqUaHHTRb9Jx8Xkm0hvMJrcwVpOXRcjjSvuDERo4I7czTIWd06Vd1BL1hHAmodrzlSsiYPrGyunnEQYeblRvVPM84nfQUZOgTi8WfQpC3mIqZw1GdQxd+JBFn6GIqTFafyxEa2jUP2Yso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+w72L2k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD79C4CEE7;
-	Sun, 21 Sep 2025 22:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758493657;
-	bh=XsPgplYi8+wjn2NIA2VSHLyCnxyguHWdNakfzR5RU/o=;
-	h=Date:Subject:From:To:Cc:Reply-To:References:In-Reply-To:From;
-	b=X+w72L2k6rlJ6HbCh/1zMbvLRq5rgX+sCiXAqA7PK8dWEdRWU27HzOf/NQEgbmb3Q
-	 3t9Lrj2nICdu9L9Bw489gQo7KXWo4RjheUjzm5pUQfLLyeUcbahlhA9wPKO2AVAQcH
-	 fwF+bKId922LfaQGAL4RBVcGOv6q3UP/OFHTATpqPopH7KfiyBLJnMdJ5MFSGVhKMQ
-	 lGATzoVCH31EvudYAH+zwGkSSfvoCeACMIZxOT5fUIkhuy6ENNaZlfnrY34cBR5BGH
-	 SDPdl5g8//a2/+J6CNu3oIUtewefb7TwJ2ttr6VNdYrIybobT7+fLPHvfjTYaYfGeL
-	 WMPDXjsoxM3Uw==
-Message-ID: <c6c192a8-1d33-43b2-8131-6bad53f06d05@kernel.org>
-Date: Sun, 21 Sep 2025 23:27:32 +0100
+	s=arc-20240116; t=1758493697; c=relaxed/simple;
+	bh=l3Ivsn3JvGxkwHoogNhgmc6pBf/DmzRCG5UoUS6WbEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0gt8+AP6aUT2ztDFZO48+LPTsxmXU8M803W6t9oqbVpCpjxTPx1VcddLux7FOy1E/KOAo0ROMOWXOnZFm7hpF90tKZGbWZqm2Y74zO11f/Ky50utGydC5Y8qPQxuUpChEh8vWPmxpGijXykr4wOTnFWB0g7YZy+sX0Geym52f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qoQmMfy9; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id D5BF410C4;
+	Mon, 22 Sep 2025 00:26:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758493612;
+	bh=l3Ivsn3JvGxkwHoogNhgmc6pBf/DmzRCG5UoUS6WbEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qoQmMfy9Wo8ZiZpmjKndpoV9optOLxQMacitUd9pcgEQtoB/DuFxrhMJGOirEIQns
+	 ts6/8TX2HwqFL2jthkYUuUOkMX0Efj4XlyrjyqLUwNCR3oMMyACyQH93V6ZIVf1izc
+	 0GKm3OPYkFbBSWqI5uOZ9Z1iYMrnRF6XpwgYBgV0=
+Date: Mon, 22 Sep 2025 01:27:43 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guoniu Zhou <guoniu.zhou@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] media: nxp: imx8-isi: Add ISI support for i.MX91
+Message-ID: <20250921222743.GE10540@pendragon.ideasonboard.com>
+References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
+ <20250905-isi_imx93-v2-5-37db5f768c57@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/12] firmware: qcom_scm: Add a prep version of
- auth_and_reset function
-From: Bryan O'Donoghue <bod@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Reply-To: Bryan O'Donoghue <bod@kernel.org>
-References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
- <_EY7CMwY6zRmzmm13Bo2V7im-VNhJRkSEhPkwo3PQnrA6Gxd5fVTyT_wRbBbN0VB7Nt8DKXVU88AwGEi0OYEvw==@protonmail.internalid>
- <20250921-kvm_rproc_pas-v3-6-458f09647920@oss.qualcomm.com>
- <W0IHn8rT1rbt5S-iZhk7vogi7VhtzK80LCjugAp0h0EmEH2kfhTG3eHXQnyRMEWt4JY9KcoADxEZqW5BgvbNpg==@protonmail.internalid>
- <591289e2-a5e3-4941-b8d4-85edac281013@kernel.org>
-Content-Language: en-US
-In-Reply-To: <591289e2-a5e3-4941-b8d4-85edac281013@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250905-isi_imx93-v2-5-37db5f768c57@nxp.com>
 
-On 21/09/2025 23:23, Bryan O'Donoghue wrote:
-> Gunyah create
+Hi Guoniu,
 
-creates
+Thank you for the patch.
 
----
-bod
+On Fri, Sep 05, 2025 at 02:56:02PM +0800, Guoniu Zhou wrote:
+> The ISI module on i.MX91 implements only one channel and one parallel
+> camera input. As no input source selection is required, gasket ops are
+> unnecessary.
+> 
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c | 12 ++++++++++++
+>  drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h |  1 +
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> index 0155c75983f02f33f7f0669e73188222ebb5e816..c3d411ddf492eb27b372763ce5d344a90c6ec524 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> @@ -347,6 +347,17 @@ static const struct mxc_isi_plat_data mxc_imx8ulp_data = {
+>  	.has_36bit_dma		= false,
+>  };
+>  
+> +static const struct mxc_isi_plat_data mxc_imx91_data = {
+> +	.model			= MXC_ISI_IMX91,
+> +	.num_ports		= 1,
+> +	.num_channels		= 1,
+> +	.reg_offset		= 0,
+> +	.ier_reg		= &mxc_imx8_isi_ier_v2,
+> +	.set_thd		= &mxc_imx8_isi_thd_v1,
+> +	.buf_active_reverse	= true,
+> +	.has_36bit_dma		= false,
+> +};
+> +
+>  static const struct mxc_isi_plat_data mxc_imx93_data = {
+>  	.model			= MXC_ISI_IMX93,
+>  	.num_ports		= 1,
+> @@ -547,6 +558,7 @@ static const struct of_device_id mxc_isi_of_match[] = {
+>  	{ .compatible = "fsl,imx8qm-isi", .data = &mxc_imx8qm_data },
+>  	{ .compatible = "fsl,imx8qxp-isi", .data = &mxc_imx8qxp_data },
+>  	{ .compatible = "fsl,imx8ulp-isi", .data = &mxc_imx8ulp_data },
+> +	{ .compatible = "fsl,imx91-isi", .data = &mxc_imx91_data },
+>  	{ .compatible = "fsl,imx93-isi", .data = &mxc_imx93_data },
+>  	{ /* sentinel */ },
+>  };
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> index e84af5127e4e7938e55e31b7063bee5e2cd4cb11..3cbd35305af0f8026c4f76b5eb5d0864f8e36dc3 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> @@ -160,6 +160,7 @@ enum model {
+>  	MXC_ISI_IMX8QM,
+>  	MXC_ISI_IMX8QXP,
+>  	MXC_ISI_IMX8ULP,
+> +	MXC_ISI_IMX91,
+>  	MXC_ISI_IMX93,
+>  };
+
+The model field is unused, should we drop it ? That's a candidate for a
+separate patch, for this patch
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
 
