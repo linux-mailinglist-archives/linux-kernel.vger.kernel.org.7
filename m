@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-826063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31073B8D708
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:56:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29E2B8D710
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 09:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5F13AD338
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A01CB1698F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 07:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738FF2D1F4E;
-	Sun, 21 Sep 2025 07:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90CF2D249C;
+	Sun, 21 Sep 2025 07:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFeOWwEG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kKdha3PW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rc1bcWmg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1FB46B5;
-	Sun, 21 Sep 2025 07:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D072746B5;
+	Sun, 21 Sep 2025 07:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758441383; cv=none; b=q7q+sN6NxrBbOPyF1WAniDrJZU1C3HrlgE/Sj9ZjQdlYFLEQKyT0lAtTv67JEfmtbLWzID1x8dPXvXN3SHH2rauKM/qs/U+wQg/QPErwmQgZ2JHfwYTlG4DmzcGP/L0DBdmgT19A8zpCkZ9iXeoKG3vHJcaUzu8WEJ7FOUgaCYg=
+	t=1758441572; cv=none; b=eLAsfvKSQ3O9NK9PzblM98ZkeqfRtY6JOyMltgAGOoLXxiegRHQCMZ0vtMSFTVdYlxuJLb06D7YhV4B8w8l8tF7+2Isd+rSmVwNKD8VYDAS3u0WIuo0Lsd+eBEiUKOBNCzhAQBG6yqhXF+J2ixsAwrfjTLt9HsiDI+acIXEYjbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758441383; c=relaxed/simple;
-	bh=pkXmWMXT97+JSbetdgGN1OksrY17F7X1ivvEOG+Y2Zg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mf7gmD4mcRmi694G1lxKCFrxf2vUUrT3oU4Zbwotgud08uoL+sDRAF+YCxlUpEhyv0x19abyEylh2CURYohmKqxbHkPtIs/5nU3Abna2PwElzwxWmmfa37v2mPavT0ubtdO6WaJc60YUB+JltaMjYWhmazqqVkJzm+EOllM4gA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFeOWwEG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309FDC4CEE7;
-	Sun, 21 Sep 2025 07:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758441383;
-	bh=pkXmWMXT97+JSbetdgGN1OksrY17F7X1ivvEOG+Y2Zg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PFeOWwEGGDYMd3n5CWiy7ndYtMKRGSZ3Wi4NfuIlCX5K/tDfuxPz9r+nsPsydld1n
-	 9re96EZn7nBU+u3PAqRXEy+V/RtD4hGMvn6CKHmMlzw5LOT1yf/WZ0vCQod/Q4Q6k7
-	 Wa1Z6nuvZpFVVA+JSjt+6vPbHzutiXunNOjpcEN/KR4hKQZCzVgtuBLTyzywS+rLBD
-	 XNMtoq6gCvRCm8HAtBcX/+lBWOUWVqdX9bttp2Fi4VVy3KdsTq1e33ZWu2wd8r+poD
-	 U0Qy8xqSMm1bRJqSx5oaPwT2hpoT0qel5Qe/S9D39iMTRzqWvwvMMiIHFyOqIxgMWX
-	 hLwvUvG3CGFUw==
-From: Georgi Djakov <djakov@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	djakov@kernel.org
-Subject: [GIT PULL] interconnect changes for 6.18
-Date: Sun, 21 Sep 2025 10:56:03 +0300
-Message-Id: <20250921075603.14452-1-djakov@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758441572; c=relaxed/simple;
+	bh=PtSTT4p20a/LZGlJuc4NQQnsML1a972kpDpubnns6Rs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CBG6wo7JF6JGZ6FUQMsO7R7XRz4wbkH/7KFxmQdrS7JlRusJZdNJKHFnVcjERgLvMBv/divjRTLGC0DFRc4hoL+gxGAu9oj7v8BBITSBU70B6zp+4qs4H/WJuFLqe9ZNEPthptMFJx3SYCADT/bMO0KcAur/kkpgYiqnhTxVv5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kKdha3PW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rc1bcWmg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758441568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qgzTW+fNXfoELpXTfDFx6F6ILchBQgnAN8zjC0dBrjE=;
+	b=kKdha3PWFHhtuCZgx3r/mUJwryEbl6EfdCZVvSaoFERn9DTsjePgVn4RJokc7eaDZH6CJz
+	CZCgljVLHt1KGKMkuySbd9npSyxnu7ea5rd28cYyxEK17nc5pt9kML5QklTyM2aIKslngz
+	KjSTJipr/DUNiF1H5fiFvX0qoq0iMFKQxPE5W8Cqx2rdwT1YnJrV2RtBnkcbiCuNEOPLX0
+	tE/3JO61vA6f/gdkjHe/5MjDzpvEAnTRWskZuZ7bxiEKNwMO24B0wFP2EK33hNycVljIJl
+	y079jKqO/XDkBUmHyJ9EFGgRnueQZhiVtBfbKItZD4DC9x9cKwkJGz16cMDKEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758441568;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qgzTW+fNXfoELpXTfDFx6F6ILchBQgnAN8zjC0dBrjE=;
+	b=rc1bcWmgmyAGk9xtXsuLiImVzQSaTXW/J1c/XX5bozwpOk6GDSbwaKWFG3qjojWFXcVyHL
+	OPS5Gj39MBvQ1zBQ==
+To: Wake Liu <wakel@google.com>, John Stultz <jstultz@google.com>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, wakel@google.com
+Subject: Re: [PATCH] selftests/timers: Skip some posix_timers tests on
+ kernels < 6.13
+In-Reply-To: <20250807085042.1690931-1-wakel@google.com>
+References: <20250807085042.1690931-1-wakel@google.com>
+Date: Sun, 21 Sep 2025 09:59:27 +0200
+Message-ID: <87o6r46xsw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hello Greg,
+On Thu, Aug 07 2025 at 16:50, Wake Liu wrote:
+> Several tests in the posix_timers selftest fail on kernels older
+> than 6.13. These tests check for timer behavior related to SIG_IGN,
+> which was refactored in the 6.13 kernel cycle, notably by
+> commit caf77435dd8a ("signal: Handle ignored signals in
+> do_sigaction(action != SIG_IGN)").
+>
+> To ensure the selftests pass on older, stable kernels, gate the
+> affected tests with a ksft_min_kernel_version(6, 13) check.
 
-This is the pull request with interconnect changes for the v6.18-rc1 merge
-window. As always, the summary is in the signed tag.
+What's the point of emitting 9 times the same skip message?
 
-All patches have been in linux-next for a full week. There are currently
-no reported issues. Please pull into char-misc-next when possible.
+There is no value at all and this can nicely be solved in main() by
+checking the kernel version once, registering either 10 or 19 tests and
+not invoking the tests which depend on 6.13+ in the first place, No?
 
 Thanks,
-Georgi
 
+        tglx
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git tags/icc-6.18-rc1
-
-for you to fetch changes up to bcdf7a064c3c73cd97870a3ef5e4dd6214b28b79:
-
-  Merge branch 'icc-glymur' into icc-next (2025-09-12 13:54:17 +0300)
-
-----------------------------------------------------------------
-interconnect changes for 6.18
-
-This pull request contains the interconnect changes for the 6.18-rc1
-merge window. It contains new driver and a minor core cleanup.
-
-Core change:
-- Use device_match_of_node() instead of open coding it
-
-Driver changes:
-- Add new driver for the Qualcomm Glymur SoC
-- Enable OSM L3 support for the QCS615 SoC
-
-Signed-off-by: Georgi Djakov <djakov@kernel.org>
-
-----------------------------------------------------------------
-Georgi Djakov (1):
-      Merge branch 'icc-glymur' into icc-next
-
-Raviteja Laggyshetty (4):
-      dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in Glymur SoC
-      interconnect: qcom: icc-rpmh: increase MAX_PORTS to support four QoS ports
-      interconnect: qcom: add glymur interconnect provider driver
-      dt-bindings: interconnect: Add OSM L3 compatible for QCS615 SoC
-
-Zhang Enpei (1):
-      interconnect: core: Use device_match_of_node()
-
- .../devicetree/bindings/interconnect/qcom,glymur-rpmh.yaml     |  172 +
- .../devicetree/bindings/interconnect/qcom,osm-l3.yaml          |    5 +
- drivers/interconnect/core.c                                    |    2 +-
- drivers/interconnect/qcom/Kconfig                              |    9 +
- drivers/interconnect/qcom/Makefile                             |    2 +
- drivers/interconnect/qcom/glymur.c                             | 2543 ++++++++
- drivers/interconnect/qcom/icc-rpmh.h                           |    2 +-
- include/dt-bindings/interconnect/qcom,glymur-rpmh.h            |  205 +
- 8 files changed, 2938 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,glymur-rpmh.yaml
- create mode 100644 drivers/interconnect/qcom/glymur.c
- create mode 100644 include/dt-bindings/interconnect/qcom,glymur-rpmh.h
 
