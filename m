@@ -1,92 +1,140 @@
-Return-Path: <linux-kernel+bounces-826431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB74B8E82B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD7DB8E831
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93868189CDB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D124A189C113
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333DD253359;
-	Sun, 21 Sep 2025 22:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8FC2BE02C;
+	Sun, 21 Sep 2025 22:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IddOChXO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="il58Bdov"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888961805E;
-	Sun, 21 Sep 2025 22:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D2712F5A5;
+	Sun, 21 Sep 2025 22:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758492459; cv=none; b=X7+xJ9bRCvL+NXCo3TmrUblRGDhVQDX9PvEcpkvt2alejxfq0ic0sSTChV34I2okCGl+0imCSnJD6+Zv/nsB3aDPdwXni9J0lwoHP0K3EgLSUN7EngjpZQOJgQcNkoxgWp1ONSD9l+QIOD+pydnXUj3UET8H8Pj+lEmEHv6l4WM=
+	t=1758492687; cv=none; b=o/WSz4VdmHjbVI2lxbGVdUt3SrKebRECRzTbNfzQJ4jwm/lO9r8R3vXDXYDmJhcPdOEi0KEemDwazgjklzPpDkDwlVCakgIj2f6Bi1za4lEDH7++0LEheijzoJtTgmJp9HYVnB4uKcQ5lFmojCL68EYz4+u3QUg8zePuDv7xtoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758492459; c=relaxed/simple;
-	bh=z1mNSQz3UrZbcale6Wt3b20gF0+3YdPSmgihFq1+T40=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rio61sDgW8ZhrQqUInu/2triYapU3H+OZ0DdsDB/VVZYMQCI6IbYsmDIZbQ/47cQx8zEU1663XEPWrpQOcarM/I044PxUvnMLIHj0VOCXyhrXRjOKXiTZNax0FGmTno72quyT7YWAcJGmuWAthGBlkzsM9DJPFJKMXMgCorhMpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IddOChXO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB07C4CEE7;
-	Sun, 21 Sep 2025 22:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758492459;
-	bh=z1mNSQz3UrZbcale6Wt3b20gF0+3YdPSmgihFq1+T40=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IddOChXOeDhxmCC6HPs7Fq+Tw0c3iEv77SRhjfJew3ZPn2pFPlzCaTw49Q9n5F39+
-	 Qmpywn4bkxo8xxFLBf1FzQEU3qILUyf9z+g/AMcsWzV/t2haszTIob1e1v/NH72r4i
-	 RXnK955t3UCJVEA+nQEhtzQwsnUUZ1R8AV82suW9aQIBw2yMQMJsedlY+3DbiQmCD7
-	 tqLdApZd7Vz1i33Rxek6HlGRRSG1kgk/mhQysScuIiGMHyv9nn/sWFBqtpBbxyrF8f
-	 KjrxDWq/3qVXV3SekJQ2R2DqFWXAvCDsAUnoXW9xYrlcA1xmuO0yVWM4rGgU8to50X
-	 Q6Px9pss+2zFA==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1v0SDZ-00000005bCS-19Ax;
-	Mon, 22 Sep 2025 00:07:37 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: "Jonathan Corbet" <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: Makefile: fix rustdoc detection
-Date: Mon, 22 Sep 2025 00:07:28 +0200
-Message-ID: <8db0faccc31c283a3ed9353e71ad396af17dd123.1758492447.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758492687; c=relaxed/simple;
+	bh=LAVT7fd94Dqyvggjb7HfswE4SogprjltEzomfWvmFqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYTK6Y/eEzrGPCdKfxEDMGM/eZncH4OmsLvzX0PeHWO1phy9QY1gyEUJlHZkZOoDM9vu5G5SI/wbADqY+LEAXWzGebZaUQiwemw1/+Af++SExeWnx8pi1G9X+YnEIJpRiZTu6GFE+oxY2bpljKj2jeET99Wa4IQLT3DJVm2bPiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=il58Bdov; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 3A82910C4;
+	Mon, 22 Sep 2025 00:09:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758492599;
+	bh=LAVT7fd94Dqyvggjb7HfswE4SogprjltEzomfWvmFqE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=il58BdovW9wqLdI9J5VQ3MUe7NyCvg6VqG6B1dgcjzlpcqMPLbk0USxPOKK2NGoaS
+	 605omlvMMFhiZ3tKn1QVSCg0F8FC2O9QSC2BEoGt6+oJJMlf09652v9iEgKlcNzEgx
+	 p3rXbh4WpjG9b5cIjcS6we/Md6PcdL9gxoFbHcIY=
+Date: Mon, 22 Sep 2025 01:10:50 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Guoniu Zhou <guoniu.zhou@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Alice Yuan <alice.yuan@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/5] media: dt-bindings: nxp,imx8-isi: Add i.MX91 ISI
+ compatible string
+Message-ID: <20250921221050.GA10540@pendragon.ideasonboard.com>
+References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
+ <20250905-isi_imx93-v2-1-37db5f768c57@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250905-isi_imx93-v2-1-37db5f768c57@nxp.com>
 
-During cleanups, the logic checking if .config exists were dropped,
-but removing it causes false-positives. So, re-add it.
+On Fri, Sep 05, 2025 at 02:55:58PM +0800, Guoniu Zhou wrote:
+> From: Alice Yuan <alice.yuan@nxp.com>
+> 
+> The ISI module on i.MX91 is reused from i.MX93 and implements one channel
+> and one camera input which only can be connected to parallel camera input.
+> So needn't to select camera source like i.MX93 in gasket ops.
+> 
+> Signed-off-by: Alice Yuan <alice.yuan@nxp.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index cc4ee55c75ed..c60db1038c9c 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -42,8 +42,10 @@ FONTS_CONF_DENY_VF ?= $(HOME)/deny-vf
- # User-friendly check for sphinx-build
- HAVE_SPHINX := $(shell if which $(SPHINXBUILD) >/dev/null 2>&1; then echo 1; else echo 0; fi)
- 
-+ifneq ($(wildcard $(srctree)/.config),)
- ifeq ($(CONFIG_RUST),y)
--	RUSTDOC="--rustdoc"
-+	RUSTDOC=--rustdoc
-+endif
- endif
- 
- ifeq ($(HAVE_SPHINX),0)
+> ---
+>  Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> index f43b91984f0152fbbcf80db3b3bbad7e8ad6c11e..001a0d9b71e096db3f543adaad40b84af378d707 100644
+> --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> @@ -22,6 +22,7 @@ properties:
+>        - fsl,imx8mn-isi
+>        - fsl,imx8mp-isi
+>        - fsl,imx8ulp-isi
+> +      - fsl,imx91-isi
+>        - fsl,imx93-isi
+>  
+>    reg:
+> @@ -66,7 +67,6 @@ required:
+>    - interrupts
+>    - clocks
+>    - clock-names
+> -  - fsl,blk-ctrl
+>    - ports
+>  
+>  allOf:
+> @@ -77,6 +77,7 @@ allOf:
+>              enum:
+>                - fsl,imx8mn-isi
+>                - fsl,imx8ulp-isi
+> +              - fsl,imx91-isi
+>                - fsl,imx93-isi
+>      then:
+>        properties:
+> @@ -109,6 +110,16 @@ allOf:
+>              - port@0
+>              - port@1
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            contains:
+> +              const: fsl,imx91-isi
+> +    then:
+> +      required:
+> +        - fsl,blk-ctrl
+> +
+>  additionalProperties: false
+>  
+>  examples:
+
 -- 
-2.51.0
+Regards,
 
+Laurent Pinchart
 
