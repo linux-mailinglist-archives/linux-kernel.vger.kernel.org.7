@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-826387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA928B8E5FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 23:07:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCD5B8E606
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 23:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF5C3BF30A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2573B93B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0449C1C84A0;
-	Sun, 21 Sep 2025 21:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D5228643C;
+	Sun, 21 Sep 2025 21:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWkYl/ol"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wolber.net header.i=@wolber.net header.b="O+t5Okyi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J7OYAISj"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEC841A7AE3
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 21:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8834D185955;
+	Sun, 21 Sep 2025 21:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758488826; cv=none; b=vAMHXJkUSY8HhW62b1Zcd54olXevOzN89Aluu+4FxanKe7xWzWqkXdmPi+n0BTyKSatbvOZ0sjszI9J0zhkh2MCRnZ726VwW2eQcJp+2jbkCVT69cHfof08xgbqTM8qOoLuOACkT4unRN4XEJhYrDcX/gucV0kI4YrlYeL0XHOs=
+	t=1758488894; cv=none; b=urSu+/rMp7aRjF9TqGY003h7i3p/4EPQRn29GyoL0JO+1VZEi1epFNTmqYxkjEMtPWIPs3MNDbuJ5IejX6NRxxo3i9AXw8IAktm3du2OeIsqIfQoiOIRi498UxtNziBKklfyUy8uphQ+VFBOp+4q1WqW+QSCFoLpNN2ume5goV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758488826; c=relaxed/simple;
-	bh=Bnii5D5R+f0E2i4mZESrA1Cqh+1ZTJqhCJX9nj+/ucQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=L8CAEnv7b5C3kCPiL6JfjgjCqOzt/WRqFJnF0G9NE9LI77cl6m+Jj7L1SVPuraE4cujxr/sRwEq+RchpRq5tK4vvGwfOr6ndV8WzhKo5TACrsVw/pZD7btn2pGMhutWnt3neIFj+O24w/tGrslXeJEUZBYbQLFz9VPvlGwqEI80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWkYl/ol; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b55115148b4so2296635a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 14:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758488824; x=1759093624; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=EV+MWhbWq2Q6vqymybluCls4t1NNkCevTKd69KW1i7o=;
-        b=NWkYl/olQPAMoQKg/AToB+k9wke9GIcmJuvCW9FeO8HcE+dYHN1kwt1Z46hO820uOV
-         PivxTlNKqY3oMbsOLXI21ELN1vFO5fjdED9dzP8bSZLTtvCYyl7sXhwkV+oe7rX7WJ4j
-         WNWEgUzm2SziLEiHrzHOhz00xtJeHhLz9E1jjdHjkmd69dl04mLbYZ57juccHAyrkc21
-         JaCcFYeHT3M0V/s7WmCAyiRnRdYe9jIPF5K97TeHfLbCQO4TtVEhLmU6Kp6R1Yy4a0Jm
-         lkG/I1HDbY69nhIOT119wQrhY4yFXlAqHObhGiL0IsGof1HQzfPphH7rHt9mq+vfRAjr
-         qxHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758488824; x=1759093624;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EV+MWhbWq2Q6vqymybluCls4t1NNkCevTKd69KW1i7o=;
-        b=wIHy7UxEnLBncc88SSwt3gaxuvnfhHV7gIZLB+OpdfEg+9YngFSjm3wxkU/6nJCJIT
-         ie5XJ8Vi/tduvRXJc7FAMeGHZaPfVgLUT5SnMVhUzOWDHgARM6fUN2dZGXY4wjOZyFIj
-         CG290Ck8iXFOlHjdqss5uA6wDWLV1aYqE2oSXjBcmqx5rCgavA26BlDhnvQx4DPg/3rW
-         SW0O19jXYG3E383AzahMk2pEqLLvuJwwfcM+22SvUnMz6SPpg03x+UwTnHMSmok0UW8t
-         6SvwqLVjkn+Aoom+5pFokjKiIf5APtOHzuBJVLaqYAxS3LrunRmV9K+h4QK27S7wsiFP
-         nC9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJTFyJ3Jl6E+cNV6g9TQSOLXSChOaY8o9fIgs/DJWODnL3FmaSbF3YxkG1vGsX82oJopCVyCuSziS8Ln4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMK3zGVZtzHP1sMHCr/fs9Hf3cknOTAmur6DXXzUG0Ud/tR7rR
-	qxdA8eNW+MyYVqU4StnjV4RfgXYam4RmHXpW872i4C/PfMk9lCK0x3LP
-X-Gm-Gg: ASbGnctGbSFOQ945LlpG94dFbfanuKbXS0Qk03gdHcrxSGv4kk8SSzf/F9b4b2V7AKr
-	lDF+CYNONJfX6m6ig3y7TXaoXhyDHr4gX7cc8byncc4yBhy783Vts1j9tFGhEM7apPgTvLnZ9fm
-	T3IG+IWdYS3iRh2cThI2kTh0muQl9vF5mYqZOaV5AYG7akmSrGiR9maf2Bzn9f7PF6A3ee/3cjU
-	m10pbvUZSCuKOQoqqgFoLnGjdHDXBXJcQSNxm723sJg48XBm790/1eMrgl1e/9/l2eG6CMaClPK
-	FkgE2v3dyLxDNq7Ea4lfwmtNatgWF9iNGsKyum32XvKT6kq8J/dYRvxmC2ep2ZTQrVIUIQs4x6v
-	UxOMaFEjKa3b3vc6fhC9cobQ/MQV948aj0cnwCn7LZzAN5+M4M1Lyt+TyPdidHqwT6t7O9+mqew
-	FN
-X-Google-Smtp-Source: AGHT+IEBhz4Vgcda0CmzO3ZZWUM5pIo4myqFp0/op8mgrMOJGUmsHkIt9o5tgVJoYdz7yYLG2MoAFg==
-X-Received: by 2002:a17:902:fcc7:b0:24c:cc2c:9da9 with SMTP id d9443c01a7336-269ba43410dmr99531245ad.14.1758488824280;
-        Sun, 21 Sep 2025 14:07:04 -0700 (PDT)
-Received: from [192.168.68.63] (104-12-136-65.lightspeed.irvnca.sbcglobal.net. [104.12.136.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-269802e14f1sm110134725ad.71.2025.09.21.14.07.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Sep 2025 14:07:03 -0700 (PDT)
-Message-ID: <649ca4a6-3158-4c52-bad3-6c266edd177d@gmail.com>
-Date: Sun, 21 Sep 2025 14:07:03 -0700
+	s=arc-20240116; t=1758488894; c=relaxed/simple;
+	bh=qOSGdF6leebqlCaCu8EDW3SnUS0vexy+XgNqzR/Dc08=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=nTMVjC4Rnr6PdThqdMkE1sf/4Y8m41/RNFHlgy1dQBr7TnK65ZlSRObPt/nvUqVTs3qmcQnO6kT3B3ga99OHqjNNcIOg7GrYJA+fym09HY6fgYrEYBbbYP26aoHdNR+YMj9lbzeDl1+oa5hz6WUjvntO+20iEfYV13i4SuPxN/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wolber.net; spf=pass smtp.mailfrom=wolber.net; dkim=pass (2048-bit key) header.d=wolber.net header.i=@wolber.net header.b=O+t5Okyi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J7OYAISj; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wolber.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolber.net
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 8EE8414000D0;
+	Sun, 21 Sep 2025 17:08:11 -0400 (EDT)
+Received: from phl-imap-03 ([10.202.2.93])
+  by phl-compute-02.internal (MEProxy); Sun, 21 Sep 2025 17:08:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolber.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1758488891;
+	 x=1758575291; bh=qOSGdF6leebqlCaCu8EDW3SnUS0vexy+XgNqzR/Dc08=; b=
+	O+t5OkyishpEBU64ngGj2QXgDOaAOBeUbmgWUQMCmKwx1Npjnm180g3HpjbuJz7L
+	oOUmtHVzHzvR+TMPdjkII8WZK0ZQfH53fauABngziZI2MhaBq4mIy8qF0p1fQmiD
+	zYPYqP/TtXCzh+zkr0U19xV9bU0ytCbarD+/v9sEtxkhmyYY1dGwEGPblxgvkuhl
+	pcTacxOMfKnsjkE4MzHvMkKT9QIcdt6P+CL0Z2uzn7e8f1MouVLSEBfDq65mDwYY
+	UwGbCOFIb+zEXcQmRct/VdA6NGq+1r/Gwxb83mHEABwi8fEJrOkGZbkSWiNFjTzZ
+	WXdwdlD1mjbPjseDQufUQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1758488891; x=
+	1758575291; bh=qOSGdF6leebqlCaCu8EDW3SnUS0vexy+XgNqzR/Dc08=; b=J
+	7OYAISjmKUZ/1/ExByetMJrNDQcvG1dVGu4Ls5/GrGeFO72phduhmnhjT0QErykQ
+	ZP3fO6ABW+uWhMvcpoWTwPfm74WObvU9bgLQQ+aim3VpwJsZAIdPtO76zJvtVxuk
+	VNl0Wr+8kPCCS0oxGUbOhnBmokETBMSjt6cxJVTxXnZZs4zDGaRmmnFZZ9HgwIny
+	ZpQgM9UdgvrAigul3WudCubZMq+ByvronsY7gXO8UlL2kZs2SB4+RfjsagZCset8
+	ssKtMikD7Yt++vKJrQVvdAGrtA58wm+PjTQTXbF3n03EdaAvfumBKlTv7EchTlSy
+	v5Eav4tf+LjvLjuIfygJg==
+X-ME-Sender: <xms:OmnQaCgCwMYVVEs2RoGBfACA1aOmnQMQJAmILe9dRRbiZVr5vrUcIQ>
+    <xme:OmnQaDD3hhanCV1noJMk8yjWE95fXSEB5uVNdvfsbs1Ys2RRR7XYbDMunsmLW4iVs
+    zEAhvdc9SLDjoWAed0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehiedtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggfgtgffkfevuffhvffofhgjsehtqhertdertdejnecuhfhrohhmpedfvehhuhgt
+    khcuhgholhgsvghrfdcuoegthhhutghkseifohhlsggvrhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepgefhieelvdfgvedvfffgudehueeukefgfeefhfeiudejieevheekgffhtddt
+    udetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheptg
+    hhuhgtkhesfiholhgsvghrrdhnvghtpdhnsggprhgtphhtthhopedvkedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepmhgrrhhtihhnrdhkvghllhihsegtrhhofigushhtrh
+    hikhgvrdgtohhmpdhrtghpthhtohepmhgrthhhihgvuhdruggvshhnohihvghrshesvghf
+    fhhitghiohhsrdgtohhmpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhmvgdprh
+    gtphhtthhopegrmhgvrhihhhhunhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepvggu
+    ugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehkvghrnhgvlhhjrghsohhngi
+    hinhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgvmhigohhrsehgmhgrihhlrdgt
+    ohhmpdhrtghpthhtohepphgruhhlrdgthhgrihhgnhhonhesghhmrghilhdrtghomhdprh
+    gtphhtthhopehrohhsthgvughtsehgohhoughmihhsrdhorhhg
+X-ME-Proxy: <xmx:OmnQaGE5h0i6QZg9hxcX-SEfitPDqL5I_2ejrbQuP80ODAf8zwM2jw>
+    <xmx:OmnQaIl1OmCwuSDFd94Uvl7vNXRASMJTnG8AL5e8mCZXHDdKx0V9-Q>
+    <xmx:OmnQaJB07OP3kO9qObmlNkKBu3KTsOSCWw7EI-qchDkswFz8cMGYNA>
+    <xmx:OmnQaHHr4bXuh7fQYtHbKovrDNI14xD7pXyyDFjRY5qTJlN-WTIiUQ>
+    <xmx:O2nQaLrNsk7LQNO7Q0QB7jXw20IHlRLcR67HCtWbvzeFkSy3Gjgj8ayd>
+Feedback-ID: i5cf64821:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 86B6318E0069; Sun, 21 Sep 2025 17:08:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] arm64: dts: rk3399-pinephone-pro: Add
- accelerometer sensor support
-To: =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megi@xff.cz>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com>
- <20250921-ppp_light_accel_mag_vol-down-v2-2-e6bcc6ca74ae@gmail.com>
- <5b6ijumsm6bgqymsfc25frqzjlpiryq7iupuk2pokcb6d4bz56@yqrz6j3oj5ga>
-Content-Language: en-US
-From: Rudraksha Gupta <guptarud@gmail.com>
-In-Reply-To: <5b6ijumsm6bgqymsfc25frqzjlpiryq7iupuk2pokcb6d4bz56@yqrz6j3oj5ga>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 21 Sep 2025 21:08:09 +0000
+Message-Id: <DCYSABMLGCUG.3T4ZQDGWFW6KY@wolber.net>
+Cc: <ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+ <martin.lau@linux.dev>, <song@kernel.org>, <yonghong.song@linux.dev>,
+ <haoluo@google.com>, <jolsa@kernel.org>, <eddyz87@gmail.com>,
+ <kpsingh@kernel.org>, <sdf@fomichev.me>, <mhiramat@kernel.org>,
+ <mathieu.desnoyers@efficios.com>, <shuah@kernel.org>, <willemb@google.com>,
+ <kerneljasonxing@gmail.com>, <paul.chaignon@gmail.com>,
+ <chen.dylane@linux.dev>, <memxor@gmail.com>,
+ <martin.kelly@crowdstrike.com>, <ameryhung@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <yikai.lin@vivo.com>
+Subject: Re: [RFC PATCH bpf-next v1 0/3] bpf: Add BPF program type for
+ overriding tracepoint probes
+From: "Chuck Wolber" <chuck@wolber.net>
+To: "Steven Rostedt" <rostedt@goodmis.org>, "Fuyu Zhao" <zhaofuyu@vivo.com>
+X-Mailer: aerc 0.21.0
+References: <20250917072242.674528-1-zhaofuyu@vivo.com>
+ <20250917153055.6fee814f@gandalf.local.home>
+ <e8e8b5e2-35fe-43cc-ba41-c84ccba189f7@vivo.com>
+ <20250918112425.23d4d379@gandalf.local.home>
+In-Reply-To: <20250918112425.23d4d379@gandalf.local.home>
 
-Hello,
+On Thu Sep 18, 2025 at 3:29 PM UTC, Steven Rostedt wrote:
+>
+> My entire workflow for what I created in the tracing system was "I have a
+> need, I will implement it". The "need" came first. I then wrote code to
+> satisfy that need. It should not be the other way around.
 
- > I'm not sure where you got this patch, but it's not from me (I know 
-for sure
- > I never did any mount-matrix testing/DT patches) and should not have my
- > Signed-of-by.
+Tagging on to this sentiment - the kernel's design is emergent and will alw=
+ays
+remain so.
 
-This is where I sourced each of the commits:
+Speculative features have a very low probability of reflecting the required
+design language. On the other hand, if someone needs a thing, the need will
+drive the use of conformal design language.
 
-- Add light/proximity sensor support
-   - 
-https://codeberg.org/megi/linux/commit/f171bc7013bc7ad3de9af817bfbcbfa548ebe01c
-- Add accelerometer sensor support
-   - 
-https://codeberg.org/megi/linux/commit/b0bb7633e073a6760fa213b8c4a78ea2e73c7bf1
-- Add magnetometer sensor support
-   - 
-https://codeberg.org/megi/linux/commit/2f7e67f451f16eaf15b81aa1dbdf126d54927d35
-- Add mount-matrix for magnetometer
-   - 
-https://codeberg.org/megi/linux/commit/d7cd2eab931e32fa94408a96d73b4e6c0616107a
-- Fix voltage threshold for volume down key
-   - 
-https://codeberg.org/megi/linux/commit/7c496a5cc27ed4e38b740f36c2d8b2c62f80ae54
-
-I will add my sources to the cover letter moving forward.
-
-
-
- > Looking at where the magnetometer is mounted, it's mounted on the 
-bottom side of
- > the PCB (U29 chip):
- > ...
- > So based on that mount-matrix should be:
- >
- >         mount-matrix =
- >             "0", "1", "0",
- >             "1", "0", "0",
- >             "0", "0", "-1";
-
-Thanks, addressed in v3!
-
-
-Thanks,
-Rudraksha
+..Ch:W..
 
 
