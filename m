@@ -1,120 +1,147 @@
-Return-Path: <linux-kernel+bounces-826336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01656B8E372
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:43:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04294B8E384
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 20:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA75817D89D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53ED23BF213
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D9624C077;
-	Sun, 21 Sep 2025 18:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qaU7NRve"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5992727FE;
+	Sun, 21 Sep 2025 18:52:26 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A6D8F54;
-	Sun, 21 Sep 2025 18:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630661C84A0;
+	Sun, 21 Sep 2025 18:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758480189; cv=none; b=qM0FdvRDAnKyIAZVmcx8IfgDHp+onWcgYahKApzfZr0J5FjLgsaC5bqYkPly5swXNwSPGRCI6oIw5qiw6pjQe0uLs51aChq1JcK0XJEnxdVsIxbbMz4jvX36Rmh7n/6zxNA9wWO4b15/vC2cveV0k/wX9i/vvEe7lX5OkvswJXU=
+	t=1758480745; cv=none; b=MQx8UCXiFZvT5m4iXTv4Z80c57XfmzaHLSeWwRBzcQtLHUBKVw0iytNZkm2ON72PL4d3YGQPpy02hhRbzJoHtwVryuT3XgI2t/HX/UnJLJIuTLHG0StTnvvrT3K+j0uNaK633EozbfLv1Zxl6cBF88K195FUe8PR7yq3smKqPdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758480189; c=relaxed/simple;
-	bh=kz8+rJ3OwRE88qi+eE8kRDASDAeDA8L3yK0pRJpy4Rk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGa9R5+fpGnHNO+vc3tneVc6DPfupaLG8RY35KA8+VRjt2cHiWXa1tHSTKyHOnsf8CKOER48T9131xd/tItrbPD/jMX6L/7fE+G3BHWdbY4UeFdOsuPqaPwfxmyv5kk/7/smMT4kHJ3dGDXshsAUMYJtK2/V6BpXAxZtWWb4A0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qaU7NRve; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=mwIooN8k13SoYRJ7KEz/xkVOkWcWn7ux3nhsoOLZo9o=; b=qaU7NRvejjiEjJmEY8pUOQ/AVk
-	ykrJ2rANOXWvNjd99dglSOASAKFgiqjyCTtDXZ2ndhSRx4lw/fVdOg8hVzMpm/cmDc9sF/FAgS5Bj
-	BZr5Ez/LQaJlUYbNzwomFxLCoktJNMv6j+hcP3xYeTcxTUBx9GERViiz3m5x1jjgCC9s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v0P1T-00962g-3H; Sun, 21 Sep 2025 20:42:55 +0200
-Date: Sun, 21 Sep 2025 20:42:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Hariprasad Kelam <hkelam@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, sgoutham@marvell.com, gakula@marvell.com,
-	sbhatta@marvell.com, naveenm@marvell.com, edumazet@google.com,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, bbhushan2@marvell.com
-Subject: Re: Query regarding Phy loopback support
-Message-ID: <defa4c07-0f8f-43cc-ba8d-0450998a8598@lunn.ch>
-References: <aMlHoBWqe8YOwnv8@test-OptiPlex-Tower-Plus-7010>
- <3b76cc60-f0c5-478b-b26c-e951a71d3d0b@lunn.ch>
- <aNA5l3JEl5JMHfZM@test-OptiPlex-Tower-Plus-7010>
+	s=arc-20240116; t=1758480745; c=relaxed/simple;
+	bh=aGtuEHxtXePmXb9Bz/sjo4Ha/4K0ioBr7XAQzZ75TU0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tleTIIN2UgVNB/hIy4AyzKmoZZvnfvzoPNYnSwvkiBOcMWzqptJt8nqMSpc8ik43+mNEKfXcxepc351OtzqneGwA9mgTjjailFcd0e4O9vPflZTUUtB0vTy1ogmThLNIoMPdBcnTDgKdkmDzP0YDCGejRRHlw6auKHaC5JaXiUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.106] (unknown [114.241.87.235])
+	by APP-01 (Coremail) with SMTP id qwCowAA3kaM3SdBo3kkjBA--.9911S2;
+	Mon, 22 Sep 2025 02:51:35 +0800 (CST)
+Message-ID: <411ade91-3fb5-40a3-baca-e6b03c5783ae@iscas.ac.cn>
+Date: Mon, 22 Sep 2025 02:51:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNA5l3JEl5JMHfZM@test-OptiPlex-Tower-Plus-7010>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
+ controller driver
+To: Alex Elder <elder@riscstar.com>, broonie@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250919155914.935608-1-elder@riscstar.com>
+ <20250919155914.935608-3-elder@riscstar.com>
+ <a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn>
+ <3c9aaa62-f685-47f7-a21c-00f51550f185@riscstar.com>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <3c9aaa62-f685-47f7-a21c-00f51550f185@riscstar.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAA3kaM3SdBo3kkjBA--.9911S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFWxZFW5Kr4xKry8CFy7GFg_yoW8WFyUpF
+	95WFWYkFW5tFn3Xr17tF1UWa45Aw1rKa4DAFy8Xas0yr45uw1vgFW5XrWv93srJr4kJF1U
+	Jw1UXr47Z3sxJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvlb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
+	8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07jfb18UUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Sun, Sep 21, 2025 at 11:14:55PM +0530, Hariprasad Kelam wrote:
-> On 2025-09-16 at 22:13:20, Andrew Lunn (andrew@lunn.ch) wrote:
-> > On Tue, Sep 16, 2025 at 04:48:56PM +0530, Hariprasad Kelam wrote:
-> > > We're looking for a standard way to configure PHY loopback on a network 
-> > > interface using common Linux tools like ethtool, ip, or devlink.
-> > > 
-> > > Currently, ethtool -k eth0 loopback on enables a generic loopback, but it 
-> > > doesn't specify if it's an internal, external, or PHY loopback. 
-> > > Need suggestions to implement this feature in a standard way.
-> > 
-> > What actually do you mean by PHY loopback?
-> 
-> The Octeon silicon series supports both MAC (RPM) and PHY (GSERM) loopback 
-> modes for testing.
-> 
-> We are seeking a solution to support the following loopback types:
-> 
-> MAC Level
-> 
-> Far-end loopback: Ingress data is routed back to egress data (MAC-to-MAC).
-> 
-> Near-end external loopback: Egress traffic is routed back to ingress traffic at the PCS layer.
-> 
-> PHY Level
-> 
-> Near-end digital loopback
-> 
-> Near-end analog loopback
-> 
-> Far-end digital loopback
-> 
-> Far-end analog loopback
-> 
-> We need suggestions on how to enable and manage these specific modes.
 
-Whatever you put in place, it needs to be generic to support other
-modes. So you need some sort of enum which can be extended. When
-describing the different modes, please try to reference 802.3, so it
-is clear what each actually means. And if it is a vendor mode, please
-describe it well, so other vendors know what it is, and can match
-their vendor names to it.
+On 9/20/25 23:59, Alex Elder wrote:
+> On 9/19/25 10:52 PM, Vivian Wang wrote:
+>>
+>> [...]
+>>
+>> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
+>> +{
+>> +    struct k1_spi_io *rx = &drv_data->rx;
+>> +    u32 bytes = drv_data->bytes;
+>> +    u32 val;
+>> +
+>> +    val = readl(drv_data->base + SSP_DATAR);
+>> +    rx->resid -= bytes;
+>> +
+>> +    if (!rx->buf)
+>> +        return;    /* Null reader: discard the data */
+>> +
+>> +    if (bytes == 1)
+>> +        *(u8 *)rx->buf = val;
+>> +    else if (bytes == 1)
+>>
+>> Typo? else if (bytes == 2)
+>
+> Wow.  Yes that is an error that I'll correct.
+>
+>>> +        *(u16 *)rx->buf = val;
+>>> +    else
+>>> +        *(u32 *)rx->buf = val;
+>>
+>> Maybe
+>>
+>>     else if (bytes == 4)
+>>         *(u32 *)rx->buf = val;
+>>     else
+>>         WARN_ON_ONCE(1);
+>
+> The value of bytes will be 1, 2, or 4, which we can tell
+> by inspection.  At one time I had a switch statement with
+> a default, but I decided to leave out the default, which
+> won't happen.
+>
+>> Just to make the pattern consistent? Same for k1_spi_write_word.
+>
+> Consistent with what? 
+>
+I was just thinking it would be clearer if the code states clearly:
 
-Frames received on the Media loopback vs host transmitted frames
-should be another property.
+    1 -> u8
+    2 -> u16
+    4 -> u32
+    anything else -> shouldn't happen
 
-Are you wanting to use this with ethtool --test? That operation is
-still using IOCTL. So you will want to add netlink support, both in
-ethtool(1) and net/ethtool/netlink.c, so you can add the extra
-optional parameters to indicate where loopback should be
-performed. And them plumb this through the MAC ethtool to phylink and
-phylib, and maybe the PCS layer, if you have a linux PCS involved.
+As is, it wasn't obvious to me that we're just handling 4 as u32. Maybe
+we're just capping it at u32, and 8 is also handled.
 
-	Andrew
+Well, maybe I'm just not familiar with SPI stuff, and word size above 4
+doesn't make sense anyway.
+
+It could also be a comment
+
+    else /* 4 */
+
+Just a suggestion, no strong preference from me.
+
+Vivian "dramforever" Wang
 
 
