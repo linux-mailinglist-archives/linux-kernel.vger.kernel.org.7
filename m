@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-826150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CE7B8DA70
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:00:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE64B8DA76
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B87418997C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C10C17B92B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D7D2580EC;
-	Sun, 21 Sep 2025 12:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E181A2BE65A;
+	Sun, 21 Sep 2025 12:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="uT9fxVBh"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/Ls5If8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA14022EE5
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C8A34BA39;
+	Sun, 21 Sep 2025 12:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758456017; cv=none; b=H4j/Fo5HDfynSmCEaYMjJXuNoWeEyaKfuHmy9SF3jawbH2cxk6ga3sPJIQQhhpn7QiznPF/caFMi7w1dJoktH+3llQRHRh8zKax93etOGedeTvuh1213Wj+MITeL/xyqOoKLfjnuXrUJTC1EieCkQnZGxJqWsqEdAvSofZ/2MTs=
+	t=1758456169; cv=none; b=Nfq8EElEpyn33zSSlkqWWh/sLNOZT2qGxQt7nBWS5PYwC+W0G7F+1setGKcpUTRwqESVyxuvArOwbo+4UjYIlZvndHeOdhoMCGpidqZjoKVau1S+5Z8XXafO/pRRast4Kktas7hcgiSpP9UKh8Sb+V5l2J8HVGlgDYLcPYr1soU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758456017; c=relaxed/simple;
-	bh=jtlr3CzskCMgRQIyf5Z/jOncrmxpl1QpXBVZm1auUpU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Vmh+16vhKF/3Bniv10MI9cadRcj5ltoHYPbMlJJClDZ8IsBqNs8VN1QCGQYIVuDAH6A+zwbwoI9Fm6Bm1/iCYxAnE55HkzPi+9FMwNYDjmwuBvYHplHZDn+HxJxPdoSg+lgGtNbBrys38/VS2d58xUV3OCertgIhWKZXl6bV1B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=uT9fxVBh; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1758455707; bh=syTZ2ErbqcBrv/fo3/fTPOQN1vuhv6P6yicAX6Yb/CA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=uT9fxVBhPOe3+CroVotqcZfe4HBoS7C8yZr3rU8w1+zH0NemBe9dJ2T/gGHOZrYuE
-	 l4C8k/hsaKaQMrfl0aO6NwBE1NTd9qJa/3EXZRt6BJcPh6WZMgX0b7kEyE1DGF6X13
-	 Tg3q7zLaShkOb/A79wEUghvs6IiuDrpiBLYcbmks=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id DC4A022D; Sun, 21 Sep 2025 19:55:04 +0800
-X-QQ-mid: xmsmtpt1758455704tvwcz3291
-Message-ID: <tencent_B8E8A6ED9ECC6C7B5E6F6C2F6D6DE096E40A@qq.com>
-X-QQ-XMAILINFO: MQ9y3o0o22FxQvAtsx36tzL/VtX+M0FnlUtjndPkaEh+5SkkGaN1onmE3Zni0g
-	 fEecmBc74vgOmePVYkDo6cxh0vUcwdHIr3rFteKKUKnQywrJxHHKTadgCTYPAuiCUTNJu3Opji7h
-	 TIhPnYXsY0aTIM9PhMazkeWfWn9/W93VGTRrBXL+eSPCNgoRf2m/U45l2exo4pT/KA1S85j/eohc
-	 N84+wSAYt2oXbPr3xDkonthMbo097mzs0lOB9GBEr9rCNOiKoXE2toiOmQaiQzVuKC/ljkA19A8U
-	 rOEa2rFPVz2EE0UDzRSpIKabcIlnj8MY/9Y9FRE8FiY2U5bfacd68awp3Dj4QU9vMUWCyq/Fg+DH
-	 vTRqyWTNmr4Yu7XrFiSxl4RpwGq2KtrDwxSwMlGDfGxgeQoYcDz33qz9MeHkL3FZwkahaY2CmCt6
-	 nVFORixjKY2HkW8z5sOttFZe8c8Dm9PL74rZjO+2dCi5lLa+NelKfZYrv+9MhxA+SfNKxS45DWY7
-	 JdwTA2eRIrQggwpEQmuwvZjVrqxS5UEmALvuy9v8Pe3FQ3pYC0msaZNYoablEU/jeRiWrPudb+F1
-	 OYEkUDrgIODyjlt3oUmAUIO9Pwa8vPTm010UmpKmBCn2Q97NgUbu0PmZ4+KFdlTIi82zewLHy38q
-	 LZDPDP2NksYwSz7YDY5a34BkFG1bVpyf0Hi6gMlvOdw2Ce/wkrPG2y88Ko/iVUFQ+WDzgIZbdhag
-	 HJ1eVOpFoaf0ZI8maEBxg1WDF5FbXKZ6UVDmJf/2jLnUMzbI3nMsMcfAI5g+mSOGQYwU7EbZ9IiJ
-	 UBQ0yG4EAZyFC7yGP7VXxdWUiGBhECoJIGpsyrjDrW7y/oii7gcXRqnEh25qxFaQA8HqPbpZwcv7
-	 OmDkVDipQCwRL6JiTVksToeVgRNwndbm4IEkD+NGKZ9CiqocYrkoPBBqZmmDBizJRVP+Nk1uu17Q
-	 Nv+gF0MiENcFKjuXgS+2bEsUqt3/wl2L9OiWPkQWo+kBl/oJ+EytzPB8CNeKWApeborOy1OBUbth
-	 bn95466g==
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in driver_remove_file
-Date: Sun, 21 Sep 2025 19:55:00 +0800
-X-OQ-MSGID: <20250921115459.2581977-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
-References: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
+	s=arc-20240116; t=1758456169; c=relaxed/simple;
+	bh=5IQlyYmqYaYIRSexLmhO6aiLRDVa4NoqpEv0Gr5FZOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBoUZ9RntvEM1/N5wt8FjqOwR6ofyjGH4Sl5jJN+bf47GJpD5cSZndZtXVh8v0wX7RyO75e04vAi0n2zepfww3tkQxMTm49tACreNfLimUr/FuK949wHLaanx22OgGttvynJ8EvvshFz24JBvA4r7cXhc6iRw7VuI3pee7e1+9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/Ls5If8; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758456166; x=1789992166;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5IQlyYmqYaYIRSexLmhO6aiLRDVa4NoqpEv0Gr5FZOc=;
+  b=K/Ls5If8VWd5AWpl+8AXwR/j/VRRH8H+QUaR8IPK50sBQABSimLs2luk
+   +D1EPLyAjY41qyl56/f9MzxWyoJ+z1gJPJKL76s1of4zVN4CoCMoqKDVW
+   36INbF0oaro9VuhFFv5NBJYi9WkhHAcvlttZNtqGxxju8q0E4XmsJiCs1
+   DdS3Gt0klFYqSdBeGZZp28BCvl/D0mvs5iBetcwx4usk0IprrEZmGjkke
+   lgE5vyMs2EfHhKYFYw0fWniHdol2LA93OMGphnETAmoejS+5C6eeGvZq7
+   VWR5szE1O5yhu38kYpLikg+AaF9TYAtBaooPD3cqmqpzv/sdrpBaq5UdJ
+   w==;
+X-CSE-ConnectionGUID: QLpeOB5DSSW6rDvjh8npiQ==
+X-CSE-MsgGUID: Cqa0B5CFQq+kbyhNKCUG1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="60669017"
+X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
+   d="scan'208";a="60669017"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 05:02:44 -0700
+X-CSE-ConnectionGUID: rHuhnbv3RFGRPrlcYPuCeQ==
+X-CSE-MsgGUID: q68WrYn/R+eVSGWv9RHJXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
+   d="scan'208";a="175380558"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 21 Sep 2025 05:02:41 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0Im7-0000hx-1H;
+	Sun, 21 Sep 2025 12:02:39 +0000
+Date: Sun, 21 Sep 2025 20:02:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Tran <alex.t.tran@gmail.com>, mchehab@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, laurent.pinchart@ideasonboard.com,
+	hansg@kernel.org, hverkuil+cisco@kernel.org, cascardo@igalia.com,
+	ribalda@chromium.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Alex Tran <alex.t.tran@gmail.com>
+Subject: Re: [PATCH v3] media: i2c: wm8775: parameterize wm8775_platform_data
+ based on config
+Message-ID: <202509211953.3uP6gmSx-lkp@intel.com>
+References: <20250921005635.949377-1-alex.t.tran@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921005635.949377-1-alex.t.tran@gmail.com>
 
-#syz test
+Hi Alex,
 
-diff --git a/drivers/comedi/drivers/c6xdigio.c b/drivers/comedi/drivers/c6xdigio.c
-index 14b90d1c64dc..023c72e589a7 100644
---- a/drivers/comedi/drivers/c6xdigio.c
-+++ b/drivers/comedi/drivers/c6xdigio.c
-@@ -242,8 +242,10 @@ static int c6xdigio_attach(struct comedi_device *dev,
- 	int ret;
- 
- 	ret = comedi_request_region(dev, it->options[0], 0x03);
--	if (ret)
-+	if (ret) {
-+		dev->driver = NULL;
- 		return ret;
-+	}
- 
- 	ret = comedi_alloc_subdevices(dev, 2);
- 	if (ret)
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on linuxtv-media-pending/master]
+[also build test ERROR on linus/master v6.17-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Tran/media-i2c-wm8775-parameterize-wm8775_platform_data-based-on-config/20250921-104257
+base:   https://git.linuxtv.org/media-ci/media-pending.git master
+patch link:    https://lore.kernel.org/r/20250921005635.949377-1-alex.t.tran%40gmail.com
+patch subject: [PATCH v3] media: i2c: wm8775: parameterize wm8775_platform_data based on config
+config: sparc-randconfig-002-20250921 (https://download.01.org/0day-ci/archive/20250921/202509211953.3uP6gmSx-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509211953.3uP6gmSx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509211953.3uP6gmSx-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "wm8775_standard_cfg" [drivers/media/pci/cx88/cx8800.ko] undefined!
+>> ERROR: modpost: "wm8775_nova_s_cfg" [drivers/media/pci/cx88/cx8800.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
