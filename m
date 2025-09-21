@@ -1,537 +1,169 @@
-Return-Path: <linux-kernel+bounces-826341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DECDB8E3B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6084B8E41B
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DA341691C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:11:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704C23BBD14
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2BA242D86;
-	Sun, 21 Sep 2025 19:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7754A23F429;
+	Sun, 21 Sep 2025 19:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="0DrFFI/y"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PM82mvB3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C5E282E1
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064F1B041A
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758481891; cv=none; b=XNUzo/1YBJ5wFgvyxeHhiBkhmyHcKEZo1q3tfyfvzTwTJprZfoGRLXSbP7+Nt0Z0DGxRFkAH+Ni4WRSiYspoly/faBswSxdZR/iiD/ItmQyeeL9kXuZRHYbA8HH/u1HtYv3L+ZCqqQyvfEW8KkoBm+Wv4voZ9W0s3qyetffBUoI=
+	t=1758482919; cv=none; b=XDQsgK+Ytz6fVqZVADQ/vvn00FladJSicoMLugEjEmyUHfcNAohOOEI/L1uKFBcdB4PmYqWTYK6huncUbFLA75XD8/2R7Eodna8+RTJGA/v1iWVbLi6mJYkQADgl/ZSbWGlCMzyTwd48lBzyr7+wds3BXqjHGWddnlwyldjQ/0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758481891; c=relaxed/simple;
-	bh=srYtm3oBIvUj97TCmmHwjRWYDpoeZlRczyaWQJBFgdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gA+iCtdZgaRe+AyRivALWLigtNlQSmDM33jpVH6CYzDA0AOeBAffCR6GoBVZylYkpMl7dH/jB/JqWvelwZJutpOdaBve364bsKkjBdiOzdXSr3+esLqJXBDWMN+XnV8CpLdYzBDPImiR2VgnSiJHhuhNXzVX23k9MQ89hu7lDFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=0DrFFI/y; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-88432e60eebso83429739f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:11:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1758481887; x=1759086687; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GMuX0JbtGkVS69zIsmL/4yyhk/kkfK+G5uLsvMrvjAc=;
-        b=0DrFFI/yVgPu8zg9A96I9D2wbRjG4taQv5iURQSuwpWDoYVCm7KHSys7bfL7gk7sES
-         IiwWoEFJp2sa+ConHzeZpaDhDfBFSj6NGIkPK9PbUWL0DhGHKt5CxLlTsh6SKqAtJMt0
-         Lyi82QWgYT78aIRNkwfeeJVBw/XFsZbtjkcNGflJyqAsOgH0N5qwi9HE4rsotR6HIOuK
-         JaTUzzZ1fZREKbARMUsy2gUY6JEvQvr/Z6fXxeHloZxppsRpC4LvY/JFmIY+YHuDhSbv
-         7uOEHjIVgFLP4mACRNNHGAuhYQOrn3Rr4N4elC2lCd0Q6rhhmF/hXATv33J3JYkGuVCv
-         BP3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758481887; x=1759086687;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMuX0JbtGkVS69zIsmL/4yyhk/kkfK+G5uLsvMrvjAc=;
-        b=NeO1tiElc+Ca6q1L/ff7UG1I9rrtBLmFw6AoLhfgCJOra3c3dQpUQLPtJfzcgPvHDk
-         D5SpxntMgMcoA1s5LoW1ng9l0ITbjl0hOUYHNFGP/KZX88jFnxTQkJ8aq+uFhA3OeGcd
-         VDwPZAv+g46fhxs8WNG3K+lDSZTBm1cdoPHzgftZtMl+x2+ob9ZIJ3XSKQq94MJ4Y7LW
-         n6fu7p1iENvSvMs5sJWiAWd3o5GUKsEZiFaYBQ7k7b/HieLSTVjejHXn2dCcQM1PGxRX
-         bG2RjdXOSHBg5kup35gBpB1WtdswyE8OVGVZ/cBD2P6BtotF0Amiy4Hb08E5+rYUWFUp
-         vXuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrLg6YDH2DX9V5B7pDzdr3lnSe2W25ZvKstykqSb/d/nbUjG/Xc/PUfs3bJaGY1LYZhvBWLtCaUA4+v/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywo/6umoVAFXlKrxeAXZrGdpQhrc+79pYknrXmb4G/Zf43uukgV
-	6entZEvKpfhIp9QmyvAtras7Xfn/DTyyE/a/EXBgdW4Nyzk7C4DHhr4RF4TOGtcP8Xg=
-X-Gm-Gg: ASbGnctOY7L4594/yP9kg6pMhCP14kguYxuUXaWjdhzZpKeIJ/PnGCuvcEV9btz4E86
-	R7NGUVwwESCkYbg75rodLH07GYiwmhBoQDLLgNWSfG6vxSeUHkmXgNdn8JSJDiNLA9D1IL/Ucuq
-	/mMOui8uMbOZJbscuBSAoRMofszMn1IG+kvVMGZCeyo2idwge5TrWuX3WvJnwxLAhk5lDehUjdA
-	yQpHWamFcwW6JAx4JktVGRgGegm4ZfejrkGmlcdtrbAVsJvFxOGzHSNPIewn8/UIxsd5hKxrAGz
-	c0ViIvMhEtE0ZZSJ2VisqIYQYXMFeVVrvzYUuFgBu9mEtXWkz0mTrLW4/SFrcGPbKvScDTT9ngz
-	TpLyM7EOeXKqJbtCdYFyF2M5krgo3f0JxAarX3k+vRiyiNl89KOKMzLeTOZolgnKPbuPRyyw=
-X-Google-Smtp-Source: AGHT+IErLvmxbESoatXMb3XqN+8yw94Jw5Exiri+q1GvICGK0rTfRDmu/C2sh2YMSDRU5YG3uU2tzA==
-X-Received: by 2002:a05:6e02:190a:b0:425:7526:7f56 with SMTP id e9e14a558f8ab-425752680c5mr30193615ab.5.1758481887085;
-        Sun, 21 Sep 2025 12:11:27 -0700 (PDT)
-Received: from [10.211.55.5] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-55ec34ec281sm107152173.0.2025.09.21.12.11.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Sep 2025 12:11:26 -0700 (PDT)
-Message-ID: <ab64c617-f0a0-4dd8-95c9-cf85486d5612@riscstar.com>
-Date: Sun, 21 Sep 2025 14:11:25 -0500
+	s=arc-20240116; t=1758482919; c=relaxed/simple;
+	bh=+Miu3sd6+O5iHno8nSMZwS7o8cXehTdumMzixg3nceo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d5eE/BPvjG5SLtXmqUiCR6ja6MRCjsSOS8k+Wd7Ixgj6/lCHf+7mEOjgAiEg7+7VONSN78F/DVTiWLknIyPp/bQ4I69pY014VyY/FsAKm/uXhyggZe/ltpDJrQLO/SwhULE/zn+xzw995QalgHuxiQMYtNiJkCzRO7G4k3kqmoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PM82mvB3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758482916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=juMfpOs2phKyJbHmzGSoqogpkBynL6NiqIsUFb6RoX8=;
+	b=PM82mvB3R4JmhvkFBh0P0ws/L8gSAYRdmiTMkJPP8exzC+SS9jXas4dSkjkEp91sUqkxeQ
+	FCBea2YyAFcWnuOWM+ybmrSIabD9q9y8X7Bh0VjuDlUL746tyg5923KYbVXyIWuEBs5gAf
+	J+JlFJ1Af/SOBjCixL7Oj2GsIPuCdAg=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-EVEXoJbUNVufkR2Cw-NZqw-1; Sun,
+ 21 Sep 2025 15:28:30 -0400
+X-MC-Unique: EVEXoJbUNVufkR2Cw-NZqw-1
+X-Mimecast-MFC-AGG-ID: EVEXoJbUNVufkR2Cw-NZqw_1758482909
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E173D1956089;
+	Sun, 21 Sep 2025 19:28:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.16])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 947871956056;
+	Sun, 21 Sep 2025 19:28:25 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 21 Sep 2025 21:27:05 +0200 (CEST)
+Date: Sun, 21 Sep 2025 21:27:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Matt Fleming <mfleming@cloudflare.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, John Stultz <jstultz@google.com>,
+	kernel-team <kernel-team@cloudflare.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Chris Arges <carges@cloudflare.com>
+Subject: Re: Debugging lost task in wait_task_inactive() when delivering
+ signal (6.12)
+Message-ID: <20250921192700.GA565@redhat.com>
+References: <CAGis_TWyhciem6bPzR98ysj1+gOVPHRGqSUNiiyvS1RnEidExw@mail.gmail.com>
+ <20250919143611.GA22933@redhat.com>
+ <CAGis_TUp9_V-kBn9CF55f08NVR+Bx3iyP=O=+PH0QAf73eGY2Q@mail.gmail.com>
+ <20250919161353.GB22933@redhat.com>
+ <CAGis_TWHJva-gktrsvO9=m5mEFf4zzcN=rNEt+5+moqz=C7AEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] spi: spacemit: introduce SpacemiT K1 SPI
- controller driver
-To: Troy Mitchell <troy.mitchell@linux.dev>, broonie@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: dlan@gentoo.org, ziyao@disroot.org, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250919155914.935608-1-elder@riscstar.com>
- <20250919155914.935608-3-elder@riscstar.com>
- <aM9t7fO_DyIG92Rx@troy-wujie14pro-arch>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <aM9t7fO_DyIG92Rx@troy-wujie14pro-arch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGis_TWHJva-gktrsvO9=m5mEFf4zzcN=rNEt+5+moqz=C7AEQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 9/20/25 10:15 PM, Troy Mitchell wrote:
-> On Fri, Sep 19, 2025 at 10:59:12AM -0500, Alex Elder wrote:
->> This patch introduces the driver for the SPI controller found in the
->> SpacemiT K1 SoC.  Currently the driver supports master mode only.
->> The SPI hardware implements RX and TX FIFOs, 32 entries each, and
->> supports both PIO and DMA mode transfers.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->> v2: - The SPI_SPACEMIT_K1 config option is added in sorted order
->>      - The spi-spacemit-k1.o make target is now added in sorted order
->>      - Read/modify/writes of registers no longer use an additional
->>        "virt" variable to hold the address accessed
->>      - The k1_spi_driver_data->ioaddr field has been renamed base
->>      - The DMA address for the base address is maintained, rather than
->>        saving the DMA address of the data register
->>      - CONFIG_MMP_PDMA is checked at runtime, and if it is not enabled,
->>        DMA will not be used
->>      - The spi-max-frequency property value is now bounds checked
->>      - A local variable is now initialized to 0 in k1_spi_write_word()
->>      - The driver name is now "k1-spi"
->>
->>   drivers/spi/Kconfig           |   8 +
->>   drivers/spi/Makefile          |   1 +
->>   drivers/spi/spi-spacemit-k1.c | 968 ++++++++++++++++++++++++++++++++++
->>   3 files changed, 977 insertions(+)
->>   create mode 100644 drivers/spi/spi-spacemit-k1.c
->>
->> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
->> index 82fa5eb3b8684..4f6c446c6bc16 100644
->> --- a/drivers/spi/Kconfig
->> +++ b/drivers/spi/Kconfig
->> @@ -1071,6 +1071,14 @@ config SPI_SG2044_NOR
->>   	  also supporting 3Byte address devices and 4Byte address
->>   	  devices.
->>   
->> +config SPI_SPACEMIT_K1
->> +	tristate "K1 SPI Controller"
->> +	depends on ARCH_SPACEMIT || COMPILE_TEST
->> +	depends on OF
->> +	default ARCH_SPACEMIT
->> +	help
->> +	  Enable support for the SpacemiT K1 SPI controller.
->> +
->>   config SPI_SPRD
->>   	tristate "Spreadtrum SPI controller"
->>   	depends on ARCH_SPRD || COMPILE_TEST
->> diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
->> index eefaeca097456..637d750ead996 100644
->> --- a/drivers/spi/Makefile
->> +++ b/drivers/spi/Makefile
->> @@ -140,6 +140,7 @@ obj-$(CONFIG_SPI_SIFIVE)		+= spi-sifive.o
->>   obj-$(CONFIG_SPI_SLAVE_MT27XX)          += spi-slave-mt27xx.o
->>   obj-$(CONFIG_SPI_SN_F_OSPI)		+= spi-sn-f-ospi.o
->>   obj-$(CONFIG_SPI_SG2044_NOR)	+= spi-sg2044-nor.o
->> +obj-$(CONFIG_SPI_SPACEMIT_K1)		+= spi-spacemit-k1.o
->>   obj-$(CONFIG_SPI_SPRD)			+= spi-sprd.o
->>   obj-$(CONFIG_SPI_SPRD_ADI)		+= spi-sprd-adi.o
->>   obj-$(CONFIG_SPI_STM32) 		+= spi-stm32.o
->> diff --git a/drivers/spi/spi-spacemit-k1.c b/drivers/spi/spi-spacemit-k1.c
->> new file mode 100644
->> index 0000000000000..8d564fe6c4303
->> --- /dev/null
->> +++ b/drivers/spi/spi-spacemit-k1.c
->> @@ -0,0 +1,968 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Support for SpacemiT K1 SPI controller
->> + *
->> + * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
->> + * Copyright (c) 2023, spacemit Corporation.
-> SpacemiT?
+Thanks Matt!
 
-Already addressed this suggestion, which Yixun also made.
-  
-https://lore.kernel.org/lkml/034cecd3-c168-4c8d-9ad5-10cc1853894b@riscstar.com/
+So I guess that this has nothing to do with coredump and wait_task_inactive()
+is broken...
 
+I am wondering if this code
 
-> 
->> + */
->> +
-> [...]
->> +static void k1_spi_read_word(struct k1_spi_driver_data *drv_data)
->> +{
->> +	struct k1_spi_io *rx = &drv_data->rx;
->> +	u32 bytes = drv_data->bytes;
->> +	u32 val;
->> +
->> +	val = readl(drv_data->base + SSP_DATAR);
->> +	rx->resid -= bytes;
->> +
->> +	if (!rx->buf)
->> +		return;	/* Null reader: discard the data */
->> +
->> +	if (bytes == 1)
->> +		*(u8 *)rx->buf = val;
->> +	else if (bytes == 1)
-> typo?
+		/*
+		 * If task is sched_delayed, force dequeue it, to avoid always
+		 * hitting the tick timeout in the queued case
+		 */
+		if (p->se.sched_delayed)
+			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
 
-Yes, Vivian noticed this too.  It's a bug, and it will be
-fixed in the next version.
-  
-https://lore.kernel.org/lkml/a7070f3f-8857-4834-9e9e-02068637075c@iscas.ac.cn/
+ia actually correct but I know nothing about the sched_delayed logic.
 
-> 
->> +		*(u16 *)rx->buf = val;
->> +	else
->> +		*(u32 *)rx->buf = val;
->> +
->> +	rx->buf += bytes;
->> +}
->> +
-> [...]
->> +static bool k1_spi_write(struct k1_spi_driver_data *drv_data)
->> +{
->> +	struct k1_spi_io *tx = &drv_data->tx;
->> +	unsigned int count;
->> +	u32 val;
->> +
->> +	if (!tx->resid)
->> +		return true;	/* Nothing more to send */
->> +
->> +	/* See how many slots in the TX FIFO are available */
->> +	val = readl(drv_data->base + SSP_STATUS);
->> +	count = FIELD_GET(SSP_STATUS_TFL, val);
->> +
->> +	/* A zero count means the FIFO is either full or empty */
->> +	if (!count) {
->> +		if (val & SSP_STATUS_TNF)
->> +			count = K1_SPI_FIFO_SIZE;
->> +		else
->> +			return false;	/* No room in the FIFO */
-> please early return:
+I will leave this to scheduler experts ;) I can't really help.
 
-OK.
+Oleg.
 
-> 
-> if (!(val & SSP_STATUS_TNF))
->    return false;
-> count = K1_SPI_FIFO_SIZE;
->> +	}
->> +
->> +	/*
->> +	 * Limit how much we try to send at a time, to reduce the
->> +	 * chance the other side can overrun our RX FIFO.
->> +	 */
->> +	count = min3(count, K1_SPI_THRESH, tx->resid);
->> +	while (count--)
->> +		k1_spi_write_word(drv_data);
->> +
->> +	return !tx->resid;
->> +}
->> +
-> [...]
->> +
->> +static int k1_spi_transfer_one_message(struct spi_controller *host,
->> +					   struct spi_message *message)
->> +{
->> +	struct k1_spi_driver_data *drv_data = spi_controller_get_devdata(host);
->> +	struct completion *completion = &drv_data->completion;
->> +	struct spi_transfer *transfer;
->> +	u32 val;
->> +
->> +	drv_data->message = message;
->> +
->> +	/* Message status starts out successful; set to -EIO on error */
->> +	message->status = 0;
->> +
->> +	/* Hold frame low to avoid losing transferred data */
->> +	val = readl(drv_data->base + SSP_TOP_CTRL);
->> +	val |= TOP_HOLD_FRAME_LOW;
->> +	writel(val, drv_data->base + SSP_TOP_CTRL);
->> +
->> +	list_for_each_entry(transfer, &message->transfers, transfer_list) {
->> +		reinit_completion(completion);
->> +
->> +		/* Issue the next transfer */
->> +		if (!k1_spi_transfer_start(drv_data, transfer)) {
->> +			message->status = -EIO;
->> +			break;
-> we don't need return a error code?
-
-You're right.  This always returns 0.  I think I'll
-just return message->status.
-
-Thank you for catching this.  I'll fix it in the next version.
-
-					-Alex
-
-
-> 
->> +		}
->> +
->> +		k1_spi_transfer_wait(drv_data);
->> +
->> +		k1_spi_transfer_end(drv_data, transfer);
->> +
->> +		/* If an error has occurred, we're done */
->> +		if (message->status)
->> +			break;
-> ditto.
-> 
-> [...]
->> +}
->> +
->> +static void k1_spi_dma_cleanup(struct device *dev, void *res)
->> +{
->> +	struct k1_spi_driver_data *drv_data = res;
->> +
->> +	if (k1_spi_dma_enabled(drv_data)) {
-> if (!k1_spi_dma_enabled(drv_data))
->    return;
-> 
->                    - Troy
-> 
->> +		k1_spi_dma_cleanup_io(drv_data, false);
->> +		k1_spi_dma_cleanup_io(drv_data, true);
->> +	}
->> +}
->> +
->> +
->> +static const struct of_device_id k1_spi_dt_ids[] = {
->> +	{ .compatible = "spacemit,k1-spi", },
->> +	{}
->> +};
->> +MODULE_DEVICE_TABLE(of, k1_spi_dt_ids);
->> +
->> +static void k1_spi_host_init(struct k1_spi_driver_data *drv_data)
->> +{
->> +	struct device_node *np = dev_of_node(drv_data->dev);
->> +	struct spi_controller *host = drv_data->controller;
->> +	struct device *dev = drv_data->dev;
->> +	u32 max_speed_hz;
->> +	int ret;
->> +
->> +	host->dev.of_node = np;
->> +	host->dev.parent = drv_data->dev;
->> +	host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP;
->> +	host->bits_per_word_mask = SPI_BPW_RANGE_MASK(4, 32);
->> +	host->num_chipselect = 1;
->> +
->> +	if (k1_spi_dma_enabled(drv_data))
->> +		host->dma_alignment = K1_SPI_DMA_ALIGNMENT;
->> +	host->cleanup = k1_spi_cleanup;
->> +	host->setup = k1_spi_setup;
->> +	host->transfer_one_message = k1_spi_transfer_one_message;
->> +
->> +	ret = of_property_read_u32(np, "spi-max-frequency", &max_speed_hz);
->> +	if (!ret) {
->> +		host->max_speed_hz = clamp(max_speed_hz, K1_SPI_MIN_SPEED_HZ,
->> +					   K1_SPI_MAX_SPEED_HZ);
->> +		if (host->max_speed_hz != max_speed_hz)
->> +			dev_warn(dev, "spi-max-frequency %u out of range, using %u\n",
->> +				max_speed_hz, host->max_speed_hz);
->> +	} else {
->> +		if (ret != -EINVAL)
->> +			dev_warn(dev, "bad spi-max-frequency, using %u\n",
->> +				 K1_SPI_DEFAULT_MAX_SPEED_HZ);
->> +		host->max_speed_hz = K1_SPI_DEFAULT_MAX_SPEED_HZ;
->> +	}
->> +}
->> +
->> +/* Set our registers to a known initial state */
->> +static void
->> +k1_spi_register_reset(struct k1_spi_driver_data *drv_data, bool initial)
->> +{
->> +	u32 val = 0;
->> +
->> +	writel(0, drv_data->base + SSP_TOP_CTRL);
->> +
->> +	if (initial) {
->> +		/*
->> +		 * The TX and RX FIFO thresholds are the same no matter
->> +		 * what the speed or bits per word, so we can just set
->> +		 * them once.  The thresholds are one more than the values
->> +		 * in the register.
->> +		 */
->> +		val = FIELD_PREP(FIFO_RFT_MASK, K1_SPI_THRESH - 1);
->> +		val |= FIELD_PREP(FIFO_TFT_MASK, K1_SPI_THRESH - 1);
->> +	}
->> +	writel(val, drv_data->base + SSP_FIFO_CTRL);
->> +
->> +	writel(0, drv_data->base + SSP_INT_EN);
->> +	writel(0, drv_data->base + SSP_TIMEOUT);
->> +
->> +	/* Clear any pending interrupt conditions */
->> +	val = readl(drv_data->base + SSP_STATUS);
->> +	writel(val, drv_data->base + SSP_STATUS);
->> +}
->> +
->> +static irqreturn_t k1_spi_ssp_isr(int irq, void *dev_id)
->> +{
->> +	struct k1_spi_driver_data *drv_data = dev_id;
->> +	bool rx_done;
->> +	bool tx_done;
->> +	u32 val;
->> +
->> +	/* Get status and clear pending interrupts */
->> +	val = readl(drv_data->base + SSP_STATUS);
->> +	writel(val, drv_data->base + SSP_STATUS);
->> +
->> +	if (!drv_data->message)
->> +		return IRQ_NONE;
->> +
->> +	/* Check for a TX underrun or RX underrun first */
->> +	if (val & (SSP_STATUS_TUR | SSP_STATUS_ROR)) {
->> +		/* Disable all interrupts on error */
->> +		writel(0, drv_data->base + SSP_INT_EN);
->> +
->> +		drv_data->message->status = -EIO;
->> +		complete(&drv_data->completion);
->> +
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	/* Drain the RX FIFO first, then transmit what we can */
->> +	rx_done = k1_spi_read(drv_data);
->> +	tx_done = k1_spi_write(drv_data);
->> +
->> +	/* Disable interrupts if we're done transferring either direction */
->> +	if (rx_done || tx_done) {
->> +		/* If both are done, disable all interrupts */
->> +		if (rx_done && tx_done) {
->> +			val = 0;
->> +		} else {
->> +			val = readl(drv_data->base + SSP_INT_EN);
->> +			if (rx_done)
->> +				val &= ~(SSP_INT_EN_TINTE | SSP_INT_EN_RIE);
->> +			if (tx_done)
->> +				val &= ~SSP_INT_EN_TIE;
->> +		}
->> +		writel(val, drv_data->base + SSP_INT_EN);
->> +	}
->> +
->> +	if (rx_done && tx_done)
->> +		complete(&drv_data->completion);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int k1_spi_probe(struct platform_device *pdev)
->> +{
->> +	struct k1_spi_driver_data *drv_data;
->> +	struct device *dev = &pdev->dev;
->> +	struct reset_control *reset;
->> +	struct spi_controller *host;
->> +	struct resource *iores;
->> +	struct clk *clk_bus;
->> +	int ret;
->> +
->> +	host = devm_spi_alloc_host(dev, sizeof(*drv_data));
->> +	if (!host)
->> +		return -ENOMEM;
->> +	drv_data = spi_controller_get_devdata(host);
->> +	drv_data->controller = host;
->> +	platform_set_drvdata(pdev, drv_data);
->> +	drv_data->dev = dev;
->> +	init_completion(&drv_data->completion);
->> +
->> +	drv_data->base = devm_platform_get_and_ioremap_resource(pdev, 0,
->> +								&iores);
->> +	if (IS_ERR(drv_data->base))
->> +		return dev_err_probe(dev, PTR_ERR(drv_data->base),
->> +				     "error mapping memory\n");
->> +	drv_data->base_addr = iores->start;
->> +
->> +	ret = devm_k1_spi_dma_setup(drv_data);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "error setting up DMA\n");
->> +
->> +	k1_spi_host_init(drv_data);
->> +
->> +	clk_bus = devm_clk_get_enabled(dev, "bus");
->> +	if (IS_ERR(clk_bus))
->> +		return dev_err_probe(dev, PTR_ERR(clk_bus),
->> +				     "error getting/enabling bus clock\n");
->> +	drv_data->bus_rate = clk_get_rate(clk_bus);
->> +
->> +	drv_data->clk = devm_clk_get_enabled(dev, "core");
->> +	if (IS_ERR(drv_data->clk))
->> +		return dev_err_probe(dev, PTR_ERR(drv_data->clk),
->> +				     "error getting/enabling core clock\n");
->> +
->> +	reset = devm_reset_control_get_exclusive_deasserted(dev, NULL);
->> +	if (IS_ERR(reset))
->> +		return dev_err_probe(dev, PTR_ERR(reset),
->> +				     "error getting/deasserting reset\n");
->> +
->> +	k1_spi_register_reset(drv_data, true);
->> +
->> +	drv_data->irq = platform_get_irq(pdev, 0);
->> +	if (drv_data->irq < 0)
->> +		return dev_err_probe(dev, drv_data->irq, "error getting IRQ\n");
->> +
->> +	ret = devm_request_irq(dev, drv_data->irq, k1_spi_ssp_isr,
->> +			       IRQF_SHARED, dev_name(dev), drv_data);
->> +	if (ret < 0)
->> +		return dev_err_probe(dev, ret, "error requesting IRQ\n");
->> +
->> +	ret = devm_spi_register_controller(dev, host);
->> +	if (ret)
->> +		dev_err(dev, "error registering controller\n");
->> +
->> +	return ret;
->> +}
->> +
->> +static void k1_spi_remove(struct platform_device *pdev)
->> +{
->> +	struct k1_spi_driver_data *drv_data = platform_get_drvdata(pdev);
->> +
->> +	k1_spi_register_reset(drv_data, false);
->> +}
->> +
->> +static struct platform_driver k1_spi_driver = {
->> +	.driver = {
->> +		.name		= "k1-spi",
->> +		.of_match_table	= k1_spi_dt_ids,
->> +	},
->> +	.probe			= k1_spi_probe,
->> +	.remove			= k1_spi_remove,
->> +};
->> +
->> +module_platform_driver(k1_spi_driver);
->> +
->> +MODULE_DESCRIPTION("SpacemiT K1 SPI controller driver");
->> +MODULE_LICENSE("GPL");
->> -- 
->> 2.48.1
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
+On 09/20, Matt Fleming wrote:
+>
+> On Fri, 19 Sept 2025 at 17:15, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > OK, thanks. Nothing "interesting" at first glance.
+>
+> Chris (Cc'd) and I managed to get a reproducer and I think I know
+> what's happening now.
+>
+> When a task A gets the SIGKILL from whichever thread is handling the
+> coredump (let's say task B) it might hit the delayed dequeue path in
+> schedule() and call set_delayed(), e.g.
+>
+>         dequeue_entity+1263
+>         dequeue_entities+216
+>         dequeue_task_fair+224
+>         __schedule+468
+>         schedule+39
+>         do_exit+221
+>         do_group_exit+48
+>         get_signal+2078
+>         arch_do_signal_or_restart+46
+>         irqentry_exit_to_user_mode+132
+>         asm_sysvec_apic_timer_interrupt+26
+>
+> At this point task A has ->on_rq=1, ->se.sched_delayed=1 and ->se.on_rq=1.
+>
+> Now when task B calls into wait_task_inactive(), it sees
+> ->se.sched_delayed=1 and calls dequeue_task().
+>
+> At this point task A has ->on_rq=1, ->se.sched_delayed=0 and ->se.on_rq=0
+>
+> Unfortunately, task B still thinks that task A is scheduled because
+> task_on_rq_queued(A) is true, but it's not runnable and will never run
+> because it's no longer in the fair rbtree and the only task that will
+> enqueue it again is task B once it leaves wait_task_inactive() and
+> hits coredump_finish().
+>
+> > > do_exit+0xdd is here in coredump_task_wait():
+> > >
+> > >                 for (;;) {
+> > >                         set_current_state(TASK_IDLE|TASK_FREEZABLE);
+> > >                         if (!self.task) /* see coredump_finish() */
+> > >                                 break;
+> > >                         schedule();
+> > >                 }
+> > >
+> > > i.e. the task calls schedule() and never comes back.
+> >
+> > Are you sure it never comes back and doesn't loop?
+>
+> Yeah, positive:
+>
+> $ sudo perf stat -e cycles -t 1546531 -- sleep 30
+>
+>  Performance counter stats for thread id '1546531':
+>
+>      <not counted>      cycles
+>
+>       30.001671072 seconds time elapsed
+>
 
 
