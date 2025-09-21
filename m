@@ -1,117 +1,194 @@
-Return-Path: <linux-kernel+bounces-826119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29601B8D945
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:06:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D732CB8D958
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 804CC441B0D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:06:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B10817C10A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 10:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCFA257AFB;
-	Sun, 21 Sep 2025 10:06:40 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFCA258CE7;
+	Sun, 21 Sep 2025 10:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AM6XhFP7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E5824336D;
-	Sun, 21 Sep 2025 10:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD14C1CFBA;
+	Sun, 21 Sep 2025 10:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758449199; cv=none; b=qShwuUryFgW+R1NG/cowQPO56msfUKXbbJu5EsMsKjiYH2pYSQ26ywgiKqTLyTdT2zwgZK9bzIt+yJVKi7utgdIsT9Pt8/fiWopn+4KjuLFbLeJ4BkUxwJWAfAF8UBOt2pHgcgJcqtaKAn63Xdww0AjwkCCR9GMZl9KpnVtADao=
+	t=1758449969; cv=none; b=lg/WfMQ/Jo1TsMjA9u9sgd3Dh1Pl/e3YIzhxl8j3AVTlN25FZPwWXYTqsJfQwaaU20cJnW8ypKQAGk04A/BvRqNYmVWjGeEQ74TL82SLhmyb4TREKxtANc6QdHyAd4M4yEydE2EG+EUI78d2U590qvwM7WWYcUz/ZZukEt3IZXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758449199; c=relaxed/simple;
-	bh=aM4xxCrBnexNMRB8d23VIVFV6eTZIOkImy//pXZj7xc=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=MSpRrnXw4P7h2CVModdcRjgUio1wkXI07tw8PTmIILNUOkWKWS35IgmfhE4u2V4NLGRFThe/mJfwLUu5CJCZ3jcKumM25++eBEeorRoaGGf9iwv6bHPfboDbFgHz90YSRVXOL/5+eAFVRtemhOeFJPOkCrCcf04SO0R+g+xgo6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-01 (Coremail) with SMTP id qwCowABHoaOBzM9oEAgTBA--.62492S2;
-	Sun, 21 Sep 2025 17:59:39 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: srini@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	pierre-louis.bossart@linux.dev
-Cc: linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()
-Date: Sun, 21 Sep 2025 17:59:27 +0800
-Message-Id: <20250921095927.28065-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:qwCowABHoaOBzM9oEAgTBA--.62492S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7KryrXrW7tw4rZw4DXw13Jwb_yoW8WF48p3
-	9rCFWSg3s8Wr1jvryrArW8Aa4IkFWUuw1rGr18Gw18Krs0vFy3KryFqw1YgFWSqFZ3JF1U
-	Xry7ZrW8Ar45WaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67
-	AK6r4fMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjWxR3UU
-	UUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1758449969; c=relaxed/simple;
+	bh=P2l57chXDQtFSlJjs3LoRhHhPpe0OIuvRfNk8Z689zw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eldAgdod6OPQlfgON4ywsMPG7OJliTbHs4OVBc+Zxh1JG+DMoN04CJVLXQhnmyLzmtKAG+O0r5+a6nIvoFK9V3Ec6gDb6Fxt/EUy2BDOHhb9TzvKigzWkRJqpIUo4lRbFjLbRNkwLwTacuDD55kDk9XF+yalnqZEWWgX+hATuyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AM6XhFP7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC45C4CEE7;
+	Sun, 21 Sep 2025 10:19:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758449969;
+	bh=P2l57chXDQtFSlJjs3LoRhHhPpe0OIuvRfNk8Z689zw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AM6XhFP7NCXS0i3t0250qiXtLjlrX1WmbvKF2BiEi9nDMtZRa+yrJGGf/oTtiOwSq
+	 I3e+bx5V8GHa3enNBRANK0+Ue2KQWBM8dVr+UMHOBZt2GoOLLXnssUpxOJhnSpfLD4
+	 +cP5K2xsoeljOGOjS/nyrxLL+MKUv4wQvI9y5NPcSX8Do4ktYYsqb+bS6VPpNgwSC4
+	 ZI73KcHnIubJEwejfO0iNd2YR3GlkmuP2i+kEh97SInPT/A9miz9K2TJmBe7n32TxL
+	 Q8BqvQj8w7DJ+EtNUSd58uJqxCSJhDLcDNPatPrqxOYt9UjODe1FVZP45SSmOSzEDs
+	 V0GDtKuV5Yl6Q==
+Date: Sun, 21 Sep 2025 12:19:22 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 08/10] man/man2/mount_setattr.2: mirror opening
+ sentence from fsopen(2)
+Message-ID: <g257patrvd5blq46uyhsw2vuychdutagfkz4bydzxn3wydqztf@j4sngp4ku4qk>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
+ <fqgxjzw5dxsd6ymm4tmvxmokq4uh2xo6lk5rqhjg4tjw5eblgg@wy5kbuhwmfnx>
+ <2025-09-21-sad-swampy-pillar-rigor-ESCPmx@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dfqx5luuiq3rq4o5"
+Content-Disposition: inline
+In-Reply-To: <2025-09-21-sad-swampy-pillar-rigor-ESCPmx@cyphar.com>
 
-wcd934x_codec_parse_data() contains a device reference count leak in
-of_slim_get_device() where device_find_child() increases the reference
-count of the device but this reference is not properly decreased in
-the success path. Add put_device() in wcd934x_codec_parse_data(),
-which ensures that the reference count of the device is correctly
-managed.
 
-Calling path: of_slim_get_device() -> of_find_slim_device() ->
-device_find_child(). As comment of device_find_child() says, 'NOTE:
-you will need to drop the reference with put_device() after use.'.
+--dfqx5luuiq3rq4o5
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: "Michael T. Kerrisk" <mtk.manpages@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Askar Safin <safinaskar@zohomail.com>, 
+	"G. Branden Robinson" <g.branden.robinson@gmail.com>, linux-man@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Howells <dhowells@redhat.com>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v4 08/10] man/man2/mount_setattr.2: mirror opening
+ sentence from fsopen(2)
+Message-ID: <g257patrvd5blq46uyhsw2vuychdutagfkz4bydzxn3wydqztf@j4sngp4ku4qk>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+ <20250919-new-mount-api-v4-8-1261201ab562@cyphar.com>
+ <fqgxjzw5dxsd6ymm4tmvxmokq4uh2xo6lk5rqhjg4tjw5eblgg@wy5kbuhwmfnx>
+ <2025-09-21-sad-swampy-pillar-rigor-ESCPmx@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-09-21-sad-swampy-pillar-rigor-ESCPmx@cyphar.com>
 
-Found by code review.
+On Sun, Sep 21, 2025 at 08:03:08PM +1000, Aleksa Sarai wrote:
+> On 2025-09-21, Alejandro Colomar <alx@kernel.org> wrote:
+> > Hi Aleksa,
+> >=20
+> > On Fri, Sep 19, 2025 at 11:59:49AM +1000, Aleksa Sarai wrote:
+> > > All of the other new mount API docs have this lead-in sentence in ord=
+er
+> > > to make this set of APIs feel a little bit more cohesive.  Despite be=
+ing
+> > > a bit of a latecomer, mount_setattr(2) is definitely part of this fam=
+ily
+> > > of APIs and so deserves the same treatment.
+> > >=20
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> >=20
+> > Thanks!  I've applied this patch.
+> > <https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git=
+/commit/?h=3Dcontrib&id=3D7022531182883ed1db5d4c926506cd373e0795ee>
+> > (Use port :80/)
+>=20
+> Ah, you forgot to switch to "file-descriptor-based" like you suggested
+> in patch 1. ;)
 
-Cc: stable@vger.kernel.org
-Fixes: a61f3b4f476e ("ASoC: wcd934x: add support to wcd9340/wcd9341 codec")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- sound/soc/codecs/wcd934x.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Oh, thanks for the reminder!  :-)
 
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 1bb7e1dc7e6b..9ffa65329934 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -5849,10 +5849,13 @@ static int wcd934x_codec_parse_data(struct wcd934x_codec *wcd)
- 	slim_get_logical_addr(wcd->sidev);
- 	wcd->if_regmap = regmap_init_slimbus(wcd->sidev,
- 				  &wcd934x_ifc_regmap_config);
--	if (IS_ERR(wcd->if_regmap))
-+	if (IS_ERR(wcd->if_regmap)) {
-+		put_device(&wcd->sidev->dev);
- 		return dev_err_probe(dev, PTR_ERR(wcd->if_regmap),
- 				     "Failed to allocate ifc register map\n");
-+	}
- 
-+	put_device(&wcd->sidev->dev);
- 	of_property_read_u32(dev->parent->of_node, "qcom,dmic-sample-rate",
- 			     &wcd->dmic_sample_rate);
- 
--- 
-2.17.1
+I've amended it, and now pushed to <kernel.org>.
 
+
+Cheers,
+Alex
+
+>=20
+> >=20
+> > Cheers,
+> > Alex
+> >=20
+> > > ---
+> > >  man/man2/mount_setattr.2 | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/man/man2/mount_setattr.2 b/man/man2/mount_setattr.2
+> > > index 4b55f6d2e09d00d9bc4b3a085f310b1b459f34e8..b27db5b96665cfb0c387b=
+f5b60776d45e0139956 100644
+> > > --- a/man/man2/mount_setattr.2
+> > > +++ b/man/man2/mount_setattr.2
+> > > @@ -19,7 +19,11 @@ .SH SYNOPSIS
+> > >  .SH DESCRIPTION
+> > >  The
+> > >  .BR mount_setattr ()
+> > > -system call changes the mount properties of a mount or an entire mou=
+nt tree.
+> > > +system call is part of
+> > > +the suite of file descriptor based mount facilities in Linux.
+> > > +.P
+> > > +.BR mount_setattr ()
+> > > +changes the mount properties of a mount or an entire mount tree.
+> > >  If
+> > >  .I path
+> > >  is relative,
+> > >=20
+> > > --=20
+> > > 2.51.0
+> > >=20
+> >=20
+> > --=20
+> > <https://www.alejandro-colomar.es>
+> > Use port 80 (that is, <...:80/>).
+>=20
+>=20
+>=20
+> --=20
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> https://www.cyphar.com/
+
+
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--dfqx5luuiq3rq4o5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjP0SkACgkQ64mZXMKQ
+wqmf0w//QHPfrYnFJ6Ln5slYg1SK6AwCJhSbj6u1z/PZM783HnFGfLH5LrfWKMVW
+Uf8Qp9QZtyDvfcBgKxjxRnJYWHjBnpX297vBzRheIsJk95urEIU8SvPWc7PPmxRJ
+PU0+MV7RtC38BxEGmLp75lJjybJeKKIPkhYJw0A2f0XfN3B3y3j472hNYJ58rUra
+JXV0y0zeb6CN2dO3uzpS8nwDPJhQQRKol3zKygw3q15cP/5z3x9MPl5uexFVEZzq
+NtRsjGkxfseBOxC1re9Ef8BEUUvLuLojjY1exqWxHOkcZo189Eg5h8cnsAAMaR7/
+A81bzsfiaMseMClXe3Xo0f06ZiLZVeHt1/vpOV4zZlAblIAcJTYPVsB/0PEHh4se
+/HzleLg6A7nI1XaExbnAx5kNvFNTDFCQpF1ZCFNGZzBkmhKbyGqmNEsyGM4xJuSd
+bElw/7Z7MPXYgQkTe5qVVerEXvLunm+iog/S9Y5E/KdmI/OR6ILn7JV14V5pZlAv
+KSpm728pV+RqD77+YKE1cvQAPnJS8HobN3bqyfgP8Pop91t7mxLca01Rh5k2ua45
+aNxVBYyihZ+iOr05tcuX2bdTl/uad3tRamJcDeid7dfviWsQaczEa1Ll2nttRmQm
+V0CnirSuCTGpVsuGNslfDYHynJ90SJk4u7/j12BXSejnnMsaaHs=
+=SF6J
+-----END PGP SIGNATURE-----
+
+--dfqx5luuiq3rq4o5--
 
