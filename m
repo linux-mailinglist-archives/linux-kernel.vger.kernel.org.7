@@ -1,520 +1,318 @@
-Return-Path: <linux-kernel+bounces-826172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A7DB8DBD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:27:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE95B8DBD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9B4517851F
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:27:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79A787A5F94
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA872D6E4A;
-	Sun, 21 Sep 2025 13:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7939F2D6E73;
+	Sun, 21 Sep 2025 13:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpLkx+a5"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Id+do7dk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472721ACEDA
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758461267; cv=none; b=Hy5oXsXV9mX91jgvSo8tTbGb/vQKS37qBhFFbKRVshJIVrtAYGiJpL0aGMCPKqUhG7WMOx3QDox3akx6Auo9Z+4FaomKEMQe67PVc7ivURYPy+f4uHnVDjCrY0F7Yv5dTdm+ir78zFPIi8yUMuF1Me8+tsUE4SZ6cuwT3eZ+qcM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758461267; c=relaxed/simple;
-	bh=BYJAfX8Ywmm+fJlTq83GsVFmVYUs5CH9DAnRyLFosY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lu2AeXSj0mzoBL/doEZANNWPJCUhSUqIWlps8JM57w4YliN8Ejnz2VC9u8KTn23TwVCuWkrUCBKvB0guZs7bjjIwUdDmp1sjZDsIeNeRa75Hd7e8vLldEQ/7jAfWFi6ObyWD4tpvH3kPJekKdLaJdNsx8Yj66ES2ITPyS5eT00k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpLkx+a5; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-32df5cae0b1so3893790a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 06:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758461264; x=1759066064; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OitEWw+Gz/Q+VImRIz1krAC633zPmVjutn3//oeJREU=;
-        b=dpLkx+a5HRjEXavGit22TBC+B2SKQLgLJOgESBWB7bbApWxrh5geWWfaE0pBeV0NOP
-         4kTXPVgUf0/7Ah7ZtuX8DdmxobuWe/U+VL2iuGyMAfNNdPk0I5ApHMjdQqQ6ZjkxNqfF
-         4gAYFe/H/0ig9LgwHFcHssMXufyIL7MqUY6kqTT4IFeQKwLWiieryXo6GwVjxMraC0ST
-         9psf89TGUTQqHPI79XQM5rQ3vnI9zcdFxaFzLdOA0k6yxa26Ty4JfbhqlThSpDwDahGK
-         B7feFpmJ6pymCFpxYupxQ9El0mmf99Z93wn/aXAGh+LZ4dXsEnob4VYO5HJyVSuDCYRW
-         98vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758461264; x=1759066064;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OitEWw+Gz/Q+VImRIz1krAC633zPmVjutn3//oeJREU=;
-        b=c8OUKWOZQXzRQxLyOWw7xRNseKwtCqGBvTHqnynGPyeTnXbR7Jtbk5GT/x1SIFXVHq
-         Kci6Q6hQvbAgseRZvwSTmOnyOFfjUa7qz834paOdClY5eZ2T05gwmmsRUGVKpDqRiaw/
-         yCZr1OIXG/vD5AhwfNPooyIQ1ys7kzGxbOJQJ7o8QtjmRnihMVABo6mR85vF8izY9geY
-         mNMLltl3R6VBZibD4BVAw59fcmkPdZoE4OIs2hEHI07D99bDzqR2+ZVbPBCVREvHEePo
-         FK/PQ4NbWypyyg6y3Yhva6TPERVcWTKCkb/86uFMRa8AA8NqJLAJHNyKfYS7yGSc2b9T
-         L3pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/vbN3v9SnmhJ9bGT2VtyTPWPI9GYf3a+4NGAgNP+d7jQtWrCo4ZtMWJsZCL4d99pc/N2JYp8WvmvCiEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0KXmu8Ute9DkBBq5D/Mm3IqMlAekRgZTXHSMKXrZGC60J4QsE
-	g+Gksa8wvzX2boeXbDGB+QEJMt/aH8LAeeHrv7JeyPtFMWSmcfBHn22h
-X-Gm-Gg: ASbGncuHdO2TnRzLUugqBGu3ADpIhdWI6ZExg4JatZJFYyqf/6Zli16ufh+/Vcftui2
-	KaaNVHmSd4st1GbYOSz0bmrExO1XHf7SDMIzqAnaFtSNK4NFed24hDEWgdVsRvJVJIyVZcp5pbc
-	g1V+q4e+0ZcAtqK+VlkNP96TdzXLiHrg2iCTpx6EXKcD9PI38jQhMlYeXqgbSjh4ZFBBTCzobYF
-	7xQqK7vqGBnVnuGpCzebzDaW/LsfSQfGNBY43qjoinbL2EADcs9epxErGVklvB6EGCWLavaVxAa
-	Ao1VVWwuupBUPrs9AUBl4NT5T+O/m2CO7SAbYkDQOth1MIDDwAnRBM1J9vf8SXWrmm6px0nYDQr
-	aUUmLNs1kS7++syfItGupb2Feh0oVz/b8qXu36UiVEUU0
-X-Google-Smtp-Source: AGHT+IEUuqlJ7FSNOLXySDcmdLbiqAPabvyytIQHjHbBO5Vl6QGpGw/MCpjpoXAvXksxJCQcHTnIEQ==
-X-Received: by 2002:a17:90b:2249:b0:32b:c5a9:7be9 with SMTP id 98e67ed59e1d1-3309835ef66mr11311226a91.25.1758461264243;
-        Sun, 21 Sep 2025 06:27:44 -0700 (PDT)
-Received: from gmail.com ([106.222.198.22])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f0fc4cfbcsm5550155b3a.61.2025.09.21.06.27.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 06:27:43 -0700 (PDT)
-From: Joshua Jayasingh <joshuajayasingh08@gmail.com>
-To: groeck@chromium.org
-Cc: gregkh@linuxfoundation.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Joshua Jayasingh <joshuajayasingh08@gmail.com>
-Subject: [PATCH] Subject: [PATCH] firmware: google: Add comments to coreboot_table.c
-Date: Sun, 21 Sep 2025 18:54:46 +0530
-Message-ID: <20250921132446.1974-1-joshuajayasingh08@gmail.com>
-X-Mailer: git-send-email 2.51.0.windows.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869AE2D130B
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758461395; cv=fail; b=c+a9P9YHhkVeIXgLfECOUW5Uzv13SJzPb1BjJpKJNmpjr01MyJS6jn9HjTBAQdYb6JRQRRbe6bdmqxcVru5emLC76HuIxISVMb6YG8Hq9fWYKGQp1Wv5M63R1gNH8n2n9Oraq3kFsh10p9EaLlSz5uQWFVdYi8XjWrX5CcGt7GU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758461395; c=relaxed/simple;
+	bh=dJHd5eUFWoV4gKiXw3B/RJYTHXOmxrC7IpyO3qbsBrM=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Izdl8sGGyaqSx8lBGO1zwwI2ImdHoxK7g1w0FucB4cI3IaTAYvzA5iGcriE5QWbL1NOsr4RB8ugeF14+b3MXUbm8GYdMs+KDvxsFyOuo0Fzn2UlZS5P6N3mP94w1QLRGFZJEAAZGa5y6l9j1f6AidbMe1v3VsnXHBziIEabvs0g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Id+do7dk; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758461394; x=1789997394;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=dJHd5eUFWoV4gKiXw3B/RJYTHXOmxrC7IpyO3qbsBrM=;
+  b=Id+do7dkyotzWDfUbQakxU/FYqtONJcciPnQNSNuj0m7nQ+NiC8DzDq7
+   LQLNyxs48SXOOLIIorGII8Ani6bC3d1FJh+0g5H7X0A0OrvXANzZiWRad
+   TdQbIbkF23MSdXQAEit/bPZz6eOHMevnm5wFm4XADORS2wwf4PQ5OBfqk
+   QEHIy/5WINOJfgNBIH3LDr+MK3TFFr3qwRua6bZUyk6AChO51t4NxqVEW
+   9JjznCrjRCXZlGoyGwueOD5hhnrguWdThU6HLd/jrox98SOxP1vL+ymnR
+   p5Swh2/mCvEiyKtfdPYi78aG0k0BZN1YNID4dmFEL4faPAgkHfcgZTW0d
+   Q==;
+X-CSE-ConnectionGUID: ZPQPpzazS9OGy7CdVSS+nQ==
+X-CSE-MsgGUID: KQlmfa3kRG+I/wFtwSYJhg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60685938"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60685938"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 06:29:53 -0700
+X-CSE-ConnectionGUID: 6lfAbDY2RZqtUetM8UUZ7Q==
+X-CSE-MsgGUID: xEoIOhJwTGyLBSBTNBRzjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
+   d="scan'208";a="175390367"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 06:29:53 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 21 Sep 2025 06:29:51 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Sun, 21 Sep 2025 06:29:51 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.5) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 21 Sep 2025 06:29:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PY9hPM/H6fZFyQRNZqHjHfxpDdxXKKPcq+asJKLEdlBfBhAE73VQgeQrwdHwY/l1dDDWoNzNl4iVs9s4wDV8OKcxnoQcwIjS6DVEUU+IJl/23qm4xBnAGg59Pzo0Gmkiepy7Rs1ehsMJFQqzZKCVSUH3HmVVn7CBf4bmFhzaafXaxdfcNfYn6jvJSIn1pIh0bIBzBgzXnmSKb9bAlU8oUHwOEtCURTBMLfq13iJXgckLcMbiQi1//BmwtFThpvxIWf6iPN0EynejLZfwNbUvTtsAoXj99J9547CF2fK8un+gxTD0Qc7+XmDnJ2KABiyc0vhSOj071dOfClCKLkRvng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C1DRWT+SwQqiIc9imBiTdp90wkN/mdyIkekV94dS9FA=;
+ b=cbIcWopZVP8v7OwwBZU+nFIe6cYt7fGtl4HhtKQGpht1+ImoLxS9TbVCOGEx3quR1wYfvIAmXAFz9qfVFoG4BebIgx0uUe39mVhukEFuF4H9b31AWx6ppDWX8iQ3wqrlyzV2p1pknfUtEPDMXrZ6NfxOSjKGvhumq5+hO2DCqydXhaz6KCsu+ACHxXShLVDyptn0h6hgCXUTWpkuT5zGeO6XaQKN5qAJ1ofpXKz4bAIiNV7apX9sVDKjtCYOAVa21BEILhNsbFKzqbRM1XjWZ2adgIlqzKakybtV+sby4cRkN01k5niVJSpFpiKBihMp10GgM/AO3bdhmbmRYis2cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by LV8PR11MB8745.namprd11.prod.outlook.com (2603:10b6:408:204::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Sun, 21 Sep
+ 2025 13:29:44 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9137.018; Sun, 21 Sep 2025
+ 13:29:44 +0000
+Date: Sun, 21 Sep 2025 21:29:34 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	<aubrey.li@linux.intel.com>, <yu.c.chen@intel.com>, <oliver.sang@intel.com>
+Subject: [peterz-queue:sched/cleanup] [sched]  cfcabf4524:
+ WARNING:possible_recursive_locking_detected
+Message-ID: <202509212119.eab661a8-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: TPYP295CA0025.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:a::15) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|LV8PR11MB8745:EE_
+X-MS-Office365-Filtering-Correlation-Id: 545d1b21-a7b1-4e3d-dd03-08ddf912ed1d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3U/FEVCEodKm8Htc0zbaXWQ/A6Ewmq14wKdC9IfyjqLBD3HrGSSuSDWipzKN?=
+ =?us-ascii?Q?jW/arY0H9WibFW8A9J7OLvtBvQKX/MwxoZrQK9xUWwWzGyMuz3DgB1o+5jQh?=
+ =?us-ascii?Q?BtutvBttu5rztM76gA//XQmD40V9Qxe+6r+OlWzffjfa5dOavHg3bAB2W3DY?=
+ =?us-ascii?Q?pygKV0Xw7ec8dSKwk5n5nS/rBhozsnkWBXrmFsHk/1C+dDKed+9shsc41aUx?=
+ =?us-ascii?Q?+DwjAf2SsHSocdRYkwJUU9fL1z+iKEXoiKc/SsOtohIwpLI0WuOJrBJucBmE?=
+ =?us-ascii?Q?JkoJybPKJHXmMrX7wFAkTIyjQUIcMBRwuWMtfDMgMYXPvZv4XsZS/ZB7AmkO?=
+ =?us-ascii?Q?FTeiveY9jFejDefEP8bgg+mTZ7amaIiO6xWJz5OuGuJHOl2L2T3fUMGlQITu?=
+ =?us-ascii?Q?yzwAATHcQKvyIKGYmyEDJxACTI6e52Mf6Sj2ldaJTbg3wGnqifwGLADYvAvv?=
+ =?us-ascii?Q?4kgPgskGCbtWG2p4bHjRAB+GrQ1O09+oK5c/vbfd5tR3wj8EO9w7UkH4LrnY?=
+ =?us-ascii?Q?ZDrtzraD3Zz1tVvG12kNZr97NQxY1PybFfr0dDbcs/qDc7ijYHt5XzgHKs06?=
+ =?us-ascii?Q?Gevf203lfo6mIkvBGlWBJ6msfaOmTIJSe+YKauml98K0kWkBnbbC/BBGAjAc?=
+ =?us-ascii?Q?UuMLT9fmNn2tGjt8nM7ZZT9LLaKqt0NJjK3fxpQYMheSjibNdwK587cgd7p/?=
+ =?us-ascii?Q?PLrtZvM/5sPMzPCILkkfaPxmOzuhk386C8Phg8S5kUQ0GVPSHsxn/QGgZD5j?=
+ =?us-ascii?Q?EgEmPyMSLqsUG5asPLkCM5mC7QmR21JviptAXQU4UHFIi/DAl5O5QgrflEa+?=
+ =?us-ascii?Q?lKrhpFoObCB3ILTT1ZAZn1JqOKe9ysX5e0wlgpTqwk5n9krcq9w3oMmzLs2I?=
+ =?us-ascii?Q?lv42xP47nw9fQOf+fE0iYSjlgN2S1BNe9TEX830woBSw9UrEZ3yP2SkIDUel?=
+ =?us-ascii?Q?bSxD1vsJqKpmySnDeZ9HH+I2SMb0+YWj+dTEJH7KfOBJTjRlzp9M5X8cXgr9?=
+ =?us-ascii?Q?hPWNfIPr4XXWFmn93A+m8FbjWDfeLPepbKY3a7KTWcOpk0l7/twPE+Zmb/A5?=
+ =?us-ascii?Q?T8Z52PDxqKT8ncD8mxqb7lHldkrHnYqFbyTUkfgX/J2iW3WHixgP+TbQ28w3?=
+ =?us-ascii?Q?bdxzMPxl4fiaVkFliC2UUuV8BT6bhbE46maNQdFTkYx6X2oL1YP/dw6esShz?=
+ =?us-ascii?Q?gOiC3nEvt6Q55l+joIjXXm+Gyt+d7alNnuSeBJTwnI2F9zxrGNzrbBqM2hph?=
+ =?us-ascii?Q?Q5jczapxe+nhwBN78K5da6meiY+l2d6pCX+1wRkhTJFhaX1D08xEhu8KfKsM?=
+ =?us-ascii?Q?pIkOuttfouptXLteaLBY9FLbVwXPyNeJVdmOgEqaG9ZMbibUUKhNnZOpvGTD?=
+ =?us-ascii?Q?90HR1AFWSTNV8OKuKoRE1dgSeTJQ?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TOAc2xNfQ1GyMff7dLkmk4IW6xUd+ZOt5GfujdM8WxtF2EXBcyDy2BpThX6C?=
+ =?us-ascii?Q?qKbHsE9L+2dSPhVwyGmIP0y2JINgmNme1b0KNlTB3ZMRKo0A1+3xmz+zXGQR?=
+ =?us-ascii?Q?+LZjMWaw5Y3IKfsDkCDJNOOqhMBsOHzxrT80Hr2PSmMwYJekc+wsTAVqwPiM?=
+ =?us-ascii?Q?MonKo+iuUjhNdG/+v8x9PRZ+8chZUT/15sliMJZLiWlrhuCg4vlsbuhQZgKk?=
+ =?us-ascii?Q?/iZcxX+dlqgkfc6AOdBB2bE7qIjPpcmNYEvts+5MM9RfJBZ/jXQ6GoulFtIF?=
+ =?us-ascii?Q?E0hlATe/EIvxiUKriaB4NO5iFrgJH3GfhdfHe7O7iKh74ra3Cu7RDMGLBn8h?=
+ =?us-ascii?Q?uYUWTReOPh7LMqC7W74N4erLrCKQMfMLsdOYnl1C9NmFAOc+rnXXMqAVdtL7?=
+ =?us-ascii?Q?Uxk3k9Ilmz1TaNRSDGCB9V28TohC5fr85mxaWoP5dOavQVlD0eHpS0lFGta6?=
+ =?us-ascii?Q?51K3tNCwfyZ+UhL95dcuIK41HyJ2Ev2Wxw8K+rJWqrkOIem7ebT+v+LnMzLu?=
+ =?us-ascii?Q?lT1Tdoqc9Rd/qkcqZRCfBCVOeQ2OoiZ6MU9XO57H/yjAc5zv0jI+SFK9F+kK?=
+ =?us-ascii?Q?+qi3kCP3pVeNKtBqfgGsDqke7WVYNklS2piOFD1FZgheiGOV0ERsH7JieOUq?=
+ =?us-ascii?Q?COeYnJHdSiZJzz+1BUUByU+NlWgx37tT8zZeaYtYUskDda2Rd9Y0JpFvw375?=
+ =?us-ascii?Q?aLxhNyKR9AtAlSEe6MWogRp8QcGS5eL5V0ZEplIOrEDlM7wQJelltFF5OTwH?=
+ =?us-ascii?Q?zynWzReTNCP8YAyy/RAMwju/2bkyJHeXXqKSM/NEE+C3hfv90UD/tY8a2FGR?=
+ =?us-ascii?Q?TdHeCOJTEtYKUpe7GUJiSIqrHHH1QXWdyIMmAFrEsCnDsKIMfwusaG4JAbGu?=
+ =?us-ascii?Q?s26UMrsM0KjOs/XyOLfyMNux8IPp2Q7TNVP9/U68SU6ym1DEgcLBz5uoRHvy?=
+ =?us-ascii?Q?1ac00Epl+AsmpmP96q44mG/hWTQbsH4ez/CfTgfR4qZjhh2cfWgRDHCZc7Pn?=
+ =?us-ascii?Q?7MHVxp+d974/Alk+JQaTDLbuogaZPIjqLEWTBZzAPfI4zqmiZbReOt5gzSq8?=
+ =?us-ascii?Q?+RPQSoFTZliGRQawpyv7mSmbQpvyhrdN2Iw9T5LsR6t3CURL/5gh0p+U6hoS?=
+ =?us-ascii?Q?U5tbPoCf35Qj00Xdp9OBFsv4jG32aBzNFABNCEP805Ruw3Cae8pZGykIwnUA?=
+ =?us-ascii?Q?Y8gRPfLUzMH3aw4m1LbMKfMoBxECcB0a7FiFWzDYgfLFpwBeB+y5ysMPWzMh?=
+ =?us-ascii?Q?L6kmsAGoSyAxBlG9X9oplKuYWNTYk68vhbBtzEWvBzhIouVd3vP7ZXNoPJta?=
+ =?us-ascii?Q?lpPwz5F8mfZeuJBq/A8niucu96qQU/wxhd448yaKo2Etsn4s1xuTLdWJ661F?=
+ =?us-ascii?Q?CfbnsALrnjd/QDIuqlqhR+WT4HZPE8M0zGHlCiT6YjGFHiE+qQEUA7SYXO8O?=
+ =?us-ascii?Q?nk5yNrHX4VAXZITCZtlbrWtB4RFJxTQ7CH28ghziTByhcIYY+DOyia2nG005?=
+ =?us-ascii?Q?bwEEjPEW7+VYxSbBkwouhWtYIb+bd4dfQ5xne/xvGnda1GA6r1qCGkwciDWB?=
+ =?us-ascii?Q?GIzLW2zg3vVsUH3DlPpUEi0zERJ3TXv+y5u1ssobV+zW50MfHe4wWMg5fL8o?=
+ =?us-ascii?Q?bw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 545d1b21-a7b1-4e3d-dd03-08ddf912ed1d
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Sep 2025 13:29:44.0447
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AjQ9OgdNbUKWyc2PeIoFckiBe+EYwJ99IqgvOwHq/hiMXEF76vxo3L6fxDeyekcwYYufGS60kjuPfrnDm6Lifw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8745
+X-OriginatorOrg: intel.com
 
-The coreboot_table.c file contains no comments, making it difficult
-for new developers to understand the logic for parsing the coreboot
-tables and locating firmware entries.
 
-This patch adds comprehensive comments throughout the file, explaining
-the purpose of key functions, structs, and complex operations to improve
-overall readability and maintainability.
 
-Signed-off-by: Joshua Jayasingh <joshuajayasingh08@gmail.com>
----
- drivers/firmware/google/coreboot_table.c | 187 +++++++++++++++++++++--
- 1 file changed, 177 insertions(+), 10 deletions(-)
+Hello,
 
-diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-index 882db32e51be..d78038bd069f 100644
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -2,7 +2,11 @@
- /*
-  * coreboot_table.c
-  *
-- * Module providing coreboot table access.
-+ * Module providing coreboot table access. This module creates a new bus type
-+ * ("coreboot") and a platform driver. The driver finds the coreboot table in
-+ * memory (via ACPI or Device Tree), parses it, and creates a new device on the
-+ * coreboot bus for each entry in the table. Other drivers can then register
-+ * with the coreboot bus to interact with these specific entries.
-  *
-  * Copyright 2017 Google Inc.
-  * Copyright 2017 Samuel Holland <samuel@sholland.org>
-@@ -21,26 +25,52 @@
- 
- #include "coreboot_table.h"
- 
-+/* Helper macro to get the coreboot_device from a struct device. */
- #define CB_DEV(d) container_of(d, struct coreboot_device, dev)
-+/* Helper macro to get the coreboot_driver from a const struct device_driver. */
- #define CB_DRV(d) container_of_const(d, struct coreboot_driver, drv)
- 
-+/**
-+ * coreboot_bus_match - Match a coreboot device with a coreboot driver.
-+ * @dev: The coreboot device.
-+ * @drv: The coreboot device driver.
-+ *
-+ * This function is called by the driver core to determine if a driver can
-+ * handle a specific device. It iterates through the driver's ID table and
-+ * compares the coreboot entry tag of the device with the tags supported by
-+ * the driver.
-+ *
-+ * Return: 1 if the device's tag matches an ID in the driver's table,
-+ * 0 otherwise.
-+ */
- static int coreboot_bus_match(struct device *dev, const struct device_driver *drv)
- {
- 	struct coreboot_device *device = CB_DEV(dev);
- 	const struct coreboot_driver *driver = CB_DRV(drv);
- 	const struct coreboot_device_id *id;
- 
-+	/* If the driver doesn't have an ID table, it can't match any device. */
- 	if (!driver->id_table)
- 		return 0;
- 
-+	/* Iterate over the driver's supported tags. */
- 	for (id = driver->id_table; id->tag; id++) {
- 		if (device->entry.tag == id->tag)
--			return 1;
-+			return 1; /* Found a match. */
- 	}
- 
--	return 0;
-+	return 0; /* No match found. */
- }
- 
-+/**
-+ * coreboot_bus_probe - Probe a coreboot device.
-+ * @dev: The coreboot device that was matched with a driver.
-+ *
-+ * This function is called by the driver core after a successful match.
-+ * It simply calls the driver's specific probe function, if it exists.
-+ *
-+ * Return: 0 on success, or an error code from the driver's probe function.
-+ */
- static int coreboot_bus_probe(struct device *dev)
- {
- 	int ret = -ENODEV;
-@@ -53,6 +83,13 @@ static int coreboot_bus_probe(struct device *dev)
- 	return ret;
- }
- 
-+/**
-+ * coreboot_bus_remove - Remove a coreboot device.
-+ * @dev: The coreboot device to remove.
-+ *
-+ * This function is called by the driver core when the device is being removed.
-+ * It calls the driver's specific remove function, if it exists.
-+ */
- static void coreboot_bus_remove(struct device *dev)
- {
- 	struct coreboot_device *device = CB_DEV(dev);
-@@ -62,6 +99,19 @@ static void coreboot_bus_remove(struct device *dev)
- 		driver->remove(device);
- }
- 
-+/**
-+ * coreboot_bus_uevent - Generate a uevent for a coreboot device.
-+ * @dev: The device for which to generate the event.
-+ * @env: The uevent environment variables.
-+ *
-+ * This function adds a MODALIAS environment variable to the uevent.
-+ * The MODALIAS is used by userspace (e.g., udev) to automatically load the
-+ * appropriate driver module for this device. The alias is formatted as
-+ * "coreboot:t<tag>", where <tag> is the 8-digit hexadecimal tag of the
-+ * coreboot table entry.
-+ *
-+ * Return: 0 on success, or an error code from add_uevent_var().
-+ */
- static int coreboot_bus_uevent(const struct device *dev, struct kobj_uevent_env *env)
- {
- 	struct coreboot_device *device = CB_DEV(dev);
-@@ -70,6 +120,10 @@ static int coreboot_bus_uevent(const struct device *dev, struct kobj_uevent_env
- 	return add_uevent_var(env, "MODALIAS=coreboot:t%08X", tag);
- }
- 
-+/*
-+ * The bus_type structure for the coreboot bus.
-+ * This defines the bus's name and its core operations (match, probe, etc.).
-+ */
- static const struct bus_type coreboot_bus_type = {
- 	.name		= "coreboot",
- 	.match		= coreboot_bus_match,
-@@ -78,6 +132,14 @@ static const struct bus_type coreboot_bus_type = {
- 	.uevent		= coreboot_bus_uevent,
- };
- 
-+/**
-+ * coreboot_device_release - Release a coreboot_device structure.
-+ * @dev: The device to be released.
-+ *
-+ * This is the release function for coreboot devices. It is called by the
-+ * driver core when the last reference to the device is dropped. Its job is
-+_ to free the memory allocated for the coreboot_device.
-+ */
- static void coreboot_device_release(struct device *dev)
- {
- 	struct coreboot_device *device = CB_DEV(dev);
-@@ -85,6 +147,17 @@ static void coreboot_device_release(struct device *dev)
- 	kfree(device);
- }
- 
-+/**
-+ * __coreboot_driver_register - Register a coreboot driver.
-+ * @driver: The coreboot driver to register.
-+ * @owner: The module that owns this driver.
-+ *
-+ * A helper function to register a coreboot driver with the coreboot bus.
-+ * It sets up the bus and owner fields in the driver's device_driver struct
-+ * and then calls the generic driver_register function.
-+ *
-+ * Return: 0 on success, or an error code from driver_register().
-+ */
- int __coreboot_driver_register(struct coreboot_driver *driver,
- 			       struct module *owner)
- {
-@@ -95,12 +168,29 @@ int __coreboot_driver_register(struct coreboot_driver *driver,
- }
- EXPORT_SYMBOL(__coreboot_driver_register);
- 
-+/**
-+ * coreboot_driver_unregister - Unregister a coreboot driver.
-+ * @driver: The coreboot driver to unregister.
-+ *
-+ * Unregisters the given driver from the coreboot bus.
-+ */
- void coreboot_driver_unregister(struct coreboot_driver *driver)
- {
- 	driver_unregister(&driver->drv);
- }
- EXPORT_SYMBOL(coreboot_driver_unregister);
- 
-+/**
-+ * coreboot_table_populate - Parse the coreboot table and create devices.
-+ * @dev: The parent device (the platform_device for the coreboot table).
-+ * @ptr: A pointer to the mapped coreboot table in memory.
-+ *
-+ * This function iterates through all entries in the coreboot table. For each
-+ * entry, it allocates a `coreboot_device`, copies the entry data into it,
-+ * and registers it as a new device on the coreboot bus.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
- static int coreboot_table_populate(struct device *dev, void *ptr)
- {
- 	int i, ret;
-@@ -109,46 +199,70 @@ static int coreboot_table_populate(struct device *dev, void *ptr)
- 	struct coreboot_table_entry *entry;
- 	struct coreboot_table_header *header = ptr;
- 
-+	/* The first entry is located right after the header. */
- 	ptr_entry = ptr + header->header_bytes;
-+
-+	/* Loop through all the entries specified in the header. */
- 	for (i = 0; i < header->table_entries; i++) {
- 		entry = ptr_entry;
- 
-+		/* Basic sanity check for entry size. */
- 		if (entry->size < sizeof(*entry)) {
- 			dev_warn(dev, "coreboot table entry too small!\n");
- 			return -EINVAL;
- 		}
- 
--		device = kzalloc(sizeof(device->dev) + entry->size, GFP_KERNEL);
-+		/* Allocate memory for our device struct and the raw entry data. */
-+		device = kzalloc(sizeof(*device) + entry->size, GFP_KERNEL);
- 		if (!device)
- 			return -ENOMEM;
- 
-+		/* Initialize the generic device fields. */
- 		device->dev.parent = dev;
- 		device->dev.bus = &coreboot_bus_type;
- 		device->dev.release = coreboot_device_release;
-+		/* Copy the raw coreboot table entry data. */
- 		memcpy(device->raw, ptr_entry, entry->size);
- 
-+		/* Set a descriptive device name based on the entry tag. */
- 		switch (device->entry.tag) {
- 		case LB_TAG_CBMEM_ENTRY:
-+			/* CBMEM entries have a specific ID we can use for a unique name. */
- 			dev_set_name(&device->dev, "cbmem-%08x",
- 				     device->cbmem_entry.id);
- 			break;
- 		default:
-+			/* For other entries, just use a generic numbered name. */
- 			dev_set_name(&device->dev, "coreboot%d", i);
- 			break;
- 		}
- 
-+		/* Register the new device with the driver core. */
- 		ret = device_register(&device->dev);
- 		if (ret) {
--			put_device(&device->dev);
-+			/* If registration fails, clean up and bail out. */
-+			put_device(&device->dev); /* This will trigger release */
- 			return ret;
- 		}
- 
-+		/* Move to the next entry in the table. */
- 		ptr_entry += entry->size;
- 	}
- 
- 	return 0;
- }
- 
-+/**
-+ * coreboot_table_probe - Probe function for the coreboot platform driver.
-+ * @pdev: The platform device.
-+ *
-+ * This function is called when the platform bus finds a device that matches
-+ * this driver (e.g., via ACPI or Device Tree). It locates the coreboot table
-+ * in memory, verifies its signature, and then calls coreboot_table_populate()
-+ * to create devices for each entry.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
- static int coreboot_table_probe(struct platform_device *pdev)
- {
- 	resource_size_t len;
-@@ -158,6 +272,7 @@ static int coreboot_table_probe(struct platform_device *pdev)
- 	void *ptr;
- 	int ret;
- 
-+	/* Get the memory region containing the coreboot table. */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res)
- 		return -EINVAL;
-@@ -166,51 +281,81 @@ static int coreboot_table_probe(struct platform_device *pdev)
- 	if (!res->start || !len)
- 		return -EINVAL;
- 
--	/* Check just the header first to make sure things are sane */
-+	/*
-+	 * First, map only the header to perform a sanity check. This avoids
-+	 * mapping a potentially huge and invalid memory region.
-+	 */
- 	header = memremap(res->start, sizeof(*header), MEMREMAP_WB);
- 	if (!header)
- 		return -ENOMEM;
- 
--	len = header->header_bytes + header->table_bytes;
-+	/* Verify the "LBIO" signature. */
- 	ret = strncmp(header->signature, "LBIO", sizeof(header->signature));
--	memunmap(header);
- 	if (ret) {
- 		dev_warn(dev, "coreboot table missing or corrupt!\n");
-+		memunmap(header);
- 		return -ENODEV;
- 	}
- 
-+	/* Get the full table size from the header. */
-+	len = header->header_bytes + header->table_bytes;
-+	memunmap(header);
-+
-+	/* Now map the entire coreboot table. */
- 	ptr = memremap(res->start, len, MEMREMAP_WB);
- 	if (!ptr)
- 		return -ENOMEM;
- 
-+	/* Populate the bus with devices from the table entries. */
- 	ret = coreboot_table_populate(dev, ptr);
- 
-+	/* Unmap the memory region as it's no longer needed. */
- 	memunmap(ptr);
- 
- 	return ret;
- }
- 
-+/**
-+ * __cb_dev_unregister - Helper function to unregister a device.
-+ * @dev: The device to unregister.
-+ * @dummy: Unused data pointer (required by bus_for_each_dev).
-+ *
-+ * This function is used as a callback for bus_for_each_dev to unregister
-+ * a single device.
-+ *
-+ * Return: Always 0.
-+ */
- static int __cb_dev_unregister(struct device *dev, void *dummy)
- {
- 	device_unregister(dev);
- 	return 0;
- }
- 
-+/**
-+ * coreboot_table_remove - Remove function for the coreboot platform driver.
-+ * @pdev: The platform device.
-+ *
-+ * This function is called when the platform device is being removed. It
-+ * cleans up by iterating over all devices on the coreboot bus and
-+ * unregistering them.
-+ */
- static void coreboot_table_remove(struct platform_device *pdev)
- {
- 	bus_for_each_dev(&coreboot_bus_type, NULL, NULL, __cb_dev_unregister);
- }
- 
- #ifdef CONFIG_ACPI
-+/* ACPI device IDs that this platform driver can bind to. */
- static const struct acpi_device_id cros_coreboot_acpi_match[] = {
--	{ "GOOGCB00", 0 },
--	{ "BOOT0000", 0 },
-+	{ "GOOGCB00", 0 }, /* Google Coreboot device */
-+	{ "BOOT0000", 0 }, /* Coreboot device on older systems */
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, cros_coreboot_acpi_match);
- #endif
- 
- #ifdef CONFIG_OF
-+/* Device Tree compatible strings that this platform driver can bind to. */
- static const struct of_device_id coreboot_of_match[] = {
- 	{ .compatible = "coreboot" },
- 	{}
-@@ -218,26 +363,40 @@ static const struct of_device_id coreboot_of_match[] = {
- MODULE_DEVICE_TABLE(of, coreboot_of_match);
- #endif
- 
-+/* The platform_driver structure for the main coreboot table driver. */
- static struct platform_driver coreboot_table_driver = {
- 	.probe = coreboot_table_probe,
- 	.remove = coreboot_table_remove,
- 	.driver = {
- 		.name = "coreboot_table",
-+		/* Link the ACPI and Device Tree match tables. */
- 		.acpi_match_table = ACPI_PTR(cros_coreboot_acpi_match),
- 		.of_match_table = of_match_ptr(coreboot_of_match),
- 	},
- };
- 
-+/**
-+ * coreboot_table_driver_init - Module initialization function.
-+ *
-+ * This function is called when the module is loaded. It registers the
-+ * coreboot bus type and then registers the platform driver that finds
-+ * and parses the coreboot table.
-+ *
-+ * Return: 0 on success, or a negative error code on failure.
-+ */
- static int __init coreboot_table_driver_init(void)
- {
- 	int ret;
- 
-+	/* First, register our new bus type with the kernel. */
- 	ret = bus_register(&coreboot_bus_type);
- 	if (ret)
- 		return ret;
- 
-+	/* Then, register the platform driver. */
- 	ret = platform_driver_register(&coreboot_table_driver);
- 	if (ret) {
-+		/* If driver registration fails, unregister the bus. */
- 		bus_unregister(&coreboot_bus_type);
- 		return ret;
- 	}
-@@ -245,15 +404,23 @@ static int __init coreboot_table_driver_init(void)
- 	return 0;
- }
- 
-+/**
-+ * coreboot_table_driver_exit - Module exit function.
-+ *
-+ * This function is called when the module is unloaded. It unregisters the
-+ * platform driver and the coreboot bus type, cleaning up all resources.
-+ */
- static void __exit coreboot_table_driver_exit(void)
- {
- 	platform_driver_unregister(&coreboot_table_driver);
- 	bus_unregister(&coreboot_bus_type);
- }
- 
-+/* Register the init and exit functions. */
- module_init(coreboot_table_driver_init);
- module_exit(coreboot_table_driver_exit);
- 
-+/* Standard module information. */
- MODULE_AUTHOR("Google, Inc.");
- MODULE_DESCRIPTION("Module providing coreboot table access");
- MODULE_LICENSE("GPL");
+kernel test robot noticed "WARNING:possible_recursive_locking_detected" on:
+
+commit: cfcabf45249df741fa733f41f7dbf98534e31b6b ("sched: Fix do_set_cpus_allowed() locking")
+https://git.kernel.org/cgit/linux/kernel/git/peterz/queue.git sched/cleanup
+
+in testcase: locktorture
+version: 
+with following parameters:
+
+	runtime: 300s
+	test: cpuhotplug
+
+
+
+config: x86_64-randconfig-076-20250917
+compiler: clang-20
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202509212119.eab661a8-lkp@intel.com
+
+
+[   95.960389][   T23]
+[   95.961013][   T23] ============================================
+[   95.961890][   T23] WARNING: possible recursive locking detected
+[   95.962817][   T23] 6.17.0-rc4-00016-gcfcabf45249d #1 Tainted: G                T
+[   95.967338][   T23] --------------------------------------------
+[   95.976369][   T23] migration/1/23 is trying to acquire lock:
+[ 95.977282][ T23] ffff8883a9dfa198 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[   95.978743][   T23]
+[   95.978743][   T23] but task is already holding lock:
+[ 95.979934][ T23] ffff8883a9dfa198 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[   95.981409][   T23]
+[   95.981409][   T23] other info that might help us debug this:
+[   95.982674][   T23]  Possible unsafe locking scenario:
+[   95.982674][   T23]
+[   95.984064][   T23]        CPU0
+[   95.984613][   T23]        ----
+[   95.985206][   T23]   lock(&rq->__lock);
+[   95.985896][   T23]   lock(&rq->__lock);
+[   95.986590][   T23]
+[   95.986590][   T23]  *** DEADLOCK ***
+[   95.986590][   T23]
+[   95.988030][   T23]  May be due to missing lock nesting notation
+[   95.988030][   T23]
+[   95.989277][   T23] 3 locks held by migration/1/23:
+[ 95.990078][ T23] #0: ffff888175d905b8 (&p->pi_lock){-.-.}-{2:2}, at: __balance_push_cpu_stop (kernel/sched/sched.h:1520 kernel/sched/sched.h:1847 kernel/sched/core.c:8098) 
+[ 95.991598][ T23] #1: ffff8883a9dfa198 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[ 95.993052][ T23] #2: ffffffff8cd48ba0 (rcu_read_lock){....}-{1:3}, at: cpuset_cpus_allowed_fallback (include/linux/rcupdate.h:331 include/linux/rcupdate.h:841 kernel/cgroup/cpuset.c:4122) 
+[   95.996014][   T23]
+[   95.996014][   T23] stack backtrace:
+[   95.996988][   T23] CPU: 1 UID: 0 PID: 23 Comm: migration/1 Tainted: G                T   6.17.0-rc4-00016-gcfcabf45249d #1 PREEMPT
+[   95.996998][   T23] Tainted: [T]=RANDSTRUCT
+[   95.997001][   T23] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[ 95.997005][ T23] Stopper: __balance_push_cpu_stop+0x0/0x320 <- balance_push (kernel/sched/core.c:8177) 
+[   95.997018][   T23] Call Trace:
+[   95.997022][   T23]  <TASK>
+[ 95.997027][ T23] __dump_stack (lib/dump_stack.c:95) 
+[ 95.997034][ T23] dump_stack_lvl (lib/dump_stack.c:123) 
+[ 95.997041][ T23] dump_stack (lib/dump_stack.c:130) 
+[ 95.997046][ T23] print_deadlock_bug (kernel/locking/lockdep.c:3043) 
+[ 95.997054][ T23] __lock_acquire (kernel/locking/lockdep.c:?) 
+[ 95.997062][ T23] ? kvm_sched_clock_read (arch/x86/kernel/kvmclock.c:91) 
+[ 95.997070][ T23] ? sched_clock_noinstr (arch/x86/kernel/tsc.c:271) 
+[ 95.997080][ T23] lock_acquire (kernel/locking/lockdep.c:5868) 
+[ 95.997085][ T23] ? raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[ 95.997091][ T23] ? __lock_acquire (kernel/locking/lockdep.c:?) 
+[ 95.997096][ T23] ? kvm_sched_clock_read (arch/x86/kernel/kvmclock.c:91) 
+[ 95.997102][ T23] ? sched_clock_noinstr (arch/x86/kernel/tsc.c:271) 
+[ 95.997109][ T23] ? raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[ 95.997114][ T23] _raw_spin_lock_nested (kernel/locking/spinlock.c:378) 
+[ 95.997121][ T23] ? raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[ 95.997127][ T23] raw_spin_rq_lock_nested (kernel/sched/core.c:638) 
+[ 95.997133][ T23] __task_rq_lock (include/linux/sched.h:2226) 
+[ 95.997141][ T23] do_set_cpus_allowed (kernel/sched/sched.h:1825 kernel/sched/core.c:2742) 
+[ 95.997149][ T23] ? cpuset_cpus_allowed_fallback (include/linux/rcupdate.h:331 include/linux/rcupdate.h:841 kernel/cgroup/cpuset.c:4122) 
+[ 95.997157][ T23] cpuset_cpus_allowed_fallback (kernel/cgroup/cpuset.c:?) 
+[ 95.997164][ T23] select_fallback_rq (kernel/sched/core.c:?) 
+[ 95.997171][ T23] __balance_push_cpu_stop (kernel/sched/core.c:8103) 
+[ 95.997178][ T23] ? __do_trace_sched_move_numa (kernel/sched/core.c:8091) 
+[ 95.997183][ T23] cpu_stopper_thread (kernel/stop_machine.c:513) 
+[ 95.997192][ T23] ? cpu_stop_should_run (kernel/stop_machine.c:488) 
+[ 95.997200][ T23] smpboot_thread_fn (kernel/smpboot.c:?) 
+[ 95.997210][ T23] ? smpboot_thread_fn (kernel/smpboot.c:?) 
+[ 95.997218][ T23] kthread (kernel/kthread.c:465) 
+[ 95.997225][ T23] ? smpboot_unregister_percpu_thread (kernel/smpboot.c:103) 
+[ 95.997233][ T23] ? __do_trace_sched_kthread_stop_ret (kernel/kthread.c:412) 
+[ 95.997240][ T23] ret_from_fork (arch/x86/kernel/process.c:154) 
+[ 95.997247][ T23] ? __do_trace_sched_kthread_stop_ret (kernel/kthread.c:412) 
+[ 95.997254][ T23] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
+[   95.997263][   T23]  </TASK>
+[  155.023652][    C0] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 57s!
+[  155.059744][    C0] Showing busy workqueues and worker pools:
+[  155.064892][    C0] workqueue events: flags=0x0
+[  155.065729][    C0]   pwq 2: cpus=0 node=0 flags=0x0 nice=0 active=3 refcnt=5
+[  155.065748][    C0]     in-flight: 9:work_for_cpu_fn BAR(476) ,10:vmstat_shepherd
+[  155.065802][    C0]     pending: e1000_watchdog
+[  155.065820][    C0] workqueue events_unbound: flags=0x2
+[  155.069920][    C0]   pwq 10: cpus=0-1 node=0 flags=0x4 nice=0 active=1 refcnt=2
+[  155.069941][    C0]     pending: crng_reseed
+[  155.069956][    C0] workqueue events_power_efficient: flags=0x82
+[  155.072924][    C0]   pwq 9: cpus=0-1 node=0 flags=0x4 nice=0 active=4 refcnt=5
+[  155.072944][    C0]     pending: do_cache_clean, 2*neigh_periodic_work, check_lifetime
+[  155.072972][    C0]   pwq 10: cpus=0-1 node=0 flags=0x4 nice=0 active=2 refcnt=3
+[  155.072984][    C0]     pending: 2*neigh_managed_work
+[  155.072996][    C0] workqueue mm_percpu_wq: flags=0x8
+[  155.078563][    C0]   pwq 2: cpus=0 node=0 flags=0x0 nice=0 active=1 refcnt=2
+[  155.078581][    C0]     pending: vmstat_update
+[  155.078679][    C0] workqueue ipv6_addrconf: flags=0x6000a
+[  155.081392][    C0]   pwq 8: cpus=0-1 flags=0x4 nice=0 active=1 refcnt=4
+[  155.081409][    C0]     pending: addrconf_verify_work
+[  155.081427][    C0] pool 2: cpus=0 node=0 flags=0x0 nice=0 hung=57s workers=4 idle: 223 94
+[  155.081475][    C0] Showing backtraces of running workers in stalled CPU-bound worker pools:
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20250921/202509212119.eab661a8-lkp@intel.com
+
+
+
 -- 
-2.51.0.windows.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
