@@ -1,169 +1,95 @@
-Return-Path: <linux-kernel+bounces-826343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6084B8E41B
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2A8B8E418
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 704C23BBD14
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:28:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D510C3BBD5F
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 19:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7754A23F429;
-	Sun, 21 Sep 2025 19:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E30A254B1B;
+	Sun, 21 Sep 2025 19:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PM82mvB3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qbMp0ing"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064F1B041A
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 19:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61B7175D53;
+	Sun, 21 Sep 2025 19:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758482919; cv=none; b=XDQsgK+Ytz6fVqZVADQ/vvn00FladJSicoMLugEjEmyUHfcNAohOOEI/L1uKFBcdB4PmYqWTYK6huncUbFLA75XD8/2R7Eodna8+RTJGA/v1iWVbLi6mJYkQADgl/ZSbWGlCMzyTwd48lBzyr7+wds3BXqjHGWddnlwyldjQ/0I=
+	t=1758482872; cv=none; b=f3PaXVisAOH2qCpomn3wc1/p5XiOdCy1Gbb1BBFBZlNf1BsWTBqvi+ahVliYpy1GWKDmzhV1k4SjVzl0o1CkVLaLyF3kfvN4v0pOAmiUoyU6lmFdaGFOynbFJdVdh0AeVsZcNFd3ooJGo85j8/eEgov6ck2tfHKiiOHHL7bAMCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758482919; c=relaxed/simple;
-	bh=+Miu3sd6+O5iHno8nSMZwS7o8cXehTdumMzixg3nceo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5eE/BPvjG5SLtXmqUiCR6ja6MRCjsSOS8k+Wd7Ixgj6/lCHf+7mEOjgAiEg7+7VONSN78F/DVTiWLknIyPp/bQ4I69pY014VyY/FsAKm/uXhyggZe/ltpDJrQLO/SwhULE/zn+xzw995QalgHuxiQMYtNiJkCzRO7G4k3kqmoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PM82mvB3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758482916;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=juMfpOs2phKyJbHmzGSoqogpkBynL6NiqIsUFb6RoX8=;
-	b=PM82mvB3R4JmhvkFBh0P0ws/L8gSAYRdmiTMkJPP8exzC+SS9jXas4dSkjkEp91sUqkxeQ
-	FCBea2YyAFcWnuOWM+ybmrSIabD9q9y8X7Bh0VjuDlUL746tyg5923KYbVXyIWuEBs5gAf
-	J+JlFJ1Af/SOBjCixL7Oj2GsIPuCdAg=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-EVEXoJbUNVufkR2Cw-NZqw-1; Sun,
- 21 Sep 2025 15:28:30 -0400
-X-MC-Unique: EVEXoJbUNVufkR2Cw-NZqw-1
-X-Mimecast-MFC-AGG-ID: EVEXoJbUNVufkR2Cw-NZqw_1758482909
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1758482872; c=relaxed/simple;
+	bh=9et15zWXEKddFX4/2vN+y8RP9sXgR9Pu1s1DLQyqFoA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dWCeerKrYPjzL/kAIo1FMNTto4C+1JAnUBMo2EK4vWgW2uvQ1d9sYr6jjtwCuOLXN6q9EE51Y3lsVY3/sCX7dgaq7q4yC0HZBYisgkfFL9boh6D2wwys0ba3uasNvREjuxyo5RUn+R9W9jqOdMLa0PCRpX2gE6pvLnnX3TZIzzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qbMp0ing; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9421740AF9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1758482869; bh=Fbdh/N5NdiPt247VOYhUeQYHOoMRcIbSDzdgEBAWNe4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qbMp0ingnT+F8mlleUbCrkOmpF9yrkfoTy42832f2hsi+xRp9vgtwfRhvYt86P+Xd
+	 4FXW3FBKJYKDeOE9sD812tIx/wP7rbvG8hM7VcG6wkNPfnLpYUva6y6VlMztbzP1XV
+	 Eg3vFID+iBe8L+2OaqVFHQMyYtciR0vLAUqXzVm4f+dn0SYJYo1ae2qpp8x+QFegFS
+	 YB9ttoF5pDoiVQw8PADwA0wel8cgbLhxfrFBZM7yp52hpzSIRzrDwYnpjJ96vqPSuU
+	 vkuH1GN78oWhJGu2QmIopjXdaVjhOqnvnlJ8rqd1iowdqUo1JUscrtzydJzBwenlDS
+	 smvWM/GnDvp1Q==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E173D1956089;
-	Sun, 21 Sep 2025 19:28:28 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.16])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 947871956056;
-	Sun, 21 Sep 2025 19:28:25 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 21 Sep 2025 21:27:05 +0200 (CEST)
-Date: Sun, 21 Sep 2025 21:27:01 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Matt Fleming <mfleming@cloudflare.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, John Stultz <jstultz@google.com>,
-	kernel-team <kernel-team@cloudflare.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Chris Arges <carges@cloudflare.com>
-Subject: Re: Debugging lost task in wait_task_inactive() when delivering
- signal (6.12)
-Message-ID: <20250921192700.GA565@redhat.com>
-References: <CAGis_TWyhciem6bPzR98ysj1+gOVPHRGqSUNiiyvS1RnEidExw@mail.gmail.com>
- <20250919143611.GA22933@redhat.com>
- <CAGis_TUp9_V-kBn9CF55f08NVR+Bx3iyP=O=+PH0QAf73eGY2Q@mail.gmail.com>
- <20250919161353.GB22933@redhat.com>
- <CAGis_TWHJva-gktrsvO9=m5mEFf4zzcN=rNEt+5+moqz=C7AEQ@mail.gmail.com>
+	by ms.lwn.net (Postfix) with ESMTPSA id 9421740AF9;
+	Sun, 21 Sep 2025 19:27:49 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>, Mark Brown <broonie@kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "open
+ list:DOCUMENTATION" <linux-doc@vger.kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>
+Subject: Re: linux-next: Tree for Sep 19 (make htmldocs problem)
+In-Reply-To: <e2112be7-ba68-43d1-92ba-98adfb869a95@infradead.org>
+References: <aM1xVa_SX3_QFU_q@sirena.org.uk>
+ <883df949-0281-4a39-8745-bcdcce3a5594@infradead.org>
+ <87ldm7c382.fsf@trenco.lwn.net>
+ <e2112be7-ba68-43d1-92ba-98adfb869a95@infradead.org>
+Date: Sun, 21 Sep 2025 13:27:48 -0600
+Message-ID: <87cy7jbo7f.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGis_TWHJva-gktrsvO9=m5mEFf4zzcN=rNEt+5+moqz=C7AEQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain
 
-Thanks Matt!
+Randy Dunlap <rdunlap@infradead.org> writes:
 
-So I guess that this has nothing to do with coredump and wait_task_inactive()
-is broken...
+> lrwxrwxrwx 1 root root 4 Sep 11 01:42 /usr/bin/sphinx-build -> alts*
+>
+> $ file  /usr/bin/alts
+> /usr/bin/alts: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 4.3.0, BuildID[sha1]=17681640c9985eb36ae6d9eca0f08159509386c4, stripped
 
-I am wondering if this code
+That is clearly the problem, when combined with this code in
+sphinx-build-wrapper:
 
-		/*
-		 * If task is sched_delayed, force dequeue it, to avoid always
-		 * hitting the tick timeout in the queued case
-		 */
-		if (p->se.sched_delayed)
-			dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+>             if self.venv:
+>                 cmd = ["python"]
+>             else:
+>                 cmd = [sys.executable,]
+> 
+>             cmd += [sphinx_build]
 
-ia actually correct but I know nothing about the sched_delayed logic.
+Mauro, what is the reason for explicitly interposing the interpreter
+there rather than just invoking the sphinx-build binary directly?  It
+seems like we could take that out and make this problem go away?
 
-I will leave this to scheduler experts ;) I can't really help.
+Thanks,
 
-Oleg.
-
-On 09/20, Matt Fleming wrote:
->
-> On Fri, 19 Sept 2025 at 17:15, Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > OK, thanks. Nothing "interesting" at first glance.
->
-> Chris (Cc'd) and I managed to get a reproducer and I think I know
-> what's happening now.
->
-> When a task A gets the SIGKILL from whichever thread is handling the
-> coredump (let's say task B) it might hit the delayed dequeue path in
-> schedule() and call set_delayed(), e.g.
->
->         dequeue_entity+1263
->         dequeue_entities+216
->         dequeue_task_fair+224
->         __schedule+468
->         schedule+39
->         do_exit+221
->         do_group_exit+48
->         get_signal+2078
->         arch_do_signal_or_restart+46
->         irqentry_exit_to_user_mode+132
->         asm_sysvec_apic_timer_interrupt+26
->
-> At this point task A has ->on_rq=1, ->se.sched_delayed=1 and ->se.on_rq=1.
->
-> Now when task B calls into wait_task_inactive(), it sees
-> ->se.sched_delayed=1 and calls dequeue_task().
->
-> At this point task A has ->on_rq=1, ->se.sched_delayed=0 and ->se.on_rq=0
->
-> Unfortunately, task B still thinks that task A is scheduled because
-> task_on_rq_queued(A) is true, but it's not runnable and will never run
-> because it's no longer in the fair rbtree and the only task that will
-> enqueue it again is task B once it leaves wait_task_inactive() and
-> hits coredump_finish().
->
-> > > do_exit+0xdd is here in coredump_task_wait():
-> > >
-> > >                 for (;;) {
-> > >                         set_current_state(TASK_IDLE|TASK_FREEZABLE);
-> > >                         if (!self.task) /* see coredump_finish() */
-> > >                                 break;
-> > >                         schedule();
-> > >                 }
-> > >
-> > > i.e. the task calls schedule() and never comes back.
-> >
-> > Are you sure it never comes back and doesn't loop?
->
-> Yeah, positive:
->
-> $ sudo perf stat -e cycles -t 1546531 -- sleep 30
->
->  Performance counter stats for thread id '1546531':
->
->      <not counted>      cycles
->
->       30.001671072 seconds time elapsed
->
-
+jon
 
