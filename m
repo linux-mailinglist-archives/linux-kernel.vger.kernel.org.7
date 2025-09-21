@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-825967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-825968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB29B8D3B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:41:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F56BB8D3B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 04:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBC037AF749
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:39:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2957B4AB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 02:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268391FE46D;
-	Sun, 21 Sep 2025 02:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F8254791;
+	Sun, 21 Sep 2025 02:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qlaHzz6W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhjV7ttH"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7375DB672;
-	Sun, 21 Sep 2025 02:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BFC548EE
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 02:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758422470; cv=none; b=aU9H2A2r+xLs2eIuN0E8GTdmG+c6RN1PxKQs0KrezVtMAZH6F252lGa1fElBe+oh0SHKFnO1kwVe1w27pB//Y+2w/bhY0hYKJ/Xc56RWM/HQoRwfkSpx4hHZrGiU24LerV4bCfjbr0v5vO1ZYk8LEWoaozbVgNGXkvHjNq9WpdI=
+	t=1758422598; cv=none; b=corCTiAwDzUQ62y6OlmHJnjLnVoANkVp+XjZ/SbIq/N7/77VWIhhFuWf/s3c464SSbVhYhHjaZe62do28xYQTqM3hMLIm4lvhSCNlDgMK2hMWx7q9YHApeYayPJOI9WwicKrJWHm1b+xD1v1D57oJe3FpME6NCOx/dYybzdQBy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758422470; c=relaxed/simple;
-	bh=WHVI3zam98eCtwHQ4w4qHUBottfzJI0Bz/jC+FZPTM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cx5afn6NvGyTiP4qyDjmxTJPDt9JUPC2Qh/8ZPVrbdKG2WrTTi/EGV4Ksy8glIjF/1jAExDafkYJtcQHi6B1VDh9jpQUQZ6/lXVQMvLf06uAGeCD4hYBVDYUgwDeDvP+3JSDTmJ1W6KYQBO0TocHJoTEcrGUt74ghy+wMZkL3GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qlaHzz6W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63D7FC4CEEB;
-	Sun, 21 Sep 2025 02:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758422470;
-	bh=WHVI3zam98eCtwHQ4w4qHUBottfzJI0Bz/jC+FZPTM4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qlaHzz6WDu05CaJSeVBF54HsisQIp2JfKEm2gouk6LmpTpRlemIkU7J6YrwlwFEuj
-	 6MP1f3jqyytXZYXKF++ISIWnnp6BMzSlROxlFaAas6F/HfOuk4NWI8jbkQGNaEsqxK
-	 Wi4JNYUe11iOEYF8Af9oNfk3O1dhaokROBYT9wLaCI6sRVaMBOLySpSYVIuD8JBASB
-	 aofJ61EBW25V45gQOaa5mDLiFrP2qeojyGoCea3x3mfkVOj2iy3W9Iit3KftQ/EXg7
-	 MEV/7CROoiSO3NtcEFrkEVx9y44NTzOhBjOerSPwNPreFlaEV54rJWuYsGv2wqhEhy
-	 UDK5f4JKAlcCg==
-Date: Sat, 20 Sep 2025 21:41:07 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Cc: linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pinctrl: qcom,pmic-gpio: Add GPIO bindings
- for Glymur PMICs
-Message-ID: <mp2elkdhqg2fsmvebwbxbxr5jyasfpzi4b5kbfxkjjxv433thc@7codfe5sp7pv>
-References: <20250919141440.1068770-1-pankaj.patil@oss.qualcomm.com>
+	s=arc-20240116; t=1758422598; c=relaxed/simple;
+	bh=IOLNp7bbvWfurHuoNIdJ0OXo/N5Q2rG8Kwy2TSpxEww=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aiLbQt3FZ9A+6G3LygsMXS2cyu2yU0UuovLEJkTzflMopqqSGH8VJQciL8HSQ80X6LvtHOn4yc7WhpG3cC+SjRVmKIe0kQbveBLwaKGnDw/FdO5iWVRH2HKCQnUw4uyGPfiMWiawdSmqnFNiWSvruz+yF6+VpiBb6PjvIsoDWWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhjV7ttH; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b07e081d852so661780966b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 20 Sep 2025 19:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758422595; x=1759027395; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NuEJ7Kuw6nXBxfCflCZImXovS/FAgf8BObIoPTsH704=;
+        b=fhjV7ttHOrlrbrtH01IvFX7CntG4DvBxipSKCbmNFeb1/wcuzEdqikiTbDNnHRKrQr
+         nkEaMVH6M1jJ7nga/pW82uwiN7qAy0GJBMMM12DIPMmNjFXTlbGaB1gDy9ahuI68viWu
+         nr5MAtJG516HckWQMgtqdOT2iJ7bwsU26y1HG41lMrtdJ44J0snLpW/2ehfPfiimpGAf
+         hxnmP7OSoD57TWz9oaiMcV+vNTfZgPHM3PXaer3u2Oh8k/qGgzephwKWiCZ0lrdipz9R
+         qgcJ306bkLKYp7nUyNTKBEj8FXvK4EE1Z+WGxpWC3pPjRi0vmo9pPAPbN9pY8un4J6/8
+         kFCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758422595; x=1759027395;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NuEJ7Kuw6nXBxfCflCZImXovS/FAgf8BObIoPTsH704=;
+        b=UZR5GMRsOD787TuwPAvFqAx16Y1az1zW1jW8ATSr26Pl4RMLH3Kno5MjhvegNYGTiu
+         4tedxyngiBfcnroAZ63sTCxbdjonqejmIDzbsBcpKQk3haaGKuDaKVJo213DfdH6r6LY
+         V0crAzDaxUCGVSy/NlfzZcoGDnUR7K8Tl6Tq27oPz0n88gq8W56vNrlXHbHO2rgr2r+p
+         7y1qjlKh3goDbnoh5ytsAjni/OHYxOMCuGzjlOpwyAsNfQ9P5QG/2H1jk8/bVhWxrUxG
+         rOAG/3qoD9NXl7GXhLQsNqkkDLbHwWQGzztdnN44cBD33P9hiv+MVrDWu0CtqRY1UtR2
+         Z4Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDmQ6tHk4qRd03ncvxjCa5/0jhh7tykaiJ1Uu4TF2i4Iyvz5nm2eV82DmeVxjGDoO5yrUxlSX6dZ+hhxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcnnc3qQr88jWBAho+HGc0/bQrwgLkz9zsZ3pqPhWP818+V5Ad
+	kIHAcgcFp7SMioGT2g1y4yVWbDj3DUA8vGBnwboAVpsQZzq2jErUxdU+
+X-Gm-Gg: ASbGncsFF+dr256U2pOK6XBqGNp3242UvwShs3gFoPBl6uOUQW3bqsZIWGF2LAMrP+B
+	2VsYDjXvuqZ5eYD51JkFswcIP1rE/b+7StGGzSlL8u19MbMWzCnXr/rbp2+5fe5DRKO04SbcT6B
+	awfhcObAZYnNgMFQQ9TuKUJNuirEaBat+Q61MGM+qPgWteTx3UeuVBPmFdhgM+6A3ZD5qSeajfW
+	dYC7rmtJUdhSRiKQp998ZkgumzpRLL1JUFQYEl6xMKmTEUMRnYrAOmX/CgroDjnZuTwecgX5CBX
+	Sp9LHRCSbYqwSfbRTa5xv53HqQgDJYKUCiZW9vl1kbzlF1m7FbgrfeWTzsBvT7gRT9hSRpc63kF
+	1Ujj65mCcDZpyPpgGtHU=
+X-Google-Smtp-Source: AGHT+IEnp3bNDrsmT04jwsuiPJbBPOdlnvUNGeBA+GfxOGwI+dq26By1MGxiqYL9UlRIJoqPtfeHuA==
+X-Received: by 2002:a17:907:96a4:b0:b04:830f:822d with SMTP id a640c23a62f3a-b24f568a6cdmr856877566b.63.1758422595233;
+        Sat, 20 Sep 2025 19:43:15 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b28be3fa38bsm224619366b.46.2025.09.20.19.43.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 20 Sep 2025 19:43:14 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: cyphar@cyphar.com
+Cc: alx@kernel.org,
+	brauner@kernel.org,
+	dhowells@redhat.com,
+	g.branden.robinson@gmail.com,
+	jack@suse.cz,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-man@vger.kernel.org,
+	mtk.manpages@gmail.com,
+	safinaskar@zohomail.com,
+	viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v4 00/10] man2: document "new" mount API
+Date: Sun, 21 Sep 2025 05:43:10 +0300
+Message-ID: <20250921024310.80511-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
+References: <20250919-new-mount-api-v4-0-1261201ab562@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250919141440.1068770-1-pankaj.patil@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 19, 2025 at 07:44:40PM +0530, Pankaj Patil wrote:
-> From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Aleksa, thank you! Don't give up. We all need these manpages.
 
-This doesn't match the first signed-off-by.
+I see you didn't address some my previous notes.
 
-> 
-> Update the Qualcomm Technologies, Inc. PMIC GPIO binding documentation
-> to include compatible strings for PMK8850, PMH0101, PMH0104, PMH0110
-> and PMCX0102 PMICs.
-> 
+* move_mount(2) still says "Mount objects cannot be attached beneath the filesystem root".
+I suggest saying "root directory" or "root" or "root directory of the process" or just "/"
+instead. But you may keep this phrase as is, of course.
 
-Looks good, but this should be sent together with the related driver
-change.
+* Docs for FSPICK_NO_AUTOMOUNT in fspick(2) are still wrong. They say that FSPICK_NO_AUTOMOUNT
+affects all components of path. Similar thing applies to mount_setattr(2) and move_mount(2)
 
-Thank you,
-Bjorn
+* open_tree(2) still says:
+> If flags does not contain OPEN_TREE_CLONE, open_tree() returns a file descriptor
+> that is exactly equivalent to one produced by openat(2) when called with the same dirfd and path.
 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-> ---
->  .../bindings/pinctrl/qcom,pmic-gpio.yaml          | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-> index 5e6dfcc3fe9b..8ae4489637f3 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.yaml
-> @@ -59,7 +59,11 @@ properties:
->            - qcom,pmc8180-gpio
->            - qcom,pmc8180c-gpio
->            - qcom,pmc8380-gpio
-> +          - qcom,pmcx0102-gpio
->            - qcom,pmd8028-gpio
-> +          - qcom,pmh0101-gpio
-> +          - qcom,pmh0104-gpio
-> +          - qcom,pmh0110-gpio
->            - qcom,pmi632-gpio
->            - qcom,pmi8950-gpio
->            - qcom,pmi8994-gpio
-> @@ -68,6 +72,7 @@ properties:
->            - qcom,pmiv0104-gpio
->            - qcom,pmk8350-gpio
->            - qcom,pmk8550-gpio
-> +          - qcom,pmk8850-gpio
->            - qcom,pmm8155au-gpio
->            - qcom,pmm8654au-gpio
->            - qcom,pmp8074-gpio
-> @@ -191,6 +196,8 @@ allOf:
->                - qcom,pm8950-gpio
->                - qcom,pm8953-gpio
->                - qcom,pmi632-gpio
-> +              - qcom,pmh0104-gpio
-> +              - qcom,pmk8850-gpio
->      then:
->        properties:
->          gpio-line-names:
-> @@ -303,6 +310,8 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,pmcx0102-gpio
-> +              - qcom,pmh0110-gpio
->                - qcom,pmi8998-gpio
->      then:
->        properties:
-> @@ -318,6 +327,7 @@ allOf:
->          compatible:
->            contains:
->              enum:
-> +              - qcom,pmh0101-gpio
->                - qcom,pmih0108-gpio
->      then:
->        properties:
-> @@ -481,13 +491,18 @@ $defs:
->                   - gpio1-gpio22 for pm8994
->                   - gpio1-gpio26 for pm8998
->                   - gpio1-gpio22 for pma8084
-> +                 - gpio1-gpio14 for pmcx0102
->                   - gpio1-gpio4 for pmd8028
-> +                 - gpio1-gpio18 for pmh0101
-> +                 - gpio1-gpio8 for pmh0104
-> +                 - gpio1-gpio14 for pmh0110
->                   - gpio1-gpio8 for pmi632
->                   - gpio1-gpio2 for pmi8950
->                   - gpio1-gpio10 for pmi8994
->                   - gpio1-gpio18 for pmih0108
->                   - gpio1-gpio4 for pmk8350
->                   - gpio1-gpio6 for pmk8550
-> +                 - gpio1-gpio8 for pmk8850
->                   - gpio1-gpio10 for pmm8155au
->                   - gpio1-gpio12 for pmm8654au
->                   - gpio1-gpio12 for pmp8074 (holes on gpio1 and gpio12)
-> -- 
-> 2.34.1
-> 
+This is not true if automounts are involved. I suggest adding "modulo automounts". But you may
+keep everything, of course.
+
+-- 
+Askar Safin
 
