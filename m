@@ -1,94 +1,142 @@
-Return-Path: <linux-kernel+bounces-826460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE740B8E949
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82DAB8E952
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 01:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724473BEC49
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FCD11897589
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 23:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A022C11DD;
-	Sun, 21 Sep 2025 22:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B74524BBEE;
+	Sun, 21 Sep 2025 23:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="E3Un81n/"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLV2eMtq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD2D2580CF;
-	Sun, 21 Sep 2025 22:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA691A76BB;
+	Sun, 21 Sep 2025 23:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758495349; cv=none; b=Y9SB/jQ+E0m/cT17FH5MrpiLbhy1qs5ONPNaNU8AlMGBMU958F4DJeD6jUKSN9xqay0qSz3KyYBMGw9hHQ8rUp5Qz8cy88nMADYmSdtFhbEdUTyPRXufRkX4XL/aC/iV/DsNXcBV6y14GMlDc7bb90ZdeF5ZmKvDFOeYjIJ7uV0=
+	t=1758495663; cv=none; b=gpB3a3s/bxT0bDNrrwTS+d3nHdX/4CDaecL0yhevhoGpFcx0iPXX7OJg6e9agUUA/qZce+PmxyjNTUPdwda76HoWnSQjveaTlGfeeETOdypc2f8UJIwz2r9pfGdJWVPikGP/jMNJk9Z8Ahx9avApXtBttHTuM7v2t0yCSUTEIe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758495349; c=relaxed/simple;
-	bh=URIwaATUK+NdLnPeTmJDkZQV8VmgwLiZzwQtjRLdXck=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=B3KWev9fWJhxjyxQyU8tcGWVR67i4Hpsa5+WOmJRQjNA8+KAZqd3hGMBksYX1ScJiA1P24jWlXTTbHhOWlBKVlnaypFD9ZSlAz5opDDRKn5NgpHQCKuSmvv5lWpHWmLdEXiSstRfk8Kc4KJlIMu117odFM52c6KB7LOTXJ0D9Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=E3Un81n/; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6D58F40B16
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1758495347; bh=5zyaBbyPh7EAwE+GJ+JBL35RaUvfL2VQKPWUoi7fTG8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=E3Un81n/xEDKYy2uBwz3En1h09LckqOYXnfMk8JVtPZ/Hz9csC9i2K3Pbf+N129FP
-	 9eoTmK1/K0nINGt8LqE+I3nflW4PWN7YFMZPD9Jm+CXNKORSeWHWPaj0aUfQ3TaUr4
-	 BhYYwiobQ8Duy7JUx2JPQV+HAaJ4Pl1AKDkWSem162f/QC/rfP6wnQXfZjmpaYMmjw
-	 79k2Tyiia0OopG0ZHZMTV+0csxXDCE1k13k1L8MP90wmXLJ/YfUWCdy4ZOMbBRLkBg
-	 f71aLHo8Yt5rgP19vy2vQBToxezz62rnb/XS86qOuc+OUpCMgbo7+SgG4sGNIrRfjq
-	 KiU6hCu9WM7GA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::824])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 6D58F40B16;
-	Sun, 21 Sep 2025 22:55:47 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] A couple of patches for sphinx-build-wrapper
-In-Reply-To: <cover.1758361087.git.mchehab+huawei@kernel.org>
-References: <cover.1758361087.git.mchehab+huawei@kernel.org>
-Date: Sun, 21 Sep 2025 16:55:46 -0600
-Message-ID: <87plbj8lfx.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1758495663; c=relaxed/simple;
+	bh=NGcq/u9PxpBZ7j6rtjeYb6cF6phAz6BmvCZx6ODT5E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Rp49u3+CTwdqB7pwiY4s/Pk7bdyE8SCHDipkQvRLZhNO7MFDrmby0rbTScf2gainYP72gaisfww91zGBpy4MawacNY6cTtM6KWHVChVFSVXWwGtv0Z58V0tvN1dGOC5wChp5GRcP8Ry5n4D6wZyFOP33PmjVevQgIFXQ086DWpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLV2eMtq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A9AC4CEE7;
+	Sun, 21 Sep 2025 23:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758495663;
+	bh=NGcq/u9PxpBZ7j6rtjeYb6cF6phAz6BmvCZx6ODT5E0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VLV2eMtq64xW9boInMnL9+i7ixAZjH8E2GFLs5LOtCBFi9Ce9y2hXTSvzOBRYSBSp
+	 8AOYyqjnFIN4qgjLI7GfLoXIGV8lUwsc6vF6ZT5YX6IzwpP5jj4bReGxVC9byiJHpY
+	 rmCK3k/R1QcMtgGsBINI8RfiR3Wpa4he+qDXW+Y2iAOZos8VENqW67tTsCkOFZ4H3m
+	 zR9I+5o0GUS4bUFG3SDZSjjHgJqTsU0ZnlI/hUkd6caVOdPBz7UnICBxNCnBy4bhvv
+	 orNJrGeFp+QEvCTS3eiaP/6YqWUO4/5w63IXA0ePbdbk90DL/PMECcJsGWf5JoVb7J
+	 s50uQT8ksw8lQ==
+Date: Sun, 21 Sep 2025 19:00:56 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Menglong Dong <menglong.dong@linux.dev>, Peter Zijlstra
+ <peterz@infradead.org>, Menglong Dong <menglong8.dong@gmail.com>,
+ jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+ ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-ID: <20250921190056.2a17d4cc@batman.local.home>
+In-Reply-To: <20250921130647.9bd0cba7d49b15d0b0ebe6f7@kernel.org>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+	<175828305637.117978.4183947592750468265.stgit@devnote2>
+	<5974303.DvuYhMxLoT@7950hx>
+	<20250921130647.9bd0cba7d49b15d0b0ebe6f7@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Sun, 21 Sep 2025 13:06:47 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> > 
+> > Hi, the logic seems right, but the warning is triggered when
+> > I try to run the bpf bench testing:  
+> 
+> Hmm, this is strange. Let me check why this happens.
+> 
+> Thank you,
+> 
+> > 
+> > $ ./benchs/run_bench_trigger.sh kretprobe-multi-all
+> > [   20.619642] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
+> > [  139.509036] ------------[ cut here ]------------
+> > [  139.509180] WARNING: CPU: 2 PID: 522 at kernel/trace/fgraph.c:839 ftrace_return_to_handler+0x2b9/0x2d0
+> > [  139.509411] Modules linked in: virtio_net
+> > [  139.509514] CPU: 2 UID: 0 PID: 522 Comm: bench Not tainted 6.17.0-rc5-g1fe6d652bfa0 #106 NONE 
+> > [  139.509720] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.17.0-1-1 04/01/2014
+> > [  139.509948] RIP: 0010:ftrace_return_to_handler+0x2b9/0x2d0
+> > [  139.510086] Code: e8 0c 08 0e 00 0f 0b 49 c7 c1 00 73 20 81 e9 d1 fe ff ff 40 f6 c6 10 75 11 49 c7 c3 ef ff ff ff ba 10 00 00 00 e9 57 fe ff ff <0f> 0b e9 a5 fe ff ff e8 1b 72 0d 01 66 66 2e 0f 1f 84 00 00 00 00
+> > [  139.510536] RSP: 0018:ffffc9000012cef8 EFLAGS: 00010002
+> > [  139.510664] RAX: ffff88810f709800 RBX: ffffc900007c3678 RCX: 0000000000000003
+> > [  139.510835] RDX: 0000000000000008 RSI: 0000000000000018 RDI: 0000000000000000
+> > [  139.511007] RBP: 0000000000000000 R08: 0000000000000034 R09: ffffffff82550319
+> > [  139.511184] R10: ffffc9000012cf50 R11: fffffffffffffff7 R12: 0000000000000000
+> > [  139.511357] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> > [  139.511532] FS:  00007fe58276fb00(0000) GS:ffff8884ab3b8000(0000) knlGS:0000000000000000
+> > [  139.511724] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  139.511865] CR2: 0000562a28314b67 CR3: 00000001143f9000 CR4: 0000000000750ef0
+> > [  139.512038] PKRU: 55555554
+> > [  139.512106] Call Trace:
+> > [  139.512177]  <IRQ>
+> > [  139.512232]  ? irq_exit_rcu+0x4/0xb0
+> > [  139.512322]  return_to_handler+0x1e/0x50
+> > [  139.512422]  ? idle_cpu+0x9/0x50
+> > [  139.512506]  ? sysvec_apic_timer_interrupt+0x69/0x80
+> > [  139.512638]  ? idle_cpu+0x9/0x50
+> > [  139.512731]  ? irq_exit_rcu+0x3a/0xb0
+> > [  139.512833]  ? ftrace_stub_direct_tramp+0x10/0x10
+> > [  139.512961]  ? sysvec_apic_timer_interrupt+0x69/0x80
+> > [  139.513101]  </IRQ>
+> > [  139.513168]  <TASK>
+> >   
+> > > +
+> > >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> > >  	trace.retval = ftrace_regs_get_return_value(fregs);
+> > >  #endif
+> > > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> > >  		}
+> > >  	}
+> > >  
+> > > +	ftrace_test_recursion_unlock(bit);
+> > > +out:
+> > >  	/*
+> > >  	 * The ftrace_graph_return() may still access the current
+> > >  	 * ret_stack structure, we need to make sure the update of
 
-> Hi Jon,
->
-> This small series is against docs/build-script branch.
->
-> The first patch addresses the lack of a check after running
-> sphinx-build to see if it returned some error code.
->
-> The second patch is a partial revert: we wneded including
-> sphinx-build-wrapper twice due to a badly-solved rebase from
-> my side.
->
-> The third patch is a bonus cleanup: it get rids with
-> load_config.py, replacing it by a single line at conf.py,
-> simplifying even further docs Makefile and docs build system.
->
-> Mauro Carvalho Chehab (3):
->   tools/docs: sphinx-build-wrapper: handle sphinx-build errors
->   scripts: remove sphinx-build-wrapper from scripts/
->   docs: conf.py: get rid of load_config.py
 
-OK, I've put these onto the build-script branch.
+Hmm, I wonder if this has to do with the "TRANSITION BIT". The
+ftrace_test_recursion_trylock() allows one level of recursion. This is
+to handle the case of an interrupt happening after the recursion bit is
+set and traces something before it updates the context in the preempt
+count. This would cause a false positive of the recursion test. To
+handle this case, it allows a single level of recursion.
 
-Thanks,
+I originally was going to mention this, but I still can't see how this
+would affect it. Because if the entry were to allow one level of
+recursion, so would the exit. I still see the entry preventing the exit
+to be called. But perhaps there's an combination that I missed?
 
-jon
+-- Steve
 
