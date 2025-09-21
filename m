@@ -1,172 +1,96 @@
-Return-Path: <linux-kernel+bounces-826142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BAFB8DA23
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:27:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E089BB8D9D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D39D17BF3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:27:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 086197A366A
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 11:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD38926B97D;
-	Sun, 21 Sep 2025 11:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C5C258EFE;
+	Sun, 21 Sep 2025 11:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="vdj922gU"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="f6Be3T/h"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9607F25D533;
-	Sun, 21 Sep 2025 11:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F8C42048
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 11:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758454039; cv=none; b=eQf30Y4MmIn0ArVYZ4LaWq/zF8z1M33p00KvC0rV1RU4mPn/gBzmF5IupQNfy//Eybq/OEC2mLapavi2ggyse2VSFPWvyiJGyYYpKWClKNzslMDlLRja2EDejNQZGYV21Er0aLvaUDSB6vcz1AbT1mQrYF/nZh+S/JX9mQTVVjU=
+	t=1758453770; cv=none; b=bXZjEIXYynFd+QgOxC9SlUj3SsbcHkSyV/ULV+NnbuqTDqJVZ1ZZZO5B3WeuJe41lRMyK850AAmD7p2KKgORa1/7kb1NtmXWRAt6k7knRyQFsze0ck3AjPTZN9V9ligiav1vS4VEqjwKaFmSBfsYYUqnY8vuN/kMV5jeVOSfjsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758454039; c=relaxed/simple;
-	bh=uj7IBPcVgr5j3kXfBUzjwNgz92gThuVhXKzbjYk8hmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0GVzF7exwHbNr0aaEZQYOyg+zZfVj6gUm9MGrsULJiejv2saspuyg4cIMAMAvKn4exHcfRk9rh3FyX1f7zgJH2Ics8MegAW/p560S8jfiuZ8iFupHi9cBYvEB2YQmgpFFVAisp4QoBVCCRy9zXnVElrKbbynzk02FbmtBh7IOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=vdj922gU; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1758453604; bh=uj7IBPcVgr5j3kXfBUzjwNgz92gThuVhXKzbjYk8hmA=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=vdj922gU4Bwxp0+IEbQJ62HSf7JICixDFHtqgq7RMoDfAroKG5WAHcjE2dXxGcP6t
-	 Vty3YA30lc1iIbjr1Q4qoLbo4uZpc7uyJQQ9RObMoQzpgzkIUl2DztucV0Fi2SjBM6
-	 MELH9wXs6Y5GWO7GgJRMfxLpzSJrJiXfynhUf4t8=
-Date: Sun, 21 Sep 2025 13:20:03 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: guptarud@gmail.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] arm64: dts: rk3399-pinephone-pro: Fix voltage
- threshold for volume down key
-Message-ID: <addgrqhxanzrjdhb7y7y2qrqu4odpoclbwlswuua4yqinrzh2l@wcdtuquzuqvr>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	guptarud@gmail.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250921-ppp_light_accel_mag_vol-down-v2-0-e6bcc6ca74ae@gmail.com>
- <20250921-ppp_light_accel_mag_vol-down-v2-5-e6bcc6ca74ae@gmail.com>
+	s=arc-20240116; t=1758453770; c=relaxed/simple;
+	bh=C8rIKTMbs5UbY90DuDOGlvfR0sprL6LvaUmyPmL18Vo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=cHSMKpuy2uw8HDtKEES84+vYuW3FmUQDgVRSPRwQKgkNd+25vFxiMPtYpQeU2B3gBso09LosXuiFDkUrAxpBvxhHDXgLNaGtzRxzEbm9ZOv4el9HQF84bHPK+pOZt2IhdTPM6JjdjEdIKesh7al7O0C2YGdxWUGJjimaQ3bMvLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=f6Be3T/h; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1758453756; bh=TyV2ofwYztUHtlPG7k1es47ro2tZQhZV1c+sRt+oFI4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=f6Be3T/h09YCvDRmnX0Mi0u2xHbE4/OCUA5qA+yjralrQe5a8Th9KV/csh4gI4gW3
+	 VoVEiYOfBoAQi+BQzozR6NMGq9HzYi3aK73ZA6QHtuDaWQzViCuD5V3C5+Zs1R8t6C
+	 /t4sImJph+8DjPaiLSIC8lB38r6kW2G39rURxHQA=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 5A218E9E; Sun, 21 Sep 2025 19:22:34 +0800
+X-QQ-mid: xmsmtpt1758453754t3nws9swj
+Message-ID: <tencent_F5FF2568BA75BB0C33479E6F1BAF4B4B1B08@qq.com>
+X-QQ-XMAILINFO: NxNtBTDMOkftewxbk4WJ7AZ92CfGkRpCBe6AEhEfAXWzncnGi90tFDvsiM6C1i
+	 r6LAW3aM8FIBwufLfrBrKFHAoZC9haPyfKCpygQj8DPiiCkv7DqF75WKZVH/b+ogzHqEk75ihyfn
+	 6yl3KSMJospnoSXP5iTjZ5Rs8p+/Ct3XqlZkqJAy16bB2NhBFKmfs+yyGf/Vj+N8TotPczV3gAt+
+	 9qr5a6ZVByl+BV5ZuoQE+K0W/teQuUemq1BM7vLVk3xIPjEjy6s6pPgEmPPkl7q/o5g4x+Oc30Tr
+	 E3RCSHfGQoT5TPUN4FSzOXNhgco4iRv2x2tyCTTmV53fpMw4jT9Nft+/BBuPZIKFv2J9c+u9EhWY
+	 spr6VQN24I4Fpj2H2nmzSz7fCDeJP0jhsUHKkCHCS4Pv16EmRSE0at5hvtbcM/6xLw4BV5smO3y0
+	 p6zhpkDPtOOOyI1aiQaoN79QHDVtyWgebbnbJjM1LVCYlwkHFzpWcVEr1+Ouy0rYd5N0bsgy2wto
+	 Dp7gngMNQuUCoVv/rtceMqO2yweJu2q8TPyhH3KAp1Z04BHgyYMA+etgMPitxhcyodMvbrPDCduT
+	 c/DIkuItZdcE+3uNEgFh7Ed7ydJU4U8qICXG96GvRyLrkGMnv9VM8yaM2opxG9MbZJR16906svDi
+	 Owbd1yNflJVmLMjf6ndSvvoCTj00vN55lOsdHK3b/X1Wdlom8uDLFtoPlKkIcwvxmyJr3b0PQx9p
+	 RwG/i/MzqsHvLn4/guDboXFKSLM7BvjBThEr064VPPniWkrHfpn6SakRRx8VqqdOWimU3nbVFrKb
+	 VQCL5Oe7ALCGA4vAgyTxMjjO5a6UtoFyWZ9TxtXm6CeUv1LkVD2a6XQHfX6cGLtlyasFXiyw0tCS
+	 ufvDfsT0/I85ZuAaE1aVo+Q/crsJ4M0EBKVxUkIxhVR8LT9q9ptH/ShWxAG0vsIR/NvBY1yA1xUK
+	 pKYgfmtWlI8NKfNW3GPw==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a56aa983ce6a1bf12485@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in driver_remove_file
+Date: Sun, 21 Sep 2025 19:22:29 +0800
+X-OQ-MSGID: <20250921112228.2552612-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
+References: <68cf794c.050a0220.13cd81.002a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921-ppp_light_accel_mag_vol-down-v2-5-e6bcc6ca74ae@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+#syz test
 
-On Sun, Sep 21, 2025 at 01:04:23AM -0700, Rudraksha Gupta via B4 Relay wrote:
-> From: Ondrej Jirman <megi@xff.cz>
-> 
-> U-Boot and Linux use different algorithms for determining voltage ranges
-> for comparison. Pick value that will work with both.
-> 
-> Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> Signed-off-by: Rudraksha Gupta <guptarud@gmail.com>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> index 0a4121b05d36c5a7e05eddbd3514a11ae4f7d3eb..4e6df664d780ed4798015db6b2fe79bf7c4e4c00 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> @@ -46,7 +46,7 @@ button-up {
->  		button-down {
->  			label = "Volume Down";
->  			linux,code = <KEY_VOLUMEDOWN>;
-> -			press-threshold-microvolt = <600000>;
-> +			press-threshold-microvolt = <400000>;
+diff --git a/drivers/comedi/drivers/c6xdigio.c b/drivers/comedi/drivers/c6xdigio.c
+index 14b90d1c64dc..023c72e589a7 100644
+--- a/drivers/comedi/drivers/c6xdigio.c
++++ b/drivers/comedi/drivers/c6xdigio.c
+@@ -242,8 +242,10 @@ static int c6xdigio_attach(struct comedi_device *dev,
+ 	int ret;
+ 
+ 	ret = comedi_request_region(dev, it->options[0], 0x03);
+-	if (ret)
++	if (ret) {
++		dev->driver = NULL:
+ 		return ret;
++	}
+ 
+ 	ret = comedi_alloc_subdevices(dev, 2);
+ 	if (ret)
 
-This is fixes the issue accidentally...
-
-According to the schematic the actual threshold is 1.8V*(2/12) = 0.3V :)
-
-  https://xff.cz/dl/tmp/f1410ee03fac4c5b.png
-
-Linux adc-keys driver uses the "closest to the threshold voltage key wins"
-algorithm.
-
-  https://elixir.bootlin.com/linux/v6.16.8/source/drivers/input/keyboard/adc-keys.c#L32
-
-U-Boot uses the same algorithm implemented differently:
-
-  https://elixir.bootlin.com/u-boot/v2025.10-rc4/source/drivers/button/button-adc.c#L97
-
-So my description in the commit message is wrong.
-
-For the current volume up/down key voltage DT "thresholds" the actual threshold
-used by the driver to determine which key will be detected will be:
-
-  (100 + (600 - 100)/2) = 350 mV
-
-So unless you press the key very lightly, a lot of the time adc voltage will be
-below 350 mV for the Volume Down key and will be misdetected as Volume Up key
-press.
-
-Here a few volume down key presses on my PPP:
-
-[   32.567143] volkey val 1791
-[   32.671337] volkey val 1791
-[   32.775266] volkey val 1791
-[   32.879208] volkey val 1791
-[   32.983109] volkey val 1791
-[   33.086836] volkey val 1791
-[   33.191116] volkey val 300
-[   33.295158] volkey val 298 <-----
-[   33.399351] volkey val 1791
-[   33.503339] volkey val 1792
-[   33.607128] volkey val 1792
-[   33.711296] volkey val 1791
-[   33.815307] volkey val 1791
-[   33.919333] volkey val 1791
-[   34.023392] volkey val 311
-[   34.127329] volkey val 305
-[   34.231124] volkey val 1791
-[   34.335390] volkey val 1791
-[   34.439303] volkey val 1791
-[   34.543256] volkey val 1791
-
-On my other Pinephone Pro it goes down even to 293 mV when the button is pressed harder.
-
-It doesn't help that the Volume Up button threshold in DT is set incorrectly, too.
-It should be 2mV and not 100mV.
-
-So the correct fix here is to change both button thresholds to:
-
-  Volume Down
-
-    press-threshold-microvolt = <300000>;
-
-  Volume Up
-
-    press-threshold-microvolt = <2000>;
-
-To match the schematic. Then the threshold/decision voltage will become ~150mV,
-which works fine according to my tests.
-
-Best regards,
-	o.
-
-
->  		};
->  	};
->  
-> 
-> -- 
-> 2.51.0
-> 
-> 
 
