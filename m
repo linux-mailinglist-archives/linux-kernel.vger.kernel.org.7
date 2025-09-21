@@ -1,128 +1,81 @@
-Return-Path: <linux-kernel+bounces-826180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B63B8DC53
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1C2B8DC59
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 15:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5E3176603
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0E117A263
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 13:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9942D7DCA;
-	Sun, 21 Sep 2025 13:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KFon5MuA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C424E4D4;
-	Sun, 21 Sep 2025 13:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4721F2D73B3;
+	Sun, 21 Sep 2025 13:36:52 +0000 (UTC)
+Received: from hrbeu.edu.cn (mx1.hrbeu.edu.cn [202.118.176.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884A04A1A
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 13:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.118.176.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758461710; cv=none; b=XBdqVzaevsoKcOlf/aCv+XVk6ObVnqC/S9Qs95d6OqhlxuydMB+QtjmIhdeJvWbQQwfRwbrX8ftytttuzRq4sAGvKSsedU0v6bRx4YjUGSQi12RwWeEV9fUpTl0NptkOmrcc9k9V9qFHRNBb2+OwRm3Tt6IAfGZCu7LANPe4noc=
+	t=1758461811; cv=none; b=EX60xehc/aylEI6IPRKCEdNCMwYYAffM3Lnwcw4tNvu/O5hgFTEu//z0pRtmtPBfz6RAbZ5CzAI/pZXh6ReA2lHB5s0egpXcRTVy/D0AjvEuMvesLHuL2rc7zK4jT50SjAwoJ8VKOFw3nz8qabAD8lScpnn76dcmJ2g0CkxS7bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758461710; c=relaxed/simple;
-	bh=IpP0NlL/USvxuGF1Y7rTBAGTIUiwSl/ulgWhzrykW0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gnWePjx2Ck1dkyH1vgx9wSQ4gxPf54VBw8OvhZvNmxCFxu6BLJm/+1yNgNkaEYx7g7oc4snG5aht/xVl8lM86KFRQPc/nMUBv/4C4x0sRGQhxKkWYDUwJEi9ZzQAXc73NZg54YwG9HWPwjKXEpXMje2ZtAM5UCY//aQzKmtte4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KFon5MuA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16154C4CEE7;
-	Sun, 21 Sep 2025 13:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1758461710;
-	bh=IpP0NlL/USvxuGF1Y7rTBAGTIUiwSl/ulgWhzrykW0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KFon5MuAF1vIHtn0Sc6D1ecmtv/1kI1WkfFAhWFhU2xgAJgkHKzYRajDK/4UDqZnb
-	 LVC97SRKgWHoWBnAJEdfDlAxYga0IIxuK7o3VhGJe0+oLpF7jcQHGQZ6LmPnrnopqd
-	 jakWO2z8M/YoLaFk52VIq6+Tm/GKxzVRhOZ/VaiY=
-Date: Sun, 21 Sep 2025 15:35:07 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Joshua Jayasingh <joshuajayasingh08@gmail.com>
-Cc: groeck@chromium.org, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Subject: [PATCH] firmware: google: Add comments to
- coreboot_table.c
-Message-ID: <2025092130-caliber-hypocrisy-5742@gregkh>
-References: <20250921132446.1974-1-joshuajayasingh08@gmail.com>
+	s=arc-20240116; t=1758461811; c=relaxed/simple;
+	bh=/nB8Lo2t4EPmQ++7brsEpEkBAtuQ/yfZbpgztCvjRjg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=RBph7r51aZbHE7OnnFW7ksXeaIj8C9Q+qDZzT+gm+Cgprt81cMKx3S2buSW26IJvymAOzCiyQxsso9sWWTNmoLCTqochGu0kvWI4x2NzJVsvUQ07CsTi87z4bmGQ0QeuNgJ3B6Jd7KdY8mnVTALw5YXVy+NWyuk3KsP0MBHFDek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn; spf=pass smtp.mailfrom=hrbeu.edu.cn; arc=none smtp.client-ip=202.118.176.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hrbeu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hrbeu.edu.cn
+Received: from baishuoran$hrbeu.edu.cn ( [172.83.159.137] ) by
+ ajax-webmail-Front (Coremail) ; Sun, 21 Sep 2025 21:35:28 +0800 (GMT+08:00)
+Date: Sun, 21 Sep 2025 21:35:28 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>
+To: "Thomas Gleixner" <tglx@linutronix.de>
+Cc: huk23@m.fudan.edu.cn, linux-kernel@vger.kernel.org,
+	syzkaller@googlegroups.com
+Subject: Re: Re: Re: possible deadlock in smp_call_function_many_cond
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.3-cmXT5 build
+ 20250609(354f7833) Copyright (c) 2002-2025 www.mailtech.cn hrbeu.edu.cn
+In-Reply-To: <87frcuro62.ffs@tglx>
+References: <758991c1.13f67.197f9cccf9b.Coremail.baishuoran@hrbeu.edu.cn>
+ <877c02vejr.ffs@tglx> <C0FEC6BF-BCC8-4301-BBE6-8A49A05D50D6@m.fudan.edu.cn>
+ <87o6taq6bk.ffs@tglx>
+ <775c18ba.1d7b5.199098fbc3f.Coremail.baishuoran@hrbeu.edu.cn>
+ <87frcuro62.ffs@tglx>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250921132446.1974-1-joshuajayasingh08@gmail.com>
+Message-ID: <43954530.4f11.1996c7c9799.Coremail.baishuoran@hrbeu.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:CbB2ygDXcdsg_89ob+dVAA--.12026W
+X-CM-SenderInfo: pedl2xpxrut0w6kuuvvxohv3gofq/1tbiAQIMCmjP04UA9gAAsC
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW5Jw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-On Sun, Sep 21, 2025 at 06:54:46PM +0530, Joshua Jayasingh wrote:
-> The coreboot_table.c file contains no comments, making it difficult
-> for new developers to understand the logic for parsing the coreboot
-> tables and locating firmware entries.
-
-Nit, your Subject: line has "Subject" in it again :)
-
-> This patch adds comprehensive comments throughout the file, explaining
-> the purpose of key functions, structs, and complex operations to improve
-> overall readability and maintainability.
-> 
-> Signed-off-by: Joshua Jayasingh <joshuajayasingh08@gmail.com>
-> ---
->  drivers/firmware/google/coreboot_table.c | 187 +++++++++++++++++++++--
->  1 file changed, 177 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/firmware/google/coreboot_table.c b/drivers/firmware/google/coreboot_table.c
-> index 882db32e51be..d78038bd069f 100644
-> --- a/drivers/firmware/google/coreboot_table.c
-> +++ b/drivers/firmware/google/coreboot_table.c
-> @@ -2,7 +2,11 @@
->  /*
->   * coreboot_table.c
->   *
-> - * Module providing coreboot table access.
-> + * Module providing coreboot table access. This module creates a new bus type
-> + * ("coreboot") and a platform driver. The driver finds the coreboot table in
-> + * memory (via ACPI or Device Tree), parses it, and creates a new device on the
-> + * coreboot bus for each entry in the table. Other drivers can then register
-> + * with the coreboot bus to interact with these specific entries.
->   *
->   * Copyright 2017 Google Inc.
->   * Copyright 2017 Samuel Holland <samuel@sholland.org>
-> @@ -21,26 +25,52 @@
->  
->  #include "coreboot_table.h"
->  
-> +/* Helper macro to get the coreboot_device from a struct device. */
->  #define CB_DEV(d) container_of(d, struct coreboot_device, dev)
-> +/* Helper macro to get the coreboot_driver from a const struct device_driver. */
->  #define CB_DRV(d) container_of_const(d, struct coreboot_driver, drv)
-
-Close, but not quiet correct documentation for this last macro.  Why do
-you think that it has to be "const"?  It should work without it, right?
-
-> +/**
-> + * coreboot_bus_match - Match a coreboot device with a coreboot driver.
-> + * @dev: The coreboot device.
-> + * @drv: The coreboot device driver.
-> + *
-> + * This function is called by the driver core to determine if a driver can
-> + * handle a specific device. It iterates through the driver's ID table and
-> + * compares the coreboot entry tag of the device with the tags supported by
-> + * the driver.
-> + *
-> + * Return: 1 if the device's tag matches an ID in the driver's table,
-> + * 0 otherwise.
-> + */
->  static int coreboot_bus_match(struct device *dev, const struct device_driver *drv)
-
-Why are you documenting static functions that do "obvious" things?
-
-I'm all for documenting stuff, but why do all of this to this old
-driver?  Where did this documentation come from?  Was it generated by a
-tool?
-
-thanks,
-
-greg k-h
+Cj4gQ2FuIHlvdSBwbGVhc2Ugc3RvcCB0b3AtcG9zdGluZz8KClNvcnJ5IGZvciB0aGF0LCBJIGRp
+ZG7igJl0IG5vdGljZSB0aGlzIGlzc3VlIGJlZm9yZS4gV2XigJl2ZSB0YWtlbiBzb21lIHRpbWUg
+dG8gcmUtbGVhcm4gdGhlIGVtYWlsIGNvbW11bmljYXRpb24gcnVsZXMgYW5kIHdpbGwgcGF5IG1v
+cmUgYXR0ZW50aW9uIGluIHRoZSBmdXR1cmUuIEFnYWluLCBteSBhcG9sb2dpZXMgZm9yIHRoZSBp
+bmNvbnZlbmllbmNlLgoKPiBJIHRvbGQgeW91IGxhc3QgdGltZToKPiAKPiA+PiA+IFsgICAgMC40
+MjczMDJdWyAgICBUMF0gVW5rbm93biBrZXJuZWwgY29tbWFuZCBsaW5lIHBhcmFtZXRlcnMgImhy
+dGltZXJfZXhwaXJlX2VudHJ5IGhydGltZXJfZXhwaXJlX2V4aXQgc3BlY19zdG9yZV9ieXBhc3Nf
+ZGlzYWJsZT1wcmN0bCBuYmRzX21heD0zMiIsIHdpbGwgYmUgcGFzc2VkIHRvIHVzZXIgc3BhY2Uu
+Cj4gPj4gCj4gPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBeXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5eXl5e
+Xl5eCj4gPj4gSG93IGlzIHRoaXMgaGVscGZ1bD8KPiAKPiBUaGlzIGRvZXMgbm90IGVuYWJsZSB0
+aGUgdHJhY2UgZXZlbnRzLiBZb3UgbmVlZDoKPiAKPiAgICB0cmFjZV9ldmVudD0iaHJ0aW1lcl9l
+eHBpcmVfZW50cnksaHJ0aW1lcl9leHBpcmVfZXhpdCIKPiAKPiB0byBtYWtlIHRoYXQgd29yay4K
+PiAKCldlIHVwZGF0ZWQgdGhlIG5ldyB0ZXN0IGxvZywgd2hpY2ggaW5jbHVkZXMgaHJ0aW1lcl9l
+eHBpcmVfZW50cnksaHJ0aW1lcl9leHBpcmVfZXhpdCBhbmQgZnRyYWNlX2R1bXBfb25fb29wczoK
+CkxvZzogaHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wNzAy
+XzYuMTQvSU5GTyUzQSUyMHJjdSUyMGRldGVjdGVkJTIwc3RhbGwlMjBpbiUyMHN5c19zZWxlY3Qv
+MTIybG9nOS4yMC50eHQKCuKAlOKAlOKAlOKAlAp0aGFua3PvvIwKQmFp
 
