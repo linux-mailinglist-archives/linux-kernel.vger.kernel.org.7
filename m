@@ -1,404 +1,191 @@
-Return-Path: <linux-kernel+bounces-826436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058FCB8E870
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A27EB8E876
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 00:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CB317D6A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04E7117D884
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 22:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5A5285040;
-	Sun, 21 Sep 2025 22:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9944E1DE2A0;
+	Sun, 21 Sep 2025 22:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixnAr8KK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E6v9G2mQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D7E2857FA;
-	Sun, 21 Sep 2025 22:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E90202C5D
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 22:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758492901; cv=none; b=CRF6uJ4tRYbKr0xZDiGRIPTaNQx9CTx6irJW4j2a9gMdpmSr9YlD2FxY6ugmOi1wBOMdsm7B2ssxd17DvVLwVdrh5UIFM/4NqksBQd7lyKV3CrTlt0Jirlrd+d8YEvHfE/Hrmqa9Fr16JejKDuhzAAYN2zMPEwfZ3dhl3D07vDk=
+	t=1758492951; cv=none; b=kud35yitYAPFp6IiagGvmU0A8f9cWHyakG0ynPvAESy3hizu5oz1sH7eTATiFRf7+W2rUcOXPPj4H+aFTVCwcqAFmu78lCEyP5xLzfUvoQU4Mewe5tVhTvVdqQrRSCj0ofeM5T3EKTX89Us3pEdr5y6Ga/ajQ+CMY9qag1EBOUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758492901; c=relaxed/simple;
-	bh=FWsP+1Qbixet1w7C8wLBcLuwCOkBhkHcQUWhKaNmR2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mEAJ7qt1+YD0EATkzmhDAts6NKKSqf33PQ4EaENKOLKKICdhZ5UtAIpNpZlGXfxPT0oHitbjlJ8GxkdmtwVE8a2JetBeXCvOB6sWz7odx0bmNuzeE+GVcjZe2o58SO8r4scK54e2yxnvysRwzhggtxi+DU2nQqsKuXWJh0RxWKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixnAr8KK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCBEC4CEE7;
-	Sun, 21 Sep 2025 22:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758492901;
-	bh=FWsP+1Qbixet1w7C8wLBcLuwCOkBhkHcQUWhKaNmR2E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ixnAr8KKqH2EcNvaWp0YRqxtEvLOyHL6MwaQyn2TE0uahSahZwq5eOYXOM5Ql38q+
-	 Nij3JzVH1pYVVFOov8m4f3emWbe5304b6P8doP7yDaTmmomimd0+6tgBzdrDeVOWg7
-	 ClS6J+1I6bClpsjwu195XVenH86cb479DBSEMSsUydFVeFE19LVtYwnE2PeBuuBpJQ
-	 mUfDk4ukM4DHjkUtqIMvqoY4amnyKjK+WJM9SrKp/9upMQ6EQ4U6eyb4WxhX+KPyL3
-	 ggYudOq6rtXu4WrZJWRWYqmaUjZ3ULkHS6peiAwuMs5Bfjj0N72W7ngJgEECa4ZIQv
-	 E9tg8rbviDLAw==
-Message-ID: <8d9338dd-86da-4e40-8d0e-4431896e65eb@kernel.org>
-Date: Sun, 21 Sep 2025 23:14:56 +0100
+	s=arc-20240116; t=1758492951; c=relaxed/simple;
+	bh=UE2+sCKcRM0D9EqELobfcIehPj4nrD3ENegoQdfRKL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXAnEAcHJRTnvyMS+5ZsItiiSropKkCeJBQ1jZl7JH+SYqXHeMCog8dsnpJyz1SxrDqRZ6RizprUrlSjUoHdgBjPZnvWrZbD8948bObbSW5qj7LV2QrMcdQXyTLr8WU3f0ScRKJIHIMVkpVSitHVntkt11FfJDP0tD1Miz/Oc1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E6v9G2mQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758492948;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=issag+Emck8nYiAlp365ctL+iXmBkoGCcqhig3VAAWc=;
+	b=E6v9G2mQWwbdfKyLTDwFYwReD8KA22BIN/LuoZG86BP7uh2xzpRSEZ+eNaTKbGDA/753IA
+	TdYgLiavMet1IwHdy8L4VImGnxo4kp50p1vb6YdcHJio03o133VVFw8AbRk14y1IVXwZn1
+	N2segHsY6wekR2mFn5xhpxxHaDTfQ2s=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-255-2Tt_he3WOgu6ACvVy_u29w-1; Sun, 21 Sep 2025 18:15:45 -0400
+X-MC-Unique: 2Tt_he3WOgu6ACvVy_u29w-1
+X-Mimecast-MFC-AGG-ID: 2Tt_he3WOgu6ACvVy_u29w_1758492943
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ef21d77d2eso3060435f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 15:15:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758492943; x=1759097743;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=issag+Emck8nYiAlp365ctL+iXmBkoGCcqhig3VAAWc=;
+        b=INzK6gjY+pBvyiUfUiTwzWFvS1bo0zVuOfCo3eLkFj3ZAKBj6IkSkmfoXWBSA4Tdc8
+         M4epvP1/fvH7M7mAu5fswmtQZpghE46/AnfH0xUDaY8O8tz2HmuosUVqaVLZU3r8h0SH
+         SM1r7w0zPHnD3ARzl7sUTSj9pbU06dMbpibKAprFTrIGryDoJ0XAbsQ7iaoxVteTTQ4n
+         oVn7u0b6QFodfLDWzXxAW/AFhTHRPKrf2ix7f+YVYD6RL+sLzuwXPh5zsHDRv3raMNRL
+         RtgWBCWMO4XcRLZceVaMmbN9F6SNT5in+h726pwKbcUQo43gUPqaJKs/MwphgypyE0z/
+         R5/A==
+X-Forwarded-Encrypted: i=1; AJvYcCX2sd+aMBJw83hxabs0qoNitrY2nXJjUWVw7MECXgktWSP8kCAQs+iCPPst+d95w97ctZMmzoAlZFAL6XE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTpDdbRVCO8ahF38aA8sQScfCtlyVnhIu6mpRN8hp8qWc9ZCeD
+	gYUqyPSCL/xAafHw2w8QWSFVOSV3ZMlA545qv1NXCFSXPo5uPwU+HxEG7+a8tOfVUDZTKx/Xz5X
+	ojCUCdFYMnb1bTfPVDPcRzsaz2f4WwCCwGpDRFyT3mA9vGdbG/2DHRyneM2jkCVe+Xg==
+X-Gm-Gg: ASbGncsj5szveNdCObw9R6LPz3KnF2HDLndxawZlIo6FWJuO3rQlcB+MguDwzw0MqEW
+	kmXDN04Nrw5p6OZIYYeVvMyVYNwOQvQD6CvIZ5pZNj1ufC8oIhgQoYle758H4skbZU9YvOQ8Phm
+	dtAPfYfYvJre8NHoKZbyhLAI5WPNMxaTkFHGKm47BUHaAmPD603HNK2fDLcbKx7boYeDM233f/D
+	goUXUf5+NU2r/zC4USkQY/ELPjzQwnugOv8uNnGuaOKtgJAqLHaIss563k7L8mcxrXltEaDwrcm
+	ATBZlPFrn3lVCu4RRnN3G3fEtPCzhgaNhtE=
+X-Received: by 2002:a05:6000:2486:b0:3e9:f852:491 with SMTP id ffacd0b85a97d-3ee86b845b9mr10991340f8f.56.1758492943125;
+        Sun, 21 Sep 2025 15:15:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG5jSHy9tCekUFhaB50y2EweyLHn5Bx3Q8YuDkLzLOfeR9o5bHpT9MJjrrnHFOUxqNdrfiSsw==
+X-Received: by 2002:a05:6000:2486:b0:3e9:f852:491 with SMTP id ffacd0b85a97d-3ee86b845b9mr10991326f8f.56.1758492942751;
+        Sun, 21 Sep 2025 15:15:42 -0700 (PDT)
+Received: from redhat.com ([2a06:c701:73ea:f900:52ee:df2b:4811:77e0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee07407d33sm17370478f8f.18.2025.09.21.15.15.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Sep 2025 15:15:41 -0700 (PDT)
+Date: Sun, 21 Sep 2025 18:15:39 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	hch@infradead.org
+Subject: Re: [PATCH V6 0/9] Refine virtio mapping API
+Message-ID: <20250921181435-mutt-send-email-mst@kernel.org>
+References: <20250821064641.5025-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/12] remoteproc: pas: Use PAS context awareness in
- smc and mdt functions
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
- <pr18fQ8x6XmfMDmz4vwZRIjSBKG85N5bhtUXB5qzFCWU3kqA6z6AUojPaPK_bZjgJG5yuj9LQnhF8uS7oyveDQ==@protonmail.internalid>
- <20250921-kvm_rproc_pas-v3-5-458f09647920@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250921-kvm_rproc_pas-v3-5-458f09647920@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821064641.5025-1-jasowang@redhat.com>
 
-On 20/09/2025 20:41, Mukesh Ojha wrote:
+On Thu, Aug 21, 2025 at 02:46:32PM +0800, Jason Wang wrote:
+> Hi all:
+> 
+> Virtio used to be coupled with DMA API. This works fine for the device
+> that do real DMA but not the others. For example, VDUSE nees to craft
+> with DMA API in order to let the virtio-vdpa driver to work.
+> 
+> This series tries to solve this issue by introducing the mapping API
+> in the virtio core. So transport like vDPA can implement their own
+> mapping logic without the need to hack with DMA API. The mapping API
+> are abstracted with a new map operations in order to be re-used by
+> transprot or device. So device like VDUSE can implement its own
+> mapping loigc.
+> 
+> For device that uses DMA (for example PCI device), the virtio core
+> will still call DMA API directly without the need of implementing map
+> ops per device/transport.
+> 
+> Please review.
 
-I think this patch title should say "Use PAS context handle" or "context 
-pointer" also should SMC and MDT be higher case ?
- > Since, we have introduced PAS context data structure to better handle
+I sent some typos i found.
+Pls send fixups on top to fix them so testing in linux-next is not invalidated.
+Thanks!
 
-"We have introduced a PAS context data-structure struct qcom_scm_pas_ctx 
-which facilitates running both with and without the Gunywayh hypervisor. 
-Convert to using "
 
-> the code when SoC run with Gunyah or in absence. Let's put these
-> awareness in some of SMC and meta data functions and replace metadata
-> context as PAS context structure is superset and will help in unifying
-> remoteproc and non-remoteproc subsystem uses same set of functions for
-> Secure PAS method.
 
-"Convert methods and code to using struct qcom_scm_pas_ctx * where 
-necessary"
-
+> Changes since V5:
 > 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->   drivers/firmware/qcom/qcom_scm.c       | 32 +++++++++--------
->   drivers/remoteproc/qcom_q6v5_pas.c     | 66 +++++++++++++++++++---------------
->   drivers/soc/qcom/mdt_loader.c          |  6 ++--
->   include/linux/firmware/qcom/qcom_scm.h |  4 +--
->   include/linux/soc/qcom/mdt_loader.h    |  5 ++-
->   5 files changed, 62 insertions(+), 51 deletions(-)
+> - Rename mapping_token to virtio_map
+> - Do not use opaque void * pointer, just use a forward decalration of
+>   vduse_iova_domain
+> - Remove unused variable and typo fixes
 > 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 1c6b4c6f5513..917341308873 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -620,7 +620,7 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_ctx_destroy);
->    *		and optional blob of data used for authenticating the metadata
->    *		and the rest of the firmware
->    * @size:	size of the metadata
-> - * @ctx:	optional metadata context
-> + * @ctx:	optional pas context
->    *
->    * Return: 0 on success.
->    *
-> @@ -629,8 +629,9 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_ctx_destroy);
->    * qcom_scm_pas_metadata_release() by the caller.
->    */
->   int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> -			    struct qcom_scm_pas_metadata *ctx)
-> +			    struct qcom_scm_pas_ctx *ctx)
->   {
-> +	struct qcom_scm_pas_metadata *mdt_ctx;
->   	dma_addr_t mdata_phys;
->   	void *mdata_buf;
->   	int ret;
-> @@ -681,10 +682,11 @@ int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
->   out:
->   	if (ret < 0 || !ctx) {
->   		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
-> -	} else if (ctx) {
-> -		ctx->ptr = mdata_buf;
-> -		ctx->phys = mdata_phys;
-> -		ctx->size = size;
-> +	} else if (ctx && ctx->metadata) {
-> +		mdt_ctx = ctx->metadata;
-> +		mdt_ctx->ptr = mdata_buf;
-> +		mdt_ctx->phys = mdata_phys;
-> +		mdt_ctx->size = size;
->   	}
+> Changes since V4:
 > 
->   	return ret ? : res.result[0];
-> @@ -693,18 +695,20 @@ EXPORT_SYMBOL_GPL(qcom_scm_pas_init_image);
+> - Rename map_token to mapping_token
+> - Introduce a union container for opaque token as well as the DMA
+>   device so we won't lose the type safety
+> - Do not try to set DMA mask for VDUSE device
+> - Introduce a new mapper_error op for API completeness
 > 
->   /**
->    * qcom_scm_pas_metadata_release() - release metadata context
-> - * @ctx:	metadata context
-> + * @ctx:	pas context
->    */
-> -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
-> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_ctx *ctx)
->   {
-> -	if (!ctx->ptr)
-> -		return;
-> +	struct qcom_scm_pas_metadata *mdt_ctx;
+> Changes since V3:
 > 
-> -	dma_free_coherent(__scm->dev, ctx->size, ctx->ptr, ctx->phys);
-> +	mdt_ctx = ctx->metadata;
-> +	if (!mdt_ctx->ptr)
-> +		return;
+> - Fix build error of PDS vDPA driver
 > 
-> -	ctx->ptr = NULL;
-> -	ctx->phys = 0;
-> -	ctx->size = 0;
-> +	dma_free_coherent(__scm->dev, mdt_ctx->size, mdt_ctx->ptr, mdt_ctx->phys);
-> +	mdt_ctx->ptr = NULL;
-> +	mdt_ctx->phys = 0;
-> +	mdt_ctx->size = 0;
->   }
->   EXPORT_SYMBOL_GPL(qcom_scm_pas_metadata_release);
+> Changes since V2:
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 55a7da801183..ad87e0334a7d 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -115,8 +115,8 @@ struct qcom_pas {
->   	struct qcom_rproc_ssr ssr_subdev;
->   	struct qcom_sysmon *sysmon;
+> - Drop VDUSE dependenct for HAS_DMA and ARCH_HAS_DMA_OPS
 > 
-> -	struct qcom_scm_pas_metadata pas_metadata;
-> -	struct qcom_scm_pas_metadata dtb_pas_metadata;
-> +	struct qcom_scm_pas_ctx *pas_ctx;
-> +	struct qcom_scm_pas_ctx *dtb_pas_ctx;
->   };
+> Changes since V1:
 > 
->   static void qcom_pas_segment_dump(struct rproc *rproc,
-> @@ -209,9 +209,9 @@ static int qcom_pas_unprepare(struct rproc *rproc)
->   	 * auth_and_reset() was successful, but in other cases clean it up
->   	 * here.
->   	 */
-> -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
-> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
->   	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> 
->   	return 0;
->   }
-> @@ -235,15 +235,8 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->   			return ret;
->   		}
-> 
-> -		ret = qcom_mdt_pas_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
-> -					pas->dtb_pas_id, pas->dtb_mem_phys,
-> -					&pas->dtb_pas_metadata);
-> -		if (ret)
-> -			goto release_dtb_firmware;
-> -
-> -		ret = qcom_mdt_load_no_init(pas->dev, pas->dtb_firmware, pas->dtb_firmware_name,
-> -					    pas->dtb_mem_region, pas->dtb_mem_phys,
-> -					    pas->dtb_mem_size, &pas->dtb_mem_reloc);
-> +		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware, pas->dtb_firmware_name,
-> +					pas->dtb_mem_region, &pas->dtb_mem_reloc);
->   		if (ret)
->   			goto release_dtb_metadata;
->   	}
-> @@ -251,9 +244,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->   	return 0;
-> 
->   release_dtb_metadata:
-> -	qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> -
-> -release_dtb_firmware:
-> +	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
->   	release_firmware(pas->dtb_firmware);
-> 
->   	return ret;
-> @@ -301,14 +292,8 @@ static int qcom_pas_start(struct rproc *rproc)
->   		}
->   	}
-> 
-> -	ret = qcom_mdt_pas_init(pas->dev, pas->firmware, rproc->firmware, pas->pas_id,
-> -				pas->mem_phys, &pas->pas_metadata);
-> -	if (ret)
-> -		goto disable_px_supply;
-> -
-> -	ret = qcom_mdt_load_no_init(pas->dev, pas->firmware, rproc->firmware,
-> -				    pas->mem_region, pas->mem_phys, pas->mem_size,
-> -				    &pas->mem_reloc);
-> +	ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, rproc->firmware,
-> +				pas->mem_region, &pas->dtb_mem_reloc);
->   	if (ret)
->   		goto release_pas_metadata;
-> 
-> @@ -328,9 +313,9 @@ static int qcom_pas_start(struct rproc *rproc)
->   		goto release_pas_metadata;
->   	}
-> 
-> -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
-> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
->   	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> 
->   	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
->   	pas->firmware = NULL;
-> @@ -338,9 +323,9 @@ static int qcom_pas_start(struct rproc *rproc)
->   	return 0;
-> 
->   release_pas_metadata:
-> -	qcom_scm_pas_metadata_release(&pas->pas_metadata);
-> +	qcom_scm_pas_metadata_release(pas->pas_ctx);
->   	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(&pas->dtb_pas_metadata);
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
->   disable_px_supply:
->   	if (pas->px_supply)
->   		regulator_disable(pas->px_supply);
-> @@ -774,12 +759,33 @@ static int qcom_pas_probe(struct platform_device *pdev)
->   	}
-> 
->   	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
-> +
-> +	pas->pas_ctx = qcom_scm_pas_ctx_init(pas->dev, pas->pas_id, pas->mem_phys,
-> +					     pas->mem_size);
-> +	if (IS_ERR(pas->pas_ctx)) {
-> +		ret = PTR_ERR(pas->pas_ctx);
-> +		goto remove_ssr_sysmon;
-> +	}
-> +
-> +	pas->dtb_pas_ctx = qcom_scm_pas_ctx_init(pas->dev, pas->dtb_pas_id,
-> +						 pas->dtb_mem_phys, pas->dtb_mem_size);
-> +	if (IS_ERR(pas->dtb_pas_ctx)) {
-> +		ret = PTR_ERR(pas->dtb_pas_ctx);
-> +		goto destroy_pas_ctx;
-> +	}
-> +
->   	ret = rproc_add(rproc);
->   	if (ret)
-> -		goto remove_ssr_sysmon;
-> +		goto destroy_dtb_pas_ctx;
-> 
->   	return 0;
-> 
-> +destroy_dtb_pas_ctx:
-> +	qcom_scm_pas_ctx_destroy(pas->dtb_pas_ctx);
-> +
-> +destroy_pas_ctx:
-> +	qcom_scm_pas_ctx_destroy(pas->pas_ctx);
-> +
->   remove_ssr_sysmon:
->   	qcom_remove_ssr_subdev(rproc, &pas->ssr_subdev);
->   	qcom_remove_sysmon_subdev(pas->sysmon);
-> @@ -802,6 +808,8 @@ static void qcom_pas_remove(struct platform_device *pdev)
->   {
->   	struct qcom_pas *pas = platform_get_drvdata(pdev);
-> 
-> +	qcom_scm_pas_ctx_destroy(pas->dtb_pas_ctx);
-> +	qcom_scm_pas_ctx_destroy(pas->pas_ctx);
->   	rproc_del(pas->rproc);
-> 
->   	qcom_q6v5_deinit(&pas->q6v5);
-> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-> index 2ef079797f05..24da6e49b2ad 100644
-> --- a/drivers/soc/qcom/mdt_loader.c
-> +++ b/drivers/soc/qcom/mdt_loader.c
-> @@ -234,13 +234,13 @@ EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
->    * @fw_name:	name of the firmware, for construction of segment file names
->    * @pas_id:	PAS identifier
->    * @mem_phys:	physical address of allocated memory region
-> - * @ctx:	PAS metadata context, to be released by caller
-> + * @ctx:	PAS context, ctx->metadata to be released by caller
->    *
->    * Returns 0 on success, negative errno otherwise.
->    */
->   int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->   		      const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> -		      struct qcom_scm_pas_metadata *ctx)
-> +		      struct qcom_scm_pas_ctx *ctx)
-
-I think the ctx abbreviation is an informational regression
-
-"struct qcom_scm_pas_context *ctx"
-
-We are converting from a structure which tells me by way of its name 
-that it contains pas metadata to a structure that tells me by way of its 
-name that it contains pas ctx.
-
-Hmm far more informative to give the structure some vowels we can 
-abbreviate the variable names galore.
-
-struct qcom_scm_pas_context {}; please
-
->   {
->   	const struct elf32_phdr *phdrs;
->   	const struct elf32_phdr *phdr;
-> @@ -492,7 +492,7 @@ int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
->   	int ret;
-> 
->   	ret = qcom_mdt_pas_init(ctx->dev, fw, firmware, ctx->pas_id,
-> -				  ctx->mem_phys, ctx->metadata);
-> +				  ctx->mem_phys, ctx);
->   	if (ret)
->   		return ret;
-> 
-> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> index e3e9e9e9077f..9ca3218f0948 100644
-> --- a/include/linux/firmware/qcom/qcom_scm.h
-> +++ b/include/linux/firmware/qcom/qcom_scm.h
-> @@ -84,8 +84,8 @@ void *qcom_scm_pas_ctx_init(struct device *dev, u32 pas_id, phys_addr_t mem_phys
->   			    size_t mem_size);
->   void qcom_scm_pas_ctx_destroy(struct qcom_scm_pas_ctx *ctx);
->   int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> -			    struct qcom_scm_pas_metadata *ctx);
-> -void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
-> +			    struct qcom_scm_pas_ctx *ctx);
-> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_ctx *ctx);
->   int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
->   int qcom_scm_pas_auth_and_reset(u32 pas_id);
->   int qcom_scm_pas_shutdown(u32 pas_id);
-> diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
-> index 36b8b331ce5f..ce2346b66af6 100644
-> --- a/include/linux/soc/qcom/mdt_loader.h
-> +++ b/include/linux/soc/qcom/mdt_loader.h
-> @@ -10,7 +10,6 @@
-> 
->   struct device;
->   struct firmware;
-> -struct qcom_scm_pas_metadata;
->   struct qcom_scm_pas_ctx;
-> 
->   #if IS_ENABLED(CONFIG_QCOM_MDT_LOADER)
-> @@ -18,7 +17,7 @@ struct qcom_scm_pas_ctx;
->   ssize_t qcom_mdt_get_size(const struct firmware *fw);
->   int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->   		      const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> -		      struct qcom_scm_pas_metadata *pas_metadata_ctx);
-> +		      struct qcom_scm_pas_ctx *pas_ctx);
->   int qcom_mdt_load(struct device *dev, const struct firmware *fw,
->   		  const char *fw_name, int pas_id, void *mem_region,
->   		  phys_addr_t mem_phys, size_t mem_size,
-> @@ -43,7 +42,7 @@ static inline ssize_t qcom_mdt_get_size(const struct firmware *fw)
-> 
->   static inline int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
->   				    const char *fw_name, int pas_id, phys_addr_t mem_phys,
-> -				    struct qcom_scm_pas_metadata *pas_metadata_ctx)
-> +				    struct qcom_scm_pas_ctx *pas_ctx)
->   {
->   	return -ENODEV;
->   }
-> 
-> --
-> 2.50.1
+> - Fix build error of mlx5_vdpa driver
 > 
 > 
+> Jason Wang (9):
+>   virtio_ring: constify virtqueue pointer for DMA helpers
+>   virtio_ring: switch to use dma_{map|unmap}_page()
+>   virtio: rename dma helpers
+>   virtio: introduce virtio_map container union
+>   virtio_ring: rename dma_handle to map_handle
+>   virtio: introduce map ops in virtio core
+>   vdpa: support virtio_map
+>   vdpa: introduce map ops
+>   vduse: switch to use virtio map API instead of DMA API
+> 
+>  drivers/net/virtio_net.c                 |  28 +-
+>  drivers/vdpa/Kconfig                     |   8 +-
+>  drivers/vdpa/alibaba/eni_vdpa.c          |   5 +-
+>  drivers/vdpa/ifcvf/ifcvf_main.c          |   5 +-
+>  drivers/vdpa/mlx5/core/mr.c              |   4 +-
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c        |  15 +-
+>  drivers/vdpa/octeon_ep/octep_vdpa_main.c |   6 +-
+>  drivers/vdpa/pds/vdpa_dev.c              |   5 +-
+>  drivers/vdpa/solidrun/snet_main.c        |   8 +-
+>  drivers/vdpa/vdpa.c                      |   5 +-
+>  drivers/vdpa/vdpa_sim/vdpa_sim.c         |   4 +-
+>  drivers/vdpa/vdpa_user/iova_domain.c     |   2 +-
+>  drivers/vdpa/vdpa_user/iova_domain.h     |   2 +-
+>  drivers/vdpa/vdpa_user/vduse_dev.c       |  79 ++--
+>  drivers/vdpa/virtio_pci/vp_vdpa.c        |   5 +-
+>  drivers/vhost/vdpa.c                     |   6 +-
+>  drivers/virtio/virtio_ring.c             | 459 ++++++++++++++---------
+>  drivers/virtio/virtio_vdpa.c             |  20 +-
+>  include/linux/vdpa.h                     |  25 +-
+>  include/linux/virtio.h                   |  46 ++-
+>  include/linux/virtio_config.h            |  72 ++++
+>  include/linux/virtio_ring.h              |   7 +-
+>  22 files changed, 531 insertions(+), 285 deletions(-)
+> 
+> -- 
+> 2.31.1
 
 
