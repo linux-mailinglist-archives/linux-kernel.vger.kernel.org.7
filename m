@@ -1,143 +1,237 @@
-Return-Path: <linux-kernel+bounces-826155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E676B8DABF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9102B8DB1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 14:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2813A3B4FC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:23:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F18D817BE77
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 12:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14492749E2;
-	Sun, 21 Sep 2025 12:23:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F112E40B
-	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 12:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820562C3245;
+	Sun, 21 Sep 2025 12:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUCEtW9s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADEF1FDA89;
+	Sun, 21 Sep 2025 12:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758457420; cv=none; b=ICzkM8Y0wUigiicufh025caom/1BUoaEdlJ4vdO8tImKRZEiqgfg1o/kpchF+mmnQa3H0AHXcdGOcrWc4Q3vBr2+G/RL02KnG4fZPc4Ut5cpDk/bdvJsKtMb9WENZkE0K1GkkEl2LUMU+JLn+96YelhnH1HDC+cmHfPia2wmn4U=
+	t=1758458043; cv=none; b=gV91SMYUeFXvX8iEv1f2BHhKfFDiIRnabcrpbMA/wJ65NWQ4u4XNwbUdUACVfaqykrRxgRngdqvNVh72DHYLrm0yOzMGaIm3N2SaqbNipde4YP8JALULwhhpGA6shtT+LYUZcHmoE9IzRdb5qCX3jQK9jFhPIBdC7t5i/Bc6N5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758457420; c=relaxed/simple;
-	bh=xsCweM0SLWTm6tOF7yEPI/xV7qi/PGFoGuEQp07uM1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G56z/gkjGc6JzPqK58BF8CcMpTd840FvUwx3WYubwGJpy38QvcsX7vmc/R7li33HSEsyO+7pKLePPrb6VgcDAZwpKCOzEMrKELoS95OdvaQtgLR4/VZb9qEy+aVqafdIFW0ObwVFvzI+YMsXMKOQ8ENpjwQbXMauwbBwLj0PeRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0AFE1516;
-	Sun, 21 Sep 2025 05:23:28 -0700 (PDT)
-Received: from [10.163.39.139] (unknown [10.163.39.139])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 729483F66E;
-	Sun, 21 Sep 2025 05:23:34 -0700 (PDT)
-Message-ID: <d84eef92-115e-4b71-9146-86fc91244c15@arm.com>
-Date: Sun, 21 Sep 2025 17:53:30 +0530
+	s=arc-20240116; t=1758458043; c=relaxed/simple;
+	bh=VxmthJPNENbIGHLIKYatBSWAADCcIL/mFRxggTyg46E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=eN8+DravrRkMIQJhMOlw9tni/cCdB4FZZFxPsRwnN9DzQ8wTmTlYx7Eu0FLInS42JCGE08PPplDGSKr12hSCTOB0c5LzU6HgLeoiVTVrle+WvZ7cL2pkwginulQUlncsuAM7C5IWzImtg7wQR26w2vcNOvgyi86WXLItvm72BWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUCEtW9s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE53AC116D0;
+	Sun, 21 Sep 2025 12:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758458043;
+	bh=VxmthJPNENbIGHLIKYatBSWAADCcIL/mFRxggTyg46E=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=lUCEtW9sAiXF2PpPs9Dae4vbu6pomlNbS76GGz1KR0zz0aTiQpFgPAs0qp1WO792Y
+	 9EVffICjQQREcHxnxaJ/5E3jscWb/+G2aYMI8j/qfgFAQnRE4c7e8JJKwiorITs0YD
+	 D22Uxyo36ePCho63HL7mhhDgAtx0mQYlJdCALIuBFNXe/7KuquS0ZZ0Xc2qwskMkhG
+	 cfwi7WjGK9NMnQ+c+fe6HNfyEJ5cMDzup9muuGXvrtm0spfr/BkGm0Lb/q8E31QNd8
+	 EVRN75dKr9UQeRzu3LEDaz7yN2UiPTAm7H2FtBQ4desmemMPSrPnitc1AsQGbFRNvg
+	 olsHlyGyHV4QQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64/mm: Elide TLB flush in certain pte protection
- transitions
-To: Dev Jain <dev.jain@arm.com>, catalin.marinas@arm.com, will@kernel.org
-Cc: wangkefeng.wang@huawei.com, ryan.roberts@arm.com, baohua@kernel.org,
- pjaroszynski@nvidia.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250920051043.16421-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250920051043.16421-1-dev.jain@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Sun, 21 Sep 2025 14:33:56 +0200
+Message-Id: <DCYHCLM67KRZ.366VS9PDKLYKY@kernel.org>
+To: "Greg KH" <gregkh@linuxfoundation.org>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>,
+ <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
+ Norov" <yury.norov@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v4 1/6] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.21.0
+References: <20250920182232.2095101-1-joelagnelf@nvidia.com>
+ <20250920182232.2095101-2-joelagnelf@nvidia.com>
+ <2025092157-pauper-snap-aad1@gregkh>
+In-Reply-To: <2025092157-pauper-snap-aad1@gregkh>
 
-On 20/09/25 10:40 AM, Dev Jain wrote:
-> Currently arm64 does an unconditional TLB flush in mprotect(). This is not
-> required for some cases, for example, when changing from PROT_NONE to
-> PROT_READ | PROT_WRITE (a real usecase - glibc malloc does this to emulate
+On Sun Sep 21, 2025 at 11:36 AM CEST, Greg KH wrote:
+> On Sat, Sep 20, 2025 at 02:22:27PM -0400, Joel Fernandes wrote:
+>> The bitfield-specific into new macro. This will be used to define
+>> structs with bitfields, similar to C language.
+>>=20
+>> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>>  drivers/gpu/nova-core/bitfield.rs    | 314 +++++++++++++++++++++++++++
+>>  drivers/gpu/nova-core/nova_core.rs   |   3 +
+>>  drivers/gpu/nova-core/regs/macros.rs | 259 +---------------------
+>>  3 files changed, 327 insertions(+), 249 deletions(-)
+>>  create mode 100644 drivers/gpu/nova-core/bitfield.rs
+>>=20
+>> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/b=
+itfield.rs
+>> new file mode 100644
+>> index 000000000000..ba6b7caa05d9
+>> --- /dev/null
+>> +++ b/drivers/gpu/nova-core/bitfield.rs
+>> @@ -0,0 +1,314 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Bitfield library for Rust structures
+>> +//!
+>> +//! Support for defining bitfields in Rust structures. Also used by the=
+ [`register!`] macro.
+>> +//!
+>> +//! # Syntax
+>> +//!
+>> +//! ```rust
+>> +//! #[derive(Debug, Clone, Copy)]
+>> +//! enum Mode {
+>> +//!     Low =3D 0,
+>> +//!     High =3D 1,
+>> +//!     Auto =3D 2,
+>> +//! }
+>> +//!
+>> +//! impl TryFrom<u8> for Mode {
+>> +//!     type Error =3D u8;
+>> +//!     fn try_from(value: u8) -> Result<Self, Self::Error> {
+>> +//!         match value {
+>> +//!             0 =3D> Ok(Mode::Low),
+>> +//!             1 =3D> Ok(Mode::High),
+>> +//!             2 =3D> Ok(Mode::Auto),
+>> +//!             _ =3D> Err(value),
+>> +//!         }
+>> +//!     }
+>> +//! }
+>> +//!
+>> +//! impl From<Mode> for u32 {
+>> +//!     fn from(mode: Mode) -> u32 {
+>> +//!         mode as u32
+>> +//!     }
+>> +//! }
+>> +//!
+>> +//! #[derive(Debug, Clone, Copy)]
+>> +//! enum State {
+>> +//!     Inactive =3D 0,
+>> +//!     Active =3D 1,
+>> +//! }
+>> +//!
+>> +//! impl From<bool> for State {
+>> +//!     fn from(value: bool) -> Self {
+>> +//!         if value { State::Active } else { State::Inactive }
+>> +//!     }
+>> +//! }
+>> +//!
+>> +//! impl From<State> for u32 {
+>> +//!     fn from(state: State) -> u32 {
+>> +//!         state as u32
+>> +//!     }
+>> +//! }
+>> +//!
+>> +//! bitfield! {
+>> +//!     struct ControlReg {
+>> +//!         3:0       mode        as u8 ?=3D> Mode;
+>> +//!         7         state       as bool =3D> State;
+>> +//!     }
+>> +//! }
+>
+> As discussed at the conference this week, I do object to this as it
+> will allow the same mistakes to happen that we used to do in the kernel
+> for a long time before the regmap() api happened, along with GENMASK().
 
-The following transition does not require a TLB flush on all
-architectures ? In which case, should not this check be part
-of generic mprotect() itself.
+Have you read the following macro arm of the implementation?
 
-PROT_NONE ---> PROT_READ | PROT_WRITE
-> growing into the non-main heaps), and unsetting uffd-wp in a range.
-> 
-> Therefore, implement pte_needs_flush() for arm64, which is already
-> implemented by some other arches as well.
+    // Generates the accessor methods for a single field.
+    (
+        @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
+            { $process:expr } $to_type:ty =3D> $res_type:ty $(, $comment:li=
+teral)?;
+    ) =3D> {
+        ::kernel::macros::paste!(
+        const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> =3D =
+$lo..=3D$hi;
+        const [<$field:upper _MASK>]: u32 =3D ((((1 << $hi) - 1) << 1) + 1)=
+ - ((1 << $lo) - 1);
+        const [<$field:upper _SHIFT>]: u32 =3D Self::[<$field:upper _MASK>]=
+.trailing_zeros();
+        );
+   =20
+        $(
+        #[doc=3D"Returns the value of this field:"]
+        #[doc=3D$comment]
+        )?
+        #[inline(always)]
+        pub(crate) fn $field(self) -> $res_type {
+            ::kernel::macros::paste!(
+            const MASK: u32 =3D $name::[<$field:upper _MASK>];
+            const SHIFT: u32 =3D $name::[<$field:upper _SHIFT>];
+            );
+            let field =3D ((self.0 & MASK) >> SHIFT);
 
-Agreed, defining pte_needs_flush() on the platform does make
-sense, if it brings some perf improvement without additional
-cost.
-> 
-> Running a userspace program changing permissions back and forth between
-> PROT_NONE and PROT_READ | PROT_WRITE, and measuring the average time taken
-> for the none->rw transition, I get a reduction from 3.2 microseconds to
-> 2.85 microseconds, giving a 12.3% improvement.
+Here you can see that it's just a mask + shift operation internally to
+access the field.
+   =20
+            $process(field)
+        }
+   =20
+        ::kernel::macros::paste!(
+        $(
+        #[doc=3D"Sets the value of this field:"]
+        #[doc=3D$comment]
+        )?
+        #[inline(always)]
+        pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
+            const MASK: u32 =3D $name::[<$field:upper _MASK>];
+            const SHIFT: u32 =3D $name::[<$field:upper _SHIFT>];
+            let value =3D (u32::from(value) << SHIFT) & MASK;
+            self.0 =3D (self.0 & !MASK) | value;
+   =20
+            self
+        }
+        );
+    };
 
-But that's a very specific workload intended to demonstrate
-the use case for this change. Hence the improvement claimed
-here is not representative of real world work loads.
-> 
-> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-> ---
-> mm-selftests pass.
-> 
-> v1->v2:
->  - Drop PTE_PRESENT_INVALID and PTE_AF checks, use ptdesc_t instead of
->    pteval_t, return !!diff (Ryan)
-> 
->  arch/arm64/include/asm/tlbflush.h | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index 18a5dc0c9a54..40df783ba09a 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -524,6 +524,33 @@ static inline void arch_tlbbatch_add_pending(struct arch_tlbflush_unmap_batch *b
->  {
->  	__flush_tlb_range_nosync(mm, start, end, PAGE_SIZE, true, 3);
->  }
-> +
-> +static inline bool __pte_flags_need_flush(ptdesc_t oldval, ptdesc_t newval)
-> +{
-> +	ptdesc_t diff = oldval ^ newval;
-> +
-> +	/* invalid to valid transition requires no flush */
-> +	if (!(oldval & PTE_VALID))
-> +		return false;
+Now I too would like to see how exactly this will be used to read data
+from hardware. But at least in theory if the conversion from hardware
+endianness to native endianness is done correctly, this will do the
+right thing :)
 
-Is not this true for all platforms which could be checked via
-pte_present() helper ? Hence should not this be moved inside
-the caller itself in generic MM ? I guess probably the above
-mentioned transition should be moved as well.
+> The issue is that you are going to want to take these bitfields as part
+> of a larger structure, and attempt to "lay it over" a chunk of memory
+> that came from, or is going to, hardware.  When that happens, all of the
+> endian issues of mis-matches between hardware and cpus come into play,
+> which is not able to be properly expressed here at all, unless you
+> attempt to either resolve it all later on in something like the regmap
+> api, or you have #ifdef stuff to attempt to capture all of the possible
+> combinations and deal with it at build time (which is strongly never
+> recommended, but is what we used to do in previous decades.)
 
-PROT_NONE ---> PROT_READ | PROT_WRITE
-> +
-> +	/* Transition in the SW bits requires no flush */
-> +	diff &= ~PTE_SWBITS_MASK;
-> +
-> +	return !!diff;
-> +}
-> +
-> +static inline bool pte_needs_flush(pte_t oldpte, pte_t newpte)
-> +{
-> +	return __pte_flags_need_flush(pte_val(oldpte), pte_val(newpte));
-> +}
-> +#define pte_needs_flush pte_needs_flush
-> +
-> +static inline bool huge_pmd_needs_flush(pmd_t oldpmd, pmd_t newpmd)
-> +{
-> +	return __pte_flags_need_flush(pmd_val(oldpmd), pmd_val(newpmd));
-> +}
-> +#define huge_pmd_needs_flush huge_pmd_needs_flush
-> +
->  #endif
->  
->  #endif
+The "laying over part" requires a cast or transmute in Rust which is
+`unsafe`, so I'd say we will definitely notice it in the code if a user
+would be trying to do it.
 
+---
+Cheers,
+Benno
 
