@@ -1,120 +1,75 @@
-Return-Path: <linux-kernel+bounces-826254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C7CB8DFEF
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:37:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB901B8E001
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 18:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1473B474A
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:37:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 692343BEBA7
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 16:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8E12550BA;
-	Sun, 21 Sep 2025 16:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0DF258EF9;
+	Sun, 21 Sep 2025 16:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Mb0PqSL9"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnvdXyr2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6C32522A8;
-	Sun, 21 Sep 2025 16:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327FF34BA47;
+	Sun, 21 Sep 2025 16:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758472662; cv=none; b=fFIIx187LoR6QiC352gaHXjqPiXwTwZP7OvouV0OW8RoMCgcSNm4NaZms6ur8W7Ph23ZOf6uOpKtsPfCFrHvNs4+tkD5qKfxsSUpWBiN2ozOcFbSeodyW3Ok5Wr8o7q3N90TkjUI06IvrmdlFGYOExt5ReBmfLwAFP5DW3RMvMo=
+	t=1758473586; cv=none; b=XAZU1Awuw2QlBZ1yraD8ia/nkvwG3JvbP/clf+shr0Asg+Cce0BFPAkkgJ4ZTThNW9xDW2A8ty6u8r6OZefWGENrVF+4tdlRC3Ryz46Oz031DRgqtHmv7zIOmsJDCSmE9X+3JDcUvbpX/dVL28kkYA1Rf6LH8lFZ5xpzRU4JXho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758472662; c=relaxed/simple;
-	bh=7JvBPeJoxKqTRyUBKzE8ehwiAfyw1+bPlIevTM3eY5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R85SRbwRNeoz8LieNr4TnYqPHPFmkTmpvsvXjW/4HsmxuCODuaPE2E6Nm29gkHZH5j+he/ydqLIuPyIDVDqecz7thPi2tOp9GLrYrNThML+UecugSAgwUZ1Uz7v51e7W3N8tdW2TeDuGAs2n029lAGUedZq9gyRDkSuHy+WDq4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Mb0PqSL9; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1758472650;
-	bh=7JvBPeJoxKqTRyUBKzE8ehwiAfyw1+bPlIevTM3eY5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mb0PqSL91m8i4951Fstrdpubh9U1v1a53JdmQxCU9diI+Bskx+JxdPgSrrdpMg9ly
-	 72CIQue9FqDAWbtLzX58n0oHUC2PdnEyOGEj2oLsC/ui3ilnckEELVJBGz8ifkMg/n
-	 Wleb+z0eSgBEklXghZFaRgYzSo685DbgWwZTMhhM=
-Date: Sun, 21 Sep 2025 18:37:30 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Benjamin Berg <benjamin@sipsolutions.net>, 
-	linux-um@lists.infradead.org, linux-kselftest@vger.kernel.org, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, linux-kernel@vger.kernel.org, 
-	Benjamin Berg <benjamin.berg@intel.com>
-Subject: Re: [PATCH v2 03/11] tools/nolibc/stdio: remove perror if
- NOLIBC_IGNORE_ERRNO is set
-Message-ID: <c10503a9-5c63-44a8-9ea7-a7bf6c4ed3fb@t-8ch.de>
-References: <20250919153420.727385-1-benjamin@sipsolutions.net>
- <20250919153420.727385-4-benjamin@sipsolutions.net>
- <20250921075511.GA16684@1wt.eu>
+	s=arc-20240116; t=1758473586; c=relaxed/simple;
+	bh=pOC1FJ1dZ8Ed5BFxEGVeWgL22mKSWnuTkoOTFE8Asdk=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=YIfdl4KIXQAJcRuCztlSULDhHBw2XPWW3pHyfpIcscNip09DjUSpkT7JonxoTfvMTOUQ2tVTE7DDwSqbpOEaQI48qe5I6rL00AlKdRGtB9DHtSwvrprPURDR2WB3+3o5AcAXhwzVvvYCJjoIjPbnCUtaP3Svh7VoEhQh5tFrd0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnvdXyr2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF85C4CEE7;
+	Sun, 21 Sep 2025 16:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758473585;
+	bh=pOC1FJ1dZ8Ed5BFxEGVeWgL22mKSWnuTkoOTFE8Asdk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=hnvdXyr27NfEjzQxiAYLEySASSRxwYe37YWbHTqXGkPN78k7AO8RST6bORNKi2nt/
+	 AIuCCOTCDXQx69JULbDh4v/wIRNFElzKjmxuPx2Qk92hx4wapgdKzzkGSfVHfiZTZ+
+	 8CRFb+Ojo4mSorbJmEjof4hBptpZ0rH70t7pIlmFWNi08cpmZqpl1l0+mJ/M4tITUO
+	 QM5XKF10LHf9BrWaW50hM+A4FMWJLWCF23pgBkMaRs1rCr2HNj384F4nb8AyAWCwY+
+	 Dyr2Bvgek+nVmxOdyXo3DDH/sf1+jRIXaAZQc9lYjuMPd1ZSowMB7dnjvtFNXPKvPR
+	 04giQeGuNtR7g==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250921075511.GA16684@1wt.eu>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250915151947.277983-2-laura.nao@collabora.com>
+References: <20250915151947.277983-1-laura.nao@collabora.com> <20250915151947.277983-2-laura.nao@collabora.com>
+Subject: Re: [PATCH v6 01/27] clk: mediatek: clk-pll: Add set/clr regs for shared PLL enable control
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: guangjie.song@mediatek.com, wenst@chromium.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, kernel@collabora.com, Laura Nao <laura.nao@collabora.com>, =?utf-8?q?N=C3=ADcolas?= F . R . A . Prado <nfraprado@collabora.com>
+To: Laura Nao <laura.nao@collabora.com>, angelogioacchino.delregno@collabora.com, conor+dt@kernel.org, krzk+dt@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, richardcochran@gmail.com, robh@kernel.org
+Date: Sun, 21 Sep 2025 09:53:04 -0700
+Message-ID: <175847358414.4354.6792968051513586535@lazor>
+User-Agent: alot/0.11
 
-On 2025-09-21 09:55:11+0200, Willy Tarreau wrote:
-> Hi Benjamin,
-> 
-> On Fri, Sep 19, 2025 at 05:34:12PM +0200, Benjamin Berg wrote:
-> > From: Benjamin Berg <benjamin.berg@intel.com>
-> > 
-> > There is no errno variable when NOLIBC_IGNORE_ERRNO is defined. As such,
-> > the perror function does not make any sense then and cannot compile.
-> > 
-> > Fixes: acab7bcdb1bc ("tools/nolibc/stdio: add perror() to report the errno value")
-> > Signed-off-by: Benjamin Berg <benjamin.berg@intel.com>
-> > Acked-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> >  tools/include/nolibc/stdio.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
-> > index 7630234408c5..c512159b8374 100644
-> > --- a/tools/include/nolibc/stdio.h
-> > +++ b/tools/include/nolibc/stdio.h
-> > @@ -597,11 +597,13 @@ int sscanf(const char *str, const char *format, ...)
-> >  	return ret;
-> >  }
-> >  
-> > +#ifndef NOLIBC_IGNORE_ERRNO
-> >  static __attribute__((unused))
-> >  void perror(const char *msg)
-> >  {
-> >  	fprintf(stderr, "%s%serrno=%d\n", (msg && *msg) ? msg : "", (msg && *msg) ? ": " : "", errno);
-> >  }
-> > +#endif
-> 
-> Please instead place the ifndef inside the function so that code calling
-> perror() continues to build. The original goal of that macro was to
-> further shrink programs at the expense of losing error details. But we
-> should be able to continue to build working programs with that macro
-> defined. There's nothing hard set in stone regarding this but here it's
-> easy to preserve a working behavior by having something like this for
-> example:
-> 
->   static __attribute__((unused))
->   void perror(const char *msg)
->   {
->  +#ifdef NOLIBC_IGNORE_ERRNO
->  + 	fprintf(stderr, "%s\n", (msg && *msg) ? msg : "unknown error");
->  +#else
->   	fprintf(stderr, "%s%serrno=%d\n", (msg && *msg) ? msg : "", (msg && *msg) ? ": " : "", errno);
->  +#endif
->   }
+Quoting Laura Nao (2025-09-15 08:19:21)
+> On MT8196, there are set/clr registers to control a shared PLL enable
+> register. These are intended to prevent different masters from
+> manipulating the PLLs independently. Add the corresponding en_set_reg
+> and en_clr_reg fields to the mtk_pll_data structure.
+>=20
+> Reviewed-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
 
-For the plain `errno` variable and printf(%m) we don't have such
-fallbacks. With NOLIBC_IGNORE_ERRNO the compilation either fails or the
-results are undefined. Personally I prefer not defining perror() here.
-
-
-Thomas
+Applied to clk-next
 
