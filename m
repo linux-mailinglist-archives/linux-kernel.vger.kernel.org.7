@@ -1,335 +1,141 @@
-Return-Path: <linux-kernel+bounces-826404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85580B8E6E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 23:45:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62E7B8E76C
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 23:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFEA16DCA1
-	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6E7189CB01
+	for <lists+linux-kernel@lfdr.de>; Sun, 21 Sep 2025 21:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D45A2D948D;
-	Sun, 21 Sep 2025 21:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304E72264B2;
+	Sun, 21 Sep 2025 21:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dG2xKJxu"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S2OH+Oq1"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C0C2C3251;
-	Sun, 21 Sep 2025 21:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B368B49620
+	for <linux-kernel@vger.kernel.org>; Sun, 21 Sep 2025 21:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758491106; cv=none; b=DNGG6qp1uUXQx+CcdhgwLqHwy2QJ9ZIOBrabsS4KJCOST5BUvGkUQiZCoIoGTfFQF8OKK0YoelJG8NvTrJBwiytNj7LjsvPlUB5G2k87+G6zO5Mk8WiymFfqWP7SgLdo7tvKNjt9vTo8qhovUdfcyecM0A5Vqo3zcyXvOP+HBYE=
+	t=1758491303; cv=none; b=awUBbYgURHCv69LghUM46orrcXt51QCT5HrkG5mOSylSEL+wQMEedgDsbq7ZKzHpeYwTUUNlMM8Rsh6XJsOfX7cbq/MUCvcGDsrpQSCbmU4ZQ98FMIW1ZMGL/mNT9/q6ZFmbwKtkS8wqMG84JkHzZTPEIzU1YBCLpnNTr7+y0Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758491106; c=relaxed/simple;
-	bh=CbmDTP8h53MG2g84pS1mnV8p4mkYAcrqZnbCQEF5x/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p1I3r3XCYv1grj8fhy72i3skc0RCgUNlR/7uNHnI7giWu/KYri5wPgWaw35HZ0jwEUd6Yp3a6F/aPpu4evJU8n2ZCgQuehIIb2f4TtzUm0w9QgAVAlVPwjjOL0y0EKXfvmTD5+nmei5AVBm5zwszzuUsO4ljFzLMyl8tCJKkcv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dG2xKJxu; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LBQeoh017068;
-	Sun, 21 Sep 2025 21:44:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=rpWAmSzRr0l1DuNzP
-	6UkVcw3Fb5aM5LXJoByQJyVPIE=; b=dG2xKJxuSA0V0SVs8ILNAVPTWboxCLfOq
-	p95GMYgIhYyXpgYsrRgmYyKMpTCEhPwEf3Wj6hkLLZVISft/IuWF8DJAlq0sQiEk
-	/j0j5kOef0V6/aMglrPYaMW+DbybfFPLaamUiIrjk+p5SGY1FusItrEe8vnVIAFd
-	iEnsyXx5LS9wN4FgM98JwMF4fAj2ZwGZv37p8r7jvCsSe49b8yAOXRnM5ejXDfK0
-	qttA4/fFVw+TBH08IwBQM8S3kDoNNGZbKRb83jQJ4LXZXdpDn0ic5jn2FxyGLoYQ
-	Vm0MIaX/8HElqku/dFRTkTureioxMIxRatvf94QlJ/jA0qsSqZJ/A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky5q4qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 21 Sep 2025 21:44:53 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58LLiqt8009352;
-	Sun, 21 Sep 2025 21:44:52 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499ky5q4qt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 21 Sep 2025 21:44:52 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58LGp7OG029540;
-	Sun, 21 Sep 2025 21:44:51 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49a6krkd63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 21 Sep 2025 21:44:51 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58LLilrZ37355934
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 21 Sep 2025 21:44:47 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE9502004B;
-	Sun, 21 Sep 2025 21:44:47 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 89C8120043;
-	Sun, 21 Sep 2025 21:44:47 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 21 Sep 2025 21:44:47 +0000 (GMT)
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Simon Horman <horms@kernel.org>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>,
-        Sidraya Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Mahanta Jambigi <mjambigi@linux.ibm.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: Halil Pasic <pasic@linux.ibm.com>
-Subject: [PATCH net-next v3 2/2] net/smc: handle -ENOMEM from smc_wr_alloc_link_mem gracefully
-Date: Sun, 21 Sep 2025 23:44:40 +0200
-Message-ID: <20250921214440.325325-3-pasic@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250921214440.325325-1-pasic@linux.ibm.com>
-References: <20250921214440.325325-1-pasic@linux.ibm.com>
+	s=arc-20240116; t=1758491303; c=relaxed/simple;
+	bh=n5VEIgBJ1tx/K7qDtE5eY9tByIFi2ZNEuEd3DFHJUQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMyw+5yXVh1OAC35C1czVEoCtMH0GUUrTz9hWPPbT24/N45BJWVKnDgqq+DAXYowrC2cw65YmgwPYutgW9juOIRIlFtVsha39j4A5jpF+U5o+sJ8NC/pPIQedLVvAgVCL2jJ5BKatDx4nRrwN2UWkOzgvKMzWERvS7O6mr6a5h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S2OH+Oq1; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id EC33C4E40A1A;
+	Sun, 21 Sep 2025 21:48:17 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9EBD460634;
+	Sun, 21 Sep 2025 21:48:17 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4E9F0102F16B6;
+	Sun, 21 Sep 2025 23:48:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1758491296; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=nDN+Ym8c7sH2R/7tI7o+YzmL4F1zM8tUGpD/GJ+ShwQ=;
+	b=S2OH+Oq1zklMOrUbDIki+S10Ft5I2PKC5G4E0fB+7nFALWNZ+o2zGrpt15K9p9T828NkfJ
+	HfW1EzSKHif/2am7h1MfYkZnoVsA71uZD2Jz+CWKTSquWxONiRHu01Lz/AqJtCMRvfW4ko
+	sYwlj7AKxaWW862F/oHKrgxBnMHuBY1wDZcSjyXZLcb14K3TSxDCzRVzIVupfc9tpx0uEi
+	zvmgBbiVskSbSp9k8dBw+4/Rg5tfjhlQhlhv79VOB95U9oY7X3Wj5sS3sRFHshAzZWdpzp
+	jo4aA5LMXeIWj5a6NLV2eKvwT2ufbZ4KKiRz68aV6dMBI1pYQV9LE5tbzg8veA==
+Date: Sun, 21 Sep 2025 23:48:05 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Wolfram Sang <wsa-dev@sang-engineering.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Frank Li <Frank.Li@nxp.com>
+Subject: Re: drivers/i3c/internals.h:54:9: error: passing 'const void *' to
+ parameter of type 'void *' discards qualifiers
+Message-ID: <202509212148052be5ea9d@mail.local>
+References: <202509212320.yCuqvnVn-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: IdjHpc584FZtdSjVPQLcTlh5PHPpa3xl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAyMCBTYWx0ZWRfXx8zdGlKAw5yH
- Z98VoLL65NyAaDaOdq1qGBOrOkfp4uPGAsfL8/ydOYlWjibA3gkyJIhPkQB03oYu4HtOxb33gEp
- H76Wh6VDArcNWhdRFDLM2D8rL9k3GwFxjc6KlBtkyreDorle25uO3SV7EGVTa/aPjgDFUNrYIBR
- oJt1Kg/zWXOez8nS/YC2K9FxjxVfKJaLoiWMmnu1moOyR/jG7ooo3caOmD8wNdzZnNRVgvSrRzS
- d6RZuEp7r2/sPXRDIrdz4uSp0qo5DI8RcrSnAK5lAxL1D8jrM0CXMNMPbeM3zxs+0yE4DFL9brt
- nn0ZZKUzYyQGPtzHOUoNVKGmltBHiPkCdw+ilU2lBonOYVy+IATbbrUs7O7MIkFea9fHhwaSCi1
- JvCA4wBZ
-X-Authority-Analysis: v=2.4 cv=XYGJzJ55 c=1 sm=1 tr=0 ts=68d071d5 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=7VMdMTDjWeNOirE0wYMA:9
-X-Proofpoint-GUID: U76d1UJCnSqmq01zK53ZyBeshX9Henck
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-21_08,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 clxscore=1015 adultscore=0 malwarescore=0
- suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200020
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509212320.yCuqvnVn-lkp@intel.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Currently if a -ENOMEM from smc_wr_alloc_link_mem() is handled by
-giving up and going the way of a TCP fallback. This was reasonable
-before the sizes of the allocations there were compile time constants
-and reasonably small. But now those are actually configurable.
+Hello,
 
-So instead of giving up, keep retrying with half of the requested
-size unless we dip below the old static sizes -- then give up!
+On 21/09/2025 23:54:32+0800, kernel test robot wrote:
+> Hi Wolfram,
+> 
+> FYI, the error/warning still remains.
+> 
 
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
-Reviewed-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
----
- Documentation/networking/smc-sysctl.rst |  8 ++++--
- net/smc/smc_core.c                      | 34 +++++++++++++++++--------
- net/smc/smc_core.h                      |  2 ++
- net/smc/smc_wr.c                        | 28 ++++++++++----------
- 4 files changed, 46 insertions(+), 26 deletions(-)
+As replied multiple times, the error is in the sparc64 code, not i3c.
 
-diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
-index c94d750c7c84..c8dbe7ac8bdf 100644
---- a/Documentation/networking/smc-sysctl.rst
-+++ b/Documentation/networking/smc-sysctl.rst
-@@ -85,7 +85,9 @@ smcr_max_send_wr - INTEGER
- 
- 	Please be aware that all the buffers need to be allocated as a physically
- 	continuous array in which each element is a single buffer and has the size
--	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
-+	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails, we keep retrying
-+	with half of the buffer count until it is ether successful or (unlikely)
-+	we dip below the old hard coded value which is 16 where we give up much
- 	like before having this control.
- 
- 	Default: 16
-@@ -103,7 +105,9 @@ smcr_max_recv_wr - INTEGER
- 
- 	Please be aware that all the buffers need to be allocated as a physically
- 	continuous array in which each element is a single buffer and has the size
--	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails we give up much
-+	of SMC_WR_BUF_SIZE (48) bytes. If the allocation fails, we keep retrying
-+	with half of the buffer count until it is ether successful or (unlikely)
-+	we dip below the old hard coded value which is 16 where we give up much
- 	like before having this control.
- 
- 	Default: 48
-diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-index 2a559a98541c..f8131b4dfcd6 100644
---- a/net/smc/smc_core.c
-+++ b/net/smc/smc_core.c
-@@ -810,6 +810,8 @@ int smcr_link_init(struct smc_link_group *lgr, struct smc_link *lnk,
- 	lnk->clearing = 0;
- 	lnk->path_mtu = lnk->smcibdev->pattr[lnk->ibport - 1].active_mtu;
- 	lnk->link_id = smcr_next_link_id(lgr);
-+	lnk->max_send_wr = lgr->max_send_wr;
-+	lnk->max_recv_wr = lgr->max_recv_wr;
- 	lnk->lgr = lgr;
- 	smc_lgr_hold(lgr); /* lgr_put in smcr_link_clear() */
- 	lnk->link_idx = link_idx;
-@@ -836,27 +838,39 @@ int smcr_link_init(struct smc_link_group *lgr, struct smc_link *lnk,
- 	rc = smc_llc_link_init(lnk);
- 	if (rc)
- 		goto out;
--	rc = smc_wr_alloc_link_mem(lnk);
--	if (rc)
--		goto clear_llc_lnk;
- 	rc = smc_ib_create_protection_domain(lnk);
- 	if (rc)
--		goto free_link_mem;
--	rc = smc_ib_create_queue_pair(lnk);
--	if (rc)
--		goto dealloc_pd;
-+		goto clear_llc_lnk;
-+	do {
-+		rc = smc_ib_create_queue_pair(lnk);
-+		if (rc)
-+			goto dealloc_pd;
-+		rc = smc_wr_alloc_link_mem(lnk);
-+		if (!rc)
-+			break;
-+		else if (rc != -ENOMEM) /* give up */
-+			goto destroy_qp;
-+		/* retry with smaller ... */
-+		lnk->max_send_wr /= 2;
-+		lnk->max_recv_wr /= 2;
-+		/* ... unless droping below old SMC_WR_BUF_SIZE */
-+		if (lnk->max_send_wr < 16 || lnk->max_recv_wr < 48)
-+			goto destroy_qp;
-+		smc_ib_destroy_queue_pair(lnk);
-+	} while (1);
-+
- 	rc = smc_wr_create_link(lnk);
- 	if (rc)
--		goto destroy_qp;
-+		goto free_link_mem;
- 	lnk->state = SMC_LNK_ACTIVATING;
- 	return 0;
- 
-+free_link_mem:
-+	smc_wr_free_link_mem(lnk);
- destroy_qp:
- 	smc_ib_destroy_queue_pair(lnk);
- dealloc_pd:
- 	smc_ib_dealloc_protection_domain(lnk);
--free_link_mem:
--	smc_wr_free_link_mem(lnk);
- clear_llc_lnk:
- 	smc_llc_link_clear(lnk, false);
- out:
-diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
-index ab2d15929cb2..b9addf633d8a 100644
---- a/net/smc/smc_core.h
-+++ b/net/smc/smc_core.h
-@@ -174,6 +174,8 @@ struct smc_link {
- 	struct completion	llc_testlink_resp; /* wait for rx of testlink */
- 	int			llc_testlink_time; /* testlink interval */
- 	atomic_t		conn_cnt; /* connections on this link */
-+	u16			max_send_wr;
-+	u16			max_recv_wr;
- };
- 
- /* For now we just allow one parallel link per link group. The SMC protocol
-diff --git a/net/smc/smc_wr.c b/net/smc/smc_wr.c
-index f5b2772414fd..6b14711f0c93 100644
---- a/net/smc/smc_wr.c
-+++ b/net/smc/smc_wr.c
-@@ -548,9 +548,9 @@ void smc_wr_remember_qp_attr(struct smc_link *lnk)
- 		    IB_QP_DEST_QPN,
- 		    &init_attr);
- 
--	lnk->wr_tx_cnt = min_t(size_t, lnk->lgr->max_send_wr,
-+	lnk->wr_tx_cnt = min_t(size_t, lnk->max_send_wr,
- 			       lnk->qp_attr.cap.max_send_wr);
--	lnk->wr_rx_cnt = min_t(size_t, lnk->lgr->max_recv_wr,
-+	lnk->wr_rx_cnt = min_t(size_t, lnk->max_recv_wr,
- 			       lnk->qp_attr.cap.max_recv_wr);
- }
- 
-@@ -742,51 +742,51 @@ int smc_wr_alloc_lgr_mem(struct smc_link_group *lgr)
- int smc_wr_alloc_link_mem(struct smc_link *link)
- {
- 	/* allocate link related memory */
--	link->wr_tx_bufs = kcalloc(link->lgr->max_send_wr,
-+	link->wr_tx_bufs = kcalloc(link->max_send_wr,
- 				   SMC_WR_BUF_SIZE, GFP_KERNEL);
- 	if (!link->wr_tx_bufs)
- 		goto no_mem;
--	link->wr_rx_bufs = kcalloc(link->lgr->max_recv_wr, link->wr_rx_buflen,
-+	link->wr_rx_bufs = kcalloc(link->max_recv_wr, link->wr_rx_buflen,
- 				   GFP_KERNEL);
- 	if (!link->wr_rx_bufs)
- 		goto no_mem_wr_tx_bufs;
--	link->wr_tx_ibs = kcalloc(link->lgr->max_send_wr,
-+	link->wr_tx_ibs = kcalloc(link->max_send_wr,
- 				  sizeof(link->wr_tx_ibs[0]), GFP_KERNEL);
- 	if (!link->wr_tx_ibs)
- 		goto no_mem_wr_rx_bufs;
--	link->wr_rx_ibs = kcalloc(link->lgr->max_recv_wr,
-+	link->wr_rx_ibs = kcalloc(link->max_recv_wr,
- 				  sizeof(link->wr_rx_ibs[0]),
- 				  GFP_KERNEL);
- 	if (!link->wr_rx_ibs)
- 		goto no_mem_wr_tx_ibs;
--	link->wr_tx_rdmas = kcalloc(link->lgr->max_send_wr,
-+	link->wr_tx_rdmas = kcalloc(link->max_send_wr,
- 				    sizeof(link->wr_tx_rdmas[0]),
- 				    GFP_KERNEL);
- 	if (!link->wr_tx_rdmas)
- 		goto no_mem_wr_rx_ibs;
--	link->wr_tx_rdma_sges = kcalloc(link->lgr->max_send_wr,
-+	link->wr_tx_rdma_sges = kcalloc(link->max_send_wr,
- 					sizeof(link->wr_tx_rdma_sges[0]),
- 					GFP_KERNEL);
- 	if (!link->wr_tx_rdma_sges)
- 		goto no_mem_wr_tx_rdmas;
--	link->wr_tx_sges = kcalloc(link->lgr->max_send_wr, sizeof(link->wr_tx_sges[0]),
-+	link->wr_tx_sges = kcalloc(link->max_send_wr, sizeof(link->wr_tx_sges[0]),
- 				   GFP_KERNEL);
- 	if (!link->wr_tx_sges)
- 		goto no_mem_wr_tx_rdma_sges;
--	link->wr_rx_sges = kcalloc(link->lgr->max_recv_wr,
-+	link->wr_rx_sges = kcalloc(link->max_recv_wr,
- 				   sizeof(link->wr_rx_sges[0]) * link->wr_rx_sge_cnt,
- 				   GFP_KERNEL);
- 	if (!link->wr_rx_sges)
- 		goto no_mem_wr_tx_sges;
--	link->wr_tx_mask = bitmap_zalloc(link->lgr->max_send_wr, GFP_KERNEL);
-+	link->wr_tx_mask = bitmap_zalloc(link->max_send_wr, GFP_KERNEL);
- 	if (!link->wr_tx_mask)
- 		goto no_mem_wr_rx_sges;
--	link->wr_tx_pends = kcalloc(link->lgr->max_send_wr,
-+	link->wr_tx_pends = kcalloc(link->max_send_wr,
- 				    sizeof(link->wr_tx_pends[0]),
- 				    GFP_KERNEL);
- 	if (!link->wr_tx_pends)
- 		goto no_mem_wr_tx_mask;
--	link->wr_tx_compl = kcalloc(link->lgr->max_send_wr,
-+	link->wr_tx_compl = kcalloc(link->max_send_wr,
- 				    sizeof(link->wr_tx_compl[0]),
- 				    GFP_KERNEL);
- 	if (!link->wr_tx_compl)
-@@ -907,7 +907,7 @@ int smc_wr_create_link(struct smc_link *lnk)
- 		goto dma_unmap;
- 	}
- 	smc_wr_init_sge(lnk);
--	bitmap_zero(lnk->wr_tx_mask, lnk->lgr->max_send_wr);
-+	bitmap_zero(lnk->wr_tx_mask, lnk->max_send_wr);
- 	init_waitqueue_head(&lnk->wr_tx_wait);
- 	rc = percpu_ref_init(&lnk->wr_tx_refs, smcr_wr_tx_refs_free, 0, GFP_KERNEL);
- 	if (rc)
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   f975f08c2e899ae2484407d7bba6bb7f8b6d9d40
+> commit: 3b661ca549b9e5bb11d0bc97ada6110aac3282d2 i3c: add missing include to internal header
+> date:   8 weeks ago
+> config: sparc64-randconfig-001-20250921 (https://download.01.org/0day-ci/archive/20250921/202509212320.yCuqvnVn-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7c861bcedf61607b6c087380ac711eb7ff918ca6)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509212320.yCuqvnVn-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509212320.yCuqvnVn-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    In file included from drivers/i3c/master.c:21:
+> >> drivers/i3c/internals.h:54:9: error: passing 'const void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>       54 |         readsl(addr, buf, nbytes / 4);
+>          |                ^~~~
+>    arch/sparc/include/asm/io_64.h:265:41: note: passing argument to parameter 'port' here
+>      265 | static inline void readsl(void __iomem *port, void *buf, unsigned long count)
+>          |                                         ^
+>    1 error generated.
+> 
+> 
+> vim +54 drivers/i3c/internals.h
+> 
+> 733b439375b494 Jorge Marques 2025-06-24  44  
+> 733b439375b494 Jorge Marques 2025-06-24  45  /**
+> 733b439375b494 Jorge Marques 2025-06-24  46   * i3c_readl_fifo - Read data buffer from 32bit FIFO
+> 733b439375b494 Jorge Marques 2025-06-24  47   * @addr: FIFO Address to read from
+> 733b439375b494 Jorge Marques 2025-06-24  48   * @buf: Pointer to the buffer to store read bytes
+> 733b439375b494 Jorge Marques 2025-06-24  49   * @nbytes: Number of bytes to read
+> 733b439375b494 Jorge Marques 2025-06-24  50   */
+> 733b439375b494 Jorge Marques 2025-06-24  51  static inline void i3c_readl_fifo(const void __iomem *addr, void *buf,
+> 733b439375b494 Jorge Marques 2025-06-24  52  				  int nbytes)
+> 733b439375b494 Jorge Marques 2025-06-24  53  {
+> 733b439375b494 Jorge Marques 2025-06-24 @54  	readsl(addr, buf, nbytes / 4);
+> 733b439375b494 Jorge Marques 2025-06-24  55  	if (nbytes & 3) {
+> 733b439375b494 Jorge Marques 2025-06-24  56  		u32 tmp;
+> 733b439375b494 Jorge Marques 2025-06-24  57  
+> 733b439375b494 Jorge Marques 2025-06-24  58  		tmp = readl(addr);
+> 733b439375b494 Jorge Marques 2025-06-24  59  		memcpy(buf + (nbytes & ~3), &tmp, nbytes & 3);
+> 733b439375b494 Jorge Marques 2025-06-24  60  	}
+> 733b439375b494 Jorge Marques 2025-06-24  61  }
+> 733b439375b494 Jorge Marques 2025-06-24  62  
+> 
+> :::::: The code at line 54 was first introduced by commit
+> :::::: 733b439375b494e8a6950ab47d18a4b615b73cb3 i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()
+> 
+> :::::: TO: Jorge Marques <jorge.marques@analog.com>
+> :::::: CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
 -- 
-2.48.1
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
