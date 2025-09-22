@@ -1,170 +1,266 @@
-Return-Path: <linux-kernel+bounces-827206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A537B9126C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C16BB91260
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 031C216AE52
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4042A16AD2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FCB308F01;
-	Mon, 22 Sep 2025 12:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A52D3081C6;
+	Mon, 22 Sep 2025 12:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="PO8kMW9h"
-Received: from fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.199.210.3])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="M3zwCwsO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E733074BD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.199.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0FD1FDA82;
+	Mon, 22 Sep 2025 12:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758544820; cv=none; b=mkQaMn1fcx3reCsRh2hVQTVKcfImho3De1UtNxOqoWHYZ74M/k9kUwkHdpjgvFIIVTn6KxCuCC2G56fmyr94tI/IcaQD1u6s4yKVfuY9de3tX/bmauyxYNUtBtIrtlBdnTxIeqsV3L3JyvDsnMx8XZE65AMNpo1J10rY8wLMhqw=
+	t=1758544770; cv=none; b=N5Igs3Kbq4lrCx67hI3WARDcwmlbYxi07dF6kCJO5XPp04vo2cKlOy2MdcQ0wXkOnfvMn6BSwL665ajtNJgvoPwC3ydQJN37EeYXRH6K/BxEXGCXPx5sPCf+TxdKsu7oD/za+jFAdRG6djV/oO4Ja4ePZZo+n76GJjIrIz/Cch0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758544820; c=relaxed/simple;
-	bh=39eC2m8LomvJUbPd0x6YvKOxV7n7FU1/dvMN0kt6RNg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jJG150hHFaYy6eFFpwcw7SbeCU7rQwPhvkZN9fJHXVJ1BL3iaXbLW28oleToPbcv1lybqOD6focb9261CjmeOj0qCLqY9H1BvGfgtsiIsuZDG6GP/qKGjoMiY2AddRPEX1e1gWwO/5WJXlrqb0/U4kLVoAx8fMht2D2bERZmCqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=PO8kMW9h; arc=none smtp.client-ip=18.199.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1758544819; x=1790080819;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RLJmOk9CHgieXzTT5gl1bkuWDqTXwImg9yrbL4Lw1WA=;
-  b=PO8kMW9h3oJIzabrZ532mY0eM/10WfJ6MmNBtgjuW5IlkCeVHBeFB9Pe
-   AslUMV8/7BdDp23M4LXOi/WIVBGTxFF0qVbeINYlZNl+zxLazuEnsjeYb
-   oZKY4hEYnBDO6lovLPfRhycZRIulPixF0f0v43akRXNW+DPsyIorkuAzc
-   7GdeLvApk745bbDLeFSZC6vXGYvZz2QJ7abS4Y6QDtaQNj2SNv1/CYUHY
-   SnwiTxz6LMIOdisspGGXbM5GDd9zlThtryPybzImGJgLXRN0OQUp61gg1
-   wEjSlHV6FrO+om2i9dcoway5mdzt7IAA4no8PTjXycF7FfUqUGGfPXhDz
-   w==;
-X-CSE-ConnectionGUID: KcywKFZBQuCrVC8ld1TY5g==
-X-CSE-MsgGUID: 1SnE9fZpTF+uR5e8YD2SpQ==
-X-IronPort-AV: E=Sophos;i="6.18,285,1751241600"; 
-   d="scan'208";a="2379604"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 12:40:08 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:31291]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.33.43:2525] with esmtp (Farcaster)
- id cc76c455-72b7-44b5-8a43-38c608c38c7a; Mon, 22 Sep 2025 12:40:08 +0000 (UTC)
-X-Farcaster-Flow-ID: cc76c455-72b7-44b5-8a43-38c608c38c7a
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 22 Sep 2025 12:40:06 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.222) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Mon, 22 Sep 2025 12:40:00 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>, <dwmw@amazon.co.uk>,
-	<jschoenh@amazon.de>, <liuyuxua@amazon.com>
-Subject: [PATCH 1/4] sched/fair: Fix cookie check on __select_idle_cpu()
-Date: Mon, 22 Sep 2025 14:39:22 +0200
-Message-ID: <64ca6d7f73625cc63fa0bc1800c9b199462a5ef3.1758543008.git.sieberf@amazon.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1758543008.git.sieberf@amazon.com>
-References: <cover.1758543008.git.sieberf@amazon.com>
+	s=arc-20240116; t=1758544770; c=relaxed/simple;
+	bh=23GeeD8fsctc1TJk74/cv00jzA01Z+bid2b6AfzDbyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ryvumx0QksIJLBVBVO0uMtgm33Rdee2VaDotYzREN/vFK61xciRSZlwmddkpFH904pk/4GBcycw17c34kZm+aSoSQeV7990sGX+Sfr5I6h8m1VDRLHdxF3EnzsgSTsJAfF6HB3dHzwqhD2vocitlxq3r7vcVEraj4vBn2hGUTGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=M3zwCwsO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9141EB7D;
+	Mon, 22 Sep 2025 14:38:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1758544683;
+	bh=23GeeD8fsctc1TJk74/cv00jzA01Z+bid2b6AfzDbyc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M3zwCwsO4T/cAW6J5xujh52KYJtTxKlv8fisr+cp71xDPjoxsjZRxUmLNkPa0JD7G
+	 QH++ThC8Nz43T8q4EGjKw4Ann2lO8VCqW1d7NmGndsIvbbW96xT2aZGQXbfGK0Ocnv
+	 v8MwEhFdV9S2meQKyXUh48O3PD3aFk6W+uZsLaYs=
+Message-ID: <eeeb9aef-9e67-45de-afb3-833bdb6994d6@ideasonboard.com>
+Date: Mon, 22 Sep 2025 15:39:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D035UWB002.ant.amazon.com (10.13.138.97) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/16] media: ti: j721e-csi2rx: get number of contexts
+ from device tree
+To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev,
+ laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Cc: y-abhilashchandra@ti.com, devarsht@ti.com, s-jain1@ti.com,
+ vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ p.zabel@pengutronix.de, conor+dt@kernel.org, sakari.ailus@linux.intel.com,
+ hverkuil-cisco@xs4all.nl, jai.luthra@ideasonboard.com,
+ changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com,
+ sjoerd@collabora.com, hverkuil+cisco@kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250911102832.1583440-1-r-donadkar@ti.com>
+ <20250911102832.1583440-8-r-donadkar@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250911102832.1583440-8-r-donadkar@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The __select_idle_cpu() function uses sched_cpu_cookie_match() to determine
-if a task can be placed on an idle CPU. This function incorrectly returns
-false when the whole core is idle but the task has a cookie, preventing
-proper task placement.
+Hi,
 
-Replace sched_cpu_cookie_match() with sched_core_cookie_match() which
-correctly handles the idle core case. Refactor select_idle_smt() to avoid
-duplicate work by checking core cookie compatibility only once in the SMT
-mask.
+On 11/09/2025 13:28, Rishikesh Donadkar wrote:
+> From: Pratyush Yadav <p.yadav@ti.com>
+> 
+> Different platforms that use this driver might have different number of
+> DMA channels allocated for CSI. So only as many DMA contexts can be used
+> as the number of DMA channels available. Get the number of channels
+> provided via device tree and only configure that many contexts, and
+> hence only that many pads.
+> 
+> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+> Co-developed-by: Jai Luthra <j-luthra@ti.com>
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> ---
+>  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 43 ++++++++++++++-----
+>  1 file changed, 32 insertions(+), 11 deletions(-)
 
-Fixes: 97886d9dcd868 ("sched: Migration changes for core scheduling")
-Signed-off-by: Fernand Sieber <sieberf@amazon.com>
----
- kernel/sched/fair.c  |  5 ++++-
- kernel/sched/sched.h | 14 --------------
- 2 files changed, 4 insertions(+), 15 deletions(-)
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b173a059315c..43ddfc25af99 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7447,7 +7447,7 @@ static inline int sched_balance_find_dst_cpu(struct sched_domain *sd, struct tas
- static inline int __select_idle_cpu(int cpu, struct task_struct *p)
- {
- 	if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
--	    sched_cpu_cookie_match(cpu_rq(cpu), p))
-+	    sched_core_cookie_match(cpu_rq(cpu), p))
- 		return cpu;
- 
- 	return -1;
-@@ -7546,6 +7546,9 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
- {
- 	int cpu;
- 
-+	if (!sched_core_cookie_match(cpu_rq(target), p))
-+		return -1;
-+
- 	for_each_cpu_and(cpu, cpu_smt_mask(target), p->cpus_ptr) {
- 		if (cpu == target)
- 			continue;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index be9745d104f7..4e7080123a4c 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1386,15 +1386,6 @@ extern void task_vruntime_update(struct rq *rq, struct task_struct *p, bool in_f
-  * A special case is that the task's cookie always matches with CPU's core
-  * cookie if the CPU is in an idle core.
-  */
--static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
--{
--	/* Ignore cookie match if core scheduler is not enabled on the CPU. */
--	if (!sched_core_enabled(rq))
--		return true;
--
--	return rq->core->core_cookie == p->core_cookie;
--}
--
- static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
- {
- 	bool idle_core = true;
-@@ -1468,11 +1459,6 @@ static inline raw_spinlock_t *__rq_lockp(struct rq *rq)
- 	return &rq->__lock;
- }
- 
--static inline bool sched_cpu_cookie_match(struct rq *rq, struct task_struct *p)
--{
--	return true;
--}
--
- static inline bool sched_core_cookie_match(struct rq *rq, struct task_struct *p)
- {
- 	return true;
--- 
-2.43.0
+ Tomi
 
-
-
-
-Amazon Development Centre (South Africa) (Proprietary) Limited
-29 Gogosoa Street, Observatory, Cape Town, Western Cape, 7925, South Africa
-Registration Number: 2004 / 034463 / 07
+> 
+> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> index e49448e1f2ad..f3443c3ab01a 100644
+> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
+> @@ -44,7 +44,7 @@
+>  
+>  #define TI_CSI2RX_MAX_PIX_PER_CLK	4
+>  #define PSIL_WORD_SIZE_BYTES		16
+> -#define TI_CSI2RX_NUM_CTX		1
+> +#define TI_CSI2RX_MAX_CTX		32
+>  
+>  /*
+>   * There are no hard limits on the width or height. The DMA engine can handle
+> @@ -57,8 +57,8 @@
+>  
+>  #define TI_CSI2RX_PAD_SINK		0
+>  #define TI_CSI2RX_PAD_FIRST_SOURCE	1
+> -#define TI_CSI2RX_NUM_SOURCE_PADS	1
+> -#define TI_CSI2RX_NUM_PADS		(1 + TI_CSI2RX_NUM_SOURCE_PADS)
+> +#define TI_CSI2RX_MAX_SOURCE_PADS	TI_CSI2RX_MAX_CTX
+> +#define TI_CSI2RX_MAX_PADS		(1 + TI_CSI2RX_MAX_SOURCE_PADS)
+>  
+>  #define DRAIN_TIMEOUT_MS		50
+>  #define DRAIN_BUFFER_SIZE		SZ_32K
+> @@ -118,14 +118,15 @@ struct ti_csi2rx_dev {
+>  	void __iomem			*shim;
+>  	struct mutex			mutex; /* To serialize ioctls. */
+>  	unsigned int			enable_count;
+> +	unsigned int			num_ctx;
+>  	struct v4l2_device		v4l2_dev;
+>  	struct media_device		mdev;
+>  	struct media_pipeline		pipe;
+> -	struct media_pad		pads[TI_CSI2RX_NUM_PADS];
+> +	struct media_pad		pads[TI_CSI2RX_MAX_PADS];
+>  	struct v4l2_async_notifier	notifier;
+>  	struct v4l2_subdev		*source;
+>  	struct v4l2_subdev		subdev;
+> -	struct ti_csi2rx_ctx		ctx[TI_CSI2RX_NUM_CTX];
+> +	struct ti_csi2rx_ctx		ctx[TI_CSI2RX_MAX_CTX];
+>  	u8				pix_per_clk;
+>  	/* Buffer to drain stale data from PSI-L endpoint */
+>  	struct {
+> @@ -459,7 +460,7 @@ static int csi_async_notifier_complete(struct v4l2_async_notifier *notifier)
+>  		return ret;
+>  
+>  	/* Create and link video nodes for all DMA contexts */
+> -	for (i = 0; i < TI_CSI2RX_NUM_CTX; i++) {
+> +	for (i = 0; i < csi->num_ctx; i++) {
+>  		struct ti_csi2rx_ctx *ctx = &csi->ctx[i];
+>  		struct video_device *vdev = &ctx->vdev;
+>  
+> @@ -1247,10 +1248,11 @@ static int ti_csi2rx_v4l2_init(struct ti_csi2rx_dev *csi)
+>  	csi->pads[TI_CSI2RX_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+>  
+>  	for (unsigned int i = TI_CSI2RX_PAD_FIRST_SOURCE;
+> -	     i < TI_CSI2RX_NUM_PADS; i++)
+> +	     i < TI_CSI2RX_PAD_FIRST_SOURCE + csi->num_ctx; i++)
+>  		csi->pads[i].flags = MEDIA_PAD_FL_SOURCE;
+>  
+> -	ret = media_entity_pads_init(&sd->entity, ARRAY_SIZE(csi->pads),
+> +	ret = media_entity_pads_init(&sd->entity,
+> +				     TI_CSI2RX_PAD_FIRST_SOURCE + csi->num_ctx,
+>  				     csi->pads);
+>  	if (ret)
+>  		goto unregister_media;
+> @@ -1341,8 +1343,9 @@ static int ti_csi2rx_init_ctx(struct ti_csi2rx_ctx *ctx)
+>  
+>  static int ti_csi2rx_probe(struct platform_device *pdev)
+>  {
+> +	struct device_node *np = pdev->dev.of_node;
+>  	struct ti_csi2rx_dev *csi;
+> -	int ret, i;
+> +	int ret = 0, i, count;
+>  
+>  	csi = devm_kzalloc(&pdev->dev, sizeof(*csi), GFP_KERNEL);
+>  	if (!csi)
+> @@ -1364,13 +1367,30 @@ static int ti_csi2rx_probe(struct platform_device *pdev)
+>  	if (!csi->drain.vaddr)
+>  		return -ENOMEM;
+>  
+> +	/* Only use as many contexts as the number of DMA channels allocated. */
+> +	count = of_property_count_strings(np, "dma-names");
+> +	if (count < 0) {
+> +		dev_err(csi->dev, "Failed to get DMA channel count: %d\n", count);
+> +		ret = count;
+> +		goto err_dma_chan;
+> +	}
+> +
+> +	csi->num_ctx = count;
+> +	if (csi->num_ctx > TI_CSI2RX_MAX_CTX) {
+> +		dev_err(csi->dev,
+> +			"%u DMA channels passed. Maximum is %u.\n",
+> +			csi->num_ctx, TI_CSI2RX_MAX_CTX);
+> +		ret = -EINVAL;
+> +		goto err_dma_chan;
+> +	}
+> +
+>  	mutex_init(&csi->mutex);
+>  
+>  	ret = ti_csi2rx_v4l2_init(csi);
+>  	if (ret)
+>  		goto err_v4l2;
+>  
+> -	for (i = 0; i < TI_CSI2RX_NUM_CTX; i++) {
+> +	for (i = 0; i < csi->num_ctx; i++) {
+>  		csi->ctx[i].idx = i;
+>  		csi->ctx[i].csi = csi;
+>  		ret = ti_csi2rx_init_ctx(&csi->ctx[i]);
+> @@ -1399,6 +1419,7 @@ static int ti_csi2rx_probe(struct platform_device *pdev)
+>  	ti_csi2rx_cleanup_v4l2(csi);
+>  err_v4l2:
+>  	mutex_destroy(&csi->mutex);
+> +err_dma_chan:
+>  	dma_free_coherent(csi->dev, csi->drain.len, csi->drain.vaddr,
+>  			  csi->drain.paddr);
+>  	return ret;
+> @@ -1409,7 +1430,7 @@ static void ti_csi2rx_remove(struct platform_device *pdev)
+>  	struct ti_csi2rx_dev *csi = platform_get_drvdata(pdev);
+>  	unsigned int i;
+>  
+> -	for (i = 0; i < TI_CSI2RX_NUM_CTX; i++)
+> +	for (i = 0; i < csi->num_ctx; i++)
+>  		ti_csi2rx_cleanup_ctx(&csi->ctx[i]);
+>  
+>  	ti_csi2rx_cleanup_notifier(csi);
 
 
