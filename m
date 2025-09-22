@@ -1,397 +1,200 @@
-Return-Path: <linux-kernel+bounces-826853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C12FB8F7E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:26:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83713B8F7C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7AD1638D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:26:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2D547A98B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80DD2FF142;
-	Mon, 22 Sep 2025 08:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA142FD7CA;
+	Mon, 22 Sep 2025 08:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxOQewYQ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Y5SfcPvH"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011025.outbound.protection.outlook.com [52.101.65.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEE92FE589
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529541; cv=none; b=ECN7iHA9dW9hdCtvPs7op7k8ptuYa2Zma8FBys4NpCvjdtvkwaWDvQGHWZ9miQsaLgXKX6S6izH4NRGQU6FmmiTHYZiUA4JRvfR7IOtqb8k1K0HDsCDxvr5kumJV1UDXv2mF0IprWGildaNio/BGmH6tSYpXWoWuUyMy9eMqPfw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529541; c=relaxed/simple;
-	bh=1nOit7L901ciKDvZFF0ZGSU41kUhZnHJmGmuaYNl9iw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NXeVXBj0WAuXWV2kM6MqzFpl/RqQGvGRwLokNZaMaG1RYUNzvvImMZozQZcpZKdHLujEQ1OxGDFCa+YzvztfMVNmIFOQU8cY7LzsnJRy0He+bvdZZ0ixBxZefKfLDWBERcYzh7luaHAJxk/X3u9BOYjfNiPVBc9LrufN+9TQLdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxOQewYQ; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24456ce0b96so44694115ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758529539; x=1759134339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vqXsmgz8VSljccR1uhYEoagIoznilh6RRWXXSXAcx0E=;
-        b=LxOQewYQLgeWenV8irZeXl7TV4XsGvFnWM2NXdRBRHUO9X6ZxmCEQZ9kNNaf3CvhD9
-         wSGz38ixM91e/Kr+SumWFm+5ejqXn0N6LtDtrPfg/LOqFaFFYKOZo93qRCccYdFHiWL4
-         55ZZfzJna7HSun8adDBx9DbfZYyeUt12d42ngWjorCw2AXRHRd9Xk5Fugzv8A9gZDTlq
-         Jn7j8x0DfQ495Un2ZNAc2ZAcHEYO/NYTwGjUfr0qItcswwLaG43glM5tpqTa56epRdnl
-         2ea1boWZ+gKWhvbw85DTyxunkcyZNWNZh4kTUeMT041XacfuhPa5NF06XsKHoDOJgpM+
-         e2ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758529539; x=1759134339;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vqXsmgz8VSljccR1uhYEoagIoznilh6RRWXXSXAcx0E=;
-        b=RSW49bTDqYQDGmzbLJHZqXmpxnA2SKZLnb2TeBO3J1PGKN4SCbhEQwAAsZrZRgSMSR
-         mrV93LnagnhEN6TXAPI6emHjGFfAE3Pcs2hDOUaMj92cbWEGEJoUoe9gdQ2zff7fPjAx
-         ukoiQX4spq6XzQ5YkFBTewO7pgx5Ad1K+ClvwrVLjUqflPKGBnRL/+lxBYaCHbEaPMYP
-         59gkpwEw0y76dxVyLDPOL4Y74EFAtohvIL+BNhYQExVtOJItJ2LmpwSMEr/J4RXAMFfr
-         l8u5l6718JvatLtkTo1bY7Td4q8Ej53E8BeWgUj8Q1KaulJUB5Affb0/3GtrPJjxA/6V
-         wW6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUIOHFH1RP5D0YaPvFLq8q6i8BdxWXpFPCy7m5cYGyuDc/5bI9mzChpUbst/uBdqn/x0FgTBZZeF8WfY08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvpbNHux3x1TJRJxiLD4RRgKtIfYd5K4twrbrmAhN07StfU/mY
-	JZXQfhNwRec8FwDSxbSMRv4bR16c2wqHljRtCuQN971i+UDkoWcbFiGYRV6Y8lp+
-X-Gm-Gg: ASbGncvyZUW4e16b/gIEfTZiBR0zM3VCjlfbfUqaB5GQSX3gmaCff5kw5mdUKTMNGUw
-	eWvEz/3XzsHjEUf1/XL74prtiMvrpU2buG35TXDbX0XvEKyLYUoJl0MfmS2ns7c0Z9oAEedM5zJ
-	RwmWCPZpuVs6/qoAEby0ZhYpwTCs/gxni3ffgLzfluaRxNXpxhN0wbLff1WWboRYDb/2oUU4GJe
-	3Fav5g+fS+yKleqzpMkwCccVpwJaeJJ5R0XCVPPnckaVzF9yqqkHOdzJbr9ZxZnTm/hZ0J2UWzP
-	y9Am3aWXqqliEivyaIlCoN6XyHlvUlTaSRDQlJn8BZNi+GmqLr9mn0yGNa/qs17THzDKRs1Sf0s
-	XUF6NgT9swFpTygyWojmS6ofkglUo3JcjTb9sr17k7rMAqBMy4BAes7ouhbAAGpWp+LN9sLaWoM
-	gOyRekms1YbAdKK64KwzjfiUfahtM=
-X-Google-Smtp-Source: AGHT+IE9+KfnCYjwY3LV3+hiy0NVCLHwdJNMHkdelsG799pI4exAmvZyR/HiwfzO2gyJXIJKn5rgjA==
-X-Received: by 2002:a17:903:98d:b0:272:a227:245b with SMTP id d9443c01a7336-272a2274fc9mr80880615ad.17.1758529539008;
-        Mon, 22 Sep 2025 01:25:39 -0700 (PDT)
-Received: from rajasilinuxtest.zztcpmrl4zvulnxionwmgqorff.rx.internal.cloudapp.net ([40.81.226.144])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980318743sm122818375ad.118.2025.09.22.01.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 01:25:38 -0700 (PDT)
-From: rajasimandalos@gmail.com
-To: linux-cifs@vger.kernel.org
-Cc: sfrench@samba.org,
-	pc@manguebit.org,
-	ronniesahlberg@gmail.com,
-	sprasad@microsoft.com,
-	tom@talpey.com,
-	bharathsm@microsoft.com,
-	linux-kernel@vger.kernel.org,
-	Rajasi Mandal <rajasimandal@microsoft.com>
-Subject: [PATCH 2/2] cifs: client: allow changing multichannel mount options on remount
-Date: Mon, 22 Sep 2025 08:24:17 +0000
-Message-ID: <20250922082417.816331-2-rajasimandalos@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250922082417.816331-1-rajasimandalos@gmail.com>
-References: <20250922082417.816331-1-rajasimandalos@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FCD274B51;
+	Mon, 22 Sep 2025 08:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758529511; cv=fail; b=jBh4Ts3WcIZmJO5Yavfiw7scn+H44J0HR+vqHdKdL0RQmz7z/9vdSYbn/gHHNY9pGpHD7Xsoa3zFVU2efn229m3EKEhs2ROvofI0PjsHhmQPXC9EQ8GuRJhmas+rZdAwxM9zdmHkfy/dKeAfNZ3O5ENf3q+7rZTfcxOIh6RD5SY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758529511; c=relaxed/simple;
+	bh=5Tm4LQxrA/ArekP3Xx189SxnUB2uiC7pLdHmtR3L258=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YxnuaFxRkciy5aFl5AOw4vbg35x3wnGW4fd8dnQ+gCVzChdWN6tDoLkGVw0G7jatRhicGBsQfeCj3fFVBhmQKYP8FGM5ZZyv8ck9Davu5/l+PZA+iNlGMWyFYdQLaDU6MZFM2j1bT9xWNE2vXLFIhAy50wo6DFlPC7soVSv8Ogs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Y5SfcPvH; arc=fail smtp.client-ip=52.101.65.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UpVAD1Cr0lYq+kJV2lLFPzTrIpI7rzt8iyY0lS2B9RkNvTQH5IB9YyH/CUXq25U82154p2OyP8U400RrfEgpwa4V7IfH1o9UO7v5BsUzSE1LuZyFlZCazCpoX1TZrq1bhSXAcSGPByuoiNeBZ7wU/76Ydg/Cbd1yxm56RoXcGxXeAN5wsVDEWl6u/BVJQjoQd/3MluB67r4HHqwAkYvZYquZTPY1OUeWpl2UGpqKtII5QyswTnqAg42pxniyYRTXJkT8zLSsv+LhHK2YSM+ZxBMV1iZIzVhm6CblYfMyypON471BeWIOHCI2TEUmp603SyQkBuI/TaD8YdEhtgW6dQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T1j0leQ0NtQtXricpxf9GO8TNtNoPNVQtwgt5jUyOhw=;
+ b=yOaj7ABvYxruCcIwvuCNtdGzZQKGu/kUJPHGdOVp/fnRmgb0wU3O2DwhbswSuhbGpUjCwnFbMaVmSrYpJT/E8doGD8KZ8S59PkvDkQcRKOqbgGt8TkGEN7ZBW4qXggnxHDE6FE0I+cPsHjl0b56Xqhd+3Uth9Pdd1LWhMPAOA8zveVq1PIIE6Hr/56DsSYtHRi6WuvMy4g0tdKm4S1OdJB9N3Dl2mMeSLrE8CrN6P67NKH/hE3ZfRNa6UhmTZzuT0GOyvUFH6UYpY9hUNLOXuR/Ucvt6fN/XF/McA+pxP+RXhEEIiUvgmafhhdZceDEBDMInmwPpemLwa/qFB4GkEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T1j0leQ0NtQtXricpxf9GO8TNtNoPNVQtwgt5jUyOhw=;
+ b=Y5SfcPvHv6Q3CyqCTSNN7IXINXdVqVuM9iGNETDB5BWgo2oSH+3OLVG2d7g/bmUWsQ5fuP//qlujPh6/Qtg9KBDMcfe7RUbfgwOnYveX2ihi7XrcAkiALgDZH8uaXLUVGmh3rS0p7AxQNB0pqQS7EQmCkAVIyHS26KsuwBHDsgWu4Wkk8elIH1/8pQPwETVbxwwLvDfbB5Sd464Y6aCA5gDp7mpsy5XwRGC0W2fa1HhwWhTPzBs4QVk5vgnbtDELq7esq16B3kGCpehPwNAN1Xpyuq7HDFfMPnFy0Tve2gRfKQ3y9kYU58ovq5DWvgjkYJjaNeXL23b5kDHXUjDOsg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB8833.eurprd04.prod.outlook.com (2603:10a6:20b:42c::19)
+ by PA4PR04MB7727.eurprd04.prod.outlook.com (2603:10a6:102:e0::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Mon, 22 Sep
+ 2025 08:25:06 +0000
+Received: from AS8PR04MB8833.eurprd04.prod.outlook.com
+ ([fe80::209c:44e4:a205:8e86]) by AS8PR04MB8833.eurprd04.prod.outlook.com
+ ([fe80::209c:44e4:a205:8e86%3]) with mapi id 15.20.9160.008; Mon, 22 Sep 2025
+ 08:25:06 +0000
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: frank.li@nxp.com,
+	jingoohan1@gmail.com,
+	l.stach@pengutronix.de,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	robh@kernel.org,
+	bhelgaas@google.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] PCI: imx6: Add a method to handle CLKREQ# override
+Date: Mon, 22 Sep 2025 16:24:30 +0800
+Message-Id: <20250922082433.1090066-1-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0016.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::17) To AS8PR04MB8833.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB8833:EE_|PA4PR04MB7727:EE_
+X-MS-Office365-Filtering-Correlation-Id: fd6d9bb5-6405-4da7-42ee-08ddf9b18916
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|52116014|7416014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q5Cgnu6J4R8iGrWDfBZ/eEN9jN4QoObKSqHY6MIRrIq1/VTIqvhWcH9QFLkQ?=
+ =?us-ascii?Q?Exy3G6/0luwdYXmTipYOJLX+Z+ylLBS9ihCAicYTn/5TC/nzhC3jZ4dTlgTS?=
+ =?us-ascii?Q?LpRU9aVrsCvqjnxXgxDfitVlR/6vSoXiLLkRqkssVaL1AmGQaqQk90THOln/?=
+ =?us-ascii?Q?xhKEYBlAPtWgJRJurKA7N4fwpAJfjbhzFfpB4ZJQ3aq8yqV61E90h65YHtXg?=
+ =?us-ascii?Q?gF6WsE+32T7N54D8SrevrE3vOtaqBZOVi9BzlFjntCe5pKbqG9yV4fPaSCuQ?=
+ =?us-ascii?Q?IZyN4pohi4pYn7ONBdi0YfkMy49ZqZguJ8L+PLIsSJMu3+b9o4RE6PMTqERb?=
+ =?us-ascii?Q?jFvhOvqbEJEuKgLD1guC83nDlQi66L8cABmvoQRrwBA2CaAM4fzQmpVHhQc8?=
+ =?us-ascii?Q?dqhsX9nvZU0Klmpx+VONAGOaVhYX2A+Rt8Y0I+JI1hbSG0d5FmDhu9kYy+xq?=
+ =?us-ascii?Q?RjKuiosigLAES4X8aSgMqK5kUzqhOQaKE4en1ipW5W+9Wl4QMI9WulJ15vas?=
+ =?us-ascii?Q?2n1hNOUJzPsR8jFuHQISRdV1PNFZiiQu0OEJ6RUog95mMvFLpmxXNeBg5hVl?=
+ =?us-ascii?Q?TWNrL7vwjIzX64k2/wz61QBHmO9oboMMhqNj7YVZlY0vxXUmRZTKwxU40HsS?=
+ =?us-ascii?Q?tnwsR8H0VD588LrbcyMAxn2oapDHwM5ozTfn6lyQaZVEyPQzPIMWNX9s62/f?=
+ =?us-ascii?Q?5kp1cjMfXOnOM8qutg1Uhfd+poDJzGh6TH2493YS8vHP7v2+kLiXwrytzQkM?=
+ =?us-ascii?Q?KPrn7obkTWmGsQlmx+6l43OYk6Y8+wcJsU3xiPG6oU+WN/1XW0zlqsDO8PnY?=
+ =?us-ascii?Q?dfPJcWvXkMZ+5RR6Qcoby6Z6+dU384+ryOG993eldBcS0g+ETpEcb+jglvPW?=
+ =?us-ascii?Q?0oZaVwncvGuNLTxfJJhPY5OiqwsvIC33Edeo3lrnvfeIWmsFtTiwWxA74dox?=
+ =?us-ascii?Q?kTDvmqUECeWwdWMm6jU/g1CzVrGrtIUyxpSYVXdlzE0Mb9OPjC/pswNt3sQP?=
+ =?us-ascii?Q?ZM1hdh5Mw+ZfsMjuZL96Ymus+eia0FpRt1bOoFCXQUjeHHlg9QQuCMinCwWK?=
+ =?us-ascii?Q?+77V3XrYJTW9BtNVFuV0qVMEQqLUemfrS/TkYIlofR6UyiQk9JKU7WoKLWN3?=
+ =?us-ascii?Q?Nyg+bHkQN2X1zygAZ0zfT16AQHmsDRC+hOVrSV8obiCCy3+rzAt3Om8jLNgZ?=
+ =?us-ascii?Q?XHxo6VSPZCMUqWVwBE1M/HewjHaIOIox41DCcp6H/vzSLWdlcJj00Sqi/UzJ?=
+ =?us-ascii?Q?weMtbAH3wjIGmaBHJcgzFJ8fMVFNlZIPVGDILWiP1VI77/3HUIhBQTGio34C?=
+ =?us-ascii?Q?BbAxK03njo7apU0ynFAjGDljYczznwI35zqixRYG74QNDQHWlU9s/z16IAgn?=
+ =?us-ascii?Q?Kas+z4VfYYlUXi2iukoU6eo3ZUAs9SNa0OQ4Dyf/mXMisBywYJy0RXRNMVRi?=
+ =?us-ascii?Q?KXNKdDnBlogAa/YFSy3qkYHp4dDryVcKFStIf5zuSShY39yzJraY6nfQxyDb?=
+ =?us-ascii?Q?V1vvNHgrl2cRjnc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8833.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(52116014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aCiBKT+Do7Sc5hF2DK15fNjCHOx7N77GUscK8L0SHub0vgWil/8SQzSzMWvB?=
+ =?us-ascii?Q?xdEYUMT/lx5yJOjO58zfFp9BYucO3IMACDXl2s8uMqBcCQLa76twSFE4nZWC?=
+ =?us-ascii?Q?l0B7NlesFJx03+Y4sqqspAFHZEJWTdjcnizGclejLlHF91lTujT3S3XXft60?=
+ =?us-ascii?Q?cyshypqmsDmkSQ/9g4DVK0LPh7Im00o+fUNNSH/eG8D5Rzk0aKwdYvn7X2rC?=
+ =?us-ascii?Q?Hy4GAfmKdqobd52BvuiZ2R3BiyAEEKXY0bC2DYa8kCxq04i6iuc5eX7VYsP9?=
+ =?us-ascii?Q?UqfBkO5jOdkpAY4i6W4/rC5EUZ4icfKIT3vFc+ryz3tCXAWAGRkX8zcurG2P?=
+ =?us-ascii?Q?jrYU5eVo9lyLKMzYixomGuZI6pSfHAHAvJH1C3lvJhfEtvYTJTXP29mTwgfT?=
+ =?us-ascii?Q?daKTHAOZ+7AG35dbvOvYuvjym9jeS+E+HdATUj6hvQjoVnxYT2rvpELyaC6L?=
+ =?us-ascii?Q?RgW7iuv2mh2VP153eQd4+a+GHq6oV/PT9EFxtu9lQATgj9zAAqyQ8LZCgvjz?=
+ =?us-ascii?Q?eHd5mzX9p0PmTLuylXCIL1zKL+azCv/HEjDNtvghbsEeA+uzEMItmehkf/GC?=
+ =?us-ascii?Q?3itWBPYHpZfXHecDuFUN3O2RtkP13DFrUT/29IIgRIFVXKISC3zm1c1BG5IL?=
+ =?us-ascii?Q?E8d2hH65fErf8mSmMyCECf9IhiGmrj5ppQCHpF4t+L6MlUQ9itgwL5GoZTf1?=
+ =?us-ascii?Q?2Rwbzg/TbMOB7vIOIP7NHHJE0Qys+XDN1i7r8jd2bs9B+sZSYbozr/zgadZ/?=
+ =?us-ascii?Q?Orexzu+fNP7AlY/t4e3hmaCUKFmjGlTclBVIsp7Q7X3zU+5m8Kcd4WAydPUN?=
+ =?us-ascii?Q?kegvwh0/qORsv9IVhH+YRGFUWqXM/0uKh//b3yXGlh+bfdjKzDrMvqblY91G?=
+ =?us-ascii?Q?qRZDSnuMzs7QCARaoz/Kb14M6Q8cjH3eiRhNk1915Q0bpQKYXuQ6ydQ7iHqi?=
+ =?us-ascii?Q?YxGi0YbmiWdNJUJzThwLxOLfasXsdNDnnJJ0/ga8XlYKrHESt8SSzrMjwjSr?=
+ =?us-ascii?Q?1bGHSfYabDR38JxNC3UEWkUqup6KkTYkSORvwXw0bP6AbB6MEnOL758hNcEQ?=
+ =?us-ascii?Q?S1xulgceIaqMoV2u4+UTxf75BpcDb52ar3tsUL3b3vA/NE//qjB/G9xHir9B?=
+ =?us-ascii?Q?7/oEXkYI6NRtLH2AVlLDdgPSSQ8E6IKjmKZlLgaRUPorlpioRJ9S3QsXUh1d?=
+ =?us-ascii?Q?Dfk6C/YO+mkD3ucyjP7NRhG+4ZYnfhQiFCDFA+hBHGScADSd4nYjIYZGMJDK?=
+ =?us-ascii?Q?jTIjwWvTTGAnUbYm8oucV3/4vrVZM4FMCG+++kO26QslY/2NyzV84JfH3oVv?=
+ =?us-ascii?Q?M4ZYb70xeqk/7wdfNeWp7uXPxitAxAcLVP1Q8LDoSYGETSq1VcemPTv+dHLo?=
+ =?us-ascii?Q?XISAh5COqoaxT3cLHt1LGxYypFVr6n+zr3Fyf/DK+HE/5TvofA3kZ5e/ulFg?=
+ =?us-ascii?Q?NYLhSQiMvxThFVUslWmKJaexdEovV9U+O/q3Myf9ompSWnPlQrl3q2lW0vOi?=
+ =?us-ascii?Q?doBpM8k2gvKPHGblB1iVY+w9kVzoSZ1irbv6WnCxjYl0SSGtVPpbBEUn8xxO?=
+ =?us-ascii?Q?4JhNAJ4S2yQunLzN9CYg9F6DxnIjU/cs4qzYEVsX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd6d9bb5-6405-4da7-42ee-08ddf9b18916
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8833.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 08:25:06.3103
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 17HoIcUYIRLISIMAuartf6U7jG9FhAALwSaLpQUWOouJ0rU2kxZT3lc6SAH/bqUkZBk7beZDuO4SyzHPH7kfCg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7727
 
-From: Rajasi Mandal <rajasimandal@microsoft.com>
+The CLKREQ# is an open drain, active low signal that is driven low by
+the card to request reference clock. It's an optional signal added in
+PCIe CEM r4.0, sec 2. Thus, this signal wouldn't be driven low if it's
+reserved.
 
-Previously, the client did not properly update the session's channel
-state when multichannel or max_channels mount options were changed
-during remount. This led to inconsistent behavior and prevented
-enabling or disabling multichannel support without a full
-unmount/remount.
+Since the reference clock controlled by CLKREQ# may be required by i.MX
+PCIe host too. To make sure this clock is ready even when the CLKREQ#
+isn't driven low by the card(e.x the scenario described above), force
+CLKREQ# override active low for i.MX PCIe host during initialization.
 
-Enable dynamic reconfiguration of multichannel and max_channels
-options during remount by introducing smb3_sync_ses_chan_max() to
-safely update the session's chan_max field, and smb3_sync_ses_channels()
-to synchronize the session's channels with the new configuration.
-Replace cifs_disable_secondary_channels() with
-cifs_decrease_secondary_channels(), which now takes a from_reconfigure
-argument for more flexible channel cleanup. Update the remount logic
-to detect changes in multichannel or max_channels and trigger the
-appropriate session/channel updates.
+The CLKREQ# override can be cleared safely when supports-clkreq is
+present and PCIe link is up later. Because the CLKREQ# would be driven
+low by the card at this time.
 
-With this change, users can safely change multichannel and
-max_channels options on remount, and the client will correctly adjust
-the session's channel state to match the new configuration.
+Main changes in v4:
+- To align the function name when add the CLKREQ# override clear, rename
+imx8mm_pcie_enable_ref_clk(), clean up codes refer to Mani' suggestions.
 
-Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
----
- fs/smb/client/cifsproto.h  |  2 +-
- fs/smb/client/fs_context.c | 29 ++++++++++++++++++
- fs/smb/client/fs_context.h |  2 +-
- fs/smb/client/sess.c       | 35 +++++++++++++++-------
- fs/smb/client/smb2pdu.c    | 60 ++++++++++++++++++++++++++++++--------
- fs/smb/client/smb2pdu.h    |  2 ++
- 6 files changed, 105 insertions(+), 25 deletions(-)
+Main changes in v3:
+- Rebase to v6.17-rc1.
+- Update the commit message refer to Bjorn's suggestions.
 
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index e8fba98690ce..ec3118457b26 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -667,7 +667,7 @@ bool
- cifs_chan_is_iface_active(struct cifs_ses *ses,
- 			  struct TCP_Server_Info *server);
- void
--cifs_disable_secondary_channels(struct cifs_ses *ses);
-+cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reconfigure);
- void
- cifs_chan_update_iface(struct cifs_ses *ses, struct TCP_Server_Info *server);
- int
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 43552b44f613..96e80c70f25d 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -1015,6 +1015,22 @@ int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_sb, struct cifs_se
- 	return 0;
- }
- 
-+/**
-+ * smb3_sync_ses_chan_max - Synchronize the session's maximum channel count
-+ * @ses: pointer to the old CIFS session structure
-+ * @max_channels: new maximum number of channels to allow
-+ *
-+ * Updates the session's chan_max field to the new value, protecting the update
-+ * with the session's channel lock. This should be called whenever the maximum
-+ * allowed channels for a session changes (e.g., after a remount or reconfigure).
-+ */
-+void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_channels)
-+{
-+	spin_lock(&ses->chan_lock);
-+	ses->chan_max = max_channels;
-+	spin_unlock(&ses->chan_lock);
-+}
-+
- static int smb3_reconfigure(struct fs_context *fc)
- {
- 	struct smb3_fs_context *ctx = smb3_fc2context(fc);
-@@ -1097,6 +1113,18 @@ static int smb3_reconfigure(struct fs_context *fc)
- 		ses->password2 = new_password2;
- 	}
- 
-+	/*
-+	 * If multichannel or max_channels has changed, update the session's channels accordingly.
-+	 * This may add or remove channels to match the new configuration.
-+	 */
-+	if ((ctx->multichannel != cifs_sb->ctx->multichannel) ||
-+		(ctx->max_channels != cifs_sb->ctx->max_channels)) {
-+		//Synchronize ses->chan_max with the new mount context
-+		smb3_sync_ses_chan_max(ses, ctx->max_channels);
-+		//Now update the session's channels to match the new configuration
-+		rc = smb3_sync_ses_channels(cifs_sb);
-+	}
-+
- 	mutex_unlock(&ses->session_mutex);
- 
- 	STEAL_STRING(cifs_sb, ctx, domainname);
-@@ -1110,6 +1138,7 @@ static int smb3_reconfigure(struct fs_context *fc)
- 	smb3_cleanup_fs_context_contents(cifs_sb->ctx);
- 	rc = smb3_fs_context_dup(cifs_sb->ctx, ctx);
- 	smb3_update_mnt_flags(cifs_sb);
-+
- #ifdef CONFIG_CIFS_DFS_UPCALL
- 	if (!rc)
- 		rc = dfs_cache_remount_fs(cifs_sb);
-diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
-index b0fec6b9a23b..a75185858285 100644
---- a/fs/smb/client/fs_context.h
-+++ b/fs/smb/client/fs_context.h
-@@ -371,7 +371,7 @@ static inline struct smb3_fs_context *smb3_fc2context(const struct fs_context *f
- extern int smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct smb3_fs_context *ctx);
- extern int smb3_sync_session_ctx_passwords(struct cifs_sb_info *cifs_sb, struct cifs_ses *ses);
- extern void smb3_update_mnt_flags(struct cifs_sb_info *cifs_sb);
--
-+extern void smb3_sync_ses_chan_max(struct cifs_ses *ses, unsigned int max_channels);
- /*
-  * max deferred close timeout (jiffies) - 2^30
-  */
-diff --git a/fs/smb/client/sess.c b/fs/smb/client/sess.c
-index 0a8c2fcc9ded..42b5481c884a 100644
---- a/fs/smb/client/sess.c
-+++ b/fs/smb/client/sess.c
-@@ -264,13 +264,16 @@ int cifs_try_adding_channels(struct cifs_ses *ses)
- 	return new_chan_count - old_chan_count;
- }
- 
--/*
-- * called when multichannel is disabled by the server.
-- * this always gets called from smb2_reconnect
-- * and cannot get called in parallel threads.
-+/**
-+ * cifs_decrease_secondary_channels - Reduce the number of active secondary channels
-+ * @ses: pointer to the CIFS session structure
-+ * @from_reconfigure: if true, only reduce to chan_max; if false, reduce to a single channel
-+ *
-+ * This function disables and cleans up extra secondary channels for a CIFS session.
-+ * If called during reconfiguration, it reduces the channel count to the new maximum (chan_max).
-+ * Otherwise, it disables all but the primary channel.
-  */
--void
--cifs_disable_secondary_channels(struct cifs_ses *ses)
-+void cifs_decrease_secondary_channels(struct cifs_ses *ses, bool from_reconfigure)
- {
- 	int i, chan_count;
- 	struct TCP_Server_Info *server;
-@@ -281,12 +284,13 @@ cifs_disable_secondary_channels(struct cifs_ses *ses)
- 	if (chan_count == 1)
- 		goto done;
- 
--	ses->chan_count = 1;
--
--	/* for all secondary channels reset the need reconnect bit */
--	ses->chans_need_reconnect &= 1;
-+	// Update the chan_count to the new maximum
-+	if (from_reconfigure)
-+		ses->chan_count = ses->chan_max;
-+	else
-+		ses->chan_count = 1;
- 
--	for (i = 1; i < chan_count; i++) {
-+	for (i = ses->chan_max ; i < chan_count; i++) {
- 		iface = ses->chans[i].iface;
- 		server = ses->chans[i].server;
- 
-@@ -318,6 +322,15 @@ cifs_disable_secondary_channels(struct cifs_ses *ses)
- 		spin_lock(&ses->chan_lock);
- 	}
- 
-+	/* For extra secondary channels, reset the need reconnect bit */
-+	if (ses->chan_count == 1) {
-+		cifs_server_dbg(VFS, "server does not support multichannel anymore. Disable all other channels\n");
-+		ses->chans_need_reconnect &= 1;
-+	} else {
-+		cifs_server_dbg(VFS, "Disable extra secondary channels\n");
-+		ses->chans_need_reconnect &= ((1UL << ses->chan_max) - 1);
-+	}
-+
- done:
- 	spin_unlock(&ses->chan_lock);
- }
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index c3b9d3f6210f..bf9a8dc0e8fc 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -168,7 +168,7 @@ smb2_hdr_assemble(struct smb2_hdr *shdr, __le16 smb2_cmd,
- static int
- cifs_chan_skip_or_disable(struct cifs_ses *ses,
- 			  struct TCP_Server_Info *server,
--			  bool from_reconnect)
-+			  bool from_reconnect, bool from_reconfigure)
- {
- 	struct TCP_Server_Info *pserver;
- 	unsigned int chan_index;
-@@ -206,10 +206,49 @@ cifs_chan_skip_or_disable(struct cifs_ses *ses,
- 		return -EHOSTDOWN;
- 	}
- 
--	cifs_server_dbg(VFS,
--		"server does not support multichannel anymore. Disable all other channels\n");
--	cifs_disable_secondary_channels(ses);
-+	cifs_decrease_secondary_channels(ses, from_reconfigure);
- 
-+	return 0;
-+}
-+
-+/**
-+ * smb3_sync_ses_channels - Synchronize session channels
-+ * with new configuration (cifs_sb_info version)
-+ * @cifs_sb: pointer to the CIFS superblock info structure
-+ * Returns 0 on success or -EINVAL if scaling is already in progress.
-+ */
-+int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb)
-+{
-+	struct cifs_ses *ses = cifs_sb_master_tcon(cifs_sb)->ses;
-+	struct smb3_fs_context *ctx = cifs_sb->ctx;
-+	bool from_reconnect = false;
-+
-+	/* Prevent concurrent scaling operations */
-+	spin_lock(&ses->ses_lock);
-+	if (ses->flags & CIFS_SES_FLAG_SCALE_CHANNELS) {
-+		spin_unlock(&ses->ses_lock);
-+		return -EINVAL;
-+	}
-+	ses->flags |= CIFS_SES_FLAG_SCALE_CHANNELS;
-+	spin_unlock(&ses->ses_lock);
-+
-+	/*
-+	 * If the old max_channels is less than the new chan_max,
-+	 * try to add channels to reach the new maximum.
-+	 * Otherwise, disable or skip extra channels to match the new configuration.
-+	 */
-+	if (ctx->max_channels < ses->chan_max) {
-+		mutex_unlock(&ses->session_mutex);
-+		cifs_try_adding_channels(ses);
-+		mutex_lock(&ses->session_mutex);
-+	} else {
-+		cifs_chan_skip_or_disable(ses, ses->server, from_reconnect, true);
-+	}
-+
-+	/* Clear scaling flag after operation */
-+	spin_lock(&ses->ses_lock);
-+	ses->flags &= ~CIFS_SES_FLAG_SCALE_CHANNELS;
-+	spin_unlock(&ses->ses_lock);
- 
- 	return 0;
- }
-@@ -356,7 +395,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
- 	if (ses->chan_count > 1 &&
- 	    !(server->capabilities & SMB2_GLOBAL_CAP_MULTI_CHANNEL)) {
- 		rc = cifs_chan_skip_or_disable(ses, server,
--					       from_reconnect);
-+					       from_reconnect, false);
- 		if (rc) {
- 			mutex_unlock(&ses->session_mutex);
- 			goto out;
-@@ -439,7 +478,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
- 			 */
- 
- 			rc = cifs_chan_skip_or_disable(ses, server,
--						       from_reconnect);
-+						       from_reconnect, false);
- 			goto skip_add_channels;
- 		} else if (rc)
- 			cifs_dbg(FYI, "%s: failed to query server interfaces: %d\n",
-@@ -1105,8 +1144,7 @@ SMB2_negotiate(const unsigned int xid,
- 		req->SecurityMode = 0;
- 
- 	req->Capabilities = cpu_to_le32(server->vals->req_capabilities);
--	if (ses->chan_max > 1)
--		req->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
-+	req->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
- 
- 	/* ClientGUID must be zero for SMB2.02 dialect */
- 	if (server->vals->protocol_id == SMB20_PROT_ID)
-@@ -1310,10 +1348,8 @@ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
- 	if (!pneg_inbuf)
- 		return -ENOMEM;
- 
--	pneg_inbuf->Capabilities =
--			cpu_to_le32(server->vals->req_capabilities);
--	if (tcon->ses->chan_max > 1)
--		pneg_inbuf->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
-+	pneg_inbuf->Capabilities = cpu_to_le32(server->vals->req_capabilities);
-+	pneg_inbuf->Capabilities |= cpu_to_le32(SMB2_GLOBAL_CAP_MULTI_CHANNEL);
- 
- 	memcpy(pneg_inbuf->Guid, server->client_guid,
- 					SMB2_CLIENT_GUID_SIZE);
-diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index 3c09a58dfd07..d3f63a4ef426 100644
---- a/fs/smb/client/smb2pdu.h
-+++ b/fs/smb/client/smb2pdu.h
-@@ -420,6 +420,8 @@ struct smb2_create_ea_ctx {
- 	struct smb2_file_full_ea_info ea;
- } __packed;
- 
-+int smb3_sync_ses_channels(struct cifs_sb_info *cifs_sb);
-+
- #define SMB2_WSL_XATTR_UID		"$LXUID"
- #define SMB2_WSL_XATTR_GID		"$LXGID"
- #define SMB2_WSL_XATTR_MODE		"$LXMOD"
--- 
-2.43.0
+Main changes in v2:
+- Update the commit message, and collect the reviewed-by tag.
+
+
+[PATCH v4 1/3] PCI: dwc: Invoke post_init in dw_pcie_resume_noirq()
+[PATCH v4 2/3] PCI: imx6: Rename imx8mm_pcie_enable_ref_clk() as
+[PATCH v4 3/3] PCI: imx6: Add a method to handle CLKREQ# override
+
+drivers/pci/controller/dwc/pci-imx6.c             | 50 +++++++++++++++++++++++++++++++++++++++++++-------
+drivers/pci/controller/dwc/pcie-designware-host.c |  3 +++
+2 files changed, 46 insertions(+), 7 deletions(-)
 
 
