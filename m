@@ -1,150 +1,196 @@
-Return-Path: <linux-kernel+bounces-826631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB1CB8EFF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:19:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E0EB8EFEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 986D517AA24
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:19:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCB1B189AC59
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 05:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2726520468E;
-	Mon, 22 Sep 2025 05:19:47 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75822A1C7;
-	Mon, 22 Sep 2025 05:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C5620468E;
+	Mon, 22 Sep 2025 05:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b481WTcq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CB82A1C7;
+	Mon, 22 Sep 2025 05:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758518386; cv=none; b=M3znK5c7oUM7GJmMAwNqBco5R24ZvhWe9AAmkiusO+2KRK8ZjPZ23LDOtbBoYF60YzBzvL7XhIGF1cip4kDD3KawHksdFg/xfvlg8S7BK3OQW4Y4zkOfjjbLSrRgk4rL5ByVthQZXSgh+qOn40wyxvoxkBMriXxHsMho/DrP6UE=
+	t=1758518351; cv=none; b=nBI/FgMYbr+I6ydhevfsaFvDYjRVWujqvc7rTLz/sP72Y8WILGb6ix7XEHT3v1YJQlnXZ97q9pQ90B3qpuZZpu/E/SKOqBTzaitIgXl9hxxl2YVHx1I0ngqRS8oaCS/Pb0YqrVhMMHE9y7czl1X1+cKJzeL/IHG7Df5e5HcXNkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758518386; c=relaxed/simple;
-	bh=5Vhn615erT56U5+0fJC8EIRESo6bbvqz1nnSe6HNd0I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TcaP0XdmXGJufeHopItuF+BKozklvqC+L1PgK/mh2lt38//KL2qN0Dmp1EXFiZwnQb3Eb8q3R6KTvJaRasY+CpQUSmEsa6v7918NoXV56RTza3htJYY0oZiXwh6hospSwaZqQQub5r1ZtlUV9/b+SVcP+lYwYQZOpMePCPrcx3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.18.142])
-	by mtasvr (Coremail) with SMTP id _____wBX0WJP3NBoIBxdAg--.35127S3;
-	Mon, 22 Sep 2025 13:19:12 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.18.142])
-	by mail-app4 (Coremail) with SMTP id zi_KCgD3r4ZM3NBojL4EAg--.64758S2;
-	Mon, 22 Sep 2025 13:19:11 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	YehezkelShB@gmail.com,
-	westeri@kernel.org,
-	michael.jamet@intel.com,
-	andreas.noever@gmail.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH] thunderbolt: Fix use-after-free in tb_dp_dprx_work
-Date: Mon, 22 Sep 2025 13:18:59 +0800
-Message-Id: <20250922051859.16095-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758518351; c=relaxed/simple;
+	bh=s4I9Cmu/ZenfNo5dF9uaj7Nmkog1Gi3BFNvkkZ5A+qA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Z3zJPOj/ILgT/z2AXcbH7H6edxyEETYXfL5r1ihdCBhiHKgDTRWrcn4FfRKzEGyX2pt7c8gE6AbgZ49XgsoywjGCsrFkHH4KaeR4wcXkPKq7zwxL5/Tv74cQrCgVO9RheOB9iRfpOD+nTEsh9IE3XbKLR+LDv2GZZt1Nh6XuCmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b481WTcq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCD6C4CEF0;
+	Mon, 22 Sep 2025 05:19:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758518350;
+	bh=s4I9Cmu/ZenfNo5dF9uaj7Nmkog1Gi3BFNvkkZ5A+qA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b481WTcqyg75dl4MRy5qIoLlm4Q62dctkdPxkVmK+q4lcmHWn7hIu9Sk0RbtL4qTp
+	 LDS1kESBtpf9TGFH9bu+GMmjcEUIvWL6acqnGiZmXsejn/5jgy05YDuifSulLfB+o6
+	 YGnipdAam/Be2s7fCKWuWVoil0APZASxS1mU32/FHnMA3/Rpsto1uSjYXOz4oSefYO
+	 mFJPqqlmyApivZnPimzpa/HKzql7wFh3+e8HN3vsgckLCaXYG3ZF1H9Ok0bXrZi3ZR
+	 4ssJOrSyS6awpBdFi3MR6WVX8KDd9AkcV0KAdA3w4JZ7di78WwqBUc6txTLTI6/MGj
+	 vyiO/ufT1CQ+Q==
+Date: Mon, 22 Sep 2025 14:19:05 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong.dong@linux.dev>
+Cc: Peter Zijlstra <peterz@infradead.org>, Steven Rostedt
+ <rostedt@kernel.org>, Menglong Dong <menglong8.dong@gmail.com>,
+ jolsa@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ kees@kernel.org, samitolvanen@google.com, rppt@kernel.org, luto@kernel.org,
+ ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH] tracing: fgraph: Protect return handler from recursion
+ loop
+Message-Id: <20250922141905.f099ed89dfd5d7c740060a94@kernel.org>
+In-Reply-To: <5974303.DvuYhMxLoT@7950hx>
+References: <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+	<175828305637.117978.4183947592750468265.stgit@devnote2>
+	<5974303.DvuYhMxLoT@7950hx>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zi_KCgD3r4ZM3NBojL4EAg--.64758S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwQQAWjPA3sJtAA0sA
-X-CM-DELIVERINFO: =?B?G7l//AXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR1yV5ixbmzrSF5xUw9Ym+rCxDSQJy/c2fDMmS0l/agfY5Z3Xq3tTgbHUvoqwYtvjxAcr2
-	P+DlzJ/7OC4qow1mgaWfEhYM8QRk76Hg6MgPYq9ZoYypeS1GrpR2WHq9h/vUzg==
-X-Coremail-Antispam: 1Uk129KBj93XoWxZw4DAw1DXr4kXF13uF4kAFc_yoW5Gw4UpF
-	W5G3yUtay5tan0yrsFqa1DuFnxur9Yy3W5Gr4kKa1rAw1Yqw43ta1rGFyFvF45ArW8JF13
-	Ar4Utr47ZF4qkrgCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
-	vjxU7xwIDUUUU
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The original code relies on cancel_delayed_work() in tb_dp_dprx_stop(),
-which does not ensure that the delayed work item tunnel->dprx_work has
-fully completed if it was already running. This leads to use-after-free
-scenarios where tb_tunnel is deallocated by tb_tunnel_put(), while
-tunnel->dprx_work remains active and attempts to dereference tb_tunnel
-in tb_dp_dprx_work().
+On Sat, 20 Sep 2025 21:39:25 +0800
+Menglong Dong <menglong.dong@linux.dev> wrote:
 
-A typical race condition is illustrated below:
+> On 2025/9/19 19:57, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > function_graph_enter_regs() prevents itself from recursion by
+> > ftrace_test_recursion_trylock(), but __ftrace_return_to_handler(),
+> > which is called at the exit, does not prevent such recursion.
+> > Therefore, while it can prevent recursive calls from
+> > fgraph_ops::entryfunc(), it is not able to prevent recursive calls
+> > to fgraph from fgraph_ops::retfunc(), resulting in a recursive loop.
+> > This can lead an unexpected recursion bug reported by Menglong.
+> > 
+> >  is_endbr() is called in __ftrace_return_to_handler -> fprobe_return
+> >   -> kprobe_multi_link_exit_handler -> is_endbr.
+> > 
+> > To fix this issue, acquire ftrace_test_recursion_trylock() in the
+> > __ftrace_return_to_handler() after unwind the shadow stack to mark
+> > this section must prevent recursive call of fgraph inside user-defined
+> > fgraph_ops::retfunc().
+> > 
+> > This is essentially a fix to commit 4346ba160409 ("fprobe: Rewrite
+> > fprobe on function-graph tracer"), because before that fgraph was
+> > only used from the function graph tracer. Fprobe allowed user to run
+> > any callbacks from fgraph after that commit.
+> > 
+> > Reported-by: Menglong Dong <menglong8.dong@gmail.com>
+> > Closes: https://lore.kernel.org/all/20250918120939.1706585-1-dongml2@chinatelecom.cn/
+> > Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  kernel/trace/fgraph.c |   12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> > index 1e3b32b1e82c..08dde420635b 100644
+> > --- a/kernel/trace/fgraph.c
+> > +++ b/kernel/trace/fgraph.c
+> > @@ -815,6 +815,7 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	unsigned long bitmap;
+> >  	unsigned long ret;
+> >  	int offset;
+> > +	int bit;
+> >  	int i;
+> >  
+> >  	ret_stack = ftrace_pop_return_trace(&trace, &ret, frame_pointer, &offset);
+> > @@ -829,6 +830,15 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  	if (fregs)
+> >  		ftrace_regs_set_instruction_pointer(fregs, ret);
+> >  
+> > +	bit = ftrace_test_recursion_trylock(trace.func, ret);
+> > +	/*
+> > +	 * This must be succeeded because the entry handler returns before
+> > +	 * modifying the return address if it is nested. Anyway, we need to
+> > +	 * avoid calling user callbacks if it is nested.
+> > +	 */
+> > +	if (WARN_ON_ONCE(bit < 0))
+> > +		goto out;
+> 
+> Hi, the logic seems right, but the warning is triggered when
+> I try to run the bpf bench testing:
 
-CPU 0                            | CPU 1
-tb_dp_tunnel_active()            |
-  tb_deactivate_and_free_tunnel()| tb_dp_dprx_start()
-    tb_tunnel_deactivate()       |   queue_delayed_work()
-      tb_dp_activate()           |
-        tb_dp_dprx_stop()        | tb_dp_dprx_work() //delayed worker
-          cancel_delayed_work()  |
-    tb_tunnel_put(tunnel);       |
-                                 |   tunnel = container_of(...); //UAF
-                                 |   tunnel-> //UAF
+Ah, I remember that this  ftrace_test_recursion_trylock() allows
+one-level nesting. OK, I will remove the WARN_ON.
 
-Replacing cancel_delayed_work() with cancel_delayed_work_sync() is
-not feasible as it would introduce a deadlock: both tb_dp_dprx_work()
-and the cleanup path acquire tb->lock, and cancel_delayed_work_sync()
-would wait indefinitely for the work item that cannot proceed.
+Thanks,
 
-Instead, implement proper reference counting:
-- If cancel_delayed_work() returns true (work is pending), we release
-  the reference in the stop function.
-- If it returns false (work is executing or already completed), the
-  reference is released in delayed work function itself.
+> 
+> $ ./benchs/run_bench_trigger.sh kretprobe-multi-all
+> [   20.619642] NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030
+> [  139.509036] ------------[ cut here ]------------
+> [  139.509180] WARNING: CPU: 2 PID: 522 at kernel/trace/fgraph.c:839 ftrace_return_to_handler+0x2b9/0x2d0
+> [  139.509411] Modules linked in: virtio_net
+> [  139.509514] CPU: 2 UID: 0 PID: 522 Comm: bench Not tainted 6.17.0-rc5-g1fe6d652bfa0 #106 NONE 
+> [  139.509720] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.17.0-1-1 04/01/2014
+> [  139.509948] RIP: 0010:ftrace_return_to_handler+0x2b9/0x2d0
+> [  139.510086] Code: e8 0c 08 0e 00 0f 0b 49 c7 c1 00 73 20 81 e9 d1 fe ff ff 40 f6 c6 10 75 11 49 c7 c3 ef ff ff ff ba 10 00 00 00 e9 57 fe ff ff <0f> 0b e9 a5 fe ff ff e8 1b 72 0d 01 66 66 2e 0f 1f 84 00 00 00 00
+> [  139.510536] RSP: 0018:ffffc9000012cef8 EFLAGS: 00010002
+> [  139.510664] RAX: ffff88810f709800 RBX: ffffc900007c3678 RCX: 0000000000000003
+> [  139.510835] RDX: 0000000000000008 RSI: 0000000000000018 RDI: 0000000000000000
+> [  139.511007] RBP: 0000000000000000 R08: 0000000000000034 R09: ffffffff82550319
+> [  139.511184] R10: ffffc9000012cf50 R11: fffffffffffffff7 R12: 0000000000000000
+> [  139.511357] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+> [  139.511532] FS:  00007fe58276fb00(0000) GS:ffff8884ab3b8000(0000) knlGS:0000000000000000
+> [  139.511724] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  139.511865] CR2: 0000562a28314b67 CR3: 00000001143f9000 CR4: 0000000000750ef0
+> [  139.512038] PKRU: 55555554
+> [  139.512106] Call Trace:
+> [  139.512177]  <IRQ>
+> [  139.512232]  ? irq_exit_rcu+0x4/0xb0
+> [  139.512322]  return_to_handler+0x1e/0x50
+> [  139.512422]  ? idle_cpu+0x9/0x50
+> [  139.512506]  ? sysvec_apic_timer_interrupt+0x69/0x80
+> [  139.512638]  ? idle_cpu+0x9/0x50
+> [  139.512731]  ? irq_exit_rcu+0x3a/0xb0
+> [  139.512833]  ? ftrace_stub_direct_tramp+0x10/0x10
+> [  139.512961]  ? sysvec_apic_timer_interrupt+0x69/0x80
+> [  139.513101]  </IRQ>
+> [  139.513168]  <TASK>
+> 
+> > +
+> >  #ifdef CONFIG_FUNCTION_GRAPH_RETVAL
+> >  	trace.retval = ftrace_regs_get_return_value(fregs);
+> >  #endif
+> > @@ -852,6 +862,8 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
+> >  		}
+> >  	}
+> >  
+> > +	ftrace_test_recursion_unlock(bit);
+> > +out:
+> >  	/*
+> >  	 * The ftrace_graph_return() may still access the current
+> >  	 * ret_stack structure, we need to make sure the update of
+> > 
+> > 
+> > 
+> 
+> 
+> 
+> 
 
-This ensures the tb_tunnel remains valid during work item execution
-while preventing memory leaks.
 
-This bug was found by static analysis.
-
-Fixes: d6d458d42e1e ("thunderbolt: Handle DisplayPort tunnel activation asynchronously")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- drivers/thunderbolt/tunnel.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
-index d52efe3f658c..89fa0c626d3e 100644
---- a/drivers/thunderbolt/tunnel.c
-+++ b/drivers/thunderbolt/tunnel.c
-@@ -1073,6 +1073,7 @@ static void tb_dp_dprx_work(struct work_struct *work)
- 
- 	if (tunnel->callback)
- 		tunnel->callback(tunnel, tunnel->callback_data);
-+	tb_tunnel_put(tunnel);
- }
- 
- static int tb_dp_dprx_start(struct tb_tunnel *tunnel)
-@@ -1097,11 +1098,14 @@ static int tb_dp_dprx_start(struct tb_tunnel *tunnel)
- 
- static void tb_dp_dprx_stop(struct tb_tunnel *tunnel)
- {
-+	bool ret;
-+
- 	if (tunnel->dprx_started) {
- 		tunnel->dprx_started = false;
- 		tunnel->dprx_canceled = true;
--		cancel_delayed_work(&tunnel->dprx_work);
--		tb_tunnel_put(tunnel);
-+		ret = cancel_delayed_work(&tunnel->dprx_work);
-+		if (ret)
-+			tb_tunnel_put(tunnel);
- 	}
- }
- 
 -- 
-2.34.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
