@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-827150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125A6B90718
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:39:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A78B90724
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAB757A1B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D9C3B2269
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A04D30506F;
-	Mon, 22 Sep 2025 11:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D03054CC;
+	Mon, 22 Sep 2025 11:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eN1bBPag"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHsVEUpf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34FC29E0E5;
-	Mon, 22 Sep 2025 11:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31DB4A1E;
+	Mon, 22 Sep 2025 11:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758541158; cv=none; b=pwwDZsKDQ2RWJ8r8gNL4Fbwf4ryNnWS+I2sizG+nt6S5zUDhmy2+4O6qsMW4mxW4w8c1Sjq/kKLUWs07Z5B9kY9hvR6cVwW+JwSXAPwsjwXEMMYrFmhaGeY1HwcWur+Q1iPoH9QFZwAhyAL1LpQZkyeoaD276tDBwLK0JWw+rJE=
+	t=1758541239; cv=none; b=i82pnMZDg2JBvcXutfxvy7+akKla2ahRFzAsTblSHoRQSfxedvyreU6VQlhKhmxHMgUpJpurZKH6IEzXFwNIRaSX9Y4VX49ZYf1kn2w+qayZPkEXDCCGfz+YMPhfFgEsUov+hOVTTXts/D2au0Uw1nagNnv8/Wu1VkYq/A2lpQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758541158; c=relaxed/simple;
-	bh=nMADfA3UKEbyqlZhjNt1e9kpbSLVmyXTD2ba8CiFz+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=n/vBFcZ6AXYXGFARH3BGfqrR/Sksekv29xBHNSnBc6Ks4QmBmuDFuvPf+VmNXdffagDUBTWA2H3nRM2kTXi2GeLpmNdM0OYmQGD8om0+rKRAKDWS6SGvri7RFXjt9qzgoMMWfP9/BRNqzUfwtrUeuRe3o9fw91kDeMxoEwxP/fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eN1bBPag; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1758541155;
-	bh=nMADfA3UKEbyqlZhjNt1e9kpbSLVmyXTD2ba8CiFz+0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=eN1bBPagXpQJ6g9esQ4O/9Nr7/+Qeen6NJgveEIE0Nuuzj8xOa3mEPJKWOfaKBFch
-	 2rB79slebeyZ+hbew8oKUfRJarLWRJ5MGg7WIDr3V9+X7YAhLWyBUHZPJndBqgRedj
-	 aJ7jn7JpFUW0TMkyFTl+rT5AwrbhPaf4HNANjRym0J50NOsnFFEwEGy5s5gn6KmzrR
-	 2uk6Bi8k+WbTDRL0jIl8zRjs92NAMsWH1d+8+mQzlGqjwwC2BJ9PLc6W03nOspyxKK
-	 NLFB7xYaeDEOEPpnfee15g1jLRMl2Rbu3t3pkk1ZZrndGVEnClxIfNsW+6KuOaumJL
-	 dHN33TNpEtw2w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9E3FA17E0B85;
-	Mon, 22 Sep 2025 13:39:14 +0200 (CEST)
-Message-ID: <19132a59-993e-4148-b883-1bc892183f33@collabora.com>
-Date: Mon, 22 Sep 2025 13:39:14 +0200
+	s=arc-20240116; t=1758541239; c=relaxed/simple;
+	bh=1bTeVpeY1inxn5GaVFTAtddOZwZ/woNdgAjjVAaaFVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEYva0i4E0wMSOmBeFvH9V92c9MKJL/wyEZt7L/7N4441ueZjsnkdrMRnz/dpnIfpbmm1tXYpf4hk8st7MIk5Vs8xK07pQ5DQE7fvsPwZoj6eKh4MH6rfCP43oN+Imqo3bwjWNyBNDeW2I9r0YVZF9p3yTHvFoga9Yo0CiKN42A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHsVEUpf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE038C4CEF0;
+	Mon, 22 Sep 2025 11:40:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758541239;
+	bh=1bTeVpeY1inxn5GaVFTAtddOZwZ/woNdgAjjVAaaFVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cHsVEUpfM+4B0JwzYOcX4dyEBnI5y4SeHnbNq6mm+9WUThqLuXBRAeQIQGXFqohnm
+	 Fz0c3p/BooiR5h8nBhbT/jkv9Ebc2SskbAb2ZVKCy3JekI/JJk8AS/7SJQ9nM29Ftq
+	 PZ/AYKEgarbKs5whtO058RE3574e+AdNXubu4clm+ynT3EIE0jEw6IIPyCswHAZePx
+	 DodjiYLGiFoE0XuadOqrDjiLe7cO/wJsLag0e0uNGqfnl2zeRLB+2zhBDhfuIW2Dw7
+	 3RXchZJlXY6Bnv56fNrSSIMtE+ICZPW42wSNmYgyVAi1O6c/BeFFesvgcfAcxC41ED
+	 XHZfz5M9DvgEw==
+Date: Mon, 22 Sep 2025 13:40:35 +0200
+From: Mark Brown <broonie@kernel.org>
+To: "Aithal, Srikanth" <sraithal@amd.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the kvm-x86 tree with the tip tree
+Message-ID: <aNE1s02dSgcJ4Uxq@finisterre.sirena.org.uk>
+References: <aNEb7o3xrTDQ6JP4@finisterre.sirena.org.uk>
+ <409d5703-ca0b-4b4b-a221-4e38ea92ae9a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: arm64: dts: airoha: Add AN7583
- compatible
-To: Christian Marangi <ansuelsmth@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250920091230.17702-1-ansuelsmth@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250920091230.17702-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Il 20/09/25 11:12, Christian Marangi ha scritto:
-> Add Airoha AN7583 compatible to the list of enum for Airoha Supported
-> SoCs.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->   Documentation/devicetree/bindings/arm/airoha.yaml | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/airoha.yaml b/Documentation/devicetree/bindings/arm/airoha.yaml
-> index 7c38c08dbf3f..6506c64af4f3 100644
-> --- a/Documentation/devicetree/bindings/arm/airoha.yaml
-> +++ b/Documentation/devicetree/bindings/arm/airoha.yaml
-> @@ -26,6 +26,10 @@ properties:
-
-"an" comes before "en". Please keep alphabetical order.
-
-Cheers,
-Angelo
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8Lq+S22UPMbyBVKx"
+Content-Disposition: inline
+In-Reply-To: <409d5703-ca0b-4b4b-a221-4e38ea92ae9a@amd.com>
+X-Cookie: Filmed before a live audience.
 
 
+--8Lq+S22UPMbyBVKx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 22, 2025 at 04:57:39PM +0530, Aithal, Srikanth wrote:
+> Hello,
+>=20
+> Todays linux-next build fails with below error on AMD x86:
+>=20
+> arch/x86/kvm/emulate.c:4091:9: error: implicit declaration of function =
+=E2=80=98F=E2=80=99
+> [-Werror=3Dimplicit-function-declaration]
+>  4091 |         F(DstMem | SrcNone | Lock,              em_inc),
+>       |         ^
+
+That'll be me doing a mismerge I expect and should've taken the other
+side of the merge for these, I'm quite surprised that the x86
+allmodconfig builds didn't trip this up :(=20
+
+--8Lq+S22UPMbyBVKx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRNbAACgkQJNaLcl1U
+h9DpuAf+Ou4ak/rJ+yT2QZPhF3D1I7FrVjChAza34qmc9dYKXC/knuyybSXogmEP
+LANT43tfIQ6EH9wIC4DvGPQTaRDIVbaB/Tu1j4wAXmINCX86uGk/vk+tusovvYLZ
+glP2h3qlwGqVjvfNEawfMwcmLXvwMkbCe5urNogEionPH2YwTUcWkJRtd0tJ4656
+Tbru+ubqvY3tysTrCSjOHOYc43r0OlMy5Eio22cec9r1uz1mWXHNRzQqLKlmjvgS
+viAmzam6Aac/zNbH80//xFGTiGKeS51VU5Ji+Qxw7GVDSHA0CK5a82WwUB3TQW1Y
+VWWi+ckxmKTYA5nXOMnZWVz31ijT6A==
+=ysGj
+-----END PGP SIGNATURE-----
+
+--8Lq+S22UPMbyBVKx--
 
