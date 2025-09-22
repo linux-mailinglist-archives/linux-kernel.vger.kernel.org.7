@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-826802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6B1B8F616
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C21B8F629
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8038616171E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE956167DC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D812F0C6E;
-	Mon, 22 Sep 2025 07:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED402F7AA4;
+	Mon, 22 Sep 2025 08:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A0LtMm4K"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kmno/LsL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3C72F746F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5142F83BC;
+	Mon, 22 Sep 2025 08:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527939; cv=none; b=QhBgXvZbhPKSxh08WQsN/EmZozfk/7/4NA5sdP5FXiRCYONWGnGt2+sTQgF0T4dCxCVmu0q+hTdhpRMtEGiB+eTo85xqATAjzztMiMnHt8oy0MdYrK175AJx7XixfxZwuaOhWr74zwpQcTI2Ii2BEv/ISNSyRfZEwoit5KNm4Zw=
+	t=1758528010; cv=none; b=mAJuJywkxr+CC4YIolt+Ii6fCcf2AB3ygaJNV6kNKT7q18HxaFdtkruCqi/vZ6RxQIU9lD1sMMXq+dM4Ox78eWD2OLpEbI12aVpxkomm3QfwncZ8DdIVpQzhKyceI5Zu/AlP+rALS2EUxUzEeF4X68qBOuRqS3IBLWA4aRo87AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527939; c=relaxed/simple;
-	bh=VxFoXFJfLJu72VUQI8PkapTjFSVP1bwVeJjNyFvSU6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSRdAfDJIWMyCUNRZyGy+7g8Mmxjbo7Bl9DSDAknEsp1g8jl5oIZ7eKp/l0/rrcFmd7uf00YiXiFTvlLm0zU6wSvb6m95TVlFBlpYR5fiPrxUvmx3GVenZ/PcATX98hI0znyDi+Pf12wiFfS1QQN2c2OQqEMW5LQAaLUqi6DGUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A0LtMm4K; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so26686185e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:58:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758527935; x=1759132735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xQRpOTdPlsJ/I3ie9xITMLFON03T608didGjNtYqmd8=;
-        b=A0LtMm4KGe7kf1WDxajMfqTBr3JGx9o8EdpYa+ejdHZrKrlF6Mi4lLBtiyGDrxRmaG
-         hTTlfQsAZWd+dKrcx0eV5ANPokbJp2z8/lq/GTgXh/ygBrbSTjU2XEMnT6W9jFpeXTXT
-         yKXwNIbflatbA9lo1tNpsxitqPh39dzWVlUKG5dBCJr/geLe10jlMqU8sYM09YoqKzKN
-         ZZG+JYhbAiz8TX8+H13XhDtvGvmhd7XafBB2ZfRPhcqoGkdIVB9iaNgHoCKXbMcZ/Fe9
-         aKYVfhl2fze0MOruqfugaS3D7ZEnSmRadwuoW8NQ5OM5sIY7r2hTUklIHgJImfr2hXV/
-         KDZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758527935; x=1759132735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xQRpOTdPlsJ/I3ie9xITMLFON03T608didGjNtYqmd8=;
-        b=nwAc6450pI41vzCxw9QF+oyVDPaZLoRadB4vi0MFvDWoo3KqJPfqEg/r6J1qWdMykC
-         Xa6WJi3nsnp2Xr6eYCeyh0bqC/UiCBnZ5y3G+wGugNnJCbIvvWoRCTc59kTMSoBuCpal
-         2LnohZ5MvfW8ES2YSUEosUiRKi12LgHnggPrYPr2eJIa77KAbYoOD0FdF70TRFG93d54
-         E+0E1Ja2yW8BLHDRqOfBCPvQgCioNNrmRZb1ldxsoLnDNQihDxeC6HXx2CARISgd1usE
-         1LBvVJHy3LPnh4SOOpdnORr8/HY+K7os8LLC72TweTyemJd1b5vGi5HjV4S3qxDIf2y7
-         ZJDw==
-X-Gm-Message-State: AOJu0Yx6SP9oMHBvFFHfBZgARNS1gJSzpdOmehLKphEk266ZRS8ClNCN
-	WtZ1Yq/tIa0Y/B5O97bbMbREpZWxN5IjmVhEpVeIlGEPZSbtscSmwxLPJFYX0QLQKFY=
-X-Gm-Gg: ASbGncvJaPjrzAWkb/GEdIl8uWG2T9wB8pZUtd25vVjktGVInlcyR0cbpwoS5u7asbU
-	AvONsQnimq0vexjr7QwJ6gG/5lzzSK9nNFvvxhJN+InhFL4boZ+3CzeqOFDjqWZwBguavzIFWpB
-	XEBkHA9uTfLbAAY1gggiF67k0+ei172Jvsm5sFDpbdL8T/ViTcRFyD1G3GpeXlEtwQvk/Nl6o1k
-	6bPXrHV8IVExUOixcEDP0kw0O58/FHsXOLlp0upA9shzHghussDAwNhlt7hJbLB15RV4qQ5CXE4
-	WW9C+I6WI1Pst1wJA2YuZDFD/SmzgORiNA7ZKpZ7fX7QQqsJnELMdzIvR3rFI1opBGjp8KWmkzs
-	S8x3i483/890yalmrC09e8KqlraWqgMg7
-X-Google-Smtp-Source: AGHT+IGv/gvgtd+VyFOGRY+JKmS6raLqaaGrk4Saz9mqQNEkVwU+lxnyBc+9ONztYTEGxxuU7e9nsg==
-X-Received: by 2002:a05:600c:3555:b0:45d:5c71:769a with SMTP id 5b1f17b1804b1-467eb048bafmr104267165e9.26.1758527934709;
-        Mon, 22 Sep 2025 00:58:54 -0700 (PDT)
-Received: from [10.11.12.107] ([79.118.185.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-464f0aac3fdsm186423945e9.1.2025.09.22.00.58.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 00:58:54 -0700 (PDT)
-Message-ID: <905d8c89-56d3-40c9-928f-d6418a0f9193@linaro.org>
-Date: Mon, 22 Sep 2025 08:58:52 +0100
+	s=arc-20240116; t=1758528010; c=relaxed/simple;
+	bh=vFcY0B+AMDBqw5bNsVbS0K5nZvkhZ8U9ZCDgEJjXTtc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=akNktn2xPT5VEJbEEumgPQ2yFjUk6wDSWXm0f8kBFM+1FlBx2CG/ctw+Qn+bxrDjecJe1tm8EhUQqToC101wpD2hwczoV0Hw4AE45YkrUOZY/bGFBRf/al1HKcCD0LhBQvCtrlBKry3BaYukEmOO98SbqT6WotvLQAdVz5SHGxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kmno/LsL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63FD0C4CEF5;
+	Mon, 22 Sep 2025 08:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758528010;
+	bh=vFcY0B+AMDBqw5bNsVbS0K5nZvkhZ8U9ZCDgEJjXTtc=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=Kmno/LsL5aXkH+5GCaZdWfmWI9xZwycgwk9ERR2vjYyMTeAyoSOMN62FvrbHIkcfC
+	 3uesTqM/qCDTShZ1AMe7YDZgGNT5t1uONSOaZLO5CguaawbW4C60aCciQLKwR3iQ/R
+	 cgTFT5zEwqjI427nogdzj5yVucxIDh7Ct6jkSJMam6Z+K7gs7OBVshGCY0o3m6IL3y
+	 aOOAlzr0eHG4K0fUu1ISd9XF+ou4KkDOxUS1TOcm6tCcFbLpCv0ew5qtwEMyGRChsi
+	 /cvahdPpGzC4yJiUNkfYovcpkoMaHtcfcDkEQTJxtOiNobJuOpggCHrlKcEurxJxPb
+	 cF2oonKyWUIUw==
+Message-ID: <9beb643b-603d-46e8-9c1d-cd8060548507@kernel.org>
+Date: Mon, 22 Sep 2025 10:00:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,269 +49,245 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] clk: samsung: add Exynos ACPM clock driver
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Griffin <peter.griffin@linaro.org>, Rob Herring <robh@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Will Deacon <will@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
- <20250908-acpm-clk-v4-4-633350c0c0b1@linaro.org>
- <175848703636.4354.2936744718103927060@lazor>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <175848703636.4354.2936744718103927060@lazor>
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2 01/10] media: v4l2-core: Introduce state management for
+ video devices
+To: Jai Luthra <jai.luthra@ideasonboard.com>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>,
+ linux-kernel@vger.kernel.org
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+ <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com>
+ <15df046b-0fe1-4b57-acad-66b88beac982@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <15df046b-0fe1-4b57-acad-66b88beac982@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Stephen,
-
-On 9/21/25 9:37 PM, Stephen Boyd wrote:
-> Quoting Tudor Ambarus (2025-09-08 06:12:45)
->> diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
->> index 76a494e95027af26272e30876a87ac293bd56dfa..70a8b82a0136b4d0213d8ff95e029c52436e5c7f 100644
->> --- a/drivers/clk/samsung/Kconfig
->> +++ b/drivers/clk/samsung/Kconfig
->> @@ -95,6 +95,16 @@ config EXYNOS_CLKOUT
->>           status of the certains clocks from SoC, but it could also be tied to
->>           other devices as an input clock.
+On 22/09/2025 09:44, Hans Verkuil wrote:
+> Hi Jai,
+> 
+> Apologies that I had no time to review v1, but I'll review v2 today.
+> 
+> On 19/09/2025 11:55, Jai Luthra wrote:
+>> Similar to V4L2 subdev states, introduce state support for video devices
+>> to provide a centralized location for storing device state information.
+>> This includes the current (active) pixelformat used by the device and
+>> the temporary (try) pixelformat used during format negotiation. In the
+>> future, this may be extended or subclassed by device drivers to store
+>> their internal state variables.
+>>
+>> Also introduce a flag for drivers that wish to use this state
+>> management. When set, the framework automatically allocates the state
+>> during device registration and stores a pointer to it within the
+>> video_device structure.
+>>
+>> This change aligns video devices with V4L2 subdevices by storing
+>> hardware state in a common framework-allocated structure. This is the
+>> first step towards enabling the multiplexing of the underlying hardware
+>> by using different software "contexts", each represented by the combined
+>> state of all video devices and V4L2 subdevices in a complex media graph.
+>>
+>> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+>> --
+>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+>> Cc: Hans Verkuil <hverkuil@kernel.org>
+>> Cc: Ricardo Ribalda <ribalda@chromium.org>
+>> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Cc: Ma Ke <make24@iscas.ac.cn>
+>> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
+>> Cc: linux-media@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>  drivers/media/v4l2-core/v4l2-dev.c | 27 +++++++++++++++++++++++++
+>>  include/media/v4l2-dev.h           | 40 ++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 67 insertions(+)
+>>
+>> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+>> index 10a126e50c1ca25b1bd0e9872571261acfc26b39..997255709448510fcd17b6de798a3df99cd7ea09 100644
+>> --- a/drivers/media/v4l2-core/v4l2-dev.c
+>> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+>> @@ -163,6 +163,27 @@ void video_device_release_empty(struct video_device *vdev)
+>>  }
+>>  EXPORT_SYMBOL(video_device_release_empty);
 >>  
->> +config EXYNOS_ACPM_CLK
->> +       tristate "Clock driver controlled via ACPM interface"
->> +       depends on EXYNOS_ACPM_PROTOCOL || (COMPILE_TEST && !EXYNOS_ACPM_PROTOCOL)
-> 
-> Why is COMPILE_TEST limited to !EXYNOS_ACPM_PROTOCOL?
-
-
-otherwise on randconfigs where COMPILE_TEST=y and EXYNOS_ACPM_PROTOCOL=n I get:
-ERROR: modpost: "devm_acpm_get_by_node" [drivers/clk/samsung/clk-acpm.ko] undefined!
-
-> 
->> +       help
->> +         This driver provides support for clocks that are controlled by
->> +         firmware that implements the ACPM interface.
+>> +struct video_device_state *
+>> +__video_device_state_alloc(struct video_device *vdev)
+>> +{
+>> +	struct video_device_state *state =
+>> +		kzalloc(sizeof(struct video_device_state), GFP_KERNEL);
 >> +
->> +         This driver uses the ACPM interface to interact with the firmware
->> +         providing all the clock controlls.
+>> +	if (!state)
+>> +		return ERR_PTR(-ENOMEM);
 >> +
->>  config TESLA_FSD_COMMON_CLK
->>         bool "Tesla FSD clock controller support" if COMPILE_TEST
->>         depends on COMMON_CLK_SAMSUNG
->> diff --git a/drivers/clk/samsung/clk-acpm.c b/drivers/clk/samsung/clk-acpm.c
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..8566495265ee3e06dbf370f9e424d5540f5c7457
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-acpm.c
->> @@ -0,0 +1,184 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Samsung Exynos ACPM protocol based clock driver.
+>> +	state->vdev = vdev;
+>> +
+>> +	return state;
+>> +}
+>> +EXPORT_SYMBOL_GPL(__video_device_state_alloc);
+>> +
+>> +void __video_device_state_free(struct video_device_state *state)
+>> +{
+>> +	kfree(state);
+>> +}
+>> +EXPORT_SYMBOL_GPL(__video_device_state_free);
+>> +
+>>  static inline void video_get(struct video_device *vdev)
+>>  {
+>>  	get_device(&vdev->dev);
+>> @@ -939,6 +960,10 @@ int __video_register_device(struct video_device *vdev,
+>>  	spin_lock_init(&vdev->fh_lock);
+>>  	INIT_LIST_HEAD(&vdev->fh_list);
+>>  
+>> +	/* state support */
+>> +	if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+>> +		vdev->state = __video_device_state_alloc(vdev);
+>> +
+>>  	/* Part 1: check device type */
+>>  	switch (type) {
+>>  	case VFL_TYPE_VIDEO:
+>> @@ -1127,6 +1152,8 @@ void video_unregister_device(struct video_device *vdev)
+>>  	clear_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>>  	mutex_unlock(&videodev_lock);
+>>  	v4l2_event_wake_all(vdev);
+>> +	if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+>> +		__video_device_state_free(vdev->state);
+>>  	device_unregister(&vdev->dev);
+>>  }
+>>  EXPORT_SYMBOL(video_unregister_device);
+>> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+>> index a213c3398dcf60be8c531df87bf40c56b4ad772d..57e4691ef467aa2b0782dd4b8357bd0670643293 100644
+>> --- a/include/media/v4l2-dev.h
+>> +++ b/include/media/v4l2-dev.h
+>> @@ -89,12 +89,18 @@ struct dentry;
+>>   *	set by the core when the sub-devices device nodes are registered with
+>>   *	v4l2_device_register_ro_subdev_nodes() and used by the sub-device ioctl
+>>   *	handler to restrict access to some ioctl calls.
+>> + * @V4L2_FL_USES_STATE:
+>> + *	indicates that the &struct video_device has state support.
+>> + *	The active video and metadata formats are stored in video_device.state,
+>> + *	and the try video and metadata formats are stored in v4l2_fh.state.
+>> + *	All new drivers should use it.
+>>   */
+>>  enum v4l2_video_device_flags {
+>>  	V4L2_FL_REGISTERED		= 0,
+>>  	V4L2_FL_USES_V4L2_FH		= 1,
+>>  	V4L2_FL_QUIRK_INVERTED_CROP	= 2,
+>>  	V4L2_FL_SUBDEV_RO_DEVNODE	= 3,
+>> +	V4L2_FL_USES_STATE		= 4,
+>>  };
+>>  
+>>  /* Priority helper functions */
+>> @@ -214,6 +220,17 @@ struct v4l2_file_operations {
+>>  	int (*release) (struct file *);
+>>  };
+>>  
+>> +/**
+>> + * struct video_device_state - Used for storing video device state information.
 >> + *
->> + * Copyright 2025 Linaro Ltd.
+>> + * @fmt: Format of the capture stream
+>> + * @vdev: Pointer to video device
 >> + */
->> +
->> +#include <linux/array_size.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/device.h>
->> +#include <linux/err.h>
->> +#include <linux/firmware/samsung/exynos-acpm-protocol.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
+>> +struct video_device_state {
+>> +	struct v4l2_format fmt;
 > 
-> Is this include used?
-
-ah, it's no longer used, I'll drop it, thanks!
+> While typically a video_device supports only a single video format type, that is
+> not always the case. There are the following exceptions:
 > 
->> +#include <linux/platform_device.h>
->> +#include <linux/types.h>
+> 1) M2M devices have both a capture and output video format. However, for M2M devices
+>    the state is per-filehandle, so it shouldn't be stored in a video_device_state
+>    struct anyway.
+> 2) VBI devices can have both a raw and sliced VBI format (either capture or output)
+> 3) AFAIK non-M2M video devices can have both a video and meta format. That may have
+>    changed, I'm not 100% certain about this.
+> 4) video devices can also support an OVERLAY or OUTPUT_OVERLAY format (rare)
 > 
-> Are you avoiding kernel.h? If so, please include container_of.h and
+> V4L2_CAP_VIDEO_OVERLAY is currently only used in
+> drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c, so once that driver
+> disappears we can drop video overlay support for capture devices.
+> 
+> 2-4 are all quite rare, but 1 is very common. But for such devices the state
+> wouldn't be in video_device anyway.
+> 
+> But it would be nice if the same struct can be used in both m2m devices and non-m2m
+> devices. It's just stored either in struct v4l2_fh or struct video_device. It would
+> give a lot of opportunities for creating helper functions to make the life for
+> driver developers easier.
 
-I tend to include just what's needed, yes. kernel.h has some things that
-are not yet needed in this driver.
+Follow-up: assuming we want to support M2M devices as well (I think we should), then
+consider renaming video_device_state since it isn't video_device specific, i.e. it
+can either live in video_device or in v4l2_fh, and in the latter case you'd have
+two instances: capture and output state.
 
-> device/devres.h to avoid implicit includes.
+Regards,
 
-Will add the two and recheck whether I rely on implicit includes somewhere else.
+	Hans
 
->> +
->> +struct acpm_clk {
->> +       u32 id;
->> +       struct clk_hw hw;
->> +       unsigned int mbox_chan_id;
->> +       const struct acpm_handle *handle;
+> 
+> Regards,
+> 
+> 	Hans
+> 
+>> +	struct video_device *vdev;
 >> +};
 >> +
->> +struct acpm_clk_variant {
->> +       const char *name;
->> +};
+>>  /*
+>>   * Newer version of video_device, handled by videodev2.c
+>>   *	This version moves redundant code from video device code to
+>> @@ -238,6 +255,7 @@ struct v4l2_file_operations {
+>>   * @queue: &struct vb2_queue associated with this device node. May be NULL.
+>>   * @prio: pointer to &struct v4l2_prio_state with device's Priority state.
+>>   *	 If NULL, then v4l2_dev->prio will be used.
+>> + * @state: &struct video_device_state, holds the active state for the device.
+>>   * @name: video device name
+>>   * @vfl_type: V4L device type, as defined by &enum vfl_devnode_type
+>>   * @vfl_dir: V4L receiver, transmitter or m2m
+>> @@ -283,6 +301,7 @@ struct video_device {
+>>  	struct vb2_queue *queue;
+>>  
+>>  	struct v4l2_prio_state *prio;
+>> +	struct video_device_state *state;
+>>  
+>>  	/* device info */
+>>  	char name[64];
+>> @@ -546,6 +565,27 @@ static inline int video_is_registered(struct video_device *vdev)
+>>  	return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>>  }
+>>  
+>> +/** __video_device_state_alloc - allocate video device state structure
+>> + *
+>> + * @vdev: pointer to struct video_device
+>> + *
+>> + * .. note::
+>> + *
+>> + *	This function is meant to be used only inside the V4L2 core.
+>> + */
+>> +struct video_device_state *
+>> +__video_device_state_alloc(struct video_device *vdev);
 >> +
->> +struct acpm_clk_driver_data {
->> +       const struct acpm_clk_variant *clks;
->> +       unsigned int nr_clks;
->> +       unsigned int mbox_chan_id;
->> +};
+>> +/** __video_device_state_free - free video device state structure
+>> + *
+>> + * @state: pointer to the state to be freed
+>> + *
+>> + * .. note::
+>> + *
+>> + *	This function is meant to be used only inside the V4L2 core.
+>> + */
+>> +void __video_device_state_free(struct video_device_state *state);
 >> +
->> +#define to_acpm_clk(clk) container_of(clk, struct acpm_clk, hw)
->> +
->> +#define ACPM_CLK(cname)                                        \
->> +       {                                               \
->> +               .name           = cname,                \
->> +       }
->> +
->> +static const struct acpm_clk_variant gs101_acpm_clks[] = {
->> +       ACPM_CLK("mif"),
->> +       ACPM_CLK("int"),
->> +       ACPM_CLK("cpucl0"),
->> +       ACPM_CLK("cpucl1"),
->> +       ACPM_CLK("cpucl2"),
->> +       ACPM_CLK("g3d"),
->> +       ACPM_CLK("g3dl2"),
->> +       ACPM_CLK("tpu"),
->> +       ACPM_CLK("intcam"),
->> +       ACPM_CLK("tnr"),
->> +       ACPM_CLK("cam"),
->> +       ACPM_CLK("mfc"),
->> +       ACPM_CLK("disp"),
->> +       ACPM_CLK("b0"),
->> +};
->> +
->> +static const struct acpm_clk_driver_data acpm_clk_gs101 = {
->> +       .clks = gs101_acpm_clks,
->> +       .nr_clks = ARRAY_SIZE(gs101_acpm_clks),
->> +       .mbox_chan_id = 0,
->> +};
->> +
->> +static unsigned long acpm_clk_recalc_rate(struct clk_hw *hw,
->> +                                         unsigned long parent_rate)
->> +{
->> +       struct acpm_clk *clk = to_acpm_clk(hw);
->> +
->> +       return clk->handle->ops.dvfs_ops.get_rate(clk->handle,
->> +                                       clk->mbox_chan_id, clk->id, 0);
->> +}
->> +
->> +static int acpm_clk_determine_rate(struct clk_hw *hw,
->> +                                  struct clk_rate_request *req)
->> +{
->> +       /*
->> +        * We can't figure out what rate it will be, so just return the
->> +        * rate back to the caller. acpm_clk_recalc_rate() will be called
->> +        * after the rate is set and we'll know what rate the clock is
->> +        * running at then.
->> +        */
->> +       return 0;
->> +}
->> +
->> +static int acpm_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                            unsigned long parent_rate)
->> +{
->> +       struct acpm_clk *clk = to_acpm_clk(hw);
->> +
->> +       return clk->handle->ops.dvfs_ops.set_rate(clk->handle,
->> +                                       clk->mbox_chan_id, clk->id, rate);
->> +}
->> +
->> +static const struct clk_ops acpm_clk_ops = {
->> +       .recalc_rate = acpm_clk_recalc_rate,
->> +       .determine_rate = acpm_clk_determine_rate,
->> +       .set_rate = acpm_clk_set_rate,
->> +};
->> +
->> +static int acpm_clk_ops_init(struct device *dev, struct acpm_clk *aclk,
+>>  /**
+>>   * v4l2_debugfs_root - returns the dentry of the top-level "v4l2" debugfs dir
+>>   *
+>>
 > 
-> Maybe acpm_clk_register() is a more appropriate name.
-
-okay, will update.
-
 > 
->> +                            const char *name)
->> +{
->> +       struct clk_init_data init = {};
->> +
->> +       init.name = name;
->> +       init.ops = &acpm_clk_ops;
->> +       aclk->hw.init = &init;
->> +
->> +       return devm_clk_hw_register(dev, &aclk->hw);
->> +}
->> +
->> +static int acpm_clk_probe(struct platform_device *pdev)
->> +{
->> +       const struct acpm_handle *acpm_handle;
->> +       struct clk_hw_onecell_data *clk_data;
->> +       struct clk_hw **hws;
->> +       struct device *dev = &pdev->dev;
->> +       struct acpm_clk *aclks;
->> +       unsigned int mbox_chan_id;
->> +       int i, err, count;
->> +
->> +       acpm_handle = devm_acpm_get_by_node(dev, dev->parent->of_node);
->> +       if (IS_ERR(acpm_handle))
->> +               return dev_err_probe(dev, PTR_ERR(acpm_handle),
->> +                                    "Failed to get acpm handle.\n");
-> 
-> Remove the period please. Most error messages don't have proper
-> punctuation.
-
-okay, will update.
-
-> 
->> +
->> +       count = acpm_clk_gs101.nr_clks;
->> +       mbox_chan_id = acpm_clk_gs101.mbox_chan_id;
->> +
->> +       clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, count),
->> +                               GFP_KERNEL);
->> +       if (!clk_data)
->> +               return -ENOMEM;
->> +
->> +       clk_data->num = count;
->> +       hws = clk_data->hws;
->> +
->> +       aclks = devm_kcalloc(dev, count, sizeof(*aclks), GFP_KERNEL);
->> +       if (!aclks)
->> +               return -ENOMEM;
->> +
->> +       for (i = 0; i < count; i++) {
->> +               struct acpm_clk *aclk = &aclks[i];
->> +
->> +               /*
->> +                * The code assumes the clock IDs start from zero,
->> +                * are sequential and do not have gaps.
->> +                */
->> +               aclk->id = i;
->> +               aclk->handle = acpm_handle;
->> +               aclk->mbox_chan_id = mbox_chan_id;
->> +
->> +               hws[i] = &aclk->hw;
->> +
->> +               err = acpm_clk_ops_init(dev, aclk,
->> +                                       acpm_clk_gs101.clks[i].name);
->> +               if (err)
->> +                       return dev_err_probe(dev, err,
->> +                                            "Failed to register clock.\n");
->> +       }
->> +
->> +       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> +                                          clk_data);
->> +}
->> +
->> +static const struct platform_device_id acpm_clk_id[] = {
->> +       { "gs101-acpm-clk" },
->> +       {},
-> 
-> Please drop comma here so that nothing can come after.
-
-okay. Thanks for the review!
-Cheers,
-ta
 
 
