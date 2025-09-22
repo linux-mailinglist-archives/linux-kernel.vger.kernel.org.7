@@ -1,195 +1,100 @@
-Return-Path: <linux-kernel+bounces-826992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B30B8FD86
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:50:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B3DB8FD89
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8836A18A0E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:51:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1290A4E1F39
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86ADD28D839;
-	Mon, 22 Sep 2025 09:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUADyRWy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CCA2C187;
-	Mon, 22 Sep 2025 09:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB202EC57C;
+	Mon, 22 Sep 2025 09:51:07 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E6E2C187;
+	Mon, 22 Sep 2025 09:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534643; cv=none; b=DZIcR+mxPB0jT2dO8FT77gRpE2mxEhkakWFFxaO4V4X5CjbxjdIQumsHGkoUv04N8ryTP75gJJOAC6acMFcHr7b6R0zsyk8llseTXmK0y3pQQwrTFFR8axUkA90hAIfaPgIGgk6fWNAcYHfIif+SoHeROPKT9ZU8ZVt8lCYrcI8=
+	t=1758534667; cv=none; b=jkaMXEG0gldDMWd9+u//A8XSM6MKHz2cto4oV90mrxfK72pSIcY0cG3LcX7jB1YoqyAuq5x/R/5HbB8nXdPkFuUnno3GUGTcpFzSQxyD9AM3sgQpuv5KSUFaWZgrPNOlWyucSQ1SFGBw/VU6Gv+bYZD8oF668QY8NtC8vh3kWBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534643; c=relaxed/simple;
-	bh=GEm+Szk8tzx4sPR6HaHuWKnegmQxHaCctzin/o/6Vks=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ng+vieDdDmtyDxky09pRuIeP45kuienbNSEMdi4tm8+0toqxIQk0BKBemfc0IWVlvgiNPcFHq9gK4yOnd42MxJFjVwAtEI97JIzVTG7TA+rjSrNK5O3eGwqztDaNaPKNzyKVuXSqkMNbXoa4XLv/dAWVXAbub4ySTLNwqNJMLZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUADyRWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D78C116B1;
-	Mon, 22 Sep 2025 09:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758534643;
-	bh=GEm+Szk8tzx4sPR6HaHuWKnegmQxHaCctzin/o/6Vks=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bUADyRWyQH2K4yeEj0ebzs7UQj98UmhSwR05kA0xofuL6OibSVvm8DVuD4YUb53OX
-	 BkSClUVXPmd6CYIztdpe+3Q6ehzzq3X2yRtOp7dF6yJD7QN+2LaVNh0p3So4rMT9Oy
-	 j7t+yQT4xIzkoCozp+fzcwJ4s2iHrrwhBgRvKtO680ADuJuP36h0jKQqnbxH3+lXb5
-	 JJ40wz4cwTi48HAFjgmENKSpS1wItG8cNzan+kg5tVsDg/iracPJtsmwFKS0eRyW8z
-	 KsRSXX2ZS7XoaK0F6Ao2nRCMFzaWyVh+zHTwYmXBFeiDxYhxKU2GlCvY8OoNw/5Beo
-	 mwX/NABoIUZwQ==
-Date: Mon, 22 Sep 2025 10:50:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: linux-next: manual merge of the kvm-x86 tree with the tip tree
-Message-ID: <aNEb7o3xrTDQ6JP4@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758534667; c=relaxed/simple;
+	bh=UFwZJr0aFA/XsWzfw/1yPz0pmDbK1CxNoKSdVsZrNPg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cg9IOW61R0lLOFqFqHOsJh4wh+ymp40mSOwY0whIE/5RgrKkMAjIA4I4kAVmNH8hY0ORS0k5rOQbUgn4tqcVunR8lBAArdVUrYCQ+towiJDmTW2OFHgKVclgX9lS9s0T6UP8c7xieA+vjqho+VeXbT5ZgOfRwXP9mZpfKrFmRKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee168d11c044bc-ffea6;
+	Mon, 22 Sep 2025 17:51:00 +0800 (CST)
+X-RM-TRANSID:2ee168d11c044bc-ffea6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee368d11c021c8-9f99b;
+	Mon, 22 Sep 2025 17:51:00 +0800 (CST)
+X-RM-TRANSID:2ee368d11c021c8-9f99b
+From: liujing <liujing@cmss.chinamobile.com>
+To: john.g.garry@oracle.com
+Cc: will@kernel.org,
+	james.clark@linaro.org,
+	mike.leach@linaro.org,
+	leo.yan@linux.dev,
+	suzuki.poulose@arm.com,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-arm-kernel@lists.infradead.org,
+	coresight@lists.linaro.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] perf sample: Fix the wrong format specifier
+Date: Mon, 22 Sep 2025 17:50:57 +0800
+Message-Id: <20250922095057.3136-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QF1hbZkcZPlWF2mW"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+
+In the file tools/perf/util/cs-etm.c, queue_nr is of type unsigned
+int and should be printed with %u.
+
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+---
+ tools/perf/util/cs-etm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 30f4bb3e7fa3..d13575285b19 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -777,7 +777,7 @@ static void cs_etm__packet_dump(const char *pkt_string, void *data)
+ 	char queue_nr[64];
+ 
+ 	if (verbose)
+-		snprintf(queue_nr, sizeof(queue_nr), "Qnr:%d; ", etmq->queue_nr);
++		snprintf(queue_nr, sizeof(queue_nr), "Qnr:%u; ", etmq->queue_nr);
+ 	else
+ 		queue_nr[0] = '\0';
+ 
+-- 
+2.27.0
 
 
---QF1hbZkcZPlWF2mW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-Today's linux-next merge of the kvm-x86 tree got a conflict in:
-
-  arch/x86/kvm/emulate.c
-
-between commit:
-
-  6204aea36b74c ("KVM: x86: Introduce EM_ASM_1")
-
-=66rom the tip tree and commit:
-
-  f8457615b71c6 ("KVM: x86: Don't emulate instructions affected by CET feat=
-ures")
-
-=66rom the kvm-x86 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/x86/kvm/emulate.c
-index 796d0c64f9baf,5c5fb6a6f7f92..0000000000000
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@@ -4001,11 -4153,11 +4088,11 @@@ static const struct opcode group4[] =3D=
-=20
-  };
- =20
-  static const struct opcode group5[] =3D {
- -	F(DstMem | SrcNone | Lock,		em_inc),
- -	F(DstMem | SrcNone | Lock,		em_dec),
- +	I(DstMem | SrcNone | Lock,		em_inc),
- +	I(DstMem | SrcNone | Lock,		em_dec),
-- 	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
-- 	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
-+ 	I(SrcMem | NearBranch | IsBranch | ShadowStack, em_call_near_abs),
-+ 	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack, em_call_far),
- -	I(SrcMem | NearBranch | IsBranch, em_jmp_abs),
- +	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
-  	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
-  	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
-  };
-diff --cc arch/x86/include/asm/cpufeatures.h
-index b2a562217d3ff,8738bd783de22..0000000000000
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@@ -495,8 -496,7 +496,9 @@@
-  #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TS=
-A-SQ */
-  #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TS=
-A-L1 */
-  #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers usin=
-g VERW before VMRUN */
- -#define X86_FEATURE_MSR_IMM		(21*32+14) /* MSR immediate form instruction=
-s */
- +#define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-u=
-serspace, see VMSCAPE bug */
- +#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring C=
-ounters */
-++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instruction=
-s */
- =20
-  /*
-   * BUG word(s)
-diff --cc arch/x86/include/asm/msr-index.h
-index 718a55d82fe45,717baeba6db3c..0000000000000
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@@ -315,14 -315,15 +315,16 @@@
-  #define PERF_CAP_PT_IDX			16
- =20
-  #define MSR_PEBS_LD_LAT_THRESHOLD	0x000003f6
- -
-+ #define PERF_CAP_LBR_FMT		0x3f
-  #define PERF_CAP_PEBS_TRAP		BIT_ULL(6)
-  #define PERF_CAP_ARCH_REG		BIT_ULL(7)
-  #define PERF_CAP_PEBS_FORMAT		0xf00
-+ #define PERF_CAP_FW_WRITES		BIT_ULL(13)
-  #define PERF_CAP_PEBS_BASELINE		BIT_ULL(14)
- +#define PERF_CAP_PEBS_TIMING_INFO	BIT_ULL(17)
-  #define PERF_CAP_PEBS_MASK		(PERF_CAP_PEBS_TRAP | PERF_CAP_ARCH_REG | \
- -					 PERF_CAP_PEBS_FORMAT | PERF_CAP_PEBS_BASELINE)
- +					 PERF_CAP_PEBS_FORMAT | PERF_CAP_PEBS_BASELINE | \
- +					 PERF_CAP_PEBS_TIMING_INFO)
- =20
-  #define MSR_IA32_RTIT_CTL		0x00000570
-  #define RTIT_CTL_TRACEEN		BIT(0)
-diff --cc arch/x86/kvm/emulate.c
-index 796d0c64f9baf,5c5fb6a6f7f92..0000000000000
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@@ -4001,11 -4153,11 +4088,11 @@@ static const struct opcode group4[] =3D=
-=20
-  };
- =20
-  static const struct opcode group5[] =3D {
-  	F(DstMem | SrcNone | Lock,		em_inc),
-  	F(DstMem | SrcNone | Lock,		em_dec),
-- 	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
-- 	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
-+ 	I(SrcMem | NearBranch | IsBranch | ShadowStack, em_call_near_abs),
-+ 	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack, em_call_far),
- -	I(SrcMem | NearBranch | IsBranch, em_jmp_abs),
- +	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
-  	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
-  	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
-  };
-
---QF1hbZkcZPlWF2mW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRG+0ACgkQJNaLcl1U
-h9Bb0wf+NYH0rfunVOk7T+n8Uyjh5kfNgwyull2F1D2i1z7zizDbD/I3O8eXSq+1
-apkikkjw/ydBRpX+7KhvVNeJ+NtBF0c1t5MyFnepgsWwl59o74KPqtiLGJwzulmg
-CwiOwW3yrqFwuE2Psm8fQL9GFknx0+SwGrSz0g46+tEG98AiNZDx7QpUYwxynMPh
-tWh4aPeXAgZnvDMdMecYt4Trsj/lezapDjgOlSgnHgg1Pi0U/gxA90Ij4CksGDBL
-lmF2KM3o5O4obfNfQLoL2bDAWl1RdJ2qMLw4fz/Gcx57EG/UadtVSsIjq+wITL83
-gxpWgkFrlAKI4vzSBls2CdGwJJz2Sg==
-=5k2Q
------END PGP SIGNATURE-----
-
---QF1hbZkcZPlWF2mW--
 
