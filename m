@@ -1,132 +1,124 @@
-Return-Path: <linux-kernel+bounces-827260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A712B914C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:08:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91795B9148D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9612E18A2359
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145823AEB5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EF1309EEC;
-	Mon, 22 Sep 2025 13:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13D8309DDF;
+	Mon, 22 Sep 2025 13:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZcAqSJqB"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bN6KJ0ON"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B68DC120;
-	Mon, 22 Sep 2025 13:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FAC7081C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758546483; cv=none; b=hGk0g9ON7FdHtI7nL1IZ9v4bqiB5+MVV+ohRtKM3zTgk4+4IS5WWVH6ron3M6EEWBcWNS1+VD+krDj5WzZdynNuH9NMYH8G0O4/niYF7XRw95hxkxJCiQL7vGpraoSlExMFyuOhMqENewcNpk1cO1sAF8WmnsJdoLa9vKQ4NsME=
+	t=1758546281; cv=none; b=dvtYC9IX70qdKptSTY4NguDezRye8JuaHWcn9LPbv+LRW6zEm7+bt1KEKEyMBuZb3r947w3iDEaRVtcIDnJQZQyScgldegmaReI4JDYHigfLf6KJhHbnzNdHykTpOXlcrPKMy9vAA7t58TfqNS4WpuJnrJsWQ3hzLigchxg2izc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758546483; c=relaxed/simple;
-	bh=QVsLC+z3WG5ImB4zyT7a9y80b64iWfxOZjKHhCuYOiA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A0t3xlp8fYPj7v8k4Xtc+8y9aw4qWJd3UiXtaBgO2IRvGmCdi1UZvzPpEN37zUmoiIArKRLuE3NsPJL5TRvFV5aaD+Yap6Tmc/MuKmKbxYg8rxH6NFHVyYC4gN35pW940FjigQ5DsM89nr2lGPX/s2X74D17dYbIOwwi4SW6Ufw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZcAqSJqB; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1758546482; x=1790082482;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QVsLC+z3WG5ImB4zyT7a9y80b64iWfxOZjKHhCuYOiA=;
-  b=ZcAqSJqB6eTJDgHWiAF6I6D5hqkJtPjKRt/RWJikmZFwmD/1vp3NeDgT
-   P18ymFrRrAT8NdK44h+Tb7QNmBFNYJXdHV4YA3pfpAEaZqLPpuyGO28Fp
-   MFm0t8M9Yn++1rMIPkLZsOPOwQvTozIcTXsI1Hft8BcHG1Xqw8lWHm1CG
-   F3wLoqe8kI04G6wLyCHREhv3F+h1FwtKfZFw2rUxmftnwslBCdGvJS2cK
-   JtIWNWv4yLzsB+jo+wtMBrrArDAI1uOgVLNQuXvTs/eeFDGjE9K3RJz+R
-   DTxbQjiGk5xx/5En+9donse1N4V4l2PrjjdGUFrFH+PEDeA99j17kA+GR
-   w==;
-X-CSE-ConnectionGUID: FVJ2Zij+QNKIJUYJJlqdNg==
-X-CSE-MsgGUID: XEdQEz2jTWeqK2v8yEHvSQ==
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="214200142"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Sep 2025 06:07:59 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 22 Sep 2025 06:07:22 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 22 Sep 2025 06:07:20 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next] net: phy: micrel: Fix default LED behaviour
-Date: Mon, 22 Sep 2025 15:03:14 +0200
-Message-ID: <20250922130314.758229-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1758546281; c=relaxed/simple;
+	bh=FMG5xfh2EwtBQe8CnKPSbpNIhMPeeyV6In//RbskC8o=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tSNMWIRA8iR2BOL1OiceQ+FqjGpfCmCmcr00CTW5nBMrOYYD0zVT1mpOJFtexWUgqysYoyDY+YWwC9drkPOjoc9TUatic+buigXbGfJVnExct3luE87PdorkDwHJVi2JncuRhoqVHYROy1gN+XFA5w1e6yAzW8rQaHhLXCFJ4MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bN6KJ0ON; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3ef9218daf5so518239f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758546277; x=1759151077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iap9wqIfUNfzgRsabkOWwLbHyEDjwXlweruKw/9NanY=;
+        b=bN6KJ0ONyqwRgYW0XeyLUggf8aA+XVmQYu4P8Y1lnGTWmvLiKnzzAg8CbAg9kxusvI
+         URhwZFdD4skhm4lt6i4xG62L8CyGoegLX0dOqVooDySDQ+s85wPb4A2kKtNkvISuRGkz
+         lXp58WfpLMg5IBjIaMAIw5NQu6t56VUmvwq1l10p15cM5wWpyFmMGoV3WytI390pA52P
+         O2zwZBjkqcEjxhxo6Cd0pJxdjVmFoxm7qXxpax3o6fbRcJBVIj9yJbfrSZSDc6a6CzPt
+         eeP67vAHpKrABGnIAG1eqTjAioTdZWk8p+QAvQRXALySsuympnCtlU3Oj98KptsuDVlI
+         nBzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758546277; x=1759151077;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iap9wqIfUNfzgRsabkOWwLbHyEDjwXlweruKw/9NanY=;
+        b=iXZ10fNdBSfOgxEEU6RpeL6jsmI4e0927ZcTVIOo8R7+3emiNLllOw96KYtZpX3+1N
+         F6GpgOqO/wVtRSMHLc5GhjLlff6snu2WKi2NqpL+gDjTADNmbFuN/cFCvVLAvzn6w9rC
+         OwVJOcdwjZkcPDbxn1UbMQvZNaLSxtRLUuyT5UOY2tusnkEohGHY1jXfSfP7DYfQQzHj
+         8HjzMwHSW17SLJjXQg8z7TFnacstc7aO13EDQknUJvvWy3gBtl2qSq/wXpd3H8rkVYXd
+         Gkhp3RnMR6uLi+ZbOEvgBNxyWMEark1HafXVBtEJLy1klB2D6Qnj/EkA42XGKPfEgfUA
+         GSYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+1G6WqQiGHLyo77Nh0z8Rp6Guq9de3KlPt5J3XGsyI+/VhZTk5o5CsCEY+aXtHzkuvoQmlZx9vy9c01g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdXS8rI5mjnXC4YhaKGPEGIm+AWMRC36BbLmLJKRzf110yrIWT
+	vhdXgU1tnIMB+BiHEl48yucMuMF4uvu5YaCEnvI1lk2z3K5U+H1BDjdnTJbTGU/n7YVyQ2Z01Sl
+	zMJtv4Y9Pcg==
+X-Google-Smtp-Source: AGHT+IG4/C+rN4qaU8lkxJCMdTPbpFXd+PfBKwy+XEmnl90zNWLAtfCNII+uZuRAKVlJ4dArjk/TBRTMhKKd
+X-Received: from wmbdr20.prod.google.com ([2002:a05:600c:6094:b0:45d:e232:8a66])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2dc9:b0:3ec:ddf7:41b4
+ with SMTP id ffacd0b85a97d-3ee87e9c87amr11321359f8f.62.1758546277574; Mon, 22
+ Sep 2025 06:04:37 -0700 (PDT)
+Date: Mon, 22 Sep 2025 13:04:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
+Message-ID: <20250922130427.2904977-1-abarnas@google.com>
+Subject: [PATCH v2 0/2] arm64: modules: Reject loading of malformed modules
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Dylan Hatch <dylanbhatch@google.com>, 
+	Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-By default the LED will be ON when there is a link but they are not
-blinking when there is any traffic activity. Therefore change this
-to blink when there is any traffic.
+Hi all,
 
-Fixes: 5a774b64cd6a ("net: phy: micrel: Add support for lan8842")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Here is version two of the patches I previously posted here:
 
----
-This fix is targeting net-next and not net because the blamed commit
-doesn't exist on net
----
- drivers/net/phy/micrel.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+  v1: https://lore.kernel.org/all/20250919122321.946462-1-abarnas@google.co=
+m/
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 399d0cf4d3426..0b42400e5e098 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -267,6 +267,8 @@
- 
- #define LAN8814_LED_CTRL_1			0x0
- #define LAN8814_LED_CTRL_1_KSZ9031_LED_MODE_	BIT(6)
-+#define LAN8814_LED_CTRL_2			0x1
-+#define LAN8814_LED_CTRL_2_LED1_COM_DIS		BIT(8)
- 
- /* PHY Control 1 */
- #define MII_KSZPHY_CTRL_1			0x1e
-@@ -5894,6 +5896,23 @@ static int lan8842_config_init(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
- 
-+	/* Even if the GPIOs are set to control the LEDs the behaviour of the
-+	 * LEDs is wrong, they are not blinking when there is traffic.
-+	 * To fix this it is required to set extended LED mode
-+	 */
-+	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-+				     LAN8814_LED_CTRL_1,
-+				     LAN8814_LED_CTRL_1_KSZ9031_LED_MODE_, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-+				     LAN8814_LED_CTRL_2,
-+				     LAN8814_LED_CTRL_2_LED1_COM_DIS,
-+				     LAN8814_LED_CTRL_2_LED1_COM_DIS);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* To allow the PHY to control the LEDs the GPIOs of the PHY should have
- 	 * a function mode and not the GPIO. Apparently by default the value is
- 	 * GPIO and not function even though the datasheet it says that it is
--- 
-2.34.1
+Changes:
+  * Renamed the parameter `is_module` to `skip_dry_run` in scs_patch()
+  * Moved comments to module_finalize() and improve justification
+  * Instead of rejecting all modules with callback, reject those with cb
+    pointing outside core kernel text
+  * Replace -EPERM to -ENOEXEC when rejecting modules with incorrect cb
+  * Fix missing return in apply_alternatives_module() placeholder
+
+Best regards
+Adrian
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Dylan Hatch <dylanbhatch@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+
+Adrian Barna=C5=9B (2):
+  arch: arm64: Fail module loading if dynamic SCS patching fails
+  arch: arm64: Reject modules with internal alternative callbacks
+
+ arch/arm64/include/asm/alternative.h |  7 +++++--
+ arch/arm64/include/asm/scs.h         |  2 +-
+ arch/arm64/kernel/alternative.c      | 19 ++++++++++++-------
+ arch/arm64/kernel/module.c           | 21 +++++++++++++++++----
+ arch/arm64/kernel/pi/map_kernel.c    |  2 +-
+ arch/arm64/kernel/pi/patch-scs.c     | 10 ++++++----
+ arch/arm64/kernel/pi/pi.h            |  2 +-
+ 7 files changed, 43 insertions(+), 20 deletions(-)
+
+--=20
+2.51.0.534.gc79095c0ca-goog
 
 
