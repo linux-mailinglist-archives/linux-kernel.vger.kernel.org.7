@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-827003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC95AB8FDCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:55:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAF5B8FDD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A2E421C62
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EB43AD806
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9079B2FF65C;
-	Mon, 22 Sep 2025 09:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB632FFF89;
+	Mon, 22 Sep 2025 09:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vmM5zUI1"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GyH4W6GW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7802FF142
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC062FF142
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758534863; cv=none; b=sc5Zfhb16cSN5tgLnJYLvKH5RRCtXebIE7avLLwJ7sBIa3Kc0ooD+Z88DZJyoMP0C8b4FCH01qYCOzE2Rwfk4RHJPrVlAqd0/FdsmVkQvUc3uIksvRQVf0oeK7Y1mOPURqmWcXbeGs6d7T/ztLFXIW33oyTYt+Le6sUqbqUZHVc=
+	t=1758534868; cv=none; b=BCJXcljeNEvxt3VVDVetTJAnts28ITOXJHNNK0Kr9TmVEqdKtmHMXI6wpjZDXnV5yFbAj/UD8/BEreUfb9ztoG7ZLpoK5kewkJzIM67tx6yHseqmYMWlH9Dr85fc2ma6U9cLp9mwuMd9WATIPjscanZrZHwZah1+pc1+Jc6ynEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758534863; c=relaxed/simple;
-	bh=ofltCFGl+Fn0+xwFt5pJ6CBY56G2B9bdV+Mhu9zJhTA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ALF70HPOaL19fcWQkPSbqsgOIOmxsN9Fdmp20E1/KWbctObcHAD65VAxWVEZnJU70gxzhSTksKO63DvI86+QbTgcbPkqjp4W0ZErtYnmU/vMSIOPSWric+Ftp8ywJoNoZuvQIUYIseCwc+/QVaGDj9g/Z3ZsqoeX1UzmIwYZaeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vmM5zUI1; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so31340885e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758534860; x=1759139660; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aY7gg6UvtyCZjbjLbPkoMruJoAlaJpYh2FM5wNJH29Q=;
-        b=vmM5zUI1pmJOO+jQacKZWRMHF6bf4Yohb3MyScrhW8yP4dDEe8FD/F0nOJUXa+OESt
-         JKac4RUkRHLTUw8JbHjxroaYaLuYBbLbUSE7MK1V0JxVFPF/l5TpmA1qXyD8b1IzEeic
-         CaRfNDkXluQVweGVjnyCO8qvrmyYHHXCuX5ParxTyWkJ4fPEKxij4VrGR+c+W0Zsg8Og
-         TsSoS9Voc4r+SlXlHrZEtwuevpGU+7gHUGbgAS7k1Y3xN3dJJFmZDAqOcyTy4Uo+kBsi
-         9yaBJkq98urkd1ZIqXaLbWWigrRoBW1+Oe27MK3sEsSFElICIBHgFsoKu3UXOyS/CIvx
-         4pJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758534860; x=1759139660;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aY7gg6UvtyCZjbjLbPkoMruJoAlaJpYh2FM5wNJH29Q=;
-        b=iLqfNZoAsinsP8AmGydu38NWRAKmMY3ssEc2gwXEjOW89Z2cnRvAQYWeGev38ISdFH
-         /9nZ5li5/GuvoNBwW8lSrywAiLrDG/KHKq1hRTxNJsuZIIC8hDpJJcrMz6AWESk5i56p
-         tIWJjxZiG6aMoHCXkpkZ+R2YffkbNijSRk1YwgcfayphVp+zbcwP/v2iuKaEPI4V9Kmr
-         BIvN+xuFvKB5pT3au8GBeRJtpXCFo3mr18sbuE2qimAhDPTKBsAi0V4PEVAIsAuzRNaX
-         gsBJGxoL6564HyBzSPzSqB3CtUtUEiyJCepYYA5xQdbdrVOJj0b6dOqk+dBY+cWy2J8a
-         sHXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2NQepH70pHCB77+3bPaFLdSVLkpTcPnCjd84X8u24VvYhzJIBxCtB3SElGPCStnf5zcFekur8L+zQLxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzbgijz72In2LIBE5uvvE4OJ20UIoiBYiIacIs0piuA2E4FSSdW
-	/lQ9mkxgLrl7albsFbKGSQcMABPNZXDzfB1JPI2v2gbt4Q/MjwmUeLwlxnIetIXTaokPu8WFLul
-	VxIVcnYQ=
-X-Gm-Gg: ASbGnctKus5InQUVWHE9HB2MSKZILS1hPzV15kjrBn3JR5nDmeOMBiOxN/288Mz4b5e
-	911u224demmi/3Z/eBBtKLaca0hXZ4kl2VDlypM5f6e7004PXqcsmktA0X1cJxcpduSbOPYPKqu
-	V7eJGRWfVztf4WSTofm1b+FRwt5dyHgvtDDlBDwcc8ket5XqER1Csv4Vjw1aDLZe10HS29jEGjG
-	KPxH5o5fmdNzB005TX8CE228ccGDVbeZA75n7k9S2Eb6bTkx/v/LypQ3LdXwLcy4hH3hnMsvQg8
-	untRLM84kXxaW6Dx1sdN4+biiM4Dr4fTokIOgRaFrx/d5lvSzut42S6BimdymW2jnL9LaYzEvha
-	2IGAGrm80yrWR4Pn5
-X-Google-Smtp-Source: AGHT+IFZRkp3yQb+hAsG6r19lZiP+SsWQRLfndiVx65XjBARU/yVpKjFGkGSzHEkduqec7SW1Qc1Yg==
-X-Received: by 2002:a05:600c:c0d7:b0:45b:9b9f:88cb with SMTP id 5b1f17b1804b1-464fdf4425emr112848235e9.16.1758534860304;
-        Mon, 22 Sep 2025 02:54:20 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:824c:ead0:65a5:c51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-467fc818e00sm156496835e9.0.2025.09.22.02.54.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:54:17 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 22 Sep 2025 11:54:05 +0200
-Subject: [PATCH 4/4] gpiolib: reuse macro code in GPIO chip printk helpers
+	s=arc-20240116; t=1758534868; c=relaxed/simple;
+	bh=8w6/o14ZXBOrZ5fcQwirnz0Nsc2q9gxNt8eNNNzu6mQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=knKjE0U7pzGURaEPeVcVol7Iq+jBo5MmihJ7wvOc+xNMrMvCfcXAbOBfXzEts841ItiSKFCUAFnR59eiVst7N6sYRy+isunpd/+k6hxqQzexBHtnlHzaIW8Dg2eoT/6hDj552Xsaas1Fhj8O5G0b5jaFv+NYnyCD0AEq3JoK7K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GyH4W6GW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E8AC4CEF5;
+	Mon, 22 Sep 2025 09:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758534867;
+	bh=8w6/o14ZXBOrZ5fcQwirnz0Nsc2q9gxNt8eNNNzu6mQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GyH4W6GWIhCtzhojtNAKnnNT3V4TSsQuNRdntOF0HddNjN5q1dWXKhT2WEtrE29sw
+	 dOqGF7XkXKhBwz0J/MJ36HFHZe/DcC/9u6sn/bWpXKqfWdqOa64aZelsyjuUvEf/Eb
+	 u6A9cTCQNFWqHuuoBgsq3aRtI4Xa4ORPEcWghaARpSxt+xAxVPCEoVCQDrebOzULz4
+	 TYDwhH33FkuEdaaYPPRS/uA5qQvgVNO067j2ctbZ0CVQ3L1fs8tFeQk5ayxPgEVkoB
+	 qnD31iJsBmNI9dZNylKZZpsKejo8x4NHE5GwcQOznc2/NXE2UvWT3VVx7+pKf9tmat
+	 uusk313WH3Q9A==
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 7788CF40066;
+	Mon, 22 Sep 2025 05:54:26 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-09.internal (MEProxy); Mon, 22 Sep 2025 05:54:26 -0400
+X-ME-Sender: <xms:0hzRaPDy7YTN00wQ7F9AdRbAc3f48LRKlq6vX1dU37hHwB3xnpXCsA>
+    <xme:0hzRaBAXrM0KpYoCKN2tNH7ajEkhR-pHOoLUMiIrCMINwH5jfyvP_xBv3yi4mjG0E
+    8TlGLGOyodQu8Qzlo0>
+X-ME-Received: <xmr:0hzRaAnpbjncp3NO83SBZpFhw_-inT8PX_Ozmz0KqHBpeu-DxH4fkffC8NRE9A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdehjeehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
+    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
+    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
+    grmhgvpdhnsggprhgtphhtthhopedviedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepnhgvvghrrghjrdhuphgrughhhigrhiesrghmugdrtghomhdprhgtphhtthhopehrih
+    gtkhdrphdrvggughgvtghomhgsvgesihhnthgvlhdrtghomhdprhgtphhtthhopehthhho
+    mhgrshdrlhgvnhgurggtkhihsegrmhgurdgtohhmpdhrtghpthhtohepjhhohhhnrdgrlh
+    hlvghnsegrmhgurdgtohhmpdhrtghpthhtoheptghhrghordhgrghosehinhhtvghlrdgt
+    ohhmpdhrtghpthhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhope
+    igihgrohihrghordhlihesihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihhnihhplh
+    hisehgrhhsvggtuhhrihhthidrnhgvth
+X-ME-Proxy: <xmx:0hzRaPgja_LiSqIlFl1iQEvsFllHCj8NS-IxwsP_Dxk97Elv6fn-ug>
+    <xmx:0hzRaJdmaQX2cUwVC8Phea1gUNgGL2OUQfFwS_vifUy6q7mNa-Qfpw>
+    <xmx:0hzRaPATkaP1IqLbnlOsIquu8LgK2z6hHVkKntlZefJDsit2pTI6cQ>
+    <xmx:0hzRaN61M-jNpmPgbfnkEfdANdJUjJDpA-9ySLSx1N9ybho-nRqPeA>
+    <xmx:0hzRaMw71qp7PqRJm_0fXe5xz7tJA_J6QJbEojxIyLdx7W_v64Ts_t8C>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 22 Sep 2025 05:54:25 -0400 (EDT)
+Date: Mon, 22 Sep 2025 10:54:23 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: "Upadhyay, Neeraj" <neeraj.upadhyay@amd.com>
+Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "john.allen@amd.com" <john.allen@amd.com>, 
+	"Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com" <seanjc@google.com>, 
+	"Li, Xiaoyao" <xiaoyao.li@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"minipli@grsecurity.net" <minipli@grsecurity.net>, "mlevitsk@redhat.com" <mlevitsk@redhat.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, naveen.rao@amd.com
+Subject: Re: [PATCH v15 29/41] KVM: SEV: Synchronize MSR_IA32_XSS from the
+ GHCB when it's valid
+Message-ID: <nvd4fg4mfd6cdcnqqaqyaqthn5ljuzswplvnslpv2pkuano4mf@yn45t5solwzp>
+References: <aMxs2taghfiOQkTU@google.com>
+ <aMxvHbhsRn40x-4g@google.com>
+ <aMx4TwOLS62ccHTQ@AUSJOHALLEN.amd.com>
+ <c64a667d9bcb35a7ffee07391b04334f16892305.camel@intel.com>
+ <aMyFIDwbHV3UQUrx@AUSJOHALLEN.amd.com>
+ <2661794f-748d-422a-b381-6577ee2729ee@amd.com>
+ <bb3256d7c5ee2e84e26d71570db25b05ada8a59f.camel@intel.com>
+ <ecaaef65cf1cd90eb8f83e6a53d9689c8b0b9a22.camel@intel.com>
+ <7ds23x6ifdvpagt3h2to3z5gmmfb356au5emokdny7bcuivvql@3yl3frlj7ecb>
+ <bd8831a3-2a23-43d2-9998-73cd5165716c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250922-gpio-debug-macros-v1-4-d99739dff711@linaro.org>
-References: <20250922-gpio-debug-macros-v1-0-d99739dff711@linaro.org>
-In-Reply-To: <20250922-gpio-debug-macros-v1-0-d99739dff711@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1596;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=O0thVIKyYLe+KZxugdYojp6zmN2ZinwZZo8q3GtWnQ8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo0RzBwHBNnfnUgbrI7iQmF5iEIfyvMwZrkluZM
- H2fvYPCC5iJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaNEcwQAKCRARpy6gFHHX
- ckMtEACP4qOB8drJaVklPS0jwn0SwPGitzkS2g996cRJd7yYmzpznpFyFLdMJhho9PqrxBzMC8a
- kCPcZ26V6f6oJzLzd0Nn8jFPOexjhmEdvZYOCFPR4+rl2NTRu1rIJDAtdMZ0yWrtCcygPImOgkI
- GBZdbgm8SiQYYVTEOs2sNvK57pqUdV0ndQGGvGRP48adctic3D0tOnQwroIbl9U7arC2yhJMPKD
- q6S9OiZc+z0Tyu0uJzOaInDPCVTBfA4it3ukDgprOCfav1hee2j0alFjyQN+m5oS0KMrqY0qmPh
- 0z3V9mciLSUmsYMdvfN0P71KRS/SwQjNab/4Q9Uchr+8rn7cmX80rezENv47Mpwk3nDf/V0cFwz
- n5FofuzAb9u18ufK5tER6cfqeaE1qVuiXFGZAFQZMz3LqLO+ESAfYLaU+/e469PT5QRYaL62rsx
- x6LxK4+Lxti/sy4+bYpvqS4efpln7J7cIJcOi8euK+Mp7bybMOlEQNdmyC8pGYVk0TFpd3kyBua
- 2WwyeCEqAORwL2oqD5CGF1blB5sq1eIZzKffbu3+S9CXVRY0UJ4uuOlvCYSYtSCbNq8g4TLRN/N
- JfhCiJyuCqjHG8uTaY7+k5jCF5dpQ9j0LTkvLOa1/JokBArIAAHLHxcpyW4EGHVL1Oe4rjdQJ7f
- ThLOMa8bBI9dRyQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd8831a3-2a23-43d2-9998-73cd5165716c@amd.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Sep 22, 2025 at 03:03:59PM +0530, Upadhyay, Neeraj wrote:
+> 
+> > 
+> > In TDX case, VAPIC state is protected VMM. It covers ISR, so guest can
+> > safely check ISR to detect if the exception is external or internal.
+> > 
+> > IIUC, VAPIC state is controlled by VMM in SEV case and ISR is not
+> > reliable.
+> > 
+> > I am not sure if Secure AVIC[1] changes the situation for AMD.
+> > 
+> > Neeraj?
+> > 
+> 
+> For Secure AVIC enabled guests, guest's vAPIC ISR state is not visible to
+> (and not controlled by) host or VMM.
 
-The arguments passed to dev_$level() macros are duplicated across the
-gpiochip_$level() macros so put them under an intermediate wrapper.
-While at it: wrap it in a do-while guard.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib.h | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index dd96b2c2e16ed1cad2a573e0dfec3ab7260da1a8..b4c5369f8a3314244424d0c90ba006f7568b314e 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -297,13 +297,14 @@ do { \
- 
- /* With chip prefix */
- 
--#define gpiochip_err(gc, fmt, ...) \
--	dev_err(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
--#define gpiochip_warn(gc, fmt, ...) \
--	dev_warn(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
--#define gpiochip_info(gc, fmt, ...) \
--	dev_info(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
--#define gpiochip_dbg(gc, fmt, ...) \
--	dev_dbg(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__)
-+#define __gpiochip_pr(level, gc, fmt, ...) \
-+do { \
-+	dev_##level(&gc->gpiodev->dev, "(%s): " fmt, gc->label, ##__VA_ARGS__); \
-+} while (0)
-+
-+#define gpiochip_err(gc, fmt, ...) __gpiochip_pr(err, gc, fmt, ##__VA_ARGS__)
-+#define gpiochip_warn(gc, fmt, ...) __gpiochip_pr(warn, gc, fmt, ##__VA_ARGS__)
-+#define gpiochip_info(gc, fmt, ...) __gpiochip_pr(info, gc, fmt, ##__VA_ARGS__)
-+#define gpiochip_dbg(gc, fmt, ...) __gpiochip_pr(dbg, gc, fmt, ##__VA_ARGS__)
- 
- #endif /* GPIOLIB_H */
+In this case, I think you should make ia32_disable() in sme_early_init()
+conditional on !Secure AVIC.
 
 -- 
-2.48.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
