@@ -1,81 +1,95 @@
-Return-Path: <linux-kernel+bounces-826950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17823B8FB64
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A79B8FBB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DBC51898187
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:17:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 437D51890812
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B357C286883;
-	Mon, 22 Sep 2025 09:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2hhDm23"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1305A27E048;
-	Mon, 22 Sep 2025 09:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB2C285045;
+	Mon, 22 Sep 2025 09:20:51 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C7F27F73A;
+	Mon, 22 Sep 2025 09:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758532620; cv=none; b=qPP/VDsPFcAK0XHtjm2WOYJy2RA815b4+ecGZvdPFpFCKqt0wLsuP6lwUjjxNuU9q6PzeHxZrXfC5oQT2Q+2RNoEcdUfmosfh5r/WF7besSJeK1LbOq7ssTopumeLKttDVlwUO8dbAHHub0r7Br4HupbQVZCcT+69X/U+oexdrk=
+	t=1758532851; cv=none; b=A+kf1I0UUgZA6qnVy5EkqN7Sy4IWafuOiOxUZAex7W7igDrLLGJu1FTO2fTsT6c7e1zZwr+V4gC+f0QnPJo+CTbriw0+rdkXFHBu9n2xoxBqMjCLoULZJOtRr3kNL/Nuc1sO6fTCUHGkxSYhvV/U2Z/updLU/rHXYgjiZG/d5FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758532620; c=relaxed/simple;
-	bh=ndoKjbXd99W0Q01g1a5m27fkrZj/8VRmY8Cj68kDylM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CwfpgSxB7W2youj4knXoziq+GrdeBOmEKZA5ABkyZVUU341WZLDc1pnPrzOEdVGyN6yNMkNlz4pdPqzSpHOJAN2AFT9kfOmNRnYg7vO9LKIUsaAneo8RZfnFLBAa29ZE7pLgfOr4MO/HLh84QkMdof5Bw6KaH4PNQ0HM8G6fGCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2hhDm23; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6D2C4CEF0;
-	Mon, 22 Sep 2025 09:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758532619;
-	bh=ndoKjbXd99W0Q01g1a5m27fkrZj/8VRmY8Cj68kDylM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N2hhDm23neKJghj6Hh1G7FHoqN3aYYT5lvp6w6etfpj0ANC/077FPGj4AYj6msawL
-	 4L1usIw8BqBw6TWReYxYC2uL6Z7INHCgj8g1gO2m5OyiWvnojL5CgjpyrSPRBlQdog
-	 SaBjaB4Ds5jdgZnuTaS0j0uDXUtOtH1dZc97AuQcCOQ/r2aJuqOskQOV2euZA9bo0f
-	 civrwJG0o0Nm0ESsSIeoKUNkdcHyCw54CrUAhtavmO21ECM9L2QjGIzedGIrNb1bo5
-	 1OLgv0OH1E4JiEDZf43x/lGLnHhQKmAMc++Vl1BAu64z6Mnhy4VNx7hMgnfkMOoBI7
-	 W6VVc7Sm0jYQQ==
-Message-ID: <7a15302f-6528-427a-85e5-e4fef985f185@kernel.org>
-Date: Mon, 22 Sep 2025 18:16:52 +0900
+	s=arc-20240116; t=1758532851; c=relaxed/simple;
+	bh=S0/nrakrevGRyR2hm7HvwMARrNMX5on+9G/g+0431lw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e8tfyDpTSN0OiQnwVV0GXloowy/9QXQwvk++Ops8Ldh7wASK+aAKjniRA2Eq4xKd4TNXm4V2PKhUq6X1w258JtTifYF7WlKQJHtV9xWB64x0La85zVF9PutTMyc67UulA7bqyd53n3+GWwCtqHy+EWv62dr+YQfi2PdDiagrZek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee568d11432e3d-2df46;
+	Mon, 22 Sep 2025 17:17:39 +0800 (CST)
+X-RM-TRANSID:2ee568d11432e3d-2df46
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee868d114320c6-9e9a0;
+	Mon, 22 Sep 2025 17:17:39 +0800 (CST)
+X-RM-TRANSID:2ee868d114320c6-9e9a0
+From: liujing <liujing@cmss.chinamobile.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] perf bench messaging: Fix the formatting issue when printing.
+Date: Mon, 22 Sep 2025 17:17:36 +0800
+Message-Id: <20250922091736.2798-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: ata: apm,xgene-ahci: Add apm,xgene-ahci-v2
- support
-To: "Rob Herring (Arm)" <robh@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250919223532.2401223-1-robh@kernel.org>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250919223532.2401223-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/20/25 07:35, Rob Herring (Arm) wrote:
-> The "apm,xgene-ahci-v2" compatible has been in use for a long time, but
-> was undocumented. It doesn't require clocks or phys.
-> 
-> Remove the "apm,xgene-ahci-pcie" compatible which isn't used anywhere
-> while we're here.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+The unsigned int type should use the %u format specifier when
+printing with printf or related functions.
 
-Applied to for-6.18. Thanks !
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+---
+ tools/perf/bench/sched-messaging.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/tools/perf/bench/sched-messaging.c b/tools/perf/bench/sched-messaging.c
+index 93dcd9dba3d0..0a447f279d68 100644
+--- a/tools/perf/bench/sched-messaging.c
++++ b/tools/perf/bench/sched-messaging.c
+@@ -338,9 +338,9 @@ int bench_sched_messaging(int argc, const char **argv)
+ 
+ 	switch (bench_format) {
+ 	case BENCH_FORMAT_DEFAULT:
+-		printf("# %d sender and receiver %s per group\n",
++		printf("# %u sender and receiver %s per group\n",
+ 		       num_fds, thread_mode ? "threads" : "processes");
+-		printf("# %d groups == %d %s run\n\n",
++		printf("# %u groups == %u %s run\n\n",
+ 		       num_groups, num_groups * 2 * num_fds,
+ 		       thread_mode ? "threads" : "processes");
+ 		printf(" %14s: %lu.%03lu [sec]\n", "Total time",
 -- 
-Damien Le Moal
-Western Digital Research
+2.27.0
+
+
+
 
