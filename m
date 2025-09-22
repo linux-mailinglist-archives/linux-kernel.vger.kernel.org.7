@@ -1,209 +1,180 @@
-Return-Path: <linux-kernel+bounces-827301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90BAB91623
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:23:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9586B91586
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BCE18846A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:24:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE1764E236F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2720830AD0A;
-	Mon, 22 Sep 2025 13:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41ACC30ACF7;
+	Mon, 22 Sep 2025 13:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="Kc9dWOao";
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="PgbFgRuL"
-Received: from mailhub9-fb.kaspersky-labs.com (mailhub9-fb.kaspersky-labs.com [195.122.169.2])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N0h64Fls"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011049.outbound.protection.outlook.com [40.93.194.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0F7277CAE;
-	Mon, 22 Sep 2025 13:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.122.169.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547415; cv=none; b=UFWdOIESh14KOhNIn+qHaWrQfWHUqNtq5AIExb1WBVo7sFIvYmZMkk7VMjHdpIdqdpQjKi+ZdEZJllAacIfUbF4qDtIB9ViRRTATbjsBfPLV819e1tGx24EpIcp2R91e/gTGEsLowlNcO3qYrLmjOBG3jOsfZNmlFiqsiNWKWIM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547415; c=relaxed/simple;
-	bh=ce3dC1v8UJ10Q6KR1l8jHBI3v4fDQEyx/Ibs0fOjVJk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GYrURAl0POSH7ZcPjnh4zyoC4GAXUuuxFkfqWIxgo0vemZNLLdhyJVt/XqbQy6vrXEpHDw7OsTDs5HsDpT8kTNRqY5ARtZxqLAU/iF3P72VIiIYPd99AMiy5TKolc18SdXlk7N7RRCtzgSLr/TPbmSHKPxxHe1ue6Q8jCWb1SFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=Kc9dWOao; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=PgbFgRuL; arc=none smtp.client-ip=195.122.169.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1758546848;
-	bh=SLhCN3olWp1p9m1EvHm7Hswfqw6IJfg8mReYcW8JC1k=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=Kc9dWOaoodlR2eISVYlaVnsXK21J8Ort40i84Lv2fmU+XfvuEVD7leqvtW64F38gC
-	 7IxodsZHr/C2OHWvondBPp7x31Gb3IM5QZ29Bz45iER4eDIIyGY2OSL1ZcjDYjOTGh
-	 tRbItkhC8ocnLNRcFr1fAFL0skNpgGLayJ93OqR7cJcA7sdpiw3HmdNr3PYpiZUflb
-	 h5EMMertjQqRFhfaMcjnvIxdUs8JNuMmnzSmxuQ73/+ZZuTRIiQoAmcAimn4UikQ5i
-	 es0ve1jgE4LXZ0HzSYbG3zviWx5m3ZUSAcJLXhbQNWZDeVc1RX8MJmxLXWhCImPssW
-	 4Ki7Yb1g+NNOQ==
-Received: from mailhub9-fb.kaspersky-labs.com (localhost [127.0.0.1])
-	by mailhub9-fb.kaspersky-labs.com (Postfix) with ESMTP id 4542C904EB8;
-	Mon, 22 Sep 2025 16:14:08 +0300 (MSK)
-Received: from mx12.kaspersky-labs.com (mx12.kaspersky-labs.com [91.103.66.155])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "mx12.kaspersky-labs.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub9-fb.kaspersky-labs.com (Postfix) with ESMTPS id 09D2A90363A;
-	Mon, 22 Sep 2025 16:14:08 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1758546840;
-	bh=SLhCN3olWp1p9m1EvHm7Hswfqw6IJfg8mReYcW8JC1k=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=PgbFgRuLMhrDSMfBd/31FxZNRhuwJgQ4qK2BQ9V9n08zVLzD8MthrbrytmZ7q8Qt/
-	 l4jxQjqnIUMwWNqUR8gaukqwpeEeDHnhu+0Lq0jtd3SiCtqdnOxgMnJrktfTDicsEY
-	 PaxQ2mGNeDDQyIqvZldAZwjN92g0d2jkTJGjmiM6xUibl1KYzRfxUgHETs1F+xHWU2
-	 g7YFaodFi1sR2BQyS++gT4dyKN6JAyAzH+2L6Z/1tGKA/ZYKzsz95jGq9P99j4l8bL
-	 BMofAX68Ey/o1Amz1+L+rrJYp5fFkDm/5Ett9TVUOK945nK6Af1u+xOnghV3XR8w+E
-	 Vm2QDG42ADJpQ==
-Received: from relay12.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay12.kaspersky-labs.com (Postfix) with ESMTP id 585215A4CB7;
-	Mon, 22 Sep 2025 16:14:00 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub12.kaspersky-labs.com (Postfix) with ESMTPS id AA8085A1580;
-	Mon, 22 Sep 2025 16:13:59 +0300 (MSK)
-Received: from larshin.avp.ru (10.16.104.188) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 22 Sep
- 2025 16:13:58 +0300
-From: Larshin Sergey <Sergey.Larshin@kaspersky.com>
-To: Jan Kara <jack@suse.com>
-CC: Larshin Sergey <Sergey.Larshin@kaspersky.com>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
-	<Oleg.Kazakov@kaspersky.com>,
-	<syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] fs: udf: fix OOB read in lengthAllocDescs handling
-Date: Mon, 22 Sep 2025 16:13:58 +0300
-Message-ID: <20250922131358.745579-1-Sergey.Larshin@kaspersky.com>
-X-Mailer: git-send-email 2.39.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD0130C364
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758546850; cv=fail; b=pVUF3eGG/3xJ4Gdn2cvdChwGIHSxyhg9Gtgl6B85lozt1Kte4EBbdn49chfd9FFqEXG8p3k/5xfxdUibgkvQ57rM4/NGnag9I/mQwK1gNdpNNs883mta9BIpuB3rtUfYVbsmgMTN6/4VKzBZBPWqsGH5+y6jPlRtgq0k1MDHCu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758546850; c=relaxed/simple;
+	bh=a+hKPWEcpeUCFaVHThBTyuZSg4uxvttS7uhaGFDX9l0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Pxo+v+IMzD0zqmM0ryIjk1n6Bj+oomv5ckS66xcpFrqyQNebvBOxVD5kSwiL0bbeDnOMZ0fDOUTVWgIz4q0Uq2yNwQm1+/lYKZRd6u1zyXzDMN3MCPLc6Erm/tEO3sJKTk9u7YiyU3qKCuV7dg79PWsR868SpfUb94uOHFg2J5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N0h64Fls; arc=fail smtp.client-ip=40.93.194.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R8A5PY5+BnqpMjXX+bqJVaT78qQqdU26Rs7R/8TB2oR4IdrEh7TO1hVURPSAGrwci/Nfl4k6VLrDLCPv7luzB2hECxi63rH1ZgF2CwpOxVzdArAaTJvF3V9KV4GDWEANtA1FITkJSRxbrJKnOLmvY77gBw1AVyyTdJlST1xz/a1+681/rSd72sUE1V9lweS8Iwt+EsjgA4BWbLcKasXLrGv/ihMNiNtkWQbS+98Z18Z+WrSmr75XYWGfeI3sqK/d7wBCFpexJAX2stAm9AE1UWkujsRL/O27RFkhh2SY9xvYhb8obFZuAlPne2p/ie5E8kiV3yScVtgJ5Mcbe5YNZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VBsiI8bPXZ+ecqCC8s5yZP07lfqQS5GoGWq5a6P3tuk=;
+ b=kE+4/7TOg3rZI9Y7i7GzEtTmePt/Y0pzPkZkGh6AT1D320sTwAEQlph8GfCnSk6EZid3OFuUCUWU47h2Uso9ofvr2kuXwIlPB9e68tVaoFiBUrOBW37Org3rNsw1LXfUP9F9dj1Ua4SSrNYNG1uGIEonfty4nvPeFoKRFtJ6pntLbIH0Hx8nPFyTEkBKXxalpozZTzxmsOSurUxTSAv6NG0mCmTp9aAgGpJEOe63qG0Yar9xPWkHW8uLtYenH43y7lQbcJ96vPdVMm0BmwRnUq3E5c9Tq68cAglmiA8Fpr0kjBpKVIhWmSnuL29+bI/85vtnVuPLA0H/RHe0vWHbRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VBsiI8bPXZ+ecqCC8s5yZP07lfqQS5GoGWq5a6P3tuk=;
+ b=N0h64Flsc2VFYCrS33WuGZ8FHRLBuI0uKKvg6DUvFoiFQxtAHKO0OKHrr3MSQE9KYB9oBPGrOZyKDFlu0e3b29wKtBsQXAyUes4v6M3gIKqAPCDvcKUz1mCZuqSNPEpawT9cFXZeMdpDJdiXuC3l/j4FNGJQN1x1xZiLprJ1Kale+zaWC7cku6yp0CH5uznxNXsIHpjtxR2erpLnz7qtYNrH+NR8hA8VGrcaohMbQ1vImO2eL0qSakXtpxMPJK9xRApujnUA/crrvfLewaezK3YNDzb1o0a1jEVJ1xtGxSzAUzgSeGgVgV0OYDRjNplhMFlpBDVLI8I87q1QlN15NA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by SA1PR12MB7198.namprd12.prod.outlook.com (2603:10b6:806:2bf::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.19; Mon, 22 Sep
+ 2025 13:14:05 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 13:14:05 +0000
+Date: Mon, 22 Sep 2025 10:14:02 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
+	Changyuan Lyu <changyuanl@google.com>, Chris Li <chrisl@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/4] kho: replace kho_preserve_phys() with
+ kho_preserve_pages()
+Message-ID: <20250922131402.GW1391379@nvidia.com>
+References: <20250921054458.4043761-1-rppt@kernel.org>
+ <20250921054458.4043761-3-rppt@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250921054458.4043761-3-rppt@kernel.org>
+X-ClientProxiedBy: BN9PR03CA0065.namprd03.prod.outlook.com
+ (2603:10b6:408:fc::10) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV4.avp.ru (10.64.57.54) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/22/2025 12:55:24
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 196480 [Sep 22 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Sergey.Larshin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 67 0.3.67
- f6b3a124585516de4e61e2bf9df040d8947a2fd5
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_one_url}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: 127.0.0.199:7.1.2;kaspersky.com:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;larshin.avp.ru:7.1.1,5.0.1;syzkaller.appspot.com:7.1.1,5.0.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/22/2025 12:56:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/22/2025 11:10:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/09/22 12:51:00
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/22 11:32:00 #27843153
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/09/22 12:52:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|SA1PR12MB7198:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24a9687d-fad2-47a0-2c35-08ddf9d9e7c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dvPDz2dPY+/g87MAwkXaZjaRwiPCmZSFKVuTbXcO8u2bd1ieq+fENn5CdMqb?=
+ =?us-ascii?Q?dH0Oi7vA5ianti0yzrV1udamYqWnPtqjX6R2VjE3uVqyV6OeNopwhR6/8Xg5?=
+ =?us-ascii?Q?FAiPCyyWj2KJjrofepxJi15coyo9CqrBmZNxUwzU+cK2jie/js1w2Wk5UL47?=
+ =?us-ascii?Q?q2dfB3IXjKCknT4ZYFiNeFUtd33NVhu5JSKoqKiiKAT3e4glRND4qQ7WJaYZ?=
+ =?us-ascii?Q?gQJhcK7ex0mbUSvXtkS/c3Yprnid1Yl0d8pMT2qGuF5ZcszKf647E9D/2JJt?=
+ =?us-ascii?Q?WK2PPrOA5621aukjv+LeeO8B2KAs8YYznArTgSatGK5CO4AsvkLKPcXFhROq?=
+ =?us-ascii?Q?E+4f52GCS3jUzY+SvwYnx3emeGi1WYH6bS6LgLR0S2pbVZGgO2yEvLbhxO51?=
+ =?us-ascii?Q?1sNKGAF4F8rMdcjwOv5Gp7uoQEU7ofHMlCrK028FDzQYdcziQ+hu6CaTXrmy?=
+ =?us-ascii?Q?rPIkF54T2KseMgSKhsqzeomLZ28srrCIghG1sGgbcxpSsZ2axBm8F4j/WAhc?=
+ =?us-ascii?Q?tWixfVNiFvdXg1BtBDJu2bjYlBRbt0me4TbJ4G62soE6A/rpLQWA0n4XRoV5?=
+ =?us-ascii?Q?7/jygNTD3drlZ+7K//jGMn56K3vzfEQZrbJ7d41e60V2XrmvrRGPBiui9NL2?=
+ =?us-ascii?Q?PVYBlw7nPHuS+iX+lrf1e0kMos1uML8cheRt43QRCH1Dh32KemV1ZNm40IJT?=
+ =?us-ascii?Q?oiBirWmO/LqOsBZODjj7LR13FcSXzYSYKuQbnmCu3rduAwHkKeLx7EFLagkf?=
+ =?us-ascii?Q?W5V8I+sB8f2kqEbZZLYwOTrRavNpJxgEQC3RP/d8wmiG2vk2vzoLRAJIHHUq?=
+ =?us-ascii?Q?hagqTQy9n/0O+eFIkM//yjJpHsU/3+NUmankXVfaXZH63DPE0bPt47rDQ7Op?=
+ =?us-ascii?Q?yRDQhwGi1ffjBZqit7K2z6C82sMcLIw+8nxr5FjLzTkB1wLmd6UR0XAAj98h?=
+ =?us-ascii?Q?MJfZkLhwb3msw2z1xSk/ti89GM06Y275C8ziWIcToPA00Jk2/HpXAmx5f/ze?=
+ =?us-ascii?Q?WNQ/CwUds1jnTAwEmxZ05DONKyLSlRV4BcwEISx27LW4XK0eMUm4OfpqpWn4?=
+ =?us-ascii?Q?bi73XUPBCumNI6V1kNBqp5dBxm3HzNXVtgM3EwjX9bQoejhY85nBLzUaGm8q?=
+ =?us-ascii?Q?Je6/0l0yy7Yt+sz/DxbayqKhqUk7TJxE9lbic1H+SWXpQC4MCxg0NE8oE4LQ?=
+ =?us-ascii?Q?yUFSZqlmxEbGkbT5G35jF8rMGmj/qaetYOHf6OjTPcxyhIo/3dGiXbKJ6VKd?=
+ =?us-ascii?Q?dm+ypyGULITFA9joVGk4MxnvxV6gcjJ+Jomqi1anbf7/Gs612FEQOCWgwohK?=
+ =?us-ascii?Q?X7zwOjoBPMjB3T1Z3GM7++kIcYqnKTxHNzpw/DhVL5NZs87IsSaw02N1Mvv/?=
+ =?us-ascii?Q?/Ng7hYgUpPC4JpIz6UAybhJqMpDphBD3uHLJnJR1AYzWVOhIKpdLeHWfYB+B?=
+ =?us-ascii?Q?xuWSdFghnjA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8Z1b4aPONTjX6Or8lYQXjJCECuGWS+5SeOqvs5CC/cJjeIqUoB5y9PXQjuJh?=
+ =?us-ascii?Q?XA0eGRzu/lMbUzJDw638JaxPwLXWdlF2OvJImH6Dh5Rz+qt3FiAAZe03ZuLx?=
+ =?us-ascii?Q?8ImVirP6tUa2BtvUIK7t+46BaBlsdjslkGgI0vJR3H1HIa6mbRaevslTC1K7?=
+ =?us-ascii?Q?KuZdDCG/lVUlC5WkgnoO3ZyM+K/MXyRLGFZFk2CHSx3Z2ZoIbQpOmBNZRRJH?=
+ =?us-ascii?Q?37O+W2vMf1zhmzJk8LO8UjJdYyNB6R8+kQ+OIIjqVmLW9yWnvSo/BmSdO8Jd?=
+ =?us-ascii?Q?ka5MikiZL2xipt7+druBA52Nk9pwQObQQGV0ZfEJowsSRuudkGgm9lvLFEkl?=
+ =?us-ascii?Q?a0gYS+AOiSCKADpQPGLlKS+EiVpoi2HpVWeXZ4uutl+kmHPAFan2YapCMxoL?=
+ =?us-ascii?Q?KOXRlFdZHJT2f9JVikCq0oXgFF1+esb6z20AmN3ab0Xg97uDQ001hGOIZqny?=
+ =?us-ascii?Q?cosVVlKhUdZhwypZCl5Bz7cfEQ3FqZ5t/p8ZQP1nNUeyD67FCGdN721jxftv?=
+ =?us-ascii?Q?BZJzX+0oxyXtL3jpE4k7HyNcZBaukAAiTcH8qbg0sJah0CFSClTBUQdU/KL6?=
+ =?us-ascii?Q?9NHHOMAcQi7nj814OXgAJ1DpXn8PTYkpA0C1LkvpRDaWfqMwbyA0QDls+lVF?=
+ =?us-ascii?Q?jbrebPSXJEwswcqY9/nE0k3kGX/jTuHRKm5vwcJOSEV9IPCYXxMNE9M5T2Ah?=
+ =?us-ascii?Q?1dqXamrcRP0auvbSpMh6a31CLkHgR6i0vbmKDCwrdB/z8wzCxN5qEs8gQFIG?=
+ =?us-ascii?Q?YH+/F0LShQ5e+NvpIOJci+UfeZLWEi3iVd5JtWaKz/StHNlbd2Uf04MzpmkC?=
+ =?us-ascii?Q?Pjju4defxlURlmeDnS5PfwVT6vWP1cLYPCUuiiRnWgeI0gtVpGPIhnGUbtAB?=
+ =?us-ascii?Q?o9kSYsN0FoFhrIOylSHMOJk4W5eQoEvbFgh0ApWD+wCAy6a8yqSD9lJnyrT1?=
+ =?us-ascii?Q?TfQX56Qel6lktjln2KhawEVNzyjWNwJTJZEVgdf6hOvDNOPItjtfsMMokqju?=
+ =?us-ascii?Q?fMQ6zKR6afWlDQDRVZd8vbvt/7A0/cnTJRrtaBZVTwpISqbYTIyQk0RiInYK?=
+ =?us-ascii?Q?QV8ZE69w8CxlHsWyiAQ7VdbBO60YNPdVGwKIvU9R53dsu52koa36zmCJnV+i?=
+ =?us-ascii?Q?GLbupDE3Ulx0GFBojSDL/yikOEUTLliFWVjp4Y5Q+epi3ZtId2hRHQB6x0F0?=
+ =?us-ascii?Q?AM+h+SDxqz1x9/8+hO9cLva5GNc/HpO3cBKOf9HRdSl/wx5SyA/ui+VA4rHh?=
+ =?us-ascii?Q?7un30sDl6s41rGBeagE0oMiEQTL10FLB4T1qbLgIrh69TyALy23xVeN/Vst6?=
+ =?us-ascii?Q?RJzrOezawKyrb7Wu8qnDzv+ZOuEyFL9AYHCT78hu95pThpVxnx0Ietr2GAZk?=
+ =?us-ascii?Q?CYX4u8JZEfAXtSHZW6pG1V/td1CksejnOUOgkJC8UUnEzMfn7guSOnQwHiCm?=
+ =?us-ascii?Q?Ovq63Xlw4+IeyGvmJFqmEvcziZZgDN7f+ziBXQXWI+nuAZ98v1a5eEkbRJzD?=
+ =?us-ascii?Q?7jjejM5+GhApDQzwEWEReTap2COH7jXDh7XHrnzeKgVi980e/kVoZjE+tVrI?=
+ =?us-ascii?Q?/v02dolRNayMgvPMorit5YRcwkfblzHsilIB8CVg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24a9687d-fad2-47a0-2c35-08ddf9d9e7c4
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 13:14:04.9718
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e2IkIT6b0i8+R+y2PmZ2Vnzo8+NeHFMVf3/l63UoIqRwIam6lJpY7ymPUUnWmMey
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7198
 
-When parsing Allocation Extent Descriptor, lengthAllocDescs comes from
-on-disk data and must be validated against the block size. Crafted or
-corrupted images may set lengthAllocDescs so that the total descriptor
-length (sizeof(allocExtDesc) + lengthAllocDescs) exceeds the buffer,
-leading udf_update_tag() to call crc_itu_t() on out-of-bounds memory and
-trigger a KASAN use-after-free read.
+On Sun, Sep 21, 2025 at 08:44:56AM +0300, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> to make it clear that KHO operates on pages rather than on a random
+> physical address.
+> 
+> The kho_preserve_pages() will be also used in upcoming support for
+> vmalloc preservation.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+>  include/linux/kexec_handover.h |  5 +++--
+>  kernel/kexec_handover.c        | 25 +++++++++++--------------
+>  mm/memblock.c                  |  4 +++-
+>  3 files changed, 17 insertions(+), 17 deletions(-)
 
-BUG: KASAN: use-after-free in crc_itu_t+0x1d5/0x2b0 lib/crc-itu-t.c:60
-Read of size 1 at addr ffff888041e7d000 by task syz-executor317/5309
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-CPU: 0 UID: 0 PID: 5309 Comm: syz-executor317 Not tainted 6.12.0-rc4-syzkaller-00261-g850925a8133c #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- crc_itu_t+0x1d5/0x2b0 lib/crc-itu-t.c:60
- udf_update_tag+0x70/0x6a0 fs/udf/misc.c:261
- udf_write_aext+0x4d8/0x7b0 fs/udf/inode.c:2179
- extent_trunc+0x2f7/0x4a0 fs/udf/truncate.c:46
- udf_truncate_tail_extent+0x527/0x7e0 fs/udf/truncate.c:106
- udf_release_file+0xc1/0x120 fs/udf/file.c:185
- __fput+0x23f/0x880 fs/file_table.c:431
- task_work_run+0x24f/0x310 kernel/task_work.c:239
- exit_task_work include/linux/task_work.h:43 [inline]
- do_exit+0xa2f/0x28e0 kernel/exit.c:939
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
- </TASK>
-
-Validate the computed total length against epos->bh->b_size.
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Reported-by: syzbot+8743fca924afed42f93e@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=8743fca924afed42f93e
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-
-Signed-off-by: Larshin Sergey <Sergey.Larshin@kaspersky.com>
----
- fs/udf/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index f24aa98e6869..a79d73f28aa7 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -2272,6 +2272,9 @@ int udf_current_aext(struct inode *inode, struct extent_position *epos,
- 		if (check_add_overflow(sizeof(struct allocExtDesc),
- 				le32_to_cpu(header->lengthAllocDescs), &alen))
- 			return -1;
-+
-+		if (alen > epos->bh->b_size)
-+			return -1;
- 	}
- 
- 	switch (iinfo->i_alloc_type) {
--- 
-2.39.5
-
+Jason
 
