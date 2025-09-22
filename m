@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-827564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F82B9217E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21491B92181
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01D7A1789FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C7D31885E3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D229B30DED3;
-	Mon, 22 Sep 2025 15:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8537C30E852;
+	Mon, 22 Sep 2025 15:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b="ghAnVNKN"
+	dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b="v7TJKlbl"
 Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B3D2D876A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C3C30C36B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556622; cv=none; b=FRpxcysbaPq9WKPe6C5ubHymogooWM0nSgiImNIMm1YtcgsnQTtjOk1jnVMIZj8k3ptFIJp4CRHSFy6NlFDTgk/Q2MTjB7T1G77EDtSu7lOMxa2Je4b+1ZcM19swOFZM8tLJGE4qZoHl/llAaozALkq3+FGZrRw+GRMJ9uIpQQA=
+	t=1758556623; cv=none; b=s6Bp6w2oqAuPFTuA1snm+47jyjrPPym/s87I9td+nJbeDOv2s7bOai40QBAUQRdVosNdjpNOfo9NdKgiIpajtqv/a1XvWnKdAiLgOwU30GVa3nB5IyNjnzdBYI1QVdw5R4aebgxq/oumDqxUs9Mh9OHnkqgc0ljYtBsVTwYu7Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556622; c=relaxed/simple;
-	bh=xOtc8YxJJUdB3wzAFS1kFTt7s4D8hxt1QMhbLXvRA4s=;
+	s=arc-20240116; t=1758556623; c=relaxed/simple;
+	bh=4E5/XL5Z3RUEl6uyZPvcgrzp7ZYaogZvwTMTchvU0vg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ka5Gip+9YbHJ3O2bsvE4KcqYBSFDl86Ud/ORPvqg1pPo9ZenX8MH7RhYd4JHYQPMYKKPgJJFqSN2NtjzKDsgCk63kRKd1IJYJLM3WcJh2mYJKY7g8BiwBdtRnDj2M91D6f+3nbm7I2MkCPUQL0iAJhrlWjkxMPOgnWf7ar4wiCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be; spf=pass smtp.mailfrom=zanders.be; dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b=ghAnVNKN; arc=none smtp.client-ip=94.124.121.26
+	 MIME-Version; b=ibOqKgdvo5KP47z/Ntxb4uLc1Rj2onxFQmEWvNEYU9rs7/Orcjwc/jiuqRkhVPLaz/ugP3oU3JcfOgy7WDtnYQU2wvkAOVpgE2KFoGlVOwDYSuDjIJuVOhfskKVIoa+HkJ4L0kSSfhgzqZ3t0E4cXMaIXkKPcQCR94aeH6bDUqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be; spf=pass smtp.mailfrom=zanders.be; dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b=v7TJKlbl; arc=none smtp.client-ip=94.124.121.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zanders.be
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=zanders.be; s=202002;
 	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:
 	 subject:cc:to:from:from;
-	bh=gluDp5vbGgiV/wuQkAXOB8YAjopU7SBxzSEGFDygyC4=;
-	b=ghAnVNKNkZ9q6Hiag00nqu5VTxSAlfIndUVOZUfzIFXbAoNortAMD0J+Ikoi1db5umLDJYPZ35OZX
-	 mYQq3z9zcsUKBk795+ZUKQGHHX+7t+Acg2IDlfwSfenHPYqfJm2UwnxtL7tbaQ0+RZy0ed35T7liFz
-	 yln/ooh/1zNV7dyvo/DRTeMXmAuz+2BaAyC3s/xv6lEdvfsuS0LBs7VHs0hov0ad221tLHerXlKSeu
-	 mfgNeLNBn0/TiTvuZQhgBIgaDFoSvrO0WRPyfHVF3OFuY7KtMeWOq9MIMiNnHu/UgqrsiXpS6L2lt2
-	 0GnjuBUa9licRnXYM8OnwpyJ+a8jazQ==
-X-MSG-ID: c17b4109-97cc-11f0-9d69-00505681446f
+	bh=dnxsXnzMfxrD8+re7WIJCjdAfu5yHxyZgjdVmRrDzZc=;
+	b=v7TJKlbltdvu2szaL1HTBkerW5GYUq4QQwOomP5I1nogRrIKfYa/umsJwY0V4w49rdCSkHTGjoGeA
+	 0GLVvBjOys/0ffRiPdUfC40rh3urzecKaTrmsgvyyBOislJx8vYOo7v8jmV1x8VDnrF36FeGT1PJqG
+	 K0BdA79jXZXjr60j+3Yb1s8m4lj5/r2zVKKT8nsTPwZZka8qjAp6AitkYpivzsxlm2aOfa5Lf1gKwx
+	 6cmi0rVdbKy5c8KTKE9GcLlo25e0IrotXOkwqDb1SP7QxZEKzLG8675N2F9+QDp6G++MK27CBRkFNJ
+	 Ci1JJOTxTu1dMXsPjjxMcuCZy7cpsCQ==
+X-MSG-ID: c27314e0-97cc-11f0-9d69-00505681446f
 From: Maarten Zanders <maarten@zanders.be>
 To: Tudor Ambarus <tudor.ambarus@linaro.org>,
 	Pratyush Yadav <pratyush@kernel.org>,
@@ -52,9 +52,9 @@ To: Tudor Ambarus <tudor.ambarus@linaro.org>,
 Cc: Maarten Zanders <maarten@zanders.be>,
 	linux-mtd@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] mtd: spi-nor: add configurable RDCR opcode
-Date: Mon, 22 Sep 2025 17:56:32 +0200
-Message-ID: <20250922155635.749975-2-maarten@zanders.be>
+Subject: [PATCH 2/2] mtd: spi-nor: macronix: use RDCR opcode 0x15
+Date: Mon, 22 Sep 2025 17:56:33 +0200
+Message-ID: <20250922155635.749975-3-maarten@zanders.be>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250922155635.749975-1-maarten@zanders.be>
 References: <20250922155635.749975-1-maarten@zanders.be>
@@ -66,92 +66,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a new flash parameter to hold the read configuration register
-(RDCR) opcode. Default to 0x35, which is the JEDEC standard.
+Macronix devices use opcode 0x15 to read the configuration register (CR)
+instead of the default 0x35. On parts such as the MX25L12833F, reading
+the CR with 0x35 returns garbage values, which are then written back
+when updating the status register (SR). This may unintentionally program
+OTP bits (e.g. top/bottom block protection) and change other default
+values.
 
-This change does not alter existing behavior but prepares the driver
-to support flashes that use a different opcode to read the CR.
+Other Macronix parts avoid this issue because their SFDP data specifies
+that CR is not read (BFPT_DWORD15_QER_SR2_BIT1_NO_RD), and the driver
+assumes CR defaults to all zeroes which matches the hardware register.
+
+Set the RDCR opcode to 0x15 for Macronix flashes to avoid corrupt CR
+writes in cases where it is used.
+
+Note that for affected parts, the block protection mechanism might
+remain broken through the OTP bit: locking an upper block (which is the
+only one supported by the driver) is now locking the lower block in HW.
 
 Fixes: 10526d85e4c6 ("mtd: spi-nor: Move Macronix bits out of core.c")
 Signed-off-by: Maarten Zanders <maarten@zanders.be>
 ---
- drivers/mtd/spi-nor/core.c | 12 +++++++++---
- drivers/mtd/spi-nor/core.h |  6 ++++--
- 2 files changed, 13 insertions(+), 5 deletions(-)
+ drivers/mtd/spi-nor/macronix.c | 1 +
+ include/linux/mtd/spi-nor.h    | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index ac4b960101cc..ff537bdad401 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -484,7 +484,7 @@ int spi_nor_read_sr(struct spi_nor *nor, u8 *sr)
+diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+index e97f5cbd9aad..de3f3d963f86 100644
+--- a/drivers/mtd/spi-nor/macronix.c
++++ b/drivers/mtd/spi-nor/macronix.c
+@@ -322,6 +322,7 @@ static int macronix_nor_late_init(struct spi_nor *nor)
+ 	if (!nor->params->set_4byte_addr_mode)
+ 		nor->params->set_4byte_addr_mode = spi_nor_set_4byte_addr_mode_en4b_ex4b;
+ 	nor->params->set_octal_dtr = macronix_nor_set_octal_dtr;
++	nor->params->rdcr_opcode = SPINOR_OP_RDCR_MX;
  
- /**
-  * spi_nor_read_cr() - Read the Configuration Register using the
-- * SPINOR_OP_RDCR (35h) command.
-+ * SPINOR_OP_RDCR command.
-  * @nor:	pointer to 'struct spi_nor'
-  * @cr:		pointer to a DMA-able buffer where the value of the
-  *              Configuration Register will be written.
-@@ -496,13 +496,16 @@ int spi_nor_read_cr(struct spi_nor *nor, u8 *cr)
- 	int ret;
+ 	return 0;
+ }
+diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+index cdcfe0fd2e7d..e35405b126c2 100644
+--- a/include/linux/mtd/spi-nor.h
++++ b/include/linux/mtd/spi-nor.h
+@@ -92,6 +92,9 @@
+ #define SPINOR_OP_RD_EVCR      0x65    /* Read EVCR register */
+ #define SPINOR_OP_WD_EVCR      0x61    /* Write EVCR register */
  
- 	if (nor->spimem) {
--		struct spi_mem_op op = SPI_NOR_RDCR_OP(cr);
-+		struct spi_mem_op op = SPI_NOR_RDCR_OP(nor->params->rdcr_opcode,
-+						       cr);
- 
- 		spi_nor_spimem_setup_op(nor, &op, nor->reg_proto);
- 
- 		ret = spi_mem_exec_op(nor->spimem, &op);
- 	} else {
--		ret = spi_nor_controller_ops_read_reg(nor, SPINOR_OP_RDCR, cr,
-+		ret = spi_nor_controller_ops_read_reg(nor,
-+						      nor->params->rdcr_opcode,
-+						      cr,
- 						      1);
- 	}
- 
-@@ -2893,6 +2896,9 @@ static void spi_nor_init_default_params(struct spi_nor *nor)
- 	/* Default to 16-bit Write Status (01h) Command */
- 	nor->flags |= SNOR_F_HAS_16BIT_SR;
- 
-+	/* Default to 0x35 to read configuration register */
-+	params->rdcr_opcode = SPINOR_OP_RDCR;
++/* Used for Macronix flashes only. */
++#define SPINOR_OP_RDCR_MX	0x15	/* Read configuration register */
 +
- 	/* Set SPI NOR sizes. */
- 	params->writesize = 1;
- 	params->size = info->size;
-diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
-index ceff412f7d65..abac5fc45ca8 100644
---- a/drivers/mtd/spi-nor/core.h
-+++ b/drivers/mtd/spi-nor/core.h
-@@ -61,8 +61,8 @@
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_OUT(1, buf, 0))
- 
--#define SPI_NOR_RDCR_OP(buf)						\
--	SPI_MEM_OP(SPI_MEM_OP_CMD(SPINOR_OP_RDCR, 0),			\
-+#define SPI_NOR_RDCR_OP(opcode, buf)					\
-+	SPI_MEM_OP(SPI_MEM_OP_CMD(opcode, 0),				\
- 		   SPI_MEM_OP_NO_ADDR,					\
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_IN(1, buf, 0))
-@@ -351,6 +351,7 @@ struct spi_nor_otp {
-  *			in octal DTR mode.
-  * @rdsr_addr_nbytes:	dummy address bytes needed for Read Status Register
-  *			command in octal DTR mode.
-+ * @rdcr_opcode:	opcode needed to read the Configuration Register
-  * @n_banks:		number of banks.
-  * @n_dice:		number of dice in the flash memory.
-  * @die_erase_opcode:	die erase opcode. Defaults to SPINOR_OP_CHIP_ERASE.
-@@ -384,6 +385,7 @@ struct spi_nor_flash_parameter {
- 	u8				rdsr_addr_nbytes;
- 	u8				n_banks;
- 	u8				n_dice;
-+	u8				rdcr_opcode;
- 	u8				die_erase_opcode;
- 	u32				*vreg_offset;
- 
+ /* Used for GigaDevices and Winbond flashes. */
+ #define SPINOR_OP_ESECR		0x44	/* Erase Security registers */
+ #define SPINOR_OP_PSECR		0x42	/* Program Security registers */
 -- 
 2.51.0
 
