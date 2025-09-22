@@ -1,59 +1,67 @@
-Return-Path: <linux-kernel+bounces-827734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8ECB928FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:10:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C21B9292C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 773D37A7F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF4A817FFB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A476F3191BC;
-	Mon, 22 Sep 2025 18:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E623191BD;
+	Mon, 22 Sep 2025 18:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V78bR3D8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk6ob/OG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC3531812E;
-	Mon, 22 Sep 2025 18:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC0E27A919;
+	Mon, 22 Sep 2025 18:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758564594; cv=none; b=PBkhfFAtOHaWWyq6RDY/Dz+0KaOxM8/pkEr2SD9w7Yrv9E8e5lwq9nsDL7Voz7/KZZMdondIwD9Xd4taju35FmfU14ZZ9L6q54kdvG5bFm+fegfuWyMpmytJZh/gDS3ioHmu2JFOkGr2lTq8SFznIaFxe4p3PsnQpYxso7PlM+s=
+	t=1758564805; cv=none; b=L+kaudMK0UoXLI/rR8keSFMZRKdHaZvJ1pdOXAJ4uMwWZ9SsOJ7vERyHk51biyaFbTVbTClPBmstKD4G6W34xAc+EQWbKYZIFTY/rJooN3ckPaLb5RJmHsd9Igy91YXQlDBOFs+Z8+OTNg0uJXhvvy8QdisJRTh7iO7OPAZZfPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758564594; c=relaxed/simple;
-	bh=Gcrrr/pU9hEwQkb8+P4aK7R5PmqmjlP4aLroqziLe7U=;
+	s=arc-20240116; t=1758564805; c=relaxed/simple;
+	bh=ch3XJR3/J1ZY9eeHVCkTk3w1gXTPD/CTnWH+kKraEHE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VUi21DzK8ijrI2GeFGLwIDQ7oNrOlVFg66/VqR7tilF5mJ3kYR9pdWyc/6bdMr79Hzm323AoJ/8VMKPpsWri3VAZ48vCAaKVdg13AIToAPO43tSxZ1gKt4aezG+5IOqlBuGddk7sa1iDrItwwvHpORerdfayinsDMLSzTBNu0x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V78bR3D8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FK0vhlcwzVJAcejz4cqAmDuYQ9iMTjiS8A6uqr3V9Oc=; b=V78bR3D8A5q1wK68XXXyD43mjM
-	v9k4tb6BPM2wWULfmvZxAOgd63Nt0qA3qTKyd1a5ZIfitDlETwgbhuMmci8VKDs6tCg15oKI0n1q+
-	67zHBTQy4A8EHZmgNNAJs+9YW5p0vaPpces4GfB1etOYPP4UBnmpmLW6pRTKWsCdj/WLzKALZDWKH
-	ROumwbJZ+6xAzHPetLhZ8np8HEhCvuAyltz1DQbCdl3FqGvZfe8EmMgq87eUdPjUVyRPDKTr/Z9Cb
-	0aJm3eLOuqpLB5CAE0anOgU5ed7IRsMqzXAraXI7YYAxmKjzRvFZA6r3svtkGZCZvDGL+UFZlLpzS
-	ObcBJ3IA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0kyx-0000000BDg1-3gyU;
-	Mon, 22 Sep 2025 18:09:47 +0000
-Date: Mon, 22 Sep 2025 11:09:47 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
-	linux-mm@kvack.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
-Subject: Re: [RFC PATCH] driver: loop: introduce synchronized read for loop
- driver
-Message-ID: <aNGQ66CD9F82BFP-@infradead.org>
-References: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=puKWaC+jb+aHlo1ESPqwoKCkRx4RwmO5BymV2OcMS7fTTXdboQOhQemdW/8wt6sMlGHj33+Vxt1MCaG5/X1OEzSo1lVqPtDPzc/w0g5aoURlocx0sj1TXaxZTYZhPt3T0252eR6iNj52YYnGeZfloCEdFeMl6yw5GqSEGymHgJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk6ob/OG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABED0C4CEF5;
+	Mon, 22 Sep 2025 18:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758564804;
+	bh=ch3XJR3/J1ZY9eeHVCkTk3w1gXTPD/CTnWH+kKraEHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yk6ob/OGAwkGwWAGBkC3qGsL386M31FRg5HYHcF6fPnimFhdojR95nWwH1ZyzM8So
+	 h7zcLzQJCGrZUbByHokQiq2rPXoQovFkjUIRLMWjh/C5NUAWvWT7r9jw+e6hVXqknQ
+	 v/gyeUsRx5+lyUGTRB4ay78pCyjW8zJsxawdOzJeJ9USmCKNyQChfKIqy54MA59FlL
+	 1CL0h2tfxpF4yPwQs6pFiHonmeFZIc1eK8syWFQeya/tghmGe8aRRHgEPqMyyDrhMe
+	 97Nhgnd0kWevlM6zF4bWz0Z9Fz4Rql+DkHFKCo/IXy/gL4hzqII5Izi3/JAu1UA1HN
+	 2b9fRV2dD7PDw==
+Date: Mon, 22 Sep 2025 13:13:23 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dang Huynh <dang.huynh@mainlining.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-unisoc@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 04/10] dt-bindings: mmc: Add RDA SDMMC controller
+Message-ID: <20250922181323.GA556259-robh@kernel.org>
+References: <20250919-rda8810pl-mmc-v1-0-d4f08a05ba4d@mainlining.org>
+ <20250919-rda8810pl-mmc-v1-4-d4f08a05ba4d@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,23 +70,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250922032915.3924368-1-zhaoyang.huang@unisoc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250919-rda8810pl-mmc-v1-4-d4f08a05ba4d@mainlining.org>
 
-On Mon, Sep 22, 2025 at 11:29:15AM +0800, zhaoyang.huang wrote:
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Fri, Sep 19, 2025 at 01:48:44AM +0700, Dang Huynh wrote:
+> Add documentation describing the SD/MMC controller in RDA Micro
+> RDA8810PL SoC.
 > 
-> For now, my android system with per pid memcgv2 setup are suffering
-> high block_rq_issue to block_rq_complete latency which is actually
-> introduced by schedule latency of too many kworker threads. By further
-> investigation, we found that the EAS scheduler which will pack small
-> load tasks into one CPU core will make this scenario worse. This commit
-> would like to introduce a way of synchronized read to be helpful on
-> this scenario. The I2C of loop device's request reduced from 14ms to
-> 2.1ms under fio test.
+> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+> ---
+>  Documentation/devicetree/bindings/mmc/rda,mmc.yaml | 92 ++++++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/rda,mmc.yaml b/Documentation/devicetree/bindings/mmc/rda,mmc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f3cda38abd66023ca9bc94d1c29df5ae9e211e7c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/rda,mmc.yaml
+> @@ -0,0 +1,92 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/rda,mmc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RDA Micro SD/MMC Controller
+> +
+> +allOf:
+> +  - $ref: mmc-controller.yaml
+> +
+> +maintainers:
+> +  - Dang Huynh <dang.huynh@mainlining.org>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - rda,8810pl-mmc
+> +      - const: rda,mmc
 
-So fix the scheduler, or create less helper threads, but this work
-around really look like fixing the symptoms instead of even trying
-to aim for the root cause.
+Drop the generic compatible.
 
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: mclk
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 2
+> +
+> +  dma-names:
+> +    items:
+> +      - const: tx
+> +      - const: rx
+> +
+> +  rda,mclk-adj:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    description:
+> +      Some board need MCLK output to be delayed for the card to work.
+> +      If not present, MCLK output is not delayed.
+> +    minimum: 0
+> +    maximum: 255
+
+You can drop the constraints if they are not less than uint8 range.
+
+What are the units? 
+
+I guess 'adj' means adjust. Just use 'rda,mclk-delay' to be more 
+precise.
+
+> +
+> +  rda,mclk-inv:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Some board need MCLK to be inverted for the card to work.
+> +      If not present, MCLK is not inverted.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - dmas
+> +  - dma-names
+> +  - vmmc-supply
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/clock/rda,8810pl-apclk.h>
+> +    #include <dt-bindings/dma/rda-ifc.h>
+> +    mmc@20950000 {
+> +      compatible = "rda,8810pl-mmc", "rda,mmc";
+> +      reg = <0x20950000 0x1000>;
+> +      interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
+> +      clocks = <&ap_syscon CLK_APB2>;
+> +      clock-names = "mclk";
+> +      resets = <&ap_syscon RST_APB2_SDMMC1>;
+> +      dmas = <&ifc IFC_SDMMC1_TX>, <&ifc IFC_SDMMC1_RX>;
+> +      dma-names = "tx", "rx";
+> +      vmmc-supply = <&vdd_sdmmc>;
+> +      rda,mclk-adj = /bits/ 8 <1>;
+> +      rda,mclk-inv;
+> +    };
+> +
+> +...
+> 
+> -- 
+> 2.51.0
+> 
 
