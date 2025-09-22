@@ -1,239 +1,321 @@
-Return-Path: <linux-kernel+bounces-826966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A2FB8FBF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:26:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CBDB8FC06
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6692C189898F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 941C27A10FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C0228725A;
-	Mon, 22 Sep 2025 09:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8fNtN5e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793DC284B33;
+	Mon, 22 Sep 2025 09:28:35 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E0312C544
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E96188734
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758533163; cv=none; b=fXZAH1LyeLBaiSYamOiq0z5YiPF5Si5f2UD6WiYMytf9S6f3/9LchZWloOQCZ2RFgAPN26P4O80vDUkSUvTbJp3PmOds0ccsKYUiwofU8srd5IPJZsLVWWZdlld1J40Qig8KMDmQmRDBOSnYf/9FvV6cBRt+GqNCVzr9nRIA53M=
+	t=1758533314; cv=none; b=slDFxI1chDOfscb7evEmHixqfDQ2W4y3s9B9hy7brIvlWbpt5rLZN+mllFUvmGvWWi4BsqvITCVLfqhVoGZhK8FRUTW2BuIakLJIaZr1p6ws6F6foFHEDJ3V2zvrElJPRByNuzjw+mz/U9I9oHQFNag722xN/6E4bQCE3JcEuE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758533163; c=relaxed/simple;
-	bh=nyjXxEfScQl0f+qKx/QuarmizK/Rrjns65gQi1ZZxv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRXubMk197YH6PiySluZJhniH9rTgQA9jUv/eEYwYBW/fjN/kLWAmoN7ILTW/sjabDy4xsHERADZKyX1DyNmWfpF7PZwu6Cpj0Hd10qFt2g16QiCXSJGYJenKZP81uYdm2mVKUsPUguiSpmqjCKUHtqoMCIxYWchttL+4MHBYDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8fNtN5e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758533160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9cF8ChkrVjedqQcH45KxT9cWQe9wu1GihjCbg8HEDV4=;
-	b=e8fNtN5emDdcZIHOcHHkqA8ewmLEZ5htGW0SRzhllMBJCeLVkUq/ubTv2fId75tTzE+n43
-	63IYYLobwfGAJkdcQSBAm/3I03x9XShFKtFDcts6+rsXII00+6tMaKiZkyVrOT2tLfCczD
-	Rp+d3B/O/tUh25vqk1yLCf0dbS2zcIg=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-635-mtMXjMbhOhaPmYqdblJ_lw-1; Mon, 22 Sep 2025 05:25:58 -0400
-X-MC-Unique: mtMXjMbhOhaPmYqdblJ_lw-1
-X-Mimecast-MFC-AGG-ID: mtMXjMbhOhaPmYqdblJ_lw_1758533157
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f44000639fso1627590f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:25:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758533157; x=1759137957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9cF8ChkrVjedqQcH45KxT9cWQe9wu1GihjCbg8HEDV4=;
-        b=GI8LDN/77yZU1mcBTPrHKJaKDq9y1Izh5CFw0svGyKRmsg9nbkvrj27qRRBvoLC55o
-         iwG1xCYpF/SHLuDYGSSNbGtp4ucoEql2et88QBRzFueeNiCtTq4xciOflQjI+Zdsbl/H
-         IA1o9bna5YwivgMqA7x+0hlwbZgz6AkyJ16QrMStiGVLtj4aT5Ofi+rj6MiSFt3jnqSW
-         Ie1MTjeZnSULB+eSjLS0KVjL77JKmTVDxZusOvp48or2/RUH7ZyFUYwRIPhMhWBY9Kg8
-         /SbdVe+20jM8Ok5N2PdkpOxlGppiIN+7XRLspa91Vh8d//kc2FVOOX1dxS1VKIeTWBWk
-         KFVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXX4QWoU5zqQuBtYAvz2e68dPi/+Fla/r2V4fk244aiACvxySVuIVA/Xtw3PPedngObCJWLL7PAhy9Uxdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOPEmnE4I8STx71S9+E/BbGfBNOKB/87XS+aUSmyQ3XqN2dn5V
-	tqol6o7TOTUWbI61xgIsoxiI525QtDA2hODN8Xo7SUj1U+7Hb1/c+ybMWnWhtwXysMNRn3ZMtgX
-	lGnWoCp7efpHNHEtCWP0I+ZPERwaZbVqA339c9Tn5zOVpGqz1yKE8EiZthofQ8cbRnQ==
-X-Gm-Gg: ASbGncthPdAUj0vHXy3Ud4QzP2Ee3wXBayw/UChyqy+2ZeA2LYFloa/lEth36IBwfa+
-	99epQEswyfyGRlejMWnEpP4zDhDQSh2vLks2CIufP/6bCsi+GQuZMj/JoqApOYslodAit0TNc8d
-	g1TMCKzSJKvgJDNssnvItflzUA7QSs9iJI7X+ihOm95yK21pZpiylG/MTJUXX8ntmNT3RnZNP/x
-	qNTmW33WQfrEe7qEIRfr/YkTlcS+oH8HzXvG5UmmtX+tW1MGSrfHvd/Zue92PWeiZCkcDuGKRQn
-	qS0EZCNGZ9wjwDo3xhtYvmTyuRflw6c7Z/olNygbbw==
-X-Received: by 2002:a05:6000:184f:b0:3f9:bc33:2fab with SMTP id ffacd0b85a97d-3f9bc333465mr4024932f8f.60.1758533157359;
-        Mon, 22 Sep 2025 02:25:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7fSov+1CGFL3df2Ud9PtHq3VhZvRxdYHyIR+xrzsZf0CNdXIba9+m6tklp40NhmnBLxQYvQ==
-X-Received: by 2002:a05:6000:184f:b0:3f9:bc33:2fab with SMTP id ffacd0b85a97d-3f9bc333465mr4024904f8f.60.1758533156898;
-        Mon, 22 Sep 2025 02:25:56 -0700 (PDT)
-Received: from sgarzare-redhat ([5.77.126.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3fee58e6e25sm3153566f8f.58.2025.09.22.02.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:25:56 -0700 (PDT)
-Date: Mon, 22 Sep 2025 11:25:42 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, 
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] tpm: Use -EPERM as fallback error code in tpm_ret_to_err
-Message-ID: <tnxfamnvxoanaihka3em7ktmzkervoea43zn2l3mqxvnuivb6n@p5nn34vns3zf>
-References: <20250922072332.2649135-1-jarkko@kernel.org>
+	s=arc-20240116; t=1758533314; c=relaxed/simple;
+	bh=W5K1IUbRgJy/ZKktgMNeYGAeCta99Nb5H7oKJP4QUEY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Fke0FrgFi88XhFgl54OBjW3f1bj+j7H3vSq5m/HoS0/y19xy29/g+B0O+uQJNi3ZFLL5oshnW57KePKuFPTTQnzcyX1vt5v3JDoGFZKlSuUOSFVGm7xZ4m/+qduvCoc7iziTXjJJFpl/aynjEm5odWfwz7s0RlcQVQ4RDOd3KpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201623.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202509221728181176;
+        Mon, 22 Sep 2025 17:28:18 +0800
+Received: from jtjnmail201622.home.langchao.com (10.100.2.22) by
+ jtjnmail201623.home.langchao.com (10.100.2.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 22 Sep 2025 17:28:17 +0800
+Received: from jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6])
+ by jtjnmail201622.home.langchao.com ([fe80::15c3:8d74:3aa6:25f6%7]) with mapi
+ id 15.01.2507.058; Mon, 22 Sep 2025 17:28:17 +0800
+From: =?utf-8?B?Qm8gTGl1ICjliJjms6IpLea1qua9ruS/oeaBrw==?=
+	<liubo03@inspur.com>
+To: "hsiangkao@linux.alibaba.com" <hsiangkao@linux.alibaba.com>,
+	"xiang@kernel.org" <xiang@kernel.org>, "chao@kernel.org" <chao@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>
+Subject: Re: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
+Thread-Topic: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
+Thread-Index: AQHcKfR9YxX0s+2XBkmHD0nyW5TlP7Sd7BwAgAEGVeA=
+Date: Mon, 22 Sep 2025 09:28:17 +0000
+Message-ID: <7eb749216aaf43c8bac99fb1755d032f@inspur.com>
+References: <0edc7fad4f38136ffbf88c9c67835d0922-9-25linux.alibaba.com@g.corp-email.com>
+ <47107a3c-44d5-4937-bc35-2e01605bdb98@linux.alibaba.com>
+In-Reply-To: <47107a3c-44d5-4937-bc35-2e01605bdb98@linux.alibaba.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+Content-Type: multipart/signed; micalg=SHA1;
+	protocol="application/x-pkcs7-signature";
+	boundary="----=_NextPart_000_000C_01DC2BE6.470DA020"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250922072332.2649135-1-jarkko@kernel.org>
+tUid: 2025922172819ecb437e303ceee173e4adbe77693dec9
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Mon, Sep 22, 2025 at 10:23:32AM +0300, Jarkko Sakkinen wrote:
->From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->
->Using -EFAULT here was not the best idea for tpm_ret_to_err as the fallback
->error code as it is no concise with trusted keys.
->
->Change the fallback as -EPERM, process TPM_RC_HASH also in tpm_ret_to_err,
->and by these changes make the helper applicable for trusted keys.
->
->Cc: stable@vger.kernel.org # v6.15+
->Fixes: 539fbab37881 ("tpm: Mask TPM RC in tpm2_start_auth_session()")
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
->---
-> include/linux/tpm.h                       |  9 +++++---
-> security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
-> 2 files changed, 13 insertions(+), 22 deletions(-)
->
->diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->index dc0338a783f3..667d290789ca 100644
->--- a/include/linux/tpm.h
->+++ b/include/linux/tpm.h
->@@ -449,13 +449,16 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
-> 	if (ret < 0)
-> 		return ret;
->
->-	switch (tpm2_rc_value(ret)) {
->-	case TPM2_RC_SUCCESS:
+------=_NextPart_000_000C_01DC2BE6.470DA020
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-I slightly prefer the `case TPM2_RC_SUCCESS` but I don't have a strong 
-opinion.
 
->+	if (!ret)
-> 		return 0;
 
-If we want to remove the `case TPM2_RC_SUCCESS`, can we just merge this 
-condition with the if on top, I mean:
-
-	if (ret <= 0)
-		return ret;
-
->+
->+	switch (tpm2_rc_value(ret)) {
-> 	case TPM2_RC_SESSION_MEMORY:
-> 		return -ENOMEM;
->+	case TPM2_RC_HASH:
->+		return -EINVAL;
-> 	default:
->-		return -EFAULT;
->+		return -EPERM;
-> 	}
-> }
+>-----Original Message-----
+>From: Gao Xiang <hsiangkao@linux.alibaba.com>
+>Sent: Monday, September 22, 2025 9:49 AM
+>To: Bo Liu (=E5=88=98=E6=B3=A2)-=E6=B5=AA=E6=BD=AE=E4=BF=A1=E6=81=AF =
+<liubo03@inspur.com>; xiang@kernel.org;
+>chao@kernel.org
+>Cc: linux-kernel@vger.kernel.org; linux-erofs@lists.ozlabs.org
+>Subject: Re: [PATCH] erofs: Add support for FS_IOC_GETFSLABEL
 >
->diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
->index 024be262702f..e165b117bbca 100644
->--- a/security/keys/trusted-keys/trusted_tpm2.c
->+++ b/security/keys/trusted-keys/trusted_tpm2.c
->@@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> 	}
 >
-> 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
->+	if (blob_len < 0)
->+		rc = blob_len;
 >
-> out:
-> 	tpm_buf_destroy(&sized);
-> 	tpm_buf_destroy(&buf);
+>On 2025/9/20 14:04, Bo Liu wrote:
+>> From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+>>
+>> Add support for reading to the erofs volume label from the
+>> FS_IOC_GETFSLABEL ioctls.
+>>
+>> Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+>> ---
+>>
+>> v1:
+>>
+>https://lore.kernel.org/linux-erofs/63904ade56634923ba734dcdab3c45d0@i
+>> nspur.com/T/#t
+>> v2:
+>> =
+https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@insp
+>> ur.com/T/#u
+>>
+>> Changes since v2:
+>> - remove unnecessary code
+>>
+>>   fs/erofs/Makefile   |  2 +-
+>>   fs/erofs/data.c     |  4 ++++
+>>   fs/erofs/dir.c      |  4 ++++
+>>   fs/erofs/inode.c    |  5 +----
+>>   fs/erofs/internal.h |  7 +++++++
+>>   fs/erofs/ioctl.c    | 41
+>+++++++++++++++++++++++++++++++++++++++++
+>>   fs/erofs/super.c    |  8 ++++++++
+>>   7 files changed, 66 insertions(+), 5 deletions(-)
+>>   create mode 100644 fs/erofs/ioctl.c
+>>
+>> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile index
+>> 549abc424763..5be6cc4acc1c 100644
+>> --- a/fs/erofs/Makefile
+>> +++ b/fs/erofs/Makefile
+>> @@ -1,7 +1,7 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>
+>>   obj-$(CONFIG_EROFS_FS) +=3D erofs.o
+>> -erofs-objs :=3D super.o inode.o data.o namei.o dir.o sysfs.o
+>> +erofs-objs :=3D super.o inode.o data.o namei.o dir.o sysfs.o ioctl.o
+>>   erofs-$(CONFIG_EROFS_FS_XATTR) +=3D xattr.o
+>>   erofs-$(CONFIG_EROFS_FS_ZIP) +=3D decompressor.o zmap.o zdata.o =
+zutil.o
+>>   erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) +=3D decompressor_lzma.o diff =
+--git
+>> a/fs/erofs/data.c b/fs/erofs/data.c index 3b1ba571c728..8ca29962a3dd
+>> 100644
+>> --- a/fs/erofs/data.c
+>> +++ b/fs/erofs/data.c
+>> @@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file =
+*file, loff_t
+>offset, int whence)
+>>   const struct file_operations erofs_file_fops =3D {
+>>   	.llseek		=3D erofs_file_llseek,
+>>   	.read_iter	=3D erofs_file_read_iter,
+>> +	.unlocked_ioctl =3D erofs_ioctl,
+>> +#ifdef CONFIG_COMPAT
+>> +	.compat_ioctl   =3D erofs_compat_ioctl,
+>> +#endif
+>>   	.mmap_prepare	=3D erofs_file_mmap_prepare,
+>>   	.get_unmapped_area =3D thp_get_unmapped_area,
+>>   	.splice_read	=3D filemap_splice_read,
+>> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c index
+>> debf469ad6bd..32b4f5aa60c9 100644
+>> --- a/fs/erofs/dir.c
+>> +++ b/fs/erofs/dir.c
+>> @@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops =3D {
+>>   	.llseek		=3D generic_file_llseek,
+>>   	.read		=3D generic_read_dir,
+>>   	.iterate_shared	=3D erofs_readdir,
+>> +	.unlocked_ioctl =3D erofs_ioctl,
+>> +#ifdef CONFIG_COMPAT
+>> +	.compat_ioctl   =3D erofs_compat_ioctl,
+>> +#endif
+>>   };
+>> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c index
+>> 9a2f59721522..a7ec17eec4b2 100644
+>> --- a/fs/erofs/inode.c
+>> +++ b/fs/erofs/inode.c
+>> @@ -213,10 +213,7 @@ static int erofs_fill_inode(struct inode *inode)
+>>   	switch (inode->i_mode & S_IFMT) {
+>>   	case S_IFREG:
+>>   		inode->i_op =3D &erofs_generic_iops;
+>> -		if (erofs_inode_is_data_compressed(vi->datalayout))
+>> -			inode->i_fop =3D &generic_ro_fops;
+>> -		else
+>> -			inode->i_fop =3D &erofs_file_fops;
+>> +		inode->i_fop =3D &erofs_file_fops;
+>>   		break;
+>>   	case S_IFDIR:
+>>   		inode->i_op =3D &erofs_dir_iops;
+>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h index
+>> 4ccc5f0ee8df..311346a017a7 100644
+>> --- a/fs/erofs/internal.h
+>> +++ b/fs/erofs/internal.h
+>> @@ -166,6 +166,9 @@ struct erofs_sb_info {
+>>   	struct erofs_domain *domain;
+>>   	char *fsid;
+>>   	char *domain_id;
+>> +
+>> +	/* volume name */
 >
->-	if (rc > 0) {
->-		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
->-			rc = -EINVAL;
->-		else
->-			rc = -EPERM;
->-	}
->-	if (blob_len < 0)
+>The comment is useless, just drop this line.
+>
+>> +	char *volume_name;
+>>   };
+>>
+>>   #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info) @@
+>> -535,6 +538,10 @@ static inline struct bio =
+*erofs_fscache_bio_alloc(struct
+>erofs_map_dev *mdev) {
+>>   static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+>>   #endif
+>>
+>> +long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long
+>> +arg); long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
+>> +			unsigned long arg);
+>> +
+>>   #define EFSCORRUPTED    EUCLEAN         /* Filesystem is
+>corrupted */
+>>
+>>   #endif	/* __EROFS_INTERNAL_H */
+>> diff --git a/fs/erofs/ioctl.c b/fs/erofs/ioctl.c new file mode 100644
+>> index 000000000000..fbcbf820c4d7
+>> --- /dev/null
+>> +++ b/fs/erofs/ioctl.c
+>> @@ -0,0 +1,41 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later #include <linux/fs.h>
+>> +#include <linux/compat.h> #include <linux/file.h>
+>> +
+>> +#include "internal.h"
+>> +
+>> +static int erofs_ioctl_get_volume_label(struct inode *inode, void
+>> +__user *arg)
+>
+>Can we just move these functions into inode.c instead?
+>
+>Since there is no need to introduce a new file just for a few new =
+lines.
+>
+>Otherwise it looks good to me.
+>
+>Thanks,
+>Gao Xiang
 
-nit: since `blob_len` is not accessed anymore in the error path, can we 
-avoid to set it to 0 when declaring it?
+Thanks for your comments.
+I will send the next version of the patch later.
 
 Thanks,
-Stefano
+Bo Liu
 
->-		rc = blob_len;
->-	else
->+	if (!rc)
-> 		payload->blob_len = blob_len;
->
-> out_put:
-> 	tpm_put_ops(chip);
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->
-> /**
->@@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> 		kfree(blob);
-> 	tpm_buf_destroy(&buf);
->
->-	if (rc > 0)
->-		rc = -EPERM;
->-
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->
-> /**
->@@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> 	tpm_buf_fill_hmac_session(chip, &buf);
-> 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
-> 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
->-	if (rc > 0)
->-		rc = -EPERM;
->
-> 	if (!rc) {
-> 		data_len = be16_to_cpup(
->@@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
->
-> out:
-> 	tpm_buf_destroy(&buf);
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->
-> /**
->@@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->
-> out:
-> 	tpm_put_ops(chip);
->-
->-	return rc;
->+	return tpm_ret_to_err(rc);
-> }
->-- 
->2.39.5
->
+------=_NextPart_000_000C_01DC2BE6.470DA020
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
 
+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
+hkiG9w0DBzAdBgNVHQ4EFgQUsmXTjDrO/nhxGDpnz5cAr1neWI8wHwYDVR0jBBgwFoAUXlkDprRM
+WGCRTvYetaU5pjLBNWowggEPBgNVHR8EggEGMIIBAjCB/6CB/KCB+YaBumxkYXA6Ly8vQ049SU5T
+UFVSLUNBLENOPUpUQ0EyMDEyLENOPUNEUCxDTj1QdWJsaWMlMjBLZXklMjBTZXJ2aWNlcyxDTj1T
+ZXJ2aWNlcyxDTj1Db25maWd1cmF0aW9uLERDPWhvbWUsREM9bGFuZ2NoYW8sREM9Y29tP2NlcnRp
+ZmljYXRlUmV2b2NhdGlvbkxpc3Q/YmFzZT9vYmplY3RDbGFzcz1jUkxEaXN0cmlidXRpb25Qb2lu
+dIY6aHR0cDovL0pUQ0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSU5TUFVSLUNB
+LmNybDCCASwGCCsGAQUFBwEBBIIBHjCCARowgbEGCCsGAQUFBzAChoGkbGRhcDovLy9DTj1JTlNQ
+VVItQ0EsQ049QUlBLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNlcnZpY2VzLENOPUNv
+bmZpZ3VyYXRpb24sREM9aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y0FDZXJ0aWZpY2F0ZT9iYXNl
+P29iamVjdENsYXNzPWNlcnRpZmljYXRpb25BdXRob3JpdHkwZAYIKwYBBQUHMAKGWGh0dHA6Ly9K
+VENBMjAxMi5ob21lLmxhbmdjaGFvLmNvbS9DZXJ0RW5yb2xsL0pUQ0EyMDEyLmhvbWUubGFuZ2No
+YW8uY29tX0lOU1BVUi1DQSgxKS5jcnQwKQYDVR0lBCIwIAYIKwYBBQUHAwIGCCsGAQUFBwMEBgor
+BgEEAYI3CgMEMDUGCSsGAQQBgjcVCgQoMCYwCgYIKwYBBQUHAwIwCgYIKwYBBQUHAwQwDAYKKwYB
+BAGCNwoDBDBBBgNVHREEOjA4oCIGCisGAQQBgjcUAgOgFAwSbGl1Ym8wM0BpbnNwdXIuY29tgRJs
+aXVibzAzQGluc3B1ci5jb20wUwYJKwYBBAGCNxkCBEYwRKBCBgorBgEEAYI3GQIBoDQEMlMtMS01
+LTIxLTE2MDY5ODA4NDgtNzA2Njk5ODI2LTE4MDE2NzQ1MzEtMjU4ODUyMzQ4MA0GCSqGSIb3DQEB
+CwUAA4IBAQAucjq5s0Qq1UtBIL8Und9mnrfn3azil+rXBoZf/N+DNuZYml+Ct4SDC0tng7F5kSt/
+2zU4vShrkviUh8kjCstCrPyqkxQodvm7reuGuBKZLy9PLZR0oB3S7vD9gUdMCw7UianFwY+mgbG/
+33dY43zujZIY8DMm6od3GMZlIueeqB6VyEESU4+ll2VFPyLXPzUMBK7DLAEnOiPbJSUvR7738lSk
+DPXxdujcFhL9wxTvh/3ghYuY0OCwf+HM7TFBSSFxa1wdkfO8aA9Bl6tY5awZ6bbsr+3+FRf/h1jW
+ZQOCCnEGixEPN0irb1ZjdI2O4u1TlTwZAYXdLVRqmr2vi1KHMYIDkzCCA48CAQEwcDBZMRMwEQYK
+CZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZ
+FgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUwCQYFKw4DAhoF
+AKCCAfgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUwOTIyMDky
+ODE0WjAjBgkqhkiG9w0BCQQxFgQUZD2p+d7RIoejqXHHQRZmHPv2U0gwfwYJKwYBBAGCNxAEMXIw
+cDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJ
+kiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AA47lMgPE5azBUewAAQADjuUw
+gYEGCyqGSIb3DQEJEAILMXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQB
+GRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34A
+A47lMgPE5azBUewAAQADjuUwgZMGCSqGSIb3DQEJDzGBhTCBgjAKBggqhkiG9w0DBzALBglghkgB
+ZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQMEAgEwDQYJ
+KoZIhvcNAQEBBQAEggEAYEjEjOw93Uu5j5/yyy7JZYQDIj6l47/jLcSxdqWJe6be74CEZCRpJeqk
+sEoEmqRU56JNmd4pcpy95NRbh3gaDigW3CVg68tcaT/uurIQt++/HCx9Jql8/YoWm5Ujjh/FLe/z
+LmONGpfo3vHcGmvTRliG1Ckk3f6p1gc0bxJ4lboaBXTm2LZdKcAAQwVyaSlJ4sabDktkgvdCkCJS
+ZRqnn0Vtm8+yVVy+KAmjfbX1OppB+QwOj/Dt45bc5eg1Qh78FRVarNlJZF97W8wi0aWXTeEZ1yEa
+IwjKwdO2Lk4dRfkX5qPgMRGEqcp0IN8DXGpSEe3tiIRIKX+0VFZ9WmlIKAAAAAAAAA==
+
+------=_NextPart_000_000C_01DC2BE6.470DA020--
 
