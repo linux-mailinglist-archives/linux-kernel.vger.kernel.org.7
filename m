@@ -1,122 +1,83 @@
-Return-Path: <linux-kernel+bounces-827608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A32BB92345
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C220B9220F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3423189DCFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:21:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 397584427FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2DD31195B;
-	Mon, 22 Sep 2025 16:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36271311595;
-	Mon, 22 Sep 2025 16:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0867E3112A0;
+	Mon, 22 Sep 2025 16:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Klnq5wyT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B6E48CFC;
+	Mon, 22 Sep 2025 16:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758558038; cv=none; b=tQQzCv9QAxFwKm99TE9KaBK6bAt9Zxu8GoPfgeIPbLA+OQh6MoQ/FTypSPF/l7bKDkVVtGizPwaIohnO2BkerPHvs2ftZUoqH0uYxULQ0M76Flx3Xam5yTLZzJCwgEFEiPIOnxEnIzv9zF+RLJy/eRH44J6Oj+9H44EEKpvt8FM=
+	t=1758557165; cv=none; b=fy9b1HdN1ni4iGsvpM9h2Vkwwh+aTXiPccOshWY65HUbdu8VKmb61O8kGI/fQolszyb0mEVz9pUrXXPmfvhIJQ9Zo5URD1zvAeiwZGzdwxtsE3TaAV4CK8xbssbx7KDEM2v8XZbmz40+ZIgZZZc/LUGoRc8F/GojujN0mpb8R44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758558038; c=relaxed/simple;
-	bh=/b6LZkKz++JM5BAJmEVxfRNTiKyfcQ7AX3Z9ffGHfjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hw57zo6gSahTtS9oEQ3hDZIOOeStTbFE45+bLXhfHqS7FteHDt7xFm8mSFTfIk/cebHfKjx+arw5sjjkoWFIYhfVHEl1/mNAX+Yebti9GOygfpn7SMiFqoyxurU8txQ3HJD5Ji5QVNXx/YdqSAUn5wGB67xipdQJxItZLV0RvCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cVnyB1Lhlz9sSL;
-	Mon, 22 Sep 2025 18:05:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id RQGetHUt7Al8; Mon, 22 Sep 2025 18:05:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cVnyB0Zhlz9sSK;
-	Mon, 22 Sep 2025 18:05:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F32C18B768;
-	Mon, 22 Sep 2025 18:05:21 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 1HyZsWwZsQmv; Mon, 22 Sep 2025 18:05:21 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 891948B763;
-	Mon, 22 Sep 2025 18:05:20 +0200 (CEST)
-Message-ID: <71cabf42-ce79-4030-a08e-475275c19f05@csgroup.eu>
-Date: Mon, 22 Sep 2025 18:05:19 +0200
+	s=arc-20240116; t=1758557165; c=relaxed/simple;
+	bh=xd23r+XPRKUhoqOC2QyRgh7gsLc1kz5qKFbjLd0vuXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaVNSHIGJ7kKCegZYT+N4oHZ+tL6/qKjF09+woVpFUH9i+V6kKgxUQMhMH64T88SsgRpyJcRd0yHlwNkhpEdKGwFfUXgR0M829yNJ8uvWHE9De16OP/5yURiFxcu52idnOEfsrnrtq1QkjBGamCCHUZEPGuwCCxpl/BI6EcPrcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Klnq5wyT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFB6C4CEF0;
+	Mon, 22 Sep 2025 16:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758557164;
+	bh=xd23r+XPRKUhoqOC2QyRgh7gsLc1kz5qKFbjLd0vuXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Klnq5wyTEEwwZuDvCzAf9eNVUqEgkN0oiCi0L6KCrjyu+eagc7jGEjFHxQUOKoqbR
+	 yVPgBcFpkiyG2hg4q5n6fAqHI5gz03I6zn8VXN37x+T5NNBSe8avgp9/RpxhedGeDn
+	 PJCcTO3VrkttXJgjT6jAkD5tsEIfK+B/H6kvXvfadHrPL4ym9g+pFxyrBf4BO9NLzF
+	 fzAW4zBx5WGS1Zci0v7TiIyn9XPULs5haMR46zC2eZB7qgcXsjt9BVhEKItViEDYfS
+	 e9kq06WtiPOLxpRY/+wmQy+STTI1dYYtnKyvFU+xRI93Diulvs3HH153OLhpkfEukV
+	 2STz2eKHnod9A==
+Date: Mon, 22 Sep 2025 11:06:03 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Raghav Sharma <raghav.s@samsung.com>
+Cc: conor+dt@kernel.org, karthik.sun@samsung.com, cw00.choi@samsung.com,
+	krzk@kernel.org, linux-samsung-soc@vger.kernel.org,
+	mturquette@baylibre.com, linux-clk@vger.kernel.org,
+	shin.son@samsung.com, linux-arm-kernel@lists.infradead.org,
+	chandan.vn@samsung.com, dev.tailor@samsung.com,
+	sunyeal.hong@samsung.com, linux-kernel@vger.kernel.org,
+	s.nawrocki@samsung.com, devicetree@vger.kernel.org,
+	alim.akhtar@samsung.com, sboyd@kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: exynosautov920: add m2m clock
+ definitions
+Message-ID: <175855716306.141333.16307821570342985917.robh@kernel.org>
+References: <20250915095401.3699849-1-raghav.s@samsung.com>
+ <CGME20250915094512epcas5p223e2eb264967508527f478eb2200be83@epcas5p2.samsung.com>
+ <20250915095401.3699849-2-raghav.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc/smp: Add check for kcalloc() failure in
- parse_thread_groups()
-To: Guangshuo Li <lgs201920130244@gmail.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20250922151025.1821411-1-lgs201920130244@gmail.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250922151025.1821411-1-lgs201920130244@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915095401.3699849-2-raghav.s@samsung.com>
 
 
-
-Le 22/09/2025 à 17:10, Guangshuo Li a écrit :
-> [Vous ne recevez pas souvent de courriers de lgs201920130244@gmail.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+On Mon, 15 Sep 2025 15:23:59 +0530, Raghav Sharma wrote:
+> Add device tree clock binding definitions for CMU_M2M
 > 
-> As kcalloc() may fail, check its return value to avoid a NULL pointer
-> dereference when passing it to of_property_read_u32_array().
-> 
-> Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with multiple properties")
-> Cc: stable@vger.kernel.org
+> Signed-off-by: Raghav Sharma <raghav.s@samsung.com>
 > ---
-> changelog:
-> v2:
-> - Return -ENOMEM directly on allocation failure.
+>  .../clock/samsung,exynosautov920-clock.yaml   | 21 +++++++++++++++++++
+>  .../clock/samsung,exynosautov920.h            |  5 +++++
+>  2 files changed, 26 insertions(+)
 > 
-> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
 
-The Signed-off-by: must be above the ---, otherwise it will be lost when 
-applying the commit.
-
-With that fixed,
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-
-
-> ---
->   arch/powerpc/kernel/smp.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-> index 5ac7084eebc0..cfccb9389760 100644
-> --- a/arch/powerpc/kernel/smp.c
-> +++ b/arch/powerpc/kernel/smp.c
-> @@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node *dn,
-> 
->          count = of_property_count_u32_elems(dn, "ibm,thread-groups");
->          thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
-> +       if (!thread_group_array)
-> +               return -ENOMEM;
->          ret = of_property_read_u32_array(dn, "ibm,thread-groups",
->                                           thread_group_array, count);
->          if (ret)
-> --
-> 2.43.0
-> 
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
