@@ -1,287 +1,273 @@
-Return-Path: <linux-kernel+bounces-827667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED68B925B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:11:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698F4B925AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 476E51901B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:12:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 293797A54EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BC0313271;
-	Mon, 22 Sep 2025 17:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197E1313287;
+	Mon, 22 Sep 2025 17:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YT1O4Y/p"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FE3mFOqU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297C73112BF;
-	Mon, 22 Sep 2025 17:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2582D3720;
+	Mon, 22 Sep 2025 17:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561099; cv=none; b=l6JOX86d5+WlZSS18ryEdKhZymUT0OgmFs38alTCoTWaVT7DrawuGnn2LDOATOfNwYO4pZMPh+yqETOed3ZCf7Do5uq3PfRtDcFEZXcV7f5zf9ydzuHinId1a7C1bI2K1JfIRyd2bzXvTkv/symKqQLI7PgeUwfrDY3kZUNWlf4=
+	t=1758561088; cv=none; b=tZaedUI1mlzhYHftGZzVP0MF4GY83YHCOkyXMQpht3KbVKpKPsBjyY5eKvrU7J1YeVn+JUwQZ1JVQpROIiqwyPzJJLKSsAnOU+mRrEqJSkFFNOvuW5McRL2unfjBhXJQA1r1z8cu/XBQBcOdznoFwt6nKNWJWmMnqgKvPMzeBH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561099; c=relaxed/simple;
-	bh=M+uzMYFznpcelmL6bFLZIlBwII0Rh3tn2rBrSHgYEPg=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=j/2TmQQlRfS+wuTyeXxBtoBY7/03lvyCQ9x3GaTmCK/lWBOIqjtXU4DKsGJdfL6UrNneWdcXS7CfmRhrzv3c+9PSEHtfHpsYmIH6x3JmGtxSkOjPG3kAnuRKVv/9IhSWIimFyNvWE5w1JYlDxDeyEpWOTV+VU/KZ1PD6htvXphE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YT1O4Y/p; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58MEBfJH019166;
-	Mon, 22 Sep 2025 17:11:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=uGUaih
-	jrnrBVDmg75B1XmTax7n/b2o5zTsts9ts6UDA=; b=YT1O4Y/pux9UsIjnAnk8p2
-	WFjOjAG0H7S2W1hcDzROFGp3hkDM0DcOHxqUE936BUw0iq3PpdfXCe3SYFRrcmwg
-	aWGUpaAGZcQ724CqhOCfnyDE3ZDLH6g+HXhZLH6sk57pZ0GtdwEGaG9LN/lyeR08
-	CCRRVqQfZR2AQ+dZ8zLIgjsC1BA9w4oz/D01HrEJgXPLlmNamVBFIbo+1siehLkd
-	YvZOb3AzKsrv14P5UK5FIi3o+UoVMkLDbUElwD3WhW3QMLALjyYk4BOl01Cu/HKO
-	AGl3pcN/hhN268uyaojY9eT1W2qRVM75sIivQPRwp8kR2/pRxNYaTgUp1iRCxoPg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpq46v5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Sep 2025 17:11:15 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58MHBF0m020602;
-	Mon, 22 Sep 2025 17:11:15 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 499hpq46v3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Sep 2025 17:11:15 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58MFRRF4008777;
-	Mon, 22 Sep 2025 17:11:14 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49a6yxqc2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Sep 2025 17:11:14 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58MHBD2927001494
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 22 Sep 2025 17:11:14 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CDA5558058;
-	Mon, 22 Sep 2025 17:11:13 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 25C1858057;
-	Mon, 22 Sep 2025 17:11:13 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.103.101])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 22 Sep 2025 17:11:13 +0000 (GMT)
-Message-ID: <9808ce35ea839c02aec4656bbbb9c01eaf1eb232.camel@linux.ibm.com>
-Subject: Re: [PATCH v3] ima: don't clear IMA_DIGSIG flag when setting or
- removing non-IMA xattr
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin	
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn"	 <serge@hallyn.com>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250915055524.2187783-1-coxu@redhat.com>
-References: <20250902042515.759750-1-coxu@redhat.com>
-	 <20250915055524.2187783-1-coxu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 22 Sep 2025 13:11:12 -0400
+	s=arc-20240116; t=1758561088; c=relaxed/simple;
+	bh=bkrPLPzrm50ZFvPyvUr+rRE9QdrzUX2GlPLdWhgO5e0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4va9X2xA/skmuKQXVPzgBQuUf9SFucFB1MuqDWSyd7xEXUKdh4xUP5zA+fakH65bMgtOcCgAOuhhthlLqlbnnB74ptNkVzRuC3h+PxfKILICTcBKucnSe5/4l0NFgZdrr6qWN0MhTBGo2eQLf+DR9TgTpdwxvCbHow7xiXS3Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FE3mFOqU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1D2C4CEF0;
+	Mon, 22 Sep 2025 17:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758561087;
+	bh=bkrPLPzrm50ZFvPyvUr+rRE9QdrzUX2GlPLdWhgO5e0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FE3mFOqUGfy67eZHcQhnavXPi3/2dG8CNj1tgOSxuZ97CpKreeWOJ5ZbrY7VTvgpb
+	 NNID9ISM8lVMxAhQZHkjEzBkQuraUA6Pziu6wipkcxycimPRRzbKtksTzgsnqZem8s
+	 Ksw6LNlNhxB3xPTYIv3laKK/fhJ7ZRi1Likdd8F3K92Cce8IJEMVw3HqJ0aAs+hYQa
+	 fCU48b2AneunAhJpC4t2GxwkYf1WJz1KqaT27bUi4FODvrvMaB33R59sV9wyJvMSnu
+	 /Qllvjmp/7NwPewSdPk3rwuuae1YivBD1ltZdAazwrH6UQ/g5qVPyOnRNLndI1+C++
+	 vYiGtaMDKb8rw==
+Date: Mon, 22 Sep 2025 12:11:26 -0500
+From: Rob Herring <robh@kernel.org>
+To: Michael Riesch <michael.riesch@collabora.com>
+Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gerald Loacker <gerald.loacker@wolfvision.net>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Collabora Kernel Team <kernel@collabora.com>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Val Packett <val@packett.cool>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Bryan O'Donoghue <bod@kernel.org>
+Subject: Re: [PATCH v11 05/17] media: dt-bindings: add rockchip rk3568 mipi
+ csi-2 receiver
+Message-ID: <20250922171126.GA480461-robh@kernel.org>
+References: <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
+ <20240220-rk3568-vicap-v11-5-af0eada54e5d@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=FrEF/3rq c=1 sm=1 tr=0 ts=68d18333 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=20KFwNOVAAAA:8 a=WJBhaHD_QqhgIenamqsA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: ueQGuQpjQczE5407otwEgc_uEMWPKehD
-X-Proofpoint-GUID: uRzp0SdF_LNjVasTM3neG87UcM6QygCd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE5MDIyNCBTYWx0ZWRfX4Mc/eKXOTRgJ
- mZUIiNRHJ3Kg7Vjn6UAH/QlRfbBQuDyqNLtv0BoksyT88rxXtuNXuPze4CODpbYql9iAX7uSbcy
- +3REQ++0FimlteWkgg4xKTTsdI/1R2QaElLyRyDFVPUj8N8tfEoTkuOyUOkudxJZHCt0TjXUErY
- 0WHjsksDC9adCS7dpcXZseJ/hI+T8lV4B1AxruSi5iCnxjWo6jCrTsJdHa+fkIDgWuBiMccLWMF
- TV5egJu+mvuWkMKtCXTqAV+4uAove2DrGbuZUvNlDYL+u2Vbmd+/KX7/JMDmU1fKxTJsb78Srkg
- 54FB4kfutOkpnFB/GFUaH82ZyIZIOeI1PWlPUB/ejAB7py2/lt+hnFOT1lgVnQQeVpmJ0Z98hZM
- PfQGwdrS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509190224
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220-rk3568-vicap-v11-5-af0eada54e5d@collabora.com>
 
-On Mon, 2025-09-15 at 13:55 +0800, Coiby Xu wrote:
-> Currently when both IMA and EVM are in fix mode, the IMA signature will
-> be reset to IMA hash if a program first stores IMA signature in
-> security.ima and then writes/removes some other security xattr for the
-> file.
->=20
-> For example, on Fedora, after booting the kernel with "ima_appraise=3Dfix
-> evm=3Dfix ima_policy=3Dappraise_tcb" and installing rpm-plugin-ima,
-> installing/reinstalling a package will not make good reference IMA
-> signature generated. Instead IMA hash is generated,
->=20
->     # getfattr -m - -d -e hex /usr/bin/bash
->     # file: usr/bin/bash
->     security.ima=3D0x0404...
->=20
-> This happens because when setting security.selinux, the IMA_DIGSIG flag
-> that had been set early was cleared. As a result, IMA hash is generated
-> when the file is closed.
->=20
-> Similarly, IMA signature can be cleared on file close after removing
-> security xattr like security.evm or setting/removing ACL.
->=20
-> Prevent replacing the IMA file signature with a file hash, by preventing
-> the IMA_DIGSIG flag from being reset.
->=20
-> Here's a minimal C reproducer which sets security.selinux as the last
-> step which can also replaced by removing security.evm or setting ACL,
->=20
->     #include <stdio.h>
->     #include <sys/xattr.h>
->     #include <fcntl.h>
->     #include <unistd.h>
->     #include <string.h>
->     #include <stdlib.h>
->=20
->     int main() {
->         const char* file_path =3D "/usr/sbin/test_binary";
->         const char* hex_string =3D "030204d33204490066306402304";
->         int length =3D strlen(hex_string);
->         char* ima_attr_value;
->         int fd;
->=20
->         fd =3D open(file_path, O_WRONLY|O_CREAT|O_EXCL, 0644);
->         if (fd =3D=3D -1) {
->             perror("Error opening file");
->             return 1;
->         }
->=20
->         ima_attr_value =3D (char*)malloc(length / 2 );
->         for (int i =3D 0, j =3D 0; i < length; i +=3D 2, j++) {
->             sscanf(hex_string + i, "%2hhx", &ima_attr_value[j]);
->         }
->=20
->         if (fsetxattr(fd, "security.ima", ima_attr_value, length/2, 0) =
-=3D=3D -1) {
->             perror("Error setting extended attribute");
->             close(fd);
->             return 1;
->         }
->=20
->         const char* selinux_value=3D "system_u:object_r:bin_t:s0";
->         if (fsetxattr(fd, "security.selinux", selinux_value, strlen(selin=
-ux_value), 0) =3D=3D -1) {
->             perror("Error setting extended attribute");
->             close(fd);
->             return 1;
->         }
->=20
->         close(fd);
->=20
->         return 0;
->     }
->=20
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-
-Thanks, Coiby.  The patch is now queued in next-integrity.
+On Wed, Sep 17, 2025 at 05:38:45PM +0200, Michael Riesch wrote:
+> Add documentation for the Rockchip RK3568 MIPI CSI-2 Receiver.
+> 
+> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
+> Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+> Signed-off-by: Michael Riesch <michael.riesch@collabora.com>
 > ---
->  security/integrity/ima/ima_appraise.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
->=20
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
-ma/ima_appraise.c
-> index f435eff4667f..5149ff4fd50d 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -694,6 +694,15 @@ static int ima_protect_xattr(struct dentry *dentry, =
-const char *xattr_name,
->  	return 0;
->  }
-> =20
-> +/*
-> + * ima_reset_appraise_flags - reset ima_iint_cache flags
-> + *
-> + * @digsig: whether to clear/set IMA_DIGSIG flag, tristate values
-> + *          0: clear IMA_DIGSIG
-> + *          1: set IMA_DIGSIG
-> + *         -1: don't change IMA_DIGSIG
-> + *
-> + */
->  static void ima_reset_appraise_flags(struct inode *inode, int digsig)
->  {
->  	struct ima_iint_cache *iint;
-> @@ -706,9 +715,9 @@ static void ima_reset_appraise_flags(struct inode *in=
-ode, int digsig)
->  		return;
->  	iint->measured_pcrs =3D 0;
->  	set_bit(IMA_CHANGE_XATTR, &iint->atomic_flags);
-> -	if (digsig)
-> +	if (digsig =3D=3D 1)
->  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
-> -	else
-> +	else if (digsig =3D=3D 0)
->  		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->  }
-> =20
-> @@ -794,6 +803,8 @@ static int ima_inode_setxattr(struct mnt_idmap *idmap=
-, struct dentry *dentry,
->  		digsig =3D (xvalue->type =3D=3D EVM_IMA_XATTR_DIGSIG);
->  	} else if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0) =
-{
->  		digsig =3D (xvalue->type =3D=3D EVM_XATTR_PORTABLE_DIGSIG);
-> +	} else {
-> +		digsig =3D -1;
->  	}
->  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
->  		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
-> @@ -807,7 +818,7 @@ static int ima_inode_set_acl(struct mnt_idmap *idmap,=
- struct dentry *dentry,
->  			     const char *acl_name, struct posix_acl *kacl)
->  {
->  	if (evm_revalidate_status(acl_name))
-> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> +		ima_reset_appraise_flags(d_backing_inode(dentry), -1);
-> =20
->  	return 0;
->  }
-> @@ -815,11 +826,13 @@ static int ima_inode_set_acl(struct mnt_idmap *idma=
-p, struct dentry *dentry,
->  static int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry =
-*dentry,
->  				 const char *xattr_name)
->  {
-> -	int result;
-> +	int result, digsig =3D -1;
-> =20
->  	result =3D ima_protect_xattr(dentry, xattr_name, NULL, 0);
->  	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
-> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> +		if (!strcmp(xattr_name, XATTR_NAME_IMA))
-> +			digsig =3D 0;
-> +		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
->  		if (result =3D=3D 1)
->  			result =3D 0;
->  	}
->=20
-> base-commit: 7aac71907bdea16e2754a782b9d9155449a9d49d
+>  .../bindings/media/rockchip,rk3568-mipi-csi.yaml   | 144 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 +
+>  2 files changed, 150 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> new file mode 100644
+> index 000000000000..8cbab93b4b85
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> @@ -0,0 +1,144 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/rockchip,rk3568-mipi-csi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RK3568 MIPI CSI-2 Receiver
+> +
+> +maintainers:
+> +  - Michael Riesch <michael.riesch@collabora.com>
+> +
+> +description:
+> +  The Rockchip RK3568 MIPI CSI-2 Receiver is a CSI-2 bridge with one input port
+> +  and one output port. It receives the data with the help of an external
+> +  MIPI PHY (C-PHY or D-PHY) and passes it to the Rockchip RK3568 Video Capture
+> +  (VICAP) block.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - rockchip,rk3588-mipi-csi
+> +          - const: rockchip,rk3568-mipi-csi
+> +      - const: rockchip,rk3568-mipi-csi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Interrupt that signals changes in CSI2HOST_ERR1.
+> +      - description: Interrupt that signals changes in CSI2HOST_ERR2.
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: irq1
+> +      - const: irq2
 
+Names that are just the index are not useful. Drop. With that,
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  phys:
+> +    maxItems: 1
+> +    description: MIPI C-PHY or D-PHY.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: Input port node. Connect to e.g., a MIPI CSI-2 image sensor.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              bus-type:
+> +                enum: [1, 4]
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - bus-type
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Output port connected to a RK3568 VICAP port.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - phys
+> +  - ports
+> +  - power-domains
+> +  - resets
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rk3568-cru.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/media/video-interfaces.h>
+> +    #include <dt-bindings/power/rk3568-power.h>
+> +
+> +    soc {
+> +        interrupt-parent = <&gic>;
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        csi: csi@fdfb0000 {
+> +            compatible = "rockchip,rk3568-mipi-csi";
+> +            reg = <0x0 0xfdfb0000 0x0 0x10000>;
+> +            interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +                         <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +            interrupt-names = "irq1", "irq2";
+> +            clocks = <&cru PCLK_CSI2HOST1>;
+> +            phys = <&csi_dphy>;
+> +            power-domains = <&power RK3568_PD_VI>;
+> +            resets = <&cru SRST_P_CSI2HOST1>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                csi_in: port@0 {
+> +                    reg = <0>;
+> +
+> +                    csi_input: endpoint {
+> +                        bus-type = <MEDIA_BUS_TYPE_CSI2_DPHY>;
+> +                        data-lanes = <1 2 3 4>;
+> +                        remote-endpoint = <&imx415_output>;
+> +                    };
+> +                };
+> +
+> +                csi_out: port@1 {
+> +                    reg = <1>;
+> +
+> +                    csi_output: endpoint {
+> +                        remote-endpoint = <&vicap_mipi_input>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4c39b9fd80bb..2ac4b7a5b255 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21797,6 +21797,12 @@ F:	Documentation/userspace-api/media/v4l/metafmt-rkisp1.rst
+>  F:	drivers/media/platform/rockchip/rkisp1
+>  F:	include/uapi/linux/rkisp1-config.h
+>  
+> +ROCKCHIP MIPI CSI-2 RECEIVER DRIVER
+> +M:	Michael Riesch <michael.riesch@collabora.com>
+> +L:	linux-media@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/rockchip,rk3568-mipi-csi.yaml
+> +
+>  ROCKCHIP RK3568 RANDOM NUMBER GENERATOR SUPPORT
+>  M:	Daniel Golle <daniel@makrotopia.org>
+>  M:	Aurelien Jarno <aurelien@aurel32.net>
+> 
+> -- 
+> 2.39.5
+> 
 
