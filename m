@@ -1,121 +1,163 @@
-Return-Path: <linux-kernel+bounces-826820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EF0B8F6C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:11:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DDBB8F6B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F3A3A8538
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:11:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402C3189DBA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AE82FD1D3;
-	Mon, 22 Sep 2025 08:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22602FD7BB;
+	Mon, 22 Sep 2025 08:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqLo6GuX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBevXoa7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AEB2F90DE;
-	Mon, 22 Sep 2025 08:11:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF58120E023;
+	Mon, 22 Sep 2025 08:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758528670; cv=none; b=gKCf9RT+CWgos77SICo5tr1O3xB/Wi6v0SEgJJhNDISWuu3mmOJLYd2HnUf59yJUvbUU0QZs2fc2oSjxeYMcLEKGv/HVrCmBC7Pkrr5Wo3ustOIg4K0/l71YyOVxK9nnIF29uiPNHpxl/UyrybmTmVViDTHVD8pYEzlaeMzN0bI=
+	t=1758528668; cv=none; b=jiHrXfjnVzL+9RKZLVwpOvs+x/kY/qJwVh2Wdc63fTYBqa3XNDHLYflqelboQIzGJEpR8QFuqZ7hWLxWzAOmfcEZj2a8ldyl3Md1N5uYZpthQZAVuqlqJxvLkVaStTnpxg0eutvrOn2x7ji5oITJRS1Nql2+xAZSPwKRqDY7I3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758528670; c=relaxed/simple;
-	bh=7Ins6AEQ7dDX0vadBpeWn+HbzgGj9qTBdP2W4cvwl0k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dq1H5WDYw/JRtWxB9C+0qrTfe26/5NMevrxSigexU/d0E6V7g6ERdVqmdgjh7bFHdQyxXOuLquVT6+9Z/CZQwo79tsdJuYKgEqryrYv6sZ9UrV5soyC1ANqCHppkW6JPDRt/EVbygiIvxtjdbz56viIzYT4AzBZlqeGC6AaRFmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqLo6GuX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07D93C4CEF0;
+	s=arc-20240116; t=1758528668; c=relaxed/simple;
+	bh=JIW9M3iR2HQQJJ0SVOTM9LqopydspXiw/QFO03vz47M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PjFAiSuvi1dOwQl0/NQXqlce4cBf5S6IWmfriqk1fdUDV3rMC3qVdRZZ9XwvyRzHBeKMTi0JIdxzAKMEVO5KDAKhndqtledPnscuGfRE8UoQg/llRiVD1lhPgOSsrPoVO3Kl7ce7MNXDBOuhd4a4zQC0qcwEelbgRCLriRhIOrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBevXoa7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 856C6C4CEF5;
 	Mon, 22 Sep 2025 08:11:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758528669;
-	bh=7Ins6AEQ7dDX0vadBpeWn+HbzgGj9qTBdP2W4cvwl0k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=QqLo6GuXu6QJb+rOWD9rWuLIXyxuevu77PsCG944IRsO+tLbxyA6ciWQotd1GzSDC
-	 T7odxE4YvG7NkcNZY/jREJ5clpzvCzyehb1HRz77apEoglg6dCOyv3APHmf4a3RyRy
-	 K5v+bIwBlZ6d1ISRzhaiKvC7HyrnxeK1FcqGuvDBAevxQN1hiU4eUwT1nL4v1KcA+o
-	 rpnrUeN/NLMakQPI6Kl1XbKRFQvrjuguTeA4IZaUwVpgby8Cb0OGeKZ7qK3YosM0ty
-	 3PuJzWY//qqjPevYfjzERK88Hx8igH5V+8mO/F3eZ+NnlRqVWpiEWRWZbRAuxg047r
-	 F8U4dxkegdWPQ==
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	bhelgaas@google.com
-Cc: robh@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Subject: [PATCH] PCI: tegra194: Rename variable 'root_bus' to 'root_port_bus' in tegra_pcie_downstream_dev_to_D0()
-Date: Mon, 22 Sep 2025 13:40:57 +0530
-Message-ID: <20250922081057.15209-1-mani@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=k20201202; t=1758528668;
+	bh=JIW9M3iR2HQQJJ0SVOTM9LqopydspXiw/QFO03vz47M=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=YBevXoa7hYL5A7UPZY6ccWB+dd6jEhpcBdgIQ5Y+u06CtYfOWAXsf+rPojGck/wPN
+	 juUHHx6j/XxXudOplLPDkNQG9CaKd7u25jCeVkf6pvJ19zH7eZTSA+8Gyd35meaVBW
+	 mUlPe7JCVRGPD77Ihv9ENCgPsVRcM6KBU1mxWCjLMCPFXw9BCNOpic6IBBfE7VNixH
+	 oLHMeGrK80Ewp3EgBN12SU6HKdWGCVowoI2XFibjijuTMfPJ6dm4GZRqlCnKlWzBdR
+	 /BzAVk8TCtEyPY/i7atr57W5qE7NU3ooGWcwtmV9obHbODWSssJN0eX0JThxmHxXuo
+	 iVfAUd7KIp0dA==
+Message-ID: <097124ea-cf9b-425c-bb5f-a305224328f6@kernel.org>
+Date: Mon, 22 Sep 2025 10:11:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2 07/10] media: v4l2-ioctl: Pass device state for
+ G/S/TRY_FMT ioctls
+To: Jai Luthra <jai.luthra@ideasonboard.com>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Ricardo Ribalda <ribalda@chromium.org>, Hans de Goede <hansg@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+ <20250919-vdev-state-v2-7-b2c42426965c@ideasonboard.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250919-vdev-state-v2-7-b2c42426965c@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+On 19/09/2025 11:55, Jai Luthra wrote:
+> Now that video device state is accepted as an argument in ioctl
+> implementations across all video device drivers, populate that argument
+> with the actual state data.
+> 
+> Pass the active state for G_FMT and S_FMT ioctls, and the try state for
+> TRY_FMT ioctl to drivers that have opted to use device state for format
+> storage.
+> 
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> --
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Hans Verkuil <hverkuil@kernel.org>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Ricardo Ribalda <ribalda@chromium.org>
+> Cc: Hans de Goede <hansg@kernel.org>
+> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
 
-In tegra_pcie_downstream_dev_to_D0(), PCI devices are transitioned to D0
-state. For iterating over the devices, first the downstream bus of the Root
-Port is searched from the Root bus. But the name of the variable that holds
-the Root Port downstream bus is named as 'root_bus', which is wrong.
+There is one more occurrence of this in v4l2_compat_ioctl32.c in function
+ctrl_is_pointer() where vidioc_query_ext_ctrl is called.
 
-So rename the variable to 'root_port_bus'. Also, move the comment on
-'bringing the devices to D0' to where the state is set exactly.
+Regards,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+	Hans
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 0c0734aa14b6..dac069fb1a16 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1270,7 +1270,7 @@ static int tegra_pcie_bpmp_set_pll_state(struct tegra_pcie_dw *pcie,
- static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
- {
- 	struct dw_pcie_rp *pp = &pcie->pci.pp;
--	struct pci_bus *child, *root_bus = NULL;
-+	struct pci_bus *child, *root_port_bus = NULL;
- 	struct pci_dev *pdev;
- 
- 	/*
-@@ -1283,19 +1283,19 @@ static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
- 	 */
- 
- 	list_for_each_entry(child, &pp->bridge->bus->children, node) {
--		/* Bring downstream devices to D0 if they are not already in */
- 		if (child->parent == pp->bridge->bus) {
--			root_bus = child;
-+			root_port_bus = child;
- 			break;
- 		}
- 	}
- 
--	if (!root_bus) {
--		dev_err(pcie->dev, "Failed to find downstream devices\n");
-+	if (!root_port_bus) {
-+		dev_err(pcie->dev, "Failed to find downstream bus of Root Port\n");
- 		return;
- 	}
- 
--	list_for_each_entry(pdev, &root_bus->devices, bus_list) {
-+	/* Bring downstream devices to D0 if they are not already in */
-+	list_for_each_entry(pdev, &root_port_bus->devices, bus_list) {
- 		if (PCI_SLOT(pdev->devfn) == 0) {
- 			if (pci_set_power_state(pdev, PCI_D0))
- 				dev_err(pcie->dev,
--- 
-2.48.1
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 644f06521673ff7ce5b194335d50f0e375ca7f51..500fc20627c97ce70016f4524301835142b7bebd 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -3070,6 +3070,21 @@ void v4l_printk_ioctl(const char *prefix, unsigned int cmd)
+>  }
+>  EXPORT_SYMBOL(v4l_printk_ioctl);
+>  
+> +static struct video_device_state *
+> +video_device_get_state(struct video_device *vfd, struct v4l2_fh *vfh,
+> +		       unsigned int cmd)
+> +{
+> +	switch (cmd) {
+> +	default:
+> +		return NULL;
+> +	case VIDIOC_G_FMT:
+> +	case VIDIOC_S_FMT:
+> +		return vfd->state;
+> +	case VIDIOC_TRY_FMT:
+> +		return vfh->state;
+> +	}
+> +}
+> +
+>  static long __video_do_ioctl(struct file *file,
+>  		unsigned int cmd, void *arg)
+>  {
+> @@ -3078,6 +3093,7 @@ static long __video_do_ioctl(struct file *file,
+>  	struct mutex *lock; /* ioctl serialization mutex */
+>  	const struct v4l2_ioctl_ops *ops = vfd->ioctl_ops;
+>  	bool write_only = false;
+> +	struct video_device_state *state = NULL;
+>  	struct v4l2_ioctl_info default_info;
+>  	const struct v4l2_ioctl_info *info;
+>  	struct v4l2_fh *vfh = file_to_v4l2_fh(file);
+> @@ -3090,6 +3106,9 @@ static long __video_do_ioctl(struct file *file,
+>  		return ret;
+>  	}
+>  
+> +	if (test_bit(V4L2_FL_USES_STATE, &vfd->flags))
+> +		state = video_device_get_state(vfd, vfh, cmd);
+> +
+>  	/*
+>  	 * We need to serialize streamon/off with queueing new requests.
+>  	 * These ioctls may trigger the cancellation of a streaming
+> @@ -3138,11 +3157,11 @@ static long __video_do_ioctl(struct file *file,
+>  
+>  	write_only = _IOC_DIR(cmd) == _IOC_WRITE;
+>  	if (info != &default_info) {
+> -		ret = info->func(ops, file, NULL, arg);
+> +		ret = info->func(ops, file, state, arg);
+>  	} else if (!ops->vidioc_default) {
+>  		ret = -ENOTTY;
+>  	} else {
+> -		ret = ops->vidioc_default(file, NULL,
+> +		ret = ops->vidioc_default(file, state,
+>  			v4l2_prio_check(vfd->prio, vfh->prio) >= 0,
+>  			cmd, arg);
+>  	}
+> 
 
 
