@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-826722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C99B8F300
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:46:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13993B8F30C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BBB5189900D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D4B3B8A5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 06:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83085248F72;
-	Mon, 22 Sep 2025 06:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D782024167A;
+	Mon, 22 Sep 2025 06:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nP7VXSl1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsTxnXe4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54F8A55;
-	Mon, 22 Sep 2025 06:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A407182B7;
+	Mon, 22 Sep 2025 06:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758523590; cv=none; b=U4Oh+Wcgwsf6xNvdxi6muZs4qOn8DMzP9tWWWWgUiqXb1hDM1PjVL+kRlCWeyvVt8DiugrAbju2v2fUFiDJ4rMxB9mTnlPCejYU0lwNiKhPwzesAYeSfcIdv3dGnf+mI9QQ4cSmg118Qmni0hXYOWrnoCkEGxjFboKopBFyjLPY=
+	t=1758523672; cv=none; b=OqgwccKOWTmup6kMLqRF65zb+EUT+aSyQosUXRPS8bYNHi8RYGmXEZ5WMN23JCRBRODCTafMHuSmWHwwnWk/sMK0JOxBEn3XTHUFK4YcF75Alq5IYETFvn13/6S3gL2Bl+h851vMZKtrxTO+2/HaerEvOAu8PNfdVps8gOZM6Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758523590; c=relaxed/simple;
-	bh=mp29UBXZYvpEtP1el7OKjbHwlHEypaNYsUJfhUBttwQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=l25zKC3G2PAbqYHLaWqZIv9BGR1Tkb6Ltsm555gGxrBneQZ0teet1uGXP1NmQxnPu78LmcgHY5UHnOQJwQ5P7gPzqRkec7g5cy0TDwN7oWGZbNwlqkRZ9TitBR4bJi933J8uv+2VRK1fgIrlvkbS7BgyeSmvxO8sMR3eRs9LdOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nP7VXSl1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DC5C4CEF0;
-	Mon, 22 Sep 2025 06:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758523590;
-	bh=mp29UBXZYvpEtP1el7OKjbHwlHEypaNYsUJfhUBttwQ=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=nP7VXSl1degD44CnUCKz8XyH1Y/s9xpLGdhM9qwWmJuXpdoF576t7wIoG+s3pSbOM
-	 0+hSoze0v+fM5ObE64bldFy1KMOLs2vuHU0i0JHaniSbexXjprQcImtoj4KwwnlSgR
-	 R9CnU6RUQnYC3MuC2mMRo6cRaWVc/IoQhmL7dPOV5qumigrlxjncHqj2ciiigLNcVY
-	 Cy3Yghr806XVKrOvYM7UZIERQR8BemLI5iRJbmEoeHjd/vcf3UDZsGPALGT1jO7PG5
-	 Vz4Tzh8sPu+6a3Q615qHMAmX5q4gapKyarsrZZsn6MzitPUv1VQ1K0BxkNyc4BayRl
-	 bzlgRJe0ZVVBA==
-Message-ID: <a317e3e5-d1fc-4d87-8fb7-c47adf7c5a69@kernel.org>
-Date: Mon, 22 Sep 2025 08:46:26 +0200
+	s=arc-20240116; t=1758523672; c=relaxed/simple;
+	bh=um8c9LylE867iljcdmP4EdcJQIucfIpVc7FL0tHNLNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ceeQ8agyzidGZ72EDGLvaf+vlYdnrspidtf2d/2yoe5EXrg2H1qr3eL9PcL2bxT+3VT91TESJKO3OXBgAwTB8+9E+71ErjOR3a/QFrnMrUatPqq+oHZMNfVwc6eMv0ApBFhWZ0HRsMW8WzDbebTSvIi3zmZIttOS9qkWM6GnG2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsTxnXe4; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758523666; x=1790059666;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=um8c9LylE867iljcdmP4EdcJQIucfIpVc7FL0tHNLNI=;
+  b=ZsTxnXe4KKXJSn4n/cH949sYqqzPs2I17KnSYt35mtMIX0SWflKiAGQB
+   4KMzYLAvy1SWtnUjQ2P57jRikjRZx1fvJ+D1rEEovCBkddzBhoL1deuwU
+   QGt0N291Fi6Py0vc54kAeKPz/uk+oimmZ81lFFGLUY2dfi1AsYv5wgtqV
+   srL4blFZGXMkH4wtL8VxuQSKHk2EQve3sLvEt8bn1y2lv1M8wRR3gxBUi
+   i3rypMwfZQyeAmQ6IyRPXEK9IQmmzyErxESCwIjfiJue5qgM+M0JjwBmn
+   fa9m4nIcXMRLDB/gLyoXcca4L7FesbuZ2dPIooLmK+4PeoOuLTrYw9Y+d
+   w==;
+X-CSE-ConnectionGUID: ZPNH56mPQwSex3ayvRlqoA==
+X-CSE-MsgGUID: ibXxIQbXT3aYxXISI0BxCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="71402749"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="71402749"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:47:44 -0700
+X-CSE-ConnectionGUID: ujVU+tgVTV6dYFeb2yPUvg==
+X-CSE-MsgGUID: KJP3wthhR/SutvPer6xkyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="207365735"
+Received: from unknown (HELO [10.238.2.49]) ([10.238.2.49])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 23:47:42 -0700
+Message-ID: <59d61506-9f20-4ac7-8e96-3fef1857c27f@linux.intel.com>
+Date: Mon, 22 Sep 2025 14:47:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,265 +66,203 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: hverkuil+cisco@kernel.org
-Subject: Re: [PATCH v4] media: i2c: wm8775: parameterize wm8775_platform_data
- based on config
-To: Alex Tran <alex.t.tran@gmail.com>, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, hansg@kernel.org,
- ribalda@chromium.org, laurent.pinchart@ideasonboard.com, cascardo@igalia.com
-References: <20250921190155.1013277-1-alex.t.tran@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250921190155.1013277-1-alex.t.tran@gmail.com>
+Subject: Re: [Patch v3 5/6] perf tools kvm: Use "cycles" to sample guest for
+ "kvm record" on Intel
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>,
+ Kevin Tian <kevin.tian@intel.com>
+References: <20250919021659.1263351-1-dapeng1.mi@linux.intel.com>
+ <20250919021659.1263351-6-dapeng1.mi@linux.intel.com> <aM2tSh6RGo2hB-XM@x1>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aM2tSh6RGo2hB-XM@x1>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Alex,
 
-On 21/09/2025 21:01, Alex Tran wrote:
-> Parameterized wm8775_platform_data struct, removing the single boolean
-> for determining device type. wm8775_standard_cfg struct will be used
-> for standard devices and wm8775_nova_s_cfg for nova_s devices. 
+On 9/20/2025 3:21 AM, Arnaldo Carvalho de Melo wrote:
+> On Fri, Sep 19, 2025 at 10:16:58AM +0800, Dapeng Mi wrote:
+>> After KVM supports PEBS for guest on Intel platforms
+>> (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+> So this isn't something selectable, i.e. with the patch above there is
+> no way to disable precise samples on the guest and instead allow the
+> host to use perf kvm with cycles:P to have a more precise view of guest
+> samples?
+>
+> I.e. wouldn't it be better to make cycles:P be accepted and since it
+> fails, it drops precise_ip to zero as its the "most precise" it can use
+> on the host when the guest is "hoarding"/using PEBS?
+>
+>> host loses the capability to sample guest with PEBS since all PEBS related
+>> MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+>> switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+>> fails to sample guest on Intel platforms since "cycles:P" event is used to
+>> sample guest by default as below case shows.
+> Or it is even worse than I thought, the host _can_ ask for cycles:P, get
+> it but then _when the guest_ vm-entries and while it is running, the
+> host doesn't have access to it?
 
-Thank you for your patch, but since this driver is ancient, and has not seen new
-development for years, I don't think it is a good idea to apply this.
+Unfortunately it's the latter one. That's why see the 0 guest records when
+running "perf kvm record/top" commands, it would always success that host
+creates cycles:P event, but once VM enters guest, guest owns the PEBS HW
+resource (All PEBS MSRs are switched to guest values) and host has no way
+to touch the PEBS HW resource in guest mode.
 
-It just increases the code size, and causes unnecessary code churn.
 
-It might be interesting if we get more exceptions like the nova_s, but that
-is highly unlikely.
+>
+> Isn't there any programmatic way for the host to know if the guest is
+> with PEBS and thus make cycles:P turn into plain "cycles"?
 
-Rejected-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+Currently we don't have such kind of code in Kernel. Of course, it can be
+added in theory but it could be meaningless since when users try to run
+"perf kvm" commands it's probably there are running VMs and the x86 guest
+PEBS support in KVM is always enabled. 
 
-Regards,
 
-	Hans
-
-> 
-> Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
-> ---
-> Changes in v2:
-> - rebased from mchehab linux media onto media committers tree
-> - resolve patch and build errors
-> Changes in v3:
-> - cc updated maintainers list
-> Changes in v4:
-> - exported config symbols
-> - cx88_core wm8775_data field converted to pointer
->  drivers/media/i2c/wm8775.c          | 111 ++++++++++++++++------------
->  drivers/media/pci/cx88/cx88-video.c |   6 +-
->  drivers/media/pci/cx88/cx88.h       |   2 +-
->  include/media/i2c/wm8775.h          |  25 +++++--
->  4 files changed, 87 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/wm8775.c b/drivers/media/i2c/wm8775.c
-> index 56778d3bc..a6c605303 100644
-> --- a/drivers/media/i2c/wm8775.c
-> +++ b/drivers/media/i2c/wm8775.c
-> @@ -50,6 +50,45 @@ struct wm8775_state {
->  	u8 input;		/* Last selected input (0-0xf) */
->  };
+>
+> - Arnaldo
+>
+>> sudo perf kvm record -a
+>> ^C[ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.787 MB perf.data.guest ]
+>>
+>> So to ensure guest record can be sampled successfully, use "cycles"
+>> instead of "cycles:P" to sample guest record by default on Intel
+>> platforms. With this patch, the guest record can be sampled
+>> successfully.
+> but unconditionally not having access to PEBS :-\
+>
+> - Arnaldo
 >  
-> +struct wm8775_platform_data wm8775_standard_cfg = {
-> +	.reset = 0x000, /* RESET */
-> +	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-> +	.interface_ctrl =
-> +		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-> +	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-> +	.powerdown = 0x000, /* Powered up */
-> +	.adc_l = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-> +	.adc_r = 0x1d4, /* ADC gain +2.5dB, enable zero cross */
-> +	.alc_ctrl_1 =
-> +		0x1bf, /* ALC Stereo, ALC target level -1dB FS max gain +8dB */
-> +	.alc_ctrl_2 = 0x185, /* Enable gain control, ALC hold time 42.6 ms */
-> +	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-> +	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-> +	.limiter_ctrl = 0x07a, /* Window 4ms, lower PGA gain limit -1dB */
-> +	.adc_mixer = 0x102, /* LRBOTH = 1, use input 2. */
-> +	.should_set_audio = false,
-> +};
-> +EXPORT_SYMBOL_GPL(wm8775_standard_cfg);
-> +
-> +struct wm8775_platform_data wm8775_nova_s_cfg = {
-> +	.reset = 0x000, /* RESET */
-> +	.zero_cross_timeout = 0x000, /* Disable zero cross detect timeout */
-> +	.interface_ctrl =
-> +		0x021, /* HPF enable, left justified, 24-bit (Philips) mode */
-> +	.master_mode = 0x102, /* Master mode, clock ratio 256fs */
-> +	.powerdown = 0x000, /* Powered up */
-> +	.adc_l = WM8775_REG_UNUSED,
-> +	.adc_r = WM8775_REG_UNUSED,
-> +	.alc_ctrl_1 = 0x1bb, /* Stereo, target level -5dB FS, max gain +8dB */
-> +	.alc_ctrl_2 = WM8775_REG_UNUSED,
-> +	.alc_ctrl_3 = 0x0a2, /* Ramp up delay 34 s, ramp down delay 33 ms */
-> +	.noise_gate = 0x005, /* Enable noise gate, threshold -72dBfs */
-> +	.limiter_ctrl = 0x0fb, /* Transient window 4ms, ALC min gain -5dB  */
-> +	.adc_mixer = WM8775_REG_UNUSED,
-> +	.should_set_audio = true, /* set volume/mute/mux */
-> +};
-> +EXPORT_SYMBOL_GPL(wm8775_nova_s_cfg);
-> +
->  static inline struct wm8775_state *to_state(struct v4l2_subdev *sd)
->  {
->  	return container_of(sd, struct wm8775_state, sd);
-> @@ -195,12 +234,8 @@ static int wm8775_probe(struct i2c_client *client)
->  	struct wm8775_state *state;
->  	struct v4l2_subdev *sd;
->  	int err;
-> -	bool is_nova_s = false;
-> -
-> -	if (client->dev.platform_data) {
-> -		struct wm8775_platform_data *data = client->dev.platform_data;
-> -		is_nova_s = data->is_nova_s;
-> -	}
-> +	struct wm8775_platform_data *data = client->dev.platform_data ?:
-> +						    &wm8775_standard_cfg;
->  
->  	/* Check if the adapter supports the needed features */
->  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_SMBUS_BYTE_DATA))
-> @@ -233,49 +268,29 @@ static int wm8775_probe(struct i2c_client *client)
->  	}
->  
->  	/* Initialize wm8775 */
-> +	wm8775_write(sd, R23, data->reset);
-> +	wm8775_write(sd, R7, data->zero_cross_timeout);
-> +	wm8775_write(sd, R11, data->interface_ctrl);
-> +	wm8775_write(sd, R12, data->master_mode);
-> +	wm8775_write(sd, R13, data->powerdown);
-> +	if (data->adc_l != WM8775_REG_UNUSED)
-> +		wm8775_write(sd, R14, data->adc_l);
-> +	if (data->adc_r != WM8775_REG_UNUSED)
-> +		wm8775_write(sd, R15, data->adc_r);
-> +	wm8775_write(sd, R16, data->alc_ctrl_1);
-> +	if (data->alc_ctrl_2 != WM8775_REG_UNUSED)
-> +		wm8775_write(sd, R17, data->alc_ctrl_2);
-> +	else
-> +		wm8775_write(sd, R17,
-> +			     (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
-> +	wm8775_write(sd, R18, data->alc_ctrl_3);
-> +	wm8775_write(sd, R19, data->noise_gate);
-> +	wm8775_write(sd, R20, data->limiter_ctrl);
-> +	if (data->adc_mixer != WM8775_REG_UNUSED)
-> +		wm8775_write(sd, R21, data->adc_mixer);
-> +	if (data->should_set_audio)
-> +		wm8775_set_audio(sd, 1);
->  
-> -	/* RESET */
-> -	wm8775_write(sd, R23, 0x000);
-> -	/* Disable zero cross detect timeout */
-> -	wm8775_write(sd, R7, 0x000);
-> -	/* HPF enable, left justified, 24-bit (Philips) mode */
-> -	wm8775_write(sd, R11, 0x021);
-> -	/* Master mode, clock ratio 256fs */
-> -	wm8775_write(sd, R12, 0x102);
-> -	/* Powered up */
-> -	wm8775_write(sd, R13, 0x000);
-> -
-> -	if (!is_nova_s) {
-> -		/* ADC gain +2.5dB, enable zero cross */
-> -		wm8775_write(sd, R14, 0x1d4);
-> -		/* ADC gain +2.5dB, enable zero cross */
-> -		wm8775_write(sd, R15, 0x1d4);
-> -		/* ALC Stereo, ALC target level -1dB FS max gain +8dB */
-> -		wm8775_write(sd, R16, 0x1bf);
-> -		/* Enable gain control, use zero cross detection,
-> -		   ALC hold time 42.6 ms */
-> -		wm8775_write(sd, R17, 0x185);
-> -	} else {
-> -		/* ALC stereo, ALC target level -5dB FS, ALC max gain +8dB */
-> -		wm8775_write(sd, R16, 0x1bb);
-> -		/* Set ALC mode and hold time */
-> -		wm8775_write(sd, R17, (state->loud->val ? ALC_EN : 0) | ALC_HOLD);
-> -	}
-> -	/* ALC gain ramp up delay 34 s, ALC gain ramp down delay 33 ms */
-> -	wm8775_write(sd, R18, 0x0a2);
-> -	/* Enable noise gate, threshold -72dBfs */
-> -	wm8775_write(sd, R19, 0x005);
-> -	if (!is_nova_s) {
-> -		/* Transient window 4ms, lower PGA gain limit -1dB */
-> -		wm8775_write(sd, R20, 0x07a);
-> -		/* LRBOTH = 1, use input 2. */
-> -		wm8775_write(sd, R21, 0x102);
-> -	} else {
-> -		/* Transient window 4ms, ALC min gain -5dB  */
-> -		wm8775_write(sd, R20, 0x0fb);
-> -
-> -		wm8775_set_audio(sd, 1);      /* set volume/mute/mux */
-> -	}
->  	return 0;
->  }
->  
-> diff --git a/drivers/media/pci/cx88/cx88-video.c b/drivers/media/pci/cx88/cx88-video.c
-> index 0c8732768..2054daeba 100644
-> --- a/drivers/media/pci/cx88/cx88-video.c
-> +++ b/drivers/media/pci/cx88/cx88-video.c
-> @@ -1348,14 +1348,14 @@ static int cx8800_initdev(struct pci_dev *pci_dev,
->  		struct i2c_board_info wm8775_info = {
->  			.type = "wm8775",
->  			.addr = 0x36 >> 1,
-> -			.platform_data = &core->wm8775_data,
-> +			.platform_data = core->wm8775_data,
->  		};
->  		struct v4l2_subdev *sd;
->  
->  		if (core->boardnr == CX88_BOARD_HAUPPAUGE_NOVASPLUS_S1)
-> -			core->wm8775_data.is_nova_s = true;
-> +			core->wm8775_data = &wm8775_nova_s_cfg;
->  		else
-> -			core->wm8775_data.is_nova_s = false;
-> +			core->wm8775_data = &wm8775_standard_cfg;
->  
->  		sd = v4l2_i2c_new_subdev_board(&core->v4l2_dev, &core->i2c_adap,
->  					       &wm8775_info, NULL);
-> diff --git a/drivers/media/pci/cx88/cx88.h b/drivers/media/pci/cx88/cx88.h
-> index 2ff3226a5..c8f85d2f4 100644
-> --- a/drivers/media/pci/cx88/cx88.h
-> +++ b/drivers/media/pci/cx88/cx88.h
-> @@ -391,7 +391,7 @@ struct cx88_core {
->  
->  	/* I2C remote data */
->  	struct IR_i2c_init_data    init_data;
-> -	struct wm8775_platform_data wm8775_data;
-> +	struct wm8775_platform_data *wm8775_data;
->  
->  	struct mutex               lock;
->  	/* various v4l controls */
-> diff --git a/include/media/i2c/wm8775.h b/include/media/i2c/wm8775.h
-> index a02695ee3..99678d165 100644
-> --- a/include/media/i2c/wm8775.h
-> +++ b/include/media/i2c/wm8775.h
-> @@ -20,13 +20,28 @@
->  #define WM8775_AIN3 4
->  #define WM8775_AIN4 8
->  
-> +#define WM8775_REG_UNUSED ((u16)-1)
->  
->  struct wm8775_platform_data {
-> -	/*
-> -	 * FIXME: Instead, we should parameterize the params
-> -	 * that need different settings between ivtv, pvrusb2, and Nova-S
-> -	 */
-> -	bool is_nova_s;
-> +	u16 reset; /* RESET (R23) */
-> +	u16 zero_cross_timeout; /* Zero cross detect timeout (R7) */
-> +	u16 interface_ctrl; /* Interface control (R11) */
-> +	u16 master_mode; /* Master mode (R12) */
-> +	u16 powerdown; /* Power down (R13) */
-> +
-> +	u16 adc_l; /* ADC left (R14) */
-> +	u16 adc_r; /* ADC right (R15) */
-> +	u16 alc_ctrl_1; /* ALC control 1 (R16)*/
-> +	u16 alc_ctrl_2; /* ALC control 2 (R17) */
-> +	u16 alc_ctrl_3; /* ALC control 3 (R18) */
-> +	u16 noise_gate; /* Noise gate (R19) */
-> +	u16 limiter_ctrl; /* Limiter control (R20) */
-> +	u16 adc_mixer; /* ADC mixer control (R21) */
-> +
-> +	bool should_set_audio;
->  };
->  
-> +extern struct wm8775_platform_data wm8775_nova_s_cfg;
-> +extern struct wm8775_platform_data wm8775_standard_cfg;
-> +
->  #endif
-
+>> sudo perf kvm record -a
+>> ^C[ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.783 MB perf.data.guest (23 samples) ]
+>>
+>> Reported-by: Kevin Tian <kevin.tian@intel.com>
+>> Fixes: cf8e55fe50df ("KVM: x86/pmu: Expose CPUIDs feature bits PDCM, DS, DTES64")
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Acked-by: Namhyung Kim <namhyung@kernel.org>
+>> ---
+>>  tools/perf/arch/x86/util/kvm-stat.c | 51 +++++++++++++++++++++++++++++
+>>  tools/perf/builtin-kvm.c            | 10 ------
+>>  tools/perf/util/kvm-stat.h          | 10 ++++++
+>>  3 files changed, 61 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+>> index 424716518b75..bff36f9345ea 100644
+>> --- a/tools/perf/arch/x86/util/kvm-stat.c
+>> +++ b/tools/perf/arch/x86/util/kvm-stat.c
+>> @@ -3,9 +3,11 @@
+>>  #include <string.h>
+>>  #include "../../../util/kvm-stat.h"
+>>  #include "../../../util/evsel.h"
+>> +#include "../../../util/env.h"
+>>  #include <asm/svm.h>
+>>  #include <asm/vmx.h>
+>>  #include <asm/kvm.h>
+>> +#include <subcmd/parse-options.h>
+>>  
+>>  define_exit_reasons_table(vmx_exit_reasons, VMX_EXIT_REASONS);
+>>  define_exit_reasons_table(svm_exit_reasons, SVM_EXIT_REASONS);
+>> @@ -211,3 +213,52 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+>>  
+>>  	return 0;
+>>  }
+>> +
+>> +/*
+>> + * After KVM supports PEBS for guest on Intel platforms
+>> + * (https://lore.kernel.org/all/20220411101946.20262-1-likexu@tencent.com/),
+>> + * host loses the capability to sample guest with PEBS since all PEBS related
+>> + * MSRs are switched to guest value after vm-entry, like IA32_DS_AREA MSR is
+>> + * switched to guest GVA at vm-entry. This would lead to "perf kvm record"
+>> + * fails to sample guest on Intel platforms since "cycles:P" event is used to
+>> + * sample guest by default.
+>> + *
+>> + * So, to avoid this issue explicitly use "cycles" instead of "cycles:P" event
+>> + * by default to sample guest on Intel platforms.
+>> + */
+>> +int kvm_add_default_arch_event(int *argc, const char **argv)
+>> +{
+>> +	const char **tmp;
+>> +	bool event = false;
+>> +	int ret = 0, i, j = *argc;
+>> +
+>> +	const struct option event_options[] = {
+>> +		OPT_BOOLEAN('e', "event", &event, NULL),
+>> +		OPT_BOOLEAN(0, "pfm-events", &event, NULL),
+>> +		OPT_END()
+>> +	};
+>> +
+>> +	if (!x86__is_intel_cpu())
+>> +		return 0;
+>> +
+>> +	tmp = calloc(j + 1, sizeof(char *));
+>> +	if (!tmp)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < j; i++)
+>> +		tmp[i] = argv[i];
+>> +
+>> +	parse_options(j, tmp, event_options, NULL, PARSE_OPT_KEEP_UNKNOWN);
+>> +	if (!event) {
+>> +		argv[j++] = STRDUP_FAIL_EXIT("-e");
+>> +		argv[j++] = STRDUP_FAIL_EXIT("cycles");
+>> +		*argc += 2;
+>> +	}
+>> +
+>> +	free(tmp);
+>> +	return 0;
+>> +
+>> +EXIT:
+>> +	free(tmp);
+>> +	return ret;
+>> +}
+>> diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
+>> index d297a7b2c088..c0d62add4996 100644
+>> --- a/tools/perf/builtin-kvm.c
+>> +++ b/tools/perf/builtin-kvm.c
+>> @@ -1636,16 +1636,6 @@ static int kvm_events_report_vcpu(struct perf_kvm_stat *kvm)
+>>  	return ret;
+>>  }
+>>  
+>> -#define STRDUP_FAIL_EXIT(s)		\
+>> -	({	char *_p;		\
+>> -		_p = strdup(s);		\
+>> -		if (!_p) {		\
+>> -			ret = -ENOMEM;	\
+>> -			goto EXIT;	\
+>> -		}			\
+>> -		_p;			\
+>> -	})
+>> -
+>>  int __weak setup_kvm_events_tp(struct perf_kvm_stat *kvm __maybe_unused)
+>>  {
+>>  	return 0;
+>> diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
+>> index 4249542544bb..53db3d56108b 100644
+>> --- a/tools/perf/util/kvm-stat.h
+>> +++ b/tools/perf/util/kvm-stat.h
+>> @@ -190,5 +190,15 @@ static inline struct kvm_info *kvm_info__new(void)
+>>  #define kvm_info__zput(ki) do { } while (0)
+>>  #endif /* HAVE_KVM_STAT_SUPPORT */
+>>  
+>> +#define STRDUP_FAIL_EXIT(s)		\
+>> +	({	char *_p;		\
+>> +		_p = strdup(s);		\
+>> +		if (!_p) {		\
+>> +			ret = -ENOMEM;	\
+>> +			goto EXIT;	\
+>> +		}			\
+>> +		_p;			\
+>> +	})
+>> +
+>>  extern int kvm_add_default_arch_event(int *argc, const char **argv);
+>>  #endif /* __PERF_KVM_STAT_H */
+>> -- 
+>> 2.34.1
 
