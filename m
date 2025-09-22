@@ -1,88 +1,80 @@
-Return-Path: <linux-kernel+bounces-827868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C926AB934EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:00:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E21B934EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F6F3A3BD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:00:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115C716DF17
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C527F011;
-	Mon, 22 Sep 2025 21:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095B726B779;
+	Mon, 22 Sep 2025 21:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I1avbmk6"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="tFnEbDmr"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED9425D218
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16D819994F;
+	Mon, 22 Sep 2025 21:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758574815; cv=none; b=VZJ5H1tGl09Xy+RE4iS+H5TdbwwUKOypPjAe7e6CesAV0w853UICQiTtclVmkzLJ19D4hwsmHF7QMXubg9UO48dtkVAf5uqCIfxk8fbj+nWW9KREHImrFS5Dl7pgijmHo6hxXs+N+l6TpSyAo1zK6bQuBq8B3Ak2exh+jTcg3nA=
+	t=1758574826; cv=none; b=BMODDPocrskQHp6tzrF2J9eALaK+QiEihulAd/dDRiBPISbENC0VZwfX7Er+6ljfw5F/8vIVraMTz5jKyNsCTMaln0CQrDLmqSdjEcU0zgFMK+sAXyvDUlBuMhCU0ewMX10ZA6maWeQVJshQjJn7Mc6FHv/jgAhamQvEF7WXK2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758574815; c=relaxed/simple;
-	bh=AggCKAT/ai9pPMS+uvkc8gHc61NeqPEoUM5TIXFt0jE=;
+	s=arc-20240116; t=1758574826; c=relaxed/simple;
+	bh=lVR1JNWr0UqoHEys8ULYA1yMquKH3xNGi3XVd2uTi6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3IKAxDiaJCOW3n+PZFGjVZjxm9bXYbPsBXdMoGHZXEMthlfNOAzBUpFnKKHMevaIOxm9YmLLZgyKUpvFfcAmMezAgovJPdm0NyII+mcRGVxwP8w9h2/1tfPxOV/7hqKohxKqSvf5g4NIM9R9EJhpKPrEtSc+PirdfmuRy4JlQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I1avbmk6; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45f2acb5f42so36320975e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758574811; x=1759179611; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZr0hPhFAud0Uw+aBiZrTvnM6zeOzyc8u94gFH2jTwA=;
-        b=I1avbmk6/YfMZ3csIRh0eB2/T59L8xPgw5F7juqcjhkXIVAzzn8wsuGm9Cfe6deVfG
-         KLqVq9G6JDwenEV9UrAz0Hr+perUaLwtaPn+qo+UY14VBn+8lNds6rz3wxKSBeWsrNT/
-         bYehkzF0Xj2kPQIh5wHiJMf9j/bjSraSYuDK1rJ8288xBpt34O4hGRzEprxxRIZa4zW9
-         fpV8NVlkNVfh0E/8p2t7X7yw2CVDA1WdhLhEa8a8V2hju4uq4TTEfG6oNrem9mgHaBvS
-         PK2Qyt5x5ME/lv0lBj2+u5PV4pVipBRE4zQ/5VgbfrzKyetDM2stvq1psnVMddt7Z4dw
-         ol+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758574811; x=1759179611;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tZr0hPhFAud0Uw+aBiZrTvnM6zeOzyc8u94gFH2jTwA=;
-        b=AhRN0QuIfjCMQJmBpdu4blfagrgmSGQPIJjrsl5Mcq89nOivwKIamzcqh+pObcDomV
-         Fz+0nxBARB2zuP22Lnb5WBfY9N/2m2+mW6d6BIBv7qgQBEVXt9W1dFCJ5hHbj5pU/tWG
-         +3rGHOMbeOyOtVmDPT0XQGcHG9BJOE2kTskTf2eLnxORmfzFfxblXvqi3jpTSyEhSmiF
-         zOCBGmYvVZJ0ENRV0HAce8WjPMlR4W4K8lAsiR5sDk3RP3JNsW4pOIn9Yu7HI2wqb824
-         Q6T4e2NHMA/Ywo93AE/0E/EQxQBA52xpr2CuS0gG8cxAF8K6U2S9PrR5h5RnO2cPdV3t
-         4miA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy/UnLJxoIgsIzzp24xYsRFu/MHGhFKLu2S8miO2y7TMgZPUvx/FYDQhuxkdXZo1GcRFlGz/y+zE70vKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvgbwC2Y2tP/q5ShhDyCXWtDiH0W8quNNgetuMWXFoE4Qdykk6
-	oOZ+AMW5ECuClXw/nPtL/oDq6M9nXWkdBcu6Pfi8Az00fv+3kVmcx8HWa8ksrtEKUg==
-X-Gm-Gg: ASbGncvlTdWUDSqfFzhXTuuhlqZVdb1a1jzL/t4JEe2s6lYoIXL5efgW/DTTjRU4BF0
-	W7DyiE+vuV7j4VDW9WgiVXgLco+SwMRQ1SxmLBuhEdfGeVJ6jLX5mmhspBcX0yDSzu8scUTcqt6
-	I6TOMM241BnDU2qtqX77fnlBrde9iZQXX/qxdGxBWcmLCJL/I8gjHrr0RYfY0+aNTzXIepdcJEi
-	qUX0lzdHMz+fME1AsZnbcZ/az4atEGDPJ95DEoCDxLbWGnukfjfdZ4MGt1omhIlWmI8fR6ks8IH
-	4rs6IbwniG5uWFRYefe3zCwsB+CcsZu2iopcKoK5zUBEhxJXauWNTsb9qq/D/UfbdZ3Bitqpvkm
-	RlhVvfmTRMvcAx7GJa6MLtg2oHmnlWah6W0mmhL03dXkidRuOImuerVQTjG1ao4/29A==
-X-Google-Smtp-Source: AGHT+IGQQ4kfiQOVTFeyQzQt2jYtkM5/eyZicm9Wu0N0OnLEQ0zchv5LfIGa+8+xPV9iHI+UIbvczw==
-X-Received: by 2002:a05:600c:8287:b0:46d:34cc:e9c1 with SMTP id 5b1f17b1804b1-46e1e0f7c74mr978165e9.4.1758574811415;
-        Mon, 22 Sep 2025 14:00:11 -0700 (PDT)
-Received: from google.com (135.91.155.104.bc.googleusercontent.com. [104.155.91.135])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e1bc00695sm14039935e9.4.2025.09.22.14.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 14:00:11 -0700 (PDT)
-Date: Mon, 22 Sep 2025 22:00:07 +0100
-From: Vincent Donnefort <vdonnefort@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	qperret@google.com, sebastianene@google.com, keirf@google.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
-Message-ID: <aNG417MneSKBxyn8@google.com>
-References: <20250919155056.2648137-1-vdonnefort@google.com>
- <87plbkxcvv.wl-maz@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rv0w5BLS2INk8IVRWIPP4QVUeQX5JByt2xOtyXbmn2pzBRfUgb8+nSQEjLinwBtv2hON8MVvoqxZ594OJjNCHvQx7IaK7IguDQ2kv2PEAiGw7S0+TC76/2Qu/EyWatfVdrrmHiHWM3jXcAVEuLSxAVtBW1WejFNEyPzVXqX3JBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=tFnEbDmr; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=asyNZP9neHNXj+Sf6k7sPwKgT9c0m2eBv/rMLNDCtys=; b=tFnEbDmrs/NXUJ6T83/sGy/b1t
+	Kz+6rhz0J1rz8uFgGchadwf5BXSxN4p/Pe4DS9blqRMtj98sPJC3c9Bd5Oiy2P3GfNnt+dVGzTvpA
+	1bBafaJfnfCSnvIGffRmpqC8Lz426hpYMpk3oUetrXLlRQPKe9fMwTjXyATJCc89WKLXoNR8wOPLs
+	VKEnHU5r55IwqRskbiZ9c4dFneKFhIMIvEMI8rQjf2h5mDdodOsL9dn5TgP5+vycrluTcxkqww0En
+	mBvDRkte5i9AZdJLflXdVN6pxpuxZzmDG9arg932xgY6sWlzorOBvctN+zdstdd+oCNQqABjm8Hnt
+	9TL4GIzA==;
+Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1v0ndz-00AlmZ-0j;
+	Mon, 22 Sep 2025 23:00:19 +0200
+Date: Mon, 22 Sep 2025 23:00:18 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+Subject: Re: [PATCH 2/3] riscv: dts: spacemit: add 24c02 eeprom on BPI-F3
+Message-ID: <aNG44sQf-RfRV9Of@aurel32.net>
+Mail-Followup-To: Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>
+References: <20250921210237.943370-1-aurelien@aurel32.net>
+ <20250921210237.943370-3-aurelien@aurel32.net>
+ <20250922032158-GYA1291757@gentoo.org>
+ <aNDVX9IrDbH2w7yJ@aurel32.net>
+ <20250922080105-GYB1291757@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,67 +83,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87plbkxcvv.wl-maz@kernel.org>
+In-Reply-To: <20250922080105-GYB1291757@gentoo.org>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Sun, Sep 21, 2025 at 12:29:08PM +0100, Marc Zyngier wrote:
-> On Fri, 19 Sep 2025 16:50:56 +0100,
-> Vincent Donnefort <vdonnefort@google.com> wrote:
-> > 
-> > There's currently no verification for host issued ranges in most of the
-> > pKVM memory transitions. The subsequent end boundary might therefore be
-> > subject to overflow and could evade the later checks.
-> > 
-> > Close this loophole with an additional check_range_args() check on a per
-> > public function basis.
-> > 
-> > host_unshare_guest transition is already protected via
-> > __check_host_shared_guest(), while assert_host_shared_guest() callers
-> > are already ignoring host checks.
-> > 
-> > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
-> > 
-> > ---
-> > 
-> >  v1 -> v2:
-> >    - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
-> >    - Rename to check_range_args().
-> > 
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > index 8957734d6183..65fcd2148f59 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
-> > @@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
-> >  	return check_page_state_range(&vm->pgt, addr, size, &d);
-> >  }
-> >  
-> > +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
-> > +{
-> > +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
-> > +		return false;
-> > +
-> > +	return start < (start + *size);
+On 2025-09-22 16:01, Yixun Lan wrote:
+> Hi Aurelien,
 > 
-> I will echo Oliver's concern on v1: you probably want to convert the
-> boundary check to be inclusive of the end of the range. Otherwise, a
-> range that ends at the top of the 64bit range will be represented as
-> 0, and fail the  check despite being perfectly valid.
+> On 06:49 Mon 22 Sep     , Aurelien Jarno wrote:
+> > Hi,
+> > 
+> > On 2025-09-22 11:21, Yixun Lan wrote:
+> > > Hi Aurelien,
+> > > 
+> > > On 23:01 Sun 21 Sep     , Aurelien Jarno wrote:
+> > > > The BPI-F3 contains a 24c02 eeprom, that contains among other things the
+> > > > MAC addresses of the two network interfaces. For this reason, mark it as
+> > > > read-only.
+> > > > 
+> > > > Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> > > > ---
+> > > >  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 ++++++++++-
+> > > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > > index 3b6e4f52e9aad..574d10fdf9b82 100644
+> > > > --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > > +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> > > > @@ -115,6 +115,15 @@ &i2c2 {
+> > > >  	pinctrl-0 = <&i2c2_0_cfg>;
+> > > >  	pinctrl-names = "default";
+> > > >  	status = "okay";
+> > > > +
+> > > > +	eeprom@50 {
+> > > > +		compatible = "atmel,24c02";
+> > > > +		reg = <0x50>;
+> > > > +		vcc-supply = <&vcc1v8_sys>;
+> > > > +		pagesize = <16>;
+> > > ..
+> > > > +		read-only;
+> > > so you're sure there is no demand to write data to eeprom?
+> > > (update info at linux env)
+> > 
+> > It seems to only contains board infos (mac addresses), but if there are 
+> > other use cases, that can indeed be dropped.
+> > 
+> On my second thought, I'm ok with it being "read-only", as we flash these
+> infos during firmware burning stage, then never alter them later.
+> 
+> > > > +		size = <256>;
+> > > > +	};
+> > > >  };
+> > > >  
+> > > >  &i2c8 {
+> > > > @@ -143,7 +152,7 @@ buck2 {
+> > > >  				regulator-always-on;
+> > > >  			};
+> > > >  
+> > > > -			buck3 {
+> > > > +			vcc1v8_sys: buck3 {
+> > > I'm not sure if adding an alias here is a good idea, it occurs buck3
+> > > serve the suppy for many devices, besides, to me it's more proper to
+> > > name it as eeprom_vcc1v8 for the eeprom according to schematics in
+> > > this case..
+> > 
+> > We need to add a label to be able to reference it for the eeprom 
+> > vcc-supply, but we'll have to also reference it for other devices (e.g.  
+> > emmc, wifi, phys, etc... It tried to choose a common name, ie the right 
+> > most one on the schematics. Another option could be to call it buck3, 
+> > but other name suggestions are welcome.
+> how about simply making it "buck3_1v8", then probably add a comment
+> later in the eeprom node? to mapping to the shecmatics
+> 	vcc-supply = <&buck3_1v8>; /* EEPROM_VCC1V8 */
 
-Do you mean allowing something like start == 0xfffffffffffff000 and size ==
-4096?
+Thanks that sounds good. I'll send an updated patchset with that change.
 
-But I guess that would still put all the following checks using "addr + size" at
-risk. Also, I believe even the code in pgtable.c wouldn't support a such range
-as it is also using a u64 end boundary.
 
-> 
-> That's not a problem for PAs, as we will be stuck with at most 56bit
-> PAs for quite a while, but VAs are a different story, and this sort of
-> range check should be valid for VAs as well.
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> -- 
-> Jazz isn't dead. It just smells funny.
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
