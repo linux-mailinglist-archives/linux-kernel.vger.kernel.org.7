@@ -1,213 +1,367 @@
-Return-Path: <linux-kernel+bounces-827255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE0EB91493
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:05:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034D6B9149C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184781889676
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:05:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5343E166689
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D99330AADA;
-	Mon, 22 Sep 2025 13:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2215D309EF2;
+	Mon, 22 Sep 2025 13:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vMRH8qs2"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PFiSBkao"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B4C3093CD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4038C120;
+	Mon, 22 Sep 2025 13:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758546283; cv=none; b=PsWtqGFiXYbZRD6M+lpCzjTginOhsyh6QUo1f7rU5PFBmqWVjH4pjeKYnngSXcCmA8QTXPQ18gT7DR9w2QBxgeCHF6F0P1vlrIxThay3pnCXjgyf/pXQ3DBf/H/0aOZlqVhEY1Wj3Ea2PnmYgVE+azwz3yYTs3Nff4LT7mi6dwM=
+	t=1758546375; cv=none; b=VdFj1QUt7PhegrbSefE/PkaGJcREP33+LSki6OvjhmQdEtLXxpYMfehtVPuzIB+pZiGVzUvUXtWw0SU7ytuySDKDkZxvemC3kxrz4q6gbYa8VCNfn2v0eroChkhhtYGdEWVwiVhyhXDg3yL6ZSW1+1MLZyt6P4uKbreCQeMl78U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758546283; c=relaxed/simple;
-	bh=FMYoIbZiYa0DS1g8RqN8iMEHg5Ih56HvWTWA1nUUjns=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dtZ7FNZLtm4y/jIRmhtYGU+kdnRmR5gCCgQuZ3P6PwcMD5a7gIyahkqmLBYDc9ROpeAl8DaWGG6o/kbrKYfsuQhYwXzVK8ws9WTTm8cs97zKZsrhKfyNmDZa3KA8xWzbg5qQ98rhfaK4hyv2rGzKZq/myYNyeyF9tMPaqncZ+go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vMRH8qs2; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45de27bf706so24218245e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:04:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758546280; x=1759151080; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JwElNbtoU6ryjkvg9ptzkO1BXP1SQnPo2fMtx+HCV1o=;
-        b=vMRH8qs2UGP1wU3xBEJ92i+Wuw4VAsCQcgypji8gA21KZCbOcYw4tKPj9cBGrAV5Nq
-         FUgOkg2A2v8RLLyXMNm4vTixJiNYPlyRUVzzOg/CbVN5Oukn5nQUYCPMrwhczfMY2A0X
-         wYKuZae8nRrRZPSWwLQ6D2eYI37N6IPF7NubbOcTkRQpobxM+7gasIeYBcag+mCe6kU1
-         KZb7favcWFSLd6Kzba43UJ1k9q6aLOm1iDdkuJAyuafIn66ZPG/XN0L4nkcapNwO5+Ig
-         LMk/D8zU4GDZ+6+4x8GUJwNg2e3sawV5JIudyfyMGlNs/p1REFH4m61hIBkmYlzi0B9L
-         opjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758546280; x=1759151080;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JwElNbtoU6ryjkvg9ptzkO1BXP1SQnPo2fMtx+HCV1o=;
-        b=smE/5IolTHGyUPw1rDa3bq9TG/6AEUu8kRG5e2dEaqUhmokN0ouR5ZPgWldKQmFU1M
-         qJhiQ0SQdfD9ycjnFogUQ/U2f1lxm8Z/oYec6XPA08NT2UqgGd//clGqi1WdeFXkMsDd
-         HFr2sCXpQ3+AioOUM3rOs+5uYkLTCf+2zTmsbem+akYtGH7eYFcqygIbESNiYI3zbFVk
-         BZOlCsPKyGDtv/vqrUU/5XOJbTgSH28ngcNJRqkqy1x8dJCDojcSzwmq5eKWIiEYfk5g
-         NRM2cA/ZvoXRhzpYpfKLOb7H8nB3RmQQ3YFUaEs51w2I6aVgYJUkkEPwHUNkBbxxtVzt
-         Vc9g==
-X-Forwarded-Encrypted: i=1; AJvYcCW2G9AW9DEnl1VfGpltJRW+cihiAa0gwnJpYiOpC2ngdW6hy94hzwyMo5UNdUJrhbD0zi/vrRo66plbulk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyhMgiUbsbPSwwRKUsWwCz6bzqwmHvhvVszrK+r+rJvep8wIep
-	dkRSSsrRhCCZ6S5vhKA+twIUFsfOZfDQnTLB2v9EgGazwd7QmPtigxKD2t932pZhMQw2edL0Q51
-	o8+6gBHHRzw==
-X-Google-Smtp-Source: AGHT+IEDFD3rxKYHYkV6r/KD3nctDYqhuTTynS2EvYjFqxAQWJnCTSezVvcxkZmuveyS5xGnrwZ/qy15N5O/
-X-Received: from wmbez5.prod.google.com ([2002:a05:600c:83c5:b0:45f:2d07:91f9])
- (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:630e:b0:46c:9e81:ad0
- with SMTP id 5b1f17b1804b1-46c9e904ffamr39494195e9.0.1758546279719; Mon, 22
- Sep 2025 06:04:39 -0700 (PDT)
-Date: Mon, 22 Sep 2025 13:04:27 +0000
-In-Reply-To: <20250922130427.2904977-1-abarnas@google.com>
+	s=arc-20240116; t=1758546375; c=relaxed/simple;
+	bh=PKJNjqlXn1ulY21TbFD+0/bx79EDenH0jPVwLf94fRQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UANTzlYyWNOoH2Vble5GorOhKDtFkXQtI8O4cgf4/slq9Fw7yepeu74f3UmARl2aqVZhFDei7mM+8mw3Of2MJef986esHXJaOkSWKnh2yaC+ICMHTHyRZ1wzhx2q6DkHrAIe/ZpZS6qjr38pXwapDikxzAGpYCBBhXzbidKeYpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PFiSBkao; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758546373; x=1790082373;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=PKJNjqlXn1ulY21TbFD+0/bx79EDenH0jPVwLf94fRQ=;
+  b=PFiSBkaoFISWCYXpxwz0oPZ97MQPM2kfu79BeabkQweUO1afzqlvgZcG
+   qzC3s0mWxpWnzn/IDI8wN3oBonvNybA891ymlsNfu9lRJzl2EyIIC5GtK
+   rdlGAzbgvoytspH4Qo5o/eSHN8gmp+85oCuiZf0aaYqJRtgidKrCofvMq
+   Dwq6oHpU6jQG8BjmMg5wSr9gfQ4aJjnrB5KnyxiN8L5MG+Qwwsfuj759u
+   q9ClangEoZwtCF/BcDW6PFPTSfMUs8VmudMUhGsxejeev3o+KkTiQGodv
+   1NEFY4gym9szcH9zwk3AqHTMEi66nuIwlSh4N3D+3N/aawYv9Dy7frdol
+   Q==;
+X-CSE-ConnectionGUID: rZA383jORI67gcEV8G6B1g==
+X-CSE-MsgGUID: D5YRYB8WSHuUo/RM0pVDNQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="64446649"
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="64446649"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:06:12 -0700
+X-CSE-ConnectionGUID: nShyirHKRD67tlzgg/FT2A==
+X-CSE-MsgGUID: tF+VjTRBTN2GnhpuTBXxZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="181620223"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.150])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:06:05 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 22 Sep 2025 16:06:00 +0300 (EEST)
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+cc: rostedt@goodmis.org, Lukas Wunner <lukas@wunner.de>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+    helgaas@kernel.org, mattc@purestorage.com, Jonathan.Cameron@huawei.com, 
+    bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, 
+    mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com, 
+    naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com, 
+    mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com
+Subject: Re: [PATCH v10 2/3] PCI: trace: Add a RAS tracepoint to monitor link
+ speed changes
+In-Reply-To: <20250920060117.866-3-xueshuai@linux.alibaba.com>
+Message-ID: <74cc8672-8e21-41e6-1535-2c504d90bbe0@linux.intel.com>
+References: <20250920060117.866-1-xueshuai@linux.alibaba.com> <20250920060117.866-3-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250922130427.2904977-1-abarnas@google.com>
-X-Mailer: git-send-email 2.51.0.534.gc79095c0ca-goog
-Message-ID: <20250922130427.2904977-3-abarnas@google.com>
-Subject: [PATCH v2 2/2] arch: arm64: Reject modules with internal alternative callbacks
-From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Dylan Hatch <dylanbhatch@google.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Fanqin Cui <cuifq1@chinatelecom.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: multipart/mixed; BOUNDARY="8323328-869169199-1758546177=:981"
+Content-ID: <f7c8ee4a-3cba-d1af-49f2-f02f07255b57@linux.intel.com>
 
-During module loading, check if a callback function used by the
-alternatives specified in the '.altinstruction' ELF section (if present)
-is located in core kernel .text. If not fail module loading before
-callback is called.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Reported-by: Fanqin Cui <cuifq1@chinatelecom.cn>
-Closes: https://lore.kernel.org/all/20250807072700.348514-1-fanqincui@163.c=
-om/
-Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
----
- arch/arm64/include/asm/alternative.h |  7 +++++--
- arch/arm64/kernel/alternative.c      | 19 ++++++++++++-------
- arch/arm64/kernel/module.c           |  9 +++++++--
- 3 files changed, 24 insertions(+), 11 deletions(-)
+--8323328-869169199-1758546177=:981
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <72eb1253-d5e1-82e3-6b40-8e1db7629aae@linux.intel.com>
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/=
-alternative.h
-index 00d97b8a757f..51746005239b 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -26,9 +26,12 @@ void __init apply_alternatives_all(void);
- bool alternative_is_applied(u16 cpucap);
-=20
- #ifdef CONFIG_MODULES
--void apply_alternatives_module(void *start, size_t length);
-+int apply_alternatives_module(void *start, size_t length);
- #else
--static inline void apply_alternatives_module(void *start, size_t length) {=
- }
-+static inline int apply_alternatives_module(void *start, size_t length)
-+{
-+	return 0;
-+}
- #endif
-=20
- void alt_cb_patch_nops(struct alt_instr *alt, __le32 *origptr,
-diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternativ=
-e.c
-index 8ff6610af496..11893a0360ad 100644
---- a/arch/arm64/kernel/alternative.c
-+++ b/arch/arm64/kernel/alternative.c
-@@ -139,9 +139,9 @@ static noinstr void clean_dcache_range_nopatch(u64 star=
-t, u64 end)
- 	} while (cur +=3D d_size, cur < end);
- }
-=20
--static void __apply_alternatives(const struct alt_region *region,
--				 bool is_module,
--				 unsigned long *cpucap_mask)
-+static int __apply_alternatives(const struct alt_region *region,
-+				bool is_module,
-+				unsigned long *cpucap_mask)
- {
- 	struct alt_instr *alt;
- 	__le32 *origptr, *updptr;
-@@ -166,10 +166,13 @@ static void __apply_alternatives(const struct alt_reg=
-ion *region,
- 		updptr =3D is_module ? origptr : lm_alias(origptr);
- 		nr_inst =3D alt->orig_len / AARCH64_INSN_SIZE;
-=20
--		if (ALT_HAS_CB(alt))
-+		if (ALT_HAS_CB(alt)) {
- 			alt_cb  =3D ALT_REPL_PTR(alt);
--		else
-+			if (!core_kernel_text((unsigned long)alt_cb))
-+				return -ENOEXEC;
-+		} else {
- 			alt_cb =3D patch_alternative;
-+		}
-=20
- 		alt_cb(alt, origptr, updptr, nr_inst);
-=20
-@@ -193,6 +196,8 @@ static void __apply_alternatives(const struct alt_regio=
-n *region,
- 		bitmap_and(applied_alternatives, applied_alternatives,
- 			   system_cpucaps, ARM64_NCAPS);
- 	}
-+
-+	return 0;
- }
-=20
- static void __init apply_alternatives_vdso(void)
-@@ -277,7 +282,7 @@ void __init apply_boot_alternatives(void)
- }
-=20
- #ifdef CONFIG_MODULES
--void apply_alternatives_module(void *start, size_t length)
-+int apply_alternatives_module(void *start, size_t length)
- {
- 	struct alt_region region =3D {
- 		.begin	=3D start,
-@@ -287,7 +292,7 @@ void apply_alternatives_module(void *start, size_t leng=
-th)
-=20
- 	bitmap_fill(all_capabilities, ARM64_NCAPS);
-=20
--	__apply_alternatives(&region, true, &all_capabilities[0]);
-+	return __apply_alternatives(&region, true, &all_capabilities[0]);
- }
- #endif
-=20
-diff --git a/arch/arm64/kernel/module.c b/arch/arm64/kernel/module.c
-index d32ab7dd86a8..6e5b488a219e 100644
---- a/arch/arm64/kernel/module.c
-+++ b/arch/arm64/kernel/module.c
-@@ -478,8 +478,13 @@ int module_finalize(const Elf_Ehdr *hdr,
- 	int ret;
-=20
- 	s =3D find_section(hdr, sechdrs, ".altinstructions");
--	if (s)
--		apply_alternatives_module((void *)s->sh_addr, s->sh_size);
-+	if (s) {
-+		ret =3D apply_alternatives_module((void *)s->sh_addr, s->sh_size);
-+		if (ret < 0) {
-+			pr_err("module %s: error occurred when applying alternatives\n", me->na=
-me);
-+			return ret;
-+		}
-+	}
-=20
- 	if (scs_is_dynamic()) {
- 		s =3D find_section(hdr, sechdrs, ".init.eh_frame");
+On Sat, 20 Sep 2025, Shuai Xue wrote:
+
+> PCIe link speed degradation directly impacts system performance and
+> often indicates hardware issues such as faulty devices, physical layer
+> problems, or configuration errors.
+>=20
+> To this end, add a RAS tracepoint to monitor link speed changes,
+> enabling proactive health checks and diagnostic analysis.
+>=20
+> The following output is generated when a device is hotplugged:
+>=20
+> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pcie_link_event/enable
+> $ cat /sys/kernel/debug/tracing/trace_pipe
+>    irq/51-pciehp-88      [001] .....   381.545386: pcie_link_event: 0000:=
+00:02.0 type:4, reason:4, cur_bus_speed:2.5 GT/s PCIe, max_bus_speed:16.0 G=
+T/s PCIe, width:1, flit_mode:0, status:DLLLA
+>=20
+> Suggested-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+> Suggested-by: Matthew W Carlis <mattc@purestorage.com>
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> ---
+>  drivers/pci/hotplug/pciehp_hpc.c |  3 +-
+>  drivers/pci/pci.c                |  2 +-
+>  drivers/pci/pci.h                | 22 +++++++++++--
+>  drivers/pci/pcie/bwctrl.c        |  4 +--
+>  drivers/pci/probe.c              |  9 +++--
+>  include/linux/pci.h              |  1 +
+>  include/trace/events/pci.h       | 56 ++++++++++++++++++++++++++++++++
+>  7 files changed, 87 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pcieh=
+p_hpc.c
+> index bcc51b26d03d..ad5f28f6a8b1 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -320,7 +320,8 @@ int pciehp_check_link_status(struct controller *ctrl)
+>  =09}
+> =20
+>  =09pcie_capability_read_word(pdev, PCI_EXP_LNKSTA2, &linksta2);
+> -=09__pcie_update_link_speed(ctrl->pcie->port->subordinate, lnk_status, l=
+inksta2);
+> +=09__pcie_update_link_speed(ctrl->pcie->port->subordinate, PCIE_HOTPLUG,
+> +=09=09=09=09 lnk_status, linksta2);
+> =20
+>  =09if (!found) {
+>  =09=09ctrl_info(ctrl, "Slot(%s): No device found\n",
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index b0f4d98036cd..96755ffd3841 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4749,7 +4749,7 @@ int pcie_retrain_link(struct pci_dev *pdev, bool us=
+e_lt)
+>  =09 * Link Speed.
+>  =09 */
+>  =09if (pdev->subordinate)
+> -=09=09pcie_update_link_speed(pdev->subordinate);
+> +=09=09pcie_update_link_speed(pdev->subordinate, PCIE_LINK_RETRAIN);
+> =20
+>  =09return rc;
+>  }
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index b8d364545e7d..422406a0695c 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -3,6 +3,7 @@
+>  #define DRIVERS_PCI_H
+> =20
+>  #include <linux/pci.h>
+> +#include <trace/events/pci.h>
+> =20
+>  struct pcie_tlp_log;
+> =20
+> @@ -455,16 +456,31 @@ static inline int pcie_dev_speed_mbps(enum pci_bus_=
+speed speed)
+>  }
+> =20
+>  u8 pcie_get_supported_speeds(struct pci_dev *dev);
+> -const char *pci_speed_string(enum pci_bus_speed speed);
+>  void __pcie_print_link_status(struct pci_dev *dev, bool verbose);
+>  void pcie_report_downtraining(struct pci_dev *dev);
+> =20
+> -static inline void __pcie_update_link_speed(struct pci_bus *bus, u16 lin=
+ksta, u16 linksta2)
+> +enum pcie_link_change_reason {
+> +=09PCIE_LINK_RETRAIN,
+> +=09PCIE_ADD_BUS,
+> +=09PCIE_BWCTRL_ENABLE,
+> +=09PCIE_BWCTRL_IRQ,
+> +=09PCIE_HOTPLUG
+
+Please use comma on any non-terminator entry so that adding to the list=20
+later will not mess up diffs.
+
+> +};
+> +
+> +static inline void __pcie_update_link_speed(struct pci_bus *bus,
+> +=09=09=09=09=09    enum pcie_link_change_reason reason,
+> +=09=09=09=09=09    u16 linksta, u16 linksta2)
+>  {
+>  =09bus->cur_bus_speed =3D pcie_link_speed[linksta & PCI_EXP_LNKSTA_CLS];
+>  =09bus->flit_mode =3D (linksta2 & PCI_EXP_LNKSTA2_FLIT) ? 1 : 0;
+> +
+> +=09trace_pcie_link_event(bus,
+> +=09=09=09     reason,
+> +=09=09=09     FIELD_GET(PCI_EXP_LNKSTA_NLW, linksta),
+> +=09=09=09     linksta & PCI_EXP_LNKSTA_LINK_STATUS_MASK);
+>  }
+> -void pcie_update_link_speed(struct pci_bus *bus);
+> +
+> +void pcie_update_link_speed(struct pci_bus *bus, enum pcie_link_change_r=
+eason reason);
+> =20
+>  /* Single Root I/O Virtualization */
+>  struct pci_sriov {
+> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+> index 36f939f23d34..32f1b30ecb84 100644
+> --- a/drivers/pci/pcie/bwctrl.c
+> +++ b/drivers/pci/pcie/bwctrl.c
+> @@ -199,7 +199,7 @@ static void pcie_bwnotif_enable(struct pcie_device *s=
+rv)
+>  =09 * Update after enabling notifications & clearing status bits ensures
+>  =09 * link speed is up to date.
+>  =09 */
+> -=09pcie_update_link_speed(port->subordinate);
+> +=09pcie_update_link_speed(port->subordinate, PCIE_BWCTRL_ENABLE);
+>  }
+> =20
+>  static void pcie_bwnotif_disable(struct pci_dev *port)
+> @@ -234,7 +234,7 @@ static irqreturn_t pcie_bwnotif_irq(int irq, void *co=
+ntext)
+>  =09 * speed (inside pcie_update_link_speed()) after LBMS has been
+>  =09 * cleared to avoid missing link speed changes.
+>  =09 */
+> -=09pcie_update_link_speed(port->subordinate);
+> +=09pcie_update_link_speed(port->subordinate, PCIE_BWCTRL_IRQ);
+> =20
+>  =09return IRQ_HANDLED;
+>  }
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index f41128f91ca7..c4cae2664156 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/irqdomain.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/bitfield.h>
+> +#include <trace/events/pci.h>
+>  #include "pci.h"
+> =20
+>  #define CARDBUS_LATENCY_TIMER=09176=09/* secondary latency timer */
+> @@ -788,14 +789,16 @@ const char *pci_speed_string(enum pci_bus_speed spe=
+ed)
+>  }
+>  EXPORT_SYMBOL_GPL(pci_speed_string);
+> =20
+> -void pcie_update_link_speed(struct pci_bus *bus)
+> +void pcie_update_link_speed(struct pci_bus *bus,
+> +=09=09=09    enum pcie_link_change_reason reason)
+>  {
+>  =09struct pci_dev *bridge =3D bus->self;
+>  =09u16 linksta, linksta2;
+> =20
+>  =09pcie_capability_read_word(bridge, PCI_EXP_LNKSTA, &linksta);
+>  =09pcie_capability_read_word(bridge, PCI_EXP_LNKSTA2, &linksta2);
+> -=09__pcie_update_link_speed(bus, linksta, linksta2);
+> +
+> +=09__pcie_update_link_speed(bus, reason, linksta, linksta2);
+>  }
+>  EXPORT_SYMBOL_GPL(pcie_update_link_speed);
+> =20
+> @@ -882,7 +885,7 @@ static void pci_set_bus_speed(struct pci_bus *bus)
+>  =09=09pcie_capability_read_dword(bridge, PCI_EXP_LNKCAP, &linkcap);
+>  =09=09bus->max_bus_speed =3D pcie_link_speed[linkcap & PCI_EXP_LNKCAP_SL=
+S];
+> =20
+> -=09=09pcie_update_link_speed(bus);
+> +=09=09pcie_update_link_speed(bus, PCIE_ADD_BUS);
+>  =09}
+>  }
+> =20
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 59876de13860..edd8a61ec44e 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -305,6 +305,7 @@ enum pci_bus_speed {
+>  =09PCI_SPEED_UNKNOWN=09=09=3D 0xff,
+>  };
+> =20
+> +const char *pci_speed_string(enum pci_bus_speed speed);
+>  enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
+>  enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
+> =20
+> diff --git a/include/trace/events/pci.h b/include/trace/events/pci.h
+> index 208609492c06..78e651b95cb3 100644
+> --- a/include/trace/events/pci.h
+> +++ b/include/trace/events/pci.h
+> @@ -57,6 +57,62 @@ TRACE_EVENT(pci_hp_event,
+>  =09)
+>  );
+> =20
+> +#define PCI_EXP_LNKSTA_LINK_STATUS_MASK (PCI_EXP_LNKSTA_LBMS | \
+> +=09=09=09=09=09 PCI_EXP_LNKSTA_LABS | \
+> +=09=09=09=09=09 PCI_EXP_LNKSTA_LT | \
+> +=09=09=09=09=09 PCI_EXP_LNKSTA_DLLLA)
+
+This looks fragile because of the headers, I don't think there anything=20
+that pulls these required defines within this header itself (so it only=20
+works because the .c files have the pci.h include before it so that that=20
+the defines from uapi side will be include).
+
+If it's allowed for these files, you should include uapi/linux/pci_regs.h.
+
+> +
+> +#define LNKSTA_FLAGS=09=09=09=09=09\
+> +=09{ PCI_EXP_LNKSTA_LT,=09"LT"},=09=09=09\
+> +=09{ PCI_EXP_LNKSTA_DLLLA,=09"DLLLA"},=09=09\
+> +=09{ PCI_EXP_LNKSTA_LBMS,=09"LBMS"},=09=09\
+> +=09{ PCI_EXP_LNKSTA_LABS,=09"LABS"}
+> +
+> +TRACE_EVENT(pcie_link_event,
+> +
+> +=09TP_PROTO(struct pci_bus *bus,
+> +=09=09  unsigned int reason,
+> +=09=09  unsigned int width,
+> +=09=09  unsigned int status
+> +=09=09),
+> +
+> +=09TP_ARGS(bus, reason, width, status),
+> +
+> +=09TP_STRUCT__entry(
+> +=09=09__string(=09port_name,=09pci_name(bus->self))
+> +=09=09__field(=09unsigned int,=09type=09=09)
+> +=09=09__field(=09unsigned int,=09reason=09=09)
+> +=09=09__field(=09unsigned int,=09cur_bus_speed=09)
+> +=09=09__field(=09unsigned int,=09max_bus_speed=09)
+> +=09=09__field(=09unsigned int,=09width=09=09)
+> +=09=09__field(=09unsigned int,=09flit_mode=09)
+> +=09=09__field(=09unsigned int,=09link_status=09)
+> +=09),
+> +
+> +=09TP_fast_assign(
+> +=09=09__assign_str(port_name);
+> +=09=09__entry->type=09=09=09=3D pci_pcie_type(bus->self);
+> +=09=09__entry->reason=09=09=09=3D reason;
+> +=09=09__entry->cur_bus_speed=09=09=3D bus->cur_bus_speed;
+> +=09=09__entry->max_bus_speed=09=09=3D bus->max_bus_speed;
+> +=09=09__entry->width=09=09=09=3D width;
+> +=09=09__entry->flit_mode=09=09=3D bus->flit_mode;
+> +=09=09__entry->link_status=09=09=3D status;
+> +=09),
+> +
+> +=09TP_printk("%s type:%d, reason:%d, cur_bus_speed:%s, max_bus_speed:%s,=
+ width:%u, flit_mode:%u, status:%s\n",
+> +=09=09__get_str(port_name),
+> +=09=09__entry->type,
+> +=09=09__entry->reason,
+> +=09=09pci_speed_string(__entry->cur_bus_speed),
+> +=09=09pci_speed_string(__entry->max_bus_speed),
+> +=09=09__entry->width,
+> +=09=09__entry->flit_mode,
+> +=09=09__print_flags((unsigned long)__entry->link_status, "|",
+> +=09=09=09=09LNKSTA_FLAGS)
+> +=09)
+> +);
+> +
+>  #endif /* _TRACE_HW_EVENT_PCI_H */
+> =20
+>  /* This part must be outside protection */
+>=20
+
 --=20
-2.51.0.534.gc79095c0ca-goog
-
+ i.
+--8323328-869169199-1758546177=:981--
 
