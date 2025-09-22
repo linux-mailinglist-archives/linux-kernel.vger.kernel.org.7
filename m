@@ -1,186 +1,149 @@
-Return-Path: <linux-kernel+bounces-826764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC36B8F483
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:23:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7DFB8F498
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78803420513
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:23:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B4B17A38CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A04C2F5461;
-	Mon, 22 Sep 2025 07:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5072F549C;
+	Mon, 22 Sep 2025 07:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qy0LR9mD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b+EXKeQd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AA92F2908;
-	Mon, 22 Sep 2025 07:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EA7212578;
+	Mon, 22 Sep 2025 07:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525824; cv=none; b=K2sDXXsgHixfyjthJYl5AS6pvsCtKjIiQAixNbdrjzN3yBJ/5eJzcW7n4gBqYXHjVplEx/okr3HhMtY6HzbPQpDHi/JcTsEBfhEPXOP+f768nmrYHdiVqHETzhm/WuMxDQV04fQRTY56Hktrrw03QEq5xCDBCgBpt2KUvNKkYEI=
+	t=1758525922; cv=none; b=WMgQK5fBlUOYFnto40Yu9lywG5pnaGY5YUdL7qQcL6S3IyjU5aNNzP3rk2HyuSl3aaGWX8XM2USOgdiUCt1q+WTXOwS3X2XU6AxxOijmy19XRPEHkpWVM+Cm3LtjMu5ioELtzUHJYtJwR1bIieCWhsbOHQRz/Q6zbgPV4s/Ce2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525824; c=relaxed/simple;
-	bh=ZV7aj9Kf9IQrMj6PE5MKPkZnwo28z3HICV1pbhZwGJg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LD6sGO6k1QebQS5JkUKLPflcpfRdahrKa2BpHDtO0eA7UJiTBFbNtOfe+/5/gX6B4CCF16e0ke+cq85hP6qEapdXI6o7l34LBGlS4CauzZNqWbihDQaXvzUGCipZzm6t9o4TeECjkX5oELJXWL36vBWxYX80m35HfXI8YEzptRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qy0LR9mD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD1C5C4CEF0;
-	Mon, 22 Sep 2025 07:23:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758525824;
-	bh=ZV7aj9Kf9IQrMj6PE5MKPkZnwo28z3HICV1pbhZwGJg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qy0LR9mD5FuTYFS2OEEJV0ZztHALjbF577zATXWDiMUWjUHPZvD0/XqnOoP72QWXU
-	 nUKth23FKJFWfYC+C3InmIeMopxNUDqKbtp+Hs+AlMo0vFQnFEhHP1jOUv/OWGC0Yl
-	 pSDB1pegHFPWq93holMjx+rfjUylWVmtA/ZjxIpNQFYFAyi/dtqcXWOkfOpu5OHFJW
-	 4wnQNgpeUNMdTR2XllaByQLomBdAWJ97OhoJcF2WktRGQX0eE8Oz7c9YTtde1F2jH5
-	 fqEug/+UTai+Htj7z5FXrSoAdGMW7Z7oplqqMDYAQNadNwoZvSvED2KWa+J8P83QiA
-	 YvWpwtxbeEB9Q==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	stable@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH] tpm: Use -EPERM as fallback error code in tpm_ret_to_err
-Date: Mon, 22 Sep 2025 10:23:32 +0300
-Message-Id: <20250922072332.2649135-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1758525922; c=relaxed/simple;
+	bh=zgYPwSd7h2h/iajm7Yw03doKtbIcXSLqMklWJTw6wK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uv3aKegnwCGKe+tSBefFk1aA78Sr1mho+N5Kfehl3Whzk/NL1RttVkYavRD+mHT2hIZBCvztSsTHrpNylG4LxE0tsvInY25p421h2hXjiL2T3p5hTtkdLafkyQ8r2NN3BqkWo2BehE6+eTTWsIwG4QS6qm/rVn996w6EtSGo5ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b+EXKeQd; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758525921; x=1790061921;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zgYPwSd7h2h/iajm7Yw03doKtbIcXSLqMklWJTw6wK8=;
+  b=b+EXKeQdcSbdbRXk3nz/PfzHaQR6lUK6h0ndsi8PfxTcdSjNwsarRMj8
+   73CvQRbSgU2Zb+5EfoK8UAqCpGvr0xTNsUxKzf75MdPFflgZfR2/a7jR1
+   9ucmUT7fEejVHbi5RqLgS5YYsfpDbgZjCQ2PY8hMYzWaAWcU9nVWDRRMK
+   DrPtIsrOG9VXy2Y5UHwcIeK4R6Y7c78KcZNAcsjxQboFA444Vl4RAJuyO
+   I4OU8G4YgPXwYccwLc+od5X+RdhwOoi+q4q+/v74nUPZHlFfI1RW9FyOP
+   KDzRn8y5DH5oLzN8xtTvPjA+CKbBNhhGfgP6/jtBfQ9Xw2iWK53LRE7ni
+   Q==;
+X-CSE-ConnectionGUID: E85T+R2CRySpN7EQ3UW+pg==
+X-CSE-MsgGUID: L5+dnVgOTJWWmu+it6fL1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="59820083"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="59820083"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:25:14 -0700
+X-CSE-ConnectionGUID: 7zSHwH9DQzWQEbw0lTqH/w==
+X-CSE-MsgGUID: dooSLQzHTjaliOXNr569Kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="176317319"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:25:08 -0700
+Message-ID: <ed332d81-9e22-41e3-95cb-9bebca1b00f6@linux.intel.com>
+Date: Mon, 22 Sep 2025 15:25:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 23/51] KVM: x86: Allow setting CR4.CET if IBT or SHSTK
+ is supported
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-24-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250919223258.1604852-24-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-Using -EFAULT here was not the best idea for tpm_ret_to_err as the fallback
-error code as it is no concise with trusted keys.
 
-Change the fallback as -EPERM, process TPM_RC_HASH also in tpm_ret_to_err,
-and by these changes make the helper applicable for trusted keys.
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+>
+> Drop X86_CR4_CET from CR4_RESERVED_BITS and instead mark CET as reserved
+> if and only if IBT *and* SHSTK are unsupported, i.e. allow CR4.CET to be
+> set if IBT or SHSTK is supported.  This creates a virtualization hole if
+> the CPU supports both IBT and SHSTK, but the kernel or vCPU model only
+> supports one of the features.  However, it's entirely legal for a CPU to
+> have only one of IBT or SHSTK, i.e. the hole is a flaw in the architecture,
+> not in KVM.
+>
+> More importantly, so long as KVM is careful to initialize and context
+> switch both IBT and SHSTK state (when supported in hardware) if either
+> feature is exposed to the guest, a misbehaving guest can only harm itself.
+> E.g. VMX initializes host CET VMCS fields based solely on hardware
+> capabilities.
+>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Signed-off-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> [sean: split to separate patch, write changelog]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Cc: stable@vger.kernel.org # v6.15+
-Fixes: 539fbab37881 ("tpm: Mask TPM RC in tpm2_start_auth_session()")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
----
- include/linux/tpm.h                       |  9 +++++---
- security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
- 2 files changed, 13 insertions(+), 22 deletions(-)
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index dc0338a783f3..667d290789ca 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -449,13 +449,16 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
- 	if (ret < 0)
- 		return ret;
- 
--	switch (tpm2_rc_value(ret)) {
--	case TPM2_RC_SUCCESS:
-+	if (!ret)
- 		return 0;
-+
-+	switch (tpm2_rc_value(ret)) {
- 	case TPM2_RC_SESSION_MEMORY:
- 		return -ENOMEM;
-+	case TPM2_RC_HASH:
-+		return -EINVAL;
- 	default:
--		return -EFAULT;
-+		return -EPERM;
- 	}
- }
- 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 024be262702f..e165b117bbca 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	}
- 
- 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
-+	if (blob_len < 0)
-+		rc = blob_len;
- 
- out:
- 	tpm_buf_destroy(&sized);
- 	tpm_buf_destroy(&buf);
- 
--	if (rc > 0) {
--		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
--			rc = -EINVAL;
--		else
--			rc = -EPERM;
--	}
--	if (blob_len < 0)
--		rc = blob_len;
--	else
-+	if (!rc)
- 		payload->blob_len = blob_len;
- 
- out_put:
- 	tpm_put_ops(chip);
--	return rc;
-+	return tpm_ret_to_err(rc);
- }
- 
- /**
-@@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		kfree(blob);
- 	tpm_buf_destroy(&buf);
- 
--	if (rc > 0)
--		rc = -EPERM;
--
--	return rc;
-+	return tpm_ret_to_err(rc);
- }
- 
- /**
-@@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 	tpm_buf_fill_hmac_session(chip, &buf);
- 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
- 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
--	if (rc > 0)
--		rc = -EPERM;
- 
- 	if (!rc) {
- 		data_len = be16_to_cpup(
-@@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 
- out:
- 	tpm_buf_destroy(&buf);
--	return rc;
-+	return tpm_ret_to_err(rc);
- }
- 
- /**
-@@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 
- out:
- 	tpm_put_ops(chip);
--
--	return rc;
-+	return tpm_ret_to_err(rc);
- }
--- 
-2.39.5
+> ---
+>   arch/x86/include/asm/kvm_host.h | 2 +-
+>   arch/x86/kvm/x86.h              | 3 +++
+>   2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 554d83ff6135..39231da3a3ff 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -142,7 +142,7 @@
+>   			  | X86_CR4_OSXSAVE | X86_CR4_SMEP | X86_CR4_FSGSBASE \
+>   			  | X86_CR4_OSXMMEXCPT | X86_CR4_LA57 | X86_CR4_VMXE \
+>   			  | X86_CR4_SMAP | X86_CR4_PKE | X86_CR4_UMIP \
+> -			  | X86_CR4_LAM_SUP))
+> +			  | X86_CR4_LAM_SUP | X86_CR4_CET))
+>   
+>   #define CR8_RESERVED_BITS (~(unsigned long)X86_CR8_TPR)
+>   
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index 65cbd454c4f1..f3dc77f006f9 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -680,6 +680,9 @@ static inline bool __kvm_is_valid_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
+>   		__reserved_bits |= X86_CR4_PCIDE;       \
+>   	if (!__cpu_has(__c, X86_FEATURE_LAM))           \
+>   		__reserved_bits |= X86_CR4_LAM_SUP;     \
+> +	if (!__cpu_has(__c, X86_FEATURE_SHSTK) &&       \
+> +	    !__cpu_has(__c, X86_FEATURE_IBT))           \
+> +		__reserved_bits |= X86_CR4_CET;         \
+>   	__reserved_bits;                                \
+>   })
+>   
 
 
