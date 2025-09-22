@@ -1,342 +1,116 @@
-Return-Path: <linux-kernel+bounces-827309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A990B9167A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2ABBB9167D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:30:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F23072A348E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB0E1898A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FC330C637;
-	Mon, 22 Sep 2025 13:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A58309EE0;
+	Mon, 22 Sep 2025 13:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A8WHERhA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="RKXVOPxb"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094C741C63;
-	Mon, 22 Sep 2025 13:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35CE309EFB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547827; cv=none; b=IPbC0iSEM6RuZtmfjAD8bbnWjSqyiWK7UovfTs56Vz8H/SeI2hKGDzXocQO2K5YZxGOTcks0XLEyYgpl/EBblTNJfzu6LBawSbTLYun9OhsunqBjX9Me85Kk2Cw6ppvS8feBofb3pf8XFOKzRTxtXG4fcNjT4GLrWWf34sMozmM=
+	t=1758547839; cv=none; b=P6sYMtHmsQTNkZauRCjc8vtaqmuPlPLEvda9OW3nSzmQ1MIzHKxRheOZZodSEv3DmPtDQuSXMUUhCDXPOEDNN22JwoT9zbgxnyurtbo9KwLqjzdbcMKQceJnOU1xLuAvfeNoOfpzU0Z+Gexhos/im3nYrSvp9yg5bqC0+iinzik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547827; c=relaxed/simple;
-	bh=/nAVCigp73cE6lEPVXQKwxrrvSOq/c8fB/xSb/ejS6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Re69+OepLRFAulNgiBwNx1g0yg8AVxB9OhSk7JFOLu6Yv/GGexERNOWZT4bhjr401YkfKU2N1j6w3xBYSH1FSH18e+vF8kt162jGxZLLKXuezSe922vhJtfOpX1cxeycHMIJS/LX9vZ4SEJuvKbcOxIoiu6dtL9lc6P7wB2nhks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A8WHERhA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 78DEF4AD;
-	Mon, 22 Sep 2025 15:28:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1758547737;
-	bh=/nAVCigp73cE6lEPVXQKwxrrvSOq/c8fB/xSb/ejS6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A8WHERhAtUEW5oz7Xk/vCj/s0Yl8dUJ3vxYdQKJ+znHqVpTyc9W9PvUeLgYuaiRUr
-	 MvbxIFS6lQ9dU5oAgN/RoUOE5TsDEEAPkXtqv5BeZPJ5lAzo31ZcYQQgHxFlowemYd
-	 evUr/1uNO47O3qxxjsVJtJxHtLFtadU8aDxW0FKA=
-Message-ID: <fa27ae08-4568-4b0c-b8bb-a4b31746e27f@ideasonboard.com>
-Date: Mon, 22 Sep 2025 16:30:15 +0300
+	s=arc-20240116; t=1758547839; c=relaxed/simple;
+	bh=cz+EppApwySK07uus2Zumno8Nob1vgha5YKDQXFkMI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jE4TLFJ8f2gyhljt2lfLcbJ65Rpo6BlKNmpy4e0f06sQq2Z1mRLXzMiqtPCTIQD+bKxBEk35tzQv6X1960Znv/eZE5Z9BLnD/JUDKw8g7c2QcurodRTCs4cdJd5aAVA6Q5BcXwb3l/lOQN7JTkIZ8355qiwoJSuhxMPFF3iUgeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=RKXVOPxb; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4d10f772416so3381531cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1758547836; x=1759152636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=soQDxbku75wcKlRQCmyQHwxlcohTMFfAqg+ZHNumi64=;
+        b=RKXVOPxbV64a7WhmtZ2EJFLDVvX3ZQT6bClL+vNETYssUy6U8Ye63KWdGbIUx8/wFu
+         VDdawWs0SElv4G9WJkWb0JBNuLY+nt+x969UXLoV7TQCxBh1g9EOzi7zC1CoqgbQhKbm
+         umjRSxJuYDjEn22dKxgoFrOCPSUB5rNGFGOslh4dYj6uaRFTwq6Q4Fkm9FRRHQ1W+Xd0
+         XhSSc9ZrYWImj17Qi85oJoi247N3+CfaKThnlS2M8cPcW8emS8Qk7oeZWgSrusb9R+5H
+         QArVd/mNOZ5Sa7KHFwb4ar1X9uCus4PdKjJl7SyZzCcYGkwh+5Xil4SlC7m4+rugQxvG
+         0MsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758547836; x=1759152636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=soQDxbku75wcKlRQCmyQHwxlcohTMFfAqg+ZHNumi64=;
+        b=A8fHzZZzSO6pHzJB9t8a1QIhhSudnzqGbhpgQVtfxCQR+wUDiknASrkBz9YOJC5TJr
+         G7NDtMl21r9vlGBmxEo+E++HSKLkW8GCG8WypEzKXuXR7LAtsacpqobi2ckGmasIiwMv
+         pmjJrDYHoq3GQ5FtcUsE1+rWH3y6tGlucUA2qwUMO4ReA38IMiWwyQWjjgmrTmwEmI3W
+         JffEsKEkKq0dw9O++TL0iMDIwuniDvenN5+6XRHCoTwIH8sZEiXzp3m2AP04YphBq89F
+         iNQRbnHs+8Bas8IxebipcYaUsGem0rcihMlZdukDORVQzFmELm4ifw1YVyBoxKAK+cGW
+         LCSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVguYj6QwTThN8u4RRQTNkeQnPWhpi2oI8CSmxmVFld1qQ3zzRPQ1uBX5Qgf/JNTrPJIVw/JpNC4idGZjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVON8I8NIlvf2znjgb1PIhvZW0t/hPuLySHTqnNBaacn4jtwo5
+	xUBYx7q1coJDKb9QdVKMmTrVRLDL0yCQ87gR+0fZFfd0TP8dmb2NXGyfrbymhHOPRW8=
+X-Gm-Gg: ASbGncugztjc9K1vPUJ981p+IXmGuQ6aBAKxQokbX8RseeHKTa+AM4dB9VvdfVtX69e
+	+9oGl3NckJ6qeyx/DQ13tRt5ulIu0kj3/1LAgPsv3bobQmzctPbUN4bRD/TFVWR3OkpxuXYyaeq
+	TUkP/9kr/iqTZ6dOR5N1IIi0TCf3NvIgLStO/ZsuQy84d9HCln+t18c23NBdY3OFF1B2GX9kT9u
+	t7OLXcjMt3L20zVhngR4zmvpyQ2gpPf3POF8/GvSKF31laKwK33S1vm7u0LyJ+/lgLbBTaBEhAR
+	RhdOw8Ap7Z9+gfUbpFFOZ/xVRM8WDaj2mSRvc21jYuANDdufQjzsbgznXmjSkS91pbg8c55f
+X-Google-Smtp-Source: AGHT+IHe9wJVlHUhgN8DEQ7hhP4hzex9JskPCNLwwhsPxRlegpEsHbuCwvoIfwhhlPGANj3noJQUlA==
+X-Received: by 2002:a05:622a:a956:10b0:4c4:40dd:2855 with SMTP id d75a77b69052e-4c440dd2b41mr79485051cf.29.1758547835584;
+        Mon, 22 Sep 2025 06:30:35 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4bda25aa5fesm70078611cf.18.2025.09.22.06.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 06:30:35 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v0gcj-0000000ALyq-2nW5;
+	Mon, 22 Sep 2025 10:30:33 -0300
+Date: Mon, 22 Sep 2025 10:30:33 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
+	joro@8bytes.org, praan@google.com
+Subject: Re: [PATCH v4 2/4] iommu/io-pgtable-arm: Move selftests to a
+ separate file
+Message-ID: <20250922133033.GZ1326709@ziepe.ca>
+References: <20250922090003.686704-1-smostafa@google.com>
+ <20250922090003.686704-3-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 09/16] media: ti: j721e-csi2rx: add support for
- processing virtual channels
-To: Rishikesh Donadkar <r-donadkar@ti.com>, jai.luthra@linux.dev,
- laurent.pinchart@ideasonboard.com, mripard@kernel.org
-Cc: y-abhilashchandra@ti.com, devarsht@ti.com, s-jain1@ti.com,
- vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- p.zabel@pengutronix.de, conor+dt@kernel.org, sakari.ailus@linux.intel.com,
- hverkuil-cisco@xs4all.nl, jai.luthra@ideasonboard.com,
- changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com,
- sjoerd@collabora.com, hverkuil+cisco@kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250911102832.1583440-1-r-donadkar@ti.com>
- <20250911102832.1583440-10-r-donadkar@ti.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20250911102832.1583440-10-r-donadkar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250922090003.686704-3-smostafa@google.com>
 
-Hi,
-
-On 11/09/2025 13:28, Rishikesh Donadkar wrote:
-> From: Jai Luthra <j-luthra@ti.com>
+On Mon, Sep 22, 2025 at 08:59:26AM +0000, Mostafa Saleh wrote:
+> Clean up the io-pgtable-arm library by moving the selftests out.
+> Next the tests will be registered with kunit.
 > 
-> Use get_frame_desc() to get the frame desc from the connected source,
-> and use the provided virtual channel instead of hardcoded one.
+> This is useful also to factor out kernel specific code out, so
+> it can compiled as part of the hypervisor object.
 > 
-> get_frame_desc() returns the same information when called on each stream
-> start, so instead get the VCs for all the routed stream at first
-> stream start and cache this information in the driver.
-> 
-> get_frame_desc() works per stream, but as we don't support multiple
-> streams yet, we will just always use stream 0. If the source doesn't
-> support get_frame_desc(), fall back to the previous method of always
-> capturing virtual channel 0.
-> 
-> Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
-> Co-developed-by: Pratyush Yadav <p.yadav@ti.com>
-> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
 > ---
->  .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 107 ++++++++++++++++++
->  1 file changed, 107 insertions(+)
-> 
-> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> index f3443c3ab01a..903722b5aea7 100644
-> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
-> @@ -32,6 +32,7 @@
->  #define SHIM_DMACNTX_YUV422		GENMASK(27, 26)
->  #define SHIM_DMACNTX_DUAL_PCK_CFG	BIT(24)
->  #define SHIM_DMACNTX_SIZE		GENMASK(21, 20)
-> +#define SHIM_DMACNTX_VC			GENMASK(9, 6)
->  #define SHIM_DMACNTX_FMT		GENMASK(5, 0)
->  #define SHIM_DMACNTX_YUV422_MODE_11	3
->  #define SHIM_DMACNTX_SIZE_8		0
-> @@ -103,6 +104,7 @@ struct ti_csi2rx_dev;
->  
->  struct ti_csi2rx_ctx {
->  	struct ti_csi2rx_dev		*csi;
-> +	struct v4l2_subdev_route	*route;
->  	struct video_device		vdev;
->  	struct vb2_queue		vidq;
->  	struct mutex			mutex; /* To serialize ioctls. */
-> @@ -111,6 +113,8 @@ struct ti_csi2rx_ctx {
->  	struct media_pad		pad;
->  	u32				sequence;
->  	u32				idx;
-> +	u32				vc;
-> +	u32				stream;
->  };
->  
->  struct ti_csi2rx_dev {
-> @@ -134,6 +138,7 @@ struct ti_csi2rx_dev {
->  		dma_addr_t		paddr;
->  		size_t			len;
->  	} drain;
-> +	bool				vc_cached;
->  };
->  
->  static inline struct ti_csi2rx_dev *to_csi2rx_dev(struct v4l2_subdev *sd)
-> @@ -610,6 +615,7 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx *ctx)
->  	}
->  
->  	reg |= FIELD_PREP(SHIM_DMACNTX_SIZE, fmt->size);
-> +	reg |= FIELD_PREP(SHIM_DMACNTX_VC, ctx->vc);
->  
->  	writel(reg, csi->shim + SHIM_DMACNTX(ctx->idx));
->  
-> @@ -884,6 +890,82 @@ static void ti_csi2rx_buffer_queue(struct vb2_buffer *vb)
->  	}
->  }
->  
-> +static int ti_csi2rx_get_route(struct ti_csi2rx_ctx *ctx)
-> +{
-> +	struct ti_csi2rx_dev *csi = ctx->csi;
-> +	struct media_pad *pad;
-> +	struct v4l2_subdev_state *state;
-> +	struct v4l2_subdev_route *r;
-> +
-> +	/* Get the source pad connected to this ctx */
-> +	pad = media_entity_remote_source_pad_unique(ctx->pad.entity);
-> +	if (!pad) {
-> +		dev_err(csi->dev, "No pad connected to ctx %d\n", ctx->idx);
-> +		return -ENODEV;
-> +	}
-> +
-> +	state = v4l2_subdev_lock_and_get_active_state(&csi->subdev);
-> +
-> +	for_each_active_route(&state->routing, r) {
-> +		if (!(r->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE))
-> +			continue;
-> +		if (r->source_pad != pad->index)
-> +			continue;
-> +
-> +		ctx->route = r;
-> +	}
-> +
-> +	v4l2_subdev_unlock_state(state);
+>  drivers/iommu/Makefile                   |   1 +
+>  drivers/iommu/io-pgtable-arm-selftests.c | 208 +++++++++++++++++++++++
+>  drivers/iommu/io-pgtable-arm.c           | 200 ----------------------
+>  3 files changed, 209 insertions(+), 200 deletions(-)
+>  create mode 100644 drivers/iommu/io-pgtable-arm-selftests.c
 
-I'm still learning the structure for this driver, but the pattern here
-does not look right. If you unlock the state, the state can change. You
-can't store the route and expect it to stay the same after unlock.
-Here you are even storing a pointer to the state, which can be dangerous.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Our current v4l2 state locking is not perfect and we need to do some
-manual locking/unlocking in the drivers for now, and, indeed, we just
-have to expect that it doesn't change. But that has to happen inside the
-enable/disable path, with such locking that it's "as safe as possible",
-which means locking early, as much as possible and keeping the lock
-during the processing. In many cases the framework deals with that (and
-that's our future target generally).
-
-In the subdev enable path, .enable_streams already has the state locked
-and the driver doesn't have to deal with it. If using s_stream (but why
-would you?) you need to lock it yourself, and it usually makes sense to
-lock almost as the first thing, and pass the state forward (or use
-v4l2_subdev_get_locked_active_state()).
-
-Here all this processing is happening from ti_csi2rx_start_streaming(),
-so not even from the subdev's ops. So I'm not sure yet how to clean this
-up, but, as I said, it just doesn't look right.
-
- Tomi
-
-> +
-> +	if (!ctx->route)
-> +		return -ENODEV;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ti_csi2rx_get_vc(struct ti_csi2rx_ctx *ctx)
-> +{
-> +	struct ti_csi2rx_dev *csi = ctx->csi;
-> +	struct ti_csi2rx_ctx *curr_ctx;
-> +	struct v4l2_mbus_frame_desc fd;
-> +	struct media_pad *source_pad;
-> +	struct v4l2_subdev_route *curr_route;
-> +	int ret;
-> +	unsigned int i, j;
-> +
-> +	/* Get the frame desc form source */
-> +	source_pad = media_entity_remote_pad_unique(&csi->subdev.entity, MEDIA_PAD_FL_SOURCE);
-> +	if (!source_pad)
-> +		return -ENODEV;
-> +
-> +	ret = v4l2_subdev_call(csi->source, pad, get_frame_desc, source_pad->index, &fd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (fd.type != V4L2_MBUS_FRAME_DESC_TYPE_CSI2)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < csi->num_ctx; i++) {
-> +		curr_ctx = &csi->ctx[i];
-> +
-> +		/* Capture VC 0 by default */
-> +		curr_ctx->vc = 0;
-> +
-> +		ret = ti_csi2rx_get_route(curr_ctx);
-> +		if (ret)
-> +			continue;
-> +
-> +		curr_route = curr_ctx->route;
-> +		curr_ctx->stream = curr_route->sink_stream;
-> +
-> +		for (j = 0; j < fd.num_entries; j++)
-> +			if (curr_ctx->stream == fd.entry[j].stream)
-> +				curr_ctx->vc = fd.entry[j].bus.csi2.vc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int ti_csi2rx_start_streaming(struct vb2_queue *vq, unsigned int count)
->  {
->  	struct ti_csi2rx_ctx *ctx = vb2_get_drv_priv(vq);
-> @@ -904,6 +986,25 @@ static int ti_csi2rx_start_streaming(struct vb2_queue *vq, unsigned int count)
->  	if (ret)
->  		goto err;
->  
-> +	/* If no stream is routed to this ctx, exit early */
-> +	ret = ti_csi2rx_get_route(ctx);
-> +	if (ret)
-> +		goto err;
-> +
-> +	/* Get the VC for all enabled ctx on first stream start */
-> +	mutex_lock(&csi->mutex);
-> +	if (!csi->vc_cached) {
-> +		ret = ti_csi2rx_get_vc(ctx);
-> +		if (ret == -ENOIOCTLCMD) {
-> +			ctx->vc = 0;
-> +		} else if (ret < 0) {
-> +			mutex_unlock(&csi->mutex);
-> +			goto err;
-> +		}
-> +		csi->vc_cached = true;
-> +	}
-> +	mutex_unlock(&csi->mutex);
-> +
->  	ti_csi2rx_setup_shim(ctx);
->  
->  	ctx->sequence = 0;
-> @@ -950,6 +1051,10 @@ static void ti_csi2rx_stop_streaming(struct vb2_queue *vq)
->  	writel(0, csi->shim + SHIM_CNTL);
->  	writel(0, csi->shim + SHIM_DMACNTX(ctx->idx));
->  
-> +	mutex_lock(&csi->mutex);
-> +	csi->vc_cached = false;
-> +	mutex_unlock(&csi->mutex);
-> +
->  	ret = v4l2_subdev_call(&csi->subdev, video, s_stream, 0);
->  	if (ret)
->  		dev_err(csi->dev, "Failed to stop subdev stream\n");
-> @@ -1303,6 +1408,8 @@ static int ti_csi2rx_init_ctx(struct ti_csi2rx_ctx *ctx)
->  
->  	ti_csi2rx_fill_fmt(fmt, &ctx->v_fmt);
->  
-> +	ctx->route = NULL;
-> +
->  	ctx->pad.flags = MEDIA_PAD_FL_SINK;
->  	vdev->entity.ops = &ti_csi2rx_video_entity_ops;
->  	ret = media_entity_pads_init(&ctx->vdev.entity, 1, &ctx->pad);
-
+Jason
 
