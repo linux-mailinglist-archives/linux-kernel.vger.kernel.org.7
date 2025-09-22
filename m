@@ -1,88 +1,236 @@
-Return-Path: <linux-kernel+bounces-827992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4724EB93A13
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A0CB93A1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8D52E0FD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0734400B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC5D2FC877;
-	Mon, 22 Sep 2025 23:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6E72DEA6F;
+	Mon, 22 Sep 2025 23:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="tiQ2QQ+/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YCf/vfVt"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A890D4A32;
-	Mon, 22 Sep 2025 23:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0E3246764
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758584610; cv=none; b=e67l0iuiSuaf0Y3hU4JVbR5kf84M8mVViJ/RVrHMnlm5b3Uz+KvwMPRuCZRt1xByphFuvgdem1Gr+0EfrhcB/fvB2zDo1aOWy3SXS7TD3xhH+T0rCN2eEzDqgyHd4d1pEHFh6mXCpRyNKwjvDI0FTJ88FNivge42oaJQNevOcdU=
+	t=1758584828; cv=none; b=H1umNrdCBeSmu9D7n92aUIE1it8xXISVTZcGOVOGARj2G1+4UqZPVsyKdYbJod57HN5yiaE+Xgj4oahRnSDlvpudQMJqxL3wt1ZeWO/85JsretEeI+GsiOYTTtPMu5in3huAvoiz0XjnFzNyFYffo2crBrUJgs/mW+pwSTa6mvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758584610; c=relaxed/simple;
-	bh=+DoS20lbklC1Eq233nF5tfa9Kd7uyFIHyukV3z8UGtM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CNqVeBEN/kipld00bCHugINdnzqiLtojnvG6LicT4i1IY3k0v4VB9AGuFYhOqT6eXfaaXnyiCr42nsCeb4eLCAH0RNE4s4rBUInwPtudzWkXPKdEvlJfN09X5DfTpp1KZrAjD+7vge3fvnmsXtML1fjZS+7XOzhWKlDzgY+Vcng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=tiQ2QQ+/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B3CC4CEF0;
-	Mon, 22 Sep 2025 23:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1758584610;
-	bh=+DoS20lbklC1Eq233nF5tfa9Kd7uyFIHyukV3z8UGtM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tiQ2QQ+/tugRqJGTfepSFY1hDwW/i74IZieK5RoR+GP4YTR4Cb+1Zc4bBqSBS1N0P
-	 LLnVNlvDIlQuGY+Rnz1AHWQZPuHeCjCgtjRK/zgILMh6FIAbuJ6POUDrIwljrgWgyM
-	 5JdqQ24zfkvP7xBXYQ0/nsfVv9cNv1URigg1cYfc=
-Date: Mon, 22 Sep 2025 16:43:28 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal
- Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Alexei Starovoitov <ast@kernel.org>,
- Peilin Ye <yepeilin@google.com>, Kumar Kartikeya Dwivedi
- <memxor@gmail.com>, bpf@vger.kernel.org, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, Meta kernel team
- <kernel-team@meta.com>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] memcg: skip cgroup_file_notify if spinning is not
- allowed
-Message-Id: <20250922164328.0d766c95f9c15330e99514bd@linux-foundation.org>
-In-Reply-To: <nzr2ztya3duztwfnpcnl2azzcdg74hjbwzzs3nxax67nsu6ffq@leycq6l5d5y2>
-References: <20250922220203.261714-1-shakeel.butt@linux.dev>
-	<20250922160308.524be6ba4d418886095ab223@linux-foundation.org>
-	<nzr2ztya3duztwfnpcnl2azzcdg74hjbwzzs3nxax67nsu6ffq@leycq6l5d5y2>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1758584828; c=relaxed/simple;
+	bh=vsvV9sYNxEd02bmok0zF1waXQhU8SOkKencLbjUyUb4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0vhqy3f1qAn1nTE+I8LclN5hflMFNDmVaq3PWNfE/BrjQ34TR61knDQstgT0w+c6rSDFjqrPL+5G2MzMB8FB2q8TxRXiBoTo8Czgb+PVk+dT2Rb7Z8TBp4ZLQ8ABlb6UNIiEVYAgvJoIi8dRS4OxlM7se2V1sJzxYGl+Fp1+0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YCf/vfVt; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-579d7104c37so4291487e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758584825; x=1759189625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UkYh1XrLqqJbB+K/z5F50jXY00Z8o2PU/kbVGNOHYjQ=;
+        b=YCf/vfVtpUS70I5Ged9UvIJpaKPLH/pstkil5WENVgcHxcZ1o0a+Xro7gPl/ErlYwt
+         GT5xi8ARFGJTEoAqK7z4XhfrUxmgaAardSnQ41wFoAc42phg3WU/CZTXNCFCozEAtgeC
+         A6XoqMGTJSW4tCF2ll3B1X1GSOyeiNTY2YO/OHDuGJ6VQZXfQXE3SQg4CAy4C7NpIPFx
+         9nR0idJvLe6nMLA2muEo/9knVIkrtgq8Uniutq8/iHou3VUl8Dvefi89Og6BRWENVGSy
+         0XmnRZURnUFzqhjPgazaBSpSFem+drJJaTCtKhEDhBSBNiWdqe9jL0REtdCIyfSejWsj
+         Zryw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758584825; x=1759189625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UkYh1XrLqqJbB+K/z5F50jXY00Z8o2PU/kbVGNOHYjQ=;
+        b=eCgtpP+FpnvQtd70LdoH5McZX+Hbf1yaFWOCFIgmScW163r3Kw5kgpenZOwHIdff1j
+         kZtBaykDovGI8PiV8yk2v5mUyyNXCOdvhugC7l5R/BlEM4TZaJLVbN8KGSmWt6+KTXsV
+         KQPmzdkwlxH63PzOTw9rH1UbjV8YIILQYaJOZ/3LoRRsDHqQUZa790YezMyqUA1ffEzZ
+         fmUoPFEirTnB1aV6deYLrAJyll6aViWdTJnLVEWeDeOsC69YFVQfeDHprhZJozeMVdj1
+         HKIJrvQWyqA/XseALtCXFiWUy/+a98TAczqGCcrmnv3p7OcbYLpsPvF0oKOxlPaIaRfP
+         /3Yg==
+X-Gm-Message-State: AOJu0YzFErv09JCdQuIcNMqwjp1MsrQVVfvs6i5HQ1ykE3K7md3c4tIK
+	WWHfln5g4spqu5JC+nHLFqDHfy58FWrpX0NChwfm/Vx3VS/Ajtk9c8AyoRqKc/+7f8vgH+1b8E4
+	/lzO8A+Ti+qQN6rPs2lCjVPyk/Z7pjXvk9K3AIXqY3FF/E01U02X3XFiEdA==
+X-Gm-Gg: ASbGncuMe9yhpgPE9CWxIMFgWeL63jyR2lR0mKuikQI96Mq5HLZeV5fkmEmZblURfAl
+	AEFDpRp7zGfKBYzXUa8tLjFGrV4rcpImdUe4wXGqDJ+ZBkrPoIqoIYNl/kT88V102fm58gt+IAx
+	KMexPQkzQBvdiHyG/bR4IRfbLyIuD39a9dhjQMtiYY0fudDFneCf3fbsJNU6rhoRWjjVQ2J5W6x
+	+33eay4sOJ3OPrXe+yYN6ynUeo3KJenxJqq
+X-Google-Smtp-Source: AGHT+IFpHPGrNQ+FpH6chnuwZ3/y3GcFnspmffPcZmo2uSG/gDUbbt23gHiiBBNGHkMBwUrBVenMMvXDvpvg59FMKEw=
+X-Received: by 2002:a05:6512:4007:b0:55f:4f1f:93fa with SMTP id
+ 2adb3069b0e04-580735ff0c7mr110448e87.42.1758584824691; Mon, 22 Sep 2025
+ 16:47:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+ <CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
+ <175817861820.709179.10538516755307778527.tip-bot2@tip-bot2> <e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
+In-Reply-To: <e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
+From: John Stultz <jstultz@google.com>
+Date: Mon, 22 Sep 2025 16:46:52 -0700
+X-Gm-Features: AS18NWAfDev1AP7TODzSXAmyJmYli1vtB_9VPgq30LevCm0dpHpVmjj9u4t-nL4
+Message-ID: <CANDhNCrztM1eK-6dab_-4hnX4miJH_pe49r=GVVqtD+Z235kgw@mail.gmail.com>
+Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org, 
+	Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 22 Sep 2025 16:22:57 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
+On Mon, Sep 22, 2025 at 2:57=E2=80=AFPM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> This patch landed in today's linux-next as commit 077e1e2e0015
+> ("sched/deadline: Fix dl_server getting stuck"). In my tests I found
+> that it breaks CPU hotplug on some of my systems. On 64bit
+> Exynos5433-based TM2e board I've captured the following lock dep warning
+> (which unfortunately doesn't look like really related to CPU hotplug):
+>
 
-> > 
-> > > --- a/mm/memcontrol.c
-> > > +++ b/mm/memcontrol.c
-> > > @@ -2307,12 +2307,13 @@ static int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
-> > >  	bool drained = false;
-> > >  	bool raised_max_event = false;
-> > >  	unsigned long pflags;
-> > > +	bool allow_spinning = gfpflags_allow_spinning(gfp_mask);
-> > >  
-> > 
-> > Does this affect only the problematic call chain which you have
-> > identified, or might other callers be undesirably affected?
-> 
-> It will only affect the call chain which can not spin due to possibly
-> NMI context and at the moment only bpf programs can cause that.
+Huh. Nor does it really look related to the dl_server change. Interesting..=
+.
 
-"possibly" NMI context?  Is it possible that a bpf caller which could
-have taken locks will now skip the notifications?  Or do the gfp_flags
-get propagated all the way through?
+
+> # for i in /sys/devices/system/cpu/cpu[1-9]; do echo 0 >$i/online; done
+> Detected VIPT I-cache on CPU7
+> CPU7: Booted secondary processor 0x0000000101 [0x410fd031]
+> ------------[ cut here ]------------
+> WARNING: CPU: 7 PID: 0 at kernel/rcu/tree.c:4329
+> rcutree_report_cpu_starting+0x1e8/0x348
+> Modules linked in: brcmfmac_wcc cpufreq_powersave cpufreq_conservative
+> brcmfmac brcmutil sha256 snd_soc_wm5110 cfg80211 snd_soc_wm_adsp cs_dsp
+> snd_soc_tm2_wm5110 snd_soc_arizona arizona_micsupp phy_exynos5_usbdrd
+> s5p_mfc typec arizona_ldo1 hci_uart btqca s5p_jpeg max77693_haptic btbcm
+> s3fwrn5_i2c exynos_gsc bluetooth s3fwrn5 nci v4l2_mem2mem nfc
+> snd_soc_i2s snd_soc_idma snd_soc_hdmi_codec snd_soc_max98504
+> snd_soc_s3c_dma videobuf2_dma_contig videobuf2_memops ecdh_generic
+> snd_soc_core ir_spi videobuf2_v4l2 ecc snd_compress ntc_thermistor
+> panfrost videodev snd_pcm_dmaengine snd_pcm rfkill drm_shmem_helper
+> panel_samsung_s6e3ha2 videobuf2_common backlight pwrseq_core gpu_sched
+> mc snd_timer snd soundcore ipv6
+> CPU: 7 UID: 0 PID: 0 Comm: swapper/7 Not tainted 6.17.0-rc6+ #16012 PREEM=
+PT
+> Hardware name: Samsung TM2E board (DT)
+> Hardware name: Samsung TM2E board (DT)
+> Detected VIPT I-cache on CPU7
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.17.0-rc6+ #16012 Not tainted
+> ------------------------------------------------------
+> swapper/7/0 is trying to acquire lock:
+> ffff000024021cc8 (&irq_desc_lock_class){-.-.}-{2:2}, at:
+> __irq_get_desc_lock+0x5c/0x9c
+>
+> but task is already holding lock:
+> ffff800083e479c0 (&port_lock_key){-.-.}-{3:3}, at:
+> s3c24xx_serial_console_write+0x80/0x268
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #2 (&port_lock_key){-.-.}-{3:3}:
+>         _raw_spin_lock_irqsave+0x60/0x88
+>         s3c24xx_serial_console_write+0x80/0x268
+>         console_flush_all+0x304/0x49c
+>         console_unlock+0x70/0x110
+>         vprintk_emit+0x254/0x39c
+>         vprintk_default+0x38/0x44
+>         vprintk+0x28/0x34
+>         _printk+0x5c/0x84
+>         register_console+0x3ac/0x4f8
+>         serial_core_register_port+0x6c4/0x7a4
+>         serial_ctrl_register_port+0x10/0x1c
+>         uart_add_one_port+0x10/0x1c
+>         s3c24xx_serial_probe+0x34c/0x6d8
+>         platform_probe+0x5c/0xac
+>         really_probe+0xbc/0x298
+>         __driver_probe_device+0x78/0x12c
+>         driver_probe_device+0xdc/0x164
+>         __device_attach_driver+0xb8/0x138
+>         bus_for_each_drv+0x80/0xdc
+>         __device_attach+0xa8/0x1b0
+>         device_initial_probe+0x14/0x20
+>         bus_probe_device+0xb0/0xb4
+>         deferred_probe_work_func+0x8c/0xc8
+>         process_one_work+0x208/0x60c
+>         worker_thread+0x244/0x388
+>         kthread+0x150/0x228
+>         ret_from_fork+0x10/0x20
+>
+> -> #1 (console_owner){..-.}-{0:0}:
+>         console_lock_spinning_enable+0x6c/0x7c
+>         console_flush_all+0x2c8/0x49c
+>         console_unlock+0x70/0x110
+>         vprintk_emit+0x254/0x39c
+>         vprintk_default+0x38/0x44
+>         vprintk+0x28/0x34
+>         _printk+0x5c/0x84
+>         exynos_wkup_irq_set_wake+0x80/0xa4
+>         irq_set_irq_wake+0x164/0x1e0
+>         arizona_irq_set_wake+0x18/0x24
+>         irq_set_irq_wake+0x164/0x1e0
+>         regmap_irq_sync_unlock+0x328/0x530
+>         __irq_put_desc_unlock+0x48/0x4c
+>         irq_set_irq_wake+0x84/0x1e0
+>         arizona_set_irq_wake+0x5c/0x70
+>         wm5110_probe+0x220/0x354 [snd_soc_wm5110]
+>         platform_probe+0x5c/0xac
+>         really_probe+0xbc/0x298
+>         __driver_probe_device+0x78/0x12c
+>         driver_probe_device+0xdc/0x164
+>         __driver_attach+0x9c/0x1ac
+>         bus_for_each_dev+0x74/0xd0
+>         driver_attach+0x24/0x30
+>         bus_add_driver+0xe4/0x208
+>         driver_register+0x60/0x128
+>         __platform_driver_register+0x24/0x30
+>         cs_exit+0xc/0x20 [cpufreq_conservative]
+>         do_one_initcall+0x64/0x308
+>         do_init_module+0x58/0x23c
+>         load_module+0x1b48/0x1dc4
+>         init_module_from_file+0x84/0xc4
+>         idempotent_init_module+0x188/0x280
+>         __arm64_sys_finit_module+0x68/0xac
+>         invoke_syscall+0x48/0x110
+>         el0_svc_.common.c
+>
+> (system is frozen at this point).
+
+So I've seen issues like this when testing scheduler changes,
+particularly when I've added debug printks or WARN_ONs that trip while
+we're deep in the scheduler core and hold various locks. I reported
+something similar here:
+https://lore.kernel.org/lkml/CANDhNCo8NRm4meR7vHqvP8vVZ-_GXVPuUKSO1wUQkKdfj=
+vy20w@mail.gmail.com/
+
+Now, usually I'll see the lockdep warning, and the hang is much more rare.
+
+But I don't see right off how the dl_server change would affect this,
+other than just changing the timing of execution such that you manage
+to trip over the existing issue.
+
+So far I don't see anything similar testing hotplug on x86 qemu.  Do
+you get any other console messages or warnings prior?
+
+Looking at the backtrace, I wonder if changing the pr_info() in
+exynos_wkup_irq_set_wake() to printk_deferred() might avoid this?
+
+thanks
+-john
 
