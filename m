@@ -1,116 +1,193 @@
-Return-Path: <linux-kernel+bounces-826895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DE1B8F92E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:37:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9265FB8F934
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C53B1893AA6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2903A765B
 	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33D4254B1B;
-	Mon, 22 Sep 2025 08:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045FF2773F3;
+	Mon, 22 Sep 2025 08:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCxNDdfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PE98RXSg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B4C9463;
-	Mon, 22 Sep 2025 08:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75440126F0A;
+	Mon, 22 Sep 2025 08:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758530261; cv=none; b=nALafZWdrAFBTETYEYse5agLKFB69vn3EmQBmsd6aPI03XycdjozhQfyc6UPjJVQJVfU4LBtGfvBf4f5tGb9c46the7icaaNkBy9//qvYMYFqCPMAno8CTr8nHYmoeqMh6nSjQCBvo7X7R/7eh89Qe+Zg+fVonI7vsEYsyCAwLY=
+	t=1758530279; cv=none; b=VrOgC/1+b6rTvb+oaqWSunWGEUl04sbK4bfhoLuNZ9Y5QB8tIHJ8Kf6GGhAjmD+oGPOarjNgmD1zjNDuW1IfFBzS4I31jkSGFlEaB8tZg93ItyJ0CztFKX7VASnUcBQtS8mbDKotBOCLU2QHZiEeI+3rc6wFc/yQGPBAhUvRCOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758530261; c=relaxed/simple;
-	bh=1XJPEbEK99ng2tj2CWAYmRrIXNRNQO41Y4BR4AURxe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ezVQiozwhfbAID9UpF4n1lBoNilyk+eaOcOl2B78xl276HVmFv3NfGoBHav1PaeTlWKkW9yoG3MzMQM4aSW8J9AkHHn0LgQ4bltQ0bO82Ok95ZTBTrxMLBRvOMG/PboSlldjlqko0Wkx4oEhrtyzkU8UqQvaYEEA5CKSGAay8JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCxNDdfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB54C4CEF0;
-	Mon, 22 Sep 2025 08:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758530260;
-	bh=1XJPEbEK99ng2tj2CWAYmRrIXNRNQO41Y4BR4AURxe4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=iCxNDdfeVNPP28KBkvYwS1l1zxaksxZ84+CTOtRQfNHz7863diYKL3C8MAP47zFYl
-	 MGXWs09WNEhICokN2t0pOxO1tIVMO2FP+gz7IeHs6MH/XSS8JK9vQWYV4jDmG/TTUe
-	 TaKjAjOoelxjVLDw8yomRKuMLx/C4UlDWk8dq5xD8hxe5+Pnl9rkeCW9pLEUtwLlwu
-	 WilwO5nADW+wQceHJLsVRx296nfhKV11cAxO907nxpWUObHQLngTmPBZ47/KYfPevJ
-	 P1J51bovYFV1za/4QMGypY/VVXPGma3ZDVTV3D+bSTEQ3H4jtXr7jyaB2CY0w+0PeI
-	 iebBV5xboGL3A==
-Date: Mon, 22 Sep 2025 09:37:34 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Shashank A P <shashank.ap@samsung.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the ext3 tree
-Message-ID: <aNEKzrMMxLAVHGIn@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1758530279; c=relaxed/simple;
+	bh=oi12o4q5hIFskYvycyV2Jw8XJZYACMASrC6OmCmT+2c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hCytn0W+aakfBU2g34DVjHDfoDcP3c78fsMfxMtpzpS5O2+cjVhn9f4Mbj4A610TlgMTg0kXy6sDwIVdvVJx4RYfvAuQQyKYmWRWF7/RZuvNUjKAMD1fcXT/2txyjCZg0jSlT4Hqpsr5rQzZsHDRjzI/A9n2KZ8o08B6eUD2M/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PE98RXSg; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758530277; x=1790066277;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oi12o4q5hIFskYvycyV2Jw8XJZYACMASrC6OmCmT+2c=;
+  b=PE98RXSgQ25dcV/yjD/z8cmMZjW4pTok8HFEmaCvRE+9qo39tSqEJOhy
+   OkcPW0pzt8bplvCMNXlGIIxkw8qsuk9TaKZJriu15o43DeFE5fQvHrXXH
+   EZTOycKlLiFrSyuxQzN67T2WFIa6DTpDb7cP6H0C0/S4sd77w3yuG+LlA
+   eIrfy0hfDsQt6t8Z4Uo/RD5QyMU/VLiB9W4Hcg59VoL7AmCdiuRNYwVe8
+   7cJwfmp/Yz0q0slsVW+JEe53AojQl34Z6V0nwwcjrht1wUdgH887Pa5q6
+   GzkRtBIla4cidRyomMEXI1PZvf+zRru/QvNOmI4XYsxwLiSvXAcUvefOq
+   g==;
+X-CSE-ConnectionGUID: 9R7vZ02vQAyW/YniCwg4Hg==
+X-CSE-MsgGUID: gXNrrvv7REWvsBnqbMgCaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60845013"
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="60845013"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:37:56 -0700
+X-CSE-ConnectionGUID: BXkVqYdTT0ym4zdN7Jy0Ag==
+X-CSE-MsgGUID: yFHc42fGQKC/JkvuRp90TA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
+   d="scan'208";a="176490946"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 01:37:53 -0700
+Message-ID: <499c8f65-1a28-4efa-b9e8-14e516edf4ad@linux.intel.com>
+Date: Mon, 22 Sep 2025 16:37:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ec+thO8EBfriwWYK"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 30/51] KVM: nVMX: Virtualize NO_HW_ERROR_CODE_CC for
+ L1 event injection to L2
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-31-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250919223258.1604852-31-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---ec+thO8EBfriwWYK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+>
+> Per SDM description(Vol.3D, Appendix A.1):
+> "If bit 56 is read as 1, software can use VM entry to deliver a hardware
+> exception with or without an error code, regardless of vector"
+>
+> Modify has_error_code check before inject events to nested guest. Only
+> enforce the check when guest is in real mode, the exception is not hard
+> exception and the platform doesn't enumerate bit56 in VMX_BASIC, in all
+> other case ignore the check to make the logic consistent with SDM.
+>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-  fs/quota/dquot.c
+> ---
+>   arch/x86/kvm/vmx/nested.c | 27 ++++++++++++++++++---------
+>   arch/x86/kvm/vmx/nested.h |  5 +++++
+>   2 files changed, 23 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 846c07380eac..b644f4599f70 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -1272,9 +1272,10 @@ static int vmx_restore_vmx_basic(struct vcpu_vmx *vmx, u64 data)
+>   {
+>   	const u64 feature_bits = VMX_BASIC_DUAL_MONITOR_TREATMENT |
+>   				 VMX_BASIC_INOUT |
+> -				 VMX_BASIC_TRUE_CTLS;
+> +				 VMX_BASIC_TRUE_CTLS |
+> +				 VMX_BASIC_NO_HW_ERROR_CODE_CC;
+>   
+> -	const u64 reserved_bits = GENMASK_ULL(63, 56) |
+> +	const u64 reserved_bits = GENMASK_ULL(63, 57) |
+>   				  GENMASK_ULL(47, 45) |
+>   				  BIT_ULL(31);
+>   
+> @@ -2949,7 +2950,6 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
+>   		u8 vector = intr_info & INTR_INFO_VECTOR_MASK;
+>   		u32 intr_type = intr_info & INTR_INFO_INTR_TYPE_MASK;
+>   		bool has_error_code = intr_info & INTR_INFO_DELIVER_CODE_MASK;
+> -		bool should_have_error_code;
+>   		bool urg = nested_cpu_has2(vmcs12,
+>   					   SECONDARY_EXEC_UNRESTRICTED_GUEST);
+>   		bool prot_mode = !urg || vmcs12->guest_cr0 & X86_CR0_PE;
+> @@ -2966,12 +2966,19 @@ static int nested_check_vm_entry_controls(struct kvm_vcpu *vcpu,
+>   		    CC(intr_type == INTR_TYPE_OTHER_EVENT && vector != 0))
+>   			return -EINVAL;
+>   
+> -		/* VM-entry interruption-info field: deliver error code */
+> -		should_have_error_code =
+> -			intr_type == INTR_TYPE_HARD_EXCEPTION && prot_mode &&
+> -			x86_exception_has_error_code(vector);
+> -		if (CC(has_error_code != should_have_error_code))
+> -			return -EINVAL;
+> +		/*
+> +		 * Cannot deliver error code in real mode or if the interrupt
+> +		 * type is not hardware exception. For other cases, do the
+> +		 * consistency check only if the vCPU doesn't enumerate
+> +		 * VMX_BASIC_NO_HW_ERROR_CODE_CC.
+> +		 */
+> +		if (!prot_mode || intr_type != INTR_TYPE_HARD_EXCEPTION) {
+> +			if (CC(has_error_code))
+> +				return -EINVAL;
+> +		} else if (!nested_cpu_has_no_hw_errcode_cc(vcpu)) {
+> +			if (CC(has_error_code != x86_exception_has_error_code(vector)))
+> +				return -EINVAL;
+> +		}
+>   
+>   		/* VM-entry exception error code */
+>   		if (CC(has_error_code &&
+> @@ -7217,6 +7224,8 @@ static void nested_vmx_setup_basic(struct nested_vmx_msrs *msrs)
+>   	msrs->basic |= VMX_BASIC_TRUE_CTLS;
+>   	if (cpu_has_vmx_basic_inout())
+>   		msrs->basic |= VMX_BASIC_INOUT;
+> +	if (cpu_has_vmx_basic_no_hw_errcode_cc())
+> +		msrs->basic |= VMX_BASIC_NO_HW_ERROR_CODE_CC;
+>   }
+>   
+>   static void nested_vmx_setup_cr_fixed(struct nested_vmx_msrs *msrs)
+> diff --git a/arch/x86/kvm/vmx/nested.h b/arch/x86/kvm/vmx/nested.h
+> index 6eedcfc91070..983484d42ebf 100644
+> --- a/arch/x86/kvm/vmx/nested.h
+> +++ b/arch/x86/kvm/vmx/nested.h
+> @@ -309,6 +309,11 @@ static inline bool nested_cr4_valid(struct kvm_vcpu *vcpu, unsigned long val)
+>   	       __kvm_is_valid_cr4(vcpu, val);
+>   }
+>   
+> +static inline bool nested_cpu_has_no_hw_errcode_cc(struct kvm_vcpu *vcpu)
+> +{
+> +	return to_vmx(vcpu)->nested.msrs.basic & VMX_BASIC_NO_HW_ERROR_CODE_CC;
+> +}
+> +
+>   /* No difference in the restrictions on guest and host CR4 in VMX operation. */
+>   #define nested_guest_cr4_valid	nested_cr4_valid
+>   #define nested_host_cr4_valid	nested_cr4_valid
 
-between commit:
-
-  72b7ceca857f3 ("fs: quota: create dedicated workqueue for quota_release_w=
-ork")
-
-=66rom the ext3 tree and commit:
-
-  08621f25a2687 ("fs: replace use of system_unbound_wq with system_dfl_wq")
-
-=66rom the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc fs/quota/dquot.c
-index 6c4a6ee1fa2b6,afa15a2145382..0000000000000
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-
-(ext3 version)
-
---ec+thO8EBfriwWYK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjRCs0ACgkQJNaLcl1U
-h9BQiwf/WWwySO+Y/qSWTwPI+12nFaFXTXLsjzdKgYuSp1VPsyabNcKTFLFTSdG7
-UKwvDCVn7r1VPUrCxaTjlFFPDTSmEKrA9OKh+yf1Fcms5HKSRyolqDUMH1jOSm/y
-G0hNiT53UppKrfy/Uhhoo1ws1jY5Cc/tnLKkgqEjpkwCicZ0d22eUMrVOx4XizH/
-Gpbn1IY/1rp08TJxQCR0dUTZWoxuhzzyfReZl7dd/3rL0f9CoKNRioPsk+NGSSNf
-k9qDjC4hzRcrs1aF0KjDvq4TYMIb5F5AaogfLLpWz0B9ztydkFeKR3Hv/DJsdon5
-ryt0caM7ymleRPrEbHvMQg7QOedCoA==
-=7HlN
------END PGP SIGNATURE-----
-
---ec+thO8EBfriwWYK--
 
