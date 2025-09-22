@@ -1,175 +1,143 @@
-Return-Path: <linux-kernel+bounces-826964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31469B8FBE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:23:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5390BB8FBE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBFD37A5EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:22:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5D917A179A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A582877ED;
-	Mon, 22 Sep 2025 09:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01F2286889;
+	Mon, 22 Sep 2025 09:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cGuj6X8q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cNBGb2pj"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FF2287244;
-	Mon, 22 Sep 2025 09:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B812C544;
+	Mon, 22 Sep 2025 09:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758533016; cv=none; b=j3+GETnQMqqaqIkItPY8pv3IvXm5U8rTeMLPz51x+tUqTJIDxRlSk8es+fUkbxhSQSb6ZDL5qcfoVZNun6MsT29TsMfXrc+rIRoiTVpEyLjI97Z0fniJHnBCELu6qxPy0HNPLEX1O1OT6qplEz9/YSfCZ1JF0f2Ufx/jYBcDi6c=
+	t=1758533142; cv=none; b=Jpj2Va+vDz5qU/o4Pw2/UWXfhb52UQS9VkxUauWn7/WIi6emQECNvynen5tIYCimZQXHhYCNKbze4cf6c9ltskrYoJ6x6HEdwmo8nTRYSRd/RkTrud5+wH6uwew2nUhi7D7yEYiV0Q/QQ6cYC3fo4bgmoP43UYsm0FdkemWu66U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758533016; c=relaxed/simple;
-	bh=lZH1GR3SVwh/Vbb9I019CLouzGZxVHUPSKq2vlxMm3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E55+NYWR2tkCNXkBKI4JHC03X0nN7fy/iOGg6TpJu54rW39yP4wU6rx/4J99TJud6GWVdLIXhklVL56iKfqmgkrS63iMbm0nvhsn10dp2PmjsLmAdIskfRPSYUYjd1ZA7GkUwlYO/28m9v2x/7JcIta9luSsNeyR+Qj2q02tNlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cGuj6X8q; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758533015; x=1790069015;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lZH1GR3SVwh/Vbb9I019CLouzGZxVHUPSKq2vlxMm3s=;
-  b=cGuj6X8qYYbtU4LDdqvMOzToypQLu74xw0sBA97TwHvievhMCos/+Irj
-   +p75g930g8QMq5NA6u4jkYusrzM2xrqf0v+MDVlCkqXxc5aZdj626BHay
-   WbDAk2Rs4rL9ld1248xhJ20GYacpAfa18SLIiw+QSi3mtlHAq/zbNOF6W
-   1XUFbs03c82B1gqxvh5zfHDR4KDEz8LDe7VccsANX7Ilp7S5BPoWdUQge
-   9SD7m3CviJ9wEROR1i5qqsoG/rNTMATP9yrycy73hgkR+EP1Cfq0CekOo
-   cJmTcWLr4XoNWNO82VSLDY2j1Lz33DZZEmYcV/XqAuzlVBW2SQVe6h3rT
-   w==;
-X-CSE-ConnectionGUID: ndhlF0ENRr2b3KfObWBs7w==
-X-CSE-MsgGUID: JeBPd2HNR5a923VK9qYJ6w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64594712"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64594712"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 02:23:34 -0700
-X-CSE-ConnectionGUID: BH/ghJKXTFGb4OfhA0JrQg==
-X-CSE-MsgGUID: 8wx/DjSgQ4mmpW08CHHK8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="175568862"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 02:23:31 -0700
-Message-ID: <4f59ec69-15fd-4463-86c9-17491afd8eca@linux.intel.com>
-Date: Mon, 22 Sep 2025 17:23:28 +0800
+	s=arc-20240116; t=1758533142; c=relaxed/simple;
+	bh=IswDfjZP5vwod6mAKpJYVT2TBfGGvqPnluT4nSXXVYQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D+IAB5SgmFQvXBkiYGu8u55F07P4fraffyP2cgB2lFJ7hKz9fOjnjCBK5iBovcXfAKpe955DkaceDSAyFxI5hwfnjyfn3xP+05dirbzKYPSC5D9kmn+mvc6YcfX2ZGv4rv2GoljTfMsSXEuVVTPh7KVxO5rFvVu2sQOi6cUE8rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cNBGb2pj; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58M9P7lO740019;
+	Mon, 22 Sep 2025 04:25:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758533107;
+	bh=+SHXzfaOEdg6X115/K//Il5mPpamyh8qQbk6ql+nf3Y=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=cNBGb2pjqzD1D/ubVZfXWMp7ZEFEV/ZGs6lYlUh21xaV3tJqZtLAVFaavMFZ2X/SA
+	 HZU/ORT3S5PGzcI/gj2xViYH+JeLhmie0Zz3PyZNjcBR2eyOtVdWmcqzqgSVDfurf8
+	 OiO8kSDdEyncPiYyL2+BqAMxB9hYGu7le4vGLDpg=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58M9P7MG1067900
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 22 Sep 2025 04:25:07 -0500
+Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 22
+ Sep 2025 04:25:07 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE205.ent.ti.com
+ (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 22 Sep 2025 04:25:07 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58M9P6vQ2274743;
+	Mon, 22 Sep 2025 04:25:06 -0500
+Date: Mon, 22 Sep 2025 14:55:05 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+        <christian.bruel@foss.st.com>, <quic_wenbyao@quicinc.com>,
+        <inochiama@gmail.com>, <mayank.rana@oss.qualcomm.com>,
+        <thippeswamy.havalige@amd.com>, <shradha.t@samsung.com>,
+        <cassel@kernel.org>, <kishon@kernel.org>,
+        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
+        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>
+Subject: Re: [PATCH v3 0/4] PCI: Keystone: Enable loadable module support
+Message-ID: <590d183c-8971-4728-9aa3-4e02bd3d0845@ti.com>
+References: <20250922071222.2814937-1-s-vadapalli@ti.com>
+ <175852954905.18749.5091036983349477093.b4-ty@kernel.org>
+ <3sjuplupmdoxqhyz2i2p4he5vw7krqokixoy6ddoiox6p536n6@xzfcyhwjx3hv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 33/51] KVM: nVMX: Add consistency checks for CET
- states
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-34-seanjc@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250919223258.1604852-34-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3sjuplupmdoxqhyz2i2p4he5vw7krqokixoy6ddoiox6p536n6@xzfcyhwjx3hv>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On Mon, Sep 22, 2025 at 02:02:43PM +0530, Manivannan Sadhasivam wrote:
 
+Hello Mani,
 
-On 9/20/2025 6:32 AM, Sean Christopherson wrote:
-> From: Chao Gao <chao.gao@intel.com>
->
-> Introduce consistency checks for CET states during nested VM-entry.
->
-> A VMCS contains both guest and host CET states, each comprising the
-> IA32_S_CET MSR, SSP, and IA32_INTERRUPT_SSP_TABLE_ADDR MSR. Various
-> checks are applied to CET states during VM-entry as documented in SDM
-> Vol3 Chapter "VM ENTRIES". Implement all these checks during nested
-> VM-entry to emulate the architectural behavior.
->
-> In summary, there are three kinds of checks on guest/host CET states
-> during VM-entry:
->
-> A. Checks applied to both guest states and host states:
->
->   * The IA32_S_CET field must not set any reserved bits; bits 10 (SUPPRESS)
->     and 11 (TRACKER) cannot both be set.
->   * SSP should not have bits 1:0 set.
->   * The IA32_INTERRUPT_SSP_TABLE_ADDR field must be canonical.
->
-> B. Checks applied to host states only
->
->   * IA32_S_CET MSR and SSP must be canonical if the CPU enters 64-bit mode
->     after VM-exit. Otherwise, IA32_S_CET and SSP must have their higher 32
->     bits cleared.
->
-> C. Checks applied to guest states only:
->
->   * IA32_S_CET MSR and SSP are not required to be canonical (i.e., 63:N-1
->     are identical, where N is the CPU's maximum linear-address width). But,
->     bits 63:N of SSP must be identical.
->
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> On Mon, Sep 22, 2025 at 01:56:08PM +0530, Manivannan Sadhasivam wrote:
+> > 
+> > On Mon, 22 Sep 2025 12:42:12 +0530, Siddharth Vadapalli wrote:
+> > > This series enables support for the 'pci-keystone.c' driver to be built
+> > > as a loadable module. The motivation for the series is that PCIe is not
+> > > a necessity for booting Linux due to which the 'pci-keystone.c' driver
+> > > does not need to be built-in.
+> > > 
+> > > Series is based on commit
+> > > dc72930fe22e Merge branch 'pci/misc'
+> > > of pci/next.
+> > > 
+> > > [...]
+> > 
+> > Applied, thanks!
+> > 
+> > [1/4] PCI: Export pci_get_host_bridge_device() for use by pci-keystone
+> >       commit: c514ba0fa8938ae09370beecb77257868c1568a7
+> > [2/4] PCI: dwc: Export dw_pcie_allocate_domains() and dw_pcie_ep_raise_msix_irq()
+> >       commit: db9ff606a5535aee94bf41682f03aba500ff3ad6
+> > [3/4] PCI: keystone: Exit ks_pcie_probe() for invalid mode
+> >       commit: 76d23c87a3e06af003ae3a08053279d06141c716
+> > [4/4] PCI: keystone: Add support to build as a loadable module
+> >       commit: e82d56b5f3844189f2b2240b1c3eaeeafc8f1fd2
+> > 
+> 
+> I just noticed the build dependency mentioned in the cover letter after applying
+> the series. This is problematic since there is no guarantee that the dependent
+> commit will reach mainline first. So if this series gets applied by Linus first,
+> then building this driver as module will break the build. We should not have the
+> build error at any cost.
 
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+As feedback for the future, is there a better way that I could have
+highlighted the build dependency? I agree that a build failure is
+unacceptable which is why I tried to highlight the dependency, but, it
+probably wasn't the best approach to point it out by mentioning it in
+the cover letter. Please let me know if I could make it easier for you
+and other Maintainers to notice such stated dependencies.
 
-One nit below.
+> 
+> So I'm dropping this series now. Please repost once the fix is in mainline
+> (which will be next cycle).
 
-> ---
->   arch/x86/kvm/vmx/nested.c | 47 +++++++++++++++++++++++++++++++++++++++
->   1 file changed, 47 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 51c50ce9e011..024bfb4d3a72 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -3100,6 +3100,17 @@ static bool is_l1_noncanonical_address_on_vmexit(u64 la, struct vmcs12 *vmcs12)
->   	return !__is_canonical_address(la, l1_address_bits_on_exit);
->   }
->   
-> +static bool is_valid_cet_state(struct kvm_vcpu *vcpu, u64 s_cet, u64 ssp, u64 ssp_tbl)
-> +{
-> +	if (!kvm_is_valid_u_s_cet(vcpu, s_cet) || !IS_ALIGNED(ssp, 4))
-> +		return false;
-> +
-> +	if (is_noncanonical_msr_address(ssp_tbl, vcpu))
-> +		return false;
-> +
-> +	return true;
-> +}
+Sure, I will repost the series. I had posted the v3 series right away
+to make it easier for you and other reviewers to provide feedback before
+people lose context. Thank you for actively reviewing this series and
+sharing your valuable feedback :)
 
-Nit:
-
-Is the following simpler?
-
-index a8a421a8e766..17ba37c2bbfc 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3102,13 +3102,8 @@ static bool is_l1_noncanonical_address_on_vmexit(u64 la, struct vmcs12 *vmcs12)
-
-  static bool is_valid_cet_state(struct kvm_vcpu *vcpu, u64 s_cet, u64 ssp, u64 ssp_tbl)
-  {
--       if (!kvm_is_valid_u_s_cet(vcpu, s_cet) || !IS_ALIGNED(ssp, 4))
--               return false;
--
--       if (is_noncanonical_msr_address(ssp_tbl, vcpu))
--               return false;
--
--       return true;
-+       return (kvm_is_valid_u_s_cet(vcpu, s_cet) && IS_ALIGNED(ssp, 4) &&
-+               !is_noncanonical_msr_address(ssp_tbl, vcpu));
-  }
+Regards,
+Siddharth.
 
