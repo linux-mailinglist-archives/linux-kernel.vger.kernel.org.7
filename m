@@ -1,122 +1,86 @@
-Return-Path: <linux-kernel+bounces-827792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55104B92F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:41:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33266B93008
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69A312E029D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A641907AF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513B8313532;
-	Mon, 22 Sep 2025 19:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSlPx4Sh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706F22F291B;
+	Mon, 22 Sep 2025 19:42:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71C92F39BF;
-	Mon, 22 Sep 2025 19:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0A4222590
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758570056; cv=none; b=WefLcJugXAmGsX8TUCgPlyNKHV8QWPCCq6CfRDSRPVCoUAnwd9/qha7tiSxhLzzDSapkJo6nc+Y8i/cc4Kjji3b2sYVZgeu7rioGV4jfnBT1hLHFGi2xY+YCA5MZef5bo7rxFFEPHoEL0qZikvB9z/vSBkr0ivpHX4IVUw1KoL0=
+	t=1758570125; cv=none; b=Z6jAWq0at8a71G/TrGfPkIbSXa13z19RXza1moEphlUdlImHPLY+I9cZbeDfWAqaMPKxKdTptNtSOLvUnF486f6g6W/pgDUtH2PvibvRD48wZb7fCODLGTXcCNzhlK/IkiXwD3DaFeqxK4OnDJcGdt24SeTQOHOzvmOe6Oo9mFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758570056; c=relaxed/simple;
-	bh=iiqDCDgZdcVZr0vXnR7UqoT7M33BpEH7LbsLXcuX/3c=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=iXa4Ycl+Re6lE2FxHZGT2u3UpHpVqdmW7DZQLKMvyOqOScyXK2sqTMo6YhhM+EF743RqrrPyPSgNkyrkhiRfXkaIdbk1YMSC6r+3RtrHFS84IkiU29Gx+ZvpzUwFGmaKMc+v9HMVCm52AQWeSGJUrU3NQWwTnAdhFG1dPPTNEjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSlPx4Sh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61220C4CEF0;
-	Mon, 22 Sep 2025 19:40:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758570056;
-	bh=iiqDCDgZdcVZr0vXnR7UqoT7M33BpEH7LbsLXcuX/3c=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=QSlPx4ShwYgZuryexQpl/Rr0eN1QmDS/HtHyyF87LjYA2N89dhSy0aGR2k34xVe5g
-	 FKVTU7i7bDebF9i2EZTBMiIK7bKp47zIhvE5SE001ojwjeBqK1qN3V4T9eI1YpewPQ
-	 Ib45b7GffShCUjdCKTZg1HpcatP7lhLZZ2Dl7vxgSHRYu8fIUXmzbKnLH9rTQqFjUv
-	 2tp1KvdGvDXT9BUzxwcU3LlG3Eiq76FlKYnln968CCSr4drkxf88QeSFpjeuPMo4Sr
-	 lWMsl7xkITD3yMiMKI1qfduJwIhN1MZ0YC62PU7QiX0QLsDuVCJW6TMFtdijvaYaB5
-	 WhiAzzOOKUPDQ==
-Date: Mon, 22 Sep 2025 14:40:55 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1758570125; c=relaxed/simple;
+	bh=4ujGpaeGDUjd+SnIcWOdIskUJI9EivKuLUDyTNZHIfo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=u73Lddfx+U5M+x2kx24aLq+20IA1Hb1XvyURRKFJ7kTH0kTwc9kt2qftc2y74IWJl6ys91qUCT2uo76Vweh+mVYVp3ItxftM38Ud+qgJNLCeWvCmfzi9CUCNo9Rf3F04MY+iWiEqPqIpyknlHGk7EBgpIZq5fNghG6xI+VPvsUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42570afa5d2so62331585ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:42:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758570122; x=1759174922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jiVhWYbXwEB5twvMMlSHvCBy2KkajPpqpRG8MrdHnNs=;
+        b=DppkacXEiY5hZlRU2Tn5NusUURKGWqBriWL06Hi0Q6CqL05+3WCFn6Qp972erulfD2
+         sKBUfn7lHVcChDn4pNFq+th1x49M+Cs0mJpNw2pBqs13npipQBkIQQ+JuEKTBfjdnSXW
+         tuVNm2eYNWzA9iKz3GoCPutoVct0U9mi8fX8J7/8ZJwm1YIhPqVzAJCagfy2sBdqpJNI
+         4Hnbprr2A88Pyg4x2C8JeJMmG36wrRRYeoqDYx1dAx5dbkWFdqpmUM18Zxe0C/IJ/ue4
+         FiET6JXT7fpSz1iAs74QRDFYt/J7hKHF4et+DAM16Fe9EZF99Q2lpzUmAhptSS4a+3Bc
+         O70Q==
+X-Gm-Message-State: AOJu0YwKM4bW1UTP3ZmWcv7lOfkA/Me/zsjJRIR+PsXu32Xqa8TZHE6T
+	883rWSqVX1Z1AXh8KRocMlf+ACa3egx5i50nxo7uCq/5HiQiMsANrb/I6/BihRICHlBj1Y4Zw/5
+	JffDFk+NSu48363oVQc/irBOg8NAq9iarJqhaUmGwC45beWROEQk2nABv5p4=
+X-Google-Smtp-Source: AGHT+IHnuDUdxMIbwSBjowlSB9NHjee6C6soIUirc92DwnG7mGCeznEjq7vsx6kuFeh8YUuQ2bDRRTVxCXfWMidrdglP/7Frz19B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrew Davis <afd@ti.com>, 
- devicetree@vger.kernel.org, Bryan Brattlof <bb@ti.com>
-To: Judith Mendez <jm@ti.com>
-In-Reply-To: <20250922160715.346137-1-jm@ti.com>
-References: <20250922160715.346137-1-jm@ti.com>
-Message-Id: <175857005548.994643.9822023252083969281.robh@kernel.org>
-Subject: Re: [RFC PATCH v2] dt-bindings: nvmem: Introduce nvmem efuse
- binding for TI K3 SoCs
+X-Received: by 2002:a05:6e02:1746:b0:424:ed48:9acd with SMTP id
+ e9e14a558f8ab-42581e8edf5mr1630985ab.27.1758570122643; Mon, 22 Sep 2025
+ 12:42:02 -0700 (PDT)
+Date: Mon, 22 Sep 2025 12:42:02 -0700
+In-Reply-To: <20250922180305.163051-2-sidharthseela@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d1a68a.a70a0220.4f78.0002.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_hdr (3)
+From: syzbot <syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, sidharthseela@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-On Mon, 22 Sep 2025 11:07:15 -0500, Judith Mendez wrote:
-> On K3 SoCs there are efuse registers scattered across the memory
-> map. In order to reference these efuse registers like gp-sw which
-> may store SW REV information or other general purpose information
-> for drivers to consume, treat them appropriately as efuse devices
-> with nvmem framework.
-> 
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> ---
-> This patch is not complete and is sent as an RFC to get some initial
-> thoughts on this implementation to solve [0].
-> 
-> [0] https://lore.kernel.org/linux-mmc/736f09e0-075a-48e0-9b32-6b8805a7ee2a@kernel.org
-> 
-> Changes since v1 RFC:
-> - Drop depreciated nvmem-deprecated-cells.yaml since nvmem.yaml
->   already includes nvmem-layout.yaml.
-> - gp-sw efused-backed reg is 128 bits, so update size of example
->   to 0x10.
-> 
-> Link to RFC v1:
-> https://lore.kernel.org/linux-devicetree/20250916154809.545283-1-jm@ti.com/
-> ---
->  .../devicetree/bindings/nvmem/ti,efuses.yaml  | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/nvmem/ti,efuses.yaml
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reported-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
+Tested-by: syzbot+332bd4e9d148f11a87dc@syzkaller.appspotmail.com
 
-yamllint warnings/errors:
+Tested on:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml: ignoring, error in schema: properties: compatible
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml: properties:compatible: [{'const': 'ti,am62p-efuse'}] is not of type 'object', 'boolean'
-	from schema $id: http://json-schema.org/draft-07/schema#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/ti,efuses.yaml: properties:compatible: [{'const': 'ti,am62p-efuse'}] is not of type 'object', 'boolean'
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-Documentation/devicetree/bindings/nvmem/ti,efuses.example.dtb: /example-0/efuse@43000230: failed to match any schema with compatible: ['ti,am62p-efuse']
+commit:         d4c7fccf Merge tag 'for-linus-iommufd' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=119e427c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b093ccee5a9e08c
+dashboard link: https://syzkaller.appspot.com/bug?extid=332bd4e9d148f11a87dc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10c1e8e2580000
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250922160715.346137-1-jm@ti.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Note: testing is done by a robot and is best-effort only.
 
