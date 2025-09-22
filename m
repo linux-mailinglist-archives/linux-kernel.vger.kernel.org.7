@@ -1,293 +1,79 @@
-Return-Path: <linux-kernel+bounces-827760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3CAB92A7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:52:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4E0B92A8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8D31904076
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4296D1904392
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDFE31A07C;
-	Mon, 22 Sep 2025 18:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5D631A57C;
+	Mon, 22 Sep 2025 18:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t/qEswtN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i9ROUaIx";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t/qEswtN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="i9ROUaIx"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFCjiWvF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18681E32CF
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 18:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C1531A553;
+	Mon, 22 Sep 2025 18:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758567158; cv=none; b=isPxMcoNOibM9///ooVbt21O2PouHRYQv6fQUDZEwWhT6yTM7pB1G1nsyaaGwlYQbrr1JrWgGbXd7GtJL5ZmBtQHxwbLWekL2eAURDdFWiOP9eSDM+u6soJmelnQESJlnCxl8B8pk3cGF7Vf/EuUzVwwNTlhMQKC7Du/NxGXxxE=
+	t=1758567161; cv=none; b=NxdLoG+56fJkMYMZzp2rzzuqlyvb77g8VzY4vPg/sr7tkGAWzruEAs19A9wYOKhZv2xJdCWDxQqaYP4Ru4CH57m96o5beUcw3DdYDc89bLKw3mBm2Qe2DxaAetUiuNcRx6FhKCU8acLmTfls/Id8bPKsX23sNQlWb9vJ4x9Ipkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758567158; c=relaxed/simple;
-	bh=Zdpldsom9bOtqZerA5Njc/yNlXifusbBIKIr3wV4eoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TatVdUlQRkuniG885n+Oi0ZbLt9eMuHen49rssBXwq5FKNrFlQp1LZ/vwAPCKIpU12A0yiRPYbiCNL713ghDKYyo2gwE3NYlxH9hqH8jPv9kfOXg+lh1q7kDrkv8hOmIo51YlNsq0Nm2Aa49f5XnO1KBZImau+4nOLFjH46vgFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t/qEswtN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i9ROUaIx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t/qEswtN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=i9ROUaIx; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C7D9F33682;
-	Mon, 22 Sep 2025 18:52:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758567154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOEd+KM3IMYvWo1eE95rp6+9G3pn0buEqnuk3zzFeaU=;
-	b=t/qEswtNPno+qZdXKePeL7juke2Sz+zo5qi1HMyoWs8Kl7Ql81qRs/L/ermbMU/bJ7EPQ9
-	xvdtFGtS1XcZCapGD4Szvr5t2GORYmcC0gd/j5uFeYz2cddO24+AXKa8dd8luNwSVULxe6
-	LWshpRD5HAihKBSa5rLfNIhTmzdFwPg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758567154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOEd+KM3IMYvWo1eE95rp6+9G3pn0buEqnuk3zzFeaU=;
-	b=i9ROUaIxP7C25w/wLu9U9VVKZfbToGDE1JgqdVw9vH+s9fYcr0guVbhayg9fHCwVzkTn5p
-	y92y43hhbx2bIkBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1758567154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOEd+KM3IMYvWo1eE95rp6+9G3pn0buEqnuk3zzFeaU=;
-	b=t/qEswtNPno+qZdXKePeL7juke2Sz+zo5qi1HMyoWs8Kl7Ql81qRs/L/ermbMU/bJ7EPQ9
-	xvdtFGtS1XcZCapGD4Szvr5t2GORYmcC0gd/j5uFeYz2cddO24+AXKa8dd8luNwSVULxe6
-	LWshpRD5HAihKBSa5rLfNIhTmzdFwPg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1758567154;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOEd+KM3IMYvWo1eE95rp6+9G3pn0buEqnuk3zzFeaU=;
-	b=i9ROUaIxP7C25w/wLu9U9VVKZfbToGDE1JgqdVw9vH+s9fYcr0guVbhayg9fHCwVzkTn5p
-	y92y43hhbx2bIkBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C9551388C;
-	Mon, 22 Sep 2025 18:52:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id E1AwAvKa0WjjYAAAD6G6ig
-	(envelope-from <ematsumiya@suse.de>); Mon, 22 Sep 2025 18:52:34 +0000
-Date: Mon, 22 Sep 2025 15:52:23 -0300
-From: Enzo Matsumiya <ematsumiya@suse.de>
-To: Henrique Carvalho <henrique.carvalho@suse.com>
-Cc: Steve French <smfrench@gmail.com>, rajasimandalos@gmail.com, 
-	linux-cifs@vger.kernel.org, sfrench@samba.org, pc@manguebit.org, ronniesahlberg@gmail.com, 
-	sprasad@microsoft.com, tom@talpey.com, bharathsm@microsoft.com, 
-	linux-kernel@vger.kernel.org, Rajasi Mandal <rajasimandal@microsoft.com>
-Subject: Re: [PATCH 1/2] cifs: client: force multichannel=off when
- max_channels=1
-Message-ID: <byjdlepkzmhm6j4ap5eyzdcusl7dgq3iuhkduf3s5h4mrayj32@lzwe2rksc4ei>
-References: <20250922082417.816331-1-rajasimandalos@gmail.com>
- <da3e2b5a-a5da-4526-9884-8789990ebf95@suse.com>
- <qmf3xwqq4hqj4issgci2g76eghytaqxihnrp236ithh2istkkf@n4s54vp3hblr>
- <CAH2r5mu9xUQz5e1Mf-dBCNh2_y2jnxPYMhmuHr1bVqKC6atd8w@mail.gmail.com>
- <75a60a40-a6fe-40f5-9d6a-aa9ff8cbfa3c@suse.com>
+	s=arc-20240116; t=1758567161; c=relaxed/simple;
+	bh=zzPDjUd3ZXXbtwbaeNu8cGUP2U9NzJAtLzJgqUtgzkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BkG6T5uDqHVfB+VauWKI6+b59i/QH02mg87SomNaA8YFE4wj3XjyjcYgyS+k7q09kHPZqq2dKr2PRmlFH9KKx5k86HRFU+x9C/2Q2U7d3XarL8Om6nuPT+YXz0K2kARs4tTyQ+osJJgRqKSJDw2BXEwU4J0oHN3iWzPd91J5MHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFCjiWvF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30EA8C4CEF0;
+	Mon, 22 Sep 2025 18:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758567160;
+	bh=zzPDjUd3ZXXbtwbaeNu8cGUP2U9NzJAtLzJgqUtgzkk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UFCjiWvFdiUb0wZzf+2dUrxNH2q/9TmWe8mLqxDj852L09tSlE5NGMVPG0e/Uy5zh
+	 N4enV7X6tpaTfmBlazdRrmJqUgJmqFkeLTR9P65OtGjiLpqhNaHVvWwX0s9Guuwbbl
+	 GVOwpADhclbuZVWJX3Yic2USLVVHLgU2Ns7+/J7dQHl/H1zCV1Oemo1zX7ESbbDvRI
+	 KyP22d1BoOCE1hyo75YZdqpyxikyvNEyDpOM9IEqhggbfjzBKoeHUlXO19xyx+JkxG
+	 8UklWFXYgwIwr1TmyARoRILE5VieYGqcJvghWWMTgDck8LMFjEN3WZncJKBq4tT2YM
+	 w7YQ4PrX7iZig==
+Date: Mon, 22 Sep 2025 11:52:39 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Donald Hunter <donald.hunter@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 1/6] mptcp: pm: netlink: only add server-side
+ attr when true
+Message-ID: <20250922115239.21e4afaa@kernel.org>
+In-Reply-To: <20250919-net-next-mptcp-server-side-flag-v1-1-a97a5d561a8b@kernel.org>
+References: <20250919-net-next-mptcp-server-side-flag-v1-0-a97a5d561a8b@kernel.org>
+	<20250919-net-next-mptcp-server-side-flag-v1-1-a97a5d561a8b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <75a60a40-a6fe-40f5-9d6a-aa9ff8cbfa3c@suse.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,samba.org,manguebit.org,microsoft.com,talpey.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 09/22, Henrique Carvalho wrote:
->
->
->On 9/22/25 1:14 PM, Steve French wrote:
->> . >Do we even need ->multichannel flag at all?
->>
->> Yes - especially in the future.   The goal is for the user to have
->> three options:
->> 1) (preferred) "multichannel" (max channels will be dynamically
->> selected and can change) the client gets to choose how many channels
->> to connect to based on what it sees in the output of the most recent
->> query interfaces call (it can change on the fly as server dynamically
->> adds and removes channels or networks become temporarily unreachable)
->
->I'm guessing this would be required while we are transitioning from
->setting channels dynamically to having multichannel on by default, as
->you commented below. Because once we have it on by default, I don't
->think there is a point in having the flag.
+On Fri, 19 Sep 2025 14:08:58 +0200 Matthieu Baerts (NGI0) wrote:
+> This attribute is a boolean. No need to add it to set it to 'false'.
+> 
+> Indeed, the default value when this attribute is not set is naturally
+> 'false'. A few bytes can then be saved by not adding this attribute if
+> the connection is not on the server side.
+> 
+> This prepares the future deprecation of its attribute, in favour of a
+> new flag.
 
-Exactly.
-
->> 2) "max_channels="   This is for the case where user wants to choose
->> the number of channels rather than have the client automatically
->> (hopefully soon in the future) choose it for you
->> 3) if server has mchan bugs, allow client to mount with no
->> multichannel (or equivalent max_channels=1)
->>
->> But ... "remount" also has to work for the three above (and currently
->> doesn't) and this is what I am hoping the recent patches can fix (?)
->> but haven't tested them enough yet
-
-I was talking more in the context of code, that it could use some
-refactoring/improvements -- I also think such functionality (hence the
-patches) are necessary.
-
-There's no sense for me, as a user, to specify e.g.:
-   # mount.cifs -o ...,multichannel,max_channels=2 ...
-
-Was there only a single option for this, it would be less confusing and
-wouldn't require this patch here.
-
-
-The below patch (PoC) is an idea I had that would make things much
-clearer for users -- have 'multipath' mount option be either a flag or a
-value option, e.g.:
-
-   # mount.cifs -o ...,multichannel //srv/share /mnt/test
-   # findmnt -t cifs -u | grep -Eo 'max_channels=[0-9]+'
-   max_channels=2
-   # umount /mnt/test
-   # mount.cifs -o ...,multichannel=4 //srv/share /mnt/test
-   # findmnt -t cifs -u | grep -Eo 'max_channels=[0-9]+'
-   max_channels=4
-
-
-Cheers,
-
-Enzo
-
----------------------
-
-diff --git a/fs/smb/client/connect.c b/fs/smb/client/connect.c
-index dd12f3eb61dc..ad9a588c7103 100644
---- a/fs/smb/client/connect.c
-+++ b/fs/smb/client/connect.c
-@@ -2487,7 +2487,7 @@ cifs_get_smb_ses(struct TCP_Server_Info *server, struct smb3_fs_context *ctx)
-  	spin_lock(&ses->chan_lock);
-  	ses->chans[0].server = server;
-  	ses->chan_count = 1;
--	ses->chan_max = ctx->multichannel ? ctx->max_channels:1;
-+	ses->chan_max = ctx->max_channels;
-  	ses->chans_need_reconnect = 1;
-  	spin_unlock(&ses->chan_lock);
-  
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 072383899e81..ceb19a58b743 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -165,7 +165,7 @@ const struct fs_parameter_spec smb3_fs_parameters[] = {
-  	fsparam_u32("max_cached_dirs", Opt_max_cached_dirs),
-  	fsparam_u32("handletimeout", Opt_handletimeout),
-  	fsparam_u64("snapshot", Opt_snapshot),
--	fsparam_u32("max_channels", Opt_max_channels),
-+	fsparam_u32("multichannel", Opt_multichannel),
-  
-  	/* Mount options which take string value */
-  	fsparam_string("source", Opt_source),
-@@ -1252,14 +1252,16 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
-  		ctx->nodelete = 1;
-  		break;
-  	case Opt_multichannel:
--		if (result.negated) {
--			ctx->multichannel = false;
--			ctx->max_channels = 1;
--		} else {
--			ctx->multichannel = true;
--			/* if number of channels not specified, default to 2 */
--			if (ctx->max_channels < 2)
-+		if (param->type == fs_value_is_flag) {
-+			if (!result.negated && ctx->max_channels < 2)
-  				ctx->max_channels = 2;
-+		} else {
-+			if (result.uint_32 < 1 || result.uint_32 > CIFS_MAX_CHANNELS) {
-+				cifs_errorf(fc, "%s: Invalid max_channels value, needs to be 1-%d\n",
-+					 __func__, CIFS_MAX_CHANNELS);
-+				goto cifs_parse_mount_err;
-+			}
-+			ctx->max_channels = result.uint_32;
-  		}
-  		break;
-  	case Opt_uid:
-@@ -1395,17 +1397,6 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
-  		}
-  		ctx->max_credits = result.uint_32;
-  		break;
--	case Opt_max_channels:
--		if (result.uint_32 < 1 || result.uint_32 > CIFS_MAX_CHANNELS) {
--			cifs_errorf(fc, "%s: Invalid max_channels value, needs to be 1-%d\n",
--				 __func__, CIFS_MAX_CHANNELS);
--			goto cifs_parse_mount_err;
--		}
--		ctx->max_channels = result.uint_32;
--		/* If more than one channel requested ... they want multichan */
--		if (result.uint_32 > 1)
--			ctx->multichannel = true;
--		break;
-  	case Opt_max_cached_dirs:
-  		if (result.uint_32 < 1) {
-  			cifs_errorf(fc, "%s: Invalid max_cached_dirs, needs to be 1 or more\n",
-@@ -1901,7 +1892,6 @@ int smb3_init_fs_context(struct fs_context *fc)
-  	ctx->echo_interval = SMB_ECHO_INTERVAL_DEFAULT;
-  
-  	/* default to no multichannel (single server connection) */
--	ctx->multichannel = false;
-  	ctx->max_channels = 1;
-  
-  	ctx->backupuid_specified = false; /* no backup intent for a user */
-diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
-index b0fec6b9a23b..ff75a7cc11dd 100644
---- a/fs/smb/client/fs_context.h
-+++ b/fs/smb/client/fs_context.h
-@@ -175,7 +175,6 @@ enum cifs_param {
-  	Opt_max_credits,
-  	Opt_max_cached_dirs,
-  	Opt_snapshot,
--	Opt_max_channels,
-  	Opt_handletimeout,
-  
-  	/* Mount options which take string value */
-@@ -293,7 +292,6 @@ struct smb3_fs_context {
-  	bool resilient:1; /* noresilient not required since not fored for CA */
-  	bool domainauto:1;
-  	bool rdma:1;
--	bool multichannel:1;
-  	bool use_client_guid:1;
-  	/* reuse existing guid for multichannel */
-  	u8 client_guid[SMB2_CLIENT_GUID_SIZE];
-
+Removing attrs from netlink messages is a bit of a gray zone.
+If anyone complains we'll have to revert..
 
