@@ -1,361 +1,219 @@
-Return-Path: <linux-kernel+bounces-827770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4EBB92BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE73B92BF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6918619055B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:06:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964ED2A4CD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC7931A573;
-	Mon, 22 Sep 2025 19:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9DE31A57F;
+	Mon, 22 Sep 2025 19:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LcWiGJof"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PYlRxL0N"
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011045.outbound.protection.outlook.com [40.93.194.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2A41FF7C5
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 19:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758567969; cv=none; b=Jz1g/BDT7eAaSKTcozPWZNs9QPRF/eY7VHyE831S5QCPd8VuEkAq/ao2SrAVO8/OhO2Ee9+inExm3KjHKIG8+2oXG5wmmGEIQtvrlZ4Vdz3SB9LpXcpZK1Sv37b9F2SKA4gKqxBH2SKNr5QzY0tRzcFgda26xvYXHGG5Ipu8yHc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758567969; c=relaxed/simple;
-	bh=aFWXLiivJ4YUzHUPxpWbeSvezEsm51bwTeklbJQIcYA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUhyWMQKiX6/UvqB6hFyMmvhpi/cuOJuxqRPy9eJo31eZeWOOtsJsCDkrUidwMmFOetry8NUa7tDrjZjH/wbLf4lq8YO1eJBV2ZJABZJspqR++/KQsLI0Ldz5KnUcH1OK7/gudn+m1lvDX17if++tc4Y9fo2zDlR4aqiSjdMCUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LcWiGJof; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e1bc8ffa1so3730285e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 12:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758567965; x=1759172765; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xfkY5AXvD0ZvDWTOWzvtBozCzcTw2ZSBgWbw8Ju3dcg=;
-        b=LcWiGJofrtnq5/bRmWEFYgOAdl+fpACZajYlNS/jGSXsWm+7fq5cbf3BDdaTPSqfaM
-         f6JK8EwPcP7zMz4wfGAo0xnhi5KlBwG/VIErv6DuV2fIDak5Zu9uR8nGyi2N1h8A+/d1
-         +eliyOHNpVNUq1uDsvgZ9OVBt7ZKwx6obHNWyrwr16CI1lL4amEF+Rxq9WnyDKXGOnXf
-         Gvtnj7xXKfmXwCAysl3xxw2ThmZISVm75HXGV8AEHL1tkXjmKEU1O6XoQe6quWFTgwc4
-         cef+ou5O2eXdmn4laYUu1vhQRMvwJGj9OhDajlJNNLof/nR87M//y/Ob8FEa7GLKoDxo
-         CyIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758567965; x=1759172765;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xfkY5AXvD0ZvDWTOWzvtBozCzcTw2ZSBgWbw8Ju3dcg=;
-        b=n4LbBX4CCUehCOujz4mZGIZPX19qET1gYk1dwTwrklPvep05h4oXWlYM4yjhnu3jHY
-         tz662vJnkTezJ0YUkE2dFjetXyvAh3oolzxigWt5KtZqJgJ8eiuhWfY2n0RQ4xis7cjn
-         PSxSJ1NjNjt8ZmFN/62YF2B60XdNKcWRVUxXn118N4a910c7brnSSKBVCoaWIgHgxuSs
-         CglKssM+oQJx8W+HbSKAU8KjD7Xuy/uQHAUeqnj6KMPXCYjWMRyMy9J/VegNyLjFuZNF
-         rGB7CSgFnHFMJd+1hzWa+qwM70+IeY3MDoGjvE9LWD8/pYq2PWwJtf7sh/OK7kYaYI/V
-         +MBg==
-X-Gm-Message-State: AOJu0YzfTF6cd5u02FAWU7uXUWsvDZnvdRu43vTaj+fOD3AhrfwHlHFy
-	BeIge7Py5iF1vPpqwbMui6dIsPeGnlJQc1ouhrVVwIu2fN4yap2ieGU0
-X-Gm-Gg: ASbGncte0uzi/BDIinvnz5rb8sZLVO+h/QQ2JWBMAz6SY6ZZ1uiV20FU3ec6bO0wQ1s
-	AHnwr2kU4+YlvVEjcKpjNZ3ynjo1oc8WqA+QB4r4HHVzcF3f5qRcd6M68xJQtqRYI2WWrnt1/+U
-	KrdxmK5SjIBgNQcPcjOxBSf0KJS1EWgM19Up12V0laj+Z4LnvimpDGa7GYkElq0KnH2Xylxn3Jk
-	oxlrlG+faEAEzre8PBUtM1OZAM2DnuBmognR2MxJKenuxe2kVQj7Yv7MRkXYXd/ORkUh88cA+92
-	2hjfQIVVbe8OFfyPNDQ7P4mcXlR4Yn2l5S/o0TF24gSiJDEMWzXaWRo+i3BrU6OxF/E1nVfZ1N1
-	Kw2F6tLU7888xoVx3GtTG91djv5u4Pk+GScdrjA5NrX+UpSkdJVrGcGQM43pjDaVoGE4=
-X-Google-Smtp-Source: AGHT+IHiYtsZgQnnhYurpBqcCwqkq3VPjSs12XfFd0dBTlEzJMi+R4rGhaLrT5UZpoVZwHHVfGt4pA==
-X-Received: by 2002:a05:600c:6288:b0:46d:996b:8293 with SMTP id 5b1f17b1804b1-46e1dab26ccmr133545e9.22.1758567964495;
-        Mon, 22 Sep 2025 12:06:04 -0700 (PDT)
-Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([37.163.188.178])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46d1c97a87csm58186295e9.20.2025.09.22.12.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 12:06:04 -0700 (PDT)
-Date: Mon, 22 Sep 2025 21:05:49 +0200
-From: Antoni Pokusinski <apokusinski01@gmail.com>
-To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux@roeck-us.net,
-	rodrigo.gobbi.7@gmail.com, naresh.solanki@9elements.com,
-	michal.simek@amd.com, grantpeltier93@gmail.com,
-	farouk.bouabid@cherry.de, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH 2/3] iio: mpl3115: add support for DRDY interrupt
-Message-ID: <20250922190549.22ly3ekwuflgbga7@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
-References: <20250921133327.123726-1-apokusinski01@gmail.com>
- <20250921133327.123726-3-apokusinski01@gmail.com>
- <073de1da8b8f04c037f267765235b3334941844f.camel@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953AF1E32CF;
+	Mon, 22 Sep 2025 19:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758568259; cv=fail; b=iy1O8/AR1xbygV7JX0LNSXZOSzi2ZxqtSOzcapW64BOG878S0j1Jex4LkuP6zpsKfaXHZ7W0HOdtLO4gh5+HWBLzOdiKc2yzijE5147iTp1iufpYMjV7lBuc4xTJEaHKQCboS9oNqGRkSU5zlWHmm3BewRr8JB78PqQ9c0uqBFE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758568259; c=relaxed/simple;
+	bh=ThJrZL/r09pYyHNf59iC9BV2wxfBog2+LDi3a0PvqkM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MoSvqz2Ajwstw2a8RMoXUM9hxpgi3QwYT2xCM1HFRPEaL/cL405aeUxOP8hPQQu0IIQZNUC9wWhxLMloD8VJibtMKnkXhxphbzkz6DM9Kz3SUuBsghWlzyxdu6uviPop4J8RSijoDv+7XScS7wMIeb0yW7xnmVTZxL3R4wpRUCk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PYlRxL0N; arc=fail smtp.client-ip=40.93.194.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZP7o6Du0XV3HXHPjlxpGgwehpcvoRXpze0dug/B7wNJygrevxABLXbH2W8jgXP5/b9MtIszi157UO6vv/pUWN7hJ3oLGS9FL/c09oI4lrP8YpHEnKQ0h/JX4keGBYxzTsyIQxUx7coiDW/zUOmBPhrm+y4wwrm4ZZUh/mXZ9vDBSMFuZRkGLuwF+UgsouDAncnoUSAZh9sQVBZEA+N4/116sKlUztGpas9l/QoIeWZqiu5jqLwzly0kRo+1gombnBmTwhxPylfcGRjOgt1vyR9MYpYV1tNjuwkK0xmvRohV1Z0aS+qSVVIb7cGti3J8ey3lKdZE9QxpqlXb3lZrbhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ThJrZL/r09pYyHNf59iC9BV2wxfBog2+LDi3a0PvqkM=;
+ b=srEf/G5BKAso2HOkJgbrU5QupOllDzmxEvLNBoVOGDjufBBuZVJKqYR8R35uOUQtCc4TVXMvbcdYqyr9T+sh1szRAmEVwPycnMqEJZeDjttDbBIG8wAisjC7a1HMI4J6gTJSu4bj0MrhKJtIOmrbZ+5ZezlUfK//vsxYYXalv77RLiRRf5LVpCua2AiXWCjnjl0LM2eMnVxqtbPEpdNSSFbFaAMP2hep16mfs4tPBC5ojK4how92MccvjtfQg2inRLF1I8Lgc6U9lX8hhbuiaH+v0Cl4a1BqVvb/yCtA0BWmooEgjKzLrcS1bDSsa6qaItLgJjRE8vlbhkUbkcZkVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ThJrZL/r09pYyHNf59iC9BV2wxfBog2+LDi3a0PvqkM=;
+ b=PYlRxL0NmBc3Sw5nkdlNXsy7RcwJc0Hci96uJlD+xm3i3KBzBTD46XtZFan12YuVh0AzlpKuXKjXOISaj49zkzaf2MVBDp7dciDcd+PDGIafsIMEsu+GHmoo0S8Mip4ap8cZDbSnmS2bD6ZbJ2C4ZI3T7oamEgrX7rsn4pC+tnE08QaZ/rhnyb6mDhiKnPSnMJaqhd/D7fmR018aZzPpHgY09rQa+wB+LfiNrB0f3yrR8hhoEZI1qmFNEVxCNb2jPohAmdF1oQJdcH9LfgiE3lQrRzGfS58Fma17UBkOKd/lBCVeKg0m7Z5oYeMeRarESYqfbJJYn1JRaM7jrdeYPw==
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
+ by PH7PR12MB7426.namprd12.prod.outlook.com (2603:10b6:510:201::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.18; Mon, 22 Sep
+ 2025 19:10:53 +0000
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::d620:1806:4b87:6056]) by CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::d620:1806:4b87:6056%3]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
+ 19:10:53 +0000
+From: Timur Tabi <ttabi@nvidia.com>
+To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Alistair Popple <apopple@nvidia.com>, Alexandre Courbot
+	<acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
+CC: "lossin@kernel.org" <lossin@kernel.org>, "ojeda@kernel.org"
+	<ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "tmgross@umich.edu" <tmgross@umich.edu>,
+	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "simona@ffwll.ch"
+	<simona@ffwll.ch>, "mripard@kernel.org" <mripard@kernel.org>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Hubbard
+	<jhubbard@nvidia.com>, "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>, "bjorn3_gh@protonmail.com"
+	<bjorn3_gh@protonmail.com>, "airlied@gmail.com" <airlied@gmail.com>,
+	"aliceryhl@google.com" <aliceryhl@google.com>, Joel Fernandes
+	<joelagnelf@nvidia.com>, "gary@garyguo.net" <gary@garyguo.net>
+Subject: Re: [PATCH v2 07/10] gpu: nova-core: gsp: Create RM registry and
+ sysinfo commands
+Thread-Topic: [PATCH v2 07/10] gpu: nova-core: gsp: Create RM registry and
+ sysinfo commands
+Thread-Index: AQHcK7RsIIrl+YrTDEmIrany5za9zrSfkdEA
+Date: Mon, 22 Sep 2025 19:10:52 +0000
+Message-ID: <d87bff0c64fb2a549920354c8b09f764e145a492.camel@nvidia.com>
+References: <20250922113026.3083103-1-apopple@nvidia.com>
+	 <20250922113026.3083103-8-apopple@nvidia.com>
+In-Reply-To: <20250922113026.3083103-8-apopple@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|PH7PR12MB7426:EE_
+x-ms-office365-filtering-correlation-id: a4f82c77-34c3-4687-dd27-08ddfa0bc003
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bmxRcjRER1I5Vkx1blJDRVVxbWlLdkVFKzcyL3hHalJQZWZYcUFTblhEWVFM?=
+ =?utf-8?B?N3V4WWUySHpjUVFueUpqTWhxbEZQWmFPZUhKMTdRYmFRWVgwZ0N3Zko1aW5m?=
+ =?utf-8?B?SFNSQVF5RytnVy9UUXZlWmdKWmNpTlc2TDMxdnNBaGtGMURybTh1N2drRC9l?=
+ =?utf-8?B?MmRHYjJMeEtJbTNRSUtjVFhIYlMzYm9sUTFXQVpFN2MwWk0vL2N0Q21MUkZS?=
+ =?utf-8?B?M0I2a0xpOGZWc0JIejhTWGNEUVluZit6YW9hZ2dXNU04WkJSWmRtRjRuZ0hk?=
+ =?utf-8?B?VjAxSkRraTZwajNUY2g2TzIxMHlsdTRpZEJZL2tJQWVJRkpxTnBVNFFmc2Zw?=
+ =?utf-8?B?eDZlS2Zha1ZvZTV0aEhvaDhna0VwY3UvTVRKL0tzbXJpQjdIdlhLaytNY1gr?=
+ =?utf-8?B?QnhTMVkxL3VrOW9SM1JJS3BLMWtpcGRYQWhGTGEwSTV6T1N2dys3SVVHVEgz?=
+ =?utf-8?B?TnQ0d1ZtaWt6aCtaWGdCU29Hb0VibTltcWtwSUVLYU4wbmhVUytNbXRWRTJV?=
+ =?utf-8?B?aFQ2Z01oKzdIYS9Za3R6VU5zcGdwUHZwQU9YUXNDNDJlRytTODhQOTZtTmF0?=
+ =?utf-8?B?TE9aZmk2MWVDenhPQWpwRHJsQWsrRVpYVHlmdnV6b0JuTHZMUmorMngyYlls?=
+ =?utf-8?B?WnROMEZhNFhnajk5MGlYWGpYQ092bFpiTm84STYrSDFIS084cXBBUW1iTkhu?=
+ =?utf-8?B?Sm53U2NSSlVycmNLQWdkS21rQWFmcVRBVUZGWGJERDBJQ01TbDM2dkZPbmFr?=
+ =?utf-8?B?M3FDeVM4RjJTano2azgvckZLYWJGTGhjYkJqcWxCT3FmTXJ5RmY2NzZFQUpm?=
+ =?utf-8?B?WEF1OEFtTDd1VnY4a3ZiL0V3QWRCMGNUc3R5dGRuUU1MejdUS2dYN2MzdlFn?=
+ =?utf-8?B?T0w2dVRDM0pXWlVCK054K2hJN2J6MGV6SHQzMkt4TkhZYTJzMlYydDRjcFRF?=
+ =?utf-8?B?elZaS0dNUGdacGNwOU1GbjlXOWJUR09XUXB5cWNxNHBaRXUrcmFHbmhmc0xk?=
+ =?utf-8?B?MFBXdnZ3amQ2bEdZbHFtenlmaTYwYjlaZFFsWkZka21paVN0VTNhZVQ2T2x4?=
+ =?utf-8?B?SGE3Q2hBOVl3RVZabEl5UU5qRC9qZlZLY2JQeVcyemhWS0piZ29ZejRDWUZE?=
+ =?utf-8?B?MFA0YU1BRzAvQUNNaUVOTW1CVTg5ZDBsUW5wS0Y0bnN1a3RJdzdzT283cmQx?=
+ =?utf-8?B?VVh6ZEpLdlo5UnJTMDkzT3cySjkvOS90clc2SVFBTDJTWGRLeWxqTXBjZE9N?=
+ =?utf-8?B?Z2ZuUTVONER5T2grZTdtL1lWcDlOcWxxUHhoM1Z6d3hzUVlTbklySmoyejI5?=
+ =?utf-8?B?WVpnUzdMcEd3b0NyaHJXRkh5UjlFb0dpekUyeXRqa1lscGZJRHd3SXQ1ZE9Z?=
+ =?utf-8?B?SlBjLzZBMUJsUXN2L2phcTNzUEpjWVlERHExUXgrL29vZjNtUzdoZTZUUmI0?=
+ =?utf-8?B?QS8zRVFUSEE3diszTmg4WjU4OHBBNDRhL0tBcXpia2kyYjA3WVp1eVdBTmJC?=
+ =?utf-8?B?d01LT0JPWjVsL05xVVQ5SXIrTVhPY3BySHZWcFhtRjFrcjZFQ2hHakliNmpR?=
+ =?utf-8?B?L3JWbG9KQ1A2OWJlc2JBbXpZN1ZkbFRiSzA2TmpUZkRkNU5NdEtlSmVuOE9H?=
+ =?utf-8?B?emRvM1hDOWszTDkwQ1VEYU5GQXpYL29ScSs4L2NucWFyL0h4UENDQ0RHeFk5?=
+ =?utf-8?B?Nzl1cXBZSTB1dk93d1pnSTJQTmJJd05VYmtNNTdkWEkwS25wQmJxMkRXczZp?=
+ =?utf-8?B?TDFMUFloZXJrUmRydnZ3WExnZnh6dUFOZ2NKSDdaWFpQbFY0cXhjV2R1MTZl?=
+ =?utf-8?B?Rmc1Tnhpek5iSHZLMmFlaVFselJvZjhXWC9EamIwYjdYeTd5QkhlVFJjb1Bj?=
+ =?utf-8?B?bk9ic1JrdFdYTFhVcERaT0I1dEM1Ny9aMGxycHhPSzJUdkpnL1BZUm9VQjJv?=
+ =?utf-8?B?ZHArL0tkRG1CR0p2WnVYRDkvRFNzdnJCalNLUnVjb25XOTN4SXNTYXkxOHhm?=
+ =?utf-8?Q?xQcC4HYkGJjiCIavAyy7kMEZiBqXv4=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eFFFL0FaejgxOGtnb2R4Q1lBeXpXUjZsRHFaSTdBYWY4cE9VLzJBc2RRMUJs?=
+ =?utf-8?B?MW9pNHRqdGltRDh3MzJqUW1pc1cxRTRxY0dzZyt3cG5ncTUwYSsvWFl1WmtC?=
+ =?utf-8?B?aXRyUzJLc2R2MDl5OTFoTWdDR1AyNmdjSnViZzNhRDRrSnhIZXpvam45OG9u?=
+ =?utf-8?B?R2w3Tnk5eC80RWZtWnl1U1ZOQjZOSXRhRVB0V2xQaUhKTzVRN1VmZW5QSldI?=
+ =?utf-8?B?bFd6dkFzc1VWTWpvalY3dSszKzhFVVlmRHd1aDZvT2REK3hYdnJBR25UUWRH?=
+ =?utf-8?B?MkF4V1BjRzE5K0o1NlJSbldHRDc3M2JJeSsvZ1I2QTVwM0ZXUXdYQ2U5aU5k?=
+ =?utf-8?B?Z1lzTW1SQXdRei9xNDI1Vzd5eldicFhmNnVWMmxLNG5FRFlCdWRKQjNnOXpO?=
+ =?utf-8?B?WVVrK0toMG10UjhXc3pUU0lxbHB2WWhrMFp3QzJ0RWFreTBkaUdUeXBtU1Zh?=
+ =?utf-8?B?QXJ0dFVOSU54L0hXbDVwUVQzSmR3NHlPWjB1dmFPMkk2YllvbGtBZlhHaGk2?=
+ =?utf-8?B?OHlIOXdWY1Fob2JVV1FUUXRBOG0zeGovandTeWVFUEFPbll2by9wTVFTbjlH?=
+ =?utf-8?B?TXZqMUFQelArSWg3eGlUR2NMRnIzRktwVlRNbUU0V0doNFJSeVpKVmJhKzEz?=
+ =?utf-8?B?VUJkaTZYeTJDOWJvSzllczU2bTZtTUxEKzFYbThHZWtDZ2JkMk9ram9QMm8x?=
+ =?utf-8?B?cEpneW5jUWpya3JuSkZ5azcvamtsU2FMb01ZY05HdmRtRjY3dU16K0lESmN1?=
+ =?utf-8?B?YVdBVTNZdm9WSEpud1ZFbnhsSnhqVG1xSHU3WHlZZyt6b29BMkFOOWVLQVE2?=
+ =?utf-8?B?c1BpRk9LYTBDbjd3YjQzTVpIZEVSUlFVS1BrZHJKOEdZNlgrK2NCNUtWUG5R?=
+ =?utf-8?B?VEpuYitJdGZrSkZLRTJHcEhJQVQ3Tzg2dmRyOVZTQ3l6OHBDUnd1WDhiMGkv?=
+ =?utf-8?B?NzRDM0VaWXBtRFIrWEgvc2pKK0dPMGMxekdqc2dkTU9nM2NsRkMvSzBsTGRk?=
+ =?utf-8?B?dHduNTZiTlMxL3B5Zy9aWWUxVW5wMlRxUWlUTlFMS1A4cjczSTZPQjhWZ1Rl?=
+ =?utf-8?B?Zi9MQVNlcmVHK2Z0WkR1dXhmcmxieGFIVE1MeUNwc3Q5TWNkNUM0Y0lGYkd6?=
+ =?utf-8?B?TlF0V1BkRk1ZMm91WHB5aFlXWXpuNUFFN1Y0bnZGSzFLVE85QTZhN1NGQ0Ju?=
+ =?utf-8?B?MTROM2ViUVZ3enJ5cmd5VHhuT0NST2JKNEloYXV2Nk5RY3VSamdlLzg4bnJt?=
+ =?utf-8?B?bkdQWFp6dDBybmRFV1ZLY3I4cVluTDlKMkhsTFZXSkp6RVdjTnJLY0NxbHBO?=
+ =?utf-8?B?UzBybEVRR2hRNVludXU5R0FqUmZhalpUR2ZkRmN2RnZkQnlVZld6SUEvV2Jq?=
+ =?utf-8?B?dllBQjRIOFN1WGNBcVV5cDh0RU9BK1liUGRzOWdZTS8wTXYyMURZK2YwU0JM?=
+ =?utf-8?B?cFJ5VDVMRnpoYUdJNVoydVdFb0hRcWROWVNTaC90T0ZFTGdhdXl1OVJrZisw?=
+ =?utf-8?B?YnlIU0lrN01CNkZWb1NnZEZoZmJXQnpCUGgrck1PemZUV0lUN2JDdWdTdEJp?=
+ =?utf-8?B?NHFURFdPSjE4QkJkSzlRRDEydjVPUksxRi9qN0RsaTIrdVBjU3N5b0FUcHdp?=
+ =?utf-8?B?YWM0SnlEanBiMWQ3d2R4MTBJV3J2RTNSa2Uvd2hLNWZKR0h1U3FhUGgvbDJW?=
+ =?utf-8?B?SmRzVkNoTVhsRUZ3OTNKdVVwZzdRWStOUDhKdnpLVVF6blM1TkRmU0l2ckZr?=
+ =?utf-8?B?akV1WXEzSWxISnBZVnVXYzU4dHdPbm9sSU8xL3lkaHZZaFQxM1lFMm5UU0Nz?=
+ =?utf-8?B?d2xMYXNlOFF3d25LTEFQa0U4a1NKN2QyMnhHOGVoQ0NOcG1Pd1RjWVRxVGRV?=
+ =?utf-8?B?VURzeXRqOVJQaFM4SGpPdEZCeEpaNkZHYkJXZGd2WWFrT0IxclA3Yitqako0?=
+ =?utf-8?B?WWZjdUNqaE50RHRnZzhhTDVKRjVmZjdSVldPS3U2K0hPS3YrWVQxMmNZQUZW?=
+ =?utf-8?B?b2VvT0Z1OTVQSG5FSXg5d042dEZJN2N0UjNlYmJVcWdRYVJJVHM5T1ZyLzc2?=
+ =?utf-8?B?cEQrUE15SzA2L1VSSnZjYkVRYzh5MU9OQ3VzNjhvUVBZOUI4dlBoMGtZMk1q?=
+ =?utf-8?Q?6/egLpJ01JcWKPoJ5GTqf38jc?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <69A11DF411AA7F43AC2F879624681B9D@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <073de1da8b8f04c037f267765235b3334941844f.camel@gmail.com>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4f82c77-34c3-4687-dd27-08ddfa0bc003
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2025 19:10:52.9422
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3p44Be+aiXYJjPaggergE3J5bs06XHNNqFu1zGaFBBJRZWIOFFlo1WE8wrbPkdEC7+8+oBcV8qMk4y6ae4l90w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7426
 
-On Mon, Sep 22, 2025 at 10:15:19AM +0100, Nuno Sá wrote:
-> On Sun, 2025-09-21 at 15:33 +0200, Antoni Pokusinski wrote:
-> > MPL3115 sensor features a "data ready" interrupt which indicates the
-> > presence of new measurements.
-> > 
-> > Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
-> > ---
-> >  drivers/iio/pressure/mpl3115.c | 167 ++++++++++++++++++++++++++++++++-
-> >  1 file changed, 162 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
-> > index 579da60ef441..cf34de8f0d7e 100644
-> > --- a/drivers/iio/pressure/mpl3115.c
-> > +++ b/drivers/iio/pressure/mpl3115.c
-> > @@ -7,7 +7,7 @@
-> >   * (7-bit I2C slave address 0x60)
-> >   *
-> >   * TODO: FIFO buffer, altimeter mode, oversampling, continuous mode,
-> > - * interrupts, user offset correction, raw mode
-> > + * user offset correction, raw mode
-> >   */
-> >  
-> >  #include <linux/module.h>
-> > @@ -17,26 +17,45 @@
-> >  #include <linux/iio/trigger_consumer.h>
-> >  #include <linux/iio/buffer.h>
-> >  #include <linux/iio/triggered_buffer.h>
-> > +#include <linux/iio/trigger.h>
-> >  #include <linux/delay.h>
-> > +#include <linux/property.h>
-> >  
-> >  #define MPL3115_STATUS 0x00
-> >  #define MPL3115_OUT_PRESS 0x01 /* MSB first, 20 bit */
-> >  #define MPL3115_OUT_TEMP 0x04 /* MSB first, 12 bit */
-> >  #define MPL3115_WHO_AM_I 0x0c
-> > +#define MPL3115_INT_SOURCE 0x12
-> > +#define MPL3115_PT_DATA_CFG 0x13
-> >  #define MPL3115_CTRL_REG1 0x26
-> > +#define MPL3115_CTRL_REG3 0x28
-> > +#define MPL3115_CTRL_REG4 0x29
-> > +#define MPL3115_CTRL_REG5 0x2a
-> >  
-> >  #define MPL3115_DEVICE_ID 0xc4
-> >  
-> >  #define MPL3115_STATUS_PRESS_RDY BIT(2)
-> >  #define MPL3115_STATUS_TEMP_RDY BIT(1)
-> >  
-> > +#define MPL3115_CTRL_INT_SRC_DRDY BIT(7)
-> > +
-> > +#define MPL3115_PT_DATA_EVENT_ALL (BIT(2) | BIT(1) | BIT(0))
-> > +
-> >  #define MPL3115_CTRL_RESET BIT(2) /* software reset */
-> >  #define MPL3115_CTRL_OST BIT(1) /* initiate measurement */
-> >  #define MPL3115_CTRL_ACTIVE BIT(0) /* continuous measurement */
-> >  #define MPL3115_CTRL_OS_258MS (BIT(5) | BIT(4)) /* 64x oversampling */
-> >  
-> > +#define MPL3115_CTRL_IPOL1 BIT(5)
-> > +#define MPL3115_CTRL_IPOL2 BIT(1)
-> > +
-> > +#define MPL3115_CTRL_INT_EN_DRDY BIT(7)
-> > +
-> > +#define MPL3115_CTRL_INT_CFG_DRDY BIT(7)
-> > +
-> >  struct mpl3115_data {
-> >  	struct i2c_client *client;
-> > +	struct iio_trigger *drdy_trig;
-> >  	struct mutex lock;
-> >  	u8 ctrl_reg1;
-> >  };
-> > @@ -164,10 +183,12 @@ static irqreturn_t mpl3115_trigger_handler(int irq, void
-> > *p)
-> >  	int ret, pos = 0;
-> >  
-> >  	mutex_lock(&data->lock);
-> > -	ret = mpl3115_request(data);
-> > -	if (ret < 0) {
-> > -		mutex_unlock(&data->lock);
-> > -		goto done;
-> > +	if (!(data->ctrl_reg1 & MPL3115_CTRL_ACTIVE)) {
-> > +		ret = mpl3115_request(data);
-> > +		if (ret < 0) {
-> > +			mutex_unlock(&data->lock);
-> > +			goto done;
-> > +		}
-> >  	}
-> >  
-> >  	if (test_bit(0, indio_dev->active_scan_mask)) {
-> > @@ -228,10 +249,142 @@ static const struct iio_chan_spec mpl3115_channels[] =
-> > {
-> >  	IIO_CHAN_SOFT_TIMESTAMP(2),
-> >  };
-> >  
-> > +static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
-> > +{
-> > +	struct iio_dev *indio_dev = private;
-> > +	struct mpl3115_data *data = iio_priv(indio_dev);
-> > +	int ret;
-> > +
-> > +	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
-> > +	if (ret < 0)
-> > +		return IRQ_HANDLED;
-> > +
-> > +	if (!(ret & MPL3115_CTRL_INT_SRC_DRDY))
-> > +		return IRQ_NONE;
-> > +
-> > +	iio_trigger_poll_nested(data->drdy_trig);
-> > +
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> > +static int mpl3115_set_trigger_state(struct iio_trigger *trig, bool state)
-> > +{
-> > +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
-> > +	struct mpl3115_data *data = iio_priv(indio_dev);
-> > +	int ret;
-> > +	u8 ctrl_reg1 = data->ctrl_reg1;
-> > +
-> > +	if (state)
-> > +		ctrl_reg1 |= MPL3115_CTRL_ACTIVE;
-> > +	else
-> > +		ctrl_reg1 &= ~MPL3115_CTRL_ACTIVE;
-> > +
-> > +	guard(mutex)(&data->lock);
-> > +
-> 
-> As Andy pointed out, you should have a precursor patch converting the complete
-> driver to use the cleanup logic.
-> 
-> Another nice cleanup you could do (if you want of course) would be to get rid of
-> mpl3115_remove().
-> 
-Will add the precursor patch in v2
-> > +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG1,
-> > +					ctrl_reg1);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG4,
-> > +					state ? MPL3115_CTRL_INT_EN_DRDY :
-> > 0);
-> > +	if (ret < 0)
-> > +		goto reg1_cleanup;
-> > +
-> > +	data->ctrl_reg1 = ctrl_reg1;
-> > +
-> > +	return 0;
-> > +
-> > +reg1_cleanup:
-> > +	i2c_smbus_write_byte_data(data->client, MPL3115_CTRL_REG1,
-> > +				  data->ctrl_reg1);
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct iio_trigger_ops mpl3115_trigger_ops = {
-> > +	.set_trigger_state = mpl3115_set_trigger_state,
-> > +};
-> > +
-> >  static const struct iio_info mpl3115_info = {
-> >  	.read_raw = &mpl3115_read_raw,
-> >  };
-> >  
-> > +static int mpl3115_trigger_probe(struct mpl3115_data *data,
-> > +				 struct iio_dev *indio_dev)
-> > +{
-> > +	struct fwnode_handle *fwnode;
-> > +	int ret, irq, irq_type;
-> > +	bool act_high, is_int2 = false;
-> > +
-> > +	fwnode = dev_fwnode(&data->client->dev);
-> > +	if (!fwnode)
-> > +		return -ENODEV;
-> > +
-> 
-> And to add to Andy's review, fwnode_irq_get_byname() will give you an error
-> anyways if !fwnode.
-> 
-> > +	irq = fwnode_irq_get_byname(fwnode, "INT1");
-> > +	if (irq < 0) {
-> > +		irq = fwnode_irq_get_byname(fwnode, "INT2");
-> > +		if (irq < 0)
-> > +			return 0;
-> > +
-> > +		is_int2 = true;
-> > +	}
-> > +
-> > +	irq_type = irq_get_trigger_type(irq);
-> > +	switch (irq_type) {
-> > +	case IRQF_TRIGGER_RISING:
-> > +		act_high = true;
-> > +		break;
-> > +	case IRQF_TRIGGER_FALLING:
-> > +		act_high = false;
-> > +		break;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	ret = i2c_smbus_write_byte_data(data->client, MPL3115_PT_DATA_CFG,
-> > +					MPL3115_PT_DATA_EVENT_ALL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	if (!is_int2) {
-> > +		ret = i2c_smbus_write_byte_data(data->client,
-> > +						MPL3115_CTRL_REG5,
-> > +						MPL3115_CTRL_INT_CFG_DRDY);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +	if (act_high) {
-> > +		ret = i2c_smbus_write_byte_data(data->client,
-> > +						MPL3115_CTRL_REG3,
-> > +						is_int2 ? MPL3115_CTRL_IPOL2
-> > :
-> > +							 
-> > MPL3115_CTRL_IPOL1);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	data->drdy_trig = devm_iio_trigger_alloc(&data->client->dev,
-> > +						 "%s-dev%d",
-> > +						 indio_dev->name,
-> > +						 iio_device_id(indio_dev));
-> > +	if (!data->drdy_trig)
-> > +		return -ENOMEM;
-> > +
-> > +	data->drdy_trig->ops = &mpl3115_trigger_ops;
-> > +	iio_trigger_set_drvdata(data->drdy_trig, indio_dev);
-> > +	ret = iio_trigger_register(data->drdy_trig);
-> 
-> devm_iio_trigger_register()
-> 
-> - Nuno Sá
->
-Will fix in v2
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	indio_dev->trig = iio_trigger_get(data->drdy_trig);
-> > +
-> > +	return devm_request_threaded_irq(&data->client->dev, irq,
-> > +					 NULL,
-> > +					 mpl3115_interrupt_handler,
-> > +					 IRQF_ONESHOT,
-> > +					 "mpl3115_irq",
-> > +					 indio_dev);
-> > +}
-> > +
-> >  static int mpl3115_probe(struct i2c_client *client)
-> >  {
-> >  	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-> > @@ -271,6 +424,10 @@ static int mpl3115_probe(struct i2c_client *client)
-> >  	if (ret < 0)
-> >  		return ret;
-> >  
-> > +	ret = mpl3115_trigger_probe(data, indio_dev);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	ret = iio_triggered_buffer_setup(indio_dev, NULL,
-> >  		mpl3115_trigger_handler, NULL);
-> >  	if (ret < 0)
+T24gTW9uLCAyMDI1LTA5LTIyIGF0IDIxOjMwICsxMDAwLCBBbGlzdGFpciBQb3BwbGUgd3JvdGU6
+CgoKPiArY29uc3QgR1NQX1JFR0lTVFJZX05VTV9FTlRSSUVTOiB1c2l6ZSA9IDI7Cj4gK3N0cnVj
+dCBSZWdpc3RyeUVudHJ5IHsKPiArICAgIGtleTogJidzdGF0aWMgc3RyLAo+ICsgICAgdmFsdWU6
+IHUzMiwKPiArfQoKUHJvYmFibHkgc2hvdWxkIGFkZCBhIGNvbW1lbnQgc2F5aW5nIHRoYXQgYWx0
+aG91Z2ggR1NQLVJNIHRlY2huaWNhbGx5IHN1cHBvcnRzIHN0cmluZ3MgYXMgdmFsdWVzLCB3ZQpk
+b24ndCBpbnRlbmQgdG8gdXNlIHRoYXQgZmVhdHVyZS4gIFlvdSBqdXN0IGhhdmUgUkVHSVNUUllf
+VEFCTEVfRU5UUllfVFlQRV9EV09SRCBkZWZpbmVkIHdpdGhvdXQgYW55CmV4cGxhbmF0aW9uIHRo
+YXQgdGhlcmUgYXJlIG90aGVyIGVudHJ5IHR5cGVzLiAgCgpNYXliZSBSRUdJU1RSWV9UQUJMRV9F
+TlRSWV9UWVBFX0RXT1JEIHNob3VsZCBiZSBhbiBlbnVtIGluc3RlYWQgb2YgYSBjb25zdC4KCj4g
+K3B1YihjcmF0ZSkgZm4gYnVpbGRfcmVnaXN0cnkoY21kcTogJm11dCBHc3BDbWRxLCBiYXI6ICZC
+YXIwKSAtPiBSZXN1bHQgewo+ICvCoMKgwqAgbGV0IHJlZ2lzdHJ5ID0gUmVnaXN0cnlUYWJsZSB7
+Cj4gK8KgwqDCoMKgwqDCoMKgIGVudHJpZXM6IFsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBS
+ZWdpc3RyeUVudHJ5IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGtleTogIlJN
+U2VjQnVzUmVzZXRFbmFibGUiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdmFs
+dWU6IDEsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfSwKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBSZWdpc3RyeUVudHJ5IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGtl
+eTogIlJNRm9yY2VQY2llQ29uZmlnU2F2ZSIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB2YWx1ZTogMSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9LAo+ICvCoMKgwqDCoMKg
+wqDCoCBdLAo+ICvCoMKgwqAgfTsKCllvdSBtaWdodCB3YW50IHRvIGFkZCBhbm90aGVyIGZpZWxk
+IHRvIFJlZ2lzdHJ5RW50cnkgdGhhdCBhZGRzIGRvY3VtZW50YXRpb24gZm9yIGVhY2ggb2YgdGhl
+c2UKZmlsZXM/ICBOb3V2ZWF1IGRvY3VtZW50cyB0aGVtIGFzIGNvbW1lbnRzLgoKQWxzbywgeW91
+J3JlIG1pc3NpbmcgUk1EZXZpZENoZWNrSWdub3JlLiAgU2VlCmh0dHBzOi8vbG9yZS1rZXJuZWwu
+Z251d2VlYi5vcmcvbm91dmVhdS9jMzRjY2MyMy01NTUwLTRmMjYtYWY2Ni00Nzk3OWFmZDE5N2VA
+a2VybmVsLm9yZy9ULwo=
 
