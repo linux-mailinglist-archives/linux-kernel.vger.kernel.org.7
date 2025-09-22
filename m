@@ -1,131 +1,218 @@
-Return-Path: <linux-kernel+bounces-827685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA87B92687
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2B9B92694
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 19:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2F9C3A951B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:24:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2DE3B6E48
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB24C313D48;
-	Mon, 22 Sep 2025 17:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFE3313E21;
+	Mon, 22 Sep 2025 17:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xbr5NpMh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BAE1FDA82;
-	Mon, 22 Sep 2025 17:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29A2313D73
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758561883; cv=none; b=PBjhXLur3AdGWX1qJOyMqRB6MAyDVeifY69PZ5Z4LzMwZ6i8WLRcYQgP3m0czPUxTaM9AJK5L0CVw35Al7KGzGS3Jq0lbLDyInMlYpze+jVGNEslDs7ShealpVyK2oAlwqUOuu4LHNC951rw6ruHwDHPIBFjUV7nbFgINp/hWGs=
+	t=1758561940; cv=none; b=EKWlS1A1z4hS/pRba/jtmrkVdMBLRhqKncZObc7m2KSTJ/q0E4sCbUmtXbytYSjHKCxqmwKbKV4i/u/xkNWrSxftcP/3np/V7eDMhj7pWHef/DHLdv+lH39RkgbF7NrxLO65TmLQDV+k6Y8FOn7A0dMmMwdZz2+21NboPX0uwjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758561883; c=relaxed/simple;
-	bh=oxPhOJCQ/qZoiBIau7Zcl2ipPtFqQVDVZ14kTjBCDoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMyeCkomcsM3DT9K7GaW2exw6rzOur1wcM1YV2bv/KVgCm4k3x9F3Rzcg/ktiQng6nYB1Wsi3wZNs5PJrgehtyosbozqcM3nWuJXMAYj6Y9ysypbhdbkEKGryLa1Wdr7FshLrTrKZAExK0eGKRCKkJeWctmq/c/6QqptkpfwCOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68AACC4CEF0;
-	Mon, 22 Sep 2025 17:24:36 +0000 (UTC)
-Date: Mon, 22 Sep 2025 18:24:33 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
-	usamaarif642@gmail.com, yuzhao@google.com, ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com, baohua@kernel.org, voidice@gmail.com,
-	Liam.Howlett@oracle.com, cerasuolodomenico@gmail.com,
-	hannes@cmpxchg.org, kaleshsingh@google.com, npache@redhat.com,
-	riel@surriel.com, roman.gushchin@linux.dev, rppt@kernel.org,
-	ryan.roberts@arm.com, dev.jain@arm.com, ryncsn@gmail.com,
-	shakeel.butt@linux.dev, surenb@google.com, hughd@google.com,
-	willy@infradead.org, matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
-	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
-	qun-wei.lin@mediatek.com, Andrew.Yang@mediatek.com,
-	casper.li@mediatek.com, chinwen.chang@mediatek.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org,
-	ioworker0@gmail.com, stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
- zero-filled subpages
-Message-ID: <aNGGUXLCn_bWlne5@arm.com>
-References: <20250922021458.68123-1-lance.yang@linux.dev>
+	s=arc-20240116; t=1758561940; c=relaxed/simple;
+	bh=9UTJYhngwTX4OcNuNjPaeMmaGryOpl+uEyIlezKAg+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gB+EAf2EJzVGcdX5PNxbjWbm/lfwcqHUNbCd8509yvWjwYf0TSJtsuPuD/0zsIWmhSgt5ZQTWAmBPeGs/5/Vp7Az5sU85UABiyMGxFkEE4j5DtGlz+2kFqFrwhAswlD0yUdQ2RzmERsfx6q8vFEkbjiE2pQm0MVpUWYIE1YmMKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xbr5NpMh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58168C4CEF7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 17:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758561940;
+	bh=9UTJYhngwTX4OcNuNjPaeMmaGryOpl+uEyIlezKAg+I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Xbr5NpMh/Mwu7bcW4s72QRbgAUaHyrOdYIPDYCyKQDCZqR7/A2qIC5jbdzfLwgZJ1
+	 OAVop5BfnbDIDK3uetvtJE2scWe/YBDDt08JXSA8qfhpzBs4Z58qVNVQXCwJHBlynJ
+	 yCyusPsP2mKEglriRKnnz0E8DQIZh3kM92J/7mQnKAaCzXOFqQCOzzGj/BOuQATIYH
+	 8DYNqnwWtPVBbZjMALPbTPFY93gRR4/DudgUI2zi26pUs8Xydveo4Dn1z5KNADAPCk
+	 7VOK5oJ5sn50s6BBACCz1qSolJz1TsRp3ECh3MUJ2WTAm11UUSs+zfWDoBDRDwN6yS
+	 c46RgzgUNLwcQ==
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-74526ca7a46so1799123a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:25:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWvVSd6PqBs2L8IZAboUUU8craNrhJx2YPPWErSgLajbXitQb25h7//ADLs/V4BrR7y5NrGIRj0vSy7x1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSLDETNE7pbOAw1Tp/+Ne6ACE1VmH9l9ojNPiVcNEizHh/ve5y
+	a9YtklwitNLf1cm91roRsNMnWhLOTZVz8DnvY9g5tSmPNUjIcnZYeHzWsZMJzxLlc1vwhHaQF9M
+	AsexF2SON2b0XjuA9QfMbKzxnS8/3AM4=
+X-Google-Smtp-Source: AGHT+IGevYc0Cjky5Fo70RXjuSv4ZxzjBma/yLe/MuVyw/IyNPLXKEdEEkMVmIcV+GoSg2VFRVyl7D9VdPXgn0KjBOc=
+X-Received: by 2002:a05:6808:2189:b0:43b:252e:f7aa with SMTP id
+ 5614622812f47-43d6c1d5116mr6519936b6e.21.1758561939579; Mon, 22 Sep 2025
+ 10:25:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922021458.68123-1-lance.yang@linux.dev>
+References: <20250915172119.5303-1-a.jahangirzad@gmail.com>
+In-Reply-To: <20250915172119.5303-1-a.jahangirzad@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 22 Sep 2025 19:25:28 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hsG=s37mSkcxbTqhmE_i-6skHPn+OpmCUhmJf27V+yzA@mail.gmail.com>
+X-Gm-Features: AS18NWA_flde3oqxc9oluH3gWfzXRVKRBOgC-j2GEqQCuSEekHCTMfBM5SSkKjI
+Message-ID: <CAJZ5v0hsG=s37mSkcxbTqhmE_i-6skHPn+OpmCUhmJf27V+yzA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: debug: fix signedness issues in read/write helpers
+To: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 10:14:58AM +0800, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
-> 
-> When both THP and MTE are enabled, splitting a THP and replacing its
-> zero-filled subpages with the shared zeropage can cause MTE tag mismatch
-> faults in userspace.
-> 
-> Remapping zero-filled subpages to the shared zeropage is unsafe, as the
-> zeropage has a fixed tag of zero, which may not match the tag expected by
-> the userspace pointer.
-> 
-> KSM already avoids this problem by using memcmp_pages(), which on arm64
-> intentionally reports MTE-tagged pages as non-identical to prevent unsafe
-> merging.
-> 
-> As suggested by David[1], this patch adopts the same pattern, replacing the
-> memchr_inv() byte-level check with a call to pages_identical(). This
-> leverages existing architecture-specific logic to determine if a page is
-> truly identical to the shared zeropage.
-> 
-> Having both the THP shrinker and KSM rely on pages_identical() makes the
-> design more future-proof, IMO. Instead of handling quirks in generic code,
-> we just let the architecture decide what makes two pages identical.
-> 
-> [1] https://lore.kernel.org/all/ca2106a3-4bb2-4457-81af-301fd99fbef4@redhat.com
-> 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Qun-wei Lin <Qun-wei.Lin@mediatek.com>
-> Closes: https://lore.kernel.org/all/a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com
-> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+On Mon, Sep 15, 2025 at 7:21=E2=80=AFPM Amir Mohammad Jahangirzad
+<a.jahangirzad@gmail.com> wrote:
+>
+> In the ACPI debugger interface the helper functions for read and write
+> operations use an `int` type for the length parameter. When a large
 
-Functionally, the patch looks fine, both with and without MTE.
+There's no need to escape data types in patch changelog and generally
+please use double quotes for escaping.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> `size_t count` is passed from the file operations, this cast to `int`
+> results in truncation and a negative value due to signed integer
+> representation.
+>
+> Logically, this negative number value propagates to the `min` calculation=
+,
+> where it's selected over the positive buffer space value, leading to an
+> unexpected behavior. Subsequently, when this negative value is used in
+> `copy_to_user` or `copy_from_user`, it is interpreted as a large positive
 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 32e0ec2dde36..28d4b02a1aa5 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -4104,29 +4104,20 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
->  static bool thp_underused(struct folio *folio)
+Function names need not be escaped too, but please add () at the end
+of each function name.
+
+> value due to the unsigned nature of the size parameter in these functions
+> causing the copy operations to attempt handling sizes far beyond the
+> intended buffer limits.
+>
+> This patch addresses the issue by:
+
+Please change the phrase above to "Address the issue by:"
+
+> - Changing the length parameters in `acpi_aml_read_user` and
+>   `acpi_aml_write_user` from `int` to `size_t`, aligning with the expecte=
+d
+>   unsigned size semantics.
+> - Updating return types and local variables in acpi_aml_read() and
+>   acpi_aml_write() to 'ssize_t' for consistency with kernel file operatio=
+n
+>   conventions.
+> - Using 'size_t' for the 'n' variable to ensure calculations remain
+>   unsigned.
+> - Adding explicit casts to 'size_t' for circ_count_to_end() and
+>   circ_space_to_end() to align types in the min() macro.
+
+min_t() can be used instead.
+
+>
+> Signed-off-by: Amir Mohammad Jahangirzad <a.jahangirzad@gmail.com>
+> ---
+>  drivers/acpi/acpi_dbg.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/acpi/acpi_dbg.c b/drivers/acpi/acpi_dbg.c
+> index d50261d05f3a1..72878840b4b75 100644
+> --- a/drivers/acpi/acpi_dbg.c
+> +++ b/drivers/acpi/acpi_dbg.c
+> @@ -569,11 +569,11 @@ static int acpi_aml_release(struct inode *inode, st=
+ruct file *file)
+>         return 0;
+>  }
+>
+> -static int acpi_aml_read_user(char __user *buf, int len)
+> +static ssize_t acpi_aml_read_user(char __user *buf, size_t len)
 >  {
->  	int num_zero_pages = 0, num_filled_pages = 0;
-> -	void *kaddr;
->  	int i;
->  
->  	for (i = 0; i < folio_nr_pages(folio); i++) {
-> -		kaddr = kmap_local_folio(folio, i * PAGE_SIZE);
-> -		if (!memchr_inv(kaddr, 0, PAGE_SIZE)) {
-> -			num_zero_pages++;
-> -			if (num_zero_pages > khugepaged_max_ptes_none) {
-> -				kunmap_local(kaddr);
-> +		if (pages_identical(folio_page(folio, i), ZERO_PAGE(0))) {
-> +			if (++num_zero_pages > khugepaged_max_ptes_none)
->  				return true;
+> -       int ret;
+> +       ssize_t ret;
+>         struct circ_buf *crc =3D &acpi_aml_io.out_crc;
+> -       int n;
+> +       size_t n;
+>         char *p;
+>
+>         ret =3D acpi_aml_lock_read(crc, ACPI_AML_OUT_USER);
+> @@ -582,7 +582,7 @@ static int acpi_aml_read_user(char __user *buf, int l=
+en)
+>         /* sync head before removing logs */
+>         smp_rmb();
+>         p =3D &crc->buf[crc->tail];
+> -       n =3D min(len, circ_count_to_end(crc));
+> +       n =3D min(len, (size_t)circ_count_to_end(crc));
 
-I wonder what the overhead of doing a memcmp() vs memchr_inv() is. The
-former will need to read from two places. If it's noticeable, it would
-affect architectures that don't have an MTE equivalent.
+Use min_t() here.
 
-Alternatively we could introduce something like folio_has_metadata()
-which on arm64 simply checks PG_mte_tagged.
+>         if (copy_to_user(buf, p, n)) {
+>                 ret =3D -EFAULT;
+>                 goto out;
+> @@ -599,8 +599,8 @@ static int acpi_aml_read_user(char __user *buf, int l=
+en)
+>  static ssize_t acpi_aml_read(struct file *file, char __user *buf,
+>                              size_t count, loff_t *ppos)
+>  {
+> -       int ret =3D 0;
+> -       int size =3D 0;
+> +       ssize_t ret =3D 0;
+> +       ssize_t size =3D 0;
+>
+>         if (!count)
+>                 return 0;
+> @@ -639,11 +639,11 @@ static ssize_t acpi_aml_read(struct file *file, cha=
+r __user *buf,
+>         return size > 0 ? size : ret;
+>  }
+>
+> -static int acpi_aml_write_user(const char __user *buf, int len)
+> +static ssize_t acpi_aml_write_user(const char __user *buf, size_t len)
+>  {
+> -       int ret;
+> +       ssize_t ret;
+>         struct circ_buf *crc =3D &acpi_aml_io.in_crc;
+> -       int n;
+> +       size_t n;
+>         char *p;
+>
+>         ret =3D acpi_aml_lock_write(crc, ACPI_AML_IN_USER);
+> @@ -652,7 +652,7 @@ static int acpi_aml_write_user(const char __user *buf=
+, int len)
+>         /* sync tail before inserting cmds */
+>         smp_mb();
+>         p =3D &crc->buf[crc->head];
+> -       n =3D min(len, circ_space_to_end(crc));
+> +       n =3D min(len, (size_t)circ_space_to_end(crc));
 
--- 
-Catalin
+And here.
+
+>         if (copy_from_user(p, buf, n)) {
+>                 ret =3D -EFAULT;
+>                 goto out;
+> @@ -663,14 +663,14 @@ static int acpi_aml_write_user(const char __user *b=
+uf, int len)
+>         ret =3D n;
+>  out:
+>         acpi_aml_unlock_fifo(ACPI_AML_IN_USER, ret >=3D 0);
+> -       return n;
+> +       return ret;
+>  }
+>
+>  static ssize_t acpi_aml_write(struct file *file, const char __user *buf,
+>                               size_t count, loff_t *ppos)
+>  {
+> -       int ret =3D 0;
+> -       int size =3D 0;
+> +       ssize_t ret =3D 0;
+> +       ssize_t size =3D 0;
+>
+>         if (!count)
+>                 return 0;
+> --
 
