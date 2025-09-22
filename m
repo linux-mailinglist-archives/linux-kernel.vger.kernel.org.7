@@ -1,157 +1,200 @@
-Return-Path: <linux-kernel+bounces-826837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E27EB8F76D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:20:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E31FB8F776
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E489918897AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D37717FA6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561AD2F1FDF;
-	Mon, 22 Sep 2025 08:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015132ED16C;
+	Mon, 22 Sep 2025 08:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Skx6qUaT"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkZMndsS"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0919D27AC3C
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C05C3208
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529189; cv=none; b=I9Yeo3GfcUx0bVZNolukgW8wBrIMZjDzm/p+6yKDhmvgD5pcJpHsRvh9zLQwFDOL1+JREfGBwzmicCSQMAgs8ZoN9jzf3FGgdwPnD4PmPEJ6m1+IGJuiMEmhCOWJfX4Acl2TUpHoI4vOYdsdoWPiKXA21NH5FMV7l4dnVYDHvDU=
+	t=1758529214; cv=none; b=EzI9oqtTFHGSsKVeOasjcOv4z6ngpJsGtfu+x0P7qf1oD2alk3gKqWnLhTcl9K7bKMlZDI9pp2R8zOMQ76ialcJ1hzLtDaBWHZxu+LTVXSvtCpuQnaY2zrWHnmarH/L3tJvAg7Rzwsv6p59EIybfHMn6l5515s3z0QPxJsYfHMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529189; c=relaxed/simple;
-	bh=K2/rQ6To9i9ckyz2T50PifW0JmcGKmlDf3QsXMOqyZY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=h1+bcVb4XS4b2+9lIRpw8ta5UMYXVqQOTZAIz2q99xir0+6ooCRclQaoTZwwAO3P5lzvAKV3k19tFslejVDJ/1Hgvd9cNK49Qcuv8FG0lzk7s7VRODS+0bv1HCvznHaJyzZW7b347WgBDxRUa3fY4q3AhOp+B9K+b/uL+3VJBvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Skx6qUaT; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1758529214; c=relaxed/simple;
+	bh=k7LHQaAqQB2O6eeT+FSaJv37gsGqHstNS+KGeKBNKnw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rO1VVGiK+eOA5hZxOOmM4bOlmFvBAq6ia00fHSADHMNbqE27TW0Oukag0md1IYzmpcTmIlGLehDeIg5iTXGkl7Gzg/6lMBolKFjry1RDCMSNkmbjISwqGUammwtoVtoCyFgOcCN2BqwmBZ7DwEEiN2gehl/5qZs4Xs3DLalOaPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkZMndsS; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso4830952f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:19:47 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2445824dc27so43409025ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758529186; x=1759133986; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9eFUoaADEJUXxpmJkZmDd+dJWMDH9tDpqU2+evv3MTk=;
-        b=Skx6qUaT+Ly9VuTj8G27LqS4Rd48a17HdxHtDglpMbXNxPXCcgHloga2Xy6nB3T5AG
-         etjZOSShYfkgRLBaiWACOKa0ViO5os34axIl7Z+JGkSKbxDE1m1MYtVYPkyoKbbc1BSV
-         aOaMzbBa9Y694sqRx/1jVEzCCFu3Quvd6TgvObJb6SdUdOow0wQNNyqR53hjoQq4lHEk
-         2zcgxgUvP5wAYbwtMbRTAlUcTbjGEyLpaztadnDJenGW62158rUC1FM9dcG/bBKqNqCx
-         9YfBdYPQwpehMv+GqLtyxcbgMRco7DzjPwGf5f+NlrrM3cxe5TMaUKGqz9HXByCnSQP3
-         DSbg==
+        d=gmail.com; s=20230601; t=1758529212; x=1759134012; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YQpw+mpVAsvBdtQIBEFkOZLcYioW8i+5zjuZhWL6i4g=;
+        b=lkZMndsSGYOcwpwLi/mmNIY6je3qpux2J2MH/0aAf4zqTiF5EAE+xNEhOkmgd/oIJf
+         qLZeeItiDGVlq3XxgzYtHDMKY0kiEOgOVzk9APPfw89aSXlDi915QFwONqt/1wYe5Rf7
+         +nuftGDlEtFWUQzGU3F9IaGYzWN6sBBSlZkH0OSqxYT4RoFgyauTYTDH9+QQHLOzQByM
+         UcGBUxg3Yoc5L43kQ/fb3xgFhmI7HdJDnaFr5nJo8/ufgVO0taIqpgoflG+ZnylIpLj+
+         5KAK9PcNUT6Uh9qGZb77l/Jcxplc9sNLoYQCmS3wtyIRpOP1hxXstWuvl4oXKwbVu9ZW
+         M/Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758529186; x=1759133986;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9eFUoaADEJUXxpmJkZmDd+dJWMDH9tDpqU2+evv3MTk=;
-        b=RWsTJ+njo935q92JsJWvum2WmA3l+4m4cLGj3RVZvcrksQ8iUgUoxryeEBCnrRAnvU
-         KMyO/v8S/ABL0OObJ1ouEgZ0BZ9MwJOG6UFoNaXkRwm1I/PaR/QhtMr3a9mGSuXgz7cT
-         Gep2Wb7N57Geq3ZzO6FXWWKqsb2IdhX7zPMR2aPMBAaKtit3Xvjgzvk+anNMzXe59n3U
-         7jiA793L7moSntlVgUbAR3zIUZrUvVN8xCRMzad0Sr9RuCfdGrQG7r9lgLp2I6n6hWnc
-         pDFCyIcHTNauOCmElnEQ86/UuzfhLcxy9RjxZiISKMcPJJUjzsGlkRZyRmWINzrWn1gW
-         MfWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlqeFxB88mQ0HvcWVNBxfuMU8g88cyVsVPFOC3KVtk5xQQk+oKgz/VltfjZDz7+lvzNwl447qFRW1aU3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsHUKDXBipdEI/ExKWNUiS8JdIzYQSEia97SFRP8mzOiif3CJ3
-	7oQDySr+XLgq8DO53XPIwakiS1oZQRU2uMj7aHgM9EQb0cwlWadahVS5
-X-Gm-Gg: ASbGncsDIn/YCrlHCtXrTRybCxIfRd/bvCs8/8RcSJh7kSqjyVKkggQm40vyVF6bkt1
-	Mb8M8Ije+M9A7uDv/pwdFTfjxtR9r/rHFpGGgyF47mbqomxOZAHNWzbGOR6jy3XKCyYLDYL5ch/
-	Zzq1hEjmAu0K4F6e/guqhSpg+43K1SnlUubMYFvXsdJd+lY2BEZQsiKZji4mxLdddc16Md9q7o0
-	Q6v4NREOLGYjm8+/QL2xWyov8Vl+RQ4VcbVikEg4Pi/48IiM5z3luzFqC4SbM9jNsWjwrUB1uO+
-	xPnjzZLG2jSXx621LDj22+qD7eezCWahVjDxAXycOd363yWuPqnhOFoeWW2yqMwbB+1+2aWC8iU
-	5/1CBzZDxqRGrfsyNneKiUwU=
-X-Google-Smtp-Source: AGHT+IEEXkD/rrigPiSf7OYSZfYz+0+remElgWQOkN8iPWl4zp//tgyKK9hLccfYO7s90fsH8kGwQQ==
-X-Received: by 2002:a5d:5d8a:0:b0:3ec:c50c:715d with SMTP id ffacd0b85a97d-3ee7f9d9d92mr11023945f8f.23.1758529186017;
-        Mon, 22 Sep 2025 01:19:46 -0700 (PDT)
-Received: from localhost ([45.10.155.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ef166e62e5sm13956914f8f.40.2025.09.22.01.19.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 01:19:45 -0700 (PDT)
-Message-ID: <d88f374a-07ff-46ff-aa04-a205c2d85a4c@gmail.com>
-Date: Mon, 22 Sep 2025 10:19:35 +0200
+        d=1e100.net; s=20230601; t=1758529212; x=1759134012;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YQpw+mpVAsvBdtQIBEFkOZLcYioW8i+5zjuZhWL6i4g=;
+        b=jfs+aoHvmIMjV0wxCO0K5RnlehaeImmFVftvgY8Xm5OUsTJfEpX3b6+B6ElN9JZ3wW
+         tzHaZF4aIGa7nnD2tLGns6/vgu8ZGntHb9bqwlsZ6726Yw5Sv5ppRQD26LHmQvK/ENH2
+         TvflnPtF1wfSRzoRtUsUNK8eBfJR4SWYjUKpn784AroEM0BsjaV4lo4Ldn1YIlxQiAsp
+         6zQzSBm5G67RrnTKwmTvMmqj5N65CMP67xr5Ax9864vXDz3AIN6CHu4qlpIROg9/88wz
+         S0OwARH0xxLWAC5RgUAzu6YsoJzpqMEx0L22cVbavzq7h5fxn0nnAgsPeIDF+SV9LKcH
+         b6Wg==
+X-Gm-Message-State: AOJu0YxuHFHVdVzbkEsQvWrDF8OOLYh6ZeupOvsDcIBGiWPaoeRr8zSI
+	YgJb1jumqfd1Lv8Q5LQjQPkygF6u3UnYnOSoRg0XWJpE4ofGa8DYW5L0
+X-Gm-Gg: ASbGnctAyQpqmYL8eU064Z3oSZ/1Fnp9D7rn1bm5wCUa3vyfwuqJLOA1cV5FKlHSzxP
+	tJfs2d+PyY2NgiEsTDDIX/7G+MgG0mgnaR7njF4lbsYX2VVpzEnPlAu6bOWtdQ44NR5PEmjEFle
+	ln9QCF+DZ523zdFpWiNIaKSHQDpzw82P8IPYMiQ+z2CoDsnGnQQN56Vq9+hDOiPn8RIYDKQ3Vfz
+	CAVYY2OwJPWDYkYZA9Rg5RpY+dZ1jHUfgbKfdza4gaCY5+Ul5oUVXNOuvhgb6Gpqc1h7GxQ5TBf
+	4ntnpVdOJ0Ao7MEVKXZqQN7g9hwVwCgGxrUOAU4NbTS0gq6KsI6Alb6mRCinCGnXqcPiRPh9z8X
+	5QbyVCTNhgIH8PHiyM9HpYA==
+X-Google-Smtp-Source: AGHT+IF2a3PSxs2bxKScnwskkO0GAHaWv2ekgx1ekGZgO5VTfxyWgSGB0bcGAJEx/TYLb/Yjr6JF4g==
+X-Received: by 2002:a17:902:ecd1:b0:267:af07:6528 with SMTP id d9443c01a7336-269ba50848bmr151819735ad.35.1758529211786;
+        Mon, 22 Sep 2025 01:20:11 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26b59d6538bsm89333815ad.82.2025.09.22.01.20.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 01:20:11 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 35184423FA7F; Mon, 22 Sep 2025 15:20:08 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux EFI <linux-efi@vger.kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Hugo Osvaldo Barrera <hugo@whynothugo.nl>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH v2 RESEND] Documentation/x86: explain LINUX_EFI_INITRD_MEDIA_GUID
+Date: Mon, 22 Sep 2025 15:19:56 +0700
+Message-ID: <20250922081956.29481-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v6 4/5] net: gro: remove unnecessary df checks
-From: Richard Gobert <richardbgobert@gmail.com>
-To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- ecree.xilinx@gmail.com, willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- horms@kernel.org, corbet@lwn.net, saeedm@nvidia.com, tariqt@nvidia.com,
- mbloch@nvidia.com, leon@kernel.org, dsahern@kernel.org,
- ncardwell@google.com, kuniyu@google.com, shuah@kernel.org, sdf@fomichev.me,
- aleksander.lobakin@intel.com, florian.fainelli@broadcom.com,
- alexander.duyck@gmail.com, linux-kernel@vger.kernel.org,
- linux-net-drivers@amd.com
-References: <20250916144841.4884-1-richardbgobert@gmail.com>
- <20250916144841.4884-5-richardbgobert@gmail.com>
- <c557acda-ad4e-4f07-a210-99c3de5960e2@redhat.com>
- <84aea541-7472-4b38-b58d-2e958bde4f98@gmail.com>
-In-Reply-To: <84aea541-7472-4b38-b58d-2e958bde4f98@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4566; i=bagasdotme@gmail.com; h=from:subject; bh=XSbt357ND7lSdI4W7HqeiIfehFqa8m3jg5LexXIM9g4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkX2Xw7rHJ2FrQUHFvKUnW+6v45zwNFxzevU85leH6l6 kg7p3B/RykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACZSn8vwP56tO15i+tynK3Qq mpSKBC//OdER+FK6i9Nhkb3dLGcvb4Z/lub3pon+vWxY/eyO547JnuHHNS1ZhcV+PD7zXZ6DzzS EFwA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-Richard Gobert wrote:
-> Paolo Abeni wrote:
->> On 9/16/25 4:48 PM, Richard Gobert wrote:
->>> Currently, packets with fixed IDs will be merged only if their
->>> don't-fragment bit is set. This restriction is unnecessary since
->>> packets without the don't-fragment bit will be forwarded as-is even
->>> if they were merged together. The merged packets will be segmented
->>> into their original forms before being forwarded, either by GSO or
->>> by TSO. The IDs will also remain identical unless NETIF_F_TSO_MANGLEID
->>> is set, in which case the IDs can become incrementing, which is also fine.
->>>
->>> Note that IP fragmentation is not an issue here, since packets are
->>> segmented before being further fragmented. Fragmentation happens the
->>> same way regardless of whether the packets were first merged together.
->>
->> I agree with Willem, that an explicit assertion somewhere (in
->> ip_do_fragmentation?!?) could be useful.
->>
-> 
-> As I replied to Willem, I'll mention ip_finish_output_gso explicitly in the
-> commit message.
-> 
-> Or did you mean I should add some type of WARN_ON assertion that ip_do_fragment isn't
-> called for GSO packets?
-> 
->> Also I'm not sure that "packets are segmented before being further
->> fragmented" is always true for the OVS forwarding scenario.
->>
-> 
-> If this is really the case, it is a bug in OVS. Segmentation is required before
-> fragmentation as otherwise GRO isn't transparent and fragments will be forwarded
-> that contain data from multiple different packets. It's also probably less efficient,
-> if the segment size is smaller than the MTU. I think this should be addressed in a
-> separate patch series.
-> 
-> I'll also mention OVS in the commit message.
-> 
+From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
 
-I looked into it, and it seems that you are correct. Looks like fragmentation
-can occur without segmentation in the OVS forwarding case. As I said, this is
-a bug since generated fragments may contain data from multiple packets. Still,
-this can already happen for packets with incrementing IDs and nothing special
-in particular will happen for the packets discussed in this patch. This should
-be fixed in a separate patch series, as do all other cases where ip_do_fragment
-is called directly without segmenting the packets first.
+Since the Handover Protocol was deprecated, the recommended approach is
+to provide an initrd using a UEFI boot service with the
+LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
+approach has been no more than an admonition with a link to an existing
+implementation.
 
-No changes are required for the current series as it does not introduce this
-issue or give it more exposure. I'll remove the comment about fragmentation
-from the commit message since it's not entirely correct and it is rather
-irrelevant to this patch anyway.
+Provide a short explanation of this functionality, to ease future
+implementations without having to reverse engineer existing ones.
 
->> /P
->>
-> 
+Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
+[Bagas: Don't use :ref: link to EFI stub documentation and refer to
+OVMF/edk2 implementation]
+Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+Changes since v1 [1]:
+
+  * Apply wording suggestion (Ard)
+  * Replace candyboot reference with OVMF (Ard)
+  * Invert patch subject prefix
+
+[1]: https://lore.kernel.org/linux-doc/20250910015738.14848-2-bagasdotme@gmail.com/
+
+ Documentation/admin-guide/efi-stub.rst |  3 ++
+ Documentation/arch/x86/boot.rst        | 38 ++++++++++++++++++++------
+ 2 files changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/admin-guide/efi-stub.rst b/Documentation/admin-guide/efi-stub.rst
+index 090f3a185e1897..f8e7407698bd2a 100644
+--- a/Documentation/admin-guide/efi-stub.rst
++++ b/Documentation/admin-guide/efi-stub.rst
+@@ -79,6 +79,9 @@ because the image we're executing is interpreted by the EFI shell,
+ which understands relative paths, whereas the rest of the command line
+ is passed to bzImage.efi.
+ 
++.. hint::
++   It is also possible to provide an initrd using a Linux-specific UEFI
++   protocol at boot time. See :ref:`pe-coff-entry-point` for details.
+ 
+ The "dtb=" option
+ -----------------
+diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+index 77e6163288db08..32eea3d2807e1c 100644
+--- a/Documentation/arch/x86/boot.rst
++++ b/Documentation/arch/x86/boot.rst
+@@ -1431,12 +1431,34 @@ The boot loader *must* fill out the following fields in bp::
+ All other fields should be zero.
+ 
+ .. note::
+-     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+-     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
+-     loading protocol (refer to [0] for an example of the bootloader side of
+-     this), which removes the need for any knowledge on the part of the EFI
+-     bootloader regarding the internal representation of boot_params or any
+-     requirements/limitations regarding the placement of the command line
+-     and ramdisk in memory, or the placement of the kernel image itself.
++   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
++   entry point described below.
+ 
+-[0] https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
++.. _pe-coff-entry-point:
++
++PE/COFF entry point
++===================
++
++When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
++regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
++implementation details.
++
++The stub loader can request the initrd via a UEFI protocol. For this to work,
++the firmware or bootloader needs to register a handle which carries
++implementations of the ``EFI_LOAD_FILE2`` protocol and the device path
++protocol exposing the ``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media device path.
++In this case, a kernel booting via the EFI stub will invoke
++``LoadFile2::LoadFile()`` method on the registered protocol to instruct the
++firmware to load the initrd into a memory location chosen by the kernel/EFI
++stub.
++
++This approach removes the need for any knowledge on the part of the EFI
++bootloader regarding the internal representation of boot_params or any
++requirements/limitations regarding the placement of the command line and
++ramdisk in memory, or the placement of the kernel image itself.
++
++For sample implementations, refer to `the original u-boot implementation`_ or
++`the OVMF implementation`_.
++
++.. _the original u-boot implementation: https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
++.. _the OVMF implementation: https://github.com/tianocore/edk2/blob/1780373897f12c25075f8883e073144506441168/OvmfPkg/LinuxInitrdDynamicShellCommand/LinuxInitrdDynamicShellCommand.c
+
+base-commit: 348011753d99b146c190aae262ee361d03cb0c5e
+prerequisite-patch-id: 1cff30305281c1f018f9e5dbd95f0c6a2d1db116
+-- 
+An old man doll... just what I always wanted! - Clara
 
 
