@@ -1,194 +1,89 @@
-Return-Path: <linux-kernel+bounces-827584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C60B92273
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:14:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B58B92281
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 18:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A47D442F07
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:14:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F38C7A9447
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F823112A3;
-	Mon, 22 Sep 2025 16:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3E13112B0;
+	Mon, 22 Sep 2025 16:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JzDrXIPX"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYYqkLeK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE481310785
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 16:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F161430C36E;
+	Mon, 22 Sep 2025 16:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758557670; cv=none; b=lGK/66z//OiSkEd7LwbhDfgoeCE/0WtoeVj9tUfj7oM+sqpLXoFucTwiSNxC0m8RSD4BYTQXYPldsz+OHI8Epc2Su7NSj15FZXCKCswcdvgRXJjlk93mMJ7vl+jEpk3UHfBEyN6mZB5fLSwbvXofQ57M0XbZMZ8Deu0Qtg2iAms=
+	t=1758557678; cv=none; b=DFG/Am7KGccEL/CJyN0vuDudWEDzxzx/07nuIJqeEkjMkBb4BdPZls6fk0iuPwtPZQtVtwLcVDgGV0uPwzPXyQINQW5c6rZHnFhOoTrNceYKWWCuh/Ew8H4IGys0OpTWwfJ9+JmaBxB8s3xlq55XHC1iisVVFImzZQ+mvHwj9QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758557670; c=relaxed/simple;
-	bh=30ZsOOdTdIvFOBRZCGShkP5CSMuuIYqi33XXYVJfMrs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BG8ghiujZMwcseBWJPpkCkzZ3MhMPXa2EAkJv055RxniUycfyeZv0wgXWKnTHn2lU7QslDUTcWmCTMw1S9z1JXsHQY45R4Jq++o51lPqNN+cUj2656XXzKYBRd9z8Z6QsmpzkHwnkV3udohTB5/tAVUMTL4Ss7e2D4EkZLxqNvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JzDrXIPX; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-7bb414430d4so12999896d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:14:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758557667; x=1759162467; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1CBVYfoU6o53B/HSfKNkUVa7COgkMVy8im6SMIh04P4=;
-        b=JzDrXIPXRU2UCSSn4kuBPixSk1g/FtByvAx9hJU6MtwShiUTTBSYP/y1P1eIoVZ2NJ
-         KKIdzo6EjVmyh0o09eyP4swRVgk4q3+Wh9dHeZpjgnzZCdjT1Q1QzlmNvIIHL9RAHKuG
-         kp6DfyjiqfbnN4sIqxfL2JDtTok/LdMTL+No8Cq6a3k5ERJGfpzeh4y8EuN+c2QBSvSV
-         x9Q5evHnn459lMMx9u7tIchbsvooGHXvlTdOmdcYyc2GMYVpKGQtSzQLjTOuCR7CxvSQ
-         BjiklwLT9cfvUCqpAZOW5g6p6oLfsuZM0CjyMd/jY969gG9OyQNUjjOEM1IiHYcNerrN
-         j25w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758557667; x=1759162467;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1CBVYfoU6o53B/HSfKNkUVa7COgkMVy8im6SMIh04P4=;
-        b=vTSoOmyfR+TENXWlDfGgJApvkMjAZmNFQDEYBaiSUddSCkH5TWCVwB89l4V7w7YVOp
-         ywXIOb7xh3MTXpTmVlPPp8twvOvhS2e6ISttxu7CWhwP3AwmAsQeSOJUwFujvTXms9B8
-         cunK6tqpf2u6GqYwzRncHTEc591vzrtiTGzJ6Pztb3YrtkzRylXG4xs5Jg/f7IK7CQKu
-         MAArsE4CLrGll/weWkLO0ZdhfjBhZbHi6nKdC3P80YQ8u4zUTlEK6IY/X5wZKZk+qpUP
-         sS0MQvgVdQ0gJlW/HB22Vv/5vJqLvkg/N4XffR9isv44KGvQS1p7cCyWRMsnKRvk65rY
-         zFOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa52x1df2LuPfvxZQ99+eJY1BI20qYu5LufFT45o7ji7dCFQsYOzNmwK3qOQlbeThT9a7uuxuRMMw0HM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx505GR5sNE2mB3L07bzESkRx9c9Gin3MLfDbCcMcKp1US5I1X5
-	deCAyZyTVYeFub0FzntiQEcArzQsF8EfdN+rX2K0oOPSId4iYuQVYFpcamoKjnplWg2CJJwkQd9
-	2f6u0Ujw5fVu4g1n25xOiSTPM2ipLbK4=
-X-Gm-Gg: ASbGncvsiagBtUEPaWIneou49LrElBtlrbYaKngFGjZTY5LfWyFcO5UjCckB/5RZNrZ
-	/nKamNo2tNqNlu29z01EC0slD4HQz9dMJdff0rD2kp3PKvWdFUpR9dosv6UemYY6wKk4p4UY+wT
-	121+pQnbRIrfyD7kJmpLMlqOi25xbbx6dpuXuW+LsaKsjXESGkR51dib26Hizure3jqZbVCGRGA
-	x4yanjdj87ErZ65a6pxHGHJsqELVPFHps2sll9tZs5cmwLOeQody7vP4CuKh6G1y3ww3iL8QrUs
-	7dS1Bc0nrc+pK/kQqudoxhAS4fL+K8TY/DyuLr7OdtKwqueLF5sjca54ZD2K3XQcSh6tU76RNaO
-	1cQ+nODh5Q4KdvcMWGeyD
-X-Google-Smtp-Source: AGHT+IEqZU/wF0sn1DWt8sMOHpiPXw7fk9nZf6HIqD/usItSrrexiSvbEo6NMOuRV89WWu9lrxUB2IlEFQz8631SxmU=
-X-Received: by 2002:ad4:5f88:0:b0:77b:3734:8a6e with SMTP id
- 6a1803df08f44-798c54f30e5mr145325036d6.29.1758557666331; Mon, 22 Sep 2025
- 09:14:26 -0700 (PDT)
+	s=arc-20240116; t=1758557678; c=relaxed/simple;
+	bh=SOLmbQP6bLxzMd4H3OlRuFgdkXbyM5XhDaq9Ts6XlvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hqYjISMv80l1VplWwSn46aVDGjDbIfK/Nx36NOzlJkEaT8GHRQLCEMUbdGH/45dRpSGYxy2yx454rNsuD4ajBpj9UJ5kVPZqpx5EYXIPpV6qbTUQwt+4X4r0b+aIQhrEXpVoaIz8c/0EKxlH9gyI4gf3Q+O/eLfAjbKFqnUfbek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYYqkLeK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57A78C4CEF0;
+	Mon, 22 Sep 2025 16:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758557677;
+	bh=SOLmbQP6bLxzMd4H3OlRuFgdkXbyM5XhDaq9Ts6XlvE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RYYqkLeKBvmZrArFsF+8N2ZLWTRtGVdvyhK+LJR0ImKhRkBEfcGydvegw5VizQrg4
+	 Eh+KikuQDg6p6vL2OjGnGdHlGwiCsjbA6iRk3P1VBGJLKc6LqfLaUYz6dKDwQhFILM
+	 IMH6C+zHQuYsOsCxWeGO2SFaXwPhnXaJ+xJOQJ3J2TinrCqmWzOLXPx+BPyA9PORM4
+	 IigMjOArhJCu4OadCG1KnijIkpg2BUbfv/17Hb3sBVhZ1iRJXMHvYSQ84nbjnjflOC
+	 VKR+lBkmctEA5bIOA0di2GAlb9hSxFe4c7TFBZRXlEgo31ZeBkAh0hWejizKU0EB20
+	 Zyz207qmLEU6Q==
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com,
+	arighi@nvidia.com,
+	changwoo@igalia.com
+Cc: linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev
+Subject: [PATCHSET sched_ext/scx-misc-a] sched_ext: Add @sch parameter in preparation for multi-sched support
+Date: Mon, 22 Sep 2025 06:14:29 -1000
+Message-ID: <20250922161436.358949-1-tj@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922082417.816331-1-rajasimandalos@gmail.com>
- <da3e2b5a-a5da-4526-9884-8789990ebf95@suse.com> <qmf3xwqq4hqj4issgci2g76eghytaqxihnrp236ithh2istkkf@n4s54vp3hblr>
-In-Reply-To: <qmf3xwqq4hqj4issgci2g76eghytaqxihnrp236ithh2istkkf@n4s54vp3hblr>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 22 Sep 2025 11:14:14 -0500
-X-Gm-Features: AS18NWCMq_JNOli-tfaoAf_osXE7CkxbRo-UTZnodnIN7idYXbnwuLpYslWJ6-g
-Message-ID: <CAH2r5mu9xUQz5e1Mf-dBCNh2_y2jnxPYMhmuHr1bVqKC6atd8w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] cifs: client: force multichannel=off when max_channels=1
-To: Enzo Matsumiya <ematsumiya@suse.de>
-Cc: Henrique Carvalho <henrique.carvalho@suse.com>, rajasimandalos@gmail.com, 
-	linux-cifs@vger.kernel.org, sfrench@samba.org, pc@manguebit.org, 
-	ronniesahlberg@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
-	bharathsm@microsoft.com, linux-kernel@vger.kernel.org, 
-	Rajasi Mandal <rajasimandal@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-. >Do we even need ->multichannel flag at all?
+This patchset systematically adds the @sch parameter to various sched_ext
+functions in preparation for multiple scheduler support. This part is
+needed regardless of how the rest of the multiple scheduler patchset
+develops. The changes also remove a bunch of naked scx_root dereferences
+that trigger sparse warnings. The changes are mostly mechanical parameter
+additions without functional changes.
 
-Yes - especially in the future.   The goal is for the user to have
-three options:
-1) (preferred) "multichannel" (max channels will be dynamically
-selected and can change) the client gets to choose how many channels
-to connect to based on what it sees in the output of the most recent
-query interfaces call (it can change on the fly as server dynamically
-adds and removes channels or networks become temporarily unreachable)
-2) "max_channels=3D"   This is for the case where user wants to choose
-the number of channels rather than have the client automatically
-(hopefully soon in the future) choose it for you
-3) if server has mchan bugs, allow client to mount with no
-multichannel (or equivalent max_channels=3D1)
+The patches are based on sched_ext/for-6.18 (ac6772e8bcda) +
+"sched_ext: misc cleanups and improvements"
+(http://lkml.kernel.org/r/20250922013246.275031-1-tj@kernel.org).
 
-But ... "remount" also has to work for the three above (and currently
-doesn't) and this is what I am hoping the recent patches can fix (?)
-but haven't tested them enough yet
+ 1 sched_ext: Separate out scx_kick_cpu() and add @sch to it
+ 2 sched_ext: Add the @sch parameter to __bstr_format()
+ 3 sched_ext: Add the @sch parameter to ext_idle helpers
+ 4 sched_ext: Drop kf_cpu_valid()
+ 5 sched_ext: Add the @sch parameter to scx_dsq_insert_preamble/commit()
+ 6 sched_ext: Drop scx_kf_exit() and scx_kf_error()
+ 7 sched_ext: Misc updates around scx_sched instance pointer
 
-> I'd actually like to propose going even further and having the whole
-module behaving as if multichannel was always on, even with
-max_channels=3D1
+The following git tree also contains the patchset:
 
-Obviously the goal (would love patches for this) is to turn
-multichannel on by default, have the client select the appropriate
-number of channels by default etc. but we have to let the user
-override it (as described above)
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-sub-sched-misc-prep
 
-On Mon, Sep 22, 2025 at 9:59=E2=80=AFAM Enzo Matsumiya <ematsumiya@suse.de>=
- wrote:
->
-> On 09/22, Henrique Carvalho wrote:
-> >Hi Rajasi,
-> >
-> >On 9/22/25 5:24 AM, rajasimandalos@gmail.com wrote:
-> >> From: Rajasi Mandal <rajasimandal@microsoft.com>
-> >>
-> >> Previously, specifying both multichannel and max_channels=3D1 as mount
-> >> options would leave multichannel enabled, even though it is not
-> >> meaningful when only one channel is allowed. This led to confusion and
-> >> inconsistent behavior, as the client would advertise multichannel
-> >> capability but never establish secondary channels.
-> >>
-> >> Fix this by forcing multichannel to false whenever max_channels=3D1,
-> >> ensuring the mount configuration is consistent and matches user intent=
-.
-> >> This prevents the client from advertising or attempting multichannel
-> >> support when it is not possible.
-> >>
-> >> Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
-> >> ---
-> >>  fs/smb/client/fs_context.c | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-> >> index 072383899e81..43552b44f613 100644
-> >> --- a/fs/smb/client/fs_context.c
-> >> +++ b/fs/smb/client/fs_context.c
-> >> @@ -1820,6 +1820,13 @@ static int smb3_fs_context_parse_param(struct f=
-s_context *fc,
-> >>              goto cifs_parse_mount_err;
-> >>      }
-> >>
-> >> +    /*
-> >> +     * Multichannel is not meaningful if max_channels is 1.
-> >> +     * Force multichannel to false to ensure consistent configuration=
-.
-> >> +     */
-> >> +    if (ctx->multichannel && ctx->max_channels =3D=3D 1)
-> >> +            ctx->multichannel =3D false;
-> >> +
-> >>      return 0;
-> >>
-> >>   cifs_parse_mount_err:
-> >
-> >Do we even need ->multichannel flag at all? Maybe we could replace
-> >->multichannel for a function that checks for max_channels > 1?
->
-> I agree with Henrique.
->
-> I'd actually like to propose going even further and having the whole
-> module behaving as if multichannel was always on, even with
-> max_channels=3D1 -- the only difference being the need to run the
-> query_interfaces worker.
->
-> This is probably work for another patch/series though.
->
->
-> Cheers,
->
-> Enzo
->
+ kernel/sched/ext.c      | 355 ++++++++++++++++++++++++++++++------------------
+ kernel/sched/ext_idle.c | 146 ++++++++++++++++----
+ 2 files changed, 340 insertions(+), 161 deletions(-)
 
-
---=20
-Thanks,
-
-Steve
+--
+tejun
 
