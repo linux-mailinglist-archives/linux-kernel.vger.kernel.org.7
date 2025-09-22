@@ -1,137 +1,120 @@
-Return-Path: <linux-kernel+bounces-826514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2613B8EB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:35:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5DFB8EB48
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 03:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7883BB34B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 01:35:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34EB317A22D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 01:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B4217A305;
-	Mon, 22 Sep 2025 01:35:46 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC94191F66;
+	Mon, 22 Sep 2025 01:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WrTbNhA3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A831F92E;
-	Mon, 22 Sep 2025 01:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1205464D;
+	Mon, 22 Sep 2025 01:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758504945; cv=none; b=GmeklNTeiuJolhTTAN94HJwPyeUsMnpxPD6dCNJCcOROlFU6ZzpjqSlGK3Ynkd+6GbJl6ldgB2TCTXBhi5zWRtFrLns1BbLcfXrSWLC4jMPeHZuABEz9cZdw53B/MxgeM80c9B4r1VY3QJYzZgyU+La09xmX28FChAo6hl9S9GE=
+	t=1758505241; cv=none; b=QFvUN+SvNkO2SyO94tvu8r/KSMyF9jjXaKZDR94Il4Zj71oi+Z7VZg823e0GtUX6GM1CmiAQ8Nyf8OUeecZNVbB32KoDbIY0Tr/YFHL3Y6q/QM1njCzjIUo5K6+/0KXwwp02ClCyOiEL49MAQbrHR587hJLENa8yN8/yEJSmNKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758504945; c=relaxed/simple;
-	bh=UDpd6ktCVgumpsGeOhlLGwc1ugvFxmrZ6AkhJw2HFO4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=m73sVvTBRLgCP4ZlHLN2CKzUQbi/xbKX6IvhjV5b0hkxXq0cYuqB4SIlsK1GV6xGep4fYr2I2te74V7Q4DwUa937evmjQD/w3kyIB+oijK4yupcL0SQzg7GB4LK0nPhMQJZ1vGtuQfsyMuMdjk4zKlq8X+h2M5asv+RjmJxAhNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [202.112.113.212])
-	by APP-05 (Coremail) with SMTP id zQCowAB33RbMp9Bo_6Q4BA--.19893S2;
-	Mon, 22 Sep 2025 09:35:19 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: srini@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	pierre-louis.bossart@linux.dev
-Cc: linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()
-Date: Mon, 22 Sep 2025 09:35:07 +0800
-Message-Id: <20250922013507.558-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:zQCowAB33RbMp9Bo_6Q4BA--.19893S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFy5JFy7JFWUJr47GryUKFg_yoW5Gr1Dp3
-	yUCFWag3s8Gr92kr1Fy3y8Aa4IkFWj93WrAr48Ga4I9ws0kry7KFyFq3WYqFZ3tFWfAF4U
-	Xry7Zr48AF4UuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-	1j6F4UJwAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8v
-	x2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4
-	vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUmQ6LU
-	UUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+	s=arc-20240116; t=1758505241; c=relaxed/simple;
+	bh=+kM5PiKkTTdIyO1uqU3fxNhuoucUcc7yyFO+KVyEYZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhCIkzyXYkhyOTkPlF41FidsUhsR1CXigCJ+L6FOogNWOvGmlHVbgocQ9f6O1gQCjD44T1gpNPriw2OqAzUZAWsWAxyjFLyTb26W5Vv3cT6FHl+eBnNoKf0LnZ0GEEgktQ7ewzdTdlrtco6bWOb41KqdOMwe+wtCVfoWvVxhHEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WrTbNhA3; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758505240; x=1790041240;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+kM5PiKkTTdIyO1uqU3fxNhuoucUcc7yyFO+KVyEYZg=;
+  b=WrTbNhA3Oem8YcDBnybGjQS7yWtsGpZD/Ltc5K5vVF3hVK8N1i7Bf1F2
+   mZ28x/kVEdaFLT0GhB8lCKMZlI3i+m7Cgbv0iP5t0pjwNwm3crkPiLYK+
+   V2rMZpKpXjHDSipk1vqg45b3NHCwfWTKZOzVE+wNPW1IOeBGxLosswMCm
+   cDOwcD3ecHW7xlQyyEKAmN5aBIFTd2HOEmIqkodRJlzTScpNuHtIbdk4V
+   qgvLMZhevvGDeAuxc67o5LWyGwwWge/Rp04m+qF93VFq1wC/QuM75yLI/
+   7xM/WtRWU6uVuIvi6l/S2+BQ7eiKUoM5EQUrFwulLqRIhAFu4z+i5DzwV
+   Q==;
+X-CSE-ConnectionGUID: UJiug7B1QB6luP8+OOVlSA==
+X-CSE-MsgGUID: tuvxsRMQSR+TRidYzyuGDg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="59802165"
+X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
+   d="scan'208";a="59802165"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 18:40:39 -0700
+X-CSE-ConnectionGUID: gxtktPD3R8aAMdur/5bYRw==
+X-CSE-MsgGUID: 58Gus90ESQWcx/rdCI9dUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,283,1751266800"; 
+   d="scan'208";a="176172100"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 21 Sep 2025 18:40:36 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0VXZ-0001Cq-1k;
+	Mon, 22 Sep 2025 01:40:30 +0000
+Date: Mon, 22 Sep 2025 09:39:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ketan Patil <ketanp@nvidia.com>, krzk@kernel.org,
+	thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Ketan Patil <ketanp@nvidia.com>
+Subject: Re: [PATCH 3/4] memory: tegra: Add support for multiple irqs
+Message-ID: <202509220945.sf6Ru7V3-lkp@intel.com>
+References: <20250916051754.39250-4-ketanp@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916051754.39250-4-ketanp@nvidia.com>
 
-wcd934x_codec_parse_data() contains a device reference count leak in
-of_slim_get_device() where device_find_child() increases the reference
-count of the device but this reference is not properly decreased in
-the success path. Add put_device() in wcd934x_codec_parse_data() and
-add devm_add_action_or_reset() in the probe function, which ensures
-that the reference count of the device is correctly managed.
+Hi Ketan,
 
-Memory leak in regmap_init_slimbus() as the allocated regmap is not
-released when the device is removed. Using devm_regmap_init_slimbus()
-instead of regmap_init_slimbus() to ensure automatic regmap cleanup on
-device removal.
+kernel test robot noticed the following build warnings:
 
-Calling path: of_slim_get_device() -> of_find_slim_device() ->
-device_find_child(). As comment of device_find_child() says, 'NOTE:
-you will need to drop the reference with put_device() after use.'.
+[auto build test WARNING on tegra/for-next]
+[also build test WARNING on krzk-mem-ctrl/for-next linus/master v6.17-rc7 next-20250919]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Found by code review.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ketan-Patil/memory-tegra-Group-mc-err-related-registers/20250916-132118
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250916051754.39250-4-ketanp%40nvidia.com
+patch subject: [PATCH 3/4] memory: tegra: Add support for multiple irqs
+config: arm-randconfig-r121-20250922 (https://download.01.org/0day-ci/archive/20250922/202509220945.sf6Ru7V3-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project efd96afedf2c0f6f2cc34cf5a9a7e3e78f592255)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509220945.sf6Ru7V3-lkp@intel.com/reproduce)
 
-Cc: stable@vger.kernel.org
-Fixes: a61f3b4f476e ("ASoC: wcd934x: add support to wcd9340/wcd9341 codec")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- modified the handling in the success path and fixed the memory leak for regmap as suggestions.
----
- sound/soc/codecs/wcd934x.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509220945.sf6Ru7V3-lkp@intel.com/
 
-diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
-index 1bb7e1dc7e6b..b472320d1ca4 100644
---- a/sound/soc/codecs/wcd934x.c
-+++ b/sound/soc/codecs/wcd934x.c
-@@ -5847,11 +5847,13 @@ static int wcd934x_codec_parse_data(struct wcd934x_codec *wcd)
- 		return dev_err_probe(dev, -EINVAL, "Unable to get SLIM Interface device\n");
- 
- 	slim_get_logical_addr(wcd->sidev);
--	wcd->if_regmap = regmap_init_slimbus(wcd->sidev,
-+	wcd->if_regmap = devm_regmap_init_slimbus(wcd->sidev,
- 				  &wcd934x_ifc_regmap_config);
--	if (IS_ERR(wcd->if_regmap))
-+	if (IS_ERR(wcd->if_regmap)) {
-+		put_device(&wcd->sidev->dev);
- 		return dev_err_probe(dev, PTR_ERR(wcd->if_regmap),
- 				     "Failed to allocate ifc register map\n");
-+	}
+sparse warnings: (new ones prefixed by >>)
+>> drivers/memory/tegra/tegra20.c:764:21: sparse: sparse: symbol 'tegra20_mc_irq_handlers' was not declared. Should it be static?
 
- 	of_property_read_u32(dev->parent->of_node, "qcom,dmic-sample-rate",
- 			     &wcd->dmic_sample_rate);
-@@ -5893,6 +5895,10 @@ static int wcd934x_codec_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+vim +/tegra20_mc_irq_handlers +764 drivers/memory/tegra/tegra20.c
 
-+	ret = devm_add_action_or_reset(dev, (void (*)(void *))put_device, &wcd->sidev->dev);
-+	if (ret)
-+		return ret;
-+
- 	/* set default rate 9P6MHz */
- 	regmap_update_bits(wcd->regmap, WCD934X_CODEC_RPM_CLK_MCLK_CFG,
- 			   WCD934X_CODEC_RPM_CLK_MCLK_CFG_MCLK_MASK,
+   763	
+ > 764	const irq_handler_t tegra20_mc_irq_handlers[] = {
+   765		tegra20_mc_handle_irq
+   766	};
+   767	
+
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
