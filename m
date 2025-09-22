@@ -1,111 +1,157 @@
-Return-Path: <linux-kernel+bounces-826947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6907DB8FB42
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D2AB8FB48
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E6F18A012F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F7216C629
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A15283C97;
-	Mon, 22 Sep 2025 09:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE186286D70;
+	Mon, 22 Sep 2025 09:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGMt2wVD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZpdRARG"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F04A224D6
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620B821D596
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758532296; cv=none; b=NpYuwj9BMvpnvwr/E91/0N9qkYa8oFcLQbQqJ9wlQetoiJnlG14AFVzoziTY7Ky7xAs19yS/cUTIbD8qR3mVmwJ0X6aWkUJtIqgHcnPbtq4wJX+Hg2I+0+Wm7tL/tUBBJWtuSebE0myurWctmR8EW2RHC3VhDV3NJUSJLZhl3b8=
+	t=1758532472; cv=none; b=WMuHu2Vd3BR0ebKAa+cy68mUCo6LCTtfklBt1LQSZBNC/Z3EMirWisf88trgl6AtbQ87032ykGttri2hJWVnJV7BDazZKeTDGeZsq6mhxKMVu+KFNb1ngCURZsvnZP4O1VYNAtLq4VJtjLoaPkZRsoUftc6BuZc6W4qEW+SldsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758532296; c=relaxed/simple;
-	bh=i1GGuij/9urYoNsBCRpJGaO3S3MaE1uGvq+3WQ8JQmc=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=KupfpIh1KZ8YxTJvromI+Xxag48bKVgYRpj06m2oW9hz5f15zWu0PFWJ4fEsmYl7UW5Jfea4zfdyCFYUyDt4HDIfqknyOTVdsbtws3S4I4jr788z0+0SZ6Dkr5UHovd4/FI4GbqQtpH5bPJQ4Oz3klBXMUfrsd0CZIfBnkUwMSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGMt2wVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0630C4CEF0;
-	Mon, 22 Sep 2025 09:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758532296;
-	bh=i1GGuij/9urYoNsBCRpJGaO3S3MaE1uGvq+3WQ8JQmc=;
-	h=Date:From:To:cc:Subject:From;
-	b=GGMt2wVDLPkDy08oTYCZ7kSbqjB1ssUXoQOP7CnZmwirgVUuzf1NgHEsCLf/iHq1d
-	 sgYOOoaaQPzGK3B/qnviLvGrcPBurAASqNM6AugrykYi6uspJoUtL/bxhDhExG+XhT
-	 AjWMTfnCI82DDSmGknk5j4UcHWXMIEAJNCtPk/oPfo893kWGZ2cL2ugDiPP+ABTBq1
-	 UL+XDdVvn2lGH9HxqH5O3xP4inQK+1jcDlZVHJOw5LhjohE3McMQKgjYA0nNzFl4gP
-	 jfM4a5HDGtuRYSi3JDGcJx1tHMXsZ7Uzsb0hRdo68PCmGSDwq3EYvqDYvpFGifC8qB
-	 xV2kLGXmUWRFg==
-Date: Mon, 22 Sep 2025 11:11:33 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] HID fixes for 6.17-final
-Message-ID: <7rq81spn-on10-rn3p-03so-825s85486ps1@xreary.bet>
+	s=arc-20240116; t=1758532472; c=relaxed/simple;
+	bh=PWZIHxNO9F6b5mRaqczR3GeKYl1D6LdC4n5HIjFGDFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTRHVcWlrNym6oGeVpsuwjgf+Y9qv0DAaQyEOUY5n3LW0L3+JwIEKVQfioV8qHFtI/8EuTNIRkc6ZnSrE+zRoWBX0aiPnIzlixuu5DK8o+3M4H8HYzSt/0gU73Q66+TPIzviC4oHgHhA03SLmrBXaJ7Y1+2+Ifksi9t/aXar5VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZpdRARG; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46d72711971so30825e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:14:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1758532469; x=1759137269; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wgArYQu+cHNbaIGGgNnr3ySxE/Az/B6v/bHyH6zdSV4=;
+        b=1ZpdRARGYER41O1923opmMPvG9X5f/TwG3kjJGNY8/Qm/ndvfUEjo4wnbDuVy84c2x
+         JMq6kyVCpj2t/3munw/mJB5EW+jZMXpmwh6YjMb8LofcbHqe2hsyRdI1RExhC+I/vZOT
+         EIzpMLj4WOQEMBTa0wu6vd3jGn+Viw6NMmP9yTXJubfHtCMXGScyEQtX7sqqbflLO87d
+         1UqKL9zBAdlbmeexqy6kBnQRMCGelsoi6+R0wFtgEHdFH/CBdKekkgWrhTSaodjyI+EK
+         NLBbCNECv7g6QhauxhXuHGb2ogeu/2KbqG91ZYHpr00nQo9tA31+I/cJcGs57lalW6nj
+         Wlhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758532469; x=1759137269;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wgArYQu+cHNbaIGGgNnr3ySxE/Az/B6v/bHyH6zdSV4=;
+        b=EUQM97hPd7g8OzxJKTYPX2H/ZEom1CG/zY60FMwjJFptzpr+qBtJbvrivBD4wqJ5vB
+         75FoIUrJCQvUSzCmYPSxXPCzAXaNMDPE3+/AtO1GhXnuHG5Pz3bKdNvRd/EzrsonyJrq
+         LV9GhNXe6M9oZs52g1B9K/bm5yOvw6KHYaZM73ivSxl7evcifZ57aWhHJbgY926mS/vc
+         g2c4rdOLoZOH72fS10ujJu8oHdwOvzLm5ccrDAc5tsLMsWK7K870Bj37CAsFtIoOymud
+         FavPVtoO0Xs4CtFLy67Y60Y6hkvKY8ZhJvowuMJIZ25xoTAMa0Wlf7FJ8uBTeaVrQHU8
+         23uw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxnqQGsQw9zQyFnn5DsPHxxZk+SlxnpNHiwFkx18BNTs5iG+LPQ/Gbb3nf/HnwItZ0tKiF6f8cwRIQpnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7o2onsRW5WswjWOgSK08OyYRVoeH+d3/cPiX5HVLQ4xquxgdk
+	XKZ+dbeX6Wq82fEorPYwUdHWhCOVNQiHYb3zVGYqGcisM8GbdBpZCOreFQbTI6v0wQ==
+X-Gm-Gg: ASbGnctiSAVEmuQjTDSo7JFL8SY3Do4FmW37v9ZIaAM+ad81AO4HuM7SXv5831sRreG
+	Mt3aRCbutU3pRL9w65SzuE2P5VsrrdYB8n7NYxoJyb3rJfa3xj2IGHatM3KokbTfXn8mCYMcK9i
+	9tafMQ03em+3JpGFuzHsr+AOjZXle4pZYNrXCIlK204FGZsMR8M93QeuLdzOf+uSV9pb11Thu3H
+	tALm5PwaGhDib6tbcu07bk1CSYCqwVuV05GKC4Q+fnQ4TF85ecJ3kGLsUHF4iXOOizBXN8fYHBt
+	Ss26NqFQaxhr+M6k6ihnt3hYMnXm1QuwwlV7lr6R0OBAkxdTknOdMtnWDVOKNQbqxWyjnzQXmwW
+	l6tkyFH01hLjry5VmHy1sS1EqNM+FZDOfu7ytplAuCwFHeZ9DDWRamUFB0UDpCLM=
+X-Google-Smtp-Source: AGHT+IHzWY/BU+tZg/uSMYwHsohYz2u6un9Jyb5wJfEWQ7iDRJk2kEB7VjW0B+HU5Afwed6ytoIPQw==
+X-Received: by 2002:a05:600c:190e:b0:45f:2e6d:ca01 with SMTP id 5b1f17b1804b1-46154878d4bmr11295375e9.4.1758532468571;
+        Mon, 22 Sep 2025 02:14:28 -0700 (PDT)
+Received: from google.com (157.24.148.146.bc.googleusercontent.com. [146.148.24.157])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f829e01a15sm7769744f8f.57.2025.09.22.02.14.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 02:14:28 -0700 (PDT)
+Date: Mon, 22 Sep 2025 09:14:24 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Keith Busch <kbusch@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Alex Mastro <amastro@fb.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, David Reiss <dreiss@meta.com>,
+	Joerg Roedel <joro@8bytes.org>, Leon Romanovsky <leon@kernel.org>,
+	Li Zhe <lizhe.67@bytedance.com>, Mahmoud Adam <mngyadam@amazon.de>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	"Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>, Yunxiang Li <Yunxiang.Li@amd.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [TECH TOPIC] vfio, iommufd: Enabling user space drivers to vend
+ more granular access to client processes
+Message-ID: <aNETcPELm72zlkwR@google.com>
+References: <20250918214425.2677057-1-amastro@fb.com>
+ <20250918225739.GS1326709@ziepe.ca>
+ <aMyUxqSEBHeHAPIn@kbusch-mbp>
+ <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BN9PR11MB5276D7D2BF13374EEA2C788F8C11A@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-Linus,
+On Fri, Sep 19, 2025 at 07:00:04AM +0000, Tian, Kevin wrote:
+> > From: Keith Busch <kbusch@kernel.org>
+> > Sent: Friday, September 19, 2025 7:25 AM
+> > 
+> > On Thu, Sep 18, 2025 at 07:57:39PM -0300, Jason Gunthorpe wrote:
+> > > On Thu, Sep 18, 2025 at 02:44:07PM -0700, Alex Mastro wrote:
+> > >
+> > > > We anticipate a growing need to provide more granular access to device
+> > resources
+> > > > beyond what the kernel currently affords to user space drivers similar to
+> > our
+> > > > model.
+> > >
+> > > I'm having a somewhat hard time wrapping my head around the security
+> > > model that says your trust your related processes not use DMA in a way
+> > > that is hostile their peers, but you don't trust them not to issue
+> > > hostile ioctls..
+> > 
+> > I read this as more about having the granularity to automatically
+> > release resources associated with a client process when it dies (as
+> > mentioned below) rather than relying on the bootstrapping process to
+> > manage it all. Not really about hostile ioctls, but that an ungraceful
+> > ending of some client workload doesn't even send them.
+> > 
+> 
+> the proposal includes two parts: BAR access and IOMMU mapping. For
+> the latter looks the intention is more around releasing resource. But
+> the former sounds more like a security enhancement - instead of
+> granting the client full access to the entire device it aims to expose
+> only a region of BAR resource necessary into guest. Then as Jason
+> questioned what is the value of doing so when one client can program
+> arbitrary DMA address into the exposed BAR region to attack mapped
+> memory of other clients and the USD... there is no hw isolation 
+> within a partitioned IOAS unless the device supports PASID then 
+> each client can be associated to its own IOAS space.
 
-please pull from
+That’s also my opinion, it seems that PASIDs are not supported in
+that case, that’s why the clients share the same IOVA address space,
+instead of each one having their own.
+In that case I think as all of this is cooperative and can’t be enforced,
+one process can corrupt another process memory that is mapped the IOMMU.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-li=
-nus-2025092201
+It seems to me that any memory mapped in the IOMMU is that situation
+has to be explicitly shared between processes first through the kernel,
+so such memory can be accessed both by CPU and DMA by both processes.
 
-to receive fixes that should still land in 6.17-final. Namely:
-
-=3D=3D=3D=3D=3D
-- work data memory corruption fix in amd_sfh (Basavaraj Natikar)
-- fix for regression in cp2112 where setting a GPIO value would always
-  fail (S=E9bastien Szymanski)
-- fix for regression in hid-lenovo causing driver to fail on non-ACPI
-  systems (Janne Grunau)
-- a couple device ID additions and tiny device-specific quirks
-=3D=3D=3D=3D=3D
-
-Thanks.
-
-----------------------------------------------------------------
-Amit Chaudhari (1):
-      HID: asus: add support for missing PX series fn keys
-
-Basavaraj Natikar (1):
-      HID: amd_sfh: Add sync across amd sfh work functions
-
-Janne Grunau (1):
-      HID: lenovo: Use KEY_PERFORMANCE instead of ACPI's platform_profile
-
-S=E9bastien Szymanski (1):
-      HID: cp2112: fix setter callbacks return value
-
-Xinpeng Sun (2):
-      HID: intel-thc-hid: intel-quicki2c: Add WCL Device IDs
-      HID: intel-thc-hid: intel-quickspi: Add WCL Device IDs
-
- drivers/hid/Kconfig                                     |  2 --
- drivers/hid/amd-sfh-hid/amd_sfh_client.c                | 12 ++++++++++--
- drivers/hid/amd-sfh-hid/amd_sfh_common.h                |  3 +++
- drivers/hid/amd-sfh-hid/amd_sfh_pcie.c                  |  4 ++++
- drivers/hid/hid-asus.c                                  |  3 +++
- drivers/hid/hid-cp2112.c                                | 10 +++++-----
- drivers/hid/hid-lenovo.c                                |  4 +---
- drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c |  2 ++
- drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h |  2 ++
- drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c |  2 ++
- drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h |  2 ++
- 11 files changed, 34 insertions(+), 12 deletions(-)
-
---=20
-Jiri Kosina
-SUSE Labs
-
+Thanks,
+Mostafa
 
