@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-827475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBBCB91DBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:10:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E58B91DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664322A597A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:10:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA67B189EA5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C70A26E711;
-	Mon, 22 Sep 2025 15:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3013A2DEA90;
+	Mon, 22 Sep 2025 15:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYVJ7PfF"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOeJA5W9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BF328153A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F49F9EC;
+	Mon, 22 Sep 2025 15:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758553847; cv=none; b=HjvMB95/1yCKaH6yEz72vjaqfgMleYSC+mb0CE8Rb1iRAVJkGVZA/di2Eaqy7rMUUJ1YnZKM0pAPBv0WG14sC+W2azLWGiQlZlmxXdOYxoniftAD7qVrrV8OMYyyVcveuNHBgZP7Fon+SUw5baHYS5Fz+UkLPAEkCj6pV9kOvK0=
+	t=1758553837; cv=none; b=d9xVLegXzv2DLBCeNS5fDud+iZVxKXldCi9G37cOma/Bpxd35F7/MMCke+wD/Ybvymo1VDKPhNDit+gMQeiVRFM9Ue1WObBjomB52B6UmVzDGHPYuPypka8O1JAT6jTedkU3K1yV79rGxCLskpg8cJ6Vm/zIQyzD7pkbsb2auzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758553847; c=relaxed/simple;
-	bh=shbNuIMNTIvGPcWi4JkSEiRj/eJEUs+EDGP+qunsASU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GzeKs7DLwLao+hcTpeBJOdgFHPHhQLxsB8+nyHbmknWoT9Fh3CRaPuJa+jydahoKR9COI3tBZQfibjwUhCaEud3v6PuzjBlsk6jh2kNxaYJjZ5gly6vyVrLPgMK9xOImtpM2FVjv39UH3hsIyv76ZrIN+W9Hlc2s7S7la4sEllA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EYVJ7PfF; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2698e4795ebso44902985ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758553844; x=1759158644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QeKEMoq0INFY9SFzoLjx1GtUOLFalE390u+VhOEOs1M=;
-        b=EYVJ7PfFjSfLOKau/jKasLl7nQJdViXiZ5n/VZ2TTlF0tjghV0yAl1gFJvKVYEjs+Z
-         xpvlS5OLmCQndRquF8TxUHSKIody51f5UU9ihusrb+KPTbE0gMdOrPLLNxR3i20JSUfJ
-         iG/qLpM9ZpnUkgcjEf3tw287BN8r+wo9lHH0tbSrDtyfT2x9hWa1m4z3UtWE5vgkwXhn
-         cFhQH45TD/X7pa7N6dVGqoW9z+cmdBODc3T61sm4tGZQNiIV24KhkDJ5jtNvWxZt/MOL
-         Ec6ODpiWyUbbG02MqvM78mPedCFcQo2Zlk90V51qjUD2AKW5iQX6xwYyiDLxmhhuk+fM
-         WZ4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758553844; x=1759158644;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QeKEMoq0INFY9SFzoLjx1GtUOLFalE390u+VhOEOs1M=;
-        b=bP0ktWbwhEoH+gA+8o7CDNqDUIiptsilOBqLR3eyfcvW32g+7sMGGleQiOqfTrOH5v
-         M3WDM7vKkU8DLHu2GqydhLyGBXp2+3oC/lkmAw6qU01SlELs1HYhaiviFpW6xFQ/TI4q
-         RQudmEr0V6vC9JrqEH0o5uYqXfJ7BXhXxXs8ZtEMPIdXiQdbBmRLujAOPv8wI7Rmbn1y
-         cOIbU+8YWIPAJx0mEs2VgWv/fVBJH81dFG6mqlhrqh1iadGoXbtzdoM/xwoKN3QBGNZq
-         JMmm39hROGbDuI6QqepUOa+oUlA7ibPOu3ISLH2GNIlAPZgcHrMW45UJuTa9iCxRwHY/
-         ObWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWC3UGp8NbN0P3t9pc8dS5G5gwJWnNfUIFMMwBshauuQulgCP+1vhlikUxtxlNRsn76u5yXjdfD4Zopf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxevp8n+OUuh0yIgg2CMo+OBZl/6jcp5Vk13UMD3u0bHFDc8Mxm
-	xyWYiKEwFAIIvBptwosL8reLjjoy1IJto7Xnhnu8ShkyFq0B+VG5fCee
-X-Gm-Gg: ASbGnctEdo5kERAoHdyTjMZifq+sX3sUugHc7ZqV8HlRk9Um5pZYr50qSzF5/U+XxaS
-	JssOEeksZddpx+IlaUwiAkEmhRAh/SpxR/T4zFAUfRrqk7z1xpjE85dtzQ0ld5Ki2n66bLjkCW9
-	AIccksOXQBC+ecnoeHBcMbmX43btwxiVNiflrpLI0YTm7z+qRCSzDQUBwc1LlPxav5VyOVDKbMM
-	Ma3l1pepK3170kh8RBQdlEwRaVWiPnCK/4y9xQAcOVLQDgc9He26IcWB3wilPIqz3RywkzFerA6
-	W6ZmJZOLhpNJhrtc5jigXWP7o96jGqEN4V6ETPHg7bgo19hA+KPP9s8/ZdT5uGjl4hyRz+lj3Ks
-	f1gZBoRyilqI76vmX64bqK4Oc
-X-Google-Smtp-Source: AGHT+IEvD9hsVBCMMBEEbvP8hFwp/v5gBhfqce58IDIzHbs1uD6mT1IGXhLlfqK/ToCU+antLZSz6Q==
-X-Received: by 2002:a17:902:db0e:b0:267:cdc8:b30b with SMTP id d9443c01a7336-269ba554c27mr147031635ad.53.1758553844543;
-        Mon, 22 Sep 2025 08:10:44 -0700 (PDT)
-Received: from lgs.. ([2408:8418:1100:9530:3d9f:679e:4ddb:a104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980180bdesm134733995ad.56.2025.09.22.08.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 08:10:44 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
+	s=arc-20240116; t=1758553837; c=relaxed/simple;
+	bh=JN8oDzMx1WaAixG0/ckzOx5OBDLUH3iItZFLAdr2wko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cUjvMIqTh3BrvwkwJtF1K0dBT1fl3YZuHv8leC5DGy1qMnSACf1jh6ac6yjNOk1YNq1twcltJITzUR/oMj0pm5pad2SB1TddO6C9+NnC1ga0na4Atf786RxG1egXXD5+z5jllzf/lQuFx2BtTlJVViRxYF5YhbtS2oCUA4v7hoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOeJA5W9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F984C4CEF0;
+	Mon, 22 Sep 2025 15:10:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758553837;
+	bh=JN8oDzMx1WaAixG0/ckzOx5OBDLUH3iItZFLAdr2wko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OOeJA5W9zP0FsNCFmuoLeFacEdE5IgjCqHPfkgpp2uqgBBvwQEhBqgCkpx0J4TW4v
+	 4orpeeHRdTBX/eUJgxLL68tYJtbJ5KwU3+SnCpkAgtrvl8yppYA9Hh3EERSSfRSNeV
+	 DGB2/baO2jQrD2AVxYSyUvI6V7jzZCZ6z4ECqVNVl1CqrbHRxQM3XRkzlAoTJ2pfiu
+	 cmpmOoVL7PdWSwHjN16hc9zdckSG8dW8cz8lizbP/WmoVzFhE4iOPESXQwe5Cvm7ae
+	 0A3CbZEAH5hYp/Tw3PPX8W8W/brhdnuoQj44BbUI4cOQJG1LIBNzAwweL0ZWPb8Sg0
+	 NTsRSWPkJOslA==
+Date: Mon, 22 Sep 2025 17:10:33 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	"Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v2] powerpc/smp: Add check for kcalloc() failure in parse_thread_groups()
-Date: Mon, 22 Sep 2025 23:10:25 +0800
-Message-ID: <20250922151025.1821411-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Vlastimil Babka <vbabka@suse.cz>, cgroups@vger.kernel.org
+Subject: Re: [PATCH 17/33] cpuset: Propagate cpuset isolation update to
+ workqueue through housekeeping
+Message-ID: <aNFm6ZhhPpRrguyS@2a01cb069018a81087c6c9b3bf9471d3.ipv6.abo.wanadoo.fr>
+References: <20250829154814.47015-1-frederic@kernel.org>
+ <20250829154814.47015-18-frederic@kernel.org>
+ <197dd0c0-f4cc-4e75-accb-6bf85ea5291d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <197dd0c0-f4cc-4e75-accb-6bf85ea5291d@redhat.com>
 
-As kcalloc() may fail, check its return value to avoid a NULL pointer
-dereference when passing it to of_property_read_u32_array().
+Le Sun, Aug 31, 2025 at 10:51:27PM -0400, Waiman Long a écrit :
+> 
+> On 8/29/25 11:47 AM, Frederic Weisbecker wrote:
+> > --- a/kernel/sched/isolation.c
+> > +++ b/kernel/sched/isolation.c
+> > @@ -102,6 +102,7 @@ EXPORT_SYMBOL_GPL(housekeeping_test_cpu);
+> >   int housekeeping_update(struct cpumask *mask, enum hk_type type)
+> >   {
+> >   	struct cpumask *trial, *old = NULL;
+> > +	int err;
+> >   	if (type != HK_TYPE_DOMAIN)
+> >   		return -ENOTSUPP;
+> > @@ -126,10 +127,11 @@ int housekeeping_update(struct cpumask *mask, enum hk_type type)
+> >   	mem_cgroup_flush_workqueue();
+> >   	vmstat_flush_workqueue();
+> > +	err = workqueue_unbound_exclude_cpumask(housekeeping_cpumask(type));
+> >   	kfree(old);
+> > -	return 0;
+> > +	return err;
+> >   }
+> 
+> Actually workqueue_unbound_exclude_cpumask() expects a cpumask of all the
+> CPUs that have been isolated. IOW, all the CPUs that are not in
+> housekeeping_cpumask(HK_TYPE_DOMAIN). So we do the inversion here or we
+> rename the function to, e.g. workqueue_unbound_cpumask_update() and make the
+> change there.
 
-Fixes: 790a1662d3a26 ("powerpc/smp: Parse ibm,thread-groups with multiple properties")
-Cc: stable@vger.kernel.org
----
-changelog:
-v2:
-- Return -ENOMEM directly on allocation failure.
+Whoops! Thanks for noticing this.
 
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- arch/powerpc/kernel/smp.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks.
 
-diff --git a/arch/powerpc/kernel/smp.c b/arch/powerpc/kernel/smp.c
-index 5ac7084eebc0..cfccb9389760 100644
---- a/arch/powerpc/kernel/smp.c
-+++ b/arch/powerpc/kernel/smp.c
-@@ -822,6 +822,8 @@ static int parse_thread_groups(struct device_node *dn,
- 
- 	count = of_property_count_u32_elems(dn, "ibm,thread-groups");
- 	thread_group_array = kcalloc(count, sizeof(u32), GFP_KERNEL);
-+	if (!thread_group_array)
-+		return -ENOMEM;
- 	ret = of_property_read_u32_array(dn, "ibm,thread-groups",
- 					 thread_group_array, count);
- 	if (ret)
+> Cheers,
+> Longman
+> 
+
 -- 
-2.43.0
-
+Frederic Weisbecker
+SUSE Labs
 
