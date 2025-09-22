@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-826888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0647DB8F8D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852C4B8F8E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C272188B819
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:35:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396132A08A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA96221710;
-	Mon, 22 Sep 2025 08:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F61027E048;
+	Mon, 22 Sep 2025 08:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KwabYl4E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="EJ8uSHRI"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138B9C120
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF9D27A10D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529858; cv=none; b=ImUUgyt/GiejJ4ahGz725BuUwUh6AbfyP4iIF6b6TCMHRBLDKKzmJEA3rY2xogwPjrFniW9Lu4s9piJS/d4vNVyDOtxiaN9oysQH8ZefNvHuse5QkvSHebsWoIwjrKwhx4rEJIpuYq8Siedqi3IJF+zJrNLNKbz6k4fCHSuBhvs=
+	t=1758529905; cv=none; b=BVsKhIPxzVdVKzGuwcvaqEbWpePRUyaXm06k38VcQ5skbWW8p9l69sE3cb82dYm9cXfPINMkPEvjMpksnssvSD0bizrnWnKqhZpR2ZIECzuaPsT572uoOqB1coY8+94IJSfWYqHNFENseBTh4CBu7whXjJhM9H26KY1+lXebD5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529858; c=relaxed/simple;
-	bh=7URL8Whx7YinWepO0tBloI/P9oc2FuIGpO7Ilt8qBZM=;
+	s=arc-20240116; t=1758529905; c=relaxed/simple;
+	bh=FirYu0l5QrjUMH7H5DAGBjRU90XnIUKkvxx11BGMq3s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G/mKw0Ucddf2p3r6AW54FuvxuXPXaNsdqHwchZSxj7QUXwdTQUxYNnhbcb3cz0AgAwELIVjuMKUPBxcyyPYc3aD/gJTplA7KvHRlh5TwogFiDfgisSbzVHcaQWoNnjl3M29+ZMGQe5rFN6B3AXnxYZGuqm6AQ4z8VIenGFq5rMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KwabYl4E; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1758529856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1v7AejRsDx7YJTfIsqR2wjIJYLTYoUc9DZoQno78EIs=;
-	b=KwabYl4EBNYWLmH9wiCvBdI1VCAcH+l81b74xyjX48XJ7/c1NPxKW0fsGO+EwmuFoXzifm
-	Ql0ej+bm5b2UBBzZtqbcyAakTww8xh7DCvO73ybVN7UxThQpKyddK0Hz7sdTXisgQiAhee
-	E/u1MrujSnuOvb3HJpWhEV8mSuVutts=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-or1kZ9MvN0CgYyEZaX5Mtw-1; Mon, 22 Sep 2025 04:30:54 -0400
-X-MC-Unique: or1kZ9MvN0CgYyEZaX5Mtw-1
-X-Mimecast-MFC-AGG-ID: or1kZ9MvN0CgYyEZaX5Mtw_1758529853
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3fba0d9eb87so360478f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:30:54 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=BI6liK6dMqhSW5drzr68Ex3IFlZx6EfdVc8k86+KiySVs0weL7UBi0EZIGP+4+vXFIbhgjW8sN8NRojc1IxKp4oHjXhOGAbHQVJCYTk0qQCmB3HqYZPcP3dLHPvz4T6NPOBF3fhMH49PMgA0UJ/LigmG4FheaWD9tt+1bEhLc9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=EJ8uSHRI; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so2336732f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:31:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1758529901; x=1759134701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=97lwVNlj4fcnM/Rf6y7n2gTeJuJTiJv3CIcVJBpEWgw=;
+        b=EJ8uSHRI6h0a06RF67xBbe/fT/8jMHTKEaGoOXum7DbJ64Vg6x+/7HtMd11h/+sCRa
+         CFPI310JWRS1xLV624P/NMUWX7OHdZ3exEYsGGaZPWgvZ4ItpaHG2sxvDUOlMpaCk3Rn
+         gVuEQ7GXYaIFGPTpKQvCoWPTy094sSHJtL1QCcJbfQynVV7VV22CNFcV60THf41weTdS
+         eGuDnJE26w48GrVleUnHKCGkwNzzqmKkFXbfVnjPwF0rQpLczATWWqW+whuTh0xjoFZ8
+         R+G4G8Ii6AH+3Z6K6kRN6BSZ71ZYn74JdQV+JmZt6LGS0z1yWqVsr6p28nmu+TGAqKua
+         eXAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758529853; x=1759134653;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1v7AejRsDx7YJTfIsqR2wjIJYLTYoUc9DZoQno78EIs=;
-        b=VznEyO2gRyohIODN8FrBT4PuyAgniJSoJv1Qa7WlbOL0vZ7x1SqTWG9PLQ5J3tyKvk
-         0k5FDkzXuMvG5ZYNx6siRFgmQR2gRcYNnougshdOLkM8l0NNKZ9qOkbtiBKxW+eUXhHt
-         BITnXCZJkA/jQzVlZidnxeD37/DqZAankNu4BIA3QPAaexwNun2ww2LpOplGPfjhPucl
-         b5Hd2eCwgpl19Wgg5yfvSaz4TrOcRyWlWJaieqM2rMv7UMr3XHxTFLtTy3ZSwgKisIbN
-         LlqnpJ87f4/AxZMepVXzWYJcjkUnqvwfuq7zZ92KnrJ1qXmhBZjD/hIeMXL7+gm3ewQw
-         Za0A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/Lbd+yuEiWpVduFR+ZFFrDCYifnp/rOieUTWb8sghtdx3ZCV9LzH6gt8o0mwe8ScIKTjRk0PkC9JjZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfX/+jAvTT6DbxEYaqiJWsjSbcBENB59L7mi8op5ky1RTgikKR
-	PuRRaiW5iThc+EI4Sar8WtTXbPng7ryNH0qfoXU+09eSykxyEElmotjX1rf/8sjjlIiL82YNb5u
-	A+CUiLU+JzucbOJlkzC6jcO51x4Grmgpb/r5VKcxOKP3InCNPAlSKawRF0wDkB6QDLg==
-X-Gm-Gg: ASbGncvSoYmPLqKCgMZGAykiYoeEqGT5ZwvRCtv15YMo4gzRM5f6ZKB+fCv8cHAbJUo
-	65Q95QMFuNdmGZx02kNNTKFCiWEsG7X99jbX53Oe6SI8etnZ0V9OP/gsoKQIPIdIQtDP2OojtQE
-	XCZFzMF5IQKPxxttBIg41FFHRC3ITAGbN2dLFwtd826Sn+/XaDZMcvdLVnkyJm4FpIaZex51nUw
-	iwYUBeKEEpHRMAstW5G75r0f9E7np3MhIQr2zJqIzG0UPkVDmqWrEumP4hzigri9YGM499gnsNj
-	2eTnCdcrUrc2Nd0wpgPsnH+xiG2kVQWR1JjifIKZ3Mn+Z1e28jjsRucyVexWeAFidhfmfLJ82Y2
-	aVK4nPLdAhuoRD/52XGax5zm/w+17DfRH2o+0PkArXJ88+kh+Y2fa56OA8zROD5A=
-X-Received: by 2002:a05:6000:290a:b0:3ee:14db:701a with SMTP id ffacd0b85a97d-3ee7e1063f3mr7948423f8f.16.1758529853080;
-        Mon, 22 Sep 2025 01:30:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIKEf6CNiFSeyuoRMV+Qi16RvMz8aVWLd4utQVYrC2+GOOlUDYYUCvQGJsHP0Q6y2iPCqQnQ==
-X-Received: by 2002:a05:6000:290a:b0:3ee:14db:701a with SMTP id ffacd0b85a97d-3ee7e1063f3mr7948396f8f.16.1758529852698;
-        Mon, 22 Sep 2025 01:30:52 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f2a:e200:f98f:8d71:83f:f88? (p200300d82f2ae200f98f8d71083f0f88.dip0.t-ipconnect.de. [2003:d8:2f2a:e200:f98f:8d71:83f:f88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee1227cc37sm17569892f8f.7.2025.09.22.01.30.51
+        d=1e100.net; s=20230601; t=1758529901; x=1759134701;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=97lwVNlj4fcnM/Rf6y7n2gTeJuJTiJv3CIcVJBpEWgw=;
+        b=f5v9a6UHX2CYvGCvRiSlZtTvl2F/hpdY2qgXwmtdbFHnLUA4L/1Kf8RAIJ5n0jSVVS
+         0jD2yFeVU99sj4a0GEo8RiKSq1t4uVkKsMqN4oNvSv+0G8RDNAf3CzRRJgeBooDAOn/f
+         ctSm4ddjHW29jgnMYjA/tk6Z3aNpR12TQLr0y36YKsnZe4FxeHJeS/bL7Bt/Aat2A6sI
+         MDTHJX51U7LTh7giWVdYAW7eAkAk7Qt/8uBsYdcoAnJUEooHnVSIO6I4IBsm920VU3j3
+         otuSX0hJWgA2AzlrQ0t6TIvo3w8IvDf1OGtEQyS3z1UzwvjPV4pyenTPQx9jHm3VCCaD
+         Kb2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXMHMJzHP16xfwFcwOCltdBVMOhExG4EQvxbVvqWr4yGO7AMU/nAZbAkqUxB0wcT3Xa76nB8S6pohg8DN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3DVkG9AwBE7OjzA2+ulJ17hMSIMxpya2DMtpW+0nWWwDWnsyk
+	ONXbKkQQtI5Z4DmNrLjBIpHX5nPlsqJCPd4+kbs09gCFprVNurlK5hp4/jlnG6KKq7s=
+X-Gm-Gg: ASbGnctSyqyhR2dqJT2i4AbOa1AxrhaesE7aeJ1hQra5R2UF3SwkOATv88XI2Q59cBz
+	Xy2MbH5kMZEvbHiYhTFWF7lywoAtJvzgHvzz4o3+JRmfErnvjY9PLhjXF0xKrKqAvOksVMuSl4j
+	+LGwyIUIGQ4n2ZUBloxWFX2+w7Z4X9WbqAiN7WPL0njhUvXkwxj7fghSR74s96KP1ST5X8z7t+Z
+	XJh60MdrpRiEUbd5QeTnw83FPgd92//l3qrSO1ic1tGURKDhAPIg9HfbM3ZP8K+onM7yBTn8SOq
+	bbr+qR51jEYim2DHcnmPTL05soDjsDa8CJZRgZG4iFikSGZhV9KfWjWHMfWAhoWWI7cKwYXurrJ
+	9F1cgEARiZrMSUhL+qeyOtARz2ucJmfPQBV9OssF5LAaNL+S7T7nB/nbKnOzI+gjeOwQ=
+X-Google-Smtp-Source: AGHT+IF0qMgnELSsh/SaUjjhvEZ5H2dsiw2RvHN61r4yu8dmqfDrHJsQn6VYJ97UynNVG/ZYSAEKyw==
+X-Received: by 2002:a05:6000:420e:b0:3e4:f194:2872 with SMTP id ffacd0b85a97d-3ee8435a56fmr9939669f8f.31.1758529900679;
+        Mon, 22 Sep 2025 01:31:40 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fc00a92sm19031245f8f.63.2025.09.22.01.31.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 01:30:52 -0700 (PDT)
-Message-ID: <aed8db95-8380-456c-9dc8-d36e58b31e4c@redhat.com>
-Date: Mon, 22 Sep 2025 10:30:50 +0200
+        Mon, 22 Sep 2025 01:31:40 -0700 (PDT)
+Message-ID: <52792fdf-e12f-4de5-ad9e-069a0f2fef42@rivosinc.com>
+Date: Mon, 22 Sep 2025 10:31:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,122 +81,216 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/proc: check p->vec_buf for NULL
-To: Jakub Acs <acsjakub@amazon.de>, linux-fsdevel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Jinjiang Tu <tujinjiang@huawei.com>, Suren Baghdasaryan <surenb@google.com>,
- Penglei Jiang <superman.xpt@gmail.com>, Mark Brown <broonie@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Andrei Vagin <avagin@gmail.com>,
- =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250922081713.77303-1-acsjakub@amazon.de>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [External] Re: [PATCH RFC 1/1] drivers: firmware: riscv: add
+ unknown NMI support
+To: yunhui cui <cuiyunhui@bytedance.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, conor@kernel.org, atishp@rivosinc.com,
+ ajones@ventanamicro.com, apatel@ventanamicro.com, mchitale@ventanamicro.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250919070048.94646-1-cuiyunhui@bytedance.com>
+ <20250919070048.94646-2-cuiyunhui@bytedance.com>
+ <ae93899e-372e-425a-ae23-deb4bbab3eeb@rivosinc.com>
+ <CAEEQ3wkpNwE14o7cLvf-cXc8xWy-s7_p_5-nShJaadqz6kVnBg@mail.gmail.com>
+ <CAEEQ3w=g_-y6AoGYcGLOow6eOd6zX1D6JXyHerortX=VYp1B8g@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250922081713.77303-1-acsjakub@amazon.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <CAEEQ3w=g_-y6AoGYcGLOow6eOd6zX1D6JXyHerortX=VYp1B8g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 22.09.25 10:17, Jakub Acs wrote:
-> When PAGEMAP_SCAN ioctl invoked with vec_len = 0 reaches
-> pagemap_scan_backout_range(), kernel panics with null-ptr-deref:
-> 
-> [   44.936808] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-> [   44.937797] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> [   44.938391] CPU: 1 UID: 0 PID: 2480 Comm: reproducer Not tainted 6.17.0-rc6 #22 PREEMPT(none)
-> [   44.939062] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [   44.939935] RIP: 0010:pagemap_scan_thp_entry.isra.0+0x741/0xa80
-> 
-> <snip registers, unreliable trace>
-> 
-> [   44.946828] Call Trace:
-> [   44.947030]  <TASK>
-> [   44.949219]  pagemap_scan_pmd_entry+0xec/0xfa0
-> [   44.952593]  walk_pmd_range.isra.0+0x302/0x910
-> [   44.954069]  walk_pud_range.isra.0+0x419/0x790
-> [   44.954427]  walk_p4d_range+0x41e/0x620
-> [   44.954743]  walk_pgd_range+0x31e/0x630
-> [   44.955057]  __walk_page_range+0x160/0x670
-> [   44.956883]  walk_page_range_mm+0x408/0x980
-> [   44.958677]  walk_page_range+0x66/0x90
-> [   44.958984]  do_pagemap_scan+0x28d/0x9c0
-> [   44.961833]  do_pagemap_cmd+0x59/0x80
-> [   44.962484]  __x64_sys_ioctl+0x18d/0x210
-> [   44.962804]  do_syscall_64+0x5b/0x290
-> [   44.963111]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> vec_len = 0 in pagemap_scan_init_bounce_buffer() means no buffers are
-> allocated and p->vec_buf remains set to NULL.
-> 
-> This breaks an assumption made later in pagemap_scan_backout_range(),
-> that page_region is always allocated for p->vec_buf_index.
-> 
-> Fix it by explicitly checking p->vec_buf for NULL before dereferencing.
-> 
-> Other sites that might run into same deref-issue are already (directly
-> or transitively) protected by checking p->vec_buf.
-> 
-> Note:
->  From PAGEMAP_SCAN man page, it seems vec_len = 0 is valid when no output
-> is requested and it's only the side effects caller is interested in,
-> hence it passes check in pagemap_scan_get_args().
-> 
-> This issue was found by syzkaller.
-> 
 
-Acked-by: David Hildenbrand <david@redhat.com>
 
--- 
-Cheers
+On 22/09/2025 10:11, yunhui cui wrote:
+> Hi Clément,
+> 
+> On Fri, Sep 19, 2025 at 3:52 PM yunhui cui <cuiyunhui@bytedance.com> wrote:
+>>
+>> Hi Clément,
+>>
+>> On Fri, Sep 19, 2025 at 3:18 PM Clément Léger <cleger@rivosinc.com> wrote:
+>>>
+>>>
+>>>
+>>> On 19/09/2025 09:00, Yunhui Cui wrote:
+>>>> Unknown NMI can force the kernel to respond (e.g., panic) when the
+>>>> system encounters unrecognized critical hardware events, aiding in
+>>>> troubleshooting system faults. This is implemented via the Supervisor
+>>>> Software Events (SSE) framework.
+>>>>
+>>>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>>>> ---
+>>>>  arch/riscv/include/asm/sbi.h     |  1 +
+>>>>  drivers/firmware/riscv/Kconfig   | 10 +++++
+>>>>  drivers/firmware/riscv/Makefile  |  1 +
+>>>>  drivers/firmware/riscv/sse_nmi.c | 77 ++++++++++++++++++++++++++++++++
+>>>>  4 files changed, 89 insertions(+)
+>>>>  create mode 100644 drivers/firmware/riscv/sse_nmi.c
+>>>>
+>>>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+>>>> index 874cc1d7603a5..5801f90a88f62 100644
+>>>> --- a/arch/riscv/include/asm/sbi.h
+>>>> +++ b/arch/riscv/include/asm/sbi.h
+>>>> @@ -481,6 +481,7 @@ enum sbi_sse_attr_id {
+>>>>
+>>>>  #define SBI_SSE_EVENT_LOCAL_HIGH_PRIO_RAS    0x00000000
+>>>>  #define SBI_SSE_EVENT_LOCAL_DOUBLE_TRAP              0x00000001
+>>>> +#define SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI                      0x00000002
+>>>
+>>> Was this submitted to the PRS WG ? This a specification modification so
+>>> it should go through the usual process.
+>>>
+>>>>  #define SBI_SSE_EVENT_GLOBAL_HIGH_PRIO_RAS   0x00008000
+>>>>  #define SBI_SSE_EVENT_LOCAL_PMU_OVERFLOW     0x00010000
+>>>>  #define SBI_SSE_EVENT_LOCAL_LOW_PRIO_RAS     0x00100000
+>>>> diff --git a/drivers/firmware/riscv/Kconfig b/drivers/firmware/riscv/Kconfig
+>>>> index ed5b663ac5f91..746bac862ac46 100644
+>>>> --- a/drivers/firmware/riscv/Kconfig
+>>>> +++ b/drivers/firmware/riscv/Kconfig
+>>>> @@ -12,4 +12,14 @@ config RISCV_SBI_SSE
+>>>>         this option provides support to register callbacks on specific SSE
+>>>>         events.
+>>>>
+>>>> +config RISCV_SSE_UNKNOWN_NMI
+>>>> +     bool "Enable SBI Supervisor Software Events unknown NMI support"
+>>>> +     depends on RISCV_SBI_SSE
+>>>> +     default y
+>>>> +     help
+>>>> +       This option enables support for delivering unknown Non-Maskable Interrupt (NMI)
+>>>> +       notifications via the Supervisor Software Events (SSE) framework. When enabled,
+>>>> +       unknown NMIs can trigger kernel responses (e.g., panic) for unrecognized critical
+>>>> +       hardware events, aiding in system fault diagnosis.
+>>>> +
+>>>>  endmenu
+>>>> diff --git a/drivers/firmware/riscv/Makefile b/drivers/firmware/riscv/Makefile
+>>>> index c8795d4bbb2ea..9242c6cd5e3e9 100644
+>>>> --- a/drivers/firmware/riscv/Makefile
+>>>> +++ b/drivers/firmware/riscv/Makefile
+>>>> @@ -1,3 +1,4 @@
+>>>>  # SPDX-License-Identifier: GPL-2.0
+>>>>
+>>>>  obj-$(CONFIG_RISCV_SBI_SSE)          += riscv_sbi_sse.o
+>>>> +obj-$(CONFIG_RISCV_SSE_UNKNOWN_NMI)  += sse_nmi.o
+>>>> diff --git a/drivers/firmware/riscv/sse_nmi.c b/drivers/firmware/riscv/sse_nmi.c
+>>>> new file mode 100644
+>>>> index 0000000000000..43063f42efff0
+>>>> --- /dev/null
+>>>> +++ b/drivers/firmware/riscv/sse_nmi.c
+>>>> @@ -0,0 +1,77 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0+
+>>>> +
+>>>> +#include <linux/mm.h>
+>>>> +#include <linux/nmi.h>
+>>>> +#include <linux/riscv_sbi_sse.h>
+>>>> +#include <linux/sched/debug.h>
+>>>> +#include <linux/sysctl.h>
+>>>> +
+>>>> +#include <asm/irq_regs.h>
+>>>> +#include <asm/sbi.h>
+>>>> +
+>>>> +int panic_on_unknown_nmi = 1;
+>>>> +struct sse_event *evt;
+>>>> +static struct ctl_table_header *unknown_nmi_sysctl_header;
+>>>> +
+>>>> +const struct ctl_table unknown_nmi_table[] = {
+>>>> +     {
+>>>> +             .procname       = "panic_enable",
+>>>> +             .data           = &panic_on_unknown_nmi,
+>>>> +             .maxlen         = sizeof(int),
+>>>> +             .mode           = 0644,
+>>>> +             .proc_handler   = proc_dointvec_minmax,
+>>>> +             .extra1         = SYSCTL_ZERO,
+>>>> +             .extra2         = SYSCTL_ONE,
+>>>> +     },
+>>>> +};
+>>>> +
+>>>> +static void nmi_handler(struct pt_regs *regs)
+>>>> +{
+>>>> +     pr_emerg("NMI received for unknown on CPU %d.\n", smp_processor_id());
+>>>> +
+>>>> +     if (panic_on_unknown_nmi)
+>>>> +             nmi_panic(regs, "NMI: Not continuing");
+>>>> +
+>>>> +     pr_emerg("Dazed and confused, but trying to continue\n");
+>>>> +}
+>>>
+>>> I'm dazed and confused as well ;) What's the point of this except
+>>> interrupting the kernel with a panic ? It seems like it's a better idea
+>>> to let the firmware handle that properly and display whatever
+>>> information are needed. Was your idea to actually force the kernel to
+>>> enter in some debug mode ?
+>>
+>> There is an important scenario: when the kernel becomes unresponsive,
+>> we need to trigger an unknown NMI to cause the system to panic() and
+>> then collect the vmcore, and such a requirement is common on x86
+>> servers.
+>>
+>>>
+>>> Thanks,
+>>>
+>>> Clément
+>>>
+>>>> +
+>>>> +static int nmi_sse_handler(u32 evt, void *arg, struct pt_regs *regs)
+>>>> +{
+>>>> +     nmi_handler(regs);
+>>>> +
+>>>> +     return 0;
+>>>> +}
+>>>> +
+>>>> +static int sse_nmi_init(void)
+>>>> +{
+>>>> +     int ret;
+>>>> +
+>>>> +     evt = sse_event_register(SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI, 0,
+>>>> +                              nmi_sse_handler, NULL);
+> 
+> Should we add this UNKNOWN_NMI event ID in Chapter 17 of the SBI spec?
 
-David / dhildenb
+Hi Yunhui,
+
+If you want it to be part of the spec, that should indeed be submitted
+for review.
+
+Thanks,
+
+Clément
+
+> 
+> 
+>>>> +     if (IS_ERR(evt))
+>>>> +             return PTR_ERR(evt);
+>>>> +
+>>>> +     ret = sse_event_enable(evt);
+>>>> +     if (ret) {
+>>>> +             sse_event_unregister(evt);
+>>>> +             return ret;
+>>>> +     }
+>>>> +
+>>>> +     unknown_nmi_sysctl_header = register_sysctl("kernel", unknown_nmi_table);
+>>>> +     if (!unknown_nmi_sysctl_header) {
+>>>> +             sse_event_disable(evt);
+>>>> +             sse_event_unregister(evt);
+>>>> +             return -ENOMEM;
+>>>> +     }
+>>>> +
+>>>> +     pr_info("Using SSE for NMI event delivery\n");
+>>>> +
+>>>> +     return 0;
+>>>> +}
+>>>> +
+>>>> +static int __init unknow_nmi_init(void)
+>>>> +{
+>>>> +     return sse_nmi_init();
+>>>> +}
+>>>> +
+>>>> +late_initcall(unknow_nmi_init);
+>>>
+>>
+>> Thanks,
+>> Yunhui
+> 
+> Thanks,
+> Yunhui
 
 
