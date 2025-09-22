@@ -1,156 +1,223 @@
-Return-Path: <linux-kernel+bounces-826969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09C2B8FC15
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E9DB8FC18
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C7217F806
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:29:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540DC3BBB92
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C97286D70;
-	Mon, 22 Sep 2025 09:29:45 +0000 (UTC)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A563E2868B8;
+	Mon, 22 Sep 2025 09:29:53 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C5C283FDB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11E7287276
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758533384; cv=none; b=MeaP3XwAAn/sXONPpCRcFrv+PYxBRd5FF07PCfGx2NXcwduE2ZjT6YMZUd4aYt/gcMnv92Lzs0udZL3RHfDSKBheg5199YZA9v++f7836VTE9CEU+hXMnSQzeHmR0DGQc06k5qz6PxCk05v8ICcYWvtZfi19jhtrRMDIJRs+5K0=
+	t=1758533393; cv=none; b=bqrqO7fuKbycHI0m0R0gZTcacrf2bjk8rUlJlvim3HHXhYt1W/BPq4q4FJKTmZdeXUs+dcVlsd/LmEabK9WQxKWz6zuGNtiALIFUNqY7X6Tj8kRZkg+vVm5MDmzuePdtyrOC3W6kC+6Pshpp2z8LVEQsYXYEWZoXPEvqcNO7BsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758533384; c=relaxed/simple;
-	bh=gxid6d73FASpgj+Dbo6qkKXdo6ItVd1h5REmlU4F6PE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tiXoBu72ZkjV5XVZBf8bgksmBfhPhQT8BKgNlNA3zRiVxWmW73OCls0LCecTOasEEatzPWIC3tCM4ztpXgZQKxXbph3fj4l5Pl67y4/BC9esrTkgKaBUQcyhd7aTDDYhpXwjmTaMreCFLQwxzEj0ibaNFm9KxcorX4bgrtanOzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-8fea25727a9so112322241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:29:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758533382; x=1759138182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ebw4sp1U8DsoLtMGrD53MUAXHrZ/k+nhfitncmC356Q=;
-        b=UyLgSoRnCXEB+HDtG0gAGERodVonS3aYoIq03g5nUkd3yxdJGTEtOHUWbY5iMQ+UYz
-         l8cd1xWlGq4E9UYttrdXbdbQCtlkPO2ZstGYb+O0mC4EdRji4+VUCeDEnBJpu32/CDfo
-         +EgyIF9zqliRz5136Srj1eVkRXfhjdjvpds5uYZ7EH8tYmoTXq7tXNkehSECnqXVDBjN
-         3U3Xc8hrD5/A/S2k0HgKOZHN4QUR1qIlXkYzw+CVXNSOEpTBsFpw6OEDDkJgmndXRHGb
-         UkhPz9JvXYhtJN4lMiaLAiXWTNRyLT4tbhQN1JCtdlVGHQ0HdCnBuDUSorSByb1wZ1O1
-         AMvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwV9LD9UzhRysD4sBTYgujj8DbYsgJQiO9WMs6qCEXTrvxh+tXI+y5f03RCEWYkk/R802GmamV6KQAavY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAeWcZTf1iv7GPWsV4201R6KcykykoE9HxUUdnzq3M3IB3AtDw
-	MRQ4rS9PEkDMOG7xUrLrLoe4rDvUb4245wpaey/B1NiugIy6c90ANuHDeYzRpSAQ
-X-Gm-Gg: ASbGncvBhKOh9iag4CfYL8gA8vIJBiL0N3yrTPeSZUQRwDu9egl9tXD+lPG2usuGieh
-	pOwCzcW0iarEUSABXGsIpQvvEuyRsM19fQ5mRDVj5a8oVUDhjta5UG5xYhIhb/Xt9s4nDMbbd1x
-	blQ41K99nhcy6HK21KOhdJ5BwRXpoy7kuWZaJbpEip7btzjPFIqux5dPcmDHSLuKj9y+RWdE0ni
-	iKbwfiU7TxCuXXJVy1ir+WempWgPk2Z3Vv3rTYgUR1559RqdANDPhiDViXWD81MG+QkH2FtskF1
-	TbNdFHAt99ROJ3YzEuZPnm07dJB1GIdiD1TjFFf6bQ8h1R8S6Ly1Rv9OUl5dZKWxaX+thj4l0tH
-	efhKhSqRSJC9pYGw7uUIXbvGXk53k7zBPSJU8Sh2bAd9iDjIEO4tSq9LMblPH
-X-Google-Smtp-Source: AGHT+IG8zW5SlZ61zL0ZoePs+NySyvPOtigg9DJqPnD4vByITN6d9uiFkbPz8+jkJDy/2bbLJIFONw==
-X-Received: by 2002:a05:6102:3e1b:b0:4ec:c4f8:c4d3 with SMTP id ada2fe7eead31-588d388e0f5mr2648909137.5.1758533381978;
-        Mon, 22 Sep 2025 02:29:41 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8fba10c5a57sm622565241.0.2025.09.22.02.29.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 02:29:41 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-5838680e242so1213630137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:29:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/fsCoMkzVTYUWlTUByyetEV7mM7BEK8Gf7kNyhtTUUYPU+kt8WT6twz/qSlflnqEOIwlZV6j1jo9SJpM=@vger.kernel.org
-X-Received: by 2002:a05:6102:c08:b0:522:255d:4d19 with SMTP id
- ada2fe7eead31-588eb292bb9mr3073422137.23.1758533380886; Mon, 22 Sep 2025
- 02:29:40 -0700 (PDT)
+	s=arc-20240116; t=1758533393; c=relaxed/simple;
+	bh=8RUAv9B+av9Alpi2qg8wnZIkhxQDm4TuXNFEHwk6LKQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MffH1r4XnMf3Ez2lSIestQfITzMX9oj1iyf2ZCHBgjhJxTAVQVrvMQpYY1LrvJuiRYWn9ZomyleDJBxxtXrNyROGS8OvT8s7L1ERWWxCIB0gnM5hnXmpgoy4s8bvMj2+Hv+f/BcqP2MyH6uQQJ+0zkeR8QTCAa00BfahjpLxxcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201622.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202509221729462433;
+        Mon, 22 Sep 2025 17:29:46 +0800
+Received: from localhost.localdomain (10.94.21.18) by
+ jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 22 Sep 2025 17:29:45 +0800
+From: Bo Liu <liubo03@inspur.com>
+To: <xiang@kernel.org>, <chao@kernel.org>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>, Bo Liu
+	<liubo03@inspur.com>
+Subject: [PATCH v4] erofs: Add support for FS_IOC_GETFSLABEL
+Date: Mon, 22 Sep 2025 17:29:36 +0800
+Message-ID: <20250922092937.2055-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
- <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com> <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
-In-Reply-To: <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 22 Sep 2025 11:29:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW-AG-NeGZKuVy1e=TGKN895F2eHEzkjJeaGvAADv-vOQ@mail.gmail.com>
-X-Gm-Features: AS18NWDKBc4eQCJYFdlrfn6McdPM_5-5yG-PRssau5_dGdaYxg2W9cfnnLuZ5PU
-Message-ID: <CAMuHMdW-AG-NeGZKuVy1e=TGKN895F2eHEzkjJeaGvAADv-vOQ@mail.gmail.com>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-m68k@vger.kernel.org, Lance Yang <lance.yang@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
+ jtjnmail201622.home.langchao.com (10.100.2.22)
+tUid: 2025922172946b58c7f6b1bce8db6fc89e7e6a4367736
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Hi Finn,
+From: Bo Liu (OpenAnolis) <liubo03@inspur.com>
 
-On Mon, 22 Sept 2025 at 10:16, Finn Thain <fthain@linux-m68k.org> wrote:
-> On Mon, 22 Sep 2025, Geert Uytterhoeven wrote:
-> > This triggers a failure in kernel/bpf/rqspinlock.c:
-> >
-> > kernel/bpf/rqspinlock.c: In function =E2=80=98bpf_res_spin_lock=E2=80=
-=99:
-> > include/linux/compiler_types.h:572:45: error: call to
-> > =E2=80=98__compiletime_assert_397=E2=80=99 declared with attribute erro=
-r: BUILD_BUG_ON
-> > failed: __alignof__(rqspinlock_t) !=3D __alignof__(struct
-> > bpf_res_spin_lock)
-> >   572 |         _compiletime_assert(condition, msg,
-> > __compiletime_assert_, __COUNTER__)
-> >       |                                             ^
-> > include/linux/compiler_types.h:553:25: note: in definition of macro
-> > =E2=80=98__compiletime_assert=E2=80=99
-> >   553 |                         prefix ## suffix();
-> >          \
-> >       |                         ^~~~~~
-> > include/linux/compiler_types.h:572:9: note: in expansion of macro
-> > =E2=80=98_compiletime_assert=E2=80=99
-> >   572 |         _compiletime_assert(condition, msg,
-> > __compiletime_assert_, __COUNTER__)
-> >       |         ^~~~~~~~~~~~~~~~~~~
-> > include/linux/build_bug.h:39:37: note: in expansion of macro
-> > =E2=80=98compiletime_assert=E2=80=99
-> >    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond),=
- msg)
-> >       |                                     ^~~~~~~~~~~~~~~~~~
-> > include/linux/build_bug.h:50:9: note: in expansion of macro =E2=80=98BU=
-ILD_BUG_ON_MSG=E2=80=99
-> >    50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #co=
-ndition)
-> >       |         ^~~~~~~~~~~~~~~~
-> > kernel/bpf/rqspinlock.c:695:9: note: in expansion of macro =E2=80=98BUI=
-LD_BUG_ON=E2=80=99
-> >   695 |         BUILD_BUG_ON(__alignof__(rqspinlock_t) !=3D
-> > __alignof__(struct bpf_res_spin_lock));
-> >       |         ^~~~~~~~~~~~
-> >
-> > I haven't investigated it yet.
->
-> Yes, I noticed that also, after I started building with defconfigs.
-> I pushed a new patch to my github repo.
->
-> https://github.com/fthain/linux/tree/atomic_t
+Add support for reading to the erofs volume label from the
+FS_IOC_GETFSLABEL ioctls.
 
-Thanks, the updated version fixes the issue.
+Signed-off-by: Bo Liu (OpenAnolis) <liubo03@inspur.com>
+---
 
-Gr{oetje,eeting}s,
+v1: https://lore.kernel.org/linux-erofs/20250825120617.19746-1-liubo03@inspur.com/
+v2: https://lore.kernel.org/linux-erofs/20250826103926.4424-1-liubo03@inspur.com/
+v3: https://lore.kernel.org/linux-erofs/20250920060455.24002-1-liubo03@inspur.com/
 
-                        Geert
+change since v3:
+- move functions into inode.
+- remove useless comment.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+ fs/erofs/data.c     |  4 ++++
+ fs/erofs/dir.c      |  4 ++++
+ fs/erofs/inode.c    | 40 ++++++++++++++++++++++++++++++++++++----
+ fs/erofs/internal.h |  6 ++++++
+ fs/erofs/super.c    |  8 ++++++++
+ 5 files changed, 58 insertions(+), 4 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+index 3b1ba571c728..8ca29962a3dd 100644
+--- a/fs/erofs/data.c
++++ b/fs/erofs/data.c
+@@ -475,6 +475,10 @@ static loff_t erofs_file_llseek(struct file *file, loff_t offset, int whence)
+ const struct file_operations erofs_file_fops = {
+ 	.llseek		= erofs_file_llseek,
+ 	.read_iter	= erofs_file_read_iter,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ 	.mmap_prepare	= erofs_file_mmap_prepare,
+ 	.get_unmapped_area = thp_get_unmapped_area,
+ 	.splice_read	= filemap_splice_read,
+diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+index debf469ad6bd..32b4f5aa60c9 100644
+--- a/fs/erofs/dir.c
++++ b/fs/erofs/dir.c
+@@ -123,4 +123,8 @@ const struct file_operations erofs_dir_fops = {
+ 	.llseek		= generic_file_llseek,
+ 	.read		= generic_read_dir,
+ 	.iterate_shared	= erofs_readdir,
++	.unlocked_ioctl = erofs_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl   = erofs_compat_ioctl,
++#endif
+ };
+diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
+index 9a2f59721522..7a9a9081f890 100644
+--- a/fs/erofs/inode.c
++++ b/fs/erofs/inode.c
+@@ -213,10 +213,7 @@ static int erofs_fill_inode(struct inode *inode)
+ 	switch (inode->i_mode & S_IFMT) {
+ 	case S_IFREG:
+ 		inode->i_op = &erofs_generic_iops;
+-		if (erofs_inode_is_data_compressed(vi->datalayout))
+-			inode->i_fop = &generic_ro_fops;
+-		else
+-			inode->i_fop = &erofs_file_fops;
++		inode->i_fop = &erofs_file_fops;
+ 		break;
+ 	case S_IFDIR:
+ 		inode->i_op = &erofs_dir_iops;
+@@ -341,6 +338,41 @@ int erofs_getattr(struct mnt_idmap *idmap, const struct path *path,
+ 	return 0;
+ }
+ 
++static int erofs_ioctl_get_volume_label(struct inode *inode, void __user *arg)
++{
++	struct erofs_sb_info *sbi = EROFS_I_SB(inode);
++	int ret;
++
++	if (!sbi->volume_name)
++		ret = clear_user(arg, 1);
++	else
++		ret = copy_to_user(arg, sbi->volume_name,
++				   strlen(sbi->volume_name));
++
++	return ret ? -EFAULT : 0;
++}
++
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct inode *inode = file_inode(filp);
++	void __user *argp = (void __user *)arg;
++
++	switch (cmd) {
++	case FS_IOC_GETFSLABEL:
++		return erofs_ioctl_get_volume_label(inode, argp);
++	default:
++		return -ENOTTY;
++	}
++}
++
++#ifdef CONFIG_COMPAT
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg)
++{
++	return erofs_ioctl(filp, cmd, (unsigned long)compat_ptr(arg));
++}
++#endif
++
+ const struct inode_operations erofs_generic_iops = {
+ 	.getattr = erofs_getattr,
+ 	.listxattr = erofs_listxattr,
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4ccc5f0ee8df..b70902e00586 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -166,6 +166,8 @@ struct erofs_sb_info {
+ 	struct erofs_domain *domain;
+ 	char *fsid;
+ 	char *domain_id;
++
++	char *volume_name;
+ };
+ 
+ #define EROFS_SB(sb) ((struct erofs_sb_info *)(sb)->s_fs_info)
+@@ -535,6 +537,10 @@ static inline struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev) {
+ static inline void erofs_fscache_submit_bio(struct bio *bio) {}
+ #endif
+ 
++long erofs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg);
++long erofs_compat_ioctl(struct file *filp, unsigned int cmd,
++			unsigned long arg);
++
+ #define EFSCORRUPTED    EUCLEAN         /* Filesystem is corrupted */
+ 
+ #endif	/* __EROFS_INTERNAL_H */
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 1b529ace4db0..f1535ebe03ec 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -343,6 +343,13 @@ static int erofs_read_superblock(struct super_block *sb)
+ 	sbi->fixed_nsec = le32_to_cpu(dsb->fixed_nsec);
+ 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
+ 
++	if (dsb->volume_name[0]) {
++		sbi->volume_name = kstrndup(dsb->volume_name,
++					    sizeof(dsb->volume_name), GFP_KERNEL);
++		if (!sbi->volume_name)
++			return -ENOMEM;
++	}
++
+ 	/* parse on-disk compression configurations */
+ 	ret = z_erofs_parse_cfgs(sb, dsb);
+ 	if (ret < 0)
+@@ -822,6 +829,7 @@ static void erofs_sb_free(struct erofs_sb_info *sbi)
+ 	kfree(sbi->domain_id);
+ 	if (sbi->dif0.file)
+ 		fput(sbi->dif0.file);
++	kfree(sbi->volume_name);
+ 	kfree(sbi);
+ }
+ 
+-- 
+2.31.1
+
 
