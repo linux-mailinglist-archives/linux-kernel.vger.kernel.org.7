@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-827085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D74B9040E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A68C0B9040B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659341893441
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F357B188BA07
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F8B303CBB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE7F303CB7;
 	Mon, 22 Sep 2025 10:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+xlhDzD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1/zJbftn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CBfUPWPi"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E5C286D56;
-	Mon, 22 Sep 2025 10:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824F32D4803
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758537849; cv=none; b=hbW9bruSlIbkQT8ADSlCu2GPEQfaLhG164RlpbqeiLCqf5wONIcyqsGFq05jLcHNekT9U063I0NCRe+iBlrL8/w+neGGnBjlOCCebQ3vpRMc+GFdfNHvxBZp0X5HFlpbDglMjeUAmbhfZq7vwJ5FjENwyKf7VVZbagXRPedyhxE=
+	t=1758537849; cv=none; b=HxLplYZJDqvcpMgXlBmg/DbmvqYXgiaFbyz226oBISH1mzB2qwsyfVoE8vGtuDoBdy64sPG7HHcen3hFDOliipsMQdnFFcOyRKBc9qt9LLhwigGai8Aa0tZMpGw6RoPt4ACQHx1yrDD2KCmkq+TezPQTEO3hh5F4JDWjbHy+j/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758537849; c=relaxed/simple;
-	bh=Scu0SimwoCRkxOBYc7t64x6kXw6D/8lqrdYnldQqIz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YoOfB6k9AZGzAUNE9KAPDTM7L2wWRuV/q5px3ZIhCKtpk5lVHqu8Na2O0jMRYDO8oyFBnPznnUQSvnp/ca3f5wDIPqXhsf98QU2SU8IkSNgviCTIkvA/EFC3CtdKm+lgojoeXoKcuBmPfv99WtoBg9beNNAGB+N+Gp6H/3p+c/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+xlhDzD; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758537848; x=1790073848;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Scu0SimwoCRkxOBYc7t64x6kXw6D/8lqrdYnldQqIz4=;
-  b=e+xlhDzDCi+qdwymzneAfgTUrWWg2qdDX5PoNX4ViLFQP2DYYC4rMbdd
-   Bpxo+3qTZxq2hZI3/DzSU+NPcTTM3M5Iiv7C4zfd7ApU3PTeSyOCm+XPT
-   tccHMGkREdkhnm4Dk7n6hx+NKcwWe3m1PDEUd97nVTfIMie2/N2uCxihc
-   jYMG5gbd1C1ri9+VzayajKVZFqAG9T6LDNPwGvykVgDUVUtEEsrRBU7NX
-   hJbnNqGja6T3vuUPH5NBnfSAxUWQWJuPY+33SMbCaZzgf7fBlVM8qJDKe
-   ZCA3oM86ze/5oy07ZxS7DseEpiZdF5KHmQ92BmZ5ZS2CFEMQU0CYNqDQP
-   w==;
-X-CSE-ConnectionGUID: Pv8yjoPGTT+sXZdFpM07jw==
-X-CSE-MsgGUID: /IoALYeNQZqmL6nN6htkdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60852398"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="60852398"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:44:07 -0700
-X-CSE-ConnectionGUID: jt9e9kpgS1C9Ak14/yW+Sw==
-X-CSE-MsgGUID: uUk8EzvJR72Z1zRMDduf4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
-   d="scan'208";a="180461341"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.61])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 03:44:04 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 3C78211F967;
-	Mon, 22 Sep 2025 13:44:01 +0300 (EEST)
-Date: Mon, 22 Sep 2025 13:44:01 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: bingbu.cao@intel.com, lixu.zhang@intel.com,
-	stanislaw.gruszka@linux.intel.com, mchehab@kernel.org,
-	wentong.wu@intel.com, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] media: pci: intel: ivsc: fix error handling in
- mei_ace driver
-Message-ID: <aNEocYyaT2pig7So@kekkonen.localdomain>
-References: <20250922094335.28486-1-make24@iscas.ac.cn>
+	bh=AlI+YKP8Q8Qoq1o9l54rYqFn7v+S33Yx+Mfa6s0Be6U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AtenqlZZBOByLouIWf6a049qmsnGU/ziCix5ZKb+HJc/r3iSaZ6LHQ+4VHocqaBK7dspkGZw3wzTtGPZA54bgb74Yvbd9pUyOC75lTuS+QyGVW5Fs2j+VbmluLgEEzr18ThqaZkUmPpWwKm6jSzvwrs09mqTFjdB35exzmGpSoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1/zJbftn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CBfUPWPi; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1758537845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2crP/7XMTvATF7qwRd2Qrq5+AyOo/h10TvTDPHrTCHM=;
+	b=1/zJbftnkJyG64lU2eFOFWq+l+mWseVycXC5BzrbM2gZj3rvwGposb4R4M68EvEuUQf5Aj
+	S3kSMweBLe9LPb0hbYw4H+JJRgCC+EO23OPTUv8IamuPK0hPZSxwZbDE9gsh99SZVWDwEf
+	v3euiyrLErqwwKOyCqGyTEjspFQDICj1PlcrvBt0lBgGKQ0qPjnISeI/GnzDQnKkLnojDf
+	zoyBHifRAg3mk4fxEaGLKLkggppajItyoyAtVspTQNiUSyREfi2Kn+PssICJaHlY7N3GLN
+	RgVTp4Sv3KnN/QYiyyUVI6giW20f5IOcJUNBOMDnkiKc1Hq3jOqW2evwdhho1A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1758537845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2crP/7XMTvATF7qwRd2Qrq5+AyOo/h10TvTDPHrTCHM=;
+	b=CBfUPWPihvc3BOfnH8LYNyZDjfQMAu5AfpBtdBcv3nNJCNFYWkxBbEazymKrSrUvD6eOxl
+	XOo8iDLDirH9wkBw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Breno Leitao <leitao@debian.org>, Mike Galbraith
+ <efault@gmx.de>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v1 1/1] printk: nbcon: Allow unsafe
+ write_atomic() for panic
+In-Reply-To: <aMq80xcRtQbthDiT@pathway.suse.cz>
+References: <20250912121852.2666874-1-john.ogness@linutronix.de>
+ <20250912121852.2666874-2-john.ogness@linutronix.de>
+ <aMl8xX9QCM9jslLH@pathway.suse.cz> <848qidw8ip.fsf@jogness.linutronix.de>
+ <aMq80xcRtQbthDiT@pathway.suse.cz>
+Date: Mon, 22 Sep 2025 12:50:04 +0206
+Message-ID: <848qi6kbrf.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922094335.28486-1-make24@iscas.ac.cn>
+Content-Type: text/plain
 
-Hi Ma,
+On 2025-09-17, Petr Mladek <pmladek@suse.com> wrote:
+>> After weighing the pros/cons I think that a global variable makes the
+>> most sense. It will simplify internal APIs and provide all
+>> console_is_usable() users a correct value. And the end result is no
+>> different than what we do now.
+>> 
+>> We could also keep its setting inside nbcon_atomic_flush_unsafe() so
+>> that the variable remains a printk-internal variable.
+>
+> Sounds good to me.
 
-On Mon, Sep 22, 2025 at 05:43:35PM +0800, Ma Ke wrote:
-> The mei_ace driver contains a device reference count leak in
-> mei_ace_setup_dev_link() where device_find_child_by_name() increases
-> the reference count of the found device but this reference is not
-> properly decreased in the success path. Add put_device() in
-> mei_ace_setup_dev_link() and delete put_device() in mei_ace_remove(),
-> which ensures that the reference count of the device is correctly
-> managed regardless of whether the probe is successful or fails.
-> 
-> Found by code review.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 78876f71b3e9 ("media: pci: intel: ivsc: Add ACE submodule")
+Right now things are a bit of a mess with required changes sitting in
+printk and mm trees. Since this won't be going in to the upcoming merge
+window, I will wait with v2 until you (Petr) can officially rebase the
+printk tree to include the recent panic_*cpu*() changes. That will also
+make it easier to coordinate the upcoming console_is_usable() changes as
+well.
 
-As this isn't a bug fix, I don't think we need these two tags. This should
-be taken into account in the subject and commit message as well.
+The functionality for v2 is the same as the v1, so the network folks can
+continue working on the nbcon netconsole implementation.
 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - modified the put_device() operations and the patch title as suggestions.
-> ---
->  drivers/media/pci/intel/ivsc/mei_ace.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
-> index 98310b8511b1..bb57656fc85a 100644
-> --- a/drivers/media/pci/intel/ivsc/mei_ace.c
-> +++ b/drivers/media/pci/intel/ivsc/mei_ace.c
-> @@ -420,6 +420,7 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
->  		goto err_put;
->  	}
->  
-> +	put_device(csi_dev);
+@Breno: Or were you planning on pushing the nbcon netconsole for the 6.18
+merge window next week? (I would guess no.)
 
-You can do this right after calling device_link_add().
-
->  	ace->csi_dev = csi_dev;
->  
->  	return 0;
-> @@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
->  	cancel_work_sync(&ace->work);
->  
->  	device_link_del(ace->csi_link);
-> -	put_device(ace->csi_dev);
->  
->  	pm_runtime_disable(&cldev->dev);
->  	pm_runtime_set_suspended(&cldev->dev);
-
--- 
-Regards,
-
-Sakari Ailus
+John
 
