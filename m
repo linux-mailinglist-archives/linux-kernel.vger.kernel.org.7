@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-826781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9E0B8F547
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:45:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F21DB8F54A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F64B189F333
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0844189F40B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D17C2F6184;
-	Mon, 22 Sep 2025 07:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593762F5483;
+	Mon, 22 Sep 2025 07:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fYkVa7vr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BNxo4C7+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C1686329;
-	Mon, 22 Sep 2025 07:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57D178F59;
+	Mon, 22 Sep 2025 07:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527120; cv=none; b=SKySCclZGHmvG8TVB0jHn5H0Bt+E59mn1Fad1MQNS0sn1CN3hjTs2HUeWoR0v5YxB50RStflzNmdjvMk/hZDyehDsm7HYZ8Yrf7HJCnbyYq9hbyDEZepLVNtjEW7oKpkgPLV1GBHoyY5yXVVjfQFgiR4Sy6EBqPhnggZQ0yiODU=
+	t=1758527154; cv=none; b=E+AEeEmU9VpOjEs5HdWERjWEknVOZ+9EofzJkiPpHcbFpbI2w89xnK3JV48XXaAhhMMzrPYuuS9oQjhzczdP/5OA3HrZfA2glJCFC5cj5/PfaKf2QXtBItfgTP1Ol+7F7VV2uv3kdMWgzO+X/hGYkJ0buC4QsnEFnH4bECWHfuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527120; c=relaxed/simple;
-	bh=H1RyaGQe908wgP+9DtCfGX//XxA1/HxhCRdfcWfFnz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDbws+FQH/DQ5cPNw4Nqeiruet82jx9Ctnoo8+UIxlvW4GlcskIut531Rgco50WICSAtSmsBlY2etyvEVTLyDlLMW6DrBDM1lL4+NzKC5taY2gqG/eMKgSD1FXbGSyY3nZ9n3MkgSS7jPFUaxz3FJ2p8iTR9SqOMuxwf4TYkf9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fYkVa7vr; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1758527154; c=relaxed/simple;
+	bh=iAwhLYlHl5Ayqav7u+OiSzYC0RGYwRIVg0l54hTvL7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfHRoPHY9KRsXMgjzjRIGl4XIhOmo4U1d8Nc5EOldFzSLE/3/yoZ0L05yO5aRwXd4cq8cnmcEbdviDFqyqa/SsNfAO8j7yEBZkJoP6PDspkpOrFedVPZD0k+b/tFQZ2RE1XQguPI4R03WA7+uL3pJ6a83YdqCwHRV0t4WFiy4OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BNxo4C7+; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758527120; x=1790063120;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H1RyaGQe908wgP+9DtCfGX//XxA1/HxhCRdfcWfFnz4=;
-  b=fYkVa7vr2GGEbJfEFsfcOIrvUaFBw6nSD1prLtP5u0+sytar615BsP6g
-   xOgPSut/HEYAxDjvwp19/n+CWjb80H+hG1SMxijGOtkJgrm/WWI1EXG2a
-   TolX1H3myh8IBYrMvWjyvGSjKeRPTQl26cB7I6Qfg6GPpi08gkkHn1su/
-   xAkdPrXaGN4xXT06/uj33KbOTPUp3Jfb3rI+NV4K4n7NUfFqbcU/m2fUc
-   OLiMvRqB8nqrBlB0PTuzq0AmUXFQ5AjP75V3BeiUCMUuHc2lkDSCcI/f/
-   GhWc5oEHP5Psqber+rYtYuo+wfxZ9pUaS18i8qyEjyMUO4AwtiyoP2Tgi
-   Q==;
-X-CSE-ConnectionGUID: dOodfSctSOq24iLZ62LSuw==
-X-CSE-MsgGUID: cKjAn5KfRiW1Yzw0vc8IHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="78224477"
+  t=1758527153; x=1790063153;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=iAwhLYlHl5Ayqav7u+OiSzYC0RGYwRIVg0l54hTvL7g=;
+  b=BNxo4C7+cDIYeqCpLuBU6cukwrAQiwML0SwTH8nskOQe0Ux9EO0SsDzP
+   HAi8jKQelNEGZSDiia8ZWH79h35jsO6XpSHWqUqTgnNQjkcxTVdqR+h57
+   x60Nj3TUncOGJMPwdsYhC2X8BOZ9qWSdBWKGCYG1YrHseHE12jqYC/wpU
+   9Z51Zw3dCKLcjyMwIAId6bnm4dT07nBFTVoBDM3rSERuZ9ljNPmHOHEB2
+   +izYEk2yInC0qXIZdz9dS2jnXg3i+0nK3HP2nfN7hOQHQ+TYIGyj6S1fS
+   dDF7nyq4OqRzAsJSJJICyowqHZoIcm+EDimxDgz+Snh5LG7WCvzHuQ2EL
+   A==;
+X-CSE-ConnectionGUID: OvnhSjJ/SXWl4mwGxGlyYg==
+X-CSE-MsgGUID: ol7GuW9kS8Kij2Uk/YFYmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60900847"
 X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="78224477"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:45:19 -0700
-X-CSE-ConnectionGUID: h9HCINiUTMCizWZCP4GPqw==
-X-CSE-MsgGUID: /oSvEyXuS/2s/wbNz4RHQQ==
+   d="scan'208";a="60900847"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:45:46 -0700
+X-CSE-ConnectionGUID: zztHcduxSAyarDiRci7ATw==
+X-CSE-MsgGUID: 84DCj+z/ROWNWRHnHJb/qQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="207149858"
-Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 22 Sep 2025 00:45:16 -0700
-Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v0bEV-0001QP-0U;
-	Mon, 22 Sep 2025 07:45:11 +0000
-Date: Mon, 22 Sep 2025 15:45:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>, srini@kernel.org, lgirdwood@gmail.com,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-	pierre-louis.bossart@linux.dev
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: wcd934x: fix error handling in
- wcd934x_codec_parse_data()
-Message-ID: <202509221535.es8PWacQ-lkp@intel.com>
-References: <20250922013507.558-1-make24@iscas.ac.cn>
+   d="scan'208";a="175539880"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:45:43 -0700
+Message-ID: <f0fb4c6e-cf79-45ad-846c-9dc67bd91f5f@linux.intel.com>
+Date: Mon, 22 Sep 2025 15:45:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922013507.558-1-make24@iscas.ac.cn>
-
-Hi Ma,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on broonie-sound/for-next]
-[also build test WARNING on linus/master v6.17-rc7 next-20250919]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/ASoC-wcd934x-fix-error-handling-in-wcd934x_codec_parse_data/20250922-094038
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-patch link:    https://lore.kernel.org/r/20250922013507.558-1-make24%40iscas.ac.cn
-patch subject: [PATCH v2] ASoC: wcd934x: fix error handling in wcd934x_codec_parse_data()
-config: i386-buildonly-randconfig-005-20250922 (https://download.01.org/0day-ci/archive/20250922/202509221535.es8PWacQ-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509221535.es8PWacQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509221535.es8PWacQ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> sound/soc/codecs/wcd934x.c:5862:38: warning: cast from 'void (*)(struct device *)' to 'void (*)(void *)' converts to incompatible function type [-Wcast-function-type-strict]
-    5862 |         ret = devm_add_action_or_reset(dev, (void (*)(void *))put_device, &wcd->sidev->dev);
-         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/device/devres.h:166:34: note: expanded from macro 'devm_add_action_or_reset'
-     166 |         __devm_add_action_or_reset(dev, action, data, #action)
-         |                                         ^~~~~~
-   1 warning generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 26/51] KVM: x86: Disable support for Shadow Stacks if
+ TDP is disabled
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+ Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-27-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250919223258.1604852-27-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-vim +5862 sound/soc/codecs/wcd934x.c
 
-  5837	
-  5838	static int wcd934x_codec_probe(struct platform_device *pdev)
-  5839	{
-  5840		struct device *dev = &pdev->dev;
-  5841		struct wcd934x_ddata *data = dev_get_drvdata(dev->parent);
-  5842		struct wcd934x_codec *wcd;
-  5843		int ret, irq;
-  5844	
-  5845		wcd = devm_kzalloc(dev, sizeof(*wcd), GFP_KERNEL);
-  5846		if (!wcd)
-  5847			return -ENOMEM;
-  5848	
-  5849		wcd->dev = dev;
-  5850		wcd->regmap = data->regmap;
-  5851		wcd->extclk = data->extclk;
-  5852		wcd->sdev = to_slim_device(data->dev);
-  5853		mutex_init(&wcd->sysclk_mutex);
-  5854		mutex_init(&wcd->micb_lock);
-  5855		wcd->common.dev = dev->parent;
-  5856		wcd->common.max_bias = 4;
-  5857	
-  5858		ret = wcd934x_codec_parse_data(wcd);
-  5859		if (ret)
-  5860			return ret;
-  5861	
-> 5862		ret = devm_add_action_or_reset(dev, (void (*)(void *))put_device, &wcd->sidev->dev);
-  5863		if (ret)
-  5864			return ret;
-  5865	
-  5866		/* set default rate 9P6MHz */
-  5867		regmap_update_bits(wcd->regmap, WCD934X_CODEC_RPM_CLK_MCLK_CFG,
-  5868				   WCD934X_CODEC_RPM_CLK_MCLK_CFG_MCLK_MASK,
-  5869				   WCD934X_CODEC_RPM_CLK_MCLK_CFG_9P6MHZ);
-  5870		memcpy(wcd->rx_chs, wcd934x_rx_chs, sizeof(wcd934x_rx_chs));
-  5871		memcpy(wcd->tx_chs, wcd934x_tx_chs, sizeof(wcd934x_tx_chs));
-  5872	
-  5873		irq = regmap_irq_get_virq(data->irq_data, WCD934X_IRQ_SLIMBUS);
-  5874		if (irq < 0)
-  5875			return dev_err_probe(wcd->dev, irq, "Failed to get SLIM IRQ\n");
-  5876	
-  5877		ret = devm_request_threaded_irq(dev, irq, NULL,
-  5878						wcd934x_slim_irq_handler,
-  5879						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-  5880						"slim", wcd);
-  5881		if (ret)
-  5882			return dev_err_probe(dev, ret, "Failed to request slimbus irq\n");
-  5883	
-  5884		wcd934x_register_mclk_output(wcd);
-  5885		platform_set_drvdata(pdev, wcd);
-  5886	
-  5887		return devm_snd_soc_register_component(dev, &wcd934x_component_drv,
-  5888						       wcd934x_slim_dais,
-  5889						       ARRAY_SIZE(wcd934x_slim_dais));
-  5890	}
-  5891	
+On 9/20/2025 6:32 AM, Sean Christopherson wrote:
+> Make TDP a hard requirement for Shadow Stacks, as there are no plans to
+> add Shadow Stack support to the Shadow MMU.  E.g. KVM hasn't been taught
+> to understand the magic Writable=0,Dirty=0 combination that is required
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Writable=0,Dirty=0 -> Writable=0,Dirty=1
+
+Otherwise,
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> for Shadow Stack accesses, and so enabling Shadow Stacks when using
+> shadow paging will put the guest into an infinite #PF loop (KVM thinks the
+> shadow page tables have a valid mapping, hardware says otherwise).
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/x86/kvm/cpuid.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 32fde9e80c28..499c86bd457e 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -955,6 +955,14 @@ void kvm_set_cpu_caps(void)
+>   	if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
+>   		kvm_cpu_cap_clear(X86_FEATURE_PKU);
+>   
+> +	/*
+> +	 * Shadow Stacks aren't implemented in the Shadow MMU.  Shadow Stack
+> +	 * accesses require "magic" Writable=0,Dirty=1 protection, which KVM
+> +	 * doesn't know how to emulate or map.
+> +	 */
+> +	if (!tdp_enabled)
+> +		kvm_cpu_cap_clear(X86_FEATURE_SHSTK);
+> +
+>   	kvm_cpu_cap_init(CPUID_7_EDX,
+>   		F(AVX512_4VNNIW),
+>   		F(AVX512_4FMAPS),
+
 
