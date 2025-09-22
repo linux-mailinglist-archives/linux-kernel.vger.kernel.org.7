@@ -1,277 +1,244 @@
-Return-Path: <linux-kernel+bounces-827909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2347AB93670
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67934B93673
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E66441C28
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AA0917A587
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8392D2F6166;
-	Mon, 22 Sep 2025 21:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670002DEA68;
+	Mon, 22 Sep 2025 21:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vvmpTMs9"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hnP47hnX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0801E287276
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECC025A34F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758577879; cv=none; b=YdeymQZ061a5Sxl2mkie72YQa0sYQre5qr59R6OZVRK9D776oQAxYhvh/XCTec7i1mgpQNGPa78daBP+W3DgT6bgtMTbVECCzTohqf+Dq6+g7BO3fvNa6X7KCknx9N69cQtDF8KZL+Hv3tw+Xh5m9gvHVzTOSvzgHEzvFG6Ga7w=
+	t=1758577906; cv=none; b=CAX/sbm4w9b+m5+Yk1k8EEayVx9LyCIYhTUA7kUfmlEYojZwydI54BO8N/WP0Cz9TdxcPaZRuo0ulwfUL+MylIS7V0D1CHi4qGdXGUR1hLrB4kZG9O3wEveor+gVUOD6OthQ89AxGu34fMUztxA/BHQo3hq/boMZJEtVZZF41O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758577879; c=relaxed/simple;
-	bh=4gTCxkmFt7LbJAKduGir9q8RFZ8lBqIzBigYw0KLi0U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sfvVdxEsgryygts4tLoxJzx0bBLSBNX34mKqisaQ6FNpUap/p3vSSjFGP3GRTrD3WsB3LngublgcMIg0LndysfhF6uTHmFdX407Q4G2IiiBVdS/Nmd1DmJ+y1aPg2vXlENTjKJO3r2RxrxTIjCXSwICdVVryI//k8pyQyEtBazo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vvmpTMs9; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee4998c4aso4595866a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1758577875; x=1759182675; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQ89xwcUbdPfzaNC8pLCecb224L4f7AvU3SVssm464k=;
-        b=vvmpTMs9gx03PX3XjdV5g1G+VWIdNT1tjxJz8tmT1qh66vcz4MweEhuUJ+lm9tt/9d
-         qdCDih+Th8mniYOoB25QwRPewyV+gGxNk7gMyvO/jOuRAMqF5eHJjnyTkeCsFU9letic
-         JaPyEhHVuA7IzGtx8lYdxnT/NDeHB4kmQLFRf678i2A1P6DnDnIf4QEuXmILpjoI28yZ
-         wJKsTgxtzV2lEx7mf5g8yaSUykTpWWMPmTYmSZSGs3P7b0NB71f7KyICQuDhbwhWBJNd
-         AyXxt68jPzcnvbU/k67BkIcGAu+p0GJRebm/Rjls2VPStbRv2kcE9lFA40KN+klEXXAQ
-         VKzQ==
+	s=arc-20240116; t=1758577906; c=relaxed/simple;
+	bh=IO+2VJI4ZMWwrOEJVHLzPh+dWD6p3JDoCjrwZpVkmHA=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=W8kPpp/2TxLG/893dawOwoPIhPsqrvUox2w9vEVZ9qG9W407/u7Wz4FLGKUBvBOOzVuXsOXO62wId/jKv3I7BYprTqZq8+jnp3cg08t6pOKzzkgTDdwmYso/6N8oqHyKLeWAoLiUJ3l+EXCwN5gMaLeXIVMFc0qUfEeJnhNWVl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hnP47hnX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758577904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FEinhsYu5ZAzzk9ZjrHV61k9LGkgCm2NxTV8yeK83cc=;
+	b=hnP47hnXJOhxb3/VmTwR7sAj+ymhfMGtm/GL4R5JlMvdjiUQe9aV0I6j5GZ5o35mR2OhXs
+	8noZK0NTTzTSjk3uj2UWYh9naSvhbXcc4VTry5hn3dafERUk4zpipdsz42NvlBeXLsLscC
+	5LKG16WlD2z4HIokLDUhXY+jP5QdrNA=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-606-c7WeH9-OMx25AhfeVAHS1g-1; Mon, 22 Sep 2025 17:51:42 -0400
+X-MC-Unique: c7WeH9-OMx25AhfeVAHS1g-1
+X-Mimecast-MFC-AGG-ID: c7WeH9-OMx25AhfeVAHS1g_1758577902
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-81ea2cb6f13so962822585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:51:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758577875; x=1759182675;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SQ89xwcUbdPfzaNC8pLCecb224L4f7AvU3SVssm464k=;
-        b=AXM+DQe03sRUl8CVbAZPqgZnIg3/fXU4CD4Wg3BQdChSCp78HuVnGYkwnmWZgVijhF
-         pdsqNG0RzFQKjKJHDHjoYepKSk/iIEkLmPfFl25sxb1Ulmlnx18Xv1bPJOndVDIwNwhG
-         x1veTrMvwPp3LpeZlRHACF2HtTJEKXDlGPnoBunB1PmeUp29sEoz9kVs6lrkqZFzp+6V
-         yY8YnIBZ+BYeMCGIPjCzloJT5b7Gjaz9HTGPgbV5V2PMd1UzM0gOV33rzH2SY0arY9hA
-         uKBqjCbSAredG1sZDq1NKvplsWUzSl2KUuLLGs82IdRma44WPi1NL8L4eGbBC8QfGVrF
-         V9yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRYyM7JunoF6+Iz+oj5cymc4w0A2sC/w3wiqBgze4YQ73icyiuA9xDKEGV+L/9ORbf+uOP6k8LDQl959c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvQPNBzhv1avdU2gt7W06w9WCY3Jy+2kn0IbpyMrwlUGFFdJWN
-	EfJaDvV17xswbZDxoZogSmEFULcG0Qb5bOLvimnrYg4NIc1XhZNA6EtPic17z50FVMtmcE6cnZw
-	nJzfu4Q==
-X-Google-Smtp-Source: AGHT+IHsV39PUiM8jSMXJ1TFDCv7QgcTSMXBPnSyUL+WNYqfnqN++rRnXbYTiLp3Hl+CdJgodqXHnVoKFpU=
-X-Received: from pjff6.prod.google.com ([2002:a17:90b:5626:b0:329:7dfc:f4e1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a42:b0:32d:d408:e86
- with SMTP id 98e67ed59e1d1-332a94f5f80mr552161a91.7.1758577875232; Mon, 22
- Sep 2025 14:51:15 -0700 (PDT)
-Date: Mon, 22 Sep 2025 14:51:13 -0700
-In-Reply-To: <20250918162529.640943-1-jon@nutanix.com>
+        d=1e100.net; s=20230601; t=1758577902; x=1759182702;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FEinhsYu5ZAzzk9ZjrHV61k9LGkgCm2NxTV8yeK83cc=;
+        b=Av5mOK0zK5riIf1rHjT9aLIfgIgNaaEkdRLj6u+gz0IoBy9R/cxwTxTXsVwngQv8wM
+         43S0W5/Gzijsna/JD7y8BXF/KxwgGUr6YR/MFa6GKpWsbyiSfBkbc6IbmfqwJy6J5/Km
+         M2Fax+LrqtKcMn9dek0CaIuBBrL3zR0lGQi6jryomQJ9U61f9FE10qKfOy4r0tiEvs4j
+         vCisYXB9kJa3BgScQ7/c8txGyxbeeVwnFor35h+12ukXKFwR/x2496uWEh1hpNhgPxR3
+         VHjoYFCQdd6R8ChbqLfTdU2EM+1lXR3Je5NUwvQs05wdeomMveaRgKziKv5Bb2NzW3W5
+         IGNA==
+X-Gm-Message-State: AOJu0YwttH2znT6KluKWcgplhJk4oNXY9FO2nLUUysRT/TWxATQNg3Su
+	aQTQujsjY2XAsSNHQlA30IIgVJyhJHTC46VZIU0IzrYslTCopCO6R3M9zmCC/I0KI2e4yarLyaR
+	cKlPn3EtKo33PstEKrbfJbobjQwkODTSrJ0NzkLSjXuttkle+TDUMiDHASgtxm91dXkNK+8DWPA
+	==
+X-Gm-Gg: ASbGnctblcuk7d3ZPtOJEZuHQIXpDNaY96vnQ0oUNJx2YMDwNM5+yIXL49laRcDr2kD
+	9QG9L2qAiCJceLtyFLlpfmT0QY+LLEm3NN86NgZ8fftt4v//O4pCjxXaG5S2ExpJV9AgjYvEWX0
+	umNlkRm1GxylI76JhSfLxoQo+C4bbSqrxjL6Qz5/vwZBRYB0Uo+8ZymPCh04vW8L4eACjodroDw
+	oUBk84SDVmoV1ZwQObeAgy7v2v5vBvrruLsnKPCndMNsMnY6h6NtX4GBxYx6hhVvUT0Uj6+9OCC
+	fN/0rw/FVnDrNvQQAYlIx+/cisOPTrse82/Pq0Agl1MAZwa7awWW9/VsCEWNt0S6yXkvgsgFbRH
+	bboxQoRpK3uA=
+X-Received: by 2002:a05:620a:2687:b0:833:b213:c062 with SMTP id af79cd13be357-85173701bf6mr62639885a.40.1758577901710;
+        Mon, 22 Sep 2025 14:51:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJb1ojM9Iwcf/vhwYlmDHzcaqEu1qarCseJ6sSvAXpTXynFpjhKro6kJnwCmmx+9EwGXyDTw==
+X-Received: by 2002:a05:620a:2687:b0:833:b213:c062 with SMTP id af79cd13be357-85173701bf6mr62637285a.40.1758577901241;
+        Mon, 22 Sep 2025 14:51:41 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8363198b0fbsm869143885a.50.2025.09.22.14.51.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 14:51:40 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <f1545ac2-9a4e-49e9-b918-205f617ec900@redhat.com>
+Date: Mon, 22 Sep 2025 17:51:39 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250918162529.640943-1-jon@nutanix.com>
-Message-ID: <aNHE0U3qxEOniXqO@google.com>
-Subject: Re: [PATCH] KVM: x86: skip userspace IOAPIC EOI exit when Directed
- EOI is enabled
-From: Sean Christopherson <seanjc@google.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Khushit Shah <khushit.shah@nutanix.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/33] PCI: Protect against concurrent change of
+ housekeeping cpumask
+To: Frederic Weisbecker <frederic@kernel.org>, Waiman Long <llong@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
+ <mhocko@suse.com>, Peter Zijlstra <peterz@infradead.org>,
+ Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, linux-pci@vger.kernel.org
+References: <20250829154814.47015-1-frederic@kernel.org>
+ <20250829154814.47015-3-frederic@kernel.org>
+ <458c5db8-0c31-4c02-9c41-b7eca851d04a@redhat.com>
+ <aMwQcVZeTwuk2Q8A@localhost.localdomain>
+Content-Language: en-US
+In-Reply-To: <aMwQcVZeTwuk2Q8A@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-It'd be super helpful for downstream folks to mention "split IRQCHIP" somewhere
-in the shortlog, e.g.
-
-  KVM: x86: Suppress EOI broadcasts with split IRQCHIP if Directed EOI is enabled
-
-On Thu, Sep 18, 2025, Jon Kohler wrote:
-> From: Khushit Shah <khushit.shah@nutanix.com>
-> 
-> Problem:
-
-Please read Documentation/process/maintainer-kvm-x86.rst.  I'll die on the hill
-that leading with a problem statement results in a less efficient changelog.
-
-And nowhere in the changelog does it state what change is actually being made.
-The shortlog calls it out, but the shortlog isn't always visible, e.g. when
-reviewing the initial patch email.
-
-> We observed Windows w/ HyperV getting stuck during boot because of
-
-No "we".  Over time, who "we" is can become unclear.
-
-> level triggered interrupt storm. This is because KVM currently
-> does not respect Directed EOI bit set by guest in split-irqchip
-> mode.
+On 9/18/25 10:00 AM, Frederic Weisbecker wrote:
+> Le Fri, Aug 29, 2025 at 06:01:17PM -0400, Waiman Long a écrit :
+>> On 8/29/25 11:47 AM, Frederic Weisbecker wrote:
+>>> HK_TYPE_DOMAIN will soon integrate cpuset isolated partitions and
+>>> therefore be made modifyable at runtime. Synchronize against the cpumask
+>>> update using RCU.
+>>>
+>>> The RCU locked section includes both the housekeeping CPU target
+>>> election for the PCI probe work and the work enqueue.
+>>>
+>>> This way the housekeeping update side will simply need to flush the
+>>> pending related works after updating the housekeeping mask in order to
+>>> make sure that no PCI work ever executes on an isolated CPU.
+>>>
+>>> Signed-off-by: Frederic Weisbecker<frederic@kernel.org>
+>>> ---
+>>>    drivers/pci/pci-driver.c | 40 +++++++++++++++++++++++++++++++---------
+>>>    1 file changed, 31 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+>>> index 63665240ae87..cf2b83004886 100644
+>>> --- a/drivers/pci/pci-driver.c
+>>> +++ b/drivers/pci/pci-driver.c
+>>> @@ -302,9 +302,8 @@ struct drv_dev_and_id {
+>>>    	const struct pci_device_id *id;
+>>>    };
+>>> -static long local_pci_probe(void *_ddi)
+>>> +static int local_pci_probe(struct drv_dev_and_id *ddi)
+>>>    {
+>>> -	struct drv_dev_and_id *ddi = _ddi;
+>>>    	struct pci_dev *pci_dev = ddi->dev;
+>>>    	struct pci_driver *pci_drv = ddi->drv;
+>>>    	struct device *dev = &pci_dev->dev;
+>>> @@ -338,6 +337,19 @@ static long local_pci_probe(void *_ddi)
+>>>    	return 0;
+>>>    }
+>>> +struct pci_probe_arg {
+>>> +	struct drv_dev_and_id *ddi;
+>>> +	struct work_struct work;
+>>> +	int ret;
+>>> +};
+>>> +
+>>> +static void local_pci_probe_callback(struct work_struct *work)
+>>> +{
+>>> +	struct pci_probe_arg *arg = container_of(work, struct pci_probe_arg, work);
+>>> +
+>>> +	arg->ret = local_pci_probe(arg->ddi);
+>>> +}
+>>> +
+>>>    static bool pci_physfn_is_probed(struct pci_dev *dev)
+>>>    {
+>>>    #ifdef CONFIG_PCI_IOV
+>>> @@ -362,34 +374,44 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
+>>>    	dev->is_probed = 1;
+>>>    	cpu_hotplug_disable();
+>>> -
+>>>    	/*
+>>>    	 * Prevent nesting work_on_cpu() for the case where a Virtual Function
+>>>    	 * device is probed from work_on_cpu() of the Physical device.
+>>>    	 */
+>>>    	if (node < 0 || node >= MAX_NUMNODES || !node_online(node) ||
+>>>    	    pci_physfn_is_probed(dev)) {
+>>> -		cpu = nr_cpu_ids;
+>>> +		error = local_pci_probe(&ddi);
+>>>    	} else {
+>>>    		cpumask_var_t wq_domain_mask;
+>>> +		struct pci_probe_arg arg = { .ddi = &ddi };
+>>> +
+>>> +		INIT_WORK_ONSTACK(&arg.work, local_pci_probe_callback);
+>>>    		if (!zalloc_cpumask_var(&wq_domain_mask, GFP_KERNEL)) {
+>>>    			error = -ENOMEM;
+>>>    			goto out;
+>>>    		}
+>>> +
+>>> +		rcu_read_lock();
+>>>    		cpumask_and(wq_domain_mask,
+>>>    			    housekeeping_cpumask(HK_TYPE_WQ),
+>>>    			    housekeeping_cpumask(HK_TYPE_DOMAIN));
+>>>    		cpu = cpumask_any_and(cpumask_of_node(node),
+>>>    				      wq_domain_mask);
+>>> +		if (cpu < nr_cpu_ids) {
+>>> +			schedule_work_on(cpu, &arg.work);
+>>> +			rcu_read_unlock();
+>>> +			flush_work(&arg.work);
+>>> +			error = arg.ret;
+>>> +		} else {
+>>> +			rcu_read_unlock();
+>>> +			error = local_pci_probe(&ddi);
+>>> +		}
+>>> +
+>>>    		free_cpumask_var(wq_domain_mask);
+>>> +		destroy_work_on_stack(&arg.work);
+>>>    	}
+>>> -
+>>> -	if (cpu < nr_cpu_ids)
+>>> -		error = work_on_cpu(cpu, local_pci_probe, &ddi);
+>>> -	else
+>>> -		error = local_pci_probe(&ddi);
+>>>    out:
+>>>    	dev->is_probed = 0;
+>>>    	cpu_hotplug_enable();
+>> A question. Is the purpose of open-coding work_on_cpu() to avoid calling
+>> INIT_WORK_ONSTACK() and destroy_work_on_stack() in RCU read-side critical
+>> section? These two macro/function may call debugobjects code which I don't
+>> know if they are allowed inside rcu_read_lock() critical section.
+>>
+>> Cheers, Longman
+> No the point is that I need to keep the target selection
+> (housekeeping_cpumask() read) and the work queue within the same
+> RCU critical section so that things are synchronized that way:
 >
-> We observed the following ACTUAL sequence on Windows guests with
+>      CPU 0                                          CPU 1
+>      -----                                          -----
+>      rcu_read_lock()                                housekeeping_update()
+>      cpu = cpumask_any(housekeeping_cpumask(...))       housekeeping_cpumask &= ~val
+>      queue_work_on(cpu, pci_probe_wq, work)             synchronize_rcu()
+>      rcu_read_unlock()                                  flush_workqueue(pci_probe_wq)
+>      flush_work(work)
+>          
+> And I can't include the whole work_on_cpu() within rcu_read_lock() because
+> flush_work() may sleep.
 
-Uber nit, generally speaking, use asterisks or underscores to emphasive a word.
-Using all caps suggests there is special meaning to the word, e.g. that it's an
-acronym or something.  I am guilty of using ALL CAPS, but I'm pretty sure only
-for "do NOT", where I think/hope the intent is clear.  For whatever reason, I
-kept doing double-takes when reading this sentence.
+Right, you are trying to avoid flush_work() within rcu_read_lock() 
+critical section. It makes it easier to review if you mention that in 
+the commit log.
 
-Though to be honest, I would omit the whole "actual" part.  There's an assumption
-that everyone is acting in good faith, i.e. that contributors aren't fabricating
-a bug report or making things up.
+>
+> Also now that you mention it, I need to create that pci_probe_wq and flush it :-)
 
-> Directed EOI enabled:
->   1. Guest issues an APIC EOI.
->   2. The interrupt is injected into L2 and serviced.
->   3. Guest issues an IOAPIC EOI.
-> 
-> But, with the current behavior in split-irqchip mode:
->   1. Guest issues an APIC EOI.
->   2. KVM exits to userspace and QEMU's ioapic_service reasserts the
->      interrupt because the line is not yet deasserted.
->   3. Steps 1 and 2 keeps looping, and hence no progress is made.
-> (logs at the bug linked below).
+OK, another wq :-)
 
-Eh, for the logs, there's a bug report, just use Closes.  And honestly, I would
-shorten all of the above.  This is a fairly straightforward bug, providing a
-super detailed play-by-play actually makes it _harder_ to understand what's
+Cheers,
+Longman
 
-> This is because in split-irqchip mode, KVM requests a userspace IOAPIC
-
-Please don't use QEMU's terminology when describing KVM bugs.
-
-> EOI exit on every APIC EOI.
-
-This is wrong.  Every *intercepted* EOI, but not all EOIs are intercepted.
-
-> However, if the guest sets the Directed EOI bit in the APIC Spurious
-> Interrupt Vector Register (SPIV, bit 12), per the x2APIC specification,
-
-There is no singular x2APIC specification.  x2APIC is defined by both Intel's SDM
-and AMD's APM.  Usually the Intel and AMD specs are compatible, key word "usually".
-Case in point, I can't find anything in the APM that suggests AMD CPUs support
-"Suppress EOI Broadcasts".
-
-Of course, that could just be an APM documentation bug, since the bit appears
-writable on Turin (though not on Milan).
-
-> the APIC does not broadcast EOIs to the IOAPIC.  In this case, it is the
-> guest's responsibility to explicitly EOI the IOAPIC by writing to its EOI
-> register.
-> 
-> kernel-irqchip mode already handles this similarly in
-> kvm_ioapic_update_eoi_one().
-
-Hmm, I'm pretty sure that's dead code since commit 0bcc3fb95b97 ("KVM: lapic: stop
-advertising DIRECTED_EOI when in-kernel IOAPIC is in use").
-
-And Fudge with a capital 'F', because I'm pretty sure we're going to need at least
-a new CAP, and probably a quirk too.
-
-As per the aforementioned commit, advertising DIRECTED_EOI without an I/O APIC
-that emulates the EOI register will make for a very sad guest.  So simply fixing
-KVM will break existing setups, even though it's unequivocally the correct behavior.
-And unfortunately, I _know_ there is at least one VMM in production that doesn't
-support EOIs in the I/O APIC.
-
-> Link: https://lore.kernel.org/kvm/7D497EF1-607D-4D37-98E7-DAF95F099342@nutanix.com/
-
-As above, this should be Closes, not Link.
-
-  Closes: https://lore.kernel.org/kvm/7D497EF1-607D-4D37-98E7-DAF95F099342@nutanix.com
-
-This also needs:
-
-  Fixes: 7543a635aa09 ("KVM: x86: Add KVM exit for IOAPIC EOIs")
-  Cc: stable@vger.kernel.org
-
-> Signed-off-by: Khushit Shah <khushit.shah@nutanix.com>
-> ---
->  arch/x86/kvm/lapic.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-> index 0725d2cae742..a81e71ad5bda 100644
-> --- a/arch/x86/kvm/lapic.c
-> +++ b/arch/x86/kvm/lapic.c
-> @@ -1473,6 +1473,10 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *apic, int vector)
->  
->  	/* Request a KVM exit to inform the userspace IOAPIC. */
->  	if (irqchip_split(apic->vcpu->kvm)) {
-> +		/* EOI the ioapic only if the Directed EOI is disabled. */
-
-Capitalize I/O APIC (ugh, the above uses IOAPIC, and further above uses ioapic).
-I'd just avoid mentioning I/O APIC at this point, it should be super obvious
-what's happening.
-
-"the Directed EOI" doesn't parse.  Directed EOI is a feature, not a "thing".
-
-"the ioapic" is also wrong in the sense that KVM has no idea how many I/O APICs
-are being emulated by userspace.  Could be 1, could be 0 or 2.
-
-Don't bother sending a v2, at least not yet.  I'll follow-up with various folks
-to try and figure out the least awful way to get out of this mess, and will
-probably post a v2 with a CAP and/or quirk.
-
-In the meantime, I have the below sitting in a local branch:
-
---
-From: Khushit Shah <khushit.shah@nutanix.com>
-Date: Thu, 18 Sep 2025 09:25:28 -0700
-Subject: [PATCH] KVM: x86: Suppress EOI broadcasts with split IRQCHIP if
- Directed EOI is enabled
-
-Do not generate a KVM_EXIT_IOAPIC_EOI exit to userspace when handling EOIs
-for a split IRQCHIP and the vCPU has enabled Directed EOIs in its local
-APIC, i.e. if the guest has set "Suppress EOI Broadcasts" in Intel
-parlance.
-
-Incorrectly broadcasting EOIs can lead to a potentially fatal interrupt
-storm if the IRQ line is still asserted and userspace reacts to the EOI by
-re-injecting the IRQ.  E.g. Windows with Hyper-V enabled gets stuck during
-boot when running under QEMU with a split IRQCHIP.
-
-Note, Suppress EOI Broadcasts is defined only in Intel's SDM, not in AMD's
-APM.  But the bit is writable on some AMD CPUs, e.g. Turin, and KVM's ABI
-is to support Directed EOI (KVM's name) irrespective of guest CPU vendor.
-
-Note #2, KVM doesn't support Directed EOIs for its in-kernel I/O APIC.
-See commit 0bcc3fb95b97 ("KVM: lapic: stop advertising DIRECTED_EOI when
-in-kernel IOAPIC is in use").
-
-Fixes: 7543a635aa09 ("KVM: x86: Add KVM exit for IOAPIC EOIs")
-Cc: stable@vger.kernel.org
-Closes: https://lore.kernel.org/kvm/7D497EF1-607D-4D37-98E7-DAF95F099342@nutanix.com
-Signed-off-by: Khushit Shah <khushit.shah@nutanix.com>
-Link: https://lore.kernel.org/r/20250918162529.640943-1-jon@nutanix.com
-[sean: rewrite changelog and comment]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/lapic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 5fc437341e03..4d77112b887d 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1429,6 +1429,15 @@ static void kvm_ioapic_send_eoi(struct kvm_lapic *apic, int vector)
- 
- 	/* Request a KVM exit to inform the userspace IOAPIC. */
- 	if (irqchip_split(apic->vcpu->kvm)) {
-+		/*
-+		 * Don't exit to userspace if the guest has enabled Directed
-+		 * EOI, a.k.a. Suppress EOI Broadcasts, in which the local APIC
-+		 * doesn't broadcast EOIs (the the guest must EOI the target
-+		 * I/O APIC(s) directly).
-+		 */
-+		if (kvm_lapic_get_reg(apic, APIC_SPIV) & APIC_SPIV_DIRECTED_EOI)
-+			return;
-+
- 		apic->vcpu->arch.pending_ioapic_eoi = vector;
- 		kvm_make_request(KVM_REQ_IOAPIC_EOI_EXIT, apic->vcpu);
- 		return;
-
-base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
---
 
