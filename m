@@ -1,237 +1,91 @@
-Return-Path: <linux-kernel+bounces-827889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAF5B935D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B4DB935D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2EC19C0758
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E35446478
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 21:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5261287249;
-	Mon, 22 Sep 2025 21:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="RekU22S2"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0535928850B;
+	Mon, 22 Sep 2025 21:21:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63097277CA5
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12746283141
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 21:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758576048; cv=none; b=A3z8C5ierkqwT6yNYJ6FleW2fC4rNwGogL1d3L6DjZuiWcYT0/vxvWgpe9w3c68AzpWjxbqjV0vNCiK7NRY3si7aJgzB7CToz772mCTGClypWuyeM6P5O0GNvqaCwA/U8nWzwTPSWI6CgVncmPqRXGaOZS7fQdBkTz3oacBRAas=
+	t=1758576065; cv=none; b=kxFe/PVN1Q3urbgWVpGxqo3CT0pJ2HhjHtWCQDMLzngTEWTSZzEkcMxnW4sMi5jDshMP6rVWBxlIzFCJb3rYexNDWczoPgOxSN4DAeDGG+qbd0KRdXUvyIjxh6WYceqLtDXQCxYdRa9AT+yJ28/V8W1/9YGxWLcJQw8wALoG4n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758576048; c=relaxed/simple;
-	bh=xihBR50Hw2D9VbbOxPhiH3tyeef2qtQXdEqxf23CwKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jy2KDMbB+4pCmNNeYmmvcJMpPk3KEN0c6dwqZfqQl6D+qC/7kJcCj2Ahk9dSncnn+gg7/Z9jIGHJC23a8D3V9rPSF1MczXV3GA9yNXZSwPXm9PDjvsxorZXGz19HE+Ab+I/PzswXzqJrgNdMCbVo3Uo2+P8roo9JgaVqXRDxfe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=RekU22S2; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-72ce9790acdso46461737b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1758576045; x=1759180845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=onj4yFqllMzEveOUk9DfiKAf4L6zZPOcmFKF8e4Prmo=;
-        b=RekU22S29EWqJzTI15pNBLvm4dd33dZUs0lq1e/v122oymxTrdV+kuI/xa4wANY21H
-         yQ2CshfsR2Ac6bitlycLLtbWa2+8TN4iygiFDW62vYbRj4RORw8TIsFB2inxh7IY3LeY
-         eMuggKBcuOVjwazuTlT5F/5h9yOeXBqtFkItsy+U7Ub+RPwYQ1NKQzRF1UzKFT0LH+4+
-         CMXLe8j73dgyUIWvznFQRp4CKnZVdbz7PrY/THc+4c6TRXBwQtlgoxHMr2f5FO+w/PVq
-         5gW1VRDLSD2g0ZPSpb3p47IxYstYXwpxC91kyzW1wLaAKQ4vBpXsVTxNWCpcQ0HeZa1o
-         R9LA==
+	s=arc-20240116; t=1758576065; c=relaxed/simple;
+	bh=r3NpGz1qBNHJUaKYOiNUrMQdMwwoP6Ucp5LUoYR9YGI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MD1vgYXXyBwdV4jLuvg4mnHrK8J6Eodkos9uSrrb4cwFlolTN8yO9NcJEzZvr7ZvAY0iSQxjOhAZjPIek9jky/bnHfY0ZupsLFSjhybE4swDljPLtWW6DQqvvLHOPIESB4mnecmXTfxwnIQ1shHDDsYYX1sL6yLmRw16nnGFdaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-4247d389921so57369185ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:21:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758576045; x=1759180845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=onj4yFqllMzEveOUk9DfiKAf4L6zZPOcmFKF8e4Prmo=;
-        b=af+E+A7zwvTm4y4PY4bZ77OZ+7Ukf6uNTLD2Rl1v+EWgtkALUGl31aflx6L1JeWfun
-         ts2BhcWOfEQFVHCoeLKgsHtILVXMo4b8hIrzjk/a5daC967nZKbVPvRAJRX0KD57Cypa
-         qpc8mC9rxhrWq380Ena6J8jUOynvtv4GCNk7HhIcmSYI9kawmE1dtk+Z1bK0FVPXr4yM
-         lx47nQw0CENQrTFWwdTqDy1AoCncmKN9DtCohCcpp8jYeil/hkYMzxKMGNSD+m5+8Y47
-         BPaWXm94YBW8FrKbj5UdUy+WnIRcUQkaAoz7iWcm4xF119gCcwJoDWhcxF6FZE3pZC2X
-         iLmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRTZMXxkXCt8WcOZP0hkAt7LnoNXVYqfRK4fhfIqJYttFRQgIJYFvV8OdiMP3mA2ms0zHksWM6Ww76XVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAWzVVLAJvpIG+VXkA5bBW1zShutuZuQ0og1kfTUTUcQzCeRyn
-	/Hp3861k8FC6lVrzm+XMaonzV+kwjoK9PR/KEuZt7MRMOJqtIkGhWQbrEr9v8DLzwgc=
-X-Gm-Gg: ASbGncsEU73GKVAsSjcYNhamF81fLAFu8A5lsYZwz883Lza7qV26rFonagrZxWwtZR/
-	5TY2IViUnoAVHi4FXc1Chvri+SzvthsgvDj2Nr2fJcAX3rehsDMQPGcPCiBqmlGR+8XkP+087ml
-	PX8SITuxoL5+ELNdaVMe+TL7HSQD/3zvajTUiq2FHx0iJRUpMWI1fgmead3i8L8BC8gQQtCMtqv
-	iddblfGHNNpivuj5F86VOtfkTQOnw00d/Z/Tlq7ELKC51qfbZtg8WMBKclIeimzs67Os2MFINSh
-	do3P3+3QNlNZH8t1aM6Sx7exuZRvg3aAYVj94j/wBy9+hxGYd8jHNsFcfd935QdoBq1COFbQ4GR
-	YfFcL98WNAcDAJ5kFx2+cuYjf
-X-Google-Smtp-Source: AGHT+IEkvQZ5SylVDHV/m2S+NTAyd5wvsiLsp5Pptg5UwT2UN0VbvwmLcskjGP4MQTxbjIrmiAtKRQ==
-X-Received: by 2002:a05:690c:4b03:b0:722:6f24:6293 with SMTP id 00721157ae682-758a2d07fd7mr1394647b3.32.1758576045119;
-        Mon, 22 Sep 2025 14:20:45 -0700 (PDT)
-Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-633bcce7089sm4581523d50.5.2025.09.22.14.20.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 14:20:44 -0700 (PDT)
-Date: Mon, 22 Sep 2025 16:20:43 -0500
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	zong.li@sifive.com, tjeznach@rivosinc.com, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, anup@brainfault.org, atish.patra@linux.dev, tglx@linutronix.de, 
-	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, alex@ghiti.fr
-Subject: Re: [RFC PATCH v2 08/18] iommu/riscv: Use MSI table to enable IMSIC
- access
-Message-ID: <20250922-50372a07397db3155fec49c9@orel>
-References: <20250920203851.2205115-20-ajones@ventanamicro.com>
- <20250920203851.2205115-28-ajones@ventanamicro.com>
- <20250922184336.GD1391379@nvidia.com>
+        d=1e100.net; s=20230601; t=1758576063; x=1759180863;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pEXVzVh1xRpn36QUJyWBl0yE9J7HW6QGqDG73VIJJTE=;
+        b=XbM0Z7N9z8gJMfQ5CukCqYRrgt82fdv5iMnEG4EdWp4AflvUFixr0VctUwzIb4Dl8k
+         wL8lecC4zgV/J3Y35CVoOGrOvlg1vGF+UF+S8VceB3jQh/5g/2gGMbyb36VSKEovvY98
+         nPxJH8XttQd7a0Nr/JuR4fvvVLLwf6nhY1myutmkLgdNrbEKA2+b85KgBr/jUnBKbxQA
+         mxXf1701or72pSQ97+qr3xdTeXJ1XaIgGS5obR2OeL+eXC51Ef8sXsQ6H7jXkf7Qd9tU
+         bk9OqKoGuSAGZ9CWtNh5TPmYip3KkXLUKrr6tTTDsc3us/KdxwBTRQTwFydFDksqq4Q5
+         d7nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDBA/8HUivNydZnUp0HVv6Ja33DAagEqCKmULJvjRo+B6Fdm/NphdUwqC73cgr6FICi3iNGKAI9tfm4Ds=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4Q+Fu9vImCUMQ9/ds5Q+njzuNGHDG1zTo64IXo1taVIVEYroz
+	j6ckK55DHFwdjx6JSRfqzqOx7Z0SSBdxg/c3FXnFi/REg/DrlEGlrEV1FAjLjs2cGFhGYjkzz7O
+	SwzEGUA47bko08uRs+rfugxUSrsY21CjahksToi7km33au0/XO0/Bpq21I3Q=
+X-Google-Smtp-Source: AGHT+IHJ5Lcy1PFoE+1HFqUxDvjXb3iEWiVH3SD6SKxbsyUcUF2l8Pan6sffL9AvGWy5az5bN517uy1gywSblFEpVuz8oT8HE9qK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922184336.GD1391379@nvidia.com>
+X-Received: by 2002:a05:6e02:1542:b0:424:86d:7bb9 with SMTP id
+ e9e14a558f8ab-42582209805mr3563505ab.0.1758576062967; Mon, 22 Sep 2025
+ 14:21:02 -0700 (PDT)
+Date: Mon, 22 Sep 2025 14:21:02 -0700
+In-Reply-To: <672b23bd.050a0220.2a847.1ba3.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68d1bdbe.a70a0220.1b52b.0003.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] INFO: task hung in flush_delayed_work
+From: syzbot <syzbot+ab509d831d9b0222f5fd@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, glass.su@suse.com, jack@suse.com, 
+	jlbec@evilplan.org, joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	mark@fasheh.com, ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 22, 2025 at 03:43:36PM -0300, Jason Gunthorpe wrote:
-> On Sat, Sep 20, 2025 at 03:38:58PM -0500, Andrew Jones wrote:
-> > When setting irq affinity extract the IMSIC address the device
-> > needs to access and add it to the MSI table. If the device no
-> > longer needs access to an IMSIC then remove it from the table
-> > to prohibit access. This allows isolating device MSIs to a set
-> > of harts so we can now add the IRQ_DOMAIN_FLAG_ISOLATED_MSI IRQ
-> > domain flag.
-> 
-> IRQ_DOMAIN_FLAG_ISOLATED_MSI has nothing to do with HARTs.
-> 
->  * Isolated MSI means that HW modeled by an irq_domain on the path from the
->  * initiating device to the CPU will validate that the MSI message specifies an
->  * interrupt number that the device is authorized to trigger. This must block
->  * devices from triggering interrupts they are not authorized to trigger.
->  * Currently authorization means the MSI vector is one assigned to the device.
+syzbot suspects this issue was fixed by commit:
 
-Unfortunately the RISC-V IOMMU doesn't have support for this. I've raised
-the lack of MSI data validation to the spec writers and I'll try to raise
-it again, but I was hoping we could still get IRQ_DOMAIN_FLAG_ISOLATED_MSI
-by simply ensuring the MSI addresses only include the affined harts (and
-also with the NOTE comment I've put in this patch to point out the
-deficiency).
+commit 276c61385f6bc3223a5ecd307cf4aba2dfbb9a31
+Author: Su Yue <glass.su@suse.com>
+Date:   Mon Jan 6 14:06:53 2025 +0000
 
-> 
-> It has to do with each PCI BDF having a unique set of
-> validation/mapping tables for MSIs that are granular to the interrupt
-> number.
+    ocfs2: mark dquot as inactive if failed to start trans while releasing dquot
 
-Interrupt numbers (MSI data) aren't used by the RISC-V IOMMU in any way.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=140da8e2580000
+start commit:   2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab509d831d9b0222f5fd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142f4e30580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c00d87980000
 
-> 
-> As I understand the spec this is is only possible with msiptp? As
-> discussed previously this has to be a static property and the SW stack
-> doesn't expect it to change. So if the IR driver sets
-> IRQ_DOMAIN_FLAG_ISOLATED_MSI it has to always use misptp?
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Yes, the patch only sets IRQ_DOMAIN_FLAG_ISOLATED_MSI when the IOMMU
-has RISCV_IOMMU_CAPABILITIES_MSI_FLAT and it will remain set for the
-lifetime of the irqdomain, no matter how the IOMMU is being applied.
+#syz fix: ocfs2: mark dquot as inactive if failed to start trans while releasing dquot
 
-> 
-> Further, since the interrupt tables have to be per BDF they cannot be
-> linked to an iommu_domain! Storing the msiptp in an iommu_domain is
-> totally wrong?? It needs to somehow be stored in the interrupt layer
-> per-struct device, check how AMD and Intel have stored their IR tables
-> programmed into their versions of DC.
-
-The RISC-V IOMMU MSI table is simply a flat address remapping table,
-which also has support for MRIFs. The table indices come from an
-address matching mechanism used to filter out invalid addresses and
-to convert valid addresses into MSI table indices. IOW, the RISC-V
-MSI table is a simple translation table, and even needs to be tied to
-a particular DMA table in order to work. Here's some examples
-
-1. stage1 not BARE
-------------------
-
-      stage1     MSI table
- IOVA ------> A  ---------> host-MSI-address
-
-2. stage1 is BARE, for example if only stage2 is in use
--------------------------------------------------------
-
-           MSI table
- IOVA == A ---------> host-MSI-address
-
-When used by the host A == host-MSI-address, but at least we can block
-the write when an IRQ has been affined to a set of harts that doesn't
-include what it's targeting. When used for irqbypass A == guest-MSI-
-address and the host-MSI-address will be that of a guest interrupt file.
-This ensures a device assigned to a guest can only reach its own vcpus
-when sending MSIs.
-
-In the first example, where stage1 is not BARE, the stage1 page tables
-must have some IOVA->A mapping, otherwise the MSI table will not get
-a chance to do a translation, as the stage1 DMA will fault. This
-series ensures stage1 gets an identity mapping for all possible MSI
-targets and then leaves it be, using the MSI tables instead for the
-isolation.
-
-I don't think we can apply a lot of AMD's and Intel's model to RISC-V.
-
-> 
-> It looks like there is something in here to support HW that doesn't
-> have msiptp? That's different, and also looks very confused.
-
-The only support is to ensure all the host IMSICs are mapped, otherwise
-we can't turn on IOMMU_DMA since all MSI writes will cause faults. We
-don't set IRQ_DOMAIN_FLAG_ISOLATED_MSI in this case, though, since we
-don't bother unmapping MSI addresses of harts that IRQs have be un-
-affined from.
-
-> The IR
-> driver should never be touching the iommu domain or calling iommu_map!
-
-As pointed out above, the RISC-V IR is quite a different beast than AMD
-and Intel. Whether or not the IOMMU has MSI table support, the IMSICs
-must be mapped in stage1, when stage1 is not BARE. So, in both cases we
-roll that mapping into the IR code since there isn't really any better
-place for it for the host case and it's necessary for the IR code to
-manage it for the virt case. Since IR (or MSI delivery in general) is
-dependent upon the stage1 page tables, then it's necessary to be tied to
-the same IOMMU domain that those page tables are tied to. Patch4's changes
-to riscv_iommu_attach_paging_domain() and riscv_iommu_iodir_update() show
-how they're tied together.
-
-> Instead it probably has to use the SW_MSI mechanism to request mapping
-> the interrupt controller aperture. You don't get
-> IRQ_DOMAIN_FLAG_ISOLATED_MSI with something like this though. Look at
-> how ARM GIC works for this mechanism.
-
-I'm not seeing how SW_MSI will help here, but so far I've just done some
-quick grepping and code skimming.
-
-> 
-> Finally, please split this series up, if ther are two different ways
-> to manage the MSI aperture then please split it into two series with a
-> clear description how the HW actually works.
-> 
-> Maybe start with the simpler case of no msiptp??
-
-The first five patches plus the "enable IOMMU_DMA" will allow paging
-domains to be used by default, while paving the way for patches 6-8 to
-allow host IRQs to be isolated to the best of our ability (only able to
-access IMSICs to which they are affined). So we could have
-
-series1: irqdomain + map all imsics + enable IOMMU_DMA
-series2: actually apply irqdomain in order to implement map/unmap of MSI
-         ptes based on IRQ affinity - set IRQ_DOMAIN_FLAG_ISOLATED_MSI,
-         because that's the best we've got...
-series3: the rest of the patches of this series which introduce irqbypass
-         support for the virt use case
-
-Would that be better? Or do you see some need for some patch splits as
-well?
-
-Thanks,
-drew
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
