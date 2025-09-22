@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-827558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B2EB92136
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FD0B9213F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 209E21903EA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6941904A94
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5FE2D29AA;
-	Mon, 22 Sep 2025 15:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B030F52C;
+	Mon, 22 Sep 2025 15:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iL+zgoWg"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C06HFul/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED566302164
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5664B30E82A;
+	Mon, 22 Sep 2025 15:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556428; cv=none; b=OldinEvgMyktISwxSrMA8YFWNoxPSBeVwEsoxYgKVznKEEUQ1qdaXrakshTa0OmD8adk6YTSeW4zcyCOiCcB7bSc77G5+tKY1A1ozGWmmStwhkB7dELvhETyDJOCZ22JMDxVcoZj1UURUEXdFP8ESIBvxOoyz0jOYvtSXKlgw5Y=
+	t=1758556431; cv=none; b=bA2dLQvXcgimXg4b5Gjlt0SauStDVDF4JsLpV8f+HHx9mjmJn1aAm6ZjHhhORx4rGgmXR/ANY0DveRL1FQO1v+PTt+lLq85bkSnoLISTHvTKdIMtdr/t9PivqAwxXols5tJxvo/ccEgnM3lCPl4FDg1oTj08W7azGRyKErJl3/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556428; c=relaxed/simple;
-	bh=xmpykvsefbZg4Z3d0+EhES58b/1383121uJSOrYR/s8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dy4lv32tlhVDZLgJl+7GZNwv/Hs18fseu8poZnmUwl63nNk9WY5LMhke2FIizfwj21y34PpcRfadfeZ2k1imW3+zDArdJagTYMV5ltbQ1vyc3gn1QXxAPsZB0h+gSOquJkC9aSKg3MnTp9W4DO+IsrOSAPxbwCJnL2bR5pw1rkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iL+zgoWg; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e6cbb991aso3744435b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758556426; x=1759161226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q61xyED0iZHvT227a823myA5nC6Bd8yB77AGxFVjBQs=;
-        b=iL+zgoWgN6zTX8jArXdOFpzYAiiPU2CQfKhPcEMUtVmH+8xWKGs+ftHIwq+TdcKHmm
-         SCDeaBxoGfR6RIcEH5uHXTCS/Z6awE65ZDx/3LFgkKma0FNLQxT2SttGujckCvEwO/3c
-         BsxGaqNdl0d6MTzEd10JHCfNbGgoJCZOh5a6ySYjfmMmH8KxNJYyZK1BepWjIEkeypZx
-         kHczk+rfU5kmvgdOPu6IbuSdC+hunG+nuQ5RIn5TCzKZH1Qo9PHzM9zCyzngtT+MuVvs
-         Fq1inofVb42mIPmqPKW2FEEcRKSl56ee8xUYoBfjNx0YJzJzZsSma9f2HkhpXdUx9/RP
-         KciA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758556426; x=1759161226;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q61xyED0iZHvT227a823myA5nC6Bd8yB77AGxFVjBQs=;
-        b=kY+FITBlIHRHjr6APL5rSLqmalEgPL+Ha6wx8zlqKKzSCaeu12SILpa3FYu3tBU7yf
-         ivoVwMl5PSAAkmrJeFSkxok8DfuQQ3Vgr4WX9yPkc3dqKNdcyKcca8mQDdawqsqAvKBX
-         8XX0LKHtoB/J0YLTmM5UHiujuntsTUrA7shnWqm4F4Pwgj5UAuRDOhUHtA9wm4gjBxl+
-         IVXIs+lmXc8feAg2A8yRX44WVnt4I0HPpCKHuhOwzxu7D6gNM4lfhHuku4FQSJc3MjLC
-         P6OGXPHDHU0WKWPXJkLwjhWSOlAMWNqnC5xoIb9AjCohZugTw6Bmy2x1RSRsrcVQF+jA
-         6XXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDHIxsIkz8RmMwIKLL150zeWb66pi5oGmKxl8qlrGaxZLqoYwIAmz6JwoYYSUph1pqwsUZuPQKRgO06g8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSEWJJckVstNAL3tepvFw7Vejx5QI6MBrIGXCxWUMCcaMRXfDo
-	x96lfaKFOzTpnpkWDfR4Nugt2ZMEv/skLigohzH8HHk9nGX10uU/xVPW
-X-Gm-Gg: ASbGncst7BxJtk21aeMX0zCIu0QGaU4751WQPwBcN7h2YomNpeKNrimFK96TZO9Vew3
-	5cMSPegddF8D9n3zfYIKledHmRHWMGai8bFGClal+jBz6aaHUr1AJyRL5f3AOMv6/4uXxp0ZUKz
-	ovNDap5z0w3EpS6Wa72kqCDyJ+RCpurvoTMIZsWnNUnqDsHpmyPRqS6fCCzdlFSTkjR7d5qEYBo
-	29Ugndo3u59TiB7LmaILtM0nVZmbHc2QttGJdL541gv2sCaJXmDhZUwoUe2qBKY5u8wfBdWU7lS
-	z/rC6IzaN9H4EfDo6vpltSyyTGh1XlDVsh6u3KTPRL1AWJROsN06vii4gMOedPDAPls66lynTwc
-	4m7nzJk488deFmuruL1kZ0Tqg
-X-Google-Smtp-Source: AGHT+IGEGQomxsa7WNV0T03rhAK/xcvrrheXR+pMEm9N4EM2OSbc4zcfLSj+YjG8nGLLs8dfNA9reg==
-X-Received: by 2002:a17:902:cec4:b0:275:2328:5d3e with SMTP id d9443c01a7336-275232861e2mr82210535ad.18.1758556426155;
-        Mon, 22 Sep 2025 08:53:46 -0700 (PDT)
-Received: from lgs.. ([2408:8418:1100:9530:3d9f:679e:4ddb:a104])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698016bf96sm133924265ad.38.2025.09.22.08.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 08:53:45 -0700 (PDT)
-From: Guangshuo Li <lgs201920130244@gmail.com>
-To: =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	"Victoria Milhoan (b42089)" <vicki.milhoan@freescale.com>,
-	Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
-	Dan Douglass <dan.douglass@nxp.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Guangshuo Li <lgs201920130244@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] crypto: caam: Add check for kcalloc() in test_len()
-Date: Mon, 22 Sep 2025 23:53:22 +0800
-Message-ID: <20250922155322.1825714-1-lgs201920130244@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1758556431; c=relaxed/simple;
+	bh=aRbXPB1JpMvAIJq5asAovoC0H16Nxldusb6Zozv6hHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGyMT9NNjAuHCQidNOT2/anOOuc5/y1tc9sxiWcoQ5rm6ooA4nFQB2zifMjyGNcgTlHtknC8mVafG6CwyrStHvVm/M1MmzxHLFih7EEYW5ktC6gTNctUZO2ULkdNgE6my0La8lGzcSe8gOnC32GMNucBnuDB6MPvD09oxeDukiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C06HFul/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED55EC4CEF0;
+	Mon, 22 Sep 2025 15:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758556430;
+	bh=aRbXPB1JpMvAIJq5asAovoC0H16Nxldusb6Zozv6hHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C06HFul/szSJI0xrMjnZM1Ks1trKCXzVjBMOMrKb2VFViBpRuvzgO+pmJkv1umK2C
+	 JnSK7Nyww7INSIyb/94rRMQm6binnV5LaXoLcngcUWamHTE5fCbpMCyhJFIE96WxB2
+	 l/MZIDaLi3jj0kF3lcEbm3Cd+82Y1Ir4bM+q9X5NOXMlCEduS+V+5VTCOIuwGtnmU9
+	 bgsQhrpaKfRqdXPFVz/1Rg7ndFcKCEaMoHIHZ4PawV8hKiR61Gm11baBOQuJFjGo+s
+	 EAg28HFex3cQCPMFUIXUOQoTgW4JEcsHt11sauBMZS6A8YVXNICsQUYOdY+FquElN+
+	 OcHa8LIlTl2Kw==
+Date: Mon, 22 Sep 2025 21:23:41 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>
+Subject: Re: [PATCH 1/2] PCI/ASPM: Override the ASPM and Clock PM states set
+ by BIOS for devicetree platforms
+Message-ID: <oc23e5sgo74wpjpaaefc6or5f54crfaeyer5zwst3wyyiauhxg@ess265fdcbeu>
+References: <frmzvhnhljy23xds7lnmo23zg35wxpzu4pvabnc6v6vz7qn2lj@gk25cglbpn3q>
+ <20250917112218.GA1844955@bhelgaas>
+ <jgidvwogoopfgtmxywllxl76lap42s4fhzt23ldncgtzfvy5ir@xs7pnhuz2nxs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <jgidvwogoopfgtmxywllxl76lap42s4fhzt23ldncgtzfvy5ir@xs7pnhuz2nxs>
 
-As kcalloc() may fail, check its return value to avoid a NULL pointer
-dereference when passing the buffer to rng->read().
+On Wed, Sep 17, 2025 at 06:33:53PM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Sep 17, 2025 at 06:22:18AM GMT, Bjorn Helgaas wrote:
+> > [+cc Kai-Heng, Rafael, Heiner, AceLan; response to
+> > https://lore.kernel.org/r/20250916-pci-dt-aspm-v1-1-778fe907c9ad@oss.qualcomm.com]
+> > 
+> > On Wed, Sep 17, 2025 at 04:14:42PM +0530, Manivannan Sadhasivam wrote:
+> > > On Tue, Sep 16, 2025 at 12:15:46PM GMT, Bjorn Helgaas wrote:
+> > > > On Tue, Sep 16, 2025 at 09:42:52PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > > > > So far, the PCI subsystem has honored the ASPM and Clock PM states set by
+> > > > > the BIOS (through LNKCTL) during device initialization. This was done
+> > > > > conservatively to avoid issues with the buggy devices that advertise
+> > > > > ASPM capabilities, but behave erratically if the ASPM states are enabled.
+> > > > > So the PCI subsystem ended up trusting the BIOS to enable only the ASPM
+> > > > > states that were known to work for the devices.
+> > > ...
+> > 
+> > > > For debuggability, I wonder if we should have a pci_dbg() at the point
+> > > > where we actually update PCI_EXP_LNKCTL, PCI_L1SS_CTL1, etc?  I could
+> > > > even argue for pci_info() since this should be a low-frequency and
+> > > > relatively high-risk event.
+> > > 
+> > > I don't know why we should print register settings since we are explicitly
+> > > printing out what states are getting enabled.
+> > 
+> > My thinking here is that we care about is what is actually written to
+> > the device, not what we *intend* to write to the device.
+> > 
+> > There's a lot of complicated aspm.c code between setting
+> > link->clkpm_default/aspm_default and actually programming the device,
+> > and when debugging a problem, I don't want to have to parse all that
+> > code to derive the register values.
+> 
+> Sure, but that is not strictly related to this series I believe. I will add a
+> patch for that at the start of this series so that you can merge it
+> independently.
+> 
 
-Fixes: 2be0d806e25e ("crypto: caam - add a test for the RNG")
-Cc: stable@vger.kernel.org
----
-changelog:
-v2:
-- Return -ENOMEM directly on allocation failure.
+I'm going to send this patch separately from this series.
 
-Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
----
- drivers/crypto/caam/caamrng.c | 3 +++
- 1 file changed, 3 insertions(+)
+- Mani
 
-diff --git a/drivers/crypto/caam/caamrng.c b/drivers/crypto/caam/caamrng.c
-index b3d14a7f4dd1..357860ee532c 100644
---- a/drivers/crypto/caam/caamrng.c
-+++ b/drivers/crypto/caam/caamrng.c
-@@ -182,6 +182,9 @@ static inline void test_len(struct hwrng *rng, size_t len, bool wait)
- 
- 	buf = kcalloc(CAAM_RNG_MAX_FIFO_STORE_SIZE, sizeof(u8), GFP_KERNEL);
- 
-+	if (!buf) {
-+		return -ENOMEM;
-+	}
- 	while (len > 0) {
- 		read_len = rng->read(rng, buf, len, wait);
- 
 -- 
-2.43.0
-
+மணிவண்ணன் சதாசிவம்
 
