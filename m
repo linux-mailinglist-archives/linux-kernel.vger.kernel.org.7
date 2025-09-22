@@ -1,161 +1,185 @@
-Return-Path: <linux-kernel+bounces-826748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210A7B8F3F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62120B8F3FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9BF3BFA39
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F0A189FB86
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E065A2F7477;
-	Mon, 22 Sep 2025 07:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C912F28FA;
+	Mon, 22 Sep 2025 07:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ODtkd9rv"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iofdB136"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20F72F2916;
-	Mon, 22 Sep 2025 07:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482BA2F0C6F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525196; cv=none; b=dpAph+KWWenMxd16QtSEJhWxBb84joA7tWYOcx+BRKfin37FeJsxW7huQ32vOrA5SCGMEvnLPUsAjev2Qo1ir9KITTCP26lJC0K3nNiew1IQ89B2U7RsAmW+hep3zHihySIelUsmgew1zk3GPa+2ZF0fv32mqq05Owtm5OwHOiE=
+	t=1758525241; cv=none; b=fLZ8xlRnS7JolKdUzro5KHqWwe2/pKPBypwsR3dHwPI8P6Ap0zYF+f+bqsda+ARH/BBTPI41fxMHYBjIyGp/VLKoU3coyz/gehO/jOGOcXPjckVElPMRqjpYsSR0SLEyT/PpHijrIEgPtve0/4Twu1R7Jcq0FskSjp8Bk6LEOAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525196; c=relaxed/simple;
-	bh=8YCqD/X4C6XNr2qVICFl11I+6jGisDXmmkdkUVDT5Ek=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+GLZkZGRJ71eAztmKvf3m2B99DFziJ5MuRRM2ncjgViG25VEUEv5/MfeofnRRx6lp/RJtNYLfR2CT5FBinzad3mOAVfQSLw6bMmBoqtVB05wB0Dpxn2aRWAVdWo7zVeEv2b4Lc2WePPkBbH7MkWVP4clwWHWokUVnPM/z6t7rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ODtkd9rv; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58M7CtrF1183992;
-	Mon, 22 Sep 2025 02:12:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1758525175;
-	bh=j54wOZWYBv+WbN005PAbMoK18i+fCxKDRhnfRbi4+us=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ODtkd9rvjsNmSLZAf1hHJLQWGt8iDGDyUsmgQDF+VzVh6/eFBIgBsFplpdpj6cDzP
-	 WN8yOUfrnkMHZLZ0gYHyGPiqJqfWre+pQV/HXb6GZi/QOQ0v2pQXDsLJYImx7O+b63
-	 x1aigCD7Ryelsnw/9wrcfsyHo9JNBnPmz/TQlKeo=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58M7CtXs118005
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 22 Sep 2025 02:12:55 -0500
-Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 22
- Sep 2025 02:12:54 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE203.ent.ti.com
- (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 22 Sep 2025 02:12:54 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58M7CN0V2369246;
-	Mon, 22 Sep 2025 02:12:48 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-        <christian.bruel@foss.st.com>, <quic_wenbyao@quicinc.com>,
-        <inochiama@gmail.com>, <mayank.rana@oss.qualcomm.com>,
-        <thippeswamy.havalige@amd.com>, <shradha.t@samsung.com>,
-        <cassel@kernel.org>, <kishon@kernel.org>,
-        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
-        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v3 4/4] PCI: keystone: Add support to build as a loadable module
-Date: Mon, 22 Sep 2025 12:42:16 +0530
-Message-ID: <20250922071222.2814937-5-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250922071222.2814937-1-s-vadapalli@ti.com>
-References: <20250922071222.2814937-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1758525241; c=relaxed/simple;
+	bh=lByWE2yrIj/KaVHMm9tlp9i8EGd1lYaBrckS5Va/18Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EU7bEA70YB1ixebXt3MIwG/RWT5qknJLmErKuvAnzGyqPAX78nkJo5xMhLOkQeajIC06Kpqblm8A0UafY+g0+wsJpawN47v/ybpkurLp+liADV6etQmaouTH2r5YFMtWevlDw+DaonZMW4KHVX46DtQKllcX7hbjBKqY0NLsoWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iofdB136; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1758525227;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yfgv0EIskhtqw6KMs4nscyueRQky2Ah7ZOep6T6Ztks=;
+	b=iofdB136N8yv4X+ZdUrNPwgOoOi9D47RVCpInrgdrUsiacyuLnrpQKBTgg8X43iHJfT/C/
+	gwK6CPIHAF2mMJTfrv6E6h10V2KJuMs7bQzSK9sNK+Lp7eODqie4HswYZ+GZIm//i5cg86
+	pMMVuEi36UJks3piec8prJg44Y9aSZM=
+From: menglong.dong@linux.dev
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Jiri Olsa <jolsa@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <kees@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Mike Rapoport <rppt@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH] x86/ibt: make is_endbr() notrace
+Date: Mon, 22 Sep 2025 15:13:38 +0800
+Message-ID: <6196970.lOV4Wx5bFT@7940hx>
+In-Reply-To: <20250922065248.GO3245006@noisy.programming.kicks-ass.net>
+References:
+ <20250918120939.1706585-1-dongml2@chinatelecom.cn>
+ <CADxym3Z6Ed5xjDMvh4ChRvrw_aLidkGrkgbK+076Exfmp=m3SA@mail.gmail.com>
+ <20250922065248.GO3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
-Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
-that the 'pci-keystone.c' driver depends upon have been exported for use,
-enable support to build the driver as a loadable module.
+On 2025/9/22 14:52 Peter Zijlstra <peterz@infradead.org> write:
+> On Fri, Sep 19, 2025 at 09:13:15AM +0800, Menglong Dong wrote:
+> 
+> > Ok, let me describe the problem in deetail.
+> > 
+> > First of all, it has nothing to do with kprobe. The bpf program of type
+> > kprobe-multi based on fprobe, and fprobe base on fgraph. So it's all
+> > about the ftrace, which means __fentry__.
+> 
+> Well, that's not confusing at all. Something called kprobe-multi not
+> being related to kprobes :-(
+> 
+> > Second, let me explain the recur detection of the kprobe-multi. Let's
+> > take the is_endbr() for example. When it is hooked by the bpf program
+> > of type kretprobe-multi, following calling chain will happen:
+> > 
+> >   is_endbr -> __ftrace_return_to_handler -> fprobe_return ->
+> >   kprobe_multi_link_exit_handler -> ftrace_get_entry_ip ->
+> >   arch_ftrace_get_symaddr -> is_endbr
+> > 
+> > Look, is_endbr() is called again during the ftrace handler, so it will
+> > trigger the ftrace handler(__ftrace_return_to_handler) again, which
+> > causes recurrence.
+> 
+> Right.
+> 
+> > Such recurrence can be detected. In kprobe_multi_link_prog_run(),
+> > the percpu various "bpf_prog_active" will be increased by 1 before we
+> > run the bpf progs, and decrease by 1 after the bpf progs finish. If the
+> > kprobe_multi_link_prog_run() is triggered again during bpf progs run,
+> > it will check if bpf_prog_active is zero, and return directly if it is not.
+> > Therefore, recurrence can't happen within the "bpf_prog_active" protection.
+> 
+> As I think Masami already said, the problem is the layer. You're trying
+> to fix an ftrace problem at the bpf layer.
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+Yeah, I see. And Masami has already posted a series for this
+problem in:
 
-v2 of this patch is at:
-https://lore.kernel.org/r/20250912122356.3326888-11-s-vadapalli@ti.com/
-Changes since v2:
-- Based on Mani's feedback, all code changes associated with driver
-  removal have been discarded.
+https://lore.kernel.org/bpf/175852291163.307379.14414635977719513326.stgit@devnote2/
 
- drivers/pci/controller/dwc/Kconfig        | 6 +++---
- drivers/pci/controller/dwc/pci-keystone.c | 6 ++++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> > However, the calling to is_endbr() is not within that scope, which makes
+> > the recurrence happen.
+> 
+> Sorta, I'm still sketchy on the whole kprobe-multi thing.
+> 
+> Anyway, I don't mind making is_endbr() invisible to tracing, that might
+> just have security benefits too. But I think first the ftrace folks need
+> to figure out how to best kill that recursion, because I don't think
+> is_endbr is particularly special here.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 34abc859c107..46012d6a607e 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -482,10 +482,10 @@ config PCI_DRA7XX_EP
- 	  This uses the DesignWare core.
- 
- config PCI_KEYSTONE
--	bool
-+	tristate
- 
- config PCI_KEYSTONE_HOST
--	bool "TI Keystone PCIe controller (host mode)"
-+	tristate "TI Keystone PCIe controller (host mode)"
- 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	depends on PCI_MSI
- 	select PCIE_DW_HOST
-@@ -497,7 +497,7 @@ config PCI_KEYSTONE_HOST
- 	  DesignWare core functions to implement the driver.
- 
- config PCI_KEYSTONE_EP
--	bool "TI Keystone PCIe controller (endpoint mode)"
-+	tristate "TI Keystone PCIe controller (endpoint mode)"
- 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	depends on PCI_ENDPOINT
- 	select PCIE_DW_EP
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index f9f8235ea3cd..2fbc714bb6e5 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -17,6 +17,7 @@
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-@@ -1134,6 +1135,7 @@ static const struct of_device_id ks_pcie_of_match[] = {
- 	},
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, ks_pcie_of_match);
- 
- static int ks_pcie_probe(struct platform_device *pdev)
- {
-@@ -1382,3 +1384,7 @@ static struct platform_driver ks_pcie_driver = {
- 	},
- };
- builtin_platform_driver(ks_pcie_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("PCIe host controller driver for Texas Instruments Keystone SoCs");
-+MODULE_AUTHOR("Murali Karicheri <m-karicheri2@ti.com>");
--- 
-2.43.0
+So, does this patch seem useful after all?
+
+OK, I'll send a V2 base on your following suggestion.
+
+Thanks!
+Menglong Dong
+
+> 
+> It is just one more function that can emit a __fentry__ site.
+> 
+> Anyway, something like the below would do:
+> 
+> Note that without making __is_endbr() __always_inline, you run the risk
+> of the compiler being retarded (they often are in the face of
+> KASAN/UBSAN like) and deciding to out-of-line that function, resulting
+> in yet another __fentry__ site.
+> 
+> An added advantage of noinstr is that it is validated by objtool to
+> never call to !noinstr code. As such, you can be sure there is no
+> instrumentation in it.
+> 
+> (the below hasn't been near a compiler)
+> 
+> ---
+>  arch/x86/include/asm/ibt.h    | 2 +-
+>  arch/x86/kernel/alternative.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/ibt.h b/arch/x86/include/asm/ibt.h
+> index 5e45d6424722..54937a527042 100644
+> --- a/arch/x86/include/asm/ibt.h
+> +++ b/arch/x86/include/asm/ibt.h
+> @@ -65,7 +65,7 @@ static __always_inline __attribute_const__ u32 gen_endbr_poison(void)
+>  	return 0xd6401f0f; /* nopl -42(%rax) */
+>  }
+>  
+> -static inline bool __is_endbr(u32 val)
+> +static __always_inline bool __is_endbr(u32 val)
+>  {
+>  	if (val == gen_endbr_poison())
+>  		return true;
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index 69fb818df2ee..f791e7abd466 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -1108,7 +1108,7 @@ void __init_or_module noinline apply_returns(s32 *start, s32 *end) { }
+>  
+>  #ifdef CONFIG_X86_KERNEL_IBT
+>  
+> -__noendbr bool is_endbr(u32 *val)
+> +__noendbr noinstr bool is_endbr(u32 *val)
+>  {
+>  	u32 endbr;
+>  
+> 
+> 
+
+
+
 
 
