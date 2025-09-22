@@ -1,395 +1,215 @@
-Return-Path: <linux-kernel+bounces-827865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79EFB934CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:57:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74209B934E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F74D1908274
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D36E16664A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3712ED842;
-	Mon, 22 Sep 2025 20:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322492ECE86;
+	Mon, 22 Sep 2025 20:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="Vvy6h959"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwrEXRLu"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CA826F28B;
-	Mon, 22 Sep 2025 20:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D88327B34A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758574609; cv=none; b=NN7Lx5KVkhKPTNtH9zfRbRQxW4slUpntG2EqfYNlkJUNbl9afGmuc9belTXwt8mqhVaI8JheIKrCY81R43ekZRKvVD/0J2q4I8FNKBlHKoElSL5XYWc9d+XNrG2khGhB7cEQrZhLRoOzO+CUBI9la7fNvmWdC/JuaHpzUZgWj7k=
+	t=1758574719; cv=none; b=SW62xRkD/0WZXDT3zyg7JDQw2/42wBYpZrvWUo8ZmUmwe0jkXiqoL3IH7YAVt0YxYMqnj2/wanPz/mVD/6CP5t+smtBHJ5AtU+5mN57bh1wUQ2JyzSq+ps7gOpA+Pc+HHF7WkA5gLrvopjn6UOCqYelpNFBXFHU2KFA6Mac0/5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758574609; c=relaxed/simple;
-	bh=eVbYXydjQ6u3xLzxlYPxKLlky7JeAiUQgOQxwxqEyx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efcmdT7+C8YjVCTo9eqoNTCG2vbRJL90aI4OT7qvF1jx6/YPbepY52l5uqdTI+3wtUHWh/Uy9dSc7Gk7wIuIKXqxL9OW9AobrD0ApqTZO+kiBy5QCFwKc6HyHW1WNlnw4NIlRwEO2Ey2fFSXRFvWROWm2pYRJZCoCSLuZgSl1jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=Vvy6h959; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=tkcGcnyLDQs7+OV1rix0MApiJwN3gW5xWpQTeFCsWWs=; b=Vvy6h959wswjozTzxSIf7gZGcZ
-	dmQJULRFzWpCDZ9ljwKvvA4iSr4dQUzMzFQOr3RRsE51R9qK3vMT/Sub1lD5lj2MwHX30dr0JmzBR
-	EboPNQ1nvIPJuI+NrHIV8GdBGSlL0JgLhWkPwB2NzZcyLSHcwd49Zr/RibAbCnZM5NZJXdnXCSxH4
-	3nAnb/IAigGw7mfI5eV26GRkrJFdmRHvwvLaRkJxoFfEWDj6FJMCqUHyQEe/fwJCHZTN4h/EcIYB2
-	a2JnEZGATR8288oyVDlk0GiGRbm8R0FoL7dTCOcvQLKEa4hF72SQwtSfE3H+gs0Hiz88gtLFiF1Ht
-	zvWEO2iw==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1v0naT-00AlZq-28;
-	Mon, 22 Sep 2025 22:56:41 +0200
-Date: Mon, 22 Sep 2025 22:56:41 +0200
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH 6/6] i2c: spacemit: introduce pio for k1
-Message-ID: <aNG4CQLraAqyVjdc@aurel32.net>
-Mail-Followup-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-References: <20250827-k1-i2c-atomic-v1-0-e59bea02d680@linux.spacemit.com>
- <20250827-k1-i2c-atomic-v1-6-e59bea02d680@linux.spacemit.com>
+	s=arc-20240116; t=1758574719; c=relaxed/simple;
+	bh=P/EYxKGUt4KlDQqc4dEWoyq9uVkW2ANWEyhW33wPUUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QPbar+yOiyPrI8HeM686hIhoGX6c5F4ADizDO514b3pUeykfGRQ2W8Qfs2WsBIOMtIvOfvnyJEH5ei2rn2UsWvjMcqmIl2Vvqup7xbbeeo7EHrhhqRi2mu2cXpKMFUACG8x0mSbzcAeVGYNGTjFm0LQaP3w+MtOgC2LhZUjNMB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gwrEXRLu; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3322e6360bbso2076295a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758574717; x=1759179517; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cyg+CfbJEgucw+GOG7zODfpjV9/l3Y90q5rDgYgLXfk=;
+        b=gwrEXRLu5PPgCBN/gXbp43k0sykMVoB/Wc7pIiiib4y2slEE/LU1FR+ksYJBsFG0rH
+         Wbch4zEGp+F97H+ZJfQ+YN2OlG8p0lFHWQk0oG54ZrmEoaa1s65+QulHXxgzAupLczBc
+         YaHoyAt+R4mhPCaM4vabGOEeQOq0VP23zBOLJTDeHhUr30weZSbNkpp5tPGNh5LUDumR
+         1DgtCsh86NOaaCaBfQ000Ic/kQH9zMQu4hWdOvqTcaFFNaZMcKEubxIOOkk+D2cp+RN/
+         IrLRXWYYT6M7YPVOq6quUCh0BE66EMWmdLW1yT03um5MSET9nj4VNv6fpsBIqc2XpM1n
+         NuWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758574717; x=1759179517;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cyg+CfbJEgucw+GOG7zODfpjV9/l3Y90q5rDgYgLXfk=;
+        b=xVjoiSsXbG2jvqK6QJVi9x5FW9nP9mwh/hUEy1WBqTnZ2d4TjzPVPr3YGstV8y6T7k
+         xL2vme4B3tmt9CfHk6Y1QDiZJrXdQy4QUW+zQc8vjccPdCvS2MizbuXtrFMVqvGnS+IT
+         pbFTxdMj0p3xbCNpqCRYShibK2oAPa6zHQ0U9S6SyezQGZxkxZiW1BxWEvNNdw4eSTh8
+         DO9LQfiX859xV34RCPNJQc3y4O+bRFdmoGporoa1TFIuOd4g/cq2gtIX2Qq5px++bIZP
+         5SOXcWU8V/Z1EAPbthuR0FvkVPVWWMziod+xrrf8M4lrcRQpDm33wawgBN9hhmsfMjPi
+         10sg==
+X-Forwarded-Encrypted: i=1; AJvYcCWoBmCZD7MjWHSd6Pk50TDAI9ZfVVHNPuQadt1mfcC3wmTwsg/LkLXOpdmFiUh7/6rts1StbLhWA/nofa0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoGBfbh7neFp3NhQDxpd9zT+kNtozVavAsqKuYhL+56l86XmuC
+	+5fLFEvFShm/dWu3OPFh6zClfLMxyZto557mfTX1+WO5BusKbkeVOh9Ug8MULdHbPPEseDhFg3z
+	/BfDODDSx23bT3MyOXyHjCRvTeUugItc=
+X-Gm-Gg: ASbGncuS7mTzIrBcE83Tm5psRH811waebiCeV/lRwkultQKyEX71Lo+zwdOhgiuQQUB
+	A553dV+Et3AZU8OkC1dldu2wf92y5tT11RrvEIt8nwbFOwgYcOfL9uwoJwtGBqwcoz9p5Ho/IZK
+	Z0pzuuNsK3hAAjUTDOMYME3s9xhy5yzd2+0qBxd4PzfBud9iun64V5doiV+Aq8bCtVUB0xq0jjs
+	cYb7qejBlkjTvavjc2dR+E=
+X-Google-Smtp-Source: AGHT+IGL9vPdRVkkKOqUJtNXq5UND6cfJRafkIFi74NGkbo62GVIzwufNt9wpETV57+hWfbc3Yfj3PA1LgxMyK1lu5g=
+X-Received: by 2002:a17:90b:5650:b0:32e:aaac:907 with SMTP id
+ 98e67ed59e1d1-332a94df129mr296854a91.5.1758574717173; Mon, 22 Sep 2025
+ 13:58:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250827-k1-i2c-atomic-v1-6-e59bea02d680@linux.spacemit.com>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+References: <20250922140317.1468691-1-chen.dylane@linux.dev> <20250922140317.1468691-2-chen.dylane@linux.dev>
+In-Reply-To: <20250922140317.1468691-2-chen.dylane@linux.dev>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 22 Sep 2025 13:58:22 -0700
+X-Gm-Features: AS18NWAKfciGnImUAyNfbcv-dsltpq9HmGDY7Qw5FgXfnyWV2jcScfFt47-sxBA
+Message-ID: <CAEf4BzbwkmeiRb5v3TRLxNEywvtn7tynYu850E-sh8Z--hM-dg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v4 2/2] selftests/bpf: Add stacktrace map
+ lookup_and_delete_elem test case
+To: Tao Chen <chen.dylane@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-08-27 15:39, Troy Mitchell wrote:
-> This patch introduces I2C PIO functionality for the Spacemit K1 SoC,
-> enabling the use of I2C with interrupts disabled.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+On Mon, Sep 22, 2025 at 7:03=E2=80=AFAM Tao Chen <chen.dylane@linux.dev> wr=
+ote:
+>
+> Add tests for stacktrace map lookup and delete:
+> 1. use bpf_map_lookup_and_delete_elem to lookup and delete the target
+>    stack_id,
+> 2. lookup the deleted stack_id again to double check.
+>
+> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 > ---
->  drivers/i2c/busses/i2c-k1.c | 139 ++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 120 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-> index d2c0d20d19ba73baa8b2e9a6acb02b2cc3b7243f..e558fe4cbd5a78b5b53b0c02cbbca818b6495d4a 100644
-> --- a/drivers/i2c/busses/i2c-k1.c
-> +++ b/drivers/i2c/busses/i2c-k1.c
-> @@ -124,6 +124,7 @@ struct spacemit_i2c_dev {
->  
->  	enum spacemit_i2c_state state;
->  	bool read;
-> +	bool is_pio;
->  	struct completion complete;
->  	u32 status;
->  };
-> @@ -228,7 +229,7 @@ static void spacemit_i2c_check_bus_release(struct spacemit_i2c_dev *i2c)
->  
->  static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
+>  .../selftests/bpf/prog_tests/stacktrace_map.c | 21 ++++++++++++++++++-
+>  .../selftests/bpf/progs/test_stacktrace_map.c |  8 +++++++
+>  2 files changed, 28 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c b/to=
+ols/testing/selftests/bpf/prog_tests/stacktrace_map.c
+> index 84a7e405e91..d50659fc25e 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/stacktrace_map.c
+> @@ -3,7 +3,7 @@
+>
+>  void test_stacktrace_map(void)
 >  {
-> -	u32 val;
-> +	u32 val = 0;
->  
->  	/*
->  	 * Unmask interrupt bits for all xfer mode:
-> @@ -236,7 +237,8 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
->  	 * For transaction complete signal, we use master stop
->  	 * interrupt, so we don't need to unmask SPACEMIT_CR_TXDONEIE.
->  	 */
-> -	val = SPACEMIT_CR_BEIE | SPACEMIT_CR_ALDIE;
-> +	if (!i2c->is_pio)
-> +		val = SPACEMIT_CR_BEIE | SPACEMIT_CR_ALDIE;
->  
->  	/*
->  	 * Unmask interrupt bits for interrupt xfer mode:
-> @@ -246,7 +248,8 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
->  	 * i2c_start function.
->  	 * Otherwise, it will cause an erroneous empty interrupt before i2c_start.
->  	 */
-> -	val |= SPACEMIT_CR_DRFIE;
-> +	if (!i2c->is_pio)
-> +		val |= SPACEMIT_CR_DRFIE;
->  
->  	if (i2c->clock_freq == SPACEMIT_I2C_MAX_FAST_MODE_FREQ)
->  		val |= SPACEMIT_CR_MODE_FAST;
-> @@ -258,7 +261,10 @@ static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
->  	val |= SPACEMIT_CR_SCLE;
->  
->  	/* enable master stop detected */
-> -	val |= SPACEMIT_CR_MSDE | SPACEMIT_CR_MSDIE;
-> +	val |= SPACEMIT_CR_MSDE;
-> +
-> +	if (!i2c->is_pio)
-> +		val |= SPACEMIT_CR_MSDIE;
->  
->  	writel(val, i2c->base + SPACEMIT_ICR);
->  
-> @@ -295,10 +301,54 @@ static void spacemit_i2c_start(struct spacemit_i2c_dev *i2c)
->  	/* send start pulse */
->  	val = readl(i2c->base + SPACEMIT_ICR);
->  	val &= ~SPACEMIT_CR_STOP;
-> -	val |= SPACEMIT_CR_START | SPACEMIT_CR_TB | SPACEMIT_CR_DTEIE;
-> +	val |= SPACEMIT_CR_START | SPACEMIT_CR_TB;
-> +
-> +	if (!i2c->is_pio)
-> +		val |= SPACEMIT_CR_DTEIE;
-> +
->  	writel(val, i2c->base + SPACEMIT_ICR);
->  }
+> -       int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd;
+> +       int control_map_fd, stackid_hmap_fd, stackmap_fd, stack_amap_fd, =
+stack_key_map_fd;
+>         const char *prog_name =3D "oncpu";
+>         int err, prog_fd, stack_trace_len;
+>         const char *file =3D "./test_stacktrace_map.bpf.o";
+> @@ -11,6 +11,8 @@ void test_stacktrace_map(void)
+>         struct bpf_program *prog;
+>         struct bpf_object *obj;
+>         struct bpf_link *link;
+> +       __u32 stack_id;
+> +       char val_buf[PERF_MAX_STACK_DEPTH * sizeof(struct bpf_stack_build=
+_id)];
+>
+>         err =3D bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj, =
+&prog_fd);
+>         if (CHECK(err, "prog_load", "err %d errno %d\n", err, errno))
+> @@ -41,6 +43,10 @@ void test_stacktrace_map(void)
+>         if (CHECK_FAIL(stack_amap_fd < 0))
+>                 goto disable_pmu;
+>
+> +       stack_key_map_fd =3D bpf_find_map(__func__, obj, "stack_key_map")=
+;
+> +       if (CHECK_FAIL(stack_key_map_fd < 0))
 
-For all the above is_pio conditions, I have a stupid question, and the
-answer probably depends on the controller behaviour. 
+please don't use CHECK*() macros, they are superseded by more targeted
+ASSERT_xxx() ones
 
-Given all the individual interrupts are kept disabled, does it make 
-sense to disable the controller interrupt in spacemit_i2c_xfer_msg() 
-below? Or maybe the reverse question, does it make sense to disable the 
-controller interrupt in spacemit_i2c_xfer_msg() given all individual 
-interrupts are kept disabled?
+pw-bot: cr
 
-> +static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid);
-> +static int spacemit_i2c_wait_pio_xfer(struct spacemit_i2c_dev *i2c)
-> +{
-> +	u32 msec = jiffies_to_msecs(i2c->adapt.timeout);
 
-The i2c->adapt.timeout value is computed without a lot of margin, so I 
-wonder if it is also valid in PIO mode where there is more overhead?
+> +               goto disable_pmu;
+> +
+>         /* give some time for bpf program run */
+>         sleep(1);
+>
+> @@ -68,6 +74,19 @@ void test_stacktrace_map(void)
+>                   "err %d errno %d\n", err, errno))
+>                 goto disable_pmu;
+>
+> +       err =3D bpf_map_lookup_elem(stack_key_map_fd, &key, &stack_id);
+> +       if (CHECK(err, "stack_key_map lookup", "err %d errno %d\n", err, =
+errno))
+> +               goto disable_pmu;
+> +
+> +       err =3D bpf_map_lookup_and_delete_elem(stackmap_fd, &stack_id, &v=
+al_buf);
+> +       if (CHECK(err, "stackmap lookup and delete",
+> +                 "err %d errno %d\n", err, errno))
+> +               goto disable_pmu;
+> +
+> +       err =3D bpf_map_lookup_elem(stackmap_fd, &stack_id, &val_buf);
+> +       CHECK((!err || errno !=3D ENOENT), "stackmap lookup deleted stack=
+_id",
+> +             "err %d errno %d\n", err, errno);
 
-Note that I haven't encountered any issue, but OTOH I only tried writing 
-one register of the P1 chip.
+bpf_map_lookup_elem() returns error code directly, no need to use
+errno, just check that err =3D=3D -ENOENT
 
-Maybe this whole computation could be simplified, other adapters seems 
-to use a fixed value independent of the message, of between 200 ms to 
-6s. That could also fix a timeout if the SCL clock is slowed down by the 
-slave (again that's not something I have tried or experienced).
+> +
+>  disable_pmu:
+>         bpf_link__destroy(link);
+>  close_prog:
+> diff --git a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c b/to=
+ols/testing/selftests/bpf/progs/test_stacktrace_map.c
+> index 47568007b66..3bede76c151 100644
+> --- a/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
+> +++ b/tools/testing/selftests/bpf/progs/test_stacktrace_map.c
+> @@ -38,6 +38,13 @@ struct {
+>         __type(value, stack_trace_t);
+>  } stack_amap SEC(".maps");
+>
+> +struct {
+> +       __uint(type, BPF_MAP_TYPE_ARRAY);
+> +       __uint(max_entries, 1);
+> +       __type(key, __u32);
+> +       __type(value, __u32);
+> +} stack_key_map SEC(".maps");
+> +
+>  /* taken from /sys/kernel/tracing/events/sched/sched_switch/format */
+>  struct sched_switch_args {
+>         unsigned long long pad;
+> @@ -64,6 +71,7 @@ int oncpu(struct sched_switch_args *ctx)
+>         /* The size of stackmap and stackid_hmap should be the same */
+>         key =3D bpf_get_stackid(ctx, &stackmap, 0);
+>         if ((int)key >=3D 0) {
+> +               bpf_map_update_elem(&stack_key_map, &val, &key, 0);
 
-> +	ktime_t timeout = ktime_add_ms(ktime_get(), msec);
-> +	int ret;
-> +
-> +	while (i2c->unprocessed && ktime_compare(ktime_get(), timeout) < 0) {
-> +		udelay(10);
-> +		i2c->status = readl(i2c->base + SPACEMIT_ISR);
-> +
-> +		spacemit_i2c_clear_int_status(i2c, i2c->status);
-> +
-> +		if (!(i2c->status & SPACEMIT_SR_IRF) && !(i2c->status & SPACEMIT_SR_ITE))
-> +			continue;
-> +
-> +		spacemit_i2c_irq_handler(0, i2c);
-> +
-> +		i2c->status = readl(i2c->base + SPACEMIT_ISR);
-> +
-> +		/*
-> +		 * This is the last byte to write of the current message.
-> +		 * If we do not wait here, control will proceed directly to start(),
-> +		 * which would overwrite the current data.
-> +		 */
-> +		if (!i2c->read && !i2c->unprocessed) {
-> +			ret = readl_poll_timeout(i2c->base + SPACEMIT_ISR,
-> +						i2c->status, i2c->status & SPACEMIT_SR_ITE,
-> +						30, 1000);
+ugh... you'd just use a global variable if this test was used through
+skeleton... maybe convert the test to skeleton and get rid of all
+those unnecessary bpf_find_map() calls as well?
 
-You can't use readl_poll_timeout() in an atomic context. You should use 
-readl_poll_timeout_atomic() instead. Note that there is another one to 
-fix in spacemit_i2c_wait_bus_idle.
-
-> +			if (ret)
-> +				return 0;
-> +		}
-> +	}
-> +
-> +	if (i2c->unprocessed)
-> +		return 0;
-> +
-> +	return 1;
-> +}
-> +
->  static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
->  {
->  	unsigned long time_left;
-> @@ -312,10 +362,27 @@ static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
->  
->  		reinit_completion(&i2c->complete);
->  
-> -		spacemit_i2c_start(i2c);
-> +		if (i2c->is_pio) {
-> +			disable_irq(i2c->irq);
-> +
-> +			/*
-> +			 * The K1 I2C controller has a quirk:
-> +			 * when doing PIO transfers, the status register must be cleared
-> +			 * of all other bits before issuing a START.
-> +			 * Failing to do so will prevent the transfer from working properly.
-> +			 */
-> +			spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
-> +
-> +			spacemit_i2c_start(i2c);
-> +			time_left = spacemit_i2c_wait_pio_xfer(i2c);
-> +
-> +			enable_irq(i2c->irq);
-> +		} else {
-> +			spacemit_i2c_start(i2c);
-> +			time_left = wait_for_completion_timeout(&i2c->complete,
-> +								i2c->adapt.timeout);
-> +		}
->  
-> -		time_left = wait_for_completion_timeout(&i2c->complete,
-> -							i2c->adapt.timeout);
->  		if (!time_left) {
->  			dev_err(i2c->dev, "msg completion timeout\n");
->  			spacemit_i2c_conditionally_reset_bus(i2c);
-> @@ -343,6 +410,9 @@ static bool spacemit_i2c_is_last_msg(struct spacemit_i2c_dev *i2c)
->  
->  static void spacemit_i2c_handle_write(struct spacemit_i2c_dev *i2c)
->  {
-> +	if (!(i2c->status & SPACEMIT_SR_ITE))
-> +		return;
-> +
->  	/* if transfer completes, SPACEMIT_ISR will handle it */
->  	if (i2c->status & SPACEMIT_SR_MSD)
->  		return;
-> @@ -355,14 +425,20 @@ static void spacemit_i2c_handle_write(struct spacemit_i2c_dev *i2c)
->  
->  	/* SPACEMIT_STATE_IDLE avoids trigger next byte */
->  	i2c->state = SPACEMIT_STATE_IDLE;
-> -	complete(&i2c->complete);
-> +
-> +	if (!i2c->is_pio)
-> +		complete(&i2c->complete);
->  }
->  
->  static void spacemit_i2c_handle_read(struct spacemit_i2c_dev *i2c)
->  {
-> +	if (!(i2c->status & SPACEMIT_SR_IRF))
-> +		return;
-> +
->  	if (i2c->unprocessed) {
->  		*i2c->msg_buf++ = readl(i2c->base + SPACEMIT_IDBR);
->  		i2c->unprocessed--;
-> +		return;
->  	}
->  
->  	/* if transfer completes, SPACEMIT_ISR will handle it */
-> @@ -375,7 +451,9 @@ static void spacemit_i2c_handle_read(struct spacemit_i2c_dev *i2c)
->  
->  	/* SPACEMIT_STATE_IDLE avoids trigger next byte */
->  	i2c->state = SPACEMIT_STATE_IDLE;
-> -	complete(&i2c->complete);
-> +
-> +	if (!i2c->is_pio)
-> +		complete(&i2c->complete);
->  }
->  
->  static void spacemit_i2c_handle_start(struct spacemit_i2c_dev *i2c)
-> @@ -410,7 +488,9 @@ static void spacemit_i2c_err_check(struct spacemit_i2c_dev *i2c)
->  	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
->  
->  	i2c->state = SPACEMIT_STATE_IDLE;
-> -	complete(&i2c->complete);
-> +
-> +	if (!i2c->is_pio)
-> +		complete(&i2c->complete);
->  }
->  
->  static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid)
-> @@ -418,13 +498,20 @@ static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid)
->  	struct spacemit_i2c_dev *i2c = devid;
->  	u32 status, val;
->  
-> -	status = readl(i2c->base + SPACEMIT_ISR);
-> -	if (!status)
-> -		return IRQ_HANDLED;
-> +	/*
-> +	 * In PIO mode, do not read status again.
-> +	 * It has already been read in wait_pio_xfer(),
-> +	 * and reading it clears some bits.
-> +	 */
-> +	if (!i2c->is_pio) {
-> +		status = readl(i2c->base + SPACEMIT_ISR);
-> +		if (!status)
-> +			return IRQ_HANDLED;
->  
-> -	i2c->status = status;
-> +		i2c->status = status;
->  
-> -	spacemit_i2c_clear_int_status(i2c, status);
-> +		spacemit_i2c_clear_int_status(i2c, status);
-> +	}
->  
->  	if (i2c->status & SPACEMIT_SR_ERR)
->  		goto err_out;
-> @@ -483,11 +570,14 @@ static void spacemit_i2c_calc_timeout(struct spacemit_i2c_dev *i2c)
->  	i2c->adapt.timeout = usecs_to_jiffies(timeout + USEC_PER_SEC / 10) / i2c->msg_num;
->  }
->  
-> -static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num)
-> +static inline int
-> +spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num, bool is_pio)
->  {
->  	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
->  	int ret;
->  
-> +	i2c->is_pio = is_pio;
-> +
->  	i2c->msgs = msgs;
->  	i2c->msg_num = num;
->  
-> @@ -510,18 +600,29 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
->  
->  	if (ret == -ETIMEDOUT || ret == -EAGAIN)
->  		dev_err(i2c->dev, "i2c transfer failed, ret %d err 0x%lx\n",
-> -			  ret, i2c->status & SPACEMIT_SR_ERR);
-> +			ret, i2c->status & SPACEMIT_SR_ERR);
->  
->  	return ret < 0 ? ret : num;
->  }
->  
-> +static int spacemit_i2c_int_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num)
-> +{
-> +	return spacemit_i2c_xfer(adapt, msgs, num, false);
-> +}
-> +
-> +static int spacemit_i2c_pio_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, int num)
-> +{
-> +	return spacemit_i2c_xfer(adapt, msgs, num, true);
-> +}
-> +
->  static u32 spacemit_i2c_func(struct i2c_adapter *adap)
->  {
->  	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
->  }
->  
->  static const struct i2c_algorithm spacemit_i2c_algo = {
-> -	.xfer = spacemit_i2c_xfer,
-> +	.xfer = spacemit_i2c_int_xfer,
-> +	.xfer_atomic = spacemit_i2c_pio_xfer,
->  	.functionality = spacemit_i2c_func,
->  };
->  
-> 
-> -- 
-> 2.50.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
-
--- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                     http://aurel32.net
+>                 bpf_map_update_elem(&stackid_hmap, &key, &val, 0);
+>                 stack_p =3D bpf_map_lookup_elem(&stack_amap, &key);
+>                 if (stack_p)
+> --
+> 2.48.1
+>
 
