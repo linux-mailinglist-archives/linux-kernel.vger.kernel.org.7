@@ -1,263 +1,253 @@
-Return-Path: <linux-kernel+bounces-827931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB9E8B9377E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820AAB9378C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 00:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9173544809F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B374188D1ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C499320A2E;
-	Mon, 22 Sep 2025 22:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1960330DED7;
+	Mon, 22 Sep 2025 22:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="E/J15dFW"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T6Fi3uKp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81C028725A;
-	Mon, 22 Sep 2025 22:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E72C2F7ACA;
+	Mon, 22 Sep 2025 22:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758579433; cv=none; b=j1kqb5+COdeUliU6+DtZ5FG0uB/+akI1goC1mahu504zR+c1Vvavxoia/7JFRszeDACK8zL0nk9CVmmHPkSGJiJ9M5K7unQtaMmbrX7va9XzIdVrlaSAg3C4z0smgV4qzSVmgxaxCcrYclj1e6JFhkvscWyj5ojo7TppU4FpjAY=
+	t=1758579468; cv=none; b=FkRS2QDlYJkdWCBdVIgjQFcr4T6xbV0INjY4BLF/eWTGPc4QdXM//h7Od8mv3OsX+1VcWEPCoatCDG9THznHFYtFavteNTM+FSCUUHc2UKQMqQBFzNSIRQqzBLIiye/rdh0KYLo6SZUqAXNf9Xer8/fJgQujQRrslKzpe/05hLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758579433; c=relaxed/simple;
-	bh=aRqxQBtjU6+rvyZVBu/BLGv3XNOiqN63EK6zK9acjS0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rBaQix8ihIQArSdvYqui2BJx16TQ/WZZ2xsH0UsW0td4Ks9wVLfGsnDpzr7YUBM1AyoHz5b1mN/hlUBbSb0dpavRFYqZBAJjY9dbSLcezmo5GqOhPoK7AaiX925+fChUCWLbKZhrYkTCSvhk2O2Z00Pzd10hZZ+es+0gtbOBiFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (1024-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=E/J15dFW; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from simon-Latitude-5450.fritz.box (p5dc88066.dip0.t-ipconnect.de [93.200.128.102])
-	(authenticated bits=0)
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPSA id 58MMH4en003919
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 23 Sep 2025 00:17:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-dortmund.de;
-	s=unimail; t=1758579428;
-	bh=aRqxQBtjU6+rvyZVBu/BLGv3XNOiqN63EK6zK9acjS0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=E/J15dFWROga6n6cRlsCwaio02tipl9T9AO72hyiym+6rD/r5r/8GSfOgNGuW6ELT
-	 AgKtZOskiEA60dIKWuJbLWQXKLmxDoNWzYZOd/g7pOb4z5qAMm6KzJez933H95/Omu
-	 lB6pA6lnN4xHhrHLuz5BiOhVFHhflQYpehDH8c/A=
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-To: willemdebruijn.kernel@gmail.com, jasowang@redhat.com, mst@redhat.com,
-        eperezma@redhat.com, stephen@networkplumber.org, leiyang@redhat.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux.dev, kvm@vger.kernel.org
-Cc: Simon Schippers <simon.schippers@tu-dortmund.de>,
-        Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Subject: [PATCH net-next v5 8/8] vhost_net: Replace rx_ring with calls of TUN/TAP wrappers
-Date: Tue, 23 Sep 2025 00:15:53 +0200
-Message-ID: <20250922221553.47802-9-simon.schippers@tu-dortmund.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
-References: <20250922221553.47802-1-simon.schippers@tu-dortmund.de>
+	s=arc-20240116; t=1758579468; c=relaxed/simple;
+	bh=JR86t5gMqZoGcwbU+6O/bTJorJB8iMgsyOH04HDXylc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mxAg13dd1wiRpwKkyFdsaNdfRxVI/lvcmU2WIe19W+gbNW4c6Gtm4UoPqkf2dlDg931vUrkIIHP+c8HG+wxLNBjSCODldO3fz8tLp23nlY87V1TaAb+6Qp/FI/8pYUw6PNyxpXg9Rab3Bw+nrZu9QdWZqFoF7PUI5oBcblmXHFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T6Fi3uKp; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758579467; x=1790115467;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JR86t5gMqZoGcwbU+6O/bTJorJB8iMgsyOH04HDXylc=;
+  b=T6Fi3uKpR2dwJTOHiQ6P+/+0fPLjsS9kN7JL6VkPNjxj7VRAr3Fic5oe
+   3ugJ/aGJ8R87fuZc6R9jtHoM3HPuBz2b3wxQ8WPrHVv9NjsPQktmkVVIr
+   Okqy2rK4Xx4FYuxzGrfdNLNmoW2iyFvoWSFXJvc/2IxjtGHfWt7dxJnqR
+   f7i96dNNGUiqCKmQ+HimP8qeZFW9PcstSokzaPKBjx9FzO0IIjR5AfcyD
+   PmCco2lYOS1zH0HDcLwb8X1JLivl62TCHzNxBKiKiOzQWOtgCwIKgpgjP
+   yDORBRzobgAkUDa0lZwO6KdjfHqnxyuJMM45m8yP47OkSE6UcbiOtrPWv
+   w==;
+X-CSE-ConnectionGUID: /MyFAQLpShebIoaUggVvBA==
+X-CSE-MsgGUID: gs8EQxNiQ22l4aq9RQM3aw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60791210"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60791210"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 15:17:46 -0700
+X-CSE-ConnectionGUID: qJP5Ld6HSlaIUd7Nb61SKQ==
+X-CSE-MsgGUID: XYQkxJBGRNC3m8m5Y9TBbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,286,1751266800"; 
+   d="scan'208";a="213742857"
+Received: from dwoodwor-mobl2.amr.corp.intel.com (HELO [10.125.108.132]) ([10.125.108.132])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 15:17:46 -0700
+Message-ID: <12f7fbd9-c35f-4ebf-809f-43f8ab240413@intel.com>
+Date: Mon, 22 Sep 2025 15:17:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 08/20] nvdimm/label: Include region label in slot
+ validation
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+ nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+ cpgs@samsung.com, Jonathan Cameron <jonathan.cameron@huawei.com>
+References: <20250917134116.1623730-1-s.neeraj@samsung.com>
+ <CGME20250917134144epcas5p498fb4b005516fca56e68533ce017fba0@epcas5p4.samsung.com>
+ <20250917134116.1623730-9-s.neeraj@samsung.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250917134116.1623730-9-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Instead of the rx_ring, the virtqueue saves the interface type TUN, TAP
-(or IF_NONE) to call TUN/TAP wrappers.
 
-Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
-Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
----
- drivers/vhost/net.c | 90 +++++++++++++++++++++++++++++----------------
- 1 file changed, 58 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index c6508fe0d5c8..6be17b53cc6c 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -127,10 +127,10 @@ struct vhost_net_virtqueue {
- 	/* Reference counting for outstanding ubufs.
- 	 * Protected by vq mutex. Writers must also take device mutex. */
- 	struct vhost_net_ubuf_ref *ubufs;
--	struct ptr_ring *rx_ring;
- 	struct vhost_net_buf rxq;
- 	/* Batched XDP buffs */
- 	struct xdp_buff *xdp;
-+	enum if_type {IF_NONE = 0, TUN, TAP} type;
- };
- 
- struct vhost_net {
-@@ -176,24 +176,54 @@ static void *vhost_net_buf_consume(struct vhost_net_buf *rxq)
- 	return ret;
- }
- 
--static int vhost_net_buf_produce(struct vhost_net_virtqueue *nvq)
-+static int vhost_net_buf_produce(struct vhost_net_virtqueue *nvq,
-+		struct sock *sk)
- {
-+	struct file *file = sk->sk_socket->file;
- 	struct vhost_net_buf *rxq = &nvq->rxq;
- 
- 	rxq->head = 0;
--	rxq->tail = ptr_ring_consume_batched(nvq->rx_ring, rxq->queue,
--					      VHOST_NET_BATCH);
-+
-+	switch (nvq->type) {
-+	case TUN:
-+		rxq->tail = tun_ring_consume_batched(file,
-+				rxq->queue, VHOST_NET_BATCH);
-+		break;
-+	case TAP:
-+		rxq->tail = tap_ring_consume_batched(file,
-+				rxq->queue, VHOST_NET_BATCH);
-+		break;
-+	case IF_NONE:
-+		WARN_ON_ONCE();
-+	}
-+
- 	return rxq->tail;
- }
- 
--static void vhost_net_buf_unproduce(struct vhost_net_virtqueue *nvq)
-+static void vhost_net_buf_unproduce(struct vhost_net_virtqueue *nvq,
-+				struct socket *sk)
- {
- 	struct vhost_net_buf *rxq = &nvq->rxq;
--
--	if (nvq->rx_ring && !vhost_net_buf_is_empty(rxq)) {
--		ptr_ring_unconsume(nvq->rx_ring, rxq->queue + rxq->head,
--				   vhost_net_buf_get_size(rxq),
--				   tun_ptr_free);
-+	struct file *file;
-+
-+	if (sk && !vhost_net_buf_is_empty(rxq)) {
-+		file = sk->file;
-+		switch (nvq->type) {
-+		case TUN:
-+			tun_ring_unconsume(file,
-+					   rxq->queue + rxq->head,
-+					   vhost_net_buf_get_size(rxq),
-+					   tun_ptr_free);
-+			break;
-+		case TAP:
-+			tap_ring_unconsume(file,
-+					   rxq->queue + rxq->head,
-+					   vhost_net_buf_get_size(rxq),
-+					   tun_ptr_free);
-+			break;
-+		case IF_NONE:
-+			return;
-+		}
- 		rxq->head = rxq->tail = 0;
- 	}
- }
-@@ -209,14 +239,15 @@ static int vhost_net_buf_peek_len(void *ptr)
- 	return __skb_array_len_with_tag(ptr);
- }
- 
--static int vhost_net_buf_peek(struct vhost_net_virtqueue *nvq)
-+static int vhost_net_buf_peek(struct vhost_net_virtqueue *nvq,
-+							  struct sock *sk)
- {
- 	struct vhost_net_buf *rxq = &nvq->rxq;
- 
- 	if (!vhost_net_buf_is_empty(rxq))
- 		goto out;
- 
--	if (!vhost_net_buf_produce(nvq))
-+	if (!vhost_net_buf_produce(nvq, sk))
- 		return 0;
- 
- out:
-@@ -998,8 +1029,8 @@ static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
- 	int len = 0;
- 	unsigned long flags;
- 
--	if (rvq->rx_ring)
--		return vhost_net_buf_peek(rvq);
-+	if (rvq->type)
-+		return vhost_net_buf_peek(rvq, sk);
- 
- 	spin_lock_irqsave(&sk->sk_receive_queue.lock, flags);
- 	head = skb_peek(&sk->sk_receive_queue);
-@@ -1207,7 +1238,7 @@ static void handle_rx(struct vhost_net *net)
- 			goto out;
- 		}
- 		busyloop_intr = false;
--		if (nvq->rx_ring)
-+		if (nvq->type)
- 			msg.msg_control = vhost_net_buf_consume(&nvq->rxq);
- 		/* On overrun, truncate and discard */
- 		if (unlikely(headcount > UIO_MAXIOV)) {
-@@ -1363,7 +1394,7 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 		n->vqs[i].batched_xdp = 0;
- 		n->vqs[i].vhost_hlen = 0;
- 		n->vqs[i].sock_hlen = 0;
--		n->vqs[i].rx_ring = NULL;
-+		n->vqs[i].type = IF_NONE;
- 		vhost_net_buf_init(&n->vqs[i].rxq);
- 	}
- 	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
-@@ -1393,8 +1424,8 @@ static struct socket *vhost_net_stop_vq(struct vhost_net *n,
- 	sock = vhost_vq_get_backend(vq);
- 	vhost_net_disable_vq(n, vq);
- 	vhost_vq_set_backend(vq, NULL);
--	vhost_net_buf_unproduce(nvq);
--	nvq->rx_ring = NULL;
-+	vhost_net_buf_unproduce(nvq, sock);
-+	nvq->type = IF_NONE;
- 	mutex_unlock(&vq->mutex);
- 	return sock;
- }
-@@ -1474,18 +1505,13 @@ static struct socket *get_raw_socket(int fd)
- 	return ERR_PTR(r);
- }
- 
--static struct ptr_ring *get_tap_ptr_ring(struct file *file)
-+static enum if_type get_if_type(struct file *file)
- {
--	struct ptr_ring *ring;
--	ring = tun_get_tx_ring(file);
--	if (!IS_ERR(ring))
--		goto out;
--	ring = tap_get_ptr_ring(file);
--	if (!IS_ERR(ring))
--		goto out;
--	ring = NULL;
--out:
--	return ring;
-+	if (is_tap_file(file))
-+		return TAP;
-+	if (is_tun_file(file))
-+		return TUN;
-+	return IF_NONE;
- }
- 
- static struct socket *get_tap_socket(int fd)
-@@ -1567,7 +1593,7 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
- 
- 		vhost_net_disable_vq(n, vq);
- 		vhost_vq_set_backend(vq, sock);
--		vhost_net_buf_unproduce(nvq);
-+		vhost_net_buf_unproduce(nvq, sock);
- 		r = vhost_vq_init_access(vq);
- 		if (r)
- 			goto err_used;
-@@ -1576,9 +1602,9 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
- 			goto err_used;
- 		if (index == VHOST_NET_VQ_RX) {
- 			if (sock)
--				nvq->rx_ring = get_tap_ptr_ring(sock->file);
-+				nvq->type = get_if_type(sock->file);
- 			else
--				nvq->rx_ring = NULL;
-+				nvq->type = IF_NONE;
- 		}
- 
- 		oldubufs = nvq->ubufs;
--- 
-2.43.0
+On 9/17/25 6:41 AM, Neeraj Kumar wrote:
+> Slot validation routine validates label slot by calculating label
+> checksum. It was only validating namespace label. This changeset also
+> validates region label if present.
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> ---
+>  drivers/nvdimm/label.c | 72 ++++++++++++++++++++++++++++++++----------
+>  drivers/nvdimm/nd.h    |  5 +++
+>  2 files changed, 60 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index d33db96ba8ba..5e476154cf81 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -359,7 +359,7 @@ static bool nsl_validate_checksum(struct nvdimm_drvdata *ndd,
+>  {
+>  	u64 sum, sum_save;
+>  
+> -	if (!ndd->cxl && !efi_namespace_label_has(ndd, checksum))
+> +	if (!efi_namespace_label_has(ndd, checksum))
+>  		return true;
+>  
+>  	sum_save = nsl_get_checksum(ndd, nd_label);
+> @@ -374,13 +374,25 @@ static void nsl_calculate_checksum(struct nvdimm_drvdata *ndd,
+>  {
+>  	u64 sum;
+>  
+> -	if (!ndd->cxl && !efi_namespace_label_has(ndd, checksum))
+> +	if (!efi_namespace_label_has(ndd, checksum))
+>  		return;
+>  	nsl_set_checksum(ndd, nd_label, 0);
+>  	sum = nd_fletcher64(nd_label, sizeof_namespace_label(ndd), 1);
+>  	nsl_set_checksum(ndd, nd_label, sum);
+>  }
+>  
+> +static bool region_label_validate_checksum(struct nvdimm_drvdata *ndd,
+> +				struct cxl_region_label *region_label)
+> +{
+> +	u64 sum, sum_save;
+> +
+> +	sum_save = region_label_get_checksum(region_label);
+> +	region_label_set_checksum(region_label, 0);
+> +	sum = nd_fletcher64(region_label, sizeof_namespace_label(ndd), 1);
+> +	region_label_set_checksum(region_label, sum_save);
+> +	return sum == sum_save;
+> +}
+> +
+>  static void region_label_calculate_checksum(struct nvdimm_drvdata *ndd,
+>  				   struct cxl_region_label *region_label)
+>  {
+> @@ -392,16 +404,30 @@ static void region_label_calculate_checksum(struct nvdimm_drvdata *ndd,
+>  }
+>  
+>  static bool slot_valid(struct nvdimm_drvdata *ndd,
+> -		struct nd_namespace_label *nd_label, u32 slot)
+> +		       union nd_lsa_label *lsa_label, u32 slot)
+>  {
+> +	struct cxl_region_label *region_label = &lsa_label->region_label;
+> +	struct nd_namespace_label *nd_label = &lsa_label->ns_label;
+> +	char *label_name;
+>  	bool valid;
+>  
+>  	/* check that we are written where we expect to be written */
+> -	if (slot != nsl_get_slot(ndd, nd_label))
+> -		return false;
+> -	valid = nsl_validate_checksum(ndd, nd_label);
+> +	if (is_region_label(ndd, lsa_label)) {
+> +		label_name = "rg";
+
+I suggest create a static string table enumerated by 'enum label_type'. That way you can directly address it by 'label_name[ltype]' when being used instead of assigning at run time. And maybe just use "region" and "namespace" since it's for debug output and we don't need to shorten it. 
+
+DJ
+
+> +		if (slot != region_label_get_slot(region_label))
+> +			return false;
+> +		valid = region_label_validate_checksum(ndd, region_label);
+> +	} else {
+> +		label_name = "ns";
+> +		if (slot != nsl_get_slot(ndd, nd_label))
+> +			return false;
+> +		valid = nsl_validate_checksum(ndd, nd_label);
+> +	}
+> +
+>  	if (!valid)
+> -		dev_dbg(ndd->dev, "fail checksum. slot: %d\n", slot);
+> +		dev_dbg(ndd->dev, "%s label checksum fail. slot: %d\n",
+> +			label_name, slot);
+> +
+>  	return valid;
+>  }
+>  
+> @@ -424,7 +450,7 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+>  
+>  		nd_label = to_label(ndd, slot);
+>  
+> -		if (!slot_valid(ndd, nd_label, slot))
+> +		if (!slot_valid(ndd, (union nd_lsa_label *) nd_label, slot))
+>  			continue;
+>  
+>  		nsl_get_uuid(ndd, nd_label, &label_uuid);
+> @@ -575,18 +601,30 @@ int nd_label_active_count(struct nvdimm_drvdata *ndd)
+>  		return 0;
+>  
+>  	for_each_clear_bit_le(slot, free, nslot) {
+> +		struct cxl_region_label *region_label;
+>  		struct nd_namespace_label *nd_label;
+> -
+> -		nd_label = to_label(ndd, slot);
+> -
+> -		if (!slot_valid(ndd, nd_label, slot)) {
+> -			u32 label_slot = nsl_get_slot(ndd, nd_label);
+> -			u64 size = nsl_get_rawsize(ndd, nd_label);
+> -			u64 dpa = nsl_get_dpa(ndd, nd_label);
+> +		union nd_lsa_label *lsa_label;
+> +		u32 lslot;
+> +		u64 size, dpa;
+> +
+> +		lsa_label = (union nd_lsa_label *) to_label(ndd, slot);
+> +		nd_label = &lsa_label->ns_label;
+> +		region_label = &lsa_label->region_label;
+> +
+> +		if (!slot_valid(ndd, lsa_label, slot)) {
+> +			if (is_region_label(ndd, lsa_label)) {
+> +				lslot = __le32_to_cpu(region_label->slot);
+> +				size = __le64_to_cpu(region_label->rawsize);
+> +				dpa = __le64_to_cpu(region_label->dpa);
+> +			} else {
+> +				lslot = nsl_get_slot(ndd, nd_label);
+> +				size = nsl_get_rawsize(ndd, nd_label);
+> +				dpa = nsl_get_dpa(ndd, nd_label);
+> +			}
+>  
+>  			dev_dbg(ndd->dev,
+>  				"slot%d invalid slot: %d dpa: %llx size: %llx\n",
+> -					slot, label_slot, dpa, size);
+> +					slot, lslot, dpa, size);
+>  			continue;
+>  		}
+>  		count++;
+> @@ -607,7 +645,7 @@ struct nd_namespace_label *nd_label_active(struct nvdimm_drvdata *ndd, int n)
+>  		struct nd_namespace_label *nd_label;
+>  
+>  		nd_label = to_label(ndd, slot);
+> -		if (!slot_valid(ndd, nd_label, slot))
+> +		if (!slot_valid(ndd, (union nd_lsa_label *) nd_label, slot))
+>  			continue;
+>  
+>  		if (n-- == 0)
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 046063ea08b6..c985f91728dd 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -344,6 +344,11 @@ region_label_uuid_equal(struct cxl_region_label *region_label,
+>  	return uuid_equal((uuid_t *) region_label->uuid, uuid);
+>  }
+>  
+> +static inline u32 region_label_get_slot(struct cxl_region_label *region_label)
+> +{
+> +	return __le32_to_cpu(region_label->slot);
+> +}
+> +
+>  static inline u64
+>  region_label_get_checksum(struct cxl_region_label *region_label)
+>  {
 
 
