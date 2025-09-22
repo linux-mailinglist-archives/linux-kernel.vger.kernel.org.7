@@ -1,163 +1,84 @@
-Return-Path: <linux-kernel+bounces-827541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6135B92046
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794D6B92055
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11C632A68CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2348817DC65
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137082EAD05;
-	Mon, 22 Sep 2025 15:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2FE2EB857;
+	Mon, 22 Sep 2025 15:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCFBpiJF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaTfLh17"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBA82E8DEE
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881F72EACEE;
+	Mon, 22 Sep 2025 15:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758555772; cv=none; b=QwIKeNsam7hb22qR4p7BPlPtH7qkxc4CkUvOArt7wkI3qXWdfgQnt8WFxz7qcavhNZt0aBjCFo7qWjE4ffwb65+sE1V2gmdUXwMsZ7tM03LGF5nxuxMI/hyT+99t4byowOfrsSVTu1SfLUTIjUiaVbpyqm+DNAqbesVjC1PLZp4=
+	t=1758555774; cv=none; b=sd6SxQHaHmo7at5HnQKMmnJ6MQ4aHdSp5bYYyW1sRCYySJk++gukQDK+l7n+pquI4CoJa3A4lByZ4p0J3zXN+3uGmtxHY0qVdlpCb3vd9laB17DNOgSzvrkykBRziuWXxQpXW2DEzclYIqRt9JbMXI28rGJosZMJdyQKrlwQKLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758555772; c=relaxed/simple;
-	bh=8a2xzUQVD9g6fYgl5qfxaW220V5QrIZ2t+whNUaKAEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uvh/+yno1ECL9ihbXJyXnzypOcowU2ZkTMuJ7MhcVnFD4Gteu7FBHiMfRDR5YK7e+Nhs9k5A7LphuntrIXHQj+VIedMw5TBsBV/Tt2BQSlJAGHi6twb4e1KPT9UgdQf/uD1w6O7Q8vItLKHkpmbeicSU8cUybY6pTG8njdUAcsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCFBpiJF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5A01C19421
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:42:51 +0000 (UTC)
+	s=arc-20240116; t=1758555774; c=relaxed/simple;
+	bh=DtPB7vfAnTG/7K/fZ6mIHFQTPh+w/VV+8h+Wu3y3m9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lINj34xD7eDzxhuWtLWeT+Ed0cFoOEw9XfXwcm3hwiGDw6Ji9K9PS/E8mswkNcg1ii0lwfxgsHP+KgPEc0pDHysoacyf24qD10W+Na1s5nkWnEN8tJPEItO37PY2w8KB2ra+w5Z24eGUo/FEmC0mjWx65+b/ElDLTek5yW4HNP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaTfLh17; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09444C116B1;
+	Mon, 22 Sep 2025 15:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758555771;
-	bh=8a2xzUQVD9g6fYgl5qfxaW220V5QrIZ2t+whNUaKAEw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bCFBpiJFpSveyzPEYzZRSSM7dEjExuWTrLMMljisPyehxDNsLtBAx+tAoWB8qCI60
-	 Dia3CykgMQo64VLLfYQZMLaIC608ylc7xfajyuA1XZ9O4bMig0K7qIiCrRQaoj7dzC
-	 ROfxHj25bflQANA7Yzzbc0XE/gOrbG/O7Dh2adyFEPxNYZnNdDHO2XShUhUqSxkSyJ
-	 YVjbotM8F5OLx/Tiejh4nxEPZE/tVLNijaQq8DnT2P9z3PoALfzdRsL8RhejaoqooB
-	 hgDy+UcZinBGOxgJWka344Hv1CUqLpkhnDWnyr1kbVnLeoavWMrgHcYyZoNaI6ITqa
-	 24/QG67EEiF1Q==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-6219e33ba2dso1518166eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:42:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXQNnZ9X9vFmoPiSli0ZuOAHtj+NAkWeu1TKnYBiyeBU5KXwsLpzTq7LbfejUzdqZjRSLjo2X36bt/z2NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyUsD13whCVAEUlB4JIk80ufOU7lta2IZwOAiZsu6Y13GjrobT
-	i9QW1hDu2TeI/qxKihXaa8I2s/1gr2m4LBbnfDxbxR/8E0CaeB3PncdoopBwEk8O6pG4+D3BYUE
-	+BCbAgjGQwcdEMIKZzJisUD0zA7jDbbQ=
-X-Google-Smtp-Source: AGHT+IEM6VbLvbu+xwC6XpJ08a5O9TpUNhUlzecT/UdItH9r4lIBmLO8A4nhnKAqSWR4XGDk1UWsXrUSiXqzJW+gZRA=
-X-Received: by 2002:a05:6808:191f:b0:43d:2762:834a with SMTP id
- 5614622812f47-43d5b3fd59fmr7950395b6e.7.1758555771212; Mon, 22 Sep 2025
- 08:42:51 -0700 (PDT)
+	s=k20201202; t=1758555774;
+	bh=DtPB7vfAnTG/7K/fZ6mIHFQTPh+w/VV+8h+Wu3y3m9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IaTfLh17dpRXzYzcDIQb1yD0zsY8wX+grH2gOJaS5RpZTgg03VKqiShxI2d7klVRS
+	 v9limkgRECyhwuN5cVr6j8Hf8IJJbx/44WWKXjzGnLbcaKd6ZmvXHevim2hj8z5xmv
+	 0yc4y3OuE94StLQrALV9F00iFHMItOcjydxvSCb+FLjSnfJhMwsmK1wzpSYyTXK2kN
+	 aRlZd37t5sstUZmhu8FxmENPjO4mgYxROkys9EVHALvd4CCTsIp0cbLWGYpBewR8Ja
+	 FcS2wrKlwHF5sApduJAA7uBT1XGOUDUIkRFPt6Tiial/6NQIibr8TxVACTsQKm0Wgg
+	 v4p+rg/hU7NPA==
+Date: Mon, 22 Sep 2025 10:42:51 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexandru Chimac <alex@chimac.ro>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Tomasz Figa <tomasz.figa@gmail.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: samsung: Add
+ exynos9610-wakeup-eint node
+Message-ID: <175855577061.34473.4077205637098992576.robh@kernel.org>
+References: <20250914-exynos9610-pinctrl-v1-0-90eda0c8fa03@chimac.ro>
+ <20250914-exynos9610-pinctrl-v1-2-90eda0c8fa03@chimac.ro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
- <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
- <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com>
- <87o6rowrsp.ffs@tglx> <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
- <87ldmqwgjc.ffs@tglx> <CAJZ5v0gW+A-eyckySFrHc7=Qr9URdRX6NqvPgkq4gZEvs_uBWg@mail.gmail.com>
- <87cy7k5gl3.ffs@tglx>
-In-Reply-To: <87cy7k5gl3.ffs@tglx>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 22 Sep 2025 17:42:40 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hkMUP3rwSggAPNp+LAKnYBoNn4sE2e9xGR_d-aofwxAA@mail.gmail.com>
-X-Gm-Features: AS18NWDut5eiI7pdRbz4uGDE_snloiZCO-WRNYNZHkBj9-M5TFtrGKR0jxiCgr0
-Message-ID: <CAJZ5v0hkMUP3rwSggAPNp+LAKnYBoNn4sE2e9xGR_d-aofwxAA@mail.gmail.com>
-Subject: Re: [PATCH] x86/topology: Implement topology_is_core_online() to
- address SMT regression
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914-exynos9610-pinctrl-v1-2-90eda0c8fa03@chimac.ro>
 
-On Sun, Sep 21, 2025 at 10:56=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->
-> Christian reported that commit a430c11f4015 ("intel_idle: Rescan "dead" S=
-MT
-> siblings during initialization") broke the use case in which both 'nosmt'
-> and 'maxcpus' are on the kernel command line because it onlines primary
-> threads, which were offline due to the maxcpus limit.
->
-> The initially proposed fix to skip primary threads in the loop is
-> inconsistent. While it prevents the primary thread to be onlined, it then
-> onlines the corresponding hyperthread(s), which does not really make sens=
-e.
->
-> The CPU iterator in cpuhp_smt_enable() contains a check which excludes al=
-l
-> threads of a core, when the primary thread is offline. The default
-> implementation is a NOOP and therefore not effective on x86.
->
-> Implement topology_is_core_online() on x86 to address this issue. This
-> makes the behaviour consistent between x86 and PowerPC.
->
-> Fixes: a430c11f4015 ("intel_idle: Rescan "dead" SMT siblings during initi=
-alization")
-> Fixes: f694481b1d31 ("ACPI: processor: Rescan "dead" SMT siblings during =
-initialization")
-> Reported-by: Christian Loehle <christian.loehle@arm.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: stable@vger.kernel.org
-> Link: https://lore.kernel.org/12740505.O9o76ZdvQC@rafael.j.wysocki
-> Closes: https://lore.kernel.org/linux-pm/724616a2-6374-4ba3-8ce3-ea9c45e2=
-ae3b@arm.com/
 
-Reviewed-by: Rafael J. Wysocki (Intel) <rafael@kernel.org>
-
+On Sun, 14 Sep 2025 19:34:37 +0000, Alexandru Chimac wrote:
+> Add a dedicated compatible for the exynos9610-wakeup-eint node,
+> which is compatbile with Exynos850's implementation (and the
+> Exynos7 fallback).
+> 
+> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
 > ---
->  arch/x86/include/asm/topology.h |   10 ++++++++++
->  arch/x86/kernel/cpu/topology.c  |   13 +++++++++++++
->  2 files changed, 23 insertions(+)
->
-> --- a/arch/x86/include/asm/topology.h
-> +++ b/arch/x86/include/asm/topology.h
-> @@ -231,6 +231,16 @@ static inline bool topology_is_primary_t
->  }
->  #define topology_is_primary_thread topology_is_primary_thread
->
-> +int topology_get_primary_thread(unsigned int cpu);
-> +
-> +static inline bool topology_is_core_online(unsigned int cpu)
-> +{
-> +       int pcpu =3D topology_get_primary_thread(cpu);
-> +
-> +       return pcpu >=3D 0 ? cpu_online(pcpu) : false;
-> +}
-> +#define topology_is_core_online topology_is_core_online
-> +
->  #else /* CONFIG_SMP */
->  static inline int topology_phys_to_logical_pkg(unsigned int pkg) { retur=
-n 0; }
->  static inline int topology_max_smt_threads(void) { return 1; }
-> --- a/arch/x86/kernel/cpu/topology.c
-> +++ b/arch/x86/kernel/cpu/topology.c
-> @@ -372,6 +372,19 @@ unsigned int topology_unit_count(u32 api
->         return topo_unit_count(lvlid, at_level, apic_maps[which_units].ma=
-p);
->  }
->
-> +#ifdef CONFIG_SMP
-> +int topology_get_primary_thread(unsigned int cpu)
-> +{
-> +       u32 apic_id =3D cpuid_to_apicid[cpu];
-> +
-> +       /*
-> +        * Get the core domain level APIC id, which is the primary thread
-> +        * and return the CPU number assigned to it.
-> +        */
-> +       return topo_lookup_cpuid(topo_apicid(apic_id, TOPO_CORE_DOMAIN));
-> +}
-> +#endif
-> +
->  #ifdef CONFIG_ACPI_HOTPLUG_CPU
->  /**
->   * topology_hotplug_apic - Handle a physical hotplugged APIC after boot
+>  .../devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml   | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
