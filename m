@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-826783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C2BB8F553
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:46:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69AADB8F571
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7FC116CA82
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:46:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31CD03BC034
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36992F5498;
-	Mon, 22 Sep 2025 07:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C2F2F6567;
+	Mon, 22 Sep 2025 07:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I2flsy/b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="TQ81andO"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE37182B4;
-	Mon, 22 Sep 2025 07:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B5CA920
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758527206; cv=none; b=ebJ6H6hY6uwXXXJZRM8q9B8QNH8n6FVpOO3XETQrNuAHCrLQ0iogs90AbdJgZH79FJP5kQOt4XdxoI3SzEdACEo8PcGqg8aqSE250VrpFQrIbK+yikDM33r523NDluVcxs04H8WzutvCCd4jG8WzRgs6XyK5K0T1LByAOQmzg1w=
+	t=1758527518; cv=none; b=oJStw0xvYdDqsuRP9bJYPuF/Im0PPCw0ieKumGI9e6JU6Qtt1IHq2zd4cgkSxNNuUPge2F00zB187dQ9l1NEEGr1ZrFkB0ZwdI6EIbnJTokJtfYUe8LELQ/3MQdtsLUsbF1ZY0s800TLuD6iu2bpjwCm3TEkrMB3G0AF9IyZutg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758527206; c=relaxed/simple;
-	bh=OsMg3MN5TISzpxmH61wHFj+M6YuHHWi4M2vXXj+Sy7c=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hbYFrec/6YuFI+SVlNuOUykUrlyirViuLe4uLMtkGLGXhpekFP2wR/l3v9Z1iORiSZu3xTS0kxS8vc8b4K76EwOqoRrYdyX5jByJlHkeLDfaERATZpyf2ZvFWlD8QNl12o5RlbXpPbwATFyEgSqyVBDKJ16g1UFj3I5F1uyOoI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I2flsy/b; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1758527204; x=1790063204;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=OsMg3MN5TISzpxmH61wHFj+M6YuHHWi4M2vXXj+Sy7c=;
-  b=I2flsy/bcXOw5AOw7+MPIzTY4M1BkoEungAeitmPKbbssjBsF88drOjs
-   kZkdrWOO/z4jiNwiXvr6ShPmiKnA1jx1TRllsclgi8hwmVIKp0WT67ThK
-   YzZNHVn6KfbCgX+RaZtNdUzYsKFO8wAg7yrat378eemZhUUiIjybJ/gIU
-   WOGM/Wz91TsI5n+xLLf83kTflnIcqiLVvyEPSK1OscHUHky4pS8QfFKzl
-   JbtcFKueDt3/GZdCERziOc9g6cSlQDkMDZe8AphYaFANb08McfL9KsqHb
-   Rim4/zevS/lEymZA0xzY01mcRdeLTJUKvyAiGxmlizJESgYDiGXoRcZy6
-   g==;
-X-CSE-ConnectionGUID: uR3ONqPSSgupAvUnM3oFdg==
-X-CSE-MsgGUID: iiwYixXRSDS2b0IPXVR6Aw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11560"; a="60900963"
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="60900963"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:46:43 -0700
-X-CSE-ConnectionGUID: HxVEPtk8Sx6g+4KrqgZMUQ==
-X-CSE-MsgGUID: U7wrw6ylT8GsugZel8EpFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,284,1751266800"; 
-   d="scan'208";a="175540003"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 00:46:41 -0700
-Message-ID: <b12cac74-5a08-4338-bbab-510860e11a30@linux.intel.com>
-Date: Mon, 22 Sep 2025 15:46:37 +0800
+	s=arc-20240116; t=1758527518; c=relaxed/simple;
+	bh=AigsWdrV8U413sLiWYn0DWOfNdAi83yiRHcmu2AqNU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h8Z+rjwG3iJxr8DV3RzLMo3ud3iIDAIRz5ns2Zzq0EX5ItWeiOUkflT+b6KPI7htIzC1ntEbDcC89ITOrjbKpZVgvog2WA+Re5EylzC9z3gHz7IwL41GWnLG1MIDSk9VYY9Q9IeHxOSxhr0ZIg3TxCVPZuLbap/4D+hlImF3CGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=TQ81andO; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-77f2e621ef8so931508b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1758527516; x=1759132316; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UDel7pcF11Oq6yCh9tIpX43vHF5ddtSDLUzVljmeUyU=;
+        b=TQ81andOj0RiDNXpmRhHleqRETx/wj6FE5qD80u74ywpg4erqzE3GJWURBe9q7wGgB
+         Fp8Ulz8CKqCOoXVzdriotZqXQk66usBlVZNxoZIK1MrELuW/PmS3akxqc7vOgAJm+K1L
+         YIeQW2WSKiTrC3D/87h2ZdhNYtv9tlNZBLqpMcnXuhAOZ+PGYlqIpVTb29koKkwaNGGL
+         tqm9kFzih/OtIKIbmvBFgI417+R88rjrs5XROctZY0AS9dwh/kgRjU8EP36JkJfUTLR5
+         54o8ghh7dEowtFKPW4AX83qMprbBRpIVGktb2eZ2wCJhwOgOV6LhtyS6xn6njvyvoxlm
+         BPUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758527516; x=1759132316;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UDel7pcF11Oq6yCh9tIpX43vHF5ddtSDLUzVljmeUyU=;
+        b=FzGUlg2L1SaGTybp/iVBiN2NvbrEHcUB1GutEXlEjJYSLNIoUmK04fzzwuXqCwgOZ0
+         VrNKPoOhYze81neugKIitV+W4vI4a21hHrduVPMLfofDBU2ZKIr2IOaLWR9YXH+zI9C5
+         hcUJXvpMc+bUiPQEkGRvlUpuFdIAvJnZ4pTrLBvBCfqCXmcyKT6QnAaJ8rYwIsd+HGQx
+         28ezeBgBTr3jnvJrV9k3GWTX0nlf2+xUrbfFHH583OrVPNJtDdB2iIPSPkiE9XPt6sGL
+         cmza4CX/R9jbZduzd4JRGXjkWjPwnPsuY0lqdTzBHY370UhMfY2XAQ+7sKtgAVPgetjT
+         PQBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuGP40KNuqqKcSDn4kN0rQPHjQyFUkOXcJWcLRIxthhnKbTHShHmvAwJPN9woVz5D1uH6R0jNI79E0jEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/IDxeyJHGR+2YwOOZo+sAuAAlH3JJhCftNSeNAtkntiVWakba
+	yJjSs+Rdg3fFkWUwpuT8v2jUHlW6W4fyAqRpyZpjBkUgx8A6W6uxlMdWXlA+l9RjJFM=
+X-Gm-Gg: ASbGnctaQe4lEO+YSh2pTN3Vnq8f5G8srYBx74Wkl85KPMTrf4Og2SIObL83d3LgB53
+	U+/tn3GD50fqZWRSBZBydxdxgTGtBADkGhM58aNW2VQtszPHgtFtOP2HWWXNDv65brtIbxtYKBY
+	8LROj4bOZkSL95kryzQYZ9xzVD2NaWoGlb9rdZgE7tDYK2D0Rfie5c0lmk0DlKJUE5prj35vmSm
+	mApQTgu3WUIkQ+f5lsocpEMmYffvR8XMnbQOh261lS7XNx0v8Y0ecb7/WuF0ibQhm+Ak+ya+nCB
+	Yaw6JA/WEZvpVRUvd0p7QHWSRMAqFnrB+pacF/qgKCB2CBXLKTstT7R2k5rXie7r2Y9HVeYNQVA
+	PgFWt30ZXJ5WIyAdDAlxP1meF82SHEdN1YzLUv6vd3SB2oTGzVLk=
+X-Google-Smtp-Source: AGHT+IFvNwMFCIWEKmfCSKTgy3OoaxHXYVww5vD36PPLuuFVpvLur2RM9yIrNxaf8MVuw+PgrnqE8Q==
+X-Received: by 2002:a05:6a00:114e:b0:771:ead8:dcdb with SMTP id d2e1a72fcca58-77e4d31e124mr13772451b3a.8.1758527516015;
+        Mon, 22 Sep 2025 00:51:56 -0700 (PDT)
+Received: from [100.82.90.25] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f315029c0sm3020093b3a.47.2025.09.22.00.51.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 00:51:55 -0700 (PDT)
+Message-ID: <7d76e5ce-22c7-4b9c-bb23-d0ccbe22b745@bytedance.com>
+Date: Mon, 22 Sep 2025 15:51:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,74 +81,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 21/51] KVM: x86/mmu: WARN on attempt to check
- permissions for Shadow Stack #PF
-From: Binbin Wu <binbin.wu@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
- Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>,
- Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-22-seanjc@google.com>
- <8b91ca86-6301-4645-a9c2-c2de3a16327c@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <8b91ca86-6301-4645-a9c2-c2de3a16327c@linux.intel.com>
+Subject: Re: [PATCH 0/4] reparent the THP split queue
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+ roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com,
+ lorenzo.stoakes@oracle.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
+ dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, Harry Yoo <harry.yoo@oracle.com>
+References: <cover.1758253018.git.zhengqi.arch@bytedance.com>
+ <svcphrpkfw66t6e4y5uso4zbt2qmgpplazeobnhikukopcz76l@ugqmwtplkbfj>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <svcphrpkfw66t6e4y5uso4zbt2qmgpplazeobnhikukopcz76l@ugqmwtplkbfj>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Shakeel,
 
-
-On 9/22/2025 3:17 PM, Binbin Wu wrote:
->
->
-> On 9/20/2025 6:32 AM, Sean Christopherson wrote:
->> Add PFERR_SS_MASK, a.k.a. Shadow Stack access, and WARN if KVM attempts to
->> check permissions for a Shadow Stack access as KVM hasn't been taught to
->> understand the magic Writable=0,Dirty=0 combination that is required for
-Typo:
-
-Writable=0,Dirty=0 -> Writable=0,Dirty=1
-
->> Shadow Stack accesses, and likely will never learn.  There are no plans to
->> support Shadow Stacks with the Shadow MMU, and the emulator rejects all
->> instructions that affect Shadow Stacks, i.e. it should be impossible for
->> KVM to observe a #PF due to a shadow stack access.
+On 9/20/25 5:33 AM, Shakeel Butt wrote:
+> Hi Qi,
+> 
+> On Fri, Sep 19, 2025 at 11:46:31AM +0800, Qi Zheng wrote:
+>> Hi all,
 >>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->
-> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
->
->> ---
->>   arch/x86/include/asm/kvm_host.h | 1 +
->>   arch/x86/kvm/mmu.h              | 2 +-
->>   2 files changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index 7a7e6356a8dd..554d83ff6135 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -267,6 +267,7 @@ enum x86_intercept_stage;
->>   #define PFERR_RSVD_MASK        BIT(3)
->>   #define PFERR_FETCH_MASK    BIT(4)
->>   #define PFERR_PK_MASK        BIT(5)
->> +#define PFERR_SS_MASK        BIT(6)
->>   #define PFERR_SGX_MASK        BIT(15)
->>   #define PFERR_GUEST_RMP_MASK    BIT_ULL(31)
->>   #define PFERR_GUEST_FINAL_MASK    BIT_ULL(32)
->> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
->> index b4b6860ab971..f63074048ec6 100644
->> --- a/arch/x86/kvm/mmu.h
->> +++ b/arch/x86/kvm/mmu.h
->> @@ -212,7 +212,7 @@ static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
->>         fault = (mmu->permissions[index] >> pte_access) & 1;
->>   -    WARN_ON(pfec & (PFERR_PK_MASK | PFERR_RSVD_MASK));
->> +    WARN_ON_ONCE(pfec & (PFERR_PK_MASK | PFERR_SS_MASK | PFERR_RSVD_MASK));
->>       if (unlikely(mmu->pkru_mask)) {
->>           u32 pkru_bits, offset;
->
->
+>> In the future, we will reparent LRU folios during memcg offline to eliminate
+>> dying memory cgroups,
+> 
+> Will you be driving this reparent LRU effort or will Muchun be driving
+> it? I think it is really important work and I would really like to get
+> this upstreamed sooner than later.
+
+I will work with Muchun to drive it. And we are also discussing some
+solutions for adapting MGLRU with Harry Yoo (private email).
+
+Oh, I forgot to cc Harry in this series.
+
++cc Harry Yoo.
+
+Thanks,
+Qi
+
+> 
+> thanks,
+> Shakeel
 
 
