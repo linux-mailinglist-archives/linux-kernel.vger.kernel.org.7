@@ -1,443 +1,212 @@
-Return-Path: <linux-kernel+bounces-826909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12B0B8F9D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CF8B8F9D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859F63BFA85
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449CE17A61D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAA0275860;
-	Mon, 22 Sep 2025 08:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BAF27B35C;
+	Mon, 22 Sep 2025 08:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="f92QqQZ+"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022122.outbound.protection.outlook.com [40.107.75.122])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bZs3df92"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3463525B687;
-	Mon, 22 Sep 2025 08:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758530644; cv=fail; b=gmM68hOY2ZJNSTagpWoeDvubCHHMTT2azY3zkR6orpdFrUsbzYbjm6p52POhtbNLshsAW6vgsixXqXz09qmyAwcE0w+rFoyu21yJQIY1F93We9RWVa3hxUzNUCYhaTLfg9lr6UNAPwfd614rJe8zqrbTYJ/HbYrWqp+AuSjxe1Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758530644; c=relaxed/simple;
-	bh=+qU8rLHBnAP+Tm1KIxRjVwA5iYmpMKVuz0dggMqHxpI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=t5ssGETg3MmLGF+m3oUl7xUNhgA9uZckR8Lw7M7hgoRfoLSRU3jiQ+6dMg0AyaaBGJyL0RmFGJdbslz+b9qw5+yy/m3KfLv/AuQfhDOub7g3f3r+nHRaAAGjlDrSZSPaVKtIefvisvmPGMgMrrJL+aLaL6JGmwrP4gvad3SdjDQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=f92QqQZ+; arc=fail smtp.client-ip=40.107.75.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s0ylmyQtSkib38EXaJi7PPcQNIh57QTQfZ+muP6cYoz6Md4nf+6dERDKtRyteV31qArs8+GFCLVHX22whS5G4oCM2Jzsn4nANVKka85nxwPOtZIR9p3tTPwUihjuLDK1OyvwLMKhAiBwsDMokTm75rT6f4bRF/JXtIX6iQvrR1EOpzNqvIoC3L2hpp0mCobYj1DodzfwYmQAYMU2ccrlliC4HgsAI5x+3GFKhDsUrUlH4eliO1Q19OM8mx63VLzcBd1NIwwPIeWKStIugL6uHlUppxl2awpyKbjyLObS7FyVKgmj8cbBPUv5/xCRX/waZTNzS85ZtpOU+Ez34p5ytg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k/3Ej/gGpDrwbXh0IG3zItWOIyastlpX8dabf8nZXdE=;
- b=k7xYupYznaI1cXmcPWMvtIe8Cm9tGGuP96OO6DHrmKhw1ly1lmAk4cC1qquJKw8RvUkDWni6/nRvTaaJBloPv9U3G7nONWnFwq0847GXveX/Hoh3qpgsQEHv21HoWF4bsUndJD3qvwF8uYYQRgcHexwGBDaIZrvNLRh6hq+ao3tZiWQmDX0F//GbgvsJF+V2xVTs+QedOCZ9wGZvnIuX5HlMqpulg+ahos3l9YY5En0JFpC2qu61KR0aWkyzYVpQRySZVkEPXqx1Gz6Eq2cl+D8pGgP0moP03fu6v9VV+1avmWAhiSVOaa7LvxzWyL4MC3cH3vfG3uCziJqfxAifNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k/3Ej/gGpDrwbXh0IG3zItWOIyastlpX8dabf8nZXdE=;
- b=f92QqQZ+Km0J1JlcLMrGiTJAdf5H13dITACDXsGpj5Me3g+bAjAJ67Z03OvIzzGEUcd6DalfUZzmaYBT5TNvQQiZKGPZrU/0eMU6K5cAeD4Rrizwp/EMVhOMPV/ZQSkGT86kN7U6fLb3nmHCCYEHQhlAnAS5cHQjBfLWES7dDpZb1+6j4n3esC5rtB/uitBclRzWrKrR1URlMhuWln1UKsZ7KbYLB7DZBVnYx1QfJQVouauvnhXrHcUgSETz6aE3KiCA9QRreyp141md+OQEeoguc4ACrgbWqnFnoKlr7w3KequSiSkkL1f9ez3hF+Uqzfg4grH/Flzfp1gCNL4XVQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com (2603:1096:405:8a::9)
- by KUZPR03MB9360.apcprd03.prod.outlook.com (2603:1096:d10:21::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.20; Mon, 22 Sep
- 2025 08:43:59 +0000
-Received: from TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f]) by TYSPR03MB8627.apcprd03.prod.outlook.com
- ([fe80::cf16:aa54:9bd5:26f%4]) with mapi id 15.20.9137.018; Mon, 22 Sep 2025
- 08:43:58 +0000
-Message-ID: <b16a6936-b6b8-44cc-9c9f-3415cef54b29@amlogic.com>
-Date: Mon, 22 Sep 2025 16:43:54 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] dts: arm64: amlogic: Add ISP related nodes for C3
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250918-b4-c3isp-v1-1-5f48db6516c9@amlogic.com>
- <36345378-6fd5-4a48-b5ea-0fcb6abda7ba@linaro.org>
-Content-Language: en-US
-From: Keke Li <keke.li@amlogic.com>
-In-Reply-To: <36345378-6fd5-4a48-b5ea-0fcb6abda7ba@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KUZPR02CA0010.apcprd02.prod.outlook.com
- (2603:1096:d10:33::8) To TYSPR03MB8627.apcprd03.prod.outlook.com
- (2603:1096:405:8a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F622765CA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758530649; cv=none; b=T5omVuQursd2C2vTaiHrr304KCsO/It24gXkARMFE+I7Uq5VYzPwQtH/C/si8w7ehzMl+qtHPgN361eMVlPwkstLVgO5amP6IlWkveH4Pdni/hXXe96SN6IIpPWKGBEp4Rdj0YfiqdcZQA2ioXYu+Z9bKFAP2SP/PVQzO+wSptc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758530649; c=relaxed/simple;
+	bh=JEkA9srvwniqkGMuHIbqQi5XTnYhtmuwTcHw1pP5wdM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GvCw9WmDhE5jCR8azXvvyDSlOmTOCKTReR/3p9tUvvUzrW3Owo7l0nVEeSgHAH3lsZ5FRzY4GUziq7t/VVO9I4vNLIfxB4jIaeVG2tk3Iwf/CaHCZtIH3kf63iZlcN0VNTA355ls2TGq9iOsFGrvFhQgXSMqEPAAyzWqfk2dS5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bZs3df92; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1758530647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fNbblmYwXQAJmAimXaX95p9se1gdhktlvWJfKB3OPuY=;
+	b=bZs3df92WlZu67m8+u60B8ay5xlHSCFhajfvRdnMN3iRbX+2yCLDkzxIrmWSIIIFQ2koaj
+	SNtySkYJ6FzDMm4D3wJJB3CHa9598PnKcpVSfx6CS8PvfwvFzp1f/SCBdgv9LNIjMi+d4F
+	bBkDt/OUCn8GWaP2j+l8QXAIAPc53oY=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-645-FA7APLEkOM2iYUHxrkn6EA-1; Mon, 22 Sep 2025 04:44:03 -0400
+X-MC-Unique: FA7APLEkOM2iYUHxrkn6EA-1
+X-Mimecast-MFC-AGG-ID: FA7APLEkOM2iYUHxrkn6EA_1758530642
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ecdf7b5c46so1518382f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:44:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758530642; x=1759135442;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fNbblmYwXQAJmAimXaX95p9se1gdhktlvWJfKB3OPuY=;
+        b=ozseLAZS9+eEghOSXta+jchZo/sVpKRQ9Pkr7g1pRZMGbbw4ZUrlXILlLYhwqF7MNu
+         6sZNgyfM1V4Ei5jyNzAPzI3Eloz8lRLy/OjDdhttwU81dbVMg6u5FcyfEPXyLwa84Mad
+         GxnTKgZXY5aWVXQvCt30GrRAxSGYa5RtLH2O1xosNy0kzgNU9mioU8+FF0P1qPlfpUID
+         EYZCviDNhvSKzormiVo8Icri0QrVhkK27EPLK0YTmYUoU3cL+80kd1TH+OC4K66+qEt9
+         nL3KnXIqjD3GOiHetNkxHwTTcuZ5ixO7u+dPcYEE1aXIdU7wMFOO6ddfe4qzUCLxEyic
+         lVBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVtiYP0ytkeDMi2Y5oPdf7KDdDjxF5GkDSy5rLze79qKk+UAq0Y3NlsZGYBKeqiwPIsEty4Q3vfkOCPeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqC2jxyIRo8BR4HRd9yXli4qZqOUoOn1aN8R38tto+5Ppgcqgp
+	n3BJ3ccX4XI6v9t55RKY1lVBY4sq0xJ63+mLKw5O6GnzrgZt/5GBC28DNBZPApDVJeC35xUdJju
+	pxBiLWuZl6L5QPtIE9WXQJXLYIeiSVUzUaX1VS/9SqBshLQiwKrLasCa7TbKydwKOzw==
+X-Gm-Gg: ASbGncttc75r8pv/j8t/jhoWot+7/ky9VHR7rdKzJ6zuOOKnBbX7DviFHfAvvFKO8sl
+	HRXPu8Tcsfb5Mkw1XvQVo2eH02rdivNeyWVkL0g1RbpkJnR7cPyNzKLGnCSWq7lMk8xP2D9hHnP
+	CQ20eiANoIenfR/i57kVgkdl+zhVnbJzj6xRrZIyLDTaJlucs4IutUVQWriXlvRgH0IzV0juCs0
+	OSKFOfSnWWDrkGJn/ORp0CNA3J/XxWZsWZqX6tekwVJg1wfweBP+T+EGKBuBPC19Oo2c+gVS5rw
+	4BoWUW46NQ4tw+JrBsRE0SJY4Xz9ZYznNuJ2CGmvWtyWuxj1mHd+nxxpHRYWj+tsf1trtacQ6jy
+	/qpRD7+gR++Y7xlP/4oUAvBGjiipr7yA/cit/Z/JU17JcyMt6+SB5zNEFCwyZqZ0=
+X-Received: by 2002:a5d:5889:0:b0:3ff:17ac:a34c with SMTP id ffacd0b85a97d-3ff17aca9ddmr1768841f8f.59.1758530642210;
+        Mon, 22 Sep 2025 01:44:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGYSPgfAQpR87QujIxhC+Anu99wbrmH6Axzt/nVhnSYFZszFCU4AL8USJ6UiN63i2MrsjXhdQ==
+X-Received: by 2002:a5d:5889:0:b0:3ff:17ac:a34c with SMTP id ffacd0b85a97d-3ff17aca9ddmr1768815f8f.59.1758530641790;
+        Mon, 22 Sep 2025 01:44:01 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f2a:e200:f98f:8d71:83f:f88? (p200300d82f2ae200f98f8d71083f0f88.dip0.t-ipconnect.de. [2003:d8:2f2a:e200:f98f:8d71:83f:f88])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7107sm19834232f8f.30.2025.09.22.01.44.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Sep 2025 01:44:01 -0700 (PDT)
+Message-ID: <715052fa-2459-4785-87fa-04c8cf30debb@redhat.com>
+Date: Mon, 22 Sep 2025 10:43:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR03MB8627:EE_|KUZPR03MB9360:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89921cc2-64b8-4b9d-a7ce-08ddf9b42c2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eDdnVkZJNjBMSFBGRGpoMFlCM1J3ODdtTjIzOVZTbHE4NDljUGtmdG5OYVJp?=
- =?utf-8?B?VHFkMmlScHBPVXBMaXl4Z3ZWWHVodmdEQy9ldS91Qjlkd3NINlFQTTZaeFBS?=
- =?utf-8?B?aHdBdThtOU1scng2Qm5qT1BWTnZyenR6QVJRWGUyUW1LZVo3KzZJTzd2c3Ju?=
- =?utf-8?B?YlQvRXNQdnZ0cFdDanliWHVtUzRFd2tvU1BFa2tTZUpsMlJTZjVrRFFpb0RN?=
- =?utf-8?B?M3UyR3d3Qm1iU3Z6cjdGTUFVS00wdmNjRE9LM0F2SUFCcVRndEk4NW44L1hi?=
- =?utf-8?B?R0ZRYVZEUlRvV0Yyd2hFSjFRR2kyRm5xRFZsS2wzYkU0T0ZPMEczRGZaSVM4?=
- =?utf-8?B?d24rcFRjTVFrQ05YL3F2TmxkMFkrWFR3VHFoN0hwSGdGanYrUnQ4Tm5PdDRN?=
- =?utf-8?B?WUFSVFNNRHlEdE5WVG8xeUp2U2NodUJuam5ib0VqaGR0a0xDQ2hGKzFRdXpF?=
- =?utf-8?B?cDgzOGNuWEU0ZGxXSkVVYU9GWXRnam5iaEY2SkwxWk5xVklBMFNMdTF6N1la?=
- =?utf-8?B?NWh1d3I4RVZBc2JkV3dYc0dUTmh3Z1dINmoyeUVlZjRHSG9Bc21qUU5Edmdx?=
- =?utf-8?B?TXFKRGVpTFpqYllydnptM1RjZHg1SEVXY2pXRU9RUkVYWjVQdGE5aTNMZFdp?=
- =?utf-8?B?NGFCNzFxdndUR2hzanNhMWRMTEJBbXlpOWhndHBMK1BEYlFUMW1yeEhwNEM2?=
- =?utf-8?B?TnZzUHdrTHJPUkVFODZWRnJGZ1c1UXZiaUFqVWlEb1M1QVZVRXNkTmVjWmg1?=
- =?utf-8?B?U1IyTFREVkhZekM4UFZudXpsc0p1N1REK2NCRk1ZdzlnY2xJWDBmL0hucm14?=
- =?utf-8?B?dmQ5THorUkl5THc2VXBvN3I5MytPNzFVYkhZRGVTQS9Ub055ZnNxY2MyOEFl?=
- =?utf-8?B?aGZ1WEYzTE9zanBTUFFIUmdoSlZHYURwdUhMUFBRbmprcVJvMXpXdFpMVCs2?=
- =?utf-8?B?Z0REUHliK09neDVBQnN0ZjhDdmtNV29PYTJaQytxOWFiNmQvb21uUTFPaW9Q?=
- =?utf-8?B?bUY4c1N1WjBrWkV3ekRqZzI3VXhNMDNmeVhtMTJITGJJazhUMHNORmN4ZUZX?=
- =?utf-8?B?d3NuOHFCamtGa09kSEs5MGkwdEpOZ3hhQTdoVmFsRVBTbHV4OVJ6UGhvRU9E?=
- =?utf-8?B?V3d2Nm1QTHlyMU9UdVhTaVVFbTVPeXBiMUNIQlhXNVYrSnJaYWNQdXZDZWN3?=
- =?utf-8?B?SVVrdUlndzVNUW5jeEVBeVNPVkJWdFIrVUs0K3lqT1VVbE0zenI2ZDlwQVVI?=
- =?utf-8?B?UlNYTGUzSkhLandDdUpML2VoaEEzWHpvU2djaGNLbFlncGI5dWNSc0FRSTJj?=
- =?utf-8?B?bWN2ek5zazVOVVNzMVdyL3NVNk1LZ0NTdUNOOXdXRVNoVnVWZW5RaWhMM3dR?=
- =?utf-8?B?R0d3djVGMWZSY0psb2I0U2hKT2ZVblo2TTkyNW0yUWR3NElGdG9wNHFENnp3?=
- =?utf-8?B?OHpody9pSnhmTVp1Nno0UW1ERG1NMENFeDhEa2laNU44MmQ2NWNhUm0zTUFn?=
- =?utf-8?B?aW5wb1BUUHROSVhmdVdDbkFwRHRRaExiQU5VUCtmb2RXd1Jibk00N01uMk8z?=
- =?utf-8?B?UWgwZnFWV2x5a2NDbWRsL3Exd3pqQy8xU1BDSm1pTCtXMDlsU0ErcDFqNjBo?=
- =?utf-8?B?RHBsZ0pyWHRWelVRLy9DWDVMRFVjZVF5V1pCaTRldmFkRDQ0emVrLzBMNGdZ?=
- =?utf-8?B?aDBvbUcxaEhSOTdtcE10Ukg1ZWZScTFpZzdDTE8xZy9QR1AvbENOckUvcjlQ?=
- =?utf-8?B?Z3oxOVE0TFFhOWpDL0YvUzlMR3VNOURCVC80cHdzK3V4TVlvRHMwbDZDY3I3?=
- =?utf-8?B?eVlCNjErWXZSMDBib2dOS3FlbGplQjg4d1d2Slp0bnJYQlcrcVRiR1c4cGhz?=
- =?utf-8?B?Rk9lR1l5cnRXRmJhTUViOGNDV21ud0UwQjBlcEdVbEhWWE9SZEtZTDNGZFVD?=
- =?utf-8?Q?QULXieK3xPI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR03MB8627.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cmF1NmVKZmxpajI1Wm1qSk9KYWw2bGh0NDA2a0xENE1pTlgwcGhQU1hydGEv?=
- =?utf-8?B?blNPYWlweXIySzFMZjljRTJpRGU4Q1UrSjFGYW9rZ3BjUWdwdjdmRkZiS1R3?=
- =?utf-8?B?Y1UyVHdRK0VDNUVZd0VYRk1yYTI0bm5UN0RDbW9RNXlBb3F2NFRXcnYvOHBS?=
- =?utf-8?B?QlJMTVNtK2h1YVd0M0lVRzBETVY2QTZFa2REUVY0SnFuV0lRZzZWdEw3cFBT?=
- =?utf-8?B?cTNFVmZwN1FRSm1iUERqVFh3ZlplR0FUK0haSlhId2wvNXpjZ3oxOGNjOEhy?=
- =?utf-8?B?ZE5EWlkveUNRT1lNRk56ajJyN3ZhTEUwY2FwVjZZVXJ1UDdqY0VBM3phTUpE?=
- =?utf-8?B?QTVIbkk1TWNDS1Njd3dPTjBjQks2S2RnQmNCVm5vQnRuWkRCZ2UvSGdYaWhX?=
- =?utf-8?B?K1k1d2V1dzR2REdjbmgzSS94YytUUVEvOG5rWld2VlJ0OWNqWVFTNVZhYm0y?=
- =?utf-8?B?VHdNU2ZlVGJTV1dRRkxzSEt3Rm9meVZmbXA4QmJXbXprUWtvZm15Lys3RDBU?=
- =?utf-8?B?T0JYTi9ad2lINyt0SFFpcWRCWkllbGRBRENGMiswVGpqaTgrWHM0Mjh0K0dq?=
- =?utf-8?B?SDVaQnNoeGg4bnlLdDg2eEdjakkvK3NxeGpwdk5wRCtLZFFFMlYyWnBFUlQr?=
- =?utf-8?B?M3hoL1BqVFJHQWc5cklVMkE0bHUrZnVuK3NDZUt6UUlQYmZkTWhqeDlzOUpR?=
- =?utf-8?B?RE9qU1dRblJHSTlqTk85RHZoT0pZcDl5MHJPdmZpc2QwVWJDc1AwOW0zMDFR?=
- =?utf-8?B?Rk9tYkN6R2xYdUU1c1lZZE9vOXhFTk9UZUd3eENsNE15dCtDTjdFcVhkeWQ4?=
- =?utf-8?B?RXVkcTVrRVVtcnpsdXIxU2VGamYxc1RzWEVFanZ0S0hiRStrVHdjeFhlYnJ0?=
- =?utf-8?B?ZzFmZHlmcWUxZkU3WkZzSHpHWldqQjl4M2lxcG9ydFBaOURuZDhDVU9qemlr?=
- =?utf-8?B?L0tlRHNYMWJ3KzBwRkkwQ1c1SW4zYzZwZmpBdTVYb0EwRmx1Yzk5K3p3SVZX?=
- =?utf-8?B?Vk5xTDFwYWk3M0pHVklxN2dFek1OUFVucGNkN25YYTdLb2VUTXh5RitxMmVC?=
- =?utf-8?B?ckNKeCtUaU91dkR2aGR2QVVDWmpiUnQvWWtNS0YxbFRhSjlTTm82UFpIblhJ?=
- =?utf-8?B?aEhzOWJQcmxxVWQ0VkRzTW5BSHRkVEZ3Z0FtSEN4U2wxQ3J0SEthZjlidCty?=
- =?utf-8?B?eWllV2JpcU5pYnBsbTdYd2p3bXZFT3ZEVStqRTBhR2dlME5nbFA1MUJYSVJz?=
- =?utf-8?B?YnZQdGdtVWVpQy90OW9jTGNjWk9JSG4xc2xlakVGd3U0dUM1eU9yQklnWk5j?=
- =?utf-8?B?SFViejZpN3FDUXA2WjVsSDlhQlZmRmV6b0dUVkRRelRPV3U5ZWQrRkdVcEcy?=
- =?utf-8?B?SWdrTGdMUlpXVzl5VmtGRmFQYnh5UXhnVmxsMm1Qc1pUSG9uZTBPNWhOekFq?=
- =?utf-8?B?UXhObVRKRzhTaXByNTZ2dSs0STkzaDZFVFRzS2dlV0JZZWs0YXA1OWpkbEJr?=
- =?utf-8?B?MkN0TndFTE90OThjcW5OT25EOHZTdEp1QlhzYTZ0RmgrUkR1cVJYSUo2T2hr?=
- =?utf-8?B?ektraTlvQXh3dnBXYWhvaVNBVFNjSS9qUmdpTzRpRHFqOGQrZUNXQXd4bjhi?=
- =?utf-8?B?VDg1Mm5pZk9WY2MxK0RaUFRycElVeHl5bTZGNC9WUjlvSmo0NG9hUnZkay9Y?=
- =?utf-8?B?TmZKcTBlbFEzN2VtZCs4U0djM0VvUjhYUjNNN3BadzRhVEJ1TnpLTWpmWEF2?=
- =?utf-8?B?RzZRRk5JM1pPK0FnMFA2cFdPa3p0SHNiRFJnZ2NPZ2tUT0N6a3pDVVhPTjdo?=
- =?utf-8?B?NFljK0pDaGcySWtLcDFOMVFEbFE0K0lEblArTlR1TGh6eSswU2tKM2NJMVlD?=
- =?utf-8?B?c0l4a1YxS2s4S2ExbHhqNlQzckxaYTcwc0gvWUoveXRXMERORjFYV3Z3V0w3?=
- =?utf-8?B?cGJTemtEdENHMFRyMUN2NHl2RWNsZEpVWWpHZWNieHdNZ05ZRUtuR3VrbDRh?=
- =?utf-8?B?VWhxMGRRaFJMcXVVQUVERnFZTUZjVllOakNwKzhPU2t3US9GOU5FSkF0NnpD?=
- =?utf-8?B?M1A0WnZDczlSTGx1QnIwemV1QUd3ZW5lK3RTV25vRUZzOG1kYkJOL1Nrakxu?=
- =?utf-8?Q?4KO/r4WisckUd6C2yEvQQ+9E4?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89921cc2-64b8-4b9d-a7ce-08ddf9b42c2d
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR03MB8627.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 08:43:58.8751
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7ri31ljwFlzF2mVOLL9iLpwQdG9dS9Ao6R10M38Sofrtvvyz9kTzjGGSvbrlceZXmEQsMIVPdmXY+/9MidDmVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR03MB9360
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] fs/proc/task_mmu: check p->vec_buf for NULL
+To: Jakub Acs <acsjakub@amazon.de>, linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Jinjiang Tu <tujinjiang@huawei.com>, Suren Baghdasaryan <surenb@google.com>,
+ Penglei Jiang <superman.xpt@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Andrei Vagin <avagin@gmail.com>,
+ =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250922082206.6889-1-acsjakub@amazon.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250922082206.6889-1-acsjakub@amazon.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Neil
+On 22.09.25 10:22, Jakub Acs wrote:
+> When PAGEMAP_SCAN ioctl invoked with vec_len = 0 reaches
+> pagemap_scan_backout_range(), kernel panics with null-ptr-deref:
+> 
+> [   44.936808] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> [   44.937797] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+> [   44.938391] CPU: 1 UID: 0 PID: 2480 Comm: reproducer Not tainted 6.17.0-rc6 #22 PREEMPT(none)
+> [   44.939062] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [   44.939935] RIP: 0010:pagemap_scan_thp_entry.isra.0+0x741/0xa80
+> 
+> <snip registers, unreliable trace>
+> 
+> [   44.946828] Call Trace:
+> [   44.947030]  <TASK>
+> [   44.949219]  pagemap_scan_pmd_entry+0xec/0xfa0
+> [   44.952593]  walk_pmd_range.isra.0+0x302/0x910
+> [   44.954069]  walk_pud_range.isra.0+0x419/0x790
+> [   44.954427]  walk_p4d_range+0x41e/0x620
+> [   44.954743]  walk_pgd_range+0x31e/0x630
+> [   44.955057]  __walk_page_range+0x160/0x670
+> [   44.956883]  walk_page_range_mm+0x408/0x980
+> [   44.958677]  walk_page_range+0x66/0x90
+> [   44.958984]  do_pagemap_scan+0x28d/0x9c0
+> [   44.961833]  do_pagemap_cmd+0x59/0x80
+> [   44.962484]  __x64_sys_ioctl+0x18d/0x210
+> [   44.962804]  do_syscall_64+0x5b/0x290
+> [   44.963111]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> vec_len = 0 in pagemap_scan_init_bounce_buffer() means no buffers are
+> allocated and p->vec_buf remains set to NULL.
+> 
+> This breaks an assumption made later in pagemap_scan_backout_range(),
+> that page_region is always allocated for p->vec_buf_index.
+> 
+> Fix it by explicitly checking p->vec_buf for NULL before dereferencing.
+> 
+> Other sites that might run into same deref-issue are already (directly
+> or transitively) protected by checking p->vec_buf.
+> 
+> Note:
+>  From PAGEMAP_SCAN man page, it seems vec_len = 0 is valid when no output
+> is requested and it's only the side effects caller is interested in,
+> hence it passes check in pagemap_scan_get_args().
+> 
+> This issue was found by syzkaller.
+> 
+> Fixes: 52526ca7fdb9 ("fs/proc/task_mmu: implement IOCTL to get and optionally clear info about PTEs")
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
 
-Thanks for your reply.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-On 2025/9/19 22:43, Neil Armstrong wrote:
-> [You don't often get email from neil.armstrong@linaro.org. Learn why 
-> this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> [ EXTERNAL EMAIL ]
->
-> On 18/09/2025 10:35, Keke Li via B4 Relay wrote:
->> From: Keke Li <keke.li@amlogic.com>
->>
->> Add the IMX290 sensor node description to the device tree file,
->> which will be controlled via I2C bus with image data transmission
->> through MIPI CSI-2 interface.
->>
->> Add CSI-2, adapter and ISP nodes for C3 family.
->>
->> Signed-off-by: Keke Li <keke.li@amlogic.com>
->> ---
->> The C3 ISP driver and device-tree bindings have been
->> submitted. To facilitate using the C3 ISP driver, the
->> related device nodes need to be added.
->
-> No need to resend until the bindings are merged.
->
-> Neil
->
-https://lore.kernel.org/all/20250427-c3isp-v9-1-e0fe09433d94@amlogic.com/
+-- 
+Cheers
 
-https://lore.kernel.org/all/20250427-c3isp-v9-3-e0fe09433d94@amlogic.com/
+David / dhildenb
 
-https://lore.kernel.org/all/20250427-c3isp-v9-5-e0fe09433d94@amlogic.com/
-
-The device-tree bindings for C3 ISP have been merged into the Linux 
-kernel v6.16.
-
-Thanks.
-
->> ---
->>   .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 84 
->> +++++++++++++++++++++
->>   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 88 
->> ++++++++++++++++++++++
->>   2 files changed, 172 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts 
->> b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
->> index 45f8631f9feb..e026604c55e6 100644
->> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
->> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
->> @@ -17,6 +17,7 @@ / {
->>       aliases {
->>               serial0 = &uart_b;
->>               spi0 = &spifc;
->> +             i2c2 = &i2c2;
->>       };
->>
->>       memory@0 {
->> @@ -146,6 +147,36 @@ sdcard: regulator-sdcard {
->>               regulator-boot-on;
->>               regulator-always-on;
->>       };
->> +
->> +     camera_vdddo_1v8: regulator-camera-1v8 {
->> +             compatible = "regulator-fixed";
->> +             regulator-name = "CAMERA_VDDDO";
->> +             regulator-min-microvolt = <1800000>;
->> +             regulator-max-microvolt = <1800000>;
->> +             vin-supply = <&vcc_3v3>;
->> +             regulator-boot-on;
->> +             regulator-always-on;
->> +     };
->> +
->> +     camera_vdda_2v9: regulator-camera-2v9 {
->> +             compatible = "regulator-fixed";
->> +             regulator-name = "CAMERA_VDDA";
->> +             regulator-min-microvolt = <2900000>;
->> +             regulator-max-microvolt = <2900000>;
->> +             vin-supply = <&vcc_5v>;
->> +             regulator-boot-on;
->> +             regulator-always-on;
->> +     };
->> +
->> +     camera_vddd_1v2: regulator-camera-1v2 {
->> +             compatible = "regulator-fixed";
->> +             regulator-name = "CAMERA_VDDD";
->> +             regulator-min-microvolt = <1200000>;
->> +             regulator-max-microvolt = <1200000>;
->> +             vin-supply = <&vcc_3v3>;
->> +             regulator-boot-on;
->> +             regulator-always-on;
->> +     };
->>   };
->>
->>   &uart_b {
->> @@ -258,3 +289,56 @@ &sd {
->>       vmmc-supply = <&sdcard>;
->>       vqmmc-supply = <&sdcard>;
->>   };
->> +
->> +&i2c2 {
->> +     status = "okay";
->> +     pinctrl-names = "default";
->> +     pinctrl-0 = <&i2c2_pins1>;
->> +     clock-frequency = <100000>; /* default 100k */
->> +
->> +     imx290: sensor0@1a {
->> +             compatible = "sony,imx290";
->> +             reg = <0x1a>;
->> +             clocks = <&clkc_pll CLKID_MCLK0>;
->> +             clock-names = "xclk";
->> +             clock-frequency = <37125000>;
->> +             assigned-clocks = <&clkc_pll CLKID_MCLK_PLL>,
->> +                               <&clkc_pll CLKID_MCLK0>;
->> +             assigned-clock-rates = <74250000>, <37125000>;
->> +
->> +             vdddo-supply = <&camera_vdddo_1v8>;
->> +             vdda-supply = <&camera_vdda_2v9>;
->> +             vddd-supply = <&camera_vddd_1v2>;
->> +
->> +             reset-gpios = <&gpio GPIOE_4 GPIO_ACTIVE_LOW>;
->> +
->> +             port {
->> +                     imx290_out: endpoint {
->> +                             data-lanes = <1 2 3 4>;
->> +                             link-frequencies = /bits/ 64 <222750000 
->> 148500000>;
->> +                             remote-endpoint = <&c3_mipi_csi_in>;
->> +                     };
->> +             };
->> +     };
->> +};
->> +
->> +&csi2 {
->> +     status = "okay";
->> +
->> +     ports {
->> +             port@0 {
->> +                     c3_mipi_csi_in: endpoint {
->> +                             remote-endpoint = <&imx290_out>;
->> +                             data-lanes = <1 2 3 4>;
->> +                     };
->> +             };
->> +     };
->> +};
->> +
->> +&adap {
->> +     status = "okay";
->> +};
->> +
->> +&isp {
->> +     status = "okay";
->> +};
->> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi 
->> b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
->> index cb9ea3ca6ee0..a62fd8534209 100644
->> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
->> @@ -992,5 +992,93 @@ mdio0: mdio {
->>                               #size-cells = <0>;
->>                       };
->>               };
->> +
->> +             csi2: csi2@ff018000 {
->> +                     compatible = "amlogic,c3-mipi-csi2";
->> +                     reg = <0x0 0xff018000 0x0 0x100>,
->> +                           <0x0 0xff019000 0x0 0x300>,
->> +                           <0x0 0xff01a000 0x0 0x100>;
->> +                     reg-names = "aphy", "dphy", "host";
->> +                     power-domains = <&pwrc PWRC_C3_MIPI_ISP_WRAP_ID>;
->> +                     clocks = <&clkc_periphs CLKID_VAPB>,
->> +                              <&clkc_periphs CLKID_CSI_PHY0>;
->> +                     clock-names = "vapb", "phy0";
->> +                     assigned-clocks = <&clkc_periphs CLKID_VAPB>,
->> +                                       <&clkc_periphs CLKID_CSI_PHY0>;
->> +                     assigned-clock-rates = <0>, <200000000>;
->> +                     status = "disabled";
->> +
->> +                     ports {
->> +                             #address-cells = <1>;
->> +                             #size-cells = <0>;
->> +
->> +                             port@0 {
->> +                                     reg = <0>;
->> +                             };
->> +
->> +                             port@1 {
->> +                                     reg = <1>;
->> +                                     c3_mipi_csi_out: endpoint {
->> +                                             remote-endpoint = 
->> <&c3_adap_in>;
->> +                                     };
->> +                             };
->> +                     };
->> +             };
->> +
->> +             adap: adap@ff010000 {
->> +                     compatible = "amlogic,c3-mipi-adapter";
->> +                     reg = <0x0 0xff010000 0x0 0x100>,
->> +                           <0x0 0xff01b000 0x0 0x100>,
->> +                           <0x0 0xff01d000 0x0 0x200>;
->> +                     reg-names = "top", "fd", "rd";
->> +                     power-domains = <&pwrc PWRC_C3_ISP_TOP_ID>;
->> +                     clocks = <&clkc_periphs CLKID_VAPB>,
->> +                              <&clkc_periphs CLKID_ISP0>;
->> +                     clock-names = "vapb", "isp0";
->> +                     assigned-clocks = <&clkc_periphs CLKID_VAPB>,
->> +                                       <&clkc_periphs CLKID_ISP0>;
->> +                     assigned-clock-rates = <0>, <400000000>;
->> +                     status = "disabled";
->> +
->> +                     ports {
->> +                             #address-cells = <1>;
->> +                             #size-cells = <0>;
->> +
->> +                             port@0 {
->> +                                     reg = <0>;
->> +                                     c3_adap_in: endpoint {
->> +                                             remote-endpoint = 
->> <&c3_mipi_csi_out>;
->> +                                     };
->> +                             };
->> +
->> +                             port@1 {
->> +                                     reg = <1>;
->> +                                     c3_adap_out: endpoint {
->> +                                             remote-endpoint = 
->> <&c3_isp_in>;
->> +                                     };
->> +                             };
->> +                     };
->> +             };
->> +
->> +             isp: isp@ff000000 {
->> +                     compatible = "amlogic,c3-isp";
->> +                     reg = <0x0 0xff000000 0x0 0xf000>;
->> +                     reg-names = "isp";
->> +                     power-domains = <&pwrc PWRC_C3_ISP_TOP_ID>;
->> +                     clocks = <&clkc_periphs CLKID_VAPB>,
->> +                              <&clkc_periphs CLKID_ISP0>;
->> +                     clock-names = "vapb", "isp0";
->> +                     assigned-clocks = <&clkc_periphs CLKID_VAPB>,
->> +                                       <&clkc_periphs CLKID_ISP0>;
->> +                     assigned-clock-rates = <0>, <400000000>;
->> +                     interrupts = <GIC_SPI 145 IRQ_TYPE_EDGE_RISING>;
->> +                     status = "disabled";
->> +
->> +                     port {
->> +                             c3_isp_in: endpoint {
->> +                                     remote-endpoint = <&c3_adap_out>;
->> +                             };
->> +                     };
->> +             };
->>       };
->>   };
->>
->> ---
->> base-commit: 84b92a499e7eca54ba1df6f6c6e01766025943f1
->> change-id: 20250731-b4-c3isp-16531391a1cb
->>
->> Best regards,
->
 
