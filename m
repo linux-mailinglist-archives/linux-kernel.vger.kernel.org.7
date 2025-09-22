@@ -1,155 +1,135 @@
-Return-Path: <linux-kernel+bounces-826846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F67B8F7B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:24:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57144B8F7D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB4EF7A30BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:22:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19CFC2A014E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 08:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431B42FDC39;
-	Mon, 22 Sep 2025 08:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC572FF643;
+	Mon, 22 Sep 2025 08:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZgUGbpG"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NkDtHcUZ"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E791E522F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AC12FE049
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758529449; cv=none; b=Zu4Mt7fySjBFEPKGsUOvwn0IZMKtVBf+YFIVQ8tzoeySgkweX1FzMbD+SVlibk0u7qq1LFaUvjN57rjYPw0xHHS30O00kVgU5k3RUgDXyqw+lO+shpeOBqRxm72CbRtyHb6eq+XyCyAiB43qCGuX2gyUPLfas2dQ20SjvWVPnas=
+	t=1758529524; cv=none; b=AJ00PvJi4NbpeH/jwx8MHOTWAO2ReSthi5AeYbZP5zA+X2IFQNoykUBo3AygTj7M6ihWkWvUTbsHHyg/R02A7ks4loNlTcgXp9zc6uLnoE2wViUnWh7E24h2XnWC5Ay9qmx3g/Bwgr+Y4WfNpZlloW6LEPXiCKcSBc+3xCY6K4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758529449; c=relaxed/simple;
-	bh=8TZnnyQakAEjErDizPjxo9AqfqKj7iYISZD5GSnJ2n0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PvtIEHz5Q49WJndcjy3l9AThupQN/GBEsCZxSbcWVujFr5S6GfumfUOJFJh8i6IBPBBYgM/4E3H9nFKVkYLyuKy13nxPauPMSMzycMvaP0nFs8O4qFzgPGQeLVeEl31Qr8nejv8qf8NNGAGUtcj4l+2HpkWWM0wP46x2pk59q0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZgUGbpG; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1758529524; c=relaxed/simple;
+	bh=oLrFhF92HdArUx15fueLaKz7PNKuzX+jtAfAeTiwpXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CxA0J92+gKD1o50IabQLaZua2YL0y4CGwz1rzOV5v216QEyJFePDGSWfoXUtZjP9mTGT8xd3SL8dfzoChClX9bOIl5UH4+8EVMTUYMmbp9HVYmR3SoIZHNUoUucb1uIXk9mHqKAmXeuV9eh/bcsr0TIRta7I5l3hBmBKGY8gBI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NkDtHcUZ; arc=none smtp.client-ip=209.85.215.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ece0e4c5faso4835720f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:24:07 -0700 (PDT)
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso2697680a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 01:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758529446; x=1759134246; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4LDmzSNY//3bfqaJ6YjqbvFTHQWUglXrj6TuZ+YI6XM=;
-        b=NZgUGbpGNf++mCXd9grp+FgzTlbZ00uOyrLsGgMlP1BA4UODsdpohIR9WCJD7jnkhg
-         bRaCehajLyLzYmk+v5L/ltTAz9MeAfyujAbGnO7gLUhwhHdIC+YwyX5FJWn33WiA5WVA
-         jCHznxisGsadwAvXFnM4LILtDWbXmQkung+TOk3xlwpxJh0IeFaTCap5jB3cQM9ege+s
-         IwzgdUX7jSKaFEnmY+ITHFlmgOsDlnf3ONF3DxYxU9fr59xHwzvFjitXFOMKxePJkLr+
-         P8UwfcdpPtNmbcvqAxUfPZRbLP9yflyFPAsk5ZVm8SrsJqstWTN2CmCoHyzywcG2BNeG
-         DAfw==
+        d=gmail.com; s=20230601; t=1758529522; x=1759134322; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ggi5B9vLvJ8tH3G1KF/mQ7XMoVTE3nlPVTBcBye3zVQ=;
+        b=NkDtHcUZOILSbaBzJ9mUuDk10oCNm2DmbhvbTUHSwGwGJ4T5N+E+YIwuIYocj5Woxj
+         n/wCLiZ20zaj07fxBePozicvqjuGPTCrQ0CJOzeWQ7wNH0SEAe2dNfR4i5U5WIjjPavX
+         tMETlfIrdmV3fr1dj1B/hdBNlS7b32W+IIvFDy6E6Wmv+E7+R2wVyMi49oq0qpQOzyKN
+         b583XsTEWBxBcjtmFD2qkUqN6nli8ZYzY6fFlXPgNLH+KkfwlDGw2y/CliOvHOiJ0jdS
+         +aa9FF5n4us54umHCGdlb+pmlBx0eqMSSMHsOo36NNfhGSlgBQ8VcjndiarJoa763Ya+
+         8cUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758529446; x=1759134246;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4LDmzSNY//3bfqaJ6YjqbvFTHQWUglXrj6TuZ+YI6XM=;
-        b=ixWrSA3fuAQz2XSFXJWPMc9vIDV5Q4I9sz3AE3rvPbaQpxZWIuDET49FCXCmdc5ojN
-         L+8D5Bob+JBcDJz6cFdiVHwbza2tPdQhVptUB/eKTj7MFXD079r690OEk0oelp9fzIvq
-         1qM8FoYhGxouwM0iT2/UWxW8qCRdGxSplUQEBVcIMGHTJzeq5ereedOHBbatrn1biMCb
-         WMlx9Y+uHkEy9NJaKa/YZP4tRQAly5Uoi79rk61giJ8maRfP7VdpnBvctTTkh88EiCl5
-         Zj9nhmf7OgNMR3tTFAB6P9IN9iuUEwwhOYI8gE60VjPqFXif9BBdW6wrYOy1HBk9jTXO
-         XEXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVX76poomfgsemfUb07phJse9B+YCHksfD4dSXvuyCnNA4qJQQ9Np+nOUwcEcWTxqybxJVg0rYe1osLgjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/M1W3gTlqf0DPb5yq4Mds4SABfJj0pIXSCFBhEM+we3YSJtu5
-	/nzx3qnpLxHbqJ7j+bRmxov5FnhtVJHx1rHBTo0WUEVi4hSW9h/XeUxe
-X-Gm-Gg: ASbGncuRdQQd8BraK1v4JGhrMj/L2rcQfv63RsaGw4rKymitcOrCGmBdRJL4z81PW9g
-	NJXeEVTvffvkEj7L8VrY6jG9CXy8JWIk1reLoIzcUsc79xhnkKmyQ9UIaNmI4BxGhmCDkldEqlT
-	NPQ+2hLIwm7bb2MM/sgcdkgDU4uI9O6lH8kNVkv1PmU6DJ/IPVxZiTCE7Pz7Hgn3qemj1bcZKpb
-	ChKmFsuyNTjl+gWincLxS+YgaXu8mFXXEe5FefqFJFPOsKdy7vNMARoZ7g2IKTv9SehAwelgWH3
-	RfT3hBDKxrhZcBps48n9L3HmuzZGgx9jtYQ5YY+UE3rJXz1gZ0bkwKAkibCplBIXFxcdPAaLc2J
-	CAPABKX9JX+xxeIhmNM+IUbqEfqERX2ARbzFIkNgKsw==
-X-Google-Smtp-Source: AGHT+IH5Ss/MexQLwWH32bSqKyK5FwYfHlZSIMK20q+jLV1U7CXiGcXfpzejzl0MccyrWKA2QZ6x2w==
-X-Received: by 2002:a5d:524d:0:b0:3f2:97a6:db6b with SMTP id ffacd0b85a97d-3f297a70589mr6175117f8f.3.1758529445981;
-        Mon, 22 Sep 2025 01:24:05 -0700 (PDT)
-Received: from [172.20.10.9] ([148.252.145.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ef166e62e5sm13972312f8f.40.2025.09.22.01.24.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 01:24:05 -0700 (PDT)
-Message-ID: <8884d7df-9709-4f5f-abfc-6b74aa220295@gmail.com>
-Date: Mon, 22 Sep 2025 10:24:01 +0200
+        d=1e100.net; s=20230601; t=1758529522; x=1759134322;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ggi5B9vLvJ8tH3G1KF/mQ7XMoVTE3nlPVTBcBye3zVQ=;
+        b=K87DB5FDu/aSTcF3tCVJvIm4Q+F9ie8W52/M/o4Acrj27H2UoQjbsPrnE00PlJ73Z1
+         UoHvgK0t44orC0DILLB4N4U6qaREiaKUbR0zJgpRPxsA2LUDUaxBsMAEK/6DgdzmWOX/
+         mrHTrdRutQqbDn4UMg3xVM36NvuyLRPQQEIfB+NrA6HrNNubqzGp6+XhTt3bjc4NeRyy
+         sHHMr6Uz6zJQCK8srMu3UD13paGe+S3x1BWZDTRPTD8wR7jAM5VSdQ9pNjuBTyyMlRul
+         Y+5baI7t82FEnKcve/6V4Cvp2wbAG+ZPG+tzdbibCqLq2rMedehwIOPFrNiGKwFFPSh7
+         qssw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6MeY9glxpKC4BU+cwRwntqibTeQEpxiP4fRCrA16Qx/5V+CxD7yoacRnIAaYdo4s0F2ArJL8JD4cyW8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC3Z3uIqUD8DNyzPXJaWGGDtzFNERvkWkiHuUaFYkuBrJe0tw4
+	u27SbhjlzaVJ2HPGIuaLQzezCPEyelQ3jom7t1IT0VZ4ApZ43c2ztPje
+X-Gm-Gg: ASbGncs7U1PwWRZG2flumig0uf88oNu30PMwb6Mg/7Wug2aYVWHeOQfkaK3SNs3Ab1d
+	Sd74TwE8d2aP5/QZHlDsS5d1iQTDBCyB4nWE9kSYOI0IJJ4S6X4j99Lxu+aQ4X/k0OhhMXzQWlz
+	3XOKGFkvG8Zw6cHpCjVQLaqk+3pcBl9CDCgqUA2tyQKEqdNIB/DOZmDx6Iv0qDOod6Gd5ZH7th0
+	2DUzvniOjmJJj+cRxZsajwoi6gkE/lmTlEzwnDLoH7+45j0INqebvPnGcAEfHvXj22KWcmdYhzY
+	bpTRFamoiBYsfcMip3lRoEcgK/zd1c/XJH2MP6cY1VtCCt3D97hHRYdnPotbiKjPuaA2N+dm3lZ
+	GMwDVt6eiEhjyQRYpqNKV78IftFGew0I90XuevZlO5dsQXz/vB9jiM0KIX4GJRjRhvObnFiurEO
+	BTG4Vs8r5XrxotC4hWqxMKX2OV1b4=
+X-Google-Smtp-Source: AGHT+IHESfgiWX1583jgQOasqZLBM8Q7dyrYwWIi+YyG7D00B4yjVWdeH/3CCyl3mLO2dR0NwhJ+5g==
+X-Received: by 2002:a17:902:cf03:b0:276:842a:f9a7 with SMTP id d9443c01a7336-276842afc51mr57163045ad.57.1758529521976;
+        Mon, 22 Sep 2025 01:25:21 -0700 (PDT)
+Received: from rajasilinuxtest.zztcpmrl4zvulnxionwmgqorff.rx.internal.cloudapp.net ([40.81.226.144])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-26980318743sm122818375ad.118.2025.09.22.01.25.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 01:25:21 -0700 (PDT)
+From: rajasimandalos@gmail.com
+To: linux-cifs@vger.kernel.org
+Cc: sfrench@samba.org,
+	pc@manguebit.org,
+	ronniesahlberg@gmail.com,
+	sprasad@microsoft.com,
+	tom@talpey.com,
+	bharathsm@microsoft.com,
+	linux-kernel@vger.kernel.org,
+	Rajasi Mandal <rajasimandal@microsoft.com>
+Subject: [PATCH 1/2] cifs: client: force multichannel=off when max_channels=1
+Date: Mon, 22 Sep 2025 08:24:16 +0000
+Message-ID: <20250922082417.816331-1-rajasimandalos@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] mm/thp: fix MTE tag mismatch when replacing
- zero-filled subpages
-Content-Language: en-GB
-To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
- david@redhat.com, lorenzo.stoakes@oracle.com
-Cc: yuzhao@google.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- baohua@kernel.org, voidice@gmail.com, Liam.Howlett@oracle.com,
- catalin.marinas@arm.com, cerasuolodomenico@gmail.com, hannes@cmpxchg.org,
- kaleshsingh@google.com, npache@redhat.com, riel@surriel.com,
- roman.gushchin@linux.dev, rppt@kernel.org, ryan.roberts@arm.com,
- dev.jain@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
- surenb@google.com, hughd@google.com, willy@infradead.org,
- matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
- byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, qun-wei.lin@mediatek.com, Andrew.Yang@mediatek.com,
- casper.li@mediatek.com, chinwen.chang@mediatek.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-mm@kvack.org, ioworker0@gmail.com,
- stable@vger.kernel.org
-References: <20250922021458.68123-1-lance.yang@linux.dev>
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250922021458.68123-1-lance.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Rajasi Mandal <rajasimandal@microsoft.com>
 
+Previously, specifying both multichannel and max_channels=1 as mount
+options would leave multichannel enabled, even though it is not
+meaningful when only one channel is allowed. This led to confusion and
+inconsistent behavior, as the client would advertise multichannel
+capability but never establish secondary channels.
 
-On 22/09/2025 03:14, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
-> 
-> When both THP and MTE are enabled, splitting a THP and replacing its
-> zero-filled subpages with the shared zeropage can cause MTE tag mismatch
-> faults in userspace.
-> 
-> Remapping zero-filled subpages to the shared zeropage is unsafe, as the
-> zeropage has a fixed tag of zero, which may not match the tag expected by
-> the userspace pointer.
-> 
-> KSM already avoids this problem by using memcmp_pages(), which on arm64
-> intentionally reports MTE-tagged pages as non-identical to prevent unsafe
-> merging.
-> 
-> As suggested by David[1], this patch adopts the same pattern, replacing the
-> memchr_inv() byte-level check with a call to pages_identical(). This
-> leverages existing architecture-specific logic to determine if a page is
-> truly identical to the shared zeropage.
-> 
-> Having both the THP shrinker and KSM rely on pages_identical() makes the
-> design more future-proof, IMO. Instead of handling quirks in generic code,
-> we just let the architecture decide what makes two pages identical.
-> 
-> [1] https://lore.kernel.org/all/ca2106a3-4bb2-4457-81af-301fd99fbef4@redhat.com
-> 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Qun-wei Lin <Qun-wei.Lin@mediatek.com>
-> Closes: https://lore.kernel.org/all/a7944523fcc3634607691c35311a5d59d1a3f8d4.camel@mediatek.com
-> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
-> Tested on x86_64 and on QEMU for arm64 (with and without MTE support),
-> and the fix works as expected.
-> 
->  mm/huge_memory.c | 15 +++------------
->  mm/migrate.c     |  8 +-------
->  2 files changed, 4 insertions(+), 19 deletions(-)
-> 
+Fix this by forcing multichannel to false whenever max_channels=1,
+ensuring the mount configuration is consistent and matches user intent.
+This prevents the client from advertising or attempting multichannel
+support when it is not possible.
 
-Thanks for the fix!
+Signed-off-by: Rajasi Mandal <rajasimandal@microsoft.com>
+---
+ fs/smb/client/fs_context.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Acked-by: Usama Arif <usamaarif642@gmail.com>
+diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
+index 072383899e81..43552b44f613 100644
+--- a/fs/smb/client/fs_context.c
++++ b/fs/smb/client/fs_context.c
+@@ -1820,6 +1820,13 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
+ 		goto cifs_parse_mount_err;
+ 	}
+ 
++	/*
++	 * Multichannel is not meaningful if max_channels is 1.
++	 * Force multichannel to false to ensure consistent configuration.
++	 */
++	if (ctx->multichannel && ctx->max_channels == 1)
++		ctx->multichannel = false;
++
+ 	return 0;
+ 
+  cifs_parse_mount_err:
+-- 
+2.43.0
+
 
