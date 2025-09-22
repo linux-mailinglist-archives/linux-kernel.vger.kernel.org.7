@@ -1,124 +1,230 @@
-Return-Path: <linux-kernel+bounces-827839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77B3B933CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:32:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FD2B933DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 22:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ABFD3ADC6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D6419073C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 20:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD1825C822;
-	Mon, 22 Sep 2025 20:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01626261B71;
+	Mon, 22 Sep 2025 20:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1d70yzY"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfxP7Pvv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B41325A33A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 20:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6DB1E833D;
+	Mon, 22 Sep 2025 20:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758573142; cv=none; b=uGGlupZyC5RfDAulpl5UULKDLnePugjc55Ouee6shQ49jz7B+vMVUOac0AxJkR7seNBGTvJHzn9cgo9A9ycDi7oMB7M9h7C4DYIuLwPFlFDj4SwR2Srzk/EAXxMgMyvgISbxAuFAhzgwXIarYarZR4W7FRhz11sHyJ2r7C20Ub4=
+	t=1758573235; cv=none; b=aJGnKdAHwxiRLO6S/pO/IXMBDb7HbUmtpu3EEIWO9ebQhrdJXcCxBX70pTrlNrTZtR62Wkln/gpqQv+1J/g5kcSpynqGVpJnFATEPe0A7La0UZatPW0pXXv6ZHiwck+6Vk45paDI/NFIoImF3JIpO4EkOrHTK3xVk4JfE41gQKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758573142; c=relaxed/simple;
-	bh=UG69M1IVVdE2PGp0fqTRKe9oVR9CdEzH1MNduD7Uexk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O3E0fbRV3wwiZjMZdhI0ShfFHsuMaVtTQMQLzSz/X/aR68br79rc75+LeJnQkF6b2WoQe4l+G/Mc2HKMBPMhnX6F2iRSiHEMcVHPVc8TqhC/jeTn+iJKZewSmbNptJlw7jUwCrlXnWTMF5HkeGds9RJ+srYgg21O5bnRUi0od0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1d70yzY; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-84dcf6f28e0so87454485a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758573138; x=1759177938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UG69M1IVVdE2PGp0fqTRKe9oVR9CdEzH1MNduD7Uexk=;
-        b=K1d70yzYo3LA2a586ItgQUZ0UeFQ5ggGN2MONG+KD6Z2mt0iiLLI8/9+SktniEKzMd
-         T4aFEWeWSMJhaEWIYcXN6MQDz+ePELlUo0MUbPsY/jQ4E+PWJsBhPedmnHYlX2kz846U
-         V8YRo1J3IXXY0XdckcoMwIgPJE4u/dZ2XeET/Jsa0BN/QuyordWAr5VDKDoHltlEDtyF
-         oK1uWBfMTEvvJvyt3Iw2noUW3zg8vbQp/N1Y+sz1HsA6D384o+05hR261wl9u9LyUmfC
-         Gu3p+ss35iTQ41w76oLwm2M2fkWwETck23GRbcpMj4XVM6Br4pJHSPIj3PFHXREVP3M8
-         4y7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758573138; x=1759177938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UG69M1IVVdE2PGp0fqTRKe9oVR9CdEzH1MNduD7Uexk=;
-        b=IqCib4QZamihS8QqwEovh51wWaZ+roT3KjMss+xL1bq5w3HJOdTlaVHULbKEuUFbeV
-         s17pfJTEGt4z4d09nJ2GgFG4Wn9cR2wtegrz4Lr/Rdxvls6Lh9VwuL01vUWpogXimDJd
-         AbqaJ+bSNoue+wpSz70TGdqrH/saXe1mGPrE1TojaciSKm+wtAnRiw4s4R36xMx9ur2H
-         2zAI4OXkQ+dwHweDmjy/0LZZXPE+YHtKvMbwOnwzZ8Yxqp8zS3qw/OQ7QhQizEerC/90
-         h5bkhDlAJXoSpe1lNR1wwRqEksj3cuOVM+N0NLMsEn3uinRlzcSKEkGOH/2e8ShIVIcc
-         dkzw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+tmI2s6sqOa+A6ibmGMNCicTG3wF/NrLKwnVtti1QAWF6SYvTvwRm0HAU1FByLgGBjl4zxe7YOo1/Hqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuEYUyJlyE2EOwjOTxH2RNUfI25b3TBn0lphsoysNseJ3jTwWD
-	ohJbV5UAa6A1XzYx9MY4x3gmayKo+nH7O8M5AePPlJrE7PULbTshZDlHGhAcGRw9DVfYiysDldv
-	eJ1pfWHc7j+hzyDuqk7pK9y1f/fO9XUI=
-X-Gm-Gg: ASbGnctF+0m1pWqD6cH21MpB+6Z3dCZgVvz0F18x5gYBqTbVP15J+rYKVZNthEhkyhN
-	aMVHfLweCCmr6tEjSRArDVejTAcBALMhv/ML2JG7c4rLBggEluiTAnNenvOmSy/xPTv4QYnUdZn
-	cvixWyINC0HUYtq5z5LO6ZonMVGhsYJlwRgnaFsKBBlIwuF4Q2H8b935qEmgepxHg9+ya1ei3v8
-	2A3XHgNj986SYQug/UMRIIHiqtIFhM4PjzGOodOMw==
-X-Google-Smtp-Source: AGHT+IHSqXAXRvrgQnAfjh65roix5LaKfKH4YNfu9oaDRcJHx5FbfpRJ/aJ3R/Xkk0NazNTr0SN+HDKIIBs1Mzh1IIo=
-X-Received: by 2002:a05:620a:370c:b0:829:25f1:3208 with SMTP id
- af79cd13be357-85175f52ec2mr33267385a.61.1758573138310; Mon, 22 Sep 2025
- 13:32:18 -0700 (PDT)
+	s=arc-20240116; t=1758573235; c=relaxed/simple;
+	bh=BQxZlqkbMQpNLXVzsCQCyONqf9JUCxYeIXzDA691YH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSEK2+IHgCf10PreGcPUjaASFAw7GtvfstSH79szqN6fjxjm9pn4o+357NbcKCTF2kAATgUKNXOyEJFrYdzlemppw3G3PXF3HERvj3556gej+h5VFwNbw4ngRd6iilwsbHgrXW7S2LgAHhrQZwAmVzBKBZhUAfOwMgCrqdRQiy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfxP7Pvv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A11C4CEF0;
+	Mon, 22 Sep 2025 20:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758573234;
+	bh=BQxZlqkbMQpNLXVzsCQCyONqf9JUCxYeIXzDA691YH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cfxP7PvvPDjqhbZVcosBquL3rnK0NwMA0H3r24O2/ZTFn64MWFQ3PZwB62UlkbZNX
+	 jxomcC3l6k97qjvXiew1Lkah6XaN4Sq0xvU2qP/JWTJ7q4Xk8AG7nLh7+r0fAokMTw
+	 /Rlit71KxbPbUhChMVe8QOCJs0hjqgcR7cpTOy/glr6QL/a7mg5srm2eU4xwADPWgd
+	 G5QfS43/zkUlsMzJ6wp1u1Z7ydXpwvRukQrxB6M2f4fYPGBlyizigSO92YBVRPdLxy
+	 MHOyjNvI7Dr1ECurrMdyDjQhIMziwRy4tN1aqkCEYIuATYHiERNk481XnO/rs+S8Z+
+	 jP8x6l/rBJ3jA==
+Date: Mon, 22 Sep 2025 15:33:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Philippe Baetens <philippebaetens@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: media: i2c: ams,mira220: Add mira220
+ image sensor
+Message-ID: <20250922203352.GA1278145-robh@kernel.org>
+References: <20250920-mira220-v4-0-921b2e83a352@gmail.com>
+ <20250920-mira220-v4-1-921b2e83a352@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
- <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
- <CAEU-x4kL45DAddmNahjR2C97+43jchpmXep++LbeP8cXLEWN-w@mail.gmail.com>
- <CAEU-x4nv3XnXchevtwN5mkVcxqnpgBobhavxZc7BjS7EgYG8Ng@mail.gmail.com> <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
-In-Reply-To: <c3plpgl2zsx4do2odwdeowodkkdnfqpexlwqg5a5mckyibxlge@qai35f5yeswy>
-From: Yinon Burgansky <yinonburgansky@gmail.com>
-Date: Mon, 22 Sep 2025 23:32:07 +0300
-X-Gm-Features: AS18NWC34wlHuTeaKU4_gAJIUEcIDl27QqadqogiGTSWePhgcUUmRrAOIWjEJR0
-Message-ID: <CAEU-x4mJiBM_zKg1DaeJkKB3W3Ay08bUTc-D3QjFjDxNiZGd0g@mail.gmail.com>
-Subject: Re: Touchpad multitouch leaves ghost fingers
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250920-mira220-v4-1-921b2e83a352@gmail.com>
 
-On Mon, Sep 22, 2025 at 7:51=E2=80=AFPM Benjamin Tissoires <bentiss@kernel.=
-org> wrote:
-> Well, I was meaning that I would provide a HID-BPF MR ready to install
-> for you.
-That would be awesome! Thank you very much!
+On Sat, Sep 20, 2025 at 09:47:58PM +0200, Philippe Baetens wrote:
+> Mira220 is a global shutter NIR-enhanced image sensor made by AMS.
+> Driver is submitted in the next patch of this series and verified on
+> a raspberry pi.
+> 
+> Signed-off-by: Philippe Baetens <philippebaetens@gmail.com>
+> ---
+>  .../devicetree/bindings/media/i2c/ams,mira220.yaml | 108 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 ++
+>  2 files changed, 114 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml b/Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
+> new file mode 100644
+> index 000000000..ae4613d0d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
+> @@ -0,0 +1,108 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/ams,mira220.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ams 2.2 MP NIR enhanced global shutter image sensor
 
-> But if you want to play with it, feel free to do so :)
-> For a jump start on HID-BPF:
-> https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
-Thank you for the reference. I=E2=80=99m feeling quite fatigued from the
-debugging process, as it took me a considerable amount of time to
-identify the issue.
-It was surprisingly difficult to determine what exactly was wrong with
-the touchpad and to uncover the root cause; perhaps I didn=E2=80=99t search
-for the right terms.
-However, I=E2=80=99m glad I finally took the time to debug it, submit the b=
-ug
-report, and find out what was wrong. Thank you!
+s/ams/AMS/
 
-> The advantage of HID-BPF is that we can drop the file in the filesystem
-> and then forget about it.
-> My plan is to have the HID-BPF detect whether the quirk has been applied
-> or not and would gracefully remove itself once the kernel is fixed.
-That's cool, nice design.
+> +
+> +maintainers:
+> +  - Philippe Baetens <philippebaetens@gmail.com>
+> +
+> +description: |-
 
-> PS: please try to refrain from top-posting your reply. The usage is to
-> inline your reply or reply below,
-Sorry about that, hopefully I did it right this time.
+Don't need '|' if no formatting to preserve.
 
-Thanks,
-Yinon
+> +  2.2 MP NIR enhanced global shutter image sensor designed for 2D and 3D
+> +  consumer and industrial machine vision applications.
+
+Is this a paragraph or just a odd line break? If a paragraph, add a 
+blank line in between and use '>' modifier.
+
+> +  Due to its small size, configurability and high sensitivity both
+> +  in visual as well as NIR, the Mira220 is well suited for 2D and
+> +  3D applications, which include Active Stereo Vision,
+> +  Structured Light Vision for Robotics and AR/VR.
+
+Wrap at 80 char.
+
+> +
+> +allOf:
+> +  - $ref: /schemas/media/video-interface-devices.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: ams,mira220
+> +
+> +  reg:
+> +    description: I2C device address
+
+Drop. That's every device.
+
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  vdig-supply:
+> +    description:
+> +      Digital I/O voltage supply, 1.35 volts
+> +
+> +  vana-supply:
+> +    description:
+> +      Analog1 voltage supply, 2.8 volts
+> +
+> +  vddl-supply:
+> +    description:
+> +      Digital core voltage supply, 1.8 volts
+> +
+> +  reset-gpios:
+> +    description: Sensor reset (XCLR) GPIO
+> +    maxItems: 1
+> +
+> +  port:
+> +    $ref: /schemas/graph.yaml#/$defs/port-base
+> +    additionalProperties: false
+> +    description:
+> +      Video output port
+> +
+> +    properties:
+> +      endpoint:
+> +        $ref: /schemas/media/video-interfaces.yaml#
+> +        unevaluatedProperties: false
+> +
+> +        properties:
+> +          data-lanes:
+> +            anyOf:
+
+Don't need 'anyOf' with a single entry.
+
+> +              - items:
+> +                  - const: 1
+> +                  - const: 2
+> +
+> +          clock-noncontinuous: true
+> +
+> +        required:
+> +          - data-lanes
+> +          - link-frequencies
+> +
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - vdig-supply
+> +  - vana-supply
+> +  - vddl-supply
+> +  - port
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        mira220: camera-sensor@54 {
+> +            compatible = "ams,mira220";
+> +            reg = <0x54>;
+> +            clocks = <&cam1_clk>;
+> +            vana-supply = <&cam1_reg>;	/* 2.5v */
+> +            vdig-supply = <&cam_dummy_reg>;	/* 1.8v */
+> +            vddl-supply = <&cam_dummy_reg>;	/* 1.35v */
+> +            port {
+> +                mira220_ep: endpoint {
+> +                    clock-lanes = <0>;
+> +                    data-lanes = <1 2>;
+> +                    link-frequencies = /bits/ 64 <750000000>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477c..c179b931b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1350,6 +1350,12 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/iio/light/ams,as73211.yaml
+>  F:	drivers/iio/light/as73211.c
+>  
+> +AMS MIRA220 DRIVER
+> +M:	Philippe Baetens <philippebaetens@gmail.com>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/media/i2c/ams,mira220.yaml
+> +F:	drivers/media/i2c/mira220.c
+> +
+>  AMT (Automatic Multicast Tunneling)
+>  M:	Taehee Yoo <ap420073@gmail.com>
+>  L:	netdev@vger.kernel.org
+> 
+> -- 
+> 2.43.0
+> 
 
