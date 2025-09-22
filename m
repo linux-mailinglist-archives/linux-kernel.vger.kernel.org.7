@@ -1,100 +1,119 @@
-Return-Path: <linux-kernel+bounces-827562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1468BB9216F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:56:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94CC0B92155
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 17:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1B543BA061
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:56:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5E42A258E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E76730F522;
-	Mon, 22 Sep 2025 15:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F8330DEB7;
+	Mon, 22 Sep 2025 15:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UU2d17AE"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3xad9+w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06E430E820
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 15:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70CD48CFC;
+	Mon, 22 Sep 2025 15:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758556553; cv=none; b=hEg3F4hocOkGxU6W84vfUPsZdyc27rljuOt6kLQRFqfau92xlwN88RzUxGAXnWal1KmgubCFi2BcIPZGxJi6HjDWI63WV+rzpulxiNEA8giRp0W8xXH703eqYL2P4DMLuCXvrYoao4ekdwprtSBzHbxVEITEkLeK/BQP3obi8BU=
+	t=1758556548; cv=none; b=cFEzSc5lY63IFeUIO1F2ZExz/y6DatoNijRYS1ciP/rAh9Haz/3j8KUdr3YW4ZWw65wBhIodtqycME6/cywAZ7DVDrxBjRR2avmDgeVKjbk2/nDwI1m9BXWVWQKpmKFhtZgd6pMVvsNNpThq8msEkwLqBdn+aiD4ZsuL5uTA2dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758556553; c=relaxed/simple;
-	bh=zKhd5kbeKppM9tP5IFjWUEKG0aqUGHUSQZU5BziWV5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DU4tqmFzAz/Rvu1t9hHq6UHejTGOukh8cNf7h+0uQvY5F25+T/a9ANKkYvtj8ntBJKM2cJxpLY+/7LwEuo4Tu9Nbe/dus9HCf4Zg9DbNZLEqKOjcfWDVwBsB5K2drhVV23f+1JWwCeP5oQGuwg4DcYi+s76isM1yw2Vs1g8+HYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UU2d17AE; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b554bb615dcso781453a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 08:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758556551; x=1759161351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zKhd5kbeKppM9tP5IFjWUEKG0aqUGHUSQZU5BziWV5Q=;
-        b=UU2d17AEdgZo0hXBP+da84jso5VtjRDy7WPhwcBVdUCWRg86ZDW7jUJ2DAIpo1xhui
-         rZUz4KZtEK1ttsDq0XDWvl1iQxN9Wv83BiTASUVoamOmNmE9H0gB1SqVra6O4sqyi6qY
-         PVmXU09CortLhpbUCBEYqnINwXSUjVhzzdDU97p3xkvbBYLtU2pgiAgTg+GJJO2lc0t5
-         S3nTjLUDoiOmybue9k5KAkEDOzAOapn7vDWsCvRDc3Fwvd/7s/8zfPzrFKA6RmQI4EqS
-         3YR8dd3LFEGXGtCmJciU8IY+8vd+XoM/UQzMkF1baskDJ4xyZJgItmZpOi+vgStraXMJ
-         mIDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758556551; x=1759161351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zKhd5kbeKppM9tP5IFjWUEKG0aqUGHUSQZU5BziWV5Q=;
-        b=sxn2Tr4YRk1wH+J1Tav4GUlx42Zq9jHARWYlVHFO+MeCwW21vPW+zwA0s/IRhjq7hF
-         zghrqRBrxTByVB0PTb5CH5Uru6d4FmhQk66w4G5FF1Gu539mnCnEIbOppb2ELALaXORz
-         9OKjJ/vRerJSVhoea/WRtvbaAygLAj73n1NwASxwn/IOewWsEqqdEXHRRAW9MIvE5k2w
-         XWkk816p+wcrMGKrpDEIH8nLp21+AM9HsxqTYweidT78jA7Vhu5QoIXUqREQ50/krSt4
-         1yUXGaWIxCyNLls8h94wlZIUkiiKIxqt/Yfq1CdozvNB7STa44MV05TnTgB0tOpM9a7e
-         +9kA==
-X-Gm-Message-State: AOJu0Yy80iiJiRtjprca3odfiLIJKkn++rMZAx9eRASGDOXhSfJnHMxt
-	Jx0MqBaXKLUR6R6YP7DbC4PzNZVXNI/QyozJP93n+qRxtb8nWeEZsTkS9vdXg4T+23Vk3k93yr9
-	JcGlVijsFvl38IVv/1DR2tNhIaErwDfE=
-X-Gm-Gg: ASbGncsV1nEgWkbEwb9omRZt0cy+niU22yv7DinIXSW14LtaWBiLspyVx0znpuPXqfp
-	JpCWcGFKUaDYLCtUVv1/M8NPPZEAM8UKHayohAxNZDWPktKfqz4VZzQovhxqNB0d/sukp+kCJCB
-	PKFcShndGceu4mpkfn2evd6Bn6dzRQmFI9al04CvoNZ9Uy/OHQ73v+mSpQFT/woG4Efk02r//aZ
-	NzosJILktXzJue3ertnQsY=
-X-Google-Smtp-Source: AGHT+IH/craAUuC/Ixwy2yPxGrtrESRbjWs3dZ3PdaVtMPq8BSoZaDjBShXnKIrESsMMpNfHvaum0Bou7tkghT7mhMM=
-X-Received: by 2002:a17:90b:5547:b0:330:4604:3ae8 with SMTP id
- 98e67ed59e1d1-330983416fcmr14935056a91.21.1758556550651; Mon, 22 Sep 2025
- 08:55:50 -0700 (PDT)
+	s=arc-20240116; t=1758556548; c=relaxed/simple;
+	bh=JerfD2CXPVA7ixQHD/FykyLShgV2ysRS6+rq+iXw0b0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=BS3lrX8Kdn0DRY9AqGghiWJvYIiiaKLg/9XEsHWYxWOH4S6T50dD60cFr2a/xYaS2JRNfnHJljgpTkY/IvXg+Qxv7WdPU0kVx5184V4zeoYVwBv2DdlVLmNCr/dL8gZAPLr7ebLxlpfVcXRxBkU8zmXrWrSh9BylJQXchMBqOD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3xad9+w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1169C4CEF7;
+	Mon, 22 Sep 2025 15:55:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758556548;
+	bh=JerfD2CXPVA7ixQHD/FykyLShgV2ysRS6+rq+iXw0b0=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=U3xad9+w+MyWVhDs7wO3wNQSfBrhZXe+knEgo75Xu6QLh/n55u9BCsAAD84eX8omB
+	 jECPqkDsYESZFK43L5f6icNH5/yLmfNXNx7KcBTZzb9PsufGlwGbq1YXzVEijiAP2t
+	 G+rpPLlIyvJQhVLL3ebbsklHDQjiQ9IKYMAZfHnMusb5pU9C3e8b5KAavl46zIaLYw
+	 HndNh02DAcQofAMtJbxV1uMzOB2NUymD1IGwE9FB1ataO2opx7QUngqf9pSvkuYDj8
+	 DD2qMImsfx/88HKGWjv9Os6ThN5BaLe86gQ03hrJM10QfwP9GLT3xZY/QbCAbo0KRs
+	 2+ft8vb1FHvbw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250922131725.378691-1-quic_ckantibh@quicinc.com>
-In-Reply-To: <20250922131725.378691-1-quic_ckantibh@quicinc.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 22 Sep 2025 08:55:36 -0700
-X-Gm-Features: AS18NWA6PUw6EJIsjtt8GzyvEAwdmMm-NuBlC2YazjESbIsx1mYkY0Xf2wO7h-4
-Message-ID: <CAEf4Bzagg84sok_Ho7Z-eaEst8go47f1fxSdtAWy0M4cPN04zw@mail.gmail.com>
-Subject: Re: [PATCH] libbpf: increase probe_name buffer size to avoid format-truncation
-To: Sanjay Chitroda <quic_ckantibh@quicinc.com>
-Cc: linux-kernel@vger.kernel.org, andrii@kernel.org, sanjayembeddese@gmail.com, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 22 Sep 2025 17:55:43 +0200
+Message-Id: <DCZG9N3QIRNP.1HUDPVL61FZVR@kernel.org>
+Cc: "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Bartosz Golaszewski"
+ <brgl@bgdev.pl>, "Tzung-Bi Shih" <tzungbi@kernel.org>, "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>, "Krzysztof Kozlowski"
+ <krzk@kernel.org>, "Benson Leung" <bleung@chromium.org>, "Rafael J .
+ Wysocki" <rafael@kernel.org>, "Jonathan Corbet" <corbet@lwn.net>, "Shuah
+ Khan" <shuah@kernel.org>, "Dawid Niedzwiecki" <dawidn@google.com>,
+ <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <chrome-platform@lists.linux.dev>, <linux-kselftest@vger.kernel.org>,
+ "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Dan Williams"
+ <dan.j.williams@intel.com>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via
+ revocable
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
+ <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
+ <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
+ <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+ <20250912132656.GC31682@pendragon.ideasonboard.com>
+ <2025091209-curfew-safari-f6e0@gregkh>
+ <CAMRc=MfdoB50o=3Q2p94o+f7S2Bzr=TAtWWQcDrC5Wf3Q5nqAA@mail.gmail.com>
+ <20250912135916.GF31682@pendragon.ideasonboard.com>
+ <2025091220-private-verse-d979@gregkh>
+ <20250912142646.GI31682@pendragon.ideasonboard.com>
+ <20250922151040.GA2546062@nvidia.com>
+In-Reply-To: <20250922151040.GA2546062@nvidia.com>
 
-Adding back bpf@
+On Mon Sep 22, 2025 at 5:10 PM CEST, Jason Gunthorpe wrote:
+> As was said later in this thread, it would be a real shame to see
+> people implement revocable in drivers instead of rely on subsystems to
+> have sane unregistration semantics where the subsystem guarentees that
+> no driver callbacks are running after unregister. You never need
+> driver revocable in a world like that.
 
-On Mon, Sep 22, 2025 at 6:17=E2=80=AFAM Sanjay Chitroda
-<quic_ckantibh@quicinc.com> wrote:
->
-> Yes, This is due to GCC being overly aggressive with its warning.
-> Also, Here is regression commit:
-> https://github.com/torvalds/linux/commit/4dde20b1aa85d69c4281eaac9a7cf
->
+I fully agree with that, in C there is indeed no value of a revocable type =
+when
+subsystems can guarantee "sane unregistration semantics".
 
-It's not a regression, (potential) truncation is expected and is fine.
+I say "in C" because in C there is no way to get a proof by the compiler th=
+at
+we're in a scope (e.g. through the subsystem guarentee) where the device is
+guaranteed to be bound (which we can in Rust).
+
+So, effectively, we're not getting any value out of the revocable in C in s=
+uch a
+case: In the best case, we're just bypassing the revocable by accessing the
+pointer unchecked (regardless whether that's valid or not); in the worst ca=
+se
+we're introducing a useless SRCU read side critical section.
+
+(In Rust the compiler will stop us from accessing the pointer unchecked if =
+we're
+not in a scope where unchecked access is valid.)
+
+So, I think in C revocable should be restricted to use-cases where scopes a=
+re
+unbound by design. DRM device callbacks are an example for that and it's th=
+e
+reason why things like drm_dev_{enter,exit}() and drm_dev_unplug() exist. I=
+n the
+end, those are exactly the same as revocable implemented in a slightly diff=
+erent
+way.
+
+- Danilo
 
