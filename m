@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-827369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DFDB91906
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:01:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941EEB91918
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF5B23AE9F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52B6F7A77E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836F542AA6;
-	Mon, 22 Sep 2025 14:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A312D74040;
+	Mon, 22 Sep 2025 14:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNQyyHpu"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="ogsFdC9C"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFAD41C62
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72C48F5B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549697; cv=none; b=J3//L2FoxAveRDwHZudB02Bak/lWQbwOa9ajUeSKkm4GG7+m59VZEs+/ISFFeXmwML6Nq1E1Z01RJIPC3Uiz7+wOAicKen5dtif+HZGYs7JmGCcLwv+EnSoThVusfiXs55CwkzqFaiq0+qSG1MefoQU1B3ChNYLa9eBHMSoWFH8=
+	t=1758549791; cv=none; b=AWkavR0TBSVQHRlrZU9J0OptprpdG4bY0UUeGwcKERj1VMjY0xjIE4gw5K9NzUxEc/DYBs0fUNQdAzuO0EsTzIhnoCclsxSkCqP9HUAzKtL7JYaBbi6IXgxIKydq2BjPzDQ3dngTv1yHMTYDosSHzIcna5Y+kDLgIfckbwAK0Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549697; c=relaxed/simple;
-	bh=UZjjThwwJZGVVrDbQVu3djnqq0f0cHLoax1dEyX8gx4=;
+	s=arc-20240116; t=1758549791; c=relaxed/simple;
+	bh=qgsofuqsgZE6bTGLYlybE7diaBrHgMneKy32J1ttfMc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t3N6wZGwPXkveC9crOw05Ahi2khPJ03yn3mfrQxij4QMRvvUSQiTHzlFAmk41vtyMeyrS28EYiMr41T1Ie4+Qf/SC6OE0/SV6lOoUVfban2RcitiPadCRSpcdTd+U2V61xl37Sfqa/qomhNzmZPN6CAmCMFmZ1UdkXpQt2QYQ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNQyyHpu; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7704f3c46ceso4026351b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:01:36 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=jurAkH9rllEfdw8nWKgpwpIZQ2z3W0/HMv9yNe/+bHEXa123Kp7qv6jllYwewcFaLZJc3It3D+VqSbflJj6CTVGHJgGzezmBdf5LZsSdofuq8jYDQhaszf2sd/fPSXk+E2LlaI5q6iKzZg3H6wwQsoSQUDkNftkgqv+bWNyGJGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=ogsFdC9C; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46c78a1784dso4323205e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:03:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758549696; x=1759154496; darn=vger.kernel.org;
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1758549787; x=1759154587; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fKCwA09uzuhqOzWAVdE6ynBeU1Drahgo1zKeykBUIgA=;
-        b=ZNQyyHpuEAmkQweemQ5+oZWcIw0D0Dg6LHu+wMpjNp6IidrSLYIV9prpKVXyIa2BWv
-         0z1FJ1x+pn5Da6tdjEEF6Wa9nVOLSQN5pfhJfeX6mUH8+xCd1DlKnHrvbmiV7dSc8Mli
-         69ECXNoKHReM7B84ke25VvzBu5GDmiamQ/+NgX4nKvTspEWrHG/sMdh8W0nqREwSKpGB
-         CImZUSb3CbZHqcpsEXDPyUrNQ8b8WqD4rk76skYT1HuK5nRAHf20E9p5/3krz1WfJTOw
-         kIcP2Rkn0PiKLhPAglqOgfnVsOsnbXmrCV7Z3i4DOKgKN955zkU85ZEfypvNOHLDFtJk
-         OqLQ==
+        bh=BnDwnUvydVIS9CMEgTJEKyggVVR1m3PZbWJ4JMnG7LY=;
+        b=ogsFdC9CuYw6/MN/I97LW6/sfg/qJKofSSiLvSfBATiUeditIglbsmPgRI4IrAQLZE
+         leCbGkh6hbDuLUMQRiUQGiPDUyZEBQQpFXeRr9O3UZaabgLlUUDwTVNzqt/jUQmTqZv7
+         50FpfXye/awb1QVQtGtza9xpXhO1Fn5K+g4FCgAM7Ajc04I+hC8b4byUKvHtrQ3VS7WU
+         A4BEt49ri0NhkoHpVdEVLNQ2ASHtBjNWPvE6N2zKAVe0uBTQQfyyegFOz+G7ZmtqXbi7
+         hdEzwyLdA7ouWh8ViPKHQhDIvYRQ2kYJHGucW1oZPJctPGk8hsgdQoxSK6gZQUD5Kems
+         AjEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758549696; x=1759154496;
+        d=1e100.net; s=20230601; t=1758549787; x=1759154587;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fKCwA09uzuhqOzWAVdE6ynBeU1Drahgo1zKeykBUIgA=;
-        b=GPKOqh27sLrGOllahlEn0aYWa3HVfUJtniIka5zqCaM8rkmbn/n+mpUjKY0jlfribC
-         UjzDioPcOtKABPotSbUYXwgoQFWcXIH4ZyySUaDava+dyEm3mpzOEW8bON3dASsXSOMu
-         XBTtUwMtAUmD8OW/lW9ZitVnClGD2oPAgp8Jye9+Nxa8XWvsyvVwr2LUyNl3OO6nV79Q
-         pfELua1HqdY4EHG/66Op2apss+oDPQ19oANZ1SPLvqDVLJkajLZjNejTS3Zf+a6NP/A2
-         vdKI8m7d2/+LIe7TTfSWNDsilH+mZ5BB2BohcwTlf9GGlSkGxALDg00YD3TThNLOgDVb
-         S33A==
-X-Forwarded-Encrypted: i=1; AJvYcCUMGHB400DuAoiTdCdKZtTNbBFHL95Rsn1g+Pt6jYotsZZNYzL/7cBtWNzPt+ZW0MYOlOwgADPi0oW26Y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZD+WhVdAxEnpkA5OrSCuCAGrCJQaY445qZL/n6JtVcbewWmf1
-	eJDZEjE66uOjX/EDG+ytXO+cEXfR5WWiILFsh8jMgzikkFky8p+fjVdO
-X-Gm-Gg: ASbGnctoSt34lw1YQsH2+mSgvgnv2vH7wUvSaRnmuzDjS4fq/OiEQl+Aw+htLF7Zbku
-	OLnF1ufoGx1xzdmH2Ym9QxQWDgqtMyQ3LnSYv+7Xc0IfTaW+Go/gr2aGIqZIOVtz1ONBJ9tB1uB
-	6EGJ+Kqdspw0xqAEKaG+SlR755e6FtAEVv88gMLy3xSRpw1TVAYnU4DQ8Mxu4XSKVLljD+dxvtN
-	xyZbkHmAmu4sVa5kFiEkhY/QIMUixrXQNuonZpadC6+8NhYykLuQp5j8cfb9VfLQGCiO8dnp/LH
-	VeJiVhHZEPTP1FRECpqNaxVooRDHqVvwUdGkNQKvdpDBqJdhLfR9ifpsVZqaIOVbjoILuXoJTdT
-	+aGslqba57hHANpvwVR7RHPHD+8CWsQ==
-X-Google-Smtp-Source: AGHT+IGrmrGvSmosds+W3wTUoh6DC44jNVPqPse8MKhb2Qiqm6JwSQCRflUH7JmR95N5n8TSktl7BQ==
-X-Received: by 2002:a05:6a00:22d1:b0:77f:414d:3774 with SMTP id d2e1a72fcca58-77f414d38e0mr3142062b3a.4.1758549695190;
-        Mon, 22 Sep 2025 07:01:35 -0700 (PDT)
-Received: from [192.168.0.150] ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77f4d204aa7sm528770b3a.44.2025.09.22.07.01.24
+        bh=BnDwnUvydVIS9CMEgTJEKyggVVR1m3PZbWJ4JMnG7LY=;
+        b=KAdLgtJ9U3VTyrxQvV/m0pLQ0eS3vIoB++zFeDF0abjSyXXXej61f3Wv8GhHwLqb52
+         6NYLVTHT5NwMamuXakgC7e9ySGm4yP7Xg8bJfggTeH1wXwgdpqU0QCZrCKaR/SUreCeJ
+         pbw+08jIhBfO3hO2FGTXen8cISQTjncgBWjNC7kuiMfMcruBAVdJWFZia3YVrmYy6hsC
+         UmcN11R+ReF90o6Nz7DeSoJcodfZu3zHK0Sp7D7YbSfPC9skcFTpz6R5kJvNVsDqG4jf
+         iW87Jha8KOqNNuvLZPha8PFzM9sYT4I9aU5jOyksd9TSD7yTTg5x8CVvFGQCdYCBlCuM
+         H3LA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrUetz8vtw0C0/rcrWR+xq+VTYX9FFfTRij3Vz+UE9GhSEGRCXVF+ivx5I6jmSWEcA0nBluW1lQY6kGCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCRUnXjPF8D8M9tvTMs6RlxinPbl9/XDlHi/H9uZWJy+dCIX1y
+	oLC1oqhP398mPmI/+HkGJoQk3PugtErefJuUZnJoZ1guiuJRXK/RSNMt0wYXkvQB+sM=
+X-Gm-Gg: ASbGncuBl4qyHMLdcbMpAaOTWKHJiFDPo1nyAEVreH6o1jR0RdQhbPvyvHTn71GZeqp
+	Ejf9akRwr4BrH34qtEluxtmCqXsQmFYiVWfe1p0v+8vCA1m4viw58wY3KMBxAqKBgcbOSmBIjG1
+	H0IEnJGMHEsWxslUe1B+UkxuTSeRzLuqlCj7e0RmbQcZPtX2O9XmUPkZKGfm//j+l9PXiv4iEZK
+	DgOtDnJVvbhl+k0Pf/tZ8/3a6ZM+wtzNaw5CtZfYW5Zi0A5dD5O1nnLJxn6sUwzHJ0i8mnqthUD
+	BsZ83/E76IhDiIaMI2nKCfFyGQbK6Nx5+4A6+03Qq8aXdTYL8+vNyzRTfvMpc93eIgGF5eaglCY
+	dMDsiKiRwDYZPca1qE0XhEirtuUD8g6/DQ3o=
+X-Google-Smtp-Source: AGHT+IEuHDWivMsA1X9IpMlcxkiY55lkIZKmZwt09tw1zka48MY9tMOGc8X7ZZu9nJed8gpJL0TprA==
+X-Received: by 2002:a05:6000:2dc7:b0:3e3:5951:95ff with SMTP id ffacd0b85a97d-3ee86d6ce08mr11173962f8f.62.1758549786464;
+        Mon, 22 Sep 2025 07:03:06 -0700 (PDT)
+Received: from [192.168.0.101] ([84.66.36.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3fcb01a9049sm5532688f8f.61.2025.09.22.07.03.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Sep 2025 07:01:26 -0700 (PDT)
-Message-ID: <ff092ff5-8ee1-4e91-b7f7-e5beb1d6d759@gmail.com>
-Date: Mon, 22 Sep 2025 21:01:18 +0700
+        Mon, 22 Sep 2025 07:03:05 -0700 (PDT)
+Message-ID: <5e2c677e-d4d8-4c79-8c89-3a09cd815696@ursulin.net>
+Date: Mon, 22 Sep 2025 15:03:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,42 +81,383 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Documentation: process: Arbitrarily bump kernel major
- version number
-To: Jonathan Corbet <corbet@lwn.net>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Kernel Workflows <workflows@vger.kernel.org>
-Cc: Dante Strock <dantestrock@hotmail.com>,
- Randy Dunlap <rdunlap@infradead.org>
-References: <20250922074219.26241-1-bagasdotme@gmail.com>
- <87h5wu8x7o.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <87h5wu8x7o.fsf@trenco.lwn.net>
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ eb_release_vmas
+To: =?UTF-8?B?6rmA6rCV66+8?= <km.kim1503@gmail.com>,
+ intel-gfx@lists.freedesktop.org
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+ rodrigo.vivi@intel.com, airlied@gmail.com, simona@ffwll.ch,
+ andi.shyti@linux.intel.com, ville.syrjala@linux.intel.com,
+ nitin.r.gote@intel.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+ Matthew Brost <matthew.brost@intel.com>,
+ John Harrison <John.C.Harrison@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+References: <CAGfirffPy5biFVLtSNEW60UCXa6_=-=NrQbU7iLQ8+BXnFQ=1A@mail.gmail.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <CAGfirffPy5biFVLtSNEW60UCXa6_=-=NrQbU7iLQ8+BXnFQ=1A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/22/25 19:53, Jonathan Corbet wrote:
-> Bagas Sanjaya <bagasdotme@gmail.com> writes:
-> 
->> The big picture section of 2.Process.rst currently hardcodes major
->> version number to 5 since fb0e0ffe7fc8e0 ("Documentation: bring process
->> docs up to date"). As it can get outdated when it is actually
->> incremented (the recent is 6 and will be 7 in the near future),
->> arbitrarily bump it to 9, giving a headroom for a decade.
->>
->> Note that the version number examples are kept to illustrate the
->> numbering scheme.
->>
->> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> 
-> Just FYI, I've pretty much shut docs down for the upcoming merge window.
-> I'm probably not the only one.
-> 
 
-So it is slated for 6.19 then?
+On 22/09/2025 13:56, 김강민 wrote:
+> Dear Linux kernel developers and maintainers,
+> 
+> This is to report a kernel bug discovered in the i915 driver using my
+> modified syzkaller.
+> 
+> Kernel driver involved: i915
+> 
+> Version detected by syzkaller:
+> - Commit version: c330cb607721
+> 
+> Latest version tested for NULL pointer dereference and memory leak:
+> - Commit version: 07e27ad16399
+> 
+> Note: The .config used in syzkaller differs from the one used in the
+> latest version. Therefore, the configuration file used in syzkaller is
+> referred to as .config(syzkaller), while the configuration file used
+> in the latest version is referred to as .config(latest).
+> 
+> 
+> In function eb_lookup_vmas(), values are assigned to eb->vma[i].vma
+> through eb_add_vma(), with the operation being repeated
+> eb->buffer_count times.
+> If eb->buffer_count is set to 2 (as configured in the PoC, though
+> values greater than 2 are also possible), then eb_add_vma() should
+> normally be executed twice. However, if during the initial execution
+> the check in eb_add_vma() fails, an error is returned, preventing the
+> second execution of eb_add_vma(). Instead, control flow proceeds
+> directly into eb_release_vmas().
+> At this point, eb_release_vmas() contains a logic that iterates over
+> eb->buffer_count in order to process vma. As a consequence, during the
+> access procedure involving eb->vma[1].vma, a NULL Pointer Dereference
+> occurs.
+> As a result, the ongoing process is interrupted, which prevents the
+> allocated heap structures, such as the timeline, from being properly
+> freed. Consequently, this leads to memory exhaustion (OOM) and
+> ultimately results in a denial-of-service (DoS) condition.
 
--- 
-An old man doll... just what I always wanted! - Clara
+Could be about 544460c33821 ("drm/i915: Multi-BB execbuf"). Unwind on 
+error there seems different than for example what ed29c2691188 
+("drm/i915: Fix userptr so we do not have to worry about obj->mm.lock, 
+v7.") did after eb_add_vma() succeeded. Because 544460c33821 added 
+checks and return code to eb_add_vma() which actually happens _after_ 
+the vma is added to the eb. So at that point it could be effectively the 
+same internal state as if the eb_add_vma() succeeded. In which case one 
+of the two error unwinds is wrong.
+
+Adding some folks to have a look.
+
+Regards,
+
+Tvrtko
+
+> Bug Report
+> ==================================================================
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:3e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:42!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:40!
+> i915 0000:00:04.0: [drm] Resetting vcs0 for preemption time out
+> BUG: kernel NULL pointer dereference, address: 0000000000000000
+> #PF: supervisor write access in kernel mode
+> #PF: error_code(0x0002) - not-present page
+> PGD 5132a067 P4D 5132a067 PUD 0
+> Oops: Oops: 0002 [#1] SMP KASAN NOPTI
+> CPU: 4 UID: 0 PID: 107163 Comm: syz.9.21041 Tainted: G    B
+>     6.17.0-rc2-00446-gc330cb607721 #2 PREEMPT(voluntary)
+> Tainted: [B]=BAD_PAGE
+> Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS
+> 1.16.3-debian-1.16.3-2 04/01/2014
+> RIP: 0010:arch_atomic_fetch_add arch/x86/include/asm/atomic.h:93 [inline] [i915]
+> RIP: 0010:raw_atomic_fetch_sub_release
+> include/linux/atomic/atomic-arch-fallback.h:949 [inline] [i915]
+> RIP: 0010:atomic_fetch_sub_release
+> include/linux/atomic/atomic-instrumented.h:401 [inline] [i915]
+> RIP: 0010:__refcount_sub_and_test include/linux/refcount.h:389 [inline] [i915]
+> RIP: 0010:__refcount_dec_and_test include/linux/refcount.h:432 [inline] [i915]
+> RIP: 0010:refcount_dec_and_test include/linux/refcount.h:450 [inline] [i915]
+> RIP: 0010:kref_put include/linux/kref.h:64 [inline] [i915]
+> RIP: 0010:__drm_gem_object_put include/drm/drm_gem.h:511 [inline] [i915]
+> RIP: 0010:i915_gem_object_put
+> drivers/gpu/drm/i915/gem/i915_gem_object.h:144 [inline] [i915]
+> RIP: 0010:i915_vma_put drivers/gpu/drm/i915/i915_vma.h:204 [inline] [i915]
+> RIP: 0010:eb_release_vmas+0x175/0xca0
+> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1097 [i915]
+> Code: 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 1e 0a 00 00 4d 8b ad b8
+> 00 00 00 be 04 00 00 00 4c 89 ef e8 50 d8 47 c1 b8 ff ff ff ff <f0> 41
+> 0f c1 45 00 85 c0 89 04 24 0f 8e 80 06 00 00 e8 65 15 16 c1
+> RSP: 0018:ffff88803ae37750 EFLAGS: 00000202
+> RAX: 00000000ffffffff RBX: ffff88803ae378b0 RCX: 0000000000000000
+> RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff88803ae376f8
+> RBP: 0000000000000050 R08: 0000000000000001 R09: ffffed100880d140
+> R10: ffff888044068a03 R11: 000000005fdf007e R12: dffffc0000000000
+> R13: 0000000000000000 R14: ffff88806131f900 R15: ffff88806131f8f8
+> FS:  00007f63571476c0(0000) GS:ffff8880e7434000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 000000006041c000 CR4: 00000000000006f0
+> Call Trace:
+>   <TASK>
+>   i915_gem_do_execbuffer+0x2786/0x6f30
+> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:3457 [i915]
+>   i915_gem_execbuffer2_ioctl+0x301/0x720
+> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:3601 [i915]
+>   drm_ioctl_kernel+0x18c/0x310 drivers/gpu/drm/drm_ioctl.c:796
+>   drm_ioctl+0x501/0xb20 drivers/gpu/drm/drm_ioctl.c:893
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:598 [inline]
+>   __se_sys_ioctl fs/ioctl.c:584 [inline]
+>   __x64_sys_ioctl+0x15e/0x1d0 fs/ioctl.c:584
+>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>   do_syscall_64+0xa4/0x260 arch/x86/entry/syscall_64.c:94
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f63586f4a6d
+> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f6357147018 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f6358935fa0 RCX: 00007f63586f4a6d
+> RDX: 0000200000000140 RSI: 00000000c0406469 RDI: 0000000000000003
+> RBP: 00007f6358798d0d R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f6358936038 R14: 00007f6358935fa0 R15: 00007ffcfc0b6320
+>   </TASK>
+> Modules linked in: i915 i2c_algo_bit drm_buddy ttm drm_display_helper
+> CR2: 0000000000000000
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:arch_atomic_fetch_add arch/x86/include/asm/atomic.h:93 [inline] [i915]
+> RIP: 0010:raw_atomic_fetch_sub_release
+> include/linux/atomic/atomic-arch-fallback.h:949 [inline] [i915]
+> RIP: 0010:atomic_fetch_sub_release
+> include/linux/atomic/atomic-instrumented.h:401 [inline] [i915]
+> RIP: 0010:__refcount_sub_and_test include/linux/refcount.h:389 [inline] [i915]
+> RIP: 0010:__refcount_dec_and_test include/linux/refcount.h:432 [inline] [i915]
+> RIP: 0010:refcount_dec_and_test include/linux/refcount.h:450 [inline] [i915]
+> RIP: 0010:kref_put include/linux/kref.h:64 [inline] [i915]
+> RIP: 0010:__drm_gem_object_put include/drm/drm_gem.h:511 [inline] [i915]
+> RIP: 0010:i915_gem_object_put
+> drivers/gpu/drm/i915/gem/i915_gem_object.h:144 [inline] [i915]
+> RIP: 0010:i915_vma_put drivers/gpu/drm/i915/i915_vma.h:204 [inline] [i915]
+> RIP: 0010:eb_release_vmas+0x175/0xca0
+> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c:1097 [i915]
+> Code: 89 f8 48 c1 e8 03 42 80 3c 20 00 0f 85 1e 0a 00 00 4d 8b ad b8
+> 00 00 00 be 04 00 00 00 4c 89 ef e8 50 d8 47 c1 b8 ff ff ff ff <f0> 41
+> 0f c1 45 00 85 c0 89 04 24 0f 8e 80 06 00 00 e8 65 15 16 c1
+> RSP: 0018:ffff88803ae37750 EFLAGS: 00000202
+> RAX: 00000000ffffffff RBX: ffff88803ae378b0 RCX: 0000000000000000
+> RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff88803ae376f8
+> RBP: 0000000000000050 R08: 0000000000000001 R09: ffffed100880d140
+> R10: ffff888044068a03 R11: 000000005fdf007e R12: dffffc0000000000
+> R13: 0000000000000000 R14: ffff88806131f900 R15: ffff88806131f8f8
+> FS:  00007f63571476c0(0000) GS:ffff8880e7434000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000000 CR3: 000000006041c000 CR4: 00000000000006f0
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> i915 0000:00:04.0: [drm] GPU HANG: ecode 12:4:277ffefe
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> i915 0000:00:04.0: [drm] Resetting rcs0 for preemption time out
+> i915 0000:00:04.0: [drm] GPU HANG: ecode 12:1:e75ffefe
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:6!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:8!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:14!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:12!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:10!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:16!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:20!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:1e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:1c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:1a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:18!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:22!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:28!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:26!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:24!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:30!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:36!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:34!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:32!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:40!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:3e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:3c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:3a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:38!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:48!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:46!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:44!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:42!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:50!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:5a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:58!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:56!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:54!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:52!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:62!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:60!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:5e!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:5c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:66!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:64!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:6c!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:6a!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:68!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> i915 0000:00:04.0: [drm] Resetting rcs0 for preemption time out
+> i915 0000:00:04.0: [drm] GPU HANG: ecode 12:1:e75ffefe
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:4!
+> Fence expiration time out i915-0000:00:04.0:0000:00:04.0:2!
+> ----------------
+> Code disassembly (best guess):
+>     0:   89 f8                   mov    %edi,%eax
+>     2:   48 c1 e8 03             shr    $0x3,%rax
+>     6:   42 80 3c 20 00          cmpb   $0x0,(%rax,%r12,1)
+>     b:   0f 85 1e 0a 00 00       jne    0xa2f
+>    11:   4d 8b ad b8 00 00 00    mov    0xb8(%r13),%r13
+>    18:   be 04 00 00 00          mov    $0x4,%esi
+>    1d:   4c 89 ef                mov    %r13,%rdi
+>    20:   e8 50 d8 47 c1          call   0xc147d875
+>    25:   b8 ff ff ff ff          mov    $0xffffffff,%eax
+> * 2a:   f0 41 0f c1 45 00       lock xadd %eax,0x0(%r13) <-- trapping
+> instruction
+>    30:   85 c0                   test   %eax,%eax
+>    32:   89 04 24                mov    %eax,(%rsp)
+>    35:   0f 8e 80 06 00 00       jle    0x6bb
+>    3b:   e8 65 15 16 c1          call   0xc11615a5
+> ==================================================================
+> 
+> Kmemleak Report
+> ==================================================================
+> 
+> unreferenced object 0xffff8880051f6700 (size 768):
+>    comm "poc", pid 334, jiffies 4294686493
+>    hex dump (first 32 bytes):
+>      01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>      00 80 53 05 80 88 ff ff 00 00 00 00 00 00 00 00  ..S.............
+>    backtrace (crc b8e44992):
+>      kmem_cache_alloc_noprof+0x26d/0x310
+>      intel_context_create+0x1a/0x40 [i915]
+>      i915_gem_create_context+0x473/0x830 [i915]
+>      i915_gem_context_open+0xce/0x150 [i915]
+>      i915_gem_open+0x8e/0x100 [i915]
+>      drm_file_alloc+0x1e1/0x2b0
+>      drm_open_helper+0x80/0x130
+>      drm_open+0x6e/0x100
+>      drm_stub_open+0x99/0xd0
+>      chrdev_open+0xb3/0x220
+>      do_dentry_open+0x14c/0x440
+>      vfs_open+0x29/0xe0
+>      path_openat+0x319/0x12a0
+>      do_filp_open+0xd2/0x180
+>      do_sys_openat2+0x85/0xe0
+>      __x64_sys_openat+0x51/0xa0
+> unreferenced object 0xffff8880054ca800 (size 1024):
+>    comm "poc", pid 334, jiffies 4294686493
+>    hex dump (first 32 bytes):
+>      01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>      02 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00  ................
+>    backtrace (crc 88e4d8c7):
+>      __kvmalloc_node_noprof+0x3d3/0x530
+>      i915_gem_execbuffer2_ioctl+0xad/0x270 [i915]
+>      drm_ioctl_kernel+0xa8/0x100
+>      drm_ioctl+0x229/0x4c0
+>      __x64_sys_ioctl+0x8e/0xe0
+>      do_syscall_64+0xa4/0x280
+>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> unreferenced object 0xffff888005f675e0 (size 32):
+>    comm "poc", pid 334, jiffies 4294686493
+>    hex dump (first 32 bytes):
+>      00 00 00 00 00 00 00 00 e0 a8 4c 05 80 88 ff ff  ..........L.....
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>    backtrace (crc 4f73f88f):
+>      __kmalloc_noprof+0x2ec/0x420
+>      i915_gem_do_execbuffer+0x5fc/0x2c50 [i915]
+>      i915_gem_execbuffer2_ioctl+0xfe/0x270 [i915]
+>      drm_ioctl_kernel+0xa8/0x100
+>      drm_ioctl+0x229/0x4c0
+>      __x64_sys_ioctl+0x8e/0xe0
+>      do_syscall_64+0xa4/0x280
+>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> unreferenced object 0xffff88800517fc80 (size 64):
+>    comm "poc", pid 334, jiffies 4294686493
+>    hex dump (first 32 bytes):
+>      01 00 00 00 00 00 00 00 80 79 02 05 80 88 ff ff  .........y......
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>    backtrace (crc 5d02cde2):
+>      __kmalloc_cache_noprof+0x284/0x320
+>      intel_engine_create_ring+0x2b/0x180 [i915]
+>      lrc_alloc+0xc0/0x240 [i915]
+>      intel_context_alloc_state+0x66/0x120 [i915]
+>      i915_gem_do_execbuffer+0x14b4/0x2c50 [i915]
+>      i915_gem_execbuffer2_ioctl+0xfe/0x270 [i915]
+>      drm_ioctl_kernel+0xa8/0x100
+>      drm_ioctl+0x229/0x4c0
+>      __x64_sys_ioctl+0x8e/0xe0
+>      do_syscall_64+0xa4/0x280
+>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> unreferenced object 0xffff888004ec1600 (size 512):
+>    comm "poc", pid 334, jiffies 4294686493
+>    hex dump (first 32 bytes):
+>      4a 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  J...............
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>    backtrace (crc 803bd2a7):
+>      __kmalloc_cache_noprof+0x284/0x320
+>      __intel_timeline_create+0x29/0x1e0 [i915]
+>      lrc_alloc+0xf2/0x240 [i915]
+>      intel_context_alloc_state+0x66/0x120 [i915]
+>      i915_gem_do_execbuffer+0x14b4/0x2c50 [i915]
+>      i915_gem_execbuffer2_ioctl+0xfe/0x270 [i915]
+>      drm_ioctl_kernel+0xa8/0x100
+>      drm_ioctl+0x229/0x4c0
+>      __x64_sys_ioctl+0x8e/0xe0
+>      do_syscall_64+0xa4/0x280
+>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ==================================================================
+> 
+> Please let me know if any further information is required.
+> 
+> Best Regards,
+> GangMin Kim.
+
 
