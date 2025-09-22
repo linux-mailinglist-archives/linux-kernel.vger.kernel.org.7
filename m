@@ -1,193 +1,279 @@
-Return-Path: <linux-kernel+bounces-826778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D95B8F52F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:42:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A1B8F53B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B08189F012
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4CB13BEB72
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BC2F6168;
-	Mon, 22 Sep 2025 07:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F672F618F;
+	Mon, 22 Sep 2025 07:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJ0RdmRR"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Woo2QBeN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC8C27B33A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717608F40;
+	Mon, 22 Sep 2025 07:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758526960; cv=none; b=pS8UHRrXHZ5ewsiU06Uw1pujSAjCk8MMNRkmzR+5MsKq5o/zwPPPvrj2C1Wj8+LY4PXv9STM6WmHFho2dv19lMcOWgcEcstezUvpxs426peY5KiqD6+M8euLCLwK7fGw7mZROen+lTa/BIKKsZcr1J/6kfIlTUqL4x/T7RwAsws=
+	t=1758527047; cv=none; b=ekDVzkehsG/cPTEnSOpaqjRiStMLpW2pk+oxfXd8BjSGQmyHxIZ6zy1iba6SjZGmSnt7WttHGFj/Uc3x1f2rpaoKCEQ+03HRHZfdmzmCpOuWWxJuYoOrMPWl4GEXVeDn/0coTyi6a1wwh+y/bJa0C5BIMi3qWPVG3v8my0jdL6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758526960; c=relaxed/simple;
-	bh=5gMuXlLFD1XuG3/tnXO1PQbMJhaTShGwHuvU9eBdkWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FfoSFPT9xykHKo3lXHVQR6bMUNAxANJYx0jpKu/TrhQ75YOzqWix9dtUDtbuLJFDfSMzAiCiU49lDILWAKW3JPy5Xr1upAw1CTO6zJBqygMX0iY9SjhRsxA0yKhKQVeb18DDozHA5hj/EBQvAhYY8MSI8xYai0eKi2U7Gmcj3D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJ0RdmRR; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77e87003967so1241703b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758526958; x=1759131758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4Phf+K1gS9MFRb7NZEcpfy0Bk/WQT2x+jx3wjjf1Yc=;
-        b=dJ0RdmRRLjHvd4Yg9fvQvCEaefhH4gBc9ck4uC/i1LZyCgNWbEGsOxX8aLtvdqCllM
-         Qk8++2PuzRfE6UP9KC3oLEk1/L+pWVGytqEvnhluh1k6kNFURFEsUtkLFQI1mNQUHjjr
-         pY9S+tVTPLUZ2zCv/rZ5bKmEerEZRqMaSoz2Omlvaqw9kVTEGN8W6EK5dggz95Kn6Oel
-         k+VeaU5LrWZkh3f3Ci/7GI/pdMr/e3Y7Rr3GQz8LwAXvlrbDPMSIuqMSVjj4lhoYeQrY
-         XAdPikz0mW77E0fFUYyn4oyvupOyu0ciyvnhrxp28j0K9JvVTxnreOUiimfS3a+tJKBR
-         /v3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758526958; x=1759131758;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j4Phf+K1gS9MFRb7NZEcpfy0Bk/WQT2x+jx3wjjf1Yc=;
-        b=Q/tMXq3SUvYjB56RbciErM3NpcY1TIgb5eyXCv/FSRhtcFF29gynMZ2J8nCLLuQR3v
-         +jv51wxfkaZ+PNb2A119o91MKaGuKKZNI9zulWX2G7a74tVkyrzM/vFjzddc3DtUVqVf
-         YUyyNUJEby5ff4tXTdIHhewqSGtMyUEE8BMUpmOA28tHs3dNsvK9WvXdgd3w6b2YIecE
-         7YcNLwqKbNnF+DPou8ZIDJFflXon0VeGXPcpw4wYB9ldaQgleRBNrac+y+6qTHdtmM27
-         OPI8A0j9J4xFgKGMaYIH1h7bWOhL063WeGje6uxOqWUrPei9T/rTuHNyeAYrJONWOfD3
-         ImAw==
-X-Gm-Message-State: AOJu0Ywu7tlN779elBniLZpI4nMCWgxf8gmXd7arCqHOVw9ietANq9lZ
-	Qjpk1AX5Ud1XrJiHc+RrBwZh1RcmhBMBTjM2FeSESAg8tqGTEfVlIeT8
-X-Gm-Gg: ASbGncuP7+0SXnV/XhHuV+Wuyvz6tbZhwVdXA2RGH6S408an87HkWhQp0tDfC0HVIb4
-	blAzpUJzB6JK2pBYrIQDjd07Z1vW6s3s0AQS402zbOOmATKeODS4rOhDnasnYGKXmyJdoAeOAua
-	+QYiM4JcWjCHbw+5Oe8vLGFTKnI9U7Op+UPRYoOe6PdjPApqioNmODwp+skO+fwsRJA58DfMCM2
-	JNk4dc/XRHtqi4Ta9R/SzEk2idz6hRAZwKrbaVlqJlB+Gr5PYtdT46IIjmx3O/8xho1txzF+wRd
-	htCoZTixpKnD2UXZWhr/DhWgpOM0IPukBgKBssvmkaMKA0ogGgmMF9iqYwT2yEM4884XbKTuJGW
-	URd7zfbsSOuqndax5zpoZTQ==
-X-Google-Smtp-Source: AGHT+IEj02pN0u0thRutHEIw7lMcFftbuQpwqlog/mxIBSHur0AW7esbFKRuvCsc5NQu009kGxpKIA==
-X-Received: by 2002:a05:6a20:734c:b0:262:d265:a51 with SMTP id adf61e73a8af0-2925c55fdacmr16155109637.18.1758526958069;
-        Mon, 22 Sep 2025 00:42:38 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b551d050414sm8109090a12.38.2025.09.22.00.42.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 00:42:37 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 057FB4220596; Mon, 22 Sep 2025 14:42:34 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Workflows <workflows@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Dante Strock <dantestrock@hotmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH v2] Documentation: process: Arbitrarily bump kernel major version number
-Date: Mon, 22 Sep 2025 14:42:19 +0700
-Message-ID: <20250922074219.26241-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758527047; c=relaxed/simple;
+	bh=xTJmutZRe2xmXyQhek9lOtpNGYD49Simt+rFNAEbuJQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Oe2Akk2D9IVh1YjMM5O4XTKniY0BF2Q1nEQF9FTklJ0l0QJGHeN18UWd8VjcbklZ30hw6oMN8iji8NQpZuCNzJRcWCwTBolEPtEtgqyKGG7awOcrEIzB46DD+i53TOAXPAgie4PCCuAVDZS3uQcr66WdP47HvrdeNZLHDdGgtP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Woo2QBeN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E58BC4CEF0;
+	Mon, 22 Sep 2025 07:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758527047;
+	bh=xTJmutZRe2xmXyQhek9lOtpNGYD49Simt+rFNAEbuJQ=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=Woo2QBeNR0jRVE685higrpHvwMEnNOtNZrQrOp24TSeJ+WgE/35Cun4Ba76LH7fln
+	 xuczEcsyEGk0I40iIXeCvDOjQkogpdaIKN6YIPmfi6f4fPeszqegaQgCW/9bxUr96S
+	 5bym8Zpv4vdt3wM9XMZbPabCP0dhduXiFIfUold4q78UmMua9SNryOa+vh3KO5rszN
+	 X2rMuzLCR106XhSlbcdj8COSkSCOYA3sRDCILGzV60QIUq+Yl4re5+xMqBjHx3pP7/
+	 m8Kqmvl1TP/R7o7DaFhOnqQKhfiStTbilkqZt+EwRXjc87adVBubqpaZGBPtFhPe1T
+	 s3tHTZ3dZUnyQ==
+Message-ID: <15df046b-0fe1-4b57-acad-66b88beac982@kernel.org>
+Date: Mon, 22 Sep 2025 09:44:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4885; i=bagasdotme@gmail.com; h=from:subject; bh=5gMuXlLFD1XuG3/tnXO1PQbMJhaTShGwHuvU9eBdkWs=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBkX/vplL98iZtB7ZH7j6QCJv6e8mf25tzy8FHUxX0/R3 L99Tt7tjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzE3pbhn1k77zetLexL1GsS S9hDg5bHrExoWfOYZcetDZkx5wXDFzD8z7mhYG9ooVHe/0FX8k/3/rfrDvdrpQeEcnyYt3BS9Vk eVgA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2 01/10] media: v4l2-core: Introduce state management for
+ video devices
+To: Jai Luthra <jai.luthra@ideasonboard.com>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, linux-media@vger.kernel.org
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>,
+ linux-kernel@vger.kernel.org
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+ <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The big picture section of 2.Process.rst currently hardcodes major
-version number to 5 since fb0e0ffe7fc8e0 ("Documentation: bring process
-docs up to date"). As it can get outdated when it is actually
-incremented (the recent is 6 and will be 7 in the near future),
-arbitrarily bump it to 9, giving a headroom for a decade.
+Hi Jai,
 
-Note that the version number examples are kept to illustrate the
-numbering scheme.
+Apologies that I had no time to review v1, but I'll review v2 today.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-Changes since v1 [1]:
+On 19/09/2025 11:55, Jai Luthra wrote:
+> Similar to V4L2 subdev states, introduce state support for video devices
+> to provide a centralized location for storing device state information.
+> This includes the current (active) pixelformat used by the device and
+> the temporary (try) pixelformat used during format negotiation. In the
+> future, this may be extended or subclassed by device drivers to store
+> their internal state variables.
+> 
+> Also introduce a flag for drivers that wish to use this state
+> management. When set, the framework automatically allocates the state
+> during device registration and stores a pointer to it within the
+> video_device structure.
+> 
+> This change aligns video devices with V4L2 subdevices by storing
+> hardware state in a common framework-allocated structure. This is the
+> first step towards enabling the multiplexing of the underlying hardware
+> by using different software "contexts", each represented by the combined
+> state of all video devices and V4L2 subdevices in a complex media graph.
+> 
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> --
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Hans Verkuil <hverkuil@kernel.org>
+> Cc: Ricardo Ribalda <ribalda@chromium.org>
+> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Ma Ke <make24@iscas.ac.cn>
+> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/media/v4l2-core/v4l2-dev.c | 27 +++++++++++++++++++++++++
+>  include/media/v4l2-dev.h           | 40 ++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 67 insertions(+)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+> index 10a126e50c1ca25b1bd0e9872571261acfc26b39..997255709448510fcd17b6de798a3df99cd7ea09 100644
+> --- a/drivers/media/v4l2-core/v4l2-dev.c
+> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+> @@ -163,6 +163,27 @@ void video_device_release_empty(struct video_device *vdev)
+>  }
+>  EXPORT_SYMBOL(video_device_release_empty);
+>  
+> +struct video_device_state *
+> +__video_device_state_alloc(struct video_device *vdev)
+> +{
+> +	struct video_device_state *state =
+> +		kzalloc(sizeof(struct video_device_state), GFP_KERNEL);
+> +
+> +	if (!state)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	state->vdev = vdev;
+> +
+> +	return state;
+> +}
+> +EXPORT_SYMBOL_GPL(__video_device_state_alloc);
+> +
+> +void __video_device_state_free(struct video_device_state *state)
+> +{
+> +	kfree(state);
+> +}
+> +EXPORT_SYMBOL_GPL(__video_device_state_free);
+> +
+>  static inline void video_get(struct video_device *vdev)
+>  {
+>  	get_device(&vdev->dev);
+> @@ -939,6 +960,10 @@ int __video_register_device(struct video_device *vdev,
+>  	spin_lock_init(&vdev->fh_lock);
+>  	INIT_LIST_HEAD(&vdev->fh_list);
+>  
+> +	/* state support */
+> +	if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+> +		vdev->state = __video_device_state_alloc(vdev);
+> +
+>  	/* Part 1: check device type */
+>  	switch (type) {
+>  	case VFL_TYPE_VIDEO:
+> @@ -1127,6 +1152,8 @@ void video_unregister_device(struct video_device *vdev)
+>  	clear_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>  	mutex_unlock(&videodev_lock);
+>  	v4l2_event_wake_all(vdev);
+> +	if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+> +		__video_device_state_free(vdev->state);
+>  	device_unregister(&vdev->dev);
+>  }
+>  EXPORT_SYMBOL(video_unregister_device);
+> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+> index a213c3398dcf60be8c531df87bf40c56b4ad772d..57e4691ef467aa2b0782dd4b8357bd0670643293 100644
+> --- a/include/media/v4l2-dev.h
+> +++ b/include/media/v4l2-dev.h
+> @@ -89,12 +89,18 @@ struct dentry;
+>   *	set by the core when the sub-devices device nodes are registered with
+>   *	v4l2_device_register_ro_subdev_nodes() and used by the sub-device ioctl
+>   *	handler to restrict access to some ioctl calls.
+> + * @V4L2_FL_USES_STATE:
+> + *	indicates that the &struct video_device has state support.
+> + *	The active video and metadata formats are stored in video_device.state,
+> + *	and the try video and metadata formats are stored in v4l2_fh.state.
+> + *	All new drivers should use it.
+>   */
+>  enum v4l2_video_device_flags {
+>  	V4L2_FL_REGISTERED		= 0,
+>  	V4L2_FL_USES_V4L2_FH		= 1,
+>  	V4L2_FL_QUIRK_INVERTED_CROP	= 2,
+>  	V4L2_FL_SUBDEV_RO_DEVNODE	= 3,
+> +	V4L2_FL_USES_STATE		= 4,
+>  };
+>  
+>  /* Priority helper functions */
+> @@ -214,6 +220,17 @@ struct v4l2_file_operations {
+>  	int (*release) (struct file *);
+>  };
+>  
+> +/**
+> + * struct video_device_state - Used for storing video device state information.
+> + *
+> + * @fmt: Format of the capture stream
+> + * @vdev: Pointer to video device
+> + */
+> +struct video_device_state {
+> +	struct v4l2_format fmt;
 
-  * Arbitrarily bump major number rather than replacing it with placeholder
-    (Jon)
-  * Apply proofreading corrections (Randy)
+While typically a video_device supports only a single video format type, that is
+not always the case. There are the following exceptions:
 
-[1]: https://lore.kernel.org/linux-doc/20250913015147.9544-1-bagasdotme@gmail.com/
+1) M2M devices have both a capture and output video format. However, for M2M devices
+   the state is per-filehandle, so it shouldn't be stored in a video_device_state
+   struct anyway.
+2) VBI devices can have both a raw and sliced VBI format (either capture or output)
+3) AFAIK non-M2M video devices can have both a video and meta format. That may have
+   changed, I'm not 100% certain about this.
+4) video devices can also support an OVERLAY or OUTPUT_OVERLAY format (rare)
 
- Documentation/process/2.Process.rst | 40 ++++++++++++-----------------
- 1 file changed, 17 insertions(+), 23 deletions(-)
+V4L2_CAP_VIDEO_OVERLAY is currently only used in
+drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c, so once that driver
+disappears we can drop video overlay support for capture devices.
 
-diff --git a/Documentation/process/2.Process.rst b/Documentation/process/2.Process.rst
-index ef3b116492df08..bbd955d91df0cd 100644
---- a/Documentation/process/2.Process.rst
-+++ b/Documentation/process/2.Process.rst
-@@ -13,24 +13,18 @@ how the process works is required in order to be an effective part of it.
- The big picture
- ---------------
- 
--The kernel developers use a loosely time-based release process, with a new
--major kernel release happening every two or three months.  The recent
--release history looks like this:
-+The Linux kernel uses a loosely time-based, rolling release development model.
-+A new major kernel release (9.x) [1]_ happens every two or three months, which
-+comes with new features, internal API changes, and more. A typical release
-+can contain about 13,000 changesets with changes to several hundred thousand
-+lines of code. Recent releases, along with their dates, can be found at
-+`Wikipedia <https://en.wikipedia.org/wiki/Linux_kernel_version_history>`_.
- 
--	======  =================
--	5.0	March 3, 2019
--	5.1	May 5, 2019
--	5.2	July 7, 2019
--	5.3	September 15, 2019
--	5.4	November 24, 2019
--	5.5	January 6, 2020
--	======  =================
--
--Every 5.x release is a major kernel release with new features, internal
--API changes, and more.  A typical release can contain about 13,000
--changesets with changes to several hundred thousand lines of code.  5.x is
--the leading edge of Linux kernel development; the kernel uses a
--rolling development model which is continually integrating major changes.
-+.. [1] Strictly speaking, the Linux kernel does not use semantic versioning
-+       number scheme, but rather the 9.x pair identifies major release
-+       version as a whole number. For each release, x is incremented,
-+       but 9 is incremented only if x is deemed large enough (e.g.
-+       Linux 5.0 is released following Linux 4.20).
- 
- A relatively straightforward discipline is followed with regard to the
- merging of patches for each release.  At the beginning of each development
-@@ -48,9 +42,9 @@ detail later on).
- 
- The merge window lasts for approximately two weeks.  At the end of this
- time, Linus Torvalds will declare that the window is closed and release the
--first of the "rc" kernels.  For the kernel which is destined to be 5.6,
-+first of the "rc" kernels.  For the kernel which is destined to be 9.x,
- for example, the release which happens at the end of the merge window will
--be called 5.6-rc1.  The -rc1 release is the signal that the time to
-+be called 9.x-rc1.  The -rc1 release is the signal that the time to
- merge new features has passed, and that the time to stabilize the next
- kernel has begun.
- 
-@@ -99,13 +93,13 @@ release is made.  In the real world, this kind of perfection is hard to
- achieve; there are just too many variables in a project of this size.
- There comes a point where delaying the final release just makes the problem
- worse; the pile of changes waiting for the next merge window will grow
--larger, creating even more regressions the next time around.  So most 5.x
--kernels go out with a handful of known regressions though, hopefully, none
--of them are serious.
-+larger, creating even more regressions the next time around.  So most kernels
-+go out with a handful of known regressions, though, hopefully, none of them
-+are serious.
- 
- Once a stable release is made, its ongoing maintenance is passed off to the
- "stable team," currently Greg Kroah-Hartman. The stable team will release
--occasional updates to the stable release using the 5.x.y numbering scheme.
-+occasional updates to the stable release using the 9.x.y numbering scheme.
- To be considered for an update release, a patch must (1) fix a significant
- bug, and (2) already be merged into the mainline for the next development
- kernel. Kernels will typically receive stable updates for a little more
+2-4 are all quite rare, but 1 is very common. But for such devices the state
+wouldn't be in video_device anyway.
 
-base-commit: 348011753d99b146c190aae262ee361d03cb0c5e
--- 
-An old man doll... just what I always wanted! - Clara
+But it would be nice if the same struct can be used in both m2m devices and non-m2m
+devices. It's just stored either in struct v4l2_fh or struct video_device. It would
+give a lot of opportunities for creating helper functions to make the life for
+driver developers easier.
+
+Regards,
+
+	Hans
+
+> +	struct video_device *vdev;
+> +};
+> +
+>  /*
+>   * Newer version of video_device, handled by videodev2.c
+>   *	This version moves redundant code from video device code to
+> @@ -238,6 +255,7 @@ struct v4l2_file_operations {
+>   * @queue: &struct vb2_queue associated with this device node. May be NULL.
+>   * @prio: pointer to &struct v4l2_prio_state with device's Priority state.
+>   *	 If NULL, then v4l2_dev->prio will be used.
+> + * @state: &struct video_device_state, holds the active state for the device.
+>   * @name: video device name
+>   * @vfl_type: V4L device type, as defined by &enum vfl_devnode_type
+>   * @vfl_dir: V4L receiver, transmitter or m2m
+> @@ -283,6 +301,7 @@ struct video_device {
+>  	struct vb2_queue *queue;
+>  
+>  	struct v4l2_prio_state *prio;
+> +	struct video_device_state *state;
+>  
+>  	/* device info */
+>  	char name[64];
+> @@ -546,6 +565,27 @@ static inline int video_is_registered(struct video_device *vdev)
+>  	return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>  }
+>  
+> +/** __video_device_state_alloc - allocate video device state structure
+> + *
+> + * @vdev: pointer to struct video_device
+> + *
+> + * .. note::
+> + *
+> + *	This function is meant to be used only inside the V4L2 core.
+> + */
+> +struct video_device_state *
+> +__video_device_state_alloc(struct video_device *vdev);
+> +
+> +/** __video_device_state_free - free video device state structure
+> + *
+> + * @state: pointer to the state to be freed
+> + *
+> + * .. note::
+> + *
+> + *	This function is meant to be used only inside the V4L2 core.
+> + */
+> +void __video_device_state_free(struct video_device_state *state);
+> +
+>  /**
+>   * v4l2_debugfs_root - returns the dentry of the top-level "v4l2" debugfs dir
+>   *
+> 
 
 
