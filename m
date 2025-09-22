@@ -1,87 +1,74 @@
-Return-Path: <linux-kernel+bounces-826739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-826744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D695B8F3AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF0CB8F3D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604D616E739
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30A8177069
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 07:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE2B2F0C50;
-	Mon, 22 Sep 2025 07:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A84E2F28F1;
+	Mon, 22 Sep 2025 07:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUV0M/qd"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BAoGWRwC"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355791F91E3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE6D2367B5;
+	Mon, 22 Sep 2025 07:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758525123; cv=none; b=TH0EY4Wsv1DKJaDARxC0vZuACBRm6AZyu2mNWNjp2xw2C7CXYuirA6IJlUVsqv1ZUEOc+KtIhKBgCqSkhpOvjj6HQioxTl01JevfeibrRGaJHQa5ig81PdGrwIh6iAo06O8KaYkMDv22tHecFWh82MjV54l0CIrRVMKjpA06hG4=
+	t=1758525182; cv=none; b=shKs736MgywkTAAtiUPjvOJmVxqJYwng+KVngIwbz67UDluDbATjlMMQDJg+JrX7tUZnUMg5dSEzDFf61UlFw+CuEJc4oJLGx/wGWTjYM9GGCOTe6pHHSKOUpKLt+VZxk+H/mQe6ePrm3X+OlZYj/i+w6t65/Ml/91FnavYJpJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758525123; c=relaxed/simple;
-	bh=d/ugOaQrlaY7PrdpD8UD3GGiibqpO+25BScz2+luv2Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fuqLQIohzWaW/32ZQIgit0t0FrWpTdfMqGf2ICPad2pgDFU+akA4BaAtuW8wDrXHXc4mXiy/j5W5DS7eT/leKAU6V9ExTUsKzSPgtB0FB/IL6+tgTBBzR9AMImOoItiVIky7vYhfjxz5da+S9uSbxSL6m22GNFZ2zQbOBcvwmrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUV0M/qd; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-77f38a9de0bso540590b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 00:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758525120; x=1759129920; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L51uGeNa8nacgso8hnxd+eYLYxlc+LmoJqaI+35rjr4=;
-        b=cUV0M/qdtAaNvJBYJJI77jqqgtkMbgL/YWIe7Elujb8BU7h5d8HC/ff4ZZNjnZOt/F
-         rBOp7wyh9kFuwYu1aY6/IUWvkim3lLe3vd0fYWspan6dj/1e/npwhqXD6+W7E/dugIuV
-         u/5D8SS5sveqFfJMm/UNOqGRKONSLtzgQnxyx4G6TelRRERZBHzIXD86cK9vf8smYm2s
-         +c1UgRKgPCztRqtMg7hHLfZ1knwD1/3hcXgOpdQMwJXJBLBB2vZZ+KABgSdXSCV5ywkO
-         V6aVLvGbnuMzQzU/NfS6OHxCTtyp9EFXv1IliXoIkWJJRzICkLxFrrbOuOl4bEB6azJn
-         bSiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758525120; x=1759129920;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L51uGeNa8nacgso8hnxd+eYLYxlc+LmoJqaI+35rjr4=;
-        b=wQX9j+1au4dfK1K09pt84QPAiHAFmfwD+Mv+UQKIp3eUQu5pqFGpNE3kxdDSUwkIgs
-         mAZMvJzf/Z4wDEnWKxllxGsPWhoGX4y5/oIIMqiwO8pDxchkUskaHSxj72ZXg77sOwqC
-         oczcuLrEpUJyLav5fy8PsdavYH/iiqpdv2IK/0Lt/eKt9G72MfrSKKFu1lK2vx9ag5LJ
-         nrVf89i/Fd1NerEukoR1plS70Ue5WC06JAATJjEvaiT/NfkJVc35K02+b/+0ijJ4OV3E
-         8U0Z71GEuderIb+l+xoMzTLc63j8zpIOEe5Qwta3Mba//EP3dmMMof6McSRN/bEJULoA
-         RvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsn1nxu9/XYaH0B+BnmqqprBSoxj5ERnrEBCFEzePwY/lp9hnc0coO45sMpVFfB2KeF7/IiLRMT9awgco=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4gM89ofq79SecIXoJov6fcXs395FjMtptMv/LZDb9xj7lcZ93
-	HLEqI+ykwHOqeXDcvDwGG2JVeJw89UVaPAwIlCIOKsRQYx3qrkK1BQRv/cmoLNIy
-X-Gm-Gg: ASbGncuIbl/9SREmDASE2I1MLRF/g00wsVvErYyMwmViJpbAyptM7RosVimhGU7TKTr
-	f+wih/sp3ivfacgKAYjxakMPPZ44ilrKERygYhxMktuxiQ9H11JBCuoV+0IyU92qw9yj5cDqRPX
-	WwZ5R3fo6T+qvYIAZAygNyHhTJ4zpe4sYlIt8Z0dZhuzDjncFckm+ybLFeCsME/XemIUyEzWDos
-	TNu4AAP+byeA15Db6H9Odg5gQeSnutjMaAqIzUOBjvxpuOz7vkBSV81BdYKgroKE1X7Ii1r6pVG
-	h+FUQUFMCeS8sdEgm4U0W+HjdMwkS+Mb2i7y9ZtWGf7Et4ndildhViFEDi3D/CR43pu9eG9K2LM
-	BjVvHHgyrYJlr3io4WOUj461OLd/ZeCzF+uCh
-X-Google-Smtp-Source: AGHT+IGwWT3qJv0Y4pAO24DRMgTrXx/7yCgl6MFgRf/c+ull4dMi9MomeuBzlvjoE4YW64QkG7MHMA==
-X-Received: by 2002:a05:6a20:e212:b0:254:b352:6479 with SMTP id adf61e73a8af0-2926e37bea9mr16802983637.32.1758525120401;
-        Mon, 22 Sep 2025 00:12:00 -0700 (PDT)
-Received: from localhost.localdomain ([165.204.156.251])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b55149526cfsm9017341a12.36.2025.09.22.00.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 00:12:00 -0700 (PDT)
-From: Rahul Kumar <rk0006818@gmail.com>
-To: miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com
-Cc: linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	rk0006818@gmail.com
-Subject: [PATCH] mtd: jedec_probe: use struct_size() helper for cfiq allocation
-Date: Mon, 22 Sep 2025 12:41:37 +0530
-Message-ID: <20250922071137.900508-1-rk0006818@gmail.com>
+	s=arc-20240116; t=1758525182; c=relaxed/simple;
+	bh=pc8fOIWyIeYU2I8WMVPLAOavlN5Cjc5WzDkmGR6HOiQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HlRo+xBt4MQTh/VKcdFZ1rKhEjIu/R03MH/nt6KsryFhiBcIbx7s6uL5/0ZiO2bMedTttWwcqgCdypLJrfaytr/7pdLOVqF49MdhAa0FdX+MkNizFpk0KE4cG9b2LSaeuqdSaFg5cVtPJrHGKWT1Zp4GgzSCTBoDp8c5Exy4D04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BAoGWRwC; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58M7CUVE1183964;
+	Mon, 22 Sep 2025 02:12:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1758525150;
+	bh=uTctHAVrrJJhz8+sjGmeprmgZ6Z8FF5nTjBctXETYv4=;
+	h=From:To:CC:Subject:Date;
+	b=BAoGWRwCnSwvL4b0XnSGtYbNbEKjRnVDuw7/S+M03ymgz+EEe09FXJF78GE8ohYch
+	 22Px5giTvLQek6ziat2OAnuNh2S/9uRk8anNPfw0QYdPKzlfsubfvDJswaDWtaV/dX
+	 V6YPEpdaCWguGMdvSCzIy5SSTujICRodxTO3UDwg=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58M7CULP1800388
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Mon, 22 Sep 2025 02:12:30 -0500
+Received: from DFLE212.ent.ti.com (10.64.6.70) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 22
+ Sep 2025 02:12:29 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE212.ent.ti.com
+ (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 22 Sep 2025 02:12:29 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58M7CN0R2369246;
+	Mon, 22 Sep 2025 02:12:23 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
+        <christian.bruel@foss.st.com>, <quic_wenbyao@quicinc.com>,
+        <inochiama@gmail.com>, <mayank.rana@oss.qualcomm.com>,
+        <thippeswamy.havalige@amd.com>, <shradha.t@samsung.com>,
+        <cassel@kernel.org>, <kishon@kernel.org>,
+        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
+        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <s-vadapalli@ti.com>
+Subject: [PATCH v3 0/4] PCI: Keystone: Enable loadable module support
+Date: Mon, 22 Sep 2025 12:42:12 +0530
+Message-ID: <20250922071222.2814937-1-s-vadapalli@ti.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,33 +77,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Documentation/process/deprecated.rst recommends against performing
-dynamic size calculations in the arguments of memory allocator
-functions due to the risk of overflow. Such calculations can wrap
-around and result in a smaller allocation than expected.
+Hello,
 
-Replace the size calculation in cfiq allocation with struct_size()
-helper to make the code clearer and handle overflows correctly.
+This series enables support for the 'pci-keystone.c' driver to be built
+as a loadable module. The motivation for the series is that PCIe is not
+a necessity for booting Linux due to which the 'pci-keystone.c' driver
+does not need to be built-in.
 
-Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
----
- drivers/mtd/chips/jedec_probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Series is based on commit
+dc72930fe22e Merge branch 'pci/misc'
+of pci/next.
 
-diff --git a/drivers/mtd/chips/jedec_probe.c b/drivers/mtd/chips/jedec_probe.c
-index 23c32fe584b7..a5d1137ca5ab 100644
---- a/drivers/mtd/chips/jedec_probe.c
-+++ b/drivers/mtd/chips/jedec_probe.c
-@@ -1985,7 +1985,7 @@ static int cfi_jedec_setup(struct map_info *map, struct cfi_private *cfi, int in
- 
- 	num_erase_regions = jedec_table[index].nr_regions;
- 
--	cfi->cfiq = kmalloc(sizeof(struct cfi_ident) + num_erase_regions * 4, GFP_KERNEL);
-+	cfi->cfiq = kmalloc(struct_size(cfi->cfiq, EraseRegionInfo, num_erase_regions), GFP_KERNEL);
- 	if (!cfi->cfiq) {
- 		//xx printk(KERN_WARNING "%s: kmalloc failed for CFI ident structure\n", map->name);
- 		return 0;
+NOTE for MAINTAINERS: This series has the following dependencies:
+1. The following commit in Linux-Next is a build-dependency for the
+series:
+https://github.com/ColinIanKing/linux-next/commit/8de1de5a3a8d42975953382068fb5195e9d6e6c6
+Since the v1 series was based on linux-next, there were no build errors.
+However, since this series is based on pci/next based on the feedback from
+Manivannan Sadhasivam <mani@kernel.org> at:
+https://lore.kernel.org/r/2gzqupa7i7qhiscwm4uin2jmdb6qowp55mzk7w4o3f73ob64e7@taf5vjd7lhc5/
+without the aforementioned commit, build will fail.
+2. The following patch series include fixes for the driver which are
+required to verify the driver functionality:
+https://lore.kernel.org/r/20250912100802.3136121-1-s-vadapalli@ti.com/
+
+v2 of this series is at:
+https://lore.kernel.org/r/20250912122356.3326888-1-s-vadapalli@ti.com/
+Changes since v2:
+- Patch 04/10 of the v2 series has been squashed into patch 02/10 of the
+  v2 series. In the v3 series, the squashed patch is 02/04.
+- Patches 03/10, 05/10, 06/10, 07/10 and 08/10 of the v2 series have been
+  dropped. The reason for dropping them is that all of the aforementioned
+  patches introduce helpers for cleanup on driver removal. Since Mani
+  pointed out that the driver cannot be removed until the IRQ issues are
+  fixed, the driver's remove function hasn't been updated and therefore
+  the helpers have been discarded.
+- The commit message of patch 09/10 of the v2 series has been updated,
+  keeping it concise and focusing on the issue and the fix. Moreover, a
+  'Fixes' tag has been included although a backport isn't necessary, in
+  order to address Mani's feedback.
+- All changes associated with driver removal in patch 10/10 of the v2
+  series have been discarded.
+- Patch relation between v2 and v3 series is as follows:
+  v3 01/04 => v2 01/10
+  v3 02/04 => v2 02/10 + 04/10
+  v3 03/04 => v2 09/10
+  v3 04/04 => v2 10/10
+
+For testing the series, Linux has been built in the following manner:
+1. Check out at commit dc72930fe22e Merge branch 'pci/misc' of pci/next
+2. Apply commit and patch series mentioned as dependencies above.
+3. Apply current series.
+4. Build Linux with CONFIG_PCI_KEYSTONE, CONFIG_PCI_KEYSTONE_HOST and
+   CONFIG_PCI_KEYSTONE_EP set to 'm'.
+
+Series has been tested on AM654-EVM with an NVMe SSD connected to the
+PCIe connector on the board and verifying that the NVMe SSD enumerates
+successfully. Additionally, the 'hdparm' utility has been used to read
+the NVMe SSD for verifying functionality. Test Logs:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/182a80bb43e9c407982f7674034a7c9d
+
+Regards,
+Siddharth.
+
+Siddharth Vadapalli (4):
+  PCI: Export pci_get_host_bridge_device() for use by pci-keystone
+  PCI: dwc: Export dw_pcie_allocate_domains() and
+    dw_pcie_ep_raise_msix_irq()
+  PCI: keystone: Exit ks_pcie_probe() for invalid mode
+  PCI: keystone: Add support to build as a loadable module
+
+ drivers/pci/controller/dwc/Kconfig                | 6 +++---
+ drivers/pci/controller/dwc/pci-keystone.c         | 8 ++++++++
+ drivers/pci/controller/dwc/pcie-designware-ep.c   | 1 +
+ drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
+ drivers/pci/host-bridge.c                         | 1 +
+ include/linux/pci.h                               | 1 +
+ 6 files changed, 15 insertions(+), 3 deletions(-)
+
 -- 
 2.43.0
 
