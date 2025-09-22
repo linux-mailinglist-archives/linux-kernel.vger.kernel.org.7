@@ -1,351 +1,103 @@
-Return-Path: <linux-kernel+bounces-827393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401F9B91A19
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC113B91A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB0807A4A22
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6ACB1902993
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE741E491B;
-	Mon, 22 Sep 2025 14:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A871E8323;
+	Mon, 22 Sep 2025 14:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="Zmm0VwMz"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CePgqQr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C021833991
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD4333991;
+	Mon, 22 Sep 2025 14:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758550805; cv=none; b=DEobdHkmTnG5/3yrYfIlu5UOF4SRrJMGb0X1zzdJq0WCsRUyeAxqMuVOuvlCrWlx2Ygxvj0pdtO53A/8o78tO+0o5MOQhIU/Ko4DcVp6v5j+eupGuChAk0OXnrFMICTUZIjk8k4K3XmWyXct2/ejjoqVj6CBQWrebxxhvxAyxjA=
+	t=1758550853; cv=none; b=IXrW58ILpFlyRO9FzPx2HWKDo2UVhG4W2boW1yu3QVr56GH3T4WvBDmhU7M8OH4VEcHvY5QK9rcT9sS3d2hV+Llmlcyt0J7MbPxglIT8YjTvMzj2swjQ0zI3IHtqKzlYYDXJXrd4FCU1RBVmuEwWeu7FQEQ/OKbWJ1lgCN5Q6cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758550805; c=relaxed/simple;
-	bh=6Df8NxguG9qDsI0h3yoKIKjTSkL+W00JSlq5UL2CriA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J4ichmOvS0+zRk8HJGz6Qt/4OLPqAyTt47CmMlcL9rl7t8PaUrnIYi88IcDM+alcgeCjRFy53bMQqWEr4pbFJO4ZIMqpnmRTZota1hi8VfBVhOd+Suw8StuU214a9mlkHjqdfrroOt9q1HP16EQIo6Hj4EoIVFgqrQVbR9vdXcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=Zmm0VwMz; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-816ac9f9507so514467585a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:20:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1758550801; x=1759155601; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=k0rfMuKDffzcF2pbWnCxF5gqRkB718SJ9J8ugkJZhI0=;
-        b=Zmm0VwMzi2/a85k8G6zYU7KoXkQpt/P4cTxIrb8FB0NPfdyXbAdnd4U1DkauqV9Q7W
-         uZJJB6xv/DBj+6U/E/fDWDCoq468wjhyARq3eXDi6dpVpa15Z+4ZInTBlr1VMQ+jDxDT
-         f783kOhlbOYD2gDS+P4TNoq3A2dBhTOhUpHaTzFg4VJcTuMLxlEij1Nz7nwmUizm7lsj
-         pLwGphdVccvWXEuRfBgcfjED4ib2ZJs0B8/2+A6yhYnGqTtHR2Ji0/Huw51mroRBQFoJ
-         yvF9j1A95JmGZOB3vEZAgzU3muVNd2LQdoYG++kOZskHeNYNau5CoBCUkyt+YlRtV5hi
-         jhQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758550801; x=1759155601;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k0rfMuKDffzcF2pbWnCxF5gqRkB718SJ9J8ugkJZhI0=;
-        b=H7po43tav9eP1JFpz5EBZNfb/V1UbgyAMA7VrSbMtpm6jlnnnr59QhE6PrFJ3sM+CV
-         yWWUzs3b5hIm/it5B6xdo9gK4i27fIXjwoHLAGguTRTn7KlD7OBCRJ+yZfMaFINsN8lV
-         Rik9F2mAvIs4ULo8jCBDarLh5ILs7Zb34ZrqTN+Tp0suy8OFHYYWfcMNJ1r4F0HC0rj3
-         fYE4vzzR/1xgUkUaOk3b0iecBon5g8G4w8+lzdkw6JKoKpYBGvQPJ7AkefI6KM+vYLaL
-         5yh6deH1cfkireIrWSrkJ29KacE2BCh96kudhR0D10WSEzvESxy22rCa7FD3y1oSuO3O
-         iX6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWiDVjb7iKYhVyvc7awXlJ01bOI2mxWAUFnjAfjshMh9NTTKzpXm/KtSm6LnubDNHd8qBCwYVz44GvHK4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL6clR7mGMuCAF/OFz7zKkMzevo1JoVQ54w1JpWw8nPPolkbxR
-	1LkvDMrSRgXxoIkcULx7Ezk/s5vinnalLdGX9l8jzXmd8Skqp8nyMiSw3/EoQKjwIlU=
-X-Gm-Gg: ASbGncsjjA95aw9i1t2Ix9L5yD/GpZdoNhwlsxWW3ssyJ1IuKWxS5u9yYjmpZN9o4Ln
-	vtzzjRPk/13XHP8WgJXlRxS+Eu/o9jY6bxludhZtzS/wgnfS4B+L+xOjN7rs1AkBfkcuSHvzewA
-	/wujDNE2gf5/LyZWeScg+ySkUhrZUCtmzQ8WCiFuOB+YDN9HAYyopdrmDNc+KWsddi1UZB3DHbM
-	rzqqgal+RplvL/c3pyeJYNuZFTP9KEMvXXcMJBBfk9wGXq5hyC16DzFld5M2Iov0ol79q75j5Ch
-	d3jaZ370X2seH6GOIZ8q8295jW7P5qe/n6Lo+W8JLbnaYJjNGGNgttMC/BmOGF+ANvSnPL521TI
-	v8goF1tJMgCYAN5Ovd/vnOAiONtoEvJbZbzW7vN0=
-X-Google-Smtp-Source: AGHT+IEJKVFJvQdzMlv24ri3l2dTJ9inka+FIaTLCOIKsGHQanOg2gWbZBayM6/vJaEm9Boy9nJEEQ==
-X-Received: by 2002:a05:620a:6ccd:b0:827:937c:2c2e with SMTP id af79cd13be357-8363adf489cmr1972115585a.30.1758550800399;
-        Mon, 22 Sep 2025 07:20:00 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:10:aee0::5ac? ([2606:6d00:10:aee0::5ac])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-836278b7ee5sm810275385a.18.2025.09.22.07.19.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 07:19:59 -0700 (PDT)
-Message-ID: <ab0b031703efcd660923ac7d053d00ab7338797c.camel@ndufresne.ca>
-Subject: Re: [PATCH v2 11/12] media: rkvdec: Add HEVC support for the
- VDPU381 variant
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Jonas Karlman <jonas@kwiboo.se>, Diederik de Haas
- <didi.debian@cknow.org>,  Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, 	linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, 	linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com, 	linux-kernel@vger.kernel.org
-Date: Mon, 22 Sep 2025 10:19:57 -0400
-In-Reply-To: <60353116-98cd-48f7-9f91-b2e51f2ff813@kwiboo.se>
-References: <20250808200340.156393-1-detlev.casanova@collabora.com>
-	 <20250808200340.156393-12-detlev.casanova@collabora.com>
-	 <DCXPZ9JSN7H2.3B76IQI8N4O6H@cknow.org>
-	 <60353116-98cd-48f7-9f91-b2e51f2ff813@kwiboo.se>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-tLYINSSFihYeorIw7EIC"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1758550853; c=relaxed/simple;
+	bh=R0weu+X08HQk2XnLPTCbBYzistuQhGHRMXvTiVRYJSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HWLp7x2VzmN9iSGxik4DlfKDopryJtFl+fCBqY4XPcl21yeAhqDqIVRWJ3nQWOZLPUGU+CzCHqhZCWJbccc7xl/2vyV6nsABmPtuYGsC6BUht5jiQHjCyhc604G6ItMTZLdG8ZfMfP6mNGY5ylgUWgfymcsYV4IcwWbUR2G2Kbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CePgqQr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F385FC4CEF0;
+	Mon, 22 Sep 2025 14:20:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758550853;
+	bh=R0weu+X08HQk2XnLPTCbBYzistuQhGHRMXvTiVRYJSc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CePgqQr8sR7WqwUnA12bDvXCWWbEqAFHvlwCpGCPQxzd7K/6uwsZAnm/IkccuNzzV
+	 DsvZzsymVLqjQfdyklRlyqLDeK19KpVKKBpizqwx1lGF2QhKYRMYiQYWtYbm2oDW+2
+	 +SdNtytAwUMMSwx5dyfhy5pw8kuEIgK3HCvOy1nCV2zQABLhFZRxZsYdaJxYI9li1m
+	 324WQQv/JNIZCinkTl7RHOCGe0F2KME9XxpuYfuQ0Wavm1wJgzNhuWPv2V7o8H+mhN
+	 UTslUuU+mmkfcH9692DT6Z4Tzc/f42ILBnchLGp0w8Sz+mYrhOpQs8EBMjfvA15Ao4
+	 gmbhMh2wyu43A==
+Date: Mon, 22 Sep 2025 16:20:47 +0200
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Alexander Aring <aahringo@redhat.com>,
+	David Teigland <teigland@redhat.com>
+Cc: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH][next] dlm: Avoid -Wflex-array-member-not-at-end warning
+Message-ID: <aNFbP3UaRokBxruI@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
---=-tLYINSSFihYeorIw7EIC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Move the conflicting declaration to the end of the corresponding
+structure. Notice that `struct dlm_message` is a flexible
+structure, this is a structure that contains a flexible-array
+member.
 
-Le samedi 20 septembre 2025 =C3=A0 18:23 +0200, Jonas Karlman a =C3=A9crit=
-=C2=A0:
-> Hi Diederik and Detlev,
->=20
-> On 9/20/2025 5:07 PM, Diederik de Haas wrote:
-> > Hi again,
-> >=20
-> > I think I've found a similar issue here as I did for H264.
-> >=20
-> > On Fri Aug 8, 2025 at 10:03 PM CEST, Detlev Casanova wrote:
-> > > The VDPU381 supports HEVC decoding up to 7680x4320@30fps.
-> > > It could double that when using both decoder cores.
-> > >=20
-> > > It support YUV420 (8 and 10 bits) as well as AFBC (not implemented
-> > > here)
-> > >=20
-> > > The fluster score is 146/147 for JCT-VC-HEVC_V1, tested on ROCK 5B.
-> > > None of the other test suites works.
-> > >=20
-> > > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > > ---
-> > > =C2=A0.../media/platform/rockchip/rkvdec/Kconfig=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0=C2=A0 1 +
-> > > =C2=A0.../media/platform/rockchip/rkvdec/Makefile=C2=A0=C2=A0 |=C2=A0=
-=C2=A0=C2=A0 2 +
-> > > =C2=A0.../platform/rockchip/rkvdec/rkvdec-cabac.c=C2=A0=C2=A0 | 3435 =
-+++++++++++++++++
-> > > =C2=A0.../rockchip/rkvdec/rkvdec-hevc-common.c=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 546 +++
-> > > =C2=A0.../rockchip/rkvdec/rkvdec-hevc-common.h=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 101 +
-> > > =C2=A0.../rockchip/rkvdec/rkvdec-vdpu381-hevc.c=C2=A0=C2=A0=C2=A0=C2=
-=A0 |=C2=A0 596 +++
-> > > =C2=A0.../media/platform/rockchip/rkvdec/rkvdec.c=C2=A0=C2=A0 |=C2=A0=
-=C2=A0 81 +
-> > > =C2=A0.../media/platform/rockchip/rkvdec/rkvdec.h=C2=A0=C2=A0 |=C2=A0=
-=C2=A0=C2=A0 1 +
-> > > =C2=A08 files changed, 4763 insertions(+)
-> > > =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvde=
-c-hevc-common.c
-> > > =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvde=
-c-hevc-common.h
-> > > =C2=A0create mode 100644 drivers/media/platform/rockchip/rkvdec/rkvde=
-c-vdpu381-hevc.c
-> > >=20
-> > > diff --git a/drivers/media/platform/rockchip/rkvdec/Kconfig b/drivers=
-/media/platform/rockchip/rkvdec/Kconfig
-> > > index 5f3bdd848a2cf..3303b0ce32809 100644
-> > > --- a/drivers/media/platform/rockchip/rkvdec/Kconfig
-> > > +++ b/drivers/media/platform/rockchip/rkvdec/Kconfig
-> > > @@ -8,6 +8,7 @@ config VIDEO_ROCKCHIP_VDEC
-> > > =C2=A0	select VIDEOBUF2_VMALLOC
-> > > =C2=A0	select V4L2_MEM2MEM_DEV
-> > > =C2=A0	select V4L2_H264
-> > > +	select V4L2_HEVC
-> > > =C2=A0	select V4L2_VP9
-> > > =C2=A0	help
-> > > =C2=A0	=C2=A0 Support for the Rockchip Video Decoder IP present on Ro=
-ckchip SoCs,
-> > >=20
-> > > ...
-> > >=20
-> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/driver=
-s/media/platform/rockchip/rkvdec/rkvdec.c
-> > > index dab34a2322c95..cd01f1e41beb5 100644
-> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> > > @@ -257,6 +257,60 @@ static const struct rkvdec_ctrls rkvdec_h264_ctr=
-ls =3D {
-> > > =C2=A0	.num_ctrls =3D ARRAY_SIZE(rkvdec_h264_ctrl_descs),
-> > > =C2=A0};
-> > > =C2=A0
-> > > +static const struct rkvdec_ctrl_desc rkvdec_hevc_ctrl_descs[] =3D {
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_DECODE_PARAMS,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_SPS,
-> > > +		.cfg.ops =3D &rkvdec_ctrl_ops,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_PPS,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_SCALING_MATRIX,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_DECODE_MODE,
-> > > +		.cfg.min =3D V4L2_STATELESS_HEVC_DECODE_MODE_FRAME_BASED,
-> > > +		.cfg.max =3D V4L2_STATELESS_HEVC_DECODE_MODE_FRAME_BASED,
-> > > +		.cfg.def =3D V4L2_STATELESS_HEVC_DECODE_MODE_FRAME_BASED,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_START_CODE,
-> > > +		.cfg.min =3D V4L2_STATELESS_HEVC_START_CODE_ANNEX_B,
-> > > +		.cfg.def =3D V4L2_STATELESS_HEVC_START_CODE_ANNEX_B,
-> > > +		.cfg.max =3D V4L2_STATELESS_HEVC_START_CODE_ANNEX_B,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_MPEG_VIDEO_HEVC_PROFILE,
-> > > +		.cfg.min =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN,
-> > > +		.cfg.max =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_10,
-> > > +		.cfg.menu_skip_mask =3D
-> > > +			BIT(V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN_STILL_PICTURE),
-> > > +		.cfg.def =3D V4L2_MPEG_VIDEO_HEVC_PROFILE_MAIN,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_MPEG_VIDEO_HEVC_LEVEL,
-> > > +		.cfg.min =3D V4L2_MPEG_VIDEO_HEVC_LEVEL_1,
-> > > +		.cfg.max =3D V4L2_MPEG_VIDEO_HEVC_LEVEL_6_1,
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_EXT_SPS_ST_RPS,
-> > > +		.cfg.dims =3D { 65 },
-> > > +	},
-> > > +	{
-> > > +		.cfg.id =3D V4L2_CID_STATELESS_HEVC_EXT_SPS_LT_RPS,
-> > > +		.cfg.dims =3D { 65 },
-> > > +	},
-> > > +};
-> > > +
-> > > +static const struct rkvdec_ctrls rkvdec_hevc_ctrls =3D {
-> > > +	.ctrls =3D rkvdec_hevc_ctrl_descs,
-> > > +	.num_ctrls =3D ARRAY_SIZE(rkvdec_hevc_ctrl_descs),
-> > > +};
-> > > +
-> > > =C2=A0static const struct rkvdec_decoded_fmt_desc rkvdec_h264_decoded=
-_fmts[] =3D {
-> > > =C2=A0	{
-> > > =C2=A0		.fourcc =3D V4L2_PIX_FMT_NV12,
-> > > @@ -276,6 +330,17 @@ static const struct rkvdec_decoded_fmt_desc rkvd=
-ec_h264_decoded_fmts[] =3D {
-> > > =C2=A0	},
-> > > =C2=A0};
-> > > =C2=A0
-> > > +static const struct rkvdec_decoded_fmt_desc rkvdec_hevc_decoded_fmts=
-[] =3D {
-> > > +	{
-> > > +		.fourcc =3D V4L2_PIX_FMT_NV12,
-> > > +		.image_fmt =3D RKVDEC_IMG_FMT_420_8BIT,
-> > > +	},
-> > > +	{
-> > > +		.fourcc =3D V4L2_PIX_FMT_NV15,
-> > > +		.image_fmt =3D RKVDEC_IMG_FMT_420_10BIT,
-> > > +	},
-> > > +};
-> > > +
-> > > =C2=A0static const struct rkvdec_ctrl_desc rkvdec_vp9_ctrl_descs[] =
-=3D {
-> > > =C2=A0	{
-> > > =C2=A0		.cfg.id =3D V4L2_CID_STATELESS_VP9_FRAME,
-> > > @@ -354,6 +419,22 @@ static const struct rkvdec_coded_fmt_desc vdpu38=
-1_coded_fmts[] =3D {
-> > > =C2=A0		.decoded_fmts =3D rkvdec_h264_decoded_fmts,
-> > > =C2=A0		.subsystem_flags =3D VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BU=
-F,
-> > > =C2=A0	},
-> > > +	{
-> > > +		.fourcc =3D V4L2_PIX_FMT_HEVC_SLICE,
-> > > +		.frmsize =3D {
-> > > +			.min_width =3D 16,
-> > > +			.max_width =3D 65472,
-> > > +			.step_width =3D 16,
-> > > +			.min_height =3D 16,
-> > > +			.max_height =3D 65472,
-> > > +			.step_height =3D 16,
-> > > +		},
-> >=20
-> > In the RK3588 TRM Part 1 paragraph 5.4.3, I see "Supported image size" =
-:
-> > 64x64 to 65472x65472; step size 16 pixels
-> >=20
-> > So I think .min_width and .min_height should be 64, not 16.
->=20
-> This should probably be changed to use min/max of 64 together with use
-> of 64 as step_width. With that we should not really need the special
-> vdpu38x_fill_pixfmt_mp, if I am not mistaken.
->=20
-> Use of 64 aligned buffers was introduced to correctly align buffers for
-> H264 hi10 and 10-bit HEVC, I currently do not see any reason why we need
-> to do something different for "rkvdec2".
+Fix the following warning:
 
-And another data point, 64x64 have been picked in the past to improve
-compatibility with the Mali GPUs, which typically requires 64 x 64 alignmen=
-t.
-Its not true if you use the YUV sampler, but there is a lot of use cases to=
- pass
-decoder data to the normal 2D samplers.
+fs/dlm/dlm_internal.h:609:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-More context, nearly all Rockchip SoC we support have GPUs based on ARM Mal=
-i
-technology.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ fs/dlm/dlm_internal.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Nicolas
+diff --git a/fs/dlm/dlm_internal.h b/fs/dlm/dlm_internal.h
+index d534a4bc162b..9df842421ae0 100644
+--- a/fs/dlm/dlm_internal.h
++++ b/fs/dlm/dlm_internal.h
+@@ -606,7 +606,6 @@ struct dlm_ls {
+ 
+ 	struct dlm_rsb		ls_local_rsb;	/* for returning errors */
+ 	struct dlm_lkb		ls_local_lkb;	/* for returning errors */
+-	struct dlm_message	ls_local_ms;	/* for faking a reply */
+ 
+ 	struct dentry		*ls_debug_rsb_dentry; /* debugfs */
+ 	struct dentry		*ls_debug_waiters_dentry; /* debugfs */
+@@ -665,6 +664,9 @@ struct dlm_ls {
+ 
+ 	int			ls_namelen;
+ 	char			ls_name[DLM_LOCKSPACE_LEN + 1];
++
++	/* Must be last --ends in a flexible-array member.*/
++	struct dlm_message	ls_local_ms;	/* for faking a reply */
+ };
+ 
+ /*
+-- 
+2.43.0
 
->=20
-> Regards,
-> Jonas
->=20
-> >=20
-> > Cheers,
-> > =C2=A0 Diederik
-> >=20
-> > > +		.ctrls =3D &rkvdec_hevc_ctrls,
-> > > +		.ops =3D &rkvdec_vdpu381_hevc_fmt_ops,
-> > > +		.num_decoded_fmts =3D ARRAY_SIZE(rkvdec_hevc_decoded_fmts),
-> > > +		.decoded_fmts =3D rkvdec_hevc_decoded_fmts,
-> > > +		.subsystem_flags =3D VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
-> > > +	},
-> > > =C2=A0};
-> > > =C2=A0
-> > > =C2=A0static const struct rkvdec_coded_fmt_desc vdpu383_coded_fmts[] =
-=3D {
-> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h b/driver=
-s/media/platform/rockchip/rkvdec/rkvdec.h
-> > > index acb9d72b130bb..df56bc0516ac9 100644
-> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> > > @@ -173,6 +173,7 @@ extern const struct rkvdec_coded_fmt_ops rkvdec_v=
-p9_fmt_ops;
-> > > =C2=A0
-> > > =C2=A0/* VDPU381 ops */
-> > > =C2=A0extern const struct rkvdec_coded_fmt_ops rkvdec_vdpu381_h264_fm=
-t_ops;
-> > > +extern const struct rkvdec_coded_fmt_ops rkvdec_vdpu381_hevc_fmt_ops=
-;
-> > > =C2=A0
-> > > =C2=A0/* VDPU383 ops */
-> > > =C2=A0extern const struct rkvdec_coded_fmt_ops rkvdec_vdpu383_h264_fm=
-t_ops;
-> >=20
->=20
-
---=-tLYINSSFihYeorIw7EIC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaNFbDQAKCRDZQZRRKWBy
-9GXeAQC3StdvV5aacSmLcskPRW3TcWPBLEmjU9Srwr9jryEqAwEAlZFEQxPQJ6L8
-A5pwspzQZxGaGpKmJCD78skby4GSVAA=
-=2/SZ
------END PGP SIGNATURE-----
-
---=-tLYINSSFihYeorIw7EIC--
 
