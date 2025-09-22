@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-827022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285ADB8FE9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:07:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A08B8FE9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 12:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A2D6422778
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13ADF16A126
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 10:07:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA272FFDCE;
-	Mon, 22 Sep 2025 10:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938BB2FFFAF;
+	Mon, 22 Sep 2025 10:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TVgSXbQC"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kvcc2yuA"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01FA2FE56F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418A02FF175
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 10:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535588; cv=none; b=tCDVfOcj7sentzugkn6VHFRDThDoBoVNGgpm1Q5hwIhq/yu3IvWKDYlrGwPe3FbHH+8uI5Odq5Ad+//g+mQu7QcsktgsXHWnTW5VJaM6xy21D6yXfZBJQYkNZqGLXWysGoWSg21zjtEQ18Ow5HR/dKMvK4cDlh+ZYLY8opkG+/U=
+	t=1758535589; cv=none; b=pt+Ih2nidFDa89yw/QnOsaQNtOeJCZWKY2CzC3c1cpcnbcTPfx1ufj+EwilYalngH90ZZ3LxWYjDYvq+vhonZNyxXrPvKAKGnmsReuPlqbgcSK8JcCaXWA3t5EZAoRBG+Cig7PlRzN2UzhCAw5BDjWL7j7PHjQ8S3anKkuqVPJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535588; c=relaxed/simple;
-	bh=1ehExbLkMmNgsVXFhI/3vAuhpWWLmzmhuVgV7QDcaGQ=;
+	s=arc-20240116; t=1758535589; c=relaxed/simple;
+	bh=p6iwdyUUP5W8+77ExyG+J/4KTfuGbStSzXc5YQJ6uQg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FDNYXqt2PTdDQOdZxce449gkh030pmptltenYEhGBDNOv8UOPfwLaCflaV3ehvYU/vIihtC6ouzg8o43pIO90p+wDgXlit5hLRx2LEvxH27gW4S+TfDjDZcVspHaiOp5xLeNsyzplOBg7iMWKADPEXvB1r6KFGyRp612VYAhTe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TVgSXbQC; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:To:Cc; b=Rj0GrusL3GXG/xXoUxJTC1nICVCBuBmzD/VWIcNGWauhgPJkLsWl4FMHcIhA8jQaPI9xKPplkLSifryDyKf/lpAxBL2vWQz1A1yKtqAV86R8mwX2bCdZHwVty7PuRLsQDpKsGAtIja7IB8XOyuYnKfnBgm4nww5p455Y6x4mBog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kvcc2yuA; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45e03730f83so17229565e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:06:26 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so3941980f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 03:06:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758535585; x=1759140385; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758535587; x=1759140387; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bsYAjCVZTAgTbKUVHs9DAPmJO/mDOJAtaWrMK8+sbis=;
-        b=TVgSXbQCa5k0aYm3TJvqmUPfEHAnB1wrN3x7203z3YMM2WBg8CLXVV5DddHNLM9/vQ
-         IAEFYF71EkLKp7t+4cydkN43ZiSjMaKzwlSHxUhfa4odg6ZOdVtLhdCarg3AR3RtRT0c
-         ZftXQsScdqhXBFYDG/d+bAto9jhjwVkJJDFjoI81G1ju/OsriXn4Tn0q5fPeggKBMM4x
-         p5L/MFxnOy4xemgP9PNkw/+6p7WV3HR2HIYyRYqgY0mrIQzCGY0AMjyDf/qULVUStRn1
-         UWgzZFgwfs7tHYm4Lsuyn867IyQZTZQXIiy2eQ98SCN+/hm9sfm4XD+0RoObDzvDTObP
-         4Eww==
+        bh=Zz313f5+9XsH5+Eb3Bh9XStxpTdiNn9ua8EWNmWWJg0=;
+        b=Kvcc2yuA+C9pliVMnH3NcM/cuTNcTpP9BD6ZmTmpTEc5z38PrdB1ou07Sg9OCDWKRa
+         nqe0mO1/uIPlwuNWzpwJ92f7hEm4ykkI+ltu+RtW4pfofjkyF3whnv+F2vejAeQYIwsQ
+         VI5YAgoI3R2qM/L3Pz+/HtCaD7NezfDT3OHjEdEjdxXd/eAA1pKDGjxbKB+acITyz7V7
+         9wamCwvNKUttbTCblF02F1xJIjXjmcZrIswdrQhoXIW5a+OUGlnkC1AEMWmDN1ALcs+/
+         FWaWBZWj+ZFri2yvJCv++6/vSPV/GoiQ1jh2775JOWnmGuztExWD2WtkMNXQ2GQ7mr1X
+         zKzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758535585; x=1759140385;
+        d=1e100.net; s=20230601; t=1758535587; x=1759140387;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bsYAjCVZTAgTbKUVHs9DAPmJO/mDOJAtaWrMK8+sbis=;
-        b=o6+y8tRI17htMknw/Wui4ztXr7/ASg3EzaVoFIZl9YucL3U6DeZcxmyuxqPMc4hlfG
-         O7pIDlNlmv6Vj/5YJN4GyxRiQM19UX55DSgBRzKQk0tpICPDORY9yrZiXsOy7z53MCXh
-         ju9MFAoz3c7LWntMZPrRKeyVEavEY0BQtI8YZRHyrpq3SACCNlVYqtWQQDvMM+GD6z6O
-         hXnRVU7sVZoq1qu8ks8yWgJQ6qBUuzlPtFggZ8W0WAJuiuBlGBAfNr3LbTFbWw/gE1m3
-         MF+Zp/9Beh4beGcskGMputkeSZeIUDFsjCsL7OMbqN94olR4wM8XwASoHMskvKKMQYwh
-         MmPA==
-X-Gm-Message-State: AOJu0YytVrItmV+dHn1qiNHOhIN0JWktVxDf49EpPJwPmFjEcFneL43F
-	CGTm+tZHl9eCkhQ12RFJIW2nqwK6Eej7leGViRGHcRE+ZM6huTKe7Go6
-X-Gm-Gg: ASbGncvkZjjgys+lRGI1+YjETWOqLjwyP/cX5VQTnx7os51bHHG2BBAD28QXXRTHPaE
-	TEhV1uvv42Xkg2StQNHejKP2R68tpGkYc+E6aLKEf1MmkR0nS9mBux0AeoY/mf/T9+6JC9Xi9Xk
-	Ab2XxajAspxeMIj9ChKqDN9ripkjQsQPQlmHHQ0rNa60XxKu9PRGER/OkygZaGme0m8OqotJorX
-	Zu0lcIRmtst0nhNiwuamo0hdvIBtTwxDZ8YewtyqEn5vwuXf7P1mqvzBFt5vqg3aq6NnEJ8mHF7
-	+Jp9w+NiQQWpIyHWcAqOUfplXaA0PmiVSa3NhzdH5Wz8es3Y+zQX0oYJ6nZet8p3dVHsKhcTMHB
-	HnWHTg7Cc9oLU4pVAGNIpR2gWhC9lIjdQyV5JqJSB2SVX24kumAnRcKlv88OSqIFYkLlYSryJmB
-	44hwlpzpu31JJpvmQnpG8aZGMi2y0=
-X-Google-Smtp-Source: AGHT+IH/nuiP33vxdi6haBkztRav20FFYyckleFU6YyLjEkl9KoqVa24kjV3Z8p0lBzYdX5BRmqpMA==
-X-Received: by 2002:a05:600c:3585:b0:459:d451:3364 with SMTP id 5b1f17b1804b1-467efb044a8mr139254985e9.24.1758535585151;
-        Mon, 22 Sep 2025 03:06:25 -0700 (PDT)
+        bh=Zz313f5+9XsH5+Eb3Bh9XStxpTdiNn9ua8EWNmWWJg0=;
+        b=pBXefn1Yr8Y+j3S10Y2blOeEqO2i3XA1gMtoYtZbcd4h3fnSVYoQzDxB2t6/FNqI1T
+         pnpUGQCTUUhpucCGzs4cjVhLE6sKJ7Pk0XrIDvOo+Qr9wkuS7oVogW/SI2hOtg4739bJ
+         qAE/pqzJJzegE30FvYfK53l4mFpINfks+v8RiYkCD8SvFVKpAbkHbt+3ByMFalnAbOkT
+         2QRA6rk2nL1TUE9gVJYJ2FNo/z9SgqGinKvyYWtDUPHdU+9g96vAx4Q1PcPvlIkuW1P4
+         i2lH5y9RUu5T7KLBJLv913g87t/tBzgsDXV4TF5z1gF0RRCzIvTLHrUk42l9AQQdN/TU
+         xVpA==
+X-Gm-Message-State: AOJu0Yw2lROhi6i6zKLXyBB+U3QSDTjC10K4oNlXN8LxSaNlneCPYham
+	akC084k8sF8biKSfA44lQjR+tgUtUQs6dgk/g+V5QuRl0sGEF2WDe4vXqzYtYg==
+X-Gm-Gg: ASbGncvHpx2ts8CIkmgAh0waehSElckng1vGZPJNCppz7vaA6gdQecUAS8G8EdEicgT
+	EWqDpQFaDUIUajOUR3VxzooYM6jsDyxdzLB6uj5KnmXeqtXl+lbBecucg/hCK9zfBTPv77GA1pa
+	QT7Q1saVN2Dv8QpJNEMprVU7P218lwR/0Y2Tnt4HDVO5C5S8WmGJaGluers/FICgJLoAmaTZOVd
+	tqoyLHWhfC6bUQSyNRY+maAu5vdsr1Agt+VOynP75FxK5s0uRpm719Ke9W+NLqxzPbPhJDrX/3f
+	WiW6tS3eP9YxOmPobVOnO2eYo44IQBfOu51mIxgxTcWcvohteQrBXC7cQweJid5WtuP4VzTq1oV
+	DV0UAsMhfqB9Xc6uqGYgMYuw3PDh/M6EpRk6KBmJa1FkHMnphu8dYm+ZI5q0pnuqaPrbi+9/R/a
+	qTNYxI5GzVIRcXMrMUM4vKFURh/ec=
+X-Google-Smtp-Source: AGHT+IG5CaKIu1s56p3TpWS5l1RWL/b3CenMfj9WhML69rXhvqLaZjx6Zs78DXIYN5FpHbWguxd0TA==
+X-Received: by 2002:a05:6000:2902:b0:402:71e6:5e12 with SMTP id ffacd0b85a97d-40271e6616emr918355f8f.46.1758535586492;
+        Mon, 22 Sep 2025 03:06:26 -0700 (PDT)
 Received: from localhost (2a02-8440-750d-3377-171e-75f8-f2d4-2af8.rev.sfr.net. [2a02:8440:750d:3377:171e:75f8:f2d4:2af8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-461391232e7sm233177835e9.6.2025.09.22.03.06.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46d1f3e1b03sm40913405e9.23.2025.09.22.03.06.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 03:06:24 -0700 (PDT)
+        Mon, 22 Sep 2025 03:06:26 -0700 (PDT)
 From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Date: Mon, 22 Sep 2025 12:06:17 +0200
-Subject: [PATCH v7 4/7] dt-binding: memory: add DDR4 channel compatible
+Date: Mon, 22 Sep 2025 12:06:18 +0200
+Subject: [PATCH v7 5/7] dt-bindings: memory: SDRAM channel: standardise
+ node name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250922-b4-ddr-bindings-v7-4-b3dd20e54db6@gmail.com>
+Message-Id: <20250922-b4-ddr-bindings-v7-5-b3dd20e54db6@gmail.com>
 References: <20250922-b4-ddr-bindings-v7-0-b3dd20e54db6@gmail.com>
 In-Reply-To: <20250922-b4-ddr-bindings-v7-0-b3dd20e54db6@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -100,44 +101,47 @@ X-Mailer: b4 0.15-dev-0dae4
 
 From: Clément Le Goffic <clement.legoffic@foss.st.com>
 
-Add in the memory channel binding the DDR4 compatible to support DDR4
-memory channel.
+Add a pattern for sdram channel node name.
 
 Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Clément Le Goffic <legoffic.clement@gmail.com>
 ---
- .../bindings/memory-controllers/ddr/jedec,sdram-channel.yaml   | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../bindings/memory-controllers/ddr/jedec,sdram-channel.yaml       | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,sdram-channel.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,sdram-channel.yaml
-index 9892da520fe4..866af40b654d 100644
+index 866af40b654d..5cdd8ef45100 100644
 --- a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,sdram-channel.yaml
 +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,sdram-channel.yaml
-@@ -19,6 +19,7 @@ maintainers:
+@@ -17,6 +17,9 @@ maintainers:
+   - Julius Werner <jwerner@chromium.org>
+ 
  properties:
++  $nodename:
++    pattern: "sdram-channel-[0-9]+$"
++
    compatible:
      enum:
-+      - jedec,ddr4-channel
-       - jedec,lpddr2-channel
-       - jedec,lpddr3-channel
-       - jedec,lpddr4-channel
-@@ -61,6 +62,15 @@ patternProperties:
-       - reg
+       - jedec,ddr4-channel
+@@ -118,7 +121,7 @@ additionalProperties: false
  
- allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: jedec,ddr4-channel
-+    then:
-+      patternProperties:
-+        "^rank@[0-9]+$":
-+          $ref: /schemas/memory-controllers/ddr/jedec,ddr4.yaml#
-   - if:
-       properties:
-         compatible:
+ examples:
+   - |
+-    lpddr-channel0 {
++    sdram-channel-0 {
+       #address-cells = <1>;
+       #size-cells = <0>;
+       compatible = "jedec,lpddr3-channel";
+@@ -133,7 +136,7 @@ examples:
+       };
+     };
+ 
+-    lpddr-channel1 {
++    sdram-channel-1 {
+       #address-cells = <1>;
+       #size-cells = <0>;
+       compatible = "jedec,lpddr4-channel";
 
 -- 
 2.43.0
