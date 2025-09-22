@@ -1,208 +1,139 @@
-Return-Path: <linux-kernel+bounces-827012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0169BB8FE26
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E69B8FE2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 11:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08F3421F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41430422023
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 09:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0BB2FB96C;
-	Mon, 22 Sep 2025 09:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9322FDC22;
+	Mon, 22 Sep 2025 09:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Qq4XOYHG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YMd5Vvqa"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CCA2F5326
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B3F2F618F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758535127; cv=none; b=Ly4EVrFkKT2sY5u98fXvBr0wcsS50wrZtPTGAP5vOGZCmQoiHiq9tZkIF/+vAqrwY7gB1rodUIqxWTtFS2iQ9p75UymxOFnmA3DSuY2vU0xdzAooYKkO1VE41TLWDhliDU9LhpgFggubuqunNhjifRHOY6Sb5jdqI9BzA8X3+eo=
+	t=1758535129; cv=none; b=PjZHR7D7+SXUPzW68wEdeiVk5QlBfayVbyJKjOumWRNN1t63dNhmTm6WS2QMmYVV8Tb1bLqQVuXdKfVcSA3oeYpdHZoda6aI+qoRfEQHV6RJXCOB8967Hjz9ZKjwixI0esG1MHpxiLDj0YPXt4gyHwNoBqb6kYC7If3HQ08walQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758535127; c=relaxed/simple;
-	bh=AsvAAT2u46FqG4eX0py+EYfURRCs48I+UGQOiRi3pRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIAuQOpwcjZm7LKG9EJkerMyLN42Ai51IaLuBoPA+JMza5XX8LLigykLq+QtAaZkK7EVvYppQ4+5rqmop73DXL2duDqh9Xca7V2ng2InIIGLOx9XQMNmjP6PMXobR6PKUWcYngGampH9CODPaQWcxGap28hvsgk4UD8ZLADIs7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Qq4XOYHG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58M8iRPX007448
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:58:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=IW9nZTpAUTWb9o/++g/7GLgt
-	nAqVsaz6ptGNBZO+z5Y=; b=Qq4XOYHGcj5UjpfNhhWI+pS57JToMKI3A3wZj8UI
-	e8VxbtMbKQqcnO3vgHJjiI1PtRXRLcdpXP8THPDyHLUVRfVFCnbLkmNwHpu89D86
-	Tmx+/g5eHlLvK5Y+fdgcwQV9Hd0yvJ9Dm2vPkwNP6Eb3iblyKwO533H97yiCsNT5
-	DjFscqzWPziW45E7jsvjglu4Eh0VVhx833W3X1UJFtZy7TbNCNrv0zXds+vCOiF0
-	6OVB6ZsjxP+3gY5A2r3OnsuUzzWhe2z6In7YHB8EI9fzhifCEfeBHGnDJHLgswT3
-	4DVBAqOwZYt0Rmw69CVPr681jEzwGz1pS0tM9EmEUndu8g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499hyemk4w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 09:58:45 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ca8c6ec82eso17539831cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:58:45 -0700 (PDT)
+	s=arc-20240116; t=1758535129; c=relaxed/simple;
+	bh=zWPNj0RNAceSF22TSQ0IDW3EbGOYMdo93t/FZbvvlww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a2yiVZQ6mR74WKGFmNXcAlrJpn2DC+BaKxAGzmnWQEfNoWgyQdzEq1y1EyNEkjqyg3g2I9jOW9s0tZpDnJDISmomSXdR5AJUIrfbLHaRPO7Xj586alCG5Q4YzHamXNVuu2JlB4V3MYiNYmISjIxPneHl7vXQszczkscdEQ5FJgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YMd5Vvqa; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so3933008f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 02:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758535126; x=1759139926; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nSZRXEJpJYIJ7RPipWafSLvYkrPeHLjEAHBfYF7qoM4=;
+        b=YMd5VvqalawgeYNlhsEo6p79eBEMK8M00xo6Xhu11BmsyfV0Nmv+UQF3HIk7pbthHN
+         jMu8P4z1E72a4e90fObExfnZtEi+/wrCjMRMFQ2QXcksZ3SD7klSygoBFp6JwjrYQtki
+         HHDQL/znCROyKt+a4NGVENVJS0pMkZ/bu0CXMoYtrqK4m+8qcL9o7VC5RWzfD4pDd4YM
+         8S/fYA5MQdzHwnGQvOcJamsM/d1mUbsT816GcpvlBnx7Gs4JegHhvc2DyyTYm36pkzMJ
+         xgi6DTpU9LU+1X+XTFAdRE2q7nWe0zExuwFVU4zTratFz1oK5MZNmMXapLhSZfH69JnR
+         yBQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758535124; x=1759139924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IW9nZTpAUTWb9o/++g/7GLgtnAqVsaz6ptGNBZO+z5Y=;
-        b=RfkmE39oMbf3OrjRTO3GDWNcWyDdpTC0ePtJqqAQM7dectRm1eG0Xgl6jK75nC2QPM
-         Ktiud3HHMwz0sw9I+HH6SIa59fG6XSWcw0koWfJ4cZnza8PwnKchnbgyeBkKbBU4BQtb
-         9T5SNIVWENdL7xyLkxSWpk0SJjFI1ya+An/7OL5W85uWbm5C1II2lR4FXVoJHWHiUctx
-         2H6RvPfEnuSIQleLatSXOiP7UAUYJm98V6KKuRDdPdyJ6zMdzMVcmizsjRLE+6jJioV1
-         e9dmb9R+Kr4GB7jKf/2twVfX+LbBPDJtkOGi0WeqnhrjtN7Iv/CvGvsOF3qRefbo5zWf
-         /q+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3cSmTEiWhzkUeP9I7yKMk0Ef2wfTwr52FlgKtYOA4eDf7fU+QvECdUwzBuN1BjrAvicm0/v/bg1iFyO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysMZ67RWJM9gLhR4PfjmobHU/661qMyUt8+05l8gagmBaYxA0d
-	Vz16SgFwOdBJsPFWpYftYaALcsVCaXf+VVXrvnMlU7KH6AEWo2OXLwPl6W6W16JNf6JuaYJCvRW
-	QXL2Ezhn3SVF37L+ly+4iqO+x9uh01347PY9UGhMMd6qjCNxGS6YfDV2adXqTRE6E1mU=
-X-Gm-Gg: ASbGncs4iaxb8oACgibjRTs/UR3Q+bUtrb1tjfOv/tAs6OES2zTwtso0IeczAt5r/V5
-	CXsgBFScZN0P+OcnDE5kC1t8rzPWHJ/C+xBh0VUJBNzBfEa+n33NlJdL9K37Eo6TJboJ8/36lhP
-	PCulbVaCfUs5lQVhytbTVVqO3jX1yogOh1W6nBm1qVs/ttjBcDQKbI9J3nj6ayIPmB/610nghyN
-	BAJp+BXMEsLNrbx2tJoOnIQ8T+g0yImDZ/46QvwSEF26Kzs4BGpuhb3zAVVQR1TH48GTv+tOLfe
-	hsF06Bc/CyPCAoRRsicHyGuEn5tgiEAbE7ydQXt9Rp2xdO2gzHI0bKPZzr9rM1PN8j6v3pOPeEV
-	Y1UxpggWbBASiNbD/CHF12iBGcFjjBCM4d6A7nZXnpray7WtrjqLd
-X-Received: by 2002:a05:622a:5c17:b0:4b0:edba:5a47 with SMTP id d75a77b69052e-4c073e88e08mr153125081cf.53.1758535124067;
-        Mon, 22 Sep 2025 02:58:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZrkbJMOE8oi3lEYxkgH7mxWyV4vRf+Ti294a6hd808l4xFyp1mQDl/IreW2vbGpM6xLJBJA==
-X-Received: by 2002:a05:622a:5c17:b0:4b0:edba:5a47 with SMTP id d75a77b69052e-4c073e88e08mr153124541cf.53.1758535123374;
-        Mon, 22 Sep 2025 02:58:43 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f44b29sm3181298e87.24.2025.09.22.02.58.42
+        d=1e100.net; s=20230601; t=1758535126; x=1759139926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nSZRXEJpJYIJ7RPipWafSLvYkrPeHLjEAHBfYF7qoM4=;
+        b=W2DOvnC4jrgNg8i42Zn2jf6qmStX1YBUzR0du3EC0CvQdoGmMRT4b0IewdEBjeiMcn
+         Fozv4W9IslMyQwuBo3+hzeQp4HQu51sY/ZXWqiQ1SX4QJC/P2VtjTOsyKiLeSS6mq0zD
+         a0AQfMOJNV+w6Yz7u/qgtrRKgQ3h9Y2j6+CqlqWd1qdxOtoQpAte0NIhNtz6jntbB6JX
+         vRt9Tlfc7/f0o5igTclm9Vbc1oo4DmdQjZU4fCjDEqe6/CkCmnSKPXnkrCDuA36zzwEP
+         VyzGdaicurRN6FIpqJQa0l0fj5WUVPcaImI4rVbOLgelHn/bWbl84T2wG5jc8AllLjGe
+         4hOw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+yO6krPaR7Ghxf6xmxr7+e6vbd8hO7EnSZ5bnPadg+dnvWH5W0TN+Ty+hOMsmx7UxAaXyR+R0lg9JZvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziPA+7PYZt+80AoyFAFmJBiJpkJkO7YNgElX901KQifoxiHwc2
+	PhEVlyio2d2hzY7LGhr98v2t5g6fGIG73D0sCTONIVz5DLONPPn/p77PFUM/hQB1rz3nGF/oRMF
+	SKD+VHys=
+X-Gm-Gg: ASbGncswi7+bdcye/nYNM0br3z8B7uBL5I0pK6M0TidWH0FoIQCLv4vHCQIYLrqrsVl
+	wgFUfRPsDNBxxnnKT9fbW8onhEbxHkVkOMQ4Er9ezJ1Ckeiyuill2tcvWBTFyYNy5H1SCc/R93G
+	Fd3+4LCFDsJYUepDnot7dWRGPUWCJ5tzyr5HJLeDLn2U7VCVbuj+PKU+tzXeUX8W7z6ziFDTB5a
+	C+2EsIx6Y4GZmBfYs0r4vk8/EU/qxAp6hjv0gj4rYfa1y+J7TEplZji4rrInDl+fU+Q4AnVLg5r
+	hGY/xJf9Y9/52xIrZCSlVOIZh5G96kSWhFBa7kyCnx51dxNf6ZtNVqJcFa+/SE+bV+ZJqLkTCuF
+	9OpvHwMCYTuRuD5bo3Fx39Ps=
+X-Google-Smtp-Source: AGHT+IFC7YOxNiZosfAq2ySehVzFtcxAUO/OP5OGtBiL3ZvhNpMo+4gv1HpkEL9ZjVRzo3egBOBdhA==
+X-Received: by 2002:a05:6000:22c7:b0:3ee:1357:e18f with SMTP id ffacd0b85a97d-3ee7bad15e4mr10289789f8f.12.1758535125927;
+        Mon, 22 Sep 2025 02:58:45 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:824c:ead0:65a5:c51])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3ee0fbc7460sm19423401f8f.31.2025.09.22.02.58.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Sep 2025 02:58:42 -0700 (PDT)
-Date: Mon, 22 Sep 2025 12:58:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Chaoyi Chen <kernel@airkyi.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Yubing Zhang <yubing.zhang@rock-chips.com>,
-        Frank Wang <frank.wang@rock-chips.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Amit Sunil Dhamne <amitsd@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chaoyi Chen <chaoyi.chen@rock-chips.com>,
-        Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
-        Diederik de Haas <didi.debian@cknow.org>,
-        Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v4 3/7] phy: rockchip: phy-rockchip-typec: Add
- typec_mux/typec_switch support
-Message-ID: <75xs2vy4pt7c6qtc4tmk6j7jdh6hdmbz73pkbv5e2ndid2gj63@nla3q6qdb43h>
-References: <20250922012039.323-1-kernel@airkyi.com>
- <20250922012039.323-4-kernel@airkyi.com>
+        Mon, 22 Sep 2025 02:58:45 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpio: virtuser: check the return value of gpiod_set_value()
+Date: Mon, 22 Sep 2025 11:58:41 +0200
+Message-ID: <20250922095841.52330-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922012039.323-4-kernel@airkyi.com>
-X-Proofpoint-GUID: pVxFiqCpB52WKtHtLavbq4OvI5lehhAA
-X-Authority-Analysis: v=2.4 cv=YMOfyQGx c=1 sm=1 tr=0 ts=68d11dd5 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=E19HVUzDLkS-Nl9glC0A:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAwNCBTYWx0ZWRfXw8Jt/m7NSiGG
- gayuaWnAzH8xsOlyS6QyuF0H9DKWociPO/TRE855EfVbKvv1NBRAMsN/sapgyE8aJgvJ0sno+JN
- AjIL5QJDNDJp+O5fyttS0fEdn6qvPhKy+aGfxkzPBjaypbEi6D2WEYco7Hy1+3Wjfl6YtVqAm2e
- TEpOXxAQWclXz2vYe4O7wEM5kpHMkvI+yZSHBo+uN95dgtheJQlsc4iHFEEzWG3zbnShJ6fliMP
- wDPDWHhgNYXRaJC4CgunL+ga12uZqOMaunLxMelM7VUehBk3htdlGtzsoiu69w6oX0493djVBAR
- dYiQUh4Mw+Yfzvd4SdFwPybGWeKF3l856FJfC+pOTXTguNnkS9k8mrBE9S8Uakxk19UYR9+wQFy
- ru9j7Gba
-X-Proofpoint-ORIG-GUID: pVxFiqCpB52WKtHtLavbq4OvI5lehhAA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-22_01,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
- clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509200004
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 22, 2025 at 09:20:35AM +0800, Chaoyi Chen wrote:
-> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> 
-> This patch add support for Type-C Port Controller Manager. Each PHY
-> will register typec_mux and typec_switch when external Type-C
-> controller is present. Type-C events are handled by TCPM without
-> extcon.
-> 
-> The extcon device should still be supported.
-> 
-> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-> ---
-> 
-> Changes in v4:
-> - Remove notify DP HPD state by USB/DP PHY.
-> 
-> (no changes since v3)
-> 
-> Changes in v2:
-> - Fix compile error when CONFIG_TYPEC is not enabled.
-> - Notify DP HPD state by USB/DP PHY.
-> 
->  drivers/phy/rockchip/phy-rockchip-typec.c | 365 +++++++++++++++++++++-
->  1 file changed, 349 insertions(+), 16 deletions(-)
-> 
-> @@ -850,6 +998,72 @@ static int tcphy_get_mode(struct rockchip_typec_phy *tcphy)
->  	return mode;
->  }
->  
-> +#if IS_ENABLED(CONFIG_TYPEC)
-> +static int tcphy_orien_sw_set(struct typec_switch_dev *sw,
-> +			      enum typec_orientation orien)
-> +{
-> +	struct rockchip_typec_phy *tcphy = typec_switch_get_drvdata(sw);
-> +
-> +	mutex_lock(&tcphy->lock);
-> +
-> +	if (orien == TYPEC_ORIENTATION_NONE) {
-> +		tcphy->new_mode = MODE_DISCONNECT;
-> +		goto unlock_ret;
-> +	}
-> +
-> +	tcphy->flip = (orien == TYPEC_ORIENTATION_REVERSE) ? true : false;
-> +	tcphy->new_mode = MODE_DFP_USB;
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I don't think it is correct. Orientation defines only the cable (plug)
-orientation. You should be getting the mux events for the mode
-selection.
+We converted gpiod_set_value() and its variants to return an integer to
+indicate failures. Check the return value where it's ignored currently
+so that user-space agents controlling the virtual user module can get
+notified about errors.
 
-> +
-> +unlock_ret:
-> +	mutex_unlock(&tcphy->lock);
-> +	return 0;
-> +}
-> +
-> +static void udphy_orien_switch_unregister(void *data)
-> +{
-> +	struct rockchip_typec_phy *tcphy = data;
-> +
-> +	typec_switch_unregister(tcphy->sw);
-> +}
-> +
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpio-virtuser.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpio/gpio-virtuser.c b/drivers/gpio/gpio-virtuser.c
+index a10eab7d2617..37f2ce20f1ae 100644
+--- a/drivers/gpio/gpio-virtuser.c
++++ b/drivers/gpio/gpio-virtuser.c
+@@ -500,9 +500,7 @@ static int gpio_virtuser_value_set(void *data, u64 val)
+ 	if (val > 1)
+ 		return -EINVAL;
+ 
+-	gpiod_set_value_cansleep(ld->ad.desc, (int)val);
+-
+-	return 0;
++	return gpiod_set_value_cansleep(ld->ad.desc, (int)val);
+ }
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(gpio_virtuser_value_fops,
+@@ -543,7 +541,7 @@ static void gpio_virtuser_set_value_atomic(struct irq_work *work)
+ 	struct gpio_virtuser_irq_work_context *ctx =
+ 			to_gpio_virtuser_irq_work_context(work);
+ 
+-	gpiod_set_value(ctx->desc, ctx->val);
++	ctx->ret = gpiod_set_value(ctx->desc, ctx->val);
+ 	complete(&ctx->work_completion);
+ }
+ 
+@@ -562,7 +560,7 @@ static int gpio_virtuser_value_atomic_set(void *data, u64 val)
+ 
+ 	gpio_virtuser_irq_work_queue_sync(&ctx);
+ 
+-	return 0;
++	return ctx.ret;
+ }
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(gpio_virtuser_value_atomic_fops,
 -- 
-With best wishes
-Dmitry
+2.48.1
+
 
