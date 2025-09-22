@@ -1,211 +1,169 @@
-Return-Path: <linux-kernel+bounces-827356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77712B91890
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:57:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 996EFB91896
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DC8C1896D09
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:58:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ED6118971DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFCD30E849;
-	Mon, 22 Sep 2025 13:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E5730E849;
+	Mon, 22 Sep 2025 13:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="fegiFJNF"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020075.outbound.protection.outlook.com [52.101.191.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="Y2hztTB9"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F1F192B66;
-	Mon, 22 Sep 2025 13:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549459; cv=fail; b=p0LSN/lHbpvaio9X4oINn/EwI+2oCZfe6+cFYUcm9CapCW/S03fd6ue408s8KxB1KyFU7BZGAHpIu7iu2eq3DcEUPM/9xZSCcedPHawUL0qP2hsBUIVqnzkSfqvE1LrXw2cJ4lkQx8yKSldLNXQ8TaAKU6qVIbandtrVAFV/oz0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549459; c=relaxed/simple;
-	bh=Nscl+rVHgPdKN2qt4KSio0c1M6605C/Bixtt94YYjgE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OydbbF2RZ6WF58jqOOXxPpNMM1yB2g3uta8h04dCNQY/YF7nlQDpv29qGP+uWKZIj4d7+GuB1nSrOEUVU69d83568e04XpbWjEgTHe3V3yu3s0HyK1GknxD+3Pqjsm2tDJQuySIJDDeHlBTj/legoZEHzz2yBhm/wYSCmqrNuTI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=fegiFJNF; arc=fail smtp.client-ip=52.101.191.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RlDBCIw/KolXD4expexfHJPCGV4ucwjbqc5wvBweJ9+Jj3kWGjaayRtIRPQHRnLEyQPLy/Cd6DiIP90UZ6+uAIGUuFSeu+QBy/q1e8Oz1eu6ucg+io0DsRrAmFd/Sx8cKYDAKrSjN3MsuHljQ4c0IB0SBe09WHiOi9xZU/JBd7dvud4svwxf2waWGgxdSEqyEwMoVJZzKolro7jyGSWZ6oc4+Uom2OU0jSH+5xyGRE6DSh+rcTa9RLMGiw12We44HbLKMf5v+mNLB2OBzFkBTBLsrwSmHhx60yz/oyGNWG8zwISZ5/sVONdW3P4H9Kkv0ScXqt1ItACY+8FgifZhFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=njTsTaKJyxhMItmYuqzFgXI+Z2kRhYzRF/iO7yzGQwQ=;
- b=IaY1S0pW199upNibSf9Ad3FV3z3Mw9cDM9RJ5D1vHkY4AKaRqQYqB4US8SW1XWEoPwN/iutFXcypUqXzkQcCh68HMsuR92uvOZ4IJBtw5U3cG/72Hy2Bh/rvqLpsZGXI4f/2EPwa9tSk2cnXhkE4vbafwlWCO34wyYYwJsTXNBy2Mw+7UJB1AlgxnqgPMvsyVthDdbkhgO9g1wzuoBNMtb4ZLXWIRbE2NuquI8Tdwr5dSDNniECnJ4Ki/SnYGr6D1ukYsxxKnxTBZA3fw8Vz+GuUM4/IrwBHZvhzPlX7xzzLLiPdNd19ewXBJlBoSjKH4JmjWkuIBHhKLdc0soYn7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=njTsTaKJyxhMItmYuqzFgXI+Z2kRhYzRF/iO7yzGQwQ=;
- b=fegiFJNFcnBt5vROQVBysiUVxjbTNnPGr18jrlwIC0ZIGTvKqt+na+tyzd8V0GaqLntVE4VcnXQekBQuiTF7zdgog1bXIL/fq40IEbRCUJDhHZR9nKvNjllDQWjTG5uZAtSQq29flGTFOaTsXNiJpx0WqBhAteH3sm0/8M1fMePps9b+ZXcz7hc9Tvpv5f/kcCIqSEvQ1KfHg8VJFMKTA1s+bk3Y1e8K6PLBO+r32AR6GU/q7U7mhrRI4stXlL6NT+mzRQmeAQbxbtbx79YkC7yUhVRIGxXtjYK+nMsjIfvuERQw+5Gi4Aa6Z4oOoTWJ9hPFTGOBCfB9N+npopo/eA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQBPR0101MB6427.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:4a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Mon, 22 Sep
- 2025 13:57:31 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%5]) with mapi id 15.20.9137.012; Mon, 22 Sep 2025
- 13:57:31 +0000
-Message-ID: <fd5abd03-0198-44cb-8cfd-b0d2cf44a35d@efficios.com>
-Date: Mon, 22 Sep 2025 09:57:30 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 02/12] rseq: Add fields and constants for time slice
- extension
-To: K Prateek Nayak <kprateek.nayak@amd.com>,
- Prakash Sangappa <prakash.sangappa@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Arnd Bergmann <arnd@arndb.de>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-References: <20250908225709.144709889@linutronix.de>
- <20250908225752.679815003@linutronix.de>
- <736A5840-3372-453F-8F78-5861AFA0F140@oracle.com>
- <228e2fb7-e141-462c-8796-3cf78aa01902@amd.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <228e2fb7-e141-462c-8796-3cf78aa01902@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: YT4PR01CA0299.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10e::14) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEAE26FDB6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758549490; cv=none; b=SXgo0UYcTd67iI5C0/c5guabKnjfKmqj/y8NsfNcw/REeFH2Q3cX/6XE9fHjW/rwp/gB0pXA1MHOaEEAxWhcv14qPfITNJZUCo7qxrtfDRsvCLD0i0ogkO5iR74oEMCj6kp9VNdqxbQjzjS4uwiY6D/5bOQSCR3U79sb9/kRyV0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758549490; c=relaxed/simple;
+	bh=j0E0JLElbkGQzcGMkewDl5HOnFcpcIh5H8sfEdo74Vk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXhl0tmkEj8QgBz3uEpolHJ6dpOGqS228eNcg+2K96pUDY23jZIVwKaxeMEGAqQ6Ct6CWhLGPjCOO7czbyfTfN7/Mw4dFG3GzVaP5SCDG1IR+WsFwXS3hA2xn45U6WYKU2D43KO/YY0NBmj5hy99ksj+fitFFqoxfRfAzb5x7jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=konsulko.com; spf=pass smtp.mailfrom=konsulko.com; dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b=Y2hztTB9; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=konsulko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=konsulko.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-88cdb27571eso143996339f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 06:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google; t=1758549488; x=1759154288; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qP87JigH9w3cESkF8N5cnJLXmDva7bVQRI9ZccgkIPo=;
+        b=Y2hztTB935k9lh3Mv7EhIMt0zzVUJp9+prmYfn6nF5e3fqvOxqNAnE6niyqRDa/l4b
+         aYFiQNRGFYR49OZSHFukU+AqKgVp/KRwRb7h2eHfzHqCkXpiyX5T5vrf3sKWgw3NJr8a
+         e2zGZzkVl1LWRyhtcckmbYC0ZAN7/2hz/WLz4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758549488; x=1759154288;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qP87JigH9w3cESkF8N5cnJLXmDva7bVQRI9ZccgkIPo=;
+        b=iu5dedauxvNhq+E0qhK5Wo3VbhqVOeE2qVm2RD5Shc7am8nvapufoA5aty0LTTryXh
+         WtN/kZ8lMM7KPD29x0PV4XnlqBev64MXcIoJA/XTcIghpMGvxLQDVSuffZXIbO9UFHMB
+         WuTsKX5OcmUVftdBnVT7xnhg57wAAubcIAife26GB55nGVKIMEHCeVRDkGul0ZRIHYp0
+         qVNZU90C/mzpFgMSgGL9nbO844nXm1ODfIC12sQV29DXfJ04sBLLjoyN9GtKkgCwFcgp
+         ZHBxbihT6gMUnszPr4EoYaJHGMeSXx64/Qu/pY4C1L6Xh0gow/Wyhldcevubl8s44RWL
+         o9nA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJX3pTc16EPAEcfqCUI5zcyF1bqreLbPjvRBPPeUPMAzfeCPKjXdT7eMvsMH8Eg287qosVqgiokyOgMpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFWzp9Fcvo1BmGc3gNPSh+EkyiO2XYrv/Xk/+L21gq/rqpY3tY
+	wtw0yk42qnsiBe/1zVQTh9DTTu+nGdzfnozkBQoJsAlyMa5PNDRgBv6zAHEIvg2WkIs=
+X-Gm-Gg: ASbGncsYmhFJiqQPBTNv1Cd4Nw8tYzMywMPT7Y1KtWMzDxHFp1KMn8XET/uvZpfYgc5
+	8nFrEZnCyMML/TfdjDgUFO4mmqslrDJwdYoFgbVwAAkrYhcI1PEbTzkm8AoZFy6m00geowLVnGu
+	dbb4/b0dEcCUOowzbEWnCw2cwQlXKm5yrBV0yc6yC0AwwnreaLUH9xnjTX8NXLDie2j406AkkOi
+	4ij8nZxd50bBEP0hZ7omrlLj8r5i1BmTg5o9bzd8RyKqmqMbEuKrq8j+PDdbhNACZaEe4tyve8z
+	mY9kq4q2Kd8kHGwyaCzRAOuCBb9ytwT2UYGPlYf/Pn5bKs+WFyND3j6u1ehA5KhvaXHqAtaoTvv
+	/04Xc9RkzE35JN27WGiG70bUSglc1s9sa4PT42zTBldMGQ+YwSlitHOOd
+X-Google-Smtp-Source: AGHT+IH8EMB15PYxcBuPL2NYgVxhRe138NFMfR7r961S2ZQFsxef2uERidjsotlvIOx9aFYgUCCKjQ==
+X-Received: by 2002:a05:6602:154a:b0:8de:1f2a:8367 with SMTP id ca18e2360f4ac-8de1f490876mr14201839f.19.1758549487477;
+        Mon, 22 Sep 2025 06:58:07 -0700 (PDT)
+Received: from bill-the-cat (fixed-189-203-97-42.totalplay.net. [189.203.97.42])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8d7f8f481bfsm31892439f.24.2025.09.22.06.58.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 06:58:06 -0700 (PDT)
+Date: Mon, 22 Sep 2025 07:58:04 -0600
+From: Tom Rini <trini@konsulko.com>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Simon Glass <sjg@chromium.org>, linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	J =?iso-8859-1?Q?=2E_Neusch=E4fer?= <j.ne@posteo.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH 1/2] scripts/make_fit: Support an initial ramdisk
+Message-ID: <20250922135804.GA124814@bill-the-cat>
+References: <20250919211000.1045267-1-sjg@chromium.org>
+ <9cafbc70-7235-4e49-928c-4d68a57b7d46@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB6427:EE_
-X-MS-Office365-Filtering-Correlation-Id: 380ad98c-41c0-4fd4-c825-08ddf9dff97f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dDRLanZjeDdUdkw2bW83a3pvSGNWdDNqSHZKZ1hHN25VbWJaeE0vNG9XZ1oz?=
- =?utf-8?B?QjI1OEdyaWtIOXc1UXlQYlBBeVlRdWZXS0YrQWMxbUUwTVZ1NDRUTEpGclA2?=
- =?utf-8?B?NGJvVHQ0NEtpNG9GWU5nUTRrK2diZkJCMTRZZWJFcGJSSnVKM2dTclZrWTE0?=
- =?utf-8?B?QnBidkk0dTNiUXRNRTBhcmtOYlQwM2NLYnBpMlBZS0NrbDBOM0dpL001QnI5?=
- =?utf-8?B?Yy9ObWV1SFVNbWFzd3ZHY0FzWVphUzRaMmFKZVJiTUl5M241Z1RqdTZmTzlN?=
- =?utf-8?B?VzZCYkh2OUhHRXlaQnZNaHpCT29SaWdTMEZpNHNDUHRLU2xYVHg2eWp2cWo0?=
- =?utf-8?B?ZHZrRzVObEgzT05xWHpDWHRMVDJOSURxNU1uWlMzckRhdXZWZTA0SGR4TGd4?=
- =?utf-8?B?SmpmdzJSbWNNcUFQd3J2cTJQS3prd3pMcmRvQ3BwNEduWjRqOGRueUFydUdv?=
- =?utf-8?B?aTNLZysrYVZoUVRVUzNGM2xvb2dMU25IdTBRbjhpTkg2QWNkVE0zR1htVmxw?=
- =?utf-8?B?NEZaQWU1MWMycE1GdmVXMmdlVFByUlFoTWM0c1pkbExheG1tRlBtSkt5QlVn?=
- =?utf-8?B?NFovUk5aUzJ5bEVNZzlnRWRNaXh4K0hzWFRJUWZWVjRxazBjNHRLSzUxcDEw?=
- =?utf-8?B?UzlIaENNVFdrRm1tVWd5clZCRnYzMVg4Q3VNUTBCUmRaSWM2TG56WkFocTJv?=
- =?utf-8?B?WmNIOCtQU1o1OS9obiszUFIvcWJVMi94K0NoVzJwb2xiRk9VZWtzNHdjZnhP?=
- =?utf-8?B?bXdxd1c2aURJZG9SOEhVR01jUy83ejUwZjV3YVdsMzNYR1FseVJsY2xIdHBh?=
- =?utf-8?B?ZjJseEFuRGlFcVMrQ0lva3lKNTIrRHVHN1piVWlYRTh6RURpdjdxUnVOY0d5?=
- =?utf-8?B?QW1xK3NYcXJWcHRyd1BQZXMxWGFhSHh4TWdYZUFxd3dHdzcvcy9mTjR6TjdU?=
- =?utf-8?B?U00zaEkwOXZjckIyUDZrMlg0bERLeFdsckczV29McWd5RVErRFRFQTdHaVNx?=
- =?utf-8?B?dHFCL21hbXdnRnAyYWhZNllTTCs0QXdSSG91V0tnbEVKd3cyMXQ3NFdUL1kr?=
- =?utf-8?B?bEIwZWJ4ZmQ3RU5qT2RVRERwVmRoM0Nkc2tZZ3lhN284ekpXNDZCemZUTnlt?=
- =?utf-8?B?dTNNUUVTVFdFeXBrV28yaXo3NjBRRUI4OWx3U3ZvQ1FnYm8vRXlnN1N5bllX?=
- =?utf-8?B?Vm5SY1BucytjZG01Rkt3ZU51UHBmQzdEdWRuTU1JWjlKb1dZZ0dRdDhUUUN6?=
- =?utf-8?B?YjJiWGxxZHQ0anpNRDRycFBEMmovUnJ3N2UzUjl3cElMWDZrQ3czb3RCQ2J6?=
- =?utf-8?B?c0VINDNvd1NaTE54TFoxdnlWN3pkS3I2KzRIY3ZYWEVHOFFNVkhEeWZVS29I?=
- =?utf-8?B?cWJpR3BZU0xacEJaQjlYOTZWRHBLVzBzdXF3U0toSUpxaGdMTFZML3h4Nlhx?=
- =?utf-8?B?ZlJxV0tjeWRLNmljZVdkamxJZjcyMi9uZmJWOHVyMDhWK0lVZ1lIclNXUktH?=
- =?utf-8?B?UGRqSEpHelhRbTJMZkEyMGdzOEhkWU9DQklxaEJHemlwemM5OFBZMTJmQWE4?=
- =?utf-8?B?azNkeXNmR3NIV1RmblNOV2tYZ05kZVdvSG1OTDRFSHlXaDRXWFM3R2QvZmY2?=
- =?utf-8?B?aWRDY1FvRkZSakt3SlVSZk83amRnKzlEczRGRHB5UXArdjlLek5IdnVUN1Y0?=
- =?utf-8?B?N2J5TUV4S083QmZ4SGlteHNaNmpmTXFrQ3Fmekx0RDg4enFtOUNUTC9tVURF?=
- =?utf-8?B?cHdOdDRnWVVaM0pmdUM5RWdtKzE5bGJwSUllbEcvMFJLRlZLNkN2eU1FdzA5?=
- =?utf-8?Q?MLv29EXXQ8gbuHSBBKK7AaOk10WX4kp6OT1Pc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M09IY0NsZG1BaDdmTTd4TmhIRFhrWTczT0duRnFsTldaUjBVY1dIcklzTjFo?=
- =?utf-8?B?R0NXNjdQYW5XQ1k0a2pXQ3M4V282akZLRDIwT0pLRDQ4RnJWUHFhUXdPTmF1?=
- =?utf-8?B?YUVMc2t0aEtiQlB4T0tycEpka1QvdGhPWHpLemVmV3RreFdFbHlpSXlZcGFO?=
- =?utf-8?B?N0lGNFBySTVSRXcvRVNwcmtsWDZEWGNrSCs0UERrcFF4c1c2R0Q3RnppOGRo?=
- =?utf-8?B?bE5YUFNrdkpGRkhsQW1ENUJJSGFWc1pDMlN6T0ZkdEQyczRhZDM3ay8xS21Z?=
- =?utf-8?B?Rk1RL2VnY0pjSmlnZEFhY0VEVU9WUjZVc3RDKzZwbVIvVFVHQmVteklwSzB1?=
- =?utf-8?B?ZVg4QkVXa3ZYU2FQWFhUMUZLS28xMVdqMlFrSmRiOHpnMm81MnkxcjhRZ1ht?=
- =?utf-8?B?Z1RCU1FKVVdxQmp2bTdRMi9IaDBNTGlqK2FsOXhyYk9TeEIzU1hCVkF3V2FY?=
- =?utf-8?B?YmJER3VRNnRhZ2lVanRtejhCOFdKa1lMTm4veGhIS1A0eFBEK3Zwbnk4Tkpl?=
- =?utf-8?B?dWNURXBmcTRCeDBwR3VRVm1KTUtIK1JRQmhUejhmZTRoWjU1VmFmY0ptVUJs?=
- =?utf-8?B?Wll5MWQzTTYyYXNRekphWGUzTms1eFk5ajRmdDFPY2k4VVFGWGRNS0VVRGJD?=
- =?utf-8?B?U3NEbjBhbVFYbVkxTnkzdDd6TDVON1g1QkVVK201T2hMNUo3bDM0ZmVEOU1R?=
- =?utf-8?B?ekg2VmZNNFlDcEJic2N6ZzcxeExBUDliYWxrVlRCOXB6UWx5Y2UwbHM0SEd6?=
- =?utf-8?B?NEpyVUlhOEdTNGpoS3luK3ZibmJaeFlCQkZJeENLZG1DTGorTGMrbGZibnVR?=
- =?utf-8?B?QkVRM3FqVERtSzcyWGlNS2tTVnNBQ1FtSHBneGZuSURYdUFwRFQ4d1ZvV2wr?=
- =?utf-8?B?c0ZuVW81U2l1TS9TV2s4TmlKV0l0ZlkvOERMRStnQWpJUmxuVW1ERGdWV3Vm?=
- =?utf-8?B?S090OGtQdXRKOFJlanNmQXk4L0VkRDNGblFLTTlWVUwyaHBNK0NpSGF2Wjlm?=
- =?utf-8?B?ZUl1eU5CUlYyWkRRYTdzdGRFUVI3YzBqQkRrQ09oY3BBOWdNbVh2enVpU0NX?=
- =?utf-8?B?ZFpkOHRQYXErVzVWUUhlQk1YcmNXMVM3MGRiSjR0Skd2U3JYdFZjdkpDUEk4?=
- =?utf-8?B?QXlEWDBqR3J6eHNhdXc2WWlqY056SVFyNkhuYTRBZXhUYW1ZVkdWL1I3Tmhk?=
- =?utf-8?B?cEJKczBiUDcvSmFuNzE5ZVExVk5lbE1wUmF2U0FVQU13ZXlSdlFzVWRLZU82?=
- =?utf-8?B?Mlg0UzNXR3h3WExiNElEWE1FUXo5enpOQWJZdWpCZWRCQmowNm1JcFJtS3Rk?=
- =?utf-8?B?ZjU4V3lUL1FGNlZNNnhNc0JzdUF1anZhelJGcEtYNTdqRzhCOHJaMWhKZjlk?=
- =?utf-8?B?bFdGZHhoMTRrVEs0ekk4ZWlJUW5tVXBTSm1BdnpjaHpGU3NBejZKSDZBU1lz?=
- =?utf-8?B?a3IycFBQZEl3emdtUFEwUVNncUVHN2tFbHlPVUhTb25WUVk1Q2svWkZMWVo5?=
- =?utf-8?B?N2ZzM1I4Z2wxa3ZNRlFuMTd0c0ZFVXZVc0IvRW9Idkd1cUw0M1dYRUZuT05Y?=
- =?utf-8?B?V2JVZ3dCbTg2RWFQTG5MYVhHNGRydDBKLzRaekE2OWFBbHE5MHczTkZrMUg3?=
- =?utf-8?B?WXEvMS9DRVZrK2JLRlBIb1ZLbnRGSGV1UmtBbC9GUE1qNDg5aWJwMzJKOG5H?=
- =?utf-8?B?RWowaHdBaXNRYzdHMnZtbThVMDVqWldGYk5DQmNEaTVLOVFLbUJBMklzN1Ux?=
- =?utf-8?B?NDJSZmFmRnAyNDhYN1pkNUVqWkplNmpMWXNGOHQxWXdCN0grTHAwb2JaR0Nh?=
- =?utf-8?B?TWhVZFAxc0lCbzJnakhhR1JmZHorUGhhazduMjd5SE9mblFLcDdSdjc4OEZq?=
- =?utf-8?B?akI4ek1PcGFTOU5XcE92YTlKVmpibjM5VHBvSUxzeTlxM3pQOWx6NVFMK3R3?=
- =?utf-8?B?NFQ5akFWSjRSQjgxK0hYLzh6N1lhNlRMKzRMbzV1ejlWM1d5TnlhaEp3SmJy?=
- =?utf-8?B?Rnp5ekNMUXIweGFtZ2l6MldZQmppY241aE5lYmFyQ3lPSHRESDRwOGpzZ3ZK?=
- =?utf-8?B?R1E5SVUrdkluVUc5WWY2ZXlwZ1BqQlBiQ1RoSUtKK1o0VkFKcCtOR2N3S21E?=
- =?utf-8?B?ZTV6blQrZlBXL0NVZDVtZU5seUpWdk0wcFViQW5kL3dKN1R2VllZS0FoTUNr?=
- =?utf-8?Q?LqY+GWRuJ9OiPBr89nq8fj8=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 380ad98c-41c0-4fd4-c825-08ddf9dff97f
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Sep 2025 13:57:31.6746
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FcLOf1jqi4x2B1BkToaQHt7x7ejWgLqM0rje97fejrtM0YCHF0YDW55oSMTJoDnvDDbmjfj6+KWmlKA/4EIV45lNOFODzO08tY9IfOvM26Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB6427
-
-On 2025-09-22 01:57, K Prateek Nayak wrote:
-> Hello Prakash,
-> 
-> On 9/22/2025 10:58 AM, Prakash Sangappa wrote:
->> With use of a new structure member for slice control, could there be discrepancy
->> with rseq structure size(older version) registered by libc?  In that case the application
->> may  not be able to use slice extension feature unless Libc’s use of rseq is disabled.
-> 
-> In this case, wouldn't GLIBC's rseq registration fail if presumed
-> __rseq_size is smaller than the "struct rseq" size?
-
-The registered rseq size cannot be smaller than 32 bytes, else
-registration is refused by the system call (-EINVAL).
-
-The new slice extension fields would fit within those 32 bytes,
-so it should always work.
-
-Thanks,
-
-Mathieu
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="E7czkW5eDIll3KJ9"
+Content-Disposition: inline
+In-Reply-To: <9cafbc70-7235-4e49-928c-4d68a57b7d46@pengutronix.de>
+X-Clacks-Overhead: GNU Terry Pratchett
 
 
+--E7czkW5eDIll3KJ9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+On Mon, Sep 22, 2025 at 09:14:55AM +0200, Ahmad Fatoum wrote:
+> Hello Simon,
+>=20
+> On 19.09.25 23:09, Simon Glass wrote:
+> > FIT (Flat Image Tree) allows an ramdisk to be included in each
+> > configuration. Add support for this to the script.
+> >=20
+> > This feature is not available via 'make image.fit' since the ramdisk
+> > likely needs to be built separately anyway, e.g. using modules from
+> > the kernel build.
+>=20
+> AFAIK the kernel supports multiple concatenated separately compressed
+> initramfs just fine, so it may still be useful to add a target which
+> builds a cpio with all modules inside and the rest can be then
+> concatenated.
+>=20
+> What do you think?
+>=20
+> > +        fsw.property_string('compression', args.compress)
+>=20
+> compression should be none as the kernel would take of decompression.
+>=20
+> Both U-Boot and barebox should warn about ramdisk compression property
+> that is !=3D "none".
+
+Agreed. In U-Boot we've been handling this correctly since:
+
+commit bddd985734653c366c8da073650930fb2e9b5003
+Author: Julius Werner <jwerner@chromium.org>
+Date:   Fri Aug 2 15:52:28 2019 -0700
+
+    fit: Do not automatically decompress ramdisk images
+   =20
+    The Linux ramdisk should always be decompressed by the kernel itself,
+    not by U-Boot. Therefore, the 'compression' node in the FIT image should
+    always be set to "none" for ramdisk images, since the only point of
+    using that node is if you want U-Boot to do the decompression itself.
+   =20
+    Yet some systems populate the node to the compression algorithm used by
+    the kernel instead. This used to be ignored, but now that we support
+    decompression of all image types it becomes a problem. Since ramdisks
+    should never be decompressed by U-Boot anyway, this patch adds a special
+    exception for them to avoid these issues. Still, setting the
+    'compression' node like that is wrong in the first place, so we still
+    want to print out a warning so that third-party distributions doing this
+    can notice and fix it.
+   =20
+    Signed-off-by: Julius Werner <jwerner@chromium.org>
+    Reviewed-by: Heiko Schocher <hs@denx.de>
+    Tested-by: Heiko Schocher <hs@denx.de>
+    Reviewed-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+
+--=20
+Tom
+
+--E7czkW5eDIll3KJ9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTzzqh0PWDgGS+bTHor4qD1Cr/kCgUCaNFV6AAKCRAr4qD1Cr/k
+CnGjAQD/vmuAq3ofEv1kMg56vhno1TytM3a+z+O5XKpKGYMIWQD/QQs0y0YpQT9i
+kJycivHT7DiRwR+v9g47p3ibeMyePQo=
+=Fyyb
+-----END PGP SIGNATURE-----
+
+--E7czkW5eDIll3KJ9--
 
