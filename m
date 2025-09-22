@@ -1,53 +1,74 @@
-Return-Path: <linux-kernel+bounces-827314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BB5B9169B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C99B916A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 15:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8403318987BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:33:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A57F17A1C79
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 13:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742DD30DED3;
-	Mon, 22 Sep 2025 13:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2A830CB2F;
+	Mon, 22 Sep 2025 13:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljBsVDgQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SDy8VOE2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A4E30DEA3;
-	Mon, 22 Sep 2025 13:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98122309EF6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 13:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758547964; cv=none; b=KAi6fOWXnJaRNZXxXLRa10QtUkzQww2sS0NX4gYTqrvxs0kVv3NFPLB2s2M2Ptse+45yPlbjNo99wjomBxo+iOvEzLnejDqoIw1hnExBYQ6nd6Wi/9oFG/B2xRilh8m1vJUpF6Awyt4ReQYXZpsXnN9t4pWq7OMhcAKeoGAYS8g=
+	t=1758548020; cv=none; b=Y+0GSwskZbbhj+XtQYXeqOYep+pH3bZz91bPN9TTKOSoncZOTQJDcVnSBh7R95nfPZ4UGH0XN6K6sYtq8qKGYLu1xRPnJxmNsLgdPvILiBtbEvYbUoeN5vD9MJxnNtIdmjogkGDkpqlibE/5hxD+wm0uk/Q/MCorGq9i85jqUYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758547964; c=relaxed/simple;
-	bh=CgD0LDOvRKAImBomzyORs0c8gU8JUpoVxd9ZVau31MA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYiTNUWTUB0rH19FcLPD9gd1DM6STOB03ZTQ2tImkw+oZH/cy5BF258SJ1pKT9LFbHejQgTVpw+o1/eR/h95L61dfip6rR59shKvFlWkEHZ8XqOQcOV4xQMyPYTUIW8G7aUXvlPSqjRhyqJIbeULIm+kH8b0/DhVT70fqkzbtgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljBsVDgQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88C47C4CEF0;
-	Mon, 22 Sep 2025 13:32:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758547964;
-	bh=CgD0LDOvRKAImBomzyORs0c8gU8JUpoVxd9ZVau31MA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ljBsVDgQK2ixds4KNlJf8YJIc/gXXiwqonIdavrPhn/u7yQ3OD6VPXfagv2gDd3+L
-	 Go54UdTIdSt4Ce+qIaQg5KOR0+aFsSJ5x7oGTpT1UmWWTtkiHooe05aqH0fhUm+30o
-	 4yzY2BdNNdEBrY7UN5O4uNue/LmC8+vsvte7FPAUSNuTAXp8V2Io0qxA4WxBFa77LB
-	 qSRlhAOVyzQODnDUTsw6Adb3HFMP5ArvySFl3o9qXS1QmszePs6BR8waDgmc1YnBVS
-	 9KTsvQZlj+8Vf7EpI66O+wgEsg++chtzWaLuOYGIm6J0y7+E5vJOa0iE43/Kbtq8w9
-	 4KdgWn4N2mLOA==
-Date: Mon, 22 Sep 2025 15:32:40 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Yinon Burgansky <yinonburgansky@gmail.com>
-Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: Touchpad multitouch leaves ghost fingers
-Message-ID: <bjtev7sgmcafoysd53xrxih4nawn2dbq4odylwdglbub6td2a3@nhoxenprhjvy>
-References: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
+	s=arc-20240116; t=1758548020; c=relaxed/simple;
+	bh=elO3NLv4vt1JKnON/yJ0aCls7P7sTB7/lhLmqgp9rgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pGGQns83buTWakqHroy1G69BNQB1aUFJlQqqXe/xcUWxOPaZzt0mNxR+VncTxIqkquFPdOMIC8IwP7xWIE+AqBSN6HqcPM7RyGTfb+NfpQTa3I0gUm5wGe0HPIzn1KMoYyaWFokxaiTrammJXxD0KAjYoWjCgc3HZ3V9+0e4p8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SDy8VOE2; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758548019; x=1790084019;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=elO3NLv4vt1JKnON/yJ0aCls7P7sTB7/lhLmqgp9rgg=;
+  b=SDy8VOE268vPkXtUUIeDzrsM5+jV1MATvXcWQs/wv5O1tLgewTI4L85n
+   ZH/pYB3z9hq0St7yQiOgomD0Sm91XS2ZEhMhm1NCwjpyzr3BmYNU1UXI2
+   UzNpD3pIcHTc4mBAVy1NBrGN9tsRnZHEjp4UKvCPjzEletWTSaOVc2Sa3
+   IqcfLViNAeyCGhsxt1AKq5q/xJ5xam68n69YxnTTUpLWMP0eF56gaigRp
+   24SZx9cSwsOqYt7vntRPmNvH+Ht8rMVQ7yUhgdpSnqvKXJsaGJvSKQRl1
+   3r4PJMYDOarPf8FSjUFHS3hJVbhv2Mt2ylI/OD3LwLMw40bYI56EpuIQ5
+   A==;
+X-CSE-ConnectionGUID: D+goINgcQmW3zA24K4sIAA==
+X-CSE-MsgGUID: pLA0eckkTh6IpzdoHXeOAw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11561"; a="63437687"
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="63437687"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2025 06:33:38 -0700
+X-CSE-ConnectionGUID: BC/kmH+NTrGQk6dneCix1w==
+X-CSE-MsgGUID: 3o4exqteQd+w9anjPZHnaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,285,1751266800"; 
+   d="scan'208";a="180491381"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 22 Sep 2025 06:33:36 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0gfd-0001iT-0c;
+	Mon, 22 Sep 2025 13:33:33 +0000
+Date: Mon, 22 Sep 2025 21:32:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Brian Norris <briannorris@chromium.org>,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>
+Subject: include/asm-generic/percpu.h:21:44: warning: array subscript 32 is
+ above array bounds of 'long unsigned int[32]'
+Message-ID: <202509222148.aujDHbuM-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,121 +77,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEU-x4=Zs22b5LX_rsBVMu4BxvDfO+CZkkuWuVNaxv8mqvh9Gw@mail.gmail.com>
 
-Hi,
+Hi Yury,
 
-On Sep 21 2025, Yinon Burgansky wrote:
-> When using the touchpad with multi-finger gestures, ghost fingers sometimes
-> remain.
-> This is reproducible with `hid-replay hid-recorded.txt`: after the
-> recording, two ghost fingers remain on the touchpad,
-> so a subsequent single-finger tap is interpreted as a triple tap.
-> Tapping with three or four fingers resets the device state.
-> 
-> I compared `hid-recorded.txt` to `evtest.txt` for the same events and it
-> appears the problem occurs when the device sends a single HID report that
-> changes the contact count from 3 -> 1,
-> while the kernel's evdev stream removes only one contact (3 -> 2) instead
-> of clearing the two removed contacts.
-> The following are the exact events where the issue first appeared:
-> 
-> hid recorder:
-> 
-> ```
-> # ReportID: 3 / Confidence: 1 | Tip Switch: 1 | Contact Id: 0 | # | X: 792
-> | Y: 378
-> # | Confidence: 1 | Tip Switch: 1 | Contact Id: 1 | # | X: 564 | Y: 403
-> # | Confidence: 1 | Tip Switch: 1 | Contact Id: 2 | # | X: 383 | Y: 542
-> # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
-> # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0 | Scan
-> Time: 43407 | Contact Count: 3 | Button: 0 | #
-> E: 000085.948315 30 03 03 18 03 7a 01 07 34 02 93 01 0b 7f 01 1e 02 00 00
-> 00 00 00 00 00 00 00 00 8f a9 03 00
-> # ReportID: 3 / Confidence: 1 | Tip Switch: 0 | Contact Id: 1 | # | X: 564
-> | Y: 406
-> # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
-> # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
-> # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0
-> # | Confidence: 0 | Tip Switch: 0 | Contact Id: 0 | # | X: 0 | Y: 0 | Scan
-> Time: 43615 | Contact Count: 1 | Button: 0 | #
-> E: 000085.960958 30 03 05 34 02 96 01 00 00 00 00 00 00 00 00 00 00 00 00
-> 00 00 00 00 00 00 00 00 5f aa 01 00
-> ```
+FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
 
-Actually, this doesn't seem to be 3->1 but 3 ->0:
-- first report has all 3 touches with "Tip Switch: 1" -> 3 touches
-- second report has only one report of a touch with "Tip Switch: 0", so
-	the kernel thinks only Contact Id 1 has been released.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   07e27ad16399afcd693be20211b0dfae63e0615f
+commit: fda1dd3c54ef3c4200c2e77634a91610da973950 find: Switch from inline to __always_inline
+date:   1 year, 1 month ago
+config: riscv-randconfig-r111-20250922 (https://download.01.org/0day-ci/archive/20250922/202509222148.aujDHbuM-lkp@intel.com/config)
+compiler: riscv32-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250922/202509222148.aujDHbuM-lkp@intel.com/reproduce)
 
-What we are missing here is a common defect in some touchpad: "not seen
-means up". And so we need the multitouch class
-`MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU`.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509222148.aujDHbuM-lkp@intel.com/
 
-And following the libinput report, it seems you already found this
-yourself :)
+All warnings (new ones prefixed by >>):
 
-Unfortunatelly, because your touchpad is an integrated one using I2C, we
-can not dynamically assign this quirk at boot so testing will require
-you to recompile the hid-multitouch module or inserting a HID-BPF
-module.
+   In file included from include/linux/compiler_types.h:174,
+                    from <command-line>:
+   drivers/base/test/test_async_driver_probe.c: In function 'test_async_probe_init':
+>> include/asm-generic/percpu.h:21:44: warning: array subscript 32 is above array bounds of 'long unsigned int[32]' [-Warray-bounds]
+    #define per_cpu_offset(x) (__per_cpu_offset[x])
+   include/linux/compiler-gcc.h:35:26: note: in definition of macro 'RELOC_HIDE'
+     (typeof(ptr)) (__ptr + (off));     \
+                             ^~~
+   include/linux/percpu-defs.h:236:2: note: in expansion of macro 'SHIFT_PERCPU_PTR'
+     SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)));   \
+     ^~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:236:26: note: in expansion of macro 'per_cpu_offset'
+     SHIFT_PERCPU_PTR((ptr), per_cpu_offset((cpu)));   \
+                             ^~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:269:29: note: in expansion of macro 'per_cpu_ptr'
+    #define per_cpu(var, cpu) (*per_cpu_ptr(&(var), cpu))
+                                ^~~~~~~~~~~
+   include/linux/topology.h:96:9: note: in expansion of macro 'per_cpu'
+     return per_cpu(numa_node, cpu);
+            ^~~~~~~
 
-I would lean toward providing a small HID-BPF program while the kernel
-is being fixed as this will be a much quicker way of fixing it for you
-(but the kernel will still need to be fixed).
 
-How does that sound?
+vim +21 include/asm-generic/percpu.h
 
-Cheers,
-Benjamin
+^1da177e4c3f41 Linus Torvalds 2005-04-16  20  
+a875a69f8b00a3 Ingo Molnar    2006-07-03 @21  #define per_cpu_offset(x) (__per_cpu_offset[x])
+acdac87202a408 travis@sgi.com 2008-01-30  22  #endif
+acdac87202a408 travis@sgi.com 2008-01-30  23  
 
-> 
-> evtest:
-> 
-> ```
-> Event: time 1758384424.367216, -------------- SYN_REPORT ------------
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
-> value 0
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 54
-> (ABS_MT_POSITION_Y), value 378
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
-> value 1
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 53
-> (ABS_MT_POSITION_X), value 564
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 54
-> (ABS_MT_POSITION_Y), value 403
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
-> value 2
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 53
-> (ABS_MT_POSITION_X), value 383
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 54
-> (ABS_MT_POSITION_Y), value 542
-> Event: time 1758384424.380922, type 3 (EV_ABS), code 1 (ABS_Y), value 378
-> Event: time 1758384424.380922, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP),
-> value 547800
-> Event: time 1758384424.380922, -------------- SYN_REPORT ------------
-> Event: time 1758384424.393487, type 3 (EV_ABS), code 47 (ABS_MT_SLOT),
-> value 1
-> Event: time 1758384424.393487, type 3 (EV_ABS), code 57
-> (ABS_MT_TRACKING_ID), value -1
-> Event: time 1758384424.393487, type 1 (EV_KEY), code 333
-> (BTN_TOOL_DOUBLETAP), value 1
-> Event: time 1758384424.393487, type 1 (EV_KEY), code 334
-> (BTN_TOOL_TRIPLETAP), value 0
-> Event: time 1758384424.393487, type 4 (EV_MSC), code 5 (MSC_TIMESTAMP),
-> value 568600
-> ```
-> 
-> This is an old issue (at least a year old) that I still encounter
-> occasionally. I originally reported it downstream:
-> https://gitlab.freedesktop.org/libinput/libinput/-/issues/1194
-> 
-> ```
-> uname -a
-> Linux fedora 6.16.7-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 11
-> 17:46:54 UTC 2025 x86_64 GNU/Linux
-> ```
-> 
-> Please let me know if you need anything else,
-> Thank you!
+:::::: The code at line 21 was first introduced by commit
+:::::: a875a69f8b00a38b4f40d9632a4fc71a159f0e0d [PATCH] lockdep: add per_cpu_offset()
+
+:::::: TO: Ingo Molnar <mingo@elte.hu>
+:::::: CC: Linus Torvalds <torvalds@g5.osdl.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
