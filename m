@@ -1,123 +1,84 @@
-Return-Path: <linux-kernel+bounces-827964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4267B93893
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:08:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9787BB938A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Sep 2025 01:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBBEE1902B20
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:08:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5C5F1902B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 23:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049732F49E3;
-	Mon, 22 Sep 2025 23:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1D130171C;
+	Mon, 22 Sep 2025 23:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="USt70Zbv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D/360iHN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0379770FE;
-	Mon, 22 Sep 2025 23:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FA128B415
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 23:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758582487; cv=none; b=B3CS1EBEYwXAByZUOz9ebVhSJQOUsyyzQ6zgElIYD7HU5WekYJuh1uj9cvgeU3J5Uhv3QCWzR4CVAIPr1KLhYNWFCSXcjyeQovaNFp4+V20IyOvYUroB6jQXjUGes3eZhACcSechAwfFwh7ZPqUAjMJ9CLJap2tPB8arqKpbV4s=
+	t=1758582518; cv=none; b=R5ueVK2HrjJhPgE5bdvnzTv/tjBS6vsO7j9fHY0k9uJzgzcnNRN/XpYFhRx31B0WnLVCcicj1yj7mea6KCnq4IxTOgRwiT7gy0ssf2ynM6V/od+BSR5AX3Zs7RFokbmR0pWoeIRu/creYgeyXoJgTv1h0uD0XF5N0fZ3kYbM29Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758582487; c=relaxed/simple;
-	bh=XWxaf+eruACKBW+zC6wZBjwveAojRX5W0Ql935IxLow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKnF50jkj4fi3wGReCU/TUNP+EBhpRmj+CO+2YrM5DNuM4ET+P8vK3TBJegymBnld0v82h4BU2ZxX88tucuuPg+0JlHasYO8s9A5cz/vVXhT0jWKoLlrfA3b/LyPIeqvyxylhAsMhmPIgk3Hqj08UpVas3Rq2jEpnaNN3ktU+H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=USt70Zbv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=vna6onQ17GRMJdgDqCCzwoNwGnMVdyQrXYBFE4uxe+E=; b=USt70ZbvzeG7Gwgi8fg1qfL5kE
-	2oVtNvV2Z8HerbbcZLlW3pMHOJ5FMD17x2BAQle8tsISd2exOeNzj/zKti+pGnJ3JAf1VBSbIxkv5
-	LdDYRupeWwJA5C501fG+mXsk2y1hGyuIjR9PnX3OxToj76hnr/QrJOcR8dYRIQZybhHMzblHf4quH
-	3QZykxoumA1MUHFzhTwG9BxOuSDCjkeGDX14zNTy1wqFOknfXQ6/fVKTWiVz9s3YBZm6Lf4jJg2KI
-	PoOcXgQlkqYOG9RhrHrLtFkSr4ZQ2DoOy0povid4qYyB3nuq9jh0Y9qvBYVtux6IExEg654vFzC8e
-	Q/uSLFnA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v0pdY-0000000BhXD-2OGh;
-	Mon, 22 Sep 2025 23:08:00 +0000
-Message-ID: <c02f08cc-0613-4e57-886f-9d49803cea00@infradead.org>
-Date: Mon, 22 Sep 2025 16:07:59 -0700
+	s=arc-20240116; t=1758582518; c=relaxed/simple;
+	bh=QmCUwDfXfg4W2Dr+QVycDtLbh1Xl7d+GJAEjUK5WNlY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RmF3inoC47PxOSuEAIAx9CihowmBMrV9CVUvsMnJltjS7nF/JlB7MeGtv1b8n12raA7XlHCGbXl1JmzTF+htJeoRwdyUiPobBU/c+hhIjiW8Dg3ljMb0uiv/1L5fXSHYpA2+zM/EtFu7qkwMh8E4Go0/ZPNbzEnfKBMn4Hxewig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D/360iHN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E45C4CEF0;
+	Mon, 22 Sep 2025 23:08:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1758582518;
+	bh=QmCUwDfXfg4W2Dr+QVycDtLbh1Xl7d+GJAEjUK5WNlY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D/360iHNLVYROtKeN/fgEBdD6WzJbXBsP73BrcZHpBpzMiIiaUC0Hk6OtLYrHKxkR
+	 g0KelA+qBAZXcUXf20lJgWNGk3lxjQzWxbfHU4DooTmBJABrOB53zHebZwUdQgP6mJ
+	 Z7XS8B7HCEcpCgWbA971c0C/FER1G6pMwW4fHT9I=
+Date: Mon, 22 Sep 2025 16:08:36 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "yanjun.zhu" <yanjun.zhu@linux.dev>
+Cc: Mike Rapoport <rppt@kernel.org>, Alexander Graf <graf@amazon.com>,
+ Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>, Chris
+ Li <chrisl@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>,
+ kexec@lists.infradead.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] kho: add support for preserving vmalloc
+ allocations
+Message-Id: <20250922160836.8d0dc984ff0986b3809c9ab0@linux-foundation.org>
+In-Reply-To: <8f893019-bd87-4f54-8238-acd8fdeed051@linux.dev>
+References: <20250921054458.4043761-1-rppt@kernel.org>
+	<20250921054458.4043761-4-rppt@kernel.org>
+	<8f893019-bd87-4f54-8238-acd8fdeed051@linux.dev>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] kbuild: Allow adding modules into the FIT ramdisk
-To: Simon Glass <sjg@chromium.org>, linux-arm-kernel@lists.infradead.org
-Cc: Nicolas Schier <nicolas@fjasle.eu>, Tom Rini <trini@konsulko.com>,
- Ahmad Fatoum <a.fatoum@pengutronix.de>, =?UTF-8?B?SiAuIE5ldXNjaMOkZmVy?=
- <j.ne@posteo.net>, Masahiro Yamada <masahiroy@kernel.org>,
- Chen-Yu Tsai <wenst@chromium.org>, Ard Biesheuvel <ardb@kernel.org>,
- Han Shen <shenhan@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>, Rong Xu <xur@google.com>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250922224835.1918759-1-sjg@chromium.org>
- <20250922224835.1918759-5-sjg@chromium.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250922224835.1918759-5-sjg@chromium.org>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Mon, 22 Sep 2025 15:31:42 -0700 "yanjun.zhu" <yanjun.zhu@linux.dev> wrote:
 
-On 9/22/25 3:48 PM, Simon Glass wrote:
-> Support 'make image.fit FIT_MODULES=1' to put all the modules into a
-> ramdisk image within the FIT.
+> > +int kho_preserve_vmalloc(void *ptr, struct kho_vmalloc *preservation)
+> > +{
+> > +	struct kho_vmalloc_chunk *chunk;
+> > +	struct vm_struct *vm = find_vm_area(ptr);
+> > +	unsigned int order, flags, nr_contig_pages;
+> > +	unsigned int idx = 0;
+> > +	int err;
 > 
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-> Suggested-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> ---
+> This is a trivial issue. I’m not sure whether RCT (Reverse Christmas 
+> Trees) is used in the Linux MM mailing list.
 
-Regarding $subject, a comment in scripts/make_fit.py says:
+Not as far as I know.  Some like it.
 
-  Note that this tool does not yet support adding a ramdisk / initrd.
-
-Is the comment incorrect or are you changing that feature here?
-
-Thanks.
-
-> 
-> (no changes since v1)
-> 
->  scripts/Makefile.lib | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 1d581ba5df66..2e880d9b4706 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -398,9 +398,15 @@ MAKE_FIT := $(srctree)/scripts/make_fit.py
->  # Use this to override the compression algorithm
->  FIT_COMPRESSION ?= gzip
->  
-> +# Set this to 1 to include an initrd with all the kernel modules
-> +FIT_MODULES ?= 0
-> +ifeq ($(FIT_MODULES),1)
-> +EXTRA := -B $(objtree) -m
-> +endif
-> +
->  quiet_cmd_fit = FIT     $@
->        cmd_fit = $(MAKE_FIT) -o $@ --arch $(UIMAGE_ARCH) --os linux \
-> -		--name '$(UIMAGE_NAME)' \
-> +		--name '$(UIMAGE_NAME)' $(EXTRA) \
->  		$(if $(findstring 1,$(KBUILD_VERBOSE)),-v) \
->  		$(if $(FIT_DECOMPOSE_DTBS),--decompose-dtbs) \
->  		--compress $(FIT_COMPRESSION) -k $< @$(word 2,$^)
-
--- 
-~Randy
+If I was to have a preference I'd suggest that things be laid out in a
+logical order rather than by column count.  Group like things together,
+avoid use of unintialized storage in initializers(!).
 
 
