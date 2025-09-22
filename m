@@ -1,152 +1,127 @@
-Return-Path: <linux-kernel+bounces-827445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-827447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CEE3B91C7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:44:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE106B91C83
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 16:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63CD7426957
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D34319041FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Sep 2025 14:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A132328488A;
-	Mon, 22 Sep 2025 14:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E7F28152A;
+	Mon, 22 Sep 2025 14:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rk5eObVU"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+1jOHYW"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2C327FD51
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A3C22D4DD
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 14:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758552217; cv=none; b=AfM8+JrAFzAfegOChCfpwuq5Q/Ym30mvwBFTYDyhnCr1/MzIXkI2cYZxakkWj9CKIGr/WlsEUM2LkxX3A2dto9Ezyn5fCQ/jNMF8fFsjSK2rwK+t4JcbTFoDA8bfwbdwF5hH1hsOcGxwXZTUihRRDFT/FLUcMntTh3Iz5cCGuPk=
+	t=1758552232; cv=none; b=pYPNUd72muPbhJjjH1ra6REvhMrjURuC+hO2G3BHTXOK3ualG1D0mwuzmaxWOl0ScElviStgtIRdBlAvX/G8BNCot9jKzPtAXEBZC97jHzEK9tI8Etq/gbLxlNtOI1u8vFoyT6NwEKc+mQ+PoZkABdUiWlNWHIS9k8EKzgwfXzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758552217; c=relaxed/simple;
-	bh=kgMKeOuANrC43iZg1jvUkmkWPzagUHEQGbtkp6bK0vI=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nMmbf63Ncvnr0QaH2yKXWfNHY1puWbZ4m1oE9z5FlV4VVicVDeYgeuF2de8nBJQVsZtW0ziSfnpQdy3XrpiO3mnQKQFli5g9cSj8ugznccll8pYSLUprssWv7IQD5x3xlVP1NfZf/SrvetidwNt2HXcKFSHvX2Faxy4cmGDMp7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rk5eObVU; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3696f1d5102so15174411fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:43:35 -0700 (PDT)
+	s=arc-20240116; t=1758552232; c=relaxed/simple;
+	bh=9C4S0HqsiaXsxwEqJKTbtVPEuS8zFCQq76H/ap9HQgI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c5Pg755Hjc80GM9w7601umJq+eaUZ7pvPjB1vpEtqBPSC90uduMIoxZbggg/Rbyy6nc4MEnQQ9f3WpCDqRAnxmvLTeN4CTs7rV7McLObjOomcrLP/UYjQP7dPkYGiqOXXiu6Xr0Xje5BQlIdxx5YfjvjHLp4A3qxynxLygMGNBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+1jOHYW; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57b7c83cc78so1854705e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Sep 2025 07:43:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1758552214; x=1759157014; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSGJ0XvVlaWK134DsZlY3yMuGiQnMb56P3+rclOYz8g=;
-        b=rk5eObVULNBZ7ONopmU1ZWtX3GIPctfomNZuozGqElIQ3UPKU264mmG2GZTUVwCMZb
-         mn7F/CV2oHOeP7cxXBBlqPpHLOzew29e8DkEOGSvXViWr4baE7QwzVF1RjyDrwdWWz/g
-         s3gRNvB0HKyurtkjyHQlhbGT9jUsWVRQFEYbdag9uI9PDHG0L7uOzGqjrkN15i//EXcM
-         qhTFEV3HTziI8sp+QClZxTC8jdXPFMvVCY462UV2zc4DAT4lMEQWDui2QgH7k3/uZadB
-         w5Y943zjNOf5Uxv1HnQtc1R9obzW/RXn9eIs/bVdhlJYO4Tzv/RoBqBZuTgTIyuOu9+v
-         iaLw==
+        d=gmail.com; s=20230601; t=1758552229; x=1759157029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+XeqFLg3di5BWF4+ZwuO795a3+ZuhvFgttiR6R4NPvc=;
+        b=K+1jOHYWe24DHweBQX68QwAgiu9+ul5ni6jYieygNAJHuRl8avTEvttNIMhyUZB7lD
+         MfdThjc0I45i1DHBMlFXTIxhOUc+x8G9y0zT+9rdgayds4ZYtmlEzfik0cU1+uDDtwka
+         y32pBQRwWwF+G+1opBI5U6dE0cDwJpwLeZKe0vSK3KwqExPNLLqbBJKFT8hdpR2RKVJ9
+         z3V7A+HfMWJqWVVziz/jGN82XOHNg0pP3xbkumwsgCU6Q3cBXfbRjyFr1aNh9OHJMren
+         /u4wOfnLR+3qyLm/xSrTycdnaYjyiV2mxbugZvq5u0m4TaL/0DfXfu951aMshEJIhVWh
+         Hn+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758552214; x=1759157014;
-        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wSGJ0XvVlaWK134DsZlY3yMuGiQnMb56P3+rclOYz8g=;
-        b=dvr1OfW6naXtgpqFbCVa2Rd3XtSvSbiIaYprVo13KihSgzA6FyzII8mho04mOqy+1L
-         Qfhw7nZzshPe3gJRioQoE65BLnihG1grlOnrg9460QMQ3oXpkZLV3GKzxmGXLH6JKy+z
-         j/WiNJv7VzH7KCBQDAlthhCX++WtN3Qy+Qjl2+wS73Pz3lL56CdyQmWw/JNjumm8qY5z
-         cmH5703WknTsFY8Y+9A2bIB78IYTx5V2mko855PRIUlYgBWM9VwznW8xpTUfIG/IrhbJ
-         fS6uZuCTuw45v5LArpbydCWe+GdPpWePJ+2bKi90QrKaT7V4be/HZBvtBUPa5Eb+WHSe
-         /ulA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEHi9ttAusJGXVUUn9qvOTVffE+mIOiYvOv4YGrTBYvtIsscJE4cwjO/7RxcQXdFLKd4LLZ36oo6kCmpk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytlyWQ4av5XI1+tJl8206Et9QRaHFGzjswnwENFIACzBlHE6Tk
-	DqKZAaZxvIM6LrRakNCkMdRdNKbcx60J+iaNrE4H8pxQ+1xWtLhVlttDAYS1xGyWEiPseY0ctfu
-	IJdnw+p6vOncixVJAAYQjvjTW9I9c64HrzuLlVPdSmA==
-X-Gm-Gg: ASbGncu54Z/BMIWMNrwUpk0NK4/n8rjkZ4+OiOjEreUJKJqfKl0uMMeJ5++UWOfW0s0
-	NeuFFypWCS0yAxLtqKaHFHsz64DYR22RegWuAkcfA1I5itwtU9IyAzhszvwlOuJo0L8A3LBw2kk
-	5fmSO8bnlZS0avFGZi2DBG56L7yOIQoRyfroCYUurtMO6sUIgfJWYO2ev/k5//T8Yxng2jy38gc
-	HFUA5CM11c/ds+AwL7flgnStWzpsZ+JLQI8hQ==
-X-Google-Smtp-Source: AGHT+IHBWA0aOkyyOd+R1k4/p6+BRWwsMoHsL9ctLqhXkzxhgXeHtoGxeh6xuifdB+qoyNNy9NaiBYY06/o80dRnaMo=
-X-Received: by 2002:a2e:be11:0:b0:350:b715:51f1 with SMTP id
- 38308e7fff4ca-3641c63392bmr41010931fa.39.1758552213655; Mon, 22 Sep 2025
- 07:43:33 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 22 Sep 2025 07:43:31 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 22 Sep 2025 07:43:31 -0700
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <20250922-i2c-mux-v1-6-28c94a610930@gmail.com>
+        d=1e100.net; s=20230601; t=1758552229; x=1759157029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+XeqFLg3di5BWF4+ZwuO795a3+ZuhvFgttiR6R4NPvc=;
+        b=smOSgR9XzEonKhWMBR0uwxvZNrabypXC+8uuF/L+jB+qS5E0kS3MD/L+27h2Gbab0J
+         NUyFeF78LKOH/giWioug6wfcOyPBKvSxkHzo+b9tlmGf5SphBM2KczFr4fW4j50F7Pkk
+         NZrnu0InN3RUfQ3VP082UWIq8KfFB75M6UtsAQar7n8S78bEG21PF0vCKXTpgFSMElFs
+         KvREARJp06uPps5toygzDmXb0JO76S28NsHvXilOWX22lALd6lFnkX6nyYBIt1SSChjH
+         u3KJbncq9MKASmvVbE1IP+6R9kMmsiyt44cQyRVctrvIbSXaqx/j2HxG6XXvvUMJ7E+Q
+         wX0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsRyZCRFP8vqnQFrW8smRP7VD8eUNxZSRQOEHHftk/oNsmCfYC2vNeOGVQJ9EUS/MdYDsXGR2pbeeEtAc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsRWaufe3eZaBwUm0/XOflj67aS2/l7Qbde7CtFL3P4R5XJ0pg
+	2en0AxnprfUSwVmRcnUD6AyrJgETJU4RSoFagc1FALSV2OiwRySuE5x7Hztft/IH
+X-Gm-Gg: ASbGncuC3CQEYW8CvaulTf5wu3oYg7WPVf9JKS4mcjcJgMo1LMMDUXYS7MpO/C3D6BJ
+	bF7QTTJeL6DeVFyirbqPHSN4xckUZPc75HcRtsX0iNUmVQIAJwMNj+kU4AqPK7uytIsoeL6RQN/
+	oWp3lw/4+g8fc2jZj4wDOcnZBJcYcxLAjDBaIetjlsWK9sHRbsskrWf/TArX7iUGXf/3ho3njb1
+	KPCm9mzuwHzFTTQeNX/1shOvEZLcrWLalOZO+aK1YJFjWEnl/t6+iTWHA9kMXklcJiES565ZcGw
+	hB+UR3dU3CmxIjODLJn+Lt5OO0tJJPWWFYBqF9pAy8TxutPDLL9SIKU11v2HLLMAyclJxfKhqOB
+	Yzqcgo4BBHPOdIqlpA6bP3IoSIung8xaEfLpmDkLJUzLJ9g7pFWm7jhCwpk1CfF5QzxcnL0PA8m
+	RllXwqcEWMmni3wCTg
+X-Google-Smtp-Source: AGHT+IHzYtEpfKcEprfpGuIP1MO4GWVytyEbGxSxTMCwGQRrh8Hl2fondVW+aeo1G/kVRwlHSYdpkg==
+X-Received: by 2002:a05:6512:6819:b0:57b:a1d3:10be with SMTP id 2adb3069b0e04-57ba1d313f0mr2266689e87.8.1758552228118;
+        Mon, 22 Sep 2025 07:43:48 -0700 (PDT)
+Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-578a5f44b29sm3348282e87.24.2025.09.22.07.43.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Sep 2025 07:43:47 -0700 (PDT)
+From: Alexandr Sapozhnkiov <alsp705@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH 5.10] vgem: fix error return in vgem_init()
+Date: Mon, 22 Sep 2025 17:43:41 +0300
+Message-ID: <20250922144344.11-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250922-i2c-mux-v1-0-28c94a610930@gmail.com> <20250922-i2c-mux-v1-6-28c94a610930@gmail.com>
-Date: Mon, 22 Sep 2025 07:43:31 -0700
-X-Gm-Features: AS18NWAukxKDxcsu63Pdrf7A6bnsBHb7UFkZ35gRQoLZiLu7TwdGXK-pBJ2BNLo
-Message-ID: <CAMRc=McVePrs_+BKkpO3zf_AUcxhzp+8Cf6Tyh1A97nzkx_ZRQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 6/7] i2c: davinci: add support for setting bus frequency
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Michael Hennerich <michael.hennerich@analog.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andi Shyti <andi.shyti@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 22 Sep 2025 08:21:01 +0200, Marcus Folkesson
-<marcus.folkesson@gmail.com> said:
-> Populate adapter with clock_hz and set_clk_freq to enable support for
-> dynamic bus frequency.
->
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-davinci.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
-> index 6b18938457d0c5cabc323c364d9330c2890df107..d3e47738f8ee7e8f69fee49509dcda396c9b7fb6 100644
-> --- a/drivers/i2c/busses/i2c-davinci.c
-> +++ b/drivers/i2c/busses/i2c-davinci.c
-> @@ -279,6 +279,27 @@ static int i2c_davinci_init(struct davinci_i2c_dev *dev)
->  	return 0;
->  }
->
-> +static int davinci_i2c_set_clk(struct i2c_adapter *adap, u32 clock_hz)
-> +{
-> +	struct davinci_i2c_dev *dev = i2c_get_adapdata(adap);
-> +
-> +	if (dev->bus_freq == clock_hz)
-> +		return 0;
-> +
-> +	dev->bus_freq = clock_hz;
-> +
-> +	/* put I2C into reset */
-> +	davinci_i2c_reset_ctrl(dev, 0);
-> +
-> +	/* compute clock dividers */
-> +	i2c_davinci_calc_clk_dividers(dev);
-> +
-> +	/* Take the I2C module out of reset: */
-> +	davinci_i2c_reset_ctrl(dev, 1);
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * This routine does i2c bus recovery by using i2c_generic_scl_recovery
->   * which is provided by I2C Bus recovery infrastructure.
-> @@ -810,6 +831,8 @@ static int davinci_i2c_probe(struct platform_device *pdev)
->  	adap->dev.parent = &pdev->dev;
->  	adap->timeout = DAVINCI_I2C_TIMEOUT;
->  	adap->dev.of_node = dev_of_node(&pdev->dev);
-> +	adap->clock_hz = dev->bus_freq;
-> +	adap->set_clk_freq = davinci_i2c_set_clk;
->
->  	if (dev->has_pfunc)
->  		adap->bus_recovery_info = &davinci_i2c_scl_recovery_info;
->
-> --
-> 2.50.1
->
->
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Return value of function dma_coerce_mask_and_coherent(), 
+called at vgem_drv.c:143, is not checked, 
+but it is usually checked for this function
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+---
+ drivers/gpu/drm/vgem/vgem_drv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index c5e3e5457737..dc132dd44b9e 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -140,8 +140,10 @@ static int __init vgem_init(void)
+ 		goto out_unregister;
+ 	}
+ 
+-	dma_coerce_mask_and_coherent(&pdev->dev,
++	ret = dma_coerce_mask_and_coherent(&pdev->dev,
+ 				     DMA_BIT_MASK(64));
++	if (ret)
++		goto out_devres;
+ 
+ 	vgem_device = devm_drm_dev_alloc(&pdev->dev, &vgem_driver,
+ 					 struct vgem_device, drm);
+-- 
+2.43.0
+
 
